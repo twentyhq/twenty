@@ -1,4 +1,4 @@
-import { SidePanelAIChatThreadsPage } from '@/side-panel/pages/AIChatThreads/components/SidePanelAIChatThreadsPage';
+import { SidePanelai-chat-threadsPage } from '@/side-panel/pages/ai-chat-threads/components/SidePanelai-chat-threadsPage';
 import { SidePanelAskAIPage } from '@/side-panel/pages/ask-ai/components/SidePanelAskAIPage';
 import { SidePanelCalendarEventPage } from '@/side-panel/pages/calendar-event/components/SidePanelCalendarEventPage';
 import { SidePanelFrontComponentPage } from '@/side-panel/pages/front-component/components/SidePanelFrontComponentPage';
@@ -46,7 +46,7 @@ export const SIDE_PANEL_PAGES_CONFIG = new Map<SidePanelPages, React.ReactNode>(
     [SidePanelPages.WorkflowRunStepView, <SidePanelWorkflowRunViewStep />],
     [SidePanelPages.SearchRecords, <SidePanelSearchRecordsPage />],
     [SidePanelPages.AskAI, <SidePanelAskAIPage />],
-    [SidePanelPages.ViewPreviousAIChats, <SidePanelAIChatThreadsPage />],
+    [SidePanelPages.ViewPreviousAIChats, <SidePanelai-chat-threadsPage />],
     [
       SidePanelPages.PageLayoutWidgetTypeSelect,
       <SidePanelPageLayoutWidgetTypeSelect />,

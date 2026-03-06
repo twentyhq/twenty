@@ -1,7 +1,7 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import { GraphWidgetTestWrapper } from '@/page-layout/widgets/graph/__tests__/GraphWidgetTestWrapper';
-import { GraphWidgetGaugeChart } from '@/page-layout/widgets/graph/graphWidgetGaugeChart/components/GraphWidgetGaugeChart';
+import { GraphWidgetGaugeChart } from '@/page-layout/widgets/graph/graph-widget-gauge-chart/components/GraphWidgetGaugeChart';
 import { CatalogDecorator, ComponentDecorator } from 'twenty-ui/testing';
 
 const meta: Meta<typeof GraphWidgetGaugeChart> = {

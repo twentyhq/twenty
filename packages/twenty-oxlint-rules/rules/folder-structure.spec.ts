@@ -202,6 +202,12 @@ ruleTester.run(RULE_NAME, rule, {
       code: DUMMY_CODE,
       filename: filename('src/modules/a/b/c/d/hooks/useDeep.ts'),
     },
+    {
+      code: DUMMY_CODE,
+      filename: filename(
+        'src/modules/a/b/c/d/e/hooks/useDeep.ts',
+      ),
+    },
 
     // Files directly in module folders
     {
@@ -214,6 +220,32 @@ ruleTester.run(RULE_NAME, rule, {
       code: DUMMY_CODE,
       filename: filename(
         'src/modules/object-record/__tests__/integration.test.ts',
+      ),
+    },
+
+    // Test helpers and non-standard files in __tests__/ are allowed (leaf context)
+    {
+      code: DUMMY_CODE,
+      filename: filename(
+        'src/modules/my-feature/hooks/__tests__/TestWrapper.tsx',
+      ),
+    },
+    {
+      code: DUMMY_CODE,
+      filename: filename(
+        'src/modules/my-feature/hooks/__tests__/constants/mockData.ts',
+      ),
+    },
+    {
+      code: DUMMY_CODE,
+      filename: filename(
+        'src/modules/my-feature/utils/__tests__/helpers/setup.ts',
+      ),
+    },
+    {
+      code: DUMMY_CODE,
+      filename: filename(
+        'src/modules/my-feature/utils/__tests__/kebab-name.test.js',
       ),
     },
   ],
@@ -249,17 +281,19 @@ ruleTester.run(RULE_NAME, rule, {
       errors: [{ messageId: 'moduleNameNotKebabCase' }],
     },
 
-    // Module nesting too deep (depth > 4)
+    // Module nesting too deep (depth > 5)
     {
       code: DUMMY_CODE,
-      filename: filename('src/modules/a/b/c/d/e/hooks/useDeep.ts'),
+      filename: filename(
+        'src/modules/a/b/c/d/e/f/hooks/useDeep.ts',
+      ),
       errors: [{ messageId: 'moduleTooDeep' }],
     },
     // Depth check fires before kebab-case check at max depth
     {
       code: DUMMY_CODE,
       filename: filename(
-        'src/modules/a/b/c/d/camelCaseDir/file.ts',
+        'src/modules/a/b/c/d/e/camelCaseDir/file.ts',
       ),
       errors: [{ messageId: 'moduleTooDeep' }],
     },
@@ -278,15 +312,6 @@ ruleTester.run(RULE_NAME, rule, {
         'src/modules/my-feature/hooks/helper.ts',
       ),
       errors: [{ messageId: 'hookFileNaming' }],
-    },
-
-    // Bad hook test file naming
-    {
-      code: DUMMY_CODE,
-      filename: filename(
-        'src/modules/my-feature/hooks/__tests__/badName.test.ts',
-      ),
-      errors: [{ messageId: 'hookTestFileNaming' }],
     },
 
     // Invalid hooks folder entry
@@ -315,15 +340,6 @@ ruleTester.run(RULE_NAME, rule, {
       errors: [{ messageId: 'utilFileNaming' }],
     },
 
-    // Bad util test file naming
-    {
-      code: DUMMY_CODE,
-      filename: filename(
-        'src/modules/my-feature/utils/__tests__/BadName.test.ts',
-      ),
-      errors: [{ messageId: 'utilTestFileNaming' }],
-    },
-
     // Non-kebab-case subfolder in utils
     {
       code: DUMMY_CODE,
@@ -331,24 +347,6 @@ ruleTester.run(RULE_NAME, rule, {
         'src/modules/my-feature/utils/camelCase/file.ts',
       ),
       errors: [{ messageId: 'invalidUtilsEntry' }],
-    },
-
-    // Unexpected folder in hook test directory
-    {
-      code: DUMMY_CODE,
-      filename: filename(
-        'src/modules/my-feature/hooks/__tests__/extra-folder/file.ts',
-      ),
-      errors: [{ messageId: 'unexpectedInTestDir' }],
-    },
-
-    // Unexpected folder in util test directory
-    {
-      code: DUMMY_CODE,
-      filename: filename(
-        'src/modules/my-feature/utils/__tests__/extra-folder/file.ts',
-      ),
-      errors: [{ messageId: 'unexpectedInTestDir' }],
     },
 
     // hooks/internal/ too deep

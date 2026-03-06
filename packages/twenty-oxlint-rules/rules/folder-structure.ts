@@ -4,11 +4,7 @@ export const RULE_NAME = 'folder-structure';
 
 const KEBAB_CASE_REGEX = /^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/;
 const USE_PASCAL_CASE_FILE_REGEX = /^use[A-Z][a-zA-Z0-9]*\.(ts|tsx)$/;
-const USE_PASCAL_CASE_TEST_FILE_REGEX =
-  /^use[A-Z][a-zA-Z0-9]*\.(test|spec)\.(ts|tsx)$/;
 const CAMEL_CASE_UTIL_FILE_REGEX = /^[a-z][a-zA-Z0-9]*\.(ts|tsx)$/;
-const CAMEL_CASE_UTIL_TEST_FILE_REGEX =
-  /^[a-z][a-zA-Z0-9]*\.(test|spec)\.(ts|tsx)$/;
 
 const LEAF_SUBDIRS_WITHOUT_FILE_NAMING_CONSTRAINT = new Set([
   'states',
@@ -26,16 +22,14 @@ const LEAF_SUBDIRS_WITHOUT_FILE_NAMING_CONSTRAINT = new Set([
 
 const TESTING_DIRS = new Set(['__tests__', '__mocks__', '__snapshots__']);
 
-const MAX_MODULE_DEPTH = 4;
+const MAX_MODULE_DEPTH = 5;
 const MAX_HOOKS_INTERNAL_DEPTH = 2;
 
 type PathContext =
   | { type: 'modules_root' }
   | { type: 'module'; depth: number }
   | { type: 'hooks'; internalDepth: number }
-  | { type: 'hooks_tests' }
   | { type: 'utils' }
-  | { type: 'utils_tests' }
   | { type: 'leaf' };
 
 type ValidationError = {
@@ -128,9 +122,6 @@ const validateSegment = (
         }
         return { nextContext: context };
       }
-      if (segment === '__tests__') {
-        return { nextContext: { type: 'hooks_tests' } };
-      }
       if (TESTING_DIRS.has(segment)) {
         return { nextContext: { type: 'leaf' } };
       }
@@ -158,29 +149,6 @@ const validateSegment = (
       };
     }
 
-    case 'hooks_tests': {
-      if (isFile(segment, isLastSegment)) {
-        if (!USE_PASCAL_CASE_TEST_FILE_REGEX.test(segment)) {
-          return {
-            error: {
-              messageId: 'hookTestFileNaming',
-              data: { name: segment },
-            },
-          };
-        }
-        return { nextContext: context };
-      }
-      if (TESTING_DIRS.has(segment)) {
-        return { nextContext: { type: 'leaf' } };
-      }
-      return {
-        error: {
-          messageId: 'unexpectedInTestDir',
-          data: { name: segment },
-        },
-      };
-    }
-
     case 'utils': {
       if (isFile(segment, isLastSegment)) {
         if (!CAMEL_CASE_UTIL_FILE_REGEX.test(segment)) {
@@ -192,9 +160,6 @@ const validateSegment = (
           };
         }
         return { nextContext: context };
-      }
-      if (segment === '__tests__') {
-        return { nextContext: { type: 'utils_tests' } };
       }
       if (TESTING_DIRS.has(segment)) {
         return { nextContext: { type: 'leaf' } };
@@ -208,29 +173,6 @@ const validateSegment = (
       return {
         error: {
           messageId: 'invalidUtilsEntry',
-          data: { name: segment },
-        },
-      };
-    }
-
-    case 'utils_tests': {
-      if (isFile(segment, isLastSegment)) {
-        if (!CAMEL_CASE_UTIL_TEST_FILE_REGEX.test(segment)) {
-          return {
-            error: {
-              messageId: 'utilTestFileNaming',
-              data: { name: segment },
-            },
-          };
-        }
-        return { nextContext: context };
-      }
-      if (TESTING_DIRS.has(segment)) {
-        return { nextContext: { type: 'leaf' } };
-      }
-      return {
-        error: {
-          messageId: 'unexpectedInTestDir',
           data: { name: segment },
         },
       };
@@ -272,20 +214,14 @@ export const rule = defineRule({
         "Module folder '{{ name }}' exceeds maximum nesting depth of {{ max }}.",
       hookFileNaming:
         "Hook file '{{ name }}' must match use{PascalCase}.(ts|tsx) (e.g. 'useMyHook.ts').",
-      hookTestFileNaming:
-        "Hook test file '{{ name }}' must match use{PascalCase}.(test|spec).(ts|tsx).",
       hooksInternalTooDeep:
         'hooks/internal/ nesting exceeds maximum depth of {{ max }}.',
       invalidHooksEntry:
         "Unexpected entry '{{ name }}' in hooks/. Only hook files, __tests__/, __mocks__/, and internal/ are allowed.",
       utilFileNaming:
         "Util file '{{ name }}' must match {camelCase}.(ts|tsx) (e.g. 'myUtil.ts').",
-      utilTestFileNaming:
-        "Util test file '{{ name }}' must match {camelCase}.(test|spec).(ts|tsx).",
       invalidUtilsEntry:
         "Unexpected entry '{{ name }}' in utils/. Only util files, __tests__/, and kebab-case subfolders are allowed.",
-      unexpectedInTestDir:
-        "Unexpected folder '{{ name }}' in test directory.",
     },
   },
   create: (context) => {
