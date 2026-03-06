@@ -97,7 +97,18 @@ export const useCreateNewAIChatThread = () => {
   });
 
   const switchToNewChat = () => {
+    const previousDraftKey =
+      currentAIChatThread ?? AGENT_CHAT_NEW_THREAD_DRAFT_KEY;
+    setAgentChatDraftsByThreadId((prev) => ({
+      ...prev,
+      [previousDraftKey]: store.get(agentChatInputState.atom),
+    }));
     setCurrentAIChatThread(AGENT_CHAT_NEW_THREAD_DRAFT_KEY);
+    setAgentChatInput(
+      store.get(agentChatDraftsByThreadIdState.atom)[
+        AGENT_CHAT_NEW_THREAD_DRAFT_KEY
+      ] ?? '',
+    );
     setCurrentAIChatThreadTitle(null);
     setAgentChatUsage(null);
     openAskAIPage({ resetNavigationStack: false });
