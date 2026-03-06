@@ -28,7 +28,7 @@ const StyledFetchMoreTrigger = styled.div`
   width: 100%;
 `;
 
-export const NavigationDrawerai-chat-threadsList = () => {
+export const NavigationDrawerAIChatThreadsList = () => {
   const currentAIChatThread = useAtomStateValue(currentAIChatThreadState);
   const { handleThreadClick } = useAIChatThreadClick({
     resetNavigationStack: true,

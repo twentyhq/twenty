@@ -1,4 +1,4 @@
-import { ai-chat-threadsList } from '@/ai/components/ai-chat-threadsList';
+import { AIChatThreadsList } from '@/ai/components/AIChatThreadsList';
 import { styled } from '@linaria/react';
 
 const StyledContainer = styled.div`
@@ -6,10 +6,10 @@ const StyledContainer = styled.div`
   width: 100%;
 `;
 
-export const SidePanelai-chat-threadsPage = () => {
+export const SidePanelAIChatThreadsPage = () => {
   return (
     <StyledContainer>
-      <ai-chat-threadsList />
+      <AIChatThreadsList />
     </StyledContainer>
   );
 };

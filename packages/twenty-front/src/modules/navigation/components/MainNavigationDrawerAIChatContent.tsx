@@ -1,8 +1,8 @@
 import { styled } from '@linaria/react';
 
-import { NavigationDrawerai-chat-threadsList } from '@/ai/components/NavigationDrawerai-chat-threadsList';
+import { NavigationDrawerAIChatThreadsList } from '@/ai/components/NavigationDrawerAIChatThreadsList';
 
-const Styledai-chat-threadsListWrapper = styled.div`
+const StyledAIChatThreadsListWrapper = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
@@ -11,8 +11,8 @@ const Styledai-chat-threadsListWrapper = styled.div`
 
 export const MainNavigationDrawerAIChatContent = () => {
   return (
-    <Styledai-chat-threadsListWrapper>
-      <NavigationDrawerai-chat-threadsList />
-    </Styledai-chat-threadsListWrapper>
+    <StyledAIChatThreadsListWrapper>
+      <NavigationDrawerAIChatThreadsList />
+    </StyledAIChatThreadsListWrapper>
   );
 };

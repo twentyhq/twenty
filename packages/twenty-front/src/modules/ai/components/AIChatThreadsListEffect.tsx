@@ -3,7 +3,7 @@ import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useEffect } from 'react';
 
-export const ai-chat-threadsListEffect = ({ focusId }: { focusId: string }) => {
+export const AIChatThreadsListEffect = ({ focusId }: { focusId: string }) => {
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const { removeFocusItemFromFocusStackById } =
     useRemoveFocusItemFromFocusStackById();

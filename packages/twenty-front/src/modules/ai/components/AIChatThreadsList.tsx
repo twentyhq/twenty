@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 
 import { AIChatThreadGroup } from '@/ai/components/AIChatThreadGroup';
-import { ai-chat-threadsListEffect } from '@/ai/components/ai-chat-threadsListEffect';
+import { AIChatThreadsListEffect } from '@/ai/components/AIChatThreadsListEffect';
 import { AIChatSkeletonLoader } from '@/ai/components/internal/AIChatSkeletonLoader';
 import { useChatThreads } from '@/ai/hooks/useChatThreads';
 import { useCreateNewAIChatThread } from '@/ai/hooks/useCreateNewAIChatThread';
@@ -35,7 +35,7 @@ const StyledButtonsContainer = styled.div`
   padding: ${themeCssVariables.spacing[2]} 10px;
 `;
 
-export const ai-chat-threadsList = () => {
+export const AIChatThreadsList = () => {
   const { createChatThread } = useCreateNewAIChatThread();
 
   const focusId = 'threads-list';
@@ -57,7 +57,7 @@ export const ai-chat-threadsList = () => {
 
   return (
     <>
-      <ai-chat-threadsListEffect focusId={focusId} />
+      <AIChatThreadsListEffect focusId={focusId} />
       <StyledContainer>
         <StyledThreadsContainer>
           {Object.entries(groupedThreads).map(([title, threadsInGroup]) => (
