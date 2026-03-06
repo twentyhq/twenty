@@ -53,12 +53,12 @@ git config --global core.autocrlf false
 
 #### 保存时 Lint 不起作用
 
-这应在安装了 eslint 扩展后即可正常工作。 如果这不起作用，请尝试将此添加到您的 vscode 设置（在开发容器范围内）：
+这应在安装了 Oxc 扩展 (`oxc.oxc-vscode`)后即可正常工作。 如果这不起作用，请尝试将此添加到您的 vscode 设置（在开发容器范围内）：
 
 ```
 "editor.codeActionsOnSave": {
 
-  "source.fixAll.eslint": "explicit"
+  "source.fixAll.oxc": "explicit"
 
 }
 ```

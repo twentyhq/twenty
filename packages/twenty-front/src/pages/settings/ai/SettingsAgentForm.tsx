@@ -106,7 +106,7 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
           isCustom: agent.isCustom,
           modelConfiguration: agent.modelConfiguration || {},
           responseFormat: agent.responseFormat || { type: 'text', schema: {} },
-          evaluationInputs: agent.evaluationInputs || [],
+          evaluationInputs: agent.evaluationInputs ?? [],
         };
         resetForm(initialValues);
         setOriginalFormValues(initialValues);

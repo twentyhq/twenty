@@ -31,13 +31,11 @@ export const getActivityTargetObjectRecords = ({
 
   const targets = activityTargets
     ? activityTargets
-    : activityRecord &&
-        'noteTargets' in activityRecord &&
-        activityRecord.noteTargets
+    : 'noteTargets' in activityRecord &&
+        isDefined(activityRecord.noteTargets)
       ? activityRecord.noteTargets
-      : activityRecord &&
-          'taskTargets' in activityRecord &&
-          activityRecord.taskTargets
+      : 'taskTargets' in activityRecord &&
+          isDefined(activityRecord.taskTargets)
         ? activityRecord.taskTargets
         : [];
 

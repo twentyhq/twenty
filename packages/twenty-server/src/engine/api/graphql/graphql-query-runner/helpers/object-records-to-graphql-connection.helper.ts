@@ -57,9 +57,9 @@ export class ObjectRecordsToGraphqlConnectionHelper {
   }: {
     objectRecords: T[];
     parentObjectRecord?: T;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
     objectRecordsAggregatedValues?: Record<string, any>;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
     selectedAggregatedFields?: Record<string, any>;
     objectName: string;
     take: number;
@@ -108,7 +108,7 @@ export class ObjectRecordsToGraphqlConnectionHelper {
     objectRecordsAggregatedValues,
   }: {
     selectedAggregatedFields: Record<string, AggregationField[]>;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
     objectRecordsAggregatedValues: Record<string, any>;
   }) => {
     if (!isDefined(objectRecordsAggregatedValues)) {
@@ -134,7 +134,7 @@ export class ObjectRecordsToGraphqlConnectionHelper {
     );
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
   public processRecord<T extends Record<string, any>>({
     objectRecord,
     objectName,
@@ -147,9 +147,9 @@ export class ObjectRecordsToGraphqlConnectionHelper {
   }: {
     objectRecord: T;
     objectName: string;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
     objectRecordsAggregatedValues?: Record<string, any>;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
     selectedAggregatedFields?: Record<string, any>;
     take: number;
     totalCount: number;
@@ -171,7 +171,7 @@ export class ObjectRecordsToGraphqlConnectionHelper {
       flatEntityMaps: this.flatObjectMetadataMaps,
     });
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
     const processedObjectRecord: Record<string, any> = {};
 
     for (const fieldId of flatObjectMetadata.fieldIds) {
@@ -273,9 +273,9 @@ export class ObjectRecordsToGraphqlConnectionHelper {
 
   private processCompositeField(
     fieldMetadata: FlatFieldMetadata,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
     fieldValue: any,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
   ): Record<string, any> {
     const compositeType = compositeTypeDefinitions.get(
       fieldMetadata.type as CompositeFieldMetadataType,
@@ -308,12 +308,12 @@ export class ObjectRecordsToGraphqlConnectionHelper {
 
         return acc;
       },
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // oxlint-disable-next-line @typescripttypescript/no-explicit-any
       {} as Record<string, any>,
     );
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
   private formatFieldValue(value: any, fieldType: FieldMetadataType) {
     switch (fieldType) {
       case FieldMetadataType.DATE:

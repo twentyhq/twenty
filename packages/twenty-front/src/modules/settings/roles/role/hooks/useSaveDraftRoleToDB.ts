@@ -263,7 +263,7 @@ export const useSaveDraftRoleToDB = ({
       (acc, predicate) => {
         const objectMetadataId = predicate.objectMetadataId;
 
-        if (!acc[objectMetadataId]) {
+        if (!isDefined(acc[objectMetadataId])) {
           acc[objectMetadataId] = [];
         }
         acc[objectMetadataId].push(predicate);
@@ -280,7 +280,7 @@ export const useSaveDraftRoleToDB = ({
     );
 
     for (const objectMetadataId of persistedObjectIds) {
-      if (!predicatesByObject[objectMetadataId]) {
+      if (!isDefined(predicatesByObject[objectMetadataId])) {
         predicatesByObject[objectMetadataId] = [];
       }
     }

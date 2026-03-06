@@ -103,7 +103,7 @@ export const SettingsTwoFactorAuthenticationMethod = () => {
   };
 
   return (
-    // eslint-disable-next-line react/jsx-props-no-spreading
+    // oxlint-disable-next-line react/jsx-props-no-spreading
     <FormProvider {...verificationForm.formConfig}>
       <SubMenuTopBarContainer
         title={t`Two Factor Authentication`}

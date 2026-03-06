@@ -26,7 +26,7 @@ type DashboardsBlockEditorProps = {
 // TODO: Refactor these BlockNote CSS overrides - some may be dead code now that we have custom components
 // (DashboardEditorSideMenu, DashboardColorSelectionMenu).
 // Test removing each selector and move necessary styles to appropriate components.
-// eslint-disable-next-line twenty/no-hardcoded-colors
+// oxlint-disable-next-line twenty/no-hardcoded-colors
 const StyledEditor = styled.div`
   width: 100%;
 

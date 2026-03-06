@@ -1,7 +1,7 @@
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { styled } from '@linaria/react';
 
-// eslint-disable-next-line twenty/styled-components-prefixed-with-styled
+// oxlint-disable-next-line twenty/styled-components-prefixed-with-styled
 export const OverlayContainer = styled.div<{
   borderRadius?: 'sm' | 'md';
   hasDangerBorder?: boolean;

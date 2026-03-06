@@ -54,7 +54,7 @@ export const useGetPublicWorkspaceDataByDomain = () => {
       if (isWorkspaceNotFoundError) {
         redirectToDefaultDomain();
       } else {
-        // eslint-disable-next-line no-console
+        // oxlint-disable-next-line no-console
         console.error(error);
       }
     },

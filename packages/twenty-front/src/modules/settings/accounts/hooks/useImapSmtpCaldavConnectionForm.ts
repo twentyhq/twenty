@@ -151,7 +151,7 @@ export const useImapSmtpCaldavConnectionForm = ({
         enqueueSuccessSnackBar({ message: successMessage });
 
         const { connectedAccountId: returnedConnectedAccountId } =
-          data?.saveImapSmtpCaldavAccount || {};
+          data?.saveImapSmtpCaldavAccount ?? {};
 
         navigate(SettingsPath.AccountsConfiguration, {
           connectedAccountId: returnedConnectedAccountId,

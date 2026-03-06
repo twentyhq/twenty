@@ -253,7 +253,7 @@ export const ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY = {
 } as const satisfies ManyToOneMetadataRelationsProperties;
 
 // satisfies with complex mapped types involving nested generics doesn't always catch missing required keys
-// eslint-disable-next-line unused-imports/no-unused-vars
+// oxlint-disable-next-line unused-imports/no-unused-vars
 type Assertions = [
   Expect<
     AllMetadataName extends keyof typeof ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY

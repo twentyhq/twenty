@@ -41,7 +41,7 @@ export default defineConfig(({ mode }) => {
   const OTHER_CHUNK_SIZE_LIMIT = 5 * 1024 * 1024; // 5MB for other chunks
 
   if (VITE_BUILD_SOURCEMAP === 'true') {
-    // eslint-disable-next-line no-console
+    // oxlint-disable-next-line no-console
     console.log(`VITE_BUILD_SOURCEMAP: ${VITE_BUILD_SOURCEMAP}`);
   }
 

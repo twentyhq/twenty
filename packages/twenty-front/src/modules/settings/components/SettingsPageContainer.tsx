@@ -11,6 +11,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledSettingsPageContainer = styled.div<{
   width?: number;
+  isMobile?: boolean;
 }>`
   display: flex;
   flex-direction: column;
@@ -18,11 +19,11 @@ const StyledSettingsPageContainer = styled.div<{
   overflow: auto;
   padding: ${themeCssVariables.spacing[6]} ${themeCssVariables.spacing[8]}
     ${themeCssVariables.spacing[8]};
-  width: ${({ width }) => {
+  width: ${({ width, isMobile }) => {
     if (isDefined(width)) {
       return width + 'px';
     }
-    if (useIsMobile()) {
+    if (isMobile) {
       return 'unset';
     }
     return OBJECT_SETTINGS_WIDTH + 'px';
@@ -35,6 +36,7 @@ export const SettingsPageContainer = ({
 }: {
   children: ReactNode;
 }) => {
+  const isMobile = useIsMobile();
   const location = useLocation();
   const settingsPath = useMemo(() => {
     const sortedPaths = Object.values(SettingsPath).sort(
@@ -54,7 +56,9 @@ export const SettingsPageContainer = ({
 
   return (
     <ScrollWrapper componentInstanceId={componentInstanceId}>
-      <StyledSettingsPageContainer>{children}</StyledSettingsPageContainer>
+      <StyledSettingsPageContainer isMobile={isMobile}>
+        {children}
+      </StyledSettingsPageContainer>
     </ScrollWrapper>
   );
 };

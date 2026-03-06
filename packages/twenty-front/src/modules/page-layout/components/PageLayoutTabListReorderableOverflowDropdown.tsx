@@ -156,7 +156,7 @@ export const PageLayoutTabListReorderableOverflowDropdown = ({
               <DropdownMenuItemsContainer>
                 <div
                   ref={provided.innerRef}
-                  // eslint-disable-next-line react/jsx-props-no-spreading
+                  // oxlint-disable-next-line react/jsx-props-no-spreading
                   {...provided.droppableProps}
                 >
                   {hiddenTabs.map((tab, index) => {
@@ -173,9 +173,9 @@ export const PageLayoutTabListReorderableOverflowDropdown = ({
                         {(draggableProvided, draggableSnapshot) => (
                           <StyledOverflowDropdownListDraggableWrapper
                             ref={draggableProvided.innerRef}
-                            // eslint-disable-next-line react/jsx-props-no-spreading
+                            // oxlint-disable-next-line react/jsx-props-no-spreading
                             {...draggableProvided.draggableProps}
-                            // eslint-disable-next-line react/jsx-props-no-spreading
+                            // oxlint-disable-next-line react/jsx-props-no-spreading
                             {...draggableProvided.dragHandleProps}
                             style={{
                               ...draggableProvided.draggableProps.style,

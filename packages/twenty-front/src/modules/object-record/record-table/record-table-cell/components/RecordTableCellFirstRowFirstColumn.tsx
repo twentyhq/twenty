@@ -69,7 +69,7 @@ export const RecordTableCellFirstRowFirstColumn = ({
       hasRightBorder={hasRightBorder}
       hasBottomBorder={hasBottomBorder}
       zIndex={zIndex}
-      // eslint-disable-next-line react/jsx-props-no-spreading
+      // oxlint-disable-next-line react/jsx-props-no-spreading
       {...dragHandleProps}
       className={cx(
         'table-cell-0-0',

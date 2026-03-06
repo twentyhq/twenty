@@ -153,7 +153,7 @@ export const SettingsAccountsMessageFoldersCard = () => {
     );
   }
 
-  if (!messageFolders || messageFolders.length === 0) {
+  if (messageFolders.length === 0) {
     return <SettingsMessageFoldersEmptyStateCard />;
   }
 

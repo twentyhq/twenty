@@ -113,10 +113,10 @@ export const PageLayoutTabList = ({
     // TODO: drop once the configuration of all record page layouts has been migrated to the backend.
     title:
       shouldTranslateTabTitles &&
-      STANDARD_PAGE_LAYOUT_TAB_TITLE_TRANSLATIONS[tab.title]
+      isDefined(STANDARD_PAGE_LAYOUT_TAB_TITLE_TRANSLATIONS[tab.title])
         ? t(STANDARD_PAGE_LAYOUT_TAB_TITLE_TRANSLATIONS[tab.title])
         : tab.title,
-    Icon: tab.icon ? getIcon(tab.icon) : undefined,
+    Icon: isDefined(tab.icon) ? getIcon(tab.icon) : undefined,
   }));
 
   const navigate = useNavigate();

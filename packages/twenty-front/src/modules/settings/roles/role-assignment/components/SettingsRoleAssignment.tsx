@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useUpdateAgentRole } from '@/settings/roles/hooks/useUpdateAgentRole';
@@ -194,7 +195,7 @@ export const SettingsRoleAssignment = ({
     closeModal(ROLE_ASSIGNMENT_CONFIRMATION_MODAL_ID);
   };
 
-  if (!settingsDraftRole) {
+  if (!isDefined(settingsDraftRole)) {
     return null;
   }
 

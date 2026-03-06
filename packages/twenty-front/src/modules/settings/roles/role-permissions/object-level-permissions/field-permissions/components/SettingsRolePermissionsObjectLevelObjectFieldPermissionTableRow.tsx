@@ -157,7 +157,7 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRow =
           color={themeCssVariables.font.color.primary}
           gap={themeCssVariables.spacing[2]}
         >
-          {!!Icon && (
+          {isDefined(Icon) && (
             <Icon
               style={{
                 minWidth: theme.icon.size.md,

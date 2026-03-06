@@ -135,11 +135,11 @@ export const FieldsConfigurationGroupEditor = ({
   return (
     <StyledGroupContainer
       ref={draggableProvided.innerRef}
-      // eslint-disable-next-line react/jsx-props-no-spreading
+      // oxlint-disable-next-line react/jsx-props-no-spreading
       {...draggableProvided.draggableProps}
       isDragging={isDragging}
     >
-      {/* eslint-disable-next-line react/jsx-props-no-spreading */}
+      {/* oxlint-disable-next-line react/jsx-props-no-spreading */}
       <StyledGroupHeaderRow {...draggableProvided.dragHandleProps}>
         <Dropdown
           dropdownId={renameDropdownId}
@@ -180,7 +180,7 @@ export const FieldsConfigurationGroupEditor = ({
         {(droppableProvided) => (
           <StyledFieldsDroppable
             ref={droppableProvided.innerRef}
-            // eslint-disable-next-line react/jsx-props-no-spreading
+            // oxlint-disable-next-line react/jsx-props-no-spreading
             {...droppableProvided.droppableProps}
           >
             {sortedFields.length === 0 && (

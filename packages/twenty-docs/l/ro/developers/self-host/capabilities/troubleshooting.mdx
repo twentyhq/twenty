@@ -54,12 +54,12 @@ Asigurați-vă că rulați yarn în directorul rădăcină și apoi rulați `npx
 
 #### Lint la salvare nu funcționează
 
-Acesta ar trebui să funcționeze implicit cu extensia eslint instalată. Dacă acest lucru nu funcționează, încercați să adăugați acest lucru la setarea vscode (în sfera containerului dev):
+Acesta ar trebui să funcționeze implicit cu extensia Oxc (`oxc.oxc-vscode`) instalată. Dacă acest lucru nu funcționează, încercați să adăugați acest lucru la setarea vscode (în sfera containerului dev):
 
 ```
 "editor.codeActionsOnSave": {
 
-  "source.fixAll.eslint": "explicit"
+  "source.fixAll.oxc": "explicit"
 
 }
 ```

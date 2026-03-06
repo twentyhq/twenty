@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { type OutputSchemaField } from '@/ai/constants/OutputFieldTypeOptions';
 import { Select } from '@/ui/input/components/Select';
 import { WorkflowOutputSchemaBuilder } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder';
@@ -30,7 +31,7 @@ type SettingsAgentResponseFormatProps = {
 };
 
 const schemaToFields = (schema: AgentResponseSchema): OutputSchemaField[] => {
-  if (!schema.properties) return [];
+  if (!isDefined(schema.properties)) return [];
 
   return Object.entries(schema.properties).map(([key, field]) => ({
     id: v4(),

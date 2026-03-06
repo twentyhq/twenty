@@ -54,12 +54,12 @@ Ujistěte se, že v kořenovém adresáři spouštíte `yarn` a poté spusťte `
 
 #### Lint při ukládání nefunguje
 
-Toto by mělo fungovat přímo s nainstalovaným rozšířením eslint. Pokud to nefunguje, zkuste přidat toto do svého nastavení vscode (v rozsahu dev containeru):
+Toto by mělo fungovat přímo s nainstalovaným rozšířením Oxc (`oxc.oxc-vscode`). Pokud to nefunguje, zkuste přidat toto do svého nastavení vscode (v rozsahu dev containeru):
 
 ```
 "editor.codeActionsOnSave": {
 
-  "source.fixAll.eslint": "explicit"
+  "source.fixAll.oxc": "explicit"
 
 }
 ```

@@ -44,7 +44,7 @@ export const RecordTableDraggableTr = ({
             focusIndex={focusIndex}
             ref={draggableProvided.innerRef}
             className={className}
-            // eslint-disable-next-line react/jsx-props-no-spreading
+            // oxlint-disable-next-line react/jsx-props-no-spreading
             {...draggableProvided.draggableProps}
             style={{
               ...draggableProvided.draggableProps.style,
