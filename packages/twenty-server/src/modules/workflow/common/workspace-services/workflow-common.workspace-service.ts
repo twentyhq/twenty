@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
@@ -8,6 +8,10 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import {
+  LogicFunctionException,
+  LogicFunctionExceptionCode,
+} from 'src/engine/metadata-modules/logic-function/logic-function.exception';
 import { LogicFunctionFromSourceService } from 'src/engine/metadata-modules/logic-function/services/logic-function-from-source.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
@@ -40,6 +44,8 @@ export type ObjectMetadataInfo = {
 
 @Injectable()
 export class WorkflowCommonWorkspaceService {
+  private readonly logger = new Logger(WorkflowCommonWorkspaceService.name);
+
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly logicFunctionFromSourceService: LogicFunctionFromSourceService,
@@ -322,10 +328,24 @@ export class WorkflowCommonWorkspaceService {
     for (const workflowVersion of workflowVersions) {
       for (const step of workflowVersion.steps ?? []) {
         if (step.type === WorkflowActionType.CODE) {
-          await this.logicFunctionFromSourceService.deleteOneWithSource({
-            id: step.settings.input.logicFunctionId,
-            workspaceId,
-          });
+          try {
+            await this.logicFunctionFromSourceService.deleteOneWithSource({
+              id: step.settings.input.logicFunctionId,
+              workspaceId,
+            });
+          } catch (error) {
+            if (
+              error instanceof LogicFunctionException &&
+              error.code ===
+                LogicFunctionExceptionCode.LOGIC_FUNCTION_NOT_FOUND
+            ) {
+              this.logger.warn(
+                `Logic function ${step.settings.input.logicFunctionId} already deleted, skipping cleanup for workflow ${workflowId}`,
+              );
+            } else {
+              throw error;
+            }
+          }
         }
       }
     }
