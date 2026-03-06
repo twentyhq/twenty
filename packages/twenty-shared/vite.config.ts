@@ -1,8 +1,8 @@
-// @ts-expect-error
+// @ts-expect-error: no type declarations for path in this config
 import path from 'path';
 import { defineConfig } from 'vite';
 import tsconfigPaths from 'vite-tsconfig-paths';
-// @ts-expect-error
+// @ts-expect-error: importing JSON without resolveJsonModule
 import packageJson from './package.json';
 
 const moduleEntries = Object.keys((packageJson as any).exports || {})
