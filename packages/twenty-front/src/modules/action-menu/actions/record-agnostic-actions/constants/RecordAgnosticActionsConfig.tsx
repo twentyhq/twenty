@@ -1,11 +1,18 @@
 import { ActionOpenSidePanelPage } from '@/action-menu/actions/components/ActionOpenSidePanelPage';
+import { EditNavigationSidebarNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/components/EditNavigationSidebarNoSelectionRecordAction';
 import { RecordAgnosticActionsKeys } from '@/action-menu/actions/record-agnostic-actions/types/RecordAgnosticActionsKeys';
 import { type ActionConfig } from '@/action-menu/actions/types/ActionConfig';
 import { ActionScope } from '@/action-menu/actions/types/ActionScope';
 import { ActionType } from '@/action-menu/actions/types/ActionType';
-import { ActionViewType, SidePanelPages } from 'twenty-shared/types';
 import { msg } from '@lingui/core/macro';
-import { IconHistory, IconSearch, IconSparkles } from 'twenty-ui/display';
+import { ActionViewType, SidePanelPages } from 'twenty-shared/types';
+import {
+  IconHistory,
+  IconLayout,
+  IconSearch,
+  IconSparkles,
+} from 'twenty-ui/display';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const RECORD_AGNOSTIC_ACTIONS_CONFIG: Record<string, ActionConfig> = {
   [RecordAgnosticActionsKeys.SEARCH_RECORDS]: {
@@ -87,5 +94,21 @@ export const RECORD_AGNOSTIC_ACTIONS_CONFIG: Record<string, ActionConfig> = {
       />
     ),
     shouldBeRegistered: () => true,
+  },
+  [RecordAgnosticActionsKeys.EDIT_NAVIGATION_SIDEBAR]: {
+    type: ActionType.Navigation,
+    scope: ActionScope.Global,
+    key: RecordAgnosticActionsKeys.EDIT_NAVIGATION_SIDEBAR,
+    label: msg`Edit navigation sidebar`,
+    shortLabel: msg`Edit sidebar`,
+    position: 4,
+    Icon: IconLayout,
+    isPinned: false,
+    availableOn: [ActionViewType.GLOBAL],
+    shouldBeRegistered: ({ isFeatureFlagEnabled }) =>
+      isFeatureFlagEnabled(
+        FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED,
+      ),
+    component: <EditNavigationSidebarNoSelectionRecordAction />,
   },
 };

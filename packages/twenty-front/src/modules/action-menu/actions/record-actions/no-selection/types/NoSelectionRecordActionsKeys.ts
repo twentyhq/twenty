@@ -13,5 +13,4 @@ export enum NoSelectionRecordActionKeys {
   GO_TO_TASKS = 'go-to-tasks',
   GO_TO_NOTES = 'go-to-notes',
   CREATE_NEW_VIEW = 'create-view',
-  EDIT_NAVIGATION_SIDEBAR = 'edit-navigation-sidebar',
 }
