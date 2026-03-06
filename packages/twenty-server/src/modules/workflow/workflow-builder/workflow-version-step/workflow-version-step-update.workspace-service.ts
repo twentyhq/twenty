@@ -73,9 +73,18 @@ export class WorkflowVersionStepUpdateWorkspaceService {
           additionalCreatedSteps: undefined,
         };
 
+    const resolvedPosition = this.sanitizeStepPosition(
+      updatedStep.position ?? existingStep.position,
+    );
+
+    const normalizedUpdatedStep = {
+      ...updatedStep,
+      position: resolvedPosition,
+    };
+
     const updatedSteps = workflowVersion.steps.map((existingStep) => {
       if (existingStep.id === step.id) {
-        return updatedStep;
+        return normalizedUpdatedStep;
       } else {
         return existingStep;
       }
@@ -93,7 +102,21 @@ export class WorkflowVersionStepUpdateWorkspaceService {
       },
     );
 
-    return updatedStep;
+    return normalizedUpdatedStep;
+  }
+
+  private sanitizeStepPosition(
+    position: WorkflowAction['position'],
+  ): WorkflowAction['position'] {
+    if (
+      !isDefined(position) ||
+      typeof position.x !== 'number' ||
+      typeof position.y !== 'number'
+    ) {
+      return undefined;
+    }
+
+    return position;
   }
 
   private async updateWorkflowVersionStepType({
