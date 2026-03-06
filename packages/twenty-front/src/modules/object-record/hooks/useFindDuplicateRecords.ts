@@ -1,4 +1,5 @@
 import { useQuery } from '@apollo/client';
+import { isDefined } from 'twenty-shared/utils';
 import { useMemo } from 'react';
 
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
@@ -70,7 +71,7 @@ export const useFindDuplicateRecords = <T extends ObjectRecord = ObjectRecord>({
   const results = useMemo(
     () =>
       objectResults?.map((result: RecordGqlConnectionEdgesRequired) => {
-        return result
+        return isDefined(result)
           ? (getRecordsFromRecordConnection({
               recordConnection: result,
             }) as T[])

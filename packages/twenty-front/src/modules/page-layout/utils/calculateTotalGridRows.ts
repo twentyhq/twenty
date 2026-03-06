@@ -7,7 +7,7 @@ export const calculateTotalGridRows = (
   minRows = GRID_MIN_ROWS,
   bufferRows = GRID_BUFFER_ROWS,
 ): number => {
-  const allLayouts = [...(layouts.desktop || []), ...(layouts.mobile || [])];
+  const allLayouts = [...(layouts.desktop ?? []), ...(layouts.mobile ?? [])];
 
   const contentRows =
     allLayouts.length === 0

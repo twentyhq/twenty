@@ -42,7 +42,7 @@ export const StyledCenteredButton = (
   props: React.ComponentProps<typeof Button>,
 ) => (
   <StyledCenteredButtonContainer>
-    {/* eslint-disable-next-line react/jsx-props-no-spreading */}
+    {/* oxlint-disable-next-line react/jsx-props-no-spreading */}
     <Button {...props} />
   </StyledCenteredButtonContainer>
 );
@@ -74,7 +74,7 @@ export const StyledConfirmationButton = (
   props: React.ComponentProps<typeof Button>,
 ) => (
   <StyledConfirmationButtonContainer>
-    {/* eslint-disable-next-line react/jsx-props-no-spreading */}
+    {/* oxlint-disable-next-line react/jsx-props-no-spreading */}
     <Button {...props} />
   </StyledConfirmationButtonContainer>
 );

@@ -22,7 +22,7 @@ export class ArgsTypeGenerator {
     const fieldConfigMap: GraphQLFieldConfigArgumentMap = {};
 
     for (const key in args) {
-      // eslint-disable-next-line no-prototype-builtins
+      // oxlint-disable-next-line no-prototype-builtins
       if (!args.hasOwnProperty(key)) {
         continue;
       }

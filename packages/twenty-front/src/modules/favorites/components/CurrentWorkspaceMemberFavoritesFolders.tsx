@@ -49,9 +49,9 @@ export const CurrentWorkspaceMemberFavoritesFolders = () => {
   }
 
   if (
-    (!favorites || favorites.length === 0) &&
+    favorites.length === 0 &&
     !isFavoriteFolderCreating &&
-    (!favoritesByFolder || favoritesByFolder.length === 0)
+    favoritesByFolder.length === 0
   ) {
     return null;
   }

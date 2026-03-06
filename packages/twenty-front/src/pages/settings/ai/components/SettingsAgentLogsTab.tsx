@@ -46,7 +46,7 @@ export const SettingsAgentLogsTab = ({
   );
 
   const getLatestEvaluation = (evaluations: any[]) => {
-    if (!evaluations || evaluations.length === 0) return null;
+    if (evaluations.length === 0) return null;
     return [...evaluations].sort(
       (a, b) =>
         new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
@@ -76,7 +76,7 @@ export const SettingsAgentLogsTab = ({
       skip: !agentId,
       onCompleted: (completedData) => {
         const backgroundIds = computeBackgroundEvaluatingTurnIds(
-          completedData?.agentTurns || [],
+          completedData?.agentTurns ?? [],
         );
         if (backgroundIds.size > 0) {
           startPolling(3000);

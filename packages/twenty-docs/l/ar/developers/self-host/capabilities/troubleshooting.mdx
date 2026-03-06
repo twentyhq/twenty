@@ -53,12 +53,12 @@ git config --global core.autocrlf false
 
 #### التحقق من العمليات عند الحفظ لا يعمل
 
-هذا يجب أن يعمل تلقائيًا مع تثبيت إضافة eslint. إذا لم يعمل ذلك، حاول إضافة هذا إلى إعدادات vscode (ضمن نطاق حاوية التطوير):
+هذا يجب أن يعمل تلقائيًا مع تثبيت إضافة Oxc (`oxc.oxc-vscode`). إذا لم يعمل ذلك، حاول إضافة هذا إلى إعدادات vscode (ضمن نطاق حاوية التطوير):
 
 ```
 "editor.codeActionsOnSave": {
 
-  "source.fixAll.eslint": "explicit"
+  "source.fixAll.oxc": "explicit"
 
 }
 ```

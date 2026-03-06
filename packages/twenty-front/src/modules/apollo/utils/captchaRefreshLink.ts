@@ -6,7 +6,7 @@ export const createCaptchaRefreshLink = (
   return new ApolloLink((operation, forward) => {
     const { variables } = operation;
 
-    const hasCaptchaToken = variables && 'captchaToken' in variables;
+    const hasCaptchaToken = variables != null && 'captchaToken' in variables;
 
     return forward(operation).map((response) => {
       if (hasCaptchaToken) {

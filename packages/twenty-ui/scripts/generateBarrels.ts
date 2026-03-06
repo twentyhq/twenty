@@ -2,7 +2,7 @@ import prettier from '@prettier/sync';
 import * as fs from 'fs';
 import { globSync } from 'glob';
 import path from 'path';
-import { Options } from 'prettier';
+import { type Options } from 'prettier';
 import slash from 'slash';
 import ts from 'typescript';
 

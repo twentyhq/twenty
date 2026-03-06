@@ -18,10 +18,10 @@ import {
 } from 'typeorm';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration/application-registration-variable.entity';
-import { AppRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/app-registration-source-type.enum';
-import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { type MarketplaceDisplayData } from 'src/engine/core-modules/application/application-marketplace/types/marketplace-display-data.type';
+import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.entity';
+import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
+import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
@@ -96,22 +96,22 @@ export class ApplicationRegistrationEntity {
   @JoinColumn({ name: 'createdByUserId' })
   createdByUser: Relation<UserEntity> | null;
 
-  // Represents ownership (who can edit), not visibility scoping.
-  // Marketplace registrations are readable by all workspaces but owned by the
-  // admin workspace when no developer has explicitly claimed them.
-  @Column({ name: 'workspaceId', nullable: false, type: 'uuid' })
-  ownerWorkspaceId: string;
+  // Ownership (who can edit). Null for catalog-synced marketplace apps that
+  // have no explicit owner — these are managed via the Admin Panel.
+  @Field(() => UUIDScalarType, { nullable: true })
+  @Column({ name: 'workspaceId', nullable: true, type: 'uuid' })
+  ownerWorkspaceId: string | null;
 
-  @ManyToOne(() => WorkspaceEntity, { onDelete: 'CASCADE' })
+  @ManyToOne(() => WorkspaceEntity, { onDelete: 'SET NULL', nullable: true })
   @JoinColumn({ name: 'workspaceId' })
-  workspace: Relation<WorkspaceEntity>;
+  workspace: Relation<WorkspaceEntity> | null;
 
-  @Field(() => AppRegistrationSourceType)
+  @Field(() => ApplicationRegistrationSourceType)
   @Column({
     type: 'text',
-    default: AppRegistrationSourceType.LOCAL,
+    default: ApplicationRegistrationSourceType.LOCAL,
   })
-  sourceType: AppRegistrationSourceType;
+  sourceType: ApplicationRegistrationSourceType;
 
   @Field(() => String, { nullable: true })
   @Column({ nullable: true, type: 'text' })
@@ -135,6 +135,10 @@ export class ApplicationRegistrationEntity {
   @Field(() => String, { nullable: true })
   @Column({ nullable: true, type: 'text' })
   termsUrl: string | null;
+
+  @Field(() => Boolean)
+  @Column({ type: 'boolean', default: false })
+  isListed: boolean;
 
   @Field(() => Boolean)
   @Column({ name: 'isFeatured', type: 'boolean', default: false })

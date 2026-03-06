@@ -34,7 +34,7 @@ export const useInitializeQueryParamState = () => {
             );
           }
         } catch (error) {
-          // eslint-disable-next-line no-console
+          // oxlint-disable-next-line no-console
           console.error(
             'Failed to parse billingCheckoutSession from URL',
             error,

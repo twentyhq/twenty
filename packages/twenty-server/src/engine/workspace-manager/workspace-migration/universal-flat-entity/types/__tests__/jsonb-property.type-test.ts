@@ -5,14 +5,14 @@ import {
   type JsonbProperty,
 } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
 
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+// oxlint-disable-next-line @typescripttypescript/no-empty-object-type
 type EmptyObject = {};
 
 type SimpleObject = { value: string };
 
 type NestedObject = { nested: { deep: number } };
 
-// eslint-disable-next-line unused-imports/no-unused-vars
+// oxlint-disable-next-line unused-imports/no-unused-vars
 type PrimitiveAssertions = [
   // Primitives pass through unchanged (not objects)
   Expect<Equal<JsonbProperty<string>, string>>,
@@ -22,7 +22,7 @@ type PrimitiveAssertions = [
   Expect<Equal<JsonbProperty<undefined>, undefined>>,
 ];
 
-// eslint-disable-next-line unused-imports/no-unused-vars
+// oxlint-disable-next-line unused-imports/no-unused-vars
 type ObjectAssertions = [
   // Objects get branded
   Expect<
@@ -45,7 +45,7 @@ type ObjectAssertions = [
   >,
 ];
 
-// eslint-disable-next-line unused-imports/no-unused-vars
+// oxlint-disable-next-line unused-imports/no-unused-vars
 type ArrayAssertions = [
   // Arrays are objects, so they get branded on the array itself
   Expect<
@@ -68,7 +68,7 @@ type ArrayAssertions = [
   >,
 ];
 
-// eslint-disable-next-line unused-imports/no-unused-vars
+// oxlint-disable-next-line unused-imports/no-unused-vars
 type UnionAssertions = [
   // Union of object and null: object gets branded, null passes through
   Expect<

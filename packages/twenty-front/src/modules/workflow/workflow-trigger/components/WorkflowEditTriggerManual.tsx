@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { Select } from '@/ui/input/components/Select';
@@ -120,7 +121,7 @@ export const WorkflowEditTriggerManual = ({
             options={availableMetadata}
             disabled={triggerOptions.readonly}
             onChange={(objectNameSingular) => {
-              if (triggerOptions.readonly === true || !availability) {
+              if (triggerOptions.readonly === true || !isDefined(availability)) {
                 return;
               }
 

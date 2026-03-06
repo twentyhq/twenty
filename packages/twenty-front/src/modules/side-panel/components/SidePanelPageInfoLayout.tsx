@@ -1,5 +1,6 @@
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 export const StyledPageInfoContainer = styled.div`
@@ -57,12 +58,12 @@ export const SidePanelPageInfoLayout = ({
 }: SidePanelPageInfoLayoutProps) => {
   return (
     <StyledPageInfoContainer>
-      {icon && (
+      {isDefined(icon) && (
         <StyledPageInfoIcon iconColor={iconColor}>{icon}</StyledPageInfoIcon>
       )}
       <StyledPageInfoTextContainer>
         <StyledPageInfoTitleContainer>{title}</StyledPageInfoTitleContainer>
-        {label && <StyledPageInfoLabel>{label}</StyledPageInfoLabel>}
+        {isDefined(label) && <StyledPageInfoLabel>{label}</StyledPageInfoLabel>}
       </StyledPageInfoTextContainer>
     </StyledPageInfoContainer>
   );

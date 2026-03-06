@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { styled } from '@linaria/react';
 import { useContext, useEffect, useRef, useState } from 'react';
 
@@ -122,7 +123,7 @@ export const CurrencyInput = ({
         onChange={handleCurrencyChange}
       />
       <StyledIcon>
-        {Icon && (
+        {isDefined(Icon) && (
           <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
         )}
       </StyledIcon>

@@ -91,7 +91,7 @@ export const StyledAppModalButton = (
   props: React.ComponentProps<typeof Button>,
 ) => (
   <StyledAppModalButtonContainer>
-    {/* eslint-disable-next-line react/jsx-props-no-spreading */}
+    {/* oxlint-disable-next-line react/jsx-props-no-spreading */}
     <Button {...props} />
   </StyledAppModalButtonContainer>
 );
@@ -109,7 +109,7 @@ export const StyledAppModalSection = ({
   ...props
 }: React.ComponentProps<typeof Section>) => (
   <StyledAppModalSectionContainer>
-    {/* eslint-disable-next-line react/jsx-props-no-spreading */}
+    {/* oxlint-disable-next-line react/jsx-props-no-spreading */}
     <Section {...props}>{children}</Section>
   </StyledAppModalSectionContainer>
 );

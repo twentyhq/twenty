@@ -44,7 +44,7 @@ export const StyledIconChevronDown = ({
   ...props
 }: { disabled?: boolean } & React.ComponentProps<typeof IconChevronDown>) => (
   <StyledIconChevronDownContainer disabled={disabled}>
-    {/* eslint-disable-next-line react/jsx-props-no-spreading */}
+    {/* oxlint-disable-next-line react/jsx-props-no-spreading */}
     <IconChevronDown {...props} />
   </StyledIconChevronDownContainer>
 );

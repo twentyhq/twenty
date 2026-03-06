@@ -53,12 +53,12 @@ Twenty 설치 중에 적절한 스키마, 확장, 사용자를 사용하여 post
 
 #### 저장 시 린트가 작동하지 않음
 
-eslint 확장 프로그램이 설치된 상태에서는 기본 설정으로 작동해야 합니다. 작동하지 않으면 vscode 설정(개발 컨테이너 범위)에 다음을 추가해 보세요:
+Oxc 확장 (`oxc.oxc-vscode`) 프로그램이 설치된 상태에서는 기본 설정으로 작동해야 합니다. 작동하지 않으면 vscode 설정(개발 컨테이너 범위)에 다음을 추가해 보세요:
 
 ```
 "editor.codeActionsOnSave": {
 
-  "source.fixAll.eslint": "explicit"
+  "source.fixAll.oxc": "explicit"
 
 }
 ```
