@@ -63,7 +63,7 @@ export const IframeWidget = ({ widget }: IframeWidgetProps) => {
 
   const configuration = widget.configuration;
 
-  if (!configuration || !('url' in configuration)) {
+  if (!isDefined(configuration) || !('url' in configuration)) {
     throw new Error(`Invalid configuration for widget ${widget.id}`);
   }
 

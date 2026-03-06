@@ -2,8 +2,7 @@ import { styled } from '@linaria/react';
 import { type ReactNode, useContext, useState } from 'react';
 import { TableBody } from './TableBody';
 import { IconChevronDown, IconChevronUp, Label } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type TableSectionProps = {
   children: ReactNode;
@@ -32,7 +31,7 @@ const StyledSection = styled.div<{ isExpanded: boolean }>`
     opacity calc(${themeCssVariables.animation.duration.normal} * 1s);
 `;
 
-const StyledSectionContent = styled(TableBody)`
+const StyledSectionContentContainer = styled.div`
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
 `;
 
@@ -41,8 +40,8 @@ export const TableSection = ({
   isInitiallyExpanded = true,
   title,
 }: TableSectionProps) => {
-  const [isExpanded, setIsExpanded] = useState(isInitiallyExpanded);
   const { theme } = useContext(ThemeContext);
+  const [isExpanded, setIsExpanded] = useState(isInitiallyExpanded);
 
   const handleToggleSection = () =>
     setIsExpanded((previousIsExpanded) => !previousIsExpanded);
@@ -67,7 +66,9 @@ export const TableSection = ({
         )}
       </StyledSectionHeader>
       <StyledSection isExpanded={isExpanded}>
-        <StyledSectionContent>{children}</StyledSectionContent>
+        <StyledSectionContentContainer>
+          <TableBody>{children}</TableBody>
+        </StyledSectionContentContainer>
       </StyledSection>
     </>
   );

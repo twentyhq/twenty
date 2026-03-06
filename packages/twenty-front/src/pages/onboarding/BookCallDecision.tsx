@@ -1,7 +1,7 @@
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
-import { Modal } from '@/ui/layout/modal/components/Modal';
+import { ModalContent } from 'twenty-ui/layout';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { Link } from 'react-router-dom';
@@ -15,10 +15,6 @@ const StyledCoverImage = styled.img`
   height: 204px;
   object-fit: cover;
   width: 320px;
-`;
-
-const StyledModalContent = styled(Modal.Content)`
-  gap: ${themeCssVariables.spacing[8]};
 `;
 
 const StyledTitleContainer = styled.div`
@@ -36,8 +32,10 @@ const StyledButtonContainer = styled.div`
   width: 100%;
 `;
 
-const StyledLink = styled(Link)`
-  text-decoration: none;
+const StyledLinkContainer = styled.div`
+  > a {
+    text-decoration: none;
+  }
 `;
 
 export const BookCallDecision = () => {
@@ -51,7 +49,7 @@ export const BookCallDecision = () => {
   };
 
   return (
-    <StyledModalContent isVerticalCentered isHorizontalCentered>
+    <ModalContent gap={8} isVerticallyCentered isHorizontallyCentered>
       <StyledTitleContainer>
         <Title noMarginTop>
           <Trans>Book your onboarding</Trans>
@@ -65,11 +63,13 @@ export const BookCallDecision = () => {
       </StyledTitleContainer>
       <StyledCoverImage src="/images/placeholders/onboarding-covers/onboarding-book-call-decision-cover.png" />
       <StyledButtonContainer>
-        <StyledLink to={AppPath.BookCall}>
-          <MainButton title={t`Book onboarding`} width={198} />
-        </StyledLink>
+        <StyledLinkContainer>
+          <Link to={AppPath.BookCall}>
+            <MainButton title={t`Book onboarding`} width={198} />
+          </Link>
+        </StyledLinkContainer>
         <LightButton title={t`Finish`} onClick={handleFinish} />
       </StyledButtonContainer>
-    </StyledModalContent>
+    </ModalContent>
   );
 };

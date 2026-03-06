@@ -7,6 +7,7 @@
  *                              |___/
  */
 
+export { BACKEND_BATCH_REQUEST_MAX_COUNT } from './BackendBatchRequestMaxCount';
 export { CalendarStartDay } from './CalendarStartDay';
 export { COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES } from './CompositeFieldTypeSubFieldsNames';
 export { CurrencyCode } from './CurrencyCode';

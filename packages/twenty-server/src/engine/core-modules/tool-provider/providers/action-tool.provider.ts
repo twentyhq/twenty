@@ -19,10 +19,11 @@ import {
   type ToolIndexEntry,
 } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 import { CodeInterpreterTool } from 'src/engine/core-modules/tool/tools/code-interpreter-tool/code-interpreter-tool';
-import { HttpTool } from 'src/engine/core-modules/tool/tools/http-tool/http-tool';
-import { SearchHelpCenterTool } from 'src/engine/core-modules/tool/tools/search-help-center-tool/search-help-center-tool';
 import { DraftEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/draft-email-tool';
 import { SendEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/send-email-tool';
+import { HttpTool } from 'src/engine/core-modules/tool/tools/http-tool/http-tool';
+import { NavigateAppTool } from 'src/engine/core-modules/tool/tools/navigate-tool/navigate-app-tool';
+import { SearchHelpCenterTool } from 'src/engine/core-modules/tool/tools/search-help-center-tool/search-help-center-tool';
 import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
 import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
@@ -39,6 +40,7 @@ export class ActionToolProvider implements ToolProvider {
     private readonly draftEmailTool: DraftEmailTool,
     private readonly searchHelpCenterTool: SearchHelpCenterTool,
     private readonly codeInterpreterTool: CodeInterpreterTool,
+    private readonly navigateAppTool: NavigateAppTool,
     private readonly permissionsService: PermissionsService,
     private readonly toolExecutorService: ToolExecutorService,
   ) {
@@ -48,6 +50,7 @@ export class ActionToolProvider implements ToolProvider {
       ['draft_email', this.draftEmailTool],
       ['search_help_center', this.searchHelpCenterTool],
       ['code_interpreter', this.codeInterpreterTool],
+      ['navigate_app', this.navigateAppTool],
     ]);
 
     // Register each action tool as a static handler in the executor
@@ -112,6 +115,14 @@ export class ActionToolProvider implements ToolProvider {
       this.buildDescriptor(
         'search_help_center',
         this.searchHelpCenterTool,
+        includeSchemas,
+      ),
+    );
+
+    descriptors.push(
+      this.buildDescriptor(
+        'navigate_app',
+        this.navigateAppTool,
         includeSchemas,
       ),
     );

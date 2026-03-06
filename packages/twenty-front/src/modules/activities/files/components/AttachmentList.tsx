@@ -9,22 +9,24 @@ import { type Attachment } from '@/activities/files/types/Attachment';
 import { downloadFile } from '@/activities/files/utils/downloadFile';
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { isAttachmentPreviewEnabledState } from '@/client-config/states/isAttachmentPreviewEnabledState';
-import { Modal } from '@/ui/layout/modal/components/Modal';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { ModalStatefulWrapper } from '@/ui/layout/modal/components/ModalStatefulWrapper';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { ModalContent, ModalHeader } from 'twenty-ui/layout';
 
 import { ActivityList } from '@/activities/components/ActivityList';
+import {
+  type AttachmentWithFile,
+  filterAttachmentsWithFile,
+} from '@/activities/files/utils/filterAttachmentsWithFile';
+import { getAttachmentUrl } from '@/activities/utils/getAttachmentUrl';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
-import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { IconDownload, IconX } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import {
-  PermissionFlagType,
-  FeatureFlagKey,
-} from '~/generated-metadata/graphql';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 import { AttachmentRow } from './AttachmentRow';
 
 const DocumentViewer = lazy(() =>
@@ -104,20 +106,6 @@ const StyledModalTitle = styled.span`
   color: ${themeCssVariables.font.color.primary};
 `;
 
-const StyledModalHeader = styled(Modal.Header)`
-  height: auto;
-  padding: 0;
-`;
-
-const StyledModalContent = styled(Modal.Content)`
-  padding: 0;
-`;
-
-const StyledModal = styled(Modal)`
-  gap: ${themeCssVariables.spacing[2]};
-  padding: ${themeCssVariables.spacing[3]};
-`;
-
 const StyledButtonContainer = styled.div`
   display: flex;
   flex-direction: row;
@@ -135,14 +123,10 @@ export const AttachmentList = ({
   const { uploadAttachmentFile } = useUploadAttachmentFile();
   const [isDraggingFile, setIsDraggingFile] = useState(false);
   const [previewedAttachment, setPreviewedAttachment] =
-    useState<Attachment | null>(null);
+    useState<AttachmentWithFile | null>(null);
 
   const isAttachmentPreviewEnabled = useAtomStateValue(
     isAttachmentPreviewEnabledState,
-  );
-
-  const isFilesFieldMigrated = useIsFeatureEnabled(
-    FeatureFlagKey.IS_FILES_FIELD_MIGRATED,
   );
 
   const hasDownloadPermission = useHasPermissionFlag(
@@ -155,15 +139,7 @@ export const AttachmentList = ({
 
   const { openModal, closeModal } = useModal();
 
-  const getAttachmentUrl = (attachment: Attachment) => {
-    const fileUrl = isFilesFieldMigrated
-      ? attachment.file?.[0]?.url || attachment.fullPath
-      : attachment.fullPath;
-
-    assertIsDefinedOrThrow(fileUrl, new Error(t`File URL is not defined`));
-
-    return fileUrl;
-  };
+  const attachmentsWithFile = filterAttachmentsWithFile(attachments);
 
   const onUploadFile = async (file: File) => {
     await uploadAttachmentFile(file, targetableObject);
@@ -175,7 +151,7 @@ export const AttachmentList = ({
     }
   };
 
-  const handlePreview = (attachment: Attachment) => {
+  const handlePreview = (attachment: AttachmentWithFile) => {
     if (!isAttachmentPreviewEnabled) return;
     setPreviewedAttachment(attachment);
     openModal(PREVIEW_MODAL_ID);
@@ -187,20 +163,18 @@ export const AttachmentList = ({
   };
 
   const handleDownload = () => {
-    if (!previewedAttachment) return;
-    downloadFile(
-      getAttachmentUrl(previewedAttachment),
-      previewedAttachment.name,
-    );
+    if (!isDefined(previewedAttachment)) return;
+    const attachmentUrl = getAttachmentUrl({ attachment: previewedAttachment });
+    downloadFile(attachmentUrl, previewedAttachment.name);
   };
 
   return (
     <>
-      {attachments && attachments.length > 0 && (
+      {attachmentsWithFile.length > 0 && (
         <StyledContainer>
           <StyledTitleBar>
             <StyledTitle>
-              {title} <StyledCount>{attachments.length}</StyledCount>
+              {title} <StyledCount>{attachmentsWithFile.length}</StyledCount>
             </StyledTitle>
             {button}
           </StyledTitleBar>
@@ -214,7 +188,7 @@ export const AttachmentList = ({
               />
             ) : (
               <ActivityList>
-                {attachments.map((attachment) => (
+                {attachmentsWithFile.map((attachment) => (
                   <AttachmentRow
                     key={attachment.id}
                     attachment={attachment}
@@ -231,14 +205,16 @@ export const AttachmentList = ({
       {previewedAttachment &&
         isAttachmentPreviewEnabled &&
         createPortal(
-          <StyledModal
-            modalId={PREVIEW_MODAL_ID}
+          <ModalStatefulWrapper
+            modalInstanceId={PREVIEW_MODAL_ID}
             size="large"
             isClosable
             onClose={handleClosePreview}
-            ignoreContainer
+            renderInDocumentBody
+            gap={2}
+            padding="small"
           >
-            <StyledModalHeader>
+            <ModalHeader noPadding autoHeight>
               <StyledHeader>
                 <StyledModalTitle>{previewedAttachment.name}</StyledModalTitle>
                 <StyledButtonContainer>
@@ -256,11 +232,11 @@ export const AttachmentList = ({
                   />
                 </StyledButtonContainer>
               </StyledHeader>
-            </StyledModalHeader>
+            </ModalHeader>
             <ScrollWrapper
               componentInstanceId={`preview-modal-${previewedAttachment.id}`}
             >
-              <StyledModalContent>
+              <ModalContent noPadding>
                 <Suspense
                   fallback={
                     <StyledLoadingContainer>
@@ -272,12 +248,14 @@ export const AttachmentList = ({
                 >
                   <DocumentViewer
                     documentName={previewedAttachment.name}
-                    documentUrl={getAttachmentUrl(previewedAttachment)}
+                    documentUrl={getAttachmentUrl({
+                      attachment: previewedAttachment,
+                    })}
                   />
                 </Suspense>
-              </StyledModalContent>
+              </ModalContent>
             </ScrollWrapper>
-          </StyledModal>,
+          </ModalStatefulWrapper>,
           document.body,
         )}
     </>

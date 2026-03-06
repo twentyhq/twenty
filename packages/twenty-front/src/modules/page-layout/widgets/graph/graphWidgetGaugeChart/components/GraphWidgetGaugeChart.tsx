@@ -18,8 +18,6 @@ import {
 } from '@nivo/radial-bar';
 import { isDefined } from 'twenty-shared/utils';
 import { H1Title, H1TitleFontColor } from 'twenty-ui/display';
-import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme';
 
 type GraphWidgetGaugeChartProps = {
   data: GaugeChartData;
@@ -53,7 +51,7 @@ const StyledChartContainer = styled.div<{ $isClickable?: boolean }>`
       : ''}
 `;
 
-const StyledH1Title = styled(H1Title)`
+const StyledH1TitleWrapper = styled.div`
   left: 50%;
   position: absolute;
   top: 50%;
@@ -71,8 +69,7 @@ export const GraphWidgetGaugeChart = ({
   customFormatter,
   onGaugeClick,
 }: GraphWidgetGaugeChartProps) => {
-  const { theme } = useContext(ThemeContext);
-  const colorRegistry = createGraphColorRegistry(theme);
+  const colorRegistry = createGraphColorRegistry();
 
   const formatOptions: GraphValueFormatOptions = {
     displayType,
@@ -138,10 +135,12 @@ export const GraphWidgetGaugeChart = ({
           layers={['bars', renderValueEndLine]}
         />
         {showValue && (
-          <StyledH1Title
-            title={formattedValue}
-            fontColor={H1TitleFontColor.Primary}
-          />
+          <StyledH1TitleWrapper>
+            <H1Title
+              title={formattedValue}
+              fontColor={H1TitleFontColor.Primary}
+            />
+          </StyledH1TitleWrapper>
         )}
       </StyledChartContainer>
       <GraphWidgetLegend

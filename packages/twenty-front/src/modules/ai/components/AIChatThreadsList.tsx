@@ -3,6 +3,7 @@ import { styled } from '@linaria/react';
 import { AIChatThreadGroup } from '@/ai/components/AIChatThreadGroup';
 import { AIChatThreadsListEffect } from '@/ai/components/AIChatThreadsListEffect';
 import { AIChatSkeletonLoader } from '@/ai/components/internal/AIChatSkeletonLoader';
+import { useChatThreads } from '@/ai/hooks/useChatThreads';
 import { useCreateNewAIChatThread } from '@/ai/hooks/useCreateNewAIChatThread';
 import { groupThreadsByDate } from '@/ai/utils/groupThreadsByDate';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
@@ -12,7 +13,6 @@ import { capitalize } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { getOsControlSymbol } from 'twenty-ui/utilities';
-import { useGetChatThreadsQuery } from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div`
   background: ${themeCssVariables.background.secondary};
@@ -47,11 +47,11 @@ export const AIChatThreadsList = () => {
     dependencies: [createChatThread],
   });
 
-  const { data: { chatThreads = [] } = {}, loading } = useGetChatThreadsQuery();
+  const { threads, hasNextPage, loading, fetchMoreRef } = useChatThreads();
 
-  const groupedThreads = groupThreadsByDate(chatThreads);
+  const groupedThreads = groupThreadsByDate(threads);
 
-  if (loading === true) {
+  if (loading && threads.length === 0) {
     return <AIChatSkeletonLoader />;
   }
 
@@ -60,13 +60,16 @@ export const AIChatThreadsList = () => {
       <AIChatThreadsListEffect focusId={focusId} />
       <StyledContainer>
         <StyledThreadsContainer>
-          {Object.entries(groupedThreads).map(([title, threads]) => (
+          {Object.entries(groupedThreads).map(([title, threadsInGroup]) => (
             <AIChatThreadGroup
               key={title}
               title={capitalize(title)}
-              threads={threads}
+              threads={threadsInGroup}
             />
           ))}
+          {hasNextPage ? (
+            <div ref={fetchMoreRef} style={{ minHeight: 1 }} />
+          ) : null}
         </StyledThreadsContainer>
         <StyledButtonsContainer>
           <Button

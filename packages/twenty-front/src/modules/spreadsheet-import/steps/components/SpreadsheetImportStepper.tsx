@@ -1,10 +1,7 @@
-import { styled } from '@linaria/react';
 import { useCallback, useContext, useState } from 'react';
-import { ThemeContext } from 'twenty-ui/theme';
-
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { Modal } from '@/ui/layout/modal/components/Modal';
+import { ModalContent } from 'twenty-ui/layout';
 
 import { ImportDataStep } from '@/spreadsheet-import/steps/components/ImportDataStep';
 import { type SpreadsheetImportStep } from '@/spreadsheet-import/steps/types/SpreadsheetImportStep';
@@ -15,12 +12,7 @@ import { SelectHeaderStep } from './SelectHeaderStep/SelectHeaderStep';
 import { SelectSheetStep } from './SelectSheetStep/SelectSheetStep';
 import { UploadStep } from './UploadStep/UploadStep';
 import { ValidationStep } from './ValidationStep/ValidationStep';
-
-const StyledProgressBarContainer = styled(Modal.Content)`
-  align-items: center;
-  display: flex;
-  justify-content: center;
-`;
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 type SpreadsheetImportStepperProps = {
   nextStep: () => void;
@@ -32,16 +24,15 @@ export const SpreadsheetImportStepper = ({
   prevStep,
 }: SpreadsheetImportStepperProps) => {
   const { theme } = useContext(ThemeContext);
-
   const { initialStepState } = useSpreadsheetImportInternal();
 
   const [currentStepState, setCurrentStepState] =
     useState<SpreadsheetImportStep>(
-      initialStepState || { type: SpreadsheetImportStepType.upload },
+      initialStepState ?? { type: SpreadsheetImportStepType.upload },
     );
   const [previousStepState, setPreviousStepState] =
     useState<SpreadsheetImportStep>(
-      initialStepState || { type: SpreadsheetImportStepType.upload },
+      initialStepState ?? { type: SpreadsheetImportStepType.upload },
     );
 
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
@@ -123,7 +114,7 @@ export const SpreadsheetImportStepper = ({
           onBack={() => {
             handleBack();
             setPreviousStepState(
-              initialStepState || { type: SpreadsheetImportStepType.upload },
+              initialStepState ?? { type: SpreadsheetImportStepType.upload },
             );
           }}
         />
@@ -137,13 +128,13 @@ export const SpreadsheetImportStepper = ({
     case SpreadsheetImportStepType.loading:
     default:
       return (
-        <StyledProgressBarContainer>
+        <ModalContent isVerticallyCentered isHorizontallyCentered>
           <CircularProgressBar
             size={80}
             barWidth={8}
             barColor={theme.font.color.primary}
           />
-        </StyledProgressBarContainer>
+        </ModalContent>
       );
   }
 };

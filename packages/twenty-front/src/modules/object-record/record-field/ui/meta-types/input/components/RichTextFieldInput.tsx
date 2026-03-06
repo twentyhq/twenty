@@ -1,6 +1,6 @@
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
-import { useRichTextCommandMenu } from '@/command-menu/hooks/useRichTextCommandMenu';
-import { type CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useOpenRichTextInSidePanel } from '@/side-panel/hooks/useOpenRichTextInSidePanel';
+import { type CoreObjectNameSingular } from 'twenty-shared/types';
 import { useRegisterInputEvents } from '@/object-record/record-field/ui/meta-types/input/hooks/useRegisterInputEvents';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 
@@ -14,8 +14,7 @@ import { Suspense, lazy, useContext, useRef } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { IconLayoutSidebarLeftCollapse } from 'twenty-ui/display';
 import { FloatingIconButton } from 'twenty-ui/input';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const ActivityRichTextEditor = lazy(() =>
   import('@/activities/components/ActivityRichTextEditor').then((module) => ({
@@ -43,7 +42,6 @@ const StyledCollapseButton = styled.div`
 
 const LoadingSkeleton = () => {
   const { theme } = useContext(ThemeContext);
-
   return (
     <SkeletonTheme
       baseColor={theme.background.tertiary}
@@ -68,7 +66,7 @@ export const RichTextFieldInput = () => {
       | CoreObjectNameSingular.Task,
   };
 
-  const { editRichText } = useRichTextCommandMenu();
+  const { openRichTextInSidePanel } = useOpenRichTextInSidePanel();
   const containerRef = useRef<HTMLDivElement>(null);
   const instanceId = useAvailableComponentInstanceIdOrThrow(
     RecordFieldComponentInstanceContext,
@@ -106,7 +104,7 @@ export const RichTextFieldInput = () => {
           size="small"
           onClick={() => {
             onEscape?.({ skipPersist: true });
-            editRichText(
+            openRichTextInSidePanel(
               targetableObject.id,
               targetableObject.targetObjectNameSingular,
             );

@@ -10,6 +10,7 @@ import {
   Relation,
 } from 'typeorm';
 
+import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { AgentMessageEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
 
 @Entity('agentMessagePart')
@@ -82,13 +83,17 @@ export class AgentMessagePartEntity {
   sourceDocumentFilename: string | null;
 
   @Column({ type: 'varchar', nullable: true })
-  fileMediaType: string | null;
-
-  @Column({ type: 'varchar', nullable: true })
   fileFilename: string | null;
 
-  @Column({ type: 'varchar', nullable: true })
-  fileUrl: string | null;
+  @Column({ type: 'uuid', nullable: true })
+  fileId: string | null;
+
+  @ManyToOne(() => FileEntity, {
+    onDelete: 'RESTRICT',
+    nullable: true,
+  })
+  @JoinColumn({ name: 'fileId' })
+  file: Relation<FileEntity> | null;
 
   @Column({ type: 'jsonb', nullable: true })
   providerMetadata: Record<string, Record<string, JSONValue>> | null;

@@ -76,7 +76,7 @@ export const Default: Story = {
         componentInstanceId={args.componentInstanceId}
         loading={args.loading}
         behaveAsLinks={args.behaveAsLinks}
-        isInRightDrawer={args.isInRightDrawer}
+        isInSidePanel={args.isInSidePanel}
         className={args.className}
       />
     </StyledInteractiveContainer>

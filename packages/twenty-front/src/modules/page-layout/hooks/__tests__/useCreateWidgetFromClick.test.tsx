@@ -1,27 +1,27 @@
-import { useNavigatePageLayoutCommandMenu } from '@/command-menu/pages/page-layout/hooks/useNavigatePageLayoutCommandMenu';
+import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
 import { useCreateWidgetFromClick } from '@/page-layout/hooks/useCreateWidgetFromClick';
 import { pageLayoutDraggedAreaComponentState } from '@/page-layout/states/pageLayoutDraggedAreaComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { act, renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
-import { CommandMenuPages } from 'twenty-shared/types';
+import { SidePanelPages } from 'twenty-shared/types';
 import {
   PAGE_LAYOUT_TEST_INSTANCE_ID,
   PageLayoutTestWrapper,
 } from './PageLayoutTestWrapper';
 
 jest.mock(
-  '@/command-menu/pages/page-layout/hooks/useNavigatePageLayoutCommandMenu',
+  '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel',
 );
 
 describe('useCreateWidgetFromClick', () => {
-  const mockNavigatePageLayoutCommandMenu = jest.fn();
+  const mockNavigatePageLayoutSidePanel = jest.fn();
 
   beforeEach(() => {
     jest.clearAllMocks();
-    (useNavigatePageLayoutCommandMenu as jest.Mock).mockReturnValue({
-      navigatePageLayoutCommandMenu: mockNavigatePageLayoutCommandMenu,
+    (useNavigatePageLayoutSidePanel as jest.Mock).mockReturnValue({
+      navigatePageLayoutSidePanel: mockNavigatePageLayoutSidePanel,
     });
   });
 
@@ -51,8 +51,8 @@ describe('useCreateWidgetFromClick', () => {
 
     expect(result.current.draggedArea).toEqual({ x: 2, y: 3, w: 1, h: 1 });
     expect(result.current.editingWidgetId).toBeNull();
-    expect(mockNavigatePageLayoutCommandMenu).toHaveBeenCalledWith({
-      commandMenuPage: CommandMenuPages.PageLayoutWidgetTypeSelect,
+    expect(mockNavigatePageLayoutSidePanel).toHaveBeenCalledWith({
+      sidePanelPage: SidePanelPages.PageLayoutWidgetTypeSelect,
       resetNavigationStack: true,
     });
   });

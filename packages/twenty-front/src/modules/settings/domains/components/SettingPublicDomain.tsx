@@ -25,13 +25,13 @@ import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons
 import { getDomainValidationSchema } from '@/settings/domains/utils/get-domain-validation-schema';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledButtonGroup = styled(ButtonGroup)`
-  & > :not(:first-of-type) > button {
+const StyledButtonGroupContainer = styled.div`
+  > * > :not(:first-of-type) > button {
     border-left: none;
   }
 `;
 
-const StyledButton = styled(Button)`
+const StyledButtonContainer = styled.div`
   align-self: flex-start;
 `;
 
@@ -171,28 +171,34 @@ export const SettingPublicDomain = () => {
               fullWidth
             />
             {isDefined(selectedPublicDomain) && (
-              <StyledButtonGroup>
-                <StyledButton
-                  isLoading={isLoading}
-                  Icon={IconReload}
-                  title={t`Reload`}
-                  variant="primary"
-                  onClick={() =>
-                    checkPublicDomainRecords(selectedPublicDomain.domain)
-                  }
-                  type="button"
-                />
-                <StyledButton
-                  Icon={IconTrash}
-                  variant="primary"
-                  onClick={onDelete}
-                />
-              </StyledButtonGroup>
+              <StyledButtonGroupContainer>
+                <ButtonGroup>
+                  <StyledButtonContainer>
+                    <Button
+                      isLoading={isLoading}
+                      Icon={IconReload}
+                      title={t`Reload`}
+                      variant="primary"
+                      onClick={() =>
+                        checkPublicDomainRecords(selectedPublicDomain.domain)
+                      }
+                      type="button"
+                    />
+                  </StyledButtonContainer>
+                  <StyledButtonContainer>
+                    <Button
+                      Icon={IconTrash}
+                      variant="primary"
+                      onClick={onDelete}
+                    />
+                  </StyledButtonContainer>
+                </ButtonGroup>
+              </StyledButtonGroupContainer>
             )}
           </StyledDomainFormWrapper>
           {isDefined(selectedPublicDomain) && publicDomainRecords?.domain && (
             <StyledRecordsWrapper>
-              {publicDomainRecords.records && (
+              {isDefined(publicDomainRecords.records) && (
                 <SettingsDomainRecords records={publicDomainRecords.records} />
               )}
             </StyledRecordsWrapper>

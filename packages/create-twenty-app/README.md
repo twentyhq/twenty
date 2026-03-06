@@ -89,6 +89,7 @@ In interactive mode, you can pick from:
 - **Example view** — a saved view for the example object (`views/example-view.ts`)
 - **Example navigation menu item** — a sidebar link (`navigation-menu-items/example-navigation-menu-item.ts`)
 - **Example skill** — an AI agent skill definition (`skills/example-skill.ts`)
+- **Integration test** — a vitest integration test verifying app installation (`__tests__/app-install.integration-test.ts`)
 
 ## What gets scaffolded
 
@@ -97,7 +98,7 @@ In interactive mode, you can pick from:
 - `roles/default-role.ts` — Default role for logic functions
 - `logic-functions/pre-install.ts` — Pre-install logic function (runs before app installation)
 - `logic-functions/post-install.ts` — Post-install logic function (runs after app installation)
-- TypeScript configuration, ESLint, package.json, .gitignore
+- TypeScript configuration, Oxlint, package.json, .gitignore
 - A prewired `twenty` script that delegates to the `twenty` CLI from twenty-sdk
 
 **Example files (controlled by scaffolding mode):**
@@ -108,6 +109,7 @@ In interactive mode, you can pick from:
 - `views/example-view.ts` — Example saved view for the example object
 - `navigation-menu-items/example-navigation-menu-item.ts` — Example sidebar navigation link
 - `skills/example-skill.ts` — Example AI agent skill definition
+- `__tests__/app-install.integration-test.ts` — Integration test that builds, installs, and verifies the app (includes `vitest.config.ts`, `tsconfig.spec.json`, and a setup file)
 
 ## Next steps
 - Run `yarn twenty help` to see all available commands.

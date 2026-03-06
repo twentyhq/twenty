@@ -1,4 +1,5 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { isDefined } from 'twenty-shared/utils';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type AvailableWorkspace } from '~/generated-metadata/graphql';
 
@@ -11,11 +12,11 @@ export const useFilteredAvailableWorkspaces = () => {
   ) => {
     return availableWorkspaces.filter(
       (availableWorkspace) =>
-        currentWorkspace?.id &&
+        isDefined(currentWorkspace?.id) &&
         availableWorkspace.id !== currentWorkspace.id &&
         availableWorkspace.displayName
           ?.toLowerCase()
-          .includes(searchValue.toLowerCase()),
+          .includes(searchValue.toLowerCase()) === true,
     );
   };
 

@@ -77,9 +77,9 @@ export const RecordCalendarCardDraggableContainer = ({
           <StyledDraggableContainer
             id={`record-calendar-card-${recordId}`}
             ref={draggableProvided?.innerRef}
-            // eslint-disable-next-line react/jsx-props-no-spreading
+            // oxlint-disable-next-line react/jsx-props-no-spreading
             {...draggableProvided?.dragHandleProps}
-            // eslint-disable-next-line react/jsx-props-no-spreading
+            // oxlint-disable-next-line react/jsx-props-no-spreading
             {...draggableProvided?.draggableProps}
             data-selectable-id={recordId}
           >

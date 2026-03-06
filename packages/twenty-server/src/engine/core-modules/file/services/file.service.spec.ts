@@ -15,24 +15,21 @@ jest.mock('uuid', () => ({
 
 describe('FileService', () => {
   let service: FileService;
-  let fileStorageService: FileStorageService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         FileService,
         {
-          provide: FileStorageService,
-          useValue: {
-            copyLegacy: jest.fn(),
-          },
-        },
-        {
           provide: TwentyConfigService,
           useValue: {},
         },
         {
           provide: JwtWrapperService,
+          useValue: {},
+        },
+        {
+          provide: FileStorageService,
           useValue: {},
         },
         {
@@ -47,35 +44,9 @@ describe('FileService', () => {
     }).compile();
 
     service = module.get<FileService>(FileService);
-    fileStorageService = module.get<FileStorageService>(FileStorageService);
   });
 
   it('should be defined', () => {
     expect(service).toBeDefined();
-  });
-
-  it('copyFileFromWorkspaceToWorkspace - should copy a file to a new workspace', async () => {
-    const result = await service.copyFileFromWorkspaceToWorkspace(
-      'workspaceId',
-      'path/to/file',
-      'newWorkspaceId',
-    );
-
-    expect(fileStorageService.copyLegacy).toHaveBeenCalledWith({
-      from: {
-        folderPath: 'workspace-workspaceId/path/to',
-        filename: 'file',
-      },
-      to: {
-        folderPath: 'workspace-newWorkspaceId/path/to',
-        filename: 'mocked-uuid',
-      },
-    });
-
-    expect(result).toEqual([
-      'workspace-newWorkspaceId',
-      'path/to',
-      'mocked-uuid',
-    ]);
   });
 });

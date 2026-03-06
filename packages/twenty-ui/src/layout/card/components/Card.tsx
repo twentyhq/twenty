@@ -5,7 +5,10 @@ import { type ComponentPropsWithoutRef } from 'react';
 const StyledCard = styled.div<{
   fullWidth?: boolean;
   rounded?: boolean;
+  backgroundColor?: string;
 }>`
+  background-color: ${({ backgroundColor }) =>
+    backgroundColor ?? 'transparent'};
   border: 1px solid ${themeCssVariables.border.color.medium};
   border-radius: ${({ rounded }) =>
     rounded
@@ -19,6 +22,7 @@ const StyledCard = styled.div<{
 type CardProps = ComponentPropsWithoutRef<'div'> & {
   fullWidth?: boolean;
   rounded?: boolean;
+  backgroundColor?: string;
 };
 
 export const Card = ({
@@ -26,6 +30,7 @@ export const Card = ({
   className,
   fullWidth,
   rounded,
+  backgroundColor,
   ...rest
 }: CardProps) => {
   return (
@@ -33,7 +38,8 @@ export const Card = ({
       className={className}
       fullWidth={fullWidth}
       rounded={rounded}
-      // eslint-disable-next-line react/jsx-props-no-spreading
+      backgroundColor={backgroundColor}
+      // oxlint-disable-next-line react/jsx-props-no-spreading
       {...rest}
     >
       {children}

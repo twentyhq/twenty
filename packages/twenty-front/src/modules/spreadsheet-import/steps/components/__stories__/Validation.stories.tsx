@@ -46,7 +46,7 @@ export const Default = () => (
   >
     <ReactSpreadsheetImportContextProvider values={mockRsiValues}>
       <SpreadSheetImportModalWrapper
-        modalId="validation-step"
+        modalInstanceId="validation-step"
         onClose={() => null}
       >
         <ValidationStep

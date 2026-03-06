@@ -1,27 +1,26 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { type ActorMetadata } from 'twenty-shared/types';
-import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
-import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { buildCreatedByFromApiKey } from 'src/engine/core-modules/actor/utils/build-created-by-from-api-key.util';
 import { buildCreatedByFromApplication } from 'src/engine/core-modules/actor/utils/build-created-by-from-application.util';
 import { buildCreatedByFromFullNameMetadata } from 'src/engine/core-modules/actor/utils/build-created-by-from-full-name-metadata.util';
-import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
+import { isApiKeyAuthContext } from 'src/engine/core-modules/auth/guards/is-api-key-auth-context.guard';
+import { isApplicationAuthContext } from 'src/engine/core-modules/auth/guards/is-application-auth-context.guard';
+import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 export type RecordInput = Record<string, unknown>;
 
 export type InjectActorParams = {
   records: RecordInput[];
   objectMetadataNameSingular: string;
-  authContext: AuthContext;
+  authContext: WorkspaceAuthContext;
 };
 
 @Injectable()
@@ -29,7 +28,6 @@ export class ActorFromAuthContextService {
   private readonly logger = new Logger(ActorFromAuthContextService.name);
 
   constructor(
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
 
@@ -89,8 +87,6 @@ export class ActorFromAuthContextService {
   > {
     const workspace = authContext.workspace;
 
-    assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
-
     const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -131,7 +127,7 @@ export class ActorFromAuthContextService {
 
     const clonedRecords = structuredClone(records);
 
-    const actorMetadata = await this.buildActorMetadata(authContext);
+    const actorMetadata = this.buildActorMetadata(authContext);
 
     for (const record of clonedRecords) {
       this.injectActorToRecord(actorMetadata, record, fieldName);
@@ -159,49 +155,23 @@ export class ActorFromAuthContextService {
     }
   }
 
-  private async buildActorMetadata(
-    authContext: AuthContext,
-  ): Promise<ActorMetadata> {
-    const { workspace, user, apiKey, application } = authContext;
-
-    assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
-
-    if (isDefined(user)) {
-      return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        async () => {
-          const workspaceMemberRepository =
-            await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-              workspace.id,
-              'workspaceMember',
-              { shouldBypassPermissionChecks: true },
-            );
-
-          const workspaceMember = await workspaceMemberRepository.findOneOrFail(
-            {
-              where: {
-                userId: user.id,
-              },
-            },
-          );
-
-          return buildCreatedByFromFullNameMetadata({
-            fullNameMetadata: workspaceMember.name,
-            workspaceMemberId: workspaceMember.id,
-          });
-        },
-        authContext as WorkspaceAuthContext,
-      );
-    }
-
-    if (isDefined(apiKey)) {
-      return buildCreatedByFromApiKey({
-        apiKey,
+  private buildActorMetadata(authContext: WorkspaceAuthContext): ActorMetadata {
+    if (isUserAuthContext(authContext)) {
+      return buildCreatedByFromFullNameMetadata({
+        fullNameMetadata: authContext.workspaceMember.name,
+        workspaceMemberId: authContext.workspaceMemberId,
       });
     }
 
-    if (isDefined(application)) {
+    if (isApiKeyAuthContext(authContext)) {
+      return buildCreatedByFromApiKey({
+        apiKey: authContext.apiKey,
+      });
+    }
+
+    if (isApplicationAuthContext(authContext)) {
       return buildCreatedByFromApplication({
-        application,
+        application: authContext.application,
       });
     }
 

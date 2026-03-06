@@ -42,7 +42,7 @@ export class GraphqlQueryFilterFieldParser {
     queryBuilder: WhereExpressionBuilder,
     objectNameSingular: string,
     key: string,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
     filterValue: any,
     isFirst = false,
     useDirectTableReference = false,
@@ -101,7 +101,7 @@ export class GraphqlQueryFilterFieldParser {
     queryBuilder: WhereExpressionBuilder,
     fieldMetadata: FlatFieldMetadata,
     objectNameSingular: string,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
     fieldValue: any,
     isFirst = false,
     useDirectTableReference = false,
@@ -130,7 +130,7 @@ export class GraphqlQueryFilterFieldParser {
       const fullFieldName = `${fieldMetadata.name}${capitalize(subFieldKey)}`;
 
       const [[operator, value]] = Object.entries(
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // oxlint-disable-next-line @typescripttypescript/no-explicit-any
         subFieldFilter as Record<string, any>,
       );
 

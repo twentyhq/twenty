@@ -12,7 +12,7 @@ import { type SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetC
 import { SpreadsheetColumnType } from '@/spreadsheet-import/types/SpreadsheetColumnType';
 import { addErrorsAndRunHooks } from '@/spreadsheet-import/utils/dataMutations';
 import { useDialogManager } from '@/ui/feedback/dialog-manager/hooks/useDialogManager';
-import { Modal } from '@/ui/layout/modal/components/Modal';
+import { ModalContent } from 'twenty-ui/layout';
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { Trans, useLingui } from '@lingui/react/macro';
@@ -31,8 +31,10 @@ import { Button, Toggle } from 'twenty-ui/input';
 import { generateColumns } from './components/columns';
 import { type ImportedStructuredRowMetadata } from './types';
 
-const StyledContent = styled(Modal.Content)`
-  padding: 0px;
+const StyledContentWrapper = styled.div`
+  display: flex;
+  flex: 1 1 0%;
+  flex-direction: column;
   position: relative;
 `;
 
@@ -54,8 +56,10 @@ const StyledToolbar = styled.div`
   box-shadow: ${themeCssVariables.boxShadow.strong};
 `;
 
-const StyledButton = styled(Button)`
-  height: 24px;
+const StyledButtonContainer = styled.div`
+  > button {
+    height: 24px;
+  }
 `;
 
 const StyledErrorToggle = styled.div`
@@ -123,7 +127,7 @@ export const ValidationStep = ({
   >(
     useMemo(
       () => addErrorsAndRunHooks(initialData, fields, rowHook, tableHook),
-      // eslint-disable-next-line react-hooks/exhaustive-deps
+      // oxlint-disable-next-line react-hooks/exhaustive-deps
       [],
     ),
   );
@@ -202,9 +206,11 @@ export const ValidationStep = ({
     if (filterByErrors) {
       return data.filter((value) => {
         if (isDefined(value?.__errors)) {
-          return Object.values(value.__errors)?.filter(
-            (err) => err.level === 'error',
-          ).length;
+            return (
+              (Object.values(value.__errors)?.filter(
+                (err) => err.level === 'error',
+              ).length ?? 0) > 0
+            );
         }
         return false;
       });
@@ -282,53 +288,57 @@ export const ValidationStep = ({
 
   return (
     <>
-      <StyledContent>
-        {filterByErrors && tableData.length === 0 ? (
-          <StyledNoRowsWithErrorsContainer>
-            <Trans>No rows with errors</Trans>
-          </StyledNoRowsWithErrorsContainer>
-        ) : (
-          <StyledScrollContainer>
-            <SpreadsheetImportTable
-              headerRowHeight={32}
-              rowKeyGetter={rowKeyGetter}
-              rows={tableData}
-              onRowsChange={updateRow}
-              columns={columns}
-              selectedRows={selectedRows}
-              onSelectedRowsChange={setSelectedRows as any} // TODO: replace 'any'
-              components={{
-                noRowsFallback: (
-                  <StyledNoRowsContainer>
-                    {filterByErrors
-                      ? t`No data containing errors`
-                      : t`No data found`}
-                  </StyledNoRowsContainer>
-                ),
-              }}
-            />
-          </StyledScrollContainer>
-        )}
-        <StyledToolbar>
-          <StyledErrorToggle>
-            <Toggle
-              value={filterByErrors}
-              onChange={() => setFilterByErrors(!filterByErrors)}
-              toggleSize="small"
-            />
-            <StyledErrorToggleDescription>
-              <Trans>Show only rows with errors</Trans>
-            </StyledErrorToggleDescription>
-          </StyledErrorToggle>
-          <StyledButton
-            Icon={IconTrash}
-            title={t`Remove`}
-            accent="default"
-            onClick={deleteSelectedRows}
-            disabled={selectedRows.size === 0}
-          />
-        </StyledToolbar>
-      </StyledContent>
+      <ModalContent noPadding>
+        <StyledContentWrapper>
+          {filterByErrors && tableData.length === 0 ? (
+            <StyledNoRowsWithErrorsContainer>
+              <Trans>No rows with errors</Trans>
+            </StyledNoRowsWithErrorsContainer>
+          ) : (
+            <StyledScrollContainer>
+              <SpreadsheetImportTable
+                headerRowHeight={32}
+                rowKeyGetter={rowKeyGetter}
+                rows={tableData}
+                onRowsChange={updateRow}
+                columns={columns}
+                selectedRows={selectedRows}
+                onSelectedRowsChange={setSelectedRows as any} // TODO: replace 'any'
+                components={{
+                  noRowsFallback: (
+                    <StyledNoRowsContainer>
+                      {filterByErrors
+                        ? t`No data containing errors`
+                        : t`No data found`}
+                    </StyledNoRowsContainer>
+                  ),
+                }}
+              />
+            </StyledScrollContainer>
+          )}
+          <StyledToolbar>
+            <StyledErrorToggle>
+              <Toggle
+                value={filterByErrors}
+                onChange={() => setFilterByErrors(!filterByErrors)}
+                toggleSize="small"
+              />
+              <StyledErrorToggleDescription>
+                <Trans>Show only rows with errors</Trans>
+              </StyledErrorToggleDescription>
+            </StyledErrorToggle>
+            <StyledButtonContainer>
+              <Button
+                Icon={IconTrash}
+                title={t`Remove`}
+                accent="default"
+                onClick={deleteSelectedRows}
+                disabled={selectedRows.size === 0}
+              />
+            </StyledButtonContainer>
+          </StyledToolbar>
+        </StyledContentWrapper>
+      </ModalContent>
       <StepNavigationButton
         onContinue={onContinue}
         onBack={onBack}

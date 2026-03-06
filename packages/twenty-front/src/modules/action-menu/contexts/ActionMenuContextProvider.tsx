@@ -3,7 +3,7 @@ import { ActionMenuContextProviderDefault } from '@/action-menu/contexts/ActionM
 import { ActionMenuContextProviderWorkflowObjects } from '@/action-menu/contexts/ActionMenuContextProviderWorkflowObjects';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -11,7 +11,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 export const ActionMenuContextProvider = ({
   children,
-  isInRightDrawer,
+  isInSidePanel,
   displayType,
   actionMenuType,
   objectMetadataItemOverride,
@@ -46,7 +46,7 @@ export const ActionMenuContextProvider = ({
   if (isWorkflowObject) {
     return (
       <ActionMenuContextProviderWorkflowObjects
-        isInRightDrawer={isInRightDrawer}
+        isInSidePanel={isInSidePanel}
         displayType={displayType}
         actionMenuType={actionMenuType}
         objectMetadataItem={objectMetadataItem}
@@ -58,7 +58,7 @@ export const ActionMenuContextProvider = ({
 
   return (
     <ActionMenuContextProviderDefault
-      isInRightDrawer={isInRightDrawer}
+      isInSidePanel={isInSidePanel}
       displayType={displayType}
       actionMenuType={actionMenuType}
       objectMetadataItem={objectMetadataItem}

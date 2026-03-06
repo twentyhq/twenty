@@ -4,8 +4,7 @@ import { useContext, useState } from 'react';
 import { IconChevronDown, IconChevronUp } from 'twenty-ui/display';
 import { JsonTree } from 'twenty-ui/json-visualizer';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { CodeExecutionDisplay } from '@/ai/components/CodeExecutionDisplay';
 import { ShimmeringText } from '@/ai/components/ShimmeringText';
@@ -137,8 +136,8 @@ export const ToolStepRenderer = ({
   toolPart: ToolUIPart;
   isStreaming: boolean;
 }) => {
-  const { t } = useLingui();
   const { theme } = useContext(ThemeContext);
+  const { t } = useLingui();
   const { copyToClipboard } = useCopyToClipboard();
   const [isExpanded, setIsExpanded] = useState(false);
   const [activeTab, setActiveTab] = useState<TabType>('output');
@@ -160,7 +159,12 @@ export const ToolStepRenderer = ({
         stdout?: string;
         stderr?: string;
         exitCode?: number;
-        files?: Array<{ filename: string; url: string; mimeType?: string }>;
+        files?: Array<{
+          fileId: string;
+          filename: string;
+          url: string;
+          mimeType?: string;
+        }>;
       };
     } | null;
 

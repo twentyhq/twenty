@@ -8,8 +8,7 @@ import { type ChangeEvent, useContext, useRef } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { type WorkflowAttachment } from 'twenty-shared/workflow';
 import { IconUpload } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type WorkflowSendEmailAttachmentsProps = {
   files: WorkflowAttachment[];
@@ -67,11 +66,10 @@ export const WorkflowSendEmailAttachments = ({
   label,
   onChange,
 }: WorkflowSendEmailAttachmentsProps) => {
+  const { theme } = useContext(ThemeContext);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { uploadWorkflowFile } = useUploadWorkflowFile();
   const { t } = useLingui();
-  const { theme } = useContext(ThemeContext);
-
   const handleAddFileClick = (e: React.MouseEvent) => {
     const target = e.target as HTMLElement;
 

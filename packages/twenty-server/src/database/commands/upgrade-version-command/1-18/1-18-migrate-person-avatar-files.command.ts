@@ -15,9 +15,7 @@ import { v4 } from 'uuid';
 import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
-import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -33,7 +31,7 @@ import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/perso
 @Command({
   name: 'upgrade:1-18:migrate-person-avatar-files',
   description:
-    'Migrate person avatarUrl files to file field: copy files and create file records',
+    '[DEPRECATED] Migrate person avatarUrl files to file field - this migration is now complete and no longer needed',
 })
 export class MigratePersonAvatarFilesCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   constructor(
@@ -41,7 +39,6 @@ export class MigratePersonAvatarFilesCommand extends ActiveOrSuspendedWorkspaces
     protected readonly workspaceRepository: Repository<WorkspaceEntity>,
     protected readonly twentyORMGlobalManager: GlobalWorkspaceOrmManager,
     protected readonly dataSourceService: DataSourceService,
-    private readonly featureFlagService: FeatureFlagService,
     private readonly fileStorageService: FileStorageService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly fieldMetadataService: FieldMetadataService,
@@ -54,23 +51,20 @@ export class MigratePersonAvatarFilesCommand extends ActiveOrSuspendedWorkspaces
 
   override async runOnWorkspace({
     workspaceId,
-    options,
   }: RunOnWorkspaceArgs): Promise<void> {
-    const isDryRun = options.dryRun ?? false;
-
-    const isMigrated = await this.featureFlagService.isFeatureEnabled(
-      FeatureFlagKey.IS_FILES_FIELD_MIGRATED,
-      workspaceId,
+    this.logger.log(
+      `[DEPRECATED] Person avatar files migration is no longer needed for workspace ${workspaceId}. ` +
+        `The IS_FILES_FIELD_MIGRATED feature flag has been removed as all workspaces are now migrated.`,
     );
+  }
 
-    if (isMigrated) {
-      this.logger.log(
-        `Person avatar files migration already completed for workspace ${workspaceId}, skipping`,
-      );
-
-      return;
-    }
-
+  private _deprecatedMigrationLogic = async ({
+    workspaceId,
+    isDryRun,
+  }: {
+    workspaceId: string;
+    isDryRun: boolean;
+  }) => {
     this.logger.log(
       `${
         isDryRun ? '[DRY RUN] ' : ''
@@ -301,5 +295,5 @@ export class MigratePersonAvatarFilesCommand extends ActiveOrSuspendedWorkspaces
         `${isDryRun ? '[DRY RUN] ' : ''}Completed person avatar files migration for workspace ${workspaceId}`,
       );
     }, systemAuthContext);
-  }
+  };
 }

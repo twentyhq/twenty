@@ -13,7 +13,7 @@ export const usePageLayoutTabWithVisibleWidgetsOrThrow = (
 ): PageLayoutTab => {
   const { currentPageLayout } = useCurrentPageLayout();
   const isMobile = useIsMobile();
-  const { isInRightDrawer } = useLayoutRenderingContext();
+  const { isInSidePanel } = useLayoutRenderingContext();
   const isPageLayoutInEditMode = useAtomComponentStateValue(
     isPageLayoutInEditModeComponentState,
   );
@@ -32,7 +32,7 @@ export const usePageLayoutTabWithVisibleWidgetsOrThrow = (
     return tab;
   }
 
-  const context = buildWidgetVisibilityContext({ isMobile, isInRightDrawer });
+  const context = buildWidgetVisibilityContext({ isMobile, isInSidePanel });
 
   return {
     ...tab,

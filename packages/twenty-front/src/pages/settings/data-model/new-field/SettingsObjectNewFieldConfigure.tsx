@@ -19,7 +19,7 @@ import {
   type RelationCreationPayload,
   SettingsPath,
 } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
+import { isDefined, getSettingsPath } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import { type z } from 'zod';
@@ -83,12 +83,12 @@ export const SettingsObjectNewFieldConfigure = () => {
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
-    if (!activeObjectMetadataItem) {
+    if (!isDefined(activeObjectMetadataItem)) {
       navigateApp(AppPath.NotFound);
     }
   }, [activeObjectMetadataItem, navigateApp]);
 
-  if (!activeObjectMetadataItem) return null;
+  if (!isDefined(activeObjectMetadataItem)) return null;
 
   const { isValid, isSubmitting } = formConfig.formState;
 
@@ -170,10 +170,10 @@ export const SettingsObjectNewFieldConfigure = () => {
     }
   };
 
-  if (!activeObjectMetadataItem) return null;
+  if (!isDefined(activeObjectMetadataItem)) return null;
 
   return (
-    <FormProvider // eslint-disable-next-line react/jsx-props-no-spreading
+    <FormProvider // oxlint-disable-next-line react/jsx-props-no-spreading
       {...formConfig}
     >
       <SubMenuTopBarContainer

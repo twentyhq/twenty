@@ -3,7 +3,6 @@ import { type IconComponent } from '@ui/display/icon/types/IconComponent';
 import { ButtonHotkeys } from '@ui/input/button/components/Button/internal/ButtonHotKeys';
 import { ButtonIcon } from '@ui/input/button/components/Button/internal/ButtonIcon';
 import { ButtonSoon } from '@ui/input/button/components/Button/internal/ButtonSoon';
-import { GRAY_SCALE_LIGHT } from '@ui/theme';
 import { themeCssVariables } from '@ui/theme-constants';
 import { useIsMobile } from '@ui/utilities';
 import { type ClickOutsideAttributes } from '@ui/utilities/types/ClickOutsideAttributes';
@@ -128,7 +127,7 @@ const computeButtonDynamicStyles = (
                 }`
               : 'none';
           result.color = !inverted
-            ? GRAY_SCALE_LIGHT.gray1
+            ? themeCssVariables.grayScale.gray1
             : themeCssVariables.color.blue;
           if (!disabled) {
             result.hoverBackground = !inverted
@@ -191,10 +190,10 @@ const computeButtonDynamicStyles = (
                 : 'transparent'
             : variant === 'secondary'
               ? focus || disabled
-                ? GRAY_SCALE_LIGHT.gray1
+                ? themeCssVariables.grayScale.gray1
                 : themeCssVariables.background.transparent.primary
               : focus
-                ? GRAY_SCALE_LIGHT.gray1
+                ? themeCssVariables.grayScale.gray1
                 : 'transparent';
           result.borderWidthOverride = '1px 1px 1px 1px';
           result.boxShadow =
@@ -232,10 +231,10 @@ const computeButtonDynamicStyles = (
                 : 'transparent'
             : variant === 'secondary'
               ? focus || disabled
-                ? GRAY_SCALE_LIGHT.gray1
+                ? themeCssVariables.grayScale.gray1
                 : themeCssVariables.background.transparent.primary
               : focus
-                ? GRAY_SCALE_LIGHT.gray1
+                ? themeCssVariables.grayScale.gray1
                 : 'transparent';
           result.borderWidthOverride = '1px 1px 1px 1px';
           result.boxShadow =
@@ -273,10 +272,10 @@ const computeButtonDynamicStyles = (
                 : 'transparent'
             : variant === 'secondary'
               ? focus || disabled
-                ? GRAY_SCALE_LIGHT.gray1
+                ? themeCssVariables.grayScale.gray1
                 : themeCssVariables.background.transparent.primary
               : focus
-                ? GRAY_SCALE_LIGHT.gray1
+                ? themeCssVariables.grayScale.gray1
                 : 'transparent';
           result.borderWidthOverride = '1px 1px 1px 1px';
           result.boxShadow =
@@ -416,7 +415,7 @@ const computeButtonWrapperColor = (
             : themeCssVariables.font.color.secondary;
         case 'blue':
           return !inverted
-            ? GRAY_SCALE_LIGHT.gray1
+            ? themeCssVariables.grayScale.gray1
             : themeCssVariables.color.blue;
         case 'danger':
           return !inverted

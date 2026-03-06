@@ -1,5 +1,6 @@
 import { registerEnumType } from '@nestjs/graphql';
 
+import { FeatureFlagKey } from 'twenty-shared/types';
 import {
   Column,
   CreateDateColumn,
@@ -9,7 +10,6 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity';
 
 @Entity({ name: 'featureFlag', schema: 'core' })

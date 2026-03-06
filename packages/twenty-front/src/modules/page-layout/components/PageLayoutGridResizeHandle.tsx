@@ -6,9 +6,8 @@ import {
   IconRadiusTopLeft,
   IconRadiusTopRight,
 } from 'twenty-ui/display';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { ThemeContext } from 'twenty-ui/theme';
-
+import { ResizeHandle } from 'twenty-ui/layout';
+import { themeCssVariables, ThemeContext } from 'twenty-ui/theme-constants';
 type WidgetHandleAxis = 'n' | 's' | 'e' | 'w' | 'ne' | 'nw' | 'se' | 'sw';
 type WidgetHorizontalHandleAxis = 'n' | 's';
 type WidgetVerticalHandleAxis = 'e' | 'w';
@@ -65,28 +64,6 @@ const StyledVerticalHandle = styled.div`
   border-radius: ${themeCssVariables.border.radius.sm};
   height: ${themeCssVariables.spacing[5]};
   width: ${themeCssVariables.icon.stroke.lg}px;
-`;
-
-const StyledHorizontalHandle = styled.div`
-  border-radius: ${themeCssVariables.border.radius.sm};
-  height: ${themeCssVariables.icon.stroke.lg}px;
-  width: ${themeCssVariables.spacing[5]};
-`;
-
-const StyledHorizontalHandleWrapper = styled.div<{
-  widgetHandleAxis: WidgetHorizontalHandleAxis;
-}>`
-  border-radius: ${themeCssVariables.border.radius.sm};
-  cursor: row-resize;
-  transform: ${({ widgetHandleAxis }) =>
-    widgetHandleAxis === 'n' ? 'translateY(-50%)' : 'translateY(50%)'};
-  padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[2]};
-
-  :hover {
-    & > div {
-      background-color: ${themeCssVariables.font.color.tertiary};
-    }
-  }
 `;
 
 const StyledVerticalHandleWrapper = styled.div<{
@@ -201,9 +178,15 @@ export const PageLayoutGridResizeHandle = forwardRef<
           </StyledVerticalHandleWrapper>
         )}
         {isHorizontalHandle(widgetHandleAxis) && (
-          <StyledHorizontalHandleWrapper widgetHandleAxis={widgetHandleAxis}>
-            <StyledHorizontalHandle />
-          </StyledHorizontalHandleWrapper>
+          <ResizeHandle
+            style={{
+              cursor: 'row-resize',
+              transform:
+                widgetHandleAxis === 'n'
+                  ? 'translateY(-50%)'
+                  : 'translateY(50%)',
+            }}
+          />
         )}
         {widgetHandleAxis === 'ne' && (
           <StyledCornerIconWrapper cursor="nesw-resize" position="ne">

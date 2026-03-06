@@ -1,7 +1,6 @@
 import { styled } from '@linaria/react';
 import { IconInfoCircle } from '@ui/display/icon/components/TablerIcons';
-import { ThemeContext } from '@ui/theme';
-import { themeCssVariables } from '@ui/theme-constants';
+import { ThemeContext, themeCssVariables } from '@ui/theme-constants';
 
 import { Button } from '@ui/input/button/components/Button/Button';
 import React, { useContext } from 'react';
@@ -20,10 +19,10 @@ const StyledTextContainer = styled.div`
   align-items: center;
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
-`;
 
-const StyledIconInfoCircle = styled(IconInfoCircle)`
-  flex-shrink: 0;
+  & > svg {
+    flex-shrink: 0;
+  }
 `;
 
 const StyledInfo = styled.div<Pick<InfoProps, 'accent'>>`
@@ -57,8 +56,10 @@ const StyledInfo = styled.div<Pick<InfoProps, 'accent'>>`
   }};
 `;
 
-const StyledLink = styled(Link)`
-  text-decoration: none;
+const StyledLinkContainer = styled.span`
+  & > a {
+    text-decoration: none;
+  }
 `;
 
 export const Info = ({
@@ -69,21 +70,24 @@ export const Info = ({
   to,
 }: InfoProps) => {
   const { theme } = useContext(ThemeContext);
+
   return (
     <StyledInfo accent={accent}>
       <StyledTextContainer>
-        <StyledIconInfoCircle size={theme.icon.size.md} />
+        <IconInfoCircle size={theme.icon.size.md} />
         {text}
       </StyledTextContainer>
       {buttonTitle && to && (
-        <StyledLink to={to}>
-          <Button
-            title={buttonTitle}
-            size="small"
-            variant="secondary"
-            accent={accent}
-          />
-        </StyledLink>
+        <StyledLinkContainer>
+          <Link to={to}>
+            <Button
+              title={buttonTitle}
+              size="small"
+              variant="secondary"
+              accent={accent}
+            />
+          </Link>
+        </StyledLinkContainer>
       )}
       {buttonTitle && onClick && !to && (
         <Button

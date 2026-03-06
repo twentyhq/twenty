@@ -1,6 +1,8 @@
+import { conditionalAvailabilityTransformPlugin } from '@/cli/utilities/build/common/conditional-availability/conditional-availability-transform-plugin';
 import { type ValidationResult } from '@/sdk';
+import { pathExists, remove } from '@/cli/utilities/file/fs-utils';
 import * as esbuild from 'esbuild';
-import * as fs from 'fs-extra';
+import { mkdtemp, writeFile } from 'node:fs/promises';
 import { createRequire } from 'module';
 import os from 'os';
 import path from 'path';
@@ -47,7 +49,7 @@ const loadModule = async ({
   appPath: string;
 }): Promise<Record<string, unknown>> => {
   const tsconfigPath = path.join(appPath, 'tsconfig.json');
-  const hasTsconfig = await fs.pathExists(tsconfigPath);
+  const hasTsconfig = await pathExists(tsconfigPath);
 
   // Resolve react from the app's node_modules for the alias
   const appRequire = createRequire(path.join(appPath, 'package.json'));
@@ -74,21 +76,21 @@ const loadModule = async ({
       ...(reactPath && { react: reactPath }),
       ...(reactDomPath && { 'react-dom': reactDomPath }),
     },
-    plugins: [manifestMockPlugin],
+    plugins: [conditionalAvailabilityTransformPlugin, manifestMockPlugin],
     logLevel: 'silent',
   });
 
   const code = result.outputFiles[0].text;
 
-  const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'twenty-manifest-'));
+  const tempDir = await mkdtemp(path.join(os.tmpdir(), 'twenty-manifest-'));
   const tempFile = path.join(tempDir, 'module.cjs');
 
   try {
-    await fs.writeFile(tempFile, code);
+    await writeFile(tempFile, code);
 
-    return require(tempFile) as Record<string, unknown>;
+    return appRequire(tempFile) as Record<string, unknown>;
   } finally {
-    await fs.remove(tempDir);
+    await remove(tempDir);
   }
 };
 

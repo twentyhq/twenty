@@ -11,6 +11,14 @@ export const testRestSuccessfulScenario = async (
     path: `/${objectMetadataPluralName}?filter=${encodedFilter}`,
   });
 
+  if (response.body.error || response.body.messages) {
+    throw new Error(
+      `REST API error: ${response.body.error} - ${JSON.stringify(response.body.messages)}`,
+    );
+  }
+
+  expect(response.body.data).toBeDefined();
+
   const records = response.body.data[objectMetadataPluralName];
 
   expect(response.body.errors).toBeUndefined();

@@ -8,7 +8,7 @@ import { canCreateActivityState } from '@/activities/states/canCreateActivitySta
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getActivityTargetObjectFieldIdName';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { modifyRecordFromCache } from '@/object-record/cache/utils/modifyRecordFromCache';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { isNonTextWritingKey } from '@/ui/utilities/hotkey/utils/isNonTextWritingKey';
@@ -20,7 +20,7 @@ import { ActivityRichTextEditorChangeOnActivityIdEffect } from '@/activities/com
 import { type Attachment } from '@/activities/files/types/Attachment';
 import { type Note } from '@/activities/types/Note';
 import { type Task } from '@/activities/types/Task';
-import { SIDE_PANEL_FOCUS_ID } from '@/command-menu/constants/SidePanelFocusId';
+import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useLabelIdentifierFieldMetadataItem } from '@/object-metadata/hooks/useLabelIdentifierFieldMetadataItem';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
@@ -299,7 +299,7 @@ export const ActivityRichTextEditor = ({
   // The problem with this library is that it takes the focus before anything else and does not prevent the event from bubbling
   //   Because of this, other events listen at the same time, and when we're in luck, the click outside gets triggered,
   //   but this leaves the door open for unpredicted behavior with click handlers conflicts,
-  //   we recently had a bug which was deleting what the user typed and closed the right drawer if he used backspace key.
+  //   we recently had a bug which was deleting what the user typed and closed the side panel if he used backspace key.
   // We could maybe use the types of components in the focus stack.
   const handleBlockEditorFocus = useCallback(() => {
     const isRecordTitleCellOpen = store.get(

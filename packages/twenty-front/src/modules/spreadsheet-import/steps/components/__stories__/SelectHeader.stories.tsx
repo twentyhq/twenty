@@ -43,7 +43,7 @@ export const Default = () => (
   >
     <ReactSpreadsheetImportContextProvider values={mockRsiValues}>
       <SpreadSheetImportModalWrapper
-        modalId="select-header-step"
+        modalInstanceId="select-header-step"
         onClose={() => null}
       >
         <SelectHeaderStep

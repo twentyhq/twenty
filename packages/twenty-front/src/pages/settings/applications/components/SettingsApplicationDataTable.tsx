@@ -36,8 +36,10 @@ export type ApplicationDataTableRow = {
 
 const MAIN_ROW_GRID_COLUMNS = `180px 1fr ${SETTINGS_OBJECT_TABLE_COLUMN_WIDTH} 36px`;
 
-const StyledEmptyHeader = styled(TableHeader)`
-  min-width: 0;
+const StyledEmptyHeaderContainer = styled.div`
+  > div {
+    min-width: 0;
+  }
 `;
 
 const StyledSearchInputContainer = styled.div`
@@ -129,7 +131,9 @@ export const SettingsApplicationDataTable = ({
             <TableHeader>{t`Name`}</TableHeader>
             <TableHeader>{t`App`}</TableHeader>
             <TableHeader align="right">{t`Fields`}</TableHeader>
-            <StyledEmptyHeader />
+            <StyledEmptyHeaderContainer>
+              <TableHeader />
+            </StyledEmptyHeaderContainer>
           </TableRow>
           {shouldDisplayObjects && (
             <TableSection title={t`Objects`}>

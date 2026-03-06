@@ -3,10 +3,11 @@ import { Injectable, Logger } from '@nestjs/common';
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { TypeMapperService } from 'src/engine/api/graphql/workspace-schema-builder/services/type-mapper.service';
 import {
-  TypeMapperService,
-  TypeOptions,
-} from 'src/engine/api/graphql/workspace-schema-builder/services/type-mapper.service';
+  type OutputTypeOptions,
+  applyTypeOptionsForOutputType,
+} from 'src/engine/api/graphql/workspace-schema-builder/utils/apply-type-options-for-output-type.util';
 import { extractGraphQLRelationFieldNames } from 'src/engine/api/graphql/workspace-schema-builder/utils/extract-graphql-relation-field-names.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 
@@ -25,7 +26,7 @@ export class RelationFieldMetadataGqlObjectTypeGenerator {
     fieldMetadata: FlatFieldMetadata<
       FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
     >;
-    typeOptions: TypeOptions;
+    typeOptions: OutputTypeOptions;
   }) {
     if (fieldMetadata.settings?.relationType === RelationType.ONE_TO_MANY)
       return {};
@@ -47,10 +48,7 @@ export class RelationFieldMetadataGqlObjectTypeGenerator {
       throw new Error(message);
     }
 
-    const modifiedType = this.typeMapperService.applyTypeOptions(
-      type,
-      typeOptions,
-    );
+    const modifiedType = applyTypeOptionsForOutputType(type, typeOptions);
 
     return {
       [joinColumnName]: {
