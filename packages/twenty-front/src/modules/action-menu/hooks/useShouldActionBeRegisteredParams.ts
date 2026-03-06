@@ -9,7 +9,6 @@ import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/s
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { usePrefetchedNavigationMenuItemsData } from '@/navigation-menu-item/hooks/usePrefetchedNavigationMenuItemsData';
-import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/isNavigationMenuInEditModeState';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
@@ -135,10 +134,6 @@ export const useShouldActionBeRegisteredParams = ({
     [store],
   );
 
-  const isNavigationMenuInEditMode = useAtomStateValue(
-    isNavigationMenuInEditModeState,
-  );
-
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
   const isFeatureFlagEnabled = (featureFlagKey: FeatureFlagKey) => {
@@ -158,7 +153,6 @@ export const useShouldActionBeRegisteredParams = ({
     hasAnySoftDeleteFilterOnView,
     isShowPage,
     isSelectAll,
-    isNavigationMenuInEditMode,
     selectedRecord,
     numberOfSelectedRecords: contextStoreNumberOfSelectedRecords,
     viewType: viewType ?? undefined,

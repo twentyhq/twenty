@@ -7,7 +7,6 @@ import { RestoreMultipleRecordsAction } from '@/action-menu/actions/record-actio
 import { UpdateMultipleRecordsAction } from '@/action-menu/actions/record-actions/multiple-records/components/UpdateMultipleRecordsAction';
 import { MultipleRecordsActionKeys } from '@/action-menu/actions/record-actions/multiple-records/types/MultipleRecordsActionKeys';
 import { CreateNewIndexRecordNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/components/CreateNewIndexRecordNoSelectionRecordAction';
-import { EditNavigationSidebarNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/components/EditNavigationSidebarNoSelectionRecordAction';
 import { CreateNewViewNoSelectionRecord } from '@/action-menu/actions/record-actions/no-selection/components/CreateNewViewNoSelectionRecord';
 import { HideDeletedRecordsNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/components/HideDeletedRecordsNoSelectionRecordAction';
 import { ImportRecordsNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/components/ImportRecordsNoSelectionRecordAction';
@@ -117,16 +116,10 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     position: 2,
     isPinned: true,
     Icon: IconPlus,
-    shouldBeRegistered: ({
-      objectPermissions,
-      hasAnySoftDeleteFilterOnView,
-      isNavigationMenuInEditMode,
-    }) =>
-      isNavigationMenuInEditMode
-        ? false
-        : ((objectPermissions.canUpdateObjectRecords &&
-            !hasAnySoftDeleteFilterOnView) ??
-          false),
+    shouldBeRegistered: ({ objectPermissions, hasAnySoftDeleteFilterOnView }) =>
+      (objectPermissions.canUpdateObjectRecords &&
+        !hasAnySoftDeleteFilterOnView) ??
+      false,
     availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
     component: <CreateNewIndexRecordNoSelectionRecordAction />,
   },
@@ -144,14 +137,12 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       selectedRecord,
       hasAnySoftDeleteFilterOnView,
       objectPermissions,
-      isNavigationMenuInEditMode,
     }) =>
       (isDefined(selectedRecord) &&
         !selectedRecord.isRemote &&
         !hasAnySoftDeleteFilterOnView &&
         objectPermissions.canSoftDeleteObjectRecords &&
-        !isDefined(selectedRecord?.deletedAt) &&
-        !isNavigationMenuInEditMode) ??
+        !isDefined(selectedRecord?.deletedAt)) ??
       false,
     availableOn: [
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
@@ -174,16 +165,13 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       isRemote,
       hasAnySoftDeleteFilterOnView,
       numberOfSelectedRecords,
-      isNavigationMenuInEditMode,
     }) =>
-      isNavigationMenuInEditMode
-        ? false
-        : ((objectPermissions.canSoftDeleteObjectRecords &&
-            !isRemote &&
-            !hasAnySoftDeleteFilterOnView &&
-            isDefined(numberOfSelectedRecords) &&
-            numberOfSelectedRecords < BACKEND_BATCH_REQUEST_MAX_COUNT) ??
-          false),
+      (objectPermissions.canSoftDeleteObjectRecords &&
+        !isRemote &&
+        !hasAnySoftDeleteFilterOnView &&
+        isDefined(numberOfSelectedRecords) &&
+        numberOfSelectedRecords < BACKEND_BATCH_REQUEST_MAX_COUNT) ??
+      false,
     availableOn: [ActionViewType.INDEX_PAGE_BULK_SELECTION],
     component: <DeleteMultipleRecordsAction />,
   },
@@ -203,17 +191,14 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       isRemote,
       isShowPage,
       hasAnySoftDeleteFilterOnView,
-      isNavigationMenuInEditMode,
     }) =>
-      isNavigationMenuInEditMode
-        ? false
-        : ((!isRemote &&
-            isDefined(selectedRecord?.deletedAt) &&
-            objectPermissions.canSoftDeleteObjectRecords &&
-            ((isDefined(isShowPage) && isShowPage) ||
-              (isDefined(hasAnySoftDeleteFilterOnView) &&
-                hasAnySoftDeleteFilterOnView))) ??
-          false),
+      (!isRemote &&
+        isDefined(selectedRecord?.deletedAt) &&
+        objectPermissions.canSoftDeleteObjectRecords &&
+        ((isDefined(isShowPage) && isShowPage) ||
+          (isDefined(hasAnySoftDeleteFilterOnView) &&
+            hasAnySoftDeleteFilterOnView))) ??
+      false,
     availableOn: [
       ActionViewType.SHOW_PAGE,
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
@@ -235,17 +220,14 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       isRemote,
       hasAnySoftDeleteFilterOnView,
       numberOfSelectedRecords,
-      isNavigationMenuInEditMode,
     }) =>
-      isNavigationMenuInEditMode
-        ? false
-        : ((objectPermissions.canSoftDeleteObjectRecords &&
-            !isRemote &&
-            isDefined(hasAnySoftDeleteFilterOnView) &&
-            hasAnySoftDeleteFilterOnView &&
-            isDefined(numberOfSelectedRecords) &&
-            numberOfSelectedRecords < BACKEND_BATCH_REQUEST_MAX_COUNT) ??
-          false),
+      (objectPermissions.canSoftDeleteObjectRecords &&
+        !isRemote &&
+        isDefined(hasAnySoftDeleteFilterOnView) &&
+        hasAnySoftDeleteFilterOnView &&
+        isDefined(numberOfSelectedRecords) &&
+        numberOfSelectedRecords < BACKEND_BATCH_REQUEST_MAX_COUNT) ??
+      false,
     availableOn: [ActionViewType.INDEX_PAGE_BULK_SELECTION],
     component: <RestoreMultipleRecordsAction />,
   },
@@ -259,18 +241,11 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     Icon: IconTrashX,
     accent: 'danger',
     isPinned: true,
-    shouldBeRegistered: ({
-      selectedRecord,
-      objectPermissions,
-      isRemote,
-      isNavigationMenuInEditMode,
-    }) =>
-      isNavigationMenuInEditMode
-        ? false
-        : ((objectPermissions.canDestroyObjectRecords &&
-            !isRemote &&
-            isDefined(selectedRecord?.deletedAt)) ??
-          false),
+    shouldBeRegistered: ({ selectedRecord, objectPermissions, isRemote }) =>
+      (objectPermissions.canDestroyObjectRecords &&
+        !isRemote &&
+        isDefined(selectedRecord?.deletedAt)) ??
+      false,
     availableOn: [
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       ActionViewType.SHOW_PAGE,
@@ -292,17 +267,14 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       isRemote,
       hasAnySoftDeleteFilterOnView,
       numberOfSelectedRecords,
-      isNavigationMenuInEditMode,
     }) =>
-      isNavigationMenuInEditMode
-        ? false
-        : ((objectPermissions.canDestroyObjectRecords &&
-            !isRemote &&
-            isDefined(hasAnySoftDeleteFilterOnView) &&
-            hasAnySoftDeleteFilterOnView &&
-            isDefined(numberOfSelectedRecords) &&
-            numberOfSelectedRecords < BACKEND_BATCH_REQUEST_MAX_COUNT) ??
-          false),
+      (objectPermissions.canDestroyObjectRecords &&
+        !isRemote &&
+        isDefined(hasAnySoftDeleteFilterOnView) &&
+        hasAnySoftDeleteFilterOnView &&
+        isDefined(numberOfSelectedRecords) &&
+        numberOfSelectedRecords < BACKEND_BATCH_REQUEST_MAX_COUNT) ??
+      false,
     availableOn: [ActionViewType.INDEX_PAGE_BULK_SELECTION],
     component: <DestroyMultipleRecordsAction />,
   },
@@ -415,14 +387,8 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     Icon: IconEdit,
     accent: 'default',
     isPinned: true,
-    shouldBeRegistered: ({
-      objectPermissions,
-      isRemote,
-      isNavigationMenuInEditMode,
-    }) =>
-      !isNavigationMenuInEditMode &&
-      objectPermissions.canUpdateObjectRecords &&
-      !isRemote,
+    shouldBeRegistered: ({ objectPermissions, isRemote }) =>
+      objectPermissions.canUpdateObjectRecords && !isRemote,
     availableOn: [ActionViewType.INDEX_PAGE_BULK_SELECTION],
     component: <UpdateMultipleRecordsAction />,
   },
@@ -440,9 +406,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       objectMetadataItem,
       numberOfSelectedRecords,
       objectPermissions,
-      isNavigationMenuInEditMode,
     }) =>
-      !isNavigationMenuInEditMode &&
       isDefined(objectMetadataItem?.duplicateCriteria) &&
       isDefined(numberOfSelectedRecords) &&
       Boolean(objectPermissions.canUpdateObjectRecords) &&
@@ -476,10 +440,8 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     Icon: IconFileImport,
     accent: 'default',
     isPinned: false,
-    shouldBeRegistered: ({
-      hasAnySoftDeleteFilterOnView,
-      isNavigationMenuInEditMode,
-    }) => !isNavigationMenuInEditMode && !hasAnySoftDeleteFilterOnView,
+    shouldBeRegistered: ({ hasAnySoftDeleteFilterOnView }) =>
+      !hasAnySoftDeleteFilterOnView,
     availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
     component: <ImportRecordsNoSelectionRecordAction />,
     requiredPermissionFlag: PermissionFlagType.IMPORT_CSV,
@@ -795,22 +757,6 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     ),
     hotKeys: ['G', 'N'],
   },
-  [NoSelectionRecordActionKeys.EDIT_NAVIGATION_SIDEBAR]: {
-    type: ActionType.Navigation,
-    scope: ActionScope.Global,
-    key: NoSelectionRecordActionKeys.EDIT_NAVIGATION_SIDEBAR,
-    label: msg`Edit navigation sidebar`,
-    shortLabel: msg`Edit sidebar`,
-    position: 30,
-    Icon: IconLayout,
-    isPinned: false,
-    availableOn: [ActionViewType.GLOBAL],
-    shouldBeRegistered: ({ isFeatureFlagEnabled }) =>
-      isFeatureFlagEnabled(
-        FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED,
-      ),
-    component: <EditNavigationSidebarNoSelectionRecordAction />,
-  },
 
   [RecordPageLayoutSingleRecordActionKeys.EDIT_RECORD_PAGE_LAYOUT]: {
     key: RecordPageLayoutSingleRecordActionKeys.EDIT_RECORD_PAGE_LAYOUT,
@@ -893,5 +839,21 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       objectMetadataItem?.nameSingular !== CoreObjectNameSingular.Dashboard,
     availableOn: [ActionViewType.PAGE_EDIT_MODE],
     component: <CancelRecordPageLayoutSingleRecordAction />,
+  },
+  [NoSelectionRecordActionKeys.EDIT_NAVIGATION_SIDEBAR]: {
+    type: ActionType.Navigation,
+    scope: ActionScope.Global,
+    key: NoSelectionRecordActionKeys.EDIT_NAVIGATION_SIDEBAR,
+    label: msg`Edit navigation sidebar`,
+    shortLabel: msg`Edit sidebar`,
+    position: 30,
+    Icon: IconLayout,
+    isPinned: false,
+    availableOn: [ActionViewType.GLOBAL],
+    shouldBeRegistered: ({ isFeatureFlagEnabled }) =>
+      isFeatureFlagEnabled(
+        FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED,
+      ),
+    component: <EditNavigationSidebarNoSelectionRecordAction />,
   },
 };
