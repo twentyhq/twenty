@@ -260,7 +260,7 @@ const StyledButton = styled.button`
 
 ## Запрещение импорта типов
 
-Избегайте импорта типов. Чтобы поддерживать этот стандарт, Oxlint проверяет и сообщает о любых нарушениях импорта типов. Это помогает сохранить согласованность и читаемость кода TypeScript.
+Избегайте импорта типов. To enforce this standard, an Oxlint rule checks for and reports any type imports. Это помогает сохранить согласованность и читаемость кода TypeScript.
 
 ```tsx
 // ❌ Плохо
@@ -281,10 +281,10 @@ import { Meta, StoryObj } from '@storybook/react';
 
 * **Поддерживаемость**: Это повышает поддерживаемость кодовой базы, поскольку разработчики могут идентифицировать и находить импорты только типов при просмотре или изменении кода.
 
-### Правило Oxlint
+### Oxlint Rule
 
-Правило Oxlint `typescript/consistent-type-imports` обеспечивает соблюдение стандарта импортов без ключевого слова type. Это правило создаст ошибки или предупреждения для всех нарушений импорта типов.
+An Oxlint rule, `typescript/consistent-type-imports`, enforces the no-type import standard. Это правило создаст ошибки или предупреждения для всех нарушений импорта типов.
 
 Обратите внимание, что это правило касается редких крайних случаев, когда случаются непреднамеренные импорты типов. Сам TypeScript не рекомендует эту практику, как указано в [примечаниях к выпуску TypeScript 3.8](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-8.html). В большинстве случаев вам не нужно использовать импорты только типов.
 
-Чтобы гарантировать соответствие вашего кода этому правилу, убедитесь, что вы запускаете Oxlint как часть вашего рабочего процесса разработки.
+To ensure your code complies with this rule, make sure to run Oxlint as part of your development workflow.
