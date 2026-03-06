@@ -143,11 +143,10 @@ export class ApplicationDevelopmentResolver {
       );
     }
 
-    const applicationRegistrationId =
-      await this.findApplicationRegistrationId(
-        applicationUniversalIdentifier,
-        workspaceId,
-      );
+    const applicationRegistrationId = await this.findApplicationRegistrationId(
+      applicationUniversalIdentifier,
+      workspaceId,
+    );
 
     await this.ensureApplicationExists({
       universalIdentifier: applicationUniversalIdentifier,

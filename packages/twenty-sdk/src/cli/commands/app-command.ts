@@ -95,7 +95,9 @@ export const registerCommands = (program: Command): void => {
 
   program
     .command('app:build [appPath]')
-    .description('Build the application into .twenty/output/ (no server needed)')
+    .description(
+      'Build the application into .twenty/output/ (no server needed)',
+    )
     .option('--tarball', 'Also pack into a .tgz tarball')
     .action(async (appPath, options) => {
       await buildCommand.execute({
@@ -106,7 +108,9 @@ export const registerCommands = (program: Command): void => {
 
   program
     .command('app:publish [appPath]')
-    .description('Build and publish to npm, or to a Twenty server with --server')
+    .description(
+      'Build and publish to npm, or to a Twenty server with --server',
+    )
     .option('--server <url>', 'Publish to a Twenty server instead of npm')
     .option('--token <token>', 'Auth token for the server')
     .option('--tag <tag>', 'npm dist-tag (e.g. beta, next)')

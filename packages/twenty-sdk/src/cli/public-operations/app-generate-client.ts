@@ -97,7 +97,4 @@ const innerAppGenerateClient = async (
 export const appGenerateClient = (
   options: AppGenerateClientOptions,
 ): Promise<CommandResult<AppGenerateClientResult>> =>
-  runSafe(
-    () => innerAppGenerateClient(options),
-    APP_ERROR_CODES.SYNC_FAILED,
-  );
+  runSafe(() => innerAppGenerateClient(options), APP_ERROR_CODES.SYNC_FAILED);

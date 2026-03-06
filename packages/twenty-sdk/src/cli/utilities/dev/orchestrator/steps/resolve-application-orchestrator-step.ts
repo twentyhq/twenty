@@ -60,7 +60,8 @@ export class ResolveApplicationOrchestratorStep {
     } else {
       this.state.applyStepEvents([
         {
-          message: 'Application not yet created (will be created on first sync)',
+          message:
+            'Application not yet created (will be created on first sync)',
           status: 'info',
         },
       ]);
