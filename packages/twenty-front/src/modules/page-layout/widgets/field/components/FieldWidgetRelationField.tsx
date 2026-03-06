@@ -14,8 +14,8 @@ const StyledContainer = styled.div`
 
 const StyledRelationChipsContainer = styled.div`
   display: flex;
-  gap: ${themeCssVariables.spacing[1]};
   flex-wrap: wrap;
+  gap: ${themeCssVariables.spacing[1]};
 `;
 
 type FieldWidgetRelationFieldProps = {

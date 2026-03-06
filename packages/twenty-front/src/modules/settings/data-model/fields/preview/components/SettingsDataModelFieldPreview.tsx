@@ -35,14 +35,14 @@ const StyledFieldPreview = styled.div<{ shrink?: boolean }>`
   gap: ${themeCssVariables.spacing[2]};
   height: fit-content;
   line-height: 24px;
+  margin-top: ${themeCssVariables.spacing[2]};
   overflow: hidden;
   padding: 0
     ${({ shrink }) =>
       shrink ? themeCssVariables.spacing[1] : themeCssVariables.spacing[2]};
-  white-space: nowrap;
-  margin-top: ${themeCssVariables.spacing[2]};
-  padding-top: ${themeCssVariables.spacing[2]};
   padding-bottom: ${themeCssVariables.spacing[2]};
+  padding-top: ${themeCssVariables.spacing[2]};
+  white-space: nowrap;
 `;
 
 const StyledFieldLabel = styled.div`

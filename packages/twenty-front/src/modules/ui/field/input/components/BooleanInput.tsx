@@ -6,16 +6,16 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledEditableBooleanFieldContainer = styled.div<{ readonly?: boolean }>`
   align-items: center;
-  cursor: ${({ onClick }) => (onClick ? 'pointer' : 'default')};
-  display: flex;
-
-  height: 100%;
-  width: 100%;
-
   color: ${({ readonly }) =>
     readonly
       ? themeCssVariables.font.color.tertiary
       : themeCssVariables.font.color.primary};
+  cursor: ${({ onClick }) => (onClick ? 'pointer' : 'default')};
+
+  display: flex;
+  height: 100%;
+
+  width: 100%;
 `;
 
 type BooleanInputProps = {

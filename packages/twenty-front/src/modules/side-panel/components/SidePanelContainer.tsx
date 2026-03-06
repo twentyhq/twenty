@@ -13,14 +13,14 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledSidePanelContainer = styled.div<{ isMobile: boolean }>`
+  display: flex;
+  flex: 1;
+  flex-direction: column;
   max-height: ${({ isMobile }) => {
     const mobileOffset = isMobile ? themeCssVariables.spacing[16] : '0px';
 
     return `calc(100% - ${mobileOffset})`;
   }};
-  display: flex;
-  flex-direction: column;
-  flex: 1;
 `;
 
 type SidePanelContainerProps = {

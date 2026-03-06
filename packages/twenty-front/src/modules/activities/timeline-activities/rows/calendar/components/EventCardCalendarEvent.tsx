@@ -43,9 +43,9 @@ const StyledCalendarEventContent = styled.div`
 const StyledCalendarEventTop = styled.div`
   align-items: center;
   display: flex;
-  width: 100%;
   gap: ${themeCssVariables.spacing[2]};
   justify-content: space-between;
+  width: 100%;
 `;
 
 const StyledCalendarEventTitle = styled.div`
@@ -68,15 +68,15 @@ const StyledCalendarEventBody = styled.div`
 `;
 
 const StyledCalendarEventDateCard = styled.div`
-  display: flex;
-  padding: ${themeCssVariables.spacing[1]};
-  flex-direction: column;
-  justify-content: center;
   align-items: center;
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  border-radius: ${themeCssVariables.spacing[1]};
+  display: flex;
+  flex-direction: column;
   gap: ${themeCssVariables.spacing[1]};
 
-  border-radius: ${themeCssVariables.spacing[1]};
-  border: 1px solid ${themeCssVariables.border.color.medium};
+  justify-content: center;
+  padding: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledCalendarEventDateCardMonth = styled.div`

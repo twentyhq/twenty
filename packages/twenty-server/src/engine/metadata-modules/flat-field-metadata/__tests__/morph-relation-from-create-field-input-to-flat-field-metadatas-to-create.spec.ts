@@ -5,7 +5,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
-import { AppRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/app-registration-source-type.enum';
+import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -27,7 +27,7 @@ const MOCK_FLAT_APPLICATION: FlatApplication = {
   description: null,
   workspaceId: 'workspace-id',
   version: null,
-  sourceType: AppRegistrationSourceType.LOCAL,
+  sourceType: ApplicationRegistrationSourceType.LOCAL,
   sourcePath: '',
   packageJsonChecksum: null,
   packageJsonFileId: null,

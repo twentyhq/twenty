@@ -14,9 +14,9 @@ import { SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInput } fro
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledFilterRow = styled.div`
+  align-items: center;
   display: flex;
   flex-direction: row;
-  align-items: center;
   gap: ${themeCssVariables.spacing[2]};
 `;
 

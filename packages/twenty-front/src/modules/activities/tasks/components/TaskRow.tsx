@@ -23,24 +23,24 @@ const StyledTaskBody = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
   display: flex;
   max-width: calc(80% - ${themeCssVariables.spacing[2]});
-  text-overflow: ellipsis;
   overflow: hidden;
   padding-bottom: 1px;
+  text-overflow: ellipsis;
 `;
 
 const StyledTaskTitle = styled.div<{
   completed: boolean;
 }>`
+  align-items: center;
   color: ${themeCssVariables.font.color.primary};
   font-weight: ${themeCssVariables.font.weight.medium};
+  overflow: hidden;
   padding: 0 ${themeCssVariables.spacing[2]};
   padding-bottom: 1px;
   text-decoration: ${({ completed }) => (completed ? 'line-through' : 'none')};
-  white-space: nowrap;
-  overflow: hidden;
   text-overflow: ellipsis;
 
-  align-items: center;
+  white-space: nowrap;
 `;
 
 const StyledDueDate = styled.div<{

@@ -19,8 +19,8 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 const StyledInputsContainer = styled.div`
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
-  width: 100%;
   margin-bottom: ${themeCssVariables.spacing[2]};
+  width: 100%;
 `;
 
 const StyledInputContainer = styled.div`

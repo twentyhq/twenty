@@ -40,20 +40,20 @@ const StyledContentWrapper = styled.div`
 
 const StyledToolbar = styled.div`
   align-items: center;
-  border-radius: ${themeCssVariables.border.radius.md};
-  border: 1px solid ${themeCssVariables.border.color.medium};
   background-color: ${themeCssVariables.background.secondary};
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  border-radius: ${themeCssVariables.border.radius.md};
   bottom: ${themeCssVariables.spacing[3]};
+  box-shadow: ${themeCssVariables.boxShadow.strong};
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   left: 50%;
+  padding: ${themeCssVariables.spacing[3]};
   position: absolute;
   transform: translateX(-50%);
   width: 400px;
-  padding: ${themeCssVariables.spacing[3]};
   z-index: 1;
-  box-shadow: ${themeCssVariables.boxShadow.strong};
 `;
 
 const StyledButtonContainer = styled.div`
@@ -206,11 +206,11 @@ export const ValidationStep = ({
     if (filterByErrors) {
       return data.filter((value) => {
         if (isDefined(value?.__errors)) {
-            return (
-              (Object.values(value.__errors)?.filter(
-                (err) => err.level === 'error',
-              ).length ?? 0) > 0
-            );
+          return (
+            (Object.values(value.__errors)?.filter(
+              (err) => err.level === 'error',
+            ).length ?? 0) > 0
+          );
         }
         return false;
       });

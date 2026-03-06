@@ -49,12 +49,15 @@ const StyledDateInputAbsoluteContainer = styled.div`
 const StyledDateInput = styled.input<{ hasError?: boolean }>`
   background-color: transparent;
   border: none;
+  color: ${({ hasError }) =>
+    hasError
+      ? themeCssVariables.color.red
+      : themeCssVariables.font.color.primary};
   color: ${themeCssVariables.font.color.primary};
   font-family: ${themeCssVariables.font.family};
   font-size: inherit;
   font-weight: inherit;
   outline: none;
-  padding: ${themeCssVariables.spacing[0]} ${themeCssVariables.spacing[2]};
 
   &::placeholder,
   &::-webkit-input-placeholder {
@@ -67,10 +70,7 @@ const StyledDateInput = styled.input<{ hasError?: boolean }>`
     color: ${themeCssVariables.font.color.tertiary};
   }
 
-  color: ${({ hasError }) =>
-    hasError
-      ? themeCssVariables.color.red
-      : themeCssVariables.font.color.primary};
+  padding: ${themeCssVariables.spacing[0]} ${themeCssVariables.spacing[2]};
 `;
 
 const StyledDateInputContainer = styled.div`

@@ -10,8 +10,8 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div<{ fullWidth?: boolean }>`
   display: flex;
-  gap: ${themeCssVariables.spacing[3]};
   flex-wrap: wrap;
+  gap: ${themeCssVariables.spacing[3]};
 
   > * {
     flex: 1;

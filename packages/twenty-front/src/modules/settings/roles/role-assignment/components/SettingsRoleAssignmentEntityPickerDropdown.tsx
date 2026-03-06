@@ -21,8 +21,8 @@ const StyledLoadingContainer = styled.div`
 `;
 
 const StyledDropdownItem = styled.div`
-  padding: ${themeCssVariables.spacing[2]};
   cursor: pointer;
+  padding: ${themeCssVariables.spacing[2]};
 
   &:hover {
     background-color: ${themeCssVariables.background.transparent.lighter};

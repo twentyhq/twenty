@@ -1,6 +1,7 @@
 import {
   type CanActivate,
   type ExecutionContext,
+  ForbiddenException,
   Injectable,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
@@ -60,7 +61,7 @@ export class FeatureFlagGuard implements CanActivate {
     );
 
     if (!isEnabled) {
-      throw new Error(
+      throw new ForbiddenException(
         `Feature flag "${featureFlag}" is not enabled for this workspace`,
       );
     }

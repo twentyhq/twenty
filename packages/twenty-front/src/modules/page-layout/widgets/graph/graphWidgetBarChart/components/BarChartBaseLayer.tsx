@@ -20,10 +20,10 @@ type BarChartBaseLayerProps = {
 
 const StyledBaseCanvas = styled.canvas`
   display: block;
+  left: 0;
   pointer-events: none;
   position: absolute;
   top: 0;
-  left: 0;
 `;
 
 export const BarChartBaseLayer = ({

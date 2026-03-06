@@ -24,8 +24,8 @@ const StyledButtonContainer = styled.div`
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
-  overflow: visible;
   gap: ${themeCssVariables.spacing[2]};
+  overflow: visible;
 `;
 
 export const SettingsApiKeys = () => {

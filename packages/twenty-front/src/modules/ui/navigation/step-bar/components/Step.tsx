@@ -21,13 +21,13 @@ const StyledContainer = styled.div<{ isLast: boolean }>`
 
 const StyledStepCircleBase = styled.div<{ isInNextSteps: boolean }>`
   align-items: center;
-  border-radius: 50%;
-  border-style: solid;
-  border-width: 1px;
   border-color: ${({ isInNextSteps }) =>
     isInNextSteps
       ? themeCssVariables.border.color.medium
       : themeCssVariables.border.color.inverted} !important;
+  border-radius: 50%;
+  border-style: solid;
+  border-width: 1px;
   display: flex;
   flex-basis: auto;
   flex-shrink: 0;

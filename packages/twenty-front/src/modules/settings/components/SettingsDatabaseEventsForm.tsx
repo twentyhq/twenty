@@ -14,14 +14,14 @@ const OBJECT_MOBILE_WIDTH = 150;
 const ACTION_MOBILE_WIDTH = 140;
 
 const StyledFilterRow = styled.div<{ isMobile: boolean }>`
+  align-items: center;
   display: grid;
+  gap: ${themeCssVariables.spacing[2]};
   grid-template-columns: ${({ isMobile }) =>
     isMobile
       ? `${OBJECT_MOBILE_WIDTH}px ${ACTION_MOBILE_WIDTH}px auto`
       : `${OBJECT_DROPDOWN_WIDTH}px ${ACTION_DROPDOWN_WIDTH}px auto`};
-  gap: ${themeCssVariables.spacing[2]};
   margin-bottom: ${themeCssVariables.spacing[2]};
-  align-items: center;
 `;
 
 const StyledPlaceholder = styled.div`

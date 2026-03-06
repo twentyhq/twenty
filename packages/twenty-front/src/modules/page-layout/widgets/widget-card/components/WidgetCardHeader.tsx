@@ -31,8 +31,8 @@ export type WidgetCardHeaderProps = {
 const StyledWidgetCardHeader = styled.div`
   align-items: center;
   display: flex;
-  height: ${themeCssVariables.spacing[6]};
   flex-shrink: 0;
+  height: ${themeCssVariables.spacing[6]};
 `;
 
 const StyledTitleContainer = styled.div<{ variant: WidgetCardVariant }>`
@@ -40,28 +40,28 @@ const StyledTitleContainer = styled.div<{ variant: WidgetCardVariant }>`
   flex: 1;
   font-size: ${themeCssVariables.font.size.md};
   font-weight: ${themeCssVariables.font.weight.medium};
-  user-select: none;
   overflow: hidden;
-
   padding-inline: ${({ variant }) =>
     variant === 'side-column' ? '0' : themeCssVariables.spacing[1]};
+
+  user-select: none;
 `;
 
 const StyledRightContainer = styled.div`
-  display: flex;
   align-items: center;
+  display: flex;
   gap: ${themeCssVariables.spacing[0.5]};
 `;
 
 const StyledActionsContainer = styled.div`
-  display: flex;
   align-items: center;
+  display: flex;
   gap: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledIconButtonContainerBase = styled.div`
-  display: flex;
   align-items: center;
+  display: flex;
   justify-content: center;
 `;
 const StyledIconButtonContainer = motion.create(StyledIconButtonContainerBase);
