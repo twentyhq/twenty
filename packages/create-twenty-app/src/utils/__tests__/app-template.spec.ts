@@ -681,7 +681,7 @@ describe('copyBaseApplicationProject', () => {
       expect(content).toContain(
         'objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER',
       );
-      expect(content).toContain("name: 'example-view'");
+      expect(content).toContain("name: 'All example items'");
       expect(content).toContain('fields: [');
       expect(content).toContain(
         'fieldMetadataUniversalIdentifier: NAME_FIELD_UNIVERSAL_IDENTIFIER',
@@ -718,6 +718,7 @@ describe('copyBaseApplicationProject', () => {
       expect(content).toContain('export default defineNavigationMenuItem({');
       expect(content).toContain("name: 'example-navigation-menu-item'");
       expect(content).toContain("icon: 'IconList'");
+      expect(content).toContain("color: 'blue'");
       expect(content).toContain('position: 0');
     });
   });

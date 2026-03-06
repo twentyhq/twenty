@@ -56,7 +56,7 @@ export const useFindOneRecord = <T extends ObjectRecord = ObjectRecord>({
   const { data, loading, error, refetch } = useQuery<{
     [nameSingular: string]: RecordGqlNode;
   }>(findOneRecordQuery, {
-    skip: !objectMetadataItem || !objectRecordId || skip || !hasReadPermission,
+    skip: !isDefined(objectMetadataItem) || !objectRecordId || skip || !hasReadPermission,
     variables: { objectRecordId },
     client: apolloCoreClient,
     onCompleted: (data) => {

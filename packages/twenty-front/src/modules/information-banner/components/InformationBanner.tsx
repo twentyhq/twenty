@@ -18,7 +18,7 @@ const StyledText = styled.div`
   white-space: nowrap;
 `;
 
-const StyledCloseButton = styled(IconButton)`
+const StyledCloseButtonContainer = styled.div`
   color: ${themeCssVariables.grayScale.gray1};
   display: flex;
 `;
@@ -79,13 +79,15 @@ export const InformationBanner = ({
             )}
           </StyledContent>
           {onClose && (
-            <StyledCloseButton
-              Icon={IconX}
-              size="small"
-              variant="tertiary"
-              onClick={onClose}
-              ariaLabel={t`Close banner`}
-            />
+            <StyledCloseButtonContainer>
+              <IconButton
+                Icon={IconX}
+                size="small"
+                variant="tertiary"
+                onClick={onClose}
+                ariaLabel={t`Close banner`}
+              />
+            </StyledCloseButtonContainer>
           )}
         </Banner>
       )}

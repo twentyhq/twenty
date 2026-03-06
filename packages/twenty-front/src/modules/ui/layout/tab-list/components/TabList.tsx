@@ -34,6 +34,11 @@ const StyledContainer = styled.div`
   }
 `;
 
+const StyledDropdownContainer = styled.div`
+  align-items: center;
+  display: flex;
+`;
+
 const StyledTabContainer = styled.div`
   display: flex;
   gap: ${TAB_LIST_GAP}px;
@@ -156,20 +161,22 @@ export const TabList = ({
             </StyledTabContainer>
 
             {hasHiddenTabs && (
-              <TabListDropdown
-                dropdownId={dropdownId}
-                onClose={() => {
-                  closeDropdown(dropdownId);
-                }}
-                overflow={{
-                  hiddenTabsCount,
-                  isActiveTabHidden,
-                }}
-                hiddenTabs={hiddenTabs}
-                activeTabId={activeTabId || ''}
-                onTabSelect={handleTabSelectFromDropdown}
-                loading={loading}
-              />
+              <StyledDropdownContainer>
+                <TabListDropdown
+                  dropdownId={dropdownId}
+                  onClose={() => {
+                    closeDropdown(dropdownId);
+                  }}
+                  overflow={{
+                    hiddenTabsCount,
+                    isActiveTabHidden,
+                  }}
+                  hiddenTabs={hiddenTabs}
+                  activeTabId={activeTabId || ''}
+                  onTabSelect={handleTabSelectFromDropdown}
+                  loading={loading}
+                />
+              </StyledDropdownContainer>
             )}
           </StyledContainer>
         </NodeDimension>

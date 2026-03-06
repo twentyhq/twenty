@@ -26,11 +26,11 @@ import { WorkflowAiAgentPermissionsFlagList } from './WorkflowAiAgentPermissions
 import { WorkflowAiAgentPermissionsObjectsList } from './WorkflowAiAgentPermissionsObjectsList';
 import { getFilteredPermissions } from './workflowAiAgentPermissions.utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-const StyledSearchInput = styled(TextInput)`
+const StyledSearchInputContainer = styled.div`
   width: 100%;
   height: 40px;
   border-block: 1px solid ${themeCssVariables.border.color.medium};
-  input {
+  & input {
     height: 40px;
     line-height: 40px;
     border: none;
@@ -198,16 +198,18 @@ export const WorkflowAiAgentPermissionsTab = ({
         </StyledBackButton>
       )}
 
-      <StyledSearchInput
-        value={searchQuery}
-        onChange={(value: string) => setSearchQuery(value)}
-        placeholder={t`Type anything...`}
-        onKeyDown={(event) => {
-          if (isNonTextWritingKey(event.key)) {
-            event.stopPropagation();
-          }
-        }}
-      />
+      <StyledSearchInputContainer>
+        <TextInput
+          value={searchQuery}
+          onChange={(value: string) => setSearchQuery(value)}
+          placeholder={t`Type anything...`}
+          onKeyDown={(event) => {
+            if (isNonTextWritingKey(event.key)) {
+              event.stopPropagation();
+            }
+          }}
+        />
+      </StyledSearchInputContainer>
 
       {shouldShowCrudList && (
         <WorkflowAiAgentPermissionsCrudList

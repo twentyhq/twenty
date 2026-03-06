@@ -4,10 +4,8 @@ exports[`Install application should fail when feature flag is disabled should fa
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "subCode": "FORBIDDEN",
-    "userFriendlyMessage": "You do not have permission to perform this action.",
+    "userFriendlyMessage": "An error occurred.",
   },
-  "message": "Application installation from tarball is not enabled",
-  "name": "ForbiddenError",
+  "message": "Feature flag "IS_APPLICATION_ENABLED" is not enabled for this workspace",
 }
 `;

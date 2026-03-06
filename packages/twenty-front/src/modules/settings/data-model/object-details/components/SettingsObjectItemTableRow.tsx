@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { type ReactNode, useContext } from 'react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -5,10 +6,11 @@ import { useLingui } from '@lingui/react/macro';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
 import { SettingsItemTypeTag } from '@/settings/components/SettingsItemTypeTag';
+import { TableRow } from '@/ui/layout/table/components/TableRow';
 import {
+  SETTINGS_OBJECT_TABLE_ROW_GRID_TEMPLATE_COLUMNS,
   StyledActionTableCell,
   StyledNameTableCell,
-  StyledObjectTableRow,
 } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRowStyledComponents';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { useIcons } from 'twenty-ui/display';
@@ -63,9 +65,13 @@ export const SettingsObjectMetadataItemTableRow = ({
   const Icon = getIcon(objectMetadataItem.icon);
 
   return (
-    <StyledObjectTableRow key={objectMetadataItem.namePlural} to={link}>
+    <TableRow
+      gridTemplateColumns={SETTINGS_OBJECT_TABLE_ROW_GRID_TEMPLATE_COLUMNS}
+      key={objectMetadataItem.namePlural}
+      to={link}
+    >
       <StyledNameTableCell>
-        {!!Icon && (
+        {isDefined(Icon) && (
           <Icon
             style={{
               minWidth: theme.icon.size.md,
@@ -95,6 +101,6 @@ export const SettingsObjectMetadataItemTableRow = ({
       </TableCell>
       <TableCell align="right">{totalObjectCount}</TableCell>
       <StyledActionTableCell>{action}</StyledActionTableCell>
-    </StyledObjectTableRow>
+    </TableRow>
   );
 };

@@ -40,7 +40,11 @@ export const RecordDetailDuplicatesSection = ({
       objectRecordIds: duplicateRecordIds,
     });
 
-  if (!queryResults || !queryResults[0] || queryResults[0].length === 0)
+  if (
+    !isDefined(queryResults) ||
+    !isDefined(queryResults[0]) ||
+    queryResults[0].length === 0
+  )
     return null;
 
   return (

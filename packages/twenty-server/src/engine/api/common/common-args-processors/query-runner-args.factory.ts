@@ -14,7 +14,7 @@ export class QueryRunnerArgsFactory {
 
   async overrideValueByFieldMetadata(
     key: string,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
     value: any,
     fieldIdByName: Record<string, string>,
     flatObjectMetadata: FlatObjectMetadata,

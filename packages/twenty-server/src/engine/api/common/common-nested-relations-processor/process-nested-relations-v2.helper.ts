@@ -50,7 +50,7 @@ export class ProcessNestedRelationsV2Helper {
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
     parentObjectMetadataItem: FlatObjectMetadata;
     parentObjectRecords: T[];
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
     parentObjectRecordsAggregatedValues?: Record<string, any>;
     relations: Record<string, FindOptionsRelations<ObjectLiteral>>;
     aggregate?: Record<string, AggregationField>;
@@ -58,7 +58,7 @@ export class ProcessNestedRelationsV2Helper {
     authContext: WorkspaceAuthContext;
     workspaceDataSource: GlobalWorkspaceDataSource;
     rolePermissionConfig?: RolePermissionConfig;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
     selectedFields: Record<string, any>;
   }): Promise<void> {
     const processRelationTasks = Object.entries(relations).map(
@@ -105,7 +105,7 @@ export class ProcessNestedRelationsV2Helper {
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
     parentObjectMetadataItem: FlatObjectMetadata;
     parentObjectRecords: T[];
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
     parentObjectRecordsAggregatedValues: Record<string, any>;
     sourceFieldName: string;
     nestedRelations: FindOptionsRelations<ObjectLiteral>;
@@ -309,7 +309,7 @@ export class ProcessNestedRelationsV2Helper {
   }: {
     records: ObjectRecord[];
     idField: string;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
   }): any[] {
     return [...new Set(records.map((item) => item[idField]))];
   }
@@ -323,24 +323,24 @@ export class ProcessNestedRelationsV2Helper {
     sourceFieldName,
     targetObjectNameSingular,
   }: {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
     referenceQueryBuilder: WorkspaceSelectQueryBuilder<any>;
     column: string;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
     ids: any[];
     limit: number;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
     aggregate: Record<string, any>;
     sourceFieldName: string;
     targetObjectNameSingular: string;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
   }): Promise<{ relationResults: any[]; relationAggregatedFieldsResult: any }> {
     if (ids.length === 0) {
       return { relationResults: [], relationAggregatedFieldsResult: {} };
     }
 
     const aggregateForRelation = aggregate[sourceFieldName];
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
     let relationAggregatedFieldsResult: Record<string, any> = {};
 
     if (aggregateForRelation) {
@@ -401,11 +401,11 @@ export class ProcessNestedRelationsV2Helper {
     relationType,
   }: {
     parentRecords: ObjectRecord[];
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
     parentObjectRecordsAggregatedValues: Record<string, any>;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
     relationResults: any[];
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
     relationAggregatedFieldsResult: Record<string, any>;
     sourceFieldName: string;
     joinField: string;

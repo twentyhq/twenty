@@ -97,17 +97,7 @@
         "command": "rimraf {projectRoot}/dist"
       }
     },
-    "lint": {
-      "options": {
-        "lintFilePatterns": [
-          "{projectRoot}/src/**/*.{ts,tsx,json}",
-          "{projectRoot}/package.json"
-        ]
-      },
-      "configurations": {
-        "fix": {}
-      }
-    },
+    "lint": {},
     "fmt": {
       "options": {
         "files": "src"

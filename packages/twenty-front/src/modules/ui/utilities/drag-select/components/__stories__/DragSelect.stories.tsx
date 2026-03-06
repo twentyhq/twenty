@@ -60,11 +60,12 @@ const StyledLargeGrid = styled.div`
   height: 600px;
 `;
 
-const StyledScrollableWrapper = styled(ScrollWrapper)`
+const StyledScrollableWrapperContainer = styled.div`
   border: 1px solid ${themeCssVariables.border.color.light};
   border-radius: ${themeCssVariables.border.radius.md};
   height: 300px;
   width: 600px;
+  overflow: hidden;
 `;
 
 type SelectableItemProps = {
@@ -146,27 +147,32 @@ const ScrollableDragSelectDemo = () => {
   };
 
   return (
-    <StyledScrollableWrapper componentInstanceId="scrollable-demo">
-      <div ref={containerRef} style={{ position: 'relative', padding: '16px' }}>
-        <StyledLargeGrid>
-          {Array.from({ length: 36 }, (_, index) => (
-            <SelectableItem
-              key={index}
-              id={`scroll-item-${index}`}
-              selected={selectedItems.has(`scroll-item-${index}`)}
-            >
-              Item {index + 1}
-            </SelectableItem>
-          ))}
-        </StyledLargeGrid>
+    <StyledScrollableWrapperContainer>
+      <ScrollWrapper componentInstanceId="scrollable-demo">
+        <div
+          ref={containerRef}
+          style={{ position: 'relative', padding: '16px' }}
+        >
+          <StyledLargeGrid>
+            {Array.from({ length: 36 }, (_, index) => (
+              <SelectableItem
+                key={index}
+                id={`scroll-item-${index}`}
+                selected={selectedItems.has(`scroll-item-${index}`)}
+              >
+                Item {index + 1}
+              </SelectableItem>
+            ))}
+          </StyledLargeGrid>
 
-        <DragSelect
-          selectableItemsContainerRef={containerRef}
-          onDragSelectionChange={handleSelectionChange}
-          scrollWrapperComponentInstanceId="scrollable-demo"
-        />
-      </div>
-    </StyledScrollableWrapper>
+          <DragSelect
+            selectableItemsContainerRef={containerRef}
+            onDragSelectionChange={handleSelectionChange}
+            scrollWrapperComponentInstanceId="scrollable-demo"
+          />
+        </div>
+      </ScrollWrapper>
+    </StyledScrollableWrapperContainer>
   );
 };
 

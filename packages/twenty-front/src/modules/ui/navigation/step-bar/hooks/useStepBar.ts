@@ -47,7 +47,7 @@ export const useStepBar = ({ initialStep }: StepsOptions) => {
       setStep(initialStep);
     }
     // We only want this to happen on mount
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return {

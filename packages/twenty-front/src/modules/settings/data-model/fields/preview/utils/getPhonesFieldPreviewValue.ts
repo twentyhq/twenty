@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type FieldPhonesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { getSettingsFieldTypeConfig } from '@/settings/data-model/utils/getSettingsFieldTypeConfig';
@@ -20,7 +21,7 @@ export const countryCodeToCallingCode = (countryCode: string): string => {
 
   const callingCode = getCountryCallingCode(countryCode);
 
-  return callingCode ? `+${callingCode}` : '';
+  return isDefined(callingCode) ? `+${callingCode}` : '';
 };
 
 export const getPhonesFieldPreviewValue = ({

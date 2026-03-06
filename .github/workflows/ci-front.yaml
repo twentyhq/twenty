@@ -53,7 +53,7 @@ jobs:
       - name: Fetch local actions
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 10
       - name: Install dependencies
         uses: ./.github/actions/yarn-install
       - name: Diagnostic disk space issue
@@ -82,7 +82,7 @@ jobs:
       - name: Fetch local actions
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 10
       - name: Install dependencies
         uses: ./.github/actions/yarn-install
       - name: Build dependencies
@@ -125,7 +125,7 @@ jobs:
   #   steps:
   #     - uses: actions/checkout@v4
   #       with:
-  #         fetch-depth: 0
+  #         fetch-depth: 10
   #     - name: Install dependencies
   #       uses: ./.github/actions/yarn-install
   #     - uses: actions/download-artifact@v4
@@ -150,7 +150,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 10
       - name: Install dependencies
         uses: ./.github/actions/yarn-install
       - name: Restore storybook build cache
@@ -184,7 +184,7 @@ jobs:
       - name: Fetch custom Github Actions and base branch history
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 10
       - name: Install dependencies
         uses: ./.github/actions/yarn-install
       - name: Restore ${{ matrix.task }} cache
@@ -222,7 +222,7 @@ jobs:
       - name: Fetch custom Github Actions and base branch history
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 10
       - name: Install dependencies
         uses: ./.github/actions/yarn-install
       - name: Front / Write .env
@@ -268,7 +268,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 10
       - uses: actions/setup-node@v4
         with:
           node-version: lts/*

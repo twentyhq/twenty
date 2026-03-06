@@ -34,7 +34,7 @@ export const ExportMultipleRecordsAction = () => {
 
   const { closeActionMenu } = useCloseActionMenu({});
 
-  const exportProgress = progress
+  const exportProgress = isDefined(progress)
     ? {
         processedRecordCount: progress.processedRecordCount,
         totalRecordCount: progress.totalRecordCount,

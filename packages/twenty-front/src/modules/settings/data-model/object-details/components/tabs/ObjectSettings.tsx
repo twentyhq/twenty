@@ -29,8 +29,10 @@ const StyledContentContainer = styled.div`
   gap: ${themeCssVariables.spacing[8]};
 `;
 
-const StyledFormSection = styled(Section)`
-  padding-left: 0 !important;
+const StyledFormSectionContainer = styled.div`
+  > * {
+    padding-left: 0 !important;
+  }
 `;
 
 const StyledDangerButtonsContainer = styled.div`
@@ -90,16 +92,18 @@ export const ObjectSettings = ({
 
   return (
     <StyledContentContainer>
-      <StyledFormSection>
-        <H2Title
-          title={t`About`}
-          description={t`Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms.`}
-        />
-        <SettingsUpdateDataModelObjectAboutForm
-          objectMetadataItem={objectMetadataItem}
-        />
-      </StyledFormSection>
-      <StyledFormSection>
+      <StyledFormSectionContainer>
+        <Section>
+          <H2Title
+            title={t`About`}
+            description={t`Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms.`}
+          />
+          <SettingsUpdateDataModelObjectAboutForm
+            objectMetadataItem={objectMetadataItem}
+          />
+        </Section>
+      </StyledFormSectionContainer>
+      <StyledFormSectionContainer>
         <Section>
           <H2Title
             title={t`Options`}
@@ -109,9 +113,9 @@ export const ObjectSettings = ({
             objectMetadataItem={objectMetadataItem}
           />
         </Section>
-      </StyledFormSection>
+      </StyledFormSectionContainer>
       {!isReadOnly && (
-        <StyledFormSection>
+        <StyledFormSectionContainer>
           <Section>
             <H2Title
               title={t`Danger zone`}
@@ -136,7 +140,7 @@ export const ObjectSettings = ({
               )}
             </StyledDangerButtonsContainer>
           </Section>
-        </StyledFormSection>
+        </StyledFormSectionContainer>
       )}
       <ConfirmationModal
         modalInstanceId={DELETE_OBJECT_MODAL_ID}

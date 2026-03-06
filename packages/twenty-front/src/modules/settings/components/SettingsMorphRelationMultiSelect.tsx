@@ -153,7 +153,7 @@ export const SettingsMorphRelationMultiSelect = ({
   const { setSelectedItemId } = useSelectableList(dropdownId);
 
   const handleDropdownOpen = () => {
-    if (selectedOptions && selectedOptions.length > 0 && !searchInputValue) {
+    if (selectedOptions.length > 0 && !searchInputValue) {
       setSelectedItemId(selectedOptions[0].label);
     }
   };

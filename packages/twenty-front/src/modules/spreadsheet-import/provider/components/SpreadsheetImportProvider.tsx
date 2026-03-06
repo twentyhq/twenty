@@ -62,7 +62,7 @@ export const SpreadsheetImportProvider = (
         <React.Suspense fallback={<LoadingSkeleton />}>
           <SpreadsheetImport
             onClose={handleClose}
-            // eslint-disable-next-line react/jsx-props-no-spreading
+            // oxlint-disable-next-line react/jsx-props-no-spreading
             {...spreadsheetImportDialog.options}
           />
         </React.Suspense>

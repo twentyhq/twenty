@@ -1,4 +1,4 @@
-/* eslint-disable react/jsx-props-no-spreading */
+/* oxlint-disable react/jsx-props-no-spreading */
 import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import {

@@ -56,10 +56,10 @@ export const triggerUpdateGroupByQueriesOptimisticEffect = ({
         const updatedGroupByConnections = cachedGroupByConnections.map(
           (groupConnection) => {
             const groupByDimensionValues =
-              readField('groupByDimensionValues', groupConnection) || [];
+              readField('groupByDimensionValues', groupConnection) ?? [];
 
             const cachedEdges =
-              readField<RecordGqlRefEdge[]>('edges', groupConnection) || [];
+              readField<RecordGqlRefEdge[]>('edges', groupConnection) ?? [];
 
             const cachedTotalCount = readField<number | undefined>(
               'totalCount',
@@ -166,7 +166,7 @@ export const triggerUpdateGroupByQueriesOptimisticEffect = ({
             const dimensionKey = recordDimensionValues.join('|');
             const dimensionExists = updatedGroupByConnections.some((conn) => {
               const connDimensionValues =
-                readField('groupByDimensionValues', conn) || [];
+                readField('groupByDimensionValues', conn) ?? [];
               return (
                 Array.isArray(connDimensionValues) &&
                 connDimensionValues.join('|') === dimensionKey

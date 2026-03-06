@@ -39,7 +39,7 @@ describe('useCreateSSOIdentityProvider', () => {
       { wrapper: Wrapper },
     );
 
-    // eslint-disable-next-line unused-imports/no-unused-vars
+    // oxlint-disable-next-line unused-imports/no-unused-vars
     const { type, ...input } = OIDCParams;
     expect(mutationOIDCCallSpy).toHaveBeenCalledWith({
       onCompleted: expect.any(Function),
@@ -66,7 +66,7 @@ describe('useCreateSSOIdentityProvider', () => {
       { wrapper: Wrapper },
     );
 
-    // eslint-disable-next-line unused-imports/no-unused-vars
+    // oxlint-disable-next-line unused-imports/no-unused-vars
     const { type, ...input } = SAMLParams;
     expect(mutationOIDCCallSpy).not.toHaveBeenCalled();
     expect(mutationSAMLCallSpy).toHaveBeenCalledWith({

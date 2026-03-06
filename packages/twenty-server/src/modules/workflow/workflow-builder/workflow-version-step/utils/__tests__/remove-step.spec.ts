@@ -1,4 +1,4 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// oxlint-disable-next-line @typescripttypescript/ban-ts-comment
 // @ts-nocheck
 // Disabled type checking due to tsgo performance issue with deep spread operations
 // See: https://github.com/microsoft/typescript-go/issues/2551

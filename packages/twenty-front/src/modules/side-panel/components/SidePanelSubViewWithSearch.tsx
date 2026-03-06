@@ -79,7 +79,7 @@ export const SidePanelSubViewWithSearch = ({
         value={searchValue}
         onChange={(event) => onSearchChange(event.target.value)}
         autoFocus
-        // eslint-disable-next-line react/jsx-props-no-spreading
+        // oxlint-disable-next-line react/jsx-props-no-spreading
         {...searchInputProps}
       />
     </StyledSearchContainer>

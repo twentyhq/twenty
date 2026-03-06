@@ -33,7 +33,7 @@ export const settingsDataModelFieldDateFormSchema = z.object({
   settings: fieldDateSettings.optional(),
 });
 
-const StyledTextInput = styled(SettingsTextInput)`
+const StyledTextInputContainer = styled.div`
   padding: ${themeCssVariables.spacing[4]};
   padding-top: 0;
 `;
@@ -117,14 +117,16 @@ export const SettingsDataModelFieldDateForm = ({
           control={control}
           defaultValue={initialCustomUnicodeDateFormat}
           render={({ field: { onChange, value } }) => (
-            <StyledTextInput
-              instanceId="custom-date-format-input"
-              placeholder={t`Format e.g. d-MMM-y (qqq''yy)`}
-              value={value}
-              onChange={(value) => onChange(value)}
-              disabled={false}
-              fullWidth
-            />
+            <StyledTextInputContainer>
+              <SettingsTextInput
+                instanceId="custom-date-format-input"
+                placeholder={t`Format e.g. d-MMM-y (qqq''yy)`}
+                value={value}
+                onChange={(value) => onChange(value)}
+                disabled={false}
+                fullWidth
+              />
+            </StyledTextInputContainer>
           )}
         />
       </AnimatedExpandableContainer>

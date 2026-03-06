@@ -15,20 +15,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type ObjectPermission, type Role } from '~/generated-metadata/graphql';
 
-const StyledTableRow = styled(TableRow)<{ isDisabled: boolean }>`
-  align-items: center;
-  display: flex;
-  cursor: ${({ isDisabled }) => (isDisabled ? 'default' : 'pointer')};
-`;
-
-const StyledPermissionCell = styled(TableCell)`
-  align-items: center;
-  display: flex;
-  flex: 1;
-  gap: ${themeCssVariables.spacing[1]};
-  padding-left: ${themeCssVariables.spacing[2]};
-`;
-
 const StyledPermissionContent = styled.div`
   align-items: center;
   display: flex;
@@ -44,13 +30,6 @@ const StyledOverrideInfo = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
   display: flex;
   gap: ${themeCssVariables.spacing[1]};
-`;
-
-const StyledCheckboxCell = styled(TableCell)`
-  align-items: center;
-  display: flex;
-  justify-content: flex-end;
-  padding-right: ${themeCssVariables.spacing[1]};
 `;
 
 type OverridableCheckboxType = 'no_cta' | 'default' | 'override';
@@ -146,8 +125,11 @@ export const SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow =
     );
 
     return (
-      <StyledTableRow onClick={handleCheckboxChange} isDisabled={!isEditable}>
-        <StyledPermissionCell>
+      <TableRow
+        onClick={handleCheckboxChange}
+        cursor={!isEditable ? 'default' : 'pointer'}
+      >
+        <TableCell gap={themeCssVariables.spacing[1]}>
           <StyledPermissionContent>
             <PermissionIcon
               permission={permission.key as SettingsRoleObjectPermissionKey}
@@ -173,15 +155,19 @@ export const SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow =
               </>
             ) : null}
           </StyledOverrideInfo>
-        </StyledPermissionCell>
-        <StyledCheckboxCell onClick={(e) => e.stopPropagation()}>
+        </TableCell>
+        <TableCell
+          align="right"
+          padding={`0 ${themeCssVariables.spacing[1]} 0 ${themeCssVariables.spacing[2]}`}
+          onClick={(e) => e.stopPropagation()}
+        >
           <OverridableCheckbox
             onChange={handleCheckboxChange}
             disabled={!isEditable}
             type={checkboxType}
             checked={isChecked}
           />
-        </StyledCheckboxCell>
-      </StyledTableRow>
+        </TableCell>
+      </TableRow>
     );
   };

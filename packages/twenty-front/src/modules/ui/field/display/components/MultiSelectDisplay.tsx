@@ -1,4 +1,5 @@
 import { type FieldMultiSelectValue } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { isDefined } from 'twenty-shared/utils';
 import { styled } from '@linaria/react';
 import { Tag } from 'twenty-ui/components';
 import { type SelectOption } from 'twenty-ui/input';
@@ -27,7 +28,7 @@ export const MultiSelectDisplay = ({
     ? options?.filter((option) => values.includes(option.value))
     : [];
 
-  if (!selectedOptions) return null;
+  if (!isDefined(selectedOptions)) return null;
 
   return (
     <StyledContainer>

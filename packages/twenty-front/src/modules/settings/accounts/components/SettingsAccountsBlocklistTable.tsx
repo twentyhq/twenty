@@ -13,11 +13,11 @@ type SettingsAccountsBlocklistTableProps = {
   handleBlockedEmailRemove: (id: string) => void;
 };
 
-const StyledTable = styled(Table)`
+const StyledTableContainer = styled.div`
   margin-top: ${themeCssVariables.spacing[4]};
 `;
 
-const StyledTableBody = styled(TableBody)`
+const StyledTableBodyContainer = styled.div`
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
 `;
 
@@ -28,25 +28,29 @@ export const SettingsAccountsBlocklistTable = ({
   return (
     <>
       {blocklist.length > 0 && (
-        <StyledTable>
-          <TableRow
-            gridAutoColumns="200px 1fr 20px"
-            mobileGridAutoColumns="120px 1fr 20px"
-          >
-            <TableHeader>{t`Email/Domain`}</TableHeader>
-            <TableHeader>{t`Added to blocklist`}</TableHeader>
-            <TableHeader></TableHeader>
-          </TableRow>
-          <StyledTableBody>
-            {blocklist.map((blocklistItem) => (
-              <SettingsAccountsBlocklistTableRow
-                key={blocklistItem.id}
-                blocklistItem={blocklistItem}
-                onRemove={handleBlockedEmailRemove}
-              />
-            ))}
-          </StyledTableBody>
-        </StyledTable>
+        <StyledTableContainer>
+          <Table>
+            <TableRow
+              gridAutoColumns="200px 1fr 20px"
+              mobileGridAutoColumns="120px 1fr 20px"
+            >
+              <TableHeader>{t`Email/Domain`}</TableHeader>
+              <TableHeader>{t`Added to blocklist`}</TableHeader>
+              <TableHeader></TableHeader>
+            </TableRow>
+            <StyledTableBodyContainer>
+              <TableBody>
+                {blocklist.map((blocklistItem) => (
+                  <SettingsAccountsBlocklistTableRow
+                    key={blocklistItem.id}
+                    blocklistItem={blocklistItem}
+                    onRemove={handleBlockedEmailRemove}
+                  />
+                ))}
+              </TableBody>
+            </StyledTableBodyContainer>
+          </Table>
+        </StyledTableContainer>
       )}
     </>
   );

@@ -15,6 +15,7 @@ import {
   OverflowingTextWithTooltip,
 } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
+import { isDefined } from 'twenty-shared/utils';
 import {
   MOBILE_VIEWPORT,
   ThemeContext,
@@ -126,7 +127,7 @@ export const PageHeader = ({
                 <Icon size={theme.icon.size.md} />
               </StyledIconContainer>
             )}
-            {title && (
+            {isDefined(title) && (
               <StyledTitleContainer data-testid="top-bar-title">
                 {typeof title === 'string' ? (
                   <OverflowingTextWithTooltip text={title} />

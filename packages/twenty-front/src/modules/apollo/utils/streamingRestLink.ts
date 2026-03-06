@@ -107,13 +107,13 @@ export class StreamingRestLink extends ApolloLink {
     try {
       const definition = operation.query.definitions[0];
 
-      if (!definition || definition.kind !== 'OperationDefinition') {
+      if (!isDefined(definition) || definition.kind !== 'OperationDefinition') {
         return null;
       }
 
       if (
-        !definition.selectionSet ||
-        !definition.selectionSet.selections ||
+        !isDefined(definition.selectionSet) ||
+        !isDefined(definition.selectionSet.selections) ||
         definition.selectionSet.selections.length === 0
       ) {
         return null;
@@ -121,7 +121,7 @@ export class StreamingRestLink extends ApolloLink {
 
       const selection = definition.selectionSet.selections[0];
 
-      if (!selection || !isDefined(selection.directives)) {
+      if (!isDefined(selection) || !isDefined(selection.directives)) {
         return null;
       }
 

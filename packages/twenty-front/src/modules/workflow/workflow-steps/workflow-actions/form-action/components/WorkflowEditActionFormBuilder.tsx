@@ -139,8 +139,11 @@ const StyledCalloutContainer = styled.div`
   padding-top: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledNotClosableCalloutContainer = styled(StyledCalloutContainer)`
+const StyledNotClosableCalloutContainer = styled.div`
   padding-bottom: ${themeCssVariables.spacing[4]};
+  padding-left: ${themeCssVariables.spacing[7]};
+  padding-right: ${themeCssVariables.spacing[7]};
+  padding-top: ${themeCssVariables.spacing[2]};
 `;
 
 export const WorkflowEditActionFormBuilder = ({

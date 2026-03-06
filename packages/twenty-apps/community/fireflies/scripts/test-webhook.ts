@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+/* oxlint-disable no-console */
 /**
  * Test script for Fireflies webhook against local Twenty instance
  *

@@ -10,6 +10,6 @@ export const filterUniqueRecordEdgesByCursor = (
 
     return seenCursors.has(currentCursor)
       ? false
-      : seenCursors.add(currentCursor);
+      : Boolean(seenCursors.add(currentCursor));
   });
 };

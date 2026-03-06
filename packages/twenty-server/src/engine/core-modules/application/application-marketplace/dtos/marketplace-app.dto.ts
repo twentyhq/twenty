@@ -2,6 +2,7 @@ import { Field, Int, ObjectType } from '@nestjs/graphql';
 
 import {
   IsArray,
+  IsBoolean,
   IsNotEmpty,
   IsNumber,
   IsOptional,
@@ -285,4 +286,8 @@ export class MarketplaceAppDTO {
   @IsString()
   @Field({ nullable: true })
   sourcePackage?: string;
+
+  @IsBoolean()
+  @Field(() => Boolean)
+  isFeatured: boolean;
 }

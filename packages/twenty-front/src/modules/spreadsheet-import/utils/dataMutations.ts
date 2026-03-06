@@ -56,7 +56,7 @@ export const addErrorsAndRunHooks = (
           values.forEach((value) => {
             if (
               fieldValidationDefinition.allowEmpty === true &&
-              (isUndefinedOrNull(value) || value === '' || !value)
+              (isUndefinedOrNull(value) || value === '' || !Boolean(value))
             ) {
               // If allowEmpty is set, we will not validate falsy fields such as undefined or empty string.
               return;
