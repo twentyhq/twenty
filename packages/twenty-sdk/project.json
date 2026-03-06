@@ -13,8 +13,7 @@
         "^production"
       ],
       "dependsOn": [
-        "^build",
-        "generate-metadata-client"
+        "^build"
       ],
       "outputs": [
         "{projectRoot}/dist"

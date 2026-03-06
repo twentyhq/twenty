@@ -25,6 +25,7 @@ jobs:
         packages/twenty-server/**
         packages/twenty-front/src/generated/**
         packages/twenty-front/src/generated-metadata/**
+        packages/twenty-sdk/src/clients/generated/metadata/**
         packages/twenty-emails/**
         packages/twenty-shared/**
 
@@ -175,7 +176,6 @@ jobs:
             echo ""
             exit 1
           fi
-
   server-test:
     needs: server-build
     timeout-minutes: 30
