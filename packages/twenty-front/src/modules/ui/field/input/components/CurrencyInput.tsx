@@ -3,12 +3,14 @@ import { styled } from '@linaria/react';
 import { useContext, useEffect, useRef, useState } from 'react';
 
 import { useRegisterInputEvents } from '@/object-record/record-field/ui/meta-types/input/hooks/useRegisterInputEvents';
+import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { CURRENCIES } from '@/settings/data-model/constants/Currencies';
 import { CurrencyPickerDropdownButton } from '@/ui/input/components/internal/currency/components/CurrencyPickerDropdownButton';
 import { type Currency } from '@/ui/input/components/internal/types/Currency';
 import { IMaskInput } from 'react-imask';
 import { type IconComponent } from 'twenty-ui/display';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { NumberFormat } from '@/localization/constants/NumberFormat';
 
 export const StyledIMaskInput = styled.div`
   > input {
@@ -68,6 +70,32 @@ export type CurrencyInputProps = {
   onSelect?: (newText: string) => void;
 };
 
+const getSeparatorsForNumberFormat = (format: NumberFormat) => {
+  switch (format) {
+    case NumberFormat.SPACES_AND_COMMA:
+      return {
+        thousandsSeparator: ' ',
+        radix: ',',
+      };
+    case NumberFormat.DOTS_AND_COMMA:
+      return {
+        thousandsSeparator: '.',
+        radix: ',',
+      };
+    case NumberFormat.APOSTROPHE_AND_DOT:
+      return {
+        thousandsSeparator: "'",
+        radix: '.',
+      };
+    case NumberFormat.COMMAS_AND_DOT:
+    default:
+      return {
+        thousandsSeparator: ',',
+        radix: '.',
+      };
+  }
+};
+
 export const CurrencyInput = ({
   instanceId,
   autoFocus,
@@ -85,8 +113,12 @@ export const CurrencyInput = ({
 }: CurrencyInputProps) => {
   const { theme } = useContext(ThemeContext);
   const [internalText, setInternalText] = useState(value);
+  const { numberFormat } = useNumberFormat();
 
   const wrapperRef = useRef<HTMLInputElement>(null);
+
+  const { thousandsSeparator, radix } =
+    getSeparatorsForNumberFormat(numberFormat);
 
   const handleChange = (value: string) => {
     setInternalText(value);
@@ -130,8 +162,8 @@ export const CurrencyInput = ({
       <StyledIMaskInput>
         <IMaskInput
           mask={Number}
-          thousandsSeparator=","
-          radix="."
+          thousandsSeparator={thousandsSeparator}
+          radix={radix}
           scale={decimals}
           onAccept={(value: string) => handleChange(value)}
           inputRef={wrapperRef}
