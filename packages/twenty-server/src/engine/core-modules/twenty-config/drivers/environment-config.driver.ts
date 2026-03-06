@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { type ConfigService } from '@nestjs/config';
 
-import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
+import { type ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 import { CONFIG_VARIABLES_INSTANCE_TOKEN } from 'src/engine/core-modules/twenty-config/constants/config-variables-instance-tokens.constants';
 
 @Injectable()

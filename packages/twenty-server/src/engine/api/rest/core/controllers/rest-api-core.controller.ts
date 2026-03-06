@@ -12,11 +12,11 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
-import { Response } from 'express';
+import { type Response } from 'express';
 
-import { RestApiCoreService } from 'src/engine/api/rest/core/services/rest-api-core.service';
+import { type RestApiCoreService } from 'src/engine/api/rest/core/services/rest-api-core.service';
 import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
-import { AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
+import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
 import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';

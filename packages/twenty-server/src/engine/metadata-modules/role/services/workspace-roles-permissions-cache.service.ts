@@ -8,7 +8,7 @@ import {
   type RestrictedFieldsPermissions,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
+import { type Repository } from 'typeorm';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';

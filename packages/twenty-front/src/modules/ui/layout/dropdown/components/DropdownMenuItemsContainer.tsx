@@ -8,17 +8,17 @@ const StyledExternalContainer = styled.div<{
   --padding: ${themeCssVariables.spacing[1]};
 
   align-items: flex-start;
+  box-sizing: border-box;
+
   display: flex;
-
   flex-direction: column;
-  max-height: ${({ maxHeight }) => (maxHeight ? `${maxHeight}px` : 'none')};
-
-  width: 100%;
 
   height: fit-content;
 
+  max-height: ${({ maxHeight }) => (maxHeight ? `${maxHeight}px` : 'none')};
+
   padding: var(--padding);
-  box-sizing: border-box;
+  width: 100%;
 `;
 
 const StyledScrollableContainer = styled.div<{ maxHeight?: number }>`
@@ -26,11 +26,11 @@ const StyledScrollableContainer = styled.div<{ maxHeight?: number }>`
 
   display: flex;
   max-height: ${({ maxHeight }) => (maxHeight ? `${maxHeight}px` : 'none')};
-  width: 100%;
-
   overflow-y: auto;
+
   scrollbar-color: ${themeCssVariables.border.color.medium} transparent;
   scrollbar-width: 4px;
+  width: 100%;
 
   *::-webkit-scrollbar-thumb {
     border-radius: ${themeCssVariables.border.radius.sm};

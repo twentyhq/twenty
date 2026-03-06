@@ -15,29 +15,29 @@ import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledDebugRow = styled.div`
-  position: absolute;
-  left: 250px;
-  top: 5px;
-  z-index: 20;
-  color: ${themeCssVariables.font.color.primary};
   background-color: ${themeCssVariables.color.gray3};
   border: 1px solid ${themeCssVariables.color.blue8};
-  padding: ${themeCssVariables.spacing['0.5']};
+  color: ${themeCssVariables.font.color.primary};
   display: flex;
+  left: 250px;
   max-height: ${themeCssVariables.spacing[4]};
-
   overflow: hidden;
+  padding: ${themeCssVariables.spacing['0.5']};
+  position: absolute;
+  top: 5px;
+
+  z-index: 20;
 `;
 
 const StyledDebugColumn = styled.div<{ width: number }>`
-  min-width: ${({ width }) => width}px;
-  max-width: ${({ width }) => width}px;
-  overflow: hidden;
-
   display: flex;
-  text-wrap-mode: nowrap;
-  padding-right: ${themeCssVariables.spacing['0.5']};
+  max-width: ${({ width }) => width}px;
+  min-width: ${({ width }) => width}px;
+
+  overflow: hidden;
   padding-left: ${themeCssVariables.spacing['0.5']};
+  padding-right: ${themeCssVariables.spacing['0.5']};
+  text-wrap-mode: nowrap;
 `;
 
 type RecordTableRowVirtualizedDebugRowHelperProps = {

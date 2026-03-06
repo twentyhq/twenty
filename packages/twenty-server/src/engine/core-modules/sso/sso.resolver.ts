@@ -9,19 +9,19 @@ import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorato
 import { EnterpriseFeaturesEnabledGuard } from 'src/engine/core-modules/auth/guards/enterprise-features-enabled.guard';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
-import { DeleteSsoInput } from 'src/engine/core-modules/sso/dtos/delete-sso.input';
+import { type DeleteSsoInput } from 'src/engine/core-modules/sso/dtos/delete-sso.input';
 import { DeleteSsoDTO } from 'src/engine/core-modules/sso/dtos/delete-sso.dto';
-import { EditSsoInput } from 'src/engine/core-modules/sso/dtos/edit-sso.input';
+import { type EditSsoInput } from 'src/engine/core-modules/sso/dtos/edit-sso.input';
 import { EditSsoDTO } from 'src/engine/core-modules/sso/dtos/edit-sso.dto';
 import { FindAvailableSSOIDPDTO } from 'src/engine/core-modules/sso/dtos/find-available-SSO-IDP.dto';
 import {
-  SetupOIDCSsoInput,
-  SetupSAMLSsoInput,
+  type SetupOIDCSsoInput,
+  type SetupSAMLSsoInput,
 } from 'src/engine/core-modules/sso/dtos/setup-sso.input';
 import { SetupSsoDTO } from 'src/engine/core-modules/sso/dtos/setup-sso.dto';
-import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
+import { type SSOService } from 'src/engine/core-modules/sso/services/sso.service';
 import { type SSOException } from 'src/engine/core-modules/sso/sso.exception';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';

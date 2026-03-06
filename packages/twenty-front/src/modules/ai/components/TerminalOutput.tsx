@@ -7,9 +7,9 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 const StyledContainer = styled.div`
+  border-radius: ${themeCssVariables.border.radius.sm};
   display: flex;
   flex-direction: column;
-  border-radius: ${themeCssVariables.border.radius.sm};
   overflow: hidden;
 `;
 

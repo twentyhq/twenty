@@ -15,10 +15,10 @@ import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
-import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
-import { RunWorkspaceMigrationInput } from 'src/engine/core-modules/application/application-manifest/dtos/run-workspace-migration.input';
-import { UninstallApplicationInput } from 'src/engine/core-modules/application/application-manifest/dtos/uninstall-application.input';
+import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { type ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
+import { type RunWorkspaceMigrationInput } from 'src/engine/core-modules/application/application-manifest/dtos/run-workspace-migration.input';
+import { type UninstallApplicationInput } from 'src/engine/core-modules/application/application-manifest/dtos/uninstall-application.input';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -29,9 +29,9 @@ import {
 } from 'src/engine/guards/feature-flag.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
-import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/workspace-migration-runner.service';
+import { type WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/workspace-migration-runner.service';
 
 @UsePipes(ResolverValidationPipe)
 @MetadataResolver()

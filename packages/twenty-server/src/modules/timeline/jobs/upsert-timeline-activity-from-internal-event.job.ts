@@ -5,11 +5,11 @@ import { type ObjectRecordNonDestructiveEvent } from 'twenty-shared/database-eve
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { type GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
+import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { SYSTEM_OBJECTS_WITH_TIMELINE_ACTIVITIES } from 'src/modules/timeline/constants/system-objects-with-timeline-activities.constant';
-import { TimelineActivityService } from 'src/modules/timeline/services/timeline-activity.service';
+import { type TimelineActivityService } from 'src/modules/timeline/services/timeline-activity.service';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Processor(MessageQueue.entityEventsToDbQueue)

@@ -11,7 +11,7 @@ import {
   createClient,
 } from '@clickhouse/client';
 
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
 export class ClickHouseService implements OnModuleInit, OnModuleDestroy {

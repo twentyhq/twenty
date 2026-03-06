@@ -4,12 +4,12 @@ import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-mana
 
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import {
-  FlatDeleteRoleTargetAction,
-  UniversalDeleteRoleTargetAction,
+  type FlatDeleteRoleTargetAction,
+  type UniversalDeleteRoleTargetAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/role-target/types/workspace-migration-role-target-action.type';
 import {
-  WorkspaceMigrationActionRunnerArgs,
-  WorkspaceMigrationActionRunnerContext,
+  type WorkspaceMigrationActionRunnerArgs,
+  type WorkspaceMigrationActionRunnerContext,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 
 @Injectable()

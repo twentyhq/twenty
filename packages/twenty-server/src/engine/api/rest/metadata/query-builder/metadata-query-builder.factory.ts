@@ -1,12 +1,12 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 
-import { GetMetadataVariablesFactory } from 'src/engine/api/rest/metadata/query-builder/factories/get-metadata-variables.factory';
-import { FindOneMetadataQueryFactory } from 'src/engine/api/rest/metadata/query-builder/factories/find-one-metadata-query.factory';
-import { FindManyMetadataQueryFactory } from 'src/engine/api/rest/metadata/query-builder/factories/find-many-metadata-query.factory';
+import { type GetMetadataVariablesFactory } from 'src/engine/api/rest/metadata/query-builder/factories/get-metadata-variables.factory';
+import { type FindOneMetadataQueryFactory } from 'src/engine/api/rest/metadata/query-builder/factories/find-one-metadata-query.factory';
+import { type FindManyMetadataQueryFactory } from 'src/engine/api/rest/metadata/query-builder/factories/find-many-metadata-query.factory';
 import { parseMetadataPath } from 'src/engine/api/rest/metadata/query-builder/utils/parse-metadata-path.utils';
-import { CreateMetadataQueryFactory } from 'src/engine/api/rest/metadata/query-builder/factories/create-metadata-query.factory';
-import { UpdateMetadataQueryFactory } from 'src/engine/api/rest/metadata/query-builder/factories/update-metadata-query.factory';
-import { DeleteMetadataQueryFactory } from 'src/engine/api/rest/metadata/query-builder/factories/delete-metadata-query.factory';
+import { type CreateMetadataQueryFactory } from 'src/engine/api/rest/metadata/query-builder/factories/create-metadata-query.factory';
+import { type UpdateMetadataQueryFactory } from 'src/engine/api/rest/metadata/query-builder/factories/update-metadata-query.factory';
+import { type DeleteMetadataQueryFactory } from 'src/engine/api/rest/metadata/query-builder/factories/delete-metadata-query.factory';
 import {
   type MetadataQuery,
   type Selectors,

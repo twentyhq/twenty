@@ -25,11 +25,11 @@ const StyledCloseButtonContainer = styled.div`
 
 const StyledContent = styled.div<{ hasCloseButton: boolean }>`
   align-items: center;
-  justify-content: center;
   display: flex;
   flex: 1;
-  margin-left: ${({ hasCloseButton }) => (hasCloseButton ? '24px' : '0')};
   gap: ${themeCssVariables.spacing[3]};
+  justify-content: center;
+  margin-left: ${({ hasCloseButton }) => (hasCloseButton ? '24px' : '0')};
 `;
 
 export const InformationBanner = ({

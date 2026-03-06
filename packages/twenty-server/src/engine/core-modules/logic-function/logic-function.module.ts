@@ -1,6 +1,6 @@
 import { type DynamicModule, Global, Module } from '@nestjs/common';
 
-import { LogicFunctionModuleAsyncOptions } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
+import { type LogicFunctionModuleAsyncOptions } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 
 import { LogicFunctionDriversModule } from 'src/engine/core-modules/logic-function/logic-function-drivers/logic-function-drivers.module';
 import { LogicFunctionResourceModule } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.module';

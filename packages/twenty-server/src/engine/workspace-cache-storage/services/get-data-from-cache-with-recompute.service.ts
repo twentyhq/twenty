@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import {
   TwentyORMException,
-  TwentyORMExceptionCode,
+  type TwentyORMExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 
 type CacheResult<T, U> = {

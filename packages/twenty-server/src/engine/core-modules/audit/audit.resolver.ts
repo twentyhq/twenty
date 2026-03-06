@@ -7,11 +7,11 @@ import {
   AuditException,
   AuditExceptionCode,
 } from 'src/engine/core-modules/audit/audit.exception';
-import { CreateObjectEventInput } from 'src/engine/core-modules/audit/dtos/create-object-event.input';
+import { type CreateObjectEventInput } from 'src/engine/core-modules/audit/dtos/create-object-event.input';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
-import { UserEntity } from 'src/engine/core-modules/user/user.entity';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type UserEntity } from 'src/engine/core-modules/user/user.entity';
+import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
@@ -20,11 +20,11 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
 import { Analytics } from './dtos/analytics.dto';
 import {
-  CreateAnalyticsInputV2,
+  type CreateAnalyticsInputV2,
   isPageviewAnalyticsInput,
   isTrackAnalyticsInput,
 } from './dtos/create-analytics.input';
-import { AuditService } from './services/audit.service';
+import { type AuditService } from './services/audit.service';
 
 @MetadataResolver(() => Analytics)
 @UsePipes(ResolverValidationPipe)

@@ -2,18 +2,18 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
-import { Repository } from 'typeorm';
+import { type Repository } from 'typeorm';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
-import { DnsManagerService } from 'src/engine/core-modules/dns-manager/services/dns-manager.service';
-import { PublicDomainDTO } from 'src/engine/core-modules/public-domain/dtos/public-domain.dto';
+import { type DnsManagerService } from 'src/engine/core-modules/dns-manager/services/dns-manager.service';
+import { type PublicDomainDTO } from 'src/engine/core-modules/public-domain/dtos/public-domain.dto';
 import { PublicDomainEntity } from 'src/engine/core-modules/public-domain/public-domain.entity';
 import {
   PublicDomainException,
   PublicDomainExceptionCode,
 } from 'src/engine/core-modules/public-domain/public-domain.exception';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { DomainValidRecords } from 'src/engine/core-modules/dns-manager/dtos/domain-valid-records';
+import { type DomainValidRecords } from 'src/engine/core-modules/dns-manager/dtos/domain-valid-records';
 
 @Injectable()
 export class PublicDomainService {

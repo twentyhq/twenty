@@ -12,8 +12,8 @@ import {
 import { TOOL_PROVIDERS } from 'src/engine/core-modules/tool-provider/constants/tool-providers.token';
 import { ToolCategory } from 'src/engine/core-modules/tool-provider/enums/tool-category.enum';
 import { compactToolOutput } from 'src/engine/core-modules/tool-provider/output-serialization/compact-tool-output.util';
-import { NativeModelToolProvider } from 'src/engine/core-modules/tool-provider/providers/native-model-tool.provider';
-import { ToolExecutorService } from 'src/engine/core-modules/tool-provider/services/tool-executor.service';
+import { type NativeModelToolProvider } from 'src/engine/core-modules/tool-provider/providers/native-model-tool.provider';
+import { type ToolExecutorService } from 'src/engine/core-modules/tool-provider/services/tool-executor.service';
 import { type ExecuteToolResult } from 'src/engine/core-modules/tool-provider/tools/execute-tool.tool';
 import { type LearnToolsAspect } from 'src/engine/core-modules/tool-provider/tools/learn-tools.tool';
 import { type ToolContext } from 'src/engine/core-modules/tool-provider/types/tool-context.type';

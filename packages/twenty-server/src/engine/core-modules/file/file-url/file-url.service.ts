@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 
-import { FileFolder } from 'twenty-shared/types';
+import { type FileFolder } from 'twenty-shared/types';
 
 import {
-  FileTokenJwtPayload,
+  type FileTokenJwtPayload,
   JwtTokenTypeEnum,
 } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { type JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
+import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
 export class FileUrlService {

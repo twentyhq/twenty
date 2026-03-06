@@ -4,23 +4,23 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { type Readable } from 'stream';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import { FileFolder } from 'twenty-shared/types';
+import { type FileFolder } from 'twenty-shared/types';
 import {
   buildSignedPath,
   extractFolderPathFilenameAndTypeOrThrow,
 } from 'twenty-shared/utils';
-import { Like, Repository } from 'typeorm';
+import { Like, type Repository } from 'typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import {
   type FileTokenJwtPayloadLegacy,
   JwtTokenTypeEnum,
 } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { type FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
-import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { type JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
+import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
 @Injectable()

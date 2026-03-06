@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
-import { LanguageModel, type ModelMessage, streamText } from 'ai';
+import { type LanguageModel, type ModelMessage, streamText } from 'ai';
 
 import { AI_TELEMETRY_CONFIG } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-telemetry.const';
-import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import { type AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 
 @Injectable()
 export class AiService {

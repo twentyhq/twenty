@@ -24,23 +24,23 @@ import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 const StyledPlusIconHeaderCell = styled.div<{
   shouldDisplayBorderBottom: boolean;
 }>`
+  background-color: ${themeCssVariables.background.primary};
   border-bottom: ${({ shouldDisplayBorderBottom }) =>
     shouldDisplayBorderBottom
       ? `1px solid ${themeCssVariables.border.color.light}`
       : 'none'};
-  background-color: ${themeCssVariables.background.primary};
 
-  color: ${themeCssVariables.font.color.tertiary};
   border-right: ${themeCssVariables.border.color.light} !important;
+  color: ${themeCssVariables.font.color.tertiary};
 
   cursor: pointer;
 
-  width: ${RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH}px;
-
-  z-index: 1;
-
   height: ${RECORD_TABLE_ROW_HEIGHT}px;
+
   max-height: ${RECORD_TABLE_ROW_HEIGHT}px;
+
+  width: ${RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH}px;
+  z-index: 1;
 
   &:hover {
     background: ${themeCssVariables.background.secondary};
@@ -51,8 +51,8 @@ const StyledPlusIconContainer = styled.div`
   align-items: center;
   display: flex;
   height: ${RECORD_TABLE_ROW_HEIGHT}px;
-  width: 100%;
   justify-content: center;
+  width: 100%;
 `;
 
 const StyledDropdownContainer = styled.div`

@@ -9,26 +9,26 @@ import {
 } from 'twenty-shared/utils';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { type WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { BarChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/bar-chart-configuration.dto';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type BarChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/bar-chart-configuration.dto';
 import { BarChartGroupMode } from 'src/engine/metadata-modules/page-layout-widget/enums/bar-chart-group-mode.enum';
 import { BarChartLayout } from 'src/engine/metadata-modules/page-layout-widget/enums/bar-chart-layout.enum';
 import { GraphOrderBy } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-order-by.enum';
 import { BAR_CHART_MAXIMUM_NUMBER_OF_BARS } from 'src/modules/dashboard/chart-data/constants/bar-chart-maximum-number-of-bars.constant';
 import { BAR_CHART_MAXIMUM_NUMBER_OF_GROUPS_PER_BAR } from 'src/modules/dashboard/chart-data/constants/bar-chart-maximum-number-of-groups-per-bar.constant';
 import { EXTRA_ITEM_TO_DETECT_TOO_MANY_GROUPS } from 'src/modules/dashboard/chart-data/constants/extra-item-to-detect-too-many-groups.constant';
-import { BarChartDataDTO } from 'src/modules/dashboard/chart-data/dtos/bar-chart-data.dto';
+import { type BarChartDataDTO } from 'src/modules/dashboard/chart-data/dtos/bar-chart-data.dto';
 import {
   ChartDataException,
   ChartDataExceptionCode,
   generateChartDataExceptionMessage,
 } from 'src/modules/dashboard/chart-data/exceptions/chart-data.exception';
-import { ChartDataQueryService } from 'src/modules/dashboard/chart-data/services/chart-data-query.service';
-import { FieldMetadataOption } from 'src/modules/dashboard/chart-data/types/field-metadata-option.type';
-import { GroupByRawResult } from 'src/modules/dashboard/chart-data/types/group-by-raw-result.type';
-import { RawDimensionValue } from 'src/modules/dashboard/chart-data/types/raw-dimension-value.type';
+import { type ChartDataQueryService } from 'src/modules/dashboard/chart-data/services/chart-data-query.service';
+import { type FieldMetadataOption } from 'src/modules/dashboard/chart-data/types/field-metadata-option.type';
+import { type GroupByRawResult } from 'src/modules/dashboard/chart-data/types/group-by-raw-result.type';
+import { type RawDimensionValue } from 'src/modules/dashboard/chart-data/types/raw-dimension-value.type';
 import { applyGapFilling } from 'src/modules/dashboard/chart-data/utils/apply-gap-filling.util';
 import { filterByRange } from 'src/modules/dashboard/chart-data/utils/filter-by-range.util';
 import { filterTwoDimensionalDataByRange } from 'src/modules/dashboard/chart-data/utils/filter-two-dimensional-data-by-range.util';

@@ -4,7 +4,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Issuer } from 'openid-client';
-import { Repository } from 'typeorm';
+import { type Repository } from 'typeorm';
 
 import {
   WorkspaceSSOIdentityProviderEntity,
@@ -12,8 +12,8 @@ import {
   OIDCResponseType,
 } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
-import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
-import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import { type BillingService } from 'src/engine/core-modules/billing/services/billing.service';
+import { type ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import {
   SSOException,
   SSOExceptionCode,
@@ -23,7 +23,7 @@ import {
   type SAMLConfiguration,
   type SSOConfiguration,
 } from 'src/engine/core-modules/sso/types/SSOConfigurations.type';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
 export class SSOService {

@@ -9,9 +9,9 @@ import {
   type ClientAIModelConfig,
   type ClientConfig,
 } from 'src/engine/core-modules/client-config/client-config.entity';
-import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
+import { type DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
 import { PUBLIC_FEATURE_FLAGS } from 'src/engine/core-modules/feature-flag/constants/public-feature-flag.const';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { convertDollarsToBillingCredits } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-dollars-to-billing-credits.util';
 import {
   AI_MODELS,
@@ -19,7 +19,7 @@ import {
   DEFAULT_SMART_MODEL,
   InferenceProvider,
 } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models.const';
-import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import { type AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 
 @Injectable()
 export class ClientConfigService {

@@ -4,7 +4,7 @@ import { assertUnreachable } from 'twenty-shared/utils';
 
 import { COMMON_PRELOAD_TOOLS } from 'src/engine/core-modules/tool-provider/constants/common-preload-tools.const';
 import { ToolCategory } from 'src/engine/core-modules/tool-provider/enums/tool-category.enum';
-import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
+import { type ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 import {
   EXECUTE_TOOL_TOOL_NAME,
   LEARN_TOOLS_TOOL_NAME,
@@ -12,12 +12,12 @@ import {
 } from 'src/engine/core-modules/tool-provider/tools';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 import {
-  AgentActorContextService,
+  type AgentActorContextService,
   type UserContext,
 } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
 import { CHAT_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/ai/ai-chat/constants/chat-system-prompts.const';
 import { type FlatSkill } from 'src/engine/metadata-modules/flat-skill/types/flat-skill.type';
-import { SkillService } from 'src/engine/metadata-modules/skill/skill.service';
+import { type SkillService } from 'src/engine/metadata-modules/skill/skill.service';
 
 export type SystemPromptSection = {
   title: string;

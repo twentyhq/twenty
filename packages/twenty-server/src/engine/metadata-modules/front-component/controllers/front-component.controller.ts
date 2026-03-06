@@ -9,14 +9,14 @@ import {
 
 import { pipeline } from 'stream/promises';
 
-import { Response } from 'express';
+import { type Response } from 'express';
 
 import {
   FileStorageException,
   FileStorageExceptionCode,
 } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -25,7 +25,7 @@ import {
   FrontComponentException,
   FrontComponentExceptionCode,
 } from 'src/engine/metadata-modules/front-component/front-component.exception';
-import { FrontComponentService } from 'src/engine/metadata-modules/front-component/front-component.service';
+import { type FrontComponentService } from 'src/engine/metadata-modules/front-component/front-component.service';
 
 @Controller('rest/front-components')
 @UseGuards(WorkspaceAuthGuard)

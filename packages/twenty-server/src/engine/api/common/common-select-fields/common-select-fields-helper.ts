@@ -1,19 +1,22 @@
 import { Injectable } from '@nestjs/common';
 
-import { FieldMetadataType, ObjectsPermissions } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  type ObjectsPermissions,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { getAllSelectableFields } from 'src/engine/api/common/common-select-fields/utils/get-all-selectable-fields.util';
 import { getIsFlatFieldAJoinColumn } from 'src/engine/api/common/common-select-fields/utils/get-is-flat-field-a-join-column.util';
 import { getIsFlatFieldAJunctionRelationField } from 'src/engine/api/common/common-select-fields/utils/get-is-flat-field-a-junction-relation-field';
-import { CommonSelectedFields } from 'src/engine/api/common/types/common-selected-fields-result.type';
+import { type CommonSelectedFields } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { MAX_DEPTH } from 'src/engine/api/rest/input-request-parsers/constants/max-depth.constant';
-import { Depth } from 'src/engine/api/rest/input-request-parsers/types/depth.type';
-import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { type Depth } from 'src/engine/api/rest/input-request-parsers/types/depth.type';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
-import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
-import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 type SelectFields = {
   [key: string]: boolean | SelectFields;

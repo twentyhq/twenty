@@ -8,7 +8,7 @@ import {
 import { type Response } from 'express';
 import { assertUnreachable } from 'twenty-shared/utils';
 
-import { HttpExceptionHandlerService } from 'src/engine/core-modules/exception-handler/http-exception-handler.service';
+import { type HttpExceptionHandlerService } from 'src/engine/core-modules/exception-handler/http-exception-handler.service';
 import {
   DashboardException,
   DashboardExceptionCode,

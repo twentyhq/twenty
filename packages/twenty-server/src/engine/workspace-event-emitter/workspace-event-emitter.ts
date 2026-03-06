@@ -1,21 +1,21 @@
 import { Injectable } from '@nestjs/common';
-import { EventEmitter2 } from '@nestjs/event-emitter';
+import { type EventEmitter2 } from '@nestjs/event-emitter';
 
 import { isDefined } from 'twenty-shared/utils';
 import {
-  ObjectRecordCreateEvent,
-  ObjectRecordDeleteEvent,
-  ObjectRecordDestroyEvent,
-  ObjectRecordUpdateEvent,
-  ObjectRecordUpsertEvent,
-  ObjectRecordRestoreEvent,
+  type ObjectRecordCreateEvent,
+  type ObjectRecordDeleteEvent,
+  type ObjectRecordDestroyEvent,
+  type ObjectRecordUpdateEvent,
+  type ObjectRecordUpsertEvent,
+  type ObjectRecordRestoreEvent,
 } from 'twenty-shared/database-events';
 
-import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { type DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import type { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type CustomEventName } from 'src/engine/workspace-event-emitter/types/custom-event-name.type';
-import { CustomWorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/custom-workspace-batch-event.type';
-import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
+import { type CustomWorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/custom-workspace-batch-event.type';
+import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { computeEventName } from 'src/engine/workspace-event-emitter/utils/compute-event-name';
 
 type ActionEventMap<T> = {

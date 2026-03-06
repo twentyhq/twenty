@@ -53,27 +53,27 @@ const StyledBenefitsContainer = styled.div`
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  width: 100%;
   gap: 16px;
   padding: ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[3]};
+  width: 100%;
 `;
 
 const StyledOrganizationBenefitsContainer = styled.div`
+  border-bottom: 1px solid ${themeCssVariables.border.color.light};
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  width: 100%;
   gap: 16px;
   padding: ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[3]};
-  border-bottom: 1px solid ${themeCssVariables.border.color.light};
+  width: 100%;
 `;
 
 const StyledChooseTrialContainer = styled.div`
   display: flex;
   flex-direction: row;
-  width: 100%;
-  margin-bottom: ${themeCssVariables.spacing[8]};
   gap: ${themeCssVariables.spacing[2]};
+  margin-bottom: ${themeCssVariables.spacing[8]};
+  width: 100%;
 `;
 
 const StyledLinkGroup = styled.div`

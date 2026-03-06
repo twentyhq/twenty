@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import {
   type HealthIndicatorResult,
-  HealthIndicatorService,
+  type HealthIndicatorService,
 } from '@nestjs/terminus';
 
 import { HEALTH_ERROR_MESSAGES } from 'src/engine/core-modules/admin-panel/constants/health-error-messages.constants';
 import { withHealthCheckTimeout } from 'src/engine/core-modules/admin-panel/utils/health-check-timeout.util';
 import { HealthStateManager } from 'src/engine/core-modules/admin-panel/utils/health-state-manager.util';
-import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
+import { type RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
 
 @Injectable()
 export class RedisHealthIndicator {

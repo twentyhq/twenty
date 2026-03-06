@@ -7,65 +7,65 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { TwoFactorAuthenticationStrategy } from 'twenty-shared/types';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
+import { type Repository } from 'typeorm';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
-import { ApiKeyService } from 'src/engine/core-modules/api-key/services/api-key.service';
+import { type ApiKeyService } from 'src/engine/core-modules/api-key/services/api-key.service';
 import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
-import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
+import { type AuditService } from 'src/engine/core-modules/audit/services/audit.service';
 import { MONITORING_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/monitoring/monitoring';
 import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { ApiKeyTokenInput } from 'src/engine/core-modules/auth/dto/api-key-token.input';
-import { AppTokenInput } from 'src/engine/core-modules/auth/dto/app-token.input';
+import { type ApiKeyTokenInput } from 'src/engine/core-modules/auth/dto/api-key-token.input';
+import { type AppTokenInput } from 'src/engine/core-modules/auth/dto/app-token.input';
 import { AuthorizeAppDTO } from 'src/engine/core-modules/auth/dto/authorize-app.dto';
-import { AuthorizeAppInput } from 'src/engine/core-modules/auth/dto/authorize-app.input';
+import { type AuthorizeAppInput } from 'src/engine/core-modules/auth/dto/authorize-app.input';
 import { AvailableWorkspacesAndAccessTokensDTO } from 'src/engine/core-modules/auth/dto/available-workspaces-and-access-tokens.dto';
 import { EmailPasswordResetLinkDTO } from 'src/engine/core-modules/auth/dto/email-password-reset-link.dto';
-import { EmailPasswordResetLinkInput } from 'src/engine/core-modules/auth/dto/email-password-reset-link.input';
-import { GetAuthTokenFromEmailVerificationTokenInput } from 'src/engine/core-modules/auth/dto/get-auth-token-from-email-verification-token.input';
+import { type EmailPasswordResetLinkInput } from 'src/engine/core-modules/auth/dto/email-password-reset-link.input';
+import { type GetAuthTokenFromEmailVerificationTokenInput } from 'src/engine/core-modules/auth/dto/get-auth-token-from-email-verification-token.input';
 import { GetAuthorizationUrlForSSODTO } from 'src/engine/core-modules/auth/dto/get-authorization-url-for-sso.dto';
-import { GetAuthorizationUrlForSSOInput } from 'src/engine/core-modules/auth/dto/get-authorization-url-for-sso.input';
+import { type GetAuthorizationUrlForSSOInput } from 'src/engine/core-modules/auth/dto/get-authorization-url-for-sso.input';
 import { InvalidatePasswordDTO } from 'src/engine/core-modules/auth/dto/invalidate-password.dto';
 import { SignUpDTO } from 'src/engine/core-modules/auth/dto/sign-up.dto';
 import { TransientTokenDTO } from 'src/engine/core-modules/auth/dto/transient-token.dto';
-import { UpdatePasswordViaResetTokenInput } from 'src/engine/core-modules/auth/dto/update-password-via-reset-token.input';
+import { type UpdatePasswordViaResetTokenInput } from 'src/engine/core-modules/auth/dto/update-password-via-reset-token.input';
 import { ValidatePasswordResetTokenDTO } from 'src/engine/core-modules/auth/dto/validate-password-reset-token.dto';
-import { ValidatePasswordResetTokenInput } from 'src/engine/core-modules/auth/dto/validate-password-reset-token.input';
+import { type ValidatePasswordResetTokenInput } from 'src/engine/core-modules/auth/dto/validate-password-reset-token.input';
 import { VerifyEmailAndGetLoginTokenDTO } from 'src/engine/core-modules/auth/dto/verify-email-and-get-login-token.dto';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
-import { ResetPasswordService } from 'src/engine/core-modules/auth/services/reset-password.service';
-import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
-import { EmailVerificationTokenService } from 'src/engine/core-modules/auth/token/services/email-verification-token.service';
-import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
-import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
-import { RenewTokenService } from 'src/engine/core-modules/auth/token/services/renew-token.service';
-import { TransientTokenService } from 'src/engine/core-modules/auth/token/services/transient-token.service';
-import { WorkspaceAgnosticTokenService } from 'src/engine/core-modules/auth/token/services/workspace-agnostic-token.service';
+import { type ResetPasswordService } from 'src/engine/core-modules/auth/services/reset-password.service';
+import { type SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
+import { type EmailVerificationTokenService } from 'src/engine/core-modules/auth/token/services/email-verification-token.service';
+import { type LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
+import { type RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
+import { type RenewTokenService } from 'src/engine/core-modules/auth/token/services/renew-token.service';
+import { type TransientTokenService } from 'src/engine/core-modules/auth/token/services/transient-token.service';
+import { type WorkspaceAgnosticTokenService } from 'src/engine/core-modules/auth/token/services/workspace-agnostic-token.service';
 import {
-  AuthContextUser,
+  type AuthContextUser,
   JwtTokenTypeEnum,
-  LoginTokenJwtPayload,
+  type LoginTokenJwtPayload,
 } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { CaptchaGuard } from 'src/engine/core-modules/captcha/captcha.guard';
 import { CaptchaGraphqlApiExceptionFilter } from 'src/engine/core-modules/captcha/filters/captcha-graphql-api-exception.filter';
-import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
+import { type WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { EmailVerificationExceptionFilter } from 'src/engine/core-modules/email-verification/email-verification-exception-filter.util';
 import { EmailVerificationTrigger } from 'src/engine/core-modules/email-verification/email-verification.constants';
-import { EmailVerificationService } from 'src/engine/core-modules/email-verification/services/email-verification.service';
+import { type EmailVerificationService } from 'src/engine/core-modules/email-verification/services/email-verification.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
-import { I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
-import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
-import { TwoFactorAuthenticationVerificationInput } from 'src/engine/core-modules/two-factor-authentication/dto/two-factor-authentication-verification.input';
+import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
+import { type SSOService } from 'src/engine/core-modules/sso/services/sso.service';
+import { type TwoFactorAuthenticationVerificationInput } from 'src/engine/core-modules/two-factor-authentication/dto/two-factor-authentication-verification.input';
 import { TwoFactorAuthenticationExceptionFilter } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication-exception.filter';
-import { TwoFactorAuthenticationService } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.service';
+import { type TwoFactorAuthenticationService } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
-import { UserService } from 'src/engine/core-modules/user/services/user.service';
-import { UserEntity } from 'src/engine/core-modules/user/user.entity';
+import { type UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
+import { type UserService } from 'src/engine/core-modules/user/services/user.service';
+import { type UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthProvider } from 'src/engine/decorators/auth/auth-provider.decorator';
@@ -76,20 +76,20 @@ import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { type PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 
 import { ApiKeyToken } from './dto/api-key-token.dto';
 import { AuthTokens } from './dto/auth-tokens.dto';
-import { GetAuthTokensFromLoginTokenInput } from './dto/get-auth-tokens-from-login-token.input';
+import { type GetAuthTokensFromLoginTokenInput } from './dto/get-auth-tokens-from-login-token.input';
 import { LoginTokenDTO } from './dto/login-token.dto';
-import { SignUpInput } from './dto/sign-up.input';
-import { UserCredentialsInput } from './dto/user-credentials.input';
+import { type SignUpInput } from './dto/sign-up.input';
+import { type UserCredentialsInput } from './dto/user-credentials.input';
 import { CheckUserExistDTO } from './dto/user-exists.dto';
-import { EmailAndCaptchaInput } from './dto/user-exists.input';
+import { type EmailAndCaptchaInput } from './dto/user-exists.input';
 import { WorkspaceInviteHashValidDTO } from './dto/workspace-invite-hash-valid.dto';
-import { WorkspaceInviteHashValidInput } from './dto/workspace-invite-hash.input';
-import { AuthService } from './services/auth.service';
+import { type WorkspaceInviteHashValidInput } from './dto/workspace-invite-hash.input';
+import { type AuthService } from './services/auth.service';
 
 @UsePipes(ResolverValidationPipe)
 @MetadataResolver()

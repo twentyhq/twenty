@@ -8,7 +8,7 @@ import {
   Entity,
   OneToMany,
   PrimaryGeneratedColumn,
-  Relation,
+  type Relation,
   UpdateDateColumn,
 } from 'typeorm';
 
@@ -16,7 +16,7 @@ import type Stripe from 'stripe';
 
 import { BillingPriceEntity } from 'src/engine/core-modules/billing/entities/billing-price.entity';
 import { BillingUsageType } from 'src/engine/core-modules/billing/enums/billing-usage-type.enum';
-import { BillingProductMetadata } from 'src/engine/core-modules/billing/types/billing-product-metadata.type';
+import { type BillingProductMetadata } from 'src/engine/core-modules/billing/types/billing-product-metadata.type';
 registerEnumType(BillingUsageType, { name: 'BillingUsageType' });
 @Entity({ name: 'billingProduct', schema: 'core' })
 export class BillingProductEntity {

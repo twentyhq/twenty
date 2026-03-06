@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 
 import { EntitySchema } from 'typeorm';
 
-import { EntitySchemaColumnFactory } from 'src/engine/twenty-orm/factories/entity-schema-column.factory';
-import { EntitySchemaRelationFactory } from 'src/engine/twenty-orm/factories/entity-schema-relation.factory';
+import { type EntitySchemaColumnFactory } from 'src/engine/twenty-orm/factories/entity-schema-column.factory';
+import { type EntitySchemaRelationFactory } from 'src/engine/twenty-orm/factories/entity-schema-relation.factory';
 import {
   type EntitySchemaFieldMetadataMaps,
   type EntitySchemaObjectMetadata,

@@ -4,7 +4,7 @@ import {
   type MigrationCommandOptions,
   MigrationCommandRunner,
 } from 'src/database/commands/command-runners/migration.command-runner';
-import { CleanerWorkspaceService } from 'src/engine/workspace-manager/workspace-cleaner/services/cleaner.workspace-service';
+import { type CleanerWorkspaceService } from 'src/engine/workspace-manager/workspace-cleaner/services/cleaner.workspace-service';
 
 @Command({
   name: 'workspace:destroy',

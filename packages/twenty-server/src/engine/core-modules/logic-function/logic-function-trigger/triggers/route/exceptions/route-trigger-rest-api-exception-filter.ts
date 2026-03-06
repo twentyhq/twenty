@@ -11,7 +11,7 @@ import {
   RouteTriggerExceptionCode,
 } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/exceptions/route-trigger.exception';
 import type { CustomException } from 'src/utils/custom-exception';
-import { HttpExceptionHandlerService } from 'src/engine/core-modules/exception-handler/http-exception-handler.service';
+import { type HttpExceptionHandlerService } from 'src/engine/core-modules/exception-handler/http-exception-handler.service';
 
 @Catch(RouteTriggerException)
 export class RouteTriggerRestApiExceptionFilter implements ExceptionFilter {

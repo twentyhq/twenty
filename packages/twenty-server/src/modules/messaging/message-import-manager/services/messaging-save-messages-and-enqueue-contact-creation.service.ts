@@ -5,9 +5,9 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { type MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { type GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import {
@@ -24,11 +24,11 @@ import {
 } from 'src/modules/messaging/message-import-manager/drivers/gmail/types/gmail-message.type';
 import {
   type MessageChannelMessageAssociationFolderAssociation,
-  MessagingMessageFolderAssociationService,
+  type MessagingMessageFolderAssociationService,
 } from 'src/modules/messaging/message-import-manager/services/messaging-message-folder-association.service';
-import { MessagingMessageService } from 'src/modules/messaging/message-import-manager/services/messaging-message.service';
+import { type MessagingMessageService } from 'src/modules/messaging/message-import-manager/services/messaging-message.service';
 import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
-import { MessagingMessageParticipantService } from 'src/modules/messaging/message-participant-manager/services/messaging-message-participant.service';
+import { type MessagingMessageParticipantService } from 'src/modules/messaging/message-participant-manager/services/messaging-message-participant.service';
 import { isWorkEmail } from 'src/utils/is-work-email';
 
 @Injectable()

@@ -1,7 +1,7 @@
 import { UnrecoverableError } from 'bullmq';
 import { extractFolderPathFilenameAndTypeOrThrow } from 'twenty-shared/utils';
 
-import { FileService } from 'src/engine/core-modules/file/services/file.service';
+import { type FileService } from 'src/engine/core-modules/file/services/file.service';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';

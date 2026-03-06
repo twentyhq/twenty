@@ -13,7 +13,7 @@ import {
 } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
 import { type CreateApplicationRegistrationVariableInput } from 'src/engine/core-modules/application/application-registration-variable/dtos/create-application-registration-variable.input';
 import { type UpdateApplicationRegistrationVariableInput } from 'src/engine/core-modules/application/application-registration-variable/dtos/update-application-registration-variable.input';
-import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
+import { type SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 
 @Injectable()
 export class ApplicationRegistrationVariableService {

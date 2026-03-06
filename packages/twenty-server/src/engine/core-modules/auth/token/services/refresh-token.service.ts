@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
-import { Repository } from 'typeorm';
+import { type Repository } from 'typeorm';
 
 import {
   AppTokenEntity,
@@ -18,8 +18,8 @@ import {
   type RefreshTokenJwtPayload,
   JwtTokenTypeEnum,
 } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { type JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
+import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 
 @Injectable()

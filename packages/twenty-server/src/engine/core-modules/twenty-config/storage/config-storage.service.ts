@@ -1,15 +1,15 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { type FindOptionsWhere, IsNull, Repository } from 'typeorm';
+import { type FindOptionsWhere, IsNull, type Repository } from 'typeorm';
 
 import {
   KeyValuePairEntity,
   KeyValuePairType,
 } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
-import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
+import { type SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
-import { ConfigValueConverterService } from 'src/engine/core-modules/twenty-config/conversion/config-value-converter.service';
+import { type ConfigValueConverterService } from 'src/engine/core-modules/twenty-config/conversion/config-value-converter.service';
 import { ConfigVariableType } from 'src/engine/core-modules/twenty-config/enums/config-variable-type.enum';
 import {
   ConfigVariableException,

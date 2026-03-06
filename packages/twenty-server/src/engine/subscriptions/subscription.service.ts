@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
+import { type RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
 import { SubscriptionChannel } from 'src/engine/subscriptions/enums/subscription-channel.enum';
 
 @Injectable()

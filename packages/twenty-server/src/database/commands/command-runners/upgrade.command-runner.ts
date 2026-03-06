@@ -7,20 +7,20 @@ import chalk from 'chalk';
 import { SemVer } from 'semver';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { In, Repository } from 'typeorm';
+import { In, type Repository } from 'typeorm';
 
 import {
-  ActiveOrSuspendedWorkspacesMigrationCommandOptions,
+  type ActiveOrSuspendedWorkspacesMigrationCommandOptions,
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
 } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import {
-  RunOnWorkspaceArgs,
-  WorkspacesMigrationCommandRunner,
+  type RunOnWorkspaceArgs,
+  type WorkspacesMigrationCommandRunner,
 } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { type GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import {
   type CompareVersionMajorAndMinorReturnType,
   compareVersionMajorAndMinor,

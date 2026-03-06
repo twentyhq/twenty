@@ -63,7 +63,7 @@ jobs:
           key: ${{ env.STORYBOOK_BUILD_CACHE_KEY_FOR_SAVE_ACTION }}
   front-sb-test:
     timeout-minutes: 30
-    runs-on: ubuntu-latest-8-cores
+    runs-on: ubuntu-latest-4-cores
     needs: front-sb-build
     strategy:
       fail-fast: false
@@ -149,32 +149,6 @@ jobs:
   #         npx nyc merge coverage-artifacts ${{ env.PATH_TO_COVERAGE }}/coverage-storybook.json
   #     - name: Checking coverage
   #       run: npx nx storybook:coverage twenty-front --checkCoverage=true --configuration=${{ matrix.storybook_scope }}
-  front-chromatic-deployment:
-    timeout-minutes: 30
-    if: false
-    needs: front-sb-build
-    runs-on: ubuntu-latest-8-cores
-    env:
-      REACT_APP_SERVER_BASE_URL: http://127.0.0.1:3000
-      CHROMATIC_PROJECT_TOKEN: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 10
-      - name: Install dependencies
-        uses: ./.github/actions/yarn-install
-      - name: Restore storybook build cache
-        uses: ./.github/actions/restore-cache
-        with:
-          key: ${{ env.STORYBOOK_BUILD_CACHE_KEY_FOR_RESTORE_ACTION }}
-      - name: Front / Write .env
-        run: |
-          cd packages/twenty-front
-          touch .env
-          echo "" >> .env
-          echo "REACT_APP_SERVER_BASE_URL=$REACT_APP_SERVER_BASE_URL" >> .env
-      - name: Publish to Chromatic
-        run: npx nx run twenty-front:chromatic:ci
   front-task:
     needs: changed-files-check
     if: needs.changed-files-check.outputs.any_changed == 'true'

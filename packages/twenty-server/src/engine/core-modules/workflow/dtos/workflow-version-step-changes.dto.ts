@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
 import GraphQLJSON from 'graphql-type-json';
-import { Difference } from 'microdiff';
+import { type Difference } from 'microdiff';
 
 @ObjectType('WorkflowVersionStepChanges')
 export class WorkflowVersionStepChangesDTO {

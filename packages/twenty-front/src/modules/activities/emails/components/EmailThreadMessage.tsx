@@ -21,8 +21,8 @@ const StyledThreadMessage = styled.div`
 `;
 
 const StyledThreadMessageHeader = styled.div`
-  display: flex;
   cursor: pointer;
+  display: flex;
   flex-direction: column;
   justify-content: space-between;
   margin-bottom: ${themeCssVariables.spacing[2]};

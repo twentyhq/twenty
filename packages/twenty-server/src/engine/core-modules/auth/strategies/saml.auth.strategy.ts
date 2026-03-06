@@ -18,7 +18,7 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
+import { type SSOService } from 'src/engine/core-modules/sso/services/sso.service';
 
 export type SAMLRequest = Omit<
   Request,

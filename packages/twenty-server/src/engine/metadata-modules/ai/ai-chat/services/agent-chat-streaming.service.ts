@@ -23,8 +23,8 @@ import { toDisplayCredits } from 'src/engine/core-modules/billing/utils/to-displ
 import { type AIModelConfig } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models-types.const';
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
 
-import { AgentChatService } from './agent-chat.service';
-import { ChatExecutionService } from './chat-execution.service';
+import { type AgentChatService } from './agent-chat.service';
+import { type ChatExecutionService } from './chat-execution.service';
 
 export type StreamAgentChatOptions = {
   threadId: string;

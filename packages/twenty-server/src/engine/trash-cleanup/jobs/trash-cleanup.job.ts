@@ -3,7 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { TrashCleanupService } from 'src/engine/trash-cleanup/services/trash-cleanup.service';
+import { type TrashCleanupService } from 'src/engine/trash-cleanup/services/trash-cleanup.service';
 
 export type TrashCleanupJobData = {
   workspaceId: string;

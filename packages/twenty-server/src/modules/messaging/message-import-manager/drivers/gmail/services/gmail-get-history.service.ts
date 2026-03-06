@@ -4,7 +4,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { type gmail_v1 } from 'googleapis';
 
 import { MESSAGING_GMAIL_USERS_HISTORY_MAX_RESULT } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-users-history-max-result.constant';
-import { GmailMessageListFetchErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-message-list-fetch-error-handler.service';
+import { type GmailMessageListFetchErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-message-list-fetch-error-handler.service';
 
 @Injectable()
 export class GmailGetHistoryService {

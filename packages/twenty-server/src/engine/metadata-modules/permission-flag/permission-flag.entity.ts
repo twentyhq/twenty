@@ -1,4 +1,4 @@
-import { PermissionFlagType } from 'twenty-shared/constants';
+import { type PermissionFlagType } from 'twenty-shared/constants';
 import {
   Column,
   CreateDateColumn,
@@ -6,7 +6,7 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
-  Relation,
+  type Relation,
   Unique,
   UpdateDateColumn,
 } from 'typeorm';

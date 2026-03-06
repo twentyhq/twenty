@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { sleep } from 'cloudflare/core';
 import Fuse from 'fuse.js';
-import { NavigateAppToolOutput } from 'twenty-shared/ai';
+import { type NavigateAppToolOutput } from 'twenty-shared/ai';
 import { FieldMetadataType, type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -11,17 +11,17 @@ import {
   NavigateAppInputZodSchema,
 } from 'src/engine/core-modules/tool/tools/navigate-tool/navigate-app-tool.schema';
 import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
-import { ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import {
   type Tool,
   type ToolExecutionContext,
 } from 'src/engine/core-modules/tool/types/tool.type';
-import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { type WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { NavigationMenuItemService } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.service';
-import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { type NavigationMenuItemService } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.service';
+import { type ViewService } from 'src/engine/metadata-modules/view/services/view.service';
+import { type GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 
 @Injectable()

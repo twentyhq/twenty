@@ -4,7 +4,7 @@ import {
   type QueueCronJobOptions,
   type QueueJobOptions,
 } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
-import { MessageQueueDriver } from 'src/engine/core-modules/message-queue/drivers/interfaces/message-queue-driver.interface';
+import { type MessageQueueDriver } from 'src/engine/core-modules/message-queue/drivers/interfaces/message-queue-driver.interface';
 import {
   type MessageQueueJobData,
   type MessageQueueJob,
@@ -12,7 +12,7 @@ import {
 import { type MessageQueueWorkerOptions } from 'src/engine/core-modules/message-queue/interfaces/message-queue-worker-options.interface';
 
 import {
-  MessageQueue,
+  type MessageQueue,
   QUEUE_DRIVER,
 } from 'src/engine/core-modules/message-queue/message-queue.constants';
 

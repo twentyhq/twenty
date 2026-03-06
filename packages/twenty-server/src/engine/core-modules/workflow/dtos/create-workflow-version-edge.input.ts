@@ -2,7 +2,7 @@ import { Field, InputType } from '@nestjs/graphql';
 
 import graphqlTypeJson from 'graphql-type-json';
 
-import { WorkflowStepConnectionOptions } from 'src/modules/workflow/workflow-builder/workflow-version-step/types/WorkflowStepCreationOptions';
+import { type WorkflowStepConnectionOptions } from 'src/modules/workflow/workflow-builder/workflow-version-step/types/WorkflowStepCreationOptions';
 
 @InputType()
 export class CreateWorkflowVersionEdgeInput {

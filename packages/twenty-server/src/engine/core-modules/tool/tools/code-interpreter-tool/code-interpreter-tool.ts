@@ -15,17 +15,17 @@ import {
   type OutputFile,
 } from 'src/engine/core-modules/code-interpreter/drivers/interfaces/code-interpreter-driver.interface';
 
-import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
 import {
   type AccessTokenJwtPayload,
   JwtTokenTypeEnum,
 } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { CodeInterpreterService } from 'src/engine/core-modules/code-interpreter/code-interpreter.service';
-import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
-import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
-import { FileService } from 'src/engine/core-modules/file/services/file.service';
-import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
-import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
+import { type CodeInterpreterService } from 'src/engine/core-modules/code-interpreter/code-interpreter.service';
+import { type FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { type FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
+import { type FileService } from 'src/engine/core-modules/file/services/file.service';
+import { type JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
+import { type SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { CodeInterpreterInputZodSchema } from 'src/engine/core-modules/tool/tools/code-interpreter-tool/code-interpreter-tool.schema';
 import { TWENTY_MCP_HELPER } from 'src/engine/core-modules/tool/tools/code-interpreter-tool/twenty-mcp-helper.const';
 import {
@@ -38,7 +38,7 @@ import {
   type Tool,
   type ToolExecutionContext,
 } from 'src/engine/core-modules/tool/types/tool.type';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 
 @Injectable()

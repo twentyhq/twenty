@@ -14,9 +14,9 @@ import {
 
 const StyledGraphContainer = styled.div`
   background-color: ${themeCssVariables.background.secondary};
+  border: 1px solid ${themeCssVariables.border.color.medium};
   border-radius: ${themeCssVariables.border.radius.md};
   height: 240px;
-  border: 1px solid ${themeCssVariables.border.color.medium};
   margin-bottom: ${themeCssVariables.spacing[4]};
   padding-top: 10px;
   width: 100%;

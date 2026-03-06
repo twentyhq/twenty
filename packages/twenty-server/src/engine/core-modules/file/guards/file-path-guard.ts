@@ -4,9 +4,9 @@ import {
   Injectable,
 } from '@nestjs/common';
 
-import { FileTokenJwtPayloadLegacy } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { type FileTokenJwtPayloadLegacy } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { extractFileInfoFromRequest } from 'src/engine/core-modules/file/utils/extract-file-info-from-request.utils';
-import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
+import { type JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 
 @Injectable()
 export class FilePathGuard implements CanActivate {

@@ -10,9 +10,9 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
-import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
+import { type CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
-import { MetricsCacheService } from 'src/engine/core-modules/metrics/metrics-cache.service';
+import { type MetricsCacheService } from 'src/engine/core-modules/metrics/metrics-cache.service';
 import { type MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 
 const METER_NAME = 'twenty-server';

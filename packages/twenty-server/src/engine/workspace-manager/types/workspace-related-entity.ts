@@ -1,4 +1,4 @@
-import { Column, JoinColumn, ManyToOne, Relation } from 'typeorm';
+import { Column, JoinColumn, ManyToOne, type Relation } from 'typeorm';
 
 import type { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 

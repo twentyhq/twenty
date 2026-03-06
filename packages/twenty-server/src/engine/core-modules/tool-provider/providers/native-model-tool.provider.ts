@@ -9,8 +9,8 @@ import {
 } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
 
 import { ToolCategory } from 'src/engine/core-modules/tool-provider/enums/tool-category.enum';
-import { AgentModelConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/agent-model-config.service';
-import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import { type AgentModelConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/agent-model-config.service';
+import { type AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 
 // SDK-native tools (anthropic webSearch, etc.) are opaque and not serializable.
 // This provider keeps generateTools() and is excluded from the descriptor system.

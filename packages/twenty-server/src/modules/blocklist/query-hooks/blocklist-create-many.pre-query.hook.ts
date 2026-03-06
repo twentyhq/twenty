@@ -12,7 +12,7 @@ import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-a
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import {
   type BlocklistItem,
-  BlocklistValidationService,
+  type BlocklistValidationService,
 } from 'src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service';
 
 @WorkspaceQueryHook(`blocklist.createMany`)

@@ -21,16 +21,16 @@ const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
   height: 100%;
-  width: 100%;
-
   overflow: hidden;
+
+  width: 100%;
 `;
 
 const StyledContainerWithPadding = styled.div`
   box-sizing: border-box;
   flex: 1;
-  min-height: 0;
   margin-left: ${themeCssVariables.spacing[2]};
+  min-height: 0;
 `;
 
 export const RecordIndexContainer = () => {

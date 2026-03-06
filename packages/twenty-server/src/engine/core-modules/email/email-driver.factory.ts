@@ -7,7 +7,7 @@ import { SmtpDriver } from 'src/engine/core-modules/email/drivers/smtp.driver';
 import { EmailDriver } from 'src/engine/core-modules/email/enums/email-driver.enum';
 import { DriverFactoryBase } from 'src/engine/core-modules/twenty-config/dynamic-factory.base';
 import { ConfigVariablesGroup } from 'src/engine/core-modules/twenty-config/enums/config-variables-group.enum';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
 export class EmailDriverFactory extends DriverFactoryBase<EmailDriverInterface> {

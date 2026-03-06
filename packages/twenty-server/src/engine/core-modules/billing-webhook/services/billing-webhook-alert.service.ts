@@ -3,7 +3,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import { type Repository } from 'typeorm';
 import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 import type Stripe from 'stripe';
@@ -14,7 +14,7 @@ import {
 } from 'src/engine/core-modules/billing/billing.exception';
 import { BillingProductEntity } from 'src/engine/core-modules/billing/entities/billing-product.entity';
 import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
-import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
+import { type BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 
 @Injectable()
 export class BillingWebhookAlertService {

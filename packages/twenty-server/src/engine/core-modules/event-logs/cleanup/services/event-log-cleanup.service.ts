@@ -4,7 +4,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { EventLogTable } from 'twenty-shared/types';
 
-import { ClickHouseService } from 'src/database/clickHouse/clickHouse.service';
+import { type ClickHouseService } from 'src/database/clickHouse/clickHouse.service';
 import { formatDateForClickHouse } from 'src/database/clickHouse/clickHouse.util';
 
 const CLICKHOUSE_TABLE_NAMES: Record<EventLogTable, string> = {

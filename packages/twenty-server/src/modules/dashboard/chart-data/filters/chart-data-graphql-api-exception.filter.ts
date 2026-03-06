@@ -1,5 +1,5 @@
-import { ArgumentsHost, Catch } from '@nestjs/common';
-import { GqlExceptionFilter } from '@nestjs/graphql';
+import { type ArgumentsHost, Catch } from '@nestjs/common';
+import { type GqlExceptionFilter } from '@nestjs/graphql';
 
 import { ChartDataException } from 'src/modules/dashboard/chart-data/exceptions/chart-data.exception';
 import { chartDataGraphqlApiExceptionHandler } from 'src/modules/dashboard/chart-data/utils/chart-data-graphql-api-exception-handler.util';

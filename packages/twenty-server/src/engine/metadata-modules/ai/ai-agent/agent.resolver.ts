@@ -5,7 +5,7 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 import { isNonEmptyString } from '@sniptt/guards';
 import { FeatureFlagKey } from 'twenty-shared/types';
 
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import {
@@ -16,14 +16,14 @@ import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.g
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { fromFlatAgentWithRoleIdToAgentDto } from 'src/engine/metadata-modules/flat-agent/utils/from-agent-entity-to-agent-dto.util';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
-import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import { type AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 
-import { AgentService } from './agent.service';
+import { type AgentService } from './agent.service';
 
-import { AgentIdInput } from './dtos/agent-id.input';
+import { type AgentIdInput } from './dtos/agent-id.input';
 import { AgentDTO } from './dtos/agent.dto';
-import { CreateAgentInput } from './dtos/create-agent.input';
-import { UpdateAgentInput } from './dtos/update-agent.input';
+import { type CreateAgentInput } from './dtos/create-agent.input';
+import { type UpdateAgentInput } from './dtos/update-agent.input';
 import { AgentGraphqlApiExceptionInterceptor } from './interceptors/agent-graphql-api-exception.interceptor';
 
 @UseGuards(

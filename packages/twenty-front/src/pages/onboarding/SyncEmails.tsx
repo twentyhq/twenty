@@ -34,9 +34,9 @@ import { AuthenticatedMethod } from '@/auth/types/AuthenticatedMethod.enum';
 const StyledSyncEmailsContainer = styled.div`
   display: flex;
   flex-direction: row;
-  width: 100%;
-  margin: ${themeCssVariables.spacing[8]} 0;
   gap: ${themeCssVariables.spacing[2]};
+  margin: ${themeCssVariables.spacing[8]} 0;
+  width: 100%;
 `;
 
 const StyledActionLinkContainer = styled.div`

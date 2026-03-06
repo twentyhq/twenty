@@ -11,14 +11,14 @@ import { PasswordUpdateNotifyEmail } from 'twenty-emails';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { AppPath } from 'twenty-shared/types';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
-import { IsNull, Repository } from 'typeorm';
+import { IsNull, type Repository } from 'typeorm';
 
 import {
   AppTokenEntity,
   AppTokenType,
 } from 'src/engine/core-modules/app-token/app-token.entity';
-import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
-import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
+import { type ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
+import { type AuditService } from 'src/engine/core-modules/audit/services/audit.service';
 import {
   AuthException,
   AuthExceptionCode,
@@ -35,16 +35,16 @@ import { type UpdatePasswordDTO } from 'src/engine/core-modules/auth/dto/update-
 import { type UserCredentialsInput } from 'src/engine/core-modules/auth/dto/user-credentials.input';
 import { type CheckUserExistDTO } from 'src/engine/core-modules/auth/dto/user-exists.dto';
 import { type WorkspaceInviteHashValidDTO } from 'src/engine/core-modules/auth/dto/workspace-invite-hash-valid.dto';
-import { AuthSsoService } from 'src/engine/core-modules/auth/services/auth-sso.service';
-import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
+import { type AuthSsoService } from 'src/engine/core-modules/auth/services/auth-sso.service';
+import { type SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
 import { type GoogleRequest } from 'src/engine/core-modules/auth/strategies/google.auth.strategy';
 import { type MicrosoftRequest } from 'src/engine/core-modules/auth/strategies/microsoft.auth.strategy';
-import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
-import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
-import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
-import { WorkspaceAgnosticTokenService } from 'src/engine/core-modules/auth/token/services/workspace-agnostic-token.service';
+import { type AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
+import { type LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
+import { type RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
+import { type WorkspaceAgnosticTokenService } from 'src/engine/core-modules/auth/token/services/workspace-agnostic-token.service';
 import {
-  AuthContextUser,
+  type AuthContextUser,
   JwtTokenTypeEnum,
 } from 'src/engine/core-modules/auth/types/auth-context.type';
 import {
@@ -54,21 +54,21 @@ import {
   type SignInUpNewUserPayload,
 } from 'src/engine/core-modules/auth/types/signInUp.type';
 import { validateRedirectUri } from 'src/engine/core-modules/auth/utils/validate-redirect-uri.util';
-import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
-import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
-import { WorkspaceDomainConfig } from 'src/engine/core-modules/domain/workspace-domains/types/workspace-domain-config.type';
-import { EmailService } from 'src/engine/core-modules/email/email.service';
-import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
-import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
-import { UserService } from 'src/engine/core-modules/user/services/user.service';
+import { type DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
+import { type WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
+import { type WorkspaceDomainConfig } from 'src/engine/core-modules/domain/workspace-domains/types/workspace-domain-config.type';
+import { type EmailService } from 'src/engine/core-modules/email/email.service';
+import { type GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
+import { type I18nService } from 'src/engine/core-modules/i18n/i18n.service';
+import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { type UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
+import { type UserService } from 'src/engine/core-modules/user/services/user.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
-import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
+import { type WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
-import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { type PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 
 @Injectable()
 // oxlint-disable-next-line twenty/inject-workspace-repository

@@ -1,6 +1,6 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { type QueryRunner, IsNull, Repository } from 'typeorm';
+import { type QueryRunner, IsNull, type Repository } from 'typeorm';
 
 import {
   KeyValuePairEntity,

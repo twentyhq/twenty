@@ -43,11 +43,11 @@ const StyledHoverCard = styled.div`
   background: ${themeCssVariables.background.primary};
   border: 1px solid ${themeCssVariables.border.color.medium};
   border-radius: ${themeCssVariables.border.radius.md};
+  bottom: calc(100% + 8px);
   box-shadow: ${themeCssVariables.boxShadow.strong};
+  left: 0;
   min-width: 280px;
   position: absolute;
-  left: 0;
-  bottom: calc(100% + 8px);
   z-index: ${themeCssVariables.lastLayerZIndex};
 `;
 

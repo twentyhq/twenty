@@ -44,11 +44,11 @@ const StyledRightPanelContainer = styled.div`
 `;
 
 const StyledRightPanelFlexContainer = styled.div`
+  align-items: center;
   display: flex;
   flex-direction: row;
-  justify-content: flex-end;
-  align-items: center;
   height: 32px;
+  justify-content: flex-end;
   margin-bottom: 12px;
 `;
 

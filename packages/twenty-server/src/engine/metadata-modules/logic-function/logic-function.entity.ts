@@ -9,9 +9,9 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import {
-  CronTriggerSettings,
-  DatabaseEventTriggerSettings,
-  HttpRouteTriggerSettings,
+  type CronTriggerSettings,
+  type DatabaseEventTriggerSettings,
+  type HttpRouteTriggerSettings,
 } from 'twenty-shared/application';
 import { type InputJsonSchema } from 'twenty-shared/logic-function';
 

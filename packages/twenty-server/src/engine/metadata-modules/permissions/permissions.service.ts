@@ -4,9 +4,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { msg } from '@lingui/core/macro';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
-import { In, Repository } from 'typeorm';
+import { In, type Repository } from 'typeorm';
 
-import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
+import { type ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import {
   ApplicationException,
@@ -20,9 +20,9 @@ import {
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { type UserWorkspacePermissions } from 'src/engine/metadata-modules/permissions/types/user-workspace-permissions';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
-import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
+import { type UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
 export class PermissionsService {

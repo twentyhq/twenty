@@ -1,7 +1,7 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 import GraphQLJSON from 'graphql-type-json';
-import { ObjectRecord } from 'twenty-shared/types';
+import { type ObjectRecord } from 'twenty-shared/types';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 

@@ -14,7 +14,7 @@ import {
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import { EntityRelation } from 'src/engine/workspace-manager/workspace-migration/types/entity-relation.interface';
+import { type EntityRelation } from 'src/engine/workspace-manager/workspace-migration/types/entity-relation.interface';
 
 @Entity({
   name: 'applicationVariable',

@@ -12,13 +12,13 @@ import {
 import { getUniversalFlatEntityEmptyForeignKeyAggregators } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/reset-universal-flat-entity-foreign-key-aggregators.util';
 import { resolveUniversalRelationIdentifiersToIds } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/resolve-universal-relation-identifiers-to-ids.util';
 import {
-  FlatCreatePageLayoutAction,
-  UniversalCreatePageLayoutAction,
+  type FlatCreatePageLayoutAction,
+  type UniversalCreatePageLayoutAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/page-layout/types/workspace-migration-page-layout-action.type';
 import { findPageLayoutTabIdInCreatePageLayoutContext } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/page-layout/services/utils/find-page-layout-tab-id-in-create-page-layout-context.util';
 import {
-  WorkspaceMigrationActionRunnerArgs,
-  WorkspaceMigrationActionRunnerContext,
+  type WorkspaceMigrationActionRunnerArgs,
+  type WorkspaceMigrationActionRunnerContext,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 
 @Injectable()

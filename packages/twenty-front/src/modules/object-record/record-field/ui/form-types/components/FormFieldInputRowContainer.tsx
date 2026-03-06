@@ -8,15 +8,15 @@ const StyledFormFieldInputRowContainer = styled.div<{
 }>`
   display: flex;
   flex-direction: row;
-  position: relative;
-
   height: ${({ multiline }) => (multiline ? 'auto' : '32px')};
+
   line-height: ${({ multiline }) =>
     multiline ? `${LINE_HEIGHT}px` : 'normal'};
   max-height: ${({ multiline, maxHeight }) =>
     multiline ? `${maxHeight ?? 5 * LINE_HEIGHT}px` : 'none'};
   min-height: ${({ multiline }) =>
     multiline ? `${3 * LINE_HEIGHT}px` : 'auto'};
+  position: relative;
 `;
 
 export const FormFieldInputRowContainer = StyledFormFieldInputRowContainer;

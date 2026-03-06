@@ -1,19 +1,19 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import { type Repository } from 'typeorm';
 
-import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
+import { type DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
-import { RoleService } from 'src/engine/metadata-modules/role/role.service';
-import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
-import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
+import { type RoleService } from 'src/engine/metadata-modules/role/role.service';
+import { type UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
+import { type WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
-import { TwentyStandardApplicationService } from 'src/engine/workspace-manager/twenty-standard-application/services/twenty-standard-application.service';
+import { type TwentyStandardApplicationService } from 'src/engine/workspace-manager/twenty-standard-application/services/twenty-standard-application.service';
 
 @Injectable()
 export class WorkspaceManagerService {

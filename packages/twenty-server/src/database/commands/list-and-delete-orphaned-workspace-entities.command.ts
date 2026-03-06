@@ -2,10 +2,14 @@ import { InjectDataSource } from '@nestjs/typeorm';
 
 import chalk from 'chalk';
 import { Command } from 'nest-commander';
-import { DataSource, EntityTarget, ObjectLiteral } from 'typeorm';
+import {
+  type DataSource,
+  type EntityTarget,
+  type ObjectLiteral,
+} from 'typeorm';
 
 import {
-  MigrationCommandOptions,
+  type MigrationCommandOptions,
   MigrationCommandRunner,
 } from 'src/database/commands/command-runners/migration.command-runner';
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';

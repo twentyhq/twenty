@@ -47,11 +47,11 @@ const StyledContainer = styled.div`
   align-self: stretch;
   display: flex;
   flex-direction: column;
+  height: 100%;
   justify-content: center;
   padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[6]}
     ${themeCssVariables.spacing[6]};
   width: calc(100% - ${themeCssVariables.spacing[12]});
-  height: 100%;
 `;
 
 const StyledTitleBar = styled.h3`
@@ -75,8 +75,8 @@ const StyledCount = styled.span`
 
 const StyledDropZoneContainer = styled.div`
   height: 100%;
-  width: 100%;
   overflow: auto;
+  width: 100%;
 `;
 
 const StyledLoadingContainer = styled.div`
@@ -98,8 +98,8 @@ const StyledHeader = styled.div`
   align-items: center;
   display: flex;
   justify-content: space-between;
-  width: 100%;
   min-height: 40px;
+  width: 100%;
 `;
 
 const StyledModalTitle = styled.span`

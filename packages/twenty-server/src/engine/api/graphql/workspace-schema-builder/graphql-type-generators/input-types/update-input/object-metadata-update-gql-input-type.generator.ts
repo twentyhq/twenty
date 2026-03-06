@@ -1,11 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import {
-  GraphQLEnumType,
-  GraphQLInputFieldConfigMap,
+  type GraphQLEnumType,
+  type GraphQLInputFieldConfigMap,
   GraphQLInputObjectType,
-  GraphQLList,
-  GraphQLScalarType,
+  type GraphQLList,
+  type GraphQLScalarType,
   isEnumType,
   isInputObjectType,
   isObjectType,
@@ -14,9 +14,9 @@ import {
 import { isDefined, pascalCase } from 'twenty-shared/utils';
 
 import { GqlInputTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/enums/gql-input-type-definition-kind.enum';
-import { RelationFieldMetadataGqlInputTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/input-types/relation-field-metadata-gql-type.generator';
-import { TypeMapperService } from 'src/engine/api/graphql/workspace-schema-builder/services/type-mapper.service';
-import { GqlTypesStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/gql-types.storage';
+import { type RelationFieldMetadataGqlInputTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/input-types/relation-field-metadata-gql-type.generator';
+import { type TypeMapperService } from 'src/engine/api/graphql/workspace-schema-builder/services/type-mapper.service';
+import { type GqlTypesStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/gql-types.storage';
 import { type SchemaGenerationContext } from 'src/engine/api/graphql/workspace-schema-builder/types/schema-generation-context.type';
 import { applyTypeOptionsForUpdateInput } from 'src/engine/api/graphql/workspace-schema-builder/utils/apply-type-options-for-update-input.util';
 import { computeFieldInputTypeOptions } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-field-input-type-options.util';

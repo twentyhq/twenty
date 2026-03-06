@@ -10,7 +10,7 @@ import ms from 'ms';
 import { SendInviteLinkEmail } from 'twenty-emails';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
-import { IsNull, Repository } from 'typeorm';
+import { IsNull, type Repository } from 'typeorm';
 
 import {
   AppTokenEntity,
@@ -20,13 +20,13 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
-import { EmailService } from 'src/engine/core-modules/email/email.service';
-import { FileService } from 'src/engine/core-modules/file/services/file.service';
-import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
-import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
-import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { type WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
+import { type EmailService } from 'src/engine/core-modules/email/email.service';
+import { type FileService } from 'src/engine/core-modules/file/services/file.service';
+import { type I18nService } from 'src/engine/core-modules/i18n/i18n.service';
+import { type OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
+import { type ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
+import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { type SendInvitationsDTO } from 'src/engine/core-modules/workspace-invitation/dtos/send-invitations.dto';
 import { castAppTokenToWorkspaceInvitationUtil } from 'src/engine/core-modules/workspace-invitation/utils/cast-app-token-to-workspace-invitation.util';
@@ -34,9 +34,9 @@ import {
   WorkspaceInvitationException,
   WorkspaceInvitationExceptionCode,
 } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.exception';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { RoleValidationService } from 'src/engine/metadata-modules/role-validation/services/role-validation.service';
-import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type RoleValidationService } from 'src/engine/metadata-modules/role-validation/services/role-validation.service';
+import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { CustomException } from 'src/utils/custom-exception';
 
 @Injectable()

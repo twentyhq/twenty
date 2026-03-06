@@ -54,10 +54,10 @@ const StyledContent = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
-  justify-content: start;
-  margin-left: ${themeCssVariables.spacing[4]};
-
   gap: ${themeCssVariables.spacing[3]};
+  justify-content: start;
+
+  margin-left: ${themeCssVariables.spacing[4]};
 `;
 
 const StyledButtonContainer = styled.div`

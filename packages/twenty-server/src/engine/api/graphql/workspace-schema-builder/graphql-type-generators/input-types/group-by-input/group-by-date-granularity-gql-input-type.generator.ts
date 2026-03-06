@@ -12,7 +12,7 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 
 import { OrderByDirectionType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/enum';
-import { GqlTypesStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/gql-types.storage';
+import { type GqlTypesStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/gql-types.storage';
 
 export const GROUP_BY_DATE_GRANULARITY_INPUT_KEY =
   'GroupByDateGranularityInput';

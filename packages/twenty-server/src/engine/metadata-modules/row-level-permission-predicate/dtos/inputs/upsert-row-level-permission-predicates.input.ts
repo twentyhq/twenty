@@ -14,7 +14,7 @@ import GraphQLJSON from 'graphql-type-json';
 import {
   RowLevelPermissionPredicateGroupLogicalOperator,
   RowLevelPermissionPredicateOperand,
-  RowLevelPermissionPredicateValue,
+  type RowLevelPermissionPredicateValue,
 } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';

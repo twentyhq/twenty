@@ -24,7 +24,7 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 const APPLICATION_REFRESH_TOKEN_INVALID_OR_EXPIRED_MESSAGE =
   'Application refresh token invalid or expired';

@@ -8,25 +8,25 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 
 import {
-  LogicFunctionDriver,
+  type LogicFunctionDriver,
   type LogicFunctionExecuteResult,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 
-import { FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import type { FlatApplicationVariable } from 'src/engine/core-modules/application/application-variable/types/flat-application-variable.type';
-import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
+import { type AuditService } from 'src/engine/core-modules/audit/services/audit.service';
 import { LOGIC_FUNCTION_EXECUTED_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/logic-function/logic-function-executed';
-import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
+import { type ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
 import { LOGIC_FUNCTION_DRIVER } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/logic-function-driver.constants';
 import { buildEnvVar } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-env-var';
-import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
-import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { type SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
+import { type ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
+import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
+import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { SubscriptionChannel } from 'src/engine/subscriptions/enums/subscription-channel.enum';
-import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { type SubscriptionService } from 'src/engine/subscriptions/subscription.service';
+import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { cleanServerUrl } from 'src/utils/clean-server-url';
 
 export class LogicFunctionExecutionException extends Error {

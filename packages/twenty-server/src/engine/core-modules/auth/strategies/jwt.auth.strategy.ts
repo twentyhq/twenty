@@ -7,7 +7,7 @@ import { Strategy } from 'passport-jwt';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { Repository } from 'typeorm';
+import { type Repository } from 'typeorm';
 
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
@@ -18,22 +18,22 @@ import {
 import {
   type AccessTokenJwtPayload,
   type ApiKeyTokenJwtPayload,
-  ApplicationAccessTokenJwtPayload,
+  type ApplicationAccessTokenJwtPayload,
   AUTH_CONTEXT_USER_SELECT_FIELDS,
   type AuthContext,
   type AuthContextUser,
-  FileTokenJwtPayloadLegacy,
+  type FileTokenJwtPayloadLegacy,
   type JwtPayload,
   JwtTokenTypeEnum,
   type WorkspaceAgnosticTokenJwtPayload,
 } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
+import { type JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { type PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
 export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {

@@ -13,14 +13,14 @@ import {
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { CreateViewSortPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/create-view-sort-permission.guard';
 import { DeleteViewSortPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/delete-view-sort-permission.guard';
 import { UpdateViewSortPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/update-view-sort-permission.guard';
-import { CreateViewSortInput } from 'src/engine/metadata-modules/view-sort/dtos/inputs/create-view-sort.input';
+import { type CreateViewSortInput } from 'src/engine/metadata-modules/view-sort/dtos/inputs/create-view-sort.input';
 import { type ViewSortDTO } from 'src/engine/metadata-modules/view-sort/dtos/view-sort.dto';
 import {
   generateViewSortExceptionMessage,
@@ -30,8 +30,8 @@ import {
   ViewSortExceptionMessageKey,
 } from 'src/engine/metadata-modules/view-sort/exceptions/view-sort.exception';
 import { ViewSortRestApiExceptionFilter } from 'src/engine/metadata-modules/view-sort/filters/view-sort-rest-api-exception.filter';
-import { ViewSortService } from 'src/engine/metadata-modules/view-sort/services/view-sort.service';
-import { ViewSortDirection } from 'src/engine/metadata-modules/view-sort/enums/view-sort-direction';
+import { type ViewSortService } from 'src/engine/metadata-modules/view-sort/services/view-sort.service';
+import { type ViewSortDirection } from 'src/engine/metadata-modules/view-sort/enums/view-sort-direction';
 
 @Controller('rest/metadata/viewSorts')
 @UseGuards(WorkspaceAuthGuard)

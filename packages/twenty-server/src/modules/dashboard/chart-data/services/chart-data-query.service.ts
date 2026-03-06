@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
-import { CalendarStartDay } from 'twenty-shared/constants';
+import { type CalendarStartDay } from 'twenty-shared/constants';
 import {
-  AggregateOperations,
+  type AggregateOperations,
   type ChartFilter,
-  ObjectRecordGroupByDateGranularity,
-  OrderByWithGroupBy,
+  type ObjectRecordGroupByDateGranularity,
+  type OrderByWithGroupBy,
 } from 'twenty-shared/types';
 import {
   isDefined,
@@ -13,14 +13,14 @@ import {
   isFieldMetadataDateKind,
 } from 'twenty-shared/utils';
 
-import { ObjectRecordGroupBy } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+import { type ObjectRecordGroupBy } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
-import { CommonGroupByQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-group-by-query-runner.service';
+import { type CommonGroupByQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-group-by-query-runner.service';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { GraphOrderBy } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-order-by.enum';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type GraphOrderBy } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-order-by.enum';
 import { GRAPH_DEFAULT_DATE_GRANULARITY } from 'src/modules/dashboard/chart-data/constants/graph-default-date-granularity.constant';
 import { GRAPH_DEFAULT_ORDER_BY } from 'src/modules/dashboard/chart-data/constants/graph-default-order-by.constant';
 import {
@@ -28,7 +28,7 @@ import {
   ChartDataExceptionCode,
   generateChartDataExceptionMessage,
 } from 'src/modules/dashboard/chart-data/exceptions/chart-data.exception';
-import { GroupByRawResult } from 'src/modules/dashboard/chart-data/types/group-by-raw-result.type';
+import { type GroupByRawResult } from 'src/modules/dashboard/chart-data/types/group-by-raw-result.type';
 import { buildAggregateFieldKey } from 'src/modules/dashboard/chart-data/utils/build-aggregate-field-key.util';
 import {
   buildGroupByFieldObject,

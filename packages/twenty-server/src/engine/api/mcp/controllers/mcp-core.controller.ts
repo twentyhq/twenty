@@ -8,12 +8,12 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 
-import { JsonRpc } from 'src/engine/api/mcp/dtos/json-rpc';
-import { McpProtocolService } from 'src/engine/api/mcp/services/mcp-protocol.service';
+import { type JsonRpc } from 'src/engine/api/mcp/dtos/json-rpc';
+import { type McpProtocolService } from 'src/engine/api/mcp/services/mcp-protocol.service';
 import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
-import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
-import { UserEntity } from 'src/engine/core-modules/user/user.entity';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
+import { type UserEntity } from 'src/engine/core-modules/user/user.entity';
+import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';

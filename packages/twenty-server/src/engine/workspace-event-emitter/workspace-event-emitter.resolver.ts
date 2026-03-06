@@ -8,7 +8,7 @@ import { type ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entit
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
@@ -17,18 +17,18 @@ import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { EVENT_STREAM_TTL_MS } from 'src/engine/subscriptions/constants/event-stream-ttl.constant';
-import { AddQuerySubscriptionInput } from 'src/engine/subscriptions/dtos/add-query-subscription.input';
+import { type AddQuerySubscriptionInput } from 'src/engine/subscriptions/dtos/add-query-subscription.input';
 import { EventSubscriptionDTO } from 'src/engine/subscriptions/dtos/event-subscription.dto';
 import { OnDbEventDTO } from 'src/engine/subscriptions/dtos/on-db-event.dto';
-import { OnDbEventInput } from 'src/engine/subscriptions/dtos/on-db-event.input';
-import { RemoveQueryFromEventStreamInput } from 'src/engine/subscriptions/dtos/remove-query-subscription.input';
+import { type OnDbEventInput } from 'src/engine/subscriptions/dtos/on-db-event.input';
+import { type RemoveQueryFromEventStreamInput } from 'src/engine/subscriptions/dtos/remove-query-subscription.input';
 import { SubscriptionChannel } from 'src/engine/subscriptions/enums/subscription-channel.enum';
 import {
   EventStreamException,
   EventStreamExceptionCode,
 } from 'src/engine/subscriptions/event-stream.exception';
-import { EventStreamService } from 'src/engine/subscriptions/event-stream.service';
-import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
+import { type EventStreamService } from 'src/engine/subscriptions/event-stream.service';
+import { type SubscriptionService } from 'src/engine/subscriptions/subscription.service';
 import { type EventStreamPayload } from 'src/engine/subscriptions/types/event-stream-payload.type';
 import { wrapAsyncIteratorWithLifecycle } from 'src/engine/workspace-event-emitter/utils/wrap-async-iterator-with-lifecycle';
 import { WorkspaceEventEmitterExceptionFilter } from 'src/engine/workspace-event-emitter/workspace-event-emitter-exception.filter';

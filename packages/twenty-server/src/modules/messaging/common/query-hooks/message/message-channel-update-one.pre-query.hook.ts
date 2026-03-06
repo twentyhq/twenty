@@ -14,7 +14,7 @@ import {
 } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { type GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import {
   MessageChannelPendingGroupEmailsAction,
@@ -25,7 +25,7 @@ import {
   MessageFolderPendingSyncAction,
   type MessageFolderWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
-import { MessagingProcessGroupEmailActionsService } from 'src/modules/messaging/message-import-manager/services/messaging-process-group-email-actions.service';
+import { type MessagingProcessGroupEmailActionsService } from 'src/modules/messaging/message-import-manager/services/messaging-process-group-email-actions.service';
 
 const ONGOING_SYNC_STAGES = [
   MessageChannelSyncStage.MESSAGE_LIST_FETCH_ONGOING,

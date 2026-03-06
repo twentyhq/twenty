@@ -15,10 +15,10 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
 import { type ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
-import { CreateApiKeyInput } from 'src/engine/core-modules/api-key/dtos/create-api-key.input';
-import { UpdateApiKeyInput } from 'src/engine/core-modules/api-key/dtos/update-api-key.input';
-import { ApiKeyService } from 'src/engine/core-modules/api-key/services/api-key.service';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type CreateApiKeyInput } from 'src/engine/core-modules/api-key/dtos/create-api-key.input';
+import { type UpdateApiKeyInput } from 'src/engine/core-modules/api-key/dtos/update-api-key.input';
+import { type ApiKeyService } from 'src/engine/core-modules/api-key/services/api-key.service';
+import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';

@@ -13,8 +13,8 @@ import { type MessageWithParticipants } from 'src/modules/messaging/message-impo
 import { formatAddressObjectAsParticipants } from 'src/modules/messaging/message-import-manager/utils/format-address-object-as-participants.util';
 import { safeParseEmailAddress } from 'src/modules/messaging/message-import-manager/utils/safe-parse.util';
 
-import { MicrosoftFetchByBatchService } from './microsoft-fetch-by-batch.service';
-import { MicrosoftMessagesImportErrorHandler } from './microsoft-messages-import-error-handler.service';
+import { type MicrosoftFetchByBatchService } from './microsoft-fetch-by-batch.service';
+import { type MicrosoftMessagesImportErrorHandler } from './microsoft-messages-import-error-handler.service';
 
 type ConnectedAccountType = Pick<
   ConnectedAccountWorkspaceEntity,

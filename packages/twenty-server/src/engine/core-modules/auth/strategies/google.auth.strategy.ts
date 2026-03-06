@@ -16,7 +16,7 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import { type SocialSSOSignInUpActionType } from 'src/engine/core-modules/auth/types/signInUp.type';
 import { type SocialSSOState } from 'src/engine/core-modules/auth/types/social-sso-state.type';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 export type GoogleRequest = Omit<
   Request,

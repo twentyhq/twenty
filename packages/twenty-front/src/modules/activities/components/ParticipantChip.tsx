@@ -29,12 +29,12 @@ const StyledContainer = styled.div`
 
 const StyledChip = styled.div`
   align-items: center;
-  display: flex;
-  padding: ${themeCssVariables.spacing[1]};
-  height: 20px;
   box-sizing: border-box;
-  white-space: nowrap;
+  display: flex;
   gap: ${themeCssVariables.spacing[1]};
+  height: 20px;
+  padding: ${themeCssVariables.spacing[1]};
+  white-space: nowrap;
 `;
 
 type ParticipantChipVariant = 'default' | 'bold';

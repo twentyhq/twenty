@@ -1,9 +1,9 @@
 import {
-  ConsoleLogger,
+  type ConsoleLogger,
   Inject,
   Injectable,
   type LogLevel,
-  LoggerService as LoggerServiceInterface,
+  type LoggerService as LoggerServiceInterface,
 } from '@nestjs/common';
 
 import { LOGGER_DRIVER } from 'src/engine/core-modules/logger/logger.constants';

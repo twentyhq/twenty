@@ -10,7 +10,7 @@ import {
 import GraphQLJSON from 'graphql-type-json';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { TrackEventName } from 'src/engine/core-modules/audit/types/events.type';
+import { type TrackEventName } from 'src/engine/core-modules/audit/types/events.type';
 
 @ArgsType()
 export class CreateObjectEventInput {

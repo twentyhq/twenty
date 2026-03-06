@@ -21,7 +21,7 @@ import {
   type AggregateChartConfiguration,
   AggregateOperations,
   type ChartFilter,
-  SerializedRelation,
+  type SerializedRelation,
 } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';

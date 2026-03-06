@@ -1,17 +1,17 @@
 import { Injectable } from '@nestjs/common';
-import { EventEmitter2 } from '@nestjs/event-emitter';
+import { type EventEmitter2 } from '@nestjs/event-emitter';
 
-import { AllMetadataName } from 'twenty-shared/metadata';
+import { type AllMetadataName } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { getWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { MetadataEventBatch } from 'src/engine/metadata-event-emitter/types/metadata-event-batch.type';
+import { type MetadataEventBatch } from 'src/engine/metadata-event-emitter/types/metadata-event-batch.type';
 import { computeMetadataEventName } from 'src/engine/metadata-event-emitter/utils/compute-metadata-event-name.util';
 import {
-  AllMetadataEventName,
-  AllMetadataEventType,
-  MetadataEvent,
+  type AllMetadataEventName,
+  type AllMetadataEventType,
+  type MetadataEvent,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/metadata-event';
 
 type EmitMetadataEventsArgs = {

@@ -13,14 +13,14 @@ import { type SystemHealthDTO } from 'src/engine/core-modules/admin-panel/dtos/s
 import { AdminPanelHealthServiceStatus } from 'src/engine/core-modules/admin-panel/enums/admin-panel-health-service-status.enum';
 import { QueueMetricsTimeRange } from 'src/engine/core-modules/admin-panel/enums/queue-metrics-time-range.enum';
 import { HealthIndicatorId } from 'src/engine/core-modules/admin-panel/enums/health-indicator-id.enum';
-import { AppHealthIndicator } from 'src/engine/core-modules/admin-panel/indicators/app.health';
-import { ConnectedAccountHealth } from 'src/engine/core-modules/admin-panel/indicators/connected-account.health';
-import { DatabaseHealthIndicator } from 'src/engine/core-modules/admin-panel/indicators/database.health';
-import { RedisHealthIndicator } from 'src/engine/core-modules/admin-panel/indicators/redis.health';
-import { WorkerHealthIndicator } from 'src/engine/core-modules/admin-panel/indicators/worker.health';
+import { type AppHealthIndicator } from 'src/engine/core-modules/admin-panel/indicators/app.health';
+import { type ConnectedAccountHealth } from 'src/engine/core-modules/admin-panel/indicators/connected-account.health';
+import { type DatabaseHealthIndicator } from 'src/engine/core-modules/admin-panel/indicators/database.health';
+import { type RedisHealthIndicator } from 'src/engine/core-modules/admin-panel/indicators/redis.health';
+import { type WorkerHealthIndicator } from 'src/engine/core-modules/admin-panel/indicators/worker.health';
 import { type WorkerQueueHealth } from 'src/engine/core-modules/admin-panel/types/worker-queue-health.type';
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
+import { type RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
 
 @Injectable()
 export class AdminPanelHealthService {

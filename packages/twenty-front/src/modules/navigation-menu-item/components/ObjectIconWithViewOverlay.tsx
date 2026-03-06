@@ -21,16 +21,16 @@ const StyledObjectIconWrapper = styled.div<{
   $backgroundColor: string;
   $borderColor?: string;
 }>`
-  position: absolute;
-  inset: 0;
-  border-radius: 4px;
-  box-sizing: border-box;
-  background-color: ${({ $backgroundColor }) => $backgroundColor};
-  display: flex;
   align-items: center;
-  justify-content: center;
+  background-color: ${({ $backgroundColor }) => $backgroundColor};
   border: ${({ $borderColor }) =>
     $borderColor ? `1px solid ${$borderColor}` : 'none'};
+  border-radius: 4px;
+  box-sizing: border-box;
+  display: flex;
+  inset: 0;
+  justify-content: center;
+  position: absolute;
 `;
 
 const StyledViewOverlay = styled.div<{ $backgroundColor: string }>`

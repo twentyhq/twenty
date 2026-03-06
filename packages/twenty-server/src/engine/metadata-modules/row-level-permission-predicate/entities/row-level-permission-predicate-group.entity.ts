@@ -1,7 +1,7 @@
 /* @license Enterprise */
 
 import {
-  RowLevelPermissionPredicateGroup,
+  type RowLevelPermissionPredicateGroup,
   RowLevelPermissionPredicateGroupLogicalOperator,
 } from 'twenty-shared/types';
 import {
@@ -14,7 +14,7 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
-  Relation,
+  type Relation,
   UpdateDateColumn,
 } from 'typeorm';
 

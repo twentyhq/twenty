@@ -20,15 +20,15 @@ export const StyledLabel = ({ children }: { children: React.ReactNode }) => (
 
 export const StyledRow = styled.div<{ isDisabled?: boolean }>`
   align-items: center;
+  border-radius: ${themeCssVariables.spacing[1]};
+  box-sizing: border-box;
+  cursor: ${({ isDisabled }) => (isDisabled ? 'not-allowed' : 'pointer')};
   display: flex;
   justify-content: space-between;
-  width: 100%;
-  padding: ${themeCssVariables.spacing[1]};
-  box-sizing: border-box;
-  border-radius: ${themeCssVariables.spacing[1]};
-  cursor: ${({ isDisabled }) => (isDisabled ? 'not-allowed' : 'pointer')};
   opacity: ${({ isDisabled }) => (isDisabled ? 0.5 : 1)};
+  padding: ${themeCssVariables.spacing[1]};
   pointer-events: ${({ isDisabled }) => (isDisabled ? 'none' : 'auto')};
+  width: 100%;
 
   :hover {
     background-color: ${({ isDisabled }) =>
@@ -59,13 +59,13 @@ export const StyledList = styled.div`
 `;
 
 export const StyledIconContainer = styled.div`
+  align-items: center;
   background-color: ${themeCssVariables.background.tertiary};
-  padding: ${themeCssVariables.spacing[1]};
   border-radius: ${themeCssVariables.spacing[1]};
+  color: ${themeCssVariables.font.color.tertiary};
   display: flex;
   justify-content: center;
-  align-items: center;
-  color: ${themeCssVariables.font.color.tertiary};
+  padding: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledIconChevronRightWrapper = styled.div`

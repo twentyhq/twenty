@@ -1,5 +1,5 @@
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
-import { DiscoveryService, Reflector } from '@nestjs/core';
+import { Injectable, Logger, type OnModuleInit } from '@nestjs/common';
+import { type DiscoveryService, type Reflector } from '@nestjs/core';
 
 import crypto from 'crypto';
 
@@ -8,13 +8,13 @@ import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
-import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
+import { type CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { PromiseMemoizer } from 'src/engine/twenty-orm/storage/promise-memoizer.storage';
 import {
   WORKSPACE_CACHE_KEY,
   WORKSPACE_CACHE_OPTIONS,
-  WorkspaceCacheOptions,
+  type WorkspaceCacheOptions,
 } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import {
   WorkspaceCacheException,
@@ -22,7 +22,7 @@ import {
 } from 'src/engine/workspace-cache/exceptions/workspace-cache.exception';
 import {
   WORKSPACE_CACHE_KEYS_V2,
-  WorkspaceCacheKeyName,
+  type WorkspaceCacheKeyName,
   type WorkspaceCacheDataMap,
   type WorkspaceCacheResult,
 } from 'src/engine/workspace-cache/types/workspace-cache-key.type';

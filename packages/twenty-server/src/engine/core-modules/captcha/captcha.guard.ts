@@ -11,8 +11,8 @@ import {
   CaptchaException,
   CaptchaExceptionCode,
 } from 'src/engine/core-modules/captcha/captcha.exception';
-import { CaptchaService } from 'src/engine/core-modules/captcha/captcha.service';
-import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import { type CaptchaService } from 'src/engine/core-modules/captcha/captcha.service';
+import { type MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 
 @Injectable()

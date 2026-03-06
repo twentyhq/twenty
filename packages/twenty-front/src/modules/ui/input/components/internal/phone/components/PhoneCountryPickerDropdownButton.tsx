@@ -24,17 +24,17 @@ const StyledDropdownButtonContainer = styled.div<StyledDropdownButtonProps>`
   background: none;
   border-radius: ${themeCssVariables.border.radius.xs} 0 0
     ${themeCssVariables.border.radius.xs};
+  border-right: 1px solid ${themeCssVariables.border.color.medium};
   color: ${({ color }) => color ?? 'none'};
   cursor: pointer;
+
   display: flex;
 
   height: 32px;
-
   padding-left: ${themeCssVariables.spacing[2]};
   padding-right: ${themeCssVariables.spacing[1]};
-  user-select: none;
 
-  border-right: 1px solid ${themeCssVariables.border.color.medium};
+  user-select: none;
 
   &:hover {
     background-color: ${themeCssVariables.background.transparent.light};
@@ -52,8 +52,8 @@ const StyledIconContainer = styled.div`
     align-items: center;
     display: flex;
     height: 12px;
-    width: 16px;
     justify-content: center;
+    width: 16px;
   }
 `;
 
@@ -62,8 +62,8 @@ const StyledCheveronIconContainer = styled.div`
     align-items: center;
     display: flex;
     height: 14px;
-    width: 14px;
     justify-content: center;
+    width: 14px;
   }
 `;
 

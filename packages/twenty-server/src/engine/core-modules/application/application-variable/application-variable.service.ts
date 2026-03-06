@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { ApplicationVariables } from 'twenty-shared/application';
+import { type ApplicationVariables } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
-import { In, Not, Repository } from 'typeorm';
+import { In, Not, type Repository } from 'typeorm';
 
 import { ApplicationVariableEntity } from 'src/engine/core-modules/application/application-variable/application-variable.entity';
 import {
@@ -11,8 +11,8 @@ import {
   ApplicationVariableEntityExceptionCode,
 } from 'src/engine/core-modules/application/application-variable/application-variable.exception';
 import { SECRET_APPLICATION_VARIABLE_MASK } from 'src/engine/core-modules/application/application-variable/constants/secret-application-variable-mask.constant';
-import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { type SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
+import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
 export class ApplicationVariableEntityService {

@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { ExtendedUIMessage } from 'twenty-shared/ai';
-import { Repository } from 'typeorm';
+import { type ExtendedUIMessage } from 'twenty-shared/ai';
+import { type Repository } from 'typeorm';
 
 import type { UIDataTypes, UIMessagePart, UITools } from 'ai';
 
 import { AgentMessagePartEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message-part.entity';
 import {
   AgentMessageEntity,
-  AgentMessageRole,
+  type AgentMessageRole,
 } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
 import { AgentTurnEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-turn.entity';
 import { mapUIMessagePartsToDBParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/mapUIMessagePartsToDBParts';
@@ -19,7 +19,7 @@ import {
 } from 'src/engine/metadata-modules/ai/ai-agent/agent.exception';
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
 
-import { AgentTitleGenerationService } from './agent-title-generation.service';
+import { type AgentTitleGenerationService } from './agent-title-generation.service';
 
 @Injectable()
 export class AgentChatService {

@@ -4,7 +4,7 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import { msg } from '@lingui/core/macro';
 import { type DataSource, type EntityManager } from 'typeorm';
 
-import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
+import { type DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import {
   PermissionsException,
   PermissionsExceptionCode,

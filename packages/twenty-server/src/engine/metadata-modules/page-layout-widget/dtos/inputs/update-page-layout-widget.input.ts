@@ -10,12 +10,12 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { GraphQLJSON } from 'graphql-type-json';
-import { PageLayoutWidgetPosition } from 'twenty-shared/types';
+import { type PageLayoutWidgetPosition } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { GridPositionInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/grid-position.input';
 import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
-import { AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/types/all-page-layout-widget-configuration.type';
+import { type AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/types/all-page-layout-widget-configuration.type';
 
 @InputType()
 export class UpdatePageLayoutWidgetInput {

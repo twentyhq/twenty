@@ -1,18 +1,18 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import {
-  GraphQLInputFieldConfigMap,
+  type GraphQLInputFieldConfigMap,
   GraphQLInputObjectType,
-  GraphQLInputType,
+  type GraphQLInputType,
   isEnumType,
   isObjectType,
 } from 'graphql';
 import { isDefined, pascalCase } from 'twenty-shared/utils';
-import { CompositeType } from 'twenty-shared/types';
+import { type CompositeType } from 'twenty-shared/types';
 
 import { GqlInputTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/enums/gql-input-type-definition-kind.enum';
-import { TypeMapperService } from 'src/engine/api/graphql/workspace-schema-builder/services/type-mapper.service';
-import { GqlTypesStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/gql-types.storage';
+import { type TypeMapperService } from 'src/engine/api/graphql/workspace-schema-builder/services/type-mapper.service';
+import { type GqlTypesStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/gql-types.storage';
 import { computeCompositeFieldTypeOptions } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-composite-field-type-options.util';
 import { computeCompositeFieldEnumTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-composite-field-enum-type-key.util';
 import { computeCompositeFieldInputTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-composite-field-input-type-key.util';

@@ -19,7 +19,7 @@ import {
   AggregateOperations,
   type ChartFilter,
   type GaugeChartConfiguration,
-  SerializedRelation,
+  type SerializedRelation,
 } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';

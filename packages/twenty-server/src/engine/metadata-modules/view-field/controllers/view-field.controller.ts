@@ -13,14 +13,14 @@ import {
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { CreateViewFieldInput } from 'src/engine/metadata-modules/view-field/dtos/inputs/create-view-field.input';
-import { UpdateViewFieldInput } from 'src/engine/metadata-modules/view-field/dtos/inputs/update-view-field.input';
-import { ViewFieldDTO } from 'src/engine/metadata-modules/view-field/dtos/view-field.dto';
-import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
+import { type CreateViewFieldInput } from 'src/engine/metadata-modules/view-field/dtos/inputs/create-view-field.input';
+import { type UpdateViewFieldInput } from 'src/engine/metadata-modules/view-field/dtos/inputs/update-view-field.input';
+import { type ViewFieldDTO } from 'src/engine/metadata-modules/view-field/dtos/view-field.dto';
+import { type ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
 import {
   generateViewFieldExceptionMessage,
   generateViewFieldUserFriendlyExceptionMessage,
@@ -29,7 +29,7 @@ import {
   ViewFieldExceptionMessageKey,
 } from 'src/engine/metadata-modules/view-field/exceptions/view-field.exception';
 import { ViewFieldRestApiExceptionFilter } from 'src/engine/metadata-modules/view-field/filters/view-field-rest-api-exception.filter';
-import { ViewFieldService } from 'src/engine/metadata-modules/view-field/services/view-field.service';
+import { type ViewFieldService } from 'src/engine/metadata-modules/view-field/services/view-field.service';
 import { CreateViewFieldPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/create-view-field-permission.guard';
 import { DeleteViewFieldPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/delete-view-field-permission.guard';
 import { UpdateViewFieldPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/update-view-field-permission.guard';

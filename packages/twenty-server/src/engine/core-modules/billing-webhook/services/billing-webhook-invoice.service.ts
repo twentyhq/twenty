@@ -9,11 +9,11 @@ import type Stripe from 'stripe';
 
 import { getSubscriptionIdFromInvoice } from 'src/engine/core-modules/billing-webhook/utils/get-subscription-id-from-invoice.util';
 import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
-import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { type BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
-import { BillingCreditRolloverService } from 'src/engine/core-modules/billing/services/billing-credit-rollover.service';
-import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
-import { MeteredCreditService } from 'src/engine/core-modules/billing/services/metered-credit.service';
+import { type BillingCreditRolloverService } from 'src/engine/core-modules/billing/services/billing-credit-rollover.service';
+import { type BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
+import { type MeteredCreditService } from 'src/engine/core-modules/billing/services/metered-credit.service';
 
 const SUBSCRIPTION_CYCLE_BILLING_REASON = 'subscription_cycle';
 

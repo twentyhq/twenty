@@ -4,13 +4,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { basename, dirname, join } from 'path';
 import { type Readable } from 'stream';
 
-import { FileFolder } from 'twenty-shared/types';
-import { Like, Repository, type QueryRunner } from 'typeorm';
+import { type FileFolder } from 'twenty-shared/types';
+import { Like, type Repository, type QueryRunner } from 'typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import { FileStorageDriverFactory } from 'src/engine/core-modules/file-storage/file-storage-driver.factory';
+import { type FileStorageDriverFactory } from 'src/engine/core-modules/file-storage/file-storage-driver.factory';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
-import { FileSettings } from 'src/engine/core-modules/file/types/file-settings.types';
+import { type FileSettings } from 'src/engine/core-modules/file/types/file-settings.types';
 
 export type ResourceIdentifier = {
   workspaceId: string;

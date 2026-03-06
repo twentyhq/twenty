@@ -18,9 +18,9 @@ const StyledToggleButton = styled.div<{ isExpandable: boolean }>`
   align-items: center;
   background: none;
   border: none;
+  color: ${themeCssVariables.font.color.tertiary};
   cursor: ${({ isExpandable }) => (isExpandable ? 'pointer' : 'auto')};
   display: flex;
-  color: ${themeCssVariables.font.color.tertiary};
   gap: ${themeCssVariables.spacing[1]};
   padding: ${themeCssVariables.spacing[1]} 0;
   transition: color calc(${themeCssVariables.animation.duration.normal} * 1s);
@@ -40,8 +40,8 @@ const StyledDisplayMessage = styled.span`
 `;
 
 const StyledIconTextContainer = styled.div`
-  display: flex;
   align-items: center;
+  display: flex;
   gap: ${themeCssVariables.spacing[1]};
 
   svg {

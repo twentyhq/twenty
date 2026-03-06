@@ -5,8 +5,8 @@ import { type WorkspacePostQueryHookInstance } from 'src/engine/api/graphql/work
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
 import { WorkspaceQueryHookType } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/types/workspace-query-hook.type';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { NotePostQueryHookService } from 'src/modules/note/query-hooks/note-post-query-hook.service';
-import { NoteWorkspaceEntity } from 'src/modules/note/standard-objects/note.workspace-entity';
+import { type NotePostQueryHookService } from 'src/modules/note/query-hooks/note-post-query-hook.service';
+import { type NoteWorkspaceEntity } from 'src/modules/note/standard-objects/note.workspace-entity';
 
 @Injectable()
 @WorkspaceQueryHook({

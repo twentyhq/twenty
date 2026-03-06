@@ -8,7 +8,10 @@ import {
   IsUUID,
   ValidateNested,
 } from 'class-validator';
-import { ALL_METADATA_NAME, AllMetadataName } from 'twenty-shared/metadata';
+import {
+  ALL_METADATA_NAME,
+  type AllMetadataName,
+} from 'twenty-shared/metadata';
 
 import { WORKSPACE_MIGRATION_ACTION_TYPE } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/constants/workspace-migration-action-type.constant';
 

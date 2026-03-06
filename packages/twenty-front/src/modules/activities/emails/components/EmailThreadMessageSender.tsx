@@ -18,8 +18,8 @@ const StyledEmailThreadMessageSender = styled.div`
 
 const StyledThreadMessageSentAt = styled.div`
   align-items: flex-end;
-  display: flex;
   color: ${themeCssVariables.font.color.tertiary};
+  display: flex;
   font-size: ${themeCssVariables.font.size.sm};
 `;
 

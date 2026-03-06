@@ -1,4 +1,4 @@
-import { JSONValue } from 'ai';
+import { type JSONValue } from 'ai';
 import {
   Column,
   CreateDateColumn,
@@ -7,7 +7,7 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
-  Relation,
+  type Relation,
 } from 'typeorm';
 
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';

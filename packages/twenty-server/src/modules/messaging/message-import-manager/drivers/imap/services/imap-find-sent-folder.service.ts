@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { isNumber } from 'class-validator';
-import { ListResponse, type ImapFlow } from 'imapflow';
+import { type ListResponse, type ImapFlow } from 'imapflow';
 
 import { getImapSentFolderCandidatesByRegex } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/get-sent-folder-candidates-by-regex.util';
 

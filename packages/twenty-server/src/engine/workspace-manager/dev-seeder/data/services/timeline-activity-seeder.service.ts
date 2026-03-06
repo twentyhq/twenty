@@ -1,21 +1,21 @@
 import { Injectable } from '@nestjs/common';
 
 import chunk from 'lodash.chunk';
-import { ObjectRecord } from 'twenty-shared/types';
+import { type ObjectRecord } from 'twenty-shared/types';
 import { capitalize } from 'twenty-shared/utils';
 
-import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
+import { type ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { CALENDAR_EVENT_DATA_SEEDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/calendar-event-data-seeds.constant';
 import {
-  CalendarEventParticipantDataSeed,
+  type CalendarEventParticipantDataSeed,
   getCalendarEventParticipantDataSeeds,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/calendar-event-participant-data-seeds.constant';
 import { COMPANY_DATA_SEEDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/company-data-seeds.constant';
 import { MESSAGE_DATA_SEEDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/message-data-seeds.constant';
 import {
   getMessageParticipantDataSeeds,
-  MessageParticipantDataSeed,
+  type MessageParticipantDataSeed,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/message-participant-data-seeds.constant';
 import { NOTE_DATA_SEEDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/note-data-seeds.constant';
 import { NOTE_TARGET_DATA_SEEDS_MAP } from 'src/engine/workspace-manager/dev-seeder/data/constants/note-target-data-seeds.constant';

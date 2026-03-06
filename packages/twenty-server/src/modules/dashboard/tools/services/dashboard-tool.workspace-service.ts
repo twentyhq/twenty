@@ -2,13 +2,13 @@ import { Injectable } from '@nestjs/common';
 
 import { type ToolSet } from 'ai';
 
-import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
-import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { PageLayoutTabService } from 'src/engine/metadata-modules/page-layout-tab/services/page-layout-tab.service';
-import { PageLayoutWidgetService } from 'src/engine/metadata-modules/page-layout-widget/services/page-layout-widget.service';
-import { PageLayoutService } from 'src/engine/metadata-modules/page-layout/services/page-layout.service';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { type RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
+import { type WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { type PageLayoutTabService } from 'src/engine/metadata-modules/page-layout-tab/services/page-layout-tab.service';
+import { type PageLayoutWidgetService } from 'src/engine/metadata-modules/page-layout-widget/services/page-layout-widget.service';
+import { type PageLayoutService } from 'src/engine/metadata-modules/page-layout/services/page-layout.service';
+import { type GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 import { createAddDashboardTabTool } from 'src/modules/dashboard/tools/add-dashboard-tab.tool';
 import { createAddDashboardWidgetTool } from 'src/modules/dashboard/tools/add-dashboard-widget.tool';

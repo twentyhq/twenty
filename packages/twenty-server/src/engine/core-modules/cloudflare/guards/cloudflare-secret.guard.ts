@@ -9,7 +9,7 @@ import {
 
 import { timingSafeEqual } from 'crypto';
 
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
 export class CloudflareSecretMatchGuard implements CanActivate {

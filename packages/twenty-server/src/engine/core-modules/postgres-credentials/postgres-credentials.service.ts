@@ -3,14 +3,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { randomBytes } from 'crypto';
 
-import { Repository } from 'typeorm';
+import { type Repository } from 'typeorm';
 
 import {
   decryptText,
   encryptText,
 } from 'src/engine/core-modules/auth/auth.util';
 import { NotFoundError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
+import { type JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { type PostgresCredentialsDTO } from 'src/engine/core-modules/postgres-credentials/dtos/postgres-credentials.dto';
 import { PostgresCredentialsEntity } from 'src/engine/core-modules/postgres-credentials/postgres-credentials.entity';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/auth-context.type';

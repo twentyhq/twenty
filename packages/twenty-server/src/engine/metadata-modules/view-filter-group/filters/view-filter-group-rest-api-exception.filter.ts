@@ -9,8 +9,8 @@ import { msg } from '@lingui/core/macro';
 import { type Response } from 'express';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
-import { HttpExceptionHandlerService } from 'src/engine/core-modules/exception-handler/http-exception-handler.service';
-import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
+import { type HttpExceptionHandlerService } from 'src/engine/core-modules/exception-handler/http-exception-handler.service';
+import { type I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import {
   ViewFilterGroupException,
   ViewFilterGroupExceptionCode,
