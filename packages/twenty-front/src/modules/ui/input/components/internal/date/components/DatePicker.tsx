@@ -1,11 +1,5 @@
 import { styled } from '@linaria/react';
-import {
-  lazy,
-  Suspense,
-  useCallback,
-  type ComponentType,
-  useContext,
-} from 'react';
+import { lazy, Suspense, useContext, type ComponentType } from 'react';
 import type { ReactDatePickerProps as ReactDatePickerLibProps } from 'react-datepicker';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 
@@ -359,7 +353,6 @@ export const DatePicker = ({
   relativeDate,
   onRelativeDateChange,
   hideHeaderInput,
-  onEscape,
 }: DatePickerProps) => {
   const { theme } = useContext(ThemeContext);
   const plainDate = isDefined(plainDateString)
@@ -455,18 +448,8 @@ export const DatePicker = ({
     ? new Date(dateShiftedToISOString)
     : null;
 
-  const handleKeyDown = useCallback(
-    (event: React.KeyboardEvent) => {
-      if (event.key !== 'Escape') return;
-      event.preventDefault();
-      event.stopPropagation();
-      onEscape?.(plainDateString ?? null);
-    },
-    [plainDateString, onEscape],
-  );
-
   return (
-    <StyledContainer calendarDisabled={isRelative} onKeyDown={handleKeyDown}>
+    <StyledContainer calendarDisabled={isRelative}>
       <div className={clearable ? 'clearable ' : ''}>
         <Suspense
           fallback={

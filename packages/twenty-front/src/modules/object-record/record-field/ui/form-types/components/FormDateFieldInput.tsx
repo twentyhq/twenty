@@ -200,14 +200,6 @@ export const FormDateFieldInput = ({
   const handlePickerEnter = () => {};
 
   const handlePickerEscape = () => {
-    closeDropdownYearSelect(MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID);
-    closeDropdownMonthSelect(MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID);
-    setInputDate(
-      isDefined(draftValue.value)
-        ? parsePlainDateToDateInputString(draftValue.value)
-        : '',
-    );
-    setPickerDate(draftValue.value ?? null);
     setDraftValue({
       type: 'static',
       value: draftValue.value,
@@ -266,10 +258,6 @@ export const FormDateFieldInput = ({
   };
 
   const handleInputKeydown = (event: KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Escape') {
-      handlePickerEscape();
-      return;
-    }
     if (event.key !== 'Enter') {
       return;
     }

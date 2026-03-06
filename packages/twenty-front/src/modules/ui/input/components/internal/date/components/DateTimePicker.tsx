@@ -11,13 +11,7 @@ import { getHighlightedDates } from '@/ui/input/components/internal/date/utils/g
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import {
-  lazy,
-  Suspense,
-  useCallback,
-  type ComponentType,
-  useContext,
-} from 'react';
+import { lazy, Suspense, useContext, type ComponentType } from 'react';
 import type { ReactDatePickerProps as ReactDatePickerLibProps } from 'react-datepicker';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 
@@ -358,7 +352,6 @@ export const DateTimePicker = ({
   onRelativeDateChange,
   hideHeaderInput,
   timeZone,
-  onEscape,
 }: DateTimePickerProps) => {
   const { theme } = useContext(ThemeContext);
   const { userFirstDayOfTheWeek } = useUserFirstDayOfTheWeek();
@@ -478,18 +471,8 @@ export const DateTimePicker = ({
   const calendarStartDayNumber =
     convertFirstDayOfTheWeekToCalendarStartDayNumber(userFirstDayOfTheWeek);
 
-  const handleKeyDown = useCallback(
-    (event: React.KeyboardEvent) => {
-      if (event.key !== 'Escape') return;
-      event.preventDefault();
-      event.stopPropagation();
-      onEscape?.(date ?? null);
-    },
-    [date, onEscape],
-  );
-
   return (
-    <StyledContainer calendarDisabled={isRelative} onKeyDown={handleKeyDown}>
+    <StyledContainer calendarDisabled={isRelative}>
       <Suspense
         fallback={
           <StyledDatePickerFallback>
