@@ -125,6 +125,15 @@ export const buildApplication = async (
     collectFileBuilt,
   });
 
+  await copyStaticFiles({
+    appPath: options.appPath,
+    fileFolder: FileFolder.Source,
+    filePaths: ['twenty-claim.jwt'].filter((filePath) =>
+      pathExistsSync(join(options.appPath, filePath)),
+    ),
+    collectFileBuilt,
+  });
+
   return { builtFileInfos };
 };
 

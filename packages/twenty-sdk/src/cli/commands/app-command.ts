@@ -2,11 +2,13 @@ import { formatPath } from '@/cli/utilities/file/file-path';
 import chalk from 'chalk';
 import type { Command } from 'commander';
 import { AppBuildCommand } from './app/app-build';
+import { AppClaimCommand } from './app/app-claim';
 import { AppDevCommand } from './app/app-dev';
 import { AppPackCommand } from './app/app-pack';
 import { AppPushCommand } from './app/app-push';
 import { AppTypecheckCommand } from './app/app-typecheck';
 import { AppUninstallCommand } from './app/app-uninstall';
+import { AppVerifyClaimCommand } from './app/app-verify-claim';
 import { AuthListCommand } from './auth/auth-list';
 import { AuthLoginCommand } from './auth/auth-login';
 import { AuthLogoutCommand } from './auth/auth-logout';
@@ -64,11 +66,13 @@ export const registerCommands = (program: Command): void => {
 
   // App commands
   const buildCommand = new AppBuildCommand();
+  const claimCommand = new AppClaimCommand();
   const devCommand = new AppDevCommand();
   const packCommand = new AppPackCommand();
   const pushCommand = new AppPushCommand();
   const typecheckCommand = new AppTypecheckCommand();
   const uninstallCommand = new AppUninstallCommand();
+  const verifyClaimCommand = new AppVerifyClaimCommand();
   const addCommand = new EntityAddCommand();
   const logsCommand = new LogicFunctionLogsCommand();
   const executeCommand = new LogicFunctionExecuteCommand();
@@ -136,6 +140,27 @@ export const registerCommands = (program: Command): void => {
         server: options.server,
         token: options.token,
       });
+    });
+
+  program
+    .command('app:claim <packageName> [appPath]')
+    .description(
+      'Generate a claim token for an npm package and write it to the app directory',
+    )
+    .action(async (packageName: string, appPath?: string) => {
+      await claimCommand.execute({
+        packageName,
+        appPath: formatPath(appPath),
+      });
+    });
+
+  program
+    .command('app:verify-claim <packageName>')
+    .description(
+      'Verify npm package ownership by checking the claim token in the published package',
+    )
+    .action(async (packageName: string) => {
+      await verifyClaimCommand.execute({ packageName });
     });
 
   program

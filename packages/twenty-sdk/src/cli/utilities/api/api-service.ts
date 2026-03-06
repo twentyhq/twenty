@@ -881,6 +881,111 @@ export class ApiService {
     }
   }
 
+  async generateNpmClaimToken(
+    packageName: string,
+  ): Promise<ApiResponse<{ token: string }>> {
+    try {
+      const mutation = `
+        mutation GenerateNpmClaimToken($packageName: String!) {
+          generateNpmClaimToken(packageName: $packageName) {
+            token
+          }
+        }
+      `;
+
+      const response = await this.client.post(
+        '/metadata',
+        {
+          query: mutation,
+          variables: { packageName },
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: '*/*',
+          },
+        },
+      );
+
+      if (response.data.errors) {
+        return {
+          success: false,
+          error:
+            response.data.errors[0]?.message ||
+            'Failed to generate claim token',
+        };
+      }
+
+      return {
+        success: true,
+        data: response.data.data.generateNpmClaimToken,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error,
+      };
+    }
+  }
+
+  async verifyNpmPackageClaim(packageName: string): Promise<
+    ApiResponse<{
+      registrationId: string;
+      universalIdentifier: string;
+      name: string;
+    }>
+  > {
+    try {
+      const mutation = `
+        mutation VerifyNpmPackageClaim($packageName: String!) {
+          verifyNpmPackageClaim(packageName: $packageName) {
+            id
+            universalIdentifier
+            name
+          }
+        }
+      `;
+
+      const response = await this.client.post(
+        '/metadata',
+        {
+          query: mutation,
+          variables: { packageName },
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: '*/*',
+          },
+        },
+      );
+
+      if (response.data.errors) {
+        return {
+          success: false,
+          error:
+            response.data.errors[0]?.message || 'Failed to verify npm claim',
+        };
+      }
+
+      const data = response.data.data.verifyNpmPackageClaim;
+
+      return {
+        success: true,
+        data: {
+          registrationId: data.id,
+          universalIdentifier: data.universalIdentifier,
+          name: data.name,
+        },
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error,
+      };
+    }
+  }
+
   async installTarballApp({
     universalIdentifier,
   }: {
