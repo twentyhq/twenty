@@ -93,13 +93,11 @@ export const MultiItemFieldInput = <T,>({
       }
       const { isValid, updatedItems } = validateInputAndComputeUpdatedItems();
 
-      if (!isValid && isInputDisplayed) {
+      if (!isValid) {
         return;
       }
 
-      if (isValid) {
-        onChange(updatedItems);
-      }
+      onChange(updatedItems);
       onClickOutside(items, event);
     },
     listenerId: instanceId,
@@ -228,7 +226,7 @@ export const MultiItemFieldInput = <T,>({
     setInputValue('');
   };
 
-  const handleItemDeletionDisplayState = (remainingItems: T[]) => {
+  const showInputIfNoItemsRemain = (remainingItems: T[]) => {
     const shouldShowInput =
       remainingItems.length === 0 && !isDefined(onAddClick);
     setIsInputDisplayed(shouldShowInput);
@@ -269,7 +267,7 @@ export const MultiItemFieldInput = <T,>({
       !shouldAutoEnterBecauseOnlyOneItemIsAllowed;
 
     if (isItemDeletion) {
-      handleItemDeletionDisplayState(updatedItems);
+      showInputIfNoItemsRemain(updatedItems);
     }
 
     return { isValid: true, updatedItems };
@@ -283,7 +281,7 @@ export const MultiItemFieldInput = <T,>({
   const handleDeleteItem = (index: number) => {
     const updatedItems = toSpliced(items, index, 1);
     onChange(updatedItems);
-    handleItemDeletionDisplayState(updatedItems);
+    showInputIfNoItemsRemain(updatedItems);
   };
 
   const handleEscape = () => {
