@@ -366,6 +366,11 @@ msgstr "API key role configuration not found."
 msgid "API key role not found."
 msgstr "API key role not found."
 
+#. js-lingui-id: ue106l
+#: src/engine/core-modules/application/application.exception.ts
+msgid "Application is not installed in this workspace. Install it first."
+msgstr "Application is not installed in this workspace. Install it first."
+
 #. js-lingui-id: ltvmAF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception.ts
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
