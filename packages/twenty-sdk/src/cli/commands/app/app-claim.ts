@@ -2,7 +2,7 @@ import { appClaim } from '@/cli/public-operations/app-claim';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
 import chalk from 'chalk';
 
-export type AppClaimCommandOptions = {
+type AppClaimCommandOptions = {
   packageName: string;
   appPath?: string;
 };

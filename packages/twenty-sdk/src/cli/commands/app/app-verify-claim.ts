@@ -1,7 +1,7 @@
 import { appVerifyClaim } from '@/cli/public-operations/app-verify-claim';
 import chalk from 'chalk';
 
-export type AppVerifyClaimCommandOptions = {
+type AppVerifyClaimCommandOptions = {
   packageName: string;
 };
 

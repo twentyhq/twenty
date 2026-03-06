@@ -7,13 +7,13 @@ import { APP_ERROR_CODES, type CommandResult } from './types';
 
 const CLAIM_FILE_NAME = 'twenty-claim.jwt';
 
-export type AppClaimOptions = {
+type AppClaimOptions = {
   packageName: string;
   appPath: string;
   onProgress?: (message: string) => void;
 };
 
-export type AppClaimResult = {
+type AppClaimResult = {
   claimFilePath: string;
 };
 

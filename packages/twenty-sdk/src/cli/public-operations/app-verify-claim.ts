@@ -2,12 +2,12 @@ import { ApiService } from '@/cli/utilities/api/api-service';
 import { runSafe } from '@/cli/utilities/run-safe';
 import { APP_ERROR_CODES, type CommandResult } from './types';
 
-export type AppVerifyClaimOptions = {
+type AppVerifyClaimOptions = {
   packageName: string;
   onProgress?: (message: string) => void;
 };
 
-export type AppVerifyClaimResult = {
+type AppVerifyClaimResult = {
   registrationId: string;
   universalIdentifier: string;
   name: string;
