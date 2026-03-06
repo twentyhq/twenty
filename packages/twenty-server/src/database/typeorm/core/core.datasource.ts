@@ -73,6 +73,9 @@ export const typeORMCoreModuleOptions: TypeOrmModuleOptions = {
       : undefined,
   extra: {
     query_timeout: 15000,
+    // Explicit pool ceiling so operators can tune it via PG_POOL_MAX_CONNECTIONS.
+    // Mirrors the poolSize configuration used by the workspace datasource.
+    max: parseInt(process.env.PG_POOL_MAX_CONNECTIONS ?? '10', 10),
   },
 };
 
