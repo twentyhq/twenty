@@ -1,4 +1,4 @@
-import { type CommandMenuItemConfig } from '@/action-menu/actions/types/CommandMenuItemConfig';
+import { type CommandMenuItemConfig } from '@/command-menu-item/actions/types/CommandMenuItemConfig';
 
 export type SidePanelCommandMenuItemGroupConfig = {
   heading: string;

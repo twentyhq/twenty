@@ -1,4 +1,4 @@
-import { CommandMenuItemContext } from '@/action-menu/contexts/CommandMenuItemContext';
+import { CommandMenuItemContext } from '@/command-menu-item/contexts/CommandMenuItemContext';
 import { sidePanelWidthState } from '@/side-panel/states/sidePanelWidthState';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { useListenToSidePanelClosing } from '@/ui/layout/side-panel/hooks/useListenToSidePanelClosing';

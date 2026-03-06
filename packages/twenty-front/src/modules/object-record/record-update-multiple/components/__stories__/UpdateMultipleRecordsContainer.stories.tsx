@@ -1,4 +1,4 @@
-import { CommandMenuItemContext } from '@/action-menu/contexts/CommandMenuItemContext';
+import { CommandMenuItemContext } from '@/command-menu-item/contexts/CommandMenuItemContext';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { ApolloCoreClientContext } from '@/object-metadata/contexts/ApolloCoreClientContext';
 import { UpdateMultipleRecordsContainer } from '@/object-record/record-update-multiple/components/UpdateMultipleRecordsContainer';

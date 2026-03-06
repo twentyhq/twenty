@@ -1,4 +1,4 @@
-import { CommandMenuItemContext } from '@/action-menu/contexts/CommandMenuItemContext';
+import { CommandMenuItemContext } from '@/command-menu-item/contexts/CommandMenuItemContext';
 import { useSidePanelWorkflowNavigation } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowNavigation';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';

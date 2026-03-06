@@ -1,5 +1,5 @@
-import { RecordShowSidePanelActionMenu } from '@/action-menu/components/RecordShowSidePanelActionMenu';
-import { RecordShowSidePanelOpenRecordButton } from '@/action-menu/components/RecordShowSidePanelOpenRecordButton';
+import { RecordShowSidePanelActionMenu } from '@/command-menu-item/components/RecordShowSidePanelActionMenu';
+import { RecordShowSidePanelOpenRecordButton } from '@/command-menu-item/components/RecordShowSidePanelOpenRecordButton';
 import { InformationBannerDeletedRecord } from '@/information-banner/components/deleted-record/InformationBannerDeletedRecord';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { RecordShowContainerContextStoreTargetedRecordsEffect } from '@/object-record/record-show/components/RecordShowContainerContextStoreTargetedRecordsEffect';

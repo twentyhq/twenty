@@ -1,4 +1,4 @@
-import { CommandMenuItemContextProvider } from '@/action-menu/contexts/CommandMenuItemContextProvider';
+import { CommandMenuItemContextProvider } from '@/command-menu-item/contexts/CommandMenuItemContextProvider';
 import { SidePanelContainer } from '@/side-panel/components/SidePanelContainer';
 import { SidePanelTopBar } from '@/side-panel/components/SidePanelTopBar';
 import { SIDE_PANEL_PAGES_CONFIG } from '@/side-panel/constants/SidePanelPagesConfig';

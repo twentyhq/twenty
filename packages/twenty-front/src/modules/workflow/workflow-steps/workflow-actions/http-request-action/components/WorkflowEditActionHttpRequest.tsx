@@ -4,7 +4,7 @@ import { Select } from '@/ui/input/components/Select';
 import { type WorkflowHttpRequestAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 
-import { CmdEnterActionButton } from '@/action-menu/components/CmdEnterActionButton';
+import { CmdEnterActionButton } from '@/command-menu-item/components/CmdEnterActionButton';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';

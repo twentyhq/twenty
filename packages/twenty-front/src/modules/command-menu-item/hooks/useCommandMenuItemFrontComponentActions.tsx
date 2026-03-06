@@ -1,8 +1,8 @@
-import { Action } from '@/action-menu/actions/components/Action';
-import { HeadlessFrontComponentAction } from '@/action-menu/actions/display/components/HeadlessFrontComponentAction';
-import { CommandMenuItemScope } from '@/action-menu/actions/types/CommandMenuItemScope';
-import { CommandMenuItemType } from '@/action-menu/actions/types/CommandMenuItemType';
-import { CommandMenuItemContext } from '@/action-menu/contexts/CommandMenuItemContext';
+import { CommandMenuItem } from '@/command-menu-item/actions/components/CommandMenuItem';
+import { HeadlessFrontComponentCommandMenuItem } from '@/command-menu-item/actions/display/components/HeadlessFrontComponentCommandMenuItem';
+import { CommandMenuItemScope } from '@/command-menu-item/actions/types/CommandMenuItemScope';
+import { CommandMenuItemType } from '@/command-menu-item/actions/types/CommandMenuItemType';
+import { CommandMenuItemContext } from '@/command-menu-item/contexts/CommandMenuItemContext';
 import { useOpenFrontComponentInSidePanel } from '@/side-panel/hooks/useOpenFrontComponentInSidePanel';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreIsPageInEditModeComponentState } from '@/context-store/states/contextStoreIsPageInEditModeComponentState';
@@ -109,12 +109,12 @@ const buildActionFromItem = ({
         commandMenuContextApi,
       ),
     component: isHeadless ? (
-      <HeadlessFrontComponentAction
+      <HeadlessFrontComponentCommandMenuItem
         frontComponentId={item.frontComponentId}
         onClick={handleClick}
       />
     ) : (
-      <Action onClick={handleClick} />
+      <CommandMenuItem onClick={handleClick} />
     ),
   };
 };

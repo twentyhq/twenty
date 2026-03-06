@@ -1,7 +1,7 @@
 import { useParams } from 'react-router-dom';
 
-import { RecordShowActionMenu } from '@/action-menu/components/RecordShowActionMenu';
-import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
+import { RecordShowActionMenu } from '@/command-menu-item/components/RecordShowActionMenu';
+import { ActionMenuComponentInstanceContext } from '@/command-menu-item/states/contexts/ActionMenuComponentInstanceContext';
 import { TimelineActivityContext } from '@/activities/timeline-activities/contexts/TimelineActivityContext';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';

@@ -1,6 +1,6 @@
-import { type CommandMenuItemConfig } from '@/action-menu/actions/types/CommandMenuItemConfig';
-import { CommandMenuItemScope } from '@/action-menu/actions/types/CommandMenuItemScope';
-import { CommandMenuItemType } from '@/action-menu/actions/types/CommandMenuItemType';
+import { type CommandMenuItemConfig } from '@/command-menu-item/actions/types/CommandMenuItemConfig';
+import { CommandMenuItemScope } from '@/command-menu-item/actions/types/CommandMenuItemScope';
+import { CommandMenuItemType } from '@/command-menu-item/actions/types/CommandMenuItemType';
 import { renderHook } from '@testing-library/react';
 import { IconPlus } from 'twenty-ui/display';
 import { useFilterActionsWithSidePanelSearch } from '@/side-panel/pages/root/hooks/useFilterActionsWithSidePanelSearch';

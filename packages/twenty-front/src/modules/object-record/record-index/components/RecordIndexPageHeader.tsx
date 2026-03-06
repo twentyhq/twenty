@@ -1,4 +1,4 @@
-import { RecordIndexActionMenu } from '@/action-menu/components/RecordIndexActionMenu';
+import { RecordIndexActionMenu } from '@/command-menu-item/components/RecordIndexActionMenu';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';

@@ -1,4 +1,4 @@
-import { ActionComponent } from '@/action-menu/actions/display/components/ActionComponent';
+import { CommandMenuItemComponent } from '@/command-menu-item/actions/display/components/CommandMenuItemComponent';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelDefaultSelectionEffect } from '@/side-panel/components/SidePanelDefaultSelectionEffect';
 import { SIDE_PANEL_SELECTABLE_LIST_ID } from '@/side-panel/constants/SidePanelSelectableListId';
@@ -83,7 +83,7 @@ export const SidePanelList = ({
               items?.length ? (
                 <SidePanelGroup heading={heading} key={heading}>
                   {items.map((item) => (
-                    <ActionComponent action={item} key={item.key} />
+                    <CommandMenuItemComponent action={item} key={item.key} />
                   ))}
                 </SidePanelGroup>
               ) : null,

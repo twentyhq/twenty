@@ -1,7 +1,7 @@
-import { type CommandMenuItemConfig } from '@/action-menu/actions/types/CommandMenuItemConfig';
-import { CommandMenuItemScope } from '@/action-menu/actions/types/CommandMenuItemScope';
-import { CommandMenuItemType } from '@/action-menu/actions/types/CommandMenuItemType';
-import { CommandMenuItemContext } from '@/action-menu/contexts/CommandMenuItemContext';
+import { type CommandMenuItemConfig } from '@/command-menu-item/actions/types/CommandMenuItemConfig';
+import { CommandMenuItemScope } from '@/command-menu-item/actions/types/CommandMenuItemScope';
+import { CommandMenuItemType } from '@/command-menu-item/actions/types/CommandMenuItemType';
+import { CommandMenuItemContext } from '@/command-menu-item/contexts/CommandMenuItemContext';
 import { useContext } from 'react';
 
 export const useSidePanelActions = () => {

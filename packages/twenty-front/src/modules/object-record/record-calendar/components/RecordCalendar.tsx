@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 
-import { ACTION_MENU_DROPDOWN_CLICK_OUTSIDE_ID } from '@/action-menu/constants/ActionMenuDropdownClickOutsideId';
+import { ACTION_MENU_DROPDOWN_CLICK_OUTSIDE_ID } from '@/command-menu-item/constants/ActionMenuDropdownClickOutsideId';
 import { COMMAND_MENU_CLICK_OUTSIDE_ID } from '@/command-menu/constants/CommandMenuClickOutsideId';
 import { RecordCalendarTopBar } from '@/object-record/record-calendar/components/RecordCalendarTopBar';
 import { RECORD_CALENDAR_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-calendar/constants/RecordCalendarClickOutsideListenerId';

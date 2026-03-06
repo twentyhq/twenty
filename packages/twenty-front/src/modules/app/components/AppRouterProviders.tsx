@@ -1,5 +1,5 @@
 import { AgentChatProvider } from '@/ai/components/AgentChatProvider';
-import { ActionMenuConfirmationModalManager } from '@/action-menu/confirmation-modal/components/ActionMenuConfirmationModalManager';
+import { ActionMenuConfirmationModalManager } from '@/command-menu-item/confirmation-modal/components/ActionMenuConfirmationModalManager';
 import { ApolloProvider } from '@/apollo/components/ApolloProvider';
 import { MetadataGater } from '@/metadata-store/components/MetadataGater';
 import { IsAppMetadataReadyEffect } from '@/metadata-store/effect-components/IsAppMetadataReadyEffect';

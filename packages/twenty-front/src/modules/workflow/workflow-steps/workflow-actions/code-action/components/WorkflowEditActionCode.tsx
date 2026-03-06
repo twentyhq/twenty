@@ -8,7 +8,7 @@ import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/wo
 import { type WorkflowCodeAction } from '@/workflow/types/Workflow';
 import { setNestedValue } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/setNestedValue';
 
-import { CmdEnterActionButton } from '@/action-menu/components/CmdEnterActionButton';
+import { CmdEnterActionButton } from '@/command-menu-item/components/CmdEnterActionButton';
 import { LogicFunctionExecutionResult } from '@/logic-functions/components/LogicFunctionExecutionResult';
 import { LogicFunctionLogs } from '@/logic-functions/components/LogicFunctionLogs';
 import { mergeDefaultFunctionInputAndFunctionInput } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/mergeDefaultFunctionInputAndFunctionInput';

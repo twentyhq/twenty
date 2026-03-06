@@ -1,4 +1,4 @@
-import { CmdEnterActionButton } from '@/action-menu/components/CmdEnterActionButton';
+import { CmdEnterActionButton } from '@/command-menu-item/components/CmdEnterActionButton';
 import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
 import { FormFieldInput } from '@/object-record/record-field/ui/components/FormFieldInput';
 import { FormSingleRecordPicker } from '@/object-record/record-field/ui/form-types/components/FormSingleRecordPicker';

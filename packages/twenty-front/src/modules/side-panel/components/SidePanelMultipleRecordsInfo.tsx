@@ -1,6 +1,6 @@
-import { DEFAULT_RECORD_ACTIONS_CONFIG } from '@/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig';
-import { MultipleRecordsActionKeys } from '@/action-menu/actions/record-actions/multiple-records/types/MultipleRecordsActionKeys';
-import { getActionLabel } from '@/action-menu/utils/getActionLabel';
+import { DEFAULT_RECORD_ACTIONS_CONFIG } from '@/command-menu-item/actions/record-actions/constants/DefaultRecordActionsConfig';
+import { MultipleRecordsActionKeys } from '@/command-menu-item/actions/record-actions/multiple-records/types/MultipleRecordsActionKeys';
+import { getActionLabel } from '@/command-menu-item/utils/getActionLabel';
 import { SidePanelPageInfoLayout } from '@/side-panel/components/SidePanelPageInfoLayout';
 import { useFindManyRecordsSelectedInContextStore } from '@/context-store/hooks/useFindManyRecordsSelectedInContextStore';
 import { t } from '@lingui/core/macro';

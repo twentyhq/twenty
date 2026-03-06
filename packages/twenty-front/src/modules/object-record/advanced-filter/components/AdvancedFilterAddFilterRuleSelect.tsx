@@ -1,4 +1,4 @@
-import { ActionButton } from '@/action-menu/actions/display/components/ActionButton';
+import { CommandMenuItemButton } from '@/command-menu-item/actions/display/components/CommandMenuItemButton';
 import { useChildRecordFiltersAndRecordFilterGroups } from '@/object-record/advanced-filter/hooks/useChildRecordFiltersAndRecordFilterGroups';
 import { useGetDefaultFieldMetadataItemForFilter } from '@/object-record/advanced-filter/hooks/useGetDefaultFieldMetadataItemForFilter';
 import { useSetRecordFilterUsedInAdvancedFilterDropdownRow } from '@/object-record/advanced-filter/hooks/useSetRecordFilterUsedInAdvancedFilterDropdownRow';
@@ -147,7 +147,7 @@ export const AdvancedFilterAddFilterRuleSelect = ({
 
   if (!isFilterRuleGroupOptionVisible) {
     return (
-      <ActionButton
+      <CommandMenuItemButton
         action={{
           Icon: IconPlus,
           label: t`Add rule`,
@@ -163,7 +163,7 @@ export const AdvancedFilterAddFilterRuleSelect = ({
     <Dropdown
       dropdownId={dropdownId}
       clickableComponent={
-        <ActionButton
+        <CommandMenuItemButton
           action={{
             Icon: IconPlus,
             label: t`Add filter rule`,

@@ -1,5 +1,5 @@
-import { type CommandMenuItemConfig } from '@/action-menu/actions/types/CommandMenuItemConfig';
-import { getActionLabel } from '@/action-menu/utils/getActionLabel';
+import { type CommandMenuItemConfig } from '@/command-menu-item/actions/types/CommandMenuItemConfig';
+import { getActionLabel } from '@/command-menu-item/utils/getActionLabel';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback } from 'react';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';

@@ -7,7 +7,7 @@ import { IconFilter, IconPlus } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { ActionButton } from '@/action-menu/actions/display/components/ActionButton';
+import { CommandMenuItemButton } from '@/command-menu-item/actions/display/components/CommandMenuItemButton';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useChildRecordFiltersAndRecordFilterGroups } from '@/object-record/advanced-filter/hooks/useChildRecordFiltersAndRecordFilterGroups';
 import { useSetRecordFilterUsedInAdvancedFilterDropdownRow } from '@/object-record/advanced-filter/hooks/useSetRecordFilterUsedInAdvancedFilterDropdownRow';
@@ -137,7 +137,7 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilde
                 ))}
             </StyledFiltersContainer>
             <StyledActionButtonWrapper>
-              <ActionButton
+              <CommandMenuItemButton
                 action={{
                   Icon: IconPlus,
                   label: t`Add rule`,

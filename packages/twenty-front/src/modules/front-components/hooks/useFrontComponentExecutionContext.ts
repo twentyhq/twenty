@@ -5,7 +5,7 @@ import {
 } from 'twenty-sdk/front-component-renderer';
 import { type AppPath, type EnqueueSnackbarParams } from 'twenty-shared/types';
 
-import { useActionMenuConfirmationModal } from '@/action-menu/confirmation-modal/hooks/useActionMenuConfirmationModal';
+import { useActionMenuConfirmationModal } from '@/command-menu-item/confirmation-modal/hooks/useActionMenuConfirmationModal';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';

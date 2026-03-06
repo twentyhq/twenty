@@ -1,7 +1,7 @@
-import { Action } from '@/action-menu/actions/components/Action';
-import { ActionLink } from '@/action-menu/actions/components/ActionLink';
-import { CommandMenuItemScope } from '@/action-menu/actions/types/CommandMenuItemScope';
-import { CommandMenuItemType } from '@/action-menu/actions/types/CommandMenuItemType';
+import { CommandMenuItem } from '@/command-menu-item/actions/components/CommandMenuItem';
+import { CommandMenuItemLink } from '@/command-menu-item/actions/components/CommandMenuItemLink';
+import { CommandMenuItemScope } from '@/command-menu-item/actions/types/CommandMenuItemScope';
+import { CommandMenuItemType } from '@/command-menu-item/actions/types/CommandMenuItemType';
 import { MAX_SEARCH_RESULTS } from '@/command-menu/constants/MaxSearchResults';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
@@ -110,7 +110,7 @@ export const useSidePanelSearchRecords = () => {
         return {
           ...baseAction,
           component: (
-            <ActionLink
+            <CommandMenuItemLink
               to={AppPath.RecordShowPage}
               params={{
                 objectNameSingular: searchRecord.objectNameSingular,
