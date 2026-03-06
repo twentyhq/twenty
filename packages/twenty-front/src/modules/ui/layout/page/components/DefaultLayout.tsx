@@ -120,7 +120,9 @@ export const DefaultLayout = () => {
                 ) : (
                   <StyledMainContainer>
                     <AppErrorBoundary FallbackComponent={AppPageErrorFallback}>
-                      <Outlet />
+                      <Suspense fallback={null}>
+                        <Outlet />
+                      </Suspense>
                     </AppErrorBoundary>
                   </StyledMainContainer>
                 )}

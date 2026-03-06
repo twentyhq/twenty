@@ -1,3 +1,4 @@
+import { lazy } from 'react';
 import { AppRouterProviders } from '@/app/components/AppRouterProviders';
 import { SettingsRoutes } from '@/app/components/SettingsRoutes';
 import { VerifyLoginTokenEffect } from '@/auth/components/VerifyLoginTokenEffect';
@@ -17,16 +18,66 @@ import { Authorize } from '~/pages/auth/Authorize';
 import { PasswordReset } from '~/pages/auth/PasswordReset';
 import { SignInUp } from '~/pages/auth/SignInUp';
 import { NotFound } from '~/pages/not-found/NotFound';
-import { RecordIndexPage } from '~/pages/object-record/RecordIndexPage';
-import { RecordShowPage } from '~/pages/object-record/RecordShowPage';
-import { BookCall } from '~/pages/onboarding/BookCall';
-import { BookCallDecision } from '~/pages/onboarding/BookCallDecision';
-import { ChooseYourPlan } from '~/pages/onboarding/ChooseYourPlan';
-import { CreateProfile } from '~/pages/onboarding/CreateProfile';
-import { CreateWorkspace } from '~/pages/onboarding/CreateWorkspace';
-import { InviteTeam } from '~/pages/onboarding/InviteTeam';
-import { PaymentSuccess } from '~/pages/onboarding/PaymentSuccess';
-import { SyncEmails } from '~/pages/onboarding/SyncEmails';
+
+const RecordIndexPage = lazy(() =>
+  import('~/pages/object-record/RecordIndexPage').then((module) => ({
+    default: module.RecordIndexPage,
+  })),
+);
+
+const RecordShowPage = lazy(() =>
+  import('~/pages/object-record/RecordShowPage').then((module) => ({
+    default: module.RecordShowPage,
+  })),
+);
+
+const BookCall = lazy(() =>
+  import('~/pages/onboarding/BookCall').then((module) => ({
+    default: module.BookCall,
+  })),
+);
+
+const BookCallDecision = lazy(() =>
+  import('~/pages/onboarding/BookCallDecision').then((module) => ({
+    default: module.BookCallDecision,
+  })),
+);
+
+const ChooseYourPlan = lazy(() =>
+  import('~/pages/onboarding/ChooseYourPlan').then((module) => ({
+    default: module.ChooseYourPlan,
+  })),
+);
+
+const CreateProfile = lazy(() =>
+  import('~/pages/onboarding/CreateProfile').then((module) => ({
+    default: module.CreateProfile,
+  })),
+);
+
+const CreateWorkspace = lazy(() =>
+  import('~/pages/onboarding/CreateWorkspace').then((module) => ({
+    default: module.CreateWorkspace,
+  })),
+);
+
+const InviteTeam = lazy(() =>
+  import('~/pages/onboarding/InviteTeam').then((module) => ({
+    default: module.InviteTeam,
+  })),
+);
+
+const PaymentSuccess = lazy(() =>
+  import('~/pages/onboarding/PaymentSuccess').then((module) => ({
+    default: module.PaymentSuccess,
+  })),
+);
+
+const SyncEmails = lazy(() =>
+  import('~/pages/onboarding/SyncEmails').then((module) => ({
+    default: module.SyncEmails,
+  })),
+);
 
 export const useCreateAppRouter = (
   isFunctionSettingsEnabled?: boolean,
