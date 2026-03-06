@@ -16,7 +16,6 @@ import { getAvailableObjectMetadataForNewSidebarItem } from '@/side-panel/pages/
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { ViewKey } from '@/views/types/ViewKey';
-import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 
 type SidePanelNewSidebarItemObjectFlowProps = {
@@ -93,7 +92,7 @@ export const SidePanelNewSidebarItemObjectFlow = ({
     setSystemObjectSearchInput('');
   };
 
-  const disableDrag = isDefined(addMenuItemInsertionContext);
+  const disableDrag = addMenuItemInsertionContext?.disableDrag === true;
 
   if (isInSystemPicker) {
     return (

@@ -78,7 +78,7 @@ export const SidePanelNewSidebarItemViewPickerSubView = ({
     ? t`No results found`
     : t`No custom views available`;
 
-  const hasInsertionContext = isDefined(addMenuItemInsertionContext);
+  const isDragDisabled = addMenuItemInsertionContext?.disableDrag === true;
 
   const handleSelectView = (view: View) => {
     const itemId = addViewToDraft(
@@ -145,8 +145,8 @@ export const SidePanelNewSidebarItemViewPickerSubView = ({
                       label={view.name}
                       id={view.id}
                       onClick={() => handleSelectView(view)}
-                      dragIndex={hasInsertionContext ? undefined : index}
-                      disableDrag={hasInsertionContext}
+                      dragIndex={isDragDisabled ? undefined : index}
+                      disableDrag={isDragDisabled}
                       payload={{
                         type: NavigationMenuItemType.VIEW,
                         viewId: view.id,
