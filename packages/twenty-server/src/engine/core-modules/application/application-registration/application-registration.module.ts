@@ -1,25 +1,18 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration/application-registration-variable.entity';
-import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration/application-registration-variable.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationResolver } from 'src/engine/core-modules/application/application-registration/application-registration.resolver';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
-import { OAuthDiscoveryController } from 'src/engine/core-modules/application/application-registration/controllers/oauth-discovery.controller';
-import { OAuthTokenController } from 'src/engine/core-modules/application/application-registration/controllers/oauth-token.controller';
-import { OAuthService } from 'src/engine/core-modules/application/application-registration/oauth.service';
-import { AppTarballUploadService } from 'src/engine/core-modules/application/application-registration/services/app-tarball-upload.service';
-import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
+import { ApplicationRegistrationVariableModule } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.module';
+import { ApplicationTarballService } from 'src/engine/core-modules/application/application-registration/application-tarball.service';
+import { ApplicationPackageModule } from 'src/engine/core-modules/application/application-package/application-package.module';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
-import { ApplicationInstallModule } from 'src/engine/core-modules/application/application-install/application-install.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
-import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-storage.module';
-import { SecretEncryptionModule } from 'src/engine/core-modules/secret-encryption/secret-encryption.module';
-import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
-import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { FileUrlModule } from 'src/engine/core-modules/file/file-url/file-url.module';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 
@@ -27,32 +20,26 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
   imports: [
     TypeOrmModule.forFeature([
       ApplicationRegistrationEntity,
-      ApplicationRegistrationVariableEntity,
       ApplicationEntity,
-      AppTokenEntity,
-      UserWorkspaceEntity,
+      WorkspaceEntity,
     ]),
-    SecretEncryptionModule,
+    ApplicationRegistrationVariableModule,
+    ApplicationPackageModule,
+    ApplicationModule,
     FeatureFlagModule,
     PermissionsModule,
-    ThrottlerModule,
-    TokenModule,
-    ApplicationModule,
-    ApplicationInstallModule,
     FileStorageModule,
+    FileUrlModule,
     WorkspaceCacheStorageModule,
   ],
-  controllers: [OAuthTokenController, OAuthDiscoveryController],
   providers: [
     ApplicationRegistrationService,
-    ApplicationRegistrationVariableService,
     ApplicationRegistrationResolver,
-    AppTarballUploadService,
-    OAuthService,
+    ApplicationTarballService,
   ],
   exports: [
     ApplicationRegistrationService,
-    ApplicationRegistrationVariableService,
+    ApplicationRegistrationVariableModule,
   ],
 })
 export class ApplicationRegistrationModule {}

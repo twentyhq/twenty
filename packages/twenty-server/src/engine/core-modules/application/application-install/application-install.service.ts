@@ -8,14 +8,19 @@ import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
-import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
-import { AppRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/app-registration-source-type.enum';
-import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import {
-  AppPackageFetcherService,
+  ApplicationException,
+  ApplicationExceptionCode,
+} from 'src/engine/core-modules/application/application.exception';
+import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
+import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import {
+  ApplicationPackageFetcherService,
   type ResolvedPackage,
-} from 'src/engine/core-modules/application/application-install/app-package-fetcher.service';
-import { ApplicationSyncService } from 'src/engine/core-modules/application/application-install/application-sync.service';
+} from 'src/engine/core-modules/application/application-package/application-package-fetcher.service';
+import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 
@@ -43,9 +48,8 @@ export class ApplicationInstallService {
   constructor(
     @InjectRepository(ApplicationRegistrationEntity)
     private readonly appRegistrationRepository: Repository<ApplicationRegistrationEntity>,
-    @InjectRepository(ApplicationEntity)
-    private readonly applicationRepository: Repository<ApplicationEntity>,
-    private readonly appPackageFetcherService: AppPackageFetcherService,
+    private readonly applicationService: ApplicationService,
+    private readonly applicationPackageFetcherService: ApplicationPackageFetcherService,
     private readonly applicationSyncService: ApplicationSyncService,
     private readonly fileStorageService: FileStorageService,
     private readonly cacheLockService: CacheLockService,
@@ -56,11 +60,20 @@ export class ApplicationInstallService {
     version?: string;
     workspaceId: string;
   }): Promise<boolean> {
-    const appRegistration = await this.appRegistrationRepository.findOneOrFail({
+    const appRegistration = await this.appRegistrationRepository.findOne({
       where: { id: params.appRegistrationId },
     });
 
-    if (appRegistration.sourceType === AppRegistrationSourceType.LOCAL) {
+    if (!appRegistration) {
+      throw new ApplicationException(
+        `Application registration with id ${params.appRegistrationId} not found`,
+        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
+      );
+    }
+
+    if (
+      appRegistration.sourceType === ApplicationRegistrationSourceType.LOCAL
+    ) {
       this.logger.log(
         `Skipping install for LOCAL app ${appRegistration.universalIdentifier} (files synced by CLI watcher in dev mode)`,
       );
@@ -88,18 +101,29 @@ export class ApplicationInstallService {
     let resolvedPackage: ResolvedPackage | null = null;
 
     try {
-      resolvedPackage = await this.appPackageFetcherService.resolvePackage(
-        appRegistration,
-        { targetVersion: params.version },
-      );
+      resolvedPackage =
+        await this.applicationPackageFetcherService.resolvePackage(
+          appRegistration,
+          { targetVersion: params.version },
+        );
 
       if (!resolvedPackage) {
         return true;
       }
 
+      const universalIdentifier = appRegistration.universalIdentifier;
+
+      await this.ensureApplicationExists({
+        universalIdentifier,
+        name: resolvedPackage.manifest.application.displayName,
+        workspaceId: params.workspaceId,
+        applicationRegistrationId: appRegistration.id,
+        sourceType: appRegistration.sourceType,
+      });
+
       await this.writeFilesToStorage(
         resolvedPackage.extractedDir,
-        appRegistration.universalIdentifier,
+        universalIdentifier,
         params.workspaceId,
       );
 
@@ -109,14 +133,8 @@ export class ApplicationInstallService {
         applicationRegistrationId: appRegistration.id,
       });
 
-      await this.updateApplicationSourceType(
-        appRegistration.universalIdentifier,
-        params.workspaceId,
-        appRegistration.sourceType,
-      );
-
       this.logger.log(
-        `Successfully installed app ${appRegistration.universalIdentifier} v${resolvedPackage.packageJson.version ?? 'unknown'}`,
+        `Successfully installed app ${universalIdentifier} v${resolvedPackage.packageJson.version ?? 'unknown'}`,
       );
 
       return true;
@@ -128,7 +146,7 @@ export class ApplicationInstallService {
       throw error;
     } finally {
       if (resolvedPackage) {
-        await this.appPackageFetcherService.cleanupExtractedDir(
+        await this.applicationPackageFetcherService.cleanupExtractedDir(
           resolvedPackage.cleanupDir,
         );
       }
@@ -202,14 +220,29 @@ export class ApplicationInstallService {
     return result;
   }
 
-  private async updateApplicationSourceType(
-    universalIdentifier: string,
-    workspaceId: string,
-    sourceType: AppRegistrationSourceType,
-  ): Promise<void> {
-    await this.applicationRepository.update(
-      { universalIdentifier, workspaceId },
-      { sourceType },
-    );
+  private async ensureApplicationExists(params: {
+    universalIdentifier: string;
+    name: string;
+    workspaceId: string;
+    applicationRegistrationId: string;
+    sourceType: ApplicationRegistrationSourceType;
+  }): Promise<ApplicationEntity> {
+    const existing = await this.applicationService.findByUniversalIdentifier({
+      universalIdentifier: params.universalIdentifier,
+      workspaceId: params.workspaceId,
+    });
+
+    if (isDefined(existing)) {
+      return existing;
+    }
+
+    return this.applicationService.create({
+      universalIdentifier: params.universalIdentifier,
+      name: params.name,
+      sourcePath: params.universalIdentifier,
+      sourceType: params.sourceType,
+      applicationRegistrationId: params.applicationRegistrationId,
+      workspaceId: params.workspaceId,
+    });
   }
 }

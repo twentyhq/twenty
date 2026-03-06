@@ -7,6 +7,8 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 import { AdminPanelHealthService } from 'src/engine/core-modules/admin-panel/admin-panel-health.service';
 import { AdminPanelQueueService } from 'src/engine/core-modules/admin-panel/admin-panel-queue.service';
 import { AdminPanelService } from 'src/engine/core-modules/admin-panel/admin-panel.service';
+import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
+import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { AdminAIModelsDTO } from 'src/engine/core-modules/client-config/client-config.entity';
 import { ConfigVariableDTO } from 'src/engine/core-modules/admin-panel/dtos/config-variable.dto';
 import { ConfigVariablesDTO } from 'src/engine/core-modules/admin-panel/dtos/config-variables.dto';
@@ -56,8 +58,9 @@ import { QueueMetricsDataDTO } from './dtos/queue-metrics-data.dto';
 )
 export class AdminPanelResolver {
   constructor(
-    private adminService: AdminPanelService,
-    private adminPanelHealthService: AdminPanelHealthService,
+    private readonly adminService: AdminPanelService,
+    private readonly adminPanelHealthService: AdminPanelHealthService,
+    private readonly applicationRegistrationService: ApplicationRegistrationService,
     private adminPanelQueueService: AdminPanelQueueService,
     private featureFlagService: FeatureFlagService,
     private readonly twentyConfigService: TwentyConfigService,
@@ -266,5 +269,13 @@ export class AdminPanelResolver {
       queueName as MessageQueue,
       jobIds,
     );
+  }
+
+  @UseGuards(AdminPanelGuard)
+  @Query(() => [ApplicationRegistrationEntity])
+  async findAllApplicationRegistrations(): Promise<
+    ApplicationRegistrationEntity[]
+  > {
+    return this.applicationRegistrationService.findAll();
   }
 }
