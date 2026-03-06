@@ -1,11 +1,12 @@
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 import { CurrentWorkspaceMemberFavoritesFolders } from '@/favorites/components/CurrentWorkspaceMemberFavoritesFolders';
-import { FavoritesDragDropProviderContent } from '@/navigation/components/FavoritesDragDropProviderContent';
 import { CurrentWorkspaceMemberNavigationMenuItemFolders } from '@/navigation-menu-item/components/CurrentWorkspaceMemberNavigationMenuItemFolders';
 import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/isNavigationMenuInEditModeState';
+import { FavoritesDragDropProviderContent } from '@/navigation/components/FavoritesDragDropProviderContent';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { AnimatedEaseInOut } from 'twenty-ui/utilities';
 
 export const CurrentWorkspaceMemberNavigationMenuItemFoldersDispatcher = () => {
   const isNavigationMenuItemEditingEnabled = useIsFeatureEnabled(
@@ -15,21 +16,17 @@ export const CurrentWorkspaceMemberNavigationMenuItemFoldersDispatcher = () => {
     isNavigationMenuInEditModeState,
   );
 
-  if (isNavigationMenuInEditMode) {
-    return null;
-  }
-
-  if (isNavigationMenuItemEditingEnabled) {
-    return (
-      <FavoritesDragDropProviderContent>
-        <CurrentWorkspaceMemberNavigationMenuItemFolders />
-      </FavoritesDragDropProviderContent>
-    );
-  }
-
   return (
-    <FavoritesDragDropProviderContent>
-      <CurrentWorkspaceMemberFavoritesFolders />
-    </FavoritesDragDropProviderContent>
+    <AnimatedEaseInOut isOpen={!isNavigationMenuInEditMode} initial>
+      {isNavigationMenuItemEditingEnabled ? (
+        <FavoritesDragDropProviderContent>
+          <CurrentWorkspaceMemberNavigationMenuItemFolders />
+        </FavoritesDragDropProviderContent>
+      ) : (
+        <FavoritesDragDropProviderContent>
+          <CurrentWorkspaceMemberFavoritesFolders />
+        </FavoritesDragDropProviderContent>
+      )}
+    </AnimatedEaseInOut>
   );
 };
