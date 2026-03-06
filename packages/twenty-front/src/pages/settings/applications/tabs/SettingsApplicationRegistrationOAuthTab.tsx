@@ -14,7 +14,13 @@ import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
-import { H2Title, IconKey, IconRefresh, IconShield, IconTrash } from 'twenty-ui/display';
+import {
+  H2Title,
+  IconKey,
+  IconRefresh,
+  IconShield,
+  IconTrash,
+} from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';

@@ -1,4 +1,4 @@
-import { ApplicationRegistrationSourceType } from '~/generated-metadata/graphql';
+import type { ApplicationRegistrationSourceType } from '~/generated-metadata/graphql';
 
 export type ApplicationRegistrationData = {
   id: string;

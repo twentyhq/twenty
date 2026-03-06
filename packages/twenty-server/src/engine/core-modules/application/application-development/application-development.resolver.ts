@@ -72,11 +72,10 @@ export class ApplicationDevelopmentResolver {
     @Args() { universalIdentifier, name }: CreateDevelopmentApplicationInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<DevelopmentApplicationDTO> {
-    const applicationRegistrationId =
-      await this.findApplicationRegistrationId(
-        universalIdentifier,
-        workspaceId,
-      );
+    const applicationRegistrationId = await this.findApplicationRegistrationId(
+      universalIdentifier,
+      workspaceId,
+    );
 
     const existing = await this.applicationService.findByUniversalIdentifier({
       universalIdentifier,
@@ -123,11 +122,10 @@ export class ApplicationDevelopmentResolver {
     @Args() { manifest }: ApplicationInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<WorkspaceMigrationDTO> {
-    const applicationRegistrationId =
-      await this.findApplicationRegistrationId(
-        manifest.application.universalIdentifier,
-        workspaceId,
-      );
+    const applicationRegistrationId = await this.findApplicationRegistrationId(
+      manifest.application.universalIdentifier,
+      workspaceId,
+    );
 
     const workspaceMigration =
       await this.applicationSyncService.synchronizeFromManifest({

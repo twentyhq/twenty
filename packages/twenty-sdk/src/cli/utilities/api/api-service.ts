@@ -331,9 +331,7 @@ export class ApiService {
   async createDevelopmentApplication(input: {
     universalIdentifier: string;
     name: string;
-  }): Promise<
-    ApiResponse<{ id: string; universalIdentifier: string }>
-  > {
+  }): Promise<ApiResponse<{ id: string; universalIdentifier: string }>> {
     try {
       const mutation = `
         mutation CreateDevelopmentApplication($universalIdentifier: String!, $name: String!) {

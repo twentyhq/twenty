@@ -5,7 +5,6 @@ import { UPDATE_APPLICATION_REGISTRATION_VARIABLE } from '@/settings/application
 import { APPLICATION_REGISTRATION_TARBALL_URL } from '@/settings/application-registrations/graphql/queries/applicationRegistrationTarballUrl';
 import { FIND_APPLICATION_REGISTRATION_VARIABLES } from '@/settings/application-registrations/graphql/queries/findApplicationRegistrationVariables';
 import { FIND_MANY_APPLICATION_REGISTRATIONS } from '@/settings/application-registrations/graphql/queries/findManyApplicationRegistrations';
-import { ApiKeyInput } from '@/settings/developers/components/ApiKeyInput';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
@@ -33,11 +32,7 @@ import {
   Status,
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
-import {
-  Section,
-  SectionAlignment,
-  SectionFontColor,
-} from 'twenty-ui/layout';
+import { Section, SectionAlignment, SectionFontColor } from 'twenty-ui/layout';
 import {
   ApplicationRegistrationSourceType,
   useFindManyApplicationsQuery,
@@ -188,9 +183,7 @@ export const SettingsApplicationRegistrationGeneralTab = ({
   const isNpmSource =
     registration.sourceType === ApplicationRegistrationSourceType.NPM;
 
-  const installedApp = (
-    applicationsData?.findManyApplications ?? []
-  ).find(
+  const installedApp = (applicationsData?.findManyApplications ?? []).find(
     (application) =>
       application.universalIdentifier === registration.universalIdentifier,
   );
@@ -555,9 +548,9 @@ export const SettingsApplicationRegistrationGeneralTab = ({
         title={t`Delete app`}
         subtitle={
           <Trans>
-            Please type {`"${confirmationValue}"`} to confirm you want to
-            delete this app. All workspace installations linked to it will lose
-            their OAuth credentials.
+            Please type {`"${confirmationValue}"`} to confirm you want to delete
+            this app. All workspace installations linked to it will lose their
+            OAuth credentials.
           </Trans>
         }
         onConfirmClick={handleDelete}

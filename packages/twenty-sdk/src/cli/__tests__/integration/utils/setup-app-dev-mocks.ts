@@ -52,8 +52,7 @@ vi.mock('@/cli/utilities/api/api-service', () => ({
       mockApiService.findApplicationRegistrationByUniversalIdentifier;
     createApplicationRegistration =
       mockApiService.createApplicationRegistration;
-    createDevelopmentApplication =
-      mockApiService.createDevelopmentApplication;
+    createDevelopmentApplication = mockApiService.createDevelopmentApplication;
     syncApplication = mockApiService.syncApplication;
     uploadFile = mockApiService.uploadFile;
   },
