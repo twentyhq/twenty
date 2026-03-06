@@ -6,8 +6,7 @@ import { syncApplication } from 'test/integration/metadata/suites/application/ut
 import { uninstallApplication } from 'test/integration/metadata/suites/application/utils/uninstall-application.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { v4 as uuidv4 } from 'uuid';
-
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagKey } from 'twenty-shared/types';
 
 const INVALID_UUID_APP_ID = uuidv4();
 const INVALID_UUID_ROLE_ID = uuidv4();

@@ -6,7 +6,7 @@ describe('getPageLayoutVerticalListViewerVariant', () => {
       getPageLayoutVerticalListViewerVariant({
         isInPinnedTab: true,
         isMobile: false,
-        isInRightDrawer: false,
+        isInSidePanel: false,
       }),
     ).toBe('side-column');
   });
@@ -16,17 +16,17 @@ describe('getPageLayoutVerticalListViewerVariant', () => {
       getPageLayoutVerticalListViewerVariant({
         isInPinnedTab: false,
         isMobile: true,
-        isInRightDrawer: false,
+        isInSidePanel: false,
       }),
     ).toBe('side-column');
   });
 
-  it('should return side-column when isInRightDrawer is true', () => {
+  it('should return side-column when isInSidePanel is true', () => {
     expect(
       getPageLayoutVerticalListViewerVariant({
         isInPinnedTab: false,
         isMobile: false,
-        isInRightDrawer: true,
+        isInSidePanel: true,
       }),
     ).toBe('side-column');
   });
@@ -36,7 +36,7 @@ describe('getPageLayoutVerticalListViewerVariant', () => {
       getPageLayoutVerticalListViewerVariant({
         isInPinnedTab: false,
         isMobile: false,
-        isInRightDrawer: false,
+        isInSidePanel: false,
       }),
     ).toBe('default');
   });

@@ -2,13 +2,13 @@ import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { ShowPageContainer } from '@/ui/layout/page/components/ShowPageContainer';
-import { RightDrawerProvider } from '@/ui/layout/right-drawer/contexts/RightDrawerContext';
+import { SidePanelProvider } from '@/ui/layout/side-panel/contexts/SidePanelContext';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
-import { CommandMenuPageComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuPageComponentInstanceContext';
+import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
 import { useMergeRecordsSelectedRecords } from '@/object-record/record-merge/hooks/useMergeRecordsSelectedRecords';
 import { MergeRecordsTabId } from '@/object-record/record-merge/types/MergeRecordsTabId';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
@@ -27,7 +27,7 @@ const StyledShowPageRightContainer = styled.div`
   overflow: auto;
 `;
 
-const StyledTabList = styled(TabList)`
+const StyledTabListContainer = styled.div`
   background-color: ${themeCssVariables.background.secondary};
   padding-left: ${themeCssVariables.spacing[2]};
 `;
@@ -51,7 +51,7 @@ export const MergeRecordsContainer = ({
   const { tabs } = useMergeRecordsContainerTabs(selectedRecords);
 
   const instanceId = useAvailableComponentInstanceIdOrThrow(
-    CommandMenuPageComponentInstanceContext,
+    SidePanelPageComponentInstanceContext,
   );
   const activeTabId = useAtomComponentStateValue(
     activeTabIdComponentState,
@@ -59,17 +59,19 @@ export const MergeRecordsContainer = ({
   );
 
   return (
-    <RightDrawerProvider value={{ isInRightDrawer: true }}>
+    <SidePanelProvider value={{ isInSidePanel: true }}>
       <ShowPageContainer>
         <StyledShowPageRightContainer>
           <TabListComponentInstanceContext.Provider
             value={{ instanceId: instanceId }}
           >
-            <StyledTabList
-              tabs={tabs}
-              behaveAsLinks={false}
-              componentInstanceId={instanceId}
-            />
+            <StyledTabListContainer>
+              <TabList
+                tabs={tabs}
+                behaveAsLinks={false}
+                componentInstanceId={instanceId}
+              />
+            </StyledTabListContainer>
           </TabListComponentInstanceContext.Provider>
           <StyledContentContainer>
             {activeTabId === MergeRecordsTabId.MERGE_PREVIEW && (
@@ -86,6 +88,6 @@ export const MergeRecordsContainer = ({
           <MergeRecordsFooter objectNameSingular={objectNameSingular} />
         </StyledShowPageRightContainer>
       </ShowPageContainer>
-    </RightDrawerProvider>
+    </SidePanelProvider>
   );
 };

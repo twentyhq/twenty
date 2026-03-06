@@ -184,7 +184,7 @@ export const SettingsDomain = () => {
       });
     }
 
-    if (!values || !currentWorkspace) {
+    if (!isDefined(values) || !isDefined(currentWorkspace)) {
       return enqueueErrorSnackBar({
         message: t`Invalid form values`,
       });
@@ -206,7 +206,7 @@ export const SettingsDomain = () => {
   return (
     <>
       <form onSubmit={form.handleSubmit(handleSave)}>
-        {/* eslint-disable-next-line react/jsx-props-no-spreading */}
+        {/* oxlint-disable-next-line react/jsx-props-no-spreading */}
         <FormProvider {...form}>
           <SubMenuTopBarContainer
             title={t`Domain`}

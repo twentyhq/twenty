@@ -14,14 +14,16 @@ type SettingsAccountsToggleSettingCardProps = {
   parameters: Parameter[];
 };
 
-const StyledCardContent = styled(CardContent)`
-  align-items: center;
-  display: flex;
-  gap: ${themeCssVariables.spacing[4]};
-  cursor: pointer;
+const StyledCardContentContainer = styled.div`
+  > * {
+    align-items: center;
+    display: flex;
+    gap: ${themeCssVariables.spacing[4]};
+    cursor: pointer;
 
-  &:hover {
-    background: ${themeCssVariables.background.transparent.lighter};
+    &:hover {
+      background: ${themeCssVariables.background.transparent.lighter};
+    }
   }
 `;
 
@@ -36,8 +38,10 @@ const StyledDescription = styled.div`
   font-size: ${themeCssVariables.font.size.sm};
 `;
 
-const StyledToggle = styled(Toggle)`
+const StyledToggleContainer = styled.span`
   margin-left: auto;
+  display: flex;
+  align-items: center;
 `;
 
 export const SettingsAccountsToggleSettingCard = ({
@@ -45,17 +49,20 @@ export const SettingsAccountsToggleSettingCard = ({
 }: SettingsAccountsToggleSettingCardProps) => (
   <Card rounded>
     {parameters.map((parameter, index) => (
-      <StyledCardContent
-        key={index}
-        divider={index < parameters.length - 1}
-        onClick={() => parameter.onToggle(!parameter.value)}
-      >
-        <div>
-          <StyledTitle>{parameter.title}</StyledTitle>
-          <StyledDescription>{parameter.description}</StyledDescription>
-        </div>
-        <StyledToggle value={parameter.value} onChange={parameter.onToggle} />
-      </StyledCardContent>
+      <StyledCardContentContainer key={index}>
+        <CardContent
+          divider={index < parameters.length - 1}
+          onClick={() => parameter.onToggle(!parameter.value)}
+        >
+          <div>
+            <StyledTitle>{parameter.title}</StyledTitle>
+            <StyledDescription>{parameter.description}</StyledDescription>
+          </div>
+          <StyledToggleContainer>
+            <Toggle value={parameter.value} onChange={parameter.onToggle} />
+          </StyledToggleContainer>
+        </CardContent>
+      </StyledCardContentContainer>
     ))}
   </Card>
 );

@@ -1,5 +1,4 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { useContext } from 'react';
 
 import { NavigationMenuItemStyleIcon } from '@/navigation-menu-item/components/NavigationMenuItemStyleIcon';
 import { usePrefetchedNavigationMenuItemsData } from '@/navigation-menu-item/hooks/usePrefetchedNavigationMenuItemsData';
@@ -8,17 +7,17 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { coreIndexViewIdFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/coreIndexViewIdFromObjectMetadataItemFamilySelector';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 export const RecordIndexPageHeaderIcon = ({
   objectMetadataItem,
 }: {
   objectMetadataItem?: ObjectMetadataItem;
 }) => {
-  const { theme } = useContext(ThemeContext);
   const isNavigationMenuItemEditingEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED,
   );
@@ -28,10 +27,11 @@ export const RecordIndexPageHeaderIcon = ({
     coreIndexViewIdFromObjectMetadataItemFamilySelector,
     { objectMetadataItemId: objectMetadataItem?.id ?? '' },
   );
+  const { theme } = useContext(ThemeContext);
   const { getIcon } = useIcons();
   const ObjectIcon = getIcon(objectMetadataItem?.icon);
 
-  if (!ObjectIcon) {
+  if (!isDefined(ObjectIcon)) {
     return null;
   }
 

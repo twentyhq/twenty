@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { buffer as streamToBuffer } from 'node:stream/consumers';
@@ -10,7 +10,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { Like, type QueryRunner, Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
-import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { FileWithSignedUrlDTO } from 'src/engine/core-modules/file/dtos/file-with-sign-url.dto';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
@@ -24,6 +24,8 @@ import { getImageBufferFromUrl } from 'src/utils/image';
 
 @Injectable()
 export class FileCorePictureService {
+  private readonly logger = new Logger(FileCorePictureService.name);
+
   constructor(
     private readonly fileStorageService: FileStorageService,
     private readonly applicationService: ApplicationService,
@@ -186,7 +188,11 @@ export class FileCorePictureService {
     imageUrl: string,
   ): Promise<{ buffer: Buffer; extension: string } | undefined> {
     try {
-      const httpClient = this.secureHttpClientService.getHttpClient();
+      const httpClient = this.secureHttpClientService.getHttpClient({
+        retries: 2,
+        shouldResetTimeout: true,
+      });
+
       const buffer = await getImageBufferFromUrl(imageUrl, httpClient);
 
       const type = await FileType.fromBuffer(buffer);
@@ -196,7 +202,11 @@ export class FileCorePictureService {
       }
 
       return { buffer, extension: type.ext };
-    } catch {
+    } catch (error) {
+      this.logger.warn(
+        `Failed to fetch image from URL: ${imageUrl} — ${error instanceof Error ? error.message : String(error)}`,
+      );
+
       return undefined;
     }
   }

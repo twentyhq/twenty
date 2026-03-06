@@ -1,8 +1,8 @@
 import { Action } from '@/action-menu/actions/components/Action';
 import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions/single-record/hooks/useSelectedRecordIdOrThrow';
-import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
+import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { type FieldMetadataItemRelation } from '@/object-metadata/types/FieldMetadataItemRelation';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -31,7 +31,7 @@ export const CreateRelatedRecordAction = ({
     objectNameSingular: CoreObjectNameSingular.Note,
   });
 
-  const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
+  const { openRecordInSidePanel } = useOpenRecordInSidePanel();
 
   const { createOneRecord: createOneTaskTarget } = useCreateOneRecord({
     objectNameSingular: CoreObjectNameSingular.TaskTarget,
@@ -87,7 +87,7 @@ export const CreateRelatedRecordAction = ({
         break;
     }
 
-    openRecordInCommandMenu({
+    openRecordInSidePanel({
       recordId: createdRecord.id,
       objectNameSingular: targetObject.nameSingular,
       isNewRecord: true,

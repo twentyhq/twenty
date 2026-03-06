@@ -970,12 +970,27 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
     },
     icon: { toCompare: true, toStringify: false, universalProperty: undefined },
+    shortLabel: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    position: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
     isPinned: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
     },
     availabilityType: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    conditionalAvailabilityExpression: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
@@ -1158,6 +1173,38 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
     },
     updatedAt: {
       toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+  },
+  viewSort: {
+    direction: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    fieldMetadataId: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: 'fieldMetadataUniversalIdentifier',
+    },
+    createdAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    updatedAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    viewId: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: 'viewUniversalIdentifier',
+    },
+    deletedAt: {
+      toCompare: true,
       toStringify: false,
       universalProperty: undefined,
     },

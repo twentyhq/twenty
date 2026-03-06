@@ -306,7 +306,7 @@ export class CacheStorageService {
   }
 
   private isRedisCache() {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
     return (this.cache.store as any)?.name === 'redis';
   }
 

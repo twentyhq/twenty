@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should match snapshot 1`] = `
 {
@@ -24,8 +24,11 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
     "propertiesToCompare": [
       "label",
       "icon",
+      "shortLabel",
+      "position",
       "isPinned",
       "availabilityType",
+      "conditionalAvailabilityExpression",
       "availabilityObjectMetadataUniversalIdentifier",
     ],
     "propertiesToStringify": [],
@@ -295,6 +298,15 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "isVisible",
       "fieldValue",
       "position",
+      "deletedAt",
+    ],
+    "propertiesToStringify": [],
+  },
+  "viewSort": {
+    "propertiesToCompare": [
+      "direction",
+      "fieldMetadataUniversalIdentifier",
+      "viewUniversalIdentifier",
       "deletedAt",
     ],
     "propertiesToStringify": [],

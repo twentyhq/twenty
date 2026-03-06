@@ -1,3 +1,8 @@
+import { getOperationName } from '@apollo/client/utilities';
+import { type SetStateAction } from 'jotai';
+import { isDefined } from 'twenty-shared/utils';
+
+import { CHAT_THREADS_PAGE_SIZE } from '@/ai/constants/ChatThreads';
 import { useAgentChatScrollToBottom } from '@/ai/hooks/useAgentChatScrollToBottom';
 import {
   agentChatUsageState,
@@ -9,10 +14,10 @@ import { isCreatingChatThreadState } from '@/ai/states/isCreatingChatThreadState
 import { mapDBMessagesToUIMessages } from '@/ai/utils/mapDBMessagesToUIMessages';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { type SetStateAction } from 'jotai';
-import { isDefined } from 'twenty-shared/utils';
+
 import {
   type AgentChatThread,
+  GetChatThreadsDocument,
   useCreateChatThreadMutation,
   useGetChatMessagesQuery,
   useGetChatThreadsQuery,
@@ -66,13 +71,19 @@ export const useAgentChatData = () => {
     onError: () => {
       setIsCreatingChatThread(false);
     },
+    refetchQueries: [
+      getOperationName(GetChatThreadsDocument) ?? 'GetChatThreads',
+    ],
   });
 
   const { loading: threadsLoading } = useGetChatThreadsQuery({
+    variables: { paging: { first: CHAT_THREADS_PAGE_SIZE } },
     skip: isDefined(currentAIChatThread),
     onCompleted: (data) => {
-      if (data.chatThreads.length > 0) {
-        const firstThread = data.chatThreads[0];
+      const edges = data?.chatThreads?.edges ?? [];
+      const threads = edges.map((edge) => edge.node);
+      if (threads.length > 0) {
+        const firstThread = threads[0];
 
         setCurrentAIChatThread(firstThread.id);
         setCurrentAIChatThreadTitle(firstThread.title ?? null);

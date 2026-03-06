@@ -40,7 +40,7 @@ const meta: Meta<typeof CommandMenuActionMenuDropdown> = {
             >
               <ActionMenuContext.Provider
                 value={{
-                  isInRightDrawer: true,
+                  isInSidePanel: true,
                   displayType: 'dropdownItem',
                   actionMenuType: 'command-menu-show-page-action-menu-dropdown',
                   actions: createMockActionMenuActions({

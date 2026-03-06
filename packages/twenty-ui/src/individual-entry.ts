@@ -12,4 +12,5 @@ export * from './json-visualizer';
 export * from './layout';
 export * from './navigation';
 export * from './theme';
+export * from './theme-constants';
 export * from './utilities';

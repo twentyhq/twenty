@@ -7,7 +7,7 @@ type MetadataSerializedRelationProperties = {
   [TSourceMetadataName in AllMetadataName]: [
     AllJsonbPropertiesWithSerializedPropertiesForMetadataName<TSourceMetadataName>,
   ] extends [never]
-    ? // eslint-disable-next-line @typescript-eslint/no-empty-object-type
+    ? // oxlint-disable-next-line @typescripttypescript/no-empty-object-type
       {}
     : Partial<Record<AllMetadataName, true>>;
 };
@@ -44,12 +44,13 @@ export const ALL_METADATA_SERIALIZED_RELATION = {
   rowLevelPermissionPredicate: {},
   rowLevelPermissionPredicateGroup: {},
   viewFilterGroup: {},
+  viewSort: {},
   frontComponent: {},
   webhook: {},
 } as const satisfies MetadataSerializedRelationProperties;
 
 // satisfies with complex mapped types involving nested generics doesn't always catch missing required keys
-// eslint-disable-next-line unused-imports/no-unused-vars
+// oxlint-disable-next-line unused-imports/no-unused-vars
 type Assertions = [
   Expect<
     AllMetadataName extends keyof typeof ALL_METADATA_SERIALIZED_RELATION

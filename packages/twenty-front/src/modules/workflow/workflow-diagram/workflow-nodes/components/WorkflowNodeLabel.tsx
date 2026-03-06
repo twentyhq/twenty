@@ -1,10 +1,7 @@
-import { useContext } from 'react';
-
 import type { WorkflowRunStepStatus } from '@/workflow/types/Workflow';
 import { getWorkflowDiagramColors } from '@/workflow/workflow-diagram/utils/getWorkflowDiagramColors';
 import { styled } from '@linaria/react';
 import { Label } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
 
 type WorkflowNodeLabelProps = {
   runStatus?: WorkflowRunStepStatus;
@@ -28,8 +25,7 @@ export const WorkflowNodeLabel = ({
   children,
   className,
 }: WorkflowNodeLabelProps) => {
-  const { theme } = useContext(ThemeContext);
-  const colors = getWorkflowDiagramColors({ theme, runStatus });
+  const colors = getWorkflowDiagramColors({ runStatus });
   const labelColor = selected ? colors.selected.color : colors.unselected.color;
 
   return (

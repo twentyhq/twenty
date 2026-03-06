@@ -15,18 +15,23 @@ import {
   type OutputFile,
 } from 'src/engine/core-modules/code-interpreter/drivers/interfaces/code-interpreter-driver.interface';
 
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import {
   type AccessTokenJwtPayload,
   JwtTokenTypeEnum,
 } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { CodeInterpreterService } from 'src/engine/core-modules/code-interpreter/code-interpreter.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { CodeInterpreterInputZodSchema } from 'src/engine/core-modules/tool/tools/code-interpreter-tool/code-interpreter-tool.schema';
 import { TWENTY_MCP_HELPER } from 'src/engine/core-modules/tool/tools/code-interpreter-tool/twenty-mcp-helper.const';
-import { type CodeInterpreterInput } from 'src/engine/core-modules/tool/tools/code-interpreter-tool/types/code-interpreter-input.type';
+import {
+  type CodeInterpreterFileInput,
+  type CodeInterpreterInput,
+} from 'src/engine/core-modules/tool/tools/code-interpreter-tool/types/code-interpreter-input.type';
 import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import {
@@ -49,6 +54,8 @@ export class CodeInterpreterTool implements Tool {
     private readonly codeInterpreterService: CodeInterpreterService,
     private readonly fileStorageService: FileStorageService,
     private readonly fileService: FileService,
+    private readonly fileUrlService: FileUrlService,
+    private readonly applicationService: ApplicationService,
     private readonly secureHttpClientService: SecureHttpClientService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly jwtWrapperService: JwtWrapperService,
@@ -94,7 +101,7 @@ export class CodeInterpreterTool implements Tool {
     );
 
     try {
-      const inputFiles = await this.downloadInputFiles(files);
+      const inputFiles = await this.downloadInputFiles(files, workspaceId);
 
       this.logger.log(
         `Executing code interpreter with ${inputFiles.length} input files`,
@@ -251,72 +258,41 @@ export class CodeInterpreterTool implements Tool {
   }
 
   private async downloadInputFiles(
-    files?: { filename: string; url: string }[],
+    files?: CodeInterpreterFileInput[],
+    workspaceId?: string,
   ): Promise<InputFile[]> {
     if (!files || files.length === 0) {
       return [];
     }
 
     const inputFiles: InputFile[] = [];
-    const serverUrl = this.twentyConfigService.get('SERVER_URL');
 
     for (const file of files) {
       try {
-        if (file.url.startsWith('data:')) {
-          const parsed = this.parseDataUrl(file.url);
-
-          if (parsed) {
-            inputFiles.push({
-              filename: file.filename,
-              content: parsed.content,
-              mimeType: parsed.mimeType,
-            });
-          }
+        if (!workspaceId) {
+          this.logger.warn(
+            `Cannot resolve file ${file.filename}: workspaceId is required`,
+          );
           continue;
         }
 
-        // Internal file downloads (from the server itself) use a plain client;
-        // external URLs go through the SSRF-protected client
-        const isInternalFileUrl = file.url.startsWith(serverUrl);
-        const httpClient = isInternalFileUrl
-          ? this.secureHttpClientService.getInternalHttpClient()
-          : this.secureHttpClientService.getHttpClient();
-
-        const response = await httpClient.get(file.url, {
-          responseType: 'arraybuffer',
-          timeout: 30_000,
+        const { buffer, mimeType } = await this.fileService.getFileContentById({
+          fileId: file.fileId,
+          workspaceId,
+          fileFolder: FileFolder.AgentChat,
         });
 
         inputFiles.push({
           filename: file.filename,
-          content: Buffer.from(response.data),
-          mimeType:
-            response.headers['content-type'] ?? 'application/octet-stream',
+          content: buffer,
+          mimeType,
         });
       } catch (error) {
-        this.logger.warn(`Failed to download file ${file.filename}`, error);
+        this.logger.warn(`Failed to resolve file ${file.filename}`, error);
       }
     }
 
     return inputFiles;
-  }
-
-  private parseDataUrl(
-    dataUrl: string,
-  ): { content: Buffer; mimeType: string } | null {
-    // Format: data:{mimeType};base64,{base64data}
-    const match = dataUrl.match(/^data:([^;]+);base64,(.+)$/);
-
-    if (!match) {
-      return null;
-    }
-
-    const [, mimeType, base64Data] = match;
-
-    return {
-      content: Buffer.from(base64Data, 'base64'),
-      mimeType,
-    };
   }
 
   private generateSessionToken(
@@ -349,30 +325,42 @@ export class CodeInterpreterTool implements Tool {
     workspaceId: string,
     executionId: string,
   ): Promise<CodeExecutionFile | null> {
-    const subFolder = `${FileFolder.AgentChat}/code-interpreter/${executionId}`;
-    const folder = `workspace-${workspaceId}/${subFolder}`;
-
     const sanitizedFilename = path.basename(file.filename);
 
     try {
-      await this.fileStorageService.writeFileLegacy({
-        file: file.content,
-        name: sanitizedFilename,
+      const { workspaceCustomFlatApplication } =
+        await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+          { workspaceId },
+        );
+
+      const fileId = v4();
+      const resourcePath = `code-interpreter/${executionId}/${fileId}-${sanitizedFilename}`;
+
+      const savedFile = await this.fileStorageService.writeFile({
+        sourceFile: file.content,
         mimeType: file.mimeType,
-        folder,
-      });
-
-      const filePath = `${subFolder}/${sanitizedFilename}`;
-      const signedPath = this.fileService.signFileUrl({
-        url: filePath,
+        fileFolder: FileFolder.AgentChat,
+        applicationUniversalIdentifier:
+          workspaceCustomFlatApplication.universalIdentifier,
         workspaceId,
+        resourcePath,
+        fileId,
+        settings: {
+          isTemporaryFile: false,
+          toDelete: false,
+        },
       });
 
-      const serverUrl = this.twentyConfigService.get('SERVER_URL');
+      const signedUrl = this.fileUrlService.signFileByIdUrl({
+        fileId: savedFile.id,
+        workspaceId,
+        fileFolder: FileFolder.AgentChat,
+      });
 
       return {
+        fileId: savedFile.id,
         filename: sanitizedFilename,
-        url: `${serverUrl}/files/${signedPath}`,
+        url: signedUrl,
         mimeType: file.mimeType,
       };
     } catch (error) {
@@ -388,12 +376,9 @@ export class CodeInterpreterTool implements Tool {
     executionId: string,
     alreadyUploadedFiles: CodeExecutionFile[],
   ): Promise<CodeExecutionFile[]> {
-    const subFolder = `${FileFolder.AgentChat}/code-interpreter/${executionId}`;
-    const folder = `workspace-${workspaceId}/${subFolder}`;
-
     const outputFileUrls: CodeExecutionFile[] = [...alreadyUploadedFiles];
     const uploadedFilenames = new Set(
-      alreadyUploadedFiles.map((f) => f.filename),
+      alreadyUploadedFiles.map((uploadedFile) => uploadedFile.filename),
     );
 
     for (const file of files) {
@@ -403,32 +388,14 @@ export class CodeInterpreterTool implements Tool {
         continue;
       }
 
-      try {
-        await this.fileStorageService.writeFileLegacy({
-          file: file.content,
-          name: sanitizedFilename,
-          mimeType: file.mimeType,
-          folder,
-        });
+      const uploadedFile = await this.uploadSingleFile(
+        file,
+        workspaceId,
+        executionId,
+      );
 
-        const filePath = `${subFolder}/${sanitizedFilename}`;
-        const signedPath = this.fileService.signFileUrl({
-          url: filePath,
-          workspaceId,
-        });
-
-        const serverUrl = this.twentyConfigService.get('SERVER_URL');
-
-        outputFileUrls.push({
-          filename: sanitizedFilename,
-          url: `${serverUrl}/files/${signedPath}`,
-          mimeType: file.mimeType,
-        });
-      } catch (error) {
-        this.logger.warn(
-          `Failed to upload output file ${file.filename}`,
-          error,
-        );
+      if (uploadedFile) {
+        outputFileUrls.push(uploadedFile);
       }
     }
 

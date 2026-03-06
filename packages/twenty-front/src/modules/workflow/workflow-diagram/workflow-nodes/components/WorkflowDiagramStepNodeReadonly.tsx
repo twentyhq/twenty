@@ -1,6 +1,6 @@
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
-import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
-import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
+import { useSidePanelWorkflowNavigation } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowNavigation';
+import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
@@ -25,7 +25,6 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import { useContext } from 'react';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
 
 export const WorkflowDiagramStepNodeReadonly = ({
   id,
@@ -35,7 +34,6 @@ export const WorkflowDiagramStepNodeReadonly = ({
   data: WorkflowDiagramStepNodeData;
 }) => {
   const { getIcon } = useIcons();
-  const { theme } = useContext(ThemeContext);
 
   const workflowVisualizerWorkflowId = useAtomComponentStateValue(
     workflowVisualizerWorkflowIdComponentState,
@@ -50,12 +48,12 @@ export const WorkflowDiagramStepNodeReadonly = ({
 
   const selected = workflowSelectedNode === id;
 
-  const { openWorkflowViewStepInCommandMenu } = useWorkflowCommandMenu();
+  const { openWorkflowViewStepInSidePanel } = useSidePanelWorkflowNavigation();
 
-  const { isInRightDrawer } = useContext(ActionMenuContext);
+  const { isInSidePanel } = useContext(ActionMenuContext);
 
-  const setCommandMenuNavigationStack = useSetAtomState(
-    commandMenuNavigationStackState,
+  const setSidePanelNavigationStack = useSetAtomState(
+    sidePanelNavigationStackState,
   );
 
   const handleClick = () => {
@@ -66,13 +64,13 @@ export const WorkflowDiagramStepNodeReadonly = ({
       throw new Error('Workflow ID and Version ID must be defined');
     }
 
-    if (!isInRightDrawer) {
-      setCommandMenuNavigationStack([]);
+    if (!isInSidePanel) {
+      setSidePanelNavigationStack([]);
     }
 
     setWorkflowSelectedNode(id);
 
-    openWorkflowViewStepInCommandMenu({
+    openWorkflowViewStepInSidePanel({
       workflowId: workflowVisualizerWorkflowId,
       workflowVersionId: workflowVisualizerWorkflowVersionId,
       title: data.name,
@@ -90,7 +88,6 @@ export const WorkflowDiagramStepNodeReadonly = ({
     <>
       <WorkflowNodeContainer
         data-click-outside-id={WORKFLOW_DIAGRAM_STEP_NODE_BASE_CLICK_OUTSIDE_ID}
-        theme={theme}
         onClick={handleClick}
         selected={selected}
       >
@@ -107,7 +104,6 @@ export const WorkflowDiagramStepNodeReadonly = ({
           </WorkflowNodeLabelWithCounterPart>
 
           <WorkflowNodeTitle
-            theme={theme}
             highlight={nodeTitleHighlighted}
             selected={selected}
           >

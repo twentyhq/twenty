@@ -12,7 +12,7 @@ import { type Response } from 'express';
 // This class add CORS headers to exception response to avoid misleading CORS error
 @Catch()
 export class UnhandledExceptionFilter implements ExceptionFilter {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
   catch(exception: any, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();

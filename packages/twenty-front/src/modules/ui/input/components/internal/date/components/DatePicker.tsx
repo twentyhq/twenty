@@ -32,8 +32,7 @@ import {
 } from 'twenty-shared/utils';
 import { IconCalendarX } from 'twenty-ui/display';
 import { MenuItemLeftContent } from 'twenty-ui/navigation';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { ThemeContext } from 'twenty-ui/theme';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 export const MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID =
   'date-picker-month-and-year-dropdown-month-select';
@@ -362,13 +361,12 @@ export const DatePicker = ({
   hideHeaderInput,
   onEscape,
 }: DatePickerProps) => {
+  const { theme } = useContext(ThemeContext);
   const plainDate = isDefined(plainDateString)
     ? Temporal.PlainDate.from(plainDateString)
     : Temporal.Now.plainDateISO();
 
   const { userTimezone } = useUserTimezone();
-
-  const { theme } = useContext(ThemeContext);
 
   const { closeDropdown: closeDropdownMonthSelect } = useCloseDropdown();
   const { closeDropdown: closeDropdownYearSelect } = useCloseDropdown();

@@ -7,14 +7,22 @@ import {
 } from '@hello-pangea/dnd';
 
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
+import { fieldsWidgetGroupsDraftComponentState } from '@/page-layout/states/fieldsWidgetGroupsDraftComponentState';
+import { fieldsWidgetUngroupedFieldsDraftComponentState } from '@/page-layout/states/fieldsWidgetUngroupedFieldsDraftComponentState';
 import { FieldsConfigurationGroupEditor } from '@/page-layout/widgets/fields/components/FieldsConfigurationGroupEditor';
+import { FieldsConfigurationUngroupedEditor } from '@/page-layout/widgets/fields/components/FieldsConfigurationUngroupedEditor';
 import { useCreateFieldsWidgetEditorGroup } from '@/page-layout/widgets/fields/hooks/useCreateFieldsWidgetEditorGroup';
 import { useDeleteFieldsWidgetEditorGroup } from '@/page-layout/widgets/fields/hooks/useDeleteFieldsWidgetEditorGroup';
-import { useFieldsWidgetGroupsDraft } from '@/page-layout/widgets/fields/hooks/useFieldsWidgetGroupsDraft';
+import { useFieldsWidgetEditorMode } from '@/page-layout/widgets/fields/hooks/useFieldsWidgetEditorMode';
 import { useMoveFieldInDraft } from '@/page-layout/widgets/fields/hooks/useMoveFieldInDraft';
+import { useMoveUngroupedFieldInDraft } from '@/page-layout/widgets/fields/hooks/useMoveUngroupedFieldInDraft';
 import { useReorderFieldsWidgetEditorGroups } from '@/page-layout/widgets/fields/hooks/useReorderFieldsWidgetEditorGroups';
 import { useToggleFieldVisibilityInDraft } from '@/page-layout/widgets/fields/hooks/useToggleFieldVisibilityInDraft';
+import { useToggleUngroupedFieldVisibilityInDraft } from '@/page-layout/widgets/fields/hooks/useToggleUngroupedFieldVisibilityInDraft';
 import { useUpdateFieldsWidgetEditorGroup } from '@/page-layout/widgets/fields/hooks/useUpdateFieldsWidgetEditorGroup';
+import { getFieldsConfigurationGroupRenameDropdownId } from '@/page-layout/widgets/fields/utils/getFieldsConfigurationGroupRenameDropdownId';
+import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 
@@ -36,10 +44,24 @@ export const FieldsConfigurationEditor = ({
   const { t } = useLingui();
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
 
-  const { draftGroups } = useFieldsWidgetGroupsDraft({
+  const { editorMode } = useFieldsWidgetEditorMode({
     pageLayoutId,
     widgetId,
   });
+
+  const fieldsWidgetGroupsDraft = useAtomComponentStateValue(
+    fieldsWidgetGroupsDraftComponentState,
+    pageLayoutId,
+  );
+
+  const draftGroups = fieldsWidgetGroupsDraft[widgetId] ?? [];
+
+  const fieldsWidgetUngroupedFieldsDraft = useAtomComponentStateValue(
+    fieldsWidgetUngroupedFieldsDraftComponentState,
+    pageLayoutId,
+  );
+
+  const ungroupedFields = fieldsWidgetUngroupedFieldsDraft[widgetId] ?? [];
 
   const { createGroup } = useCreateFieldsWidgetEditorGroup({
     pageLayoutId,
@@ -61,6 +83,17 @@ export const FieldsConfigurationEditor = ({
     widgetId,
   });
 
+  const { moveField: moveUngroupedField } = useMoveUngroupedFieldInDraft({
+    pageLayoutId,
+    widgetId,
+  });
+
+  const { toggleFieldVisibility: toggleUngroupedFieldVisibility } =
+    useToggleUngroupedFieldVisibilityInDraft({
+      pageLayoutId,
+      widgetId,
+    });
+
   const { updateGroup } = useUpdateFieldsWidgetEditorGroup({
     pageLayoutId,
     widgetId,
@@ -70,6 +103,8 @@ export const FieldsConfigurationEditor = ({
     pageLayoutId,
     widgetId,
   });
+
+  const { openDropdown } = useOpenDropdown();
 
   const [renamingGroupValue, setRenamingGroupValue] = useState('');
 
@@ -149,10 +184,27 @@ export const FieldsConfigurationEditor = ({
     );
   };
 
-  const handleAddGroup = () => {
+  const handleAddGroup = ({ afterGroupId }: { afterGroupId?: string }) => {
     const newGroupName = t`New Group`;
-    createGroup(newGroupName);
+    const newGroupId = createGroup({ name: newGroupName, afterGroupId });
+
+    setRenamingGroupValue(newGroupName);
+    openDropdown({
+      dropdownComponentInstanceIdFromProps:
+        getFieldsConfigurationGroupRenameDropdownId(newGroupId),
+    });
   };
+
+  if (editorMode === 'ungrouped') {
+    return (
+      <FieldsConfigurationUngroupedEditor
+        ungroupedFields={ungroupedFields}
+        onMoveField={moveUngroupedField}
+        onToggleFieldVisibility={toggleUngroupedFieldVisibility}
+        onAddGroup={() => handleAddGroup({})}
+      />
+    );
+  }
 
   const sortedGroups = [...draftGroups].sort((a, b) => a.position - b.position);
 
@@ -166,7 +218,7 @@ export const FieldsConfigurationEditor = ({
         {(provided) => (
           <StyledGroupsDroppable
             ref={provided.innerRef}
-            // eslint-disable-next-line react/jsx-props-no-spreading
+            // oxlint-disable-next-line react/jsx-props-no-spreading
             {...provided.droppableProps}
           >
             {sortedGroups.map((group, index) => (
@@ -182,7 +234,9 @@ export const FieldsConfigurationEditor = ({
                     objectMetadataItem={objectMetadataItem}
                     draggableProvided={draggableProvided}
                     isDragging={snapshot.isDragging}
-                    onAddGroup={handleAddGroup}
+                    onAddGroup={() =>
+                      handleAddGroup({ afterGroupId: group.id })
+                    }
                     onToggleFieldVisibility={(fieldMetadataId) =>
                       toggleFieldVisibility(group.id, fieldMetadataId)
                     }

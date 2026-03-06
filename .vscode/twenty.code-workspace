@@ -37,8 +37,8 @@
       "path": "../packages/twenty-zapier"
     },
     {
-      "name": "tools/eslint-rules",
-      "path": "../tools/eslint-rules"
+      "name": "packages/twenty-oxlint-rules",
+      "path": "../packages/twenty-oxlint-rules"
     },
     {
       "name": "packages/twenty-e2e-testing",
@@ -49,23 +49,26 @@
     "editor.formatOnSave": false,
     "files.eol": "auto",
     "[typescript]": {
-      "editor.formatOnSave": false,
+      "editor.formatOnSave": true,
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
       "editor.codeActionsOnSave": {
-        "source.fixAll.eslint": "explicit",
+        "source.fixAll.oxc": "explicit",
         "source.addMissingImports": "always"
       }
     },
     "[javascript]": {
-      "editor.formatOnSave": false,
+      "editor.formatOnSave": true,
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
       "editor.codeActionsOnSave": {
-        "source.fixAll.eslint": "explicit",
+        "source.fixAll.oxc": "explicit",
         "source.addMissingImports": "always"
       }
     },
     "[typescriptreact]": {
-      "editor.formatOnSave": false,
+      "editor.formatOnSave": true,
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
       "editor.codeActionsOnSave": {
-        "source.fixAll.eslint": "explicit",
+        "source.fixAll.oxc": "explicit",
         "source.addMissingImports": "always"
       }
     },
@@ -88,7 +91,7 @@
     "typescript.preferences.importModuleSpecifier": "non-relative",
     "[javascript][typescript][typescriptreact]": {
       "editor.codeActionsOnSave": {
-        "source.fixAll.eslint": "explicit",
+        "source.fixAll.oxc": "explicit",
         "source.addMissingImports": "always"
       }
     },
@@ -98,6 +101,7 @@
     "files.exclude": {
       "packages/": true
     },
+    "oxc.lint.enable": true,
     "jest.runMode": "on-demand",
     "jest.disabledWorkspaceFolders": [
       "ROOT",

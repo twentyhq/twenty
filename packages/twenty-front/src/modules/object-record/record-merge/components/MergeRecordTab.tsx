@@ -6,7 +6,7 @@ import { Section } from 'twenty-ui/layout';
 import { PageLayoutType } from '~/generated-metadata/graphql';
 
 type MergeRecordTabProps = {
-  isInRightDrawer?: boolean;
+  isInSidePanel?: boolean;
   objectNameSingular: string;
   recordId: string;
 };
@@ -23,14 +23,14 @@ export const MergeRecordTab = ({
           targetObjectNameSingular: objectNameSingular,
         },
         layoutType: PageLayoutType.RECORD_PAGE,
-        isInRightDrawer: true,
+        isInSidePanel: true,
       }}
     >
       <Section>
         <SummaryCard
           objectNameSingular={objectNameSingular}
           objectRecordId={recordId}
-          isInRightDrawer={true}
+          isInSidePanel={true}
         />
 
         {getCardComponent(CardType.FieldCard, {

@@ -3,8 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import React, { useContext, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from '@ui/theme-constants';
-import { ThemeContext } from '@ui/theme';
+import { ThemeContext, themeCssVariables } from '@ui/theme-constants';
 
 import { type ModalOverlay } from '../types/ModalOverlay';
 import { type ModalPadding } from '../types/ModalPadding';
@@ -128,9 +127,9 @@ export const Modal = ({
   onBackdropMouseDown,
   modalRef: externalRef,
 }: ModalProps) => {
+  const { theme } = useContext(ThemeContext);
   const internalRef = useRef<HTMLDivElement>(null);
   const resolvedRef = externalRef ?? internalRef;
-  const { theme } = useContext(ThemeContext);
 
   const handleBackdropMouseDown = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -158,7 +157,9 @@ export const Modal = ({
             layout
             overlay={overlay}
             variants={modalAnimation}
-            transition={{ duration: theme.animation.duration.normal }}
+            transition={{
+              duration: theme.animation.duration.normal,
+            }}
             isMobile={isMobile}
             gap={gap}
             smallBorderRadius={smallBorderRadius}

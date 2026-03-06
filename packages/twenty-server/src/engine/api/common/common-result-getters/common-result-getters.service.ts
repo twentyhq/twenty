@@ -15,7 +15,6 @@ import { RichTextV2FieldQueryResultGetterHandler } from 'src/engine/api/common/c
 import { AttachmentQueryResultGetterHandler } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/handlers/attachment-query-result-getter.handler';
 import { PersonQueryResultGetterHandler } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/handlers/person-query-result-getter.handler';
 import { WorkspaceMemberQueryResultGetterHandler } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/handlers/workspace-member-query-result-getter.handler';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -43,7 +42,6 @@ export class CommonResultGettersService {
   constructor(
     private readonly fileService: FileService,
     private readonly fileUrlService: FileUrlService,
-    private readonly featureFlagService: FeatureFlagService,
   ) {
     this.initializeObjectHandlers();
     this.initializeFieldHandlers();
@@ -55,11 +53,7 @@ export class CommonResultGettersService {
       ['person', new PersonQueryResultGetterHandler(this.fileService)],
       [
         'workspaceMember',
-        new WorkspaceMemberQueryResultGetterHandler(
-          this.fileService,
-          this.featureFlagService,
-          this.fileUrlService,
-        ),
+        new WorkspaceMemberQueryResultGetterHandler(this.fileUrlService),
       ],
     ]);
   }
@@ -75,11 +69,7 @@ export class CommonResultGettersService {
       ],
       [
         FieldMetadataType.RICH_TEXT_V2,
-        new RichTextV2FieldQueryResultGetterHandler(
-          this.fileService,
-          this.fileUrlService,
-          this.featureFlagService,
-        ),
+        new RichTextV2FieldQueryResultGetterHandler(this.fileUrlService),
       ],
     ]);
   }

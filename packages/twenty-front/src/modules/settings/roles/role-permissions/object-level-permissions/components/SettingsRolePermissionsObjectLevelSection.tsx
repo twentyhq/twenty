@@ -18,12 +18,14 @@ import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
-const StyledCreateObjectOverrideSection = styled(Section)`
-  border-top: 1px solid ${themeCssVariables.border.color.light};
-  display: flex;
-  justify-content: flex-end;
-  padding-top: ${themeCssVariables.spacing[2]};
-  padding-bottom: ${themeCssVariables.spacing[2]};
+const StyledCreateObjectOverrideSectionContainer = styled.div`
+  > * {
+    border-top: 1px solid ${themeCssVariables.border.color.light};
+    display: flex;
+    justify-content: flex-end;
+    padding-top: ${themeCssVariables.spacing[2]};
+    padding-bottom: ${themeCssVariables.spacing[2]};
+  }
 `;
 
 const StyledTableRows = styled.div`
@@ -37,10 +39,6 @@ type SettingsRolePermissionsObjectLevelSectionProps = {
   fromAgentId?: string;
   objectMetadataItemsFromMarketplaceApp?: ObjectMetadataItem[];
 };
-
-const StyledNoOverride = styled(TableCell)`
-  color: ${themeCssVariables.font.color.tertiary};
-`;
 
 export const SettingsRolePermissionsObjectLevelSection = ({
   roleId,
@@ -130,25 +128,27 @@ export const SettingsRolePermissionsObjectLevelSection = ({
               ),
             )
           ) : (
-            <StyledNoOverride>
+            <TableCell color={themeCssVariables.font.color.tertiary}>
               {t`No permissions have been set for individual objects.`}
-            </StyledNoOverride>
+            </TableCell>
           )}
         </StyledTableRows>
       </Table>
       {isEditable && (
-        <StyledCreateObjectOverrideSection>
-          <Button
-            Icon={IconPlus}
-            title={t`Add rule`}
-            variant="secondary"
-            size="small"
-            disabled={
-              !settingsDraftRole.isEditable || allObjectsHaveSetPermission
-            }
-            onClick={handleAddRule}
-          />
-        </StyledCreateObjectOverrideSection>
+        <StyledCreateObjectOverrideSectionContainer>
+          <Section>
+            <Button
+              Icon={IconPlus}
+              title={t`Add rule`}
+              variant="secondary"
+              size="small"
+              disabled={
+                !settingsDraftRole.isEditable || allObjectsHaveSetPermission
+              }
+              onClick={handleAddRule}
+            />
+          </Section>
+        </StyledCreateObjectOverrideSectionContainer>
       )}
     </Section>
   );

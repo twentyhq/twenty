@@ -1,4 +1,4 @@
-/* eslint-disable */
+/* oxlint-disable */
 // @ts-nocheck
 import { type Role } from '~/generated-metadata/graphql';
 

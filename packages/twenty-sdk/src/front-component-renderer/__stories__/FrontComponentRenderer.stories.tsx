@@ -16,6 +16,7 @@ const meta: Meta<typeof FrontComponentRenderer> = {
   args: {
     onError: errorHandler,
     applicationAccessToken: 'fake-token',
+    executionContext: { frontComponentId: 'storybook-test', userId: null },
   },
   beforeEach: () => {
     errorHandler.mockClear();
@@ -117,16 +118,15 @@ export const SdkContext: Story = {
   ...createComponentStory('sdk-context-example'),
   args: {
     ...createComponentStory('sdk-context-example').args,
-    executionContext: { userId: 'test-user-abc-123' },
+    executionContext: {
+      frontComponentId: 'sdk-context-test',
+      userId: 'test-user-abc-123',
+    },
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await canvas.findByTestId(
-      'sdk-context-component',
-      {},
-      { timeout: 30000 },
-    );
+    await canvas.findByTestId('sdk-context-component', {}, { timeout: 30000 });
 
     const userIdElement = await canvas.findByTestId('sdk-context-user-id');
     expect(userIdElement).toBeVisible();
@@ -138,9 +138,7 @@ export const SdkContext: Story = {
     const button = await canvas.findByTestId('sdk-context-button');
     await userEvent.click(button);
 
-    const renderCount = await canvas.findByTestId(
-      'sdk-context-render-count',
-    );
+    const renderCount = await canvas.findByTestId('sdk-context-render-count');
     expect(renderCount).toHaveTextContent('Renders: 1');
 
     expect(userIdElement).toHaveTextContent('test-user-abc-123');

@@ -43,7 +43,7 @@ const meta: Meta<typeof RecordIndexActionMenuDropdown> = {
           >
             <ActionMenuContext.Provider
               value={{
-                isInRightDrawer: true,
+                isInSidePanel: true,
                 displayType: 'dropdownItem',
                 actionMenuType: 'index-page-action-menu-dropdown',
                 actions: createMockActionMenuActions({

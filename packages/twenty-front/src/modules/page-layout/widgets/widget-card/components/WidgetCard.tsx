@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
-import { type WidgetCardVariant } from '~/modules/page-layout/widgets/types/WidgetCardVariant';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { isDefined } from 'twenty-shared/utils';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { type WidgetCardVariant } from '~/modules/page-layout/widgets/types/WidgetCardVariant';
 
 type WidgetCardStyledProps = {
   variant: WidgetCardVariant;
@@ -129,6 +129,8 @@ export type WidgetCardProps = {
   children?: React.ReactNode;
   onMouseEnter?: React.MouseEventHandler<HTMLDivElement>;
   onMouseLeave?: React.MouseEventHandler<HTMLDivElement>;
+  'data-testid'?: string;
+  'data-widget-id'?: string;
 };
 
 export const WidgetCard = ({
@@ -144,6 +146,8 @@ export const WidgetCard = ({
   children,
   onMouseEnter,
   onMouseLeave,
+  'data-testid': dataTestId,
+  'data-widget-id': dataWidgetId,
 }: WidgetCardProps) => {
   return (
     <StyledWidgetCard
@@ -159,6 +163,8 @@ export const WidgetCard = ({
       className={className}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
+      data-testid={dataTestId}
+      data-widget-id={dataWidgetId}
     >
       {children}
     </StyledWidgetCard>

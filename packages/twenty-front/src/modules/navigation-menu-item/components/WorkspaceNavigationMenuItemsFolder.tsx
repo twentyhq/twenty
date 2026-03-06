@@ -11,8 +11,7 @@ import {
   IconPlus,
   useIcons,
 } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { useIsDropDisabledForSection } from '@/navigation-menu-item/hooks/useIsDropDisabledForSection';
 import { useOpenAddItemToFolderPage } from '@/navigation-menu-item/hooks/useOpenAddItemToFolderPage';
@@ -243,7 +242,7 @@ export const WorkspaceNavigationMenuItemsFolder = ({
                 <StyledFolderDroppableContent
                   ref={provided.innerRef}
                   $compact={isEditMode || navigationMenuItems.length === 0}
-                  // eslint-disable-next-line react/jsx-props-no-spreading
+                  // oxlint-disable-next-line react/jsx-props-no-spreading
                   {...provided.droppableProps}
                 >
                   {navigationMenuItems.map((navigationMenuItem, index) => {

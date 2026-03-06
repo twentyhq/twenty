@@ -2,12 +2,12 @@ import { styled } from '@linaria/react';
 import React from 'react';
 
 import { getDisplayNameFromParticipant } from '@/activities/emails/utils/getDisplayNameFromParticipant';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { Avatar } from 'twenty-ui/display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledAvatar = styled(Avatar)`
+const StyledAvatarContainer = styled.span`
   margin-right: ${themeCssVariables.spacing[1]};
 `;
 
@@ -67,12 +67,14 @@ export const ParticipantChip = ({
         />
       ) : (
         <StyledChip>
-          <StyledAvatar
-            avatarUrl={avatarUrl}
-            type="rounded"
-            placeholder={displayName}
-            size="sm"
-          />
+          <StyledAvatarContainer>
+            <Avatar
+              avatarUrl={avatarUrl}
+              type="rounded"
+              placeholder={displayName}
+              size="sm"
+            />
+          </StyledAvatarContainer>
           <StyledSenderName variant={variant}>{displayName}</StyledSenderName>
         </StyledChip>
       )}

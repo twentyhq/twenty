@@ -29,7 +29,6 @@ const StyledDescription = styled.span`
 `;
 
 const StyledToggleContainer = styled.div`
-  align-items: center;
   background-color: ${themeCssVariables.background.transparent.lighter};
   border-top: 1px solid ${themeCssVariables.border.color.medium};
   border-bottom: 1px solid ${themeCssVariables.border.color.medium};
@@ -38,6 +37,8 @@ const StyledToggleContainer = styled.div`
   border-top-right-radius: ${themeCssVariables.border.radius.sm};
   display: flex;
   padding-right: ${themeCssVariables.spacing[2]};
+  padding-top: ${themeCssVariables.spacing[2]};
+  padding-bottom: ${themeCssVariables.spacing[2]};
 `;
 
 export const FormBooleanFieldToggleInput = ({
