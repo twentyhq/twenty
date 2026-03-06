@@ -27,7 +27,7 @@ const StyledPlusButtonWrapper = styled.div`
   position: absolute;
   right: 0;
   top: 0;
-  z-index: ${TABLE_Z_INDEX.headerColumns.withoutGroups.headerColumnsSticky};
+  z-index: ${TABLE_Z_INDEX.headerColumns.headerColumnsSticky};
 `;
 
 export const RecordTableHeaderFirstCell = () => {

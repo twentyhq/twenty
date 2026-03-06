@@ -22,10 +22,6 @@ const StyledContainer = styled.div`
   width: ${RECORD_TABLE_COLUMN_CHECKBOX_WIDTH};
 `;
 
-const StyledRecordTableTdContainer = styled.div`
-  border-left: 1px solid transparent;
-`;
-
 export const RecordTableCellCheckbox = () => {
   const { isSelected } = useRecordTableRowContextOrThrow();
 
@@ -42,16 +38,14 @@ export const RecordTableCellCheckbox = () => {
   );
 
   return (
-    <StyledRecordTableTdContainer>
-      <RecordTableCellStyleWrapper
-        isSelected={isSelected}
-        hasRightBorder={false}
-        widthClassName={RECORD_TABLE_COLUMN_CHECKBOX_WIDTH_CLASS_NAME}
-      >
-        <StyledContainer onClick={handleClick} data-select-disable>
-          <Checkbox hoverable checked={isSelected} />
-        </StyledContainer>
-      </RecordTableCellStyleWrapper>
-    </StyledRecordTableTdContainer>
+    <RecordTableCellStyleWrapper
+      isSelected={isSelected}
+      hasRightBorder={false}
+      widthClassName={RECORD_TABLE_COLUMN_CHECKBOX_WIDTH_CLASS_NAME}
+    >
+      <StyledContainer onClick={handleClick} data-select-disable>
+        <Checkbox hoverable checked={isSelected} />
+      </StyledContainer>
+    </RecordTableCellStyleWrapper>
   );
 };
