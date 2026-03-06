@@ -73,6 +73,10 @@ export const getRecordNodeFromRecord = <T extends ObjectRecord>({
             return undefined;
           }
 
+          if (!Array.isArray(value)) {
+            return undefined;
+          }
+
           return [
             gqlField,
             getRecordConnectionFromRecords({
@@ -110,6 +114,10 @@ export const getRecordNodeFromRecord = <T extends ObjectRecord>({
           }
 
           if (!morphRelation?.targetObjectMetadata?.nameSingular) {
+            return undefined;
+          }
+
+          if (!Array.isArray(value)) {
             return undefined;
           }
 
