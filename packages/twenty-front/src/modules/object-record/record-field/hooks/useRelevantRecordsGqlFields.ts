@@ -1,27 +1,35 @@
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getImageIdentifierFieldMetadataItem } from '@/object-metadata/utils/getImageIdentifierFieldMetadataItem';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { hasObjectMetadataItemPositionField } from '@/object-metadata/utils/hasObjectMetadataItemPositionField';
 import { generateActivityTargetGqlFields } from '@/object-record/graphql/record-gql-fields/utils/generateActivityTargetGqlFields';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
+
 import { generateDepthRecordGqlFieldsFromFields } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromFields';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
+import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
-import { isDefined } from 'twenty-shared/utils';
 
-type UseRecordsFieldVisibleGqlFields = {
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { filterDuplicatesById, isDefined } from 'twenty-shared/utils';
+
+type UseRecordsUsefulGqlFields = {
   objectMetadataItem: ObjectMetadataItem;
   additionalFieldMetadataId?: string | null;
 };
 
-export const useRecordsFieldVisibleGqlFields = ({
+export const useRelevantRecordsGqlFields = ({
   objectMetadataItem,
   additionalFieldMetadataId,
-}: UseRecordsFieldVisibleGqlFields) => {
+}: UseRecordsUsefulGqlFields) => {
   const visibleRecordFields = useAtomComponentSelectorValue(
     visibleRecordFieldsComponentSelector,
+  );
+
+  const currentRecordFilters = useAtomComponentStateValue(
+    currentRecordFiltersComponentState,
   );
 
   const { fieldMetadataItemByFieldMetadataItemId } =
@@ -29,14 +37,29 @@ export const useRecordsFieldVisibleGqlFields = ({
 
   const { objectMetadataItems } = useObjectMetadataItems();
 
+  const visibleRecordFieldMetadataItems = visibleRecordFields
+    .map(
+      (field) =>
+        fieldMetadataItemByFieldMetadataItemId[field.fieldMetadataItemId],
+    )
+    .filter(isDefined);
+
+  const recordFilterFields = currentRecordFilters
+    .map((recordFilter) =>
+      objectMetadataItem.fields.find(
+        (field) => field.id === recordFilter.fieldMetadataId,
+      ),
+    )
+    .filter(isDefined);
+
+  const fieldMetadataItemsToUse = [
+    ...visibleRecordFieldMetadataItems,
+    ...(recordFilterFields ?? []),
+  ].filter(filterDuplicatesById);
+
   const allDepthOneGqlFields = generateDepthRecordGqlFieldsFromFields({
     objectMetadataItems,
-    fields: visibleRecordFields
-      .map(
-        (field) =>
-          fieldMetadataItemByFieldMetadataItemId[field.fieldMetadataItemId],
-      )
-      .filter(isDefined),
+    fields: fieldMetadataItemsToUse,
     depth: 1,
   });
 
