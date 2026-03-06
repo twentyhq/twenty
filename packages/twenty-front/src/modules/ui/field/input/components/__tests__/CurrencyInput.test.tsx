@@ -9,7 +9,7 @@ jest.mock('@/localization/hooks/useNumberFormat', () => ({
 }));
 
 jest.mock('react-imask', () => ({
-  IMaskInput: jest.fn((props: any) => <input {...props} />),
+  IMaskInput: jest.fn(() => null),
 }));
 
 describe('CurrencyInput', () => {
@@ -37,7 +37,16 @@ describe('CurrencyInput', () => {
       formatNumber: jest.fn(),
     });
 
-    render(<CurrencyInput {...commonProps} />);
+    render(
+      <CurrencyInput
+        instanceId={commonProps.instanceId}
+        value={commonProps.value}
+        currencyCode={commonProps.currencyCode}
+        onEnter={commonProps.onEnter}
+        onEscape={commonProps.onEscape}
+        onClickOutside={commonProps.onClickOutside}
+      />,
+    );
 
     const firstCallArgs = (IMaskInput as jest.Mock).mock.calls[0][0];
 
@@ -53,7 +62,16 @@ describe('CurrencyInput', () => {
       formatNumber: jest.fn(),
     });
 
-    render(<CurrencyInput {...commonProps} />);
+    render(
+      <CurrencyInput
+        instanceId={commonProps.instanceId}
+        value={commonProps.value}
+        currencyCode={commonProps.currencyCode}
+        onEnter={commonProps.onEnter}
+        onEscape={commonProps.onEscape}
+        onClickOutside={commonProps.onClickOutside}
+      />,
+    );
 
     const firstCallArgs = (IMaskInput as jest.Mock).mock.calls[0][0];
 
@@ -61,4 +79,3 @@ describe('CurrencyInput', () => {
     expect(firstCallArgs.radix).toBe('.');
   });
 });
-
