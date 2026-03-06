@@ -2,6 +2,7 @@ name: CI Server
 
 on:
   pull_request:
+  merge_group:
 
 permissions:
   contents: read
@@ -15,6 +16,7 @@ env:
 
 jobs:
   changed-files-check:
+    if: github.event_name != 'merge_group'
     uses: ./.github/workflows/changed-files.yaml
     with:
       files: |
