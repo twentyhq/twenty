@@ -5,7 +5,7 @@ import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/re
 import { phoneSchema } from '@/object-record/record-field/ui/validation-schemas/phoneSchema';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { styled } from '@linaria/react';
-import { parsePhoneNumber, type E164Number } from 'libphonenumber-js';
+import { parsePhoneNumberFromString, type E164Number } from 'libphonenumber-js';
 import ReactPhoneNumberInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
 
@@ -171,7 +171,7 @@ export const PhonesFieldInput = () => {
           };
         }
 
-        const phone = parsePhoneNumber(input);
+        const phone = parsePhoneNumberFromString(input);
         if (phone !== undefined) {
           return {
             number: phone.nationalNumber,
