@@ -218,7 +218,7 @@ export const FieldsConfigurationEditor = ({
         {(provided) => (
           <StyledGroupsDroppable
             ref={provided.innerRef}
-            // eslint-disable-next-line react/jsx-props-no-spreading
+            // oxlint-disable-next-line react/jsx-props-no-spreading
             {...provided.droppableProps}
           >
             {sortedGroups.map((group, index) => (

@@ -22,7 +22,7 @@ import { useUpdateEffect } from '~/hooks/useUpdateEffect';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
 export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
-  // eslint-disable-next-line twenty/no-state-useref
+  // oxlint-disable-next-line twenty/no-state-useref
   const apolloRef = useRef<ApolloFactory<NormalizedCacheObject> | null>(null);
 
   const navigate = useNavigate();
@@ -108,7 +108,7 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
     });
 
     return apolloRef.current.getClient();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [
     setTokenPair,
     setCurrentUser,

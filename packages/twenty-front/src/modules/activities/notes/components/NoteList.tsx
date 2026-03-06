@@ -56,7 +56,7 @@ export const NoteList = ({
   button,
 }: NoteListProps) => (
   <>
-    {notes && notes.length > 0 && (
+    {notes.length > 0 && (
       <StyledContainer>
         <StyledTitleBar>
           <StyledTitle>

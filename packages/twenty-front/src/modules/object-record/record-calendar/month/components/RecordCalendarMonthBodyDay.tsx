@@ -146,7 +146,7 @@ export const RecordCalendarMonthBodyDay = ({
       <Droppable droppableId={dayKey}>
         {(droppableProvided, droppableSnapshot) => (
           <StyledCardsContainer
-            // eslint-disable-next-line react/jsx-props-no-spreading
+            // oxlint-disable-next-line react/jsx-props-no-spreading
             {...droppableProvided.droppableProps}
             ref={droppableProvided.innerRef}
             isDraggedOver={droppableSnapshot.isDraggingOver}

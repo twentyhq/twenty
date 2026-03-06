@@ -142,7 +142,7 @@ const buildGridTemplateColumns = (
       const isLastColumn = index === columns.length - 1;
       const width = widths[col.id] ?? col.defaultWidth;
 
-      // eslint-disable-next-line lingui/no-unlocalized-strings
+      // oxlint-disable-next-line lingui/no-unlocalized-strings
       return isLastColumn ? `minmax(${width}px, 1fr)` : `${width}px`;
     })
     .join(' ');

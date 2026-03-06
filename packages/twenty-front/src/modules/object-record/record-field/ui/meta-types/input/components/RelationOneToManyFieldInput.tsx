@@ -53,7 +53,7 @@ export const RelationOneToManyFieldInput = () => {
     fieldMetadataId: fieldDefinition.fieldMetadataId,
     objectMetadataItems,
   });
-  if (!fieldMetadataItem || !objectMetadataItem) {
+  if (!isDefined(fieldMetadataItem) || !isDefined(objectMetadataItem)) {
     throw new CustomError(
       'Field metadata item or object metadata item not found',
       'FIELD_METADATA_ITEM_OR_OBJECT_METADATA_ITEM_NOT_FOUND',
@@ -209,7 +209,7 @@ export const RelationOneToManyFieldInput = () => {
         const { targetFields, sourceField } = junctionConfig;
         const targetField = targetFields[0];
 
-        if (!targetField || !sourceField) {
+        if (!isDefined(targetField) || !isDefined(sourceField)) {
           return;
         }
 

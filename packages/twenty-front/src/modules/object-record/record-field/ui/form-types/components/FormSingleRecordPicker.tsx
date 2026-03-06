@@ -88,7 +88,7 @@ export const FormSingleRecordPicker = ({
       }
     : {
         type: 'static',
-        value: defaultValue || '',
+        value: (defaultValue as string | undefined) ?? '',
       };
 
   if (objectNameSingulars.length === 0) {

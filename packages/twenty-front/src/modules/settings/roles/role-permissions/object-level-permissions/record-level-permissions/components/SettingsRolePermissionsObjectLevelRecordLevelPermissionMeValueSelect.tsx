@@ -110,7 +110,7 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelec
       }
     }
 
-    const compatibleWorkspaceMemberFields = !workspaceMemberMetadataItem
+    const compatibleWorkspaceMemberFields = !isDefined(workspaceMemberMetadataItem)
       ? []
       : workspaceMemberMetadataItem.fields.filter((field) => {
           if (

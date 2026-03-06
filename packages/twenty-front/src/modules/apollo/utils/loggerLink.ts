@@ -40,7 +40,7 @@ export const loggerLink = (getSchemaName: (operation: Operation) => string) =>
 
       console.groupCollapsed(...titleArgs);
 
-      if (variables && Object.keys(variables).length !== 0) {
+      if (Object.keys(variables).length !== 0) {
         logDebug('VARIABLES', variables);
       }
 
@@ -70,7 +70,7 @@ export const loggerLink = (getSchemaName: (operation: Operation) => string) =>
           errors.forEach((err: any) => {
             logDebug(
               `%c${err.message}`,
-              // eslint-disable-next-line twenty/no-hardcoded-colors
+              // oxlint-disable-next-line twenty/no-hardcoded-colors
               'color: #F51818; font-weight: lighter',
             );
           });
@@ -78,7 +78,7 @@ export const loggerLink = (getSchemaName: (operation: Operation) => string) =>
 
         logDebug('HEADERS: ', headers);
 
-        if (variables && Object.keys(variables).length !== 0) {
+        if (Object.keys(variables).length !== 0) {
           logDebug('VARIABLES', variables);
         }
 

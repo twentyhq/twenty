@@ -231,7 +231,7 @@ export const SignInUpTOTPVerification = () => {
         <Trans>Paste the code below</Trans>
       </StyledTextContainer>
       <StyledMainContentContainer>
-        {/* // eslint-disable-next-line react/jsx-props-no-spreading */}
+        {/* // oxlint-disable-next-line react/jsx-props-no-spreading */}
         <Controller
           name="otp"
           control={form.control}
@@ -247,7 +247,7 @@ export const SignInUpTOTPVerification = () => {
                     {slots.slice(0, 3).map((slot, idx) => (
                       <Slot
                         key={idx}
-                        // eslint-disable-next-line react/jsx-props-no-spreading
+                        // oxlint-disable-next-line react/jsx-props-no-spreading
                         {...slot}
                       />
                     ))}
@@ -259,7 +259,7 @@ export const SignInUpTOTPVerification = () => {
                     {slots.slice(3).map((slot, idx) => (
                       <Slot
                         key={idx}
-                        // eslint-disable-next-line react/jsx-props-no-spreading
+                        // oxlint-disable-next-line react/jsx-props-no-spreading
                         {...slot}
                       />
                     ))}

@@ -86,7 +86,7 @@ export const generateColumns = (
     sortable: false,
     frozen: true,
     formatter: (props: any) => {
-      // eslint-disable-next-line  react-hooks/rules-of-hooks
+      // oxlint-disable-next-line  react-hooks/rules-of-hooks
       const [isRowSelected, onRowSelectionChange] = useRowSelection();
 
       return (

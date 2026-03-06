@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
@@ -48,7 +49,7 @@ export const SettingsAvailableStandardObjectItemTableRow = ({
         color={themeCssVariables.font.color.primary}
         gap={themeCssVariables.spacing[2]}
       >
-        {!!Icon && <Icon size={theme.icon.size.md} />}
+        {isDefined(Icon) && <Icon size={theme.icon.size.md} />}
         {objectItem.labelPlural}
       </TableCell>
       <TableCell>

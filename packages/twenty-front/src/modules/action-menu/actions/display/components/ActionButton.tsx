@@ -29,7 +29,7 @@ export const ActionButton = ({
 
   return (
     <>
-      {action.shortLabel ? (
+      {isDefined(action.shortLabel) ? (
         <Button
           Icon={action.Icon}
           size="small"

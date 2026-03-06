@@ -56,7 +56,7 @@ export const StyledSystemToolTableRow = (
   props: React.ComponentProps<typeof TableRow>,
 ) => (
   <StyledSystemToolTableRowContainer>
-    {/* eslint-disable-next-line react/jsx-props-no-spreading */}
+    {/* oxlint-disable-next-line react/jsx-props-no-spreading */}
     <TableRow gridTemplateColumns="1fr 100px 36px" {...props} />
   </StyledSystemToolTableRowContainer>
 );

@@ -20,17 +20,7 @@
         "command": "mintlify build"
       }
     },
-    "lint": {
-      "options": {
-        "lintFilePatterns": [
-          "{projectRoot}/**/*.{mdx,json}",
-          "{projectRoot}/package.json"
-        ]
-      },
-      "configurations": {
-        "fix": {}
-      }
-    },
+    "lint": {},
     "fmt": {
       "options": {
         "files": "."

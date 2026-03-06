@@ -66,7 +66,7 @@ export const SignInUpWorkspaceScopeForm = () => {
           <HorizontalSeparator />
         ) : null}
         {providers.password && (
-          // eslint-disable-next-line react/jsx-props-no-spreading
+          // oxlint-disable-next-line react/jsx-props-no-spreading
           <FormProvider {...form}>
             <SignInUpWithCredentials />
           </FormProvider>

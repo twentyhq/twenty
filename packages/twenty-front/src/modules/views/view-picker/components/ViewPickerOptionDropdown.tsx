@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { useCreateFavorite } from '@/favorites/hooks/useCreateFavorite';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { usePrefetchedNavigationMenuItemsData } from '@/navigation-menu-item/hooks/usePrefetchedNavigationMenuItemsData';
@@ -81,7 +82,8 @@ export const ViewPickerOptionDropdown = ({
       )
     : favorites.some(
         (favorite) =>
-          favorite.recordId === view.id && favorite.forWorkspaceMemberId,
+          favorite.recordId === view.id &&
+            isDefined(favorite.forWorkspaceMemberId),
       );
 
   const handleDelete = () => {

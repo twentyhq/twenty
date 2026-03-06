@@ -31,7 +31,7 @@ export const RecordIndexPageHeaderIcon = ({
   const { getIcon } = useIcons();
   const ObjectIcon = getIcon(objectMetadataItem?.icon);
 
-  if (!ObjectIcon) {
+  if (!isDefined(ObjectIcon)) {
     return null;
   }
 

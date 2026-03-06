@@ -5,9 +5,9 @@ import {
   type InputHTMLAttributes,
   type ReactNode,
 } from 'react';
-
 import { useRegisterInputEvents } from '@/object-record/record-field/ui/meta-types/input/hooks/useRegisterInputEvents';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { isDefined } from 'twenty-shared/utils';
 import { useCombinedRefs } from '~/hooks/useCombinedRefs';
 
 const StyledInput = styled.input<{
@@ -159,13 +159,13 @@ export const MultiItemBaseInput = forwardRef<
               placeholder={placeholder}
               onChange={(event) => onChange(event.target.value)}
               ref={combinedRef}
-              withRightComponent={!!rightComponent}
+              withRightComponent={isDefined(rightComponent)}
               hasItem={hasItem}
               onFocus={onFocus}
               onBlur={onBlur}
             />
           )}
-          {!!rightComponent && (
+          {isDefined(rightComponent) && (
             <StyledRightContainer>{rightComponent}</StyledRightContainer>
           )}
         </StyledInputContainer>

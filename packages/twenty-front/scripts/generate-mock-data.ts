@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+/* oxlint-disable no-console */
 import { generateApiKeys } from './mock-data/generate-api-keys.js';
 import { generateBillingPlans } from './mock-data/generate-billing-plans.js';
 import { generateMetadata } from './mock-data/generate-metadata.js';

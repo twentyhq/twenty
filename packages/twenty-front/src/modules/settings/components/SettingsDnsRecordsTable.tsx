@@ -46,7 +46,7 @@ export const SettingsDnsRecordsTable = ({
 }: SettingsDnsRecordsTableProps) => {
   const { copyToClipboard } = useCopyToClipboard();
 
-  if (!records || records.length === 0) {
+  if (records.length === 0) {
     return null;
   }
 

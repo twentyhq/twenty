@@ -34,9 +34,9 @@ export class CacheStorageModule implements OnModuleDestroy {
   constructor(@Inject(CACHE_MANAGER) private cacheManager: Cache) {}
 
   async onModuleDestroy() {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
     if ((this.cacheManager.store as any)?.name === 'redis') {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // oxlint-disable-next-line @typescripttypescript/no-explicit-any
       await (this.cacheManager.store as any).client.quit();
     }
   }

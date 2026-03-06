@@ -20,8 +20,8 @@
     "function:execute": "twenty function:execute",
     "app:uninstall": "twenty app:uninstall",
     "help": "twenty help",
-    "lint": "eslint",
-    "lint:fix": "eslint --fix"
+    "lint": "oxlint -c .oxlintrc.json .",
+    "lint:fix": "oxlint --fix -c .oxlintrc.json ."
   },
   "dependencies": {
     "twenty-sdk": "latest"
@@ -31,7 +31,6 @@
     "@types/node": "^24.7.2",
     "@types/react": "^19.0.2",
     "react": "^19.0.2",
-    "eslint": "^9.32.0",
-    "typescript-eslint": "^8.50.0"
+    "oxlint": "^0.16.0"
   }
 }
