@@ -144,7 +144,11 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
       ...trigger,
       settings: {
         ...trigger.settings,
-        fields: isDefined(fields) ? (Array.isArray(fields) ? fields : [fields]) : null,
+        fields: isDefined(fields)
+          ? Array.isArray(fields)
+            ? fields
+            : [fields]
+          : null,
       },
     });
   };

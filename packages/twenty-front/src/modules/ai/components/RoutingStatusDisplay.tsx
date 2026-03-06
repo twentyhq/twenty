@@ -66,7 +66,8 @@ export const RoutingStatusDisplay = ({
   const [isExpanded, setIsExpanded] = useState(false);
   const isLoading = data.state === 'loading';
   const isDebugMode = process.env.IS_DEBUG_MODE === 'true';
-  const isExpandable = isDebugMode && data.state === 'routed' && isDefined(data.debug);
+  const isExpandable =
+    isDebugMode && data.state === 'routed' && isDefined(data.debug);
 
   if (data.state === 'error') {
     return null;

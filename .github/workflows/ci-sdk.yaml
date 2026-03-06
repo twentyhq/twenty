@@ -1,8 +1,6 @@
 name: CI SDK
 
 on:
-  merge_group:
-
   pull_request:
 
 permissions:

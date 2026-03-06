@@ -206,11 +206,11 @@ export const ValidationStep = ({
     if (filterByErrors) {
       return data.filter((value) => {
         if (isDefined(value?.__errors)) {
-            return (
-              (Object.values(value.__errors)?.filter(
-                (err) => err.level === 'error',
-              ).length ?? 0) > 0
-            );
+          return (
+            (Object.values(value.__errors)?.filter(
+              (err) => err.level === 'error',
+            ).length ?? 0) > 0
+          );
         }
         return false;
       });
