@@ -178,7 +178,7 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
           {(provided) => (
             <StyledWorkspaceDroppableList
               ref={provided.innerRef}
-              // eslint-disable-next-line react/jsx-props-no-spreading
+              // oxlint-disable-next-line react/jsx-props-no-spreading
               {...provided.droppableProps}
             >
               {filteredItems.map((item, index) => {

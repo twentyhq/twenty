@@ -61,28 +61,48 @@ const buildManifest = (
   });
 
 describe('syncApplication', () => {
-  let appCreated = false;
-
-  beforeAll(async () => {
+  beforeEach(async () => {
     await setupApplicationForSync({
       applicationUniversalIdentifier: TEST_APP_ID,
       name: 'Test Application',
       description: 'A test application',
       sourcePath: 'test-sync',
     });
-
-    appCreated = true;
   }, 60000);
 
   afterEach(async () => {
-    if (!appCreated) {
-      return;
+    try {
+      await uninstallApplication({
+        universalIdentifier: TEST_APP_ID,
+        expectToFail: false,
+      });
+    } catch {
+      // May fail if the test didn't fully install/sync
     }
 
-    await uninstallApplication({
-      universalIdentifier: TEST_APP_ID,
-      expectToFail: false,
-    });
+    await globalThis.testDataSource.query(
+      `DELETE FROM core."role" WHERE "universalIdentifier" = $1`,
+      [TEST_ROLE_ID],
+    );
+
+    await globalThis.testDataSource.query(
+      `DELETE FROM core."file" WHERE "applicationId" IN (
+        SELECT id FROM core."application" WHERE "universalIdentifier" = $1
+      )`,
+      [TEST_APP_ID],
+    );
+
+    await globalThis.testDataSource.query(
+      `DELETE FROM core."application"
+       WHERE "universalIdentifier" = $1`,
+      [TEST_APP_ID],
+    );
+
+    await globalThis.testDataSource.query(
+      `DELETE FROM core."applicationRegistration"
+       WHERE "universalIdentifier" = $1`,
+      [TEST_APP_ID],
+    );
   });
 
   it('should return workspace migration actions on initial sync then on second sync with field rename and new role', async () => {

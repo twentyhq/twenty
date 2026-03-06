@@ -25,37 +25,12 @@ import {
   useGetAgentTurnsQuery,
 } from '~/generated-metadata/graphql';
 
-const StyledTable = styled(Table)`
+const StyledTableContainer = styled.div`
   margin-top: ${themeCssVariables.spacing[3]};
 `;
 
-const StyledTableHeaderRow = styled(TableRow)`
-  grid-template-columns: 140px 80px 1fr 40px;
+const StyledTableHeaderRowContainer = styled.div`
   margin-bottom: ${themeCssVariables.spacing[2]};
-`;
-
-const StyledTableRow = styled(TableRow)`
-  grid-template-columns: 140px 80px 1fr 40px;
-`;
-
-const StyledScoreCell = styled(TableCell)`
-  align-items: center;
-  gap: ${themeCssVariables.spacing[2]};
-`;
-
-const StyledDateCell = styled(TableCell)`
-  color: ${themeCssVariables.font.color.tertiary};
-`;
-
-const StyledInputCell = styled(TableCell)`
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
-
-const StyledActionCell = styled(TableCell)`
-  justify-content: flex-end;
-  padding-right: ${themeCssVariables.spacing[2]};
 `;
 
 type SettingsAgentLogsTabProps = {
@@ -71,7 +46,7 @@ export const SettingsAgentLogsTab = ({
   );
 
   const getLatestEvaluation = (evaluations: any[]) => {
-    if (!evaluations || evaluations.length === 0) return null;
+    if (evaluations.length === 0) return null;
     return [...evaluations].sort(
       (a, b) =>
         new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
@@ -101,7 +76,7 @@ export const SettingsAgentLogsTab = ({
       skip: !agentId,
       onCompleted: (completedData) => {
         const backgroundIds = computeBackgroundEvaluatingTurnIds(
-          completedData?.agentTurns || [],
+          completedData?.agentTurns ?? [],
         );
         if (backgroundIds.size > 0) {
           startPolling(3000);
@@ -164,17 +139,21 @@ export const SettingsAgentLogsTab = ({
 
   if (loading) {
     return (
-      <StyledTable>
-        <StyledTableHeaderRow>
-          <TableHeader>{t`Date`}</TableHeader>
-          <TableHeader>{t`Score`}</TableHeader>
-          <TableHeader>{t`Input`}</TableHeader>
-          <TableHeader />
-        </StyledTableHeaderRow>
-        {Array.from({ length: 3 }).map((_, index) => (
-          <Skeleton height={48} borderRadius={4} key={index} />
-        ))}
-      </StyledTable>
+      <StyledTableContainer>
+        <Table>
+          <StyledTableHeaderRowContainer>
+            <TableRow gridTemplateColumns="140px 80px 1fr 40px">
+              <TableHeader>{t`Date`}</TableHeader>
+              <TableHeader>{t`Score`}</TableHeader>
+              <TableHeader>{t`Input`}</TableHeader>
+              <TableHeader />
+            </TableRow>
+          </StyledTableHeaderRowContainer>
+          {Array.from({ length: 3 }).map((_, index) => (
+            <Skeleton height={48} borderRadius={4} key={index} />
+          ))}
+        </Table>
+      </StyledTableContainer>
     );
   }
 
@@ -195,65 +174,78 @@ export const SettingsAgentLogsTab = ({
   }
 
   return (
-    <StyledTable>
-      <StyledTableHeaderRow>
-        <TableHeader>{t`Date`}</TableHeader>
-        <TableHeader>{t`Score`}</TableHeader>
-        <TableHeader>{t`Input`}</TableHeader>
-        <TableHeader />
-      </StyledTableHeaderRow>
-      {turns.map((turn: any) => {
-        const latestEvaluation = getLatestEvaluation(turn.evaluations);
-        const userInput = getUserMessageInput(turn.messages);
+    <StyledTableContainer>
+      <Table>
+        <StyledTableHeaderRowContainer>
+          <TableRow gridTemplateColumns="140px 80px 1fr 40px">
+            <TableHeader>{t`Date`}</TableHeader>
+            <TableHeader>{t`Score`}</TableHeader>
+            <TableHeader>{t`Input`}</TableHeader>
+            <TableHeader />
+          </TableRow>
+        </StyledTableHeaderRowContainer>
+        {turns.map((turn: any) => {
+          const latestEvaluation = getLatestEvaluation(turn.evaluations);
+          const userInput = getUserMessageInput(turn.messages);
 
-        return (
-          <StyledTableRow key={turn.id}>
-            <StyledDateCell>
-              {new Date(turn.createdAt).toLocaleDateString('en-US', {
-                month: 'short',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit',
-              })}
-            </StyledDateCell>
-            <StyledScoreCell>
-              {latestEvaluation ? (
-                <Status
-                  color={getScoreColor(latestEvaluation.score)}
-                  text={`${latestEvaluation.score}`}
-                />
-              ) : evaluatingTurnIds.has(turn.id) ||
-                backgroundEvaluatingTurnIds.has(turn.id) ? (
-                <Status color="blue" text={t`Evaluating`} isLoaderVisible />
-              ) : (
-                <Button
-                  size="small"
-                  variant="secondary"
-                  onClick={() => handleEvaluateTurn(turn.id)}
-                  disabled={evaluating}
-                  title={t`Evaluate`}
-                />
-              )}
-            </StyledScoreCell>
-            <StyledInputCell>{userInput || t`No input`}</StyledInputCell>
-            <StyledActionCell>
-              {latestEvaluation && (
-                <UndecoratedLink
-                  to={getSettingsPath(SettingsPath.AIAgentTurnDetail)
-                    .replace(':agentId', agentId)
-                    .replace(':turnId', turn.id)}
-                >
-                  <LightIconButton
-                    Icon={IconChevronRight}
-                    title={t`View all evaluations`}
-                    accent="tertiary"
+          return (
+            <TableRow key={turn.id} gridTemplateColumns="140px 80px 1fr 40px">
+              <TableCell color={themeCssVariables.font.color.tertiary}>
+                {new Date(turn.createdAt).toLocaleDateString('en-US', {
+                  month: 'short',
+                  day: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit',
+                })}
+              </TableCell>
+              <TableCell gap={themeCssVariables.spacing[2]}>
+                {latestEvaluation ? (
+                  <Status
+                    color={getScoreColor(latestEvaluation.score)}
+                    text={`${latestEvaluation.score}`}
                   />
-                </UndecoratedLink>
-              )}
-            </StyledActionCell>
-          </StyledTableRow>
-        );
-      })}
-    </StyledTable>
+                ) : evaluatingTurnIds.has(turn.id) ||
+                  backgroundEvaluatingTurnIds.has(turn.id) ? (
+                  <Status color="blue" text={t`Evaluating`} isLoaderVisible />
+                ) : (
+                  <Button
+                    size="small"
+                    variant="secondary"
+                    onClick={() => handleEvaluateTurn(turn.id)}
+                    disabled={evaluating}
+                    title={t`Evaluate`}
+                  />
+                )}
+              </TableCell>
+              <TableCell
+                overflow="hidden"
+                textOverflow="ellipsis"
+                whiteSpace="nowrap"
+              >
+                {userInput || t`No input`}
+              </TableCell>
+              <TableCell
+                align="right"
+                padding={`0 ${themeCssVariables.spacing[2]} 0 0`}
+              >
+                {latestEvaluation && (
+                  <UndecoratedLink
+                    to={getSettingsPath(SettingsPath.AIAgentTurnDetail)
+                      .replace(':agentId', agentId)
+                      .replace(':turnId', turn.id)}
+                  >
+                    <LightIconButton
+                      Icon={IconChevronRight}
+                      title={t`View all evaluations`}
+                      accent="tertiary"
+                    />
+                  </UndecoratedLink>
+                )}
+              </TableCell>
+            </TableRow>
+          );
+        })}
+      </Table>
+    </StyledTableContainer>
   );
 };

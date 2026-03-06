@@ -68,7 +68,7 @@ const StyledContainer = styled.div`
   }
 `;
 
-const StyledProgressBar = styled(ProgressBar)`
+const StyledProgressBarContainer = styled.div`
   bottom: 0;
   height: auto;
   left: 0;
@@ -112,17 +112,19 @@ const StyledDescription = styled.div`
   width: 200px;
 `;
 
-const StyledLink = styled(Link)`
-  display: block;
-  color: ${themeCssVariables.font.color.tertiary};
-  font-size: ${themeCssVariables.font.size.sm};
-  padding-left: ${themeCssVariables.spacing[6]};
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  max-width: 200px;
-  &:hover {
-    color: ${themeCssVariables.font.color.secondary};
+const StyledLinkContainer = styled.div`
+  > a {
+    display: block;
+    color: ${themeCssVariables.font.color.tertiary};
+    font-size: ${themeCssVariables.font.size.sm};
+    padding-left: ${themeCssVariables.spacing[6]};
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    max-width: 200px;
+    &:hover {
+      color: ${themeCssVariables.font.color.secondary};
+    }
   }
 `;
 
@@ -229,10 +231,12 @@ export const SnackBar = ({
       role={role}
       data-globally-prevent-click-outside
     >
-      <StyledProgressBar
-        barColor={theme.snackBar[variant].backgroundColor}
-        value={progressValue}
-      />
+      <StyledProgressBarContainer>
+        <ProgressBar
+          barColor={theme.snackBar[variant].backgroundColor}
+          value={progressValue}
+        />
+      </StyledProgressBarContainer>
       <StyledHeader>
         <StyledIcon>{icon}</StyledIcon>
         <StyledMessage>{sanitizedMessage ?? ''}</StyledMessage>
@@ -248,7 +252,9 @@ export const SnackBar = ({
         <StyledDescription>{sanitizedDetailedMessage}</StyledDescription>
       )}
       {actionText && actionTo && (
-        <StyledLink to={actionTo}>{actionText}</StyledLink>
+        <StyledLinkContainer>
+          <Link to={actionTo}>{actionText}</Link>
+        </StyledLinkContainer>
       )}
       {actionText && actionOnClick && !actionTo && (
         <StyledActionButton>

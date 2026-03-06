@@ -1,5 +1,4 @@
 import {
-  Logger,
   UseFilters,
   UseGuards,
   UseInterceptors,
@@ -13,24 +12,22 @@ import { FileFolder, FeatureFlagKey } from 'twenty-shared/types';
 
 import type { FileUpload } from 'graphql-upload/processRequest.mjs';
 
-import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration/application-registration-variable.service';
+import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
-import { AppRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/app-registration-source-type.enum';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
 import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
-import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/application.dto';
-import { ApplicationInput } from 'src/engine/core-modules/application/dtos/application.input';
-import { CreateApplicationInput } from 'src/engine/core-modules/application/dtos/create-application.input';
-import { GenerateApplicationTokenInput } from 'src/engine/core-modules/application/dtos/generate-application-token.input';
-import { UploadApplicationFileInput } from 'src/engine/core-modules/application/dtos/uploadApplicationFileInput';
-import { WorkspaceMigrationDTO } from 'src/engine/core-modules/application/dtos/workspace-migration.dto';
-import { ApplicationSyncService } from 'src/engine/core-modules/application/application-install/application-sync.service';
+import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
+import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { ApplicationTokenPairDTO } from 'src/engine/core-modules/application/dtos/application-token-pair.dto';
+import { ApplicationInput } from 'src/engine/core-modules/application/application-development/dtos/application.input';
+import { GenerateApplicationTokenInput } from 'src/engine/core-modules/application/application-development/dtos/generate-application-token.input';
+import { UploadApplicationFileInput } from 'src/engine/core-modules/application/application-development/dtos/upload-application-file.input';
+import { WorkspaceMigrationDTO } from 'src/engine/core-modules/application/application-development/dtos/workspace-migration.dto';
+import { ApplicationTokenPairDTO } from 'src/engine/core-modules/application/application-oauth/dtos/application-token-pair.dto';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { FileDTO } from 'src/engine/core-modules/file/dtos/file.dto';
@@ -58,12 +55,10 @@ import { streamToBuffer } from 'src/utils/stream-to-buffer';
   SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
 )
 export class ApplicationDevelopmentResolver {
-  private readonly logger = new Logger(ApplicationDevelopmentResolver.name);
-
   constructor(
     private readonly applicationTokenService: ApplicationTokenService,
-    private readonly applicationSyncService: ApplicationSyncService,
     private readonly applicationService: ApplicationService,
+    private readonly applicationSyncService: ApplicationSyncService,
     private readonly applicationRegistrationService: ApplicationRegistrationService,
     private readonly applicationRegistrationVariableService: ApplicationRegistrationVariableService,
     private readonly fileStorageService: FileStorageService,
@@ -87,19 +82,17 @@ export class ApplicationDevelopmentResolver {
     @Args() { manifest }: ApplicationInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<WorkspaceMigrationDTO> {
-    const applicationRegistrationId =
-      await this.resolveApplicationRegistrationId(
-        manifest.application.universalIdentifier,
-        {
-          name: manifest.application.displayName,
-          description: manifest.application.description,
-          logoUrl: manifest.application.logoUrl,
-          author: manifest.application.author,
-          websiteUrl: manifest.application.websiteUrl,
-          termsUrl: manifest.application.termsUrl,
-        },
-        workspaceId,
-      );
+    const applicationRegistrationId = await this.findApplicationRegistrationId(
+      manifest.application.universalIdentifier,
+      workspaceId,
+    );
+
+    await this.ensureApplicationExists({
+      universalIdentifier: manifest.application.universalIdentifier,
+      name: manifest.application.displayName,
+      workspaceId,
+      applicationRegistrationId,
+    });
 
     const workspaceMigration =
       await this.applicationSyncService.synchronizeFromManifest({
@@ -119,19 +112,6 @@ export class ApplicationDevelopmentResolver {
         workspaceMigration.applicationUniversalIdentifier,
       actions: workspaceMigration.actions,
     };
-  }
-
-  @Mutation(() => ApplicationDTO)
-  @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)
-  async createOneApplication(
-    @Args('input') input: CreateApplicationInput,
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ) {
-    return await this.applicationService.create({
-      ...input,
-      sourceType: AppRegistrationSourceType.LOCAL,
-      workspaceId,
-    });
   }
 
   @Mutation(() => FileDTO)
@@ -176,16 +156,8 @@ export class ApplicationDevelopmentResolver {
     });
   }
 
-  private async resolveApplicationRegistrationId(
+  private async findApplicationRegistrationId(
     universalIdentifier: string,
-    metadata: {
-      name: string;
-      description?: string;
-      logoUrl?: string;
-      author?: string;
-      websiteUrl?: string;
-      termsUrl?: string;
-    },
     workspaceId: string,
   ): Promise<string> {
     const existingRegistration =
@@ -193,35 +165,27 @@ export class ApplicationDevelopmentResolver {
         universalIdentifier,
       );
 
-    if (existingRegistration) {
-      const isOwner =
-        await this.applicationRegistrationService.isOwnedByWorkspace(
-          existingRegistration.id,
-          workspaceId,
-        );
-
-      if (!isOwner) {
-        throw new ApplicationException(
-          'Cannot sync application: registration is owned by another workspace',
-          ApplicationExceptionCode.FORBIDDEN,
-        );
-      }
-
-      return existingRegistration.id;
+    if (!existingRegistration) {
+      throw new ApplicationException(
+        `No registration found for "${universalIdentifier}". Create one first with createApplicationRegistration.`,
+        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
+      );
     }
 
-    const { applicationRegistration: newRegistration } =
-      await this.applicationRegistrationService.create(
-        { ...metadata, universalIdentifier },
+    const isOwner =
+      await this.applicationRegistrationService.isOwnedByWorkspace(
+        existingRegistration.id,
         workspaceId,
-        null,
       );
 
-    this.logger.log(
-      `Created app registration for ${metadata.name} (${universalIdentifier})`,
-    );
+    if (!isOwner) {
+      throw new ApplicationException(
+        'Cannot sync application: registration is owned by another workspace',
+        ApplicationExceptionCode.FORBIDDEN,
+      );
+    }
 
-    return newRegistration.id;
+    return existingRegistration.id;
   }
 
   private async syncRegistrationMetadata(
@@ -258,5 +222,30 @@ export class ApplicationDevelopmentResolver {
         );
       }
     }
+  }
+
+  private async ensureApplicationExists(params: {
+    universalIdentifier: string;
+    name: string;
+    workspaceId: string;
+    applicationRegistrationId: string;
+  }): Promise<void> {
+    const existing = await this.applicationService.findByUniversalIdentifier({
+      universalIdentifier: params.universalIdentifier,
+      workspaceId: params.workspaceId,
+    });
+
+    if (existing) {
+      return;
+    }
+
+    await this.applicationService.create({
+      universalIdentifier: params.universalIdentifier,
+      name: params.name,
+      sourcePath: params.universalIdentifier,
+      sourceType: ApplicationRegistrationSourceType.LOCAL,
+      applicationRegistrationId: params.applicationRegistrationId,
+      workspaceId: params.workspaceId,
+    });
   }
 }

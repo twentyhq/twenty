@@ -32,9 +32,9 @@ export type WorkspaceMigrationRunnerExecutionErrors = {
 };
 
 const {
-  // eslint-disable-next-line unused-imports/no-unused-vars
+  // oxlint-disable-next-line unused-imports/no-unused-vars
   EXECUTION_FAILED: WorkspaceMigrationRunnerExceptionExecutionFailedCode,
-  // eslint-disable-next-line unused-imports/no-unused-vars
+  // oxlint-disable-next-line unused-imports/no-unused-vars
   ...WorkspaceMigrationRunnerExceptionCodeOtherCode
 } = WorkspaceMigrationRunnerExceptionCode;
 

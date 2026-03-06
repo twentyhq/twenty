@@ -1,7 +1,8 @@
-import * as fs from 'fs-extra';
 import { join } from 'path';
 
 import { normalizeManifestForComparison } from '@/cli/__tests__/integration/utils/normalize-manifest.util';
+import { readJson } from '@/cli/utilities/file/fs-utils';
+import { type Manifest } from 'twenty-shared/application';
 import { EXPECTED_MANIFEST } from '../expected-manifest';
 
 export const defineManifestTests = (appPath: string): void => {
@@ -9,7 +10,7 @@ export const defineManifestTests = (appPath: string): void => {
 
   describe('manifest', () => {
     it('should build manifest matching expected JSON', async () => {
-      const manifest = await fs.readJson(manifestOutputPath);
+      const manifest = await readJson<Manifest>(manifestOutputPath);
 
       expect(manifest).not.toBeNull();
 

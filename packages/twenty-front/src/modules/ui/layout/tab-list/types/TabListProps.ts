@@ -5,7 +5,7 @@ export type TabListProps = {
   loading?: boolean;
   behaveAsLinks?: boolean;
   className?: string;
-  isInRightDrawer?: boolean;
+  isInSidePanel?: boolean;
   componentInstanceId: string;
   onChangeTab?: (tabId: string) => void;
 };

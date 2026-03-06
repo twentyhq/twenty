@@ -48,7 +48,7 @@ export const useAggregateRecords = <T extends AggregateRecordsData>({
   const { data, loading, error } = useQuery<RecordGqlOperationFindManyResult>(
     aggregateQuery,
     {
-      skip: skip || !objectMetadataItem || !hasReadPermission,
+      skip: skip || !isDefined(objectMetadataItem) || !hasReadPermission,
       variables: {
         filter,
       },

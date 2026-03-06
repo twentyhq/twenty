@@ -32,7 +32,7 @@ const StyledContainer = styled.div`
   gap: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledSelectDropdown = styled(Select)`
+const StyledSelectDropdownContainer = styled.div`
   margin-bottom: ${themeCssVariables.spacing[2]};
 `;
 const StyledNoBodyMessage = styled.div`
@@ -163,23 +163,25 @@ export const BodyInput = ({
   return (
     <FormFieldInputContainer>
       <InputLabel>{t`Body Input`}</InputLabel>
-      <StyledSelectDropdown
-        options={[
-          { label: t`Key/Value`, value: BODY_TYPES.KEY_VALUE, Icon: IconKey },
-          {
-            label: t`Raw JSON`,
-            value: BODY_TYPES.RAW_JSON,
-            Icon: IconFileText,
-          },
-          { label: t`Form Data`, value: BODY_TYPES.FORM_DATA, Icon: IconKey },
-          { label: t`Text`, value: BODY_TYPES.TEXT, Icon: IconFileText },
-          { label: t`None`, value: BODY_TYPES.NONE, Icon: IconFileText },
-        ]}
-        dropdownId="body-input-mode"
-        value={getBodyTypeFromHeaders(headers) || BODY_TYPES.NONE}
-        onChange={(value) => handleModeChange(value as BodyType)}
-        disabled={readonly}
-      />
+      <StyledSelectDropdownContainer>
+        <Select
+          options={[
+            { label: t`Key/Value`, value: BODY_TYPES.KEY_VALUE, Icon: IconKey },
+            {
+              label: t`Raw JSON`,
+              value: BODY_TYPES.RAW_JSON,
+              Icon: IconFileText,
+            },
+            { label: t`Form Data`, value: BODY_TYPES.FORM_DATA, Icon: IconKey },
+            { label: t`Text`, value: BODY_TYPES.TEXT, Icon: IconFileText },
+            { label: t`None`, value: BODY_TYPES.NONE, Icon: IconFileText },
+          ]}
+          dropdownId="body-input-mode"
+          value={getBodyTypeFromHeaders(headers) || BODY_TYPES.NONE}
+          onChange={(value) => handleModeChange(value as BodyType)}
+          disabled={readonly}
+        />
+      </StyledSelectDropdownContainer>
 
       <StyledContainer>
         {isBodyTypeRawJson ? (

@@ -25,31 +25,33 @@ export type TextAreaInputProps = {
   copyButton?: boolean;
 };
 
-const StyledTextArea = styled(TextareaAutosize)`
-  background-color: transparent;
-  border: none;
-  color: ${themeCssVariables.font.color.primary};
-  font-family: ${themeCssVariables.font.family};
-  font-size: inherit;
-  font-weight: inherit;
-  outline: none;
-  padding: ${themeCssVariables.spacing[0]} ${themeCssVariables.spacing[2]};
-
-  &::placeholder,
-  &::-webkit-input-placeholder {
-    color: ${themeCssVariables.font.color.light};
+const StyledTextAreaContainer = styled.div`
+  > textarea {
+    background-color: transparent;
+    border: none;
+    color: ${themeCssVariables.font.color.primary};
     font-family: ${themeCssVariables.font.family};
-    font-weight: ${themeCssVariables.font.weight.medium};
+    font-size: inherit;
+    font-weight: inherit;
+    outline: none;
+    padding: ${themeCssVariables.spacing[0]} ${themeCssVariables.spacing[2]};
+
+    &::placeholder,
+    &::-webkit-input-placeholder {
+      color: ${themeCssVariables.font.color.light};
+      font-family: ${themeCssVariables.font.family};
+      font-weight: ${themeCssVariables.font.weight.medium};
+    }
+
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    resize: none;
+    max-height: 400px;
+    width: calc(100% - ${themeCssVariables.spacing[7]});
+
+    line-height: 18px;
   }
-
-  align-items: center;
-  display: flex;
-  justify-content: center;
-  resize: none;
-  max-height: 400px;
-  width: calc(100% - ${themeCssVariables.spacing[7]});
-
-  line-height: 18px;
 `;
 
 const StyledLightIconButtonContainer = styled.div`
@@ -111,16 +113,18 @@ export const TextAreaInput = ({
 
   return (
     <>
-      <StyledTextArea
-        placeholder={placeholder}
-        disabled={disabled}
-        className={className}
-        ref={wrapperRef}
-        onChange={handleChange}
-        autoFocus={autoFocus}
-        value={internalText}
-        maxRows={maxRows}
-      />
+      <StyledTextAreaContainer>
+        <TextareaAutosize
+          placeholder={placeholder}
+          disabled={disabled}
+          className={className}
+          ref={wrapperRef}
+          onChange={handleChange}
+          autoFocus={autoFocus}
+          value={internalText}
+          maxRows={maxRows}
+        />
+      </StyledTextAreaContainer>
       {copyButton && (
         <StyledLightIconButtonContainer ref={copyRef}>
           <LightCopyIconButton copyText={internalText} />

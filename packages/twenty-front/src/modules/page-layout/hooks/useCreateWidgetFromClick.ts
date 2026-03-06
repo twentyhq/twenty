@@ -1,11 +1,11 @@
-import { useNavigatePageLayoutCommandMenu } from '@/command-menu/pages/page-layout/hooks/useNavigatePageLayoutCommandMenu';
+import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
 import { pageLayoutDraggedAreaComponentState } from '@/page-layout/states/pageLayoutDraggedAreaComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { parseCellIdToCoordinates } from '@/page-layout/utils/parseCellIdToCoordinates';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
-import { CommandMenuPages } from 'twenty-shared/types';
+import { SidePanelPages } from 'twenty-shared/types';
 
 export const useCreateWidgetFromClick = () => {
   const pageLayoutDraggedAreaState = useAtomComponentStateCallbackState(
@@ -16,7 +16,7 @@ export const useCreateWidgetFromClick = () => {
     pageLayoutEditingWidgetIdComponentState,
   );
 
-  const { navigatePageLayoutCommandMenu } = useNavigatePageLayoutCommandMenu();
+  const { navigatePageLayoutSidePanel } = useNavigatePageLayoutSidePanel();
 
   const store = useStore();
 
@@ -28,13 +28,13 @@ export const useCreateWidgetFromClick = () => {
       store.set(pageLayoutDraggedAreaState, bounds);
       store.set(pageLayoutEditingWidgetIdState, null);
 
-      navigatePageLayoutCommandMenu({
-        commandMenuPage: CommandMenuPages.PageLayoutWidgetTypeSelect,
+      navigatePageLayoutSidePanel({
+        sidePanelPage: SidePanelPages.PageLayoutWidgetTypeSelect,
         resetNavigationStack: true,
       });
     },
     [
-      navigatePageLayoutCommandMenu,
+      navigatePageLayoutSidePanel,
       pageLayoutDraggedAreaState,
       pageLayoutEditingWidgetIdState,
       store,

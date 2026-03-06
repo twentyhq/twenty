@@ -7,7 +7,7 @@ import {
   Droppable,
 } from '@hello-pangea/dnd';
 
-import { useNavigatePageLayoutCommandMenu } from '@/command-menu/pages/page-layout/hooks/useNavigatePageLayoutCommandMenu';
+import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
 import { PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS } from '@/page-layout/components/PageLayoutTabListDroppableIds';
 import { PageLayoutTabListDroppableMoreButton } from '@/page-layout/components/PageLayoutTabListDroppableMoreButton';
 import { PageLayoutTabMenuItemSelectAvatar } from '@/page-layout/components/PageLayoutTabMenuItemSelectAvatar';
@@ -27,7 +27,7 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useContext } from 'react';
-import { CommandMenuPages } from 'twenty-shared/types';
+import { SidePanelPages } from 'twenty-shared/types';
 import { type PageLayoutType } from '~/generated-metadata/graphql';
 import { ThemeContext } from 'twenty-ui/theme-constants';
 
@@ -96,7 +96,7 @@ export const PageLayoutTabListReorderableOverflowDropdown = ({
     pageLayoutId,
   );
 
-  const { navigatePageLayoutCommandMenu } = useNavigatePageLayoutCommandMenu();
+  const { navigatePageLayoutSidePanel } = useNavigatePageLayoutSidePanel();
 
   const handleClose = () => {
     if (!isPageLayoutTabDragging) {
@@ -112,8 +112,8 @@ export const PageLayoutTabListReorderableOverflowDropdown = ({
 
   const handleEditClick = (tabId: string) => {
     setPageLayoutTabSettingsOpenTabId(tabId);
-    navigatePageLayoutCommandMenu({
-      commandMenuPage: CommandMenuPages.PageLayoutTabSettings,
+    navigatePageLayoutSidePanel({
+      sidePanelPage: SidePanelPages.PageLayoutTabSettings,
     });
     onClose();
   };
@@ -156,7 +156,7 @@ export const PageLayoutTabListReorderableOverflowDropdown = ({
               <DropdownMenuItemsContainer>
                 <div
                   ref={provided.innerRef}
-                  // eslint-disable-next-line react/jsx-props-no-spreading
+                  // oxlint-disable-next-line react/jsx-props-no-spreading
                   {...provided.droppableProps}
                 >
                   {hiddenTabs.map((tab, index) => {
@@ -173,9 +173,9 @@ export const PageLayoutTabListReorderableOverflowDropdown = ({
                         {(draggableProvided, draggableSnapshot) => (
                           <StyledOverflowDropdownListDraggableWrapper
                             ref={draggableProvided.innerRef}
-                            // eslint-disable-next-line react/jsx-props-no-spreading
+                            // oxlint-disable-next-line react/jsx-props-no-spreading
                             {...draggableProvided.draggableProps}
-                            // eslint-disable-next-line react/jsx-props-no-spreading
+                            // oxlint-disable-next-line react/jsx-props-no-spreading
                             {...draggableProvided.dragHandleProps}
                             style={{
                               ...draggableProvided.draggableProps.style,

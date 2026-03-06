@@ -2,7 +2,7 @@ import { ActionComponent } from '@/action-menu/actions/display/components/Action
 import { ActionScope } from '@/action-menu/actions/types/ActionScope';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
-import { getRightDrawerActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getRightDrawerActionMenuDropdownIdFromActionMenuId';
+import { getSidePanelActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getSidePanelActionMenuDropdownIdFromActionMenuId';
 import { OptionsDropdownMenu } from '@/ui/layout/dropdown/components/OptionsDropdownMenu';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useContext } from 'react';
@@ -15,7 +15,7 @@ export const CommandMenuActionMenuDropdown = () => {
   );
 
   const dropdownId =
-    getRightDrawerActionMenuDropdownIdFromActionMenuId(actionMenuId);
+    getSidePanelActionMenuDropdownIdFromActionMenuId(actionMenuId);
 
   const recordSelectionActions = actions.filter(
     (action) => action.scope === ActionScope.RecordSelection,

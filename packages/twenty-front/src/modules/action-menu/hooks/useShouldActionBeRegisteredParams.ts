@@ -84,7 +84,7 @@ export const useShouldActionBeRegisteredParams = ({
     objectMetadataItem?.nameSingular === CoreObjectNameSingular.Note ||
     objectMetadataItem?.nameSingular === CoreObjectNameSingular.Task;
 
-  const { isInRightDrawer } = useContext(ActionMenuContext);
+  const { isInSidePanel } = useContext(ActionMenuContext);
 
   const { recordIndexId } = useRecordIndexIdFromCurrentContextStore();
 
@@ -149,7 +149,7 @@ export const useShouldActionBeRegisteredParams = ({
     isFavorite,
     objectPermissions,
     isNoteOrTask,
-    isInRightDrawer,
+    isInSidePanel,
     hasAnySoftDeleteFilterOnView,
     isShowPage,
     isSelectAll,

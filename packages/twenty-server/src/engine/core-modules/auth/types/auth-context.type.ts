@@ -9,7 +9,7 @@ import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-membe
 export { AUTH_CONTEXT_USER_SELECT_FIELDS } from 'src/engine/core-modules/auth/constants/auth-context-user-select-fields.constants';
 export { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context-user.type';
 
-export type AuthContext = {
+export type RawAuthContext = {
   user?: AuthContextUser | null | undefined;
   apiKey?: ApiKeyEntity | null | undefined;
   workspaceMemberId?: string;
@@ -24,6 +24,9 @@ export type AuthContext = {
     impersonatedUserWorkspaceId?: string;
   };
 };
+
+// @deprecated Use WorkspaceAuthContext instead
+export type AuthContext = RawAuthContext;
 
 export type SerializableAuthContext = {
   userId?: string;

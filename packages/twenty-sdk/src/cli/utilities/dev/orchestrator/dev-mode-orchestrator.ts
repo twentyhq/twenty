@@ -15,7 +15,7 @@ import {
 import { SyncApplicationOrchestratorStep } from '@/cli/utilities/dev/orchestrator/steps/sync-application-orchestrator-step';
 import { UploadFilesOrchestratorStep } from '@/cli/utilities/dev/orchestrator/steps/upload-files-orchestrator-step';
 import { serializeError } from '@/cli/utilities/error/serialize-error';
-import * as fs from 'fs-extra';
+import { emptyDir, ensureDir } from '@/cli/utilities/file/fs-utils';
 import path from 'path';
 import { OUTPUT_DIR, type Manifest } from 'twenty-shared/application';
 
@@ -91,8 +91,8 @@ export class DevModeOrchestrator {
   async start(): Promise<void> {
     const outputDir = path.join(this.state.appPath, OUTPUT_DIR);
 
-    await fs.ensureDir(outputDir);
-    await fs.emptyDir(outputDir);
+    await ensureDir(outputDir);
+    await emptyDir(outputDir);
 
     await this.clientService.ensureGeneratedClientStub({
       appPath: this.state.appPath,

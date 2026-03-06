@@ -11,6 +11,7 @@ import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledEditableTitleContainer = styled.div`
@@ -92,7 +93,7 @@ export const ObjectRecordShowPageBreadcrumb = ({
           navigateToIndexView();
         }}
       >
-        {HeaderIcon && <HeaderIcon size={theme.icon.size.md} />}
+        {isDefined(HeaderIcon) && <HeaderIcon size={theme.icon.size.md} />}
         {objectLabel}
         <span>{' / '}</span>
       </StyledEditableTitlePrefix>

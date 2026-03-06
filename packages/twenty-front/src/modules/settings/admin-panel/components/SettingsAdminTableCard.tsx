@@ -45,13 +45,13 @@ export const SettingsAdminTableCard = ({
             <TableRow
               key={index + item.label}
               gridAutoColumns={gridAutoColumns}
-              height={themeCssVariables.spacing[6]}
             >
               <TableCell
                 align={labelAlign}
                 color={themeCssVariables.font.color.tertiary}
-                height={themeCssVariables.spacing[6]}
+                height="auto"
                 gap={themeCssVariables.spacing[2]}
+                padding={`${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[2]}`}
               >
                 {item.Icon && <item.Icon size={theme.icon.size.md} />}
                 <span>{item.label}</span>
@@ -59,9 +59,10 @@ export const SettingsAdminTableCard = ({
               <TableCell
                 align={valueAlign}
                 color={themeCssVariables.font.color.primary}
-                height={themeCssVariables.spacing[6]}
+                height="auto"
                 onClick={item.onClick}
                 clickable={isDefined(item.onClick)}
+                padding={`${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[2]}`}
               >
                 {item.value}
               </TableCell>

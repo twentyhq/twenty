@@ -8,7 +8,7 @@ import { styled } from '@linaria/react';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledScrollWrapper = styled(ScrollWrapper)`
+const StyledScrollWrapperContainer = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
@@ -30,11 +30,13 @@ export const AIChatTabMessageList = () => {
   }
 
   return (
-    <StyledScrollWrapper componentInstanceId={AI_CHAT_SCROLL_WRAPPER_ID}>
-      {agentChatMessageIdsComponent.map((messageId) => {
-        return <AIChatMessage messageId={messageId} key={messageId} />;
-      })}
-      <AIChatErrorUnderMessageList />
-    </StyledScrollWrapper>
+    <StyledScrollWrapperContainer>
+      <ScrollWrapper componentInstanceId={AI_CHAT_SCROLL_WRAPPER_ID}>
+        {agentChatMessageIdsComponent.map((messageId) => {
+          return <AIChatMessage messageId={messageId} key={messageId} />;
+        })}
+        <AIChatErrorUnderMessageList />
+      </ScrollWrapper>
+    </StyledScrollWrapperContainer>
   );
 };

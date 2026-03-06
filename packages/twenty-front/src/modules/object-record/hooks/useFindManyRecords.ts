@@ -1,4 +1,5 @@
 import { useQuery, type WatchQueryFetchPolicy } from '@apollo/client';
+import { isDefined } from 'twenty-shared/utils';
 
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -89,7 +90,7 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
 
   const { data, loading, error, fetchMore, refetch } =
     useQuery<RecordGqlOperationFindManyResult>(findManyRecordsQuery, {
-      skip: skip || !objectMetadataItem || !hasReadPermission,
+      skip: skip || !isDefined(objectMetadataItem) || !hasReadPermission,
       variables: {
         filter: withSoftDeleteFilter,
         orderBy,

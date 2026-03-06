@@ -7,6 +7,7 @@ export const FIND_MANY_APPLICATIONS = gql`
       name
       description
       version
+      universalIdentifier
       applicationRegistrationId
       applicationRegistration {
         id

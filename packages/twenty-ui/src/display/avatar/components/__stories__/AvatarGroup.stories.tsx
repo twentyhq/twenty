@@ -13,7 +13,7 @@ import {
 import { AvatarGroup, type AvatarGroupProps } from '../AvatarGroup';
 
 const makeAvatar = (userName: string, props: Partial<AvatarProps> = {}) => (
-  // eslint-disable-next-line react/jsx-props-no-spreading
+  // oxlint-disable-next-line react/jsx-props-no-spreading
   <Avatar placeholder={userName} placeholderColorSeed={userName} {...props} />
 );
 

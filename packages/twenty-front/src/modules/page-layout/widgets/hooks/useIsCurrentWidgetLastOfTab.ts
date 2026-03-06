@@ -10,7 +10,7 @@ import { isDefined } from 'twenty-shared/utils';
 export const useIsCurrentWidgetLastOfTab = (widgetId: string): boolean => {
   const { currentPageLayout } = useCurrentPageLayout();
   const isMobile = useIsMobile();
-  const { isInRightDrawer } = useLayoutRenderingContext();
+  const { isInSidePanel } = useLayoutRenderingContext();
   const isPageLayoutInEditMode = useAtomComponentStateValue(
     isPageLayoutInEditModeComponentState,
   );
@@ -31,7 +31,7 @@ export const useIsCurrentWidgetLastOfTab = (widgetId: string): boolean => {
     ? tab.widgets
     : filterVisibleWidgets({
         widgets: tab.widgets,
-        context: buildWidgetVisibilityContext({ isMobile, isInRightDrawer }),
+        context: buildWidgetVisibilityContext({ isMobile, isInSidePanel }),
       });
 
   if (visibleWidgets.length === 0) {

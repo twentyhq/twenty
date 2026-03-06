@@ -11,6 +11,7 @@ export enum ApplicationExceptionCode {
   FRONT_COMPONENT_NOT_FOUND = 'FRONT_COMPONENT_NOT_FOUND',
   ENTITY_NOT_FOUND = 'ENTITY_NOT_FOUND',
   APPLICATION_NOT_FOUND = 'APPLICATION_NOT_FOUND',
+  APP_NOT_INSTALLED = 'APP_NOT_INSTALLED',
   FORBIDDEN = 'FORBIDDEN',
   INVALID_INPUT = 'INVALID_INPUT',
   SOURCE_CHANNEL_MISMATCH = 'SOURCE_CHANNEL_MISMATCH',
@@ -35,6 +36,8 @@ const getApplicationExceptionUserFriendlyMessage = (
       return msg`Entity not found.`;
     case ApplicationExceptionCode.APPLICATION_NOT_FOUND:
       return msg`Application not found.`;
+    case ApplicationExceptionCode.APP_NOT_INSTALLED:
+      return msg`Application is not installed in this workspace. Install it first.`;
     case ApplicationExceptionCode.FORBIDDEN:
       return msg`You do not have permission to perform this action.`;
     case ApplicationExceptionCode.INVALID_INPUT:

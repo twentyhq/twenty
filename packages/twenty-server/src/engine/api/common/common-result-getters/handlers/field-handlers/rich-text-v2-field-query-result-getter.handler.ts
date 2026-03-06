@@ -11,7 +11,7 @@ import { type FileUrlService } from 'src/engine/core-modules/file/file-url/file-
 import { extractFileIdFromUrl } from 'src/engine/core-modules/file/files-field/utils/extract-file-id-from-url.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// oxlint-disable-next-line @typescripttypescript/no-explicit-any
 type RichTextBlock = Record<string, any>;
 
 const parseBlocknoteJsonSafely = (
