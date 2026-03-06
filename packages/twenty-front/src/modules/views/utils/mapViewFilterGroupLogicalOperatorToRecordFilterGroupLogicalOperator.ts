@@ -7,7 +7,14 @@ export const mapViewFilterGroupLogicalOperatorToRecordFilterGroupLogicalOperator
   }: {
     viewFilterGroupLogicalOperator: ViewFilterGroupLogicalOperator;
   }) => {
-    return viewFilterGroupLogicalOperator === ViewFilterGroupLogicalOperator.AND
-      ? RecordFilterGroupLogicalOperator.AND
-      : RecordFilterGroupLogicalOperator.OR;
+    return (
+      {
+        [ViewFilterGroupLogicalOperator.AND]:
+          RecordFilterGroupLogicalOperator.AND,
+        [ViewFilterGroupLogicalOperator.OR]:
+          RecordFilterGroupLogicalOperator.OR,
+        [ViewFilterGroupLogicalOperator.NOT]:
+          RecordFilterGroupLogicalOperator.NOT,
+      }[viewFilterGroupLogicalOperator] ?? RecordFilterGroupLogicalOperator.AND
+    );
   };

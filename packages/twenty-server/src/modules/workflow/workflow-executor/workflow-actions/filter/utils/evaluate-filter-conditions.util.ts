@@ -125,6 +125,9 @@ function evaluateFilterGroup(
     case 'OR':
       return allResults.some((result) => result);
 
+    case 'NOT':
+      return allResults.every((result) => !result);
+
     default:
       throw new Error(`Unknown logical operator: ${group.logicalOperator}`);
   }

@@ -9,4 +9,8 @@ export const ADVANCED_FILTER_LOGICAL_OPERATOR_OPTIONS = [
     value: RecordFilterGroupLogicalOperator.OR,
     label: 'Or',
   },
+  {
+    value: RecordFilterGroupLogicalOperator.NOT,
+    label: 'Not',
+  },
 ];

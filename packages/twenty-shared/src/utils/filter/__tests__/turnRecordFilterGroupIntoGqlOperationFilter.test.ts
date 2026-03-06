@@ -83,6 +83,31 @@ describe('turnRecordFilterGroupsIntoGqlOperationFilter', () => {
     expect(result).toHaveProperty('or');
   });
 
+  it('should return NOT filter for NOT logical operator', () => {
+    const result = turnRecordFilterGroupsIntoGqlOperationFilter({
+      filterValueDependencies: {},
+      filters: [
+        {
+          fieldMetadataId: 'f1',
+          value: 'test',
+          type: 'TEXT',
+          operand: ViewFilterOperand.CONTAINS,
+          recordFilterGroupId: 'group1',
+        },
+      ],
+      fields,
+      recordFilterGroups: [
+        {
+          id: 'group1',
+          logicalOperator: RecordFilterGroupLogicalOperator.NOT,
+        },
+      ],
+      currentRecordFilterGroupId: 'group1',
+    });
+
+    expect(result).toHaveProperty('not');
+  });
+
   it('should handle nested groups', () => {
     const result = turnRecordFilterGroupsIntoGqlOperationFilter({
       filterValueDependencies: {},

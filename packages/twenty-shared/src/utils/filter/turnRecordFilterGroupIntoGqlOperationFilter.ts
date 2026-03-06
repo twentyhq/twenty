@@ -99,6 +99,18 @@ export const turnRecordFilterGroupsIntoGqlOperationFilter = ({
         ...subGroupRecordGqlOperationFilters,
       ],
     };
+  } else if (
+    currentRecordFilterGroup.logicalOperator ===
+    RecordFilterGroupLogicalOperator.NOT
+  ) {
+    return {
+      not: {
+        and: [
+          ...groupRecordGqlOperationFilters,
+          ...subGroupRecordGqlOperationFilters,
+        ],
+      },
+    };
   } else {
     throw new Error(
       `Unknown logical operator ${currentRecordFilterGroup.logicalOperator}`,

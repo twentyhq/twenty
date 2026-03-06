@@ -4,6 +4,7 @@ import { type ViewFilterOperand } from './ViewFilterOperand';
 export enum StepLogicalOperator {
   AND = 'AND',
   OR = 'OR',
+  NOT = 'NOT',
 }
 
 export type StepFilterGroup = {

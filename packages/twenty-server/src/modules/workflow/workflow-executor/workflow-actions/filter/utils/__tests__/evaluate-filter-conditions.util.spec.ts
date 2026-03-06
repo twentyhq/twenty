@@ -1424,6 +1424,72 @@ describe('evaluateFilterConditions', () => {
       });
     });
 
+    describe('single group with NOT logic', () => {
+      it('should return true when all filters fail (None of)', () => {
+        const filterGroups: StepFilterGroup[] = [
+          {
+            id: 'group1',
+            logicalOperator: StepLogicalOperator.NOT,
+          },
+        ];
+
+        const filters: ResolvedFilter[] = [
+          {
+            id: 'filter1',
+            type: 'RELATION',
+            rightOperand: 'John',
+            operand: ViewFilterOperand.IS,
+            stepFilterGroupId: 'group1',
+            leftOperand: 'Jane', // This will fail
+          },
+          {
+            id: 'filter2',
+            type: 'NUMBER',
+            rightOperand: 25,
+            operand: ViewFilterOperand.GREATER_THAN_OR_EQUAL,
+            stepFilterGroupId: 'group1',
+            leftOperand: 20, // This will fail
+          },
+        ];
+
+        const result = evaluateFilterConditions({ filterGroups, filters });
+
+        expect(result).toBe(true);
+      });
+
+      it('should return false when at least one filter passes', () => {
+        const filterGroups: StepFilterGroup[] = [
+          {
+            id: 'group1',
+            logicalOperator: StepLogicalOperator.NOT,
+          },
+        ];
+
+        const filters: ResolvedFilter[] = [
+          {
+            id: 'filter1',
+            type: 'RELATION',
+            rightOperand: 'John',
+            operand: ViewFilterOperand.IS,
+            stepFilterGroupId: 'group1',
+            leftOperand: 'Jane', // This will fail
+          },
+          {
+            id: 'filter2',
+            type: 'NUMBER',
+            rightOperand: 25,
+            operand: ViewFilterOperand.GREATER_THAN_OR_EQUAL,
+            stepFilterGroupId: 'group1',
+            leftOperand: 30, // This will pass
+          },
+        ];
+
+        const result = evaluateFilterConditions({ filterGroups, filters });
+
+        expect(result).toBe(false);
+      });
+    });
+
     describe('single group with OR logic', () => {
       it('should return true when at least one filter passes', () => {
         const filterGroups: StepFilterGroup[] = [

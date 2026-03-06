@@ -19,9 +19,12 @@ export const convertCoreViewFilterGroupToViewFilterGroup = (
     parentViewFilterGroupId:
       coreViewFilterGroup.parentViewFilterGroupId ?? null,
     logicalOperator:
-      coreViewFilterGroup.logicalOperator === 'AND'
-        ? ViewFilterGroupLogicalOperator.AND
-        : ViewFilterGroupLogicalOperator.OR,
+      {
+        AND: ViewFilterGroupLogicalOperator.AND,
+        OR: ViewFilterGroupLogicalOperator.OR,
+        NOT: ViewFilterGroupLogicalOperator.NOT,
+      }[coreViewFilterGroup.logicalOperator] ??
+      ViewFilterGroupLogicalOperator.AND,
     positionInViewFilterGroup:
       coreViewFilterGroup.positionInViewFilterGroup ?? null,
   };
