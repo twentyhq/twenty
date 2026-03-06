@@ -1,5 +1,5 @@
-/* eslint-disable no-console */
-import { createClient } from '@clickhouse/client';
+/* oxlint-disable no-console */
+import { createClient, ClickHouseLogLevel } from '@clickhouse/client';
 import { config } from 'dotenv';
 
 import { objectEventFixtures, workspaceEventFixtures } from './fixtures';
@@ -11,6 +11,7 @@ config({
 
 const client = createClient({
   url: process.env.CLICKHOUSE_URL,
+  log: { level: ClickHouseLogLevel.OFF },
 });
 
 async function seedEvents() {

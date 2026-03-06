@@ -1,8 +1,6 @@
 name: CI Shared
 
 on:
-  merge_group:
-
   pull_request:
 
 permissions:
@@ -36,13 +34,13 @@ jobs:
       - name: Fetch custom Github Actions and base branch history
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 10
       - name: Install dependencies
         uses: ./.github/actions/yarn-install
       - name: Run ${{ matrix.task }} task
         uses: ./.github/actions/nx-affected
         with:
-          tag: scope:frontend
+          tag: scope:shared
           tasks: ${{ matrix.task }}
   ci-shared-status-check:
     if: always() && !cancelled()

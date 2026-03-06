@@ -53,10 +53,12 @@ export const computeOptimisticRecordFromInput = ({
         objectMetadataItem.fields.find((field) => {
           if (!isFieldMorphRelation(field)) return false;
 
-          return getFieldMetadataFromGqlField({
-            objectMetadataItem,
-            gqlField: recordKey,
-          });
+          return isDefined(
+            getFieldMetadataFromGqlField({
+              objectMetadataItem,
+              gqlField: recordKey,
+            }),
+          );
         });
 
       const isUnknownField =

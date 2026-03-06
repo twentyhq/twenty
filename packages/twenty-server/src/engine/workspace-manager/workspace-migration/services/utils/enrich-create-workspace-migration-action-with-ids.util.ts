@@ -166,6 +166,7 @@ export const enrichCreateWorkspaceMigrationActionsWithIds = ({
       case 'commandMenuItem':
       case 'navigationMenuItem':
       case 'frontComponent':
+      case 'viewSort':
       case 'webhook': {
         if (!isDefined(idByUniversalIdentifier)) {
           return action;

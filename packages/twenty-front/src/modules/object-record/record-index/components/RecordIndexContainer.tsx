@@ -1,5 +1,4 @@
 import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { ObjectOptionsDropdown } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdown';
 import { RecordBoardContainer } from '@/object-record/record-board/components/RecordBoardContainer';
@@ -16,6 +15,7 @@ import { RecordIndexCalendarContainer } from '@/object-record/record-index/compo
 import { RecordIndexFiltersToContextStoreEffect } from '@/object-record/record-index/components/RecordIndexFiltersToContextStoreEffect';
 import { ViewBar } from '@/views/components/ViewBar';
 import { ViewType } from '@/views/types/ViewType';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -28,7 +28,8 @@ const StyledContainer = styled.div`
 
 const StyledContainerWithPadding = styled.div`
   box-sizing: border-box;
-  height: calc(100% - ${themeCssVariables.spacing[10]});
+  flex: 1;
+  min-height: 0;
   margin-left: ${themeCssVariables.spacing[2]};
 `;
 

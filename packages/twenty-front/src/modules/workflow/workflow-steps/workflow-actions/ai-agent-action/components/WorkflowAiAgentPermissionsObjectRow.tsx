@@ -6,9 +6,8 @@ import {
   StyledRowLeftContent,
   StyledText,
 } from './WorkflowAiAgentPermissionsStyles';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme';
-
 type WorkflowAiAgentPermissionsObjectRowProps = {
   objectMetadata: {
     id: string;

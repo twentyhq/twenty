@@ -1,9 +1,8 @@
-import { useContext } from 'react';
 import type { IconComponent } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
-
 import { StyledNavigationMenuItemIconContainer } from '@/navigation-menu-item/components/NavigationMenuItemIconContainer';
 import { getNavigationMenuItemIconStyleFromColor } from '@/navigation-menu-item/utils/get-navigation-menu-item-icon-style-from-color';
+import { useContext } from 'react';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 export type NavigationMenuItemStyleIconProps = {
   Icon: IconComponent;
@@ -15,7 +14,7 @@ export const NavigationMenuItemStyleIcon = ({
   color,
 }: NavigationMenuItemStyleIconProps) => {
   const { theme } = useContext(ThemeContext);
-  const style = getNavigationMenuItemIconStyleFromColor(theme, color);
+  const style = getNavigationMenuItemIconStyleFromColor(color);
   return (
     <StyledNavigationMenuItemIconContainer
       $backgroundColor={style.backgroundColor}

@@ -43,5 +43,5 @@ dist-ssr
 .vite/
 .nyc_output/
 
-# eslint-plugin-project-structure
+# project structure cache (legacy)
 projectStructure.cache.json

@@ -36,6 +36,7 @@ import { WorkspaceMigrationViewFilterActionsBuilderService } from 'src/engine/wo
 import { WorkspaceMigrationViewGroupActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-group/workspace-migration-view-group-actions-builder.service';
 import { WorkspaceMigrationViewActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view/workspace-migration-view-actions-builder.service';
 import { WorkspaceMigrationWebhookActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/webhook/workspace-migration-webhook-actions-builder.service';
+import { WorkspaceMigrationViewSortActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-sort/workspace-migration-view-sort-actions.builder.service';
 
 @Injectable()
 export class WorkspaceMigrationBuildOrchestratorService {
@@ -48,6 +49,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
     private readonly workspaceMigrationViewFilterGroupActionsBuilderService: WorkspaceMigrationViewFilterGroupActionsBuilderService,
     private readonly workspaceMigrationViewGroupActionsBuilderService: WorkspaceMigrationViewGroupActionsBuilderService,
     private readonly workspaceMigrationViewFieldGroupActionsBuilderService: WorkspaceMigrationViewFieldGroupActionsBuilderService,
+    private readonly workspaceMigrationViewSortActionsBuilderService: WorkspaceMigrationViewSortActionsBuilderService,
     private readonly workspaceMigrationLogicFunctionActionsBuilderService: WorkspaceMigrationLogicFunctionActionsBuilderService,
     private readonly workspaceMigrationRoleTargetActionsBuilderService: WorkspaceMigrationRoleTargetActionsBuilderService,
     private readonly workspaceMigrationFieldActionsBuilderService: WorkspaceMigrationFieldActionsBuilderService,
@@ -134,6 +136,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
       flatViewFilterGroupMaps,
       flatViewGroupMaps,
       flatViewFieldGroupMaps,
+      flatViewSortMaps,
       flatRowLevelPermissionPredicateMaps,
       flatRowLevelPermissionPredicateGroupMaps,
       flatRoleMaps,
@@ -352,6 +355,28 @@ export class WorkspaceMigrationBuildOrchestratorService {
         orchestratorFailureReport.viewGroup.push(...viewGroupResult.errors);
       } else {
         orchestratorActionsReport.viewGroup = viewGroupResult.actions;
+      }
+    }
+
+    if (isDefined(flatViewSortMaps)) {
+      const { from: fromFlatViewSortMaps, to: toFlatViewSortMaps } =
+        flatViewSortMaps;
+      const viewSortResult =
+        await this.workspaceMigrationViewSortActionsBuilderService.validateAndBuild(
+          {
+            additionalCacheDataMaps,
+            from: fromFlatViewSortMaps,
+            to: toFlatViewSortMaps,
+            buildOptions,
+            dependencyOptimisticFlatEntityMaps: optimisticAllFlatEntityMaps,
+            workspaceId,
+          },
+        );
+
+      if (viewSortResult.status === 'fail') {
+        orchestratorFailureReport.viewSort.push(...viewSortResult.errors);
+      } else {
+        orchestratorActionsReport.viewSort = viewSortResult.actions;
       }
     }
 
@@ -763,6 +788,9 @@ export class WorkspaceMigrationBuildOrchestratorService {
           ...aggregatedOrchestratorActionsReport.viewGroup.delete,
           ...aggregatedOrchestratorActionsReport.viewGroup.create,
           ...aggregatedOrchestratorActionsReport.viewGroup.update,
+          ...aggregatedOrchestratorActionsReport.viewSort.create,
+          ...aggregatedOrchestratorActionsReport.viewSort.update,
+          ...aggregatedOrchestratorActionsReport.viewSort.delete,
           ///
 
           // Logic functions

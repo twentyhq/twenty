@@ -49,7 +49,7 @@ const meta: Meta<typeof DashboardWidgetPlaceholder> = {
         <PageLayoutTestWrapper store={jotaiStore}>
           <LayoutRenderingProvider
             value={{
-              isInRightDrawer: false,
+              isInSidePanel: false,
               layoutType: PageLayoutType.DASHBOARD,
               targetRecordIdentifier: undefined,
             }}

@@ -19,8 +19,7 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { H2Title, IconSearch } from 'twenty-ui/display';
 import { UndecoratedLink } from 'twenty-ui/navigation';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { type SettingsDataModelFieldTypeFormValues } from '~/pages/settings/data-model/new-field/SettingsObjectNewFieldSelect';
 
@@ -57,7 +56,7 @@ const StyledCardContainer = styled.div`
   width: calc(50% - ${themeCssVariables.spacing[1]});
 `;
 
-const StyledSearchInput = styled(SettingsTextInput)`
+const StyledSearchInputContainer = styled.div`
   width: 100%;
 `;
 
@@ -109,13 +108,15 @@ export const SettingsObjectNewFieldSelector = ({
     <>
       {' '}
       <Section>
-        <StyledSearchInput
-          instanceId="new-field-type-search"
-          LeftIcon={IconSearch}
-          placeholder={t`Search a type`}
-          value={searchQuery}
-          onChange={setSearchQuery}
-        />
+        <StyledSearchInputContainer>
+          <SettingsTextInput
+            instanceId="new-field-type-search"
+            LeftIcon={IconSearch}
+            placeholder={t`Search a type`}
+            value={searchQuery}
+            onChange={setSearchQuery}
+          />
+        </StyledSearchInputContainer>
       </Section>
       <Controller
         name="type"

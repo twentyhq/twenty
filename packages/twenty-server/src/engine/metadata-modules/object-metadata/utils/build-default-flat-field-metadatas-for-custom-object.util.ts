@@ -152,6 +152,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
           calendarViewUniversalIdentifiers: [],
           mainGroupByFieldMetadataViewUniversalIdentifiers: [],
           universalSettings: null,
+          viewSortUniversalIdentifiers: [],
         };
 
   const searchVectorUniversalSettings: UniversalFlatFieldMetadata<FieldMetadataType.TS_VECTOR>['universalSettings'] =

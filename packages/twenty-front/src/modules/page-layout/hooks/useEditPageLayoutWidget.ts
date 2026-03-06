@@ -1,11 +1,11 @@
 import { useCallback } from 'react';
 
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
+import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { CommandMenuPages } from 'twenty-shared/types';
+import { SidePanelPages } from 'twenty-shared/types';
 
-import { useNavigatePageLayoutCommandMenu } from '@/command-menu/pages/page-layout/hooks/useNavigatePageLayoutCommandMenu';
+import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
@@ -24,9 +24,9 @@ export const useEditPageLayoutWidget = (pageLayoutIdFromProps?: string) => {
     pageLayoutId,
   );
 
-  const { navigatePageLayoutCommandMenu } = useNavigatePageLayoutCommandMenu();
-  const { closeCommandMenu } = useCommandMenu();
-  const setCommandMenuPage = useSetAtomState(commandMenuPageState);
+  const { navigatePageLayoutSidePanel } = useNavigatePageLayoutSidePanel();
+  const { closeSidePanelMenu } = useSidePanelMenu();
+  const setSidePanelPage = useSetAtomState(sidePanelPageState);
 
   const handleEditWidget = useCallback(
     ({
@@ -39,8 +39,8 @@ export const useEditPageLayoutWidget = (pageLayoutIdFromProps?: string) => {
       setPageLayoutEditingWidgetId(widgetId);
 
       if (widgetType === WidgetType.IFRAME) {
-        navigatePageLayoutCommandMenu({
-          commandMenuPage: CommandMenuPages.PageLayoutIframeSettings,
+        navigatePageLayoutSidePanel({
+          sidePanelPage: SidePanelPages.PageLayoutIframeSettings,
           pageTitle: t`Edit iFrame`,
           resetNavigationStack: true,
         });
@@ -48,8 +48,8 @@ export const useEditPageLayoutWidget = (pageLayoutIdFromProps?: string) => {
       }
 
       if (widgetType === WidgetType.GRAPH) {
-        navigatePageLayoutCommandMenu({
-          commandMenuPage: CommandMenuPages.PageLayoutGraphTypeSelect,
+        navigatePageLayoutSidePanel({
+          sidePanelPage: SidePanelPages.PageLayoutGraphTypeSelect,
           pageTitle: t`Edit Graph`,
           resetNavigationStack: true,
         });
@@ -57,22 +57,22 @@ export const useEditPageLayoutWidget = (pageLayoutIdFromProps?: string) => {
       }
 
       if (widgetType === WidgetType.FIELDS) {
-        navigatePageLayoutCommandMenu({
-          commandMenuPage: CommandMenuPages.PageLayoutFieldsSettings,
+        navigatePageLayoutSidePanel({
+          sidePanelPage: SidePanelPages.PageLayoutFieldsSettings,
           pageTitle: t`Edit Fields`,
           resetNavigationStack: true,
         });
         return;
       }
 
-      setCommandMenuPage(CommandMenuPages.Root);
-      closeCommandMenu();
+      setSidePanelPage(SidePanelPages.Root);
+      closeSidePanelMenu();
     },
     [
       setPageLayoutEditingWidgetId,
-      navigatePageLayoutCommandMenu,
-      closeCommandMenu,
-      setCommandMenuPage,
+      navigatePageLayoutSidePanel,
+      closeSidePanelMenu,
+      setSidePanelPage,
     ],
   );
 

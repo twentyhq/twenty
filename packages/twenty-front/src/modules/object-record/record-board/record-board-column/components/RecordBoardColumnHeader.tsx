@@ -68,7 +68,7 @@ const StyledColumn = styled.div`
   position: relative;
 `;
 
-const StyledTag = styled(Tag)`
+const StyledTagContainer = styled.div`
   max-width: 100%;
   min-width: 0;
   overflow: hidden;
@@ -139,24 +139,29 @@ export const RecordBoardColumnHeader = () => {
                   y: 10,
                 }}
                 clickableComponent={
-                  <StyledTag
-                    variant={
-                      columnDefinition.type === RecordGroupDefinitionType.Value
-                        ? 'solid'
-                        : 'outline'
-                    }
-                    color={
-                      columnDefinition.type === RecordGroupDefinitionType.Value
-                        ? columnDefinition.color
-                        : 'transparent'
-                    }
-                    text={columnDefinition.title}
-                    weight={
-                      columnDefinition.type === RecordGroupDefinitionType.Value
-                        ? 'regular'
-                        : 'medium'
-                    }
-                  />
+                  <StyledTagContainer>
+                    <Tag
+                      variant={
+                        columnDefinition.type ===
+                        RecordGroupDefinitionType.Value
+                          ? 'solid'
+                          : 'outline'
+                      }
+                      color={
+                        columnDefinition.type ===
+                        RecordGroupDefinitionType.Value
+                          ? columnDefinition.color
+                          : 'transparent'
+                      }
+                      text={columnDefinition.title}
+                      weight={
+                        columnDefinition.type ===
+                        RecordGroupDefinitionType.Value
+                          ? 'regular'
+                          : 'medium'
+                      }
+                    />
+                  </StyledTagContainer>
                 }
                 dropdownComponents={<RecordBoardColumnDropdownMenu />}
               />

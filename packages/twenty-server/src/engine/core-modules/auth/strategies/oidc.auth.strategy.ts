@@ -45,7 +45,7 @@ export class OIDCAuthStrategy extends PassportStrategy(
     });
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
   async authenticate(req: Request, options: any) {
     return super.authenticate(req, {
       ...options,
@@ -85,7 +85,7 @@ export class OIDCAuthStrategy extends PassportStrategy(
   async validate(
     req: Request,
     tokenset: TokenSet,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
     done: (err: any, user?: OIDCRequest['user']) => void,
   ) {
     try {

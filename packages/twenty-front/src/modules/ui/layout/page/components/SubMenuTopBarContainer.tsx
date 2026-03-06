@@ -3,6 +3,7 @@ import {
   Breadcrumb,
   type BreadcrumbProps,
 } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
+import { isDefined } from 'twenty-shared/utils';
 import { styled } from '@linaria/react';
 import { type JSX, type ReactNode } from 'react';
 import { PageBody } from './PageBody';
@@ -50,7 +51,7 @@ export const SubMenuTopBarContainer = ({
       </PageHeader>
       <PageBody>
         <InformationBannerWrapper />
-        {(title || reserveTitleSpace) && (
+        {(isDefined(title) || reserveTitleSpace === true) && (
           <StyledTitle reserveTitleSpace={reserveTitleSpace}>
             {title}
           </StyledTitle>

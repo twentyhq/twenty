@@ -1,11 +1,14 @@
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
 import { motion } from 'framer-motion';
+import { useContext } from 'react';
 
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { AnimatedCheckmark } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
-import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  MOBILE_VIEWPORT,
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div<{ isLast: boolean }>`
   align-items: center;
@@ -82,8 +85,8 @@ export const Step = ({
   children,
   activeStep = 0,
 }: StepProps) => {
-  const { theme } = useContext(ThemeContext);
   const isMobile = useIsMobile();
+  const { theme } = useContext(ThemeContext);
 
   const variantsLine = {
     previous: {

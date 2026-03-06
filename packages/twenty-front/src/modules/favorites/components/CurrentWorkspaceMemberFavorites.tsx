@@ -209,7 +209,7 @@ export const CurrentWorkspaceMemberFavorites = ({
             {(provided) => (
               <div
                 ref={provided.innerRef}
-                // eslint-disable-next-line react/jsx-props-no-spreading
+                // oxlint-disable-next-line react/jsx-props-no-spreading
                 {...provided.droppableProps}
                 // TODO: (Drag Drop Bug) Adding bottom margin to ensure drag-to-last-position works. Need to find better solution that doesn't affect spacing.
                 // Issue: Without margin, dragging to last position triggers next folder drop area
@@ -259,7 +259,7 @@ export const CurrentWorkspaceMemberFavorites = ({
       {isModalOpened &&
         createPortal(
           <ConfirmationModal
-            modalId={modalId}
+            modalInstanceId={modalId}
             title={
               folder.favorites.length > 1
                 ? t`Remove ${favoriteCount} favorites?`

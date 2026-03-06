@@ -1,9 +1,10 @@
 import * as fs from 'fs-extra';
 import { join } from 'path';
-import { v4 } from 'uuid';
 import { ASSETS_DIR } from 'twenty-shared/application';
+import { v4 } from 'uuid';
 
 import { type ExampleOptions } from '@/types/scaffolding-options';
+import { scaffoldIntegrationTest } from '@/utils/test-template';
 import createTwentyAppPackageJson from 'package.json';
 
 const SRC_FOLDER = 'src';
@@ -23,7 +24,11 @@ export const copyBaseApplicationProject = async ({
 }) => {
   await fs.copy(join(__dirname, './constants/base-application'), appDirectory);
 
-  await createPackageJson({ appName, appDirectory });
+  await createPackageJson({
+    appName,
+    appDirectory,
+    includeExampleIntegrationTest: exampleOptions.includeExampleIntegrationTest,
+  });
 
   await createGitignore(appDirectory);
 
@@ -98,6 +103,13 @@ export const copyBaseApplicationProject = async ({
     });
   }
 
+  if (exampleOptions.includeExampleIntegrationTest) {
+    await scaffoldIntegrationTest({
+      appDirectory,
+      sourceFolderPath,
+    });
+  }
+
   await createDefaultPreInstallFunction({
     appDirectory: sourceFolderPath,
     fileFolder: 'logic-functions',
@@ -167,6 +179,7 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
+*.d.ts
 `;
 
   await fs.writeFile(join(appDirectory, '.gitignore'), gitignoreContent);
@@ -509,11 +522,16 @@ const createApplicationConfig = async ({
   fileFolder?: string;
   fileName: string;
 }) => {
+  const universalIdentifier = v4();
+
   const content = `import { defineApplication } from 'twenty-sdk';
 import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/roles/default-role';
 
+export const APPLICATION_UNIVERSAL_IDENTIFIER =
+  '${universalIdentifier}';
+
 export default defineApplication({
-  universalIdentifier: '${v4()}',
+  universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
   displayName: '${displayName}',
   description: '${description ?? ''}',
   defaultRoleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
@@ -527,10 +545,34 @@ export default defineApplication({
 const createPackageJson = async ({
   appName,
   appDirectory,
+  includeExampleIntegrationTest,
 }: {
   appName: string;
   appDirectory: string;
+  includeExampleIntegrationTest: boolean;
 }) => {
+  const scripts: Record<string, string> = {
+    twenty: 'twenty',
+    lint: 'oxlint -c .oxlintrc.json .',
+    'lint:fix': 'oxlint --fix -c .oxlintrc.json .',
+  };
+
+  const devDependencies: Record<string, string> = {
+    typescript: '^5.9.3',
+    '@types/node': '^24.7.2',
+    '@types/react': '^18.2.0',
+    react: '^18.2.0',
+    oxlint: '^0.16.0',
+    'twenty-sdk': createTwentyAppPackageJson.version,
+  };
+
+  if (includeExampleIntegrationTest) {
+    scripts.test = 'vitest run';
+    scripts['test:watch'] = 'vitest';
+    devDependencies.vitest = '^3.1.1';
+    devDependencies['vite-tsconfig-paths'] = '^4.2.1';
+  }
+
   const packageJson = {
     name: appName,
     version: '0.1.0',
@@ -541,21 +583,8 @@ const createPackageJson = async ({
       yarn: '>=4.0.2',
     },
     packageManager: 'yarn@4.9.2',
-    scripts: {
-      twenty: 'twenty',
-      lint: 'eslint',
-      'lint:fix': 'eslint --fix',
-    },
-    dependencies: {},
-    devDependencies: {
-      'twenty-sdk': createTwentyAppPackageJson.version,
-      typescript: '^5.9.3',
-      '@types/node': '^24.7.2',
-      '@types/react': '^18.2.0',
-      react: '^18.2.0',
-      eslint: '^9.32.0',
-      'typescript-eslint': '^8.50.0',
-    },
+    scripts,
+    devDependencies,
   };
 
   await fs.writeFile(

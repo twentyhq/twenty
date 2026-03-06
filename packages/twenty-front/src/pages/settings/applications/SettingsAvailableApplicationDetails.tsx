@@ -7,16 +7,18 @@ import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTab
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import {
   IconApps,
   IconBox,
+  IconCheck,
   IconColumns,
   IconCommand,
   IconDownload,
+  IconEyeOff,
   IconFileText,
   IconInfoCircle,
   IconLayoutGrid,
@@ -27,8 +29,12 @@ import {
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { PermissionFlagType } from '~/generated-metadata/graphql';
-import { useMarketplaceApps } from '~/pages/settings/applications/hooks/useMarketplaceApps';
+import {
+  PermissionFlagType,
+  useFindOneApplicationByUniversalIdentifierQuery,
+  useFindOneMarketplaceAppQuery,
+} from '~/generated-metadata/graphql';
+import { useMarketplaceApps } from '~/modules/marketplace/hooks/useMarketplaceApps';
 import { SettingsApplicationPermissionsTab } from '~/pages/settings/applications/tabs/SettingsApplicationPermissionsTab';
 import { SettingsAvailableApplicationDetailContentTab } from '~/pages/settings/applications/tabs/SettingsAvailableApplicationDetailContentTab';
 
@@ -240,6 +246,19 @@ const StyledProviderItem = styled.li`
   margin-bottom: ${themeCssVariables.spacing[1]};
 `;
 
+const StyledUnlistedBanner = styled.div`
+  align-items: center;
+  background-color: ${themeCssVariables.background.transparent.lighter};
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  border-radius: ${themeCssVariables.border.radius.sm};
+  color: ${themeCssVariables.font.color.secondary};
+  display: flex;
+  font-size: ${themeCssVariables.font.size.md};
+  gap: ${themeCssVariables.spacing[2]};
+  margin-bottom: ${themeCssVariables.spacing[4]};
+  padding: ${themeCssVariables.spacing[3]} ${themeCssVariables.spacing[4]};
+`;
+
 export const SettingsAvailableApplicationDetails = () => {
   const { availableApplicationId = '' } = useParams<{
     availableApplicationId: string;
@@ -248,18 +267,54 @@ export const SettingsAvailableApplicationDetails = () => {
   const [selectedScreenshotIndex, setSelectedScreenshotIndex] = useState(0);
 
   const { data: marketplaceApps } = useMarketplaceApps();
-  const { install } = useInstallMarketplaceApp();
+  const { install, isInstalling } = useInstallMarketplaceApp();
   const canInstallMarketplaceApps = useHasPermissionFlag(
     PermissionFlagType.MARKETPLACE_APPS,
   );
+  const { data: installedAppData } =
+    useFindOneApplicationByUniversalIdentifierQuery({
+      variables: { universalIdentifier: availableApplicationId },
+      skip: !availableApplicationId,
+    });
 
-  const application = useMemo(() => {
-    return marketplaceApps?.find((app) => app.id === availableApplicationId);
-  }, [availableApplicationId, marketplaceApps]);
+  const listedApp = marketplaceApps?.find(
+    (app) => app.id === availableApplicationId,
+  );
+
+  const { data: singleAppData } = useFindOneMarketplaceAppQuery({
+    variables: { universalIdentifier: availableApplicationId },
+    skip: isDefined(listedApp) || !availableApplicationId,
+  });
+
+  const singleApp = singleAppData?.findOneMarketplaceApp;
+
+  const application = isDefined(listedApp)
+    ? listedApp
+    : isDefined(singleApp)
+      ? {
+          ...singleApp,
+          content: {
+            objects: (singleApp.objects ?? []).length,
+            fields:
+              (singleApp.objects ?? []).reduce(
+                (count, appObject) => count + appObject.fields.length,
+                0,
+              ) + (singleApp.fields ?? []).length,
+            functions: (singleApp.logicFunctions ?? []).length,
+            frontComponents: (singleApp.frontComponents ?? []).length,
+          },
+        }
+      : undefined;
+
+  const isUnlisted = !isDefined(listedApp) && isDefined(application);
+
+  const isAlreadyInstalled = isDefined(installedAppData?.findOneApplication);
 
   const handleInstall = async () => {
     if (isDefined(application)) {
-      await install();
+      await install({
+        universalIdentifier: application.id,
+      });
     }
   };
 
@@ -436,6 +491,12 @@ export const SettingsAvailableApplicationDetails = () => {
       ]}
     >
       <SettingsPageContainer>
+        {isUnlisted && (
+          <StyledUnlistedBanner>
+            <IconEyeOff size={16} />
+            {t`This application is not listed on the marketplace. It was shared via a direct link.`}
+          </StyledUnlistedBanner>
+        )}
         <StyledHeader>
           <StyledHeaderLeft>
             <StyledLogo>
@@ -459,11 +520,18 @@ export const SettingsAvailableApplicationDetails = () => {
           </StyledHeaderLeft>
           {canInstallMarketplaceApps && (
             <Button
-              Icon={IconDownload}
-              title={t`Install`}
-              variant="primary"
-              accent="blue"
+              Icon={isAlreadyInstalled ? IconCheck : IconDownload}
+              title={
+                isAlreadyInstalled
+                  ? t`Installed`
+                  : isInstalling
+                    ? t`Installing...`
+                    : t`Install`
+              }
+              variant={isAlreadyInstalled ? 'secondary' : 'primary'}
+              accent={isAlreadyInstalled ? 'default' : 'blue'}
               onClick={handleInstall}
+              disabled={isAlreadyInstalled || isInstalling}
             />
           )}
         </StyledHeader>

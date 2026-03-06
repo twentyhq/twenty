@@ -37,7 +37,6 @@ import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interf
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
-import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { InternalServerError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -75,7 +74,7 @@ type PermissionOptions = {
 };
 
 export class WorkspaceEntityManager extends EntityManager {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
   readonly repositories: Map<string, Repository<any>>;
   declare connection: GlobalWorkspaceDataSource;
 
@@ -138,7 +137,7 @@ export class WorkspaceEntityManager extends EntityManager {
   override getRepository<Entity extends ObjectLiteral>(
     target: EntityTarget<Entity>,
     rolePermissionConfig?: RolePermissionConfig,
-    authContext?: AuthContext,
+    authContext?: WorkspaceAuthContext,
   ): WorkspaceRepository<Entity> {
     const dataSource = this.connection;
 
@@ -239,7 +238,7 @@ export class WorkspaceEntityManager extends EntityManager {
       | QueryDeepPartialEntityWithNestedRelationFields<Entity>[],
     selectedColumns: string[] | '*' = '*',
     permissionOptions?: PermissionOptions,
-    authContext?: AuthContext,
+    authContext?: WorkspaceAuthContext,
   ): Promise<InsertResult> {
     const metadata = this.connection.getMetadata(target);
 
@@ -250,7 +249,7 @@ export class WorkspaceEntityManager extends EntityManager {
       permissionOptions,
     )
       .insert()
-      .setAuthContext(authContext ?? {})
+      .setWorkspaceAuthContext(authContext ?? ({} as WorkspaceAuthContext))
       .values(entity)
       .returning(selectedColumns)
       .execute();
@@ -429,7 +428,7 @@ export class WorkspaceEntityManager extends EntityManager {
     if (isNaN(Number(value)))
       throw new TypeORMError(`Value "${value}" is not a number.`);
     // convert possible embeded path "social.likes" into object { social: { like: () => value } }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
     const values = propertyPath.split('.').reduceRight<any>(
       (value, key) => ({ [key]: value }),
       () => this.connection.driver.escape(column.databaseName) + ' + ' + value,
@@ -488,7 +487,7 @@ export class WorkspaceEntityManager extends EntityManager {
     return this.connection.getMetadata(target).name;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
   private extractTargetNameSingularFromEntity(entity: any): string {
     return this.connection.getMetadata(entity.constructor).name;
   }
@@ -1041,7 +1040,7 @@ export class WorkspaceEntityManager extends EntityManager {
       );
     if (isNaN(Number(value)))
       throw new TypeORMError(`Value "${value}" is not a number.`);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
     const values = propertyPath.split('.').reduceRight<any>(
       (value, key) => ({ [key]: value }),
       () => this.connection.driver.escape(column.databaseName) + ' - ' + value,
@@ -1831,7 +1830,7 @@ export class WorkspaceEntityManager extends EntityManager {
 
   // Forbidden methods
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
   override query<T = any>(_query: string, _parameters?: any[]): Promise<T> {
     throw new PermissionsException(
       'Method not allowed.',

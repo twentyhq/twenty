@@ -9,7 +9,6 @@ import { AuditModule } from 'src/engine/core-modules/audit/audit.module';
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
-import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
 import { LogicFunctionResourceModule } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.module';
 import { SecretEncryptionModule } from 'src/engine/core-modules/secret-encryption/secret-encryption.module';
 import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
@@ -26,7 +25,6 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
 
 @Module({
   imports: [
-    FileUploadModule,
     NestjsQueryTypeOrmModule.forFeature([LogicFunctionEntity]),
     TypeOrmModule.forFeature([ApplicationEntity, FeatureFlagEntity]),
     ThrottlerModule,

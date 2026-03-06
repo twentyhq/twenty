@@ -32,6 +32,7 @@ const StyledAnimatedContainer = styled.div<{
   isExpanded: boolean;
   isResizing: boolean;
 }>`
+  height: 100vh;
   max-height: 100vh;
   overflow: hidden;
   position: relative;

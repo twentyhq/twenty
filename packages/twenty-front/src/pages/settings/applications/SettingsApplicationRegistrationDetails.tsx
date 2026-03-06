@@ -1,8 +1,10 @@
 import { SettingsAdminTableCard } from '@/settings/admin-panel/components/SettingsAdminTableCard';
 import { DELETE_APPLICATION_REGISTRATION } from '@/settings/application-registrations/graphql/mutations/deleteApplicationRegistration';
 import { ROTATE_APPLICATION_REGISTRATION_CLIENT_SECRET } from '@/settings/application-registrations/graphql/mutations/rotateApplicationRegistrationClientSecret';
+import { TRANSFER_APPLICATION_REGISTRATION_OWNERSHIP } from '@/settings/application-registrations/graphql/mutations/transferApplicationRegistrationOwnership';
 import { UPDATE_APPLICATION_REGISTRATION } from '@/settings/application-registrations/graphql/mutations/updateApplicationRegistration';
 import { UPDATE_APPLICATION_REGISTRATION_VARIABLE } from '@/settings/application-registrations/graphql/mutations/updateApplicationRegistrationVariable';
+import { APPLICATION_REGISTRATION_TARBALL_URL } from '@/settings/application-registrations/graphql/queries/applicationRegistrationTarballUrl';
 import { FIND_APPLICATION_REGISTRATION_STATS } from '@/settings/application-registrations/graphql/queries/findApplicationRegistrationStats';
 import { FIND_APPLICATION_REGISTRATION_VARIABLES } from '@/settings/application-registrations/graphql/queries/findApplicationRegistrationVariables';
 import { FIND_MANY_APPLICATION_REGISTRATIONS } from '@/settings/application-registrations/graphql/queries/findManyApplicationRegistrations';
@@ -16,6 +18,7 @@ import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModa
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useInstallMarketplaceApp } from '~/modules/marketplace/hooks/useInstallMarketplaceApp';
 import { useMutation, useQuery } from '@apollo/client';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
@@ -25,10 +28,15 @@ import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined, isValidUrl } from 'twenty-shared/utils';
 import {
+  H1Title,
+  H1TitleFontColor,
   H2Title,
+  IconArrowRight,
   IconChartBar,
   IconCheck,
+  IconBox,
   IconDownload,
+  IconExternalLink,
   IconKey,
   IconRefresh,
   IconShield,
@@ -38,15 +46,33 @@ import {
   IconWorld,
   Status,
 } from 'twenty-ui/display';
+import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
+import {
+  Card,
+  Section,
+  SectionAlignment,
+  SectionFontColor,
+} from 'twenty-ui/layout';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
+import {
+  ApplicationRegistrationSourceType,
+  useFindManyApplicationsQuery,
+} from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  StyledAppModal,
+  StyledAppModalButton,
+  StyledAppModalSection,
+  StyledAppModalTitle,
+} from '~/pages/settings/applications/components/SettingsAppModalLayout';
 import { applicationRegistrationClientSecretFamilyState } from '~/pages/settings/applications/states/applicationRegistrationClientSecretFamilyState';
 
 const DELETE_REGISTRATION_MODAL_ID = 'delete-application-registration-modal';
 const ROTATE_SECRET_MODAL_ID = 'rotate-application-registration-secret-modal';
+const TRANSFER_OWNERSHIP_MODAL_ID =
+  'transfer-application-registration-ownership-modal';
 
 const StyledInputContainer = styled.div`
   align-items: center;
@@ -99,6 +125,32 @@ const StyledRotateContainer = styled.div`
   padding-top: ${themeCssVariables.spacing[2]};
 `;
 
+const StyledDangerButtonGroup = styled.div`
+  display: flex;
+  gap: ${themeCssVariables.spacing[2]};
+`;
+
+const StyledSourceRow = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${themeCssVariables.spacing[2]};
+`;
+
+const StyledDownloadLink = styled.a`
+  color: ${themeCssVariables.font.color.secondary};
+  cursor: pointer;
+  text-decoration: underline;
+  &:hover {
+    color: ${themeCssVariables.font.color.primary};
+  }
+`;
+
+const StyledMarketplaceActions = styled.div`
+  display: flex;
+  gap: ${themeCssVariables.spacing[2]};
+  padding-top: ${themeCssVariables.spacing[2]};
+`;
+
 type ServerVariable = {
   id: string;
   key: string;
@@ -113,7 +165,7 @@ export const SettingsApplicationRegistrationDetails = () => {
   const navigate = useNavigateSettings();
   const { copyToClipboard } = useCopyToClipboard();
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
-  const { openModal } = useModal();
+  const { openModal, closeModal } = useModal();
   const { applicationRegistrationId = '' } = useParams<{
     applicationRegistrationId: string;
   }>();
@@ -123,11 +175,14 @@ export const SettingsApplicationRegistrationDetails = () => {
     applicationRegistrationId,
   );
 
+  const [isInstalling, setIsInstalling] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [formRedirectUris, setFormRedirectUris] = useState<string[]>([]);
   const [newRedirectUri, setNewRedirectUri] = useState('');
   const [hasChanges, setHasChanges] = useState(false);
   const [rotatedSecret, setRotatedSecret] = useState<string | null>(null);
+  const [transferSubdomain, setTransferSubdomain] = useState('');
+  const [isTransferring, setIsTransferring] = useState(false);
 
   const [variableValues, setVariableValues] = useState<Record<string, string>>(
     {},
@@ -158,6 +213,14 @@ export const SettingsApplicationRegistrationDetails = () => {
     skip: !applicationRegistrationId,
   });
 
+  const { data: tarballUrlData } = useQuery(
+    APPLICATION_REGISTRATION_TARBALL_URL,
+    {
+      variables: { id: applicationRegistrationId },
+      skip: !applicationRegistrationId,
+    },
+  );
+
   const [updateRegistration] = useMutation(UPDATE_APPLICATION_REGISTRATION, {
     refetchQueries: [
       FIND_ONE_APPLICATION_REGISTRATION,
@@ -176,14 +239,119 @@ export const SettingsApplicationRegistrationDetails = () => {
       refetchQueries: [FIND_APPLICATION_REGISTRATION_VARIABLES],
     },
   );
+  const [transferOwnership] = useMutation(
+    TRANSFER_APPLICATION_REGISTRATION_OWNERSHIP,
+    {
+      refetchQueries: [
+        FIND_ONE_APPLICATION_REGISTRATION,
+        FIND_MANY_APPLICATION_REGISTRATIONS,
+      ],
+    },
+  );
+
+  const { install } = useInstallMarketplaceApp();
+  const { data: applicationsData, refetch: refetchApplications } =
+    useFindManyApplicationsQuery();
 
   const registration = data?.findOneApplicationRegistration;
   const variables: ServerVariable[] =
     variablesData?.findApplicationRegistrationVariables ?? [];
 
+  const isNpmSource =
+    registration?.sourceType === ApplicationRegistrationSourceType.NPM;
+
   if (loading || !registration) {
     return null;
   }
+
+  const isInstalledOnWorkspace = (
+    applicationsData?.findManyApplications ?? []
+  ).some(
+    (application) =>
+      application.universalIdentifier === registration.universalIdentifier,
+  );
+
+  const handleToggleListed = async () => {
+    try {
+      await updateRegistration({
+        variables: {
+          input: {
+            id: applicationRegistrationId,
+            update: {
+              isListed: !registration.isListed,
+            },
+          },
+        },
+      });
+      enqueueSuccessSnackBar({
+        message: registration.isListed
+          ? t`App removed from marketplace`
+          : t`App listed on marketplace`,
+      });
+    } catch {
+      enqueueErrorSnackBar({
+        message: t`Error updating marketplace listing`,
+      });
+    }
+  };
+
+  const marketplacePageUrl = getSettingsPath(
+    SettingsPath.AvailableApplicationDetail,
+    {
+      availableApplicationId: registration.universalIdentifier,
+    },
+  );
+
+  const handleInstallOnWorkspace = async () => {
+    setIsInstalling(true);
+    try {
+      const success = await install({
+        universalIdentifier: registration.universalIdentifier,
+      });
+
+      if (success) {
+        await refetchApplications();
+        enqueueSuccessSnackBar({
+          message: t`App installed on this workspace`,
+        });
+      }
+    } catch {
+      enqueueErrorSnackBar({
+        message: t`Error installing app`,
+      });
+    } finally {
+      setIsInstalling(false);
+    }
+  };
+
+  const handleTransferOwnership = async () => {
+    const trimmed = transferSubdomain.trim();
+
+    if (!isNonEmptyString(trimmed)) {
+      return;
+    }
+
+    setIsTransferring(true);
+    try {
+      await transferOwnership({
+        variables: {
+          applicationRegistrationId,
+          targetWorkspaceSubdomain: trimmed,
+        },
+      });
+      enqueueSuccessSnackBar({
+        message: t`Ownership transferred successfully`,
+      });
+      setTransferSubdomain('');
+      navigate(SettingsPath.Applications);
+    } catch {
+      enqueueErrorSnackBar({
+        message: t`Failed to transfer ownership. Check that the subdomain is correct.`,
+      });
+    } finally {
+      setIsTransferring(false);
+    }
+  };
 
   const markDirty = () => setHasChanges(true);
 
@@ -364,6 +532,47 @@ export const SettingsApplicationRegistrationDetails = () => {
           t`Universal identifier copied`,
         ),
     },
+    ...(isNpmSource && isNonEmptyString(registration.sourcePackage)
+      ? [
+          {
+            Icon: IconBox,
+            label: t`Package`,
+            value: registration.sourcePackage,
+          },
+        ]
+      : registration.sourceType === ApplicationRegistrationSourceType.TARBALL
+        ? [
+            {
+              Icon: IconBox,
+              label: t`Source`,
+              value: isNonEmptyString(
+                tarballUrlData?.applicationRegistrationTarballUrl,
+              ) ? (
+                <StyledSourceRow>
+                  <span>
+                    <Trans>Tarball upload</Trans>
+                  </span>
+                  <StyledDownloadLink
+                    href={tarballUrlData.applicationRegistrationTarballUrl}
+                    download
+                  >
+                    <Trans>Download</Trans>
+                  </StyledDownloadLink>
+                </StyledSourceRow>
+              ) : (
+                t`Tarball upload`
+              ),
+            },
+          ]
+        : registration.sourceType === ApplicationRegistrationSourceType.LOCAL
+          ? [
+              {
+                Icon: IconBox,
+                label: t`Source`,
+                value: t`Local development`,
+              },
+            ]
+          : []),
   ];
 
   const stats = statsData?.findApplicationRegistrationStats;
@@ -444,6 +653,61 @@ export const SettingsApplicationRegistrationDetails = () => {
               rounded
               items={generalItems}
               gridAutoColumns="3fr 8fr"
+            />
+          </Section>
+
+          <Section>
+            <H2Title
+              title={t`Marketplace Listing`}
+              description={t`Control visibility on the marketplace. Unlisted apps are still accessible via direct link.`}
+            />
+            <Card rounded>
+              <SettingsOptionCardContentToggle
+                title={t`Listed on marketplace`}
+                description={
+                  isNpmSource
+                    ? t`Managed by the marketplace catalog sync for npm packages`
+                    : t`When enabled, this app appears in the marketplace browse page`
+                }
+                checked={registration.isListed}
+                onChange={handleToggleListed}
+                disabled={isNpmSource}
+                divider
+              />
+              <SettingsOptionCardContentToggle
+                title={t`Featured`}
+                description={t`Featured apps are curated. Open a PR to request featured status.`}
+                checked={registration.isFeatured}
+                onChange={() => {}}
+                disabled
+              />
+            </Card>
+            <StyledMarketplaceActions>
+              <Button
+                Icon={IconExternalLink}
+                title={t`View marketplace page`}
+                variant="secondary"
+                to={marketplacePageUrl}
+              />
+            </StyledMarketplaceActions>
+          </Section>
+
+          <Section>
+            <H2Title
+              title={t`Installation`}
+              description={t`Install this app on the current workspace`}
+            />
+            <Button
+              Icon={isInstalledOnWorkspace ? IconCheck : IconDownload}
+              title={
+                isInstalledOnWorkspace
+                  ? t`Installed`
+                  : t`Install on this workspace`
+              }
+              variant="secondary"
+              accent="blue"
+              disabled={isInstalledOnWorkspace || isInstalling}
+              onClick={handleInstallOnWorkspace}
             />
           </Section>
 
@@ -574,17 +838,26 @@ export const SettingsApplicationRegistrationDetails = () => {
               description={
                 hasActiveInstalls
                   ? t`Uninstall this app from all workspaces before deleting it`
-                  : t`Delete this app`
+                  : t`Delete or transfer this app registration`
               }
             />
-            <Button
-              accent="danger"
-              variant="secondary"
-              title={t`Delete`}
-              Icon={IconTrash}
-              disabled={hasActiveInstalls}
-              onClick={() => openModal(DELETE_REGISTRATION_MODAL_ID)}
-            />
+            <StyledDangerButtonGroup>
+              <Button
+                accent="danger"
+                variant="secondary"
+                title={t`Delete`}
+                Icon={IconTrash}
+                disabled={hasActiveInstalls}
+                onClick={() => openModal(DELETE_REGISTRATION_MODAL_ID)}
+              />
+              <Button
+                accent="default"
+                variant="secondary"
+                title={t`Transfer ownership`}
+                Icon={IconArrowRight}
+                onClick={() => openModal(TRANSFER_OWNERSHIP_MODAL_ID)}
+              />
+            </StyledDangerButtonGroup>
           </Section>
         </SettingsPageContainer>
       </SubMenuTopBarContainer>
@@ -592,7 +865,7 @@ export const SettingsApplicationRegistrationDetails = () => {
       <ConfirmationModal
         confirmationPlaceholder={confirmationValue}
         confirmationValue={confirmationValue}
-        modalId={ROTATE_SECRET_MODAL_ID}
+        modalInstanceId={ROTATE_SECRET_MODAL_ID}
         title={t`Rotate client secret`}
         subtitle={
           <Trans>
@@ -609,7 +882,7 @@ export const SettingsApplicationRegistrationDetails = () => {
       <ConfirmationModal
         confirmationPlaceholder={confirmationValue}
         confirmationValue={confirmationValue}
-        modalId={DELETE_REGISTRATION_MODAL_ID}
+        modalInstanceId={DELETE_REGISTRATION_MODAL_ID}
         title={t`Delete app`}
         subtitle={
           <Trans>
@@ -622,6 +895,58 @@ export const SettingsApplicationRegistrationDetails = () => {
         confirmButtonText={t`Delete`}
         loading={isLoading}
       />
+
+      <StyledAppModal
+        modalId={TRANSFER_OWNERSHIP_MODAL_ID}
+        isClosable
+        onClose={() => setTransferSubdomain('')}
+        padding="large"
+        dataGloballyPreventClickOutside
+      >
+        <StyledAppModalTitle>
+          <H1Title
+            title={t`Transfer ownership`}
+            fontColor={H1TitleFontColor.Primary}
+          />
+        </StyledAppModalTitle>
+        <StyledAppModalSection
+          alignment={SectionAlignment.Center}
+          fontColor={SectionFontColor.Primary}
+        >
+          {t`Enter the workspace subdomain to transfer this app to. You will lose access to manage it.`}
+        </StyledAppModalSection>
+        <Section>
+          <SettingsTextInput
+            instanceId="transfer-ownership-subdomain"
+            value={transferSubdomain}
+            onChange={setTransferSubdomain}
+            placeholder={t`e.g. my-workspace`}
+            fullWidth
+            disableHotkeys
+            label={t`Target workspace subdomain`}
+            autoFocusOnMount
+          />
+        </Section>
+        <StyledAppModalButton
+          onClick={() => {
+            closeModal(TRANSFER_OWNERSHIP_MODAL_ID);
+            setTransferSubdomain('');
+          }}
+          variant="secondary"
+          title={t`Cancel`}
+          fullWidth
+        />
+        <StyledAppModalButton
+          onClick={handleTransferOwnership}
+          variant="secondary"
+          accent="danger"
+          title={t`Transfer`}
+          disabled={
+            !isNonEmptyString(transferSubdomain.trim()) || isTransferring
+          }
+          fullWidth
+        />
+      </StyledAppModal>
     </>
   );
 };

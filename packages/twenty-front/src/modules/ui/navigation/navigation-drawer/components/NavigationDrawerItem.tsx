@@ -25,8 +25,11 @@ import {
   TooltipDelay,
   TooltipPosition,
 } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
-import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  MOBILE_VIEWPORT,
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 import {
   type TriggerEventType,
   useMouseDownNavigation,
@@ -348,9 +351,15 @@ export const NavigationDrawerItem = ({
         danger={danger}
         soon={soon}
         as={
-          to ? (isExternalLink ? 'a' : Link) : rightOptions ? 'div' : undefined
+          to
+            ? isExternalLink
+              ? 'a'
+              : Link
+            : isDefined(rightOptions)
+              ? 'div'
+              : undefined
         }
-        role={to ? undefined : rightOptions ? 'button' : undefined}
+        role={to ? undefined : isDefined(rightOptions) ? 'button' : undefined}
         to={isExternalLink ? undefined : to}
         href={isExternalLink ? to : undefined}
         target={isExternalLink ? '_blank' : undefined}
@@ -359,7 +368,7 @@ export const NavigationDrawerItem = ({
         indentationLevel={indentationLevel}
         isNavigationDrawerExpanded={isNavigationDrawerExpanded}
         isDragging={isDragging}
-        hasRightOptions={!!rightOptions}
+        hasRightOptions={isDefined(rightOptions)}
         isSelectedInEditMode={isSelectedInEditMode}
       >
         <StyledItemElementsContainer>
@@ -441,7 +450,7 @@ export const NavigationDrawerItem = ({
             </NavigationDrawerAnimatedCollapseWrapper>
           )}
 
-          {rightOptions && (
+          {isDefined(rightOptions) && (
             <NavigationDrawerAnimatedCollapseWrapper>
               <StyledRightOptionsContainer
                 onClick={(e) => {

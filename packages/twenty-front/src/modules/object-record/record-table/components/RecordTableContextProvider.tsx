@@ -41,7 +41,6 @@ export const RecordTableContextProvider = ({
 
   const visibleRecordFields = useAtomComponentSelectorValue(
     visibleRecordFieldsComponentSelector,
-    recordTableId,
   );
 
   const recordIndexOpenRecordIn = useAtomStateValue(

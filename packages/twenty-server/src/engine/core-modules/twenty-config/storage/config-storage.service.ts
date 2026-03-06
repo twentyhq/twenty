@@ -48,11 +48,11 @@ export class ConfigStorageService implements ConfigStorageInterface {
   }
 
   private async convertAndSecureValue<T extends keyof ConfigVariables>(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
     value: any,
     key: T,
     isDecrypt = false,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
   ): Promise<any> {
     try {
       const convertedValue = isDecrypt

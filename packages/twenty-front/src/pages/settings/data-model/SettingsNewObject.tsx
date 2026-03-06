@@ -72,7 +72,7 @@ export const SettingsNewObject = () => {
   };
 
   return (
-    // eslint-disable-next-line react/jsx-props-no-spreading
+    // oxlint-disable-next-line react/jsx-props-no-spreading
     <FormProvider {...formConfig}>
       <SubMenuTopBarContainer
         title={t`New Object`}

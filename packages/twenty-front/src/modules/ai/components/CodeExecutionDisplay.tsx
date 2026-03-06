@@ -15,8 +15,7 @@ import {
 } from 'twenty-ui/display';
 import { CodeEditor, LightIconButton } from 'twenty-ui/input';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 const StyledContainer = styled.div`
@@ -176,6 +175,7 @@ type CodeExecutionDisplayProps = {
   stderr: string;
   exitCode?: number;
   files?: Array<{
+    fileId: string;
     filename: string;
     url: string;
     mimeType?: string;
@@ -201,8 +201,8 @@ export const CodeExecutionDisplay = ({
   files = [],
   isRunning = false,
 }: CodeExecutionDisplayProps) => {
-  const { t } = useLingui();
   const { theme } = useContext(ThemeContext);
+  const { t } = useLingui();
   const { copyToClipboard } = useCopyToClipboard();
   const [isCodeExpanded, setIsCodeExpanded] = useState(false);
   const [isOutputExpanded, setIsOutputExpanded] = useState(true);
@@ -337,7 +337,7 @@ export const CodeExecutionDisplay = ({
                 const filename = file.filename;
 
                 return (
-                  <StyledFileCard key={file.url}>
+                  <StyledFileCard key={file.fileId}>
                     <StyledFilePreview>
                       {isPreviewableMimeType(file.mimeType) ? (
                         <StyledPreviewImage

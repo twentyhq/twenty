@@ -48,7 +48,7 @@ export const CardContent = ({
       divider={divider}
       isClickable={isClickable}
       hasHoverHighlight={hasHoverHighlight}
-      // eslint-disable-next-line react/jsx-props-no-spreading
+      // oxlint-disable-next-line react/jsx-props-no-spreading
       {...rest}
     >
       {children}

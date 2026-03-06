@@ -96,30 +96,30 @@ my-twenty-app/
   .yarnrc.yml
   .yarn/
     install-state.gz
-  eslint.config.mjs
+  .oxlintrc.json
   tsconfig.json
   README.md
-  public/                           # Cartella delle risorse pubbliche (immagini, font, ecc.)
+  public/                           # Public assets folder (images, fonts, etc.)
   src/
-  ├── application-config.ts           # Obbligatorio - configurazione principale dell'applicazione
+  ├── application-config.ts           # Required - main application configuration
   ├── roles/
-  │   └── default-role.ts               # Ruolo predefinito per le funzioni logiche
+  │   └── default-role.ts               # Default role for logic functions
   ├── objects/
-  │   └── example-object.ts             # Definizione di oggetto personalizzato di esempio
+  │   └── example-object.ts             # Example custom object definition
   ├── fields/
-  │   └── example-field.ts              # Definizione di campo autonomo di esempio
+  │   └── example-field.ts              # Example standalone field definition
   ├── logic-functions/
-  │   ├── hello-world.ts                # Funzione logica di esempio
-  │   ├── pre-install.ts                # Funzione logica di pre-installazione
-  │   └── post-install.ts               # Funzione logica di post-installazione
+  │   ├── hello-world.ts                # Example logic function
+  │   ├── pre-install.ts                # Pre-install logic function
+  │   └── post-install.ts               # Post-install logic function
   ├── front-components/
-  │   └── hello-world.tsx               # Componente front-end di esempio
+  │   └── hello-world.tsx               # Example front component
   ├── views/
-  │   └── example-view.ts                # Definizione di vista salvata di esempio
+  │   └── example-view.ts                # Example saved view definition
   ├── navigation-menu-items/
-  │   └── example-navigation-menu-item.ts # Link di navigazione della barra laterale di esempio
+  │   └── example-navigation-menu-item.ts # Example sidebar navigation link
   └── skills/
-      └── example-skill.ts                # Definizione di skill per agente IA di esempio
+      └── example-skill.ts                # Example AI agent skill definition
 ```
 
 Con `--minimal`, vengono creati solo i file principali (`application-config.ts`, `roles/default-role.ts`, `logic-functions/pre-install.ts` e `logic-functions/post-install.ts`). Con `--interactive`, scegli quali file di esempio includere.
@@ -130,7 +130,7 @@ A livello generale:
 * **.gitignore**: Ignora i file generati comuni come `node_modules`, `.yarn`, `generated/` (client tipizzato), `dist/`, `build/`, cartelle di coverage, file di log e file `.env*`.
 * **yarn.lock**, **.yarnrc.yml**, **.yarn/**: Bloccano e configurano la toolchain Yarn 4 utilizzata dal progetto.
 * **.nvmrc**: Fissa la versione di Node.js prevista dal progetto.
-* **eslint.config.mjs** e **tsconfig.json**: Forniscono linting e configurazione TypeScript per i sorgenti TypeScript della tua app.
+* **.oxlintrc.json** and **tsconfig.json**: Provide linting and TypeScript configuration for your app's TypeScript sources.
 * **README.md**: Un breve README nella radice dell'app con istruzioni di base.
 * **public/**: Una cartella per archiviare risorse pubbliche (immagini, font, file statici) che saranno servite con la tua applicazione. I file collocati qui vengono caricati durante la sincronizzazione e sono accessibili in fase di esecuzione.
 * **src/**: Il luogo principale in cui definisci la tua applicazione come codice

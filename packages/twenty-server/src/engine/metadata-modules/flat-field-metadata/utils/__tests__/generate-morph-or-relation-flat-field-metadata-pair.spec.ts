@@ -6,6 +6,7 @@ import {
   RelationType,
 } from 'twenty-shared/types';
 
+import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import {
   generateMorphOrRelationFlatFieldMetadataPair,
@@ -21,7 +22,7 @@ const MOCK_FLAT_APPLICATION: FlatApplication = {
   description: null,
   version: null,
   workspaceId: 'workspace-id',
-  sourceType: 'local',
+  sourceType: ApplicationRegistrationSourceType.LOCAL,
   sourcePath: '',
   packageJsonChecksum: null,
   packageJsonFileId: null,

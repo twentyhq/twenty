@@ -12,7 +12,6 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
@@ -23,7 +22,6 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 
 import { ResetPasswordService } from './reset-password.service';
 
-// To avoid dynamic import issues in Jest
 jest.mock('@react-email/render', () => ({
   render: jest.fn().mockImplementation(async (_, options) => {
     if (options?.plainText) {
@@ -63,21 +61,9 @@ describe('ResetPasswordService', () => {
           useClass: Repository,
         },
         {
-          provide: getRepositoryToken(WorkspaceEntity),
-          useClass: Repository,
-        },
-        {
           provide: EmailService,
           useValue: {
             send: jest.fn().mockResolvedValue({ success: true }),
-          },
-        },
-        {
-          provide: DomainServerConfigService,
-          useValue: {
-            getBaseUrl: jest
-              .fn()
-              .mockResolvedValue(new URL('http://localhost:3001')),
           },
         },
         {
@@ -113,7 +99,6 @@ describe('ResetPasswordService', () => {
     );
     emailService = module.get<EmailService>(EmailService);
     twentyConfigService = module.get<TwentyConfigService>(TwentyConfigService);
-
     workspaceDomainsService = module.get<WorkspaceDomainsService>(
       WorkspaceDomainsService,
     );
@@ -146,16 +131,58 @@ describe('ResetPasswordService', () => {
       expect(appTokenRepository.save).toHaveBeenCalledWith(
         expect.objectContaining({
           userId: '1',
+          workspaceId: 'workspace-id',
           type: AppTokenType.PasswordResetToken,
         }),
       );
+    });
+
+    it('should resolve workspace when workspaceId is missing', async () => {
+      const mockUser = { id: '1', email: 'test@example.com' };
+      const mockWorkspace = { id: 'resolved-workspace-id' };
+
+      jest
+        .spyOn(userService, 'findUserByEmailOrThrow')
+        .mockResolvedValue(mockUser as UserEntity);
+      jest
+        .spyOn(workspaceRepository, 'findOne')
+        .mockResolvedValue(mockWorkspace as WorkspaceEntity);
+      jest.spyOn(appTokenRepository, 'findOne').mockResolvedValue(null);
+      jest
+        .spyOn(appTokenRepository, 'save')
+        .mockResolvedValue({} as AppTokenEntity);
+      jest.spyOn(twentyConfigService, 'get').mockReturnValue('1h');
+
+      const result =
+        await service.generatePasswordResetToken('test@example.com');
+
+      expect(result.workspaceId).toBe('resolved-workspace-id');
+      expect(appTokenRepository.save).toHaveBeenCalledWith(
+        expect.objectContaining({
+          workspaceId: 'resolved-workspace-id',
+        }),
+      );
+    });
+
+    it('should throw an error if no password auth enabled workspace found', async () => {
+      const mockUser = { id: '1', email: 'test@example.com' };
+
+      jest
+        .spyOn(userService, 'findUserByEmailOrThrow')
+        .mockResolvedValue(mockUser as UserEntity);
+      jest.spyOn(workspaceRepository, 'findOne').mockResolvedValue(null);
+      jest.spyOn(twentyConfigService, 'get').mockReturnValue('1h');
+
+      await expect(
+        service.generatePasswordResetToken('test@example.com'),
+      ).rejects.toThrow(AuthException);
     });
 
     it('should throw an error if user is not found', async () => {
       jest
         .spyOn(userService, 'findUserByEmailOrThrow')
         .mockRejectedValue(
-          new AuthException('User not found', AuthExceptionCode.USER_NOT_FOUND),
+          new AuthException('User not found', AuthExceptionCode.INVALID_INPUT),
         );
 
       await expect(
@@ -181,6 +208,7 @@ describe('ResetPasswordService', () => {
       jest
         .spyOn(appTokenRepository, 'findOne')
         .mockResolvedValue(mockExistingToken as AppTokenEntity);
+      jest.spyOn(twentyConfigService, 'get').mockReturnValue('1h');
 
       await expect(
         service.generatePasswordResetToken('test@example.com', 'workspace-id'),
@@ -214,29 +242,35 @@ describe('ResetPasswordService', () => {
           ),
         );
 
-      const result = await service.sendEmailPasswordResetLink(
-        mockToken,
-        'test@example.com',
-        'en',
-      );
+      const result = await service.sendEmailPasswordResetLink({
+        resetToken: mockToken,
+        email: 'test@example.com',
+        locale: 'en',
+      });
 
       expect(result.success).toBe(true);
       expect(emailService.send).toHaveBeenCalled();
     });
 
     it('should throw an error if user is not found', async () => {
+      const mockToken = {
+        workspaceId: 'workspace-id',
+        passwordResetToken: 'token123',
+        passwordResetTokenExpiresAt: new Date(),
+      };
+
       jest
         .spyOn(userService, 'findUserByEmailOrThrow')
         .mockRejectedValue(
-          new AuthException('User not found', AuthExceptionCode.USER_NOT_FOUND),
+          new AuthException('User not found', AuthExceptionCode.INVALID_INPUT),
         );
 
       await expect(
-        service.sendEmailPasswordResetLink(
-          {} as any,
-          'nonexistent@example.com',
-          'en',
-        ),
+        service.sendEmailPasswordResetLink({
+          resetToken: mockToken,
+          email: 'nonexistent@example.com',
+          locale: 'en',
+        }),
       ).rejects.toThrow(AuthException);
     });
   });
@@ -297,7 +331,7 @@ describe('ResetPasswordService', () => {
       jest
         .spyOn(userService, 'findUserByIdOrThrow')
         .mockRejectedValue(
-          new AuthException('User not found', AuthExceptionCode.USER_NOT_FOUND),
+          new AuthException('User not found', AuthExceptionCode.INVALID_INPUT),
         );
 
       await expect(

@@ -4,8 +4,6 @@ permissions:
   contents: read
 
 on:
-  merge_group:
-
   pull_request:
 
 concurrency:
@@ -42,7 +40,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 10
 
       - name: Install dependencies
         uses: ./.github/actions/yarn-install

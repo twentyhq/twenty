@@ -11,6 +11,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { SortableTableHeader } from '@/ui/layout/table/components/SortableTableHeader';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
+import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
@@ -23,8 +24,7 @@ import {
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { MenuItemToggle, UndecoratedLink } from 'twenty-ui/navigation';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import {
   useActivateSkillMutation,
@@ -34,10 +34,7 @@ import {
 import { SettingsSkillInactiveMenuDropDown } from '~/pages/settings/ai/components/SettingsSkillInactiveMenuDropDown';
 import { SETTINGS_SKILL_TABLE_METADATA } from '~/pages/settings/ai/constants/SettingsSkillTableMetadata';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
-import {
-  SettingsSkillTableRow,
-  StyledSkillTableRow,
-} from './SettingsSkillTableRow';
+import { SettingsSkillTableRow } from './SettingsSkillTableRow';
 
 const StyledSearchAndFilterContainer = styled.div`
   display: flex;
@@ -46,12 +43,11 @@ const StyledSearchAndFilterContainer = styled.div`
   padding-bottom: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledSearchInput = styled(SettingsTextInput)`
+const StyledSearchInputWrapper = styled.div`
   flex: 1;
-  width: 100%;
 `;
 
-const StyledTableHeaderRow = styled(StyledSkillTableRow)`
+const StyledTableHeaderRowContainer = styled.div`
   margin-bottom: ${themeCssVariables.spacing[2]};
 `;
 
@@ -63,12 +59,12 @@ const StyledFooterContainer = styled.div`
 `;
 
 export const SettingsSkillsTable = () => {
+  const { theme } = useContext(ThemeContext);
   const { data, loading, refetch } = useFindManySkillsQuery();
   const [activateSkill] = useActivateSkillMutation();
   const [deleteSkill] = useDeleteSkillMutation();
 
   const { t } = useLingui();
-  const { theme } = useContext(ThemeContext);
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
   const [searchTerm, setSearchTerm] = useState('');
   const [showDeactivated, setShowDeactivated] = useState(true);
@@ -123,13 +119,16 @@ export const SettingsSkillsTable = () => {
   return (
     <>
       <StyledSearchAndFilterContainer>
-        <StyledSearchInput
-          instanceId="skill-table-search"
-          LeftIcon={IconSearch}
-          placeholder={t`Search a skill...`}
-          value={searchTerm}
-          onChange={setSearchTerm}
-        />
+        <StyledSearchInputWrapper>
+          <SettingsTextInput
+            instanceId="skill-table-search"
+            LeftIcon={IconSearch}
+            placeholder={t`Search a skill...`}
+            value={searchTerm}
+            onChange={setSearchTerm}
+            fullWidth
+          />
+        </StyledSearchInputWrapper>
         <Dropdown
           dropdownId="settings-skills-filter-dropdown"
           dropdownPlacement="bottom-end"
@@ -160,21 +159,23 @@ export const SettingsSkillsTable = () => {
       </StyledSearchAndFilterContainer>
 
       <Table>
-        <StyledTableHeaderRow>
-          {SETTINGS_SKILL_TABLE_METADATA.fields.map(
-            (settingsSkillTableMetadataField) => (
-              <SortableTableHeader
-                key={settingsSkillTableMetadataField.fieldName}
-                fieldName={settingsSkillTableMetadataField.fieldName}
-                label={t(settingsSkillTableMetadataField.fieldLabel)}
-                tableId={SETTINGS_SKILL_TABLE_METADATA.tableId}
-                align={settingsSkillTableMetadataField.align}
-                initialSort={SETTINGS_SKILL_TABLE_METADATA.initialSort}
-              />
-            ),
-          )}
-          <TableHeader />
-        </StyledTableHeaderRow>
+        <StyledTableHeaderRowContainer>
+          <TableRow gridTemplateColumns="1fr 120px 36px">
+            {SETTINGS_SKILL_TABLE_METADATA.fields.map(
+              (settingsSkillTableMetadataField) => (
+                <SortableTableHeader
+                  key={settingsSkillTableMetadataField.fieldName}
+                  fieldName={settingsSkillTableMetadataField.fieldName}
+                  label={t(settingsSkillTableMetadataField.fieldLabel)}
+                  tableId={SETTINGS_SKILL_TABLE_METADATA.tableId}
+                  align={settingsSkillTableMetadataField.align}
+                  initialSort={SETTINGS_SKILL_TABLE_METADATA.initialSort}
+                />
+              ),
+            )}
+            <TableHeader />
+          </TableRow>
+        </StyledTableHeaderRowContainer>
         {showSkeleton
           ? Array.from({ length: 3 }).map((_, index) => (
               <Skeleton height={32} borderRadius={4} key={index} />

@@ -21,7 +21,7 @@ export const CardFooter = ({
   ...rest
 }: CardFooterProps) => {
   return (
-    // eslint-disable-next-line react/jsx-props-no-spreading
+    // oxlint-disable-next-line react/jsx-props-no-spreading
     <StyledCardFooter className={className} divider={divider} {...rest}>
       {children}
     </StyledCardFooter>

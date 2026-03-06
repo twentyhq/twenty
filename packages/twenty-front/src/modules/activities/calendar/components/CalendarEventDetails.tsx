@@ -5,7 +5,7 @@ import { useCallback, useState } from 'react';
 import { CalendarEventParticipantsResponseStatus } from '@/activities/calendar/components/CalendarEventParticipantsResponseStatus';
 import { type CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
@@ -85,7 +85,7 @@ const StyledFields = styled.div`
   width: 100%;
 `;
 
-const StyledPropertyBox = styled(PropertyBox)`
+const StyledPropertyBoxContainer = styled.div`
   height: ${themeCssVariables.spacing[6]};
   width: 100%;
 `;
@@ -165,35 +165,37 @@ export const CalendarEventDetails = ({
     });
 
     return (
-      <StyledPropertyBox key={fieldMetadataItem.id}>
-        <FieldContext.Provider
-          value={{
-            recordId: calendarEvent.id,
-            isLabelIdentifier: false,
-            fieldDefinition: formatFieldMetadataItemAsFieldDefinition({
-              field: fieldMetadataItem,
-              objectMetadataItem,
-              showLabel: true,
-              labelWidth: 72,
-            }),
-            useUpdateRecord: useUpdateOneCalendarEventRecordMutation,
-            maxWidth: 300,
-            isRecordFieldReadOnly: isReadOnly,
-          }}
-        >
-          <RecordFieldComponentInstanceContext.Provider
+      <StyledPropertyBoxContainer key={fieldMetadataItem.id}>
+        <PropertyBox>
+          <FieldContext.Provider
             value={{
-              instanceId: getRecordFieldInputInstanceId({
-                recordId: calendarEvent.id,
-                fieldName: fieldMetadataItem.name,
-                prefix: INPUT_ID_PREFIX,
+              recordId: calendarEvent.id,
+              isLabelIdentifier: false,
+              fieldDefinition: formatFieldMetadataItemAsFieldDefinition({
+                field: fieldMetadataItem,
+                objectMetadataItem,
+                showLabel: true,
+                labelWidth: 72,
               }),
+              useUpdateRecord: useUpdateOneCalendarEventRecordMutation,
+              maxWidth: 300,
+              isRecordFieldReadOnly: isReadOnly,
             }}
           >
-            <RecordInlineCell />
-          </RecordFieldComponentInstanceContext.Provider>
-        </FieldContext.Provider>
-      </StyledPropertyBox>
+            <RecordFieldComponentInstanceContext.Provider
+              value={{
+                instanceId: getRecordFieldInputInstanceId({
+                  recordId: calendarEvent.id,
+                  fieldName: fieldMetadataItem.name,
+                  prefix: INPUT_ID_PREFIX,
+                }),
+              }}
+            >
+              <RecordInlineCell />
+            </RecordFieldComponentInstanceContext.Provider>
+          </FieldContext.Provider>
+        </PropertyBox>
+      </StyledPropertyBoxContainer>
     );
   };
 

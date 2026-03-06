@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS } from '@/page-layout/components/PageLayoutTabListDroppableIds';
 import { pageLayoutTabListCurrentDragDroppableIdComponentState } from '@/page-layout/states/pageLayoutTabListCurrentDragDroppableIdComponentState';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
@@ -8,9 +9,8 @@ import { styled } from '@linaria/react';
 import { type DraggableProvided } from '@hello-pangea/dnd';
 import { StyledTabContainer, TabContent } from 'twenty-ui/input';
 import { MenuItemSelectAvatar } from 'twenty-ui/navigation';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme';
-
 const StyledDraggableWrapper = styled.div`
   display: flex;
   cursor: grab;
@@ -30,7 +30,6 @@ export const PageLayoutTabRenderClone = ({
   activeTabId: string | null;
 }) => {
   const { theme } = useContext(ThemeContext);
-
   const pageLayoutTabListCurrentDragDroppableId = useAtomComponentStateValue(
     pageLayoutTabListCurrentDragDroppableIdComponentState,
   );
@@ -39,15 +38,15 @@ export const PageLayoutTabRenderClone = ({
     pageLayoutTabListCurrentDragDroppableId ===
     PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS.VISIBLE_TABS;
 
-  if (!tab) return null;
+  if (!isDefined(tab)) return null;
 
   if (isHoveringTabList) {
     return (
       <StyledDraggableWrapper
         ref={provided.innerRef}
-        // eslint-disable-next-line react/jsx-props-no-spreading
+        // oxlint-disable-next-line react/jsx-props-no-spreading
         {...provided.draggableProps}
-        // eslint-disable-next-line react/jsx-props-no-spreading
+        // oxlint-disable-next-line react/jsx-props-no-spreading
         {...provided.dragHandleProps}
         style={{
           ...provided.draggableProps.style,
@@ -72,9 +71,9 @@ export const PageLayoutTabRenderClone = ({
       <StyledDraggableWrapper
         id={'clone-drag-wrapper'}
         ref={provided.innerRef}
-        // eslint-disable-next-line react/jsx-props-no-spreading
+        // oxlint-disable-next-line react/jsx-props-no-spreading
         {...provided.draggableProps}
-        // eslint-disable-next-line react/jsx-props-no-spreading
+        // oxlint-disable-next-line react/jsx-props-no-spreading
         {...provided.dragHandleProps}
         style={{
           ...provided.draggableProps.style,

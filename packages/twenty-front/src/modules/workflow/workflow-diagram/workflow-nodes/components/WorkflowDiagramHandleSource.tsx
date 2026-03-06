@@ -4,14 +4,13 @@ import { NODE_HANDLE_WIDTH_PX } from '@/workflow/workflow-diagram/constants/Node
 import { getWorkflowDiagramColors } from '@/workflow/workflow-diagram/utils/getWorkflowDiagramColors';
 import { styled } from '@linaria/react';
 import { Handle, Position, type HandleProps } from '@xyflow/react';
-import { useContext, useMemo, type CSSProperties } from 'react';
-import { ThemeContext } from 'twenty-ui/theme';
+import { useMemo, type CSSProperties } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const HANDLE_SCALE_ON_HOVER = 1.5;
 
-const StyledHandle = styled(Handle)`
-  &.react-flow__handle {
+const StyledHandleContainer = styled.div`
+  & .react-flow__handle {
     height: ${NODE_HANDLE_HEIGHT_PX}px;
     width: ${NODE_HANDLE_WIDTH_PX}px;
     opacity: var(--handle-opacity, 1);
@@ -70,27 +69,25 @@ export const WorkflowDiagramHandleSource = ({
   disableHoverEffect,
   runStatus,
 }: WorkflowDiagramHandleSourceProps) => {
-  const { theme } = useContext(ThemeContext);
-
   const dynamicStyles = useMemo(() => {
     const isRight = position === Position.Right;
     const transform = isRight ? 'translate(50%, -50%)' : 'translate(-50%, 50%)';
-    // eslint-disable-next-line lingui/no-unlocalized-strings
+    // oxlint-disable-next-line lingui/no-unlocalized-strings
     const transformOrigin = isRight ? 'top right' : 'bottom left';
 
     let bg: string;
     let borderColor: string;
 
     if (selected) {
-      const colors = getWorkflowDiagramColors({ theme, runStatus });
+      const colors = getWorkflowDiagramColors({ runStatus });
       bg = colors.selected.background;
       borderColor = colors.selected.borderColor;
     } else {
-      bg = theme.background.primary;
+      bg = themeCssVariables.background.primary;
       borderColor =
         hovered && disableHoverEffect !== true
-          ? theme.font.color.light
-          : theme.border.color.strong;
+          ? themeCssVariables.font.color.light
+          : themeCssVariables.border.color.strong;
     }
 
     const styles: Record<string, string> = {
@@ -102,7 +99,7 @@ export const WorkflowDiagramHandleSource = ({
     };
 
     if (disableHoverEffect !== true) {
-      const hoverColors = getWorkflowDiagramColors({ theme });
+      const hoverColors = getWorkflowDiagramColors({});
       styles['--handle-hover-bg'] = hoverColors.selected.background;
       styles['--handle-hover-border-color'] = hoverColors.selected.borderColor;
       styles['--handle-hover-transform'] =
@@ -110,14 +107,11 @@ export const WorkflowDiagramHandleSource = ({
     }
 
     return styles as CSSProperties;
-  }, [position, selected, hovered, disableHoverEffect, runStatus, type, theme]);
+  }, [position, selected, hovered, disableHoverEffect, runStatus, type]);
 
   return (
-    <StyledHandle
-      id={id}
-      type={type}
-      position={position}
-      style={dynamicStyles}
-    />
+    <StyledHandleContainer>
+      <Handle id={id} type={type} position={position} style={dynamicStyles} />
+    </StyledHandleContainer>
   );
 };

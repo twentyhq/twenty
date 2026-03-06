@@ -70,7 +70,7 @@ export const SettingsDevelopersWebhookForm = ({
   const secretTextInputId = `${webhookId}-secret`;
 
   return (
-    // eslint-disable-next-line react/jsx-props-no-spreading
+    // oxlint-disable-next-line react/jsx-props-no-spreading
     <FormProvider {...formConfig}>
       <SubMenuTopBarContainer
         title={getTitle()}
@@ -198,7 +198,7 @@ export const SettingsDevelopersWebhookForm = ({
         <ConfirmationModal
           confirmationPlaceholder={t`yes`}
           confirmationValue={t`yes`}
-          modalId={DELETE_WEBHOOK_MODAL_ID}
+          modalInstanceId={DELETE_WEBHOOK_MODAL_ID}
           title={t`Delete webhook`}
           subtitle={
             <Trans>

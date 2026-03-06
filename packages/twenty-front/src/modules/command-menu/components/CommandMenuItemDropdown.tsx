@@ -2,7 +2,7 @@ import {
   CommandMenuItem,
   type CommandMenuItemProps,
 } from '@/command-menu/components/CommandMenuItem';
-import { COMMAND_MENU_LIST_SELECTABLE_LIST_ID } from '@/command-menu/constants/CommandMenuListSelectableListId';
+import { SIDE_PANEL_SELECTABLE_LIST_ID } from '@/side-panel/constants/SidePanelSelectableListId';
 import {
   Dropdown,
   type DropdownProps,
@@ -37,7 +37,7 @@ export const CommandMenuItemDropdown = ({
   );
 
   const { setSelectedItemId } = useSelectableList(
-    COMMAND_MENU_LIST_SELECTABLE_LIST_ID,
+    SIDE_PANEL_SELECTABLE_LIST_ID,
   );
 
   return (

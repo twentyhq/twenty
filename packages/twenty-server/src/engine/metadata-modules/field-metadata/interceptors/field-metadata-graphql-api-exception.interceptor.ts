@@ -18,7 +18,7 @@ export class FieldMetadataGraphqlApiExceptionInterceptor
 {
   constructor(private readonly i18nService: I18nService) {}
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const gqlContext = GqlExecutionContext.create(context);
     const ctx = gqlContext.getContext();

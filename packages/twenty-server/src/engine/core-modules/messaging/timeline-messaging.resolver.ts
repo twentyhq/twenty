@@ -11,7 +11,7 @@ import { DismissReconnectAccountBannerInput } from 'src/engine/core-modules/mess
 import { TimelineThreadsWithTotalDTO } from 'src/engine/core-modules/messaging/dtos/timeline-threads-with-total.dto';
 import { GetMessagesService } from 'src/engine/core-modules/messaging/services/get-messages.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
-import { UserEntity } from 'src/engine/core-modules/user/user.entity';
+import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -71,7 +71,7 @@ export class TimelineMessagingResolver {
 
   @Query(() => TimelineThreadsWithTotalDTO)
   async getTimelineThreadsFromPersonId(
-    @AuthUser() user: UserEntity,
+    @AuthUser() user: AuthContextUser,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args() { personId, page, pageSize }: GetTimelineThreadsFromPersonIdArgs,
   ) {
@@ -98,7 +98,7 @@ export class TimelineMessagingResolver {
 
   @Query(() => TimelineThreadsWithTotalDTO)
   async getTimelineThreadsFromCompanyId(
-    @AuthUser() user: UserEntity,
+    @AuthUser() user: AuthContextUser,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args() { companyId, page, pageSize }: GetTimelineThreadsFromCompanyIdArgs,
   ) {
@@ -125,7 +125,7 @@ export class TimelineMessagingResolver {
 
   @Query(() => TimelineThreadsWithTotalDTO)
   async getTimelineThreadsFromOpportunityId(
-    @AuthUser() user: UserEntity,
+    @AuthUser() user: AuthContextUser,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args()
     { opportunityId, page, pageSize }: GetTimelineThreadsFromOpportunityIdArgs,
@@ -154,7 +154,7 @@ export class TimelineMessagingResolver {
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.CONNECTED_ACCOUNTS))
   @Mutation(() => Boolean)
   async dismissReconnectAccountBanner(
-    @AuthUser() user: UserEntity,
+    @AuthUser() user: AuthContextUser,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args() { connectedAccountId }: DismissReconnectAccountBannerInput,
   ): Promise<boolean> {

@@ -2,26 +2,26 @@ import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { type Preview } from '@storybook/react-vite';
 import { initialize, mswLoader } from 'msw-storybook-addon';
-import { useEffect } from 'react';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
-//import { useDarkMode } from 'storybook-dark-mode';
 
-// eslint-disable-next-line no-restricted-imports
+// oxlint-disable-next-line no-restricted-imports
 import { RootDecorator } from '../src/testing/decorators/RootDecorator';
-// eslint-disable-next-line no-restricted-imports
+// oxlint-disable-next-line no-restricted-imports
 import { resetJotaiStore } from '../src/modules/ui/utilities/state/jotai/jotaiStore';
 
 import 'react-loading-skeleton/dist/skeleton.css';
 import 'twenty-ui/style.css';
-import { THEME_LIGHT, ThemeContextProvider } from 'twenty-ui/theme';
-// eslint-disable-next-line no-restricted-imports
+import 'twenty-ui/theme-light.css';
+import 'twenty-ui/theme-dark.css';
+import { ThemeProvider } from 'twenty-ui/theme-constants';
+// oxlint-disable-next-line no-restricted-imports
 import { messages as enMessages } from '../src/locales/generated/en';
 
 // Initialize i18n globally for all stories
 i18n.load({ [SOURCE_LOCALE]: enMessages });
 i18n.activate(SOURCE_LOCALE);
 import { mockedUserJWT } from '~/testing/mock-data/jwt';
-// eslint-disable-next-line no-restricted-imports
+// oxlint-disable-next-line no-restricted-imports
 import { ClickOutsideListenerContext } from '../src/modules/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
 
 initialize({
@@ -40,16 +40,16 @@ initialize({
     try {
       const requestBody = await request.json();
 
-      // eslint-disable-next-line no-console
+      // oxlint-disable-next-line no-console
       console.warn(`Unhandled ${request.method} request to ${request.url}
         with payload ${JSON.stringify(requestBody)}\n
         This request should be mocked with MSW`);
     } catch (error) {
-      // eslint-disable-next-line no-console
+      // oxlint-disable-next-line no-console
       console.error(`Cannot parse msw request body : ${error}`);
     }
 
-    // eslint-disable-next-line no-console
+    // oxlint-disable-next-line no-console
     console.warn(
       `Unhandled ${request.method} request to ${request.url} \n  This request should be mocked with MSW`,
     );
@@ -60,23 +60,15 @@ initialize({
 const preview: Preview = {
   decorators: [
     (Story) => {
-      // const theme = useDarkMode() ? THEME_DARK : THEME_LIGHT;
-      const theme = THEME_LIGHT;
-
-      useEffect(() => {
-        document.documentElement.className =
-          theme.name === 'dark' ? 'dark' : 'light';
-      }, [theme]);
-
       return (
         <I18nProvider i18n={i18n}>
-          <ThemeContextProvider theme={theme}>
+          <ThemeProvider colorScheme="light">
             <ClickOutsideListenerContext.Provider
               value={{ excludedClickOutsideId: undefined }}
             >
               <Story />
             </ClickOutsideListenerContext.Provider>
-          </ThemeContextProvider>
+          </ThemeProvider>
         </I18nProvider>
       );
     },

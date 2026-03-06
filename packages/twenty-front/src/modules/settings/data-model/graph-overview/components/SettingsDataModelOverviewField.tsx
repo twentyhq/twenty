@@ -1,12 +1,12 @@
+import { isDefined } from 'twenty-shared/utils';
 import { styled } from '@linaria/react';
 import { Handle, Position } from '@xyflow/react';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { useContext } from 'react';
 import { useIcons } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useContext } from 'react';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { RelationType } from '~/generated-metadata/graphql';
 
 type ObjectFieldRowProps = {
@@ -27,9 +27,9 @@ const StyledFieldName = styled.div`
 `;
 
 export const ObjectFieldRow = ({ field }: ObjectFieldRowProps) => {
+  const { theme } = useContext(ThemeContext);
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
   const { getIcon } = useIcons();
-  const { theme } = useContext(ThemeContext);
 
   const relatedObjectId = field.relation?.targetObjectMetadata.id;
 
@@ -41,7 +41,7 @@ export const ObjectFieldRow = ({ field }: ObjectFieldRowProps) => {
 
   return (
     <StyledRow>
-      {Icon && <Icon size={theme.icon.size.md} />}
+      {isDefined(Icon) && <Icon size={theme.icon.size.md} />}
       <StyledFieldName>{relatedObject?.labelPlural ?? ''}</StyledFieldName>
       <Handle
         type={

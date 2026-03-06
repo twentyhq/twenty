@@ -1,6 +1,6 @@
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
-import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
-import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
+import { useSidePanelWorkflowNavigation } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowNavigation';
+import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
@@ -17,13 +17,12 @@ import { useLingui } from '@lingui/react/macro';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { ThemeContext } from 'twenty-ui/theme';
 
 export const WorkflowDiagramEmptyTriggerEditable = ({ id }: { id: string }) => {
   const { t } = useLingui();
-  const { theme } = useContext(ThemeContext);
 
-  const { openWorkflowTriggerTypeInCommandMenu } = useWorkflowCommandMenu();
+  const { openWorkflowTriggerTypeInSidePanel } =
+    useSidePanelWorkflowNavigation();
 
   const workflowVisualizerWorkflowId = useAtomComponentStateValue(
     workflowVisualizerWorkflowIdComponentState,
@@ -33,10 +32,10 @@ export const WorkflowDiagramEmptyTriggerEditable = ({ id }: { id: string }) => {
     workflowSelectedNodeComponentState,
   );
 
-  const { isInRightDrawer } = useContext(ActionMenuContext);
+  const { isInSidePanel } = useContext(ActionMenuContext);
 
-  const setCommandMenuNavigationStack = useSetAtomState(
-    commandMenuNavigationStackState,
+  const setSidePanelNavigationStack = useSetAtomState(
+    sidePanelNavigationStackState,
   );
 
   const selected = workflowSelectedNode === id;
@@ -44,8 +43,8 @@ export const WorkflowDiagramEmptyTriggerEditable = ({ id }: { id: string }) => {
   const { resetWorkflowInsertStepIds } = useResetWorkflowInsertStepIds();
 
   const handleClick = () => {
-    if (!isInRightDrawer) {
-      setCommandMenuNavigationStack([]);
+    if (!isInSidePanel) {
+      setSidePanelNavigationStack([]);
     }
 
     resetWorkflowInsertStepIds();
@@ -56,13 +55,12 @@ export const WorkflowDiagramEmptyTriggerEditable = ({ id }: { id: string }) => {
       return;
     }
 
-    openWorkflowTriggerTypeInCommandMenu(workflowVisualizerWorkflowId);
+    openWorkflowTriggerTypeInSidePanel(workflowVisualizerWorkflowId);
   };
 
   return (
     <WorkflowNodeContainer
       data-click-outside-id={WORKFLOW_DIAGRAM_STEP_NODE_BASE_CLICK_OUTSIDE_ID}
-      theme={theme}
       onClick={handleClick}
       selected={selected}
     >
@@ -75,7 +73,7 @@ export const WorkflowDiagramEmptyTriggerEditable = ({ id }: { id: string }) => {
           </WorkflowNodeLabel>
         </WorkflowNodeLabelWithCounterPart>
 
-        <WorkflowNodeTitle theme={theme} selected={selected}>
+        <WorkflowNodeTitle selected={selected}>
           {t`Add a Trigger`}
         </WorkflowNodeTitle>
       </WorkflowNodeRightPart>
