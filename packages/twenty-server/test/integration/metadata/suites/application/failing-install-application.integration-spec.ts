@@ -50,6 +50,13 @@ describe('Install application should fail when entity does not exist', () => {
     }
 
     await globalThis.testDataSource.query(
+      `DELETE FROM core."file" WHERE "applicationId" IN (
+        SELECT id FROM core."application" WHERE "universalIdentifier" = $1
+      )`,
+      [INVALID_UUID_APP_ID],
+    );
+
+    await globalThis.testDataSource.query(
       `DELETE FROM core."application"
        WHERE "universalIdentifier" = $1`,
       [INVALID_UUID_APP_ID],
