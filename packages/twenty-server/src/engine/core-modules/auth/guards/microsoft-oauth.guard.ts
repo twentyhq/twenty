@@ -76,14 +76,7 @@ export class MicrosoftOAuthGuard extends AuthGuard('microsoft') {
       request.query.state as string,
     );
 
-    const rawRetryCount =
-      state?.oauthRetryCount ??
-      parseInt((request.query.oauthRetryCount as string) ?? '0', 10);
-
-    const oauthRetryCount =
-      Number.isFinite(rawRetryCount) && rawRetryCount >= 0
-        ? rawRetryCount
-        : MICROSOFT_OAUTH_MAX_RETRY_ATTEMPTS;
+    const oauthRetryCount = Math.max(0, Number(state?.oauthRetryCount) || 0);
 
     if (oauthRetryCount >= MICROSOFT_OAUTH_MAX_RETRY_ATTEMPTS) {
       return false;

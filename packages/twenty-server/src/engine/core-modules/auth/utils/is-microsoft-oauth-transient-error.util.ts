@@ -3,5 +3,5 @@ export const isMicrosoftOAuthTransientError = (error: unknown): boolean => {
     return false;
   }
 
-  return error.message?.includes('AADSTS650051') === true;
+  return error.message.includes('AADSTS650051');
 };
