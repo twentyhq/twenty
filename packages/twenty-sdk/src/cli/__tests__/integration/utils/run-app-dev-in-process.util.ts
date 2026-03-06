@@ -10,6 +10,8 @@ export type RunAppDevResult = {
   stepStatuses?: Record<string, string>;
 };
 
+// Waits for a full sync cycle to complete: pipeline must have started
+// syncing at least once and then returned to idle (isSyncing === false).
 export const runAppDevInProcess = async (options: {
   appPath: string;
   timeout?: number;
@@ -19,17 +21,26 @@ export const runAppDevInProcess = async (options: {
 
   const command = new AppDevCommand();
 
-  await command.execute({ appPath });
+  await command.execute({ appPath, headless: true });
 
   const startTime = Date.now();
+  let sawSyncing = false;
 
   while (Date.now() - startTime < timeout) {
-    if (await pathExists(manifestPath)) {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      await command.close();
+    const state = command.getOrchestrator()?.getState();
 
-      return { success: true };
+    if (state?.pipeline.isSyncing) {
+      sawSyncing = true;
     }
+
+    if (sawSyncing && !state?.pipeline.isSyncing) {
+      if (await pathExists(manifestPath)) {
+        await command.close();
+
+        return { success: true };
+      }
+    }
+
     await new Promise((resolve) => setTimeout(resolve, 100));
   }
 

@@ -54,6 +54,9 @@ Commands:
   auth:switch          Switch the default workspace
   auth:list            List all configured workspaces
   app:dev              Watch and sync local application changes
+  app:generate-client  Build, sync to local server, and generate the typed API client
+  app:build            Build the application (no server needed)
+  app:publish          Build and publish to npm or a Twenty server
   app:typecheck        Run TypeScript type checking on the application
   app:uninstall        Uninstall application from Twenty
   entity:add           Add a new entity to your application
@@ -129,6 +132,19 @@ Application development commands.
 - `twenty app:dev [appPath]` — Start development mode: watch and sync local application changes.
 
   - Behavior: Builds your application (functions and front components), computes the manifest, syncs everything to your workspace, then watches the directory for changes and re-syncs automatically. Displays an interactive UI showing build and sync status in real time. Press Ctrl+C to stop.
+
+- `twenty app:generate-client [appPath]` — One-shot build, sync to local server, and generate the typed API client. Requires a running local server.
+
+- `twenty app:build [appPath]` — Build the application into `.twenty/output/`. No server needed.
+  - Options:
+    - `--tarball`: Also pack the output into a `.tgz` tarball.
+
+- `twenty app:publish [appPath]` — Build and publish the application.
+  - Default (no flags): builds and runs `npm publish` on the output directory.
+  - Options:
+    - `--server <url>`: Publish to a Twenty server instead of npm (builds tarball, uploads, and installs).
+    - `--token <token>`: Auth token for the server.
+    - `--tag <tag>`: npm dist-tag (e.g. `beta`, `next`).
 
 - `twenty app:typecheck [appPath]` — Run TypeScript type checking on the application (runs `tsc --noEmit`). Exits with code 1 if type errors are found.
 

@@ -11,6 +11,12 @@ export const defineEntitiesTests = (appPath: string): void => {
 
       expect(sortedFiles).toEqual([
         'api-client',
+        'api-client/core',
+        'api-client/core/schema.ts',
+        'api-client/core/types.ts',
+        'api-client/metadata',
+        'api-client/metadata/schema.ts',
+        'api-client/metadata/types.ts',
         'manifest.json',
         'package.json',
         'public',

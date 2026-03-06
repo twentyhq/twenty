@@ -34,7 +34,7 @@ export const findApplication = async ({
   if (!findResult.success) {
     return {
       success: false,
-      error: `Failed to look up application: ${JSON.stringify(findResult.error)}`,
+      error: `Failed to look up application: ${findResult.error instanceof Error ? findResult.error.message : String(findResult.error)}`,
     };
   }
 
