@@ -18,11 +18,12 @@ export const ViewFieldsHiddenDropdownSection = () => {
   const { changeRecordFieldVisibility } =
     useChangeRecordFieldVisibility(recordIndexId);
 
-  const { handleBoardFieldVisibilityChange } = useObjectOptionsForBoard({
-    objectNameSingular: objectMetadataItem.nameSingular,
-    recordBoardId: recordIndexId,
-    viewBarId: recordIndexId,
-  });
+  const { handleBoardFieldVisibilityChange, hiddenBoardFields } =
+    useObjectOptionsForBoard({
+      objectNameSingular: objectMetadataItem.nameSingular,
+      recordBoardId: recordIndexId,
+      viewBarId: recordIndexId,
+    });
 
   const handleChangeFieldVisibility =
     viewType === ViewType.Kanban
@@ -42,10 +43,24 @@ export const ViewFieldsHiddenDropdownSection = () => {
   });
 
   const availableFieldMetadataItemsToShow = activeFieldMetadataItems.filter(
-    (fieldMetadataItemToFilter) =>
-      !visibleRecordFields
+    (fieldMetadataItemToFilter) => {
+      const isAlreadyVisible = visibleRecordFields
         .map((recordField) => recordField.fieldMetadataItemId)
-        .includes(fieldMetadataItemToFilter.id),
+        .includes(fieldMetadataItemToFilter.id);
+
+      if (isAlreadyVisible) {
+        return false;
+      }
+
+      if (viewType === ViewType.Kanban) {
+        return hiddenBoardFields.some(
+          (boardField) =>
+            boardField.fieldMetadataId === fieldMetadataItemToFilter.id,
+        );
+      }
+
+      return true;
+    },
   );
 
   const { getIcon } = useIcons();

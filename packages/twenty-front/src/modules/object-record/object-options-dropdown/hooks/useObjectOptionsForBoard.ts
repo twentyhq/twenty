@@ -114,10 +114,6 @@ export const useObjectOptionsForBoard = ({
               updatedRecordField.fieldMetadataItemId,
           );
 
-          if (indexToModify === -1) {
-            return;
-          }
-
           draftRecordIndexFieldDefinitions[indexToModify].position =
             updatedRecordField.position;
         },
@@ -225,10 +221,6 @@ export const useObjectOptionsForBoard = ({
                 recordIndexFieldDefinitionToModify.fieldMetadataId ===
                 updatedRecordField.fieldMetadataItemId,
             );
-
-            if (indexToModify === -1) {
-              return;
-            }
 
             draftRecordIndexFieldDefinitions[indexToModify].isVisible =
               shouldShowFieldMetadataItem;
