@@ -8,9 +8,12 @@
   "rules": {
     "no-unused-vars": "off",
 
-    "typescript/no-unused-vars": ["warn", {
-      "argsIgnorePattern": "^_"
-    }],
+    "typescript/no-unused-vars": [
+      "warn",
+      {
+        "argsIgnorePattern": "^_"
+      }
+    ],
     "typescript/no-explicit-any": "off"
   }
 }
