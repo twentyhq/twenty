@@ -21,8 +21,8 @@ const StyledMainContainerLayoutForDesktop = styled.div`
 
 const StyledPageBodyForDesktopContainer = styled.div`
   display: flex;
-  flex: 1 1 0;
   flex-direction: column;
+  flex: 1 1 0;
   min-width: 0;
   width: 0;
 
