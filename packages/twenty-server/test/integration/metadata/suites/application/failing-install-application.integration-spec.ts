@@ -12,8 +12,6 @@ const INVALID_UUID_APP_ID = uuidv4();
 const INVALID_UUID_ROLE_ID = uuidv4();
 
 describe('Install application should fail when entity does not exist', () => {
-  let appCreated = false;
-
   beforeAll(async () => {
     await updateFeatureFlag({
       featureFlag:
@@ -21,15 +19,15 @@ describe('Install application should fail when entity does not exist', () => {
       value: true,
       expectToFail: false,
     });
+  });
 
+  beforeEach(async () => {
     await setupApplicationForSync({
       applicationUniversalIdentifier: INVALID_UUID_APP_ID,
       name: 'Test Invalid UUID App',
       description: 'App for testing UUID v4 validation',
       sourcePath: 'test-invalid-uuid',
     });
-
-    appCreated = true;
   }, 60000);
 
   afterAll(async () => {
@@ -42,14 +40,26 @@ describe('Install application should fail when entity does not exist', () => {
   });
 
   afterEach(async () => {
-    if (!appCreated) {
-      return;
+    try {
+      await uninstallApplication({
+        universalIdentifier: INVALID_UUID_APP_ID,
+        expectToFail: false,
+      });
+    } catch {
+      // May fail if the test didn't install/sync
     }
 
-    await uninstallApplication({
-      universalIdentifier: INVALID_UUID_APP_ID,
-      expectToFail: false,
-    });
+    await globalThis.testDataSource.query(
+      `DELETE FROM core."application"
+       WHERE "universalIdentifier" = $1`,
+      [INVALID_UUID_APP_ID],
+    );
+
+    await globalThis.testDataSource.query(
+      `DELETE FROM core."applicationRegistration"
+       WHERE "universalIdentifier" = $1`,
+      [INVALID_UUID_APP_ID],
+    );
   });
 
   it('should fail with execution error when installing non-existent app registration', async () => {
