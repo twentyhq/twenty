@@ -35,7 +35,7 @@ export const SettingsApplicationRegistrationDistributionTab = ({
   registration: ApplicationRegistrationData;
 }) => {
   const { t } = useLingui();
-  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar } = useSnackBar();
 
   const applicationRegistrationId = registration.id;
 
@@ -65,11 +65,6 @@ export const SettingsApplicationRegistrationDistributionTab = ({
             },
           },
         },
-      });
-      enqueueSuccessSnackBar({
-        message: registration.isListed
-          ? t`App removed from marketplace`
-          : t`App listed on marketplace`,
       });
     } catch {
       enqueueErrorSnackBar({

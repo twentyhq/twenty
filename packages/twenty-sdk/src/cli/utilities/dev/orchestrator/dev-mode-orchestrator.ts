@@ -226,21 +226,7 @@ export class DevModeOrchestrator {
       name: manifest.application.displayName,
     });
 
-    if (createResult.success && createResult.data) {
-      this.state.steps.resolveApplication.output = {
-        applicationId: createResult.data.id,
-        universalIdentifier: createResult.data.universalIdentifier,
-      };
-      this.state.steps.resolveApplication.status = 'done';
-
-      this.state.applyStepEvents([
-        { message: 'Application created', status: 'success' },
-      ]);
-
-      await this.ensureValidTokensStep.exchangeTokens({
-        applicationId: createResult.data.id,
-      });
-    } else {
+    if (!createResult.success || !createResult.data) {
       this.state.applyStepEvents([
         {
           message: 'Failed to create development application',
@@ -251,6 +237,20 @@ export class DevModeOrchestrator {
 
       return false;
     }
+
+    this.state.steps.resolveApplication.output = {
+      applicationId: createResult.data.id,
+      universalIdentifier: createResult.data.universalIdentifier,
+    };
+    this.state.steps.resolveApplication.status = 'done';
+
+    this.state.applyStepEvents([
+      { message: 'Application created', status: 'success' },
+    ]);
+
+    await this.ensureValidTokensStep.exchangeTokens({
+      applicationId: createResult.data.id,
+    });
 
     this.uploadFilesStep.initialize({
       appPath: this.state.appPath,

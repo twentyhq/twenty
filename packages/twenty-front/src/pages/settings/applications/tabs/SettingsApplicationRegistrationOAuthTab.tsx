@@ -180,7 +180,7 @@ export const SettingsApplicationRegistrationOAuthTab = ({
     markDirty();
   };
 
-  const displayedSecret = applicationRegistrationClientSecret ?? rotatedSecret;
+  const displayedSecret = rotatedSecret ?? applicationRegistrationClientSecret;
   const confirmationValue = t`yes`;
 
   const credentialItems = [
