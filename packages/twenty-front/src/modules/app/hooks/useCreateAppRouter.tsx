@@ -117,56 +117,108 @@ export const useCreateAppRouter = (
           <Route path={AppPath.VerifyEmail} element={<VerifyEmailEffect />} />
           <Route
             path={AppPath.SignInUp}
-            element={<LazyRoute><SignInUp /></LazyRoute>}
+            element={
+              <LazyRoute>
+                <SignInUp />
+              </LazyRoute>
+            }
           />
           <Route
             path={AppPath.Invite}
-            element={<LazyRoute><SignInUp /></LazyRoute>}
+            element={
+              <LazyRoute>
+                <SignInUp />
+              </LazyRoute>
+            }
           />
           <Route
             path={AppPath.ResetPassword}
-            element={<LazyRoute><PasswordReset /></LazyRoute>}
+            element={
+              <LazyRoute>
+                <PasswordReset />
+              </LazyRoute>
+            }
           />
           <Route
             path={AppPath.CreateWorkspace}
-            element={<LazyRoute><CreateWorkspace /></LazyRoute>}
+            element={
+              <LazyRoute>
+                <CreateWorkspace />
+              </LazyRoute>
+            }
           />
           <Route
             path={AppPath.CreateProfile}
-            element={<LazyRoute><CreateProfile /></LazyRoute>}
+            element={
+              <LazyRoute>
+                <CreateProfile />
+              </LazyRoute>
+            }
           />
           <Route
             path={AppPath.SyncEmails}
-            element={<LazyRoute><SyncEmails /></LazyRoute>}
+            element={
+              <LazyRoute>
+                <SyncEmails />
+              </LazyRoute>
+            }
           />
           <Route
             path={AppPath.InviteTeam}
-            element={<LazyRoute><InviteTeam /></LazyRoute>}
+            element={
+              <LazyRoute>
+                <InviteTeam />
+              </LazyRoute>
+            }
           />
           <Route
             path={AppPath.PlanRequired}
-            element={<LazyRoute><ChooseYourPlan /></LazyRoute>}
+            element={
+              <LazyRoute>
+                <ChooseYourPlan />
+              </LazyRoute>
+            }
           />
           <Route
             path={AppPath.PlanRequiredSuccess}
-            element={<LazyRoute><PaymentSuccess /></LazyRoute>}
+            element={
+              <LazyRoute>
+                <PaymentSuccess />
+              </LazyRoute>
+            }
           />
           <Route
             path={AppPath.BookCallDecision}
-            element={<LazyRoute><BookCallDecision /></LazyRoute>}
+            element={
+              <LazyRoute>
+                <BookCallDecision />
+              </LazyRoute>
+            }
           />
           <Route
             path={AppPath.BookCall}
-            element={<LazyRoute><BookCall /></LazyRoute>}
+            element={
+              <LazyRoute>
+                <BookCall />
+              </LazyRoute>
+            }
           />
           <Route path={indexAppPath.getIndexAppPath()} element={<></>} />
           <Route
             path={AppPath.RecordIndexPage}
-            element={<LazyRoute><RecordIndexPage /></LazyRoute>}
+            element={
+              <LazyRoute>
+                <RecordIndexPage />
+              </LazyRoute>
+            }
           />
           <Route
             path={AppPath.RecordShowPage}
-            element={<LazyRoute><RecordShowPage /></LazyRoute>}
+            element={
+              <LazyRoute>
+                <RecordShowPage />
+              </LazyRoute>
+            }
           />
           <Route
             path={AppPath.SettingsCatchAll}
@@ -179,13 +231,21 @@ export const useCreateAppRouter = (
           />
           <Route
             path={AppPath.NotFoundWildcard}
-            element={<LazyRoute><NotFound /></LazyRoute>}
+            element={
+              <LazyRoute>
+                <NotFound />
+              </LazyRoute>
+            }
           />
         </Route>
         <Route element={<BlankLayout />}>
           <Route
             path={AppPath.Authorize}
-            element={<LazyRoute><Authorize /></LazyRoute>}
+            element={
+              <LazyRoute>
+                <Authorize />
+              </LazyRoute>
+            }
           />
         </Route>
       </Route>,
