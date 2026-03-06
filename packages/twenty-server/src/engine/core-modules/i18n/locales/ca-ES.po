@@ -371,6 +371,11 @@ msgstr "No s'ha trobat la configuració del rol de la clau d'API."
 msgid "API key role not found."
 msgstr "Rol de la clau d'API no trobat."
 
+#. js-lingui-id: ue106l
+#: src/engine/core-modules/application/application.exception.ts
+msgid "Application is not installed in this workspace. Install it first."
+msgstr ""
+
 #. js-lingui-id: ltvmAF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception.ts
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
