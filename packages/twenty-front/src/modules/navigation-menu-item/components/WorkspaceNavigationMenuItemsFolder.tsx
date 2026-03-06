@@ -131,8 +131,11 @@ export const WorkspaceNavigationMenuItemsFolder = ({
   const handleClick = shouldUseEditModeClick
     ? (e?: React.MouseEvent) => {
         e?.stopPropagation();
-        onEditModeClick?.();
-        handleToggle();
+        if (isSelectedInEditMode) {
+          handleToggle();
+        } else {
+          onEditModeClick?.();
+        }
       }
     : handleToggle;
 
