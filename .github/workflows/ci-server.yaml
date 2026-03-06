@@ -193,10 +193,6 @@ jobs:
           if [ "$HAS_ERRORS" = true ]; then
             exit 1
           fi
-      - name: Save server setup
-        uses: ./.github/actions/save-cache
-        with:
-          key: ${{ steps.restore-server-setup-cache.outputs.cache-primary-key }}
   server-test:
     needs: server-build
     timeout-minutes: 30

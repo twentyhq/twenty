@@ -1,5 +1,6 @@
 import path from 'path';
 
+import { CLIENTS_GENERATED_DIR } from '@/cli/constants/clients-dir';
 import { ClientService } from '@/cli/utilities/client/client-service';
 
 const main = async () => {
@@ -7,8 +8,7 @@ const main = async () => {
     __dirname,
     '..',
     'src',
-    'clients',
-    'generated',
+    CLIENTS_GENERATED_DIR,
     'metadata',
   );
 
@@ -22,4 +22,7 @@ const main = async () => {
   console.log(`Metadata client generated at ${outputPath}`);
 };
 
-main();
+main().catch((error) => {
+  console.error('Failed to generate metadata client:', error);
+  process.exit(1);
+});

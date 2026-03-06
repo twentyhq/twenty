@@ -13,8 +13,8 @@ import {
   vi,
 } from 'vitest';
 
-vi.mock('@/cli/constants/clients-generated-folder', () => ({
-  CLIENTS_GENERATED_FOLDER: 'src/clients/generated',
+vi.mock('@/cli/constants/clients-dir', () => ({
+  CLIENTS_GENERATED_DIR: 'src/clients/generated',
 }));
 
 vi.mock('twenty-shared/application', () => ({

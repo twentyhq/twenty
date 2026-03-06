@@ -104,7 +104,7 @@
     },
     "generate-metadata-client": {
       "executor": "nx:run-commands",
-      "cache": true,
+      "cache": false,
       "dependsOn": [
         "^build"
       ],

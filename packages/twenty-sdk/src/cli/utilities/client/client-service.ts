@@ -1,7 +1,7 @@
 import { appendFile, readFile } from 'node:fs/promises';
 import { join } from 'path';
 
-import { CLIENTS_GENERATED_FOLDER } from '@/cli/constants/clients-generated-folder';
+import { CLIENTS_GENERATED_DIR } from '@/cli/constants/clients-dir';
 import { ApiService } from '@/cli/utilities/api/api-service';
 import {
   emptyDir,
@@ -92,7 +92,7 @@ export class ClientService {
     appPath: string;
     authToken?: string;
   }): Promise<void> {
-    const outputPath = join(appPath, 'node_modules', 'twenty-sdk', CLIENTS_GENERATED_FOLDER);
+    const outputPath = join(appPath, 'node_modules', 'twenty-sdk', CLIENTS_GENERATED_DIR);
     const tempPath = `${outputPath}.tmp`;
 
     const coreSchemaResponse = await this.apiService.getSchema({ authToken });
