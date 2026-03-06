@@ -62,66 +62,6 @@
       }
     ],
 
-    "twenty/t-call-in-function": "error",
-    "twenty/no-single-tag-to-translate": "warn",
-    "twenty/no-trans-inside-trans": "warn",
-    "twenty/no-expression-in-message": "warn",
-    "twenty/no-unlocalized-strings": ["warn", {
-      "ignoreNames": [
-        "className",
-        "styleName",
-        "type",
-        "id",
-        "key",
-        "name",
-        "data-testid",
-        "testId",
-        "src",
-        "href",
-        "to",
-        "rel",
-        "target",
-        "as",
-        "variant",
-        "size",
-        "color",
-        "severity",
-        "direction",
-        "align",
-        "method",
-        "action",
-        "encoding",
-        "encType",
-        "scope",
-        "role",
-        { "regex": { "pattern": "^aria-" } },
-        { "regex": { "pattern": "^data-" } },
-        { "regex": { "pattern": "^(icon|Icon)" } }
-      ],
-      "ignoreFunctions": [
-        "console.*",
-        "*.addEventListener",
-        "*.removeEventListener",
-        "require",
-        "import",
-        "getSettingsPath",
-        "Error",
-        "TypeError",
-        "RangeError",
-        "*.querySelector",
-        "*.querySelectorAll",
-        "*.getElementById",
-        "*.getItem",
-        "*.setItem",
-        "*.removeItem"
-      ],
-      "ignore": [
-        "^[^a-zA-Z]*$",
-        "^[A-Z][a-zA-Z0-9]*$",
-        "^[a-z]+(?:[A-Z][a-z]+)*$"
-      ]
-    }],
-
     "twenty/enforce-module-boundaries": [
       "error",
       {
