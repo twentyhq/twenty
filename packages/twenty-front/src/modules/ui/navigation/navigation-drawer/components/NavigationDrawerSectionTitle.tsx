@@ -25,6 +25,10 @@ const StyledTitle = styled.div`
   &:hover {
     cursor: pointer;
     background-color: ${themeCssVariables.background.transparent.light};
+
+    .section-title-label {
+      color: ${themeCssVariables.font.color.tertiary};
+    }
   }
 `;
 
@@ -97,11 +101,11 @@ export const NavigationDrawerSectionTitle = ({
   return (
     <StyledTitle className="section-title-container">
       <StyledLabelContainer onClick={handleTitleClick}>
-        <Label>{label}</Label>
+        <Label className="section-title-label">{label}</Label>
         {isOpen !== undefined && (
           <StyledChevron>
             <ChevronIcon
-              size={themeCssVariables.icon.size.sm}
+              size="12px"
               stroke={themeCssVariables.icon.stroke.sm}
               color={themeCssVariables.font.color.tertiary}
             />
