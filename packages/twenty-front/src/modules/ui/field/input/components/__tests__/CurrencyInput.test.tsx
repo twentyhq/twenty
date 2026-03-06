@@ -47,7 +47,7 @@ describe('CurrencyInput', () => {
         onClickOutside={commonProps.onClickOutside}
       />,
     );
-
+    expect(IMaskInput).toHaveBeenCalledTimes(1);
     const firstCallArgs = (IMaskInput as jest.Mock).mock.calls[0][0];
 
     expect(firstCallArgs.thousandsSeparator).toBe(' ');
@@ -76,6 +76,56 @@ describe('CurrencyInput', () => {
     const firstCallArgs = (IMaskInput as jest.Mock).mock.calls[0][0];
 
     expect(firstCallArgs.thousandsSeparator).toBe(',');
+    expect(firstCallArgs.radix).toBe('.');
+  });
+
+  it('uses comma as decimal and dot as thousands separator for DOTS_AND_COMMA format', () => {
+    const { IMaskInput } = require('react-imask');
+
+    mockUseNumberFormat.mockReturnValue({
+      numberFormat: NumberFormat.DOTS_AND_COMMA,
+      formatNumber: jest.fn(),
+    });
+
+    render(
+      <CurrencyInput
+        instanceId={commonProps.instanceId}
+        value={commonProps.value}
+        currencyCode={commonProps.currencyCode}
+        onEnter={commonProps.onEnter}
+        onEscape={commonProps.onEscape}
+        onClickOutside={commonProps.onClickOutside}
+      />,
+    );
+
+    const firstCallArgs = (IMaskInput as jest.Mock).mock.calls[0][0];
+
+    expect(firstCallArgs.thousandsSeparator).toBe('.');
+    expect(firstCallArgs.radix).toBe(',');
+  });
+
+  it('uses dot as decimal and apostrophe as thousands separator for APOSTROPHE_AND_DOT format', () => {
+    const { IMaskInput } = require('react-imask');
+
+    mockUseNumberFormat.mockReturnValue({
+      numberFormat: NumberFormat.APOSTROPHE_AND_DOT,
+      formatNumber: jest.fn(),
+    });
+
+    render(
+      <CurrencyInput
+        instanceId={commonProps.instanceId}
+        value={commonProps.value}
+        currencyCode={commonProps.currencyCode}
+        onEnter={commonProps.onEnter}
+        onEscape={commonProps.onEscape}
+        onClickOutside={commonProps.onClickOutside}
+      />,
+    );
+
+    const firstCallArgs = (IMaskInput as jest.Mock).mock.calls[0][0];
+
+    expect(firstCallArgs.thousandsSeparator).toBe("'");
     expect(firstCallArgs.radix).toBe('.');
   });
 });
