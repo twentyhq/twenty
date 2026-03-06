@@ -81,6 +81,11 @@ describe('syncApplication', () => {
     }
 
     await globalThis.testDataSource.query(
+      `DELETE FROM core."role" WHERE "universalIdentifier" = $1`,
+      [TEST_ROLE_ID],
+    );
+
+    await globalThis.testDataSource.query(
       `DELETE FROM core."application"
        WHERE "universalIdentifier" = $1`,
       [TEST_APP_ID],
