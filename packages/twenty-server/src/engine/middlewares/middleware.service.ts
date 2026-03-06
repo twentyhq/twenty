@@ -129,18 +129,11 @@ export class MiddlewareService {
     }
 
     const data = await this.accessTokenService.validateTokenByRequest(request);
-    const cachedMetadataVersion = data.workspace
+    const metadataVersion = data.workspace
       ? await this.workspaceStorageCacheService.getMetadataVersion(
           data.workspace.id,
         )
       : undefined;
-    // Fall back to the workspace entity's metadataVersion when Redis cache is
-    // cold (e.g. after a pod restart).  This matches the fallback logic in
-    // WorkspaceSchemaFactory.createGraphQLSchema() so that the GraphQL-Yoga
-    // schema cache key is the same on the first and second request, preventing
-    // an unnecessary double schema-build cycle per pod restart.
-    const metadataVersion =
-      cachedMetadataVersion ?? data.workspace?.metadataVersion;
 
     bindDataToRequestObject(data, request, metadataVersion);
   }
