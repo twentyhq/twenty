@@ -218,8 +218,7 @@ export const computeInputFields = (
   isRequired = false,
 ): InputField[] => {
   const result = [];
-  for (const field of node.fields.edges) {
-    const nodeField = field.node;
+  for (const nodeField of node.fieldsList.filter((f) => f.isActive)) {
     switch (nodeField.type) {
       case FieldMetadataType.FULL_NAME:
       case FieldMetadataType.CURRENCY:

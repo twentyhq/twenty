@@ -8,6 +8,7 @@ export type NodeField = {
   label: string;
   description: string | null;
   isNullable: boolean;
+  isActive: boolean;
   defaultValue: boolean | object | null;
   list?: boolean;
   placeholder?: string;
@@ -17,11 +18,7 @@ export type Node = {
   nameSingular: string;
   namePlural: string;
   labelSingular: string;
-  fields: {
-    edges: {
-      node: NodeField;
-    }[];
-  };
+  fieldsList: NodeField[];
 };
 
 export type InputField = {

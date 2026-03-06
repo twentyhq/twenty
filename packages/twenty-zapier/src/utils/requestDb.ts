@@ -13,17 +13,14 @@ export const requestSchema = async (
           nameSingular
           namePlural
           labelSingular
-          fields(paging: {first: 1000}, filter: {isActive: {is:true}}) {
-            edges {
-              node {
-                type
-                name
-                label
-                description
-                isNullable
-                defaultValue
-              }
-            }
+          fieldsList {
+            type
+            name
+            label
+            description
+            isNullable
+            isActive
+            defaultValue
           }
         }
       }
