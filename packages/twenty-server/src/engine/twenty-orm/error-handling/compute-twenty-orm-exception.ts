@@ -51,9 +51,9 @@ export const computeTwentyORMException = async (
       );
     }
 
-    if (errorCode === POSTGRESQL_ERROR_CODES.INVALID_TEXT_REPRESENTATION) {
+    if (isDefined(errorCode) && errorCode.startsWith('22')) {
       return new TwentyORMException(
-        error.message, // safe and useful
+        error.message,
         TwentyORMExceptionCode.INVALID_INPUT,
       );
     }
