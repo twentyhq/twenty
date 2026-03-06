@@ -199,7 +199,7 @@ export const createSdkClientsResolverPlugin = (
         'node_modules',
         'twenty-sdk',
         CLIENTS_SOURCE_DIR,
-        'index.ts'
+        'index.ts',
       ),
     }));
   },

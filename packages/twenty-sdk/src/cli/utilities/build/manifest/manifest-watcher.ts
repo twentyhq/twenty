@@ -8,11 +8,7 @@ export type ManifestWatcherOptions = {
   handleChangeDetected: (filePath: string) => void;
 };
 
-const IGNORED_DIRECTORY_NAMES = new Set([
-  'node_modules',
-  'dist',
-  '.twenty',
-]);
+const IGNORED_DIRECTORY_NAMES = new Set(['node_modules', 'dist', '.twenty']);
 
 export class ManifestWatcher {
   private appPath: string;

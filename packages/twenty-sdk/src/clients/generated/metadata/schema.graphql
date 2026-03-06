@@ -15,7 +15,9 @@ type ApiKey {
   role: Role!
 }
 
-"""A UUID scalar type"""
+"""
+A UUID scalar type
+"""
 scalar UUID
 
 """
@@ -194,7 +196,9 @@ type WorkspaceMember {
   numberFormat: WorkspaceMemberNumberFormatEnum
 }
 
-"""Date format as Month first, Day first, Year first or system as default"""
+"""
+Date format as Month first, Day first, Year first or system as default
+"""
 enum WorkspaceMemberDateFormatEnum {
   SYSTEM
   MONTH_FIRST
@@ -202,14 +206,18 @@ enum WorkspaceMemberDateFormatEnum {
   YEAR_FIRST
 }
 
-"""Time time as Military, Standard or system as default"""
+"""
+Time time as Military, Standard or system as default
+"""
 enum WorkspaceMemberTimeFormatEnum {
   SYSTEM
   HOUR_12
   HOUR_24
 }
 
-"""Number format for displaying numbers"""
+"""
+Number format for displaying numbers
+"""
 enum WorkspaceMemberNumberFormatEnum {
   SYSTEM
   COMMAS_AND_DOT
@@ -352,7 +360,9 @@ type Field {
   object: Object
 }
 
-"""Type of the field"""
+"""
+Type of the field
+"""
 enum FieldMetadataType {
   ACTOR
   ADDRESS
@@ -401,42 +411,62 @@ type Index {
   updatedAt: DateTime!
   indexFieldMetadataList: [IndexField!]!
   objectMetadata(
-    """Limit or page results."""
-    paging: CursorPaging! = {first: 10}
+    """
+    Limit or page results.
+    """
+    paging: CursorPaging! = { first: 10 }
 
-    """Specify to filter the records returned."""
+    """
+    Specify to filter the records returned.
+    """
     filter: ObjectFilter! = {}
   ): IndexObjectMetadataConnection!
   indexFieldMetadatas(
-    """Limit or page results."""
-    paging: CursorPaging! = {first: 10}
+    """
+    Limit or page results.
+    """
+    paging: CursorPaging! = { first: 10 }
 
-    """Specify to filter the records returned."""
+    """
+    Specify to filter the records returned.
+    """
     filter: IndexFieldFilter! = {}
   ): IndexIndexFieldMetadatasConnection!
 }
 
-"""Type of the index"""
+"""
+Type of the index
+"""
 enum IndexType {
   BTREE
   GIN
 }
 
 input CursorPaging {
-  """Paginate before opaque cursor"""
+  """
+  Paginate before opaque cursor
+  """
   before: ConnectionCursor
 
-  """Paginate after opaque cursor"""
+  """
+  Paginate after opaque cursor
+  """
   after: ConnectionCursor
 
-  """Paginate first"""
+  """
+  Paginate first
+  """
   first: Int
 
-  """Paginate last"""
+  """
+  Paginate last
+  """
   last: Int
 }
 
-"""Cursor for paging through collections"""
+"""
+Cursor for paging through collections
+"""
 scalar ConnectionCursor
 
 input ObjectFilter {
@@ -516,17 +546,25 @@ type Object {
   fieldsList: [Field!]!
   indexMetadataList: [Index!]!
   fields(
-    """Limit or page results."""
-    paging: CursorPaging! = {first: 10}
+    """
+    Limit or page results.
+    """
+    paging: CursorPaging! = { first: 10 }
 
-    """Specify to filter the records returned."""
+    """
+    Specify to filter the records returned.
+    """
     filter: FieldFilter! = {}
   ): ObjectFieldsConnection!
   indexMetadatas(
-    """Limit or page results."""
-    paging: CursorPaging! = {first: 10}
+    """
+    Limit or page results.
+    """
+    paging: CursorPaging! = { first: 10 }
 
-    """Specify to filter the records returned."""
+    """
+    Specify to filter the records returned.
+    """
     filter: IndexFilter! = {}
   ): ObjectIndexMetadatasConnection!
 }
@@ -853,7 +891,9 @@ type User {
   availableWorkspaces: AvailableWorkspaces!
 }
 
-"""Onboarding status"""
+"""
+Onboarding status
+"""
 enum OnboardingStatus {
   PLAN_REQUIRED
   WORKSPACE_ACTIVATION
@@ -926,7 +966,10 @@ enum WidgetType {
   FRONT_COMPONENT
 }
 
-union PageLayoutWidgetPosition = PageLayoutWidgetGridPosition | PageLayoutWidgetVerticalListPosition | PageLayoutWidgetCanvasPosition
+union PageLayoutWidgetPosition =
+  | PageLayoutWidgetGridPosition
+  | PageLayoutWidgetVerticalListPosition
+  | PageLayoutWidgetCanvasPosition
 
 type PageLayoutWidgetGridPosition {
   layoutMode: PageLayoutTabLayoutMode!
@@ -951,7 +994,28 @@ type PageLayoutWidgetCanvasPosition {
   layoutMode: PageLayoutTabLayoutMode!
 }
 
-union WidgetConfiguration = AggregateChartConfiguration | StandaloneRichTextConfiguration | PieChartConfiguration | LineChartConfiguration | IframeConfiguration | GaugeChartConfiguration | BarChartConfiguration | CalendarConfiguration | FrontComponentConfiguration | EmailsConfiguration | FieldConfiguration | FieldRichTextConfiguration | FieldsConfiguration | FilesConfiguration | NotesConfiguration | TasksConfiguration | TimelineConfiguration | ViewConfiguration | WorkflowConfiguration | WorkflowRunConfiguration | WorkflowVersionConfiguration
+union WidgetConfiguration =
+  | AggregateChartConfiguration
+  | StandaloneRichTextConfiguration
+  | PieChartConfiguration
+  | LineChartConfiguration
+  | IframeConfiguration
+  | GaugeChartConfiguration
+  | BarChartConfiguration
+  | CalendarConfiguration
+  | FrontComponentConfiguration
+  | EmailsConfiguration
+  | FieldConfiguration
+  | FieldRichTextConfiguration
+  | FieldsConfiguration
+  | FilesConfiguration
+  | NotesConfiguration
+  | TasksConfiguration
+  | TimelineConfiguration
+  | ViewConfiguration
+  | WorkflowConfiguration
+  | WorkflowRunConfiguration
+  | WorkflowVersionConfiguration
 
 type AggregateChartConfiguration {
   configurationType: WidgetConfigurationType!
@@ -1034,7 +1098,9 @@ enum ObjectRecordGroupByDateGranularity {
   NONE
 }
 
-"""Order by options for graph widgets"""
+"""
+Order by options for graph widgets
+"""
 enum GraphOrderBy {
   FIELD_ASC
   FIELD_DESC
@@ -1075,7 +1141,9 @@ type LineChartConfiguration {
   firstDayOfTheWeek: Int
 }
 
-"""Which axes should display labels"""
+"""
+Which axes should display labels
+"""
 enum AxisNameDisplay {
   NONE
   X
@@ -1131,13 +1199,17 @@ type BarChartConfiguration {
   firstDayOfTheWeek: Int
 }
 
-"""Display mode for bar charts with secondary grouping"""
+"""
+Display mode for bar charts with secondary grouping
+"""
 enum BarChartGroupMode {
   STACKED
   GROUPED
 }
 
-"""Layout orientation for bar charts"""
+"""
+Layout orientation for bar charts
+"""
 enum BarChartLayout {
   VERTICAL
   HORIZONTAL
@@ -1248,7 +1320,9 @@ type MetadataEvent {
   properties: ObjectRecordEventProperties!
 }
 
-"""Metadata Event Action"""
+"""
+Metadata Event Action
+"""
 enum MetadataEventAction {
   CREATED
   UPDATED
@@ -1264,7 +1338,9 @@ type ObjectRecordEvent {
   properties: ObjectRecordEventProperties!
 }
 
-"""Database Event Action"""
+"""
+Database Event Action
+"""
 enum DatabaseEventAction {
   CREATED
   UPDATED
@@ -1299,7 +1375,9 @@ type OnDbEvent {
 }
 
 type Analytics {
-  """Boolean that confirms query was dispatched"""
+  """
+  Boolean that confirms query was dispatched
+  """
   success: Boolean!
 }
 
@@ -1320,7 +1398,9 @@ type BillingProductMetadata {
   productKey: BillingProductKey!
 }
 
-"""The different billing plans available"""
+"""
+The different billing plans available
+"""
 enum BillingPlanKey {
   PRO
   ENTERPRISE
@@ -1331,7 +1411,9 @@ enum BillingUsageType {
   LICENSED
 }
 
-"""The different billing products available"""
+"""
+The different billing products available
+"""
 enum BillingProductKey {
   BASE_PRODUCT
   WORKFLOW_NODE_EXECUTION
@@ -1415,10 +1497,14 @@ enum SubscriptionStatus {
 }
 
 type BillingEndTrialPeriod {
-  """Updated subscription status"""
+  """
+  Updated subscription status
+  """
   status: SubscriptionStatus
 
-  """Boolean that confirms if a payment method was found"""
+  """
+  Boolean that confirms if a payment method was found
+  """
   hasPaymentMethod: Boolean!
 
   """
@@ -1449,15 +1535,21 @@ type BillingSession {
 }
 
 type BillingUpdate {
-  """Current billing subscription"""
+  """
+  Current billing subscription
+  """
   currentBillingSubscription: BillingSubscription!
 
-  """All billing subscriptions"""
+  """
+  All billing subscriptions
+  """
   billingSubscriptions: [BillingSubscription!]!
 }
 
 type OnboardingStepSuccess {
-  """Boolean that confirms query was dispatched"""
+  """
+  Boolean that confirms query was dispatched
+  """
   success: Boolean!
 }
 
@@ -1484,7 +1576,9 @@ type WorkspaceInvitation {
 }
 
 type SendInvitations {
-  """Boolean that confirms query was dispatched"""
+  """
+  Boolean that confirms query was dispatched
+  """
   success: Boolean!
   errors: [String!]!
   result: [WorkspaceInvitation!]!
@@ -1628,64 +1722,96 @@ type PublicWorkspaceData {
 }
 
 type IndexEdge {
-  """The node containing the Index"""
+  """
+  The node containing the Index
+  """
   node: Index!
 
-  """Cursor for this node."""
+  """
+  Cursor for this node.
+  """
   cursor: ConnectionCursor!
 }
 
 type PageInfo {
-  """true if paging forward and there are more records."""
+  """
+  true if paging forward and there are more records.
+  """
   hasNextPage: Boolean
 
-  """true if paging backwards and there are more records."""
+  """
+  true if paging backwards and there are more records.
+  """
   hasPreviousPage: Boolean
 
-  """The cursor of the first returned record."""
+  """
+  The cursor of the first returned record.
+  """
   startCursor: ConnectionCursor
 
-  """The cursor of the last returned record."""
+  """
+  The cursor of the last returned record.
+  """
   endCursor: ConnectionCursor
 }
 
 type IndexConnection {
-  """Paging information"""
+  """
+  Paging information
+  """
   pageInfo: PageInfo!
 
-  """Array of edges."""
+  """
+  Array of edges.
+  """
   edges: [IndexEdge!]!
 }
 
 type IndexFieldEdge {
-  """The node containing the IndexField"""
+  """
+  The node containing the IndexField
+  """
   node: IndexField!
 
-  """Cursor for this node."""
+  """
+  Cursor for this node.
+  """
   cursor: ConnectionCursor!
 }
 
 type IndexIndexFieldMetadatasConnection {
-  """Paging information"""
+  """
+  Paging information
+  """
   pageInfo: PageInfo!
 
-  """Array of edges."""
+  """
+  Array of edges.
+  """
   edges: [IndexFieldEdge!]!
 }
 
 type ObjectEdge {
-  """The node containing the Object"""
+  """
+  The node containing the Object
+  """
   node: Object!
 
-  """Cursor for this node."""
+  """
+  Cursor for this node.
+  """
   cursor: ConnectionCursor!
 }
 
 type IndexObjectMetadataConnection {
-  """Paging information"""
+  """
+  Paging information
+  """
   pageInfo: PageInfo!
 
-  """Array of edges."""
+  """
+  Array of edges.
+  """
   edges: [ObjectEdge!]!
 }
 
@@ -1695,34 +1821,50 @@ type ObjectRecordCount {
 }
 
 type ObjectConnection {
-  """Paging information"""
+  """
+  Paging information
+  """
   pageInfo: PageInfo!
 
-  """Array of edges."""
+  """
+  Array of edges.
+  """
   edges: [ObjectEdge!]!
 }
 
 type ObjectIndexMetadatasConnection {
-  """Paging information"""
+  """
+  Paging information
+  """
   pageInfo: PageInfo!
 
-  """Array of edges."""
+  """
+  Array of edges.
+  """
   edges: [IndexEdge!]!
 }
 
 type FieldEdge {
-  """The node containing the Field"""
+  """
+  The node containing the Field
+  """
   node: Field!
 
-  """Cursor for this node."""
+  """
+  Cursor for this node.
+  """
   cursor: ConnectionCursor!
 }
 
 type ObjectFieldsConnection {
-  """Paging information"""
+  """
+  Paging information
+  """
   pageInfo: PageInfo!
 
-  """Array of edges."""
+  """
+  Array of edges.
+  """
   edges: [FieldEdge!]!
 }
 
@@ -1739,17 +1881,23 @@ type Relation {
   targetFieldMetadata: Field!
 }
 
-"""Relation type"""
+"""
+Relation type
+"""
 enum RelationType {
   ONE_TO_MANY
   MANY_TO_ONE
 }
 
 type FieldConnection {
-  """Paging information"""
+  """
+  Paging information
+  """
   pageInfo: PageInfo!
 
-  """Array of edges."""
+  """
+  Array of edges.
+  """
   edges: [FieldEdge!]!
 }
 
@@ -1816,7 +1964,9 @@ type SetupSso {
 }
 
 type DeleteTwoFactorAuthenticationMethod {
-  """Boolean that confirms query was dispatched"""
+  """
+  Boolean that confirms query was dispatched
+  """
   success: Boolean!
 }
 
@@ -1848,7 +1998,9 @@ type AvailableWorkspacesAndAccessTokens {
 }
 
 type EmailPasswordResetLink {
-  """Boolean that confirms query was dispatched"""
+  """
+  Boolean that confirms query was dispatched
+  """
   success: Boolean!
 }
 
@@ -1859,7 +2011,9 @@ type GetAuthorizationUrlForSSO {
 }
 
 type InvalidatePassword {
-  """Boolean that confirms query was dispatched"""
+  """
+  Boolean that confirms query was dispatched
+  """
   success: Boolean!
 }
 
@@ -1935,23 +2089,35 @@ type NavigationMenuItem {
 }
 
 type LogicFunctionExecutionResult {
-  """Execution result in JSON format"""
+  """
+  Execution result in JSON format
+  """
   data: JSON
 
-  """Execution Logs"""
+  """
+  Execution Logs
+  """
   logs: String!
 
-  """Execution duration in milliseconds"""
+  """
+  Execution duration in milliseconds
+  """
   duration: Float!
 
-  """Execution status"""
+  """
+  Execution status
+  """
   status: LogicFunctionExecutionStatus!
 
-  """Execution error in JSON format"""
+  """
+  Execution error in JSON format
+  """
   error: JSON
 }
 
-"""Status of the logic function execution"""
+"""
+Status of the logic function execution
+"""
 enum LogicFunctionExecutionStatus {
   IDLE
   SUCCESS
@@ -1959,7 +2125,9 @@ enum LogicFunctionExecutionStatus {
 }
 
 type LogicFunctionLogs {
-  """Execution Logs"""
+  """
+  Execution Logs
+  """
   logs: String!
 }
 
@@ -2093,18 +2261,26 @@ type AISystemPromptPreview {
 }
 
 type AgentChatThreadEdge {
-  """The node containing the AgentChatThread"""
+  """
+  The node containing the AgentChatThread
+  """
   node: AgentChatThread!
 
-  """Cursor for this node."""
+  """
+  Cursor for this node.
+  """
   cursor: ConnectionCursor!
 }
 
 type AgentChatThreadConnection {
-  """Paging information"""
+  """
+  Paging information
+  """
   pageInfo: PageInfo!
 
-  """Array of edges."""
+  """
+  Array of edges.
+  """
   edges: [AgentChatThreadEdge!]!
 }
 
@@ -2360,7 +2536,9 @@ type QueueJob {
   stackTrace: [String!]
 }
 
-"""Job state in the queue"""
+"""
+Job state in the queue
+"""
 enum JobState {
   COMPLETED
   FAILED
@@ -2779,7 +2957,10 @@ type Query {
   getPageLayoutWidget(id: String!): PageLayoutWidget!
   getPageLayoutTabs(pageLayoutId: String!): [PageLayoutTab!]!
   getPageLayoutTab(id: String!): PageLayoutTab!
-  getPageLayouts(objectMetadataId: String, pageLayoutType: PageLayoutType): [PageLayout!]!
+  getPageLayouts(
+    objectMetadataId: String
+    pageLayoutType: PageLayoutType
+  ): [PageLayout!]!
   getPageLayout(id: String!): PageLayout
   findOneLogicFunction(input: LogicFunctionIdInput!): LogicFunction!
   findManyLogicFunctions: [LogicFunction!]!
@@ -2787,14 +2968,20 @@ type Query {
   getLogicFunctionSourceCode(input: LogicFunctionIdInput!): String
   objectRecordCounts: [ObjectRecordCount!]!
   object(
-    """The id of the record to find."""
+    """
+    The id of the record to find.
+    """
     id: UUID!
   ): Object!
   objects(
-    """Limit or page results."""
-    paging: CursorPaging! = {first: 10}
+    """
+    Limit or page results.
+    """
+    paging: CursorPaging! = { first: 10 }
 
-    """Specify to filter the records returned."""
+    """
+    Specify to filter the records returned.
+    """
     filter: ObjectFilter! = {}
   ): ObjectConnection!
   getCoreViewFields(viewId: String!): [CoreViewField!]!
@@ -2812,14 +2999,20 @@ type Query {
   getCoreViewFieldGroups(viewId: String!): [CoreViewFieldGroup!]!
   getCoreViewFieldGroup(id: String!): CoreViewFieldGroup
   index(
-    """The id of the record to find."""
+    """
+    The id of the record to find.
+    """
     id: UUID!
   ): Index!
   indexMetadatas(
-    """Limit or page results."""
-    paging: CursorPaging! = {first: 10}
+    """
+    Limit or page results.
+    """
+    paging: CursorPaging! = { first: 10 }
 
-    """Specify to filter the records returned."""
+    """
+    Specify to filter the records returned.
+    """
     filter: IndexFilter! = {}
   ): IndexConnection!
   commandMenuItems: [CommandMenuItem!]!
@@ -2841,29 +3034,45 @@ type Query {
   getToolIndex: [ToolIndexEntry!]!
   getToolInputSchema(toolName: String!): JSON
   field(
-    """The id of the record to find."""
+    """
+    The id of the record to find.
+    """
     id: UUID!
   ): Field!
   fields(
-    """Limit or page results."""
-    paging: CursorPaging! = {first: 10}
+    """
+    Limit or page results.
+    """
+    paging: CursorPaging! = { first: 10 }
 
-    """Specify to filter the records returned."""
+    """
+    Specify to filter the records returned.
+    """
     filter: FieldFilter! = {}
   ): FieldConnection!
   currentUser: User!
   currentWorkspace: Workspace!
   getPublicWorkspaceDataByDomain(origin: String): PublicWorkspaceData!
   checkUserExists(email: String!, captchaToken: String): CheckUserExist!
-  checkWorkspaceInviteHashIsValid(inviteHash: String!): WorkspaceInviteHashValid!
+  checkWorkspaceInviteHashIsValid(
+    inviteHash: String!
+  ): WorkspaceInviteHashValid!
   findWorkspaceFromInviteHash(inviteHash: String!): Workspace!
-  validatePasswordResetToken(passwordResetToken: String!): ValidatePasswordResetToken!
-  findApplicationRegistrationByClientId(clientId: String!): PublicApplicationRegistration
-  findApplicationRegistrationByUniversalIdentifier(universalIdentifier: String!): ApplicationRegistration
+  validatePasswordResetToken(
+    passwordResetToken: String!
+  ): ValidatePasswordResetToken!
+  findApplicationRegistrationByClientId(
+    clientId: String!
+  ): PublicApplicationRegistration
+  findApplicationRegistrationByUniversalIdentifier(
+    universalIdentifier: String!
+  ): ApplicationRegistration
   findManyApplicationRegistrations: [ApplicationRegistration!]!
   findOneApplicationRegistration(id: String!): ApplicationRegistration!
   findApplicationRegistrationStats(id: String!): ApplicationRegistrationStats!
-  findApplicationRegistrationVariables(applicationRegistrationId: String!): [ApplicationRegistrationVariable!]!
+  findApplicationRegistrationVariables(
+    applicationRegistrationId: String!
+  ): [ApplicationRegistrationVariable!]!
   applicationRegistrationTarballUrl(id: String!): String
   getSSOIdentityProviders: [FindAvailableSSOIDP!]!
   webhooks: [Webhook!]!
@@ -2874,14 +3083,20 @@ type Query {
   skills: [Skill!]!
   skill(id: UUID!): Skill
   chatThreads(
-    """Limit or page results."""
-    paging: CursorPaging! = {first: 10}
+    """
+    Limit or page results.
+    """
+    paging: CursorPaging! = { first: 10 }
 
-    """Specify to filter the records returned."""
+    """
+    Specify to filter the records returned.
+    """
     filter: AgentChatThreadFilter! = {}
 
-    """Specify to sort results."""
-    sorting: [AgentChatThreadSort!]! = [{field: updatedAt, direction: DESC}]
+    """
+    Specify to sort results.
+    """
+    sorting: [AgentChatThreadSort!]! = [{ field: updatedAt, direction: DESC }]
   ): AgentChatThreadConnection!
   agentTurns(agentId: UUID!): [AgentTurn!]!
   eventLogs(input: EventLogQueryInput!): EventLogQueryResult!
@@ -2889,16 +3104,31 @@ type Query {
   lineChartData(input: LineChartDataInput!): LineChartData!
   barChartData(input: BarChartDataInput!): BarChartData!
   getConnectedImapSmtpCaldavAccount(id: UUID!): ConnectedImapSmtpCaldavAccount!
-  getAutoCompleteAddress(address: String!, token: String!, country: String, isFieldCity: Boolean): [AutocompleteResult!]!
+  getAutoCompleteAddress(
+    address: String!
+    token: String!
+    country: String
+    isFieldCity: Boolean
+  ): [AutocompleteResult!]!
   getAddressDetails(placeId: String!, token: String!): PlaceDetailsResult!
   getConfigVariablesGrouped: ConfigVariables!
   getSystemHealthStatus: SystemHealth!
-  getIndicatorHealthStatus(indicatorId: HealthIndicatorId!): AdminPanelHealthServiceData!
-  getQueueMetrics(queueName: String!, timeRange: QueueMetricsTimeRange = OneHour): QueueMetricsData!
+  getIndicatorHealthStatus(
+    indicatorId: HealthIndicatorId!
+  ): AdminPanelHealthServiceData!
+  getQueueMetrics(
+    queueName: String!
+    timeRange: QueueMetricsTimeRange = OneHour
+  ): QueueMetricsData!
   versionInfo: VersionInfo!
   getAdminAiModels: AdminAIModels!
   getDatabaseConfigVariable(key: String!): ConfigVariable!
-  getQueueJobs(queueName: String!, state: JobState!, limit: Int = 50, offset: Int = 0): QueueJobsResponse!
+  getQueueJobs(
+    queueName: String!
+    state: JobState!
+    limit: Int = 50
+    offset: Int = 0
+  ): QueueJobsResponse!
   findAllApplicationRegistrations: [ApplicationRegistration!]!
   getPostgresCredentials: PostgresCredentials
   findManyPublicDomains: [PublicDomain!]!
@@ -2910,12 +3140,16 @@ type Query {
 }
 
 input LogicFunctionIdInput {
-  """The id of the function."""
+  """
+  The id of the function.
+  """
   id: ID!
 }
 
 input AgentIdInput {
-  """The id of the agent."""
+  """
+  The id of the agent.
+  """
   id: UUID!
 }
 
@@ -2961,13 +3195,17 @@ enum AgentChatThreadSortFields {
   updatedAt
 }
 
-"""Sort Directions"""
+"""
+Sort Directions
+"""
 enum SortDirection {
   ASC
   DESC
 }
 
-"""Sort Nulls Options"""
+"""
+Sort Nulls Options
+"""
 enum SortNulls {
   NULLS_FIRST
   NULLS_LAST
@@ -3017,21 +3255,44 @@ input BarChartDataInput {
 type Mutation {
   addQueryToEventStream(input: AddQuerySubscriptionInput!): Boolean!
   removeQueryFromEventStream(input: RemoveQueryFromEventStreamInput!): Boolean!
-  createObjectEvent(event: String!, recordId: UUID!, objectMetadataId: UUID!, properties: JSON): Analytics!
-  trackAnalytics(type: AnalyticsType!, name: String, event: String, properties: JSON): Analytics!
+  createObjectEvent(
+    event: String!
+    recordId: UUID!
+    objectMetadataId: UUID!
+    properties: JSON
+  ): Analytics!
+  trackAnalytics(
+    type: AnalyticsType!
+    name: String
+    event: String
+    properties: JSON
+  ): Analytics!
   createPageLayoutWidget(input: CreatePageLayoutWidgetInput!): PageLayoutWidget!
-  updatePageLayoutWidget(id: String!, input: UpdatePageLayoutWidgetInput!): PageLayoutWidget!
+  updatePageLayoutWidget(
+    id: String!
+    input: UpdatePageLayoutWidgetInput!
+  ): PageLayoutWidget!
   destroyPageLayoutWidget(id: String!): Boolean!
   createPageLayoutTab(input: CreatePageLayoutTabInput!): PageLayoutTab!
-  updatePageLayoutTab(id: String!, input: UpdatePageLayoutTabInput!): PageLayoutTab!
+  updatePageLayoutTab(
+    id: String!
+    input: UpdatePageLayoutTabInput!
+  ): PageLayoutTab!
   destroyPageLayoutTab(id: String!): Boolean!
   createPageLayout(input: CreatePageLayoutInput!): PageLayout!
   updatePageLayout(id: String!, input: UpdatePageLayoutInput!): PageLayout!
   destroyPageLayout(id: String!): Boolean!
-  updatePageLayoutWithTabsAndWidgets(id: String!, input: UpdatePageLayoutWithTabsInput!): PageLayout!
+  updatePageLayoutWithTabsAndWidgets(
+    id: String!
+    input: UpdatePageLayoutWithTabsInput!
+  ): PageLayout!
   deleteOneLogicFunction(input: LogicFunctionIdInput!): LogicFunction!
-  createOneLogicFunction(input: CreateLogicFunctionFromSourceInput!): LogicFunction!
-  executeOneLogicFunction(input: ExecuteOneLogicFunctionInput!): LogicFunctionExecutionResult!
+  createOneLogicFunction(
+    input: CreateLogicFunctionFromSourceInput!
+  ): LogicFunction!
+  executeOneLogicFunction(
+    input: ExecuteOneLogicFunctionInput!
+  ): LogicFunctionExecutionResult!
   updateOneLogicFunction(input: UpdateLogicFunctionFromSourceInput!): Boolean!
   createOneObject(input: CreateOneObjectInput!): Object!
   deleteOneObject(input: DeleteOneObjectInput!): Object!
@@ -3054,19 +3315,34 @@ type Mutation {
   updateCoreViewGroup(input: UpdateViewGroupInput!): CoreViewGroup!
   deleteCoreViewGroup(input: DeleteViewGroupInput!): CoreViewGroup!
   destroyCoreViewGroup(input: DestroyViewGroupInput!): CoreViewGroup!
-  createCoreViewFilterGroup(input: CreateViewFilterGroupInput!): CoreViewFilterGroup!
-  updateCoreViewFilterGroup(id: String!, input: UpdateViewFilterGroupInput!): CoreViewFilterGroup!
+  createCoreViewFilterGroup(
+    input: CreateViewFilterGroupInput!
+  ): CoreViewFilterGroup!
+  updateCoreViewFilterGroup(
+    id: String!
+    input: UpdateViewFilterGroupInput!
+  ): CoreViewFilterGroup!
   deleteCoreViewFilterGroup(id: String!): Boolean!
   destroyCoreViewFilterGroup(id: String!): Boolean!
   createCoreViewFilter(input: CreateViewFilterInput!): CoreViewFilter!
   updateCoreViewFilter(input: UpdateViewFilterInput!): CoreViewFilter!
   deleteCoreViewFilter(input: DeleteViewFilterInput!): CoreViewFilter!
   destroyCoreViewFilter(input: DestroyViewFilterInput!): CoreViewFilter!
-  updateCoreViewFieldGroup(input: UpdateViewFieldGroupInput!): CoreViewFieldGroup!
-  createCoreViewFieldGroup(input: CreateViewFieldGroupInput!): CoreViewFieldGroup!
-  createManyCoreViewFieldGroups(inputs: [CreateViewFieldGroupInput!]!): [CoreViewFieldGroup!]!
-  deleteCoreViewFieldGroup(input: DeleteViewFieldGroupInput!): CoreViewFieldGroup!
-  destroyCoreViewFieldGroup(input: DestroyViewFieldGroupInput!): CoreViewFieldGroup!
+  updateCoreViewFieldGroup(
+    input: UpdateViewFieldGroupInput!
+  ): CoreViewFieldGroup!
+  createCoreViewFieldGroup(
+    input: CreateViewFieldGroupInput!
+  ): CoreViewFieldGroup!
+  createManyCoreViewFieldGroups(
+    inputs: [CreateViewFieldGroupInput!]!
+  ): [CoreViewFieldGroup!]!
+  deleteCoreViewFieldGroup(
+    input: DeleteViewFieldGroupInput!
+  ): CoreViewFieldGroup!
+  destroyCoreViewFieldGroup(
+    input: DestroyViewFieldGroupInput!
+  ): CoreViewFieldGroup!
   upsertFieldsWidget(input: UpsertFieldsWidgetInput!): CoreView!
   createCommandMenuItem(input: CreateCommandMenuItemInput!): CommandMenuItem!
   updateCommandMenuItem(input: UpdateCommandMenuItemInput!): CommandMenuItem!
@@ -3081,9 +3357,20 @@ type Mutation {
   uploadWorkflowFile(file: Upload!): FileWithSignedUrl!
   uploadWorkspaceLogo(file: Upload!): FileWithSignedUrl!
   uploadWorkspaceMemberProfilePicture(file: Upload!): FileWithSignedUrl!
-  uploadFilesFieldFile(file: Upload!, fieldMetadataId: String!): FileWithSignedUrl!
-  uploadFilesFieldFileByUniversalIdentifier(file: Upload!, fieldMetadataUniversalIdentifier: String!): FileWithSignedUrl!
-  checkoutSession(recurringInterval: SubscriptionInterval!, plan: BillingPlanKey! = PRO, requirePaymentMethod: Boolean! = true, successUrlPath: String): BillingSession!
+  uploadFilesFieldFile(
+    file: Upload!
+    fieldMetadataId: String!
+  ): FileWithSignedUrl!
+  uploadFilesFieldFileByUniversalIdentifier(
+    file: Upload!
+    fieldMetadataUniversalIdentifier: String!
+  ): FileWithSignedUrl!
+  checkoutSession(
+    recurringInterval: SubscriptionInterval!
+    plan: BillingPlanKey! = PRO
+    requirePaymentMethod: Boolean! = true
+    successUrlPath: String
+  ): BillingSession!
   switchSubscriptionInterval: BillingUpdate!
   switchBillingPlan: BillingUpdate!
   cancelSwitchBillingPlan: BillingUpdate!
@@ -3091,21 +3378,36 @@ type Mutation {
   setMeteredSubscriptionPrice(priceId: String!): BillingUpdate!
   endSubscriptionTrialPeriod: BillingEndTrialPeriod!
   cancelSwitchMeteredPrice: BillingUpdate!
-  createNavigationMenuItem(input: CreateNavigationMenuItemInput!): NavigationMenuItem!
-  updateNavigationMenuItem(input: UpdateOneNavigationMenuItemInput!): NavigationMenuItem!
+  createNavigationMenuItem(
+    input: CreateNavigationMenuItemInput!
+  ): NavigationMenuItem!
+  updateNavigationMenuItem(
+    input: UpdateOneNavigationMenuItemInput!
+  ): NavigationMenuItem!
   deleteNavigationMenuItem(id: UUID!): NavigationMenuItem!
   createApiKey(input: CreateApiKeyInput!): ApiKey!
   updateApiKey(input: UpdateApiKeyInput!): ApiKey
   revokeApiKey(input: RevokeApiKeyInput!): ApiKey
   assignRoleToApiKey(apiKeyId: UUID!, roleId: UUID!): Boolean!
-  updateWorkspaceMemberRole(workspaceMemberId: UUID!, roleId: UUID!): WorkspaceMember!
+  updateWorkspaceMemberRole(
+    workspaceMemberId: UUID!
+    roleId: UUID!
+  ): WorkspaceMember!
   createOneRole(createRoleInput: CreateRoleInput!): Role!
   updateOneRole(updateRoleInput: UpdateRoleInput!): Role!
   deleteOneRole(roleId: UUID!): String!
-  upsertObjectPermissions(upsertObjectPermissionsInput: UpsertObjectPermissionsInput!): [ObjectPermission!]!
-  upsertPermissionFlags(upsertPermissionFlagsInput: UpsertPermissionFlagsInput!): [PermissionFlag!]!
-  upsertFieldPermissions(upsertFieldPermissionsInput: UpsertFieldPermissionsInput!): [FieldPermission!]!
-  upsertRowLevelPermissionPredicates(input: UpsertRowLevelPermissionPredicatesInput!): UpsertRowLevelPermissionPredicatesResult!
+  upsertObjectPermissions(
+    upsertObjectPermissionsInput: UpsertObjectPermissionsInput!
+  ): [ObjectPermission!]!
+  upsertPermissionFlags(
+    upsertPermissionFlagsInput: UpsertPermissionFlagsInput!
+  ): [PermissionFlag!]!
+  upsertFieldPermissions(
+    upsertFieldPermissionsInput: UpsertFieldPermissionsInput!
+  ): [FieldPermission!]!
+  upsertRowLevelPermissionPredicates(
+    input: UpsertRowLevelPermissionPredicatesInput!
+  ): UpsertRowLevelPermissionPredicatesResult!
   assignRoleToAgent(agentId: UUID!, roleId: UUID!): Boolean!
   removeRoleFromAgent(agentId: UUID!): Boolean!
   skipSyncEmailOnboardingStep: OnboardingStepSuccess!
@@ -3113,50 +3415,134 @@ type Mutation {
   deleteWorkspaceInvitation(appTokenId: String!): String!
   resendWorkspaceInvitation(appTokenId: String!): SendInvitations!
   sendInvitations(emails: [String!]!, roleId: UUID): SendInvitations!
-  createApprovedAccessDomain(input: CreateApprovedAccessDomainInput!): ApprovedAccessDomain!
+  createApprovedAccessDomain(
+    input: CreateApprovedAccessDomainInput!
+  ): ApprovedAccessDomain!
   deleteApprovedAccessDomain(input: DeleteApprovedAccessDomainInput!): Boolean!
-  validateApprovedAccessDomain(input: ValidateApprovedAccessDomainInput!): ApprovedAccessDomain!
+  validateApprovedAccessDomain(
+    input: ValidateApprovedAccessDomainInput!
+  ): ApprovedAccessDomain!
   createOneField(input: CreateOneFieldMetadataInput!): Field!
   updateOneField(input: UpdateOneFieldMetadataInput!): Field!
   deleteOneField(input: DeleteOneFieldInput!): Field!
   deleteUser: User!
   deleteUserFromWorkspace(workspaceMemberIdToDelete: String!): UserWorkspace!
   updateUserEmail(newEmail: String!, verifyEmailRedirectPath: String): Boolean!
-  resendEmailVerificationToken(email: String!, origin: String!): ResendEmailVerificationToken!
+  resendEmailVerificationToken(
+    email: String!
+    origin: String!
+  ): ResendEmailVerificationToken!
   activateWorkspace(data: ActivateWorkspaceInput!): Workspace!
   updateWorkspace(data: UpdateWorkspaceInput!): Workspace!
   deleteCurrentWorkspace: Workspace!
   checkCustomDomainValidRecords: DomainValidRecords
-  getAuthorizationUrlForSSO(input: GetAuthorizationUrlForSSOInput!): GetAuthorizationUrlForSSO!
-  getLoginTokenFromCredentials(email: String!, password: String!, captchaToken: String, locale: String, verifyEmailRedirectPath: String, origin: String!): LoginToken!
-  signIn(email: String!, password: String!, captchaToken: String, locale: String, verifyEmailRedirectPath: String): AvailableWorkspacesAndAccessTokens!
-  verifyEmailAndGetLoginToken(emailVerificationToken: String!, email: String!, captchaToken: String, origin: String!): VerifyEmailAndGetLoginToken!
-  verifyEmailAndGetWorkspaceAgnosticToken(emailVerificationToken: String!, email: String!, captchaToken: String): AvailableWorkspacesAndAccessTokens!
-  getAuthTokensFromOTP(otp: String!, loginToken: String!, captchaToken: String, origin: String!): AuthTokens!
-  signUp(email: String!, password: String!, captchaToken: String, locale: String, verifyEmailRedirectPath: String): AvailableWorkspacesAndAccessTokens!
-  signUpInWorkspace(email: String!, password: String!, workspaceId: UUID, workspaceInviteHash: String, workspacePersonalInviteToken: String, captchaToken: String, locale: String, verifyEmailRedirectPath: String): SignUp!
+  getAuthorizationUrlForSSO(
+    input: GetAuthorizationUrlForSSOInput!
+  ): GetAuthorizationUrlForSSO!
+  getLoginTokenFromCredentials(
+    email: String!
+    password: String!
+    captchaToken: String
+    locale: String
+    verifyEmailRedirectPath: String
+    origin: String!
+  ): LoginToken!
+  signIn(
+    email: String!
+    password: String!
+    captchaToken: String
+    locale: String
+    verifyEmailRedirectPath: String
+  ): AvailableWorkspacesAndAccessTokens!
+  verifyEmailAndGetLoginToken(
+    emailVerificationToken: String!
+    email: String!
+    captchaToken: String
+    origin: String!
+  ): VerifyEmailAndGetLoginToken!
+  verifyEmailAndGetWorkspaceAgnosticToken(
+    emailVerificationToken: String!
+    email: String!
+    captchaToken: String
+  ): AvailableWorkspacesAndAccessTokens!
+  getAuthTokensFromOTP(
+    otp: String!
+    loginToken: String!
+    captchaToken: String
+    origin: String!
+  ): AuthTokens!
+  signUp(
+    email: String!
+    password: String!
+    captchaToken: String
+    locale: String
+    verifyEmailRedirectPath: String
+  ): AvailableWorkspacesAndAccessTokens!
+  signUpInWorkspace(
+    email: String!
+    password: String!
+    workspaceId: UUID
+    workspaceInviteHash: String
+    workspacePersonalInviteToken: String
+    captchaToken: String
+    locale: String
+    verifyEmailRedirectPath: String
+  ): SignUp!
   signUpInNewWorkspace: SignUp!
   generateTransientToken: TransientToken!
   getAuthTokensFromLoginToken(loginToken: String!, origin: String!): AuthTokens!
-  authorizeApp(clientId: String!, codeChallenge: String, redirectUrl: String!, state: String, scope: String): AuthorizeApp!
+  authorizeApp(
+    clientId: String!
+    codeChallenge: String
+    redirectUrl: String!
+    state: String
+    scope: String
+  ): AuthorizeApp!
   renewToken(appToken: String!): AuthTokens!
   generateApiKeyToken(apiKeyId: UUID!, expiresAt: String!): ApiKeyToken!
-  emailPasswordResetLink(email: String!, workspaceId: UUID): EmailPasswordResetLink!
-  updatePasswordViaResetToken(passwordResetToken: String!, newPassword: String!): InvalidatePassword!
-  createApplicationRegistration(input: CreateApplicationRegistrationInput!): CreateApplicationRegistration!
-  updateApplicationRegistration(input: UpdateApplicationRegistrationInput!): ApplicationRegistration!
+  emailPasswordResetLink(
+    email: String!
+    workspaceId: UUID
+  ): EmailPasswordResetLink!
+  updatePasswordViaResetToken(
+    passwordResetToken: String!
+    newPassword: String!
+  ): InvalidatePassword!
+  createApplicationRegistration(
+    input: CreateApplicationRegistrationInput!
+  ): CreateApplicationRegistration!
+  updateApplicationRegistration(
+    input: UpdateApplicationRegistrationInput!
+  ): ApplicationRegistration!
   deleteApplicationRegistration(id: String!): Boolean!
   rotateApplicationRegistrationClientSecret(id: String!): RotateClientSecret!
-  createApplicationRegistrationVariable(input: CreateApplicationRegistrationVariableInput!): ApplicationRegistrationVariable!
-  updateApplicationRegistrationVariable(input: UpdateApplicationRegistrationVariableInput!): ApplicationRegistrationVariable!
+  createApplicationRegistrationVariable(
+    input: CreateApplicationRegistrationVariableInput!
+  ): ApplicationRegistrationVariable!
+  updateApplicationRegistrationVariable(
+    input: UpdateApplicationRegistrationVariableInput!
+  ): ApplicationRegistrationVariable!
   deleteApplicationRegistrationVariable(id: String!): Boolean!
   registerNpmPackage(packageName: String!): ApplicationRegistration!
-  uploadAppTarball(file: Upload!, universalIdentifier: String): ApplicationRegistration!
-  transferApplicationRegistrationOwnership(applicationRegistrationId: String!, targetWorkspaceSubdomain: String!): ApplicationRegistration!
-  initiateOTPProvisioning(loginToken: String!, origin: String!): InitiateTwoFactorAuthenticationProvisioning!
+  uploadAppTarball(
+    file: Upload!
+    universalIdentifier: String
+  ): ApplicationRegistration!
+  transferApplicationRegistrationOwnership(
+    applicationRegistrationId: String!
+    targetWorkspaceSubdomain: String!
+  ): ApplicationRegistration!
+  initiateOTPProvisioning(
+    loginToken: String!
+    origin: String!
+  ): InitiateTwoFactorAuthenticationProvisioning!
   initiateOTPProvisioningForAuthenticatedUser: InitiateTwoFactorAuthenticationProvisioning!
-  deleteTwoFactorAuthenticationMethod(twoFactorAuthenticationMethodId: UUID!): DeleteTwoFactorAuthenticationMethod!
-  verifyTwoFactorAuthenticationMethodForAuthenticatedUser(otp: String!): VerifyTwoFactorAuthenticationMethod!
+  deleteTwoFactorAuthenticationMethod(
+    twoFactorAuthenticationMethodId: UUID!
+  ): DeleteTwoFactorAuthenticationMethod!
+  verifyTwoFactorAuthenticationMethodForAuthenticatedUser(
+    otp: String!
+  ): VerifyTwoFactorAuthenticationMethod!
   createOIDCIdentityProvider(input: SetupOIDCSsoInput!): SetupSso!
   createSAMLIdentityProvider(input: SetupSAMLSsoInput!): SetupSso!
   deleteSSOIdentityProvider(input: DeleteSsoInput!): DeleteSso!
@@ -3175,10 +3561,21 @@ type Mutation {
   duplicateDashboard(id: UUID!): DuplicatedDashboard!
   impersonate(userId: UUID!, workspaceId: UUID!): Impersonate!
   startChannelSync(connectedAccountId: UUID!): ChannelSyncSuccess!
-  saveImapSmtpCaldavAccount(accountOwnerId: UUID!, handle: String!, connectionParameters: EmailAccountConnectionParameters!, id: UUID): ImapSmtpCaldavConnectionSuccess!
-  updateLabPublicFeatureFlag(input: UpdateLabPublicFeatureFlagInput!): FeatureFlag!
+  saveImapSmtpCaldavAccount(
+    accountOwnerId: UUID!
+    handle: String!
+    connectionParameters: EmailAccountConnectionParameters!
+    id: UUID
+  ): ImapSmtpCaldavConnectionSuccess!
+  updateLabPublicFeatureFlag(
+    input: UpdateLabPublicFeatureFlagInput!
+  ): FeatureFlag!
   userLookupAdminPanel(userIdentifier: String!): UserLookup!
-  updateWorkspaceFeatureFlag(workspaceId: UUID!, featureFlag: String!, value: Boolean!): Boolean!
+  updateWorkspaceFeatureFlag(
+    workspaceId: UUID!
+    featureFlag: String!
+    value: Boolean!
+  ): Boolean!
   setAdminAiModelEnabled(modelId: String!, enabled: Boolean!): Boolean!
   createDatabaseConfigVariable(key: String!, value: JSON!): Boolean!
   updateDatabaseConfigVariable(key: String!, value: JSON!): Boolean!
@@ -3190,7 +3587,10 @@ type Mutation {
   createPublicDomain(domain: String!): PublicDomain!
   deletePublicDomain(domain: String!): Boolean!
   checkPublicDomainValidRecords(domain: String!): DomainValidRecords
-  createEmailingDomain(domain: String!, driver: EmailingDomainDriver!): EmailingDomain!
+  createEmailingDomain(
+    domain: String!
+    driver: EmailingDomainDriver!
+  ): EmailingDomain!
   deleteEmailingDomain(id: String!): Boolean!
   verifyEmailingDomain(id: String!): EmailingDomain!
   createOneAppToken(input: CreateOneAppTokenInput!): AppToken!
@@ -3198,11 +3598,23 @@ type Mutation {
   installApplication(appRegistrationId: String!, version: String): Boolean!
   runWorkspaceMigration(workspaceMigration: WorkspaceMigrationInput!): Boolean!
   uninstallApplication(universalIdentifier: String!): Boolean!
-  updateOneApplicationVariable(key: String!, value: String!, applicationId: UUID!): Boolean!
+  updateOneApplicationVariable(
+    key: String!
+    value: String!
+    applicationId: UUID!
+  ): Boolean!
   generateApplicationToken(applicationId: UUID!): ApplicationTokenPair!
   syncApplication(manifest: JSON!): WorkspaceMigration!
-  uploadApplicationFile(file: Upload!, applicationUniversalIdentifier: String!, fileFolder: FileFolder!, filePath: String!): File!
-  upgradeApplication(appRegistrationId: String!, targetVersion: String!): Boolean!
+  uploadApplicationFile(
+    file: Upload!
+    applicationUniversalIdentifier: String!
+    fileFolder: FileFolder!
+    filePath: String!
+  ): File!
+  upgradeApplication(
+    appRegistrationId: String!
+    targetVersion: String!
+  ): Boolean!
   renewApplicationToken(applicationRefreshToken: String!): ApplicationTokenPair!
 }
 
@@ -3311,18 +3723,26 @@ input CreateLogicFunctionFromSourceInput {
 }
 
 input ExecuteOneLogicFunctionInput {
-  """Id of the logic function to execute"""
+  """
+  Id of the logic function to execute
+  """
   id: UUID!
 
-  """Payload in JSON format"""
+  """
+  Payload in JSON format
+  """
   payload: JSON!
 }
 
 input UpdateLogicFunctionFromSourceInput {
-  """Id of the logic function to update"""
+  """
+  Id of the logic function to update
+  """
   id: UUID!
 
-  """The logic function updates"""
+  """
+  The logic function updates
+  """
   update: UpdateLogicFunctionFromSourceInputUpdates!
 }
 
@@ -3341,7 +3761,9 @@ input UpdateLogicFunctionFromSourceInputUpdates {
 }
 
 input CreateOneObjectInput {
-  """The object to create"""
+  """
+  The object to create
+  """
   object: CreateObjectInput!
 }
 
@@ -3361,14 +3783,18 @@ input CreateObjectInput {
 }
 
 input DeleteOneObjectInput {
-  """The id of the record to delete."""
+  """
+  The id of the record to delete.
+  """
   id: UUID!
 }
 
 input UpdateOneObjectInput {
   update: UpdateObjectPayload!
 
-  """The id of the object to update"""
+  """
+  The id of the object to update
+  """
   id: UUID!
 }
 
@@ -3387,10 +3813,14 @@ input UpdateObjectPayload {
 }
 
 input UpdateViewFieldInput {
-  """The id of the view field to update"""
+  """
+  The id of the view field to update
+  """
   id: UUID!
 
-  """The view field to update"""
+  """
+  The view field to update
+  """
   update: UpdateViewFieldInputUpdates!
 }
 
@@ -3414,12 +3844,16 @@ input CreateViewFieldInput {
 }
 
 input DeleteViewFieldInput {
-  """The id of the view field to delete."""
+  """
+  The id of the view field to delete.
+  """
   id: UUID!
 }
 
 input DestroyViewFieldInput {
-  """The id of the view field to destroy."""
+  """
+  The id of the view field to destroy.
+  """
   id: UUID!
 }
 
@@ -3469,10 +3903,14 @@ input CreateViewSortInput {
 }
 
 input UpdateViewSortInput {
-  """The id of the view sort to update"""
+  """
+  The id of the view sort to update
+  """
   id: UUID!
 
-  """The view sort to update"""
+  """
+  The view sort to update
+  """
   update: UpdateViewSortInputUpdates!
 }
 
@@ -3481,12 +3919,16 @@ input UpdateViewSortInputUpdates {
 }
 
 input DeleteViewSortInput {
-  """The id of the view sort to delete."""
+  """
+  The id of the view sort to delete.
+  """
   id: UUID!
 }
 
 input DestroyViewSortInput {
-  """The id of the view sort to destroy."""
+  """
+  The id of the view sort to destroy.
+  """
   id: UUID!
 }
 
@@ -3499,10 +3941,14 @@ input CreateViewGroupInput {
 }
 
 input UpdateViewGroupInput {
-  """The id of the view group to update"""
+  """
+  The id of the view group to update
+  """
   id: UUID!
 
-  """The view group to update"""
+  """
+  The view group to update
+  """
   update: UpdateViewGroupInputUpdates!
 }
 
@@ -3514,12 +3960,16 @@ input UpdateViewGroupInputUpdates {
 }
 
 input DeleteViewGroupInput {
-  """The id of the view group to delete."""
+  """
+  The id of the view group to delete.
+  """
   id: UUID!
 }
 
 input DestroyViewGroupInput {
-  """The id of the view group to destroy."""
+  """
+  The id of the view group to destroy.
+  """
   id: UUID!
 }
 
@@ -3551,10 +4001,14 @@ input CreateViewFilterInput {
 }
 
 input UpdateViewFilterInput {
-  """The id of the view filter to update"""
+  """
+  The id of the view filter to update
+  """
   id: UUID!
 
-  """The view filter to update"""
+  """
+  The view filter to update
+  """
   update: UpdateViewFilterInputUpdates!
 }
 
@@ -3568,20 +4022,28 @@ input UpdateViewFilterInputUpdates {
 }
 
 input DeleteViewFilterInput {
-  """The id of the view filter to delete."""
+  """
+  The id of the view filter to delete.
+  """
   id: UUID!
 }
 
 input DestroyViewFilterInput {
-  """The id of the view filter to destroy."""
+  """
+  The id of the view filter to destroy.
+  """
   id: UUID!
 }
 
 input UpdateViewFieldGroupInput {
-  """The id of the view field group to update"""
+  """
+  The id of the view field group to update
+  """
   id: UUID!
 
-  """The view field group to update"""
+  """
+  The view field group to update
+  """
   update: UpdateViewFieldGroupInputUpdates!
 }
 
@@ -3601,17 +4063,23 @@ input CreateViewFieldGroupInput {
 }
 
 input DeleteViewFieldGroupInput {
-  """The id of the view field group to delete."""
+  """
+  The id of the view field group to delete.
+  """
   id: UUID!
 }
 
 input DestroyViewFieldGroupInput {
-  """The id of the view field group to destroy."""
+  """
+  The id of the view field group to destroy.
+  """
   id: UUID!
 }
 
 input UpsertFieldsWidgetInput {
-  """The id of the fields widget whose groups and fields to upsert"""
+  """
+  The id of the fields widget whose groups and fields to upsert
+  """
   widgetId: UUID!
 
   """
@@ -3634,7 +4102,9 @@ input UpsertFieldsWidgetGroupInput {
 }
 
 input UpsertFieldsWidgetFieldInput {
-  """The id of the view field"""
+  """
+  The id of the view field
+  """
   viewFieldId: UUID!
   isVisible: Boolean!
   position: Float!
@@ -3675,10 +4145,14 @@ input CreateFrontComponentInput {
 }
 
 input UpdateFrontComponentInput {
-  """The id of the front component to update"""
+  """
+  The id of the front component to update
+  """
   id: UUID!
 
-  """The front component fields to update"""
+  """
+  The front component fields to update
+  """
   update: UpdateFrontComponentInputUpdates!
 }
 
@@ -3714,7 +4188,9 @@ input UpdateAgentInput {
   evaluationInputs: [String!]
 }
 
-"""The `Upload` scalar type represents a file upload."""
+"""
+The `Upload` scalar type represents a file upload.
+"""
 scalar Upload
 
 input CreateNavigationMenuItemInput {
@@ -3731,10 +4207,14 @@ input CreateNavigationMenuItemInput {
 }
 
 input UpdateOneNavigationMenuItemInput {
-  """The id of the record to update"""
+  """
+  The id of the record to update
+  """
   id: UUID!
 
-  """The record to update"""
+  """
+  The record to update
+  """
   update: UpdateNavigationMenuItemInput!
 }
 
@@ -3784,7 +4264,9 @@ input CreateRoleInput {
 input UpdateRoleInput {
   update: UpdateRolePayload!
 
-  """The id of the role to update"""
+  """
+  The id of the role to update
+  """
   id: UUID!
 }
 
@@ -3875,7 +4357,9 @@ input ValidateApprovedAccessDomainInput {
 }
 
 input CreateOneFieldMetadataInput {
-  """The record to create"""
+  """
+  The record to create
+  """
   field: CreateFieldInput!
 }
 
@@ -3902,10 +4386,14 @@ input CreateFieldInput {
 }
 
 input UpdateOneFieldMetadataInput {
-  """The id of the record to update"""
+  """
+  The id of the record to update
+  """
   id: UUID!
 
-  """The record to update"""
+  """
+  The record to update
+  """
   update: UpdateFieldInput!
 }
 
@@ -3928,7 +4416,9 @@ input UpdateFieldInput {
 }
 
 input DeleteOneFieldInput {
-  """The id of the field to delete."""
+  """
+  The id of the field to delete.
+  """
   id: UUID!
 }
 
@@ -4050,10 +4540,14 @@ input CreateWebhookInput {
 }
 
 input UpdateWebhookInput {
-  """The id of the webhook to update"""
+  """
+  The id of the webhook to update
+  """
   id: UUID!
 
-  """The webhook fields to update"""
+  """
+  The webhook fields to update
+  """
   update: UpdateWebhookInputUpdates!
 }
 
@@ -4103,7 +4597,9 @@ input UpdateLabPublicFeatureFlagInput {
 }
 
 input CreateOneAppTokenInput {
-  """The record to create"""
+  """
+  The record to create
+  """
   appToken: CreateAppTokenInput!
 }
 

@@ -11,10 +11,7 @@ import { CLIENTS_GENERATED_DIR } from '@/cli/constants/clients-dir';
 import { OUTPUT_DIR, API_CLIENT_DIR } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
 
-const API_CLIENT_FILES = [
-  'core/types.ts',
-  'core/schema.ts',
-];
+const API_CLIENT_FILES = ['core/types.ts', 'core/schema.ts'];
 
 export type UploadFilesOrchestratorStepOutput = {
   fileUploader: FileUploader | null;

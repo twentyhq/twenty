@@ -96,7 +96,12 @@ export class ClientService {
     appPath: string;
     authToken?: string;
   }): Promise<void> {
-    const generatedDir = join(appPath, 'node_modules', 'twenty-sdk', CLIENTS_GENERATED_DIR);
+    const generatedDir = join(
+      appPath,
+      'node_modules',
+      'twenty-sdk',
+      CLIENTS_GENERATED_DIR,
+    );
     const coreOutputPath = join(generatedDir, 'core');
     const tempPath = `${coreOutputPath}.tmp`;
 
@@ -132,8 +137,7 @@ export class ClientService {
   }: {
     outputPath: string;
   }): Promise<void> {
-    const metadataSchemaResponse =
-      await this.apiService.getMetadataSchema();
+    const metadataSchemaResponse = await this.apiService.getMetadataSchema();
 
     if (!metadataSchemaResponse.success) {
       throw new Error(
