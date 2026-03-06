@@ -19,11 +19,11 @@ const StyledTitleLabel = styled.div`
 
 const StyledChevronWrapper = styled.div<{ isExpanded: boolean }>`
   color: ${themeCssVariables.font.color.tertiary};
+  display: flex;
   transform: ${({ isExpanded }) =>
     isExpanded ? 'rotate(180deg)' : 'rotate(0deg)'};
   transition: transform
     calc(${themeCssVariables.animation.duration.normal} * 1s) ease;
-  display: flex;
 `;
 
 type FieldsWidgetGroupContainerProps = {

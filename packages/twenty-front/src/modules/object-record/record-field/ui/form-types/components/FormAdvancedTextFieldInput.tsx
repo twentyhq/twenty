@@ -27,29 +27,29 @@ const StyledAdvancedTextFieldContainerWrapper = styled.div`
 `;
 
 const StyledAdvancedTextFieldFieldContainer = styled.div`
-  position: relative;
   display: flex;
   flex-direction: column;
-  gap: ${themeCssVariables.spacing[2]};
   flex-grow: 1;
+  gap: ${themeCssVariables.spacing[2]};
+  position: relative;
 `;
 
 const StyledAdvancedTextFieldInnerContainer = styled.div`
-  flex-grow: 1;
   background-color: ${themeCssVariables.background.transparent.lighter};
   border: 1px solid ${themeCssVariables.border.color.medium};
   border-radius: ${themeCssVariables.border.radius.sm};
-
   box-sizing: border-box;
+
   display: flex;
+  flex-grow: 1;
   overflow: auto;
   width: 100%;
 `;
 
 const StyledEditorActionButtonContainer = styled.div`
   position: absolute;
-  top: ${themeCssVariables.spacing[0]};
   right: 30px;
+  top: ${themeCssVariables.spacing[0]};
   z-index: 1;
 `;
 
@@ -59,8 +59,8 @@ const StyledFullScreenEditorContainer = styled.div`
   border-radius: ${themeCssVariables.border.radius.sm};
   flex: 1;
   min-height: 0;
-  padding: ${themeCssVariables.spacing[2]};
   overflow-y: auto;
+  padding: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledFullScreenButtonContainerWrapper = styled.div`
@@ -70,8 +70,8 @@ const StyledFullScreenButtonContainerWrapper = styled.div`
     padding: ${themeCssVariables.spacing[2]};
 
     :hover {
-      cursor: pointer;
       background-color: ${themeCssVariables.background.transparent.light};
+      cursor: pointer;
     }
   }
 `;

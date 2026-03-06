@@ -32,8 +32,8 @@ const StyledContainer = styled.div`
 `;
 
 const StyledTrendIconContainer = styled.div`
-  display: flex;
   align-items: center;
+  display: flex;
   justify-content: center;
 `;
 

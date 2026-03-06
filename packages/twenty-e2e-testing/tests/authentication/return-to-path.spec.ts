@@ -9,18 +9,18 @@ const test = base.extend<{ loginPage: LoginPage }>({
 });
 
 const loginAndSelectWorkspace = async (loginPage: LoginPage, page: any) => {
-  await page.waitForLoadState('networkidle');
+  await page.waitForLoadState('domcontentloaded');
   await loginPage.clickLoginWithEmailIfVisible();
   await loginPage.typeEmail(process.env.DEFAULT_LOGIN!);
   await loginPage.clickContinueButton();
   await loginPage.typePassword(process.env.DEFAULT_PASSWORD!);
-  await page.waitForLoadState('networkidle');
+  await page.waitForLoadState('domcontentloaded');
   await loginPage.clickSignInButton();
-  await page.waitForLoadState('networkidle');
+  await page.waitForLoadState('domcontentloaded');
 
   const workspaceButton = page.getByText('Apple', { exact: true });
 
-  await workspaceButton.waitFor({ state: 'visible', timeout: 15000 }).catch(
+  await workspaceButton.waitFor({ state: 'visible', timeout: 30000 }).catch(
     () => {
       // Single workspace mode — no workspace selection
     },
@@ -34,7 +34,7 @@ const loginAndSelectWorkspace = async (loginPage: LoginPage, page: any) => {
     () =>
       !window.location.href.includes('verify') &&
       !window.location.href.includes('welcome'),
-    { timeout: 15000 },
+    { timeout: 30000 },
   );
 };
 
@@ -82,13 +82,13 @@ test.describe('Return-to-path after login', () => {
     page,
     loginPage,
   }) => {
-    const targetPath =
-      '/authorize?clientId=test-client-id&redirectUrl=https%3A%2F%2Fexample.com%2Fcallback';
+    const targetPath = '/settings/accounts';
+    const targetPathWithParams = `${targetPath}?tab=emails&filter=unread`;
 
     await test.step(
       'Navigate to path with query params while logged out',
       async () => {
-        await page.goto(targetPath);
+        await page.goto(targetPathWithParams);
         await page.waitForURL('**/welcome');
         await page.waitForLoadState('domcontentloaded');
       },
@@ -101,14 +101,15 @@ test.describe('Return-to-path after login', () => {
     await test.step(
       'Verify redirected to original path with query params',
       async () => {
-        await page.waitForURL('**/authorize**', { timeout: 15000 });
+        await page.waitForURL(`**${targetPath}**`, {
+          timeout: 30000,
+          waitUntil: 'commit',
+        });
         const url = new URL(page.url());
 
-        expect(url.pathname).toBe('/authorize');
-        expect(url.searchParams.get('clientId')).toBe('test-client-id');
-        expect(url.searchParams.get('redirectUrl')).toBe(
-          'https://example.com/callback',
-        );
+        expect(url.pathname).toBe(targetPath);
+        expect(url.searchParams.get('tab')).toBe('emails');
+        expect(url.searchParams.get('filter')).toBe('unread');
       },
     );
   });

@@ -7,23 +7,23 @@ import { MessageChannelVisibility } from '~/generated/graphql';
 
 const StyledContainer = styled.div<{ isCompact?: boolean }>`
   align-items: center;
+  background: ${themeCssVariables.background.transparent.lighter};
+  border: 1px solid ${themeCssVariables.border.color.light};
+  border-radius: 4px;
+  color: ${themeCssVariables.font.color.tertiary};
   display: flex;
+  flex: 1;
   flex: ${({ isCompact }) => (isCompact ? '0 0 auto' : '1 0 0')};
+  font-size: ${themeCssVariables.font.size.sm};
+
+  font-weight: ${themeCssVariables.font.weight.regular};
   gap: ${themeCssVariables.spacing[1]};
   height: 20px;
+
   margin-left: auto;
-  width: ${({ isCompact }) => (isCompact ? 'auto' : '100%')};
   min-width: ${themeCssVariables.spacing[21]};
   padding: ${themeCssVariables.spacing[0]} ${themeCssVariables.spacing[1]};
-
-  border-radius: 4px;
-  border: 1px solid ${themeCssVariables.border.color.light};
-  background: ${themeCssVariables.background.transparent.lighter};
-
-  color: ${themeCssVariables.font.color.tertiary};
-  font-weight: ${themeCssVariables.font.weight.regular};
-  font-size: ${themeCssVariables.font.size.sm};
-  flex: 1;
+  width: ${({ isCompact }) => (isCompact ? 'auto' : '100%')};
 `;
 
 type EmailThreadNotSharedProps = {

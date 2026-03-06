@@ -66,60 +66,60 @@ const cloneColumnFieldWidthRules = Array.from(
 
 const StyledRowDraggableCloneCSSBridge = styled.div`
   div.table-cell:nth-of-type(1) {
-    position: sticky;
     left: 0px;
+    position: sticky;
     z-index: ${TABLE_Z_INDEX.cell.withGroups.sticky};
   }
 
   div.table-cell:nth-of-type(2) {
-    position: sticky;
     left: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px;
+    position: sticky;
     z-index: ${TABLE_Z_INDEX.cell.withoutGroups.sticky};
   }
 
   div.table-cell-0-0 {
-    position: sticky;
     left: ${`${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH + RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px`};
+    position: sticky;
 
     ${HorizontalScrollBoxShadowCSS}
   }
 
   div.table-cell:nth-of-type(3) {
-    position: sticky;
     left: ${`${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH + RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px`};
+    position: sticky;
     z-index: ${TABLE_Z_INDEX.cell.withoutGroups.sticky};
 
     ${HorizontalScrollBoxShadowCSS}
   }
 
   div.${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH_CLASS_NAME} {
-    width: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px;
-    min-width: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px;
     max-width: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px;
+    min-width: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px;
+    width: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px;
   }
 
   div.${RECORD_TABLE_COLUMN_CHECKBOX_WIDTH_CLASS_NAME} {
-    width: ${RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px;
-    min-width: ${RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px;
     max-width: ${RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px;
+    min-width: ${RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px;
+    width: ${RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px;
   }
 
   div.${RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH_CLASS_NAME} {
-    width: ${RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH}px;
-    min-width: ${RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH}px;
     max-width: ${RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH}px;
+    min-width: ${RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH}px;
+    width: ${RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH}px;
   }
 
   ${cloneColumnFieldWidthRules}
 
   div.${RECORD_TABLE_COLUMN_LAST_EMPTY_COLUMN_WIDTH_CLASS_NAME} {
-    width: var(${RECORD_TABLE_COLUMN_LAST_EMPTY_COLUMN_WIDTH_VARIABLE_NAME});
-    min-width: var(
-      ${RECORD_TABLE_COLUMN_LAST_EMPTY_COLUMN_WIDTH_VARIABLE_NAME}
-    );
     max-width: var(
       ${RECORD_TABLE_COLUMN_LAST_EMPTY_COLUMN_WIDTH_VARIABLE_NAME}
     );
+    min-width: var(
+      ${RECORD_TABLE_COLUMN_LAST_EMPTY_COLUMN_WIDTH_VARIABLE_NAME}
+    );
+    width: var(${RECORD_TABLE_COLUMN_LAST_EMPTY_COLUMN_WIDTH_VARIABLE_NAME});
   }
 `;
 

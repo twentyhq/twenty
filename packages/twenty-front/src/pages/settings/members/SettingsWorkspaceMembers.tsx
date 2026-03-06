@@ -76,8 +76,8 @@ const StyledTableContainer = styled.div<{ hasMoreRows?: boolean }>`
 `;
 
 const StyledIconWrapper = styled.div`
-  display: flex;
   align-items: center;
+  display: flex;
   margin-right: ${themeCssVariables.spacing[2]};
 `;
 

@@ -33,9 +33,9 @@ import {
 } from './SettingsToolTableRow';
 
 const StyledSearchAndFilterContainer = styled.div`
+  align-items: center;
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
-  align-items: center;
   padding-bottom: ${themeCssVariables.spacing[2]};
 `;
 

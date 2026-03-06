@@ -13,8 +13,8 @@ const StyledResizeHandler = styled.div<{
 }>`
   bottom: 0;
   cursor: col-resize;
-  position: absolute;
   left: ${({ position }) => (position === 'left' ? '-1px' : 'auto')};
+  position: absolute;
   right: ${({ position }) => (position === 'right' ? '-1px' : 'auto')};
   top: 0;
   width: 10px;

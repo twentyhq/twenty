@@ -10,8 +10,8 @@ const StyledSkeletonContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 6px;
-  min-width: 196px;
   max-width: 196px;
+  min-width: 196px;
 `;
 
 export const MainNavigationDrawerItemsSkeletonLoader = ({

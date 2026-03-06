@@ -10,8 +10,6 @@ const StyledWorkflowDiagramEdgeLabelContainer = styled.div<{
   centerY?: number;
 }>`
   position: absolute;
-  width: fit-content;
-
   transform: ${({ position, sourceX, sourceY, centerX, centerY }) => {
     if (isDefined(centerX) && isDefined(centerY)) {
       return `translate(-50%, -50%) translate(${centerX}px, ${centerY}px)`;
@@ -25,6 +23,8 @@ const StyledWorkflowDiagramEdgeLabelContainer = styled.div<{
         return 'none';
     }
   }};
+
+  width: fit-content;
 `;
 
 export { StyledWorkflowDiagramEdgeLabelContainer as WorkflowDiagramEdgeLabelContainer };

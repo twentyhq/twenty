@@ -21,12 +21,6 @@ const StyledContainer = styled.div<{
   isOtherMonth: boolean;
   isDayOfWeekend: boolean;
 }>`
-  display: flex;
-  width: calc(100% / 7);
-  flex-direction: column;
-  min-height: 122px;
-  padding: ${themeCssVariables.spacing[1]};
-  min-width: 0;
   background: ${({ isOtherMonth, isDayOfWeekend }) =>
     isOtherMonth || isDayOfWeekend
       ? themeCssVariables.background.secondary
@@ -35,6 +29,12 @@ const StyledContainer = styled.div<{
     isOtherMonth
       ? themeCssVariables.font.color.light
       : themeCssVariables.font.color.primary};
+  display: flex;
+  flex-direction: column;
+  min-height: 122px;
+  min-width: 0;
+  padding: ${themeCssVariables.spacing[1]};
+  width: calc(100% / 7);
 
   &:not(:last-child) {
     border-right: 1px solid ${themeCssVariables.border.color.light};
@@ -60,20 +60,20 @@ const StyledDayHeaderDayContainer = styled.div`
 
 const StyledDayHeaderDay = styled.span<{ isToday: boolean }>`
   align-items: center;
-  display: flex;
-  font-size: ${themeCssVariables.font.size.sm};
-  justify-content: center;
-  line-height: 140%;
-  width: 20px;
-  border-radius: ${({ isToday }) => (isToday ? '4px' : '0')};
   background: ${({ isToday }) =>
     isToday ? themeCssVariables.color.blue : 'transparent'};
+  border-radius: ${({ isToday }) => (isToday ? '4px' : '0')};
   color: ${({ isToday }) =>
     isToday
       ? themeCssVariables.font.color.inverted
       : themeCssVariables.font.color.primary};
+  display: flex;
+  font-size: ${themeCssVariables.font.size.sm};
   font-weight: ${({ isToday }) =>
     isToday ? themeCssVariables.font.weight.medium : 'normal'};
+  justify-content: center;
+  line-height: 140%;
+  width: 20px;
 `;
 
 const StyledCardsContainer = styled.div<{ isDraggedOver?: boolean }>`

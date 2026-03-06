@@ -10,7 +10,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.event_name == 'merge_group' && github.event.merge_group.base_ref || github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -54,6 +54,18 @@ jobs:
       - name: Install dependencies
         uses: ./.github/actions/yarn-install
 
+      - name: Restore Nx build cache
+        uses: actions/cache/restore@v4
+        with:
+          key: v4-e2e-build-${{ github.ref_name }}-${{ github.sha }}
+          restore-keys: |
+            v4-e2e-build-${{ github.ref_name }}-
+            v4-e2e-build-main-
+          path: |
+            .nx
+            node_modules/.cache
+            packages/*/node_modules/.cache
+
       - name: Build twenty-shared
         run: npx nx build twenty-shared
 
@@ -70,6 +82,16 @@ jobs:
 
       - name: Build server
         run: npx nx build twenty-server
+
+      - name: Save Nx build cache
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          key: v4-e2e-build-${{ github.ref_name }}-${{ github.sha }}
+          path: |
+            .nx
+            node_modules/.cache
+            packages/*/node_modules/.cache
 
       - name: Create and setup database
         run: |

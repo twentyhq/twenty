@@ -4,9 +4,9 @@ import { type IconComponent } from 'twenty-ui/display';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div<{ Variant: Variants }>`
+  align-items: center;
   color: ${({ Variant }) =>
     Variant === 'danger' ? themeCssVariables.color.red : 'inherit'};
-  align-items: center;
   display: flex;
   flex-direction: row;
   gap: ${themeCssVariables.spacing[2]};

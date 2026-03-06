@@ -29,8 +29,8 @@ const StyledFiltersContainer = styled.div`
 
 const StyledFilterItem = styled.div`
   flex: 1;
-  min-width: 200px;
   max-width: 300px;
+  min-width: 200px;
 `;
 
 export const EventLogFilters = ({

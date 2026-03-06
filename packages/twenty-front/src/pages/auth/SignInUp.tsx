@@ -42,9 +42,9 @@ const StyledLoaderContainer = styled.div`
   align-items: center;
   display: flex;
   justify-content: center;
+  margin-bottom: ${themeCssVariables.spacing[8]};
   margin-top: ${themeCssVariables.spacing[8]};
   width: 100%;
-  margin-bottom: ${themeCssVariables.spacing[8]};
 `;
 
 const StandardContent = ({
