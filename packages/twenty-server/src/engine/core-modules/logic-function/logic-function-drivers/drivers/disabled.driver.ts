@@ -13,6 +13,14 @@ export class DisabledDriver implements LogicFunctionDriver {
     // No-op when disabled
   }
 
+  async createLayerIfNotExist(): Promise<void> {
+    // No-op when disabled
+  }
+
+  async build(): Promise<void> {
+    // No-op when disabled
+  }
+
   async execute(): Promise<LogicFunctionExecuteResult> {
     throw new LogicFunctionException(
       'Logic function execution is disabled. Set LOGIC_FUNCTION_TYPE to LOCAL or LAMBDA to enable.',

@@ -1,5 +1,4 @@
 import * as fs from 'fs/promises';
-import { join } from 'path';
 
 import {
   CreateFunctionCommand,
@@ -13,8 +12,6 @@ import {
   ListLayerVersionsCommand,
   type ListLayerVersionsCommandInput,
   LogType,
-  PublishLayerVersionCommand,
-  type PublishLayerVersionCommandInput,
   ResourceNotFoundException,
   waitUntilFunctionUpdatedV2,
 } from '@aws-sdk/client-lambda';
@@ -28,6 +25,7 @@ import {
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { copyBuilder } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-builder';
 import { copyExecutor } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-executor';
 import { createZipFile } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/create-zip-file';
 import { TemporaryDirManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/temporary-dir-manager';
@@ -38,12 +36,14 @@ import {
   LogicFunctionExceptionCode,
 } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
-import { copyYarnEngineAndBuildDependencies } from 'src/engine/core-modules/application/application-package/utils/copy-yarn-engine-and-build-dependencies';
 import { type LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
 import { callWithTimeout } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/call-with-timeout';
 
 const UPDATE_FUNCTION_DURATION_TIMEOUT_IN_SECONDS = 60;
 const CREDENTIALS_DURATION_IN_SECONDS = 60 * 60; // 1h
+const BUILDER_LAMBDA_TIMEOUT_SECONDS = 300;
+const BUILDER_LAMBDA_MEMORY_MB = 1024;
+const DEFAULT_BUILDER_FUNCTION_NAME = 'twenty-package-sandbox-builder';
 
 type LambdaDriverExecutorPayload = {
   code: string;
@@ -52,11 +52,24 @@ type LambdaDriverExecutorPayload = {
   handlerName: string;
 };
 
+export type BuilderLambdaPayload = {
+  action: 'createLayer';
+  layerName: string;
+  packageJson: string;
+  yarnLock: string;
+  compatibleRuntimes: string[];
+};
+
+export type BuilderLambdaResult = {
+  layerVersionArn: string;
+};
+
 export interface LambdaDriverOptions extends LambdaClientConfig {
   logicFunctionResourceService: LogicFunctionResourceService;
   region: string;
   lambdaRole: string;
   subhostingRole?: string;
+  builderFunctionName?: string;
 }
 
 export class LambdaDriver implements LogicFunctionDriver {
@@ -121,11 +134,11 @@ export class LambdaDriver implements LogicFunctionDriver {
   }
 
   private async waitFunctionUpdates(
-    flatLogicFunction: FlatLogicFunction,
+    functionName: string,
     maxWaitTime: number = UPDATE_FUNCTION_DURATION_TIMEOUT_IN_SECONDS,
   ) {
     const waitParams = {
-      FunctionName: flatLogicFunction.id,
+      FunctionName: functionName,
     };
 
     await waitUntilFunctionUpdatedV2(
@@ -138,7 +151,157 @@ export class LambdaDriver implements LogicFunctionDriver {
     return flatApplication.yarnLockChecksum ?? 'default';
   }
 
-  private async createLayerIfNotExists({
+  private getBuilderFunctionName() {
+    return this.options.builderFunctionName ?? DEFAULT_BUILDER_FUNCTION_NAME;
+  }
+
+  private async ensureBuilderLambdaExists(): Promise<void> {
+    const builderFunctionName = this.getBuilderFunctionName();
+    const lambdaClient = await this.getLambdaClient();
+
+    try {
+      await lambdaClient.send(
+        new GetFunctionCommand({ FunctionName: builderFunctionName }),
+      );
+
+      return;
+    } catch (error) {
+      if (!(error instanceof ResourceNotFoundException)) {
+        throw error;
+      }
+    }
+
+    const temporaryDirManager = new TemporaryDirManager();
+    const { sourceTemporaryDir, lambdaZipPath } =
+      await temporaryDirManager.init();
+
+    await copyBuilder(sourceTemporaryDir);
+
+    await createZipFile(sourceTemporaryDir, lambdaZipPath);
+
+    const params: CreateFunctionCommandInput = {
+      Code: {
+        ZipFile: await fs.readFile(lambdaZipPath),
+      },
+      FunctionName: builderFunctionName,
+      Handler: 'index.handler',
+      Role: this.options.lambdaRole,
+      Runtime: LogicFunctionRuntime.NODE22,
+      Timeout: BUILDER_LAMBDA_TIMEOUT_SECONDS,
+      MemorySize: BUILDER_LAMBDA_MEMORY_MB,
+    };
+
+    await lambdaClient.send(new CreateFunctionCommand(params));
+
+    await temporaryDirManager.clean();
+
+    await this.waitFunctionUpdates(builderFunctionName);
+  }
+
+  private async invokeBuilderLambda(
+    payload: BuilderLambdaPayload,
+  ): Promise<BuilderLambdaResult> {
+    const lambdaClient = await this.getLambdaClient();
+
+    const result = await callWithTimeout({
+      callback: () =>
+        lambdaClient.send(
+          new InvokeCommand({
+            FunctionName: this.getBuilderFunctionName(),
+            Payload: JSON.stringify(payload),
+            LogType: LogType.Tail,
+          }),
+        ),
+      timeoutMs: BUILDER_LAMBDA_TIMEOUT_SECONDS * 1000,
+    });
+
+    const parsedResult = result.Payload
+      ? JSON.parse(result.Payload.transformToString())
+      : {};
+
+    if (result.FunctionError) {
+      throw new LogicFunctionException(
+        `Builder Lambda failed: ${JSON.stringify(parsedResult)}`,
+        LogicFunctionExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
+      );
+    }
+
+    return parsedResult as BuilderLambdaResult;
+  }
+
+  private async getExistingLayerArn(
+    layerName: string,
+  ): Promise<string | undefined> {
+    const listLayerParams: ListLayerVersionsCommandInput = {
+      LayerName: layerName,
+      MaxItems: 1,
+    };
+
+    const listLayerResult = await (
+      await this.getLambdaClient()
+    ).send(new ListLayerVersionsCommand(listLayerParams));
+
+    return listLayerResult.LayerVersions?.[0]?.LayerVersionArn;
+  }
+
+  private async getDependencyContents(
+    flatApplication: FlatApplication,
+    applicationUniversalIdentifier: string,
+  ): Promise<{ packageJson: string; yarnLock: string }> {
+    const temporaryDirManager = new TemporaryDirManager();
+    const { sourceTemporaryDir } = await temporaryDirManager.init();
+
+    await this.logicFunctionResourceService.copyDependenciesInMemory({
+      applicationUniversalIdentifier,
+      workspaceId: flatApplication.workspaceId,
+      inMemoryFolderPath: sourceTemporaryDir,
+    });
+
+    const [packageJson, yarnLock] = await Promise.all([
+      fs.readFile(`${sourceTemporaryDir}/package.json`, 'utf-8'),
+      fs.readFile(`${sourceTemporaryDir}/yarn.lock`, 'utf-8'),
+    ]);
+
+    await temporaryDirManager.clean();
+
+    return { packageJson, yarnLock };
+  }
+
+  async createLayerIfNotExist({
+    flatApplication,
+    applicationUniversalIdentifier,
+  }: {
+    flatApplication: FlatApplication;
+    applicationUniversalIdentifier: string;
+  }): Promise<void> {
+    const layerName = this.getLayerName(flatApplication);
+
+    const existingArn = await this.getExistingLayerArn(layerName);
+
+    if (isDefined(existingArn)) {
+      return;
+    }
+
+    const { packageJson, yarnLock } = await this.getDependencyContents(
+      flatApplication,
+      applicationUniversalIdentifier,
+    );
+
+    await this.ensureBuilderLambdaExists();
+
+    await this.invokeBuilderLambda({
+      action: 'createLayer',
+      layerName,
+      packageJson,
+      yarnLock,
+      compatibleRuntimes: [
+        LogicFunctionRuntime.NODE18,
+        LogicFunctionRuntime.NODE22,
+      ],
+    });
+  }
+
+  private async getLayerArn({
     flatApplication,
     applicationUniversalIdentifier,
   }: {
@@ -147,58 +310,26 @@ export class LambdaDriver implements LogicFunctionDriver {
   }): Promise<string> {
     const layerName = this.getLayerName(flatApplication);
 
-    const listLayerParams: ListLayerVersionsCommandInput = {
-      LayerName: layerName,
-      MaxItems: 1,
-    };
+    const existingArn = await this.getExistingLayerArn(layerName);
 
-    const listLayerCommand = new ListLayerVersionsCommand(listLayerParams);
-
-    const listLayerResult = await (
-      await this.getLambdaClient()
-    ).send(listLayerCommand);
-
-    if (isDefined(listLayerResult.LayerVersions?.[0]?.LayerVersionArn)) {
-      return listLayerResult.LayerVersions[0].LayerVersionArn;
+    if (isDefined(existingArn)) {
+      return existingArn;
     }
 
-    const temporaryDirManager = new TemporaryDirManager();
-    const { sourceTemporaryDir, lambdaZipPath } =
-      await temporaryDirManager.init();
-
-    const nodeDependenciesFolder = join(sourceTemporaryDir, 'nodejs');
-
-    await this.logicFunctionResourceService.copyDependenciesInMemory({
+    await this.createLayerIfNotExist({
+      flatApplication,
       applicationUniversalIdentifier,
-      workspaceId: flatApplication.workspaceId,
-      inMemoryFolderPath: nodeDependenciesFolder,
     });
-    await copyYarnEngineAndBuildDependencies(nodeDependenciesFolder);
 
-    await createZipFile(sourceTemporaryDir, lambdaZipPath);
+    const newArn = await this.getExistingLayerArn(layerName);
 
-    const params: PublishLayerVersionCommandInput = {
-      LayerName: layerName,
-      Content: {
-        ZipFile: await fs.readFile(lambdaZipPath),
-      },
-      CompatibleRuntimes: [
-        LogicFunctionRuntime.NODE18,
-        LogicFunctionRuntime.NODE22,
-      ],
-    };
-
-    const command = new PublishLayerVersionCommand(params);
-
-    const result = await (await this.getLambdaClient()).send(command);
-
-    await temporaryDirManager.clean();
-
-    if (!isDefined(result.LayerVersionArn)) {
-      throw new Error('new layer version arn if undefined');
+    if (!isDefined(newArn)) {
+      throw new Error(
+        `Layer '${layerName}' was not created by the builder Lambda`,
+      );
     }
 
-    return result.LayerVersionArn;
+    return newArn;
   }
 
   private async getLambdaExecutor(flatLogicFunction: FlatLogicFunction) {
@@ -256,7 +387,7 @@ export class LambdaDriver implements LogicFunctionDriver {
     return false;
   }
 
-  private async build({
+  async build({
     flatLogicFunction,
     flatApplication,
     applicationUniversalIdentifier,
@@ -269,7 +400,7 @@ export class LambdaDriver implements LogicFunctionDriver {
       return;
     }
 
-    const layerArn = await this.createLayerIfNotExists({
+    const layerArn = await this.getLayerArn({
       flatApplication,
       applicationUniversalIdentifier,
     });
@@ -331,7 +462,7 @@ export class LambdaDriver implements LogicFunctionDriver {
       applicationUniversalIdentifier,
     });
 
-    await this.waitFunctionUpdates(flatLogicFunction);
+    await this.waitFunctionUpdates(flatLogicFunction.id);
 
     const startTime = Date.now();
 
