@@ -1,6 +1,7 @@
 import { NavigationDropTargetContext } from '@/navigation-menu-item/contexts/NavigationDropTargetContext';
 import React, { lazy, Suspense, useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 
 import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/constants/NavigationMenuItemDroppableIds';
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
@@ -149,8 +150,15 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
           isOpen={isNavigationSectionOpen}
         />
       </NavigationDrawerAnimatedCollapseWrapper>
-      {(isNavigationSectionOpen || isAddToNavigationDropTargetVisible) &&
-        (isNavigationMenuInEditMode ? (
+      <AnimatedExpandableContainer
+        isExpanded={
+          isNavigationSectionOpen || isAddToNavigationDropTargetVisible
+        }
+        dimension="height"
+        mode="fit-content"
+        containAnimation
+      >
+        {isNavigationMenuInEditMode ? (
           <Suspense
             fallback={
               <WorkspaceSectionListEditModeFallback
@@ -177,7 +185,8 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
             folderChildrenById={folderChildrenById}
             onActiveObjectMetadataItemClick={onActiveObjectMetadataItemClick}
           />
-        ))}
+        )}
+      </AnimatedExpandableContainer>
     </NavigationDrawerSection>
   );
 };
