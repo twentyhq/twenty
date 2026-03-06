@@ -394,13 +394,11 @@ export const NavigationDrawerItem = ({
                   size={theme.icon.size.md}
                   stroke={theme.icon.stroke.md}
                   color={
-                    variant === 'tertiary'
-                      ? themeCssVariables.font.color.tertiary
-                      : showBreadcrumb &&
-                          !isSettingsPage &&
-                          !isNavigationDrawerExpanded
-                        ? theme.font.color.light
-                        : 'currentColor'
+                    showBreadcrumb &&
+                    !isSettingsPage &&
+                    !isNavigationDrawerExpanded
+                      ? theme.font.color.light
+                      : 'currentColor'
                   }
                 />
               </StyledIcon>
