@@ -10,9 +10,7 @@ const CAMEL_CASE_UTIL_FILE_REGEX = /^[a-z][a-zA-Z0-9]*\.(ts|tsx)$/;
 const CAMEL_CASE_UTIL_TEST_FILE_REGEX =
   /^[a-z][a-zA-Z0-9]*\.(test|spec)\.(ts|tsx)$/;
 
-const ALLOWED_MODULE_SUBDIRS = new Set([
-  'hooks',
-  'utils',
+const LEAF_SUBDIRS_WITHOUT_FILE_NAMING_CONSTRAINT = new Set([
   'states',
   'types',
   'graphql',
@@ -94,7 +92,7 @@ const validateSegment = (
       if (segment === 'utils') {
         return { nextContext: { type: 'utils' } };
       }
-      if (ALLOWED_MODULE_SUBDIRS.has(segment)) {
+      if (LEAF_SUBDIRS_WITHOUT_FILE_NAMING_CONSTRAINT.has(segment)) {
         return { nextContext: { type: 'leaf' } };
       }
       if (context.depth >= MAX_MODULE_DEPTH) {
