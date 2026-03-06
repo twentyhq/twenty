@@ -97,6 +97,16 @@ jobs:
       - name: Run Playwright tests
         run: npx nx test twenty-e2e-testing
 
+      - name: Upload Playwright results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-results
+          path: |
+            packages/twenty-e2e-testing/run_results/
+            packages/twenty-e2e-testing/test-results/
+          retention-days: 7
+
   ci-merge-queue-status-check:
     if: always() && !cancelled()
     timeout-minutes: 5
