@@ -96,8 +96,9 @@ export class ClientService {
     appPath: string;
     authToken?: string;
   }): Promise<void> {
-    const outputPath = join(appPath, 'node_modules', 'twenty-sdk', CLIENTS_GENERATED_DIR);
-    const tempPath = `${outputPath}.tmp`;
+    const generatedDir = join(appPath, 'node_modules', 'twenty-sdk', CLIENTS_GENERATED_DIR);
+    const coreOutputPath = join(generatedDir, 'core');
+    const tempPath = `${coreOutputPath}.tmp`;
 
     const coreSchemaResponse = await this.apiService.getSchema({ authToken });
 
@@ -112,18 +113,18 @@ export class ClientService {
 
     await generate({
       schema: coreSchemaResponse.data,
-      output: join(tempPath, 'core'),
+      output: tempPath,
       scalarTypes: COMMON_SCALAR_TYPES,
     });
 
-    await this.injectClientWrapper(join(tempPath, 'core'), {
+    await this.injectClientWrapper(tempPath, {
       apiClientName: 'CoreApiClient',
       defaultUrl: `\`\${process.env.${DEFAULT_API_URL_NAME}}/graphql\``,
       includeUploadFile: true,
     });
 
-    await remove(outputPath);
-    await move(tempPath, outputPath);
+    await remove(coreOutputPath);
+    await move(tempPath, coreOutputPath);
   }
 
   async generateMetadataClient({
