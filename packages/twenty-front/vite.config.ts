@@ -121,7 +121,7 @@ export default defineConfig(({ mode }) => {
       ...(env.ANALYZE === 'true'
         ? [
             visualizer({
-              open: true,
+              open: !process.env.CI,
               gzipSize: true,
               brotliSize: true,
               filename: 'dist/stats.html',

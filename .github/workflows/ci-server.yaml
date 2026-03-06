@@ -177,8 +177,7 @@ jobs:
           fi
 
   server-test:
-    needs: changed-files-check
-    if: needs.changed-files-check.outputs.any_changed == 'true'
+    needs: server-build
     timeout-minutes: 30
     runs-on: ubuntu-latest-8-cores
     steps:
@@ -188,6 +187,10 @@ jobs:
           fetch-depth: 10
       - name: Install dependencies
         uses: ./.github/actions/yarn-install
+      - name: Restore server build cache
+        uses: ./.github/actions/restore-cache
+        with:
+          key: ${{ env.SERVER_BUILD_CACHE_KEY }}
       - name: Build twenty-shared
         run: npx nx build twenty-shared
       - name: Server / Run Tests

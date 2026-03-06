@@ -1,4 +1,5 @@
 import { AppRouterProviders } from '@/app/components/AppRouterProviders';
+import { LazyRoute } from '@/app/components/LazyRoute';
 import { SettingsRoutes } from '@/app/components/SettingsRoutes';
 import { VerifyLoginTokenEffect } from '@/auth/components/VerifyLoginTokenEffect';
 
@@ -8,7 +9,7 @@ import { BlankLayout } from '@/ui/layout/page/components/BlankLayout';
 import { DefaultLayout } from '@/ui/layout/page/components/DefaultLayout';
 import { AppPath } from 'twenty-shared/types';
 
-import { lazy, Suspense } from 'react';
+import { lazy } from 'react';
 import {
   createBrowserRouter,
   createRoutesFromElements,
@@ -116,108 +117,56 @@ export const useCreateAppRouter = (
           <Route path={AppPath.VerifyEmail} element={<VerifyEmailEffect />} />
           <Route
             path={AppPath.SignInUp}
-            element={
-              <Suspense fallback={null}>
-                <SignInUp />
-              </Suspense>
-            }
+            element={<LazyRoute><SignInUp /></LazyRoute>}
           />
           <Route
             path={AppPath.Invite}
-            element={
-              <Suspense fallback={null}>
-                <SignInUp />
-              </Suspense>
-            }
+            element={<LazyRoute><SignInUp /></LazyRoute>}
           />
           <Route
             path={AppPath.ResetPassword}
-            element={
-              <Suspense fallback={null}>
-                <PasswordReset />
-              </Suspense>
-            }
+            element={<LazyRoute><PasswordReset /></LazyRoute>}
           />
           <Route
             path={AppPath.CreateWorkspace}
-            element={
-              <Suspense fallback={null}>
-                <CreateWorkspace />
-              </Suspense>
-            }
+            element={<LazyRoute><CreateWorkspace /></LazyRoute>}
           />
           <Route
             path={AppPath.CreateProfile}
-            element={
-              <Suspense fallback={null}>
-                <CreateProfile />
-              </Suspense>
-            }
+            element={<LazyRoute><CreateProfile /></LazyRoute>}
           />
           <Route
             path={AppPath.SyncEmails}
-            element={
-              <Suspense fallback={null}>
-                <SyncEmails />
-              </Suspense>
-            }
+            element={<LazyRoute><SyncEmails /></LazyRoute>}
           />
           <Route
             path={AppPath.InviteTeam}
-            element={
-              <Suspense fallback={null}>
-                <InviteTeam />
-              </Suspense>
-            }
+            element={<LazyRoute><InviteTeam /></LazyRoute>}
           />
           <Route
             path={AppPath.PlanRequired}
-            element={
-              <Suspense fallback={null}>
-                <ChooseYourPlan />
-              </Suspense>
-            }
+            element={<LazyRoute><ChooseYourPlan /></LazyRoute>}
           />
           <Route
             path={AppPath.PlanRequiredSuccess}
-            element={
-              <Suspense fallback={null}>
-                <PaymentSuccess />
-              </Suspense>
-            }
+            element={<LazyRoute><PaymentSuccess /></LazyRoute>}
           />
           <Route
             path={AppPath.BookCallDecision}
-            element={
-              <Suspense fallback={null}>
-                <BookCallDecision />
-              </Suspense>
-            }
+            element={<LazyRoute><BookCallDecision /></LazyRoute>}
           />
           <Route
             path={AppPath.BookCall}
-            element={
-              <Suspense fallback={null}>
-                <BookCall />
-              </Suspense>
-            }
+            element={<LazyRoute><BookCall /></LazyRoute>}
           />
           <Route path={indexAppPath.getIndexAppPath()} element={<></>} />
           <Route
             path={AppPath.RecordIndexPage}
-            element={
-              <Suspense fallback={null}>
-                <RecordIndexPage />
-              </Suspense>
-            }
+            element={<LazyRoute><RecordIndexPage /></LazyRoute>}
           />
           <Route
             path={AppPath.RecordShowPage}
-            element={
-              <Suspense fallback={null}>
-                <RecordShowPage />
-              </Suspense>
-            }
+            element={<LazyRoute><RecordShowPage /></LazyRoute>}
           />
           <Route
             path={AppPath.SettingsCatchAll}
@@ -230,21 +179,13 @@ export const useCreateAppRouter = (
           />
           <Route
             path={AppPath.NotFoundWildcard}
-            element={
-              <Suspense fallback={null}>
-                <NotFound />
-              </Suspense>
-            }
+            element={<LazyRoute><NotFound /></LazyRoute>}
           />
         </Route>
         <Route element={<BlankLayout />}>
           <Route
             path={AppPath.Authorize}
-            element={
-              <Suspense fallback={null}>
-                <Authorize />
-              </Suspense>
-            }
+            element={<LazyRoute><Authorize /></LazyRoute>}
           />
         </Route>
       </Route>,

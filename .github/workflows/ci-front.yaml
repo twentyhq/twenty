@@ -117,7 +117,7 @@ jobs:
       - name: Serve storybook & run tests
         run: |
           npx http-server packages/twenty-front/storybook-static --port 6006 --silent &
-          until curl -sf http://localhost:6006 > /dev/null 2>&1; do sleep 1; done
+          timeout 30 bash -c 'until curl -sf http://localhost:6006 > /dev/null 2>&1; do sleep 1; done'
           npx nx storybook:test twenty-front --configuration=${{ matrix.storybook_scope }} --shard=${{ matrix.shard }}/${{ env.SHARD_COUNTER }}
       # - name: Rename coverage file
       #   run: |
