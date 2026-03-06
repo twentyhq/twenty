@@ -55779,6 +55779,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"twenty-oxlint-rules@workspace:packages/twenty-oxlint-rules":
+  version: 0.0.0-use.local
+  resolution: "twenty-oxlint-rules@workspace:packages/twenty-oxlint-rules"
+  languageName: unknown
+  linkType: soft
+
 "twenty-sdk@workspace:*, twenty-sdk@workspace:packages/twenty-sdk":
   version: 0.0.0-use.local
   resolution: "twenty-sdk@workspace:packages/twenty-sdk"
