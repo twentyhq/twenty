@@ -1,6 +1,6 @@
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
-import { useRecordsUsefulGqlFields } from '@/object-record/record-field/hooks/useRecordsUsefulGqlFields';
+import { useRelevantRecordsGqlFields } from '@/object-record/record-field/hooks/useRelevantRecordsGqlFields';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
@@ -63,7 +63,7 @@ export const useRecordIndexGroupCommonQueryVariables = () => {
     recordIndexGroupFieldMetadataItemComponentState,
   );
 
-  const recordGqlFields = useRecordsUsefulGqlFields({
+  const recordGqlFields = useRelevantRecordsGqlFields({
     objectMetadataItem,
     additionalFieldMetadataId: recordIndexGroupFieldMetadataItem?.id,
   });

@@ -20,7 +20,7 @@ type UseRecordsUsefulGqlFields = {
   additionalFieldMetadataId?: string | null;
 };
 
-export const useRecordsUsefulGqlFields = ({
+export const useRelevantRecordsGqlFields = ({
   objectMetadataItem,
   additionalFieldMetadataId,
 }: UseRecordsUsefulGqlFields) => {
