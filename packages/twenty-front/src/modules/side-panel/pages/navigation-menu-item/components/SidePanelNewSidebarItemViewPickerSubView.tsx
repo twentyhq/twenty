@@ -18,6 +18,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { type View } from '@/views/types/View';
 import { ViewKey } from '@/views/types/ViewKey';
+import { ViewType } from '@/views/types/ViewType';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -54,6 +55,7 @@ export const SidePanelNewSidebarItemViewPickerSubView = ({
       (view) =>
         view.objectMetadataId === selectedObjectMetadataIdForView &&
         view.key !== ViewKey.Index &&
+        view.type !== ViewType.FieldsWidget &&
         view.visibility === ViewVisibility.WORKSPACE,
     )
     .sort((a, b) => a.position - b.position);
