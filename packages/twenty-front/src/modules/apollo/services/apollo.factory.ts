@@ -284,6 +284,12 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
                   return; // already caught in BE
                 }
                 default:
+                  // Schema-validation errors (no extension code) caused by
+                  // unauthenticated requests are expected and non-actionable;
+                  // skip Sentry when there is no token pair.
+                  if (isUndefinedOrNull(getTokenPair())) {
+                    return;
+                  }
                   sendToSentry({ graphQLError, operation });
               }
             }

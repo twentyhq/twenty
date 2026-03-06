@@ -7,7 +7,7 @@ import {
   type YogaDriverServerContext,
 } from '@graphql-yoga/nestjs';
 import * as Sentry from '@sentry/node';
-import { GraphQLError, GraphQLSchema } from 'graphql';
+import { GraphQLError } from 'graphql';
 import GraphQLJSON from 'graphql-type-json';
 import {
   type GraphQLSchemaWithContext,
@@ -87,11 +87,15 @@ export class GraphQLConfigService
       conditionalSchema: async (context) => {
         const { workspace, user, application } = context.req;
 
-        try {
-          if (!isDefined(workspace)) {
-            return new GraphQLSchema({});
-          }
+        if (!isDefined(workspace)) {
+          throw new GraphQLError('Unauthenticated', {
+            extensions: {
+              code: 'UNAUTHENTICATED',
+            },
+          });
+        }
 
+        try {
           return await this.createSchema(context, workspace, application?.id);
         } catch (error) {
           if (error instanceof UnauthorizedException) {
