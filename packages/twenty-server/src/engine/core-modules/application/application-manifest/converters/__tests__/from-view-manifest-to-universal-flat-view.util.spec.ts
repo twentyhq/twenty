@@ -5,6 +5,7 @@ import {
 } from 'twenty-shared/types';
 
 import { fromViewManifestToUniversalFlatView } from 'src/engine/core-modules/application/application-manifest/converters/from-view-manifest-to-universal-flat-view.util';
+import { ViewKey } from 'src/engine/metadata-modules/view/enums/view-key.enum';
 
 describe('fromViewManifestToUniversalFlatView', () => {
   const now = '2026-01-01T00:00:00.000Z';
@@ -34,7 +35,7 @@ describe('fromViewManifestToUniversalFlatView', () => {
     expect(result.isCustom).toBe(true);
     expect(result.visibility).toBe(ViewVisibility.WORKSPACE);
     expect(result.openRecordIn).toBe(ViewOpenRecordIn.SIDE_PANEL);
-    expect(result.key).toBeNull();
+    expect(result.key).toBe(ViewKey.INDEX);
     expect(result.createdAt).toBe(now);
     expect(result.updatedAt).toBe(now);
   });
