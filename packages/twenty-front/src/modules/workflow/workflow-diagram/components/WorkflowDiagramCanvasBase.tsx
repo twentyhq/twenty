@@ -164,7 +164,7 @@ export const WorkflowDiagramCanvasBase = ({
     event: MouseEvent | React.MouseEvent<Element, MouseEvent>;
   }) => void;
 }) => {
-  const { theme } = useContext(ThemeContext);
+  const { theme, colorScheme } = useContext(ThemeContext);
   const store = useStore();
   const reactflow = useReactFlow();
 
@@ -623,6 +623,7 @@ export const WorkflowDiagramCanvasBase = ({
         preventScrolling={true}
         connectionLineComponent={WorkflowDiagramConnection}
         connectionRadius={0}
+        colorMode={colorScheme}
       >
         <Background color={theme.border.color.medium} size={2} />
 

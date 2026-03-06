@@ -62,6 +62,12 @@ jobs:
         run: npx nx reset:env twenty-front
       - name: Front / Build storybook
         run: npx nx storybook:build twenty-front
+      - name: Upload storybook build
+        uses: actions/upload-artifact@v4
+        with:
+          name: storybook-static
+          path: packages/twenty-front/storybook-static
+          retention-days: 1
       - name: Save storybook build cache
         uses: ./.github/actions/save-cache
         with:
@@ -78,6 +84,7 @@ jobs:
     env:
       SHARD_COUNTER: 4
       REACT_APP_SERVER_BASE_URL: http://localhost:3000
+      STORYBOOK_URL: http://localhost:6006
     steps:
       - name: Fetch local actions
         uses: actions/checkout@v4
@@ -85,19 +92,33 @@ jobs:
           fetch-depth: 10
       - name: Install dependencies
         uses: ./.github/actions/yarn-install
+      - name: Restore storybook build cache
+        uses: ./.github/actions/restore-cache
+        with:
+          key: ${{ env.STORYBOOK_BUILD_CACHE_KEY_FOR_RESTORE_ACTION }}
+      - name: Clean stale storybook vitest cache
+        run: rm -rf packages/twenty-front/node_modules/.cache/storybook
       - name: Build dependencies
         run: |
           npx nx build twenty-shared
           npx nx build twenty-ui
           npx nx build twenty-sdk
+      - name: Download storybook build
+        uses: actions/download-artifact@v4
+        with:
+          name: storybook-static
+          path: packages/twenty-front/storybook-static
       - name: Install Playwright
         run: |
           cd packages/twenty-front
           npx playwright install
       - name: Front / Write .env
         run: npx nx reset:env twenty-front
-      - name: Run storybook tests
-        run: npx nx storybook:test twenty-front --configuration=${{ matrix.storybook_scope }} --shard=${{ matrix.shard }}/${{ env.SHARD_COUNTER }}
+      - name: Serve storybook & run tests
+        run: |
+          npx http-server packages/twenty-front/storybook-static --port 6006 --silent &
+          timeout 30 bash -c 'until curl -sf http://localhost:6006 > /dev/null 2>&1; do sleep 1; done'
+          npx nx storybook:test twenty-front --configuration=${{ matrix.storybook_scope }} --shard=${{ matrix.shard }}/${{ env.SHARD_COUNTER }}
       # - name: Rename coverage file
       #   run: |
       #     if [ -f "packages/twenty-front/coverage/storybook/coverage-final.json" ]; then
@@ -214,6 +235,7 @@ jobs:
     runs-on: ubuntu-latest-8-cores
     env:
       NODE_OPTIONS: "--max-old-space-size=10240"
+      ANALYZE: "true"
     steps:
       - name: Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.11.0
