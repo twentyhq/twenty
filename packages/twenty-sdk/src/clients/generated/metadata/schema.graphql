@@ -44,17 +44,19 @@ type ApplicationRegistration {
   oAuthClientId: String!
   oAuthRedirectUris: [String!]!
   oAuthScopes: [String!]!
-  sourceType: AppRegistrationSourceType!
+  ownerWorkspaceId: UUID
+  sourceType: ApplicationRegistrationSourceType!
   sourcePackage: String
   latestAvailableVersion: String
   websiteUrl: String
   termsUrl: String
+  isListed: Boolean!
   isFeatured: Boolean!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
 
-enum AppRegistrationSourceType {
+enum ApplicationRegistrationSourceType {
   NPM
   TARBALL
   LOCAL
@@ -285,7 +287,7 @@ type Role {
 type ApplicationRegistrationSummary {
   id: UUID!
   latestAvailableVersion: String
-  sourceType: AppRegistrationSourceType!
+  sourceType: ApplicationRegistrationSourceType!
 }
 
 type ApplicationVariable {
@@ -1779,45 +1781,6 @@ type RotateClientSecret {
   clientSecret: String!
 }
 
-type AuthToken {
-  token: String!
-  expiresAt: DateTime!
-}
-
-type ApplicationTokenPair {
-  applicationAccessToken: AuthToken!
-  applicationRefreshToken: AuthToken!
-}
-
-type LogicFunctionExecutionResult {
-  """Execution result in JSON format"""
-  data: JSON
-
-  """Execution Logs"""
-  logs: String!
-
-  """Execution duration in milliseconds"""
-  duration: Float!
-
-  """Execution status"""
-  status: LogicFunctionExecutionStatus!
-
-  """Execution error in JSON format"""
-  error: JSON
-}
-
-"""Status of the logic function execution"""
-enum LogicFunctionExecutionStatus {
-  IDLE
-  SUCCESS
-  ERROR
-}
-
-type LogicFunctionLogs {
-  """Execution Logs"""
-  logs: String!
-}
-
 type DeleteSso {
   identityProviderId: UUID!
 }
@@ -1867,6 +1830,11 @@ type VerifyTwoFactorAuthenticationMethod {
 
 type AuthorizeApp {
   redirectUrl: String!
+}
+
+type AuthToken {
+  token: String!
+  expiresAt: DateTime!
 }
 
 type AuthTokenPair {
@@ -1966,6 +1934,35 @@ type NavigationMenuItem {
   targetRecordIdentifier: RecordIdentifier
 }
 
+type LogicFunctionExecutionResult {
+  """Execution result in JSON format"""
+  data: JSON
+
+  """Execution Logs"""
+  logs: String!
+
+  """Execution duration in milliseconds"""
+  duration: Float!
+
+  """Execution status"""
+  status: LogicFunctionExecutionStatus!
+
+  """Execution error in JSON format"""
+  error: JSON
+}
+
+"""Status of the logic function execution"""
+enum LogicFunctionExecutionStatus {
+  IDLE
+  SUCCESS
+  ERROR
+}
+
+type LogicFunctionLogs {
+  """Execution Logs"""
+  logs: String!
+}
+
 type ToolIndexEntry {
   name: String!
   description: String!
@@ -2015,6 +2012,11 @@ type Skill {
   applicationId: UUID
   createdAt: DateTime!
   updatedAt: DateTime!
+}
+
+type ApplicationTokenPair {
+  applicationAccessToken: AuthToken!
+  applicationRefreshToken: AuthToken!
 }
 
 type FrontComponent {
@@ -2592,6 +2594,7 @@ type MarketplaceApp {
   frontComponents: [MarketplaceAppFrontComponent!]!
   defaultRole: MarketplaceAppDefaultRole
   sourcePackage: String
+  isFeatured: Boolean!
 }
 
 type PublicDomain {
@@ -2861,8 +2864,7 @@ type Query {
   findOneApplicationRegistration(id: String!): ApplicationRegistration!
   findApplicationRegistrationStats(id: String!): ApplicationRegistrationStats!
   findApplicationRegistrationVariables(applicationRegistrationId: String!): [ApplicationRegistrationVariable!]!
-  findManyApplications: [Application!]!
-  findOneApplication(id: UUID, universalIdentifier: UUID): Application!
+  applicationRegistrationTarballUrl(id: String!): String
   getSSOIdentityProviders: [FindAvailableSSOIDP!]!
   webhooks: [Webhook!]!
   webhook(id: UUID!): Webhook
@@ -2897,10 +2899,14 @@ type Query {
   getAdminAiModels: AdminAIModels!
   getDatabaseConfigVariable(key: String!): ConfigVariable!
   getQueueJobs(queueName: String!, state: JobState!, limit: Int = 50, offset: Int = 0): QueueJobsResponse!
+  findAllApplicationRegistrations: [ApplicationRegistration!]!
   getPostgresCredentials: PostgresCredentials
   findManyPublicDomains: [PublicDomain!]!
   getEmailingDomains: [EmailingDomain!]!
   findManyMarketplaceApps: [MarketplaceApp!]!
+  findOneMarketplaceApp(universalIdentifier: String!): MarketplaceApp!
+  findManyApplications: [Application!]!
+  findOneApplication(id: UUID, universalIdentifier: UUID): Application!
 }
 
 input LogicFunctionIdInput {
@@ -3144,11 +3150,9 @@ type Mutation {
   createApplicationRegistrationVariable(input: CreateApplicationRegistrationVariableInput!): ApplicationRegistrationVariable!
   updateApplicationRegistrationVariable(input: UpdateApplicationRegistrationVariableInput!): ApplicationRegistrationVariable!
   deleteApplicationRegistrationVariable(id: String!): Boolean!
+  registerNpmPackage(packageName: String!): ApplicationRegistration!
   uploadAppTarball(file: Upload!, universalIdentifier: String): ApplicationRegistration!
-  renewApplicationToken(applicationRefreshToken: String!): ApplicationTokenPair!
-  installApplication(workspaceMigration: WorkspaceMigrationInput!): Boolean!
-  uninstallApplication(universalIdentifier: String!): Boolean!
-  updateOneApplicationVariable(key: String!, value: String!, applicationId: UUID!): Boolean!
+  transferApplicationRegistrationOwnership(applicationRegistrationId: String!, targetWorkspaceSubdomain: String!): ApplicationRegistration!
   initiateOTPProvisioning(loginToken: String!, origin: String!): InitiateTwoFactorAuthenticationProvisioning!
   initiateOTPProvisioningForAuthenticatedUser: InitiateTwoFactorAuthenticationProvisioning!
   deleteTwoFactorAuthenticationMethod(twoFactorAuthenticationMethodId: UUID!): DeleteTwoFactorAuthenticationMethod!
@@ -3191,12 +3195,15 @@ type Mutation {
   verifyEmailingDomain(id: String!): EmailingDomain!
   createOneAppToken(input: CreateOneAppTokenInput!): AppToken!
   installMarketplaceApp(universalIdentifier: String!, version: String): Boolean!
-  installNpmApp(packageName: String!, version: String): Boolean!
-  upgradeApplication(appRegistrationId: String!, targetVersion: String!): Boolean!
+  installApplication(appRegistrationId: String!, version: String): Boolean!
+  runWorkspaceMigration(workspaceMigration: WorkspaceMigrationInput!): Boolean!
+  uninstallApplication(universalIdentifier: String!): Boolean!
+  updateOneApplicationVariable(key: String!, value: String!, applicationId: UUID!): Boolean!
   generateApplicationToken(applicationId: UUID!): ApplicationTokenPair!
   syncApplication(manifest: JSON!): WorkspaceMigration!
-  createOneApplication(input: CreateApplicationInput!): Application!
   uploadApplicationFile(file: Upload!, applicationUniversalIdentifier: String!, fileFolder: FileFolder!, filePath: String!): File!
+  upgradeApplication(appRegistrationId: String!, targetVersion: String!): Boolean!
+  renewApplicationToken(applicationRefreshToken: String!): ApplicationTokenPair!
 }
 
 input AddQuerySubscriptionInput {
@@ -3988,6 +3995,7 @@ input UpdateApplicationRegistrationPayload {
   oAuthScopes: [String!]
   websiteUrl: String
   termsUrl: String
+  isListed: Boolean
 }
 
 input CreateApplicationRegistrationVariableInput {
@@ -4006,49 +4014,6 @@ input UpdateApplicationRegistrationVariableInput {
 input UpdateApplicationRegistrationVariablePayload {
   value: String
   description: String
-}
-
-input WorkspaceMigrationInput {
-  actions: [WorkspaceMigrationDeleteActionInput!]!
-}
-
-input WorkspaceMigrationDeleteActionInput {
-  type: WorkspaceMigrationActionType!
-  metadataName: AllMetadataName!
-  universalIdentifier: String!
-}
-
-enum WorkspaceMigrationActionType {
-  delete
-  create
-  update
-}
-
-enum AllMetadataName {
-  fieldMetadata
-  objectMetadata
-  view
-  viewField
-  viewFieldGroup
-  viewGroup
-  viewSort
-  rowLevelPermissionPredicate
-  rowLevelPermissionPredicateGroup
-  viewFilterGroup
-  index
-  logicFunction
-  viewFilter
-  role
-  roleTarget
-  agent
-  skill
-  pageLayout
-  pageLayoutWidget
-  pageLayoutTab
-  commandMenuItem
-  navigationMenuItem
-  frontComponent
-  webhook
 }
 
 input SetupOIDCSsoInput {
@@ -4146,13 +4111,47 @@ input CreateAppTokenInput {
   expiresAt: DateTime!
 }
 
-input CreateApplicationInput {
+input WorkspaceMigrationInput {
+  actions: [WorkspaceMigrationDeleteActionInput!]!
+}
+
+input WorkspaceMigrationDeleteActionInput {
+  type: WorkspaceMigrationActionType!
+  metadataName: AllMetadataName!
   universalIdentifier: String!
-  name: String!
-  description: String
-  version: String!
-  sourcePath: String!
-  applicationRegistrationId: String
+}
+
+enum WorkspaceMigrationActionType {
+  delete
+  create
+  update
+}
+
+enum AllMetadataName {
+  fieldMetadata
+  objectMetadata
+  view
+  viewField
+  viewFieldGroup
+  viewGroup
+  viewSort
+  rowLevelPermissionPredicate
+  rowLevelPermissionPredicateGroup
+  viewFilterGroup
+  index
+  logicFunction
+  viewFilter
+  role
+  roleTarget
+  agent
+  skill
+  pageLayout
+  pageLayoutWidget
+  pageLayoutTab
+  commandMenuItem
+  navigationMenuItem
+  frontComponent
+  webhook
 }
 
 enum FileFolder {

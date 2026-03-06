@@ -48,18 +48,20 @@ export interface ApplicationRegistration {
     oAuthClientId: Scalars['String']
     oAuthRedirectUris: Scalars['String'][]
     oAuthScopes: Scalars['String'][]
-    sourceType: AppRegistrationSourceType
+    ownerWorkspaceId?: Scalars['UUID']
+    sourceType: ApplicationRegistrationSourceType
     sourcePackage?: Scalars['String']
     latestAvailableVersion?: Scalars['String']
     websiteUrl?: Scalars['String']
     termsUrl?: Scalars['String']
+    isListed: Scalars['Boolean']
     isFeatured: Scalars['Boolean']
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
     __typename: 'ApplicationRegistration'
 }
 
-export type AppRegistrationSourceType = 'NPM' | 'TARBALL' | 'LOCAL'
+export type ApplicationRegistrationSourceType = 'NPM' | 'TARBALL' | 'LOCAL'
 
 export interface TwoFactorAuthenticationMethodSummary {
     twoFactorAuthenticationMethodId: Scalars['UUID']
@@ -235,7 +237,7 @@ export interface Role {
 export interface ApplicationRegistrationSummary {
     id: Scalars['UUID']
     latestAvailableVersion?: Scalars['String']
-    sourceType: AppRegistrationSourceType
+    sourceType: ApplicationRegistrationSourceType
     __typename: 'ApplicationRegistrationSummary'
 }
 
@@ -1486,42 +1488,6 @@ export interface RotateClientSecret {
     __typename: 'RotateClientSecret'
 }
 
-export interface AuthToken {
-    token: Scalars['String']
-    expiresAt: Scalars['DateTime']
-    __typename: 'AuthToken'
-}
-
-export interface ApplicationTokenPair {
-    applicationAccessToken: AuthToken
-    applicationRefreshToken: AuthToken
-    __typename: 'ApplicationTokenPair'
-}
-
-export interface LogicFunctionExecutionResult {
-    /** Execution result in JSON format */
-    data?: Scalars['JSON']
-    /** Execution Logs */
-    logs: Scalars['String']
-    /** Execution duration in milliseconds */
-    duration: Scalars['Float']
-    /** Execution status */
-    status: LogicFunctionExecutionStatus
-    /** Execution error in JSON format */
-    error?: Scalars['JSON']
-    __typename: 'LogicFunctionExecutionResult'
-}
-
-
-/** Status of the logic function execution */
-export type LogicFunctionExecutionStatus = 'IDLE' | 'SUCCESS' | 'ERROR'
-
-export interface LogicFunctionLogs {
-    /** Execution Logs */
-    logs: Scalars['String']
-    __typename: 'LogicFunctionLogs'
-}
-
 export interface DeleteSso {
     identityProviderId: Scalars['UUID']
     __typename: 'DeleteSso'
@@ -1580,6 +1546,12 @@ export interface VerifyTwoFactorAuthenticationMethod {
 export interface AuthorizeApp {
     redirectUrl: Scalars['String']
     __typename: 'AuthorizeApp'
+}
+
+export interface AuthToken {
+    token: Scalars['String']
+    expiresAt: Scalars['DateTime']
+    __typename: 'AuthToken'
 }
 
 export interface AuthTokenPair {
@@ -1696,6 +1668,30 @@ export interface NavigationMenuItem {
     __typename: 'NavigationMenuItem'
 }
 
+export interface LogicFunctionExecutionResult {
+    /** Execution result in JSON format */
+    data?: Scalars['JSON']
+    /** Execution Logs */
+    logs: Scalars['String']
+    /** Execution duration in milliseconds */
+    duration: Scalars['Float']
+    /** Execution status */
+    status: LogicFunctionExecutionStatus
+    /** Execution error in JSON format */
+    error?: Scalars['JSON']
+    __typename: 'LogicFunctionExecutionResult'
+}
+
+
+/** Status of the logic function execution */
+export type LogicFunctionExecutionStatus = 'IDLE' | 'SUCCESS' | 'ERROR'
+
+export interface LogicFunctionLogs {
+    /** Execution Logs */
+    logs: Scalars['String']
+    __typename: 'LogicFunctionLogs'
+}
+
 export interface ToolIndexEntry {
     name: Scalars['String']
     description: Scalars['String']
@@ -1748,6 +1744,12 @@ export interface Skill {
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
     __typename: 'Skill'
+}
+
+export interface ApplicationTokenPair {
+    applicationAccessToken: AuthToken
+    applicationRefreshToken: AuthToken
+    __typename: 'ApplicationTokenPair'
 }
 
 export interface FrontComponent {
@@ -2298,6 +2300,7 @@ export interface MarketplaceApp {
     frontComponents: MarketplaceAppFrontComponent[]
     defaultRole?: MarketplaceAppDefaultRole
     sourcePackage?: Scalars['String']
+    isFeatured: Scalars['Boolean']
     __typename: 'MarketplaceApp'
 }
 
@@ -2557,8 +2560,7 @@ export interface Query {
     findOneApplicationRegistration: ApplicationRegistration
     findApplicationRegistrationStats: ApplicationRegistrationStats
     findApplicationRegistrationVariables: ApplicationRegistrationVariable[]
-    findManyApplications: Application[]
-    findOneApplication: Application
+    applicationRegistrationTarballUrl?: Scalars['String']
     getSSOIdentityProviders: FindAvailableSSOIDP[]
     webhooks: Webhook[]
     webhook?: Webhook
@@ -2584,10 +2586,14 @@ export interface Query {
     getAdminAiModels: AdminAIModels
     getDatabaseConfigVariable: ConfigVariable
     getQueueJobs: QueueJobsResponse
+    findAllApplicationRegistrations: ApplicationRegistration[]
     getPostgresCredentials?: PostgresCredentials
     findManyPublicDomains: PublicDomain[]
     getEmailingDomains: EmailingDomain[]
     findManyMarketplaceApps: MarketplaceApp[]
+    findOneMarketplaceApp: MarketplaceApp
+    findManyApplications: Application[]
+    findOneApplication: Application
     __typename: 'Query'
 }
 
@@ -2739,11 +2745,9 @@ export interface Mutation {
     createApplicationRegistrationVariable: ApplicationRegistrationVariable
     updateApplicationRegistrationVariable: ApplicationRegistrationVariable
     deleteApplicationRegistrationVariable: Scalars['Boolean']
+    registerNpmPackage: ApplicationRegistration
     uploadAppTarball: ApplicationRegistration
-    renewApplicationToken: ApplicationTokenPair
-    installApplication: Scalars['Boolean']
-    uninstallApplication: Scalars['Boolean']
-    updateOneApplicationVariable: Scalars['Boolean']
+    transferApplicationRegistrationOwnership: ApplicationRegistration
     initiateOTPProvisioning: InitiateTwoFactorAuthenticationProvisioning
     initiateOTPProvisioningForAuthenticatedUser: InitiateTwoFactorAuthenticationProvisioning
     deleteTwoFactorAuthenticationMethod: DeleteTwoFactorAuthenticationMethod
@@ -2786,12 +2790,15 @@ export interface Mutation {
     verifyEmailingDomain: EmailingDomain
     createOneAppToken: AppToken
     installMarketplaceApp: Scalars['Boolean']
-    installNpmApp: Scalars['Boolean']
-    upgradeApplication: Scalars['Boolean']
+    installApplication: Scalars['Boolean']
+    runWorkspaceMigration: Scalars['Boolean']
+    uninstallApplication: Scalars['Boolean']
+    updateOneApplicationVariable: Scalars['Boolean']
     generateApplicationToken: ApplicationTokenPair
     syncApplication: WorkspaceMigration
-    createOneApplication: Application
     uploadApplicationFile: File
+    upgradeApplication: Scalars['Boolean']
+    renewApplicationToken: ApplicationTokenPair
     __typename: 'Mutation'
 }
 
@@ -2856,11 +2863,13 @@ export interface ApplicationRegistrationGenqlSelection{
     oAuthClientId?: boolean | number
     oAuthRedirectUris?: boolean | number
     oAuthScopes?: boolean | number
+    ownerWorkspaceId?: boolean | number
     sourceType?: boolean | number
     sourcePackage?: boolean | number
     latestAvailableVersion?: boolean | number
     websiteUrl?: boolean | number
     termsUrl?: boolean | number
+    isListed?: boolean | number
     isFeatured?: boolean | number
     createdAt?: boolean | number
     updatedAt?: boolean | number
@@ -4373,42 +4382,6 @@ export interface RotateClientSecretGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface AuthTokenGenqlSelection{
-    token?: boolean | number
-    expiresAt?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface ApplicationTokenPairGenqlSelection{
-    applicationAccessToken?: AuthTokenGenqlSelection
-    applicationRefreshToken?: AuthTokenGenqlSelection
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface LogicFunctionExecutionResultGenqlSelection{
-    /** Execution result in JSON format */
-    data?: boolean | number
-    /** Execution Logs */
-    logs?: boolean | number
-    /** Execution duration in milliseconds */
-    duration?: boolean | number
-    /** Execution status */
-    status?: boolean | number
-    /** Execution error in JSON format */
-    error?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface LogicFunctionLogsGenqlSelection{
-    /** Execution Logs */
-    logs?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
 export interface DeleteSsoGenqlSelection{
     identityProviderId?: boolean | number
     __typename?: boolean | number
@@ -4474,6 +4447,13 @@ export interface VerifyTwoFactorAuthenticationMethodGenqlSelection{
 
 export interface AuthorizeAppGenqlSelection{
     redirectUrl?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface AuthTokenGenqlSelection{
+    token?: boolean | number
+    expiresAt?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -4609,6 +4589,28 @@ export interface NavigationMenuItemGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface LogicFunctionExecutionResultGenqlSelection{
+    /** Execution result in JSON format */
+    data?: boolean | number
+    /** Execution Logs */
+    logs?: boolean | number
+    /** Execution duration in milliseconds */
+    duration?: boolean | number
+    /** Execution status */
+    status?: boolean | number
+    /** Execution error in JSON format */
+    error?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface LogicFunctionLogsGenqlSelection{
+    /** Execution Logs */
+    logs?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface ToolIndexEntryGenqlSelection{
     name?: boolean | number
     description?: boolean | number
@@ -4662,6 +4664,13 @@ export interface SkillGenqlSelection{
     applicationId?: boolean | number
     createdAt?: boolean | number
     updatedAt?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ApplicationTokenPairGenqlSelection{
+    applicationAccessToken?: AuthTokenGenqlSelection
+    applicationRefreshToken?: AuthTokenGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -5243,6 +5252,7 @@ export interface MarketplaceAppGenqlSelection{
     frontComponents?: MarketplaceAppFrontComponentGenqlSelection
     defaultRole?: MarketplaceAppDefaultRoleGenqlSelection
     sourcePackage?: boolean | number
+    isFeatured?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -5540,8 +5550,7 @@ export interface QueryGenqlSelection{
     findOneApplicationRegistration?: (ApplicationRegistrationGenqlSelection & { __args: {id: Scalars['String']} })
     findApplicationRegistrationStats?: (ApplicationRegistrationStatsGenqlSelection & { __args: {id: Scalars['String']} })
     findApplicationRegistrationVariables?: (ApplicationRegistrationVariableGenqlSelection & { __args: {applicationRegistrationId: Scalars['String']} })
-    findManyApplications?: ApplicationGenqlSelection
-    findOneApplication?: (ApplicationGenqlSelection & { __args?: {id?: (Scalars['UUID'] | null), universalIdentifier?: (Scalars['UUID'] | null)} })
+    applicationRegistrationTarballUrl?: { __args: {id: Scalars['String']} }
     getSSOIdentityProviders?: FindAvailableSSOIDPGenqlSelection
     webhooks?: WebhookGenqlSelection
     webhook?: (WebhookGenqlSelection & { __args: {id: Scalars['UUID']} })
@@ -5573,10 +5582,14 @@ export interface QueryGenqlSelection{
     getAdminAiModels?: AdminAIModelsGenqlSelection
     getDatabaseConfigVariable?: (ConfigVariableGenqlSelection & { __args: {key: Scalars['String']} })
     getQueueJobs?: (QueueJobsResponseGenqlSelection & { __args: {queueName: Scalars['String'], state: JobState, limit?: (Scalars['Int'] | null), offset?: (Scalars['Int'] | null)} })
+    findAllApplicationRegistrations?: ApplicationRegistrationGenqlSelection
     getPostgresCredentials?: PostgresCredentialsGenqlSelection
     findManyPublicDomains?: PublicDomainGenqlSelection
     getEmailingDomains?: EmailingDomainGenqlSelection
     findManyMarketplaceApps?: MarketplaceAppGenqlSelection
+    findOneMarketplaceApp?: (MarketplaceAppGenqlSelection & { __args: {universalIdentifier: Scalars['String']} })
+    findManyApplications?: ApplicationGenqlSelection
+    findOneApplication?: (ApplicationGenqlSelection & { __args?: {id?: (Scalars['UUID'] | null), universalIdentifier?: (Scalars['UUID'] | null)} })
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -5747,11 +5760,9 @@ export interface MutationGenqlSelection{
     createApplicationRegistrationVariable?: (ApplicationRegistrationVariableGenqlSelection & { __args: {input: CreateApplicationRegistrationVariableInput} })
     updateApplicationRegistrationVariable?: (ApplicationRegistrationVariableGenqlSelection & { __args: {input: UpdateApplicationRegistrationVariableInput} })
     deleteApplicationRegistrationVariable?: { __args: {id: Scalars['String']} }
+    registerNpmPackage?: (ApplicationRegistrationGenqlSelection & { __args: {packageName: Scalars['String']} })
     uploadAppTarball?: (ApplicationRegistrationGenqlSelection & { __args: {file: Scalars['Upload'], universalIdentifier?: (Scalars['String'] | null)} })
-    renewApplicationToken?: (ApplicationTokenPairGenqlSelection & { __args: {applicationRefreshToken: Scalars['String']} })
-    installApplication?: { __args: {workspaceMigration: WorkspaceMigrationInput} }
-    uninstallApplication?: { __args: {universalIdentifier: Scalars['String']} }
-    updateOneApplicationVariable?: { __args: {key: Scalars['String'], value: Scalars['String'], applicationId: Scalars['UUID']} }
+    transferApplicationRegistrationOwnership?: (ApplicationRegistrationGenqlSelection & { __args: {applicationRegistrationId: Scalars['String'], targetWorkspaceSubdomain: Scalars['String']} })
     initiateOTPProvisioning?: (InitiateTwoFactorAuthenticationProvisioningGenqlSelection & { __args: {loginToken: Scalars['String'], origin: Scalars['String']} })
     initiateOTPProvisioningForAuthenticatedUser?: InitiateTwoFactorAuthenticationProvisioningGenqlSelection
     deleteTwoFactorAuthenticationMethod?: (DeleteTwoFactorAuthenticationMethodGenqlSelection & { __args: {twoFactorAuthenticationMethodId: Scalars['UUID']} })
@@ -5794,12 +5805,15 @@ export interface MutationGenqlSelection{
     verifyEmailingDomain?: (EmailingDomainGenqlSelection & { __args: {id: Scalars['String']} })
     createOneAppToken?: (AppTokenGenqlSelection & { __args: {input: CreateOneAppTokenInput} })
     installMarketplaceApp?: { __args: {universalIdentifier: Scalars['String'], version?: (Scalars['String'] | null)} }
-    installNpmApp?: { __args: {packageName: Scalars['String'], version?: (Scalars['String'] | null)} }
-    upgradeApplication?: { __args: {appRegistrationId: Scalars['String'], targetVersion: Scalars['String']} }
+    installApplication?: { __args: {appRegistrationId: Scalars['String'], version?: (Scalars['String'] | null)} }
+    runWorkspaceMigration?: { __args: {workspaceMigration: WorkspaceMigrationInput} }
+    uninstallApplication?: { __args: {universalIdentifier: Scalars['String']} }
+    updateOneApplicationVariable?: { __args: {key: Scalars['String'], value: Scalars['String'], applicationId: Scalars['UUID']} }
     generateApplicationToken?: (ApplicationTokenPairGenqlSelection & { __args: {applicationId: Scalars['UUID']} })
     syncApplication?: (WorkspaceMigrationGenqlSelection & { __args: {manifest: Scalars['JSON']} })
-    createOneApplication?: (ApplicationGenqlSelection & { __args: {input: CreateApplicationInput} })
     uploadApplicationFile?: (FileGenqlSelection & { __args: {file: Scalars['Upload'], applicationUniversalIdentifier: Scalars['String'], fileFolder: FileFolder, filePath: Scalars['String']} })
+    upgradeApplication?: { __args: {appRegistrationId: Scalars['String'], targetVersion: Scalars['String']} }
+    renewApplicationToken?: (ApplicationTokenPairGenqlSelection & { __args: {applicationRefreshToken: Scalars['String']} })
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -6064,17 +6078,13 @@ export interface CreateApplicationRegistrationInput {name: Scalars['String'],des
 
 export interface UpdateApplicationRegistrationInput {id: Scalars['String'],update: UpdateApplicationRegistrationPayload}
 
-export interface UpdateApplicationRegistrationPayload {name?: (Scalars['String'] | null),description?: (Scalars['String'] | null),logoUrl?: (Scalars['String'] | null),author?: (Scalars['String'] | null),oAuthRedirectUris?: (Scalars['String'][] | null),oAuthScopes?: (Scalars['String'][] | null),websiteUrl?: (Scalars['String'] | null),termsUrl?: (Scalars['String'] | null)}
+export interface UpdateApplicationRegistrationPayload {name?: (Scalars['String'] | null),description?: (Scalars['String'] | null),logoUrl?: (Scalars['String'] | null),author?: (Scalars['String'] | null),oAuthRedirectUris?: (Scalars['String'][] | null),oAuthScopes?: (Scalars['String'][] | null),websiteUrl?: (Scalars['String'] | null),termsUrl?: (Scalars['String'] | null),isListed?: (Scalars['Boolean'] | null)}
 
 export interface CreateApplicationRegistrationVariableInput {applicationRegistrationId: Scalars['String'],key: Scalars['String'],value: Scalars['String'],description?: (Scalars['String'] | null),isSecret?: (Scalars['Boolean'] | null)}
 
 export interface UpdateApplicationRegistrationVariableInput {id: Scalars['String'],update: UpdateApplicationRegistrationVariablePayload}
 
 export interface UpdateApplicationRegistrationVariablePayload {value?: (Scalars['String'] | null),description?: (Scalars['String'] | null)}
-
-export interface WorkspaceMigrationInput {actions: WorkspaceMigrationDeleteActionInput[]}
-
-export interface WorkspaceMigrationDeleteActionInput {type: WorkspaceMigrationActionType,metadataName: AllMetadataName,universalIdentifier: Scalars['String']}
 
 export interface SetupOIDCSsoInput {name: Scalars['String'],issuer: Scalars['String'],clientID: Scalars['String'],clientSecret: Scalars['String']}
 
@@ -6110,7 +6120,9 @@ appToken: CreateAppTokenInput}
 
 export interface CreateAppTokenInput {expiresAt: Scalars['DateTime']}
 
-export interface CreateApplicationInput {universalIdentifier: Scalars['String'],name: Scalars['String'],description?: (Scalars['String'] | null),version: Scalars['String'],sourcePath: Scalars['String'],applicationRegistrationId?: (Scalars['String'] | null)}
+export interface WorkspaceMigrationInput {actions: WorkspaceMigrationDeleteActionInput[]}
+
+export interface WorkspaceMigrationDeleteActionInput {type: WorkspaceMigrationActionType,metadataName: AllMetadataName,universalIdentifier: Scalars['String']}
 
 export interface SubscriptionGenqlSelection{
     onDbEvent?: (OnDbEventGenqlSelection & { __args: {input: OnDbEventInput} })
@@ -7181,38 +7193,6 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
-    const AuthToken_possibleTypes: string[] = ['AuthToken']
-    export const isAuthToken = (obj?: { __typename?: any } | null): obj is AuthToken => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isAuthToken"')
-      return AuthToken_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const ApplicationTokenPair_possibleTypes: string[] = ['ApplicationTokenPair']
-    export const isApplicationTokenPair = (obj?: { __typename?: any } | null): obj is ApplicationTokenPair => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationTokenPair"')
-      return ApplicationTokenPair_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const LogicFunctionExecutionResult_possibleTypes: string[] = ['LogicFunctionExecutionResult']
-    export const isLogicFunctionExecutionResult = (obj?: { __typename?: any } | null): obj is LogicFunctionExecutionResult => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isLogicFunctionExecutionResult"')
-      return LogicFunctionExecutionResult_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const LogicFunctionLogs_possibleTypes: string[] = ['LogicFunctionLogs']
-    export const isLogicFunctionLogs = (obj?: { __typename?: any } | null): obj is LogicFunctionLogs => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isLogicFunctionLogs"')
-      return LogicFunctionLogs_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
     const DeleteSso_possibleTypes: string[] = ['DeleteSso']
     export const isDeleteSso = (obj?: { __typename?: any } | null): obj is DeleteSso => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isDeleteSso"')
@@ -7281,6 +7261,14 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     export const isAuthorizeApp = (obj?: { __typename?: any } | null): obj is AuthorizeApp => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isAuthorizeApp"')
       return AuthorizeApp_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const AuthToken_possibleTypes: string[] = ['AuthToken']
+    export const isAuthToken = (obj?: { __typename?: any } | null): obj is AuthToken => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAuthToken"')
+      return AuthToken_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -7421,6 +7409,22 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
+    const LogicFunctionExecutionResult_possibleTypes: string[] = ['LogicFunctionExecutionResult']
+    export const isLogicFunctionExecutionResult = (obj?: { __typename?: any } | null): obj is LogicFunctionExecutionResult => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isLogicFunctionExecutionResult"')
+      return LogicFunctionExecutionResult_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const LogicFunctionLogs_possibleTypes: string[] = ['LogicFunctionLogs']
+    export const isLogicFunctionLogs = (obj?: { __typename?: any } | null): obj is LogicFunctionLogs => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isLogicFunctionLogs"')
+      return LogicFunctionLogs_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const ToolIndexEntry_possibleTypes: string[] = ['ToolIndexEntry']
     export const isToolIndexEntry = (obj?: { __typename?: any } | null): obj is ToolIndexEntry => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isToolIndexEntry"')
@@ -7441,6 +7445,14 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     export const isSkill = (obj?: { __typename?: any } | null): obj is Skill => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isSkill"')
       return Skill_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ApplicationTokenPair_possibleTypes: string[] = ['ApplicationTokenPair']
+    export const isApplicationTokenPair = (obj?: { __typename?: any } | null): obj is ApplicationTokenPair => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationTokenPair"')
+      return ApplicationTokenPair_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -8100,7 +8112,7 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     }
     
 
-export const enumAppRegistrationSourceType = {
+export const enumApplicationRegistrationSourceType = {
    NPM: 'NPM' as const,
    TARBALL: 'TARBALL' as const,
    LOCAL: 'LOCAL' as const

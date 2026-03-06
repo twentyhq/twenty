@@ -50,7 +50,7 @@ export default {
         159,
         163,
         182,
-        192,
+        217,
         225,
         238,
         239,
@@ -72,9 +72,9 @@ export default {
         329,
         338,
         397,
-        434,
-        435,
-        451
+        448,
+        449,
+        450
     ],
     "types": {
         "BillingProductDTO": {
@@ -187,6 +187,9 @@ export default {
             "oAuthScopes": [
                 1
             ],
+            "ownerWorkspaceId": [
+                3
+            ],
             "sourceType": [
                 8
             ],
@@ -202,6 +205,9 @@ export default {
             "termsUrl": [
                 1
             ],
+            "isListed": [
+                6
+            ],
             "isFeatured": [
                 6
             ],
@@ -215,7 +221,7 @@ export default {
                 1
             ]
         },
-        "AppRegistrationSourceType": {},
+        "ApplicationRegistrationSourceType": {},
         "TwoFactorAuthenticationMethodSummary": {
             "twoFactorAuthenticationMethodId": [
                 3
@@ -3499,57 +3505,6 @@ export default {
                 1
             ]
         },
-        "AuthToken": {
-            "token": [
-                1
-            ],
-            "expiresAt": [
-                4
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "ApplicationTokenPair": {
-            "applicationAccessToken": [
-                189
-            ],
-            "applicationRefreshToken": [
-                189
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "LogicFunctionExecutionResult": {
-            "data": [
-                15
-            ],
-            "logs": [
-                1
-            ],
-            "duration": [
-                11
-            ],
-            "status": [
-                192
-            ],
-            "error": [
-                15
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "LogicFunctionExecutionStatus": {},
-        "LogicFunctionLogs": {
-            "logs": [
-                1
-            ],
-            "__typename": [
-                1
-            ]
-        },
         "DeleteSso": {
             "identityProviderId": [
                 3
@@ -3606,7 +3561,7 @@ export default {
                 154
             ],
             "workspace": [
-                196
+                191
             ],
             "__typename": [
                 1
@@ -3664,12 +3619,23 @@ export default {
                 1
             ]
         },
+        "AuthToken": {
+            "token": [
+                1
+            ],
+            "expiresAt": [
+                4
+            ],
+            "__typename": [
+                1
+            ]
+        },
         "AuthTokenPair": {
             "accessOrWorkspaceAgnosticToken": [
-                189
+                198
             ],
             "refreshToken": [
-                189
+                198
             ],
             "__typename": [
                 1
@@ -3677,7 +3643,7 @@ export default {
         },
         "AvailableWorkspacesAndAccessTokens": {
             "tokens": [
-                203
+                199
             ],
             "availableWorkspaces": [
                 156
@@ -3729,10 +3695,10 @@ export default {
         },
         "SignUp": {
             "loginToken": [
-                189
+                198
             ],
             "workspace": [
-                208
+                204
             ],
             "__typename": [
                 1
@@ -3740,7 +3706,7 @@ export default {
         },
         "TransientToken": {
             "transientToken": [
-                189
+                198
             ],
             "__typename": [
                 1
@@ -3762,7 +3728,7 @@ export default {
         },
         "VerifyEmailAndGetLoginToken": {
             "loginToken": [
-                189
+                198
             ],
             "workspaceUrls": [
                 151
@@ -3781,7 +3747,7 @@ export default {
         },
         "AuthTokens": {
             "tokens": [
-                203
+                199
             ],
             "__typename": [
                 1
@@ -3789,7 +3755,7 @@ export default {
         },
         "LoginToken": {
             "loginToken": [
-                189
+                198
             ],
             "__typename": [
                 1
@@ -3875,7 +3841,36 @@ export default {
                 4
             ],
             "targetRecordIdentifier": [
-                218
+                214
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "LogicFunctionExecutionResult": {
+            "data": [
+                15
+            ],
+            "logs": [
+                1
+            ],
+            "duration": [
+                11
+            ],
+            "status": [
+                217
+            ],
+            "error": [
+                15
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "LogicFunctionExecutionStatus": {},
+        "LogicFunctionLogs": {
+            "logs": [
+                1
             ],
             "__typename": [
                 1
@@ -4022,6 +4017,17 @@ export default {
                 1
             ]
         },
+        "ApplicationTokenPair": {
+            "applicationAccessToken": [
+                198
+            ],
+            "applicationRefreshToken": [
+                198
+            ],
+            "__typename": [
+                1
+            ]
+        },
         "FrontComponent": {
             "id": [
                 3
@@ -4060,7 +4066,7 @@ export default {
                 6
             ],
             "applicationTokenPair": [
-                190
+                222
             ],
             "__typename": [
                 1
@@ -4169,7 +4175,7 @@ export default {
                 1
             ],
             "parts": [
-                221
+                220
             ],
             "createdAt": [
                 4
@@ -4948,10 +4954,10 @@ export default {
         "QueueMetricsTimeRange": {},
         "Impersonate": {
             "loginToken": [
-                189
+                198
             ],
             "workspace": [
-                208
+                204
             ],
             "__typename": [
                 1
@@ -5200,6 +5206,9 @@ export default {
             ],
             "sourcePackage": [
                 1
+            ],
+            "isFeatured": [
+                6
             ],
             "__typename": [
                 1
@@ -5923,10 +5932,10 @@ export default {
                 141
             ],
             "navigationMenuItems": [
-                219
+                215
             ],
             "navigationMenuItem": [
-                219,
+                215,
                 {
                     "id": [
                         3,
@@ -5956,7 +5965,7 @@ export default {
                 146
             ],
             "getToolIndex": [
-                220
+                219
             ],
             "getToolInputSchema": [
                 15,
@@ -6004,7 +6013,7 @@ export default {
                 }
             ],
             "checkUserExists": [
-                216,
+                212,
                 {
                     "email": [
                         1,
@@ -6016,7 +6025,7 @@ export default {
                 }
             ],
             "checkWorkspaceInviteHashIsValid": [
-                217,
+                213,
                 {
                     "inviteHash": [
                         1,
@@ -6034,7 +6043,7 @@ export default {
                 }
             ],
             "validatePasswordResetToken": [
-                211,
+                207,
                 {
                     "passwordResetToken": [
                         1,
@@ -6090,22 +6099,17 @@ export default {
                     ]
                 }
             ],
-            "findManyApplications": [
-                49
-            ],
-            "findOneApplication": [
-                49,
+            "applicationRegistrationTarballUrl": [
+                1,
                 {
                     "id": [
-                        3
-                    ],
-                    "universalIdentifier": [
-                        3
+                        1,
+                        "String!"
                     ]
                 }
             ],
             "getSSOIdentityProviders": [
-                197
+                192
             ],
             "webhooks": [
                 234
@@ -6141,10 +6145,10 @@ export default {
                 229
             ],
             "skills": [
-                222
+                221
             ],
             "skill": [
-                222,
+                221,
                 {
                     "id": [
                         3,
@@ -6316,6 +6320,9 @@ export default {
                     ]
                 }
             ],
+            "findAllApplicationRegistrations": [
+                7
+            ],
             "getPostgresCredentials": [
                 303
             ],
@@ -6327,6 +6334,29 @@ export default {
             ],
             "findManyMarketplaceApps": [
                 290
+            ],
+            "findOneMarketplaceApp": [
+                290,
+                {
+                    "universalIdentifier": [
+                        1,
+                        "String!"
+                    ]
+                }
+            ],
+            "findManyApplications": [
+                49
+            ],
+            "findOneApplication": [
+                49,
+                {
+                    "id": [
+                        3
+                    ],
+                    "universalIdentifier": [
+                        3
+                    ]
+                }
             ],
             "__typename": [
                 1
@@ -6707,7 +6737,7 @@ export default {
                 }
             ],
             "executeOneLogicFunction": [
-                191,
+                216,
                 {
                     "input": [
                         350,
@@ -7238,7 +7268,7 @@ export default {
                 144
             ],
             "createNavigationMenuItem": [
-                219,
+                215,
                 {
                     "input": [
                         398,
@@ -7247,7 +7277,7 @@ export default {
                 }
             ],
             "updateNavigationMenuItem": [
-                219,
+                215,
                 {
                     "input": [
                         399,
@@ -7256,7 +7286,7 @@ export default {
                 }
             ],
             "deleteNavigationMenuItem": [
-                219,
+                215,
                 {
                     "id": [
                         3,
@@ -7554,7 +7584,7 @@ export default {
                 161
             ],
             "getAuthorizationUrlForSSO": [
-                206,
+                202,
                 {
                     "input": [
                         425,
@@ -7563,7 +7593,7 @@ export default {
                 }
             ],
             "getLoginTokenFromCredentials": [
-                215,
+                211,
                 {
                     "email": [
                         1,
@@ -7589,7 +7619,7 @@ export default {
                 }
             ],
             "signIn": [
-                204,
+                200,
                 {
                     "email": [
                         1,
@@ -7611,7 +7641,7 @@ export default {
                 }
             ],
             "verifyEmailAndGetLoginToken": [
-                212,
+                208,
                 {
                     "emailVerificationToken": [
                         1,
@@ -7631,7 +7661,7 @@ export default {
                 }
             ],
             "verifyEmailAndGetWorkspaceAgnosticToken": [
-                204,
+                200,
                 {
                     "emailVerificationToken": [
                         1,
@@ -7647,7 +7677,7 @@ export default {
                 }
             ],
             "getAuthTokensFromOTP": [
-                214,
+                210,
                 {
                     "otp": [
                         1,
@@ -7667,7 +7697,7 @@ export default {
                 }
             ],
             "signUp": [
-                204,
+                200,
                 {
                     "email": [
                         1,
@@ -7689,7 +7719,7 @@ export default {
                 }
             ],
             "signUpInWorkspace": [
-                209,
+                205,
                 {
                     "email": [
                         1,
@@ -7720,13 +7750,13 @@ export default {
                 }
             ],
             "signUpInNewWorkspace": [
-                209
+                205
             ],
             "generateTransientToken": [
-                210
+                206
             ],
             "getAuthTokensFromLoginToken": [
-                214,
+                210,
                 {
                     "loginToken": [
                         1,
@@ -7739,7 +7769,7 @@ export default {
                 }
             ],
             "authorizeApp": [
-                202,
+                197,
                 {
                     "clientId": [
                         1,
@@ -7761,7 +7791,7 @@ export default {
                 }
             ],
             "renewToken": [
-                214,
+                210,
                 {
                     "appToken": [
                         1,
@@ -7770,7 +7800,7 @@ export default {
                 }
             ],
             "generateApiKeyToken": [
-                213,
+                209,
                 {
                     "apiKeyId": [
                         3,
@@ -7783,7 +7813,7 @@ export default {
                 }
             ],
             "emailPasswordResetLink": [
-                205,
+                201,
                 {
                     "email": [
                         1,
@@ -7795,7 +7825,7 @@ export default {
                 }
             ],
             "updatePasswordViaResetToken": [
-                207,
+                203,
                 {
                     "passwordResetToken": [
                         1,
@@ -7870,6 +7900,15 @@ export default {
                     ]
                 }
             ],
+            "registerNpmPackage": [
+                7,
+                {
+                    "packageName": [
+                        1,
+                        "String!"
+                    ]
+                }
+            ],
             "uploadAppTarball": [
                 7,
                 {
@@ -7882,52 +7921,21 @@ export default {
                     ]
                 }
             ],
-            "renewApplicationToken": [
-                190,
+            "transferApplicationRegistrationOwnership": [
+                7,
                 {
-                    "applicationRefreshToken": [
-                        1,
-                        "String!"
-                    ]
-                }
-            ],
-            "installApplication": [
-                6,
-                {
-                    "workspaceMigration": [
-                        432,
-                        "WorkspaceMigrationInput!"
-                    ]
-                }
-            ],
-            "uninstallApplication": [
-                6,
-                {
-                    "universalIdentifier": [
-                        1,
-                        "String!"
-                    ]
-                }
-            ],
-            "updateOneApplicationVariable": [
-                6,
-                {
-                    "key": [
+                    "applicationRegistrationId": [
                         1,
                         "String!"
                     ],
-                    "value": [
+                    "targetWorkspaceSubdomain": [
                         1,
                         "String!"
-                    ],
-                    "applicationId": [
-                        3,
-                        "UUID!"
                     ]
                 }
             ],
             "initiateOTPProvisioning": [
-                200,
+                195,
                 {
                     "loginToken": [
                         1,
@@ -7940,10 +7948,10 @@ export default {
                 }
             ],
             "initiateOTPProvisioningForAuthenticatedUser": [
-                200
+                195
             ],
             "deleteTwoFactorAuthenticationMethod": [
-                199,
+                194,
                 {
                     "twoFactorAuthenticationMethodId": [
                         3,
@@ -7952,7 +7960,7 @@ export default {
                 }
             ],
             "verifyTwoFactorAuthenticationMethodForAuthenticatedUser": [
-                201,
+                196,
                 {
                     "otp": [
                         1,
@@ -7961,37 +7969,37 @@ export default {
                 }
             ],
             "createOIDCIdentityProvider": [
-                198,
+                193,
                 {
                     "input": [
-                        436,
+                        432,
                         "SetupOIDCSsoInput!"
                     ]
                 }
             ],
             "createSAMLIdentityProvider": [
-                198,
+                193,
                 {
                     "input": [
-                        437,
+                        433,
                         "SetupSAMLSsoInput!"
                     ]
                 }
             ],
             "deleteSSOIdentityProvider": [
-                194,
+                189,
                 {
                     "input": [
-                        438,
+                        434,
                         "DeleteSsoInput!"
                     ]
                 }
             ],
             "editSSOIdentityProvider": [
-                195,
+                190,
                 {
                     "input": [
-                        439,
+                        435,
                         "EditSsoInput!"
                     ]
                 }
@@ -8000,7 +8008,7 @@ export default {
                 234,
                 {
                     "input": [
-                        440,
+                        436,
                         "CreateWebhookInput!"
                     ]
                 }
@@ -8009,7 +8017,7 @@ export default {
                 234,
                 {
                     "input": [
-                        441,
+                        437,
                         "UpdateWebhookInput!"
                     ]
                 }
@@ -8027,25 +8035,25 @@ export default {
                 226
             ],
             "createSkill": [
-                222,
+                221,
                 {
                     "input": [
-                        443,
+                        439,
                         "CreateSkillInput!"
                     ]
                 }
             ],
             "updateSkill": [
-                222,
+                221,
                 {
                     "input": [
-                        444,
+                        440,
                         "UpdateSkillInput!"
                     ]
                 }
             ],
             "deleteSkill": [
-                222,
+                221,
                 {
                     "id": [
                         3,
@@ -8054,7 +8062,7 @@ export default {
                 }
             ],
             "activateSkill": [
-                222,
+                221,
                 {
                     "id": [
                         3,
@@ -8063,7 +8071,7 @@ export default {
                 }
             ],
             "deactivateSkill": [
-                222,
+                221,
                 {
                     "id": [
                         3,
@@ -8136,7 +8144,7 @@ export default {
                         "String!"
                     ],
                     "connectionParameters": [
-                        445,
+                        441,
                         "EmailAccountConnectionParameters!"
                     ],
                     "id": [
@@ -8148,7 +8156,7 @@ export default {
                 162,
                 {
                     "input": [
-                        447,
+                        443,
                         "UpdateLabPublicFeatureFlagInput!"
                     ]
                 }
@@ -8321,7 +8329,7 @@ export default {
                 68,
                 {
                     "input": [
-                        448,
+                        444,
                         "CreateOneAppTokenInput!"
                     ]
                 }
@@ -8338,10 +8346,10 @@ export default {
                     ]
                 }
             ],
-            "installNpmApp": [
+            "installApplication": [
                 6,
                 {
-                    "packageName": [
+                    "appRegistrationId": [
                         1,
                         "String!"
                     ],
@@ -8350,21 +8358,43 @@ export default {
                     ]
                 }
             ],
-            "upgradeApplication": [
+            "runWorkspaceMigration": [
                 6,
                 {
-                    "appRegistrationId": [
-                        1,
-                        "String!"
-                    ],
-                    "targetVersion": [
+                    "workspaceMigration": [
+                        446,
+                        "WorkspaceMigrationInput!"
+                    ]
+                }
+            ],
+            "uninstallApplication": [
+                6,
+                {
+                    "universalIdentifier": [
                         1,
                         "String!"
                     ]
                 }
             ],
+            "updateOneApplicationVariable": [
+                6,
+                {
+                    "key": [
+                        1,
+                        "String!"
+                    ],
+                    "value": [
+                        1,
+                        "String!"
+                    ],
+                    "applicationId": [
+                        3,
+                        "UUID!"
+                    ]
+                }
+            ],
             "generateApplicationToken": [
-                190,
+                222,
                 {
                     "applicationId": [
                         3,
@@ -8381,15 +8411,6 @@ export default {
                     ]
                 }
             ],
-            "createOneApplication": [
-                49,
-                {
-                    "input": [
-                        450,
-                        "CreateApplicationInput!"
-                    ]
-                }
-            ],
             "uploadApplicationFile": [
                 282,
                 {
@@ -8402,10 +8423,32 @@ export default {
                         "String!"
                     ],
                     "fileFolder": [
-                        451,
+                        450,
                         "FileFolder!"
                     ],
                     "filePath": [
+                        1,
+                        "String!"
+                    ]
+                }
+            ],
+            "upgradeApplication": [
+                6,
+                {
+                    "appRegistrationId": [
+                        1,
+                        "String!"
+                    ],
+                    "targetVersion": [
+                        1,
+                        "String!"
+                    ]
+                }
+            ],
+            "renewApplicationToken": [
+                222,
+                {
+                    "applicationRefreshToken": [
                         1,
                         "String!"
                     ]
@@ -10224,6 +10267,9 @@ export default {
             "termsUrl": [
                 1
             ],
+            "isListed": [
+                6
+            ],
             "__typename": [
                 1
             ]
@@ -10270,30 +10316,6 @@ export default {
                 1
             ]
         },
-        "WorkspaceMigrationInput": {
-            "actions": [
-                433
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "WorkspaceMigrationDeleteActionInput": {
-            "type": [
-                434
-            ],
-            "metadataName": [
-                435
-            ],
-            "universalIdentifier": [
-                1
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "WorkspaceMigrationActionType": {},
-        "AllMetadataName": {},
         "SetupOIDCSsoInput": {
             "name": [
                 1
@@ -10378,7 +10400,7 @@ export default {
                 3
             ],
             "update": [
-                442
+                438
             ],
             "__typename": [
                 1
@@ -10452,13 +10474,13 @@ export default {
         },
         "EmailAccountConnectionParameters": {
             "IMAP": [
-                446
+                442
             ],
             "SMTP": [
-                446
+                442
             ],
             "CALDAV": [
-                446
+                442
             ],
             "__typename": [
                 1
@@ -10497,7 +10519,7 @@ export default {
         },
         "CreateOneAppTokenInput": {
             "appToken": [
-                449
+                445
             ],
             "__typename": [
                 1
@@ -10511,36 +10533,37 @@ export default {
                 1
             ]
         },
-        "CreateApplicationInput": {
+        "WorkspaceMigrationInput": {
+            "actions": [
+                447
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "WorkspaceMigrationDeleteActionInput": {
+            "type": [
+                448
+            ],
+            "metadataName": [
+                449
+            ],
             "universalIdentifier": [
-                1
-            ],
-            "name": [
-                1
-            ],
-            "description": [
-                1
-            ],
-            "version": [
-                1
-            ],
-            "sourcePath": [
-                1
-            ],
-            "applicationRegistrationId": [
                 1
             ],
             "__typename": [
                 1
             ]
         },
+        "WorkspaceMigrationActionType": {},
+        "AllMetadataName": {},
         "FileFolder": {},
         "Subscription": {
             "onDbEvent": [
                 122,
                 {
                     "input": [
-                        453,
+                        452,
                         "OnDbEventInput!"
                     ]
                 }
@@ -10555,10 +10578,10 @@ export default {
                 }
             ],
             "logicFunctionLogs": [
-                193,
+                218,
                 {
                     "input": [
-                        454,
+                        453,
                         "LogicFunctionLogsInput!"
                     ]
                 }
