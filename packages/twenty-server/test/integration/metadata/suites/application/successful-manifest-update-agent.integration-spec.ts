@@ -25,8 +25,7 @@ const findAppAgents = async () => {
   });
 
   return data.findManyAgents.filter(
-    (agent) =>
-      agent.name === 'sales-assistant' || agent.name === 'support-bot',
+    (agent) => agent.name === 'sales-assistant' || agent.name === 'support-bot',
   );
 };
 
@@ -173,9 +172,7 @@ describe('Manifest update - agents', () => {
 
     expect(agentsAfterFirstSync).toHaveLength(2);
     expect(
-      agentsAfterFirstSync.find(
-        (agent) => agent.name === 'sales-assistant',
-      ),
+      agentsAfterFirstSync.find((agent) => agent.name === 'sales-assistant'),
     ).toBeDefined();
     expect(
       agentsAfterFirstSync.find((agent) => agent.name === 'support-bot'),
