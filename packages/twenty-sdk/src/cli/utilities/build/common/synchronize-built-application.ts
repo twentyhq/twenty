@@ -49,6 +49,28 @@ const ensureApplicationRegistrationExists = async (
   return { success: true, data: undefined };
 };
 
+const ensureDevelopmentApplicationExists = async (
+  apiService: ApiService,
+  manifest: Manifest,
+): Promise<CommandResult> => {
+  const result = await apiService.createDevelopmentApplication({
+    universalIdentifier: manifest.application.universalIdentifier,
+    name: manifest.application.displayName,
+  });
+
+  if (!result.success) {
+    return {
+      success: false,
+      error: {
+        code: APP_ERROR_CODES.SYNC_FAILED,
+        message: `Failed to create development application: ${serializeError(result.error)}`,
+      },
+    };
+  }
+
+  return { success: true, data: undefined };
+};
+
 export const synchronizeBuiltApplication = async ({
   appPath,
   manifest,
@@ -70,21 +92,28 @@ export const synchronizeBuiltApplication = async ({
     return registrationResult;
   }
 
+  const applicationResult = await ensureDevelopmentApplicationExists(
+    apiService,
+    manifest,
+  );
+
+  if (!applicationResult.success) {
+    return applicationResult;
+  }
+
   const fileUploader = new FileUploader({
     applicationUniversalIdentifier: universalIdentifier,
     appPath,
   });
 
-  const uploadResults = [];
-
-  for (const fileInfo of builtFileInfos.values()) {
-    const result = await fileUploader.uploadFile({
-      builtPath: fileInfo.builtPath,
-      fileFolder: fileInfo.fileFolder,
-    });
-
-    uploadResults.push(result);
-  }
+  const uploadResults = await Promise.all(
+    [...builtFileInfos.values()].map((fileInfo) =>
+      fileUploader.uploadFile({
+        builtPath: fileInfo.builtPath,
+        fileFolder: fileInfo.fileFolder,
+      }),
+    ),
+  );
 
   const failedUploads = uploadResults.filter((result) => !result.success);
 
