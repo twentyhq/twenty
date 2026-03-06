@@ -136,10 +136,12 @@ Application development commands.
 - `twenty app:generate-client [appPath]` — One-shot build, sync to local server, and generate the typed API client. Requires a running local server.
 
 - `twenty app:build [appPath]` — Build the application into `.twenty/output/`. No server needed.
+
   - Options:
     - `--tarball`: Also pack the output into a `.tgz` tarball.
 
 - `twenty app:publish [appPath]` — Build and publish the application.
+
   - Default (no flags): builds and runs `npm publish` on the output directory.
   - Options:
     - `--server <url>`: Publish to a Twenty server instead of npm (builds tarball, uploads, and installs).
