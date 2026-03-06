@@ -51,14 +51,6 @@ export class WorkspaceMigrationRunnerService {
       flatMapsKeysSet.has('flatObjectMetadataMaps') ||
       flatMapsKeysSet.has('flatFieldMetadataMaps');
 
-    if (shouldIncrementMetadataGraphqlSchemaVersion) {
-      asyncOperations.push(
-        this.workspaceMetadataVersionService.incrementMetadataVersion(
-          workspaceId,
-        ),
-      );
-    }
-
     const viewRelatedFlatMapsKeys: (keyof AllFlatEntityMaps)[] = [
       'flatViewMaps',
       'flatViewFilterMaps',
@@ -115,6 +107,17 @@ export class WorkspaceMigrationRunnerService {
       'Runner',
       `Cache invalidation ${allFlatEntityMapsKeys.join()}`,
     );
+
+    const flatMapsKeysSet = new Set(allFlatEntityMapsKeys);
+
+    if (
+      flatMapsKeysSet.has('flatObjectMetadataMaps') ||
+      flatMapsKeysSet.has('flatFieldMetadataMaps')
+    ) {
+      await this.workspaceMetadataVersionService.incrementMetadataVersion(
+        workspaceId,
+      );
+    }
 
     await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
       workspaceId,
