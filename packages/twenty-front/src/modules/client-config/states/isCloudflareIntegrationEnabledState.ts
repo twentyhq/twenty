@@ -1,6 +1,6 @@
-import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-export const isCloudflareIntegrationEnabledState = createStateV2<boolean>({
+export const isCloudflareIntegrationEnabledState = createAtomState<boolean>({
   key: 'isCloudflareIntegrationEnabled',
   defaultValue: false,
 });

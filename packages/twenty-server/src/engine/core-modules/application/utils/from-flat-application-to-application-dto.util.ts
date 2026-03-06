@@ -13,6 +13,7 @@ export const fromFlatApplicationToApplicationDto = ({
   availablePackages,
   universalIdentifier,
   version,
+  settingsCustomTabFrontComponentId,
 }: FlatApplication): ApplicationDTO => {
   return {
     canBeUninstalled,
@@ -27,5 +28,7 @@ export const fromFlatApplicationToApplicationDto = ({
     availablePackages: availablePackages ?? {},
     universalIdentifier,
     version: version ?? undefined,
+    settingsCustomTabFrontComponentId:
+      settingsCustomTabFrontComponentId ?? undefined,
   };
 };

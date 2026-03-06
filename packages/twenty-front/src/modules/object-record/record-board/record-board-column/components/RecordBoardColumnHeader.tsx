@@ -1,5 +1,6 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useContext, useState } from 'react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
@@ -15,8 +16,9 @@ import { recordIndexAggregateDisplayValueForGroupValueComponentFamilyState } fro
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useToggleDropdown } from '@/ui/layout/dropdown/hooks/useToggleDropdown';
-import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { Tag } from 'twenty-ui/components';
 import { IconDotsVertical, IconPlus } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
@@ -26,9 +28,9 @@ const StyledHeader = styled.div`
   cursor: pointer;
   display: flex;
   flex-direction: row;
+  height: 100%;
   justify-content: left;
   width: 100%;
-  height: 100%;
 `;
 
 const StyledHeaderActions = styled.div`
@@ -37,7 +39,7 @@ const StyledHeaderActions = styled.div`
 `;
 
 const StyledHeaderContainer = styled.div`
-  background: ${({ theme }) => theme.background.primary};
+  background: ${themeCssVariables.background.primary};
   display: flex;
   justify-content: space-between;
   width: 100%;
@@ -45,7 +47,7 @@ const StyledHeaderContainer = styled.div`
 const StyledLeftContainer = styled.div`
   align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
   overflow: hidden;
 `;
 
@@ -55,18 +57,18 @@ const StyledRightContainer = styled.div`
 `;
 
 const StyledColumn = styled.div`
-  background-color: ${({ theme }) => theme.background.primary};
+  background-color: ${themeCssVariables.background.primary};
   display: flex;
   flex-direction: column;
   max-width: ${RECORD_BOARD_COLUMN_WIDTH}px;
   min-width: ${RECORD_BOARD_COLUMN_WIDTH}px;
 
-  padding: ${({ theme }) => theme.spacing(2)};
+  padding: ${themeCssVariables.spacing[2]};
 
   position: relative;
 `;
 
-const StyledTag = styled(Tag)`
+const StyledTagContainer = styled.div`
   max-width: 100%;
   min-width: 0;
   overflow: hidden;
@@ -91,7 +93,7 @@ export const RecordBoardColumnHeader = () => {
 
   const hasObjectUpdatePermissions = objectPermissions.canUpdateObjectRecords;
 
-  const hasAnySoftDeleteFilterOnView = useRecoilComponentValue(
+  const hasAnySoftDeleteFilterOnView = useAtomComponentSelectorValue(
     hasAnySoftDeleteFilterOnViewComponentSelector,
   );
 
@@ -100,12 +102,12 @@ export const RecordBoardColumnHeader = () => {
   });
 
   const recordIndexAggregateDisplayValueForGroupValue =
-    useRecoilComponentFamilyValue(
+    useAtomComponentFamilyStateValue(
       recordIndexAggregateDisplayValueForGroupValueComponentFamilyState,
       { groupValue: columnDefinition?.value ?? '' },
     );
 
-  const recordIndexAggregateDisplayLabel = useRecoilComponentValue(
+  const recordIndexAggregateDisplayLabel = useAtomComponentStateValue(
     recordIndexAggregateDisplayLabelComponentState,
   );
 
@@ -137,24 +139,29 @@ export const RecordBoardColumnHeader = () => {
                   y: 10,
                 }}
                 clickableComponent={
-                  <StyledTag
-                    variant={
-                      columnDefinition.type === RecordGroupDefinitionType.Value
-                        ? 'solid'
-                        : 'outline'
-                    }
-                    color={
-                      columnDefinition.type === RecordGroupDefinitionType.Value
-                        ? columnDefinition.color
-                        : 'transparent'
-                    }
-                    text={columnDefinition.title}
-                    weight={
-                      columnDefinition.type === RecordGroupDefinitionType.Value
-                        ? 'regular'
-                        : 'medium'
-                    }
-                  />
+                  <StyledTagContainer>
+                    <Tag
+                      variant={
+                        columnDefinition.type ===
+                        RecordGroupDefinitionType.Value
+                          ? 'solid'
+                          : 'outline'
+                      }
+                      color={
+                        columnDefinition.type ===
+                        RecordGroupDefinitionType.Value
+                          ? columnDefinition.color
+                          : 'transparent'
+                      }
+                      text={columnDefinition.title}
+                      weight={
+                        columnDefinition.type ===
+                        RecordGroupDefinitionType.Value
+                          ? 'regular'
+                          : 'medium'
+                      }
+                    />
+                  </StyledTagContainer>
                 }
                 dropdownComponents={<RecordBoardColumnDropdownMenu />}
               />

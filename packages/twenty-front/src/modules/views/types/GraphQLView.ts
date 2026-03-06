@@ -1,5 +1,4 @@
 import { type AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
-import { type CoreViewSortEssential } from '@/views/types/CoreViewSortEssential';
 import { type ViewField } from '@/views/types/ViewField';
 import { type ViewFilter } from '@/views/types/ViewFilter';
 import { type ViewFilterGroup } from '@/views/types/ViewFilterGroup';
@@ -11,6 +10,7 @@ import {
   type ViewVisibility,
   type ViewCalendarLayout,
 } from '~/generated-metadata/graphql';
+import { type ViewSort } from '@/views/types/ViewSort';
 export type GraphQLView = {
   id: string;
   name: string;
@@ -26,7 +26,7 @@ export type GraphQLView = {
   viewFields: ViewField[];
   viewFilters: ViewFilter[];
   viewFilterGroups?: ViewFilterGroup[];
-  viewSorts: CoreViewSortEssential[];
+  viewSorts: ViewSort[];
   viewGroups: ViewGroup[];
   position: number;
   icon: string;

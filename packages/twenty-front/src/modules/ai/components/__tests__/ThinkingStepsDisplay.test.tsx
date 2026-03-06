@@ -1,10 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import {
-  THEME_LIGHT,
-  ThemeContextProvider,
-  ThemeProvider,
-} from 'twenty-ui/theme';
+import { ThemeProvider } from 'twenty-ui/theme-constants';
 
 import { ThinkingStepsDisplay } from '@/ai/components/ThinkingStepsDisplay';
 import { type ThinkingStepPart } from '@/ai/utils/thinkingStepPart';
@@ -16,9 +12,9 @@ jest.mock('~/hooks/useCopyToClipboard', () => ({
 }));
 
 jest.mock(
-  '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue',
+  '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue',
   () => ({
-    useRecoilComponentValue: () => 'output',
+    useAtomComponentSelectorValue: () => 'output',
   }),
 );
 
@@ -84,14 +80,12 @@ const renderThinkingStepsDisplay = ({
   hasAssistantTextResponseStarted?: boolean;
 }) => {
   return render(
-    <ThemeProvider theme={THEME_LIGHT}>
-      <ThemeContextProvider theme={THEME_LIGHT}>
-        <ThinkingStepsDisplay
-          parts={parts}
-          isLastMessageStreaming={isLastMessageStreaming}
-          hasAssistantTextResponseStarted={hasAssistantTextResponseStarted}
-        />
-      </ThemeContextProvider>
+    <ThemeProvider colorScheme="light">
+      <ThinkingStepsDisplay
+        parts={parts}
+        isLastMessageStreaming={isLastMessageStreaming}
+        hasAssistantTextResponseStarted={hasAssistantTextResponseStarted}
+      />
     </ThemeProvider>,
   );
 };

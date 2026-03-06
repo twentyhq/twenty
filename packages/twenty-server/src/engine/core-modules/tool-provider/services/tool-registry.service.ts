@@ -1,6 +1,6 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 
-import { type ToolCallOptions, type ToolSet, jsonSchema } from 'ai';
+import { type ToolExecutionOptions, type ToolSet, jsonSchema } from 'ai';
 
 import {
   type NativeToolProvider,
@@ -219,7 +219,7 @@ export class ToolRegistryService {
     toolName: string,
     args: Record<string, unknown>,
     context: ToolContext,
-    _options: ToolCallOptions,
+    _options: ToolExecutionOptions,
   ): Promise<ExecuteToolResult> {
     try {
       const fullContext = this.buildContextFromToolContext(context);

@@ -4,10 +4,10 @@ import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateAct
 import { NoteList } from '@/activities/notes/components/NoteList';
 import { useNotes } from '@/activities/notes/hooks/useNotes';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { IconPlus } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
@@ -43,7 +43,7 @@ export const NotesCard = () => {
     activityObjectNameSingular: CoreObjectNameSingular.Note,
   });
 
-  const isNotesEmpty = !notes || notes.length === 0;
+  const isNotesEmpty = notes.length === 0;
 
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: targetRecord.targetObjectNameSingular,
@@ -62,7 +62,7 @@ export const NotesCard = () => {
   if (isNotesEmpty) {
     return (
       <AnimatedPlaceholderEmptyContainer
-        // eslint-disable-next-line react/jsx-props-no-spreading
+        // oxlint-disable-next-line react/jsx-props-no-spreading
         {...EMPTY_PLACEHOLDER_TRANSITION_PROPS}
       >
         <AnimatedPlaceholder type="noNote" />

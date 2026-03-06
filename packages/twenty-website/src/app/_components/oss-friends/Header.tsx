@@ -1,6 +1,6 @@
 'use client';
 
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
 
 import { Theme } from '@/app/_components/ui/theme/theme';

@@ -1,4 +1,4 @@
-import { type AuthBypassProvidersDTO } from 'src/engine/core-modules/workspace/dtos/public-workspace-data-output';
+import { type AuthBypassProvidersDTO } from 'src/engine/core-modules/workspace/dtos/public-workspace-data.dto';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 export const getAuthBypassProvidersByWorkspace = ({

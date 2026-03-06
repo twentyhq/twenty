@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { Draggable } from '@hello-pangea/dnd';
 
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
@@ -8,7 +8,7 @@ import { useRecordCalendarContextOrThrow } from '@/object-record/record-calendar
 import { RecordCalendarCard } from '@/object-record/record-calendar/record-calendar-card/components/RecordCalendarCard';
 import { RecordCalendarCardComponentInstanceContext } from '@/object-record/record-calendar/record-calendar-card/states/contexts/RecordCalendarCardComponentInstanceContext';
 import { recordIndexCalendarFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexCalendarFieldMetadataIdState';
-import { useRecoilValue } from 'recoil';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledDraggableContainer = styled.div`
@@ -36,7 +36,7 @@ export const RecordCalendarCardDraggableContainer = ({
     objectMetadataItem.id,
   );
 
-  const recordIndexCalendarFieldMetadataId = useRecoilValue(
+  const recordIndexCalendarFieldMetadataId = useAtomStateValue(
     recordIndexCalendarFieldMetadataIdState,
   );
 
@@ -77,9 +77,9 @@ export const RecordCalendarCardDraggableContainer = ({
           <StyledDraggableContainer
             id={`record-calendar-card-${recordId}`}
             ref={draggableProvided?.innerRef}
-            // eslint-disable-next-line react/jsx-props-no-spreading
+            // oxlint-disable-next-line react/jsx-props-no-spreading
             {...draggableProvided?.dragHandleProps}
-            // eslint-disable-next-line react/jsx-props-no-spreading
+            // oxlint-disable-next-line react/jsx-props-no-spreading
             {...draggableProvided?.draggableProps}
             data-selectable-id={recordId}
           >

@@ -23,6 +23,8 @@ import {
 
 export const WORKFLOW_RUN_ENQUEUE_CRON_PATTERN = '*/5 * * * *';
 
+const WORKSPACE_BATCH_SIZE = 10;
+
 @Processor(MessageQueue.cronQueue)
 export class WorkflowRunEnqueueCronJob {
   private readonly logger = new Logger(WorkflowRunEnqueueCronJob.name);
@@ -53,32 +55,51 @@ export class WorkflowRunEnqueueCronJob {
 
     let enqueuedCount = 0;
 
-    for (const workspace of activeWorkspaces) {
-      try {
-        const hasNotStartedRuns = await this.hasNotStartedRuns(workspace.id);
+    for (
+      let workspaceIndex = 0;
+      workspaceIndex < activeWorkspaces.length;
+      workspaceIndex += WORKSPACE_BATCH_SIZE
+    ) {
+      const batch = activeWorkspaces.slice(
+        workspaceIndex,
+        workspaceIndex + WORKSPACE_BATCH_SIZE,
+      );
 
-        if (hasNotStartedRuns) {
-          await this.messageQueueService.add<WorkflowRunEnqueueJobData>(
-            WorkflowRunEnqueueJob.name,
-            {
-              workspaceId: workspace.id,
-              isCacheMode: false,
-            },
-          );
+      const results = await Promise.allSettled(
+        batch.map((workspace) => this.checkAndEnqueue(workspace.id)),
+      );
+
+      for (const [index, result] of results.entries()) {
+        if (result.status === 'fulfilled' && result.value) {
           enqueuedCount++;
         }
-      } catch (error) {
-        this.exceptionHandlerService.captureExceptions([error], {
-          workspace: {
-            id: workspace.id,
-          },
-        });
+
+        if (result.status === 'rejected') {
+          this.exceptionHandlerService.captureExceptions([result.reason], {
+            workspace: { id: batch[index].id },
+          });
+        }
       }
     }
 
     this.logger.log(
       `Completed WorkflowRunEnqueueCronJob cron, enqueued ${enqueuedCount} jobs`,
     );
+  }
+
+  private async checkAndEnqueue(workspaceId: string): Promise<boolean> {
+    const hasNotStartedRuns = await this.hasNotStartedRuns(workspaceId);
+
+    if (hasNotStartedRuns) {
+      await this.messageQueueService.add<WorkflowRunEnqueueJobData>(
+        WorkflowRunEnqueueJob.name,
+        { workspaceId, isCacheMode: false },
+      );
+
+      return true;
+    }
+
+    return false;
   }
 
   private async hasNotStartedRuns(workspaceId: string): Promise<boolean> {
@@ -98,6 +119,7 @@ export class WorkflowRunEnqueueCronJob {
         });
       },
       authContext,
+      { lite: true },
     );
   }
 }

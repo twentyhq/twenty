@@ -1,10 +1,10 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 
 const StyledPreviewContent = styled.div<{ isMobile: boolean }>`
   display: flex;
-  gap: 6px;
   flex-direction: ${({ isMobile }) => (isMobile ? 'column' : 'row')};
+  gap: 6px;
 `;
 
 export const SettingsDataModelFieldRelationPreviewContent = ({

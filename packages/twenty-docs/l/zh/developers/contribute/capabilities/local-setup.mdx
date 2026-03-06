@@ -6,66 +6,66 @@ description: 本指南适用于希望在本地运行 Twenty 的贡献者或好�
 ## 先决条件
 
 <Tabs>
-  <Tab title="Linux 和 MacOS">
-    在安装和使用 Twenty 之前，请确保在您的计算机上安装以下内容：
+<Tab title="Linux 和 MacOS">
 
-    * [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
-    * [Node v24.5.0](https://nodejs.org/en/download)
-    * [yarn v4](https://yarnpkg.com/getting-started/install)
-    * [nvm](https://github.com/nvm-sh/nvm/blob/master/README.md)
+在安装和使用 Twenty 之前，请确保在您的计算机上安装以下内容：
+* [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
+* [Node v24.5.0](https://nodejs.org/en/download)
+* [yarn v4](https://yarnpkg.com/getting-started/install)
+* [nvm](https://github.com/nvm-sh/nvm/blob/master/README.md)
 
-    <Warning>
-      `npm` 无法使用，您应该改用 `yarn`。 Yarn 现在与 Node.js 一起提供，因此您不需要单独安装它。
-      如果您尚未执行此操作，只需运行 `corepack enable` 即可启用 Yarn。
-    </Warning>
-  </Tab>
+<Warning>
+`npm` 无法使用，您应该改用 `yarn`。 Yarn 现在与 Node.js 一起提供，因此您不需要单独安装它。
+如果您尚未执行此操作，只需运行 `corepack enable` 即可启用 Yarn。
+</Warning>
 
-  <Tab title="Windows (WSL)">
-    1. 安装 WSL
-       以管理员身份打开 PowerShell 并运行：
+</Tab>
 
-    ```powershell
-    wsl --install
-    ```
+<Tab title="Windows (WSL)">
 
-    现在您应该看到一个提示，要求您重启计算机。 如果没有，请手动重启。
+1. 安装 WSL
+   以管理员身份打开 PowerShell 并运行：
+```powershell
+wsl --install
+```
+现在您应该看到一个提示，要求您重启计算机。 如果没有，请手动重启。
 
-    重启后，一个 powershell 窗口将打开并安装 Ubuntu。 这可能需要一些时间。
-    您将看到一个提示，要求为您的 Ubuntu 安装创建用户名和密码。
+重启后，一个 powershell 窗口将打开并安装 Ubuntu。 这可能需要一些时间。
+您将看到一个提示，要求为您的 Ubuntu 安装创建用户名和密码。
 
-    2. 安装和配置 git
+2. 安装和配置 git
 
-    ```bash
-    sudo apt-get install git
+```bash
+sudo apt-get install git
 
-    git config --global user.name "Your Name"
+git config --global user.name "Your Name"
 
-    git config --global user.email "youremail@domain.com"
-    ```
+git config --global user.email "youremail@domain.com"
+```
 
-    3. 安装 nvm、node.js 和 yarn
+3. 安装 nvm、node.js 和 yarn
 
-    <Warning>
-      使用 `nvm` 安装正确的 `node` 版本。 `.nvmrc` 确保所有贡献者使用相同的版本。
-    </Warning>
+<Warning>
+使用 `nvm` 安装正确的 `node` 版本。 `.nvmrc` 确保所有贡献者使用相同的版本。
+</Warning>
 
-    ```bash
-    sudo apt-get install curl
+```bash
+sudo apt-get install curl
 
-    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
-    ```
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
+```
+关闭并重新打开您的终端以使用 nvm。 然后运行以下命令。
 
-    关闭并重新打开您的终端以使用 nvm。 然后运行以下命令。
+```bash
 
-    ```bash
+nvm install # installs recommended node version
 
-    nvm install # installs recommended node version
+nvm use # use recommended node version
 
-    nvm use # use recommended node version
+corepack enable
+```
 
-    corepack enable
-    ```
-  </Tab>
+</Tab>
 </Tabs>
 
 ---
@@ -75,19 +75,19 @@ description: 本指南适用于希望在本地运行 Twenty 的贡献者或好�
 在您的终端中，运行以下命令。
 
 <Tabs>
-  <Tab title="SSH (推荐)">
-    如果您尚未设置 SSH 密钥，您可以在 [这里](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/about-ssh) 学习如何设置。
+<Tab title="SSH (推荐)">
+如果您尚未设置 SSH 密钥，您可以在 [这里](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/about-ssh) 学习如何设置。
+```bash
+git clone git@github.com:twentyhq/twenty.git
+```
+</Tab>
+<Tab title="HTTPS">
 
-    ```bash
-    git clone git@github.com:twentyhq/twenty.git
-    ```
-  </Tab>
+```bash
+git clone https://github.com/twentyhq/twenty.git
+```
 
-  <Tab title="HTTPS">
-    ```bash
-    git clone https://github.com/twentyhq/twenty.git
-    ```
-  </Tab>
+</Tab>
 </Tabs>
 
 ## 步骤 2：定位到项目根目录
@@ -104,20 +104,16 @@ cd twenty
   <Tab title="Linux">
     \*\*选项 1（推荐）：\*\*在本地供应您的数据库：
     使用以下链接在 Linux 机器上安装 Postgresql：[Postgresql 安装](https://www.postgresql.org/download/linux/)
-
     ```bash
       psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
     ```
-
     注意：您可能需要在命令 `psql` 前添加 `sudo -u postgres` 以避免权限错误。
 
     \*\*选项 2：\*\*如果您已安装 docker：
-
     ```bash
       make -C packages/twenty-docker postgres-on-docker
     ```
   </Tab>
-
   <Tab title="Mac OS">
     \*\*选项 1（推荐）：\*\*通过 `brew` 在本地设置数据库：
 
@@ -129,14 +125,12 @@ cd twenty
     ```
 
     您可以通过执行以下操作来验证 PostgreSQL 服务器是否正在运行：
-
     ```bash
       brew services list
     ```
 
     安装器在通过 Homebrew 安装时可能不会默认创建 `postgres` 用户。 相反，它会创建一个与您的 macOS 用户名（例如，“john”）匹配的 PostgreSQL 角色。
     按照以下步骤检查并在必要时创建 `postgres` 用户：
-
     ```bash
       # Connect to PostgreSQL
       psql postgres
@@ -145,59 +139,48 @@ cd twenty
     ```
 
     在 psql 提示符（postgres=#）下，运行：
-
-    ```bash
-     # List existing PostgreSQL roles
-     \du
-    ```
-
+     ```bash
+      # List existing PostgreSQL roles
+      \du
+     ```
     您将看到类似于以下的输出：
-
-    ```bash
-     Role name | Attributes  | Member of
-     -----------+-------------+-----------
-     john      | Superuser   | {}
-    ```
+     ```bash
+      Role name | Attributes  | Member of
+      -----------+-------------+-----------
+      john      | Superuser   | {}
+     ```
 
     如果您没有看到 `postgres` 角色列出，请继续下一步。
     手动创建 `postgres` 角色：
-
-    ```bash
-     CREATE ROLE postgres WITH SUPERUSER LOGIN;
-    ```
-
+     ```bash
+      CREATE ROLE postgres WITH SUPERUSER LOGIN;
+     ```
     这将创建一个具备登录权限名为 `postgres` 的超级用户角色。
-
-    ```bash
-    角色名 | 属性  | 成员
-    -----------+-------------+-----------
-    postgres  | 超级用户   | {}
-    john      | 超级用户   | {}
-    ```
+      ```bash
+      角色名 | 属性  | 成员
+      -----------+-------------+-----------
+      postgres  | 超级用户   | {}
+      john      | 超级用户   | {}
+      ```
 
     \*\*选项 2：\*\*如果您已安装 docker：
-
     ```bash
       make -C packages/twenty-docker postgres-on-docker
     ```
   </Tab>
-
   <Tab title="Windows (WSL)">
     以下所有步骤应在 WSL 终端（在您的虚拟机内）中运行
 
     \*\*选项 1：\*\*在本地提供您的 Postgresql：
     使用以下链接在 Linux 虚拟机上安装 Postgresql：[Postgresql 安装](https://www.postgresql.org/download/linux/)
-
     ```bash
       psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
     ```
-
     注意：您可能需要在命令 `psql` 前添加 `sudo -u postgres` 以避免权限错误。
 
     \*\*选项 2：\*\*如果您已安装 docker：
     在 WSL 上运行 Docker 增加了额外的复杂性。
     仅在您对涉及的额外步骤感到舒适时使用此选项，包括开启 [Docker Desktop WSL2](https://docs.docker.com/desktop/wsl)。
-
     ```bash
       make -C packages/twenty-docker postgres-on-docker
     ```
@@ -216,35 +199,28 @@ Twenty 需要 Redis 缓存来提供最佳性能
     使用以下链接在 Linux 机器上安装 Redis：[Redis 安装](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/install-redis-on-linux/)
 
     \*\*选项 2：\*\*如果您已安装 docker：
-
     ```bash
       make -C packages/twenty-docker redis-on-docker
     ```
   </Tab>
-
   <Tab title="Mac OS">
     \*\*选项 1（推荐）：\*\*通过 `brew` 在本地设置 Redis：
-
     ```bash
     brew install redis
     ```
-
     启动您的 redis server：
     `brew services start redis`
 
     \*\*选项 2：\*\*如果您已安装 docker：
-
     ```bash
       make -C packages/twenty-docker redis-on-docker
     ```
   </Tab>
-
   <Tab title="Windows (WSL)">
     \*\*选项 1：\*\*在本地供应您的 Redis：
     使用以下链接在 Linux 虚拟机上安装 Redis：[Redis 安装](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/install-redis-on-linux/)
 
     \*\*选项 2：\*\*如果您已安装 docker：
-
     ```bash
       make -C packages/twenty-docker redis-on-docker
     ```
@@ -265,7 +241,7 @@ cp ./packages/twenty-server/.env.example ./packages/twenty-server/.env
 ```
 
 <Info>
-  **多工作区模式：** 默认情况下，Twenty 以单工作区模式运行，在此模式下只能创建一个工作区。 要启用多工作区支持（对于测试基于子域的功能很有用），请在服务器的 `.env` 文件中设置 `IS_MULTIWORKSPACE_ENABLED=true`。 详见 [多工作区模式](/l/zh/developers/self-host/capabilities/setup#multi-workspace-mode)。
+**多工作区模式：** 默认情况下，Twenty 以单工作区模式运行，在此模式下只能创建一个工作区。 要启用多工作区支持（对于测试基于子域的功能很有用），请在服务器的 `.env` 文件中设置 `IS_MULTIWORKSPACE_ENABLED=true`。 详见 [多工作区模式](/l/zh/developers/self-host/capabilities/setup#multi-workspace-mode)。
 </Info>
 
 ## 步骤 6：安装依赖项
@@ -285,15 +261,12 @@ yarn
     根据您的 Linux 发行版，Redis 服务器可能会自动启动。
     如果没有，请查看您的发行版的 [Redis 安装指南](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/)。
   </Tab>
-
   <Tab title="Mac OS">
-    Redis 应该已经在运行中。 如果没有，运行：
-
+  Redis 应该已经在运行中。 如果没有，运行：
     ```bash
     brew services start redis
     ```
   </Tab>
-
   <Tab title="Windows (WSL)">
     根据您的 Linux 发行版，Redis 服务器可能会自动启动。
     如果没有，请查看您的发行版的 [Redis 安装指南](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/)。

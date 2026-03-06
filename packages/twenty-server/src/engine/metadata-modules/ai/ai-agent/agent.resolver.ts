@@ -2,9 +2,9 @@ import { UseGuards, UseInterceptors } from '@nestjs/common';
 import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { isDefined } from 'twenty-shared/utils';
+import { isNonEmptyString } from '@sniptt/guards';
+import { FeatureFlagKey } from 'twenty-shared/types';
 
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
@@ -74,7 +74,7 @@ export class AgentResolver {
     @Args('input') input: CreateAgentInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<AgentDTO> {
-    if (isDefined(input.modelId)) {
+    if (isNonEmptyString(input.modelId)) {
       this.aiModelRegistryService.validateModelAvailability(
         input.modelId,
         workspace,
@@ -96,7 +96,7 @@ export class AgentResolver {
     @Args('input') input: UpdateAgentInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<AgentDTO> {
-    if (isDefined(input.modelId)) {
+    if (isNonEmptyString(input.modelId)) {
       this.aiModelRegistryService.validateModelAvailability(
         input.modelId,
         workspace,

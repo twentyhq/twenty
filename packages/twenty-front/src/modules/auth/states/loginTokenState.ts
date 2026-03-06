@@ -1,7 +1,7 @@
-import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 import { type AuthToken } from '~/generated-metadata/graphql';
 
-export const loginTokenState = createStateV2<AuthToken['token'] | null>({
+export const loginTokenState = createAtomState<AuthToken['token'] | null>({
   key: 'loginTokenState',
   defaultValue: null,
 });

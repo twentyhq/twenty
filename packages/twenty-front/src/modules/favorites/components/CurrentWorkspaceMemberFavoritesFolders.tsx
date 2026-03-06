@@ -4,28 +4,29 @@ import { FavoriteFolders } from '@/favorites/components/FavoritesFolders';
 import { FavoritesSkeletonLoader } from '@/favorites/components/FavoritesSkeletonLoader';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { useFavoritesByFolder } from '@/favorites/hooks/useFavoritesByFolder';
-import { isFavoriteFolderCreatingStateV2 } from '@/favorites/states/isFavoriteFolderCreatingStateV2';
-import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
+import { isFavoriteFolderCreatingState } from '@/favorites/states/isFavoriteFolderCreatingState';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
 import { isNavigationSectionOpenFamilyState } from '@/ui/navigation/navigation-drawer/states/isNavigationSectionOpenFamilyState';
-import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconFolderPlus } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 
 export const CurrentWorkspaceMemberFavoritesFolders = () => {
-  const currentWorkspaceMember = useRecoilValueV2(currentWorkspaceMemberState);
+  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const { sortedFavorites: favorites } = useFavorites();
   const { favoritesByFolder } = useFavoritesByFolder();
 
-  const [isFavoriteFolderCreating, setIsFavoriteFolderCreating] =
-    useRecoilStateV2(isFavoriteFolderCreatingStateV2);
+  const [isFavoriteFolderCreating, setIsFavoriteFolderCreating] = useAtomState(
+    isFavoriteFolderCreatingState,
+  );
 
   const loading = useIsPrefetchLoading();
 
@@ -33,7 +34,7 @@ export const CurrentWorkspaceMemberFavoritesFolders = () => {
 
   const { toggleNavigationSection, openNavigationSection } =
     useNavigationSection('Favorites');
-  const isNavigationSectionOpen = useFamilyRecoilValueV2(
+  const isNavigationSectionOpen = useAtomFamilyStateValue(
     isNavigationSectionOpenFamilyState,
     'Favorites',
   );
@@ -48,9 +49,9 @@ export const CurrentWorkspaceMemberFavoritesFolders = () => {
   }
 
   if (
-    (!favorites || favorites.length === 0) &&
+    favorites.length === 0 &&
     !isFavoriteFolderCreating &&
-    (!favoritesByFolder || favoritesByFolder.length === 0)
+    favoritesByFolder.length === 0
   ) {
     return null;
   }

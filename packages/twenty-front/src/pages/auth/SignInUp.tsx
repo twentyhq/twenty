@@ -5,10 +5,10 @@ import {
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
 import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 import { Logo } from '@/auth/components/Logo';
 import { Title } from '@/auth/components/Title';
@@ -29,21 +29,22 @@ import { SignInUpTwoFactorAuthenticationProvision } from '@/auth/sign-in-up/comp
 import { SignInUpTOTPVerification } from '@/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification';
 import { useWorkspaceFromInviteHash } from '@/auth/sign-in-up/hooks/useWorkspaceFromInviteHash';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
-import { Modal } from '@/ui/layout/modal/components/Modal';
+import { ModalContent } from 'twenty-ui/layout';
 import { useLingui } from '@lingui/react/macro';
 import { useSearchParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { Loader } from 'twenty-ui/feedback';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { AnimatedEaseIn } from 'twenty-ui/utilities';
-import { type PublicWorkspaceDataOutput } from '~/generated-metadata/graphql';
+import { type PublicWorkspaceData } from '~/generated-metadata/graphql';
 
 const StyledLoaderContainer = styled.div`
   align-items: center;
   display: flex;
   justify-content: center;
-  margin-top: ${({ theme }) => theme.spacing(8)};
+  margin-bottom: ${themeCssVariables.spacing[8]};
+  margin-top: ${themeCssVariables.spacing[8]};
   width: 100%;
-  margin-bottom: ${({ theme }) => theme.spacing(8)};
 `;
 
 const StandardContent = ({
@@ -53,14 +54,14 @@ const StandardContent = ({
   title,
   onClickOnLogo,
 }: {
-  workspacePublicData: PublicWorkspaceDataOutput | null;
+  workspacePublicData: PublicWorkspaceData | null;
   signInUpForm: JSX.Element | null;
   signInUpStep: SignInUpStep;
   title: string;
   onClickOnLogo: () => void;
 }) => {
   return (
-    <Modal.Content isVerticalCentered isHorizontalCentered>
+    <ModalContent isVerticallyCentered isHorizontallyCentered>
       <AnimatedEaseIn>
         <Logo
           secondaryLogo={workspacePublicData?.logo}
@@ -76,23 +77,23 @@ const StandardContent = ({
         SignInUpStep.TwoFactorAuthenticationVerification,
         SignInUpStep.WorkspaceSelection,
       ].includes(signInUpStep) && <FooterNote />}
-    </Modal.Content>
+    </ModalContent>
   );
 };
 
 export const SignInUp = () => {
   const { t } = useLingui();
-  const setSignInUpStep = useSetRecoilStateV2(signInUpStepState);
-  const clientConfigApiStatus = useRecoilValueV2(clientConfigApiStatusState);
+  const setSignInUpStep = useSetAtomState(signInUpStepState);
+  const clientConfigApiStatus = useAtomStateValue(clientConfigApiStatusState);
 
   const { form } = useSignInUpForm();
   const { signInUpStep } = useSignInUp(form);
   const { isDefaultDomain } = useIsCurrentLocationOnDefaultDomain();
   const { isOnAWorkspace } = useIsCurrentLocationOnAWorkspace();
-  const workspacePublicData = useRecoilValueV2(workspacePublicDataState);
+  const workspacePublicData = useAtomStateValue(workspacePublicDataState);
   const { loading: getPublicWorkspaceDataLoading } =
     useGetPublicWorkspaceDataByDomain();
-  const isMultiWorkspaceEnabled = useRecoilValueV2(
+  const isMultiWorkspaceEnabled = useAtomStateValue(
     isMultiWorkspaceEnabledState,
   );
   const { workspaceInviteHash, workspace: workspaceFromInviteHash } =
@@ -204,9 +205,9 @@ export const SignInUp = () => {
 
   if (signInUpStep === SignInUpStep.EmailVerification) {
     return (
-      <Modal.Content isVerticalCentered isHorizontalCentered>
+      <ModalContent isVerticallyCentered isHorizontallyCentered>
         <EmailVerificationSent email={searchParams.get('email')} />
-      </Modal.Content>
+      </ModalContent>
     );
   }
 

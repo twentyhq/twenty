@@ -1,39 +1,39 @@
 import { AdvancedFilterContext } from '@/object-record/advanced-filter/states/context/AdvancedFilterContext';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
-import { useContext } from 'react';
-import { useRecoilCallback } from 'recoil';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useStore } from 'jotai';
+import { useCallback, useContext } from 'react';
 
 export const useUpsertRecordFilter = () => {
-  const currentRecordFiltersCallbackState = useRecoilComponentCallbackState(
+  const currentRecordFilters = useAtomComponentStateCallbackState(
     currentRecordFiltersComponentState,
   );
 
+  const store = useStore();
   const { onUpdate } = useContext(AdvancedFilterContext);
 
-  const upsertRecordFilterCallback = useRecoilCallback(
-    ({ set, snapshot }) =>
-      (recordFilterToSet: RecordFilter) => {
-        const currentRecordFilters = getSnapshotValue(
-          snapshot,
-          currentRecordFiltersCallbackState,
+  const upsertRecordFilterCallback = useCallback(
+    (recordFilterToSet: RecordFilter) => {
+      const existingRecordFilters = store.get(
+        currentRecordFilters,
+      ) as RecordFilter[];
+
+      const foundRecordFilterInCurrentRecordFilters =
+        existingRecordFilters.some(
+          (existingFilter) => existingFilter.id === recordFilterToSet.id,
         );
 
-        const foundRecordFilterInCurrentRecordFilters =
-          currentRecordFilters.some(
-            (existingFilter) => existingFilter.id === recordFilterToSet.id,
-          );
-
-        if (!foundRecordFilterInCurrentRecordFilters) {
-          set(currentRecordFiltersCallbackState, [
-            ...currentRecordFilters,
-            recordFilterToSet,
-          ]);
-        } else {
-          set(currentRecordFiltersCallbackState, (currentRecordFilters) => {
-            const newCurrentRecordFilters = [...currentRecordFilters];
+      if (!foundRecordFilterInCurrentRecordFilters) {
+        store.set(currentRecordFilters, [
+          ...existingRecordFilters,
+          recordFilterToSet,
+        ]);
+      } else {
+        store.set(
+          currentRecordFilters,
+          (previousRecordFilters: RecordFilter[]) => {
+            const newCurrentRecordFilters = [...previousRecordFilters];
 
             const indexOfFilterToUpdate = newCurrentRecordFilters.findIndex(
               (existingFilter) => existingFilter.id === recordFilterToSet.id,
@@ -44,10 +44,11 @@ export const useUpsertRecordFilter = () => {
             };
 
             return newCurrentRecordFilters;
-          });
-        }
-      },
-    [currentRecordFiltersCallbackState],
+          },
+        );
+      }
+    },
+    [currentRecordFilters, store],
   );
 
   const upsertRecordFilter = (recordFilterToSet: RecordFilter) => {

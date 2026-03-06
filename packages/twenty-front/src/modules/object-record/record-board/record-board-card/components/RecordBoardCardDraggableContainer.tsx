@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { Draggable } from '@hello-pangea/dnd';
 import { useContext } from 'react';
 
@@ -11,7 +11,7 @@ import { RecordBoardCardContext } from '@/object-record/record-board/record-boar
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { isRecordBoardCardFocusedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardFocusedComponentFamilyState';
 import { DragAndDropLibraryLegacyReRenderBreaker } from '@/ui/drag-and-drop/components/DragAndDropReRenderBreaker';
-import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
+import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 
 const StyledDraggableContainer = styled.div`
   position: relative;
@@ -36,7 +36,7 @@ export const RecordBoardCardDraggableContainer = ({
 
   const { columnIndex } = useContext(RecordBoardColumnContext);
 
-  const isRecordBoardCardFocusActive = useRecoilComponentFamilyValue(
+  const isRecordBoardCardFocused = useAtomComponentFamilyStateValue(
     isRecordBoardCardFocusedComponentFamilyState,
     {
       rowIndex,
@@ -53,15 +53,15 @@ export const RecordBoardCardDraggableContainer = ({
           <StyledDraggableContainer
             id={`record-board-card-${columnIndex}-${rowIndex}`}
             ref={draggableProvided?.innerRef}
-            // eslint-disable-next-line react/jsx-props-no-spreading
+            // oxlint-disable-next-line react/jsx-props-no-spreading
             {...draggableProvided?.dragHandleProps}
-            // eslint-disable-next-line react/jsx-props-no-spreading
+            // oxlint-disable-next-line react/jsx-props-no-spreading
             {...draggableProvided?.draggableProps}
             data-selectable-id={recordId}
             data-select-disable
           >
             <DragAndDropLibraryLegacyReRenderBreaker memoizationId={recordId}>
-              {isRecordBoardCardFocusActive && <RecordBoardCardHotkeysEffect />}
+              {isRecordBoardCardFocused && <RecordBoardCardHotkeysEffect />}
               <RecordBoardCard />
               <RecordBoardCardMultiDragPreview />
             </DragAndDropLibraryLegacyReRenderBreaker>

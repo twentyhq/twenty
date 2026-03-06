@@ -11,6 +11,8 @@ export const SUPPORTED_FILE_FOLDERS = [
   FileFolder.CorePicture,
   FileFolder.FilesField,
   FileFolder.Workflow,
+  FileFolder.AgentChat,
+  FileFolder.AppTarball,
 ] as const;
 
 export type SupportedFileFolder = (typeof SUPPORTED_FILE_FOLDERS)[number];

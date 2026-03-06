@@ -1,49 +1,50 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { useContext } from 'react';
 import { type IconComponent, IconX } from 'twenty-ui/display';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledChip = styled.div<{ variant: SortOrFilterChipVariant }>`
   align-items: center;
-  background-color: ${({ theme, variant }) => {
+  background-color: ${({ variant }) => {
     switch (variant) {
       case 'danger':
-        return theme.background.danger;
+        return themeCssVariables.background.danger;
       case 'default':
       default:
-        return theme.accent.quaternary;
+        return themeCssVariables.accent.quaternary;
     }
   }};
   border: 1px solid
-    ${({ theme, variant }) => {
+    ${({ variant }) => {
       switch (variant) {
         case 'danger':
-          return theme.border.color.danger;
+          return themeCssVariables.border.color.danger;
         case 'default':
         default:
-          return theme.accent.tertiary;
+          return themeCssVariables.accent.tertiary;
       }
     }};
   border-radius: 4px;
-  color: ${({ theme, variant }) => {
+  box-sizing: border-box;
+  color: ${({ variant }) => {
     switch (variant) {
       case 'danger':
-        return theme.color.red;
+        return themeCssVariables.color.red;
       case 'default':
       default:
-        return theme.color.blue;
+        return themeCssVariables.color.blue;
     }
   }};
-  height: 24px;
-  box-sizing: border-box;
+  column-gap: ${themeCssVariables.spacing[1]};
   cursor: pointer;
   display: flex;
   flex-direction: row;
   flex-shrink: 0;
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  padding: ${({ theme }) => theme.spacing(0.5)};
-  padding-left: ${({ theme }) => theme.spacing(1)};
-  column-gap: ${({ theme }) => theme.spacing(1)};
+  font-size: ${themeCssVariables.font.size.sm};
+  font-weight: ${themeCssVariables.font.weight.medium};
+  height: 24px;
+  padding: ${themeCssVariables.spacing[0.5]};
+  padding-left: ${themeCssVariables.spacing[1]};
   user-select: none;
   white-space: nowrap;
 `;
@@ -54,45 +55,45 @@ const StyledIcon = styled.div`
 `;
 
 const StyledDelete = styled.button<{ variant: SortOrFilterChipVariant }>`
-  box-sizing: border-box;
-  height: 20px;
-  width: 20px;
-  display: flex;
-  justify-content: center;
   align-items: center;
-  cursor: pointer;
-  font-size: ${({ theme }) => theme.font.size.sm};
-  user-select: none;
-  padding: 0;
-  margin: 0;
   background: none;
   border: none;
+  box-sizing: border-box;
   color: inherit;
+  cursor: pointer;
+  display: flex;
+  font-size: ${themeCssVariables.font.size.sm};
+  height: 20px;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+  width: 20px;
 
   &:hover {
-    background-color: ${({ theme, variant }) => {
+    background-color: ${({ variant }) => {
       switch (variant) {
         case 'danger':
-          return theme.color.red5;
+          return themeCssVariables.color.red5;
         case 'default':
         default:
-          return theme.accent.secondary;
+          return themeCssVariables.accent.secondary;
       }
     }};
-    border-radius: ${({ theme }) => theme.border.radius.sm};
+    border-radius: ${themeCssVariables.border.radius.sm};
   }
 `;
 
 const StyledLabelKey = styled.div`
-  font-weight: ${({ theme }) => theme.font.weight.medium};
+  font-weight: ${themeCssVariables.font.weight.medium};
 `;
 
 const StyledFilterValue = styled.span`
-  font-weight: ${({ theme }) => theme.font.weight.regular};
+  font-weight: ${themeCssVariables.font.weight.regular};
 `;
 
 const StyledSortValue = styled.span`
-  font-weight: ${({ theme }) => theme.font.weight.medium};
+  font-weight: ${themeCssVariables.font.weight.medium};
 `;
 
 const StyledKeyLabelContainer = styled.div`
@@ -124,7 +125,7 @@ export const SortOrFilterChip = ({
   onClick,
   type,
 }: SortOrFilterChipProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   const handleDeleteClick = (e: React.MouseEvent) => {
     e.stopPropagation();

@@ -24,8 +24,11 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
     "propertiesToCompare": [
       "label",
       "icon",
+      "shortLabel",
+      "position",
       "isPinned",
       "availabilityType",
+      "conditionalAvailabilityExpression",
       "availabilityObjectMetadataUniversalIdentifier",
     ],
     "propertiesToStringify": [],
@@ -90,6 +93,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "cronTriggerSettings",
       "databaseEventTriggerSettings",
       "httpRouteTriggerSettings",
+      "builtHandlerPath",
     ],
     "propertiesToStringify": [
       "toolInputSchema",
@@ -105,6 +109,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "name",
       "link",
       "icon",
+      "color",
     ],
     "propertiesToStringify": [],
   },
@@ -293,6 +298,15 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "isVisible",
       "fieldValue",
       "position",
+      "deletedAt",
+    ],
+    "propertiesToStringify": [],
+  },
+  "viewSort": {
+    "propertiesToCompare": [
+      "direction",
+      "fieldMetadataUniversalIdentifier",
+      "viewUniversalIdentifier",
       "deletedAt",
     ],
     "propertiesToStringify": [],

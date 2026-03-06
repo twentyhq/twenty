@@ -7,10 +7,10 @@ import {
 } from '@/sdk/front-component-api';
 import { useEffect, useState } from 'react';
 
-import { type CommandMenuPages } from 'twenty-shared/types';
+import { type SidePanelPages } from 'twenty-shared/types';
 
 export type ActionOpenSidePanelPageProps = {
-  page: CommandMenuPages;
+  page: SidePanelPages;
   pageTitle: string;
   pageIcon: string;
   onClick?: () => void;

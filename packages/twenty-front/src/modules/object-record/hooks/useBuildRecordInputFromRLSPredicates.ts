@@ -5,7 +5,7 @@ import { convertPredicateToRecordFilter } from '@/settings/roles/role-permission
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { CoreObjectNameSingular, RelationType } from 'twenty-shared/types';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
@@ -14,8 +14,7 @@ import { buildRecordInputFromFilter } from '@/object-record/record-table/utils/b
 import { buildCompositeValueFromSubField } from '@/object-record/record-table/utils/buildValueFromFilter';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isUndefined } from '@sniptt/guards';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
-import { RelationType } from 'twenty-shared/types';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 const mergeCompositeValues = (
@@ -31,7 +30,7 @@ export const useBuildRecordInputFromRLSPredicates = ({
 }: {
   objectMetadataItem: ObjectMetadataItem;
 }) => {
-  const currentWorkspaceMember = useRecoilValueV2(currentWorkspaceMemberState);
+  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
 
   const { record: currentWorkspaceMemberRecord } = useFindOneRecord({
     objectNameSingular: CoreObjectNameSingular.WorkspaceMember,

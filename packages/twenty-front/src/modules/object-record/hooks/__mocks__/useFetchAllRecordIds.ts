@@ -1,7 +1,9 @@
-import { RecordGqlConnectionEdgesRequired } from '@/object-record/graphql/types/RecordGqlConnectionEdgesRequired';
+import { type RecordGqlConnectionEdgesRequired } from '@/object-record/graphql/types/RecordGqlConnectionEdgesRequired';
 import { gql } from '@apollo/client';
 
-import { peopleQueryResult } from '~/testing/mock-data/people';
+import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
+import { mockedPersonRecords } from '~/testing/mock-data/generated/data/people/mock-people-data';
+import { generateMockRecordConnection } from '~/testing/utils/generateMockRecordConnection';
 
 export const query = gql`
   query FindManyPeople(
@@ -36,11 +38,20 @@ export const query = gql`
 
 export const mockPageSize = 2;
 
+const flatPersonRecords = mockedPersonRecords.map((record) =>
+  getRecordFromRecordNode({ recordNode: record }),
+);
+
+const baseConnection = generateMockRecordConnection({
+  objectNameSingular: 'person',
+  records: flatPersonRecords,
+});
+
 export const peopleMockWithIdsOnly: RecordGqlConnectionEdgesRequired = {
-  ...peopleQueryResult.people,
-  edges: peopleQueryResult.people.edges.map((edge) => ({
+  ...baseConnection,
+  edges: baseConnection.edges.map((edge, index) => ({
     ...edge,
-    node: { __typename: 'Person', id: edge.node.id },
+    cursor: `cursor-${index}`,
   })),
 };
 

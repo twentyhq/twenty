@@ -1,8 +1,8 @@
 import { SelectableListComponentInstanceContext } from '@/ui/layout/selectable-list/states/contexts/SelectableListComponentInstanceContext';
-import { createComponentFamilyStateV2 } from '@/ui/utilities/state/jotai/utils/createComponentFamilyStateV2';
+import { createAtomComponentFamilyState } from '@/ui/utilities/state/jotai/utils/createAtomComponentFamilyState';
 
 export const isSelectedItemIdComponentFamilyState =
-  createComponentFamilyStateV2<boolean, string>({
+  createAtomComponentFamilyState<boolean, string>({
     key: 'isSelectedItemIdComponentFamilyState',
     defaultValue: false,
     componentInstanceContext: SelectableListComponentInstanceContext,

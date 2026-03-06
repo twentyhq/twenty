@@ -1,10 +1,8 @@
-import { filterSuggestionItems } from '@blocknote/core';
+import { filterSuggestionItems } from '@blocknote/core/extensions';
 import { BlockNoteView } from '@blocknote/mantine';
 import { SuggestionMenuController } from '@blocknote/react';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import { type ClipboardEvent } from 'react';
-
+import { styled } from '@linaria/react';
+import { type ClipboardEvent, useContext } from 'react';
 import { type BLOCK_SCHEMA } from '@/blocknote-editor/blocks/Schema';
 import { getSlashMenu } from '@/blocknote-editor/utils/getSlashMenu';
 import { CustomMentionMenu } from '@/blocknote-editor/components/CustomMentionMenu';
@@ -14,6 +12,7 @@ import {
   type SuggestionItem,
 } from '@/blocknote-editor/components/CustomSlashMenu';
 import { useMentionMenu } from '@/mention/hooks/useMentionMenu';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 interface BlockEditorProps {
   editor: typeof BLOCK_SCHEMA.BlockNoteEditor;
@@ -24,48 +23,48 @@ interface BlockEditorProps {
   readonly?: boolean;
 }
 
-// eslint-disable-next-line twenty/no-hardcoded-colors
+// oxlint-disable-next-line twenty/no-hardcoded-colors
 const StyledEditor = styled.div`
   width: 100%;
 
   & .editor {
     background: transparent;
+    color: ${themeCssVariables.font.color.primary};
     font-size: 13px;
-    color: ${({ theme }) => theme.font.color.primary};
     min-height: 400px;
   }
   & .editor [class^='_inlineContent']:before {
-    color: ${({ theme }) => theme.font.color.tertiary};
+    color: ${themeCssVariables.font.color.tertiary};
     font-style: normal !important;
   }
   & .editor .bn-inline-content:has(> .ProseMirror-trailingBreak):before {
     font-style: normal;
   }
   & .mantine-ActionIcon-icon {
+    background: transparent;
     height: 20px;
     width: 20px;
-    background: transparent;
   }
   & .bn-container .bn-drag-handle {
-    width: 20px;
     height: 20px;
+    width: 20px;
   }
   & .bn-block-content[data-content-type='checkListItem'] > div > div {
-    display: flex;
     align-items: center;
+    display: flex;
   }
   & .bn-drag-handle-menu {
-    background: ${({ theme }) => theme.background.transparent.secondary};
-    backdrop-filter: ${({ theme }) => theme.blur.medium};
+    backdrop-filter: ${themeCssVariables.blur.medium};
+    background: ${themeCssVariables.background.transparent.secondary};
+    border: 1px solid ${themeCssVariables.border.color.medium};
+    border-radius: 8px;
     box-shadow:
       0px 2px 4px rgba(0, 0, 0, 0.04),
       2px 4px 16px rgba(0, 0, 0, 0.12);
-    min-width: 160px;
-    min-height: 96px;
-    padding: 4px;
-    border-radius: 8px;
-    border: 1px solid ${({ theme }) => theme.border.color.medium};
     left: 26px;
+    min-height: 96px;
+    min-width: 160px;
+    padding: 4px;
   }
 
   & .bn-editor {
@@ -81,30 +80,30 @@ const StyledEditor = styled.div`
   }
 
   & .bn-suggestion-menu {
-    padding: 4px;
+    backdrop-filter: ${themeCssVariables.blur.medium};
+    background: ${themeCssVariables.background.transparent.secondary};
+    border: 1px solid ${themeCssVariables.border.color.medium};
     border-radius: 8px;
-    border: 1px solid ${({ theme }) => theme.border.color.medium};
-    background: ${({ theme }) => theme.background.transparent.secondary};
-    backdrop-filter: ${({ theme }) => theme.blur.medium};
+    padding: 4px;
   }
 
   & .mantine-Menu-item {
     background-color: transparent;
-    min-width: 152px;
-    min-height: 32px;
+    color: ${themeCssVariables.font.color.secondary};
+    font-family: ${themeCssVariables.font.family};
 
     font-style: normal;
-    font-family: ${({ theme }) => theme.font.family};
-    font-weight: ${({ theme }) => theme.font.weight.regular};
-    color: ${({ theme }) => theme.font.color.secondary};
+    font-weight: ${themeCssVariables.font.weight.regular};
+    min-height: 32px;
+    min-width: 152px;
   }
   & .mantine-ActionIcon-root:hover {
+    backdrop-filter: blur(20px);
+    background: ${themeCssVariables.background.transparent.primary};
+    border: 1px solid ${themeCssVariables.border.color.light};
     box-shadow:
       0px 0px 4px rgba(0, 0, 0, 0.08),
       0px 2px 4px rgba(0, 0, 0, 0.04);
-    background: ${({ theme }) => theme.background.transparent.primary};
-    backdrop-filter: blur(20px);
-    border: 1px solid ${({ theme }) => theme.border.color.light};
   }
   & .bn-side-menu .mantine-UnstyledButton-root:not(.mantine-Menu-item) svg {
     height: 16px;
@@ -119,17 +118,17 @@ const StyledEditor = styled.div`
   }
 
   & .bn-inline-content a {
-    color: ${({ theme }) => theme.color.blue};
+    color: ${themeCssVariables.color.blue};
   }
 
   & .bn-inline-content code {
-    font-family: monospace;
-    color: ${({ theme }) => theme.font.color.danger};
-    padding: 2px 4px;
+    background-color: ${themeCssVariables.background.transparent.light};
+    border: 1px solid ${themeCssVariables.font.color.extraLight};
     border-radius: 4px;
-    border: 1px solid ${({ theme }) => theme.font.color.extraLight};
+    color: ${themeCssVariables.font.color.danger};
+    font-family: monospace;
     font-size: 0.9rem;
-    background-color: ${({ theme }) => theme.background.transparent.light};
+    padding: 2px 4px;
   }
 `;
 
@@ -141,8 +140,9 @@ export const BlockEditor = ({
   onPaste,
   readonly,
 }: BlockEditorProps) => {
-  const theme = useTheme();
-  const blockNoteTheme = theme.name === 'light' ? 'light' : 'dark';
+  const { colorScheme } = useContext(ThemeContext);
+
+  const blockNoteTheme = colorScheme === 'light' ? 'light' : 'dark';
   const getMentionItems = useMentionMenu(editor);
 
   const handleFocus = () => {

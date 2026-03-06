@@ -1,15 +1,17 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 
-import { Modal } from '@/ui/layout/modal/components/Modal';
-import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
+import { ModalStatefulWrapper } from '@/ui/layout/modal/components/ModalStatefulWrapper';
+import { MOBILE_VIEWPORT } from 'twenty-ui/theme-constants';
 import { SpreadSheetImportModalCloseButton } from './SpreadSheetImportModalCloseButton';
 
-const StyledModal = styled(Modal)`
+const StyledInnerContainer = styled.div`
+  display: flex;
+  flex: 1;
+  flex-direction: column;
   min-height: 600px;
   min-width: 800px;
-  padding: 0;
   position: relative;
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     min-width: auto;
@@ -27,29 +29,32 @@ const StyledRtlLtr = styled.div`
 
 type SpreadSheetImportModalWrapperProps = {
   children: React.ReactNode;
-  modalId: string;
+  modalInstanceId: string;
   onClose: () => void;
 };
 
 export const SpreadSheetImportModalWrapper = ({
-  modalId,
+  modalInstanceId,
   children,
   onClose,
 }: SpreadSheetImportModalWrapperProps) => {
   const { rtl } = useSpreadsheetImportInternal();
 
   return (
-    <StyledModal
+    <ModalStatefulWrapper
       size="extraLarge"
-      modalId={modalId}
+      padding="none"
+      modalInstanceId={modalInstanceId}
       isClosable={true}
       onClose={onClose}
       shouldCloseModalOnClickOutsideOrEscape={false}
     >
-      <StyledRtlLtr dir={rtl ? 'rtl' : 'ltr'}>
-        <SpreadSheetImportModalCloseButton onClose={onClose} />
-        {children}
-      </StyledRtlLtr>
-    </StyledModal>
+      <StyledInnerContainer>
+        <StyledRtlLtr dir={rtl ? 'rtl' : 'ltr'}>
+          <SpreadSheetImportModalCloseButton onClose={onClose} />
+          {children}
+        </StyledRtlLtr>
+      </StyledInnerContainer>
+    </ModalStatefulWrapper>
   );
 };

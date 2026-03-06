@@ -44,16 +44,15 @@ Puteți importa relații între obiecte folosind funcția de import CSV. Trebuie
 <Note>**Înregistrările șterse contează pentru unicitate.** Înregistrările șterse soft (vizibile în Command Menu → See deleted records) sunt incluse în verificările de unicitate. Dacă importați o înregistrare cu aceeași valoare unică ca o înregistrare ștearsă, înregistrarea ștearsă va fi restaurată.</Note>
 
 <Warning>
-  **Ordinea importului contează!**
+**Ordinea importului contează!**
 
-  Când importați obiecte înrudite, încărcați fișierele în această ordine:
+Când importați obiecte înrudite, încărcați fișierele în această ordine:
+1. **Companiile** mai întâi (partea "one" a relațiilor)
+2. **Persoanele** în al doilea rând (legate de companii prin companyId)
+3. **Oportunitățile** în al treilea rând (legate de companii/persoane)
+4. **Obiectele personalizate** cu relații, la final
 
-  1. **Companiile** mai întâi (partea "one" a relațiilor)
-  2. **Persoanele** în al doilea rând (legate de companii prin companyId)
-  3. **Oportunitățile** în al treilea rând (legate de companii/persoane)
-  4. **Obiectele personalizate** cu relații, la final
-
-  De ce? Partea "one" a unei relații unul-la-mulți trebuie să existe înainte de a o putea referi. De exemplu, înregistrarea Companiei trebuie să existe înainte de a importa o Persoană cu ID-ul acelei companii.
+De ce? Partea "one" a unei relații unul-la-mulți trebuie să existe înainte de a o putea referi. De exemplu, înregistrarea Companiei trebuie să existe înainte de a importa o Persoană cu ID-ul acelei companii.
 </Warning>
 
 Consultați [acest articol](/l/ro/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) pentru un ghid pas cu pas despre cum să procedați.

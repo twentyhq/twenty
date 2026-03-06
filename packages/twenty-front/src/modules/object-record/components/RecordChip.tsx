@@ -1,17 +1,17 @@
-import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
 import { useRecordChipData } from '@/object-record/hooks/useRecordChipData';
-import { recordIndexOpenRecordInStateV2 } from '@/object-record/record-index/states/recordIndexOpenRecordInStateV2';
+import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { canOpenObjectInSidePanel } from '@/object-record/utils/canOpenObjectInSidePanel';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { t } from '@lingui/core/macro';
 import { type MouseEvent } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  AvatarChip,
+  AvatarOrIcon,
   Chip,
   type ChipSize,
   ChipVariant,
@@ -25,6 +25,7 @@ export type RecordChipProps = {
   className?: string;
   variant?: ChipVariant.Highlighted | ChipVariant.Transparent;
   forceDisableClick?: boolean;
+  isBold?: boolean;
   maxWidth?: number;
   to?: string | undefined;
   size?: ChipSize;
@@ -39,6 +40,7 @@ export const RecordChip = ({
   record,
   className,
   variant,
+  isBold = false,
   maxWidth,
   to,
   size,
@@ -53,10 +55,10 @@ export const RecordChip = ({
     record,
   });
 
-  const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
+  const { openRecordInSidePanel } = useOpenRecordInSidePanel();
 
-  const recordIndexOpenRecordIn = useRecoilValueV2(
-    recordIndexOpenRecordInStateV2,
+  const recordIndexOpenRecordIn = useAtomStateValue(
+    recordIndexOpenRecordInState,
   );
   const canOpenInSidePanel = canOpenObjectInSidePanel(objectNameSingular);
 
@@ -68,7 +70,7 @@ export const RecordChip = ({
     ? onClick
     : isSidePanelViewOpenRecordInType
       ? (_event: MouseEvent<HTMLElement>) => {
-          openRecordInCommandMenu({
+          openRecordInSidePanel({
             recordId: record.id,
             objectNameSingular,
           });
@@ -85,13 +87,14 @@ export const RecordChip = ({
       <Chip
         label={recordChipData.name}
         emptyLabel={t`Untitled`}
+        isBold={isBold}
         size={size}
         maxWidth={maxWidth}
         className={className}
         variant={ChipVariant.Transparent}
         leftComponent={
           isIconHidden ? null : (
-            <AvatarChip
+            <AvatarOrIcon
               placeholder={recordChipData.name}
               placeholderColorSeed={record.id}
               avatarType={recordChipData.avatarType}
@@ -109,10 +112,11 @@ export const RecordChip = ({
       maxWidth={maxWidth}
       label={recordChipData.name}
       emptyLabel={t`Untitled`}
+      isBold={isBold}
       isLabelHidden={isLabelHidden}
       leftComponent={
         isIconHidden ? null : (
-          <AvatarChip
+          <AvatarOrIcon
             placeholder={recordChipData.name}
             placeholderColorSeed={record.id}
             avatarType={recordChipData.avatarType}

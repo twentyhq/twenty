@@ -7,18 +7,17 @@ import {
 } from '@/auth/states/signInUpStepState';
 import { AuthenticatedMethod } from '@/auth/types/AuthenticatedMethod.enum';
 import { type SocialSSOSignInUpActionType } from '@/auth/types/socialSSOSignInUp.type';
-import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
-import { memo } from 'react';
+import { memo, useContext } from 'react';
 import { HorizontalSeparator, IconGoogle } from 'twenty-ui/display';
 import { MainButton } from 'twenty-ui/input';
-import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { LastUsedPill } from './LastUsedPill';
 import { StyledSSOButtonContainer } from './SignInUpSSOButtonStyles';
-
+import { ThemeContext } from 'twenty-ui/theme-constants';
 const GoogleIcon = memo(() => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   return <IconGoogle size={theme.icon.size.md} />;
 });
 
@@ -30,9 +29,10 @@ export const SignInUpWithGoogle = ({
   isGlobalScope?: boolean;
 }) => {
   const { t } = useLingui();
-  const signInUpStep = useRecoilValueV2(signInUpStepState);
-  const [lastAuthenticatedMethod, setLastAuthenticatedMethod] =
-    useRecoilStateV2(lastAuthenticatedMethodState);
+  const signInUpStep = useAtomStateValue(signInUpStepState);
+  const [lastAuthenticatedMethod, setLastAuthenticatedMethod] = useAtomState(
+    lastAuthenticatedMethodState,
+  );
   const { signInWithGoogle } = useSignInWithGoogle();
   const hasMultipleAuthMethods = useHasMultipleAuthMethods();
 

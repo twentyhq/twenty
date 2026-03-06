@@ -1,5 +1,4 @@
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useChangeView } from '@/views/hooks/useChangeView';
 import { useCreateViewFromCurrentView } from '@/views/hooks/useCreateViewFromCurrentView';
 import { ViewType } from '@/views/types/ViewType';
@@ -13,122 +12,106 @@ import { viewPickerModeComponentState } from '@/views/view-picker/states/viewPic
 import { viewPickerSelectedIconComponentState } from '@/views/view-picker/states/viewPickerSelectedIconComponentState';
 import { viewPickerTypeComponentState } from '@/views/view-picker/states/viewPickerTypeComponentState';
 import { viewPickerVisibilityComponentState } from '@/views/view-picker/states/viewPickerVisibilityComponentState';
-import { useRecoilCallback } from 'recoil';
+import { useStore } from 'jotai';
+import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useCreateViewFromCurrentState = () => {
   const { closeAndResetViewPicker } = useCloseAndResetViewPicker();
 
-  const viewPickerInputNameCallbackState = useRecoilComponentCallbackState(
+  const viewPickerInputNameCallbackState = useAtomComponentStateCallbackState(
     viewPickerInputNameComponentState,
   );
 
-  const viewPickerSelectedIconCallbackState = useRecoilComponentCallbackState(
-    viewPickerSelectedIconComponentState,
-  );
+  const viewPickerSelectedIconCallbackState =
+    useAtomComponentStateCallbackState(viewPickerSelectedIconComponentState);
 
-  const viewPickerTypeCallbackState = useRecoilComponentCallbackState(
+  const viewPickerTypeCallbackState = useAtomComponentStateCallbackState(
     viewPickerTypeComponentState,
   );
 
   const viewPickerMainGroupByFieldMetadataIdCallbackState =
-    useRecoilComponentCallbackState(
+    useAtomComponentStateCallbackState(
       viewPickerMainGroupByFieldMetadataIdComponentState,
     );
 
   const viewPickerCalendarFieldMetadataIdCallbackState =
-    useRecoilComponentCallbackState(
+    useAtomComponentStateCallbackState(
       viewPickerCalendarFieldMetadataIdComponentState,
     );
 
-  const viewPickerIsPersistingCallbackState = useRecoilComponentCallbackState(
-    viewPickerIsPersistingComponentState,
-  );
+  const viewPickerIsPersistingCallbackState =
+    useAtomComponentStateCallbackState(viewPickerIsPersistingComponentState);
 
-  const viewPickerIsDirtyCallbackState = useRecoilComponentCallbackState(
+  const viewPickerIsDirtyCallbackState = useAtomComponentStateCallbackState(
     viewPickerIsDirtyComponentState,
   );
 
-  const viewPickerModeCallbackState = useRecoilComponentCallbackState(
+  const viewPickerModeCallbackState = useAtomComponentStateCallbackState(
     viewPickerModeComponentState,
   );
 
-  const viewPickerVisibilityCallbackState = useRecoilComponentCallbackState(
+  const viewPickerVisibilityCallbackState = useAtomComponentStateCallbackState(
     viewPickerVisibilityComponentState,
   );
 
   const { createViewFromCurrentView } = useCreateViewFromCurrentView();
   const { changeView } = useChangeView();
 
-  const createViewFromCurrentState = useRecoilCallback(
-    ({ snapshot, set }) =>
-      async () => {
-        const name = getSnapshotValue(
-          snapshot,
-          viewPickerInputNameCallbackState,
-        );
-        const iconKey = getSnapshotValue(
-          snapshot,
-          viewPickerSelectedIconCallbackState,
-        );
-        const type = getSnapshotValue(snapshot, viewPickerTypeCallbackState);
-        const mainGroupByFieldMetadataId = getSnapshotValue(
-          snapshot,
-          viewPickerMainGroupByFieldMetadataIdCallbackState,
-        );
-        const calendarFieldMetadataId = getSnapshotValue(
-          snapshot,
-          viewPickerCalendarFieldMetadataIdCallbackState,
-        );
+  const store = useStore();
 
-        const viewPickerMode = getSnapshotValue(
-          snapshot,
-          viewPickerModeCallbackState,
-        );
-        const visibility = getSnapshotValue(
-          snapshot,
-          viewPickerVisibilityCallbackState,
-        );
-
-        const shouldCopyFiltersAndSortsAndAggregate =
-          viewPickerMode === 'create-from-current';
-
-        set(viewPickerIsPersistingCallbackState, true);
-        set(viewPickerIsDirtyCallbackState, false);
-
-        const createdViewId = await createViewFromCurrentView(
-          {
-            name,
-            icon: iconKey,
-            type,
-            mainGroupByFieldMetadataId:
-              type === ViewType.Kanban ? mainGroupByFieldMetadataId : null,
-            calendarFieldMetadataId,
-            visibility,
-          },
-          shouldCopyFiltersAndSortsAndAggregate,
-        );
-
-        if (isDefined(createdViewId)) {
-          closeAndResetViewPicker();
-          changeView(createdViewId);
-        }
-      },
-    [
-      closeAndResetViewPicker,
-      createViewFromCurrentView,
-      changeView,
-      viewPickerInputNameCallbackState,
-      viewPickerIsDirtyCallbackState,
-      viewPickerIsPersistingCallbackState,
+  const createViewFromCurrentState = useCallback(async () => {
+    const name = store.get(viewPickerInputNameCallbackState);
+    const iconKey = store.get(viewPickerSelectedIconCallbackState);
+    const type = store.get(viewPickerTypeCallbackState);
+    const mainGroupByFieldMetadataId = store.get(
       viewPickerMainGroupByFieldMetadataIdCallbackState,
+    );
+    const calendarFieldMetadataId = store.get(
       viewPickerCalendarFieldMetadataIdCallbackState,
-      viewPickerSelectedIconCallbackState,
-      viewPickerTypeCallbackState,
-      viewPickerModeCallbackState,
-      viewPickerVisibilityCallbackState,
-    ],
-  );
+    );
+
+    const viewPickerMode = store.get(viewPickerModeCallbackState);
+    const visibility = store.get(viewPickerVisibilityCallbackState);
+
+    const shouldCopyFiltersAndSortsAndAggregate =
+      viewPickerMode === 'create-from-current';
+
+    store.set(viewPickerIsPersistingCallbackState, true);
+    store.set(viewPickerIsDirtyCallbackState, false);
+
+    const createdViewId = await createViewFromCurrentView(
+      {
+        name,
+        icon: iconKey,
+        type,
+        mainGroupByFieldMetadataId:
+          type === ViewType.Kanban ? mainGroupByFieldMetadataId : null,
+        calendarFieldMetadataId,
+        visibility,
+      },
+      shouldCopyFiltersAndSortsAndAggregate,
+    );
+
+    if (isDefined(createdViewId)) {
+      closeAndResetViewPicker();
+      changeView(createdViewId);
+    }
+  }, [
+    store,
+    closeAndResetViewPicker,
+    createViewFromCurrentView,
+    changeView,
+    viewPickerInputNameCallbackState,
+    viewPickerIsDirtyCallbackState,
+    viewPickerIsPersistingCallbackState,
+    viewPickerMainGroupByFieldMetadataIdCallbackState,
+    viewPickerCalendarFieldMetadataIdCallbackState,
+    viewPickerSelectedIconCallbackState,
+    viewPickerTypeCallbackState,
+    viewPickerModeCallbackState,
+    viewPickerVisibilityCallbackState,
+  ]);
 
   return { createViewFromCurrentState };
 };

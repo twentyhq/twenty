@@ -1,6 +1,5 @@
 import { renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
-import { RecoilRoot } from 'recoil';
 
 import { useActivities } from '@/activities/hooks/useActivities';
 import { useTasks } from '@/activities/tasks/hooks/useTasks';
@@ -45,13 +44,11 @@ jest.mock('@/activities/hooks/useActivities', () => ({
 (useActivities as jest.Mock).mockImplementation(useActivitiesMock);
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
-  <RecoilRoot>
-    <ObjectFilterDropdownComponentInstanceContext.Provider
-      value={{ instanceId: 'entity-tasks-filter-instance' }}
-    >
-      {children}
-    </ObjectFilterDropdownComponentInstanceContext.Provider>
-  </RecoilRoot>
+  <ObjectFilterDropdownComponentInstanceContext.Provider
+    value={{ instanceId: 'entity-tasks-filter-instance' }}
+  >
+    {children}
+  </ObjectFilterDropdownComponentInstanceContext.Provider>
 );
 
 describe('useTasks', () => {

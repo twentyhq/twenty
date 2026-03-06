@@ -1,18 +1,17 @@
-import { useSetRecoilState } from 'recoil';
-
 import { activityTargetableEntityArrayState } from '@/activities/states/activityTargetableEntityArrayState';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
-import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { viewableRecordIdState } from '@/object-record/record-side-panel/states/viewableRecordIdState';
+import { viewableRecordNameSingularState } from '@/object-record/record-side-panel/states/viewableRecordNameSingularState';
 import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 
 import { isUpsertingActivityInDBState } from '@/activities/states/isCreatingActivityInDBState';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { type Note } from '@/activities/types/Note';
 import { type NoteTarget } from '@/activities/types/NoteTarget';
 import { type Task } from '@/activities/types/Task';
 import { type TaskTarget } from '@/activities/types/TaskTarget';
-import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
+import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { findTargetFieldInfo } from '@/object-record/record-field/ui/utils/junction/findTargetFieldInfo';
@@ -40,19 +39,19 @@ export const useOpenCreateActivityDrawer = ({
     shouldMatchRootQueryFilter: true,
   });
 
-  const setActivityTargetableEntityArray = useSetRecoilState(
+  const setActivityTargetableEntityArray = useSetAtomState(
     activityTargetableEntityArrayState,
   );
-  const setViewableRecordId = useSetRecoilState(viewableRecordIdState);
-  const setViewableRecordNameSingular = useSetRecoilState(
+  const setViewableRecordId = useSetAtomState(viewableRecordIdState);
+  const setViewableRecordNameSingular = useSetAtomState(
     viewableRecordNameSingularState,
   );
 
-  const setIsUpsertingActivityInDB = useSetRecoilState(
+  const setIsUpsertingActivityInDB = useSetAtomState(
     isUpsertingActivityInDBState,
   );
 
-  const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
+  const { openRecordInSidePanel } = useOpenRecordInSidePanel();
 
   const { objectMetadataItems } = useObjectMetadataItems();
 
@@ -126,7 +125,7 @@ export const useOpenCreateActivityDrawer = ({
       setActivityTargetableEntityArray([]);
     }
 
-    openRecordInCommandMenu({
+    openRecordInSidePanel({
       recordId: activity.id,
       objectNameSingular: activityObjectNameSingular,
       isNewRecord: true,

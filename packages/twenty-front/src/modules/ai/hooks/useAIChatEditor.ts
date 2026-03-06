@@ -9,8 +9,8 @@ import { useCallback, useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { AI_CHAT_INPUT_ID } from '@/ai/constants/AiChatInputId';
-import { agentChatInputStateV2 } from '@/ai/states/agentChatInputStateV2';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { agentChatInputState } from '@/ai/states/agentChatInputState';
+import { dispatchAgentChatSendMessageEvent } from '@/ai/utils/dispatchAgentChatSendMessageEvent';
 import { MENTION_SUGGESTION_PLUGIN_KEY } from '@/mention/constants/MentionSuggestionPluginKey';
 import { MentionSuggestion } from '@/mention/extensions/MentionSuggestion';
 import { MentionTag } from '@/mention/extensions/MentionTag';
@@ -18,14 +18,11 @@ import { useMentionSearch } from '@/mention/hooks/useMentionSearch';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 
-type UseAIChatEditorProps = {
-  onSendMessage: () => void;
-};
-
-export const useAIChatEditor = ({ onSendMessage }: UseAIChatEditorProps) => {
-  const setAgentChatInput = useSetRecoilStateV2(agentChatInputStateV2);
+export const useAIChatEditor = () => {
+  const setAgentChatInput = useSetAtomState(agentChatInputState);
   const { searchMentionRecords } = useMentionSearch();
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const { removeFocusItemFromFocusStackById } =
@@ -61,7 +58,7 @@ export const useAIChatEditor = ({ onSendMessage }: UseAIChatEditorProps) => {
           }
 
           event.preventDefault();
-          onSendMessage();
+          dispatchAgentChatSendMessageEvent();
 
           const { state } = view;
           view.dispatch(state.tr.delete(0, state.doc.content.size));
@@ -108,9 +105,9 @@ export const useAIChatEditor = ({ onSendMessage }: UseAIChatEditorProps) => {
   }
 
   const handleSendAndClear = useCallback(() => {
-    onSendMessage();
+    dispatchAgentChatSendMessageEvent();
     editor?.commands.clearContent();
-  }, [onSendMessage, editor]);
+  }, [editor]);
 
   return { editor, handleSendAndClear };
 };

@@ -15,7 +15,7 @@ const Render = (args: RenderProps) => {
     setValue(value);
   };
 
-  // eslint-disable-next-line react/jsx-props-no-spreading
+  // oxlint-disable-next-line react/jsx-props-no-spreading
   return <Select {...args} value={value} onChange={handleChange} />;
 };
 

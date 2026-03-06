@@ -1,27 +1,72 @@
-import { agentChatUsageStateV2 } from '@/ai/states/agentChatUsageStateV2';
-import { currentAIChatThreadStateV2 } from '@/ai/states/currentAIChatThreadStateV2';
-import { currentAIChatThreadTitleStateV2 } from '@/ai/states/currentAIChatThreadTitleStateV2';
-import { useOpenAskAIPageInCommandMenu } from '@/command-menu/hooks/useOpenAskAIPageInCommandMenu';
-import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
-import { useCreateChatThreadMutation } from '~/generated-metadata/graphql';
+import { useApolloClient } from '@apollo/client';
+
+import { CHAT_THREADS_PAGE_SIZE } from '@/ai/constants/ChatThreads';
+import { agentChatUsageState } from '@/ai/states/agentChatUsageState';
+import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
+import { currentAIChatThreadTitleState } from '@/ai/states/currentAIChatThreadTitleState';
+import { useOpenAskAIPageInSidePanel } from '@/side-panel/hooks/useOpenAskAIPageInSidePanel';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { isDefined } from 'twenty-shared/utils';
+
+import {
+  type GetChatThreadsQuery,
+  GetChatThreadsDocument,
+  useCreateChatThreadMutation,
+} from '~/generated-metadata/graphql';
 
 export const useCreateNewAIChatThread = () => {
-  const [, setCurrentAIChatThread] = useRecoilStateV2(
-    currentAIChatThreadStateV2,
-  );
-  const setAgentChatUsage = useSetRecoilStateV2(agentChatUsageStateV2);
-  const setCurrentAIChatThreadTitle = useSetRecoilStateV2(
-    currentAIChatThreadTitleStateV2,
+  const apolloClient = useApolloClient();
+  const [, setCurrentAIChatThread] = useAtomState(currentAIChatThreadState);
+  const setAgentChatUsage = useSetAtomState(agentChatUsageState);
+  const setCurrentAIChatThreadTitle = useSetAtomState(
+    currentAIChatThreadTitleState,
   );
 
-  const { openAskAIPage } = useOpenAskAIPageInCommandMenu();
+  const { openAskAIPage } = useOpenAskAIPageInSidePanel();
   const [createChatThread] = useCreateChatThreadMutation({
     onCompleted: (data) => {
       setCurrentAIChatThread(data.createChatThread.id);
       setCurrentAIChatThreadTitle(null);
       setAgentChatUsage(null);
+
       openAskAIPage({ resetNavigationStack: false });
+
+      const newThread = data.createChatThread;
+      const threadListVariables = {
+        paging: { first: CHAT_THREADS_PAGE_SIZE },
+      };
+      const existing = apolloClient.cache.readQuery<GetChatThreadsQuery>({
+        query: GetChatThreadsDocument,
+        variables: threadListVariables,
+      });
+      if (isDefined(existing) && isDefined(existing.chatThreads)) {
+        const newNode = {
+          __typename: 'AgentChatThread' as const,
+          ...newThread,
+          totalInputTokens: 0,
+          totalOutputTokens: 0,
+          contextWindowTokens: null,
+          conversationSize: 0,
+          totalInputCredits: 0,
+          totalOutputCredits: 0,
+        };
+        const newEdge = {
+          __typename: 'AgentChatThreadEdge' as const,
+          node: newNode,
+          cursor: newThread.id,
+        };
+        apolloClient.cache.writeQuery({
+          query: GetChatThreadsDocument,
+          variables: threadListVariables,
+          data: {
+            chatThreads: {
+              ...existing.chatThreads,
+              edges: [newEdge, ...existing.chatThreads.edges],
+            },
+          },
+        });
+      }
     },
   });
 

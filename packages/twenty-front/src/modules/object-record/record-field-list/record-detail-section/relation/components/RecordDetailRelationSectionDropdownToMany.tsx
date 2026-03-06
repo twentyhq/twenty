@@ -1,12 +1,11 @@
 import { type ReactNode, useCallback, useContext } from 'react';
-import { useRecoilValue } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { getFieldMetadataItemById } from '@/object-metadata/utils/getFieldMetadataItemById';
 import { useRecordFieldsScopeContextOrThrow } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
-import { useAddNewRecordAndOpenRightDrawer } from '@/object-record/record-field/ui/meta-types/input/hooks/useAddNewRecordAndOpenRightDrawer';
+import { useAddNewRecordAndOpenSidePanel } from '@/object-record/record-field/ui/meta-types/input/hooks/useAddNewRecordAndOpenSidePanel';
 import { useUpdateRelationOneToManyFieldInput } from '@/object-record/record-field/ui/meta-types/input/hooks/useUpdateRelationOneToManyFieldInput';
 import { type FieldRelationMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { MultipleRecordPicker } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPicker';
@@ -21,8 +20,9 @@ import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { dropdownPlacementComponentState } from '@/ui/layout/dropdown/states/dropdownPlacementComponentState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { CustomError, isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
@@ -49,7 +49,7 @@ export const RecordDetailRelationSectionDropdownToMany = ({
     objectMetadataItems,
   });
 
-  if (!fieldMetadataItem || !objectMetadataItem) {
+  if (!isDefined(fieldMetadataItem) || !isDefined(objectMetadataItem)) {
     throw new CustomError(
       'Field metadata item or object metadata item not found',
       'FIELD_METADATA_ITEM_OR_OBJECT_METADATA_ITEM_NOT_FOUND',
@@ -71,9 +71,10 @@ export const RecordDetailRelationSectionDropdownToMany = ({
     );
   }
 
-  const fieldValue = useRecoilValue<
-    ({ id: string } & Record<string, any>) | ObjectRecord[] | null
-  >(recordStoreFamilySelector({ recordId, fieldName }));
+  const fieldValue = useAtomFamilySelectorValue(recordStoreFamilySelector, {
+    recordId,
+    fieldName,
+  }) as ({ id: string } & Record<string, unknown>) | ObjectRecord[] | null;
 
   const relationRecords: ObjectRecord[] = (fieldValue as ObjectRecord[]) ?? [];
 
@@ -85,23 +86,23 @@ export const RecordDetailRelationSectionDropdownToMany = ({
 
   const { closeDropdown } = useCloseDropdown();
 
-  const dropdownPlacement = useRecoilComponentValueV2(
+  const dropdownPlacement = useAtomComponentStateValue(
     dropdownPlacementComponentState,
     dropdownId,
   );
 
-  const setMultipleRecordPickerSearchFilter = useSetRecoilComponentState(
+  const setMultipleRecordPickerSearchFilter = useSetAtomComponentState(
     multipleRecordPickerSearchFilterComponentState,
     dropdownId,
   );
 
-  const setMultipleRecordPickerPickableMorphItems = useSetRecoilComponentState(
+  const setMultipleRecordPickerPickableMorphItems = useSetAtomComponentState(
     multipleRecordPickerPickableMorphItemsComponentState,
     dropdownId,
   );
 
   const setMultipleRecordPickerSearchableObjectMetadataItems =
-    useSetRecoilComponentState(
+    useSetAtomComponentState(
       multipleRecordPickerSearchableObjectMetadataItemsComponentState,
       dropdownId,
     );
@@ -117,15 +118,14 @@ export const RecordDetailRelationSectionDropdownToMany = ({
 
   const { updateRelation } = useUpdateRelationOneToManyFieldInput();
 
-  const { createNewRecordAndOpenRightDrawer } =
-    useAddNewRecordAndOpenRightDrawer({
-      fieldMetadataItem,
-      objectMetadataItem,
-      relationObjectMetadataNameSingular,
-      relationObjectMetadataItem,
-      relationFieldMetadataItem,
-      recordId,
-    });
+  const { createNewRecordAndOpenSidePanel } = useAddNewRecordAndOpenSidePanel({
+    fieldMetadataItem,
+    objectMetadataItem,
+    relationObjectMetadataNameSingular,
+    relationObjectMetadataItem,
+    relationFieldMetadataItem,
+    recordId,
+  });
 
   const handleOpenRelationPickerDropdown = () => {
     setMultipleRecordPickerSearchableObjectMetadataItems([
@@ -159,7 +159,7 @@ export const RecordDetailRelationSectionDropdownToMany = ({
   const handleCreateNew = (searchString?: string) => {
     closeDropdown(dropdownId);
 
-    createNewRecordAndOpenRightDrawer?.(searchString);
+    createNewRecordAndOpenSidePanel?.(searchString);
   };
 
   return (
@@ -182,7 +182,7 @@ export const RecordDetailRelationSectionDropdownToMany = ({
           focusId={dropdownId}
           componentInstanceId={dropdownId}
           onCreate={
-            isDefined(createNewRecordAndOpenRightDrawer)
+            isDefined(createNewRecordAndOpenSidePanel)
               ? handleCreateNew
               : undefined
           }

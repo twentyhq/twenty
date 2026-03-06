@@ -1,12 +1,13 @@
-import { useTheme } from '@emotion/react';
 import { motion } from 'framer-motion';
+import { useContext } from 'react';
+import { ThemeContext } from '@ui/theme-constants';
 
 type AnimatedTranslationProps = {
   children: React.ReactNode;
 };
 
 export const AnimatedTranslation = ({ children }: AnimatedTranslationProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   return (
     <motion.div
@@ -21,7 +22,7 @@ export const AnimatedTranslation = ({ children }: AnimatedTranslationProps) => {
           opacity: 1,
           y: 0,
           transition: {
-            duration: theme.animation.duration.normal, // Replace this with your theme's duration
+            duration: theme.animation.duration.normal,
             ease: 'easeInOut',
           },
         },

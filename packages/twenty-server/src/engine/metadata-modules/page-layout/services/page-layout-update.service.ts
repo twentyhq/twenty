@@ -4,18 +4,18 @@ import { PageLayoutTabLayoutMode } from 'twenty-shared/types';
 import { computeDiffBetweenObjects, isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
-import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { resolveEntityRelationUniversalIdentifiers } from 'src/engine/metadata-modules/flat-entity/utils/resolve-entity-relation-universal-identifiers.util';
 import { FLAT_PAGE_LAYOUT_TAB_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-page-layout-tab/constants/flat-page-layout-tab-editable-properties.constant';
 import { type FlatPageLayoutTabMaps } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab-maps.type';
 import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
 import { FLAT_PAGE_LAYOUT_WIDGET_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-page-layout-widget/constants/flat-page-layout-widget-editable-properties.constant';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
+import { buildFlatPageLayoutWidgetCommonProperties } from 'src/engine/metadata-modules/flat-page-layout-widget/utils/build-flat-page-layout-widget-common-properties.util';
 import { fromPageLayoutWidgetConfigurationToUniversalConfiguration } from 'src/engine/metadata-modules/flat-page-layout-widget/utils/from-page-layout-widget-configuration-to-universal-configuration.util';
 import { type FlatPageLayout } from 'src/engine/metadata-modules/flat-page-layout/types/flat-page-layout.type';
 import { reconstructFlatPageLayoutWithTabsAndWidgets } from 'src/engine/metadata-modules/flat-page-layout/utils/reconstruct-flat-page-layout-with-tabs-and-widgets.util';
@@ -119,6 +119,7 @@ export class PageLayoutUpdateService {
     const {
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
+      flatFrontComponentMaps,
       flatViewFieldGroupMaps,
       flatViewMaps,
     } =
@@ -128,6 +129,7 @@ export class PageLayoutUpdateService {
           flatMapsKeys: [
             'flatObjectMetadataMaps',
             'flatFieldMetadataMaps',
+            'flatFrontComponentMaps',
             'flatViewFieldGroupMaps',
             'flatViewMaps',
           ],
@@ -154,6 +156,7 @@ export class PageLayoutUpdateService {
         workspaceCustomApplicationUniversalIdentifier:
           workspaceCustomFlatApplication.universalIdentifier,
         flatFieldMetadataMaps,
+        flatFrontComponentMaps,
         flatViewFieldGroupMaps,
         flatViewMaps,
       });
@@ -367,6 +370,7 @@ export class PageLayoutUpdateService {
     workspaceCustomApplicationId,
     workspaceCustomApplicationUniversalIdentifier,
     flatFieldMetadataMaps,
+    flatFrontComponentMaps,
     flatViewFieldGroupMaps,
     flatViewMaps,
   }: {
@@ -378,6 +382,7 @@ export class PageLayoutUpdateService {
     AllFlatEntityMaps,
     | 'flatObjectMetadataMaps'
     | 'flatFieldMetadataMaps'
+    | 'flatFrontComponentMaps'
     | 'flatViewFieldGroupMaps'
     | 'flatViewMaps'
     | 'flatPageLayoutTabMaps'
@@ -402,6 +407,7 @@ export class PageLayoutUpdateService {
           workspaceCustomApplicationId,
           workspaceCustomApplicationUniversalIdentifier,
           flatFieldMetadataMaps,
+          flatFrontComponentMaps,
           flatViewFieldGroupMaps,
           flatViewMaps,
         });
@@ -427,6 +433,7 @@ export class PageLayoutUpdateService {
     workspaceCustomApplicationId,
     workspaceCustomApplicationUniversalIdentifier,
     flatFieldMetadataMaps,
+    flatFrontComponentMaps,
     flatViewFieldGroupMaps,
     flatViewMaps,
   }: {
@@ -439,6 +446,7 @@ export class PageLayoutUpdateService {
     AllFlatEntityMaps,
     | 'flatObjectMetadataMaps'
     | 'flatFieldMetadataMaps'
+    | 'flatFrontComponentMaps'
     | 'flatViewFieldGroupMaps'
     | 'flatViewMaps'
     | 'flatPageLayoutTabMaps'
@@ -468,32 +476,18 @@ export class PageLayoutUpdateService {
     });
 
     const now = new Date();
+
     const widgetsToCreate: FlatPageLayoutWidget[] = entitiesToCreate.map(
       (widgetInput) => {
         const widgetId = widgetInput.id ?? v4();
 
-        const {
-          pageLayoutTabUniversalIdentifier,
-          objectMetadataUniversalIdentifier,
-        } = resolveEntityRelationUniversalIdentifiers({
-          metadataName: 'pageLayoutWidget',
-          foreignKeyValues: {
-            pageLayoutTabId: widgetInput.pageLayoutTabId,
-            objectMetadataId: widgetInput.objectMetadataId,
-          },
-          flatEntityMaps: { flatPageLayoutTabMaps, flatObjectMetadataMaps },
-        });
-
         return {
           id: widgetId,
-          pageLayoutTabId: widgetInput.pageLayoutTabId,
-          pageLayoutTabUniversalIdentifier,
-          title: widgetInput.title,
-          type: widgetInput.type,
-          objectMetadataId: widgetInput.objectMetadataId ?? null,
-          objectMetadataUniversalIdentifier,
-          gridPosition: widgetInput.gridPosition,
-          position: widgetInput.position ?? null,
+          ...buildFlatPageLayoutWidgetCommonProperties({
+            widgetInput,
+            flatPageLayoutTabMaps,
+            flatObjectMetadataMaps,
+          }),
           configuration: widgetInput.configuration,
           workspaceId,
           createdAt: now.toISOString(),
@@ -509,6 +503,8 @@ export class PageLayoutUpdateService {
               configuration: widgetInput.configuration,
               fieldMetadataUniversalIdentifierById:
                 flatFieldMetadataMaps.universalIdentifierById,
+              frontComponentUniversalIdentifierById:
+                flatFrontComponentMaps.universalIdentifierById,
               viewFieldGroupUniversalIdentifierById:
                 flatViewFieldGroupMaps.universalIdentifierById,
               viewUniversalIdentifierById: flatViewMaps.universalIdentifierById,
@@ -526,28 +522,13 @@ export class PageLayoutUpdateService {
 
         const updatedConfiguration = widgetInput.configuration ?? null;
 
-        const {
-          pageLayoutTabUniversalIdentifier,
-          objectMetadataUniversalIdentifier,
-        } = resolveEntityRelationUniversalIdentifiers({
-          metadataName: 'pageLayoutWidget',
-          foreignKeyValues: {
-            pageLayoutTabId: widgetInput.pageLayoutTabId,
-            objectMetadataId: widgetInput.objectMetadataId,
-          },
-          flatEntityMaps: { flatPageLayoutTabMaps, flatObjectMetadataMaps },
-        });
-
         return {
           ...existingWidget,
-          pageLayoutTabId: widgetInput.pageLayoutTabId,
-          pageLayoutTabUniversalIdentifier,
-          title: widgetInput.title,
-          type: widgetInput.type,
-          objectMetadataId: widgetInput.objectMetadataId ?? null,
-          objectMetadataUniversalIdentifier,
-          gridPosition: widgetInput.gridPosition,
-          position: widgetInput.position ?? null,
+          ...buildFlatPageLayoutWidgetCommonProperties({
+            widgetInput,
+            flatPageLayoutTabMaps,
+            flatObjectMetadataMaps,
+          }),
           configuration: updatedConfiguration,
           updatedAt: now.toISOString(),
           ...(isDefined(updatedConfiguration) && {
@@ -556,6 +537,8 @@ export class PageLayoutUpdateService {
                 configuration: updatedConfiguration,
                 fieldMetadataUniversalIdentifierById:
                   flatFieldMetadataMaps.universalIdentifierById,
+                frontComponentUniversalIdentifierById:
+                  flatFrontComponentMaps.universalIdentifierById,
                 viewFieldGroupUniversalIdentifierById:
                   flatViewFieldGroupMaps.universalIdentifierById,
                 viewUniversalIdentifierById:
@@ -575,28 +558,13 @@ export class PageLayoutUpdateService {
 
         const restoredConfiguration = widgetInput.configuration ?? null;
 
-        const {
-          pageLayoutTabUniversalIdentifier,
-          objectMetadataUniversalIdentifier,
-        } = resolveEntityRelationUniversalIdentifiers({
-          metadataName: 'pageLayoutWidget',
-          foreignKeyValues: {
-            pageLayoutTabId: widgetInput.pageLayoutTabId,
-            objectMetadataId: widgetInput.objectMetadataId,
-          },
-          flatEntityMaps: { flatPageLayoutTabMaps, flatObjectMetadataMaps },
-        });
-
         return {
           ...existingWidget,
-          pageLayoutTabId: widgetInput.pageLayoutTabId,
-          pageLayoutTabUniversalIdentifier,
-          title: widgetInput.title,
-          type: widgetInput.type,
-          objectMetadataId: widgetInput.objectMetadataId ?? null,
-          objectMetadataUniversalIdentifier,
-          gridPosition: widgetInput.gridPosition,
-          position: widgetInput.position ?? null,
+          ...buildFlatPageLayoutWidgetCommonProperties({
+            widgetInput,
+            flatPageLayoutTabMaps,
+            flatObjectMetadataMaps,
+          }),
           configuration: restoredConfiguration,
           deletedAt: null,
           updatedAt: now.toISOString(),
@@ -606,6 +574,8 @@ export class PageLayoutUpdateService {
                 configuration: restoredConfiguration,
                 fieldMetadataUniversalIdentifierById:
                   flatFieldMetadataMaps.universalIdentifierById,
+                frontComponentUniversalIdentifierById:
+                  flatFrontComponentMaps.universalIdentifierById,
                 viewFieldGroupUniversalIdentifierById:
                   flatViewFieldGroupMaps.universalIdentifierById,
                 viewUniversalIdentifierById:

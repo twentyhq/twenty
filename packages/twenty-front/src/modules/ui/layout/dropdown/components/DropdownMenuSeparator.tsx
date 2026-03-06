@@ -1,10 +1,8 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledDropdownMenuSeparator = styled.div`
-  background-color: ${({ theme }) =>
-    theme.name === 'dark'
-      ? theme.background.transparent.light
-      : theme.border.color.light};
+  background-color: ${themeCssVariables.border.color.light};
   min-height: 1px;
   width: 100%;
 `;

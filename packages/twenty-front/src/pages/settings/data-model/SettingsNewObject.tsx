@@ -14,7 +14,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
@@ -26,7 +26,7 @@ export const SettingsNewObject = () => {
   const navigate = useNavigateSettings();
   const [isLoading, setIsLoading] = useState(false);
   const { createOneObjectMetadataItem } = useCreateOneObjectMetadataItem();
-  const objectMetadataItems = useRecoilValueV2(objectMetadataItemsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
 
   const formConfig = useForm<SettingsDataModelObjectAboutFormValues>({
     mode: 'onChange',
@@ -72,7 +72,7 @@ export const SettingsNewObject = () => {
   };
 
   return (
-    // eslint-disable-next-line react/jsx-props-no-spreading
+    // oxlint-disable-next-line react/jsx-props-no-spreading
     <FormProvider {...formConfig}>
       <SubMenuTopBarContainer
         title={t`New Object`}

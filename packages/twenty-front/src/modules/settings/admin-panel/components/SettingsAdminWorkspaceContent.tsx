@@ -5,7 +5,7 @@ import { SettingsAdminTableCard } from '@/settings/admin-panel/components/Settin
 import { useFeatureFlagState } from '@/settings/admin-panel/hooks/useFeatureFlagState';
 import { useImpersonationAuth } from '@/settings/admin-panel/hooks/useImpersonationAuth';
 import { useImpersonationRedirect } from '@/settings/admin-panel/hooks/useImpersonationRedirect';
-import { userLookupResultStateV2 } from '@/settings/admin-panel/states/userLookupResultStateV2';
+import { userLookupResultState } from '@/settings/admin-panel/states/userLookupResultState';
 import { type WorkspaceInfo } from '@/settings/admin-panel/types/WorkspaceInfo';
 import { getWorkspaceSchemaName } from '@/settings/admin-panel/utils/get-workspace-schema-name.util';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -15,14 +15,14 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useState } from 'react';
 import { getImageAbsoluteURI, isDefined } from 'twenty-shared/utils';
-import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
-import { AvatarChip, Chip } from 'twenty-ui/components';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { AvatarOrIcon, Chip } from 'twenty-ui/components';
 import {
   H2Title,
   IconEyeShare,
@@ -33,6 +33,7 @@ import {
 } from 'twenty-ui/display';
 import { Button, Toggle } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import {
   type FeatureFlagKey,
@@ -47,21 +48,21 @@ type SettingsAdminWorkspaceContentProps = {
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(3)};
-  margin-top: ${({ theme }) => theme.spacing(6)};
+  gap: ${themeCssVariables.spacing[3]};
+  margin-top: ${themeCssVariables.spacing[6]};
 `;
 
 const StyledButtonContainer = styled.div`
-  margin-top: ${({ theme }) => theme.spacing(3)};
+  margin-top: ${themeCssVariables.spacing[3]};
 `;
 
 export const SettingsAdminWorkspaceContent = ({
   activeWorkspace,
 }: SettingsAdminWorkspaceContentProps) => {
-  const canManageFeatureFlags = useRecoilValueV2(canManageFeatureFlagsState);
+  const canManageFeatureFlags = useAtomStateValue(canManageFeatureFlagsState);
   const { enqueueErrorSnackBar } = useSnackBar();
-  const [currentUser] = useRecoilStateV2(currentUserState);
-  const currentWorkspace = useRecoilValueV2(currentWorkspaceState);
+  const [currentUser] = useAtomState(currentUserState);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
   const [updateFeatureFlag] = useUpdateWorkspaceFeatureFlagMutation();
   const [isImpersonateLoading, setIsImpersonationLoading] = useState(false);
@@ -70,7 +71,7 @@ export const SettingsAdminWorkspaceContent = ({
   const [impersonate] = useImpersonateMutation();
 
   const { updateFeatureFlagState } = useFeatureFlagState();
-  const userLookupResult = useRecoilValueV2(userLookupResultStateV2);
+  const userLookupResult = useAtomStateValue(userLookupResultState);
 
   const { t } = useLingui();
 
@@ -151,7 +152,7 @@ export const SettingsAdminWorkspaceContent = ({
           label={activeWorkspace?.name ?? ''}
           emptyLabel={t`Untitled`}
           leftComponent={
-            <AvatarChip
+            <AvatarOrIcon
               avatarUrl={
                 getImageAbsoluteURI({
                   imageUrl: isNonEmptyString(activeWorkspace?.logo)

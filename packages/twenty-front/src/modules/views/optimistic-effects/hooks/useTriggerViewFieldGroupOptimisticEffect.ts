@@ -1,4 +1,3 @@
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { type CoreViewWithRelations } from '@/views/types/CoreViewWithRelations';
 import { useApolloClient } from '@apollo/client';
@@ -6,6 +5,7 @@ import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { type CoreViewFieldGroup } from '~/generated-metadata/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
+import { useStore } from 'jotai';
 
 type ViewFieldGroupForOptimisticEffect = Omit<
   CoreViewFieldGroup,
@@ -13,6 +13,7 @@ type ViewFieldGroupForOptimisticEffect = Omit<
 >;
 
 export const useTriggerViewFieldGroupOptimisticEffect = () => {
+  const store = useStore();
   const apolloClient = useApolloClient();
 
   const cache = apolloClient.cache;
@@ -27,7 +28,7 @@ export const useTriggerViewFieldGroupOptimisticEffect = () => {
       updatedViewFieldGroups?: ViewFieldGroupForOptimisticEffect[];
       deletedViewFieldGroups?: Pick<CoreViewFieldGroup, 'id' | 'viewId'>[];
     }) => {
-      const coreViews = jotaiStore.get(coreViewsState.atom);
+      const coreViews = store.get(coreViewsState.atom);
       let newCoreViews = [...coreViews];
 
       createdViewFieldGroups.forEach((createdViewFieldGroup) => {
@@ -147,10 +148,10 @@ export const useTriggerViewFieldGroupOptimisticEffect = () => {
       );
 
       if (!isDeeplyEqual(coreViews, newCoreViews)) {
-        jotaiStore.set(coreViewsState.atom, newCoreViews);
+        store.set(coreViewsState.atom, newCoreViews);
       }
     },
-    [cache],
+    [cache, store],
   );
 
   return {

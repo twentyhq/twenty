@@ -194,7 +194,7 @@ setHotkeyScopeAndMemorizePreviousScope(
 
 ### Usar StyledComponents
 
-Estiliza los componentes con [styled-components](https://emotion.sh/docs/styled).
+Estiliza los componentes con [Linaria styled](https://github.com/callstack/linaria).
 
 ```tsx
 // ❌ Bad
@@ -260,7 +260,7 @@ const StyledButton = styled.button`
 
 ## Aplicando No-Type Imports
 
-Evita las importaciones de tipo. Para reforzar este estándar, una regla de ESLint verifica y reporta cualquier importación de tipo. Esto ayuda a mantener la consistencia y la legibilidad en el código TypeScript.
+Evita las importaciones de tipo. Para reforzar este estándar, una regla de Oxlint verifica y reporta cualquier importación de tipo. Esto ayuda a mantener la consistencia y la legibilidad en el código TypeScript.
 
 ```tsx
 // ❌ Bad
@@ -281,10 +281,10 @@ import { Meta, StoryObj } from '@storybook/react';
 
 * **Mantenibilidad**: Mejora la mantenibilidad de la base de código porque los desarrolladores pueden identificar y localizar importaciones solo de tipo al revisar o modificar el código.
 
-### Regla de ESLint
+### regla de Oxlint
 
-Una regla de ESLint, `@typescript-eslint/consistent-type-imports`, impone el estándar de no usar "type" en las importaciones. Esta regla generará errores o advertencias sobre cualquier violación de importación de tipo.
+Una regla de Oxlint, `typescript/consistent-type-imports`, impone el estándar de no usar "type" en las importaciones. Esta regla generará errores o advertencias sobre cualquier violación de importación de tipo.
 
 Por favor, ten en cuenta que esta regla específicamente aborda extraños casos límite donde ocurren importaciones de tipo no intencionadas. TypeScript en sí mismo desaconseja esta práctica, como se menciona en las [notas de lanzamiento de TypeScript 3.8](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-8.html). En la mayoría de situaciones, no deberías necesitar usar importaciones solo de tipo.
 
-Para asegurarte de que tu código cumpla con esta regla, asegúrate de ejecutar ESLint como parte de tu flujo de trabajo de desarrollo.
+Para asegurarte de que tu código cumpla con esta regla, asegúrate de ejecutar Oxlint como parte de tu flujo de trabajo de desarrollo.

@@ -1,5 +1,5 @@
 import { useGetAvailablePackages } from '@/logic-functions/hooks/useGetAvailablePackages';
-import { useLogicFunctionEditor } from '@/logic-functions/hooks/useLogicFunctionEditor';
+import { useLogicFunctionForm } from '@/logic-functions/hooks/useLogicFunctionForm';
 import { useFullScreenModal } from '@/ui/layout/fullscreen/hooks/useFullScreenModal';
 import { type BreadcrumbProps } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow';
@@ -10,27 +10,22 @@ import { setNestedValue } from '@/workflow/workflow-steps/workflow-actions/code-
 
 import { CmdEnterActionButton } from '@/action-menu/components/CmdEnterActionButton';
 import { LogicFunctionExecutionResult } from '@/logic-functions/components/LogicFunctionExecutionResult';
+import { LogicFunctionLogs } from '@/logic-functions/components/LogicFunctionLogs';
 import { mergeDefaultFunctionInputAndFunctionInput } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/mergeDefaultFunctionInputAndFunctionInput';
 import { InputLabel } from '@/ui/input/components/InputLabel';
-import { TextArea } from '@/ui/input/components/TextArea';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowCodeEditor } from '@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowCodeEditor';
 import { WorkflowEditActionCodeFields } from '@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCodeFields';
 import { WORKFLOW_LOGIC_FUNCTION_TAB_LIST_COMPONENT_ID } from '@/workflow/workflow-steps/workflow-actions/code-action/constants/WorkflowLogicFunctionTabListComponentId';
-import {
-  type LogicFunctionTestData,
-  logicFunctionTestDataFamilyState,
-} from '@/workflow/workflow-steps/workflow-actions/code-action/states/logicFunctionTestDataFamilyState';
 import { WorkflowLogicFunctionTabId } from '@/workflow/workflow-steps/workflow-actions/code-action/types/WorkflowLogicFunctionTabId';
 import { getWrongExportedFunctionMarkers } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/getWrongExportedFunctionMarkers';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
@@ -39,7 +34,6 @@ import { type Monaco } from '@monaco-editor/react';
 import { type editor } from 'monaco-editor';
 import { AutoTypings } from 'monaco-editor-auto-typings';
 import { useState } from 'react';
-import { useRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -51,21 +45,19 @@ import { CodeEditor } from 'twenty-ui/input';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { useDebouncedCallback } from 'use-debounce';
 import { getFunctionInputFromInputSchema } from 'twenty-shared/workflow';
-
-const CODE_EDITOR_MIN_HEIGHT = 343;
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { LogicFunctionTestInputInitEffect } from '@/logic-functions/components/LogicFunctionTestInputInitEffect';
+import { useExecuteLogicFunction } from '@/logic-functions/hooks/useExecuteLogicFunction';
 
 const StyledCodeEditorContainer = styled.div`
   display: flex;
   flex-direction: column;
   position: relative;
-  flex: 1;
-  min-height: ${CODE_EDITOR_MIN_HEIGHT}px;
-  overflow: hidden;
 `;
 
-const StyledTabList = styled(TabList)`
-  background-color: ${({ theme }) => theme.background.secondary};
-  padding-left: ${({ theme }) => theme.spacing(2)};
+const StyledTabListContainer = styled.div`
+  background-color: ${themeCssVariables.background.secondary};
+  padding-left: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledFullScreenCodeEditorContainer = styled.div`
@@ -98,14 +90,14 @@ export const WorkflowEditActionCode = ({
   const isMobile = useIsMobile();
   const logicFunctionId = action.settings.input.logicFunctionId;
   const fullScreenFocusId = `code-editor-fullscreen-${logicFunctionId}`;
-  const activeTabId = useRecoilComponentValueV2(
+  const activeTabId = useAtomComponentStateValue(
     activeTabIdComponentState,
     WORKFLOW_LOGIC_FUNCTION_TAB_LIST_COMPONENT_ID,
   );
   const { getUpdatableWorkflowVersion } =
     useGetUpdatableWorkflowVersionOrThrow();
 
-  const workflowVisualizerWorkflowId = useRecoilComponentValue(
+  const workflowVisualizerWorkflowId = useAtomComponentStateValue(
     workflowVisualizerWorkflowIdComponentState,
   );
   const workflow = useWorkflowWithCurrentVersion(workflowVisualizerWorkflowId);
@@ -121,20 +113,23 @@ export const WorkflowEditActionCode = ({
     });
   };
 
-  const { formValues, loading, executeLogicFunction, onChange, isExecuting } =
-    useLogicFunctionEditor({
-      logicFunctionId,
-      executeCallback: updateOutputSchemaFromTestResult,
-    });
+  const { formValues, loading, onChange } = useLogicFunctionForm({
+    logicFunctionId,
+  });
+
+  const {
+    executeLogicFunction,
+    isExecuting,
+    logicFunctionTestData,
+    updateLogicFunctionInput,
+  } = useExecuteLogicFunction({
+    logicFunctionId,
+    callback: updateOutputSchemaFromTestResult,
+  });
 
   const { availablePackages } = useGetAvailablePackages({
     id: logicFunctionId,
   });
-
-  const [logicFunctionTestData, setLogicFunctionTestData] =
-    useRecoilState<LogicFunctionTestData>(
-      logicFunctionTestDataFamilyState(logicFunctionId),
-    );
 
   const [functionInput, setFunctionInput] =
     useState<LogicFunctionInputFormData>(
@@ -161,6 +156,7 @@ export const WorkflowEditActionCode = ({
         newInput: newFunctionInput,
         oldInput: action.settings.input.logicFunctionInput,
       });
+
       const newMergedTestInput = mergeDefaultFunctionInputAndFunctionInput({
         newInput: newFunctionInput,
         oldInput: logicFunctionTestData.input,
@@ -168,10 +164,7 @@ export const WorkflowEditActionCode = ({
 
       setFunctionInput(newMergedInput);
 
-      setLogicFunctionTestData((prev) => ({
-        ...prev,
-        input: newMergedTestInput,
-      }));
+      updateLogicFunctionInput(newMergedTestInput);
 
       updateAction({
         ...action,
@@ -223,10 +216,8 @@ export const WorkflowEditActionCode = ({
       path,
       value,
     );
-    setLogicFunctionTestData((prev) => ({
-      ...prev,
-      input: updatedTestFunctionInput,
-    }));
+
+    updateLogicFunctionInput(updatedTestFunctionInput);
   };
 
   const handleTestFunction = async () => {
@@ -301,8 +292,6 @@ export const WorkflowEditActionCode = ({
     focusId: fullScreenFocusId,
     dependencies: [isFullScreen],
   });
-
-  const testLogsTextAreaId = `${logicFunctionId}-test-logs`;
 
   const breadcrumbLinks: BreadcrumbProps['links'] = [
     {
@@ -380,11 +369,14 @@ export const WorkflowEditActionCode = ({
   return (
     !loading && (
       <>
-        <StyledTabList
-          tabs={tabs}
-          behaveAsLinks={false}
-          componentInstanceId={WORKFLOW_LOGIC_FUNCTION_TAB_LIST_COMPONENT_ID}
-        />
+        <LogicFunctionTestInputInitEffect logicFunctionId={logicFunctionId} />
+        <StyledTabListContainer>
+          <TabList
+            tabs={tabs}
+            behaveAsLinks={false}
+            componentInstanceId={WORKFLOW_LOGIC_FUNCTION_TAB_LIST_COMPONENT_ID}
+          />
+        </StyledTabListContainer>
         <WorkflowStepBody>
           {activeTabId === WorkflowLogicFunctionTabId.CODE && (
             <>
@@ -427,12 +419,9 @@ export const WorkflowEditActionCode = ({
               </StyledCodeEditorContainer>
               {logicFunctionTestData.output.logs.length > 0 && (
                 <StyledCodeEditorContainer>
-                  <InputLabel>{t`Logs`}</InputLabel>
-                  <TextArea
-                    textAreaId={testLogsTextAreaId}
+                  <LogicFunctionLogs
+                    componentInstanceId={`workflow-edit-action-logs-${action.id}`}
                     value={isExecuting ? '' : logicFunctionTestData.output.logs}
-                    maxRows={20}
-                    disabled
                   />
                 </StyledCodeEditorContainer>
               )}

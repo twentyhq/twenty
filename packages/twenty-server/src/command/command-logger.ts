@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+/* oxlint-disable no-console */
 import { Injectable } from '@nestjs/common';
 
 import { existsSync } from 'fs';

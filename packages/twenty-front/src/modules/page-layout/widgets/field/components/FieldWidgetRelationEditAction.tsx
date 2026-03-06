@@ -20,12 +20,12 @@ import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guar
 import { getRecordFieldCardRelationPickerDropdownId } from '@/object-record/record-show/utils/getRecordFieldCardRelationPickerDropdownId';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
-import { css } from '@emotion/react';
-import styled from '@emotion/styled';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { styled } from '@linaria/react';
 import { CustomError } from 'twenty-shared/utils';
 import { IconPencil } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type FieldWidgetRelationEditActionProps = {
   fieldDefinition:
@@ -34,17 +34,17 @@ type FieldWidgetRelationEditActionProps = {
   recordId: string;
 };
 
-const StyledEditButton = styled(LightIconButton)<{
+const StyledEditButtonWrapper = styled.div<{
   isDropdownOpen: boolean;
   isMobile: boolean;
 }>`
-  ${({ isDropdownOpen, isMobile, theme }) =>
-    !isDropdownOpen &&
-    css`
-      opacity: ${isMobile ? 1 : 0};
-      pointer-events: none;
-      transition: opacity ${theme.animation.duration.instant}s ease;
-    `}
+  opacity: ${({ isDropdownOpen, isMobile }) =>
+    isDropdownOpen ? '1' : isMobile ? '1' : '0'};
+  pointer-events: ${({ isDropdownOpen }) => (isDropdownOpen ? 'auto' : 'none')};
+  transition: ${({ isDropdownOpen }) =>
+    isDropdownOpen
+      ? 'none'
+      : `opacity ${themeCssVariables.animation.duration.instant}s ease`};
 
   .widget:hover & {
     opacity: 1;
@@ -99,7 +99,7 @@ export const FieldWidgetRelationEditAction = ({
       instanceId: scopeInstanceId,
     });
 
-  const isRelationSelectionDropdownOpen = useRecoilComponentValueV2(
+  const isDropdownOpen = useAtomComponentStateValue(
     isDropdownOpenComponentState,
     relationSelectionDropdownId,
   );
@@ -107,12 +107,12 @@ export const FieldWidgetRelationEditAction = ({
   const isMobile = useIsMobile();
 
   const dropdownTriggerClickableComponent = (
-    <StyledEditButton
-      isDropdownOpen={isRelationSelectionDropdownOpen}
+    <StyledEditButtonWrapper
+      isDropdownOpen={isDropdownOpen}
       isMobile={isMobile}
-      Icon={IconPencil}
-      accent="secondary"
-    />
+    >
+      <LightIconButton Icon={IconPencil} accent="secondary" />
+    </StyledEditButtonWrapper>
   );
 
   return (

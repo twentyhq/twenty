@@ -5,7 +5,7 @@ title: Einrichtung
 # Konfigurationsverwaltung
 
 <Warning>
-  **Erstinstallation?** Folgen Sie dem [Docker Compose-Installationshandbuch](/l/de/developers/self-host/capabilities/docker-compose), um Twenty zum Laufen zu bringen, und kehren Sie dann hierher zurück, um die Konfiguration fortzusetzen.
+**Erstinstallation?** Folgen Sie dem [Docker Compose-Installationshandbuch](/l/de/developers/self-host/capabilities/docker-compose), um Twenty zum Laufen zu bringen, und kehren Sie dann hierher zurück, um die Konfiguration fortzusetzen.
 </Warning>
 
 Twenty bietet **zwei Konfigurationsmodi**, um unterschiedlichen Implementierungsbedürfnissen gerecht zu werden:
@@ -26,7 +26,7 @@ IS_CONFIG_VARIABLES_IN_DB_ENABLED=true  # Standard
 4. Änderungen werden sofort wirksam (innerhalb von 15 Sekunden für Mehrcontainer-Bereitstellungen)
 
 <Warning>
-  **Mehr-Container-Bereitstellungen:** Bei Verwendung der Datenbankkonfiguration (`IS_CONFIG_VARIABLES_IN_DB_ENABLED=true`) lesen sowohl Server- als auch Worker-Container aus derselben Datenbank. Änderungen im Admin-Panel wirken sich auf beide Container aus, wodurch die Notwendigkeit entfällt, Umgebungsvariablen zwischen den Containern zu duplizieren (außer Infrastrukturvariablen).
+**Mehr-Container-Bereitstellungen:** Bei Verwendung der Datenbankkonfiguration (`IS_CONFIG_VARIABLES_IN_DB_ENABLED=true`) lesen sowohl Server- als auch Worker-Container aus derselben Datenbank. Änderungen im Admin-Panel wirken sich auf beide Container aus, wodurch die Notwendigkeit entfällt, Umgebungsvariablen zwischen den Containern zu duplizieren (außer Infrastrukturvariablen).
 </Warning>
 
 **Was Sie über das Admin-Panel konfigurieren können:**
@@ -41,10 +41,10 @@ IS_CONFIG_VARIABLES_IN_DB_ENABLED=true  # Standard
 ![Konfigurationsvariablen des Admin-Panels](/images/user-guide/setup/admin-panel-config-variables.png)
 
 <Warning>
-  Jede Variable ist mit Beschreibungen in Ihrem Admin-Panel dokumentiert unter **Einstellungen → Admin-Panel → Konfigurationsvariablen**.
-  Einige Infrastruktureinstellungen wie Datenbankverbindungen (`PG_DATABASE_URL`), Server-URLs (`SERVER_URL`) und Anwendungsgeheimnisse (`APP_SECRET`) können nur über die `.env`-Datei konfiguriert werden.
+Jede Variable ist mit Beschreibungen in Ihrem Admin-Panel dokumentiert unter **Einstellungen → Admin-Panel → Konfigurationsvariablen**.
+Einige Infrastruktureinstellungen wie Datenbankverbindungen (`PG_DATABASE_URL`), Server-URLs (`SERVER_URL`) und Anwendungsgeheimnisse (`APP_SECRET`) können nur über die `.env`-Datei konfiguriert werden.
 
-  [Vollständige technische Referenz →](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts)
+[Vollständige technische Referenz →](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts)
 </Warning>
 
 ## 2. Nur-Umgebungs-Konfiguration
@@ -93,7 +93,7 @@ Aktivieren Sie den Multi-Workspace-Modus für SaaS-ähnliche Bereitstellungen, b
 * Workspacespezifische Einstellungen wie Subdomain und benutzerdefinierte Domain werden in den Workspace-Einstellungen verfügbar.
 
 <Warning>
-  **Nur-Umgebungs-Einstellung:** `IS_MULTIWORKSPACE_ENABLED` kann nur über die `.env`-Datei konfiguriert werden und erfordert einen Neustart. Dies kann nicht über das Admin-Panel geändert werden.
+**Nur-Umgebungs-Einstellung:** `IS_MULTIWORKSPACE_ENABLED` kann nur über die `.env`-Datei konfiguriert werden und erfordert einen Neustart. Dies kann nicht über das Admin-Panel geändert werden.
 </Warning>
 
 ### DNS-Konfiguration für Multi-Workspace
@@ -149,7 +149,7 @@ Wenn aktiviert, können nur Benutzer mit `canAccessFullAdminPanel` zusätzliche 
    * `AUTH_GOOGLE_APIS_CALLBACK_URL=https://{your-domain}/auth/google-apis/get-access-token`
 
 <Warning>
-  **Nur-Umgebungsmodus:** Wenn Sie `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false` setzen, fügen Sie diese Variablen stattdessen Ihrer `.env`-Datei hinzu.
+**Nur-Umgebungsmodus:** Wenn Sie `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false` setzen, fügen Sie diese Variablen stattdessen Ihrer `.env`-Datei hinzu.
 </Warning>
 
 **Erforderliche Scopes** (automatisch konfiguriert):
@@ -168,7 +168,7 @@ Fügen Sie im [OAuth-Zustimmungsbildschirm](https://console.cloud.google.com/api
 ## Microsoft 365-Integration
 
 <Warning>
-  Benutzer müssen eine [Microsoft 365-Lizenz](https://admin.microsoft.com/Adminportal/Home) besitzen, um die Kalender- und Messaging-API verwenden zu können. Ohne eine solche Lizenz können sie ihr Konto nicht mit Twenty synchronisieren.
+Benutzer müssen eine [Microsoft 365-Lizenz](https://admin.microsoft.com/Adminportal/Home) besitzen, um die Kalender- und Messaging-API verwenden zu können. Ohne eine solche Lizenz können sie ihr Konto nicht mit Twenty synchronisieren.
 </Warning>
 
 ### Erstellen Sie ein Projekt in Microsoft Azure
@@ -211,7 +211,7 @@ Sie müssen die folgenden Weiterleitungs-URIs zu Ihrem Projekt hinzufügen:
    * `AUTH_MICROSOFT_APIS_CALLBACK_URL=https://{your-domain}/auth/microsoft-apis/get-access-token`
 
 <Warning>
-  **Nur-Umgebungsmodus:** Wenn Sie `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false` setzen, fügen Sie diese Variablen stattdessen Ihrer `.env`-Datei hinzu.
+**Nur-Umgebungsmodus:** Wenn Sie `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false` setzen, fügen Sie diese Variablen stattdessen Ihrer `.env`-Datei hinzu.
 </Warning>
 
 ### Scopes konfigurieren
@@ -256,40 +256,45 @@ yarn command:prod cron:workflow:automated-cron-trigger
 3. Konfigurieren Sie Ihre SMTP-Einstellungen:
 
 <ArticleTabs label1="Gmail" label2="Office365" label3="Smtp4dev">
-  <ArticleTab>
-    Sie müssen ein [App-Passwort](https://support.google.com/accounts/answer/185833) bereitstellen.
 
+  <ArticleTab>
+
+  Sie müssen ein [App-Passwort](https://support.google.com/accounts/answer/185833) bereitstellen.
+  * EMAIL_DRIVER=smtp
+  * EMAIL_SMTP_HOST=smtp.gmail.com
+  * EMAIL_SMTP_PORT=465
+  * EMAIL_SMTP_USER=gmail_email_address
+  * EMAIL_SMTP_PASSWORD='gmail_app_password'
+
+  </ArticleTab>
+
+  <ArticleTab>
+
+  Beachten Sie, dass, wenn Sie die Zwei-Faktor-Authentifizierung aktiviert haben, ein [App-Passwort](https://support.microsoft.com/en-us/account-billing/manage-app-passwords-for-two-step-verification-d6dc8c6d-4bf7-4851-ad95-6d07799387e9) bereitgestellt werden muss.
+  * EMAIL_DRIVER=smtp
+  * EMAIL_SMTP_HOST=smtp.office365.com
+  * EMAIL_SMTP_PORT=587
+  * EMAIL_SMTP_USER=office365_email_address
+  * EMAIL_SMTP_PASSWORD='office365_password'
+
+  </ArticleTab>
+
+  <ArticleTab>
+
+  **smtp4dev** ist ein Fake-SMTP-Mailserver für Entwicklung und Tests.
+  * Führen Sie das smtp4dev-Image aus: `docker run --rm -it -p 8090:80 -p 2525:25 rnwood/smtp4dev`
+  * Rufen Sie die smtp4dev-Benutzeroberfläche hier auf: [http://localhost:8090](http://localhost:8090)
+  * Setzen Sie die folgenden Variablen:
     * EMAIL_DRIVER=smtp
-    * EMAIL_SMTP_HOST=smtp.gmail.com
-    * EMAIL_SMTP_PORT=465
-    * EMAIL_SMTP_USER=gmail_email_address
-    * EMAIL_SMTP_PASSWORD='gmail_app_password'
+    * EMAIL_SMTP_HOST=localhost
+    * EMAIL_SMTP_PORT=2525
+
   </ArticleTab>
 
-  <ArticleTab>
-    Beachten Sie, dass, wenn Sie die Zwei-Faktor-Authentifizierung aktiviert haben, ein [App-Passwort](https://support.microsoft.com/en-us/account-billing/manage-app-passwords-for-two-step-verification-d6dc8c6d-4bf7-4851-ad95-6d07799387e9) bereitgestellt werden muss.
-
-    * EMAIL_DRIVER=smtp
-    * EMAIL_SMTP_HOST=smtp.office365.com
-    * EMAIL_SMTP_PORT=587
-    * EMAIL_SMTP_USER=office365_email_address
-    * EMAIL_SMTP_PASSWORD='office365_password'
-  </ArticleTab>
-
-  <ArticleTab>
-    **smtp4dev** ist ein Fake-SMTP-Mailserver für Entwicklung und Tests.
-
-    * Führen Sie das smtp4dev-Image aus: `docker run --rm -it -p 8090:80 -p 2525:25 rnwood/smtp4dev`
-    * Rufen Sie die smtp4dev-Benutzeroberfläche hier auf: [http://localhost:8090](http://localhost:8090)
-    * Setzen Sie die folgenden Variablen:
-      * EMAIL_DRIVER=smtp
-      * EMAIL_SMTP_HOST=localhost
-      * EMAIL_SMTP_PORT=2525
-  </ArticleTab>
 </ArticleTabs>
 
 <Warning>
-  **Nur-Umgebungsmodus:** Wenn Sie `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false` setzen, fügen Sie diese Variablen stattdessen Ihrer `.env`-Datei hinzu.
+**Nur-Umgebungsmodus:** Wenn Sie `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false` setzen, fügen Sie diese Variablen stattdessen Ihrer `.env`-Datei hinzu.
 </Warning>
 
 ## Logikfunktionen
@@ -297,7 +302,7 @@ yarn command:prod cron:workflow:automated-cron-trigger
 Twenty unterstützt Logikfunktionen für Workflows und benutzerdefinierte Logik. Die Ausführungsumgebung wird über die Umgebungsvariable `SERVERLESS_TYPE` konfiguriert.
 
 <Warning>
-  **Sicherheitshinweis:** Der lokale Treiber (`SERVERLESS_TYPE=LOCAL`) führt Code ohne Sandbox direkt auf dem Host in einem Node.js-Prozess aus. Er sollte nur für vertrauenswürdigen Code in der Entwicklung verwendet werden. Für Produktivbereitstellungen, die nicht vertrauenswürdigen Code verarbeiten, empfehlen wir nachdrücklich, `SERVERLESS_TYPE=LAMBDA` oder `SERVERLESS_TYPE=DISABLED` zu verwenden.
+**Sicherheitshinweis:** Der lokale Treiber (`SERVERLESS_TYPE=LOCAL`) führt Code ohne Sandbox direkt auf dem Host in einem Node.js-Prozess aus. Er sollte nur für vertrauenswürdigen Code in der Entwicklung verwendet werden. Für Produktivbereitstellungen, die nicht vertrauenswürdigen Code verarbeiten, empfehlen wir nachdrücklich, `SERVERLESS_TYPE=LAMBDA` oder `SERVERLESS_TYPE=DISABLED` zu verwenden.
 </Warning>
 
 ### Verfügbare Treiber
@@ -333,5 +338,5 @@ SERVERLESS_TYPE=DISABLED
 ```
 
 <Note>
-  Bei Verwendung von `SERVERLESS_TYPE=DISABLED` führt jeder Versuch, eine Logikfunktion auszuführen, zu einem Fehler. Dies ist nützlich, wenn Sie Twenty ohne Unterstützung für Logikfunktionen betreiben möchten.
+Bei Verwendung von `SERVERLESS_TYPE=DISABLED` führt jeder Versuch, eine Logikfunktion auszuführen, zu einem Fehler. Dies ist nützlich, wenn Sie Twenty ohne Unterstützung für Logikfunktionen betreiben möchten.
 </Note>

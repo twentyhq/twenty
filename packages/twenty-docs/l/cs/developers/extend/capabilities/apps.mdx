@@ -4,7 +4,7 @@ description: Vytvářejte a spravujte přizpůsobení Twenty jako kód.
 ---
 
 <Warning>
-  Aplikace jsou aktuálně v alfa testování. Tato funkce je funkční, ale stále se vyvíjí.
+Aplikace jsou aktuálně v alfa testování. Tato funkce je funkční, ale stále se vyvíjí.
 </Warning>
 
 ## Co jsou aplikace?
@@ -31,13 +31,6 @@ Vytvořte novou aplikaci pomocí oficiálního scaffolderu, poté se ověřte a 
 # Vygenerujte kostru nové aplikace (ve výchozím nastavení zahrnuje všechny příklady)
 npx create-twenty-app@latest my-twenty-app
 cd my-twenty-app
-
-# Pokud nepoužíváte yarn@4
-corepack enable
-yarn install
-
-# Přihlaste se pomocí svého API klíče (budete vyzváni)
-yarn twenty auth:login
 
 # Spusťte vývojový režim: automaticky synchronizuje místní změny s vaším pracovním prostorem
 yarn twenty app:dev
@@ -68,6 +61,9 @@ yarn twenty function:logs
 # Spusťte funkci podle názvu
 yarn twenty function:execute -n my-function -p '{"name": "test"}'
 
+# Spusťte předinstalační funkci
+yarn twenty function:execute --preInstall
+
 # Spusťte postinstalační funkci
 yarn twenty function:execute --postInstall
 
@@ -87,7 +83,7 @@ Když spustíte `npx create-twenty-app@latest my-twenty-app`, scaffolder:
 * Zkopíruje minimální základní aplikaci do `my-twenty-app/`
 * Přidá lokální závislost `twenty-sdk` a konfiguraci pro Yarn 4
 * Vytvoří konfigurační soubory a skripty napojené na `twenty` CLI
-* Vygeneruje základní soubory (konfigurace aplikace, výchozí role funkcí, postinstalační funkce) a k nim ukázkové soubory podle zvoleného režimu generování kostry
+* Vygeneruje základní soubory (konfigurace aplikace, výchozí role funkcí, předinstalační a postinstalační funkce) a k nim ukázkové soubory podle zvoleného režimu generování kostry
 
 Čerstvě vygenerovaná aplikace s výchozím režimem `--exhaustive` vypadá takto:
 
@@ -100,7 +96,7 @@ my-twenty-app/
   .yarnrc.yml
   .yarn/
     install-state.gz
-  eslint.config.mjs
+  .oxlintrc.json
   tsconfig.json
   README.md
   public/                           # Složka s veřejnými prostředky (obrázky, písma apod.)
@@ -114,6 +110,7 @@ my-twenty-app/
   │   └── example-field.ts              # Ukázková samostatná definice pole
   ├── logic-functions/
   │   ├── hello-world.ts                # Ukázková logická funkce
+  │   ├── pre-install.ts                # Předinstalační logická funkce
   │   └── post-install.ts               # Postinstalační logická funkce
   ├── front-components/
   │   └── hello-world.tsx               # Ukázková front-endová komponenta
@@ -125,7 +122,7 @@ my-twenty-app/
       └── example-skill.ts                # Ukázková definice dovednosti agenta AI
 ```
 
-S volbou `--minimal` se vytvoří pouze základní soubory (`application-config.ts`, `roles/default-role.ts` a `logic-functions/post-install.ts`). S volbou `--interactive` si vyberete, které ukázkové soubory chcete zahrnout.
+S volbou `--minimal` se vytvoří pouze základní soubory (`application-config.ts`, `roles/default-role.ts`, `logic-functions/pre-install.ts` a `logic-functions/post-install.ts`). S volbou `--interactive` si vyberete, které ukázkové soubory chcete zahrnout.
 
 V kostce:
 
@@ -133,7 +130,7 @@ V kostce:
 * **.gitignore**: Ignoruje běžné artefakty jako `node_modules`, `.yarn`, `generated/` (typovaný klient), `dist/`, `build/`, složky s coverage, logy a soubory `.env*`.
 * **yarn.lock**, **.yarnrc.yml**, **.yarn/**: Zamykají a konfigurují nástrojový řetězec Yarn 4 používaný projektem.
 * **.nvmrc**: Fixuje verzi Node.js požadovanou projektem.
-* **eslint.config.mjs** a **tsconfig.json**: Poskytují lintování a konfiguraci TypeScriptu pro zdrojové soubory vaší aplikace v TypeScriptu.
+* **.oxlintrc.json** and **tsconfig.json**: Provide linting and TypeScript configuration for your app's TypeScript sources.
 * **README.md**: Krátké README v kořeni aplikace se základními pokyny.
 * **public/**: Složka pro ukládání veřejných prostředků (obrázky, písma, statické soubory), které bude vaše aplikace poskytovat. Soubory umístěné zde se během synchronizace nahrají a jsou za běhu dostupné.
 * **src/**: Hlavní místo, kde definujete svou aplikaci jako kód
@@ -142,19 +139,21 @@ V kostce:
 
 SDK detekuje entity analýzou vašich souborů TypeScript a hledá volání **`export default define<Entity>({...})`**. Každý typ entity má odpovídající pomocnou funkci exportovanou z `twenty-sdk`:
 
-| Pomocná funkce               | Typ entity                            |
-| ---------------------------- | ------------------------------------- |
-| `defineObject()`             | Definice vlastních objektů            |
-| `defineLogicFunction()`      | Definice logických funkcí             |
-| `defineFrontComponent()`     | Definice frontendových komponent      |
-| `defineRole()`               | Definice rolí                         |
-| `defineField()`              | Rozšíření polí u existujících objektů |
-| `defineView()`               | Definice uložených zobrazení          |
-| `defineNavigationMenuItem()` | Definice položek navigační nabídky    |
-| `defineSkill()`              | Definice dovedností agenta AI         |
+| Pomocná funkce                     | Typ entity                                                |
+| ---------------------------------- | --------------------------------------------------------- |
+| `defineObject()`                   | Definice vlastních objektů                                |
+| `defineLogicFunction()`            | Definice logických funkcí                                 |
+| `definePreInstallLogicFunction()`  | Předinstalační logická funkce (spouští se před instalací) |
+| `definePostInstallLogicFunction()` | Postinstalační logická funkce (spouští se po instalaci)   |
+| `defineFrontComponent()`           | Definice frontendových komponent                          |
+| `defineRole()`                     | Definice rolí                                             |
+| `defineField()`                    | Rozšíření polí u existujících objektů                     |
+| `defineView()`                     | Definice uložených zobrazení                              |
+| `defineNavigationMenuItem()`       | Definice položek navigační nabídky                        |
+| `defineSkill()`                    | Definice dovedností agenta AI                             |
 
 <Note>
-  **Pojmenování souborů je flexibilní.** Detekce entit je založená na AST — SDK prochází vaše zdrojové soubory a hledá vzor `export default define<Entity>({...})`. Soubory a složky můžete organizovat, jak chcete. Seskupování podle typu entity (např. `logic-functions/`, `roles/`) je pouze konvence pro organizaci kódu, nikoli požadavek.
+**Pojmenování souborů je flexibilní.** Detekce entit je založená na AST — SDK prochází vaše zdrojové soubory a hledá vzor `export default define<Entity>({...})`. Soubory a složky můžete organizovat, jak chcete. Seskupování podle typu entity (např. `logic-functions/`, `roles/`) je pouze konvence pro organizaci kódu, nikoli požadavek.
 </Note>
 
 Příklad detekované entity:
@@ -172,7 +171,7 @@ export default defineObject({
 
 Pozdější příkazy přidají další soubory a složky:
 
-* `yarn twenty app:dev` automaticky vygeneruje typovaného klienta API v `node_modules/twenty-sdk/generated` (typovaný klient Twenty + typy pracovního prostoru).
+* `yarn twenty app:dev` automaticky vygeneruje dva typované API klienty v `node_modules/twenty-sdk/generated`: `CoreApiClient` (pro data pracovního prostoru přes `/graphql`) a `MetadataApiClient` (pro konfiguraci pracovního prostoru a nahrávání souborů přes `/metadata`).
 * `yarn twenty entity:add` přidá soubory s definicemi entit do `src/` pro vaše vlastní objekty, funkce, frontové komponenty, role, dovednosti a další.
 
 ## Ověření
@@ -216,17 +215,19 @@ twenty-sdk poskytuje typované stavební bloky a pomocné funkce, které použí
 
 SDK poskytuje pomocné funkce pro definování entit vaší aplikace. Jak je popsáno v [Detekce entit](#entity-detection), musíte použít `export default define<Entity>({...})`, aby byly vaše entity detekovány:
 
-| Funkce                       | Účel                                                              |
-| ---------------------------- | ----------------------------------------------------------------- |
-| `defineApplication()`        | Nakonfigurujte metadata aplikace (povinné, jedno na aplikaci)     |
-| `defineObject()`             | Definice vlastních objektů s poli                                 |
-| `defineLogicFunction()`      | Definice logických funkcí s obslužnými funkcemi                   |
-| `defineFrontComponent()`     | Definujte frontendové komponenty pro vlastní uživatelské rozhraní |
-| `defineRole()`               | Konfigurace oprávnění rolí a přístupu k objektům                  |
-| `defineField()`              | Rozšiřte existující objekty o další pole                          |
-| `defineView()`               | Definujte uložená zobrazení pro objekty                           |
-| `defineNavigationMenuItem()` | Definujte odkazy postranní navigace                               |
-| `defineSkill()`              | Definuje dovednosti agenta AI                                     |
+| Funkce                             | Účel                                                              |
+| ---------------------------------- | ----------------------------------------------------------------- |
+| `defineApplication()`              | Nakonfigurujte metadata aplikace (povinné, jedno na aplikaci)     |
+| `defineObject()`                   | Definice vlastních objektů s poli                                 |
+| `defineLogicFunction()`            | Definice logických funkcí s obslužnými funkcemi                   |
+| `definePreInstallLogicFunction()`  | Definujte předinstalační logickou funkci (jedna na aplikaci)      |
+| `definePostInstallLogicFunction()` | Definujte postinstalační logickou funkci (jedna na aplikaci)      |
+| `defineFrontComponent()`           | Definujte frontendové komponenty pro vlastní uživatelské rozhraní |
+| `defineRole()`                     | Konfigurace oprávnění rolí a přístupu k objektům                  |
+| `defineField()`                    | Rozšiřte existující objekty o další pole                          |
+| `defineView()`                     | Definujte uložená zobrazení pro objekty                           |
+| `defineNavigationMenuItem()`       | Definujte odkazy postranní navigace                               |
+| `defineSkill()`                    | Definuje dovednosti agenta AI                                     |
 
 Tyto funkce validují vaši konfiguraci v době sestavení a poskytují automatické doplňování v IDE a typovou bezpečnost.
 
@@ -312,11 +313,11 @@ Hlavní body:
 * Nové objekty můžete vygenerovat pomocí `yarn twenty entity:add`, který vás provede pojmenováním, poli a vztahy.
 
 <Note>
-  **Základní pole jsou vytvořena automaticky.** Když definujete vlastní objekt, Twenty automaticky přidá standardní pole
-  jako `id`, `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy` a `deletedAt`.
-  Nemusíte je definovat v poli `fields` — přidejte pouze svá vlastní pole.
-  Výchozí pole můžete přepsat definováním pole se stejným názvem v poli `fields`,
-  ale to se nedoporučuje.
+**Základní pole jsou vytvořena automaticky.** Když definujete vlastní objekt, Twenty automaticky přidá standardní pole
+jako `id`, `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy` a `deletedAt`.
+Nemusíte je definovat v poli `fields` — přidejte pouze svá vlastní pole.
+Výchozí pole můžete přepsat definováním pole se stejným názvem v poli `fields`,
+ale to se nedoporučuje.
 </Note>
 
 ### Konfigurace aplikace (application-config.ts)
@@ -326,6 +327,7 @@ Každá aplikace má jeden soubor `application-config.ts`, který popisuje:
 * **Identitu aplikace**: identifikátory, zobrazovaný název a popis.
 * **Jak běží její funkce**: kterou roli používají pro oprávnění.
 * **(Volitelné) proměnné**: dvojice klíč–hodnota zpřístupněné vašim funkcím jako proměnné prostředí.
+* **(Volitelná) předinstalační funkce**: logická funkce, která se spouští před instalací aplikace.
 * **(Volitelná) postinstalační funkce**: logická funkce, která se spouští po instalaci aplikace.
 
 Use `defineApplication()` to define your application configuration:
@@ -334,7 +336,6 @@ Use `defineApplication()` to define your application configuration:
 // src/application-config.ts
 import { defineApplication } from 'twenty-sdk';
 import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/roles/default-role';
-import { POST_INSTALL_UNIVERSAL_IDENTIFIER } from 'src/logic-functions/post-install';
 
 export default defineApplication({
   universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
@@ -350,7 +351,6 @@ export default defineApplication({
     },
   },
   defaultRoleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
-  postInstallLogicFunctionUniversalIdentifier: POST_INSTALL_UNIVERSAL_IDENTIFIER,
 });
 ```
 
@@ -359,7 +359,7 @@ Poznámky:
 * Pole `universalIdentifier` jsou deterministická ID, která vlastníte; vygenerujte je jednou a udržujte je stabilní napříč synchronizacemi.
 * `applicationVariables` se stanou proměnnými prostředí pro vaše funkce (například `DEFAULT_RECIPIENT_NAME` je dostupné jako `process.env.DEFAULT_RECIPIENT_NAME`).
 * `defaultRoleUniversalIdentifier` se musí shodovat se souborem role (viz níže).
-* `postInstallLogicFunctionUniversalIdentifier` (volitelné) odkazuje na logickou funkci, která se automaticky spustí po instalaci aplikace. Viz [Postinstalační funkce](#post-install-functions).
+* Předinstalační a postinstalační funkce jsou při sestavování manifestu automaticky detekovány. Viz [Předinstalační funkce](#pre-install-functions) a [Postinstalační funkce](#post-install-functions).
 
 #### Role a oprávnění
 
@@ -433,10 +433,10 @@ Každý soubor funkce používá `defineLogicFunction()` k exportu konfigurace s
 // src/app/createPostCard.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk';
 import type { DatabaseEventPayload, ObjectRecordCreateEvent, CronPayload, RoutePayload } from 'twenty-sdk';
-import Twenty, { type Person } from '~/generated';
+import { CoreApiClient, type Person } from 'twenty-sdk/generated';
 
 const handler = async (params: RoutePayload) => {
-  const client = new Twenty(); // generated typed client
+  const client = new CoreApiClient();
   const name = 'name' in params.queryStringParameters
     ? params.queryStringParameters.name ?? process.env.DEFAULT_RECIPIENT_NAME ?? 'Hello world'
     : 'Hello world';
@@ -498,6 +498,44 @@ Poznámky:
 * Pole `triggers` je volitelné. Funkce bez spouštěčů lze použít jako pomocné funkce volané jinými funkcemi.
 * V jedné funkci můžete kombinovat více typů spouštěčů.
 
+### Předinstalační funkce
+
+Předinstalační funkce je logická funkce, která se automaticky spouští před instalací vaší aplikace v pracovním prostoru. To je užitečné pro validační úlohy, kontrolu předpokladů nebo přípravu stavu pracovního prostoru před zahájením hlavní instalace.
+
+Když vygenerujete kostru nové aplikace pomocí `create-twenty-app`, vytvoří se pro vás předinstalační funkce v `src/logic-functions/pre-install.ts`:
+
+```typescript
+// src/logic-functions/pre-install.ts
+import { definePreInstallLogicFunction, type InstallLogicFunctionPayload } from 'twenty-sdk';
+
+const handler = async (payload: InstallLogicFunctionPayload): Promise<void> => {
+  console.log('Pre install logic function executed successfully!', payload.previousVersion);
+};
+
+export default definePreInstallLogicFunction({
+  universalIdentifier: '<generated-uuid>',
+  name: 'pre-install',
+  description: 'Runs before installation to prepare the application.',
+  timeoutSeconds: 300,
+  handler,
+});
+```
+
+Předinstalační funkci můžete také kdykoli spustit ručně pomocí CLI:
+
+```bash filename="Terminal"
+yarn twenty function:execute --preInstall
+```
+
+Hlavní body:
+
+* Předinstalační funkce používají `definePreInstallLogicFunction()` — specializovanou variantu, která vynechává nastavení spouštěčů (`cronTriggerSettings`, `databaseEventTriggerSettings`, `httpRouteTriggerSettings`, `isTool`).
+* Obslužná funkce (handler) obdrží `InstallLogicFunctionPayload` s `{ previousVersion: string }` — verzi aplikace, která byla dříve nainstalována (nebo prázdný řetězec při čisté instalaci).
+* Na jednu aplikaci je povolena pouze jedna předinstalační funkce. Sestavení manifestu skončí chybou, pokud je zjištěna více než jedna.
+* Identifikátor `universalIdentifier` funkce se během sestavení automaticky nastaví v manifestu aplikace jako `preInstallLogicFunctionUniversalIdentifier` — není potřeba jej uvádět v `defineApplication()`.
+* Výchozí časový limit je nastaven na 300 sekund (5 minut), aby umožnil delší přípravné úlohy.
+* Předinstalační funkce nepotřebují spouštěče — platforma je vyvolává před instalací nebo je lze spustit ručně pomocí `function:execute --preInstall`.
+
 ### Postinstalační funkce
 
 Postinstalační funkce je logická funkce, která se automaticky spouští po instalaci vaší aplikace do pracovního prostoru. To je užitečné pro jednorázové úlohy nastavení, jako je naplnění výchozími daty, vytvoření počátečních záznamů nebo konfigurace nastavení pracovního prostoru.
@@ -506,31 +544,18 @@ Když vygenerujete kostru nové aplikace pomocí `create-twenty-app`, vytvoří 
 
 ```typescript
 // src/logic-functions/post-install.ts
-import { defineLogicFunction } from 'twenty-sdk';
+import { definePostInstallLogicFunction, type InstallLogicFunctionPayload } from 'twenty-sdk';
 
-export const POST_INSTALL_UNIVERSAL_IDENTIFIER = '<generated-uuid>';
-
-const handler = async (): Promise<void> => {
-  console.log('Post install logic function executed successfully!');
+const handler = async (payload: InstallLogicFunctionPayload): Promise<void> => {
+  console.log('Post install logic function executed successfully!', payload.previousVersion);
 };
 
-export default defineLogicFunction({
-  universalIdentifier: POST_INSTALL_UNIVERSAL_IDENTIFIER,
+export default definePostInstallLogicFunction({
+  universalIdentifier: '<generated-uuid>',
   name: 'post-install',
   description: 'Runs after installation to set up the application.',
   timeoutSeconds: 300,
   handler,
-});
-```
-
-Funkce je připojena do vaší aplikace odkazem na její univerzální identifikátor v `application-config.ts`:
-
-```typescript
-import { POST_INSTALL_UNIVERSAL_IDENTIFIER } from 'src/logic-functions/post-install';
-
-export default defineApplication({
-  // ...
-  postInstallLogicFunctionUniversalIdentifier: POST_INSTALL_UNIVERSAL_IDENTIFIER,
 });
 ```
 
@@ -542,35 +567,35 @@ yarn twenty function:execute --postInstall
 
 Hlavní body:
 
-* Postinstalační funkce jsou standardní logické funkce — používají `defineLogicFunction()` stejně jako jakákoli jiná funkce.
-* Pole `postInstallLogicFunctionUniversalIdentifier` v `defineApplication()` je volitelné. Pokud je vynecháno, po instalaci se nespustí žádná funkce.
+* Postinstalační funkce používají `definePostInstallLogicFunction()` — specializovanou variantu, která vynechává nastavení spouštěčů (`cronTriggerSettings`, `databaseEventTriggerSettings`, `httpRouteTriggerSettings`, `isTool`).
+* Obslužná funkce (handler) obdrží `InstallLogicFunctionPayload` s `{ previousVersion: string }` — verzi aplikace, která byla dříve nainstalována (nebo prázdný řetězec při čisté instalaci).
+* Na jednu aplikaci je povolena pouze jedna postinstalační funkce. Sestavení manifestu skončí chybou, pokud je zjištěna více než jedna.
+* Identifikátor `universalIdentifier` funkce se během sestavení automaticky nastaví v manifestu aplikace jako `postInstallLogicFunctionUniversalIdentifier` — není potřeba jej uvádět v `defineApplication()`.
 * Výchozí časový limit je nastaven na 300 sekund (5 minut), aby umožnil delší úlohy nastavení, jako je naplnění daty.
 * Postinstalační funkce nepotřebují spouštěče — jsou spouštěny platformou během instalace nebo ručně pomocí `function:execute --postInstall`.
 
 ### Payload spouštěče trasy
 
 <Warning>
-  **Zpětně nekompatibilní změna (v1.16, leden 2026):** Formát payloadu spouštěče trasy se změnil. Před verzí v1.16 byly parametry dotazu, parametry cesty a tělo odesílány přímo jako payload. Od verze v1.16 jsou zanořeny uvnitř strukturovaného objektu `RoutePayload`.
+**Zpětně nekompatibilní změna (v1.16, leden 2026):** Formát payloadu spouštěče trasy se změnil. Před verzí v1.16 byly parametry dotazu, parametry cesty a tělo odesílány přímo jako payload. Od verze v1.16 jsou zanořeny uvnitř strukturovaného objektu `RoutePayload`.
 
-  **Před v1.16:**
+**Před v1.16:**
+```typescript
+const handler = async (params) => {
+  const { param1, param2 } = params; // Direct access
+};
+```
 
-  ```typescript
-  const handler = async (params) => {
-    const { param1, param2 } = params; // Direct access
-  };
-  ```
+**Po v1.16:**
+```typescript
+const handler = async (event: RoutePayload) => {
+  const { param1, param2 } = event.body; // Access via .body
+  const { queryParam } = event.queryStringParameters;
+  const { id } = event.pathParameters;
+};
+```
 
-  **Po v1.16:**
-
-  ```typescript
-  const handler = async (event: RoutePayload) => {
-    const { param1, param2 } = event.body; // Access via .body
-    const { queryParam } = event.queryStringParameters;
-    const { id } = event.pathParameters;
-  };
-  ```
-
-  **Jak migrovat existující funkce:** Aktualizujte svůj handler tak, aby destrukturoval z `event.body`, `event.queryStringParameters` nebo `event.pathParameters` místo přímo z objektu params.
+**Jak migrovat existující funkce:** Aktualizujte svůj handler tak, aby destrukturoval z `event.body`, `event.queryStringParameters` nebo `event.pathParameters` místo přímo z objektu params.
 </Warning>
 
 Když spouštěč trasy vyvolá vaši logickou funkci, ta obdrží objekt `RoutePayload`, který odpovídá formátu AWS HTTP API v2. Importujte typ z `twenty-sdk`:
@@ -653,10 +678,10 @@ Chcete-li označit logickou funkci jako nástroj, nastavte `isTool: true` a posk
 ```typescript
 // src/logic-functions/enrich-company.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk';
-import Twenty from '~/generated';
+import { CoreApiClient } from 'twenty-sdk/generated';
 
 const handler = async (params: { companyName: string; domain?: string }) => {
-  const client = new Twenty();
+  const client = new CoreApiClient();
 
   const result = await client.mutation({
     createTask: {
@@ -706,7 +731,7 @@ Hlavní body:
 * Můžete kombinovat `isTool` se spouštěči — funkce může být zároveň nástrojem (volatelným agenty AI) i spouštěna událostmi (cron, databázové události, routes).
 
 <Note>
-  **Napište kvalitní `description`.** Agenti AI se spoléhají na pole funkce `description` při rozhodování, kdy nástroj použít. Buďte konkrétní ohledně toho, co nástroj dělá a kdy se má volat.
+**Napište kvalitní `description`.** Agenti AI se spoléhají na pole funkce `description` při rozhodování, kdy nástroj použít. Buďte konkrétní ohledně toho, co nástroj dělá a kdy se má volat.
 </Note>
 
 ### Frontendové komponenty
@@ -714,7 +739,7 @@ Hlavní body:
 Frontendové komponenty vám umožňují vytvářet vlastní React komponenty, které se vykreslují v rozhraní Twenty. K definování komponent s vestavěnou validací použijte `defineFrontComponent()`:
 
 ```typescript
-// src/my-widget.front-component.tsx
+// src/front-components/my-widget.tsx
 import { defineFrontComponent } from 'twenty-sdk';
 
 const MyWidget = () => {
@@ -737,14 +762,13 @@ export default defineFrontComponent({
 Hlavní body:
 
 * Frontendové komponenty jsou React komponenty, které se vykreslují v izolovaných kontextech v rámci Twenty.
-* Pro automatickou detekci použijte příponu souboru `*.front-component.tsx`.
 * Pole `component` odkazuje na vaši React komponentu.
 * Komponenty se během `yarn twenty app:dev` automaticky sestaví a synchronizují.
 
 Nové frontendové komponenty můžete vytvořit dvěma způsoby:
 
 * **Vygenerované**: Spusťte `yarn twenty entity:add` a zvolte možnost přidat novou frontendovou komponentu.
-* **Ruční**: Vytvořte nový soubor `*.front-component.tsx` a použijte `defineFrontComponent()`.
+* **Ruční**: Vytvořte nový soubor `.tsx` a použijte `defineFrontComponent()`, podle stejného vzoru.
 
 ### Dovednosti
 
@@ -781,18 +805,24 @@ Nové dovednosti můžete vytvářet dvěma způsoby:
 * **Vygenerované**: Spusťte `yarn twenty entity:add` a zvolte možnost přidat novou dovednost.
 * **Ruční**: Vytvořte nový soubor a použijte `defineSkill()` podle stejného vzoru.
 
-### Generovaný typovaný klient
+### Generované typované klienty
 
-Typovaný klient je automaticky generován pomocí `yarn twenty app:dev` a ukládá se do `node_modules/twenty-sdk/generated` podle schématu vašeho pracovního prostoru. Použijte jej ve svých funkcích:
+Dva typované klienty jsou automaticky generovány pomocí `yarn twenty app:dev` a ukládají se do `node_modules/twenty-sdk/generated` podle schématu vašeho pracovního prostoru:
+
+* **`CoreApiClient`** — provádí dotazy na endpoint `/graphql` za účelem získání dat pracovního prostoru
+* **`MetadataApiClient`** — odesílá dotazy na endpoint `/metadata` pro konfiguraci pracovního prostoru a nahrávání souborů
 
 ```typescript
-import Twenty from '~/generated';
+import { CoreApiClient, MetadataApiClient } from 'twenty-sdk/generated';
 
-const client = new Twenty();
+const client = new CoreApiClient();
 const { me } = await client.query({ me: { id: true, displayName: true } });
+
+const metadataClient = new MetadataApiClient();
+const { currentWorkspace } = await metadataClient.query({ currentWorkspace: { id: true } });
 ```
 
-Klient se automaticky znovu generuje pomocí `yarn twenty app:dev` kdykoli se změní vaše objekty nebo pole.
+Oba klienti se automaticky znovu generují pomocí `yarn twenty app:dev` kdykoli se změní vaše objekty nebo pole.
 
 #### Běhové přihlašovací údaje v logických funkcích
 
@@ -809,17 +839,17 @@ Poznámky:
 
 #### Nahrávání souborů
 
-Vygenerovaný klient `Twenty` obsahuje metodu `uploadFile` pro připojování souborů k polím typu souboru u objektů ve vašem pracovním prostoru. Protože standardní klienti GraphQL nativně nepodporují nahrávání souborů pomocí multipart, klient poskytuje tuto speciální metodu, která interně implementuje [specifikaci multipart požadavků GraphQL](https://github.com/jaydenseric/graphql-multipart-request-spec).
+Vygenerovaný `MetadataApiClient` obsahuje metodu `uploadFile` pro připojování souborů k polím typu souboru u objektů ve vašem pracovním prostoru. Protože standardní klienti GraphQL nativně nepodporují nahrávání souborů pomocí multipart, klient poskytuje tuto speciální metodu, která interně implementuje [specifikaci multipart požadavků GraphQL](https://github.com/jaydenseric/graphql-multipart-request-spec).
 
 ```typescript
-import Twenty from '~/generated';
+import { MetadataApiClient } from 'twenty-sdk/generated';
 import * as fs from 'fs';
 
-const client = new Twenty();
+const metadataClient = new MetadataApiClient();
 
 const fileBuffer = fs.readFileSync('./invoice.pdf');
 
-const uploadedFile = await client.uploadFile(
+const uploadedFile = await metadataClient.uploadFile(
   fileBuffer,                                         // file contents as a Buffer
   'invoice.pdf',                                      // filename
   'application/pdf',                                  // MIME type (defaults to 'application/octet-stream')
@@ -850,7 +880,7 @@ uploadFile(
 
 Hlavní body:
 
-* Metoda odešle soubor na **koncový bod metadat** (nikoli na hlavní koncový bod GraphQL), kde se provede mutace nahrání.
+* Metoda `uploadFile` je k dispozici v `MetadataApiClient`, protože mutaci nahrávání obsluhuje endpoint `/metadata`.
 * Používá `universalIdentifier` pole (nikoli jeho ID specifické pro pracovní prostor), takže váš kód pro nahrávání funguje ve všech pracovních prostorech, kde je vaše aplikace nainstalována — v souladu s tím, jak aplikace odkazují na pole všude jinde.
 * Vrácená hodnota `url` je podepsaná adresa URL, kterou můžete použít k přístupu k nahranému souboru.
 

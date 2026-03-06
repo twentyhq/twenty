@@ -1,47 +1,51 @@
-import { useGetBrowsingContext } from '@/ai/hooks/useBrowsingContext';
-import { agentChatSelectedFilesStateV2 } from '@/ai/states/agentChatSelectedFilesStateV2';
-import { agentChatUploadedFilesStateV2 } from '@/ai/states/agentChatUploadedFilesStateV2';
-import { agentChatUsageStateV2 } from '@/ai/states/agentChatUsageStateV2';
-import { currentAIChatThreadStateV2 } from '@/ai/states/currentAIChatThreadStateV2';
-import { currentAIChatThreadTitleStateV2 } from '@/ai/states/currentAIChatThreadTitleStateV2';
+import { AGENT_CHAT_SEND_MESSAGE_EVENT_NAME } from '@/ai/constants/AgentChatSendMessageEventName';
+import { useApolloClient } from '@apollo/client';
 
-import { agentChatInputStateV2 } from '@/ai/states/agentChatInputStateV2';
-import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { useGetBrowsingContext } from '@/ai/hooks/useBrowsingContext';
+import { agentChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
+import { agentChatUploadedFilesState } from '@/ai/states/agentChatUploadedFilesState';
+import { agentChatUsageState } from '@/ai/states/agentChatUsageState';
+import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
+import { currentAIChatThreadTitleState } from '@/ai/states/currentAIChatThreadTitleState';
+
+import { AGENT_CHAT_RETRY_EVENT_NAME } from '@/ai/constants/AgentChatRetryEventName';
+import { AGENT_CHAT_STOP_EVENT_NAME } from '@/ai/constants/AgentChatStopEventName';
+import { agentChatInputState } from '@/ai/states/agentChatInputState';
 import { REST_API_BASE_URL } from '@/apollo/constant/rest-api-base-url';
 import { getTokenPair } from '@/apollo/utils/getTokenPair';
 import { renewToken } from '@/auth/services/AuthService';
 import { tokenPairState } from '@/auth/states/tokenPairState';
+import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
+import { useCallback } from 'react';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { cookieStorage } from '~/utils/cookie-storage';
 
 export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
-  const setTokenPair = useSetRecoilStateV2(tokenPairState);
-  const setAgentChatUsage = useSetRecoilStateV2(agentChatUsageStateV2);
+  const setTokenPair = useSetAtomState(tokenPairState);
+  const setAgentChatUsage = useSetAtomState(agentChatUsageState);
 
   const { getBrowsingContext } = useGetBrowsingContext();
-  const setCurrentAIChatThreadTitle = useSetRecoilStateV2(
-    currentAIChatThreadTitleStateV2,
+  const setCurrentAIChatThreadTitle = useSetAtomState(
+    currentAIChatThreadTitleState,
+  );
+  const apolloClient = useApolloClient();
+
+  const agentChatSelectedFiles = useAtomStateValue(agentChatSelectedFilesState);
+
+  const currentAIChatThread = useAtomStateValue(currentAIChatThreadState);
+
+  const [agentChatUploadedFiles, setAgentChatUploadedFiles] = useAtomState(
+    agentChatUploadedFilesState,
   );
 
-  const agentChatSelectedFiles = useRecoilValueV2(
-    agentChatSelectedFilesStateV2,
-  );
-
-  const currentAIChatThread = useRecoilValueV2(currentAIChatThreadStateV2);
-
-  const [agentChatUploadedFiles, setAgentChatUploadedFiles] = useRecoilStateV2(
-    agentChatUploadedFilesStateV2,
-  );
-
-  const [agentChatInput, setAgentChatInput] = useRecoilStateV2(
-    agentChatInputStateV2,
-  );
+  const [agentChatInput, setAgentChatInput] = useAtomState(agentChatInputState);
 
   const retryFetchWithRenewedToken = async (
     input: RequestInfo | URL,
@@ -165,20 +169,34 @@ export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
 
       if (isDefined(titlePart) && titlePart.type === 'data-thread-title') {
         setCurrentAIChatThreadTitle(titlePart.data.title);
+        if (isDefined(currentAIChatThread)) {
+          const threadRef = apolloClient.cache.identify({
+            __typename: 'AgentChatThread',
+            id: currentAIChatThread,
+          });
+          if (isDefined(threadRef)) {
+            apolloClient.cache.modify({
+              id: threadRef,
+              fields: {
+                title: () => titlePart.data.title,
+              },
+            });
+          }
+        }
       }
     },
   });
 
   const isStreaming = status === 'streaming';
-
   const isLoading = isStreaming || agentChatSelectedFiles.length > 0;
 
-  const handleSendMessage = async () => {
+  const handleSendMessage = useCallback(async () => {
     if (agentChatInput.trim() === '' || isLoading || !currentAIChatThread) {
       return;
     }
 
     const content = agentChatInput.trim();
+
     setAgentChatInput('');
 
     const browsingContext = getBrowsingContext();
@@ -195,16 +213,40 @@ export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
         },
       },
     );
+
     setAgentChatUploadedFiles([]);
-  };
+  }, [
+    agentChatInput,
+    isLoading,
+    currentAIChatThread,
+    setAgentChatInput,
+    getBrowsingContext,
+    sendMessage,
+    agentChatUploadedFiles,
+    setAgentChatUploadedFiles,
+  ]);
+
+  useListenToBrowserEvent({
+    eventName: AGENT_CHAT_SEND_MESSAGE_EVENT_NAME,
+    onBrowserEvent: handleSendMessage,
+  });
+
+  useListenToBrowserEvent({
+    eventName: AGENT_CHAT_STOP_EVENT_NAME,
+    onBrowserEvent: stop,
+  });
+
+  useListenToBrowserEvent({
+    eventName: AGENT_CHAT_RETRY_EVENT_NAME,
+    onBrowserEvent: regenerate,
+  });
 
   return {
     messages,
     handleSendMessage,
     handleStop: stop,
     isLoading,
-    isStreaming,
     error,
-    handleRetry: regenerate,
+    status,
   };
 };

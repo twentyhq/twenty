@@ -3,13 +3,13 @@ import { useCreateNavigationMenuItemMutation } from '~/generated-metadata/graphq
 
 import { usePrefetchedNavigationMenuItemsData } from '@/navigation-menu-item/hooks/usePrefetchedNavigationMenuItemsData';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 
 export const useCreateNavigationMenuItem = () => {
   const { navigationMenuItems, currentWorkspaceMemberId } =
     usePrefetchedNavigationMenuItemsData();
-  const objectMetadataItems = useRecoilValueV2(objectMetadataItemsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
 
   const [createNavigationMenuItemMutation] =
     useCreateNavigationMenuItemMutation({
@@ -27,7 +27,8 @@ export const useCreateNavigationMenuItem = () => {
       const relevantItems = folderId
         ? navigationMenuItems.filter((item) => item.folderId === folderId)
         : navigationMenuItems.filter(
-            (item) => !item.folderId && item.userWorkspaceId,
+            (item) =>
+              !isDefined(item.folderId) && isDefined(item.userWorkspaceId),
           );
 
       const maxPosition = Math.max(
@@ -59,7 +60,8 @@ export const useCreateNavigationMenuItem = () => {
       const relevantItems = folderId
         ? navigationMenuItems.filter((item) => item.folderId === folderId)
         : navigationMenuItems.filter(
-            (item) => !item.folderId && item.userWorkspaceId,
+            (item) =>
+              !isDefined(item.folderId) && isDefined(item.userWorkspaceId),
           );
 
       const maxPosition = Math.max(

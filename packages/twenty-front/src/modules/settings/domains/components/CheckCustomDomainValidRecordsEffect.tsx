@@ -8,7 +8,7 @@ export const CheckCustomDomainValidRecordsEffect = () => {
   useEffect(() => {
     checkCustomDomainRecords();
     // Check custom domain only needs to run once at mount
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return <></>;

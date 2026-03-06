@@ -1,24 +1,15 @@
 import { useState } from 'react';
-import styled from '@emotion/styled';
 
 import { useClientConfig } from '@/client-config/hooks/useClientConfig';
 import { GET_ADMIN_AI_MODELS } from '@/settings/admin-panel/ai/graphql/queries/getAdminAiModels';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { t } from '@lingui/core/macro';
-import {
-  H2Title,
-  IconArchive,
-  IconFilter,
-  IconPlug,
-  IconRobot,
-  IconSearch,
-} from 'twenty-ui/display';
-import { Button } from 'twenty-ui/input';
+import { H2Title, IconArchive, IconPlug, IconRobot } from 'twenty-ui/display';
+import { SearchInput } from 'twenty-ui/input';
 import { Card, Section } from 'twenty-ui/layout';
 import { MenuItemToggle } from 'twenty-ui/navigation';
 import {
@@ -28,17 +19,6 @@ import {
 } from '~/generated-metadata/graphql';
 import { getModelIcon } from '~/pages/settings/ai/utils/getModelIcon';
 import { getModelProviderLabel } from '~/pages/settings/ai/utils/getModelProviderLabel';
-
-const StyledSearchAndFilterContainer = styled.div`
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
-  margin-bottom: ${({ theme }) => theme.spacing(2)};
-  width: 100%;
-`;
-
-const StyledSearchInput = styled(SettingsTextInput)`
-  flex: 1;
-`;
 
 export const SettingsAdminAI = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
@@ -161,51 +141,41 @@ export const SettingsAdminAI = () => {
           description={t`Toggle model availability across all workspaces`}
         />
 
-        <StyledSearchAndFilterContainer>
-          <StyledSearchInput
-            instanceId="admin-model-search"
-            LeftIcon={IconSearch}
-            placeholder={t`Search a model...`}
-            value={searchQuery}
-            onChange={setSearchQuery}
-          />
-          <Dropdown
-            dropdownId="admin-ai-models-filter-dropdown"
-            dropdownPlacement="bottom-end"
-            dropdownOffset={{ x: 0, y: 8 }}
-            clickableComponent={
-              <Button
-                Icon={IconFilter}
-                size="medium"
-                variant="secondary"
-                accent="default"
-                ariaLabel={t`Filter`}
-              />
-            }
-            dropdownComponents={
-              <DropdownContent>
-                <DropdownMenuItemsContainer>
-                  <MenuItemToggle
-                    LeftIcon={IconPlug}
-                    onToggleChange={() =>
-                      setShowUnconfigured(!showUnconfigured)
-                    }
-                    toggled={showUnconfigured}
-                    text={t`Unconfigured models`}
-                    toggleSize="small"
-                  />
-                  <MenuItemToggle
-                    LeftIcon={IconArchive}
-                    onToggleChange={() => setShowDeprecated(!showDeprecated)}
-                    toggled={showDeprecated}
-                    text={t`Deprecated models`}
-                    toggleSize="small"
-                  />
-                </DropdownMenuItemsContainer>
-              </DropdownContent>
-            }
-          />
-        </StyledSearchAndFilterContainer>
+        <SearchInput
+          placeholder={t`Search a model...`}
+          value={searchQuery}
+          onChange={setSearchQuery}
+          filterDropdown={(filterButton) => (
+            <Dropdown
+              dropdownId="admin-ai-models-filter-dropdown"
+              dropdownPlacement="bottom-end"
+              dropdownOffset={{ x: 0, y: 8 }}
+              clickableComponent={filterButton}
+              dropdownComponents={
+                <DropdownContent>
+                  <DropdownMenuItemsContainer>
+                    <MenuItemToggle
+                      LeftIcon={IconPlug}
+                      onToggleChange={() =>
+                        setShowUnconfigured(!showUnconfigured)
+                      }
+                      toggled={showUnconfigured}
+                      text={t`Unconfigured models`}
+                      toggleSize="small"
+                    />
+                    <MenuItemToggle
+                      LeftIcon={IconArchive}
+                      onToggleChange={() => setShowDeprecated(!showDeprecated)}
+                      toggled={showDeprecated}
+                      text={t`Deprecated models`}
+                      toggleSize="small"
+                    />
+                  </DropdownMenuItemsContainer>
+                </DropdownContent>
+              }
+            />
+          )}
+        />
 
         <Card rounded>
           {filteredModels.map((model, index) => (

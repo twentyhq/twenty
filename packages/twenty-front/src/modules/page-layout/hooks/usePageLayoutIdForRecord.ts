@@ -1,12 +1,11 @@
-import { useRecoilValue } from 'recoil';
-
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { recordPageLayoutByObjectMetadataIdFamilySelector } from '@/page-layout/states/selectors/recordPageLayoutByObjectMetadataIdFamilySelector';
 import { getDefaultRecordPageLayoutId } from '@/page-layout/utils/getDefaultRecordPageLayoutId';
 import { type TargetRecordIdentifier } from '@/ui/layout/contexts/TargetRecordIdentifier';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { isDefined } from 'twenty-shared/utils';
 
 export const usePageLayoutIdForRecord = ({
@@ -29,10 +28,9 @@ export const usePageLayoutIdForRecord = ({
     objectNameSingular: targetObjectNameSingular,
   });
 
-  const recordPageLayout = useRecoilValue(
-    recordPageLayoutByObjectMetadataIdFamilySelector({
-      objectMetadataId: objectMetadataItem.id,
-    }),
+  const recordPageLayout = useAtomFamilySelectorValue(
+    recordPageLayoutByObjectMetadataIdFamilySelector,
+    { objectMetadataId: objectMetadataItem.id },
   );
 
   if (isDashboard) {

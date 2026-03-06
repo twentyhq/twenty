@@ -12,7 +12,9 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { isApiKeyAuthContext } from 'src/engine/core-modules/auth/guards/is-api-key-auth-context.guard';
+import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 import { WorkspaceMemberPreQueryHookService } from 'src/modules/workspace-member/query-hooks/workspace-member-pre-query-hook.service';
@@ -28,7 +30,7 @@ export class WorkspaceMemberUpdateOnePreQueryHook
   ) {}
 
   async execute(
-    authContext: AuthContext,
+    authContext: WorkspaceAuthContext,
     _objectName: string,
     payload: UpdateOneResolverArgs,
   ): Promise<UpdateOneResolverArgs> {
@@ -38,16 +40,22 @@ export class WorkspaceMemberUpdateOnePreQueryHook
 
     await this.workspaceMemberPreQueryHookService.validateWorkspaceMemberUpdatePermissionOrThrow(
       {
-        userWorkspaceId: authContext.userWorkspaceId,
+        userWorkspaceId: isUserAuthContext(authContext)
+          ? authContext.userWorkspaceId
+          : undefined,
         targettedWorkspaceMemberId: payload.id,
         workspaceId: workspace.id,
-        apiKey: authContext.apiKey,
-        workspaceMemberId: authContext.workspaceMemberId,
+        apiKey: isApiKeyAuthContext(authContext)
+          ? authContext.apiKey
+          : undefined,
+        workspaceMemberId: isUserAuthContext(authContext)
+          ? authContext.workspaceMemberId
+          : undefined,
       },
     );
 
     // TODO: remove this code once we have migrated locale update to userWorkspace update
-    if (payload.data.locale) {
+    if (payload.data.locale && isUserAuthContext(authContext)) {
       const userWorkspace = await this.userWorkspaceRepository.findOne({
         where: {
           id: authContext.userWorkspaceId,
@@ -69,7 +77,9 @@ export class WorkspaceMemberUpdateOnePreQueryHook
 
     await this.workspaceMemberPreQueryHookService.completeOnboardingProfileStepIfNameProvided(
       {
-        userId: authContext.user?.id,
+        userId: isUserAuthContext(authContext)
+          ? authContext.user.id
+          : undefined,
         workspaceId: workspace.id,
         firstName: payload.data.name?.firstName,
         lastName: payload.data.name?.lastName,

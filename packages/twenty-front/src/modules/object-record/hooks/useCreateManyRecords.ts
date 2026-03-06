@@ -22,7 +22,7 @@ import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeO
 import { dispatchObjectRecordOperationBrowserEvent } from '@/browser-event/utils/dispatchObjectRecordOperationBrowserEvent';
 import { getCreateManyRecordsMutationResponseField } from '@/object-record/utils/getCreateManyRecordsMutationResponseField';
 import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type RecordGqlOperationGqlRecordFields } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -78,7 +78,7 @@ export const useCreateManyRecords = <
     objectMetadataItem,
   });
 
-  const currentWorkspaceMember = useRecoilValueV2(currentWorkspaceMemberState);
+  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
 
   const { objectMetadataItems } = useObjectMetadataItems();
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
@@ -142,26 +142,30 @@ export const useCreateManyRecords = <
       }
     });
 
-    const recordsCreatedInCache = recordOptimisticRecordsInput
-      .map((recordToCreate) =>
-        createOneRecordInCache({
+    const recordsCreatedInCache = recordOptimisticRecordsInput.flatMap(
+      (recordToCreate) => {
+        const created = createOneRecordInCache({
           ...recordToCreate,
           __typename: getObjectTypename(objectMetadataItem.nameSingular),
-        }),
-      )
-      .filter(isDefined);
+        });
+
+        return created !== undefined && created !== null ? [created] : [];
+      },
+    );
 
     if (recordsCreatedInCache.length > 0) {
-      const recordNodeCreatedInCache = recordsCreatedInCache
-        .map((record) =>
-          getRecordNodeFromRecord({
+      const recordNodeCreatedInCache = recordsCreatedInCache.flatMap(
+        (record) => {
+          const node = getRecordNodeFromRecord({
             objectMetadataItem,
             objectMetadataItems,
             record: record,
             computeReferences: false,
-          }),
-        )
-        .filter(isDefined);
+          });
+
+          return node !== undefined && node !== null ? [node] : [];
+        },
+      );
 
       triggerCreateRecordsOptimisticEffect({
         cache: apolloCoreClient.cache,

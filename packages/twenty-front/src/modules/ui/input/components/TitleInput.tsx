@@ -7,8 +7,9 @@ import { TitleInputAutoOpenEffect } from '@/ui/input/components/TitleInputAutoOp
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { OverflowingTextWithTooltip } from 'twenty-ui/display';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type InputProps = {
   instanceId: string;
@@ -33,12 +34,14 @@ const StyledDiv = styled.div<{
   sizeVariant: TextInputSize;
   disabled?: boolean;
 }>`
+  align-items: center;
   background: inherit;
   border: none;
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  color: ${({ theme }) => theme.font.color.primary};
+  border-radius: ${themeCssVariables.border.radius.sm};
+  box-sizing: border-box;
+  color: ${themeCssVariables.font.color.primary};
   cursor: ${({ disabled }) => (disabled ? 'default' : 'pointer')};
-  overflow: hidden;
+  display: flex;
   height: ${({ sizeVariant }) =>
     sizeVariant === 'xs'
       ? '20px'
@@ -47,13 +50,11 @@ const StyledDiv = styled.div<{
         : sizeVariant === 'md'
           ? '28px'
           : '32px'};
-  padding: ${({ theme }) => theme.spacing(0, 1.25)};
-  box-sizing: border-box;
-  display: flex;
-  align-items: center;
+  overflow: hidden;
+  padding: ${themeCssVariables.spacing[0]} 5px;
   :hover {
-    background: ${({ theme, disabled }) =>
-      disabled ? 'inherit' : theme.background.transparent.light};
+    background: ${({ disabled }) =>
+      disabled ? 'inherit' : themeCssVariables.background.transparent.light};
   }
 `;
 

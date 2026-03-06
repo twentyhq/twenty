@@ -1,13 +1,15 @@
 import { useCallback } from 'react';
 
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { useStore } from 'jotai';
 
-export const useGetRelationMetadata = () =>
-  useCallback(
+export const useGetRelationMetadata = () => {
+  const store = useStore();
+
+  return useCallback(
     ({
       fieldMetadataItem,
     }: {
@@ -19,7 +21,7 @@ export const useGetRelationMetadata = () =>
 
       if (!relation) return null;
 
-      const relationObjectMetadataItem = jotaiStore.get(
+      const relationObjectMetadataItem = store.get(
         objectMetadataItemFamilySelector.selectorFamily({
           objectName: relation.targetObjectMetadata.nameSingular,
           objectNameType: 'singular',
@@ -40,5 +42,6 @@ export const useGetRelationMetadata = () =>
         relationType: relation.type,
       };
     },
-    [],
+    [store],
   );
+};

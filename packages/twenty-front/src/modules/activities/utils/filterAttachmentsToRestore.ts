@@ -1,23 +1,19 @@
 import { type Attachment } from '@/activities/files/types/Attachment';
+import { filterAttachmentsWithFile } from '@/activities/files/utils/filterAttachmentsWithFile';
 import { compareUrls } from '@/activities/utils/compareUrls';
 import { getAttachmentUrl } from '@/activities/utils/getAttachmentUrl';
 
 export const filterAttachmentsToRestore = ({
   attachmentPathsToRestore,
   softDeletedAttachments,
-  isFilesFieldMigrated,
 }: {
   attachmentPathsToRestore: string[];
   softDeletedAttachments: Attachment[];
-  isFilesFieldMigrated: boolean;
 }) => {
-  return softDeletedAttachments
+  return filterAttachmentsWithFile(softDeletedAttachments)
     .filter((attachment) =>
       attachmentPathsToRestore.some((path) =>
-        compareUrls(
-          getAttachmentUrl({ attachment, isFilesFieldMigrated }),
-          path,
-        ),
+        compareUrls(getAttachmentUrl({ attachment }), path),
       ),
     )
     .map((attachment) => attachment.id);

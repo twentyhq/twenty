@@ -194,7 +194,7 @@ setHotkeyScopeAndMemorizePreviousScope(
 
 ### Používejte StyledComponents
 
-Styling komponenty s [styled-components](https://emotion.sh/docs/styled).
+Stylujte komponenty pomocí [Linaria styled](https://github.com/callstack/linaria).
 
 ```tsx
 // ❌ Špatné
@@ -260,7 +260,7 @@ const StyledButton = styled.button`
 
 ## Prosazování Zákazu Importů Typů
 
-Vyhýbejte se typovým importům. K prosazení tohoto standardu pravidlo ESLint kontroluje a hlásí jakékoli typové importy. To pomáhá udržovat konzistenci a čitelnost v TypeScript kódu.
+Vyhýbejte se typovým importům. K prosazení tohoto standardu pravidlo Oxlint kontroluje a hlásí jakékoli typové importy. To pomáhá udržovat konzistenci a čitelnost v TypeScript kódu.
 
 ```tsx
 // ❌ Bad
@@ -281,10 +281,10 @@ import { Meta, StoryObj } from '@storybook/react';
 
 * **Udržovatelnost**: Zvyšuje udržovatelnost kódové základny, protože vývojáři mohou při revizi nebo úpravách kódu identifikovat a najít importy pouze typů.
 
-### Pravidlo ESLint
+### Pravidlo Oxlint
 
-Pravidlo ESLint, `@typescript-eslint/consistent-type-imports`, prosazuje standard zákazu importů typů. Toto pravidlo generuje chyby nebo varování pro jakékoli porušení typového importu.
+Pravidlo Oxlint, `typescript/consistent-type-imports`, prosazuje standard zákazu importů typů. Toto pravidlo generuje chyby nebo varování pro jakékoli porušení typového importu.
 
 Upozorňujeme, že toto pravidlo konkrétně řeší vzácné okrajové případy, kdy dochází k neúmyslným typovým importům. TypeScript sám odrazuje tuto praxi, jak je uvedeno v [poznámkách k verzi TypeScript 3.8](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-8.html). Ve většině případů byste neměli potřebovat používat pouze typové importy.
 
-Aby váš kód splňoval toto pravidlo, spusťte ESLint jako součást svého vývojového pracovního postupu.
+Aby váš kód splňoval toto pravidlo, spusťte Oxlint jako součást svého vývojového pracovního postupu.

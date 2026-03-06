@@ -1,5 +1,4 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 
 import { ActivityTargetsInlineCell } from '@/activities/inline-cell/components/ActivityTargetsInlineCell';
@@ -9,48 +8,52 @@ import { beautifyExactDate, hasDatePassed } from '~/utils/date-utils';
 import { ActivityRow } from '@/activities/components/ActivityRow';
 import { useActivityTargetsComponentInstanceId } from '@/activities/inline-cell/hooks/useActivityTargetsComponentInstanceId';
 import { type Task } from '@/activities/types/Task';
-import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { StopPropagationContainer } from '@/object-record/record-board/record-board-card/components/StopPropagationContainer';
 import { RecordFieldsScopeContextProvider } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import { FieldContextProvider } from '@/object-record/record-field/ui/components/FieldContextProvider';
+import { useContext } from 'react';
 import { IconCalendar, OverflowingTextWithTooltip } from 'twenty-ui/display';
 import { Checkbox, CheckboxShape } from 'twenty-ui/input';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useCompleteTask } from '@/activities/tasks/hooks/useCompleteTask';
 
 const StyledTaskBody = styled.div`
-  color: ${({ theme }) => theme.font.color.tertiary};
+  color: ${themeCssVariables.font.color.tertiary};
   display: flex;
-  max-width: calc(80% - ${({ theme }) => theme.spacing(2)});
-  text-overflow: ellipsis;
+  max-width: calc(80% - ${themeCssVariables.spacing[2]});
   overflow: hidden;
-  padding-bottom: ${({ theme }) => theme.spacing(0.25)};
+  padding-bottom: 1px;
+  text-overflow: ellipsis;
 `;
 
 const StyledTaskTitle = styled.div<{
   completed: boolean;
 }>`
-  color: ${({ theme }) => theme.font.color.primary};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  padding: 0 ${({ theme }) => theme.spacing(2)};
-  padding-bottom: ${({ theme }) => theme.spacing(0.25)};
-  text-decoration: ${({ completed }) => (completed ? 'line-through' : 'none')};
-  white-space: nowrap;
+  align-items: center;
+  color: ${themeCssVariables.font.color.primary};
+  font-weight: ${themeCssVariables.font.weight.medium};
   overflow: hidden;
+  padding: 0 ${themeCssVariables.spacing[2]};
+  padding-bottom: 1px;
+  text-decoration: ${({ completed }) => (completed ? 'line-through' : 'none')};
   text-overflow: ellipsis;
 
-  align-items: center;
+  white-space: nowrap;
 `;
 
 const StyledDueDate = styled.div<{
   isPast: boolean;
 }>`
   align-items: center;
-  color: ${({ theme, isPast }) =>
-    isPast ? theme.font.color.danger : theme.font.color.secondary};
+  color: ${({ isPast }) =>
+    isPast
+      ? themeCssVariables.font.color.danger
+      : themeCssVariables.font.color.secondary};
   display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
-  padding-left: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
+  padding-left: ${themeCssVariables.spacing[1]};
   white-space: nowrap;
 `;
 
@@ -66,7 +69,7 @@ const StyledActivityTargetsContainer = styled.div`
 `;
 
 const StyledPlaceholder = styled.div`
-  color: ${({ theme }) => theme.font.color.light};
+  color: ${themeCssVariables.font.color.light};
 `;
 
 const StyledLeftSideContainer = styled.div`
@@ -82,8 +85,8 @@ const StyledCheckboxContainer = styled.div`
 `;
 
 export const TaskRow = ({ task }: { task: Task }) => {
-  const theme = useTheme();
-  const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
+  const { theme } = useContext(ThemeContext);
+  const { openRecordInSidePanel } = useOpenRecordInSidePanel();
 
   const body = getActivitySummary(task?.bodyV2?.blocknote ?? null);
 
@@ -97,7 +100,7 @@ export const TaskRow = ({ task }: { task: Task }) => {
   return (
     <ActivityRow
       onClick={() => {
-        openRecordInCommandMenu({
+        openRecordInSidePanel({
           recordId: task.id,
           objectNameSingular: CoreObjectNameSingular.Task,
         });

@@ -39,6 +39,13 @@ const config: StorybookConfig = {
     return {
       ...viteConfig,
       plugins,
+      resolve: {
+        ...viteConfig.resolve,
+        alias: {
+          ...(viteConfig.resolve?.alias ?? {}),
+          '@tabler/icons-react': '@tabler/icons-react/dist/esm/icons/index.mjs',
+        },
+      },
     };
   },
 };

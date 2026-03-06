@@ -1,6 +1,6 @@
-import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-export const lastVisitedViewPerObjectMetadataItemState = createStateV2<Record<
+export const lastVisitedViewPerObjectMetadataItemState = createAtomState<Record<
   string,
   string
 > | null>({

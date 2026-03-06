@@ -1,7 +1,9 @@
+import { fieldsWidgetEditorModeDraftComponentState } from '@/page-layout/states/fieldsWidgetEditorModeDraftComponentState';
 import { fieldsWidgetGroupsDraftComponentState } from '@/page-layout/states/fieldsWidgetGroupsDraftComponentState';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { fieldsWidgetUngroupedFieldsDraftComponentState } from '@/page-layout/states/fieldsWidgetUngroupedFieldsDraftComponentState';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useStore } from 'jotai';
 import { useCallback } from 'react';
-import { useRecoilCallback } from 'recoil';
 import { v4 } from 'uuid';
 
 type UseCreateFieldsWidgetEditorGroupParams = {
@@ -13,48 +15,113 @@ export const useCreateFieldsWidgetEditorGroup = ({
   pageLayoutId,
   widgetId,
 }: UseCreateFieldsWidgetEditorGroupParams) => {
-  const fieldsWidgetGroupsDraftState = useRecoilComponentCallbackState(
+  const fieldsWidgetGroupsDraftState = useAtomComponentStateCallbackState(
     fieldsWidgetGroupsDraftComponentState,
     pageLayoutId,
   );
 
-  const createGroup = useRecoilCallback(
-    ({ set, snapshot }) =>
-      (name: string) => {
-        const allDraftGroups = snapshot
-          .getLoadable(fieldsWidgetGroupsDraftState)
-          .getValue();
+  const fieldsWidgetUngroupedFieldsDraftState =
+    useAtomComponentStateCallbackState(
+      fieldsWidgetUngroupedFieldsDraftComponentState,
+      pageLayoutId,
+    );
 
-        const currentGroups = allDraftGroups[widgetId] ?? [];
-        const maxPosition = Math.max(
-          ...currentGroups.map((g) => g.position),
-          -1,
+  const fieldsWidgetEditorModeDraftState = useAtomComponentStateCallbackState(
+    fieldsWidgetEditorModeDraftComponentState,
+    pageLayoutId,
+  );
+
+  const store = useStore();
+
+  const createGroup = useCallback(
+    ({ name, afterGroupId }: { name: string; afterGroupId?: string }) => {
+      const allEditorModes = store.get(fieldsWidgetEditorModeDraftState);
+
+      const currentEditorMode = allEditorModes[widgetId] ?? 'ungrouped';
+
+      const newId = v4();
+
+      if (currentEditorMode === 'ungrouped') {
+        const allUngroupedFields = store.get(
+          fieldsWidgetUngroupedFieldsDraftState,
         );
-        const newId = v4();
 
-        set(fieldsWidgetGroupsDraftState, (prev) => ({
+        const ungroupedFields = allUngroupedFields[widgetId] ?? [];
+
+        store.set(fieldsWidgetGroupsDraftState, (prev) => ({
           ...prev,
           [widgetId]: [
-            ...(prev[widgetId] ?? []),
             {
               id: newId,
               name,
-              position: maxPosition + 1,
+              position: 0,
+              isVisible: true,
+              fields: ungroupedFields.map((field, index) => ({
+                ...field,
+                position: index,
+                globalIndex: index,
+              })),
+            },
+          ],
+        }));
+
+        store.set(fieldsWidgetUngroupedFieldsDraftState, (prev) => ({
+          ...prev,
+          [widgetId]: [],
+        }));
+
+        store.set(fieldsWidgetEditorModeDraftState, (prev) => ({
+          ...prev,
+          [widgetId]: 'grouped' as const,
+        }));
+      } else {
+        const allDraftGroups = store.get(fieldsWidgetGroupsDraftState);
+
+        const currentGroups = allDraftGroups[widgetId] ?? [];
+
+        const afterGroup = afterGroupId
+          ? currentGroups.find((g) => g.id === afterGroupId)
+          : undefined;
+
+        const newPosition =
+          afterGroup !== undefined
+            ? afterGroup.position + 1
+            : Math.max(...currentGroups.map((g) => g.position), -1) + 1;
+
+        const shiftedGroups =
+          afterGroup !== undefined
+            ? currentGroups.map((g) =>
+                g.position >= newPosition
+                  ? { ...g, position: g.position + 1 }
+                  : g,
+              )
+            : currentGroups;
+
+        store.set(fieldsWidgetGroupsDraftState, (prev) => ({
+          ...prev,
+          [widgetId]: [
+            ...shiftedGroups,
+            {
+              id: newId,
+              name,
+              position: newPosition,
               isVisible: true,
               fields: [],
             },
           ],
         }));
+      }
 
-        return newId;
-      },
-    [fieldsWidgetGroupsDraftState, widgetId],
+      return newId;
+    },
+    [
+      fieldsWidgetGroupsDraftState,
+      fieldsWidgetUngroupedFieldsDraftState,
+      fieldsWidgetEditorModeDraftState,
+      widgetId,
+      store,
+    ],
   );
 
-  const createGroupCallback = useCallback(
-    (name: string) => createGroup(name),
-    [createGroup],
-  );
-
-  return { createGroup: createGroupCallback };
+  return { createGroup };
 };

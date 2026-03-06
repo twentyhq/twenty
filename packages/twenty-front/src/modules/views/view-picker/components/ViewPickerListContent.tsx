@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type DropResult } from '@hello-pangea/dnd';
 import { type MouseEvent, useCallback } from 'react';
 
@@ -10,8 +10,8 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { DropdownMenuSectionLabel } from '@/ui/layout/dropdown/components/DropdownMenuSectionLabel';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
-import { useFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValueV2';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { usePerformViewAPIUpdate } from '@/views/hooks/internal/usePerformViewAPIUpdate';
 import { useChangeView } from '@/views/hooks/useChangeView';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
@@ -24,11 +24,12 @@ import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/sta
 import { useLingui } from '@lingui/react/macro';
 import { IconPlus } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { ViewVisibility } from '~/generated-metadata/graphql';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
 
-const StyledBoldDropdownMenuItemsContainer = styled(DropdownMenuItemsContainer)`
-  font-weight: ${({ theme }) => theme.font.weight.regular};
+const StyledBoldDropdownMenuItemsContainerWrapper = styled.div`
+  font-weight: ${themeCssVariables.font.weight.regular};
 `;
 
 export const ViewPickerListContent = () => {
@@ -36,7 +37,7 @@ export const ViewPickerListContent = () => {
 
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
 
-  const viewsOnCurrentObject = useFamilySelectorValueV2(
+  const viewsOnCurrentObject = useAtomFamilySelectorValue(
     coreViewsFromObjectMetadataItemFamilySelector,
     { objectMetadataItemId: objectMetadataItem.id },
   );
@@ -54,7 +55,7 @@ export const ViewPickerListContent = () => {
 
   const { currentView } = useGetCurrentViewOnly();
 
-  const setViewPickerReferenceViewId = useSetRecoilComponentState(
+  const setViewPickerReferenceViewId = useSetAtomComponentState(
     viewPickerReferenceViewIdComponentState,
   );
 
@@ -197,13 +198,15 @@ export const ViewPickerListContent = () => {
         </>
       )}
       <DropdownMenuSeparator />
-      <StyledBoldDropdownMenuItemsContainer scrollable={false}>
-        <MenuItem
-          onClick={handleAddViewButtonClick}
-          LeftIcon={IconPlus}
-          text={t`Add view`}
-        />
-      </StyledBoldDropdownMenuItemsContainer>
+      <StyledBoldDropdownMenuItemsContainerWrapper>
+        <DropdownMenuItemsContainer scrollable={false}>
+          <MenuItem
+            onClick={handleAddViewButtonClick}
+            LeftIcon={IconPlus}
+            text={t`Add view`}
+          />
+        </DropdownMenuItemsContainer>
+      </StyledBoldDropdownMenuItemsContainerWrapper>
     </DropdownContent>
   );
 };

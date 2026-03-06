@@ -9,26 +9,14 @@
   },
   "packageManager": "yarn@4.9.2",
   "scripts": {
-    "auth:login": "twenty auth login",
-    "auth:logout": "twenty auth logout",
-    "auth:status": "twenty auth status",
-    "auth:switch": "twenty auth switch",
-    "auth:list": "twenty auth list",
-    "app:dev": "twenty app dev",
-    "app:sync": "twenty app sync",
-    "entity:add": "twenty entity add",
-    "function:logs": "twenty function logs",
-    "function:execute": "twenty function execute",
-    "app:uninstall": "twenty app uninstall",
-    "help": "twenty help",
-    "lint": "eslint",
-    "lint:fix": "eslint --fix"
-  },
-  "dependencies": {
-    "twenty-sdk": "0.3.1"
+    "twenty": "twenty",
+    "lint": "oxlint -c .oxlintrc.json .",
+    "lint:fix": "oxlint --fix -c .oxlintrc.json ."
   },
   "devDependencies": {
-    "@types/node": "^24.7.2"
+    "@types/node": "^24.7.2",
+    "oxlint": "^0.16.0",
+    "twenty-sdk": "0.6.2"
   },
   "$schema": "https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-cli/src/constants/schemas/appManifest.schema.json",
   "universalIdentifier": "a7070f46-3158-4b40-828f-8e6b1febc233"

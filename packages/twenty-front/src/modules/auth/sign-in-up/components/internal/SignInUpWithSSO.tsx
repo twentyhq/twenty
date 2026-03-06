@@ -7,25 +7,27 @@ import {
 } from '@/auth/states/signInUpStepState';
 import { AuthenticatedMethod } from '@/auth/types/AuthenticatedMethod.enum';
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
-import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
-import { useTheme } from '@emotion/react';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { HorizontalSeparator, IconLock } from 'twenty-ui/display';
 import { MainButton } from 'twenty-ui/input';
 import { LastUsedPill } from './LastUsedPill';
 import { StyledSSOButtonContainer } from './SignInUpSSOButtonStyles';
+import { useContext } from 'react';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 export const SignInUpWithSSO = () => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const { t } = useLingui();
-  const setSignInUpStep = useSetRecoilStateV2(signInUpStepState);
-  const workspaceAuthProviders = useRecoilValueV2(workspaceAuthProvidersState);
-  const signInUpStep = useRecoilValueV2(signInUpStepState);
-  const [lastAuthenticatedMethod, setLastAuthenticatedMethod] =
-    useRecoilStateV2(lastAuthenticatedMethodState);
+  const setSignInUpStep = useSetAtomState(signInUpStepState);
+  const workspaceAuthProviders = useAtomStateValue(workspaceAuthProvidersState);
+  const signInUpStep = useAtomStateValue(signInUpStepState);
+  const [lastAuthenticatedMethod, setLastAuthenticatedMethod] = useAtomState(
+    lastAuthenticatedMethodState,
+  );
   const hasMultipleAuthMethods = useHasMultipleAuthMethods();
 
   const { redirectToSSOLoginPage } = useSSO();

@@ -1,23 +1,24 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
-import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useCanEditProfileField } from '@/settings/profile/hooks/useCanEditProfileField';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { logError } from '~/utils/logError';
 
 const StyledComboInputContainer = styled.div`
   display: flex;
   flex-direction: row;
   > * + * {
-    margin-left: ${({ theme }) => theme.spacing(4)};
+    margin-left: ${themeCssVariables.spacing[4]};
   }
 `;
 
@@ -27,8 +28,8 @@ type NameFieldsProps = {
 
 export const NameFields = ({ autoSave = true }: NameFieldsProps) => {
   const { t } = useLingui();
-  const currentUser = useRecoilValueV2(currentUserState);
-  const [currentWorkspaceMember, setCurrentWorkspaceMember] = useRecoilStateV2(
+  const currentUser = useAtomStateValue(currentUserState);
+  const [currentWorkspaceMember, setCurrentWorkspaceMember] = useAtomState(
     currentWorkspaceMemberState,
   );
   const { canEdit: canEditFirstName } = useCanEditProfileField('firstName');

@@ -7,8 +7,8 @@ import { useRemoveFieldPermissionInDraftRole } from '@/settings/roles/role-permi
 import { newFieldPermissionsFilter } from '@/settings/roles/role/hooks/utils/newFieldPermissionsFilter.util';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { getOperationName } from '@apollo/client/utilities';
-import { useRecoilValue } from 'recoil';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import {
   type RowLevelPermissionPredicateGroupLogicalOperator,
@@ -57,12 +57,14 @@ export const useSaveDraftRoleToDB = ({
   const { addAgentsToRole } = useUpdateAgentRole(roleId);
   const { addApiKeysToRole } = useUpdateApiKeyRole(roleId);
 
-  const settingsPersistedRole = useRecoilValue(
-    settingsPersistedRoleFamilyState(roleId),
+  const settingsPersistedRole = useAtomFamilyStateValue(
+    settingsPersistedRoleFamilyState,
+    roleId,
   );
 
-  const settingsDraftRole = useRecoilValue(
-    settingsDraftRoleFamilyState(roleId),
+  const settingsDraftRole = useAtomFamilyStateValue(
+    settingsDraftRoleFamilyState,
+    roleId,
   );
 
   const dirtyFields = getDirtyFields(settingsDraftRole, settingsPersistedRole);
@@ -261,7 +263,7 @@ export const useSaveDraftRoleToDB = ({
       (acc, predicate) => {
         const objectMetadataId = predicate.objectMetadataId;
 
-        if (!acc[objectMetadataId]) {
+        if (!isDefined(acc[objectMetadataId])) {
           acc[objectMetadataId] = [];
         }
         acc[objectMetadataId].push(predicate);
@@ -278,7 +280,7 @@ export const useSaveDraftRoleToDB = ({
     );
 
     for (const objectMetadataId of persistedObjectIds) {
-      if (!predicatesByObject[objectMetadataId]) {
+      if (!isDefined(predicatesByObject[objectMetadataId])) {
         predicatesByObject[objectMetadataId] = [];
       }
     }

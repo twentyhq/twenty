@@ -1,12 +1,12 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useEffect, useRef, useState, type ChangeEvent } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
 
 import { LightCopyIconButton } from '@/object-record/record-field/ui/components/LightCopyIconButton';
 import { useRegisterInputEvents } from '@/object-record/record-field/ui/meta-types/input/hooks/useRegisterInputEvents';
 import { isDefined } from 'twenty-shared/utils';
-import { TEXT_INPUT_STYLE } from 'twenty-ui/theme';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 export type TextAreaInputProps = {
   instanceId: string;
@@ -25,24 +25,41 @@ export type TextAreaInputProps = {
   copyButton?: boolean;
 };
 
-const StyledTextArea = styled(TextareaAutosize)`
-  ${TEXT_INPUT_STYLE}
-  align-items: center;
-  display: flex;
-  justify-content: center;
-  resize: none;
-  max-height: 400px;
-  width: calc(100% - ${({ theme }) => theme.spacing(7)});
+const StyledTextAreaContainer = styled.div`
+  > textarea {
+    align-items: center;
+    background-color: transparent;
+    border: none;
+    color: ${themeCssVariables.font.color.primary};
+    display: flex;
+    font-family: ${themeCssVariables.font.family};
+    font-size: inherit;
+    font-weight: inherit;
 
-  line-height: 18px;
+    &::placeholder,
+    &::-webkit-input-placeholder {
+      color: ${themeCssVariables.font.color.light};
+      font-family: ${themeCssVariables.font.family};
+      font-weight: ${themeCssVariables.font.weight.medium};
+    }
+
+    justify-content: center;
+    line-height: 18px;
+    max-height: 400px;
+    outline: none;
+    padding: ${themeCssVariables.spacing[0]} ${themeCssVariables.spacing[2]};
+    resize: none;
+
+    width: calc(100% - ${themeCssVariables.spacing[7]});
+  }
 `;
 
 const StyledLightIconButtonContainer = styled.div`
   background: transparent;
   position: absolute;
+  right: 0;
   top: 16px;
   transform: translateY(-50%);
-  right: 0;
 `;
 
 export const TextAreaInput = ({
@@ -96,16 +113,18 @@ export const TextAreaInput = ({
 
   return (
     <>
-      <StyledTextArea
-        placeholder={placeholder}
-        disabled={disabled}
-        className={className}
-        ref={wrapperRef}
-        onChange={handleChange}
-        autoFocus={autoFocus}
-        value={internalText}
-        maxRows={maxRows}
-      />
+      <StyledTextAreaContainer>
+        <TextareaAutosize
+          placeholder={placeholder}
+          disabled={disabled}
+          className={className}
+          ref={wrapperRef}
+          onChange={handleChange}
+          autoFocus={autoFocus}
+          value={internalText}
+          maxRows={maxRows}
+        />
+      </StyledTextAreaContainer>
       {copyButton && (
         <StyledLightIconButtonContainer ref={copyRef}>
           <LightCopyIconButton copyText={internalText} />

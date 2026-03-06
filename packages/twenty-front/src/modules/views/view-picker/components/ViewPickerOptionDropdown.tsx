@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { useCreateFavorite } from '@/favorites/hooks/useCreateFavorite';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { usePrefetchedNavigationMenuItemsData } from '@/navigation-menu-item/hooks/usePrefetchedNavigationMenuItemsData';
@@ -6,7 +7,7 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { MenuItemWithOptionDropdown } from '@/ui/navigation/menu-item/components/MenuItemWithOptionDropdown';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { type View } from '@/views/types/View';
 import { useDestroyViewFromCurrentState } from '@/views/view-picker/hooks/useDestroyViewFromCurrentState';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
@@ -54,7 +55,7 @@ export const ViewPickerOptionDropdown = ({
   const { closeDropdown } = useCloseDropdown();
   const { getIcon } = useIcons();
   const { destroyViewFromCurrentState } = useDestroyViewFromCurrentState();
-  const setViewPickerReferenceViewId = useSetRecoilComponentState(
+  const setViewPickerReferenceViewId = useSetAtomComponentState(
     viewPickerReferenceViewIdComponentState,
   );
   const { setViewPickerMode } = useViewPickerMode();
@@ -81,7 +82,8 @@ export const ViewPickerOptionDropdown = ({
       )
     : favorites.some(
         (favorite) =>
-          favorite.recordId === view.id && favorite.forWorkspaceMemberId,
+          favorite.recordId === view.id &&
+          isDefined(favorite.forWorkspaceMemberId),
       );
 
   const handleDelete = () => {

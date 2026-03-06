@@ -4,26 +4,27 @@ import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
 import { NavigationDrawerSectionTitleSkeletonLoader } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitleSkeletonLoader';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
-import styled from '@emotion/styled';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { styled } from '@linaria/react';
 import React from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Label } from 'twenty-ui/display';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledTitle = styled.div`
   align-items: center;
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+  border-radius: ${themeCssVariables.border.radius.sm};
   display: flex;
-  height: ${({ theme }) => theme.spacing(5)};
-  padding-left: ${({ theme }) => theme.spacing(1)};
-  padding-right: ${({ theme }) => theme.spacing(0.5)};
-  padding-top: ${({ theme }) => theme.spacing(1)};
-  padding-bottom: ${({ theme }) => theme.spacing(1)};
+  height: ${themeCssVariables.spacing[5]};
   justify-content: space-between;
+  padding-bottom: ${themeCssVariables.spacing[1]};
+  padding-left: ${themeCssVariables.spacing[1]};
+  padding-right: ${themeCssVariables.spacing['0.5']};
+  padding-top: ${themeCssVariables.spacing[1]};
 
   &:hover {
+    background-color: ${themeCssVariables.background.transparent.light};
     cursor: pointer;
-    background-color: ${({ theme }) => theme.background.transparent.light};
   }
 `;
 
@@ -60,11 +61,11 @@ export const NavigationDrawerSectionTitle = ({
   alwaysShowRightIcon = false,
 }: NavigationDrawerSectionTitleProps) => {
   const isMobile = useIsMobile();
-  const isNavigationDrawerExpanded = useRecoilValueV2(
+  const isNavigationDrawerExpanded = useAtomStateValue(
     isNavigationDrawerExpandedState,
   );
   const isSettingsPage = useIsSettingsPage();
-  const currentUser = useRecoilValueV2(currentUserState);
+  const currentUser = useAtomStateValue(currentUserState);
   const loading = useIsPrefetchLoading();
   const handleTitleClick = (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
@@ -82,7 +83,7 @@ export const NavigationDrawerSectionTitle = ({
       <StyledLabelContainer onClick={handleTitleClick}>
         <Label>{label}</Label>
       </StyledLabelContainer>
-      {rightIcon && (
+      {isDefined(rightIcon) && (
         <StyledRightIcon
           isMobile={isMobile}
           $alwaysVisible={alwaysShowRightIcon}

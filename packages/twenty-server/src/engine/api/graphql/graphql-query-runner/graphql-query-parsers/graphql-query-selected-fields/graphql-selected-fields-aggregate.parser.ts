@@ -12,7 +12,7 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 
 export class GraphqlQuerySelectedFieldsAggregateParser {
   parse(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
     graphqlSelectedFields: Partial<Record<string, any>>,
     flatObjectMetadata: FlatObjectMetadata,
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,

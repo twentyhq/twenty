@@ -1,5 +1,5 @@
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import {
   IconCalendar,
@@ -35,12 +35,14 @@ const tabs = [
   { id: 'reports', title: 'Reports', Icon: IconCheckbox },
 ];
 
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+
 const StyledInteractiveContainer = styled.div`
-  border: 1px solid ${({ theme }) => theme.border.color.strong};
+  border: 1px solid ${themeCssVariables.border.color.strong};
   max-width: 100%;
   min-width: 300px;
   overflow: auto;
-  padding: ${({ theme }) => theme.spacing(5)};
+  padding: ${themeCssVariables.spacing[5]};
   resize: horizontal;
   width: 600px;
 `;
@@ -74,7 +76,7 @@ export const Default: Story = {
         componentInstanceId={args.componentInstanceId}
         loading={args.loading}
         behaveAsLinks={args.behaveAsLinks}
-        isInRightDrawer={args.isInRightDrawer}
+        isInSidePanel={args.isInSidePanel}
         className={args.className}
       />
     </StyledInteractiveContainer>

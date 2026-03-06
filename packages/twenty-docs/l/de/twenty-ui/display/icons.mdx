@@ -14,35 +14,44 @@ Eine Liste von Symbolen, die in unserer App verwendet werden.
 Wir verwenden Tabler-Symbole für React in der gesamten App.
 
 <Tabs>
-  <Tab title="Installation">
-    <br />
 
-    ```
-    yarn add @tabler/icons-react
-    ```
-  </Tab>
+<Tab title="Installation">
+<br />
 
-  <Tab title="Props">
-    Sie können jedes Symbol als Komponente importieren. Hier ist ein Beispiel:
+```
+yarn add @tabler/icons-react
+```
 
-    <br />
+</Tab>
 
-    ```jsx
-    import { IconArrowLeft } from "@tabler/icons-react";
+<Tab title="Props">
 
-    export const MyComponent = () => {
-      return <IconArrowLeft color="red" size={48} />;
-    };
-    ```
-  </Tab>
+Sie können jedes Symbol als Komponente importieren. Hier ist ein Beispiel:
+<br />
 
-  <Tab title="Props">
-    | Props  | Typ          | Beschreibung                              | Standard     |
-    | ------ | ------------ | ----------------------------------------- | ------------ |
-    | größe  | nummer       | Die Höhe und Breite des Symbols in Pixeln | 24           |
-    | farbe  | Zeichenkette | Die Farbe der Symbole                     | currentColor |
-    | Strich | nummer       | Die Strichbreite des Symbols in Pixeln    | 2            |
-  </Tab>
+```jsx
+import { IconArrowLeft } from "@tabler/icons-react";
+
+export const MyComponent = () => {
+  return <IconArrowLeft color="red" size={48} />;
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+
+| Props  | Typ          | Beschreibung                              | Standard     |
+| ------ | ------------ | ----------------------------------------- | ------------ |
+| größe  | nummer       | Die Höhe und Breite des Symbols in Pixeln | 24           |
+| farbe  | Zeichenkette | Die Farbe der Symbole                     | currentColor |
+| Strich | nummer       | Die Strichbreite des Symbols in Pixeln    | 2            |
+
+
+
+</Tab>
+
 </Tabs>
 
 ## Benutzerdefinierte Symbole
@@ -54,20 +63,29 @@ Zusätzlich zu den Tabler-Symbolen verwendet die App auch einige benutzerdefinie
 Zeigt ein Adressbuchsymbol an.
 
 <Tabs>
-  <Tab title="Verwendung">
-    ```jsx
-    import { IconAddressBook } from 'twenty-ui/display';
 
-    export const MyComponent = () => {
-      return <IconAddressBook size={24} stroke={2} />;
-    };
-    ```
-  </Tab>
+<Tab title="Verwendung">
 
-  <Tab title="Eigenschaften">
-    | Eigenschaften | Typ    | Beschreibung                              | Standard |
-    | ------------- | ------ | ----------------------------------------- | -------- |
-    | größe         | nummer | Die Höhe und Breite des Symbols in Pixeln | 24       |
-    | Strich        | nummer | Die Strichbreite des Symbols in Pixeln    | 2        |
-  </Tab>
+```jsx
+import { IconAddressBook } from 'twenty-ui/display';
+
+export const MyComponent = () => {
+  return <IconAddressBook size={24} stroke={2} />;
+};
+```
+
+</Tab>
+
+<Tab title="Eigenschaften">
+
+
+| Eigenschaften | Typ    | Beschreibung                              | Standard |
+| ------------- | ------ | ----------------------------------------- | -------- |
+| größe         | nummer | Die Höhe und Breite des Symbols in Pixeln | 24       |
+| Strich        | nummer | Die Strichbreite des Symbols in Pixeln    | 2        |
+
+
+
+</Tab>
+
 </Tabs>

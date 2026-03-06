@@ -1,16 +1,17 @@
-import styled from '@emotion/styled';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from '@linaria/react';
 
 const StyledDropdownMenuSectionLabel = styled.div`
-  background-color: ${({ theme }) => theme.background.transparent.lighter};
-  color: ${({ theme }) => theme.font.color.tertiary};
-  min-height: 20px;
-  width: auto;
-  font-size: ${({ theme }) => theme.font.size.xxs};
-  display: flex;
   align-items: center;
+  background-color: ${themeCssVariables.background.transparent.lighter};
+  color: ${themeCssVariables.font.color.tertiary};
+  display: flex;
+  font-size: ${themeCssVariables.font.size.xxs};
   justify-content: flex-start;
-  padding-left: ${({ theme }) => theme.spacing(1)};
+  min-height: 20px;
+  padding-left: ${themeCssVariables.spacing[1]};
   user-select: none;
+  width: auto;
 `;
 
 export type DropdownMenuSectionLabelProps = {

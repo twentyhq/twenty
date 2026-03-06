@@ -1,14 +1,15 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { useContext } from 'react';
 import { type IconComponent } from 'twenty-ui/display';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div<{ Variant: Variants }>`
-  color: ${({ theme, Variant }) =>
-    Variant === 'danger' ? theme.color.red : 'inherit'};
   align-items: center;
+  color: ${({ Variant }) =>
+    Variant === 'danger' ? themeCssVariables.color.red : 'inherit'};
   display: flex;
   flex-direction: row;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledTextContainer = styled.div``;
@@ -26,7 +27,8 @@ export const CustomSideMenuOptions = ({
   Variant,
   text,
 }: CustomSideMenuOptionsProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
+
   return (
     <StyledContainer Variant={Variant}>
       <LeftIcon

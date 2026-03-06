@@ -1,5 +1,5 @@
 import { TextInput } from '@/ui/input/components/TextInput';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { Controller, useFormContext } from 'react-hook-form';
 
@@ -8,7 +8,7 @@ import { domainConfigurationState } from '@/domain-manager/states/domainConfigur
 import { isDefined } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledDomainFormWrapper = styled.div`
   align-items: center;
@@ -16,10 +16,10 @@ const StyledDomainFormWrapper = styled.div`
 `;
 
 export const SettingsSubdomain = () => {
-  const domainConfiguration = useRecoilValueV2(domainConfigurationState);
+  const domainConfiguration = useAtomStateValue(domainConfigurationState);
   const { t } = useLingui();
 
-  const currentWorkspace = useRecoilValueV2(currentWorkspaceState);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
   const { control } = useFormContext<{
     subdomain: string;

@@ -1,10 +1,11 @@
 import { BaseChip } from '@/object-record/record-field/ui/form-types/components/BaseChip';
 import { useSearchVariable } from '@/workflow/workflow-variables/hooks/useSearchVariable';
-import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
+import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { extractRawVariableNamePart } from 'twenty-shared/workflow';
 import { IconAlertTriangle } from 'twenty-ui/display';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 type VariableChipProps = {
   rawVariableName: string;
@@ -17,8 +18,8 @@ export const VariableChip = ({
   onRemove,
   isFullRecord = false,
 }: VariableChipProps) => {
-  const theme = useTheme();
   const { t } = useLingui();
+  const { theme } = useContext(ThemeContext);
 
   const { variableLabel, variablePathLabel } = useSearchVariable({
     stepId: extractRawVariableNamePart({

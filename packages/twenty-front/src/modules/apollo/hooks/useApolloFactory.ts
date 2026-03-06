@@ -7,13 +7,14 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { previousUrlState } from '@/auth/states/previousUrlState';
+import { returnToPathState } from '@/auth/states/returnToPathState';
+import { isValidReturnToPath } from '@/auth/utils/isValidReturnToPath';
 import { tokenPairState } from '@/auth/states/tokenPairState';
 import { appVersionState } from '@/client-config/states/appVersionState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
@@ -21,24 +22,22 @@ import { useUpdateEffect } from '~/hooks/useUpdateEffect';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
 export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
-  // eslint-disable-next-line twenty/no-state-useref
+  // oxlint-disable-next-line twenty/no-state-useref
   const apolloRef = useRef<ApolloFactory<NormalizedCacheObject> | null>(null);
 
   const navigate = useNavigate();
-  const setTokenPair = useSetRecoilStateV2(tokenPairState);
-  const [currentWorkspace, setCurrentWorkspace] = useRecoilStateV2(
+  const setTokenPair = useSetAtomState(tokenPairState);
+  const [currentWorkspace, setCurrentWorkspace] = useAtomState(
     currentWorkspaceState,
   );
-  const appVersion = useRecoilValueV2(appVersionState);
-  const [currentWorkspaceMember, setCurrentWorkspaceMember] = useRecoilStateV2(
+  const appVersion = useAtomStateValue(appVersionState);
+  const [currentWorkspaceMember, setCurrentWorkspaceMember] = useAtomState(
     currentWorkspaceMemberState,
   );
-  const setCurrentUser = useSetRecoilStateV2(currentUserState);
-  const setCurrentUserWorkspace = useSetRecoilStateV2(
-    currentUserWorkspaceState,
-  );
+  const setCurrentUser = useSetAtomState(currentUserState);
+  const setCurrentUserWorkspace = useSetAtomState(currentUserWorkspaceState);
 
-  const setPreviousUrl = useSetRecoilStateV2(previousUrlState);
+  const setReturnToPath = useSetAtomState(returnToPathState);
   const location = useLocation();
 
   const { enqueueErrorSnackBar } = useSnackBar();
@@ -78,7 +77,11 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
           !isMatchingLocation(location, AppPath.Invite) &&
           !isMatchingLocation(location, AppPath.ResetPassword)
         ) {
-          setPreviousUrl(`${location.pathname}${location.search}`);
+          const path = `${location.pathname}${location.search}${location.hash}`;
+
+          if (isValidReturnToPath(path)) {
+            setReturnToPath(path);
+          }
           navigate(AppPath.SignInUp);
         }
       },
@@ -105,13 +108,13 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
     });
 
     return apolloRef.current.getClient();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [
     setTokenPair,
     setCurrentUser,
     setCurrentWorkspaceMember,
     setCurrentWorkspace,
-    setPreviousUrl,
+    setReturnToPath,
     enqueueErrorSnackBar,
   ]);
 

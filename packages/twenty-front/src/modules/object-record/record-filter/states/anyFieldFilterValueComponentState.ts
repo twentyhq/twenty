@@ -1,8 +1,9 @@
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
-import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
+import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 
-export const anyFieldFilterValueComponentState = createComponentState<string>({
-  key: 'anyFieldFilterValueComponentState',
-  defaultValue: '',
-  componentInstanceContext: RecordFiltersComponentInstanceContext,
-});
+export const anyFieldFilterValueComponentState =
+  createAtomComponentState<string>({
+    key: 'anyFieldFilterValueComponentState',
+    defaultValue: '',
+    componentInstanceContext: RecordFiltersComponentInstanceContext,
+  });

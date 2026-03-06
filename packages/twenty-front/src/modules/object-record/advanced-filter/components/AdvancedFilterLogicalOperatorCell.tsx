@@ -1,23 +1,24 @@
 import { AdvancedFilterLogicalOperatorDropdown } from '@/object-record/advanced-filter/components/AdvancedFilterLogicalOperatorDropdown';
 import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
 
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { capitalize } from 'twenty-shared/utils';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledText = styled.div`
-  height: ${({ theme }) => theme.spacing(8)};
-  display: flex;
   align-items: center;
+  display: flex;
+  height: ${themeCssVariables.spacing[8]};
 
-  padding-left: ${({ theme }) => theme.spacing(2.25)};
+  padding-left: 9px;
 `;
 
 const StyledContainer = styled.div`
   align-items: start;
+  color: ${themeCssVariables.font.color.tertiary};
   display: flex;
-  min-width: ${({ theme }) => theme.spacing(20)};
-  color: ${({ theme }) => theme.font.color.tertiary};
+  min-width: ${themeCssVariables.spacing[20]};
 `;
 
 type AdvancedFilterLogicalOperatorCellProps = {

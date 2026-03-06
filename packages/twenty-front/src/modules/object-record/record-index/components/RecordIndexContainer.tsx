@@ -1,11 +1,11 @@
-import styled from '@emotion/styled';
-import { useRecoilState } from 'recoil';
+import { styled } from '@linaria/react';
 
 import { ObjectOptionsDropdown } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdown';
 import { RecordBoardContainer } from '@/object-record/record-board/components/RecordBoardContainer';
 import { RecordIndexTableContainer } from '@/object-record/record-index/components/RecordIndexTableContainer';
 import { RecordIndexViewBarEffect } from '@/object-record/record-index/components/RecordIndexViewBarEffect';
 import { recordIndexViewTypeState } from '@/object-record/record-index/states/recordIndexViewTypeState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 import { InformationBannerWrapper } from '@/information-banner/components/InformationBannerWrapper';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
@@ -15,24 +15,26 @@ import { RecordIndexCalendarContainer } from '@/object-record/record-index/compo
 import { RecordIndexFiltersToContextStoreEffect } from '@/object-record/record-index/components/RecordIndexFiltersToContextStoreEffect';
 import { ViewBar } from '@/views/components/ViewBar';
 import { ViewType } from '@/views/types/ViewType';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
   height: 100%;
-  width: 100%;
-
   overflow: hidden;
+
+  width: 100%;
 `;
 
 const StyledContainerWithPadding = styled.div`
   box-sizing: border-box;
-  height: calc(100% - ${({ theme }) => theme.spacing(10)});
-  margin-left: ${({ theme }) => theme.spacing(2)};
+  flex: 1;
+  margin-left: ${themeCssVariables.spacing[2]};
+  min-height: 0;
 `;
 
 export const RecordIndexContainer = () => {
-  const [recordIndexViewType] = useRecoilState(recordIndexViewTypeState);
+  const recordIndexViewType = useAtomStateValue(recordIndexViewTypeState);
 
   const {
     objectNamePlural,

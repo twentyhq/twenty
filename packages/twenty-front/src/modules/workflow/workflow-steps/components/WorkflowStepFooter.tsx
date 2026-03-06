@@ -1,15 +1,15 @@
-import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
-import { useCommandMenuWorkflowIdOrThrow } from '@/command-menu/pages/workflow/hooks/useCommandMenuWorkflowIdOrThrow';
+import { useSidePanelWorkflowNavigation } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowNavigation';
+import { useSidePanelWorkflowIdOrThrow } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowIdOrThrow';
 import { OptionsDropdownMenu } from '@/ui/layout/dropdown/components/OptionsDropdownMenu';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { RightDrawerFooter } from '@/ui/layout/right-drawer/components/RightDrawerFooter';
+import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useDeleteStep } from '@/workflow/workflow-steps/hooks/useDeleteStep';
 import { useDuplicateStep } from '@/workflow/workflow-steps/hooks/useDuplicateStep';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
-import { workflowAiAgentActionAgentStateV2 } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentActionAgentStateV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { workflowAiAgentActionAgentState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentActionAgentState';
 import { useLingui } from '@lingui/react/macro';
 import { useId } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
@@ -37,15 +37,15 @@ export const WorkflowStepFooter = ({
   const { t } = useLingui();
   const { duplicateStep } = useDuplicateStep();
   const { closeDropdown } = useCloseDropdown();
-  const workflowId = useCommandMenuWorkflowIdOrThrow();
+  const workflowId = useSidePanelWorkflowIdOrThrow();
   const {
-    openWorkflowEditStepTypeInCommandMenu,
-    openWorkflowTriggerTypeInCommandMenu,
-  } = useWorkflowCommandMenu();
+    openWorkflowEditStepTypeInSidePanel,
+    openWorkflowTriggerTypeInSidePanel,
+  } = useSidePanelWorkflowNavigation();
   const { deleteStep } = useDeleteStep();
   const navigateSettings = useNavigateSettings();
-  const workflowAiAgentActionAgent = useRecoilValueV2(
-    workflowAiAgentActionAgentStateV2,
+  const workflowAiAgentActionAgent = useAtomStateValue(
+    workflowAiAgentActionAgentState,
   );
   const shouldPinDeleteButton =
     !isDefined(additionalActions) || additionalActions.length === 0;
@@ -66,9 +66,9 @@ export const WorkflowStepFooter = ({
     closeDropdown(dropdownId);
 
     if (stepId === TRIGGER_STEP_ID) {
-      openWorkflowTriggerTypeInCommandMenu(workflowId);
+      openWorkflowTriggerTypeInSidePanel(workflowId);
     } else {
-      openWorkflowEditStepTypeInCommandMenu(workflowId);
+      openWorkflowEditStepTypeInSidePanel(workflowId);
     }
   };
 
@@ -98,7 +98,7 @@ export const WorkflowStepFooter = ({
     }
   };
 
-  const selectedItemId = useRecoilComponentValueV2(
+  const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
     dropdownId,
   );
@@ -177,7 +177,7 @@ export const WorkflowStepFooter = ({
   );
 
   return (
-    <RightDrawerFooter
+    <SidePanelFooter
       actions={[
         OptionsDropdown,
         ...(additionalActions ?? []),

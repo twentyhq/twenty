@@ -68,15 +68,18 @@ export class AgentChatStreamingService {
 
     // Fire user-message save without awaiting to avoid delaying time-to-first-letter.
     // The promise is awaited inside onFinish where we need the turnId.
+    const lastUserMessage = messages[messages.length - 1];
     const lastUserText =
-      messages[messages.length - 1]?.parts.find((part) => part.type === 'text')
-        ?.text ?? '';
+      lastUserMessage?.parts.find((part) => part.type === 'text')?.text ?? '';
 
     const userMessagePromise = this.agentChatService.addMessage({
       threadId: thread.id,
       uiMessage: {
         role: AgentMessageRole.USER,
-        parts: [{ type: 'text', text: lastUserText }],
+        parts:
+          lastUserMessage?.parts.filter(
+            (part) => part.type === 'text' || part.type === 'file',
+          ) ?? [],
       },
     });
 
@@ -131,7 +134,8 @@ export class AgentChatStreamingService {
               messageMetadata: ({ part }) => {
                 if (part.type === 'finish-step') {
                   const stepInput = part.usage?.inputTokens ?? 0;
-                  const stepCached = part.usage?.cachedInputTokens ?? 0;
+                  const stepCached =
+                    part.usage?.inputTokenDetails?.cacheReadTokens ?? 0;
                   const stepCacheCreation = extractCacheCreationTokens(
                     (
                       part as {
@@ -245,8 +249,8 @@ function computeStreamCosts(
     | {
         inputTokens?: number;
         outputTokens?: number;
-        cachedInputTokens?: number;
-        reasoningTokens?: number;
+        inputTokenDetails?: { cacheReadTokens?: number };
+        outputTokenDetails?: { reasoningTokens?: number };
       }
     | undefined,
   cacheCreationTokens: number,
@@ -254,8 +258,8 @@ function computeStreamCosts(
   const breakdown = computeCostBreakdown(modelConfig, {
     inputTokens: totalUsage?.inputTokens,
     outputTokens: totalUsage?.outputTokens,
-    cachedInputTokens: totalUsage?.cachedInputTokens,
-    reasoningTokens: totalUsage?.reasoningTokens,
+    cachedInputTokens: totalUsage?.inputTokenDetails?.cacheReadTokens,
+    reasoningTokens: totalUsage?.outputTokenDetails?.reasoningTokens,
     cacheCreationTokens,
   });
 

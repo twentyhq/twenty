@@ -7,20 +7,20 @@ import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailab
 import { availableFieldMetadataItemsForFilterFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForFilterFamilySelector';
 import { availableFieldMetadataItemsForSortFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForSortFamilySelector';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
-import { useFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValueV2';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useMemo } from 'react';
 
 export const useColumnDefinitionsFromObjectMetadata = (
   objectMetadataItem: ObjectMetadataItem,
 ) => {
-  const filterableFieldMetadataItems = useFamilySelectorValueV2(
+  const filterableFieldMetadataItems = useAtomFamilySelectorValue(
     availableFieldMetadataItemsForFilterFamilySelector,
     {
       objectMetadataItemId: objectMetadataItem.id,
     },
   );
 
-  const sortableFieldMetadataItems = useFamilySelectorValueV2(
+  const sortableFieldMetadataItems = useAtomFamilySelectorValue(
     availableFieldMetadataItemsForSortFamilySelector,
     {
       objectMetadataItemId: objectMetadataItem.id,

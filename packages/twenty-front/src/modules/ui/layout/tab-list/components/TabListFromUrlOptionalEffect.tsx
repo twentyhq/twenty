@@ -1,28 +1,26 @@
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 
 type TabListFromUrlOptionalEffectProps = {
   tabListIds: string[];
-  isInRightDrawer: boolean;
+  isInSidePanel: boolean;
 };
 
 export const TabListFromUrlOptionalEffect = ({
   tabListIds,
-  isInRightDrawer,
+  isInSidePanel,
 }: TabListFromUrlOptionalEffectProps) => {
   const location = useLocation();
-  const activeTabId = useRecoilComponentValueV2(activeTabIdComponentState);
-  const setActiveTabId = useSetRecoilComponentStateV2(
-    activeTabIdComponentState,
-  );
+  const activeTabId = useAtomComponentStateValue(activeTabIdComponentState);
+  const setActiveTabId = useSetAtomComponentState(activeTabIdComponentState);
 
   const hash = location.hash.replace('#', '');
 
   useEffect(() => {
-    if (isInRightDrawer) {
+    if (isInSidePanel) {
       return;
     }
 
@@ -33,7 +31,7 @@ export const TabListFromUrlOptionalEffect = ({
     if (tabListIds.includes(hash)) {
       setActiveTabId(hash);
     }
-  }, [hash, activeTabId, setActiveTabId, tabListIds, isInRightDrawer]);
+  }, [hash, activeTabId, setActiveTabId, tabListIds, isInSidePanel]);
 
   return <></>;
 };

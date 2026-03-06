@@ -1,18 +1,19 @@
 import { useCallback } from 'react';
 
 import { billingCheckoutSessionState } from '@/auth/states/billingCheckoutSessionState';
+import { returnToPathState } from '@/auth/states/returnToPathState';
 import { type BillingCheckoutSession } from '@/auth/types/billingCheckoutSession.type';
+import { isValidReturnToPath } from '@/auth/utils/isValidReturnToPath';
 import { BILLING_CHECKOUT_SESSION_DEFAULT_VALUE } from '@/billing/constants/BillingCheckoutSessionDefaultValue';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import deepEqual from 'deep-equal';
+import { useStore } from 'jotai';
 
-// Initialize state that are hydrated from query parameters
-// We used to use recoil-sync to do this, but it was causing issues with Firefox
 export const useInitializeQueryParamState = () => {
+  const store = useStore();
   const initializeQueryParamState = useCallback(() => {
-    const handlers = {
+    const handlers: Record<string, (value: string) => void> = {
       billingCheckoutSession: (value: string) => {
-        const billingCheckoutSession = jotaiStore.get(
+        const billingCheckoutSession = store.get(
           billingCheckoutSessionState.atom,
         );
 
@@ -27,21 +28,26 @@ export const useInitializeQueryParamState = () => {
             'requirePaymentMethod' in parsedValue &&
             !deepEqual(billingCheckoutSession, parsedValue)
           ) {
-            jotaiStore.set(
+            store.set(
               billingCheckoutSessionState.atom,
               parsedValue as BillingCheckoutSession,
             );
           }
         } catch (error) {
-          // eslint-disable-next-line no-console
+          // oxlint-disable-next-line no-console
           console.error(
             'Failed to parse billingCheckoutSession from URL',
             error,
           );
-          jotaiStore.set(
+          store.set(
             billingCheckoutSessionState.atom,
             BILLING_CHECKOUT_SESSION_DEFAULT_VALUE,
           );
+        }
+      },
+      returnToPath: (value: string) => {
+        if (isValidReturnToPath(value)) {
+          store.set(returnToPathState.atom, value);
         }
       },
     };
@@ -54,7 +60,7 @@ export const useInitializeQueryParamState = () => {
         handler(value);
       }
     }
-  }, []);
+  }, [store]);
 
   return { initializeQueryParamState };
 };

@@ -1,4 +1,3 @@
-import { useTheme } from '@emotion/react';
 import { IconChevronRight, type IconComponent } from '@ui/display';
 import { type LightIconButtonProps } from '@ui/input/button/components/LightIconButton';
 import { LightIconButtonGroup } from '@ui/input/button/components/LightIconButtonGroup';
@@ -7,10 +6,12 @@ import {
   type MouseEvent,
   type ReactElement,
   type ReactNode,
+  useContext,
 } from 'react';
 
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { MenuItemHotKeys } from '@ui/navigation/menu/menu-item/components/MenuItemHotKeys';
+import { ThemeContext } from '@ui/theme-constants';
 import { motion } from 'framer-motion';
 import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent';
 import {
@@ -49,6 +50,7 @@ export type MenuItemProps = {
   contextualText?: ReactNode;
   hasSubMenu?: boolean;
   focused?: boolean;
+  selected?: boolean;
   hotKeys?: string[];
   isSubMenuOpened?: boolean;
 };
@@ -79,10 +81,11 @@ export const MenuItem = ({
   hasSubMenu = false,
   disabled = false,
   focused = false,
+  selected = false,
   hotKeys,
   isSubMenuOpened = false,
 }: MenuItemProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const showIconButtons = Array.isArray(iconButtons) && iconButtons.length > 0;
 
   const handleMenuItemClick = (event: MouseEvent<HTMLDivElement>) => {
@@ -103,7 +106,7 @@ export const MenuItem = ({
       isIconDisplayedOnHoverOnly={isIconDisplayedOnHoverOnly}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
-      focused={focused}
+      focused={focused || selected}
     >
       <MenuItemLeftContent
         LeftIcon={LeftIcon ?? undefined}
@@ -131,7 +134,9 @@ export const MenuItem = ({
         {hasSubMenu && !disabled && (
           <StyledSubMenuIcon
             animate={{ rotate: isSubMenuOpened ? 90 : 0 }}
-            transition={{ duration: theme.animation.duration.normal }}
+            transition={{
+              duration: theme.animation.duration.normal,
+            }}
           >
             <IconChevronRight
               size={theme.icon.size.sm}

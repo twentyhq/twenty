@@ -59,17 +59,17 @@ Verileri içe aktarmadan önce Twenty çalışma alanınızı hazırlayın:
 4. Alan ayarlarını yapılandırın (benzersiz, zorunlu, seçenekler vb.)
 
 <Warning>
-  **Alanlar içe aktarmadan önce mevcut olmalıdır.**
+**Alanlar içe aktarmadan önce mevcut olmalıdır.**
 
-  CSV içe aktarma alanları değil, kayıtları oluşturur. İçe aktarmadan önce tüm özel alanları Ayarlar → Veri Modeli içinde oluşturun.
+CSV içe aktarma alanları değil, kayıtları oluşturur. İçe aktarmadan önce tüm özel alanları Ayarlar → Veri Modeli içinde oluşturun.
 </Warning>
 
 ### Ekibinizi Davet Edin
 
 <Warning>
-  **Kullanıcıları verileri içe aktarmadan ÖNCE davet edin.**
+**Kullanıcıları verileri içe aktarmadan ÖNCE davet edin.**
 
-  Verileriniz kullanıcı referansları içeriyorsa (Hesap Sahibi, Atanan vb.), bu kullanıcıların içe aktarmadan önce Twenty'de mevcut olması gerekir. Aksi halde bu ilişkiler eşlenemez.
+Verileriniz kullanıcı referansları içeriyorsa (Hesap Sahibi, Atanan vb.), bu kullanıcıların içe aktarmadan önce Twenty'de mevcut olması gerekir. Aksi halde bu ilişkiler eşlenemez.
 </Warning>
 
 1. **Ayarlar → Üyeler** bölümüne gidin
@@ -116,9 +116,9 @@ Dışa aktarılan her CSV'yi bir hesap tablosu uygulamasında açın ve Twenty i
 | **Seçim Alanları** | Görüntü etiketleri değil, API adlarını kullanın |
 
 <Warning>
-  **Alan adı biçimi kritiktir.**
+**Alan adı biçimi kritiktir.**
 
-  `https://domain.com` kullanın (`domain.com` veya `www.domain.com` değil). Bu, Twenty'nin biçimiyle eşleşir ve e-posta/takvim eşzamanlamasını bağladığınızda yinelenmeleri önler.
+`https://domain.com` kullanın (`domain.com` veya `www.domain.com` değil). Bu, Twenty'nin biçimiyle eşleşir ve e-posta/takvim eşzamanlamasını bağladığınızda yinelenmeleri önler.
 </Warning>
 
 Tüm alan türleri için tam biçimlendirme gereksinimleri için [CSV Dosyalarınızı Nasıl Hazırlarsınız](/l/tr/user-guide/data-migration/how-tos/prepare-your-csv-files) bölümüne bakın.
@@ -149,17 +149,16 @@ Tam biçimlendirme kılavuzu için [CSV Dosyalarınızı Nasıl Hazırlarsınız
 ## Adım 6: Twenty'ye İçe Aktarın
 
 <Warning>
-  **İçe Aktarma Sırası Önemlidir!**
+**İçe Aktarma Sırası Önemlidir!**
 
-  Her zaman şu sırayla içe aktarın:
+Her zaman şu sırayla içe aktarın:
+1. Önce **Şirketler** (bağımlılık yok)
+2. İkinci olarak **Kişiler** (Şirketlere bağlanır)
+3. Üçüncü olarak **Fırsatlar** (Şirketlere/Kişilere bağlanır)
+4. **Notlar ve Görevler** (kayıtlara bağlanır)
+5. **Özel nesneler** (bağımlılıklarına uyarak)
 
-  1. Önce **Şirketler** (bağımlılık yok)
-  2. İkinci olarak **Kişiler** (Şirketlere bağlanır)
-  3. Üçüncü olarak **Fırsatlar** (Şirketlere/Kişilere bağlanır)
-  4. **Notlar ve Görevler** (kayıtlara bağlanır)
-  5. **Özel nesneler** (bağımlılıklarına uyarak)
-
-  Ona referans verebilmeden önce ana kayıt mevcut olmalıdır.
+Ona referans verebilmeden önce ana kayıt mevcut olmalıdır.
 </Warning>
 
 ### Her Nesneyi İçe Aktarın

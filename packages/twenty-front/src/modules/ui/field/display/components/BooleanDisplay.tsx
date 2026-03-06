@@ -1,13 +1,10 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { IconCheck, IconX } from 'twenty-ui/display';
-import { THEME_COMMON } from 'twenty-ui/theme';
-
-const spacing = THEME_COMMON.spacingMultiplicator * 1;
-const iconSizeSm = THEME_COMMON.icon.size.sm;
+const iconSizeSm = 14;
 
 const StyledBooleanFieldValue = styled.div`
-  margin-left: ${spacing}px;
+  margin-left: 4px;
 `;
 
 type BooleanDisplayProps = {
@@ -15,9 +12,9 @@ type BooleanDisplayProps = {
 };
 
 const StyledContainer = styled.div`
-  height: 20px;
-  display: flex;
   align-items: center;
+  display: flex;
+  height: 20px;
 `;
 
 export const BooleanDisplay = ({ value }: BooleanDisplayProps) => {

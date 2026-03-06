@@ -193,7 +193,7 @@ setHotkeyScopeAndMemorizePreviousScope(
 
 ### StyledComponents kullanın
 
-Bileşenleri [styled-components](https://emotion.sh/docs/styled) ile stillendirin.
+Bileşenleri [Linaria styled](https://github.com/callstack/linaria) ile stillendirin.
 
 ```tsx
 // ❌ Kötü
@@ -259,7 +259,7 @@ const StyledButton = styled.button`
 
 ## Tip içermeyen importları zorunlu kılma
 
-Tip ithalatlarından kaçının. Bu standardı uygulamak için bir ESLint kuralı, herhangi bir tip ithalatını kontrol eder ve raporlar. Bu, TypeScript kodunda tutarlılık ve okunabilirliği sağlamaya yardımcı olur.
+Tip ithalatlarından kaçının. Bu standardı uygulamak için bir Oxlint kuralı, herhangi bir tür içe aktarmayı denetler ve raporlar. Bu, TypeScript kodunda tutarlılık ve okunabilirliği sağlamaya yardımcı olur.
 
 ```tsx
 // ❌ Kötü
@@ -280,10 +280,10 @@ import { Meta, StoryObj } from '@storybook/react';
 
 * **Bakım Kolaylığı**: Kod tabanının bakımını kolaylaştırır çünkü geliştiriciler kodu incelerken veya değiştirirken yalnızca tip ithalatlarını tanımlayabilir ve bulabilirler.
 
-### ESLint Kuralı
+### Oxlint Kuralı
 
-ESLint kuralı, `@typescript-eslint/consistent-type-imports`, tip ithalat standardını uygular. Bu kural, herhangi bir tip ithalat ihlali için hata veya uyarı üretir.
+Bir Oxlint kuralı, `typescript/consistent-type-imports`, tür içe aktarmalarının yasaklanması standardını uygular. Bu kural, herhangi bir tip ithalat ihlali için hata veya uyarı üretir.
 
 Lütfen unutmayın ki bu kural, istemeden yapılan tip ithalatlarının gerçekleştiği nadir durumları özellikle ele alır. TypeScript'in kendisi, [TypeScript 3.8 sürüm notlarında](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-8.html) belirtildiği gibi, bu uygulamayı caydırmaktadır. Çoğu durumda, yalnızca tip ithalatları kullanmanıza gerek yoktur.
 
-Kodunuzun bu kurala uygun olduğundan emin olmak için, geliştirme iş akışınızın bir parçası olarak ESLint'i çalıştırdığınızdan emin olun.
+Kodunuzun bu kurala uyduğundan emin olmak için, geliştirme iş akışınızın bir parçası olarak Oxlint'i çalıştırdığınızdan emin olun.

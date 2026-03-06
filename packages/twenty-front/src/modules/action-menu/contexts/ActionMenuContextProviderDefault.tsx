@@ -6,20 +6,21 @@ import {
 } from '@/action-menu/contexts/ActionMenuContext';
 import { useRegisteredActions } from '@/action-menu/hooks/useRegisteredActions';
 import { useShouldActionBeRegisteredParams } from '@/action-menu/hooks/useShouldActionBeRegisteredParams';
+import { useCommandMenuContextApi } from '@/action-menu/hooks/useCommandMenuContextApi';
 import { useCommandMenuItemFrontComponentActions } from '@/command-menu-item/hooks/useCommandMenuItemFrontComponentActions';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 export const ActionMenuContextProviderDefault = ({
   objectMetadataItem,
-  isInRightDrawer,
+  isInSidePanel,
   displayType,
   actionMenuType,
   children,
 }: {
   objectMetadataItem: ObjectMetadataItem;
-  isInRightDrawer: ActionMenuContextType['isInRightDrawer'];
+  isInSidePanel: ActionMenuContextType['isInSidePanel'];
   displayType: ActionMenuContextType['displayType'];
   actionMenuType: ActionMenuContextType['actionMenuType'];
   children: React.ReactNode;
@@ -34,7 +35,7 @@ export const ActionMenuContextProviderDefault = ({
 
   const actions = useRegisteredActions(shouldBeRegisteredParams);
 
-  const contextStoreTargetedRecordsRule = useRecoilComponentValue(
+  const contextStoreTargetedRecordsRule = useAtomComponentStateValue(
     contextStoreTargetedRecordsRuleComponentState,
   );
 
@@ -50,13 +51,15 @@ export const ActionMenuContextProviderDefault = ({
   const runWorkflowRecordAgnosticActions =
     useRunWorkflowRecordAgnosticActions();
 
+  const commandMenuContextApi = useCommandMenuContextApi();
+
   const commandMenuItemFrontComponentActions =
-    useCommandMenuItemFrontComponentActions();
+    useCommandMenuItemFrontComponentActions(commandMenuContextApi);
 
   return (
     <ActionMenuContext.Provider
       value={{
-        isInRightDrawer,
+        isInSidePanel,
         displayType,
         actionMenuType,
         actions: [

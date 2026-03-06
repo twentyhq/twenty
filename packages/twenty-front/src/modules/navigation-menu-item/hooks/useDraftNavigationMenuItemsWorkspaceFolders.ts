@@ -8,6 +8,8 @@ export const useDraftNavigationMenuItemsWorkspaceFolders = () => {
     (folder) => ({
       id: folder.id,
       name: folder.folderName,
+      icon: folder.icon,
+      color: folder.color,
     }),
   );
 

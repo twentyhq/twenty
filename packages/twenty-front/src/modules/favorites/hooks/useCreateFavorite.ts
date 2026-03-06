@@ -1,12 +1,12 @@
 import { usePrefetchedNavigationMenuItemsData } from '@/navigation-menu-item/hooks/usePrefetchedNavigationMenuItemsData';
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/utils/isNavigationMenuItemFolder';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isDefined } from 'twenty-shared/utils';
 import { useCreateNavigationMenuItemMutation } from '~/generated-metadata/graphql';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { usePrefetchedFavoritesData } from './usePrefetchedFavoritesData';
 import { usePrefetchedFavoritesFoldersData } from './usePrefetchedFavoritesFoldersData';
 
@@ -14,7 +14,7 @@ export const useCreateFavorite = () => {
   const { favorites, currentWorkspaceMemberId } = usePrefetchedFavoritesData();
   const { favoriteFolders } = usePrefetchedFavoritesFoldersData();
   const { navigationMenuItems } = usePrefetchedNavigationMenuItemsData();
-  const objectMetadataItems = useRecoilValueV2(objectMetadataItemsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
 
   const { createOneRecord: createOneFavorite } = useCreateOneRecord({
     objectNameSingular: CoreObjectNameSingular.Favorite,
@@ -33,7 +33,9 @@ export const useCreateFavorite = () => {
     const relevantFavorites = favoriteFolderId
       ? favorites.filter((fav) => fav.favoriteFolderId === favoriteFolderId)
       : favorites.filter(
-          (fav) => !fav.favoriteFolderId && fav.forWorkspaceMemberId,
+          (fav) =>
+            !isDefined(fav.favoriteFolderId) &&
+            isDefined(fav.forWorkspaceMemberId),
         );
 
     const maxPosition = Math.max(

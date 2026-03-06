@@ -1,12 +1,12 @@
-/* eslint-disable twenty/max-consts-per-file */
+/* oxlint-disable twenty/max-consts-per-file */
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailableTableColumns';
 import { findByProperty } from 'twenty-shared/utils';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
-import { getMockCompanyObjectMetadataItem } from '~/testing/mock-data/companies';
+import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
-const COMPANY_MOCK_OBJECT = getMockCompanyObjectMetadataItem();
+const COMPANY_MOCK_OBJECT = getMockObjectMetadataItemOrThrow('company');
 
 export const SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS = (
   [

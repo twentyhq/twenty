@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`Filter input validation - MORPH_RELATION Gql filter input - failure MORPH_RELATION field type - should fail with filter : {"manyToOneMorphRelationFieldApiInputValidationTargetTestObject1":{"eq":"6dd71a46-68fe-4420-82b3-0d5b00ad2642"}} 1`] = `"Field "manyToOneMorphRelationFieldApiInputValidationTargetTestObject1" is not defined by type "ApiInputValidationTestObjectFilterInput". Did you mean "manyToOneMorphRelationFieldApiInputValidationTargetTestObject1Id" or "manyToOneMorphRelationFieldApiInputValidationTargetTestObject2Id"?"`;
+
+exports[`Filter input validation - MORPH_RELATION Gql filter input - failure MORPH_RELATION field type - should fail with filter : {"manyToOneMorphRelationFieldApiInputValidationTargetTestObject1Id":{"eq":"invalid-uuid"}} 1`] = `"Invalid UUID: 'invalid-uuid'"`;
+
+exports[`Filter input validation - MORPH_RELATION Rest filter input - failure MORPH_RELATION field type - should fail with filter : "manyToOneMorphRelationFieldApiInputValidationTargetTestObject1[eq]:\\"6dd71a46-68fe-4420-82b3-0d5b00ad2642\\"" 1`] = `
+[
+  "Data validation error.",
+]
+`;
+
+exports[`Filter input validation - MORPH_RELATION Rest filter input - failure MORPH_RELATION field type - should fail with filter : "manyToOneMorphRelationFieldApiInputValidationTargetTestObject1Id[eq]:\\"invalid-uuid\\"" 1`] = `
+[
+  "Invalid UUID value 'invalid-uuid' for field "manyToOneMorphRelationFieldApiInputValidationTargetTestObject1Id"",
+]
+`;

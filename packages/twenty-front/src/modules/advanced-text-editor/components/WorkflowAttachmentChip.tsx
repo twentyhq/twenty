@@ -1,11 +1,12 @@
 import { getFileType } from '@/activities/files/utils/getFileType';
 import { useFileCategoryColors } from '@/file/hooks/useFileCategoryColors';
 import { IconMapping } from '@/file/utils/fileIconMappings';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { useContext } from 'react';
 import { type WorkflowAttachment } from 'twenty-shared/workflow';
-import { AvatarChip } from 'twenty-ui/components';
+import { AvatarOrIcon } from 'twenty-ui/components';
 import { IconX } from 'twenty-ui/display';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type WorkflowAttachmentChipProps = {
   file: WorkflowAttachment;
@@ -15,46 +16,46 @@ type WorkflowAttachmentChipProps = {
 
 const StyledChip = styled.div<{ deletable: boolean }>`
   align-items: center;
-  background-color: ${({ theme }) => theme.background.transparent.light};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  column-gap: ${({ theme }) => theme.spacing(1)};
+  background-color: ${themeCssVariables.background.transparent.light};
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  border-radius: ${themeCssVariables.border.radius.sm};
+  column-gap: ${themeCssVariables.spacing[1]};
   display: inline-flex;
   flex-direction: row;
   flex-shrink: 0;
   max-width: 140px;
-  padding-left: ${({ theme }) => theme.spacing(1)};
+  padding-left: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledLabel = styled.span`
-  color: ${({ theme }) => theme.font.color.primary};
-  font-size: ${({ theme }) => theme.font.size.sm};
+  color: ${themeCssVariables.font.color.primary};
+  font-size: ${themeCssVariables.font.size.sm};
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 `;
 
 const StyledDelete = styled.button`
-  height: 20px;
-  width: 20px;
-  display: flex;
-  justify-content: center;
   align-items: center;
-  margin: 0;
-  padding: 0;
-  cursor: pointer;
-  font-size: ${({ theme }) => theme.font.size.sm};
-  user-select: none;
-  flex-shrink: 0;
   background: none;
   border: none;
-  color: ${({ theme }) => theme.font.color.tertiary};
-  border-top-right-radius: ${({ theme }) => theme.border.radius.sm};
-  border-bottom-right-radius: ${({ theme }) => theme.border.radius.sm};
+  border-bottom-right-radius: ${themeCssVariables.border.radius.sm};
+  border-top-right-radius: ${themeCssVariables.border.radius.sm};
+  color: ${themeCssVariables.font.color.tertiary};
+  cursor: pointer;
+  display: flex;
+  flex-shrink: 0;
+  font-size: ${themeCssVariables.font.size.sm};
+  height: 20px;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+  width: 20px;
 
   &:hover {
-    background-color: ${({ theme }) => theme.background.transparent.medium};
-    color: ${({ theme }) => theme.font.color.primary};
+    background-color: ${themeCssVariables.background.transparent.medium};
+    color: ${themeCssVariables.font.color.primary};
   }
 `;
 
@@ -63,12 +64,12 @@ export const WorkflowAttachmentChip = ({
   onRemove,
   readonly = false,
 }: WorkflowAttachmentChipProps) => {
+  const { theme } = useContext(ThemeContext);
   const iconColors = useFileCategoryColors();
-  const theme = useTheme();
 
   return (
     <StyledChip data-chip deletable={!readonly}>
-      <AvatarChip
+      <AvatarOrIcon
         Icon={IconMapping[getFileType(file.name)]}
         IconBackgroundColor={iconColors[getFileType(file.name)]}
       />

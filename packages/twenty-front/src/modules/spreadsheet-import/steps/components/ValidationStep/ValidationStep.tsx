@@ -12,8 +12,9 @@ import { type SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetC
 import { SpreadsheetColumnType } from '@/spreadsheet-import/types/SpreadsheetColumnType';
 import { addErrorsAndRunHooks } from '@/spreadsheet-import/utils/dataMutations';
 import { useDialogManager } from '@/ui/feedback/dialog-manager/hooks/useDialogManager';
-import { Modal } from '@/ui/layout/modal/components/Modal';
-import styled from '@emotion/styled';
+import { ModalContent } from 'twenty-ui/layout';
+import { styled } from '@linaria/react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { Trans, useLingui } from '@lingui/react/macro';
 import {
   type Dispatch,
@@ -30,31 +31,35 @@ import { Button, Toggle } from 'twenty-ui/input';
 import { generateColumns } from './components/columns';
 import { type ImportedStructuredRowMetadata } from './types';
 
-const StyledContent = styled(Modal.Content)`
-  padding: 0px;
+const StyledContentWrapper = styled.div`
+  display: flex;
+  flex: 1 1 0%;
+  flex-direction: column;
   position: relative;
 `;
 
 const StyledToolbar = styled.div`
   align-items: center;
-  border-radius: ${({ theme }) => theme.border.radius.md};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  background-color: ${({ theme }) => theme.background.secondary};
-  bottom: ${({ theme }) => theme.spacing(3)};
+  background-color: ${themeCssVariables.background.secondary};
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  border-radius: ${themeCssVariables.border.radius.md};
+  bottom: ${themeCssVariables.spacing[3]};
+  box-shadow: ${themeCssVariables.boxShadow.strong};
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   left: 50%;
+  padding: ${themeCssVariables.spacing[3]};
   position: absolute;
   transform: translateX(-50%);
   width: 400px;
-  padding: ${({ theme }) => theme.spacing(3)};
   z-index: 1;
-  box-shadow: ${({ theme }) => theme.boxShadow.strong};
 `;
 
-const StyledButton = styled(Button)`
-  height: 24px;
+const StyledButtonContainer = styled.div`
+  > button {
+    height: 24px;
+  }
 `;
 
 const StyledErrorToggle = styled.div`
@@ -64,10 +69,10 @@ const StyledErrorToggle = styled.div`
 `;
 
 const StyledErrorToggleDescription = styled.span`
-  color: ${({ theme }) => theme.font.color.secondary};
-  font-size: ${({ theme }) => theme.font.size.md};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
-  margin-left: ${({ theme }) => theme.spacing(2)};
+  color: ${themeCssVariables.font.color.secondary};
+  font-size: ${themeCssVariables.font.size.md};
+  font-weight: ${themeCssVariables.font.weight.regular};
+  margin-left: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledScrollContainer = styled.div`
@@ -82,11 +87,11 @@ const StyledNoRowsContainer = styled.div`
   display: flex;
   grid-column: 1/-1;
   justify-content: center;
-  margin-top: ${({ theme }) => theme.spacing(8)};
+  margin-top: ${themeCssVariables.spacing[8]};
 `;
 
 const StyledNoRowsWithErrorsContainer = styled.div`
-  color: ${({ theme }) => theme.font.color.tertiary};
+  color: ${themeCssVariables.font.color.tertiary};
   display: flex;
   justify-content: center;
   margin: auto 0;
@@ -122,7 +127,7 @@ export const ValidationStep = ({
   >(
     useMemo(
       () => addErrorsAndRunHooks(initialData, fields, rowHook, tableHook),
-      // eslint-disable-next-line react-hooks/exhaustive-deps
+      // oxlint-disable-next-line react-hooks/exhaustive-deps
       [],
     ),
   );
@@ -201,9 +206,11 @@ export const ValidationStep = ({
     if (filterByErrors) {
       return data.filter((value) => {
         if (isDefined(value?.__errors)) {
-          return Object.values(value.__errors)?.filter(
-            (err) => err.level === 'error',
-          ).length;
+          return (
+            (Object.values(value.__errors)?.filter(
+              (err) => err.level === 'error',
+            ).length ?? 0) > 0
+          );
         }
         return false;
       });
@@ -281,53 +288,57 @@ export const ValidationStep = ({
 
   return (
     <>
-      <StyledContent>
-        {filterByErrors && tableData.length === 0 ? (
-          <StyledNoRowsWithErrorsContainer>
-            <Trans>No rows with errors</Trans>
-          </StyledNoRowsWithErrorsContainer>
-        ) : (
-          <StyledScrollContainer>
-            <SpreadsheetImportTable
-              headerRowHeight={32}
-              rowKeyGetter={rowKeyGetter}
-              rows={tableData}
-              onRowsChange={updateRow}
-              columns={columns}
-              selectedRows={selectedRows}
-              onSelectedRowsChange={setSelectedRows as any} // TODO: replace 'any'
-              components={{
-                noRowsFallback: (
-                  <StyledNoRowsContainer>
-                    {filterByErrors
-                      ? t`No data containing errors`
-                      : t`No data found`}
-                  </StyledNoRowsContainer>
-                ),
-              }}
-            />
-          </StyledScrollContainer>
-        )}
-        <StyledToolbar>
-          <StyledErrorToggle>
-            <Toggle
-              value={filterByErrors}
-              onChange={() => setFilterByErrors(!filterByErrors)}
-              toggleSize="small"
-            />
-            <StyledErrorToggleDescription>
-              <Trans>Show only rows with errors</Trans>
-            </StyledErrorToggleDescription>
-          </StyledErrorToggle>
-          <StyledButton
-            Icon={IconTrash}
-            title={t`Remove`}
-            accent="default"
-            onClick={deleteSelectedRows}
-            disabled={selectedRows.size === 0}
-          />
-        </StyledToolbar>
-      </StyledContent>
+      <ModalContent noPadding>
+        <StyledContentWrapper>
+          {filterByErrors && tableData.length === 0 ? (
+            <StyledNoRowsWithErrorsContainer>
+              <Trans>No rows with errors</Trans>
+            </StyledNoRowsWithErrorsContainer>
+          ) : (
+            <StyledScrollContainer>
+              <SpreadsheetImportTable
+                headerRowHeight={32}
+                rowKeyGetter={rowKeyGetter}
+                rows={tableData}
+                onRowsChange={updateRow}
+                columns={columns}
+                selectedRows={selectedRows}
+                onSelectedRowsChange={setSelectedRows as any} // TODO: replace 'any'
+                components={{
+                  noRowsFallback: (
+                    <StyledNoRowsContainer>
+                      {filterByErrors
+                        ? t`No data containing errors`
+                        : t`No data found`}
+                    </StyledNoRowsContainer>
+                  ),
+                }}
+              />
+            </StyledScrollContainer>
+          )}
+          <StyledToolbar>
+            <StyledErrorToggle>
+              <Toggle
+                value={filterByErrors}
+                onChange={() => setFilterByErrors(!filterByErrors)}
+                toggleSize="small"
+              />
+              <StyledErrorToggleDescription>
+                <Trans>Show only rows with errors</Trans>
+              </StyledErrorToggleDescription>
+            </StyledErrorToggle>
+            <StyledButtonContainer>
+              <Button
+                Icon={IconTrash}
+                title={t`Remove`}
+                accent="default"
+                onClick={deleteSelectedRows}
+                disabled={selectedRows.size === 0}
+              />
+            </StyledButtonContainer>
+          </StyledToolbar>
+        </StyledContentWrapper>
+      </ModalContent>
       <StepNavigationButton
         onContinue={onContinue}
         onBack={onBack}

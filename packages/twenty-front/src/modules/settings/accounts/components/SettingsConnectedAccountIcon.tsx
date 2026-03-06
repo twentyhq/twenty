@@ -1,5 +1,4 @@
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
-import { useTheme } from '@emotion/react';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -12,11 +11,13 @@ import {
   IconMicrosoft,
   IconSend,
 } from 'twenty-ui/display';
+import { useContext } from 'react';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 const ImapSmtpCaldavIcon = (
   props: IconComponentProps & { account: ConnectedAccount },
 ) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const { account } = props;
 
   const hasImap = isDefined(account.connectionParameters?.IMAP);

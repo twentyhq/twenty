@@ -7,10 +7,10 @@ import { getObjectMetadataForNavigationMenuItem } from '@/navigation-menu-item/u
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/utils/isNavigationMenuItemFolder';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
 import { isDefined } from 'twenty-shared/utils';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 
 import { useNavigationMenuItemsByFolder } from './useNavigationMenuItemsByFolder';
 import { usePrefetchedNavigationMenuItemsData } from './usePrefetchedNavigationMenuItemsData';
@@ -34,8 +34,8 @@ export const useWorkspaceSectionItems = (): FlatWorkspaceItem[] => {
   const { workspaceNavigationMenuItemsSorted } = useSortedNavigationMenuItems();
   const { workspaceNavigationMenuItemsByFolder } =
     useNavigationMenuItemsByFolder();
-  const coreViews = useRecoilValueV2(coreViewsState);
-  const objectMetadataItems = useRecoilValueV2(objectMetadataItemsState);
+  const coreViews = useAtomStateValue(coreViewsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
 
   const views = coreViews.map(convertCoreViewToView);
 

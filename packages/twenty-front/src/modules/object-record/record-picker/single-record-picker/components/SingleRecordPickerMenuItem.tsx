@@ -1,5 +1,3 @@
-import styled from '@emotion/styled';
-
 import { getAvatarType } from '@/object-metadata/utils/getAvatarType';
 import { searchRecordStoreFamilyState } from '@/object-record/record-picker/multiple-record-picker/states/searchRecordStoreComponentFamilyState';
 import { SingleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/single-record-picker/states/contexts/SingleRecordPickerComponentInstanceContext';
@@ -9,9 +7,9 @@ import { type RecordPickerPickableMorphItem } from '@/object-record/record-picke
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyValueV2';
-import { useRecoilValue } from 'recoil';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/display';
 import { MenuItemSelectAvatar } from 'twenty-ui/navigation';
@@ -21,10 +19,6 @@ type SingleRecordPickerMenuItemProps = {
   onMorphItemSelected: (morphItem?: RecordPickerPickableMorphItem) => void;
   isRecordSelected: boolean;
 };
-
-const StyledSelectableItem = styled(SelectableListItem)`
-  width: 100%;
-`;
 
 export const SingleRecordPickerMenuItem = ({
   morphItem,
@@ -39,29 +33,32 @@ export const SingleRecordPickerMenuItem = ({
   const selectableListComponentInstanceId =
     getSingleRecordPickerSelectableListId(recordPickerComponentInstanceId);
 
-  const isSelectedByKeyboard = useRecoilComponentFamilyValueV2(
+  const isSelectedItemId = useAtomComponentFamilyStateValue(
     isSelectedItemIdComponentFamilyState,
     morphItem.recordId,
     selectableListComponentInstanceId,
   );
 
-  const searchRecord = useRecoilValue(
-    searchRecordStoreFamilyState(morphItem.recordId),
+  const searchRecordStore = useAtomFamilyStateValue(
+    searchRecordStoreFamilyState,
+    morphItem.recordId,
   );
 
-  const searchableObjectMetadataItems = useRecoilComponentValue(
-    singleRecordPickerSearchableObjectMetadataItemsComponentState,
-    recordPickerComponentInstanceId,
-  );
+  const singleRecordPickerSearchableObjectMetadataItems =
+    useAtomComponentStateValue(
+      singleRecordPickerSearchableObjectMetadataItemsComponentState,
+      recordPickerComponentInstanceId,
+    );
 
-  if (!isDefined(searchRecord)) {
+  if (!isDefined(searchRecordStore)) {
     return null;
   }
 
-  const showObjectName = searchableObjectMetadataItems.length > 1;
+  const showObjectName =
+    singleRecordPickerSearchableObjectMetadataItems.length > 1;
 
   return (
-    <StyledSelectableItem
+    <SelectableListItem
       itemId={morphItem.recordId}
       key={morphItem.recordId}
       onEnter={() => {
@@ -71,24 +68,26 @@ export const SingleRecordPickerMenuItem = ({
       <MenuItemSelectAvatar
         testId="menu-item"
         onClick={() => onMorphItemSelected(morphItem)}
-        text={searchRecord.label}
+        text={searchRecordStore.label}
         selected={isRecordSelected}
-        focused={isSelectedByKeyboard}
+        focused={isSelectedItemId}
         avatar={
           <Avatar
-            avatarUrl={searchRecord.imageUrl}
+            avatarUrl={searchRecordStore.imageUrl}
             placeholderColorSeed={morphItem.recordId}
-            placeholder={searchRecord.label}
+            placeholder={searchRecordStore.label}
             size="md"
-            type={getAvatarType(searchRecord.objectNameSingular) ?? 'rounded'}
+            type={
+              getAvatarType(searchRecordStore.objectNameSingular) ?? 'rounded'
+            }
           />
         }
         contextualText={
           showObjectName
-            ? capitalize(searchRecord.objectLabelSingular)
+            ? capitalize(searchRecordStore.objectLabelSingular)
             : undefined
         }
       />
-    </StyledSelectableItem>
+    </SelectableListItem>
   );
 };

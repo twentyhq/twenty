@@ -1,19 +1,17 @@
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getImageIdentifierFieldMetadataItem } from '@/object-metadata/utils/getImageIdentifierFieldMetadataItem';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { hasObjectMetadataItemPositionField } from '@/object-metadata/utils/hasObjectMetadataItemPositionField';
 import { generateActivityTargetGqlFields } from '@/object-record/graphql/record-gql-fields/utils/generateActivityTargetGqlFields';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 
 import { generateDepthRecordGqlFieldsFromFields } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromFields';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { filterDuplicatesById, isDefined } from 'twenty-shared/utils';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 type UseRecordsUsefulGqlFields = {
   objectMetadataItem: ObjectMetadataItem;
@@ -36,10 +34,6 @@ export const useRecordsUsefulGqlFields = ({
     useRecordIndexContextOrThrow();
 
   const { objectMetadataItems } = useObjectMetadataItems();
-
-  const isFilesFieldMigrated = useIsFeatureEnabled(
-    FeatureFlagKey.IS_FILES_FIELD_MIGRATED,
-  );
 
   const visibleRecordFieldMetadataItems = visibleRecordFields
     .map(
@@ -65,15 +59,12 @@ export const useRecordsUsefulGqlFields = ({
     objectMetadataItems,
     fields: fieldMetadataItemsToUse,
     depth: 1,
-    isFilesFieldMigrated,
   });
 
   const labelIdentifierFieldMetadataItem =
     getLabelIdentifierFieldMetadataItem(objectMetadataItem);
-  const imageIdentifierFieldMetadataItem = getImageIdentifierFieldMetadataItem(
-    objectMetadataItem,
-    isFilesFieldMigrated,
-  );
+  const imageIdentifierFieldMetadataItem =
+    getImageIdentifierFieldMetadataItem(objectMetadataItem);
 
   const hasPosition = hasObjectMetadataItemPositionField(objectMetadataItem);
 

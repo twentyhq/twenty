@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 export const StyledSSOButtonContainer = styled.div`
   position: relative;

@@ -160,7 +160,7 @@ export enum PageHotkeyScope {
 }
 ```
 
-내부적으로, 현재 선택한 스코프는 애플리케이션 전반에 걸쳐 공유되는 Recoil 상태에 저장됩니다:
+내부적으로, 현재 선택한 스코프는 애플리케이션 전반에 걸쳐 공유되는 Jotai 상태에 저장됩니다:
 
 ```tsx
 export const currentHotkeyScopeState = createState<HotkeyScope>({
@@ -169,10 +169,10 @@ export const currentHotkeyScopeState = createState<HotkeyScope>({
 });
 ```
 
-하지만 이 Recoil 상태는 수동으로 처리해서는 안 됩니다! 다음 섹션에서 사용하는 방법을 배웁니다.
+하지만 이 Jotai 상태는 수동으로 처리해서는 안 됩니다! 다음 섹션에서 사용하는 방법을 배웁니다.
 
 ## 내부적으로 어떻게 작동합니까?
 
 [react-hotkeys-hook](https://react-hotkeys-hook.vercel.app/docs/intro) 위에 얇은 래퍼를 만들어 성능을 높이고 불필요한 재랜더링을 방지합니다.
 
-또한 핫키 스코프 상태를 처리하고 애플리케이션 전반에서 사용할 수 있도록 한 Recoil 상태를 만듭니다.
+또한 핫키 스코프 상태를 처리하고 애플리케이션 전반에서 사용할 수 있도록 한 Jotai 상태를 만듭니다.

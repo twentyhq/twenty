@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { ConnectedAccountProvider } from 'twenty-shared/types';
+import { ConnectedAccountProvider, FeatureFlagKey } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
 import {
@@ -13,7 +13,6 @@ import { CreateMessageChannelService } from 'src/engine/core-modules/auth/servic
 import { GoogleAPIScopesService } from 'src/engine/core-modules/auth/services/google-apis-scopes';
 import { GoogleApisServiceAvailabilityService } from 'src/engine/core-modules/auth/services/google-apis-service-availability.service';
 import { UpdateConnectedAccountOnReconnectService } from 'src/engine/core-modules/auth/services/update-connected-account-on-reconnect.service';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -117,6 +116,13 @@ export class GoogleAPIsService {
       await this.googleApisServiceAvailabilityService.checkServicesAvailability(
         input.accessToken,
       );
+
+    if (!isMessagingAvailable && !isCalendarAvailable) {
+      throw new AuthException(
+        'Unable to connect: Your Google account does not have access to Gmail or Calendar. Please contact your workspace administrator.',
+        AuthExceptionCode.INSUFFICIENT_SCOPES,
+      );
+    }
 
     const authContext = buildSystemAuthContext(workspaceId);
 

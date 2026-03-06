@@ -1,11 +1,12 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
-import { type ReactNode } from 'react';
+import { type ReactNode, useContext } from 'react';
 import { t } from '@lingui/core/macro';
 import { Card, CardContent } from 'twenty-ui/layout';
 import { IconChevronRight } from 'twenty-ui/display';
 import { Pill } from 'twenty-ui/components';
+import { isDefined } from 'twenty-shared/utils';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type SettingsCardProps = {
   description?: string;
@@ -18,52 +19,64 @@ type SettingsCardProps = {
   Status?: ReactNode;
 };
 
-const StyledCard = styled(Card)<{
+const StyledCardWrapper = styled.div<{
   disabled?: boolean;
-  onClick?: () => void;
+  clickable?: boolean;
 }>`
-  color: ${({ disabled, theme }) =>
-    disabled ? theme.font.color.extraLight : theme.font.color.tertiary};
-  cursor: ${({ disabled, onClick }) =>
-    disabled ? 'not-allowed' : onClick ? 'pointer' : 'default'};
+  color: ${({ disabled }) =>
+    disabled
+      ? themeCssVariables.font.color.extraLight
+      : themeCssVariables.font.color.tertiary};
+  cursor: ${({ disabled, clickable }) =>
+    disabled ? 'not-allowed' : clickable ? 'pointer' : 'default'};
   width: 100%;
+
+  > * {
+    color: inherit;
+  }
 `;
 
-const StyledCardContent = styled(CardContent)<object>`
-  display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(2)};
-  padding: ${({ theme }) => theme.spacing(2, 2)};
+const StyledCardContentContainer = styled.div`
+  > * {
+    display: flex;
+    flex-direction: column;
+    gap: ${themeCssVariables.spacing[2]};
+    padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[2]};
 
-  &:hover {
-    background-color: ${({ theme }) => theme.background.quaternary};
-    cursor: pointer;
+    &:hover {
+      background-color: ${themeCssVariables.background.quaternary};
+      cursor: pointer;
+    }
   }
 `;
 
 const StyledHeader = styled.div`
   align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledTitle = styled.div<{ disabled?: boolean }>`
-  color: ${({ disabled, theme }) =>
-    disabled ? 'inherit' : theme.font.color.secondary};
+  color: ${({ disabled }) =>
+    disabled
+      ? themeCssVariables.font.color.extraLight
+      : themeCssVariables.font.color.secondary};
   display: flex;
   flex: 1 0 auto;
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  gap: ${({ theme }) => theme.spacing(2)};
+  font-weight: ${themeCssVariables.font.weight.medium};
+  gap: ${themeCssVariables.spacing[2]};
   justify-content: flex-start;
 `;
 
-const StyledIconChevronRight = styled(IconChevronRight)`
-  color: ${({ theme }) => theme.font.color.light};
+const StyledIconChevronRightContainer = styled.span`
+  align-items: center;
+  color: ${themeCssVariables.font.color.light};
+  display: flex;
 `;
 
 const StyledDescription = styled.div`
-  padding-bottom: ${({ theme }) => theme.spacing(2)};
-  padding-left: ${({ theme }) => theme.spacing(7)};
+  padding-bottom: ${themeCssVariables.spacing[2]};
+  padding-left: ${themeCssVariables.spacing[7]};
 `;
 
 const StyledIconContainer = styled.div`
@@ -84,27 +97,34 @@ export const SettingsCard = ({
   className,
   Status,
 }: SettingsCardProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   return (
-    <StyledCard
+    <StyledCardWrapper
       disabled={disabled}
-      onClick={disabled ? undefined : onClick}
+      clickable={!!onClick}
       className={className}
-      rounded={true}
     >
-      <StyledCardContent>
-        <StyledHeader>
-          <StyledIconContainer>{Icon}</StyledIconContainer>
-          <StyledTitle disabled={disabled}>
-            {title}
-            {soon && <Pill label={t`Soon`} />}
-          </StyledTitle>
-          {Status && Status}
-          <StyledIconChevronRight size={theme.icon.size.sm} />
-        </StyledHeader>
-        {description && <StyledDescription>{description}</StyledDescription>}
-      </StyledCardContent>
-    </StyledCard>
+      <Card onClick={disabled ? undefined : onClick} rounded={true} fullWidth>
+        <StyledCardContentContainer>
+          <CardContent>
+            <StyledHeader>
+              <StyledIconContainer>{Icon}</StyledIconContainer>
+              <StyledTitle disabled={disabled}>
+                {title}
+                {soon && <Pill label={t`Soon`} />}
+              </StyledTitle>
+              {isDefined(Status) && Status}
+              <StyledIconChevronRightContainer>
+                <IconChevronRight size={theme.icon.size.sm} />
+              </StyledIconChevronRightContainer>
+            </StyledHeader>
+            {description && (
+              <StyledDescription>{description}</StyledDescription>
+            )}
+          </CardContent>
+        </StyledCardContentContainer>
+      </Card>
+    </StyledCardWrapper>
   );
 };

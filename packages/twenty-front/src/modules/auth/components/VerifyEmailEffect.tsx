@@ -8,16 +8,16 @@ import { useVerifyLogin } from '@/auth/hooks/useVerifyLogin';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
 import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
-import { Modal } from '@/ui/layout/modal/components/Modal';
+import { ModalContent } from 'twenty-ui/layout';
 import { useLingui } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { EmailVerificationSent } from '@/auth/sign-in-up/components/EmailVerificationSent';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 export const VerifyEmailEffect = () => {
   const {
@@ -30,7 +30,7 @@ export const VerifyEmailEffect = () => {
   const [searchParams] = useSearchParams();
   const [isError, setIsError] = useState(false);
 
-  const setVerifyEmailRedirectPath = useSetRecoilStateV2(
+  const setVerifyEmailRedirectPath = useSetAtomState(
     verifyEmailRedirectPathState,
   );
 
@@ -42,7 +42,7 @@ export const VerifyEmailEffect = () => {
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
   const { verifyLoginToken } = useVerifyLogin();
   const { isOnAWorkspace } = useIsCurrentLocationOnAWorkspace();
-  const clientConfigApiStatus = useRecoilValueV2(clientConfigApiStatusState);
+  const clientConfigApiStatus = useAtomStateValue(clientConfigApiStatusState);
 
   const { t } = useLingui();
   useEffect(() => {
@@ -121,14 +121,14 @@ export const VerifyEmailEffect = () => {
     verifyEmailToken();
 
     // Verify email only needs to run once at mount
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [clientConfigApiStatus.isLoadedOnce]);
 
   if (isError) {
     return (
-      <Modal.Content isVerticalCentered isHorizontalCentered>
+      <ModalContent isVerticallyCentered isHorizontallyCentered>
         <EmailVerificationSent email={email} isError={true} />
-      </Modal.Content>
+      </ModalContent>
     );
   }
 

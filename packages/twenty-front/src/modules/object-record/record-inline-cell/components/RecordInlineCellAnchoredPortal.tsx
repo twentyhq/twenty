@@ -14,7 +14,7 @@ import { FieldFocusContextProvider } from '@/object-record/record-field/ui/conte
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { isJunctionRelationForbidden } from '@/object-record/record-field/ui/utils/junction/isJunctionRelationForbidden';
 import { RecordInlineCellAnchoredPortalContext } from '@/object-record/record-inline-cell/components/RecordInlineCellAnchoredPortalContext';
-import { RecordInlineCellCloseOnCommandMenuOpeningEffect } from '@/object-record/record-inline-cell/components/RecordInlineCellCloseOnCommandMenuOpeningEffect';
+import { RecordInlineCellCloseOnSidePanelOpeningEffect } from '@/object-record/record-inline-cell/components/RecordInlineCellCloseOnSidePanelOpeningEffect';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { createPortal } from 'react-dom';
 import { isDefined } from 'twenty-shared/utils';
@@ -23,6 +23,7 @@ type RecordInlineCellAnchoredPortalProps = {
   fieldMetadataItem: Pick<
     FieldMetadataItem,
     | 'id'
+    | 'universalIdentifier'
     | 'name'
     | 'type'
     | 'createdAt'
@@ -122,7 +123,7 @@ export const RecordInlineCellAnchoredPortal = ({
               <RecordInlineCellAnchoredPortalContext>
                 {children}
 
-                <RecordInlineCellCloseOnCommandMenuOpeningEffect />
+                <RecordInlineCellCloseOnSidePanelOpeningEffect />
               </RecordInlineCellAnchoredPortalContext>
             </RecordFieldComponentInstanceContext.Provider>,
             anchorElement,

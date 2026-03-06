@@ -1,8 +1,9 @@
 import { EXECUTE_ONE_LOGIC_FUNCTION } from '@/logic-functions/graphql/mutations/executeOneLogicFunction';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { logicFunctionTestDataFamilyState } from '@/workflow/workflow-steps/workflow-actions/code-action/states/logicFunctionTestDataFamilyState';
 import { useMutation } from '@apollo/client';
 import { useState } from 'react';
-import { useRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { LogicFunctionExecutionStatus } from '~/generated-metadata/graphql';
 import { sleep } from '~/utils/sleep';
@@ -37,9 +38,22 @@ export const useExecuteLogicFunction = ({
     { input: ExecuteOneLogicFunctionInput }
   >(EXECUTE_ONE_LOGIC_FUNCTION);
 
-  const [logicFunctionTestData, setLogicFunctionTestData] = useRecoilState(
-    logicFunctionTestDataFamilyState(logicFunctionId),
+  const logicFunctionTestData = useAtomFamilyStateValue(
+    logicFunctionTestDataFamilyState,
+    logicFunctionId,
   );
+
+  const setLogicFunctionTestData = useSetAtomFamilyState(
+    logicFunctionTestDataFamilyState,
+    logicFunctionId,
+  );
+
+  const updateLogicFunctionInput = (input: object) => {
+    setLogicFunctionTestData((prev) => ({
+      ...prev,
+      input,
+    }));
+  };
 
   const executeLogicFunction = async () => {
     if (isExecuting) {
@@ -69,7 +83,6 @@ export const useExecuteLogicFunction = ({
       setLogicFunctionTestData((prev) => ({
         ...prev,
         language: 'json',
-        height: 300,
         output: {
           data: executionResult?.data
             ? JSON.stringify(executionResult.data, null, 4)
@@ -89,5 +102,10 @@ export const useExecuteLogicFunction = ({
     }
   };
 
-  return { executeLogicFunction, isExecuting };
+  return {
+    executeLogicFunction,
+    updateLogicFunctionInput,
+    logicFunctionTestData,
+    isExecuting,
+  };
 };

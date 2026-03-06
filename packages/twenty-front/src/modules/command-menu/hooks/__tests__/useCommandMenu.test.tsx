@@ -1,44 +1,35 @@
 import { renderHook } from '@testing-library/react';
+import { Provider as JotaiProvider } from 'jotai';
 import { act } from 'react';
 import { MemoryRouter } from 'react-router-dom';
-import { RecoilRoot, useRecoilValue } from 'recoil';
 
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
-import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageInfoState';
-import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
-import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
-import { CommandMenuPages } from 'twenty-shared/types';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
+import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
+import { sidePanelPageInfoState } from '@/side-panel/states/sidePanelPageInfoState';
+import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
+import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { SidePanelPages } from 'twenty-shared/types';
 import { IconDotsVertical } from 'twenty-ui/display';
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
-  <RecoilRoot>
+  <JotaiProvider store={jotaiStore}>
     <MemoryRouter
       initialEntries={['/one', '/two', { pathname: '/three' }]}
       initialIndex={1}
     >
       {children}
     </MemoryRouter>
-  </RecoilRoot>
+  </JotaiProvider>
 );
 
 const renderHooks = () => {
   const { result } = renderHook(
     () => {
-      const commandMenu = useCommandMenu();
-      const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
-      const commandMenuNavigationStack = useRecoilValue(
-        commandMenuNavigationStackState,
-      );
-      const commandMenuPage = useRecoilValue(commandMenuPageState);
-      const commandMenuPageInfo = useRecoilValue(commandMenuPageInfoState);
+      const commandMenu = useSidePanelMenu();
 
       return {
         commandMenu,
-        isCommandMenuOpened,
-        commandMenuNavigationStack,
-        commandMenuPage,
-        commandMenuPageInfo,
       };
     },
     {
@@ -48,7 +39,7 @@ const renderHooks = () => {
   return { result };
 };
 
-describe('useCommandMenu', () => {
+describe('useSidePanelMenu', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -57,74 +48,78 @@ describe('useCommandMenu', () => {
     const { result } = renderHooks();
 
     act(() => {
-      result.current.commandMenu.openCommandMenu();
+      result.current.commandMenu.openSidePanelMenu();
     });
 
-    expect(result.current.isCommandMenuOpened).toBe(true);
+    expect(jotaiStore.get(isSidePanelOpenedState.atom)).toBe(true);
 
     act(() => {
-      result.current.commandMenu.closeCommandMenu();
+      result.current.commandMenu.closeSidePanelMenu();
     });
 
-    expect(result.current.isCommandMenuOpened).toBe(false);
+    expect(jotaiStore.get(isSidePanelOpenedState.atom)).toBe(false);
   });
 
   it('should toggle the command menu', () => {
     const { result } = renderHooks();
 
-    expect(result.current.isCommandMenuOpened).toBe(false);
+    expect(jotaiStore.get(isSidePanelOpenedState.atom)).toBe(false);
 
     act(() => {
-      result.current.commandMenu.toggleCommandMenu();
+      result.current.commandMenu.toggleSidePanelMenu();
     });
 
-    expect(result.current.isCommandMenuOpened).toBe(true);
+    expect(jotaiStore.get(isSidePanelOpenedState.atom)).toBe(true);
 
     act(() => {
-      result.current.commandMenu.toggleCommandMenu();
+      result.current.commandMenu.toggleSidePanelMenu();
     });
 
-    expect(result.current.isCommandMenuOpened).toBe(false);
+    expect(jotaiStore.get(isSidePanelOpenedState.atom)).toBe(false);
   });
 
   it('should navigate command menu and reset navigation stack when resetNavigationStack is true', () => {
     const { result } = renderHooks();
 
     act(() => {
-      result.current.commandMenu.navigateCommandMenu({
-        page: CommandMenuPages.Root,
+      result.current.commandMenu.navigateSidePanelMenu({
+        page: SidePanelPages.Root,
         pageTitle: 'First Page',
         pageIcon: IconDotsVertical,
         resetNavigationStack: false,
       });
     });
 
-    expect(result.current.commandMenuPage).toBe(CommandMenuPages.Root);
-    expect(result.current.commandMenuPageInfo.title).toBe('First Page');
-    expect(result.current.commandMenuNavigationStack).toHaveLength(1);
+    expect(jotaiStore.get(sidePanelPageState.atom)).toBe(SidePanelPages.Root);
+    expect(jotaiStore.get(sidePanelPageInfoState.atom).title).toBe(
+      'First Page',
+    );
+    expect(jotaiStore.get(sidePanelNavigationStackState.atom)).toHaveLength(1);
 
     act(() => {
-      result.current.commandMenu.navigateCommandMenu({
-        page: CommandMenuPages.SearchRecords,
+      result.current.commandMenu.navigateSidePanelMenu({
+        page: SidePanelPages.SearchRecords,
         pageTitle: 'Second Page',
         pageIcon: IconDotsVertical,
         resetNavigationStack: false,
       });
     });
 
-    expect(result.current.commandMenuNavigationStack).toHaveLength(2);
+    expect(jotaiStore.get(sidePanelNavigationStackState.atom)).toHaveLength(2);
 
     act(() => {
-      result.current.commandMenu.navigateCommandMenu({
-        page: CommandMenuPages.Root,
+      result.current.commandMenu.navigateSidePanelMenu({
+        page: SidePanelPages.Root,
         pageTitle: 'Reset Page',
         pageIcon: IconDotsVertical,
         resetNavigationStack: true,
       });
     });
 
-    expect(result.current.commandMenuPage).toBe(CommandMenuPages.Root);
-    expect(result.current.commandMenuPageInfo.title).toBe('Reset Page');
-    expect(result.current.commandMenuNavigationStack).toHaveLength(1);
+    expect(jotaiStore.get(sidePanelPageState.atom)).toBe(SidePanelPages.Root);
+    expect(jotaiStore.get(sidePanelPageInfoState.atom).title).toBe(
+      'Reset Page',
+    );
+    expect(jotaiStore.get(sidePanelNavigationStackState.atom)).toHaveLength(1);
   });
 });

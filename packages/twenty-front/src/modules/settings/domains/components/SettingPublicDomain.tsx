@@ -8,7 +8,7 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { Button, ButtonGroup } from 'twenty-ui/input';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { SettingsDomainRecords } from '@/settings/domains/components/SettingsDomainRecords';
 import { useCheckPublicDomainValidRecords } from '@/settings/domains/hooks/useCheckPublicDomainValidRecords';
 import {
@@ -19,36 +19,37 @@ import {
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { CheckPublicDomainValidRecordsEffect } from '@/settings/domains/components/CheckPublicDomainValidRecordsEffect';
 import { selectedPublicDomainState } from '@/settings/domains/states/selectedPublicDomainState';
-import { useRecoilState } from 'recoil';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useState } from 'react';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { getDomainValidationSchema } from '@/settings/domains/utils/get-domain-validation-schema';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledButtonGroup = styled(ButtonGroup)`
-  & > :not(:first-of-type) > button {
+const StyledButtonGroupContainer = styled.div`
+  > * > :not(:first-of-type) > button {
     border-left: none;
   }
 `;
 
-const StyledButton = styled(Button)`
+const StyledButtonContainer = styled.div`
   align-self: flex-start;
 `;
 
 const StyledDomainFormWrapper = styled.div`
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledRecordsWrapper = styled.div`
-  margin-top: ${({ theme }) => theme.spacing(2)};
+  margin-top: ${themeCssVariables.spacing[2]};
 
   & > :not(:first-of-type) {
-    margin-top: ${({ theme }) => theme.spacing(4)};
+    margin-top: ${themeCssVariables.spacing[4]};
   }
 `;
 
 export const SettingPublicDomain = () => {
-  const [selectedPublicDomain, setSelectedPublicDomain] = useRecoilState(
+  const [selectedPublicDomain, setSelectedPublicDomain] = useAtomState(
     selectedPublicDomainState,
   );
   const { t } = useLingui();
@@ -170,28 +171,34 @@ export const SettingPublicDomain = () => {
               fullWidth
             />
             {isDefined(selectedPublicDomain) && (
-              <StyledButtonGroup>
-                <StyledButton
-                  isLoading={isLoading}
-                  Icon={IconReload}
-                  title={t`Reload`}
-                  variant="primary"
-                  onClick={() =>
-                    checkPublicDomainRecords(selectedPublicDomain.domain)
-                  }
-                  type="button"
-                />
-                <StyledButton
-                  Icon={IconTrash}
-                  variant="primary"
-                  onClick={onDelete}
-                />
-              </StyledButtonGroup>
+              <StyledButtonGroupContainer>
+                <ButtonGroup>
+                  <StyledButtonContainer>
+                    <Button
+                      isLoading={isLoading}
+                      Icon={IconReload}
+                      title={t`Reload`}
+                      variant="primary"
+                      onClick={() =>
+                        checkPublicDomainRecords(selectedPublicDomain.domain)
+                      }
+                      type="button"
+                    />
+                  </StyledButtonContainer>
+                  <StyledButtonContainer>
+                    <Button
+                      Icon={IconTrash}
+                      variant="primary"
+                      onClick={onDelete}
+                    />
+                  </StyledButtonContainer>
+                </ButtonGroup>
+              </StyledButtonGroupContainer>
             )}
           </StyledDomainFormWrapper>
           {isDefined(selectedPublicDomain) && publicDomainRecords?.domain && (
             <StyledRecordsWrapper>
-              {publicDomainRecords.records && (
+              {isDefined(publicDomainRecords.records) && (
                 <SettingsDomainRecords records={publicDomainRecords.records} />
               )}
             </StyledRecordsWrapper>

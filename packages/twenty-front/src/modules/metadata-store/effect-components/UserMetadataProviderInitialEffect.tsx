@@ -9,76 +9,62 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadedState';
 import { useInitializeFormatPreferences } from '@/localization/hooks/useInitializeFormatPreferences';
 import { getDateFnsLocale } from '@/ui/field/display/utils/getDateFnsLocale.util';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { type ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 import { enUS } from 'date-fns/locale';
 import { useStore } from 'jotai';
-import { useEffect, useState } from 'react';
-import { useRecoilCallback } from 'recoil';
-import { useLocation } from 'react-router-dom';
+import { useCallback, useEffect, useState } from 'react';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
-import { AppPath, type ObjectPermissions } from 'twenty-shared/types';
+import { type ObjectPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   useGetCurrentUserQuery,
   type WorkspaceMember,
 } from '~/generated-metadata/graphql';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
-import { dateLocaleStateV2 } from '~/localization/states/dateLocaleStateV2';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
-import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
 export const UserMetadataProviderInitialEffect = () => {
-  const location = useLocation();
   const isLoggedIn = useIsLogged();
-  const currentUser = useRecoilValueV2(currentUserState);
+  const currentUser = useAtomStateValue(currentUserState);
   const store = useStore();
   const [isInitialized, setIsInitialized] = useState(false);
 
-  const setCurrentUser = useSetRecoilStateV2(currentUserState);
-  const setCurrentWorkspace = useSetRecoilStateV2(currentWorkspaceState);
-  const setCurrentUserWorkspace = useSetRecoilStateV2(
-    currentUserWorkspaceState,
-  );
-  const setAvailableWorkspaces = useSetRecoilStateV2(availableWorkspacesState);
-  const setCurrentWorkspaceMember = useSetRecoilStateV2(
+  const setCurrentUser = useSetAtomState(currentUserState);
+  const setCurrentWorkspace = useSetAtomState(currentWorkspaceState);
+  const setCurrentUserWorkspace = useSetAtomState(currentUserWorkspaceState);
+  const setAvailableWorkspaces = useSetAtomState(availableWorkspacesState);
+  const setCurrentWorkspaceMember = useSetAtomState(
     currentWorkspaceMemberState,
   );
-  const setCurrentWorkspaceMembers = useSetRecoilStateV2(
+  const setCurrentWorkspaceMembers = useSetAtomState(
     currentWorkspaceMembersState,
   );
-  const setCurrentWorkspaceMembersWithDeleted = useSetRecoilStateV2(
+  const setCurrentWorkspaceDeletedMembers = useSetAtomState(
     currentWorkspaceDeletedMembersState,
   );
-  const setIsCurrentUserLoaded = useSetRecoilStateV2(isCurrentUserLoadedState);
+  const setIsCurrentUserLoaded = useSetAtomState(isCurrentUserLoadedState);
 
   const { initializeFormatPreferences } = useInitializeFormatPreferences();
 
-  const isOnAuthPath =
-    isMatchingLocation(location, AppPath.Verify) ||
-    isMatchingLocation(location, AppPath.VerifyEmail);
-
-  const updateLocaleCatalog = useRecoilCallback(
-    ({ snapshot, set }) =>
-      async (newLocale: keyof typeof APP_LOCALES) => {
-        const localeValue = snapshot.getLoadable(dateLocaleState).getValue();
-        if (localeValue.locale !== newLocale) {
-          getDateFnsLocale(newLocale).then((localeCatalog) => {
-            const newValue = {
-              locale: newLocale,
-              localeCatalog: localeCatalog || enUS,
-            };
-            set(dateLocaleState, newValue);
-            store.set(dateLocaleStateV2.atom, newValue);
-          });
-        }
-      },
+  const updateLocaleCatalog = useCallback(
+    async (newLocale: keyof typeof APP_LOCALES) => {
+      const localeValue = store.get(dateLocaleState.atom);
+      if (localeValue.locale !== newLocale) {
+        getDateFnsLocale(newLocale).then((localeCatalog) => {
+          const newValue = {
+            locale: newLocale,
+            localeCatalog: localeCatalog || enUS,
+          };
+          store.set(dateLocaleState.atom, newValue);
+        });
+      }
+    },
     [store],
   );
 
-  const shouldSkipUserQuery =
-    !isLoggedIn || isDefined(currentUser) || isOnAuthPath;
+  const shouldSkipUserQuery = !isLoggedIn || isDefined(currentUser);
 
   const { data: userQueryData, loading: userQueryLoading } =
     useGetCurrentUserQuery({
@@ -86,7 +72,9 @@ export const UserMetadataProviderInitialEffect = () => {
     });
 
   useEffect(() => {
-    if (isInitialized) return;
+    if (isInitialized) {
+      return;
+    }
 
     if (!isLoggedIn) {
       setIsCurrentUserLoaded(true);
@@ -163,7 +151,7 @@ export const UserMetadataProviderInitialEffect = () => {
     }
 
     if (isDefined(deletedWorkspaceMembers)) {
-      setCurrentWorkspaceMembersWithDeleted(deletedWorkspaceMembers);
+      setCurrentWorkspaceDeletedMembers(deletedWorkspaceMembers);
     }
 
     if (isDefined(availableWorkspaces)) {
@@ -184,7 +172,7 @@ export const UserMetadataProviderInitialEffect = () => {
     setCurrentWorkspace,
     setCurrentWorkspaceMember,
     initializeFormatPreferences,
-    setCurrentWorkspaceMembersWithDeleted,
+    setCurrentWorkspaceDeletedMembers,
     updateLocaleCatalog,
     setIsCurrentUserLoaded,
   ]);

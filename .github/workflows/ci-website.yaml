@@ -4,9 +4,8 @@ permissions:
   contents: read
 
 on:
-  merge_group:
-
   pull_request:
+  merge_group:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -14,6 +13,7 @@ concurrency:
 
 jobs:
   changed-files-check:
+    if: github.event_name != 'merge_group'
     uses: ./.github/workflows/changed-files.yaml
     with:
       files: |
@@ -23,7 +23,7 @@ jobs:
     needs: changed-files-check
     if: needs.changed-files-check.outputs.any_changed == 'true'
     timeout-minutes: 10
-    runs-on: depot-ubuntu-24.04
+    runs-on: ubuntu-latest
     services:
       postgres:
         image: twentycrm/twenty-postgres-spilo
@@ -42,7 +42,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 10
 
       - name: Install dependencies
         uses: ./.github/actions/yarn-install
@@ -65,7 +65,7 @@ jobs:
   ci-website-status-check:
     if: always() && !cancelled()
     timeout-minutes: 5
-    runs-on: depot-ubuntu-24.04
+    runs-on: ubuntu-latest
     needs: [changed-files-check, website-build]
     steps:
       - name: Fail job if any needs failed

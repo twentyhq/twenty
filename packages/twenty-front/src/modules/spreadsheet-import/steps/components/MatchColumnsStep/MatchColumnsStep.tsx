@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useCallback, useMemo, useState } from 'react';
 
 import { StepNavigationButton } from '@/spreadsheet-import/components/StepNavigationButton';
@@ -14,7 +14,7 @@ import { setIgnoreColumn } from '@/spreadsheet-import/utils/setIgnoreColumn';
 import { setSubColumn } from '@/spreadsheet-import/utils/setSubColumn';
 import { useDialogManager } from '@/ui/feedback/dialog-manager/hooks/useDialogManager';
 
-import { Modal } from '@/ui/layout/modal/components/Modal';
+import { ModalContent } from 'twenty-ui/layout';
 
 import { DO_NOT_IMPORT_OPTION_KEY } from '@/spreadsheet-import/constants/DoNotImportOptionKey';
 import { ColumnGrid } from '@/spreadsheet-import/steps/components/MatchColumnsStep/components/ColumnGrid';
@@ -28,32 +28,28 @@ import { type SpreadsheetColumn } from '@/spreadsheet-import/types/SpreadsheetCo
 import { SpreadsheetColumnType } from '@/spreadsheet-import/types/SpreadsheetColumnType';
 import { type SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetColumns';
 import { type SpreadsheetImportField } from '@/spreadsheet-import/types/SpreadsheetImportField';
+import { useAtomFamilySelectorState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorState';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { useRecoilState } from 'recoil';
-
-const StyledContent = styled(Modal.Content)`
-  align-items: center;
-  padding: 0px;
-`;
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledColumnsContainer = styled.div`
   align-items: center;
   display: flex;
   flex-direction: column;
-  margin-bottom: ${({ theme }) => theme.spacing(4)};
+  margin-bottom: ${themeCssVariables.spacing[4]};
 `;
 
 const StyledColumns = styled.span`
-  color: ${({ theme }) => theme.font.color.primary};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
+  color: ${themeCssVariables.font.color.primary};
+  font-size: ${themeCssVariables.font.size.sm};
+  font-weight: ${themeCssVariables.font.weight.medium};
 `;
 
 const StyledColumn = styled.span`
-  color: ${({ theme }) => theme.font.color.primary};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
+  color: ${themeCssVariables.font.color.primary};
+  font-size: ${themeCssVariables.font.size.sm};
+  font-weight: ${themeCssVariables.font.weight.regular};
 `;
 
 export type MatchColumnsStepProps = {
@@ -81,8 +77,9 @@ export const MatchColumnsStep = ({
   const dataExample = data.slice(0, 2);
   const { spreadsheetImportFields: fields } = useSpreadsheetImportInternal();
   const [isLoading, setIsLoading] = useState(false);
-  const [columns, setColumns] = useRecoilState(
-    initialComputedColumnsSelector(headerValues),
+  const [columns, setColumns] = useAtomFamilySelectorState(
+    initialComputedColumnsSelector,
+    headerValues,
   );
 
   const { matchColumnsStepHook } = useSpreadsheetImportInternal();
@@ -274,7 +271,7 @@ export const MatchColumnsStep = ({
 
   return (
     <>
-      <StyledContent>
+      <ModalContent noPadding isVerticallyCentered>
         <ScrollWrapper componentInstanceId="scroll-wrapper-modal-content">
           <ColumnGrid
             columns={columns}
@@ -302,7 +299,7 @@ export const MatchColumnsStep = ({
             )}
           />
         </ScrollWrapper>
-      </StyledContent>
+      </ModalContent>
       <StepNavigationButton
         onContinue={handleOnContinue}
         isLoading={isLoading}

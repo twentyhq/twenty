@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
@@ -6,6 +6,7 @@ import { SettingsDataModelRelationFieldPreview } from '@/settings/data-model/fie
 import { SettingsDataModelObjectPreview } from '@/settings/data-model/objects/components/SettingsDataModelObjectSummary';
 import { isDefined } from 'twenty-shared/utils';
 import { Card, CardContent } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 export type SettingsDataModelRelationFieldPreviewSubWidgetProps = {
   fieldMetadataItem: Pick<
@@ -20,14 +21,19 @@ export type SettingsDataModelRelationFieldPreviewSubWidgetProps = {
   pluralizeLabel?: boolean;
 };
 
-const StyledCard = styled(Card)`
-  border-radius: ${({ theme }) => theme.border.radius.md};
-  color: ${({ theme }) => theme.font.color.primary};
+const StyledCardContainer = styled.div`
   margin: auto;
+
+  > * {
+    border-radius: ${themeCssVariables.border.radius.md};
+    color: ${themeCssVariables.font.color.primary};
+  }
 `;
 
-const StyledCardContent = styled(CardContent)`
-  padding: ${({ theme }) => theme.spacing(2)};
+const StyledCardContentContainer = styled.div`
+  > * {
+    padding: ${themeCssVariables.spacing[2]};
+  }
 `;
 
 export const SettingsDataModelRelationFieldPreviewSubWidget = ({
@@ -48,21 +54,25 @@ export const SettingsDataModelRelationFieldPreviewSubWidget = ({
     .filter(isDefined);
 
   return (
-    <StyledCard className={className} fullWidth>
-      <StyledCardContent>
-        <SettingsDataModelObjectPreview
-          objectMetadataItems={targetObjectMetadataItems}
-          pluralizeLabel={pluralizeLabel}
-        />
-        <SettingsDataModelRelationFieldPreview
-          fieldMetadataItem={fieldMetadataItem}
-          relationTargetObjectNameSingular={
-            fieldPreviewTargetObjectNameSingular
-          }
-          shrink={shrink}
-          withFieldLabel={withFieldLabel}
-        />
-      </StyledCardContent>
-    </StyledCard>
+    <StyledCardContainer className={className}>
+      <Card fullWidth>
+        <StyledCardContentContainer>
+          <CardContent>
+            <SettingsDataModelObjectPreview
+              objectMetadataItems={targetObjectMetadataItems}
+              pluralizeLabel={pluralizeLabel}
+            />
+            <SettingsDataModelRelationFieldPreview
+              fieldMetadataItem={fieldMetadataItem}
+              relationTargetObjectNameSingular={
+                fieldPreviewTargetObjectNameSingular
+              }
+              shrink={shrink}
+              withFieldLabel={withFieldLabel}
+            />
+          </CardContent>
+        </StyledCardContentContainer>
+      </Card>
+    </StyledCardContainer>
   );
 };

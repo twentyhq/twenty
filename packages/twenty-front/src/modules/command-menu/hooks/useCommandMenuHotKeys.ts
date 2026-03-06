@@ -1,56 +1,56 @@
-import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
-import { SIDE_PANEL_FOCUS_ID } from '@/command-menu/constants/SidePanelFocusId';
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { useCommandMenuHistory } from '@/command-menu/hooks/useCommandMenuHistory';
-import { useOpenAskAIPageInCommandMenu } from '@/command-menu/hooks/useOpenAskAIPageInCommandMenu';
-import { useOpenRecordsSearchPageInCommandMenu } from '@/command-menu/hooks/useOpenRecordsSearchPageInCommandMenu';
+import { SIDE_PANEL_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelComponentInstanceId';
+import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
+import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
+import { useOpenAskAIPageInSidePanel } from '@/side-panel/hooks/useOpenAskAIPageInSidePanel';
+import { useOpenRecordsSearchPageInSidePanel } from '@/side-panel/hooks/useOpenRecordsSearchPageInSidePanel';
 import { useSetGlobalCommandMenuContext } from '@/command-menu/hooks/useSetGlobalCommandMenuContext';
-import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
-import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
+import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
+import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { useKeyboardShortcutMenu } from '@/keyboard-shortcut-menu/hooks/useKeyboardShortcutMenu';
 import { useGlobalHotkeys } from '@/ui/utilities/hotkey/hooks/useGlobalHotkeys';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useRecoilValue } from 'recoil';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { Key } from 'ts-key-enum';
-import { CommandMenuPages } from 'twenty-shared/types';
+import { SidePanelPages } from 'twenty-shared/types';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const useCommandMenuHotKeys = () => {
-  const { toggleCommandMenu } = useCommandMenu();
+  const { toggleSidePanelMenu } = useSidePanelMenu();
 
-  const { openRecordsSearchPage } = useOpenRecordsSearchPageInCommandMenu();
+  const { openRecordsSearchPage } = useOpenRecordsSearchPageInSidePanel();
 
-  const { openAskAIPage } = useOpenAskAIPageInCommandMenu();
+  const { openAskAIPage } = useOpenAskAIPageInSidePanel();
 
-  const { goBackFromCommandMenu } = useCommandMenuHistory();
+  const { goBackFromSidePanel } = useSidePanelHistory();
 
   const { setGlobalCommandMenuContext } = useSetGlobalCommandMenuContext();
 
-  const commandMenuSearch = useRecoilValue(commandMenuSearchState);
+  const sidePanelSearch = useAtomStateValue(sidePanelSearchState);
 
   const { closeKeyboardShortcutMenu } = useKeyboardShortcutMenu();
 
-  const commandMenuPage = useRecoilValue(commandMenuPageState);
+  const sidePanelPage = useAtomStateValue(sidePanelPageState);
 
   const isAiEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
 
-  const contextStoreTargetedRecordsRuleComponent = useRecoilComponentValue(
+  const contextStoreTargetedRecordsRule = useAtomComponentStateValue(
     contextStoreTargetedRecordsRuleComponentState,
-    COMMAND_MENU_COMPONENT_INSTANCE_ID,
+    SIDE_PANEL_COMPONENT_INSTANCE_ID,
   );
 
   useGlobalHotkeys({
     keys: ['ctrl+k', 'meta+k'],
     callback: () => {
       closeKeyboardShortcutMenu();
-      toggleCommandMenu();
+      toggleSidePanelMenu();
     },
     containsModifier: true,
-    dependencies: [closeKeyboardShortcutMenu, toggleCommandMenu],
+    dependencies: [closeKeyboardShortcutMenu, toggleSidePanelMenu],
   });
 
   useGlobalHotkeys({
@@ -82,10 +82,10 @@ export const useCommandMenuHotKeys = () => {
   useHotkeysOnFocusedElement({
     keys: [Key.Escape],
     callback: () => {
-      goBackFromCommandMenu();
+      goBackFromSidePanel();
     },
     focusId: SIDE_PANEL_FOCUS_ID,
-    dependencies: [goBackFromCommandMenu],
+    dependencies: [goBackFromSidePanel],
     options: {
       enableOnFormTags: false,
     },
@@ -94,30 +94,29 @@ export const useCommandMenuHotKeys = () => {
   useHotkeysOnFocusedElement({
     keys: [Key.Backspace, Key.Delete],
     callback: () => {
-      if (isNonEmptyString(commandMenuSearch)) {
+      if (isNonEmptyString(sidePanelSearch)) {
         return;
       }
 
       if (
-        commandMenuPage === CommandMenuPages.Root &&
+        sidePanelPage === SidePanelPages.Root &&
         !(
-          contextStoreTargetedRecordsRuleComponent.mode === 'selection' &&
-          contextStoreTargetedRecordsRuleComponent.selectedRecordIds.length ===
-            0
+          contextStoreTargetedRecordsRule.mode === 'selection' &&
+          contextStoreTargetedRecordsRule.selectedRecordIds.length === 0
         )
       ) {
         setGlobalCommandMenuContext();
       }
-      if (commandMenuPage !== CommandMenuPages.Root) {
-        goBackFromCommandMenu();
+      if (sidePanelPage !== SidePanelPages.Root) {
+        goBackFromSidePanel();
       }
     },
     focusId: SIDE_PANEL_FOCUS_ID,
     dependencies: [
-      commandMenuPage,
-      commandMenuSearch,
-      contextStoreTargetedRecordsRuleComponent,
-      goBackFromCommandMenu,
+      sidePanelPage,
+      sidePanelSearch,
+      contextStoreTargetedRecordsRule,
+      goBackFromSidePanel,
       setGlobalCommandMenuContext,
     ],
     options: {

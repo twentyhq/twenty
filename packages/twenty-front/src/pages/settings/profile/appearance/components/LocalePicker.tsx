@@ -1,9 +1,8 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
-import { useSetRecoilState } from 'recoil';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { getDateFnsLocale } from '@/ui/field/display/utils/getDateFnsLocale.util';
 import { Select } from '@/ui/input/components/Select';
@@ -16,24 +15,22 @@ import { enUS } from 'date-fns/locale';
 import { APP_LOCALES } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
-import { dateLocaleStateV2 } from '~/localization/states/dateLocaleStateV2';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 import { logError } from '~/utils/logError';
 
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(4)};
+  gap: ${themeCssVariables.spacing[4]};
 `;
 
 export const LocalePicker = () => {
   const { t } = useLingui();
   const store = useStore();
-  const [currentWorkspaceMember, setCurrentWorkspaceMember] = useRecoilStateV2(
+  const [currentWorkspaceMember, setCurrentWorkspaceMember] = useAtomState(
     currentWorkspaceMemberState,
   );
-  const setDateLocale = useSetRecoilState(dateLocaleState);
-
   const { updateOneRecord } = useUpdateOneRecord();
 
   const { refreshObjectMetadataItems } =
@@ -71,14 +68,13 @@ export const LocalePicker = () => {
       locale: value,
       localeCatalog: dateFnsLocale || enUS,
     };
-    setDateLocale(newDateLocale);
-    store.set(dateLocaleStateV2.atom, newDateLocale);
+    store.set(dateLocaleState.atom, newDateLocale);
 
     await dynamicActivate(value);
     try {
       localStorage.setItem('locale', value);
     } catch (error) {
-      // eslint-disable-next-line no-console
+      // oxlint-disable-next-line no-console
       console.log('Failed to save locale to localStorage:', error);
     }
     await refreshObjectMetadataItems();

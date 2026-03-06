@@ -1,16 +1,17 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledDashContainer = styled.div`
-  display: flex;
-  width: ${({ theme }) => theme.spacing(2)};
-  justify-content: center;
   align-items: center;
+  display: flex;
+  justify-content: center;
+  width: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledDash = styled.div`
-  background-color: ${({ theme }) => theme.font.color.light};
-  height: ${({ theme }) => theme.spacing(0.4)};
-  width: ${({ theme }) => theme.spacing(1.5)};
+  background-color: ${themeCssVariables.font.color.light};
+  height: 1.6px;
+  width: ${themeCssVariables.spacing['1.5']};
 `;
 
 export const TwoFactorAuthenticationVerificationCodeDash = () => {

@@ -4,11 +4,13 @@ import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useU
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
 import { RecordTableActionRow } from '@/object-record/record-table/record-table-row/components/RecordTableActionRow';
+import { isRecordTableCreateDisabled } from '@/object-record/record-table/utils/isRecordTableCreateDisabled';
 import { useLoadRecordsToVirtualRows } from '@/object-record/record-table/virtualization/hooks/useLoadRecordsToVirtualRows';
 import { totalNumberOfRecordsToVirtualizeComponentState } from '@/object-record/record-table/virtualization/states/totalNumberOfRecordsToVirtualizeComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
-import { useRecoilCallback } from 'recoil';
+import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/display';
 
@@ -25,45 +27,46 @@ export const RecordTableNoRecordGroupAddNew = () => {
 
   const hasObjectUpdatePermissions = objectPermissions.canUpdateObjectRecords;
 
-  const hasAnySoftDeleteFilterOnView = useRecoilComponentValue(
+  const hasAnySoftDeleteFilterOnView = useAtomComponentSelectorValue(
     hasAnySoftDeleteFilterOnViewComponentSelector,
   );
 
-  const totalNumberOfRecordsToVirtualize = useRecoilComponentValue(
+  const totalNumberOfRecordsToVirtualize = useAtomComponentStateValue(
     totalNumberOfRecordsToVirtualizeComponentState,
   );
 
   const { loadRecordsToVirtualRows } = useLoadRecordsToVirtualRows();
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
-  const handleButtonClick = useRecoilCallback(
-    () => async () => {
-      const createdRecord = await createNewIndexRecord({
-        position: 'last',
+  const handleButtonClick = useCallback(async () => {
+    const createdRecord = await createNewIndexRecord({
+      position: 'last',
+    });
+
+    upsertRecordsInStore({ partialRecords: [createdRecord] });
+
+    if (isDefined(totalNumberOfRecordsToVirtualize)) {
+      loadRecordsToVirtualRows({
+        records: [createdRecord],
+        startingRealIndex: totalNumberOfRecordsToVirtualize,
       });
-
-      upsertRecordsInStore({ partialRecords: [createdRecord] });
-
-      if (isDefined(totalNumberOfRecordsToVirtualize)) {
-        loadRecordsToVirtualRows({
-          records: [createdRecord],
-          startingRealIndex: totalNumberOfRecordsToVirtualize,
-        });
-      }
-    },
-    [
-      createNewIndexRecord,
-      upsertRecordsInStore,
-      loadRecordsToVirtualRows,
-      totalNumberOfRecordsToVirtualize,
-    ],
-  );
+    }
+  }, [
+    createNewIndexRecord,
+    upsertRecordsInStore,
+    loadRecordsToVirtualRows,
+    totalNumberOfRecordsToVirtualize,
+  ]);
 
   if (hasAnySoftDeleteFilterOnView) {
     return null;
   }
 
   if (!hasObjectUpdatePermissions) {
+    return null;
+  }
+
+  if (isRecordTableCreateDisabled(objectMetadataItem.nameSingular)) {
     return null;
   }
 

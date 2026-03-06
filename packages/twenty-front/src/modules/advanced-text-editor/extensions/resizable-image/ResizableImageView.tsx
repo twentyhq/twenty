@@ -1,31 +1,20 @@
-import { css } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type NodeViewProps, NodeViewWrapper } from '@tiptap/react';
 import React, { useCallback, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const IMAGE_MIN_WIDTH = 32;
 const IMAGE_MAX_WIDTH = 600;
 
-const StyledNodeViewWrapper = styled(NodeViewWrapper)`
+const StyledNodeViewWrapperContainer = styled.div<{
+  align?: string;
+}>`
   height: 100%;
-  ${({ align }) => {
-    switch (align) {
-      case 'left':
-        return css`
-          margin-left: 0;
-        `;
-      case 'right':
-        return css`
-          margin-right: 0;
-        `;
-      case 'center':
-        return css`
-          margin-left: auto;
-          margin-right: auto;
-        `;
-    }
-  }}
+  margin-left: ${({ align }) =>
+    align === 'left' ? '0' : align === 'center' ? 'auto' : 'unset'};
+  margin-right: ${({ align }) =>
+    align === 'right' ? '0' : align === 'center' ? 'auto' : 'unset'};
 `;
 
 const StyledImageWrapper = styled.div<{ width?: number }>`
@@ -43,28 +32,21 @@ const StyledImage = styled.img`
 `;
 
 const StyledImageHandle = styled.div<{ handle: 'left' | 'right' }>`
-  border-radius: ${({ theme }) => theme.border.radius.md};
-  background-color: ${({ theme }) => theme.background.primaryInverted};
-  border: 1px solid ${({ theme }) => theme.background.primary};
+  background-color: ${themeCssVariables.background.primaryInverted};
+  border: 1px solid ${themeCssVariables.background.primary};
+  border-radius: ${themeCssVariables.border.radius.md};
   cursor: col-resize;
-  height: ${({ theme }) => theme.spacing(8)};
+  height: ${themeCssVariables.spacing[8]};
+  left: ${({ handle }) =>
+    handle === 'left' ? themeCssVariables.spacing[1] : 'auto'};
   position: absolute;
+  right: ${({ handle }) =>
+    handle === 'right' ? themeCssVariables.spacing[1] : 'auto'};
   top: 50%;
   transform: translateY(-50%);
-  width: ${({ theme }) => theme.spacing(2)};
+
+  width: ${themeCssVariables.spacing[2]};
   z-index: 1;
-
-  ${({ handle, theme }) => {
-    if (handle === 'left') {
-      return css`
-        left: ${theme.spacing(1)};
-      `;
-    }
-
-    return css`
-      right: ${theme.spacing(1)};
-    `;
-  }}
 `;
 
 type ResizeParams = {
@@ -179,37 +161,38 @@ export const ResizableImageView = (props: ResizableImageViewProps) => {
   }, []);
 
   return (
-    <StyledNodeViewWrapper
-      onMouseEnter={handleImageHover}
-      onMouseLeave={handleImageHoverEnd}
-      align={align}
-    >
-      <StyledImageWrapper
-        ref={imageWrapperRef}
-        style={{ width: width ? `${width}px` : 'fit-content' }}
+    <NodeViewWrapper>
+      <StyledNodeViewWrapperContainer
+        onMouseEnter={handleImageHover}
+        onMouseLeave={handleImageHoverEnd}
+        align={align}
       >
-        <StyledImageContainer>
-          <StyledImage
-            src={src}
-            alt={alt}
-            draggable={false}
-            contentEditable={false}
-          />
-          {/* Show resize handles when hovering over image OR actively resizing */}
-          {(isHovering || isDefined(resizeParams)) && (
-            <>
-              <StyledImageHandle
-                handle="left"
-                onMouseDown={(e) => handleImageHandleMouseDown('left', e)}
-              />
-              <StyledImageHandle
-                handle="right"
-                onMouseDown={(e) => handleImageHandleMouseDown('right', e)}
-              />
-            </>
-          )}
-        </StyledImageContainer>
-      </StyledImageWrapper>
-    </StyledNodeViewWrapper>
+        <StyledImageWrapper
+          ref={imageWrapperRef}
+          style={{ width: width ? `${width}px` : 'fit-content' }}
+        >
+          <StyledImageContainer>
+            <StyledImage
+              src={src}
+              alt={alt}
+              draggable={false}
+              contentEditable={false}
+            />
+            {(isHovering || isDefined(resizeParams)) && (
+              <>
+                <StyledImageHandle
+                  handle="left"
+                  onMouseDown={(e) => handleImageHandleMouseDown('left', e)}
+                />
+                <StyledImageHandle
+                  handle="right"
+                  onMouseDown={(e) => handleImageHandleMouseDown('right', e)}
+                />
+              </>
+            )}
+          </StyledImageContainer>
+        </StyledImageWrapper>
+      </StyledNodeViewWrapperContainer>
+    </NodeViewWrapper>
   );
 };

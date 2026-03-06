@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
@@ -52,6 +52,7 @@ export class PageLayoutDuplicationService {
       flatPageLayoutWidgetMaps,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
+      flatFrontComponentMaps,
       flatViewFieldGroupMaps,
       flatViewMaps,
     } = await this.getPageLayoutFlatEntityMaps(workspaceId);
@@ -116,6 +117,7 @@ export class PageLayoutDuplicationService {
       flatPageLayoutTabMaps: optimisticFlatPageLayoutTabMaps,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
+      flatFrontComponentMaps,
       flatViewFieldGroupMaps,
       flatViewMaps,
     });
@@ -185,6 +187,7 @@ export class PageLayoutDuplicationService {
           'flatPageLayoutWidgetMaps',
           'flatObjectMetadataMaps',
           'flatFieldMetadataMaps',
+          'flatFrontComponentMaps',
           'flatViewFieldGroupMaps',
           'flatViewMaps',
         ],
@@ -296,6 +299,7 @@ export class PageLayoutDuplicationService {
     flatPageLayoutTabMaps,
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
+    flatFrontComponentMaps,
     flatViewFieldGroupMaps,
     flatViewMaps,
   }: {
@@ -309,6 +313,7 @@ export class PageLayoutDuplicationService {
     flatPageLayoutTabMaps: AllFlatEntityMaps['flatPageLayoutTabMaps'];
     flatObjectMetadataMaps: AllFlatEntityMaps['flatObjectMetadataMaps'];
     flatFieldMetadataMaps: AllFlatEntityMaps['flatFieldMetadataMaps'];
+    flatFrontComponentMaps: AllFlatEntityMaps['flatFrontComponentMaps'];
     flatViewFieldGroupMaps: AllFlatEntityMaps['flatViewFieldGroupMaps'];
     flatViewMaps: AllFlatEntityMaps['flatViewMaps'];
   }): FlatPageLayoutWidget[] {
@@ -330,6 +335,7 @@ export class PageLayoutDuplicationService {
           flatPageLayoutTabMaps,
           flatObjectMetadataMaps,
           flatFieldMetadataMaps,
+          flatFrontComponentMaps,
           flatViewFieldGroupMaps,
           flatViewMaps,
         }),

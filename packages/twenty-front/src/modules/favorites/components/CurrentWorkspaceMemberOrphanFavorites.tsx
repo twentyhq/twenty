@@ -8,23 +8,24 @@ import { isLocationMatchingFavorite } from '@/favorites/utils/isLocationMatching
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
-import styled from '@emotion/styled';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { useLocation } from 'react-router-dom';
 import { IconHeartOff } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledEmptyContainer = styled.div`
   width: 100%;
 `;
 
 const StyledOrphanFavoritesContainer = styled.div`
-  margin-bottom: ${({ theme }) => theme.betweenSiblingsGap};
+  margin-bottom: ${themeCssVariables.betweenSiblingsGap};
 `;
 
 export const CurrentWorkspaceMemberOrphanFavorites = () => {
-  const objectMetadataItems = useRecoilValueV2(objectMetadataItemsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
   const { sortedFavorites: favorites } = useFavorites();
   const { deleteFavorite } = useDeleteFavorite();
   const currentPath = useLocation().pathname;

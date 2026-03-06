@@ -1,11 +1,11 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import { type ReactNode } from 'react';
+import { styled } from '@linaria/react';
+import { type ReactNode, useContext } from 'react';
 
 import { SettingsItemTypeTag } from '@/settings/components/SettingsItemTypeTag';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { OverflowingTextWithTooltip, useIcons } from 'twenty-ui/display';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { type Agent } from '~/generated-metadata/graphql';
 
 export type SettingsAIAgentTableRowProps = {
@@ -14,25 +14,11 @@ export type SettingsAIAgentTableRowProps = {
   link?: string;
 };
 
-export const StyledAIAgentTableRow = styled(TableRow)`
-  grid-template-columns: 1fr 120px 36px;
-`;
-
-const StyledNameTableCell = styled(TableCell)`
-  color: ${({ theme }) => theme.font.color.primary};
-  gap: ${({ theme }) => theme.spacing(2)};
-  min-width: 0;
-  overflow: hidden;
-`;
-
-const StyledActionTableCell = styled(TableCell)`
-  justify-content: flex-end;
-  padding-right: ${({ theme }) => theme.spacing(2)};
-`;
+export const AI_AGENT_TABLE_ROW_GRID_TEMPLATE_COLUMNS = '1fr 120px 36px';
 
 const StyledIconContainer = styled.div`
   flex-shrink: 0;
-  height: ${({ theme }) => theme.spacing(4)};
+  height: ${themeCssVariables.spacing[4]};
 `;
 
 export const SettingsAIAgentTableRow = ({
@@ -40,22 +26,36 @@ export const SettingsAIAgentTableRow = ({
   agent,
   link,
 }: SettingsAIAgentTableRowProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const { getIcon } = useIcons();
   const Icon = getIcon(agent.icon || 'IconRobot');
 
   return (
-    <StyledAIAgentTableRow key={agent.id} to={link}>
-      <StyledNameTableCell>
+    <TableRow
+      gridTemplateColumns={AI_AGENT_TABLE_ROW_GRID_TEMPLATE_COLUMNS}
+      key={agent.id}
+      to={link}
+    >
+      <TableCell
+        color={themeCssVariables.font.color.primary}
+        gap={themeCssVariables.spacing[2]}
+        minWidth="0"
+        overflow="hidden"
+      >
         <StyledIconContainer>
           <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
         </StyledIconContainer>
         <OverflowingTextWithTooltip text={agent.label} />
-      </StyledNameTableCell>
+      </TableCell>
       <TableCell>
         <SettingsItemTypeTag item={agent} />
       </TableCell>
-      <StyledActionTableCell>{action}</StyledActionTableCell>
-    </StyledAIAgentTableRow>
+      <TableCell
+        align="right"
+        padding={`0 ${themeCssVariables.spacing[2]} 0 0`}
+      >
+        {action}
+      </TableCell>
+    </TableRow>
   );
 };

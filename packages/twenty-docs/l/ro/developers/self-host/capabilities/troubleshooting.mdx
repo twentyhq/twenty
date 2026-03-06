@@ -54,21 +54,18 @@ Asigurați-vă că rulați yarn în directorul rădăcină și apoi rulați `npx
 
 #### Lint la salvare nu funcționează
 
-Acesta ar trebui să funcționeze implicit cu extensia eslint instalată. Dacă acest lucru nu funcționează, încercați să adăugați acest lucru la setarea vscode (în sfera containerului dev):
+This should work out of the box with the Oxc extension (`oxc.oxc-vscode`) installed. Dacă acest lucru nu funcționează, încercați să adăugați acest lucru la setarea vscode (în sfera containerului dev):
 
 ```
 "editor.codeActionsOnSave": {
 
-  "source.fixAll.eslint": "explicit"
+  "source.fixAll.oxc": "explicit"
 
 }
 ```
 
 #### În timpul rulării `npx nx start` sau `npx nx start twenty-front`, apare o eroare Out of memory
 
-În `packages/twenty-front/.env` decomentați `VITE_DISABLE_TYPESCRIPT_CHECKER=true` și `VITE_DISABLE_ESLINT_CHECKER=true` pentru a dezactiva verificările de fundal, astfel reducând cantitatea de RAM necesară.
-
-**Dacă nu funcționează:**
 Rulați doar serviciile de care aveți nevoie, în loc de `npx nx start`. De exemplu, dacă lucrați la server, rulați doar `npx nx worker twenty-server`
 
 **Dacă nu funcționează:**
@@ -146,7 +143,7 @@ Comentați pluginul checker în `packages/twenty-ui/vite-config.ts`, ca în exem
 
 ```
 plugins: [
-      react({ jsxImportSource: '@emotion/react' }),
+      react({ jsxImportSource: 'react' }),
       tsconfigPaths(),
       svgr(),
       dts(dtsConfig),

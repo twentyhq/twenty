@@ -10,8 +10,6 @@ import {
   Route,
   RouterProvider,
 } from 'react-router-dom';
-import { RecoilRoot } from 'recoil';
-
 import { ClientConfigProviderEffect } from '@/client-config/components/ClientConfigProviderEffect';
 import { ApolloCoreClientMockedProvider } from '@/object-metadata/hooks/__mocks__/ApolloCoreClientMockedProvider';
 
@@ -24,7 +22,6 @@ import { ClientConfigProvider } from '~/modules/client-config/components/ClientC
 import { mockedApolloClient } from '~/testing/mockedApolloClient';
 
 import { MainContextStoreProvider } from '@/context-store/components/MainContextStoreProvider';
-import { RecoilDebugObserverEffect } from '@/debug/components/RecoilDebugObserver';
 import { PreComputedChipGeneratorsProvider } from '@/object-metadata/components/PreComputedChipGeneratorsProvider';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
 import { PrefetchDataProvider } from '@/prefetch/components/PrefetchDataProvider';
@@ -78,42 +75,39 @@ await dynamicActivate(SOURCE_LOCALE);
 const Providers = () => {
   return (
     <JotaiProvider store={jotaiStore}>
-      <RecoilRoot>
-        <SnackBarComponentInstanceContext.Provider
-          value={{ instanceId: 'snack-bar-manager' }}
-        >
-          <RecoilDebugObserverEffect />
-          <ApolloProvider client={mockedApolloClient}>
-            <I18nProvider i18n={i18n}>
-              <ApolloStorybookDevLogEffect />
-              <ClientConfigProviderEffect />
-              <ClientConfigProvider>
-                <MetadataProviderInitialEffects />
-                <IsAppMetadataReadyEffect />
-                <WorkspaceProviderEffect />
-                <MetadataGater>
-                  <ApolloCoreClientMockedProvider>
-                    <PreComputedChipGeneratorsProvider>
-                      <FullHeightStorybookLayout>
-                        <HelmetProvider>
-                          <IconsProvider>
-                            <PrefetchDataProvider>
-                              <RecordComponentInstanceContextsWrapper componentInstanceId="storybook-test-record">
-                                <Outlet />
-                              </RecordComponentInstanceContextsWrapper>
-                            </PrefetchDataProvider>
-                          </IconsProvider>
-                        </HelmetProvider>
-                      </FullHeightStorybookLayout>
-                    </PreComputedChipGeneratorsProvider>
-                    <MainContextStoreProvider />
-                  </ApolloCoreClientMockedProvider>
-                </MetadataGater>
-              </ClientConfigProvider>
-            </I18nProvider>
-          </ApolloProvider>
-        </SnackBarComponentInstanceContext.Provider>
-      </RecoilRoot>
+      <SnackBarComponentInstanceContext.Provider
+        value={{ instanceId: 'snack-bar-manager' }}
+      >
+        <ApolloProvider client={mockedApolloClient}>
+          <I18nProvider i18n={i18n}>
+            <ApolloStorybookDevLogEffect />
+            <ClientConfigProviderEffect />
+            <ClientConfigProvider>
+              <MetadataProviderInitialEffects />
+              <IsAppMetadataReadyEffect />
+              <WorkspaceProviderEffect />
+              <MetadataGater>
+                <ApolloCoreClientMockedProvider>
+                  <PreComputedChipGeneratorsProvider>
+                    <FullHeightStorybookLayout>
+                      <HelmetProvider>
+                        <IconsProvider>
+                          <PrefetchDataProvider>
+                            <RecordComponentInstanceContextsWrapper componentInstanceId="storybook-test-record">
+                              <Outlet />
+                            </RecordComponentInstanceContextsWrapper>
+                          </PrefetchDataProvider>
+                        </IconsProvider>
+                      </HelmetProvider>
+                    </FullHeightStorybookLayout>
+                  </PreComputedChipGeneratorsProvider>
+                  <MainContextStoreProvider />
+                </ApolloCoreClientMockedProvider>
+              </MetadataGater>
+            </ClientConfigProvider>
+          </I18nProvider>
+        </ApolloProvider>
+      </SnackBarComponentInstanceContext.Provider>
     </JotaiProvider>
   );
 };

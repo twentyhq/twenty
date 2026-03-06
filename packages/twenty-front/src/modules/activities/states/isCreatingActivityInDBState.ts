@@ -1,5 +1,5 @@
-import { createState } from '@/ui/utilities/state/utils/createState';
-export const isUpsertingActivityInDBState = createState<boolean>({
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
+export const isUpsertingActivityInDBState = createAtomState<boolean>({
   key: 'isUpsertingActivityInDBState',
   defaultValue: false,
 });

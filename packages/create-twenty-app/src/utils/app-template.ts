@@ -1,9 +1,11 @@
 import * as fs from 'fs-extra';
 import { join } from 'path';
-import { v4 } from 'uuid';
 import { ASSETS_DIR } from 'twenty-shared/application';
+import { v4 } from 'uuid';
 
 import { type ExampleOptions } from '@/types/scaffolding-options';
+import { scaffoldIntegrationTest } from '@/utils/test-template';
+import createTwentyAppPackageJson from 'package.json';
 
 const SRC_FOLDER = 'src';
 
@@ -22,7 +24,11 @@ export const copyBaseApplicationProject = async ({
 }) => {
   await fs.copy(join(__dirname, './constants/base-application'), appDirectory);
 
-  await createPackageJson({ appName, appDirectory });
+  await createPackageJson({
+    appName,
+    appDirectory,
+    includeExampleIntegrationTest: exampleOptions.includeExampleIntegrationTest,
+  });
 
   await createGitignore(appDirectory);
 
@@ -97,6 +103,19 @@ export const copyBaseApplicationProject = async ({
     });
   }
 
+  if (exampleOptions.includeExampleIntegrationTest) {
+    await scaffoldIntegrationTest({
+      appDirectory,
+      sourceFolderPath,
+    });
+  }
+
+  await createDefaultPreInstallFunction({
+    appDirectory: sourceFolderPath,
+    fileFolder: 'logic-functions',
+    fileName: 'pre-install.ts',
+  });
+
   await createDefaultPostInstallFunction({
     appDirectory: sourceFolderPath,
     fileFolder: 'logic-functions',
@@ -140,8 +159,7 @@ generated
 # dev
 /dist/
 
-.twenty/*
-!.twenty/output/
+.twenty
 
 # production
 /build
@@ -161,6 +179,7 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
+*.d.ts
 `;
 
   await fs.writeFile(join(appDirectory, '.gitignore'), gitignoreContent);
@@ -268,6 +287,36 @@ export default defineLogicFunction({
   await fs.writeFile(join(appDirectory, fileFolder ?? '', fileName), content);
 };
 
+const createDefaultPreInstallFunction = async ({
+  appDirectory,
+  fileFolder,
+  fileName,
+}: {
+  appDirectory: string;
+  fileFolder?: string;
+  fileName: string;
+}) => {
+  const universalIdentifier = v4();
+
+  const content = `import { definePreInstallLogicFunction, type InstallLogicFunctionPayload } from 'twenty-sdk';
+
+const handler = async (payload: InstallLogicFunctionPayload): Promise<void> => {
+  console.log('Pre install logic function executed successfully!', payload.previousVersion);
+};
+
+export default definePreInstallLogicFunction({
+  universalIdentifier: '${universalIdentifier}',
+  name: 'pre-install',
+  description: 'Runs before installation to prepare the application.',
+  timeoutSeconds: 300,
+  handler,
+});
+`;
+
+  await fs.ensureDir(join(appDirectory, fileFolder ?? ''));
+  await fs.writeFile(join(appDirectory, fileFolder ?? '', fileName), content);
+};
+
 const createDefaultPostInstallFunction = async ({
   appDirectory,
   fileFolder,
@@ -279,16 +328,14 @@ const createDefaultPostInstallFunction = async ({
 }) => {
   const universalIdentifier = v4();
 
-  const content = `import { defineLogicFunction } from 'twenty-sdk';
+  const content = `import { definePostInstallLogicFunction, type InstallLogicFunctionPayload } from 'twenty-sdk';
 
-export const POST_INSTALL_UNIVERSAL_IDENTIFIER = '${universalIdentifier}';
-
-const handler = async (): Promise<void> => {
-  console.log('Post install logic function executed successfully!');
+const handler = async (payload: InstallLogicFunctionPayload): Promise<void> => {
+  console.log('Post install logic function executed successfully!', payload.previousVersion);
 };
 
-export default defineLogicFunction({
-  universalIdentifier: POST_INSTALL_UNIVERSAL_IDENTIFIER,
+export default definePostInstallLogicFunction({
+  universalIdentifier: '${universalIdentifier}',
   name: 'post-install',
   description: 'Runs after installation to set up the application.',
   timeoutSeconds: 300,
@@ -384,16 +431,29 @@ const createExampleView = async ({
   fileName: string;
 }) => {
   const universalIdentifier = v4();
+  const viewFieldUniversalIdentifier = v4();
 
-  const content = `import { defineView } from 'twenty-sdk';
-import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/objects/example-object';
+  const content = `import { defineView, ViewKey } from 'twenty-sdk';
+import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER, NAME_FIELD_UNIVERSAL_IDENTIFIER } from 'src/objects/example-object';
+
+export const EXAMPLE_VIEW_UNIVERSAL_IDENTIFIER = '${universalIdentifier}';
 
 export default defineView({
-  universalIdentifier: '${universalIdentifier}',
-  name: 'example-view',
+  universalIdentifier: EXAMPLE_VIEW_UNIVERSAL_IDENTIFIER,
+  name: 'All example items',
   objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
   icon: 'IconList',
+  key: ViewKey.INDEX,
   position: 0,
+  fields: [
+    {
+      universalIdentifier: '${viewFieldUniversalIdentifier}',
+      fieldMetadataUniversalIdentifier: NAME_FIELD_UNIVERSAL_IDENTIFIER,
+      position: 0,
+      isVisible: true,
+      size: 200,
+    },
+  ],
 });
 `;
 
@@ -413,18 +473,15 @@ const createExampleNavigationMenuItem = async ({
   const universalIdentifier = v4();
 
   const content = `import { defineNavigationMenuItem } from 'twenty-sdk';
+  import { EXAMPLE_VIEW_UNIVERSAL_IDENTIFIER } from 'src/views/example-view';
 
 export default defineNavigationMenuItem({
   universalIdentifier: '${universalIdentifier}',
   name: 'example-navigation-menu-item',
   icon: 'IconList',
+  color: 'blue',
   position: 0,
-  // Link to a view:
-  // viewUniversalIdentifier: '...',
-  // Or link to an object:
-  // targetObjectUniversalIdentifier: '...',
-  // Or link to an external URL:
-  // link: 'https://example.com',
+  viewUniversalIdentifier: EXAMPLE_VIEW_UNIVERSAL_IDENTIFIER,
 });
 `;
 
@@ -475,16 +532,19 @@ const createApplicationConfig = async ({
   fileFolder?: string;
   fileName: string;
 }) => {
+  const universalIdentifier = v4();
+
   const content = `import { defineApplication } from 'twenty-sdk';
 import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/roles/default-role';
-import { POST_INSTALL_UNIVERSAL_IDENTIFIER } from 'src/logic-functions/post-install';
+
+export const APPLICATION_UNIVERSAL_IDENTIFIER =
+  '${universalIdentifier}';
 
 export default defineApplication({
-  universalIdentifier: '${v4()}',
+  universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
   displayName: '${displayName}',
   description: '${description ?? ''}',
   defaultRoleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
-  postInstallLogicFunctionUniversalIdentifier: POST_INSTALL_UNIVERSAL_IDENTIFIER,
 });
 `;
 
@@ -495,10 +555,34 @@ export default defineApplication({
 const createPackageJson = async ({
   appName,
   appDirectory,
+  includeExampleIntegrationTest,
 }: {
   appName: string;
   appDirectory: string;
+  includeExampleIntegrationTest: boolean;
 }) => {
+  const scripts: Record<string, string> = {
+    twenty: 'twenty',
+    lint: 'oxlint -c .oxlintrc.json .',
+    'lint:fix': 'oxlint --fix -c .oxlintrc.json .',
+  };
+
+  const devDependencies: Record<string, string> = {
+    typescript: '^5.9.3',
+    '@types/node': '^24.7.2',
+    '@types/react': '^18.2.0',
+    react: '^18.2.0',
+    oxlint: '^0.16.0',
+    'twenty-sdk': createTwentyAppPackageJson.version,
+  };
+
+  if (includeExampleIntegrationTest) {
+    scripts.test = 'vitest run';
+    scripts['test:watch'] = 'vitest';
+    devDependencies.vitest = '^3.1.1';
+    devDependencies['vite-tsconfig-paths'] = '^4.2.1';
+  }
+
   const packageJson = {
     name: appName,
     version: '0.1.0',
@@ -509,22 +593,8 @@ const createPackageJson = async ({
       yarn: '>=4.0.2',
     },
     packageManager: 'yarn@4.9.2',
-    scripts: {
-      twenty: 'twenty',
-      lint: 'eslint',
-      'lint:fix': 'eslint --fix',
-    },
-    dependencies: {
-      'twenty-sdk': 'latest',
-    },
-    devDependencies: {
-      typescript: '^5.9.3',
-      '@types/node': '^24.7.2',
-      '@types/react': '^18.2.0',
-      react: '^18.2.0',
-      eslint: '^9.32.0',
-      'typescript-eslint': '^8.50.0',
-    },
+    scripts,
+    devDependencies,
   };
 
   await fs.writeFile(

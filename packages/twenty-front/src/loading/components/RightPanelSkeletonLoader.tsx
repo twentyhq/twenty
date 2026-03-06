@@ -1,11 +1,15 @@
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { useContext } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import { BORDER_COMMON, MOBILE_VIEWPORT } from 'twenty-ui/theme';
+import {
+  MOBILE_VIEWPORT,
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 const StyledMainContainer = styled.div`
-  background: ${({ theme }) => theme.background.noisy};
+  background: ${themeCssVariables.background.noisy};
   box-sizing: border-box;
   display: flex;
   flex: 1 1 auto;
@@ -22,9 +26,9 @@ const StyledMainContainer = styled.div`
 `;
 
 const StyledPanel = styled.div`
-  background: ${({ theme }) => theme.background.primary};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${BORDER_COMMON.radius.md};
+  background: ${themeCssVariables.background.primary};
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  border-radius: ${themeCssVariables.border.radius.md};
   height: 100%;
   overflow: auto;
   width: 100%;
@@ -40,17 +44,16 @@ const StyledRightPanelContainer = styled.div`
 `;
 
 const StyledRightPanelFlexContainer = styled.div`
+  align-items: center;
   display: flex;
   flex-direction: row;
-  justify-content: flex-end;
-  align-items: center;
   height: 32px;
+  justify-content: flex-end;
   margin-bottom: 12px;
 `;
 
 const StyledSkeletonHeaderLoader = () => {
-  const theme = useTheme();
-
+  const { theme } = useContext(ThemeContext);
   return (
     <StyledHeaderContainer>
       <SkeletonTheme
@@ -68,8 +71,7 @@ const StyledSkeletonHeaderLoader = () => {
 };
 
 const StyledSkeletonAddLoader = () => {
-  const theme = useTheme();
-
+  const { theme } = useContext(ThemeContext);
   return (
     <SkeletonTheme
       baseColor={theme.background.tertiary}

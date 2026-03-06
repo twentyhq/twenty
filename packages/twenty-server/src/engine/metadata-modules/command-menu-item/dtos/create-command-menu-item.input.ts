@@ -1,9 +1,10 @@
-import { Field, InputType } from '@nestjs/graphql';
+import { Field, Float, InputType } from '@nestjs/graphql';
 
 import {
   IsBoolean,
   IsEnum,
   IsNotEmpty,
+  IsNumber,
   IsOptional,
   IsString,
   IsUUID,
@@ -34,6 +35,16 @@ export class CreateCommandMenuItemInput {
   @Field({ nullable: true })
   icon?: string;
 
+  @IsString()
+  @IsOptional()
+  @Field({ nullable: true })
+  shortLabel?: string;
+
+  @IsNumber()
+  @IsOptional()
+  @Field(() => Float, { nullable: true })
+  position?: number;
+
   @IsBoolean()
   @IsOptional()
   @Field({ nullable: true })
@@ -43,6 +54,11 @@ export class CreateCommandMenuItemInput {
   @IsOptional()
   @Field(() => CommandMenuItemAvailabilityType, { nullable: true })
   availabilityType?: CommandMenuItemAvailabilityType;
+
+  @IsString()
+  @IsOptional()
+  @Field({ nullable: true })
+  conditionalAvailabilityExpression?: string;
 
   @IsUUID()
   @IsOptional()

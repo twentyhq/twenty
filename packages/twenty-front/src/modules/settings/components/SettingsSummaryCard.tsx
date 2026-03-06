@@ -1,25 +1,28 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 import { Card, CardContent } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type SettingsSummaryCardProps = {
   title: ReactNode;
   rightComponent: ReactNode;
 };
 
-const StyledCardContent = styled(CardContent)`
-  align-items: center;
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
-  padding: ${({ theme }) => theme.spacing(2)};
-  min-height: ${({ theme }) => theme.spacing(6)};
+const StyledCardContentContainer = styled.div`
+  > * {
+    align-items: center;
+    display: flex;
+    gap: ${themeCssVariables.spacing[2]};
+    min-height: ${themeCssVariables.spacing[6]};
+    padding: ${themeCssVariables.spacing[2]};
+  }
 `;
 
 const StyledTitle = styled.div`
-  color: ${({ theme }) => theme.font.color.primary};
+  color: ${themeCssVariables.font.color.primary};
   display: flex;
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  gap: ${({ theme }) => theme.spacing(2)};
+  font-weight: ${themeCssVariables.font.weight.medium};
+  gap: ${themeCssVariables.spacing[2]};
   margin-right: auto;
 `;
 
@@ -28,9 +31,11 @@ export const SettingsSummaryCard = ({
   rightComponent,
 }: SettingsSummaryCardProps) => (
   <Card>
-    <StyledCardContent>
-      <StyledTitle>{title}</StyledTitle>
-      {rightComponent}
-    </StyledCardContent>
+    <StyledCardContentContainer>
+      <CardContent>
+        <StyledTitle>{title}</StyledTitle>
+        {rightComponent}
+      </CardContent>
+    </StyledCardContentContainer>
   </Card>
 );

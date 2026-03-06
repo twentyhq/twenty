@@ -1,7 +1,7 @@
 import { usePrepareFindManyActivitiesQuery } from '@/activities/hooks/usePrepareFindManyActivitiesQuery';
-import { objectShowPageTargetableObjectStateV2 } from '@/activities/timeline-activities/states/objectShowPageTargetableObjectStateV2';
-import { type CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { objectShowPageTargetableObjectState } from '@/activities/timeline-activities/states/objectShowPageTargetableObjectState';
+import { type CoreObjectNameSingular } from 'twenty-shared/types';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
 
 // This hook should only be executed if the normalized cache is up-to-date
@@ -12,8 +12,8 @@ export const useRefreshShowPageFindManyActivitiesQueries = ({
 }: {
   activityObjectNameSingular: CoreObjectNameSingular;
 }) => {
-  const objectShowPageTargetableObject = useRecoilValueV2(
-    objectShowPageTargetableObjectStateV2,
+  const objectShowPageTargetableObject = useAtomStateValue(
+    objectShowPageTargetableObjectState,
   );
 
   const { prepareFindManyActivitiesQuery } = usePrepareFindManyActivitiesQuery({

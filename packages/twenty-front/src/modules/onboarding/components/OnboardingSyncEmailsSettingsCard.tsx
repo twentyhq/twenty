@@ -1,7 +1,8 @@
 import { ONBOARDING_SYNC_EMAILS_OPTIONS } from '@/onboarding/constants/OnboardingSyncEmailsOptions';
 import { SettingsAccountsRadioSettingsCard } from '@/settings/accounts/components/SettingsAccountsRadioSettingsCard';
 import { SettingsAccountsVisibilityIcon } from '@/settings/accounts/components/SettingsAccountsVisibilityIcon';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { MessageChannelVisibility } from '~/generated/graphql';
 
 type OnboardingSyncEmailsSettingsCardProps = {
@@ -9,8 +10,8 @@ type OnboardingSyncEmailsSettingsCardProps = {
   value?: MessageChannelVisibility;
 };
 
-const StyledCardMedia = styled(SettingsAccountsVisibilityIcon)`
-  width: ${({ theme }) => theme.spacing(10)};
+const StyledCardMediaContainer = styled.div`
+  width: ${themeCssVariables.spacing[10]};
 `;
 
 export const OnboardingSyncEmailsSettingsCard = ({
@@ -20,11 +21,13 @@ export const OnboardingSyncEmailsSettingsCard = ({
   const optionsWithCardMedia = ONBOARDING_SYNC_EMAILS_OPTIONS.map((option) => ({
     ...option,
     cardMedia: (
-      <StyledCardMedia
-        metadata={option.cardMediaProps.metadata}
-        subject={option.cardMediaProps.subject}
-        body={option.cardMediaProps.body}
-      />
+      <StyledCardMediaContainer>
+        <SettingsAccountsVisibilityIcon
+          metadata={option.cardMediaProps.metadata}
+          subject={option.cardMediaProps.subject}
+          body={option.cardMediaProps.body}
+        />
+      </StyledCardMediaContainer>
     ),
   }));
 

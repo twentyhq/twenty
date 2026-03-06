@@ -1,7 +1,7 @@
 import { BarChartBaseLayerEffect } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/BarChartBaseLayerEffect';
 import { type BarPosition } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarPosition';
 import { type ChartMargins } from '@/page-layout/widgets/graph/types/ChartMargins';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useRef } from 'react';
 import { type BarChartLayout } from '~/generated-metadata/graphql';
 
@@ -20,10 +20,10 @@ type BarChartBaseLayerProps = {
 
 const StyledBaseCanvas = styled.canvas`
   display: block;
+  left: 0;
   pointer-events: none;
   position: absolute;
   top: 0;
-  left: 0;
 `;
 
 export const BarChartBaseLayer = ({

@@ -1,12 +1,13 @@
-import { useNavigatePageLayoutCommandMenu } from '@/command-menu/pages/page-layout/hooks/useNavigatePageLayoutCommandMenu';
+import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
 import { useEndPageLayoutDragSelection } from '@/page-layout/hooks/useEndPageLayoutDragSelection';
 import { pageLayoutDraggedAreaComponentState } from '@/page-layout/states/pageLayoutDraggedAreaComponentState';
 import { pageLayoutSelectedCellsComponentState } from '@/page-layout/states/pageLayoutSelectedCellsComponentState';
 import { calculateGridBoundsFromSelectedCells } from '@/page-layout/utils/calculateGridBoundsFromSelectedCells';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { act, renderHook } from '@testing-library/react';
+import { createStore } from 'jotai';
 import { type ReactNode } from 'react';
-import { CommandMenuPages } from 'twenty-shared/types';
+import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   PAGE_LAYOUT_TEST_INSTANCE_ID,
@@ -14,38 +15,41 @@ import {
 } from './PageLayoutTestWrapper';
 
 jest.mock(
-  '@/command-menu/pages/page-layout/hooks/useNavigatePageLayoutCommandMenu',
+  '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel',
 );
 jest.mock('../../utils/calculateGridBoundsFromSelectedCells');
 
-const createInitializeState =
-  (initialSelectedCells?: Set<string>, initialDraggedArea?: any) =>
-  ({ set }: { set: any }) => {
-    if (isDefined(initialSelectedCells)) {
-      set(
-        pageLayoutSelectedCellsComponentState.atomFamily({
-          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
-        }),
-        initialSelectedCells,
-      );
-    }
-    if (initialDraggedArea !== undefined) {
-      set(
-        pageLayoutDraggedAreaComponentState.atomFamily({
-          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
-        }),
-        initialDraggedArea,
-      );
-    }
-  };
+const createTestStore = (
+  initialSelectedCells?: Set<string>,
+  initialDraggedArea?: any,
+) => {
+  const store = createStore();
+  if (isDefined(initialSelectedCells)) {
+    store.set(
+      pageLayoutSelectedCellsComponentState.atomFamily({
+        instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+      }),
+      initialSelectedCells,
+    );
+  }
+  if (initialDraggedArea !== undefined) {
+    store.set(
+      pageLayoutDraggedAreaComponentState.atomFamily({
+        instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+      }),
+      initialDraggedArea,
+    );
+  }
+  return store;
+};
 
 describe('useEndPageLayoutDragSelection', () => {
-  const mockNavigatePageLayoutCommandMenu = jest.fn();
+  const mockNavigatePageLayoutSidePanel = jest.fn();
 
   beforeEach(() => {
     jest.clearAllMocks();
-    (useNavigatePageLayoutCommandMenu as jest.Mock).mockReturnValue({
-      navigatePageLayoutCommandMenu: mockNavigatePageLayoutCommandMenu,
+    (useNavigatePageLayoutSidePanel as jest.Mock).mockReturnValue({
+      navigatePageLayoutSidePanel: mockNavigatePageLayoutSidePanel,
     });
   });
 
@@ -55,28 +59,25 @@ describe('useEndPageLayoutDragSelection', () => {
       mockBounds,
     );
 
+    const store = createTestStore(new Set(['0-0', '0-1', '1-0', '1-1']), null);
+
     const { result } = renderHook(
       () => ({
         endDragSelection: useEndPageLayoutDragSelection(
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         ),
-        selectedCells: useRecoilComponentValue(
+        selectedCells: useAtomComponentStateValue(
           pageLayoutSelectedCellsComponentState,
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         ),
-        draggedArea: useRecoilComponentValue(
+        draggedArea: useAtomComponentStateValue(
           pageLayoutDraggedAreaComponentState,
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         ),
       }),
       {
         wrapper: ({ children }: { children: ReactNode }) => (
-          <PageLayoutTestWrapper
-            initializeState={createInitializeState(
-              new Set(['0-0', '0-1', '1-0', '1-1']),
-              null,
-            )}
-          >
+          <PageLayoutTestWrapper store={store}>
             {children}
           </PageLayoutTestWrapper>
         ),
@@ -100,8 +101,8 @@ describe('useEndPageLayoutDragSelection', () => {
     expect(result.current.draggedArea).toEqual(mockBounds);
     expect(result.current.selectedCells.size).toBe(0);
 
-    expect(mockNavigatePageLayoutCommandMenu).toHaveBeenCalledWith({
-      commandMenuPage: CommandMenuPages.PageLayoutWidgetTypeSelect,
+    expect(mockNavigatePageLayoutSidePanel).toHaveBeenCalledWith({
+      sidePanelPage: SidePanelPages.PageLayoutWidgetTypeSelect,
       resetNavigationStack: true,
     });
   });
@@ -109,25 +110,25 @@ describe('useEndPageLayoutDragSelection', () => {
   it('should not navigate when no cells are selected', () => {
     (calculateGridBoundsFromSelectedCells as jest.Mock).mockReturnValue(null);
 
+    const store = createTestStore(new Set(), null);
+
     const { result } = renderHook(
       () => ({
         endDragSelection: useEndPageLayoutDragSelection(
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         ),
-        selectedCells: useRecoilComponentValue(
+        selectedCells: useAtomComponentStateValue(
           pageLayoutSelectedCellsComponentState,
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         ),
-        draggedArea: useRecoilComponentValue(
+        draggedArea: useAtomComponentStateValue(
           pageLayoutDraggedAreaComponentState,
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         ),
       }),
       {
         wrapper: ({ children }: { children: ReactNode }) => (
-          <PageLayoutTestWrapper
-            initializeState={createInitializeState(new Set(), null)}
-          >
+          <PageLayoutTestWrapper store={store}>
             {children}
           </PageLayoutTestWrapper>
         ),
@@ -139,7 +140,7 @@ describe('useEndPageLayoutDragSelection', () => {
     });
 
     expect(calculateGridBoundsFromSelectedCells).not.toHaveBeenCalled();
-    expect(mockNavigatePageLayoutCommandMenu).not.toHaveBeenCalled();
+    expect(mockNavigatePageLayoutSidePanel).not.toHaveBeenCalled();
     expect(result.current.draggedArea).toBeNull();
     expect(result.current.selectedCells.size).toBe(0);
   });
@@ -147,28 +148,25 @@ describe('useEndPageLayoutDragSelection', () => {
   it('should not navigate when bounds calculation returns null', () => {
     (calculateGridBoundsFromSelectedCells as jest.Mock).mockReturnValue(null);
 
+    const store = createTestStore(new Set(['invalid-cell']), null);
+
     const { result } = renderHook(
       () => ({
         endDragSelection: useEndPageLayoutDragSelection(
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         ),
-        selectedCells: useRecoilComponentValue(
+        selectedCells: useAtomComponentStateValue(
           pageLayoutSelectedCellsComponentState,
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         ),
-        draggedArea: useRecoilComponentValue(
+        draggedArea: useAtomComponentStateValue(
           pageLayoutDraggedAreaComponentState,
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         ),
       }),
       {
         wrapper: ({ children }: { children: ReactNode }) => (
-          <PageLayoutTestWrapper
-            initializeState={createInitializeState(
-              new Set(['invalid-cell']),
-              null,
-            )}
-          >
+          <PageLayoutTestWrapper store={store}>
             {children}
           </PageLayoutTestWrapper>
         ),
@@ -182,7 +180,7 @@ describe('useEndPageLayoutDragSelection', () => {
     expect(calculateGridBoundsFromSelectedCells).toHaveBeenCalledWith([
       'invalid-cell',
     ]);
-    expect(mockNavigatePageLayoutCommandMenu).not.toHaveBeenCalled();
+    expect(mockNavigatePageLayoutSidePanel).not.toHaveBeenCalled();
     expect(result.current.draggedArea).toBeNull();
     expect(result.current.selectedCells.size).toBe(0);
   });
@@ -206,21 +204,21 @@ describe('useEndPageLayoutDragSelection', () => {
       mockBounds,
     );
 
+    const store = createTestStore(new Set(['0-0']));
+
     const { result } = renderHook(
       () => ({
         endDragSelection: useEndPageLayoutDragSelection(
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         ),
-        selectedCells: useRecoilComponentValue(
+        selectedCells: useAtomComponentStateValue(
           pageLayoutSelectedCellsComponentState,
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         ),
       }),
       {
         wrapper: ({ children }: { children: ReactNode }) => (
-          <PageLayoutTestWrapper
-            initializeState={createInitializeState(new Set(['0-0']))}
-          >
+          <PageLayoutTestWrapper store={store}>
             {children}
           </PageLayoutTestWrapper>
         ),
@@ -231,7 +229,7 @@ describe('useEndPageLayoutDragSelection', () => {
       result.current.endDragSelection.endPageLayoutDragSelection();
     });
 
-    expect(mockNavigatePageLayoutCommandMenu).toHaveBeenCalled();
+    expect(mockNavigatePageLayoutSidePanel).toHaveBeenCalled();
   });
 
   it('should clear selected cells after successful navigation', () => {
@@ -240,21 +238,21 @@ describe('useEndPageLayoutDragSelection', () => {
       mockBounds,
     );
 
+    const store = createTestStore(new Set(['0-0']));
+
     const { result } = renderHook(
       () => ({
         endDragSelection: useEndPageLayoutDragSelection(
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         ),
-        selectedCells: useRecoilComponentValue(
+        selectedCells: useAtomComponentStateValue(
           pageLayoutSelectedCellsComponentState,
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         ),
       }),
       {
         wrapper: ({ children }: { children: ReactNode }) => (
-          <PageLayoutTestWrapper
-            initializeState={createInitializeState(new Set(['0-0']))}
-          >
+          <PageLayoutTestWrapper store={store}>
             {children}
           </PageLayoutTestWrapper>
         ),

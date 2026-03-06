@@ -44,7 +44,7 @@ registerEnumType(FieldMetadataType, {
 
 @ObjectType('Field')
 @Authorize({
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
   authorize: (context: any) => ({
     workspaceId: { eq: context?.req?.workspace?.id },
   }),
@@ -63,6 +63,11 @@ export class FieldMetadataDTO<T extends FieldMetadataType = FieldMetadataType> {
   @IsNotEmpty()
   @IDField(() => UUIDScalarType)
   id: string;
+
+  @IsUUID()
+  @IsNotEmpty()
+  @IDField(() => UUIDScalarType)
+  universalIdentifier: string;
 
   @IsEnum(FieldMetadataType)
   @IsNotEmpty()

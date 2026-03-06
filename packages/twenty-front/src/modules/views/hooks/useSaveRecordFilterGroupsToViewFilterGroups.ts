@@ -1,14 +1,16 @@
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { usePerformViewFilterGroupAPIPersist } from '@/views/hooks/internal/usePerformViewFilterGroupAPIPersist';
 import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
+import { coreViewsState } from '@/views/states/coreViewState';
 import { getViewFilterGroupsToCreate } from '@/views/utils/getViewFilterGroupsToCreate';
 import { getViewFilterGroupsToDelete } from '@/views/utils/getViewFilterGroupsToDelete';
 import { getViewFilterGroupsToUpdate } from '@/views/utils/getViewFilterGroupsToUpdate';
 import { mapRecordFilterGroupToViewFilterGroup } from '@/views/utils/mapRecordFilterGroupToViewFilterGroup';
-import { useRecoilCallback } from 'recoil';
+import { useStore } from 'jotai';
+import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useSaveRecordFilterGroupsToViewFilterGroups = () => {
@@ -22,65 +24,93 @@ export const useSaveRecordFilterGroupsToViewFilterGroups = () => {
   const { currentView } = useGetCurrentViewOnly();
 
   const currentRecordFilterGroupsCallbackState =
-    useRecoilComponentCallbackState(currentRecordFilterGroupsComponentState);
+    useAtomComponentStateCallbackState(currentRecordFilterGroupsComponentState);
 
-  const saveRecordFilterGroupsToViewFilterGroups = useRecoilCallback(
-    ({ snapshot }) =>
-      async () => {
-        if (!canPersistChanges || !isDefined(currentView)) {
-          return;
-        }
+  const store = useStore();
 
-        const currentViewFilterGroups = currentView?.viewFilterGroups ?? [];
+  const setCoreViews = useSetAtomState(coreViewsState);
 
-        const currentRecordFilterGroups = getSnapshotValue(
-          snapshot,
-          currentRecordFilterGroupsCallbackState,
-        );
+  const saveRecordFilterGroupsToViewFilterGroups = useCallback(async () => {
+    if (!canPersistChanges || !isDefined(currentView)) {
+      return;
+    }
 
-        const newViewFilterGroups = currentRecordFilterGroups.map(
-          (recordFilterGroup) =>
-            mapRecordFilterGroupToViewFilterGroup({
-              recordFilterGroup,
-              view: currentView,
-            }),
-        );
+    const currentViewFilterGroups = currentView?.viewFilterGroups ?? [];
 
-        const viewFilterGroupsToCreate = getViewFilterGroupsToCreate(
-          currentViewFilterGroups,
-          newViewFilterGroups,
-        );
-
-        const viewFilterGroupsToDelete = getViewFilterGroupsToDelete(
-          currentViewFilterGroups,
-          newViewFilterGroups,
-        );
-
-        const viewFilterGroupsToUpdate = getViewFilterGroupsToUpdate(
-          currentViewFilterGroups,
-          newViewFilterGroups,
-        );
-
-        const viewFilterGroupIdsToDelete = viewFilterGroupsToDelete.map(
-          (viewFilterGroup) => viewFilterGroup.id,
-        );
-
-        await performViewFilterGroupAPICreate(
-          viewFilterGroupsToCreate,
-          currentView,
-        );
-        await performViewFilterGroupAPIUpdate(viewFilterGroupsToUpdate);
-        await performViewFilterGroupAPIDelete(viewFilterGroupIdsToDelete);
-      },
-    [
-      canPersistChanges,
-      currentView,
+    const currentRecordFilterGroups = store.get(
       currentRecordFilterGroupsCallbackState,
-      performViewFilterGroupAPICreate,
-      performViewFilterGroupAPIUpdate,
-      performViewFilterGroupAPIDelete,
-    ],
-  );
+    );
+
+    const newViewFilterGroups = currentRecordFilterGroups.map(
+      (recordFilterGroup) =>
+        mapRecordFilterGroupToViewFilterGroup({
+          recordFilterGroup,
+          view: currentView,
+        }),
+    );
+
+    const viewFilterGroupsToCreate = getViewFilterGroupsToCreate(
+      currentViewFilterGroups,
+      newViewFilterGroups,
+    );
+
+    const viewFilterGroupsToDelete = getViewFilterGroupsToDelete(
+      currentViewFilterGroups,
+      newViewFilterGroups,
+    );
+
+    const viewFiltersToOptimisticallyCascadeDelete =
+      currentView.viewFilters.filter((viewFilter) =>
+        viewFilterGroupsToDelete.some(
+          (viewFilterGroupToDelete) =>
+            viewFilterGroupToDelete.id === viewFilter.viewFilterGroupId,
+        ),
+      );
+
+    for (const viewFilterToCascadeDelete of viewFiltersToOptimisticallyCascadeDelete) {
+      setCoreViews((currentCoreViews) => {
+        const updatedCoreViews = currentCoreViews.map((coreView) => {
+          if (coreView.id !== currentView.id) {
+            return coreView;
+          }
+
+          return {
+            ...coreView,
+            viewFilters: coreView.viewFilters.filter(
+              (viewFilter) => viewFilter.id !== viewFilterToCascadeDelete.id,
+            ),
+          };
+        });
+
+        return updatedCoreViews;
+      });
+    }
+
+    const viewFilterGroupsToUpdate = getViewFilterGroupsToUpdate(
+      currentViewFilterGroups,
+      newViewFilterGroups,
+    );
+
+    const viewFilterGroupIdsToDelete = viewFilterGroupsToDelete.map(
+      (viewFilterGroup) => viewFilterGroup.id,
+    );
+
+    await performViewFilterGroupAPICreate(
+      viewFilterGroupsToCreate,
+      currentView,
+    );
+    await performViewFilterGroupAPIUpdate(viewFilterGroupsToUpdate);
+    await performViewFilterGroupAPIDelete(viewFilterGroupIdsToDelete);
+  }, [
+    canPersistChanges,
+    currentView,
+    store,
+    currentRecordFilterGroupsCallbackState,
+    performViewFilterGroupAPICreate,
+    performViewFilterGroupAPIUpdate,
+    performViewFilterGroupAPIDelete,
+    setCoreViews,
+  ]);
 
   return {
     saveRecordFilterGroupsToViewFilterGroups,

@@ -1,17 +1,14 @@
-import { selectorFamily } from 'recoil';
+import { mountedHeadlessFrontComponentMapsState } from '@/front-components/states/mountedHeadlessFrontComponentMapsState';
+import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
 
-import { mountedHeadlessFrontComponentIdsState } from '@/front-components/states/mountedHeadlessFrontComponentIdsState';
+export const isHeadlessFrontComponentMountedFamilySelector =
+  createAtomFamilySelector<boolean, string>({
+    key: 'isHeadlessFrontComponentMountedFamilySelector',
+    get:
+      (frontComponentId: string) =>
+      ({ get }) => {
+        const mountedMap = get(mountedHeadlessFrontComponentMapsState);
 
-export const isHeadlessFrontComponentMountedFamilySelector = selectorFamily<
-  boolean,
-  string
->({
-  key: 'isHeadlessFrontComponentMountedFamilySelector',
-  get:
-    (frontComponentId: string) =>
-    ({ get }) => {
-      const mountedIds = get(mountedHeadlessFrontComponentIdsState);
-
-      return mountedIds.has(frontComponentId);
-    },
-});
+        return mountedMap.has(frontComponentId);
+      },
+  });

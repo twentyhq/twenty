@@ -1,4 +1,4 @@
-import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
+import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { useActiveRecordBoardCard } from '@/object-record/record-board/hooks/useActiveRecordBoardCard';
 import { useFocusedRecordBoardCard } from '@/object-record/record-board/hooks/useFocusedRecordBoardCard';
@@ -9,8 +9,8 @@ import { RecordBoardCardContext } from '@/object-record/record-board/record-boar
 import { isRecordBoardCardSelectedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardSelectedComponentFamilyState';
 import { recordBoardSelectedRecordIdsComponentSelector } from '@/object-record/record-board/states/selectors/recordBoardSelectedRecordIdsComponentSelector';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
-import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useContext } from 'react';
 import { Key } from 'ts-key-enum';
 
@@ -20,19 +20,19 @@ export const useRecordBoardCardHotkeys = (focusId: string) => {
     RecordBoardCardContext,
   );
 
-  const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
+  const { openRecordInSidePanel } = useOpenRecordInSidePanel();
   const { activateBoardCard } = useActiveRecordBoardCard();
   const { setRecordAsSelected } = useRecordBoardSelection();
 
   const { resetRecordBoardSelection } = useResetRecordBoardSelection();
   const { unfocusBoardCard } = useFocusedRecordBoardCard(recordBoardId);
 
-  const isRecordBoardCardSelected = useRecoilComponentFamilyValue(
+  const isRecordBoardCardSelected = useAtomComponentFamilyStateValue(
     isRecordBoardCardSelectedComponentFamilyState,
     recordId,
   );
 
-  const selectedRecordIds = useRecoilComponentValue(
+  const selectedRecordIds = useAtomComponentSelectorValue(
     recordBoardSelectedRecordIdsComponentSelector,
     recordBoardId,
   );
@@ -43,8 +43,8 @@ export const useRecordBoardCardHotkeys = (focusId: string) => {
     setRecordAsSelected(recordId, !isRecordBoardCardSelected);
   };
 
-  const handleOpenRecordInCommandMenu = () => {
-    openRecordInCommandMenu({
+  const handleOpenRecordInSidePanel = () => {
+    openRecordInSidePanel({
       recordId,
       objectNameSingular: objectMetadataItem.nameSingular,
       isNewRecord: false,
@@ -77,9 +77,9 @@ export const useRecordBoardCardHotkeys = (focusId: string) => {
       `${Key.Control}+${Key.Enter}`,
       `${Key.Meta}+${Key.Enter}`,
     ],
-    callback: handleOpenRecordInCommandMenu,
+    callback: handleOpenRecordInSidePanel,
     focusId,
-    dependencies: [handleOpenRecordInCommandMenu],
+    dependencies: [handleOpenRecordInSidePanel],
   });
 
   useHotkeysOnFocusedElement({

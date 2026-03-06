@@ -1,5 +1,5 @@
 import { useLazyQuery } from '@apollo/client';
-import { useRecoilCallback } from 'recoil';
+import { useCallback } from 'react';
 
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -60,8 +60,8 @@ export const useLazyFindManyRecordsWithOffset = ({
     },
   );
 
-  const findManyRecordsLazyWithOffset = useRecoilCallback(
-    () => async (limit: number, offset: number) => {
+  const findManyRecordsLazyWithOffset = useCallback(
+    async (limit: number, offset: number) => {
       if (!hasReadPermission) {
         return {
           data: null,

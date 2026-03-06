@@ -1,14 +1,16 @@
 import { Injectable } from '@nestjs/common';
 
+import { assertUnreachable } from 'twenty-shared/utils';
+
 import { COMMON_PRELOAD_TOOLS } from 'src/engine/core-modules/tool-provider/constants/common-preload-tools.const';
 import { ToolCategory } from 'src/engine/core-modules/tool-provider/enums/tool-category.enum';
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
-import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 import {
   EXECUTE_TOOL_TOOL_NAME,
   LEARN_TOOLS_TOOL_NAME,
   LOAD_SKILL_TOOL_NAME,
 } from 'src/engine/core-modules/tool-provider/tools';
+import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 import {
   AgentActorContextService,
   type UserContext,
@@ -137,8 +139,7 @@ export class SystemPromptBuilderService {
     contextString?: string,
     storedFiles?: Array<{
       filename: string;
-      storagePath: string;
-      url: string;
+      fileId: string;
     }>,
     workspaceInstructions?: string,
     userContext?: UserContext,
@@ -198,12 +199,12 @@ ${parts.join('\n')}`;
   }
 
   buildUploadedFilesSection(
-    storedFiles: Array<{ filename: string; storagePath: string; url: string }>,
+    storedFiles: Array<{ filename: string; fileId: string }>,
   ): string {
     const fileList = storedFiles.map((f) => `- ${f.filename}`).join('\n');
 
     const filesJson = JSON.stringify(
-      storedFiles.map((f) => ({ filename: f.filename, url: f.url })),
+      storedFiles.map((f) => ({ filename: f.filename, fileId: f.fileId })),
     );
 
     return `
@@ -213,7 +214,7 @@ The user has uploaded the following files:
 ${fileList}
 
 **IMPORTANT**: Use the \`code_interpreter\` tool to analyze these files.
-When calling code_interpreter, include the files parameter with these values:
+When calling code_interpreter, include the files parameter with these values (use fileId to reference uploaded files):
 \`\`\`json
 ${filesJson}
 \`\`\`
@@ -246,6 +247,7 @@ ${skillsList}`;
     preloadedTools: string[],
   ): string {
     const preloadedSet = new Set(preloadedTools);
+    const hasWebSearch = preloadedSet.has('web_search');
 
     const toolsByCategory = new Map<string, ToolIndexEntry[]>();
 
@@ -259,6 +261,14 @@ ${skillsList}`;
 
     const sections: string[] = [];
 
+    const webSearchLine = hasWebSearch
+      ? `- \`web_search\` ✓: Search the web for real-time information (ALWAYS use this for current data, news, research)`
+      : `- Web search is automatically available — the model will search the web when needed. Do NOT call \`web_search\` as a tool.`;
+
+    const otherPreloadedTools = preloadedTools.filter(
+      (name) => name !== 'web_search',
+    );
+
     sections.push(`
 ## Available Tools
 
@@ -266,20 +276,12 @@ You have access to ${toolCatalog.length} tools plus native web search. Some are 
 To use any other tool, first call \`${LEARN_TOOLS_TOOL_NAME}\` to learn its schema, then call \`${EXECUTE_TOOL_TOOL_NAME}\` to run it.
 
 ### Pre-loaded Tools (ready to use now)
-- \`web_search\` ✓: Search the web for real-time information (ALWAYS use this for current data, news, research)
-${preloadedTools.length > 0 ? preloadedTools.map((toolName) => `- \`${toolName}\` ✓`).join('\n') : ''}
+${webSearchLine}
+${otherPreloadedTools.length > 0 ? otherPreloadedTools.map((toolName) => `- \`${toolName}\` ✓`).join('\n') : ''}
 
 ### Tool Catalog by Category`);
 
-    const categoryOrder = [
-      ToolCategory.DATABASE_CRUD,
-      ToolCategory.ACTION,
-      ToolCategory.WORKFLOW,
-      ToolCategory.DASHBOARD,
-      ToolCategory.METADATA,
-      ToolCategory.VIEW,
-      ToolCategory.LOGIC_FUNCTION,
-    ];
+    const categoryOrder = Object.values(ToolCategory);
 
     for (const category of categoryOrder) {
       const tools = toolsByCategory.get(category);
@@ -301,16 +303,19 @@ ${tools
   .join('\n')}`);
     }
 
+    const webSearchInstruction = hasWebSearch
+      ? `1. **Web search** (\`web_search\`): Use for ANY request requiring current/real-time information from the internet\n`
+      : '';
+
     sections.push(`
 ### How to Use Tools
-1. **Web search** (\`web_search\`): Use for ANY request requiring current/real-time information from the internet
-2. **Pre-loaded tools** (marked with ✓): Use directly
-3. **Other tools**: First call \`${LEARN_TOOLS_TOOL_NAME}({toolNames: ["tool_name"]})\` to learn the schema, then call \`${EXECUTE_TOOL_TOOL_NAME}({toolName: "tool_name", arguments: {...}})\` to run it`);
+${webSearchInstruction}${hasWebSearch ? '2' : '1'}. **Pre-loaded tools** (marked with ✓): Use directly
+${hasWebSearch ? '3' : '2'}. **Other tools**: First call \`${LEARN_TOOLS_TOOL_NAME}({toolNames: ["tool_name"]})\` to learn the schema, then call \`${EXECUTE_TOOL_TOOL_NAME}({toolName: "tool_name", arguments: {...}})\` to run it`);
 
     return sections.join('\n');
   }
 
-  private getCategoryLabel(category: string): string {
+  private getCategoryLabel(category: ToolCategory): string {
     switch (category) {
       case ToolCategory.DATABASE_CRUD:
         return 'Database Tools (CRUD operations)';
@@ -326,8 +331,12 @@ ${tools
         return 'Dashboard Tools (create/manage dashboards)';
       case ToolCategory.LOGIC_FUNCTION:
         return 'Logic Functions (custom tools)';
+      case ToolCategory.NATIVE_MODEL:
+        return 'Native Model Capabilities (e.g. web search)';
+      case ToolCategory.VIEW_FIELD:
+        return 'View Field Tools (manage view columns)';
       default:
-        return category;
+        return assertUnreachable(category);
     }
   }
 }

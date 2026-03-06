@@ -8,11 +8,11 @@ import { Select } from '@/ui/input/components/Select';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
-import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
-import { useId, useState } from 'react';
+import { useContext, useId, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconCheck, IconCircleOff, IconX } from 'twenty-ui/display';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 type FormBooleanFieldInputProps = {
   label?: string;
@@ -45,8 +45,8 @@ export const FormBooleanFieldInput = ({
   readonly,
   VariablePicker,
 }: FormBooleanFieldInputProps) => {
-  const theme = useTheme();
   const { t } = useLingui();
+  const { theme } = useContext(ThemeContext);
 
   const instanceId = useId();
 
@@ -134,7 +134,9 @@ export const FormBooleanFieldInput = ({
             hasRightElement={isDefined(VariablePicker) && !readonly}
             disabled={readonly}
             dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
-            dropdownOffset={{ y: parseInt(theme.spacing(1), 10) }}
+            dropdownOffset={{
+              y: parseInt(theme.spacing[1], 10),
+            }}
           />
         ) : (
           <FormFieldInputInnerContainer

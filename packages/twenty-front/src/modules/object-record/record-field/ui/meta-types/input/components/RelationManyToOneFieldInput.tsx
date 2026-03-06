@@ -4,7 +4,7 @@ import { useRelationField } from '@/object-record/record-field/ui/meta-types/hoo
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { getFieldMetadataItemById } from '@/object-metadata/utils/getFieldMetadataItemById';
-import { useAddNewRecordAndOpenRightDrawer } from '@/object-record/record-field/ui/meta-types/input/hooks/useAddNewRecordAndOpenRightDrawer';
+import { useAddNewRecordAndOpenSidePanel } from '@/object-record/record-field/ui/meta-types/input/hooks/useAddNewRecordAndOpenSidePanel';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { recordFieldInputLayoutDirectionComponentState } from '@/object-record/record-field/ui/states/recordFieldInputLayoutDirectionComponentState';
 import { recordFieldInputLayoutDirectionLoadingComponentState } from '@/object-record/record-field/ui/states/recordFieldInputLayoutDirectionLoadingComponentState';
@@ -13,8 +13,8 @@ import { singleRecordPickerSelectedIdComponentState } from '@/object-record/reco
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
 import { CustomError, isDefined } from 'twenty-shared/utils';
@@ -29,7 +29,7 @@ export const RelationManyToOneFieldInput = () => {
     fieldMetadataId: fieldDefinition.fieldMetadataId,
     objectMetadataItems,
   });
-  if (!fieldMetadataItem || !objectMetadataItem) {
+  if (!isDefined(fieldMetadataItem) || !isDefined(objectMetadataItem)) {
     throw new CustomError(
       'Field metadata item or object metadata item not found',
       'FIELD_METADATA_ITEM_OR_OBJECT_METADATA_ITEM_NOT_FOUND',
@@ -66,39 +66,39 @@ export const RelationManyToOneFieldInput = () => {
     );
   }
 
-  const { createNewRecordAndOpenRightDrawer } =
-    useAddNewRecordAndOpenRightDrawer({
-      fieldMetadataItem,
-      objectMetadataItem,
-      relationObjectMetadataNameSingular:
-        fieldDefinition.metadata.relationObjectMetadataNameSingular,
-      relationObjectMetadataItem,
-      relationFieldMetadataItem,
-      recordId,
-    });
+  const { createNewRecordAndOpenSidePanel } = useAddNewRecordAndOpenSidePanel({
+    fieldMetadataItem,
+    objectMetadataItem,
+    relationObjectMetadataNameSingular:
+      fieldDefinition.metadata.relationObjectMetadataNameSingular,
+    relationObjectMetadataItem,
+    relationFieldMetadataItem,
+    recordId,
+  });
 
-  const layoutDirection = useRecoilComponentValue(
+  const recordFieldInputLayoutDirection = useAtomComponentStateValue(
     recordFieldInputLayoutDirectionComponentState,
   );
 
-  const isLoading = useRecoilComponentValue(
+  const recordFieldInputLayoutDirectionLoading = useAtomComponentStateValue(
     recordFieldInputLayoutDirectionLoadingComponentState,
+    instanceId,
   );
 
-  const setSingleRecordPickerSelectedId = useSetRecoilComponentState(
+  const setSingleRecordPickerSelectedId = useSetAtomComponentState(
     singleRecordPickerSelectedIdComponentState,
     instanceId,
   );
 
   const handleCreateNew = async (searchInput?: string) => {
-    const newRecordId = await createNewRecordAndOpenRightDrawer?.(searchInput);
+    const newRecordId = await createNewRecordAndOpenSidePanel?.(searchInput);
 
     if (isDefined(newRecordId)) {
       setSingleRecordPickerSelectedId(newRecordId);
     }
   };
 
-  if (isLoading) {
+  if (recordFieldInputLayoutDirectionLoading) {
     return <></>;
   }
   const fieldLabel = fieldDefinition.label;
@@ -111,9 +111,7 @@ export const RelationManyToOneFieldInput = () => {
       emptyLabel={t`No ${fieldLabel}`}
       onCancel={onCancel}
       onCreate={
-        isDefined(createNewRecordAndOpenRightDrawer)
-          ? handleCreateNew
-          : undefined
+        isDefined(createNewRecordAndOpenSidePanel) ? handleCreateNew : undefined
       }
       onMorphItemSelected={handleMorphItemSelected}
       objectNameSingulars={[
@@ -121,7 +119,7 @@ export const RelationManyToOneFieldInput = () => {
       ]}
       recordPickerInstanceId={instanceId}
       layoutDirection={
-        layoutDirection === 'downward'
+        recordFieldInputLayoutDirection === 'downward'
           ? 'search-bar-on-top'
           : 'search-bar-on-bottom'
       }

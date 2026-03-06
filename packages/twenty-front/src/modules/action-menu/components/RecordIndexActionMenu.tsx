@@ -1,13 +1,15 @@
 import { PageHeaderActionMenuButtons } from '@/action-menu/components/PageHeaderActionMenuButtons';
 import { RecordIndexActionMenuDropdown } from '@/action-menu/components/RecordIndexActionMenuDropdown';
 import { ActionMenuContextProvider } from '@/action-menu/contexts/ActionMenuContextProvider';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 export const RecordIndexActionMenu = () => {
-  const contextStoreCurrentObjectMetadataItemId = useRecoilComponentValue(
+  const contextStoreCurrentObjectMetadataItemId = useAtomComponentStateValue(
     contextStoreCurrentObjectMetadataItemIdComponentState,
+    MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
 
   const isMobile = useIsMobile();
@@ -17,14 +19,14 @@ export const RecordIndexActionMenu = () => {
       {contextStoreCurrentObjectMetadataItemId && (
         <>
           <ActionMenuContextProvider
-            isInRightDrawer={false}
+            isInSidePanel={false}
             displayType="button"
             actionMenuType="index-page-action-menu"
           >
             {!isMobile && <PageHeaderActionMenuButtons />}
           </ActionMenuContextProvider>
           <ActionMenuContextProvider
-            isInRightDrawer={false}
+            isInSidePanel={false}
             displayType="dropdownItem"
             actionMenuType="index-page-action-menu-dropdown"
           >

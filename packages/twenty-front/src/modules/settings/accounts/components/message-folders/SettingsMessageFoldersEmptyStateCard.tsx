@@ -1,21 +1,22 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { IconFolder } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
+import { useContext } from 'react';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledEmptyState = styled.div`
   align-items: center;
-  color: ${({ theme }) => theme.font.color.tertiary};
+  color: ${themeCssVariables.font.color.tertiary};
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(2)};
-  padding: ${({ theme }) => theme.spacing(8)};
+  gap: ${themeCssVariables.spacing[2]};
+  padding: ${themeCssVariables.spacing[8]};
   text-align: center;
 `;
 
 export const SettingsMessageFoldersEmptyStateCard = () => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   return (
     <Section>

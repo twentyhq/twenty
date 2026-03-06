@@ -1,22 +1,22 @@
 /* @license Enterprise */
 
 import { SettingsSecuritySSORowDropdownMenu } from '@/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu';
-import { type SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProvidersState';
+import { type SSOIdentityProvider } from '@/settings/security/types/SSOIdentityProvider';
 import { getColorBySSOIdentityProviderStatus } from '@/settings/security/utils/getColorBySSOIdentityProviderStatus';
-import styled from '@emotion/styled';
-import { type UnwrapRecoilValue } from 'recoil';
+import { styled } from '@linaria/react';
 import { Status } from 'twenty-ui/display';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledRowRightContainer = styled.div`
   align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
 `;
 
 export const SettingsSSOIdentityProviderRowRightContainer = ({
   SSOIdp,
 }: {
-  SSOIdp: UnwrapRecoilValue<typeof SSOIdentitiesProvidersState>[0];
+  SSOIdp: Omit<SSOIdentityProvider, '__typename'>;
 }) => {
   return (
     <StyledRowRightContainer>

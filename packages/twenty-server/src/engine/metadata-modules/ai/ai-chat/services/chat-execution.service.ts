@@ -18,8 +18,8 @@ import { getAppPath, isDefined } from 'twenty-shared/utils';
 
 import { type CodeExecutionStreamEmitter } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
 
-import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { COMMON_PRELOAD_TOOLS } from 'src/engine/core-modules/tool-provider/constants/common-preload-tools.const';
 import { wrapToolsWithOutputSerialization } from 'src/engine/core-modules/tool-provider/output-serialization/wrap-tools-with-output-serialization.util';
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
@@ -124,8 +124,6 @@ export class ChatExecutionService {
       toolContext,
     );
 
-    const preloadedToolNames = Object.keys(preloadedTools);
-
     const modelId = workspace.smartModel;
 
     this.aiModelRegistryService.validateModelAvailability(modelId, workspace);
@@ -139,12 +137,20 @@ export class ChatExecutionService {
       registeredModel.modelId,
     );
 
+    const { tools: nativeSearchTools, callableToolNames: searchToolNames } =
+      this.getNativeWebSearchTools(registeredModel.inferenceProvider);
+
     // Direct tools: native provider tools + preloaded tools.
     // These are callable directly AND as fallback through execute_tool.
     const directTools: ToolSet = {
       ...wrapToolsWithOutputSerialization(preloadedTools),
-      ...this.getNativeWebSearchTool(registeredModel.inferenceProvider),
+      ...nativeSearchTools,
     };
+
+    const preloadedToolNames = [
+      ...Object.keys(preloadedTools),
+      ...searchToolNames,
+    ];
 
     // ToolSet is constant for the entire conversation — no mutation.
     // learn_tools returns schemas as text; execute_tool dispatches to cached tools.
@@ -169,8 +175,7 @@ export class ChatExecutionService {
 
     let storedFiles: Array<{
       filename: string;
-      storagePath: string;
-      url: string;
+      fileId: string;
     }> = [];
 
     if (extractedFiles.length > 0) {
@@ -205,9 +210,11 @@ export class ChatExecutionService {
             : undefined,
     };
 
+    const modelMessages = await convertToModelMessages(processedMessages);
+
     const stream = streamText({
       model: registeredModel.model,
-      messages: [systemMessage, ...convertToModelMessages(processedMessages)],
+      messages: [systemMessage, ...modelMessages],
       tools: activeTools,
       stopWhen: stepCountIs(AGENT_CONFIG.MAX_STEPS),
       experimental_telemetry: AI_TELEMETRY_CONFIG,
@@ -318,46 +325,56 @@ export class ChatExecutionService {
     return context;
   }
 
-  private getNativeWebSearchTool(
-    inferenceProvider: InferenceProvider,
-  ): ToolSet {
+  private getNativeWebSearchTools(inferenceProvider: InferenceProvider): {
+    tools: ToolSet;
+    callableToolNames: string[];
+  } {
     switch (inferenceProvider) {
       case InferenceProvider.ANTHROPIC:
-        return { web_search: anthropic.tools.webSearch_20250305() };
+        return {
+          tools: { web_search: anthropic.tools.webSearch_20250305() },
+          callableToolNames: ['web_search'],
+        };
       case InferenceProvider.BEDROCK: {
         const bedrockProvider =
           this.aiModelRegistryService.getBedrockProvider();
 
         if (bedrockProvider) {
           return {
-            web_search:
-              bedrockProvider.tools.webSearch_20250305() as ToolSet[string],
+            tools: {
+              web_search:
+                bedrockProvider.tools.webSearch_20250305() as ToolSet[string],
+            },
+            callableToolNames: ['web_search'],
           };
         }
 
-        return {};
+        return { tools: {}, callableToolNames: [] };
       }
       case InferenceProvider.OPENAI:
-        return { web_search: openai.tools.webSearch() };
+        return {
+          tools: { web_search: openai.tools.webSearch() },
+          callableToolNames: ['web_search'],
+        };
       case InferenceProvider.GROQ:
         return {
-          web_search: groq.tools.browserSearch({}) as ToolSet[string],
+          tools: {
+            web_search: groq.tools.browserSearch({}) as ToolSet[string],
+          },
+          callableToolNames: [],
         };
       default:
-        return {};
+        return { tools: {}, callableToolNames: [] };
     }
   }
 
   private async storeExtractedFiles(
     files: ExtractedFile[],
     _workspaceId: string,
-  ): Promise<Array<{ filename: string; storagePath: string; url: string }>> {
-    // Files are already uploaded and have URLs, just return them with their info
-    // The code interpreter tool will download them when needed
+  ): Promise<Array<{ filename: string; fileId: string }>> {
     return files.map((file) => ({
       filename: file.filename,
-      storagePath: file.filename,
-      url: file.url,
+      fileId: file.fileId,
     }));
   }
 }

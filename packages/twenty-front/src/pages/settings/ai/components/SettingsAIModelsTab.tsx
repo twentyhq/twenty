@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 import { DEFAULT_FAST_MODEL } from '@/ai/constants/DefaultFastModel';
 import { DEFAULT_SMART_MODEL } from '@/ai/constants/DefaultSmartModel';
@@ -12,8 +12,8 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Select } from '@/ui/input/components/Select';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
-import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { t } from '@lingui/core/macro';
 import {
   H2Title,
@@ -23,26 +23,23 @@ import {
   IconTwentyStar,
 } from 'twenty-ui/display';
 import { Card, Section } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useUpdateWorkspaceMutation } from '~/generated-metadata/graphql';
 import { getModelIcon } from '~/pages/settings/ai/utils/getModelIcon';
 import { getModelProviderLabel } from '~/pages/settings/ai/utils/getModelProviderLabel';
 
 const StyledSearchContainer = styled.div`
-  padding-bottom: ${({ theme }) => theme.spacing(2)};
-`;
-
-const StyledSearchInput = styled(SettingsTextInput)`
-  width: 100%;
+  padding-bottom: ${themeCssVariables.spacing[2]};
 `;
 
 export const SettingsAIModelsTab = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
-  const [currentWorkspace, setCurrentWorkspace] = useRecoilStateV2(
+  const [currentWorkspace, setCurrentWorkspace] = useAtomState(
     currentWorkspaceState,
   );
   const [updateWorkspace] = useUpdateWorkspaceMutation();
   const [searchQuery, setSearchQuery] = useState('');
-  const aiModels = useRecoilValueV2(aiModelsState);
+  const aiModels = useAtomStateValue(aiModelsState);
 
   const {
     allModelsWithAvailability,
@@ -357,12 +354,13 @@ export const SettingsAIModelsTab = () => {
           />
 
           <StyledSearchContainer>
-            <StyledSearchInput
+            <SettingsTextInput
               instanceId="model-table-search"
               LeftIcon={IconSearch}
               placeholder={t`Search a model...`}
               value={searchQuery}
               onChange={setSearchQuery}
+              fullWidth
             />
           </StyledSearchContainer>
 

@@ -12,7 +12,6 @@ import { DialogComponentInstanceContext } from '@/ui/feedback/dialog-manager/con
 import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { Provider as JotaiProvider } from 'jotai';
-import { RecoilRoot } from 'recoil';
 
 const meta: Meta<typeof SelectHeaderStep> = {
   title: 'Modules/SpreadsheetImport/SelectHeaderStep',
@@ -30,9 +29,7 @@ const meta: Meta<typeof SelectHeaderStep> = {
       );
       return (
         <JotaiProvider store={jotaiStore}>
-          <RecoilRoot>
-            <Story />
-          </RecoilRoot>
+          <Story />
         </JotaiProvider>
       );
     },
@@ -46,7 +43,7 @@ export const Default = () => (
   >
     <ReactSpreadsheetImportContextProvider values={mockRsiValues}>
       <SpreadSheetImportModalWrapper
-        modalId="select-header-step"
+        modalInstanceId="select-header-step"
         onClose={() => null}
       >
         <SelectHeaderStep

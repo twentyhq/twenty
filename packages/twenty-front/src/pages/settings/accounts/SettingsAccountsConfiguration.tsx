@@ -1,16 +1,15 @@
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 import { type CalendarChannel } from '@/accounts/types/CalendarChannel';
 import { type MessageChannel } from '@/accounts/types/MessageChannel';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { CoreObjectNameSingular, SettingsPath } from 'twenty-shared/types';
 import { useGenerateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/hooks/useGenerateDepthRecordGqlFieldsFromObject';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { settingsAccountsSelectedMessageChannelStateV2 } from '@/settings/accounts/states/settingsAccountsSelectedMessageChannelStateV2';
+import { settingsAccountsSelectedMessageChannelState } from '@/settings/accounts/states/settingsAccountsSelectedMessageChannelState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { useStartChannelSyncMutation } from '~/generated-metadata/graphql';
 import { SettingsAccountsConfigurationStepCalendar } from '~/pages/settings/accounts/SettingsAccountsConfigurationStepCalendar';
@@ -30,8 +29,8 @@ export const SettingsAccountsConfiguration = () => {
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
   const [startChannelSyncMutation, { loading: isSubmitting }] =
     useStartChannelSyncMutation();
-  const setSelectedMessageChannel = useSetRecoilStateV2(
-    settingsAccountsSelectedMessageChannelStateV2,
+  const setSettingsAccountsSelectedMessageChannel = useSetAtomState(
+    settingsAccountsSelectedMessageChannelState,
   );
 
   const [currentStep, setCurrentStep] =
@@ -55,7 +54,7 @@ export const SettingsAccountsConfiguration = () => {
     recordGqlFields,
     onCompleted: (data) => {
       if (isDefined(data[0])) {
-        setSelectedMessageChannel(data[0]);
+        setSettingsAccountsSelectedMessageChannel(data[0]);
       }
     },
     skip: !connectedAccountId,

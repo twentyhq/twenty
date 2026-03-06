@@ -1,18 +1,18 @@
 import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 export const useCurrentPageLayout = () => {
-  const pageLayoutPersisted = useRecoilComponentValue(
+  const pageLayoutPersisted = useAtomComponentStateValue(
     pageLayoutPersistedComponentState,
   );
 
-  const pageLayoutDraft = useRecoilComponentValue(
+  const pageLayoutDraft = useAtomComponentStateValue(
     pageLayoutDraftComponentState,
   );
 
-  const isPageLayoutInEditMode = useRecoilComponentValue(
+  const isPageLayoutInEditMode = useAtomComponentStateValue(
     isPageLayoutInEditModeComponentState,
   );
 

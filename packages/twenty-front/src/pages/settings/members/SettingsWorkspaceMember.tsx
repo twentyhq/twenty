@@ -1,7 +1,7 @@
 import { useParams } from 'react-router-dom';
 import { useDebouncedCallback } from 'use-debounce';
 
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { CoreObjectNameSingular, SettingsPath } from 'twenty-shared/types';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useImpersonationAuth } from '@/settings/admin-panel/hooks/useImpersonationAuth';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -13,10 +13,9 @@ import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
-import { SettingsPath } from 'twenty-shared/types';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconInfoCircle, IconLockOpen } from 'twenty-ui/display';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -49,10 +48,10 @@ export const SettingsWorkspaceMember = () => {
   const navigateSettings = useNavigateSettings();
   const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
   const { openModal, closeModal } = useModal();
-  const currentWorkspace = useRecoilValueV2(currentWorkspaceState);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const { executeImpersonationAuth } = useImpersonationAuth();
   const [impersonate] = useImpersonateMutation();
-  const isImpersonating = useRecoilValueV2(isImpersonatingState);
+  const isImpersonating = useAtomStateValue(isImpersonatingState);
   const canImpersonate =
     useHasPermissionFlag(PermissionFlagType.IMPERSONATE) && !isImpersonating;
 
@@ -75,7 +74,7 @@ export const SettingsWorkspaceMember = () => {
   });
 
   const tabListComponentId = `${SETTINGS_WORKSPACE_MEMBER_TABS.COMPONENT_INSTANCE_ID}-${workspaceMemberId}`;
-  const activeTabId = useRecoilComponentValueV2(
+  const activeTabId = useAtomComponentStateValue(
     activeTabIdComponentState,
     tabListComponentId,
   );
@@ -219,7 +218,7 @@ export const SettingsWorkspaceMember = () => {
           </SettingsPageContainer>
 
           <ConfirmationModal
-            modalId={DELETE_MEMBER_MODAL_ID}
+            modalInstanceId={DELETE_MEMBER_MODAL_ID}
             title={t`Remove member from workspace`}
             subtitle={t`This action cannot be undone. This will permanently remove this member from this workspace and remove them from all their assignments.`}
             onConfirmClick={handleDeleteMember}

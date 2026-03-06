@@ -1,6 +1,8 @@
-import { useRecoilCallback } from 'recoil';
+import { useCallback } from 'react';
+import { useStore } from 'jotai';
 
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 
 import { isMultiDragActiveComponentState } from '@/object-record/record-drag/states/isMultiDragActiveComponentState';
 
@@ -10,101 +12,95 @@ import { isRecordIdPrimaryDragMultipleComponentFamilyState } from '@/object-reco
 import { isRecordIdSecondaryDragMultipleComponentFamilyState } from '@/object-record/record-drag/states/isRecordIdSecondaryDragMultipleComponentFamilyState';
 import { originalDragSelectionComponentState } from '@/object-record/record-drag/states/originalDragSelectionComponentState';
 import { primaryDraggedRecordIdComponentState } from '@/object-record/record-drag/states/primaryDraggedRecordIdComponentState';
-import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useEndRecordDrag = (contextStoreInstanceId?: string) => {
-  const isMultiDragActiveCallbackState = useRecoilComponentCallbackState(
+  const store = useStore();
+  const isMultiDragActiveCallbackState = useAtomComponentStateCallbackState(
     isMultiDragActiveComponentState,
     contextStoreInstanceId,
   );
 
-  const draggedRecordIdsCallbackState = useRecoilComponentCallbackState(
+  const draggedRecordIdsCallbackState = useAtomComponentStateCallbackState(
     draggedRecordIdsComponentState,
     contextStoreInstanceId,
   );
 
-  const primaryDraggedRecordIdCallbackState = useRecoilComponentCallbackState(
-    primaryDraggedRecordIdComponentState,
-    contextStoreInstanceId,
-  );
+  const primaryDraggedRecordIdCallbackState =
+    useAtomComponentStateCallbackState(
+      primaryDraggedRecordIdComponentState,
+      contextStoreInstanceId,
+    );
 
-  const originalSelectionCallbackState = useRecoilComponentCallbackState(
+  const originalSelection = useAtomComponentStateCallbackState(
     originalDragSelectionComponentState,
     contextStoreInstanceId,
   );
 
   const isRecordIdPrimaryDragMultipleCallbackState =
-    useRecoilComponentCallbackState(
+    useAtomComponentFamilyStateCallbackState(
       isRecordIdPrimaryDragMultipleComponentFamilyState,
       contextStoreInstanceId,
     );
 
   const isRecordIdSecondaryDragMultipleCallbackState =
-    useRecoilComponentCallbackState(
+    useAtomComponentFamilyStateCallbackState(
       isRecordIdSecondaryDragMultipleComponentFamilyState,
       contextStoreInstanceId,
     );
 
-  const isDraggingRecordCallbackState = useRecoilComponentCallbackState(
+  const isDraggingRecord = useAtomComponentStateCallbackState(
     isDraggingRecordComponentState,
     contextStoreInstanceId,
   );
 
-  const endRecordDrag = useRecoilCallback(
-    ({ snapshot, set }) =>
-      () => {
-        set(isDraggingRecordCallbackState, false);
+  const endRecordDrag = useCallback(() => {
+    store.set(isDraggingRecord, false);
 
-        const currentlyDraggedRecordIds = getSnapshotValue(
-          snapshot,
-          draggedRecordIdsCallbackState,
-        );
+    const currentlyDraggedRecordIds = store.get(draggedRecordIdsCallbackState);
 
-        const primaryDraggedRecordId = getSnapshotValue(
-          snapshot,
-          primaryDraggedRecordIdCallbackState,
-        );
-
-        if (currentlyDraggedRecordIds.length > 0) {
-          const secondaryDraggedIds = currentlyDraggedRecordIds.filter(
-            (recordIdToFilter) => recordIdToFilter !== primaryDraggedRecordId,
-          );
-
-          for (const secondaryDraggedId of secondaryDraggedIds) {
-            set(
-              isRecordIdSecondaryDragMultipleCallbackState({
-                recordId: secondaryDraggedId,
-              }),
-              false,
-            );
-          }
-        }
-
-        if (isDefined(primaryDraggedRecordId)) {
-          set(
-            isRecordIdPrimaryDragMultipleCallbackState({
-              recordId: primaryDraggedRecordId,
-            }),
-            false,
-          );
-        }
-
-        set(isMultiDragActiveCallbackState, false);
-        set(draggedRecordIdsCallbackState, []);
-        set(primaryDraggedRecordIdCallbackState, null);
-        set(originalSelectionCallbackState, []);
-      },
-    [
-      isMultiDragActiveCallbackState,
-      draggedRecordIdsCallbackState,
+    const primaryDraggedRecordId = store.get(
       primaryDraggedRecordIdCallbackState,
-      originalSelectionCallbackState,
-      isRecordIdPrimaryDragMultipleCallbackState,
-      isRecordIdSecondaryDragMultipleCallbackState,
-      isDraggingRecordCallbackState,
-    ],
-  );
+    );
+
+    if (currentlyDraggedRecordIds.length > 0) {
+      const secondaryDraggedIds = currentlyDraggedRecordIds.filter(
+        (recordIdToFilter) => recordIdToFilter !== primaryDraggedRecordId,
+      );
+
+      for (const secondaryDraggedId of secondaryDraggedIds) {
+        store.set(
+          isRecordIdSecondaryDragMultipleCallbackState({
+            recordId: secondaryDraggedId,
+          }),
+          false,
+        );
+      }
+    }
+
+    if (isDefined(primaryDraggedRecordId)) {
+      store.set(
+        isRecordIdPrimaryDragMultipleCallbackState({
+          recordId: primaryDraggedRecordId,
+        }),
+        false,
+      );
+    }
+
+    store.set(isMultiDragActiveCallbackState, false);
+    store.set(draggedRecordIdsCallbackState, []);
+    store.set(primaryDraggedRecordIdCallbackState, null);
+    store.set(originalSelection, []);
+  }, [
+    store,
+    isMultiDragActiveCallbackState,
+    draggedRecordIdsCallbackState,
+    primaryDraggedRecordIdCallbackState,
+    originalSelection,
+    isRecordIdPrimaryDragMultipleCallbackState,
+    isRecordIdSecondaryDragMultipleCallbackState,
+    isDraggingRecord,
+  ]);
 
   return { endRecordDrag };
 };

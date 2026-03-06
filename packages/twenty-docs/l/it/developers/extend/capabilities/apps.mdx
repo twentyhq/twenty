@@ -4,7 +4,7 @@ description: Crea e gestisci le personalizzazioni di Twenty come codice.
 ---
 
 <Warning>
-  Le app sono attualmente in fase alfa. La funzionalità è funzionante ma ancora in evoluzione.
+Le app sono attualmente in fase alfa. La funzionalità è funzionante ma ancora in evoluzione.
 </Warning>
 
 ## Cosa sono le app?
@@ -31,13 +31,6 @@ Crea una nuova app utilizzando lo scaffolder ufficiale, quindi autenticati e ini
 # Crea lo scaffold di una nuova app (include tutti gli esempi per impostazione predefinita)
 npx create-twenty-app@latest my-twenty-app
 cd my-twenty-app
-
-# Se non usi yarn@4
-corepack enable
-yarn install
-
-# Autenticati usando la tua API key (ti verrà richiesto)
-yarn twenty auth:login
 
 # Avvia la modalità di sviluppo: sincronizza automaticamente le modifiche locali con il tuo workspace
 yarn twenty app:dev
@@ -68,6 +61,9 @@ yarn twenty function:logs
 # Esegui una funzione per nome
 yarn twenty function:execute -n my-function -p '{"name": "test"}'
 
+# Esegui la funzione di pre-installazione
+yarn twenty function:execute --preInstall
+
 # Esegui la funzione post-installazione
 yarn twenty function:execute --postInstall
 
@@ -87,7 +83,7 @@ Quando esegui `npx create-twenty-app@latest my-twenty-app`, lo scaffolder:
 * Copia un'applicazione base minimale in `my-twenty-app/`
 * Aggiunge una dipendenza locale `twenty-sdk` e la configurazione di Yarn 4
 * Crea file di configurazione e script collegati alla CLI `twenty`
-* Genera i file principali (configurazione dell'applicazione, ruolo predefinito per le funzioni logiche, funzione di post-installazione) più i file di esempio in base alla modalità di scaffolding
+* Genera i file principali (configurazione dell'applicazione, ruolo predefinito per le funzioni logiche, funzioni di pre-installazione e post-installazione) più i file di esempio in base alla modalità di scaffolding
 
 Un'app appena creata con la modalità predefinita `--exhaustive` si presenta così:
 
@@ -100,7 +96,7 @@ my-twenty-app/
   .yarnrc.yml
   .yarn/
     install-state.gz
-  eslint.config.mjs
+  .oxlintrc.json
   tsconfig.json
   README.md
   public/                           # Public assets folder (images, fonts, etc.)
@@ -114,6 +110,7 @@ my-twenty-app/
   │   └── example-field.ts              # Example standalone field definition
   ├── logic-functions/
   │   ├── hello-world.ts                # Example logic function
+  │   ├── pre-install.ts                # Pre-install logic function
   │   └── post-install.ts               # Post-install logic function
   ├── front-components/
   │   └── hello-world.tsx               # Example front component
@@ -125,7 +122,7 @@ my-twenty-app/
       └── example-skill.ts                # Example AI agent skill definition
 ```
 
-Con `--minimal`, vengono creati solo i file principali (`application-config.ts`, `roles/default-role.ts` e `logic-functions/post-install.ts`). Con `--interactive`, scegli quali file di esempio includere.
+Con `--minimal`, vengono creati solo i file principali (`application-config.ts`, `roles/default-role.ts`, `logic-functions/pre-install.ts` e `logic-functions/post-install.ts`). Con `--interactive`, scegli quali file di esempio includere.
 
 A livello generale:
 
@@ -133,7 +130,7 @@ A livello generale:
 * **.gitignore**: Ignora i file generati comuni come `node_modules`, `.yarn`, `generated/` (client tipizzato), `dist/`, `build/`, cartelle di coverage, file di log e file `.env*`.
 * **yarn.lock**, **.yarnrc.yml**, **.yarn/**: Bloccano e configurano la toolchain Yarn 4 utilizzata dal progetto.
 * **.nvmrc**: Fissa la versione di Node.js prevista dal progetto.
-* **eslint.config.mjs** e **tsconfig.json**: Forniscono linting e configurazione TypeScript per i sorgenti TypeScript della tua app.
+* **.oxlintrc.json** and **tsconfig.json**: Provide linting and TypeScript configuration for your app's TypeScript sources.
 * **README.md**: Un breve README nella radice dell'app con istruzioni di base.
 * **public/**: Una cartella per archiviare risorse pubbliche (immagini, font, file statici) che saranno servite con la tua applicazione. I file collocati qui vengono caricati durante la sincronizzazione e sono accessibili in fase di esecuzione.
 * **src/**: Il luogo principale in cui definisci la tua applicazione come codice
@@ -142,19 +139,21 @@ A livello generale:
 
 L'SDK rileva le entità analizzando i tuoi file TypeScript alla ricerca di chiamate **`export default define<Entity>({...})`**. Ogni tipo di entità ha una corrispondente funzione helper esportata da `twenty-sdk`:
 
-| Funzione helper              | Tipo di entità                                 |
-| ---------------------------- | ---------------------------------------------- |
-| `defineObject()`             | Definizioni di oggetti personalizzati          |
-| `defineLogicFunction()`      | Definizioni di funzioni logiche                |
-| `defineFrontComponent()`     | Definizioni dei componenti front-end           |
-| `defineRole()`               | Definizioni di ruoli                           |
-| `defineField()`              | Estensioni di campo per oggetti esistenti      |
-| `defineView()`               | Definizioni di viste salvate                   |
-| `defineNavigationMenuItem()` | Definizioni delle voci del menu di navigazione |
-| `defineSkill()`              | AI agent skill definitions                     |
+| Funzione helper                    | Tipo di entità                                                                 |
+| ---------------------------------- | ------------------------------------------------------------------------------ |
+| `defineObject()`                   | Definizioni di oggetti personalizzati                                          |
+| `defineLogicFunction()`            | Definizioni di funzioni logiche                                                |
+| `definePreInstallLogicFunction()`  | Funzione logica di pre-installazione (viene eseguita prima dell'installazione) |
+| `definePostInstallLogicFunction()` | Funzione logica di post-installazione (viene eseguita dopo l'installazione)    |
+| `defineFrontComponent()`           | Definizioni dei componenti front-end                                           |
+| `defineRole()`                     | Definizioni di ruoli                                                           |
+| `defineField()`                    | Estensioni di campo per oggetti esistenti                                      |
+| `defineView()`                     | Definizioni di viste salvate                                                   |
+| `defineNavigationMenuItem()`       | Definizioni delle voci del menu di navigazione                                 |
+| `defineSkill()`                    | AI agent skill definitions                                                     |
 
 <Note>
-  **La denominazione dei file è flessibile.** Il rilevamento delle entità è basato sull'AST — l'SDK esegue la scansione dei file sorgente alla ricerca del pattern `export default define<Entity>({...})`. Puoi organizzare file e cartelle come preferisci. Raggruppare per tipo di entità (ad es., `logic-functions/`, `roles/`) è solo una convenzione per l'organizzazione del codice, non un requisito.
+**La denominazione dei file è flessibile.** Il rilevamento delle entità è basato sull'AST — l'SDK esegue la scansione dei file sorgente alla ricerca del pattern `export default define<Entity>({...})`. Puoi organizzare file e cartelle come preferisci. Raggruppare per tipo di entità (ad es., `logic-functions/`, `roles/`) è solo una convenzione per l'organizzazione del codice, non un requisito.
 </Note>
 
 Esempio di entità rilevata:
@@ -172,7 +171,7 @@ export default defineObject({
 
 Comandi successivi aggiungeranno altri file e cartelle:
 
-* `yarn twenty app:dev` genererà automaticamente un client API tipizzato in `node_modules/twenty-sdk/generated` (client Twenty tipizzato + tipi dell'area di lavoro).
+* `yarn twenty app:dev` genererà automaticamente due client API tipizzati in `node_modules/twenty-sdk/generated`: `CoreApiClient` (per i dati dell'area di lavoro tramite `/graphql`) e `MetadataApiClient` (per la configurazione dell'area di lavoro e il caricamento di file tramite `/metadata`).
 * `yarn twenty entity:add` will add entity definition files under `src/` for your custom objects, functions, front components, roles, skills, and more.
 
 ## Autenticazione
@@ -216,17 +215,19 @@ Il pacchetto twenty-sdk fornisce blocchi tipizzati e funzioni helper da usare ne
 
 L'SDK fornisce funzioni helper per definire le entità della tua app. Come descritto in [Rilevamento delle entità](#entity-detection), devi usare `export default define<Entity>({...})` affinché le tue entità vengano rilevate:
 
-| Funzione                     | Scopo                                                                   |
-| ---------------------------- | ----------------------------------------------------------------------- |
-| `defineApplication()`        | Configura i metadati dell'applicazione (obbligatorio, uno per app)      |
-| `defineObject()`             | Definisci oggetti personalizzati con campi                              |
-| `defineLogicFunction()`      | Definisci funzioni logiche con handler                                  |
-| `defineFrontComponent()`     | Definisci componenti front-end per un'interfaccia utente personalizzata |
-| `defineRole()`               | Configura i permessi dei ruoli e l'accesso agli oggetti                 |
-| `defineField()`              | Estendi gli oggetti esistenti con campi aggiuntivi                      |
-| `defineView()`               | Definisce viste salvate per gli oggetti                                 |
-| `defineNavigationMenuItem()` | Definisce i link di navigazione della barra laterale                    |
-| `defineSkill()`              | Define AI agent skills                                                  |
+| Funzione                           | Scopo                                                                      |
+| ---------------------------------- | -------------------------------------------------------------------------- |
+| `defineApplication()`              | Configura i metadati dell'applicazione (obbligatorio, uno per app)         |
+| `defineObject()`                   | Definisci oggetti personalizzati con campi                                 |
+| `defineLogicFunction()`            | Definisci funzioni logiche con handler                                     |
+| `definePreInstallLogicFunction()`  | Definisce una funzione logica di pre-installazione (una per applicazione)  |
+| `definePostInstallLogicFunction()` | Definisce una funzione logica di post-installazione (una per applicazione) |
+| `defineFrontComponent()`           | Definisci componenti front-end per un'interfaccia utente personalizzata    |
+| `defineRole()`                     | Configura i permessi dei ruoli e l'accesso agli oggetti                    |
+| `defineField()`                    | Estendi gli oggetti esistenti con campi aggiuntivi                         |
+| `defineView()`                     | Definisce viste salvate per gli oggetti                                    |
+| `defineNavigationMenuItem()`       | Definisce i link di navigazione della barra laterale                       |
+| `defineSkill()`                    | Define AI agent skills                                                     |
 
 Queste funzioni convalidano la configurazione in fase di build e offrono il completamento automatico nell'IDE e la sicurezza dei tipi.
 
@@ -312,11 +313,11 @@ Punti chiave:
 * Puoi generare nuovi oggetti con `yarn twenty entity:add`, che ti guida nella denominazione, nei campi e nelle relazioni.
 
 <Note>
-  **I campi base vengono creati automaticamente.** Quando definisci un oggetto personalizzato, Twenty aggiunge automaticamente i campi standard
-  come `id`, `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy` e `deletedAt`.
-  Non è necessario definirli nel tuo array `fields` — aggiungi solo i tuoi campi personalizzati.
-  Puoi sovrascrivere i campi predefiniti definendo un campo con lo stesso nome nel tuo array `fields`,
-  ma non è consigliato.
+**I campi base vengono creati automaticamente.** Quando definisci un oggetto personalizzato, Twenty aggiunge automaticamente i campi standard
+come `id`, `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy` e `deletedAt`.
+Non è necessario definirli nel tuo array `fields` — aggiungi solo i tuoi campi personalizzati.
+Puoi sovrascrivere i campi predefiniti definendo un campo con lo stesso nome nel tuo array `fields`,
+ma non è consigliato.
 </Note>
 
 ### Configurazione dell'applicazione (application-config.ts)
@@ -326,6 +327,7 @@ Ogni app ha un singolo file `application-config.ts` che descrive:
 * **Identità dell'app**: identificatori, nome visualizzato e descrizione.
 * **Come vengono eseguite le sue funzioni**: quale ruolo usano per i permessi.
 * **Variabili (opzionali)**: coppie chiave–valore esposte alle funzioni come variabili d'ambiente.
+* **(Opzionale) funzione di pre-installazione**: una funzione logica che viene eseguita prima che l'app venga installata.
 * **(Opzionale) funzione post-installazione**: una funzione logica che viene eseguita dopo l'installazione dell'app.
 
 Usa `defineApplication()` per definire la configurazione della tua applicazione:
@@ -334,7 +336,6 @@ Usa `defineApplication()` per definire la configurazione della tua applicazione:
 // src/application-config.ts
 import { defineApplication } from 'twenty-sdk';
 import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/roles/default-role';
-import { POST_INSTALL_UNIVERSAL_IDENTIFIER } from 'src/logic-functions/post-install';
 
 export default defineApplication({
   universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
@@ -350,7 +351,6 @@ export default defineApplication({
     },
   },
   defaultRoleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
-  postInstallLogicFunctionUniversalIdentifier: POST_INSTALL_UNIVERSAL_IDENTIFIER,
 });
 ```
 
@@ -359,7 +359,7 @@ Note:
 * I campi `universalIdentifier` sono ID deterministici sotto il tuo controllo; generali una volta e mantienili stabili tra le sincronizzazioni.
 * `applicationVariables` diventano variabili d'ambiente per le tue funzioni (ad esempio, `DEFAULT_RECIPIENT_NAME` è disponibile come `process.env.DEFAULT_RECIPIENT_NAME`).
 * `defaultRoleUniversalIdentifier` deve corrispondere al file del ruolo (vedi sotto).
-* `postInstallLogicFunctionUniversalIdentifier` (opzionale) fa riferimento a una funzione logica che viene eseguita automaticamente dopo l'installazione dell'app. Vedi [Funzioni post-installazione](#post-install-functions).
+* Le funzioni di pre-installazione e post-installazione vengono rilevate automaticamente durante la build del manifesto. Vedi [Funzioni di pre-installazione](#pre-install-functions) e [Funzioni di post-installazione](#post-install-functions).
 
 #### Ruoli e permessi
 
@@ -433,10 +433,10 @@ Ogni file di funzione usa `defineLogicFunction()` per esportare una configurazio
 // src/app/createPostCard.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk';
 import type { DatabaseEventPayload, ObjectRecordCreateEvent, CronPayload, RoutePayload } from 'twenty-sdk';
-import Twenty, { type Person } from '~/generated';
+import { CoreApiClient, type Person } from 'twenty-sdk/generated';
 
 const handler = async (params: RoutePayload) => {
-  const client = new Twenty(); // generated typed client
+  const client = new CoreApiClient();
   const name = 'name' in params.queryStringParameters
     ? params.queryStringParameters.name ?? process.env.DEFAULT_RECIPIENT_NAME ?? 'Hello world'
     : 'Hello world';
@@ -498,6 +498,44 @@ Note:
 * L'array `triggers` è facoltativo. Le funzioni senza trigger possono essere utilizzate come funzioni di utilità richiamate da altre funzioni.
 * Puoi combinare più tipi di trigger in un'unica funzione.
 
+### Funzioni di pre-installazione
+
+Una funzione di pre-installazione è una funzione logica che viene eseguita automaticamente prima che la tua app venga installata in uno spazio di lavoro. È utile per attività di convalida, controlli dei prerequisiti o per preparare lo stato dello spazio di lavoro prima che proceda l'installazione principale.
+
+Quando esegui lo scaffolding di una nuova app con `create-twenty-app`, viene generata una funzione di pre-installazione in `src/logic-functions/pre-install.ts`:
+
+```typescript
+// src/logic-functions/pre-install.ts
+import { definePreInstallLogicFunction, type InstallLogicFunctionPayload } from 'twenty-sdk';
+
+const handler = async (payload: InstallLogicFunctionPayload): Promise<void> => {
+  console.log('Pre install logic function executed successfully!', payload.previousVersion);
+};
+
+export default definePreInstallLogicFunction({
+  universalIdentifier: '<generated-uuid>',
+  name: 'pre-install',
+  description: 'Runs before installation to prepare the application.',
+  timeoutSeconds: 300,
+  handler,
+});
+```
+
+Puoi anche eseguire manualmente la funzione di pre-installazione in qualsiasi momento utilizzando la CLI:
+
+```bash filename="Terminal"
+yarn twenty function:execute --preInstall
+```
+
+Punti chiave:
+
+* Le funzioni di pre-installazione utilizzano `definePreInstallLogicFunction()` — una variante specializzata che omette le impostazioni dei trigger (`cronTriggerSettings`, `databaseEventTriggerSettings`, `httpRouteTriggerSettings`, `isTool`).
+* L'handler riceve un `InstallLogicFunctionPayload` con `{ previousVersion: string }` — la versione dell'app precedentemente installata (oppure una stringa vuota per nuove installazioni).
+* È consentita una sola funzione di pre-installazione per applicazione. La build del manifesto genererà un errore se ne viene rilevata più di una.
+* L'`universalIdentifier` della funzione viene impostato automaticamente come `preInstallLogicFunctionUniversalIdentifier` nel manifesto dell'applicazione durante la build — non è necessario farvi riferimento in `defineApplication()`.
+* Il timeout predefinito è impostato a 300 secondi (5 minuti) per consentire attività di preparazione più lunghe.
+* Le funzioni di pre-installazione non necessitano di trigger — vengono invocate dalla piattaforma prima dell'installazione o manualmente tramite `function:execute --preInstall`.
+
 ### Funzioni post-installazione
 
 Una funzione post-installazione è una funzione logica che viene eseguita automaticamente dopo che la tua app è stata installata in uno spazio di lavoro. Questo è utile per attività di configurazione una tantum come il popolamento di dati predefiniti, la creazione di record iniziali o la configurazione delle impostazioni dello spazio di lavoro.
@@ -506,31 +544,18 @@ Quando esegui lo scaffolding di una nuova app con `create-twenty-app`, viene gen
 
 ```typescript
 // src/logic-functions/post-install.ts
-import { defineLogicFunction } from 'twenty-sdk';
+import { definePostInstallLogicFunction, type InstallLogicFunctionPayload } from 'twenty-sdk';
 
-export const POST_INSTALL_UNIVERSAL_IDENTIFIER = '<generated-uuid>';
-
-const handler = async (): Promise<void> => {
-  console.log('Post install logic function executed successfully!');
+const handler = async (payload: InstallLogicFunctionPayload): Promise<void> => {
+  console.log('Post install logic function executed successfully!', payload.previousVersion);
 };
 
-export default defineLogicFunction({
-  universalIdentifier: POST_INSTALL_UNIVERSAL_IDENTIFIER,
+export default definePostInstallLogicFunction({
+  universalIdentifier: '<generated-uuid>',
   name: 'post-install',
   description: 'Runs after installation to set up the application.',
   timeoutSeconds: 300,
   handler,
-});
-```
-
-La funzione viene collegata alla tua app facendo riferimento al suo identificatore universale in `application-config.ts`:
-
-```typescript
-import { POST_INSTALL_UNIVERSAL_IDENTIFIER } from 'src/logic-functions/post-install';
-
-export default defineApplication({
-  // ...
-  postInstallLogicFunctionUniversalIdentifier: POST_INSTALL_UNIVERSAL_IDENTIFIER,
 });
 ```
 
@@ -542,35 +567,35 @@ yarn twenty function:execute --postInstall
 
 Punti chiave:
 
-* Le funzioni di post-installazione sono funzioni logiche standard — usano `defineLogicFunction()` come qualsiasi altra funzione.
-* Il campo `postInstallLogicFunctionUniversalIdentifier` in `defineApplication()` è facoltativo. Se omesso, nessuna funzione viene eseguita dopo l'installazione.
+* Le funzioni di post-installazione utilizzano `definePostInstallLogicFunction()` — una variante specializzata che omette le impostazioni dei trigger (`cronTriggerSettings`, `databaseEventTriggerSettings`, `httpRouteTriggerSettings`, `isTool`).
+* L'handler riceve un `InstallLogicFunctionPayload` con `{ previousVersion: string }` — la versione dell'app precedentemente installata (oppure una stringa vuota per nuove installazioni).
+* È consentita una sola funzione di post-installazione per applicazione. La build del manifesto genererà un errore se ne viene rilevata più di una.
+* L'`universalIdentifier` della funzione viene impostato automaticamente come `postInstallLogicFunctionUniversalIdentifier` nel manifesto dell'applicazione durante la build — non è necessario farvi riferimento in `defineApplication()`.
 * Il timeout predefinito è impostato a 300 secondi (5 minuti) per consentire attività di configurazione più lunghe, come il popolamento dei dati.
 * Le funzioni di post-installazione non necessitano di trigger — vengono invocate dalla piattaforma durante l'installazione o manualmente tramite `function:execute --postInstall`.
 
 ### Payload del trigger di route
 
 <Warning>
-  **Modifica non retrocompatibile (v1.16, gennaio 2026):** Il formato del payload del trigger di route è cambiato. Prima della v1.16, i parametri di query, i parametri di percorso e il corpo venivano inviati direttamente come payload. A partire dalla v1.16, sono annidati all'interno di un oggetto `RoutePayload` strutturato.
+**Modifica non retrocompatibile (v1.16, gennaio 2026):** Il formato del payload del trigger di route è cambiato. Prima della v1.16, i parametri di query, i parametri di percorso e il corpo venivano inviati direttamente come payload. A partire dalla v1.16, sono annidati all'interno di un oggetto `RoutePayload` strutturato.
 
-  **Prima della v1.16:**
+**Prima della v1.16:**
+```typescript
+const handler = async (params) => {
+  const { param1, param2 } = params; // Direct access
+};
+```
 
-  ```typescript
-  const handler = async (params) => {
-    const { param1, param2 } = params; // Direct access
-  };
-  ```
+**Dopo la v1.16:**
+```typescript
+const handler = async (event: RoutePayload) => {
+  const { param1, param2 } = event.body; // Access via .body
+  const { queryParam } = event.queryStringParameters;
+  const { id } = event.pathParameters;
+};
+```
 
-  **Dopo la v1.16:**
-
-  ```typescript
-  const handler = async (event: RoutePayload) => {
-    const { param1, param2 } = event.body; // Access via .body
-    const { queryParam } = event.queryStringParameters;
-    const { id } = event.pathParameters;
-  };
-  ```
-
-  **Per migrare le funzioni esistenti:** Aggiorna l'handler per estrarre i dati da `event.body`, `event.queryStringParameters` o `event.pathParameters` invece che direttamente dall'oggetto `params`.
+**Per migrare le funzioni esistenti:** Aggiorna l'handler per estrarre i dati da `event.body`, `event.queryStringParameters` o `event.pathParameters` invece che direttamente dall'oggetto `params`.
 </Warning>
 
 Quando un trigger di route invoca la tua funzione logica, questa riceve un oggetto `RoutePayload` che segue il formato AWS HTTP API v2. Importa il tipo da `twenty-sdk`:
@@ -653,10 +678,10 @@ Per contrassegnare una funzione logica come strumento, imposta `isTool: true` e 
 ```typescript
 // src/logic-functions/enrich-company.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk';
-import Twenty from '~/generated';
+import { CoreApiClient } from 'twenty-sdk/generated';
 
 const handler = async (params: { companyName: string; domain?: string }) => {
-  const client = new Twenty();
+  const client = new CoreApiClient();
 
   const result = await client.mutation({
     createTask: {
@@ -706,7 +731,7 @@ Punti chiave:
 * È possibile combinare `isTool` con i trigger — una funzione può essere sia uno strumento (invocabile dagli agenti IA) sia attivata da eventi (cron, eventi del database, routes) contemporaneamente.
 
 <Note>
-  **Scrivi una buona `description`.** Gli agenti IA fanno affidamento sul campo `description` della funzione per decidere quando usare lo strumento. Sii specifico su cosa fa lo strumento e quando dovrebbe essere invocato.
+**Scrivi una buona `description`.** Gli agenti IA fanno affidamento sul campo `description` della funzione per decidere quando usare lo strumento. Sii specifico su cosa fa lo strumento e quando dovrebbe essere invocato.
 </Note>
 
 ### Componenti front-end
@@ -714,7 +739,7 @@ Punti chiave:
 I componenti front-end ti consentono di creare componenti React personalizzati che vengono renderizzati all'interno dell'interfaccia di Twenty. Usa `defineFrontComponent()` per definire componenti con convalida integrata:
 
 ```typescript
-// src/my-widget.front-component.tsx
+// src/front-components/my-widget.tsx
 import { defineFrontComponent } from 'twenty-sdk';
 
 const MyWidget = () => {
@@ -737,14 +762,13 @@ export default defineFrontComponent({
 Punti chiave:
 
 * I componenti front-end sono componenti React che eseguono il rendering in contesti isolati all'interno di Twenty.
-* Usa il suffisso di file `*.front-component.tsx` per il rilevamento automatico.
 * Il campo `component` fa riferimento al tuo componente React.
 * I componenti vengono compilati e sincronizzati automaticamente durante `yarn twenty app:dev`.
 
 Puoi creare nuovi componenti front-end in due modi:
 
 * **Generata dallo scaffolder**: Esegui `yarn twenty entity:add` e scegli l'opzione per aggiungere un nuovo componente front-end.
-* **Manuale**: Crea un nuovo file `*.front-component.tsx` e usa `defineFrontComponent()`.
+* **Manuale**: Crea un nuovo file `.tsx` e usa `defineFrontComponent()`, seguendo lo stesso schema.
 
 ### Abilità
 
@@ -781,18 +805,24 @@ You can create new skills in two ways:
 * **Scaffolded**: Run `yarn twenty entity:add` and choose the option to add a new skill.
 * **Manual**: Create a new file and use `defineSkill()`, following the same pattern.
 
-### Client tipizzato generato
+### Client tipizzati generati
 
-Il client tipizzato è generato automaticamente da `yarn twenty app:dev` e salvato in `node_modules/twenty-sdk/generated` in base allo schema della tua area di lavoro. Usalo nelle tue funzioni:
+Due client tipizzati sono generati automaticamente da `yarn twenty app:dev` e salvati in `node_modules/twenty-sdk/generated` in base allo schema della tua area di lavoro:
+
+* **`CoreApiClient`** — interroga l'endpoint `/graphql` per i dati dell'area di lavoro
+* **`MetadataApiClient`** — interroga l'endpoint `/metadata` per la configurazione dello spazio di lavoro e il caricamento dei file
 
 ```typescript
-import Twenty from '~/generated';
+import { CoreApiClient, MetadataApiClient } from 'twenty-sdk/generated';
 
-const client = new Twenty();
+const client = new CoreApiClient();
 const { me } = await client.query({ me: { id: true, displayName: true } });
+
+const metadataClient = new MetadataApiClient();
+const { currentWorkspace } = await metadataClient.query({ currentWorkspace: { id: true } });
 ```
 
-Il client viene rigenerato automaticamente da `yarn twenty app:dev` ogni volta che i tuoi oggetti o campi cambiano.
+Entrambi i client vengono rigenerati automaticamente da `yarn twenty app:dev` ogni volta che i tuoi oggetti o campi cambiano.
 
 #### Credenziali di runtime nelle funzioni logiche
 
@@ -809,17 +839,17 @@ Note:
 
 #### Caricamento dei file
 
-Il client `Twenty` generato include un metodo `uploadFile` per allegare file ai campi di tipo file sugli oggetti del tuo spazio di lavoro. Poiché i client GraphQL standard non supportano nativamente il caricamento di file multipart, il client fornisce questo metodo dedicato che implementa la [specifica della richiesta GraphQL multipart](https://github.com/jaydenseric/graphql-multipart-request-spec) dietro le quinte.
+Il `MetadataApiClient` generato include un metodo `uploadFile` per allegare file ai campi di tipo file sugli oggetti del tuo spazio di lavoro. Poiché i client GraphQL standard non supportano nativamente il caricamento di file multipart, il client fornisce questo metodo dedicato che implementa la [specifica della richiesta GraphQL multipart](https://github.com/jaydenseric/graphql-multipart-request-spec) dietro le quinte.
 
 ```typescript
-import Twenty from '~/generated';
+import { MetadataApiClient } from 'twenty-sdk/generated';
 import * as fs from 'fs';
 
-const client = new Twenty();
+const metadataClient = new MetadataApiClient();
 
 const fileBuffer = fs.readFileSync('./invoice.pdf');
 
-const uploadedFile = await client.uploadFile(
+const uploadedFile = await metadataClient.uploadFile(
   fileBuffer,                                         // file contents as a Buffer
   'invoice.pdf',                                      // filename
   'application/pdf',                                  // MIME type (defaults to 'application/octet-stream')
@@ -850,7 +880,7 @@ uploadFile(
 
 Punti chiave:
 
-* Il metodo invia il file al **metadata endpoint** (non all'endpoint GraphQL principale), dove la mutation di upload viene risolta.
+* Il metodo `uploadFile` è disponibile su `MetadataApiClient` perché la mutazione di upload viene risolta dall'endpoint `/metadata`.
 * Usa l'`universalIdentifier` del campo (non il suo ID specifico dello spazio di lavoro), quindi il tuo codice di upload funziona in qualsiasi spazio di lavoro in cui la tua app è installata — coerentemente con il modo in cui le app fanno riferimento ai campi altrove.
 * L'`url` restituito è un URL firmato che puoi usare per accedere al file caricato.
 

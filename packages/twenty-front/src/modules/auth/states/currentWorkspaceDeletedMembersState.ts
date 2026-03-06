@@ -1,7 +1,7 @@
-import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 import { type DeletedWorkspaceMember } from '~/generated-metadata/graphql';
 
-export const currentWorkspaceDeletedMembersState = createStateV2<
+export const currentWorkspaceDeletedMembersState = createAtomState<
   DeletedWorkspaceMember[]
 >({
   key: 'currentWorkspaceDeletedMembersState',

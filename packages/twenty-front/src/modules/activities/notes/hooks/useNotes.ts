@@ -1,15 +1,17 @@
 import { useEffect, useMemo } from 'react';
 
 import { useActivities } from '@/activities/hooks/useActivities';
-import { currentNotesQueryVariablesStateV2 } from '@/activities/notes/states/currentNotesQueryVariablesStateV2';
+import { currentNotesQueryVariablesState } from '@/activities/notes/states/currentNotesQueryVariablesState';
 import { FIND_MANY_TIMELINE_ACTIVITIES_ORDER_BY } from '@/activities/timeline-activities/constants/FindManyTimelineActivitiesOrderBy';
 import { type Note } from '@/activities/types/Note';
-import { type RecordGqlOperationVariables } from 'twenty-shared/types';
+import {
+  CoreObjectNameSingular,
+  type RecordGqlOperationVariables,
+} from 'twenty-shared/types';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
-import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 
 export const useNotes = (targetableObject: ActivityTargetableObject) => {
   const notesQueryVariables = useMemo(
@@ -34,7 +36,7 @@ export const useNotes = (targetableObject: ActivityTargetableObject) => {
   });
 
   const [currentNotesQueryVariables, setCurrentNotesQueryVariables] =
-    useRecoilStateV2(currentNotesQueryVariablesStateV2);
+    useAtomState(currentNotesQueryVariablesState);
 
   // TODO: fix useEffect, remove with better pattern
   useEffect(() => {

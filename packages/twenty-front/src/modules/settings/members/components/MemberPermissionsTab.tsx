@@ -5,7 +5,7 @@ import { Select } from '@/ui/input/components/Select';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
@@ -18,6 +18,7 @@ import {
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useUpdateWorkspaceMemberRoleMutation } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
@@ -25,17 +26,17 @@ const CONFIRM_ROLE_CHANGE_MODAL_ID = 'confirm-role-change-modal';
 
 const StyledNoRoleContainer = styled.div`
   align-items: center;
-  color: ${({ theme }) => theme.font.color.tertiary};
+  color: ${themeCssVariables.font.color.tertiary};
   display: flex;
   justify-content: center;
-  padding: ${({ theme }) => theme.spacing(8)};
+  padding: ${themeCssVariables.spacing[8]};
 `;
 
 const StyledRoleContainer = styled.div`
   align-items: flex-end;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
-  margin-bottom: ${({ theme }) => theme.spacing(8)};
+  gap: ${themeCssVariables.spacing[2]};
+  margin-bottom: ${themeCssVariables.spacing[8]};
 `;
 
 const StyledRoleSelector = styled.div`
@@ -72,7 +73,7 @@ export const MemberPermissionsTab = ({
         label: role.label,
         value: role.id,
         Icon: getIcon(role.icon) ?? IconUser,
-      })) || [];
+      })) ?? [];
 
   const handleRoleChangeRequest = (newRoleId: string) => {
     const newRole = allRoles.find((role) => role.id === newRoleId);
@@ -110,7 +111,7 @@ export const MemberPermissionsTab = ({
     }
   };
 
-  if (!primaryRole) {
+  if (!isDefined(primaryRole)) {
     return (
       <StyledNoRoleContainer>{t`No role assigned to this member`}</StyledNoRoleContainer>
     );
@@ -149,7 +150,7 @@ export const MemberPermissionsTab = ({
 
       {pendingRole && (
         <ConfirmationModal
-          modalId={CONFIRM_ROLE_CHANGE_MODAL_ID}
+          modalInstanceId={CONFIRM_ROLE_CHANGE_MODAL_ID}
           title={t`Confirm role update`}
           subtitle={t`Are you sure you want to update the role of this user from "${oldRoleLabel}" to "${newRoleLabel}"?`}
           onConfirmClick={handleConfirmRoleChange}

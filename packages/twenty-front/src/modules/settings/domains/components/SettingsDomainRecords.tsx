@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsDnsRecordsTable } from '@/settings/components/SettingsDnsRecordsTable';
 import { t } from '@lingui/core/macro';
@@ -8,14 +9,14 @@ import {
   type DomainRecord,
   type DomainValidRecords,
 } from '~/generated-metadata/graphql';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const SettingsDomainRecords = ({
   records,
 }: {
   records: DomainValidRecords['records'];
 }) => {
-  const currentWorkspace = useRecoilValueV2(currentWorkspaceState);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
   const rowsDefinitions = [
     { name: 'Domain Setup', validationType: 'redirection' as const },
@@ -46,9 +47,9 @@ export const SettingsDomainRecords = ({
 
     return {
       statusColor:
-        record && record.status === 'error'
+        isDefined(record) && record.status === 'error'
           ? 'red'
-          : record && record.status === 'pending'
+          : isDefined(record) && record.status === 'pending'
             ? 'yellow'
             : defaultValues.statusColor,
       ...record,

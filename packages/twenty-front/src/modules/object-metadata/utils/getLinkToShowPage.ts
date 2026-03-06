@@ -1,4 +1,4 @@
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { getBasePathToShowPage } from '@/object-metadata/utils/getBasePathToShowPage';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 

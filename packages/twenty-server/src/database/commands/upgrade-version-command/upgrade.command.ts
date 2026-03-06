@@ -20,6 +20,7 @@ import { MigrateTaskTargetToMorphRelationsCommand } from 'src/database/commands/
 import { BackfillFileSizeAndMimeTypeCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-backfill-file-size-and-mime-type.command';
 import { BackfillMessageChannelThrottleRetryAfterCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-backfill-message-channel-throttle-retry-after.command';
 import { BackfillStandardViewsAndFieldMetadataCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-backfill-standard-views-and-field-metadata.command';
+import { DeleteOrphanFavoritesCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-delete-orphan-favorites.command';
 import { MigrateActivityRichTextAttachmentFileIdsCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-migrate-activity-rich-text-attachment-file-ids.command';
 import { MigrateAttachmentFilesCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-migrate-attachment-files.command';
 import { MigrateFavoritesToNavigationMenuItemsCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-migrate-favorites-to-navigation-menu-items.command';
@@ -30,6 +31,8 @@ import { AddMissingSystemFieldsToStandardObjectsCommand } from 'src/database/com
 import { BackfillMessageChannelMessageAssociationMessageFolderCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-backfill-message-channel-message-association-message-folder.command';
 import { BackfillPageLayoutsCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-backfill-page-layouts.command';
 import { BackfillSystemFieldsIsSystemCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-backfill-system-fields-is-system.command';
+import { FixInvalidStandardUniversalIdentifiersCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-fix-invalid-standard-universal-identifiers.command';
+import { SeedServerIdCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-seed-server-id.command';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
@@ -60,6 +63,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly fixMorphRelationFieldNamesCommand: FixMorphRelationFieldNamesCommand,
 
     // 1.18 Commands
+    protected readonly deleteOrphanFavoritesCommand: DeleteOrphanFavoritesCommand,
     protected readonly migrateFavoritesToNavigationMenuItemsCommand: MigrateFavoritesToNavigationMenuItemsCommand,
     protected readonly migratePersonAvatarFilesCommand: MigratePersonAvatarFilesCommand,
     protected readonly backfillFileSizeAndMimeTypeCommand: BackfillFileSizeAndMimeTypeCommand,
@@ -75,6 +79,8 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly addMissingSystemFieldsToStandardObjectsCommand: AddMissingSystemFieldsToStandardObjectsCommand,
     protected readonly backfillMessageChannelMessageAssociationMessageFolderCommand: BackfillMessageChannelMessageAssociationMessageFolderCommand,
     protected readonly backfillPageLayoutsCommand: BackfillPageLayoutsCommand,
+    protected readonly fixRoleAndAgentUniversalIdentifiersCommand: FixInvalidStandardUniversalIdentifiersCommand,
+    protected readonly seedServerIdCommand: SeedServerIdCommand,
   ) {
     super(
       workspaceRepository,
@@ -99,6 +105,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     ];
 
     const commands_1180: VersionCommands = [
+      this.deleteOrphanFavoritesCommand,
       this.migrateFavoritesToNavigationMenuItemsCommand,
       this.migratePersonAvatarFilesCommand,
       this.migrateAttachmentFilesCommand,
@@ -115,6 +122,8 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       this.addMissingSystemFieldsToStandardObjectsCommand,
       this.backfillMessageChannelMessageAssociationMessageFolderCommand,
       this.backfillPageLayoutsCommand,
+      this.fixRoleAndAgentUniversalIdentifiersCommand,
+      this.seedServerIdCommand,
     ];
 
     this.allCommands = {

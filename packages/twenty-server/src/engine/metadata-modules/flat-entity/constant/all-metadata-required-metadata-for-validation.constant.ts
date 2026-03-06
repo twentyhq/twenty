@@ -53,6 +53,10 @@ export const ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION = {
   viewFilterGroup: {
     view: true,
   },
+  viewSort: {
+    fieldMetadata: true,
+    view: true,
+  },
   role: {},
   roleTarget: {
     role: true,
@@ -80,6 +84,7 @@ export const ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION = {
   pageLayoutWidget: {
     objectMetadata: true,
     pageLayoutTab: true,
+    frontComponent: true,
   },
   rowLevelPermissionPredicate: {
     fieldMetadata: true,
