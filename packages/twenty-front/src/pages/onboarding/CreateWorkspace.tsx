@@ -144,7 +144,7 @@ export const CreateWorkspace = () => {
   );
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === Key.Enter && !isSubmitting) {
+    if (event.key === Key.Enter) {
       event.preventDefault();
       handleSubmit(onSubmit)();
     }

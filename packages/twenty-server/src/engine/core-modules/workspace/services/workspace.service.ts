@@ -305,18 +305,6 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     }
 
     if (
-      workspace.activationStatus === WorkspaceActivationStatus.ACTIVE
-    ) {
-      this.logger.log(
-        `Workspace ${workspace.id} is already active, returning existing workspace`,
-      );
-
-      return await this.workspaceRepository.findOneBy({
-        id: workspace.id,
-      });
-    }
-
-    if (
       workspace.activationStatus === WorkspaceActivationStatus.ONGOING_CREATION
     ) {
       throw new Error('Workspace is already being created');
