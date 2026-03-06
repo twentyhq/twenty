@@ -1,27 +1,29 @@
-import { type ExecutionContext, Injectable, Logger } from '@nestjs/common';
+import { type ExecutionContext, Injectable } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { type Request } from 'express';
+import { parseJson } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
+import { MICROSOFT_OAUTH_MAX_RETRY_ATTEMPTS } from 'src/engine/core-modules/auth/constants/microsoft-oauth-max-retry-attempts.constants';
+import { type SocialSSOState } from 'src/engine/core-modules/auth/types/social-sso-state.type';
+import { isMicrosoftOAuthTransientError } from 'src/engine/core-modules/auth/utils/is-microsoft-oauth-transient-error.util';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
-const AADSTS650051_ERROR = 'AADSTS650051';
-const MAX_MICROSOFT_AUTH_RETRIES = 1;
+type SocialSSOStateWithRetry = SocialSSOState & {
+  oauthRetryCount?: number;
+};
 
 @Injectable()
 export class MicrosoftOAuthGuard extends AuthGuard('microsoft') {
-  private readonly logger = new Logger(MicrosoftOAuthGuard.name);
-
   constructor(
     private readonly guardRedirectService: GuardRedirectService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
-    private readonly twentyConfigService: TwentyConfigService,
   ) {
     super({
       prompt: 'select_account',
@@ -30,7 +32,6 @@ export class MicrosoftOAuthGuard extends AuthGuard('microsoft') {
 
   async canActivate(context: ExecutionContext) {
     const request = context.switchToHttp().getRequest();
-    const response = context.switchToHttp().getResponse();
     let workspace: WorkspaceEntity | null = null;
 
     try {
@@ -46,19 +47,7 @@ export class MicrosoftOAuthGuard extends AuthGuard('microsoft') {
 
       return (await super.canActivate(context)) as boolean;
     } catch (err) {
-      if (
-        err instanceof Error &&
-        err.message?.includes(AADSTS650051_ERROR) &&
-        this.canRetryMicrosoftAuth(request)
-      ) {
-        this.logger.warn(
-          'AADSTS650051: Microsoft service principal race condition, retrying auth flow',
-        );
-
-        const retryUrl = this.buildMicrosoftAuthRetryUrl(request);
-
-        response.redirect(retryUrl);
-
+      if (this.handleTransientMicrosoftOAuthError(context, request, err)) {
         return false;
       }
 
@@ -74,65 +63,42 @@ export class MicrosoftOAuthGuard extends AuthGuard('microsoft') {
     }
   }
 
-  private canRetryMicrosoftAuth(request: {
-    query: Record<string, unknown>;
-  }): boolean {
-    const retryCount = Number(request.query.msRetry) || 0;
+  private handleTransientMicrosoftOAuthError(
+    context: ExecutionContext,
+    request: Request,
+    error: unknown,
+  ): boolean {
+    if (!isMicrosoftOAuthTransientError(error)) {
+      return false;
+    }
 
-    return retryCount < MAX_MICROSOFT_AUTH_RETRIES;
-  }
+    const state = parseJson<SocialSSOStateWithRetry>(
+      request.query.state as string,
+    );
 
-  private buildMicrosoftAuthRetryUrl(request: {
-    query: Record<string, unknown>;
-  }): string {
-    const retryCount = (Number(request.query.msRetry) || 0) + 1;
+    const oauthRetryCount = Math.max(0, Number(state?.oauthRetryCount) || 0);
 
-    let state: Record<string, unknown> = {};
+    if (oauthRetryCount >= MICROSOFT_OAUTH_MAX_RETRY_ATTEMPTS) {
+      return false;
+    }
 
-    try {
-      if (typeof request.query.state === 'string') {
-        state = JSON.parse(request.query.state);
+    const url = new URL('/auth/microsoft', 'http://localhost');
+
+    url.searchParams.set('oauthRetryCount', String(oauthRetryCount + 1));
+
+    if (state) {
+      for (const [key, value] of Object.entries(state)) {
+        if (key !== 'oauthRetryCount' && value != null) {
+          url.searchParams.set(key, String(value));
+        }
       }
-    } catch {
-      // state parsing failed, proceed with empty state
     }
 
-    const params = new URLSearchParams();
+    context
+      .switchToHttp()
+      .getResponse()
+      .redirect(url.pathname + url.search);
 
-    if (state.workspaceId) {
-      params.set('workspaceId', String(state.workspaceId));
-    }
-
-    if (state.workspaceInviteHash) {
-      params.set('workspaceInviteHash', String(state.workspaceInviteHash));
-    }
-
-    if (state.workspacePersonalInviteToken) {
-      params.set(
-        'workspacePersonalInviteToken',
-        String(state.workspacePersonalInviteToken),
-      );
-    }
-
-    if (state.action) {
-      params.set('action', String(state.action));
-    }
-
-    if (state.locale) {
-      params.set('locale', String(state.locale));
-    }
-
-    if (state.billingCheckoutSessionState) {
-      params.set(
-        'billingCheckoutSessionState',
-        String(state.billingCheckoutSessionState),
-      );
-    }
-
-    params.set('msRetry', String(retryCount));
-
-    const serverUrl = this.twentyConfigService.get('SERVER_URL');
-
-    return `${serverUrl}/auth/microsoft?${params.toString()}`;
+    return true;
   }
 }
