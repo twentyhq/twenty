@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import {
@@ -21,6 +21,10 @@ import { AiAgentRoleService } from 'src/engine/metadata-modules/ai/ai-agent-role
 import { AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.service';
 import { DEFAULT_SMART_MODEL } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models.const';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import {
+  LogicFunctionException,
+  LogicFunctionExceptionCode,
+} from 'src/engine/metadata-modules/logic-function/logic-function.exception';
 import { LogicFunctionFromSourceService } from 'src/engine/metadata-modules/logic-function/services/logic-function-from-source.service';
 import { findFlatLogicFunctionOrThrow } from 'src/engine/metadata-modules/logic-function/utils/find-flat-logic-function-or-throw.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -63,6 +67,10 @@ const ITERATOR_EMPTY_STEP_POSITION_OFFSET = {
 
 @Injectable()
 export class WorkflowVersionStepOperationsWorkspaceService {
+  private readonly logger = new Logger(
+    WorkflowVersionStepOperationsWorkspaceService.name,
+  );
+
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly logicFunctionFromSourceService: LogicFunctionFromSourceService,
@@ -87,10 +95,24 @@ export class WorkflowVersionStepOperationsWorkspaceService {
   }) {
     switch (step.type) {
       case WorkflowActionType.CODE: {
-        await this.logicFunctionFromSourceService.deleteOneWithSource({
-          id: step.settings.input.logicFunctionId,
-          workspaceId,
-        });
+        try {
+          await this.logicFunctionFromSourceService.deleteOneWithSource({
+            id: step.settings.input.logicFunctionId,
+            workspaceId,
+          });
+        } catch (error) {
+          if (
+            error instanceof LogicFunctionException &&
+            error.code ===
+              LogicFunctionExceptionCode.LOGIC_FUNCTION_NOT_FOUND
+          ) {
+            this.logger.warn(
+              `Logic function ${step.settings.input.logicFunctionId} already deleted, skipping cleanup`,
+            );
+          } else {
+            throw error;
+          }
+        }
         break;
       }
       case WorkflowActionType.AI_AGENT: {
