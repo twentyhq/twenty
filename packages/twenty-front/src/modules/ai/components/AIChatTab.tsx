@@ -5,6 +5,9 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { DropZone } from '@/activities/files/components/DropZone';
 import { AIChatEditorSection } from '@/ai/components/AIChatEditorSection';
 import { useAIChatFileUpload } from '@/ai/hooks/useAIChatFileUpload';
+import { AGENT_CHAT_NEW_THREAD_DRAFT_KEY } from '@/ai/states/agentChatDraftsByThreadIdState';
+import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 import { AIChatTabMessageList } from '@/ai/components/AIChatTabMessageList';
 
@@ -20,6 +23,8 @@ const StyledContainer = styled.div<{ isDraggingFile: boolean }>`
 
 export const AIChatTab = () => {
   const [isDraggingFile, setIsDraggingFile] = useState(false);
+  const currentAIChatThread = useAtomStateValue(currentAIChatThreadState);
+  const draftKey = currentAIChatThread ?? AGENT_CHAT_NEW_THREAD_DRAFT_KEY;
 
   const { uploadFiles } = useAIChatFileUpload();
 
@@ -37,7 +42,7 @@ export const AIChatTab = () => {
       {!isDraggingFile && (
         <>
           <AIChatTabMessageList />
-          <AIChatEditorSection />
+          <AIChatEditorSection key={draftKey} />
         </>
       )}
     </StyledContainer>
