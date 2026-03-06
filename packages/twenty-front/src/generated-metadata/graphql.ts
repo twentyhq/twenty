@@ -2505,9 +2505,11 @@ export type Mutation = {
   updatePageLayoutWithTabsAndWidgets: PageLayout;
   updatePasswordViaResetToken: InvalidatePassword;
   updateSkill: Skill;
+  updateUserAiChatBudget: Scalars['Boolean'];
   updateUserEmail: Scalars['Boolean'];
   updateWebhook: Webhook;
   updateWorkspace: Workspace;
+  updateWorkspaceDefaultUserAiChatBudget: Scalars['Boolean'];
   updateWorkspaceFeatureFlag: Scalars['Boolean'];
   updateWorkspaceMemberRole: WorkspaceMember;
   upgradeApplication: Scalars['Boolean'];
@@ -3335,6 +3337,12 @@ export type MutationUpdateSkillArgs = {
 };
 
 
+export type MutationUpdateUserAiChatBudgetArgs = {
+  maxCreditsPerPeriod?: InputMaybe<Scalars['Float']>;
+  userWorkspaceId: Scalars['UUID'];
+};
+
+
 export type MutationUpdateUserEmailArgs = {
   newEmail: Scalars['String'];
   verifyEmailRedirectPath?: InputMaybe<Scalars['String']>;
@@ -3348,6 +3356,11 @@ export type MutationUpdateWebhookArgs = {
 
 export type MutationUpdateWorkspaceArgs = {
   data: UpdateWorkspaceInput;
+};
+
+
+export type MutationUpdateWorkspaceDefaultUserAiChatBudgetArgs = {
+  maxCreditsPerPeriod?: InputMaybe<Scalars['Float']>;
 };
 
 
@@ -5285,6 +5298,7 @@ export type UserWorkspace = {
   deletedAt?: Maybe<Scalars['DateTime']>;
   id: Scalars['UUID'];
   locale: Scalars['String'];
+  maxAiChatCreditsPerPeriod?: Maybe<Scalars['Float']>;
   objectPermissions?: Maybe<Array<ObjectPermission>>;
   objectsPermissions?: Maybe<Array<ObjectPermission>>;
   permissionFlags?: Maybe<Array<PermissionFlagType>>;
