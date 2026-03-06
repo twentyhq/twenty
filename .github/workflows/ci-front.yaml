@@ -96,10 +96,13 @@ jobs:
         uses: ./.github/actions/restore-cache
         with:
           key: ${{ env.STORYBOOK_BUILD_CACHE_KEY_FOR_RESTORE_ACTION }}
+      - name: Clean stale storybook vitest cache
+        run: rm -rf packages/twenty-front/node_modules/.cache/storybook
       - name: Build dependencies
         run: |
           npx nx build twenty-shared
           npx nx build twenty-ui
+          npx nx build twenty-sdk
       - name: Download storybook build
         uses: actions/download-artifact@v4
         with:
