@@ -7,7 +7,7 @@ import {
 import { isWorkflowIteratorAction } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/guards/is-workflow-iterator-action.guard';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
-export const getStoppedIteratorStepInfos = ({
+export const buildIteratorToStopStepInfos = ({
   stepInfos,
   steps,
 }: {
