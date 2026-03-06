@@ -260,7 +260,7 @@ const StyledButton = styled.button`
 
 ## Impor Importações Sem Tipo
 
-Evite importações de tipo. Para impor esse padrão, uma regra do Oxlint verifica e relata qualquer violação de importação de tipos. Isso ajuda a manter a consistência e a legibilidade no código TypeScript.
+Evite importações de tipo. To enforce this standard, an Oxlint rule checks for and reports any type imports. Isso ajuda a manter a consistência e a legibilidade no código TypeScript.
 
 ```tsx
 // ❌ Bad
@@ -281,10 +281,10 @@ import { Meta, StoryObj } from '@storybook/react';
 
 * **Manutenção**: Melhora a manutenibilidade da base de código porque os desenvolvedores podem identificar e localizar importações somente de tipo ao revisar ou modificar o código.
 
-### Regra Oxlint
+### Oxlint Rule
 
-Uma regra do Oxlint, `typescript/consistent-type-imports`, aplica o padrão de importação sem tipo. Esta regra gerará erros ou avisos para qualquer violação de importação de tipo.
+An Oxlint rule, `typescript/consistent-type-imports`, enforces the no-type import standard. Esta regra gerará erros ou avisos para qualquer violação de importação de tipo.
 
 Observe que esta regra trata especificamente de casos isolados onde importações de tipos não intencionais ocorrem. O próprio TypeScript desencoraja essa prática, conforme mencionado nas [notas de lançamento do TypeScript 3.8](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-8.html). Na maioria das situações, não é necessário usar importações somente de tipo.
 
-Para garantir que seu código esteja em conformidade com essa regra, certifique-se de executar o Oxlint como parte do seu fluxo de trabalho de desenvolvimento.
+To ensure your code complies with this rule, make sure to run Oxlint as part of your development workflow.
