@@ -87,6 +87,7 @@ const getSeparatorsForNumberFormat = (format: NumberFormat) => {
         thousandsSeparator: "'",
         radix: '.',
       };
+    case NumberFormat.SYSTEM:
     case NumberFormat.COMMAS_AND_DOT:
     default:
       return {
