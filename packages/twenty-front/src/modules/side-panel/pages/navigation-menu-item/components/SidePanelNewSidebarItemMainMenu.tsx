@@ -51,7 +51,7 @@ export const SidePanelNewSidebarItemMainMenu = ({
   const isAddingToFolder = isDefined(
     addMenuItemInsertionContext?.targetFolderId,
   );
-  const hasInsertionContext = isDefined(addMenuItemInsertionContext);
+  const isDragDisabled = addMenuItemInsertionContext?.disableDrag === true;
   const selectableItemIds = isAddingToFolder
     ? MAIN_MENU_ITEM_TYPES.filter(
         (type) => type !== NavigationMenuItemType.FOLDER,
@@ -128,14 +128,14 @@ export const SidePanelNewSidebarItemMainMenu = ({
                   label={t`Folder`}
                   id={NavigationMenuItemType.FOLDER}
                   onClick={handleAddFolder}
-                  dragIndex={hasInsertionContext ? undefined : 3}
+                  dragIndex={isDragDisabled ? undefined : 3}
                   payload={{
                     type: NavigationMenuItemType.FOLDER,
                     folderId: 'new',
                     name: t`New folder`,
                   }}
                   disabled={isAddingToFolder}
-                  disableDrag={hasInsertionContext}
+                  disableDrag={isDragDisabled}
                 />
               </SelectableListItem>
               <SelectableListItem
@@ -147,14 +147,14 @@ export const SidePanelNewSidebarItemMainMenu = ({
                   label={t`Link`}
                   id={NavigationMenuItemType.LINK}
                   onClick={handleAddLink}
-                  dragIndex={hasInsertionContext ? undefined : 4}
+                  dragIndex={isDragDisabled ? undefined : 4}
                   payload={{
                     type: NavigationMenuItemType.LINK,
                     linkId: 'new',
                     name: t`Link label`,
                     link: 'https://www.example.com',
                   }}
-                  disableDrag={hasInsertionContext}
+                  disableDrag={isDragDisabled}
                 />
               </SelectableListItem>
             </SidePanelGroup>

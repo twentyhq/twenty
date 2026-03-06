@@ -1,6 +1,7 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import React, { useContext, useState } from 'react';
+import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   IconChevronDown,
@@ -13,6 +14,8 @@ import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useIsDropDisabledForSection } from '@/navigation-menu-item/hooks/useIsDropDisabledForSection';
 import { useOpenAddItemToFolderPage } from '@/navigation-menu-item/hooks/useOpenAddItemToFolderPage';
 import { useWorkspaceFolderOpenState } from '@/navigation-menu-item/hooks/useWorkspaceFolderOpenState';
+import { addMenuItemInsertionContextState } from '@/navigation-menu-item/states/addMenuItemInsertionContextState';
+import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 import { useIsMobile } from 'twenty-ui/utilities';
 
@@ -106,6 +109,10 @@ export const WorkspaceNavigationMenuItemsFolder = ({
   const { isOpen, handleToggle, selectedNavigationMenuItemIndex } =
     useWorkspaceFolderOpenState({ folderId, navigationMenuItems });
   const { openAddItemToFolderPage } = useOpenAddItemToFolderPage();
+  const sidePanelPage = useAtomStateValue(sidePanelPageState);
+  const addMenuItemInsertionContext = useAtomStateValue(
+    addMenuItemInsertionContextState,
+  );
 
   const folderContentLengthForTree = isNavigationMenuInEditMode
     ? navigationMenuItems.length + 1
@@ -125,6 +132,7 @@ export const WorkspaceNavigationMenuItemsFolder = ({
     ? (e?: React.MouseEvent) => {
         e?.stopPropagation();
         onEditModeClick?.();
+        handleToggle();
       }
     : handleToggle;
 
@@ -160,6 +168,7 @@ export const WorkspaceNavigationMenuItemsFolder = ({
           ? folderColor
           : DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER
       }
+      active={!isOpen && selectedNavigationMenuItemIndex >= 0}
       onClick={handleClick}
       className="navigation-drawer-item"
       triggerEvent="CLICK"
@@ -167,19 +176,26 @@ export const WorkspaceNavigationMenuItemsFolder = ({
       isDragging={isDragging}
       alwaysShowRightOptions
       rightOptions={
-        isOpen ? (
-          <IconChevronDown
-            size={theme.icon.size.sm}
-            stroke={theme.icon.stroke.sm}
-            color={theme.font.color.tertiary}
-          />
-        ) : (
-          <IconChevronRight
-            size={theme.icon.size.sm}
-            stroke={theme.icon.stroke.sm}
-            color={theme.font.color.tertiary}
-          />
-        )
+        <div
+          onClick={(e) => {
+            e.stopPropagation();
+            handleToggle();
+          }}
+        >
+          {isOpen ? (
+            <IconChevronDown
+              size={theme.icon.size.sm}
+              stroke={theme.icon.stroke.sm}
+              color={theme.font.color.tertiary}
+            />
+          ) : (
+            <IconChevronRight
+              size={theme.icon.size.sm}
+              stroke={theme.icon.stroke.sm}
+              color={theme.font.color.tertiary}
+            />
+          )}
+        </div>
       }
     />
   );
@@ -268,6 +284,10 @@ export const WorkspaceNavigationMenuItemsFolder = ({
                     onClick={handleAddMenuItemToFolder}
                     triggerEvent="CLICK"
                     variant="tertiary"
+                    isSelectedInEditMode={
+                      sidePanelPage === SidePanelPages.NavigationMenuAddItem &&
+                      addMenuItemInsertionContext?.targetFolderId === folderId
+                    }
                     subItemState={getNavigationSubItemLeftAdornment({
                       index: navigationMenuItems.length,
                       arrayLength: folderContentLengthForTree,

@@ -2,19 +2,13 @@ import { CurrentWorkspaceMemberFavorites } from '@/favorites/components/CurrentW
 import { useCreateFavoriteFolder } from '@/favorites/hooks/useCreateFavoriteFolder';
 import { useFavoritesByFolder } from '@/favorites/hooks/useFavoritesByFolder';
 import { isFavoriteFolderCreatingState } from '@/favorites/states/isFavoriteFolderCreatingState';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import { NavigationDrawerInput } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerInput';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useState } from 'react';
 import { IconFolder } from 'twenty-ui/display';
 
-type FavoriteFoldersProps = {
-  isNavigationSectionOpen: boolean;
-};
-
-export const FavoriteFolders = ({
-  isNavigationSectionOpen,
-}: FavoriteFoldersProps) => {
+export const FavoriteFolders = () => {
   const [newFolderName, setNewFolderName] = useState('');
 
   const { favoritesByFolder } = useFavoritesByFolder();
@@ -55,10 +49,6 @@ export const FavoriteFolders = ({
     setNewFolderName('');
     setIsFavoriteFolderCreating(false);
   };
-
-  if (!isNavigationSectionOpen) {
-    return null;
-  }
 
   return (
     <>

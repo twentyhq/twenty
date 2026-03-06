@@ -5,6 +5,7 @@ import { useDebounce } from 'use-debounce';
 
 import { MAX_SEARCH_RESULTS } from '@/command-menu/constants/MaxSearchResults';
 import { useDraftNavigationMenuItems } from '@/navigation-menu-item/hooks/useDraftNavigationMenuItems';
+import { addMenuItemInsertionContextState } from '@/navigation-menu-item/states/addMenuItemInsertionContextState';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
@@ -14,6 +15,7 @@ import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { SidePanelSubViewWithSearch } from '@/side-panel/components/SidePanelSubViewWithSearch';
 import { SidePanelNewSidebarItemRecordItem } from '@/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemRecordItem';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSearchQuery } from '~/generated/graphql';
 
 type SearchRecordBase = {
@@ -25,14 +27,16 @@ type SearchRecordBase = {
 
 type SidePanelNewSidebarItemRecordSubViewProps = {
   onBack: () => void;
-  disableDrag?: boolean;
 };
 
 export const SidePanelNewSidebarItemRecordSubView = ({
   onBack,
-  disableDrag = false,
 }: SidePanelNewSidebarItemRecordSubViewProps) => {
   const { t } = useLingui();
+  const addMenuItemInsertionContext = useAtomStateValue(
+    addMenuItemInsertionContextState,
+  );
+  const disableDrag = addMenuItemInsertionContext?.disableDrag === true;
   const { currentDraft } = useDraftNavigationMenuItems();
   const { objectMetadataItems } = useObjectMetadataItems();
   const [recordSearchInput, setRecordSearchInput] = useState('');

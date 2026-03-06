@@ -19,6 +19,7 @@ import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconFolderPlus } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
+import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 
 export const CurrentWorkspaceMemberFavoritesFolders = () => {
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
@@ -73,12 +74,17 @@ export const CurrentWorkspaceMemberFavoritesFolders = () => {
           isOpen={isNavigationSectionOpen}
         />
       </NavigationDrawerAnimatedCollapseWrapper>
-      {isNavigationSectionOpen && (
+      <AnimatedExpandableContainer
+        isExpanded={isNavigationSectionOpen}
+        dimension="height"
+        mode="fit-content"
+        containAnimation
+      >
         <FavoritesDragProvider>
-          <FavoriteFolders isNavigationSectionOpen={isNavigationSectionOpen} />
+          <FavoriteFolders />
           <CurrentWorkspaceMemberOrphanFavorites />
         </FavoritesDragProvider>
-      )}
+      </AnimatedExpandableContainer>
     </NavigationDrawerSection>
   );
 };

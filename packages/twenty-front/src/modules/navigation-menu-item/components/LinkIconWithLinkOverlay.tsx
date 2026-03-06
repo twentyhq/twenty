@@ -50,13 +50,13 @@ const StyledFaviconImage = styled.img`
 const StyledLinkOverlay = styled.div<{ $backgroundColor: string }>`
   align-items: center;
   background-color: ${({ $backgroundColor }) => $backgroundColor};
-  border-radius: 4px;
-  bottom: -7px;
+  border-radius: ${themeCssVariables.border.radius.xs};
+  bottom: -5px;
   display: flex;
   height: 14px;
   justify-content: center;
   position: absolute;
-  right: -7px;
+  right: -6px;
   width: 14px;
 `;
 
@@ -107,7 +107,7 @@ export const LinkIconWithLinkOverlay = ({
       </StyledMainIconWrapper>
       <StyledLinkOverlay $backgroundColor={themeCssVariables.grayScale.gray4}>
         <LinkIcon
-          size="12px"
+          size="14px"
           stroke={themeCssVariables.icon.stroke.md}
           color={themeCssVariables.grayScale.gray10}
         />
