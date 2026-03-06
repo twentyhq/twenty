@@ -56,11 +56,15 @@ export default defineConfig(({ command }) => {
     tsconfigPath: tsConfigPath,
   };
 
+  const BUNDLED_DEPS = ['@tabler/icons-react'];
+
   return {
     resolve: {
       alias: {
         '@ui/': path.resolve(__dirname, 'src') + '/',
         '@assets/': path.resolve(__dirname, 'src/assets') + '/',
+        '@tabler/icons-react':
+          '@tabler/icons-react/dist/esm/icons/index.mjs',
       },
     },
     css: {
@@ -122,7 +126,9 @@ export default defineConfig(({ command }) => {
         name: 'twenty-ui',
       },
       rollupOptions: {
-        external: Object.keys(packageJson.dependencies || {}),
+        external: Object.keys(packageJson.dependencies || {}).filter(
+          (dep) => !BUNDLED_DEPS.includes(dep),
+        ),
         output: [
           {
             assetFileNames: 'style.css',
