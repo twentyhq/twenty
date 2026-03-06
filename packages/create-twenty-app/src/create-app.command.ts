@@ -24,7 +24,7 @@ export class CreateAppCommand {
       const { appName, appDisplayName, appDirectory, appDescription } =
         await this.getAppInfos(directory);
 
-      const exampleOptions = await this.resolveExampleOptions(mode);
+      const exampleOptions = this.resolveExampleOptions(mode);
 
       await this.validateDirectory(appDirectory);
 
@@ -103,9 +103,7 @@ export class CreateAppCommand {
     return { appName, appDisplayName, appDirectory, appDescription };
   }
 
-  private async resolveExampleOptions(
-    mode: ScaffoldingMode,
-  ): Promise<ExampleOptions> {
+  private resolveExampleOptions(mode: ScaffoldingMode): ExampleOptions {
     if (mode === 'minimal') {
       return {
         includeExampleObject: false,
@@ -119,113 +117,15 @@ export class CreateAppCommand {
       };
     }
 
-    if (mode === 'exhaustive') {
-      return {
-        includeExampleObject: true,
-        includeExampleField: true,
-        includeExampleLogicFunction: true,
-        includeExampleFrontComponent: true,
-        includeExampleView: true,
-        includeExampleNavigationMenuItem: true,
-        includeExampleSkill: true,
-        includeExampleIntegrationTest: true,
-      };
-    }
-
-    const { selectedExamples } = await inquirer.prompt([
-      {
-        type: 'checkbox',
-        name: 'selectedExamples',
-        message: 'Select which example files to include:',
-        choices: [
-          {
-            name: 'Example object (custom object definition)',
-            value: 'object',
-            checked: true,
-          },
-          {
-            name: 'Example field (custom field on the example object)',
-            value: 'field',
-            checked: true,
-          },
-          {
-            name: 'Example logic function (server-side handler)',
-            value: 'logicFunction',
-            checked: true,
-          },
-          {
-            name: 'Example front component (React UI component)',
-            value: 'frontComponent',
-            checked: true,
-          },
-          {
-            name: 'Example view (saved view for the example object)',
-            value: 'view',
-            checked: true,
-          },
-          {
-            name: 'Example navigation menu item (sidebar link)',
-            value: 'navigationMenuItem',
-            checked: true,
-          },
-          {
-            name: 'Example skill (AI agent skill definition)',
-            value: 'skill',
-            checked: true,
-          },
-          {
-            name: 'Integration test (vitest test verifying app installation)',
-            value: 'integrationTest',
-            checked: true,
-          },
-        ],
-      },
-    ]);
-
-    const includeField = selectedExamples.includes('field');
-    const includeNavigationMenuItem =
-      selectedExamples.includes('navigationMenuItem');
-    const includeExampleIntegrationTest =
-      selectedExamples.includes('integrationTest');
-    const includeView =
-      selectedExamples.includes('view') || includeNavigationMenuItem;
-    const includeObject =
-      selectedExamples.includes('object') ||
-      includeField ||
-      includeView ||
-      includeNavigationMenuItem;
-
-    if (
-      includeNavigationMenuItem &&
-      !selectedExamples.includes('view')
-    ) {
-      console.log(
-        chalk.yellow(
-          'Note: View example auto-included because example navigation menu item depends on it.',
-        ),
-      );
-    }
-
-    if (
-      (includeField || includeView || includeNavigationMenuItem) &&
-      !selectedExamples.includes('object')
-    ) {
-      console.log(
-        chalk.yellow(
-          'Note: Object example auto-included because example field/view depends on it.',
-        ),
-      );
-    }
-
     return {
-      includeExampleObject: includeObject,
-      includeExampleField: includeField,
-      includeExampleLogicFunction: selectedExamples.includes('logicFunction'),
-      includeExampleFrontComponent: selectedExamples.includes('frontComponent'),
-      includeExampleView: includeView,
-      includeExampleNavigationMenuItem: includeNavigationMenuItem,
-      includeExampleSkill: selectedExamples.includes('skill'),
-      includeExampleIntegrationTest,
+      includeExampleObject: true,
+      includeExampleField: true,
+      includeExampleLogicFunction: true,
+      includeExampleFrontComponent: true,
+      includeExampleView: true,
+      includeExampleNavigationMenuItem: true,
+      includeExampleSkill: true,
+      includeExampleIntegrationTest: true,
     };
   }
 
