@@ -36,17 +36,14 @@ cd my-twenty-app
 yarn twenty app:dev
 ```
 
-O gerador de estrutura oferece suporte a três modos para controlar quais arquivos de exemplo são incluídos:
+The scaffolder supports two modes for controlling which example files are included:
 
 ```bash filename="Terminal"
-# Padrão (exhaustivo): todos os exemplos (objeto, campo, função de lógica, componente de front-end, visualização, item do menu de navegação, habilidade)
+# Default (exhaustive): all examples (object, field, logic function, front component, view, navigation menu item, skill)
 npx create-twenty-app@latest my-app
 
-# Mínimo: apenas arquivos principais (application-config.ts e default-role.ts)
+# Minimal: only core files (application-config.ts and default-role.ts)
 npx create-twenty-app@latest my-app --minimal
-
-# Interativo: selecione quais exemplos incluir
-npx create-twenty-app@latest my-app --interactive
 ```
 
 A partir daqui você pode:
@@ -122,7 +119,7 @@ my-twenty-app/
       └── example-skill.ts                # Exemplo de definição de habilidade de agente de IA
 ```
 
-With `--minimal`, only the core files are created (`application-config.ts`, `roles/default-role.ts`, `logic-functions/pre-install.ts`, and `logic-functions/post-install.ts`). Com `--interactive`, você escolhe quais arquivos de exemplo incluir.
+With `--minimal`, only the core files are created (`application-config.ts`, `roles/default-role.ts`, `logic-functions/pre-install.ts`, and `logic-functions/post-install.ts`).
 
 Em alto nível:
 
