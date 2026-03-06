@@ -109,10 +109,11 @@ export class BillingPortalWorkspaceService {
         (subscription) => subscription.status !== SubscriptionStatus.Canceled,
       )
     ) {
-      throw new BillingException(
-        'Customer already has a non-canceled billing subscription',
-        BillingExceptionCode.BILLING_SUBSCRIPTION_INVALID,
+      this.logger.warn(
+        `Workspace ${workspace.id} already has a non-canceled billing subscription, returning success URL`,
       );
+
+      return successUrl;
     }
 
     const stripeSubscription =
