@@ -35,10 +35,8 @@ export const PageLayoutTabRenderClone = ({
   );
 
   const isHoveringTabList =
-    pageLayoutTabListCurrentDragDroppableId ===
-      PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS.VISIBLE_TABS ||
-    pageLayoutTabListCurrentDragDroppableId ===
-      PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS.MORE_BUTTON;
+  pageLayoutTabListCurrentDragDroppableId !==
+  PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS.OVERFLOW_TABS;
 
   if (!isDefined(tab)) return null;
 
