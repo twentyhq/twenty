@@ -5,9 +5,9 @@ import { Injectable, Logger } from '@nestjs/common';
 import type Stripe from 'stripe';
 
 import { type BillingMeterEventName } from 'src/engine/core-modules/billing/enums/billing-meter-event-names';
-import { type StripeSDKService } from 'src/engine/core-modules/billing/stripe/stripe-sdk/services/stripe-sdk.service';
+import { StripeSDKService } from 'src/engine/core-modules/billing/stripe/stripe-sdk/services/stripe-sdk.service';
 import { type BillingDimensions } from 'src/engine/core-modules/billing/types/billing-dimensions.type';
-import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
 export class StripeBillingMeterEventService {

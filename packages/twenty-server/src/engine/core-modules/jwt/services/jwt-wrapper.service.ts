@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import {
-  type JwtService,
+  JwtService,
   type JwtSignOptions,
   type JwtVerifyOptions,
 } from '@nestjs/jwt';
@@ -20,7 +20,7 @@ import {
   type JwtPayload,
   JwtTokenTypeEnum,
 } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
 export class JwtWrapperService {

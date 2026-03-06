@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import {
   type HealthIndicatorResult,
-  type HealthIndicatorService,
+  HealthIndicatorService,
 } from '@nestjs/terminus';
 import { InjectDataSource } from '@nestjs/typeorm';
 
-import { type DataSource } from 'typeorm';
+import { DataSource } from 'typeorm';
 
 import { HEALTH_ERROR_MESSAGES } from 'src/engine/core-modules/admin-panel/constants/health-error-messages.constants';
 import { withHealthCheckTimeout } from 'src/engine/core-modules/admin-panel/utils/health-check-timeout.util';

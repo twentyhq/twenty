@@ -2,14 +2,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Command, Option } from 'nest-commander';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { In, LessThan, type Repository } from 'typeorm';
+import { In, LessThan, Repository } from 'typeorm';
 
 import {
   type MigrationCommandOptions,
   MigrationCommandRunner,
 } from 'src/database/commands/command-runners/migration.command-runner';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { type CleanerWorkspaceService } from 'src/engine/workspace-manager/workspace-cleaner/services/cleaner.workspace-service';
+import { CleanerWorkspaceService } from 'src/engine/workspace-manager/workspace-cleaner/services/cleaner.workspace-service';
 
 @Command({
   name: 'workspace:clean:onboarding',

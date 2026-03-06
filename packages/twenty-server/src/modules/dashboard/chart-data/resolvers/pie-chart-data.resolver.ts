@@ -6,10 +6,10 @@ import { getWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/wo
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { type PieChartDataInput } from 'src/modules/dashboard/chart-data/dtos/inputs/pie-chart-data.input';
+import { PieChartDataInput } from 'src/modules/dashboard/chart-data/dtos/inputs/pie-chart-data.input';
 import { PieChartDataDTO } from 'src/modules/dashboard/chart-data/dtos/pie-chart-data.dto';
 import { ChartDataGraphqlApiExceptionFilter } from 'src/modules/dashboard/chart-data/filters/chart-data-graphql-api-exception.filter';
-import { type PieChartDataService } from 'src/modules/dashboard/chart-data/services/pie-chart-data.service';
+import { PieChartDataService } from 'src/modules/dashboard/chart-data/services/pie-chart-data.service';
 
 @MetadataResolver()
 @UseFilters(ChartDataGraphqlApiExceptionFilter)

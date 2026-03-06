@@ -4,8 +4,8 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { type BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
-import { type MeteredCreditService } from 'src/engine/core-modules/billing/services/metered-credit.service';
+import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
+import { MeteredCreditService } from 'src/engine/core-modules/billing/services/metered-credit.service';
 
 @Injectable()
 export class BillingWebhookCreditGrantService {

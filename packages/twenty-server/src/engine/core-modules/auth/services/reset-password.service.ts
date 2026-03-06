@@ -15,7 +15,7 @@ import {
   getAppPath,
   isDefined,
 } from 'twenty-shared/utils';
-import { IsNull, MoreThan, type Repository } from 'typeorm';
+import { IsNull, MoreThan, Repository } from 'typeorm';
 
 import {
   AppTokenEntity,
@@ -29,11 +29,11 @@ import { type EmailPasswordResetLinkDTO } from 'src/engine/core-modules/auth/dto
 import { type InvalidatePasswordDTO } from 'src/engine/core-modules/auth/dto/invalidate-password.dto';
 import { type ValidatePasswordResetTokenDTO } from 'src/engine/core-modules/auth/dto/validate-password-reset-token.dto';
 import { type PasswordResetToken } from 'src/engine/core-modules/auth/types/password-reset-token.type';
-import { type WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
-import { type EmailService } from 'src/engine/core-modules/email/email.service';
-import { type I18nService } from 'src/engine/core-modules/i18n/i18n.service';
-import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { type UserService } from 'src/engine/core-modules/user/services/user.service';
+import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
+import { EmailService } from 'src/engine/core-modules/email/email.service';
+import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 

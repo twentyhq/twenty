@@ -9,7 +9,7 @@ import {
 } from 'class-validator';
 import GraphQLJSON from 'graphql-type-json';
 
-import { type TrackEventName } from 'src/engine/core-modules/audit/types/events.type';
+import { TrackEventName } from 'src/engine/core-modules/audit/types/events.type';
 import { type PageviewProperties } from 'src/engine/core-modules/audit/utils/events/pageview/pageview';
 
 enum AnalyticsType {

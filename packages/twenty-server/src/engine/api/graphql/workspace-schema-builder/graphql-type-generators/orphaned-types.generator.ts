@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
-import { type GraphQLNamedType } from 'graphql';
+import { GraphQLNamedType } from 'graphql';
 
 import { GqlOperation } from 'src/engine/api/graphql/workspace-schema-builder/enums/gql-operation.enum';
-import { type GqlTypesStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/gql-types.storage';
+import { GqlTypesStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/gql-types.storage';
 
 @Injectable()
 export class OrphanedTypesGenerator {

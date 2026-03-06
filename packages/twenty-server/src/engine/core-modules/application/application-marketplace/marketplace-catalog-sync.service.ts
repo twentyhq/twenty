@@ -1,9 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { type ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
+import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { MARKETPLACE_CATALOG_INDEX } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-catalog-index.constant';
-import { type MarketplaceService } from 'src/engine/core-modules/application/application-marketplace/marketplace.service';
+import { MarketplaceService } from 'src/engine/core-modules/application/application-marketplace/marketplace.service';
 
 @Injectable()
 export class MarketplaceCatalogSyncService {

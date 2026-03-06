@@ -4,13 +4,13 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
-import { type OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
+import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import {
   PermissionsException,
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { type PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 
 @Injectable()
 export class WorkspaceMemberPreQueryHookService {

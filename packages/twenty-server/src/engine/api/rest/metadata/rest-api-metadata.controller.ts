@@ -10,10 +10,10 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
-import { type Request, type Response } from 'express';
+import { Request, Response } from 'express';
 import { PermissionFlagType } from 'twenty-shared/constants';
 
-import { type RestApiMetadataService } from 'src/engine/api/rest/metadata/rest-api-metadata.service';
+import { RestApiMetadataService } from 'src/engine/api/rest/metadata/rest-api-metadata.service';
 import { cleanGraphQLResponse } from 'src/engine/api/rest/utils/clean-graphql-response.utils';
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';

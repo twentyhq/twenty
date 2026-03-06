@@ -7,23 +7,23 @@ import {
   isDefined,
 } from 'twenty-shared/utils';
 
-import { type CommonSelectFieldsHelper } from 'src/engine/api/common/common-select-fields/common-select-fields-helper';
-import { type CommonGroupByOutputItem } from 'src/engine/api/common/types/common-group-by-output-item.type';
-import { type CommonSelectedFields } from 'src/engine/api/common/types/common-selected-fields-result.type';
+import { CommonSelectFieldsHelper } from 'src/engine/api/common/common-select-fields/common-select-fields-helper';
+import { CommonGroupByOutputItem } from 'src/engine/api/common/types/common-group-by-output-item.type';
+import { CommonSelectedFields } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { parseCorePath } from 'src/engine/api/rest/input-request-parsers/path-parser-utils/parse-core-path.utils';
-import { type Depth } from 'src/engine/api/rest/input-request-parsers/types/depth.type';
-import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
-import { type ActorFromAuthContextService } from 'src/engine/core-modules/actor/services/actor-from-auth-context.service';
-import { type ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
+import { Depth } from 'src/engine/api/rest/input-request-parsers/types/depth.type';
+import { AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
+import { ActorFromAuthContextService } from 'src/engine/core-modules/actor/services/actor-from-auth-context.service';
+import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
 import { isApiKeyAuthContext } from 'src/engine/core-modules/auth/guards/is-api-key-auth-context.guard';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { getWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
-import { type AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
-import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { type WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
-import { type FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
+import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
-import { type WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -35,9 +35,9 @@ import {
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { type UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
-import { type WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
-import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
+import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 export interface PageInfo {
   hasNextPage?: boolean;

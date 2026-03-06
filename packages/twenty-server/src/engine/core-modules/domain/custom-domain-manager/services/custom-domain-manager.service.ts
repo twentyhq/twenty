@@ -3,15 +3,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
-import { type Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 
-import { type AuditService } from 'src/engine/core-modules/audit/services/audit.service';
+import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
 import { CUSTOM_DOMAIN_ACTIVATED_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/custom-domain/custom-domain-activated';
 import { CUSTOM_DOMAIN_DEACTIVATED_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/custom-domain/custom-domain-deactivated';
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
-import { type BillingService } from 'src/engine/core-modules/billing/services/billing.service';
-import { type DomainValidRecords } from 'src/engine/core-modules/dns-manager/dtos/domain-valid-records';
-import { type DnsManagerService } from 'src/engine/core-modules/dns-manager/services/dns-manager.service';
+import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
+import { DomainValidRecords } from 'src/engine/core-modules/dns-manager/dtos/domain-valid-records';
+import { DnsManagerService } from 'src/engine/core-modules/dns-manager/services/dns-manager.service';
 import { PublicDomainEntity } from 'src/engine/core-modules/public-domain/public-domain.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import {

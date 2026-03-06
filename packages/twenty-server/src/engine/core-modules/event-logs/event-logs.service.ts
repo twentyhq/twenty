@@ -5,12 +5,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { EventLogTable } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { type Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 
-import { type ClickHouseService } from 'src/database/clickHouse/clickHouse.service';
+import { ClickHouseService } from 'src/database/clickHouse/clickHouse.service';
 import { formatDateForClickHouse } from 'src/database/clickHouse/clickHouse.util';
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
-import { type BillingService } from 'src/engine/core-modules/billing/services/billing.service';
+import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 
 import {
@@ -18,11 +18,11 @@ import {
   EventLogsExceptionCode,
 } from './event-logs.exception';
 
-import { type EventLogFiltersInput } from './dtos/event-log-filters.input';
-import { type EventLogQueryInput } from './dtos/event-log-query.input';
+import { EventLogFiltersInput } from './dtos/event-log-filters.input';
+import { EventLogQueryInput } from './dtos/event-log-query.input';
 import {
-  type EventLogQueryResult,
-  type EventLogRecord,
+  EventLogQueryResult,
+  EventLogRecord,
 } from './dtos/event-log-result.dto';
 
 type ClickHouseEventRecord = {

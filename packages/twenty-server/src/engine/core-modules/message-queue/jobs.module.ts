@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { type ModuleRef } from '@nestjs/core';
+import { ModuleRef } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';

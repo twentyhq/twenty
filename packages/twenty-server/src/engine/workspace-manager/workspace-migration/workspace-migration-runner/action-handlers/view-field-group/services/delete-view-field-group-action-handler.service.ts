@@ -4,12 +4,12 @@ import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-mana
 
 import { ViewFieldGroupEntity } from 'src/engine/metadata-modules/view-field-group/entities/view-field-group.entity';
 import {
-  type FlatDeleteViewFieldGroupAction,
-  type UniversalDeleteViewFieldGroupAction,
+  FlatDeleteViewFieldGroupAction,
+  UniversalDeleteViewFieldGroupAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-field-group/types/workspace-migration-view-field-group-action.type';
 import {
-  type WorkspaceMigrationActionRunnerArgs,
-  type WorkspaceMigrationActionRunnerContext,
+  WorkspaceMigrationActionRunnerArgs,
+  WorkspaceMigrationActionRunnerContext,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 
 @Injectable()

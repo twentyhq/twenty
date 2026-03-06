@@ -2,7 +2,7 @@ import { type DynamicModule, Module } from '@nestjs/common';
 
 import {
   LogicFunctionDriverType,
-  type LogicFunctionModuleAsyncOptions,
+  LogicFunctionModuleAsyncOptions,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 
 import { DisabledDriver } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/disabled.driver';

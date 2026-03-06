@@ -4,12 +4,12 @@ import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-mana
 
 import { SkillEntity } from 'src/engine/metadata-modules/skill/entities/skill.entity';
 import {
-  type FlatDeleteSkillAction,
-  type UniversalDeleteSkillAction,
+  FlatDeleteSkillAction,
+  UniversalDeleteSkillAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/skill/types/workspace-migration-skill-action.type';
 import {
-  type WorkspaceMigrationActionRunnerArgs,
-  type WorkspaceMigrationActionRunnerContext,
+  WorkspaceMigrationActionRunnerArgs,
+  WorkspaceMigrationActionRunnerContext,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 
 @Injectable()

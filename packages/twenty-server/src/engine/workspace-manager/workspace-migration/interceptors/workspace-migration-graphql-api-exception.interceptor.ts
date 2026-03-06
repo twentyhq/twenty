@@ -9,7 +9,7 @@ import { GqlExecutionContext } from '@nestjs/graphql';
 import { type Observable, catchError } from 'rxjs';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
-import { type I18nService } from 'src/engine/core-modules/i18n/i18n.service';
+import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { NotFoundError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import {
   FlatEntityMapsException,

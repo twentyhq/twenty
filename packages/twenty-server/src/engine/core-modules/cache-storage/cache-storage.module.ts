@@ -1,4 +1,4 @@
-import { CACHE_MANAGER, type Cache, CacheModule } from '@nestjs/cache-manager';
+import { CACHE_MANAGER, Cache, CacheModule } from '@nestjs/cache-manager';
 import { Global, Inject, Module, type OnModuleDestroy } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 

@@ -11,11 +11,11 @@ import { NODE_ESM_CJS_BANNER } from 'twenty-shared/application';
 
 import { FileStorageExceptionCode } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 
-import { type FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { TemporaryDirManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/temporary-dir-manager';
 import {
   getLogicFunctionSeedProjectFiles,
-  type LogicFunctionSeedProjectFile,
+  LogicFunctionSeedProjectFile,
 } from 'src/engine/core-modules/logic-function/logic-function-resource/utils/get-logic-function-seed-project-files.util';
 import {
   LogicFunctionException,

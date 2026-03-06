@@ -12,10 +12,10 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { generateServiceProviderMetadata } from '@node-saml/node-saml';
-import { type Response } from 'express';
+import { Response } from 'express';
 import { AppPath } from 'twenty-shared/types';
 import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
-import { type Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 
 import {
   AuthException,
@@ -25,20 +25,20 @@ import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters
 import { EnterpriseFeaturesEnabledGuard } from 'src/engine/core-modules/auth/guards/enterprise-features-enabled.guard';
 import { OIDCAuthGuard } from 'src/engine/core-modules/auth/guards/oidc-auth.guard';
 import { SAMLAuthGuard } from 'src/engine/core-modules/auth/guards/saml-auth.guard';
-import { type AuthService } from 'src/engine/core-modules/auth/services/auth.service';
-import { type OIDCRequest } from 'src/engine/core-modules/auth/strategies/oidc.auth.strategy';
-import { type SAMLRequest } from 'src/engine/core-modules/auth/strategies/saml.auth.strategy';
-import { type LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
-import { type WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
-import { type GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
-import { type SSOService } from 'src/engine/core-modules/sso/services/sso.service';
+import { AuthService } from 'src/engine/core-modules/auth/services/auth.service';
+import { OIDCRequest } from 'src/engine/core-modules/auth/strategies/oidc.auth.strategy';
+import { SAMLRequest } from 'src/engine/core-modules/auth/strategies/saml.auth.strategy';
+import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
+import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
+import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
+import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
 import {
   IdentityProviderType,
   WorkspaceSSOIdentityProviderEntity,
 } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
-import { type UserService } from 'src/engine/core-modules/user/services/user.service';
+import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
-import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 

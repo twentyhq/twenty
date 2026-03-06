@@ -10,23 +10,23 @@ import {
 } from 'twenty-emails';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { In, type Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
-import { type BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
-import { type EmailService } from 'src/engine/core-modules/email/email.service';
-import { type I18nService } from 'src/engine/core-modules/i18n/i18n.service';
-import { type MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
+import { EmailService } from 'src/engine/core-modules/email/email.service';
+import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
-import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { type UserService } from 'src/engine/core-modules/user/services/user.service';
-import { type UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
-import { type WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
+import { UserService } from 'src/engine/core-modules/user/services/user.service';
+import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
+import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { USER_WORKSPACE_DELETION_WARNING_SENT_KEY } from 'src/engine/workspace-manager/workspace-cleaner/constants/user-workspace-deletion-warning-sent-key.constant';
-import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 export const CLEAN_SUSPENDED_WORKSPACES_OPERATIONS = [
   'warn',

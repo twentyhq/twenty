@@ -1,6 +1,6 @@
 /* @license Enterprise */
 
-import type Stripe from 'stripe';
+import Stripe from 'stripe';
 import {
   Column,
   CreateDateColumn,
@@ -8,14 +8,14 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
-  type Relation,
+  Relation,
   Unique,
   UpdateDateColumn,
 } from 'typeorm';
 
 import { BillingProductEntity } from 'src/engine/core-modules/billing/entities/billing-product.entity';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
-import { type BillingSubscriptionItemMetadata } from 'src/engine/core-modules/billing/types/billing-subscription-item-metadata.type';
+import { BillingSubscriptionItemMetadata } from 'src/engine/core-modules/billing/types/billing-subscription-item-metadata.type';
 @Entity({ name: 'billingSubscriptionItem', schema: 'core' })
 @Unique(
   'IDX_BILLING_SUBSCRIPTION_ITEM_BILLING_SUBSCRIPTION_ID_STRIPE_PRODUCT_ID_UNIQUE',

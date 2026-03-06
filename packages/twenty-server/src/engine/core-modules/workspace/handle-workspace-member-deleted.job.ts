@@ -1,4 +1,4 @@
-import { type WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
+import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';

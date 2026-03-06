@@ -17,9 +17,9 @@ import {
 } from 'class-validator';
 import graphqlTypeJson from 'graphql-type-json';
 import {
-  type CronTriggerSettings,
-  type DatabaseEventTriggerSettings,
-  type HttpRouteTriggerSettings,
+  CronTriggerSettings,
+  DatabaseEventTriggerSettings,
+  HttpRouteTriggerSettings,
 } from 'twenty-shared/application';
 
 import type { InputJsonSchema } from 'twenty-shared/logic-function';

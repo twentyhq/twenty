@@ -5,15 +5,15 @@ import { isDefined } from 'twenty-shared/utils';
 import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { type JsonRpc } from 'src/engine/api/mcp/dtos/json-rpc';
-import { type McpToolExecutorService } from 'src/engine/api/mcp/services/mcp-tool-executor.service';
+import { McpToolExecutorService } from 'src/engine/api/mcp/services/mcp-tool-executor.service';
 import { wrapJsonRpcResponse } from 'src/engine/api/mcp/utils/wrap-jsonrpc-response.util';
 import { type ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
-import { type ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
+import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { buildApiKeyAuthContext } from 'src/engine/core-modules/auth/utils/build-api-key-auth-context.util';
-import { type FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { COMMON_PRELOAD_TOOLS } from 'src/engine/core-modules/tool-provider/constants/common-preload-tools.const';
-import { type ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
+import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 import {
   createExecuteToolTool,
   EXECUTE_TOOL_TOOL_NAME,
@@ -35,8 +35,8 @@ import {
   loadSkillInputSchema,
 } from 'src/engine/core-modules/tool-provider/tools/load-skill.tool';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { type SkillService } from 'src/engine/metadata-modules/skill/skill.service';
-import { type UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
+import { SkillService } from 'src/engine/metadata-modules/skill/skill.service';
+import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 
 const MCP_EXCLUDED_TOOLS = new Set(['code_interpreter', 'http_request']);
 

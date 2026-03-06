@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import {
   type HealthIndicatorResult,
-  type HealthIndicatorService,
+  HealthIndicatorService,
 } from '@nestjs/terminus';
 
 import { HEALTH_ERROR_MESSAGES } from 'src/engine/core-modules/admin-panel/constants/health-error-messages.constants';
@@ -11,7 +11,7 @@ import {
   CALENDAR_SYNC_METRICS_BY_STATUS,
   MESSAGE_SYNC_METRICS_BY_STATUS,
 } from 'src/engine/core-modules/metrics/constants/account-sync-metrics-by-status.constant';
-import { type MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 @Injectable()
 export class ConnectedAccountHealth {
   constructor(

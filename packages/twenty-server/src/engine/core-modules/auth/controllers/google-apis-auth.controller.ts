@@ -8,10 +8,10 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { type Response } from 'express';
+import { Response } from 'express';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { type Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 
 import {
   AuthException,
@@ -20,13 +20,13 @@ import {
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
 import { GoogleAPIsOauthExchangeCodeForTokenGuard } from 'src/engine/core-modules/auth/guards/google-apis-oauth-exchange-code-for-token.guard';
 import { GoogleAPIsOauthRequestCodeGuard } from 'src/engine/core-modules/auth/guards/google-apis-oauth-request-code.guard';
-import { type GoogleAPIsService } from 'src/engine/core-modules/auth/services/google-apis.service';
-import { type TransientTokenService } from 'src/engine/core-modules/auth/token/services/transient-token.service';
-import { type APIsOAuthRequest } from 'src/engine/core-modules/auth/types/apis-oauth-request.type';
-import { type WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
-import { type GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
-import { type OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
-import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { GoogleAPIsService } from 'src/engine/core-modules/auth/services/google-apis.service';
+import { TransientTokenService } from 'src/engine/core-modules/auth/token/services/transient-token.service';
+import { APIsOAuthRequest } from 'src/engine/core-modules/auth/types/apis-oauth-request.type';
+import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
+import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
+import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';

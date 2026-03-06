@@ -4,7 +4,7 @@ import { type SendMailOptions } from 'nodemailer';
 
 import { type EmailDriverInterface } from 'src/engine/core-modules/email/drivers/interfaces/email-driver.interface';
 
-import { type EmailDriverFactory } from 'src/engine/core-modules/email/email-driver.factory';
+import { EmailDriverFactory } from 'src/engine/core-modules/email/email-driver.factory';
 
 @Injectable()
 export class EmailSenderService implements EmailDriverInterface {

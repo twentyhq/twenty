@@ -10,7 +10,7 @@ import { AuthProvidersDTO } from 'src/engine/core-modules/workspace/dtos/public-
 import {
   InferenceProvider,
   ModelFamily,
-  type ModelId,
+  ModelId,
 } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models.const';
 
 registerEnumType(FeatureFlagKey, {

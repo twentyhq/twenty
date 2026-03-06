@@ -2,7 +2,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Command, Option } from 'nest-commander';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { In, type Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 import {
   type MigrationCommandOptions,
@@ -11,8 +11,8 @@ import {
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
   CLEAN_SUSPENDED_WORKSPACES_OPERATIONS,
-  type CleanerWorkspaceService,
-  type CleanSuspendedWorkspacesOperation,
+  CleanerWorkspaceService,
+  CleanSuspendedWorkspacesOperation,
   type CleanSuspendedWorkspacesOptions,
 } from 'src/engine/workspace-manager/workspace-cleaner/services/cleaner.workspace-service';
 

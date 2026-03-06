@@ -13,7 +13,7 @@ import {
   EmailingDomainDriver,
   EmailingDomainStatus,
 } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain';
-import { type VerificationRecord } from 'src/engine/core-modules/emailing-domain/drivers/types/verifications-record';
+import { VerificationRecord } from 'src/engine/core-modules/emailing-domain/drivers/types/verifications-record';
 import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity';
 
 @Entity({ name: 'emailingDomain', schema: 'core' })

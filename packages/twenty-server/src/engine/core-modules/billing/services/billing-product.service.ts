@@ -10,7 +10,7 @@ import { type BillingPriceEntity } from 'src/engine/core-modules/billing/entitie
 import { type BillingProductEntity } from 'src/engine/core-modules/billing/entities/billing-product.entity';
 import { type BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { type SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
-import { type BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
+import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
 
 @Injectable()
 export class BillingProductService {

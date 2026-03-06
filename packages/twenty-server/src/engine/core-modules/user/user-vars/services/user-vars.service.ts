@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { type QueryRunner } from 'typeorm';
 
 import { KeyValuePairType } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
-import { type KeyValuePairService } from 'src/engine/core-modules/key-value-pair/key-value-pair.service';
+import { KeyValuePairService } from 'src/engine/core-modules/key-value-pair/key-value-pair.service';
 import { mergeUserVars } from 'src/engine/core-modules/user/user-vars/utils/merge-user-vars.util';
 
 @Injectable()

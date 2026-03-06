@@ -1,5 +1,5 @@
 import { Injectable, type Type } from '@nestjs/common';
-import { type Reflector } from '@nestjs/core';
+import { Reflector } from '@nestjs/core';
 
 import { type MessageQueueProcessOptions } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { type MessageQueueProcessorOptions } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';

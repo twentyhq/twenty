@@ -1,9 +1,4 @@
-import {
-  Inject,
-  Injectable,
-  type OnModuleInit,
-  Optional,
-} from '@nestjs/common';
+import { Inject, Injectable, OnModuleInit, Optional } from '@nestjs/common';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 
@@ -15,13 +10,13 @@ import {
 
 import { WORKFLOW_TOOL_SERVICE_TOKEN } from 'src/engine/core-modules/tool-provider/constants/workflow-tool-service.token';
 import { ToolCategory } from 'src/engine/core-modules/tool-provider/enums/tool-category.enum';
-import { type ToolExecutorService } from 'src/engine/core-modules/tool-provider/services/tool-executor.service';
+import { ToolExecutorService } from 'src/engine/core-modules/tool-provider/services/tool-executor.service';
 import {
   type ToolDescriptor,
   type ToolIndexEntry,
 } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 import { toolSetToDescriptors } from 'src/engine/core-modules/tool-provider/utils/tool-set-to-descriptors.util';
-import { type PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import type { WorkflowToolWorkspaceService } from 'src/modules/workflow/workflow-tools/services/workflow-tool.workspace-service';
 
 @Injectable()

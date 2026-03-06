@@ -4,7 +4,7 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { ViewVisibility } from 'twenty-shared/types';
 
-import { type PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { type ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import {
   ViewException,
@@ -13,7 +13,7 @@ import {
   generateViewExceptionMessage,
   generateViewUserFriendlyExceptionMessage,
 } from 'src/engine/metadata-modules/view/exceptions/view.exception';
-import { type ViewService } from 'src/engine/metadata-modules/view/services/view.service';
+import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 
 @Injectable()
 export class ViewAccessService {

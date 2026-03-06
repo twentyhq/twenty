@@ -16,9 +16,9 @@ import {
 } from 'class-validator';
 import graphqlTypeJson from 'graphql-type-json';
 import {
-  type CronTriggerSettings,
-  type DatabaseEventTriggerSettings,
-  type HttpRouteTriggerSettings,
+  CronTriggerSettings,
+  DatabaseEventTriggerSettings,
+  HttpRouteTriggerSettings,
 } from 'twenty-shared/application';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';

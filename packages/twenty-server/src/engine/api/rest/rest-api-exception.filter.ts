@@ -7,7 +7,7 @@ import {
 
 import { type Response } from 'express';
 
-import { type HttpExceptionHandlerService } from 'src/engine/core-modules/exception-handler/http-exception-handler.service';
+import { HttpExceptionHandlerService } from 'src/engine/core-modules/exception-handler/http-exception-handler.service';
 
 @Catch()
 export class RestApiExceptionFilter implements ExceptionFilter {

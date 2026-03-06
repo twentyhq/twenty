@@ -1,8 +1,8 @@
 import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
 
-import { type Request, type Response } from 'express';
+import { Request, Response } from 'express';
 
-import { type OpenApiService } from 'src/engine/core-modules/open-api/open-api.service';
+import { OpenApiService } from 'src/engine/core-modules/open-api/open-api.service';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 

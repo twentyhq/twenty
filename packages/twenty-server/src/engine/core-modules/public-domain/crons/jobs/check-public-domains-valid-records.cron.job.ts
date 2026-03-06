@@ -1,11 +1,11 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { type Repository, Raw } from 'typeorm';
+import { Repository, Raw } from 'typeorm';
 
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { type PublicDomainService } from 'src/engine/core-modules/public-domain/public-domain.service';
+import { PublicDomainService } from 'src/engine/core-modules/public-domain/public-domain.service';
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
 import { PublicDomainEntity } from 'src/engine/core-modules/public-domain/public-domain.entity';
 

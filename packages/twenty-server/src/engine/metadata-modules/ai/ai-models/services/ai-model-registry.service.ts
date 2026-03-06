@@ -12,7 +12,7 @@ import { createOpenAI, openai } from '@ai-sdk/openai';
 import { xai } from '@ai-sdk/xai';
 import { type LanguageModel } from 'ai';
 
-import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import {
   AgentException,
   AgentExceptionCode,

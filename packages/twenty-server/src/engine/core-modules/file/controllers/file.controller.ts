@@ -10,7 +10,7 @@ import {
 
 import { join } from 'path';
 
-import { type Request, type Response } from 'express';
+import { Request, Response } from 'express';
 import { FileFolder } from 'twenty-shared/types';
 
 import {
@@ -25,9 +25,9 @@ import {
 import { FileApiExceptionFilter } from 'src/engine/core-modules/file/filters/file-api-exception.filter';
 import {
   FileByIdGuard,
-  type SupportedFileFolder,
+  SupportedFileFolder,
 } from 'src/engine/core-modules/file/guards/file-by-id.guard';
-import { type FileService } from 'src/engine/core-modules/file/services/file.service';
+import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 

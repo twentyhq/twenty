@@ -7,7 +7,7 @@ import { join } from 'path';
 
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { type Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
@@ -19,8 +19,8 @@ import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/appli
 import { extractTarballSecurely } from 'src/engine/core-modules/application/application-package/utils/extract-tarball-securely.util';
 import { readJsonFile } from 'src/engine/core-modules/application/application-package/utils/read-json-file.util';
 import { resolvePackageContentDir } from 'src/engine/core-modules/application/application-package/utils/tarball-utils';
-import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { type FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 
 export const MAX_TARBALL_UPLOAD_SIZE_BYTES = 50 * 1024 * 1024;
 

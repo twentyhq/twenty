@@ -1,5 +1,5 @@
 import { Catch } from '@nestjs/common';
-import { type GqlExceptionFilter } from '@nestjs/graphql';
+import { GqlExceptionFilter } from '@nestjs/graphql';
 
 import { assertUnreachable } from 'twenty-shared/utils';
 

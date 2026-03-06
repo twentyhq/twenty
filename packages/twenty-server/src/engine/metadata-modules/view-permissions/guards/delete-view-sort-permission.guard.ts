@@ -5,8 +5,8 @@ import {
 } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 
-import { type ViewAccessService } from 'src/engine/metadata-modules/view-permissions/services/view-access.service';
-import { type ViewEntityLookupService } from 'src/engine/metadata-modules/view-permissions/services/view-entity-lookup.service';
+import { ViewAccessService } from 'src/engine/metadata-modules/view-permissions/services/view-access.service';
+import { ViewEntityLookupService } from 'src/engine/metadata-modules/view-permissions/services/view-entity-lookup.service';
 
 @Injectable()
 export class DeleteViewSortPermissionGuard implements CanActivate {

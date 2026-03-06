@@ -11,7 +11,7 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
-  type Relation,
+  Relation,
   UpdateDateColumn,
 } from 'typeorm';
 

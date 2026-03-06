@@ -7,18 +7,18 @@ import { isNonEmptyString } from '@sniptt/guards';
 import FileType from 'file-type';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Like, type QueryRunner, type Repository } from 'typeorm';
+import { Like, type QueryRunner, Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
-import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { type FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
-import { type FileWithSignedUrlDTO } from 'src/engine/core-modules/file/dtos/file-with-sign-url.dto';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { FileWithSignedUrlDTO } from 'src/engine/core-modules/file/dtos/file-with-sign-url.dto';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
-import { type FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
+import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { extractFileInfo } from 'src/engine/core-modules/file/utils/extract-file-info.utils';
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
 import { sanitizeFile } from 'src/engine/core-modules/file/utils/sanitize-file.utils';
-import { type SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
+import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { getImageBufferFromUrl } from 'src/utils/image';
 

@@ -1,13 +1,13 @@
 /* @license Enterprise */
 
-import { Injectable, Logger, type OnModuleInit } from '@nestjs/common';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { IsNull, LessThan, type Repository } from 'typeorm';
+import { IsNull, LessThan, Repository } from 'typeorm';
 
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
-import { type MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
-import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 // Workspaces created less than 1 minute ago are excluded from the check

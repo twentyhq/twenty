@@ -16,7 +16,7 @@ import {
 import {
   TOTP_STRATEGY_CONFIG_SCHEMA,
   type TotpContext,
-  type TOTPStrategyConfig,
+  TOTPStrategyConfig,
 } from './constants/totp.strategy.constants';
 
 @Injectable()

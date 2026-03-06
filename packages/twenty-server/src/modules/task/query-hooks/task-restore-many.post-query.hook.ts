@@ -5,8 +5,8 @@ import { type WorkspacePostQueryHookInstance } from 'src/engine/api/graphql/work
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
 import { WorkspaceQueryHookType } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/types/workspace-query-hook.type';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { type TaskPostQueryHookService } from 'src/modules/task/query-hooks/task-post-query-hook.service';
-import { type TaskWorkspaceEntity } from 'src/modules/task/standard-objects/task.workspace-entity';
+import { TaskPostQueryHookService } from 'src/modules/task/query-hooks/task-post-query-hook.service';
+import { TaskWorkspaceEntity } from 'src/modules/task/standard-objects/task.workspace-entity';
 
 @Injectable()
 @WorkspaceQueryHook({

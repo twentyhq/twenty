@@ -6,7 +6,7 @@ import { join, relative } from 'path';
 
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { type Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 
 import {
   ApplicationException,
@@ -14,15 +14,15 @@ import {
 } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
-import { type ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import {
-  type ApplicationPackageFetcherService,
+  ApplicationPackageFetcherService,
   type ResolvedPackage,
 } from 'src/engine/core-modules/application/application-package/application-package-fetcher.service';
-import { type ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
-import { type CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
-import { type FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
+import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
+import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 
 const FILE_FOLDER_MAPPING: Record<string, FileFolder> = {
   'package.json': FileFolder.Dependencies,

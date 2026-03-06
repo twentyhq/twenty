@@ -1,30 +1,30 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
-import { type ViewType, ViewVisibility } from 'twenty-shared/types';
+import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
+import { ViewType, ViewVisibility } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { In, IsNull, type Repository } from 'typeorm';
+import { In, IsNull, Repository } from 'typeorm';
 
-import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { type I18nService } from 'src/engine/core-modules/i18n/i18n.service';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { generateMessageId } from 'src/engine/core-modules/i18n/utils/generateMessageId';
-import { type WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { fromCreateViewInputToFlatViewToCreate } from 'src/engine/metadata-modules/flat-view/utils/from-create-view-input-to-flat-view-to-create.util';
 import { fromDeleteViewInputToFlatViewOrThrow } from 'src/engine/metadata-modules/flat-view/utils/from-delete-view-input-to-flat-view-or-throw.util';
 import { fromDestroyViewInputToFlatViewOrThrow } from 'src/engine/metadata-modules/flat-view/utils/from-destroy-view-input-to-flat-view-or-throw.util';
 import { fromUpdateViewInputToFlatViewToUpdateOrThrow } from 'src/engine/metadata-modules/flat-view/utils/from-update-view-input-to-flat-view-to-update-or-throw.util';
-import { type CreateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/create-view.input';
-import { type DeleteViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/delete-view.input';
-import { type DestroyViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/destroy-view.input';
-import { type UpdateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/update-view.input';
-import { type ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
+import { CreateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/create-view.input';
+import { DeleteViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/delete-view.input';
+import { DestroyViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/destroy-view.input';
+import { UpdateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/update-view.input';
+import { ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { fromFlatViewToViewDto } from 'src/engine/metadata-modules/view/utils/from-flat-view-to-view-dto.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
-import { type WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
+import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 @Injectable()
 export class ViewService {

@@ -10,7 +10,7 @@ import {
 } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationTokenPairDTO } from 'src/engine/core-modules/application/application-oauth/dtos/application-token-pair.dto';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
-import { type ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
+import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';

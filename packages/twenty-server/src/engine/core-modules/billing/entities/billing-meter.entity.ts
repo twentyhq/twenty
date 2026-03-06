@@ -1,13 +1,13 @@
 /* @license Enterprise */
 
-import type Stripe from 'stripe';
+import Stripe from 'stripe';
 import {
   Column,
   CreateDateColumn,
   Entity,
   OneToMany,
   PrimaryGeneratedColumn,
-  type Relation,
+  Relation,
   UpdateDateColumn,
 } from 'typeorm';
 

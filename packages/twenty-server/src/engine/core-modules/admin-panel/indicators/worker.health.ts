@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import {
   type HealthIndicatorResult,
-  type HealthIndicatorService,
+  HealthIndicatorService,
 } from '@nestjs/terminus';
 
 import { Queue } from 'bullmq';
@@ -11,7 +11,7 @@ import { METRICS_FAILURE_RATE_THRESHOLD } from 'src/engine/core-modules/admin-pa
 import { type WorkerQueueHealth } from 'src/engine/core-modules/admin-panel/types/worker-queue-health.type';
 import { withHealthCheckTimeout } from 'src/engine/core-modules/admin-panel/utils/health-check-timeout.util';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { type RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
+import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
 
 @Injectable()
 export class WorkerHealthIndicator {

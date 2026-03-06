@@ -1,7 +1,7 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 import { IDField } from '@ptc-org/nestjs-query-graphql';
-import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
+import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import {
   BeforeInsert,
   BeforeUpdate,
@@ -12,7 +12,7 @@ import {
   Index,
   OneToMany,
   PrimaryGeneratedColumn,
-  type Relation,
+  Relation,
   UpdateDateColumn,
 } from 'typeorm';
 

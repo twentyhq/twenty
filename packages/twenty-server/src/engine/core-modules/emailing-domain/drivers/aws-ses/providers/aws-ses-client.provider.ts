@@ -5,7 +5,7 @@ import {
   type SESv2ClientConfig as SESClientConfig,
 } from '@aws-sdk/client-sesv2';
 
-import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
 export class AwsSesClientProvider {

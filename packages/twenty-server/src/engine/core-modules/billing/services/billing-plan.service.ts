@@ -3,7 +3,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { JsonContains, type Repository } from 'typeorm';
+import { JsonContains, Repository } from 'typeorm';
 import { findOrThrow } from 'twenty-shared/utils';
 
 import {

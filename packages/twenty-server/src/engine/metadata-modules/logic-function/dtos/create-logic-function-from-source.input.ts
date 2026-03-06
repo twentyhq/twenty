@@ -13,14 +13,14 @@ import {
 } from 'class-validator';
 import graphqlTypeJson from 'graphql-type-json';
 import {
-  type CronTriggerSettings,
-  type DatabaseEventTriggerSettings,
-  type HttpRouteTriggerSettings,
+  CronTriggerSettings,
+  DatabaseEventTriggerSettings,
+  HttpRouteTriggerSettings,
 } from 'twenty-shared/application';
 
 import type { JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { type LogicFunctionSourceInput } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-source.input';
+import { LogicFunctionSourceInput } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-source.input';
 
 @InputType()
 export class CreateLogicFunctionFromSourceInput {

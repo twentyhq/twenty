@@ -11,8 +11,8 @@ import {
   type AddressFields,
   sanitizePlaceDetailsResults,
 } from 'src/engine/core-modules/geo-map/utils/sanitize-place-details-results.util';
-import { type SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
-import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
 export class GeoMapService {

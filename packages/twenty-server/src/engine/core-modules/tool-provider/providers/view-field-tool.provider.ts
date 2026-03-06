@@ -1,4 +1,4 @@
-import { Injectable, type OnModuleInit } from '@nestjs/common';
+import { Injectable, OnModuleInit } from '@nestjs/common';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 
@@ -9,14 +9,14 @@ import {
 } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
 
 import { ToolCategory } from 'src/engine/core-modules/tool-provider/enums/tool-category.enum';
-import { type ToolExecutorService } from 'src/engine/core-modules/tool-provider/services/tool-executor.service';
+import { ToolExecutorService } from 'src/engine/core-modules/tool-provider/services/tool-executor.service';
 import {
   type ToolDescriptor,
   type ToolIndexEntry,
 } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 import { toolSetToDescriptors } from 'src/engine/core-modules/tool-provider/utils/tool-set-to-descriptors.util';
-import { type PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
-import { type ViewFieldToolsFactory } from 'src/engine/metadata-modules/view-field/tools/view-field-tools.factory';
+import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { ViewFieldToolsFactory } from 'src/engine/metadata-modules/view-field/tools/view-field-tools.factory';
 
 @Injectable()
 export class ViewFieldToolProvider implements ToolProvider, OnModuleInit {

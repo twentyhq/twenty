@@ -3,23 +3,23 @@ import { Injectable } from '@nestjs/common';
 import { isString } from '@sniptt/guards';
 import { isDefined, isValidVariable } from 'twenty-shared/utils';
 import {
-  type BaseOutputSchemaV2,
-  type BulkRecordsAvailability,
+  BaseOutputSchemaV2,
+  BulkRecordsAvailability,
   extractRawVariableNamePart,
-  type GlobalAvailability,
+  GlobalAvailability,
   navigateOutputSchemaProperty,
-  type SingleRecordAvailability,
+  SingleRecordAvailability,
   TRIGGER_STEP_ID,
 } from 'twenty-shared/workflow';
 
 import { type DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { checkStringIsDatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/utils/check-string-is-database-event-action';
 import { generateFakeValue } from 'src/engine/utils/generate-fake-value';
-import { type WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
+import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { DEFAULT_ITERATOR_CURRENT_ITEM } from 'src/modules/workflow/workflow-builder/workflow-schema/constants/default-iterator-current-item.const';
 import {
-  type Leaf,
-  type Node,
+  Leaf,
+  Node,
   type OutputSchema,
 } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
 import { extractPropertyPathFromVariable } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/extract-property-path-from-variable';
@@ -34,7 +34,7 @@ import {
   WorkflowActionType,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import {
-  type WorkflowTrigger,
+  WorkflowTrigger,
   WorkflowTriggerType,
 } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 

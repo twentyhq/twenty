@@ -4,8 +4,8 @@ import axios from 'axios';
 import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
-import { type MarketplaceAppDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app.dto';
-import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { MarketplaceAppDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app.dto';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 const npmSearchResultSchema = z.object({
   objects: z.array(

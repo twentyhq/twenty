@@ -1,6 +1,6 @@
-import { type SendMailOptions } from 'nodemailer';
+import { SendMailOptions } from 'nodemailer';
 
-import { type EmailSenderService } from 'src/engine/core-modules/email/email-sender.service';
+import { EmailSenderService } from 'src/engine/core-modules/email/email-sender.service';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';

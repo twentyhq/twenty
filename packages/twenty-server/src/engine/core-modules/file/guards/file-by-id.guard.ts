@@ -1,15 +1,11 @@
-import {
-  type CanActivate,
-  type ExecutionContext,
-  Injectable,
-} from '@nestjs/common';
+import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 
 import { FileFolder } from 'twenty-shared/types';
 
 import { fileFolderConfigs } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
-import { type FileTokenJwtPayload } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { type JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
+import { FileTokenJwtPayload } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 
 export const SUPPORTED_FILE_FOLDERS = [
   FileFolder.CorePicture,

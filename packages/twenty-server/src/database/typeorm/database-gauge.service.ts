@@ -1,9 +1,9 @@
-import { Injectable, Logger, type OnModuleInit } from '@nestjs/common';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
-import { type DataSource } from 'typeorm';
+import { DataSource } from 'typeorm';
 
-import { type MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 
 @Injectable()
 export class DatabaseGaugeService implements OnModuleInit {

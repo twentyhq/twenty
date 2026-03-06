@@ -6,7 +6,7 @@ import {
   decryptText,
   encryptText,
 } from 'src/engine/core-modules/auth/auth.util';
-import { type EnvironmentConfigDriver } from 'src/engine/core-modules/twenty-config/drivers/environment-config.driver';
+import { EnvironmentConfigDriver } from 'src/engine/core-modules/twenty-config/drivers/environment-config.driver';
 
 @Injectable()
 export class SecretEncryptionService {

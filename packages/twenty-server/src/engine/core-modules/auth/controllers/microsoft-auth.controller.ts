@@ -7,13 +7,13 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
-import { type Response } from 'express';
+import { Response } from 'express';
 
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
 import { MicrosoftOAuthGuard } from 'src/engine/core-modules/auth/guards/microsoft-oauth.guard';
 import { MicrosoftProviderEnabledGuard } from 'src/engine/core-modules/auth/guards/microsoft-provider-enabled.guard';
-import { type AuthService } from 'src/engine/core-modules/auth/services/auth.service';
-import { type MicrosoftRequest } from 'src/engine/core-modules/auth/strategies/microsoft.auth.strategy';
+import { AuthService } from 'src/engine/core-modules/auth/services/auth.service';
+import { MicrosoftRequest } from 'src/engine/core-modules/auth/strategies/microsoft.auth.strategy';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';

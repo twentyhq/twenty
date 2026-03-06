@@ -6,10 +6,10 @@ import { getWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/wo
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { type LineChartDataInput } from 'src/modules/dashboard/chart-data/dtos/inputs/line-chart-data.input';
+import { LineChartDataInput } from 'src/modules/dashboard/chart-data/dtos/inputs/line-chart-data.input';
 import { LineChartDataDTO } from 'src/modules/dashboard/chart-data/dtos/line-chart-data.dto';
 import { ChartDataGraphqlApiExceptionFilter } from 'src/modules/dashboard/chart-data/filters/chart-data-graphql-api-exception.filter';
-import { type LineChartDataService } from 'src/modules/dashboard/chart-data/services/line-chart-data.service';
+import { LineChartDataService } from 'src/modules/dashboard/chart-data/services/line-chart-data.service';
 
 @MetadataResolver()
 @UseFilters(ChartDataGraphqlApiExceptionFilter)

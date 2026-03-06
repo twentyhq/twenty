@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { google } from 'googleapis';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import {
   ConnectedAccountRefreshAccessTokenException,
   ConnectedAccountRefreshAccessTokenExceptionCode,

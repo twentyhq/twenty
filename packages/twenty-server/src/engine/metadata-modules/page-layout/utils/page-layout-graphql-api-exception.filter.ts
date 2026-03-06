@@ -8,7 +8,7 @@ import { GqlExecutionContext } from '@nestjs/graphql';
 
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
-import { type I18nService } from 'src/engine/core-modules/i18n/i18n.service';
+import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { PageLayoutTabException } from 'src/engine/metadata-modules/page-layout-tab/exceptions/page-layout-tab.exception';
 import { PageLayoutWidgetException } from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
 import { PageLayoutException } from 'src/engine/metadata-modules/page-layout/exceptions/page-layout.exception';

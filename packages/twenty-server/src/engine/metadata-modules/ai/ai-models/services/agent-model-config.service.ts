@@ -2,16 +2,16 @@ import { Injectable } from '@nestjs/common';
 
 import { anthropic } from '@ai-sdk/anthropic';
 import { openai } from '@ai-sdk/openai';
-import { type ProviderOptions } from '@ai-sdk/provider-utils';
-import { type ToolSet } from 'ai';
+import { ProviderOptions } from '@ai-sdk/provider-utils';
+import { ToolSet } from 'ai';
 
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-config.const';
 import { InferenceProvider } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models.const';
 import {
-  type AiModelRegistryService,
-  type RegisteredAIModel,
+  AiModelRegistryService,
+  RegisteredAIModel,
 } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
-import { type FlatAgentWithRoleId } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
+import { FlatAgentWithRoleId } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
 
 @Injectable()
 export class AgentModelConfigService {

@@ -5,7 +5,7 @@ import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 import GraphQLJSON from 'graphql-type-json';
 import {
   RowLevelPermissionPredicateOperand,
-  type RowLevelPermissionPredicateValue,
+  RowLevelPermissionPredicateValue,
 } from 'twenty-shared/types';
 
 registerEnumType(RowLevelPermissionPredicateOperand, {

@@ -4,8 +4,8 @@ import { type Client } from '@microsoft/microsoft-graph-client';
 import { type Auth } from 'googleapis';
 import { CustomError, isDefined } from 'twenty-shared/utils';
 
-import { type GoogleOAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/drivers/google/google-oauth2-client-manager.service';
-import { type MicrosoftOAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/drivers/microsoft/microsoft-oauth2-client-manager.service';
+import { GoogleOAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/drivers/google/google-oauth2-client-manager.service';
+import { MicrosoftOAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/drivers/microsoft/microsoft-oauth2-client-manager.service';
 import { OAuth2ClientManagerExceptionCode } from 'src/modules/connected-account/oauth2-client-manager/exceptions/oauth2-client-manager.exceptions';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 

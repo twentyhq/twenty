@@ -7,14 +7,14 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
-import { type Response } from 'express';
+import { Response } from 'express';
 
 import { AuthOAuthExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-oauth-exception.filter';
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
 import { GoogleOauthGuard } from 'src/engine/core-modules/auth/guards/google-oauth.guard';
 import { GoogleProviderEnabledGuard } from 'src/engine/core-modules/auth/guards/google-provider-enabled.guard';
-import { type AuthService } from 'src/engine/core-modules/auth/services/auth.service';
-import { type GoogleRequest } from 'src/engine/core-modules/auth/strategies/google.auth.strategy';
+import { AuthService } from 'src/engine/core-modules/auth/services/auth.service';
+import { GoogleRequest } from 'src/engine/core-modules/auth/strategies/google.auth.strategy';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';

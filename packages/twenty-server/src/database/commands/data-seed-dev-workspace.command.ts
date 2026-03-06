@@ -6,7 +6,7 @@ import {
   SEED_APPLE_WORKSPACE_ID,
   SEED_YCOMBINATOR_WORKSPACE_ID,
 } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
-import { type DevSeederService } from 'src/engine/workspace-manager/dev-seeder/services/dev-seeder.service';
+import { DevSeederService } from 'src/engine/workspace-manager/dev-seeder/services/dev-seeder.service';
 @Command({
   name: 'workspace:seed:dev',
   description:

@@ -1,7 +1,7 @@
 import { Field, InputType } from '@nestjs/graphql';
 
 import { IsBoolean, IsNotEmpty } from 'class-validator';
-import { type FeatureFlagKey } from 'twenty-shared/types';
+import { FeatureFlagKey } from 'twenty-shared/types';
 
 @InputType()
 export class UpdateLabPublicFeatureFlagInput {

@@ -9,7 +9,7 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
-  type Relation,
+  Relation,
   Unique,
   UpdateDateColumn,
 } from 'typeorm';

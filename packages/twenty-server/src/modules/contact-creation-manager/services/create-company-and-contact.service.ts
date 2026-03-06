@@ -4,20 +4,20 @@ import { isNonEmptyString, isNull } from '@sniptt/guards';
 import chunk from 'lodash.chunk';
 import compact from 'lodash.compact';
 import {
-  type ConnectedAccountProvider,
+  ConnectedAccountProvider,
   type FieldActorSource,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type DeepPartial } from 'typeorm';
 import { v4 } from 'uuid';
 
-import { type ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
-import { type GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { CONTACTS_CREATION_BATCH_SIZE } from 'src/modules/contact-creation-manager/constants/contacts-creation-batch-size.constant';
-import { type CreateCompanyService } from 'src/modules/contact-creation-manager/services/create-company.service';
-import { type CreatePersonService } from 'src/modules/contact-creation-manager/services/create-person.service';
+import { CreateCompanyService } from 'src/modules/contact-creation-manager/services/create-company.service';
+import { CreatePersonService } from 'src/modules/contact-creation-manager/services/create-person.service';
 import { type Contact } from 'src/modules/contact-creation-manager/types/contact.type';
 import { filterOutContactsThatBelongToSelfOrWorkspaceMembers } from 'src/modules/contact-creation-manager/utils/filter-out-contacts-that-belong-to-self-or-workspace-members.util';
 import { getDomainNameFromHandle } from 'src/modules/contact-creation-manager/utils/get-domain-name-from-handle.util';

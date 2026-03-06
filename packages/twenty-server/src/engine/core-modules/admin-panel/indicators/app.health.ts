@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import {
   type HealthIndicatorResult,
-  type HealthIndicatorService,
+  HealthIndicatorService,
 } from '@nestjs/terminus';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { type Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 
 import { HealthStateManager } from 'src/engine/core-modules/admin-panel/utils/health-state-manager.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';

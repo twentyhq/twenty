@@ -1,14 +1,14 @@
 import { UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation } from '@nestjs/graphql';
 
-import { type ImpersonateInput } from 'src/engine/core-modules/admin-panel/dtos/impersonate.input';
+import { ImpersonateInput } from 'src/engine/core-modules/admin-panel/dtos/impersonate.input';
 import { ImpersonateDTO } from 'src/engine/core-modules/admin-panel/dtos/impersonate.dto';
 import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
-import { type ImpersonationService } from 'src/engine/core-modules/impersonation/services/impersonation.service';
+import { ImpersonationService } from 'src/engine/core-modules/impersonation/services/impersonation.service';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
 import { ImpersonatePermissionGuard } from 'src/engine/guards/impersonate-permission.guard';

@@ -5,8 +5,8 @@ import { AggregateOperations } from 'twenty-shared/types';
 import { z } from 'zod';
 
 import { formatValidationErrors } from 'src/engine/core-modules/tool-provider/utils/format-validation-errors.util';
-import { type WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { type ViewFieldService } from 'src/engine/metadata-modules/view-field/services/view-field.service';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { ViewFieldService } from 'src/engine/metadata-modules/view-field/services/view-field.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 
 const GetViewFieldsInputSchema = z.object({

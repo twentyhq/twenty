@@ -7,13 +7,13 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
-  type Relation,
+  Relation,
   Unique,
   UpdateDateColumn,
 } from 'typeorm';
 
-import { type ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import { type FileSettings } from 'src/engine/core-modules/file/types/file-settings.types';
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { FileSettings } from 'src/engine/core-modules/file/types/file-settings.types';
 import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity';
 
 @Entity('file')

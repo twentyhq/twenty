@@ -10,9 +10,9 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { SamlAuthStrategy } from 'src/engine/core-modules/auth/strategies/saml.auth.strategy';
-import { type WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
-import { type GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
-import { type SSOService } from 'src/engine/core-modules/sso/services/sso.service';
+import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
+import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
+import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
 import { type SSOConfiguration } from 'src/engine/core-modules/sso/types/SSOConfigurations.type';
 import { type WorkspaceSSOIdentityProviderEntity } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 

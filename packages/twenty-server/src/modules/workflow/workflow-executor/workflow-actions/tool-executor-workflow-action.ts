@@ -4,9 +4,9 @@ import { resolveInput, resolveRichTextVariables } from 'twenty-shared/utils';
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
-import { type DraftEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/draft-email-tool';
-import { type HttpTool } from 'src/engine/core-modules/tool/tools/http-tool/http-tool';
-import { type SendEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/send-email-tool';
+import { DraftEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/draft-email-tool';
+import { HttpTool } from 'src/engine/core-modules/tool/tools/http-tool/http-tool';
+import { SendEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/send-email-tool';
 import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
 import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
 import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input';

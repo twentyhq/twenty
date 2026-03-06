@@ -3,10 +3,10 @@ import { Cron } from '@nestjs/schedule';
 
 import { type DatabaseConfigDriverInterface } from 'src/engine/core-modules/twenty-config/drivers/interfaces/database-config-driver.interface';
 
-import { type ConfigCacheService } from 'src/engine/core-modules/twenty-config/cache/config-cache.service';
+import { ConfigCacheService } from 'src/engine/core-modules/twenty-config/cache/config-cache.service';
 import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 import { CONFIG_VARIABLES_REFRESH_CRON_INTERVAL } from 'src/engine/core-modules/twenty-config/constants/config-variables-refresh-cron-interval.constants';
-import { type ConfigStorageService } from 'src/engine/core-modules/twenty-config/storage/config-storage.service';
+import { ConfigStorageService } from 'src/engine/core-modules/twenty-config/storage/config-storage.service';
 import { isEnvOnlyConfigVar } from 'src/engine/core-modules/twenty-config/utils/is-env-only-config-var.util';
 
 @Injectable()

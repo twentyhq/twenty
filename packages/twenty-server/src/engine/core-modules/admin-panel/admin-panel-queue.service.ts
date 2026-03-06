@@ -12,7 +12,7 @@ import {
 import { InternalServerError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { QUEUE_RETENTION } from 'src/engine/core-modules/message-queue/constants/queue-retention.constants';
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { type RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
+import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
 
 type JobOperationResult = {
   jobId: string;
