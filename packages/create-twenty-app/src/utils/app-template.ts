@@ -95,6 +95,7 @@ export const copyBaseApplicationProject = async ({
     });
   }
 
+
   if (exampleOptions.includeExampleSkill) {
     await createExampleSkill({
       appDirectory: sourceFolderPath,
@@ -436,9 +437,11 @@ const createExampleView = async ({
   const content = `import { defineView } from 'twenty-sdk';
 import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER, NAME_FIELD_UNIVERSAL_IDENTIFIER } from 'src/objects/example-object';
 
+export const EXAMPLE_VIEW_UNIVERSAL_IDENTIFIER = '${universalIdentifier}';
+
 export default defineView({
-  universalIdentifier: '${universalIdentifier}',
-  name: 'example-view',
+  universalIdentifier: EXAMPLE_VIEW_UNIVERSAL_IDENTIFIER,
+  name: 'All example items',
   objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
   icon: 'IconList',
   position: 0,
@@ -470,18 +473,14 @@ const createExampleNavigationMenuItem = async ({
   const universalIdentifier = v4();
 
   const content = `import { defineNavigationMenuItem } from 'twenty-sdk';
+  import { EXAMPLE_VIEW_UNIVERSAL_IDENTIFIER } from 'src/views/example-view';
 
 export default defineNavigationMenuItem({
   universalIdentifier: '${universalIdentifier}',
   name: 'example-navigation-menu-item',
   icon: 'IconList',
   position: 0,
-  // Link to a view:
-  // viewUniversalIdentifier: '...',
-  // Or link to an object:
-  // targetObjectUniversalIdentifier: '...',
-  // Or link to an external URL:
-  // link: 'https://example.com',
+  viewUniversalIdentifier: EXAMPLE_VIEW_UNIVERSAL_IDENTIFIER,
 });
 `;
 

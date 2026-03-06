@@ -183,16 +183,36 @@ export class CreateAppCommand {
     ]);
 
     const includeField = selectedExamples.includes('field');
-    const includeView = selectedExamples.includes('view');
+    const includeNavigationMenuItem =
+      selectedExamples.includes('navigationMenuItem');
     const includeExampleIntegrationTest =
       selectedExamples.includes('integrationTest');
+    const includeView =
+      selectedExamples.includes('view') || includeNavigationMenuItem;
     const includeObject =
-      selectedExamples.includes('object') || includeField || includeView;
+      selectedExamples.includes('object') ||
+      includeField ||
+      includeView ||
+      includeNavigationMenuItem;
 
-    if ((includeField || includeView) && !selectedExamples.includes('object')) {
+    if (
+      includeNavigationMenuItem &&
+      !selectedExamples.includes('view')
+    ) {
       console.log(
         chalk.yellow(
-          'Note: Example object auto-included because example field/view depends on it.',
+          'Note: View example auto-included because example navigation menu item depends on it.',
+        ),
+      );
+    }
+
+    if (
+      (includeField || includeView || includeNavigationMenuItem) &&
+      !selectedExamples.includes('object')
+    ) {
+      console.log(
+        chalk.yellow(
+          'Note: Object example auto-included because example field/view depends on it.',
         ),
       );
     }
@@ -203,8 +223,7 @@ export class CreateAppCommand {
       includeExampleLogicFunction: selectedExamples.includes('logicFunction'),
       includeExampleFrontComponent: selectedExamples.includes('frontComponent'),
       includeExampleView: includeView,
-      includeExampleNavigationMenuItem:
-        selectedExamples.includes('navigationMenuItem'),
+      includeExampleNavigationMenuItem: includeNavigationMenuItem,
       includeExampleSkill: selectedExamples.includes('skill'),
       includeExampleIntegrationTest,
     };

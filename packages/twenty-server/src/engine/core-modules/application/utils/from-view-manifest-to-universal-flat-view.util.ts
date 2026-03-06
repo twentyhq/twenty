@@ -5,6 +5,7 @@ import {
   ViewVisibility,
 } from 'twenty-shared/types';
 
+import { ViewKey } from 'src/engine/metadata-modules/view/enums/view-key.enum';
 import { type UniversalFlatView } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view.type';
 
 export const fromViewManifestToUniversalFlatView = ({
@@ -28,7 +29,7 @@ export const fromViewManifestToUniversalFlatView = ({
     isCustom: true,
     visibility: viewManifest.visibility ?? ViewVisibility.WORKSPACE,
     openRecordIn: viewManifest.openRecordIn ?? ViewOpenRecordIn.SIDE_PANEL,
-    key: null,
+    key: ViewKey.INDEX,
     kanbanAggregateOperation: null,
     kanbanAggregateOperationFieldMetadataUniversalIdentifier: null,
     calendarLayout: null,
