@@ -1,6 +1,6 @@
 {
-  "name": "hello-world",
-  "version": "0.1.0",
+  "name": "@twentyhq/hello-world",
+  "version": "0.2.2",
   "license": "MIT",
   "engines": {
     "node": "^24.5.0",
@@ -10,19 +10,18 @@
   "packageManager": "yarn@4.9.2",
   "scripts": {
     "twenty": "twenty",
-    "lint": "eslint",
-    "lint:fix": "eslint --fix",
+    "lint": "oxlint -c .oxlintrc.json .",
+    "lint:fix": "oxlint --fix -c .oxlintrc.json .",
     "test": "vitest run",
     "test:watch": "vitest"
   },
   "devDependencies": {
     "@types/node": "^24.7.2",
     "@types/react": "^18.2.0",
-    "eslint": "^9.32.0",
+    "oxlint": "^0.16.0",
     "react": "^18.2.0",
     "twenty-sdk": "0.6.3",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.50.0",
     "vite-tsconfig-paths": "^4.2.1",
     "vitest": "^3.1.1"
   }

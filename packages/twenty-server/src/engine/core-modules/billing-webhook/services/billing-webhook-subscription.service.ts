@@ -38,7 +38,7 @@ import {
 } from 'src/engine/workspace-manager/workspace-cleaner/jobs/clean-workspace-deletion-warning-user-vars.job';
 
 @Injectable()
-// eslint-disable-next-line twenty/inject-workspace-repository
+// oxlint-disable-next-line twenty/inject-workspace-repository
 export class BillingWebhookSubscriptionService {
   protected readonly logger = new Logger(
     BillingWebhookSubscriptionService.name,

@@ -31,9 +31,8 @@ import { WorkspacePreQueryHookPayload } from 'src/engine/api/graphql/workspace-q
 import { WorkspaceQueryHookService } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.service';
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
 import { isApiKeyAuthContext } from 'src/engine/core-modules/auth/guards/is-api-key-auth-context.guard';
+import { isApplicationAuthContext } from 'src/engine/core-modules/auth/guards/is-application-auth-context.guard';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
-import { isWorkspaceAuthContext } from 'src/engine/core-modules/auth/guards/is-workspace-auth-context.guard';
-import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
@@ -104,14 +103,6 @@ export abstract class CommonBaseQueryRunnerService<
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
     } = queryRunnerContext;
-
-    if (!isWorkspaceAuthContext(authContext)) {
-      throw new CommonQueryRunnerException(
-        'Invalid auth context',
-        CommonQueryRunnerExceptionCode.INVALID_AUTH_CONTEXT,
-        { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
-      );
-    }
 
     await this.throttleQueryExecution(authContext);
 
@@ -312,32 +303,35 @@ export abstract class CommonBaseQueryRunnerService<
   }
 
   private async getRoleIdOrThrow(
-    authContext: AuthContext,
+    authContext: WorkspaceAuthContext,
     workspaceId: string,
   ): Promise<string> {
-    if (isDefined(authContext.apiKey)) {
+    if (isApiKeyAuthContext(authContext)) {
       return this.apiKeyRoleService.getRoleIdForApiKeyId(
         authContext.apiKey.id,
         workspaceId,
       );
     }
 
-    if (isDefined(authContext.application?.defaultRoleId)) {
-      return authContext.application?.defaultRoleId;
+    if (
+      isApplicationAuthContext(authContext) &&
+      isDefined(authContext.application.defaultRoleId)
+    ) {
+      return authContext.application.defaultRoleId;
     }
 
-    if (!isDefined(authContext.userWorkspaceId)) {
-      throw new CommonQueryRunnerException(
-        'Invalid auth context',
-        CommonQueryRunnerExceptionCode.INVALID_AUTH_CONTEXT,
-        { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
-      );
+    if (isUserAuthContext(authContext)) {
+      return this.userRoleService.getRoleIdForUserWorkspace({
+        userWorkspaceId: authContext.userWorkspaceId,
+        workspaceId,
+      });
     }
 
-    return this.userRoleService.getRoleIdForUserWorkspace({
-      userWorkspaceId: authContext.userWorkspaceId,
-      workspaceId,
-    });
+    throw new CommonQueryRunnerException(
+      'Invalid auth context',
+      CommonQueryRunnerExceptionCode.INVALID_AUTH_CONTEXT,
+      { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
+    );
   }
 
   private async prepareExtendedQueryRunnerContextWithGlobalDatasource(

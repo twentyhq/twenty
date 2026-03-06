@@ -1,7 +1,8 @@
-import IconAddressBookRaw from '@assets/icons/address-book.svg?react';
 import { useContext } from 'react';
+
+import IconAddressBookRaw from '@assets/icons/address-book.svg?react';
 import { type IconComponentProps } from '@ui/display/icon/types/IconComponent';
-import { ThemeContext } from '@ui/theme';
+import { ThemeContext } from '@ui/theme-constants';
 
 type IconAddressBookProps = Pick<
   IconComponentProps,

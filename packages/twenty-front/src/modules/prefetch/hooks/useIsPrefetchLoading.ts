@@ -13,7 +13,7 @@ export const useIsPrefetchLoading = () => {
     PrefetchKey.AllFavoritesFolders,
   );
 
-  // eslint-disable-next-line twenty/matching-state-variable
+  // oxlint-disable-next-line twenty/matching-state-variable
   const prefetchIsLoadedFavorites = useAtomFamilyStateValue(
     prefetchIsLoadedFamilyState,
     PrefetchKey.AllFavorites,

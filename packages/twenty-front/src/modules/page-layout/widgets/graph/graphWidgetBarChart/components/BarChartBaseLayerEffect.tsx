@@ -15,7 +15,7 @@ import {
   useState,
 } from 'react';
 import { BarChartLayout } from '~/generated-metadata/graphql';
-import { ThemeContext } from 'twenty-ui/theme';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 type BarChartBaseLayerEffectProps = {
   bars: BarPosition[];

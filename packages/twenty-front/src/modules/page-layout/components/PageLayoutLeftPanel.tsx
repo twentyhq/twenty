@@ -32,7 +32,7 @@ export const PageLayoutLeftPanel = ({
 }: PageLayoutLeftPanelProps) => {
   const { currentPageLayout } = useCurrentPageLayout();
   const targetRecordIdentifier = useTargetRecord();
-  const { isInRightDrawer } = useLayoutRenderingContext();
+  const { isInSidePanel } = useLayoutRenderingContext();
   const pinnedTab = usePageLayoutTabWithVisibleWidgetsOrThrow(pinnedLeftTabId);
 
   if (currentPageLayout?.type !== PageLayoutType.RECORD_PAGE) {
@@ -49,7 +49,7 @@ export const PageLayoutLeftPanel = ({
       <SummaryCard
         objectNameSingular={targetRecordIdentifier.targetObjectNameSingular}
         objectRecordId={targetRecordIdentifier.id}
-        isInRightDrawer={isInRightDrawer}
+        isInSidePanel={isInSidePanel}
       />
 
       <PageLayoutContentProvider

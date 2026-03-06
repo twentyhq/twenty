@@ -98,7 +98,7 @@ In interactive mode, you can pick from:
 - `roles/default-role.ts` — Default role for logic functions
 - `logic-functions/pre-install.ts` — Pre-install logic function (runs before app installation)
 - `logic-functions/post-install.ts` — Post-install logic function (runs after app installation)
-- TypeScript configuration, ESLint, package.json, .gitignore
+- TypeScript configuration, Oxlint, package.json, .gitignore
 - A prewired `twenty` script that delegates to the `twenty` CLI from twenty-sdk
 
 **Example files (controlled by scaffolding mode):**

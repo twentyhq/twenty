@@ -1,4 +1,4 @@
-/* eslint-disable twenty/no-navigate-prefer-link */
+/* oxlint-disable twenty/no-navigate-prefer-link */
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { useFilterObjectMetadataItemsWithPermissionOverride } from '@/settings/roles/role-permissions/object-level-permissions/hooks/useFilterObjectWithPermissionOverride';
 import { useObjectMetadataItemsThatCanHavePermission } from '@/settings/roles/role-permissions/object-level-permissions/hooks/useObjectMetadataItemsThatCanHavePermission';
@@ -10,8 +10,7 @@ import { useSearchParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { H2Title, IconSearch, useIcons } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 const StyledTypeSelectContainer = styled.div`
@@ -40,8 +39,8 @@ const StyledSearchContainer = styled.div`
   padding-bottom: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledSearchInput = styled(SettingsTextInput)`
-  input {
+const StyledSearchInputContainer = styled.div`
+  > * input {
     background: ${themeCssVariables.background.transparent.lighter};
     border: 1px solid ${themeCssVariables.border.color.medium};
   }
@@ -105,15 +104,17 @@ export const SettingsRolePermissionsObjectLevelObjectPicker = ({
     <StyledTypeSelectContainer>
       <Section>
         <StyledSearchContainer>
-          <StyledSearchInput
-            instanceId="role-permissions-object-search"
-            value={searchFilter}
-            onChange={handleSearchChange}
-            placeholder={t`Search an object`}
-            fullWidth
-            LeftIcon={IconSearch}
-            sizeVariant="lg"
-          />
+          <StyledSearchInputContainer>
+            <SettingsTextInput
+              instanceId="role-permissions-object-search"
+              value={searchFilter}
+              onChange={handleSearchChange}
+              placeholder={t`Search an object`}
+              fullWidth
+              LeftIcon={IconSearch}
+              sizeVariant="lg"
+            />
+          </StyledSearchInputContainer>
         </StyledSearchContainer>
       </Section>
 

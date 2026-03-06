@@ -1,6 +1,6 @@
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { useNavigatePageLayoutCommandMenu } from '@/command-menu/pages/page-layout/hooks/useNavigatePageLayoutCommandMenu';
-import { CommandMenuPages } from 'twenty-shared/types';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
+import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
+import { SidePanelPages } from 'twenty-shared/types';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
@@ -48,9 +48,9 @@ export const useDuplicatePageLayoutTab = (pageLayoutIdFromProps?: string) => {
     pageLayoutId,
   );
 
-  const { navigatePageLayoutCommandMenu } = useNavigatePageLayoutCommandMenu();
+  const { navigatePageLayoutSidePanel } = useNavigatePageLayoutSidePanel();
 
-  const { closeCommandMenu } = useCommandMenu();
+  const { closeSidePanelMenu } = useSidePanelMenu();
 
   const duplicateTab = useCallback(
     (tabId: string): string => {
@@ -124,14 +124,14 @@ export const useDuplicatePageLayoutTab = (pageLayoutIdFromProps?: string) => {
         tabs: [...prev.tabs, newTab],
       });
 
-      closeCommandMenu();
+      closeSidePanelMenu();
 
       setActiveTabId(newTabId);
 
       setPageLayoutTabSettingsOpenTabId(newTabId);
 
-      navigatePageLayoutCommandMenu({
-        commandMenuPage: CommandMenuPages.PageLayoutTabSettings,
+      navigatePageLayoutSidePanel({
+        sidePanelPage: SidePanelPages.PageLayoutTabSettings,
         pageTitle: newTab.title,
         focusTitleInput: true,
       });
@@ -139,8 +139,8 @@ export const useDuplicatePageLayoutTab = (pageLayoutIdFromProps?: string) => {
       return newTabId;
     },
     [
-      closeCommandMenu,
-      navigatePageLayoutCommandMenu,
+      closeSidePanelMenu,
+      navigatePageLayoutSidePanel,
       pageLayoutCurrentLayouts,
       pageLayoutDraft,
       setActiveTabId,

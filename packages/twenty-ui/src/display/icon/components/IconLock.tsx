@@ -2,7 +2,7 @@ import { useContext } from 'react';
 
 import IconLockRaw from '@assets/icons/lock.svg?react';
 import { type IconComponentProps } from '@ui/display/icon/types/IconComponent';
-import { ThemeContext } from '@ui/theme';
+import { ThemeContext } from '@ui/theme-constants';
 
 type IconLockCustomProps = Pick<IconComponentProps, 'size'>;
 

@@ -15,9 +15,10 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application-registration/application-registration.entity';
+import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
+import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
-import { ApplicationVariableEntity } from 'src/engine/core-modules/applicationVariable/application-variable.entity';
+import { ApplicationVariableEntity } from 'src/engine/core-modules/application/application-variable/application-variable.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -52,8 +53,8 @@ export class ApplicationEntity extends WorkspaceRelatedEntity {
   @Column({ nullable: true, type: 'text' })
   version: string | null;
 
-  @Column({ type: 'text', default: 'local' })
-  sourceType: 'local';
+  @Column({ type: 'text', default: ApplicationRegistrationSourceType.LOCAL })
+  sourceType: ApplicationRegistrationSourceType;
 
   @Column({ nullable: false, type: 'text' })
   sourcePath: string;

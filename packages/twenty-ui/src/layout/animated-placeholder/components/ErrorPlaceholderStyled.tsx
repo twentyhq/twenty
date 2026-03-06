@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { themeCssVariables } from '@ui/theme-constants';
 
-// eslint-disable-next-line twenty/styled-components-prefixed-with-styled
+// oxlint-disable-next-line twenty/styled-components-prefixed-with-styled
 export const AnimatedPlaceholderErrorContainer = styled.div`
   align-items: center;
   width: 100%;
@@ -13,7 +13,7 @@ export const AnimatedPlaceholderErrorContainer = styled.div`
   text-align: center;
 `;
 
-// eslint-disable-next-line twenty/styled-components-prefixed-with-styled
+// oxlint-disable-next-line twenty/styled-components-prefixed-with-styled
 export const AnimatedPlaceholderErrorTextContainer = styled.div`
   align-items: center;
   display: flex;
@@ -24,7 +24,7 @@ export const AnimatedPlaceholderErrorTextContainer = styled.div`
   width: 100%;
 `;
 
-// eslint-disable-next-line twenty/styled-components-prefixed-with-styled
+// oxlint-disable-next-line twenty/styled-components-prefixed-with-styled
 export const AnimatedPlaceholderErrorTitle = styled.div`
   color: ${themeCssVariables.font.color.primary};
   font-size: ${themeCssVariables.font.size.xl};
@@ -32,7 +32,7 @@ export const AnimatedPlaceholderErrorTitle = styled.div`
   line-height: ${themeCssVariables.text.lineHeight.lg};
 `;
 
-// eslint-disable-next-line twenty/styled-components-prefixed-with-styled
+// oxlint-disable-next-line twenty/styled-components-prefixed-with-styled
 export const AnimatedPlaceholderErrorSubTitle = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
   font-size: ${themeCssVariables.font.size.xs};

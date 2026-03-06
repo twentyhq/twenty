@@ -96,7 +96,7 @@ my-twenty-app/
   .yarnrc.yml
   .yarn/
     install-state.gz
-  eslint.config.mjs
+  .oxlintrc.json
   tsconfig.json
   README.md
   public/                           # مجلد الأصول العامة (صور، خطوط، إلخ)
@@ -119,7 +119,7 @@ my-twenty-app/
   ├── navigation-menu-items/
   │   └── example-navigation-menu-item.ts # رابط تنقّل في الشريط الجانبي — مثال
   └── skills/
-      └── example-skill.ts                # تعريف مهارة لوكيل الذكاء الاصطناعي — مثال
+      └── example-skill.ts                # تعريف مهارة لوكيل الذكاء الاصطناعي — مثال},{
 ```
 
 مع `--minimal`، سيتم إنشاء الملفات الأساسية فقط (`application-config.ts`، `roles/default-role.ts`، `logic-functions/pre-install.ts`، و`logic-functions/post-install.ts`). مع `--interactive`، تختار ملفات الأمثلة التي تريد تضمينها.
@@ -130,7 +130,7 @@ my-twenty-app/
 * **.gitignore**: يتجاهل العناصر الشائعة مثل `node_modules` و`.yarn` و`generated/` (عميل مضبوط الأنواع) و`dist/` و`build/` ومجلدات التغطية وملفات السجلات وملفات `.env*`.
 * **yarn.lock**، **.yarnrc.yml**، **.yarn/**: تقوم بقفل وتكوين حزمة أدوات Yarn 4 المستخدمة في المشروع.
 * **.nvmrc**: يثبّت إصدار Node.js المتوقع للمشروع.
-* **eslint.config.mjs** و**tsconfig.json**: يقدّمان إعدادات الفحص والتهيئة لـ TypeScript لمصادر TypeScript في تطبيقك.
+* **.oxlintrc.json** و **tsconfig.json**: يقدّمان إعدادات الفحص والتهيئة لـ TypeScript لمصادر TypeScript في تطبيقك.
 * **README.md**: ملف README قصير في جذر التطبيق يتضمن تعليمات أساسية.
 * **public/**: مجلد لتخزين الأصول العامة (صور، خطوط، ملفات ثابتة) التي سيتم تقديمها مع تطبيقك. الملفات الموضوعة هنا تُرفع أثناء المزامنة وتكون متاحة أثناء وقت التشغيل.
 * **src/**: المكان الرئيسي حيث تعرّف تطبيقك ككود

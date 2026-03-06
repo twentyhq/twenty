@@ -553,8 +553,8 @@ const createPackageJson = async ({
 }) => {
   const scripts: Record<string, string> = {
     twenty: 'twenty',
-    lint: 'eslint',
-    'lint:fix': 'eslint --fix',
+    lint: 'oxlint -c .oxlintrc.json .',
+    'lint:fix': 'oxlint --fix -c .oxlintrc.json .',
   };
 
   const devDependencies: Record<string, string> = {
@@ -562,8 +562,7 @@ const createPackageJson = async ({
     '@types/node': '^24.7.2',
     '@types/react': '^18.2.0',
     react: '^18.2.0',
-    eslint: '^9.32.0',
-    'typescript-eslint': '^8.50.0',
+    oxlint: '^0.16.0',
     'twenty-sdk': createTwentyAppPackageJson.version,
   };
 

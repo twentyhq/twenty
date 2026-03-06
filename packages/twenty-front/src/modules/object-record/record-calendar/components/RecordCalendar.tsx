@@ -17,9 +17,10 @@ import { LINK_CHIP_CLICK_OUTSIDE_ID } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainerContainer = styled.div`
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  height: inherit;
+  height: 100%;
   gap: ${themeCssVariables.spacing[2]};
   padding: ${themeCssVariables.spacing[2]};
   padding-left: ${themeCssVariables.spacing[1]};

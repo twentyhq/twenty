@@ -43,6 +43,7 @@ const StyledRecordTableCellHoveredPortalContent = styled.div<{
       : showInteractiveStyle
         ? `1px solid ${themeCssVariables.font.color.extraLight}`
         : `1px solid ${themeCssVariables.border.color.medium}`};
+  outline-offset: -1px;
 
   user-select: none;
 `;

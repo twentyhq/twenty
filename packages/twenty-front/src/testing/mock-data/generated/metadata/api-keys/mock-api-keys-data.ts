@@ -1,6 +1,5 @@
-/* eslint-disable */
+/* oxlint-disable */
 // @ts-nocheck
-
 
 // This file was automatically generated — do not edit manually.
 

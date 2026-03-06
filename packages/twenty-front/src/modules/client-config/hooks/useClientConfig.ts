@@ -151,7 +151,7 @@ export const useClientConfig = (): UseClientConfigResult => {
         magicLink: false,
         sso: clientConfig.authProviders.sso,
       });
-      setAiModels(clientConfig.aiModels || []);
+      setAiModels(clientConfig.aiModels ?? []);
       setIsAnalyticsEnabled(clientConfig.analyticsEnabled);
       setIsDeveloperDefaultSignInPrefilled(clientConfig.signInPrefilled);
       setIsMultiWorkspaceEnabled(clientConfig.isMultiWorkspaceEnabled);

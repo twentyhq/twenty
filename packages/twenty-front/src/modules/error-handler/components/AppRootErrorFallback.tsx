@@ -1,8 +1,9 @@
 import { type AppErrorDisplayProps } from '@/error-handler/types/AppErrorDisplayProps';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { useContext } from 'react';
 import { IconReload } from 'twenty-ui/display';
-import { ICON_SIZES, themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type AppRootErrorFallbackProps = AppErrorDisplayProps;
 
@@ -102,6 +103,8 @@ export const AppRootErrorFallback = ({
   resetErrorBoundary,
   title = t`Sorry, something went wrong`,
 }: AppRootErrorFallbackProps) => {
+  const { theme } = useContext(ThemeContext);
+
   return (
     <StyledContainer>
       <StyledPanel>
@@ -124,7 +127,7 @@ export const AppRootErrorFallback = ({
           </StyledEmptyTextContainer>
           <StyledButton onClick={resetErrorBoundary}>
             <StyledIconContainer>
-              <IconReload size={ICON_SIZES.md} />
+              <IconReload size={theme.icon.size.md} />
             </StyledIconContainer>
             {t`Reload`}
           </StyledButton>

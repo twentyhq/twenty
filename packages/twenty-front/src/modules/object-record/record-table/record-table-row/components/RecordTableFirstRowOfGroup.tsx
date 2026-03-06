@@ -1,7 +1,6 @@
 import { RecordTableRowDiv } from '@/object-record/record-table/record-table-row/components/RecordTableRowDiv';
 import { isRecordTableScrolledVerticallyComponentState } from '@/object-record/record-table/states/isRecordTableScrolledVerticallyComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { isActive } from '@tiptap/core';
 import { forwardRef, type ReactNode } from 'react';
 
 type RecordTableTrProps = {
@@ -43,10 +42,10 @@ export const RecordTableFirstRowOfGroup = forwardRef<
         data-virtualized-id={recordId}
         isDragging={isDragging}
         ref={ref}
-        data-active={isActive}
-        data-focused={isRowFocusActive && isFocused && !isActive}
+        data-active={false}
+        data-focused={isRowFocusActive && isFocused}
         data-next-row-active-or-focused={isNextRowActiveOrFocused}
-        // eslint-disable-next-line react/jsx-props-no-spreading
+        // oxlint-disable-next-line react/jsx-props-no-spreading
         {...props}
         isScrolledVertically={isRecordTableScrolledVertically}
         isFirstRowOfGroup={true}

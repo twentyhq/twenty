@@ -2,15 +2,16 @@ import { useRecordIndexTableFetchMore } from '@/object-record/record-index/hooks
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
+import { recordTableWentFromEmptyToNotEmptyComponentState } from '@/object-record/record-table/states/recordTableWentFromEmptyToNotEmptyComponentState';
 import { useTriggerInitialRecordTableDataLoad } from '@/object-record/record-table/virtualization/hooks/useTriggerInitialRecordTableDataLoad';
 import { isInitializingVirtualTableDataLoadingComponentState } from '@/object-record/record-table/virtualization/states/isInitializingVirtualTableDataLoadingComponentState';
 import { lastContextStoreVirtualizedViewIdComponentState } from '@/object-record/record-table/virtualization/states/lastContextStoreVirtualizedViewIdComponentState';
 import { lastContextStoreVirtualizedVisibleRecordFieldsComponentState } from '@/object-record/record-table/virtualization/states/lastContextStoreVirtualizedVisibleRecordFieldsComponentState';
 import { lastRecordTableQueryIdentifierComponentState } from '@/object-record/record-table/virtualization/states/lastRecordTableQueryIdentifierComponentState';
 import { isFetchingMoreRecordsFamilyState } from '@/object-record/states/isFetchingMoreRecordsFamilyState';
-import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import isEmpty from 'lodash.isempty';
 import { useEffect } from 'react';
@@ -30,6 +31,11 @@ export const RecordTableVirtualizedInitialDataLoadEffect = () => {
   const [isInitializingVirtualTableDataLoading] = useAtomComponentState(
     isInitializingVirtualTableDataLoadingComponentState,
   );
+
+  const [
+    recordTableWentFromEmptyToNotEmpty,
+    setRecordTableWentFromEmptyToNotEmpty,
+  ] = useAtomComponentState(recordTableWentFromEmptyToNotEmptyComponentState);
 
   const isFetchingMoreRecords = useAtomFamilyStateValue(
     isFetchingMoreRecordsFamilyState,
@@ -79,12 +85,17 @@ export const RecordTableVirtualizedInitialDataLoadEffect = () => {
         setLastRecordTableQueryIdentifier(queryIdentifier);
 
         await triggerInitialRecordTableDataLoad();
+      } else if (recordTableWentFromEmptyToNotEmpty) {
+        setRecordTableWentFromEmptyToNotEmpty(false);
+
+        await triggerInitialRecordTableDataLoad();
       } else if (
         JSON.stringify(lastContextStoreVirtualizedVisibleRecordFields) !==
         JSON.stringify(visibleRecordFields)
       ) {
-        const lastFields = lastContextStoreVirtualizedVisibleRecordFields || [];
-        const currentFields = visibleRecordFields || [];
+        const lastFields =
+          lastContextStoreVirtualizedVisibleRecordFields ?? [];
+        const currentFields = visibleRecordFields ?? [];
 
         setLastContextStoreVirtualizedVisibleRecordFields(visibleRecordFields);
 
@@ -98,6 +109,8 @@ export const RecordTableVirtualizedInitialDataLoadEffect = () => {
       }
     })();
   }, [
+    recordTableWentFromEmptyToNotEmpty,
+    setRecordTableWentFromEmptyToNotEmpty,
     queryIdentifier,
     lastRecordTableQueryIdentifier,
     triggerInitialRecordTableDataLoad,

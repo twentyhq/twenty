@@ -1,23 +1,25 @@
+import chalk from 'chalk';
+import inquirer from 'inquirer';
+import { writeFile } from 'node:fs/promises';
+import { join, relative } from 'path';
+import { SyncableEntity } from 'twenty-shared/application';
+import { FieldMetadataType } from 'twenty-shared/types';
+import { assertUnreachable } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
+
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
+import { convertToLabel } from '@/cli/utilities/entity/entity-label';
+import { getFieldBaseFile } from '@/cli/utilities/entity/entity-field-template';
 import { getFrontComponentBaseFile } from '@/cli/utilities/entity/entity-front-component-template';
 import { getLogicFunctionBaseFile } from '@/cli/utilities/entity/entity-logic-function-template';
 import { getNavigationMenuItemBaseFile } from '@/cli/utilities/entity/entity-navigation-menu-item-template';
-import { convertToLabel } from '@/cli/utilities/entity/entity-label';
 import { getObjectBaseFile } from '@/cli/utilities/entity/entity-object-template';
 import { getPageLayoutBaseFile } from '@/cli/utilities/entity/entity-page-layout-template';
 import { getRoleBaseFile } from '@/cli/utilities/entity/entity-role-template';
 import { getSkillBaseFile } from '@/cli/utilities/entity/entity-skill-template';
 import { getViewBaseFile } from '@/cli/utilities/entity/entity-view-template';
-import chalk from 'chalk';
-import * as fs from 'fs-extra';
-import inquirer from 'inquirer';
-import kebabcase from 'lodash.kebabcase';
-import { join, relative } from 'path';
-import { SyncableEntity } from 'twenty-shared/application';
-import { FieldMetadataType } from 'twenty-shared/types';
-import { assertUnreachable } from 'twenty-shared/utils';
-import { getFieldBaseFile } from '@/cli/utilities/entity/entity-field-template';
-import { v4 } from 'uuid';
+import { ensureDir, pathExists } from '@/cli/utilities/file/fs-utils';
+import { kebabCase } from '@/cli/utilities/string/kebab-case';
 
 const APP_FOLDER = 'src';
 
@@ -34,20 +36,20 @@ export class EntityAddCommand {
         ? join(CURRENT_EXECUTION_DIRECTORY, path)
         : join(CURRENT_EXECUTION_DIRECTORY, APP_FOLDER, entityName);
 
-      await fs.ensureDir(appPath);
+      await ensureDir(appPath);
 
       const { name, file } = await this.getEntityData(entity);
 
       const filePath = join(appPath, this.getFileName(name, entity));
 
-      if (await fs.pathExists(filePath)) {
+      if (await pathExists(filePath)) {
         const { overwrite } = await this.handleFileExist();
         if (!overwrite) {
           return;
         }
       }
 
-      await fs.writeFile(filePath, file);
+      await writeFile(filePath, file);
 
       console.log(
         chalk.green(`✓ Created ${entityName}:`),
@@ -197,7 +199,7 @@ export class EntityAddCommand {
     const viewUniversalIdentifier = v4();
 
     const viewFile = getViewBaseFile({
-      name: `all-${kebabcase(objectName)}`,
+      name: `all-${kebabCase(objectName)}`,
       universalIdentifier: viewUniversalIdentifier,
       objectUniversalIdentifier: this.lastObjectUniversalIdentifier,
     });
@@ -210,12 +212,12 @@ export class EntityAddCommand {
           this.getFolderName(SyncableEntity.View),
         );
 
-    await fs.ensureDir(viewFolderPath);
+    await ensureDir(viewFolderPath);
 
-    const viewFileName = `all-${kebabcase(objectName)}.ts`;
+    const viewFileName = `all-${kebabCase(objectName)}.ts`;
     const viewFilePath = join(viewFolderPath, viewFileName);
 
-    if (await fs.pathExists(viewFilePath)) {
+    if (await pathExists(viewFilePath)) {
       const { overwrite } = await this.handleFileExist();
 
       if (!overwrite) {
@@ -223,7 +225,7 @@ export class EntityAddCommand {
       }
     }
 
-    await fs.writeFile(viewFilePath, viewFile);
+    await writeFile(viewFilePath, viewFile);
 
     console.log(
       chalk.green(`✓ Created view:`),
@@ -243,12 +245,12 @@ export class EntityAddCommand {
           this.getFolderName(SyncableEntity.NavigationMenuItem),
         );
 
-    await fs.ensureDir(navFolderPath);
+    await ensureDir(navFolderPath);
 
-    const navFileName = `${kebabcase(objectName)}.ts`;
+    const navFileName = `${kebabCase(objectName)}.ts`;
     const navFilePath = join(navFolderPath, navFileName);
 
-    if (await fs.pathExists(navFilePath)) {
+    if (await pathExists(navFilePath)) {
       const { overwrite } = await this.handleFileExist();
 
       if (!overwrite) {
@@ -256,7 +258,7 @@ export class EntityAddCommand {
       }
     }
 
-    await fs.writeFile(navFilePath, navFile);
+    await writeFile(navFilePath, navFile);
 
     console.log(
       chalk.green(`✓ Created navigation menu item:`),
@@ -471,16 +473,16 @@ export class EntityAddCommand {
   }
 
   getFolderName(entity: SyncableEntity) {
-    return `${kebabcase(entity)}s`;
+    return `${kebabCase(entity)}s`;
   }
 
   getFileName(name: string, entity: SyncableEntity) {
     switch (entity) {
       case SyncableEntity.FrontComponent: {
-        return `${kebabcase(name)}.tsx`;
+        return `${kebabCase(name)}.tsx`;
       }
       default: {
-        return `${kebabcase(name)}.ts`;
+        return `${kebabCase(name)}.ts`;
       }
     }
   }

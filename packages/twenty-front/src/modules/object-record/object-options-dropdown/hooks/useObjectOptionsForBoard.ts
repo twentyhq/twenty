@@ -85,7 +85,7 @@ export const useObjectOptionsForBoard = ({
             recordIndexFieldDefinitionsByKey[fieldMetadataId];
 
           return {
-            ...(existingBoardField || availableColumnDefinition),
+            ...(existingBoardField ?? availableColumnDefinition),
             isVisible: false,
           };
         }),

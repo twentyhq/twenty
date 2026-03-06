@@ -15,7 +15,7 @@ import {
   type OutputFile,
 } from 'src/engine/core-modules/code-interpreter/drivers/interfaces/code-interpreter-driver.interface';
 
-import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import {
   type AccessTokenJwtPayload,
   JwtTokenTypeEnum,

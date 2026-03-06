@@ -11,8 +11,14 @@ export const APPLICATION_REGISTRATION_FRAGMENT = gql`
     oAuthClientId
     oAuthRedirectUris
     oAuthScopes
+    sourceType
+    sourcePackage
+    latestAvailableVersion
     websiteUrl
     termsUrl
+    isListed
+    isFeatured
+    ownerWorkspaceId
     createdAt
     updatedAt
   }

@@ -2,6 +2,7 @@ import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObje
 import { hasAnySoftDeleteFilterOnViewComponentSelector } from '@/object-record/record-filter/states/hasAnySoftDeleteFilterOnView';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
+import { isRecordTableCreateDisabled } from '@/object-record/record-table/utils/isRecordTableCreateDisabled';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { styled } from '@linaria/react';
 import { IconPlus } from 'twenty-ui/display';
@@ -45,7 +46,8 @@ export const RecordTableHeaderLabelIdentifierCellPlusButton = () => {
     !isMobile &&
     !isReadOnly &&
     hasObjectUpdatePermissions &&
-    !hasAnySoftDeleteFilterOnView && (
+    !hasAnySoftDeleteFilterOnView &&
+    !isRecordTableCreateDisabled(objectMetadataItem.nameSingular) && (
       <StyledHeaderIcon>
         <LightIconButton
           Icon={IconPlus}

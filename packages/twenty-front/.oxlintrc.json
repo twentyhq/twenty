@@ -1,0 +1,124 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["react", "typescript", "unicorn", "import"],
+  "jsPlugins": ["../twenty-oxlint-rules/dist/oxlint-plugin.mjs"],
+  "categories": {
+    "correctness": "off"
+  },
+  "ignorePatterns": [
+    "node_modules",
+    "src/generated",
+    "src/generated-metadata",
+    "src/locales/generated",
+    "src/testing/mock-data",
+    "**/__mocks__/**",
+    "**/*.stories.ts",
+    "**/*.stories.tsx",
+    "build",
+    "coverage",
+    "storybook-static"
+  ],
+  "rules": {
+    "func-style": ["error", "declaration", { "allowArrowFunctions": true }],
+    "no-console": ["warn", { "allow": ["group", "groupCollapsed", "groupEnd"] }],
+    "no-control-regex": "off",
+    "no-debugger": "error",
+    "no-duplicate-imports": "error",
+    "no-undef": "off",
+    "no-unused-vars": "off",
+    "no-redeclare": "off",
+    "no-restricted-imports": ["error", {
+      "patterns": [
+        {
+          "group": ["../*"],
+          "message": "Relative parent imports are not allowed. Use @/ alias instead."
+        },
+        {
+          "group": ["@tabler/icons-react"],
+          "message": "Please import icons from `twenty-ui`"
+        },
+        {
+          "group": ["react-hotkeys-web-hook"],
+          "importNames": ["useHotkeys"],
+          "message": "Please use the custom wrapper: `useScopedHotkeys` from `twenty-ui`"
+        },
+        {
+          "group": ["lodash"],
+          "message": "Please use the standalone lodash package (for instance: `import groupBy from 'lodash.groupby'` instead of `import { groupBy } from 'lodash'`)"
+        }
+      ]
+    }],
+
+    "import/no-duplicates": "error",
+
+    "react/no-unescaped-entities": "off",
+    "react/prop-types": "off",
+    "react/jsx-key": "off",
+    "react/display-name": "off",
+    "react/jsx-uses-react": "off",
+    "react/react-in-jsx-scope": "off",
+    "react/jsx-no-useless-fragment": "off",
+    "react/jsx-props-no-spreading": ["error", { "explicitSpread": "ignore" }],
+
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn",
+
+    "typescript/no-redeclare": "error",
+    "typescript/ban-ts-comment": "error",
+    "typescript/consistent-type-imports": ["error", {
+      "prefer": "type-imports",
+      "fixStyle": "inline-type-imports"
+    }],
+    "typescript/explicit-function-return-type": "off",
+    "typescript/explicit-module-boundary-types": "off",
+    "typescript/no-empty-object-type": ["error", {
+      "allowInterfaces": "with-single-extends"
+    }],
+    "typescript/no-empty-function": "off",
+    "typescript/no-explicit-any": "off",
+    "typescript/no-unused-vars": ["warn", {
+      "vars": "all",
+      "varsIgnorePattern": "^_",
+      "args": "after-used",
+      "argsIgnorePattern": "^_"
+    }],
+
+    "typescript/strict-boolean-expressions": ["error", {
+      "allowNullableBoolean": true,
+      "allowNullableObject": true,
+      "allowString": true,
+      "allowNumber": true,
+      "allowNullableString": true,
+      "allowNullableNumber": true,
+      "allowNullableEnum": true,
+      "allowAny": true
+    }],
+
+    "twenty/effect-components": "error",
+    "twenty/no-hardcoded-colors": "error",
+    "twenty/matching-state-variable": "error",
+    "twenty/sort-css-properties-alphabetically": "off",
+    "twenty/styled-components-prefixed-with-styled": "error",
+    "twenty/no-state-useref": "error",
+    "twenty/component-props-naming": "error",
+    "twenty/no-navigate-prefer-link": "error",
+    "twenty/no-jotai-store-in-selector": "error",
+    "twenty/no-direct-atom-family-in-selector": "error",
+    "twenty/enforce-module-boundaries": ["error", {
+      "depConstraints": [
+        {
+          "sourceTag": "scope:frontend",
+          "onlyDependOnLibsWithTags": ["scope:shared", "scope:frontend"]
+        }
+      ]
+    }]
+  },
+  "overrides": [
+    {
+      "files": ["**/constants/*.ts", "**/*.constants.ts"],
+      "rules": {
+        "twenty/max-consts-per-file": ["error", { "max": 1 }]
+      }
+    }
+  ]
+}

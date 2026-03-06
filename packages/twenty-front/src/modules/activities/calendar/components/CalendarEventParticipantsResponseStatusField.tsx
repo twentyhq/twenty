@@ -7,8 +7,7 @@ import { ParticipantChip } from '@/activities/components/ParticipantChip';
 import { EllipsisDisplay } from '@/ui/field/display/components/EllipsisDisplay';
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
 import { IconCheck, IconQuestionMark, IconX } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledInlineCellBaseContainer = styled.div`
   align-items: center;
@@ -22,7 +21,7 @@ const StyledInlineCellBaseContainer = styled.div`
   user-select: none;
 `;
 
-const StyledPropertyBox = styled(PropertyBox)`
+const StyledPropertyBoxContainer = styled.div`
   height: ${themeCssVariables.spacing[6]};
   width: 100%;
 `;
@@ -88,19 +87,21 @@ export const CalendarEventParticipantsResponseStatusField = ({
   ));
 
   return (
-    <StyledPropertyBox>
-      <StyledInlineCellBaseContainer>
-        <StyledLabelAndIconContainer>
-          <StyledIconContainer>{Icon}</StyledIconContainer>
+    <StyledPropertyBoxContainer>
+      <PropertyBox>
+        <StyledInlineCellBaseContainer>
+          <StyledLabelAndIconContainer>
+            <StyledIconContainer>{Icon}</StyledIconContainer>
 
-          <StyledLabelContainer width={72}>
-            <EllipsisDisplay>{responseStatus}</EllipsisDisplay>
-          </StyledLabelContainer>
-        </StyledLabelAndIconContainer>
-        <StyledDiv ref={participantsContainerRef}>
-          <ExpandableList isChipCountDisplayed>{styledChips}</ExpandableList>
-        </StyledDiv>
-      </StyledInlineCellBaseContainer>
-    </StyledPropertyBox>
+            <StyledLabelContainer width={72}>
+              <EllipsisDisplay>{responseStatus}</EllipsisDisplay>
+            </StyledLabelContainer>
+          </StyledLabelAndIconContainer>
+          <StyledDiv ref={participantsContainerRef}>
+            <ExpandableList isChipCountDisplayed>{styledChips}</ExpandableList>
+          </StyledDiv>
+        </StyledInlineCellBaseContainer>
+      </PropertyBox>
+    </StyledPropertyBoxContainer>
   );
 };

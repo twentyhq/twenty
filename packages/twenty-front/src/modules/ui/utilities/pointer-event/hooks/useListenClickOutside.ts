@@ -118,7 +118,7 @@ export const useListenClickOutside = <T extends Element>({
         !isClickedOnExcluded;
 
       if (CLICK_OUTSIDE_DEBUG_MODE) {
-        // eslint-disable-next-line no-console
+        // oxlint-disable-next-line no-console
         console.log('click outside compare ref', {
           listenerId,
           shouldTrigger,

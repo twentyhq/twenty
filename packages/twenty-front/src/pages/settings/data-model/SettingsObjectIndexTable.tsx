@@ -20,11 +20,9 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type SettingsObjectIndexesTableItem } from '~/pages/settings/data-model/types/SettingsObjectIndexesTableItem';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
-export const StyledObjectIndexTableRow = styled(TableRow)`
-  grid-template-columns: 350px 70px 80px;
-`;
+const OBJECT_INDEX_TABLE_ROW_GRID_TEMPLATE_COLUMNS = '350px 70px 80px';
 
-const StyledSearchInput = styled(SettingsTextInput)`
+const StyledSearchInputContainer = styled.div`
   padding-bottom: ${themeCssVariables.spacing[2]};
   width: 100%;
 `;
@@ -120,15 +118,19 @@ export const SettingsObjectIndexTable = ({
 
   return (
     <>
-      <StyledSearchInput
-        instanceId="object-index-table-search"
-        LeftIcon={IconSearch}
-        placeholder={t`Search an index...`}
-        value={searchTerm}
-        onChange={setSearchTerm}
-      />
+      <StyledSearchInputContainer>
+        <SettingsTextInput
+          instanceId="object-index-table-search"
+          LeftIcon={IconSearch}
+          placeholder={t`Search an index...`}
+          value={searchTerm}
+          onChange={setSearchTerm}
+        />
+      </StyledSearchInputContainer>
       <Table>
-        <StyledObjectIndexTableRow>
+        <TableRow
+          gridTemplateColumns={OBJECT_INDEX_TABLE_ROW_GRID_TEMPLATE_COLUMNS}
+        >
           {tableMetadata.fields.map((item) => (
             <SortableTableHeader
               key={item.fieldName}
@@ -140,10 +142,13 @@ export const SettingsObjectIndexTable = ({
             />
           ))}
           <TableHeader></TableHeader>
-        </StyledObjectIndexTableRow>
+        </TableRow>
         {isNonEmptyArray(filteredActiveItems) &&
           filteredActiveItems.map((objectSettingsIndex) => (
-            <StyledObjectIndexTableRow key={objectSettingsIndex.name}>
+            <TableRow
+              gridTemplateColumns={OBJECT_INDEX_TABLE_ROW_GRID_TEMPLATE_COLUMNS}
+              key={objectSettingsIndex.name}
+            >
               <TableCell>{objectSettingsIndex.indexFields}</TableCell>
               <TableCell>
                 {objectSettingsIndex.isUnique ? (
@@ -153,7 +158,7 @@ export const SettingsObjectIndexTable = ({
                 )}
               </TableCell>
               <TableCell>{objectSettingsIndex.indexType}</TableCell>
-            </StyledObjectIndexTableRow>
+            </TableRow>
           ))}
       </Table>
     </>

@@ -6,7 +6,7 @@ import { type ExtractEntityManyToOneEntityRelationProperties } from 'src/engine/
 type FieldMetadataManyToOneRelations =
   ExtractEntityManyToOneEntityRelationProperties<FieldMetadataEntity>;
 
-// eslint-disable-next-line unused-imports/no-unused-vars
+// oxlint-disable-next-line unused-imports/no-unused-vars
 type Assertions = [
   // FieldMetadataEntity ManyToOne relations:
   // - object (ObjectMetadataEntity)

@@ -2,6 +2,8 @@ import { Logger } from '@nestjs/common';
 
 import { Command, CommandRunner } from 'nest-commander';
 
+import { ApplicationVersionCheckCronCommand } from 'src/engine/core-modules/application/application-upgrade/crons/commands/application-version-check.cron.command';
+import { MarketplaceCatalogSyncCronCommand } from 'src/engine/core-modules/application/application-marketplace/crons/commands/marketplace-catalog-sync.cron.command';
 import { EventLogCleanupCronCommand } from 'src/engine/core-modules/event-logs/cleanup/commands/event-log-cleanup.cron.command';
 import { CheckPublicDomainsValidRecordsCronCommand } from 'src/engine/core-modules/public-domain/crons/commands/check-public-domains-valid-records.cron.command';
 import { CheckCustomDomainValidRecordsCronCommand } from 'src/engine/core-modules/workspace/crons/commands/check-custom-domain-valid-records.cron.command';
@@ -52,6 +54,8 @@ export class CronRegisterAllCommand extends CommandRunner {
     private readonly cleanOnboardingWorkspacesCronCommand: CleanOnboardingWorkspacesCronCommand,
     private readonly trashCleanupCronCommand: TrashCleanupCronCommand,
     private readonly eventLogCleanupCronCommand: EventLogCleanupCronCommand,
+    private readonly marketplaceCatalogSyncCronCommand: MarketplaceCatalogSyncCronCommand,
+    private readonly applicationVersionCheckCronCommand: ApplicationVersionCheckCronCommand,
   ) {
     super();
   }
@@ -135,6 +139,14 @@ export class CronRegisterAllCommand extends CommandRunner {
       {
         name: 'EventLogCleanup',
         command: this.eventLogCleanupCronCommand,
+      },
+      {
+        name: 'MarketplaceCatalogSync',
+        command: this.marketplaceCatalogSyncCronCommand,
+      },
+      {
+        name: 'ApplicationVersionCheck',
+        command: this.applicationVersionCheckCronCommand,
       },
     ];
 

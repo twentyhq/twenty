@@ -2,8 +2,11 @@ import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLo
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import { ThemeContext } from 'twenty-ui/theme';
-import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  MOBILE_VIEWPORT,
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 const StyledMainContainer = styled.div`
   background: ${themeCssVariables.background.noisy};
@@ -51,7 +54,6 @@ const StyledRightPanelFlexContainer = styled.div`
 
 const StyledSkeletonHeaderLoader = () => {
   const { theme } = useContext(ThemeContext);
-
   return (
     <StyledHeaderContainer>
       <SkeletonTheme
@@ -70,7 +72,6 @@ const StyledSkeletonHeaderLoader = () => {
 
 const StyledSkeletonAddLoader = () => {
   const { theme } = useContext(ThemeContext);
-
   return (
     <SkeletonTheme
       baseColor={theme.background.tertiary}

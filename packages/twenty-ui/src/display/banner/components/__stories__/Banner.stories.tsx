@@ -8,7 +8,7 @@ const meta: Meta<typeof Banner> = {
   component: Banner,
   decorators: [ComponentDecorator],
   render: (args) => (
-    // eslint-disable-next-line react/jsx-props-no-spreading
+    // oxlint-disable-next-line react/jsx-props-no-spreading
     <Banner {...args}>
       Sync lost with mailbox hello@twenty.com. Please reconnect for updates:
     </Banner>

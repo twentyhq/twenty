@@ -13,8 +13,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import 'react-phone-number-input/style.css';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronDown, IconWorld } from 'twenty-ui/display';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { ThemeContext } from 'twenty-ui/theme';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type StyledDropdownButtonProps = {
   isUnfolded: boolean;
@@ -75,8 +74,6 @@ export const PhoneCountryPickerDropdownButton = ({
   value: string;
   onChange: (countryCode: string) => void;
 }) => {
-  const { theme } = useContext(ThemeContext);
-
   const [selectedCountry, setSelectedCountry] = useState<Country>();
 
   const isDropdownOpen = useAtomComponentStateValue(
@@ -92,6 +89,7 @@ export const PhoneCountryPickerDropdownButton = ({
   };
 
   const countries = useCountries();
+  const { theme } = useContext(ThemeContext);
 
   useEffect(() => {
     const country = countries.find(({ countryCode }) => countryCode === value);
