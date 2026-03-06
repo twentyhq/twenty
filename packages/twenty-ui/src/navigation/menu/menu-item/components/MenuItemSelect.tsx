@@ -8,42 +8,53 @@ import {
   type IconComponent,
 } from '@ui/display';
 import { type ReactNode, useContext } from 'react';
-import { ThemeContext } from '@ui/theme';
-import { themeCssVariables } from '@ui/theme-constants';
+import { ThemeContext, themeCssVariables } from '@ui/theme-constants';
 import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent';
 import {
-  StyledMenuItemBase,
   StyledMenuItemLabel,
   StyledMenuItemRightContent,
   StyledRightMenuItemContextualText,
 } from '../internals/components/StyledMenuItemBase';
 
-export const StyledMenuItemSelect = styled(StyledMenuItemBase)<{
+export const StyledMenuItemSelect = styled.div<{
   disabled?: boolean;
   focused?: boolean;
+  isKeySelected?: boolean;
 }>`
-  background: ${({ disabled, focused }) => {
+  --horizontal-padding: ${themeCssVariables.spacing[1]};
+  --vertical-padding: ${themeCssVariables.spacing[2]};
+  align-items: center;
+  border-radius: ${themeCssVariables.border.radius.sm};
+  display: flex;
+  flex-direction: row;
+  font-size: ${themeCssVariables.font.size.sm};
+  gap: ${themeCssVariables.spacing[2]};
+  height: calc(32px - 2 * var(--vertical-padding));
+  justify-content: space-between;
+  padding: var(--vertical-padding) var(--horizontal-padding);
+  position: relative;
+  user-select: none;
+  width: calc(100% - 2 * var(--horizontal-padding));
+  transition: background 0.1s ease;
+  background: ${({ disabled, focused, isKeySelected }) => {
     if (disabled === true) {
       return 'inherit';
     }
-    if (focused === true) {
+    if (focused === true || isKeySelected === true) {
       return themeCssVariables.background.transparent.light;
     }
     return '';
   }};
-
   &:hover {
     background: ${({ disabled }) =>
       disabled === true
         ? 'inherit'
         : themeCssVariables.background.transparent.light};
   }
-
   color: ${({ disabled }) =>
     disabled === true
       ? themeCssVariables.font.color.tertiary
       : themeCssVariables.font.color.secondary};
-
   cursor: ${({ disabled }) => (disabled === true ? 'default' : 'pointer')};
 `;
 

@@ -1,16 +1,25 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 import { MessageFolderImportPolicy } from '@/accounts/types/MessageChannel';
-import { SettingsAccountsCardMedia } from '@/settings/accounts/components/SettingsAccountsCardMedia';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type SettingsAccountsMessageFolderIconProps = {
   className?: string;
   value?: MessageFolderImportPolicy;
 };
 
-const StyledCardMedia = styled(SettingsAccountsCardMedia)`
+const StyledCardMedia = styled.div`
   align-items: stretch;
+  border: 2px solid ${themeCssVariables.border.color.medium};
+  border-radius: ${themeCssVariables.border.radius.sm};
+  color: ${themeCssVariables.font.color.light};
+  display: flex;
   flex-direction: column;
+  gap: ${themeCssVariables.spacing['0.5']};
+  height: ${themeCssVariables.spacing[8]};
+  justify-content: center;
+  padding: ${themeCssVariables.spacing['0.5']};
+  width: ${themeCssVariables.spacing[6]};
 `;
 
 const StyledFolderRow = styled.div`
@@ -20,16 +29,20 @@ const StyledFolderRow = styled.div`
 `;
 
 const StyledFolderIcon = styled.div<{ isDisabled?: boolean }>`
-  background-color: ${({ isDisabled, theme }) =>
-    isDisabled ? theme.background.quaternary : theme.accent.accent4060};
+  background-color: ${({ isDisabled }) =>
+    isDisabled
+      ? themeCssVariables.background.quaternary
+      : themeCssVariables.accent.accent4060};
   border-radius: 1px;
   height: 5px;
   width: 5px;
 `;
 
 const StyledFolderLabel = styled.div<{ isDisabled?: boolean }>`
-  background-color: ${({ isDisabled, theme }) =>
-    isDisabled ? theme.background.quaternary : theme.accent.accent4060};
+  background-color: ${({ isDisabled }) =>
+    isDisabled
+      ? themeCssVariables.background.quaternary
+      : themeCssVariables.accent.accent4060};
   border-radius: 1px;
   flex: 1;
   height: 5px;

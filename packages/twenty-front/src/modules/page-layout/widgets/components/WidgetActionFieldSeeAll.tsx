@@ -11,8 +11,7 @@ import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { coreIndexViewIdFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/coreIndexViewIdFromObjectMetadataItemFamilySelector';
-import { css } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { Link } from 'react-router-dom';
 import { AppPath, ViewFilterOperand } from 'twenty-shared/types';
@@ -25,18 +24,20 @@ import {
 } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import { RelationType } from '~/generated-metadata/graphql';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledLink = styled(Link)`
+const StyledLinkContainer = styled.div`
   display: flex;
-  text-decoration: none;
+
+  > * {
+    text-decoration: none;
+  }
 `;
 
-const StyledSeeAllButton = styled(LightIconButton)<{ isMobile: boolean }>`
-  ${({ theme, isMobile }) => css`
-    opacity: ${isMobile ? 1 : 0};
-    pointer-events: none;
-    transition: opacity ${theme.animation.duration.instant}s ease;
-  `}
+const StyledSeeAllButtonWrapper = styled.div<{ isMobile: boolean }>`
+  opacity: ${({ isMobile }) => (isMobile ? '1' : '0')};
+  pointer-events: none;
+  transition: opacity ${themeCssVariables.animation.duration.instant}s ease;
 
   .widget:hover & {
     opacity: 1;
@@ -133,13 +134,13 @@ export const WidgetActionFieldSeeAll = () => {
   return (
     <>
       <div id={tooltipId}>
-        <StyledLink to={filterLinkHref} data-testid="widget-see-all-link">
-          <StyledSeeAllButton
-            Icon={IconArrowUpRight}
-            accent="secondary"
-            isMobile={isMobile}
-          />
-        </StyledLink>
+        <StyledLinkContainer>
+          <Link to={filterLinkHref} data-testid="widget-see-all-link">
+            <StyledSeeAllButtonWrapper isMobile={isMobile}>
+              <LightIconButton Icon={IconArrowUpRight} accent="secondary" />
+            </StyledSeeAllButtonWrapper>
+          </Link>
+        </StyledLinkContainer>
       </div>
       <AppTooltip
         anchorSelect={`#${tooltipId}`}

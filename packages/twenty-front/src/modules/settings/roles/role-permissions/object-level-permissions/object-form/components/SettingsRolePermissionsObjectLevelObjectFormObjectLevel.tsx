@@ -4,18 +4,19 @@ import { SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow } from 
 import { type SettingsRolePermissionsObjectLevelPermission } from '@/settings/roles/role-permissions/objects-permissions/types/SettingsRolePermissionsObjectPermission';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledTable = styled.div`
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+  border-bottom: 1px solid ${themeCssVariables.border.color.light};
 `;
 
 const StyledTableRows = styled.div`
-  padding-bottom: ${({ theme }) => theme.spacing(2)};
-  padding-top: ${({ theme }) => theme.spacing(2)};
+  padding-bottom: ${themeCssVariables.spacing[2]};
+  padding-top: ${themeCssVariables.spacing[2]};
 `;
 
 type SettingsRolePermissionsObjectLevelObjectFormObjectLevelProps = {

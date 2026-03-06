@@ -53,21 +53,18 @@ Stellen Sie sicher, dass Sie `yarn` im Root-Verzeichnis ausführen und dann `npx
 
 #### Lint beim Speichern funktioniert nicht
 
-Normalerweise sollte dies sofort mit der installierten eslint-Erweiterung funktionieren. Wenn es nicht funktioniert, versuchen Sie, dies zu Ihren vscode-Einstellungen hinzuzufügen (im Entwicklungscontainer-Bereich):
+Normalerweise sollte dies sofort mit der installierten Oxc-Erweiterung (`oxc.oxc-vscode`) funktionieren. Wenn es nicht funktioniert, versuchen Sie, dies zu Ihren vscode-Einstellungen hinzuzufügen (im Entwicklungscontainer-Bereich):
 
 ```
 "editor.codeActionsOnSave": {
 
-  "source.fixAll.eslint": "explicit"
+  "source.fixAll.oxc": "explicit"
 
 }
 ```
 
 #### Beim Ausführen von `npx nx start` oder `npx nx start twenty-front` wird ein Speicherfehler angezeigt
 
-Kommentieren Sie in `packages/twenty-front/.env` `VITE_DISABLE_TYPESCRIPT_CHECKER=true` und `VITE_DISABLE_ESLINT_CHECKER=true` aus, um Hintergrundprüfungen zu deaktivieren und den RAM-Bedarf zu reduzieren.
-
-**Wenn es nicht funktioniert:**
 Führen Sie nur die Services aus, die Sie benötigen, anstatt `npx nx start`. Wenn Sie zum Beispiel am Server arbeiten, führen Sie nur `npx nx worker twenty-server` aus.
 
 **Wenn es nicht funktioniert:**
@@ -145,7 +142,7 @@ Kommentieren Sie das Checker-Plugin in `packages/twenty-ui/vite-config.ts` wie i
 
 ```
 plugins: [
-      react({ jsxImportSource: '@emotion/react' }),
+      react({ jsxImportSource: 'react' }),
       tsconfigPaths(),
       svgr(),
       dts(dtsConfig),

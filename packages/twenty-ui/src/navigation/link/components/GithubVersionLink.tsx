@@ -1,8 +1,8 @@
-import { useContext } from 'react';
 import { IconBrandGithub } from '@ui/display';
-import { ThemeContext } from '@ui/theme';
 import { ClickToActionLink } from '@ui/navigation/link/components/ClickToActionLink';
 import { GITHUB_LINK } from '../constants/GithubLink';
+import { ThemeContext } from '@ui/theme-constants';
+import { useContext } from 'react';
 
 interface GithubVersionLinkProps {
   version: string;

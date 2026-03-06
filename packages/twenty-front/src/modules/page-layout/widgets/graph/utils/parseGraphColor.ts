@@ -1,6 +1,6 @@
 import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
 import { isDefined } from 'twenty-shared/utils';
-import { MAIN_COLOR_NAMES, type ThemeColor } from 'twenty-ui/theme';
+import { type ThemeColor, MAIN_COLOR_NAMES } from 'twenty-ui/theme';
 
 export const parseGraphColor = (
   value: string | null | undefined,

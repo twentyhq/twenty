@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import {
   type DraggableProvided,
   type DraggableRubric,
@@ -27,9 +27,9 @@ type PageLayoutTabListVisibleTabsProps = {
 
 const StyledTabContainer = styled.div`
   display: flex;
-  position: relative;
-  overflow: hidden;
   max-width: 100%;
+  overflow: hidden;
+  position: relative;
 
   > *:not(:last-child) {
     margin-right: ${TAB_LIST_GAP}px;
@@ -70,7 +70,7 @@ export const PageLayoutTabListVisibleTabs = ({
         {(provided) => (
           <StyledTabContainer
             ref={provided.innerRef}
-            // eslint-disable-next-line react/jsx-props-no-spreading
+            // oxlint-disable-next-line react/jsx-props-no-spreading
             {...provided.droppableProps}
           >
             {visibleTabs.slice(0, visibleTabCount).map((tab, index) => (

@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 
 import { type Task } from '@/activities/types/Task';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 
 export const useCompleteTask = (task: Task) => {

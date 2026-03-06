@@ -5,8 +5,9 @@ import { ZeroLine } from '@/page-layout/widgets/graph/chart-core/layers/ZeroLine
 import { type AxisLayerConfig } from '@/page-layout/widgets/graph/chart-core/types/AxisLayerConfig';
 import { getAxisLayerLayout } from '@/page-layout/widgets/graph/chart-core/utils/getAxisLayerLayout';
 import { type ChartMargins } from '@/page-layout/widgets/graph/types/ChartMargins';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { useContext } from 'react';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 type AxisLayerProps = {
   bottomAxisTickRotation: number;
@@ -53,7 +54,8 @@ export const AxisLayer = ({
   yAxisLabel,
   axisConfig,
 }: AxisLayerProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
+
   const tickFontSize = axisConfig.tickFontSize;
   const legendFontSize = axisConfig.legendFontSize;
 

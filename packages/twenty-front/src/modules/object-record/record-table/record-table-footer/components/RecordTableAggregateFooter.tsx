@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 import { RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnAddColumnButtonWidth';
 import { RECORD_TABLE_COLUMN_CHECKBOX_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnCheckboxWidth';
@@ -9,16 +9,16 @@ import { useRecordTableContextOrThrow } from '@/object-record/record-table/conte
 import { RecordTableAggregateFooterCell } from '@/object-record/record-table/record-table-footer/components/RecordTableAggregateFooterCell';
 import { RecordTableColumnAggregateFooterCellContext } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterCellContext';
 import { isDefined } from 'twenty-shared/utils';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledPlaceholderDragAndDropFooterCell = styled.div<{
   isTableWithGroups: boolean;
 }>`
-  background-color: ${({ theme }) => theme.background.primary};
-  width: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH +
-  RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px;
-  position: sticky;
-  left: 0px;
+  background-color: ${themeCssVariables.background.primary};
   bottom: 0;
+  left: 0px;
+  position: sticky;
+  width: ${`${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH + RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px`};
 
   z-index: ${({ isTableWithGroups }) =>
     isTableWithGroups
@@ -29,10 +29,10 @@ const StyledPlaceholderDragAndDropFooterCell = styled.div<{
 const StyledPlaceholderAddButtonPlaceholderFooterCell = styled.div<{
   isTableWithGroups: boolean;
 }>`
-  background-color: ${({ theme }) => theme.background.primary};
-  width: ${RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH}px;
-  position: sticky;
+  background-color: ${themeCssVariables.background.primary};
   bottom: 0;
+  position: sticky;
+  width: ${RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH}px;
   z-index: ${({ isTableWithGroups }) =>
     isTableWithGroups
       ? TABLE_Z_INDEX.footer.tableWithGroups.default
@@ -42,9 +42,9 @@ const StyledPlaceholderAddButtonPlaceholderFooterCell = styled.div<{
 const StyledPlaceholderLastColumnEmptyFooterCell = styled.div<{
   isTableWithGroups: boolean;
 }>`
-  background-color: ${({ theme }) => theme.background.primary};
-  position: sticky;
+  background-color: ${themeCssVariables.background.primary};
   bottom: 0;
+  position: sticky;
   z-index: ${({ isTableWithGroups }) =>
     isTableWithGroups
       ? TABLE_Z_INDEX.footer.tableWithGroups.default

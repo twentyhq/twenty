@@ -1,8 +1,9 @@
+import { useContext } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import { useTheme } from '@emotion/react';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 export const SettingsAccountLoader = () => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   return (
     <SkeletonTheme
       baseColor={theme.background.tertiary}

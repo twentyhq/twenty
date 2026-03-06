@@ -17,11 +17,14 @@ export const workflowShouldKeepRunning = ({
     ),
   );
 
-  const successStepWithNotStartedExecutableChildren = steps.some(
+  const completedStepWithNotStartedExecutableChildren = steps.some(
     (step) =>
-      stepInfos[step.id]?.status === StepStatus.SUCCESS &&
+      (stepInfos[step.id]?.status === StepStatus.SUCCESS ||
+        stepInfos[step.id]?.status === StepStatus.FAILED_SAFELY) &&
       (step.nextStepIds ?? []).some((nextStepId) => {
-        const nextStep = steps.find((step) => step.id === nextStepId);
+        const nextStep = steps.find(
+          (candidateStep) => candidateStep.id === nextStepId,
+        );
 
         if (!nextStep) {
           return false;
@@ -40,6 +43,6 @@ export const workflowShouldKeepRunning = ({
   );
 
   return (
-    runningOrPendingStepExists || successStepWithNotStartedExecutableChildren
+    runningOrPendingStepExists || completedStepWithNotStartedExecutableChildren
   );
 };

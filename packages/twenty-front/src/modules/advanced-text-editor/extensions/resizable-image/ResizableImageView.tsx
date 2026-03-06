@@ -11,18 +11,10 @@ const StyledNodeViewWrapperContainer = styled.div<{
   align?: string;
 }>`
   height: 100%;
-  ${({ align }) => {
-    switch (align) {
-      case 'left':
-        return 'margin-left: 0;';
-      case 'right':
-        return 'margin-right: 0;';
-      case 'center':
-        return 'margin-left: auto; margin-right: auto;';
-      default:
-        return '';
-    }
-  }}
+  margin-left: ${({ align }) =>
+    align === 'left' ? '0' : align === 'center' ? 'auto' : 'unset'};
+  margin-right: ${({ align }) =>
+    align === 'right' ? '0' : align === 'center' ? 'auto' : 'unset'};
 `;
 
 const StyledImageWrapper = styled.div<{ width?: number }>`
@@ -40,21 +32,21 @@ const StyledImage = styled.img`
 `;
 
 const StyledImageHandle = styled.div<{ handle: 'left' | 'right' }>`
-  border-radius: ${themeCssVariables.border.radius.md};
   background-color: ${themeCssVariables.background.primaryInverted};
   border: 1px solid ${themeCssVariables.background.primary};
+  border-radius: ${themeCssVariables.border.radius.md};
   cursor: col-resize;
   height: ${themeCssVariables.spacing[8]};
+  left: ${({ handle }) =>
+    handle === 'left' ? themeCssVariables.spacing[1] : 'auto'};
   position: absolute;
+  right: ${({ handle }) =>
+    handle === 'right' ? themeCssVariables.spacing[1] : 'auto'};
   top: 50%;
   transform: translateY(-50%);
+
   width: ${themeCssVariables.spacing[2]};
   z-index: 1;
-
-  ${({ handle }) =>
-    handle === 'left'
-      ? `left: ${themeCssVariables.spacing[1]};`
-      : `right: ${themeCssVariables.spacing[1]};`}
 `;
 
 type ResizeParams = {

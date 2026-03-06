@@ -9,7 +9,7 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { type DropdownOffset } from '@/ui/layout/dropdown/types/DropdownOffset';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { format } from 'date-fns';
 import { Temporal } from 'temporal-polyfill';
@@ -20,6 +20,7 @@ import {
 } from 'twenty-shared/utils';
 import { IconChevronLeft, IconChevronRight } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -29,20 +30,20 @@ const StyledContainer = styled.div`
   width: 100%;
 `;
 
-const StyledNavigationButton = styled(Button)`
-  padding: ${({ theme }) => theme.spacing(1)};
+const StyledNavigationButtonContainer = styled.div`
+  padding: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledLeftSection = styled.div`
-  display: flex;
   align-items: center;
-  gap: ${({ theme }) => theme.spacing(2)};
+  display: flex;
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledNavigationSection = styled.div`
-  display: flex;
   align-items: center;
-  gap: ${({ theme }) => theme.spacing(1)};
+  display: flex;
+  gap: ${themeCssVariables.spacing[1]};
   justify-content: flex-end;
 `;
 
@@ -119,24 +120,28 @@ export const RecordCalendarTopBar = () => {
       </StyledLeftSection>
 
       <StyledNavigationSection>
-        <StyledNavigationButton
-          size="small"
-          variant="tertiary"
-          Icon={IconChevronLeft}
-          onClick={handlePreviousMonth}
-        />
+        <StyledNavigationButtonContainer>
+          <Button
+            size="small"
+            variant="tertiary"
+            Icon={IconChevronLeft}
+            onClick={handlePreviousMonth}
+          />
+        </StyledNavigationButtonContainer>
         <Button
           size="small"
           variant="tertiary"
           title={t`Today`}
           onClick={handleTodayClick}
         />
-        <StyledNavigationButton
-          size="small"
-          variant="tertiary"
-          Icon={IconChevronRight}
-          onClick={handleNextMonth}
-        />
+        <StyledNavigationButtonContainer>
+          <Button
+            size="small"
+            variant="tertiary"
+            Icon={IconChevronRight}
+            onClick={handleNextMonth}
+          />
+        </StyledNavigationButtonContainer>
       </StyledNavigationSection>
     </StyledContainer>
   );

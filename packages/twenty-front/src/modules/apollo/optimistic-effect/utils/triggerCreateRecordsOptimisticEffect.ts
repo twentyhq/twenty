@@ -165,7 +165,7 @@ export const triggerCreateRecordsOptimisticEffect = ({
                 },
               );
 
-              if (recordToCreateReference && !recordAlreadyInCache) {
+              if (isDefined(recordToCreateReference) && !recordAlreadyInCache) {
                 const cursor = encodeCursor(recordToCreate);
 
                 const edge = {

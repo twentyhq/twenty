@@ -1,4 +1,4 @@
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { renderHook } from '@testing-library/react';
 import { useRelatedRecordActions } from '@/action-menu/actions/record-agnostic-actions/hooks/useRelatedRecordActions';

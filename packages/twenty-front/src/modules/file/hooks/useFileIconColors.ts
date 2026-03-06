@@ -1,12 +1,13 @@
 import { type AttachmentFileCategory } from '@/activities/files/types/AttachmentFileCategory';
-import { useTheme } from '@emotion/react';
+import { useContext } from 'react';
 import { type FileCategory } from 'twenty-shared/types';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 export const useFileIconColors = (): Record<
   AttachmentFileCategory | FileCategory,
   string
 > => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   return {
     ARCHIVE: theme.color.gray,

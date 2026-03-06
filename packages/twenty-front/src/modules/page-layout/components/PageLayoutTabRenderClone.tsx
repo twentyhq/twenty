@@ -1,18 +1,19 @@
+import { isDefined } from 'twenty-shared/utils';
 import { PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS } from '@/page-layout/components/PageLayoutTabListDroppableIds';
 import { pageLayoutTabListCurrentDragDroppableIdComponentState } from '@/page-layout/states/pageLayoutTabListCurrentDragDroppableIdComponentState';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { TabAvatar } from '@/ui/layout/tab-list/components/TabAvatar';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
 import { type DraggableProvided } from '@hello-pangea/dnd';
+import { styled } from '@linaria/react';
+import { useContext } from 'react';
 import { StyledTabContainer, TabContent } from 'twenty-ui/input';
 import { MenuItemSelectAvatar } from 'twenty-ui/navigation';
-
+import { ThemeContext } from 'twenty-ui/theme-constants';
 const StyledDraggableWrapper = styled.div`
-  display: flex;
   cursor: grab;
+  display: flex;
 
   &:active {
     cursor: grabbing;
@@ -28,25 +29,24 @@ export const PageLayoutTabRenderClone = ({
   provided: DraggableProvided;
   activeTabId: string | null;
 }) => {
-  const theme = useTheme();
-
+  const { theme } = useContext(ThemeContext);
   const pageLayoutTabListCurrentDragDroppableId = useAtomComponentStateValue(
     pageLayoutTabListCurrentDragDroppableIdComponentState,
   );
 
   const isHoveringTabList =
-    pageLayoutTabListCurrentDragDroppableId ===
-    PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS.VISIBLE_TABS;
+    pageLayoutTabListCurrentDragDroppableId !==
+    PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS.OVERFLOW_TABS;
 
-  if (!tab) return null;
+  if (!isDefined(tab)) return null;
 
   if (isHoveringTabList) {
     return (
       <StyledDraggableWrapper
         ref={provided.innerRef}
-        // eslint-disable-next-line react/jsx-props-no-spreading
+        // oxlint-disable-next-line react/jsx-props-no-spreading
         {...provided.draggableProps}
-        // eslint-disable-next-line react/jsx-props-no-spreading
+        // oxlint-disable-next-line react/jsx-props-no-spreading
         {...provided.dragHandleProps}
         style={{
           ...provided.draggableProps.style,
@@ -71,9 +71,9 @@ export const PageLayoutTabRenderClone = ({
       <StyledDraggableWrapper
         id={'clone-drag-wrapper'}
         ref={provided.innerRef}
-        // eslint-disable-next-line react/jsx-props-no-spreading
+        // oxlint-disable-next-line react/jsx-props-no-spreading
         {...provided.draggableProps}
-        // eslint-disable-next-line react/jsx-props-no-spreading
+        // oxlint-disable-next-line react/jsx-props-no-spreading
         {...provided.dragHandleProps}
         style={{
           ...provided.draggableProps.style,

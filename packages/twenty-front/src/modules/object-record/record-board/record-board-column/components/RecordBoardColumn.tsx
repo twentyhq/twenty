@@ -1,5 +1,6 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { Droppable } from '@hello-pangea/dnd';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { RecordBoardColumnCardsContainer } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnCardsContainer';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
@@ -12,17 +13,17 @@ import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hoo
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledColumn = styled.div`
-  background-color: ${({ theme }) => theme.background.primary};
+  background-color: ${themeCssVariables.background.primary};
   display: flex;
-  flex-direction: column;
-  max-width: 200px;
-  min-width: 200px;
-  min-height: 100%;
   flex: 1;
-  padding: ${({ theme }) => theme.spacing(2)};
+  flex-direction: column;
+  height: 100%;
+  max-width: 200px;
+  min-height: 100%;
+  min-width: 200px;
+  padding: ${themeCssVariables.spacing[2]};
   padding-top: 0px;
   position: relative;
-  height: 100%;
 `;
 
 type RecordBoardColumnProps = {

@@ -50,10 +50,9 @@ export const CurrentWorkspaceMemberNavigationMenuItemFolders = () => {
   }
 
   if (
-    (!navigationMenuItemsSorted || navigationMenuItemsSorted.length === 0) &&
+    navigationMenuItemsSorted.length === 0 &&
     !isNavigationMenuItemFolderCreating &&
-    (!userNavigationMenuItemsByFolder ||
-      userNavigationMenuItemsByFolder.length === 0)
+    userNavigationMenuItemsByFolder.length === 0
   ) {
     return null;
   }

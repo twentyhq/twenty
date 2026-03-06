@@ -151,10 +151,10 @@ export class TimelineMessagingService {
             person: {
               id: threadParticipant.person?.id,
               name: {
-                //eslint-disable-next-line
+                //oxlint-disable-next-line
                 //@ts-ignore
                 firstName: threadParticipant.person?.nameFirstName,
-                //eslint-disable-next-line
+                //oxlint-disable-next-line
                 //@ts-ignore
                 lastName: threadParticipant.person?.nameLastName,
               },
@@ -163,10 +163,10 @@ export class TimelineMessagingService {
             workspaceMember: {
               id: threadParticipant.workspaceMember?.id,
               name: {
-                //eslint-disable-next-line
+                //oxlint-disable-next-line
                 //@ts-ignore
                 firstName: threadParticipant.workspaceMember?.nameFirstName,
-                //eslint-disable-next-line
+                //oxlint-disable-next-line
                 //@ts-ignore
                 lastName: threadParticipant.workspaceMember?.nameLastName,
               },

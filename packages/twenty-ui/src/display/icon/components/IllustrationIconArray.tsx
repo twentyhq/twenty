@@ -1,8 +1,10 @@
-import IllustrationIconArrayRaw from '@assets/icons/illustration-array.svg?react';
 import { useContext } from 'react';
+
+import IllustrationIconArrayRaw from '@assets/icons/illustration-array.svg?react';
 import { IllustrationIconWrapper } from '@ui/display/icon/components/IllustrationIconWrapper';
 import { type IconComponentProps } from '@ui/display/icon/types/IconComponent';
-import { ThemeContext } from '@ui/theme';
+import { ThemeContext } from '@ui/theme-constants';
+
 type IllustrationIconArrayProps = Pick<IconComponentProps, 'size'>;
 
 export const IllustrationIconArray = (props: IllustrationIconArrayProps) => {

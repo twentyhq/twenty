@@ -1,7 +1,5 @@
 import { styled } from '@linaria/react';
 
-import { isUndefined } from '@sniptt/guards';
-
 import { IconCheck } from '@ui/display';
 import { themeCssVariables } from '@ui/theme-constants';
 import { type MenuItemAccent } from '../../types/MenuItemAccent';
@@ -39,13 +37,13 @@ export const StyledMenuItemBase = styled.div<MenuItemBaseProps>`
   background: ${({ isKeySelected, focused }) =>
     isKeySelected || focused
       ? themeCssVariables.background.transparent.light
-      : ''};
+      : 'transparent'};
 
   transition: ${({ isHoverBackgroundDisabled, disabled }) =>
     disabled || isHoverBackgroundDisabled ? 'none' : 'background 0.1s ease'};
 
   color: ${({ accent, disabled }) => {
-    if (!isUndefined(disabled) && disabled !== false) {
+    if (disabled !== undefined && disabled !== false) {
       return themeCssVariables.font.color.tertiary;
     }
     switch (accent) {
@@ -60,8 +58,17 @@ export const StyledMenuItemBase = styled.div<MenuItemBaseProps>`
   }};
 
   &:hover {
-    background: ${({ accent, disabled, isHoverBackgroundDisabled }) => {
-      if (disabled === true) return '';
+    background: ${({
+      accent,
+      disabled,
+      isHoverBackgroundDisabled,
+      isKeySelected,
+      focused,
+    }) => {
+      if (disabled === true)
+        return isKeySelected || focused
+          ? themeCssVariables.background.transparent.light
+          : 'transparent';
       if (accent === 'danger')
         return themeCssVariables.background.transparent.danger;
       if (isHoverBackgroundDisabled === true) return 'transparent';
@@ -86,8 +93,14 @@ export const StyledMenuItemLabel = styled.div`
   white-space: nowrap;
 `;
 
-export const StyledMenuItemLabelLight = styled(StyledMenuItemLabel)`
+export const StyledMenuItemLabelLight = styled.div`
   color: ${themeCssVariables.font.color.light};
+  display: flex;
+  flex-direction: row;
+  font-size: ${themeCssVariables.font.size.md};
+  font-weight: ${themeCssVariables.font.weight.regular};
+  overflow: hidden;
+  white-space: nowrap;
 `;
 
 export const StyledNoIconFiller = styled.div`
@@ -132,21 +145,55 @@ type HoverableMenuItemBaseProps = {
   cursor?: 'drag' | 'default';
 } & MenuItemBaseProps;
 
-export const StyledHoverableMenuItemBase = styled(
-  StyledMenuItemBase,
-)<HoverableMenuItemBaseProps>`
-  & .hoverable-buttons {
-    opacity: ${({ isIconDisplayedOnHoverOnly }) =>
-      isIconDisplayedOnHoverOnly === true ? '0' : '1'};
-    right: ${({ isIconDisplayedOnHoverOnly }) =>
-      isIconDisplayedOnHoverOnly === true
-        ? themeCssVariables.spacing[2]
-        : 'auto'};
-    transition: opacity
-      calc(${themeCssVariables.animation.duration.instant} * 1s) ease;
-  }
-
+export const StyledHoverableMenuItemBase = styled.div<HoverableMenuItemBaseProps>`
+  --horizontal-padding: ${themeCssVariables.spacing[1]};
+  --vertical-padding: ${themeCssVariables.spacing[2]};
+  align-items: center;
+  border-radius: ${themeCssVariables.border.radius.sm};
+  display: flex;
+  flex-direction: row;
+  font-size: ${themeCssVariables.font.size.sm};
+  gap: ${themeCssVariables.spacing[2]};
+  height: calc(32px - 2 * var(--vertical-padding));
+  justify-content: space-between;
+  padding: var(--vertical-padding) var(--horizontal-padding);
+  background: ${({ isKeySelected, focused }) =>
+    isKeySelected || focused
+      ? themeCssVariables.background.transparent.light
+      : 'transparent'};
+  transition: ${({ isHoverBackgroundDisabled, disabled }) =>
+    disabled || isHoverBackgroundDisabled ? 'none' : 'background 0.1s ease'};
+  color: ${({ accent, disabled }) => {
+    if (disabled !== undefined && disabled !== false) {
+      return themeCssVariables.font.color.tertiary;
+    }
+    switch (accent) {
+      case 'danger':
+        return themeCssVariables.font.color.danger;
+      case 'placeholder':
+        return themeCssVariables.font.color.tertiary;
+      case 'default':
+      default:
+        return themeCssVariables.font.color.secondary;
+    }
+  }};
   &:hover {
+    background: ${({
+      accent,
+      disabled,
+      isHoverBackgroundDisabled,
+      isKeySelected,
+      focused,
+    }) => {
+      if (disabled === true)
+        return isKeySelected || focused
+          ? themeCssVariables.background.transparent.light
+          : 'transparent';
+      if (accent === 'danger')
+        return themeCssVariables.background.transparent.danger;
+      if (isHoverBackgroundDisabled === true) return 'transparent';
+      return themeCssVariables.background.transparent.light;
+    }};
     & .hoverable-buttons {
       opacity: 1;
     }
@@ -157,12 +204,23 @@ export const StyledHoverableMenuItemBase = styled(
       opacity: 1;
     }
   }
-
+  position: relative;
+  user-select: none;
+  width: calc(100% - 2 * var(--horizontal-padding));
+  & .hoverable-buttons {
+    opacity: ${({ isIconDisplayedOnHoverOnly }) =>
+      isIconDisplayedOnHoverOnly === true ? '0' : '1'};
+    right: ${({ isIconDisplayedOnHoverOnly }) =>
+      isIconDisplayedOnHoverOnly === true
+        ? themeCssVariables.spacing[2]
+        : 'auto'};
+    transition: opacity
+      calc(${themeCssVariables.animation.duration.instant} * 1s) ease;
+  }
   cursor: ${({ cursor, disabled }) => {
-    if (!isUndefined(disabled) && disabled !== false) {
+    if (disabled !== undefined && disabled !== false) {
       return 'default';
     }
-
     switch (cursor) {
       case 'drag':
         return 'grab';
@@ -172,10 +230,18 @@ export const StyledHoverableMenuItemBase = styled(
   }};
 `;
 
-export const StyledMenuItemIconCheck = styled(IconCheck)`
+const StyledMenuItemIconCheckContainer = styled.div`
+  align-items: center;
+  display: flex;
   flex-shrink: 0;
   margin-right: ${themeCssVariables.spacing[1]};
 `;
+
+export const StyledMenuItemIconCheck = ({ size }: { size?: number }) => (
+  <StyledMenuItemIconCheckContainer>
+    <IconCheck size={size} />
+  </StyledMenuItemIconCheckContainer>
+);
 
 export const StyledMenuItemContextualText = styled.div`
   color: ${themeCssVariables.font.color.light};
@@ -187,8 +253,13 @@ export const StyledMenuItemContextualText = styled.div`
   overflow: hidden;
 `;
 
-export const StyledRightMenuItemContextualText = styled(
-  StyledMenuItemContextualText,
-)`
+export const StyledRightMenuItemContextualText = styled.div`
+  color: ${themeCssVariables.font.color.light};
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  padding-left: ${themeCssVariables.spacing[1]};
+  flex-shrink: 1;
+  overflow: hidden;
   text-align: right;
 `;

@@ -57,21 +57,18 @@ Twentyのインストール中に、postgresデータベースを適切なスキ
 
 #### 保存時のLintが機能しない
 
-eslint拡張子がインストールされている場合、これは標準設定で動作するはずです。 eslint拡張子がインストールされている場合、これは標準設定で動作するはずです。 もしこれが機能しない場合、vscode設定で以下を追加してみてください（開発コンテナ範囲内で）。
+Oxc拡張子 (`oxc.oxc-vscode`)がインストールされている場合、これは標準設定で動作するはずです。 もしこれが機能しない場合、vscode設定で以下を追加してみてください（開発コンテナ範囲内で）。
 
 ```
 "editor.codeActionsOnSave": {
 
-  "source.fixAll.eslint": "explicit"
+  "source.fixAll.oxc": "explicit"
 
 }
 ```
 
 #### `npx nx start` または `npx nx start twenty-front` 実行中にメモリエラーが発生
 
-`packages/twenty-front/.env`で`VITE_DISABLE_TYPESCRIPT_CHECKER=true` と `VITE_DISABLE_ESLINT_CHECKER=true` をコメント解除して、バックグラウンドチェックを無効化し、必要なRAMの量を減らします。
-
-**うまくいかない場合:**
 `npx nx start` の代わりに、必要なサービスだけを実行してください。 例えば、サーバーで作業している場合は、`npx nx worker twenty-server` のみを実行してください。
 
 **うまくいかない場合:**
@@ -152,7 +149,7 @@ npx nx worker twenty-server
 
 ```
 plugins: [
-      react({ jsxImportSource: '@emotion/react' }),
+      react({ jsxImportSource: 'react' }),
       tsconfigPaths(),
       svgr(),
       dts(dtsConfig),

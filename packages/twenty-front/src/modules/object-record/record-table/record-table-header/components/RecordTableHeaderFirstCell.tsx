@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableColumnHeadWithDropdown } from '@/object-record/record-table/record-table-header/components/RecordTableColumnHeadWithDropdown';
@@ -25,8 +25,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 const StyledPlusButtonWrapper = styled.div`
   position: absolute;
-  top: 0;
   right: 0;
+  top: 0;
   z-index: ${TABLE_Z_INDEX.headerColumns.withoutGroups.headerColumnsSticky};
 `;
 

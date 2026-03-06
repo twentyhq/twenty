@@ -1,0 +1,86 @@
+import { useLingui } from '@lingui/react/macro';
+import { IconLink } from 'twenty-ui/display';
+
+import { SidePanelPageInfoLayout } from '@/side-panel/components/SidePanelPageInfoLayout';
+import { sidePanelPageInfoState } from '@/side-panel/states/sidePanelPageInfoState';
+import { sidePanelShouldFocusTitleInputComponentState } from '@/side-panel/states/sidePanelShouldFocusTitleInputComponentState';
+import { NavigationMenuItemStyleIcon } from '@/navigation-menu-item/components/NavigationMenuItemStyleIcon';
+import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
+import { useUpdateLinkInDraft } from '@/navigation-menu-item/hooks/useUpdateLinkInDraft';
+import { useWorkspaceSectionItems } from '@/navigation-menu-item/hooks/useWorkspaceSectionItems';
+import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeState';
+import { TitleInput } from '@/ui/input/components/TitleInput';
+import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+
+export const SidePanelLinkInfo = () => {
+  const { t } = useLingui();
+  const sidePanelPageInfo = useAtomStateValue(sidePanelPageInfoState);
+  const [sidePanelShouldFocusTitleInput, setSidePanelShouldFocusTitleInput] =
+    useAtomComponentState(
+      sidePanelShouldFocusTitleInputComponentState,
+      sidePanelPageInfo.instanceId,
+    );
+  const selectedNavigationMenuItemInEditMode = useAtomStateValue(
+    selectedNavigationMenuItemInEditModeState,
+  );
+  const items = useWorkspaceSectionItems();
+  const { updateLinkInDraft } = useUpdateLinkInDraft();
+
+  const defaultLabel = t`Link label`;
+  const placeholder = t`Link label`;
+
+  const selectedItem = selectedNavigationMenuItemInEditMode
+    ? items.find(
+        (item) =>
+          item.itemType === NavigationMenuItemType.LINK &&
+          item.id === selectedNavigationMenuItemInEditMode,
+      )
+    : undefined;
+
+  if (!selectedItem) return null;
+
+  const itemId = selectedItem.id;
+  const itemName = selectedItem.name ?? defaultLabel;
+
+  const handleChange = (text: string) => {
+    updateLinkInDraft(itemId, { name: text });
+  };
+
+  const handleSave = () => {
+    const trimmed = itemName.trim();
+    const finalName = trimmed.length > 0 ? trimmed : defaultLabel;
+
+    if (finalName !== itemName) {
+      updateLinkInDraft(itemId, { name: finalName });
+    }
+  };
+
+  return (
+    <SidePanelPageInfoLayout
+      icon={
+        <NavigationMenuItemStyleIcon
+          Icon={IconLink}
+          color={selectedItem.color}
+        />
+      }
+      title={
+        <TitleInput
+          instanceId={`link-label-${itemId}`}
+          sizeVariant="sm"
+          value={itemName}
+          onChange={handleChange}
+          placeholder={placeholder}
+          onEnter={handleSave}
+          onEscape={handleSave}
+          onClickOutside={handleSave}
+          onTab={handleSave}
+          onShiftTab={handleSave}
+          shouldFocus={sidePanelShouldFocusTitleInput}
+          onFocus={() => setSidePanelShouldFocusTitleInput(false)}
+        />
+      }
+      label={t`Link`}
+    />
+  );
+};

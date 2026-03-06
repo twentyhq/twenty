@@ -7,9 +7,9 @@ import { isDefined } from 'twenty-shared/utils';
 import { InternalServerError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 
 export type CacheMetadataPluginConfig = {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
   cacheGetter: (key: string) => any;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
   cacheSetter: (key: string, value: any) => void;
   operationsToCache: string[];
 };
@@ -42,7 +42,7 @@ export function useCachedMetadata(config: CacheMetadataPluginConfig): Plugin {
     return `graphql:operations:${operationName}:${workspace.id}:${workspaceMetadataVersion}:${locale}:${queryHash}`;
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
   const getOperationName = (serverContext: any) =>
     serverContext?.req?.body?.operationName;
 

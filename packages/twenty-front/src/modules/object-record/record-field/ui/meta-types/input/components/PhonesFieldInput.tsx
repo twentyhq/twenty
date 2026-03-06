@@ -4,7 +4,7 @@ import { PhonesFieldMenuItem } from '@/object-record/record-field/ui/meta-types/
 import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/record-field/ui/states/recordFieldInputIsFieldInErrorComponentState';
 import { phoneSchema } from '@/object-record/record-field/ui/validation-schemas/phoneSchema';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { parsePhoneNumber, type E164Number } from 'libphonenumber-js';
 import ReactPhoneNumberInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
@@ -20,11 +20,10 @@ import {
 } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { phonesSchema } from '@/object-record/record-field/ui/types/guards/isFieldPhonesValue';
 import { PhoneCountryPickerDropdownButton } from '@/ui/input/components/internal/phone/components/PhoneCountryPickerDropdownButton';
-import { css } from '@emotion/react';
 import { useContext } from 'react';
 import { MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
-import { TEXT_INPUT_STYLE } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';
 
@@ -32,39 +31,39 @@ const StyledCustomPhoneInputContainer = styled.div<{
   hasItem: boolean;
   hasError?: boolean;
 }>`
-  ${({ hasItem, theme }) =>
-    hasItem &&
-    css`
-      background-color: ${theme.background.transparent.lighter};
-      border-radius: 4px;
-      border: 1px solid ${theme.border.color.medium};
-      height: 30px;
-    `}
-
-  ${({ hasError, hasItem, theme }) =>
-    hasError &&
-    hasItem &&
-    css`
-      border: 1px solid ${theme.border.color.danger};
-    `}
+  background-color: ${({ hasItem }) =>
+    hasItem ? themeCssVariables.background.transparent.lighter : 'transparent'};
+  border: ${({ hasItem, hasError }) =>
+    hasItem
+      ? hasError
+        ? `1px solid ${themeCssVariables.border.color.danger}`
+        : `1px solid ${themeCssVariables.border.color.medium}`
+      : 'none'};
+  border-radius: ${({ hasItem }) => (hasItem ? '4px' : '0')};
+  height: ${({ hasItem }) => (hasItem ? '30px' : 'auto')};
 `;
 
-const StyledCustomPhoneInput = styled(ReactPhoneNumberInput)`
-  ${TEXT_INPUT_STYLE}
-  padding: 0;
+const StyledCustomPhoneInputWrapper = styled.div`
+  background-color: transparent;
+  border: none;
+  color: ${themeCssVariables.font.color.primary};
+  font-family: ${themeCssVariables.font.family};
+  font-size: inherit;
+  font-weight: inherit;
   height: 100%;
+  width: calc(100% - ${themeCssVariables.spacing[8]});
 
   .PhoneInputInput {
     background: none;
     border: none;
-    color: ${({ theme }) => theme.font.color.primary};
-    margin-left: ${({ theme }) => theme.spacing(2)};
+    color: ${themeCssVariables.font.color.primary};
+    margin-left: ${themeCssVariables.spacing[2]};
 
     &::placeholder,
     &::-webkit-input-placeholder {
-      color: ${({ theme }) => theme.font.color.light};
-      font-family: ${({ theme }) => theme.font.family};
-      font-weight: ${({ theme }) => theme.font.weight.medium};
+      color: ${themeCssVariables.font.color.light};
+      font-family: ${themeCssVariables.font.family};
+      font-weight: ${themeCssVariables.font.weight.medium};
     }
 
     :focus {
@@ -73,10 +72,9 @@ const StyledCustomPhoneInput = styled(ReactPhoneNumberInput)`
   }
 
   & svg {
-    border-radius: ${({ theme }) => theme.border.radius.xs};
+    border-radius: ${themeCssVariables.border.radius.xs};
     height: 12px;
   }
-  width: calc(100% - ${({ theme }) => theme.spacing(8)});
 `;
 
 export const PhonesFieldInput = () => {
@@ -212,16 +210,18 @@ export const PhonesFieldInput = () => {
             hasItem={!!phones.length}
             hasError={hasError}
           >
-            <StyledCustomPhoneInput
-              autoFocus={autoFocus}
-              placeholder={placeholder}
-              value={value as E164Number}
-              onChange={onChange as unknown as (newValue: E164Number) => void}
-              international={true}
-              withCountryCallingCode={true}
-              countrySelectComponent={PhoneCountryPickerDropdownButton}
-              defaultCountry={defaultCountry}
-            />
+            <StyledCustomPhoneInputWrapper>
+              <ReactPhoneNumberInput
+                autoFocus={autoFocus}
+                placeholder={placeholder}
+                value={value as E164Number}
+                onChange={onChange as unknown as (newValue: E164Number) => void}
+                international={true}
+                withCountryCallingCode={true}
+                countrySelectComponent={PhoneCountryPickerDropdownButton}
+                defaultCountry={defaultCountry}
+              />
+            </StyledCustomPhoneInputWrapper>
           </StyledCustomPhoneInputContainer>
         );
       }}

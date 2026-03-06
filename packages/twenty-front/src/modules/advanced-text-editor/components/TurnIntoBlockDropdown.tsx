@@ -9,13 +9,13 @@ import { type Editor } from '@tiptap/react';
 import { useContext, useId } from 'react';
 import { IconPilcrow } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledMenuItem = styled.button`
   align-items: center;
   background: none;
   border: none;
+  border-radius: ${themeCssVariables.spacing[1.5]};
   color: ${themeCssVariables.font.color.tertiary};
   cursor: pointer;
   display: flex;
@@ -23,10 +23,9 @@ const StyledMenuItem = styled.button`
   font-weight: ${themeCssVariables.font.weight.regular};
   gap: 4px;
   height: ${themeCssVariables.spacing[6]};
+  padding: 0 ${themeCssVariables.spacing[1.5]};
   padding: 0;
   width: 100%;
-  padding: 0 ${themeCssVariables.spacing[1.5]};
-  border-radius: ${themeCssVariables.spacing[1.5]};
 
   :hover {
     background: ${themeCssVariables.background.transparent.medium};
@@ -45,7 +44,6 @@ export const TurnIntoBlockDropdown = ({
   editor,
 }: TurnIntoBlockDropdownProps) => {
   const { theme } = useContext(ThemeContext);
-
   const instanceId = useId();
   const dropdownId = `turn-into-block-dropdown-${instanceId}`;
   const { toggleDropdown } = useToggleDropdown();
@@ -84,7 +82,7 @@ export const TurnIntoBlockDropdown = ({
         </StyledMenuItem>
       }
       dropdownOffset={{
-        y: parseInt(theme.spacing(1), 10),
+        y: parseInt(theme.spacing[1], 10),
       }}
     />
   );

@@ -1,4 +1,4 @@
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagKey } from 'twenty-shared/types';
 
 type FeatureFlagMetadata = {
   label: string;

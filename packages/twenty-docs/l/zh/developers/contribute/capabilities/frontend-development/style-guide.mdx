@@ -194,7 +194,7 @@ setHotkeyScopeAndMemorizePreviousScope(
 
 ### 使用StyledComponents
 
-使用[styled-components](https://emotion.sh/docs/styled)对组件进行样式化。
+使用[Linaria styled](https://github.com/callstack/linaria)对组件进行样式化。
 
 ```tsx
 // ❌ Bad
@@ -260,7 +260,7 @@ const StyledButton = styled.button`
 
 ## 强制不允许类型导入
 
-避免类型导入。 为强制实施此标准，ESLint规则检查并报告所有类型导入。 这有助于在TypeScript代码中保持一致性和可读性。
+避免类型导入。 为强制实施此标准，Oxlint 规则会检查并报告所有类型导入。 这有助于在TypeScript代码中保持一致性和可读性。
 
 ```tsx
 // ❌ Bad
@@ -281,10 +281,10 @@ import { Meta, StoryObj } from '@storybook/react';
 
 * **可维护性**：它增强了代码库的可维护性，因为开发人员可以在审查或修改代码时识别和定位仅类型导入。
 
-### ESLint规则
+### Oxlint 规则
 
-ESLint规则，`@typescript-eslint/consistent-type-imports`，强制执行不允许类型导入标准。 该规则会生成错误或警告以提示任何类型导入的违规。
+Oxlint 规则，`typescript/consistent-type-imports`，强制执行不允许类型导入标准。 该规则会生成错误或警告以提示任何类型导入的违规。
 
 请注意，此规则专门针对在罕见的边缘情况中发生的非预期类型导入。 TypeScript 本身也不鼓励这种做法，如[TypeScript 3.8 发行说明](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-8.html)所述。 在大多数情况下，您不需要使用仅类型导入。
 
-为确保您的代码符合此规则，请确保在开发工作流程中运行ESLint。
+为确保您的代码符合此规则，请确保在开发工作流程中运行 Oxlint。

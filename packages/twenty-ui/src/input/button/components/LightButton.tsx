@@ -1,7 +1,6 @@
 import { styled } from '@linaria/react';
 import { type IconComponent } from '@ui/display';
-import { ThemeContext } from '@ui/theme';
-import { themeCssVariables } from '@ui/theme-constants';
+import { ThemeContext, themeCssVariables } from '@ui/theme-constants';
 import { type MouseEvent, useContext } from 'react';
 
 export type LightButtonAccent = 'secondary' | 'tertiary';

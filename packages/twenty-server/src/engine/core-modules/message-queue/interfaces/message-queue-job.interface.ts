@@ -1,4 +1,4 @@
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// oxlint-disable-next-line @typescripttypescript/no-explicit-any
 export interface MessageQueueJob<T = any> {
   id: string;
   name: string;
@@ -12,6 +12,6 @@ export interface MessageQueueCronJobData<
 }
 
 export interface MessageQueueJobData {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
   [key: string]: any;
 }

@@ -1,5 +1,4 @@
-import { css, useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { format } from 'date-fns';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -14,8 +13,10 @@ import { getCalendarEventEndDate } from '@/activities/calendar/utils/getCalendar
 import { getCalendarEventStartDate } from '@/activities/calendar/utils/getCalendarEventStartDate';
 import { hasCalendarEventEnded } from '@/activities/calendar/utils/hasCalendarEventEnded';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { useOpenCalendarEventInCommandMenu } from '@/command-menu/hooks/useOpenCalendarEventInCommandMenu';
+import { useOpenCalendarEventInSidePanel } from '@/side-panel/hooks/useOpenCalendarEventInSidePanel';
+import { useContext } from 'react';
 import { IconArrowRight } from 'twenty-ui/display';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type CalendarEventRowProps = {
   calendarEvent: TimelineCalendarEvent;
@@ -24,70 +25,59 @@ type CalendarEventRowProps = {
 
 const StyledContainer = styled.div<{ showTitle?: boolean }>`
   align-items: center;
-  display: inline-flex;
-  gap: ${({ theme }) => theme.spacing(3)};
-  height: ${({ theme }) => theme.spacing(6)};
-  position: relative;
   cursor: ${({ showTitle }) => (showTitle ? 'pointer' : 'not-allowed')};
+  display: inline-flex;
+  gap: ${themeCssVariables.spacing[3]};
+  height: ${themeCssVariables.spacing[6]};
+  position: relative;
 `;
 
 const StyledAttendanceIndicator = styled.div<{ active?: boolean }>`
-  background-color: ${({ theme }) => theme.tag.background.gray};
+  background-color: ${({ active }) =>
+    active
+      ? themeCssVariables.tag.background.red
+      : themeCssVariables.tag.background.gray};
+  border-radius: ${themeCssVariables.border.radius.xs};
   height: 100%;
-  width: ${({ theme }) => theme.spacing(1)};
-  border-radius: ${({ theme }) => theme.border.radius.xs};
-
-  ${({ active, theme }) =>
-    active &&
-    css`
-      background-color: ${theme.tag.background.red};
-    `}
+  width: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledLabels = styled.div`
   align-items: center;
+  color: ${themeCssVariables.font.color.primary};
   display: flex;
-  color: ${({ theme }) => theme.font.color.primary};
-  gap: ${({ theme }) => theme.spacing(2)};
   flex: 1 0 auto;
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledTime = styled.div`
   align-items: center;
+  color: ${themeCssVariables.font.color.tertiary};
   display: flex;
-  color: ${({ theme }) => theme.font.color.tertiary};
-  gap: ${({ theme }) => theme.spacing(1)};
-  width: ${({ theme }) => theme.spacing(26)};
+  gap: ${themeCssVariables.spacing[1]};
+  width: ${themeCssVariables.spacing[26]};
 `;
 
 const StyledTitle = styled.div<{ active: boolean; canceled: boolean }>`
+  color: ${({ active }) =>
+    active ? themeCssVariables.font.color.primary : 'inherit'};
   flex: 1 0 auto;
+  font-weight: ${({ active }) =>
+    active ? themeCssVariables.font.weight.medium : 'inherit'};
   overflow: hidden;
+  text-decoration: ${({ canceled }) => (canceled ? 'line-through' : 'none')};
   text-overflow: ellipsis;
   white-space: nowrap;
-  width: ${({ theme }) => theme.spacing(10)};
-  ${({ theme, active }) =>
-    active &&
-    css`
-      color: ${theme.font.color.primary};
-      font-weight: ${theme.font.weight.medium};
-    `}
-
-  ${({ canceled }) =>
-    canceled &&
-    css`
-      text-decoration: line-through;
-    `}
+  width: ${themeCssVariables.spacing[10]};
 `;
 
 export const CalendarEventRow = ({
   calendarEvent,
   className,
 }: CalendarEventRowProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
-  const { openCalendarEventInCommandMenu } =
-    useOpenCalendarEventInCommandMenu();
+  const { openCalendarEventInSidePanel } = useOpenCalendarEventInSidePanel();
 
   const startsAt = getCalendarEventStartDate(calendarEvent);
   const endsAt = getCalendarEventEndDate(calendarEvent);
@@ -111,7 +101,7 @@ export const CalendarEventRow = ({
       onClick={
         showTitle
           ? () => {
-              openCalendarEventInCommandMenu(calendarEvent.id);
+              openCalendarEventInSidePanel(calendarEvent.id);
             }
           : undefined
       }

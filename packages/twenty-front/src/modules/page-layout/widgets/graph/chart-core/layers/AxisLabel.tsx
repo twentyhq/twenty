@@ -1,5 +1,6 @@
-import { useTheme } from '@emotion/react';
+import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 type AxisLabelProps = {
   label: string;
@@ -16,7 +17,7 @@ export const AxisLabel = ({
   fontSize,
   rotation,
 }: AxisLabelProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   return (
     <text

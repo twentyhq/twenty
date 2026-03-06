@@ -1,10 +1,11 @@
 import { NavigationDropTargetContext } from '@/navigation-menu-item/contexts/NavigationDropTargetContext';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { Droppable } from '@hello-pangea/dnd';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconLink, IconPlus } from 'twenty-ui/display';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { NavigationItemDropTarget } from '@/navigation-menu-item/components/NavigationItemDropTarget';
 import { WorkspaceNavigationMenuItemsFolder } from '@/navigation-menu-item/components/WorkspaceNavigationMenuItemsFolder';
@@ -24,20 +25,20 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
 
 const StyledWorkspaceDroppableList = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.betweenSiblingsGap};
+  gap: ${themeCssVariables.betweenSiblingsGap};
 `;
 
 type NavigationDrawerSectionForWorkspaceItemsProps = {
@@ -177,7 +178,7 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
           {(provided) => (
             <StyledWorkspaceDroppableList
               ref={provided.innerRef}
-              // eslint-disable-next-line react/jsx-props-no-spreading
+              // oxlint-disable-next-line react/jsx-props-no-spreading
               {...provided.droppableProps}
             >
               {filteredItems.map((item, index) => {

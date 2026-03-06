@@ -133,6 +133,7 @@ export const fromUniversalFlatFieldMetadataToFlatFieldMetadata = ({
     calendarViewIds: [],
     mainGroupByFieldMetadataViewIds: [],
     kanbanAggregateOperationViewIds: [],
+    viewSortIds: [],
     ...emptyUniversalForeignKeyAggregators,
   };
 };

@@ -1,20 +1,19 @@
+import { type FeatureFlagKey } from 'twenty-shared/types';
+
 import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { type PublicFeatureFlag } from 'src/engine/core-modules/feature-flag/constants/public-feature-flag.const';
-import { type FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { publicFeatureFlagValidator } from 'src/engine/core-modules/feature-flag/validates/is-public-feature-flag.validate';
 
-jest.mock(
-  'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum',
-  () => ({
-    FeatureFlagKey: {
-      mockKey1: 'MOCK_KEY_1',
-      mockKey2: 'MOCK_KEY_2',
-    },
-  }),
-);
+jest.mock('twenty-shared/types', () => ({
+  ...jest.requireActual('twenty-shared/types'),
+  FeatureFlagKey: {
+    mockKey1: 'MOCK_KEY_1',
+    mockKey2: 'MOCK_KEY_2',
+  },
+}));
 
 const mockPublicFeatureFlag = {
   key: 'MOCK_KEY_1',

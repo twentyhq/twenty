@@ -1,9 +1,10 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { AppPath } from 'twenty-shared/types';
 import { getImageAbsoluteURI, isDefined } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/display';
 import { UndecoratedLink } from 'twenty-ui/navigation';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useRedirectToDefaultDomain } from '~/modules/domain-manager/hooks/useRedirectToDefaultDomain';
 
@@ -15,36 +16,35 @@ type LogoProps = {
 };
 
 const StyledContainer = styled.div`
-  height: ${({ theme }) => theme.spacing(12)};
-  margin-bottom: ${({ theme }) => theme.spacing(4)};
-  margin-top: ${({ theme }) => theme.spacing(4)};
+  height: ${themeCssVariables.spacing[12]};
+  margin-bottom: ${themeCssVariables.spacing[4]};
+  margin-top: ${themeCssVariables.spacing[4]};
 
   position: relative;
-  width: ${({ theme }) => theme.spacing(12)};
+  width: ${themeCssVariables.spacing[12]};
 `;
 
 const StyledSecondaryLogo = styled.img`
-  border-radius: ${({ theme }) => theme.border.radius.xs};
-  height: ${({ theme }) => theme.spacing(6)};
-  width: ${({ theme }) => theme.spacing(6)};
+  border-radius: ${themeCssVariables.border.radius.xs};
+  height: ${themeCssVariables.spacing[6]};
+  width: ${themeCssVariables.spacing[6]};
 `;
 
 const StyledSecondaryLogoContainer = styled.div`
   align-items: center;
-  background-color: ${({ theme }) => theme.background.primary};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  bottom: ${({ theme }) => `-${theme.spacing(3)}`};
+  background-color: ${themeCssVariables.background.primary};
+  border-radius: ${themeCssVariables.border.radius.sm};
+  bottom: calc(-1 * ${themeCssVariables.spacing[3]});
   display: flex;
-  height: ${({ theme }) => theme.spacing(7)};
+  height: ${themeCssVariables.spacing[7]};
   justify-content: center;
 
   position: absolute;
-  right: ${({ theme }) => `-${theme.spacing(3)}`};
-  width: ${({ theme }) => theme.spacing(7)};
+  right: calc(-1 * ${themeCssVariables.spacing[3]});
+  width: ${themeCssVariables.spacing[7]};
 `;
 
-const StyledPrimaryLogo = styled.div<{ src: string }>`
-  background: url(${(props) => props.src});
+const StyledPrimaryLogo = styled.div`
   background-size: cover;
   height: 100%;
   width: 100%;
@@ -80,10 +80,14 @@ export const Logo = ({
           to={AppPath.SignInUp}
           onClick={redirectToDefaultDomain}
         >
-          <StyledPrimaryLogo src={primaryLogoUrl} />
+          <StyledPrimaryLogo
+            style={{ backgroundImage: `url(${primaryLogoUrl})` }}
+          />
         </UndecoratedLink>
       ) : (
-        <StyledPrimaryLogo src={primaryLogoUrl} />
+        <StyledPrimaryLogo
+          style={{ backgroundImage: `url(${primaryLogoUrl})` }}
+        />
       )}
       {isDefined(secondaryLogoUrl) ? (
         <StyledSecondaryLogoContainer>

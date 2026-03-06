@@ -1,5 +1,5 @@
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { format, getYear } from 'date-fns';
 
@@ -13,7 +13,7 @@ import { useCalendarEvents } from '@/activities/calendar/hooks/useCalendarEvents
 import { CustomResolverFetchMoreLoader } from '@/activities/components/CustomResolverFetchMoreLoader';
 import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
 import { useCustomResolver } from '@/activities/hooks/useCustomResolver';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { H3Title } from 'twenty-ui/display';
 import {
@@ -25,6 +25,7 @@ import {
   EMPTY_PLACEHOLDER_TRANSITION_PROPS,
   Section,
 } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type TimelineCalendarEventsWithTotal } from '~/generated/graphql';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 
@@ -32,18 +33,18 @@ const StyledContainer = styled.div`
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(8)};
-  padding: ${({ theme }) => theme.spacing(6)};
-  width: 100%;
+  gap: ${themeCssVariables.spacing[8]};
   overflow: scroll;
+  padding: ${themeCssVariables.spacing[6]};
+  width: 100%;
 `;
 
 const StyledYear = styled.span`
-  color: ${({ theme }) => theme.font.color.light};
+  color: ${themeCssVariables.font.color.light};
 `;
 
 const StyledTitleContainer = styled.div`
-  margin-bottom: ${({ theme }) => theme.spacing(4)};
+  margin-bottom: ${themeCssVariables.spacing[4]};
 `;
 
 export const CalendarEventsCard = () => {
@@ -107,7 +108,7 @@ export const CalendarEventsCard = () => {
     // TODO: change animated placeholder
     return (
       <AnimatedPlaceholderEmptyContainer
-        // eslint-disable-next-line react/jsx-props-no-spreading
+        // oxlint-disable-next-line react/jsx-props-no-spreading
         {...EMPTY_PLACEHOLDER_TRANSITION_PROPS}
       >
         <AnimatedPlaceholder type="noMatchRecord" />

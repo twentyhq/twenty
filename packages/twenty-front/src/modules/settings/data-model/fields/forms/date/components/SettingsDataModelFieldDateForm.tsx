@@ -10,10 +10,11 @@ import { useDateSettingsFormInitialValues } from '@/settings/data-model/fields/f
 import { getDisplayFormatLabel } from '@/settings/data-model/fields/forms/date/utils/getDisplayFormatLabel';
 import { Select } from '@/ui/input/components/Select';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { IconSlash } from 'twenty-ui/display';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const fieldDateSettings = z.discriminatedUnion('displayFormat', [
   z.object({
@@ -32,8 +33,8 @@ export const settingsDataModelFieldDateFormSchema = z.object({
   settings: fieldDateSettings.optional(),
 });
 
-const StyledTextInput = styled(SettingsTextInput)`
-  padding: ${({ theme }) => theme.spacing(4)};
+const StyledTextInputContainer = styled.div`
+  padding: ${themeCssVariables.spacing[4]};
   padding-top: 0;
 `;
 
@@ -116,14 +117,16 @@ export const SettingsDataModelFieldDateForm = ({
           control={control}
           defaultValue={initialCustomUnicodeDateFormat}
           render={({ field: { onChange, value } }) => (
-            <StyledTextInput
-              instanceId="custom-date-format-input"
-              placeholder={t`Format e.g. d-MMM-y (qqq''yy)`}
-              value={value}
-              onChange={(value) => onChange(value)}
-              disabled={false}
-              fullWidth
-            />
+            <StyledTextInputContainer>
+              <SettingsTextInput
+                instanceId="custom-date-format-input"
+                placeholder={t`Format e.g. d-MMM-y (qqq''yy)`}
+                value={value}
+                onChange={(value) => onChange(value)}
+                disabled={false}
+                fullWidth
+              />
+            </StyledTextInputContainer>
           )}
         />
       </AnimatedExpandableContainer>

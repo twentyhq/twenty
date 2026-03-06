@@ -9,7 +9,7 @@ export const getVirtualizationOverscanWindow = (
 ) => {
   const numberOfRowsDisplayedInTable = Math.min(
     Math.floor(scrollWrapperHeight / (RECORD_TABLE_ROW_HEIGHT + 1)),
-    30,
+    40,
   );
 
   const halfNumberOfRowsVisible = Math.floor(numberOfRowsDisplayedInTable / 2);

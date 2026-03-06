@@ -6,7 +6,7 @@ import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { recordIndexActionMenuDropdownPositionComponentState } from '@/action-menu/states/recordIndexActionMenuDropdownPositionComponentState';
 import { getActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getActionMenuDropdownIdFromActionMenuId';
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -16,20 +16,20 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
 import { IconLayoutSidebarRightExpand } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
 
 const StyledDropdownMenuContainer = styled.div`
-  width: 100%;
-  height: 100%;
-
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
   align-items: center;
+  display: flex;
+
+  flex-direction: column;
+  height: 100%;
+  justify-content: center;
+  width: 100%;
 `;
 
 export const RecordIndexActionMenuDropdown = () => {
@@ -54,7 +54,7 @@ export const RecordIndexActionMenuDropdown = () => {
     dropdownId,
   );
 
-  const { openCommandMenu } = useCommandMenu();
+  const { openSidePanelMenu } = useSidePanelMenu();
 
   const selectedItemIdArray = [
     ...recordIndexActions.map((action) => action.key),
@@ -95,14 +95,14 @@ export const RecordIndexActionMenuDropdown = () => {
                   key="more-actions"
                   onEnter={() => {
                     closeDropdown(dropdownId);
-                    openCommandMenu();
+                    openSidePanelMenu();
                   }}
                 >
                   <MenuItem
                     LeftIcon={IconLayoutSidebarRightExpand}
                     onClick={() => {
                       closeDropdown(dropdownId);
-                      openCommandMenu();
+                      openSidePanelMenu();
                     }}
                     focused={selectedItemId === 'more-actions'}
                     text={t`More actions`}

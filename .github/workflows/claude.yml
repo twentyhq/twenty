@@ -23,7 +23,7 @@ jobs:
       (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, '@claude') && github.event.comment.user.type != 'Bot') ||
       (github.event_name == 'pull_request_review' && contains(github.event.review.body, '@claude') && github.event.review.user.type != 'Bot') ||
       (github.event_name == 'issues' && (contains(github.event.issue.body, '@claude') || contains(github.event.issue.title, '@claude')))
-    runs-on: depot-ubuntu-24.04
+    runs-on: ubuntu-latest
     timeout-minutes: 60
     permissions:
       contents: write
@@ -96,7 +96,7 @@ jobs:
 
   claude-cross-repo:
     if: github.event_name == 'repository_dispatch'
-    runs-on: depot-ubuntu-24.04
+    runs-on: ubuntu-latest
     timeout-minutes: 60
     permissions:
       contents: write
@@ -164,4 +164,4 @@ jobs:
           token: ${{ secrets.CI_PRIVILEGED_DISPATCH_TOKEN }}
           repository: twentyhq/ci-privileged
           event-type: claude-cross-repo-response
-          client-payload: '{"repo": ${{ toJSON(steps.prompt.outputs.repo) }}, "issue_number": ${{ toJSON(steps.prompt.outputs.issue_number) }}, "run_id": ${{ toJSON(github.run_id) }}, "run_url": ${{ toJSON(format('{0}/{1}/actions/runs/{2}', github.server_url, github.repository, github.run_id)) }}}'
+          client-payload: '{"repo": ${{ toJSON(steps.prompt.outputs.repo) }}, "issue_number": ${{ toJSON(steps.prompt.outputs.issue_number) }}, "run_id": ${{ toJSON(github.run_id) }}, "run_url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"}'

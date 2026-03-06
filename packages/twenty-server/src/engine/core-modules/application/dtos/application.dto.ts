@@ -10,7 +10,8 @@ import {
 import GraphQLJSON from 'graphql-type-json';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { ApplicationVariableEntityDTO } from 'src/engine/core-modules/applicationVariable/dtos/application-variable.dto';
+import { ApplicationRegistrationSummaryDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-summary.dto';
+import { ApplicationVariableEntityDTO } from 'src/engine/core-modules/application/application-variable/dtos/application-variable.dto';
 import { AgentDTO } from 'src/engine/metadata-modules/ai/ai-agent/dtos/agent.dto';
 import { LogicFunctionDTO } from 'src/engine/metadata-modules/logic-function/dtos/logic-function.dto';
 import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
@@ -29,12 +30,12 @@ export class ApplicationDTO {
 
   @IsOptional()
   @IsString()
-  @Field()
+  @Field({ nullable: true })
   description?: string;
 
   @IsOptional()
   @IsString()
-  @Field()
+  @Field({ nullable: true })
   version?: string;
 
   @IsString()
@@ -63,6 +64,11 @@ export class ApplicationDTO {
 
   @Field(() => GraphQLJSON)
   availablePackages: Record<string, string>;
+
+  @IsOptional()
+  @IsUUID()
+  @Field(() => UUIDScalarType, { nullable: true })
+  applicationRegistrationId?: string;
 
   @Field(() => Boolean)
   @IsBoolean()
@@ -93,4 +99,8 @@ export class ApplicationDTO {
 
   @Field(() => [ApplicationVariableEntityDTO])
   applicationVariables?: ApplicationVariableEntityDTO[];
+
+  @IsOptional()
+  @Field(() => ApplicationRegistrationSummaryDTO, { nullable: true })
+  applicationRegistration?: ApplicationRegistrationSummaryDTO;
 }

@@ -1,24 +1,26 @@
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import {
   type AnimationControls,
   motion,
   type TargetAndTransition,
 } from 'framer-motion';
-
-const StyledAnimatedContainer = styled(motion.span)`
+import { useContext } from 'react';
+import { ThemeContext } from 'twenty-ui/theme-constants';
+const StyledAnimatedContainerBase = styled.span`
   display: block;
 `;
+
+const StyledAnimatedContainer = motion.create(StyledAnimatedContainerBase);
 
 export const NavigationDrawerAnimatedCollapseWrapper = ({
   children,
 }: {
   children: React.ReactNode;
 }) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const isSettingsPage = useIsSettingsPage();
   const isNavigationDrawerExpanded = useAtomStateValue(
     isNavigationDrawerExpandedState,
@@ -47,7 +49,9 @@ export const NavigationDrawerAnimatedCollapseWrapper = ({
     <StyledAnimatedContainer
       initial={false}
       animate={animate}
-      transition={{ duration: theme.animation.duration.normal }}
+      transition={{
+        duration: theme.animation.duration.normal,
+      }}
     >
       {children}
     </StyledAnimatedContainer>

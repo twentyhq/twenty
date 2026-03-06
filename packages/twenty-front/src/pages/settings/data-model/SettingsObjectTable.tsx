@@ -5,7 +5,8 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
 import { useCombinedGetTotalCount } from '@/object-record/multiple-objects/hooks/useCombinedGetTotalCount';
 import { SettingsObjectMetadataItemTableRow } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRow';
-import { StyledObjectTableRow } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRowStyledComponents';
+import { TableRow } from '@/ui/layout/table/components/TableRow';
+import { SETTINGS_OBJECT_TABLE_ROW_GRID_TEMPLATE_COLUMNS } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRowStyledComponents';
 import { SettingsObjectInactiveMenuDropDown } from '@/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown';
 import { getItemTagInfo } from '@/settings/data-model/utils/getItemTagInfo';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -17,25 +18,25 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { type ReactNode, useMemo, useState } from 'react';
+import { type ReactNode, useContext, useMemo, useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconArchive, IconChevronRight, IconSettings } from 'twenty-ui/display';
 import { SearchInput } from 'twenty-ui/input';
 import { MenuItemToggle } from 'twenty-ui/navigation';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { GET_SETTINGS_OBJECT_TABLE_METADATA } from '~/pages/settings/data-model/constants/SettingsObjectTableMetadata';
 import type { SettingsObjectTableItem } from '~/pages/settings/data-model/types/SettingsObjectTableItem';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
-const StyledIconChevronRight = styled(IconChevronRight)`
-  color: ${({ theme }) => theme.font.color.tertiary};
+const StyledIconChevronRightContainer = styled.div`
+  color: ${themeCssVariables.font.color.tertiary};
 `;
 
 const StyledSearchInputContainer = styled.div`
-  padding-bottom: ${({ theme }) => theme.spacing(2)};
+  padding-bottom: ${themeCssVariables.spacing[2]};
 `;
 
 export const SettingsObjectTable = ({
@@ -45,9 +46,8 @@ export const SettingsObjectTable = ({
   objectMetadataItems: ObjectMetadataItem[];
   withSearchBar?: boolean;
 }) => {
+  const { theme } = useContext(ThemeContext);
   const { t } = useLingui();
-
-  const theme = useTheme();
 
   const isAdvancedModeEnabled = useAtomStateValue(isAdvancedModeEnabledState);
 
@@ -171,7 +171,9 @@ export const SettingsObjectTable = ({
       )}
 
       <Table>
-        <StyledObjectTableRow>
+        <TableRow
+          gridTemplateColumns={SETTINGS_OBJECT_TABLE_ROW_GRID_TEMPLATE_COLUMNS}
+        >
           {GET_SETTINGS_OBJECT_TABLE_METADATA.fields.map(
             (settingsObjectsTableMetadataField) => (
               <SortableTableHeader
@@ -185,7 +187,7 @@ export const SettingsObjectTable = ({
             ),
           )}
           <TableHeader></TableHeader>
-        </StyledObjectTableRow>
+        </TableRow>
         {filteredObjectSettingsItems.map((objectSettingsItem) => {
           const isActive = objectSettingsItem.objectMetadataItem.isActive;
 
@@ -196,10 +198,12 @@ export const SettingsObjectTable = ({
               totalObjectCount={objectSettingsItem.totalObjectCount}
               action={
                 isActive ? (
-                  <StyledIconChevronRight
-                    size={theme.icon.size.md}
-                    stroke={theme.icon.stroke.sm}
-                  />
+                  <StyledIconChevronRightContainer>
+                    <IconChevronRight
+                      size={theme.icon.size.md}
+                      stroke={theme.icon.stroke.sm}
+                    />
+                  </StyledIconChevronRightContainer>
                 ) : (
                   <SettingsObjectInactiveMenuDropDown
                     isCustomObject={

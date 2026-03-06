@@ -2,9 +2,9 @@ import { styled } from '@linaria/react';
 import { Avatar } from '@ui/display/avatar/components/Avatar';
 import { type AvatarType } from '@ui/display/avatar/types/AvatarType';
 import { type IconComponent } from '@ui/display/icon/types/IconComponent';
-import { ThemeContext } from '@ui/theme';
-import { type Nullable } from '@ui/utilities';
+import { ThemeContext } from '@ui/theme-constants';
 import { useContext } from 'react';
+import { type Nullable } from '@ui/utilities';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledIconWithBackgroundContainer = styled.div<{
@@ -50,6 +50,7 @@ export const AvatarOrIcon = ({
   onClick,
 }: AvatarOrIconProps) => {
   const { theme } = useContext(ThemeContext);
+
   if (!isDefined(Icon)) {
     return (
       <Avatar
@@ -67,10 +68,7 @@ export const AvatarOrIcon = ({
 
   if (isIconInverted || isDefined(IconBackgroundColor)) {
     return (
-      <StyledAvatarOrIconWrapper
-        isClickable={isClickable}
-        onClick={onClick}
-      >
+      <StyledAvatarOrIconWrapper isClickable={isClickable} onClick={onClick}>
         <StyledIconWithBackgroundContainer
           backgroundColor={
             IconBackgroundColor ?? theme.background.invertedSecondary
@@ -87,10 +85,7 @@ export const AvatarOrIcon = ({
   }
 
   return (
-    <StyledAvatarOrIconWrapper
-      isClickable={isClickable}
-      onClick={onClick}
-    >
+    <StyledAvatarOrIconWrapper isClickable={isClickable} onClick={onClick}>
       <Icon
         size={theme.icon.size.sm}
         stroke={theme.icon.stroke.sm}

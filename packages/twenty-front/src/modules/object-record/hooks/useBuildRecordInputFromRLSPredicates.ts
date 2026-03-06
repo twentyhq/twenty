@@ -5,7 +5,7 @@ import { convertPredicateToRecordFilter } from '@/settings/roles/role-permission
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { CoreObjectNameSingular, RelationType } from 'twenty-shared/types';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
@@ -15,7 +15,6 @@ import { buildCompositeValueFromSubField } from '@/object-record/record-table/ut
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isUndefined } from '@sniptt/guards';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { RelationType } from 'twenty-shared/types';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 const mergeCompositeValues = (

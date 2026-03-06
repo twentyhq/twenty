@@ -1,6 +1,7 @@
-import { useContext } from 'react';
-import { type AnimationDuration, ThemeContext } from '@ui/theme';
 import { AnimatePresence, motion } from 'framer-motion';
+import { useContext } from 'react';
+import { type AnimationDuration } from '@ui/theme';
+import { ThemeContext } from '@ui/theme-constants';
 
 type AnimatedEaseInOutProps = {
   isOpen: boolean;

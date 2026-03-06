@@ -3,7 +3,7 @@ import { RecordIndexContextProvider } from '@/object-record/record-index/context
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { getActionMenuIdFromRecordIndexId } from '@/action-menu/utils/getActionMenuIdFromRecordIndexId';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
-import { MainContainerLayoutWithCommandMenu } from '@/object-record/components/MainContainerLayoutWithCommandMenu';
+import { MainContainerLayoutWithSidePanel } from '@/object-record/components/MainContainerLayoutWithSidePanel';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { lastShowPageRecordIdState } from '@/object-record/record-field/ui/states/lastShowPageRecordId';
@@ -17,7 +17,7 @@ import { useRecordIndexIdFromCurrentContextStore } from '@/object-record/record-
 import { RECORD_INDEX_DRAG_SELECT_BOUNDARY_CLASS } from '@/ui/utilities/drag-select/constants/RecordIndecDragSelectBoundaryClass';
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useCallback } from 'react';
 import { NotFound } from '~/pages/not-found/NotFound';
 import { useStore } from 'jotai';
@@ -95,14 +95,14 @@ export const RecordIndexContainerGater = () => {
             >
               <PageTitle title={objectMetadataItem.labelPlural} />
               <RecordIndexPageHeader />
-              <MainContainerLayoutWithCommandMenu>
+              <MainContainerLayoutWithSidePanel>
                 <StyledIndexContainer
                   className={RECORD_INDEX_DRAG_SELECT_BOUNDARY_CLASS}
                 >
                   <RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect />
                   <RecordIndexContainer />
                 </StyledIndexContainer>
-              </MainContainerLayoutWithCommandMenu>
+              </MainContainerLayoutWithSidePanel>
             </ActionMenuComponentInstanceContext.Provider>
           </RecordComponentInstanceContextsWrapper>
           <RecordIndexLoadBaseOnContextStoreEffect />

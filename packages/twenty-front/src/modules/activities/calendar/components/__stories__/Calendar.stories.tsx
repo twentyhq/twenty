@@ -4,7 +4,7 @@ import { HttpResponse, graphql } from 'msw';
 
 import { CalendarEventsCard } from '@/activities/calendar/components/CalendarEventsCard';
 import { getTimelineCalendarEventsFromCompanyId } from '@/activities/calendar/graphql/queries/getTimelineCalendarEventsFromCompanyId';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { PageLayoutType } from '~/generated-metadata/graphql';
@@ -28,7 +28,7 @@ const meta: Meta<typeof CalendarEventsCard> = {
             targetObjectNameSingular: CoreObjectNameSingular.Company,
           },
           layoutType: PageLayoutType.RECORD_PAGE,
-          isInRightDrawer: false,
+          isInSidePanel: false,
         }}
       >
         <Story />

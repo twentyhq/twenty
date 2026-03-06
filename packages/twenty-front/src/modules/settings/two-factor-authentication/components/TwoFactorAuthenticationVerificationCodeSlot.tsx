@@ -1,35 +1,34 @@
-import { css } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type SlotProps } from 'input-otp';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledSlot = styled.div<{ isActive: boolean }>`
-  position: relative;
-  width: 24px;
-  height: 32px;
-  font-size: ${({ theme }) => theme.font.size.md};
-  display: flex;
   align-items: center;
+  background-color: ${themeCssVariables.background.transparent.lighter};
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  border-radius: ${themeCssVariables.border.radius.sm};
+  display: flex;
+  font-size: ${themeCssVariables.font.size.md};
+  height: 32px;
   justify-content: center;
-  transition: all 0.3s;
-  background-color: ${({ theme }) => theme.background.transparent.lighter};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+  outline: 0;
+  outline-color: ${({ isActive }) =>
+    isActive
+      ? themeCssVariables.border.color.strong
+      : themeCssVariables.border.color.medium};
+  outline-color: ${themeCssVariables.border.color.medium};
 
   .group:hover &,
   .group:focus-within & {
-    border-color: ${({ theme }) => theme.border.color.medium};
+    border-color: ${themeCssVariables.border.color.medium};
   }
 
-  outline: 0;
-  outline-color: ${({ theme }) => theme.border.color.medium};
+  outline-style: ${({ isActive }) => (isActive ? 'solid' : 'none')};
+  outline-width: ${({ isActive }) => (isActive ? '1px' : '0')};
 
-  ${({ isActive, theme }) =>
-    isActive &&
-    css`
-      outline-width: 1px;
-      outline-style: solid;
-      outline-color: ${theme.border.color.strong};
-    `}
+  position: relative;
+  transition: all 0.3s;
+  width: 24px;
 `;
 
 const StyledCaretContainer = styled.div`
@@ -61,9 +60,9 @@ const StyledInputChar = styled.div`
 `;
 
 const StyledCaret = styled.div`
-  width: 1px;
+  background-color: ${themeCssVariables.font.color.primary};
   height: 20px;
-  background-color: ${({ theme }) => theme.font.color.primary};
+  width: 1px;
 `;
 
 type TwoFactorAuthenticationVerificationCodeSlotProps = SlotProps;

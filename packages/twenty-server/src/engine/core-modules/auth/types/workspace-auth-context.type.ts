@@ -1,4 +1,4 @@
-import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { type RawAuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 
 export type WorkspaceAuthContextType =
   | 'system'
@@ -9,27 +9,27 @@ export type WorkspaceAuthContextType =
 
 interface BaseWorkspaceAuthContext {
   type: WorkspaceAuthContextType;
-  workspace: NonNullable<AuthContext['workspace']>;
+  workspace: NonNullable<RawAuthContext['workspace']>;
   workspaceMetadataVersion?: string;
 }
 
 export interface ApiKeyWorkspaceAuthContext extends BaseWorkspaceAuthContext {
   type: 'apiKey';
-  apiKey: NonNullable<AuthContext['apiKey']>;
+  apiKey: NonNullable<RawAuthContext['apiKey']>;
 }
 
 export interface UserWorkspaceAuthContext extends BaseWorkspaceAuthContext {
   type: 'user';
-  userWorkspaceId: NonNullable<AuthContext['userWorkspaceId']>;
-  user: NonNullable<AuthContext['user']>;
-  workspaceMemberId: NonNullable<AuthContext['workspaceMemberId']>;
-  workspaceMember: NonNullable<AuthContext['workspaceMember']>;
+  userWorkspaceId: NonNullable<RawAuthContext['userWorkspaceId']>;
+  user: NonNullable<RawAuthContext['user']>;
+  workspaceMemberId: NonNullable<RawAuthContext['workspaceMemberId']>;
+  workspaceMember: NonNullable<RawAuthContext['workspaceMember']>;
 }
 
 export interface ApplicationWorkspaceAuthContext
   extends BaseWorkspaceAuthContext {
   type: 'application';
-  application: NonNullable<AuthContext['application']>;
+  application: NonNullable<RawAuthContext['application']>;
 }
 
 export interface SystemWorkspaceAuthContext extends BaseWorkspaceAuthContext {
@@ -39,8 +39,8 @@ export interface SystemWorkspaceAuthContext extends BaseWorkspaceAuthContext {
 export interface PendingActivationUserWorkspaceAuthContext
   extends BaseWorkspaceAuthContext {
   type: 'pendingActivationUser';
-  userWorkspaceId: NonNullable<AuthContext['userWorkspaceId']>;
-  user: NonNullable<AuthContext['user']>;
+  userWorkspaceId: NonNullable<RawAuthContext['userWorkspaceId']>;
+  user: NonNullable<RawAuthContext['user']>;
 }
 
 export type WorkspaceAuthContext =

@@ -1,23 +1,24 @@
 import { DROPDOWN_MENU_ITEMS_CONTAINER_MAX_HEIGHT } from '@/ui/layout/dropdown/constants/DropdownMenuItemsContainerMaxHeight';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledExternalContainer = styled.div<{
   maxHeight?: number;
 }>`
-  --padding: ${({ theme }) => theme.spacing(1)};
+  --padding: ${themeCssVariables.spacing[1]};
 
   align-items: flex-start;
+  box-sizing: border-box;
+
   display: flex;
-
   flex-direction: column;
-  max-height: ${({ maxHeight }) => (maxHeight ? `${maxHeight}px` : 'none')};
-
-  width: 100%;
 
   height: fit-content;
 
+  max-height: ${({ maxHeight }) => (maxHeight ? `${maxHeight}px` : 'none')};
+
   padding: var(--padding);
-  box-sizing: border-box;
+  width: 100%;
 `;
 
 const StyledScrollableContainer = styled.div<{ maxHeight?: number }>`
@@ -25,14 +26,14 @@ const StyledScrollableContainer = styled.div<{ maxHeight?: number }>`
 
   display: flex;
   max-height: ${({ maxHeight }) => (maxHeight ? `${maxHeight}px` : 'none')};
+  overflow-y: auto;
+
+  scrollbar-color: ${themeCssVariables.border.color.medium} transparent;
+  scrollbar-width: 4px;
   width: 100%;
 
-  overflow-y: auto;
-  scrollbar-color: ${({ theme }) => theme.border.color.medium} transparent;
-  scrollbar-width: 4px;
-
   *::-webkit-scrollbar-thumb {
-    border-radius: ${({ theme }) => theme.border.radius.sm};
+    border-radius: ${themeCssVariables.border.radius.sm};
   }
 `;
 

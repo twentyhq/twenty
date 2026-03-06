@@ -1,6 +1,8 @@
 import react from '@vitejs/plugin-react-swc';
 import wyw from '@wyw-in-js/vite';
+import * as fs from 'fs';
 import * as path from 'path';
+import { createWywProfilingPlugin } from 'twenty-shared/vite';
 import { defineConfig } from 'vite';
 import checker from 'vite-plugin-checker';
 import dts, { type PluginOptions } from 'vite-plugin-dts';
@@ -12,7 +14,7 @@ type Checkers = Parameters<typeof checker>[0];
 import packageJson from './package.json';
 
 const entries = Object.keys(packageJson.exports)
-  .filter((el) => el !== './style.css')
+  .filter((el) => !el.endsWith('.css'))
   .map((module) => `src/${module}/index.ts`);
 
 const entryFileNames = (chunk: any, extension: 'cjs' | 'mjs') => {
@@ -54,11 +56,14 @@ export default defineConfig(({ command }) => {
     tsconfigPath: tsConfigPath,
   };
 
+  const BUNDLED_DEPS = ['@tabler/icons-react'];
+
   return {
     resolve: {
       alias: {
         '@ui/': path.resolve(__dirname, 'src') + '/',
         '@assets/': path.resolve(__dirname, 'src/assets') + '/',
+        '@tabler/icons-react': '@tabler/icons-react/dist/esm/icons/index.mjs',
       },
     },
     css: {
@@ -81,13 +86,25 @@ export default defineConfig(({ command }) => {
       svgr(),
       dts(dtsConfig),
       checker(checkersConfig),
-      {
-        ...wyw({
+      createWywProfilingPlugin(
+        wyw({
+          include: [path.resolve(__dirname, 'src') + '/**/*.{ts,tsx}'],
           babelOptions: {
             presets: ['@babel/preset-typescript', '@babel/preset-react'],
           },
         }),
-        enforce: 'pre',
+      ),
+      {
+        name: 'copy-theme-css',
+        closeBundle() {
+          const themeCssFiles = ['theme-light.css', 'theme-dark.css'];
+          for (const file of themeCssFiles) {
+            fs.copyFileSync(
+              path.resolve(__dirname, `src/theme-constants/${file}`),
+              path.resolve(__dirname, `dist/${file}`),
+            );
+          }
+        },
       },
     ],
     build: {
@@ -108,7 +125,9 @@ export default defineConfig(({ command }) => {
         name: 'twenty-ui',
       },
       rollupOptions: {
-        external: Object.keys(packageJson.dependencies || {}),
+        external: Object.keys(packageJson.dependencies || {}).filter(
+          (dep) => !BUNDLED_DEPS.includes(dep),
+        ),
         output: [
           {
             assetFileNames: 'style.css',

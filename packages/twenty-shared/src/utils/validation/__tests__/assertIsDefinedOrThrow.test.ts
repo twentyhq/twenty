@@ -31,7 +31,7 @@ describe('assertIsDefinedOrThrow', () => {
   });
 
   it('narrows the type after assertion (compile-time check)', () => {
-    // eslint-disable-next-line prefer-arrow/prefer-arrow-functions
+    // oxlint-disable-next-line prefer-arrow/prefer-arrow-functions
     function expectString(s: string) {
       expect(typeof s).toBe('string');
     }

@@ -65,9 +65,9 @@ export class RecordInputTransformerService {
 
   private async transformFieldValue(
     fieldType: FieldMetadataType,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
     value: any,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
   ): Promise<any> {
     if (!isDefined(value)) {
       return value;
@@ -95,7 +95,7 @@ export class RecordInputTransformerService {
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
   private stringifySubFields(fieldMetadataType: FieldMetadataType, value: any) {
     const compositeType = compositeTypeDefinitions.get(fieldMetadataType);
 
@@ -124,7 +124,7 @@ export class RecordInputTransformerService {
     );
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
   private parseSubFields(fieldMetadataType: FieldMetadataType, value: any) {
     const compositeType = compositeTypeDefinitions.get(fieldMetadataType);
 
@@ -133,7 +133,7 @@ export class RecordInputTransformerService {
     }
 
     return Object.entries(value).reduce(
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // oxlint-disable-next-line @typescripttypescript/no-explicit-any
       (acc, [subFieldName, subFieldValue]: [string, any]) => {
         const subFieldType = compositeType.properties.find(
           (property) => property.name === subFieldName,

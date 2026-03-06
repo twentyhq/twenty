@@ -1,5 +1,4 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { msg } from '@lingui/core/macro';
 import { i18n } from '@lingui/core';
 import { useLingui } from '@lingui/react/macro';
@@ -33,13 +32,14 @@ import { WorkflowFindRecordsFilters } from '@/workflow/workflow-steps/workflow-a
 import { WorkflowFindRecordsFiltersEffect } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowFindRecordsFiltersEffect';
 import { WorkflowFindRecordsSorts } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowFindRecordsSorts';
 import { WorkflowObjectDropdownContent } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowObjectDropdownContent';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledLabel = styled.span`
-  color: ${({ theme }) => theme.font.color.light};
+  color: ${themeCssVariables.font.color.light};
   display: block;
-  font-size: ${({ theme }) => theme.font.size.xs};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  margin-bottom: ${({ theme }) => theme.spacing(1)};
+  font-size: ${themeCssVariables.font.size.xs};
+  font-weight: ${themeCssVariables.font.weight.semiBold};
+  margin-bottom: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledRecordTypeSelectContainer = styled.div<{ fullWidth?: boolean }>`
@@ -81,7 +81,6 @@ export const WorkflowEditActionFindRecords = ({
   action,
   actionOptions,
 }: WorkflowEditActionFindRecordsProps) => {
-  const theme = useTheme();
   const { t } = useLingui();
   const maxRecordsFormatted = QUERY_MAX_RECORDS.toLocaleString();
 
@@ -202,7 +201,7 @@ export const WorkflowEditActionFindRecords = ({
                 />
               )
             }
-            dropdownOffset={{ y: parseInt(theme.spacing(1), 10) }}
+            dropdownOffset={{ y: 4 }}
           />
         </StyledRecordTypeSelectContainer>
 

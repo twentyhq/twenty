@@ -5,27 +5,28 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 
 import { isNonEmptyString } from '@sniptt/guards';
 
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
 import { useGetRecordFilterDisplayValue } from '@/object-record/record-filter/hooks/useGetRecordFilterDisplayValue';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 // TODO: factorize this with https://github.com/twentyhq/core-team-issues/issues/752
 const StyledControlContainer = styled.div`
-  display: flex;
   align-items: center;
-  gap: ${({ theme }) => theme.spacing(1)};
+  background-color: ${themeCssVariables.background.transparent.lighter};
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  border-radius: ${themeCssVariables.border.radius.sm};
   box-sizing: border-box;
-  height: ${({ theme }) => theme.spacing(8)};
-  max-width: 100%;
-  padding: 0 ${({ theme }) => theme.spacing(2)};
-  background-color: ${({ theme }) => theme.background.transparent.lighter};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  color: ${({ theme }) => theme.font.color.primary};
+  color: ${themeCssVariables.font.color.primary};
   cursor: pointer;
+  display: flex;
+  gap: ${themeCssVariables.spacing[1]};
+  height: ${themeCssVariables.spacing[8]};
+  max-width: 100%;
+  padding: 0 ${themeCssVariables.spacing[2]};
   text-align: left;
 `;
 

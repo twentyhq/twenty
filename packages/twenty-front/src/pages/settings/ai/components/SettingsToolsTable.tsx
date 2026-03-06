@@ -1,6 +1,6 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useMemo, useState } from 'react';
+import { useContext, useMemo, useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
 
 import { useGetToolIndex } from '@/ai/hooks/useGetToolIndex';
@@ -11,7 +11,6 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
-import { useTheme } from '@emotion/react';
 import { useNavigate } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
@@ -23,51 +22,52 @@ import {
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 import { SettingsSystemToolTableRow } from './SettingsSystemToolTableRow';
+import { TableRow } from '@/ui/layout/table/components/TableRow';
 import {
+  TOOL_TABLE_ROW_GRID_TEMPLATE_COLUMNS,
   SettingsToolTableRow,
-  StyledToolTableRow,
 } from './SettingsToolTableRow';
 
 const StyledSearchAndFilterContainer = styled.div`
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
   align-items: center;
-  padding-bottom: ${({ theme }) => theme.spacing(2)};
+  display: flex;
+  gap: ${themeCssVariables.spacing[2]};
+  padding-bottom: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledSearchInput = styled(SettingsTextInput)`
+const StyledSearchInputContainer = styled.div`
   flex: 1;
   width: 100%;
 `;
 
-const StyledTableHeaderRow = styled(StyledToolTableRow)`
-  margin-bottom: ${({ theme }) => theme.spacing(2)};
+const StyledTableHeaderRowContainer = styled.div`
+  margin-bottom: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledFooterContainer = styled.div`
   align-items: center;
   display: flex;
   justify-content: flex-end;
-  margin-top: ${({ theme }) => theme.spacing(4)};
+  margin-top: ${themeCssVariables.spacing[4]};
 `;
 
 export const SettingsToolsTable = () => {
+  const { theme } = useContext(ThemeContext);
   const logicFunctions = useAtomStateValue(logicFunctionsState);
   const { toolIndex, loading: toolIndexLoading } = useGetToolIndex();
   const { createLogicFunction } = usePersistLogicFunction();
 
   const { t } = useLingui();
-  const theme = useTheme();
   const navigate = useNavigate();
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
   const [customSearchTerm, setCustomSearchTerm] = useState('');
   const [builtInSearchTerm, setBuiltInSearchTerm] = useState('');
   const [isCreating, setIsCreating] = useState(false);
 
-  // Filter to only show logic functions that are marked as tools
   const tools = useMemo(
     () => logicFunctions.filter((fn) => fn.isTool === true),
     [logicFunctions],
@@ -88,7 +88,6 @@ export const SettingsToolsTable = () => {
     [tools, customSearchTerm],
   );
 
-  // System tools from the tool index (excluding logic function tools which are shown separately)
   const systemTools = useMemo(
     () =>
       toolIndex.filter(
@@ -128,8 +127,6 @@ export const SettingsToolsTable = () => {
         const newLogicFunction = result.response.data.createOneLogicFunction;
         enqueueSuccessSnackBar({ message: t`Tool created` });
 
-        // Navigate to the logic function detail page
-        // The applicationId might be null for workspace-level functions
         const applicationId = (newLogicFunction as { applicationId?: string })
           .applicationId;
         if (isDefined(applicationId)) {
@@ -175,20 +172,26 @@ export const SettingsToolsTable = () => {
           description={t`Custom tools created in your workspace`}
         />
         <StyledSearchAndFilterContainer>
-          <StyledSearchInput
-            instanceId="custom-tool-table-search"
-            LeftIcon={IconSearch}
-            placeholder={t`Search a custom tool...`}
-            value={customSearchTerm}
-            onChange={setCustomSearchTerm}
-          />
+          <StyledSearchInputContainer>
+            <SettingsTextInput
+              instanceId="custom-tool-table-search"
+              LeftIcon={IconSearch}
+              placeholder={t`Search a custom tool...`}
+              value={customSearchTerm}
+              onChange={setCustomSearchTerm}
+            />
+          </StyledSearchInputContainer>
         </StyledSearchAndFilterContainer>
         <Table>
-          <StyledTableHeaderRow>
-            <TableHeader>{t`Name`}</TableHeader>
-            <TableHeader align="right">{t`Type`}</TableHeader>
-            <TableHeader />
-          </StyledTableHeaderRow>
+          <StyledTableHeaderRowContainer>
+            <TableRow
+              gridTemplateColumns={TOOL_TABLE_ROW_GRID_TEMPLATE_COLUMNS}
+            >
+              <TableHeader>{t`Name`}</TableHeader>
+              <TableHeader align="right">{t`Type`}</TableHeader>
+              <TableHeader />
+            </TableRow>
+          </StyledTableHeaderRowContainer>
           {showSkeleton
             ? Array.from({ length: 3 }).map((_, index) => (
                 <Skeleton height={32} borderRadius={4} key={index} />
@@ -226,20 +229,26 @@ export const SettingsToolsTable = () => {
           description={t`Standard tools available to AI agents`}
         />
         <StyledSearchAndFilterContainer>
-          <StyledSearchInput
-            instanceId="builtin-tool-table-search"
-            LeftIcon={IconSearch}
-            placeholder={t`Search a built-in tool...`}
-            value={builtInSearchTerm}
-            onChange={setBuiltInSearchTerm}
-          />
+          <StyledSearchInputContainer>
+            <SettingsTextInput
+              instanceId="builtin-tool-table-search"
+              LeftIcon={IconSearch}
+              placeholder={t`Search a built-in tool...`}
+              value={builtInSearchTerm}
+              onChange={setBuiltInSearchTerm}
+            />
+          </StyledSearchInputContainer>
         </StyledSearchAndFilterContainer>
         <Table>
-          <StyledTableHeaderRow>
-            <TableHeader>{t`Name`}</TableHeader>
-            <TableHeader align="right">{t`Type`}</TableHeader>
-            <TableHeader />
-          </StyledTableHeaderRow>
+          <StyledTableHeaderRowContainer>
+            <TableRow
+              gridTemplateColumns={TOOL_TABLE_ROW_GRID_TEMPLATE_COLUMNS}
+            >
+              <TableHeader>{t`Name`}</TableHeader>
+              <TableHeader align="right">{t`Type`}</TableHeader>
+              <TableHeader />
+            </TableRow>
+          </StyledTableHeaderRowContainer>
           {filteredSystemTools.map((systemTool) => (
             <SettingsSystemToolTableRow
               key={systemTool.name}

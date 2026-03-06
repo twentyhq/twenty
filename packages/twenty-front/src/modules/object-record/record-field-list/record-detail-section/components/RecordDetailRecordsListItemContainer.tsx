@@ -1,31 +1,46 @@
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
-import isPropValid from '@emotion/is-prop-valid';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { PageLayoutType } from '~/generated-metadata/graphql';
 
-const StyledListItem = styled('div', {
-  shouldForwardProp: (prop) =>
-    isPropValid(prop) && prop !== 'noHorizontalPadding',
-})<{ noHorizontalPadding?: boolean }>`
+const StyledListItem = styled.div<{
+  noHorizontalPadding?: boolean;
+  isDropdownOpen?: boolean;
+}>`
   align-items: center;
-  justify-content: space-between;
-  gap: ${({ theme }) => theme.spacing(1)};
   display: flex;
-  height: ${({ theme }) => theme.spacing(10)};
-  padding-left: ${({ theme, noHorizontalPadding }) =>
-    noHorizontalPadding ? 0 : theme.spacing(3)};
-  padding-right: ${({ theme, noHorizontalPadding }) =>
-    noHorizontalPadding ? 0 : theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[1]};
+  height: ${themeCssVariables.spacing[10]};
+  justify-content: space-between;
+  padding-left: ${({ noHorizontalPadding }) =>
+    noHorizontalPadding ? 0 : themeCssVariables.spacing[3]};
+  padding-right: ${({ noHorizontalPadding }) =>
+    noHorizontalPadding ? 0 : themeCssVariables.spacing[2]};
+
+  .displayOnHover {
+    opacity: ${({ isDropdownOpen }) => (isDropdownOpen ? 1 : 0)};
+    pointer-events: ${({ isDropdownOpen }) =>
+      isDropdownOpen ? 'auto' : 'none'};
+    transition: opacity
+      calc(${themeCssVariables.animation.duration.instant} * 1s) ease;
+  }
+
+  &:hover .displayOnHover {
+    opacity: 1;
+    pointer-events: auto;
+  }
 `;
 
 type RecordDetailRecordsListItemContainerProps = {
   children: React.ReactNode;
   className?: string;
+  isDropdownOpen?: boolean;
 };
 
 export const RecordDetailRecordsListItemContainer = ({
   children,
   className,
+  isDropdownOpen,
 }: RecordDetailRecordsListItemContainerProps) => {
   const layoutRenderingContext = useLayoutRenderingContext();
 
@@ -36,6 +51,7 @@ export const RecordDetailRecordsListItemContainer = ({
     <StyledListItem
       className={className}
       noHorizontalPadding={isInRecordPageLayout}
+      isDropdownOpen={isDropdownOpen}
     >
       {children}
     </StyledListItem>

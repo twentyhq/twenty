@@ -1,6 +1,6 @@
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getActivityTargetObjectFieldIdName';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { isDefined } from 'twenty-shared/utils';
 

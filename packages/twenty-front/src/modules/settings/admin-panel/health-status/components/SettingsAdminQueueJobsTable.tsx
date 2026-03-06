@@ -12,11 +12,12 @@ import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { plural, t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { IconRefresh, IconTrash } from 'twenty-ui/display';
 import { Button, Checkbox } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   JobState,
   type QueueJob,
@@ -37,19 +38,19 @@ type SettingsAdminQueueJobsTableProps = {
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(4)};
+  gap: ${themeCssVariables.spacing[4]};
 `;
 
 const StyledControlsContainer = styled.div`
   align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
   justify-content: space-between;
 `;
 
 const StyledEmptyState = styled.div`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  padding: ${({ theme }) => theme.spacing(8)};
+  color: ${themeCssVariables.font.color.tertiary};
+  padding: ${themeCssVariables.spacing[8]};
   text-align: center;
 `;
 
@@ -57,46 +58,16 @@ const StyledPaginationContainer = styled.div`
   align-items: center;
   display: flex;
   justify-content: space-between;
-  padding: ${({ theme }) => theme.spacing(2)};
-`;
-
-const StyledTableCell = styled(TableCell)`
-  max-width: 200px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
-
-const StyledExpandableTableRow = styled(TableRow)<{ isExpanded: boolean }>`
-  cursor: pointer;
-  background-color: ${({ theme, isExpanded }) =>
-    isExpanded ? theme.background.transparent.light : 'transparent'};
-
-  &:hover {
-    background-color: ${({ theme }) => theme.background.transparent.light};
-  }
+  padding: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledJobRowWrapper = styled.div`
   display: contents;
 `;
 
-const StyledCheckboxCell = styled(TableCell)`
-  justify-content: center;
-  padding: 0;
-  padding-left: ${({ theme }) => theme.spacing(1)};
-`;
-
-const StyledHeaderCheckboxCell = styled(TableHeader)`
-  align-items: center;
-  display: flex;
-  justify-content: center;
-  padding-right: ${({ theme }) => theme.spacing(1)};
-`;
-
 const StyledButtonGroup = styled.div`
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const RETRY_MODAL_ID = 'retry-jobs-modal';
@@ -150,7 +121,6 @@ export const SettingsAdminQueueJobsTable = ({
   const totalCount = data?.getQueueJobs?.totalCount || 0;
   const failedJobs = jobs.filter((job) => job.state === JobState.FAILED);
 
-  // Pass retention config to parent when data loads
   const shouldPassConfig =
     data?.getQueueJobs?.retentionConfig !== undefined &&
     onRetentionConfigLoaded !== undefined;
@@ -165,7 +135,6 @@ export const SettingsAdminQueueJobsTable = ({
   const someJobsSelected =
     jobs.some((job) => selectedJobIds.has(job.id)) && !allJobsSelected;
 
-  // Check if all selected jobs are failed (for showing retry button)
   const selectedJobs = jobs.filter((job) => selectedJobIds.has(job.id));
   const allSelectedAreFailed =
     selectedJobs.length > 0 &&
@@ -298,7 +267,10 @@ export const SettingsAdminQueueJobsTable = ({
         <>
           <Table>
             <TableRow gridAutoColumns="32px 2fr 1fr 2fr 32px">
-              <StyledHeaderCheckboxCell>
+              <TableHeader
+                align="center"
+                padding={`0 ${themeCssVariables.spacing[1]} 0 ${themeCssVariables.spacing[2]}`}
+              >
                 {jobs.length > 0 && (
                   <Checkbox
                     checked={allJobsSelected}
@@ -306,7 +278,7 @@ export const SettingsAdminQueueJobsTable = ({
                     onChange={handleToggleAll}
                   />
                 )}
-              </StyledHeaderCheckboxCell>
+              </TableHeader>
               <TableHeader>{t`Job Name`}</TableHeader>
               <TableHeader>{t`State`}</TableHeader>
               <TableHeader align="right">{t`Timestamp`}</TableHeader>
@@ -319,22 +291,34 @@ export const SettingsAdminQueueJobsTable = ({
 
                 return (
                   <StyledJobRowWrapper key={job.id}>
-                    <StyledExpandableTableRow
+                    <TableRow
                       gridAutoColumns="32px 2fr 1fr 2fr 32px"
                       onClick={() => handleRowClick(job.id)}
                       isExpanded={isExpanded}
+                      cursor="pointer"
+                      hoverBackgroundColor={
+                        themeCssVariables.background.transparent.light
+                      }
                     >
-                      <StyledCheckboxCell
+                      <TableCell
+                        align="center"
+                        padding={`0 0 0 ${themeCssVariables.spacing[1]}`}
                         onClick={(e) => {
                           e.stopPropagation();
                           handleToggleJob(e, job.id);
                         }}
                       >
                         <Checkbox checked={isSelected} />
-                      </StyledCheckboxCell>
-                      <StyledTableCell title={job.name}>
+                      </TableCell>
+                      <TableCell
+                        title={job.name}
+                        maxWidth="200px"
+                        overflow="hidden"
+                        textOverflow="ellipsis"
+                        whiteSpace="nowrap"
+                      >
                         {job.name}
-                      </StyledTableCell>
+                      </TableCell>
                       <TableCell>
                         <SettingsAdminJobStateBadge
                           state={job.state}
@@ -363,7 +347,7 @@ export const SettingsAdminQueueJobsTable = ({
                           onDelete={() => handleDeleteOne(job.id)}
                         />
                       </TableCell>
-                    </StyledExpandableTableRow>
+                    </TableRow>
                     <SettingsAdminJobDetailsExpandable
                       job={job}
                       isExpanded={isExpanded}
@@ -398,12 +382,12 @@ export const SettingsAdminQueueJobsTable = ({
       )}
 
       <SettingsAdminRetryJobsConfirmationModal
-        modalId={RETRY_MODAL_ID}
+        modalInstanceId={RETRY_MODAL_ID}
         jobCount={selectedCount > 0 ? selectedCount : failedJobs.length}
         onConfirm={confirmRetrySelected}
       />
       <SettingsAdminDeleteJobsConfirmationModal
-        modalId={DELETE_MODAL_ID}
+        modalInstanceId={DELETE_MODAL_ID}
         jobCount={selectedCount}
         onConfirm={confirmDeleteSelected}
       />

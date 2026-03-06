@@ -1,6 +1,6 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import { useCallback } from 'react';
+import { styled } from '@linaria/react';
+import { useCallback, useContext } from 'react';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { RecordBoardColumnHeaderAggregateDropdown } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdown';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
@@ -45,26 +45,26 @@ const StyledTrContainer = styled.div`
   flex-direction: row;
 
   div:not(:first-of-type) {
-    border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+    border-bottom: 1px solid ${themeCssVariables.border.color.light};
   }
 `;
 
 const StyledChevronContainer = styled.div`
   border-right: none;
-  color: ${({ theme }) => theme.font.color.secondary};
+  color: ${themeCssVariables.font.color.secondary};
   display: flex;
+  left: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px;
+  min-width: ${RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px;
+  position: sticky;
   text-align: center;
+
   vertical-align: middle;
   width: ${RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px;
-  min-width: ${RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px;
-
-  position: sticky;
-  left: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px;
 
   z-index: ${TABLE_Z_INDEX.groupSection.stickyCell};
 `;
 
-const StyledAnimatedLightIconButton = styled(AnimatedLightIconButton)`
+const StyledAnimatedLightIconButtonContainer = styled.div`
   display: block;
   margin: auto;
 
@@ -76,19 +76,18 @@ const StyledRecordGroupSection = styled.div<{ width: number }>`
   border-right: none;
   display: flex;
   flex-direction: row;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
   height: ${RECORD_TABLE_ROW_HEIGHT}px;
-  width: ${({ width }) => width}px;
+  left: ${`${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH + RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px`};
   min-width: ${({ width }) => width}px;
 
   position: sticky;
-  left: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH +
-  RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px;
+  width: ${({ width }) => width}px;
 
   z-index: ${TABLE_Z_INDEX.groupSection.stickyCell};
 `;
 
-const StyledTag = styled(Tag)`
+const StyledTagContainer = styled.div`
   flex-shrink: 0;
 `;
 
@@ -101,21 +100,21 @@ const StyledFieldPlaceholderCell = styled.div<{ widthOfFields: number }>`
 `;
 
 const StyledRecordTableDragAndDropPlaceholderCell = styled.div`
+  background-color: ${themeCssVariables.background.primary};
+  border-bottom: 1px solid ${themeCssVariables.background.primary};
   height: ${RECORD_TABLE_ROW_HEIGHT}px;
-  width: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px;
+
+  left: 0;
+
   min-width: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px;
 
-  background-color: ${({ theme }) => theme.background.primary};
-
-  border-bottom: 1px solid ${({ theme }) => theme.background.primary};
-
   position: sticky;
-  left: 0;
+  width: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px;
   z-index: ${TABLE_Z_INDEX.groupSection.stickyCell};
 `;
 
 export const RecordTableRecordGroupSection = () => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   const currentRecordGroupId = useCurrentRecordGroupId();
 
@@ -195,32 +194,36 @@ export const RecordTableRecordGroupSection = () => {
     <StyledTrContainer onClick={handleDropdownToggle}>
       <StyledRecordTableDragAndDropPlaceholderCell />
       <StyledChevronContainer>
-        <StyledAnimatedLightIconButton
-          Icon={IconChevronDown}
-          size="small"
-          accent="secondary"
-          animate={{ rotate: !isRecordGroupTableSectionToggled ? -90 : 0 }}
-          transition={{ duration: theme.animation.duration.normal }}
-        />
+        <StyledAnimatedLightIconButtonContainer>
+          <AnimatedLightIconButton
+            Icon={IconChevronDown}
+            size="small"
+            accent="secondary"
+            animate={{ rotate: !isRecordGroupTableSectionToggled ? -90 : 0 }}
+            transition={{ duration: theme.animation.duration.normal }}
+          />
+        </StyledAnimatedLightIconButtonContainer>
       </StyledChevronContainer>
       <StyledRecordGroupSection
         className="disable-shadow"
         width={widthOfLabelIdentifierRecordField}
       >
-        <StyledTag
-          variant={
-            recordGroupDefinition.type !== RecordGroupDefinitionType.NoValue
-              ? 'solid'
-              : 'outline'
-          }
-          color={
-            recordGroupDefinition.type !== RecordGroupDefinitionType.NoValue
-              ? recordGroupDefinition.color
-              : 'transparent'
-          }
-          text={recordGroupDefinition.title}
-          weight="medium"
-        />
+        <StyledTagContainer>
+          <Tag
+            variant={
+              recordGroupDefinition.type !== RecordGroupDefinitionType.NoValue
+                ? 'solid'
+                : 'outline'
+            }
+            color={
+              recordGroupDefinition.type !== RecordGroupDefinitionType.NoValue
+                ? recordGroupDefinition.color
+                : 'transparent'
+            }
+            text={recordGroupDefinition.title}
+            weight="medium"
+          />
+        </StyledTagContainer>
         <RecordBoardColumnHeaderAggregateDropdown
           aggregateValue={recordIndexAggregateDisplayValueForGroupValue}
           dropdownId={`record-group-section-aggregate-dropdown-${currentRecordGroupId}`}

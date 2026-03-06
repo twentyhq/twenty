@@ -2,7 +2,7 @@ import { AdvancedSettingsContentWrapperWithDot } from '@/settings/components/Adv
 import { ADVANCED_SETTINGS_ANIMATION_DURATION } from '@/settings/constants/AdvancedSettingsAnimationDurations';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 
 const StyledContent = styled.div`

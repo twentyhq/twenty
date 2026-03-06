@@ -1,38 +1,41 @@
 import { FORM_FIELD_PLACEHOLDER_STYLES } from '@/object-record/record-field/ui/form-types/constants/FormFieldPlaceholderStyles';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { EditorContent, type Editor } from '@tiptap/react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledEditor = styled.div<{
   multiline?: boolean;
   readonly?: boolean;
 }>`
-  width: 100%;
-  display: flex;
   box-sizing: border-box;
-  padding-right: ${({ multiline, theme }) =>
-    multiline ? theme.spacing(4) : undefined};
+  display: flex;
+  padding-right: ${({ multiline }) =>
+    multiline ? themeCssVariables.spacing[4] : '0'};
+  width: 100%;
 
   .editor-content {
     width: 100%;
   }
 
   .tiptap {
-    padding: ${({ theme }) => `${theme.spacing(1)} ${theme.spacing(2)}`};
+    align-items: ${({ multiline }) => (multiline ? 'top' : 'center')};
+    border: none !important;
     box-sizing: border-box;
+    color: ${({ readonly }) =>
+      readonly
+        ? themeCssVariables.font.color.light
+        : themeCssVariables.font.color.primary};
     display: flex;
-    height: 100%;
-    overflow-x: auto;
-    overflow-y: ${({ multiline }) => (multiline ? 'auto' : 'hidden')};
-    scrollbar-width: none;
+    font-family: ${themeCssVariables.font.family};
+    font-weight: ${themeCssVariables.font.weight.regular};
     &::-webkit-scrollbar {
       display: none;
     }
-    color: ${({ theme, readonly }) =>
-      readonly ? theme.font.color.light : theme.font.color.primary};
-    font-family: ${({ theme }) => theme.font.family};
-    font-weight: ${({ theme }) => theme.font.weight.regular};
-    border: none !important;
-    align-items: ${({ multiline }) => (multiline ? 'top' : 'center')};
+    height: 100%;
+    overflow-x: auto;
+    overflow-y: ${({ multiline }) => (multiline ? 'auto' : 'hidden')};
+    padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
+    scrollbar-width: none;
     white-space: ${({ multiline }) => (multiline ? 'pre' : 'nowrap')};
 
     p.is-editor-empty:first-of-type::before {
@@ -48,17 +51,17 @@ const StyledEditor = styled.div<{
     }
 
     .variable-tag {
-      background-color: ${({ theme }) => theme.color.blue3};
-      border-radius: ${({ theme }) => theme.border.radius.sm};
-      color: ${({ theme }) => theme.color.blue};
-      padding: ${({ theme }) => theme.spacing(1)};
+      background-color: ${themeCssVariables.color.blue3};
+      border-radius: ${themeCssVariables.border.radius.sm};
+      color: ${themeCssVariables.color.blue};
+      padding: ${themeCssVariables.spacing[1]};
     }
 
     .text-tag {
-      background-color: ${({ theme }) => theme.color.blue3};
-      border-radius: ${({ theme }) => theme.border.radius.sm};
-      color: ${({ theme }) => theme.color.blue};
-      padding: ${({ theme }) => theme.spacing(1)};
+      background-color: ${themeCssVariables.color.blue3};
+      border-radius: ${themeCssVariables.border.radius.sm};
+      color: ${themeCssVariables.color.blue};
+      padding: ${themeCssVariables.spacing[1]};
     }
   }
 

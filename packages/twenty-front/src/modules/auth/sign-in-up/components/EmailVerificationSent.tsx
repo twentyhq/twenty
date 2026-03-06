@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
@@ -17,66 +17,67 @@ import {
   IconMicrosoft,
 } from 'twenty-ui/display';
 import { MainButton } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { AnimatedEaseIn } from 'twenty-ui/utilities';
 
 const StyledContainer = styled.div`
+  align-items: center;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: ${({ theme }) => theme.spacing(8)};
+  gap: ${themeCssVariables.spacing[8]};
   width: 100%;
 `;
 
 const StyledTextContainer = styled.div`
+  align-items: center;
   display: flex;
   flex-direction: column;
-  align-items: center;
   text-align: center;
 `;
 
 const StyledEmail = styled.span`
-  font-weight: ${({ theme }) => theme.font.weight.medium};
+  font-weight: ${themeCssVariables.font.weight.medium};
 `;
 
 const StyledButtonsContainer = styled.div`
+  align-items: center;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: ${({ theme }) => theme.spacing(3)};
-  width: 100%;
+  gap: ${themeCssVariables.spacing[3]};
   max-width: 240px;
+  width: 100%;
 `;
 
 const StyledBottomLinks = styled.div`
   align-items: center;
   display: flex;
   flex-direction: row;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
   justify-content: center;
 `;
 
 const StyledLinkButton = styled.button`
   background: none;
   border: none;
-  font-family: ${({ theme }) => theme.font.family};
-  font-size: ${({ theme }) => theme.font.size.xs};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
-  line-height: 140%;
-  color: ${({ theme }) => theme.font.color.tertiary};
+  color: ${themeCssVariables.font.color.tertiary};
   cursor: pointer;
+  font-family: ${themeCssVariables.font.family};
+  font-size: ${themeCssVariables.font.size.xs};
+  font-weight: ${themeCssVariables.font.weight.regular};
+  line-height: 140%;
 
   &:hover {
-    color: ${({ theme }) => theme.font.color.secondary};
+    color: ${themeCssVariables.font.color.secondary};
   }
 
   &:disabled {
-    opacity: 0.5;
     cursor: not-allowed;
+    opacity: 0.5;
   }
 `;
 
 const StyledDot = styled.div`
-  background: ${({ theme }) => theme.font.color.light};
+  background: ${themeCssVariables.font.color.light};
   border-radius: 50%;
   height: 2px;
   width: 2px;

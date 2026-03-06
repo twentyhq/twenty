@@ -13,9 +13,9 @@ import { isRecordTableRowActiveComponentFamilyState } from '@/object-record/reco
 import { recordTableHoverPositionComponentState } from '@/object-record/record-table/states/recordTableHoverPositionComponentState';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useContext } from 'react';
-import { BORDER_COMMON } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 const StyledRecordTableCellHoveredPortalContent = styled.div<{
@@ -23,13 +23,13 @@ const StyledRecordTableCellHoveredPortalContent = styled.div<{
   isRecordTableRowActive: boolean;
 }>`
   align-items: center;
-  background: ${({ theme }) => theme.background.transparent.secondary};
-  background-color: ${({ theme, isRecordTableRowActive }) =>
+  background: ${themeCssVariables.background.transparent.secondary};
+  background-color: ${({ isRecordTableRowActive }) =>
     isRecordTableRowActive
-      ? theme.accent.quaternary
-      : theme.background.primary};
+      ? themeCssVariables.accent.quaternary
+      : themeCssVariables.background.primary};
   border-radius: ${({ showInteractiveStyle }) =>
-    showInteractiveStyle ? BORDER_COMMON.radius.sm : 'none'};
+    showInteractiveStyle ? themeCssVariables.border.radius.sm : 'none'};
   box-sizing: border-box;
   cursor: ${({ showInteractiveStyle }) =>
     showInteractiveStyle ? 'pointer' : 'default'};
@@ -37,12 +37,13 @@ const StyledRecordTableCellHoveredPortalContent = styled.div<{
 
   height: ${RECORD_TABLE_ROW_HEIGHT}px;
 
-  outline: ${({ theme, showInteractiveStyle, isRecordTableRowActive }) =>
+  outline: ${({ showInteractiveStyle, isRecordTableRowActive }) =>
     isRecordTableRowActive
       ? 'none'
       : showInteractiveStyle
-        ? `1px solid ${theme.font.color.extraLight}`
-        : `1px solid ${theme.border.color.medium}`};
+        ? `1px solid ${themeCssVariables.font.color.extraLight}`
+        : `1px solid ${themeCssVariables.border.color.medium}`};
+  outline-offset: -1px;
 
   user-select: none;
 `;

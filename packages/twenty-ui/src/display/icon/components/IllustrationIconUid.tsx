@@ -1,9 +1,9 @@
 import { useContext } from 'react';
-import { IllustrationIconWrapper } from '@ui/display/icon/components/IllustrationIconWrapper';
 
 import IllustrationIconUidRaw from '@assets/icons/illustration-uid.svg?react';
+import { IllustrationIconWrapper } from '@ui/display/icon/components/IllustrationIconWrapper';
 import { type IconComponentProps } from '@ui/display/icon/types/IconComponent';
-import { ThemeContext } from '@ui/theme';
+import { ThemeContext } from '@ui/theme-constants';
 
 type IllustrationIconUidProps = Pick<IconComponentProps, 'size'>;
 

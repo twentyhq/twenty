@@ -26,21 +26,6 @@
     "typecheck": {
       "dependsOn": ["^build"]
     },
-    "lint": {
-      "executor": "@nx/eslint:lint",
-      "outputs": [
-        "{options.outputFile}"
-      ],
-      "options": {
-        "lintFilePatterns": [
-          "packages/twenty-apps/community/fireflies/**/*.{ts,tsx,js,jsx}"
-        ]
-      },
-      "configurations": {
-        "fix": {
-          "fix": true
-        }
-      }
-    }
+    "lint": {}
   }
 }

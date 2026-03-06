@@ -1,9 +1,9 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import { useState } from 'react';
+import { styled } from '@linaria/react';
+import { useContext, useState } from 'react';
 
 import { IconBrain, IconChevronDown, IconChevronUp } from 'twenty-ui/display';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { ShimmeringText } from '@/ai/components/ShimmeringText';
 import { t } from '@lingui/core/macro';
@@ -11,27 +11,27 @@ import { t } from '@lingui/core/macro';
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(2)};
-  margin-bottom: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
+  margin-bottom: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledThinkingText = styled.div`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-size: ${({ theme }) => theme.font.size.md};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
+  color: ${themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.md};
+  font-weight: ${themeCssVariables.font.weight.medium};
 `;
 
 const StyledReasoningContainer = styled.div`
-  background: ${({ theme }) => theme.background.transparent.lighter};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  padding: ${({ theme }) => theme.spacing(3)};
-  border: 1px solid ${({ theme }) => theme.border.color.light};
+  background: ${themeCssVariables.background.transparent.lighter};
+  border: 1px solid ${themeCssVariables.border.color.light};
+  border-radius: ${themeCssVariables.border.radius.sm};
+  padding: ${themeCssVariables.spacing[3]};
 `;
 
 const StyledReasoningText = styled.div`
-  color: ${({ theme }) => theme.font.color.secondary};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  line-height: ${({ theme }) => theme.text.lineHeight.lg};
+  color: ${themeCssVariables.font.color.secondary};
+  font-size: ${themeCssVariables.font.size.sm};
+  line-height: ${themeCssVariables.text.lineHeight.lg};
   white-space: pre-wrap;
 `;
 
@@ -39,24 +39,24 @@ const StyledToggleButton = styled.div`
   align-items: center;
   background: none;
   border: none;
-  color: ${({ theme }) => theme.font.color.tertiary};
+  color: ${themeCssVariables.font.color.tertiary};
   cursor: pointer;
   display: flex;
-  font-size: ${({ theme }) => theme.font.size.md};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  gap: ${({ theme }) => theme.spacing(1)};
-  padding: ${({ theme }) => theme.spacing(1)} 0;
-  transition: color ${({ theme }) => theme.animation.duration.normal}s;
+  font-size: ${themeCssVariables.font.size.md};
+  font-weight: ${themeCssVariables.font.weight.medium};
+  gap: ${themeCssVariables.spacing[1]};
+  padding: ${themeCssVariables.spacing[1]} 0;
+  transition: color calc(${themeCssVariables.animation.duration.normal} * 1s);
 
   &:hover {
-    color: ${({ theme }) => theme.font.color.secondary};
+    color: ${themeCssVariables.font.color.secondary};
   }
 `;
 
 const StyledIconContainer = styled.div`
-  display: flex;
   align-items: center;
-  gap: ${({ theme }) => theme.spacing(1)};
+  display: flex;
+  gap: ${themeCssVariables.spacing[1]};
 `;
 
 export const ReasoningSummaryDisplay = ({
@@ -66,7 +66,7 @@ export const ReasoningSummaryDisplay = ({
   content: string;
   isThinking?: boolean;
 }) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const [isExpanded, setIsExpanded] = useState(false);
 
   const hasContent = content.trim().length > 0;

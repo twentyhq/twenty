@@ -7,7 +7,11 @@ import { isDefined } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
-import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import {
+  ApplicationException,
+  ApplicationExceptionCode,
+} from 'src/engine/core-modules/application/application.exception';
 import { TOOL_PERMISSION_FLAGS } from 'src/engine/metadata-modules/permissions/constants/tool-permission-flags';
 import {
   PermissionsException,
@@ -28,7 +32,8 @@ export class PermissionsService {
     private readonly apiKeyRoleService: ApiKeyRoleService,
     @InjectRepository(RoleEntity)
     private readonly roleRepository: Repository<RoleEntity>,
-    private readonly applicationService: ApplicationService,
+    @InjectRepository(ApplicationEntity)
+    private readonly applicationRepository: Repository<ApplicationEntity>,
   ) {}
 
   private isToolPermission(feature: string) {
@@ -183,11 +188,18 @@ export class PermissionsService {
     }
 
     if (applicationId) {
-      const applicationRoleId =
-        await this.applicationService.findApplicationRoleId(
-          applicationId,
-          workspaceId,
+      const application = await this.applicationRepository.findOne({
+        where: { id: applicationId, workspaceId },
+      });
+
+      if (!isDefined(application) || !isDefined(application.defaultRoleId)) {
+        throw new ApplicationException(
+          `Could not find application ${applicationId}`,
+          ApplicationExceptionCode.APPLICATION_NOT_FOUND,
         );
+      }
+
+      const applicationRoleId = application.defaultRoleId;
 
       const role = await this.roleRepository.findOne({
         where: { id: applicationRoleId, workspaceId },

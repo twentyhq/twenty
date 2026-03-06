@@ -3,7 +3,6 @@ import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-re
 export const testRestFailingScenario = async (
   objectMetadataPluralName: string,
   filter: any,
-  errorMessage: string,
 ) => {
   const encodedFilter = encodeURIComponent(filter);
   const response = await makeRestAPIRequest({
@@ -12,5 +11,5 @@ export const testRestFailingScenario = async (
   });
 
   expect(response.body.error).toBeDefined();
-  expect(JSON.stringify(response.body.messages)).toContain(errorMessage);
+  expect(response.body.messages).toMatchSnapshot();
 };

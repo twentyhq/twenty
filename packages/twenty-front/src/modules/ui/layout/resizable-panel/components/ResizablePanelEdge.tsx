@@ -1,9 +1,10 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 import { RESIZE_EDGE_WIDTH_PX } from '@/ui/layout/resizable-panel/constants/ResizeEdgeWidthPx';
 import { useResizablePanel } from '@/ui/layout/resizable-panel/hooks/useResizablePanel';
 import { type ResizablePanelConstraints } from '@/ui/layout/resizable-panel/types/ResizablePanelConstraints';
 import { type ResizablePanelSide } from '@/ui/layout/resizable-panel/types/ResizablePanelSide';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type StyledEdgeProps = {
   isActive: boolean;
@@ -12,34 +13,36 @@ type StyledEdgeProps = {
 };
 
 const StyledEdge = styled.div<StyledEdgeProps>`
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  ${({ side }) =>
-    side === 'right' ? 'right' : 'left'}: -${RESIZE_EDGE_WIDTH_PX / 2}px;
-  width: ${RESIZE_EDGE_WIDTH_PX}px;
-  cursor: col-resize;
-
-  display: flex;
   align-items: center;
+  bottom: 0;
+  cursor: col-resize;
+  display: flex;
   justify-content: center;
+  left: ${({ side }) =>
+    side === 'left' ? `-${RESIZE_EDGE_WIDTH_PX / 2}px` : 'auto'};
+  position: absolute;
+
+  right: ${({ side }) =>
+    side === 'right' ? `-${RESIZE_EDGE_WIDTH_PX / 2}px` : 'auto'};
+  top: 0;
+  width: ${RESIZE_EDGE_WIDTH_PX}px;
 `;
 
 const StyledHandle = styled.div<{ isActive: boolean; isHovered: boolean }>`
-  width: 4px;
-  height: 48px;
-  border-radius: ${({ theme }) => theme.border.radius.pill};
-  background-color: ${({ theme, isActive, isHovered }) =>
+  background-color: ${({ isActive, isHovered }) =>
     isActive
-      ? theme.color.blue
+      ? themeCssVariables.color.blue
       : isHovered
-        ? theme.font.color.tertiary
-        : theme.background.quaternary};
-  transition:
-    background-color ${({ theme }) => theme.animation.duration.fast}s,
-    transform ${({ theme }) => theme.animation.duration.fast}s;
+        ? themeCssVariables.font.color.tertiary
+        : themeCssVariables.background.quaternary};
+  border-radius: ${themeCssVariables.border.radius.pill};
+  height: 48px;
   transform: ${({ isHovered, isActive }) =>
     isHovered || isActive ? 'scaleY(1.2)' : 'scaleY(1)'};
+  transition:
+    background-color ${themeCssVariables.animation.duration.fast}s,
+    transform ${themeCssVariables.animation.duration.fast}s;
+  width: 4px;
 `;
 
 type ResizablePanelEdgeProps = {

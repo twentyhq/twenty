@@ -1,6 +1,5 @@
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { CoreObjectNameSingular, FieldMetadataType } from 'twenty-shared/types';
 import { type WorkflowFormFieldType } from '@/workflow/workflow-steps/workflow-actions/form-action/types/WorkflowFormFieldType';
-import { FieldMetadataType } from 'twenty-shared/types';
 import { assertUnreachable } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 

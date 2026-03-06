@@ -36,7 +36,6 @@ export class GroupByResolverFactory
 
       const resolverContext = createQueryRunnerContext({
         workspaceSchemaBuilderContext: internalContext,
-        request: requestContext.req,
       });
 
       const shouldIncludeRecords =

@@ -1,9 +1,8 @@
 import { useCountries } from '@/ui/input/components/internal/hooks/useCountries';
 import { type Country } from '@/ui/input/components/internal/types/Country';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import { useEffect, useState } from 'react';
+import { styled } from '@linaria/react';
+import { useContext, useEffect, useState } from 'react';
 
 import { PhoneCountryPickerDropdownSelect } from './PhoneCountryPickerDropdownSelect';
 
@@ -14,6 +13,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import 'react-phone-number-input/style.css';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronDown, IconWorld } from 'twenty-ui/display';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type StyledDropdownButtonProps = {
   isUnfolded: boolean;
@@ -22,38 +22,38 @@ type StyledDropdownButtonProps = {
 const StyledDropdownButtonContainer = styled.div<StyledDropdownButtonProps>`
   align-items: center;
   background: none;
-  border-radius: ${({ theme }) => theme.border.radius.xs} 0 0
-    ${({ theme }) => theme.border.radius.xs};
+  border-radius: ${themeCssVariables.border.radius.xs} 0 0
+    ${themeCssVariables.border.radius.xs};
+  border-right: 1px solid ${themeCssVariables.border.color.medium};
   color: ${({ color }) => color ?? 'none'};
   cursor: pointer;
+
   display: flex;
 
   height: 32px;
+  padding-left: ${themeCssVariables.spacing[2]};
+  padding-right: ${themeCssVariables.spacing[1]};
 
-  padding-left: ${({ theme }) => theme.spacing(2)};
-  padding-right: ${({ theme }) => theme.spacing(1)};
   user-select: none;
 
-  border-right: 1px solid ${({ theme }) => theme.border.color.medium};
-
   &:hover {
-    background-color: ${({ theme }) => theme.background.transparent.light};
+    background-color: ${themeCssVariables.background.transparent.light};
   }
 `;
 
 const StyledIconContainer = styled.div`
   align-items: center;
-  color: ${({ theme }) => theme.font.color.tertiary};
+  color: ${themeCssVariables.font.color.tertiary};
   display: flex;
-  gap: ${({ theme }) => theme.spacing(0.5)};
+  gap: ${themeCssVariables.spacing[0.5]};
   justify-content: center;
 
   svg {
     align-items: center;
     display: flex;
     height: 12px;
-    width: 16px;
     justify-content: center;
+    width: 16px;
   }
 `;
 
@@ -62,8 +62,8 @@ const StyledCheveronIconContainer = styled.div`
     align-items: center;
     display: flex;
     height: 14px;
-    width: 14px;
     justify-content: center;
+    width: 14px;
   }
 `;
 
@@ -74,8 +74,6 @@ export const PhoneCountryPickerDropdownButton = ({
   value: string;
   onChange: (countryCode: string) => void;
 }) => {
-  const theme = useTheme();
-
   const [selectedCountry, setSelectedCountry] = useState<Country>();
 
   const isDropdownOpen = useAtomComponentStateValue(
@@ -91,6 +89,7 @@ export const PhoneCountryPickerDropdownButton = ({
   };
 
   const countries = useCountries();
+  const { theme } = useContext(ThemeContext);
 
   useEffect(() => {
     const country = countries.find(({ countryCode }) => countryCode === value);

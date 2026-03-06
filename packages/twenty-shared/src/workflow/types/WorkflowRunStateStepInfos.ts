@@ -8,6 +8,7 @@ export enum StepStatus {
   SUCCESS = 'SUCCESS',
   STOPPED = 'STOPPED',
   FAILED = 'FAILED',
+  FAILED_SAFELY = 'FAILED_SAFELY',
   PENDING = 'PENDING',
   SKIPPED = 'SKIPPED',
 }

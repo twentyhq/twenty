@@ -1,26 +1,27 @@
 import { getWrongExportedFunctionMarkers } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/getWrongExportedFunctionMarkers';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type Monaco } from '@monaco-editor/react';
 import { type editor } from 'monaco-editor';
 import { IconMaximize } from 'twenty-ui/display';
 import { CodeEditor, LightIconButton } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const CODE_EDITOR_MIN_HEIGHT = 343;
 
 const StyledCodeEditorContainer = styled.div`
   display: flex;
-  flex-direction: column;
-  position: relative;
   flex: 1;
+  flex-direction: column;
   min-height: ${CODE_EDITOR_MIN_HEIGHT}px;
   overflow: hidden;
+  position: relative;
 `;
 
 const StyledFullScreenButtonContainer = styled.div`
   position: absolute;
-  top: ${({ theme }) => theme.spacing(2)};
-  right: ${({ theme }) => theme.spacing(2)};
+  right: ${themeCssVariables.spacing[2]};
+  top: ${themeCssVariables.spacing[2]};
   z-index: 1;
 `;
 

@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { Draggable } from '@hello-pangea/dnd';
 
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
@@ -77,9 +77,9 @@ export const RecordCalendarCardDraggableContainer = ({
           <StyledDraggableContainer
             id={`record-calendar-card-${recordId}`}
             ref={draggableProvided?.innerRef}
-            // eslint-disable-next-line react/jsx-props-no-spreading
+            // oxlint-disable-next-line react/jsx-props-no-spreading
             {...draggableProvided?.dragHandleProps}
-            // eslint-disable-next-line react/jsx-props-no-spreading
+            // oxlint-disable-next-line react/jsx-props-no-spreading
             {...draggableProvided?.draggableProps}
             data-selectable-id={recordId}
           >

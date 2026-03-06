@@ -33,7 +33,7 @@ type OneToManyRelationIdArrays = {
   mainGroupByFieldMetadataViewIds: string[];
 };
 
-// eslint-disable-next-line unused-imports/no-unused-vars
+// oxlint-disable-next-line unused-imports/no-unused-vars
 type RelationIdAssertions = [
   // Non-relation types have undefined relation IDs
   Expect<
@@ -66,7 +66,7 @@ type RelationIdAssertions = [
   >,
 ];
 
-// eslint-disable-next-line unused-imports/no-unused-vars
+// oxlint-disable-next-line unused-imports/no-unused-vars
 type FlatTransformationAssertions = [
   Expect<HasAllProperties<FlatFieldMetadata, DatePropertiesCastToString>>,
   Expect<HasAllProperties<FlatFieldMetadata, OneToManyRelationIdArrays>>,

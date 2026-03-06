@@ -13,7 +13,7 @@ export const generateAggregateQuery = ({
   recordGqlFields: RecordGqlFields;
 }) => {
   const selectedFields = Object.entries(recordGqlFields)
-    .filter(([_, shouldBeQueried]) => shouldBeQueried)
+    .filter(([_, shouldBeQueried]) => Boolean(shouldBeQueried))
     .map(([fieldName]) => fieldName)
     .join('\n      ');
 
