@@ -16,7 +16,7 @@ import {
   WorkflowVersionStepExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
-import { buildIteratorToStopStepInfos } from 'src/modules/workflow/common/utils/build-iterator-to-stop-step-infos.util';
+import { setAllIteratorsStepInfosAsStopped } from 'src/modules/workflow/common/utils/set-all-iterators-step-infos-as-stopped.util';
 import { workflowHasRunningSteps } from 'src/modules/workflow/common/utils/workflow-has-running-steps.util';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { WorkflowVersionStepOperationsWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-operations.workspace-service';
@@ -223,7 +223,7 @@ export class WorkflowRunnerWorkspaceService {
     const steps = workflowRun.state.flow.steps;
 
     if (workflowHasRunningSteps({ stepInfos, steps })) {
-      const stoppedIteratorStepInfos = buildIteratorToStopStepInfos({
+      const stoppedIteratorStepInfos = setAllIteratorsStepInfosAsStopped({
         stepInfos,
         steps,
       });
