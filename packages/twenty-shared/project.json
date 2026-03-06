@@ -68,25 +68,11 @@
         "{projectRoot}/src/*/index.ts",
         "{projectRoot}/package.json"
       ],
-      "options": {
-        "command": "tsx {projectRoot}/scripts/generateBarrels.ts"
-      }
+      "options": { "command": "tsx {projectRoot}/scripts/generateBarrels.ts" }
     },
     "typecheck": {},
     "test": {},
-    "lint": {
-      "options": {},
-      "configurations": {
-        "fix": {}
-      }
-    },
-    "fmt": {
-      "options": {
-        "files": "src"
-      },
-      "configurations": {
-        "fix": {}
-      }
-    }
+    "lint": { "options": {}, "configurations": { "fix": {} } },
+    "fmt": { "options": { "files": "src" }, "configurations": { "fix": {} } }
   }
 }
