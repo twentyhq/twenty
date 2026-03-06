@@ -7,6 +7,7 @@ import { FeatureFlagKey } from 'twenty-shared/types';
 import { CoreResolver } from 'src/engine/api/graphql/graphql-config/decorators/core-resolver.decorator';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
+import { WorkflowQueryValidationGraphqlApiExceptionFilter } from 'src/engine/core-modules/workflow/filters/workflow-query-validation-graphql-api-exception.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { HttpTool } from 'src/engine/core-modules/tool/tools/http-tool/http-tool';
 import { CreateWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/create-workflow-version-step.input';
@@ -41,6 +42,7 @@ import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-ru
 @UseFilters(
   PermissionsGraphqlApiExceptionFilter,
   PreventNestToAutoLogGraphqlErrorsFilter,
+  WorkflowQueryValidationGraphqlApiExceptionFilter,
   WorkflowVersionStepGraphqlApiExceptionFilter,
 )
 export class WorkflowVersionStepResolver {
