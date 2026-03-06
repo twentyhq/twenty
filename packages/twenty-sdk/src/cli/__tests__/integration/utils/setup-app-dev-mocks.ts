@@ -3,9 +3,6 @@ import { vi } from 'vitest';
 const mockApiService = {
   validateAuth: vi.fn().mockResolvedValue({ authValid: true, serverUp: true }),
   findOneApplication: vi.fn().mockResolvedValue({ success: true, data: null }),
-  createApplication: vi
-    .fn()
-    .mockResolvedValue({ success: true, data: { id: 'mock-id' } }),
   generateApplicationToken: vi.fn().mockResolvedValue({
     success: true,
     data: {
@@ -47,7 +44,6 @@ vi.mock('@/cli/utilities/api/api-service', () => ({
   ApiService: class {
     validateAuth = mockApiService.validateAuth;
     findOneApplication = mockApiService.findOneApplication;
-    createApplication = mockApiService.createApplication;
     generateApplicationToken = mockApiService.generateApplicationToken;
     renewApplicationToken = mockApiService.renewApplicationToken;
     findApplicationRegistrationByUniversalIdentifier =

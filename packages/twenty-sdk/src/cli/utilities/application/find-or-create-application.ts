@@ -1,40 +1,40 @@
 import { type ApiService } from '@/cli/utilities/api/api-service';
-import { serializeError } from '@/cli/utilities/error/serialize-error';
-import { type Manifest } from 'twenty-shared/application';
 
-export type EnsureApplicationSuccess = {
+export type FindApplicationSuccess = {
   success: true;
   applicationId: string;
   universalIdentifier: string;
-  created: boolean;
 };
 
-export type EnsureApplicationFailure = {
+export type FindApplicationNotFound = {
+  success: true;
+  applicationId: null;
+  universalIdentifier: string;
+};
+
+export type FindApplicationFailure = {
   success: false;
   error: string;
 };
 
-export type EnsureApplicationResult =
-  | EnsureApplicationSuccess
-  | EnsureApplicationFailure;
+export type FindApplicationResult =
+  | FindApplicationSuccess
+  | FindApplicationNotFound
+  | FindApplicationFailure;
 
-export const findOrCreateApplication = async ({
+export const findApplication = async ({
   apiService,
-  manifest,
-  applicationRegistrationId,
+  universalIdentifier,
 }: {
   apiService: ApiService;
-  manifest: Manifest;
-  applicationRegistrationId?: string;
-}): Promise<EnsureApplicationResult> => {
-  const universalIdentifier = manifest.application.universalIdentifier;
-
+  universalIdentifier: string;
+}): Promise<FindApplicationResult> => {
   const findResult = await apiService.findOneApplication(universalIdentifier);
 
   if (!findResult.success) {
     return {
       success: false,
-      error: `Failed to resolve application: ${serializeError(findResult.error)}`,
+      error: `Failed to look up application: ${JSON.stringify(findResult.error)}`,
     };
   }
 
@@ -43,38 +43,12 @@ export const findOrCreateApplication = async ({
       success: true,
       applicationId: findResult.data.id,
       universalIdentifier: findResult.data.universalIdentifier,
-      created: false,
-    };
-  }
-
-  let registrationId = applicationRegistrationId;
-
-  if (!registrationId) {
-    const registerResult =
-      await apiService.findApplicationRegistrationByUniversalIdentifier(
-        universalIdentifier,
-      );
-
-    if (registerResult.success && registerResult.data) {
-      registrationId = registerResult.data.id;
-    }
-  }
-
-  const createResult = await apiService.createApplication(manifest, {
-    applicationRegistrationId: registrationId,
-  });
-
-  if (!createResult.success) {
-    return {
-      success: false,
-      error: `Failed to create application: ${serializeError(createResult.error)}`,
     };
   }
 
   return {
     success: true,
-    applicationId: createResult.data!.id,
-    universalIdentifier: createResult.data!.universalIdentifier,
-    created: true,
+    applicationId: null,
+    universalIdentifier,
   };
 };

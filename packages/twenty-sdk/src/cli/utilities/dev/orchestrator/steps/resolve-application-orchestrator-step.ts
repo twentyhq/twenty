@@ -1,5 +1,5 @@
 import { type ApiService } from '@/cli/utilities/api/api-service';
-import { findOrCreateApplication } from '@/cli/utilities/application/find-or-create-application';
+import { findApplication } from '@/cli/utilities/application/find-or-create-application';
 import { type OrchestratorState } from '@/cli/utilities/dev/orchestrator/dev-mode-orchestrator-state';
 import { type Manifest } from 'twenty-shared/application';
 
@@ -29,17 +29,15 @@ export class ResolveApplicationOrchestratorStep {
 
   async execute(input: {
     manifest: Manifest;
-    applicationRegistrationId?: string;
   }): Promise<ResolveApplicationOrchestratorStepOutput> {
     const step = this.state.steps.resolveApplication;
 
     step.status = 'in_progress';
     this.notify();
 
-    const result = await findOrCreateApplication({
+    const result = await findApplication({
       apiService: this.apiService,
-      manifest: input.manifest,
-      applicationRegistrationId: input.applicationRegistrationId,
+      universalIdentifier: input.manifest.application.universalIdentifier,
     });
 
     if (!result.success) {
@@ -55,10 +53,16 @@ export class ResolveApplicationOrchestratorStep {
       return step.output;
     }
 
-    if (result.created) {
+    if (result.applicationId) {
       this.state.applyStepEvents([
-        { message: 'Creating application', status: 'info' },
-        { message: 'Application created', status: 'success' },
+        { message: 'Application found', status: 'success' },
+      ]);
+    } else {
+      this.state.applyStepEvents([
+        {
+          message: 'Application not yet created (will be created on first sync)',
+          status: 'info',
+        },
       ]);
     }
 

@@ -223,21 +223,35 @@ export class DevModeOrchestrator {
   }
 
   private async initializePipeline(manifest: Manifest): Promise<boolean> {
-    const registerResult = await this.registerAppStep.execute({ manifest });
+    await this.registerAppStep.execute({ manifest });
 
     const resolveResult = await this.resolveApplicationStep.execute({
       manifest,
-      applicationRegistrationId:
-        registerResult.applicationRegistrationId ?? undefined,
     });
 
     if (!resolveResult.applicationId) {
-      return false;
-    }
+      // App doesn't exist yet — run an initial sync to create it
+      // so that file uploads (which require the ApplicationEntity) can proceed
+      await this.syncApplicationStep.execute({
+        manifest,
+        builtFileInfos: new Map(),
+        appPath: this.state.appPath,
+      });
 
-    await this.ensureValidTokensStep.exchangeTokens({
-      applicationId: resolveResult.applicationId,
-    });
+      const reResolveResult = await this.resolveApplicationStep.execute({
+        manifest,
+      });
+
+      if (reResolveResult.applicationId) {
+        await this.ensureValidTokensStep.exchangeTokens({
+          applicationId: reResolveResult.applicationId,
+        });
+      }
+    } else {
+      await this.ensureValidTokensStep.exchangeTokens({
+        applicationId: resolveResult.applicationId,
+      });
+    }
 
     this.uploadFilesStep.initialize({
       appPath: this.state.appPath,

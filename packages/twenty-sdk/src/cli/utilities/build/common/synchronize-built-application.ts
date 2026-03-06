@@ -3,7 +3,6 @@ import {
   type CommandResult,
 } from '@/cli/public-operations/types';
 import { ApiService } from '@/cli/utilities/api/api-service';
-import { findOrCreateApplication } from '@/cli/utilities/application/find-or-create-application';
 import { type BuiltFileInfo } from '@/cli/utilities/build/common/build-application';
 import { manifestUpdateChecksums } from '@/cli/utilities/build/manifest/manifest-update-checksums';
 import { writeManifestToOutput } from '@/cli/utilities/build/manifest/manifest-writer';
@@ -26,22 +25,6 @@ export const synchronizeBuiltApplication = async ({
   builtFileInfos: Map<string, BuiltFileInfo>;
 }): Promise<CommandResult> => {
   const apiService = new ApiService();
-
-  const ensureResult = await findOrCreateApplication({
-    apiService,
-    manifest,
-  });
-
-  if (!ensureResult.success) {
-    return {
-      success: false,
-      error: {
-        code: APP_ERROR_CODES.SYNC_FAILED,
-        message: ensureResult.error,
-      },
-    };
-  }
-
   const universalIdentifier = manifest.application.universalIdentifier;
 
   const fileUploader = new FileUploader({

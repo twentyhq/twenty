@@ -383,69 +383,6 @@ export class ApiService {
     }
   }
 
-  async createApplication(
-    manifest: Manifest,
-    options?: { applicationRegistrationId?: string },
-  ): Promise<ApiResponse<{ id: string; universalIdentifier: string }>> {
-    try {
-      const mutation = `
-        mutation CreateOneApplication($input: CreateApplicationInput!) {
-          createOneApplication(input: $input) {
-            id
-            universalIdentifier
-          }
-        }
-      `;
-
-      const input: Record<string, string> = {
-        universalIdentifier: manifest.application.universalIdentifier,
-        name: manifest.application.displayName,
-        version: '0.0.1',
-        sourcePath: 'cli-sync',
-      };
-
-      if (options?.applicationRegistrationId) {
-        input.applicationRegistrationId = options.applicationRegistrationId;
-      }
-
-      const variables = {
-        input,
-      };
-
-      const response: AxiosResponse = await this.client.post(
-        '/metadata',
-        {
-          query: mutation,
-          variables,
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Accept: '*/*',
-          },
-        },
-      );
-
-      if (response.data.errors) {
-        return {
-          success: false,
-          error: response.data.errors[0],
-        };
-      }
-
-      return {
-        success: true,
-        data: response.data.data.createOneApplication,
-        message: `Successfully create application: ${manifest.application.displayName}`,
-      };
-    } catch (error) {
-      return {
-        success: false,
-        error,
-      };
-    }
-  }
-
   async syncApplication(manifest: Manifest): Promise<ApiResponse> {
     try {
       const mutation = `
