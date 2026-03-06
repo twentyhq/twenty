@@ -14,7 +14,6 @@ import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/
 import { CreateApplicationRegistrationVariableInput } from 'src/engine/core-modules/application/application-registration-variable/dtos/create-application-registration-variable.input';
 import { UpdateApplicationRegistrationVariableInput } from 'src/engine/core-modules/application/application-registration-variable/dtos/update-application-registration-variable.input';
 import { ApplicationNpmClaimService } from 'src/engine/core-modules/application/application-registration/application-npm-claim.service';
-import { ApplicationPackageFetcherService } from 'src/engine/core-modules/application/application-package/application-package-fetcher.service';
 import { ApplicationRegistrationExceptionFilter } from 'src/engine/core-modules/application/application-registration/application-registration-exception-filter';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import {
@@ -65,7 +64,6 @@ export class ApplicationRegistrationResolver {
     private readonly applicationRegistrationService: ApplicationRegistrationService,
     private readonly applicationRegistrationVariableService: ApplicationRegistrationVariableService,
     private readonly applicationTarballService: ApplicationTarballService,
-    private readonly applicationPackageFetcherService: ApplicationPackageFetcherService,
     private readonly applicationNpmClaimService: ApplicationNpmClaimService,
     private readonly fileUrlService: FileUrlService,
   ) {}
@@ -263,44 +261,6 @@ export class ApplicationRegistrationResolver {
       id,
       workspaceId,
     );
-  }
-
-  @UseGuards(
-    WorkspaceAuthGuard,
-    FeatureFlagGuard,
-    SettingsPermissionGuard(PermissionFlagType.MARKETPLACE_APPS),
-  )
-  @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)
-  @Mutation(() => ApplicationRegistrationEntity)
-  async registerNpmPackage(
-    @Args('packageName') packageName: string,
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ): Promise<ApplicationRegistrationEntity> {
-    const resolvedPackage =
-      await this.applicationPackageFetcherService.resolveNpmPackage(
-        packageName,
-      );
-
-    try {
-      const manifest = resolvedPackage.manifest.application;
-
-      return await this.applicationRegistrationService.createFromNpmPackage({
-        packageName,
-        universalIdentifier: manifest.universalIdentifier,
-        name: manifest.displayName,
-        description: manifest.description,
-        author: manifest.author,
-        logoUrl: manifest.logoUrl,
-        websiteUrl: manifest.websiteUrl,
-        termsUrl: manifest.termsUrl,
-        version: resolvedPackage.packageJson.version as string | undefined,
-        ownerWorkspaceId: workspaceId,
-      });
-    } finally {
-      await this.applicationPackageFetcherService.cleanupExtractedDir(
-        resolvedPackage.cleanupDir,
-      );
-    }
   }
 
   @UseGuards(

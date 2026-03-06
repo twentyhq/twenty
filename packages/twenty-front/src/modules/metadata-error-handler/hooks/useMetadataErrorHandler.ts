@@ -1,7 +1,7 @@
 import { type ApolloError } from '@apollo/client';
 import { t } from '@lingui/core/macro';
 
-import { classifyMetadataError } from '@/metadata-error-handler/utils/classify-metadata-error.util';
+import { classifyMetadataError } from '@/metadata-error-handler/utils/classifyMetadataError';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import {
   type AllMetadataName,

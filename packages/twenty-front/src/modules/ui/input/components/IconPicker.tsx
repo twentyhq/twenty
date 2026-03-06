@@ -11,7 +11,7 @@ import { SelectableList } from '@/ui/layout/selectable-list/components/Selectabl
 import { arrayToChunks } from '~/utils/array/arrayToChunks';
 
 import { ICON_PICKER_DROPDOWN_CONTENT_WIDTH } from '@/ui/input/components/constants/IconPickerDropdownContentWidth';
-import { IconPickerScrollEffect } from '@/ui/input/hooks/IconPickerScrollEffect';
+import { IconPickerScrollEffect } from '@/ui/input/effect-components/IconPickerScrollEffect';
 import {
   ICON_PICKER_DEFAULT_VISIBLE_COUNT,
   iconPickerVisibleCountState,
