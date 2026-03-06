@@ -7,16 +7,13 @@ export const defineEntitiesTests = (appPath: string): void => {
   describe('logicFunctions', () => {
     it('should have built logicFunctions preserving source path structure', async () => {
       const files = await readdir(outputDir, { recursive: true });
-      const sortedFiles = files.map((f) => f.toString()).sort();
+      // api-client is generated post-sync and depends on server schema availability
+      const sortedFiles = files
+        .map((f) => f.toString())
+        .filter((f) => !f.startsWith('api-client'))
+        .sort();
 
       expect(sortedFiles).toEqual([
-        'api-client',
-        'api-client/core',
-        'api-client/core/schema.ts',
-        'api-client/core/types.ts',
-        'api-client/metadata',
-        'api-client/metadata/schema.ts',
-        'api-client/metadata/types.ts',
         'manifest.json',
         'package.json',
         'public',
