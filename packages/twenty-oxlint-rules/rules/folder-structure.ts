@@ -10,9 +10,9 @@ const CAMEL_CASE_UTIL_FILE_REGEX = /^[a-z][a-zA-Z0-9]*\.(ts|tsx)$/;
 const CAMEL_CASE_UTIL_TEST_FILE_REGEX =
   /^[a-z][a-zA-Z0-9]*\.(test|spec)\.(ts|tsx)$/;
 
+// 'hooks' and 'utils' are handled by dedicated branches in
+// validateSegment before this set is checked.
 const ALLOWED_MODULE_SUBDIRS = new Set([
-  'hooks',
-  'utils',
   'states',
   'types',
   'graphql',
@@ -45,17 +45,19 @@ type ValidationError = {
   data: Record<string, string | number>;
 };
 
-const isFile = (segment: string): boolean => segment.includes('.');
+const isFile = (segment: string, isLastSegment: boolean): boolean =>
+  isLastSegment;
 
 const validateSegment = (
   segment: string,
   context: PathContext,
+  isLastSegment: boolean,
 ):
   | { nextContext: PathContext; error?: undefined }
   | { error: ValidationError } => {
   switch (context.type) {
     case 'modules_root': {
-      if (isFile(segment)) {
+      if (isFile(segment, isLastSegment)) {
         return {
           error: {
             messageId: 'noFilesInModulesRoot',
@@ -78,7 +80,7 @@ const validateSegment = (
     }
 
     case 'module': {
-      if (isFile(segment)) {
+      if (isFile(segment, isLastSegment)) {
         return { nextContext: context };
       }
       if (TESTING_DIRS.has(segment)) {
@@ -95,19 +97,19 @@ const validateSegment = (
       if (ALLOWED_MODULE_SUBDIRS.has(segment)) {
         return { nextContext: { type: 'leaf' } };
       }
-      if (!KEBAB_CASE_REGEX.test(segment)) {
-        return {
-          error: {
-            messageId: 'moduleNameNotKebabCase',
-            data: { name: segment },
-          },
-        };
-      }
       if (context.depth >= MAX_MODULE_DEPTH) {
         return {
           error: {
             messageId: 'moduleTooDeep',
             data: { max: MAX_MODULE_DEPTH, name: segment },
+          },
+        };
+      }
+      if (!KEBAB_CASE_REGEX.test(segment)) {
+        return {
+          error: {
+            messageId: 'moduleNameNotKebabCase',
+            data: { name: segment },
           },
         };
       }
@@ -117,7 +119,7 @@ const validateSegment = (
     }
 
     case 'hooks': {
-      if (isFile(segment)) {
+      if (isFile(segment, isLastSegment)) {
         if (!USE_PASCAL_CASE_FILE_REGEX.test(segment)) {
           return {
             error: {
@@ -159,7 +161,7 @@ const validateSegment = (
     }
 
     case 'hooks_tests': {
-      if (isFile(segment)) {
+      if (isFile(segment, isLastSegment)) {
         if (!USE_PASCAL_CASE_TEST_FILE_REGEX.test(segment)) {
           return {
             error: {
@@ -182,7 +184,7 @@ const validateSegment = (
     }
 
     case 'utils': {
-      if (isFile(segment)) {
+      if (isFile(segment, isLastSegment)) {
         if (!CAMEL_CASE_UTIL_FILE_REGEX.test(segment)) {
           return {
             error: {
@@ -199,7 +201,9 @@ const validateSegment = (
       if (TESTING_DIRS.has(segment)) {
         return { nextContext: { type: 'leaf' } };
       }
-      // Allow kebab-case subfolders in utils as leaf directories
+      // Intentionally treated as leaf — files inside these subfolders
+      // skip camelCase enforcement to allow flexible organization
+      // (e.g. utils/cron-to-human/types/CronParts.ts is valid).
       if (KEBAB_CASE_REGEX.test(segment)) {
         return { nextContext: { type: 'leaf' } };
       }
@@ -212,7 +216,7 @@ const validateSegment = (
     }
 
     case 'utils_tests': {
-      if (isFile(segment)) {
+      if (isFile(segment, isLastSegment)) {
         if (!CAMEL_CASE_UTIL_TEST_FILE_REGEX.test(segment)) {
           return {
             error: {
@@ -305,8 +309,14 @@ export const rule = defineRule({
 
         let currentContext: PathContext = { type: 'modules_root' };
 
-        for (const segment of segments) {
-          const result = validateSegment(segment, currentContext);
+        for (let i = 0; i < segments.length; i++) {
+          const segment = segments[i];
+          const isLastSegment = i === segments.length - 1;
+          const result = validateSegment(
+            segment,
+            currentContext,
+            isLastSegment,
+          );
 
           if ('error' in result) {
             context.report({

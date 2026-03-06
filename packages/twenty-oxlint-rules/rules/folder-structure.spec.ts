@@ -255,6 +255,14 @@ ruleTester.run(RULE_NAME, rule, {
       filename: filename('src/modules/a/b/c/d/e/hooks/useDeep.ts'),
       errors: [{ messageId: 'moduleTooDeep' }],
     },
+    // Depth check fires before kebab-case check at max depth
+    {
+      code: DUMMY_CODE,
+      filename: filename(
+        'src/modules/a/b/c/d/camelCaseDir/file.ts',
+      ),
+      errors: [{ messageId: 'moduleTooDeep' }],
+    },
 
     // Bad hook file naming
     {
@@ -330,6 +338,15 @@ ruleTester.run(RULE_NAME, rule, {
       code: DUMMY_CODE,
       filename: filename(
         'src/modules/my-feature/hooks/__tests__/extra-folder/file.ts',
+      ),
+      errors: [{ messageId: 'unexpectedInTestDir' }],
+    },
+
+    // Unexpected folder in util test directory
+    {
+      code: DUMMY_CODE,
+      filename: filename(
+        'src/modules/my-feature/utils/__tests__/extra-folder/file.ts',
       ),
       errors: [{ messageId: 'unexpectedInTestDir' }],
     },
