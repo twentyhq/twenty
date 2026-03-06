@@ -20,7 +20,10 @@ import { fromPageLayoutWidgetConfigurationToUniversalConfiguration } from 'src/e
 import { type FlatPageLayout } from 'src/engine/metadata-modules/flat-page-layout/types/flat-page-layout.type';
 import { reconstructFlatPageLayoutWithTabsAndWidgets } from 'src/engine/metadata-modules/flat-page-layout/utils/reconstruct-flat-page-layout-with-tabs-and-widgets.util';
 import { UpdatePageLayoutTabWithWidgetsInput } from 'src/engine/metadata-modules/page-layout-tab/dtos/inputs/update-page-layout-tab-with-widgets.input';
+import { type FieldsConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/fields-configuration.dto';
 import { UpdatePageLayoutWidgetWithIdInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/update-page-layout-widget-with-id.input';
+import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
+import { validateFieldsWidgetNewFieldDefaultConfiguration } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-fields-widget-new-field-default-configuration.util';
 import { UpdatePageLayoutWithTabsInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/update-page-layout-with-tabs.input';
 import { PageLayoutDTO } from 'src/engine/metadata-modules/page-layout/dtos/page-layout.dto';
 import {
@@ -476,6 +479,23 @@ export class PageLayoutUpdateService {
     });
 
     const now = new Date();
+
+    for (const widgetInput of [
+      ...entitiesToCreate,
+      ...entitiesToUpdate,
+      ...entitiesToRestoreAndUpdate,
+    ]) {
+      if (
+        isDefined(widgetInput.configuration) &&
+        widgetInput.configuration.configurationType ===
+          WidgetConfigurationType.FIELDS
+      ) {
+        validateFieldsWidgetNewFieldDefaultConfiguration({
+          configuration: widgetInput.configuration as FieldsConfigurationDTO,
+          flatViewFieldGroupMaps,
+        });
+      }
+    }
 
     const widgetsToCreate: FlatPageLayoutWidget[] = entitiesToCreate.map(
       (widgetInput) => {

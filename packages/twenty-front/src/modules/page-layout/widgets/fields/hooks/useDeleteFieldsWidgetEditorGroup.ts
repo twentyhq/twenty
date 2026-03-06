@@ -1,9 +1,15 @@
 import { fieldsWidgetEditorModeDraftComponentState } from '@/page-layout/states/fieldsWidgetEditorModeDraftComponentState';
 import { fieldsWidgetGroupsDraftComponentState } from '@/page-layout/states/fieldsWidgetGroupsDraftComponentState';
 import { fieldsWidgetUngroupedFieldsDraftComponentState } from '@/page-layout/states/fieldsWidgetUngroupedFieldsDraftComponentState';
+import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
+import { isDefined } from 'twenty-shared/utils';
+import {
+  type FieldsConfiguration,
+  WidgetConfigurationType,
+} from '~/generated-metadata/graphql';
 
 type UseDeleteFieldsWidgetEditorGroupParams = {
   pageLayoutId: string;
@@ -30,6 +36,11 @@ export const useDeleteFieldsWidgetEditorGroup = ({
     pageLayoutId,
   );
 
+  const pageLayoutDraftState = useAtomComponentStateCallbackState(
+    pageLayoutDraftComponentState,
+    pageLayoutId,
+  );
+
   const store = useStore();
 
   const deleteGroup = useCallback(
@@ -43,6 +54,25 @@ export const useDeleteFieldsWidgetEditorGroup = ({
       if (!deletedGroup) {
         return;
       }
+
+      const pageLayoutDraft = store.get(pageLayoutDraftState);
+
+      const widget = pageLayoutDraft.tabs
+        .flatMap((tab) => tab.widgets)
+        .find((w) => w.id === widgetId);
+
+      const fieldsConfiguration =
+        isDefined(widget?.configuration) &&
+        widget.configuration.configurationType ===
+          WidgetConfigurationType.FIELDS
+          ? (widget.configuration as FieldsConfiguration)
+          : null;
+
+      const currentViewFieldGroupId =
+        fieldsConfiguration?.newFieldDefaultConfiguration?.viewFieldGroupId ??
+        null;
+
+      const isReferencedGroupBeingDeleted = currentViewFieldGroupId === groupId;
 
       const deletedGroupFields = deletedGroup.fields;
       const remainingGroups = currentGroups.filter(
@@ -68,6 +98,26 @@ export const useDeleteFieldsWidgetEditorGroup = ({
           ...prev,
           [widgetId]: 'ungrouped' as const,
         }));
+
+        if (isDefined(fieldsConfiguration)) {
+          store.set(pageLayoutDraftState, (prev) => ({
+            ...prev,
+            tabs: prev.tabs.map((tab) => ({
+              ...tab,
+              widgets: tab.widgets.map((w) =>
+                w.id === widgetId
+                  ? {
+                      ...w,
+                      configuration: {
+                        ...fieldsConfiguration,
+                        newFieldDefaultConfiguration: null,
+                      },
+                    }
+                  : w,
+              ),
+            })),
+          }));
+        }
 
         return;
       }
@@ -112,11 +162,37 @@ export const useDeleteFieldsWidgetEditorGroup = ({
           };
         }),
       }));
+
+      if (isReferencedGroupBeingDeleted && isDefined(fieldsConfiguration)) {
+        store.set(pageLayoutDraftState, (prev) => ({
+          ...prev,
+          tabs: prev.tabs.map((tab) => ({
+            ...tab,
+            widgets: tab.widgets.map((w) =>
+              w.id === widgetId
+                ? {
+                    ...w,
+                    configuration: {
+                      ...fieldsConfiguration,
+                      newFieldDefaultConfiguration: {
+                        isVisible:
+                          fieldsConfiguration.newFieldDefaultConfiguration
+                            ?.isVisible ?? true,
+                        viewFieldGroupId: targetGroup.id,
+                      },
+                    },
+                  }
+                : w,
+            ),
+          })),
+        }));
+      }
     },
     [
       fieldsWidgetGroupsDraftState,
       fieldsWidgetUngroupedFieldsDraftState,
       fieldsWidgetEditorModeDraftState,
+      pageLayoutDraftState,
       widgetId,
       store,
     ],

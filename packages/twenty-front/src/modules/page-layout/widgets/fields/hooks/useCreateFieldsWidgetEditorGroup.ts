@@ -1,10 +1,16 @@
 import { fieldsWidgetEditorModeDraftComponentState } from '@/page-layout/states/fieldsWidgetEditorModeDraftComponentState';
 import { fieldsWidgetGroupsDraftComponentState } from '@/page-layout/states/fieldsWidgetGroupsDraftComponentState';
 import { fieldsWidgetUngroupedFieldsDraftComponentState } from '@/page-layout/states/fieldsWidgetUngroupedFieldsDraftComponentState';
+import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
+import {
+  type FieldsConfiguration,
+  WidgetConfigurationType,
+} from '~/generated-metadata/graphql';
 
 type UseCreateFieldsWidgetEditorGroupParams = {
   pageLayoutId: string;
@@ -28,6 +34,11 @@ export const useCreateFieldsWidgetEditorGroup = ({
 
   const fieldsWidgetEditorModeDraftState = useAtomComponentStateCallbackState(
     fieldsWidgetEditorModeDraftComponentState,
+    pageLayoutId,
+  );
+
+  const pageLayoutDraftState = useAtomComponentStateCallbackState(
+    pageLayoutDraftComponentState,
     pageLayoutId,
   );
 
@@ -74,6 +85,42 @@ export const useCreateFieldsWidgetEditorGroup = ({
           ...prev,
           [widgetId]: 'grouped' as const,
         }));
+
+        const pageLayoutDraft = store.get(pageLayoutDraftState);
+
+        const widget = pageLayoutDraft.tabs
+          .flatMap((tab) => tab.widgets)
+          .find((w) => w.id === widgetId);
+
+        const fieldsConfiguration =
+          isDefined(widget?.configuration) &&
+          widget.configuration.configurationType ===
+            WidgetConfigurationType.FIELDS
+            ? (widget.configuration as FieldsConfiguration)
+            : null;
+
+        if (isDefined(fieldsConfiguration)) {
+          store.set(pageLayoutDraftState, (prev) => ({
+            ...prev,
+            tabs: prev.tabs.map((tab) => ({
+              ...tab,
+              widgets: tab.widgets.map((w) =>
+                w.id === widgetId
+                  ? {
+                      ...w,
+                      configuration: {
+                        ...fieldsConfiguration,
+                        newFieldDefaultConfiguration: {
+                          isVisible: true,
+                          viewFieldGroupId: newId,
+                        },
+                      },
+                    }
+                  : w,
+              ),
+            })),
+          }));
+        }
       } else {
         const allDraftGroups = store.get(fieldsWidgetGroupsDraftState);
 
@@ -118,6 +165,7 @@ export const useCreateFieldsWidgetEditorGroup = ({
       fieldsWidgetGroupsDraftState,
       fieldsWidgetUngroupedFieldsDraftState,
       fieldsWidgetEditorModeDraftState,
+      pageLayoutDraftState,
       widgetId,
       store,
     ],
