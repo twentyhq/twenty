@@ -14,6 +14,7 @@ import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-e
 import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input';
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
 import { filterValidFieldsInRecord } from 'src/modules/workflow/workflow-executor/utils/filter-valid-fields-in-record.util';
+import { formatWorkflowRecordRelationFields } from 'src/modules/workflow/workflow-executor/utils/format-workflow-record-relation-fields.util';
 import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
 import { resolveRichTextFieldsInRecord } from 'src/modules/workflow/workflow-executor/utils/resolve-rich-text-fields-in-record.util';
 import { isWorkflowUpsertRecordAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/guards/is-workflow-upsert-record-action.guard';
@@ -76,8 +77,13 @@ export class UpsertRecordWorkflowAction implements WorkflowAction {
       );
     }
 
-    const filteredObjectRecord = filterValidFieldsInRecord(
+    const formattedObjectRecord = formatWorkflowRecordRelationFields(
       workflowActionInput.objectRecord,
+      objectMetadataInfo,
+    );
+
+    const filteredObjectRecord = filterValidFieldsInRecord(
+      formattedObjectRecord,
       objectMetadataInfo.flatObjectMetadata,
       objectMetadataInfo.flatFieldMetadataMaps,
     );
