@@ -1,34 +1,46 @@
 import { isDefined } from 'twenty-shared/utils';
-import type { NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/states/navigationMenuItemsDraftState';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { isNavigationMenuItemFolder } from '@/navigation-menu-item/utils/isNavigationMenuItemFolder';
 import { getPositionBetween } from '@/navigation-menu-item/utils/getPositionBetween';
+import { isNavigationMenuItemFolder } from '@/navigation-menu-item/utils/isNavigationMenuItemFolder';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+
+import { useWorkspaceSectionItems } from './useWorkspaceSectionItems';
 
 export const useNavigationMenuItemMoveRemove = () => {
   const setNavigationMenuItemsDraft = useSetAtomState(
     navigationMenuItemsDraftState,
   );
+  const items = useWorkspaceSectionItems();
+  const visibleItemIds = new Set(items.map((item) => item.id));
 
   const moveUp = (navigationMenuItemId: string) => {
     setNavigationMenuItemsDraft((draft) => {
-      if (!draft) return draft;
+      if (!draft) {
+        return draft;
+      }
 
       const currentItem = draft.find(
         (item) => item.id === navigationMenuItemId,
       );
-      if (!currentItem) return draft;
+      if (!currentItem) {
+        return draft;
+      }
 
       const folderId = currentItem.folderId ?? null;
       const siblings = draft
-        .filter((item) => (item.folderId ?? null) === folderId)
+        .filter(
+          (item) =>
+            (item.folderId ?? null) === folderId && visibleItemIds.has(item.id),
+        )
         .sort((a, b) => a.position - b.position);
 
       const currentIndex = siblings.findIndex(
         (item) => item.id === navigationMenuItemId,
       );
-      if (currentIndex <= 0) return draft;
+      if (currentIndex <= 0) {
+        return draft;
+      }
 
       const prev = siblings[currentIndex - 1];
       const prevPrev = siblings[currentIndex - 2];
@@ -44,16 +56,23 @@ export const useNavigationMenuItemMoveRemove = () => {
 
   const moveDown = (navigationMenuItemId: string) => {
     setNavigationMenuItemsDraft((draft) => {
-      if (!draft) return draft;
+      if (!draft) {
+        return draft;
+      }
 
       const currentItem = draft.find(
         (item) => item.id === navigationMenuItemId,
       );
-      if (!currentItem) return draft;
+      if (!currentItem) {
+        return draft;
+      }
 
       const folderId = currentItem.folderId ?? null;
       const siblings = draft
-        .filter((item) => (item.folderId ?? null) === folderId)
+        .filter(
+          (item) =>
+            (item.folderId ?? null) === folderId && visibleItemIds.has(item.id),
+        )
         .sort((a, b) => a.position - b.position);
 
       const currentIndex = siblings.findIndex(
@@ -77,12 +96,16 @@ export const useNavigationMenuItemMoveRemove = () => {
 
   const remove = (navigationMenuItemId: string) => {
     setNavigationMenuItemsDraft((draft) => {
-      if (!draft) return draft;
+      if (!draft) {
+        return draft;
+      }
 
       const itemToRemove = draft.find(
         (item) => item.id === navigationMenuItemId,
       );
-      if (!itemToRemove) return draft;
+      if (!itemToRemove) {
+        return draft;
+      }
 
       const isFolder = isNavigationMenuItemFolder(itemToRemove);
 
@@ -103,10 +126,14 @@ export const useNavigationMenuItemMoveRemove = () => {
     targetFolderId: string | null,
   ) => {
     setNavigationMenuItemsDraft((draft) => {
-      if (!draft) return draft;
+      if (!draft) {
+        return draft;
+      }
 
       const itemToMove = draft.find((item) => item.id === navigationMenuItemId);
-      if (!itemToMove) return draft;
+      if (!itemToMove) {
+        return draft;
+      }
 
       const isFolder = isNavigationMenuItemFolder(itemToMove);
       if (isFolder && targetFolderId === navigationMenuItemId) {
