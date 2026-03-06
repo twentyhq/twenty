@@ -5,8 +5,8 @@ import { AggregateOperations } from '@/object-record/record-table/constants/Aggr
 import { getRecordAggregateDisplayLabel } from '@/object-record/record-index/utils/getRecordndexAggregateDisplayLabel';
 
 import { convertAggregateOperationToExtendedAggregateOperation } from '@/object-record/utils/convertAggregateOperationToExtendedAggregateOperation';
-import { buildRatioNumeratorFilter } from '@/page-layout/widgets/graph/graphWidgetAggregateChart/utils/buildRatioNumeratorFilter';
-import { computeRatioDisplayValue } from '@/page-layout/widgets/graph/graphWidgetAggregateChart/utils/computeRatioDisplayValue';
+import { buildRatioNumeratorFilter } from '@/page-layout/widgets/graph/graph-widget-aggregate-chart/utils/buildRatioNumeratorFilter';
+import { computeRatioDisplayValue } from '@/page-layout/widgets/graph/graph-widget-aggregate-chart/utils/computeRatioDisplayValue';
 import { useGraphWidgetQueryCommon } from '@/page-layout/widgets/graph/hooks/useGraphWidgetQueryCommon';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { UserContext } from '@/users/contexts/UserContext';
