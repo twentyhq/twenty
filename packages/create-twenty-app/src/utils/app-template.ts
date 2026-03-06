@@ -95,7 +95,6 @@ export const copyBaseApplicationProject = async ({
     });
   }
 
-
   if (exampleOptions.includeExampleSkill) {
     await createExampleSkill({
       appDirectory: sourceFolderPath,
@@ -434,7 +433,7 @@ const createExampleView = async ({
   const universalIdentifier = v4();
   const viewFieldUniversalIdentifier = v4();
 
-  const content = `import { defineView } from 'twenty-sdk';
+  const content = `import { defineView, ViewKey } from 'twenty-sdk';
 import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER, NAME_FIELD_UNIVERSAL_IDENTIFIER } from 'src/objects/example-object';
 
 export const EXAMPLE_VIEW_UNIVERSAL_IDENTIFIER = '${universalIdentifier}';
@@ -444,6 +443,7 @@ export default defineView({
   name: 'All example items',
   objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
   icon: 'IconList',
+  key: ViewKey.INDEX,
   position: 0,
   fields: [
     {

@@ -673,7 +673,9 @@ describe('copyBaseApplicationProject', () => {
 
       const content = await fs.readFile(viewPath, 'utf8');
 
-      expect(content).toContain("import { defineView } from 'twenty-sdk'");
+      expect(content).toContain(
+        "import { defineView, ViewKey } from 'twenty-sdk'",
+      );
       expect(content).toContain(
         "import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER, NAME_FIELD_UNIVERSAL_IDENTIFIER } from 'src/objects/example-object'",
       );
@@ -687,6 +689,7 @@ describe('copyBaseApplicationProject', () => {
         'fieldMetadataUniversalIdentifier: NAME_FIELD_UNIVERSAL_IDENTIFIER',
       );
       expect(content).toContain('isVisible: true');
+      expect(content).toContain('key: ViewKey.INDEX');
       expect(content).toContain('size: 200');
     });
   });

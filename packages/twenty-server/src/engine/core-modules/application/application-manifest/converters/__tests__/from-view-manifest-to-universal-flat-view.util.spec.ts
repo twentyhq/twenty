@@ -2,10 +2,10 @@ import {
   ViewOpenRecordIn,
   ViewType,
   ViewVisibility,
+  ViewKey,
 } from 'twenty-shared/types';
 
 import { fromViewManifestToUniversalFlatView } from 'src/engine/core-modules/application/application-manifest/converters/from-view-manifest-to-universal-flat-view.util';
-import { ViewKey } from 'src/engine/metadata-modules/view/enums/view-key.enum';
 
 describe('fromViewManifestToUniversalFlatView', () => {
   const now = '2026-01-01T00:00:00.000Z';
