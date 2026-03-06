@@ -19,6 +19,7 @@ const StyledSettingsPageContainer = styled.div<{
   overflow: auto;
   padding: ${themeCssVariables.spacing[6]} ${themeCssVariables.spacing[8]}
     ${themeCssVariables.spacing[8]};
+  padding-bottom: ${themeCssVariables.spacing[20]};
   width: ${({ width, isMobile }) => {
     if (isDefined(width)) {
       return width + 'px';
@@ -28,7 +29,6 @@ const StyledSettingsPageContainer = styled.div<{
     }
     return OBJECT_SETTINGS_WIDTH + 'px';
   }};
-  padding-bottom: ${themeCssVariables.spacing[20]};
 `;
 
 export const SettingsPageContainer = ({

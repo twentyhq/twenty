@@ -19,9 +19,11 @@ A CLI and SDK to develop, build, and publish applications that extend [Twenty CR
 - Works great with the scaffolder: [create-twenty-app](https://www.npmjs.com/package/create-twenty-app)
 
 ## Documentation
+
 See Twenty application documentation https://docs.twenty.com/developers/extend/capabilities/apps
 
 ## Prerequisites
+
 - Node.js 24+ (recommended) and Yarn 4
 - A Twenty workspace and an API key. Generate one at https://app.twenty.com/settings/api-webhooks
 
@@ -73,6 +75,7 @@ In a scaffolded project (via `create-twenty-app`), use `yarn twenty <command>` i
 Authenticate the CLI against your Twenty workspace.
 
 - `twenty auth:login` — Authenticate with Twenty.
+
   - Options:
     - `--api-key <key>`: API key for authentication.
     - `--api-url <url>`: Twenty API URL (defaults to your current profile's value or `http://localhost:3000`).
@@ -83,6 +86,7 @@ Authenticate the CLI against your Twenty workspace.
 - `twenty auth:status` — Print the current authentication status (API URL, masked API key, validity).
 
 - `twenty auth:list` — List all configured workspaces.
+
   - Behavior: Displays all available workspaces with their authentication status and API URLs. Shows which workspace is the current default.
 
 - `twenty auth:switch [workspace]` — Switch the default workspace for authentication.
@@ -123,6 +127,7 @@ twenty auth:switch production
 Application development commands.
 
 - `twenty app:dev [appPath]` — Start development mode: watch and sync local application changes.
+
   - Behavior: Builds your application (functions and front components), computes the manifest, syncs everything to your workspace, then watches the directory for changes and re-syncs automatically. Displays an interactive UI showing build and sync status in real time. Press Ctrl+C to stop.
 
 - `twenty app:typecheck [appPath]` — Run TypeScript type checking on the application (runs `tsc --noEmit`). Exits with code 1 if type errors are found.
@@ -149,6 +154,7 @@ Application development commands.
 ### Function
 
 - `twenty function:logs [appPath]` — Stream application function logs.
+
   - Options:
     - `-u, --functionUniversalIdentifier <id>`: Only show logs for a specific function universal ID.
     - `-n, --functionName <name>`: Only show logs for a specific function name.
@@ -249,8 +255,8 @@ Notes:
 - `twenty auth:switch` sets the `defaultWorkspace` field, which is used when `--workspace` is not specified.
 - `twenty auth:list` shows all configured workspaces and their authentication status.
 
-
 ## Troubleshooting
+
 - Auth errors: run `twenty auth:login` again and ensure the API key has the required permissions.
 - Typings out of date: restart `twenty app:dev` to refresh the client and types.
 - Not seeing changes in dev: make sure dev mode is running (`twenty app:dev`).
@@ -301,5 +307,6 @@ node packages/twenty-sdk/dist/cli.cjs <command>
 ```
 
 ### Resources
+
 - See our [GitHub](https://github.com/twentyhq/twenty)
 - Join our [Discord](https://discord.gg/cx5n4Jzs57)

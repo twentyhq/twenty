@@ -1,4 +1,4 @@
-export type ScaffoldingMode = 'exhaustive' | 'minimal' | 'interactive';
+export type ScaffoldingMode = 'exhaustive' | 'minimal';
 
 export type ExampleOptions = {
   includeExampleObject: boolean;

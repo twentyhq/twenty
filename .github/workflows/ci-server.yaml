@@ -2,7 +2,6 @@ name: CI Server
 
 on:
   pull_request:
-
   merge_group:
 
 permissions:
@@ -17,6 +16,7 @@ env:
 
 jobs:
   changed-files-check:
+    if: github.event_name != 'merge_group'
     uses: ./.github/workflows/changed-files.yaml
     with:
       files: |
@@ -32,7 +32,7 @@ jobs:
     needs: changed-files-check
     if: needs.changed-files-check.outputs.any_changed == 'true'
     timeout-minutes: 30
-    runs-on: ubuntu-latest-8-cores
+    runs-on: ubuntu-latest-4-cores
     steps:
       - name: Fetch custom Github Actions and base branch history
         uses: actions/checkout@v4
@@ -60,7 +60,7 @@ jobs:
     needs: changed-files-check
     if: needs.changed-files-check.outputs.any_changed == 'true'
     timeout-minutes: 30
-    runs-on: ubuntu-latest-8-cores
+    runs-on: ubuntu-latest-4-cores
     steps:
       - name: Fetch custom Github Actions and base branch history
         uses: actions/checkout@v4
@@ -79,7 +79,7 @@ jobs:
   server-validation:
     needs: server-build
     timeout-minutes: 30
-    runs-on: ubuntu-latest-8-cores
+    runs-on: ubuntu-latest-4-cores
     services:
       postgres:
         image: twentycrm/twenty-postgres-spilo
@@ -179,7 +179,7 @@ jobs:
   server-test:
     needs: server-build
     timeout-minutes: 30
-    runs-on: ubuntu-latest-8-cores
+    runs-on: ubuntu-latest-4-cores
     steps:
       - name: Fetch custom Github Actions and base branch history
         uses: actions/checkout@v4
@@ -201,7 +201,7 @@ jobs:
 
   server-integration-test:
     timeout-minutes: 30
-    runs-on: ubuntu-latest-8-cores
+    runs-on: ubuntu-latest-4-cores
     needs: server-build
     strategy:
       fail-fast: false

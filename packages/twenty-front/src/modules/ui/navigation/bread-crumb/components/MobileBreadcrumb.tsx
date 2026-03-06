@@ -19,16 +19,16 @@ const StyledWrapper = styled.nav`
   font-size: ${themeCssVariables.font.size.md};
   grid-auto-flow: column;
   grid-column-gap: ${themeCssVariables.spacing[1]};
+  height: ${themeCssVariables.spacing[8]};
   max-width: 100%;
   min-width: 0;
-  height: ${themeCssVariables.spacing[8]};
 `;
 
 const StyledLinkContainer = styled.div`
   > a {
     color: inherit;
-    text-decoration: none;
     overflow: hidden;
+    text-decoration: none;
     text-overflow: ellipsis;
     white-space: nowrap;
   }

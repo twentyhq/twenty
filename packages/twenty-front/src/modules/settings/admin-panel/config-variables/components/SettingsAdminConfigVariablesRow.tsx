@@ -21,9 +21,9 @@ const StyledTableRowContainer = styled.div`
 `;
 
 const StyledEllipsisLabel = styled.div`
-  white-space: nowrap;
-  text-overflow: ellipsis;
   overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 export const SettingsAdminConfigVariablesRow = ({

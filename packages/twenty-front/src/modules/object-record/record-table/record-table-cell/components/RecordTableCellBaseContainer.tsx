@@ -19,18 +19,18 @@ const StyledBaseContainer = styled.div<{
   cursor: ${({ isReadOnly }) => (isReadOnly ? 'default' : 'pointer')};
   display: flex;
   height: 32px;
-  user-select: none;
-
   position: relative;
 
+  user-select: none;
+
   &:hover {
-    outline: ${({ isReadOnly, fontColorMedium }) =>
-      isReadOnly ? `1px solid ${fontColorMedium}` : 'unset'};
-    border-radius: ${({ isReadOnly }) => (isReadOnly ? '0px' : 'unset')};
     background-color: ${({ isReadOnly, backgroundColorSecondary }) =>
       isReadOnly ? backgroundColorSecondary : 'unset'};
+    border-radius: ${({ isReadOnly }) => (isReadOnly ? '0px' : 'unset')};
     color: ${({ isReadOnly, fontColorSecondary }) =>
       isReadOnly ? fontColorSecondary : 'unset'};
+    outline: ${({ isReadOnly, fontColorMedium }) =>
+      isReadOnly ? `1px solid ${fontColorMedium}` : 'unset'};
 
     svg {
       color: ${({ isReadOnly, fontColorSecondary }) =>

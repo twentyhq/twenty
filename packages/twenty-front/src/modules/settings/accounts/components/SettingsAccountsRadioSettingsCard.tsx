@@ -43,9 +43,9 @@ const StyledDescription = styled.div`
 `;
 
 const StyledRadioContainer = styled.span`
-  margin-left: auto;
-  display: flex;
   align-items: center;
+  display: flex;
+  margin-left: auto;
 `;
 
 const StyledExpandedContent = styled.div`

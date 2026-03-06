@@ -1,9 +1,8 @@
 name: CI SDK
 
 on:
-  merge_group:
-
   pull_request:
+  merge_group:
 
 permissions:
   contents: read
@@ -14,10 +13,12 @@ concurrency:
 
 jobs:
   changed-files-check:
+    if: github.event_name != 'merge_group'
     uses: ./.github/workflows/changed-files.yaml
     with:
       files: |
         packages/twenty-sdk/**
+        packages/twenty-server/**
         !packages/twenty-sdk/package.json
   sdk-test:
     needs: changed-files-check
@@ -50,7 +51,7 @@ jobs:
           tasks: ${{ matrix.task }}
   sdk-e2e-test:
     timeout-minutes: 30
-    runs-on: ubuntu-latest-8-cores
+    runs-on: ubuntu-latest-4-cores
     needs: [changed-files-check, sdk-test]
     if: needs.changed-files-check.outputs.any_changed == 'true'
     services:

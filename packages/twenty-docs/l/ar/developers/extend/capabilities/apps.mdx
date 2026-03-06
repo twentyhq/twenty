@@ -36,7 +36,7 @@ cd my-twenty-app
 yarn twenty app:dev
 ```
 
-يدعم المُنشئ ثلاثة أوضاع للتحكم في ملفات الأمثلة التي سيتم تضمينها:
+يدعم المُنشئ وضعين للتحكم في ملفات الأمثلة التي سيتم تضمينها:
 
 ```bash filename="Terminal"
 # الافتراضي (شامل): جميع الأمثلة (كائن، حقل، دالة منطقية، مكوّن الواجهة الأمامية، عرض، عنصر قائمة التنقل، مهارة)
@@ -44,9 +44,6 @@ npx create-twenty-app@latest my-app
 
 # الأدنى: الملفات الأساسية فقط (application-config.ts و default-role.ts)
 npx create-twenty-app@latest my-app --minimal
-
-# التفاعلي: اختر الأمثلة التي تريد تضمينها
-npx create-twenty-app@latest my-app --interactive
 ```
 
 من هنا يمكنك:
@@ -122,7 +119,7 @@ my-twenty-app/
       └── example-skill.ts                # تعريف مهارة لوكيل الذكاء الاصطناعي — مثال},{
 ```
 
-مع `--minimal`، سيتم إنشاء الملفات الأساسية فقط (`application-config.ts`، `roles/default-role.ts`، `logic-functions/pre-install.ts`، و`logic-functions/post-install.ts`). مع `--interactive`، تختار ملفات الأمثلة التي تريد تضمينها.
+مع `--minimal`، سيتم إنشاء الملفات الأساسية فقط (`application-config.ts`، `roles/default-role.ts`، `logic-functions/pre-install.ts`، و`logic-functions/post-install.ts`).
 
 بشكل عام:
 

@@ -27,14 +27,14 @@ const StyledFieldPlaceholderCell = styled.div<{ widthOfFields: number }>`
 `;
 
 const StyledRecordTableDraggableTr = styled.div`
-  cursor: pointer;
+  align-items: center;
 
-  border: none;
   background: ${themeCssVariables.background.primary};
+  border: none;
 
+  cursor: pointer;
   display: flex;
   flex-direction: row;
-  align-items: center;
 
   &:hover {
     div:not(:first-of-type) {
@@ -57,10 +57,10 @@ const StyledIconContainer = styled.div`
   display: flex;
   height: ${RECORD_TABLE_ROW_HEIGHT}px;
   justify-content: center;
-  width: ${RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px;
+  left: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px;
 
   position: sticky;
-  left: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px;
+  width: ${RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px;
 `;
 
 const StyledActionTextContainer = styled.div<{ width: number }>`
@@ -79,13 +79,13 @@ const StyledActionTextContainer = styled.div<{ width: number }>`
 
 const StyledText = styled.span`
   color: ${themeCssVariables.font.color.tertiary};
-  margin-left: ${themeCssVariables.spacing[2]};
   font-size: ${themeCssVariables.font.size.md};
+  margin-left: ${themeCssVariables.spacing[2]};
+  position: absolute;
   text-align: left;
   vertical-align: middle;
-  white-space: nowrap;
 
-  position: absolute;
+  white-space: nowrap;
 `;
 
 type RecordTableActionRowProps = {

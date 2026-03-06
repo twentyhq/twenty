@@ -16,10 +16,10 @@ const StyledCardGrid = styled.div`
 
 const StyledImage = styled.img`
   border-bottom: 1px solid ${themeCssVariables.border.color.medium};
-  height: 120px;
-  width: 100%;
-  object-fit: cover;
   display: flex;
+  height: 120px;
+  object-fit: cover;
+  width: 100%;
 `;
 
 export const SettingsLabContent = () => {

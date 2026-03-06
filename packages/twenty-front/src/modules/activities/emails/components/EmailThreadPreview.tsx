@@ -16,9 +16,9 @@ import { formatToHumanReadableDate } from '~/utils/date-utils';
 
 const StyledHeading = styled.div<{ unread: boolean }>`
   display: flex;
+  max-width: 20%;
   overflow: hidden;
   width: fit-content;
-  max-width: 20%;
 `;
 
 const StyledParticipantsContainer = styled.div`
@@ -52,17 +52,17 @@ const StyledSubjectAndBody = styled.div`
 
 const StyledSubject = styled.span`
   color: ${themeCssVariables.font.color.primary};
-  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 const StyledBody = styled.span`
   color: ${themeCssVariables.font.color.tertiary};
+  flex: 1;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  flex: 1;
 `;
 
 const StyledReceivedAt = styled.div`

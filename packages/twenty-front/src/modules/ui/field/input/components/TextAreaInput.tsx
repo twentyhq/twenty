@@ -27,14 +27,14 @@ export type TextAreaInputProps = {
 
 const StyledTextAreaContainer = styled.div`
   > textarea {
+    align-items: center;
     background-color: transparent;
     border: none;
     color: ${themeCssVariables.font.color.primary};
+    display: flex;
     font-family: ${themeCssVariables.font.family};
     font-size: inherit;
     font-weight: inherit;
-    outline: none;
-    padding: ${themeCssVariables.spacing[0]} ${themeCssVariables.spacing[2]};
 
     &::placeholder,
     &::-webkit-input-placeholder {
@@ -43,23 +43,23 @@ const StyledTextAreaContainer = styled.div`
       font-weight: ${themeCssVariables.font.weight.medium};
     }
 
-    align-items: center;
-    display: flex;
     justify-content: center;
-    resize: none;
-    max-height: 400px;
-    width: calc(100% - ${themeCssVariables.spacing[7]});
-
     line-height: 18px;
+    max-height: 400px;
+    outline: none;
+    padding: ${themeCssVariables.spacing[0]} ${themeCssVariables.spacing[2]};
+    resize: none;
+
+    width: calc(100% - ${themeCssVariables.spacing[7]});
   }
 `;
 
 const StyledLightIconButtonContainer = styled.div`
   background: transparent;
   position: absolute;
+  right: 0;
   top: 16px;
   transform: translateY(-50%);
-  right: 0;
 `;
 
 export const TextAreaInput = ({

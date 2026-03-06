@@ -34,9 +34,9 @@ const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[8]};
+  overflow: scroll;
   padding: ${themeCssVariables.spacing[6]};
   width: 100%;
-  overflow: scroll;
 `;
 
 const StyledYear = styled.span`

@@ -6,8 +6,8 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 const StyledStaticCellSkeleton = styled.div`
   background-color: ${themeCssVariables.background.tertiary};
   border-radius: ${themeCssVariables.border.radius.sm};
-  padding: 8px;
   margin: 8px;
+  padding: 8px;
 `;
 
 export const RecordTableCellLoading = ({

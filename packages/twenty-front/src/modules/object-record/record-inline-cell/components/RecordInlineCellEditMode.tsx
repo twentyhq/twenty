@@ -21,12 +21,12 @@ import { createPortal } from 'react-dom';
 const StyledInlineCellEditModeContainer = styled.div`
   align-items: center;
 
-  display: flex;
-  width: 100%;
-  position: absolute;
-  height: 24px;
-
   background: transparent;
+  display: flex;
+  height: 24px;
+  position: absolute;
+
+  width: 100%;
 `;
 
 type RecordInlineCellEditModeProps = {

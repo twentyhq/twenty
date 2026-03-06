@@ -17,10 +17,10 @@ const StyledContainer = styled.div<{ isExpanded: boolean }>`
   display: flex;
   flex-direction: ${({ isExpanded }) => (isExpanded ? 'row' : 'column')};
   gap: ${({ isExpanded }) => (isExpanded ? '0' : themeCssVariables.spacing[4])};
-  user-select: none;
-  padding-right: ${themeCssVariables.spacing[2]};
   min-height: ${PAGE_BAR_MIN_HEIGHT}px;
+  padding-right: ${themeCssVariables.spacing[2]};
   transition: gap calc(${themeCssVariables.animation.duration.normal} * 1s) ease;
+  user-select: none;
 `;
 
 const StyledRightActions = styled.div<{ isExpanded: boolean }>`
@@ -42,10 +42,10 @@ const StyledNavigationDrawerCollapseButtonContainer = styled.div`
 `;
 
 const StyledWorkspaceDropdownContainer = styled.div`
-  min-height: ${themeCssVariables.spacing[8]};
-  display: flex;
   align-items: center;
+  display: flex;
   justify-content: center;
+  min-height: ${themeCssVariables.spacing[8]};
 `;
 
 type NavigationDrawerHeaderProps = {

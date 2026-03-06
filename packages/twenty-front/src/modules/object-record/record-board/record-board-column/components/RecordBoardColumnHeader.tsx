@@ -28,9 +28,9 @@ const StyledHeader = styled.div`
   cursor: pointer;
   display: flex;
   flex-direction: row;
+  height: 100%;
   justify-content: left;
   width: 100%;
-  height: 100%;
 `;
 
 const StyledHeaderActions = styled.div`

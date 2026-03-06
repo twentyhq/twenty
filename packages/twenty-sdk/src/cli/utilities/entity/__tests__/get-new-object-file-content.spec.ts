@@ -12,15 +12,24 @@ describe('getNewObjectFileContent', () => {
       name: 'company',
     });
 
-    expect(result).toContain("import { defineObject } from 'twenty-sdk'");
+    expect(result).toContain(
+      "import { defineObject, FieldType } from 'twenty-sdk'",
+    );
     expect(result).toContain('export default defineObject({');
+    expect(result).toContain('export const NAME_FIELD_UNIVERSAL_IDENTIFIER');
 
     expect(result).toContain("nameSingular: 'company'");
     expect(result).toContain("namePlural: 'companies'");
     expect(result).toContain("labelSingular: 'Company'");
     expect(result).toContain("labelPlural: 'Companies'");
     expect(result).toContain("icon: 'IconBox'");
+    expect(result).toContain(
+      'labelIdentifierFieldMetadataUniversalIdentifier: NAME_FIELD_UNIVERSAL_IDENTIFIER',
+    );
     expect(result).toContain('fields: [');
+    expect(result).toContain('FieldType.TEXT');
+    expect(result).toContain("name: 'name'");
+    expect(result).toContain("label: 'Name'");
 
     expect(result).toMatch(
       /universalIdentifier: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'/,

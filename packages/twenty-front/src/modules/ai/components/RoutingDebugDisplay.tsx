@@ -22,13 +22,13 @@ const StyledToggleButton = styled.div`
   align-items: center;
   background: none;
   border: none;
+  color: ${themeCssVariables.font.color.tertiary};
   cursor: pointer;
   display: flex;
-  color: ${themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.sm};
   gap: ${themeCssVariables.spacing[1]};
   padding: ${themeCssVariables.spacing[1]} 0;
   transition: color calc(${themeCssVariables.animation.duration.normal} * 1s);
-  font-size: ${themeCssVariables.font.size.sm};
 
   &:hover {
     color: ${themeCssVariables.font.color.secondary};
@@ -63,14 +63,14 @@ const StyledTab = styled.div<{ isActive: boolean }>`
     isActive
       ? themeCssVariables.font.color.primary
       : themeCssVariables.font.color.tertiary};
+  cursor: pointer;
   font-size: ${themeCssVariables.font.size.sm};
   font-weight: ${({ isActive }) =>
     isActive
       ? themeCssVariables.font.weight.medium
       : themeCssVariables.font.weight.regular};
-  cursor: pointer;
-  transition: color calc(${themeCssVariables.animation.duration.normal} * 1s);
   padding-bottom: ${themeCssVariables.spacing[2]};
+  transition: color calc(${themeCssVariables.animation.duration.normal} * 1s);
 
   &:hover {
     color: ${themeCssVariables.font.color.secondary};

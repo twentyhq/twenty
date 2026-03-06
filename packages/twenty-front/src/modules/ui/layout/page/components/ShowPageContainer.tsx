@@ -15,8 +15,8 @@ const StyledOuterContainer = styled.div`
 const StyledInnerContainer = styled.div`
   display: flex;
   flex-direction: var(--show-page-direction, row);
-  width: 100%;
   height: 100%;
+  width: 100%;
 `;
 
 const StyledScrollWrapperContainer = styled.div`
