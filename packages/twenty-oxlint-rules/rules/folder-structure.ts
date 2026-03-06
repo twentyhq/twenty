@@ -10,10 +10,9 @@ const CAMEL_CASE_UTIL_FILE_REGEX = /^[a-z][a-zA-Z0-9]*\.(ts|tsx)$/;
 const CAMEL_CASE_UTIL_TEST_FILE_REGEX =
   /^[a-z][a-zA-Z0-9]*\.(test|spec)\.(ts|tsx)$/;
 
-// 'hooks' and 'utils' are not in this set because they have their own
-// contexts with file-naming enforcement (use{PascalCase} / {camelCase}).
-// The remaining subdirs are "leaf" contexts where any file name is valid.
 const ALLOWED_MODULE_SUBDIRS = new Set([
+  'hooks',
+  'utils',
   'states',
   'types',
   'graphql',
