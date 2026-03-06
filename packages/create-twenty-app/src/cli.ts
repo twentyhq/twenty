@@ -31,7 +31,9 @@ const program = new Command(packageJson.name)
 
       if (modeFlags.length > 1) {
         console.error(
-          chalk.red('Error: --exhaustive and --minimal are mutually exclusive.'),
+          chalk.red(
+            'Error: --exhaustive and --minimal are mutually exclusive.',
+          ),
         );
         process.exit(1);
       }

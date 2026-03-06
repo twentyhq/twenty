@@ -66,10 +66,10 @@ yarn twenty app:uninstall
 
 Control which example files are included when creating a new app:
 
-| Flag                | Behavior                                                                |
-| ------------------- |-------------------------------------------------------------------------|
-| `-e, --exhaustive`  | **(default)** Creates all example files                                 |
-| `-m, --minimal`     | Creates only core files (`application-config.ts` and `default-role.ts`) |
+| Flag               | Behavior                                                                |
+| ------------------ | ----------------------------------------------------------------------- |
+| `-e, --exhaustive` | **(default)** Creates all example files                                 |
+| `-m, --minimal`    | Creates only core files (`application-config.ts` and `default-role.ts`) |
 
 ```bash
 # Default: all examples included
