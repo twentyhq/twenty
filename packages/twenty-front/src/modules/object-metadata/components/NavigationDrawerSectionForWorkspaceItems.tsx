@@ -157,6 +157,7 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
         dimension="height"
         mode="fit-content"
         containAnimation
+        initial={false}
       >
         {isNavigationMenuInEditMode ? (
           <Suspense

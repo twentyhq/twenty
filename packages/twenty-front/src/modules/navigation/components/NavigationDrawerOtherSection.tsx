@@ -63,6 +63,7 @@ export const NavigationDrawerOtherSection = () => {
         dimension="height"
         mode="fit-content"
         containAnimation
+        initial={false}
       >
         <NavigationDrawerItem
           label={t`Settings`}

@@ -80,6 +80,7 @@ export const CurrentWorkspaceMemberNavigationMenuItemFolders = () => {
         dimension="height"
         mode="fit-content"
         containAnimation
+        initial={false}
       >
         <NavigationMenuItemFolders />
         <CurrentWorkspaceMemberOrphanNavigationMenuItems />
