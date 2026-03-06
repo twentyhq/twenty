@@ -143,6 +143,19 @@ export class ApplicationDevelopmentResolver {
       );
     }
 
+    const applicationRegistrationId =
+      await this.findApplicationRegistrationId(
+        applicationUniversalIdentifier,
+        workspaceId,
+      );
+
+    await this.ensureApplicationExists({
+      universalIdentifier: applicationUniversalIdentifier,
+      name: applicationUniversalIdentifier,
+      workspaceId,
+      applicationRegistrationId,
+    });
+
     const buffer = await streamToBuffer(createReadStream());
 
     return await this.fileStorageService.writeFile({

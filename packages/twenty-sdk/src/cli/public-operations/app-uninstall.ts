@@ -25,7 +25,7 @@ const innerAppUninstall = async (
       error: {
         code: APP_ERROR_CODES.MANIFEST_NOT_FOUND,
         message:
-          'Manifest not found. Run `app:build` or `app:dev` to generate it first.',
+          'Manifest not found. Run `app:generate-client` or `app:dev` to generate it first.',
       },
     };
   }

@@ -209,6 +209,18 @@ export class DevModeOrchestrator {
       appPath: this.state.appPath,
     });
 
+    if (!this.state.steps.resolveApplication.output.applicationId) {
+      const postSyncResolve = await this.resolveApplicationStep.execute({
+        manifest: buildResult.manifest!,
+      });
+
+      if (postSyncResolve.applicationId) {
+        await this.ensureValidTokensStep.exchangeTokens({
+          applicationId: postSyncResolve.applicationId,
+        });
+      }
+    }
+
     if (objectsOrFieldsChanged) {
       await this.generateApiClientStep.execute({
         appPath: this.state.appPath,
@@ -229,25 +241,7 @@ export class DevModeOrchestrator {
       manifest,
     });
 
-    if (!resolveResult.applicationId) {
-      // App doesn't exist yet — run an initial sync to create it
-      // so that file uploads (which require the ApplicationEntity) can proceed
-      await this.syncApplicationStep.execute({
-        manifest,
-        builtFileInfos: new Map(),
-        appPath: this.state.appPath,
-      });
-
-      const reResolveResult = await this.resolveApplicationStep.execute({
-        manifest,
-      });
-
-      if (reResolveResult.applicationId) {
-        await this.ensureValidTokensStep.exchangeTokens({
-          applicationId: reResolveResult.applicationId,
-        });
-      }
-    } else {
+    if (resolveResult.applicationId) {
       await this.ensureValidTokensStep.exchangeTokens({
         applicationId: resolveResult.applicationId,
       });

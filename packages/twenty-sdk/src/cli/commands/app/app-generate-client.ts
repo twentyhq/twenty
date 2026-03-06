@@ -1,20 +1,20 @@
-import { appBuild } from '@/cli/public-operations/app-build';
+import { appGenerateClient } from '@/cli/public-operations/app-generate-client';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
 import chalk from 'chalk';
 
-export type AppBuildCommandOptions = {
+export type AppGenerateClientCommandOptions = {
   appPath?: string;
 };
 
-export class AppBuildCommand {
-  async execute(options: AppBuildCommandOptions): Promise<void> {
+export class AppGenerateClientCommand {
+  async execute(options: AppGenerateClientCommandOptions): Promise<void> {
     const appPath = options.appPath ?? CURRENT_EXECUTION_DIRECTORY;
 
-    console.log(chalk.blue('Building and syncing application...'));
+    console.log(chalk.blue('Generating API client...'));
     console.log(chalk.gray(`App path: ${appPath}`));
     console.log('');
 
-    const result = await appBuild({
+    const result = await appGenerateClient({
       appPath,
       onProgress: (message) => console.log(chalk.gray(message)),
     });
@@ -26,7 +26,7 @@ export class AppBuildCommand {
 
     console.log(
       chalk.green(
-        `✓ Build and sync succeeded (${result.data.fileCount} file${result.data.fileCount === 1 ? '' : 's'})`,
+        `✓ Client generated (${result.data.fileCount} file${result.data.fileCount === 1 ? '' : 's'})`,
       ),
     );
   }

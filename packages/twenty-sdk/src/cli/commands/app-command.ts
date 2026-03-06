@@ -1,7 +1,7 @@
 import { formatPath } from '@/cli/utilities/file/file-path';
 import chalk from 'chalk';
 import type { Command } from 'commander';
-import { AppBuildCommand } from './app/app-build';
+import { AppGenerateClientCommand } from './app/app-generate-client';
 import { AppDevCommand } from './app/app-dev';
 import { AppPackCommand } from './app/app-pack';
 import { AppPushCommand } from './app/app-push';
@@ -63,7 +63,7 @@ export const registerCommands = (program: Command): void => {
     });
 
   // App commands
-  const buildCommand = new AppBuildCommand();
+  const generateClientCommand = new AppGenerateClientCommand();
   const devCommand = new AppDevCommand();
   const packCommand = new AppPackCommand();
   const pushCommand = new AppPushCommand();
@@ -74,10 +74,12 @@ export const registerCommands = (program: Command): void => {
   const executeCommand = new LogicFunctionExecuteCommand();
 
   program
-    .command('app:build [appPath]')
-    .description('Build the application without watching for changes')
+    .command('app:generate-client [appPath]')
+    .description(
+      'Build, sync to local server, and generate the typed API client',
+    )
     .action(async (appPath) => {
-      await buildCommand.execute({
+      await generateClientCommand.execute({
         appPath: formatPath(appPath),
       });
     });

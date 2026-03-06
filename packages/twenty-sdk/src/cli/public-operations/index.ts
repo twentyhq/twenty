@@ -5,8 +5,11 @@ export { authLogout } from './auth-logout';
 export type { AuthLogoutOptions } from './auth-logout';
 
 // App
-export { appBuild } from './app-build';
-export type { AppBuildOptions, AppBuildResult } from './app-build';
+export { appGenerateClient } from './app-generate-client';
+export type {
+  AppGenerateClientOptions,
+  AppGenerateClientResult,
+} from './app-generate-client';
 export { appPack } from './app-pack';
 export type { AppPackResult } from './app-pack';
 export { appUninstall } from './app-uninstall';

@@ -6,18 +6,18 @@ import { ClientService } from '@/cli/utilities/client/client-service';
 import { runSafe } from '@/cli/utilities/run-safe';
 import { APP_ERROR_CODES, type CommandResult } from './types';
 
-export type AppBuildOptions = {
+export type AppGenerateClientOptions = {
   appPath: string;
   onProgress?: (message: string) => void;
 };
 
-export type AppBuildResult = {
+export type AppGenerateClientResult = {
   fileCount: number;
 };
 
-const innerAppBuild = async (
-  options: AppBuildOptions,
-): Promise<CommandResult<AppBuildResult>> => {
+const innerAppGenerateClient = async (
+  options: AppGenerateClientOptions,
+): Promise<CommandResult<AppGenerateClientResult>> => {
   const { appPath, onProgress } = options;
 
   onProgress?.('Building manifest...');
@@ -45,7 +45,7 @@ const innerAppBuild = async (
 
   onProgress?.('Building application files...');
 
-  const firstBuildResult = await buildApplication({
+  const buildResult = await buildApplication({
     appPath,
     manifest,
     filePaths,
@@ -53,14 +53,14 @@ const innerAppBuild = async (
 
   onProgress?.('Syncing application schema...');
 
-  const firstSyncResult = await synchronizeBuiltApplication({
+  const syncResult = await synchronizeBuiltApplication({
     appPath,
     manifest,
-    builtFileInfos: firstBuildResult.builtFileInfos,
+    builtFileInfos: buildResult.builtFileInfos,
   });
 
-  if (!firstSyncResult.success) {
-    return firstSyncResult;
+  if (!syncResult.success) {
+    return syncResult;
   }
 
   onProgress?.('Generating API client...');
@@ -86,35 +86,18 @@ const innerAppBuild = async (
     };
   }
 
-  onProgress?.('Rebuilding with generated client...');
-
-  const finalBuildResult = await buildApplication({
-    appPath,
-    manifest,
-    filePaths,
-  });
-
-  onProgress?.('Syncing built files...');
-
-  const finalSyncResult = await synchronizeBuiltApplication({
-    appPath,
-    manifest,
-    builtFileInfos: finalBuildResult.builtFileInfos,
-  });
-
-  if (!finalSyncResult.success) {
-    return finalSyncResult;
-  }
-
   return {
     success: true,
     data: {
-      fileCount: finalBuildResult.builtFileInfos.size,
+      fileCount: buildResult.builtFileInfos.size,
     },
   };
 };
 
-export const appBuild = (
-  options: AppBuildOptions,
-): Promise<CommandResult<AppBuildResult>> =>
-  runSafe(() => innerAppBuild(options), APP_ERROR_CODES.SYNC_FAILED);
+export const appGenerateClient = (
+  options: AppGenerateClientOptions,
+): Promise<CommandResult<AppGenerateClientResult>> =>
+  runSafe(
+    () => innerAppGenerateClient(options),
+    APP_ERROR_CODES.SYNC_FAILED,
+  );
