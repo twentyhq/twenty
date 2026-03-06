@@ -383,6 +383,67 @@ export class ApplicationRegistrationService {
     return this.applicationRegistrationRepository.save(registration);
   }
 
+  async claimForNpm(params: {
+    existingRegistration: ApplicationRegistrationEntity;
+    packageName: string;
+    ownerWorkspaceId: string;
+    manifest: import('twenty-shared/application').Manifest;
+    version?: string;
+  }): Promise<ApplicationRegistrationEntity> {
+    const { existingRegistration, packageName, ownerWorkspaceId, manifest } =
+      params;
+
+    await this.applicationRegistrationRepository.update(
+      existingRegistration.id,
+      {
+        sourceType: ApplicationRegistrationSourceType.NPM,
+        sourcePackage: packageName,
+        ownerWorkspaceId,
+        name: manifest.application.displayName,
+        description: manifest.application.description ?? null,
+        author: manifest.application.author ?? null,
+        latestAvailableVersion: params.version ?? null,
+      },
+    );
+
+    return this.applicationRegistrationRepository.findOneOrFail({
+      where: { id: existingRegistration.id },
+    });
+  }
+
+  async createFromNpmClaim(params: {
+    packageName: string;
+    universalIdentifier: string;
+    name: string;
+    description?: string;
+    author?: string;
+    logoUrl?: string;
+    websiteUrl?: string;
+    termsUrl?: string;
+    version?: string;
+    ownerWorkspaceId: string;
+  }): Promise<ApplicationRegistrationEntity> {
+    const registration = this.applicationRegistrationRepository.create({
+      universalIdentifier: params.universalIdentifier,
+      name: params.name,
+      description: params.description ?? null,
+      author: params.author ?? null,
+      logoUrl: params.logoUrl ?? null,
+      websiteUrl: params.websiteUrl ?? null,
+      termsUrl: params.termsUrl ?? null,
+      latestAvailableVersion: params.version ?? null,
+      sourceType: ApplicationRegistrationSourceType.NPM,
+      sourcePackage: params.packageName,
+      isListed: true,
+      oAuthClientId: v4(),
+      oAuthRedirectUris: [],
+      oAuthScopes: [],
+      ownerWorkspaceId: params.ownerWorkspaceId,
+    });
+
+    return this.applicationRegistrationRepository.save(registration);
+  }
+
   async findManyBySourceType(
     sourceType: ApplicationRegistrationSourceType,
   ): Promise<ApplicationRegistrationEntity[]> {

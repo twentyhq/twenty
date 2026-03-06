@@ -48,6 +48,7 @@ export enum JwtTokenTypeEnum {
   KEY_ENCRYPTION_KEY = 'KEY_ENCRYPTION_KEY',
   APPLICATION_ACCESS = 'APPLICATION_ACCESS',
   APPLICATION_REFRESH = 'APPLICATION_REFRESH',
+  NPM_CLAIM = 'NPM_CLAIM',
 }
 
 type CommonPropertiesJwtPayload = {
@@ -141,6 +142,12 @@ export type PostgresProxyTokenJwtPayload = CommonPropertiesJwtPayload & {
   type: JwtTokenTypeEnum.POSTGRES_PROXY;
 };
 
+export type NpmClaimTokenJwtPayload = CommonPropertiesJwtPayload & {
+  type: JwtTokenTypeEnum.NPM_CLAIM;
+  workspaceId: string;
+  packageName: string;
+};
+
 export type JwtPayload =
   | AccessTokenJwtPayload
   | ApiKeyTokenJwtPayload
@@ -152,4 +159,5 @@ export type JwtPayload =
   | RefreshTokenJwtPayload
   | FileTokenJwtPayload
   | FileTokenJwtPayloadLegacy
-  | PostgresProxyTokenJwtPayload;
+  | PostgresProxyTokenJwtPayload
+  | NpmClaimTokenJwtPayload;
