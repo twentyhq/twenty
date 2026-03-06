@@ -55,7 +55,7 @@ const StyledSeparator = styled.span`
 `;
 
 export const FooterNote = () => {
-  const isOnAWorkspace = useIsCurrentLocationOnAWorkspace();
+  const { isOnAWorkspace } = useIsCurrentLocationOnAWorkspace();
 
   const { shouldOfferBypass, shouldUseBypass, enableBypass } =
     useWorkspaceBypass();

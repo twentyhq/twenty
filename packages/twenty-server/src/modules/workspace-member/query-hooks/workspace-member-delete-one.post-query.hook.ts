@@ -5,10 +5,11 @@ import { Repository } from 'typeorm';
 
 import { type WorkspacePostQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
 
-import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
 import { WorkspaceQueryHookType } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/types/workspace-query-hook.type';
-import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { isApiKeyAuthContext } from 'src/engine/core-modules/auth/guards/is-api-key-auth-context.guard';
+import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
@@ -36,7 +37,7 @@ export class WorkspaceMemberDeleteOnePostQueryHook
   ) {}
 
   async execute(
-    authContext: AuthContext,
+    authContext: WorkspaceAuthContext,
     _objectName: string,
     payload: WorkspaceMemberWorkspaceEntity[],
   ): Promise<void> {
@@ -53,11 +54,17 @@ export class WorkspaceMemberDeleteOnePostQueryHook
 
     await this.workspaceMemberPreQueryHookService.validateWorkspaceMemberUpdatePermissionOrThrow(
       {
-        userWorkspaceId: authContext.userWorkspaceId,
-        workspaceMemberId: authContext.workspaceMemberId,
+        userWorkspaceId: isUserAuthContext(authContext)
+          ? authContext.userWorkspaceId
+          : undefined,
+        workspaceMemberId: isUserAuthContext(authContext)
+          ? authContext.workspaceMemberId
+          : undefined,
         targettedWorkspaceMemberId,
         workspaceId: workspace.id,
-        apiKey: authContext.apiKey,
+        apiKey: isApiKeyAuthContext(authContext)
+          ? authContext.apiKey
+          : undefined,
       },
     );
 
@@ -77,7 +84,7 @@ export class WorkspaceMemberDeleteOnePostQueryHook
             withDeleted: true,
           });
         },
-        authContext as WorkspaceAuthContext,
+        authContext,
       );
 
     if (!isDefined(workspaceMember)) {

@@ -18,7 +18,7 @@ export const CardHeader = ({
   ...rest
 }: CardHeaderProps) => {
   return (
-    // eslint-disable-next-line react/jsx-props-no-spreading
+    // oxlint-disable-next-line react/jsx-props-no-spreading
     <StyledCardHeader className={className} {...rest}>
       {children}
     </StyledCardHeader>

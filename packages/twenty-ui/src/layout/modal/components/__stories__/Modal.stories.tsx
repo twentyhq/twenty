@@ -16,7 +16,7 @@ const StyledCenteredTitle = styled.div`
   text-align: center;
 `;
 
-const StyledSection = styled(Section)`
+const StyledSectionContainer = styled.div`
   margin-bottom: ${themeCssVariables.spacing[6]};
 `;
 
@@ -103,13 +103,15 @@ export const Confirmation: Story = {
       <StyledCenteredTitle>
         <H1Title title="Delete record?" fontColor={H1TitleFontColor.Primary} />
       </StyledCenteredTitle>
-      <StyledSection
-        alignment={SectionAlignment.Center}
-        fontColor={SectionFontColor.Primary}
-      >
-        This action cannot be undone. The record and all of its data will be
-        permanently removed.
-      </StyledSection>
+      <StyledSectionContainer>
+        <Section
+          alignment={SectionAlignment.Center}
+          fontColor={SectionFontColor.Primary}
+        >
+          This action cannot be undone. The record and all of its data will be
+          permanently removed.
+        </Section>
+      </StyledSectionContainer>
       <Button title="Cancel" variant="secondary" fullWidth justify="center" />
       <Button
         title="Delete"

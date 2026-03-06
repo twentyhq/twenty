@@ -15,8 +15,12 @@ import {
   OverflowingTextWithTooltip,
 } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
-import { ThemeContext } from 'twenty-ui/theme';
-import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
+import { isDefined } from 'twenty-shared/utils';
+import {
+  MOBILE_VIEWPORT,
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 const StyledTopBarContainer = styled.div<{ isMobile: boolean }>`
   align-items: center;
@@ -123,7 +127,7 @@ export const PageHeader = ({
                 <Icon size={theme.icon.size.md} />
               </StyledIconContainer>
             )}
-            {title && (
+            {isDefined(title) && (
               <StyledTitleContainer data-testid="top-bar-title">
                 {typeof title === 'string' ? (
                   <OverflowingTextWithTooltip text={title} />

@@ -1,11 +1,11 @@
-import * as fs from 'fs-extra';
+import { readdir } from 'node:fs/promises';
 import { join } from 'path';
 
 export const defineLogicFunctionsTests = (appPath: string): void => {
   describe('logicFunctions', () => {
     it('should have built logicFunctions at root level', async () => {
       const outputDir = join(appPath, '.twenty/output');
-      const files = await fs.readdir(outputDir, { recursive: true });
+      const files = await readdir(outputDir, { recursive: true });
       const functionFiles = files
         .map((f) => f.toString())
         .filter((f) => f.includes('.function.'))

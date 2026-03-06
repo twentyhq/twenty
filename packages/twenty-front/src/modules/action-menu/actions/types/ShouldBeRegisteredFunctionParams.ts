@@ -14,7 +14,7 @@ export type ShouldBeRegisteredFunctionParams = {
   recordFilters?: RecordFilter[];
   isShowPage?: boolean;
   hasAnySoftDeleteFilterOnView?: boolean;
-  isInRightDrawer?: boolean;
+  isInSidePanel?: boolean;
   isFavorite?: boolean;
   isRemote?: boolean;
   isNoteOrTask?: boolean;

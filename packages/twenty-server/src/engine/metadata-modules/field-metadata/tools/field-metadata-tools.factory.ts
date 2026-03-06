@@ -104,6 +104,22 @@ const DeleteFieldMetadataInputSchema = z.object({
   id: z.string().uuid().describe('ID of the field to delete'),
 });
 
+const CreateManyFieldMetadataInputSchema = z.object({
+  fields: z
+    .array(CreateFieldMetadataInputSchema)
+    .min(1)
+    .max(20)
+    .describe('Array of field metadata to create (1-20 items).'),
+});
+
+const UpdateManyFieldMetadataInputSchema = z.object({
+  fields: z
+    .array(UpdateFieldMetadataInputSchema)
+    .min(1)
+    .max(20)
+    .describe('Array of field metadata updates to apply (1-20 items).'),
+});
+
 @Injectable()
 export class FieldMetadataToolsFactory {
   constructor(private readonly fieldMetadataService: FieldMetadataService) {}
@@ -221,6 +237,86 @@ export class FieldMetadataToolsFactory {
               });
 
             return fromFlatFieldMetadataToFieldMetadataDto(flatFieldMetadata);
+          } catch (error) {
+            if (error instanceof WorkspaceMigrationBuilderException) {
+              throw new Error(formatValidationErrors(error));
+            }
+            throw error;
+          }
+        },
+      },
+      create_many_field_metadata: {
+        description:
+          'Create multiple field metadata at once on one or more objects. More efficient than calling create_field_metadata multiple times. Each item follows the same schema as create_field_metadata.',
+        inputSchema: CreateManyFieldMetadataInputSchema,
+        execute: async (parameters: {
+          fields: Array<{
+            objectMetadataId: string;
+            type: FieldMetadataType;
+            name: string;
+            label: string;
+            description?: string;
+            icon?: string;
+            isNullable?: boolean;
+            isUnique?: boolean;
+            defaultValue?: unknown;
+            options?: unknown;
+            settings?: unknown;
+            isLabelSyncedWithName?: boolean;
+            isRemoteCreation?: boolean;
+            relationCreationPayload?: unknown;
+          }>;
+        }) => {
+          try {
+            await this.fieldMetadataService.createManyFields({
+              createFieldInputs: parameters.fields as Parameters<
+                typeof this.fieldMetadataService.createManyFields
+              >[0]['createFieldInputs'],
+              workspaceId,
+            });
+
+            return true;
+          } catch (error) {
+            if (error instanceof WorkspaceMigrationBuilderException) {
+              throw new Error(formatValidationErrors(error));
+            }
+            throw error;
+          }
+        },
+      },
+      update_many_field_metadata: {
+        description:
+          'Update multiple field metadata at once. More efficient than calling update_field_metadata multiple times. Each item must include the field ID and the properties to update.',
+        inputSchema: UpdateManyFieldMetadataInputSchema,
+        execute: async (parameters: {
+          fields: Array<{
+            id: string;
+            name?: string;
+            label?: string;
+            description?: string;
+            icon?: string;
+            isActive?: boolean;
+            isNullable?: boolean;
+            isUnique?: boolean;
+            defaultValue?: unknown;
+            options?: unknown;
+            settings?: unknown;
+            isLabelSyncedWithName?: boolean;
+          }>;
+        }) => {
+          try {
+            await Promise.all(
+              parameters.fields.map(async ({ id, ...update }) => {
+                await this.fieldMetadataService.updateOneField({
+                  updateFieldInput: { id, ...update } as Parameters<
+                    typeof this.fieldMetadataService.updateOneField
+                  >[0]['updateFieldInput'],
+                  workspaceId,
+                });
+              }),
+            );
+
+            return true;
           } catch (error) {
             if (error instanceof WorkspaceMigrationBuilderException) {
               throw new Error(formatValidationErrors(error));

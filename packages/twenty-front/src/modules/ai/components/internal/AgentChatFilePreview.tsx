@@ -13,7 +13,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { AvatarOrIcon, Chip, ChipVariant } from 'twenty-ui/components';
 import { type IconComponent, IconX } from 'twenty-ui/display';
 import { Loader } from 'twenty-ui/feedback';
-import { ThemeContext } from 'twenty-ui/theme';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 const StyledClickableContainer = styled.div<{ clickable: boolean }>`
   cursor: ${({ clickable }: { clickable: boolean }) =>

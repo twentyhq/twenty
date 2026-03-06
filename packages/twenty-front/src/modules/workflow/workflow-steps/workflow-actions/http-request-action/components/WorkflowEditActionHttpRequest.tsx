@@ -30,9 +30,7 @@ import { BodyInput } from './BodyInput';
 import { HttpRequestExecutionResult } from './HttpRequestExecutionResult';
 import { HttpRequestTestVariableInput } from './HttpRequestTestVariableInput';
 import { KeyValuePairInput } from './KeyValuePairInput';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { ThemeContext } from 'twenty-ui/theme';
-
+import { themeCssVariables, ThemeContext } from 'twenty-ui/theme-constants';
 type WorkflowEditActionHttpRequestProps = {
   action: WorkflowHttpRequestAction;
   actionOptions: {
@@ -41,7 +39,7 @@ type WorkflowEditActionHttpRequestProps = {
   };
 };
 
-const StyledTabList = styled(TabList)`
+const StyledTabListContainer = styled.div`
   background-color: ${themeCssVariables.background.secondary};
   padding-left: ${themeCssVariables.spacing[2]};
 `;
@@ -63,7 +61,7 @@ const StyledConfigurationTabContent = styled.div`
   flex: 1;
 `;
 
-const StyledFullHeightFormRawJsonFieldInput = styled(FormRawJsonFieldInput)`
+const StyledFullHeightFormRawJsonFieldInputContainer = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -130,11 +128,13 @@ export const WorkflowEditActionHttpRequest = ({
 
   return (
     <>
-      <StyledTabList
-        tabs={tabs}
-        behaveAsLinks={false}
-        componentInstanceId={WORKFLOW_HTTP_REQUEST_TAB_LIST_COMPONENT_ID}
-      />
+      <StyledTabListContainer>
+        <TabList
+          tabs={tabs}
+          behaveAsLinks={false}
+          componentInstanceId={WORKFLOW_HTTP_REQUEST_TAB_LIST_COMPONENT_ID}
+        />
+      </StyledTabListContainer>
       <WorkflowStepBody>
         {activeTabId === WorkflowHttpRequestTabId.CONFIGURATION && (
           <StyledConfigurationTabContent>
@@ -153,7 +153,9 @@ export const WorkflowEditActionHttpRequest = ({
               value={formData.method}
               onChange={(value) => handleFieldChange('method', value)}
               disabled={actionOptions.readonly}
-              dropdownOffset={{ y: parseInt(theme.spacing(1), 10) }}
+              dropdownOffset={{
+                y: parseInt(theme.spacing[1], 10),
+              }}
               dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
             />
 
@@ -178,14 +180,16 @@ export const WorkflowEditActionHttpRequest = ({
               />
             )}
 
-            <StyledFullHeightFormRawJsonFieldInput
-              label={t`Expected Response Body`}
-              placeholder={JSON_RESPONSE_PLACEHOLDER}
-              defaultValue={outputSchema}
-              onChange={handleOutputSchemaChange}
-              readonly={actionOptions.readonly}
-              error={error}
-            />
+            <StyledFullHeightFormRawJsonFieldInputContainer>
+              <FormRawJsonFieldInput
+                label={t`Expected Response Body`}
+                placeholder={JSON_RESPONSE_PLACEHOLDER}
+                defaultValue={outputSchema}
+                onChange={handleOutputSchemaChange}
+                readonly={actionOptions.readonly}
+                error={error}
+              />
+            </StyledFullHeightFormRawJsonFieldInputContainer>
           </StyledConfigurationTabContent>
         )}
         {activeTabId === WorkflowHttpRequestTabId.TEST && (

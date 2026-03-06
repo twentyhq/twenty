@@ -1,8 +1,7 @@
-import { useContext } from 'react';
-
 import { type IconComponent } from '@ui/display';
+import { useContext } from 'react';
+import { ThemeContext } from '@ui/theme-constants';
 import { MenuItemIconBoxContainer } from './MenuItemIconBoxContainer';
-import { ThemeContext } from '@ui/theme';
 
 export type MenuItemIconProps = {
   Icon: IconComponent | null | undefined;

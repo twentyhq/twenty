@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { type ReactNode } from 'react';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -37,7 +38,7 @@ export const useMockFieldContext = ({
   };
 
   const FieldContextProvider =
-    fieldMetadataItem && objectMetadataItem
+    isDefined(fieldMetadataItem) && isDefined(objectMetadataItem)
       ? ({ children }: { children: ReactNode }) => (
           <FieldContext.Provider
             key={objectRecordId + fieldMetadataItem.id}

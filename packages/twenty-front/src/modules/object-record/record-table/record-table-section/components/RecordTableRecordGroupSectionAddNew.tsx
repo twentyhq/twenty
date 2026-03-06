@@ -5,6 +5,7 @@ import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
 import { RecordTableActionRow } from '@/object-record/record-table/record-table-row/components/RecordTableActionRow';
+import { isRecordTableCreateDisabled } from '@/object-record/record-table/utils/isRecordTableCreateDisabled';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
@@ -39,6 +40,10 @@ export const RecordTableRecordGroupSectionAddNew = () => {
   const hasObjectUpdatePermissions = objectPermissions.canUpdateObjectRecords;
 
   if (!hasObjectUpdatePermissions) {
+    return null;
+  }
+
+  if (isRecordTableCreateDisabled(objectMetadataItem.nameSingular)) {
     return null;
   }
 

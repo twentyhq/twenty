@@ -382,17 +382,22 @@ msgid "Application not found."
 msgstr "Aplikace nenalezena."
 
 #. js-lingui-id: DE/icK
-#: src/engine/core-modules/application-registration/application-registration.exception.ts
+#: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "Application registration not found."
 msgstr ""
 
 #. js-lingui-id: eiOt+9
-#: src/engine/core-modules/application-registration/application-registration.exception.ts
+#: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "Application registration variable not found."
 msgstr ""
 
+#. js-lingui-id: QtRMs/
+#: src/engine/core-modules/application/application.exception.ts
+msgid "Application upgrade failed."
+msgstr ""
+
 #. js-lingui-id: 9qtW5o
-#: src/engine/core-modules/applicationVariable/application-variable.exception.ts
+#: src/engine/core-modules/application/application-variable/application-variable.exception.ts
 msgid "Application variable not found."
 msgstr "Proměnná aplikace nenalezena."
 
@@ -493,6 +498,22 @@ msgstr "Fakturační produkt nenalezen."
 msgid "Billing subscription not found."
 msgstr "Fakturační předplatné nenalezeno."
 
+#. js-lingui-id: 0j1d4L
+#: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
+#: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
+msgid "Blocklist handle already exists."
+msgstr ""
+
+#. js-lingui-id: Hbe5jq
+#: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
+msgid "Blocklist handle is required."
+msgstr ""
+
+#. js-lingui-id: xYLtTf
+#: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
+msgid "Blocklist item not found."
+msgstr ""
+
 #. js-lingui-id: Ara8xP
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-standalone-rich-text-body.util.ts
 msgid "Body is required for standalone rich text widget"
@@ -511,6 +532,11 @@ msgstr ""
 #. js-lingui-id: TaToDK
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-standalone-rich-text-body.util.ts
 msgid "Body must be an object for widget \"{widgetTitle}\""
+msgstr ""
+
+#. js-lingui-id: HOWEGX
+#: src/modules/blocklist/query-hooks/blocklist-update-many.pre-query.hook.ts
+msgid "Bulk update of blocklist entries is not allowed."
 msgstr ""
 
 #. js-lingui-id: AjVXBS
@@ -567,6 +593,11 @@ msgstr "Nelze přidat oprávnění na systémových objektech."
 #: src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception.ts
 msgid "Cannot complete operation due to related records."
 msgstr "Operaci nelze dokončit kvůli souvisejícím záznamům."
+
+#. js-lingui-id: 6Sk/wo
+#: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
+msgid "Cannot create blocklist entry for another workspace member."
+msgstr ""
 
 #. js-lingui-id: LIPsWu
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
@@ -1216,6 +1247,11 @@ msgstr "Nepodařilo se smazat záznam."
 msgid "Failed to duplicate dashboard."
 msgstr "Nepodařilo se duplikovat ovládací panel."
 
+#. js-lingui-id: Ol/51Z
+#: src/engine/core-modules/application/application.exception.ts
+msgid "Failed to extract tarball."
+msgstr ""
+
 #. js-lingui-id: HfhmrS
 #: src/engine/core-modules/admin-panel/admin-panel-queue.service.ts
 msgid "Failed to load queue jobs. Please try again later."
@@ -1846,6 +1882,11 @@ msgstr "Neplatný parametr hloubky."
 msgid "Invalid email address."
 msgstr "Neplatná e-mailová adresa."
 
+#. js-lingui-id: Lq9KTr
+#: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
+msgid "Invalid email or domain."
+msgstr ""
+
 #. js-lingui-id: YtFgT4
 #: src/engine/core-modules/feature-flag/feature-flag.exception.ts
 msgid "Invalid feature flag key."
@@ -1934,6 +1975,11 @@ msgstr "Neplatná hodnota hodiny. Měla by být celočíselná větší než 1"
 #: src/engine/core-modules/sso/sso.exception.ts
 msgid "Invalid identity provider type."
 msgstr "Neplatný typ poskytovatele identity."
+
+#. js-lingui-id: xfXYBX
+#: src/engine/core-modules/application/application-registration/application-registration.exception.ts
+msgid "Invalid input for application registration."
+msgstr ""
 
 #. js-lingui-id: t7SpQO
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
@@ -3003,12 +3049,12 @@ msgid "One or more records were not found."
 msgstr ""
 
 #. js-lingui-id: kx632Q
-#: src/engine/core-modules/application-registration/application-registration.exception.ts
+#: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "One or more redirect URIs are invalid."
 msgstr ""
 
 #. js-lingui-id: PUBUbK
-#: src/engine/core-modules/application-registration/application-registration.exception.ts
+#: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "One or more requested scopes are invalid."
 msgstr ""
 
@@ -3680,6 +3726,11 @@ msgstr "Některá z vybraných oprávnění není platná. Zkuste to prosím zno
 msgid "Some workspace memberships could not be found. They may no longer have access to this workspace."
 msgstr "Některá členství v pracovním prostoru nebyla nalezena. Možná už k tomuto pracovnímu prostoru nemají přístup."
 
+#. js-lingui-id: Oa7nLQ
+#: src/engine/core-modules/application/application.exception.ts
+msgid "Source channel mismatch."
+msgstr ""
+
 #. js-lingui-id: OmgwCE
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-flat-field-metadata.util.ts
 msgid "Source object cannot be the target object"
@@ -3862,6 +3913,11 @@ msgstr "Agenta, kterého hledáte, nelze nalézt. Mohl být smazán nebo k němu
 #: src/engine/metadata-modules/permissions/permissions.service.ts
 msgid "The API key does not have a valid role assigned. Please check your API key configuration."
 msgstr "Klíč API nemá přiřazenou platnou roli. Zkontrolujte konfiguraci svého klíče API."
+
+#. js-lingui-id: MQn14a
+#: src/engine/core-modules/application/application-registration/application-registration.exception.ts
+msgid "The app source channel does not match the expected type."
+msgstr ""
 
 #. js-lingui-id: IU78DA
 #: src/engine/metadata-modules/permissions/permissions.service.ts
@@ -4171,7 +4227,7 @@ msgid "This type of record cannot be merged."
 msgstr ""
 
 #. js-lingui-id: nZbise
-#: src/engine/core-modules/application-registration/application-registration.exception.ts
+#: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "This universal identifier is already claimed by another registration."
 msgstr ""
 
@@ -4258,6 +4314,11 @@ msgstr "Je vyžadováno ověření v rámci dvoufaktorového ověřování."
 #. js-lingui-id: Qx95XY
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
 msgid "Udpated field is not a morph relation or a relation"
+msgstr ""
+
+#. js-lingui-id: SpmRxi
+#: src/engine/core-modules/application/application.exception.ts
+msgid "Unable to retrieve the application package."
 msgstr ""
 
 #. js-lingui-id: WWSSTx
@@ -4355,6 +4416,12 @@ msgstr "Uživatel nemá oprávnění."
 #: src/utils/__test__/custom-exception.spec.ts
 msgid "User friendly error message"
 msgstr "Uživatelsky přívětivá chybová zpráva"
+
+#. js-lingui-id: NJT8W8
+#: src/modules/blocklist/query-hooks/blocklist-update-one.pre-query.hook.ts
+#: src/modules/blocklist/query-hooks/blocklist-create-many.pre-query.hook.ts
+msgid "User id is required."
+msgstr ""
 
 #. js-lingui-id: pMOjQa
 #: src/engine/core-modules/auth/token/services/access-token.service.ts
@@ -4945,6 +5012,11 @@ msgstr "Nesoulad ID pracovního prostoru a role."
 msgid "Workspace is not ready to welcome new members"
 msgstr "Pracovní prostor není připraven přivítat nové členy"
 
+#. js-lingui-id: SWTQfb
+#: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
+msgid "Workspace member cannot be updated."
+msgstr ""
+
 #. js-lingui-id: rnnLQA
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Workspace member not found."
@@ -5154,6 +5226,11 @@ msgstr "Nemáte oprávnění k úpravě tohoto zobrazení."
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "You have exhausted your credits. Please upgrade your plan to continue."
 msgstr "Vyčerpali jste své kredity. Chcete-li pokračovat, přejděte na vyšší tarif."
+
+#. js-lingui-id: nq15cs
+#: src/modules/blocklist/query-hooks/blocklist-create-one.pre-query.hook.ts
+msgid "You must be authenticated to manage blocklist."
+msgstr ""
 
 #. js-lingui-id: z+7x/s
 #: src/engine/core-modules/auth/auth.exception.ts

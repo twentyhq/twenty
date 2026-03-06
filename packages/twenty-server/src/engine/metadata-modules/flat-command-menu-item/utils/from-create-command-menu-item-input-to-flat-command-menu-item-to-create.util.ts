@@ -64,6 +64,8 @@ export const fromCreateCommandMenuItemInputToFlatCommandMenuItemToCreate = ({
     frontComponentUniversalIdentifier,
     label: createCommandMenuItemInput.label,
     icon: createCommandMenuItemInput.icon ?? null,
+    shortLabel: createCommandMenuItemInput.shortLabel ?? null,
+    position: createCommandMenuItemInput.position ?? 0,
     isPinned: createCommandMenuItemInput.isPinned ?? false,
     availabilityType:
       createCommandMenuItemInput.availabilityType ??

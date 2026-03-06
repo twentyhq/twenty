@@ -134,14 +134,14 @@ describe('CommandMenuItem update should succeed', () => {
       expectToFail: false,
       input: {
         id: createdCommandMenuItemId,
-        availabilityType: CommandMenuItemAvailabilityType.SINGLE_RECORD,
+        availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
         availabilityObjectMetadataId: companyObjectMetadataId,
       },
     });
 
     expect(data.updateCommandMenuItem).toMatchObject({
       id: createdCommandMenuItemId,
-      availabilityType: CommandMenuItemAvailabilityType.SINGLE_RECORD,
+      availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
       availabilityObjectMetadataId: companyObjectMetadataId,
     });
   });
@@ -154,7 +154,7 @@ describe('CommandMenuItem update should succeed', () => {
         label: 'Fully Updated Label',
         icon: 'IconNew',
         isPinned: true,
-        availabilityType: CommandMenuItemAvailabilityType.BULK_RECORDS,
+        availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
         availabilityObjectMetadataId: personObjectMetadataId,
       },
     });
@@ -164,7 +164,7 @@ describe('CommandMenuItem update should succeed', () => {
       label: 'Fully Updated Label',
       icon: 'IconNew',
       isPinned: true,
-      availabilityType: CommandMenuItemAvailabilityType.BULK_RECORDS,
+      availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
       availabilityObjectMetadataId: personObjectMetadataId,
     });
   });

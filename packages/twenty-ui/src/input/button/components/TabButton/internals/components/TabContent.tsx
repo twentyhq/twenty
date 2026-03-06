@@ -1,6 +1,6 @@
 import { Pill } from '@ui/components/Pill/Pill';
 import { Avatar, type IconComponent } from '@ui/display';
-import { ThemeContext } from '@ui/theme';
+import { ThemeContext } from '@ui/theme-constants';
 import { type ReactElement, useContext } from 'react';
 import { StyledTabHover } from './StyledTabBase';
 
@@ -29,6 +29,7 @@ export const TabContent = ({
   className,
 }: TabContentProps) => {
   const { theme } = useContext(ThemeContext);
+
   const iconColor = active
     ? theme.font.color.primary
     : disabled

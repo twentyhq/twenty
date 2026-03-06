@@ -5,8 +5,7 @@ import { ResizeHandle } from '@ui/layout/resize-handle/components/ResizeHandle';
 import { BASE_CODE_EDITOR_THEME_ID } from '@ui/input/code-editor/constants/BaseCodeEditorThemeId';
 import { useResizeHandle } from '@ui/layout/resize-handle/hooks/useResizeHandle';
 import { getBaseCodeEditorTheme } from '@ui/input/code-editor/theme/utils/getBaseCodeEditorTheme';
-import { ThemeContext } from '@ui/theme';
-import { themeCssVariables } from '@ui/theme-constants';
+import { ThemeContext, themeCssVariables } from '@ui/theme-constants';
 import { type editor } from 'monaco-editor';
 import { type KeyboardEvent, useContext, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -189,9 +188,7 @@ export const CodeEditor = ({
 
             monaco.editor.defineTheme(
               BASE_CODE_EDITOR_THEME_ID,
-              getBaseCodeEditorTheme({
-                theme,
-              }),
+              getBaseCodeEditorTheme(theme),
             );
             monaco.editor.setTheme(BASE_CODE_EDITOR_THEME_ID);
 

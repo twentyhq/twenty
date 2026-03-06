@@ -87,7 +87,7 @@ my-twenty-app/
   .yarnrc.yml
   .yarn/
     install-state.gz
-  eslint.config.mjs
+  .oxlintrc.json
   tsconfig.json
   README.md
   src/
@@ -157,7 +157,7 @@ src/
 * **.gitignore**: `node_modules`、`.yarn`、`generated/`（型付きクライアント）、`dist/`、`build/`、カバレッジ用フォルダー、ログファイル、`.env*` ファイルなどの一般的な生成物を無視します。
 * **yarn.lock**、**.yarnrc.yml**、**.yarn/**: プロジェクトで使用する Yarn 4 ツールチェーンをロックおよび構成します。
 * **.nvmrc**: プロジェクトで想定する Node.js バージョンを固定します。
-* **eslint.config.mjs** と **tsconfig.json**: アプリの TypeScript ソース向けの Lint と TypeScript 設定を提供します。
+* **.oxlintrc.json** と **tsconfig.json**: アプリの TypeScript ソース向けの Lint と TypeScript 設定を提供します。
 * **README.md**: アプリのルートにある、基本的な手順を記した短い README。
 * **src/**: The main place where you define your application-as-code:
   * `application.config.ts`: アプリのグローバル設定（メタデータとランタイムの接続）。 「アプリケーション設定」を参照してください。

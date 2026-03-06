@@ -20,7 +20,7 @@ const StyledText = styled.span`
   z-index: 1;
 `;
 
-const StyledScrollableContainer = styled.div`
+const StyledValueContainer = styled.div`
   overflow-x: auto;
   white-space: nowrap;
   scrollbar-width: none;
@@ -29,9 +29,7 @@ const StyledScrollableContainer = styled.div`
   &::-webkit-scrollbar {
     display: none;
   }
-`;
 
-const StyledValueContainer = styled(StyledScrollableContainer)`
   align-items: center;
   display: flex;
   gap: 4px;

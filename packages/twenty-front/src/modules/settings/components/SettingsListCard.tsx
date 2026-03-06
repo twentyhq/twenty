@@ -5,14 +5,15 @@ import { SettingsListSkeletonCard } from '@/settings/components/SettingsListSkel
 
 import { type IconComponent, IconPlus } from 'twenty-ui/display';
 import { Card, CardFooter } from 'twenty-ui/layout';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { SettingsListItemCardContent } from './SettingsListItemCardContent';
 
-const StyledFooter = styled(CardFooter)`
-  align-items: center;
-  display: flex;
-  padding: ${themeCssVariables.spacing[1]};
+const StyledFooterContainer = styled.div`
+  > * {
+    align-items: center;
+    display: flex;
+    padding: ${themeCssVariables.spacing[1]};
+  }
 `;
 
 const StyledButton = styled.button`
@@ -92,12 +93,14 @@ export const SettingsListCard = <
         />
       ))}
       {hasFooter && (
-        <StyledFooter divider={!!items.length}>
-          <StyledButton onClick={onFooterButtonClick}>
-            <IconPlus size={theme.icon.size.md} />
-            {footerButtonLabel}
-          </StyledButton>
-        </StyledFooter>
+        <StyledFooterContainer>
+          <CardFooter divider={!!items.length}>
+            <StyledButton onClick={onFooterButtonClick}>
+              <IconPlus size={theme.icon.size.md} />
+              {footerButtonLabel}
+            </StyledButton>
+          </CardFooter>
+        </StyledFooterContainer>
       )}
     </Card>
   );

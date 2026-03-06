@@ -1,4 +1,4 @@
-import { styled } from '@linaria/react';
+import { css } from '@linaria/core';
 import { type PlacesType, type PositionStrategy, Tooltip } from 'react-tooltip';
 import { themeCssVariables } from '@ui/theme-constants';
 
@@ -16,24 +16,17 @@ export enum TooltipDelay {
   longDelay = '1000ms',
 }
 
-const StyledAppTooltip = styled(Tooltip)<{ width?: string }>`
+const appTooltipClass = css`
   backdrop-filter: ${themeCssVariables.blur.strong};
   background-color: ${themeCssVariables.color.transparent.gray11};
   border-radius: ${themeCssVariables.border.radius.sm};
-
   box-shadow: ${themeCssVariables.boxShadow.light};
   color: ${themeCssVariables.grayScale.gray1};
-
   font-size: ${themeCssVariables.font.size.sm};
   font-weight: ${themeCssVariables.font.weight.regular};
-
-  max-width: ${({ width }) => width || '40%'};
   overflow: visible;
-
   padding: ${themeCssVariables.spacing[2]};
-
   word-break: break-word;
-
   z-index: ${themeCssVariables.lastLayerZIndex};
 `;
 
@@ -82,23 +75,22 @@ export const AppTooltip = ({
   };
 
   return (
-    <StyledAppTooltip
-      {...{
-        anchorSelect,
-        className,
-        content,
-        delayShow: getDelayInMis(delay),
-        delayHide: 20,
-        hidden,
-        noArrow,
-        offset,
-        place,
-        positionStrategy,
-        children,
-        clickable,
-        width,
-        isOpen,
-      }}
-    />
+    <Tooltip
+      anchorSelect={anchorSelect}
+      className={`${appTooltipClass}${className ? ` ${className}` : ''}`}
+      content={content}
+      delayShow={getDelayInMis(delay)}
+      delayHide={20}
+      hidden={hidden}
+      noArrow={noArrow}
+      offset={offset}
+      place={place}
+      positionStrategy={positionStrategy}
+      clickable={clickable}
+      isOpen={isOpen}
+      style={{ maxWidth: width ?? '40%' }}
+    >
+      {children}
+    </Tooltip>
   );
 };

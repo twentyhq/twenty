@@ -9,8 +9,12 @@ export const fromFlatCommandMenuItemToCommandMenuItemDto = (
   frontComponentId: flatCommandMenuItem.frontComponentId ?? undefined,
   label: flatCommandMenuItem.label,
   icon: flatCommandMenuItem.icon ?? undefined,
+  shortLabel: flatCommandMenuItem.shortLabel ?? undefined,
+  position: flatCommandMenuItem.position,
   isPinned: flatCommandMenuItem.isPinned,
   availabilityType: flatCommandMenuItem.availabilityType,
+  conditionalAvailabilityExpression:
+    flatCommandMenuItem.conditionalAvailabilityExpression ?? undefined,
   availabilityObjectMetadataId:
     flatCommandMenuItem.availabilityObjectMetadataId ?? undefined,
   workspaceId: flatCommandMenuItem.workspaceId,

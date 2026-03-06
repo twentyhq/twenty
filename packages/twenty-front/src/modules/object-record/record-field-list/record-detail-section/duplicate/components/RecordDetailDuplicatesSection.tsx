@@ -1,4 +1,4 @@
-import { useOpenMergeRecordsPageInCommandMenu } from '@/command-menu/hooks/useOpenMergeRecordsPageInCommandMenu';
+import { useOpenMergeRecordsPageInSidePanel } from '@/side-panel/hooks/useOpenMergeRecordsPageInSidePanel';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { useFindDuplicateRecords } from '@/object-record/hooks/useFindDuplicateRecords';
@@ -34,13 +34,17 @@ export const RecordDetailDuplicatesSection = ({
     objectRecordId,
   ];
 
-  const { openMergeRecordsPageInCommandMenu } =
-    useOpenMergeRecordsPageInCommandMenu({
+  const { openMergeRecordsPageInSidePanel } =
+    useOpenMergeRecordsPageInSidePanel({
       objectNameSingular,
       objectRecordIds: duplicateRecordIds,
     });
 
-  if (!queryResults || !queryResults[0] || queryResults[0].length === 0)
+  if (
+    !isDefined(queryResults) ||
+    !isDefined(queryResults[0]) ||
+    queryResults[0].length === 0
+  )
     return null;
 
   return (
@@ -51,7 +55,7 @@ export const RecordDetailDuplicatesSection = ({
           className="displayOnHover"
           Icon={IconArrowMerge}
           accent="tertiary"
-          onClick={openMergeRecordsPageInCommandMenu}
+          onClick={openMergeRecordsPageInSidePanel}
         />
       }
     >

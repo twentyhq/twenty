@@ -120,7 +120,7 @@ describe('CommandMenuItem creation should succeed', () => {
         label: 'Full Command Menu Item',
         icon: 'IconSparkles',
         isPinned: true,
-        availabilityType: CommandMenuItemAvailabilityType.SINGLE_RECORD,
+        availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
         availabilityObjectMetadataId: companyObjectMetadataId,
       },
     });
@@ -133,7 +133,7 @@ describe('CommandMenuItem creation should succeed', () => {
       label: 'Full Command Menu Item',
       icon: 'IconSparkles',
       isPinned: true,
-      availabilityType: CommandMenuItemAvailabilityType.SINGLE_RECORD,
+      availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
       availabilityObjectMetadataId: companyObjectMetadataId,
     });
   });
@@ -146,7 +146,7 @@ describe('CommandMenuItem creation should succeed', () => {
       input: {
         workflowVersionId,
         label: 'Bulk Records Command',
-        availabilityType: CommandMenuItemAvailabilityType.BULK_RECORDS,
+        availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
         availabilityObjectMetadataId: personObjectMetadataId,
       },
     });
@@ -157,7 +157,7 @@ describe('CommandMenuItem creation should succeed', () => {
       id: expect.any(String),
       workflowVersionId,
       label: 'Bulk Records Command',
-      availabilityType: CommandMenuItemAvailabilityType.BULK_RECORDS,
+      availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
       availabilityObjectMetadataId: personObjectMetadataId,
     });
   });

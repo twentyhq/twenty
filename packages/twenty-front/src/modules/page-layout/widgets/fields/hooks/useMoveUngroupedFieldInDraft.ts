@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { fieldsWidgetUngroupedFieldsDraftComponentState } from '@/page-layout/states/fieldsWidgetUngroupedFieldsDraftComponentState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useStore } from 'jotai';
@@ -31,7 +32,7 @@ export const useMoveUngroupedFieldInDraft = ({
 
         const [movedField] = sortedFields.splice(sourceIndex, 1);
 
-        if (!movedField) {
+        if (!isDefined(movedField)) {
           return prev;
         }
 

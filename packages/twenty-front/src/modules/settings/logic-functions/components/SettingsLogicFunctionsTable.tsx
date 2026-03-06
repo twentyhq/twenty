@@ -8,14 +8,21 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { type LogicFunction } from '~/generated-metadata/graphql';
 import { useLingui } from '@lingui/react/macro';
+import React from 'react';
 import { useParams } from 'react-router-dom';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-export const StyledTableRow = styled(TableRow)`
-  grid-template-columns: 164px 1fr 96px 32px;
-`;
+export const StyledTableRow = (
+  props: React.ComponentProps<typeof TableRow>,
+) => (
+  <TableRow
+    gridTemplateColumns="164px 1fr 96px 32px"
+    // oxlint-disable-next-line react/jsx-props-no-spreading
+    {...props}
+  />
+);
 
-const StyledTableBody = styled(TableBody)`
+const StyledTableBodyContainer = styled.div`
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
 `;
 
@@ -40,18 +47,20 @@ export const SettingsLogicFunctionsTable = ({
         <TableHeader>{t`Runtime`}</TableHeader>
         <TableHeader></TableHeader>
       </StyledTableRow>
-      <StyledTableBody>
-        {logicFunctions.map((logicFunction: LogicFunction) => (
-          <SettingsLogicFunctionsFieldItemTableRow
-            key={logicFunction.id}
-            logicFunction={logicFunction}
-            to={getSettingsPath(SettingsPath.ApplicationLogicFunctionDetail, {
-              applicationId,
-              logicFunctionId: logicFunction.id,
-            })}
-          />
-        ))}
-      </StyledTableBody>
+      <StyledTableBodyContainer>
+        <TableBody>
+          {logicFunctions.map((logicFunction: LogicFunction) => (
+            <SettingsLogicFunctionsFieldItemTableRow
+              key={logicFunction.id}
+              logicFunction={logicFunction}
+              to={getSettingsPath(SettingsPath.ApplicationLogicFunctionDetail, {
+                applicationId,
+                logicFunctionId: logicFunction.id,
+              })}
+            />
+          ))}
+        </TableBody>
+      </StyledTableBodyContainer>
     </Table>
   );
 };

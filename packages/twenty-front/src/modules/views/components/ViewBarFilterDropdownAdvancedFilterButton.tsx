@@ -26,9 +26,11 @@ import { MenuItem } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { v4 } from 'uuid';
 
-const StyledPill = styled(Pill)`
-  background: ${themeCssVariables.color.blue3};
-  color: ${themeCssVariables.color.blue};
+const StyledPillContainer = styled.span`
+  & > * {
+    background: ${themeCssVariables.color.blue3};
+    color: ${themeCssVariables.color.blue};
+  }
 `;
 
 export const ViewBarFilterDropdownAdvancedFilterButton = () => {
@@ -134,7 +136,9 @@ export const ViewBarFilterDropdownAdvancedFilterButton = () => {
         focused={isSelectedItemId}
       />
       {advancedFilterQuerySubFilterCount > 0 && (
-        <StyledPill label={advancedFilterQuerySubFilterCount.toString()} />
+        <StyledPillContainer>
+          <Pill label={advancedFilterQuerySubFilterCount.toString()} />
+        </StyledPillContainer>
       )}
     </SelectableListItem>
   );

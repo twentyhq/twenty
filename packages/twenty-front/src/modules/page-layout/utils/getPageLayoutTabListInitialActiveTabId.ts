@@ -6,7 +6,7 @@ type GetPageLayoutTabListInitialActiveTabIdParams = {
   tabs: PageLayoutTab[];
   defaultTabToFocusOnMobileAndSidePanelId?: string;
   isMobile: boolean;
-  isInRightDrawer: boolean;
+  isInSidePanel: boolean;
 };
 
 export const getPageLayoutTabListInitialActiveTabId = ({
@@ -14,7 +14,7 @@ export const getPageLayoutTabListInitialActiveTabId = ({
   tabs,
   defaultTabToFocusOnMobileAndSidePanelId,
   isMobile,
-  isInRightDrawer,
+  isInSidePanel,
 }: GetPageLayoutTabListInitialActiveTabIdParams): string | null => {
   const activeTabExists = tabs.some((tab) => tab.id === activeTabId);
 
@@ -22,7 +22,7 @@ export const getPageLayoutTabListInitialActiveTabId = ({
     return activeTabId;
   }
 
-  const isOnMobileOrSidePanel = isMobile || isInRightDrawer;
+  const isOnMobileOrSidePanel = isMobile || isInSidePanel;
 
   if (
     isOnMobileOrSidePanel &&

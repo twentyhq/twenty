@@ -27,7 +27,7 @@ import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useC
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 
-import { useNavigatePageLayoutCommandMenu } from '@/command-menu/pages/page-layout/hooks/useNavigatePageLayoutCommandMenu';
+import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
 import { PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS } from '@/page-layout/components/PageLayoutTabListDroppableIds';
 import { PageLayoutTabListReorderableOverflowDropdown } from '@/page-layout/components/PageLayoutTabListReorderableOverflowDropdown';
 import { PageLayoutTabListStaticOverflowDropdown } from '@/page-layout/components/PageLayoutTabListStaticOverflowDropdown';
@@ -44,7 +44,7 @@ import { TabListFromUrlOptionalEffect } from '@/ui/layout/tab-list/components/Ta
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { CommandMenuPages } from 'twenty-shared/types';
+import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type PageLayoutType } from '~/generated-metadata/graphql';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -68,6 +68,11 @@ const StyledContainer = styled.div`
   }
 `;
 
+const StyledDropdownContainer = styled.div`
+  align-items: center;
+  display: flex;
+`;
+
 const StyledAddButton = styled.div`
   display: flex;
   align-items: center;
@@ -88,7 +93,7 @@ export const PageLayoutTabList = ({
   tabs,
   loading,
   behaveAsLinks,
-  isInRightDrawer,
+  isInSidePanel,
   className,
   componentInstanceId,
   onChangeTab,
@@ -108,10 +113,10 @@ export const PageLayoutTabList = ({
     // TODO: drop once the configuration of all record page layouts has been migrated to the backend.
     title:
       shouldTranslateTabTitles &&
-      STANDARD_PAGE_LAYOUT_TAB_TITLE_TRANSLATIONS[tab.title]
+      isDefined(STANDARD_PAGE_LAYOUT_TAB_TITLE_TRANSLATIONS[tab.title])
         ? t(STANDARD_PAGE_LAYOUT_TAB_TITLE_TRANSLATIONS[tab.title])
         : tab.title,
-    Icon: tab.icon ? getIcon(tab.icon) : undefined,
+    Icon: isDefined(tab.icon) ? getIcon(tab.icon) : undefined,
   }));
 
   const navigate = useNavigate();
@@ -238,17 +243,17 @@ export const PageLayoutTabList = ({
     pageLayoutTabSettingsOpenTabIdComponentState,
     pageLayoutId,
   );
-  const { navigatePageLayoutCommandMenu } = useNavigatePageLayoutCommandMenu();
+  const { navigatePageLayoutSidePanel } = useNavigatePageLayoutSidePanel();
 
   const openTabSettings = useCallback(
     (tabId: string) => {
       setPageLayoutTabSettingsOpenTabId(tabId);
-      navigatePageLayoutCommandMenu({
-        commandMenuPage: CommandMenuPages.PageLayoutTabSettings,
+      navigatePageLayoutSidePanel({
+        sidePanelPage: SidePanelPages.PageLayoutTabSettings,
         resetNavigationStack: true,
       });
     },
-    [setPageLayoutTabSettingsOpenTabId, navigatePageLayoutCommandMenu],
+    [setPageLayoutTabSettingsOpenTabId, navigatePageLayoutSidePanel],
   );
 
   const isTabSettingsOpen = isDefined(pageLayoutTabSettingsOpenTabId);
@@ -324,7 +329,7 @@ export const PageLayoutTabList = ({
       value={{ instanceId: componentInstanceId }}
     >
       <TabListFromUrlOptionalEffect
-        isInRightDrawer={!!isInRightDrawer}
+        isInSidePanel={!!isInSidePanel}
         tabListIds={tabsWithIcons.map((tab) => tab.id)}
       />
 
@@ -366,18 +371,20 @@ export const PageLayoutTabList = ({
               />
 
               {shouldRenderReorderableDropdown && (
-                <PageLayoutTabListReorderableOverflowDropdown
-                  dropdownId={dropdownId}
-                  hiddenTabs={hiddenTabs}
-                  hiddenTabsCount={hiddenTabsCount}
-                  isActiveTabHidden={isActiveTabHidden}
-                  activeTabId={activeTabId || ''}
-                  loading={loading}
-                  onSelect={handleSelectTabFromDropdown}
-                  visibleTabCount={visibleTabCount}
-                  onClose={closeOverflowDropdown}
-                  pageLayoutType={pageLayoutType}
-                />
+                <StyledDropdownContainer>
+                  <PageLayoutTabListReorderableOverflowDropdown
+                    dropdownId={dropdownId}
+                    hiddenTabs={hiddenTabs}
+                    hiddenTabsCount={hiddenTabsCount}
+                    isActiveTabHidden={isActiveTabHidden}
+                    activeTabId={activeTabId || ''}
+                    loading={loading}
+                    onSelect={handleSelectTabFromDropdown}
+                    visibleTabCount={visibleTabCount}
+                    onClose={closeOverflowDropdown}
+                    pageLayoutType={pageLayoutType}
+                  />
+                </StyledDropdownContainer>
               )}
 
               {onAddTab && (
@@ -405,16 +412,18 @@ export const PageLayoutTabList = ({
               canReorder={canReorderTabs}
             />
             {shouldRenderStaticDropdown && (
-              <PageLayoutTabListStaticOverflowDropdown
-                dropdownId={dropdownId}
-                hiddenTabs={hiddenTabs}
-                hiddenTabsCount={hiddenTabsCount}
-                isActiveTabHidden={isActiveTabHidden}
-                activeTabId={activeTabId || ''}
-                loading={loading}
-                onSelect={handleSelectTabFromDropdown}
-                onClose={closeOverflowDropdown}
-              />
+              <StyledDropdownContainer>
+                <PageLayoutTabListStaticOverflowDropdown
+                  dropdownId={dropdownId}
+                  hiddenTabs={hiddenTabs}
+                  hiddenTabsCount={hiddenTabsCount}
+                  isActiveTabHidden={isActiveTabHidden}
+                  activeTabId={activeTabId || ''}
+                  loading={loading}
+                  onSelect={handleSelectTabFromDropdown}
+                  onClose={closeOverflowDropdown}
+                />
+              </StyledDropdownContainer>
             )}
             {onAddTab && (
               <StyledAddButton>

@@ -30,8 +30,7 @@ import {
   IconChevronRight,
   IconPlus,
 } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { type AvailableWorkspace } from '~/generated-metadata/graphql';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 
@@ -135,11 +134,11 @@ const StyledForgotPasswordLinkContainer = styled.div`
 `;
 
 export const SignInUpGlobalScopeForm = () => {
+  const { theme } = useContext(ThemeContext);
   const authProviders = useAtomStateValue(authProvidersState);
   const signInUpStep = useAtomStateValue(signInUpStepState);
   const { buildWorkspaceUrl } = useBuildWorkspaceUrl();
   const { signOut } = useAuth();
-  const { theme } = useContext(ThemeContext);
 
   const { createWorkspace } = useSignUpInNewWorkspace();
   const availableWorkspaces = useAtomStateValue(availableWorkspacesState);
@@ -245,7 +244,7 @@ export const SignInUpGlobalScopeForm = () => {
           {(authProviders.google || authProviders.microsoft) && (
             <HorizontalSeparator />
           )}
-          {/* eslint-disable-next-line react/jsx-props-no-spreading */}
+          {/* oxlint-disable-next-line react/jsx-props-no-spreading */}
           <FormProvider {...form}>
             <SignInUpWithCredentials isGlobalScope />
           </FormProvider>

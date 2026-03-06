@@ -7,5 +7,5 @@ export * from 'twenty-ui/input';
 export * from 'twenty-ui/json-visualizer';
 export * from 'twenty-ui/layout';
 export * from 'twenty-ui/navigation';
-export * from 'twenty-ui/theme';
+export * from 'twenty-ui/theme-constants';
 export * from 'twenty-ui/utilities';

@@ -4,7 +4,7 @@ import { IconSearch } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { useOpenRecordsSearchPageInCommandMenu } from '@/command-menu/hooks/useOpenRecordsSearchPageInCommandMenu';
+import { useOpenRecordsSearchPageInSidePanel } from '@/side-panel/hooks/useOpenRecordsSearchPageInSidePanel';
 import { PAGE_BAR_MIN_HEIGHT } from '@/ui/layout/page/constants/PageBarMinHeight';
 import { MultiWorkspaceDropdownButton } from '@/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/MultiWorkspaceDropdownButton';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
@@ -33,12 +33,12 @@ const StyledRightActions = styled.div<{ isExpanded: boolean }>`
   transition: gap calc(${themeCssVariables.animation.duration.normal} * 1s) ease;
 `;
 
-const StyledNavigationDrawerCollapseButton = styled(
-  NavigationDrawerCollapseButton,
-)`
-  height: ${themeCssVariables.spacing[6]};
-  padding-right: ${themeCssVariables.spacing[1]};
-  width: ${themeCssVariables.spacing[6]};
+const StyledNavigationDrawerCollapseButtonContainer = styled.div`
+  > * {
+    height: ${themeCssVariables.spacing[6]};
+    padding-right: ${themeCssVariables.spacing[1]};
+    width: ${themeCssVariables.spacing[6]};
+  }
 `;
 
 const StyledWorkspaceDropdownContainer = styled.div`
@@ -56,7 +56,7 @@ export const NavigationDrawerHeader = ({
   showCollapseButton,
 }: NavigationDrawerHeaderProps) => {
   const isMobile = useIsMobile();
-  const { openRecordsSearchPage } = useOpenRecordsSearchPageInCommandMenu();
+  const { openRecordsSearchPage } = useOpenRecordsSearchPageInSidePanel();
   const isNavigationDrawerExpanded = useAtomStateValue(
     isNavigationDrawerExpandedState,
   );
@@ -76,7 +76,9 @@ export const NavigationDrawerHeader = ({
             aria-label={t`Search`}
           />
           {isNavigationDrawerExpanded && showCollapseButton && (
-            <StyledNavigationDrawerCollapseButton direction="left" />
+            <StyledNavigationDrawerCollapseButtonContainer>
+              <NavigationDrawerCollapseButton direction="left" />
+            </StyledNavigationDrawerCollapseButtonContainer>
           )}
         </StyledRightActions>
       )}

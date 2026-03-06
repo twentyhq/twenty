@@ -1,16 +1,16 @@
 import { type Preview } from '@storybook/react-vite';
-import { THEME_LIGHT, ThemeContextProvider } from '@ui/theme';
+import '@ui/theme-constants/theme-light.css';
+import '@ui/theme-constants/theme-dark.css';
+import { ThemeProvider } from '@ui/theme-constants';
 
 const preview: Preview = {
   tags: ['autodocs'],
   decorators: [
     (Story) => {
-      const theme = THEME_LIGHT;
-
       return (
-        <ThemeContextProvider theme={theme}>
+        <ThemeProvider colorScheme="light">
           <Story />
-        </ThemeContextProvider>
+        </ThemeProvider>
       );
     },
   ],

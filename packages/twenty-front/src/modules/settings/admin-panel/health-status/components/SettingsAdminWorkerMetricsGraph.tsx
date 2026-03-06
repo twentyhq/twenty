@@ -1,12 +1,12 @@
+import { isDefined } from 'twenty-shared/utils';
 import { SettingsAdminTableCard } from '@/settings/admin-panel/components/SettingsAdminTableCard';
 import { SettingsAdminWorkerMetricsTooltip } from '@/settings/admin-panel/health-status/components/SettingsAdminWorkerMetricsTooltip';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useContext } from 'react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { ResponsiveLine } from '@nivo/line';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useContext } from 'react';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   QueueMetricsTimeRange,
   useGetQueueMetricsQuery,
@@ -30,9 +30,11 @@ const StyledNoDataMessage = styled.div`
   justify-content: center;
 `;
 
-const StyledSettingsAdminTableCard = styled(SettingsAdminTableCard)`
-  padding-left: ${themeCssVariables.spacing[2]};
-  padding-right: ${themeCssVariables.spacing[2]};
+const StyledSettingsAdminTableCardContainer = styled.div`
+  > * {
+    padding-left: ${themeCssVariables.spacing[2]};
+    padding-right: ${themeCssVariables.spacing[2]};
+  }
 `;
 
 type SettingsAdminWorkerMetricsGraphProps = {
@@ -200,24 +202,26 @@ export const SettingsAdminWorkerMetricsGraph = ({
           <StyledNoDataMessage>{t`No metrics data available`}</StyledNoDataMessage>
         )}
       </StyledGraphContainer>
-      {metricsDetails && (
-        <StyledSettingsAdminTableCard
-          rounded
-          items={Object.entries(metricsDetails)
-            .filter(([key]) => key !== '__typename')
-            .map(([key, value]) => ({
-              label: key.charAt(0).toUpperCase() + key.slice(1),
-              value:
-                typeof value === 'number'
-                  ? value
-                  : Array.isArray(value)
-                    ? value.length
-                    : String(value),
-            }))}
-          gridAutoColumns="1fr 1fr"
-          labelAlign="left"
-          valueAlign="right"
-        />
+      {isDefined(metricsDetails) && (
+        <StyledSettingsAdminTableCardContainer>
+          <SettingsAdminTableCard
+            rounded
+            items={Object.entries(metricsDetails)
+              .filter(([key]) => key !== '__typename')
+              .map(([key, value]) => ({
+                label: key.charAt(0).toUpperCase() + key.slice(1),
+                value:
+                  typeof value === 'number'
+                    ? value
+                    : Array.isArray(value)
+                      ? value.length
+                      : String(value),
+              }))}
+            gridAutoColumns="1fr 1fr"
+            labelAlign="left"
+            valueAlign="right"
+          />
+        </StyledSettingsAdminTableCardContainer>
       )}
     </>
   );

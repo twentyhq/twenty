@@ -52,11 +52,3 @@ export { THEME_DARK } from './constants/ThemeDark';
 export { THEME_LIGHT } from './constants/ThemeLight';
 export { TRANSPARENT_COLORS_DARK } from './constants/TransparentColorsDark';
 export { TRANSPARENT_COLORS_LIGHT } from './constants/TransparentColorsLight';
-export type { ThemeContextType } from './provider/ThemeContextProvider';
-export {
-  ThemeContext,
-  ThemeContextProvider,
-} from './provider/ThemeContextProvider';
-export { ThemeProvider } from './provider/ThemeProvider';
-export type { ThemeType } from './types/ThemeType';
-export { getNextThemeColor } from './utils/getNextThemeColor';

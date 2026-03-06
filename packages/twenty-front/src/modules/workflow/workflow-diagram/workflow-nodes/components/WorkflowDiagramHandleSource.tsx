@@ -9,8 +9,8 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const HANDLE_SCALE_ON_HOVER = 1.5;
 
-const StyledHandle = styled(Handle)`
-  &.react-flow__handle {
+const StyledHandleContainer = styled.div`
+  & .react-flow__handle {
     height: ${NODE_HANDLE_HEIGHT_PX}px;
     width: ${NODE_HANDLE_WIDTH_PX}px;
     opacity: var(--handle-opacity, 1);
@@ -72,7 +72,7 @@ export const WorkflowDiagramHandleSource = ({
   const dynamicStyles = useMemo(() => {
     const isRight = position === Position.Right;
     const transform = isRight ? 'translate(50%, -50%)' : 'translate(-50%, 50%)';
-    // eslint-disable-next-line lingui/no-unlocalized-strings
+    // oxlint-disable-next-line lingui/no-unlocalized-strings
     const transformOrigin = isRight ? 'top right' : 'bottom left';
 
     let bg: string;
@@ -110,11 +110,8 @@ export const WorkflowDiagramHandleSource = ({
   }, [position, selected, hovered, disableHoverEffect, runStatus, type]);
 
   return (
-    <StyledHandle
-      id={id}
-      type={type}
-      position={position}
-      style={dynamicStyles}
-    />
+    <StyledHandleContainer>
+      <Handle id={id} type={type} position={position} style={dynamicStyles} />
+    </StyledHandleContainer>
   );
 };

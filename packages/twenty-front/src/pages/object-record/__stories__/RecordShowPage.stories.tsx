@@ -64,7 +64,7 @@ export type Story = StoryObj<typeof RecordShowPage>;
 
 // TEMP_DISABLED_TEST: Temporarily commented out due to test failure
 // export const Default: Story = {
-//   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+//   // oxlint-disable-next-line @typescripttypescript/ban-ts-comment
 //   // @ts-ignore
 //   decorators: [PageDecorator, ContextStoreDecorator],
 //   play: async ({ canvasElement }) => {
