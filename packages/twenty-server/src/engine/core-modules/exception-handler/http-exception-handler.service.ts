@@ -105,7 +105,9 @@ export class HttpExceptionHandlerService {
     }
 
     if (exception instanceof PostgresException) {
-      exception = new InternalServerErrorException(exception.message);
+      exception = new InternalServerErrorException(
+        `${exception.message} (PG error code: ${exception.code})`,
+      );
       statusCode = 500;
     }
 
