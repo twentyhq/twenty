@@ -1,6 +1,6 @@
 import crypto from 'crypto';
 import type * as esbuild from 'esbuild';
-import * as fs from 'fs-extra';
+import { readFile } from 'node:fs/promises';
 import path from 'path';
 import { type OnFileBuiltCallback } from '@/cli/utilities/build/common/restartable-watcher-interface';
 import { type FileFolder } from 'twenty-shared/types';
@@ -31,7 +31,7 @@ export const processEsbuildResult = async ({
       result.metafile?.outputs?.[outputFile]?.entryPoint || '';
     const relativeSourcePath = path.relative(appPath, absoluteSourcePath);
 
-    const content = await fs.readFile(absoluteBuiltFile);
+    const content = await readFile(absoluteBuiltFile);
     const checksum = crypto.createHash('md5').update(content).digest('hex');
 
     const lastChecksum = lastChecksums.get(relativeBuiltPath);

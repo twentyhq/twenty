@@ -5,13 +5,13 @@ import { ActionMenuComponentInstanceContext } from '@/action-menu/states/context
 import { TimelineActivityContext } from '@/activities/timeline-activities/contexts/TimelineActivityContext';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
-import { MainContainerLayoutWithCommandMenu } from '@/object-record/components/MainContainerLayoutWithCommandMenu';
+import { MainContainerLayoutWithSidePanel } from '@/object-record/components/MainContainerLayoutWithSidePanel';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
 import { PageLayoutRecordPageRenderer } from '@/object-record/record-show/components/PageLayoutRecordPageRenderer';
 import { RecordShowPageSSESubscribeEffect } from '@/object-record/record-show/components/RecordShowPageSSESubscribeEffect';
 import { useRecordShowPage } from '@/object-record/record-show/hooks/useRecordShowPage';
 import { computeRecordShowComponentInstanceId } from '@/object-record/record-show/utils/computeRecordShowComponentInstanceId';
-import { PageHeaderToggleCommandMenuButton } from '@/ui/layout/page-header/components/PageHeaderToggleCommandMenuButton';
+import { PageHeaderToggleSidePanelButton } from '@/ui/layout/page-header/components/PageHeaderToggleSidePanelButton';
 import { PageContainer } from '@/ui/layout/page/components/PageContainer';
 import { RecordShowPageHeader } from '~/pages/object-record/RecordShowPageHeader';
 import { RecordShowPageTitle } from '~/pages/object-record/RecordShowPageTitle';
@@ -50,9 +50,9 @@ export const RecordShowPage = () => {
               objectRecordId={objectRecordId}
             >
               <RecordShowActionMenu />
-              <PageHeaderToggleCommandMenuButton />
+              <PageHeaderToggleSidePanelButton />
             </RecordShowPageHeader>
-            <MainContainerLayoutWithCommandMenu>
+            <MainContainerLayoutWithSidePanel>
               <TimelineActivityContext.Provider
                 value={{
                   recordId: objectRecordId,
@@ -63,14 +63,14 @@ export const RecordShowPage = () => {
                     id: objectRecordId,
                     targetObjectNameSingular: objectNameSingular,
                   }}
-                  isInRightDrawer={false}
+                  isInSidePanel={false}
                 />
                 <RecordShowPageSSESubscribeEffect
                   objectNameSingular={objectNameSingular}
                   recordId={objectRecordId}
                 />
               </TimelineActivityContext.Provider>
-            </MainContainerLayoutWithCommandMenu>
+            </MainContainerLayoutWithSidePanel>
           </PageContainer>
         </ActionMenuComponentInstanceContext.Provider>
       </ContextStoreComponentInstanceContext.Provider>

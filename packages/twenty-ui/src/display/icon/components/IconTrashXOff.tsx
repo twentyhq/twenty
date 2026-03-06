@@ -2,7 +2,7 @@ import { useContext } from 'react';
 
 import IconTrashXOffRaw from '@assets/icons/trash-x-off.svg?react';
 import { type IconComponentProps } from '@ui/display/icon/types/IconComponent';
-import { ThemeContext } from '@ui/theme';
+import { ThemeContext } from '@ui/theme-constants';
 
 type IconTrashXOffProps = Pick<IconComponentProps, 'size' | 'stroke'>;
 

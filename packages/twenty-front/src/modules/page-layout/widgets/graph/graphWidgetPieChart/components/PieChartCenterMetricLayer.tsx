@@ -2,10 +2,9 @@ import { usePieChartCenterMetricData } from '@/page-layout/widgets/graph/graphWi
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { AnimatePresence, motion } from 'framer-motion';
-import { type PieChartConfiguration } from '~/generated-metadata/graphql';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme';
+import { type PieChartConfiguration } from '~/generated-metadata/graphql';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type PieChartCenterMetricProps = {
   objectMetadataItemId: string;

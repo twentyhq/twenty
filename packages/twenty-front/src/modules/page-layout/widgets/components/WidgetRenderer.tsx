@@ -33,7 +33,7 @@ import {
   PageLayoutType,
   WidgetType,
 } from '~/generated-metadata/graphql';
-import { ThemeContext } from 'twenty-ui/theme';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 const StyledNoAccessContainer = styled.div`
   align-items: center;
@@ -76,7 +76,7 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
 
   const { layoutMode } = usePageLayoutContentContext();
   const { isInPinnedTab } = useIsInPinnedTab();
-  const { isInRightDrawer } = useLayoutRenderingContext();
+  const { isInSidePanel } = useLayoutRenderingContext();
   const isMobile = useIsMobile();
 
   const { currentPageLayout } = useCurrentPageLayoutOrThrow();
@@ -127,7 +127,7 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
     isInPinnedTab,
     pageLayoutType: currentPageLayout.type,
     isMobile,
-    isInRightDrawer,
+    isInSidePanel,
   });
 
   const actions = useWidgetActions({ widget });

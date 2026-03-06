@@ -1,11 +1,10 @@
 import { type SelectSizeVariant } from '@/ui/input/components/Select';
 import { styled } from '@linaria/react';
+import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronDown, OverflowingTextWithTooltip } from 'twenty-ui/display';
 import { type SelectOption } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 export type SelectControlTextAccent = 'default' | 'placeholder';
 
@@ -79,7 +78,6 @@ export const SelectControl = ({
   hasRightElement,
 }: SelectControlProps) => {
   const { theme } = useContext(ThemeContext);
-
   return (
     <StyledControlContainer
       disabled={isDisabled}

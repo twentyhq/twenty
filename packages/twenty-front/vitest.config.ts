@@ -24,7 +24,9 @@ export default defineConfig({
         plugins: [
           storybookTest({
             configDir: path.join(dirname, '.storybook'),
-            storybookScript: 'yarn storybook --no-open',
+            ...(process.env.STORYBOOK_URL
+              ? { storybookUrl: process.env.STORYBOOK_URL }
+              : { storybookScript: 'yarn storybook --no-open' }),
           }),
         ],
         test: {

@@ -68,7 +68,7 @@ export const PageLayoutGridOverlay = () => {
   const { createWidgetFromClick } = useCreateWidgetFromClick();
 
   const numberOfRows = useMemo(() => {
-    const currentTabLayouts = pageLayoutCurrentLayouts[activeTabId ?? ''] || {
+    const currentTabLayouts = pageLayoutCurrentLayouts[activeTabId ?? ''] ?? {
       desktop: [],
       mobile: [],
     };

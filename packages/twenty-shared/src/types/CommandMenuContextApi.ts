@@ -3,7 +3,7 @@ import { type ObjectRecord } from './ObjectRecord';
 
 export type CommandMenuContextApi = {
   isShowPage: boolean;
-  isInRightDrawer: boolean;
+  isInSidePanel: boolean;
   isFavorite: boolean;
   isRemote: boolean;
   isNoteOrTask: boolean;

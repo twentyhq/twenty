@@ -1,12 +1,13 @@
-import { useContext } from 'react';
 import { styled } from '@linaria/react';
 
 import { ActivityRow } from '@/activities/components/ActivityRow';
 import { EmailThreadNotShared } from '@/activities/emails/components/EmailThreadNotShared';
-import { useOpenEmailThreadInCommandMenu } from '@/command-menu/hooks/useOpenEmailThreadInCommandMenu';
+import { useOpenEmailThreadInSidePanel } from '@/side-panel/hooks/useOpenEmailThreadInSidePanel';
+import { useContext } from 'react';
+
+import { isDefined } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   MessageChannelVisibility,
   type TimelineThread,
@@ -75,7 +76,8 @@ type EmailThreadPreviewProps = {
 };
 
 export const EmailThreadPreview = ({ thread }: EmailThreadPreviewProps) => {
-  const { openEmailThreadInCommandMenu } = useOpenEmailThreadInCommandMenu();
+  const { theme } = useContext(ThemeContext);
+  const { openEmailThreadInSidePanel } = useOpenEmailThreadInSidePanel();
 
   const visibility = thread.visibility;
 
@@ -102,13 +104,11 @@ export const EmailThreadPreview = ({ thread }: EmailThreadPreviewProps) => {
       thread.visibility === MessageChannelVisibility.SHARE_EVERYTHING;
 
     if (canOpen) {
-      openEmailThreadInCommandMenu(thread.id);
+      openEmailThreadInSidePanel(thread.id);
     }
   };
 
   const isDisabled = visibility !== MessageChannelVisibility.SHARE_EVERYTHING;
-  const { theme } = useContext(ThemeContext);
-
   return (
     <ActivityRow onClick={handleThreadClick} disabled={isDisabled}>
       <StyledHeading unread={!thread.read}>
@@ -122,7 +122,7 @@ export const EmailThreadPreview = ({ thread }: EmailThreadPreviewProps) => {
             }
             type="rounded"
           />
-          {thread?.lastTwoParticipants?.[0] && (
+          {isDefined(thread?.lastTwoParticipants?.[0]) && (
             <StyledAvatarWrapper>
               <Avatar
                 avatarUrl={thread.lastTwoParticipants[0].avatarUrl}

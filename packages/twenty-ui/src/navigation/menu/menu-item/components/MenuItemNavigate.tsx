@@ -1,7 +1,6 @@
-import { useContext } from 'react';
-
 import { IconChevronRight, type IconComponent } from '@ui/display';
-import { ThemeContext } from '@ui/theme';
+import { ThemeContext } from '@ui/theme-constants';
+import { useContext } from 'react';
 import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent';
 import {
   StyledMenuItemBase,

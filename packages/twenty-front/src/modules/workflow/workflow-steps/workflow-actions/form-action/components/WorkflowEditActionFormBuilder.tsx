@@ -18,7 +18,7 @@ import { styled } from '@linaria/react';
 import { type OnDragEndResponder } from '@hello-pangea/dnd';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -32,7 +32,7 @@ import {
 import { LightIconButton } from 'twenty-ui/input';
 import { useDebouncedCallback } from 'use-debounce';
 import { v4 } from 'uuid';
-import { ICON_SIZES, themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables, ThemeContext } from 'twenty-ui/theme-constants';
 
 export type WorkflowEditActionFormBuilderProps = {
   triggerType: WorkflowTriggerType | undefined;
@@ -139,8 +139,11 @@ const StyledCalloutContainer = styled.div`
   padding-top: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledNotClosableCalloutContainer = styled(StyledCalloutContainer)`
+const StyledNotClosableCalloutContainer = styled.div`
   padding-bottom: ${themeCssVariables.spacing[4]};
+  padding-left: ${themeCssVariables.spacing[7]};
+  padding-right: ${themeCssVariables.spacing[7]};
+  padding-top: ${themeCssVariables.spacing[2]};
 `;
 
 export const WorkflowEditActionFormBuilder = ({
@@ -149,6 +152,7 @@ export const WorkflowEditActionFormBuilder = ({
   actionOptions,
 }: WorkflowEditActionFormBuilderProps) => {
   const { t } = useLingui();
+  const { theme } = useContext(ThemeContext);
 
   const [formData, setFormData] = useState<FormData>(action.settings.input);
 
@@ -328,7 +332,7 @@ export const WorkflowEditActionFormBuilder = ({
                                 </StyledPlaceholderContainer>
                                 {field.type === 'RECORD' && (
                                   <IconChevronDown
-                                    size={ICON_SIZES.md}
+                                    size={theme.icon.size.md}
                                     color={
                                       themeCssVariables.font.color.tertiary
                                     }
@@ -418,7 +422,7 @@ export const WorkflowEditActionFormBuilder = ({
                 >
                   <StyledFieldContainer>
                     <StyledAddFieldButtonContentContainer>
-                      <IconPlus size={ICON_SIZES.sm} />
+                      <IconPlus size={theme.icon.size.sm} />
                       {t`Add Field`}
                     </StyledAddFieldButtonContentContainer>
                   </StyledFieldContainer>

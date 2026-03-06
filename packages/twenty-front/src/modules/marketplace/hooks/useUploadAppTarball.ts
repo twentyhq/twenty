@@ -8,6 +8,7 @@ import { UPLOAD_APP_TARBALL } from '~/modules/marketplace/graphql/mutations/uplo
 type UploadResult =
   | {
       success: true;
+      registrationId: string;
       universalIdentifier: string;
     }
   | {
@@ -29,7 +30,10 @@ export const useUploadAppTarball = () => {
 
       const registration = result.data?.uploadAppTarball;
 
-      if (!isDefined(registration?.universalIdentifier)) {
+      if (
+        !isDefined(registration?.id) ||
+        !isDefined(registration?.universalIdentifier)
+      ) {
         enqueueErrorSnackBar({ message: t`Upload failed.` });
 
         return { success: false };
@@ -37,11 +41,14 @@ export const useUploadAppTarball = () => {
 
       return {
         success: true,
+        registrationId: registration.id,
         universalIdentifier: registration.universalIdentifier,
       };
-    } catch {
+    } catch (error) {
+      const graphqlMessage = error instanceof Error ? error.message : undefined;
+
       enqueueErrorSnackBar({
-        message: t`Failed to upload tarball.`,
+        message: graphqlMessage ?? t`Failed to upload tarball.`,
       });
 
       return { success: false };

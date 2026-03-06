@@ -1,7 +1,7 @@
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import { type FieldRelationMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { RightDrawerProvider } from '@/ui/layout/right-drawer/contexts/RightDrawerContext';
+import { SidePanelProvider } from '@/ui/layout/side-panel/contexts/SidePanelContext';
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -21,13 +21,13 @@ const StyledRelationChipsContainer = styled.div`
 type FieldWidgetRelationFieldProps = {
   fieldDefinition: FieldDefinition<FieldRelationMetadata>;
   relationValue: any;
-  isInRightDrawer: boolean;
+  isInSidePanel: boolean;
 };
 
 export const FieldWidgetRelationField = ({
   fieldDefinition,
   relationValue,
-  isInRightDrawer,
+  isInSidePanel,
 }: FieldWidgetRelationFieldProps) => {
   const fieldMetadata = fieldDefinition.metadata;
   const isOneToMany = fieldMetadata.relationType === 'ONE_TO_MANY';
@@ -44,7 +44,7 @@ export const FieldWidgetRelationField = ({
 
   if (isOneToMany) {
     return (
-      <RightDrawerProvider value={{ isInRightDrawer }}>
+      <SidePanelProvider value={{ isInSidePanel }}>
         <StyledContainer>
           <StyledRelationChipsContainer>
             {relationValue.map((relatedRecord: any) => (
@@ -56,12 +56,12 @@ export const FieldWidgetRelationField = ({
             ))}
           </StyledRelationChipsContainer>
         </StyledContainer>
-      </RightDrawerProvider>
+      </SidePanelProvider>
     );
   }
 
   return (
-    <RightDrawerProvider value={{ isInRightDrawer }}>
+    <SidePanelProvider value={{ isInSidePanel }}>
       <StyledContainer>
         <StyledRelationChipsContainer>
           <RecordChip
@@ -70,6 +70,6 @@ export const FieldWidgetRelationField = ({
           />
         </StyledRelationChipsContainer>
       </StyledContainer>
-    </RightDrawerProvider>
+    </SidePanelProvider>
   );
 };

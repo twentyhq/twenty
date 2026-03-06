@@ -32,20 +32,20 @@ type PageLayoutVerticalListViewerProps = {
 export const PageLayoutVerticalListViewer = ({
   widgets,
 }: PageLayoutVerticalListViewerProps) => {
-  const { isInRightDrawer } = useLayoutRenderingContext();
+  const { isInSidePanel } = useLayoutRenderingContext();
   const isMobile = useIsMobile();
   const { isInPinnedTab } = useIsInPinnedTab();
 
   const variant = getPageLayoutVerticalListViewerVariant({
     isInPinnedTab,
     isMobile,
-    isInRightDrawer,
+    isInSidePanel,
   });
 
   return (
     <StyledVerticalListContainer
       variant={variant}
-      shouldUseWhiteBackground={isMobile || isInRightDrawer}
+      shouldUseWhiteBackground={isMobile || isInSidePanel}
     >
       {widgets.map((widget) => (
         <div key={widget.id}>

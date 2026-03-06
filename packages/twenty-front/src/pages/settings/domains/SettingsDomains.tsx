@@ -23,7 +23,7 @@ const StyledMainContent = styled.div`
   min-height: 200px;
 `;
 
-const StyledSection = styled(Section)`
+const StyledSectionContainer = styled.div`
   flex-shrink: 0;
 `;
 
@@ -51,37 +51,45 @@ export const SettingsDomains = () => {
     >
       <SettingsPageContainer>
         <StyledMainContent>
-          <StyledSection>
-            <H2Title
-              title={t`Workspace Domain`}
-              description={t`Edit your subdomain name or set a custom domain.`}
-            />
-            <SettingsWorkspaceDomainCard />
-          </StyledSection>
-          <StyledSection>
-            <H2Title
-              title={t`Approved Domains`}
-              description={t`Anyone with an email address at these domains is allowed to sign up for this workspace.`}
-            />
-            <SettingsApprovedAccessDomainsListCard />
-          </StyledSection>
-          {isEmailingDomainsEnabled && (
-            <StyledSection>
+          <StyledSectionContainer>
+            <Section>
               <H2Title
-                title={t`Emailing Domains`}
-                description={t`Configure and verify domains for emailing from this workspace.`}
+                title={t`Workspace Domain`}
+                description={t`Edit your subdomain name or set a custom domain.`}
               />
-              <SettingsEmailingDomains />
-            </StyledSection>
+              <SettingsWorkspaceDomainCard />
+            </Section>
+          </StyledSectionContainer>
+          <StyledSectionContainer>
+            <Section>
+              <H2Title
+                title={t`Approved Domains`}
+                description={t`Anyone with an email address at these domains is allowed to sign up for this workspace.`}
+              />
+              <SettingsApprovedAccessDomainsListCard />
+            </Section>
+          </StyledSectionContainer>
+          {isEmailingDomainsEnabled && (
+            <StyledSectionContainer>
+              <Section>
+                <H2Title
+                  title={t`Emailing Domains`}
+                  description={t`Configure and verify domains for emailing from this workspace.`}
+                />
+                <SettingsEmailingDomains />
+              </Section>
+            </StyledSectionContainer>
           )}
           {isPublicDomainEnabled && (
-            <StyledSection>
-              <H2Title
-                title={t`Public Domains`}
-                description={t`Provision a complete and secure hosting environment on these domains.`}
-              />
-              <SettingsPublicDomainsListCard />
-            </StyledSection>
+            <StyledSectionContainer>
+              <Section>
+                <H2Title
+                  title={t`Public Domains`}
+                  description={t`Provision a complete and secure hosting environment on these domains.`}
+                />
+                <SettingsPublicDomainsListCard />
+              </Section>
+            </StyledSectionContainer>
           )}
         </StyledMainContent>
       </SettingsPageContainer>

@@ -1,4 +1,4 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// oxlint-disable-next-line @typescripttypescript/ban-ts-comment
 // @ts-ignore
 import { type WorkflowRun } from '@/workflow/types/Workflow';
 import { StepStatus } from 'twenty-shared/workflow';

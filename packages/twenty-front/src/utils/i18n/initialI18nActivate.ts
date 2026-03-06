@@ -25,7 +25,7 @@ export const initialI18nActivate = () => {
     try {
       localStorage.setItem('locale', normalizedUrlLocale);
     } catch (error) {
-      // eslint-disable-next-line no-console
+      // oxlint-disable-next-line no-console
       console.log('Failed to save locale to localStorage:', error);
     }
   } else if (

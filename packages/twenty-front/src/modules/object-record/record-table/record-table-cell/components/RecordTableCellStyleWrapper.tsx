@@ -2,7 +2,7 @@ import { type DraggableProvidedDragHandleProps } from '@hello-pangea/dnd';
 import { cx } from '@linaria/core';
 import { styled } from '@linaria/react';
 import { type ReactNode, useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 export const StyledCell = styled.div<{
   backgroundColor: string;
@@ -63,7 +63,7 @@ export const RecordTableCellStyleWrapper = ({
       fontColor={fontColor}
       hasRightBorder={hasRightBorder}
       hasBottomBorder={hasBottomBorder}
-      // eslint-disable-next-line react/jsx-props-no-spreading
+      // oxlint-disable-next-line react/jsx-props-no-spreading
       {...dragHandleProps}
       className={cx('table-cell', widthClassName)}
     >

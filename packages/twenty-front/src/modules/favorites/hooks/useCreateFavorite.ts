@@ -33,7 +33,9 @@ export const useCreateFavorite = () => {
     const relevantFavorites = favoriteFolderId
       ? favorites.filter((fav) => fav.favoriteFolderId === favoriteFolderId)
       : favorites.filter(
-          (fav) => !fav.favoriteFolderId && fav.forWorkspaceMemberId,
+          (fav) =>
+            !isDefined(fav.favoriteFolderId) &&
+            isDefined(fav.forWorkspaceMemberId),
         );
 
     const maxPosition = Math.max(

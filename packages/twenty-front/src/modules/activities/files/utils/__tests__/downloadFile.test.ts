@@ -24,7 +24,7 @@ describe.skip('downloadFile', () => {
     );
 
     expect(link).not.toBeNull();
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // oxlint-disable-next-line @typescripttypescript/ban-ts-comment
     // @ts-ignore
     expect(link?.style?.display).toBe('none');
 

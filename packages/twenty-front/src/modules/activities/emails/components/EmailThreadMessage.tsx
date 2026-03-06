@@ -8,6 +8,7 @@ import { EmailThreadMessageSender } from '@/activities/emails/components/EmailTh
 import { EmailThreadNotShared } from '@/activities/emails/components/EmailThreadNotShared';
 import { type EmailThreadMessageParticipant } from '@/activities/emails/types/EmailThreadMessageParticipant';
 import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
+import { isDefined } from 'twenty-shared/utils';
 import { MessageParticipantRole } from 'twenty-shared/types';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { MessageChannelVisibility } from '~/generated/graphql';
@@ -53,7 +54,7 @@ export const EmailThreadMessage = ({
     (participant) => participant.role !== MessageParticipantRole.FROM,
   );
 
-  if (!sender || receivers.length === 0) {
+  if (!isDefined(sender) || receivers.length === 0) {
     return null;
   }
 

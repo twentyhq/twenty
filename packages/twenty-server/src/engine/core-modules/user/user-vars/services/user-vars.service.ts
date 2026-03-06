@@ -8,7 +8,7 @@ import { mergeUserVars } from 'src/engine/core-modules/user/user-vars/utils/merg
 
 @Injectable()
 export class UserVarsService<
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
   KeyValueTypesMap extends Record<string, any> = Record<string, any>,
 > {
   constructor(private readonly keyValuePairService: KeyValuePairService) {}
@@ -22,7 +22,7 @@ export class UserVarsService<
     workspaceId?: string;
     key: Extract<K, string>;
   }): Promise<KeyValueTypesMap[K]> {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
     let userVarWorkspaceLevel: any[] = [];
 
     if (workspaceId) {
@@ -40,7 +40,7 @@ export class UserVarsService<
       );
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
     let userVarUserLevel: any[] = [];
 
     if (userId) {
@@ -56,7 +56,7 @@ export class UserVarsService<
       throw new Error(`Multiple values found for key ${key} at user level`);
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
     let userVarWorkspaceAndUserLevel: any[] = [];
 
     if (userId && workspaceId) {
@@ -87,9 +87,9 @@ export class UserVarsService<
   }: {
     userId?: string;
     workspaceId?: string;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
   }): Promise<Map<Extract<keyof KeyValueTypesMap, string>, any>> {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
     let result: any[] = [];
 
     if (userId) {

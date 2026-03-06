@@ -4,10 +4,6 @@ import { isDefined, isValidUuid, resolveInput } from 'twenty-shared/utils';
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
-import {
-  RecordCrudException,
-  RecordCrudExceptionCode,
-} from 'src/engine/core-modules/record-crud/exceptions/record-crud.exception';
 import { UpdateRecordService } from 'src/engine/core-modules/record-crud/services/update-record.service';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import {
@@ -79,9 +75,9 @@ export class UpdateRecordWorkflowAction implements WorkflowAction {
       !isValidUuid(workflowActionInput.objectRecordId) ||
       !isDefined(workflowActionInput.objectName)
     ) {
-      throw new RecordCrudException(
+      throw new WorkflowStepExecutorException(
         'Failed to update: Object record ID and name are required',
-        RecordCrudExceptionCode.INVALID_REQUEST,
+        WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
       );
     }
 
@@ -96,9 +92,9 @@ export class UpdateRecordWorkflowAction implements WorkflowAction {
     );
 
     if (filteredFieldsToUpdate?.length === 0) {
-      throw new RecordCrudException(
+      throw new WorkflowStepExecutorException(
         'Failed to update: No fields to update',
-        RecordCrudExceptionCode.INVALID_REQUEST,
+        WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
       );
     }
 
@@ -118,10 +114,7 @@ export class UpdateRecordWorkflowAction implements WorkflowAction {
     });
 
     if (!toolOutput.success) {
-      throw new RecordCrudException(
-        toolOutput.error || toolOutput.message,
-        RecordCrudExceptionCode.RECORD_UPDATE_FAILED,
-      );
+      return { error: toolOutput.error || toolOutput.message };
     }
 
     return {

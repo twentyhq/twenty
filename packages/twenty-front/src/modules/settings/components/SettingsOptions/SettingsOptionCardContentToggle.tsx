@@ -1,6 +1,5 @@
 import { Separator } from '@/settings/components/Separator';
 import {
-  StyledSettingsCardContent,
   StyledSettingsCardDescription,
   StyledSettingsCardIcon,
   StyledSettingsCardTextContainer,
@@ -14,10 +13,14 @@ import {
   OverflowingTextWithTooltip,
 } from 'twenty-ui/display';
 import { Toggle } from 'twenty-ui/input';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledSettingsCardToggleContent = styled(StyledSettingsCardContent)`
+const StyledSettingsCardToggleContent = styled.div<{ disabled?: boolean }>`
+  align-items: center;
+  display: flex;
+  gap: ${themeCssVariables.spacing[3]};
+  background-color: ${themeCssVariables.background.secondary};
+  padding: ${themeCssVariables.spacing[4]};
   cursor: ${({ disabled }) => (disabled ? 'default' : 'pointer')};
   position: relative;
   pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
@@ -27,7 +30,9 @@ const StyledSettingsCardToggleContent = styled(StyledSettingsCardContent)`
   }
 `;
 
-const StyledSettingsCardToggleButton = styled(Toggle)`
+const StyledSettingsCardToggleButtonContainer = styled.span`
+  align-items: center;
+  display: flex;
   flex-shrink: 0;
   margin-left: auto;
 `;
@@ -85,15 +90,17 @@ export const SettingsOptionCardContentToggle = ({
             </StyledSettingsCardDescription>
           )}
         </StyledSettingsCardTextContainer>
-        <StyledSettingsCardToggleButton
-          id={toggleId}
-          value={checked}
-          onChange={onChange}
-          disabled={disabled}
-          toggleSize="small"
-          color={advancedMode ? theme.color.yellow : theme.color.blue}
-          centered={toggleCentered}
-        />
+        <StyledSettingsCardToggleButtonContainer>
+          <Toggle
+            id={toggleId}
+            value={checked}
+            onChange={onChange}
+            disabled={disabled}
+            toggleSize="small"
+            color={advancedMode ? theme.color.yellow : theme.color.blue}
+            centered={toggleCentered}
+          />
+        </StyledSettingsCardToggleButtonContainer>
       </StyledSettingsCardToggleContent>
       {divider && <Separator />}
     </>

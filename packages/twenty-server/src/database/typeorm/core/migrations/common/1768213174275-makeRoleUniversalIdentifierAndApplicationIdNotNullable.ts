@@ -24,7 +24,7 @@ export class MakeRoleUniversalIdentifierAndApplicationIdNotNullable1768213174275
         await queryRunner.query(`ROLLBACK TO SAVEPOINT ${savepointName}`);
         await queryRunner.query(`RELEASE SAVEPOINT ${savepointName}`);
       } catch (rollbackError) {
-        // eslint-disable-next-line no-console
+        // oxlint-disable-next-line no-console
         console.error(
           'Failed to rollback to savepoint in MakeRoleUniversalIdentifierAndApplicationIdNotNullable1768213174275',
           rollbackError,
@@ -32,7 +32,7 @@ export class MakeRoleUniversalIdentifierAndApplicationIdNotNullable1768213174275
         throw rollbackError;
       }
 
-      // eslint-disable-next-line no-console
+      // oxlint-disable-next-line no-console
       console.error(
         'Swallowing MakeRoleUniversalIdentifierAndApplicationIdNotNullable1768213174275 error',
         e,

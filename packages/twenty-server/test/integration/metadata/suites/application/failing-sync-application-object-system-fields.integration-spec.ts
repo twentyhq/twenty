@@ -3,7 +3,6 @@ import { buildBaseManifest } from 'test/integration/metadata/suites/application/
 import { buildDefaultObjectManifest } from 'test/integration/metadata/suites/application/utils/build-default-object-manifest.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
-import { uninstallApplication } from 'test/integration/metadata/suites/application/utils/uninstall-application.util';
 import { type Manifest, type ObjectManifest } from 'twenty-shared/application';
 import {
   type EachTestingContext,
@@ -157,8 +156,6 @@ const failingSyncApplicationSystemFieldsTestCases: SyncApplicationTestingContext
   ];
 
 describe('Sync application should fail due to object system fields integrity', () => {
-  let appCreated = false;
-
   beforeAll(async () => {
     await setupApplicationForSync({
       applicationUniversalIdentifier: TEST_APP_ID,
@@ -166,19 +163,32 @@ describe('Sync application should fail due to object system fields integrity', (
       description: 'App for testing system field validation',
       sourcePath: 'test-system-fields',
     });
-
-    appCreated = true;
   }, 60000);
 
-  afterEach(async () => {
-    if (!appCreated) {
-      return;
-    }
+  afterAll(async () => {
+    await globalThis.testDataSource.query(
+      `DELETE FROM core."role" WHERE "universalIdentifier" = $1`,
+      [TEST_ROLE_ID],
+    );
 
-    await uninstallApplication({
-      universalIdentifier: TEST_APP_ID,
-      expectToFail: false,
-    });
+    await globalThis.testDataSource.query(
+      `DELETE FROM core."file" WHERE "applicationId" IN (
+        SELECT id FROM core."application" WHERE "universalIdentifier" = $1
+      )`,
+      [TEST_APP_ID],
+    );
+
+    await globalThis.testDataSource.query(
+      `DELETE FROM core."application"
+       WHERE "universalIdentifier" = $1`,
+      [TEST_APP_ID],
+    );
+
+    await globalThis.testDataSource.query(
+      `DELETE FROM core."applicationRegistration"
+       WHERE "universalIdentifier" = $1`,
+      [TEST_APP_ID],
+    );
   });
 
   it.each(

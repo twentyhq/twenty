@@ -45,6 +45,7 @@ import { RenewTokenService } from 'src/engine/core-modules/auth/token/services/r
 import { TransientTokenService } from 'src/engine/core-modules/auth/token/services/transient-token.service';
 import { WorkspaceAgnosticTokenService } from 'src/engine/core-modules/auth/token/services/workspace-agnostic-token.service';
 import {
+  AuthContextUser,
   JwtTokenTypeEnum,
   LoginTokenJwtPayload,
 } from 'src/engine/core-modules/auth/types/auth-context.type';
@@ -508,7 +509,7 @@ export class AuthResolver {
   @Mutation(() => SignUpDTO)
   @UseGuards(UserAuthGuard, NoPermissionGuard)
   async signUpInNewWorkspace(
-    @AuthUser() currentUser: UserEntity,
+    @AuthUser() currentUser: AuthContextUser,
     @AuthProvider() authProvider: AuthProviderEnum,
   ): Promise<SignUpDTO> {
     const { user, workspace } = await this.signInUpService.signUpOnNewWorkspace(
@@ -533,7 +534,7 @@ export class AuthResolver {
   @Mutation(() => TransientTokenDTO)
   @UseGuards(UserAuthGuard, NoPermissionGuard)
   async generateTransientToken(
-    @AuthUser() user: UserEntity,
+    @AuthUser() user: AuthContextUser,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<TransientTokenDTO | void> {
     const workspaceMember = await this.userService.loadWorkspaceMember(
@@ -780,7 +781,7 @@ export class AuthResolver {
   @UseGuards(UserAuthGuard, NoPermissionGuard)
   async authorizeApp(
     @Args() authorizeAppInput: AuthorizeAppInput,
-    @AuthUser() user: UserEntity,
+    @AuthUser() user: AuthContextUser,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<AuthorizeAppDTO> {
     return await this.authService.generateAuthorizationCode(

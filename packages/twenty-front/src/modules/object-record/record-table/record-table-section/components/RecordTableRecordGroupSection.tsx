@@ -1,7 +1,6 @@
 import { styled } from '@linaria/react';
 import { useCallback, useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { RecordBoardColumnHeaderAggregateDropdown } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdown';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
@@ -65,7 +64,7 @@ const StyledChevronContainer = styled.div`
   z-index: ${TABLE_Z_INDEX.groupSection.stickyCell};
 `;
 
-const StyledAnimatedLightIconButton = styled(AnimatedLightIconButton)`
+const StyledAnimatedLightIconButtonContainer = styled.div`
   display: block;
   margin: auto;
 
@@ -83,13 +82,12 @@ const StyledRecordGroupSection = styled.div<{ width: number }>`
   min-width: ${({ width }) => width}px;
 
   position: sticky;
-  left: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH +
-  RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px;
+  left: ${`${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH + RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px`};
 
   z-index: ${TABLE_Z_INDEX.groupSection.stickyCell};
 `;
 
-const StyledTag = styled(Tag)`
+const StyledTagContainer = styled.div`
   flex-shrink: 0;
 `;
 
@@ -196,32 +194,36 @@ export const RecordTableRecordGroupSection = () => {
     <StyledTrContainer onClick={handleDropdownToggle}>
       <StyledRecordTableDragAndDropPlaceholderCell />
       <StyledChevronContainer>
-        <StyledAnimatedLightIconButton
-          Icon={IconChevronDown}
-          size="small"
-          accent="secondary"
-          animate={{ rotate: !isRecordGroupTableSectionToggled ? -90 : 0 }}
-          transition={{ duration: theme.animation.duration.normal }}
-        />
+        <StyledAnimatedLightIconButtonContainer>
+          <AnimatedLightIconButton
+            Icon={IconChevronDown}
+            size="small"
+            accent="secondary"
+            animate={{ rotate: !isRecordGroupTableSectionToggled ? -90 : 0 }}
+            transition={{ duration: theme.animation.duration.normal }}
+          />
+        </StyledAnimatedLightIconButtonContainer>
       </StyledChevronContainer>
       <StyledRecordGroupSection
         className="disable-shadow"
         width={widthOfLabelIdentifierRecordField}
       >
-        <StyledTag
-          variant={
-            recordGroupDefinition.type !== RecordGroupDefinitionType.NoValue
-              ? 'solid'
-              : 'outline'
-          }
-          color={
-            recordGroupDefinition.type !== RecordGroupDefinitionType.NoValue
-              ? recordGroupDefinition.color
-              : 'transparent'
-          }
-          text={recordGroupDefinition.title}
-          weight="medium"
-        />
+        <StyledTagContainer>
+          <Tag
+            variant={
+              recordGroupDefinition.type !== RecordGroupDefinitionType.NoValue
+                ? 'solid'
+                : 'outline'
+            }
+            color={
+              recordGroupDefinition.type !== RecordGroupDefinitionType.NoValue
+                ? recordGroupDefinition.color
+                : 'transparent'
+            }
+            text={recordGroupDefinition.title}
+            weight="medium"
+          />
+        </StyledTagContainer>
         <RecordBoardColumnHeaderAggregateDropdown
           aggregateValue={recordIndexAggregateDisplayValueForGroupValue}
           dropdownId={`record-group-section-aggregate-dropdown-${currentRecordGroupId}`}

@@ -30,7 +30,7 @@ const StyledMainContent = styled.div`
   min-height: 200px;
 `;
 
-const StyledSection = styled(Section)`
+const StyledSectionContainer = styled.div`
   flex-shrink: 0;
 `;
 
@@ -58,54 +58,60 @@ export const SettingsApiWebhooks = () => {
     >
       <SettingsPageContainer>
         <StyledMainContent>
-          <StyledSection>
-            <H2Title
-              title={t`Documentation`}
-              description={t`Try our REST or GraphQL API playgrounds.`}
-            />
-            <StyledContainer>
-              <StyledSettingsApiPlaygroundCoverImage />
-              <PlaygroundSetupForm />
-            </StyledContainer>
-          </StyledSection>
+          <StyledSectionContainer>
+            <Section>
+              <H2Title
+                title={t`Documentation`}
+                description={t`Try our REST or GraphQL API playgrounds.`}
+              />
+              <StyledContainer>
+                <StyledSettingsApiPlaygroundCoverImage />
+                <PlaygroundSetupForm />
+              </StyledContainer>
+            </Section>
+          </StyledSectionContainer>
 
-          <StyledSection>
-            <H2Title
-              title={t`API Keys`}
-              description={t`Active API keys created by you or your team.`}
-            />
-            <StyledContainer isMobile={isMobile}>
-              <SettingsApiKeysTable />
-              <StyledButtonContainer>
-                <Button
-                  Icon={IconPlus}
-                  title={t`Create API key`}
-                  size="small"
-                  variant="secondary"
-                  to={getSettingsPath(SettingsPath.NewApiKey)}
-                />
-              </StyledButtonContainer>
-            </StyledContainer>
-          </StyledSection>
+          <StyledSectionContainer>
+            <Section>
+              <H2Title
+                title={t`API Keys`}
+                description={t`Active API keys created by you or your team.`}
+              />
+              <StyledContainer isMobile={isMobile}>
+                <SettingsApiKeysTable />
+                <StyledButtonContainer>
+                  <Button
+                    Icon={IconPlus}
+                    title={t`Create API key`}
+                    size="small"
+                    variant="secondary"
+                    to={getSettingsPath(SettingsPath.NewApiKey)}
+                  />
+                </StyledButtonContainer>
+              </StyledContainer>
+            </Section>
+          </StyledSectionContainer>
 
-          <StyledSection>
-            <H2Title
-              title={t`Webhooks`}
-              description={t`Establish Webhook endpoints for notifications on asynchronous events.`}
-            />
-            <StyledContainer isMobile={isMobile}>
-              <SettingsWebhooksTable />
-              <StyledButtonContainer>
-                <Button
-                  Icon={IconPlus}
-                  title={t`Create webhook`}
-                  size="small"
-                  variant="secondary"
-                  to={getSettingsPath(SettingsPath.NewWebhook)}
-                />
-              </StyledButtonContainer>
-            </StyledContainer>
-          </StyledSection>
+          <StyledSectionContainer>
+            <Section>
+              <H2Title
+                title={t`Webhooks`}
+                description={t`Establish Webhook endpoints for notifications on asynchronous events.`}
+              />
+              <StyledContainer isMobile={isMobile}>
+                <SettingsWebhooksTable />
+                <StyledButtonContainer>
+                  <Button
+                    Icon={IconPlus}
+                    title={t`Create webhook`}
+                    size="small"
+                    variant="secondary"
+                    to={getSettingsPath(SettingsPath.NewWebhook)}
+                  />
+                </StyledButtonContainer>
+              </StyledContainer>
+            </Section>
+          </StyledSectionContainer>
         </StyledMainContent>
       </SettingsPageContainer>
     </SubMenuTopBarContainer>

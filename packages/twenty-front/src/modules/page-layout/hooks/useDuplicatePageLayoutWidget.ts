@@ -78,7 +78,7 @@ export const useDuplicatePageLayoutWidget = (
         ...generateDuplicatedTimestamps(),
       };
 
-      const currentTabLayouts = allTabLayouts[sourceTab.id] || {
+      const currentTabLayouts = allTabLayouts[sourceTab.id] ?? {
         desktop: [],
         mobile: [],
       };

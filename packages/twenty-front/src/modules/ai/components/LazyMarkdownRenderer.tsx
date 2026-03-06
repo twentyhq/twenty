@@ -13,7 +13,7 @@ import {
 import { lazy, Suspense, useContext } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { isDefined } from 'twenty-shared/utils';
-import { ThemeContext } from 'twenty-ui/theme';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 const TextWithRecordLinks = ({ text }: { text: string }) => {
   const parts: React.ReactNode[] = [];
@@ -132,7 +132,6 @@ const MarkdownRenderer = lazy(async () => {
 
 const LoadingSkeleton = () => {
   const { theme } = useContext(ThemeContext);
-
   return (
     <SkeletonTheme
       baseColor={theme.background.tertiary}

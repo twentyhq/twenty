@@ -19,11 +19,10 @@ import { useLingui } from '@lingui/react/macro';
 import { useContext, useId, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconMaximize } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useIsMobile } from 'twenty-ui/utilities';
 
-const StyledAdvancedTextFieldContainer = styled(FormFieldInputContainer)`
+const StyledAdvancedTextFieldContainerWrapper = styled.div`
   flex-grow: 1;
 `;
 
@@ -64,14 +63,16 @@ const StyledFullScreenEditorContainer = styled.div`
   overflow-y: auto;
 `;
 
-const StyledFullScreenButtonContainer = styled(StyledDropdownButtonContainer)`
-  background-color: transparent;
+const StyledFullScreenButtonContainerWrapper = styled.div`
+  > * {
+    background-color: transparent;
+    color: ${themeCssVariables.font.color.tertiary};
+    padding: ${themeCssVariables.spacing[2]};
 
-  color: ${themeCssVariables.font.color.tertiary};
-  padding: ${themeCssVariables.spacing[2]};
-  :hover {
-    cursor: pointer;
-    background-color: ${themeCssVariables.background.transparent.light};
+    :hover {
+      cursor: pointer;
+      background-color: ${themeCssVariables.background.transparent.light};
+    }
   }
 `;
 
@@ -110,10 +111,10 @@ export const FormAdvancedTextFieldInput = ({
   maxWidth,
   contentType = 'json',
 }: FormAdvancedTextFieldInputProps) => {
+  const { theme } = useContext(ThemeContext);
   const instanceId = useId();
   const isMobile = useIsMobile();
   const [isFullScreen, setIsFullScreen] = useState(false);
-  const { theme } = useContext(ThemeContext);
 
   const { t } = useLingui();
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
@@ -210,46 +211,50 @@ export const FormAdvancedTextFieldInput = ({
 
   return (
     <>
-      <StyledAdvancedTextFieldContainer>
-        {label ? <InputLabel>{label}</InputLabel> : null}
+      <StyledAdvancedTextFieldContainerWrapper>
+        <FormFieldInputContainer>
+          {label ? <InputLabel>{label}</InputLabel> : null}
 
-        <StyledAdvancedTextFieldFieldContainer>
-          <StyledAdvancedTextFieldInnerContainer>
-            {!isFullScreen && (
-              <AdvancedTextEditor
-                editor={editor}
-                readonly={readonly}
-                minHeight={minHeight}
-                maxWidth={maxWidth}
-              />
-            )}
+          <StyledAdvancedTextFieldFieldContainer>
+            <StyledAdvancedTextFieldInnerContainer>
+              {!isFullScreen && (
+                <AdvancedTextEditor
+                  editor={editor}
+                  readonly={readonly}
+                  minHeight={minHeight}
+                  maxWidth={maxWidth}
+                />
+              )}
 
-            {enableFullScreen && (
-              <StyledEditorActionButtonContainer>
-                {!readonly && !isFullScreen && (
-                  <StyledFullScreenButtonContainer
-                    isUnfolded={false}
-                    transparentBackground
-                    onClick={handleEnterFullScreen}
-                  >
-                    <IconMaximize size={theme.icon.size.md} />
-                  </StyledFullScreenButtonContainer>
-                )}
-              </StyledEditorActionButtonContainer>
-            )}
+              {enableFullScreen && (
+                <StyledEditorActionButtonContainer>
+                  {!readonly && !isFullScreen && (
+                    <StyledFullScreenButtonContainerWrapper>
+                      <StyledDropdownButtonContainer
+                        isUnfolded={false}
+                        transparentBackground
+                        onClick={handleEnterFullScreen}
+                      >
+                        <IconMaximize size={theme.icon.size.md} />
+                      </StyledDropdownButtonContainer>
+                    </StyledFullScreenButtonContainerWrapper>
+                  )}
+                </StyledEditorActionButtonContainer>
+              )}
 
-            {VariablePicker && !readonly ? (
-              <VariablePicker
-                instanceId={instanceId}
-                multiline={true}
-                onVariableSelect={handleVariableTagInsert}
-              />
-            ) : null}
-          </StyledAdvancedTextFieldInnerContainer>
-        </StyledAdvancedTextFieldFieldContainer>
-        {hint && <InputHint>{hint}</InputHint>}
-        {error && <InputErrorHelper>{error}</InputErrorHelper>}
-      </StyledAdvancedTextFieldContainer>
+              {VariablePicker && !readonly ? (
+                <VariablePicker
+                  instanceId={instanceId}
+                  multiline={true}
+                  onVariableSelect={handleVariableTagInsert}
+                />
+              ) : null}
+            </StyledAdvancedTextFieldInnerContainer>
+          </StyledAdvancedTextFieldFieldContainer>
+          {hint && <InputHint>{hint}</InputHint>}
+          {error && <InputErrorHelper>{error}</InputErrorHelper>}
+        </FormFieldInputContainer>
+      </StyledAdvancedTextFieldContainerWrapper>
 
       {fullScreenOverlay}
     </>

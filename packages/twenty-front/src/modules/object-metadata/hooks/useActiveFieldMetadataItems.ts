@@ -1,4 +1,5 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { isDefined } from 'twenty-shared/utils';
 import { isActiveFieldMetadataItem } from '@/object-metadata/utils/isActiveFieldMetadataItem';
 import { useMemo } from 'react';
 
@@ -9,7 +10,7 @@ export const useActiveFieldMetadataItems = ({
 }) => {
   const activeFieldMetadataItems = useMemo(
     () =>
-      objectMetadataItem
+      isDefined(objectMetadataItem)
         ? objectMetadataItem.readableFields.filter(
             ({ id, isActive, isSystem, name }) =>
               isActiveFieldMetadataItem({

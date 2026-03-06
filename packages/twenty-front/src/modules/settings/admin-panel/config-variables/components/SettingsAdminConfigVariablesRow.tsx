@@ -1,28 +1,22 @@
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { useContext } from 'react';
 import { styled } from '@linaria/react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconChevronRight } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useContext } from 'react';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { type ConfigVariable } from '~/generated-metadata/graphql';
 
 type SettingsAdminConfigVariablesRowProps = {
   variable: ConfigVariable;
 };
 
-const StyledTruncatedCell = styled(TableCell)`
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  cursor: pointer;
-`;
-
-const StyledTableRow = styled(TableRow)`
-  &:hover {
-    background-color: ${themeCssVariables.background.transparent.light};
+const StyledTableRowContainer = styled.div`
+  > * {
+    &:hover {
+      background-color: ${themeCssVariables.background.transparent.light};
+    }
   }
 `;
 
@@ -49,24 +43,38 @@ export const SettingsAdminConfigVariablesRow = ({
           : variable.value;
 
   return (
-    <StyledTableRow
-      gridAutoColumns="5fr 3fr 1fr"
-      to={getSettingsPath(SettingsPath.AdminPanelConfigVariableDetails, {
-        variableName: variable.name,
-      })}
-    >
-      <StyledTruncatedCell color={theme.font.color.primary}>
-        <StyledEllipsisLabel>{variable.name}</StyledEllipsisLabel>
-      </StyledTruncatedCell>
-      <StyledTruncatedCell align="right">
-        <StyledEllipsisLabel>{displayValue}</StyledEllipsisLabel>
-      </StyledTruncatedCell>
-      <TableCell align="right">
-        <IconChevronRight
-          size={theme.icon.size.md}
-          color={theme.font.color.tertiary}
-        />
-      </TableCell>
-    </StyledTableRow>
+    <StyledTableRowContainer>
+      <TableRow
+        gridAutoColumns="5fr 3fr 1fr"
+        to={getSettingsPath(SettingsPath.AdminPanelConfigVariableDetails, {
+          variableName: variable.name,
+        })}
+      >
+        <TableCell
+          color={theme.font.color.primary}
+          whiteSpace="nowrap"
+          overflow="hidden"
+          textOverflow="ellipsis"
+          clickable
+        >
+          <StyledEllipsisLabel>{variable.name}</StyledEllipsisLabel>
+        </TableCell>
+        <TableCell
+          align="right"
+          whiteSpace="nowrap"
+          overflow="hidden"
+          textOverflow="ellipsis"
+          clickable
+        >
+          <StyledEllipsisLabel>{displayValue}</StyledEllipsisLabel>
+        </TableCell>
+        <TableCell align="right">
+          <IconChevronRight
+            size={theme.icon.size.md}
+            color={theme.font.color.tertiary}
+          />
+        </TableCell>
+      </TableRow>
+    </StyledTableRowContainer>
   );
 };

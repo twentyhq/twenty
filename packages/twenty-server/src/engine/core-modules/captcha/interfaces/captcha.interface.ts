@@ -31,7 +31,7 @@ export type CaptchaModuleOptions =
 
 export type CaptchaModuleAsyncOptions = {
   useFactory: (
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
     ...args: any[]
   ) => CaptchaModuleOptions | Promise<CaptchaModuleOptions> | undefined;
 } & Pick<ModuleMetadata, 'imports'> &
