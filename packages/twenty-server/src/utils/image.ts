@@ -60,8 +60,10 @@ export const getImageBufferFromUrl = async (
 
     return Buffer.from(response.data, 'binary');
   } catch (error) {
+    const code = (error as { code?: string }).code;
     const message = error instanceof Error ? error.message : 'Unknown error';
+    const detail = message || code || 'Unknown error';
 
-    throw new Error(`Failed to fetch image from ${url}: ${message}`);
+    throw new Error(`Failed to fetch image from ${url}: ${detail}`);
   }
 };
