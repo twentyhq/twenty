@@ -17,10 +17,10 @@ const ActivityRichTextEditor = lazy(() =>
 );
 
 const StyledShowPageActivityContainer = styled.div`
-  margin-top: ${themeCssVariables.spacing[6]};
-  width: 100%;
-  padding-inline: 44px;
   box-sizing: border-box;
+  margin-top: ${themeCssVariables.spacing[6]};
+  padding-inline: 44px;
+  width: 100%;
 `;
 
 const StyledSkeletonContainer = styled.div`

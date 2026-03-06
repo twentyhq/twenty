@@ -11,23 +11,22 @@ const StyledEditorContainer = styled.div<{
   minHeight: number;
   maxWidth: number;
 }>`
-  height: 100%;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
+  height: 100%;
   width: 100%;
-  box-sizing: border-box;
 
   .editor-content {
     flex-grow: 1;
-    width: 100%;
     height: 100%;
     min-height: ${({ minHeight }) => minHeight}px;
+    width: 100%;
   }
 
   .tiptap {
-    padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
+    border: none !important;
     box-sizing: border-box;
-    height: 100%;
     color: ${({ readonly }) =>
       readonly
         ? themeCssVariables.font.color.light
@@ -35,7 +34,8 @@ const StyledEditorContainer = styled.div<{
     font-family: ${themeCssVariables.font.family};
     font-size: ${themeCssVariables.font.size.sm};
     font-weight: ${themeCssVariables.font.weight.regular};
-    border: none !important;
+    height: 100%;
+    padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
 
     p.is-editor-empty:first-of-type::before {
       ${FORM_FIELD_PLACEHOLDER_STYLES}
@@ -70,8 +70,8 @@ const StyledEditorContainer = styled.div<{
     }
 
     li {
-      margin-bottom: ${themeCssVariables.spacing[2]};
       line-height: 1.5;
+      margin-bottom: ${themeCssVariables.spacing[2]};
     }
   }
 

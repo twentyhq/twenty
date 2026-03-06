@@ -25,12 +25,12 @@ const StyledMainContentContainer = styled.div`
 
 const StyledTextContainer = styled.div`
   align-items: center;
-  margin-bottom: ${themeCssVariables.spacing[4]};
   color: ${themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.sm};
 
+  margin-bottom: ${themeCssVariables.spacing[4]};
   max-width: 280px;
   text-align: center;
-  font-size: ${themeCssVariables.font.size.sm};
 
   & > a {
     color: ${themeCssVariables.font.color.tertiary};
@@ -50,14 +50,14 @@ const StyledForm = styled.div`
 `;
 
 const StyledCopySetupKeyLink = styled.button`
+  align-items: center;
   background: none;
   border: none;
   color: ${themeCssVariables.font.color.secondary};
   cursor: pointer;
   display: flex;
-  align-items: center;
-  gap: ${themeCssVariables.spacing[1]};
   font-size: ${themeCssVariables.font.size.sm};
+  gap: ${themeCssVariables.spacing[1]};
   margin-top: ${themeCssVariables.spacing[2]};
   padding: 0;
   text-decoration: underline;

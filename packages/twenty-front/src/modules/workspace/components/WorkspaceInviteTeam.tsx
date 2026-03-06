@@ -25,9 +25,9 @@ import { Button } from 'twenty-ui/input';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
+  align-items: center;
   display: flex;
   flex-direction: row;
-  align-items: center;
   gap: ${themeCssVariables.spacing[2]};
   padding-bottom: ${themeCssVariables.spacing[3]};
 

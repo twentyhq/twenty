@@ -17,14 +17,14 @@ const StyledContainer = styled.div`
 `;
 
 const StyledFieldRow = styled.div`
-  display: flex;
   align-items: stretch;
+  display: flex;
   gap: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledActionWrapper = styled.div`
-  display: flex;
   align-items: stretch;
+  display: flex;
 
   & > button + button {
     border-left: none;
@@ -32,9 +32,9 @@ const StyledActionWrapper = styled.div`
 `;
 
 const StyledActionButtonContainer = styled.div`
-  height: 100%;
-  display: inline-flex;
   align-items: center;
+  display: inline-flex;
+  height: 100%;
   justify-content: center;
 `;
 

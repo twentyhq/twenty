@@ -32,8 +32,8 @@ import { type PageLayoutType } from '~/generated-metadata/graphql';
 import { ThemeContext } from 'twenty-ui/theme-constants';
 
 const StyledOverflowDropdownListDraggableWrapper = styled.div`
-  display: flex;
   cursor: grab;
+  display: flex;
 
   &:active {
     cursor: grabbing;

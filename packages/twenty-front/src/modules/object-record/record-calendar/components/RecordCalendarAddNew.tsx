@@ -15,9 +15,9 @@ import { Button } from 'twenty-ui/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledButtonContainer = styled.div`
-  padding: ${themeCssVariables.spacing['0.5']};
-  min-width: unset;
   height: auto;
+  min-width: unset;
+  padding: ${themeCssVariables.spacing['0.5']};
 `;
 
 type RecordCalendarAddNewProps = {

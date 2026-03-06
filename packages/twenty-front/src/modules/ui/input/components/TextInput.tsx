@@ -22,8 +22,8 @@ const StyledContainer = styled.div<Pick<TextInputComponentProps, 'fullWidth'>>`
   box-sizing: border-box;
   display: inline-flex;
   flex-direction: column;
-  width: ${({ fullWidth }) => (fullWidth ? `100%` : 'auto')};
   position: relative;
+  width: ${({ fullWidth }) => (fullWidth ? `100%` : 'auto')};
 `;
 
 const StyledInputContainer = styled.div`
@@ -43,10 +43,14 @@ const StyledAdornmentContainer = styled.div<StyledAdornmentContainerProps>`
   align-items: center;
   background-color: ${themeCssVariables.background.transparent.light};
   border: 1px solid ${themeCssVariables.border.color.medium};
+  border-left-style: ${({ position }) =>
+    position === 'right' ? 'none' : 'solid'};
   border-radius: ${({ position }) =>
     position === 'left'
       ? `${themeCssVariables.border.radius.sm} 0 0 ${themeCssVariables.border.radius.sm}`
       : `0 ${themeCssVariables.border.radius.sm} ${themeCssVariables.border.radius.sm} 0`};
+  border-right-style: ${({ position }) =>
+    position === 'left' ? 'none' : 'solid'};
   box-sizing: border-box;
   color: ${themeCssVariables.font.color.tertiary};
   display: flex;
@@ -61,9 +65,6 @@ const StyledAdornmentContainer = styled.div<StyledAdornmentContainerProps>`
           ? '28px'
           : '32px'};
   justify-content: center;
-  min-width: fit-content;
-  padding: ${themeCssVariables.spacing[2]};
-  width: auto;
   line-height: ${({ sizeVariant }) =>
     sizeVariant === 'xs'
       ? '20px'
@@ -72,11 +73,10 @@ const StyledAdornmentContainer = styled.div<StyledAdornmentContainerProps>`
         : sizeVariant === 'md'
           ? '28px'
           : '32px'};
+  min-width: fit-content;
 
-  border-right-style: ${({ position }) =>
-    position === 'left' ? 'none' : 'solid'};
-  border-left-style: ${({ position }) =>
-    position === 'right' ? 'none' : 'solid'};
+  padding: ${themeCssVariables.spacing[2]};
+  width: auto;
 `;
 
 const StyledInput = styled.input<
@@ -94,18 +94,18 @@ const StyledInput = styled.input<
   >
 >`
   background-color: ${themeCssVariables.background.transparent.lighter};
+  border: 1px solid
+    ${({ error }) =>
+      error
+        ? themeCssVariables.border.color.danger
+        : themeCssVariables.border.color.medium};
+
   border-radius: ${({ leftAdornment, rightAdornment }) =>
     leftAdornment
       ? `0 ${themeCssVariables.border.radius.sm} ${themeCssVariables.border.radius.sm} 0`
       : rightAdornment
         ? `${themeCssVariables.border.radius.sm} 0 0 ${themeCssVariables.border.radius.sm}`
         : themeCssVariables.border.radius.sm};
-
-  border: 1px solid
-    ${({ error }) =>
-      error
-        ? themeCssVariables.border.color.danger
-        : themeCssVariables.border.color.medium};
   box-sizing: border-box;
   color: ${themeCssVariables.font.color.primary};
   display: flex;
@@ -124,6 +124,7 @@ const StyledInput = styled.input<
         : sizeVariant === 'md'
           ? '28px'
           : '32px'};
+  max-width: ${({ autoGrow }) => (autoGrow ? '100%' : 'none')};
   outline: none;
   padding: ${({ sizeVariant, autoGrow }) =>
     autoGrow
@@ -143,12 +144,11 @@ const StyledInput = styled.input<
       : RightIcon
         ? `calc(${themeCssVariables.spacing[3]} + 16px)`
         : themeCssVariables.spacing[2]};
+  text-overflow: ellipsis;
   width: ${({ width }) =>
     isDefined(width)
       ? `calc(${width}px + ${themeCssVariables.spacing[0.5]})`
       : '100%'};
-  max-width: ${({ autoGrow }) => (autoGrow ? '100%' : 'none')};
-  text-overflow: ellipsis;
   &::placeholder,
   &::-webkit-input-placeholder {
     color: ${themeCssVariables.font.color.light};
@@ -175,8 +175,10 @@ const StyledInput = styled.input<
 
 const StyledLeftIconContainer = styled.div<{ sizeVariant: TextInputSize }>`
   align-items: center;
+  bottom: 0;
   display: flex;
   justify-content: center;
+  margin: auto 0;
   padding-left: ${({ sizeVariant }) =>
     sizeVariant === 'xs'
       ? themeCssVariables.spacing[0.5]
@@ -185,22 +187,20 @@ const StyledLeftIconContainer = styled.div<{ sizeVariant: TextInputSize }>`
         : themeCssVariables.spacing[2]};
   position: absolute;
   top: 0;
-  bottom: 0;
-  margin: auto 0;
 `;
 
 const StyledTrailingIconContainer = styled.div<
   Pick<TextInputComponentProps, 'error'>
 >`
   align-items: center;
+  bottom: 0;
   display: flex;
   justify-content: center;
+  margin: auto 0;
   padding-right: ${themeCssVariables.spacing[2]};
   position: absolute;
-  top: 0;
-  bottom: 0;
   right: 0;
-  margin: auto 0;
+  top: 0;
 `;
 
 const StyledTrailingIcon = styled.div<{

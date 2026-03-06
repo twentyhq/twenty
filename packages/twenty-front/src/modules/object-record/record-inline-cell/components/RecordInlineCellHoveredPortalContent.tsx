@@ -9,20 +9,20 @@ const StyledRecordTableCellHoveredPortalContent = styled.div<{
   align-items: center;
   display: flex;
   gap: ${themeCssVariables.spacing[1]};
-  width: 100%;
-
   justify-content: ${({ isCentered }) =>
     isCentered === true ? 'center' : 'normal'};
+
+  width: 100%;
 `;
 
 const StyledInlineCellBaseContainer = styled.div<{ readonly: boolean }>`
-  box-sizing: border-box;
-  width: 100%;
-  display: flex;
-  height: fit-content;
-  gap: ${themeCssVariables.spacing[1]};
-  user-select: none;
   align-items: center;
+  box-sizing: border-box;
+  display: flex;
+  gap: ${themeCssVariables.spacing[1]};
+  height: fit-content;
+  user-select: none;
+  width: 100%;
 `;
 
 type RecordInlineCellHoveredPortalContentProps = {

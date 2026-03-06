@@ -12,9 +12,9 @@ const StyledContainer = styled.div`
   box-sizing: border-box;
   display: flex;
   height: 100vh;
-  width: 100vw;
-  padding-top: ${themeCssVariables.spacing[3]};
   padding-left: ${themeCssVariables.spacing[3]};
+  padding-top: ${themeCssVariables.spacing[3]};
+  width: 100vw;
 `;
 
 export const AppFullScreenErrorFallback = ({

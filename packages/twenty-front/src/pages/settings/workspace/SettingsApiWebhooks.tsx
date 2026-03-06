@@ -37,8 +37,8 @@ const StyledSectionContainer = styled.div`
 const StyledContainer = styled.div<{ isMobile?: boolean }>`
   display: flex;
   flex-direction: column;
-  overflow: ${({ isMobile }) => (isMobile ? 'hidden' : 'visible')};
   gap: ${themeCssVariables.spacing[2]};
+  overflow: ${({ isMobile }) => (isMobile ? 'hidden' : 'visible')};
 `;
 
 export const SettingsApiWebhooks = () => {

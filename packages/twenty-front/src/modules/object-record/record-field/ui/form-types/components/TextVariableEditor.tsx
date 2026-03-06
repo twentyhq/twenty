@@ -7,35 +7,35 @@ const StyledEditor = styled.div<{
   multiline?: boolean;
   readonly?: boolean;
 }>`
-  width: 100%;
-  display: flex;
   box-sizing: border-box;
+  display: flex;
   padding-right: ${({ multiline }) =>
     multiline ? themeCssVariables.spacing[4] : '0'};
+  width: 100%;
 
   .editor-content {
     width: 100%;
   }
 
   .tiptap {
-    padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
+    align-items: ${({ multiline }) => (multiline ? 'top' : 'center')};
+    border: none !important;
     box-sizing: border-box;
-    display: flex;
-    height: 100%;
-    overflow-x: auto;
-    overflow-y: ${({ multiline }) => (multiline ? 'auto' : 'hidden')};
-    scrollbar-width: none;
-    &::-webkit-scrollbar {
-      display: none;
-    }
     color: ${({ readonly }) =>
       readonly
         ? themeCssVariables.font.color.light
         : themeCssVariables.font.color.primary};
+    display: flex;
     font-family: ${themeCssVariables.font.family};
     font-weight: ${themeCssVariables.font.weight.regular};
-    border: none !important;
-    align-items: ${({ multiline }) => (multiline ? 'top' : 'center')};
+    &::-webkit-scrollbar {
+      display: none;
+    }
+    height: 100%;
+    overflow-x: auto;
+    overflow-y: ${({ multiline }) => (multiline ? 'auto' : 'hidden')};
+    padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
+    scrollbar-width: none;
     white-space: ${({ multiline }) => (multiline ? 'pre' : 'nowrap')};
 
     p.is-editor-empty:first-of-type::before {

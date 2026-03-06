@@ -16,15 +16,15 @@ const StyledTitle = styled.div`
   border-radius: ${themeCssVariables.border.radius.sm};
   display: flex;
   height: ${themeCssVariables.spacing[5]};
+  justify-content: space-between;
+  padding-bottom: ${themeCssVariables.spacing[1]};
   padding-left: ${themeCssVariables.spacing[1]};
   padding-right: ${themeCssVariables.spacing['0.5']};
   padding-top: ${themeCssVariables.spacing[1]};
-  padding-bottom: ${themeCssVariables.spacing[1]};
-  justify-content: space-between;
 
   &:hover {
-    cursor: pointer;
     background-color: ${themeCssVariables.background.transparent.light};
+    cursor: pointer;
   }
 `;
 

@@ -54,11 +54,11 @@ const StyledDisplayModeContainer = styled.div`
   align-items: center;
   background: transparent;
   border: none;
+  cursor: pointer;
   display: flex;
   font-family: inherit;
   padding-inline: ${themeCssVariables.spacing[2]};
   width: 100%;
-  cursor: pointer;
 
   &:hover,
   &[data-open='true'] {
@@ -68,8 +68,8 @@ const StyledDisplayModeContainer = styled.div`
 
 const StyledSelectInputContainer = styled.div`
   position: absolute;
-  z-index: 1;
   top: ${themeCssVariables.spacing[9]};
+  z-index: 1;
 `;
 
 const StyledPlaceholderContainer = styled.div`

@@ -17,10 +17,10 @@ const StyledCoverImageContainer = styled.div`
   border-radius: ${themeCssVariables.border.radius.md};
   box-sizing: border-box;
   display: flex;
-  min-height: 153px;
   justify-content: center;
-  position: relative;
   margin-bottom: ${themeCssVariables.spacing[8]};
+  min-height: 153px;
+  position: relative;
 `;
 
 const StyledButtonContainer = styled.div`

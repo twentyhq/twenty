@@ -19,10 +19,10 @@ const StyledNonClickableStartIcon = styled.div`
   font-family: ${themeCssVariables.font.family};
   font-weight: ${themeCssVariables.font.weight.regular};
   gap: ${themeCssVariables.spacing[1]};
-  justify-content: center;
-
-  white-space: nowrap;
   height: ${themeCssVariables.spacing[6]};
+
+  justify-content: center;
+  white-space: nowrap;
   width: ${themeCssVariables.spacing[6]};
 `;
 

@@ -44,13 +44,13 @@ const StyledIconChevronDownWrapper = styled.div<{
 `;
 
 const StyledClickableContainer = styled.div`
-  cursor: pointer;
-  display: flex;
-
-  flex-direction: row;
-  width: 100%;
-  justify-content: center;
   align-items: center;
+  cursor: pointer;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  width: 100%;
 `;
 
 export const UnmatchColumnBanner = ({

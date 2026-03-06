@@ -42,15 +42,15 @@ type CalendarEventDetailsProps = {
 const INPUT_ID_PREFIX = 'calendar-event-details';
 
 const StyledContainer = styled.div`
-  background: ${themeCssVariables.background.secondary};
   align-items: flex-start;
+  background: ${themeCssVariables.background.secondary};
   border-bottom: 1px solid ${themeCssVariables.border.color.medium};
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[6]};
   padding: ${themeCssVariables.spacing[6]};
   width: 100%;
-  box-sizing: border-box;
 `;
 
 const StyledEventChipWrapper = styled.span`

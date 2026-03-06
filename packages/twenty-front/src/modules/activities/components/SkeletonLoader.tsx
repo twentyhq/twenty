@@ -4,14 +4,14 @@ import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledSkeletonContainer = styled.div`
+  align-content: flex-start;
   align-items: center;
-  width: 100%;
-  padding: ${themeCssVariables.spacing[8]};
   display: flex;
   flex-direction: column;
-  gap: ${themeCssVariables.spacing[4]};
   flex-wrap: wrap;
-  align-content: flex-start;
+  gap: ${themeCssVariables.spacing[4]};
+  padding: ${themeCssVariables.spacing[8]};
+  width: 100%;
 `;
 
 const StyledSkeletonSubSection = styled.div`

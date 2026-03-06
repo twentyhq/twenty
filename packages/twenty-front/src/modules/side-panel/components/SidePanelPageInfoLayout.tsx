@@ -31,16 +31,16 @@ export const StyledPageInfoTextContainer = styled.div`
 export const StyledPageInfoTitleContainer = styled.div`
   font-size: ${themeCssVariables.font.size.md};
   font-weight: ${themeCssVariables.font.weight.semiBold};
-  padding-inline: ${themeCssVariables.spacing[1]};
-  min-width: 0;
   max-width: 150px;
+  min-width: 0;
+  padding-inline: ${themeCssVariables.spacing[1]};
 `;
 
 export const StyledPageInfoLabel = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
+  flex-shrink: 0;
   font-size: ${themeCssVariables.font.size.sm};
   white-space: nowrap;
-  flex-shrink: 0;
 `;
 
 type SidePanelPageInfoLayoutProps = {

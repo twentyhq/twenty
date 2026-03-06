@@ -15,20 +15,20 @@ import { IconCheck } from 'twenty-ui/display';
 
 const StyledBooleanSelectContainer = styled.div<{ selected?: boolean }>`
   align-items: center;
+  border-radius: ${themeCssVariables.border.radius.sm};
+  color: ${themeCssVariables.font.color.primary};
   cursor: pointer;
   display: flex;
   padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[2]}
     ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[1]};
-  border-radius: ${themeCssVariables.border.radius.sm};
-  color: ${themeCssVariables.font.color.primary};
   &:hover {
     background: ${themeCssVariables.background.transparent.light};
   }
 `;
 
 const StyledIconCheckContainer = styled.div`
-  flex: 1;
   display: flex;
+  flex: 1;
   justify-content: flex-end;
 `;
 

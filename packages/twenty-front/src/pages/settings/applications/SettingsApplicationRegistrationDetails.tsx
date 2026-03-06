@@ -104,8 +104,8 @@ const StyledVariableRow = styled.div`
 `;
 
 const StyledVariableInfo = styled.div`
-  flex: 1;
   display: flex;
+  flex: 1;
   flex-direction: column;
   gap: ${themeCssVariables.spacing['0.5']};
 `;

@@ -15,9 +15,9 @@ type BarChartHoverLayerProps = {
 
 const StyledHoverCanvas = styled.canvas`
   display: block;
+  left: 0;
   position: absolute;
   top: 0;
-  left: 0;
 `;
 
 export const BarChartHoverLayer = ({

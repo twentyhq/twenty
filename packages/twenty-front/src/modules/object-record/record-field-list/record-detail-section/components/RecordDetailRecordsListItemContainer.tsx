@@ -8,10 +8,10 @@ const StyledListItem = styled.div<{
   isDropdownOpen?: boolean;
 }>`
   align-items: center;
-  justify-content: space-between;
-  gap: ${themeCssVariables.spacing[1]};
   display: flex;
+  gap: ${themeCssVariables.spacing[1]};
   height: ${themeCssVariables.spacing[10]};
+  justify-content: space-between;
   padding-left: ${({ noHorizontalPadding }) =>
     noHorizontalPadding ? 0 : themeCssVariables.spacing[3]};
   padding-right: ${({ noHorizontalPadding }) =>

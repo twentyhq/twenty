@@ -36,8 +36,8 @@ const StyledPropertyBox = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[2]};
-  padding-top: ${themeCssVariables.spacing[3]};
   padding-bottom: ${themeCssVariables.spacing[3]};
+  padding-top: ${themeCssVariables.spacing[3]};
 `;
 
 const StyledInlineFieldsPropertyBox = styled.div`
@@ -46,8 +46,8 @@ const StyledInlineFieldsPropertyBox = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[2]};
-  padding-top: 0;
   padding-bottom: 0;
+  padding-top: 0;
 `;
 
 type FieldsWidgetProps = {

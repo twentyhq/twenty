@@ -35,32 +35,32 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 const StyledNodeLabelWithCounterPart = styled.div`
   align-items: center;
   align-self: stretch;
+  box-sizing: border-box;
+  column-gap: ${themeCssVariables.spacing[2]};
   display: flex;
   height: 14px;
   justify-content: space-between;
-  box-sizing: border-box;
-  column-gap: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledStatusIconsContainer = styled.div`
   align-items: center;
+  box-sizing: border-box;
   display: flex;
   gap: ${themeCssVariables.spacing[1]};
   justify-content: flex-end;
-  box-sizing: border-box;
 `;
 
 const StyledColorIcon = styled.div<{
   color: string;
 }>`
   align-items: center;
+  background: ${({ color }) => color};
   border-radius: ${themeCssVariables.border.radius.sm};
   box-sizing: border-box;
   display: flex;
   height: 14px;
   justify-content: center;
   width: 14px;
-  background: ${({ color }) => color};
 `;
 
 const StyledIterationCounter = styled.div<{

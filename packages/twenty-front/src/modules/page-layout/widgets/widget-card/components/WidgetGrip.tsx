@@ -5,19 +5,19 @@ import { themeCssVariables, ThemeContext } from 'twenty-ui/theme-constants';
 import { useContext } from 'react';
 
 const StyledGripContainerBase = styled.div`
-  width: 20px;
-  height: 20px;
-  display: flex;
   align-items: center;
-  justify-content: center;
-  cursor: grab;
-  user-select: none;
   border-radius: ${themeCssVariables.border.radius.sm};
   box-sizing: border-box;
+  cursor: grab;
+  display: flex;
+  height: 20px;
+  justify-content: center;
+  user-select: none;
+  width: 20px;
 
   &:active {
-    cursor: grabbing;
     background: ${themeCssVariables.background.tertiary};
+    cursor: grabbing;
   }
 
   &:hover {

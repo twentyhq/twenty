@@ -22,23 +22,23 @@ const StyledDescription = styled.span`
   color: ${themeCssVariables.font.color.secondary};
   display: flex;
   font-size: ${themeCssVariables.font.size.md};
-  padding-left: ${themeCssVariables.spacing[2]};
-  white-space: nowrap;
   overflow: hidden;
+  padding-left: ${themeCssVariables.spacing[2]};
   text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 const StyledToggleContainer = styled.div`
   background-color: ${themeCssVariables.background.transparent.lighter};
-  border-top: 1px solid ${themeCssVariables.border.color.medium};
   border-bottom: 1px solid ${themeCssVariables.border.color.medium};
-  border-right: 1px solid ${themeCssVariables.border.color.medium};
   border-bottom-right-radius: ${themeCssVariables.border.radius.sm};
+  border-right: 1px solid ${themeCssVariables.border.color.medium};
+  border-top: 1px solid ${themeCssVariables.border.color.medium};
   border-top-right-radius: ${themeCssVariables.border.radius.sm};
   display: flex;
+  padding-bottom: ${themeCssVariables.spacing[2]};
   padding-right: ${themeCssVariables.spacing[2]};
   padding-top: ${themeCssVariables.spacing[2]};
-  padding-bottom: ${themeCssVariables.spacing[2]};
 `;
 
 export const FormBooleanFieldToggleInput = ({

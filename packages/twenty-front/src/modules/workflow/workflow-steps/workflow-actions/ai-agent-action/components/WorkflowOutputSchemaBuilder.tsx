@@ -48,10 +48,10 @@ const StyledSettingsHeader = styled.div`
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
   display: grid;
   gap: ${themeCssVariables.spacing[1]};
-  padding-right: ${themeCssVariables.spacing[2]};
-  padding-left: ${themeCssVariables.spacing[3]};
   grid-template-columns: 1fr 24px;
   padding-bottom: ${themeCssVariables.spacing[2]};
+  padding-left: ${themeCssVariables.spacing[3]};
+  padding-right: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledTitleContainer = styled.div`
@@ -68,6 +68,7 @@ const StyledCloseButtonContainer = styled.div`
 
 const StyledAddFieldButton = styled.button`
   align-items: center;
+  background-color: ${themeCssVariables.background.transparent.lighter};
   border: 1px solid ${themeCssVariables.border.color.light};
   border-radius: ${themeCssVariables.border.radius.sm};
   color: ${themeCssVariables.font.color.secondary};
@@ -80,7 +81,6 @@ const StyledAddFieldButton = styled.button`
   margin-top: ${themeCssVariables.spacing[2]};
   padding: ${themeCssVariables.spacing[2]};
   width: 100%;
-  background-color: ${themeCssVariables.background.transparent.lighter};
 
   &:hover {
     background-color: ${themeCssVariables.background.transparent.light};
@@ -88,12 +88,12 @@ const StyledAddFieldButton = styled.button`
 `;
 
 const StyledMessageContentContainer = styled.div`
-  flex-direction: column;
   color: ${themeCssVariables.font.color.secondary};
   display: flex;
+  flex-direction: column;
   gap: ${themeCssVariables.spacing[4]};
-  padding: ${themeCssVariables.spacing[4]};
   line-height: normal;
+  padding: ${themeCssVariables.spacing[4]};
 `;
 
 const StyledMessageDescription = styled.div`
