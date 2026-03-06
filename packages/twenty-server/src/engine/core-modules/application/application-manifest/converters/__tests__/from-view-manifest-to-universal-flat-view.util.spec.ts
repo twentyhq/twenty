@@ -17,6 +17,7 @@ describe('fromViewManifestToUniversalFlatView', () => {
         universalIdentifier: 'view-uuid-1',
         name: 'All Records',
         objectUniversalIdentifier: 'object-uuid-1',
+        key: ViewKey.INDEX,
       },
       applicationUniversalIdentifier,
       now,
