@@ -19,7 +19,7 @@ export const runAppDevInProcess = async (options: {
 
   const command = new AppDevCommand();
 
-  await command.execute({ appPath, headless: true });
+  await command.execute({ appPath });
 
   const startTime = Date.now();
 

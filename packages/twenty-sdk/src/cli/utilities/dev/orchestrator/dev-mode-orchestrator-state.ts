@@ -1,6 +1,7 @@
 import { type EntityFilePaths } from '@/cli/utilities/build/manifest/manifest-extract-config';
 import { type BuildManifestOrchestratorStepOutput } from '@/cli/utilities/dev/orchestrator/steps/build-manifest-orchestrator-step';
 import { type CheckServerOrchestratorStepOutput } from '@/cli/utilities/dev/orchestrator/steps/check-server-orchestrator-step';
+import { type ResolveApplicationOrchestratorStepOutput } from '@/cli/utilities/dev/orchestrator/steps/resolve-application-orchestrator-step';
 import { type StartWatchersOrchestratorStepOutput } from '@/cli/utilities/dev/orchestrator/steps/start-watchers-orchestrator-step';
 import { type SyncApplicationOrchestratorStepOutput } from '@/cli/utilities/dev/orchestrator/steps/sync-application-orchestrator-step';
 import { type UploadFilesOrchestratorStepOutput } from '@/cli/utilities/dev/orchestrator/steps/upload-files-orchestrator-step';
@@ -95,10 +96,7 @@ export class OrchestratorState {
   steps: {
     checkServer: OrchestratorStepState<CheckServerOrchestratorStepOutput>;
     ensureValidTokens: OrchestratorStepState<Record<string, never>>;
-    resolveApplication: OrchestratorStepState<{
-      applicationId: string | null;
-      universalIdentifier: string | null;
-    }>;
+    resolveApplication: OrchestratorStepState<ResolveApplicationOrchestratorStepOutput>;
     buildManifest: OrchestratorStepState<BuildManifestOrchestratorStepOutput>;
     uploadFiles: OrchestratorStepState<UploadFilesOrchestratorStepOutput>;
     generateApiClient: OrchestratorStepState<Record<string, never>>;

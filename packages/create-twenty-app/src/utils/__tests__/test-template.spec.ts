@@ -47,7 +47,7 @@ describe('scaffoldIntegrationTest', () => {
       const content = await fs.readFile(testPath, 'utf8');
 
       expect(content).toContain(
-        "import { appGenerateClient, appUninstall } from 'twenty-sdk/cli'",
+        "import { appBuild, appUninstall } from 'twenty-sdk/cli'",
       );
       expect(content).toContain(
         "import { MetadataApiClient } from 'twenty-sdk/generated'",
@@ -57,7 +57,7 @@ describe('scaffoldIntegrationTest', () => {
       );
       expect(content).toContain('TWENTY_TEST_API_KEY');
       expect(content).toContain('assertServerIsReachable');
-      expect(content).toContain('appGenerateClient');
+      expect(content).toContain('appBuild');
       expect(content).toContain('appUninstall');
       expect(content).toContain('findManyApplications');
       expect(content).toContain('APPLICATION_UNIVERSAL_IDENTIFIER');

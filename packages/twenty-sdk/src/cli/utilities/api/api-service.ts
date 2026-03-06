@@ -101,6 +101,61 @@ export class ApiService {
     }
   }
 
+  async findOneApplication(
+    universalIdentifier: string,
+  ): Promise<ApiResponse<{ id: string; universalIdentifier: string } | null>> {
+    try {
+      const query = `
+        query FindOneApplication($universalIdentifier: UUID!) {
+          findOneApplication(universalIdentifier: $universalIdentifier) {
+            id
+            universalIdentifier
+          }
+        }
+      `;
+
+      const response = await this.client.post(
+        '/metadata',
+        {
+          query,
+          variables: { universalIdentifier },
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: '*/*',
+          },
+        },
+      );
+
+      if (response.data.errors) {
+        const isNotFound = response.data.errors.some(
+          (error: { extensions?: { code?: string } }) =>
+            error.extensions?.code === 'NOT_FOUND',
+        );
+
+        if (isNotFound) {
+          return { success: true, data: null };
+        }
+
+        return {
+          success: false,
+          error: response.data.errors[0],
+        };
+      }
+
+      return {
+        success: true,
+        data: response.data.data.findOneApplication,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error,
+      };
+    }
+  }
+
   async generateApplicationToken(applicationId: string): Promise<
     ApiResponse<{
       applicationAccessToken: { token: string; expiresAt: string };
@@ -328,25 +383,40 @@ export class ApiService {
     }
   }
 
-  async createDevelopmentApplication(input: {
-    universalIdentifier: string;
-    name: string;
-  }): Promise<ApiResponse<{ id: string; universalIdentifier: string }>> {
+  async createApplication(
+    manifest: Manifest,
+    options?: { applicationRegistrationId?: string },
+  ): Promise<ApiResponse<{ id: string; universalIdentifier: string }>> {
     try {
       const mutation = `
-        mutation CreateDevelopmentApplication($universalIdentifier: String!, $name: String!) {
-          createDevelopmentApplication(universalIdentifier: $universalIdentifier, name: $name) {
+        mutation CreateOneApplication($input: CreateApplicationInput!) {
+          createOneApplication(input: $input) {
             id
             universalIdentifier
           }
         }
       `;
 
-      const response = await this.client.post(
+      const input: Record<string, string> = {
+        universalIdentifier: manifest.application.universalIdentifier,
+        name: manifest.application.displayName,
+        version: '0.0.1',
+        sourcePath: 'cli-sync',
+      };
+
+      if (options?.applicationRegistrationId) {
+        input.applicationRegistrationId = options.applicationRegistrationId;
+      }
+
+      const variables = {
+        input,
+      };
+
+      const response: AxiosResponse = await this.client.post(
         '/metadata',
         {
           query: mutation,
-          variables: input,
+          variables,
         },
         {
           headers: {
@@ -365,7 +435,8 @@ export class ApiService {
 
       return {
         success: true,
-        data: response.data.data.createDevelopmentApplication,
+        data: response.data.data.createOneApplication,
+        message: `Successfully create application: ${manifest.application.displayName}`,
       };
     } catch (error) {
       return {

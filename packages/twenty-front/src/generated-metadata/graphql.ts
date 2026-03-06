@@ -1484,12 +1484,6 @@ export type DestroyViewSortInput = {
   id: Scalars['UUID'];
 };
 
-export type DevelopmentApplication = {
-  __typename?: 'DevelopmentApplication';
-  id: Scalars['String'];
-  universalIdentifier: Scalars['String'];
-};
-
 export type DomainRecord = {
   __typename?: 'DomainRecord';
   key: Scalars['String'];
@@ -2373,7 +2367,6 @@ export type Mutation = {
   createCoreViewGroup: CoreViewGroup;
   createCoreViewSort: CoreViewSort;
   createDatabaseConfigVariable: Scalars['Boolean'];
-  createDevelopmentApplication: DevelopmentApplication;
   createEmailingDomain: EmailingDomain;
   createFrontComponent: FrontComponent;
   createManyCoreViewFieldGroups: Array<CoreViewFieldGroup>;
@@ -2456,6 +2449,7 @@ export type Mutation = {
   initiateOTPProvisioningForAuthenticatedUser: InitiateTwoFactorAuthenticationProvisioning;
   installApplication: Scalars['Boolean'];
   installMarketplaceApp: Scalars['Boolean'];
+  registerNpmPackage: ApplicationRegistration;
   removeQueryFromEventStream: Scalars['Boolean'];
   removeRoleFromAgent: Scalars['Boolean'];
   renewApplicationToken: ApplicationTokenPair;
@@ -2651,12 +2645,6 @@ export type MutationCreateCoreViewSortArgs = {
 export type MutationCreateDatabaseConfigVariableArgs = {
   key: Scalars['String'];
   value: Scalars['JSON'];
-};
-
-
-export type MutationCreateDevelopmentApplicationArgs = {
-  name: Scalars['String'];
-  universalIdentifier: Scalars['String'];
 };
 
 
@@ -3052,6 +3040,11 @@ export type MutationInstallApplicationArgs = {
 export type MutationInstallMarketplaceAppArgs = {
   universalIdentifier: Scalars['String'];
   version?: InputMaybe<Scalars['String']>;
+};
+
+
+export type MutationRegisterNpmPackageArgs = {
+  packageName: Scalars['String'];
 };
 
 
@@ -6271,6 +6264,13 @@ export type InstallMarketplaceAppMutationVariables = Exact<{
 
 
 export type InstallMarketplaceAppMutation = { __typename?: 'Mutation', installMarketplaceApp: boolean };
+
+export type RegisterNpmPackageMutationVariables = Exact<{
+  packageName: Scalars['String'];
+}>;
+
+
+export type RegisterNpmPackageMutation = { __typename?: 'Mutation', registerNpmPackage: { __typename?: 'ApplicationRegistration', id: string, universalIdentifier: string, name: string } };
 
 export type UpgradeApplicationMutationVariables = Exact<{
   appRegistrationId: Scalars['String'];
@@ -11604,6 +11604,41 @@ export function useInstallMarketplaceAppMutation(baseOptions?: Apollo.MutationHo
 export type InstallMarketplaceAppMutationHookResult = ReturnType<typeof useInstallMarketplaceAppMutation>;
 export type InstallMarketplaceAppMutationResult = Apollo.MutationResult<InstallMarketplaceAppMutation>;
 export type InstallMarketplaceAppMutationOptions = Apollo.BaseMutationOptions<InstallMarketplaceAppMutation, InstallMarketplaceAppMutationVariables>;
+export const RegisterNpmPackageDocument = gql`
+    mutation RegisterNpmPackage($packageName: String!) {
+  registerNpmPackage(packageName: $packageName) {
+    id
+    universalIdentifier
+    name
+  }
+}
+    `;
+export type RegisterNpmPackageMutationFn = Apollo.MutationFunction<RegisterNpmPackageMutation, RegisterNpmPackageMutationVariables>;
+
+/**
+ * __useRegisterNpmPackageMutation__
+ *
+ * To run a mutation, you first call `useRegisterNpmPackageMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRegisterNpmPackageMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [registerNpmPackageMutation, { data, loading, error }] = useRegisterNpmPackageMutation({
+ *   variables: {
+ *      packageName: // value for 'packageName'
+ *   },
+ * });
+ */
+export function useRegisterNpmPackageMutation(baseOptions?: Apollo.MutationHookOptions<RegisterNpmPackageMutation, RegisterNpmPackageMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RegisterNpmPackageMutation, RegisterNpmPackageMutationVariables>(RegisterNpmPackageDocument, options);
+      }
+export type RegisterNpmPackageMutationHookResult = ReturnType<typeof useRegisterNpmPackageMutation>;
+export type RegisterNpmPackageMutationResult = Apollo.MutationResult<RegisterNpmPackageMutation>;
+export type RegisterNpmPackageMutationOptions = Apollo.BaseMutationOptions<RegisterNpmPackageMutation, RegisterNpmPackageMutationVariables>;
 export const UpgradeApplicationDocument = gql`
     mutation UpgradeApplication($appRegistrationId: String!, $targetVersion: String!) {
   upgradeApplication(

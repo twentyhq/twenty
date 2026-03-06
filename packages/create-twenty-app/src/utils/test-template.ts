@@ -128,7 +128,7 @@ const createIntegrationTest = async ({
   fileName: string;
 }) => {
   const content = `import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/application-config';
-import { appGenerateClient, appUninstall } from 'twenty-sdk/cli';
+import { appBuild, appUninstall } from 'twenty-sdk/cli';
 import { MetadataApiClient } from 'twenty-sdk/generated';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
@@ -158,14 +158,14 @@ describe('App installation', () => {
   beforeAll(async () => {
     await assertServerIsReachable();
 
-    const generateResult = await appGenerateClient({
+    const buildResult = await appBuild({
       appPath: APP_PATH,
-      onProgress: (message: string) => console.log(\`[generate-client] \${message}\`),
+      onProgress: (message: string) => console.log(\`[build] \${message}\`),
     });
 
-    if (!generateResult.success) {
+    if (!buildResult.success) {
       throw new Error(
-        \`Client generation failed: \${generateResult.error?.message ?? 'Unknown error'}\`,
+        \`App build failed: \${buildResult.error?.message ?? 'Unknown error'}\`,
       );
     }
 

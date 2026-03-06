@@ -24,8 +24,6 @@ import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/appli
 import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationInput } from 'src/engine/core-modules/application/application-development/dtos/application.input';
-import { CreateDevelopmentApplicationInput } from 'src/engine/core-modules/application/application-development/dtos/create-development-application.input';
-import { DevelopmentApplicationDTO } from 'src/engine/core-modules/application/application-development/dtos/development-application.dto';
 import { GenerateApplicationTokenInput } from 'src/engine/core-modules/application/application-development/dtos/generate-application-token.input';
 import { UploadApplicationFileInput } from 'src/engine/core-modules/application/application-development/dtos/upload-application-file.input';
 import { WorkspaceMigrationDTO } from 'src/engine/core-modules/application/application-development/dtos/workspace-migration.dto';
@@ -66,44 +64,6 @@ export class ApplicationDevelopmentResolver {
     private readonly fileStorageService: FileStorageService,
   ) {}
 
-  @Mutation(() => DevelopmentApplicationDTO)
-  @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)
-  async createDevelopmentApplication(
-    @Args() { universalIdentifier, name }: CreateDevelopmentApplicationInput,
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ): Promise<DevelopmentApplicationDTO> {
-    const applicationRegistrationId = await this.findApplicationRegistrationId(
-      universalIdentifier,
-      workspaceId,
-    );
-
-    const existing = await this.applicationService.findByUniversalIdentifier({
-      universalIdentifier,
-      workspaceId,
-    });
-
-    if (existing) {
-      return {
-        id: existing.id,
-        universalIdentifier: existing.universalIdentifier,
-      };
-    }
-
-    const application = await this.applicationService.create({
-      universalIdentifier,
-      name,
-      sourcePath: universalIdentifier,
-      sourceType: ApplicationRegistrationSourceType.LOCAL,
-      applicationRegistrationId,
-      workspaceId,
-    });
-
-    return {
-      id: application.id,
-      universalIdentifier: application.universalIdentifier,
-    };
-  }
-
   @Mutation(() => ApplicationTokenPairDTO)
   @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)
   async generateApplicationToken(
@@ -126,6 +86,13 @@ export class ApplicationDevelopmentResolver {
       manifest.application.universalIdentifier,
       workspaceId,
     );
+
+    await this.ensureApplicationExists({
+      universalIdentifier: manifest.application.universalIdentifier,
+      name: manifest.application.displayName,
+      workspaceId,
+      applicationRegistrationId,
+    });
 
     const workspaceMigration =
       await this.applicationSyncService.synchronizeFromManifest({
@@ -255,5 +222,30 @@ export class ApplicationDevelopmentResolver {
         );
       }
     }
+  }
+
+  private async ensureApplicationExists(params: {
+    universalIdentifier: string;
+    name: string;
+    workspaceId: string;
+    applicationRegistrationId: string;
+  }): Promise<void> {
+    const existing = await this.applicationService.findByUniversalIdentifier({
+      universalIdentifier: params.universalIdentifier,
+      workspaceId: params.workspaceId,
+    });
+
+    if (existing) {
+      return;
+    }
+
+    await this.applicationService.create({
+      universalIdentifier: params.universalIdentifier,
+      name: params.name,
+      sourcePath: params.universalIdentifier,
+      sourceType: ApplicationRegistrationSourceType.LOCAL,
+      applicationRegistrationId: params.applicationRegistrationId,
+      workspaceId: params.workspaceId,
+    });
   }
 }
