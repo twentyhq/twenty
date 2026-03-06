@@ -1,6 +1,4 @@
-import {
-  type OrchestratorStateEntityInfo,
-} from '@/cli/utilities/dev/orchestrator/dev-mode-orchestrator-state';
+import { type OrchestratorStateEntityInfo } from '@/cli/utilities/dev/orchestrator/dev-mode-orchestrator-state';
 import {
   type DevUiStatus,
   DEV_UI_STATUS_CONFIG,
@@ -37,9 +35,7 @@ export const DevUiEntityRow = ({
 
   return (
     <Box>
-      <DevUiStatusIcon
-        uiStatus={mapFileStatusToDevUiStatus(entity.status)}
-      />
+      <DevUiStatusIcon uiStatus={mapFileStatusToDevUiStatus(entity.status)} />
       <Text>{entity.name}</Text>
       {entity.path !== entity.name && (
         <Text dimColor> ({shortenPath(entity.path)})</Text>

@@ -43,8 +43,7 @@ const config: StorybookConfig = {
         ...viteConfig.resolve,
         alias: {
           ...(viteConfig.resolve?.alias ?? {}),
-          '@tabler/icons-react':
-            '@tabler/icons-react/dist/esm/icons/index.mjs',
+          '@tabler/icons-react': '@tabler/icons-react/dist/esm/icons/index.mjs',
         },
       },
     };
