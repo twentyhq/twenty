@@ -2,7 +2,7 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { Table } from '@/ui/layout/table/components/Table';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 
 import { SettingsRolesTableHeader } from '@/settings/roles/components/SettingsRolesTableHeader';
@@ -23,34 +23,33 @@ import {
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { MenuItemToggle } from 'twenty-ui/navigation';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { sortByAscString } from '~/utils/array/sortByAscString';
 
-const StyledCreateRoleSection = styled(Section)`
-  border-top: 1px solid ${({ theme }) => theme.border.color.light};
-  display: flex;
-  justify-content: flex-end;
-  padding-top: ${({ theme }) => theme.spacing(2)};
-  padding-bottom: ${({ theme }) => theme.spacing(2)};
+const StyledCreateRoleSectionContainer = styled.div`
+  > * {
+    border-top: 1px solid ${themeCssVariables.border.color.light};
+    display: flex;
+    justify-content: flex-end;
+    padding-top: ${themeCssVariables.spacing[2]};
+    padding-bottom: ${themeCssVariables.spacing[2]};
+  }
 `;
 
 const StyledTableRows = styled.div`
-  padding-bottom: ${({ theme }) => theme.spacing(2)};
-  padding-top: ${({ theme }) => theme.spacing(2)};
-`;
-
-const StyledNoRoles = styled(TableCell)`
-  color: ${({ theme }) => theme.font.color.tertiary};
+  padding-bottom: ${themeCssVariables.spacing[2]};
+  padding-top: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledSearchAndFilterContainer = styled.div`
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
-  margin-bottom: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
+  margin-bottom: ${themeCssVariables.spacing[2]};
   width: 100%;
 `;
 
-const StyledSearchInput = styled(SettingsTextInput)`
+const StyledSearchInputContainer = styled.div`
   flex: 1;
 `;
 
@@ -87,13 +86,15 @@ export const SettingsRolesList = () => {
       />
 
       <StyledSearchAndFilterContainer>
-        <StyledSearchInput
-          instanceId="settings-roles-search"
-          LeftIcon={IconSearch}
-          placeholder={t`Search a role...`}
-          value={searchTerm}
-          onChange={setSearchTerm}
-        />
+        <StyledSearchInputContainer>
+          <SettingsTextInput
+            instanceId="settings-roles-search"
+            LeftIcon={IconSearch}
+            placeholder={t`Search a role...`}
+            value={searchTerm}
+            onChange={setSearchTerm}
+          />
+        </StyledSearchInputContainer>
         <Dropdown
           dropdownId="settings-roles-filter-dropdown"
           dropdownPlacement="bottom-end"
@@ -134,7 +135,9 @@ export const SettingsRolesList = () => {
         <SettingsRolesTableHeader />
         <StyledTableRows>
           {filteredRoles.length === 0 ? (
-            <StyledNoRoles>{t`No roles found`}</StyledNoRoles>
+            <TableCell color={themeCssVariables.font.color.tertiary}>
+              {t`No roles found`}
+            </TableCell>
           ) : (
             filteredRoles.map((role) => (
               <SettingsRolesTableRow key={role.id} role={role} />
@@ -142,15 +145,17 @@ export const SettingsRolesList = () => {
           )}
         </StyledTableRows>
       </Table>
-      <StyledCreateRoleSection>
-        <Button
-          Icon={IconPlus}
-          title={t`Create Role`}
-          variant="secondary"
-          size="small"
-          onClick={() => navigateSettings(SettingsPath.RoleCreate)}
-        />
-      </StyledCreateRoleSection>
+      <StyledCreateRoleSectionContainer>
+        <Section>
+          <Button
+            Icon={IconPlus}
+            title={t`Create Role`}
+            variant="secondary"
+            size="small"
+            onClick={() => navigateSettings(SettingsPath.RoleCreate)}
+          />
+        </Section>
+      </StyledCreateRoleSectionContainer>
     </Section>
   );
 };

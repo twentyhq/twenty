@@ -39,6 +39,20 @@ export { Card } from './card/components/Card';
 export { CardContent } from './card/components/CardContent';
 export { CardFooter } from './card/components/CardFooter';
 export { CardHeader } from './card/components/CardHeader';
+export { Modal } from './modal/components/Modal';
+export { ModalBackdrop } from './modal/components/ModalBackdrop';
+export type { ModalContentProps } from './modal/components/ModalContent';
+export { ModalContent } from './modal/components/ModalContent';
+export type { ModalFooterProps } from './modal/components/ModalFooter';
+export { ModalFooter } from './modal/components/ModalFooter';
+export type { ModalHeaderProps } from './modal/components/ModalHeader';
+export { ModalHeader } from './modal/components/ModalHeader';
+export type { ModalOverlay } from './modal/types/ModalOverlay';
+export type { ModalPadding } from './modal/types/ModalPadding';
+export type { ModalProps } from './modal/types/ModalProps';
+export type { ModalSize } from './modal/types/ModalSize';
+export { ResizeHandle } from './resize-handle/components/ResizeHandle';
+export { useResizeHandle } from './resize-handle/hooks/useResizeHandle';
 export {
   SectionAlignment,
   SectionFontColor,

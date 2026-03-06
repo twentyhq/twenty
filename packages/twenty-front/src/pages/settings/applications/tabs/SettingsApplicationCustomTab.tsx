@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { Suspense, lazy } from 'react';
 
 const FrontComponentRenderer = lazy(() =>

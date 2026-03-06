@@ -1,6 +1,8 @@
+import { useContext } from 'react';
+
 import IconAddressBookRaw from '@assets/icons/address-book.svg?react';
-import { useTheme } from '@emotion/react';
 import { type IconComponentProps } from '@ui/display/icon/types/IconComponent';
+import { ThemeContext } from '@ui/theme-constants';
 
 type IconAddressBookProps = Pick<
   IconComponentProps,
@@ -8,7 +10,7 @@ type IconAddressBookProps = Pick<
 >;
 
 export const IconAddressBook = (props: IconAddressBookProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const size = props.size ?? 24;
   const stroke = props.stroke ?? theme.icon.stroke.md;
 

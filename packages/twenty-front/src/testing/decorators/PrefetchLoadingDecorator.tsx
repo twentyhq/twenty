@@ -15,7 +15,7 @@ export const PrefetchLoadingDecorator: Decorator = (Story, context) => {
     PrefetchKey.AllFavoritesFolders,
   );
 
-  // eslint-disable-next-line twenty/matching-state-variable
+  // oxlint-disable-next-line twenty/matching-state-variable
   const setPrefetchIsLoadedFavorites = useSetAtomFamilyState(
     prefetchIsLoadedFamilyState,
     PrefetchKey.AllFavorites,

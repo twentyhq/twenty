@@ -1,5 +1,4 @@
-import { useTheme } from '@emotion/react';
-import { useId, useState } from 'react';
+import { useContext, useId, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { AppTooltip, TooltipDelay, TooltipPosition } from 'twenty-ui/display';
 
@@ -14,6 +13,7 @@ import { EllipsisDisplay } from '@/ui/field/display/components/EllipsisDisplay';
 import { isDefined, formatToShortNumber } from 'twenty-shared/utils';
 import { DEFAULT_DECIMAL_VALUE } from '~/utils/format/formatNumber';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 type CurrencyDisplayProps = {
   currencyValue: FieldCurrencyValue | null | undefined;
@@ -24,7 +24,7 @@ export const CurrencyDisplay = ({
   currencyValue,
   fieldDefinition,
 }: CurrencyDisplayProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const instanceId = useId();
   const [shouldRenderTooltip, setShouldRenderTooltip] = useState(false);
 

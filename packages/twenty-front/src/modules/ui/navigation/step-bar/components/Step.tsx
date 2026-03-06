@@ -1,10 +1,14 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
+import { useContext } from 'react';
 
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { AnimatedCheckmark } from 'twenty-ui/display';
-import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
+import {
+  MOBILE_VIEWPORT,
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div<{ isLast: boolean }>`
   align-items: center;
@@ -15,15 +19,15 @@ const StyledContainer = styled.div<{ isLast: boolean }>`
   }
 `;
 
-const StyledStepCircle = styled(motion.div)<{ isInNextSteps: boolean }>`
+const StyledStepCircleBase = styled.div<{ isInNextSteps: boolean }>`
   align-items: center;
   border-radius: 50%;
   border-style: solid;
   border-width: 1px;
-  border-color: ${({ theme, isInNextSteps }) =>
+  border-color: ${({ isInNextSteps }) =>
     isInNextSteps
-      ? theme.border.color.medium
-      : theme.border.color.inverted} !important;
+      ? themeCssVariables.border.color.medium
+      : themeCssVariables.border.color.inverted} !important;
   display: flex;
   flex-basis: auto;
   flex-shrink: 0;
@@ -34,29 +38,37 @@ const StyledStepCircle = styled(motion.div)<{ isInNextSteps: boolean }>`
   width: 20px;
 `;
 
+const StyledStepCircle = motion.create(StyledStepCircleBase);
+
 const StyledStepIndex = styled.span<{ isCurrentStep: boolean }>`
-  color: ${({ theme, isCurrentStep }) =>
-    isCurrentStep ? theme.font.color.inverted : theme.font.color.tertiary};
-  font-size: ${({ theme }) => theme.font.size.md};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
+  color: ${({ isCurrentStep }) =>
+    isCurrentStep
+      ? themeCssVariables.font.color.inverted
+      : themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.md};
+  font-weight: ${themeCssVariables.font.weight.medium};
 `;
 
 const StyledStepLabel = styled.span<{ isInNextSteps: boolean }>`
-  color: ${({ theme, isInNextSteps }) =>
-    isInNextSteps ? theme.font.color.tertiary : theme.font.color.primary};
-  font-size: ${({ theme }) => theme.font.size.md};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  margin-left: ${({ theme }) => theme.spacing(2)};
+  color: ${({ isInNextSteps }) =>
+    isInNextSteps
+      ? themeCssVariables.font.color.tertiary
+      : themeCssVariables.font.color.primary};
+  font-size: ${themeCssVariables.font.size.md};
+  font-weight: ${themeCssVariables.font.weight.semiBold};
+  margin-left: ${themeCssVariables.spacing[2]};
   white-space: nowrap;
 `;
 
-const StyledStepLine = styled(motion.div)`
+const StyledStepLineBase = styled.div`
   height: 2px;
-  margin-left: ${({ theme }) => theme.spacing(2)};
-  margin-right: ${({ theme }) => theme.spacing(2)};
+  margin-left: ${themeCssVariables.spacing[2]};
+  margin-right: ${themeCssVariables.spacing[2]};
   overflow: hidden;
   width: 100%;
 `;
+
+const StyledStepLine = motion.create(StyledStepLineBase);
 
 export type StepProps = React.PropsWithChildren &
   React.ComponentProps<'div'> & {
@@ -73,8 +85,8 @@ export const Step = ({
   children,
   activeStep = 0,
 }: StepProps) => {
-  const theme = useTheme();
   const isMobile = useIsMobile();
+  const { theme } = useContext(ThemeContext);
 
   const variantsLine = {
     previous: {

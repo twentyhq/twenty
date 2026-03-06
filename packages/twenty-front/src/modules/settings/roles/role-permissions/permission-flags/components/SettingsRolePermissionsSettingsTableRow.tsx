@@ -4,35 +4,18 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { Checkbox } from 'twenty-ui/input';
+import { useContext } from 'react';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { v4 } from 'uuid';
 
-const StyledTableRow = styled(TableRow)<{ isDisabled: boolean }>`
-  cursor: ${({ isDisabled }) => (isDisabled ? 'default' : 'pointer')};
-`;
-
 const StyledName = styled.span`
-  color: ${({ theme }) => theme.font.color.primary};
+  color: ${themeCssVariables.font.color.primary};
 `;
 
-const StyledDescription = styled(StyledName)`
-  color: ${({ theme }) => theme.font.color.secondary};
-`;
-
-const StyledPermissionCell = styled(TableCell)`
-  align-items: center;
-  display: flex;
-  flex: 1;
-  gap: ${({ theme }) => theme.spacing(2)};
-`;
-
-const StyledCheckboxCell = styled(TableCell)`
-  align-items: center;
-  display: flex;
-  justify-content: flex-end;
-  padding-right: ${({ theme }) => theme.spacing(1)};
+const StyledDescription = styled.span`
+  color: ${themeCssVariables.font.color.secondary};
 `;
 
 const StyledIconContainer = styled.div`
@@ -53,7 +36,7 @@ export const SettingsRolePermissionsSettingsTableRow = ({
   permission,
   isEditable,
 }: SettingsRolePermissionsSettingsTableRowProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const settingsDraftRole = useAtomFamilyStateValue(
     settingsDraftRoleFamilyState,
     roleId,
@@ -111,13 +94,13 @@ export const SettingsRolePermissionsSettingsTableRow = ({
   };
 
   return (
-    <StyledTableRow
+    <TableRow
       key={permission.key}
       gridAutoColumns="3fr 4fr 24px"
       onClick={handleRowClick}
-      isDisabled={isDisabled}
+      cursor={isDisabled ? 'default' : 'pointer'}
     >
-      <StyledPermissionCell>
+      <TableCell gap={themeCssVariables.spacing[2]}>
         <StyledIconContainer>
           <permission.Icon
             size={theme.icon.size.md}
@@ -126,17 +109,21 @@ export const SettingsRolePermissionsSettingsTableRow = ({
           />
         </StyledIconContainer>
         <StyledName>{permission.name}</StyledName>
-      </StyledPermissionCell>
-      <StyledPermissionCell>
+      </TableCell>
+      <TableCell gap={themeCssVariables.spacing[2]}>
         <StyledDescription>{permission.description}</StyledDescription>
-      </StyledPermissionCell>
-      <StyledCheckboxCell onClick={(e) => e.stopPropagation()}>
+      </TableCell>
+      <TableCell
+        align="right"
+        padding={`0 ${themeCssVariables.spacing[1]} 0 ${themeCssVariables.spacing[2]}`}
+        onClick={(e) => e.stopPropagation()}
+      >
         <Checkbox
           checked={isChecked}
           disabled={isDisabled}
           onChange={(event) => handleChange(event.target.checked)}
         />
-      </StyledCheckboxCell>
-    </StyledTableRow>
+      </TableCell>
+    </TableRow>
   );
 };

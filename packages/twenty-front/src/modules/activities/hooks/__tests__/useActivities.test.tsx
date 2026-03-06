@@ -1,7 +1,7 @@
 import { renderHook } from '@testing-library/react';
 import { useActivities } from '@/activities/hooks/useActivities';
 import { type Task } from '@/activities/types/Task';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 
 jest.mock('@/activities/hooks/useActivityTargetsForTargetableObjects', () => ({
   useActivityTargetsForTargetableObjects: jest.fn(),

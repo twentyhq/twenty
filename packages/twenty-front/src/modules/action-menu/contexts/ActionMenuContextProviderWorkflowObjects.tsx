@@ -5,6 +5,7 @@ import {
 } from '@/action-menu/contexts/ActionMenuContext';
 import { useRegisteredActions } from '@/action-menu/hooks/useRegisteredActions';
 import { useShouldActionBeRegisteredParams } from '@/action-menu/hooks/useShouldActionBeRegisteredParams';
+import { useCommandMenuContextApi } from '@/action-menu/hooks/useCommandMenuContextApi';
 import { useCommandMenuItemFrontComponentActions } from '@/command-menu-item/hooks/useCommandMenuItemFrontComponentActions';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
@@ -17,7 +18,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 type ActionMenuContextProviderWorkflowObjectsProps = {
   objectMetadataItem: ObjectMetadataItem;
-  isInRightDrawer: ActionMenuContextType['isInRightDrawer'];
+  isInSidePanel: ActionMenuContextType['isInSidePanel'];
   displayType: ActionMenuContextType['displayType'];
   actionMenuType: ActionMenuContextType['actionMenuType'];
   children: React.ReactNode;
@@ -25,7 +26,7 @@ type ActionMenuContextProviderWorkflowObjectsProps = {
 
 const ActionMenuContextProviderWorkflowObjectsContent = ({
   objectMetadataItem,
-  isInRightDrawer,
+  isInSidePanel,
   displayType,
   actionMenuType,
   children,
@@ -50,13 +51,15 @@ const ActionMenuContextProviderWorkflowObjectsContent = ({
   const runWorkflowRecordAgnosticActions =
     useRunWorkflowRecordAgnosticActions();
 
+  const commandMenuContextApi = useCommandMenuContextApi();
+
   const commandMenuItemFrontComponentActions =
-    useCommandMenuItemFrontComponentActions();
+    useCommandMenuItemFrontComponentActions(commandMenuContextApi);
 
   return (
     <ActionMenuContext.Provider
       value={{
-        isInRightDrawer,
+        isInSidePanel,
         displayType,
         actionMenuType,
         actions: [
@@ -73,7 +76,7 @@ const ActionMenuContextProviderWorkflowObjectsContent = ({
 
 const ActionMenuContextProviderWorkflowObjectsWithoutWorkflow = ({
   objectMetadataItem,
-  isInRightDrawer,
+  isInSidePanel,
   displayType,
   actionMenuType,
   children,
@@ -94,13 +97,15 @@ const ActionMenuContextProviderWorkflowObjectsWithoutWorkflow = ({
   const runWorkflowRecordAgnosticActions =
     useRunWorkflowRecordAgnosticActions();
 
+  const commandMenuContextApi = useCommandMenuContextApi();
+
   const commandMenuItemFrontComponentActions =
-    useCommandMenuItemFrontComponentActions();
+    useCommandMenuItemFrontComponentActions(commandMenuContextApi);
 
   return (
     <ActionMenuContext.Provider
       value={{
-        isInRightDrawer,
+        isInSidePanel,
         displayType,
         actionMenuType,
         actions: [
@@ -117,7 +122,7 @@ const ActionMenuContextProviderWorkflowObjectsWithoutWorkflow = ({
 
 export const ActionMenuContextProviderWorkflowObjects = ({
   objectMetadataItem,
-  isInRightDrawer,
+  isInSidePanel,
   displayType,
   actionMenuType,
   children,
@@ -140,7 +145,7 @@ export const ActionMenuContextProviderWorkflowObjects = ({
     return (
       <ActionMenuContextProviderWorkflowObjectsContent
         objectMetadataItem={objectMetadataItem}
-        isInRightDrawer={isInRightDrawer}
+        isInSidePanel={isInSidePanel}
         displayType={displayType}
         actionMenuType={actionMenuType}
         selectedRecordId={selectedRecord.id}
@@ -153,7 +158,7 @@ export const ActionMenuContextProviderWorkflowObjects = ({
   return (
     <ActionMenuContextProviderWorkflowObjectsWithoutWorkflow
       objectMetadataItem={objectMetadataItem}
-      isInRightDrawer={isInRightDrawer}
+      isInSidePanel={isInSidePanel}
       displayType={displayType}
       actionMenuType={actionMenuType}
       workflowWithCurrentVersion={undefined}

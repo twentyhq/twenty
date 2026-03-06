@@ -1,11 +1,11 @@
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { useTheme } from '@emotion/react';
 import { type Placement } from '@floating-ui/react';
 import {
   type FunctionComponent,
   type MouseEvent,
   type ReactElement,
   type ReactNode,
+  useContext,
 } from 'react';
 import {
   IconChevronRight,
@@ -19,6 +19,7 @@ import {
   StyledHoverableMenuItemBase,
   StyledMenuItemLeftContent,
 } from 'twenty-ui/navigation';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 export type MenuItemIconButton = {
   Wrapper?: FunctionComponent<{ iconButton: ReactElement }>;
@@ -62,8 +63,7 @@ export const MenuItemWithOptionDropdown = ({
   hasSubMenu = false,
   dropdownPlacement = 'bottom-end',
 }: MenuItemWithOptionDropdownProps) => {
-  const theme = useTheme();
-
+  const { theme } = useContext(ThemeContext);
   const handleMenuItemClick = (event: MouseEvent<HTMLDivElement>) => {
     if (!onClick) return;
     event.preventDefault();

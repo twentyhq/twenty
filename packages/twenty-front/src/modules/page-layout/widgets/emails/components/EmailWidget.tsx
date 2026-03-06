@@ -1,8 +1,8 @@
 import { EmailsCard } from '@/activities/emails/components/EmailsCard';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
-import { RightDrawerProvider } from '@/ui/layout/right-drawer/contexts/RightDrawerContext';
-import styled from '@emotion/styled';
+import { SidePanelProvider } from '@/ui/layout/side-panel/contexts/SidePanelContext';
+import { styled } from '@linaria/react';
 
 const StyledContainer = styled.div`
   box-sizing: border-box;
@@ -16,13 +16,13 @@ type EmailWidgetProps = {
 };
 
 export const EmailWidget = ({ widget: _widget }: EmailWidgetProps) => {
-  const { isInRightDrawer } = useLayoutRenderingContext();
+  const { isInSidePanel } = useLayoutRenderingContext();
 
   return (
-    <RightDrawerProvider value={{ isInRightDrawer }}>
+    <SidePanelProvider value={{ isInSidePanel }}>
       <StyledContainer>
         <EmailsCard />
       </StyledContainer>
-    </RightDrawerProvider>
+    </SidePanelProvider>
   );
 };

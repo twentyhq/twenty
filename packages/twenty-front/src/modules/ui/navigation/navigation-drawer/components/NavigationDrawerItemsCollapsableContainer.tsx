@@ -1,16 +1,19 @@
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { type ReactNode, useContext } from 'react';
 import {
   type AnimationControls,
   motion,
   type TargetAndTransition,
 } from 'framer-motion';
-import { type ReactNode } from 'react';
+import { ThemeContext } from 'twenty-ui/theme-constants';
+const StyledAnimationGroupContainerBase = styled.div``;
 
-const StyledAnimationGroupContainer = styled(motion.div)``;
+const StyledAnimationGroupContainer = motion.create(
+  StyledAnimationGroupContainerBase,
+);
 
 type NavigationDrawerItemsCollapsableContainerProps = {
   isGroup?: boolean;
@@ -21,7 +24,7 @@ export const NavigationDrawerItemsCollapsableContainer = ({
   isGroup = false,
   children,
 }: NavigationDrawerItemsCollapsableContainerProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const isSettingsPage = useIsSettingsPage();
   const isNavigationDrawerExpanded = useAtomStateValue(
     isNavigationDrawerExpandedState,
@@ -48,7 +51,9 @@ export const NavigationDrawerItemsCollapsableContainer = ({
     <StyledAnimationGroupContainer
       initial={false}
       animate={animate}
-      transition={{ duration: theme.animation.duration.normal }}
+      transition={{
+        duration: theme.animation.duration.normal,
+      }}
     >
       {children}
     </StyledAnimationGroupContainer>

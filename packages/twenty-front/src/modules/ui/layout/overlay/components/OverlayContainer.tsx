@@ -1,6 +1,7 @@
-import styled from '@emotion/styled';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from '@linaria/react';
 
-// eslint-disable-next-line twenty/styled-components-prefixed-with-styled
+// oxlint-disable-next-line twenty/styled-components-prefixed-with-styled
 export const OverlayContainer = styled.div<{
   borderRadius?: 'sm' | 'md';
   hasDangerBorder?: boolean;
@@ -8,16 +9,16 @@ export const OverlayContainer = styled.div<{
   align-items: center;
   display: flex;
 
-  backdrop-filter: ${({ theme }) => theme.blur.medium};
+  backdrop-filter: ${themeCssVariables.blur.medium};
 
-  border-radius: ${({ theme, borderRadius }) =>
-    theme.border.radius[borderRadius ?? 'md']};
+  border-radius: ${({ borderRadius }) =>
+    themeCssVariables.border.radius[borderRadius ?? 'md']};
 
-  background: ${({ theme }) => theme.background.transparent.primary};
+  background: ${themeCssVariables.background.transparent.primary};
   border: 1px solid
-    ${({ theme, hasDangerBorder }) =>
-      theme.border.color[hasDangerBorder ? 'danger' : 'medium']};
-  box-shadow: ${({ theme }) => theme.boxShadow.strong};
+    ${({ hasDangerBorder }) =>
+      themeCssVariables.border.color[hasDangerBorder ? 'danger' : 'medium']};
+  box-shadow: ${themeCssVariables.boxShadow.strong};
 
   overflow: hidden;
 

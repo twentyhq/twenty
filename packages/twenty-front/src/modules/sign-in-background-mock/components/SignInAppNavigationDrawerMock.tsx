@@ -6,14 +6,14 @@ import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/componen
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { DEFAULT_WORKSPACE_NAME } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceName';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconSearch, IconSettings } from 'twenty-ui/display';
 import { getOsControlSymbol, useIsMobile } from 'twenty-ui/utilities';
 
-const StyledMainSection = styled(NavigationDrawerSection)`
+const StyledMainSectionWrapper = styled.div`
   min-height: fit-content;
 `;
 
@@ -39,20 +39,22 @@ export const SignInAppNavigationDrawerMock = ({
   return (
     <NavigationDrawer className={className} title={DEFAULT_WORKSPACE_NAME}>
       {!isMobile && (
-        <StyledMainSection>
-          <NavigationDrawerItem
-            label={t`Search`}
-            Icon={IconSearch}
-            onClick={() => {}}
-            keyboard={[getOsControlSymbol(), 'K']}
-          />
-          <NavigationDrawerItem
-            label={t`Settings`}
-            to={getSettingsPath(SettingsPath.ProfilePage)}
-            onClick={() => {}}
-            Icon={IconSettings}
-          />
-        </StyledMainSection>
+        <StyledMainSectionWrapper>
+          <NavigationDrawerSection>
+            <NavigationDrawerItem
+              label={t`Search`}
+              Icon={IconSearch}
+              onClick={() => {}}
+              keyboard={[getOsControlSymbol(), 'K']}
+            />
+            <NavigationDrawerItem
+              label={t`Settings`}
+              to={getSettingsPath(SettingsPath.ProfilePage)}
+              onClick={() => {}}
+              Icon={IconSettings}
+            />
+          </NavigationDrawerSection>
+        </StyledMainSectionWrapper>
       )}
       <NavigationDrawerSectionForObjectMetadataItems
         sectionTitle={t`Workspace`}

@@ -1,4 +1,4 @@
-/* eslint-disable no-restricted-imports */
+/* oxlint-disable no-restricted-imports */
 export {
   IconNumber123 as Icon123,
   IconAlertCircle,
@@ -91,6 +91,7 @@ export {
   IconCodeCircle,
   IconCoins,
   IconColorSwatch,
+  IconColumnInsertRight,
   IconColumns,
   IconCommand,
   IconMessageCircle as IconComment,
@@ -224,6 +225,7 @@ export {
   IconInbox,
   IconInfoCircle,
   IconItalic,
+  IconJetpack,
   IconJson,
   IconKey,
   IconLanguage,
@@ -268,8 +270,8 @@ export {
   IconMoodSmile,
   IconMoon,
   IconMouse2,
-  IconNorthStar,
   IconNewSection,
+  IconNorthStar,
   IconNoteOff,
   IconNotes,
   IconNumber,

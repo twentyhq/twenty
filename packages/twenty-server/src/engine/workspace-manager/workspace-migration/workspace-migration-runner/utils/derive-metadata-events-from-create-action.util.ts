@@ -89,6 +89,7 @@ const deriveAllMetadataEventsFromCreateAction = (
     case 'commandMenuItem':
     case 'frontComponent':
     case 'navigationMenuItem':
+    case 'viewSort':
     case 'webhook': {
       return [
         {

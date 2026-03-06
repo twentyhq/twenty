@@ -1,34 +1,16 @@
-import { ActivityTargetsInlineCell } from '@/activities/inline-cell/components/ActivityTargetsInlineCell';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { type CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
-import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
-import { useIsRecordReadOnly } from '@/object-record/read-only/hooks/useIsRecordReadOnly';
-import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
 import { RecordFieldsScopeContextProvider } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import { RecordFieldListComponentInstanceContext } from '@/object-record/record-field-list/states/contexts/RecordFieldListComponentInstanceContext';
-import { recordFieldListHoverPositionComponentState } from '@/object-record/record-field-list/states/recordFieldListHoverPositionComponentState';
-import { isActivityTargetField } from '@/object-record/record-field-list/utils/categorizeRelationFields';
-import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
-import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
-import { isJunctionRelationForbidden } from '@/object-record/record-field/ui/utils/junction/isJunctionRelationForbidden';
-import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
-import { PropertyBoxSkeletonLoader } from '@/object-record/record-inline-cell/property-box/components/PropertyBoxSkeletonLoader';
-import { useRecordShowContainerActions } from '@/object-record/record-show/hooks/useRecordShowContainerActions';
-import { useRecordShowContainerData } from '@/object-record/record-show/hooks/useRecordShowContainerData';
-import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { FieldsWidgetCellEditModePortal } from '@/page-layout/widgets/fields/components/FieldsWidgetCellEditModePortal';
 import { FieldsWidgetCellHoveredPortal } from '@/page-layout/widgets/fields/components/FieldsWidgetCellHoveredPortal';
+import { FieldsWidgetFieldList } from '@/page-layout/widgets/fields/components/FieldsWidgetFieldList';
 import { FieldsWidgetGroupContainer } from '@/page-layout/widgets/fields/components/FieldsWidgetGroupContainer';
 import { useFieldsWidgetGroupsForDisplay } from '@/page-layout/widgets/fields/hooks/useFieldsWidgetGroupsForDisplay';
-import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
-import { RightDrawerProvider } from '@/ui/layout/right-drawer/contexts/RightDrawerContext';
-import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import styled from '@emotion/styled';
+import { SidePanelProvider } from '@/ui/layout/side-panel/contexts/SidePanelContext';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import {
   AnimatedPlaceholder,
@@ -38,6 +20,7 @@ import {
   AnimatedPlaceholderEmptyTitle,
   EMPTY_PLACEHOLDER_TRANSITION_PROPS,
 } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type FieldsConfiguration } from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div`
@@ -49,12 +32,22 @@ const StyledContainer = styled.div`
 
 const StyledPropertyBox = styled.div`
   align-self: stretch;
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+  border-radius: ${themeCssVariables.border.radius.sm};
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(2)};
-  padding-top: ${({ theme }) => theme.spacing(3)};
-  padding-bottom: ${({ theme }) => theme.spacing(3)};
+  gap: ${themeCssVariables.spacing[2]};
+  padding-top: ${themeCssVariables.spacing[3]};
+  padding-bottom: ${themeCssVariables.spacing[3]};
+`;
+
+const StyledInlineFieldsPropertyBox = styled.div`
+  align-self: stretch;
+  border-radius: ${themeCssVariables.border.radius.sm};
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[2]};
+  padding-top: 0;
+  padding-bottom: 0;
 `;
 
 type FieldsWidgetProps = {
@@ -63,38 +56,17 @@ type FieldsWidgetProps = {
 
 export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
   const targetRecord = useTargetRecord();
-  const { isInRightDrawer } = useLayoutRenderingContext();
+  const { isInSidePanel } = useLayoutRenderingContext();
 
-  const instanceId = `fields-${widget.id}-${targetRecord.id}${isInRightDrawer ? '-right-drawer' : ''}`;
-
-  const { recordLoading, isPrefetchLoading } = useRecordShowContainerData({
-    objectRecordId: targetRecord.id,
-  });
+  const instanceId = `fields-${widget.id}-${targetRecord.id}${isInSidePanel ? '-side-panel' : ''}`;
 
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: targetRecord.targetObjectNameSingular,
   });
 
-  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
-  const { objectMetadataItems } = useObjectMetadataItems();
-
-  const { useUpdateOneObjectRecordMutation } = useRecordShowContainerActions({
-    objectNameSingular: targetRecord.targetObjectNameSingular,
-  });
-
-  const isRecordReadOnly = useIsRecordReadOnly({
-    recordId: targetRecord.id,
-    objectMetadataId: objectMetadataItem.id,
-  });
-
-  const setRecordFieldListHoverPosition = useSetAtomComponentState(
-    recordFieldListHoverPositionComponentState,
-    instanceId,
-  );
-
   const fieldsConfiguration = widget.configuration as FieldsConfiguration;
 
-  const { groups } = useFieldsWidgetGroupsForDisplay({
+  const { groups, displayMode } = useFieldsWidgetGroupsForDisplay({
     widgetId: widget.id,
     viewId: fieldsConfiguration.viewId ?? null,
     objectNameSingular: targetRecord.targetObjectNameSingular,
@@ -108,10 +80,10 @@ export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
 
   if (!hasFieldsToDisplay) {
     return (
-      <RightDrawerProvider value={{ isInRightDrawer }}>
+      <SidePanelProvider value={{ isInSidePanel }}>
         <StyledContainer>
           <AnimatedPlaceholderEmptyContainer
-            // eslint-disable-next-line react/jsx-props-no-spreading
+            // oxlint-disable-next-line react/jsx-props-no-spreading
             {...EMPTY_PLACEHOLDER_TRANSITION_PROPS}
           >
             <AnimatedPlaceholder type="noRecord" />
@@ -125,7 +97,7 @@ export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
             </AnimatedPlaceholderEmptyTextContainer>
           </AnimatedPlaceholderEmptyContainer>
         </StyledContainer>
-      </RightDrawerProvider>
+      </SidePanelProvider>
     );
   }
 
@@ -137,103 +109,25 @@ export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
             instanceId,
           }}
         >
-          {groups.map((group) => (
-            <FieldsWidgetGroupContainer key={group.id} title={group.name}>
-              <StyledPropertyBox>
-                {isPrefetchLoading ? (
-                  <PropertyBoxSkeletonLoader />
-                ) : (
-                  <>
-                    {group.fields.map(({ fieldMetadataItem, globalIndex }) => {
-                      const isActivityTarget = isActivityTargetField(
-                        fieldMetadataItem.name,
-                        targetRecord.targetObjectNameSingular,
-                      );
-
-                      return (
-                        <FieldContext.Provider
-                          key={targetRecord.id + fieldMetadataItem.id}
-                          value={{
-                            recordId: targetRecord.id,
-                            maxWidth: 200,
-                            isLabelIdentifier: false,
-                            fieldDefinition:
-                              formatFieldMetadataItemAsColumnDefinition({
-                                field: fieldMetadataItem,
-                                position: globalIndex,
-                                objectMetadataItem,
-                                showLabel: true,
-                                labelWidth: 90,
-                              }),
-                            useUpdateRecord: useUpdateOneObjectRecordMutation,
-                            isDisplayModeFixHeight: true,
-                            isRecordFieldReadOnly: isRecordFieldReadOnly({
-                              isRecordReadOnly,
-                              objectPermissions:
-                                getObjectPermissionsFromMapByObjectMetadataId({
-                                  objectPermissionsByObjectMetadataId,
-                                  objectMetadataId: objectMetadataItem.id,
-                                }),
-                              fieldMetadataItem: {
-                                id: fieldMetadataItem.id,
-                                isUIReadOnly:
-                                  fieldMetadataItem.isUIReadOnly ?? false,
-                              },
-                            }),
-                            onMouseEnter: () =>
-                              setRecordFieldListHoverPosition(globalIndex),
-                            anchorId: `${getRecordFieldInputInstanceId({
-                              recordId: targetRecord.id,
-                              fieldName: fieldMetadataItem.name,
-                              prefix: instanceId,
-                            })}`,
-                            isForbidden: isJunctionRelationForbidden({
-                              fieldMetadataItem,
-                              sourceObjectMetadataId: objectMetadataItem.id,
-                              objectMetadataItems,
-                              objectPermissionsByObjectMetadataId,
-                            }),
-                          }}
-                        >
-                          {isActivityTarget ? (
-                            <ActivityTargetsInlineCell
-                              componentInstanceId={getRecordFieldInputInstanceId(
-                                {
-                                  recordId: targetRecord.id,
-                                  fieldName: fieldMetadataItem.name,
-                                  prefix: instanceId,
-                                },
-                              )}
-                              activityObjectNameSingular={
-                                targetRecord.targetObjectNameSingular as
-                                  | CoreObjectNameSingular.Note
-                                  | CoreObjectNameSingular.Task
-                              }
-                              activityRecordId={targetRecord.id}
-                              showLabel={true}
-                              maxWidth={200}
-                            />
-                          ) : (
-                            <RecordFieldComponentInstanceContext.Provider
-                              value={{
-                                instanceId: getRecordFieldInputInstanceId({
-                                  recordId: targetRecord.id,
-                                  fieldName: fieldMetadataItem.name,
-                                  prefix: instanceId,
-                                }),
-                              }}
-                            >
-                              <RecordInlineCell loading={recordLoading} />
-                            </RecordFieldComponentInstanceContext.Provider>
-                          )}
-                        </FieldContext.Provider>
-                      );
-                    })}
-                  </>
-                )}
-              </StyledPropertyBox>
-            </FieldsWidgetGroupContainer>
-          ))}
+          {displayMode === 'inline' ? (
+            <StyledInlineFieldsPropertyBox>
+              <FieldsWidgetFieldList
+                fields={groups.flatMap((group) => group.fields)}
+                instanceId={instanceId}
+              />
+            </StyledInlineFieldsPropertyBox>
+          ) : (
+            groups.map((group) => (
+              <FieldsWidgetGroupContainer key={group.id} title={group.name}>
+                <StyledPropertyBox>
+                  <FieldsWidgetFieldList
+                    fields={group.fields}
+                    instanceId={instanceId}
+                  />
+                </StyledPropertyBox>
+              </FieldsWidgetGroupContainer>
+            ))
+          )}
 
           <FieldsWidgetCellHoveredPortal
             objectMetadataItem={objectMetadataItem}

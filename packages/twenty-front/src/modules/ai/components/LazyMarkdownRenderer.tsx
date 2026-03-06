@@ -4,11 +4,16 @@ import {
   RECORD_REFERENCE_REGEX,
   RecordLink,
 } from '@/ai/components/RecordLink';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import { lazy, Suspense } from 'react';
+import {
+  StyledMarkdownContainer,
+  StyledParagraph,
+  StyledSkeletonContainer,
+  StyledTableScrollContainer,
+} from '@/ai/components/LazyMarkdownRendererStyledComponents';
+import { lazy, Suspense, useContext } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { isDefined } from 'twenty-shared/utils';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 const TextWithRecordLinks = ({ text }: { text: string }) => {
   const parts: React.ReactNode[] = [];
@@ -72,11 +77,11 @@ const MarkdownRenderer = lazy(async () => {
     default: ({
       children,
       TableScrollContainer,
-      StyledParagraph,
+      ParagraphComponent,
     }: {
       children: string;
       TableScrollContainer: React.ComponentType<{ children: React.ReactNode }>;
-      StyledParagraph: React.ComponentType<{ children: React.ReactNode }>;
+      ParagraphComponent: React.ComponentType<{ children: React.ReactNode }>;
     }) => (
       <Markdown
         remarkPlugins={[remarkGfm]}
@@ -87,9 +92,9 @@ const MarkdownRenderer = lazy(async () => {
             </TableScrollContainer>
           ),
           p: ({ children }) => (
-            <StyledParagraph>
+            <ParagraphComponent>
               {processChildrenForRecordLinks(children)}
-            </StyledParagraph>
+            </ParagraphComponent>
           ),
           li: ({ children }) => (
             <li>{processChildrenForRecordLinks(children)}</li>
@@ -125,195 +130,8 @@ const MarkdownRenderer = lazy(async () => {
   };
 });
 
-const StyledMarkdownContainer = styled.div`
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  line-height: 150%;
-  margin: ${({ theme }) => `${theme.spacing(1.5)} 0`};
-  position: relative;
-  scroll-margin-top: ${({ theme }) => theme.spacing(10)};
-  scroll-margin-bottom: ${({ theme }) => theme.spacing(10)};
-
-  &:empty {
-    display: none;
-  }
-
-  .markdown-link {
-    color: ${({ theme }) => theme.accent.accent11};
-    text-decoration: none;
-    -webkit-text-decoration: none;
-  }
-
-  .markdown-link:visited {
-    color: ${({ theme }) => theme.accent.accent11};
-  }
-
-  .markdown-link:hover {
-    text-decoration: underline !important;
-  }
-
-  strong,
-  b {
-    font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  }
-
-  h1,
-  h2,
-  h3 {
-    font-weight: ${({ theme }) => theme.font.weight.semiBold} !important;
-  }
-
-  h1 {
-    font-size: 1.6em;
-    line-height: 1.25;
-    margin-bottom: 12px;
-    margin-top: 24px;
-  }
-
-  h2 {
-    font-size: 1.3em;
-    line-height: 1.25;
-    margin-bottom: 10px;
-    margin-top: 20px;
-  }
-
-  h3 {
-    font-size: 1.15em;
-    line-height: 1.25;
-    margin-bottom: 8px;
-    margin-top: 18px;
-  }
-
-  h4 {
-    font-size: 1.05em;
-    line-height: 1.25;
-    margin-bottom: 8px;
-    margin-top: 16px;
-  }
-
-  h5 {
-    font-size: 0.95em;
-    line-height: 1.25;
-    margin-bottom: 6px;
-    margin-top: 14px;
-  }
-
-  h6 {
-    font-size: 0.85em;
-    line-height: 1.25;
-    margin-bottom: 6px;
-    margin-top: 12px;
-  }
-
-  hr {
-    background-color: ${({ theme }) => theme.border.color.light} !important;
-    border: none;
-    height: 1px;
-    margin: ${({ theme }) => theme.spacing(4)} 0;
-  }
-
-  ol:first-of-type:not(.nested),
-  ul:first-of-type:not(.nested) {
-    margin-top: ${({ theme }) => theme.spacing(1)} !important;
-  }
-
-  ol:last-of-type:not(.nested),
-  ul:last-of-type:not(.nested) {
-    margin-bottom: ${({ theme }) => theme.spacing(1)} !important;
-  }
-
-  li {
-    line-height: 150%;
-    margin-bottom: ${({ theme }) => theme.spacing(0.5)} !important;
-    margin-top: ${({ theme }) => theme.spacing(0.5)} !important;
-    padding-bottom: ${({ theme }) => theme.spacing(0.5)} !important;
-    padding-top: ${({ theme }) => theme.spacing(0.5)} !important;
-  }
-
-  :not(pre) > code {
-    background-color: ${({ theme }) => theme.background.tertiary};
-    border-radius: ${({ theme }) => theme.border.radius.sm};
-    color: ${({ theme }) => theme.font.color.primary};
-    font-family: ${({ theme }) => `${theme.code.font.family}, monospace`};
-    font-size: 0.9em;
-    padding: 1.5px 3px;
-    transition: all ${({ theme }) => theme.animation.duration.fast}s ease;
-  }
-
-  :not(pre) > code[style*='cursor: pointer'] {
-    background-color: ${({ theme }) => theme.background.secondary};
-    border: ${({ theme }) => `1px solid ${theme.accent.accent10}`};
-    color: ${({ theme }) => theme.accent.accent10};
-  }
-
-  :not(pre) > code[style*='cursor: pointer']:hover {
-    background-color: ${({ theme }) => theme.background.transparent.blue};
-  }
-
-  .markdown-code-outer-container {
-    border-radius: ${({ theme }) => theme.border.radius.md} !important;
-    overflow: hidden;
-  }
-
-  .markdown-block-code {
-    background-color: ${({ theme }) => theme.background.secondary};
-    border: 1px solid ${({ theme }) => theme.border.color.medium};
-    border-radius: ${({ theme }) => theme.border.radius.md} !important;
-  }
-
-  .markdown-block-code * {
-    animation: none !important;
-  }
-
-  img {
-    height: auto;
-    max-width: 100%;
-  }
-`;
-
-// Using div instead of p to allow RecordLink (which contains div elements) as children
-const StyledParagraph = styled.div`
-  line-height: inherit;
-  margin-block: ${({ theme }) => theme.spacing(2)};
-
-  &:first-child {
-    margin-block-start: 0;
-  }
-
-  &:last-child {
-    margin-block-end: 0;
-  }
-`;
-
-const StyledSkeletonContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(2)};
-  width: 100%;
-`;
-
-const StyledTableScrollContainer = styled.div`
-  overflow-x: auto;
-
-  table {
-    border-collapse: collapse;
-    margin-block: ${({ theme }) => theme.spacing(2)};
-  }
-
-  th,
-  td {
-    border: ${({ theme }) => `1px solid ${theme.border.color.light}`};
-    padding: ${({ theme }) => theme.spacing(2)};
-  }
-
-  th {
-    background-color: ${({ theme }) => theme.background.secondary};
-    font-weight: ${({ theme }) => theme.font.weight.medium};
-  }
-`;
-
 const LoadingSkeleton = () => {
-  const theme = useTheme();
-
+  const { theme } = useContext(ThemeContext);
   return (
     <SkeletonTheme
       baseColor={theme.background.tertiary}
@@ -352,7 +170,7 @@ export const LazyMarkdownRenderer = ({ text }: { text: string }) => {
       <Suspense fallback={<LoadingSkeleton />}>
         <MarkdownRenderer
           TableScrollContainer={StyledTableScrollContainer}
-          StyledParagraph={StyledParagraph}
+          ParagraphComponent={StyledParagraph}
         >
           {text}
         </MarkdownRenderer>

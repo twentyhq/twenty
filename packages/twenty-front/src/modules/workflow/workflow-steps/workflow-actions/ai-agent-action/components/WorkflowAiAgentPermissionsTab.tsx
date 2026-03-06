@@ -8,14 +8,14 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { workflowAiAgentActionAgentState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentActionAgentState';
 import { workflowAiAgentPermissionsIsAddingPermissionState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsIsAddingPermissionState';
 import { workflowAiAgentPermissionsSelectedObjectIdState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsSelectedObjectIdState';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
 import { type Agent, useGetRolesQuery } from '~/generated-metadata/graphql';
-import { RightDrawerSkeletonLoader } from '~/loading/components/RightDrawerSkeletonLoader';
+import { SidePanelSkeletonLoader } from '~/loading/components/SidePanelSkeletonLoader';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
 import { isNonTextWritingKey } from '@/ui/utilities/hotkey/utils/isNonTextWritingKey';
@@ -25,11 +25,12 @@ import { WorkflowAiAgentPermissionsCrudList } from './WorkflowAiAgentPermissions
 import { WorkflowAiAgentPermissionsFlagList } from './WorkflowAiAgentPermissionsFlagList';
 import { WorkflowAiAgentPermissionsObjectsList } from './WorkflowAiAgentPermissionsObjectsList';
 import { getFilteredPermissions } from './workflowAiAgentPermissions.utils';
-const StyledSearchInput = styled(TextInput)`
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+const StyledSearchInputContainer = styled.div`
   width: 100%;
   height: 40px;
-  border-block: 1px solid ${({ theme }) => theme.border.color.medium};
-  input {
+  border-block: 1px solid ${themeCssVariables.border.color.medium};
+  & input {
     height: 40px;
     line-height: 40px;
     border: none;
@@ -39,7 +40,7 @@ const StyledSearchInput = styled(TextInput)`
 `;
 
 const StyledBackButtonText = styled.span`
-  color: ${({ theme }) => theme.font.color.secondary};
+  color: ${themeCssVariables.font.color.secondary};
 `;
 
 const StyledBackButton = styled.button`
@@ -47,15 +48,15 @@ const StyledBackButton = styled.button`
   align-items: center;
   background: none;
   border: none;
-  color: ${({ theme }) => theme.font.color.secondary};
+  color: ${themeCssVariables.font.color.secondary};
   cursor: pointer;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
-  padding: ${({ theme }) => theme.spacing(3)};
+  gap: ${themeCssVariables.spacing[1]};
+  padding: ${themeCssVariables.spacing[3]};
   text-align: left;
 
   &:hover {
-    color: ${({ theme }) => theme.font.color.primary};
+    color: ${themeCssVariables.font.color.primary};
   }
 `;
 
@@ -148,7 +149,7 @@ export const WorkflowAiAgentPermissionsTab = ({
   });
 
   if (isAgentLoading || rolesLoading) {
-    return <RightDrawerSkeletonLoader />;
+    return <SidePanelSkeletonLoader />;
   }
 
   if (!isDefined(workflowAiAgentActionAgent)) {
@@ -197,16 +198,18 @@ export const WorkflowAiAgentPermissionsTab = ({
         </StyledBackButton>
       )}
 
-      <StyledSearchInput
-        value={searchQuery}
-        onChange={(value: string) => setSearchQuery(value)}
-        placeholder={t`Type anything...`}
-        onKeyDown={(event) => {
-          if (isNonTextWritingKey(event.key)) {
-            event.stopPropagation();
-          }
-        }}
-      />
+      <StyledSearchInputContainer>
+        <TextInput
+          value={searchQuery}
+          onChange={(value: string) => setSearchQuery(value)}
+          placeholder={t`Type anything...`}
+          onKeyDown={(event) => {
+            if (isNonTextWritingKey(event.key)) {
+              event.stopPropagation();
+            }
+          }}
+        />
+      </StyledSearchInputContainer>
 
       {shouldShowCrudList && (
         <WorkflowAiAgentPermissionsCrudList

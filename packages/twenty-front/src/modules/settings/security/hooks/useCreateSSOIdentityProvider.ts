@@ -29,7 +29,7 @@ export const useCreateSSOIdentityProvider = () => {
         } & CreateSamlIdentityProviderMutationVariables['input']),
   ) => {
     if (input.type === 'OIDC') {
-      // eslint-disable-next-line unused-imports/no-unused-vars
+      // oxlint-disable-next-line unused-imports/no-unused-vars
       const { type, ...params } = input;
       return await createOidcIdentityProviderMutation({
         variables: { input: params },
@@ -41,7 +41,7 @@ export const useCreateSSOIdentityProvider = () => {
         },
       });
     } else if (input.type === 'SAML') {
-      // eslint-disable-next-line unused-imports/no-unused-vars
+      // oxlint-disable-next-line unused-imports/no-unused-vars
       const { type, ...params } = input;
       return await createSamlIdentityProviderMutation({
         variables: { input: params },

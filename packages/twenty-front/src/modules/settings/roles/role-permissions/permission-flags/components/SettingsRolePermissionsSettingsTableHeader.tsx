@@ -1,6 +1,5 @@
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { Checkbox } from 'twenty-ui/input';
 
@@ -9,19 +8,13 @@ import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDr
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { v4 } from 'uuid';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type SettingsRolePermissionsSettingsTableHeaderProps = {
   roleId: string;
   settingsPermissionsConfig: SettingsRolePermissionsSettingPermission[];
   isEditable: boolean;
 };
-
-const StyledActionsHeader = styled(TableHeader)`
-  align-items: center;
-  display: flex;
-  justify-content: flex-end;
-  padding-right: ${({ theme }) => theme.spacing(1)};
-`;
 
 export const SettingsRolePermissionsSettingsTableHeader = ({
   roleId,
@@ -54,7 +47,11 @@ export const SettingsRolePermissionsSettingsTableHeader = ({
     <TableRow gridAutoColumns="3fr 4fr 24px">
       <TableHeader>{t`Name`}</TableHeader>
       <TableHeader>{t`Description`}</TableHeader>
-      <StyledActionsHeader aria-label={t`Actions`}>
+      <TableHeader
+        align="right"
+        padding={`0 ${themeCssVariables.spacing[1]} 0 ${themeCssVariables.spacing[2]}`}
+        aria-label={t`Actions`}
+      >
         <Checkbox
           checked={allSettingsPermissionsEnabled}
           indeterminate={
@@ -77,7 +74,7 @@ export const SettingsRolePermissionsSettingsTableHeader = ({
             });
           }}
         />
-      </StyledActionsHeader>
+      </TableHeader>
     </TableRow>
   );
 };

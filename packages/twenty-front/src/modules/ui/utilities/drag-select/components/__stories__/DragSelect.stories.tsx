@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useRef, useState } from 'react';
 import { userEvent, within } from 'storybook/test';
@@ -7,13 +7,14 @@ import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { isDefined } from 'twenty-shared/utils';
 import { ComponentDecorator } from 'twenty-ui/testing';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
-  border: 1px solid ${({ theme }) => theme.border.color.light};
-  border-radius: ${({ theme }) => theme.border.radius.md};
+  border: 1px solid ${themeCssVariables.border.color.light};
+  border-radius: ${themeCssVariables.border.radius.md};
   height: 400px;
   overflow: hidden;
-  padding: ${({ theme }) => theme.spacing(4)};
+  padding: ${themeCssVariables.spacing[4]};
   position: relative;
   width: 600px;
 `;
@@ -21,27 +22,31 @@ const StyledContainer = styled.div`
 const StyledSelectableItem = styled.div<{ selected?: boolean }>`
   width: 100px;
   height: 80px;
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  background: ${({ theme, selected }) =>
-    selected ? theme.color.blue3 : theme.background.secondary};
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  border-radius: ${themeCssVariables.border.radius.sm};
+  background: ${({ selected }) =>
+    selected
+      ? themeCssVariables.color.blue3
+      : themeCssVariables.background.secondary};
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: ${({ theme }) => theme.spacing(1)};
+  margin: ${themeCssVariables.spacing[1]};
   user-select: none;
   cursor: pointer;
 
   &:hover {
-    background: ${({ theme, selected }) =>
-      selected ? theme.color.blue5 : theme.background.tertiary};
+    background: ${({ selected }) =>
+      selected
+        ? themeCssVariables.color.blue5
+        : themeCssVariables.background.tertiary};
   }
 `;
 
 const StyledGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
   width: 100%;
   height: 100%;
 `;
@@ -49,17 +54,18 @@ const StyledGrid = styled.div`
 const StyledLargeGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(6, 1fr);
-  gap: ${({ theme }) => theme.spacing(2)};
-  padding: ${({ theme }) => theme.spacing(4)};
+  gap: ${themeCssVariables.spacing[2]};
+  padding: ${themeCssVariables.spacing[4]};
   width: 900px;
   height: 600px;
 `;
 
-const StyledScrollableWrapper = styled(ScrollWrapper)`
-  border: 1px solid ${({ theme }) => theme.border.color.light};
-  border-radius: ${({ theme }) => theme.border.radius.md};
+const StyledScrollableWrapperContainer = styled.div`
+  border: 1px solid ${themeCssVariables.border.color.light};
+  border-radius: ${themeCssVariables.border.radius.md};
   height: 300px;
   width: 600px;
+  overflow: hidden;
 `;
 
 type SelectableItemProps = {
@@ -141,27 +147,32 @@ const ScrollableDragSelectDemo = () => {
   };
 
   return (
-    <StyledScrollableWrapper componentInstanceId="scrollable-demo">
-      <div ref={containerRef} style={{ position: 'relative', padding: '16px' }}>
-        <StyledLargeGrid>
-          {Array.from({ length: 36 }, (_, index) => (
-            <SelectableItem
-              key={index}
-              id={`scroll-item-${index}`}
-              selected={selectedItems.has(`scroll-item-${index}`)}
-            >
-              Item {index + 1}
-            </SelectableItem>
-          ))}
-        </StyledLargeGrid>
+    <StyledScrollableWrapperContainer>
+      <ScrollWrapper componentInstanceId="scrollable-demo">
+        <div
+          ref={containerRef}
+          style={{ position: 'relative', padding: '16px' }}
+        >
+          <StyledLargeGrid>
+            {Array.from({ length: 36 }, (_, index) => (
+              <SelectableItem
+                key={index}
+                id={`scroll-item-${index}`}
+                selected={selectedItems.has(`scroll-item-${index}`)}
+              >
+                Item {index + 1}
+              </SelectableItem>
+            ))}
+          </StyledLargeGrid>
 
-        <DragSelect
-          selectableItemsContainerRef={containerRef}
-          onDragSelectionChange={handleSelectionChange}
-          scrollWrapperComponentInstanceId="scrollable-demo"
-        />
-      </div>
-    </StyledScrollableWrapper>
+          <DragSelect
+            selectableItemsContainerRef={containerRef}
+            onDragSelectionChange={handleSelectionChange}
+            scrollWrapperComponentInstanceId="scrollable-demo"
+          />
+        </div>
+      </ScrollWrapper>
+    </StyledScrollableWrapperContainer>
   );
 };
 

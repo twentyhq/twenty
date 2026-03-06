@@ -68,11 +68,11 @@ export class WorkspaceDataSourceService {
 
   public async executeRawQuery(
     _query: string,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
     _parameters: any[] = [],
     _workspaceId: string,
     _transactionManager?: EntityManager,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
   ): Promise<any> {
     throw new PermissionsException(
       'Method not allowed as permissions are not handled at datasource level.',

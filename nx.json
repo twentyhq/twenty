@@ -40,34 +40,30 @@
       "dependsOn": ["^build"]
     },
     "lint": {
-      "executor": "@nx/eslint:lint",
+      "executor": "nx:run-commands",
       "cache": true,
-      "outputs": ["{options.outputFile}"],
       "options": {
-        "eslintConfig": "{projectRoot}/eslint.config.mjs",
-        "cache": true,
-        "cacheLocation": "{workspaceRoot}/.cache/eslint"
+        "cwd": "{projectRoot}",
+        "command": "npx oxlint -c .oxlintrc.json ."
       },
       "configurations": {
-        "ci": {
-          "cacheStrategy": "content"
-        },
+        "ci": {},
         "fix": {
-          "fix": true
+          "command": "npx oxlint --fix -c .oxlintrc.json ."
         }
       },
-      "dependsOn": ["^build"]
+      "dependsOn": ["^build", "twenty-oxlint-rules:build"]
     },
     "lint:diff-with-main": {
       "executor": "nx:run-commands",
       "cache": false,
       "options": {
-        "command": "git diff --name-only --diff-filter=d main | grep -E '{args.pattern}' | grep '^{projectRoot}/' | xargs sh -c 'if [ $# -gt 0 ]; then npx eslint --config {projectRoot}/eslint.config.mjs \"$@\"; fi' _",
+        "command": "FILES=$(git diff --name-only --diff-filter=d main -- {projectRoot}/ | grep -E '{args.pattern}'); [ -z \"$FILES\" ] && echo 'No changed files.' || npx oxlint -c {projectRoot}/.oxlintrc.json $FILES",
         "pattern": "\\.(ts|tsx|js|jsx)$"
       },
       "configurations": {
         "fix": {
-          "command": "git diff --name-only --diff-filter=d main | grep -E '{args.pattern}' | grep '^{projectRoot}/' | xargs sh -c 'if [ $# -gt 0 ]; then npx eslint --config {projectRoot}/eslint.config.mjs --fix \"$@\"; fi' _"
+          "command": "FILES=$(git diff --name-only --diff-filter=d main -- {projectRoot}/ | grep -E '{args.pattern}'); [ -z \"$FILES\" ] && echo 'No changed files.' || npx oxlint --fix -c {projectRoot}/.oxlintrc.json $FILES"
         }
       }
     },
@@ -147,7 +143,7 @@
       "outputs": ["{projectRoot}/{options.output-dir}"],
       "options": {
         "cwd": "{projectRoot}",
-        "command": "NODE_OPTIONS='--max-old-space-size=10240' VITE_DISABLE_TYPESCRIPT_CHECKER=true storybook build --test",
+        "command": "NODE_OPTIONS='--max-old-space-size=10240' storybook build --test",
         "output-dir": "storybook-static",
         "config-dir": ".storybook"
       },
@@ -255,14 +251,6 @@
         }
       }
     },
-    "@nx/eslint:lint": {
-      "cache": true,
-      "inputs": [
-        "default",
-        "{workspaceRoot}/eslint.config.mjs",
-        "{workspaceRoot}/packages/twenty-eslint-rules/**/*"
-      ]
-    },
     "@nx/vite:build": {
       "cache": true,
       "dependsOn": ["^build"],
@@ -276,23 +264,21 @@
   "generators": {
     "@nx/react": {
       "application": {
-        "style": "@emotion/styled",
-        "linter": "eslint",
+        "style": "@linaria/react",
         "bundler": "vite",
         "compiler": "swc",
         "unitTestRunner": "jest",
         "projectNameAndRootFormat": "derived"
       },
       "library": {
-        "style": "@emotion/styled",
-        "linter": "eslint",
+        "style": "@linaria/react",
         "bundler": "vite",
         "compiler": "swc",
         "unitTestRunner": "jest",
         "projectNameAndRootFormat": "derived"
       },
       "component": {
-        "style": "@emotion/styled"
+        "style": "@linaria/react"
       }
     }
   },

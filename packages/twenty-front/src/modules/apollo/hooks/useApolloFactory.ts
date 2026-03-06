@@ -7,7 +7,8 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { previousUrlState } from '@/auth/states/previousUrlState';
+import { returnToPathState } from '@/auth/states/returnToPathState';
+import { isValidReturnToPath } from '@/auth/utils/isValidReturnToPath';
 import { tokenPairState } from '@/auth/states/tokenPairState';
 import { appVersionState } from '@/client-config/states/appVersionState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -21,7 +22,7 @@ import { useUpdateEffect } from '~/hooks/useUpdateEffect';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
 export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
-  // eslint-disable-next-line twenty/no-state-useref
+  // oxlint-disable-next-line twenty/no-state-useref
   const apolloRef = useRef<ApolloFactory<NormalizedCacheObject> | null>(null);
 
   const navigate = useNavigate();
@@ -36,7 +37,7 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
   const setCurrentUser = useSetAtomState(currentUserState);
   const setCurrentUserWorkspace = useSetAtomState(currentUserWorkspaceState);
 
-  const setPreviousUrl = useSetAtomState(previousUrlState);
+  const setReturnToPath = useSetAtomState(returnToPathState);
   const location = useLocation();
 
   const { enqueueErrorSnackBar } = useSnackBar();
@@ -76,7 +77,11 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
           !isMatchingLocation(location, AppPath.Invite) &&
           !isMatchingLocation(location, AppPath.ResetPassword)
         ) {
-          setPreviousUrl(`${location.pathname}${location.search}`);
+          const path = `${location.pathname}${location.search}${location.hash}`;
+
+          if (isValidReturnToPath(path)) {
+            setReturnToPath(path);
+          }
           navigate(AppPath.SignInUp);
         }
       },
@@ -103,13 +108,13 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
     });
 
     return apolloRef.current.getClient();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [
     setTokenPair,
     setCurrentUser,
     setCurrentWorkspaceMember,
     setCurrentWorkspace,
-    setPreviousUrl,
+    setReturnToPath,
     enqueueErrorSnackBar,
   ]);
 

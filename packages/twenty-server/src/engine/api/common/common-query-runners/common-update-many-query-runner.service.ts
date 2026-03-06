@@ -105,11 +105,11 @@ export class CommonUpdateManyQueryRunnerService extends CommonBaseQueryRunnerSer
 
     return {
       ...args,
-      filter: this.queryRunnerArgsFactory.overrideFilterByFieldMetadata(
-        args.filter,
+      filter: this.filterArgProcessor.process({
+        filter: args.filter,
         flatObjectMetadata,
         flatFieldMetadataMaps,
-      ),
+      }),
       data: (
         await this.dataArgProcessor.process({
           partialRecordInputs: [args.data],

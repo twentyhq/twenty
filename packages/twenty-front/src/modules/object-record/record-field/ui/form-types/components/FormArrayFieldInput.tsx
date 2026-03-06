@@ -22,13 +22,13 @@ import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyArray } from '@sniptt/guards';
-import { useId, useRef, useState } from 'react';
+import { useContext, useId, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/display';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { MenuItem } from 'twenty-ui/navigation';
 import { toSpliced } from '~/utils/array/toSpliced';
 
@@ -48,26 +48,33 @@ const StyledDisplayModeReadonlyContainer = styled.div`
   border: none;
   display: flex;
   font-family: inherit;
-  padding-inline: ${({ theme }) => theme.spacing(2)};
+  padding-inline: ${themeCssVariables.spacing[2]};
   width: 100%;
 `;
 
-const StyledDisplayModeContainer = styled(StyledDisplayModeReadonlyContainer)`
+const StyledDisplayModeContainer = styled.div`
+  align-items: center;
+  background: transparent;
+  border: none;
+  display: flex;
+  font-family: inherit;
+  padding-inline: ${themeCssVariables.spacing[2]};
+  width: 100%;
   height: 30px;
   cursor: pointer;
   box-sizing: border-box;
 
   &:hover,
   &[data-open='true'] {
-    background-color: ${({ theme }) => theme.background.transparent.lighter};
+    background-color: ${themeCssVariables.background.transparent.lighter};
   }
 `;
 
-const StyledInput = styled(TextInput)`
-  padding: ${({ theme }) => `${theme.spacing(1)} ${theme.spacing(2)}`};
+const StyledInputContainer = styled.div`
+  padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
 `;
 
-const StyledPlaceholder = styled(FormFieldPlaceholder)`
+const StyledPlaceholderContainer = styled.div`
   width: 100%;
 `;
 
@@ -85,8 +92,7 @@ export const FormArrayFieldInput = ({
   testId,
 }: FormArrayFieldInputProps) => {
   const { t } = useLingui();
-  const theme = useTheme();
-
+  const { theme } = useContext(ThemeContext);
   const instanceId = useId();
 
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
@@ -304,25 +310,29 @@ export const FormArrayFieldInput = ({
                 {draftValue.value.length > 0 ? (
                   <ArrayDisplay value={draftValue.value} />
                 ) : (
-                  <StyledPlaceholder />
+                  <StyledPlaceholderContainer>
+                    <FormFieldPlaceholder />
+                  </StyledPlaceholderContainer>
                 )}
               </StyledDisplayModeReadonlyContainer>
             ) : draftValue.value.length === 0 ? (
-              <StyledInput
-                instanceId={formFieldInputInstanceId}
-                placeholder={t`Enter an item`}
-                value={newItemDraftValue}
-                copyButton={false}
-                onChange={handleFirstItemInputChange}
-                onEnter={handleFirstItemInputEnter}
-                shouldTrim={false}
-              />
+              <StyledInputContainer>
+                <TextInput
+                  instanceId={formFieldInputInstanceId}
+                  placeholder={t`Enter an item`}
+                  value={newItemDraftValue}
+                  copyButton={false}
+                  onChange={handleFirstItemInputChange}
+                  onEnter={handleFirstItemInputEnter}
+                  shouldTrim={false}
+                />
+              </StyledInputContainer>
             ) : (
               <Dropdown
                 dropdownId={dropdownId}
                 dropdownPlacement="bottom-start"
                 dropdownOffset={{
-                  y: parseSpacingValueAsNumber(theme.spacing(1)),
+                  y: parseSpacingValueAsNumber(theme.spacing[1]),
                 }}
                 clickableComponent={
                   <StyledDisplayModeContainer data-open={isDropdownOpen}>

@@ -9,7 +9,7 @@ import { SettingsSecurityApprovedAccessDomainValidationEffect } from '@/settings
 import { approvedAccessDomainsState } from '@/settings/security/states/ApprovedAccessDomainsState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ApolloError } from '@apollo/client';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -19,8 +19,10 @@ import { useGetApprovedAccessDomainsQuery } from '~/generated-metadata/graphql';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 
-const StyledLink = styled(Link)`
-  text-decoration: none;
+const StyledLinkContainer = styled.div`
+  > a {
+    text-decoration: none;
+  }
 `;
 
 export const SettingsApprovedAccessDomainsListCard = () => {
@@ -54,12 +56,14 @@ export const SettingsApprovedAccessDomainsListCard = () => {
   };
 
   return loading || !approvedAccessDomains.length ? (
-    <StyledLink to={getSettingsPath(SettingsPath.NewApprovedAccessDomain)}>
-      <SettingsCard
-        title={t`Add Approved Access Domain`}
-        Icon={<IconMailCog />}
-      />
-    </StyledLink>
+    <StyledLinkContainer>
+      <Link to={getSettingsPath(SettingsPath.NewApprovedAccessDomain)}>
+        <SettingsCard
+          title={t`Add Approved Access Domain`}
+          Icon={<IconMailCog />}
+        />
+      </Link>
+    </StyledLinkContainer>
   ) : (
     <>
       <SettingsSecurityApprovedAccessDomainValidationEffect />

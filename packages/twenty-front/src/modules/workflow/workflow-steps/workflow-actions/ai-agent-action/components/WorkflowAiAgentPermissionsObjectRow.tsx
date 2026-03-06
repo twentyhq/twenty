@@ -1,4 +1,3 @@
-import { useTheme } from '@emotion/react';
 import { useIcons } from 'twenty-ui/display';
 import {
   StyledIconChevronRight,
@@ -7,7 +6,8 @@ import {
   StyledRowLeftContent,
   StyledText,
 } from './WorkflowAiAgentPermissionsStyles';
-
+import { ThemeContext } from 'twenty-ui/theme-constants';
+import { useContext } from 'react';
 type WorkflowAiAgentPermissionsObjectRowProps = {
   objectMetadata: {
     id: string;
@@ -23,7 +23,7 @@ export const WorkflowAiAgentPermissionsObjectRow = ({
   onClick,
   readonly,
 }: WorkflowAiAgentPermissionsObjectRowProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const { getIcon } = useIcons();
   const IconComponent = getIcon(objectMetadata.icon);
 

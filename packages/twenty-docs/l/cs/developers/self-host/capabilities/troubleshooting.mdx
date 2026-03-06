@@ -54,21 +54,18 @@ Ujistěte se, že v kořenovém adresáři spouštíte `yarn` a poté spusťte `
 
 #### Lint při ukládání nefunguje
 
-Toto by mělo fungovat přímo s nainstalovaným rozšířením eslint. Pokud to nefunguje, zkuste přidat toto do svého nastavení vscode (v rozsahu dev containeru):
+Toto by mělo fungovat přímo s nainstalovaným rozšířením Oxc (`oxc.oxc-vscode`). Pokud to nefunguje, zkuste přidat toto do svého nastavení vscode (v rozsahu dev containeru):
 
 ```
 "editor.codeActionsOnSave": {
 
-  "source.fixAll.eslint": "explicit"
+  "source.fixAll.oxc": "explicit"
 
 }
 ```
 
 #### Při spuštění `npx nx start` nebo `npx nx start twenty-front` došlo k chybě nedostatku paměti
 
-In `packages/twenty-front/.env` uncomment `VITE_DISABLE_TYPESCRIPT_CHECKER=true` and `VITE_DISABLE_ESLINT_CHECKER=true` to disable background checks thus reducing amount of needed RAM.
-
-**Pokud to nefunguje:**
 Spusťte pouze služby, které potřebujete, místo `npx nx start`. Například pokud pracujete na serveru, spusťte pouze `npx nx worker twenty-server`
 
 **Pokud to nefunguje:**
@@ -146,7 +143,7 @@ Zakomentujte plugin checker v `packages/twenty-ui/vite-config.ts` jako v příkl
 
 ```
 plugins: [
-      react({ jsxImportSource: '@emotion/react' }),
+      react({ jsxImportSource: 'react' }),
       tsconfigPaths(),
       svgr(),
       dts(dtsConfig),

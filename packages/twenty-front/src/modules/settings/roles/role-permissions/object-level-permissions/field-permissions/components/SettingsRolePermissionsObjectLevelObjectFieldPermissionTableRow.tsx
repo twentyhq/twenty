@@ -9,25 +9,19 @@ import { useUpsertFieldPermissionInDraftRole } from '@/settings/roles/role-permi
 import { OverridableCheckbox } from '@/settings/roles/role-permissions/object-level-permissions/object-form/components/OverridableCheckbox';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import { useMemo } from 'react';
+import { styled } from '@linaria/react';
+import { useContext, useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { v4 } from 'uuid';
 import {
   type FieldPermission,
   RelationType,
 } from '~/generated-metadata/graphql';
 
-export const StyledObjectFieldTableRow = styled(TableRow)`
-  grid-template-columns: 180px minmax(0, 1fr) 60px 60px;
-`;
-
-const StyledNameTableCell = styled(TableCell)`
-  color: ${({ theme }) => theme.font.color.primary};
-  gap: ${({ theme }) => theme.spacing(2)};
-`;
+export const FIELD_PERMISSION_TABLE_ROW_GRID_TEMPLATE_COLUMNS =
+  '180px minmax(0, 1fr) 60px 60px';
 
 const StyledNameLabel = styled.div`
   white-space: nowrap;
@@ -53,7 +47,7 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRow =
     roleId,
     isLabelIdentifier,
   }: SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRowProps) => {
-    const theme = useTheme();
+    const { theme } = useContext(ThemeContext);
     const { getIcon } = useIcons();
     const Icon = getIcon(fieldMetadataItem.icon);
 
@@ -156,11 +150,18 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRow =
     const shouldShowEmptyTableHeader = cannotAllowFieldUpdateRestrict;
 
     return (
-      <StyledObjectFieldTableRow>
-        <StyledNameTableCell>
-          {!!Icon && (
+      <TableRow
+        gridTemplateColumns={FIELD_PERMISSION_TABLE_ROW_GRID_TEMPLATE_COLUMNS}
+      >
+        <TableCell
+          color={themeCssVariables.font.color.primary}
+          gap={themeCssVariables.spacing[2]}
+        >
+          {isDefined(Icon) && (
             <Icon
-              style={{ minWidth: theme.icon.size.md }}
+              style={{
+                minWidth: theme.icon.size.md,
+              }}
               size={theme.icon.size.md}
               stroke={theme.icon.stroke.sm}
             />
@@ -168,7 +169,7 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRow =
           <StyledNameLabel title={fieldMetadataItem.label}>
             {fieldMetadataItem.label}
           </StyledNameLabel>
-        </StyledNameTableCell>
+        </TableCell>
         <TableCell>
           <SettingsObjectFieldDataType
             Icon={RelationIcon}
@@ -210,6 +211,6 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRow =
             </TableCell>
           )}
         </>
-      </StyledObjectFieldTableRow>
+      </TableRow>
     );
   };

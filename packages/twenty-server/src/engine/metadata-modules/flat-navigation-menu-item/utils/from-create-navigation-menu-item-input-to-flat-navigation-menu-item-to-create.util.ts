@@ -82,6 +82,7 @@ export const fromCreateNavigationMenuItemInputToFlatNavigationMenuItemToCreate =
       name: createNavigationMenuItemInput.name ?? null,
       link: createNavigationMenuItemInput.link ?? null,
       icon: createNavigationMenuItemInput.icon ?? null,
+      color: createNavigationMenuItemInput.color ?? null,
       position,
       workspaceId,
       applicationId: flatApplication.id,

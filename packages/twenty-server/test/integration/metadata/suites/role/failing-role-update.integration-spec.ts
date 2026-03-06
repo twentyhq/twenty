@@ -9,7 +9,7 @@ import {
   type EachTestingContext,
 } from 'twenty-shared/testing';
 
-import { type UpdateRolePayload } from 'src/engine/metadata-modules/role/dtos/update-role-input.dto';
+import { type UpdateRolePayload } from 'src/engine/metadata-modules/role/dtos/update-role.input';
 
 type TestContext = {
   input: (testSetup: TestSetup) => {

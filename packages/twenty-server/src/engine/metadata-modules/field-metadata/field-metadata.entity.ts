@@ -31,6 +31,7 @@ import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entiti
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 import { JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
+import { ViewSortEntity } from 'src/engine/metadata-modules/view-sort/entities/view-sort.entity';
 
 // This entity is used as a reference test case for type utilities in:
 // Modifying relations or properties may require updating type test expectations for Typecheck to pass.
@@ -206,4 +207,7 @@ export class FieldMetadataEntity<
 
   @OneToMany(() => ViewEntity, (view) => view.mainGroupByFieldMetadata)
   mainGroupByFieldMetadataViews: Relation<ViewEntity[]>;
+
+  @OneToMany(() => ViewSortEntity, (viewSort) => viewSort.fieldMetadata)
+  viewSorts: Relation<ViewSortEntity[]>;
 }

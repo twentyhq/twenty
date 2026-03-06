@@ -19,7 +19,9 @@ import {
   type AccessTokenJwtPayload,
   type ApiKeyTokenJwtPayload,
   ApplicationAccessTokenJwtPayload,
+  AUTH_CONTEXT_USER_SELECT_FIELDS,
   type AuthContext,
+  type AuthContextUser,
   FileTokenJwtPayloadLegacy,
   type JwtPayload,
   JwtTokenTypeEnum,
@@ -118,7 +120,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
   private async validateAccessToken(
     payload: AccessTokenJwtPayload,
   ): Promise<AuthContext> {
-    let user: UserEntity | null = null;
+    let user: AuthContextUser | null = null;
     let context: AuthContext = {};
 
     const workspace = await this.workspaceRepository.findOneBy({
@@ -145,17 +147,6 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
       );
     }
 
-    user = await this.userRepository.findOne({
-      where: { id: userId },
-    });
-
-    if (!isDefined(user)) {
-      throw new AuthException(
-        'User not found',
-        AuthExceptionCode.USER_NOT_FOUND,
-      );
-    }
-
     if (!payload.userWorkspaceId) {
       throw new AuthException(
         'UserWorkspaceEntity not found',
@@ -163,29 +154,31 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
       );
     }
 
-    const userWorkspace = await this.userWorkspaceRepository.findOne({
-      where: { id: payload.userWorkspaceId },
-      relations: ['user', 'workspace'],
+    const userContext = await this.resolveUserContext({
+      userId,
+      userWorkspaceId: payload.userWorkspaceId,
     });
 
     assertIsDefinedOrThrow(
-      userWorkspace,
+      userContext,
       new AuthException(
-        'UserWorkspaceEntity not found',
-        AuthExceptionCode.USER_WORKSPACE_NOT_FOUND,
+        'User or user workspace not found',
+        AuthExceptionCode.USER_NOT_FOUND,
         {
           userFriendlyMessage: msg`User does not have access to this workspace`,
         },
       ),
     );
 
+    user = userContext.user;
+
     context = {
       ...context,
       user,
       workspace,
       authProvider: payload.authProvider,
-      userWorkspace,
-      userWorkspaceId: userWorkspace.id,
+      userWorkspace: userContext.userWorkspace,
+      userWorkspaceId: userContext.userWorkspace.id,
       workspaceMemberId: payload.workspaceMemberId,
     };
 
@@ -223,6 +216,41 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
       ...context,
       workspaceMember,
     };
+  }
+
+  private async resolveUserContext(params: {
+    userId: string;
+    userWorkspaceId: string;
+    expectedWorkspaceId?: string;
+  }): Promise<{
+    user: AuthContextUser;
+    userWorkspace: UserWorkspaceEntity;
+  } | null> {
+    const user = await this.userRepository.findOne({
+      where: { id: params.userId },
+      select: [...AUTH_CONTEXT_USER_SELECT_FIELDS],
+    });
+
+    if (!isDefined(user)) {
+      return null;
+    }
+
+    const userWorkspace = await this.userWorkspaceRepository.findOne({
+      where: { id: params.userWorkspaceId },
+    });
+
+    if (!isDefined(userWorkspace)) {
+      return null;
+    }
+
+    if (
+      isDefined(params.expectedWorkspaceId) &&
+      userWorkspace.workspaceId !== params.expectedWorkspaceId
+    ) {
+      return null;
+    }
+
+    return { user, userWorkspace };
   }
 
   private async validateImpersonation(payload: AccessTokenJwtPayload) {
@@ -322,6 +350,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
   ): Promise<AuthContext> {
     const user = await this.userRepository.findOne({
       where: { id: payload.sub },
+      select: [...AUTH_CONTEXT_USER_SELECT_FIELDS],
     });
 
     userValidator.assertIsDefinedOrThrow(
@@ -359,12 +388,23 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
       );
     }
 
-    // TODO: Token carries userId/userWorkspaceId but they are unused.
-    // Compute the intersection of user and application permissions instead.
-    return {
-      application,
-      workspace,
-    };
+    const context: AuthContext = { application, workspace };
+
+    if (payload.userId && payload.userWorkspaceId) {
+      const userContext = await this.resolveUserContext({
+        userId: payload.userId,
+        userWorkspaceId: payload.userWorkspaceId,
+        expectedWorkspaceId: workspace.id,
+      });
+
+      if (isDefined(userContext)) {
+        context.user = userContext.user;
+        context.userWorkspace = userContext.userWorkspace;
+        context.userWorkspaceId = userContext.userWorkspace.id;
+      }
+    }
+
+    return context;
   }
 
   private isLegacyApiKeyPayload(

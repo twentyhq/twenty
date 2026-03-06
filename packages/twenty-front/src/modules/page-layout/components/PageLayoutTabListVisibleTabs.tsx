@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import {
   type DraggableProvided,
   type DraggableRubric,
@@ -70,7 +70,7 @@ export const PageLayoutTabListVisibleTabs = ({
         {(provided) => (
           <StyledTabContainer
             ref={provided.innerRef}
-            // eslint-disable-next-line react/jsx-props-no-spreading
+            // oxlint-disable-next-line react/jsx-props-no-spreading
             {...provided.droppableProps}
           >
             {visibleTabs.slice(0, visibleTabCount).map((tab, index) => (

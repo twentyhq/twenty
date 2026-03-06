@@ -1,0 +1,41 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`Filter input validation - RATING Gql filter input - failure RATING field type - should fail with filter : {"ratingField":{"eq":"not-a-rating"}} 1`] = `"Value "not-a-rating" does not exist in "ApiInputValidationTestObjectRatingFieldEnum" enum."`;
+
+exports[`Filter input validation - RATING Gql filter input - failure RATING field type - should fail with filter : {"ratingField":{"eq":[]}} 1`] = `"Enum "ApiInputValidationTestObjectRatingFieldEnum" cannot represent non-string value: []."`;
+
+exports[`Filter input validation - RATING Gql filter input - failure RATING field type - should fail with filter : {"ratingField":{"eq":{}}} 1`] = `"Enum "ApiInputValidationTestObjectRatingFieldEnum" cannot represent non-string value: {}."`;
+
+exports[`Filter input validation - RATING Gql filter input - failure RATING field type - should fail with filter : {"ratingField":{"eq":2}} 1`] = `"Enum "ApiInputValidationTestObjectRatingFieldEnum" cannot represent non-string value: 2."`;
+
+exports[`Filter input validation - RATING Gql filter input - failure RATING field type - should fail with filter : {"ratingField":{"eq":true}} 1`] = `"Enum "ApiInputValidationTestObjectRatingFieldEnum" cannot represent non-string value: true."`;
+
+exports[`Filter input validation - RATING Rest filter input - failure RATING field type - should fail with filter : "ratingField[eq]:\\"[]\\"" 1`] = `
+[
+  "invalid input value for enum workspace_1wgvd1injqtife6y4rvfbu3h5."_apiInputValidationTestObject_ratingField_enum": "[]"",
+]
+`;
+
+exports[`Filter input validation - RATING Rest filter input - failure RATING field type - should fail with filter : "ratingField[eq]:\\"{}\\"" 1`] = `
+[
+  "invalid input value for enum workspace_1wgvd1injqtife6y4rvfbu3h5."_apiInputValidationTestObject_ratingField_enum": "{}"",
+]
+`;
+
+exports[`Filter input validation - RATING Rest filter input - failure RATING field type - should fail with filter : "ratingField[eq]:\\"not-a-rating\\"" 1`] = `
+[
+  "invalid input value for enum workspace_1wgvd1injqtife6y4rvfbu3h5."_apiInputValidationTestObject_ratingField_enum": "not-a-rating"",
+]
+`;
+
+exports[`Filter input validation - RATING Rest filter input - failure RATING field type - should fail with filter : "ratingField[eq]:\\"true\\"" 1`] = `
+[
+  "invalid input value for enum workspace_1wgvd1injqtife6y4rvfbu3h5."_apiInputValidationTestObject_ratingField_enum": "true"",
+]
+`;
+
+exports[`Filter input validation - RATING Rest filter input - failure RATING field type - should fail with filter : "ratingField[eq]:2" 1`] = `
+[
+  "invalid input value for enum workspace_1wgvd1injqtife6y4rvfbu3h5."_apiInputValidationTestObject_ratingField_enum": "2"",
+]
+`;

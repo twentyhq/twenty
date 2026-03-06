@@ -1,5 +1,5 @@
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
+import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { useNavigationMenuItemsDraftState } from '@/navigation-menu-item/hooks/useNavigationMenuItemsDraftState';
 import { useSaveNavigationMenuItemsDraft } from '@/navigation-menu-item/hooks/useSaveNavigationMenuItemsDraft';
 import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/isNavigationMenuInEditModeState';
@@ -10,38 +10,38 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useState } from 'react';
-import { CommandMenuPages } from 'twenty-shared/types';
+import { useContext, useState } from 'react';
+import { SidePanelPages } from 'twenty-shared/types';
 import { IconCheck, useIcons } from 'twenty-ui/display';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div`
   align-items: center;
-  background: ${({ theme }) => theme.color.blue};
+  background: ${themeCssVariables.color.blue};
   box-sizing: border-box;
-  color: ${({ theme }) => theme.font.color.inverted};
+  color: ${themeCssVariables.font.color.inverted};
   display: flex;
   justify-content: space-between;
-  padding: ${({ theme }) => theme.spacing(2, 3)};
+  padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
   width: 100%;
 `;
 
 const StyledTitle = styled.span`
   align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 export const NavigationMenuEditModeBar = () => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const { t } = useLingui();
   const { getIcon } = useIcons();
   const [isSaving, setIsSaving] = useState(false);
-  const { closeCommandMenu } = useCommandMenu();
-  const commandMenuPage = useAtomStateValue(commandMenuPageState);
+  const { closeSidePanelMenu } = useSidePanelMenu();
+  const sidePanelPage = useAtomStateValue(sidePanelPageState);
   const { enqueueErrorSnackBar } = useSnackBar();
   const setNavigationMenuItemsDraft = useSetAtomState(
     navigationMenuItemsDraftState,
@@ -60,10 +60,10 @@ export const NavigationMenuEditModeBar = () => {
     setSelectedNavigationMenuItemInEditMode(null);
     setIsNavigationMenuInEditMode(false);
     const isNavItemPageOpen =
-      commandMenuPage === CommandMenuPages.NavigationMenuAddItem ||
-      commandMenuPage === CommandMenuPages.NavigationMenuItemEdit;
+      sidePanelPage === SidePanelPages.NavigationMenuAddItem ||
+      sidePanelPage === SidePanelPages.NavigationMenuItemEdit;
     if (isNavItemPageOpen) {
-      closeCommandMenu();
+      closeSidePanelMenu();
     }
   };
 
@@ -84,7 +84,7 @@ export const NavigationMenuEditModeBar = () => {
     try {
       await saveDraft();
       cancelEditMode();
-      closeCommandMenu();
+      closeSidePanelMenu();
     } catch {
       enqueueErrorSnackBar({
         message: t`Failed to save navigation layout`,

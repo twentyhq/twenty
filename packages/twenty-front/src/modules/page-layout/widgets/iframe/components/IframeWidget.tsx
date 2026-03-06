@@ -3,14 +3,15 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { PageLayoutWidgetNoDataDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay';
 import { WidgetSkeletonLoader } from '@/page-layout/widgets/components/WidgetSkeletonLoader';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div<{ $isEditMode: boolean }>`
   box-sizing: border-box;
-  border-radius: ${({ theme }) => theme.border.radius.md};
-  background: ${({ theme }) => theme.background.primary};
+  border-radius: ${themeCssVariables.border.radius.md};
+  background: ${themeCssVariables.background.primary};
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -34,9 +35,9 @@ const StyledLoadingContainer = styled.div`
   left: 0;
   right: 0;
   bottom: 0;
-  padding-top: ${({ theme }) => theme.spacing(2)};
-  padding-left: ${({ theme }) => theme.spacing(2)};
-  background: ${({ theme }) => theme.background.primary};
+  padding-top: ${themeCssVariables.spacing[2]};
+  padding-left: ${themeCssVariables.spacing[2]};
+  background: ${themeCssVariables.background.primary};
   pointer-events: none;
   z-index: 1;
 `;
@@ -47,7 +48,7 @@ const StyledErrorContainer = styled.div`
   align-items: center;
   justify-content: center;
   height: 100%;
-  padding: ${({ theme }) => theme.spacing(4)};
+  padding: ${themeCssVariables.spacing[4]};
   text-align: center;
 `;
 
@@ -62,7 +63,7 @@ export const IframeWidget = ({ widget }: IframeWidgetProps) => {
 
   const configuration = widget.configuration;
 
-  if (!configuration || !('url' in configuration)) {
+  if (!isDefined(configuration) || !('url' in configuration)) {
     throw new Error(`Invalid configuration for widget ${widget.id}`);
   }
 

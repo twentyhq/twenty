@@ -1,4 +1,4 @@
-/* eslint-disable no-console, lingui/no-unlocalized-strings */
+/* oxlint-disable no-console, lingui/no-unlocalized-strings */
 import { print } from 'graphql';
 
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
@@ -15,6 +15,11 @@ const OBJECTS_TO_GENERATE = [
   'task',
   'note',
   'timelineActivity',
+  'workspaceMember',
+  'favorite',
+  'favoriteFolder',
+  'connectedAccount',
+  'calendarEvent',
 ];
 
 // Production query builders omit __typename on connection/edge wrappers

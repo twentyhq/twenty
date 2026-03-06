@@ -1,9 +1,10 @@
 import { usePieChartCenterMetricData } from '@/page-layout/widgets/graph/graphWidgetPieChart/hooks/usePieChartCenterMetricData';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { AnimatePresence, motion } from 'framer-motion';
+import { useContext } from 'react';
 import { type PieChartConfiguration } from '~/generated-metadata/graphql';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type PieChartCenterMetricProps = {
   objectMetadataItemId: string;
@@ -12,7 +13,7 @@ type PieChartCenterMetricProps = {
   hasNoData?: boolean;
 };
 
-const StyledCenterMetricContainer = styled(motion.div)`
+const StyledCenterMetricContainerBase = styled.div`
   align-items: center;
   display: flex;
   flex-direction: column;
@@ -23,21 +24,24 @@ const StyledCenterMetricContainer = styled(motion.div)`
   top: 50%;
   transform: translate(-50%, -50%);
 `;
+const StyledCenterMetricContainer = motion.create(
+  StyledCenterMetricContainerBase,
+);
 
 const StyledValue = styled.span`
-  color: ${({ theme }) => theme.font.color.primary};
+  color: ${themeCssVariables.font.color.primary};
   font-size: clamp(12px, 10cqmin, 48px);
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
+  font-weight: ${themeCssVariables.font.weight.semiBold};
 `;
 
 const StyledLabel = styled.span`
-  color: ${({ theme }) => theme.font.color.tertiary};
+  color: ${themeCssVariables.font.color.tertiary};
   font-size: clamp(10px, 5cqmin, 24px);
 `;
 
 const StyledNoDataText = styled.span`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-size: ${({ theme }) => theme.font.size.md};
+  color: ${themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.md};
 `;
 
 export const PieChartCenterMetric = ({
@@ -46,7 +50,7 @@ export const PieChartCenterMetric = ({
   show,
   hasNoData = false,
 }: PieChartCenterMetricProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const { t } = useLingui();
 
   const { centerMetricValue, centerMetricLabel } = usePieChartCenterMetricData({

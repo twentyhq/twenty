@@ -1,4 +1,4 @@
-/* eslint-disable */
+/* oxlint-disable */
 // @ts-nocheck
 import { type Role } from '~/generated-metadata/graphql';
 
@@ -11202,7 +11202,7 @@ export const mockedRoles: Role[] =
         "userEmail": "richard.palmer1000@apple.dev"
       }
     ],
-    "agents": [],
-    "apiKeys": []
+    "apiKeys": [],
+    "agents": []
   }
 ];

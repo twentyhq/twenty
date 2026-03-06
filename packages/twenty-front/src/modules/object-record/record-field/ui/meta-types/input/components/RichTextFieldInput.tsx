@@ -1,6 +1,6 @@
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
-import { useRichTextCommandMenu } from '@/command-menu/hooks/useRichTextCommandMenu';
-import { type CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useOpenRichTextInSidePanel } from '@/side-panel/hooks/useOpenRichTextInSidePanel';
+import { type CoreObjectNameSingular } from 'twenty-shared/types';
 import { useRegisterInputEvents } from '@/object-record/record-field/ui/meta-types/input/hooks/useRegisterInputEvents';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 
@@ -9,12 +9,12 @@ import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts
 
 import { type FieldRichTextV2Metadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { Suspense, lazy, useContext, useRef } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { IconLayoutSidebarLeftCollapse } from 'twenty-ui/display';
 import { FloatingIconButton } from 'twenty-ui/input';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const ActivityRichTextEditor = lazy(() =>
   import('@/activities/components/ActivityRichTextEditor').then((module) => ({
@@ -23,26 +23,25 @@ const ActivityRichTextEditor = lazy(() =>
 );
 
 const StyledContainer = styled.div`
-  background-color: ${({ theme }) => theme.background.primary};
+  background-color: ${themeCssVariables.background.primary};
   width: 480px;
-  padding: ${({ theme }) => theme.spacing(2)} ${({ theme }) => theme.spacing(2)}
-    ${({ theme }) => theme.spacing(2)} ${({ theme }) => theme.spacing(12)};
-  margin: 0 0 0 ${({ theme }) => theme.spacing(-5)};
+  padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[2]}
+    ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[12]};
+  margin: 0 0 0 calc(-1 * ${themeCssVariables.spacing[5]});
   display: flex;
   box-sizing: border-box;
   position: relative;
 `;
 
 const StyledCollapseButton = styled.div`
-  border-radius: ${({ theme }) => theme.border.radius.md};
-  color: ${({ theme }) => theme.font.color.light};
+  border-radius: ${themeCssVariables.border.radius.md};
+  color: ${themeCssVariables.font.color.light};
   cursor: pointer;
   display: flex;
 `;
 
 const LoadingSkeleton = () => {
-  const theme = useTheme();
-
+  const { theme } = useContext(ThemeContext);
   return (
     <SkeletonTheme
       baseColor={theme.background.tertiary}
@@ -67,7 +66,7 @@ export const RichTextFieldInput = () => {
       | CoreObjectNameSingular.Task,
   };
 
-  const { editRichText } = useRichTextCommandMenu();
+  const { openRichTextInSidePanel } = useOpenRichTextInSidePanel();
   const containerRef = useRef<HTMLDivElement>(null);
   const instanceId = useAvailableComponentInstanceIdOrThrow(
     RecordFieldComponentInstanceContext,
@@ -105,7 +104,7 @@ export const RichTextFieldInput = () => {
           size="small"
           onClick={() => {
             onEscape?.({ skipPersist: true });
-            editRichText(
+            openRichTextInSidePanel(
               targetableObject.id,
               targetableObject.targetObjectNameSingular,
             );

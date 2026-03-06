@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { RECORD_TABLE_COLUMN_CHECKBOX_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnCheckboxWidth';
@@ -10,21 +10,15 @@ import { useRecordTableContextOrThrow } from '@/object-record/record-table/conte
 import { RecordTableDragAndDropPlaceholderCell } from '@/object-record/record-table/record-table-cell/components/RecordTableDragAndDropPlaceholderCell';
 import { RecordTableAddButtonPlaceholderCell } from '@/object-record/record-table/record-table-row/components/RecordTableAddButtonPlaceholderCell';
 import { RecordTableGroupSectionLastDynamicFillingCell } from '@/object-record/record-table/record-table-row/components/RecordTableGroupSectionLastDynamicFillingCell';
-import { useTheme } from '@emotion/react';
+import { useContext } from 'react';
 import {
   filterOutByProperty,
   findByProperty,
   sumByProperty,
 } from 'twenty-shared/utils';
 import { type IconComponent } from 'twenty-ui/display';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useIsMobile } from 'twenty-ui/utilities';
-
-const StyledDragDropPlaceholderCell = styled(
-  RecordTableDragAndDropPlaceholderCell,
-)`
-  left: 0;
-  position: sticky;
-`;
 
 const StyledFieldPlaceholderCell = styled.div<{ widthOfFields: number }>`
   height: ${RECORD_TABLE_ROW_HEIGHT}px;
@@ -36,7 +30,7 @@ const StyledRecordTableDraggableTr = styled.div`
   cursor: pointer;
 
   border: none;
-  background: ${({ theme }) => theme.background.primary};
+  background: ${themeCssVariables.background.primary};
 
   display: flex;
   flex-direction: row;
@@ -44,12 +38,12 @@ const StyledRecordTableDraggableTr = styled.div`
 
   &:hover {
     div:not(:first-of-type) {
-      background-color: ${({ theme }) => theme.background.secondary};
+      background-color: ${themeCssVariables.background.secondary};
     }
   }
 
   div:not(:first-of-type) {
-    border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+    border-bottom: 1px solid ${themeCssVariables.border.color.light};
   }
 
   width: 100%;
@@ -59,7 +53,7 @@ const StyledIconContainer = styled.div`
   align-items: center;
   background-color: transparent;
   border-right: none;
-  color: ${({ theme }) => theme.font.color.secondary};
+  color: ${themeCssVariables.font.color.secondary};
   display: flex;
   height: ${RECORD_TABLE_ROW_HEIGHT}px;
   justify-content: center;
@@ -78,16 +72,15 @@ const StyledActionTextContainer = styled.div<{ width: number }>`
   height: ${RECORD_TABLE_ROW_HEIGHT}px;
   justify-content: start;
 
-  left: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH +
-  RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px;
+  left: ${`${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH + RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px`};
   position: sticky;
   width: ${({ width }) => width}px;
 `;
 
 const StyledText = styled.span`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  margin-left: ${({ theme }) => theme.spacing(2)};
-  font-size: ${({ theme }) => theme.font.size.md};
+  color: ${themeCssVariables.font.color.tertiary};
+  margin-left: ${themeCssVariables.spacing[2]};
+  font-size: ${themeCssVariables.font.size.md};
   text-align: left;
   vertical-align: middle;
   white-space: nowrap;
@@ -106,7 +99,7 @@ export const RecordTableActionRow = ({
   text,
   onClick,
 }: RecordTableActionRowProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   const { visibleRecordFields } = useRecordTableContextOrThrow();
   const { labelIdentifierFieldMetadataItem } = useRecordIndexContextOrThrow();
@@ -136,7 +129,7 @@ export const RecordTableActionRow = ({
 
   return (
     <StyledRecordTableDraggableTr onClick={onClick}>
-      <StyledDragDropPlaceholderCell />
+      <RecordTableDragAndDropPlaceholderCell />
       <StyledIconContainer>
         <LeftIcon
           stroke={theme.icon.stroke.sm}

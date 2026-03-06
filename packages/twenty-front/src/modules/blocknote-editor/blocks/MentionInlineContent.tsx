@@ -3,26 +3,28 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { createReactInlineContentSpec } from '@blocknote/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { Chip, ChipVariant } from 'twenty-ui/components';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
-const StyledRecordChip = styled(RecordChip)`
+const StyledRecordChipContainer = styled.div`
+  display: inline;
   height: auto;
   margin: 0;
-  padding: ${({ theme }) => `0 ${theme.spacing(1)}`};
+  padding: 0 ${themeCssVariables.spacing[1]};
 `;
 
-const StyledInlineMentionRecordChip = styled(MentionRecordChip)`
+const StyledInlineMentionRecordChipContainer = styled.div`
+  display: inline;
   height: auto;
   margin: 0;
-  padding: ${({ theme }) => `0 ${theme.spacing(1)}`};
+  padding: 0 ${themeCssVariables.spacing[1]};
 `;
 
-// Backward-compatible renderer for legacy notes that only stored objectMetadataId + recordId
 const LegacyMentionRenderer = ({
   recordId,
   objectMetadataId,
@@ -69,11 +71,13 @@ const LegacyMentionRenderer = ({
   }
 
   return (
-    <StyledRecordChip
-      objectNameSingular={objectMetadataItem.nameSingular}
-      record={record}
-      forceDisableClick={false}
-    />
+    <StyledRecordChipContainer>
+      <RecordChip
+        objectNameSingular={objectMetadataItem.nameSingular}
+        record={record}
+        forceDisableClick={false}
+      />
+    </StyledRecordChipContainer>
   );
 };
 
@@ -112,12 +116,14 @@ export const MentionInlineContent = createReactInlineContentSpec(
       // New notes store objectNameSingular + label + imageUrl directly
       if (isNonEmptyString(objectNameSingular) && isNonEmptyString(label)) {
         return (
-          <StyledInlineMentionRecordChip
-            recordId={recordId}
-            objectNameSingular={objectNameSingular}
-            label={label}
-            imageUrl={imageUrl}
-          />
+          <StyledInlineMentionRecordChipContainer>
+            <MentionRecordChip
+              recordId={recordId}
+              objectNameSingular={objectNameSingular}
+              label={label}
+              imageUrl={imageUrl}
+            />
+          </StyledInlineMentionRecordChipContainer>
         );
       }
 

@@ -3,6 +3,7 @@ import { useMultiSelectFieldDisplay } from '@/object-record/record-field/ui/meta
 import { MultiSelectDisplay } from '@/ui/field/display/components/MultiSelectDisplay';
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
 import { Tag } from 'twenty-ui/components';
+import { isDefined } from 'twenty-shared/utils';
 
 export const MultiSelectFieldDisplay = () => {
   const { fieldValue, fieldDefinition } = useMultiSelectFieldDisplay();
@@ -15,7 +16,7 @@ export const MultiSelectFieldDisplay = () => {
       )
     : [];
 
-  if (!selectedOptions) return null;
+  if (!isDefined(selectedOptions)) return null;
 
   return isFocused ? (
     <ExpandableList isChipCountDisplayed={isFocused}>

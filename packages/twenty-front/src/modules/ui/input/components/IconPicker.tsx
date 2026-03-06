@@ -1,5 +1,7 @@
-import styled from '@emotion/styled';
-import { type ReactNode, useCallback, useMemo, useState } from 'react';
+import { isDefined } from 'twenty-shared/utils';
+import { css } from '@linaria/core';
+import { styled } from '@linaria/react';
+import React, { type ReactNode, useCallback, useMemo, useState } from 'react';
 
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -31,6 +33,7 @@ import {
   type IconButtonVariant,
   LightIconButton,
 } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 export type IconPickerProps = {
   disabled?: boolean;
@@ -53,20 +56,53 @@ const StyledMenuIconItemsContainer = styled.div`
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  gap: ${({ theme }) => theme.spacing(0.5)};
+  gap: ${themeCssVariables.spacing[0.5]};
 `;
 
-const StyledLightIconButton = styled(LightIconButton)<{
+const selectedIconButtonStyle = css`
+  background: ${themeCssVariables.background.transparent.medium};
+`;
+
+const focusedIconButtonStyle = css`
+  background: ${themeCssVariables.background.transparent.light};
+`;
+
+type StyledLightIconButtonProps = React.ComponentProps<
+  typeof LightIconButton
+> & {
   isSelected?: boolean;
   isFocused?: boolean;
-}>`
-  background: ${({ theme, isSelected, isFocused }) =>
-    isSelected
-      ? theme.background.transparent.medium
-      : isFocused
-        ? theme.background.transparent.light
-        : 'transparent'};
-`;
+};
+
+const StyledLightIconButton = ({
+  isSelected,
+  isFocused,
+  className,
+  'aria-label': ariaLabel,
+  size,
+  title,
+  Icon,
+  onClick,
+  testId,
+  active,
+  accent,
+  disabled,
+  focus,
+}: StyledLightIconButtonProps) => (
+  <LightIconButton
+    aria-label={ariaLabel}
+    size={size}
+    title={title}
+    Icon={Icon}
+    onClick={onClick}
+    testId={testId}
+    active={active}
+    accent={accent}
+    disabled={disabled}
+    focus={focus}
+    className={`${className ?? ''} ${isSelected ? selectedIconButtonStyle : isFocused ? focusedIconButtonStyle : ''}`}
+  />
+);
 
 const StyledLoadingMore = styled.div`
   display: flex;
@@ -177,7 +213,7 @@ export const IconPicker = ({
   const icons = getIcons();
 
   const totalMatchingIconsCount = useMemo(() => {
-    if (!icons) return 0;
+    if (!isDefined(icons)) return 0;
 
     return Object.keys(icons).filter((iconKey) => {
       const iconLabel = convertIconKeyToLabel(iconKey)
@@ -230,7 +266,8 @@ export const IconPicker = ({
       .map(({ iconKey }) => iconKey);
 
     const isSelectedIconMatchingFilter =
-      selectedIconKey && filteredAndSortedIconKeys.includes(selectedIconKey);
+      isDefined(selectedIconKey) &&
+      filteredAndSortedIconKeys.includes(selectedIconKey);
 
     return isSelectedIconMatchingFilter
       ? [
@@ -271,7 +308,7 @@ export const IconPicker = ({
         dropdownId={dropdownId}
         dropdownOffset={dropdownOffset}
         clickableComponent={
-          clickableComponent || (
+          clickableComponent ?? (
             <IconButton
               ariaLabel={t`Click to select icon ${iconAriaLabel}`}
               disabled={disabled}

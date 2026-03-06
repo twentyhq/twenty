@@ -8,8 +8,7 @@ const AVAILABILITY_TYPE_MAP: Record<
   CommandMenuItemAvailabilityType
 > = {
   GLOBAL: CommandMenuItemAvailabilityType.GLOBAL,
-  SINGLE_RECORD: CommandMenuItemAvailabilityType.SINGLE_RECORD,
-  BULK_RECORDS: CommandMenuItemAvailabilityType.BULK_RECORDS,
+  RECORD_SELECTION: CommandMenuItemAvailabilityType.RECORD_SELECTION,
 };
 
 export const fromCommandMenuItemManifestToUniversalFlatCommandMenuItem = ({
@@ -25,11 +24,15 @@ export const fromCommandMenuItemManifestToUniversalFlatCommandMenuItem = ({
     universalIdentifier: commandMenuItemManifest.universalIdentifier,
     applicationUniversalIdentifier,
     label: commandMenuItemManifest.label,
+    shortLabel: null,
+    position: 0,
     icon: commandMenuItemManifest.icon ?? null,
     isPinned: commandMenuItemManifest.isPinned ?? false,
     availabilityType: commandMenuItemManifest.availabilityType
       ? AVAILABILITY_TYPE_MAP[commandMenuItemManifest.availabilityType]
       : CommandMenuItemAvailabilityType.GLOBAL,
+    conditionalAvailabilityExpression:
+      commandMenuItemManifest.conditionalAvailabilityExpression ?? null,
     frontComponentUniversalIdentifier:
       commandMenuItemManifest.frontComponentUniversalIdentifier,
     availabilityObjectMetadataUniversalIdentifier:

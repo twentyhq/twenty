@@ -1,6 +1,5 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import { type ReactNode } from 'react';
+import { styled } from '@linaria/react';
+import { type ReactNode, useContext } from 'react';
 
 import { NavigationDrawerCollapseButton } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerCollapseButton';
 
@@ -16,41 +15,47 @@ import {
   OverflowingTextWithTooltip,
 } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
-import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
+import { isDefined } from 'twenty-shared/utils';
+import {
+  MOBILE_VIEWPORT,
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 const StyledTopBarContainer = styled.div<{ isMobile: boolean }>`
   align-items: center;
-  background: ${({ theme }) => theme.background.noisy};
-  color: ${({ theme }) => theme.font.color.primary};
+  background: ${themeCssVariables.background.noisy};
+  color: ${themeCssVariables.font.color.primary};
   display: flex;
   flex-direction: row;
-  font-size: ${({ theme }) => theme.font.size.lg};
+  font-size: ${themeCssVariables.font.size.lg};
   justify-content: space-between;
   min-height: ${PAGE_BAR_MIN_HEIGHT}px;
-  padding-top: ${({ theme }) => theme.spacing(3)};
-  padding-bottom: ${({ theme }) => theme.spacing(3)};
-  padding-left: ${({ isMobile, theme }) => (isMobile ? theme.spacing(3) : 0)};
-  padding-right: ${({ theme }) => theme.spacing(3)};
-  gap: ${({ theme }) => theme.spacing(2)};
+  padding-top: ${themeCssVariables.spacing[3]};
+  padding-bottom: ${themeCssVariables.spacing[3]};
+  padding-left: ${({ isMobile }) =>
+    isMobile ? themeCssVariables.spacing[3] : 0};
+  padding-right: ${themeCssVariables.spacing[3]};
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledLeftContainer = styled.div`
   align-items: center;
   display: flex;
   flex-direction: row;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
   overflow-x: hidden;
   width: 100%;
   @media (max-width: ${MOBILE_VIEWPORT}px) {
-    padding-left: ${({ theme }) => theme.spacing(1)};
+    padding-left: ${themeCssVariables.spacing[1]};
   }
 `;
 
 const StyledTitleContainer = styled.div`
   display: flex;
-  font-size: ${({ theme }) => theme.font.size.md};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  margin-right: ${({ theme }) => theme.spacing(1)};
+  font-size: ${themeCssVariables.font.size.md};
+  font-weight: ${themeCssVariables.font.weight.medium};
+  margin-right: ${themeCssVariables.spacing[1]};
   width: 100%;
   overflow: hidden;
   align-items: center;
@@ -59,7 +64,7 @@ const StyledTitleContainer = styled.div`
 const StyledTopBarIconStyledTitleContainer = styled.div`
   align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
   flex-direction: row;
   width: 100%;
   overflow: hidden;
@@ -67,7 +72,7 @@ const StyledTopBarIconStyledTitleContainer = styled.div`
 
 const StyledPageActionContainer = styled.div`
   display: inline-flex;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
   flex: 1 0 auto;
 `;
 
@@ -95,7 +100,7 @@ export const PageHeader = ({
   className,
 }: PageHeaderProps) => {
   const isMobile = useIsMobile();
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const isNavigationDrawerExpanded = useAtomStateValue(
     isNavigationDrawerExpandedState,
   );
@@ -122,7 +127,7 @@ export const PageHeader = ({
                 <Icon size={theme.icon.size.md} />
               </StyledIconContainer>
             )}
-            {title && (
+            {isDefined(title) && (
               <StyledTitleContainer data-testid="top-bar-title">
                 {typeof title === 'string' ? (
                   <OverflowingTextWithTooltip text={title} />

@@ -1,42 +1,43 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { useContext } from 'react';
 import { useDropzone } from 'react-dropzone';
 
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import { IconUpload } from 'twenty-ui/display';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
   align-items: center;
-  background: ${({ theme }) => theme.background.secondary};
-  border: ${({ theme }) => `2px dashed ${theme.border.color.strong}`};
-  border-radius: ${({ theme }) => theme.border.radius.md};
+  background: ${themeCssVariables.background.secondary};
+  border: 2px dashed ${themeCssVariables.border.color.strong};
+  border-radius: ${themeCssVariables.border.radius.sm};
   display: flex;
   flex-direction: column;
   height: 100%;
   justify-content: center;
-  border-radius: ${({ theme }) => theme.border.radius.sm};
   text-align: center;
 `;
 
 const StyledUploadDragTitle = styled.div`
-  color: ${({ theme }) => theme.font.color.primary};
-  font-size: ${({ theme }) => theme.font.size.lg};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  line-height: ${({ theme }) => theme.text.lineHeight.md};
+  color: ${themeCssVariables.font.color.primary};
+  font-size: ${themeCssVariables.font.size.lg};
+  font-weight: ${themeCssVariables.font.weight.medium};
+  line-height: ${themeCssVariables.text.lineHeight.md};
   margin-bottom: 8px;
 `;
 
 const StyledUploadDragSubTitle = styled.div`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-size: ${({ theme }) => theme.font.size.md};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
-  line-height: ${({ theme }) => theme.text.lineHeight.md};
+  color: ${themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.md};
+  font-weight: ${themeCssVariables.font.weight.regular};
+  line-height: ${themeCssVariables.text.lineHeight.md};
 `;
 
-const StyledUploadIcon = styled(IconUpload)`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  margin-bottom: ${({ theme }) => theme.spacing(3)};
+const StyledUploadIconContainer = styled.div`
+  color: ${themeCssVariables.font.color.tertiary};
+  display: flex;
+  margin-bottom: ${themeCssVariables.spacing[3]};
 `;
 
 type DropZoneProps = {
@@ -48,8 +49,8 @@ export const DropZone = ({
   setIsDraggingFile,
   onUploadFiles,
 }: DropZoneProps) => {
+  const { theme } = useContext(ThemeContext);
   const { t } = useLingui();
-  const theme = useTheme();
   const { maxFileSize } = useSpreadsheetImportInternal();
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -74,19 +75,21 @@ export const DropZone = ({
 
   return (
     <StyledContainer
-      // eslint-disable-next-line react/jsx-props-no-spreading
+      // oxlint-disable-next-line react/jsx-props-no-spreading
       {...getRootProps()}
     >
       {isDragActive && (
         <>
           <input
-            // eslint-disable-next-line react/jsx-props-no-spreading
+            // oxlint-disable-next-line react/jsx-props-no-spreading
             {...getInputProps()}
           />
-          <StyledUploadIcon
-            stroke={theme.icon.stroke.sm}
-            size={theme.icon.size.lg}
-          />
+          <StyledUploadIconContainer>
+            <IconUpload
+              stroke={theme.icon.stroke.sm}
+              size={theme.icon.size.lg}
+            />
+          </StyledUploadIconContainer>
           <StyledUploadDragTitle>{t`Upload files`}</StyledUploadDragTitle>
           <StyledUploadDragSubTitle>
             {t`Drag and Drop Here`}

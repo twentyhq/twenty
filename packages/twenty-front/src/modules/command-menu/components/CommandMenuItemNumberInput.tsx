@@ -4,9 +4,9 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { currentFocusIdSelector } from '@/ui/utilities/focus/states/currentFocusIdSelector';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { useStore } from 'jotai';
 import { useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { type IconComponent } from 'twenty-ui/display';
@@ -25,8 +25,8 @@ type CommandMenuItemNumberInputProps = {
   placeholder?: string;
 };
 
-const StyledRightAlignedTextInput = styled(TextInput)`
-  input {
+const StyledRightAlignedTextInputContainer = styled.div`
+  & input {
     text-align: right;
   }
 `;
@@ -44,9 +44,7 @@ export const CommandMenuItemNumberInput = ({
   const focusId = `${id}-input`;
   const [draftValue, setDraftValue] = useState(value);
   const [hasError, setHasError] = useState(false);
-
-  const currentFocusId = useAtomStateValue(currentFocusIdSelector);
-  const isNumberInputCurrentlyFocused = currentFocusId === focusId;
+  const store = useStore();
 
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const { removeFocusItemFromFocusStackById } =
@@ -87,20 +85,24 @@ export const CommandMenuItemNumberInput = ({
   };
 
   const handleBlur = () => {
+    const isInputStillFocused =
+      store.get(currentFocusIdSelector.atom) === focusId;
+
+    if (isInputStillFocused && draftValue !== value) {
+      handleCommit(draftValue);
+    }
+
     removeFocusItemFromFocusStackById({ focusId });
   };
 
   const handleEscape = () => {
+    removeFocusItemFromFocusStackById({ focusId });
     setDraftValue(value);
+    setHasError(false);
     inputRef.current?.blur();
   };
 
-  const handleClickOutside = () => {
-    handleCommit(draftValue);
-  };
-
   const handleEnter = () => {
-    handleCommit(draftValue);
     inputRef.current?.blur();
   };
 
@@ -110,9 +112,6 @@ export const CommandMenuItemNumberInput = ({
     inputValue: draftValue,
     onEscape: handleEscape,
     onEnter: handleEnter,
-    onClickOutside: isNumberInputCurrentlyFocused
-      ? handleClickOutside
-      : undefined,
   });
 
   const handleChange = (text: string) => {
@@ -133,18 +132,20 @@ export const CommandMenuItemNumberInput = ({
       Icon={Icon}
       onClick={focusInput}
       RightComponent={
-        <StyledRightAlignedTextInput
-          ref={inputRef}
-          value={draftValue}
-          sizeVariant="sm"
-          onChange={handleChange}
-          onFocus={handleFocus}
-          onBlur={handleBlur}
-          placeholder={placeholder}
-          error={hasError ? ' ' : undefined}
-          noErrorHelper
-          textClickOutsideId={focusId}
-        />
+        <StyledRightAlignedTextInputContainer>
+          <TextInput
+            ref={inputRef}
+            value={draftValue}
+            sizeVariant="sm"
+            onChange={handleChange}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+            placeholder={placeholder}
+            error={hasError ? ' ' : undefined}
+            noErrorHelper
+            textClickOutsideId={focusId}
+          />
+        </StyledRightAlignedTextInputContainer>
       }
     />
   );

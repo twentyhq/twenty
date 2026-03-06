@@ -160,7 +160,7 @@ export enum PageHotkeyScope {
 }
 ```
 
-Internally, the currently selected scope is stored in a Jotai atom that is shared across the application :
+Interně je aktuálně vybraný rozsah uložen v Jotai atomu, který je sdílen napříč aplikací :
 
 ```tsx
 export const currentHotkeyScopeState = createState<HotkeyScope>({
@@ -169,10 +169,10 @@ export const currentHotkeyScopeState = createState<HotkeyScope>({
 });
 ```
 
-But this atom should never be handled manually ! Ukážeme si, jak jej používat v příští sekci.
+Ale tento atom by se nikdy neměl spravovat ručně ! Ukážeme si, jak jej používat v příští sekci.
 
 ## Jak to funguje interně?
 
 Vytvořili jsme tenkou vrstvu nad [react-hotkeys-hook](https://react-hotkeys-hook.vercel.app/docs/intro), která je výkonnější a vyhýbá se zbytečným překreslením.
 
-We also create a Jotai atom to handle the hotkey scope state and make it available everywhere in the application.
+Také vytváříme Jotai atom, abychom mohli řídit stav rozsahu klávesových zkratek a učinit jej dostupným kdekoli v aplikaci.

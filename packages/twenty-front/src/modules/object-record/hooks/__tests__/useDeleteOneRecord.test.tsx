@@ -9,7 +9,7 @@ import { type MockedResponse } from '@apollo/client/testing';
 import { InMemoryTestingCacheInstance } from '~/testing/cache/inMemoryTestingCacheInstance';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
-import { allMockCompanyRecordsWithRelation } from '~/testing/mock-data/companiesWithRelations';
+import { mockedCompanyRecords } from '~/testing/mock-data/generated/data/companies/mock-companies-data';
 import { mockedPersonRecords } from '~/testing/mock-data/generated/data/people/mock-people-data';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
@@ -24,15 +24,19 @@ const flatPersonRecords = mockedPersonRecords.map((record) =>
   getRecordFromRecordNode({ recordNode: record }),
 );
 
+const flatCompanyRecords = mockedCompanyRecords.map((record) =>
+  getRecordFromRecordNode({ recordNode: record }),
+);
+
 describe('useDeleteOneRecord', () => {
-  const matchingCompanyId = allMockCompanyRecordsWithRelation[0].id;
+  const matchingCompanyId = flatCompanyRecords[0].id;
   const personRecord = {
     ...flatPersonRecords[0],
     deletedAt: null,
     companyId: matchingCompanyId,
-    company: { ...allMockCompanyRecordsWithRelation[0] },
+    company: { ...flatCompanyRecords[0] },
   };
-  const relatedCompanyRecord = allMockCompanyRecordsWithRelation[0];
+  const relatedCompanyRecord = flatCompanyRecords[0];
   const personObjectMetadataItem = getMockObjectMetadataItemOrThrow('person');
   const companyObjectMetadataItem = getMockObjectMetadataItemOrThrow('company');
   const objectMetadataItems = generatedMockObjectMetadataItems;
@@ -199,7 +203,7 @@ describe('useDeleteOneRecord', () => {
       initialRecordsInCache: [
         {
           objectMetadataItem: companyObjectMetadataItem,
-          records: allMockCompanyRecordsWithRelation,
+          records: flatCompanyRecords,
         },
         {
           objectMetadataItem: personObjectMetadataItem,

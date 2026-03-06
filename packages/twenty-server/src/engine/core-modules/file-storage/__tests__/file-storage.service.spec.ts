@@ -1,8 +1,6 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { Readable } from 'stream';
-
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { FileStorageDriverFactory } from 'src/engine/core-modules/file-storage/file-storage-driver.factory';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
@@ -72,81 +70,6 @@ describe('FileStorageService', () => {
       };
 
       mockFileStorageDriverFactory.getCurrentDriver.mockReturnValue(mockDriver);
-    });
-
-    describe('writeFileLegacy', () => {
-      it('should delegate to the current driver', async () => {
-        const writeParams = {
-          file: Buffer.from('test content'),
-          name: 'test.txt',
-          folder: 'documents',
-          mimeType: 'text/plain',
-        };
-
-        mockDriver.writeFile.mockResolvedValue(undefined);
-
-        await service.writeFileLegacy(writeParams);
-
-        expect(fileStorageDriverFactory.getCurrentDriver).toHaveBeenCalled();
-        expect(mockDriver.writeFile).toHaveBeenCalledWith({
-          filePath: 'documents/test.txt',
-          sourceFile: writeParams.file,
-          mimeType: 'text/plain',
-        });
-      });
-
-      it('should handle write errors', async () => {
-        const writeParams = {
-          file: 'test content',
-          name: 'test.txt',
-          folder: 'documents',
-          mimeType: 'text/plain',
-        };
-
-        const error = new Error('Write failed');
-
-        mockDriver.writeFile.mockRejectedValue(error);
-
-        await expect(service.writeFileLegacy(writeParams)).rejects.toThrow(
-          'Write failed',
-        );
-        expect(fileStorageDriverFactory.getCurrentDriver).toHaveBeenCalled();
-      });
-    });
-
-    describe('readFileLegacy', () => {
-      it('should delegate to the current driver', async () => {
-        const readParams = {
-          filePath: 'documents/test.txt',
-        };
-
-        const mockStream = new Readable();
-
-        mockDriver.readFile.mockResolvedValue(mockStream);
-
-        const result = await service.readFileLegacy(readParams);
-
-        expect(fileStorageDriverFactory.getCurrentDriver).toHaveBeenCalled();
-        expect(mockDriver.readFile).toHaveBeenCalledWith({
-          filePath: 'documents/test.txt',
-        });
-        expect(result).toBe(mockStream);
-      });
-
-      it('should handle read errors', async () => {
-        const readParams = {
-          filePath: 'documents/test.txt',
-        };
-
-        const error = new Error('Read failed');
-
-        mockDriver.readFile.mockRejectedValue(error);
-
-        await expect(service.readFileLegacy(readParams)).rejects.toThrow(
-          'Read failed',
-        );
-        expect(fileStorageDriverFactory.getCurrentDriver).toHaveBeenCalled();
-      });
     });
 
     describe('deleteLegacy', () => {

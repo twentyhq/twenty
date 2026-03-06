@@ -1,5 +1,4 @@
-import { css } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 import { useAuth } from '@/auth/hooks/useAuth';
 import {
@@ -21,13 +20,14 @@ import { Controller } from 'react-hook-form';
 import { AppPath } from 'twenty-shared/types';
 import { MainButton } from 'twenty-ui/input';
 import { ClickToActionLink } from 'twenty-ui/navigation';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 const StyledMainContentContainer = styled.div`
-  margin-bottom: ${({ theme }) => theme.spacing(8)};
-  margin-top: ${({ theme }) => theme.spacing(4)};
+  margin-bottom: ${themeCssVariables.spacing[8]};
+  margin-top: ${themeCssVariables.spacing[4]};
   text-align: center;
 `;
 
@@ -47,12 +47,12 @@ const StyledSlot = styled.div<{ isActive: boolean }>`
   align-items: center;
   justify-content: center;
   transition: all 0.3s;
-  border-top: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-right: 1px solid ${({ theme }) => theme.border.color.medium};
+  border-top: 1px solid ${themeCssVariables.border.color.medium};
+  border-bottom: 1px solid ${themeCssVariables.border.color.medium};
+  border-right: 1px solid ${themeCssVariables.border.color.medium};
 
   &:first-of-type {
-    border-left: 1px solid ${({ theme }) => theme.border.color.medium};
+    border-left: 1px solid ${themeCssVariables.border.color.medium};
     border-top-left-radius: 0.375rem;
     border-bottom-left-radius: 0.375rem;
   }
@@ -64,19 +64,15 @@ const StyledSlot = styled.div<{ isActive: boolean }>`
 
   .group:hover &,
   .group:focus-within & {
-    border-color: ${({ theme }) => theme.border.color.medium};
+    border-color: ${themeCssVariables.border.color.medium};
   }
 
-  outline: 0;
-  outline-color: ${({ theme }) => theme.border.color.medium};
-
-  ${({ isActive, theme }) =>
-    isActive &&
-    css`
-      outline-width: 1px;
-      outline-style: solid;
-      outline-color: ${theme.border.color.strong};
-    `}
+  outline-width: ${({ isActive }) => (isActive ? '1px' : '0')};
+  outline-style: ${({ isActive }) => (isActive ? 'solid' : 'none')};
+  outline-color: ${({ isActive }) =>
+    isActive
+      ? themeCssVariables.border.color.strong
+      : themeCssVariables.border.color.medium};
 `;
 
 const StyledPlaceholderChar = styled.div`
@@ -119,7 +115,7 @@ const StyledCaretContainer = styled.div`
 const StyledCaret = styled.div`
   width: 1px;
   height: 2rem;
-  background-color: ${({ theme }) => theme.font.color.light};
+  background-color: ${themeCssVariables.font.color.light};
 `;
 
 const FakeCaret = () => {
@@ -138,7 +134,7 @@ const StyledDashContainer = styled.div`
 `;
 
 const StyledDash = styled.div`
-  background-color: ${({ theme }) => theme.font.color.primary};
+  background-color: ${themeCssVariables.font.color.primary};
   border-radius: 9999px;
   height: 0.25rem;
   width: 0.75rem;
@@ -166,16 +162,16 @@ const StyledSlotGroup = styled.div`
 `;
 const StyledTextContainer = styled.div`
   align-items: center;
-  margin-bottom: ${({ theme }) => theme.spacing(4)};
-  color: ${({ theme }) => theme.font.color.tertiary};
+  margin-bottom: ${themeCssVariables.spacing[4]};
+  color: ${themeCssVariables.font.color.tertiary};
 
   max-width: 280px;
   text-align: center;
-  font-size: ${({ theme }) => theme.font.size.sm};
+  font-size: ${themeCssVariables.font.size.sm};
 `;
 
 const StyledActionBackLinkContainer = styled.div`
-  margin: ${({ theme }) => theme.spacing(3)} 0 0;
+  margin: ${themeCssVariables.spacing[3]} 0 0;
 `;
 
 export const SignInUpTOTPVerification = () => {
@@ -235,7 +231,7 @@ export const SignInUpTOTPVerification = () => {
         <Trans>Paste the code below</Trans>
       </StyledTextContainer>
       <StyledMainContentContainer>
-        {/* // eslint-disable-next-line react/jsx-props-no-spreading */}
+        {/* // oxlint-disable-next-line react/jsx-props-no-spreading */}
         <Controller
           name="otp"
           control={form.control}
@@ -251,7 +247,7 @@ export const SignInUpTOTPVerification = () => {
                     {slots.slice(0, 3).map((slot, idx) => (
                       <Slot
                         key={idx}
-                        // eslint-disable-next-line react/jsx-props-no-spreading
+                        // oxlint-disable-next-line react/jsx-props-no-spreading
                         {...slot}
                       />
                     ))}
@@ -263,7 +259,7 @@ export const SignInUpTOTPVerification = () => {
                     {slots.slice(3).map((slot, idx) => (
                       <Slot
                         key={idx}
-                        // eslint-disable-next-line react/jsx-props-no-spreading
+                        // oxlint-disable-next-line react/jsx-props-no-spreading
                         {...slot}
                       />
                     ))}

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 import { useClientConfig } from '@/client-config/hooks/useClientConfig';
 import { GET_ADMIN_AI_MODELS } from '@/settings/admin-panel/ai/graphql/queries/getAdminAiModels';
@@ -21,6 +21,7 @@ import {
 import { Button } from 'twenty-ui/input';
 import { Card, Section } from 'twenty-ui/layout';
 import { MenuItemToggle } from 'twenty-ui/navigation';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   useCreateDatabaseConfigVariableMutation,
   useGetAdminAiModelsQuery,
@@ -31,12 +32,12 @@ import { getModelProviderLabel } from '~/pages/settings/ai/utils/getModelProvide
 
 const StyledSearchAndFilterContainer = styled.div`
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
-  margin-bottom: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
+  margin-bottom: ${themeCssVariables.spacing[2]};
   width: 100%;
 `;
 
-const StyledSearchInput = styled(SettingsTextInput)`
+const StyledSearchInputContainer = styled.div`
   flex: 1;
 `;
 
@@ -162,13 +163,15 @@ export const SettingsAdminAI = () => {
         />
 
         <StyledSearchAndFilterContainer>
-          <StyledSearchInput
-            instanceId="admin-model-search"
-            LeftIcon={IconSearch}
-            placeholder={t`Search a model...`}
-            value={searchQuery}
-            onChange={setSearchQuery}
-          />
+          <StyledSearchInputContainer>
+            <SettingsTextInput
+              instanceId="admin-model-search"
+              LeftIcon={IconSearch}
+              placeholder={t`Search a model...`}
+              value={searchQuery}
+              onChange={setSearchQuery}
+            />
+          </StyledSearchInputContainer>
           <Dropdown
             dropdownId="admin-ai-models-filter-dropdown"
             dropdownPlacement="bottom-end"

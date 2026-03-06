@@ -3,8 +3,8 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { useContext } from 'react';
 import { t } from '@lingui/core/macro';
 import { useLocation, useParams, useSearchParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
@@ -12,14 +12,15 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconChevronDown } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 const StyledContainer = styled.div`
   align-items: center;
-  color: ${({ theme }) => theme.font.color.tertiary};
+  color: ${themeCssVariables.font.color.tertiary};
   cursor: default;
   display: flex;
-  font-size: ${({ theme }) => theme.font.size.md};
+  font-size: ${themeCssVariables.font.size.md};
 `;
 
 const StyledButtonContainer = styled.div`
@@ -27,10 +28,12 @@ const StyledButtonContainer = styled.div`
   width: 100%;
 `;
 
-const StyledDownChevron = styled(IconChevronDown)`
-  color: ${({ theme }) => theme.font.color.primary};
+const StyledDownChevronContainer = styled.span`
+  align-items: center;
+  color: ${themeCssVariables.font.color.primary};
+  display: flex;
   position: absolute;
-  right: ${({ theme }) => theme.spacing(1.5)};
+  right: ${themeCssVariables.spacing['1.5']};
   top: 50%;
   transform: translateY(-50%);
 `;
@@ -40,38 +43,25 @@ const StyledMenuItemWrapper = styled.div<{ disabled?: boolean }>`
   width: 100%;
 `;
 
-const StyledMenuItem = styled(MenuItem)<{
-  selected?: boolean;
-  disabled?: boolean;
-}>`
-  background: ${({ theme, selected }) =>
-    selected ? theme.background.quaternary : 'transparent'};
-  opacity: ${({ disabled }) => (disabled ? 0.5 : 1)};
-  pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
+const StyledSpan = styled.span`
+  margin-left: ${themeCssVariables.spacing[2]};
+`;
 
-  &:hover {
-    background: ${({ theme, disabled }) =>
-      disabled ? 'transparent' : theme.background.tertiary};
+const StyledButtonWrapper = styled.div`
+  > button {
+    color: ${themeCssVariables.font.color.primary};
+    padding-right: ${themeCssVariables.spacing[6]};
   }
 `;
 
-const StyledSpan = styled.span`
-  margin-left: ${({ theme }) => theme.spacing(2)};
-`;
-
-const StyledButton = styled(Button)`
-  color: ${({ theme }) => theme.font.color.primary};
-  padding-right: ${({ theme }) => theme.spacing(6)};
-`;
-
 export const SettingsDataModelNewFieldBreadcrumbDropDown = () => {
+  const { theme } = useContext(ThemeContext);
   const dropdownId = `settings-object-new-field-breadcrumb-dropdown`;
   const { closeDropdown } = useCloseDropdown();
   const navigate = useNavigateSettings();
   const location = useLocation();
   const { objectNamePlural = '' } = useParams();
   const [searchParams] = useSearchParams();
-  const theme = useTheme();
 
   const fieldType = searchParams.get('fieldType') as SettingsFieldType;
   const isConfigureStep = location.pathname.includes('/configure');
@@ -101,11 +91,17 @@ export const SettingsDataModelNewFieldBreadcrumbDropDown = () => {
         dropdownId={dropdownId}
         clickableComponent={
           <StyledButtonContainer>
-            <StyledDownChevron size={theme.icon.size.md} />
+            <StyledDownChevronContainer>
+              <IconChevronDown size={theme.icon.size.md} />
+            </StyledDownChevronContainer>
             {isConfigureStep ? (
-              <StyledButton variant="tertiary" title={t`2. Configure`} />
+              <StyledButtonWrapper>
+                <Button variant="tertiary" title={t`2. Configure`} />
+              </StyledButtonWrapper>
             ) : (
-              <StyledButton variant="tertiary" title={t`1. Type`} />
+              <StyledButtonWrapper>
+                <Button variant="tertiary" title={t`1. Type`} />
+              </StyledButtonWrapper>
             )}
           </StyledButtonContainer>
         }
@@ -113,14 +109,14 @@ export const SettingsDataModelNewFieldBreadcrumbDropDown = () => {
           <DropdownContent>
             <DropdownMenuItemsContainer>
               <StyledMenuItemWrapper>
-                <StyledMenuItem
+                <MenuItem
                   text={t`1. Type`}
                   onClick={() => handleClick('select')}
                   selected={!isConfigureStep}
                 />
               </StyledMenuItemWrapper>
               <StyledMenuItemWrapper disabled={!isDefined(fieldType)}>
-                <StyledMenuItem
+                <MenuItem
                   text={t`2. Configure`}
                   onClick={() => handleClick('configure')}
                   selected={isConfigureStep}

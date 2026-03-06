@@ -4,10 +4,6 @@ import { isDefined, resolveInput } from 'twenty-shared/utils';
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
-import {
-  RecordCrudException,
-  RecordCrudExceptionCode,
-} from 'src/engine/core-modules/record-crud/exceptions/record-crud.exception';
 import { UpsertRecordService } from 'src/engine/core-modules/record-crud/services/upsert-record.service';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import {
@@ -74,9 +70,9 @@ export class UpsertRecordWorkflowAction implements WorkflowAction {
     ) as WorkflowUpsertRecordActionInput;
 
     if (!isDefined(workflowActionInput.objectName)) {
-      throw new RecordCrudException(
+      throw new WorkflowStepExecutorException(
         'Failed to upsert: Object name is required',
-        RecordCrudExceptionCode.INVALID_REQUEST,
+        WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
       );
     }
 
@@ -97,10 +93,7 @@ export class UpsertRecordWorkflowAction implements WorkflowAction {
     });
 
     if (!toolOutput.success) {
-      throw new RecordCrudException(
-        toolOutput.error || toolOutput.message,
-        RecordCrudExceptionCode.RECORD_UPSERT_FAILED,
-      );
+      return { error: toolOutput.error || toolOutput.message };
     }
 
     return {

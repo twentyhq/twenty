@@ -9,7 +9,7 @@ import { isDefined } from 'class-validator';
  */
 export function LogExecutionTime(label?: string | undefined) {
   return function (
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
     target: any,
     propertyKey: string,
     descriptor: PropertyDescriptor,
@@ -17,7 +17,7 @@ export function LogExecutionTime(label?: string | undefined) {
     const originalMethod = descriptor.value;
     const logger = new Logger(`${target.constructor.name}:${propertyKey}`);
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
     descriptor.value = async function (...args: any[]) {
       const start = performance.now();
 

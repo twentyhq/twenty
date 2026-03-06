@@ -1,6 +1,7 @@
 import { type ReactNode } from 'react';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { RecordTableContextProvider as RecordTableContextInternalProvider } from '@/object-record/record-table/contexts/RecordTableContext';
 
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
@@ -32,13 +33,14 @@ export const RecordTableContextProvider = ({
     objectNameSingular,
   });
 
+  const { objectMetadataItems } = useObjectMetadataItems();
+
   const objectPermissions = useObjectPermissionsForObject(
     objectMetadataItem.id,
   );
 
   const visibleRecordFields = useAtomComponentSelectorValue(
     visibleRecordFieldsComponentSelector,
-    recordTableId,
   );
 
   const recordIndexOpenRecordIn = useAtomStateValue(
@@ -57,6 +59,7 @@ export const RecordTableContextProvider = ({
         value={{
           viewBarId,
           objectMetadataItem,
+          objectMetadataItems,
           recordTableId,
           objectNameSingular,
           objectPermissions,

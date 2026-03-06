@@ -1,21 +1,17 @@
-import { type Theme } from '@emotion/react';
 import { type WorkflowTriggerType } from '@/workflow/types/Workflow';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-export const getTriggerIconColor = ({
-  theme,
-  triggerType,
-}: {
-  theme: Theme;
-  triggerType: WorkflowTriggerType;
-}) => {
+export const getTriggerIconColor = (
+  triggerType: WorkflowTriggerType,
+): string => {
   switch (triggerType) {
     case 'DATABASE_EVENT':
-      return theme.color.blue;
+      return themeCssVariables.color.blue;
     case 'CRON':
     case 'MANUAL':
     case 'WEBHOOK':
-      return theme.color.purple;
+      return themeCssVariables.color.purple;
     default:
-      return theme.color.purple;
+      return themeCssVariables.color.purple;
   }
 };

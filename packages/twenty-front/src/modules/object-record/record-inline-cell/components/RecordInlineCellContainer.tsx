@@ -1,6 +1,6 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useContext } from 'react';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useFieldFocus } from '@/object-record/record-field/ui/hooks/useFieldFocus';
@@ -19,7 +19,7 @@ import { useRecordInlineCellContext } from './RecordInlineCellContext';
 
 const StyledIconContainer = styled.div`
   align-items: center;
-  color: ${({ theme }) => theme.font.color.tertiary};
+  color: ${themeCssVariables.font.color.tertiary};
   display: flex;
   width: 16px;
 
@@ -35,9 +35,9 @@ const StyledIconContainer = styled.div`
 const StyledLabelAndIconContainer = styled.div`
   align-items: center;
   align-self: flex-start;
-  color: ${({ theme }) => theme.font.color.tertiary};
+  color: ${themeCssVariables.font.color.tertiary};
   display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
   height: 24px;
 `;
 
@@ -49,9 +49,9 @@ const StyledValueContainer = styled.div<{ readonly: boolean }>`
 `;
 
 const StyledLabelContainer = styled.div<{ width?: number }>`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  width: ${({ width }) => width}px;
+  color: ${themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.sm};
+  width: ${({ width }) => (width !== undefined ? `${width}px` : 'auto')};
 `;
 
 const StyledInlineCellBaseContainer = styled.div<{ readonly: boolean }>`
@@ -59,7 +59,7 @@ const StyledInlineCellBaseContainer = styled.div<{ readonly: boolean }>`
   width: 100%;
   display: flex;
   height: fit-content;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
   user-select: none;
   align-items: center;
   cursor: ${({ readonly }) => (readonly ? 'default' : 'pointer')};
@@ -72,6 +72,7 @@ export const StyledSkeletonDiv = styled.div`
 export const RecordInlineCellContainer = () => {
   const { readonly, IconLabel, label, labelWidth, showLabel } =
     useRecordInlineCellContext();
+  const { theme } = useContext(ThemeContext);
 
   const { recordId, fieldDefinition, onMouseEnter, onMouseLeave, anchorId } =
     useContext(FieldContext);
@@ -96,7 +97,6 @@ export const RecordInlineCellContainer = () => {
     onMouseLeave?.();
   };
 
-  const theme = useTheme();
   const labelId = `label-${getRecordFieldInputInstanceId({
     recordId,
     fieldName: fieldDefinition?.metadata?.fieldName,

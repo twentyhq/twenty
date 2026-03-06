@@ -60,7 +60,7 @@ export const SettingsSecuritySSOIdentifyProvider = () => {
   return (
     <form onSubmit={form.handleSubmit(handleSave)}>
       <FormProvider
-        // eslint-disable-next-line react/jsx-props-no-spreading
+        // oxlint-disable-next-line react/jsx-props-no-spreading
         {...form}
       >
         <SubMenuTopBarContainer

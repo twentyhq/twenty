@@ -19,7 +19,7 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { AvailableWorkspaces } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
+import { AvailableWorkspaces } from 'src/engine/core-modules/auth/dto/available-workspaces.dto';
 import { OnboardingStatus } from 'src/engine/core-modules/onboarding/enums/onboarding-status.enum';
 import {
   OnboardingService,
@@ -38,6 +38,7 @@ import {
   WorkspaceMemberTranspiler,
 } from 'src/engine/core-modules/user/services/workspace-member-transpiler.service';
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
+import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
@@ -119,7 +120,7 @@ export class UserResolver {
   @Query(() => UserEntity)
   @UseGuards(UserAuthGuard, NoPermissionGuard)
   async currentUser(
-    @AuthUser() { id: userId }: UserEntity,
+    @AuthUser() { id: userId }: AuthContextUser,
     @AuthWorkspace({ allowUndefined: true }) workspace: WorkspaceEntity,
   ): Promise<UserEntity> {
     const user = await this.userRepository.findOne({
@@ -360,7 +361,7 @@ export class UserResolver {
 
   @Mutation(() => UserEntity)
   @UseGuards(UserAuthGuard, NoPermissionGuard)
-  async deleteUser(@AuthUser() { id: userId }: UserEntity) {
+  async deleteUser(@AuthUser() { id: userId }: AuthContextUser) {
     return this.userService.deleteUser(userId);
   }
 
@@ -368,7 +369,7 @@ export class UserResolver {
   @UseGuards(UserAuthGuard, CustomPermissionGuard)
   async deleteUserFromWorkspace(
     @Args('workspaceMemberIdToDelete') workspaceMemberIdToDelete: string,
-    @AuthUser() { id: userId }: UserEntity,
+    @AuthUser() { id: userId }: AuthContextUser,
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthWorkspace()
     workspace: WorkspaceEntity,
@@ -468,7 +469,7 @@ export class UserResolver {
 
   @ResolveField(() => AvailableWorkspaces)
   async availableWorkspaces(
-    @AuthUser() user: UserEntity,
+    @AuthUser() user: AuthContextUser,
     @AuthProvider() authProvider: AuthProviderEnum,
   ): Promise<AvailableWorkspaces> {
     return this.userWorkspaceService.setLoginTokenToAvailableWorkspacesWhenAuthProviderMatch(
@@ -488,7 +489,7 @@ export class UserResolver {
   )
   async updateUserEmail(
     @Args() { newEmail, verifyEmailRedirectPath }: UpdateUserEmailInput,
-    @AuthUser() user: UserEntity,
+    @AuthUser() user: AuthContextUser,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ) {
     const editableFields = workspace.editableProfileFields || [];

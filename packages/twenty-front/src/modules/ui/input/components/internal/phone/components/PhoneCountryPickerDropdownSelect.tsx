@@ -1,5 +1,5 @@
 import { t } from '@lingui/core/macro';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useMemo, useState } from 'react';
 
 import { type Country } from '@/ui/input/components/internal/types/Country';
@@ -10,16 +10,17 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import 'react-phone-number-input/style.css';
 import { MenuItem, MenuItemSelectAvatar } from 'twenty-ui/navigation';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledIconContainer = styled.div`
   align-items: center;
-  color: ${({ theme }) => theme.font.color.tertiary};
+  color: ${themeCssVariables.font.color.tertiary};
   display: flex;
-  padding-right: ${({ theme }) => theme.spacing(1)};
+  padding-right: ${themeCssVariables.spacing[1]};
 
   svg {
     align-items: center;
-    border-radius: ${({ theme }) => theme.border.radius.xs};
+    border-radius: ${themeCssVariables.border.radius.xs};
     display: flex;
     height: 12px;
     justify-content: center;

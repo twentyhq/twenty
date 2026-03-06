@@ -1,37 +1,42 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { useContext } from 'react';
 import { CardContent } from 'twenty-ui/layout';
 import { type IconComponent } from 'twenty-ui/display';
 import { Radio } from 'twenty-ui/input';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledRadioCardContent = styled(CardContent)`
-  display: flex;
-  align-items: center;
-  padding: ${({ theme }) => theme.spacing(2)};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  flex-grow: 1;
-  gap: ${({ theme }) => theme.spacing(2)};
-  cursor: pointer;
+const StyledRadioCardContentContainer = styled.div`
+  > * {
+    display: flex;
+    align-items: center;
+    padding: ${themeCssVariables.spacing[2]};
+    border: 1px solid ${themeCssVariables.border.color.medium};
+    border-radius: ${themeCssVariables.border.radius.sm};
+    flex-grow: 1;
+    gap: ${themeCssVariables.spacing[2]};
+    cursor: pointer;
 
-  &:hover {
-    background: ${({ theme }) => theme.background.transparent.lighter};
+    &:hover {
+      background: ${themeCssVariables.background.transparent.lighter};
+    }
   }
 `;
 
-const StyledRadio = styled(Radio)`
+const StyledRadioContainer = styled.span`
+  align-items: center;
+  display: flex;
   margin-left: auto;
-  padding: ${({ theme }) => theme.spacing(1)};
+  padding: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledTitle = styled.div`
-  color: ${({ theme }) => theme.font.color.secondary};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
+  color: ${themeCssVariables.font.color.secondary};
+  font-weight: ${themeCssVariables.font.weight.medium};
 `;
 
 const StyledDescription = styled.div`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-size: ${({ theme }) => theme.font.size.sm};
+  color: ${themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.sm};
 `;
 
 type SettingsRadioCardProps = {
@@ -53,18 +58,21 @@ export const SettingsRadioCard = ({
   isSelected,
   Icon,
 }: SettingsRadioCardProps) => {
-  const theme = useTheme();
-
+  const { theme } = useContext(ThemeContext);
   const onClick = () => handleSelect(value);
 
   return (
-    <StyledRadioCardContent tabIndex={0} onClick={onClick}>
-      {Icon && <Icon size={theme.icon.size.xl} color={theme.color.gray10} />}
-      <span>
-        {title && <StyledTitle>{title}</StyledTitle>}
-        {description && <StyledDescription>{description}</StyledDescription>}
-      </span>
-      <StyledRadio value={value} checked={isSelected} />
-    </StyledRadioCardContent>
+    <StyledRadioCardContentContainer>
+      <CardContent tabIndex={0} onClick={onClick}>
+        {Icon && <Icon size={theme.icon.size.xl} color={theme.color.gray10} />}
+        <span>
+          {title && <StyledTitle>{title}</StyledTitle>}
+          {description && <StyledDescription>{description}</StyledDescription>}
+        </span>
+        <StyledRadioContainer>
+          <Radio value={value} checked={isSelected} />
+        </StyledRadioContainer>
+      </CardContent>
+    </StyledRadioCardContentContainer>
   );
 };

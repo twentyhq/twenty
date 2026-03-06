@@ -5,25 +5,26 @@ import { NavigationDrawerSectionTitleSkeletonLoader } from '@/ui/navigation/navi
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import React from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Label } from 'twenty-ui/display';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledTitle = styled.div`
   align-items: center;
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+  border-radius: ${themeCssVariables.border.radius.sm};
   display: flex;
-  height: ${({ theme }) => theme.spacing(5)};
-  padding-left: ${({ theme }) => theme.spacing(1)};
-  padding-right: ${({ theme }) => theme.spacing(0.5)};
-  padding-top: ${({ theme }) => theme.spacing(1)};
-  padding-bottom: ${({ theme }) => theme.spacing(1)};
+  height: ${themeCssVariables.spacing[5]};
+  padding-left: ${themeCssVariables.spacing[1]};
+  padding-right: ${themeCssVariables.spacing['0.5']};
+  padding-top: ${themeCssVariables.spacing[1]};
+  padding-bottom: ${themeCssVariables.spacing[1]};
   justify-content: space-between;
 
   &:hover {
     cursor: pointer;
-    background-color: ${({ theme }) => theme.background.transparent.light};
+    background-color: ${themeCssVariables.background.transparent.light};
   }
 `;
 
@@ -82,7 +83,7 @@ export const NavigationDrawerSectionTitle = ({
       <StyledLabelContainer onClick={handleTitleClick}>
         <Label>{label}</Label>
       </StyledLabelContainer>
-      {rightIcon && (
+      {isDefined(rightIcon) && (
         <StyledRightIcon
           isMobile={isMobile}
           $alwaysVisible={alwaysShowRightIcon}

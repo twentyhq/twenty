@@ -7,7 +7,7 @@ import { type IteratorOutputSchema } from '@/workflow/workflow-variables/types/I
 
 export const isIteratorOutputSchema = (
   stepType: WorkflowActionType | WorkflowTriggerType,
-  schema: OutputSchemaV2,
-): schema is IteratorOutputSchema => {
+  _schema: OutputSchemaV2,
+): _schema is IteratorOutputSchema => {
   return stepType === 'ITERATOR';
 };

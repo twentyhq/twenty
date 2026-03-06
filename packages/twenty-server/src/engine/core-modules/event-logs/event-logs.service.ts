@@ -23,7 +23,7 @@ import { EventLogQueryInput } from './dtos/event-log-query.input';
 import {
   EventLogQueryResult,
   EventLogRecord,
-} from './dtos/event-log-result.output';
+} from './dtos/event-log-result.dto';
 
 type ClickHouseEventRecord = {
   event?: string;

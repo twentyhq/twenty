@@ -1,5 +1,5 @@
 import { ApolloError } from '@apollo/client';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useParams } from 'react-router-dom';
 import { useDebouncedCallback } from 'use-debounce';
 
@@ -24,6 +24,7 @@ import {
   IconSettings,
 } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   type CreateAgentInput,
   useCreateOneAgentMutation,
@@ -49,12 +50,12 @@ const StyledContentContainer = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(8)};
+  gap: ${themeCssVariables.spacing[8]};
   width: 100%;
 `;
 
-const StyledTabList = styled(TabList)`
-  margin-bottom: ${({ theme }) => theme.spacing(8)};
+const StyledTabListContainer = styled.div`
+  margin-bottom: ${themeCssVariables.spacing[8]};
 `;
 
 export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
@@ -105,7 +106,7 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
           isCustom: agent.isCustom,
           modelConfiguration: agent.modelConfiguration || {},
           responseFormat: agent.responseFormat || { type: 'text', schema: {} },
-          evaluationInputs: agent.evaluationInputs || [],
+          evaluationInputs: agent.evaluationInputs ?? [],
         };
         resetForm(initialValues);
         setOriginalFormValues(initialValues);
@@ -416,11 +417,13 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
               <SettingsAgentDetailSkeletonLoader />
             ) : (
               <>
-                <StyledTabList
-                  tabs={tabs}
-                  className="tab-list"
-                  componentInstanceId={tabListComponentId}
-                />
+                <StyledTabListContainer>
+                  <TabList
+                    tabs={tabs}
+                    className="tab-list"
+                    componentInstanceId={tabListComponentId}
+                  />
+                </StyledTabListContainer>
                 <StyledContentContainer>
                   {isRoleTab && (
                     <SettingsAgentRoleTab

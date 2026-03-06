@@ -1,5 +1,4 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { CurrencyCode } from 'twenty-shared/constants';
@@ -7,30 +6,31 @@ import { CurrencyCode } from 'twenty-shared/constants';
 import { CURRENCIES } from '@/settings/data-model/constants/Currencies';
 import { type Currency } from '@/ui/input/components/internal/types/Currency';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { useContext } from 'react';
 import { IconChevronDown } from 'twenty-ui/display';
 import { CurrencyPickerDropdownSelect } from './CurrencyPickerDropdownSelect';
-
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 const StyledDropdownButtonContainer = styled.div`
   align-items: center;
   color: ${({ color }) => color ?? 'none'};
   cursor: pointer;
   display: flex;
-  border-right: ${({ theme }) => `1px solid ${theme.border.color.medium}`};
+  border-right: 1px solid ${themeCssVariables.border.color.medium};
   height: 32px;
-  padding-left: ${({ theme }) => theme.spacing(2)};
-  padding-right: ${({ theme }) => theme.spacing(2)};
+  padding-left: ${themeCssVariables.spacing[2]};
+  padding-right: ${themeCssVariables.spacing[2]};
   user-select: none;
   &:hover {
-    background-color: ${({ theme }) => theme.background.transparent.light};
+    background-color: ${themeCssVariables.background.transparent.light};
   }
 `;
 
 const StyledIconContainer = styled.div`
   align-items: center;
-  color: ${({ theme }) => theme.font.color.tertiary};
+  color: ${themeCssVariables.font.color.tertiary};
   display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
+  gap: ${themeCssVariables.spacing[1]};
+  font-weight: ${themeCssVariables.font.weight.medium};
   justify-content: center;
 
   svg {
@@ -48,8 +48,7 @@ export const CurrencyPickerDropdownButton = ({
   selectedCurrencyCode: string;
   onChange: (currency: Currency) => void;
 }) => {
-  const theme = useTheme();
-
+  const { theme } = useContext(ThemeContext);
   const dropdownId = 'currency-picker-dropdown-id';
 
   const { closeDropdown } = useCloseDropdown();

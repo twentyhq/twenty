@@ -24,11 +24,15 @@ export const copyYarnEngineAndBuildDependencies = async (
   const { NODE_OPTIONS: _nodeOptions, ...cleanEnv } = process.env;
 
   try {
-    await execFilePromise(process.execPath, [localYarnPath], {
-      cwd: buildDirectory,
-      env: cleanEnv,
-    });
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await execFilePromise(
+      process.execPath,
+      [localYarnPath, 'workspaces', 'focus', '--all', '--production'],
+      {
+        cwd: buildDirectory,
+        env: cleanEnv,
+      },
+    );
+    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
   } catch (error: any) {
     const errorMessage =
       [error?.stdout, error?.stderr].filter(Boolean).join('\n') ||

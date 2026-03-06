@@ -1,6 +1,7 @@
 import { type DropResult } from '@hello-pangea/dnd';
 import { useStore } from 'jotai';
 import { useCallback, useContext } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 import { processGroupDrop } from '@/object-record/record-drag/utils/processGroupDrop';
 
@@ -22,7 +23,7 @@ export const useProcessBoardCardDrop = () => {
 
   const processBoardCardDrop = useCallback(
     (boardCardDropResult: DropResult, selectedRecordIds: string[]) => {
-      if (!selectFieldMetadataItem) return;
+      if (!isDefined(selectFieldMetadataItem)) return;
 
       processGroupDrop({
         groupDropResult: boardCardDropResult,

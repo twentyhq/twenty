@@ -6,11 +6,12 @@ import {
   StyledSettingsCardTitle,
 } from '@/settings/components/SettingsOptions/SettingsCardContentBase';
 import { SettingsOptionIconCustomizer } from '@/settings/components/SettingsOptions/SettingsOptionIconCustomizer';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import {
   type IconComponent,
   OverflowingTextWithTooltip,
 } from 'twenty-ui/display';
+import { isDefined } from 'twenty-shared/utils';
 
 type SettingsOptionCardContentButtonProps = {
   Icon?: IconComponent;
@@ -47,7 +48,7 @@ export const SettingsOptionCardContentButton = ({
           </StyledSettingsCardDescription>
         )}
       </StyledSettingsCardTextContainer>
-      {Button && <StyledButtonContainer>{Button}</StyledButtonContainer>}
+      {isDefined(Button) && <StyledButtonContainer>{Button}</StyledButtonContainer>}
     </StyledSettingsCardContent>
   );
 };

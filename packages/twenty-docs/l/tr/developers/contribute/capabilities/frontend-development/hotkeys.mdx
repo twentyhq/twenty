@@ -160,7 +160,7 @@ export enum PageHotkeyScope {
 }
 ```
 
-Internally, the currently selected scope is stored in a Jotai atom that is shared across the application :
+Dahili olarak, şu anda seçili olan kapsam, uygulama genelinde paylaşılan bir Jotai atomunda saklanır:
 
 ```tsx
 export const currentHotkeyScopeState = createState<HotkeyScope>({
@@ -169,10 +169,10 @@ export const currentHotkeyScopeState = createState<HotkeyScope>({
 });
 ```
 
-But this atom should never be handled manually ! Bunu bir sonraki bölümde nasıl kullanacağımızı göreceğiz.
+Ancak bu atom asla el ile yönetilmemelidir! Bunu bir sonraki bölümde nasıl kullanacağımızı göreceğiz.
 
 ## İçsel olarak nasıl çalışıyor?
 
 Gereksiz yeniden render etme işlemlerinden kaçınarak daha performanslı hale getiren [react-hotkeys-hook](https://react-hotkeys-hook.vercel.app/docs/intro) üzerine ince bir sarmalayıcı yaptık.
 
-We also create a Jotai atom to handle the hotkey scope state and make it available everywhere in the application.
+Ayrıca, kısayol kapsamı durumunu yönetmek ve uygulamanın her yerinde kullanılabilir hale getirmek için bir Jotai atomu oluşturuyoruz.

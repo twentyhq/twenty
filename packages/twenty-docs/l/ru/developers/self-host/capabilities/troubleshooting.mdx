@@ -54,21 +54,18 @@ git config --global core.autocrlf false
 
 #### Lint on Save не работает
 
-Это должно работать из коробки с установленным расширением eslint. Если это не работает, попробуйте добавить это в настройки vscode (на уровне контейнера разработчика):
+Это должно работать из коробки с установленным расширением Oxc (`oxc.oxc-vscode`). Если это не работает, попробуйте добавить это в настройки vscode (на уровне контейнера разработчика):
 
 ```
 "editor.codeActionsOnSave": {
 
-  "source.fixAll.eslint": "explicit"
+  "source.fixAll.oxc": "explicit"
 
 }
 ```
 
 #### При запуске `npx nx start` или `npx nx start twenty-front` возникает ошибка нехватки памяти
 
-В `packages/twenty-front/.env` раскомментируйте `VITE_DISABLE_TYPESCRIPT_CHECKER=true` и `VITE_DISABLE_ESLINT_CHECKER=true`, чтобы отключить фоновые проверки, таким образом уменьшая количество необходимой оперативной памяти.
-
-**Если это не работает:**
 Запускайте только те сервисы, которые вам нужны, вместо `npx nx start`. Например, если вы работаете на сервере, запускайте только `npx nx worker twenty-server`
 
 **Если это не работает:**
@@ -146,7 +143,7 @@ npx nx worker twenty-server
 
 ```
 plugins: [
-      react({ jsxImportSource: '@emotion/react' }),
+      react({ jsxImportSource: 'react' }),
       tsconfigPaths(),
       svgr(),
       dts(dtsConfig),

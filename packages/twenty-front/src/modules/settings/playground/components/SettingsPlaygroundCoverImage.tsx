@@ -1,22 +1,44 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { type ReactNode, useContext } from 'react';
 
 import DarkCoverImage from '@/settings/playground/assets/cover-dark.png';
 import LightCoverImage from '@/settings/playground/assets/cover-light.png';
-import { Card } from 'twenty-ui/layout';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
-export const StyledSettingsApiPlaygroundCoverImage = styled(Card)`
+const StyledCoverContainer = styled.div`
   align-items: center;
-  background-image: ${({ theme }) =>
-    theme.name === 'light'
-      ? `url('${LightCoverImage.toString()}')`
-      : `url('${DarkCoverImage.toString()}')`};
   background-size: cover;
-  border-radius: ${({ theme }) => theme.border.radius.md};
+  border-radius: ${themeCssVariables.border.radius.md};
   box-sizing: border-box;
   display: flex;
   height: 153px;
   justify-content: center;
   position: relative;
-  margin-top: ${({ theme }) => theme.spacing(4)};
-  margin-bottom: ${({ theme }) => theme.spacing(4)};
+  margin-top: ${themeCssVariables.spacing[4]};
+  margin-bottom: ${themeCssVariables.spacing[4]};
 `;
+
+type StyledSettingsApiPlaygroundCoverImageProps = {
+  children?: ReactNode;
+  className?: string;
+};
+
+export const StyledSettingsApiPlaygroundCoverImage = ({
+  children,
+  className,
+}: StyledSettingsApiPlaygroundCoverImageProps) => {
+  const { colorScheme } = useContext(ThemeContext);
+
+  const coverImage =
+    colorScheme === 'light'
+      ? LightCoverImage.toString()
+      : DarkCoverImage.toString();
+  return (
+    <StyledCoverContainer
+      className={className}
+      style={{ backgroundImage: `url('${coverImage}')` }}
+    >
+      {children}
+    </StyledCoverContainer>
+  );
+};

@@ -11,16 +11,16 @@ import { NodeDimensionEffect } from '@/ui/utilities/dimensions/components/NodeDi
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useRef, useState } from 'react';
+import { useContext, useRef, useState } from 'react';
 import {
   IconChevronLeft,
   IconChevronRight,
   OverflowingTextWithTooltip,
 } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 export type GraphWidgetLegendItem = {
   id: string;
@@ -42,26 +42,28 @@ const StyledAnimationClipContainer = styled.div`
   position: relative;
 `;
 
-const StyledLegendMotionWrapper = styled(motion.div)`
+const StyledLegendMotionWrapperBase = styled.div`
   width: 100%;
 `;
+const StyledLegendMotionWrapper = motion.create(StyledLegendMotionWrapperBase);
 
-const StyledItemsWrapper = styled(motion.div)<{ centered?: boolean }>`
+const StyledItemsWrapperBase = styled.div<{ centered?: boolean }>`
   display: flex;
-  gap: ${({ theme }) => theme.spacing(3)};
+  gap: ${themeCssVariables.spacing[3]};
   flex-wrap: nowrap;
   flex: 1;
   min-width: 0;
   justify-content: ${({ centered }) => (centered ? 'center' : 'flex-start')};
 `;
+const StyledItemsWrapper = motion.create(StyledItemsWrapperBase);
 
 const StyledLegendContainer = styled.div<{ needsPagination: boolean }>`
   display: flex;
   flex-wrap: nowrap;
-  gap: ${({ theme }) => theme.spacing(3)};
+  gap: ${themeCssVariables.spacing[3]};
   justify-content: ${({ needsPagination }) =>
     needsPagination ? 'flex-start' : 'center'};
-  padding-top: ${({ theme }) => theme.spacing(3)};
+  padding-top: ${themeCssVariables.spacing[3]};
   overflow: hidden;
   width: 100%;
   align-items: center;
@@ -75,9 +77,9 @@ const StyledLegendItem = styled.div<{
   align-items: center;
   cursor: ${({ isInteractive }) => (isInteractive ? 'pointer' : 'default')};
   display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
-  font-size: ${({ theme }) => theme.font.size.xs};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
+  gap: ${themeCssVariables.spacing[1]};
+  font-size: ${themeCssVariables.font.size.xs};
+  font-weight: ${themeCssVariables.font.weight.semiBold};
   flex-shrink: ${({ canShrink }) => (canShrink ? 1 : 0)};
   min-width: 0;
 `;
@@ -86,8 +88,9 @@ const StyledLegendLabel = styled.div<{
   fixedWidth?: boolean;
   isHidden?: boolean;
 }>`
-  color: ${({ theme }) => theme.font.color.secondary};
-  ${({ fixedWidth }) => fixedWidth && `width: ${LEGEND_LABEL_MAX_WIDTH}px;`}
+  color: ${themeCssVariables.font.color.secondary};
+  width: ${({ fixedWidth }) =>
+    fixedWidth ? `${LEGEND_LABEL_MAX_WIDTH}px` : 'auto'};
   overflow: hidden;
   text-decoration: ${({ isHidden }) => (isHidden ? 'line-through' : 'none')};
   opacity: ${({ isHidden }) =>
@@ -98,7 +101,8 @@ const StyledLegendLabel = styled.div<{
   }
 `;
 
-const StyledLegendDot = styled(GraphWidgetLegendDot)<{ isHidden?: boolean }>`
+const StyledLegendDotWrapper = styled.div<{ isHidden?: boolean }>`
+  display: flex;
   opacity: ${({ isHidden }) =>
     isHidden ? LEGEND_HIGHLIGHT_DIMMED_OPACITY : 1};
 `;
@@ -108,12 +112,12 @@ const StyledPaginationContainer = styled.div`
   display: flex;
   flex-direction: row;
   flex-shrink: 0;
-  gap: ${({ theme }) => theme.spacing(0.5)};
+  gap: ${themeCssVariables.spacing[0.5]};
 `;
 
 const StyledPaginationIndicator = styled.span`
-  color: ${({ theme }) => theme.font.color.light};
-  font-size: ${({ theme }) => theme.font.size.xs};
+  color: ${themeCssVariables.font.color.light};
+  font-size: ${themeCssVariables.font.size.xs};
 `;
 
 const legendEnterExitVariants = {
@@ -135,6 +139,8 @@ export const GraphWidgetLegend = ({
   items,
   show = true,
 }: GraphWidgetLegendProps) => {
+  const { theme } = useContext(ThemeContext);
+
   const containerRef = useRef<HTMLDivElement>(null);
 
   const [currentPage, setCurrentPage] = useState(0);
@@ -143,8 +149,6 @@ export const GraphWidgetLegend = ({
 
   const [animationDirection, setAnimationDirection] =
     useState<AnimationDirection>('forward');
-
-  const theme = useTheme();
 
   const isPageLayoutInEditMode = useAtomComponentStateValue(
     isPageLayoutInEditModeComponentState,
@@ -314,10 +318,9 @@ export const GraphWidgetLegend = ({
                         onMouseEnter={() => handleLegendItemMouseEnter(item.id)}
                         onMouseLeave={handleLegendItemMouseLeave}
                       >
-                        <StyledLegendDot
-                          color={item.color}
-                          isHidden={isHidden}
-                        />
+                        <StyledLegendDotWrapper isHidden={isHidden}>
+                          <GraphWidgetLegendDot color={item.color} />
+                        </StyledLegendDotWrapper>
                         <StyledLegendLabel
                           fixedWidth={needsPagination}
                           isHidden={isHidden}

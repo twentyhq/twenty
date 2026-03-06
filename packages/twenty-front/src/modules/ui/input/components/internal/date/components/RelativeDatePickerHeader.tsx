@@ -5,21 +5,24 @@ import { RELATIVE_DATETIME_UNITS_SELECT_OPTIONS } from '@/ui/input/components/in
 import { RELATIVE_DATE_UNITS_SELECT_OPTIONS } from '@/ui/input/components/internal/date/constants/RelativeDateUnitSelectOptions';
 
 import { t } from '@lingui/core/macro';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useState } from 'react';
 import { type Nullable } from 'twenty-shared/types';
 import {
+  isDefined,
   relativeDateFilterSchema,
   type RelativeDateFilter,
   type RelativeDateFilterDirection,
   type RelativeDateFilterUnit,
 } from 'twenty-shared/utils';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div<{ noPadding: boolean }>`
   display: flex;
   align-items: center;
-  gap: ${({ theme }) => theme.spacing(1)};
-  padding: ${({ theme, noPadding }) => (noPadding ? '0' : theme.spacing(2))};
+  gap: ${themeCssVariables.spacing[1]};
+  padding: ${({ noPadding }) =>
+    noPadding ? '0' : themeCssVariables.spacing[2]};
   padding-bottom: 0;
 `;
 
@@ -53,7 +56,7 @@ export const RelativeDatePickerHeader = ({
 
   const [draftAmountValue, setDraftAmountValue] = useState(amountTextValue);
 
-  const isUnitPlural = amount && amount > 1 && direction !== 'THIS';
+  const isUnitPlural = isDefined(amount) && amount > 1 && direction !== 'THIS';
   const unitOptionsSource = allowIntraDayUnits
     ? RELATIVE_DATETIME_UNITS_SELECT_OPTIONS
     : RELATIVE_DATE_UNITS_SELECT_OPTIONS;

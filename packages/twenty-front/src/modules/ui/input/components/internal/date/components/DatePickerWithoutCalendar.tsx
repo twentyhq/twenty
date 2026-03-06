@@ -1,5 +1,5 @@
-import styled from '@emotion/styled';
-import { lazy, Suspense, type ComponentType } from 'react';
+import { styled } from '@linaria/react';
+import { Suspense, lazy, useContext, type ComponentType } from 'react';
 import type { ReactDatePickerProps as ReactDatePickerLibProps } from 'react-datepicker';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 
@@ -10,13 +10,13 @@ import { CalendarStartDay } from 'twenty-shared/constants';
 import { detectCalendarStartDay } from '@/localization/utils/detection/detectCalendarStartDay';
 import { DatePickerHeader } from '@/ui/input/components/internal/date/components/DatePickerHeader';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { useTheme } from '@emotion/react';
 import 'react-datepicker/dist/react-datepicker.css';
 
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { Temporal } from 'temporal-polyfill';
 import { type Nullable } from 'twenty-shared/types';
 import { isDefined, turnJSDateToPlainDate } from 'twenty-shared/utils';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 export const MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID =
   'date-picker-month-and-year-dropdown-month-select';
@@ -33,13 +33,13 @@ const StyledContainer = styled.div<{
   width: ${DATE_PICKER_CONTAINER_WIDTH}px;
 
   & .react-datepicker {
-    border-color: ${({ theme }) => theme.border.color.light};
+    border-color: ${themeCssVariables.border.color.light};
     background: transparent;
     font-family: 'Inter';
-    font-size: ${({ theme }) => theme.font.size.md};
+    font-size: ${themeCssVariables.font.size.md};
     border: none;
     display: block;
-    font-weight: ${({ theme }) => theme.font.weight.regular};
+    font-weight: ${themeCssVariables.font.weight.regular};
   }
 
   & .react-datepicker-popper {
@@ -82,20 +82,20 @@ const StyledContainer = styled.div<{
 
   & .react-datepicker__header__dropdown {
     display: flex;
-    color: ${({ theme }) => theme.font.color.primary};
-    margin-left: ${({ theme }) => theme.spacing(1)};
-    margin-bottom: ${({ theme }) => theme.spacing(10)};
+    color: ${themeCssVariables.font.color.primary};
+    margin-left: ${themeCssVariables.spacing[1]};
+    margin-bottom: ${themeCssVariables.spacing[10]};
   }
 
   & .react-datepicker__month-dropdown-container,
   & .react-datepicker__year-dropdown-container {
     text-align: left;
-    border-radius: ${({ theme }) => theme.border.radius.sm};
-    margin-left: ${({ theme }) => theme.spacing(1)};
+    border-radius: ${themeCssVariables.border.radius.sm};
+    margin-left: ${themeCssVariables.spacing[1]};
     margin-right: 0;
-    padding: ${({ theme }) => theme.spacing(2)};
-    padding-right: ${({ theme }) => theme.spacing(4)};
-    background-color: ${({ theme }) => theme.background.tertiary};
+    padding: ${themeCssVariables.spacing[2]};
+    padding-right: ${themeCssVariables.spacing[4]};
+    background-color: ${themeCssVariables.background.tertiary};
   }
 
   & .react-datepicker__month-read-view--down-arrow,
@@ -103,14 +103,14 @@ const StyledContainer = styled.div<{
     height: 5px;
     width: 5px;
     border-width: 1px 1px 0 0;
-    border-color: ${({ theme }) => theme.border.color.light};
+    border-color: ${themeCssVariables.border.color.light};
     top: 3px;
     right: -6px;
   }
 
   & .react-datepicker__year-read-view,
   & .react-datepicker__month-read-view {
-    padding-right: ${({ theme }) => theme.spacing(2)};
+    padding-right: ${themeCssVariables.spacing[2]};
   }
 
   & .react-datepicker__month-dropdown-container {
@@ -124,15 +124,15 @@ const StyledContainer = styled.div<{
   & .react-datepicker__month-dropdown,
   & .react-datepicker__year-dropdown {
     overflow-y: scroll;
-    top: ${({ theme }) => theme.spacing(2)};
+    top: ${themeCssVariables.spacing[2]};
   }
   & .react-datepicker__month-dropdown {
-    left: ${({ theme }) => theme.spacing(2)};
+    left: ${themeCssVariables.spacing[2]};
     height: 260px;
   }
 
   & .react-datepicker__year-dropdown {
-    left: calc(${({ theme }) => theme.spacing(9)} + 80px);
+    left: calc(${themeCssVariables.spacing[9]} + 80px);
     width: 100px;
     height: 260px;
   }
@@ -149,16 +149,16 @@ const StyledContainer = styled.div<{
   & .react-datepicker__year-option,
   & .react-datepicker__month-option {
     text-align: left;
-    padding: ${({ theme }) => theme.spacing(2)}
-      calc(${({ theme }) => theme.spacing(2)} - 2px);
-    width: calc(100% - ${({ theme }) => theme.spacing(4)});
-    border-radius: ${({ theme }) => theme.border.radius.xs};
-    color: ${({ theme }) => theme.font.color.secondary};
+    padding: ${themeCssVariables.spacing[2]}
+      calc(${themeCssVariables.spacing[2]} - 2px);
+    width: calc(100% - ${themeCssVariables.spacing[4]});
+    border-radius: ${themeCssVariables.border.radius.xs};
+    color: ${themeCssVariables.font.color.secondary};
     cursor: pointer;
     margin: 2px;
 
     &:hover {
-      background: ${({ theme }) => theme.background.transparent.light};
+      background: ${themeCssVariables.background.transparent.light};
     }
   }
 
@@ -174,7 +174,7 @@ const StyledContainer = styled.div<{
   }
 
   & .react-datepicker__day-name {
-    color: ${({ theme }) => theme.font.color.secondary};
+    color: ${themeCssVariables.font.color.secondary};
     width: 34px;
     height: 40px;
     line-height: 40px;
@@ -211,10 +211,10 @@ const StyledContainer = styled.div<{
   & .react-datepicker__navigation--previous,
   & .react-datepicker__navigation--next {
     height: 34px;
-    border-radius: ${({ theme }) => theme.border.radius.sm};
+    border-radius: ${themeCssVariables.border.radius.sm};
     padding-top: 6px;
     &:hover {
-      background: ${({ theme }) => theme.background.transparent.light};
+      background: ${themeCssVariables.background.transparent.light};
     }
   }
   & .react-datepicker__navigation--previous {
@@ -240,7 +240,7 @@ const StyledContainer = styled.div<{
     height: 7px;
     width: 7px;
     border-width: 1px 1px 0 0;
-    border-color: ${({ theme }) => theme.font.color.tertiary};
+    border-color: ${themeCssVariables.font.color.tertiary};
   }
 
   & .react-datepicker__day--keyboard-selected {
@@ -249,47 +249,47 @@ const StyledContainer = styled.div<{
 
   & .react-datepicker__day,
   .react-datepicker__time-name {
-    color: ${({ theme }) => theme.font.color.primary};
+    color: ${themeCssVariables.font.color.primary};
   }
 
   & .react-datepicker__day--selected {
-    background-color: ${({ theme }) => theme.color.blue};
-    color: ${({ theme }) => theme.background.primary};
+    background-color: ${themeCssVariables.color.blue};
+    color: ${themeCssVariables.background.primary};
 
     &.react-datepicker__day:hover {
-      color: ${({ theme }) => theme.background.primary};
+      color: ${themeCssVariables.background.primary};
     }
   }
 
   & .react-datepicker__day--outside-month {
-    color: ${({ theme }) => theme.font.color.tertiary};
+    color: ${themeCssVariables.font.color.tertiary};
   }
 
   & .react-datepicker__day:hover {
-    color: ${({ theme }) => theme.font.color.tertiary};
+    color: ${themeCssVariables.font.color.tertiary};
   }
 
   & .clearable {
-    border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+    border-bottom: 1px solid ${themeCssVariables.border.color.light};
   }
 `;
 
 const StyledSpacer = styled.div`
-  height: ${({ theme }) => theme.spacing(2)};
+  height: ${themeCssVariables.spacing[2]};
   width: auto;
 `;
 
 const StyledDatePickerFallback = styled.div`
   align-items: center;
-  background: ${({ theme }) => theme.background.secondary};
-  border-radius: ${({ theme }) => theme.border.radius.md};
-  color: ${({ theme }) => theme.font.color.tertiary};
+  background: ${themeCssVariables.background.secondary};
+  border-radius: ${themeCssVariables.border.radius.md};
+  color: ${themeCssVariables.font.color.tertiary};
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
   height: 300px;
   justify-content: center;
-  padding: ${({ theme }) => theme.spacing(4)};
+  padding: ${themeCssVariables.spacing[4]};
   width: 280px;
 `;
 
@@ -322,9 +322,8 @@ export const DatePickerWithoutCalendar = ({
   onChange,
   onClose,
 }: DatePickerWithoutCalendarProps) => {
+  const { theme } = useContext(ThemeContext);
   const plainDate = isDefined(date) ? Temporal.PlainDate.from(date) : null;
-
-  const theme = useTheme();
 
   const { closeDropdown: closeDropdownMonthSelect } = useCloseDropdown();
   const { closeDropdown: closeDropdownYearSelect } = useCloseDropdown();

@@ -6,9 +6,9 @@ Dieses Dokument beschreibt die besten Praktiken, die Sie beim Arbeiten am Fronte
 
 ## Zustandsverwaltung
 
-React and Jotai handle state management in the codebase.
+React und Jotai übernehmen die Zustandsverwaltung im Code.
 
-### Use Jotai atoms to store state
+### Verwenden Sie Jotai-Atome, um den Zustand zu speichern
 
 Es ist eine gute Praxis, so viele Atome zu erstellen, wie Sie benötigen, um Ihren Zustand zu speichern.
 
@@ -45,7 +45,7 @@ export const MyComponent = () => {
 
 Vermeiden Sie die Verwendung von `useRef`, um den Zustand zu speichern.
 
-If you want to store state, you should use `useState` or Jotai atoms with `useAtomState`.
+Wenn Sie den Zustand speichern möchten, sollten Sie `useState` oder Jotai-Atome mit `useAtomState` verwenden.
 
 Sehen Sie sich [an, wie Re-Renderings verwaltet werden können](#managing-re-renders), falls Sie das Gefühl haben, dass Sie `useRef` benötigen, um einige Re-Renderings zu verhindern.
 
@@ -82,8 +82,8 @@ If you feel like you need to add a `useEffect` in your root component, you shoul
 Dasselbe können Sie auch für die Datenabruflogik mit Apollo-Hooks anwenden.
 
 ```tsx
-// ❌ Bad, will cause re-renders even if data is not changing,
-//    because useEffect needs to be re-evaluated
+// ❌ Schlecht, verursacht Re-Renders, auch wenn sich die Daten nicht ändern,
+//    weil useEffect neu ausgewertet werden muss
 export const PageComponent = () => {
   const [data, setData] = useAtomState(dataState);
   const [someDependency] = useAtomState(someDependencyState);
@@ -103,8 +103,8 @@ export const App = () => (
 ```
 
 ```tsx
-// ✅ Good, will not cause re-renders if data is not changing,
-//   because useEffect is re-evaluated in another sibling component
+// ✅ Gut, verursacht keine Re-Renders, wenn sich die Daten nicht ändern,
+//   weil useEffect in einer anderen Geschwisterkomponente neu ausgewertet wird
 export const PageComponent = () => {
   const [data, setData] = useAtomState(dataState);
 
@@ -132,9 +132,9 @@ export const App = () => (
 );
 ```
 
-### Use atom family states and selectors
+### Verwenden Sie Atom-Familienzustände und Selektoren
 
-Atom family states and selectors are a great way to avoid re-renders.
+Atom-Familienzustände und Selektoren sind eine großartige Möglichkeit, Re-Renders zu vermeiden.
 
 Sie sind nützlich, wenn Sie eine Liste von Elementen speichern müssen.
 

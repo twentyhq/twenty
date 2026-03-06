@@ -1,6 +1,7 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { useContext } from 'react';
 import { SkeletonTheme } from 'react-loading-skeleton';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { RecordCardBodyContainer } from '@/object-record/record-card/components/RecordCardBodyContainer';
@@ -11,32 +12,31 @@ import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 
 const StyledSkeletonIconAndText = styled.div`
   display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledSkeletonTitle = styled.div`
-  padding-left: ${({ theme }) => theme.spacing(1)};
+  padding-left: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledBodyContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(0.5)};
+  gap: ${themeCssVariables.spacing['0.5']};
   padding-top: 4px;
   padding-bottom: 4px;
 `;
 
 const StyledStaticCellSkeleton = styled.div<{ width: number; height: number }>`
-  background-color: ${({ theme }) => theme.background.tertiary};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+  background-color: ${themeCssVariables.background.tertiary};
+  border-radius: ${themeCssVariables.border.radius.sm};
 
   width: ${({ width }) => width}px;
   height: ${({ height }) => height}px;
 `;
 
 export const RecordBoardColumnCardContainerSkeletonLoader = () => {
-  const theme = useTheme();
-
+  const { theme } = useContext(ThemeContext);
   const { currentView } = useGetCurrentViewOnly();
 
   const isCompactModeActive = currentView?.isCompact ?? false;

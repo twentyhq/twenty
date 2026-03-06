@@ -1,7 +1,7 @@
 import gql from 'graphql-tag';
 import { type PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
 
-import { type UpdateRolePayload } from 'src/engine/metadata-modules/role/dtos/update-role-input.dto';
+import { type UpdateRolePayload } from 'src/engine/metadata-modules/role/dtos/update-role.input';
 
 export type UpdateOneRoleFactoryInput = {
   idToUpdate: string;

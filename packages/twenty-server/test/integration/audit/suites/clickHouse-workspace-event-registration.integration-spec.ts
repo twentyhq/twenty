@@ -1,6 +1,10 @@
 import process from 'process';
 
-import { type ClickHouseClient, createClient } from '@clickhouse/client';
+import {
+  type ClickHouseClient,
+  ClickHouseLogLevel,
+  createClient,
+} from '@clickhouse/client';
 import request from 'supertest';
 
 import { CUSTOM_DOMAIN_ACTIVATED_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/custom-domain/custom-domain-activated';
@@ -14,6 +18,7 @@ describe('ClickHouse Event Registration (integration)', () => {
 
     clickHouseClient = createClient({
       url: process.env.CLICKHOUSE_URL,
+      log: { level: ClickHouseLogLevel.OFF },
     });
 
     await clickHouseClient.query({
