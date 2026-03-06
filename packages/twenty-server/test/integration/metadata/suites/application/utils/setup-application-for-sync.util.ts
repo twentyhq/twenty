@@ -2,7 +2,7 @@ import crypto from 'crypto';
 
 import { uploadApplicationFile } from 'test/integration/metadata/suites/application/utils/upload-application-file.util';
 
-const TEST_WORKSPACE_ID = '20202020-1c25-4d02-bf25-6aeccf7ea419';
+const TEST_WORKSPACE_ID = '20202020-1c25-4d02-bf25-6aeccf7ea419' as const;
 
 export const setupApplicationForSync = async ({
   applicationUniversalIdentifier,
