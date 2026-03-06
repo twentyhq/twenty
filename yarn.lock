@@ -55968,6 +55968,7 @@ __metadata:
     express: "npm:4.22.1"
     express-session: "npm:^1.18.2"
     file-type: "npm:16.5.4"
+    fuse.js: "npm:^7.1.0"
     gaxios: "npm:5.1.3"
     google-auth-library: "npm:8.9.0"
     googleapis: "npm:105.0.0"
