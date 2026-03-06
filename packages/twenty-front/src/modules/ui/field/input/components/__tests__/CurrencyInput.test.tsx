@@ -72,7 +72,7 @@ describe('CurrencyInput', () => {
         onClickOutside={commonProps.onClickOutside}
       />,
     );
-
+    expect(IMaskInput).toHaveBeenCalledTimes(1);
     const firstCallArgs = (IMaskInput as jest.Mock).mock.calls[0][0];
 
     expect(firstCallArgs.thousandsSeparator).toBe(',');
@@ -97,7 +97,7 @@ describe('CurrencyInput', () => {
         onClickOutside={commonProps.onClickOutside}
       />,
     );
-
+    expect(IMaskInput).toHaveBeenCalledTimes(1);
     const firstCallArgs = (IMaskInput as jest.Mock).mock.calls[0][0];
 
     expect(firstCallArgs.thousandsSeparator).toBe('.');
@@ -122,7 +122,7 @@ describe('CurrencyInput', () => {
         onClickOutside={commonProps.onClickOutside}
       />,
     );
-
+    expect(IMaskInput).toHaveBeenCalledTimes(1);
     const firstCallArgs = (IMaskInput as jest.Mock).mock.calls[0][0];
 
     expect(firstCallArgs.thousandsSeparator).toBe("'");
