@@ -8,6 +8,8 @@ import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_LINK } from '@/navigation-menu-item/
 import { getNavigationMenuItemIconStyleFromColor } from '@/navigation-menu-item/utils/get-navigation-menu-item-icon-style-from-color';
 import { getLinkFaviconUrl } from '@/navigation-menu-item/utils/getLinkFaviconUrl';
 
+const failedFaviconUrls = new Set<string>();
+
 const StyledCompositeContainer = styled.div`
   align-items: center;
   border-radius: 4px;
@@ -73,12 +75,12 @@ export const LinkIconWithLinkOverlay = ({
   DefaultIcon,
   color: navItemColor,
 }: LinkIconWithLinkOverlayProps) => {
-  const [failedFaviconLink, setFailedFaviconLink] = useState<string | null>(
-    null,
-  );
+  const [localFailedLink, setLocalFailedLink] = useState<string | null>(null);
   const faviconUrl = getLinkFaviconUrl(link);
+  const linkKey = link ?? '';
+  const isKnownFailed = failedFaviconUrls.has(linkKey);
   const showFavicon =
-    isDefined(faviconUrl) && failedFaviconLink !== (link ?? null);
+    isDefined(faviconUrl) && !isKnownFailed && localFailedLink !== linkKey;
 
   const linkStyle = getNavigationMenuItemIconStyleFromColor(
     navItemColor ?? DEFAULT_NAVIGATION_MENU_ITEM_COLOR_LINK,
@@ -95,7 +97,10 @@ export const LinkIconWithLinkOverlay = ({
           <StyledFaviconImage
             src={faviconUrl}
             alt=""
-            onError={() => setFailedFaviconLink(link ?? null)}
+            onError={() => {
+              if (isDefined(link)) failedFaviconUrls.add(link);
+              setLocalFailedLink(linkKey);
+            }}
           />
         ) : (
           <DefaultIcon
