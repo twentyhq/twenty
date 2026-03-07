@@ -1,18 +1,25 @@
+import { execSync } from 'child_process';
+import path from 'path';
+
 import { buildApplication } from '@/cli/utilities/build/common/build-application';
-import { synchronizeBuiltApplication } from '@/cli/utilities/build/common/synchronize-built-application';
 import { runTypecheck } from '@/cli/utilities/build/common/typecheck-plugin';
 import { buildAndValidateManifest } from '@/cli/utilities/build/manifest/build-and-validate-manifest';
+import { manifestUpdateChecksums } from '@/cli/utilities/build/manifest/manifest-update-checksums';
+import { writeManifestToOutput } from '@/cli/utilities/build/manifest/manifest-writer';
 import { ClientService } from '@/cli/utilities/client/client-service';
 import { runSafe } from '@/cli/utilities/run-safe';
 import { APP_ERROR_CODES, type CommandResult } from './types';
 
 export type AppBuildOptions = {
   appPath: string;
+  tarball?: boolean;
   onProgress?: (message: string) => void;
 };
 
 export type AppBuildResult = {
+  outputDir: string;
   fileCount: number;
+  tarballPath?: string;
 };
 
 const innerAppBuild = async (
@@ -39,33 +46,27 @@ const innerAppBuild = async (
   for (const warning of manifestResult.warnings) {
     onProgress?.(`⚠ ${warning}`);
   }
+
   const clientService = new ClientService();
 
   await clientService.ensureGeneratedClientStub({ appPath });
 
   onProgress?.('Building application files...');
 
-  const firstBuildResult = await buildApplication({
+  const buildResult = await buildApplication({
     appPath,
     manifest,
     filePaths,
   });
 
-  onProgress?.('Syncing application schema...');
+  onProgress?.('Updating manifest checksums...');
 
-  const firstSyncResult = await synchronizeBuiltApplication({
-    appPath,
+  const updatedManifest = manifestUpdateChecksums({
     manifest,
-    builtFileInfos: firstBuildResult.builtFileInfos,
+    builtFileInfos: buildResult.builtFileInfos,
   });
 
-  if (!firstSyncResult.success) {
-    return firstSyncResult;
-  }
-
-  onProgress?.('Generating API client...');
-
-  await clientService.generate({ appPath });
+  await writeManifestToOutput(appPath, updatedManifest);
 
   onProgress?.('Running typecheck...');
 
@@ -86,35 +87,30 @@ const innerAppBuild = async (
     };
   }
 
-  onProgress?.('Rebuilding with generated client...');
+  const outputDir = path.join(appPath, '.twenty', 'output');
 
-  const finalBuildResult = await buildApplication({
-    appPath,
-    manifest,
-    filePaths,
-  });
+  const result: AppBuildResult = {
+    outputDir,
+    fileCount: buildResult.builtFileInfos.size,
+  };
 
-  onProgress?.('Syncing built files...');
+  if (options.tarball) {
+    onProgress?.('Packing tarball...');
 
-  const finalSyncResult = await synchronizeBuiltApplication({
-    appPath,
-    manifest,
-    builtFileInfos: finalBuildResult.builtFileInfos,
-  });
+    const packOutput = execSync('npm pack --pack-destination .', {
+      cwd: outputDir,
+      encoding: 'utf-8',
+    }).trim();
 
-  if (!finalSyncResult.success) {
-    return finalSyncResult;
+    const tarballName = packOutput.split('\n').pop()!;
+
+    result.tarballPath = path.join(outputDir, tarballName);
   }
 
-  return {
-    success: true,
-    data: {
-      fileCount: finalBuildResult.builtFileInfos.size,
-    },
-  };
+  return { success: true, data: result };
 };
 
 export const appBuild = (
   options: AppBuildOptions,
 ): Promise<CommandResult<AppBuildResult>> =>
-  runSafe(() => innerAppBuild(options), APP_ERROR_CODES.SYNC_FAILED);
+  runSafe(() => innerAppBuild(options), APP_ERROR_CODES.BUILD_FAILED);

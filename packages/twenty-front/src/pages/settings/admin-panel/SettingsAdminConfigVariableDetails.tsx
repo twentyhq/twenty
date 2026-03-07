@@ -38,8 +38,8 @@ const StyledH3TitleContainer = styled.div`
 `;
 
 const StyledRow = styled.div`
-  display: flex;
   align-items: flex-end;
+  display: flex;
   gap: ${themeCssVariables.spacing[2]};
 `;
 

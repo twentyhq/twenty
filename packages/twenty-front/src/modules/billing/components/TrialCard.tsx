@@ -14,15 +14,15 @@ const StyledTrialCardContainer = styled.div`
 
 const StyledTrialDurationContainer = styled.div`
   color: ${themeCssVariables.font.color.secondary};
-  font-size: ${themeCssVariables.font.size.md};
   display: flex;
+  font-size: ${themeCssVariables.font.size.md};
   margin-bottom: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledCreditCardRequirementContainer = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
-  font-size: ${themeCssVariables.font.size.md};
   display: flex;
+  font-size: ${themeCssVariables.font.size.md};
 `;
 
 export const TrialCard = ({ duration, withCreditCard }: TrialCardProps) => {

@@ -74,8 +74,8 @@ const StyledDropdownContainer = styled.div`
 `;
 
 const StyledAddButton = styled.div`
-  display: flex;
   align-items: center;
+  display: flex;
   height: ${themeCssVariables.spacing[10]};
   margin-left: ${TAB_LIST_GAP}px;
 `;

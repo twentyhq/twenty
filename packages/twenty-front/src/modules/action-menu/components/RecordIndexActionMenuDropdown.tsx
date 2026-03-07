@@ -23,13 +23,13 @@ import { IconLayoutSidebarRightExpand } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
 
 const StyledDropdownMenuContainer = styled.div`
-  width: 100%;
-  height: 100%;
-
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
   align-items: center;
+  display: flex;
+
+  flex-direction: column;
+  height: 100%;
+  justify-content: center;
+  width: 100%;
 `;
 
 export const RecordIndexActionMenuDropdown = () => {

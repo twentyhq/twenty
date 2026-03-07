@@ -13,9 +13,9 @@ const StyledRowContainer = styled.div`
     font-size: ${themeCssVariables.font.size.sm};
     font-weight: ${themeCssVariables.font.weight.medium};
     gap: ${themeCssVariables.spacing[2]};
+    min-height: ${themeCssVariables.spacing[6]};
     padding: ${themeCssVariables.spacing[2]};
     padding-left: ${themeCssVariables.spacing[3]};
-    min-height: ${themeCssVariables.spacing[6]};
   }
 `;
 
@@ -26,8 +26,8 @@ const StyledRightContainer = styled.div`
 `;
 
 const StyledContent = styled.div`
-  flex: 1 1 0;
   display: flex;
+  flex: 1 1 0;
   gap: ${themeCssVariables.spacing[1]};
   min-width: 0;
   overflow: hidden;

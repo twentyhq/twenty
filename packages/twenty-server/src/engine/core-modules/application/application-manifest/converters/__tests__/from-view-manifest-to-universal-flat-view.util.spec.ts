@@ -2,6 +2,7 @@ import {
   ViewOpenRecordIn,
   ViewType,
   ViewVisibility,
+  ViewKey,
 } from 'twenty-shared/types';
 
 import { fromViewManifestToUniversalFlatView } from 'src/engine/core-modules/application/application-manifest/converters/from-view-manifest-to-universal-flat-view.util';
@@ -16,6 +17,7 @@ describe('fromViewManifestToUniversalFlatView', () => {
         universalIdentifier: 'view-uuid-1',
         name: 'All Records',
         objectUniversalIdentifier: 'object-uuid-1',
+        key: ViewKey.INDEX,
       },
       applicationUniversalIdentifier,
       now,
@@ -34,7 +36,7 @@ describe('fromViewManifestToUniversalFlatView', () => {
     expect(result.isCustom).toBe(true);
     expect(result.visibility).toBe(ViewVisibility.WORKSPACE);
     expect(result.openRecordIn).toBe(ViewOpenRecordIn.SIDE_PANEL);
-    expect(result.key).toBeNull();
+    expect(result.key).toBe(ViewKey.INDEX);
     expect(result.createdAt).toBe(now);
     expect(result.updatedAt).toBe(now);
   });

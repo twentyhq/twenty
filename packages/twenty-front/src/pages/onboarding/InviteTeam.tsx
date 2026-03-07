@@ -32,10 +32,10 @@ import { useCreateWorkspaceInvitation } from '@/workspace-invitation/hooks/useCr
 const StyledAnimatedContainer = styled.div`
   display: flex;
   flex-direction: column;
-  padding: ${themeCssVariables.spacing[8]} 0;
   gap: ${themeCssVariables.spacing[4]};
-  overflow-y: scroll;
   overflow-x: hidden;
+  overflow-y: scroll;
+  padding: ${themeCssVariables.spacing[8]} 0;
   width: 100%;
 `;
 

@@ -23,8 +23,8 @@ import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { SettingsCustomDomain } from '@/settings/domains/components/SettingsCustomDomain';
 import { SettingsSubdomain } from '@/settings/domains/components/SettingsSubdomain';
 import { useState } from 'react';
-import { getSubdomainValidationSchema } from '@/settings/domains/utils/get-subdomain-validation-schema';
-import { getDomainValidationSchema } from '@/settings/domains/utils/get-domain-validation-schema';
+import { getSubdomainValidationSchema } from '@/settings/domains/utils/getSubdomainValidationSchema';
+import { getDomainValidationSchema } from '@/settings/domains/utils/getDomainValidationSchema';
 import { useCheckCustomDomainValidRecords } from '@/settings/domains/hooks/useCheckCustomDomainValidRecords';
 import { isCloudflareIntegrationEnabledState } from '@/client-config/states/isCloudflareIntegrationEnabledState';
 

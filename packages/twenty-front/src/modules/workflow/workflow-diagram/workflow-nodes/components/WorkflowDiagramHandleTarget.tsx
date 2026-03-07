@@ -9,14 +9,14 @@ type WorkflowDiagramHandleTargetProps = {
 
 const StyledHandleContainer = styled.div`
   & .react-flow__handle {
-    opacity: 0;
-    z-index: 1;
     border-radius: ${themeCssVariables.border.radius.md};
-    width: 100%;
     height: 100%;
     left: 0;
+    opacity: 0;
     top: 0;
     transform: translate(-1px, -5px);
+    width: 100%;
+    z-index: 1;
 
     &.connectionindicator {
       cursor: pointer;

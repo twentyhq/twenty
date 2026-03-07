@@ -6,18 +6,18 @@ export const StyledContainer = styled.div<{
   isNavigationDrawerExpanded: boolean;
 }>`
   align-items: center;
-  cursor: pointer;
-  color: ${themeCssVariables.font.color.primary};
-  border-radius: ${themeCssVariables.border.radius.sm};
   border: 1px solid transparent;
+  border-radius: ${themeCssVariables.border.radius.sm};
+  color: ${themeCssVariables.font.color.primary};
+  cursor: pointer;
   display: flex;
-  justify-content: space-between;
+  gap: ${({ isNavigationDrawerExpanded }) =>
+    isNavigationDrawerExpanded ? themeCssVariables.spacing[1] : '0'};
   height: ${themeCssVariables.spacing[5]};
+  justify-content: space-between;
   padding: calc(${themeCssVariables.spacing[1]} - 1px);
   width: ${({ isNavigationDrawerExpanded }) =>
     isNavigationDrawerExpanded ? '100%' : 'auto'};
-  gap: ${({ isNavigationDrawerExpanded }) =>
-    isNavigationDrawerExpanded ? themeCssVariables.spacing[1] : '0'};
   &:hover {
     background-color: ${themeCssVariables.background.transparent.lighter};
     border: 1px solid ${themeCssVariables.border.color.medium};

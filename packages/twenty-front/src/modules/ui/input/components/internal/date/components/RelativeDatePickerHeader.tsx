@@ -18,8 +18,8 @@ import {
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div<{ noPadding: boolean }>`
-  display: flex;
   align-items: center;
+  display: flex;
   gap: ${themeCssVariables.spacing[1]};
   padding: ${({ noPadding }) =>
     noPadding ? '0' : themeCssVariables.spacing[2]};

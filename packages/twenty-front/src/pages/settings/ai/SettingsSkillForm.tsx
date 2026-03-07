@@ -78,10 +78,10 @@ const StyledAdvancedSettingsContainer = styled.div`
 
 const StyledHeaderTitle = styled.div`
   color: ${themeCssVariables.font.color.primary};
-  font-weight: ${themeCssVariables.font.weight.semiBold};
   font-size: ${themeCssVariables.font.size.lg};
-  width: fit-content;
+  font-weight: ${themeCssVariables.font.weight.semiBold};
   max-width: 420px;
+  width: fit-content;
   & > input:disabled {
     color: ${themeCssVariables.font.color.primary};
   }

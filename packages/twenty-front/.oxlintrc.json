@@ -97,13 +97,14 @@
     "twenty/effect-components": "error",
     "twenty/no-hardcoded-colors": "error",
     "twenty/matching-state-variable": "error",
-    "twenty/sort-css-properties-alphabetically": "off",
+    "twenty/sort-css-properties-alphabetically": "error",
     "twenty/styled-components-prefixed-with-styled": "error",
     "twenty/no-state-useref": "error",
     "twenty/component-props-naming": "error",
     "twenty/no-navigate-prefer-link": "error",
     "twenty/no-jotai-store-in-selector": "error",
     "twenty/no-direct-atom-family-in-selector": "error",
+    "twenty/folder-structure": "error",
     "twenty/enforce-module-boundaries": ["error", {
       "depConstraints": [
         {

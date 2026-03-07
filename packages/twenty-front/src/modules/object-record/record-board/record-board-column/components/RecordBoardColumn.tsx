@@ -15,15 +15,15 @@ import { isDefined } from 'twenty-shared/utils';
 const StyledColumn = styled.div`
   background-color: ${themeCssVariables.background.primary};
   display: flex;
-  flex-direction: column;
-  max-width: 200px;
-  min-width: 200px;
-  min-height: 100%;
   flex: 1;
+  flex-direction: column;
+  height: 100%;
+  max-width: 200px;
+  min-height: 100%;
+  min-width: 200px;
   padding: ${themeCssVariables.spacing[2]};
   padding-top: 0px;
   position: relative;
-  height: 100%;
 `;
 
 type RecordBoardColumnProps = {

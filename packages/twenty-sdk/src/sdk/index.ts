@@ -71,6 +71,7 @@ export { PermissionFlag } from './roles/permission-flag-type';
 export { defineSkill } from './skills/define-skill';
 export { defineView } from './views/define-view';
 export type { ViewConfig } from './views/view-config';
+export { ViewKey } from './views/view-key';
 
 // Action components for front components
 export {

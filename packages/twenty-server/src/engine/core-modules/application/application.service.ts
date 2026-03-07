@@ -212,12 +212,6 @@ export class ApplicationService {
     });
   }
 
-  async createOneApplication(
-    data: Partial<ApplicationEntity> & { workspaceId: string },
-  ): Promise<ApplicationEntity> {
-    return this.create(data);
-  }
-
   async findTwentyStandardApplicationOrThrow(workspaceId: string): Promise<{
     application: ApplicationEntity;
     workspace: WorkspaceEntity;

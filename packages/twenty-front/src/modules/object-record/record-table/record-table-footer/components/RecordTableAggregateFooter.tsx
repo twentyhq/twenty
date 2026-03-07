@@ -15,10 +15,10 @@ const StyledPlaceholderDragAndDropFooterCell = styled.div<{
   isTableWithGroups: boolean;
 }>`
   background-color: ${themeCssVariables.background.primary};
-  width: ${`${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH + RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px`};
-  position: sticky;
-  left: 0px;
   bottom: 0;
+  left: 0px;
+  position: sticky;
+  width: ${`${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH + RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px`};
 
   z-index: ${({ isTableWithGroups }) =>
     isTableWithGroups
@@ -30,9 +30,9 @@ const StyledPlaceholderAddButtonPlaceholderFooterCell = styled.div<{
   isTableWithGroups: boolean;
 }>`
   background-color: ${themeCssVariables.background.primary};
-  width: ${RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH}px;
-  position: sticky;
   bottom: 0;
+  position: sticky;
+  width: ${RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH}px;
   z-index: ${({ isTableWithGroups }) =>
     isTableWithGroups
       ? TABLE_Z_INDEX.footer.tableWithGroups.default
@@ -43,8 +43,8 @@ const StyledPlaceholderLastColumnEmptyFooterCell = styled.div<{
   isTableWithGroups: boolean;
 }>`
   background-color: ${themeCssVariables.background.primary};
-  position: sticky;
   bottom: 0;
+  position: sticky;
   z-index: ${({ isTableWithGroups }) =>
     isTableWithGroups
       ? TABLE_Z_INDEX.footer.tableWithGroups.default

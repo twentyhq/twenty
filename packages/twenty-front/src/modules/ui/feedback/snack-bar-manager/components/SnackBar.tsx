@@ -57,10 +57,10 @@ const StyledContainer = styled.div`
   box-shadow: ${themeCssVariables.boxShadow.strong};
   box-sizing: border-box;
   cursor: pointer;
+  margin-top: ${themeCssVariables.spacing[2]};
   padding: ${themeCssVariables.spacing[2]};
   position: relative;
   width: 296px;
-  margin-top: ${themeCssVariables.spacing[2]};
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     border-radius: 0;
@@ -72,10 +72,10 @@ const StyledProgressBarContainer = styled.div`
   bottom: 0;
   height: auto;
   left: 0;
+  pointer-events: none;
   position: absolute;
   right: 0;
   top: 0;
-  pointer-events: none;
 `;
 
 const StyledHeader = styled.div`
@@ -106,22 +106,22 @@ const StyledActions = styled.div`
 const StyledDescription = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
   font-size: ${themeCssVariables.font.size.sm};
-  padding-left: ${themeCssVariables.spacing[6]};
   overflow: hidden;
+  padding-left: ${themeCssVariables.spacing[6]};
   text-overflow: ellipsis;
   width: 200px;
 `;
 
 const StyledLinkContainer = styled.div`
   > a {
-    display: block;
     color: ${themeCssVariables.font.color.tertiary};
+    display: block;
     font-size: ${themeCssVariables.font.size.sm};
-    padding-left: ${themeCssVariables.spacing[6]};
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
     max-width: 200px;
+    overflow: hidden;
+    padding-left: ${themeCssVariables.spacing[6]};
+    text-overflow: ellipsis;
+    white-space: nowrap;
     &:hover {
       color: ${themeCssVariables.font.color.secondary};
     }

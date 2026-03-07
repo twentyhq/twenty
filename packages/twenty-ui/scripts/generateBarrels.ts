@@ -151,7 +151,10 @@ type WriteInJsonFileArgs = {
 };
 const updateJsonFile = ({ content, file }: WriteInJsonFileArgs) => {
   const updatedJsonFile = JSON.stringify(content);
-  const formattedContent = prettierFormat(updatedJsonFile, 'json-stringify');
+  const formattedContent = prettier.format(updatedJsonFile, {
+    ...prettierConfiguration,
+    filepath: file,
+  });
   fs.writeFileSync(file, formattedContent, 'utf-8');
 };
 

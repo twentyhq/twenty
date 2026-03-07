@@ -20,12 +20,12 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 const StyledCustomDatePickerHeader = styled.div`
   align-items: center;
   display: flex;
+  gap: ${themeCssVariables.spacing[1]};
   justify-content: flex-end;
   padding-left: ${themeCssVariables.spacing[2]};
   padding-right: ${themeCssVariables.spacing[2]};
-  padding-top: ${themeCssVariables.spacing[2]};
 
-  gap: ${themeCssVariables.spacing[1]};
+  padding-top: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledSeparator = styled.div`

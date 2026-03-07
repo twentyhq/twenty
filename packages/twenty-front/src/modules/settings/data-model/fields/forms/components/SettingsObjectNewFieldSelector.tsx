@@ -43,9 +43,9 @@ const StyledTypeSelectContainer = styled.div`
 
 const StyledContainer = styled.div`
   display: flex;
+  flex-wrap: wrap;
   gap: ${themeCssVariables.spacing[2]};
   justify-content: flex-start;
-  flex-wrap: wrap;
   width: 100%;
 `;
 

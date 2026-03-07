@@ -42,9 +42,9 @@ const StyledDropdownContainer = styled.div`
 const StyledTabContainer = styled.div`
   display: flex;
   gap: ${TAB_LIST_GAP}px;
-  position: relative;
-  overflow: hidden;
   max-width: 100%;
+  overflow: hidden;
+  position: relative;
 `;
 
 export const TabList = ({

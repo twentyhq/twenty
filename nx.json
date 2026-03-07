@@ -44,12 +44,12 @@
       "cache": true,
       "options": {
         "cwd": "{projectRoot}",
-        "command": "npx oxlint -c .oxlintrc.json ."
+        "command": "npx oxlint -c .oxlintrc.json . && (prettier . --check --cache --cache-location ../../.cache/prettier/{projectRoot} --cache-strategy metadata || (echo 'ERROR: Prettier formatting check failed! Fix with: npx nx lint --configuration=fix' && false))"
       },
       "configurations": {
         "ci": {},
         "fix": {
-          "command": "npx oxlint --fix -c .oxlintrc.json ."
+          "command": "npx oxlint --fix -c .oxlintrc.json . && prettier . --write --cache --cache-location ../../.cache/prettier/{projectRoot} --cache-strategy metadata"
         }
       },
       "dependsOn": ["^build", "twenty-oxlint-rules:build"]
@@ -58,12 +58,12 @@
       "executor": "nx:run-commands",
       "cache": false,
       "options": {
-        "command": "FILES=$(git diff --name-only --diff-filter=d main -- {projectRoot}/ | grep -E '{args.pattern}'); [ -z \"$FILES\" ] && echo 'No changed files.' || npx oxlint -c {projectRoot}/.oxlintrc.json $FILES",
+        "command": "FILES=$(git diff --name-only --diff-filter=d main -- {projectRoot}/ | grep -E '{args.pattern}'); [ -z \"$FILES\" ] && echo 'No changed files.' || (npx oxlint -c {projectRoot}/.oxlintrc.json $FILES && (prettier --check $FILES || (echo 'ERROR: Prettier formatting check failed! Fix with: npx nx lint:diff-with-main --configuration=fix' && false)))",
         "pattern": "\\.(ts|tsx|js|jsx)$"
       },
       "configurations": {
         "fix": {
-          "command": "FILES=$(git diff --name-only --diff-filter=d main -- {projectRoot}/ | grep -E '{args.pattern}'); [ -z \"$FILES\" ] && echo 'No changed files.' || npx oxlint --fix -c {projectRoot}/.oxlintrc.json $FILES"
+          "command": "FILES=$(git diff --name-only --diff-filter=d main -- {projectRoot}/ | grep -E '{args.pattern}'); [ -z \"$FILES\" ] && echo 'No changed files.' || (npx oxlint --fix -c {projectRoot}/.oxlintrc.json $FILES && prettier --write $FILES)"
         }
       }
     },

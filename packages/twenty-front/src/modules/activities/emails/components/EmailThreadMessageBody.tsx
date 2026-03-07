@@ -9,8 +9,8 @@ const StyledThreadMessageBody = styled(motion.div)`
   display: flex;
   flex-direction: column;
   margin-top: ${themeCssVariables.spacing[4]};
-  white-space: pre-line;
   overflow-wrap: break-word;
+  white-space: pre-line;
 
   a {
     color: ${themeCssVariables.font.color.primary};

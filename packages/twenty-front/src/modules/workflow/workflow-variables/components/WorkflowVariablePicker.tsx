@@ -8,21 +8,21 @@ const StyledSearchVariablesDropdownContainer = styled.div<{
   isReadonly?: boolean;
 }>`
   align-items: center;
-  display: flex;
-  justify-content: center;
-
   background-color: ${({ multiline }) =>
     multiline
       ? 'transparent'
       : themeCssVariables.background.transparent.lighter};
+  border: ${({ multiline }) =>
+    multiline ? 'none' : `1px solid ${themeCssVariables.border.color.medium}`};
 
   border-radius: ${({ multiline }) =>
     multiline
       ? themeCssVariables.border.radius.sm
       : `0 ${themeCssVariables.border.radius.sm} ${themeCssVariables.border.radius.sm} 0`};
 
-  border: ${({ multiline }) =>
-    multiline ? 'none' : `1px solid ${themeCssVariables.border.color.medium}`};
+  display: flex;
+
+  justify-content: center;
 
   padding: ${({ multiline }) =>
     multiline

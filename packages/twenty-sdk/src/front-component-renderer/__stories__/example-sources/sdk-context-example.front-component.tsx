@@ -37,9 +37,7 @@ const SdkContextComponent = () => {
 
   const userId = useUserId();
 
-  const fullContext = useFrontComponentExecutionContext(
-    (context) => context,
-  );
+  const fullContext = useFrontComponentExecutionContext((context) => context);
 
   return (
     <div data-testid="sdk-context-component" style={CARD_STYLE}>
@@ -78,9 +76,7 @@ const SdkContextComponent = () => {
         </pre>
       </div>
 
-      <div
-        style={{ display: 'flex', alignItems: 'center', gap: 12 }}
-      >
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
         <button
           data-testid="sdk-context-button"
           onClick={() => setRenderCount((previous) => previous + 1)}
