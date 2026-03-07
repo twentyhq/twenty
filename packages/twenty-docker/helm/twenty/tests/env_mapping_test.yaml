@@ -67,22 +67,17 @@ tests:
       server.disableDbMigrations: true
     asserts:
       - contains:
-          path: spec.template.spec.initContainers
+          path: spec.template.spec.initContainers[?(@.name=="run-migrations")].env
           content:
-            name: run-migrations
-          any: true
-      - equal:
-          path: spec.template.spec.initContainers[?(@.name == "run-migrations")].env[0]
-          value:
             name: DISABLE_DB_MIGRATIONS
             value: "true"
 
   - it: disableDbMigrations defaults to false in init container
     template: templates/deployment-server.yaml
     asserts:
-      - equal:
-          path: spec.template.spec.initContainers[?(@.name == "run-migrations")].env[0]
-          value:
+      - contains:
+          path: spec.template.spec.initContainers[?(@.name=="run-migrations")].env
+          content:
             name: DISABLE_DB_MIGRATIONS
             value: "false"
 

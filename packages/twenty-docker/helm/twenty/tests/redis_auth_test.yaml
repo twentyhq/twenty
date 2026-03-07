@@ -66,8 +66,19 @@ tests:
             name: REDIS_PASSWORD
             value: "s3cr3t"
 
-  - it: does not inject REDIS_PASSWORD when using internal redis
+  - it: does not inject REDIS_PASSWORD into server when using internal redis
     template: templates/deployment-server.yaml
+    set:
+      redisInternal.enabled: true
+    asserts:
+      - notContains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: REDIS_PASSWORD
+          any: true
+
+  - it: does not inject REDIS_PASSWORD into worker when using internal redis
+    template: templates/deployment-worker.yaml
     set:
       redisInternal.enabled: true
     asserts:
