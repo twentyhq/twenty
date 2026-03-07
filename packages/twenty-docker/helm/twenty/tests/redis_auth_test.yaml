@@ -1,0 +1,78 @@
+suite: redis external authentication
+templates:
+  - templates/deployment-server.yaml
+  - templates/deployment-worker.yaml
+release:
+  name: my-twenty
+  namespace: default
+tests:
+  - it: injects REDIS_PASSWORD from external secret into server
+    template: templates/deployment-server.yaml
+    set:
+      redisInternal.enabled: false
+      redis.external.host: redis.example.com
+      redis.external.secretName: redis-creds
+      redis.external.passwordKey: password
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: REDIS_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: redis-creds
+                key: password
+
+  - it: injects REDIS_PASSWORD from external secret into worker
+    template: templates/deployment-worker.yaml
+    set:
+      redisInternal.enabled: false
+      redis.external.host: redis.example.com
+      redis.external.secretName: redis-creds
+      redis.external.passwordKey: password
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: REDIS_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: redis-creds
+                key: password
+
+  - it: injects plaintext REDIS_PASSWORD when password set directly in server
+    template: templates/deployment-server.yaml
+    set:
+      redisInternal.enabled: false
+      redis.external.host: redis.example.com
+      redis.external.password: "s3cr3t"
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: REDIS_PASSWORD
+            value: "s3cr3t"
+
+  - it: injects plaintext REDIS_PASSWORD when password set directly in worker
+    template: templates/deployment-worker.yaml
+    set:
+      redisInternal.enabled: false
+      redis.external.host: redis.example.com
+      redis.external.password: "s3cr3t"
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: REDIS_PASSWORD
+            value: "s3cr3t"
+
+  - it: does not inject REDIS_PASSWORD when using internal redis
+    template: templates/deployment-server.yaml
+    set:
+      redisInternal.enabled: true
+    asserts:
+      - notContains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: REDIS_PASSWORD
+          any: true
