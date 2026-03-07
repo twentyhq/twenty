@@ -111,7 +111,7 @@ tests:
   # 'core' schema. This ensures the _typeorm_migrations table and all application
   # tables use the dedicated core schema.
 
-  - it: migration init container runs yarn database migrate
+  - it: migration init container runs yarn database:migrate:prod
     template: templates/deployment-server.yaml
     set:
       db.enabled: true

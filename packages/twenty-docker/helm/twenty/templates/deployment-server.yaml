@@ -71,10 +71,6 @@ spec:
                 secretKeyRef:
                   name: {{ include "twenty.fullname" . }}-db-url
                   key: appPassword
-            {{- range $key, $value := .Values.server.additionalEnv }}
-            - name: {{ $key }}
-              value: {{ $value | quote }}
-            {{- end }}
           command:
             - sh
             - -c
@@ -128,7 +124,7 @@ spec:
               echo "Running database setup and migrations..."
 
               # Run initial setup only on empty database
-              has_schema=$(psql -tAc "SELECT EXISTS (SELECT 1 FROM information_schema.schemata WHERE schema_name = 'core')" ${PG_DATABASE_URL})
+              has_schema=$(psql -tAc "SELECT EXISTS (SELECT 1 FROM information_schema.schemata WHERE schema_name = 'core')" "${PG_DATABASE_URL}")
               if [ "$has_schema" = "f" ]; then
                   echo "Database appears to be empty, running initial setup."
                   NODE_OPTIONS="--max-old-space-size=1500" tsx ./scripts/setup-db.ts

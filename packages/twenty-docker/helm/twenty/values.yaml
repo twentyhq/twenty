@@ -48,7 +48,7 @@ server:
       cpu: 1000m
       memory: 1024Mi
 
-  # Set to "true" to skip database migrations on startup (useful for read-only replicas or manual migration control)
+  # Set to true to skip database migrations on startup (useful for read-only replicas or manual migration control)
   disableDbMigrations: false
 
   env:
