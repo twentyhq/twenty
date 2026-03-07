@@ -62,7 +62,10 @@ export const computeTwentyORMException = async (
       isDefined(errorCode) &&
       Object.values(POSTGRESQL_ERROR_CODES).includes(errorCode)
     ) {
-      throw new PostgresException('Data validation error.', errorCode);
+      throw new PostgresException(
+        `Data validation error (code: ${errorCode}).`,
+        errorCode,
+      );
     }
     throw error;
   }
