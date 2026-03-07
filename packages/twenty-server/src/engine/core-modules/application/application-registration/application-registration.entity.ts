@@ -137,10 +137,6 @@ export class ApplicationRegistrationEntity {
   termsUrl: string | null;
 
   @Field(() => Boolean)
-  @Column({ type: 'boolean', default: false })
-  isListed: boolean;
-
-  @Field(() => Boolean)
   @Column({ name: 'isFeatured', type: 'boolean', default: false })
   isFeatured: boolean;
 

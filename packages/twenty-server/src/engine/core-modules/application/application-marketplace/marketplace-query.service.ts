@@ -35,7 +35,7 @@ export class MarketplaceQueryService {
     }
 
     const registrations =
-      await this.applicationRegistrationService.findManyListed();
+      await this.applicationRegistrationService.findManyNpm();
 
     if (registrations.length === 0) {
       if (!this.hasSyncBeenEnqueued) {

@@ -3,9 +3,10 @@ import { FIND_MANY_APPLICATION_REGISTRATIONS } from '@/settings/application-regi
 import { SettingsListCard } from '@/settings/components/SettingsListCard';
 import { getDocumentationUrl } from '@/support/utils/getDocumentationUrl';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useQuery } from '@apollo/client';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useQuery } from '@apollo/client';
+import { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
@@ -19,31 +20,21 @@ import {
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import { useContext } from 'react';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  type ApplicationRegistrationFragmentFragment,
+  ApplicationRegistrationSourceType,
+} from '~/generated-metadata/graphql';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 const StyledButtonContainer = styled.div`
   margin: ${themeCssVariables.spacing[2]} 0;
 `;
 
-const StyledPublishMethodLabel = styled.div`
-  color: ${themeCssVariables.font.color.light};
-  font-size: ${themeCssVariables.font.size.sm};
-  margin-bottom: ${themeCssVariables.spacing[2]};
-  margin-top: ${themeCssVariables.spacing[4]};
-`;
-
 const StyledEmptyStateContainer = styled.div`
   display: flex;
   flex-direction: column;
 `;
-
-type ApplicationRegistration = {
-  id: string;
-  name: string;
-  description: string | null;
-};
 
 export const SettingsApplicationsDeveloperTab = () => {
   const { theme } = useContext(ThemeContext);
@@ -55,8 +46,23 @@ export const SettingsApplicationsDeveloperTab = () => {
 
   const { data, loading } = useQuery(FIND_MANY_APPLICATION_REGISTRATIONS);
 
-  const registrations: ApplicationRegistration[] =
+  const registrations: ApplicationRegistrationFragmentFragment[] =
     data?.findManyApplicationRegistrations ?? [];
+
+  const developmentApps = registrations.filter(
+    (registration) =>
+      registration.sourceType === ApplicationRegistrationSourceType.LOCAL,
+  );
+
+  const publishedApps = registrations.filter(
+    (registration) =>
+      registration.sourceType === ApplicationRegistrationSourceType.NPM,
+  );
+
+  const internalApps = registrations.filter(
+    (registration) =>
+      registration.sourceType === ApplicationRegistrationSourceType.TARBALL,
+  );
 
   const createCommands = [
     // oxlint-disable-next-line lingui/no-unlocalized-strings
@@ -116,6 +122,56 @@ export const SettingsApplicationsDeveloperTab = () => {
     />
   );
 
+  const navigateToRegistration = (
+    registration: ApplicationRegistrationFragmentFragment,
+  ) => {
+    navigate(
+      getSettingsPath(SettingsPath.ApplicationRegistrationDetail, {
+        applicationRegistrationId: registration.id,
+      }),
+    );
+  };
+
+  const renderAppList = (
+    apps: ApplicationRegistrationFragmentFragment[],
+    emptyState: React.ReactNode,
+  ) => {
+    if (apps.length > 0) {
+      return (
+        <SettingsListCard
+          items={apps}
+          getItemLabel={(registration) => registration.name}
+          isLoading={loading}
+          RowIcon={IconApps}
+          onRowClick={navigateToRegistration}
+          RowRightComponent={() => (
+            <IconChevronRight
+              size={theme.icon.size.md}
+              stroke={theme.icon.stroke.sm}
+            />
+          )}
+        />
+      );
+    }
+
+    return emptyState;
+  };
+
+  const devCommands = [
+    // oxlint-disable-next-line lingui/no-unlocalized-strings
+    'npx twenty app:dev',
+  ];
+
+  const devCopyButton = (
+    <Button
+      onClick={() => {
+        copyToClipboard(devCommands.join('\n'), t`Command copied to clipboard`);
+      }}
+      ariaLabel={t`Copy command`}
+      Icon={IconCopy}
+    />
+  );
+
   return (
     <>
       <Section>
@@ -140,48 +196,49 @@ export const SettingsApplicationsDeveloperTab = () => {
           />
         </StyledButtonContainer>
       </Section>
+
       <Section>
         <H2Title
-          title={t`My Apps`}
-          description={t`Apps you've created, registered, or published`}
+          title={t`Your Development Apps`}
+          description={t`Apps running in local development mode`}
         />
-        {registrations.length > 0 ? (
-          <SettingsListCard
-            items={registrations}
-            getItemLabel={(registration) => registration.name}
-            isLoading={loading}
-            RowIcon={IconApps}
-            onRowClick={(registration) => {
-              navigate(
-                getSettingsPath(SettingsPath.ApplicationRegistrationDetail, {
-                  applicationRegistrationId: registration.id,
-                }),
-              );
-            }}
-            RowRightComponent={() => (
-              <IconChevronRight
-                size={theme.icon.size.md}
-                stroke={theme.icon.stroke.sm}
-              />
-            )}
-          />
-        ) : (
+        {renderAppList(
+          developmentApps,
           <StyledEmptyStateContainer>
-            <StyledPublishMethodLabel>
-              {t`Publish to npm`}
-            </StyledPublishMethodLabel>
+            <CommandBlock commands={devCommands} button={devCopyButton} />
+          </StyledEmptyStateContainer>,
+        )}
+      </Section>
+
+      <Section>
+        <H2Title
+          title={t`Your Published Apps`}
+          description={t`Apps published to npm and available to all servers`}
+        />
+        {renderAppList(
+          publishedApps,
+          <StyledEmptyStateContainer>
             <CommandBlock
               commands={publishNpmCommands}
               button={publishNpmCopyButton}
             />
-            <StyledPublishMethodLabel>
-              {t`Or push directly to your server`}
-            </StyledPublishMethodLabel>
+          </StyledEmptyStateContainer>,
+        )}
+      </Section>
+
+      <Section>
+        <H2Title
+          title={t`Your Internal Apps`}
+          description={t`Apps deployed to this server via tarball. Install or upgrade from any workspace.`}
+        />
+        {renderAppList(
+          internalApps,
+          <StyledEmptyStateContainer>
             <CommandBlock
               commands={publishServerCommands}
               button={publishServerCopyButton}
             />
-          </StyledEmptyStateContainer>
+          </StyledEmptyStateContainer>,
         )}
       </Section>
     </>

@@ -65,7 +65,7 @@ export const SettingsAdminApps = () => {
             <TableRow gridTemplateColumns={TABLE_GRID}>
               <TableHeader>{t`Name`}</TableHeader>
               <TableHeader>{t`Source`}</TableHeader>
-              <TableHeader>{t`Listed`}</TableHeader>
+              <TableHeader>{t`Type`}</TableHeader>
               <TableHeader>{t`Featured`}</TableHeader>
             </TableRow>
           </StyledTableHeaderRowContainer>
@@ -86,8 +86,14 @@ export const SettingsAdminApps = () => {
                   </TableCell>
                   <TableCell>
                     <Status
-                      color={registration.isListed ? 'green' : 'gray'}
-                      text={registration.isListed ? t`Yes` : t`No`}
+                      color={
+                        registration.sourceType === 'npm'
+                          ? 'green'
+                          : registration.sourceType === 'tarball'
+                            ? 'blue'
+                            : 'gray'
+                      }
+                      text={registration.sourceType.toUpperCase()}
                     />
                   </TableCell>
                   <TableCell>

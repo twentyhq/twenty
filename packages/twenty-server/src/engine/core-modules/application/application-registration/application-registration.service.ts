@@ -220,8 +220,6 @@ export class ApplicationRegistrationService {
       updateData.oAuthScopes = update.oAuthScopes;
     if (isDefined(update.websiteUrl)) updateData.websiteUrl = update.websiteUrl;
     if (isDefined(update.termsUrl)) updateData.termsUrl = update.termsUrl;
-    if (isDefined(update.isListed)) updateData.isListed = update.isListed;
-
     if (Object.keys(updateData).length > 0) {
       await this.applicationRegistrationRepository.update(id, updateData);
     }
@@ -276,7 +274,6 @@ export class ApplicationRegistrationService {
       | 'websiteUrl'
       | 'termsUrl'
       | 'latestAvailableVersion'
-      | 'isListed'
       | 'isFeatured'
       | 'marketplaceDisplayData'
       | 'ownerWorkspaceId'
@@ -328,7 +325,6 @@ export class ApplicationRegistrationService {
       websiteUrl: params.websiteUrl,
       termsUrl: params.termsUrl,
       latestAvailableVersion: params.latestAvailableVersion,
-      isListed: params.isListed,
       isFeatured: params.isFeatured,
       marketplaceDisplayData: params.marketplaceDisplayData,
       oAuthClientId: v4(),
@@ -389,7 +385,6 @@ export class ApplicationRegistrationService {
       sourceType: ApplicationRegistrationSourceType.NPM,
       sourcePackage: params.packageName,
       latestAvailableVersion: params.latestAvailableVersion,
-      isListed: true,
       oAuthClientId: v4(),
       oAuthRedirectUris: [],
       oAuthScopes: [],
@@ -411,9 +406,9 @@ export class ApplicationRegistrationService {
     });
   }
 
-  async findManyListed(): Promise<ApplicationRegistrationEntity[]> {
+  async findManyNpm(): Promise<ApplicationRegistrationEntity[]> {
     return this.applicationRegistrationRepository.find({
-      where: { isListed: true },
+      where: { sourceType: ApplicationRegistrationSourceType.NPM },
     });
   }
 

@@ -100,11 +100,10 @@ export class ApplicationUpgradeService {
     });
 
     if (
-      appRegistration.sourceType === ApplicationRegistrationSourceType.LOCAL ||
-      appRegistration.sourceType === ApplicationRegistrationSourceType.TARBALL
+      appRegistration.sourceType === ApplicationRegistrationSourceType.LOCAL
     ) {
       throw new ApplicationException(
-        'Cannot upgrade an app installed from a tarball or local source',
+        'Cannot upgrade an app running in local development mode',
         ApplicationExceptionCode.UPGRADE_FAILED,
       );
     }
