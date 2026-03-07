@@ -65,7 +65,7 @@ export class GoogleApisServiceAvailabilityService {
         return false;
       }
 
-      this.logger.error('Error checking messaging availability', error);
+      this.logger.warn('Error checking messaging availability', error);
 
       throw error;
     }
@@ -99,7 +99,7 @@ export class GoogleApisServiceAvailabilityService {
         return false;
       }
 
-      this.logger.error('Error checking Calendar availability', error);
+      this.logger.warn('Error checking Calendar availability', error);
 
       throw error;
     }
@@ -124,19 +124,6 @@ export class GoogleApisServiceAvailabilityService {
       return false;
     }
 
-    const isFailedPrecondition = firstError.reason === 'failedPrecondition';
-
-    const isServiceNotEnabled =
-      firstError.message?.toLowerCase()?.includes('service not enabled') ??
-      false;
-
-    const isPreconditionCheckFailed =
-      firstError.message
-        ?.toLowerCase()
-        ?.includes('precondition check failed') ?? false;
-
-    return (
-      isFailedPrecondition && (isServiceNotEnabled || isPreconditionCheckFailed)
-    );
+    return firstError.reason === 'failedPrecondition';
   }
 }
