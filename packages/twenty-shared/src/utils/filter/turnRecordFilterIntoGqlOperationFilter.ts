@@ -698,7 +698,10 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
           }
         case RecordFilterOperand.IS: {
           if (!isSubFieldFilter) {
-            const parts = recordFilter.value.split(' ').map((p) => p.trim()).filter(isNonEmptyString);
+            const parts = recordFilter.value
+              .split(' ')
+              .map((p) => p.trim())
+              .filter(isNonEmptyString);
             const [firstPart, ...rest] = parts;
             const lastPart = rest.join(' ');
             return {
@@ -743,7 +746,10 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
         }
         case RecordFilterOperand.IS_NOT: {
           if (!isSubFieldFilter) {
-            const parts = recordFilter.value.split(' ').map((p) => p.trim()).filter(isNonEmptyString);
+            const parts = recordFilter.value
+              .split(' ')
+              .map((p) => p.trim())
+              .filter(isNonEmptyString);
             const [firstPart, ...rest] = parts;
             const lastPart = rest.join(' ');
             return {

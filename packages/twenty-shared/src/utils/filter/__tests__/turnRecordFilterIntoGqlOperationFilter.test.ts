@@ -2,8 +2,8 @@ import {
   FieldMetadataType,
   ViewFilterOperand as RecordFilterOperand,
 } from '@/types';
-import { turnRecordFilterIntoRecordGqlOperationFilter } from '@/utils/filter/turnRecordFilterIntoGqlOperationFilter';
 import { type RecordFilter } from '@/utils';
+import { turnRecordFilterIntoRecordGqlOperationFilter } from '@/utils/filter/turnRecordFilterIntoGqlOperationFilter';
 
 const fields = [
   { id: 'f-text', name: 'name', type: FieldMetadataType.TEXT, label: 'Name' },
@@ -219,10 +219,7 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
       });
 
       expect(result).toEqual({
-        or: [
-          { not: { name: { eq: 'test' } } },
-          { name: { is: 'NULL' } },
-        ],
+        or: [{ not: { name: { eq: 'test' } } }, { name: { is: 'NULL' } }],
       });
     });
   });
@@ -1027,7 +1024,9 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
 
       expect(result).toEqual({
         or: [
-          { not: { website: { primaryLinkUrl: { eq: 'https://example.com' } } } },
+          {
+            not: { website: { primaryLinkUrl: { eq: 'https://example.com' } } },
+          },
           { website: { primaryLinkUrl: { is: 'NULL' } } },
         ],
       });
