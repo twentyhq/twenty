@@ -10,9 +10,7 @@ import { ApplicationRegistrationService } from 'src/engine/core-modules/applicat
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type UserEntity } from 'src/engine/core-modules/user/user.entity';
 
-const createMockUser = (
-  overrides: Partial<UserEntity> = {},
-): UserEntity =>
+const createMockUser = (overrides: Partial<UserEntity> = {}): UserEntity =>
   ({
     id: 'user-123',
     email: 'dev@example.com',
@@ -59,9 +57,7 @@ describe('ApplicationNpmRegistrationService', () => {
     }).compile();
 
     service = module.get(ApplicationNpmRegistrationService);
-    applicationRegistrationService = module.get(
-      ApplicationRegistrationService,
-    );
+    applicationRegistrationService = module.get(ApplicationRegistrationService);
     applicationPackageFetcherService = module.get(
       ApplicationPackageFetcherService,
     );
@@ -101,11 +97,7 @@ describe('ApplicationNpmRegistrationService', () => {
       });
 
       await expect(
-        service.registerNpmPackage(
-          'twenty-app-test',
-          user,
-          'workspace-1',
-        ),
+        service.registerNpmPackage('twenty-app-test', user, 'workspace-1'),
       ).rejects.toThrow(ApplicationRegistrationException);
     });
 
@@ -203,19 +195,14 @@ describe('ApplicationNpmRegistrationService', () => {
         {} as any,
       );
 
-      await service.registerNpmPackage(
-        'twenty-app-test',
-        user,
-        'workspace-1',
-      );
+      await service.registerNpmPackage('twenty-app-test', user, 'workspace-1');
 
       expect(
         applicationRegistrationService.upsertFromNpmRegistration,
       ).toHaveBeenCalledWith(
         expect.objectContaining({
           isProvenanceVerified: true,
-          provenanceRepositoryUrl:
-            'https://github.com/user/twenty-app-test',
+          provenanceRepositoryUrl: 'https://github.com/user/twenty-app-test',
           provenanceVerifiedAt: expect.any(Date),
         }),
       );

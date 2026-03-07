@@ -28,8 +28,8 @@ const StyledButtonContainer = styled.div`
 `;
 
 const StyledPublishMethodLabel = styled.div`
-  font-size: ${themeCssVariables.font.size.sm};
   color: ${themeCssVariables.font.color.light};
+  font-size: ${themeCssVariables.font.size.sm};
   margin-bottom: ${themeCssVariables.spacing[2]};
   margin-top: ${themeCssVariables.spacing[4]};
 `;

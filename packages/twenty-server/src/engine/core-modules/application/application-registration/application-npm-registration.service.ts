@@ -17,10 +17,7 @@ type NpmPackument = {
   name: string;
   'dist-tags': Record<string, string>;
   maintainers: Array<{ name: string; email: string }>;
-  versions: Record<
-    string,
-    { dist?: { tarball?: string; integrity?: string } }
-  >;
+  versions: Record<string, { dist?: { tarball?: string; integrity?: string } }>;
 };
 
 export type ProvenanceMetadata = {
@@ -30,9 +27,7 @@ export type ProvenanceMetadata = {
 
 @Injectable()
 export class ApplicationNpmRegistrationService {
-  private readonly logger = new Logger(
-    ApplicationNpmRegistrationService.name,
-  );
+  private readonly logger = new Logger(ApplicationNpmRegistrationService.name);
 
   constructor(
     private readonly twentyConfigService: TwentyConfigService,
@@ -55,7 +50,7 @@ export class ApplicationNpmRegistrationService {
     }
 
     const { data } = await axios.get<NpmPackument>(
-      `${registryUrl}/${encodeURIComponent(packageName).replace('%40', '@')}`,
+      `${registryUrl}/${encodeURIComponent(packageName).replaceAll('%40', '@')}`,
       { headers, timeout: 15_000 },
     );
 
@@ -142,10 +137,8 @@ export class ApplicationNpmRegistrationService {
           ownerWorkspaceId: workspaceId,
           createdByUserId: user.id,
           latestAvailableVersion: latestVersion ?? null,
-          isProvenanceVerified:
-            provenanceMetadata?.hasProvenance ?? false,
-          provenanceRepositoryUrl:
-            provenanceMetadata?.repositoryUrl ?? null,
+          isProvenanceVerified: provenanceMetadata?.hasProvenance ?? false,
+          provenanceRepositoryUrl: provenanceMetadata?.repositoryUrl ?? null,
           provenanceVerifiedAt: provenanceMetadata?.hasProvenance
             ? new Date()
             : null,
@@ -176,9 +169,7 @@ export class ApplicationNpmRegistrationService {
       }
 
       for (const attestation of data.attestations) {
-        if (
-          attestation.predicateType !== 'https://slsa.dev/provenance/v1'
-        ) {
+        if (attestation.predicateType !== 'https://slsa.dev/provenance/v1') {
           continue;
         }
 

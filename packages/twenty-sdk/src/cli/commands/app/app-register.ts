@@ -31,20 +31,14 @@ export class AppRegisterCommand {
 
     console.log(chalk.green('Package registered successfully!'));
     console.log(chalk.gray(`  Name: ${result.data.name}`));
-    console.log(
-      chalk.gray(`  ID: ${result.data.universalIdentifier}`),
-    );
+    console.log(chalk.gray(`  ID: ${result.data.universalIdentifier}`));
 
     if (result.data.isProvenanceVerified) {
-      console.log(
-        chalk.green('  Provenance: Verified'),
-      );
+      console.log(chalk.green('  Provenance: Verified'));
 
       if (result.data.provenanceRepositoryUrl) {
         console.log(
-          chalk.gray(
-            `  Repository: ${result.data.provenanceRepositoryUrl}`,
-          ),
+          chalk.gray(`  Repository: ${result.data.provenanceRepositoryUrl}`),
         );
       }
     } else {

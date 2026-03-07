@@ -2458,6 +2458,7 @@ export type Mutation = {
   initiateOTPProvisioningForAuthenticatedUser: InitiateTwoFactorAuthenticationProvisioning;
   installApplication: Scalars['Boolean'];
   installMarketplaceApp: Scalars['Boolean'];
+  registerNpmPackage: ApplicationRegistration;
   removeQueryFromEventStream: Scalars['Boolean'];
   removeRoleFromAgent: Scalars['Boolean'];
   renewApplicationToken: ApplicationTokenPair;
@@ -2537,7 +2538,6 @@ export type Mutation = {
   verifyEmailAndGetLoginToken: VerifyEmailAndGetLoginToken;
   verifyEmailAndGetWorkspaceAgnosticToken: AvailableWorkspacesAndAccessTokens;
   verifyEmailingDomain: EmailingDomain;
-  registerNpmPackage: ApplicationRegistration;
   verifyTwoFactorAuthenticationMethodForAuthenticatedUser: VerifyTwoFactorAuthenticationMethod;
 };
 
@@ -3058,6 +3058,11 @@ export type MutationInstallMarketplaceAppArgs = {
 };
 
 
+export type MutationRegisterNpmPackageArgs = {
+  packageName: Scalars['String'];
+};
+
+
 export type MutationRemoveQueryFromEventStreamArgs = {
   input: RemoveQueryFromEventStreamInput;
 };
@@ -3478,11 +3483,6 @@ export type MutationVerifyEmailAndGetWorkspaceAgnosticTokenArgs = {
 
 export type MutationVerifyEmailingDomainArgs = {
   id: Scalars['String'];
-};
-
-
-export type MutationRegisterNpmPackageArgs = {
-  packageName: Scalars['String'];
 };
 
 
