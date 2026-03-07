@@ -56,10 +56,43 @@ describe('CastToLogLevelArray Decorator', () => {
     expect(transformedClass.logLevels).toBeUndefined();
   });
 
-  it('should cast "verbose,error,toto" to undefined', () => {
+  it('should cast "verbose,error,toto" to ["verbose", "error"] filtering invalid levels', () => {
     const transformedClass = plainToClass(TestClass, {
       logLevels: 'verbose,error,toto',
     });
+
+    expect(transformedClass.logLevels).toStrictEqual(['verbose', 'error']);
+  });
+
+  it('should cast "info" to ["log"] mapping info alias', () => {
+    const transformedClass = plainToClass(TestClass, { logLevels: 'info' });
+
+    expect(transformedClass.logLevels).toStrictEqual(['log']);
+  });
+
+  it('should cast "debug,info,error,warn" to ["debug", "log", "error", "warn"]', () => {
+    const transformedClass = plainToClass(TestClass, {
+      logLevels: 'debug,info,error,warn',
+    });
+
+    expect(transformedClass.logLevels).toStrictEqual([
+      'debug',
+      'log',
+      'error',
+      'warn',
+    ]);
+  });
+
+  it('should deduplicate when alias maps to existing level', () => {
+    const transformedClass = plainToClass(TestClass, {
+      logLevels: 'log,info',
+    });
+
+    expect(transformedClass.logLevels).toStrictEqual(['log']);
+  });
+
+  it('should cast "toto" to undefined when all levels are invalid', () => {
+    const transformedClass = plainToClass(TestClass, { logLevels: 'toto' });
 
     expect(transformedClass.logLevels).toBeUndefined();
   });
