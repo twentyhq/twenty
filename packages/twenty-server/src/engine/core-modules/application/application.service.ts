@@ -48,6 +48,41 @@ export class ApplicationService {
     return application.defaultRoleId;
   }
 
+  async findWorkspaceCustomFlatApplicationOrThrow({
+    workspaceId,
+  }: {
+    workspaceId: string;
+  }) {
+    const workspace = await this.workspaceRepository.findOne({
+      where: { id: workspaceId },
+      withDeleted: true,
+    });
+
+    if (!isDefined(workspace)) {
+      throw new ApplicationException(
+        `Could not find workspace ${workspaceId}`,
+        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
+      );
+    }
+
+    const { flatApplicationMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspace.id, [
+        'flatApplicationMaps',
+      ]);
+
+    const workspaceCustomFlatApplication =
+      flatApplicationMaps.byId[workspace.workspaceCustomApplicationId];
+
+    if (!isDefined(workspaceCustomFlatApplication)) {
+      throw new ApplicationException(
+        `Could not find workspace custom application for workspace ${workspaceId}`,
+        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
+      );
+    }
+
+    return { workspaceCustomFlatApplication };
+  }
+
   async findWorkspaceTwentyStandardAndCustomApplicationOrThrow({
     workspace: workspaceInput,
     workspaceId,
@@ -88,7 +123,7 @@ export class ApplicationService {
 
     if (!isDefined(twentyStandardApplicationId)) {
       throw new ApplicationException(
-        `Could not find workspace twenty standard applicationId in cache ${workspaceId}`,
+        `Could not find workspace twenty standard applicationId in cache ${workspaceId} (activationStatus: ${workspace.activationStatus})`,
         ApplicationExceptionCode.APPLICATION_NOT_FOUND,
       );
     }

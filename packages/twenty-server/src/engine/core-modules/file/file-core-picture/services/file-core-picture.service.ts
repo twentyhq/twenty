@@ -169,11 +169,9 @@ export class FileCorePictureService {
     });
 
     const { workspaceCustomFlatApplication } =
-      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        {
-          workspaceId,
-        },
-      );
+      await this.applicationService.findWorkspaceCustomFlatApplicationOrThrow({
+        workspaceId,
+      });
 
     await this.fileStorageService.delete({
       workspaceId,
