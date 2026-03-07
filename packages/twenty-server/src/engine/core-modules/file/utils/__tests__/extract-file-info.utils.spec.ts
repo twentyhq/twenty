@@ -122,26 +122,28 @@ describe('extractFileInfo', () => {
     });
   });
 
-  it('should throw error when PNG extension is used with non-PNG buffer', async () => {
-    await expect(
-      extractFileInfo({
-        file: textBuffer,
-        filename: 'fake-image.png',
-      }),
-    ).rejects.toThrow(
-      "File content does not match its extension. The file has extension 'png' (expected mime type: image/png), but the file content could not be detected as this type. The file may be corrupted, have the wrong extension, or be a security risk.",
-    );
+  it('should fall back to extension-based mime type when content detection fails for PNG', async () => {
+    const result = await extractFileInfo({
+      file: textBuffer,
+      filename: 'fake-image.png',
+    });
+
+    expect(result).toEqual({
+      mimeType: 'image/png',
+      ext: 'png',
+    });
   });
 
-  it('should throw error when PDF extension is used with non-PDF buffer', async () => {
-    await expect(
-      extractFileInfo({
-        file: textBuffer,
-        filename: 'fake-document.pdf',
-      }),
-    ).rejects.toThrow(
-      "File content does not match its extension. The file has extension 'pdf' (expected mime type: application/pdf), but the file content could not be detected as this type. The file may be corrupted, have the wrong extension, or be a security risk.",
-    );
+  it('should fall back to extension-based mime type when content detection fails for PDF', async () => {
+    const result = await extractFileInfo({
+      file: textBuffer,
+      filename: 'fake-document.pdf',
+    });
+
+    expect(result).toEqual({
+      mimeType: 'application/pdf',
+      ext: 'pdf',
+    });
   });
 
   it('should handle markdown files using extension', async () => {

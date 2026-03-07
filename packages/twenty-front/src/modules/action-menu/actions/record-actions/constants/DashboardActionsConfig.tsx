@@ -13,7 +13,6 @@ import { ActionViewType } from 'twenty-shared/types';
 import { PageLayoutSingleRecordActionKeys } from '@/page-layout/actions/PageLayoutSingleRecordActionKeys';
 import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { PermissionFlagType } from '~/generated-metadata/graphql';
 import {
   IconCancel,
   IconCopyPlus,
@@ -32,7 +31,6 @@ export const DASHBOARD_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       Icon: IconPencil,
       type: ActionType.Standard,
       scope: ActionScope.RecordSelection,
-      requiredPermissionFlag: PermissionFlagType.LAYOUTS,
       shouldBeRegistered: ({ selectedRecord, objectPermissions }) =>
         isDefined(selectedRecord) &&
         !selectedRecord?.isRemote &&
@@ -52,7 +50,6 @@ export const DASHBOARD_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       Icon: IconDeviceFloppy,
       type: ActionType.Standard,
       scope: ActionScope.RecordSelection,
-      requiredPermissionFlag: PermissionFlagType.LAYOUTS,
       shouldBeRegistered: ({ selectedRecord, objectPermissions }) =>
         isDefined(selectedRecord) &&
         !selectedRecord?.isRemote &&
@@ -71,7 +68,6 @@ export const DASHBOARD_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       Icon: IconCancel,
       type: ActionType.Standard,
       scope: ActionScope.RecordSelection,
-      requiredPermissionFlag: PermissionFlagType.LAYOUTS,
       shouldBeRegistered: ({ selectedRecord, objectPermissions }) =>
         isDefined(selectedRecord) &&
         !selectedRecord?.isRemote &&
@@ -90,7 +86,6 @@ export const DASHBOARD_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       Icon: IconCopyPlus,
       type: ActionType.Standard,
       scope: ActionScope.RecordSelection,
-      requiredPermissionFlag: PermissionFlagType.LAYOUTS,
       shouldBeRegistered: ({ selectedRecord, objectPermissions }) =>
         isDefined(selectedRecord) &&
         !selectedRecord?.isRemote &&
