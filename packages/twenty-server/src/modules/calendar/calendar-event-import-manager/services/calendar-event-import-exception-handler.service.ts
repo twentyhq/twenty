@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import {
   type TwentyORMException,
@@ -67,6 +68,13 @@ export class CalendarEventImportErrorHandlerService {
         break;
       case CalendarEventImportDriverExceptionCode.SYNC_CURSOR_ERROR:
         await this.handleSyncCursorErrorException(calendarChannel, workspaceId);
+        break;
+      case POSTGRESQL_ERROR_CODES.FOREIGN_KEY_VIOLATION:
+        await this.handleTemporaryException(
+          syncStep,
+          calendarChannel,
+          workspaceId,
+        );
         break;
       case CalendarEventImportDriverExceptionCode.CHANNEL_MISCONFIGURED:
       case CalendarEventImportDriverExceptionCode.UNKNOWN:
