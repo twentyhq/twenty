@@ -9,9 +9,9 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledErrorContainer = styled.div`
+  align-items: flex-start;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
   width: 100%;
 `;
 

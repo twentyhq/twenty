@@ -9,10 +9,10 @@ import { RecordTableCellStyleWrapper } from '@/object-record/record-table/record
 import { IconListViewGrip } from 'twenty-ui/input';
 
 const StyledContainer = styled.div`
-  height: ${RECORD_TABLE_ROW_HEIGHT}px;
   border-color: transparent;
   cursor: grab;
   display: flex;
+  height: ${RECORD_TABLE_ROW_HEIGHT}px;
 
   &:hover .icon {
     opacity: 1;

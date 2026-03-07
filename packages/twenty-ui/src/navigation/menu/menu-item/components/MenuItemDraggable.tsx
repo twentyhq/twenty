@@ -16,6 +16,7 @@ export type MenuItemDraggableProps = {
   isTooltipOpen?: boolean;
   onClick?: () => void;
   text: ReactNode;
+  contextualText?: ReactNode;
   className?: string;
   isIconDisplayedOnHoverOnly?: boolean;
   gripMode?: MenuItemDraggableGripMode;
@@ -30,6 +31,7 @@ export const MenuItemDraggable = ({
   iconButtons,
   onClick,
   text,
+  contextualText,
   isDragDisabled = false,
   className,
   isIconDisplayedOnHoverOnly = true,
@@ -51,6 +53,7 @@ export const MenuItemDraggable = ({
       <MenuItemLeftContent
         LeftIcon={LeftIcon}
         text={text}
+        contextualText={contextualText}
         withIconContainer={withIconContainer}
         disabled={isDragDisabled}
         gripMode={gripMode}

@@ -23,14 +23,14 @@ const StyledContainer = styled.div`
 const StyledContainerContainer = styled.div`
   display: flex;
   flex-direction: column;
-  min-height: calc(100% - ${themeCssVariables.spacing[2]});
   height: min-content;
+  min-height: calc(100% - ${themeCssVariables.spacing[2]});
 `;
 
 const StyledBoardContentContainer = styled.div`
   display: flex;
-  flex-direction: column;
   flex: 1;
+  flex-direction: column;
 `;
 
 export const RecordBoard = () => {

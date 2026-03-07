@@ -11,9 +11,9 @@ const StyledBoardCard = styled.div<{
   border-radius: ${themeCssVariables.border.radius.sm};
   color: ${themeCssVariables.font.color.primary};
   cursor: pointer;
-  width: 100%;
-
   opacity: ${({ isSecondaryDragged }) => (isSecondaryDragged ? '0.3' : '1')};
+
+  width: 100%;
 
   &[data-selected='true'] {
     background-color: ${themeCssVariables.accent.quaternary};
@@ -37,8 +37,8 @@ const StyledBoardCard = styled.div<{
   }
 
   .checkbox-container {
-    transition: all ease-in-out 160ms;
     opacity: 0;
+    transition: all ease-in-out 160ms;
   }
 
   &[data-selected='true'] .checkbox-container {
@@ -50,8 +50,8 @@ const StyledBoardCard = styled.div<{
   }
 
   .compact-icon-container {
-    transition: all ease-in-out 160ms;
     opacity: 0;
+    transition: all ease-in-out 160ms;
   }
   &:hover .compact-icon-container {
     opacity: 1;

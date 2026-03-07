@@ -15,8 +15,8 @@ const StyledWrapper = styled.div`
 
 const StyledCopyButton = styled.div`
   position: absolute;
-  top: ${themeCssVariables.spacing[3]};
   right: ${themeCssVariables.spacing[3]};
+  top: ${themeCssVariables.spacing[3]};
   z-index: 1;
 `;
 

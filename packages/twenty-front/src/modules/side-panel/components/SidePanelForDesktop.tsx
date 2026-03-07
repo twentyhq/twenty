@@ -26,24 +26,24 @@ const StyledSidePanelWrapper = styled.div<{
   flex-shrink: 0;
   min-width: 0;
   overflow: hidden;
-  width: ${({ isOpen }) => (isOpen ? `var(${SIDE_PANEL_WIDTH_VAR})` : '0px')};
   transition: ${({ isResizing }) =>
     isResizing
       ? 'none'
       : `width ${themeCssVariables.animation.duration.normal}s`};
+  width: ${({ isOpen }) => (isOpen ? `var(${SIDE_PANEL_WIDTH_VAR})` : '0px')};
 `;
 
 const StyledSidePanel = styled.aside`
   background: ${themeCssVariables.background.primary};
   border: 1px solid ${themeCssVariables.border.color.medium};
   border-radius: ${themeCssVariables.border.radius.md};
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   height: 100%;
   overflow: hidden;
   position: relative;
   width: 100%;
-  box-sizing: border-box;
 `;
 
 const StyledModalContainer = styled.div`

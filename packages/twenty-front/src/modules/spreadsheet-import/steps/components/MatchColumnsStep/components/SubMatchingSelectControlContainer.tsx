@@ -5,8 +5,8 @@ const StyledControlContainer = styled.div<{ cursor: string }>`
   align-items: center;
   background-color: ${themeCssVariables.background.transparent.lighter};
   border: 1px solid ${themeCssVariables.border.color.medium};
-  box-sizing: border-box;
   border-radius: ${themeCssVariables.border.radius.sm};
+  box-sizing: border-box;
   color: ${themeCssVariables.font.color.primary};
   cursor: ${({ cursor }) => cursor};
   display: flex;

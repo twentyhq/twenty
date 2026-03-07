@@ -27,9 +27,9 @@ type PageLayoutTabListVisibleTabsProps = {
 
 const StyledTabContainer = styled.div`
   display: flex;
-  position: relative;
-  overflow: hidden;
   max-width: 100%;
+  overflow: hidden;
+  position: relative;
 
   > *:not(:last-child) {
     margin-right: ${TAB_LIST_GAP}px;

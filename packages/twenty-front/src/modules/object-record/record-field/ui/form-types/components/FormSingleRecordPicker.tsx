@@ -24,11 +24,11 @@ import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledFormSelectContainerWrapper = styled.div<{ readonly?: boolean }>`
   align-items: center;
+  cursor: ${({ readonly }) => (readonly ? 'default' : 'pointer')};
   height: 32px;
   justify-content: space-between;
-  padding-right: ${themeCssVariables.spacing[2]};
 
-  cursor: ${({ readonly }) => (readonly ? 'default' : 'pointer')};
+  padding-right: ${themeCssVariables.spacing[2]};
 
   &:hover,
   &[data-open='true'] {

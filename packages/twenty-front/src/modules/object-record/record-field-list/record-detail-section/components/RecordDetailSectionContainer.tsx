@@ -6,8 +6,8 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledRecordDetailSectionWrapper = styled.div`
   border-top: 1px solid ${themeCssVariables.border.color.light};
-  padding-top: ${themeCssVariables.spacing[3]};
   padding-bottom: ${themeCssVariables.spacing[3]};
+  padding-top: ${themeCssVariables.spacing[3]};
   width: auto;
 `;
 

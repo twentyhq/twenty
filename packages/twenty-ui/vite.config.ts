@@ -63,8 +63,7 @@ export default defineConfig(({ command }) => {
       alias: {
         '@ui/': path.resolve(__dirname, 'src') + '/',
         '@assets/': path.resolve(__dirname, 'src/assets') + '/',
-        '@tabler/icons-react':
-          '@tabler/icons-react/dist/esm/icons/index.mjs',
+        '@tabler/icons-react': '@tabler/icons-react/dist/esm/icons/index.mjs',
       },
     },
     css: {

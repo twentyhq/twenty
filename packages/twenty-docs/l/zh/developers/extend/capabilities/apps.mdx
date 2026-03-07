@@ -36,7 +36,7 @@ cd my-twenty-app
 yarn twenty app:dev
 ```
 
-The scaffolder supports three modes for controlling which example files are included:
+脚手架工具支持两种模式，用于控制包含哪些示例文件：
 
 ```bash filename="Terminal"
 # 默认（完整）：所有示例（对象、字段、逻辑函数、前端组件、视图、导航菜单项、技能）
@@ -44,9 +44,6 @@ npx create-twenty-app@latest my-app
 
 # 最小化：仅核心文件（application-config.ts 和 default-role.ts）
 npx create-twenty-app@latest my-app --minimal
-
-# 交互式：选择要包含的示例
-npx create-twenty-app@latest my-app --interactive
 ```
 
 从这里您可以：
@@ -122,7 +119,7 @@ my-twenty-app/
       └── example-skill.ts                # Example AI agent skill definition
 ```
 
-使用 `--minimal` 时，只会创建核心文件（`application-config.ts`、`roles/default-role.ts`、`logic-functions/pre-install.ts` 和 `logic-functions/post-install.ts`）。 With `--interactive`, you choose which example files to include.
+使用 `--minimal` 时，只会创建核心文件（`application-config.ts`、`roles/default-role.ts`、`logic-functions/pre-install.ts` 和 `logic-functions/post-install.ts`）。
 
 总体来说：
 

@@ -36,7 +36,7 @@ cd my-twenty-app
 yarn twenty app:dev
 ```
 
-İskelet oluşturucu, hangi örnek dosyaların dahil edileceğini kontrol etmek için üç modu destekler:
+İskelet oluşturucu, hangi örnek dosyaların dahil edileceğini kontrol etmek için iki modu destekler:
 
 ```bash filename="Terminal"
 # Varsayılan (kapsamlı): tüm örnekler (nesne, alan, mantık fonksiyonu, ön bileşen, görünüm, gezinme menüsü öğesi, yetenek)
@@ -44,9 +44,6 @@ npx create-twenty-app@latest my-app
 
 # Minimal: yalnızca çekirdek dosyalar (application-config.ts ve default-role.ts)
 npx create-twenty-app@latest my-app --minimal
-
-# Etkileşimli: dahil edilecek örnekleri seçin
-npx create-twenty-app@latest my-app --interactive
 ```
 
 Buradan şunları yapabilirsiniz:
@@ -122,7 +119,7 @@ my-twenty-app/
       └── example-skill.ts                # Örnek yapay zekâ ajanı yetenek tanımı
 ```
 
-`--minimal` ile yalnızca çekirdek dosyalar oluşturulur (`application-config.ts`, `roles/default-role.ts`, `logic-functions/pre-install.ts` ve `logic-functions/post-install.ts`). `--interactive` ile hangi örnek dosyaların dahil edileceğini siz seçersiniz.
+`--minimal` ile yalnızca çekirdek dosyalar oluşturulur (`application-config.ts`, `roles/default-role.ts`, `logic-functions/pre-install.ts` ve `logic-functions/post-install.ts`).
 
 Genel hatlarıyla:
 

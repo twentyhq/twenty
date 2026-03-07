@@ -6,6 +6,7 @@ import { OrchestratorState } from '@/cli/utilities/dev/orchestrator/dev-mode-orc
 
 export type AppDevOptions = {
   appPath?: string;
+  headless?: boolean;
 };
 
 export class AppDevCommand {
@@ -29,20 +30,25 @@ export class AppDevCommand {
       frontendUrl: process.env.FRONTEND_URL,
     });
 
-    const uiStateManager = new DevUiStateManager(orchestratorState);
+    if (!options.headless) {
+      const uiStateManager = new DevUiStateManager(orchestratorState);
 
-    orchestratorState.onChange = () => uiStateManager.notify();
+      orchestratorState.onChange = () => uiStateManager.notify();
 
-    const { unmount } = await renderDevUI(uiStateManager);
+      const { unmount } = await renderDevUI(uiStateManager);
 
-    this.unmountUI = unmount;
+      this.unmountUI = unmount;
+    }
 
     this.orchestrator = new DevModeOrchestrator({
       state: orchestratorState,
     });
 
     await this.orchestrator.start();
-    this.setupGracefulShutdown();
+
+    if (!options.headless) {
+      this.setupGracefulShutdown();
+    }
   }
 
   private setupGracefulShutdown(): void {

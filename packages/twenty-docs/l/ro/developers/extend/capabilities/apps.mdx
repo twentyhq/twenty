@@ -36,7 +36,7 @@ cd my-twenty-app
 yarn twenty app:dev
 ```
 
-Generatorul de schelet acceptă trei moduri pentru a controla ce fișiere de exemplu sunt incluse:
+Generatorul de schelet acceptă două moduri pentru a controla ce fișiere de exemplu sunt incluse:
 
 ```bash filename="Terminal"
 # Implicit (exhaustiv): toate exemplele (obiect, câmp, funcție logică, componentă de interfață, vizualizare, element de meniu de navigare, abilitate)
@@ -44,9 +44,6 @@ npx create-twenty-app@latest my-app
 
 # Minimal: doar fișierele de bază (application-config.ts și default-role.ts)
 npx create-twenty-app@latest my-app --minimal
-
-# Interactiv: selectezi ce exemple să incluzi
-npx create-twenty-app@latest my-app --interactive
 ```
 
 De aici puteți:
@@ -122,7 +119,7 @@ my-twenty-app/
       └── example-skill.ts                # Example AI agent skill definition
 ```
 
-Cu `--minimal`, sunt create doar fișierele de bază (`application-config.ts`, `roles/default-role.ts`, `logic-functions/pre-install.ts` și `logic-functions/post-install.ts`). Cu `--interactive`, alegi ce fișiere de exemplu să incluzi.
+Cu `--minimal`, sunt create doar fișierele de bază (`application-config.ts`, `roles/default-role.ts`, `logic-functions/pre-install.ts` și `logic-functions/post-install.ts`).
 
 Pe scurt:
 

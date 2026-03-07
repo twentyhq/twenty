@@ -30,8 +30,8 @@ type SettingsDnsRecordsTableProps = {
 
 const StyledTableRowContainer = styled.div`
   > * > * {
-    min-width: 0;
     max-width: 100%;
+    min-width: 0;
     overflow: hidden;
   }
 `;

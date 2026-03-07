@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { Suspense, lazy, useContext, type ComponentType } from 'react';
+import { lazy, Suspense, useContext, type ComponentType } from 'react';
 import type { ReactDatePickerProps as ReactDatePickerLibProps } from 'react-datepicker';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 

@@ -81,12 +81,12 @@ const StyledOptionsLabel = styled.div<{
   font-size: ${themeCssVariables.font.size.xs};
   font-weight: ${themeCssVariables.font.weight.semiBold};
   margin-bottom: ${themeCssVariables.spacing['1.5']};
-  margin-top: ${themeCssVariables.spacing[1]};
-  width: 100%;
   margin-left: ${({ isAdvancedModeEnabled, isBulkInputMode }) =>
     isAdvancedModeEnabled && !isBulkInputMode
       ? themeCssVariables.spacing[10]
       : themeCssVariables.spacing[0]};
+  margin-top: ${themeCssVariables.spacing[1]};
+  width: 100%;
 `;
 
 const StyledApiKeyContainer = styled.div`
@@ -101,9 +101,9 @@ const StyledApiKey = styled.span`
   font-weight: ${themeCssVariables.font.weight.semiBold};
   margin-bottom: ${themeCssVariables.spacing['1.5']};
   margin-top: ${themeCssVariables.spacing[1]};
-  width: 100%;
-
   white-space: nowrap;
+
+  width: 100%;
 `;
 
 const StyledLabelContainer = styled.div`
@@ -122,9 +122,9 @@ const StyledIconContainer = styled.div`
 `;
 
 const StyledIconPointContainer = styled.span`
-  margin-right: ${themeCssVariables.spacing['0.5']};
-  display: flex;
   align-items: center;
+  display: flex;
+  margin-right: ${themeCssVariables.spacing['0.5']};
 `;
 
 const StyledFooterContainer = styled.div`
@@ -142,8 +142,8 @@ const StyledButtonContainer = styled.div`
 `;
 
 const StyledOptionsHeaderContainer = styled.div`
-  display: flex;
   align-items: center;
+  display: flex;
   justify-content: space-between;
   margin-bottom: ${themeCssVariables.spacing['1.5']};
   margin-top: ${themeCssVariables.spacing[1]};
@@ -157,8 +157,8 @@ const StyledTextAreaContainer = styled.div`
 const StyledHelpText = styled.div`
   color: ${themeCssVariables.font.color.light};
   font-size: ${themeCssVariables.font.size.xs};
-  margin-top: ${themeCssVariables.spacing[1]};
   margin-bottom: ${themeCssVariables.spacing[2]};
+  margin-top: ${themeCssVariables.spacing[1]};
 `;
 
 export const SettingsDataModelFieldSelectForm = ({

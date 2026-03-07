@@ -1,6 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { type AIChatErrorCodeType } from '@/ai/utils/AIChatErrorCode';
+import { type AIChatErrorCodeType } from '@/ai/utils/aiChatErrorCode';
 import { extractErrorCode } from '@/ai/utils/extractErrorCode';
 
 export const isAIChatErrorOfType = (

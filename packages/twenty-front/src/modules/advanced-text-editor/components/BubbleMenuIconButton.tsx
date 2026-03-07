@@ -16,8 +16,8 @@ type BubbleMenuIconButtonProps = {
 const StyledBubbleMenuIconButtonContainer = styled.div`
   border: none;
   border-radius: ${themeCssVariables.spacing[1.5]};
-  width: ${themeCssVariables.spacing[6]};
   height: ${themeCssVariables.spacing[6]};
+  width: ${themeCssVariables.spacing[6]};
 `;
 
 export const BubbleMenuIconButton = ({
