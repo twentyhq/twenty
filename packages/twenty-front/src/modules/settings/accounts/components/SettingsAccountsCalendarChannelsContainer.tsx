@@ -36,6 +36,7 @@ export const SettingsAccountsCalendarChannelsContainer = () => {
         eq: currentWorkspaceMember?.id,
       },
     },
+    skip: !currentWorkspaceMember?.id,
   });
 
   const { records: calendarChannels } = useFindManyRecords<

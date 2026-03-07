@@ -9,16 +9,12 @@ import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 export const useUpdateWorkflowVersionTrigger = () => {
   const { updateOneRecord: updateOneWorkflowVersion } = useUpdateOneRecord();
 
-  const { getUpdatableWorkflowVersion, isReady } =
+  const { getUpdatableWorkflowVersion } =
     useGetUpdatableWorkflowVersionOrThrow();
 
   const { markStepForRecomputation } = useStepsOutputSchema();
 
   const updateTrigger = async (updatedTrigger: WorkflowTrigger) => {
-    if (!isReady) {
-      return;
-    }
-
     const workflowVersionId = await getUpdatableWorkflowVersion();
 
     await updateOneWorkflowVersion({

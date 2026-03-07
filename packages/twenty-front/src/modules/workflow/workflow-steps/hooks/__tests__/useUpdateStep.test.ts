@@ -18,7 +18,6 @@ jest.mock(
 jest.mock('@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow', () => ({
   useGetUpdatableWorkflowVersionOrThrow: () => ({
     getUpdatableWorkflowVersion: mockGetUpdatableWorkflowVersion,
-    isReady: true,
   }),
 }));
 
