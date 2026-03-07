@@ -4,12 +4,16 @@ import { useUpdateWorkflowVersionStep } from '@/workflow/workflow-steps/hooks/us
 import { useStepsOutputSchema } from '@/workflow/workflow-variables/hooks/useStepsOutputSchema';
 
 export const useUpdateStep = () => {
-  const { getUpdatableWorkflowVersion } =
+  const { getUpdatableWorkflowVersion, isReady } =
     useGetUpdatableWorkflowVersionOrThrow();
   const { updateWorkflowVersionStep } = useUpdateWorkflowVersionStep();
   const { markStepForRecomputation } = useStepsOutputSchema();
 
   const updateStep = async (updatedStep: WorkflowAction) => {
+    if (!isReady) {
+      return { updatedStep: undefined };
+    }
+
     const workflowVersionId = await getUpdatableWorkflowVersion();
 
     const result = await updateWorkflowVersionStep({

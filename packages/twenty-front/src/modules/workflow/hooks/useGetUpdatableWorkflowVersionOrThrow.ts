@@ -13,6 +13,9 @@ export const useGetUpdatableWorkflowVersionOrThrow = (instanceId?: string) => {
   );
   const workflow = useWorkflowWithCurrentVersion(workflowVisualizerWorkflowId);
 
+  const isReady =
+    isDefined(workflowVisualizerWorkflowId) && isDefined(workflow);
+
   const getUpdatableWorkflowVersion = async (): Promise<string> => {
     if (!isDefined(workflowVisualizerWorkflowId) || !isDefined(workflow)) {
       throw new Error('Failed to get updatable workflow version');
@@ -34,5 +37,5 @@ export const useGetUpdatableWorkflowVersionOrThrow = (instanceId?: string) => {
     return draftVersionId;
   };
 
-  return { getUpdatableWorkflowVersion };
+  return { getUpdatableWorkflowVersion, isReady };
 };
