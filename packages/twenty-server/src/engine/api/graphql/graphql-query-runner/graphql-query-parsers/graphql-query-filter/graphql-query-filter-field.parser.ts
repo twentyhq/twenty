@@ -69,17 +69,7 @@ export class GraphqlQueryFilterFieldParser {
         useDirectTableReference,
       );
     }
-    const filterEntries = Object.entries(filterValue);
-
-    if (filterEntries.length !== 1) {
-      throw new GraphqlQueryRunnerException(
-        `Filter for field "${key}" must have exactly one operator, received ${filterEntries.length}`,
-        GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
-        { userFriendlyMessage: msg`Invalid filter value for field "${key}"` },
-      );
-    }
-
-    const [[operator, value]] = filterEntries;
+    const [[operator, value]] = Object.entries(filterValue);
 
     if (
       ARRAY_OPERATORS.includes(operator) &&

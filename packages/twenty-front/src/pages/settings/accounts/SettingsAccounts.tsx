@@ -34,7 +34,6 @@ export const SettingsAccounts = () => {
         },
       },
       recordGqlFields,
-      skip: !currentWorkspaceMember?.id,
     });
 
   return (

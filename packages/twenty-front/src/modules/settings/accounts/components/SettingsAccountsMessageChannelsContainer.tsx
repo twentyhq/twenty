@@ -43,7 +43,6 @@ export const SettingsAccountsMessageChannelsContainer = () => {
         eq: currentWorkspaceMember?.id,
       },
     },
-    skip: !currentWorkspaceMember?.id,
   });
 
   const { recordGqlFields } = useGenerateDepthRecordGqlFieldsFromObject({
