@@ -165,7 +165,7 @@ export class MicrosoftGetMessagesService {
       return [];
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
     return batchResponse.responses.map((response: any) => {
       if (response.status === 200) {
         return response.body;

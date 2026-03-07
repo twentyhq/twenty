@@ -2,9 +2,10 @@ import { styled } from '@linaria/react';
 
 import { ActivityRow } from '@/activities/components/ActivityRow';
 import { EmailThreadNotShared } from '@/activities/emails/components/EmailThreadNotShared';
-import { useOpenEmailThreadInCommandMenu } from '@/command-menu/hooks/useOpenEmailThreadInCommandMenu';
+import { useOpenEmailThreadInSidePanel } from '@/side-panel/hooks/useOpenEmailThreadInSidePanel';
 import { useContext } from 'react';
 
+import { isDefined } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/display';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import {
@@ -15,9 +16,9 @@ import { formatToHumanReadableDate } from '~/utils/date-utils';
 
 const StyledHeading = styled.div<{ unread: boolean }>`
   display: flex;
+  max-width: 20%;
   overflow: hidden;
   width: fit-content;
-  max-width: 20%;
 `;
 
 const StyledParticipantsContainer = styled.div`
@@ -51,17 +52,17 @@ const StyledSubjectAndBody = styled.div`
 
 const StyledSubject = styled.span`
   color: ${themeCssVariables.font.color.primary};
-  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 const StyledBody = styled.span`
   color: ${themeCssVariables.font.color.tertiary};
+  flex: 1;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  flex: 1;
 `;
 
 const StyledReceivedAt = styled.div`
@@ -76,7 +77,7 @@ type EmailThreadPreviewProps = {
 
 export const EmailThreadPreview = ({ thread }: EmailThreadPreviewProps) => {
   const { theme } = useContext(ThemeContext);
-  const { openEmailThreadInCommandMenu } = useOpenEmailThreadInCommandMenu();
+  const { openEmailThreadInSidePanel } = useOpenEmailThreadInSidePanel();
 
   const visibility = thread.visibility;
 
@@ -103,7 +104,7 @@ export const EmailThreadPreview = ({ thread }: EmailThreadPreviewProps) => {
       thread.visibility === MessageChannelVisibility.SHARE_EVERYTHING;
 
     if (canOpen) {
-      openEmailThreadInCommandMenu(thread.id);
+      openEmailThreadInSidePanel(thread.id);
     }
   };
 
@@ -121,7 +122,7 @@ export const EmailThreadPreview = ({ thread }: EmailThreadPreviewProps) => {
             }
             type="rounded"
           />
-          {thread?.lastTwoParticipants?.[0] && (
+          {isDefined(thread?.lastTwoParticipants?.[0]) && (
             <StyledAvatarWrapper>
               <Avatar
                 avatarUrl={thread.lastTwoParticipants[0].avatarUrl}

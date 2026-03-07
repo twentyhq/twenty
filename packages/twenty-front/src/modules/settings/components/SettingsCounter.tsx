@@ -25,13 +25,14 @@ const StyledCounterContainer = styled.div<{ showButtons: boolean }>`
       : themeCssVariables.spacing[16]};
 `;
 
-const StyledTextInput = styled(SettingsTextInput)`
+const StyledTextInputContainer = styled.div`
   width: ${themeCssVariables.spacing[16]};
-  input {
-    width: ${themeCssVariables.spacing[16]};
+
+  > * input {
+    font-weight: ${themeCssVariables.font.weight.medium};
     height: ${themeCssVariables.spacing[6]};
     text-align: center;
-    font-weight: ${themeCssVariables.font.weight.medium};
+    width: ${themeCssVariables.spacing[16]};
   }
 `;
 
@@ -84,14 +85,16 @@ export const SettingsCounter = ({
           disabled={disabled}
         />
       )}
-      <StyledTextInput
-        instanceId="settings-counter-input"
-        name="counter"
-        fullWidth
-        value={value.toString()}
-        onChange={handleTextInputChange}
-        disabled={disabled}
-      />
+      <StyledTextInputContainer>
+        <SettingsTextInput
+          instanceId="settings-counter-input"
+          name="counter"
+          fullWidth
+          value={value.toString()}
+          onChange={handleTextInputChange}
+          disabled={disabled}
+        />
+      </StyledTextInputContainer>
       {showButtons && (
         <IconButton
           size="small"

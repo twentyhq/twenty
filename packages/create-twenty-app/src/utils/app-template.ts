@@ -431,16 +431,29 @@ const createExampleView = async ({
   fileName: string;
 }) => {
   const universalIdentifier = v4();
+  const viewFieldUniversalIdentifier = v4();
 
-  const content = `import { defineView } from 'twenty-sdk';
-import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/objects/example-object';
+  const content = `import { defineView, ViewKey } from 'twenty-sdk';
+import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER, NAME_FIELD_UNIVERSAL_IDENTIFIER } from 'src/objects/example-object';
+
+export const EXAMPLE_VIEW_UNIVERSAL_IDENTIFIER = '${universalIdentifier}';
 
 export default defineView({
-  universalIdentifier: '${universalIdentifier}',
-  name: 'example-view',
+  universalIdentifier: EXAMPLE_VIEW_UNIVERSAL_IDENTIFIER,
+  name: 'All example items',
   objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
   icon: 'IconList',
+  key: ViewKey.INDEX,
   position: 0,
+  fields: [
+    {
+      universalIdentifier: '${viewFieldUniversalIdentifier}',
+      fieldMetadataUniversalIdentifier: NAME_FIELD_UNIVERSAL_IDENTIFIER,
+      position: 0,
+      isVisible: true,
+      size: 200,
+    },
+  ],
 });
 `;
 
@@ -460,18 +473,15 @@ const createExampleNavigationMenuItem = async ({
   const universalIdentifier = v4();
 
   const content = `import { defineNavigationMenuItem } from 'twenty-sdk';
+  import { EXAMPLE_VIEW_UNIVERSAL_IDENTIFIER } from 'src/views/example-view';
 
 export default defineNavigationMenuItem({
   universalIdentifier: '${universalIdentifier}',
   name: 'example-navigation-menu-item',
   icon: 'IconList',
+  color: 'blue',
   position: 0,
-  // Link to a view:
-  // viewUniversalIdentifier: '...',
-  // Or link to an object:
-  // targetObjectUniversalIdentifier: '...',
-  // Or link to an external URL:
-  // link: 'https://example.com',
+  viewUniversalIdentifier: EXAMPLE_VIEW_UNIVERSAL_IDENTIFIER,
 });
 `;
 
@@ -553,8 +563,8 @@ const createPackageJson = async ({
 }) => {
   const scripts: Record<string, string> = {
     twenty: 'twenty',
-    lint: 'eslint',
-    'lint:fix': 'eslint --fix',
+    lint: 'oxlint -c .oxlintrc.json .',
+    'lint:fix': 'oxlint --fix -c .oxlintrc.json .',
   };
 
   const devDependencies: Record<string, string> = {
@@ -562,8 +572,7 @@ const createPackageJson = async ({
     '@types/node': '^24.7.2',
     '@types/react': '^18.2.0',
     react: '^18.2.0',
-    eslint: '^9.32.0',
-    'typescript-eslint': '^8.50.0',
+    oxlint: '^0.16.0',
     'twenty-sdk': createTwentyAppPackageJson.version,
   };
 

@@ -13,12 +13,12 @@ type EmailThreadHeaderProps = {
 
 const StyledContainer = styled.div`
   align-items: flex-start;
+  background: ${themeCssVariables.background.secondary};
+  border-bottom: 1px solid ${themeCssVariables.border.color.medium};
   display: flex;
   flex-direction: column;
-  padding: ${themeCssVariables.spacing[6]};
   gap: ${themeCssVariables.spacing[6]};
-  border-bottom: 1px solid ${themeCssVariables.border.color.medium};
-  background: ${themeCssVariables.background.secondary};
+  padding: ${themeCssVariables.spacing[6]};
 `;
 
 const StyledHead = styled.div`
@@ -26,10 +26,10 @@ const StyledHead = styled.div`
 `;
 
 const StyledHeading = styled.h2`
+  color: ${themeCssVariables.font.color.primary};
   margin: 0;
   margin-bottom: ${themeCssVariables.spacing[3]};
   max-width: 100%;
-  color: ${themeCssVariables.font.color.primary};
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

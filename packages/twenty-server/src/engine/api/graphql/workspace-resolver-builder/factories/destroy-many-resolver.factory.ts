@@ -36,7 +36,6 @@ export class DestroyManyResolverFactory
 
       const resolverContext = createQueryRunnerContext({
         workspaceSchemaBuilderContext: internalContext,
-        request: requestContext.req,
       });
 
       try {

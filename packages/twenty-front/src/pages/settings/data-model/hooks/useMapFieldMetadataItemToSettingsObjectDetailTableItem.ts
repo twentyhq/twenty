@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMetadata';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
@@ -38,8 +39,8 @@ export const useMapFieldMetadataItemToSettingsObjectDetailTableItem = (
       fieldMetadataItem,
       fieldType: fieldType ?? '',
       dataType:
-        (relationObjectMetadataItem?.labelPlural ??
-        isFieldTypeSupportedInSettings(fieldMetadataType))
+        isDefined(relationObjectMetadataItem?.labelPlural) ||
+        isFieldTypeSupportedInSettings(fieldMetadataType)
           ? getSettingsFieldTypeConfig(fieldMetadataType as SettingsFieldType)
               ?.label
           : '',

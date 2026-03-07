@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { lingui } from '@lingui/vite-plugin';
 import { isNonEmptyString } from '@sniptt/guards';
 import react from '@vitejs/plugin-react-swc';
@@ -12,20 +11,17 @@ import {
   type PluginOption,
   searchForWorkspaceRoot,
 } from 'vite';
-import checker from 'vite-plugin-checker';
 import svgr from 'vite-plugin-svgr';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
 import { createWywProfilingPlugin } from 'twenty-shared/vite';
-type Checkers = Parameters<typeof checker>[0];
 
-export default defineConfig(({ command, mode }) => {
+export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, __dirname, '');
 
   const {
     REACT_APP_SERVER_BASE_URL,
     VITE_BUILD_SOURCEMAP,
-    VITE_DISABLE_TYPESCRIPT_CHECKER,
     VITE_HOST,
     SSL_CERT_PATH,
     SSL_KEY_PATH,
@@ -37,12 +33,6 @@ export default defineConfig(({ command, mode }) => {
     ? parseInt(REACT_APP_PORT)
     : 3001;
 
-  const isBuildCommand = command === 'build';
-
-  const tsConfigPath = isBuildCommand
-    ? path.resolve(__dirname, './tsconfig.build.json')
-    : path.resolve(__dirname, './tsconfig.json');
-
   const CHUNK_SIZE_WARNING_LIMIT = 1024 * 1024; // 1MB
   // Please don't increase this limit for main index chunk
   // If it gets too big then find modules in the code base
@@ -50,24 +40,9 @@ export default defineConfig(({ command, mode }) => {
   const MAIN_CHUNK_SIZE_LIMIT = 6.8 * 1024 * 1024; // 6.8MB for main index chunk
   const OTHER_CHUNK_SIZE_LIMIT = 5 * 1024 * 1024; // 5MB for other chunks
 
-  const checkers: Checkers = {
-    overlay: false,
-  };
-
-  if (VITE_DISABLE_TYPESCRIPT_CHECKER === 'true') {
-    console.log(
-      `VITE_DISABLE_TYPESCRIPT_CHECKER: ${VITE_DISABLE_TYPESCRIPT_CHECKER}`,
-    );
-  }
-
   if (VITE_BUILD_SOURCEMAP === 'true') {
+    // oxlint-disable-next-line no-console
     console.log(`VITE_BUILD_SOURCEMAP: ${VITE_BUILD_SOURCEMAP}`);
-  }
-
-  if (VITE_DISABLE_TYPESCRIPT_CHECKER !== 'true') {
-    checkers['typescript'] = {
-      tsconfigPath: tsConfigPath,
-    };
   }
 
   return {
@@ -108,15 +83,19 @@ export default defineConfig(({ command, mode }) => {
       lingui({
         configPath: path.resolve(__dirname, './lingui.config.ts'),
       }),
-      checker(checkers),
       createWywProfilingPlugin(
         wyw({
           include: [path.resolve(__dirname, 'src') + '/**/*.{ts,tsx}'],
           exclude: [
             '**/generated-metadata/**',
             '**/testing/mock-data/generated/**',
+            '**/testing/**',
             '**/*.test.{ts,tsx}',
             '**/*.spec.{ts,tsx}',
+            '**/*.stories.{ts,tsx}',
+            '**/__stories__/**',
+            '**/__tests__/**',
+            '**/__mocks__/**',
             '**/types/**',
             '**/constants/**',
             '**/states/**',
@@ -131,6 +110,7 @@ export default defineConfig(({ command, mode }) => {
             '**/mutations/**',
             '**/fragments/**',
             '**/graphql/**',
+            '**/decorators/**',
           ],
           babelOptions: {
             presets: ['@babel/preset-typescript', '@babel/preset-react'],
@@ -138,12 +118,16 @@ export default defineConfig(({ command, mode }) => {
           },
         }),
       ),
-      visualizer({
-        open: true,
-        gzipSize: true,
-        brotliSize: true,
-        filename: 'dist/stats.html',
-      }) as PluginOption, // https://github.com/btd/rollup-plugin-visualizer/issues/162#issuecomment-1538265997,
+      ...(env.ANALYZE === 'true'
+        ? [
+            visualizer({
+              open: !process.env.CI,
+              gzipSize: true,
+              brotliSize: true,
+              filename: 'dist/stats.html',
+            }) as PluginOption,
+          ]
+        : []),
     ],
 
     optimizeDeps: {
@@ -262,7 +246,6 @@ export default defineConfig(({ command, mode }) => {
     resolve: {
       alias: {
         path: 'rollup-plugin-node-polyfills/polyfills/path',
-        '@tabler/icons-react': '@tabler/icons-react/dist/esm/icons/index.mjs',
       },
     },
   };

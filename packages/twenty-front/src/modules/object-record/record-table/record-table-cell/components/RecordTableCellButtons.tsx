@@ -5,13 +5,13 @@ import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 import { AnimatedContainer } from 'twenty-ui/utilities';
 
 const StyledButtonContainer = styled.div`
-  margin: ${themeCssVariables.spacing[1]};
+  border: 1px solid ${themeCssVariables.border.color.strong};
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     position: relative;
     right: 7px;
   }
   border-radius: ${themeCssVariables.border.radius.sm};
-  border: 1px solid ${themeCssVariables.border.color.strong};
+  margin: ${themeCssVariables.spacing[1]};
 `;
 
 type RecordTableCellButtonsProps = {

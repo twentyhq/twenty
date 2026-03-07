@@ -28,5 +28,5 @@ export const getPositionNumberIcon = (index: number) => {
     IconSquareNumber9,
   ];
 
-  return iconMapping[index] || IconSquareNumber1;
+  return iconMapping[index] ?? IconSquareNumber1;
 };

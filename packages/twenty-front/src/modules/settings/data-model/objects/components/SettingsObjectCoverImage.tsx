@@ -6,21 +6,21 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconEye } from 'twenty-ui/display';
 import { FloatingButton } from 'twenty-ui/input';
-import { Card } from 'twenty-ui/layout';
 
 import DarkCoverImage from '@/settings/data-model/assets/cover-dark.png';
 import LightCoverImage from '@/settings/data-model/assets/cover-light.png';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
-const StyledCoverImageContainer = styled(Card)`
+
+const StyledCoverImageContainer = styled.div`
   align-items: center;
   background-size: cover;
   border-radius: ${themeCssVariables.border.radius.md};
   box-sizing: border-box;
   display: flex;
-  min-height: 153px;
   justify-content: center;
-  position: relative;
   margin-bottom: ${themeCssVariables.spacing[8]};
+  min-height: 153px;
+  position: relative;
 `;
 
 const StyledButtonContainer = styled.div`

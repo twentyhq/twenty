@@ -55,7 +55,8 @@ const StyledDialogMessage = styled.span`
   text-align: center;
 `;
 
-const StyledDialogButton = styled(Button)`
+const StyledDialogButtonContainer = styled.div`
+  display: flex;
   justify-content: center;
   margin-bottom: ${themeCssVariables.spacing[2]};
 `;
@@ -157,16 +158,18 @@ export const Dialog = ({
         {message && <StyledDialogMessage>{message}</StyledDialogMessage>}
         {children}
         {buttons.map(({ accent, onClick, role, title: key, variant }) => (
-          <StyledDialogButton
-            onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
-              onClose?.();
-              onClick?.(event);
-            }}
-            fullWidth={true}
-            variant={variant ?? 'secondary'}
-            title={key}
-            {...{ accent, key, role }}
-          />
+          <StyledDialogButtonContainer key={key}>
+            <Button
+              onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
+                onClose?.();
+                onClick?.(event);
+              }}
+              fullWidth={true}
+              variant={variant ?? 'secondary'}
+              title={key}
+              {...{ accent, role }}
+            />
+          </StyledDialogButtonContainer>
         ))}
       </StyledDialogContainer>
     </StyledDialogOverlay>

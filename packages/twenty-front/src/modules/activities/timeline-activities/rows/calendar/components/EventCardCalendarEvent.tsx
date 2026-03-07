@@ -5,7 +5,7 @@ import { isUndefined } from '@sniptt/guards';
 import { CalendarEventNotSharedContent } from '@/activities/calendar/components/CalendarEventNotSharedContent';
 import { CalendarEventParticipantsAvatarGroup } from '@/activities/calendar/components/CalendarEventParticipantsAvatarGroup';
 import { type CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
-import { useOpenCalendarEventInCommandMenu } from '@/command-menu/hooks/useOpenCalendarEventInCommandMenu';
+import { useOpenCalendarEventInSidePanel } from '@/side-panel/hooks/useOpenCalendarEventInSidePanel';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
@@ -43,9 +43,9 @@ const StyledCalendarEventContent = styled.div`
 const StyledCalendarEventTop = styled.div`
   align-items: center;
   display: flex;
-  width: 100%;
   gap: ${themeCssVariables.spacing[2]};
   justify-content: space-between;
+  width: 100%;
 `;
 
 const StyledCalendarEventTitle = styled.div`
@@ -68,15 +68,15 @@ const StyledCalendarEventBody = styled.div`
 `;
 
 const StyledCalendarEventDateCard = styled.div`
-  display: flex;
-  padding: ${themeCssVariables.spacing[1]};
-  flex-direction: column;
-  justify-content: center;
   align-items: center;
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  border-radius: ${themeCssVariables.spacing[1]};
+  display: flex;
+  flex-direction: column;
   gap: ${themeCssVariables.spacing[1]};
 
-  border-radius: ${themeCssVariables.spacing[1]};
-  border: 1px solid ${themeCssVariables.border.color.medium};
+  justify-content: center;
+  padding: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledCalendarEventDateCardMonth = styled.div`
@@ -97,8 +97,7 @@ export const EventCardCalendarEvent = ({
   calendarEventId: string;
 }) => {
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
-  const { openCalendarEventInCommandMenu } =
-    useOpenCalendarEventInCommandMenu();
+  const { openCalendarEventInSidePanel } = useOpenCalendarEventInSidePanel();
 
   const {
     record: calendarEvent,
@@ -171,7 +170,7 @@ export const EventCardCalendarEvent = ({
 
   const handleClick = () => {
     if (canOpen) {
-      openCalendarEventInCommandMenu(calendarEventId);
+      openCalendarEventInSidePanel(calendarEventId);
     }
   };
 

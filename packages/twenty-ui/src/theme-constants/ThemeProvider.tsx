@@ -50,7 +50,7 @@ export type ThemeContextType = {
 const computeThemeFromCss = (): ThemeType => {
   const root = document?.documentElement;
 
-  if (!root) {
+  if (!root || typeof getComputedStyle !== 'function') {
     return themeCssVariables as unknown as ThemeType;
   }
 

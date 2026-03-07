@@ -1,7 +1,8 @@
-import { AppDevCommand } from '@/cli/commands/app/app-dev';
-import * as fs from 'fs-extra';
 import { join } from 'path';
 import { OUTPUT_DIR } from 'twenty-shared/application';
+
+import { AppDevCommand } from '@/cli/commands/app/app-dev';
+import { pathExists } from '@/cli/utilities/file/fs-utils';
 
 export type RunAppDevResult = {
   success: boolean;
@@ -18,12 +19,12 @@ export const runAppDevInProcess = async (options: {
 
   const command = new AppDevCommand();
 
-  await command.execute({ appPath });
+  await command.execute({ appPath, headless: true });
 
   const startTime = Date.now();
 
   while (Date.now() - startTime < timeout) {
-    if (await fs.pathExists(manifestPath)) {
+    if (await pathExists(manifestPath)) {
       await new Promise((resolve) => setTimeout(resolve, 500));
       await command.close();
 

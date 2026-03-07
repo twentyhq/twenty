@@ -27,11 +27,11 @@ import { getFileNameAndExtension } from '~/utils/file/getFileNameAndExtension';
 const StyledLeftContent = styled.div`
   align-items: center;
   display: flex;
-  gap: ${themeCssVariables.spacing[3]};
-
-  width: 100%;
-  overflow: auto;
   flex: 1;
+
+  gap: ${themeCssVariables.spacing[3]};
+  overflow: auto;
+  width: 100%;
 `;
 
 const StyledRightContent = styled.div`

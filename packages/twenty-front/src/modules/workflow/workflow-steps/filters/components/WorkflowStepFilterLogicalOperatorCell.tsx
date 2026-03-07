@@ -25,9 +25,9 @@ const StyledNumber = styled.span`
 
 const StyledContainer = styled.div`
   align-items: start;
+  color: ${themeCssVariables.font.color.tertiary};
   display: flex;
   min-width: ${themeCssVariables.spacing[20]};
-  color: ${themeCssVariables.font.color.tertiary};
 `;
 
 type WorkflowStepFilterLogicalOperatorCellProps = {

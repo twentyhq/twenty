@@ -63,9 +63,9 @@ const StyledContainer = styled.div`
 `;
 
 const StyledCloseButton = styled.div`
+  left: ${themeCssVariables.spacing[3]};
   position: absolute;
   top: ${themeCssVariables.spacing[3]};
-  left: ${themeCssVariables.spacing[3]};
   z-index: 5;
 `;
 

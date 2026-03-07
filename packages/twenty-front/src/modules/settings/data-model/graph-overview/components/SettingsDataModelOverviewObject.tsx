@@ -12,7 +12,7 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { ObjectFieldRowWithoutRelation } from '@/settings/data-model/graph-overview/components/SettingsDataModelOverviewFieldWithoutRelation';
 import '@xyflow/react/dist/style.css';
 import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
+import { isDefined, getSettingsPath } from 'twenty-shared/utils';
 import { IconChevronDown, IconChevronUp, useIcons } from 'twenty-ui/display';
 import { SettingsItemTypeTag } from '@/settings/components/SettingsItemTypeTag';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
@@ -23,14 +23,14 @@ type SettingsDataModelOverviewObjectProps =
 
 const StyledNode = styled.div`
   background-color: ${themeCssVariables.background.secondary};
+  border: 1px solid ${themeCssVariables.border.color.medium};
   border-radius: ${themeCssVariables.border.radius.md};
+  box-shadow: ${themeCssVariables.boxShadow.light};
   display: flex;
   flex-direction: column;
-  width: 220px;
-  padding: ${themeCssVariables.spacing[2]};
   gap: ${themeCssVariables.spacing[2]};
-  border: 1px solid ${themeCssVariables.border.color.medium};
-  box-shadow: ${themeCssVariables.boxShadow.light};
+  padding: ${themeCssVariables.spacing[2]};
+  width: 220px;
 `;
 
 const StyledHeader = styled.div`
@@ -50,30 +50,30 @@ const StyledObjectName = styled.div`
 `;
 
 const StyledInnerCard = styled.div`
-  border: 1px solid ${themeCssVariables.border.color.light};
   background-color: ${themeCssVariables.background.primary};
+  border: 1px solid ${themeCssVariables.border.color.light};
   border-radius: ${themeCssVariables.border.radius.sm};
-  padding: ${themeCssVariables.spacing[2]} 0 ${themeCssVariables.spacing[2]} 0;
+  color: ${themeCssVariables.font.color.tertiary};
   display: flex;
   flex-flow: column nowrap;
   gap: ${themeCssVariables.spacing['0.5']};
-  color: ${themeCssVariables.font.color.tertiary};
+  padding: ${themeCssVariables.spacing[2]} 0 ${themeCssVariables.spacing[2]} 0;
 `;
 
 const StyledCardRow = styled.div`
   align-items: center;
   display: flex;
-  height: 24px;
   gap: ${themeCssVariables.spacing[1]};
+  height: 24px;
 `;
 
 const StyledCardRowOther = styled.div`
   align-items: center;
   cursor: pointer;
   display: flex;
+  gap: ${themeCssVariables.spacing[2]};
   height: 24px;
   padding: 0 ${themeCssVariables.spacing[2]};
-  gap: ${themeCssVariables.spacing[2]};
 
   &:hover {
     background-color: ${themeCssVariables.background.tertiary};
@@ -86,15 +86,17 @@ const StyledObjectInstanceCount = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
 `;
 
-const StyledObjectLink = styled(Link)`
-  align-items: center;
-  display: flex;
-  gap: ${themeCssVariables.spacing[1]};
-  text-decoration: none;
-  color: ${themeCssVariables.font.color.primary};
+const StyledObjectLinkContainer = styled.div`
+  > a {
+    align-items: center;
+    color: ${themeCssVariables.font.color.primary};
+    display: flex;
+    gap: ${themeCssVariables.spacing[1]};
+    text-decoration: none;
 
-  &:hover {
-    color: ${themeCssVariables.font.color.secondary};
+    &:hover {
+      color: ${themeCssVariables.font.color.secondary};
+    }
   }
 `;
 
@@ -123,14 +125,16 @@ export const SettingsDataModelOverviewObject = ({
     <StyledNode>
       <StyledHeader>
         <StyledObjectName onMouseEnter={() => {}} onMouseLeave={() => {}}>
-          <StyledObjectLink
-            to={getSettingsPath(SettingsPath.Objects, {
-              objectNamePlural: objectMetadataItem.namePlural,
-            })}
-          >
-            {Icon && <Icon size={theme.icon.size.md} />}
-            {objectMetadataItem.labelPlural}
-          </StyledObjectLink>
+          <StyledObjectLinkContainer>
+            <Link
+              to={getSettingsPath(SettingsPath.Objects, {
+                objectNamePlural: objectMetadataItem.namePlural,
+              })}
+            >
+              {isDefined(Icon) && <Icon size={theme.icon.size.md} />}
+              {objectMetadataItem.labelPlural}
+            </Link>
+          </StyledObjectLinkContainer>
           <StyledObjectInstanceCount> · {totalCount}</StyledObjectInstanceCount>
         </StyledObjectName>
         <SettingsItemTypeTag item={objectMetadataItem} />

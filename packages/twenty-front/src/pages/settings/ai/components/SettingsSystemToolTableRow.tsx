@@ -41,31 +41,30 @@ export type SettingsSystemToolTableRowProps = {
   tool: SystemTool;
 };
 
-export const StyledSystemToolTableRow = styled(TableRow)`
-  grid-template-columns: 1fr 100px 36px;
-  opacity: 0.7;
+const StyledSystemToolTableRowContainer = styled.div`
+  > div,
+  > a {
+    opacity: 0.7;
 
-  &[data-clickable='true']:hover {
-    opacity: 0.85;
+    &[data-clickable='true']:hover {
+      opacity: 0.85;
+    }
   }
 `;
 
-const StyledNameTableCell = styled(TableCell)`
-  color: ${themeCssVariables.font.color.primary};
-  gap: ${themeCssVariables.spacing[2]};
-  min-width: 0;
-  overflow: hidden;
-`;
+export const StyledSystemToolTableRow = (
+  props: React.ComponentProps<typeof TableRow>,
+) => (
+  <StyledSystemToolTableRowContainer>
+    {/* oxlint-disable-next-line react/jsx-props-no-spreading */}
+    <TableRow gridTemplateColumns="1fr 100px 36px" {...props} />
+  </StyledSystemToolTableRowContainer>
+);
 
 const StyledIconContainer = styled.div`
   align-items: center;
   display: flex;
   flex-shrink: 0;
-`;
-
-const StyledActionTableCell = styled(TableCell)`
-  justify-content: flex-end;
-  padding-right: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledExpandableContent = styled.div`
@@ -134,22 +133,30 @@ export const SettingsSystemToolTableRow = ({
         onClick={handleRowClick}
         isClickable
       >
-        <StyledNameTableCell>
+        <TableCell
+          color={themeCssVariables.font.color.primary}
+          gap={themeCssVariables.spacing[2]}
+          minWidth="0"
+          overflow="hidden"
+        >
           <StyledIconContainer>
             <Icon size={16} />
           </StyledIconContainer>
           <OverflowingTextWithTooltip text={tool.name} />
-        </StyledNameTableCell>
+        </TableCell>
         <TableCell>
           <SettingsItemTypeTag item={{ isCustom: false }} />
         </TableCell>
-        <StyledActionTableCell>
+        <TableCell
+          align="right"
+          padding={`0 ${themeCssVariables.spacing[2]} 0 0`}
+        >
           {isExpanded ? (
             <IconChevronDown size={16} />
           ) : (
             <IconChevronRight size={16} />
           )}
-        </StyledActionTableCell>
+        </TableCell>
       </StyledSystemToolTableRow>
 
       <AnimatedExpandableContainer isExpanded={isExpanded} mode="fit-content">

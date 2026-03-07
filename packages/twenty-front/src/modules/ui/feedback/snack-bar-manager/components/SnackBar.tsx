@@ -57,10 +57,10 @@ const StyledContainer = styled.div`
   box-shadow: ${themeCssVariables.boxShadow.strong};
   box-sizing: border-box;
   cursor: pointer;
+  margin-top: ${themeCssVariables.spacing[2]};
   padding: ${themeCssVariables.spacing[2]};
   position: relative;
   width: 296px;
-  margin-top: ${themeCssVariables.spacing[2]};
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     border-radius: 0;
@@ -68,14 +68,14 @@ const StyledContainer = styled.div`
   }
 `;
 
-const StyledProgressBar = styled(ProgressBar)`
+const StyledProgressBarContainer = styled.div`
   bottom: 0;
   height: auto;
   left: 0;
+  pointer-events: none;
   position: absolute;
   right: 0;
   top: 0;
-  pointer-events: none;
 `;
 
 const StyledHeader = styled.div`
@@ -106,23 +106,25 @@ const StyledActions = styled.div`
 const StyledDescription = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
   font-size: ${themeCssVariables.font.size.sm};
-  padding-left: ${themeCssVariables.spacing[6]};
   overflow: hidden;
+  padding-left: ${themeCssVariables.spacing[6]};
   text-overflow: ellipsis;
   width: 200px;
 `;
 
-const StyledLink = styled(Link)`
-  display: block;
-  color: ${themeCssVariables.font.color.tertiary};
-  font-size: ${themeCssVariables.font.size.sm};
-  padding-left: ${themeCssVariables.spacing[6]};
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  max-width: 200px;
-  &:hover {
-    color: ${themeCssVariables.font.color.secondary};
+const StyledLinkContainer = styled.div`
+  > a {
+    color: ${themeCssVariables.font.color.tertiary};
+    display: block;
+    font-size: ${themeCssVariables.font.size.sm};
+    max-width: 200px;
+    overflow: hidden;
+    padding-left: ${themeCssVariables.spacing[6]};
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    &:hover {
+      color: ${themeCssVariables.font.color.secondary};
+    }
   }
 `;
 
@@ -229,10 +231,12 @@ export const SnackBar = ({
       role={role}
       data-globally-prevent-click-outside
     >
-      <StyledProgressBar
-        barColor={theme.snackBar[variant].backgroundColor}
-        value={progressValue}
-      />
+      <StyledProgressBarContainer>
+        <ProgressBar
+          barColor={theme.snackBar[variant].backgroundColor}
+          value={progressValue}
+        />
+      </StyledProgressBarContainer>
       <StyledHeader>
         <StyledIcon>{icon}</StyledIcon>
         <StyledMessage>{sanitizedMessage ?? ''}</StyledMessage>
@@ -248,7 +252,9 @@ export const SnackBar = ({
         <StyledDescription>{sanitizedDetailedMessage}</StyledDescription>
       )}
       {actionText && actionTo && (
-        <StyledLink to={actionTo}>{actionText}</StyledLink>
+        <StyledLinkContainer>
+          <Link to={actionTo}>{actionText}</Link>
+        </StyledLinkContainer>
       )}
       {actionText && actionOnClick && !actionTo && (
         <StyledActionButton>

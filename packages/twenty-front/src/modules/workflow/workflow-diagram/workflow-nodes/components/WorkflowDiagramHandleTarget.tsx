@@ -7,16 +7,16 @@ type WorkflowDiagramHandleTargetProps = {
   isConnectable?: boolean;
 };
 
-const StyledHandle = styled(Handle)`
-  &.react-flow__handle {
-    opacity: 0;
-    z-index: 1;
+const StyledHandleContainer = styled.div`
+  & .react-flow__handle {
     border-radius: ${themeCssVariables.border.radius.md};
-    width: 100%;
     height: 100%;
     left: 0;
+    opacity: 0;
     top: 0;
     transform: translate(-1px, -5px);
+    width: 100%;
+    z-index: 1;
 
     &.connectionindicator {
       cursor: pointer;
@@ -28,12 +28,14 @@ export const WorkflowDiagramHandleTarget = ({
   isConnectable = false,
 }: WorkflowDiagramHandleTargetProps) => {
   return (
-    <StyledHandle
-      id={WORKFLOW_DIAGRAM_NODE_DEFAULT_TARGET_HANDLE_ID}
-      type="target"
-      position={Position.Top}
-      isConnectableEnd={isConnectable}
-      isConnectableStart={false}
-    />
+    <StyledHandleContainer>
+      <Handle
+        id={WORKFLOW_DIAGRAM_NODE_DEFAULT_TARGET_HANDLE_ID}
+        type="target"
+        position={Position.Top}
+        isConnectableEnd={isConnectable}
+        isConnectableStart={false}
+      />
+    </StyledHandleContainer>
   );
 };

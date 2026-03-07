@@ -18,18 +18,18 @@ const StyledText = styled.div`
   white-space: nowrap;
 `;
 
-const StyledCloseButton = styled(IconButton)`
+const StyledCloseButtonContainer = styled.div`
   color: ${themeCssVariables.grayScale.gray1};
   display: flex;
 `;
 
 const StyledContent = styled.div<{ hasCloseButton: boolean }>`
   align-items: center;
-  justify-content: center;
   display: flex;
   flex: 1;
-  margin-left: ${({ hasCloseButton }) => (hasCloseButton ? '24px' : '0')};
   gap: ${themeCssVariables.spacing[3]};
+  justify-content: center;
+  margin-left: ${({ hasCloseButton }) => (hasCloseButton ? '24px' : '0')};
 `;
 
 export const InformationBanner = ({
@@ -79,13 +79,15 @@ export const InformationBanner = ({
             )}
           </StyledContent>
           {onClose && (
-            <StyledCloseButton
-              Icon={IconX}
-              size="small"
-              variant="tertiary"
-              onClick={onClose}
-              ariaLabel={t`Close banner`}
-            />
+            <StyledCloseButtonContainer>
+              <IconButton
+                Icon={IconX}
+                size="small"
+                variant="tertiary"
+                onClick={onClose}
+                ariaLabel={t`Close banner`}
+              />
+            </StyledCloseButtonContainer>
           )}
         </Banner>
       )}

@@ -15,11 +15,11 @@ type EventFieldDiffValueProps = {
 
 const StyledEventFieldDiffValue = styled.div`
   align-items: center;
+  color: ${themeCssVariables.font.color.primary};
   display: flex;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: ${themeCssVariables.font.color.primary};
 `;
 
 export const EventFieldDiffValue = ({

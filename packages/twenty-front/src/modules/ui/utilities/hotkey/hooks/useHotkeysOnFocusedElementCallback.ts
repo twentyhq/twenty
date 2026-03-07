@@ -69,7 +69,7 @@ export const useHotkeysOnFocusedElementCallback = (
 
       return callback(keyboardEvent, hotkeysEvent);
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
     [...dependencyArray, store],
   );
 };

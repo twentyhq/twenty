@@ -38,9 +38,9 @@ export const PageLayoutTabListReorderableTab = ({
       {(draggableProvided, draggableSnapshot) => (
         <StyledTabContainer
           ref={draggableProvided.innerRef}
-          // eslint-disable-next-line react/jsx-props-no-spreading
+          // oxlint-disable-next-line react/jsx-props-no-spreading
           {...draggableProvided.draggableProps}
-          // eslint-disable-next-line react/jsx-props-no-spreading
+          // oxlint-disable-next-line react/jsx-props-no-spreading
           {...draggableProvided.dragHandleProps}
           onClick={draggableSnapshot.isDragging ? undefined : onSelect}
           active={isActive}

@@ -17,10 +17,10 @@ type SettingsItemTypeTagProps = {
 
 const StyledContainer = styled.div`
   align-items: center;
+  color: ${themeCssVariables.font.color.secondary};
   display: flex;
   font-size: ${themeCssVariables.font.size.sm};
   gap: ${themeCssVariables.spacing[1]};
-  color: ${themeCssVariables.font.color.secondary};
 `;
 
 export const SettingsItemTypeTag = ({

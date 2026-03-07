@@ -30,8 +30,8 @@ const StyledContainer = styled.div`
 
   .scalar-app .text-pretty {
     overflow-wrap: break-word;
-    word-break: normal;
     white-space: normal;
+    word-break: normal;
   }
 `;
 

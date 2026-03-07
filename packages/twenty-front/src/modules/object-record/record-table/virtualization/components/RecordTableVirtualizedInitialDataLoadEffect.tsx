@@ -93,8 +93,8 @@ export const RecordTableVirtualizedInitialDataLoadEffect = () => {
         JSON.stringify(lastContextStoreVirtualizedVisibleRecordFields) !==
         JSON.stringify(visibleRecordFields)
       ) {
-        const lastFields = lastContextStoreVirtualizedVisibleRecordFields || [];
-        const currentFields = visibleRecordFields || [];
+        const lastFields = lastContextStoreVirtualizedVisibleRecordFields ?? [];
+        const currentFields = visibleRecordFields ?? [];
 
         setLastContextStoreVirtualizedVisibleRecordFields(visibleRecordFields);
 

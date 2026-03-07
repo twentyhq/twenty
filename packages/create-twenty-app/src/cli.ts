@@ -18,10 +18,6 @@ const program = new Command(packageJson.name)
     '-m, --minimal',
     'Create only core entities (application-config and default-role)',
   )
-  .option(
-    '-i, --interactive',
-    'Interactively choose which entity examples to include',
-  )
   .helpOption('-h, --help', 'Display this help message.')
   .action(
     async (
@@ -29,19 +25,14 @@ const program = new Command(packageJson.name)
       options?: {
         exhaustive?: boolean;
         minimal?: boolean;
-        interactive?: boolean;
       },
     ) => {
-      const modeFlags = [
-        options?.exhaustive,
-        options?.minimal,
-        options?.interactive,
-      ].filter(Boolean);
+      const modeFlags = [options?.exhaustive, options?.minimal].filter(Boolean);
 
       if (modeFlags.length > 1) {
         console.error(
           chalk.red(
-            'Error: --exhaustive, --minimal, and --interactive are mutually exclusive.',
+            'Error: --exhaustive and --minimal are mutually exclusive.',
           ),
         );
         process.exit(1);
@@ -56,11 +47,7 @@ const program = new Command(packageJson.name)
         process.exit(1);
       }
 
-      const mode: ScaffoldingMode = options?.minimal
-        ? 'minimal'
-        : options?.interactive
-          ? 'interactive'
-          : 'exhaustive';
+      const mode: ScaffoldingMode = options?.minimal ? 'minimal' : 'exhaustive';
 
       await new CreateAppCommand().execute(directory, mode);
     },

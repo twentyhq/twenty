@@ -34,19 +34,24 @@ const StyledContainer = styled.div`
   }
 `;
 
+const StyledDropdownContainer = styled.div`
+  align-items: center;
+  display: flex;
+`;
+
 const StyledTabContainer = styled.div`
   display: flex;
   gap: ${TAB_LIST_GAP}px;
-  position: relative;
-  overflow: hidden;
   max-width: 100%;
+  overflow: hidden;
+  position: relative;
 `;
 
 export const TabList = ({
   tabs,
   loading,
   behaveAsLinks = true,
-  isInRightDrawer,
+  isInSidePanel,
   className,
   componentInstanceId,
   onChangeTab,
@@ -118,7 +123,7 @@ export const TabList = ({
     >
       <>
         <TabListFromUrlOptionalEffect
-          isInRightDrawer={!!isInRightDrawer}
+          isInSidePanel={!!isInSidePanel}
           tabListIds={tabs.map((tab) => tab.id)}
         />
 
@@ -156,20 +161,22 @@ export const TabList = ({
             </StyledTabContainer>
 
             {hasHiddenTabs && (
-              <TabListDropdown
-                dropdownId={dropdownId}
-                onClose={() => {
-                  closeDropdown(dropdownId);
-                }}
-                overflow={{
-                  hiddenTabsCount,
-                  isActiveTabHidden,
-                }}
-                hiddenTabs={hiddenTabs}
-                activeTabId={activeTabId || ''}
-                onTabSelect={handleTabSelectFromDropdown}
-                loading={loading}
-              />
+              <StyledDropdownContainer>
+                <TabListDropdown
+                  dropdownId={dropdownId}
+                  onClose={() => {
+                    closeDropdown(dropdownId);
+                  }}
+                  overflow={{
+                    hiddenTabsCount,
+                    isActiveTabHidden,
+                  }}
+                  hiddenTabs={hiddenTabs}
+                  activeTabId={activeTabId || ''}
+                  onTabSelect={handleTabSelectFromDropdown}
+                  loading={loading}
+                />
+              </StyledDropdownContainer>
             )}
           </StyledContainer>
         </NodeDimension>

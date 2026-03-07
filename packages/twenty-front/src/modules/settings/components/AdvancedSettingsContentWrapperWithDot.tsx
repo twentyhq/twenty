@@ -16,17 +16,19 @@ type AdvancedSettingsContentWrapperWithDotProps = {
 };
 
 const StyledDotContainer = styled.div<{ dotPosition: DotPosition }>`
+  align-items: ${({ dotPosition }) =>
+    dotPosition === 'top' ? 'stretch' : 'center'};
   display: flex;
-  position: absolute;
   height: 100%;
   left: calc(-1 * ${themeCssVariables.spacing[5]});
 
+  position: absolute;
   top: ${({ dotPosition }) => (dotPosition === 'top' ? '0' : 'auto')};
-  align-items: ${({ dotPosition }) =>
-    dotPosition === 'top' ? 'stretch' : 'center'};
 `;
 
-const StyledIconPoint = styled(IconPoint)`
+const StyledIconPointContainer = styled.span`
+  align-items: center;
+  display: flex;
   margin-right: 0;
 `;
 
@@ -41,11 +43,13 @@ export const AdvancedSettingsContentWrapperWithDot = ({
     <StyledWrapper>
       {!hideDot && (
         <StyledDotContainer dotPosition={dotPosition}>
-          <StyledIconPoint
-            size={12}
-            color={theme.color.yellow}
-            fill={theme.color.yellow}
-          />
+          <StyledIconPointContainer>
+            <IconPoint
+              size={12}
+              color={theme.color.yellow}
+              fill={theme.color.yellow}
+            />
+          </StyledIconPointContainer>
         </StyledDotContainer>
       )}
       {children}

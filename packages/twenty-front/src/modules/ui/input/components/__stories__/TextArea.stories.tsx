@@ -14,7 +14,7 @@ const Render = (args: RenderProps) => {
     setValue(text);
   };
 
-  // eslint-disable-next-line react/jsx-props-no-spreading
+  // oxlint-disable-next-line react/jsx-props-no-spreading
   return <TextArea {...args} value={value} onChange={handleChange} />;
 };
 

@@ -56,14 +56,14 @@ export const PageLayoutVerticalListEditor = ({
 }: PageLayoutVerticalListEditorProps) => {
   const droppableId = `page-layout-vertical-list-${useId()}`;
 
-  const { isInRightDrawer } = useLayoutRenderingContext();
+  const { isInSidePanel } = useLayoutRenderingContext();
   const isMobile = useIsMobile();
   const { isInPinnedTab } = useIsInPinnedTab();
 
   const variant = getPageLayoutVerticalListViewerVariant({
     isInPinnedTab,
     isMobile,
-    isInRightDrawer,
+    isInSidePanel,
   });
 
   const setPageLayoutDraggingWidgetId = useSetAtomComponentState(
@@ -85,8 +85,8 @@ export const PageLayoutVerticalListEditor = ({
           <StyledVerticalListContainer
             ref={provided.innerRef}
             variant={variant}
-            shouldUseWhiteBackground={isMobile || isInRightDrawer}
-            // eslint-disable-next-line react/jsx-props-no-spreading
+            shouldUseWhiteBackground={isMobile || isInSidePanel}
+            // oxlint-disable-next-line react/jsx-props-no-spreading
             {...provided.droppableProps}
           >
             {widgets.map((widget, index) => (
@@ -99,11 +99,11 @@ export const PageLayoutVerticalListEditor = ({
                 {(provided, snapshot) => (
                   <StyledDraggableWrapper
                     ref={provided.innerRef}
-                    // eslint-disable-next-line react/jsx-props-no-spreading
+                    // oxlint-disable-next-line react/jsx-props-no-spreading
                     {...provided.draggableProps}
                     isDragging={snapshot.isDragging}
                   >
-                    {/* eslint-disable-next-line react/jsx-props-no-spreading */}
+                    {/* oxlint-disable-next-line react/jsx-props-no-spreading */}
                     <div {...provided.dragHandleProps}>
                       <WidgetRenderer widget={widget} />
                     </div>

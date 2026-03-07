@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { styled } from '@linaria/react';
 import { Handle, Position } from '@xyflow/react';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
@@ -16,9 +17,9 @@ const StyledRow = styled.div`
   align-items: center;
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
+  padding: 0 ${themeCssVariables.spacing[2]};
   position: relative;
   width: 100%;
-  padding: 0 ${themeCssVariables.spacing[2]};
 `;
 
 const StyledFieldName = styled.div`
@@ -40,7 +41,7 @@ export const ObjectFieldRow = ({ field }: ObjectFieldRowProps) => {
 
   return (
     <StyledRow>
-      {Icon && <Icon size={theme.icon.size.md} />}
+      {isDefined(Icon) && <Icon size={theme.icon.size.md} />}
       <StyledFieldName>{relatedObject?.labelPlural ?? ''}</StyledFieldName>
       <Handle
         type={

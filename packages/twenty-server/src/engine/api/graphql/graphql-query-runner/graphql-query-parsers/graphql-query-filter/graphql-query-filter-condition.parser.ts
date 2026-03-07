@@ -25,11 +25,11 @@ export class GraphqlQueryFilterConditionParser {
   }
 
   public parse(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
     queryBuilder: WorkspaceSelectQueryBuilder<any>,
     objectNameSingular: string,
     filter: Partial<ObjectRecordFilter>,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
   ): WorkspaceSelectQueryBuilder<any> {
     if (!filter || Object.keys(filter).length === 0) {
       return queryBuilder;
@@ -48,7 +48,7 @@ export class GraphqlQueryFilterConditionParser {
     queryBuilder: WhereExpressionBuilder,
     objectNameSingular: string,
     key: string,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
     value: any,
     isFirst = false,
   ): void {

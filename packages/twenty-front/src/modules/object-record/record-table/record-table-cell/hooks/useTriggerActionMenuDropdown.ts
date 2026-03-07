@@ -4,7 +4,7 @@ import { useStore } from 'jotai';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { recordIndexActionMenuDropdownPositionComponentState } from '@/action-menu/states/recordIndexActionMenuDropdownPositionComponentState';
 import { getActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getActionMenuDropdownIdFromActionMenuId';
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
@@ -35,7 +35,7 @@ export const useTriggerActionMenuDropdown = ({
     );
 
   const { openDropdown } = useOpenDropdown();
-  const { closeCommandMenu } = useCommandMenu();
+  const { closeSidePanelMenu } = useSidePanelMenu();
   const store = useStore();
 
   const triggerActionMenuDropdown = useCallback(
@@ -53,7 +53,7 @@ export const useTriggerActionMenuDropdown = ({
         store.set(isRowSelectedFamilyState(recordId), true);
       }
 
-      closeCommandMenu();
+      closeSidePanelMenu();
 
       openDropdown({
         dropdownComponentInstanceIdFromProps: actionMenuDropdownId,
@@ -62,7 +62,7 @@ export const useTriggerActionMenuDropdown = ({
     [
       recordIndexActionMenuDropdownPositionCallbackState,
       isRowSelectedFamilyState,
-      closeCommandMenu,
+      closeSidePanelMenu,
       openDropdown,
       actionMenuDropdownId,
       store,

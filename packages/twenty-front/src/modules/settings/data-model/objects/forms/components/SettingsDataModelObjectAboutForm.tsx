@@ -48,10 +48,10 @@ const StyledInputContainer = styled.div`
 
 const StyledAdvancedSettingsSectionInputWrapper = styled.div`
   display: flex;
+  flex: 1;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[4]};
   width: 100%;
-  flex: 1;
 `;
 
 const StyledAdvancedSettingsOuterContainer = styled.div`
@@ -86,8 +86,8 @@ const StyledConflictBanner = styled.div`
 const StyledBannerContent = styled.div`
   align-items: center;
   display: flex;
-  gap: ${themeCssVariables.spacing[2]};
   flex: 1;
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledBannerText = styled.span`
@@ -95,14 +95,16 @@ const StyledBannerText = styled.span`
   flex: 1;
 `;
 
-const StyledConflictButton = styled(Button)`
-  border-color: ${themeCssVariables.color.blue};
-  color: ${themeCssVariables.color.blue};
-  &:hover {
-    background: ${themeCssVariables.accent.secondary};
-  }
-  &:focus-visible {
-    box-shadow: 0 0 0 3px ${themeCssVariables.accent.tertiary};
+const StyledConflictButtonContainer = styled.div`
+  > button {
+    border-color: ${themeCssVariables.color.blue};
+    color: ${themeCssVariables.color.blue};
+    &:hover {
+      background: ${themeCssVariables.accent.secondary};
+    }
+    &:focus-visible {
+      box-shadow: 0 0 0 3px ${themeCssVariables.accent.tertiary};
+    }
   }
 `;
 
@@ -281,18 +283,20 @@ export const SettingsDataModelObjectAboutForm = ({
                     {t`An object with this name already exists`}
                   </StyledBannerText>
                 </StyledBannerContent>
-                <StyledConflictButton
-                  size="small"
-                  variant="secondary"
-                  accent="blue"
-                  title={t`Open`}
-                  onClick={() =>
-                    navigateSettings(SettingsPath.ObjectDetail, {
-                      objectNamePlural:
-                        conflictingObjectMetadataItem.namePlural,
-                    })
-                  }
-                />
+                <StyledConflictButtonContainer>
+                  <Button
+                    size="small"
+                    variant="secondary"
+                    accent="blue"
+                    title={t`Open`}
+                    onClick={() =>
+                      navigateSettings(SettingsPath.ObjectDetail, {
+                        objectNamePlural:
+                          conflictingObjectMetadataItem.namePlural,
+                      })
+                    }
+                  />
+                </StyledConflictButtonContainer>
               </StyledConflictBanner>
             )}
             {[

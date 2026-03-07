@@ -28,11 +28,11 @@ export const SpreadsheetImportStepper = ({
 
   const [currentStepState, setCurrentStepState] =
     useState<SpreadsheetImportStep>(
-      initialStepState || { type: SpreadsheetImportStepType.upload },
+      initialStepState ?? { type: SpreadsheetImportStepType.upload },
     );
   const [previousStepState, setPreviousStepState] =
     useState<SpreadsheetImportStep>(
-      initialStepState || { type: SpreadsheetImportStepType.upload },
+      initialStepState ?? { type: SpreadsheetImportStepType.upload },
     );
 
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
@@ -114,7 +114,7 @@ export const SpreadsheetImportStepper = ({
           onBack={() => {
             handleBack();
             setPreviousStepState(
-              initialStepState || { type: SpreadsheetImportStepType.upload },
+              initialStepState ?? { type: SpreadsheetImportStepType.upload },
             );
           }}
         />

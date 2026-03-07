@@ -63,7 +63,7 @@ export const SettingsObjectNewFieldSelect = () => {
   if (!activeObjectMetadataItem) return null;
 
   return (
-    <FormProvider // eslint-disable-next-line react/jsx-props-no-spreading
+    <FormProvider // oxlint-disable-next-line react/jsx-props-no-spreading
       {...formMethods}
     >
       <SubMenuTopBarContainer

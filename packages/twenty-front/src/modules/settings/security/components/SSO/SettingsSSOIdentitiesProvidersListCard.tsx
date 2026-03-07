@@ -18,9 +18,12 @@ import { getSettingsPath } from 'twenty-shared/utils';
 import { IconKey } from 'twenty-ui/display';
 import { useGetSsoIdentityProvidersQuery } from '~/generated-metadata/graphql';
 
-const StyledLink = styled(Link)<{ isDisabled: boolean }>`
+const StyledLinkContainer = styled.div<{ isDisabled: boolean }>`
   pointer-events: ${({ isDisabled }) => (isDisabled ? 'none' : 'auto')};
-  text-decoration: none;
+
+  > a {
+    text-decoration: none;
+  }
 `;
 
 export const SettingsSSOIdentitiesProvidersListCard = () => {
@@ -48,16 +51,17 @@ export const SettingsSSOIdentitiesProvidersListCard = () => {
   });
 
   return loading || !SSOIdentitiesProviders.length ? (
-    <StyledLink
-      to={getSettingsPath(SettingsPath.NewSSOIdentityProvider)}
+    <StyledLinkContainer
       isDisabled={currentWorkspace?.hasValidEnterpriseKey !== true}
     >
-      <SettingsCard
-        title={t`Add SSO Identity Provider`}
-        disabled={currentWorkspace?.hasValidEnterpriseKey !== true}
-        Icon={<IconKey />}
-      />
-    </StyledLink>
+      <Link to={getSettingsPath(SettingsPath.NewSSOIdentityProvider)}>
+        <SettingsCard
+          title={t`Add SSO Identity Provider`}
+          disabled={currentWorkspace?.hasValidEnterpriseKey !== true}
+          Icon={<IconKey />}
+        />
+      </Link>
+    </StyledLinkContainer>
   ) : (
     <SettingsSSOIdentitiesProvidersListCardWrapper />
   );

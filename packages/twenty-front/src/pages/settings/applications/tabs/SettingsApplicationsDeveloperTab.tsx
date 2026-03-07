@@ -2,6 +2,7 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { FIND_MANY_APPLICATION_REGISTRATIONS } from '@/settings/application-registrations/graphql/queries/findManyApplicationRegistrations';
 import { SettingsListCard } from '@/settings/components/SettingsListCard';
 import { getDocumentationUrl } from '@/support/utils/getDocumentationUrl';
+import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -16,15 +17,26 @@ import {
   IconChevronRight,
   IconCopy,
   IconFileInfo,
+  IconUpload,
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { useContext } from 'react';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
+import {
+  SettingsUploadTarballModal,
+  UPLOAD_TARBALL_MODAL_ID,
+} from '~/pages/settings/applications/components/SettingsUploadTarballModal';
 
 const StyledButtonContainer = styled.div`
   margin: ${themeCssVariables.spacing[2]} 0;
+`;
+
+const StyledButtonGroupContainer = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: ${themeCssVariables.spacing[4]};
 `;
 
 type ApplicationRegistration = {
@@ -38,6 +50,7 @@ export const SettingsApplicationsDeveloperTab = () => {
   const { t } = useLingui();
   const navigate = useNavigate();
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
+  const { openModal } = useModal();
 
   const { copyToClipboard } = useCopyToClipboard();
 
@@ -47,9 +60,9 @@ export const SettingsApplicationsDeveloperTab = () => {
     data?.findManyApplicationRegistrations ?? [];
 
   const commands = [
-    // eslint-disable-next-line lingui/no-unlocalized-strings
+    // oxlint-disable-next-line lingui/no-unlocalized-strings
     'npx create-twenty-app@latest my-twenty-app',
-    // eslint-disable-next-line lingui/no-unlocalized-strings
+    // oxlint-disable-next-line lingui/no-unlocalized-strings
     'cd my-twenty-app',
   ];
 
@@ -87,12 +100,12 @@ export const SettingsApplicationsDeveloperTab = () => {
           />
         </StyledButtonContainer>
       </Section>
-      {registrations.length > 0 && (
-        <Section>
-          <H2Title
-            title={t`My Apps`}
-            description={t`Apps you've created and published`}
-          />
+      <Section>
+        <H2Title
+          title={t`My Apps`}
+          description={t`Apps you've created, registered, or published`}
+        />
+        {registrations.length > 0 && (
           <SettingsListCard
             items={registrations}
             getItemLabel={(registration) => registration.name}
@@ -112,8 +125,19 @@ export const SettingsApplicationsDeveloperTab = () => {
               />
             )}
           />
-        </Section>
-      )}
+        )}
+      </Section>
+      <StyledButtonGroupContainer>
+        <Button
+          Icon={IconUpload}
+          title={t`Upload tarball`}
+          size="small"
+          variant="secondary"
+          onClick={() => openModal(UPLOAD_TARBALL_MODAL_ID)}
+        />
+      </StyledButtonGroupContainer>
+
+      <SettingsUploadTarballModal />
     </>
   );
 };
