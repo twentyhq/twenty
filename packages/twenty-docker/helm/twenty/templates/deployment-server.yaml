@@ -91,9 +91,9 @@ spec:
               DO
               $do$
               BEGIN
-              IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = :'app_user') THEN
-              EXECUTE format('CREATE USER %I WITH PASSWORD %L', :'app_user', :'app_password');
-              END IF;
+                IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = :'app_user') THEN
+                  EXECUTE format('CREATE USER %I WITH PASSWORD %L', :'app_user', :'app_password');
+                END IF;
               END
               $do$;
               EOSQL
@@ -141,7 +141,9 @@ spec:
 
               echo "Successfully migrated DB!"
           env:
-                  {{- if eq (include "twenty.db.useExternalSecret" .) "true" }}
+            - name: DISABLE_DB_MIGRATIONS
+              value: {{ .Values.server.disableDbMigrations | quote }}
+            {{- if eq (include "twenty.db.useExternalSecret" .) "true" }}
             - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
@@ -149,7 +151,7 @@ spec:
                   key: {{ include "twenty.dbPassword.secretKey" . }}
             - name: PG_DATABASE_URL
               value: {{ include "twenty.dbUrl.template" . | quote }}
-                  {{- else }}
+            {{- else }}
             - name: PG_DATABASE_URL
               valueFrom:
                 secretKeyRef:
@@ -162,25 +164,21 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.redis.external.secretName }}
                   key: {{ .Values.redis.external.passwordKey }}
-                {{- else if .Values.redis.external.password }}
+            {{- else if .Values.redis.external.password }}
             - name: REDIS_PASSWORD
               value: {{ .Values.redis.external.password | quote }}
-                {{- end }}
+            {{- end }}
             - name: REDIS_URL
               value: {{ include "twenty.redisUrl" . | quote }}
-            {{- range $key, $value := .Values.server.additionalEnv }}
-            - name: {{ $key }}
-              value: {{ $value | quote }}
-            {{- end }}
       containers:
         - name: server
-              {{- $img := include "twenty.server.image" . }}
+          {{- $img := include "twenty.server.image" . }}
           image: {{ include "twenty.image.repository" $img }}:{{ include "twenty.image.tag" $img }}
           imagePullPolicy: {{ include "twenty.image.pullPolicy" $img }}
           env:
             - name: SERVER_URL
               value: {{ include "twenty.serverUrl" . | quote }}
-                {{- if eq (include "twenty.db.useExternalSecret" .) "true" }}
+            {{- if eq (include "twenty.db.useExternalSecret" .) "true" }}
             - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
@@ -188,7 +186,7 @@ spec:
                   key: {{ include "twenty.dbPassword.secretKey" . }}
             - name: PG_DATABASE_URL
               value: {{ include "twenty.dbUrl.template" . | quote }}
-                {{- else }}
+            {{- else }}
             - name: PG_DATABASE_URL
               valueFrom:
                 secretKeyRef:
@@ -201,10 +199,10 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.redis.external.secretName }}
                   key: {{ .Values.redis.external.passwordKey }}
-                {{- else if .Values.redis.external.password }}
+            {{- else if .Values.redis.external.password }}
             - name: REDIS_PASSWORD
               value: {{ .Values.redis.external.password | quote }}
-                {{- end }}
+            {{- end }}
             - name: REDIS_URL
               value: {{ include "twenty.redisUrl" . | quote }}
             - name: SIGN_IN_PREFILLED
@@ -220,6 +218,24 @@ spec:
                 secretKeyRef:
                   name: {{ include "twenty.secret.tokens.name" . }}
                   key: accessToken
+            {{- /* Render any additional server.env keys not already mapped above */}}
+            {{- $reserved := list "SERVER_URL" "PG_DATABASE_URL" "REDIS_URL" "SIGN_IN_PREFILLED" "STORAGE_TYPE" "ACCESS_TOKEN_EXPIRES_IN" "LOGIN_TOKEN_EXPIRES_IN" "APP_SECRET" -}}
+            {{- range $k, $v := .Values.server.env }}
+            {{- if not (has $k $reserved) }}
+            - name: {{ $k }}
+              value: {{ $v | quote }}
+            {{- end }}
+            {{- end }}
+            {{- /* Optional extraEnv array for custom builds */}}
+            {{- range .Values.server.extraEnv }}
+            - name: {{ .name }}
+              {{- if .valueFrom }}
+              valueFrom:
+{{ toYaml .valueFrom | nindent 16 }}
+              {{- else }}
+              value: {{ .value | quote }}
+              {{- end }}
+            {{- end }}
             {{- $storageEnv := (include "twenty.storageEnv" .) }}
             {{- if $storageEnv }}
               {{ $storageEnv | nindent 12 }}

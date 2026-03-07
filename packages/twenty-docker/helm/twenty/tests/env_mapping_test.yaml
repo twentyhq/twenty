@@ -1,0 +1,78 @@
+suite: env mapping
+templates:
+  - templates/deployment-server.yaml
+  - templates/deployment-worker.yaml
+release:
+  name: my-twenty
+  namespace: default
+tests:
+  - it: renders Google auth envs when set
+    template: templates/deployment-server.yaml
+    set:
+      server.env.AUTH_GOOGLE_ENABLED: true
+      server.env.AUTH_GOOGLE_CLIENT_ID: gid
+      server.env.AUTH_GOOGLE_CLIENT_SECRET: gsecret
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: AUTH_GOOGLE_ENABLED
+            value: "true"
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: AUTH_GOOGLE_CLIENT_ID
+            value: gid
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: AUTH_GOOGLE_CLIENT_SECRET
+            value: gsecret
+
+  - it: renders server extraEnv value
+    template: templates/deployment-server.yaml
+    set:
+      server.extraEnv:
+        - name: FEATURE_X_ENABLED
+          value: "true"
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: FEATURE_X_ENABLED
+            value: "true"
+
+  - it: renders worker extraEnv valueFrom
+    template: templates/deployment-worker.yaml
+    set:
+      worker.extraEnv:
+        - name: CUSTOM_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: my-secret
+              key: custom
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: CUSTOM_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: my-secret
+                key: custom
+
+  - it: disableDbMigrations injects env var into migration init container
+    template: templates/deployment-server.yaml
+    set:
+      server.disableDbMigrations: true
+    asserts:
+      - contains:
+          path: spec.template.spec.initContainers
+          content:
+            name: run-migrations
+          any: true
+      - equal:
+          path: spec.template.spec.initContainers[?(@.name == "run-migrations")].env[0]
+          value:
+            name: DISABLE_DB_MIGRATIONS
+            value: "true"

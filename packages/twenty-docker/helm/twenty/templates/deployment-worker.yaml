@@ -90,6 +90,16 @@ spec:
             - name: {{ $key }}
               value: {{ $value | quote }}
             {{- end }}
+            {{- /* extraEnv supports both value and valueFrom (e.g. secretKeyRef) */}}
+            {{- range .Values.worker.extraEnv }}
+            - name: {{ .name }}
+              {{- if .valueFrom }}
+              valueFrom:
+{{ toYaml .valueFrom | nindent 16 }}
+              {{- else }}
+              value: {{ .value | quote }}
+              {{- end }}
+            {{- end }}
             {{- $storageEnv := (include "twenty.storageEnv" .) }}
             {{- if $storageEnv }}
             {{ $storageEnv | nindent 12 }}
