@@ -50,7 +50,7 @@ export class ApplicationNpmRegistrationService {
     }
 
     const { data } = await axios.get<NpmPackument>(
-      `${registryUrl}/${encodeURIComponent(packageName).replaceAll('%40', '@')}`,
+      `${registryUrl}/${encodeURIComponent(packageName).replace(/%40/g, '@')}`,
       { headers, timeout: 15_000 },
     );
 
