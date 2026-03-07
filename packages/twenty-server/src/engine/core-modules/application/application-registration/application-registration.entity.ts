@@ -147,6 +147,17 @@ export class ApplicationRegistrationEntity {
   @Column({ type: 'jsonb', nullable: true })
   marketplaceDisplayData: MarketplaceDisplayData | null;
 
+  @Field(() => String, { nullable: true })
+  @Column({ nullable: true, type: 'text' })
+  provenanceRepositoryUrl: string | null;
+
+  @Field(() => Boolean)
+  @Column({ type: 'boolean', default: false })
+  isProvenanceVerified: boolean;
+
+  @Column({ nullable: true, type: 'timestamptz' })
+  provenanceVerifiedAt: Date | null;
+
   @OneToMany(
     () => ApplicationRegistrationVariableEntity,
     (variable) => variable.applicationRegistration,

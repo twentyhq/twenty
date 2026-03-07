@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { ApplicationNpmClaimService } from 'src/engine/core-modules/application/application-registration/application-npm-claim.service';
+import { ApplicationNpmRegistrationService } from 'src/engine/core-modules/application/application-registration/application-npm-registration.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationResolver } from 'src/engine/core-modules/application/application-registration/application-registration.resolver';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
@@ -14,7 +14,6 @@ import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-
 import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-storage.module';
 import { FileUrlModule } from 'src/engine/core-modules/file/file-url/file-url.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 
@@ -32,17 +31,17 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
     PermissionsModule,
     FileStorageModule,
     FileUrlModule,
-    JwtModule,
     WorkspaceCacheStorageModule,
   ],
   providers: [
     ApplicationRegistrationService,
     ApplicationRegistrationResolver,
     ApplicationTarballService,
-    ApplicationNpmClaimService,
+    ApplicationNpmRegistrationService,
   ],
   exports: [
     ApplicationRegistrationService,
+    ApplicationNpmRegistrationService,
     ApplicationRegistrationVariableModule,
   ],
 })

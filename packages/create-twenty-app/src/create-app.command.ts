@@ -66,7 +66,7 @@ export class CreateAppCommand {
         name: 'name',
         message: 'Application name:',
         when: () => !directory,
-        default: 'my-awesome-app',
+        default: 'twenty-app-my-awesome-app',
         validate: (input) => {
           if (input.length === 0) return 'Application name is required';
           return true;

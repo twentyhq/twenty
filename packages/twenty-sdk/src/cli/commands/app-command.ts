@@ -2,13 +2,12 @@ import { formatPath } from '@/cli/utilities/file/file-path';
 import chalk from 'chalk';
 import type { Command } from 'commander';
 import { AppBuildCommand } from './app/app-build';
-import { AppClaimCommand } from './app/app-claim';
 import { AppGenerateClientCommand } from './app/app-generate-client';
 import { AppDevCommand } from './app/app-dev';
 import { AppPublishCommand } from './app/app-publish';
+import { AppRegisterCommand } from './app/app-register';
 import { AppTypecheckCommand } from './app/app-typecheck';
 import { AppUninstallCommand } from './app/app-uninstall';
-import { AppVerifyClaimCommand } from './app/app-verify-claim';
 import { AuthListCommand } from './auth/auth-list';
 import { AuthLoginCommand } from './auth/auth-login';
 import { AuthLogoutCommand } from './auth/auth-logout';
@@ -66,13 +65,12 @@ export const registerCommands = (program: Command): void => {
 
   // App commands
   const buildCommand = new AppBuildCommand();
-  const claimCommand = new AppClaimCommand();
   const generateClientCommand = new AppGenerateClientCommand();
   const devCommand = new AppDevCommand();
   const publishCommand = new AppPublishCommand();
+  const registerCommand = new AppRegisterCommand();
   const typecheckCommand = new AppTypecheckCommand();
   const uninstallCommand = new AppUninstallCommand();
-  const verifyClaimCommand = new AppVerifyClaimCommand();
   const addCommand = new EntityAddCommand();
   const logsCommand = new LogicFunctionLogsCommand();
   const executeCommand = new LogicFunctionExecuteCommand();
@@ -128,6 +126,15 @@ export const registerCommands = (program: Command): void => {
     });
 
   program
+    .command('app:register [packageName]')
+    .description(
+      'Register ownership of an npm package (verifies your email is in npm maintainers)',
+    )
+    .action(async (packageName?: string) => {
+      await registerCommand.execute({ packageName });
+    });
+
+  program
     .command('app:typecheck [appPath]')
     .description('Run TypeScript type checking on the application')
     .action(async (appPath) => {
@@ -150,27 +157,6 @@ export const registerCommands = (program: Command): void => {
       } catch {
         process.exit(1);
       }
-    });
-
-  program
-    .command('app:claim <packageName> [appPath]')
-    .description(
-      'Generate a claim token for an npm package and write it to the app directory',
-    )
-    .action(async (packageName: string, appPath?: string) => {
-      await claimCommand.execute({
-        packageName,
-        appPath: formatPath(appPath),
-      });
-    });
-
-  program
-    .command('app:verify-claim <packageName>')
-    .description(
-      'Verify npm package ownership by checking the claim token in the published package',
-    )
-    .action(async (packageName: string) => {
-      await verifyClaimCommand.execute({ packageName });
     });
 
   program

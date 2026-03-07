@@ -2,7 +2,6 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { FIND_MANY_APPLICATION_REGISTRATIONS } from '@/settings/application-registrations/graphql/queries/findManyApplicationRegistrations';
 import { SettingsListCard } from '@/settings/components/SettingsListCard';
 import { getDocumentationUrl } from '@/support/utils/getDocumentationUrl';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -17,26 +16,27 @@ import {
   IconChevronRight,
   IconCopy,
   IconFileInfo,
-  IconUpload,
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { useContext } from 'react';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
-import {
-  SettingsUploadTarballModal,
-  UPLOAD_TARBALL_MODAL_ID,
-} from '~/pages/settings/applications/components/SettingsUploadTarballModal';
 
 const StyledButtonContainer = styled.div`
   margin: ${themeCssVariables.spacing[2]} 0;
 `;
 
-const StyledButtonGroupContainer = styled.div`
+const StyledPublishMethodLabel = styled.div`
+  font-size: ${themeCssVariables.font.size.sm};
+  color: ${themeCssVariables.font.color.light};
+  margin-bottom: ${themeCssVariables.spacing[2]};
+  margin-top: ${themeCssVariables.spacing[4]};
+`;
+
+const StyledEmptyStateContainer = styled.div`
   display: flex;
-  justify-content: flex-end;
-  margin-bottom: ${themeCssVariables.spacing[4]};
+  flex-direction: column;
 `;
 
 type ApplicationRegistration = {
@@ -50,7 +50,6 @@ export const SettingsApplicationsDeveloperTab = () => {
   const { t } = useLingui();
   const navigate = useNavigate();
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
-  const { openModal } = useModal();
 
   const { copyToClipboard } = useCopyToClipboard();
 
@@ -59,19 +58,60 @@ export const SettingsApplicationsDeveloperTab = () => {
   const registrations: ApplicationRegistration[] =
     data?.findManyApplicationRegistrations ?? [];
 
-  const commands = [
+  const createCommands = [
     // oxlint-disable-next-line lingui/no-unlocalized-strings
     'npx create-twenty-app@latest my-twenty-app',
     // oxlint-disable-next-line lingui/no-unlocalized-strings
     'cd my-twenty-app',
   ];
 
-  const copyButton = (
+  const createCopyButton = (
     <Button
       onClick={() => {
-        copyToClipboard(commands.join('\n'), t`Commands copied to clipboard`);
+        copyToClipboard(
+          createCommands.join('\n'),
+          t`Commands copied to clipboard`,
+        );
       }}
       ariaLabel={t`Copy commands`}
+      Icon={IconCopy}
+    />
+  );
+
+  const publishNpmCommands = [
+    // oxlint-disable-next-line lingui/no-unlocalized-strings
+    'npx twenty app:publish',
+    // oxlint-disable-next-line lingui/no-unlocalized-strings
+    'npx twenty app:register <package-name>',
+  ];
+
+  const publishNpmCopyButton = (
+    <Button
+      onClick={() => {
+        copyToClipboard(
+          publishNpmCommands.join('\n'),
+          t`Command copied to clipboard`,
+        );
+      }}
+      ariaLabel={t`Copy command`}
+      Icon={IconCopy}
+    />
+  );
+
+  const publishServerCommands = [
+    // oxlint-disable-next-line lingui/no-unlocalized-strings
+    'npx twenty app:publish --server <server-url>',
+  ];
+
+  const publishServerCopyButton = (
+    <Button
+      onClick={() => {
+        copyToClipboard(
+          publishServerCommands.join('\n'),
+          t`Command copied to clipboard`,
+        );
+      }}
+      ariaLabel={t`Copy command`}
       Icon={IconCopy}
     />
   );
@@ -83,7 +123,7 @@ export const SettingsApplicationsDeveloperTab = () => {
           title={t`Create an application`}
           description={t`You can either create a private app or share it to others`}
         />
-        <CommandBlock commands={commands} button={copyButton} />
+        <CommandBlock commands={createCommands} button={createCopyButton} />
         <StyledButtonContainer>
           <Button
             Icon={IconFileInfo}
@@ -105,7 +145,7 @@ export const SettingsApplicationsDeveloperTab = () => {
           title={t`My Apps`}
           description={t`Apps you've created, registered, or published`}
         />
-        {registrations.length > 0 && (
+        {registrations.length > 0 ? (
           <SettingsListCard
             items={registrations}
             getItemLabel={(registration) => registration.name}
@@ -125,19 +165,25 @@ export const SettingsApplicationsDeveloperTab = () => {
               />
             )}
           />
+        ) : (
+          <StyledEmptyStateContainer>
+            <StyledPublishMethodLabel>
+              {t`Publish to npm`}
+            </StyledPublishMethodLabel>
+            <CommandBlock
+              commands={publishNpmCommands}
+              button={publishNpmCopyButton}
+            />
+            <StyledPublishMethodLabel>
+              {t`Or push directly to your server`}
+            </StyledPublishMethodLabel>
+            <CommandBlock
+              commands={publishServerCommands}
+              button={publishServerCopyButton}
+            />
+          </StyledEmptyStateContainer>
         )}
       </Section>
-      <StyledButtonGroupContainer>
-        <Button
-          Icon={IconUpload}
-          title={t`Upload tarball`}
-          size="small"
-          variant="secondary"
-          onClick={() => openModal(UPLOAD_TARBALL_MODAL_ID)}
-        />
-      </StyledButtonGroupContainer>
-
-      <SettingsUploadTarballModal />
     </>
   );
 };

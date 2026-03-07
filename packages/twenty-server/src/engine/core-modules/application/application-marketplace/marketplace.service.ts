@@ -53,6 +53,11 @@ export class MarketplaceService {
       return parsed.data.objects
         .map((result) => {
           const { name, version, description, author, links } = result.package;
+
+          if (!this.hasValidAppPrefix(name)) {
+            return null;
+          }
+
           const twentyKeyword = (result.package.keywords ?? []).find(
             (keyword) => keyword.startsWith('twenty-uid:'),
           );
@@ -91,5 +96,12 @@ export class MarketplaceService {
 
       return [];
     }
+  }
+
+  private hasValidAppPrefix(packageName: string): boolean {
+    return (
+      packageName.startsWith('twenty-app-') ||
+      /^@[^/]+\/twenty-app-/.test(packageName)
+    );
   }
 }

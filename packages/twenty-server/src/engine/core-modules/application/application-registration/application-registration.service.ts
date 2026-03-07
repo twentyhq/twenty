@@ -280,7 +280,15 @@ export class ApplicationRegistrationService {
       | 'isFeatured'
       | 'marketplaceDisplayData'
       | 'ownerWorkspaceId'
-    >,
+    > &
+      Partial<
+        Pick<
+          ApplicationRegistrationEntity,
+          | 'isProvenanceVerified'
+          | 'provenanceRepositoryUrl'
+          | 'provenanceVerifiedAt'
+        >
+      >,
   ): Promise<void> {
     const existing = await this.findOneByUniversalIdentifier(
       params.universalIdentifier,
@@ -299,6 +307,11 @@ export class ApplicationRegistrationService {
         termsUrl: params.termsUrl,
         latestAvailableVersion: params.latestAvailableVersion,
         marketplaceDisplayData: params.marketplaceDisplayData,
+        ...(isDefined(params.isProvenanceVerified) && {
+          isProvenanceVerified: params.isProvenanceVerified,
+          provenanceRepositoryUrl: params.provenanceRepositoryUrl ?? null,
+          provenanceVerifiedAt: params.provenanceVerifiedAt ?? null,
+        }),
       });
 
       return;
@@ -322,67 +335,69 @@ export class ApplicationRegistrationService {
       oAuthRedirectUris: [],
       oAuthScopes: [],
       ownerWorkspaceId: params.ownerWorkspaceId,
+      isProvenanceVerified: params.isProvenanceVerified ?? false,
+      provenanceRepositoryUrl: params.provenanceRepositoryUrl ?? null,
+      provenanceVerifiedAt: params.provenanceVerifiedAt ?? null,
     });
 
     await this.applicationRegistrationRepository.save(registration);
   }
 
-  async claimForNpm(params: {
-    existingRegistration: ApplicationRegistrationEntity;
+  async upsertFromNpmRegistration(params: {
+    universalIdentifier: string;
     packageName: string;
+    name: string;
+    description: string | null;
+    author: string | null;
     ownerWorkspaceId: string;
-    manifest: import('twenty-shared/application').Manifest;
-    version?: string;
+    createdByUserId: string;
+    latestAvailableVersion: string | null;
+    isProvenanceVerified: boolean;
+    provenanceRepositoryUrl: string | null;
+    provenanceVerifiedAt: Date | null;
   }): Promise<ApplicationRegistrationEntity> {
-    const { existingRegistration, packageName, ownerWorkspaceId, manifest } =
-      params;
-
-    await this.applicationRegistrationRepository.update(
-      existingRegistration.id,
-      {
-        sourceType: ApplicationRegistrationSourceType.NPM,
-        sourcePackage: packageName,
-        ownerWorkspaceId,
-        name: manifest.application.displayName,
-        description: manifest.application.description ?? null,
-        author: manifest.application.author ?? null,
-        latestAvailableVersion: params.version ?? null,
-      },
+    const existing = await this.findOneByUniversalIdentifier(
+      params.universalIdentifier,
     );
 
-    return this.applicationRegistrationRepository.findOneOrFail({
-      where: { id: existingRegistration.id },
-    });
-  }
+    if (isDefined(existing)) {
+      await this.applicationRegistrationRepository.save({
+        ...existing,
+        sourceType: ApplicationRegistrationSourceType.NPM,
+        sourcePackage: params.packageName,
+        ownerWorkspaceId: params.ownerWorkspaceId,
+        createdByUserId: params.createdByUserId,
+        name: params.name,
+        description: params.description,
+        author: params.author,
+        latestAvailableVersion: params.latestAvailableVersion,
+        isProvenanceVerified: params.isProvenanceVerified,
+        provenanceRepositoryUrl: params.provenanceRepositoryUrl,
+        provenanceVerifiedAt: params.provenanceVerifiedAt,
+      });
 
-  async createFromNpmClaim(params: {
-    packageName: string;
-    universalIdentifier: string;
-    name: string;
-    description?: string;
-    author?: string;
-    logoUrl?: string;
-    websiteUrl?: string;
-    termsUrl?: string;
-    version?: string;
-    ownerWorkspaceId: string;
-  }): Promise<ApplicationRegistrationEntity> {
+      return this.applicationRegistrationRepository.findOneOrFail({
+        where: { id: existing.id },
+      });
+    }
+
     const registration = this.applicationRegistrationRepository.create({
       universalIdentifier: params.universalIdentifier,
       name: params.name,
-      description: params.description ?? null,
-      author: params.author ?? null,
-      logoUrl: params.logoUrl ?? null,
-      websiteUrl: params.websiteUrl ?? null,
-      termsUrl: params.termsUrl ?? null,
-      latestAvailableVersion: params.version ?? null,
+      description: params.description,
+      author: params.author,
       sourceType: ApplicationRegistrationSourceType.NPM,
       sourcePackage: params.packageName,
+      latestAvailableVersion: params.latestAvailableVersion,
       isListed: true,
       oAuthClientId: v4(),
       oAuthRedirectUris: [],
       oAuthScopes: [],
       ownerWorkspaceId: params.ownerWorkspaceId,
+      createdByUserId: params.createdByUserId,
+      isProvenanceVerified: params.isProvenanceVerified,
+      provenanceRepositoryUrl: params.provenanceRepositoryUrl,
+      provenanceVerifiedAt: params.provenanceVerifiedAt,
     });
 
     return this.applicationRegistrationRepository.save(registration);

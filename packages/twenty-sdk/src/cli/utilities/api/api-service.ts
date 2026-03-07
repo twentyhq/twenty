@@ -810,14 +810,24 @@ export class ApiService {
     }
   }
 
-  async generateNpmClaimToken(
-    packageName: string,
-  ): Promise<ApiResponse<{ token: string }>> {
+  async registerNpmPackage(packageName: string): Promise<
+    ApiResponse<{
+      id: string;
+      universalIdentifier: string;
+      name: string;
+      isProvenanceVerified: boolean;
+      provenanceRepositoryUrl: string | null;
+    }>
+  > {
     try {
       const mutation = `
-        mutation GenerateNpmClaimToken($packageName: String!) {
-          generateNpmClaimToken(packageName: $packageName) {
-            token
+        mutation RegisterNpmPackage($packageName: String!) {
+          registerNpmPackage(packageName: $packageName) {
+            id
+            universalIdentifier
+            name
+            isProvenanceVerified
+            provenanceRepositoryUrl
           }
         }
       `;
@@ -841,71 +851,13 @@ export class ApiService {
           success: false,
           error:
             response.data.errors[0]?.message ||
-            'Failed to generate claim token',
+            'Failed to register npm package',
         };
       }
 
       return {
         success: true,
-        data: response.data.data.generateNpmClaimToken,
-      };
-    } catch (error) {
-      return {
-        success: false,
-        error,
-      };
-    }
-  }
-
-  async verifyNpmPackageClaim(packageName: string): Promise<
-    ApiResponse<{
-      registrationId: string;
-      universalIdentifier: string;
-      name: string;
-    }>
-  > {
-    try {
-      const mutation = `
-        mutation VerifyNpmPackageClaim($packageName: String!) {
-          verifyNpmPackageClaim(packageName: $packageName) {
-            id
-            universalIdentifier
-            name
-          }
-        }
-      `;
-
-      const response = await this.client.post(
-        '/metadata',
-        {
-          query: mutation,
-          variables: { packageName },
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Accept: '*/*',
-          },
-        },
-      );
-
-      if (response.data.errors) {
-        return {
-          success: false,
-          error:
-            response.data.errors[0]?.message || 'Failed to verify npm claim',
-        };
-      }
-
-      const data = response.data.data.verifyNpmPackageClaim;
-
-      return {
-        success: true,
-        data: {
-          registrationId: data.id,
-          universalIdentifier: data.universalIdentifier,
-          name: data.name,
-        },
+        data: response.data.data.registerNpmPackage,
       };
     } catch (error) {
       return {

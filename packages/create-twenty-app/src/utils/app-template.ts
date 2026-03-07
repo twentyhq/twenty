@@ -36,6 +36,8 @@ export const copyBaseApplicationProject = async ({
 
   await createYarnLock(appDirectory);
 
+  await createPublishWorkflow(appDirectory);
+
   const sourceFolderPath = join(appDirectory, SRC_FOLDER);
 
   await fs.ensureDir(sourceFolderPath);
@@ -140,6 +142,33 @@ const createYarnLock = async (appDirectory: string) => {
 `;
 
   await fs.writeFile(join(appDirectory, 'yarn.lock'), yarnLockContent);
+};
+
+const createPublishWorkflow = async (appDirectory: string) => {
+  const workflowDir = join(appDirectory, '.github', 'workflows');
+
+  await fs.ensureDir(workflowDir);
+
+  const workflowContent = `name: Publish
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: twentyhq/twenty/.github/actions/publish-twenty-app@main
+        with:
+          npm-token: \${{ secrets.NPM_TOKEN }}
+`;
+
+  await fs.writeFile(join(workflowDir, 'publish.yml'), workflowContent);
 };
 const createGitignore = async (appDirectory: string) => {
   const gitignoreContent = `# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
@@ -583,10 +612,18 @@ const createPackageJson = async ({
     devDependencies['vite-tsconfig-paths'] = '^4.2.1';
   }
 
+  const normalizedName = appName.startsWith('twenty-app-')
+    ? appName
+    : `twenty-app-${appName}`;
+
   const packageJson = {
-    name: appName,
+    name: normalizedName,
     version: '0.1.0',
     license: 'MIT',
+    keywords: ['twenty-app'],
+    publishConfig: {
+      access: 'public' as const,
+    },
     engines: {
       node: '^24.5.0',
       npm: 'please-use-yarn',

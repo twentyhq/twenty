@@ -357,6 +357,7 @@ export type ApplicationRegistration = {
   id: Scalars['UUID'];
   isFeatured: Scalars['Boolean'];
   isListed: Scalars['Boolean'];
+  isProvenanceVerified: Scalars['Boolean'];
   latestAvailableVersion?: Maybe<Scalars['String']>;
   logoUrl?: Maybe<Scalars['String']>;
   name: Scalars['String'];
@@ -364,6 +365,7 @@ export type ApplicationRegistration = {
   oAuthRedirectUris: Array<Scalars['String']>;
   oAuthScopes: Array<Scalars['String']>;
   ownerWorkspaceId?: Maybe<Scalars['UUID']>;
+  provenanceRepositoryUrl?: Maybe<Scalars['String']>;
   sourcePackage?: Maybe<Scalars['String']>;
   sourceType: ApplicationRegistrationSourceType;
   termsUrl?: Maybe<Scalars['String']>;
@@ -2535,6 +2537,7 @@ export type Mutation = {
   verifyEmailAndGetLoginToken: VerifyEmailAndGetLoginToken;
   verifyEmailAndGetWorkspaceAgnosticToken: AvailableWorkspacesAndAccessTokens;
   verifyEmailingDomain: EmailingDomain;
+  registerNpmPackage: ApplicationRegistration;
   verifyTwoFactorAuthenticationMethodForAuthenticatedUser: VerifyTwoFactorAuthenticationMethod;
 };
 
@@ -3475,6 +3478,11 @@ export type MutationVerifyEmailAndGetWorkspaceAgnosticTokenArgs = {
 
 export type MutationVerifyEmailingDomainArgs = {
   id: Scalars['String'];
+};
+
+
+export type MutationRegisterNpmPackageArgs = {
+  packageName: Scalars['String'];
 };
 
 

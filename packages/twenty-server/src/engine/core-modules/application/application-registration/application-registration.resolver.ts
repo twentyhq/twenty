@@ -13,7 +13,7 @@ import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/a
 import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
 import { CreateApplicationRegistrationVariableInput } from 'src/engine/core-modules/application/application-registration-variable/dtos/create-application-registration-variable.input';
 import { UpdateApplicationRegistrationVariableInput } from 'src/engine/core-modules/application/application-registration-variable/dtos/update-application-registration-variable.input';
-import { ApplicationNpmClaimService } from 'src/engine/core-modules/application/application-registration/application-npm-claim.service';
+import { ApplicationNpmRegistrationService } from 'src/engine/core-modules/application/application-registration/application-npm-registration.service';
 import { ApplicationRegistrationExceptionFilter } from 'src/engine/core-modules/application/application-registration/application-registration-exception-filter';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import {
@@ -28,7 +28,6 @@ import {
 import { ApplicationRegistrationStatsDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-stats.dto';
 import { CreateApplicationRegistrationDTO } from 'src/engine/core-modules/application/application-registration/dtos/create-application-registration.dto';
 import { CreateApplicationRegistrationInput } from 'src/engine/core-modules/application/application-registration/dtos/create-application-registration.input';
-import { NpmClaimTokenDTO } from 'src/engine/core-modules/application/application-registration/dtos/npm-claim-token.dto';
 import { PublicApplicationRegistrationDTO } from 'src/engine/core-modules/application/application-registration/dtos/public-application-registration.dto';
 import { RotateClientSecretDTO } from 'src/engine/core-modules/application/application-registration/dtos/rotate-client-secret.dto';
 import { TransferApplicationRegistrationOwnershipInput } from 'src/engine/core-modules/application/application-registration/dtos/transfer-application-registration-ownership.input';
@@ -64,7 +63,7 @@ export class ApplicationRegistrationResolver {
     private readonly applicationRegistrationService: ApplicationRegistrationService,
     private readonly applicationRegistrationVariableService: ApplicationRegistrationVariableService,
     private readonly applicationTarballService: ApplicationTarballService,
-    private readonly applicationNpmClaimService: ApplicationNpmClaimService,
+    private readonly applicationNpmRegistrationService: ApplicationNpmRegistrationService,
     private readonly fileUrlService: FileUrlService,
   ) {}
 
@@ -352,31 +351,16 @@ export class ApplicationRegistrationResolver {
     SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
   )
   @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)
-  @Mutation(() => NpmClaimTokenDTO)
-  async generateNpmClaimToken(
-    @Args('packageName') packageName: string,
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ): Promise<NpmClaimTokenDTO> {
-    const token = this.applicationNpmClaimService.generateClaimToken(
-      packageName,
-      workspaceId,
-    );
-
-    return { token };
-  }
-
-  @UseGuards(
-    WorkspaceAuthGuard,
-    FeatureFlagGuard,
-    SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
-  )
-  @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)
   @Mutation(() => ApplicationRegistrationEntity)
-  async verifyNpmPackageClaim(
+  async registerNpmPackage(
     @Args('packageName') packageName: string,
+    @AuthUser() user: UserEntity,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ApplicationRegistrationEntity> {
-    return this.applicationNpmClaimService.verifyAndClaimNpmPackage(
+    return this.applicationNpmRegistrationService.registerNpmPackage(
       packageName,
+      user,
+      workspaceId,
     );
   }
 }

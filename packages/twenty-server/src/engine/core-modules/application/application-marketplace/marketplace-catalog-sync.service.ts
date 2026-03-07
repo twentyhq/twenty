@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { ApplicationNpmRegistrationService } from 'src/engine/core-modules/application/application-registration/application-npm-registration.service';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { MARKETPLACE_CATALOG_INDEX } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-catalog-index.constant';
@@ -12,6 +13,7 @@ export class MarketplaceCatalogSyncService {
   constructor(
     private readonly applicationRegistrationService: ApplicationRegistrationService,
     private readonly marketplaceService: MarketplaceService,
+    private readonly applicationNpmRegistrationService: ApplicationNpmRegistrationService,
   ) {}
 
   async syncCatalog(): Promise<void> {
@@ -62,6 +64,24 @@ export class MarketplaceCatalogSyncService {
       }
 
       try {
+        let isProvenanceVerified = false;
+        let provenanceRepositoryUrl: string | null = null;
+        let provenanceVerifiedAt: Date | null = null;
+
+        if (app.version) {
+          const provenance =
+            await this.applicationNpmRegistrationService.fetchProvenanceMetadata(
+              app.sourcePackage ?? app.name,
+              app.version,
+            );
+
+          if (provenance?.hasProvenance) {
+            isProvenanceVerified = true;
+            provenanceRepositoryUrl = provenance.repositoryUrl;
+            provenanceVerifiedAt = new Date();
+          }
+        }
+
         await this.applicationRegistrationService.upsertFromCatalog({
           universalIdentifier: app.id,
           name: app.name,
@@ -77,6 +97,9 @@ export class MarketplaceCatalogSyncService {
           isFeatured: false,
           marketplaceDisplayData: null,
           ownerWorkspaceId: null,
+          isProvenanceVerified,
+          provenanceRepositoryUrl,
+          provenanceVerifiedAt,
         });
       } catch (error) {
         this.logger.error(
