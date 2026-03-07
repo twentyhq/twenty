@@ -181,7 +181,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       flatViewGroupMaps: existingFlatViewGroupMaps,
       flatViewMaps: existingFlatViewMaps,
       flatViewFieldMaps: existingFlatViewFieldMaps,
-      flatViewSortMaps: existingFlatViewSortMaps,
     } = await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
       {
         workspaceId,
@@ -193,7 +192,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           'flatViewGroupMaps',
           'flatViewMaps',
           'flatViewFieldMaps',
-          'flatViewSortMaps',
         ],
       },
     );
@@ -207,7 +205,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       flatViewGroupMaps: existingFlatViewGroupMaps,
       flatViewMaps: existingFlatViewMaps,
       flatViewFieldMaps: existingFlatViewFieldMaps,
-      flatViewSortMaps: existingFlatViewSortMaps,
       flatApplication: resolvedOwnerFlatApplication,
       isSystemBuild,
     });
@@ -246,7 +243,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       flatViewFiltersToDelete,
       flatViewFiltersToUpdate,
       flatViewFieldsToDelete,
-      flatViewSortsToDelete,
       flatViewsToUpdate,
       flatViewsToDelete,
     } = inputTranspilationResult.result;
@@ -283,11 +279,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
             viewField: {
               flatEntityToCreate: [],
               flatEntityToDelete: flatViewFieldsToDelete,
-              flatEntityToUpdate: [],
-            },
-            viewSort: {
-              flatEntityToCreate: [],
-              flatEntityToDelete: flatViewSortsToDelete,
               flatEntityToUpdate: [],
             },
           },

@@ -46,12 +46,7 @@ export const ViewBarRecordSortEffect = () => {
       }
 
       if (isDefined(currentView)) {
-        const validViewSorts = currentView.viewSorts.filter((viewSort) =>
-          objectMetadataItem.fields.some(
-            (field) => field.id === viewSort.fieldMetadataId,
-          ),
-        );
-        setCurrentRecordSorts(validViewSorts);
+        setCurrentRecordSorts(currentView.viewSorts);
         setHasInitializedCurrentRecordSorts(true);
       }
     }
