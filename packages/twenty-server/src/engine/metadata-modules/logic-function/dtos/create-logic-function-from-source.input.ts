@@ -1,5 +1,6 @@
 import { Field, InputType } from '@nestjs/graphql';
 
+import { Type } from 'class-transformer';
 import {
   IsBoolean,
   IsNotEmpty,
@@ -10,6 +11,7 @@ import {
   IsUUID,
   Max,
   Min,
+  ValidateNested,
 } from 'class-validator';
 import graphqlTypeJson from 'graphql-type-json';
 import {
@@ -61,6 +63,8 @@ export class CreateLogicFunctionFromSourceInput {
   @IsOptional()
   isTool?: boolean;
 
+  @Type(() => LogicFunctionSourceInput)
+  @ValidateNested()
   @IsObject()
   @Field(() => graphqlTypeJson, { nullable: true })
   @IsOptional()
