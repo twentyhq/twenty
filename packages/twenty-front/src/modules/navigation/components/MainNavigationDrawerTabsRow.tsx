@@ -127,7 +127,7 @@ export const MainNavigationDrawerTabsRow = () => {
   );
   const [navigationDrawerActiveTab, setNavigationDrawerActiveTab] =
     useAtomState(navigationDrawerActiveTabState);
-  const { switchToNewChat } = useCreateNewAIChatThread();
+  const { createChatThread } = useCreateNewAIChatThread();
   const isAiEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
   const setIsNavigationDrawerExpanded = useSetAtomState(
     isNavigationDrawerExpandedState,
@@ -155,7 +155,7 @@ export const MainNavigationDrawerTabsRow = () => {
     if (isMobile) {
       setIsNavigationDrawerExpanded(false);
     }
-    switchToNewChat();
+    createChatThread();
   };
 
   const handleNewChatKeyDown = (event: React.KeyboardEvent) => {

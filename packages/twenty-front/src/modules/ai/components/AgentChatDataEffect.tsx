@@ -14,8 +14,8 @@ import { useEffect } from 'react';
 import { Temporal } from 'temporal-polyfill';
 
 export const AgentChatDataEffect = () => {
-  const { uiMessages, isLoading, ensureThreadIdForSend } = useAgentChatData();
-  const chatState = useAgentChat(uiMessages, ensureThreadIdForSend);
+  const { uiMessages, isLoading } = useAgentChatData();
+  const chatState = useAgentChat(uiMessages);
 
   const combinedIsLoading = chatState.isLoading || isLoading;
   const isStreaming = chatState.status === 'streaming';

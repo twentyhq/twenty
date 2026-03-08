@@ -36,7 +36,7 @@ export const MobileNavigationBar = () => {
     useAtomState(isNavigationDrawerExpandedState);
   const [currentMobileNavigationDrawer, setCurrentMobileNavigationDrawer] =
     useAtomState(currentMobileNavigationDrawerState);
-  const { switchToNewChat } = useCreateNewAIChatThread();
+  const { createChatThread } = useCreateNewAIChatThread();
   const isAiEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
   const { alphaSortedActiveNonSystemObjectMetadataItems } =
     useFilteredObjectMetadataItems();
@@ -100,7 +100,7 @@ export const MobileNavigationBar = () => {
             onClick: () => {
               setIsNavigationDrawerExpanded(false);
               closeSidePanelMenu();
-              switchToNewChat();
+              createChatThread();
             },
           },
         ]

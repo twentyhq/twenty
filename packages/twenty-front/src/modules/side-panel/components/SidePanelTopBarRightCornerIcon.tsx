@@ -22,7 +22,7 @@ export const SidePanelTopBarRightCornerIcon = () => {
   const isAiEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
   const sidePanelPage = useAtomStateValue(sidePanelPageState);
   const { openAskAIPage } = useOpenAskAIPageInSidePanel();
-  const { switchToNewChat } = useCreateNewAIChatThread();
+  const { createChatThread } = useCreateNewAIChatThread();
 
   if (isMobile || !isAiEnabled) {
     return null;
@@ -52,7 +52,7 @@ export const SidePanelTopBarRightCornerIcon = () => {
         Icon={IconEdit}
         size="small"
         variant="tertiary"
-        onClick={() => switchToNewChat()}
+        onClick={() => createChatThread()}
         ariaLabel={t`New conversation`}
       />
     </StyledIconButtonContainer>

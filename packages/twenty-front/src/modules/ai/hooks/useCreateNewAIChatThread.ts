@@ -96,12 +96,5 @@ export const useCreateNewAIChatThread = () => {
     },
   });
 
-  const switchToNewChat = () => {
-    setCurrentAIChatThread(AGENT_CHAT_NEW_THREAD_DRAFT_KEY);
-    setCurrentAIChatThreadTitle(null);
-    setAgentChatUsage(null);
-    openAskAIPage({ resetNavigationStack: false });
-  };
-
-  return { createChatThread, switchToNewChat };
+  return { createChatThread };
 };

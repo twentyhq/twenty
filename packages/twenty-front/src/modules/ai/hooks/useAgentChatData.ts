@@ -1,6 +1,5 @@
 import { getOperationName } from '@apollo/client/utilities';
 import { useStore } from 'jotai';
-import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { CHAT_THREADS_PAGE_SIZE } from '@/ai/constants/ChatThreads';
@@ -34,47 +33,35 @@ export const useAgentChatData = () => {
   const setCurrentAIChatThreadTitle = useSetAtomState(
     currentAIChatThreadTitleState,
   );
-  const [, setIsCreatingChatThread] = useAtomState(isCreatingChatThreadState);
+  const [isCreatingChatThread, setIsCreatingChatThread] = useAtomState(
+    isCreatingChatThreadState,
+  );
   const setAgentChatDraftsByThreadId = useSetAtomState(
     agentChatDraftsByThreadIdState,
   );
-  const [, setCreatingForFirstSend] = useState(false);
   const store = useStore();
 
   const { scrollToBottom } = useAgentChatScrollToBottom();
 
   const [createChatThread] = useCreateChatThreadMutation({
     onCompleted: (data) => {
-      setCreatingForFirstSend((prev) => {
-        const previousDraftKey =
-          store.get(currentAIChatThreadState.atom) ??
-          AGENT_CHAT_NEW_THREAD_DRAFT_KEY;
+      const newThreadId = data.createChatThread.id;
+      const previousDraftKey =
+        currentAIChatThread ?? AGENT_CHAT_NEW_THREAD_DRAFT_KEY;
+      const newDraft =
+        store.get(agentChatDraftsByThreadIdState.atom)[
+          AGENT_CHAT_NEW_THREAD_DRAFT_KEY
+        ] ?? '';
 
-        if (prev) {
-          setIsCreatingChatThread(false);
-          setAgentChatDraftsByThreadId((drafts) => ({
-            ...drafts,
-            [previousDraftKey]: store.get(agentChatInputState.atom),
-          }));
-          return false;
-        }
-
-        const newThreadId = data.createChatThread.id;
-        const newDraft =
-          store.get(agentChatDraftsByThreadIdState.atom)[
-            AGENT_CHAT_NEW_THREAD_DRAFT_KEY
-          ] ?? '';
-        setIsCreatingChatThread(false);
-        setAgentChatDraftsByThreadId((drafts) => ({
-          ...drafts,
-          [previousDraftKey]: store.get(agentChatInputState.atom),
-        }));
-        setCurrentAIChatThread(newThreadId);
-        setAgentChatInput(newDraft);
-        setCurrentAIChatThreadTitle(null);
-        setAgentChatUsage(null);
-        return false;
-      });
+      setIsCreatingChatThread(false);
+      setAgentChatDraftsByThreadId((prev) => ({
+        ...prev,
+        [previousDraftKey]: store.get(agentChatInputState.atom),
+      }));
+      setCurrentAIChatThread(newThreadId);
+      setAgentChatInput(newDraft);
+      setCurrentAIChatThreadTitle(null);
+      setAgentChatUsage(null);
     },
     onError: () => {
       setIsCreatingChatThread(false);
@@ -115,50 +102,24 @@ export const useAgentChatData = () => {
               }
             : null,
         );
-      } else {
-        setCurrentAIChatThread(AGENT_CHAT_NEW_THREAD_DRAFT_KEY);
-        setAgentChatInput(
-          store.get(agentChatDraftsByThreadIdState.atom)[
-            AGENT_CHAT_NEW_THREAD_DRAFT_KEY
-          ] ?? '',
-        );
-        setCurrentAIChatThreadTitle(null);
-        setAgentChatUsage(null);
+      } else if (!isCreatingChatThread) {
+        setIsCreatingChatThread(true);
+        createChatThread();
       }
     },
   });
 
-  const isNewThread = currentAIChatThread === AGENT_CHAT_NEW_THREAD_DRAFT_KEY;
   const { loading: messagesLoading, data } = useGetChatMessagesQuery({
     variables: { threadId: currentAIChatThread! },
-    skip: !isDefined(currentAIChatThread) || isNewThread,
+    skip: !isDefined(currentAIChatThread),
     onCompleted: scrollToBottom,
   });
 
   const uiMessages = mapDBMessagesToUIMessages(data?.chatMessages || []);
   const isLoading = messagesLoading || threadsLoading;
 
-  const ensureThreadIdForSend = async (): Promise<string | null> => {
-    const current = store.get(currentAIChatThreadState.atom);
-    if (current !== AGENT_CHAT_NEW_THREAD_DRAFT_KEY) {
-      return current;
-    }
-    setCreatingForFirstSend(true);
-    setIsCreatingChatThread(true);
-    try {
-      const result = await createChatThread();
-      return result?.data?.createChatThread?.id ?? null;
-    } catch {
-      setCreatingForFirstSend(false);
-      return null;
-    } finally {
-      setIsCreatingChatThread(false);
-    }
-  };
-
   return {
     uiMessages,
     isLoading,
-    ensureThreadIdForSend,
   };
 };

@@ -36,15 +36,15 @@ const StyledButtonsContainer = styled.div`
 `;
 
 export const AIChatThreadsList = () => {
-  const { switchToNewChat } = useCreateNewAIChatThread();
+  const { createChatThread } = useCreateNewAIChatThread();
 
   const focusId = 'threads-list';
 
   useHotkeysOnFocusedElement({
     keys: [`${Key.Control}+${Key.Enter}`, `${Key.Meta}+${Key.Enter}`],
-    callback: switchToNewChat,
+    callback: () => createChatThread(),
     focusId,
-    dependencies: [switchToNewChat],
+    dependencies: [createChatThread],
   });
 
   const { threads, hasNextPage, loading, fetchMoreRef } = useChatThreads();
@@ -77,7 +77,7 @@ export const AIChatThreadsList = () => {
             accent="blue"
             size="medium"
             title={t`New chat`}
-            onClick={() => switchToNewChat()}
+            onClick={() => createChatThread()}
             hotkeys={[getOsControlSymbol(), '⏎']}
           />
         </StyledButtonsContainer>
