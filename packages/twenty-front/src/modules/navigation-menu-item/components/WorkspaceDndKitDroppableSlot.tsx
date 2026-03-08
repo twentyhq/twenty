@@ -4,7 +4,7 @@ import { type ReactNode } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { getDndKitDropTargetId } from '@/navigation-menu-item/utils/getDndKitDropTargetId';
-import type { DroppableData } from '@/navigation/utils/workspaceDndKitDroppableData';
+import type { DroppableData } from '@/navigation/types/workspaceDndKitDroppableData';
 
 const StyledSlotWrapper = styled.div<{ $empty: boolean }>`
   min-height: 0;

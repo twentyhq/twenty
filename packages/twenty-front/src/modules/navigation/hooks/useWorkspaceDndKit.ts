@@ -16,9 +16,9 @@ import { isNavigationMenuItemFolder } from '@/navigation-menu-item/utils/isNavig
 import { isWorkspaceDroppableId } from '@/navigation-menu-item/utils/isWorkspaceDroppableId';
 import { validateAndExtractWorkspaceFolderId } from '@/navigation-menu-item/utils/validateAndExtractWorkspaceFolderId';
 
-import type { DraggableData } from '@/navigation/utils/workspaceDndKitDraggableData';
-import type { DropDestination } from '@/navigation/utils/workspaceDndKitDropDestination';
-import { DROP_RESULT_OPTIONS } from '@/navigation/utils/workspaceDndKitDropResultOptions';
+import { DROP_RESULT_OPTIONS } from '@/navigation/constants/workspaceDndKitDropResultOptions';
+import type { DraggableData } from '@/navigation/types/workspaceDndKitDraggableData';
+import type { DropDestination } from '@/navigation/types/workspaceDndKitDropDestination';
 import { isFolderDrag } from '@/navigation/utils/workspaceDndKitIsFolderDrag';
 import { resolveDropTarget } from '@/navigation/utils/workspaceDndKitResolveDropTarget';
 import { toDropResult } from '@/navigation/utils/workspaceDndKitToDropResult';

@@ -1,4 +1,4 @@
-import type { DropDestination } from '@/navigation/utils/workspaceDndKitDropDestination';
+import type { DropDestination } from '@/navigation/types/workspaceDndKitDropDestination';
 
 export type SortableTargetDestination = {
   destination: DropDestination;

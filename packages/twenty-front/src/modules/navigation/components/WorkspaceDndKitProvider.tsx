@@ -9,7 +9,7 @@ import type { ReactNode } from 'react';
 import { NavigationDragSourceContext } from '@/navigation-menu-item/contexts/NavigationDragSourceContext';
 import { NavigationDropTargetContext } from '@/navigation-menu-item/contexts/NavigationDropTargetContext';
 import { NavigationMenuItemDragContext } from '@/navigation-menu-item/contexts/NavigationMenuItemDragContext';
-import type { DraggableData } from '@/navigation/utils/workspaceDndKitDraggableData';
+import type { DraggableData } from '@/navigation/types/workspaceDndKitDraggableData';
 
 import { useWorkspaceDndKit } from '@/navigation/hooks/useWorkspaceDndKit';
 
