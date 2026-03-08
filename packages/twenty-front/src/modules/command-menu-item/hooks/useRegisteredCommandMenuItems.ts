@@ -1,5 +1,5 @@
-import { useRecordAgnosticActions } from '@/command-menu-item/record-agnostic/hooks/useRecordAgnosticActions';
-import { useRelatedRecordActions } from '@/command-menu-item/record-agnostic/hooks/useRelatedRecordActions';
+import { useRecordAgnosticCommands } from '@/command-menu-item/record-agnostic/hooks/useRecordAgnosticCommands';
+import { useRelatedRecordCommands } from '@/command-menu-item/record-agnostic/hooks/useRelatedRecordCommands';
 import { CommandMenuItemViewType } from 'twenty-shared/types';
 import { type ShouldBeRegisteredFunctionParams } from '@/command-menu-item/types/ShouldBeRegisteredFunctionParams';
 import { getCommandMenuItemConfig } from '@/command-menu-item/utils/getCommandMenuItemConfig';
@@ -40,13 +40,13 @@ export const useRegisteredCommandMenuItems = (
     objectMetadataItem,
   });
 
-  const relatedRecordActionConfig = useRelatedRecordActions({
+  const relatedRecordActionConfig = useRelatedRecordCommands({
     sourceObjectMetadataItem: objectMetadataItem,
     getIcon,
     startPosition: Object.keys(recordActionConfig).length + 1,
   });
 
-  const recordAgnosticActionConfig = useRecordAgnosticActions();
+  const recordAgnosticActionConfig = useRecordAgnosticCommands();
 
   const actionsConfig = {
     ...recordActionConfig,

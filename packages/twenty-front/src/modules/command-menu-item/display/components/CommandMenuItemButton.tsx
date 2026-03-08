@@ -1,5 +1,5 @@
 import { type CommandMenuItemDisplayProps } from '@/command-menu-item/display/components/CommandMenuItemDisplay';
-import { getActionLabel } from '@/command-menu-item/utils/getActionLabel';
+import { getCommandMenuItemLabel } from '@/command-menu-item/utils/getCommandMenuItemLabel';
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
 import { AppTooltip, TooltipDelay, TooltipPosition } from 'twenty-ui/display';
@@ -19,10 +19,10 @@ export const CommandMenuItemButton = ({
   onClick?: (event?: React.MouseEvent<HTMLElement>) => void;
   to?: string;
 }) => {
-  const label = getActionLabel(action.label);
+  const label = getCommandMenuItemLabel(action.label);
 
   const shortLabel = isDefined(action.shortLabel)
-    ? getActionLabel(action.shortLabel)
+    ? getCommandMenuItemLabel(action.shortLabel)
     : undefined;
 
   const buttonAccent = action.isPrimaryCTA ? 'blue' : 'default';

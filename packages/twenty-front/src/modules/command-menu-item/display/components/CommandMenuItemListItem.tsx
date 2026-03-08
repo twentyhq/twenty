@@ -1,5 +1,5 @@
 import { type CommandMenuItemDisplayProps } from '@/command-menu-item/display/components/CommandMenuItemDisplay';
-import { getActionLabel } from '@/command-menu-item/utils/getActionLabel';
+import { getCommandMenuItemLabel } from '@/command-menu-item/utils/getCommandMenuItemLabel';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useNavigate } from 'react-router-dom';
@@ -35,8 +35,8 @@ export const CommandMenuItemListItem = ({
       <CommandMenuItem
         id={action.key}
         Icon={action.Icon}
-        label={getActionLabel(action.label)}
-        description={getActionLabel(action.description ?? '')}
+        label={getCommandMenuItemLabel(action.label)}
+        description={getCommandMenuItemLabel(action.description ?? '')}
         to={to}
         onClick={disabled ? undefined : onClick}
         hotKeys={action.hotKeys}

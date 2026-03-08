@@ -1,7 +1,7 @@
 import { CommandMenuItem } from '@/command-menu-item/display/components/CommandMenuItem';
 import { CommandMenuItemLink } from '@/command-menu-item/display/components/CommandMenuItemLink';
-import { NoSelectionRecordActionKeys } from '@/command-menu-item/record/no-selection/types/NoSelectionRecordActionsKeys';
-import { SingleRecordActionKeys } from '@/command-menu-item/record/single-record/types/SingleRecordActionsKey';
+import { NoSelectionRecordCommandKeys } from '@/command-menu-item/record/no-selection/types/NoSelectionRecordCommandKeys';
+import { SingleRecordCommandKeys } from '@/command-menu-item/record/single-record/types/SingleRecordCommandKeys';
 import { type CommandMenuItemConfig } from '@/command-menu-item/types/CommandMenuItemConfig';
 import { CommandMenuItemScope } from '@/command-menu-item/types/CommandMenuItemScope';
 import { CommandMenuItemType } from '@/command-menu-item/types/CommandMenuItemType';
@@ -31,7 +31,7 @@ export const createMockActionMenuActions = ({
   {
     type: CommandMenuItemType.Standard,
     scope: CommandMenuItemScope.RecordSelection,
-    key: SingleRecordActionKeys.ADD_TO_FAVORITES,
+    key: SingleRecordCommandKeys.ADD_TO_FAVORITES,
     label: msg`Add to favorites`,
     shortLabel: msg`Add to favorites`,
     position: 2,
@@ -47,7 +47,7 @@ export const createMockActionMenuActions = ({
   {
     type: CommandMenuItemType.Standard,
     scope: CommandMenuItemScope.RecordSelection,
-    key: SingleRecordActionKeys.EXPORT_FROM_RECORD_INDEX,
+    key: SingleRecordCommandKeys.EXPORT_FROM_RECORD_INDEX,
     label: msg`Export`,
     shortLabel: msg`Export`,
     position: 4,
@@ -61,7 +61,7 @@ export const createMockActionMenuActions = ({
   {
     type: CommandMenuItemType.Standard,
     scope: CommandMenuItemScope.RecordSelection,
-    key: SingleRecordActionKeys.DELETE,
+    key: SingleRecordCommandKeys.DELETE,
     label: msg`Delete`,
     shortLabel: msg`Delete`,
     position: 7,
@@ -78,7 +78,7 @@ export const createMockActionMenuActions = ({
   {
     type: CommandMenuItemType.Navigation,
     scope: CommandMenuItemScope.Global,
-    key: NoSelectionRecordActionKeys.GO_TO_PEOPLE,
+    key: NoSelectionRecordCommandKeys.GO_TO_PEOPLE,
     label: msg`Go to People`,
     shortLabel: msg`People`,
     position: 19,

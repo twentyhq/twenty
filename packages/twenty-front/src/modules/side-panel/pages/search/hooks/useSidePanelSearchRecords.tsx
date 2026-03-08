@@ -89,7 +89,7 @@ export const useSidePanelSearchRecords = () => {
           return {
             ...baseAction,
             component: (
-              <Action
+              <CommandMenuItem
                 onClick={() => {
                   searchRecord.objectNameSingular === 'task'
                     ? openRecordInSidePanel({

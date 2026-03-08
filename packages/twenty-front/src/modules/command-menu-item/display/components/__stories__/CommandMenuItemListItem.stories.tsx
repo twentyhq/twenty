@@ -1,8 +1,8 @@
 import { CommandMenuItemListItem } from '@/command-menu-item/display/components/CommandMenuItemListItem';
-import { NoSelectionRecordActionKeys } from '@/command-menu-item/record/no-selection/types/NoSelectionRecordActionsKeys';
-import { SingleRecordActionKeys } from '@/command-menu-item/record/single-record/types/SingleRecordActionsKey';
+import { NoSelectionRecordCommandKeys } from '@/command-menu-item/record/no-selection/types/NoSelectionRecordCommandKeys';
+import { SingleRecordCommandKeys } from '@/command-menu-item/record/single-record/types/SingleRecordCommandKeys';
 import { createMockActionMenuActions } from '@/command-menu-item/mock/action-menu-actions.mock';
-import { getActionLabel } from '@/command-menu-item/utils/getActionLabel';
+import { getCommandMenuItemLabel } from '@/command-menu-item/utils/getCommandMenuItemLabel';
 import { SelectableListComponentInstanceContext } from '@/ui/layout/selectable-list/states/contexts/SelectableListComponentInstanceContext';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, within } from 'storybook/test';
@@ -18,12 +18,12 @@ const mockActions = createMockActionMenuActions({
   addToFavoritesMock,
 });
 
-const addToFavoritesAction = mockActions.find(
-  (action) => action.key === SingleRecordActionKeys.ADD_TO_FAVORITES,
+const addToFavoritesCommandMenuItem = mockActions.find(
+  (action) => action.key === SingleRecordCommandKeys.ADD_TO_FAVORITES,
 );
 
-const goToPeopleAction = mockActions.find(
-  (action) => action.key === NoSelectionRecordActionKeys.GO_TO_PEOPLE,
+const goToPeopleCommandMenuItem = mockActions.find(
+  (action) => action.key === NoSelectionRecordCommandKeys.GO_TO_PEOPLE,
 );
 
 const meta: Meta<typeof CommandMenuItemListItem> = {
@@ -46,14 +46,14 @@ export default meta;
 
 export const Default: Story = {
   args: {
-    action: addToFavoritesAction,
+    action: addToFavoritesCommandMenuItem,
     onClick: addToFavoritesMock,
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await userEvent.click(
       await canvas.findByText(
-        getActionLabel(addToFavoritesAction?.label ?? ''),
+        getCommandMenuItemLabel(addToFavoritesCommandMenuItem?.label ?? ''),
       ),
     );
     expect(addToFavoritesMock).toHaveBeenCalled();
@@ -62,13 +62,13 @@ export const Default: Story = {
 
 export const WithLink: Story = {
   args: {
-    action: goToPeopleAction,
+    action: goToPeopleCommandMenuItem,
     to: '/objects/people',
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const listItem = await canvas.findByText(
-      getActionLabel(goToPeopleAction?.label ?? ''),
+      getCommandMenuItemLabel(goToPeopleCommandMenuItem?.label ?? ''),
     );
     expect(listItem).toBeVisible();
   },

@@ -2,20 +2,20 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, within } from 'storybook/test';
 
 import { CommandMenuItemComponent } from '@/command-menu-item/display/components/CommandMenuItemComponent';
-import { SingleRecordActionKeys } from '@/command-menu-item/record/single-record/types/SingleRecordActionsKey';
+import { SingleRecordCommandKeys } from '@/command-menu-item/record/single-record/types/SingleRecordCommandKeys';
 import { CommandMenuItemContext } from '@/command-menu-item/contexts/CommandMenuItemContext';
 import { createMockActionMenuActions } from '@/command-menu-item/mock/action-menu-actions.mock';
 import { ActionMenuComponentInstanceContext } from '@/command-menu-item/states/contexts/ActionMenuComponentInstanceContext';
-import { getActionLabel } from '@/command-menu-item/utils/getActionLabel';
+import { getCommandMenuItemLabel } from '@/command-menu-item/utils/getCommandMenuItemLabel';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 const mockActions = createMockActionMenuActions({});
 
-const addToFavoritesAction = mockActions.find(
-  (action) => action.key === SingleRecordActionKeys.ADD_TO_FAVORITES,
+const addToFavoritesCommandMenuItem = mockActions.find(
+  (action) => action.key === SingleRecordCommandKeys.ADD_TO_FAVORITES,
 );
 
-if (!addToFavoritesAction) {
+if (!addToFavoritesCommandMenuItem) {
   throw new Error('Add to favorites action not found');
 }
 
@@ -33,7 +33,7 @@ const meta: Meta<typeof CommandMenuItemComponent> = {
             isInSidePanel: false,
             actionMenuType: 'index-page-action-menu',
             displayType: 'button',
-            actions: [addToFavoritesAction],
+            actions: [addToFavoritesCommandMenuItem],
           }}
         >
           <Story />
@@ -42,7 +42,7 @@ const meta: Meta<typeof CommandMenuItemComponent> = {
     ),
   ],
   args: {
-    action: addToFavoritesAction,
+    action: addToFavoritesCommandMenuItem,
   },
   parameters: {
     container: {
@@ -60,7 +60,9 @@ export const Default: Story = {
 
     expect(
       await canvas.findByText(
-        getActionLabel(addToFavoritesAction?.shortLabel ?? ''),
+        getCommandMenuItemLabel(
+          addToFavoritesCommandMenuItem?.shortLabel ?? '',
+        ),
       ),
     ).toBeVisible();
   },

@@ -1,5 +1,5 @@
 import { type CommandMenuItemConfig } from '@/command-menu-item/types/CommandMenuItemConfig';
-import { getActionLabel } from '@/command-menu-item/utils/getActionLabel';
+import { getCommandMenuItemLabel } from '@/command-menu-item/utils/getCommandMenuItemLabel';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback } from 'react';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
@@ -11,7 +11,7 @@ const checkInShortcuts = (action: CommandMenuItemConfig, search: string) => {
 };
 
 const checkInLabels = (action: CommandMenuItemConfig, search: string) => {
-  const actionLabel = getActionLabel(action.label);
+  const actionLabel = getCommandMenuItemLabel(action.label);
   if (isNonEmptyString(actionLabel)) {
     const searchNormalized = normalizeSearchText(search);
     return normalizeSearchText(actionLabel).includes(searchNormalized);

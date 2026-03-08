@@ -1,5 +1,5 @@
-import { useRunWorkflowRecordActions } from '@/command-menu-item/record/workflow/hooks/useRunWorkflowRecordActions';
-import { useRunWorkflowRecordAgnosticActions } from '@/command-menu-item/record-agnostic/workflow/hooks/useRunWorkflowRecordAgnosticActions';
+import { useRunWorkflowRecordCommands } from '@/command-menu-item/record/workflow/hooks/useRunWorkflowRecordCommands';
+import { useRunWorkflowRecordAgnosticCommands } from '@/command-menu-item/record-agnostic/workflow/hooks/useRunWorkflowRecordAgnosticCommands';
 import {
   CommandMenuItemContext,
   type CommandMenuItemContextType,
@@ -43,13 +43,13 @@ export const CommandMenuItemContextProviderDefault = ({
     contextStoreTargetedRecordsRule.mode === 'selection' &&
     contextStoreTargetedRecordsRule.selectedRecordIds.length > 0;
 
-  const runWorkflowRecordActions = useRunWorkflowRecordActions({
+  const runWorkflowRecordActions = useRunWorkflowRecordCommands({
     objectMetadataItem,
     skip: !isRecordSelection,
   });
 
   const runWorkflowRecordAgnosticActions =
-    useRunWorkflowRecordAgnosticActions();
+    useRunWorkflowRecordAgnosticCommands();
 
   const commandMenuItemContextApi = useCommandMenuItemContextApi();
 

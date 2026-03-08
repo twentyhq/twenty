@@ -1,4 +1,4 @@
-import { useRunWorkflowRecordAgnosticActions } from '@/command-menu-item/record-agnostic/workflow/hooks/useRunWorkflowRecordAgnosticActions';
+import { useRunWorkflowRecordAgnosticCommands } from '@/command-menu-item/record-agnostic/workflow/hooks/useRunWorkflowRecordAgnosticCommands';
 import {
   CommandMenuItemContext,
   type CommandMenuItemContextType,
@@ -49,7 +49,7 @@ const CommandMenuItemContextProviderWorkflowObjectsContent = ({
   const actions = useRegisteredCommandMenuItems(shouldBeRegisteredParams);
 
   const runWorkflowRecordAgnosticActions =
-    useRunWorkflowRecordAgnosticActions();
+    useRunWorkflowRecordAgnosticCommands();
 
   const commandMenuItemContextApi = useCommandMenuItemContextApi();
 
@@ -95,7 +95,7 @@ const CommandMenuItemContextProviderWorkflowObjectsWithoutWorkflow = ({
   const actions = useRegisteredCommandMenuItems(shouldBeRegisteredParams);
 
   const runWorkflowRecordAgnosticActions =
-    useRunWorkflowRecordAgnosticActions();
+    useRunWorkflowRecordAgnosticCommands();
 
   const commandMenuItemContextApi = useCommandMenuItemContextApi();
 

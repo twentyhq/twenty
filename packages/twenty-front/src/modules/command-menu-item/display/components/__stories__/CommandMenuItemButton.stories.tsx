@@ -1,8 +1,8 @@
 import { CommandMenuItemButton } from '@/command-menu-item/display/components/CommandMenuItemButton';
-import { NoSelectionRecordActionKeys } from '@/command-menu-item/record/no-selection/types/NoSelectionRecordActionsKeys';
-import { SingleRecordActionKeys } from '@/command-menu-item/record/single-record/types/SingleRecordActionsKey';
+import { NoSelectionRecordCommandKeys } from '@/command-menu-item/record/no-selection/types/NoSelectionRecordCommandKeys';
+import { SingleRecordCommandKeys } from '@/command-menu-item/record/single-record/types/SingleRecordCommandKeys';
 import { createMockActionMenuActions } from '@/command-menu-item/mock/action-menu-actions.mock';
-import { getActionLabel } from '@/command-menu-item/utils/getActionLabel';
+import { getCommandMenuItemLabel } from '@/command-menu-item/utils/getCommandMenuItemLabel';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, within } from 'storybook/test';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
@@ -25,24 +25,26 @@ const mockActions = createMockActionMenuActions({
   addToFavoritesMock,
 });
 
-const addToFavoritesAction = mockActions.find(
-  (action) => action.key === SingleRecordActionKeys.ADD_TO_FAVORITES,
+const addToFavoritesCommandMenuItem = mockActions.find(
+  (action) => action.key === SingleRecordCommandKeys.ADD_TO_FAVORITES,
 );
 
-const goToPeopleAction = mockActions.find(
-  (action) => action.key === NoSelectionRecordActionKeys.GO_TO_PEOPLE,
+const goToPeopleCommandMenuItem = mockActions.find(
+  (action) => action.key === NoSelectionRecordCommandKeys.GO_TO_PEOPLE,
 );
 
 export const Default: Story = {
   args: {
-    action: addToFavoritesAction,
+    action: addToFavoritesCommandMenuItem,
     onClick: addToFavoritesMock,
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await userEvent.click(
       await canvas.findByText(
-        getActionLabel(addToFavoritesAction?.shortLabel ?? ''),
+        getCommandMenuItemLabel(
+          addToFavoritesCommandMenuItem?.shortLabel ?? '',
+        ),
       ),
     );
     expect(addToFavoritesMock).toHaveBeenCalled();
@@ -51,13 +53,13 @@ export const Default: Story = {
 
 export const WithLink: Story = {
   args: {
-    action: goToPeopleAction,
+    action: goToPeopleCommandMenuItem,
     to: '/objects/people',
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const menuItem = await canvas.findByText(
-      getActionLabel(goToPeopleAction?.shortLabel ?? ''),
+      getCommandMenuItemLabel(goToPeopleCommandMenuItem?.shortLabel ?? ''),
     );
     expect(menuItem).toBeVisible();
     expect(canvas.getByRole('link')).toHaveAttribute('href', '/objects/people');

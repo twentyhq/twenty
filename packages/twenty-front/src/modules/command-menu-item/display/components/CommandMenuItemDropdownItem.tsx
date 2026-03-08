@@ -1,5 +1,5 @@
 import { type CommandMenuItemDisplayProps } from '@/command-menu-item/display/components/CommandMenuItemDisplay';
-import { getActionLabel } from '@/command-menu-item/utils/getActionLabel';
+import { getCommandMenuItemLabel } from '@/command-menu-item/utils/getCommandMenuItemLabel';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { SelectableListComponentInstanceContext } from '@/ui/layout/selectable-list/states/contexts/SelectableListComponentInstanceContext';
 import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';
@@ -44,7 +44,7 @@ export const CommandMenuItemDropdownItem = ({
         key={action.key}
         LeftIcon={action.Icon}
         onClick={handleClick}
-        text={getActionLabel(action.label)}
+        text={getCommandMenuItemLabel(action.label)}
       />
     </SelectableListItem>
   );

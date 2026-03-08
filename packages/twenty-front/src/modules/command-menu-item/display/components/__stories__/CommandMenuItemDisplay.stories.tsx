@@ -1,9 +1,9 @@
 import { CommandMenuItemDisplay } from '@/command-menu-item/display/components/CommandMenuItemDisplay';
-import { SingleRecordActionKeys } from '@/command-menu-item/record/single-record/types/SingleRecordActionsKey';
+import { SingleRecordCommandKeys } from '@/command-menu-item/record/single-record/types/SingleRecordCommandKeys';
 import { CommandMenuItemConfigContext } from '@/command-menu-item/contexts/CommandMenuItemConfigContext';
 import { CommandMenuItemContext } from '@/command-menu-item/contexts/CommandMenuItemContext';
 import { createMockActionMenuActions } from '@/command-menu-item/mock/action-menu-actions.mock';
-import { getActionLabel } from '@/command-menu-item/utils/getActionLabel';
+import { getCommandMenuItemLabel } from '@/command-menu-item/utils/getCommandMenuItemLabel';
 import { SelectableListComponentInstanceContext } from '@/ui/layout/selectable-list/states/contexts/SelectableListComponentInstanceContext';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, within } from 'storybook/test';
@@ -19,12 +19,12 @@ const mockActions = createMockActionMenuActions({
   addToFavoritesMock,
 });
 
-const addToFavoritesAction = mockActions.find(
-  (action) => action.key === SingleRecordActionKeys.ADD_TO_FAVORITES,
+const addToFavoritesCommandMenuItem = mockActions.find(
+  (action) => action.key === SingleRecordCommandKeys.ADD_TO_FAVORITES,
 );
 
-if (!addToFavoritesAction) {
-  throw new Error('addToFavoritesAction not found');
+if (!addToFavoritesCommandMenuItem) {
+  throw new Error('addToFavoritesCommandMenuItem not found');
 }
 
 const meta: Meta<typeof CommandMenuItemDisplay> = {
@@ -32,7 +32,9 @@ const meta: Meta<typeof CommandMenuItemDisplay> = {
   component: CommandMenuItemDisplay,
   decorators: [
     (Story) => (
-      <CommandMenuItemConfigContext.Provider value={addToFavoritesAction}>
+      <CommandMenuItemConfigContext.Provider
+        value={addToFavoritesCommandMenuItem}
+      >
         <Story />
       </CommandMenuItemConfigContext.Provider>
     ),
@@ -65,7 +67,9 @@ export const AsButton: Story = {
     const canvas = within(canvasElement);
     await userEvent.click(
       await canvas.findByText(
-        getActionLabel(addToFavoritesAction?.shortLabel ?? ''),
+        getCommandMenuItemLabel(
+          addToFavoritesCommandMenuItem?.shortLabel ?? '',
+        ),
       ),
     );
     expect(addToFavoritesMock).toHaveBeenCalled();
@@ -101,7 +105,7 @@ export const AsListItem: Story = {
     const canvas = within(canvasElement);
     await userEvent.click(
       await canvas.findByText(
-        getActionLabel(addToFavoritesAction?.label ?? ''),
+        getCommandMenuItemLabel(addToFavoritesCommandMenuItem?.label ?? ''),
       ),
     );
     expect(addToFavoritesMock).toHaveBeenCalled();
@@ -137,7 +141,7 @@ export const AsDropdownItem: Story = {
     const canvas = within(canvasElement);
     await userEvent.click(
       await canvas.findByText(
-        getActionLabel(addToFavoritesAction?.label ?? ''),
+        getCommandMenuItemLabel(addToFavoritesCommandMenuItem?.label ?? ''),
       ),
     );
     expect(addToFavoritesMock).toHaveBeenCalled();

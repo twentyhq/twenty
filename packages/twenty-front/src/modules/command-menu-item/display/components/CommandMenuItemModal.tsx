@@ -11,7 +11,7 @@ import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpe
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { type ButtonAccent } from 'twenty-ui/input';
 
-export type ActionModalProps = {
+export type CommandMenuItemModalProps = {
   title: string;
   subtitle: ReactNode;
   onConfirmClick: () => void | Promise<void>;
@@ -31,7 +31,7 @@ export const CommandMenuItemModal = ({
   isLoading = false,
   closeSidePanelOnShowPageOptionsActionExecution,
   closeSidePanelOnCommandMenuItemListActionExecution,
-}: ActionModalProps) => {
+}: CommandMenuItemModalProps) => {
   const { openModal } = useModal();
 
   const { closeActionMenu } = useCloseActionMenu({
