@@ -3055,11 +3055,6 @@ export type MutationInstallMarketplaceAppArgs = {
 };
 
 
-export type MutationRegisterNpmPackageArgs = {
-  packageName: Scalars['String'];
-};
-
-
 export type MutationRemoveQueryFromEventStreamArgs = {
   input: RemoveQueryFromEventStreamInput;
 };
