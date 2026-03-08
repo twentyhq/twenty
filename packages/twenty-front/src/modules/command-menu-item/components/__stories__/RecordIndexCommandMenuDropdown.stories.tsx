@@ -19,7 +19,7 @@ const addToFavoritesMock = test.fn();
 const exportMock = test.fn();
 
 const meta: Meta<typeof RecordIndexCommandMenuDropdown> = {
-  title: 'Modules/ActionMenu/RecordIndexCommandMenuDropdown',
+  title: 'Modules/CommandMenu/RecordIndexCommandMenuDropdown',
   component: RecordIndexCommandMenuDropdown,
   decorators: [
     (Story) => {

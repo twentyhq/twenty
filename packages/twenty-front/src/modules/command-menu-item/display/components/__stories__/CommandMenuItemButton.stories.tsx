@@ -8,7 +8,7 @@ import { expect, fn, userEvent, within } from 'storybook/test';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
 
 const meta: Meta<typeof CommandMenuItemButton> = {
-  title: 'Modules/ActionMenu/Actions/Display/CommandMenuItemButton',
+  title: 'Modules/CommandMenuItem/Display/CommandMenuItemButton',
   component: CommandMenuItemButton,
   decorators: [ComponentDecorator, RouterDecorator],
 };

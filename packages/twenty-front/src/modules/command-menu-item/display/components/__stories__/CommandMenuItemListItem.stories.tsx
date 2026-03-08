@@ -27,7 +27,7 @@ const goToPeopleCommandMenuItem = mockActions.find(
 );
 
 const meta: Meta<typeof CommandMenuItemListItem> = {
-  title: 'Modules/ActionMenu/Actions/Display/CommandMenuItemListItem',
+  title: 'Modules/CommandMenuItem/Display/CommandMenuItemListItem',
   component: CommandMenuItemListItem,
   decorators: [
     (Story) => (

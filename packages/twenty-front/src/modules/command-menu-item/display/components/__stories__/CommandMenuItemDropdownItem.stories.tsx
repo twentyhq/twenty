@@ -9,7 +9,7 @@ import { expect, fn, userEvent, within } from 'storybook/test';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
 
 const meta: Meta<typeof CommandMenuItemDropdownItem> = {
-  title: 'Modules/ActionMenu/Actions/Display/CommandMenuItemDropdownItem',
+  title: 'Modules/CommandMenuItem/Display/CommandMenuItemDropdownItem',
   component: CommandMenuItemDropdownItem,
   decorators: [
     (Story) => (

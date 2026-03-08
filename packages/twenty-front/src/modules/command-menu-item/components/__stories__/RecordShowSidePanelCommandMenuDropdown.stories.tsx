@@ -20,7 +20,7 @@ const addToFavoritesMock = test.fn();
 const exportMock = test.fn();
 
 const meta: Meta<typeof RecordShowSidePanelCommandMenuDropdown> = {
-  title: 'Modules/ActionMenu/RecordShowSidePanelCommandMenuDropdown',
+  title: 'Modules/CommandMenu/RecordShowSidePanelCommandMenuDropdown',
   component: RecordShowSidePanelCommandMenuDropdown,
   decorators: [
     (Story) => (

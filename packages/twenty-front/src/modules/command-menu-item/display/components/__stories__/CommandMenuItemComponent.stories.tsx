@@ -20,7 +20,7 @@ if (!addToFavoritesCommandMenuItem) {
 }
 
 const meta: Meta<typeof CommandMenuItemComponent> = {
-  title: 'Modules/ActionMenu/Actions/Display/CommandMenuItemComponent',
+  title: 'Modules/CommandMenuItem/Display/CommandMenuItemComponent',
   component: CommandMenuItemComponent,
   decorators: [
     ComponentDecorator,
