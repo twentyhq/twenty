@@ -1,4 +1,4 @@
-import { type CommandMenuItemConfig } from '@/command-menu-item/actions/types/CommandMenuItemConfig';
+import { type CommandMenuItemConfig } from '@/command-menu-item/types/CommandMenuItemConfig';
 import { getActionLabel } from '@/command-menu-item/utils/getActionLabel';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback } from 'react';

@@ -1,4 +1,4 @@
-import { type CommandMenuItemConfig } from '@/command-menu-item/actions/types/CommandMenuItemConfig';
+import { type CommandMenuItemConfig } from '@/command-menu-item/types/CommandMenuItemConfig';
 import { createContext } from 'react';
 
 export type CommandMenuItemContextType = {

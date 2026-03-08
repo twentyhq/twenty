@@ -1,5 +1,5 @@
-import { CommandMenuItemComponent } from '@/command-menu-item/actions/display/components/CommandMenuItemComponent';
-import { CommandMenuItemScope } from '@/command-menu-item/actions/types/CommandMenuItemScope';
+import { CommandMenuItemComponent } from '@/command-menu-item/display/components/CommandMenuItemComponent';
+import { CommandMenuItemScope } from '@/command-menu-item/types/CommandMenuItemScope';
 import { CommandMenuItemContext } from '@/command-menu-item/contexts/CommandMenuItemContext';
 import { ActionMenuComponentInstanceContext } from '@/command-menu-item/states/contexts/ActionMenuComponentInstanceContext';
 import { getSidePanelActionMenuDropdownIdFromActionMenuId } from '@/command-menu-item/utils/getSidePanelActionMenuDropdownIdFromActionMenuId';

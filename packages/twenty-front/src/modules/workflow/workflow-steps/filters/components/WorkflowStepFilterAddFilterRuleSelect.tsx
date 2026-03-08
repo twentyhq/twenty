@@ -1,4 +1,4 @@
-import { CommandMenuItemButton } from '@/command-menu-item/actions/display/components/CommandMenuItemButton';
+import { CommandMenuItemButton } from '@/command-menu-item/display/components/CommandMenuItemButton';
 import { getAdvancedFilterAddFilterRuleSelectDropdownId } from '@/object-record/advanced-filter/utils/getAdvancedFilterAddFilterRuleSelectDropdownId';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';

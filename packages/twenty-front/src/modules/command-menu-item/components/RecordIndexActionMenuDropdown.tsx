@@ -1,6 +1,6 @@
-import { CommandMenuItemComponent } from '@/command-menu-item/actions/display/components/CommandMenuItemComponent';
-import { CommandMenuItemScope } from '@/command-menu-item/actions/types/CommandMenuItemScope';
-import { CommandMenuItemType } from '@/command-menu-item/actions/types/CommandMenuItemType';
+import { CommandMenuItemComponent } from '@/command-menu-item/display/components/CommandMenuItemComponent';
+import { CommandMenuItemScope } from '@/command-menu-item/types/CommandMenuItemScope';
+import { CommandMenuItemType } from '@/command-menu-item/types/CommandMenuItemType';
 import { ACTION_MENU_DROPDOWN_CLICK_OUTSIDE_ID } from '@/command-menu-item/constants/ActionMenuDropdownClickOutsideId';
 import { CommandMenuItemContext } from '@/command-menu-item/contexts/CommandMenuItemContext';
 import { ActionMenuComponentInstanceContext } from '@/command-menu-item/states/contexts/ActionMenuComponentInstanceContext';

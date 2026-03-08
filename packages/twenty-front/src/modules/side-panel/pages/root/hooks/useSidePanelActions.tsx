@@ -1,6 +1,6 @@
-import { type CommandMenuItemConfig } from '@/command-menu-item/actions/types/CommandMenuItemConfig';
-import { CommandMenuItemScope } from '@/command-menu-item/actions/types/CommandMenuItemScope';
-import { CommandMenuItemType } from '@/command-menu-item/actions/types/CommandMenuItemType';
+import { type CommandMenuItemConfig } from '@/command-menu-item/types/CommandMenuItemConfig';
+import { CommandMenuItemScope } from '@/command-menu-item/types/CommandMenuItemScope';
+import { CommandMenuItemType } from '@/command-menu-item/types/CommandMenuItemType';
 import { CommandMenuItemContext } from '@/command-menu-item/contexts/CommandMenuItemContext';
 import { useContext } from 'react';
 

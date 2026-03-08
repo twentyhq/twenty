@@ -7,7 +7,7 @@ import { IconFilter, IconPlus } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { CommandMenuItemButton } from '@/command-menu-item/actions/display/components/CommandMenuItemButton';
+import { CommandMenuItemButton } from '@/command-menu-item/display/components/CommandMenuItemButton';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useChildRecordFiltersAndRecordFilterGroups } from '@/object-record/advanced-filter/hooks/useChildRecordFiltersAndRecordFilterGroups';
 import { useSetRecordFilterUsedInAdvancedFilterDropdownRow } from '@/object-record/advanced-filter/hooks/useSetRecordFilterUsedInAdvancedFilterDropdownRow';

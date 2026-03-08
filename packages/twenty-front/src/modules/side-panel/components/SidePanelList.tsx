@@ -1,4 +1,4 @@
-import { CommandMenuItemComponent } from '@/command-menu-item/actions/display/components/CommandMenuItemComponent';
+import { CommandMenuItemComponent } from '@/command-menu-item/display/components/CommandMenuItemComponent';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelDefaultSelectionEffect } from '@/side-panel/components/SidePanelDefaultSelectionEffect';
 import { SIDE_PANEL_SELECTABLE_LIST_ID } from '@/side-panel/constants/SidePanelSelectableListId';

@@ -1,0 +1,164 @@
+import { MultipleRecordsActionKeys } from '@/command-menu-item/record/multiple-records/types/MultipleRecordsActionKeys';
+import { NoSelectionRecordActionKeys } from '@/command-menu-item/record/no-selection/types/NoSelectionRecordActionsKeys';
+import { SingleRecordActionKeys } from '@/command-menu-item/record/single-record/types/SingleRecordActionsKey';
+import { SeeVersionWorkflowRunSingleRecordAction } from '@/command-menu-item/record/single-record/workflow-runs/components/SeeVersionWorkflowRunSingleRecordAction';
+import { SeeWorkflowWorkflowRunSingleRecordAction } from '@/command-menu-item/record/single-record/workflow-runs/components/SeeWorkflowWorkflowRunSingleRecordAction';
+import { StopWorkflowRunSingleRecordAction } from '@/command-menu-item/record/single-record/workflow-runs/components/StopWorkflowRunSingleRecordAction';
+import { WorkflowRunSingleRecordActionKeys } from '@/command-menu-item/record/single-record/workflow-runs/types/WorkflowRunSingleRecordActionsKeys';
+import { inheritActionsFromDefaultConfig } from '@/command-menu-item/record/utils/inheritActionsFromDefaultConfig';
+import { CommandMenuItemScope } from '@/command-menu-item/types/CommandMenuItemScope';
+import { CommandMenuItemType } from '@/command-menu-item/types/CommandMenuItemType';
+import { CommandMenuItemViewType } from 'twenty-shared/types';
+import { msg } from '@lingui/core/macro';
+import {
+  IconPlayerStop,
+  IconSettingsAutomation,
+  IconVersions,
+} from 'twenty-ui/display';
+
+export const WORKFLOW_RUNS_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
+  config: {
+    [WorkflowRunSingleRecordActionKeys.SEE_VERSION]: {
+      key: WorkflowRunSingleRecordActionKeys.SEE_VERSION,
+      label: msg`See version`,
+      shortLabel: msg`See version`,
+      position: 0,
+      isPinned: true,
+      type: CommandMenuItemType.Standard,
+      scope: CommandMenuItemScope.RecordSelection,
+      Icon: IconVersions,
+      shouldBeRegistered: () => true,
+      availableOn: [
+        CommandMenuItemViewType.SHOW_PAGE,
+        CommandMenuItemViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+      ],
+      component: <SeeVersionWorkflowRunSingleRecordAction />,
+    },
+
+    [WorkflowRunSingleRecordActionKeys.SEE_WORKFLOW]: {
+      key: WorkflowRunSingleRecordActionKeys.SEE_WORKFLOW,
+      label: msg`See workflow`,
+      shortLabel: msg`See workflow`,
+      position: 1,
+      isPinned: true,
+      type: CommandMenuItemType.Standard,
+      scope: CommandMenuItemScope.RecordSelection,
+      Icon: IconSettingsAutomation,
+      shouldBeRegistered: () => true,
+      availableOn: [
+        CommandMenuItemViewType.SHOW_PAGE,
+        CommandMenuItemViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+      ],
+      component: <SeeWorkflowWorkflowRunSingleRecordAction />,
+    },
+    [WorkflowRunSingleRecordActionKeys.STOP]: {
+      key: WorkflowRunSingleRecordActionKeys.STOP,
+      label: msg`Stop`,
+      shortLabel: msg`Stop`,
+      position: 2,
+      isPinned: true,
+      type: CommandMenuItemType.Standard,
+      scope: CommandMenuItemScope.RecordSelection,
+      Icon: IconPlayerStop,
+      shouldBeRegistered: ({ selectedRecord, isSelectAll }) => {
+        if (isSelectAll === true) {
+          return true;
+        }
+
+        const stoppableStatuses = ['NOT_STARTED', 'ENQUEUED', 'RUNNING'];
+        return stoppableStatuses.includes(selectedRecord?.status);
+      },
+      availableOn: [
+        CommandMenuItemViewType.SHOW_PAGE,
+        CommandMenuItemViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+        CommandMenuItemViewType.INDEX_PAGE_BULK_SELECTION,
+      ],
+      component: <StopWorkflowRunSingleRecordAction />,
+    },
+  },
+  actionKeys: [
+    SingleRecordActionKeys.ADD_TO_FAVORITES,
+    SingleRecordActionKeys.REMOVE_FROM_FAVORITES,
+    SingleRecordActionKeys.NAVIGATE_TO_PREVIOUS_RECORD,
+    SingleRecordActionKeys.NAVIGATE_TO_NEXT_RECORD,
+    SingleRecordActionKeys.EXPORT_FROM_RECORD_INDEX,
+    SingleRecordActionKeys.EXPORT_FROM_RECORD_SHOW,
+    MultipleRecordsActionKeys.EXPORT,
+    NoSelectionRecordActionKeys.EXPORT_VIEW,
+    NoSelectionRecordActionKeys.SEE_DELETED_RECORDS,
+    NoSelectionRecordActionKeys.HIDE_DELETED_RECORDS,
+    NoSelectionRecordActionKeys.GO_TO_WORKFLOWS,
+    NoSelectionRecordActionKeys.GO_TO_PEOPLE,
+    NoSelectionRecordActionKeys.GO_TO_COMPANIES,
+    NoSelectionRecordActionKeys.GO_TO_OPPORTUNITIES,
+    NoSelectionRecordActionKeys.GO_TO_DASHBOARDS,
+    NoSelectionRecordActionKeys.GO_TO_SETTINGS,
+    NoSelectionRecordActionKeys.GO_TO_TASKS,
+    NoSelectionRecordActionKeys.GO_TO_NOTES,
+  ],
+  propertiesToOverwrite: {
+    [SingleRecordActionKeys.ADD_TO_FAVORITES]: {
+      isPinned: false,
+      position: 3,
+    },
+    [SingleRecordActionKeys.REMOVE_FROM_FAVORITES]: {
+      isPinned: false,
+      position: 4,
+    },
+    [SingleRecordActionKeys.EXPORT_FROM_RECORD_INDEX]: {
+      position: 5,
+      label: msg`Export run`,
+    },
+    [SingleRecordActionKeys.EXPORT_FROM_RECORD_SHOW]: {
+      position: 5,
+      label: msg`Export run`,
+    },
+    [MultipleRecordsActionKeys.EXPORT]: {
+      position: 6,
+      label: msg`Export runs`,
+    },
+    [NoSelectionRecordActionKeys.EXPORT_VIEW]: {
+      position: 7,
+      label: msg`Export view`,
+    },
+    [NoSelectionRecordActionKeys.SEE_DELETED_RECORDS]: {
+      position: 8,
+      label: msg`See deleted runs`,
+    },
+    [NoSelectionRecordActionKeys.HIDE_DELETED_RECORDS]: {
+      position: 9,
+      label: msg`Hide deleted runs`,
+    },
+    [SingleRecordActionKeys.NAVIGATE_TO_PREVIOUS_RECORD]: {
+      position: 10,
+    },
+    [SingleRecordActionKeys.NAVIGATE_TO_NEXT_RECORD]: {
+      position: 11,
+    },
+    [NoSelectionRecordActionKeys.GO_TO_WORKFLOWS]: {
+      position: 12,
+      isPinned: true,
+    },
+    [NoSelectionRecordActionKeys.GO_TO_PEOPLE]: {
+      position: 13,
+    },
+    [NoSelectionRecordActionKeys.GO_TO_COMPANIES]: {
+      position: 14,
+    },
+    [NoSelectionRecordActionKeys.GO_TO_OPPORTUNITIES]: {
+      position: 15,
+    },
+    [NoSelectionRecordActionKeys.GO_TO_DASHBOARDS]: {
+      position: 16,
+    },
+    [NoSelectionRecordActionKeys.GO_TO_SETTINGS]: {
+      position: 17,
+    },
+    [NoSelectionRecordActionKeys.GO_TO_TASKS]: {
+      position: 18,
+    },
+    [NoSelectionRecordActionKeys.GO_TO_NOTES]: {
+      position: 19,
+    },
+  },
+});

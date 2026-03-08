@@ -1,7 +1,7 @@
-import { CommandMenuItem } from '@/command-menu-item/actions/components/CommandMenuItem';
-import { HeadlessFrontComponentCommandMenuItem } from '@/command-menu-item/actions/display/components/HeadlessFrontComponentCommandMenuItem';
-import { CommandMenuItemScope } from '@/command-menu-item/actions/types/CommandMenuItemScope';
-import { CommandMenuItemType } from '@/command-menu-item/actions/types/CommandMenuItemType';
+import { CommandMenuItem } from '@/command-menu-item/display/components/CommandMenuItem';
+import { HeadlessFrontComponentCommandMenuItem } from '@/command-menu-item/display/components/HeadlessFrontComponentCommandMenuItem';
+import { CommandMenuItemScope } from '@/command-menu-item/types/CommandMenuItemScope';
+import { CommandMenuItemType } from '@/command-menu-item/types/CommandMenuItemType';
 import { CommandMenuItemContext } from '@/command-menu-item/contexts/CommandMenuItemContext';
 import { useOpenFrontComponentInSidePanel } from '@/side-panel/hooks/useOpenFrontComponentInSidePanel';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';

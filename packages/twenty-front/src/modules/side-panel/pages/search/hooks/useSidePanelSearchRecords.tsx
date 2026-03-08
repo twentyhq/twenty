@@ -1,7 +1,7 @@
-import { CommandMenuItem } from '@/command-menu-item/actions/components/CommandMenuItem';
-import { CommandMenuItemLink } from '@/command-menu-item/actions/components/CommandMenuItemLink';
-import { CommandMenuItemScope } from '@/command-menu-item/actions/types/CommandMenuItemScope';
-import { CommandMenuItemType } from '@/command-menu-item/actions/types/CommandMenuItemType';
+import { CommandMenuItem } from '@/command-menu-item/display/components/CommandMenuItem';
+import { CommandMenuItemLink } from '@/command-menu-item/display/components/CommandMenuItemLink';
+import { CommandMenuItemScope } from '@/command-menu-item/types/CommandMenuItemScope';
+import { CommandMenuItemType } from '@/command-menu-item/types/CommandMenuItemType';
 import { MAX_SEARCH_RESULTS } from '@/command-menu/constants/MaxSearchResults';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';

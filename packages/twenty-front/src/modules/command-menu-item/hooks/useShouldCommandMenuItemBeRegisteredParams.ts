@@ -1,5 +1,5 @@
-import { type ShouldBeRegisteredFunctionParams } from '@/command-menu-item/actions/types/ShouldBeRegisteredFunctionParams';
-import { getCommandMenuItemViewType } from '@/command-menu-item/actions/utils/getCommandMenuItemViewType';
+import { type ShouldBeRegisteredFunctionParams } from '@/command-menu-item/types/ShouldBeRegisteredFunctionParams';
+import { getCommandMenuItemViewType } from '@/command-menu-item/utils/getCommandMenuItemViewType';
 import { CommandMenuItemContext } from '@/command-menu-item/contexts/CommandMenuItemContext';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { objectPermissionsFamilySelector } from '@/auth/states/objectPermissionsFamilySelector';

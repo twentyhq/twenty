@@ -1,9 +1,9 @@
-import { useRecordAgnosticActions } from '@/command-menu-item/actions/record-agnostic-actions/hooks/useRecordAgnosticActions';
-import { useRelatedRecordActions } from '@/command-menu-item/actions/record-agnostic-actions/hooks/useRelatedRecordActions';
+import { useRecordAgnosticActions } from '@/command-menu-item/record-agnostic/hooks/useRecordAgnosticActions';
+import { useRelatedRecordActions } from '@/command-menu-item/record-agnostic/hooks/useRelatedRecordActions';
 import { CommandMenuItemViewType } from 'twenty-shared/types';
-import { type ShouldBeRegisteredFunctionParams } from '@/command-menu-item/actions/types/ShouldBeRegisteredFunctionParams';
-import { getCommandMenuItemConfig } from '@/command-menu-item/actions/utils/getCommandMenuItemConfig';
-import { getCommandMenuItemViewType } from '@/command-menu-item/actions/utils/getCommandMenuItemViewType';
+import { type ShouldBeRegisteredFunctionParams } from '@/command-menu-item/types/ShouldBeRegisteredFunctionParams';
+import { getCommandMenuItemConfig } from '@/command-menu-item/utils/getCommandMenuItemConfig';
+import { getCommandMenuItemViewType } from '@/command-menu-item/utils/getCommandMenuItemViewType';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
 import { contextStoreIsPageInEditModeComponentState } from '@/context-store/states/contextStoreIsPageInEditModeComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';

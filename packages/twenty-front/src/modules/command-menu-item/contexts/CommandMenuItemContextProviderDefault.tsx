@@ -1,5 +1,5 @@
-import { useRunWorkflowRecordActions } from '@/command-menu-item/actions/record-actions/run-workflow-actions/hooks/useRunWorkflowRecordActions';
-import { useRunWorkflowRecordAgnosticActions } from '@/command-menu-item/actions/record-agnostic-actions/run-workflow-actions/hooks/useRunWorkflowRecordAgnosticActions';
+import { useRunWorkflowRecordActions } from '@/command-menu-item/record/workflow/hooks/useRunWorkflowRecordActions';
+import { useRunWorkflowRecordAgnosticActions } from '@/command-menu-item/record-agnostic/workflow/hooks/useRunWorkflowRecordAgnosticActions';
 import {
   CommandMenuItemContext,
   type CommandMenuItemContextType,

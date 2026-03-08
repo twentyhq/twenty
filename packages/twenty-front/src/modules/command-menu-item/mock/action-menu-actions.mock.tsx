@@ -1,10 +1,10 @@
-import { CommandMenuItem } from '@/command-menu-item/actions/components/CommandMenuItem';
-import { CommandMenuItemLink } from '@/command-menu-item/actions/components/CommandMenuItemLink';
-import { NoSelectionRecordActionKeys } from '@/command-menu-item/actions/record-actions/no-selection/types/NoSelectionRecordActionsKeys';
-import { SingleRecordActionKeys } from '@/command-menu-item/actions/record-actions/single-record/types/SingleRecordActionsKey';
-import { type CommandMenuItemConfig } from '@/command-menu-item/actions/types/CommandMenuItemConfig';
-import { CommandMenuItemScope } from '@/command-menu-item/actions/types/CommandMenuItemScope';
-import { CommandMenuItemType } from '@/command-menu-item/actions/types/CommandMenuItemType';
+import { CommandMenuItem } from '@/command-menu-item/display/components/CommandMenuItem';
+import { CommandMenuItemLink } from '@/command-menu-item/display/components/CommandMenuItemLink';
+import { NoSelectionRecordActionKeys } from '@/command-menu-item/record/no-selection/types/NoSelectionRecordActionsKeys';
+import { SingleRecordActionKeys } from '@/command-menu-item/record/single-record/types/SingleRecordActionsKey';
+import { type CommandMenuItemConfig } from '@/command-menu-item/types/CommandMenuItemConfig';
+import { CommandMenuItemScope } from '@/command-menu-item/types/CommandMenuItemScope';
+import { CommandMenuItemType } from '@/command-menu-item/types/CommandMenuItemType';
 import {
   CommandMenuItemViewType,
   CoreObjectNameSingular,
