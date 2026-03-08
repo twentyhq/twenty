@@ -27,16 +27,19 @@ type SearchRecordBase = {
 
 type SidePanelNewSidebarItemRecordSubViewProps = {
   onBack: () => void;
+  disableDrag?: boolean;
 };
 
 export const SidePanelNewSidebarItemRecordSubView = ({
   onBack,
+  disableDrag: disableDragProp,
 }: SidePanelNewSidebarItemRecordSubViewProps) => {
   const { t } = useLingui();
   const addMenuItemInsertionContext = useAtomStateValue(
     addMenuItemInsertionContextState,
   );
-  const disableDrag = addMenuItemInsertionContext?.disableDrag === true;
+  const disableDrag =
+    disableDragProp ?? addMenuItemInsertionContext?.disableDrag === true;
   const { currentDraft } = useDraftNavigationMenuItems();
   const { objectMetadataItems } = useObjectMetadataItems();
   const [recordSearchInput, setRecordSearchInput] = useState('');
