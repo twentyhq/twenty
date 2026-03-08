@@ -42,5 +42,7 @@ export const DuplicateWorkflowSingleRecordCommand = () => {
     }
   };
 
-  return isDefined(workflow) ? <CommandMenuItemExecution onClick={handleClick} /> : null;
+  return isDefined(workflow) ? (
+    <CommandMenuItemExecution onClick={handleClick} />
+  ) : null;
 };

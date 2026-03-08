@@ -52,7 +52,9 @@ export const CommandMenuItemDisplay = ({
   }
 
   if (displayType === 'dropdownItem') {
-    return <CommandMenuItemDropdownItem action={action} onClick={onClick} to={to} />;
+    return (
+      <CommandMenuItemDropdownItem action={action} onClick={onClick} to={to} />
+    );
   }
 
   return assertUnreachable(displayType, 'Unsupported display type');

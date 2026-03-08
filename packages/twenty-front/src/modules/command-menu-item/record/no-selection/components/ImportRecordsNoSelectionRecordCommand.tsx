@@ -10,5 +10,9 @@ export const ImportRecordsNoSelectionRecordCommand = () => {
       objectMetadataItem.nameSingular,
     );
 
-  return <CommandMenuItemExecution onClick={openObjectRecordsSpreadsheetImportDialog} />;
+  return (
+    <CommandMenuItemExecution
+      onClick={openObjectRecordsSpreadsheetImportDialog}
+    />
+  );
 };
