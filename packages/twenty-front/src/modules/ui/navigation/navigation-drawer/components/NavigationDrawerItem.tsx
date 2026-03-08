@@ -95,7 +95,6 @@ const StyledItem = styled.button<StyledItemProps>`
       : '1px solid transparent'};
   border-radius: ${themeCssVariables.border.radius.sm};
   box-sizing: border-box;
-  text-decoration: none;
   color: ${({ active, danger, soon, variant }) => {
     if (active === true) {
       return themeCssVariables.font.color.primary;
@@ -119,7 +118,6 @@ const StyledItem = styled.button<StyledItemProps>`
   height: ${themeCssVariables.spacing[7]};
   margin-top: ${({ indentationLevel }) =>
     indentationLevel === 2 ? '2px' : '0'};
-
   padding-bottom: ${themeCssVariables.spacing[1]};
   padding-left: ${themeCssVariables.spacing[1]};
   padding-right: ${({ hasRightOptions }) =>
@@ -127,12 +125,13 @@ const StyledItem = styled.button<StyledItemProps>`
       ? themeCssVariables.spacing['0.5']
       : themeCssVariables.spacing[1]};
   padding-top: ${themeCssVariables.spacing[1]};
-
   pointer-events: ${({ soon }) => (soon ? 'none' : 'auto')};
-
   text-decoration: none;
-
   user-select: none;
+  width: ${({ isNavigationDrawerExpanded, hasRightOptions }) =>
+    !isNavigationDrawerExpanded
+      ? `calc(${NAVIGATION_DRAWER_COLLAPSED_WIDTH}px - ${themeCssVariables.spacing[6]} + ${themeCssVariables.spacing[1]} + ${hasRightOptions ? themeCssVariables.spacing['0.5'] : themeCssVariables.spacing[1]})`
+      : `calc(100% - ${themeCssVariables.spacing['1.5']} + ${themeCssVariables.spacing[1]} + ${hasRightOptions ? themeCssVariables.spacing['0.5'] : themeCssVariables.spacing[1]})`};
 
   &:hover {
     background: ${themeCssVariables.background.transparent.light};
@@ -145,11 +144,6 @@ const StyledItem = styled.button<StyledItemProps>`
   &:hover .keyboard-shortcuts {
     visibility: visible;
   }
-
-  width: ${({ isNavigationDrawerExpanded, hasRightOptions }) =>
-    !isNavigationDrawerExpanded
-      ? `calc(${NAVIGATION_DRAWER_COLLAPSED_WIDTH}px - ${themeCssVariables.spacing[6]} + ${themeCssVariables.spacing[1]} + ${hasRightOptions ? themeCssVariables.spacing['0.5'] : themeCssVariables.spacing[1]})`
-      : `calc(100% - ${themeCssVariables.spacing['1.5']} + ${themeCssVariables.spacing[1]} + ${hasRightOptions ? themeCssVariables.spacing['0.5'] : themeCssVariables.spacing[1]})`};
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     font-size: ${themeCssVariables.font.size.lg};

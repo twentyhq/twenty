@@ -22,15 +22,15 @@ const StyledDroppableWrapper = styled.div`
   }
 
   &[data-dragging-over='true'][data-show-drop-line='true']::before {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 2px;
     background-color: ${themeCssVariables.color.blue};
     border-radius: ${themeCssVariables.border.radius.sm}
       ${themeCssVariables.border.radius.sm} 0 0;
+    bottom: 0;
+    content: '';
+    height: 2px;
+    left: 0;
+    position: absolute;
+    width: 100%;
   }
 `;
 

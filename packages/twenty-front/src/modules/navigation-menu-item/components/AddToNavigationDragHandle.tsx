@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
-import { type ReactNode, useContext } from 'react';
+import { useContext, type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconGripVertical, type IconComponent } from 'twenty-ui/display';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
@@ -24,9 +24,9 @@ const StyledIconSlot = styled.div<{
   height: ${({ $hasFixedSize }) =>
     $hasFixedSize ? themeCssVariables.spacing[4] : 'auto'};
   justify-content: center;
+  opacity: ${({ $disabled }) => ($disabled ? 0.5 : 1)};
   width: ${({ $hasFixedSize }) =>
     $hasFixedSize ? themeCssVariables.spacing[4] : 'auto'};
-  opacity: ${({ $disabled }) => ($disabled ? 0.5 : 1)};
 
   &:active {
     cursor: ${({ $disabled, $disableDrag }) =>

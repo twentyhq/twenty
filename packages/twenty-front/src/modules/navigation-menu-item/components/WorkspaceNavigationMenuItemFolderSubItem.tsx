@@ -56,7 +56,7 @@ export const WorkspaceNavigationMenuItemFolderSubItem = ({
       isDefined(objectMetadataItem));
 
   const handleEditModeClick =
-    isEditableInEditMode && onNavigationMenuItemClick
+    isEditableInEditMode && isDefined(onNavigationMenuItemClick)
       ? () =>
           onNavigationMenuItemClick({
             item: navigationMenuItem,

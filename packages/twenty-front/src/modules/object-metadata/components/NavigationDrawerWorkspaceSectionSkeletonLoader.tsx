@@ -5,11 +5,11 @@ import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledTitleSkeleton = styled.div`
+  align-items: center;
+  display: flex;
+  height: ${themeCssVariables.spacing[5]};
   padding-left: ${themeCssVariables.spacing[1]};
   padding-right: ${themeCssVariables.spacing['0.5']};
-  height: ${themeCssVariables.spacing[5]};
-  display: flex;
-  align-items: center;
 `;
 
 const StyledRowsContainer = styled.div`

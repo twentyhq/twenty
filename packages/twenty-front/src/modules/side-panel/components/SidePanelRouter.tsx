@@ -26,7 +26,7 @@ export const SidePanelRouter = () => {
     : null;
 
   const sidePanelPageComponent =
-    rawPageComponent && React.isValidElement(rawPageComponent)
+    isDefined(rawPageComponent) && React.isValidElement(rawPageComponent)
       ? React.cloneElement(rawPageComponent, {
           key: sidePanelPageInfo.instanceId,
         })

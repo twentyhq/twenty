@@ -37,8 +37,8 @@ const StyledDraggableMenuItem = styled.div<{
 }>`
   cursor: ${({ $disabled, $disableDrag }) =>
     $disabled || $disableDrag ? 'default' : 'grab'};
-  width: 100%;
   pointer-events: ${({ $disabled }) => ($disabled ? 'none' : 'auto')};
+  width: 100%;
 
   &:active {
     cursor: ${({ $disabled, $disableDrag }) =>

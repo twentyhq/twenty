@@ -40,8 +40,8 @@ const StyledLabelContainer = styled.div`
 `;
 
 const StyledChevron = styled.div`
-  display: flex;
   align-items: center;
+  display: flex;
   opacity: 0;
   .section-title-container:hover & {
     opacity: 1;

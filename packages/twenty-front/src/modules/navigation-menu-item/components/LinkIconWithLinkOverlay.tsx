@@ -27,20 +27,20 @@ const StyledMainIconWrapper = styled.div<{
   $borderColor?: string;
   $noBackgroundOrBorder?: boolean;
 }>`
-  position: absolute;
-  inset: 0;
-  border-radius: 4px;
-  box-sizing: border-box;
+  align-items: center;
   background-color: ${({ $backgroundColor, $noBackgroundOrBorder }) =>
     $noBackgroundOrBorder ? 'transparent' : $backgroundColor};
-  display: flex;
-  align-items: center;
-  justify-content: center;
   border: ${({ $borderColor, $noBackgroundOrBorder }) =>
     $noBackgroundOrBorder || !$borderColor
       ? 'none'
       : `1px solid ${$borderColor}`};
+  border-radius: 4px;
+  box-sizing: border-box;
+  display: flex;
+  inset: 0;
+  justify-content: center;
   overflow: hidden;
+  position: absolute;
 `;
 
 const StyledFaviconImage = styled.img`
