@@ -5,7 +5,7 @@ import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePush
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { currentFocusIdSelector } from '@/ui/utilities/focus/states/currentFocusIdSelector';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useStore } from 'jotai';
 import { useRef, useState } from 'react';
 import { type IconComponent } from 'twenty-ui/display';
@@ -19,8 +19,8 @@ type CommandMenuItemTextInputProps = {
   placeholder?: string;
 };
 
-const StyledRightAlignedTextInput = styled(TextInput)`
-  input {
+const StyledRightAlignedTextInputContainer = styled.div`
+  & input {
     text-align: right;
   }
 `;
@@ -96,16 +96,18 @@ export const CommandMenuItemTextInput = ({
       Icon={Icon}
       onClick={focusInput}
       RightComponent={
-        <StyledRightAlignedTextInput
-          ref={inputRef}
-          value={draftValue}
-          sizeVariant="sm"
-          onChange={setDraftValue}
-          onFocus={handleFocus}
-          onBlur={handleBlur}
-          placeholder={placeholder}
-          textClickOutsideId={focusId}
-        />
+        <StyledRightAlignedTextInputContainer>
+          <TextInput
+            ref={inputRef}
+            value={draftValue}
+            sizeVariant="sm"
+            onChange={setDraftValue}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+            placeholder={placeholder}
+            textClickOutsideId={focusId}
+          />
+        </StyledRightAlignedTextInputContainer>
       }
     />
   );

@@ -33,10 +33,10 @@ async function dropSchemasSequentially() {
         ),
       );
     }
-    // eslint-disable-next-line no-console
+    // oxlint-disable-next-line no-console
     console.log('All schemas dropped successfully.');
   } catch (err) {
-    // eslint-disable-next-line no-console
+    // oxlint-disable-next-line no-console
     console.error('Error during schema dropping:', err);
   }
 }

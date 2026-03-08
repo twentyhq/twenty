@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { PlaceAutocompleteSelect } from '@/geo-map/components/PlaceAutocompleteSelect';
@@ -15,7 +15,7 @@ import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDr
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
-import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
+import { MOBILE_VIEWPORT } from 'twenty-ui/theme-constants';
 import { v4 } from 'uuid';
 
 import { t } from '@lingui/core/macro';
@@ -45,8 +45,8 @@ const StyledAddressContainer = styled.div`
 
 const StyledHalfRowContainer = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
   gap: 8px;
+  grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     display: block;

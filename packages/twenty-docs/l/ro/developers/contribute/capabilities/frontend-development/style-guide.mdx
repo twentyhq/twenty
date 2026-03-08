@@ -194,7 +194,7 @@ setHotkeyScopeAndMemorizePreviousScope(
 
 ### Folosește ComponentaStilizată
 
-Stilizează componentele cu [styled-components](https://emotion.sh/docs/styled).
+Stilizează componentele cu [Linaria styled](https://github.com/callstack/linaria).
 
 ```tsx
 // ❌ Rău
@@ -260,7 +260,7 @@ const StyledButton = styled.button`
 
 ## Impunerea Neprecizării Importurilor de Tip
 
-Evită importurile de tip. Pentru a impune acest standard, o regulă ESLint verifică și raportează orice importuri de tip. Acest lucru ajută la menținerea consistenței și lizibilității în codul TypeScript.
+Evită importurile de tip. Pentru a impune acest standard, o regulă Oxlint verifică și raportează orice importuri de tip. Acest lucru ajută la menținerea consistenței și lizibilității în codul TypeScript.
 
 ```tsx
 // ❌ Rău
@@ -281,10 +281,10 @@ import { Meta, StoryObj } from '@storybook/react';
 
 * **Întreținere**: Îmbunătățește întreținerea bazei de cod, deoarece dezvoltatorii pot identifica și localiza importurile doar de tip când revizuiesc sau modifică codul.
 
-### Regula ESLint
+### Regula Oxlint
 
-O regulă ESLint, `@typescript-eslint/consistent-type-imports`, impune standardul fără importuri de tip. Această regulă va genera erori sau avertismente pentru orice încălcare a importurilor de tip.
+O regulă Oxlint, `typescript/consistent-type-imports`, impune standardul fără importuri de tip. Această regulă va genera erori sau avertismente pentru orice încălcare a importurilor de tip.
 
 Rețineți că această regulă abordează în mod specific cazurile-limită rare în care apar importuri de tip neintenționate. TypeScript descurajează el însuși această practică, așa cum este menționat în notele de lansare [TypeScript 3.8](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-8.html). În majoritatea situațiilor, nu ar trebui să aveți nevoie de importuri doar de tip.
 
-Pentru a vă asigura că codul respectă această regulă, rulați ESLint ca parte a fluxului de lucru de dezvoltare.
+Pentru a vă asigura că codul respectă această regulă, rulați Oxlint ca parte a fluxului de lucru de dezvoltare.

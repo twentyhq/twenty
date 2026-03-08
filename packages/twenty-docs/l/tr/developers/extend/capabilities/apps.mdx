@@ -36,7 +36,7 @@ cd my-twenty-app
 yarn twenty app:dev
 ```
 
-İskelet oluşturucu, hangi örnek dosyaların dahil edileceğini kontrol etmek için üç modu destekler:
+İskelet oluşturucu, hangi örnek dosyaların dahil edileceğini kontrol etmek için iki modu destekler:
 
 ```bash filename="Terminal"
 # Varsayılan (kapsamlı): tüm örnekler (nesne, alan, mantık fonksiyonu, ön bileşen, görünüm, gezinme menüsü öğesi, yetenek)
@@ -44,9 +44,6 @@ npx create-twenty-app@latest my-app
 
 # Minimal: yalnızca çekirdek dosyalar (application-config.ts ve default-role.ts)
 npx create-twenty-app@latest my-app --minimal
-
-# Etkileşimli: dahil edilecek örnekleri seçin
-npx create-twenty-app@latest my-app --interactive
 ```
 
 Buradan şunları yapabilirsiniz:
@@ -96,7 +93,7 @@ my-twenty-app/
   .yarnrc.yml
   .yarn/
     install-state.gz
-  eslint.config.mjs
+  .oxlintrc.json
   tsconfig.json
   README.md
   public/                           # Genel varlıklar klasörü (görseller, yazı tipleri vb.)
@@ -122,7 +119,7 @@ my-twenty-app/
       └── example-skill.ts                # Örnek yapay zekâ ajanı yetenek tanımı
 ```
 
-`--minimal` ile yalnızca çekirdek dosyalar oluşturulur (`application-config.ts`, `roles/default-role.ts`, `logic-functions/pre-install.ts` ve `logic-functions/post-install.ts`). `--interactive` ile hangi örnek dosyaların dahil edileceğini siz seçersiniz.
+`--minimal` ile yalnızca çekirdek dosyalar oluşturulur (`application-config.ts`, `roles/default-role.ts`, `logic-functions/pre-install.ts` ve `logic-functions/post-install.ts`).
 
 Genel hatlarıyla:
 
@@ -130,7 +127,7 @@ Genel hatlarıyla:
 * **.gitignore**: `node_modules`, `.yarn`, `generated/` (türlendirilmiş istemci), `dist/`, `build/`, kapsam klasörleri, günlük dosyaları ve `.env*` dosyaları gibi yaygın artifaktları yok sayar.
 * **yarn.lock**, **.yarnrc.yml**, **.yarn/**: Proje tarafından kullanılan Yarn 4 araç zincirini kilitler ve yapılandırır.
 * **.nvmrc**: Projenin beklediği Node.js sürümünü sabitler.
-* **eslint.config.mjs** ve **tsconfig.json**: Uygulamanızın TypeScript kaynakları için linting ve TypeScript yapılandırması sağlar.
+* **.oxlintrc.json** ve **tsconfig.json**: Uygulamanızın TypeScript kaynakları için linting ve TypeScript yapılandırması sağlar.
 * **README.md**: Uygulama kökünde temel talimatların yer aldığı kısa bir README.
 * **public/**: Uygulamanızla birlikte sunulacak genel varlıkları (görseller, yazı tipleri, statik dosyalar) depolamak için bir klasör. Buraya yerleştirilen dosyalar senkronizasyon sırasında yüklenir ve çalışma zamanında erişilebilir olur.
 * **src/**: Uygulamanızı kod olarak tanımladığınız ana yer

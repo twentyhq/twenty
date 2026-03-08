@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 import { AnimatedFigures } from '@/app/_components/contributors/AnimatedFigures';
 import { CardContainer } from '@/app/_components/contributors/CardContainer';

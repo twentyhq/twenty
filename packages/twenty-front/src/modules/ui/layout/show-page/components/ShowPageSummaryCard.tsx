@@ -1,8 +1,7 @@
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { Trans } from '@lingui/react/macro';
-import { type ChangeEvent, type ReactNode, useRef } from 'react';
+import { type ChangeEvent, type ReactNode, useContext, useRef } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -12,6 +11,7 @@ import {
   type IconComponent,
 } from 'twenty-ui/display';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { v4 as uuidV4 } from 'uuid';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import {
@@ -37,36 +37,36 @@ export const StyledShowPageSummaryCard = styled.div<{
   isMobile: boolean;
 }>`
   align-items: center;
+  border-bottom: 1px solid ${themeCssVariables.border.color.light};
+  box-sizing: border-box;
   display: flex;
   flex-direction: ${({ isMobile }) => (isMobile ? 'row' : 'column')};
-  gap: ${({ theme, isMobile }) =>
-    isMobile ? theme.spacing(2) : theme.spacing(3)};
-  justify-content: ${({ isMobile }) => (isMobile ? 'flex-start' : 'center')};
-  padding: ${({ theme }) => theme.spacing(4)};
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+  gap: ${({ isMobile }) =>
+    isMobile ? themeCssVariables.spacing[2] : themeCssVariables.spacing[3]};
   height: ${({ isMobile }) => (isMobile ? '77px' : '127px')};
-  box-sizing: border-box;
+  justify-content: ${({ isMobile }) => (isMobile ? 'flex-start' : 'center')};
+  padding: ${themeCssVariables.spacing[4]};
 `;
 
 const StyledInfoContainer = styled.div<{ isMobile: boolean }>`
   align-items: ${({ isMobile }) => (isMobile ? 'flex-start' : 'center')};
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
   width: 100%;
 `;
 
 const StyledDate = styled.div<{ isMobile: boolean }>`
-  color: ${({ theme }) => theme.font.color.tertiary};
+  color: ${themeCssVariables.font.color.tertiary};
   cursor: pointer;
-  padding-left: ${({ theme }) => theme.spacing(1)};
+  padding-left: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledTitle = styled.div<{ isMobile: boolean }>`
-  color: ${({ theme }) => theme.font.color.primary};
+  color: ${themeCssVariables.font.color.primary};
   display: flex;
-  font-size: ${({ theme }) => theme.font.size.xl};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
+  font-size: ${themeCssVariables.font.size.xl};
+  font-weight: ${themeCssVariables.font.weight.semiBold};
   justify-content: ${({ isMobile }) => (isMobile ? 'flex-start' : 'center')};
   width: 90%;
 `;
@@ -75,9 +75,9 @@ const StyledAvatarWrapper = styled.div<{
   isAvatarEditable: boolean;
   hasIcon: boolean;
 }>`
-  background-color: ${({ theme, hasIcon }) =>
-    hasIcon ? theme.background.transparent.light : 'unset'};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+  background-color: ${({ hasIcon }) =>
+    hasIcon ? themeCssVariables.background.transparent.light : 'unset'};
+  border-radius: ${themeCssVariables.border.radius.sm};
   cursor: ${({ isAvatarEditable }) =>
     isAvatarEditable ? 'pointer' : 'default'};
 `;
@@ -95,7 +95,7 @@ const StyledSubSkeleton = styled.div`
 `;
 
 const StyledShowPageSummaryCardSkeletonLoader = () => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   return (
     <SkeletonTheme
       baseColor={theme.background.tertiary}

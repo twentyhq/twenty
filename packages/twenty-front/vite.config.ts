@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { lingui } from '@lingui/vite-plugin';
 import { isNonEmptyString } from '@sniptt/guards';
 import react from '@vitejs/plugin-react-swc';
@@ -12,18 +11,17 @@ import {
   type PluginOption,
   searchForWorkspaceRoot,
 } from 'vite';
-import checker from 'vite-plugin-checker';
 import svgr from 'vite-plugin-svgr';
 import tsconfigPaths from 'vite-tsconfig-paths';
-type Checkers = Parameters<typeof checker>[0];
 
-export default defineConfig(({ command, mode }) => {
+import { createWywProfilingPlugin } from 'twenty-shared/vite';
+
+export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, __dirname, '');
 
   const {
     REACT_APP_SERVER_BASE_URL,
     VITE_BUILD_SOURCEMAP,
-    VITE_DISABLE_TYPESCRIPT_CHECKER,
     VITE_HOST,
     SSL_CERT_PATH,
     SSL_KEY_PATH,
@@ -35,12 +33,6 @@ export default defineConfig(({ command, mode }) => {
     ? parseInt(REACT_APP_PORT)
     : 3001;
 
-  const isBuildCommand = command === 'build';
-
-  const tsConfigPath = isBuildCommand
-    ? path.resolve(__dirname, './tsconfig.build.json')
-    : path.resolve(__dirname, './tsconfig.json');
-
   const CHUNK_SIZE_WARNING_LIMIT = 1024 * 1024; // 1MB
   // Please don't increase this limit for main index chunk
   // If it gets too big then find modules in the code base
@@ -48,24 +40,9 @@ export default defineConfig(({ command, mode }) => {
   const MAIN_CHUNK_SIZE_LIMIT = 6.8 * 1024 * 1024; // 6.8MB for main index chunk
   const OTHER_CHUNK_SIZE_LIMIT = 5 * 1024 * 1024; // 5MB for other chunks
 
-  const checkers: Checkers = {
-    overlay: false,
-  };
-
-  if (VITE_DISABLE_TYPESCRIPT_CHECKER === 'true') {
-    console.log(
-      `VITE_DISABLE_TYPESCRIPT_CHECKER: ${VITE_DISABLE_TYPESCRIPT_CHECKER}`,
-    );
-  }
-
   if (VITE_BUILD_SOURCEMAP === 'true') {
+    // oxlint-disable-next-line no-console
     console.log(`VITE_BUILD_SOURCEMAP: ${VITE_BUILD_SOURCEMAP}`);
-  }
-
-  if (VITE_DISABLE_TYPESCRIPT_CHECKER !== 'true') {
-    checkers['typescript'] = {
-      tsconfigPath: tsConfigPath,
-    };
   }
 
   return {
@@ -96,7 +73,6 @@ export default defineConfig(({ command, mode }) => {
 
     plugins: [
       react({
-        jsxImportSource: '@emotion/react',
         plugins: [['@lingui/swc-plugin', {}]],
       }),
       tsconfigPaths({
@@ -107,139 +83,51 @@ export default defineConfig(({ command, mode }) => {
       lingui({
         configPath: path.resolve(__dirname, './lingui.config.ts'),
       }),
-      checker(checkers),
-      {
-        ...wyw({
-          include: [
-            '**/twenty-ui/src/**/*.{ts,tsx}',
-            '**/AdvancedTextEditor.tsx',
-            '**/BubbleMenuIconButton.tsx',
-            '**/TextBubbleMenu.tsx',
-            '**/TurnIntoBlockDropdown.tsx',
-            '**/WorkflowAttachmentChip.tsx',
-            '**/WorkflowSendEmailAttachments.tsx',
-            '**/ResizableImageView.tsx',
-            '**/SettingsBillingSubscriptionInfo.tsx',
-            '**/SubscriptionBenefit.tsx',
-            '**/SubscriptionInfoContainer.tsx',
-            '**/SubscriptionPrice.tsx',
-            '**/TrialCard.tsx',
-            '**/MeteredPriceSelector.tsx',
-            '**/PlansTags.tsx',
-            '**/SettingsBillingLabelValueItem.tsx',
-            '**/SubscriptionInfoRowContainer.tsx',
-            '**/FileBlock.tsx',
-            '**/MentionInlineContent.tsx',
-            '**/BlockEditor.tsx',
-            '**/CustomMentionMenu.tsx',
-            '**/CustomSideMenu.tsx',
-            '**/CustomSideMenuOptions.tsx',
-            '**/CustomSlashMenu.tsx',
-            '**/CurrentWorkspaceMemberOrphanFavorites.tsx',
-            '**/FavoritesBackButton.tsx',
-            '**/FavoritesDroppable.tsx',
-            '**/FavoritesSkeletonLoader.tsx',
-            '**/FavoriteFolderPickerList.tsx',
-            '**/InformationBanner.tsx',
-            '**/InformationBannerWrapper.tsx',
-            '**/InformationBannerDeletedRecord.tsx',
-            '**/AddToNavigationDragHandle.tsx',
-            '**/CurrentWorkspaceMemberOrphanNavigationMenuItems.tsx',
-            '**/NavigationItemDropTarget.tsx',
-            '**/NavigationMenuEditModeBar.tsx',
-            '**/NavigationMenuItemBackButton.tsx',
-            '**/NavigationMenuItemDroppable.tsx',
-            '**/NavigationMenuItemIconContainer.tsx',
-            '**/NavigationMenuItemSkeletonLoader.tsx',
-            '**/ObjectIconWithViewOverlay.tsx',
-            '**/WorkspaceNavigationMenuItems.tsx',
-            '**/WorkspaceNavigationMenuItemsFolder.tsx',
-            '**/MainNavigationDrawerAIChatContent.tsx',
-            '**/MainNavigationDrawerNavigationContent.tsx',
-            '**/MainNavigationDrawerScrollableItems.tsx',
-            '**/MainNavigationDrawerTabsRow.tsx',
-            '**/RecordTableCellBaseContainer.tsx',
-            '**/RecordTableCellDisplayContainer.tsx',
-            '**/RecordTableCellFirstRowFirstColumn.tsx',
-            '**/RecordTableCellLoading.tsx',
-            '**/RecordTableCellStyleWrapper.tsx',
-            '**/RecordTableDragAndDropPlaceholderCell.tsx',
-            '**/RecordTableAggregateFooterCell.tsx',
-            '**/RecordTableHeaderAddColumnButton.tsx',
-            '**/RecordTableHeaderCell.tsx',
-            '**/RecordTableHeaderCheckboxColumn.tsx',
-            '**/RecordTableHeaderDragDropColumn.tsx',
-            '**/RecordTableHeaderFirstCell.tsx',
-            '**/RecordTableHeaderFirstScrollableCell.tsx',
-            '**/RecordTableHeaderLastEmptyColumn.tsx',
-            '**/RecordTableAddButtonPlaceholderCell.tsx',
-            '**/RecordTableGroupSectionLastDynamicFillingCell.tsx',
-            '**/RecordTableLastDynamicFillingCell.tsx',
-            '**/RecordTableRowVirtualizedContainer.tsx',
-            '**/RecordTableVirtualizedBodyPlaceholder.tsx',
-            '**/SignInAppNavigationDrawerMock.tsx',
-            '**/SignInBackgroundMockContainer.tsx',
-            '**/SignInBackgroundMockPage.tsx',
-            '**/Heading.tsx',
-            '**/MatchColumnSelectFieldSelectDropdownContent.tsx',
-            '**/MatchColumnToFieldSelect.tsx',
-            '**/SpreadSheetImportModalCloseButton.tsx',
-            '**/SpreadSheetImportModalWrapper.tsx',
-            '**/SpreadsheetImportTable.tsx',
-            '**/StepNavigationButton.tsx',
-            '**/ImportDataStep.tsx',
-            '**/MatchColumnsStep.tsx',
-            '**/ColumnGrid.tsx',
-            '**/SubMatchingSelectControlContainer.tsx',
-            '**/SubMatchingSelectDropdownButton.tsx',
-            '**/SubMatchingSelectRow.tsx',
-            '**/SubMatchingSelectRowLeftSelect.tsx',
-            '**/SubMatchingSelectRowRightDropdown.tsx',
-            '**/TemplateColumn.tsx',
-            '**/UnmatchColumn.tsx',
-            '**/UnmatchColumnBanner.tsx',
-            '**/UserTableColumn.tsx',
-            '**/SelectHeaderStep.tsx',
-            '**/SelectSheetStep.tsx',
-            '**/SpreadsheetImportStepper.tsx',
-            '**/SpreadsheetImportStepperContainer.tsx',
-            '**/UploadStep.tsx',
-            '**/DropZone.tsx',
-            '**/ValidationStep.tsx',
-            '**/columns.tsx',
-            '**/BooleanDisplay.tsx',
-            '**/EllipsisDisplay.tsx',
-            '**/EmailsDisplay.tsx',
-            '**/MultiSelectDisplay.tsx',
-            '**/PhonesDisplay.tsx',
-            '**/TextDisplay.tsx',
-            '**/RatingInput.tsx',
-            '**/SortOrFilterChip.tsx',
-            '**/UpdateViewButtonGroup.tsx',
-            '**/ViewBarDetails.tsx',
-            '**/ViewBarFilterDropdownAdvancedFilterButton.tsx',
-            '**/ViewBarFilterDropdownAnyFieldSearchButtonMenuItem.tsx',
-            '**/ViewBarFilterDropdownBottomMenu.tsx',
-            '**/ViewBarFilterDropdownFieldSelectMenu.tsx',
-            '**/ViewPickerContentCreateMode.tsx',
-            '**/ViewPickerDropdown.tsx',
-            '**/ViewPickerIconAndNameContainer.tsx',
-            '**/ViewPickerListContent.tsx',
-            '**/ViewPickerSaveButtonContainer.tsx',
-            '**/ViewPickerSelectContainer.tsx',
+      createWywProfilingPlugin(
+        wyw({
+          include: [path.resolve(__dirname, 'src') + '/**/*.{ts,tsx}'],
+          exclude: [
+            '**/generated-metadata/**',
+            '**/testing/mock-data/generated/**',
+            '**/testing/**',
+            '**/*.test.{ts,tsx}',
+            '**/*.spec.{ts,tsx}',
+            '**/*.stories.{ts,tsx}',
+            '**/__stories__/**',
+            '**/__tests__/**',
+            '**/__mocks__/**',
+            '**/types/**',
+            '**/constants/**',
+            '**/states/**',
+            '**/selectors/**',
+            '**/guards/**',
+            '**/schemas/**',
+            '**/utils/**',
+            '**/contexts/**',
+            '**/hooks/**',
+            '**/enums/**',
+            '**/queries/**',
+            '**/mutations/**',
+            '**/fragments/**',
+            '**/graphql/**',
+            '**/decorators/**',
           ],
           babelOptions: {
             presets: ['@babel/preset-typescript', '@babel/preset-react'],
+            plugins: ['@babel/plugin-transform-export-namespace-from'],
           },
         }),
-        enforce: 'pre',
-      },
-      visualizer({
-        open: true,
-        gzipSize: true,
-        brotliSize: true,
-        filename: 'dist/stats.html',
-      }) as PluginOption, // https://github.com/btd/rollup-plugin-visualizer/issues/162#issuecomment-1538265997,
+      ),
+      ...(env.ANALYZE === 'true'
+        ? [
+            visualizer({
+              open: !process.env.CI,
+              gzipSize: true,
+              brotliSize: true,
+              filename: 'dist/stats.html',
+            }) as PluginOption,
+          ]
+        : []),
     ],
 
     optimizeDeps: {
@@ -254,13 +142,12 @@ export default defineConfig(({ command, mode }) => {
       minify: 'esbuild',
       outDir: 'build',
       sourcemap: VITE_BUILD_SOURCEMAP === 'true',
+      chunkSizeWarningLimit: CHUNK_SIZE_WARNING_LIMIT,
       rollupOptions: {
         //  Don't use manual chunks as it causes many issue
         // including this one we wasted a lot of time on:
         // https://github.com/rollup/rollup/issues/2793
         output: {
-          // Set chunk size warning limit (in bytes) - warns at 1MB
-          chunkSizeWarningLimit: CHUNK_SIZE_WARNING_LIMIT,
           // Custom plugin to fail build if chunks exceed max size
           plugins: [
             {
@@ -359,7 +246,6 @@ export default defineConfig(({ command, mode }) => {
     resolve: {
       alias: {
         path: 'rollup-plugin-node-polyfills/polyfills/path',
-        '@tabler/icons-react': '@tabler/icons-react/dist/esm/icons/index.mjs',
       },
     },
   };

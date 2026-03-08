@@ -5,27 +5,28 @@ import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-sto
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { RecordIndexPageHeaderIcon } from '@/object-record/record-index/components/RecordIndexPageHeaderIcon';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { PageHeaderToggleCommandMenuButton } from '@/ui/layout/page-header/components/PageHeaderToggleCommandMenuButton';
+import { PageHeaderToggleSidePanelButton } from '@/ui/layout/page-header/components/PageHeaderToggleSidePanelButton';
 import { PageHeader } from '@/ui/layout/page/components/PageHeader';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledTitleWithSelectedRecords = styled.div`
   display: flex;
   flex-direction: row;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledTitle = styled.div`
-  color: ${({ theme }) => theme.font.color.primary};
-  padding-right: ${({ theme }) => theme.spacing(0.5)};
+  color: ${themeCssVariables.font.color.primary};
+  padding-right: ${themeCssVariables.spacing['0.5']};
 `;
 
 const StyledSelectedRecordsCount = styled.div`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  padding-left: ${({ theme }) => theme.spacing(0.5)};
+  color: ${themeCssVariables.font.color.tertiary};
+  padding-left: ${themeCssVariables.spacing['0.5']};
 `;
 
 export const RecordIndexPageHeader = () => {
@@ -71,7 +72,7 @@ export const RecordIndexPageHeader = () => {
       {isDefined(contextStoreCurrentViewId) && (
         <>
           <RecordIndexActionMenu />
-          <PageHeaderToggleCommandMenuButton />
+          <PageHeaderToggleSidePanelButton />
         </>
       )}
     </PageHeader>

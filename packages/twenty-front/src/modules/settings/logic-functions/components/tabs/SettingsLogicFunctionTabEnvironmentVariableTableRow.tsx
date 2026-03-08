@@ -5,9 +5,8 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import {
   IconCheck,
   IconDotsVertical,
@@ -20,13 +19,23 @@ import { LightIconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
 import type { ApplicationVariable } from '~/generated-metadata/graphql';
 
-const StyledEditModeTableRow = styled(TableRow)`
-  grid-template-columns: 180px auto 56px;
-`;
+const StyledEditModeTableRow = (
+  props: React.ComponentProps<typeof TableRow>,
+) => (
+  <TableRow
+    gridTemplateColumns="180px auto 56px"
+    // oxlint-disable-next-line react/jsx-props-no-spreading
+    {...props}
+  />
+);
 
-const StyledTableRow = styled(TableRow)`
-  grid-template-columns: 180px 300px 32px;
-`;
+const StyledTableRow = (props: React.ComponentProps<typeof TableRow>) => (
+  <TableRow
+    gridTemplateColumns="180px 300px 32px"
+    // oxlint-disable-next-line react/jsx-props-no-spreading
+    {...props}
+  />
+);
 
 export const SettingsLogicFunctionTabEnvironmentVariableTableRow = ({
   envVariable,

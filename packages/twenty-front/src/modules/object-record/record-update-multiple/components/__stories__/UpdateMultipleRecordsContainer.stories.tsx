@@ -58,7 +58,7 @@ const meta: Meta<typeof UpdateMultipleRecordsContainer> = {
             actions: [],
             actionMenuType: 'index-page-action-menu-dropdown',
             displayType: 'dropdownItem',
-            isInRightDrawer: true,
+            isInSidePanel: true,
           }}
         >
           <Story />

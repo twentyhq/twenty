@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 
 import IconMicrosoftOutlookRaw from '@assets/icons/microsoft-outlook.svg?react';
-import { ThemeContext } from '@ui/theme';
+import { ThemeContext } from '@ui/theme-constants';
 
 interface IconMicrosoftOutlookProps {
   size?: number | string;

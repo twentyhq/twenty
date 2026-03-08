@@ -6,9 +6,9 @@ import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboard
 import { PageFocusId } from '@/types/PageFocusId';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { Modal } from '@/ui/layout/modal/components/Modal';
+import { ModalContent } from 'twenty-ui/layout';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useCallback } from 'react';
@@ -24,6 +24,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconCopy, SeparatorLineText } from 'twenty-ui/display';
 import { LightButton, MainButton } from 'twenty-ui/input';
 import { ClickToActionLink } from 'twenty-ui/navigation';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { z } from 'zod';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 import { useCreateWorkspaceInvitation } from '@/workspace-invitation/hooks/useCreateWorkspaceInvitation';
@@ -31,10 +32,10 @@ import { useCreateWorkspaceInvitation } from '@/workspace-invitation/hooks/useCr
 const StyledAnimatedContainer = styled.div`
   display: flex;
   flex-direction: column;
-  padding: ${({ theme }) => theme.spacing(8)} 0;
-  gap: ${({ theme }) => theme.spacing(4)};
-  overflow-y: scroll;
+  gap: ${themeCssVariables.spacing[4]};
   overflow-x: hidden;
+  overflow-y: scroll;
+  padding: ${themeCssVariables.spacing[8]} 0;
   width: 100%;
 `;
 
@@ -50,7 +51,7 @@ const StyledButtonContainer = styled.div`
 `;
 
 const StyledActionSkipLinkContainer = styled.div`
-  margin: ${({ theme }) => theme.spacing(3)} 0 0;
+  margin: ${themeCssVariables.spacing[3]} 0 0;
 `;
 
 const validationSchema = z.object({
@@ -129,6 +130,12 @@ export const InviteTeam = () => {
             .filter((email) => email.length > 0),
         ),
       );
+
+      if (emails.length === 0) {
+        setNextOnboardingStatus();
+        return;
+      }
+
       const result = await sendInvitation({ emails });
 
       if (isDefined(result.errors)) {
@@ -162,7 +169,7 @@ export const InviteTeam = () => {
   });
 
   return (
-    <Modal.Content isVerticalCentered isHorizontalCentered>
+    <ModalContent isVerticallyCentered isHorizontallyCentered>
       <Title>
         <Trans>Invite your team</Trans>
       </Title>
@@ -222,6 +229,6 @@ export const InviteTeam = () => {
           <Trans>Skip</Trans>
         </ClickToActionLink>
       </StyledActionSkipLinkContainer>
-    </Modal.Content>
+    </ModalContent>
   );
 };

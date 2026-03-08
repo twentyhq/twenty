@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useState } from 'react';
 
 import { currentUserState } from '@/auth/states/currentUserState';
@@ -8,32 +8,33 @@ import { useUpdateEmail } from '@/settings/profile/hooks/useUpdateEmail';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { IconCheck, IconPencil, IconX } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledFieldRow = styled.div`
-  display: flex;
   align-items: stretch;
-  gap: ${({ theme }) => theme.spacing(2)};
+  display: flex;
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledActionWrapper = styled.div`
-  display: flex;
   align-items: stretch;
+  display: flex;
 
   & > button + button {
     border-left: none;
   }
 `;
 
-const StyledActionButton = styled(Button)`
-  height: 100%;
-  display: inline-flex;
+const StyledActionButtonContainer = styled.div`
   align-items: center;
+  display: inline-flex;
+  height: 100%;
   justify-content: center;
 `;
 
@@ -95,34 +96,40 @@ export const EmailField = () => {
         />
         {isEditing ? (
           <StyledActionWrapper key="editing">
-            <StyledActionButton
-              Icon={IconCheck}
-              variant="secondary"
-              position="left"
-              size="small"
-              onClick={handleSave}
-              disabled={isSaveDisabled}
-              type="button"
-            />
-            <StyledActionButton
-              Icon={IconX}
-              variant="secondary"
-              position="right"
-              size="small"
-              onClick={handleCancelEditing}
-              type="button"
-            />
+            <StyledActionButtonContainer>
+              <Button
+                Icon={IconCheck}
+                variant="secondary"
+                position="left"
+                size="small"
+                onClick={handleSave}
+                disabled={isSaveDisabled}
+                type="button"
+              />
+            </StyledActionButtonContainer>
+            <StyledActionButtonContainer>
+              <Button
+                Icon={IconX}
+                variant="secondary"
+                position="right"
+                size="small"
+                onClick={handleCancelEditing}
+                type="button"
+              />
+            </StyledActionButtonContainer>
           </StyledActionWrapper>
         ) : (
           <StyledActionWrapper key="view">
-            <StyledActionButton
-              Icon={IconPencil}
-              variant="secondary"
-              size="small"
-              onClick={handleStartEditing}
-              disabled={!canEdit}
-              type="button"
-            />
+            <StyledActionButtonContainer>
+              <Button
+                Icon={IconPencil}
+                variant="secondary"
+                size="small"
+                onClick={handleStartEditing}
+                disabled={!canEdit}
+                type="button"
+              />
+            </StyledActionButtonContainer>
           </StyledActionWrapper>
         )}
       </StyledFieldRow>

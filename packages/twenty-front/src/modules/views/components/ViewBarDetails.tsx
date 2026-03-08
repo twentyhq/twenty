@@ -52,8 +52,8 @@ const StyledBar = styled.div`
   flex-direction: row;
   justify-content: space-between;
   min-height: 32px;
-  padding-top: ${themeCssVariables.spacing[1]};
   padding-bottom: ${themeCssVariables.spacing[1]};
+  padding-top: ${themeCssVariables.spacing[1]};
   z-index: 4;
 `;
 

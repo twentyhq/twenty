@@ -1,6 +1,5 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import { useState } from 'react';
+import { styled } from '@linaria/react';
+import { useContext, useState } from 'react';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { Key } from 'ts-key-enum';
@@ -16,13 +15,14 @@ import { isMicrosoftCalendarEnabledState } from '@/client-config/states/isMicros
 import { isMicrosoftMessagingEnabledState } from '@/client-config/states/isMicrosoftMessagingEnabledState';
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
 import { PageFocusId } from '@/types/PageFocusId';
-import { Modal } from '@/ui/layout/modal/components/Modal';
+import { ModalContent } from 'twenty-ui/layout';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { t } from '@lingui/core/macro';
 import { AppPath, ConnectedAccountProvider } from 'twenty-shared/types';
 import { IconGoogle, IconMicrosoft } from 'twenty-ui/display';
 import { MainButton } from 'twenty-ui/input';
 import { ClickToActionLink } from 'twenty-ui/navigation';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   CalendarChannelVisibility,
   MessageChannelVisibility,
@@ -34,26 +34,26 @@ import { AuthenticatedMethod } from '@/auth/types/AuthenticatedMethod.enum';
 const StyledSyncEmailsContainer = styled.div`
   display: flex;
   flex-direction: row;
+  gap: ${themeCssVariables.spacing[2]};
+  margin: ${themeCssVariables.spacing[8]} 0;
   width: 100%;
-  margin: ${({ theme }) => theme.spacing(8)} 0;
-  gap: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledActionLinkContainer = styled.div`
   display: flex;
   flex-direction: row;
-  margin: ${({ theme }) => theme.spacing(3)} 0 0;
-  padding-top: ${({ theme }) => theme.spacing(2)};
+  margin: ${themeCssVariables.spacing[3]} 0 0;
+  padding-top: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledProviderContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(3)};
+  gap: ${themeCssVariables.spacing[3]};
 `;
 
 export const SyncEmails = () => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const { triggerApisOAuth } = useTriggerApisOAuth();
   const setNextOnboardingStatus = useSetNextOnboardingStatus();
   const [visibility, setVisibility] = useState<MessageChannelVisibility>(
@@ -115,7 +115,7 @@ export const SyncEmails = () => {
   });
 
   return (
-    <Modal.Content isVerticalCentered isHorizontalCentered>
+    <ModalContent isVerticallyCentered isHorizontallyCentered>
       <Title noMarginTop>{t`Emails and Calendar`}</Title>
       <SubTitle>
         {t`Sync your Emails and Calendar with Twenty. Choose your privacy settings.`}
@@ -174,6 +174,6 @@ export const SyncEmails = () => {
           {t`Continue without sync`}
         </ClickToActionLink>
       </StyledActionLinkContainer>
-    </Modal.Content>
+    </ModalContent>
   );
 };

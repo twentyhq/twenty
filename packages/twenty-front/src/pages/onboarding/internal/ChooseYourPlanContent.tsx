@@ -10,7 +10,7 @@ import { useBaseLicensedPriceByPlanKeyAndInterval } from '@/billing/hooks/useBas
 import { useBaseProductByPlanKey } from '@/billing/hooks/useBaseProductByPlanKey';
 import { useHandleCheckoutSession } from '@/billing/hooks/useHandleCheckoutSession';
 import { calendarBookingPageIdState } from '@/client-config/states/calendarBookingPageIdState';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { AppPath } from 'twenty-shared/types';
@@ -19,70 +19,73 @@ import { isDefined } from 'twenty-shared/utils';
 import { Loader } from 'twenty-ui/feedback';
 import { CardPicker, MainButton } from 'twenty-ui/input';
 import { CAL_LINK, ClickToActionLink } from 'twenty-ui/navigation';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { BillingPlanKey, type Billing } from '~/generated-metadata/graphql';
 
 const StyledSubscriptionContainer = styled.div<{
   withLongerMarginBottom: boolean;
 }>`
-  background-color: ${({ theme }) => theme.background.secondary};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.md};
+  background-color: ${themeCssVariables.background.secondary};
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  border-radius: ${themeCssVariables.border.radius.md};
 
   display: flex;
   flex-direction: column;
-  margin: ${({ theme }) => theme.spacing(8)} 0
-    ${({ theme, withLongerMarginBottom }) =>
-      theme.spacing(withLongerMarginBottom ? 8 : 2)};
+  margin: ${themeCssVariables.spacing[8]} 0
+    ${({ withLongerMarginBottom }) =>
+      withLongerMarginBottom
+        ? themeCssVariables.spacing[8]
+        : themeCssVariables.spacing[2]};
   width: 100%;
 `;
 
 const StyledSubscriptionPriceContainer = styled.div`
   align-items: center;
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+  border-bottom: 1px solid ${themeCssVariables.border.color.light};
   display: flex;
   flex-direction: column;
-  margin: ${({ theme }) => theme.spacing(4)} ${({ theme }) => theme.spacing(3)}
-    0 ${({ theme }) => theme.spacing(4)};
-  padding-bottom: ${({ theme }) => theme.spacing(3)};
+  margin: ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[3]} 0
+    ${themeCssVariables.spacing[4]};
+  padding-bottom: ${themeCssVariables.spacing[3]};
 `;
 
 const StyledBenefitsContainer = styled.div`
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  width: 100%;
   gap: 16px;
-  padding: ${({ theme }) => theme.spacing(4)} ${({ theme }) => theme.spacing(3)};
+  padding: ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[3]};
+  width: 100%;
 `;
 
 const StyledOrganizationBenefitsContainer = styled.div`
+  border-bottom: 1px solid ${themeCssVariables.border.color.light};
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  width: 100%;
   gap: 16px;
-  padding: ${({ theme }) => theme.spacing(4)} ${({ theme }) => theme.spacing(3)};
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+  padding: ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[3]};
+  width: 100%;
 `;
 
 const StyledChooseTrialContainer = styled.div`
   display: flex;
   flex-direction: row;
+  gap: ${themeCssVariables.spacing[2]};
+  margin-bottom: ${themeCssVariables.spacing[8]};
   width: 100%;
-  margin-bottom: ${({ theme }) => theme.spacing(8)};
-  gap: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledLinkGroup = styled.div`
   align-items: center;
   display: flex;
   flex-direction: row;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
   justify-content: center;
-  margin-top: ${({ theme }) => theme.spacing(4)};
+  margin-top: ${themeCssVariables.spacing[4]};
 
   > span {
-    background-color: ${({ theme }) => theme.font.color.light};
+    background-color: ${themeCssVariables.font.color.light};
     border-radius: 50%;
     height: 2px;
     width: 2px;

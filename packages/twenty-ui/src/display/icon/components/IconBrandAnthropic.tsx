@@ -2,7 +2,7 @@ import { useContext } from 'react';
 
 import IconAnthropicRaw from '@assets/icons/anthropic.svg?react';
 import { type IconComponentProps } from '@ui/display/icon/types/IconComponent';
-import { ThemeContext } from '@ui/theme';
+import { ThemeContext } from '@ui/theme-constants';
 
 type IconBrandAnthropicProps = Pick<IconComponentProps, 'size' | 'color'>;
 

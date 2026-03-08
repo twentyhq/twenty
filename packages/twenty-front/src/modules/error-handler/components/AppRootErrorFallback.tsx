@@ -1,24 +1,24 @@
 import { type AppErrorDisplayProps } from '@/error-handler/types/AppErrorDisplayProps';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { motion } from 'framer-motion';
+import { useContext } from 'react';
 import { IconReload } from 'twenty-ui/display';
-import { THEME_DARK } from 'twenty-ui/theme';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type AppRootErrorFallbackProps = AppErrorDisplayProps;
 
 const StyledContainer = styled.div`
-  background: ${THEME_DARK.background.noisy};
+  background: ${themeCssVariables.background.noisy};
   box-sizing: border-box;
   display: flex;
   height: 100vh;
-  width: 100vw;
   padding: 12px;
+  width: 100vw;
 `;
 
 const StyledPanel = styled.div`
-  background: ${({ theme }) => theme.grayScale.gray1};
-  border: 1px solid ${({ theme }) => theme.grayScale.gray5};
+  background: ${themeCssVariables.grayScale.gray1};
+  border: 1px solid ${themeCssVariables.grayScale.gray5};
   border-radius: 8px;
   height: 100%;
   overflow-x: auto;
@@ -26,20 +26,20 @@ const StyledPanel = styled.div`
   width: 100%;
 `;
 
-const StyledEmptyContainer = styled(motion.div)`
+const StyledEmptyContainer = styled.div`
   align-items: center;
-  width: 100%;
-  height: 100%;
   display: flex;
   flex-direction: column;
   gap: 24px;
+  height: 100%;
   justify-content: center;
   text-align: center;
+  width: 100%;
 `;
 
 const StyledImageContainer = styled.div`
-  display: flex;
   align-items: center;
+  display: flex;
   justify-content: center;
   position: relative;
 `;
@@ -51,8 +51,8 @@ const StyledBackgroundImage = styled.img`
 
 const StyledInnerImage = styled.img`
   max-height: 130px;
-  position: absolute;
   max-width: 130px;
+  position: absolute;
 `;
 
 const StyledEmptyTextContainer = styled.div`
@@ -66,13 +66,13 @@ const StyledEmptyTextContainer = styled.div`
 `;
 
 const StyledEmptyTitle = styled.div`
-  color: ${({ theme }) => theme.grayScale.gray12};
+  color: ${themeCssVariables.grayScale.gray12};
   font-size: 1.23rem;
   font-weight: 600;
 `;
 
 const StyledEmptySubTitle = styled.div`
-  color: ${({ theme }) => theme.grayScale.gray11};
+  color: ${themeCssVariables.grayScale.gray11};
   font-size: 0.92rem;
   font-weight: 400;
   line-height: 1.5;
@@ -83,18 +83,19 @@ const StyledEmptySubTitle = styled.div`
 
 const StyledButton = styled.button`
   align-items: center;
-  background: ${({ theme }) => theme.grayScale.gray1};
-  border: 1px solid ${({ theme }) => theme.grayScale.gray5};
-  color: ${({ theme }) => theme.grayScale.gray12};
+  background: ${themeCssVariables.grayScale.gray1};
+  border: 1px solid ${themeCssVariables.grayScale.gray5};
   border-radius: 8px;
+  color: ${themeCssVariables.grayScale.gray12};
   cursor: pointer;
   display: flex;
-  padding: 8px 16px;
   padding: 8px;
+  padding: 8px 16px;
 `;
 
-const StyledIcon = styled(IconReload)`
-  color: ${({ theme }) => theme.grayScale.gray12};
+const StyledIconContainer = styled.span`
+  color: ${themeCssVariables.grayScale.gray12};
+  display: inline-flex;
   margin-right: 8px;
 `;
 
@@ -102,6 +103,8 @@ export const AppRootErrorFallback = ({
   resetErrorBoundary,
   title = t`Sorry, something went wrong`,
 }: AppRootErrorFallbackProps) => {
+  const { theme } = useContext(ThemeContext);
+
   return (
     <StyledContainer>
       <StyledPanel>
@@ -123,7 +126,9 @@ export const AppRootErrorFallback = ({
             </StyledEmptySubTitle>
           </StyledEmptyTextContainer>
           <StyledButton onClick={resetErrorBoundary}>
-            <StyledIcon size={16} />
+            <StyledIconContainer>
+              <IconReload size={theme.icon.size.md} />
+            </StyledIconContainer>
             {t`Reload`}
           </StyledButton>
         </StyledEmptyContainer>

@@ -1,6 +1,6 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
@@ -24,7 +24,7 @@ const meta: Meta<typeof RecordDetailDuplicatesSection> = {
             targetObjectNameSingular: 'company',
           },
           layoutType: PageLayoutType.RECORD_PAGE,
-          isInRightDrawer: false,
+          isInSidePanel: false,
         }}
       >
         <Story />

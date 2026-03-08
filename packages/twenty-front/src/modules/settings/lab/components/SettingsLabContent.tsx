@@ -1,24 +1,25 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import { useLabPublicFeatureFlags } from '@/settings/lab/hooks/useLabPublicFeatureFlags';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useState } from 'react';
 import { Card } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type FeatureFlagKey } from '~/generated-metadata/graphql';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledCardGrid = styled.div`
   display: grid;
-  gap: ${({ theme }) => theme.spacing(4)};
+  gap: ${themeCssVariables.spacing[4]};
   grid-template-columns: 1fr;
 `;
 
 const StyledImage = styled.img`
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.medium};
-  height: 120px;
-  width: 100%;
-  object-fit: cover;
+  border-bottom: 1px solid ${themeCssVariables.border.color.medium};
   display: flex;
+  height: 120px;
+  object-fit: cover;
+  width: 100%;
 `;
 
 export const SettingsLabContent = () => {

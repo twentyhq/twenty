@@ -2,12 +2,10 @@ import { styled } from '@linaria/react';
 import { useContext } from 'react';
 // @ts-expect-error  // Todo: remove usage of react-data-grid
 import DataGrid, { type DataGridProps } from 'react-data-grid';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledDataGrid = styled(DataGrid)`
+const StyledDataGridContainer = styled.div<{ headerRowHeight?: number }>`
   --rdg-background-color: ${themeCssVariables.background.primary};
   --rdg-border-color: ${themeCssVariables.border.color.medium};
   --rdg-color: ${themeCssVariables.font.color.primary};
@@ -27,9 +25,11 @@ const StyledDataGrid = styled(DataGrid)`
   --row-selected-hover-background-color: ${themeCssVariables.background
     .secondary};
 
-  border: none;
-  block-size: 100%;
-  width: 100%;
+  > * {
+    border: none;
+    block-size: 100%;
+    width: 100%;
+  }
 
   .rdg-header-row .rdg-cell {
     box-shadow: none;
@@ -38,12 +38,10 @@ const StyledDataGrid = styled(DataGrid)`
     font-size: ${themeCssVariables.font.size.sm};
     font-weight: ${themeCssVariables.font.weight.semiBold};
     letter-spacing: wider;
-    ${({ headerRowHeight }) =>
+    border-bottom: ${({ headerRowHeight }) =>
       headerRowHeight === 0
-        ? `
-          border: none;
-        `
-        : ''};
+        ? 'none'
+        : `1px solid ${themeCssVariables.border.color.medium}`};
   }
 
   .rdg-cell {
@@ -103,7 +101,7 @@ const StyledDataGrid = styled(DataGrid)`
     display: flex;
     line-height: none;
   }
-` as typeof DataGrid;
+`;
 
 type SpreadsheetImportTableProps<Data> = Pick<
   DataGridProps<Data>,
@@ -134,28 +132,31 @@ export const SpreadsheetImportTable = <Data,>({
   onSelectedRowsChange,
   selectedRows,
 }: SpreadsheetImportTableProps<Data>) => {
+  const { colorScheme } = useContext(ThemeContext);
+
   const { rtl } = useSpreadsheetImportInternal();
-  const { theme } = useContext(ThemeContext);
-  const themeClassName = theme.name === 'dark' ? 'rdg-dark' : 'rdg-light';
+  const themeClassName = colorScheme === 'dark' ? 'rdg-dark' : 'rdg-light';
 
   if (!rows?.length || !columns?.length) return null;
 
   return (
-    <StyledDataGrid
-      direction={rtl ? 'rtl' : 'ltr'}
-      rowHeight={40}
-      {...{
-        className: `${className || ''} ${themeClassName}`,
-        columns,
-        headerRowHeight,
-        rowKeyGetter,
-        onRowsChange,
-        rows,
-        components,
-        onRowClick,
-        onSelectedRowsChange,
-        selectedRows,
-      }}
-    />
+    <StyledDataGridContainer headerRowHeight={headerRowHeight}>
+      <DataGrid
+        direction={rtl ? 'rtl' : 'ltr'}
+        rowHeight={40}
+        {...{
+          className: `${className || ''} ${themeClassName}`,
+          columns,
+          headerRowHeight,
+          rowKeyGetter,
+          onRowsChange,
+          rows,
+          components,
+          onRowClick,
+          onSelectedRowsChange,
+          selectedRows,
+        }}
+      />
+    </StyledDataGridContainer>
   );
 };

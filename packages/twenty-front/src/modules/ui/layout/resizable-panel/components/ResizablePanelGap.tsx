@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 import { useResizablePanel } from '@/ui/layout/resizable-panel/hooks/useResizablePanel';
 import { type ResizablePanelConstraints } from '@/ui/layout/resizable-panel/types/ResizablePanelConstraints';
@@ -8,8 +8,8 @@ const StyledGap = styled.div<{ gapWidth: number }>`
   cursor: col-resize;
   flex-shrink: 0;
   height: 100%;
-  width: ${({ gapWidth }) => gapWidth}px;
   transition: width 0.15s ease;
+  width: ${({ gapWidth }) => gapWidth}px;
 `;
 
 type ResizablePanelGapProps = {

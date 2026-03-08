@@ -33,7 +33,7 @@ export const AppErrorBoundary = ({
         return scope;
       });
     } catch (sentryError) {
-      // eslint-disable-next-line no-console
+      // oxlint-disable-next-line no-console
       console.error('Failed to capture exception with Sentry:', sentryError);
     }
 

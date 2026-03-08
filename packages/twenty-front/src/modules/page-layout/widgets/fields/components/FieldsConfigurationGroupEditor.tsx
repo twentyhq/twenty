@@ -1,5 +1,5 @@
-import styled from '@emotion/styled';
 import { Droppable, type DraggableProvided } from '@hello-pangea/dnd';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
@@ -8,27 +8,49 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import { FieldsConfigurationFieldEditor } from '@/page-layout/widgets/fields/components/FieldsConfigurationFieldEditor';
 import { FieldsConfigurationGroupDropdown } from '@/page-layout/widgets/fields/components/FieldsConfigurationGroupDropdown';
 import { FieldsConfigurationGroupRenameInput } from '@/page-layout/widgets/fields/components/FieldsConfigurationGroupRenameInput';
+import { NEW_FIELDS_INDICATOR_DRAGGABLE_ID } from '@/page-layout/widgets/fields/constants/NewFieldsIndicatorDraggableId';
 import { type FieldsWidgetGroup } from '@/page-layout/widgets/fields/types/FieldsWidgetGroup';
+import { getFieldsConfigurationGroupRenameDropdownId } from '@/page-layout/widgets/fields/utils/getFieldsConfigurationGroupRenameDropdownId';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
-import { IconNewSection } from 'twenty-ui/display';
+import {
+  IconEye,
+  IconEyeOff,
+  IconNewSection,
+  IconPlaylistAdd,
+} from 'twenty-ui/display';
 import { MenuItem, MenuItemDraggable } from 'twenty-ui/navigation';
+
+import { FieldsConfigurationGroupDraggableHeader } from '@/page-layout/widgets/fields/components/FieldsConfigurationGroupDraggableHeader';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledFieldsDroppable = styled.div`
   display: flex;
   flex-direction: column;
 `;
 
+const StyledEmptyGroupDropZone = styled.div`
+  align-items: center;
+  border: 1px dashed ${themeCssVariables.border.color.medium};
+  border-radius: ${themeCssVariables.border.radius.sm};
+  color: ${themeCssVariables.font.color.light};
+  display: flex;
+  font-size: ${themeCssVariables.font.size.sm};
+  justify-content: center;
+  margin: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
+  min-height: ${themeCssVariables.spacing[10]};
+`;
+
 const StyledGroupContainer = styled.div<{ isDragging: boolean }>`
-  background: ${({ isDragging, theme }) =>
-    isDragging ? theme.background.primary : 'transparent'};
+  background: ${({ isDragging }) =>
+    isDragging ? themeCssVariables.background.primary : 'transparent'};
   border: 1px solid
-    ${({ isDragging, theme }) =>
-      isDragging ? theme.color.blue : 'transparent'};
-  border-radius: ${({ theme }) => theme.border.radius.md};
+    ${({ isDragging }) =>
+      isDragging ? themeCssVariables.color.blue : 'transparent'};
+  border-radius: ${themeCssVariables.border.radius.md};
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -48,7 +70,7 @@ const StyledMenuItemDraggableWrapper = styled.div`
 
 const StyledDropdownContainer = styled.div`
   position: absolute;
-  right: ${({ theme }) => theme.spacing(1)};
+  right: ${themeCssVariables.spacing[1]};
   top: 50%;
   transform: translateY(-50%);
   z-index: 1;
@@ -67,6 +89,9 @@ type FieldsConfigurationGroupEditorProps = {
   renamingGroupValue: string;
   onRenamingGroupValueChange: (value: string) => void;
   onStartRename: (params: { groupId: string; groupName: string }) => void;
+  showNewFieldsItem: boolean;
+  newFieldsIsVisible: boolean;
+  onToggleNewFieldsVisibility: () => void;
 };
 
 export const FieldsConfigurationGroupEditor = ({
@@ -80,10 +105,15 @@ export const FieldsConfigurationGroupEditor = ({
   renamingGroupValue,
   onRenamingGroupValueChange,
   onStartRename,
+  showNewFieldsItem,
+  newFieldsIsVisible,
+  onToggleNewFieldsVisibility,
 }: FieldsConfigurationGroupEditorProps) => {
   const { t } = useLingui();
 
-  const renameDropdownId = `fields-configuration-group-rename-${group.id}`;
+  const renameDropdownId = getFieldsConfigurationGroupRenameDropdownId(
+    group.id,
+  );
 
   const { openDropdown } = useOpenDropdown();
   const { closeDropdown } = useCloseDropdown();
@@ -117,23 +147,18 @@ export const FieldsConfigurationGroupEditor = ({
   return (
     <StyledGroupContainer
       ref={draggableProvided.innerRef}
-      // eslint-disable-next-line react/jsx-props-no-spreading
+      // oxlint-disable-next-line react/jsx-props-no-spreading
       {...draggableProvided.draggableProps}
       isDragging={isDragging}
     >
-      {/* eslint-disable-next-line react/jsx-props-no-spreading */}
+      {/* oxlint-disable-next-line react/jsx-props-no-spreading */}
       <StyledGroupHeaderRow {...draggableProvided.dragHandleProps}>
         <Dropdown
           dropdownId={renameDropdownId}
           clickableComponentWidth="100%"
           clickableComponent={
             <StyledMenuItemDraggableWrapper>
-              <MenuItemDraggable
-                text={group.name}
-                gripMode="always"
-                isIconDisplayedOnHoverOnly={false}
-                withIconContainer
-              />
+              <FieldsConfigurationGroupDraggableHeader text={group.name} />
             </StyledMenuItemDraggableWrapper>
           }
           disableClickForClickableComponent
@@ -167,9 +192,14 @@ export const FieldsConfigurationGroupEditor = ({
         {(droppableProvided) => (
           <StyledFieldsDroppable
             ref={droppableProvided.innerRef}
-            // eslint-disable-next-line react/jsx-props-no-spreading
+            // oxlint-disable-next-line react/jsx-props-no-spreading
             {...droppableProvided.droppableProps}
           >
+            {sortedFields.length === 0 && (
+              <StyledEmptyGroupDropZone>
+                {t`Drop fields here`}
+              </StyledEmptyGroupDropZone>
+            )}
             {sortedFields.map((field, fieldIndex) => {
               return (
                 <DraggableItem
@@ -193,6 +223,33 @@ export const FieldsConfigurationGroupEditor = ({
                 />
               );
             })}
+            {showNewFieldsItem && (
+              <DraggableItem
+                key={NEW_FIELDS_INDICATOR_DRAGGABLE_ID}
+                draggableId={NEW_FIELDS_INDICATOR_DRAGGABLE_ID}
+                index={sortedFields.length}
+                isInsideScrollableContainer
+                itemComponent={
+                  <MenuItemDraggable
+                    LeftIcon={IconPlaylistAdd}
+                    text={t`New fields`}
+                    contextualText={t`Default position/visibility for fields created in the future`}
+                    gripMode="onHover"
+                    withIconContainer
+                    isIconDisplayedOnHoverOnly={false}
+                    iconButtons={[
+                      {
+                        Icon: newFieldsIsVisible ? IconEye : IconEyeOff,
+                        onClick: (e) => {
+                          e.stopPropagation();
+                          onToggleNewFieldsVisibility();
+                        },
+                      },
+                    ]}
+                  />
+                }
+              />
+            )}
             {droppableProvided.placeholder}
           </StyledFieldsDroppable>
         )}
@@ -201,7 +258,7 @@ export const FieldsConfigurationGroupEditor = ({
       <MenuItem
         LeftIcon={IconNewSection}
         withIconContainer
-        text={t`Add a Group`}
+        text={t`Add a Section`}
         onClick={onAddGroup}
       />
     </StyledGroupContainer>

@@ -5,6 +5,7 @@ import { SETTINGS_ADMIN_TABS_ID } from '@/settings/admin-panel/constants/Setting
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { t } from '@lingui/core/macro';
 import {
+  IconApps,
   IconHeart,
   IconSettings2,
   IconSparkles,
@@ -23,6 +24,12 @@ export const SettingsAdminContent = () => {
       title: t`General`,
       Icon: IconSettings2,
       disabled: !canAccessFullAdminPanel && !canImpersonate,
+    },
+    {
+      id: SETTINGS_ADMIN_TABS.APPS,
+      title: t`Apps`,
+      Icon: IconApps,
+      disabled: !canAccessFullAdminPanel,
     },
     {
       id: SETTINGS_ADMIN_TABS.AI,

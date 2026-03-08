@@ -1,7 +1,7 @@
 import { agentChatUsageState } from '@/ai/states/agentChatUsageState';
 import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
 import { currentAIChatThreadTitleState } from '@/ai/states/currentAIChatThreadTitleState';
-import { useOpenAskAIPageInCommandMenu } from '@/command-menu/hooks/useOpenAskAIPageInCommandMenu';
+import { useOpenAskAIPageInSidePanel } from '@/side-panel/hooks/useOpenAskAIPageInSidePanel';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { isDefined } from 'twenty-shared/utils';
@@ -20,7 +20,7 @@ export const useAIChatThreadClick = (
     currentAIChatThreadTitleState,
   );
   const setAgentChatUsage = useSetAtomState(agentChatUsageState);
-  const { openAskAIPage } = useOpenAskAIPageInCommandMenu();
+  const { openAskAIPage } = useOpenAskAIPageInSidePanel();
 
   const handleThreadClick = (thread: AgentChatThread) => {
     setCurrentAIChatThread(thread.id);

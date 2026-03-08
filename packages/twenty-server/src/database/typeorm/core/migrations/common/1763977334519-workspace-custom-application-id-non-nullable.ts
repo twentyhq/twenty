@@ -27,7 +27,7 @@ export class WorkspaceCustomApplicationIdNonNullable1763977334519
         await queryRunner.query(`ROLLBACK TO SAVEPOINT ${savepointName}`);
         await queryRunner.query(`RELEASE SAVEPOINT ${savepointName}`);
       } catch (rollbackError) {
-        // eslint-disable-next-line no-console
+        // oxlint-disable-next-line no-console
         console.error(
           'Failed to rollback to savepoint in WorkspaceCustomApplicationIdNonNullable1763977334519',
           rollbackError,
@@ -35,7 +35,7 @@ export class WorkspaceCustomApplicationIdNonNullable1763977334519
         throw rollbackError;
       }
 
-      // eslint-disable-next-line no-console
+      // oxlint-disable-next-line no-console
       console.error(
         'Swallowing WorkspaceCustomApplicationIdNonNullable1763977334519 error',
         e,

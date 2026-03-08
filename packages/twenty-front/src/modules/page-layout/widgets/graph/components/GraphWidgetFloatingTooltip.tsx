@@ -3,11 +3,11 @@ import {
   type GraphWidgetTooltipItem,
 } from '@/page-layout/widgets/graph/components/GraphWidgetTooltip';
 import { useGraphWidgetTooltipFloating } from '@/page-layout/widgets/graph/hooks/useGraphWidgetTooltipFloating';
-import { useTheme } from '@emotion/react';
 import { FloatingPortal, type VirtualElement } from '@floating-ui/react';
 import { animated, useSpring } from '@react-spring/web';
+import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-
+import { ThemeContext } from 'twenty-ui/theme-constants';
 type GraphWidgetFloatingTooltipProps = {
   reference: Element | VirtualElement | null;
   boundary: Element | null;
@@ -33,7 +33,7 @@ export const GraphWidgetFloatingTooltip = ({
   onMouseLeave,
   disablePointerEvents = false,
 }: GraphWidgetFloatingTooltipProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   const { refs, x, y, isPositioned } = useGraphWidgetTooltipFloating(
     reference,

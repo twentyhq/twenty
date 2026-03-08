@@ -3,18 +3,11 @@ import { StepNavigationButton } from '@/spreadsheet-import/components/StepNaviga
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import { spreadsheetImportCreatedRecordsProgressState } from '@/spreadsheet-import/states/spreadsheetImportCreatedRecordsProgressState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { Modal } from '@/ui/layout/modal/components/Modal';
+import { ModalContent } from 'twenty-ui/layout';
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { t } from '@lingui/core/macro';
 import { Loader } from 'twenty-ui/feedback';
-
-const StyledContent = styled(Modal.Content)`
-  align-items: center;
-  display: flex;
-  justify-content: center;
-  padding: 0px;
-`;
 
 const StyledHeader = styled.span`
   color: ${themeCssVariables.font.color.primary};
@@ -50,11 +43,11 @@ export const ImportDataStep = ({
 
   return (
     <>
-      <StyledContent>
+      <ModalContent noPadding isVerticallyCentered isHorizontallyCentered>
         <StyledHeader>{t`Importing Data ...`}</StyledHeader>
         <StyledDescription>{t`${formattedCreatedRecordsProgress} out of ${formattedRecordsToImportCount} records imported.`}</StyledDescription>
         <Loader />
-      </StyledContent>
+      </ModalContent>
       <StepNavigationButton onBack={onClose} backTitle={t`Cancel`} />
     </>
   );

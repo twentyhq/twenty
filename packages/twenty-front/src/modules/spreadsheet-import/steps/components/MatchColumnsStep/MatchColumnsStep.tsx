@@ -14,7 +14,7 @@ import { setIgnoreColumn } from '@/spreadsheet-import/utils/setIgnoreColumn';
 import { setSubColumn } from '@/spreadsheet-import/utils/setSubColumn';
 import { useDialogManager } from '@/ui/feedback/dialog-manager/hooks/useDialogManager';
 
-import { Modal } from '@/ui/layout/modal/components/Modal';
+import { ModalContent } from 'twenty-ui/layout';
 
 import { DO_NOT_IMPORT_OPTION_KEY } from '@/spreadsheet-import/constants/DoNotImportOptionKey';
 import { ColumnGrid } from '@/spreadsheet-import/steps/components/MatchColumnsStep/components/ColumnGrid';
@@ -32,11 +32,6 @@ import { useAtomFamilySelectorState } from '@/ui/utilities/state/jotai/hooks/use
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-
-const StyledContent = styled(Modal.Content)`
-  align-items: center;
-  padding: 0px;
-`;
 
 const StyledColumnsContainer = styled.div`
   align-items: center;
@@ -276,7 +271,7 @@ export const MatchColumnsStep = ({
 
   return (
     <>
-      <StyledContent>
+      <ModalContent noPadding isVerticallyCentered>
         <ScrollWrapper componentInstanceId="scroll-wrapper-modal-content">
           <ColumnGrid
             columns={columns}
@@ -304,7 +299,7 @@ export const MatchColumnsStep = ({
             )}
           />
         </ScrollWrapper>
-      </StyledContent>
+      </ModalContent>
       <StepNavigationButton
         onContinue={handleOnContinue}
         isLoading={isLoading}

@@ -4,10 +4,6 @@ import { isDefined, isValidUuid, resolveInput } from 'twenty-shared/utils';
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
-import {
-  RecordCrudException,
-  RecordCrudExceptionCode,
-} from 'src/engine/core-modules/record-crud/exceptions/record-crud.exception';
 import { UpdateRecordService } from 'src/engine/core-modules/record-crud/services/update-record.service';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import {
@@ -19,6 +15,7 @@ import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
 import { buildWorkflowActorMetadata } from 'src/modules/workflow/workflow-executor/utils/build-workflow-actor-metadata.util';
 import { filterValidFieldsInRecord } from 'src/modules/workflow/workflow-executor/utils/filter-valid-fields-in-record.util';
+import { formatWorkflowRecordRelationFields } from 'src/modules/workflow/workflow-executor/utils/format-workflow-record-relation-fields.util';
 import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
 import { resolveRichTextFieldsInRecord } from 'src/modules/workflow/workflow-executor/utils/resolve-rich-text-fields-in-record.util';
 import { isWorkflowUpdateRecordAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/guards/is-workflow-update-record-action.guard';
@@ -79,14 +76,19 @@ export class UpdateRecordWorkflowAction implements WorkflowAction {
       !isValidUuid(workflowActionInput.objectRecordId) ||
       !isDefined(workflowActionInput.objectName)
     ) {
-      throw new RecordCrudException(
+      throw new WorkflowStepExecutorException(
         'Failed to update: Object record ID and name are required',
-        RecordCrudExceptionCode.INVALID_REQUEST,
+        WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
       );
     }
 
-    const filteredObjectRecord = filterValidFieldsInRecord(
+    const formattedObjectRecord = formatWorkflowRecordRelationFields(
       workflowActionInput.objectRecord,
+      objectMetadataInfo,
+    );
+
+    const filteredObjectRecord = filterValidFieldsInRecord(
+      formattedObjectRecord,
       objectMetadataInfo.flatObjectMetadata,
       objectMetadataInfo.flatFieldMetadataMaps,
     );
@@ -96,9 +98,9 @@ export class UpdateRecordWorkflowAction implements WorkflowAction {
     );
 
     if (filteredFieldsToUpdate?.length === 0) {
-      throw new RecordCrudException(
+      throw new WorkflowStepExecutorException(
         'Failed to update: No fields to update',
-        RecordCrudExceptionCode.INVALID_REQUEST,
+        WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
       );
     }
 
@@ -118,10 +120,7 @@ export class UpdateRecordWorkflowAction implements WorkflowAction {
     });
 
     if (!toolOutput.success) {
-      throw new RecordCrudException(
-        toolOutput.error || toolOutput.message,
-        RecordCrudExceptionCode.RECORD_UPDATE_FAILED,
-      );
+      return { error: toolOutput.error || toolOutput.message };
     }
 
     return {

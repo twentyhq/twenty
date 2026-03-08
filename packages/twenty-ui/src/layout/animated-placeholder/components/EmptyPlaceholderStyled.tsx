@@ -2,6 +2,7 @@ import { styled } from '@linaria/react';
 import { themeCssVariables } from '@ui/theme-constants';
 import { type HTMLMotionProps, motion } from 'framer-motion';
 import { type ReactNode } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledEmptyContainerBase = styled.div`
   align-items: center;
@@ -22,11 +23,13 @@ type AnimatedPlaceholderEmptyContainerProps = Pick<
 > & {
   children?: ReactNode;
   className?: string;
+  width?: number;
 };
 
 export const AnimatedPlaceholderEmptyContainer = ({
   children,
   className,
+  width,
   initial,
   animate,
   transition,
@@ -34,6 +37,7 @@ export const AnimatedPlaceholderEmptyContainer = ({
   return (
     <MotionEmptyContainer
       className={className}
+      style={isDefined(width) ? { width: `${width}px` } : undefined}
       initial={initial}
       animate={animate}
       transition={transition}
@@ -51,7 +55,7 @@ export const EMPTY_PLACEHOLDER_TRANSITION_PROPS = {
   },
 };
 
-// eslint-disable-next-line twenty/styled-components-prefixed-with-styled
+// oxlint-disable-next-line twenty/styled-components-prefixed-with-styled
 export const AnimatedPlaceholderEmptyTextContainer = styled.div`
   align-items: center;
   display: flex;
@@ -62,14 +66,14 @@ export const AnimatedPlaceholderEmptyTextContainer = styled.div`
   width: 100%;
 `;
 
-// eslint-disable-next-line twenty/styled-components-prefixed-with-styled
+// oxlint-disable-next-line twenty/styled-components-prefixed-with-styled
 export const AnimatedPlaceholderEmptyTitle = styled.div`
   color: ${themeCssVariables.font.color.primary};
   font-size: ${themeCssVariables.font.size.lg};
   font-weight: ${themeCssVariables.font.weight.semiBold};
 `;
 
-// eslint-disable-next-line twenty/styled-components-prefixed-with-styled
+// oxlint-disable-next-line twenty/styled-components-prefixed-with-styled
 export const AnimatedPlaceholderEmptySubTitle = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
   font-size: ${themeCssVariables.font.size.sm};

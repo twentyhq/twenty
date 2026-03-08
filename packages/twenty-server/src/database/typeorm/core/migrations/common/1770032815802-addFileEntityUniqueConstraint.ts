@@ -21,7 +21,7 @@ export class AddFileEntityUniqueConstraint1770032815802
         await queryRunner.query(`ROLLBACK TO SAVEPOINT ${savepointName}`);
         await queryRunner.query(`RELEASE SAVEPOINT ${savepointName}`);
       } catch (rollbackError) {
-        // eslint-disable-next-line no-console
+        // oxlint-disable-next-line no-console
         console.error(
           'Failed to rollback to savepoint in AddFileEntityUniqueConstraint1770032815802',
           rollbackError,
@@ -29,7 +29,7 @@ export class AddFileEntityUniqueConstraint1770032815802
         throw rollbackError;
       }
 
-      // eslint-disable-next-line no-console
+      // oxlint-disable-next-line no-console
       console.error(
         'Swallowing AddFileEntityUniqueConstraint1770032815802 error',
         e,

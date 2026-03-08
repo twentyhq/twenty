@@ -1,8 +1,10 @@
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { OverflowingTextWithTooltip } from '@ui/display/tooltip/OverflowingTextWithTooltip';
 import { themeCssVariables } from '@ui/theme-constants';
+import { isDefined } from 'twenty-shared/utils';
 
 export enum ChipSize {
   Large = 'large',
@@ -28,6 +30,7 @@ export type ChipProps = {
   clickable?: boolean;
   label: string;
   isLabelHidden?: boolean;
+  isBold?: boolean;
   maxWidth?: number;
   variant?: ChipVariant;
   accent?: ChipAccent;
@@ -46,7 +49,13 @@ const StyledDiv = styled.div`
 const StyledContainer = styled.div<
   Pick<
     ChipProps,
-    'accent' | 'clickable' | 'disabled' | 'maxWidth' | 'size' | 'variant'
+    | 'accent'
+    | 'clickable'
+    | 'disabled'
+    | 'isBold'
+    | 'maxWidth'
+    | 'size'
+    | 'variant'
   >
 >`
   --chip-horizontal-padding: ${themeCssVariables.spacing[1]};
@@ -86,8 +95,8 @@ const StyledContainer = styled.div<
   padding: var(--chip-vertical-padding) var(--chip-horizontal-padding);
   user-select: none;
 
-  font-weight: ${({ accent }) =>
-    accent === ChipAccent.TextSecondary
+  font-weight: ${({ accent, isBold }) =>
+    isBold || accent === ChipAccent.TextSecondary
       ? themeCssVariables.font.weight.medium
       : 'inherit'};
 
@@ -133,8 +142,8 @@ const StyledContainer = styled.div<
 `;
 
 const StyledRightComponentDivider = styled.div`
-  border-left: 1px solid ${themeCssVariables.border.color.light};
   align-self: stretch;
+  border-left: 1px solid ${themeCssVariables.border.color.light};
 `;
 
 const renderRightComponent = (
@@ -148,7 +157,7 @@ const renderRightComponent = (
   const rendered =
     typeof rightComponent === 'function' ? rightComponent() : rightComponent;
 
-  if (rightComponentDivider) {
+  if (rightComponentDivider === true) {
     return (
       <>
         <StyledRightComponentDivider />
@@ -164,6 +173,7 @@ export const Chip = ({
   size = ChipSize.Small,
   label,
   isLabelHidden = false,
+  isBold = false,
   disabled = false,
   clickable = true,
   variant = ChipVariant.Regular,
@@ -182,13 +192,14 @@ export const Chip = ({
       accent={accent}
       clickable={clickable}
       disabled={disabled}
+      isBold={isBold}
       size={size}
       variant={variant}
       className={className}
       maxWidth={maxWidth}
     >
       {leftComponent}
-      {!isLabelHidden && label && label.trim() ? (
+      {!isLabelHidden && isDefined(label) && isNonEmptyString(label) ? (
         <OverflowingTextWithTooltip size={size} text={label} />
       ) : !forceEmptyText && !isLabelHidden ? (
         <StyledDiv>{emptyLabel}</StyledDiv>

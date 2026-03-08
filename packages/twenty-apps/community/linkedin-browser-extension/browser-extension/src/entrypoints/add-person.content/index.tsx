@@ -43,7 +43,6 @@ export default defineContentScript({
       },
     });
 
-
     ctx.addEventListener(window, 'wxt:locationchange', ({newUrl, }) => {
     const injectedBtn = document.querySelector('[data-id="twenty-btn"]');
         if(personPattern.includes(newUrl) && !injectedBtn) ui.mount();

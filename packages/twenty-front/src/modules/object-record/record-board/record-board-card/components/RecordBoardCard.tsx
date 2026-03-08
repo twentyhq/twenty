@@ -30,23 +30,21 @@ import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hoo
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useContext } from 'react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { AnimatedEaseInOut } from 'twenty-ui/utilities';
 import { useDebouncedCallback } from 'use-debounce';
 
 const StyledCardContainer = styled.div<{ isPrimaryMultiDrag?: boolean }>`
   position: relative;
-  ${({ isPrimaryMultiDrag }) =>
-    isPrimaryMultiDrag &&
-    `
-    transform: scale(1.02);
-    z-index: 10;
-  `}
+  transform: ${({ isPrimaryMultiDrag }) =>
+    isPrimaryMultiDrag ? 'scale(1.02)' : 'none'};
+  z-index: ${({ isPrimaryMultiDrag }) => (isPrimaryMultiDrag ? '10' : 'auto')};
 `;
 
 const StyledBoardCardWrapper = styled.div`
-  padding-bottom: ${({ theme }) => theme.spacing(2)};
+  padding-bottom: ${themeCssVariables.spacing[2]};
   width: 100%;
 `;
 

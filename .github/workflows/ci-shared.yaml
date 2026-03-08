@@ -1,9 +1,8 @@
 name: CI Shared
 
 on:
-  merge_group:
-
   pull_request:
+  merge_group:
 
 permissions:
   contents: read
@@ -14,6 +13,7 @@ concurrency:
 
 jobs:
   changed-files-check:
+    if: github.event_name != 'merge_group'
     uses: ./.github/workflows/changed-files.yaml
     with:
       files: |
@@ -22,7 +22,7 @@ jobs:
     needs: changed-files-check
     if: needs.changed-files-check.outputs.any_changed == 'true'
     timeout-minutes: 30
-    runs-on: depot-ubuntu-24.04
+    runs-on: ubuntu-latest
     env:
       NODE_OPTIONS: '--max-old-space-size=4096'
     strategy:
@@ -36,18 +36,18 @@ jobs:
       - name: Fetch custom Github Actions and base branch history
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 10
       - name: Install dependencies
         uses: ./.github/actions/yarn-install
       - name: Run ${{ matrix.task }} task
         uses: ./.github/actions/nx-affected
         with:
-          tag: scope:frontend
+          tag: scope:shared
           tasks: ${{ matrix.task }}
   ci-shared-status-check:
     if: always() && !cancelled()
     timeout-minutes: 5
-    runs-on: depot-ubuntu-24.04
+    runs-on: ubuntu-latest
     needs: [changed-files-check, shared-test]
     steps:
       - name: Fail job if any needs failed

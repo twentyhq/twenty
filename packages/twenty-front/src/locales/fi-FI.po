@@ -212,6 +212,11 @@ msgstr "{currentRank} / {totalCount} joukossa {objectLabelPlural}"
 msgid "{days, plural, one {{days} day} other {{days} days}}"
 msgstr "{days, plural, one {{days} päivä} other {{days} päivää}}"
 
+#. js-lingui-id: Muj+po
+#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
+msgid "{daysLeft} days"
+msgstr ""
+
 #. js-lingui-id: 0KwX9P
 #. placeholder {0}: (1000).toFixed(decimals)
 #. placeholder {1}: (1000).toFixed(decimals)
@@ -251,7 +256,7 @@ msgid "{fileName} upload rejected"
 msgstr "{fileName}-tiedoston lähetys hylättiin"
 
 #. js-lingui-id: bv2QCV
-#: src/modules/command-menu/pages/page-layout/hooks/useChartSettingsValues.ts
+#: src/modules/side-panel/pages/page-layout/hooks/useChartSettingsValues.ts
 msgid "{filterRulesCount, plural, one {{filterRulesCount} rule} other {{filterRulesCount} rules}}"
 msgstr "{filterRulesCount, plural, one {{filterRulesCount} sääntö} other {{filterRulesCount} sääntöä}}"
 
@@ -413,12 +418,12 @@ msgid "{totalCost} credits"
 msgstr "{totalCost} hyvitystä"
 
 #. js-lingui-id: p38XKy
-#: src/modules/command-menu/components/CommandMenuMultipleRecordsInfo.tsx
+#: src/modules/side-panel/components/SidePanelMultipleRecordsInfo.tsx
 msgid "{totalCount} selected"
 msgstr ""
 
 #. js-lingui-id: WwbakM
-#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutFieldsSettings.tsx
+#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutFieldsSettings.tsx
 msgid "{totalFieldsCount} fields"
 msgstr ""
 
@@ -467,6 +472,11 @@ msgstr "0"
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 msgid "0 */1 * * *"
 msgstr "0 */1 * * *"
+
+#. js-lingui-id: gphxoA
+#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
+msgid "1 day"
+msgstr ""
 
 #. js-lingui-id: tEdOxj
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepEmail.tsx
@@ -710,9 +720,9 @@ msgstr "ACS URL kopioitu leikepöydälle"
 
 #. js-lingui-id: bwRvnp
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
-#: src/modules/command-menu/components/CommandMenuWorkflowStepInfo.tsx
-#: src/modules/command-menu/components/CommandMenuWorkflowStepInfo.tsx
-#: src/modules/command-menu/components/CommandMenuWorkflowStepInfo.tsx
+#: src/modules/side-panel/components/SidePanelWorkflowStepInfo.tsx
+#: src/modules/side-panel/components/SidePanelWorkflowStepInfo.tsx
+#: src/modules/side-panel/components/SidePanelWorkflowStepInfo.tsx
 msgid "Action"
 msgstr "Toiminto"
 
@@ -796,11 +806,6 @@ msgstr "Lisää \"{trimmedName}\" valintoihin"
 msgid "Add a {objectLabelSingular}"
 msgstr "Lisää {objectLabelSingular}"
 
-#. js-lingui-id: 7W8nJr
-#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupEditor.tsx
-msgid "Add a Group"
-msgstr ""
-
 #. js-lingui-id: CZDwqQ
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
 msgid "Add a new company we're in touch with (e.g. name, website, industry). Details: "
@@ -813,8 +818,14 @@ msgid "Add a node"
 msgstr "Lisää solmu"
 
 #. js-lingui-id: nGv1DN
-#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNewSidebarItemRecordSubView.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemRecordSubView.tsx
 msgid "Add a record"
+msgstr ""
+
+#. js-lingui-id: r8W+9y
+#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationUngroupedEditor.tsx
+#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupEditor.tsx
+msgid "Add a Section"
 msgstr ""
 
 #. js-lingui-id: eMc2xs
@@ -885,8 +896,8 @@ msgstr "Lisää tiedosto"
 #: src/modules/views/components/ViewBarDetailsAddFilterButton.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilderContent.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilderContent.tsx
-#: src/modules/object-record/advanced-filter/command-menu/components/AdvancedFilterCommandMenuCreateRootFilterButton.tsx
-#: src/modules/object-record/advanced-filter/command-menu/components/AdvancedFilterCommandMenuCreateRootFilterButton.tsx
+#: src/modules/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelCreateRootFilterButton.tsx
+#: src/modules/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelCreateRootFilterButton.tsx
 msgid "Add filter"
 msgstr "Lisää suodatin"
 
@@ -925,7 +936,7 @@ msgid "Add Item"
 msgstr "Lisää kohde"
 
 #. js-lingui-id: cI2ZVO
-#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNavigationMenuItemEditPage.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNavigationMenuItemEditPage.tsx
 msgid "Add item to folder"
 msgstr ""
 
@@ -936,12 +947,12 @@ msgid "Add menu item"
 msgstr ""
 
 #. js-lingui-id: JbORSt
-#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuEditOrganizeActions.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditOrganizeActions.tsx
 msgid "Add menu item after"
 msgstr ""
 
 #. js-lingui-id: DKlI/M
-#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuEditOrganizeActions.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditOrganizeActions.tsx
 msgid "Add menu item before"
 msgstr ""
 
@@ -1093,9 +1104,9 @@ msgid "Add widget"
 msgstr "Lisää pienoisohjelma"
 
 #. js-lingui-id: iRpDWj
+#: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts
 #: src/modules/page-layout/widgets/widget-card/components/WidgetCardHeader.tsx
 #: src/modules/page-layout/widgets/components/DashboardWidgetPlaceholder.tsx
-#: src/modules/command-menu/pages/page-layout/utils/getPageLayoutPageTitle.ts
 msgid "Add Widget"
 msgstr "Lisää widget"
 
@@ -1139,11 +1150,6 @@ msgstr "Osoite 1"
 msgid "Address 2"
 msgstr "Osoite 2"
 
-#. js-lingui-id: Eis4ey
-#: src/modules/settings/roles/components/SettingsRolesDefaultRole.tsx
-msgid "Adjust the role-related settings"
-msgstr "Säädä rooliin liittyviä asetuksia"
-
 #. js-lingui-id: U3pytU
 #: src/modules/settings/members/components/MemberInfosTab.tsx
 msgid "Admin"
@@ -1183,8 +1189,8 @@ msgid "Advanced filter"
 msgstr "Tarkennettu suodatin"
 
 #. js-lingui-id: miuPUc
-#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartDataSourceDropdownContent.tsx
-#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartDataSourceDropdownContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartDataSourceDropdownContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartDataSourceDropdownContent.tsx
 msgid "Advanced objects"
 msgstr "Edistykselliset objektit"
 
@@ -1264,8 +1270,8 @@ msgid "Agents powering this app"
 msgstr "Tämän sovelluksen taustalla toimivat agentit"
 
 #. js-lingui-id: sPQ5qN
+#: src/modules/side-panel/pages/page-layout/constants/GraphTypeInformation.ts
 #: src/modules/page-layout/utils/getWidgetTitle.ts
-#: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
 msgid "Aggregate Chart"
 msgstr ""
 
@@ -1281,11 +1287,11 @@ msgstr ""
 #: src/pages/settings/ai/SettingsAI.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
+#: src/modules/side-panel/pages/workflow/action/components/SidePanelWorkflowSelectAction.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
-#: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectAction.tsx
 msgid "AI"
 msgstr "AI"
 
@@ -1338,6 +1344,16 @@ msgstr "Kaikki ({relationRecordsCount})"
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
 msgid "All Actions Access"
 msgstr "Kaikkien toimintojen käyttöoikeus"
+
+#. js-lingui-id: s1C/cR
+#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
+msgid "All App Registrations"
+msgstr ""
+
+#. js-lingui-id: ZrLLkh
+#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
+msgid "All application registrations across the platform, including orphaned marketplace apps"
+msgstr ""
 
 #. js-lingui-id: 1kLn6M
 #: src/modules/activities/calendar/components/CalendarEventRow.tsx
@@ -1393,7 +1409,7 @@ msgid "All Objects"
 msgstr "Kaikki objektit"
 
 #. js-lingui-id: RoFE84
-#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuObjectPickerSubView.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelObjectPickerSubView.tsx
 msgid "All objects are already in the sidebar"
 msgstr ""
 
@@ -1408,7 +1424,7 @@ msgid "All set!"
 msgstr "Valmista!"
 
 #. js-lingui-id: CHvT6e
-#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNewSidebarItemObjectFlow.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemObjectFlow.tsx
 msgid "All system objects are already in the sidebar"
 msgstr ""
 
@@ -1503,13 +1519,13 @@ msgid "Allowed redirect URIs for OAuth flows"
 msgstr ""
 
 #. js-lingui-id: Yn0ZH1
-#: src/modules/command-menu/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
-#: src/modules/command-menu/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
+#: src/modules/side-panel/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
+#: src/modules/side-panel/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
 msgid "alphabetical"
 msgstr ""
 
 #. js-lingui-id: eO7HSp
-#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuObjectMenuItem.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelObjectMenuItem.tsx
 msgid "Already in navbar"
 msgstr ""
 
@@ -1525,6 +1541,9 @@ msgstr ""
 
 #. js-lingui-id: Vw8l6h
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestExecutionResult.tsx
+#: src/modules/views/hooks/internal/usePerformViewSortAPIPersist.ts
+#: src/modules/views/hooks/internal/usePerformViewSortAPIPersist.ts
+#: src/modules/views/hooks/internal/usePerformViewSortAPIPersist.ts
 msgid "An error occurred"
 msgstr "Tapahtui virhe"
 
@@ -1550,6 +1569,7 @@ msgstr "Kuvaa ladattaessa tapahtui virhe."
 
 #. js-lingui-id: XyOToQ
 #: src/utils/get-error-message-from-apollo-error.util.ts
+#: src/modules/views/hooks/internal/usePerformViewSortAPIPersist.ts
 #: src/modules/views/hooks/internal/usePerformViewGroupAPIPersist.ts
 #: src/modules/views/hooks/internal/usePerformViewFilterAPIPersist.ts
 #: src/modules/views/hooks/internal/usePerformViewFilterAPIPersist.ts
@@ -1737,6 +1757,21 @@ msgstr "Apostrofi ja piste - {apostropheAndDotExample}"
 msgid "App"
 msgstr ""
 
+#. js-lingui-id: zL5xow
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "App installed on this workspace"
+msgstr ""
+
+#. js-lingui-id: KbVpuI
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "App listed on marketplace"
+msgstr ""
+
+#. js-lingui-id: hwQxsm
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "App removed from marketplace"
+msgstr ""
+
 #. js-lingui-id: 2zAy1h
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
 msgid "App updated"
@@ -1773,9 +1808,20 @@ msgstr "sovelluksen tietosivu"
 msgid "Application details"
 msgstr "Sovelluksen tiedot"
 
+#. js-lingui-id: lGEBD4
+#: src/pages/settings/applications/components/SettingsUploadTarballModal.tsx
+#: src/modules/marketplace/hooks/useInstallApp.ts
+msgid "Application installed successfully."
+msgstr ""
+
 #. js-lingui-id: +tE2x9
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 msgid "Application successfully uninstalled."
+msgstr ""
+
+#. js-lingui-id: V+GSWz
+#: src/modules/marketplace/hooks/useUpgradeApplication.ts
+msgid "Application upgraded successfully."
 msgstr ""
 
 #. js-lingui-id: fL7WXr
@@ -1787,8 +1833,8 @@ msgstr ""
 #: src/pages/settings/applications/SettingsApplications.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
+#: src/modules/side-panel/pages/workflow/action/components/SidePanelWorkflowSelectAction.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
-#: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectAction.tsx
 msgid "Applications"
 msgstr "Sovellukset"
 
@@ -1814,12 +1860,13 @@ msgstr "Hyväksytyt verkkotunnukset"
 
 #. js-lingui-id: VDvaN2
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
 msgid "Apps"
 msgstr ""
 
-#. js-lingui-id: n++nRq
+#. js-lingui-id: KKYyo8
 #: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
-msgid "Apps you've created and published"
+msgid "Apps you've created, registered, or published"
 msgstr ""
 
 #. js-lingui-id: 8HV3WN
@@ -1883,10 +1930,10 @@ msgid "As it will be displayed in the workspace"
 msgstr ""
 
 #. js-lingui-id: 54PdN4
-#: src/modules/command-menu/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
-#: src/modules/command-menu/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
-#: src/modules/command-menu/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
-#: src/modules/command-menu/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
+#: src/modules/side-panel/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
+#: src/modules/side-panel/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
+#: src/modules/side-panel/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
+#: src/modules/side-panel/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
 msgid "ascending"
 msgstr ""
 
@@ -1898,9 +1945,9 @@ msgid "Ascending"
 msgstr "Nouseva"
 
 #. js-lingui-id: xWEvuo
+#: src/modules/side-panel/hooks/useOpenAskAIPageInSidePanel.ts
+#: src/modules/side-panel/components/SidePanelAskAIInfo.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
-#: src/modules/command-menu/hooks/useOpenAskAIPageInCommandMenu.ts
-#: src/modules/command-menu/components/CommandMenuAskAIInfo.tsx
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
@@ -1961,6 +2008,11 @@ msgstr "Määritetty {roleTargetDisplayName}"
 #: src/modules/settings/roles/components/SettingsRolesTableHeader.tsx
 msgid "Assigned to"
 msgstr "Määrätty henkilölle"
+
+#. js-lingui-id: TzM/0+
+#: src/modules/settings/roles/components/SettingsRolesDefaultRole.tsx
+msgid "Assigned to users who join via invite link, approved domain, or SSO, and used as fallback when an assigned role is deleted"
+msgstr ""
 
 #. js-lingui-id: 0dtKl9
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
@@ -2181,7 +2233,7 @@ msgid "Average"
 msgstr "Keskiarvo"
 
 #. js-lingui-id: li9In6
-#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+#: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Axis name"
 msgstr "Akselin nimi"
 
@@ -2311,7 +2363,7 @@ msgid "Boolean"
 msgstr "Totuusarvo"
 
 #. js-lingui-id: njBeMm
-#: src/modules/command-menu/pages/page-layout/utils/getChartAxisNameDisplayOptions.ts
+#: src/modules/side-panel/pages/page-layout/utils/getChartAxisNameDisplayOptions.ts
 msgid "Both"
 msgstr "Molemmat"
 
@@ -2414,7 +2466,7 @@ msgid "Calendar"
 msgstr "Kalenteri"
 
 #. js-lingui-id: wRpDAv
-#: src/modules/command-menu/hooks/useOpenCalendarEventInCommandMenu.ts
+#: src/modules/side-panel/hooks/useOpenCalendarEventInSidePanel.ts
 msgid "Calendar Event"
 msgstr "Kalenteritapahtuma"
 
@@ -2477,6 +2529,9 @@ msgid "Can't scan? Copy the"
 msgstr "Et voi skannata? Kopioi"
 
 #. js-lingui-id: dEgA5A
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/components/SettingsUploadTarballModal.tsx
+#: src/pages/settings/applications/components/SettingsRegisterNpmAppModal.tsx
 #: src/pages/auth/Authorize.tsx
 #: src/modules/ui/layout/modal/components/ConfirmationModal.tsx
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
@@ -2628,8 +2683,8 @@ msgid "Change to Yearly?"
 msgstr "Vaihda vuosittaiseksi?"
 
 #. js-lingui-id: nuBbBr
-#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutWidgetTypeSelect.tsx
-#: src/modules/command-menu/components/hooks/usePageLayoutHeaderInfo.ts
+#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutWidgetTypeSelect.tsx
+#: src/modules/side-panel/components/hooks/usePageLayoutHeaderInfo.ts
 msgid "Chart"
 msgstr "Kaavio"
 
@@ -2693,6 +2748,11 @@ msgstr "Valitse OIDC- ja SAML-protokollien välillä"
 msgid "Choose between Short and Full"
 msgstr "Valitse lyhyen ja täyden välillä"
 
+#. js-lingui-id: +yPBXI
+#: src/pages/settings/applications/components/SettingsUploadTarballModal.tsx
+msgid "Choose file"
+msgstr ""
+
 #. js-lingui-id: YcrXB2
 #: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
 msgid "Choose the default currency that will apply"
@@ -2709,17 +2769,17 @@ msgid "Choose the format used to display date value"
 msgstr "Valitse päivämäärän näyttämiseen käytetty muoto"
 
 #. js-lingui-id: CiPJbh
-#: src/modules/settings/data-model/fields/forms/utils/getSettingsDataModelFieldOnClickActionDescription.util.ts
+#: src/modules/settings/data-model/fields/forms/utils/getSettingsDataModelFieldOnClickActionDescription.ts
 msgid "Choose what happens when you click a link"
 msgstr "Valitse, mitä tapahtuu, kun napsautat linkkiä"
 
 #. js-lingui-id: D3MauW
-#: src/modules/settings/data-model/fields/forms/utils/getSettingsDataModelFieldOnClickActionDescription.util.ts
+#: src/modules/settings/data-model/fields/forms/utils/getSettingsDataModelFieldOnClickActionDescription.ts
 msgid "Choose what happens when you click a phone number"
 msgstr "Valitse, mitä tapahtuu, kun napsautat puhelinnumeroa"
 
 #. js-lingui-id: QR1yAR
-#: src/modules/settings/data-model/fields/forms/utils/getSettingsDataModelFieldOnClickActionDescription.util.ts
+#: src/modules/settings/data-model/fields/forms/utils/getSettingsDataModelFieldOnClickActionDescription.ts
 msgid "Choose what happens when you click an email"
 msgstr "Valitse, mitä tapahtuu, kun napsautat sähköpostiosoitetta"
 
@@ -2834,10 +2894,10 @@ msgstr "Sulje"
 msgid "Close banner"
 msgstr "Sulje banneri"
 
-#. js-lingui-id: qYsAlX
-#: src/modules/ui/layout/page-header/components/PageHeaderToggleCommandMenuButton.tsx
-msgid "Close command menu"
-msgstr "Sulje komento-valikko"
+#. js-lingui-id: saip/v
+#: src/modules/ui/layout/page-header/components/PageHeaderToggleSidePanelButton.tsx
+msgid "Close side panel"
+msgstr ""
 
 #. js-lingui-id: EWPtMO
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCode.tsx
@@ -2878,7 +2938,7 @@ msgid "Collapse folder"
 msgstr "Supista kansio"
 
 #. js-lingui-id: jZlrte
-#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuEditColorOption.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditColorOption.tsx
 msgid "Color"
 msgstr ""
 
@@ -2888,7 +2948,7 @@ msgid "Color code"
 msgstr "Värikoodi"
 
 #. js-lingui-id: 1HfW/F
-#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+#: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Colors"
 msgstr "Värit"
 
@@ -2908,7 +2968,7 @@ msgid "Command Icon"
 msgstr "Komentokuvake"
 
 #. js-lingui-id: PUMdxH
-#: src/modules/command-menu/hooks/useCommandMenu.ts
+#: src/modules/side-panel/hooks/useSidePanelMenu.ts
 msgid "Command Menu"
 msgstr "Komentovalikko"
 
@@ -2968,7 +3028,7 @@ msgstr "Valmiit työt säilytetään {completedDuration}, epäonnistuneet työt 
 #. js-lingui-id: 0CuAor
 #: src/modules/workflow/workflow-steps/workflow-actions/if-else-action/components/WorkflowEditActionIfElseBody.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowEditActionFilterBody.tsx
-#: src/modules/command-menu/pages/page-layout/components/ChartFiltersSettings.tsx
+#: src/modules/side-panel/pages/page-layout/components/ChartFiltersSettings.tsx
 msgid "Conditions"
 msgstr "Ehdot"
 
@@ -3030,7 +3090,7 @@ msgid "Configure fallback login methods for users with SSO bypass permissions"
 msgstr "Määritä varasijaiset kirjautumismenetelmät käyttäjille, joilla on SSO-ohituksen käyttöoikeudet"
 
 #. js-lingui-id: c7wznw
-#: src/modules/command-menu/pages/page-layout/utils/getPageLayoutPageTitle.ts
+#: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts
 msgid "Configure filters"
 msgstr "Määritä suodattimet"
 
@@ -3157,12 +3217,12 @@ msgid "Connection successfully updated"
 msgstr "Yhteys päivitettiin onnistuneesti"
 
 #. js-lingui-id: JdGr7p
-#: src/modules/command-menu/pages/page-layout/components/ChartLimitInfoBanner.tsx
+#: src/modules/side-panel/pages/page-layout/components/ChartLimitInfoBanner.tsx
 msgid "Consider adding a filter or changing the date granularity to display more data."
 msgstr ""
 
 #. js-lingui-id: G++HwN
-#: src/modules/command-menu/pages/page-layout/components/ChartLimitInfoBanner.tsx
+#: src/modules/side-panel/pages/page-layout/components/ChartLimitInfoBanner.tsx
 msgid "Consider adding a filter to display more data."
 msgstr ""
 
@@ -3190,7 +3250,7 @@ msgid "Content"
 msgstr "Sisältö"
 
 #. js-lingui-id: M73whl
-#: src/modules/command-menu/components/CommandMenu.tsx
+#: src/modules/side-panel/pages/root/components/SidePanelRootPage.tsx
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "Context"
 msgstr "Yhteys"
@@ -3235,6 +3295,11 @@ msgstr ""
 msgid "Continue"
 msgstr "Jatka"
 
+#. js-lingui-id: YsnqkW
+#: src/modules/workflow/workflow-steps/workflow-actions/iterator-action/components/WorkflowEditActionIterator.tsx
+msgid "Continue on iteration failure"
+msgstr ""
+
 #. js-lingui-id: RvVi9c
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWithCredentials.tsx
 msgid "Continue with Email"
@@ -3254,6 +3319,11 @@ msgstr "Jatka Microsoftin avulla"
 #: src/pages/onboarding/SyncEmails.tsx
 msgid "Continue without sync"
 msgstr "Jatka ilman synkronointia"
+
+#. js-lingui-id: nTcGbN
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "Control visibility on the marketplace. Unlisted apps are still accessible via direct link."
+msgstr ""
 
 #. js-lingui-id: +iFqZW
 #: src/modules/settings/roles/role-settings/components/SettingsRoleApplicability.tsx
@@ -3354,8 +3424,8 @@ msgstr "Kopioi näkymän linkki"
 
 #. js-lingui-id: SGsgDO
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
+#: src/modules/side-panel/pages/workflow/action/components/SidePanelWorkflowSelectAction.tsx
 #: src/modules/settings/playground/constants/SettingsPlaygroundFormSchemaSelectOptions.ts
-#: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectAction.tsx
 msgid "Core"
 msgstr "Ydin"
 
@@ -3549,7 +3619,7 @@ msgid "Create Profile"
 msgstr "Luo profiili"
 
 #. js-lingui-id: GPuEIc
-#: src/modules/command-menu/components/CommandMenu.tsx
+#: src/modules/side-panel/pages/root/components/SidePanelRootPage.tsx
 msgid "Create Related Record"
 msgstr "Luo liittyvä tietue"
 
@@ -3614,7 +3684,7 @@ msgid "Created"
 msgstr "Luotu"
 
 #. js-lingui-id: 4fBuqE
-#: src/modules/command-menu/components/CommandMenuRecordInfo.tsx
+#: src/modules/side-panel/components/SidePanelRecordInfo.tsx
 msgid "Created {beautifiedCreatedAt}"
 msgstr ""
 
@@ -3696,7 +3766,7 @@ msgid "CRUD"
 msgstr ""
 
 #. js-lingui-id: J1QT+3
-#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+#: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Cumulative"
 msgstr "Kumulatiivinen"
 
@@ -3781,11 +3851,11 @@ msgid "Customization"
 msgstr "Mukauttaminen"
 
 #. js-lingui-id: srRMnJ
-#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutFieldsSettings.tsx
-#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNavigationMenuItemEditPage.tsx
-#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNavigationMenuItemEditPage.tsx
-#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuEditObjectViewBase.tsx
-#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuEditLinkItemView.tsx
+#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutFieldsSettings.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNavigationMenuItemEditPage.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNavigationMenuItemEditPage.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditObjectViewBase.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditLinkItemView.tsx
 msgid "Customize"
 msgstr ""
 
@@ -3866,10 +3936,10 @@ msgstr "Koontinäytöt"
 
 #. js-lingui-id: HKH+W+
 #: src/pages/settings/applications/components/SettingsApplicationDataTable.tsx
-#: src/modules/command-menu/pages/workflow/trigger-type/components/CommandMenuWorkflowSelectTriggerTypeContent.tsx
-#: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectAction.tsx
-#: src/modules/command-menu/pages/page-layout/constants/ChartSettingsHeadings.ts
-#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNewSidebarItemMainMenu.tsx
+#: src/modules/side-panel/pages/workflow/trigger-type/components/SidePanelWorkflowSelectTriggerTypeContent.tsx
+#: src/modules/side-panel/pages/workflow/action/components/SidePanelWorkflowSelectAction.tsx
+#: src/modules/side-panel/pages/page-layout/constants/ChartSettingsHeadings.ts
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemMainMenu.tsx
 msgid "Data"
 msgstr "Data"
 
@@ -3879,14 +3949,14 @@ msgid "Data deletion"
 msgstr "Tietojen poisto"
 
 #. js-lingui-id: xpZXLn
-#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+#: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Data labels"
 msgstr "Datan etiketit"
 
 #. js-lingui-id: BCllhB
-#: src/modules/command-menu/pages/page-layout/utils/__tests__/shouldHideChartSetting.test.ts
-#: src/modules/command-menu/pages/page-layout/utils/__tests__/shouldHideChartSetting.test.ts
-#: src/modules/command-menu/pages/page-layout/utils/__tests__/shouldHideChartSetting.test.ts
+#: src/modules/side-panel/pages/page-layout/utils/__tests__/shouldHideChartSetting.test.ts
+#: src/modules/side-panel/pages/page-layout/utils/__tests__/shouldHideChartSetting.test.ts
+#: src/modules/side-panel/pages/page-layout/utils/__tests__/shouldHideChartSetting.test.ts
 msgid "Data Labels"
 msgstr "Dataluettelot"
 
@@ -3907,10 +3977,10 @@ msgid "Data model - Settings"
 msgstr "Tietomalli - Asetukset"
 
 #. js-lingui-id: fM466x
-#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
-#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
-#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
-#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+#: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+#: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+#: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+#: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Data on display"
 msgstr "Näytettävä data"
 
@@ -3956,42 +4026,42 @@ msgid "Date format"
 msgstr "Päiväysmuoto"
 
 #. js-lingui-id: +A7KEy
-#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
-#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
-#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+#: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+#: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+#: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Date granularity"
 msgstr "Päivämäärän tarkkuus"
 
 #. js-lingui-id: dhHZTJ
-#: src/modules/command-menu/pages/page-layout/utils/__tests__/shouldHideChartSetting.test.ts
+#: src/modules/side-panel/pages/page-layout/utils/__tests__/shouldHideChartSetting.test.ts
 msgid "Date Granularity"
 msgstr "Päivämäärän tarkkuus"
 
 #. js-lingui-id: agXC4d
-#: src/modules/command-menu/pages/page-layout/utils/__tests__/shouldHideChartSetting.test.ts
+#: src/modules/side-panel/pages/page-layout/utils/__tests__/shouldHideChartSetting.test.ts
 msgid "Date Granularity X"
 msgstr "Päivämäärän tarkkuus X"
 
 #. js-lingui-id: YsCGZL
-#: src/modules/command-menu/pages/page-layout/utils/__tests__/shouldHideChartSetting.test.ts
+#: src/modules/side-panel/pages/page-layout/utils/__tests__/shouldHideChartSetting.test.ts
 msgid "Date Granularity Y"
 msgstr "Päivämäärän tarkkuus Y"
 
 #. js-lingui-id: H7OUPr
+#: src/modules/side-panel/pages/page-layout/utils/getDateGranularityLabel.ts
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
-#: src/modules/command-menu/pages/page-layout/utils/getDateGranularityLabel.ts
 msgid "Day"
 msgstr "Päivä"
 
 #. js-lingui-id: ahA8fy
-#: src/modules/command-menu/pages/page-layout/utils/getDateGranularityLabel.ts
+#: src/modules/side-panel/pages/page-layout/utils/getDateGranularityLabel.ts
 msgid "Day of the week"
 msgstr "Viikonpäivä"
 
 #. js-lingui-id: J/Upwb
-#: src/modules/command-menu/pages/page-layout/utils/getDateGranularityPluralLabel.ts
-#: src/modules/command-menu/pages/page-layout/utils/getDateGranularityPluralLabel.ts
+#: src/modules/side-panel/pages/page-layout/utils/getDateGranularityPluralLabel.ts
+#: src/modules/side-panel/pages/page-layout/utils/getDateGranularityPluralLabel.ts
 msgid "days"
 msgstr "päivää"
 
@@ -4083,11 +4153,24 @@ msgid "Default Country Code"
 msgstr "Oletusmaakoodi"
 
 #. js-lingui-id: 4HDpKr
-#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartColorPaletteOption.tsx
+#: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartColorPaletteOption.tsx
 msgid "Default palette"
 msgstr "Oletuspaletti"
 
+#. js-lingui-id: U/uGBk
+#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationUngroupedEditor.tsx
+#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupEditor.tsx
+msgid "Default position/visibility for fields created in the future"
+msgstr ""
+
+#. js-lingui-id: v41VX6
+#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
+#: src/modules/workspace/components/WorkspaceInviteTeam.tsx
+msgid "Default role"
+msgstr ""
+
 #. js-lingui-id: CGhRMh
+#: src/modules/settings/roles/components/SettingsRolesDefaultRole.tsx
 #: src/modules/settings/roles/components/SettingsRolesDefaultRole.tsx
 msgid "Default Role"
 msgstr "Oletusrooli"
@@ -4162,6 +4245,7 @@ msgstr "poista"
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
 #: src/modules/views/view-picker/components/ViewPickerEditButton.tsx
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
+#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutTabSettings.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTabEnvironmentVariableTableRow.tsx
 #: src/modules/settings/emailing-domains/components/SettingsEmailingDomainRowDropdownMenu.tsx
@@ -4180,7 +4264,6 @@ msgstr "poista"
 #: src/modules/object-record/record-field/ui/meta-types/input/components/MultiItemFieldMenuItem.tsx
 #: src/modules/navigation-menu-item/components/NavigationMenuItemFolderNavigationDrawerItemDropdown.tsx
 #: src/modules/favorites/components/FavoriteFolderNavigationDrawerItemDropdown.tsx
-#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutTabSettings.tsx
 #: src/modules/blocknote-editor/components/CustomSideMenu.tsx
 #: src/modules/activities/files/components/AttachmentDropdown.tsx
 #: src/modules/action-menu/mock/action-menu-actions.mock.tsx
@@ -4282,6 +4365,11 @@ msgstr "Poista ryhmä"
 msgid "Delete node"
 msgstr "Poista solmu"
 
+#. js-lingui-id: x9/fRy
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "Delete or transfer this app registration"
+msgstr ""
+
 #. js-lingui-id: kf0A63
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Delete records"
@@ -4317,11 +4405,6 @@ msgstr ""
 msgid "Delete this agent"
 msgstr "Poista tämä agentti"
 
-#. js-lingui-id: Lz86s9
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
-msgid "Delete this app"
-msgstr ""
-
 #. js-lingui-id: T6S2Ns
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Delete this integration"
@@ -4353,7 +4436,7 @@ msgid "Delete webhook"
 msgstr "Poista Webhooks"
 
 #. js-lingui-id: tWD0z0
-#: src/modules/command-menu/pages/page-layout/components/WidgetSettingsFooter.tsx
+#: src/modules/side-panel/pages/page-layout/components/WidgetSettingsFooter.tsx
 msgid "Delete widget"
 msgstr ""
 
@@ -4411,10 +4494,10 @@ msgid "Deprecated models"
 msgstr ""
 
 #. js-lingui-id: O3LJh6
-#: src/modules/command-menu/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
-#: src/modules/command-menu/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
-#: src/modules/command-menu/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
-#: src/modules/command-menu/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
+#: src/modules/side-panel/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
+#: src/modules/side-panel/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
+#: src/modules/side-panel/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
+#: src/modules/side-panel/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
 msgid "descending"
 msgstr ""
 
@@ -4618,6 +4701,7 @@ msgid "Downgrade"
 msgstr "Alentaminen"
 
 #. js-lingui-id: mzI/c+
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
 #: src/modules/activities/files/components/DocumentViewer.tsx
 #: src/modules/activities/files/components/AttachmentDropdown.tsx
 msgid "Download"
@@ -4654,8 +4738,13 @@ msgid "Drag and Drop Here"
 msgstr "Vedä ja pudota tähän"
 
 #. js-lingui-id: oSoaUV
-#: src/modules/command-menu/components/CommandMenuItemWithAddToNavigationDrag.tsx
+#: src/modules/side-panel/components/SidePanelItemWithAddToNavigationDrag.tsx
 msgid "Drag to add to navbar"
+msgstr ""
+
+#. js-lingui-id: VIbDgE
+#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupEditor.tsx
+msgid "Drop fields here"
 msgstr ""
 
 #. js-lingui-id: 6D/BnN
@@ -4664,7 +4753,7 @@ msgid "Drop file here..."
 msgstr "Pudota tiedosto tähän..."
 
 #. js-lingui-id: euc6Ns
-#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutTabSettings.tsx
+#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutTabSettings.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
 msgid "Duplicate"
@@ -4681,7 +4770,7 @@ msgid "Duplicate node"
 msgstr "Kaksoiskappale solmu"
 
 #. js-lingui-id: mMsEuG
-#: src/modules/command-menu/pages/page-layout/components/WidgetSettingsFooter.tsx
+#: src/modules/side-panel/pages/page-layout/components/WidgetSettingsFooter.tsx
 msgid "Duplicate widget"
 msgstr ""
 
@@ -4700,12 +4789,22 @@ msgstr "Kaksoiskappaleet"
 msgid "Dutch"
 msgstr "Hollanti"
 
+#. js-lingui-id: 3MYDWJ
+#: src/pages/settings/applications/components/SettingsRegisterNpmAppModal.tsx
+msgid "e.g. @twentyhq/hello-world"
+msgstr ""
+
 #. js-lingui-id: QVVmxi
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/modules/settings/developers/components/ApiKeyNameInput.tsx
 msgid "E.g. backoffice integration"
 msgstr "Esimerkiksi backoffice-integraatio"
+
+#. js-lingui-id: 88vQqv
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "e.g. my-workspace"
+msgstr ""
 
 #. js-lingui-id: p5P8NB
 #: src/pages/settings/ai/SettingsAIPrompts.tsx
@@ -4718,7 +4817,7 @@ msgid "e.g., summary, status, count"
 msgstr "esim. yhteenveto, tila, määrä"
 
 #. js-lingui-id: 79hamt
-#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+#: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Each slice represents"
 msgstr "Jokainen osa edustaa"
 
@@ -4744,6 +4843,7 @@ msgstr "eddy@gmail.com, @apple.com"
 
 #. js-lingui-id: ePK91l
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
+#: src/modules/side-panel/hooks/useSidePanelMenu.ts
 #: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableRowOptionsDropdown.tsx
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTabEnvironmentVariableTableRow.tsx
@@ -4752,7 +4852,6 @@ msgstr "eddy@gmail.com, @apple.com"
 #: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
 #: src/modules/object-record/record-field/ui/meta-types/input/components/MultiItemFieldMenuItem.tsx
 #: src/modules/object-record/record-field/ui/form-types/components/FormMultiSelectFieldInput.tsx
-#: src/modules/command-menu/hooks/useCommandMenu.ts
 #: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
 msgid "Edit"
 msgstr "Muokkaa"
@@ -4791,9 +4890,9 @@ msgid "Edit Fields"
 msgstr "Muokkaa kenttiä"
 
 #. js-lingui-id: uPHscS
+#: src/modules/side-panel/pages/navigation-menu-item/hooks/useAddFolderToNavigationMenu.ts
 #: src/modules/navigation-menu-item/hooks/useHandleAddToNavigationDrop.ts
 #: src/modules/navigation-menu-item/components/WorkspaceNavigationMenuItems.tsx
-#: src/modules/command-menu/pages/navigation-menu-item/hooks/useAddFolderToNavigationMenu.ts
 msgid "Edit folder"
 msgstr ""
 
@@ -4813,9 +4912,9 @@ msgid "Edit Layout"
 msgstr ""
 
 #. js-lingui-id: /PoNoq
+#: src/modules/side-panel/pages/navigation-menu-item/hooks/useAddLinkToNavigationMenu.ts
 #: src/modules/navigation-menu-item/hooks/useHandleAddToNavigationDrop.ts
 #: src/modules/navigation-menu-item/components/WorkspaceNavigationMenuItems.tsx
-#: src/modules/command-menu/pages/navigation-menu-item/hooks/useAddLinkToNavigationMenu.ts
 msgid "Edit link"
 msgstr ""
 
@@ -4939,7 +5038,7 @@ msgid "Email or domain is already in blocklist"
 msgstr "Sähköposti tai verkkotunnus on jo estolistalla"
 
 #. js-lingui-id: +VjrH/
-#: src/modules/command-menu/hooks/useOpenEmailThreadInCommandMenu.ts
+#: src/modules/side-panel/hooks/useOpenEmailThreadInSidePanel.ts
 msgid "Email Thread"
 msgstr "Sähköpostiketju"
 
@@ -5004,10 +5103,10 @@ msgstr "Sähköpostit"
 msgid "Emails and Calendar"
 msgstr "Sähköpostit ja kalenteri"
 
-#. js-lingui-id: Ft+sR1
+#. js-lingui-id: mHrqHa
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
-msgid "Emails from the blocklist will be ignored. Manage blocklist on the “Accounts” setting page."
-msgstr "Estoluettelon sähköpostit ohitetaan. Hallitse estoluetteloa kohdassa ”Tilit” asetussivulla."
+msgid "Emails from the blocklist will be ignored. Manage blocklist on the \"Accounts\" setting page."
+msgstr ""
 
 #. js-lingui-id: Ww/M6X
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
@@ -5289,11 +5388,21 @@ msgstr "Anna tunnistetiedot yhteyden muodostamiseksi"
 msgid "Enter the infos to set the connection"
 msgstr "Anna tiedot yhteyden luomiseksi"
 
+#. js-lingui-id: 2tpV02
+#: src/pages/settings/applications/components/SettingsRegisterNpmAppModal.tsx
+msgid "Enter the npm package name to register as an application."
+msgstr ""
+
 #. js-lingui-id: 3EF9HN
 #: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
 #: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
 msgid "Enter the system prompt that defines this agent's behavior and capabilities"
 msgstr "Anna järjestelmän kehote, joka määrittää tämän agentin käyttäytymisen ja ominaisuudet"
+
+#. js-lingui-id: tEWpbi
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "Enter the workspace subdomain to transfer this app to. You will lose access to manage it."
+msgstr ""
 
 #. js-lingui-id: rYIISB
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
@@ -5408,6 +5517,11 @@ msgstr "Virhe noudettaessa työntekijän mittareita: {errorMessage}"
 msgid "Error illustration"
 msgstr "Virheen kuvitus"
 
+#. js-lingui-id: zCb/ve
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "Error installing app"
+msgstr ""
+
 #. js-lingui-id: UJr0dl
 #: src/pages/settings/security/event-logs/SettingsEventLogs.tsx
 msgid "Error Loading Audit Logs"
@@ -5456,6 +5570,11 @@ msgstr ""
 #. js-lingui-id: ZUyXma
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
 msgid "Error updating app"
+msgstr ""
+
+#. js-lingui-id: OceoGT
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "Error updating marketplace listing"
 msgstr ""
 
 #. js-lingui-id: lX3Yil
@@ -5940,6 +6059,11 @@ msgstr "Vastausta ei saatu"
 msgid "Failed to impersonate user. {errorMessage}"
 msgstr "Käyttäjän esittäminen epäonnistui. {errorMessage}"
 
+#. js-lingui-id: qZwtAi
+#: src/modules/marketplace/hooks/useInstallApp.ts
+msgid "Failed to install the application."
+msgstr ""
+
 #. js-lingui-id: BTjpvA
 #: src/modules/front-components/components/FrontComponentRenderer.tsx
 msgid "Failed to load front component: {errorMessage}"
@@ -5959,6 +6083,11 @@ msgstr "Tietueiden yhdistäminen epäonnistui. Yritä uudelleen."
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "Failed to parse context: {contextValue}"
 msgstr "Kontekstin jäsentäminen epäonnistui: {contextValue}"
+
+#. js-lingui-id: hV6mC1
+#: src/modules/marketplace/hooks/useRegisterNpmPackage.ts
+msgid "Failed to register npm package."
+msgstr ""
 
 #. js-lingui-id: A/P7PX
 #: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
@@ -5989,6 +6118,11 @@ msgstr ""
 #. js-lingui-id: 9ryUyP
 #: src/pages/settings/ai/SettingsAIPrompts.tsx
 msgid "Failed to save workspace instructions"
+msgstr ""
+
+#. js-lingui-id: LVcnN8
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "Failed to transfer ownership. Check that the subdomain is correct."
 msgstr ""
 
 #. js-lingui-id: YzURPo
@@ -6042,6 +6176,11 @@ msgstr "Roolin päivitys epäonnistui"
 msgid "Failed to update variable"
 msgstr "Muuttujan päivitys epäonnistui"
 
+#. js-lingui-id: pBEL6J
+#: src/modules/marketplace/hooks/useUpgradeApplication.ts
+msgid "Failed to upgrade the application."
+msgstr ""
+
 #. js-lingui-id: jU/HbX
 #: src/modules/object-record/record-field/ui/meta-types/hooks/useUploadFilesFieldFile.ts
 #: src/modules/advanced-text-editor/hooks/useUploadWorkflowFile.ts
@@ -6058,15 +6197,15 @@ msgstr ""
 msgid "Failed to upload file: {fileName}"
 msgstr "Tiedostoa ei voitu ladata: {fileName}"
 
-#. js-lingui-id: wJb11y
-#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
-msgid "Failed to upload image: "
-msgstr "Kuvan lataus epäonnistui: "
-
 #. js-lingui-id: Lx8/KQ
 #: src/modules/settings/workspace-member/components/WorkspaceMemberPictureUploader.tsx
 msgid "Failed to upload picture"
 msgstr "Kuvan lähetys epäonnistui"
+
+#. js-lingui-id: vWFfVs
+#: src/modules/marketplace/hooks/useUploadAppTarball.ts
+msgid "Failed to upload tarball."
+msgstr ""
 
 #. js-lingui-id: K0joU5
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthAccountSyncCountersTable.tsx
@@ -6075,12 +6214,12 @@ msgstr "Epäonnistumisprosentti"
 
 #. js-lingui-id: ocUvR+
 #: src/modules/ui/field/display/components/BooleanDisplay.tsx
+#: src/modules/side-panel/pages/page-layout/hooks/useChartSettingsValues.ts
+#: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartRatioOptionValueSelectionDropdownContent.tsx
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab.tsx
 #: src/modules/settings/data-model/fields/forms/boolean/constants/BooleanDataModelSelectOptions.ts
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownBooleanSelect.tsx
-#: src/modules/command-menu/pages/page-layout/hooks/useChartSettingsValues.ts
-#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartRatioOptionValueSelectionDropdownContent.tsx
 msgid "False"
 msgstr "Väärä"
 
@@ -6105,6 +6244,22 @@ msgstr "Ominaisuustunnus"
 msgid "Feature Flags & Impersonation"
 msgstr "Ominaisuustunnukset ja teeskentely"
 
+#. js-lingui-id: FkMol5
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
+msgid "Featured"
+msgstr ""
+
+#. js-lingui-id: znbJM3
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "Featured apps are curated. Open a PR to request featured status."
+msgstr ""
+
+#. js-lingui-id: F1sJEJ
+#: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
+msgid "Featured only"
+msgstr ""
+
 #. js-lingui-id: 2lOBKV
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "field"
@@ -6112,8 +6267,8 @@ msgstr "kenttä"
 
 #. js-lingui-id: AXjA78
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsSelect.tsx
+#: src/modules/side-panel/pages/page-layout/utils/getFieldLabelWithSubField.ts
 #: src/modules/settings/developers/components/WebhookEntitySelect.tsx
-#: src/modules/command-menu/pages/page-layout/utils/getFieldLabelWithSubField.ts
 msgid "Field"
 msgstr "Kenttä"
 
@@ -6178,7 +6333,7 @@ msgid "Fields Permissions"
 msgstr "Kenttien käyttöoikeudet"
 
 #. js-lingui-id: n7J1Rh
-#: src/modules/command-menu/pages/page-layout/utils/getPageLayoutPageTitle.ts
+#: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts
 msgid "Fields Settings"
 msgstr ""
 
@@ -6188,7 +6343,7 @@ msgid "Fields to update"
 msgstr "Päivitettävät kentät"
 
 #. js-lingui-id: YlwXq3
-#: src/modules/command-menu/components/hooks/usePageLayoutHeaderInfo.ts
+#: src/modules/side-panel/components/hooks/usePageLayoutHeaderInfo.ts
 msgid "Fields Widget"
 msgstr ""
 
@@ -6228,11 +6383,6 @@ msgstr ""
 msgid "File upload failed"
 msgstr ""
 
-#. js-lingui-id: H/+55l
-#: src/modules/activities/files/components/AttachmentList.tsx
-msgid "File URL is not defined"
-msgstr ""
-
 #. js-lingui-id: sER+bs
 #: src/modules/page-layout/constants/StandardPageLayoutTabTitleTranslations.ts
 msgid "Files"
@@ -6245,12 +6395,11 @@ msgstr ""
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
 #: src/modules/views/components/ViewBarFilterDropdownFieldSelectMenu.tsx
 #: src/modules/views/components/ViewBarFilterButton.tsx
+#: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+#: src/modules/side-panel/pages/page-layout/components/ChartFiltersSettings.tsx
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
-#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
-#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
-#: src/modules/command-menu/pages/page-layout/components/ChartFiltersSettings.tsx
 msgid "Filter"
 msgstr "Suodata"
 
@@ -6342,30 +6491,31 @@ msgstr "Etunimi ei saa olla tyhjä"
 
 #. js-lingui-id: ylQd2j
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
+#: src/modules/side-panel/pages/workflow/action/components/SidePanelWorkflowSelectAction.tsx
 #: src/modules/page-layout/constants/StandardPageLayoutTabTitleTranslations.ts
-#: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectAction.tsx
 msgid "Flow"
 msgstr "Virtaus"
 
 #. js-lingui-id: kNqMMd
-#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNewSidebarItemMainMenu.tsx
-#: src/modules/command-menu/components/CommandMenuFolderInfo.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemMainMenu.tsx
+#: src/modules/side-panel/components/SidePanelFolderInfo.tsx
 msgid "Folder"
 msgstr ""
 
 #. js-lingui-id: cqQyPB
-#: src/modules/command-menu/components/CommandMenuFolderInfo.tsx
+#: src/modules/side-panel/components/SidePanelFolderInfo.tsx
 msgid "Folder name"
 msgstr ""
 
 #. js-lingui-id: HSh8u/
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditFolderPickerSubView.tsx
 #: src/modules/settings/accounts/components/message-folders/SettingsAccountsMessageFoldersCard.tsx
-#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuEditFolderPickerSubView.tsx
 msgid "Folders"
 msgstr "Kansiot"
 
 #. js-lingui-id: glx6on
 #: src/modules/auth/sign-in-up/components/SignInUpWorkspaceScopeForm.tsx
+#: src/modules/auth/sign-in-up/components/SignInUpGlobalScopeForm.tsx
 msgid "Forgot your password?"
 msgstr "Unohtuiko salasana?"
 
@@ -6436,7 +6586,7 @@ msgid "Front components"
 msgstr ""
 
 #. js-lingui-id: xf0TNb
-#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutWidgetTypeSelect.tsx
+#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutWidgetTypeSelect.tsx
 msgid "Front Components"
 msgstr ""
 
@@ -6468,8 +6618,8 @@ msgid "Functions - Settings"
 msgstr "Toiminnot - Asetukset"
 
 #. js-lingui-id: vYj1cC
+#: src/modules/side-panel/pages/page-layout/constants/GraphTypeInformation.ts
 #: src/modules/page-layout/utils/getWidgetTitle.ts
-#: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
 msgid "Gauge Chart"
 msgstr "Mittarikaavio"
 
@@ -6479,9 +6629,9 @@ msgstr "Mittarikaavio"
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
+#: src/modules/page-layout/widgets/fields/hooks/useFieldsWidgetGroupsForDisplay.ts
 #: src/modules/page-layout/widgets/fields/hooks/useFieldsWidgetGroups.ts
 #: src/modules/page-layout/widgets/fields/hooks/useFieldsWidgetGroups.ts
-#: src/modules/page-layout/widgets/fields/hooks/useFieldsWidgetEditorGroupsData.ts
 #: src/modules/keyboard-shortcut-menu/components/KeyboardShortcutMenuOpenContent.tsx
 msgid "General"
 msgstr "Yleiset"
@@ -6517,7 +6667,7 @@ msgid "Get your subscription"
 msgstr "Hanki tilaus"
 
 #. js-lingui-id: 2GT3Hf
-#: src/modules/command-menu/components/CommandMenu.tsx
+#: src/modules/side-panel/pages/root/components/SidePanelRootPage.tsx
 msgid "Global"
 msgstr "Globaali"
 
@@ -6657,9 +6807,9 @@ msgid "Group"
 msgstr "Ryhmä"
 
 #. js-lingui-id: ALoP4W
+#: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
-#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Group by"
 msgstr "Ryhmittäin"
 
@@ -6802,7 +6952,7 @@ msgid "Hide deleted workflows"
 msgstr "Piilota poistetut työnkulut"
 
 #. js-lingui-id: MuEcPp
-#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+#: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Hide empty category"
 msgstr "Piilota tyhjä kategoria"
 
@@ -6828,8 +6978,8 @@ msgid "Home"
 msgstr ""
 
 #. js-lingui-id: Xkd22/
+#: src/modules/side-panel/pages/page-layout/constants/GraphTypeInformation.ts
 #: src/modules/page-layout/utils/getWidgetTitle.ts
-#: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
 msgid "Horizontal Bar Chart"
 msgstr ""
 
@@ -6889,7 +7039,7 @@ msgid "https://example.com/callback"
 msgstr ""
 
 #. js-lingui-id: yhVtER
-#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutIframeSettings.tsx
+#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutIframeSettings.tsx
 msgid "https://example.com/embed"
 msgstr "https://example.com/embed"
 
@@ -6900,7 +7050,7 @@ msgstr "https://example.com/webhook"
 
 #. js-lingui-id: khBRyu
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
-#: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectAction.tsx
+#: src/modules/side-panel/pages/workflow/action/components/SidePanelWorkflowSelectAction.tsx
 msgid "Human Input"
 msgstr "Ihmisen syöte"
 
@@ -6962,7 +7112,7 @@ msgid "If you’ve lost this key, you can regenerate it, but be aware that any s
 msgstr "Jos olet hukannut tämän avaimen, voit luoda sen uudelleen, mutta muista, että kaikki skriptit, jotka käyttävät tätä avainta, on päivitettävä. Kirjoita vahvistukseksi \"{confirmationValue}\"."
 
 #. js-lingui-id: KDMdBi
-#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutWidgetTypeSelect.tsx
+#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutWidgetTypeSelect.tsx
 msgid "iFrame"
 msgstr "iFrame"
 
@@ -6972,12 +7122,12 @@ msgid "Iframe"
 msgstr ""
 
 #. js-lingui-id: hiXeBh
-#: src/modules/command-menu/pages/page-layout/utils/getPageLayoutPageTitle.ts
+#: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts
 msgid "iFrame Settings"
 msgstr "iFrame-asetukset"
 
 #. js-lingui-id: mO+Bte
-#: src/modules/command-menu/components/hooks/usePageLayoutHeaderInfo.ts
+#: src/modules/side-panel/components/hooks/usePageLayoutHeaderInfo.ts
 msgid "iFrame Widget"
 msgstr "iFrame-pienoisohjelma"
 
@@ -7145,8 +7295,8 @@ msgstr "Tiedot"
 #. js-lingui-id: XU5AOg
 #: src/pages/settings/ai/components/SettingsAgentLogsTab.tsx
 #: src/pages/settings/ai/components/SettingsAgentLogsTab.tsx
+#: src/modules/side-panel/pages/workflow/step/view-run/components/SidePanelWorkflowRunViewStepContent.tsx
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
-#: src/modules/command-menu/pages/workflow/step/view-run/components/CommandMenuWorkflowRunViewStepContent.tsx
 #: src/modules/ai/components/ToolStepRenderer.tsx
 #: src/modules/ai/components/ThinkingStepsDisplay.tsx
 msgid "Input"
@@ -7190,13 +7340,30 @@ msgstr ""
 msgid "Install and manage applications"
 msgstr "Asenna ja hallinnoi sovelluksia"
 
+#. js-lingui-id: cDDhds
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "Install on this workspace"
+msgstr ""
+
 #. js-lingui-id: JXiMtM
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
 msgid "Install Stats"
 msgstr ""
 
+#. js-lingui-id: FEkwu/
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "Install this app on the current workspace"
+msgstr ""
+
+#. js-lingui-id: Xry+oU
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "Installation"
+msgstr ""
+
 #. js-lingui-id: eQkgKV
+#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsApplications.tsx
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
 msgid "Installed"
 msgstr ""
 
@@ -7204,6 +7371,11 @@ msgstr ""
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 msgid "Installed applications"
 msgstr "Asennetut sovellukset"
+
+#. js-lingui-id: wJJ+Wy
+#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+msgid "Installing..."
+msgstr ""
 
 #. js-lingui-id: AwUsnG
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
@@ -7349,11 +7521,6 @@ msgstr "Virheellinen URL-osoite. Määritä tämä pienoisohjelma valitsemalla M
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification.tsx
 msgid "Invalid verification code. Please try again."
 msgstr "Virheellinen varmennuskoodi. Yritä uudelleen."
-
-#. js-lingui-id: K8XJhc
-#: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
-msgid "Invalid workspace"
-msgstr "Virheellinen työtila"
 
 #. js-lingui-id: ZR1dJ4
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/components/WorkspacesForSignUp.tsx
@@ -7517,7 +7684,7 @@ msgid "Italian"
 msgstr "Italia"
 
 #. js-lingui-id: hgr8eo
-#: src/modules/command-menu/pages/page-layout/utils/getDateGranularityPluralLabel.ts
+#: src/modules/side-panel/pages/page-layout/utils/getDateGranularityPluralLabel.ts
 msgid "items"
 msgstr "kohteet"
 
@@ -7731,16 +7898,16 @@ msgid "Launch"
 msgstr "Käynnistä"
 
 #. js-lingui-id: 9BjbLR
-#: src/modules/command-menu/components/CommandMenuWorkflowStepInfo.tsx
+#: src/modules/side-panel/components/SidePanelWorkflowStepInfo.tsx
 msgid "Launch manually"
 msgstr "Käynnistä manuaalisesti"
 
 #. js-lingui-id: rdU729
+#: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts
+#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutFieldsSettings.tsx
+#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutFieldsLayout.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
-#: src/modules/command-menu/pages/page-layout/utils/getPageLayoutPageTitle.ts
-#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutFieldsSettings.tsx
-#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutFieldsLayout.tsx
 msgid "Layout"
 msgstr "Ulkoasu"
 
@@ -7802,7 +7969,7 @@ msgid "Leave workspace"
 msgstr "Poistu työtilasta"
 
 #. js-lingui-id: MP1v+1
-#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+#: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Legend"
 msgstr ""
 
@@ -7848,14 +8015,14 @@ msgid "Limit must be greater than 0."
 msgstr ""
 
 #. js-lingui-id: pFkLY3
+#: src/modules/side-panel/pages/page-layout/constants/GraphTypeInformation.ts
 #: src/modules/page-layout/utils/getWidgetTitle.ts
-#: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
 msgid "Line Chart"
 msgstr "Viivakaavio"
 
 #. js-lingui-id: yzF66j
-#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNewSidebarItemMainMenu.tsx
-#: src/modules/command-menu/components/CommandMenuLinkInfo.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemMainMenu.tsx
+#: src/modules/side-panel/components/SidePanelLinkInfo.tsx
 msgid "Link"
 msgstr ""
 
@@ -7871,11 +8038,11 @@ msgid "Link copied to clipboard"
 msgstr "Linkki kopioitu leikepöydälle"
 
 #. js-lingui-id: vH3ZQY
+#: src/modules/side-panel/pages/navigation-menu-item/hooks/useAddLinkToNavigationMenu.ts
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemMainMenu.tsx
+#: src/modules/side-panel/components/SidePanelLinkInfo.tsx
+#: src/modules/side-panel/components/SidePanelLinkInfo.tsx
 #: src/modules/navigation-menu-item/hooks/useHandleAddToNavigationDrop.ts
-#: src/modules/command-menu/pages/navigation-menu-item/hooks/useAddLinkToNavigationMenu.ts
-#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNewSidebarItemMainMenu.tsx
-#: src/modules/command-menu/components/CommandMenuLinkInfo.tsx
-#: src/modules/command-menu/components/CommandMenuLinkInfo.tsx
 msgid "Link label"
 msgstr ""
 
@@ -7899,6 +8066,16 @@ msgstr ""
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 msgid "List installed applications. Use filter to search for a specific application"
 msgstr "Listaa asennetut sovellukset. Käytä suodatinta tietyn sovelluksen etsimiseen"
+
+#. js-lingui-id: Ap948/
+#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
+msgid "Listed"
+msgstr ""
+
+#. js-lingui-id: vxO58F
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "Listed on marketplace"
+msgstr ""
 
 #. js-lingui-id: HhVDr2
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
@@ -7990,7 +8167,7 @@ msgid "Loading skills..."
 msgstr ""
 
 #. js-lingui-id: 7YK6ap
-#: src/modules/command-menu/pages/message-thread/components/CommandMenuMessageThreadPage.tsx
+#: src/modules/side-panel/pages/message-thread/components/SidePanelMessageThreadPage.tsx
 msgid "Loading thread"
 msgstr "Ladataan ketjua"
 
@@ -8002,6 +8179,11 @@ msgstr "Ladataan ketjua"
 #: src/modules/activities/timeline-activities/rows/calendar/components/EventCardCalendarEvent.tsx
 msgid "Loading..."
 msgstr "Ladataan..."
+
+#. js-lingui-id: OmWlgF
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "Local development"
+msgstr ""
 
 #. js-lingui-id: 8NbHF7
 #: src/pages/settings/ai/SettingsAIPrompts.tsx
@@ -8062,9 +8244,8 @@ msgstr "Kirjaudu ulos"
 
 #. js-lingui-id: w/bY7R
 #: src/pages/settings/ai/SettingsAgentForm.tsx
-#: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCode.tsx
-#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
+#: src/modules/logic-functions/components/LogicFunctionLogs.tsx
 msgid "Logs"
 msgstr "Lokit"
 
@@ -8164,15 +8345,25 @@ msgstr "Hallitse sovellustasi"
 msgid "Manage your internet accounts."
 msgstr "Hallitse internet-tilejäsi."
 
+#. js-lingui-id: +pSdLP
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "Managed by the marketplace catalog sync for npm packages"
+msgstr ""
+
 #. js-lingui-id: BWTzAb
-#: src/modules/command-menu/pages/page-layout/hooks/useGraphXSortOptionLabels.ts
-#: src/modules/command-menu/pages/page-layout/hooks/useGraphGroupBySortOptionLabels.ts
+#: src/modules/side-panel/pages/page-layout/hooks/useGraphXSortOptionLabels.ts
+#: src/modules/side-panel/pages/page-layout/hooks/useGraphGroupBySortOptionLabels.ts
 msgid "Manual"
 msgstr ""
 
 #. js-lingui-id: Zt5PUS
 #: src/pages/settings/applications/SettingsApplications.tsx
 msgid "Marketplace"
+msgstr ""
+
+#. js-lingui-id: H4eHwB
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "Marketplace Listing"
 msgstr ""
 
 #. js-lingui-id: FCc+QF
@@ -8186,9 +8377,9 @@ msgid "Match Columns"
 msgstr "Yhdistä sarakkeet"
 
 #. js-lingui-id: CK1KXz
+#: src/modules/side-panel/pages/page-layout/constants/settings/RangeMaxSetting.ts
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
-#: src/modules/command-menu/pages/page-layout/constants/settings/RangeMaxSetting.ts
 msgid "Max"
 msgstr "Suurin"
 
@@ -8198,7 +8389,7 @@ msgid "Max import capacity: {formatSpreadsheetMaxRecordImportCapacity} records. 
 msgstr "Enimmäistuontikapasiteetti: {formatSpreadsheetMaxRecordImportCapacity} tietuetta. Muuten, harkitse tiedoston jakamista tai API:n käyttämistä."
 
 #. js-lingui-id: 2ICF9k
-#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+#: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Max range"
 msgstr "Maksimirajoitus"
 
@@ -8295,7 +8486,7 @@ msgid "Merge preview"
 msgstr "Esikatselu yhdistä"
 
 #. js-lingui-id: Cmeamd
-#: src/modules/command-menu/hooks/useOpenMergeRecordsPageInCommandMenu.tsx
+#: src/modules/side-panel/hooks/useOpenMergeRecordsPageInSidePanel.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Merge records"
 msgstr "Yhdistä tietueet"
@@ -8361,14 +8552,14 @@ msgid "Microsoft"
 msgstr "Microsoft"
 
 #. js-lingui-id: eTUF28
+#: src/modules/side-panel/pages/page-layout/constants/settings/RangeMinSetting.ts
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
-#: src/modules/command-menu/pages/page-layout/constants/settings/RangeMinSetting.ts
 msgid "Min"
 msgstr "Pienin"
 
 #. js-lingui-id: JBisyL
-#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+#: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Min range"
 msgstr "Minimirajoitus"
 
@@ -8434,15 +8625,15 @@ msgid "month"
 msgstr "kuukausi"
 
 #. js-lingui-id: HajiZl
+#: src/modules/side-panel/pages/page-layout/utils/getDateGranularityLabel.ts
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx
-#: src/modules/command-menu/pages/page-layout/utils/getDateGranularityLabel.ts
 msgid "Month"
 msgstr "Kuukausi"
 
 #. js-lingui-id: ytTyc9
-#: src/modules/command-menu/pages/page-layout/utils/getDateGranularityLabel.ts
+#: src/modules/side-panel/pages/page-layout/utils/getDateGranularityLabel.ts
 msgid "Month of the year"
 msgstr "Vuoden kuukausi"
 
@@ -8452,8 +8643,8 @@ msgid "monthly"
 msgstr "kuukausittain"
 
 #. js-lingui-id: 6jefe3
-#: src/modules/command-menu/pages/page-layout/utils/getDateGranularityPluralLabel.ts
-#: src/modules/command-menu/pages/page-layout/utils/getDateGranularityPluralLabel.ts
+#: src/modules/side-panel/pages/page-layout/utils/getDateGranularityPluralLabel.ts
+#: src/modules/side-panel/pages/page-layout/utils/getDateGranularityPluralLabel.ts
 msgid "months"
 msgstr ""
 
@@ -8487,36 +8678,36 @@ msgid "Most installed version"
 msgstr ""
 
 #. js-lingui-id: 3Ib6FN
-#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuEditOrganizeActions.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditOrganizeActions.tsx
 msgid "Move down"
 msgstr ""
 
 #. js-lingui-id: iSLA/r
+#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutTabSettings.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 #: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
-#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutTabSettings.tsx
 msgid "Move left"
 msgstr "Siirrä vasemmalle"
 
 #. js-lingui-id: Ubl2by
+#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutTabSettings.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 #: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
-#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutTabSettings.tsx
 msgid "Move right"
 msgstr "Siirrä oikealle"
 
 #. js-lingui-id: 6qDVmw
-#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuEditFolderPickerSubView.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditFolderPickerSubView.tsx
 msgid "Move to a folder"
 msgstr ""
 
 #. js-lingui-id: JCPOml
-#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuEditOrganizeActions.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditOrganizeActions.tsx
 msgid "Move to folder"
 msgstr ""
 
 #. js-lingui-id: QyioBP
-#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuEditOrganizeActions.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditOrganizeActions.tsx
 msgid "Move up"
 msgstr ""
 
@@ -8596,6 +8787,7 @@ msgstr ""
 #: src/modules/settings/admin-panel/config-variables/components/SettingsAdminConfigVariablesTable.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 msgid "Name"
 msgstr "Nimi"
 
@@ -8711,7 +8903,7 @@ msgid "New"
 msgstr "Uusi"
 
 #. js-lingui-id: LfvvW4
-#: src/modules/command-menu/hooks/useOpenRecordInCommandMenu.ts
+#: src/modules/side-panel/hooks/useOpenRecordInSidePanel.ts
 msgid "New {objectLabelSingular}"
 msgstr "Uusi {objectLabelSingular}"
 
@@ -8748,7 +8940,7 @@ msgid "New chat"
 msgstr "Uusi keskustelu"
 
 #. js-lingui-id: +HY5kX
-#: src/modules/command-menu/components/CommandMenuTopBarRightCornerIcon.tsx
+#: src/modules/side-panel/components/SidePanelTopBarRightCornerIcon.tsx
 msgid "New conversation"
 msgstr ""
 
@@ -8765,10 +8957,16 @@ msgstr "Uusi sähköpostitoimialue"
 msgid "New Field"
 msgstr "Uusi kenttä"
 
+#. js-lingui-id: DNUCGO
+#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationUngroupedEditor.tsx
+#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupEditor.tsx
+msgid "New fields"
+msgstr ""
+
 #. js-lingui-id: 96G6Re
-#: src/modules/command-menu/pages/navigation-menu-item/hooks/useAddFolderToNavigationMenu.ts
-#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNewSidebarItemMainMenu.tsx
-#: src/modules/command-menu/components/CommandMenuFolderInfo.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/hooks/useAddFolderToNavigationMenu.ts
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemMainMenu.tsx
+#: src/modules/side-panel/components/SidePanelFolderInfo.tsx
 msgid "New folder"
 msgstr ""
 
@@ -8808,10 +9006,10 @@ msgid "New record"
 msgstr "Uusi tietue"
 
 #. js-lingui-id: x6Ckh1
+#: src/modules/side-panel/pages/navigation-menu-item/hooks/useNavigationMenuItemEditOrganizeActions.ts
+#: src/modules/side-panel/hooks/useSidePanelMenu.ts
 #: src/modules/navigation-menu-item/hooks/useOpenAddItemToFolderPage.ts
 #: src/modules/navigation-menu-item/components/WorkspaceNavigationMenuItems.tsx
-#: src/modules/command-menu/pages/navigation-menu-item/hooks/useNavigationMenuItemEditOrganizeActions.ts
-#: src/modules/command-menu/hooks/useCommandMenu.ts
 msgid "New sidebar item"
 msgstr ""
 
@@ -8848,7 +9046,7 @@ msgid "New Webhook"
 msgstr "Uusi Webhook"
 
 #. js-lingui-id: vam7Jz
-#: src/modules/command-menu/components/hooks/usePageLayoutHeaderInfo.ts
+#: src/modules/side-panel/components/hooks/usePageLayoutHeaderInfo.ts
 msgid "New widget"
 msgstr ""
 
@@ -8874,6 +9072,8 @@ msgstr "Yhdeksäs"
 #. js-lingui-id: 1UzENP
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelUpdateFieldsValueForObject.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSeeFieldsValueForObject.tsx
+#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
+#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 msgid "No"
 msgstr "Ei"
 
@@ -8996,12 +9196,12 @@ msgid "No currency"
 msgstr "Ei valuuttaa"
 
 #. js-lingui-id: DKVJFE
-#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNewSidebarItemViewPickerSubView.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemViewPickerSubView.tsx
 msgid "No custom views available"
 msgstr ""
 
 #. js-lingui-id: plhHQt
-#: src/modules/page-layout/widgets/graph/graphWidgetPieChart/components/PieChartCenterMetricLayer.tsx
+#: src/modules/page-layout/widgets/graph/graph-widget-pie-chart/components/PieChartCenterMetricLayer.tsx
 #: src/modules/page-layout/widgets/graph/components/NoDataLayer.tsx
 #: src/modules/page-layout/widgets/graph/components/GraphWidgetTooltip.tsx
 msgid "No data"
@@ -9077,13 +9277,18 @@ msgstr "Ei tapahtumia"
 msgid "No events have been scheduled with this {objectName} yet."
 msgstr "Tälle kohteelle {objectName} ei ole vielä ajoitettu tapahtumia."
 
+#. js-lingui-id: K8KcHw
+#: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
+msgid "No featured applications found. {nonFeaturedCount} non-featured result(s) available — "
+msgstr ""
+
 #. js-lingui-id: h+tLhU
 #: src/modules/page-layout/widgets/field/components/FieldWidget.tsx
 msgid "No field configured"
 msgstr "Kenttää ei ole määritetty"
 
 #. js-lingui-id: /hvarH
-#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionRelationFieldView.tsx
+#: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionRelationFieldView.tsx
 msgid "No fields available"
 msgstr ""
 
@@ -9103,13 +9308,13 @@ msgid "No Files"
 msgstr "Ei tiedostoja"
 
 #. js-lingui-id: pYblOw
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditFolderPickerSubView.tsx
 #: src/modules/favorites/favorite-folder-picker/components/FavoriteFolderPickerList.tsx
-#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuEditFolderPickerSubView.tsx
 msgid "No folder"
 msgstr "Ei kansiota"
 
 #. js-lingui-id: 6XMhqL
-#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuEditFolderPickerSubView.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditFolderPickerSubView.tsx
 msgid "No folders available"
 msgstr ""
 
@@ -9201,7 +9406,7 @@ msgid "No object found"
 msgstr ""
 
 #. js-lingui-id: YFHO2u
-#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNewSidebarItemViewObjectPickerSubView.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemViewObjectPickerSubView.tsx
 msgid "No objects with views found"
 msgstr ""
 
@@ -9278,14 +9483,14 @@ msgid "No Results"
 msgstr "Ei tuloksia"
 
 #. js-lingui-id: AxPAXW
-#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuSystemObjectPickerSubView.tsx
-#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuObjectPickerSubView.tsx
-#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNewSidebarItemViewSystemSubView.tsx
-#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNewSidebarItemViewPickerSubView.tsx
-#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNewSidebarItemViewObjectPickerSubView.tsx
-#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNewSidebarItemRecordSubView.tsx
-#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuEditFolderPickerSubView.tsx
-#: src/modules/command-menu/components/CommandMenuList.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelSystemObjectPickerSubView.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelObjectPickerSubView.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemViewSystemSubView.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemViewPickerSubView.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemViewObjectPickerSubView.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemRecordSubView.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditFolderPickerSubView.tsx
+#: src/modules/side-panel/components/SidePanelList.tsx
 msgid "No results found"
 msgstr "Tuloksia ei löytynyt"
 
@@ -9310,12 +9515,12 @@ msgid "No Select field"
 msgstr "Ei valintakenttää"
 
 #. js-lingui-id: RQ6tfU
-#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuSystemObjectPickerSubView.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelSystemObjectPickerSubView.tsx
 msgid "No system objects available"
 msgstr ""
 
 #. js-lingui-id: Yf4rVG
-#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNewSidebarItemViewSystemSubView.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemViewSystemSubView.tsx
 msgid "No system objects with views found"
 msgstr ""
 
@@ -9355,21 +9560,21 @@ msgid "No workspace selected"
 msgstr "Työtilaa ei ole valittu"
 
 #. js-lingui-id: Ah7JCB
-#: src/modules/command-menu/pages/workflow/step/view-run/components/CommandMenuWorkflowRunViewStepContent.tsx
+#: src/modules/side-panel/pages/workflow/step/view-run/components/SidePanelWorkflowRunViewStepContent.tsx
 msgid "Node"
 msgstr "Solmu"
 
 #. js-lingui-id: EdQY6l
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/BodyInput.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
+#: src/modules/side-panel/pages/page-layout/utils/getDateGranularityLabel.ts
+#: src/modules/side-panel/pages/page-layout/utils/getChartAxisNameDisplayOptions.ts
+#: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionDropdownContentBase.tsx
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectIdentifiersForm.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterAggregateOperationMenuItems.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
-#: src/modules/command-menu/pages/page-layout/utils/getDateGranularityLabel.ts
-#: src/modules/command-menu/pages/page-layout/utils/getChartAxisNameDisplayOptions.ts
-#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionDropdownContentBase.tsx
 msgid "None"
 msgstr "Ei mitään"
 
@@ -9511,10 +9716,10 @@ msgstr "objekti"
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpdateRecord.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionDeleteRecord.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateRecord.tsx
+#: src/modules/side-panel/pages/root/components/SidePanelRootPage.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemMainMenu.tsx
+#: src/modules/side-panel/components/SidePanelObjectViewRecordInfo.tsx
 #: src/modules/settings/developers/components/WebhookEntitySelect.tsx
-#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNewSidebarItemMainMenu.tsx
-#: src/modules/command-menu/components/CommandMenuObjectViewRecordInfo.tsx
-#: src/modules/command-menu/components/CommandMenu.tsx
 msgid "Object"
 msgstr "Objekti"
 
@@ -9574,9 +9779,9 @@ msgstr ""
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
 #: src/pages/settings/applications/components/SettingsApplicationDataTable.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsObjectsList.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelObjectPickerSubView.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemViewObjectPickerSubView.tsx
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
-#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuObjectPickerSubView.tsx
-#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNewSidebarItemViewObjectPickerSubView.tsx
 msgid "Objects"
 msgstr "Objektit"
 
@@ -9611,7 +9816,7 @@ msgid "Older"
 msgstr ""
 
 #. js-lingui-id: +rvV4v
-#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+#: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Omit zero values"
 msgstr "Jätä nollarvot pois"
 
@@ -9720,7 +9925,7 @@ msgstr "Vain aikaleima ja osallistujat jaetaan tiimisi kanssa."
 
 #. js-lingui-id: 1TNIig
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
-#: src/modules/action-menu/components/RecordShowRightDrawerOpenRecordButton.tsx
+#: src/modules/action-menu/components/RecordShowSidePanelOpenRecordButton.tsx
 msgid "Open"
 msgstr "Avaa"
 
@@ -9728,11 +9933,6 @@ msgstr "Avaa"
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldOnClickActionForm.tsx
 msgid "Open as link"
 msgstr "Avaa linkkinä"
-
-#. js-lingui-id: 69b7aE
-#: src/modules/ui/layout/page-header/components/PageHeaderToggleCommandMenuButton.tsx
-msgid "Open command menu"
-msgstr "Avaa komento-valikko"
 
 #. js-lingui-id: pZZH4Q
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -9754,6 +9954,11 @@ msgstr "Avaa Roolit-näkymässä"
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
 msgid "Open Outlook"
 msgstr "Avaa Outlookissa"
+
+#. js-lingui-id: bY2Xkv
+#: src/modules/ui/layout/page-header/components/PageHeaderToggleSidePanelButton.tsx
+msgid "Open side panel"
+msgstr ""
 
 #. js-lingui-id: OV5wZZ
 #: src/modules/object-metadata/components/NavigationDrawerOpenedSection.tsx
@@ -9782,7 +9987,6 @@ msgstr "Vaihtoehtoinen salaisuus, jota käytetään HMAC-allekirjoituksen laskem
 
 #. js-lingui-id: 0zpgxV
 #: src/modules/ui/layout/dropdown/components/OptionsDropdownMenu.tsx
-#: src/modules/settings/roles/components/SettingsRolesDefaultRole.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableFilterDropdown.tsx
@@ -9829,7 +10033,7 @@ msgid "Organization plan"
 msgstr ""
 
 #. js-lingui-id: nV6twc
-#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuEditOrganizeActions.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditOrganizeActions.tsx
 msgid "Organize"
 msgstr ""
 
@@ -9839,10 +10043,10 @@ msgstr ""
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemMainMenu.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/page-layout/widgets/fields/hooks/useFieldsWidgetGroups.ts
 #: src/modules/navigation/components/NavigationDrawerOtherSection.tsx
-#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNewSidebarItemMainMenu.tsx
 msgid "Other"
 msgstr "Muu"
 
@@ -9863,7 +10067,7 @@ msgid "Other workspaces"
 msgstr "Muut työtilat"
 
 #. js-lingui-id: NuKR0h
-#: src/modules/command-menu/pages/workflow/trigger-type/components/CommandMenuWorkflowSelectTriggerTypeContent.tsx
+#: src/modules/side-panel/pages/workflow/trigger-type/components/SidePanelWorkflowSelectTriggerTypeContent.tsx
 msgid "Others"
 msgstr "Muut"
 
@@ -9884,8 +10088,8 @@ msgstr "Katkos"
 
 #. js-lingui-id: gh06VD
 #: src/modules/workflow/components/WorkflowStepExecutionResult.tsx
+#: src/modules/side-panel/pages/workflow/step/view-run/components/SidePanelWorkflowRunViewStepContent.tsx
 #: src/modules/logic-functions/components/LogicFunctionExecutionResult.tsx
-#: src/modules/command-menu/pages/workflow/step/view-run/components/CommandMenuWorkflowRunViewStepContent.tsx
 #: src/modules/ai/components/ToolStepRenderer.tsx
 #: src/modules/ai/components/ThinkingStepsDisplay.tsx
 #: src/modules/ai/components/TerminalOutput.tsx
@@ -9915,13 +10119,33 @@ msgid "Overview"
 msgstr "Yleiskatsaus"
 
 #. js-lingui-id: LtI9AS
-#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuEditOwnerSection.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditOwnerSection.tsx
 msgid "Owner"
+msgstr ""
+
+#. js-lingui-id: RWJnRQ
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "Ownership transferred successfully"
 msgstr ""
 
 #. js-lingui-id: y3tCDg
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "p"
+msgstr ""
+
+#. js-lingui-id: mGYa19
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "Package"
+msgstr ""
+
+#. js-lingui-id: VXyQnz
+#: src/pages/settings/applications/components/SettingsRegisterNpmAppModal.tsx
+msgid "Package name"
+msgstr ""
+
+#. js-lingui-id: +BO/Qa
+#: src/modules/marketplace/hooks/useRegisterNpmPackage.ts
+msgid "Package registered successfully."
 msgstr ""
 
 #. js-lingui-id: 6WdDG7
@@ -10051,7 +10275,7 @@ msgstr "Prosenttia ei tyhjä"
 
 #. js-lingui-id: /roQKz
 #: src/modules/settings/data-model/fields/forms/number/constants/NumberDataModelSelectOptions.ts
-#: src/modules/page-layout/widgets/graph/graphWidgetPieChart/hooks/usePieChartCenterMetricData.ts
+#: src/modules/page-layout/widgets/graph/graph-widget-pie-chart/hooks/usePieChartCenterMetricData.ts
 msgid "Percentage"
 msgstr "Prosenttiosuus"
 
@@ -10144,13 +10368,13 @@ msgid "Pick a {objectLabel} record"
 msgstr "Valitse {objectLabel} tietue"
 
 #. js-lingui-id: JqqNlC
-#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNewSidebarItemViewPickerSubView.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemViewPickerSubView.tsx
 msgid "Pick a view"
 msgstr ""
 
 #. js-lingui-id: Wlba2h
-#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuObjectPickerSubView.tsx
-#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNewSidebarItemViewObjectPickerSubView.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelObjectPickerSubView.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemViewObjectPickerSubView.tsx
 msgid "Pick an object"
 msgstr ""
 
@@ -10163,8 +10387,8 @@ msgid "Picture"
 msgstr "Kuva"
 
 #. js-lingui-id: 3ubdv5
+#: src/modules/side-panel/pages/page-layout/constants/GraphTypeInformation.ts
 #: src/modules/page-layout/utils/getWidgetTitle.ts
-#: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
 msgid "Pie Chart"
 msgstr "Ympyräkaavio"
 
@@ -10206,7 +10430,7 @@ msgstr "Tarkista sähköpostisi varmennuslinkin osalta."
 
 #. js-lingui-id: jEw0Mr
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
-#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutIframeSettings.tsx
+#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutIframeSettings.tsx
 msgid "Please enter a valid URL"
 msgstr "Anna kelvollinen URL-osoite"
 
@@ -10288,12 +10512,12 @@ msgid "Portuguese — Portugal"
 msgstr "Portugali — Portugali"
 
 #. js-lingui-id: JQw9es
-#: src/modules/command-menu/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
+#: src/modules/side-panel/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
 msgid "position ascending"
 msgstr ""
 
 #. js-lingui-id: ZtUcct
-#: src/modules/command-menu/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
+#: src/modules/side-panel/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
 msgid "position descending"
 msgstr ""
 
@@ -10315,7 +10539,7 @@ msgid "Prefilling your workspace data..."
 msgstr "Esitäytetään työtilasi tietoja..."
 
 #. js-lingui-id: rNqTKZ
-#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+#: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Prefix"
 msgstr "Etuliite"
 
@@ -10505,18 +10729,18 @@ msgid "Python Code Execution"
 msgstr "Python-koodin suoritus"
 
 #. js-lingui-id: 2vudsu
-#: src/modules/command-menu/pages/page-layout/utils/getDateGranularityLabel.ts
+#: src/modules/side-panel/pages/page-layout/utils/getDateGranularityLabel.ts
 msgid "Quarter"
 msgstr "Vuosineljännes"
 
 #. js-lingui-id: GKNfuv
-#: src/modules/command-menu/pages/page-layout/utils/getDateGranularityLabel.ts
+#: src/modules/side-panel/pages/page-layout/utils/getDateGranularityLabel.ts
 msgid "Quarter of the year"
 msgstr "Vuoden neljännes"
 
 #. js-lingui-id: kyP980
-#: src/modules/command-menu/pages/page-layout/utils/getDateGranularityPluralLabel.ts
-#: src/modules/command-menu/pages/page-layout/utils/getDateGranularityPluralLabel.ts
+#: src/modules/side-panel/pages/page-layout/utils/getDateGranularityPluralLabel.ts
+#: src/modules/side-panel/pages/page-layout/utils/getDateGranularityPluralLabel.ts
 msgid "quarters"
 msgstr ""
 
@@ -10546,10 +10770,10 @@ msgid "Rating"
 msgstr "Arviointi"
 
 #. js-lingui-id: iaocTt
+#: src/modules/side-panel/pages/page-layout/hooks/useChartSettingsValues.ts
 #: src/modules/page-layout/widgets/graph/hooks/useGraphWidgetAggregateQuery.ts
 #: src/modules/page-layout/widgets/graph/hooks/useGraphWidgetAggregateQuery.ts
-#: src/modules/page-layout/widgets/graph/graphWidgetAggregateChart/utils/getAggregateChartOperationLabel.ts
-#: src/modules/command-menu/pages/page-layout/hooks/useChartSettingsValues.ts
+#: src/modules/page-layout/widgets/graph/graph-widget-aggregate-chart/utils/getAggregateChartOperationLabel.ts
 msgid "Ratio"
 msgstr "Suhde"
 
@@ -10614,7 +10838,7 @@ msgstr "tietue"
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpdateRecord.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionDeleteRecord.tsx
-#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNewSidebarItemMainMenu.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemMainMenu.tsx
 msgid "Record"
 msgstr "Tietue"
 
@@ -10658,7 +10882,7 @@ msgid "Record Page"
 msgstr "Tietuesivu"
 
 #. js-lingui-id: dSCufP
-#: src/modules/command-menu/components/CommandMenu.tsx
+#: src/modules/side-panel/pages/root/components/SidePanelRootPage.tsx
 msgid "Record Selection"
 msgstr "Valitse tietueet"
 
@@ -10718,6 +10942,23 @@ msgstr "Luo avain uudelleen"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Regenerate Key"
 msgstr "Luo API-avain uudelleen"
+
+#. js-lingui-id: fgLNSM
+#: src/pages/settings/applications/components/SettingsRegisterNpmAppModal.tsx
+msgid "Register"
+msgstr ""
+
+#. js-lingui-id: kbU+zg
+#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
+#: src/pages/settings/applications/components/SettingsRegisterNpmAppModal.tsx
+msgid "Register from npm"
+msgstr ""
+
+#. js-lingui-id: cxM2TJ
+#: src/modules/marketplace/hooks/useRegisterNpmPackage.ts
+msgid "Registration failed."
+msgstr ""
 
 #. js-lingui-id: h9AYFD
 #: src/modules/settings/data-model/fields/forms/components/SettingsObjectNewFieldSelector.tsx
@@ -10823,7 +11064,7 @@ msgid "Remove from favorites"
 msgstr "Poista suosikeista"
 
 #. js-lingui-id: 9VZ6f0
-#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuEditOrganizeActions.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditOrganizeActions.tsx
 msgid "Remove from sidebar"
 msgstr ""
 
@@ -10887,12 +11128,12 @@ msgid "Reorder field"
 msgstr "Järjestä kenttä uudelleen"
 
 #. js-lingui-id: a2EE6C
-#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartManualSortSubMenuContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartManualSortSubMenuContent.tsx
 msgid "Reorder options"
 msgstr ""
 
 #. js-lingui-id: ImOQa9
-#: src/modules/command-menu/pages/message-thread/components/CommandMenuMessageThreadPage.tsx
+#: src/modules/side-panel/pages/message-thread/components/SidePanelMessageThreadPage.tsx
 #: src/modules/activities/emails/components/EmailThreadBottomBar.tsx
 msgid "Reply"
 msgstr "Vastaa"
@@ -10931,7 +11172,7 @@ msgid "Reset 2FA"
 msgstr "Nollaa 2FA"
 
 #. js-lingui-id: 1IWc1n
-#: src/modules/command-menu/components/ResetContextToSelectionCommandButton.tsx
+#: src/modules/side-panel/pages/root/components/SidePanelResetContextToSelectionButton.tsx
 msgid "Reset to"
 msgstr "Palauta"
 
@@ -11037,8 +11278,8 @@ msgid "Result"
 msgstr "Tulos"
 
 #. js-lingui-id: kx0s+n
-#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNewSidebarItemRecordSubView.tsx
-#: src/modules/command-menu/hooks/useCommandMenuSearchRecords.tsx
+#: src/modules/side-panel/pages/search/hooks/useSidePanelSearchRecords.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemRecordSubView.tsx
 msgid "Results"
 msgstr "Tulokset"
 
@@ -11065,8 +11306,8 @@ msgid "Return Value"
 msgstr "Palautusarvo"
 
 #. js-lingui-id: wu55ly
-#: src/modules/command-menu/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
-#: src/modules/command-menu/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
+#: src/modules/side-panel/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
+#: src/modules/side-panel/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
 msgid "reverse alphabetical"
 msgstr ""
 
@@ -11076,9 +11317,9 @@ msgid "Revoked for this object"
 msgstr "Peruutettu tälle kohteelle"
 
 #. js-lingui-id: NP5Nbf
+#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutWidgetTypeSelect.tsx
+#: src/modules/side-panel/hooks/useOpenRichTextInSidePanel.ts
 #: src/modules/page-layout/utils/getWidgetTitle.ts
-#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutWidgetTypeSelect.tsx
-#: src/modules/command-menu/hooks/useRichTextCommandMenu.ts
 msgid "Rich Text"
 msgstr "Muotoiltu teksti"
 
@@ -11088,6 +11329,7 @@ msgid "role"
 msgstr "rooli"
 
 #. js-lingui-id: GDvlUT
+#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/ai/SettingsAgentForm.tsx
@@ -11281,9 +11523,9 @@ msgstr ""
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownWorkspacesListComponents.tsx
 #: src/modules/ui/layout/dropdown/components/DropdownMenuSearchInput.tsx
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
+#: src/modules/side-panel/hooks/useOpenRecordsSearchPageInSidePanel.ts
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentWorkspaceMemberPickerDropdown.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
-#: src/modules/command-menu/hooks/useOpenRecordsSearchPageInCommandMenu.ts
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
@@ -11291,10 +11533,10 @@ msgstr ""
 msgid "Search"
 msgstr "Hae"
 
-#. js-lingui-id: 8NBMeZ
-#: src/modules/command-menu/components/CommandMenu.tsx
-msgid "Search ''{commandMenuSearch}'' with..."
-msgstr "Hae ''{commandMenuSearch}'' avulla..."
+#. js-lingui-id: aOQ/Fi
+#: src/modules/side-panel/pages/root/components/SidePanelRootPage.tsx
+msgid "Search ''{sidePanelSearch}'' with..."
+msgstr ""
 
 #. js-lingui-id: g2dQp/
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelect.tsx
@@ -11324,7 +11566,7 @@ msgid "Search a field..."
 msgstr "Etsi kenttää..."
 
 #. js-lingui-id: ITQFzL
-#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuEditFolderPickerSubView.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditFolderPickerSubView.tsx
 msgid "Search a folder..."
 msgstr ""
 
@@ -11345,8 +11587,8 @@ msgid "Search a skill..."
 msgstr ""
 
 #. js-lingui-id: hVJ1MP
-#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuSystemObjectPickerSubView.tsx
-#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNewSidebarItemViewSystemSubView.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelSystemObjectPickerSubView.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemViewSystemSubView.tsx
 msgid "Search a system object..."
 msgstr ""
 
@@ -11361,7 +11603,7 @@ msgid "Search a type"
 msgstr "Etsi tyyppiä"
 
 #. js-lingui-id: +MhOVB
-#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNewSidebarItemViewPickerSubView.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemViewPickerSubView.tsx
 msgid "Search a view..."
 msgstr ""
 
@@ -11398,8 +11640,8 @@ msgstr "Etsi objekti"
 
 #. js-lingui-id: BoNHR0
 #: src/pages/settings/applications/components/SettingsApplicationDataTable.tsx
-#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuObjectPickerSubView.tsx
-#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNewSidebarItemViewObjectPickerSubView.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelObjectPickerSubView.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemViewObjectPickerSubView.tsx
 msgid "Search an object..."
 msgstr ""
 
@@ -11418,12 +11660,12 @@ msgid "Search API keys"
 msgstr "Etsi API-avaimia"
 
 #. js-lingui-id: yI4D/V
-#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartColorSelectionDropdownContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartColorSelectionDropdownContent.tsx
 msgid "Search colors"
 msgstr "Etsi värejä"
 
 #. js-lingui-id: AR3FV/
-#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuEditColorOption.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditColorOption.tsx
 msgid "Search colors..."
 msgstr ""
 
@@ -11445,13 +11687,13 @@ msgstr "Etsi valuutta"
 #. js-lingui-id: 7taA9j
 #: src/modules/views/components/ViewBarFilterDropdownFieldSelectMenu.tsx
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionRelationFieldView.tsx
+#: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionDropdownContentBase.tsx
+#: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartFieldSelectionForAggregateOperationDropdownContent.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarFieldsContent.tsx
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterFieldSelectSearchInput.tsx
-#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionRelationFieldView.tsx
-#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionDropdownContentBase.tsx
-#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartFieldSelectionForAggregateOperationDropdownContent.tsx
 msgid "Search fields"
 msgstr "Etsi kenttiä"
 
@@ -11471,17 +11713,17 @@ msgid "Search icon"
 msgstr "Etsi kuvake"
 
 #. js-lingui-id: two5rl
-#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartDataSourceDropdownContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartDataSourceDropdownContent.tsx
 msgid "Search objects"
 msgstr "Etsi objekteja"
 
 #. js-lingui-id: pGn7U0
-#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartAggregateOperationSelectionDropdownContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartAggregateOperationSelectionDropdownContent.tsx
 msgid "Search operations"
 msgstr "Etsi toimintoja"
 
 #. js-lingui-id: 996xRf
-#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartRatioOptionValueSelectionDropdownContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartRatioOptionValueSelectionDropdownContent.tsx
 msgid "Search options"
 msgstr "Hakuvaihtoehdot"
 
@@ -11492,8 +11734,13 @@ msgid "Search records"
 msgstr "Hae tietueita"
 
 #. js-lingui-id: rRklUH
-#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNewSidebarItemRecordSubView.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemRecordSubView.tsx
 msgid "Search records..."
+msgstr ""
+
+#. js-lingui-id: wCw+0a
+#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
+msgid "Search registrations..."
 msgstr ""
 
 #. js-lingui-id: YIix5Y
@@ -11673,6 +11920,11 @@ msgstr "Näytä työnkulku"
 msgid "See Workflows"
 msgstr "Näytä työnkulut"
 
+#. js-lingui-id: 2PIP/G
+#: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
+msgid "Seed a demo workspace using the dedicated tool, ask me questions about my activity and goals to tailor the seeded data to my needs, and then help me explore the workspace and data you created."
+msgstr ""
+
 #. js-lingui-id: rG3WVm
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/components/columns.tsx
 #: src/modules/spreadsheet-import/steps/components/SelectHeaderStep/components/SelectColumn.tsx
@@ -11688,6 +11940,11 @@ msgstr ""
 #. js-lingui-id: VjMMyZ
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelect.tsx
 msgid "Select 1 field"
+msgstr ""
+
+#. js-lingui-id: YfBvUy
+#: src/pages/settings/applications/components/SettingsUploadTarballModal.tsx
+msgid "Select a .tar.gz application package to upload and install."
 msgstr ""
 
 #. js-lingui-id: OMoA3j
@@ -11706,7 +11963,7 @@ msgid "Select a field to display in this widget"
 msgstr "Valitse kenttä, joka näytetään tässä widgetissä"
 
 #. js-lingui-id: dtAvBz
-#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNavigationMenuItemEditPage.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNavigationMenuItemEditPage.tsx
 msgid "Select a navigation item to edit"
 msgstr ""
 
@@ -11716,13 +11973,13 @@ msgid "Select a value"
 msgstr "Valitse arvo"
 
 #. js-lingui-id: YcJS1T
-#: src/modules/command-menu/hooks/useWorkflowCommandMenu.ts
+#: src/modules/side-panel/pages/workflow/hooks/useSidePanelWorkflowNavigation.ts
 #: src/modules/command-menu/hooks/__tests__/useWorkflowCommandMenu.test.tsx
 msgid "Select action"
 msgstr "Valitse toiminto"
 
 #. js-lingui-id: WZvt/6
-#: src/modules/command-menu/hooks/useWorkflowCommandMenu.ts
+#: src/modules/side-panel/pages/workflow/hooks/useSidePanelWorkflowNavigation.ts
 #: src/modules/command-menu/hooks/__tests__/useWorkflowCommandMenu.test.tsx
 msgid "Select Action"
 msgstr "Valitse toiminto"
@@ -11765,7 +12022,7 @@ msgid "Select file"
 msgstr "Valitse tiedosto"
 
 #. js-lingui-id: i568hB
-#: src/modules/command-menu/pages/page-layout/utils/getPageLayoutPageTitle.ts
+#: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts
 msgid "Select Graph Type"
 msgstr "Valitse kaaviotyyppi"
 
@@ -11790,9 +12047,9 @@ msgid "Select one or several standard objects to activate below"
 msgstr "Valitse yksi tai useampi standardiobjekti, jotka haluat aktivoida alla"
 
 #. js-lingui-id: lGxnQv
+#: src/modules/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelRecordFilterOperandSelect.tsx
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterRecordFilterOperandSelectContent.tsx
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterRecordFilterOperandSelect.tsx
-#: src/modules/object-record/advanced-filter/command-menu/components/AdvancedFilterCommandMenuRecordFilterOperandSelect.tsx
 msgid "Select operand"
 msgstr "Valitse operandi"
 
@@ -11842,7 +12099,7 @@ msgid "Select Type"
 msgstr "Valitse tyyppi"
 
 #. js-lingui-id: iWf0Zj
-#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartRatioOptionValueSelectionDropdownContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartRatioOptionValueSelectionDropdownContent.tsx
 msgid "Select value"
 msgstr "Valitse arvo"
 
@@ -11912,10 +12169,10 @@ msgstr "Palveluntarjoajan Tiedot"
 msgid "Set {placeholderForEmptyCell}"
 msgstr "Aseta {placeholderForEmptyCell}"
 
-#. js-lingui-id: YZwx1e
+#. js-lingui-id: QEVmIH
 #: src/modules/settings/roles/components/SettingsRolesDefaultRole.tsx
-msgid "Set a default role for this workspace"
-msgstr "Aseta oletusrooli tälle työtilalle"
+msgid "Set a default for this workspace"
+msgstr ""
 
 #. js-lingui-id: PPcets
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
@@ -11986,12 +12243,12 @@ msgstr "Asetetaan tietokantaasi..."
 #: src/pages/settings/ai/SettingsAgentForm.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
+#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutTabSettings.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 #: src/modules/object-record/record-merge/hooks/useMergeRecordsContainerTabs.ts
 #: src/modules/navigation/components/NavigationDrawerOtherSection.tsx
-#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutTabSettings.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Settings"
 msgstr "Asetukset"
@@ -12009,6 +12266,11 @@ msgstr "Asetusten käyttöoikeudet"
 #. js-lingui-id: rl/5Qa
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 msgid "Settings tab"
+msgstr ""
+
+#. js-lingui-id: dIJGKR
+#: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
+msgid "Setup a tailor-made workspace"
 msgstr ""
 
 #. js-lingui-id: Ue7X/E
@@ -12067,6 +12329,11 @@ msgstr "Pitäisikö objektin nimilapun muuttaminen vaihtaa myös APIa?"
 msgid "Should changing the label also change the API name?"
 msgstr ""
 
+#. js-lingui-id: vbXZ3k
+#: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
+msgid "show all"
+msgstr ""
+
 #. js-lingui-id: lSEpDc
 #: src/modules/object-record/record-group/components/RecordGroupMenuItemDraggable.tsx
 msgid "Show group {groupValue}"
@@ -12083,7 +12350,7 @@ msgid "Show only rows with errors"
 msgstr "Näytä vain virheelliset rivit"
 
 #. js-lingui-id: TJ4tz9
-#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+#: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Show value in center"
 msgstr ""
 
@@ -12285,19 +12552,22 @@ msgid "Sort"
 msgstr "Järjestä"
 
 #. js-lingui-id: /HgF9q
-#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
-#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+#: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+#: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Sort by"
 msgstr "Järjestä"
 
 #. js-lingui-id: vKy//U
-#: src/modules/command-menu/pages/page-layout/utils/__tests__/shouldHideChartSetting.test.ts
+#: src/modules/side-panel/pages/page-layout/utils/__tests__/shouldHideChartSetting.test.ts
 msgid "Sort By Group"
 msgstr "Lajittele ryhmän mukaan"
 
 #. js-lingui-id: wdxz7K
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableOptionsDropdownContent.tsx
-#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 msgid "Source"
 msgstr "Lähde"
 
@@ -12312,10 +12582,10 @@ msgid "Spanish"
 msgstr "Espanja"
 
 #. js-lingui-id: gsifzp
-#: src/modules/command-menu/pages/page-layout/utils/__tests__/shouldHideChartSetting.test.ts
-#: src/modules/command-menu/pages/page-layout/utils/__tests__/shouldHideChartSetting.test.ts
-#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
-#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+#: src/modules/side-panel/pages/page-layout/utils/__tests__/shouldHideChartSetting.test.ts
+#: src/modules/side-panel/pages/page-layout/utils/__tests__/shouldHideChartSetting.test.ts
+#: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+#: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Split multiple values"
 msgstr ""
 
@@ -12341,12 +12611,12 @@ msgid "Stack Trace"
 msgstr "Pinojälki"
 
 #. js-lingui-id: nNpwX2
-#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+#: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Stacked bars"
 msgstr "Pystypalkit"
 
 #. js-lingui-id: bQSDyq
-#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+#: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Stacked lines"
 msgstr ""
 
@@ -12444,7 +12714,7 @@ msgid "String"
 msgstr ""
 
 #. js-lingui-id: 1CalO6
-#: src/modules/command-menu/pages/page-layout/constants/ChartSettingsHeadings.ts
+#: src/modules/side-panel/pages/page-layout/constants/ChartSettingsHeadings.ts
 msgid "Style"
 msgstr ""
 
@@ -12570,7 +12840,7 @@ msgid "Successfully updated {count} records"
 msgstr ""
 
 #. js-lingui-id: QJz8/3
-#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+#: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Suffix"
 msgstr "Jälkiliite"
 
@@ -12690,13 +12960,13 @@ msgstr ""
 
 #. js-lingui-id: 0apULK
 #: src/pages/settings/data-model/SettingsObjectTable.tsx
-#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuSystemObjectPickerSubView.tsx
-#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuSystemObjectPickerSubView.tsx
-#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuObjectPickerSubView.tsx
-#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuObjectPickerSubView.tsx
-#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNewSidebarItemViewSystemSubView.tsx
-#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNewSidebarItemViewSystemSubView.tsx
-#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNewSidebarItemViewObjectPickerSubView.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelSystemObjectPickerSubView.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelSystemObjectPickerSubView.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelObjectPickerSubView.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelObjectPickerSubView.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemViewSystemSubView.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemViewSystemSubView.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemViewObjectPickerSubView.tsx
 msgid "System objects"
 msgstr ""
 
@@ -12764,12 +13034,12 @@ msgid "System settings - Sunday"
 msgstr "Järjestelmän asetukset - Sunnuntai"
 
 #. js-lingui-id: HuA3RU
-#: src/modules/command-menu/components/hooks/usePageLayoutHeaderInfo.ts
+#: src/modules/side-panel/components/hooks/usePageLayoutHeaderInfo.ts
 msgid "Tab"
 msgstr "Välilehti"
 
 #. js-lingui-id: zr20ox
-#: src/modules/command-menu/pages/page-layout/utils/getPageLayoutPageTitle.ts
+#: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts
 msgid "Tab Settings"
 msgstr "Välilehden asetukset"
 
@@ -12781,9 +13051,25 @@ msgstr "Välilehden asetukset"
 msgid "Table"
 msgstr "Taulukko"
 
+#. js-lingui-id: HpIrmy
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "Tarball upload"
+msgstr ""
+
+#. js-lingui-id: yvSCl+
+#: src/pages/settings/applications/components/SettingsUploadTarballModal.tsx
+msgid "Tarball uploaded but installation failed."
+msgstr ""
+
 #. js-lingui-id: sceIIK
 #: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationJunctionForm.tsx
 msgid "Target relation on Junction Object"
+msgstr ""
+
+#. js-lingui-id: qmwHSv
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "Target workspace subdomain"
 msgstr ""
 
 #. js-lingui-id: R+s8S+
@@ -13079,6 +13365,11 @@ msgstr ""
 msgid "This action will delete this folder and the navigation menu item inside. Do you want to continue?"
 msgstr ""
 
+#. js-lingui-id: SYslQU
+#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+msgid "This application is not listed on the marketplace. It was shared via a direct link."
+msgstr ""
+
 #. js-lingui-id: SLIRqz
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
 msgid "This database value overrides environment settings. "
@@ -13348,7 +13639,7 @@ msgid "Tools"
 msgstr ""
 
 #. js-lingui-id: 72c5Qo
-#: src/modules/page-layout/widgets/graph/graphWidgetPieChart/hooks/usePieChartCenterMetricData.ts
+#: src/modules/page-layout/widgets/graph/graph-widget-pie-chart/hooks/usePieChartCenterMetricData.ts
 msgid "Total"
 msgstr ""
 
@@ -13378,6 +13669,17 @@ msgstr "Aika yhteensä"
 msgid "Track your {intervalLabel} workflow credit consumption."
 msgstr "Seuraa {intervalLabel} työprosessien krediittien kulutustasi."
 
+#. js-lingui-id: zPGNJm
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "Transfer"
+msgstr ""
+
+#. js-lingui-id: KSnRfc
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "Transfer ownership"
+msgstr ""
+
 #. js-lingui-id: lhkaAC
 #: src/modules/billing/components/internal/PlansTags.tsx
 msgid "Trial"
@@ -13396,9 +13698,9 @@ msgstr "Kokeilujakso päättynyt. Päivitä laskutustietosi."
 #. js-lingui-id: H2Sfhg
 #: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramEmptyTriggerReadonly.tsx
 #: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramEmptyTriggerEditable.tsx
-#: src/modules/command-menu/components/CommandMenuWorkflowStepInfo.tsx
-#: src/modules/command-menu/components/CommandMenuWorkflowStepInfo.tsx
-#: src/modules/command-menu/components/CommandMenuWorkflowStepInfo.tsx
+#: src/modules/side-panel/components/SidePanelWorkflowStepInfo.tsx
+#: src/modules/side-panel/components/SidePanelWorkflowStepInfo.tsx
+#: src/modules/side-panel/components/SidePanelWorkflowStepInfo.tsx
 msgid "Trigger"
 msgstr "Laukaisin"
 
@@ -13419,7 +13721,7 @@ msgid "Trigger interval"
 msgstr "Laukaisuväli"
 
 #. js-lingui-id: PiUt3N
-#: src/modules/command-menu/hooks/useWorkflowCommandMenu.ts
+#: src/modules/side-panel/pages/workflow/hooks/useSidePanelWorkflowNavigation.ts
 #: src/modules/command-menu/hooks/__tests__/useWorkflowCommandMenu.test.tsx
 msgid "Trigger Type"
 msgstr "Laukaisijan tyyppi"
@@ -13442,12 +13744,12 @@ msgstr "Aktivoi toiminnon Http-pyynnöllä"
 
 #. js-lingui-id: c+xCSz
 #: src/modules/ui/field/display/components/BooleanDisplay.tsx
+#: src/modules/side-panel/pages/page-layout/hooks/useChartSettingsValues.ts
+#: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartRatioOptionValueSelectionDropdownContent.tsx
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab.tsx
 #: src/modules/settings/data-model/fields/forms/boolean/constants/BooleanDataModelSelectOptions.ts
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownBooleanSelect.tsx
-#: src/modules/command-menu/pages/page-layout/hooks/useChartSettingsValues.ts
-#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartRatioOptionValueSelectionDropdownContent.tsx
 msgid "True"
 msgstr "Tosi"
 
@@ -13564,12 +13866,12 @@ msgstr ""
 
 #. js-lingui-id: qzD6hf
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsTab.tsx
-#: src/modules/command-menu/components/CommandMenuTopBar.tsx
+#: src/modules/side-panel/components/SidePanelTopBar.tsx
 msgid "Type anything..."
 msgstr "Kirjoita jotain..."
 
 #. js-lingui-id: UhqKcC
-#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNewSidebarItemRecordSubView.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemRecordSubView.tsx
 msgid "Type to search records"
 msgstr ""
 
@@ -13614,22 +13916,22 @@ msgid "Undefined"
 msgstr "Määrittelemätön"
 
 #. js-lingui-id: o23uCL
-#: src/modules/command-menu/pages/page-layout/utils/getChartLimitMessage.ts
+#: src/modules/side-panel/pages/page-layout/utils/getChartLimitMessage.ts
 msgid "Undisplayed data: max {maxItems} {granularityLabel} per chart."
 msgstr ""
 
 #. js-lingui-id: LshHRh
-#: src/modules/command-menu/pages/page-layout/utils/getChartLimitMessage.ts
+#: src/modules/side-panel/pages/page-layout/utils/getChartLimitMessage.ts
 msgid "Undisplayed data: max {maxItems} bars per chart."
 msgstr ""
 
 #. js-lingui-id: 8MwfeU
-#: src/modules/command-menu/pages/page-layout/utils/getChartLimitMessage.ts
+#: src/modules/side-panel/pages/page-layout/utils/getChartLimitMessage.ts
 msgid "Undisplayed data: max {maxItems} data points per chart."
 msgstr ""
 
 #. js-lingui-id: 0LZhoy
-#: src/modules/command-menu/pages/page-layout/utils/getChartLimitMessage.ts
+#: src/modules/side-panel/pages/page-layout/utils/getChartLimitMessage.ts
 msgid "Undisplayed data: max {maxItems} slices per chart."
 msgstr ""
 
@@ -13667,8 +13969,8 @@ msgid "Unique fields"
 msgstr "Yksilölliset kentät"
 
 #. js-lingui-id: pRpC/r
-#: src/modules/command-menu/pages/page-layout/constants/settings/SuffixSetting.ts
-#: src/modules/command-menu/pages/page-layout/constants/settings/PrefixSetting.ts
+#: src/modules/side-panel/pages/page-layout/constants/settings/SuffixSetting.ts
+#: src/modules/side-panel/pages/page-layout/constants/settings/PrefixSetting.ts
 msgid "unit"
 msgstr "yksikkö"
 
@@ -13690,7 +13992,7 @@ msgid "Unknown"
 msgstr "Tuntematon"
 
 #. js-lingui-id: YPJWmo
-#: src/modules/command-menu/pages/page-layout/utils/getCurrentGraphTypeFromConfig.ts
+#: src/modules/side-panel/pages/page-layout/utils/getCurrentGraphTypeFromConfig.ts
 msgid "Unknown chart configuration type"
 msgstr ""
 
@@ -13743,6 +14045,7 @@ msgstr ""
 #: src/modules/ui/field/display/components/GlobalFilePreviewModal.tsx
 #: src/modules/ui/field/display/components/ArrayDisplay.tsx
 #: src/modules/ui/field/display/components/ActorDisplay.tsx
+#: src/modules/side-panel/components/SidePanelContextChip.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/page-layout/components/PageLayoutRendererContent.tsx
 #: src/modules/object-record/record-title-cell/components/RecordTitleFullNameFieldDisplay.tsx
@@ -13750,10 +14053,8 @@ msgstr ""
 #: src/modules/object-record/components/RecordChip.tsx
 #: src/modules/object-record/components/RecordChip.tsx
 #: src/modules/mention/components/MentionRecordChip.tsx
-#: src/modules/command-menu/components/CommandMenuContextChip.tsx
 #: src/modules/ai/components/RecordLink.tsx
 #: src/modules/ai/components/AIChatThreadGroup.tsx
-#: src/modules/ai/components/internal/AgentChatFilePreview.tsx
 #: src/modules/ai/components/internal/AgentChatFilePreview.tsx
 #: src/modules/activities/timeline-activities/rows/activity/components/EventRowActivity.tsx
 msgid "Untitled"
@@ -13765,7 +14066,7 @@ msgid "Untitled {labelSingular}"
 msgstr "Nimetön {labelSingular}"
 
 #. js-lingui-id: RBz20h
-#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutWidgetTypeSelect.tsx
+#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutWidgetTypeSelect.tsx
 msgid "Untitled iFrame"
 msgstr "Nimetön iFrame"
 
@@ -13792,6 +14093,7 @@ msgid "update"
 msgstr "päivitä"
 
 #. js-lingui-id: EkH9pt
+#: src/pages/settings/applications/components/SettingsApplicationTableRow.tsx
 #: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
 #: src/modules/information-banner/components/billing/InformationBannerBillingSubscriptionPaused.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -13799,7 +14101,7 @@ msgid "Update"
 msgstr "Päivitä"
 
 #. js-lingui-id: 0KAL3W
-#: src/modules/command-menu/hooks/useOpenUpdateMultipleRecordsPageInCommandMenu.tsx
+#: src/modules/side-panel/hooks/useOpenUpdateMultipleRecordsPageInSidePanel.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Update records"
 msgstr ""
@@ -13853,6 +14155,11 @@ msgstr "Päivitys"
 msgid "Upgrade Plan"
 msgstr "Päivitä tilaus"
 
+#. js-lingui-id: pKCx2F
+#: src/pages/settings/applications/components/SettingsApplicationVersionContainer.tsx
+msgid "Upgrade to {latestAvailableVersion}"
+msgstr ""
+
 #. js-lingui-id: ggd+Ee
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
 msgid "Upgrade to access"
@@ -13861,6 +14168,11 @@ msgstr ""
 #. js-lingui-id: jmVW3I
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Upgrade to Enterprise to access audit logs"
+msgstr ""
+
+#. js-lingui-id: +Gi3x1
+#: src/pages/settings/applications/components/SettingsApplicationVersionContainer.tsx
+msgid "Upgrading..."
 msgstr ""
 
 #. js-lingui-id: ONWvwQ
@@ -13872,6 +14184,11 @@ msgstr "Lataa"
 #: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
 msgid "Upload .xlsx, .xls or .csv file"
 msgstr "Lataa .xlsx, .xls tai .csv tiedosto"
+
+#. js-lingui-id: BhkxTk
+#: src/modules/marketplace/hooks/useUploadAppTarball.ts
+msgid "Upload failed."
+msgstr ""
 
 #. js-lingui-id: 2IXDgU
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
@@ -13896,6 +14213,12 @@ msgstr "Lataa tiedostoja"
 msgid "Upload Files"
 msgstr "Lataa tiedostoja"
 
+#. js-lingui-id: aG3MkW
+#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
+#: src/pages/settings/applications/components/SettingsUploadTarballModal.tsx
+msgid "Upload tarball"
+msgstr ""
+
 #. js-lingui-id: akDOEO
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Upload the XML file with your connection infos"
@@ -13918,7 +14241,7 @@ msgid "URL"
 msgstr "Verkko-osoite"
 
 #. js-lingui-id: pphDjD
-#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutIframeSettings.tsx
+#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutIframeSettings.tsx
 msgid "URL to Embed"
 msgstr "URL upotettavaksi"
 
@@ -14034,14 +14357,14 @@ msgstr "Vahvista tiedot"
 #. js-lingui-id: wMHvYH
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTable.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/KeyValuePairInput.tsx
+#: src/modules/side-panel/pages/page-layout/hooks/useGraphXSortOptionLabels.ts
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTabEnvironmentVariableTableRow.tsx
 #: src/modules/settings/components/SettingsDnsRecordsTable.tsx
 #: src/modules/settings/admin-panel/config-variables/components/SettingsAdminConfigVariablesTable.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
-#: src/modules/page-layout/widgets/graph/graphWidgetGaugeChart/components/GraphWidgetGaugeChart.tsx
-#: src/modules/page-layout/widgets/graph/graphWidgetGaugeChart/components/GraphWidgetGaugeChart.tsx
-#: src/modules/command-menu/pages/page-layout/hooks/useGraphXSortOptionLabels.ts
+#: src/modules/page-layout/widgets/graph/graph-widget-gauge-chart/components/GraphWidgetGaugeChart.tsx
+#: src/modules/page-layout/widgets/graph/graph-widget-gauge-chart/components/GraphWidgetGaugeChart.tsx
 msgid "Value"
 msgstr "Arvo"
 
@@ -14113,8 +14436,8 @@ msgid "Version of the application"
 msgstr "Sovelluksen versio"
 
 #. js-lingui-id: yIWhRv
+#: src/modules/side-panel/pages/page-layout/constants/GraphTypeInformation.ts
 #: src/modules/page-layout/utils/getWidgetTitle.ts
-#: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
 msgid "Vertical Bar Chart"
 msgstr ""
 
@@ -14129,10 +14452,10 @@ msgid "view"
 msgstr "näkymä"
 
 #. js-lingui-id: jpctdh
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemMainMenu.tsx
+#: src/modules/side-panel/components/SidePanelObjectViewRecordInfo.tsx
 #: src/modules/settings/developers/components/WebhookEntitySelect.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
-#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNewSidebarItemMainMenu.tsx
-#: src/modules/command-menu/components/CommandMenuObjectViewRecordInfo.tsx
 msgid "View"
 msgstr "Näkymä"
 
@@ -14167,7 +14490,7 @@ msgid "View Docs"
 msgstr "Näytä dokumentaatio"
 
 #. js-lingui-id: Mv1YVf
-#: src/modules/ui/feedback/snack-bar-manager/utils/build-error-action.util.ts
+#: src/modules/ui/feedback/snack-bar-manager/utils/buildErrorAction.ts
 msgid "View existing record"
 msgstr "Näytä olemassa oleva tietue"
 
@@ -14211,6 +14534,11 @@ msgstr "Näytä työt"
 msgid "View Logs"
 msgstr ""
 
+#. js-lingui-id: 7PrSCy
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "View marketplace page"
+msgstr ""
+
 #. js-lingui-id: ecVcAx
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
@@ -14225,6 +14553,11 @@ msgstr ""
 #. js-lingui-id: mzftV9
 #: src/modules/workflow/workflow-steps/components/WorkflowStepFooter.tsx
 msgid "View Role"
+msgstr ""
+
+#. js-lingui-id: 4y776f
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "view sort"
 msgstr ""
 
 #. js-lingui-id: FNDoRH
@@ -14243,7 +14576,7 @@ msgid "View workspace activity logs"
 msgstr ""
 
 #. js-lingui-id: 1I6UoR
-#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNewSidebarItemViewPickerSubView.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemViewPickerSubView.tsx
 msgid "Views"
 msgstr ""
 
@@ -14414,15 +14747,15 @@ msgid "Website"
 msgstr ""
 
 #. js-lingui-id: zx4BuL
+#: src/modules/side-panel/pages/page-layout/utils/getDateGranularityLabel.ts
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx
-#: src/modules/command-menu/pages/page-layout/utils/getDateGranularityLabel.ts
 msgid "Week"
 msgstr "Viikko"
 
 #. js-lingui-id: IAUiSh
-#: src/modules/command-menu/pages/page-layout/utils/getDateGranularityPluralLabel.ts
+#: src/modules/side-panel/pages/page-layout/utils/getDateGranularityPluralLabel.ts
 msgid "weeks"
 msgstr ""
 
@@ -14482,6 +14815,11 @@ msgstr ""
 msgid "When enabled, newly added models are available to all workspaces by default"
 msgstr ""
 
+#. js-lingui-id: mCGuXk
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "When enabled, this app appears in the marketplace browse page"
+msgstr ""
+
 #. js-lingui-id: C51ilI
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 msgid "When the API key will expire."
@@ -14495,15 +14833,20 @@ msgstr "Milloin avain poistetaan käytöstä"
 #. js-lingui-id: YvwwqC
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterLogicalOperatorCell.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionLogicalOperatorCell.tsx
+#: src/modules/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelLogicalOperatorCell.tsx
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterLogicalOperatorCell.tsx
-#: src/modules/object-record/advanced-filter/command-menu/components/AdvancedFilterCommandMenuLogicalOperatorCell.tsx
 msgid "Where"
 msgstr "Missä"
 
 #. js-lingui-id: fANaAS
-#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutWidgetTypeSelect.tsx
+#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutWidgetTypeSelect.tsx
 msgid "Widget type"
 msgstr "Widgetin tyyppi"
+
+#. js-lingui-id: j6ncOZ
+#: src/modules/workflow/workflow-steps/workflow-actions/iterator-action/components/WorkflowEditActionIterator.tsx
+msgid "Will continue to the next iteration even if the current one fails"
+msgstr ""
 
 #. js-lingui-id: bB8dFW
 #: src/modules/billing/components/TrialCard.tsx
@@ -14687,20 +15030,20 @@ msgid "Write your function (in typescript) below"
 msgstr "Kirjoita funktiosi (typescript) alle"
 
 #. js-lingui-id: SHqkdn
-#: src/modules/command-menu/pages/page-layout/utils/getChartAxisNameDisplayOptions.ts
-#: src/modules/command-menu/pages/page-layout/constants/ChartSettingsHeadings.ts
+#: src/modules/side-panel/pages/page-layout/utils/getChartAxisNameDisplayOptions.ts
+#: src/modules/side-panel/pages/page-layout/constants/ChartSettingsHeadings.ts
 msgid "X axis"
 msgstr "X-akseli"
 
 #. js-lingui-id: sbYPEJ
-#: src/modules/command-menu/pages/page-layout/utils/__tests__/shouldHideChartSetting.test.ts
-#: src/modules/command-menu/pages/page-layout/utils/__tests__/shouldHideChartSetting.test.ts
+#: src/modules/side-panel/pages/page-layout/utils/__tests__/shouldHideChartSetting.test.ts
+#: src/modules/side-panel/pages/page-layout/utils/__tests__/shouldHideChartSetting.test.ts
 msgid "X Axis Data"
 msgstr "X-akselin tiedot"
 
 #. js-lingui-id: fplGg6
-#: src/modules/command-menu/pages/page-layout/utils/getChartAxisNameDisplayOptions.ts
-#: src/modules/command-menu/pages/page-layout/constants/ChartSettingsHeadings.ts
+#: src/modules/side-panel/pages/page-layout/utils/getChartAxisNameDisplayOptions.ts
+#: src/modules/side-panel/pages/page-layout/constants/ChartSettingsHeadings.ts
 msgid "Y axis"
 msgstr "Y-akseli"
 
@@ -14710,7 +15053,7 @@ msgid "year"
 msgstr "vuosi"
 
 #. js-lingui-id: 3PAU4M
-#: src/modules/command-menu/pages/page-layout/utils/getDateGranularityLabel.ts
+#: src/modules/side-panel/pages/page-layout/utils/getDateGranularityLabel.ts
 msgid "Year"
 msgstr "Vuosi"
 
@@ -14720,7 +15063,7 @@ msgid "yearly"
 msgstr "vuosittain"
 
 #. js-lingui-id: +BGee5
-#: src/modules/command-menu/pages/page-layout/utils/getDateGranularityPluralLabel.ts
+#: src/modules/side-panel/pages/page-layout/utils/getDateGranularityPluralLabel.ts
 msgid "years"
 msgstr "vuotta"
 
@@ -14737,6 +15080,12 @@ msgstr "Keltainen"
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "yes"
 msgstr "kyllä"
+
+#. js-lingui-id: l75CjT
+#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
+#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
+msgid "Yes"
+msgstr ""
 
 #. js-lingui-id: y/0uwd
 #: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts

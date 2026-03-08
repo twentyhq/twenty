@@ -1,4 +1,4 @@
-/* eslint-disable no-console, lingui/no-unlocalized-strings */
+/* oxlint-disable no-console, lingui/no-unlocalized-strings */
 import { print } from 'graphql';
 
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';

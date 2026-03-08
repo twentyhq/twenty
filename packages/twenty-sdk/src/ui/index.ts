@@ -7,9 +7,5 @@ export * from 'twenty-ui/input';
 export * from 'twenty-ui/json-visualizer';
 export * from 'twenty-ui/layout';
 export * from 'twenty-ui/navigation';
-export * from 'twenty-ui/theme';
+export * from 'twenty-ui/theme-constants';
 export * from 'twenty-ui/utilities';
-
-// Re-export Emotion's ThemeProvider so front components can wrap
-// their content with the Twenty UI theme without a direct @emotion/react dependency
-export { ThemeProvider } from '@emotion/react';

@@ -1,5 +1,5 @@
 import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
-import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
+import { MOBILE_VIEWPORT } from 'twenty-ui/theme-constants';
 
 const isMobile = window.innerWidth <= MOBILE_VIEWPORT;
 

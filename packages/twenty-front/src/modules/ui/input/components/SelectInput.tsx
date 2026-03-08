@@ -58,14 +58,12 @@ export const SelectInput = ({
 
   const optionsToSelect = useMemo(() => {
     const searchTerm = normalizeSearchText(searchFilter);
-    return (
-      options.filter((option) => {
-        return (
-          option.value !== selectedOption?.value &&
-          normalizeSearchText(option.label).includes(searchTerm)
-        );
-      }) || []
-    );
+    return options.filter((option) => {
+      return (
+        option.value !== selectedOption?.value &&
+        normalizeSearchText(option.label).includes(searchTerm)
+      );
+    });
   }, [options, searchFilter, selectedOption?.value]);
 
   const optionsInDropDown = useMemo(

@@ -31,6 +31,7 @@
   "dependencies": {
     "@sniptt/guards": "^0.2.0",
     "class-validator": "^0.14.0",
+    "expr-eval": "^2.0.2",
     "handlebars": "^4.7.8",
     "libphonenumber-js": "^1.10.26",
     "lodash.camelcase": "^4.3.0",
@@ -95,6 +96,11 @@
       "import": "./dist/utils.mjs",
       "require": "./dist/utils.cjs"
     },
+    "./vite": {
+      "types": "./dist/vite/index.d.ts",
+      "import": "./dist/vite.mjs",
+      "require": "./dist/vite.cjs"
+    },
     "./workflow": {
       "types": "./dist/workflow/index.d.ts",
       "import": "./dist/workflow.mjs",
@@ -118,6 +124,7 @@
     "translations",
     "types",
     "utils",
+    "vite",
     "workflow",
     "workspace"
   ],
@@ -152,6 +159,9 @@
       ],
       "utils": [
         "dist/utils/index.d.ts"
+      ],
+      "vite": [
+        "dist/vite/index.d.ts"
       ],
       "workflow": [
         "dist/workflow/index.d.ts"

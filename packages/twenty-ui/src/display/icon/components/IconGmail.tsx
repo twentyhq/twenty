@@ -2,7 +2,7 @@ import { useContext } from 'react';
 
 import IconGmailRaw from '@assets/icons/gmail.svg?react';
 import { type IconComponentProps } from '@ui/display/icon/types/IconComponent';
-import { ThemeContext } from '@ui/theme';
+import { ThemeContext } from '@ui/theme-constants';
 
 type IconGmailProps = Pick<IconComponentProps, 'size'>;
 

@@ -5,23 +5,24 @@ import { useActionRolePermissionFlagConfig } from '@/settings/roles/role-permiss
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 
 import { H2Title, IconTool } from 'twenty-ui/display';
 import { AnimatedExpandableContainer, Card, Section } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledTable = styled.div`
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+  border-bottom: 1px solid ${themeCssVariables.border.color.light};
 `;
 
 const StyledTableRows = styled.div`
-  padding-bottom: ${({ theme }) => theme.spacing(2)};
-  padding-top: ${({ theme }) => theme.spacing(2)};
+  padding-bottom: ${themeCssVariables.spacing[2]};
+  padding-top: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledCard = styled(Card)`
-  margin-bottom: ${({ theme }) => theme.spacing(4)};
+const StyledCardContainer = styled.div`
+  margin-bottom: ${themeCssVariables.spacing[4]};
 `;
 
 type SettingsRolePermissionsToolSectionProps = {
@@ -58,21 +59,23 @@ export const SettingsRolePermissionsToolSection = ({
     <Section>
       <H2Title title={t`Actions`} description={t`Actions permissions`} />
       {shouldShowAllAccessToggle && (
-        <StyledCard rounded>
-          <SettingsOptionCardContentToggle
-            Icon={IconTool}
-            title={t`All Actions Access`}
-            description={t`Grants permission to perform all available actions without restriction`}
-            checked={settingsDraftRole.canAccessAllTools}
-            disabled={!isEditable}
-            onChange={() => {
-              setSettingsDraftRole({
-                ...settingsDraftRole,
-                canAccessAllTools: !settingsDraftRole.canAccessAllTools,
-              });
-            }}
-          />
-        </StyledCard>
+        <StyledCardContainer>
+          <Card rounded>
+            <SettingsOptionCardContentToggle
+              Icon={IconTool}
+              title={t`All Actions Access`}
+              description={t`Grants permission to perform all available actions without restriction`}
+              checked={settingsDraftRole.canAccessAllTools}
+              disabled={!isEditable}
+              onChange={() => {
+                setSettingsDraftRole({
+                  ...settingsDraftRole,
+                  canAccessAllTools: !settingsDraftRole.canAccessAllTools,
+                });
+              }}
+            />
+          </Card>
+        </StyledCardContainer>
       )}
       <AnimatedExpandableContainer
         isExpanded={

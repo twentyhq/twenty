@@ -27,7 +27,7 @@ export const RecordShowActionMenu = () => {
     <>
       {hasSelectedRecord && contextStoreCurrentObjectMetadataItemId && (
         <ActionMenuContextProvider
-          isInRightDrawer={false}
+          isInSidePanel={false}
           displayType="button"
           actionMenuType="show-page-action-menu"
         >

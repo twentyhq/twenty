@@ -1,15 +1,16 @@
 import { TitleInput } from '@/ui/input/components/TitleInput';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledHeaderTitle = styled.div`
-  color: ${({ theme }) => theme.font.color.primary};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  font-size: ${({ theme }) => theme.font.size.lg};
-  width: fit-content;
+  color: ${themeCssVariables.font.color.primary};
+  font-size: ${themeCssVariables.font.size.lg};
+  font-weight: ${themeCssVariables.font.weight.semiBold};
   max-width: 420px;
+  width: fit-content;
   & > input:disabled {
-    color: ${({ theme }) => theme.font.color.primary};
+    color: ${themeCssVariables.font.color.primary};
   }
 `;
 

@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 import { hasRecordGroupsComponentSelector } from '@/object-record/record-group/states/selectors/hasRecordGroupsComponentSelector';
 import { HIDDEN_TABLE_COLUMN_DROPDOWN_ID } from '@/object-record/record-table/constants/HiddenTableColumnDropdownId';
@@ -16,33 +16,34 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useTheme } from '@emotion/react';
 import { cx } from '@linaria/core';
+import { useContext } from 'react';
 import { IconPlus } from 'twenty-ui/display';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledPlusIconHeaderCell = styled.div<{
   shouldDisplayBorderBottom: boolean;
 }>`
-  border-bottom: ${({ theme, shouldDisplayBorderBottom }) =>
+  background-color: ${themeCssVariables.background.primary};
+  border-bottom: ${({ shouldDisplayBorderBottom }) =>
     shouldDisplayBorderBottom
-      ? `1px solid ${theme.border.color.light}`
+      ? `1px solid ${themeCssVariables.border.color.light}`
       : 'none'};
-  background-color: ${({ theme }) => theme.background.primary};
 
-  color: ${({ theme }) => theme.font.color.tertiary};
-  border-right: ${({ theme }) => theme.border.color.light} !important;
+  border-right: ${themeCssVariables.border.color.light} !important;
+  color: ${themeCssVariables.font.color.tertiary};
 
   cursor: pointer;
 
-  width: ${RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH}px;
-
-  z-index: 1;
-
   height: ${RECORD_TABLE_ROW_HEIGHT}px;
+
   max-height: ${RECORD_TABLE_ROW_HEIGHT}px;
 
+  width: ${RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH}px;
+  z-index: 1;
+
   &:hover {
-    background: ${({ theme }) => theme.background.secondary};
+    background: ${themeCssVariables.background.secondary};
   }
 `;
 
@@ -50,8 +51,8 @@ const StyledPlusIconContainer = styled.div`
   align-items: center;
   display: flex;
   height: ${RECORD_TABLE_ROW_HEIGHT}px;
-  width: 100%;
   justify-content: center;
+  width: 100%;
 `;
 
 const StyledDropdownContainer = styled.div`
@@ -60,7 +61,7 @@ const StyledDropdownContainer = styled.div`
 `;
 
 export const RecordTableHeaderAddColumnButton = () => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   const isRecordTableRowActive = useAtomComponentFamilyStateValue(
     isRecordTableRowActiveComponentFamilyState,

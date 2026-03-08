@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type ReactElement } from 'react';
 
 import { EventsGroup } from '@/activities/timeline-activities/components/EventsGroup';
@@ -9,6 +9,7 @@ import { type ActivityTargetableObject } from '@/activities/types/ActivityTarget
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type EventListProps = {
   targetableObject: ActivityTargetableObject;
@@ -24,7 +25,7 @@ const StyledTimelineContainer = styled.div`
   display: flex;
   flex: 1 0 0;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
   justify-content: flex-start;
 `;
 

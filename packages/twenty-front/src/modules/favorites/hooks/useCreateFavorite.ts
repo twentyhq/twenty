@@ -1,6 +1,6 @@
 import { usePrefetchedNavigationMenuItemsData } from '@/navigation-menu-item/hooks/usePrefetchedNavigationMenuItemsData';
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/utils/isNavigationMenuItemFolder';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isDefined } from 'twenty-shared/utils';
@@ -33,7 +33,9 @@ export const useCreateFavorite = () => {
     const relevantFavorites = favoriteFolderId
       ? favorites.filter((fav) => fav.favoriteFolderId === favoriteFolderId)
       : favorites.filter(
-          (fav) => !fav.favoriteFolderId && fav.forWorkspaceMemberId,
+          (fav) =>
+            !isDefined(fav.favoriteFolderId) &&
+            isDefined(fav.forWorkspaceMemberId),
         );
 
     const maxPosition = Math.max(

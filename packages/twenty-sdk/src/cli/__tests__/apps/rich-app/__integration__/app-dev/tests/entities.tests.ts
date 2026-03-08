@@ -1,4 +1,4 @@
-import * as fs from 'fs-extra';
+import { readdir } from 'node:fs/promises';
 import { join } from 'path';
 import { OUTPUT_DIR } from 'twenty-shared/application';
 
@@ -6,11 +6,14 @@ export const defineEntitiesTests = (appPath: string): void => {
   const outputDir = join(appPath, OUTPUT_DIR);
   describe('logicFunctions', () => {
     it('should have built logicFunctions preserving source path structure', async () => {
-      const files = await fs.readdir(outputDir, { recursive: true });
-      const sortedFiles = files.map((f) => f.toString()).sort();
+      const files = await readdir(outputDir, { recursive: true });
+      // api-client is generated post-sync and depends on server schema availability
+      const sortedFiles = files
+        .map((f) => f.toString())
+        .filter((f) => !f.startsWith('api-client'))
+        .sort();
 
       expect(sortedFiles).toEqual([
-        'api-client',
         'manifest.json',
         'package.json',
         'public',
@@ -43,7 +46,7 @@ export const defineEntitiesTests = (appPath: string): void => {
     });
 
     it('should not create shared chunk files for utilities', async () => {
-      const files = await fs.readdir(outputDir, { recursive: true });
+      const files = await readdir(outputDir, { recursive: true });
 
       // Chunk files have a hash suffix like "greeting.util-CipJsYK0.mjs"
       const chunkFiles = files

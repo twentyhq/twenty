@@ -32,7 +32,7 @@ export const VerifyLoginTokenEffect = () => {
       navigate(AppPath.SignInUp);
     }
     // Verify only needs to run once at mount
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [clientConfigLoaded]);
 
   return <></>;

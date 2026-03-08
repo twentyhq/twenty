@@ -1,9 +1,10 @@
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { flip, FloatingPortal, offset, useFloating } from '@floating-ui/react';
 import { type ReactNode } from 'react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type ExpandedFieldDisplayProps = {
   anchorElement?: HTMLElement;
@@ -12,16 +13,16 @@ type ExpandedFieldDisplayProps = {
 };
 
 const StyledExpandedFieldContainer = styled.div`
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(1)};
-  padding: ${({ theme }) => theme.spacing(2)};
-  overflow: auto;
-  box-sizing: border-box;
+  gap: ${themeCssVariables.spacing[1]};
   height: 300px;
-  width: 400px;
-  position: relative;
+  overflow: auto;
   overflow-y: auto;
+  padding: ${themeCssVariables.spacing[2]};
+  position: relative;
+  width: 400px;
 `;
 
 const StyledContainer = styled.div`

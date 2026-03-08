@@ -1,12 +1,14 @@
 import {
   type CanActivate,
   type ExecutionContext,
+  ForbiddenException,
   Injectable,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { GqlExecutionContext } from '@nestjs/graphql';
 
-import { type FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { type FeatureFlagKey } from 'twenty-shared/types';
+
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { TypedReflect } from 'src/utils/typed-reflect';
 
@@ -59,7 +61,7 @@ export class FeatureFlagGuard implements CanActivate {
     );
 
     if (!isEnabled) {
-      throw new Error(
+      throw new ForbiddenException(
         `Feature flag "${featureFlag}" is not enabled for this workspace`,
       );
     }

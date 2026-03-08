@@ -30,7 +30,7 @@ const getServerBlockNoteEditor = async (): Promise<ServerBlockNoteEditor> => {
 };
 
 export const transformRichTextV2Value = async (
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
   richTextValue: any,
 ): Promise<RichTextV2Metadata> => {
   const parsedValue = isNonEmptyString(richTextValue)

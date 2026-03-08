@@ -1,19 +1,23 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import React from 'react';
 
 import { getDisplayNameFromParticipant } from '@/activities/emails/utils/getDisplayNameFromParticipant';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { Avatar } from 'twenty-ui/display';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledAvatar = styled(Avatar)`
-  margin-right: ${({ theme }) => theme.spacing(1)};
+const StyledAvatarContainer = styled.span`
+  margin-right: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledSenderName = styled.span<{ variant?: 'default' | 'bold' }>`
-  color: ${({ theme }) => theme.font.color.primary};
-  font-size: ${({ theme }) => theme.font.size.md};
-  font-weight: ${({ theme, variant }) =>
-    variant === 'bold' ? theme.font.weight.medium : theme.font.weight.regular};
+  color: ${themeCssVariables.font.color.primary};
+  font-size: ${themeCssVariables.font.size.md};
+  font-weight: ${({ variant }) =>
+    variant === 'bold'
+      ? themeCssVariables.font.weight.medium
+      : themeCssVariables.font.weight.regular};
   overflow: hidden;
   text-overflow: ellipsis;
 `;
@@ -23,23 +27,14 @@ const StyledContainer = styled.div`
   display: flex;
 `;
 
-const StyledRecordChip = styled(RecordChip)<{
-  participantChipVariant: 'default' | 'bold';
-}>`
-  font-weight: ${({ theme, participantChipVariant }) =>
-    participantChipVariant === 'bold'
-      ? theme.font.weight.medium
-      : theme.font.weight.regular};
-`;
-
 const StyledChip = styled.div`
   align-items: center;
-  display: flex;
-  padding: ${({ theme }) => theme.spacing(1)};
-  height: 20px;
   box-sizing: border-box;
+  display: flex;
+  gap: ${themeCssVariables.spacing[1]};
+  height: 20px;
+  padding: ${themeCssVariables.spacing[1]};
   white-space: nowrap;
-  gap: ${({ theme }) => theme.spacing(1)};
 `;
 
 type ParticipantChipVariant = 'default' | 'bold';
@@ -65,19 +60,21 @@ export const ParticipantChip = ({
   return (
     <StyledContainer className={className}>
       {person ? (
-        <StyledRecordChip
+        <RecordChip
           objectNameSingular={CoreObjectNameSingular.Person}
           record={person}
-          participantChipVariant={variant}
+          isBold={variant === 'bold'}
         />
       ) : (
         <StyledChip>
-          <StyledAvatar
-            avatarUrl={avatarUrl}
-            type="rounded"
-            placeholder={displayName}
-            size="sm"
-          />
+          <StyledAvatarContainer>
+            <Avatar
+              avatarUrl={avatarUrl}
+              type="rounded"
+              placeholder={displayName}
+              size="sm"
+            />
+          </StyledAvatarContainer>
           <StyledSenderName variant={variant}>{displayName}</StyledSenderName>
         </StyledChip>
       )}

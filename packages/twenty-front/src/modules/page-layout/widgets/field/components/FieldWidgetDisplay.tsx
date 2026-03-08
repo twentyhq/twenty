@@ -16,9 +16,9 @@ import { fieldWidgetHoverComponentState } from '@/page-layout/widgets/field/stat
 import { generateFieldWidgetInstanceId } from '@/page-layout/widgets/field/utils/generateFieldWidgetInstanceId';
 import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
 import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
-import { RightDrawerProvider } from '@/ui/layout/right-drawer/contexts/RightDrawerContext';
+import { SidePanelProvider } from '@/ui/layout/side-panel/contexts/SidePanelContext';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 const StyledContainer = styled.div`
   width: 100%;
@@ -29,7 +29,7 @@ type FieldWidgetDisplayProps = {
   fieldMetadataItem: FieldMetadataItem;
   objectMetadataItem: ObjectMetadataItem;
   recordId: string;
-  isInRightDrawer: boolean;
+  isInSidePanel: boolean;
 };
 
 export const FieldWidgetDisplay = ({
@@ -37,7 +37,7 @@ export const FieldWidgetDisplay = ({
   fieldMetadataItem,
   objectMetadataItem,
   recordId,
-  isInRightDrawer,
+  isInSidePanel,
 }: FieldWidgetDisplayProps) => {
   const widget = useCurrentWidget();
 
@@ -49,7 +49,7 @@ export const FieldWidgetDisplay = ({
     widgetId: widget.id,
     recordId,
     fieldName: fieldMetadataItem.name,
-    isInRightDrawer,
+    isInSidePanel,
   });
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
@@ -68,7 +68,7 @@ export const FieldWidgetDisplay = ({
 
   return (
     <RecordFieldsScopeContextProvider value={{ scopeInstanceId: instanceId }}>
-      <RightDrawerProvider value={{ isInRightDrawer }}>
+      <SidePanelProvider value={{ isInSidePanel }}>
         <RecordFieldComponentInstanceContext.Provider
           value={{
             instanceId: getRecordFieldInputInstanceId({
@@ -126,7 +126,7 @@ export const FieldWidgetDisplay = ({
             instanceId={instanceId}
           />
         </RecordFieldComponentInstanceContext.Provider>
-      </RightDrawerProvider>
+      </SidePanelProvider>
     </RecordFieldsScopeContextProvider>
   );
 };

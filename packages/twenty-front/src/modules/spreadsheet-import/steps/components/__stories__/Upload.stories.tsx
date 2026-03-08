@@ -46,7 +46,10 @@ export const Default = () => (
     value={{ instanceId: 'dialog-manager' }}
   >
     <ReactSpreadsheetImportContextProvider values={mockRsiValues}>
-      <SpreadSheetImportModalWrapper modalId="upload-step" onClose={() => null}>
+      <SpreadSheetImportModalWrapper
+        modalInstanceId="upload-step"
+        onClose={() => null}
+      >
         <UploadStep
           setUploadedFile={() => null}
           setCurrentStepState={() => null}

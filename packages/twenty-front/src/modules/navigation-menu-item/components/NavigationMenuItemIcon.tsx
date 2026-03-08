@@ -1,15 +1,14 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Avatar, useIcons } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 import { StyledNavigationMenuItemIconContainer } from '@/navigation-menu-item/components/NavigationMenuItemIconContainer';
 import { ObjectIconWithViewOverlay } from '@/navigation-menu-item/components/ObjectIconWithViewOverlay';
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import { useObjectNavItemColor } from '@/navigation-menu-item/hooks/useObjectNavItemColor';
-import { getNavigationMenuItemIconStyleFromColor } from '@/navigation-menu-item/utils/get-navigation-menu-item-icon-style-from-color';
+import { getNavigationMenuItemIconStyleFromColor } from '@/navigation-menu-item/utils/getNavigationMenuItemIconStyleFromColor';
 import { getEffectiveNavigationMenuItemColor } from '@/navigation-menu-item/utils/getEffectiveNavigationMenuItemColor';
 import { type ProcessedNavigationMenuItem } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
 import { useGetStandardObjectIcon } from '@/object-metadata/hooks/useGetStandardObjectIcon';
@@ -23,7 +22,6 @@ export const NavigationMenuItemIcon = ({
 }: {
   navigationMenuItem: ProcessedNavigationMenuItem;
 }) => {
-  const { theme } = useContext(ThemeContext);
   const { getIcon } = useIcons();
   const isNavigationMenuItemEditingEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED,
@@ -75,14 +73,14 @@ export const NavigationMenuItemIcon = ({
     !isRecord &&
     isNonEmptyString(effectiveColor);
   const iconStyle = useStyledIcon
-    ? getNavigationMenuItemIconStyleFromColor(theme, effectiveColor)
+    ? getNavigationMenuItemIconStyleFromColor(effectiveColor)
     : null;
 
   const iconColorToUse = iconStyle
     ? iconStyle.iconColor
     : StandardIcon
       ? IconColor
-      : theme.font.color.secondary;
+      : themeCssVariables.font.color.secondary;
 
   const avatar = (
     <Avatar

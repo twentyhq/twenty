@@ -9,11 +9,12 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { TableSubRow } from '@/ui/layout/table/components/TableSubRow';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronDown, IconChevronRight, useIcons } from 'twenty-ui/display';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { type ApplicationDataTableRow } from '~/pages/settings/applications/components/SettingsApplicationDataTable';
 
@@ -21,11 +22,7 @@ const MAIN_ROW_GRID_COLUMNS = '180px 1fr 98.7px 36px';
 const FIELD_SUB_ROW_GRID_COLUMNS = '180px 1fr';
 
 const StyledFieldDivider = styled.div`
-  border-top: 1px solid ${({ theme }) => theme.border.color.light};
-`;
-
-const StyledFieldNameTableCell = styled(StyledNameTableCell)`
-  color: ${({ theme }) => theme.font.color.secondary};
+  border-top: 1px solid ${themeCssVariables.border.color.light};
 `;
 
 export const SettingsApplicationDataTableRow = ({
@@ -37,7 +34,7 @@ export const SettingsApplicationDataTableRow = ({
   isExpanded: boolean;
   onToggle: () => void;
 }) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const { getIcon } = useIcons();
 
   const Icon = getIcon(row.icon);
@@ -95,7 +92,10 @@ export const SettingsApplicationDataTableRow = ({
               key={field.key}
               gridAutoColumns={FIELD_SUB_ROW_GRID_COLUMNS}
             >
-              <StyledFieldNameTableCell>
+              <TableCell
+                color={themeCssVariables.font.color.secondary}
+                gap={themeCssVariables.spacing[2]}
+              >
                 {isDefined(FieldIcon) && (
                   <FieldIcon
                     size={theme.icon.size.md}
@@ -103,7 +103,7 @@ export const SettingsApplicationDataTableRow = ({
                   />
                 )}
                 {field.label}
-              </StyledFieldNameTableCell>
+              </TableCell>
               <TableCell>
                 <SettingsObjectFieldDataType
                   value={field.type as SettingsFieldType}

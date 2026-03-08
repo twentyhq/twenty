@@ -10,11 +10,12 @@
   "packageManager": "yarn@4.9.2",
   "scripts": {
     "twenty": "twenty",
-    "lint": "eslint",
-    "lint:fix": "eslint --fix"
+    "lint": "oxlint -c .oxlintrc.json .",
+    "lint:fix": "oxlint --fix -c .oxlintrc.json ."
   },
   "devDependencies": {
     "@types/node": "^24.7.2",
+    "oxlint": "^0.16.0",
     "twenty-sdk": "0.6.2"
   },
   "$schema": "https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-cli/src/constants/schemas/appManifest.schema.json",

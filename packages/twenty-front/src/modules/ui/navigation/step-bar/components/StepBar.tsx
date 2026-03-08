@@ -1,9 +1,9 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import React from 'react';
 
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
-import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
+import { MOBILE_VIEWPORT } from 'twenty-ui/theme-constants';
 import { Step, type StepProps } from './Step';
 
 const StyledContainer = styled.div`
@@ -32,7 +32,7 @@ export const StepBar = ({ activeStep, children }: StepBarProps) => {
         }
 
         // If the child is not a Step, return it as-is
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // oxlint-disable-next-line @typescripttypescript/ban-ts-comment
         // @ts-expect-error
         if (child.type?.displayName !== Step.displayName) {
           return child;

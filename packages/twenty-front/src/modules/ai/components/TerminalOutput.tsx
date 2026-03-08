@@ -1,88 +1,94 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { IconCopy, IconTerminal } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 const StyledContainer = styled.div`
+  border-radius: ${themeCssVariables.border.radius.sm};
   display: flex;
   flex-direction: column;
-  border-radius: ${({ theme }) => theme.border.radius.sm};
   overflow: hidden;
 `;
 
 const StyledHeader = styled.div`
   align-items: center;
-  background: ${({ theme }) => theme.background.tertiary};
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.medium};
+  background: ${themeCssVariables.background.tertiary};
+  border-bottom: 1px solid ${themeCssVariables.border.color.medium};
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
   justify-content: space-between;
-  padding: ${({ theme }) => theme.spacing(1)} ${({ theme }) => theme.spacing(2)};
+  padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
 `;
 
 const StyledHeaderLeft = styled.div`
   align-items: center;
-  color: ${({ theme }) => theme.font.color.secondary};
+  color: ${themeCssVariables.font.color.secondary};
   display: flex;
-  font-size: ${({ theme }) => theme.font.size.sm};
-  gap: ${({ theme }) => theme.spacing(1)};
+  font-size: ${themeCssVariables.font.size.sm};
+  gap: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledTabContainer = styled.div`
   display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledTab = styled.button<{ isActive: boolean; hasError?: boolean }>`
-  background: ${({ isActive, theme }) =>
-    isActive ? theme.background.secondary : 'transparent'};
+  background: ${({ isActive }) =>
+    isActive ? themeCssVariables.background.secondary : 'transparent'};
   border: none;
-  border-radius: ${({ theme }) => theme.border.radius.xs};
-  color: ${({ isActive, hasError, theme }) =>
+  border-radius: ${themeCssVariables.border.radius.xs};
+  color: ${({ isActive, hasError }) =>
     hasError
-      ? theme.color.red
+      ? themeCssVariables.color.red
       : isActive
-        ? theme.font.color.primary
-        : theme.font.color.tertiary};
+        ? themeCssVariables.font.color.primary
+        : themeCssVariables.font.color.tertiary};
   cursor: pointer;
-  font-size: ${({ theme }) => theme.font.size.xs};
-  font-weight: ${({ isActive, theme }) =>
-    isActive ? theme.font.weight.medium : theme.font.weight.regular};
-  padding: ${({ theme }) => theme.spacing(0.5)}
-    ${({ theme }) => theme.spacing(1)};
+  font-size: ${themeCssVariables.font.size.xs};
+  font-weight: ${({ isActive }) =>
+    isActive
+      ? themeCssVariables.font.weight.medium
+      : themeCssVariables.font.weight.regular};
+  padding: ${themeCssVariables.spacing['0.5']} ${themeCssVariables.spacing[1]};
 
   &:hover {
-    background: ${({ theme }) => theme.background.secondary};
-    color: ${({ hasError, theme }) =>
-      hasError ? theme.color.red : theme.font.color.primary};
+    background: ${themeCssVariables.background.secondary};
+    color: ${({ hasError }) =>
+      hasError
+        ? themeCssVariables.color.red
+        : themeCssVariables.font.color.primary};
   }
 `;
 
 const StyledOutputArea = styled.div<{ isError?: boolean }>`
-  background: ${({ theme }) => theme.background.tertiary};
-  color: ${({ isError, theme }) =>
-    isError ? theme.color.red : theme.font.color.primary};
+  background: ${themeCssVariables.background.tertiary};
+  color: ${({ isError }) =>
+    isError
+      ? themeCssVariables.color.red
+      : themeCssVariables.font.color.primary};
   font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
-  font-size: ${({ theme }) => theme.font.size.sm};
+  font-size: ${themeCssVariables.font.size.sm};
   line-height: 1.5;
   max-height: 300px;
   min-height: 100px;
   overflow-y: auto;
-  padding: ${({ theme }) => theme.spacing(2)};
+  padding: ${themeCssVariables.spacing[2]};
   white-space: pre-wrap;
   word-break: break-word;
 `;
 
 const StyledEmptyMessage = styled.div`
-  color: ${({ theme }) => theme.font.color.tertiary};
+  color: ${themeCssVariables.font.color.tertiary};
   font-style: italic;
 `;
 
 const StyledCursor = styled.span`
   animation: blink 1s step-end infinite;
-  background: ${({ theme }) => theme.font.color.primary};
+  background: ${themeCssVariables.font.color.primary};
   display: inline-block;
   height: 1em;
   margin-left: 2px;

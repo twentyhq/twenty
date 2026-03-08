@@ -1,5 +1,8 @@
 import { type ToolUIPart } from 'ai';
-import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
+import {
+  isExtendedFileUIPart,
+  type ExtendedUIMessagePart,
+} from 'twenty-shared/ai';
 
 import { type AgentMessagePartEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message-part.entity';
 
@@ -30,13 +33,17 @@ export const mapUIMessagePartsToDBParts = (
             ...basePart,
             reasoningContent: part.text,
           };
-        case 'file':
+        case 'file': {
+          if (!isExtendedFileUIPart(part)) {
+            throw new Error('Expected file part');
+          }
+
           return {
             ...basePart,
-            fileMediaType: part.mediaType,
             fileFilename: part.filename,
-            fileUrl: part.url,
+            fileId: part.fileId,
           };
+        }
         case 'source-url':
           return {
             ...basePart,

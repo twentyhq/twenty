@@ -1,7 +1,7 @@
 import { act, renderHook } from '@testing-library/react';
 import { v4 } from 'uuid';
 
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import {
   query,
   response,

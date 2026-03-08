@@ -32,7 +32,7 @@ jobs:
     needs: changed-files-check
     if: needs.changed-files-check.outputs.any_changed == 'true'
     timeout-minutes: 45
-    runs-on: depot-ubuntu-24.04
+    runs-on: ubuntu-latest
     services:
       postgres:
         image: twentycrm/twenty-postgres-spilo
@@ -70,7 +70,7 @@ jobs:
       - name: Checkout current branch
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 10
 
       - name: Try to merge main into current branch
         id: merge_attempt

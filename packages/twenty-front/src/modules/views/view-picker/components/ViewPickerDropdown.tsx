@@ -1,7 +1,5 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { useContext } from 'react';
-
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { StyledDropdownButtonContainer } from '@/ui/layout/dropdown/components/StyledDropdownButtonContainer';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
@@ -23,8 +21,12 @@ import {
   OverflowingTextWithTooltip,
   useIcons,
 } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
-import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useContext } from 'react';
+import {
+  MOBILE_VIEWPORT,
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 const StyledIconContainer = styled.span`
   display: flex;
@@ -55,7 +57,6 @@ const StyledViewName = styled.span`
 
 export const ViewPickerDropdown = () => {
   const { theme } = useContext(ThemeContext);
-
   const { currentView } = useGetCurrentViewOnly();
 
   const { updateViewFromCurrentState } = useUpdateViewFromCurrentState();
@@ -88,7 +89,7 @@ export const ViewPickerDropdown = () => {
       clickableComponent={
         <StyledDropdownButtonContainer isUnfolded={isDropdownOpen}>
           <StyledIconContainer>
-            {currentView && CurrentViewIcon ? (
+            {isDefined(currentView) && isDefined(CurrentViewIcon) ? (
               <CurrentViewIcon size={theme.icon.size.md} />
             ) : (
               <IconList size={theme.icon.size.md} />

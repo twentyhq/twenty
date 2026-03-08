@@ -9,7 +9,7 @@ import { SingleRecordActionKeys } from '@/action-menu/actions/record-actions/sin
 import { inheritActionsFromDefaultConfig } from '@/action-menu/actions/record-actions/utils/inheritActionsFromDefaultConfig';
 import { ActionScope } from '@/action-menu/actions/types/ActionScope';
 import { ActionType } from '@/action-menu/actions/types/ActionType';
-import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
+import { ActionViewType } from 'twenty-shared/types';
 import { PageLayoutSingleRecordActionKeys } from '@/page-layout/actions/PageLayoutSingleRecordActionKeys';
 import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';

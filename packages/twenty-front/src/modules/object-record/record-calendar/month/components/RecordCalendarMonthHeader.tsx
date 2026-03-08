@@ -1,6 +1,6 @@
 import { RecordCalendarMonthHeaderDay } from '@/object-record/record-calendar/month/components/RecordCalendarMonthHeaderDay';
 import { useRecordCalendarMonthContextOrThrow } from '@/object-record/record-calendar/month/contexts/RecordCalendarMonthContext';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 const StyledContainer = styled.div`
   display: flex;

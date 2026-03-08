@@ -14,7 +14,7 @@ const RECORD_STEP_TYPES = [
 
 export const isRecordStepOutputSchema = (
   stepType: WorkflowActionType | WorkflowTriggerType,
-  schema: OutputSchemaV2,
-): schema is RecordActionOutputSchema => {
+  _schema: OutputSchemaV2,
+): _schema is RecordActionOutputSchema => {
   return RECORD_STEP_TYPES.includes(stepType);
 };

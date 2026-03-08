@@ -22,7 +22,7 @@ import { MicrosoftAPIsOauthExchangeCodeForTokenGuard } from 'src/engine/core-mod
 import { MicrosoftAPIsOauthRequestCodeGuard } from 'src/engine/core-modules/auth/guards/microsoft-apis-oauth-request-code.guard';
 import { MicrosoftAPIsService } from 'src/engine/core-modules/auth/services/microsoft-apis.service';
 import { TransientTokenService } from 'src/engine/core-modules/auth/token/services/transient-token.service';
-import { MicrosoftAPIsRequest } from 'src/engine/core-modules/auth/types/microsoft-api-request.type';
+import { APIsOAuthRequest } from 'src/engine/core-modules/auth/types/apis-oauth-request.type';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
@@ -63,7 +63,7 @@ export class MicrosoftAPIsAuthController {
     NoPermissionGuard,
   )
   async MicrosoftAuthGetAccessToken(
-    @Req() req: MicrosoftAPIsRequest,
+    @Req() req: APIsOAuthRequest,
     @Res() res: Response,
   ) {
     let workspace: WorkspaceEntity | null = null;

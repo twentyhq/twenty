@@ -1,10 +1,11 @@
 import { RecordGroupContext } from '@/object-record/record-group/states/context/RecordGroupContext';
 import { useContext } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useCurrentRecordGroupId = (): string => {
   const context = useContext(RecordGroupContext);
 
-  if (!context) {
+  if (!isDefined(context)) {
     throw new Error(
       'useCurrentRecordGroupId must be used within a RecordGroupContextProvider.',
     );

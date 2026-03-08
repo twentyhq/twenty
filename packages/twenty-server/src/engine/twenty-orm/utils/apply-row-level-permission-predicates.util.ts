@@ -1,5 +1,6 @@
 /* @license Enterprise */
 
+import { FeatureFlagKey } from 'twenty-shared/types';
 import {
   Brackets,
   NotBrackets,
@@ -11,8 +12,8 @@ import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interf
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
 import { GraphqlQueryFilterFieldParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser';
-import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
 import { buildRowLevelPermissionRecordFilter } from 'src/engine/twenty-orm/utils/build-row-level-permission-record-filter.util';
@@ -21,7 +22,7 @@ type ApplyRowLevelPermissionPredicatesArgs<T extends ObjectLiteral> = {
   queryBuilder: WorkspaceSelectQueryBuilder<T>;
   objectMetadata: FlatObjectMetadata;
   internalContext: WorkspaceInternalContext;
-  authContext: AuthContext;
+  authContext: WorkspaceAuthContext;
   featureFlagMap: FeatureFlagMap;
 };
 
@@ -40,8 +41,11 @@ export const applyRowLevelPermissionPredicates = <T extends ObjectLiteral>({
     return;
   }
 
-  const roleId = authContext.userWorkspaceId
-    ? internalContext.userWorkspaceRoleMap[authContext.userWorkspaceId]
+  const userWorkspaceId = isUserAuthContext(authContext)
+    ? authContext.userWorkspaceId
+    : undefined;
+  const roleId = userWorkspaceId
+    ? internalContext.userWorkspaceRoleMap[userWorkspaceId]
     : undefined;
 
   const recordFilter = buildRowLevelPermissionRecordFilter({
@@ -52,7 +56,9 @@ export const applyRowLevelPermissionPredicates = <T extends ObjectLiteral>({
     flatFieldMetadataMaps: internalContext.flatFieldMetadataMaps,
     objectMetadata,
     roleId,
-    authContext,
+    workspaceMember: isUserAuthContext(authContext)
+      ? authContext.workspaceMember
+      : undefined,
   });
 
   if (!recordFilter || Object.keys(recordFilter).length === 0) {
@@ -126,7 +132,7 @@ const parseKeyFilter = ({
   queryBuilder: WhereExpressionBuilder;
   objectNameSingular: string;
   key: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
   value: any;
   isFirst: boolean;
   fieldParser: GraphqlQueryFilterFieldParser;

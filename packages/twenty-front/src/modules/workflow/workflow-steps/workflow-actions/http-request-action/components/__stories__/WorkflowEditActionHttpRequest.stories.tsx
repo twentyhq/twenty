@@ -117,8 +117,7 @@ export const Configured: Story = {
     const canvas = within(canvasElement);
 
     const urlLabel = await canvas.findByText('URL');
-    const urlInputContainer = urlLabel.closest('div')?.nextElementSibling;
-    const urlEditor = urlInputContainer?.querySelector('.ProseMirror');
+    const urlEditor = urlLabel.parentElement?.querySelector('.ProseMirror');
     expect(urlEditor).toBeVisible();
     expect(urlEditor).toHaveTextContent('https://api.example.com/data');
 
@@ -138,8 +137,7 @@ export const ReadOnly: Story = {
     const canvas = within(canvasElement);
 
     const urlLabel = await canvas.findByText('URL');
-    const urlInputContainer = urlLabel.closest('div')?.nextElementSibling;
-    const urlEditor = urlInputContainer?.querySelector('.ProseMirror');
+    const urlEditor = urlLabel.parentElement?.querySelector('.ProseMirror');
     expect(urlEditor).toBeVisible();
     expect(urlEditor).toHaveTextContent('https://api.example.com/data');
     expect(urlEditor).toHaveAttribute('contenteditable', 'false');

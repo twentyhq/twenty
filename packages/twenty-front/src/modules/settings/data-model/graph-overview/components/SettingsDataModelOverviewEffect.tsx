@@ -1,10 +1,10 @@
-import { useTheme } from '@emotion/react';
 import { type Edge, type Node } from '@xyflow/react';
 import { useEffect } from 'react';
 
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { isDefined } from 'twenty-shared/utils';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type SettingsDataModelOverviewEffectProps = {
   setEdges: (edges: Edge[]) => void;
@@ -15,7 +15,6 @@ export const SettingsDataModelOverviewEffect = ({
   setEdges,
   setNodes,
 }: SettingsDataModelOverviewEffectProps) => {
-  const theme = useTheme();
   const { activeNonSystemObjectMetadataItems: items } =
     useFilteredObjectMetadataItems();
 
@@ -62,7 +61,7 @@ export const SettingsDataModelOverviewEffect = ({
               type: 'smoothstep',
               style: {
                 strokeWidth: 1,
-                stroke: theme.color.gray,
+                stroke: themeCssVariables.color.gray,
               },
               markerEnd: 'marker',
               markerStart: 'marker',
@@ -102,7 +101,7 @@ export const SettingsDataModelOverviewEffect = ({
     };
 
     loadDagreAndLayout();
-  }, [items, setEdges, setNodes, theme]);
+  }, [items, setEdges, setNodes]);
 
   return <></>;
 };

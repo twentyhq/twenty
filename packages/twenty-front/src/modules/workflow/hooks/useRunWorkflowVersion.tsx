@@ -1,10 +1,10 @@
 import { triggerCreateRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerCreateRecordsOptimisticEffect';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
+import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { useCreateOneRecordInCache } from '@/object-record/cache/hooks/useCreateOneRecordInCache';
 import { useUpsertFindOneRecordQueryInCache } from '@/object-record/cache/hooks/useUpsertFindOneRecordQueryInCache';
 import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename';
@@ -62,7 +62,7 @@ export const useRunWorkflowVersion = () => {
       recordGqlFields: computedRecordGqlFields,
     });
 
-  const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
+  const { openRecordInSidePanel } = useOpenRecordInSidePanel();
 
   const setRecordInStore = useCallback(
     (workflowRun: WorkflowRun) => {
@@ -141,7 +141,7 @@ export const useRunWorkflowVersion = () => {
       variables: { input: { workflowVersionId, workflowRunId, payload } },
     });
 
-    openRecordInCommandMenu({
+    openRecordInSidePanel({
       objectNameSingular: CoreObjectNameSingular.WorkflowRun,
       recordId: workflowRunId,
     });

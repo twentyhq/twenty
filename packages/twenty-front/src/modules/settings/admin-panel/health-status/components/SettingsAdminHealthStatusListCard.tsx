@@ -1,5 +1,4 @@
 import { SettingsListCard } from '@/settings/components/SettingsListCard';
-import { useTheme } from '@emotion/react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import {
@@ -10,6 +9,8 @@ import {
   IconTool,
   IconUserCircle,
 } from 'twenty-ui/display';
+import { useContext } from 'react';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 import {
   HealthIndicatorId,
   type SystemHealthService,
@@ -32,7 +33,7 @@ export const SettingsAdminHealthStatusListCard = ({
   services: Array<SystemHealthService>;
   loading?: boolean;
 }) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   return (
     <SettingsListCard

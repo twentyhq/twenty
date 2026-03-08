@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 
 import {
@@ -7,43 +7,43 @@ import {
   StyledEventRowItemColumn,
 } from '@/activities/timeline-activities/rows/components/EventRowDynamicComponent';
 import { isTimelineActivityWithLinkedRecord } from '@/activities/timeline-activities/types/TimelineActivity';
-import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
-import { type CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
+import { type CoreObjectNameSingular } from 'twenty-shared/types';
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { isNonEmptyString } from '@sniptt/guards';
 import { OverflowingTextWithTooltip } from 'twenty-ui/display';
-import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
+import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type EventRowActivityProps = EventRowDynamicComponentProps;
 
 const StyledLinkedActivity = styled.span`
-  color: ${({ theme }) => theme.font.color.primary};
+  color: ${themeCssVariables.font.color.primary};
   cursor: pointer;
-  text-decoration: underline;
-  width: 100%;
   overflow: hidden;
+  text-decoration: underline;
   text-overflow: ellipsis;
   white-space: nowrap;
+  width: 100%;
 `;
 
 const StyledRowContainer = styled.div`
   align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
   justify-content: space-between;
 `;
 
 const StyledEventRow = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
   width: 100%;
 `;
 
 const StyledRow = styled.div`
   align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
   overflow: hidden;
 `;
 
@@ -51,12 +51,12 @@ const StyledItemTitleDate = styled.div`
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     display: none;
   }
-  color: ${({ theme }) => theme.font.color.tertiary};
-  padding: 0 ${({ theme }) => theme.spacing(1)};
+  color: ${themeCssVariables.font.color.tertiary};
+  padding: 0 ${themeCssVariables.spacing[1]};
 `;
 
 export const StyledEventRowItemText = styled.span`
-  color: ${({ theme }) => theme.font.color.primary};
+  color: ${themeCssVariables.font.color.primary};
 `;
 
 export const EventRowActivity = ({
@@ -96,7 +96,7 @@ export const EventRowActivity = ({
   };
   const activityTitle = computeActivityTitle();
 
-  const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
+  const { openRecordInSidePanel } = useOpenRecordInSidePanel();
 
   return (
     <StyledEventRow>
@@ -108,7 +108,7 @@ export const EventRowActivity = ({
           </StyledEventRowItemAction>
           <StyledLinkedActivity
             onClick={() =>
-              openRecordInCommandMenu({
+              openRecordInSidePanel({
                 recordId: event.linkedRecordId,
                 objectNameSingular,
               })

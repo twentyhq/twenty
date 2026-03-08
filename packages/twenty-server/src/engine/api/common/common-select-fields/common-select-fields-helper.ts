@@ -92,7 +92,10 @@ export class CommonSelectFieldsHelper {
         flatEntityId: fieldId,
       });
 
-      if (!isFlatFieldMetadataOfType(flatField, FieldMetadataType.RELATION)) {
+      if (
+        !isFlatFieldMetadataOfType(flatField, FieldMetadataType.RELATION) &&
+        !isFlatFieldMetadataOfType(flatField, FieldMetadataType.MORPH_RELATION)
+      ) {
         continue;
       }
 

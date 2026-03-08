@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 export const CardContainer = styled.div`
   border: 3px solid #141414;

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
@@ -12,13 +12,12 @@ import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/st
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 
 import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import {
@@ -30,6 +29,7 @@ import {
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { UndecoratedLink } from 'twenty-ui/navigation';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { SETTINGS_OBJECT_DETAIL_TABS } from '~/pages/settings/data-model/constants/SettingsObjectDetailTabs';
@@ -37,15 +37,14 @@ import { updatedObjectNamePluralState } from '~/pages/settings/data-model/states
 
 const StyledContentContainer = styled.div`
   flex: 1;
-  width: 100%;
   padding-left: 0;
+  width: 100%;
 `;
 
 export const SettingsObjectDetailPage = () => {
+  const { theme } = useContext(ThemeContext);
   const navigateApp = useNavigateApp();
   const { t } = useLingui();
-  const theme = useTheme();
-
   const { objectNamePlural = '' } = useParams();
 
   const { findObjectMetadataItemByNamePlural } =

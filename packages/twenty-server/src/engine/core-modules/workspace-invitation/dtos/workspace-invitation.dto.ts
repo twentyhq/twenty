@@ -12,6 +12,9 @@ export class WorkspaceInvitation {
   @Field({ nullable: false })
   email: string;
 
+  @Field(() => UUIDScalarType, { nullable: true })
+  roleId?: string | null;
+
   @Field({ nullable: false })
   expiresAt: Date;
 }
