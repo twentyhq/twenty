@@ -1,3 +1,3 @@
 export const getCommandMenuIdFromRecordIndexId = (recordIndexId: string) => {
-  return `action-menu-record-index-${recordIndexId}`;
+  return `command-menu-record-index-${recordIndexId}`;
 };

@@ -25,13 +25,13 @@ const meta: Meta<typeof RecordIndexCommandMenuDropdown> = {
     (Story) => {
       jotaiStore.set(
         isDropdownOpenComponentState.atomFamily({
-          instanceId: 'action-menu-dropdown-story-action-menu',
+          instanceId: 'command-menu-dropdown-story-command-menu',
         }),
         true,
       );
       jotaiStore.set(
         recordIndexCommandMenuDropdownPositionComponentState.atomFamily({
-          instanceId: 'action-menu-dropdown-story',
+          instanceId: 'command-menu-dropdown-story',
         }),
         { x: 10, y: 10 },
       );
@@ -39,7 +39,7 @@ const meta: Meta<typeof RecordIndexCommandMenuDropdown> = {
       return (
         <JotaiProvider store={jotaiStore}>
           <CommandMenuComponentInstanceContext.Provider
-            value={{ instanceId: 'story-action-menu' }}
+            value={{ instanceId: 'story-command-menu' }}
           >
             <CommandMenuItemContext.Provider
               value={{

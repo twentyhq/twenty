@@ -1,5 +1,5 @@
 export const getSidePanelCommandMenuDropdownIdFromCommandMenuId = (
   commandMenuId: string,
 ) => {
-  return `side-panel-action-menu-dropdown-${commandMenuId}`;
+  return `side-panel-command-menu-dropdown-${commandMenuId}`;
 };

@@ -41,7 +41,7 @@ export const CommandMenuItemButton = ({
           ariaLabel={label}
         />
       ) : (
-        <div id={`action-menu-entry-${action.key}`} key={action.key}>
+        <div id={`command-menu-item-entry-${action.key}`} key={action.key}>
           <IconButton
             Icon={action.Icon}
             size="small"
@@ -53,7 +53,7 @@ export const CommandMenuItemButton = ({
           />
           <StyledWrapper>
             <AppTooltip
-              anchorSelect={`#action-menu-entry-${action.key}`}
+              anchorSelect={`#command-menu-item-entry-${action.key}`}
               content={label}
               delay={TooltipDelay.longDelay}
               place={TooltipPosition.Bottom}

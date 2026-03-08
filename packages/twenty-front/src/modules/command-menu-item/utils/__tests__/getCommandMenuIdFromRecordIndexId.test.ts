@@ -3,7 +3,7 @@ import { getCommandMenuIdFromRecordIndexId } from '@/command-menu-item/utils/get
 describe('getCommandMenuIdFromRecordIndexId', () => {
   it('should return the correct action menu id', () => {
     expect(getCommandMenuIdFromRecordIndexId('record-index-id')).toBe(
-      'action-menu-record-index-record-index-id',
+      'command-menu-record-index-record-index-id',
     );
   });
 });

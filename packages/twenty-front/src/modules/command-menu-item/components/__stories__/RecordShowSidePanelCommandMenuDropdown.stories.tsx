@@ -36,7 +36,7 @@ const meta: Meta<typeof RecordShowSidePanelCommandMenuDropdown> = {
             contextStoreNumberOfSelectedRecords={1}
           >
             <CommandMenuComponentInstanceContext.Provider
-              value={{ instanceId: 'story-action-menu' }}
+              value={{ instanceId: 'story-command-menu' }}
             >
               <CommandMenuItemContext.Provider
                 value={{
@@ -64,7 +64,7 @@ const meta: Meta<typeof RecordShowSidePanelCommandMenuDropdown> = {
     RouterDecorator,
   ],
   args: {
-    actionMenuId: 'story-action-menu',
+    actionMenuId: 'story-command-menu',
   },
 };
 
@@ -74,13 +74,13 @@ type Story = StoryObj<typeof RecordShowSidePanelCommandMenuDropdown>;
 
 export const Default: Story = {
   args: {
-    actionMenuId: 'story-action-menu',
+    actionMenuId: 'story-command-menu',
   },
 };
 
 export const WithButtonClicks: Story = {
   args: {
-    actionMenuId: 'story-action-menu',
+    actionMenuId: 'story-command-menu',
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement.ownerDocument.body);

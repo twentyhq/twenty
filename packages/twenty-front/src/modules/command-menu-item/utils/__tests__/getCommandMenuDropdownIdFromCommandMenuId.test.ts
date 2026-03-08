@@ -2,8 +2,8 @@ import { getCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/u
 
 describe('getCommandMenuDropdownIdFromCommandMenuId', () => {
   it('should return the correct action menu dropdown id', () => {
-    expect(getCommandMenuDropdownIdFromCommandMenuId('action-menu-id')).toBe(
-      'action-menu-dropdown-action-menu-id',
+    expect(getCommandMenuDropdownIdFromCommandMenuId('command-menu-id')).toBe(
+      'command-menu-dropdown-command-menu-id',
     );
   });
 });
