@@ -16,7 +16,7 @@ import {
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { isDomain } from 'src/engine/utils/is-domain';
+import { isValidHostname } from 'twenty-shared/utils';
 import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklist.repository';
 import { BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
@@ -67,7 +67,12 @@ export class BlocklistValidationService {
         z
           .string()
           .refine(
-            (value) => value.startsWith('@') && isDomain(value.slice(1)),
+            (value) =>
+              value.startsWith('@') &&
+              isValidHostname(value.slice(1), {
+                allowIp: false,
+                allowLocalhost: false,
+              }),
             'Invalid email or domain',
           ),
       );
