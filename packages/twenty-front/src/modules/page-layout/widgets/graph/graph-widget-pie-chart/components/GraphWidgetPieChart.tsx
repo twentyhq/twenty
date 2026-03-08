@@ -24,10 +24,12 @@ import {
 import {
   type MouseEvent as ReactMouseEvent,
   useCallback,
+  useContext,
   useMemo,
   useRef,
 } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 import {
   type PieChartConfiguration,
   type PieChartDataItem,
@@ -88,7 +90,8 @@ export const GraphWidgetPieChart = ({
   showDataLabels = false,
   showCenterMetric = true,
 }: GraphWidgetPieChartProps) => {
-  const colorRegistry = createGraphColorRegistry();
+  const { theme } = useContext(ThemeContext);
+  const colorRegistry = createGraphColorRegistry(theme.color);
   const containerRef = useRef<HTMLDivElement>(null);
   const setGraphWidgetPieTooltip = useSetAtomComponentState(
     graphWidgetPieTooltipComponentState,

@@ -3,9 +3,10 @@ import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/crea
 import { generateGroupColor } from '@/page-layout/widgets/graph/utils/generateGroupColor';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { styled } from '@linaria/react';
+import { useContext } from 'react';
 import { ColorSample } from 'twenty-ui/display';
 import { MenuItemSelect } from 'twenty-ui/navigation';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { type ThemeColor } from 'twenty-ui/theme';
 type ChartColorGradientOptionProps = {
   colorOption: {
@@ -32,7 +33,8 @@ export const ChartColorGradientOption = ({
 }: ChartColorGradientOptionProps) => {
   const colorName = colorOption.colorName as ThemeColor;
 
-  const colorRegistry = createGraphColorRegistry();
+  const { theme } = useContext(ThemeContext);
+  const colorRegistry = createGraphColorRegistry(theme.color);
 
   const colorSamples = (
     <StyledColorSamplesContainer>
