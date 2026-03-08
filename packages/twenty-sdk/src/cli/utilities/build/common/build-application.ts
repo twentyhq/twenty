@@ -1,3 +1,13 @@
+import crypto from 'crypto';
+import { readFile } from 'node:fs/promises';
+import { dirname, join } from 'path';
+import {
+  NODE_ESM_CJS_BANNER,
+  OUTPUT_DIR,
+  type Manifest,
+} from 'twenty-shared/application';
+import { FileFolder } from 'twenty-shared/types';
+
 import { esbuildOneShotBuild } from '@/cli/utilities/build/common/esbuild-one-shot-build';
 import {
   LOGIC_FUNCTION_EXTERNAL_MODULES,
@@ -7,15 +17,13 @@ import { FRONT_COMPONENT_EXTERNAL_MODULES } from '@/cli/utilities/build/common/f
 import { getFrontComponentBuildPlugins } from '@/cli/utilities/build/common/front-component-build/utils/get-front-component-build-plugins';
 import { type OnFileBuiltCallback } from '@/cli/utilities/build/common/restartable-watcher-interface';
 import { type EntityFilePaths } from '@/cli/utilities/build/manifest/manifest-extract-config';
-import crypto from 'crypto';
-import * as fs from 'fs-extra';
-import { dirname, join } from 'path';
 import {
-  NODE_ESM_CJS_BANNER,
-  OUTPUT_DIR,
-  type Manifest,
-} from 'twenty-shared/application';
-import { FileFolder } from 'twenty-shared/types';
+  copy,
+  emptyDir,
+  ensureDir,
+  pathExists,
+  pathExistsSync,
+} from '@/cli/utilities/file/fs-utils';
 
 export type AppBuildOptions = {
   appPath: string;
@@ -39,8 +47,8 @@ export const buildApplication = async (
 ): Promise<AppBuildResult> => {
   const outputDir = join(options.appPath, OUTPUT_DIR);
 
-  await fs.ensureDir(outputDir);
-  await fs.emptyDir(outputDir);
+  await ensureDir(outputDir);
+  await emptyDir(outputDir);
 
   const builtFileInfos = new Map<string, BuiltFileInfo>();
 
@@ -112,7 +120,7 @@ export const buildApplication = async (
     appPath: options.appPath,
     fileFolder: FileFolder.Dependencies,
     filePaths: ['package.json', 'yarn.lock'].filter((filePath) =>
-      fs.pathExistsSync(join(options.appPath, filePath)),
+      pathExistsSync(join(options.appPath, filePath)),
     ),
     collectFileBuilt,
   });
@@ -134,17 +142,17 @@ const copyStaticFiles = async ({
   for (const sourcePath of filePaths) {
     const absoluteSourcePath = join(appPath, sourcePath);
 
-    if (!(await fs.pathExists(absoluteSourcePath))) {
+    if (!(await pathExists(absoluteSourcePath))) {
       continue;
     }
 
     const builtPath = join(OUTPUT_DIR, sourcePath);
     const absoluteBuiltPath = join(appPath, builtPath);
 
-    await fs.ensureDir(dirname(absoluteBuiltPath));
-    await fs.copy(absoluteSourcePath, absoluteBuiltPath);
+    await ensureDir(dirname(absoluteBuiltPath));
+    await copy(absoluteSourcePath, absoluteBuiltPath);
 
-    const content = await fs.readFile(absoluteBuiltPath);
+    const content = await readFile(absoluteBuiltPath);
     const checksum = crypto.createHash('md5').update(content).digest('hex');
 
     collectFileBuilt({

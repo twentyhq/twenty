@@ -23,11 +23,11 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 const StyledQRCodeContainer = styled.div`
-  margin: ${themeCssVariables.spacing[4]} 0;
+  align-items: flex-start;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
   gap: ${themeCssVariables.spacing[3]};
+  margin: ${themeCssVariables.spacing[4]} 0;
 `;
 
 const StyledQRCodeWrapper = styled.div`
@@ -44,7 +44,7 @@ const StyledOTPContainer = styled.div`
   width: fit-content;
 `;
 
-const StyledQRCode = styled(QRCode)`
+const StyledQRCodeSizer = styled.div`
   height: 137px;
   width: 137px;
 `;
@@ -52,8 +52,8 @@ const StyledQRCode = styled(QRCode)`
 const StyledCopySetupKeyText = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
   font-size: ${themeCssVariables.font.size.sm};
-  text-align: left;
   line-height: 1.5;
+  text-align: left;
 `;
 
 const StyledCopySetupKeyLink = styled.button`
@@ -63,9 +63,9 @@ const StyledCopySetupKeyLink = styled.button`
   cursor: pointer;
   display: inline;
   font-size: ${themeCssVariables.font.size.sm};
+  margin-left: 0;
   padding: 0;
   text-decoration: underline;
-  margin-left: 0;
 
   &:hover {
     color: ${themeCssVariables.font.color.secondary};
@@ -103,7 +103,7 @@ export const SettingsTwoFactorAuthenticationMethod = () => {
   };
 
   return (
-    // eslint-disable-next-line react/jsx-props-no-spreading
+    // oxlint-disable-next-line react/jsx-props-no-spreading
     <FormProvider {...verificationForm.formConfig}>
       <SubMenuTopBarContainer
         title={t`Two Factor Authentication`}
@@ -152,7 +152,9 @@ export const SettingsTwoFactorAuthenticationMethod = () => {
                 ) : (
                   <>
                     <StyledQRCodeWrapper>
-                      <StyledQRCode value={qrCode} />
+                      <StyledQRCodeSizer>
+                        <QRCode value={qrCode} />
+                      </StyledQRCodeSizer>
                     </StyledQRCodeWrapper>
                     <StyledCopySetupKeyText>
                       <Trans>Can't scan? Copy the</Trans>{' '}

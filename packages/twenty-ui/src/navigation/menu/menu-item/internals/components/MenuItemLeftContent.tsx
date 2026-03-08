@@ -28,7 +28,13 @@ const StyledMainText = styled.div`
   max-width: 100%;
 `;
 
-const StyledMenuItemLabelRight = styled(StyledMenuItemLabel)`
+const StyledMenuItemLabelRight = styled.div`
+  display: flex;
+  flex-direction: row;
+  font-size: ${themeCssVariables.font.size.md};
+  font-weight: ${themeCssVariables.font.weight.regular};
+  overflow: hidden;
+  white-space: nowrap;
   margin-left: auto;
 `;
 
@@ -108,7 +114,10 @@ export const MenuItemLeftContent = ({
             {isString(contextualText)
               ? isNonEmptyString(contextualText) && (
                   <StyledMenuItemContextualText>
-                    <OverflowingTextWithTooltip text={`· ${contextualText}`} />
+                    <OverflowingTextWithTooltip
+                      text={`· ${contextualText}`}
+                      tooltipContent={contextualText}
+                    />
                   </StyledMenuItemContextualText>
                 )
               : contextualText}

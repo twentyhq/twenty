@@ -19,11 +19,11 @@ type EventRowActivityProps = EventRowDynamicComponentProps;
 const StyledLinkedActivity = styled.span`
   color: ${themeCssVariables.font.color.primary};
   cursor: pointer;
-  text-decoration: underline;
-  width: 100%;
   overflow: hidden;
+  text-decoration: underline;
   text-overflow: ellipsis;
   white-space: nowrap;
+  width: 100%;
 `;
 
 const StyledRowContainer = styled.div`

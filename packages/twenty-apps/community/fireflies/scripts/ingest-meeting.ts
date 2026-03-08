@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+/* oxlint-disable no-console */
 /**
  * Fetch a Fireflies meeting by ID and insert it into Twenty using the same path
  * as the webhook handler.

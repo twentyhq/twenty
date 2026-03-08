@@ -23,21 +23,10 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "{projectRoot}",
-        "commands": [
-          "NODE_ENV=test jest --testTimeout 10000"
-        ]
+        "commands": ["NODE_ENV=test jest --testTimeout 10000"]
       }
     },
-    "lint": {
-      "options": {
-        "lintFilePatterns": ["{projectRoot}/src/**/*.{ts,json}"],
-        "maxWarnings": 0
-      },
-      "configurations": {
-        "ci": { "lintFilePatterns": ["{projectRoot}/**/*.{ts,json}"] },
-        "fix": {}
-      }
-    },
+    "lint": {},
     "typecheck": {},
     "validate": {
       "executor": "nx:run-commands",

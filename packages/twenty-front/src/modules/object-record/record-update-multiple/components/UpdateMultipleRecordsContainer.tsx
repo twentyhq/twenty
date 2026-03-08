@@ -13,16 +13,16 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 const StyledShowPageRightContainer = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: start;
-  width: 100%;
   height: 100%;
+  justify-content: start;
   overflow: auto;
+  width: 100%;
 `;
 
 const StyledContentContainer = styled.div`
+  background: ${themeCssVariables.background.primary};
   flex: 1;
   overflow-y: auto;
-  background: ${themeCssVariables.background.primary};
   padding-bottom: ${themeCssVariables.spacing[16]};
 `;
 

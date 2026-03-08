@@ -21,21 +21,21 @@ import { MergeSettingsTab } from './MergeSettingsTab';
 const StyledShowPageRightContainer = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: start;
-  width: 100%;
   height: 100%;
+  justify-content: start;
   overflow: auto;
+  width: 100%;
 `;
 
-const StyledTabList = styled(TabList)`
+const StyledTabListContainer = styled.div`
   background-color: ${themeCssVariables.background.secondary};
   padding-left: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledContentContainer = styled.div`
+  background: ${themeCssVariables.background.primary};
   flex: 1;
   overflow-y: auto;
-  background: ${themeCssVariables.background.primary};
   padding-bottom: ${themeCssVariables.spacing[16]};
 `;
 
@@ -65,11 +65,13 @@ export const MergeRecordsContainer = ({
           <TabListComponentInstanceContext.Provider
             value={{ instanceId: instanceId }}
           >
-            <StyledTabList
-              tabs={tabs}
-              behaveAsLinks={false}
-              componentInstanceId={instanceId}
-            />
+            <StyledTabListContainer>
+              <TabList
+                tabs={tabs}
+                behaveAsLinks={false}
+                componentInstanceId={instanceId}
+              />
+            </StyledTabListContainer>
           </TabListComponentInstanceContext.Provider>
           <StyledContentContainer>
             {activeTabId === MergeRecordsTabId.MERGE_PREVIEW && (

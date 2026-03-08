@@ -4,6 +4,7 @@ import { Type } from 'class-transformer';
 import {
   ArrayMaxSize,
   IsArray,
+  IsBoolean,
   IsNotEmpty,
   IsOptional,
   IsString,
@@ -65,6 +66,11 @@ export class UpdateApplicationRegistrationPayload {
   @MaxLength(2048)
   @IsOptional()
   termsUrl?: string;
+
+  @Field(() => Boolean, { nullable: true })
+  @IsBoolean()
+  @IsOptional()
+  isListed?: boolean;
 }
 
 @InputType()

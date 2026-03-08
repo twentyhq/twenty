@@ -7,7 +7,7 @@ import { type OutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOut
 
 export const isFormOutputSchema = (
   stepType: WorkflowActionType | WorkflowTriggerType,
-  schema: OutputSchemaV2,
-): schema is FormOutputSchema => {
+  _schema: OutputSchemaV2,
+): _schema is FormOutputSchema => {
   return stepType === 'FORM';
 };

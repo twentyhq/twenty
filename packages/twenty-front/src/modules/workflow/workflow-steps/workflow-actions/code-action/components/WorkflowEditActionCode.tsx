@@ -55,7 +55,7 @@ const StyledCodeEditorContainer = styled.div`
   position: relative;
 `;
 
-const StyledTabList = styled(TabList)`
+const StyledTabListContainer = styled.div`
   background-color: ${themeCssVariables.background.secondary};
   padding-left: ${themeCssVariables.spacing[2]};
 `;
@@ -370,11 +370,13 @@ export const WorkflowEditActionCode = ({
     !loading && (
       <>
         <LogicFunctionTestInputInitEffect logicFunctionId={logicFunctionId} />
-        <StyledTabList
-          tabs={tabs}
-          behaveAsLinks={false}
-          componentInstanceId={WORKFLOW_LOGIC_FUNCTION_TAB_LIST_COMPONENT_ID}
-        />
+        <StyledTabListContainer>
+          <TabList
+            tabs={tabs}
+            behaveAsLinks={false}
+            componentInstanceId={WORKFLOW_LOGIC_FUNCTION_TAB_LIST_COMPONENT_ID}
+          />
+        </StyledTabListContainer>
         <WorkflowStepBody>
           {activeTabId === WorkflowLogicFunctionTabId.CODE && (
             <>

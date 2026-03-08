@@ -24,11 +24,11 @@ export const ExportNoteActionSingleRecordAction = () => {
     try {
       parsedBody = JSON.parse(initialBody);
     } catch {
-      // eslint-disable-next-line no-console
+      // oxlint-disable-next-line no-console
       console.warn(
         `Failed to parse body for record ${recordId}, for rich text version 'v2'`,
       );
-      // eslint-disable-next-line no-console
+      // oxlint-disable-next-line no-console
       console.warn(initialBody);
     }
 

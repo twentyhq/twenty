@@ -5,9 +5,9 @@ import {
   type InputHTMLAttributes,
   type ReactNode,
 } from 'react';
-
 import { useRegisterInputEvents } from '@/object-record/record-field/ui/meta-types/input/hooks/useRegisterInputEvents';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { isDefined } from 'twenty-shared/utils';
 import { useCombinedRefs } from '~/hooks/useCombinedRefs';
 
 const StyledInput = styled.input<{
@@ -15,14 +15,20 @@ const StyledInput = styled.input<{
   hasError?: boolean;
   hasItem: boolean;
 }>`
+  background-color: ${({ hasItem }) =>
+    hasItem ? themeCssVariables.background.transparent.lighter : 'transparent'};
   background-color: transparent;
+  border: ${({ hasItem, hasError }) =>
+    hasItem
+      ? hasError
+        ? `1px solid ${themeCssVariables.border.color.danger}`
+        : `1px solid ${themeCssVariables.border.color.medium}`
+      : 'none'};
   border: none;
+  border-radius: ${({ hasItem }) => (hasItem ? '4px' : '0')};
+  box-sizing: border-box;
   color: ${themeCssVariables.font.color.primary};
   font-family: ${themeCssVariables.font.family};
-  font-size: inherit;
-  font-weight: inherit;
-  outline: none;
-  padding: ${themeCssVariables.spacing[0]} ${themeCssVariables.spacing[2]};
 
   &::placeholder,
   &::-webkit-input-placeholder {
@@ -31,23 +37,17 @@ const StyledInput = styled.input<{
     font-weight: ${themeCssVariables.font.weight.medium};
   }
 
-  background-color: ${({ hasItem }) =>
-    hasItem ? themeCssVariables.background.transparent.lighter : 'transparent'};
-  border: ${({ hasItem, hasError }) =>
-    hasItem
-      ? hasError
-        ? `1px solid ${themeCssVariables.border.color.danger}`
-        : `1px solid ${themeCssVariables.border.color.medium}`
-      : 'none'};
-  border-radius: ${({ hasItem }) => (hasItem ? '4px' : '0')};
-  box-sizing: border-box;
+  font-size: inherit;
   font-weight: ${themeCssVariables.font.weight.medium};
+  font-weight: inherit;
   height: 32px;
-  position: relative;
-  width: 100%;
-
+  outline: none;
+  padding: ${themeCssVariables.spacing[0]} ${themeCssVariables.spacing[2]};
   padding-right: ${({ withRightComponent }) =>
     withRightComponent ? '32px' : '0'};
+  position: relative;
+
+  width: 100%;
 `;
 
 const StyledInputContainer = styled.div`
@@ -159,13 +159,13 @@ export const MultiItemBaseInput = forwardRef<
               placeholder={placeholder}
               onChange={(event) => onChange(event.target.value)}
               ref={combinedRef}
-              withRightComponent={!!rightComponent}
+              withRightComponent={isDefined(rightComponent)}
               hasItem={hasItem}
               onFocus={onFocus}
               onBlur={onBlur}
             />
           )}
-          {!!rightComponent && (
+          {isDefined(rightComponent) && (
             <StyledRightContainer>{rightComponent}</StyledRightContainer>
           )}
         </StyledInputContainer>

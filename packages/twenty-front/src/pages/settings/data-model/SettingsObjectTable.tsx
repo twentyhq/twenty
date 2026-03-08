@@ -5,7 +5,8 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
 import { useCombinedGetTotalCount } from '@/object-record/multiple-objects/hooks/useCombinedGetTotalCount';
 import { SettingsObjectMetadataItemTableRow } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRow';
-import { StyledObjectTableRow } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRowStyledComponents';
+import { TableRow } from '@/ui/layout/table/components/TableRow';
+import { SETTINGS_OBJECT_TABLE_ROW_GRID_TEMPLATE_COLUMNS } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRowStyledComponents';
 import { SettingsObjectInactiveMenuDropDown } from '@/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown';
 import { getItemTagInfo } from '@/settings/data-model/utils/getItemTagInfo';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -30,7 +31,7 @@ import { GET_SETTINGS_OBJECT_TABLE_METADATA } from '~/pages/settings/data-model/
 import type { SettingsObjectTableItem } from '~/pages/settings/data-model/types/SettingsObjectTableItem';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
-const StyledIconChevronRight = styled(IconChevronRight)`
+const StyledIconChevronRightContainer = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
 `;
 
@@ -170,7 +171,9 @@ export const SettingsObjectTable = ({
       )}
 
       <Table>
-        <StyledObjectTableRow>
+        <TableRow
+          gridTemplateColumns={SETTINGS_OBJECT_TABLE_ROW_GRID_TEMPLATE_COLUMNS}
+        >
           {GET_SETTINGS_OBJECT_TABLE_METADATA.fields.map(
             (settingsObjectsTableMetadataField) => (
               <SortableTableHeader
@@ -184,7 +187,7 @@ export const SettingsObjectTable = ({
             ),
           )}
           <TableHeader></TableHeader>
-        </StyledObjectTableRow>
+        </TableRow>
         {filteredObjectSettingsItems.map((objectSettingsItem) => {
           const isActive = objectSettingsItem.objectMetadataItem.isActive;
 
@@ -195,10 +198,12 @@ export const SettingsObjectTable = ({
               totalObjectCount={objectSettingsItem.totalObjectCount}
               action={
                 isActive ? (
-                  <StyledIconChevronRight
-                    size={theme.icon.size.md}
-                    stroke={theme.icon.stroke.sm}
-                  />
+                  <StyledIconChevronRightContainer>
+                    <IconChevronRight
+                      size={theme.icon.size.md}
+                      stroke={theme.icon.stroke.sm}
+                    />
+                  </StyledIconChevronRightContainer>
                 ) : (
                   <SettingsObjectInactiveMenuDropDown
                     isCustomObject={

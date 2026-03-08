@@ -7,7 +7,7 @@ import { type OutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOut
 
 export const isManualTriggerOutputSchema = (
   stepType: WorkflowActionType | WorkflowTriggerType,
-  schema: OutputSchemaV2,
-): schema is ManualTriggerOutputSchema => {
+  _schema: OutputSchemaV2,
+): _schema is ManualTriggerOutputSchema => {
   return stepType === 'MANUAL';
 };

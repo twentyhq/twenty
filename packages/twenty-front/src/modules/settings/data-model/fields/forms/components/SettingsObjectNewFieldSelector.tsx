@@ -43,9 +43,9 @@ const StyledTypeSelectContainer = styled.div`
 
 const StyledContainer = styled.div`
   display: flex;
+  flex-wrap: wrap;
   gap: ${themeCssVariables.spacing[2]};
   justify-content: flex-start;
-  flex-wrap: wrap;
   width: 100%;
 `;
 
@@ -56,7 +56,7 @@ const StyledCardContainer = styled.div`
   width: calc(50% - ${themeCssVariables.spacing[1]});
 `;
 
-const StyledSearchInput = styled(SettingsTextInput)`
+const StyledSearchInputContainer = styled.div`
   width: 100%;
 `;
 
@@ -108,13 +108,15 @@ export const SettingsObjectNewFieldSelector = ({
     <>
       {' '}
       <Section>
-        <StyledSearchInput
-          instanceId="new-field-type-search"
-          LeftIcon={IconSearch}
-          placeholder={t`Search a type`}
-          value={searchQuery}
-          onChange={setSearchQuery}
-        />
+        <StyledSearchInputContainer>
+          <SettingsTextInput
+            instanceId="new-field-type-search"
+            LeftIcon={IconSearch}
+            placeholder={t`Search a type`}
+            value={searchQuery}
+            onChange={setSearchQuery}
+          />
+        </StyledSearchInputContainer>
       </Section>
       <Controller
         name="type"

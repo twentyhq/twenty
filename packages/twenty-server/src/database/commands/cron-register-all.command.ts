@@ -2,7 +2,7 @@ import { Logger } from '@nestjs/common';
 
 import { Command, CommandRunner } from 'nest-commander';
 
-import { AppVersionCheckCronCommand } from 'src/engine/core-modules/application/application-version-check/crons/commands/app-version-check.cron.command';
+import { ApplicationVersionCheckCronCommand } from 'src/engine/core-modules/application/application-upgrade/crons/commands/application-version-check.cron.command';
 import { MarketplaceCatalogSyncCronCommand } from 'src/engine/core-modules/application/application-marketplace/crons/commands/marketplace-catalog-sync.cron.command';
 import { EventLogCleanupCronCommand } from 'src/engine/core-modules/event-logs/cleanup/commands/event-log-cleanup.cron.command';
 import { CheckPublicDomainsValidRecordsCronCommand } from 'src/engine/core-modules/public-domain/crons/commands/check-public-domains-valid-records.cron.command';
@@ -55,7 +55,7 @@ export class CronRegisterAllCommand extends CommandRunner {
     private readonly trashCleanupCronCommand: TrashCleanupCronCommand,
     private readonly eventLogCleanupCronCommand: EventLogCleanupCronCommand,
     private readonly marketplaceCatalogSyncCronCommand: MarketplaceCatalogSyncCronCommand,
-    private readonly appVersionCheckCronCommand: AppVersionCheckCronCommand,
+    private readonly applicationVersionCheckCronCommand: ApplicationVersionCheckCronCommand,
   ) {
     super();
   }
@@ -145,8 +145,8 @@ export class CronRegisterAllCommand extends CommandRunner {
         command: this.marketplaceCatalogSyncCronCommand,
       },
       {
-        name: 'AppVersionCheck',
-        command: this.appVersionCheckCronCommand,
+        name: 'ApplicationVersionCheck',
+        command: this.applicationVersionCheckCronCommand,
       },
     ];
 

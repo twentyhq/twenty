@@ -33,13 +33,9 @@ const StyledNameCell = styled.div`
 const StyledNameContainer = styled.div`
   align-items: center;
   display: flex;
-  overflow: hidden;
   gap: ${themeCssVariables.spacing[2]};
-  width: 100%;
-`;
-
-const StyledTableCell = styled(TableCell)`
   overflow: hidden;
+  width: 100%;
 `;
 
 export type RoleTarget =
@@ -119,17 +115,17 @@ export const SettingsRoleAssignmentTableRow = ({
 
   return (
     <TableRow gridAutoColumns="2fr 4fr">
-      <StyledTableCell>
+      <TableCell overflow="hidden">
         <StyledNameContainer>
           <StyledIconWrapper>{renderIcon()}</StyledIconWrapper>
           <StyledNameCell>
             <OverflowingTextWithTooltip text={renderName()} />
           </StyledNameCell>
         </StyledNameContainer>
-      </StyledTableCell>
-      <StyledTableCell>
+      </TableCell>
+      <TableCell overflow="hidden">
         <OverflowingTextWithTooltip text={renderSecondaryInfo()} />
-      </StyledTableCell>
+      </TableCell>
     </TableRow>
   );
 };

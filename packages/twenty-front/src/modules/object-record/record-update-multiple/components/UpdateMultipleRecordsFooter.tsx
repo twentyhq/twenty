@@ -21,8 +21,8 @@ const StyledFooterContainer = styled.div`
 `;
 
 const StyledFooterActions = styled.div`
-  display: flex;
   align-items: flex-end;
+  display: flex;
   gap: ${themeCssVariables.spacing[2]};
 `;
 

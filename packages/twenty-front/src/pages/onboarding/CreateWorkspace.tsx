@@ -19,7 +19,6 @@ import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
 import { ApolloError } from '@apollo/client';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { motion } from 'framer-motion';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
@@ -45,9 +44,9 @@ const StyledLoaderContainer = styled.div`
   align-items: center;
   display: flex;
   justify-content: center;
+  margin-bottom: ${themeCssVariables.spacing[8]};
   margin-top: ${themeCssVariables.spacing[8]};
   width: 100%;
-  margin-bottom: ${themeCssVariables.spacing[8]};
 `;
 
 enum PendingCreationLoaderStep {
@@ -57,11 +56,11 @@ enum PendingCreationLoaderStep {
   Step3 = 'step-3',
 }
 
-const StyledPendingCreationLoader = styled(motion.div)`
-  width: 100%;
+const StyledPendingCreationLoader = styled.div`
+  align-items: center;
   display: flex;
   justify-content: center;
-  align-items: center;
+  width: 100%;
 `;
 
 export const CreateWorkspace = () => {

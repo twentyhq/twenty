@@ -18,8 +18,8 @@ import { IdentityProviderType } from '~/generated-metadata/graphql';
 const StyledInputsContainer = styled.div`
   display: grid;
   gap: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[4]};
-  grid-template-columns: 1fr 1fr;
   grid-template-areas: 'input-1 input-1';
+  grid-template-columns: 1fr 1fr;
 
   & :first-of-type {
     grid-area: input-1;

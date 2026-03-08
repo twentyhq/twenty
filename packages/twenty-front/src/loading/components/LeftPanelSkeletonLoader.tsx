@@ -35,12 +35,12 @@ const StyledSkeletonContainer = styled.div`
 `;
 
 const StyledSkeletonTitleContainer = styled.div`
+  align-items: flex-start;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
   gap: 10px;
   height: 32px;
+  justify-content: center;
 
   max-width: 196px;
   min-width: 196px;

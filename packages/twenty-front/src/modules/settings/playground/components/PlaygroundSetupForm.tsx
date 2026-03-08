@@ -27,10 +27,10 @@ const playgroundSetupFormSchema = z.object({
 type PlaygroundSetupFormValues = z.infer<typeof playgroundSetupFormSchema>;
 
 const StyledForm = styled.form`
-  display: grid;
-  grid-template-columns: 1.5fr 1fr 1fr 0.5fr;
   align-items: end;
+  display: grid;
   gap: ${themeCssVariables.spacing[2]};
+  grid-template-columns: 1.5fr 1fr 1fr 0.5fr;
   margin-bottom: ${themeCssVariables.spacing[2]};
   width: 100%;
 `;

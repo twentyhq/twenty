@@ -36,7 +36,6 @@ export class FindOneResolverFactory
 
         const resolverContext = createQueryRunnerContext({
           workspaceSchemaBuilderContext: internalContext,
-          request: requestContext.req,
         });
 
         const record = await this.commonFindOneQueryRunnerService.execute(

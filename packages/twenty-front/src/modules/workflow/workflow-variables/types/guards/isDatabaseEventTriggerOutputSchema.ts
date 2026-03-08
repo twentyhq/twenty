@@ -7,7 +7,7 @@ import { type OutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOut
 
 export const isDatabaseEventTriggerOutputSchema = (
   stepType: WorkflowActionType | WorkflowTriggerType,
-  schema: OutputSchemaV2,
-): schema is DatabaseEventTriggerOutputSchema => {
+  _schema: OutputSchemaV2,
+): _schema is DatabaseEventTriggerOutputSchema => {
   return stepType === 'DATABASE_EVENT';
 };

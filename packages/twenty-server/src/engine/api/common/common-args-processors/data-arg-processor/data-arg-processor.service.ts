@@ -15,6 +15,7 @@ import {
 } from 'twenty-shared/utils';
 
 import { transformActorField } from 'src/engine/api/common/common-args-processors/data-arg-processor/transformer-utils/transform-actor-field.util';
+import { isRelationNestedOperation } from 'src/engine/api/common/common-args-processors/data-arg-processor/utils/is-relation-nested-operation.util';
 import { transformAddressField } from 'src/engine/api/common/common-args-processors/data-arg-processor/transformer-utils/transform-address-field.util';
 import { transformArrayField } from 'src/engine/api/common/common-args-processors/data-arg-processor/transformer-utils/transform-array-field.util';
 import { transformCurrencyField } from 'src/engine/api/common/common-args-processors/data-arg-processor/transformer-utils/transform-currency-field.util';
@@ -48,7 +49,7 @@ import {
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
-import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { transformEmailsValue } from 'src/engine/core-modules/record-transformer/utils/transform-emails-value.util';
 import { transformLinksValue } from 'src/engine/core-modules/record-transformer/utils/transform-links-value.util';
@@ -57,7 +58,9 @@ import { transformRichTextV2Value } from 'src/engine/core-modules/record-transfo
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
@@ -73,7 +76,7 @@ export class DataArgProcessorService {
     shouldBackfillPositionIfUndefined = true,
   }: {
     partialRecordInputs: Partial<ObjectRecord>[] | undefined;
-    authContext: AuthContext;
+    authContext: WorkspaceAuthContext;
     flatObjectMetadata: FlatObjectMetadata;
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
     shouldBackfillPositionIfUndefined?: boolean;
@@ -224,13 +227,11 @@ export class DataArgProcessorService {
       }
       case FieldMetadataType.RELATION:
       case FieldMetadataType.MORPH_RELATION: {
-        const fieldMetadataRelationSettings =
-          fieldMetadata.settings as FieldMetadataSettingsMapping['RELATION'];
+        const relationSettings = fieldMetadata.settings as
+          | FieldMetadataSettingsMapping['RELATION']
+          | FieldMetadataSettingsMapping['MORPH_RELATION'];
 
-        if (
-          fieldMetadataRelationSettings.relationType ===
-          RelationType.ONE_TO_MANY
-        ) {
+        if (relationSettings.relationType === RelationType.ONE_TO_MANY) {
           throw new CommonQueryRunnerException(
             `One-to-many relation ${key} field does not support write operations.`,
             CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
@@ -238,8 +239,25 @@ export class DataArgProcessorService {
           );
         }
 
-        if (key === fieldMetadataRelationSettings.joinColumnName) {
+        const joinColumnName = isFlatFieldMetadataOfType(
+          fieldMetadata,
+          FieldMetadataType.MORPH_RELATION,
+        )
+          ? computeMorphOrRelationFieldJoinColumnName({
+              name: fieldMetadata.name,
+            })
+          : relationSettings.joinColumnName;
+
+        if (key === joinColumnName) {
           return validateUUIDFieldOrThrow(value, key);
+        }
+
+        if (isDefined(joinColumnName) && !isRelationNestedOperation(value)) {
+          throw new CommonQueryRunnerException(
+            `Relation "${key}" requires connect or disconnect operation`,
+            CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
+            { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
+          );
         }
 
         return value;

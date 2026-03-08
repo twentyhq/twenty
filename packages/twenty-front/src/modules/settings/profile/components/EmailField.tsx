@@ -17,24 +17,24 @@ const StyledContainer = styled.div`
 `;
 
 const StyledFieldRow = styled.div`
-  display: flex;
   align-items: stretch;
+  display: flex;
   gap: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledActionWrapper = styled.div`
-  display: flex;
   align-items: stretch;
+  display: flex;
 
   & > button + button {
     border-left: none;
   }
 `;
 
-const StyledActionButton = styled(Button)`
-  height: 100%;
-  display: inline-flex;
+const StyledActionButtonContainer = styled.div`
   align-items: center;
+  display: inline-flex;
+  height: 100%;
   justify-content: center;
 `;
 
@@ -96,34 +96,40 @@ export const EmailField = () => {
         />
         {isEditing ? (
           <StyledActionWrapper key="editing">
-            <StyledActionButton
-              Icon={IconCheck}
-              variant="secondary"
-              position="left"
-              size="small"
-              onClick={handleSave}
-              disabled={isSaveDisabled}
-              type="button"
-            />
-            <StyledActionButton
-              Icon={IconX}
-              variant="secondary"
-              position="right"
-              size="small"
-              onClick={handleCancelEditing}
-              type="button"
-            />
+            <StyledActionButtonContainer>
+              <Button
+                Icon={IconCheck}
+                variant="secondary"
+                position="left"
+                size="small"
+                onClick={handleSave}
+                disabled={isSaveDisabled}
+                type="button"
+              />
+            </StyledActionButtonContainer>
+            <StyledActionButtonContainer>
+              <Button
+                Icon={IconX}
+                variant="secondary"
+                position="right"
+                size="small"
+                onClick={handleCancelEditing}
+                type="button"
+              />
+            </StyledActionButtonContainer>
           </StyledActionWrapper>
         ) : (
           <StyledActionWrapper key="view">
-            <StyledActionButton
-              Icon={IconPencil}
-              variant="secondary"
-              size="small"
-              onClick={handleStartEditing}
-              disabled={!canEdit}
-              type="button"
-            />
+            <StyledActionButtonContainer>
+              <Button
+                Icon={IconPencil}
+                variant="secondary"
+                size="small"
+                onClick={handleStartEditing}
+                disabled={!canEdit}
+                type="button"
+              />
+            </StyledActionButtonContainer>
           </StyledActionWrapper>
         )}
       </StyledFieldRow>

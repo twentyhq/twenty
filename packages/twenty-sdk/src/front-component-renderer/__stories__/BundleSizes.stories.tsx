@@ -74,10 +74,8 @@ const BundleSizesTable = () => {
         </thead>
         <tbody>
           {entries.map((entry) => {
-            const reactWidth =
-              (entry.reactBytes / maxBytes) * BAR_MAX_WIDTH;
-            const preactWidth =
-              (entry.preactBytes / maxBytes) * BAR_MAX_WIDTH;
+            const reactWidth = (entry.reactBytes / maxBytes) * BAR_MAX_WIDTH;
+            const preactWidth = (entry.preactBytes / maxBytes) * BAR_MAX_WIDTH;
             const saving =
               entry.reactBytes > 0
                 ? (
@@ -102,7 +100,9 @@ const BundleSizesTable = () => {
                   {formatLabel(entry.name)}
                 </td>
                 <td style={{ padding: '10px 12px' }}>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                  <div
+                    style={{ display: 'flex', flexDirection: 'column', gap: 3 }}
+                  >
                     <div
                       style={{
                         height: 14,

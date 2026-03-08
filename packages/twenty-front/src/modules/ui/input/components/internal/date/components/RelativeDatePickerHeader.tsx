@@ -9,6 +9,7 @@ import { styled } from '@linaria/react';
 import { useState } from 'react';
 import { type Nullable } from 'twenty-shared/types';
 import {
+  isDefined,
   relativeDateFilterSchema,
   type RelativeDateFilter,
   type RelativeDateFilterDirection,
@@ -17,8 +18,8 @@ import {
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div<{ noPadding: boolean }>`
-  display: flex;
   align-items: center;
+  display: flex;
   gap: ${themeCssVariables.spacing[1]};
   padding: ${({ noPadding }) =>
     noPadding ? '0' : themeCssVariables.spacing[2]};
@@ -55,7 +56,7 @@ export const RelativeDatePickerHeader = ({
 
   const [draftAmountValue, setDraftAmountValue] = useState(amountTextValue);
 
-  const isUnitPlural = amount && amount > 1 && direction !== 'THIS';
+  const isUnitPlural = isDefined(amount) && amount > 1 && direction !== 'THIS';
   const unitOptionsSource = allowIntraDayUnits
     ? RELATIVE_DATETIME_UNITS_SELECT_OPTIONS
     : RELATIVE_DATE_UNITS_SELECT_OPTIONS;

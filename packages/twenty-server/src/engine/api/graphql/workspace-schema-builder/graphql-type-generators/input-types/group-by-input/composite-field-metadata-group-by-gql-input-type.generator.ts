@@ -59,7 +59,7 @@ export class CompositeFieldMetadataGroupByGqlInputTypeGenerator {
         continue;
       }
 
-      const type = this.typeMapperService.applyTypeOptions(GraphQLBoolean, {});
+      const type = GraphQLBoolean;
 
       fields[property.name] = {
         type,

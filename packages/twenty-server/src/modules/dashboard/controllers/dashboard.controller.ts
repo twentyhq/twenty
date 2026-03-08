@@ -1,14 +1,6 @@
 import { Controller, Param, Post, UseFilters, UseGuards } from '@nestjs/common';
 
-import {
-  AuthContext,
-  type AuthContextUser,
-} from 'src/engine/core-modules/auth/types/auth-context.type';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
-import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
-import { AuthWorkspaceMemberId } from 'src/engine/decorators/auth/auth-workspace-member-id.decorator';
-import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { getWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -25,19 +17,8 @@ export class DashboardController {
   ) {}
 
   @Post(':id/duplicate')
-  async duplicate(
-    @Param('id') id: string,
-    @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUser() user: AuthContextUser,
-    @AuthWorkspaceMemberId() workspaceMemberId: string,
-    @AuthUserWorkspaceId() userWorkspaceId: string,
-  ): Promise<DuplicatedDashboardDTO> {
-    const authContext: AuthContext = {
-      user,
-      workspace,
-      workspaceMemberId,
-      userWorkspaceId,
-    };
+  async duplicate(@Param('id') id: string): Promise<DuplicatedDashboardDTO> {
+    const authContext = getWorkspaceAuthContext();
 
     return this.dashboardDuplicationService.duplicateDashboard(id, authContext);
   }

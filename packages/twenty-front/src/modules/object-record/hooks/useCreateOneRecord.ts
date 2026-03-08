@@ -162,7 +162,7 @@ export const useCreateOneRecord = <
         },
       })
       .catch((error: Error) => {
-        if (!recordCreatedInCache) {
+        if (!isDefined(recordCreatedInCache)) {
           throw error;
         }
 

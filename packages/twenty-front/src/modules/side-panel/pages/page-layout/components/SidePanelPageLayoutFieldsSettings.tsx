@@ -22,8 +22,8 @@ const StyledContainer = styled.div`
 
 const StyledSidePanelContainer = styled.div`
   display: flex;
-  flex-direction: column;
   flex: 1;
+  flex-direction: column;
   overflow: hidden;
 `;
 

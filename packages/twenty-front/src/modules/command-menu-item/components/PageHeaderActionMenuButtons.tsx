@@ -6,8 +6,8 @@ import { useContext } from 'react';
 import { ThemeContext } from 'twenty-ui/theme-constants';
 
 const StyledActionContainer = styled(motion.div)`
-  display: flex;
   align-items: center;
+  display: flex;
   justify-content: center;
 `;
 

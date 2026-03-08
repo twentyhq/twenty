@@ -25,14 +25,14 @@ const StyledShowPageRightContainer = styled.div`
   flex-direction: column;
   height: 100%;
   justify-content: start;
-  width: 100%;
   overflow: auto;
+  width: 100%;
 `;
 
 const StyledContentContainer = styled.div<{ isInSidePanel: boolean }>`
+  background: ${themeCssVariables.background.primary};
   flex: 1;
   overflow-y: auto;
-  background: ${themeCssVariables.background.primary};
   padding-bottom: ${({ isInSidePanel }) =>
     isInSidePanel ? themeCssVariables.spacing[16] : 0};
 `;

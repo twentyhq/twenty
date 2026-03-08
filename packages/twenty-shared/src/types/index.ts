@@ -262,6 +262,7 @@ export { IsValidGraphQLEnumName } from './validators/is-valid-graphql-enum-name.
 export { ViewFilterGroupLogicalOperator } from './ViewFilterGroupLogicalOperator';
 export { ViewFilterOperand } from './ViewFilterOperand';
 export { ViewFilterOperandDeprecated } from './ViewFilterOperandDeprecated';
+export { ViewKey } from './ViewKey';
 export { ViewOpenRecordIn } from './ViewOpenRecordIn';
 export { ViewType } from './ViewType';
 export { ViewVisibility } from './ViewVisibility';

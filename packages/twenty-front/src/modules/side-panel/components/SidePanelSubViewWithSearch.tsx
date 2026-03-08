@@ -27,9 +27,9 @@ const StyledSearchInput = styled.input`
   border-radius: ${themeCssVariables.border.radius.sm};
   box-sizing: border-box;
 
+  outline: none;
   padding: 0;
   width: 100%;
-  outline: none;
 
   &::placeholder {
     color: ${themeCssVariables.font.color.tertiary};
@@ -38,8 +38,8 @@ const StyledSearchInput = styled.input`
 
 const StyledScrollableListWrapper = styled.div`
   display: flex;
-  flex-direction: column;
   flex: 1;
+  flex-direction: column;
   min-height: 0;
   overflow: hidden;
 
@@ -79,7 +79,7 @@ export const SidePanelSubViewWithSearch = ({
         value={searchValue}
         onChange={(event) => onSearchChange(event.target.value)}
         autoFocus
-        // eslint-disable-next-line react/jsx-props-no-spreading
+        // oxlint-disable-next-line react/jsx-props-no-spreading
         {...searchInputProps}
       />
     </StyledSearchContainer>

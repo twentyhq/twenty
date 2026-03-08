@@ -27,12 +27,12 @@ const MS_OFFICE_EXTENSIONS = [
 ];
 
 const StyledDocumentViewerContainer = styled.div`
+  background: ${themeCssVariables.background.secondary};
   display: flex;
   flex-direction: column;
   height: calc(100vh - 200px);
   min-height: 500px;
   width: 100%;
-  background: ${themeCssVariables.background.secondary};
 
   #react-doc-viewer #header-bar {
     display: none;
@@ -45,22 +45,22 @@ const StyledDocumentViewerContainer = styled.div`
   #react-doc-viewer,
   #proxy-renderer,
   #msdoc-renderer {
+    background: none;
     display: flex;
     flex-direction: column;
     height: 100%;
-    width: 100%;
     overflow: auto;
-    background: none;
+    width: 100%;
   }
 `;
 
 const StyledUnavailablePreviewContainer = styled.div`
+  align-items: center;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
   gap: ${themeCssVariables.spacing[4]};
+  height: 100%;
+  justify-content: center;
   padding: ${themeCssVariables.spacing[8]};
   text-align: center;
 `;

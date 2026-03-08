@@ -12,16 +12,16 @@ import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 const StyledInlineCellBaseContainer = styled.div`
   align-items: center;
   box-sizing: border-box;
-  width: 100%;
   display: flex;
-
   gap: ${themeCssVariables.spacing[1]};
 
   position: relative;
+
   user-select: none;
+  width: 100%;
 `;
 
-const StyledPropertyBox = styled(PropertyBox)`
+const StyledPropertyBoxContainer = styled.div`
   height: ${themeCssVariables.spacing[6]};
   width: 100%;
 `;
@@ -87,19 +87,21 @@ export const CalendarEventParticipantsResponseStatusField = ({
   ));
 
   return (
-    <StyledPropertyBox>
-      <StyledInlineCellBaseContainer>
-        <StyledLabelAndIconContainer>
-          <StyledIconContainer>{Icon}</StyledIconContainer>
+    <StyledPropertyBoxContainer>
+      <PropertyBox>
+        <StyledInlineCellBaseContainer>
+          <StyledLabelAndIconContainer>
+            <StyledIconContainer>{Icon}</StyledIconContainer>
 
-          <StyledLabelContainer width={72}>
-            <EllipsisDisplay>{responseStatus}</EllipsisDisplay>
-          </StyledLabelContainer>
-        </StyledLabelAndIconContainer>
-        <StyledDiv ref={participantsContainerRef}>
-          <ExpandableList isChipCountDisplayed>{styledChips}</ExpandableList>
-        </StyledDiv>
-      </StyledInlineCellBaseContainer>
-    </StyledPropertyBox>
+            <StyledLabelContainer width={72}>
+              <EllipsisDisplay>{responseStatus}</EllipsisDisplay>
+            </StyledLabelContainer>
+          </StyledLabelAndIconContainer>
+          <StyledDiv ref={participantsContainerRef}>
+            <ExpandableList isChipCountDisplayed>{styledChips}</ExpandableList>
+          </StyledDiv>
+        </StyledInlineCellBaseContainer>
+      </PropertyBox>
+    </StyledPropertyBoxContainer>
   );
 };

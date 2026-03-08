@@ -11,8 +11,8 @@ const StyledContainer = styled.div`
   display: flex;
   gap: ${themeCssVariables.spacing[1]};
   height: ${themeCssVariables.spacing[5]};
-  padding: 0 ${themeCssVariables.spacing[1]};
   margin-right: ${themeCssVariables.spacing[1]};
+  padding: 0 ${themeCssVariables.spacing[1]};
 `;
 
 const StyledIconBox = styled.div`

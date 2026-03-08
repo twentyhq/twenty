@@ -10,8 +10,8 @@ type SettingsOptionIconCustomizerProps = {
 };
 
 const StyledIconCustomizer = styled.div<{ zoom: number; rotate: number }>`
-  display: inline-flex;
   align-items: center;
+  display: inline-flex;
   justify-content: center;
   transform: scale(${({ zoom }) => zoom}) rotate(${({ rotate }) => rotate}deg);
 `;

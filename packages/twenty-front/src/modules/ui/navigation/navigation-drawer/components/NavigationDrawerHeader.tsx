@@ -17,10 +17,10 @@ const StyledContainer = styled.div<{ isExpanded: boolean }>`
   display: flex;
   flex-direction: ${({ isExpanded }) => (isExpanded ? 'row' : 'column')};
   gap: ${({ isExpanded }) => (isExpanded ? '0' : themeCssVariables.spacing[4])};
-  user-select: none;
-  padding-right: ${themeCssVariables.spacing[2]};
   min-height: ${PAGE_BAR_MIN_HEIGHT}px;
+  padding-right: ${themeCssVariables.spacing[2]};
   transition: gap calc(${themeCssVariables.animation.duration.normal} * 1s) ease;
+  user-select: none;
 `;
 
 const StyledRightActions = styled.div<{ isExpanded: boolean }>`
@@ -33,19 +33,19 @@ const StyledRightActions = styled.div<{ isExpanded: boolean }>`
   transition: gap calc(${themeCssVariables.animation.duration.normal} * 1s) ease;
 `;
 
-const StyledNavigationDrawerCollapseButton = styled(
-  NavigationDrawerCollapseButton,
-)`
-  height: ${themeCssVariables.spacing[6]};
-  padding-right: ${themeCssVariables.spacing[1]};
-  width: ${themeCssVariables.spacing[6]};
+const StyledNavigationDrawerCollapseButtonContainer = styled.div`
+  > * {
+    height: ${themeCssVariables.spacing[6]};
+    padding-right: ${themeCssVariables.spacing[1]};
+    width: ${themeCssVariables.spacing[6]};
+  }
 `;
 
 const StyledWorkspaceDropdownContainer = styled.div`
-  min-height: ${themeCssVariables.spacing[8]};
-  display: flex;
   align-items: center;
+  display: flex;
   justify-content: center;
+  min-height: ${themeCssVariables.spacing[8]};
 `;
 
 type NavigationDrawerHeaderProps = {
@@ -76,7 +76,9 @@ export const NavigationDrawerHeader = ({
             aria-label={t`Search`}
           />
           {isNavigationDrawerExpanded && showCollapseButton && (
-            <StyledNavigationDrawerCollapseButton direction="left" />
+            <StyledNavigationDrawerCollapseButtonContainer>
+              <NavigationDrawerCollapseButton direction="left" />
+            </StyledNavigationDrawerCollapseButtonContainer>
           )}
         </StyledRightActions>
       )}

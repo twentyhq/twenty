@@ -21,7 +21,7 @@ export class AddWorkspaceForeignKeys1767002571103
         await queryRunner.query(`ROLLBACK TO SAVEPOINT ${savepointName}`);
         await queryRunner.query(`RELEASE SAVEPOINT ${savepointName}`);
       } catch (rollbackError) {
-        // eslint-disable-next-line no-console
+        // oxlint-disable-next-line no-console
         console.error(
           'Failed to rollback to savepoint in AddWorkspaceForeignKeys1767002571103',
           rollbackError,
@@ -29,7 +29,7 @@ export class AddWorkspaceForeignKeys1767002571103
         throw rollbackError;
       }
 
-      // eslint-disable-next-line no-console
+      // oxlint-disable-next-line no-console
       console.error('Swallowing AddWorkspaceForeignKeys1767002571103 error', e);
     }
   }

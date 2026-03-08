@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { styled } from '@linaria/react';
 import { useContext, useEffect, useRef, useState } from 'react';
 
@@ -9,25 +10,27 @@ import { IMaskInput } from 'react-imask';
 import { type IconComponent } from 'twenty-ui/display';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
-export const StyledIMaskInput = styled(IMaskInput)`
-  margin: 0;
-  background-color: transparent;
-  border: none;
-  color: ${themeCssVariables.font.color.primary};
-  font-family: ${themeCssVariables.font.family};
-  font-size: inherit;
-  font-weight: inherit;
-  outline: none;
-  padding: ${themeCssVariables.spacing[0]} ${themeCssVariables.spacing[1.5]};
-
-  &::placeholder,
-  &::-webkit-input-placeholder {
-    color: ${themeCssVariables.font.color.light};
+export const StyledIMaskInput = styled.div`
+  > input {
+    background-color: transparent;
+    border: none;
+    color: ${themeCssVariables.font.color.primary};
     font-family: ${themeCssVariables.font.family};
-    font-weight: ${themeCssVariables.font.weight.medium};
-  }
+    font-size: inherit;
+    font-weight: inherit;
+    margin: 0;
+    outline: none;
+    padding: ${themeCssVariables.spacing[0]} ${themeCssVariables.spacing[1.5]};
 
-  width: 100%;
+    &::placeholder,
+    &::-webkit-input-placeholder {
+      color: ${themeCssVariables.font.color.light};
+      font-family: ${themeCssVariables.font.family};
+      font-weight: ${themeCssVariables.font.weight.medium};
+    }
+
+    width: 100%;
+  }
 `;
 
 const StyledContainer = styled.div`
@@ -42,9 +45,9 @@ const StyledIcon = styled.div`
   display: flex;
 
   & > svg {
-    padding-left: ${themeCssVariables.spacing[1]};
     color: ${themeCssVariables.font.color.tertiary};
     height: ${themeCssVariables.icon.size.md}px;
+    padding-left: ${themeCssVariables.spacing[1]};
     width: ${themeCssVariables.icon.size.md}px;
   }
 `;
@@ -120,23 +123,25 @@ export const CurrencyInput = ({
         onChange={handleCurrencyChange}
       />
       <StyledIcon>
-        {Icon && (
+        {isDefined(Icon) && (
           <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
         )}
       </StyledIcon>
-      <StyledIMaskInput
-        mask={Number}
-        thousandsSeparator=","
-        radix="."
-        scale={decimals}
-        onAccept={(value: string) => handleChange(value)}
-        inputRef={wrapperRef}
-        autoComplete="off"
-        placeholder={placeholder}
-        autoFocus={autoFocus}
-        value={value}
-        unmask
-      />
+      <StyledIMaskInput>
+        <IMaskInput
+          mask={Number}
+          thousandsSeparator=","
+          radix="."
+          scale={decimals}
+          onAccept={(value: string) => handleChange(value)}
+          inputRef={wrapperRef}
+          autoComplete="off"
+          placeholder={placeholder}
+          autoFocus={autoFocus}
+          value={value}
+          unmask
+        />
+      </StyledIMaskInput>
     </StyledContainer>
   );
 };

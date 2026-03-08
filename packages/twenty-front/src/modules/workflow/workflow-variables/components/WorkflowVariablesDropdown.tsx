@@ -1,5 +1,4 @@
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { StyledDropdownButtonContainer } from '@/ui/layout/dropdown/components/StyledDropdownButtonContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -15,17 +14,29 @@ import { useContext, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconVariablePlus } from 'twenty-ui/display';
 import { themeCssVariables, ThemeContext } from 'twenty-ui/theme-constants';
-const StyledDropdownVariableButtonContainer = styled(
-  StyledDropdownButtonContainer,
-)<{ transparentBackground?: boolean; disabled?: boolean }>`
+const StyledDropdownVariableButtonContainer = styled.div<{
+  isUnfolded?: boolean;
+  transparentBackground?: boolean;
+  disabled?: boolean;
+}>`
+  align-items: center;
   background-color: ${({ transparentBackground }) =>
     transparentBackground
       ? 'transparent'
       : themeCssVariables.background.transparent.lighter};
-
+  border-radius: ${themeCssVariables.border.radius.sm};
   color: ${themeCssVariables.font.color.tertiary};
+  cursor: pointer;
+  display: flex;
   padding: ${themeCssVariables.spacing[2]};
-  :hover {
+  user-select: none;
+  &:hover {
+    background: ${({ isUnfolded, transparentBackground }) =>
+      transparentBackground
+        ? 'transparent'
+        : isUnfolded
+          ? themeCssVariables.background.transparent.medium
+          : themeCssVariables.background.transparent.light};
     cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   }
 `;
