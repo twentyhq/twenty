@@ -18,7 +18,9 @@ export const checkIfShouldSkipFiltering = ({
   ].includes(recordFilter.operand);
 
   const isFilterValueEmpty =
-    !isDefined(recordFilter.value) || recordFilter.value === '';
+    !isDefined(recordFilter.value) ||
+    recordFilter.value === '' ||
+    recordFilter.value === 'null';
 
   const shouldSkipFiltering =
     !isAnEmptinessOperand && !isDateOperandWithoutValue && isFilterValueEmpty;
