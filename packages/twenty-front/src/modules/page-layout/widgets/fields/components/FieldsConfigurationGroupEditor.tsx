@@ -8,6 +8,7 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import { FieldsConfigurationFieldEditor } from '@/page-layout/widgets/fields/components/FieldsConfigurationFieldEditor';
 import { FieldsConfigurationGroupDropdown } from '@/page-layout/widgets/fields/components/FieldsConfigurationGroupDropdown';
 import { FieldsConfigurationGroupRenameInput } from '@/page-layout/widgets/fields/components/FieldsConfigurationGroupRenameInput';
+import { NEW_FIELDS_INDICATOR_DRAGGABLE_ID } from '@/page-layout/widgets/fields/constants/NewFieldsIndicatorDraggableId';
 import { type FieldsWidgetGroup } from '@/page-layout/widgets/fields/types/FieldsWidgetGroup';
 import { getFieldsConfigurationGroupRenameDropdownId } from '@/page-layout/widgets/fields/utils/getFieldsConfigurationGroupRenameDropdownId';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -15,8 +16,15 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
-import { IconNewSection } from 'twenty-ui/display';
+import {
+  IconEye,
+  IconEyeOff,
+  IconNewSection,
+  IconPlaylistAdd,
+} from 'twenty-ui/display';
 import { MenuItem, MenuItemDraggable } from 'twenty-ui/navigation';
+
+import { FieldsConfigurationGroupDraggableHeader } from '@/page-layout/widgets/fields/components/FieldsConfigurationGroupDraggableHeader';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledFieldsDroppable = styled.div`
@@ -81,6 +89,9 @@ type FieldsConfigurationGroupEditorProps = {
   renamingGroupValue: string;
   onRenamingGroupValueChange: (value: string) => void;
   onStartRename: (params: { groupId: string; groupName: string }) => void;
+  showNewFieldsItem: boolean;
+  newFieldsIsVisible: boolean;
+  onToggleNewFieldsVisibility: () => void;
 };
 
 export const FieldsConfigurationGroupEditor = ({
@@ -94,6 +105,9 @@ export const FieldsConfigurationGroupEditor = ({
   renamingGroupValue,
   onRenamingGroupValueChange,
   onStartRename,
+  showNewFieldsItem,
+  newFieldsIsVisible,
+  onToggleNewFieldsVisibility,
 }: FieldsConfigurationGroupEditorProps) => {
   const { t } = useLingui();
 
@@ -133,23 +147,18 @@ export const FieldsConfigurationGroupEditor = ({
   return (
     <StyledGroupContainer
       ref={draggableProvided.innerRef}
-      // eslint-disable-next-line react/jsx-props-no-spreading
+      // oxlint-disable-next-line react/jsx-props-no-spreading
       {...draggableProvided.draggableProps}
       isDragging={isDragging}
     >
-      {/* eslint-disable-next-line react/jsx-props-no-spreading */}
+      {/* oxlint-disable-next-line react/jsx-props-no-spreading */}
       <StyledGroupHeaderRow {...draggableProvided.dragHandleProps}>
         <Dropdown
           dropdownId={renameDropdownId}
           clickableComponentWidth="100%"
           clickableComponent={
             <StyledMenuItemDraggableWrapper>
-              <MenuItemDraggable
-                text={group.name}
-                gripMode="always"
-                isIconDisplayedOnHoverOnly={false}
-                withIconContainer
-              />
+              <FieldsConfigurationGroupDraggableHeader text={group.name} />
             </StyledMenuItemDraggableWrapper>
           }
           disableClickForClickableComponent
@@ -183,7 +192,7 @@ export const FieldsConfigurationGroupEditor = ({
         {(droppableProvided) => (
           <StyledFieldsDroppable
             ref={droppableProvided.innerRef}
-            // eslint-disable-next-line react/jsx-props-no-spreading
+            // oxlint-disable-next-line react/jsx-props-no-spreading
             {...droppableProvided.droppableProps}
           >
             {sortedFields.length === 0 && (
@@ -214,6 +223,33 @@ export const FieldsConfigurationGroupEditor = ({
                 />
               );
             })}
+            {showNewFieldsItem && (
+              <DraggableItem
+                key={NEW_FIELDS_INDICATOR_DRAGGABLE_ID}
+                draggableId={NEW_FIELDS_INDICATOR_DRAGGABLE_ID}
+                index={sortedFields.length}
+                isInsideScrollableContainer
+                itemComponent={
+                  <MenuItemDraggable
+                    LeftIcon={IconPlaylistAdd}
+                    text={t`New fields`}
+                    contextualText={t`Default position/visibility for fields created in the future`}
+                    gripMode="onHover"
+                    withIconContainer
+                    isIconDisplayedOnHoverOnly={false}
+                    iconButtons={[
+                      {
+                        Icon: newFieldsIsVisible ? IconEye : IconEyeOff,
+                        onClick: (e) => {
+                          e.stopPropagation();
+                          onToggleNewFieldsVisibility();
+                        },
+                      },
+                    ]}
+                  />
+                }
+              />
+            )}
             {droppableProvided.placeholder}
           </StyledFieldsDroppable>
         )}

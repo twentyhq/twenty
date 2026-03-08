@@ -2,7 +2,7 @@ import prettier from '@prettier/sync';
 import * as fs from 'fs';
 import { globSync } from 'glob';
 import path from 'path';
-import { Options } from 'prettier';
+import { type Options } from 'prettier';
 import slash from 'slash';
 import ts from 'typescript';
 
@@ -151,7 +151,10 @@ type WriteInJsonFileArgs = {
 };
 const updateJsonFile = ({ content, file }: WriteInJsonFileArgs) => {
   const updatedJsonFile = JSON.stringify(content);
-  const formattedContent = prettierFormat(updatedJsonFile, 'json-stringify');
+  const formattedContent = prettier.format(updatedJsonFile, {
+    ...prettierConfiguration,
+    filepath: file,
+  });
   fs.writeFileSync(file, formattedContent, 'utf-8');
 };
 

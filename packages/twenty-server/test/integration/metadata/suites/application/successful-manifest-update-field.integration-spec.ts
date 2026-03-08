@@ -52,10 +52,38 @@ describe('Manifest update - fields', () => {
   }, 60000);
 
   afterEach(async () => {
-    await uninstallApplication({
-      universalIdentifier: TEST_APP_ID,
-      expectToFail: false,
-    });
+    try {
+      await uninstallApplication({
+        universalIdentifier: TEST_APP_ID,
+        expectToFail: false,
+      });
+    } catch {
+      // May fail if the test didn't fully install/sync
+    }
+
+    await globalThis.testDataSource.query(
+      `DELETE FROM core."role" WHERE "universalIdentifier" = $1`,
+      [TEST_ROLE_ID],
+    );
+
+    await globalThis.testDataSource.query(
+      `DELETE FROM core."file" WHERE "applicationId" IN (
+        SELECT id FROM core."application" WHERE "universalIdentifier" = $1
+      )`,
+      [TEST_APP_ID],
+    );
+
+    await globalThis.testDataSource.query(
+      `DELETE FROM core."application"
+       WHERE "universalIdentifier" = $1`,
+      [TEST_APP_ID],
+    );
+
+    await globalThis.testDataSource.query(
+      `DELETE FROM core."applicationRegistration"
+       WHERE "universalIdentifier" = $1`,
+      [TEST_APP_ID],
+    );
   });
 
   it('should create a new field when added to manifest on second sync', async () => {

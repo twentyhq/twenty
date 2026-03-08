@@ -24,7 +24,7 @@ export class MakeAgentUniversalIdentifierAndApplicationIdNotNullable176821317427
         await queryRunner.query(`ROLLBACK TO SAVEPOINT ${savepointName}`);
         await queryRunner.query(`RELEASE SAVEPOINT ${savepointName}`);
       } catch (rollbackError) {
-        // eslint-disable-next-line no-console
+        // oxlint-disable-next-line no-console
         console.error(
           'Failed to rollback to savepoint in MakeAgentUniversalIdentifierAndApplicationIdNotNullable1768213174274',
           rollbackError,
@@ -32,7 +32,7 @@ export class MakeAgentUniversalIdentifierAndApplicationIdNotNullable176821317427
         throw rollbackError;
       }
 
-      // eslint-disable-next-line no-console
+      // oxlint-disable-next-line no-console
       console.error(
         'Swallowing MakeAgentUniversalIdentifierAndApplicationIdNotNullable1768213174274 error',
         e,

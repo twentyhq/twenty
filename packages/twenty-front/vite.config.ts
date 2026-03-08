@@ -41,7 +41,7 @@ export default defineConfig(({ mode }) => {
   const OTHER_CHUNK_SIZE_LIMIT = 5 * 1024 * 1024; // 5MB for other chunks
 
   if (VITE_BUILD_SOURCEMAP === 'true') {
-    // eslint-disable-next-line no-console
+    // oxlint-disable-next-line no-console
     console.log(`VITE_BUILD_SOURCEMAP: ${VITE_BUILD_SOURCEMAP}`);
   }
 
@@ -89,8 +89,13 @@ export default defineConfig(({ mode }) => {
           exclude: [
             '**/generated-metadata/**',
             '**/testing/mock-data/generated/**',
+            '**/testing/**',
             '**/*.test.{ts,tsx}',
             '**/*.spec.{ts,tsx}',
+            '**/*.stories.{ts,tsx}',
+            '**/__stories__/**',
+            '**/__tests__/**',
+            '**/__mocks__/**',
             '**/types/**',
             '**/constants/**',
             '**/states/**',
@@ -105,6 +110,7 @@ export default defineConfig(({ mode }) => {
             '**/mutations/**',
             '**/fragments/**',
             '**/graphql/**',
+            '**/decorators/**',
           ],
           babelOptions: {
             presets: ['@babel/preset-typescript', '@babel/preset-react'],
@@ -112,12 +118,16 @@ export default defineConfig(({ mode }) => {
           },
         }),
       ),
-      visualizer({
-        open: true,
-        gzipSize: true,
-        brotliSize: true,
-        filename: 'dist/stats.html',
-      }) as PluginOption, // https://github.com/btd/rollup-plugin-visualizer/issues/162#issuecomment-1538265997,
+      ...(env.ANALYZE === 'true'
+        ? [
+            visualizer({
+              open: !process.env.CI,
+              gzipSize: true,
+              brotliSize: true,
+              filename: 'dist/stats.html',
+            }) as PluginOption,
+          ]
+        : []),
     ],
 
     optimizeDeps: {
@@ -236,7 +246,6 @@ export default defineConfig(({ mode }) => {
     resolve: {
       alias: {
         path: 'rollup-plugin-node-polyfills/polyfills/path',
-        '@tabler/icons-react': '@tabler/icons-react/dist/esm/icons/index.mjs',
       },
     },
   };

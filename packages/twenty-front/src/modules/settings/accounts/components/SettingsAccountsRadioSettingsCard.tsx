@@ -4,6 +4,7 @@ import { Trans } from '@lingui/react';
 import { type ReactNode } from 'react';
 import { Radio } from 'twenty-ui/input';
 import { Card, CardContent } from 'twenty-ui/layout';
+import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type SettingsAccountsRadioSettingsCardProps<Option extends { value: string }> =
@@ -42,9 +43,9 @@ const StyledDescription = styled.div`
 `;
 
 const StyledRadioContainer = styled.span`
-  margin-left: auto;
-  display: flex;
   align-items: center;
+  display: flex;
+  margin-left: auto;
 `;
 
 const StyledExpandedContent = styled.div`
@@ -91,7 +92,7 @@ export const SettingsAccountsRadioSettingsCard = <
               />
             </StyledRadioContainer>
           </StyledOptionHeader>
-          {option.cardContentExpanded && value === option.value && (
+          {isDefined(option.cardContentExpanded) && value === option.value && (
             <StyledExpandedContent>
               {option.cardContentExpanded}
             </StyledExpandedContent>

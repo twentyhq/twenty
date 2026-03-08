@@ -36,8 +36,8 @@ const StyledPropertyBox = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[2]};
-  padding-top: ${themeCssVariables.spacing[3]};
   padding-bottom: ${themeCssVariables.spacing[3]};
+  padding-top: ${themeCssVariables.spacing[3]};
 `;
 
 const StyledInlineFieldsPropertyBox = styled.div`
@@ -46,8 +46,8 @@ const StyledInlineFieldsPropertyBox = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[2]};
-  padding-top: 0;
   padding-bottom: 0;
+  padding-top: 0;
 `;
 
 type FieldsWidgetProps = {
@@ -83,7 +83,7 @@ export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
       <SidePanelProvider value={{ isInSidePanel }}>
         <StyledContainer>
           <AnimatedPlaceholderEmptyContainer
-            // eslint-disable-next-line react/jsx-props-no-spreading
+            // oxlint-disable-next-line react/jsx-props-no-spreading
             {...EMPTY_PLACEHOLDER_TRANSITION_PROPS}
           >
             <AnimatedPlaceholder type="noRecord" />

@@ -50,7 +50,7 @@ export const useMentionSearch = () => {
         },
       });
 
-      const searchRecords = data?.search.edges.map((edge) => edge.node) || [];
+      const searchRecords = data?.search.edges.map((edge) => edge.node) ?? [];
 
       return searchRecords.map((searchRecord) => ({
         recordId: searchRecord.recordId,

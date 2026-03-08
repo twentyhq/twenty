@@ -1,5 +1,6 @@
 import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsType';
 import {
+  type ViewKey,
   type AggregateOperations,
   type ViewFilterGroupLogicalOperator,
   type ViewFilterOperand,
@@ -55,6 +56,7 @@ export type ViewManifest = SyncableEntityOptions & {
   name: string;
   objectUniversalIdentifier: string;
   type?: ViewType;
+  key?: ViewKey;
   icon?: string;
   position?: number;
   isCompact?: boolean;

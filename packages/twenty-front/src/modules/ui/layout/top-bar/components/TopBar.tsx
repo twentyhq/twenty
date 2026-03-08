@@ -13,9 +13,9 @@ type TopBarProps = {
 const StyledContainer = styled.div`
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
   display: flex;
-  margin-left: ${themeCssVariables.spacing[3]};
-
   flex-direction: column;
+
+  margin-left: ${themeCssVariables.spacing[3]};
 `;
 
 const StyledTopBar = styled.div`

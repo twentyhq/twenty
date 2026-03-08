@@ -9,6 +9,7 @@ import { type VariablePickerComponent } from '@/object-record/record-field/ui/fo
 import { type FieldPhonesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { t } from '@lingui/core/macro';
+import { isDefined } from 'twenty-shared/utils';
 
 type FormPhoneFieldInputProps = {
   label?: string;
@@ -39,7 +40,7 @@ export const FormPhoneFieldInput = ({
     onChange({
       primaryPhoneCountryCode: defaultValue?.primaryPhoneCountryCode ?? '',
       primaryPhoneCallingCode: defaultValue?.primaryPhoneCallingCode ?? '',
-      primaryPhoneNumber: number ? `${number}` : '',
+      primaryPhoneNumber: isDefined(number) ? `${number}` : '',
     });
   };
 

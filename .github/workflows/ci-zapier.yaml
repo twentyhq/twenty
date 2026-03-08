@@ -3,8 +3,6 @@ name: CI Zapier
 on:
   pull_request:
 
-  merge_group:
-
 permissions:
   contents: read
 
@@ -28,7 +26,7 @@ jobs:
     needs: changed-files-check
     if: needs.changed-files-check.outputs.any_changed == 'true'
     timeout-minutes: 30
-    runs-on: ubuntu-latest-8-cores
+    runs-on: ubuntu-latest-4-cores
     services:
       postgres:
         image: twentycrm/twenty-postgres-spilo
@@ -52,7 +50,7 @@ jobs:
       - name: Fetch custom Github Actions and base branch history
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 10
       - name: Install dependencies
         uses: ./.github/actions/yarn-install
 
@@ -107,7 +105,7 @@ jobs:
       - name: Fetch custom Github Actions and base branch history
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 10
       - name: Install dependencies
         uses: ./.github/actions/yarn-install
       - name: Build

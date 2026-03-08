@@ -3,6 +3,7 @@ import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPe
 import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
 import { hasAnySoftDeleteFilterOnViewComponentSelector } from '@/object-record/record-filter/states/hasAnySoftDeleteFilterOnView';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
+import { isRecordTableCreateDisabled } from '@/object-record/record-table/utils/isRecordTableCreateDisabled';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -19,6 +20,9 @@ import {
 } from 'twenty-ui/layout';
 
 const StyledEmptyPlaceholderOuterContainer = styled.div`
+  height: 100%;
+  width: 100%;
+
   > * {
     align-items: flex-start;
   }
@@ -84,7 +88,8 @@ export const RecordTableEmptyStateDisplay = (
         {'buttonComponent' in props && props.buttonComponent}
         {'buttonTitle' in props &&
           !isReadOnly &&
-          !hasAnySoftDeleteFilterOnView && (
+          !hasAnySoftDeleteFilterOnView &&
+          !isRecordTableCreateDisabled(objectMetadataItem.nameSingular) && (
             <Button
               Icon={props.ButtonIcon}
               title={props.buttonTitle}

@@ -12,7 +12,7 @@ export const StyledNameTableCell = (
   <TableCell
     color={themeCssVariables.font.color.primary}
     gap={themeCssVariables.spacing[2]}
-    // eslint-disable-next-line react/jsx-props-no-spreading
+    // oxlint-disable-next-line react/jsx-props-no-spreading
     {...props}
   />
 );
@@ -23,7 +23,7 @@ export const StyledActionTableCell = (
   <TableCell
     align="center"
     padding={`0 ${themeCssVariables.spacing[1]} 0 ${themeCssVariables.spacing[2]}`}
-    // eslint-disable-next-line react/jsx-props-no-spreading
+    // oxlint-disable-next-line react/jsx-props-no-spreading
     {...props}
   />
 );

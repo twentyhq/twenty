@@ -54,19 +54,19 @@ Assicurati di eseguire yarn nella directory principale e poi esegui `npx nx serv
 
 #### Lint on Save not working
 
-Questo dovrebbe funzionare direttamente con l'estensione eslint installata. Se questo non funziona prova ad aggiungere questo alle impostazioni di vscode (nello scope del container di sviluppo):
+Questo dovrebbe funzionare direttamente con l'estensione Oxc (`oxc.oxc-vscode`) installata. Se questo non funziona prova ad aggiungere questo alle impostazioni di vscode (nello scope del container di sviluppo):
 
 ```
 "editor.codeActionsOnSave": {
 
-  "source.fixAll.eslint": "explicit"
+  "source.fixAll.oxc": "explicit"
 
 }
 ```
 
 #### Durante l'esecuzione di `npx nx start` o `npx nx start twenty-front`, viene generato un errore di memoria insufficiente
 
-Run only the services you need, instead of `npx nx start`. Ad esempio, se lavori sul server, esegui solo `npx nx worker twenty-server`
+Esegui solo i servizi di cui hai bisogno, invece di `npx nx start`. Ad esempio, se lavori sul server, esegui solo `npx nx worker twenty-server`
 
 **If it does not work:**
 If you tried to run only `npx nx run twenty-server:start` on WSL and it's failing with the below memory error:

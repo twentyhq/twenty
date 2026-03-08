@@ -8,15 +8,15 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { styled } from '@linaria/react';
 import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
+import { isDefined, getSettingsPath } from 'twenty-shared/utils';
 import { OverflowingTextWithTooltip, useIcons } from 'twenty-ui/display';
 import { useContext } from 'react';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledNameLabel = styled.div`
-  white-space: nowrap;
-  text-overflow: ellipsis;
   overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 type SettingsRolePermissionsObjectLevelTableRowProps = {
@@ -56,7 +56,7 @@ export const SettingsRolePermissionsObjectLevelTableRow = ({
         color={themeCssVariables.font.color.primary}
         gap={themeCssVariables.spacing[1]}
       >
-        {!!Icon && (
+        {isDefined(Icon) && (
           <Icon
             style={{
               minWidth: theme.icon.size.md,

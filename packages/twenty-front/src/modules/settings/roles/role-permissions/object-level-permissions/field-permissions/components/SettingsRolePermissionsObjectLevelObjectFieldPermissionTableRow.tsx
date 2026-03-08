@@ -24,11 +24,11 @@ export const FIELD_PERMISSION_TABLE_ROW_GRID_TEMPLATE_COLUMNS =
   '180px minmax(0, 1fr) 60px 60px';
 
 const StyledNameLabel = styled.div`
-  white-space: nowrap;
-  text-overflow: ellipsis;
   overflow: hidden;
-
+  text-overflow: ellipsis;
   user-select: none;
+
+  white-space: nowrap;
 `;
 
 type SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRowProps = {
@@ -157,7 +157,7 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRow =
           color={themeCssVariables.font.color.primary}
           gap={themeCssVariables.spacing[2]}
         >
-          {!!Icon && (
+          {isDefined(Icon) && (
             <Icon
               style={{
                 minWidth: theme.icon.size.md,

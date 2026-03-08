@@ -258,7 +258,7 @@ export const CurrentWorkspaceMemberNavigationMenuItems = ({
             {(provided) => (
               <div
                 ref={provided.innerRef}
-                // eslint-disable-next-line react/jsx-props-no-spreading
+                // oxlint-disable-next-line react/jsx-props-no-spreading
                 {...provided.droppableProps}
               >
                 {folder.navigationMenuItems.map((navigationMenuItem, index) => (

@@ -18,6 +18,7 @@ import { RelationFieldMetadataGqlInputTypeGenerator } from 'src/engine/api/graph
 import { TypeMapperService } from 'src/engine/api/graphql/workspace-schema-builder/services/type-mapper.service';
 import { GqlTypesStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/gql-types.storage';
 import { type SchemaGenerationContext } from 'src/engine/api/graphql/workspace-schema-builder/types/schema-generation-context.type';
+import { applyTypeOptionsForUpdateInput } from 'src/engine/api/graphql/workspace-schema-builder/utils/apply-type-options-for-update-input.util';
 import { computeFieldInputTypeOptions } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-field-input-type-options.util';
 import { computeCompositeFieldInputTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-composite-field-input-type-key.util';
 import { computeEnumFieldGqlTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-enum-field-gql-type-key.util';
@@ -156,10 +157,7 @@ export class ObjectMetadataUpdateGqlInputTypeGenerator {
           }
         }
 
-        const modifiedType = this.typeMapperService.applyTypeOptions(
-          type,
-          typeOptions,
-        );
+        const modifiedType = applyTypeOptionsForUpdateInput(type, typeOptions);
 
         generatedFields = {
           [fieldMetadata.name]: {

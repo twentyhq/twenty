@@ -22,7 +22,7 @@ import { selectedPublicDomainState } from '@/settings/domains/states/selectedPub
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useState } from 'react';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
-import { getDomainValidationSchema } from '@/settings/domains/utils/get-domain-validation-schema';
+import { getDomainValidationSchema } from '@/settings/domains/utils/getDomainValidationSchema';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledButtonGroupContainer = styled.div`
@@ -198,7 +198,7 @@ export const SettingPublicDomain = () => {
           </StyledDomainFormWrapper>
           {isDefined(selectedPublicDomain) && publicDomainRecords?.domain && (
             <StyledRecordsWrapper>
-              {publicDomainRecords.records && (
+              {isDefined(publicDomainRecords.records) && (
                 <SettingsDomainRecords records={publicDomainRecords.records} />
               )}
             </StyledRecordsWrapper>

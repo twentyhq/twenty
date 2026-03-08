@@ -86,7 +86,7 @@ export const PageLayoutVerticalListEditor = ({
             ref={provided.innerRef}
             variant={variant}
             shouldUseWhiteBackground={isMobile || isInSidePanel}
-            // eslint-disable-next-line react/jsx-props-no-spreading
+            // oxlint-disable-next-line react/jsx-props-no-spreading
             {...provided.droppableProps}
           >
             {widgets.map((widget, index) => (
@@ -99,11 +99,11 @@ export const PageLayoutVerticalListEditor = ({
                 {(provided, snapshot) => (
                   <StyledDraggableWrapper
                     ref={provided.innerRef}
-                    // eslint-disable-next-line react/jsx-props-no-spreading
+                    // oxlint-disable-next-line react/jsx-props-no-spreading
                     {...provided.draggableProps}
                     isDragging={snapshot.isDragging}
                   >
-                    {/* eslint-disable-next-line react/jsx-props-no-spreading */}
+                    {/* oxlint-disable-next-line react/jsx-props-no-spreading */}
                     <div {...provided.dragHandleProps}>
                       <WidgetRenderer widget={widget} />
                     </div>

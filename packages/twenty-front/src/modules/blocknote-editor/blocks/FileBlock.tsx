@@ -56,7 +56,7 @@ export const FileBlock = createReactBlockSpec(
   },
   {
     render: ({ block, editor }) => {
-      // eslint-disable-next-line react-hooks/rules-of-hooks
+      // oxlint-disable-next-line react-hooks/rules-of-hooks
       const inputFileRef = useRef<HTMLInputElement>(null);
 
       const handleUploadAttachment = async (file: File) => {

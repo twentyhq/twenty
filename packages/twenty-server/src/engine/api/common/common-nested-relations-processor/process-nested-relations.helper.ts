@@ -36,7 +36,7 @@ export class ProcessNestedRelationsHelper {
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
     parentObjectMetadataItem: FlatObjectMetadata;
     parentObjectRecords: T[];
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
     parentObjectRecordsAggregatedValues?: Record<string, any>;
     relations: Record<string, FindOptionsRelations<ObjectLiteral>>;
     aggregate?: Record<string, AggregationField>;
@@ -44,7 +44,7 @@ export class ProcessNestedRelationsHelper {
     authContext: WorkspaceAuthContext;
     workspaceDataSource: GlobalWorkspaceDataSource;
     rolePermissionConfig?: RolePermissionConfig;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
     selectedFields: Record<string, any>;
   }): Promise<void> {
     return this.processNestedRelationsV2Helper.processNestedRelations({

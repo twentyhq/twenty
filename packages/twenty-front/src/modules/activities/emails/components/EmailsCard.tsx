@@ -32,10 +32,10 @@ const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[6]};
-  padding: ${themeCssVariables.spacing[6]} ${themeCssVariables.spacing[6]}
-    ${themeCssVariables.spacing[2]};
   height: 100%;
   overflow: auto;
+  padding: ${themeCssVariables.spacing[6]} ${themeCssVariables.spacing[6]}
+    ${themeCssVariables.spacing[2]};
 `;
 
 const StyledH1TitleWrapper = styled.div`
@@ -90,7 +90,7 @@ export const EmailsCard = () => {
   if (!firstQueryLoading && !timelineThreads?.length) {
     return (
       <AnimatedPlaceholderEmptyContainer
-        // eslint-disable-next-line react/jsx-props-no-spreading
+        // oxlint-disable-next-line react/jsx-props-no-spreading
         {...EMPTY_PLACEHOLDER_TRANSITION_PROPS}
       >
         <AnimatedPlaceholder type="emptyInbox" />

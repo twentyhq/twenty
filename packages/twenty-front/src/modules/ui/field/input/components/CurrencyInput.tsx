@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { styled } from '@linaria/react';
 import { useContext, useEffect, useRef, useState } from 'react';
 
@@ -11,13 +12,13 @@ import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 export const StyledIMaskInput = styled.div`
   > input {
-    margin: 0;
     background-color: transparent;
     border: none;
     color: ${themeCssVariables.font.color.primary};
     font-family: ${themeCssVariables.font.family};
     font-size: inherit;
     font-weight: inherit;
+    margin: 0;
     outline: none;
     padding: ${themeCssVariables.spacing[0]} ${themeCssVariables.spacing[1.5]};
 
@@ -44,9 +45,9 @@ const StyledIcon = styled.div`
   display: flex;
 
   & > svg {
-    padding-left: ${themeCssVariables.spacing[1]};
     color: ${themeCssVariables.font.color.tertiary};
     height: ${themeCssVariables.icon.size.md}px;
+    padding-left: ${themeCssVariables.spacing[1]};
     width: ${themeCssVariables.icon.size.md}px;
   }
 `;
@@ -122,7 +123,7 @@ export const CurrencyInput = ({
         onChange={handleCurrencyChange}
       />
       <StyledIcon>
-        {Icon && (
+        {isDefined(Icon) && (
           <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
         )}
       </StyledIcon>

@@ -10,17 +10,17 @@ import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 const StyledDetailsContainer = styled.div`
   background-color: ${themeCssVariables.background.secondary};
-  padding: ${themeCssVariables.spacing[4]};
-  border-radius: ${themeCssVariables.border.radius.md};
   border: 1px solid ${themeCssVariables.border.color.medium};
+  border-radius: ${themeCssVariables.border.radius.md};
   font-size: ${themeCssVariables.font.size.sm};
   overflow-x: auto;
+  padding: ${themeCssVariables.spacing[4]};
 `;
 
 const StyledErrorMessage = styled.div`
   color: ${themeCssVariables.color.red};
-  margin-top: ${themeCssVariables.spacing[2]};
   margin-bottom: ${themeCssVariables.spacing[4]};
+  margin-top: ${themeCssVariables.spacing[2]};
 `;
 
 export const SettingsAdminJsonDataIndicatorHealthStatus = () => {

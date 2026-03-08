@@ -5,6 +5,7 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import { type RecordGqlEdge } from '@/object-record/graphql/types/RecordGqlEdge';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { generateGroupsRecordsGroupByQuery } from '@/object-record/record-aggregate/utils/generateGroupsRecordsGroupByQuery';
+
 import { useRecordIndexGroupCommonQueryVariables } from '@/object-record/record-index/hooks/useRecordIndexGroupCommonQueryVariables';
 import { buildGroupByFieldObject } from '@/page-layout/widgets/graph/utils/buildGroupByFieldObject';
 import { useLazyQuery } from '@apollo/client';
@@ -63,6 +64,7 @@ export const useRecordIndexGroupsRecordsLazyGroupBy = ({
           limit: recordGroupsLimit,
         },
         client: apolloCoreClient,
+        fetchPolicy: 'no-cache',
       },
     );
 

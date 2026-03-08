@@ -34,10 +34,10 @@ const StyledInput = styled.input<{ hasError?: boolean }>`
   background: transparent;
   border: none;
   color: ${themeCssVariables.font.color.primary};
+  font-size: ${themeCssVariables.font.size.md};
+  font-weight: 500;
   outline: none;
   padding-left: ${themeCssVariables.spacing[2]};
-  font-weight: 500;
-  font-size: ${themeCssVariables.font.size.md};
   width: 140px;
 `;
 

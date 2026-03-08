@@ -1345,6 +1345,16 @@ msgstr "Todos ({relationRecordsCount})"
 msgid "All Actions Access"
 msgstr "Acesso a Todas as Ações"
 
+#. js-lingui-id: s1C/cR
+#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
+msgid "All App Registrations"
+msgstr ""
+
+#. js-lingui-id: ZrLLkh
+#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
+msgid "All application registrations across the platform, including orphaned marketplace apps"
+msgstr ""
+
 #. js-lingui-id: 1kLn6M
 #: src/modules/activities/calendar/components/CalendarEventRow.tsx
 msgid "All day"
@@ -1747,6 +1757,21 @@ msgstr "Apóstrofo e ponto - {apostropheAndDotExample}"
 msgid "App"
 msgstr ""
 
+#. js-lingui-id: zL5xow
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "App installed on this workspace"
+msgstr ""
+
+#. js-lingui-id: KbVpuI
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "App listed on marketplace"
+msgstr ""
+
+#. js-lingui-id: hwQxsm
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "App removed from marketplace"
+msgstr ""
+
 #. js-lingui-id: 2zAy1h
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
 msgid "App updated"
@@ -1784,6 +1809,7 @@ msgid "Application details"
 msgstr "Detalhes da aplicação"
 
 #. js-lingui-id: lGEBD4
+#: src/pages/settings/applications/components/SettingsUploadTarballModal.tsx
 #: src/modules/marketplace/hooks/useInstallApp.ts
 msgid "Application installed successfully."
 msgstr ""
@@ -1834,12 +1860,13 @@ msgstr "Domínios Aprovados"
 
 #. js-lingui-id: VDvaN2
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
 msgid "Apps"
 msgstr ""
 
-#. js-lingui-id: n++nRq
+#. js-lingui-id: KKYyo8
 #: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
-msgid "Apps you've created and published"
+msgid "Apps you've created, registered, or published"
 msgstr ""
 
 #. js-lingui-id: 8HV3WN
@@ -2502,8 +2529,9 @@ msgid "Can't scan? Copy the"
 msgstr "Não consegue escanear? Copie o"
 
 #. js-lingui-id: dEgA5A
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
 #: src/pages/settings/applications/components/SettingsUploadTarballModal.tsx
-#: src/pages/settings/applications/components/SettingsInstallNpmAppModal.tsx
+#: src/pages/settings/applications/components/SettingsRegisterNpmAppModal.tsx
 #: src/pages/auth/Authorize.tsx
 #: src/modules/ui/layout/modal/components/ConfirmationModal.tsx
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
@@ -2741,17 +2769,17 @@ msgid "Choose the format used to display date value"
 msgstr "Escolha o formato usado para exibir o valor da data"
 
 #. js-lingui-id: CiPJbh
-#: src/modules/settings/data-model/fields/forms/utils/getSettingsDataModelFieldOnClickActionDescription.util.ts
+#: src/modules/settings/data-model/fields/forms/utils/getSettingsDataModelFieldOnClickActionDescription.ts
 msgid "Choose what happens when you click a link"
 msgstr "Escolha o que acontece ao clicar em um link"
 
 #. js-lingui-id: D3MauW
-#: src/modules/settings/data-model/fields/forms/utils/getSettingsDataModelFieldOnClickActionDescription.util.ts
+#: src/modules/settings/data-model/fields/forms/utils/getSettingsDataModelFieldOnClickActionDescription.ts
 msgid "Choose what happens when you click a phone number"
 msgstr "Escolha o que acontece ao clicar em um número de telefone"
 
 #. js-lingui-id: QR1yAR
-#: src/modules/settings/data-model/fields/forms/utils/getSettingsDataModelFieldOnClickActionDescription.util.ts
+#: src/modules/settings/data-model/fields/forms/utils/getSettingsDataModelFieldOnClickActionDescription.ts
 msgid "Choose what happens when you click an email"
 msgstr "Escolha o que acontece ao clicar em um endereço de e-mail"
 
@@ -3291,6 +3319,11 @@ msgstr "Continuar com a Microsoft"
 #: src/pages/onboarding/SyncEmails.tsx
 msgid "Continue without sync"
 msgstr "Continuar sem sincronização"
+
+#. js-lingui-id: nTcGbN
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "Control visibility on the marketplace. Unlisted apps are still accessible via direct link."
+msgstr ""
 
 #. js-lingui-id: +iFqZW
 #: src/modules/settings/roles/role-settings/components/SettingsRoleApplicability.tsx
@@ -4124,6 +4157,12 @@ msgstr "Código de país padrão"
 msgid "Default palette"
 msgstr "Paleta padrão"
 
+#. js-lingui-id: U/uGBk
+#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationUngroupedEditor.tsx
+#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupEditor.tsx
+msgid "Default position/visibility for fields created in the future"
+msgstr ""
+
 #. js-lingui-id: v41VX6
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
@@ -4326,6 +4365,11 @@ msgstr "Eliminar grupo"
 msgid "Delete node"
 msgstr "Excluir nó"
 
+#. js-lingui-id: x9/fRy
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "Delete or transfer this app registration"
+msgstr ""
+
 #. js-lingui-id: kf0A63
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Delete records"
@@ -4360,11 +4404,6 @@ msgstr ""
 #: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
 msgid "Delete this agent"
 msgstr "Excluir este agente"
-
-#. js-lingui-id: Lz86s9
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
-msgid "Delete this app"
-msgstr ""
 
 #. js-lingui-id: T6S2Ns
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -4662,6 +4701,7 @@ msgid "Downgrade"
 msgstr "Downgrade"
 
 #. js-lingui-id: mzI/c+
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
 #: src/modules/activities/files/components/DocumentViewer.tsx
 #: src/modules/activities/files/components/AttachmentDropdown.tsx
 msgid "Download"
@@ -4750,7 +4790,7 @@ msgid "Dutch"
 msgstr "Holandês"
 
 #. js-lingui-id: 3MYDWJ
-#: src/pages/settings/applications/components/SettingsInstallNpmAppModal.tsx
+#: src/pages/settings/applications/components/SettingsRegisterNpmAppModal.tsx
 msgid "e.g. @twentyhq/hello-world"
 msgstr ""
 
@@ -4760,6 +4800,11 @@ msgstr ""
 #: src/modules/settings/developers/components/ApiKeyNameInput.tsx
 msgid "E.g. backoffice integration"
 msgstr "Ex.: integração de backoffice"
+
+#. js-lingui-id: 88vQqv
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "e.g. my-workspace"
+msgstr ""
 
 #. js-lingui-id: p5P8NB
 #: src/pages/settings/ai/SettingsAIPrompts.tsx
@@ -5343,9 +5388,9 @@ msgstr "Insira as credenciais para configurar a conexão"
 msgid "Enter the infos to set the connection"
 msgstr "Insira as informações para configurar a conexão"
 
-#. js-lingui-id: n1dNU/
-#: src/pages/settings/applications/components/SettingsInstallNpmAppModal.tsx
-msgid "Enter the npm package name of the application you want to install."
+#. js-lingui-id: 2tpV02
+#: src/pages/settings/applications/components/SettingsRegisterNpmAppModal.tsx
+msgid "Enter the npm package name to register as an application."
 msgstr ""
 
 #. js-lingui-id: 3EF9HN
@@ -5353,6 +5398,11 @@ msgstr ""
 #: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
 msgid "Enter the system prompt that defines this agent's behavior and capabilities"
 msgstr "Insira o prompt do sistema que define o comportamento e as capacidades deste agente"
+
+#. js-lingui-id: tEWpbi
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "Enter the workspace subdomain to transfer this app to. You will lose access to manage it."
+msgstr ""
 
 #. js-lingui-id: rYIISB
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
@@ -5467,6 +5517,11 @@ msgstr "Erro ao obter métricas do worker: {errorMessage}"
 msgid "Error illustration"
 msgstr "Ilustração de erro"
 
+#. js-lingui-id: zCb/ve
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "Error installing app"
+msgstr ""
+
 #. js-lingui-id: UJr0dl
 #: src/pages/settings/security/event-logs/SettingsEventLogs.tsx
 msgid "Error Loading Audit Logs"
@@ -5515,6 +5570,11 @@ msgstr ""
 #. js-lingui-id: ZUyXma
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
 msgid "Error updating app"
+msgstr ""
+
+#. js-lingui-id: OceoGT
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "Error updating marketplace listing"
 msgstr ""
 
 #. js-lingui-id: lX3Yil
@@ -6024,6 +6084,11 @@ msgstr "Falha ao fundir registos. Por favor, tente novamente."
 msgid "Failed to parse context: {contextValue}"
 msgstr "Falha ao analisar o contexto: {contextValue}"
 
+#. js-lingui-id: hV6mC1
+#: src/modules/marketplace/hooks/useRegisterNpmPackage.ts
+msgid "Failed to register npm package."
+msgstr ""
+
 #. js-lingui-id: A/P7PX
 #: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
 msgid "Failed to remove override"
@@ -6053,6 +6118,11 @@ msgstr ""
 #. js-lingui-id: 9ryUyP
 #: src/pages/settings/ai/SettingsAIPrompts.tsx
 msgid "Failed to save workspace instructions"
+msgstr ""
+
+#. js-lingui-id: LVcnN8
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "Failed to transfer ownership. Check that the subdomain is correct."
 msgstr ""
 
 #. js-lingui-id: YzURPo
@@ -6173,6 +6243,22 @@ msgstr "Flag de recurso"
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Feature Flags & Impersonation"
 msgstr "Flags de recurso e Personificação"
+
+#. js-lingui-id: FkMol5
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
+msgid "Featured"
+msgstr ""
+
+#. js-lingui-id: znbJM3
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "Featured apps are curated. Open a PR to request featured status."
+msgstr ""
+
+#. js-lingui-id: F1sJEJ
+#: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
+msgid "Featured only"
+msgstr ""
 
 #. js-lingui-id: 2lOBKV
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -6313,7 +6399,6 @@ msgstr ""
 #: src/modules/side-panel/pages/page-layout/components/ChartFiltersSettings.tsx
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
-#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 msgid "Filter"
 msgstr "Filtro"
@@ -7247,7 +7332,6 @@ msgstr "Insira uma entrada JSON, depois pressione \"Executar\" para testar sua f
 
 #. js-lingui-id: TKQ7K+
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
-#: src/pages/settings/applications/components/SettingsInstallNpmAppModal.tsx
 msgid "Install"
 msgstr ""
 
@@ -7256,15 +7340,9 @@ msgstr ""
 msgid "Install and manage applications"
 msgstr "Instalar e gerenciar aplicações"
 
-#. js-lingui-id: gR90Vf
-#: src/pages/settings/applications/tabs/SettingsApplicationsInstalledTab.tsx
-msgid "Install app"
-msgstr ""
-
-#. js-lingui-id: H3eHCv
-#: src/pages/settings/applications/tabs/SettingsApplicationsInstalledTab.tsx
-#: src/pages/settings/applications/components/SettingsInstallNpmAppModal.tsx
-msgid "Install from npm"
+#. js-lingui-id: cDDhds
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "Install on this workspace"
 msgstr ""
 
 #. js-lingui-id: JXiMtM
@@ -7272,8 +7350,20 @@ msgstr ""
 msgid "Install Stats"
 msgstr ""
 
+#. js-lingui-id: FEkwu/
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "Install this app on the current workspace"
+msgstr ""
+
+#. js-lingui-id: Xry+oU
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "Installation"
+msgstr ""
+
 #. js-lingui-id: eQkgKV
+#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsApplications.tsx
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
 msgid "Installed"
 msgstr ""
 
@@ -7785,11 +7875,6 @@ msgstr "Último pagamento falhou. Por favor, contate o seu administrador."
 msgid "Last payment failed. Please update your billing details."
 msgstr "Último pagamento falhou. Por favor, atualize seus detalhes de cobrança."
 
-#. js-lingui-id: pJxM65
-#: src/pages/settings/applications/components/SettingsInstallNpmAppModal.tsx
-msgid "latest"
-msgstr ""
-
 #. js-lingui-id: wL3cK8
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
@@ -7982,6 +8067,16 @@ msgstr ""
 msgid "List installed applications. Use filter to search for a specific application"
 msgstr "Liste as aplicações instaladas. Use o filtro para pesquisar uma aplicação específica"
 
+#. js-lingui-id: Ap948/
+#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
+msgid "Listed"
+msgstr ""
+
+#. js-lingui-id: vxO58F
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "Listed on marketplace"
+msgstr ""
+
 #. js-lingui-id: HhVDr2
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Listing"
@@ -8084,6 +8179,11 @@ msgstr "A carregar a conversa"
 #: src/modules/activities/timeline-activities/rows/calendar/components/EventCardCalendarEvent.tsx
 msgid "Loading..."
 msgstr "Carregando..."
+
+#. js-lingui-id: OmWlgF
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "Local development"
+msgstr ""
 
 #. js-lingui-id: 8NbHF7
 #: src/pages/settings/ai/SettingsAIPrompts.tsx
@@ -8245,6 +8345,11 @@ msgstr "Gerencie sua aplicação"
 msgid "Manage your internet accounts."
 msgstr "Gerir as suas contas de internet."
 
+#. js-lingui-id: +pSdLP
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "Managed by the marketplace catalog sync for npm packages"
+msgstr ""
+
 #. js-lingui-id: BWTzAb
 #: src/modules/side-panel/pages/page-layout/hooks/useGraphXSortOptionLabels.ts
 #: src/modules/side-panel/pages/page-layout/hooks/useGraphGroupBySortOptionLabels.ts
@@ -8254,6 +8359,11 @@ msgstr ""
 #. js-lingui-id: Zt5PUS
 #: src/pages/settings/applications/SettingsApplications.tsx
 msgid "Marketplace"
+msgstr ""
+
+#. js-lingui-id: H4eHwB
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "Marketplace Listing"
 msgstr ""
 
 #. js-lingui-id: FCc+QF
@@ -8677,6 +8787,7 @@ msgstr ""
 #: src/modules/settings/admin-panel/config-variables/components/SettingsAdminConfigVariablesTable.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 msgid "Name"
 msgstr "Nome"
 
@@ -8846,6 +8957,12 @@ msgstr "Novo Domínio de Email"
 msgid "New Field"
 msgstr "Novo Campo"
 
+#. js-lingui-id: DNUCGO
+#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationUngroupedEditor.tsx
+#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupEditor.tsx
+msgid "New fields"
+msgstr ""
+
 #. js-lingui-id: 96G6Re
 #: src/modules/side-panel/pages/navigation-menu-item/hooks/useAddFolderToNavigationMenu.ts
 #: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemMainMenu.tsx
@@ -8955,6 +9072,8 @@ msgstr "Nono"
 #. js-lingui-id: 1UzENP
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelUpdateFieldsValueForObject.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSeeFieldsValueForObject.tsx
+#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
+#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 msgid "No"
 msgstr "Não"
 
@@ -9082,7 +9201,7 @@ msgid "No custom views available"
 msgstr ""
 
 #. js-lingui-id: plhHQt
-#: src/modules/page-layout/widgets/graph/graphWidgetPieChart/components/PieChartCenterMetricLayer.tsx
+#: src/modules/page-layout/widgets/graph/graph-widget-pie-chart/components/PieChartCenterMetricLayer.tsx
 #: src/modules/page-layout/widgets/graph/components/NoDataLayer.tsx
 #: src/modules/page-layout/widgets/graph/components/GraphWidgetTooltip.tsx
 msgid "No data"
@@ -9157,6 +9276,11 @@ msgstr "Sem eventos"
 #: src/modules/activities/calendar/components/CalendarEventsCard.tsx
 msgid "No events have been scheduled with this {objectName} yet."
 msgstr "Ainda não foram agendados eventos com este {objectName}."
+
+#. js-lingui-id: K8KcHw
+#: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
+msgid "No featured applications found. {nonFeaturedCount} non-featured result(s) available — "
+msgstr ""
 
 #. js-lingui-id: h+tLhU
 #: src/modules/page-layout/widgets/field/components/FieldWidget.tsx
@@ -9999,14 +10123,29 @@ msgstr "Visão Geral"
 msgid "Owner"
 msgstr ""
 
+#. js-lingui-id: RWJnRQ
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "Ownership transferred successfully"
+msgstr ""
+
 #. js-lingui-id: y3tCDg
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "p"
 msgstr ""
 
+#. js-lingui-id: mGYa19
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "Package"
+msgstr ""
+
 #. js-lingui-id: VXyQnz
-#: src/pages/settings/applications/components/SettingsInstallNpmAppModal.tsx
+#: src/pages/settings/applications/components/SettingsRegisterNpmAppModal.tsx
 msgid "Package name"
+msgstr ""
+
+#. js-lingui-id: +BO/Qa
+#: src/modules/marketplace/hooks/useRegisterNpmPackage.ts
+msgid "Package registered successfully."
 msgstr ""
 
 #. js-lingui-id: 6WdDG7
@@ -10136,7 +10275,7 @@ msgstr "Percentagem não vazia"
 
 #. js-lingui-id: /roQKz
 #: src/modules/settings/data-model/fields/forms/number/constants/NumberDataModelSelectOptions.ts
-#: src/modules/page-layout/widgets/graph/graphWidgetPieChart/hooks/usePieChartCenterMetricData.ts
+#: src/modules/page-layout/widgets/graph/graph-widget-pie-chart/hooks/usePieChartCenterMetricData.ts
 msgid "Percentage"
 msgstr "Percentual"
 
@@ -10634,7 +10773,7 @@ msgstr "Avaliação"
 #: src/modules/side-panel/pages/page-layout/hooks/useChartSettingsValues.ts
 #: src/modules/page-layout/widgets/graph/hooks/useGraphWidgetAggregateQuery.ts
 #: src/modules/page-layout/widgets/graph/hooks/useGraphWidgetAggregateQuery.ts
-#: src/modules/page-layout/widgets/graph/graphWidgetAggregateChart/utils/getAggregateChartOperationLabel.ts
+#: src/modules/page-layout/widgets/graph/graph-widget-aggregate-chart/utils/getAggregateChartOperationLabel.ts
 msgid "Ratio"
 msgstr "Razão"
 
@@ -10803,6 +10942,23 @@ msgstr "Regenerar chave"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Regenerate Key"
 msgstr "Regenerar chave"
+
+#. js-lingui-id: fgLNSM
+#: src/pages/settings/applications/components/SettingsRegisterNpmAppModal.tsx
+msgid "Register"
+msgstr ""
+
+#. js-lingui-id: kbU+zg
+#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
+#: src/pages/settings/applications/components/SettingsRegisterNpmAppModal.tsx
+msgid "Register from npm"
+msgstr ""
+
+#. js-lingui-id: cxM2TJ
+#: src/modules/marketplace/hooks/useRegisterNpmPackage.ts
+msgid "Registration failed."
+msgstr ""
 
 #. js-lingui-id: h9AYFD
 #: src/modules/settings/data-model/fields/forms/components/SettingsObjectNewFieldSelector.tsx
@@ -11582,6 +11738,11 @@ msgstr "Pesquisar registos"
 msgid "Search records..."
 msgstr ""
 
+#. js-lingui-id: wCw+0a
+#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
+msgid "Search registrations..."
+msgstr ""
+
 #. js-lingui-id: YIix5Y
 #: src/modules/settings/developers/components/WebhookEntitySelect.tsx
 msgid "Search..."
@@ -12168,6 +12329,11 @@ msgstr "Alterar o rótulo de um objeto deve também alterar a API?"
 msgid "Should changing the label also change the API name?"
 msgstr ""
 
+#. js-lingui-id: vbXZ3k
+#: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
+msgid "show all"
+msgstr ""
+
 #. js-lingui-id: lSEpDc
 #: src/modules/object-record/record-group/components/RecordGroupMenuItemDraggable.tsx
 msgid "Show group {groupValue}"
@@ -12397,8 +12563,11 @@ msgid "Sort By Group"
 msgstr "Ordenar por Grupo"
 
 #. js-lingui-id: wdxz7K
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableOptionsDropdownContent.tsx
+#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 msgid "Source"
 msgstr "Fonte"
 
@@ -12882,9 +13051,25 @@ msgstr "Definições da Aba"
 msgid "Table"
 msgstr "Tabela"
 
+#. js-lingui-id: HpIrmy
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "Tarball upload"
+msgstr ""
+
+#. js-lingui-id: yvSCl+
+#: src/pages/settings/applications/components/SettingsUploadTarballModal.tsx
+msgid "Tarball uploaded but installation failed."
+msgstr ""
+
 #. js-lingui-id: sceIIK
 #: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationJunctionForm.tsx
 msgid "Target relation on Junction Object"
+msgstr ""
+
+#. js-lingui-id: qmwHSv
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "Target workspace subdomain"
 msgstr ""
 
 #. js-lingui-id: R+s8S+
@@ -13180,6 +13365,11 @@ msgstr ""
 msgid "This action will delete this folder and the navigation menu item inside. Do you want to continue?"
 msgstr ""
 
+#. js-lingui-id: SYslQU
+#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+msgid "This application is not listed on the marketplace. It was shared via a direct link."
+msgstr ""
+
 #. js-lingui-id: SLIRqz
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
 msgid "This database value overrides environment settings. "
@@ -13449,7 +13639,7 @@ msgid "Tools"
 msgstr ""
 
 #. js-lingui-id: 72c5Qo
-#: src/modules/page-layout/widgets/graph/graphWidgetPieChart/hooks/usePieChartCenterMetricData.ts
+#: src/modules/page-layout/widgets/graph/graph-widget-pie-chart/hooks/usePieChartCenterMetricData.ts
 msgid "Total"
 msgstr ""
 
@@ -13478,6 +13668,17 @@ msgstr "Tempo total"
 #: src/modules/billing/components/SettingsBillingCreditsSection.tsx
 msgid "Track your {intervalLabel} workflow credit consumption."
 msgstr "Acompanhe seu consumo de créditos de fluxo de trabalho {intervalLabel}."
+
+#. js-lingui-id: zPGNJm
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "Transfer"
+msgstr ""
+
+#. js-lingui-id: KSnRfc
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "Transfer ownership"
+msgstr ""
 
 #. js-lingui-id: lhkaAC
 #: src/modules/billing/components/internal/PlansTags.tsx
@@ -14013,7 +14214,7 @@ msgid "Upload Files"
 msgstr "Carregar arquivos"
 
 #. js-lingui-id: aG3MkW
-#: src/pages/settings/applications/tabs/SettingsApplicationsInstalledTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
 #: src/pages/settings/applications/components/SettingsUploadTarballModal.tsx
 msgid "Upload tarball"
 msgstr ""
@@ -14162,8 +14363,8 @@ msgstr "Validar dados"
 #: src/modules/settings/admin-panel/config-variables/components/SettingsAdminConfigVariablesTable.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
-#: src/modules/page-layout/widgets/graph/graphWidgetGaugeChart/components/GraphWidgetGaugeChart.tsx
-#: src/modules/page-layout/widgets/graph/graphWidgetGaugeChart/components/GraphWidgetGaugeChart.tsx
+#: src/modules/page-layout/widgets/graph/graph-widget-gauge-chart/components/GraphWidgetGaugeChart.tsx
+#: src/modules/page-layout/widgets/graph/graph-widget-gauge-chart/components/GraphWidgetGaugeChart.tsx
 msgid "Value"
 msgstr "Valor"
 
@@ -14228,11 +14429,6 @@ msgstr "Verificar o código do aplicativo"
 msgid "Version"
 msgstr "Versão"
 
-#. js-lingui-id: OVk6Na
-#: src/pages/settings/applications/components/SettingsInstallNpmAppModal.tsx
-msgid "Version (optional)"
-msgstr ""
-
 #. js-lingui-id: IHIWR4
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
@@ -14294,7 +14490,7 @@ msgid "View Docs"
 msgstr "Ver documentação"
 
 #. js-lingui-id: Mv1YVf
-#: src/modules/ui/feedback/snack-bar-manager/utils/build-error-action.util.ts
+#: src/modules/ui/feedback/snack-bar-manager/utils/buildErrorAction.ts
 msgid "View existing record"
 msgstr "Ver registro existente"
 
@@ -14336,6 +14532,11 @@ msgstr "Ver Trabalhos"
 #. js-lingui-id: 923YyC
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "View Logs"
+msgstr ""
+
+#. js-lingui-id: 7PrSCy
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "View marketplace page"
 msgstr ""
 
 #. js-lingui-id: ecVcAx
@@ -14614,6 +14815,11 @@ msgstr ""
 msgid "When enabled, newly added models are available to all workspaces by default"
 msgstr ""
 
+#. js-lingui-id: mCGuXk
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "When enabled, this app appears in the marketplace browse page"
+msgstr ""
+
 #. js-lingui-id: C51ilI
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 msgid "When the API key will expire."
@@ -14874,6 +15080,12 @@ msgstr "Amarelo"
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "yes"
 msgstr "sim"
+
+#. js-lingui-id: l75CjT
+#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
+#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
+msgid "Yes"
+msgstr ""
 
 #. js-lingui-id: y/0uwd
 #: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts

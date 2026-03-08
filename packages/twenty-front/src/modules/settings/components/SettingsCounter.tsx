@@ -29,10 +29,10 @@ const StyledTextInputContainer = styled.div`
   width: ${themeCssVariables.spacing[16]};
 
   > * input {
-    width: ${themeCssVariables.spacing[16]};
+    font-weight: ${themeCssVariables.font.weight.medium};
     height: ${themeCssVariables.spacing[6]};
     text-align: center;
-    font-weight: ${themeCssVariables.font.weight.medium};
+    width: ${themeCssVariables.spacing[16]};
   }
 `;
 

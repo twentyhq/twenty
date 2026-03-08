@@ -21,9 +21,9 @@ const StyledIconSlot = styled.div<{
     $disabled || $disableDrag ? 'default' : 'grab'};
   display: flex;
   flex-shrink: 0;
-  justify-content: center;
   height: ${({ $hasFixedSize }) =>
     $hasFixedSize ? themeCssVariables.spacing[4] : 'auto'};
+  justify-content: center;
   width: ${({ $hasFixedSize }) =>
     $hasFixedSize ? themeCssVariables.spacing[4] : 'auto'};
   opacity: ${({ $disabled }) => ($disabled ? 0.5 : 1)};

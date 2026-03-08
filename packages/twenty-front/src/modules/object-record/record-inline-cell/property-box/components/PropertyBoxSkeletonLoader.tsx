@@ -8,8 +8,8 @@ const StyledSkeletonDiv = styled.div`
   align-items: center;
   display: flex;
   gap: ${themeCssVariables.spacing[1]};
-  width: 100%;
   height: 24px;
+  width: 100%;
 `;
 export const PropertyBoxSkeletonLoader = () => {
   const { theme } = useContext(ThemeContext);

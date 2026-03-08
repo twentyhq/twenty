@@ -110,8 +110,16 @@
   --t-background-overlay-primary: color(display-p3 0 0 0 / 0.722);
   --t-background-overlay-secondary: color(display-p3 0 0 0 / 0.361);
   --t-background-overlay-tertiary: color(display-p3 0 0 0 / 0.071);
-  --t-background-radial-gradient: radial-gradient(50% 62.62% at 50% 0%, color(display-p3 0.6 0.6 0.6) 0%, color(display-p3 0.514 0.514 0.514) 100%);
-  --t-background-radial-gradient-hover: radial-gradient(76.32% 95.59% at 50% 0%, color(display-p3 0.514 0.514 0.514) 0%, color(display-p3 0.4 0.4 0.4) 100%);
+  --t-background-radial-gradient: radial-gradient(
+    50% 62.62% at 50% 0%,
+    color(display-p3 0.6 0.6 0.6) 0%,
+    color(display-p3 0.514 0.514 0.514) 100%
+  );
+  --t-background-radial-gradient-hover: radial-gradient(
+    76.32% 95.59% at 50% 0%,
+    color(display-p3 0.514 0.514 0.514) 0%,
+    color(display-p3 0.4 0.4 0.4) 100%
+  );
   --t-background-primary-inverted: color(display-p3 0.2 0.2 0.2);
   --t-background-primary-inverted-hover: color(display-p3 0.4 0.4 0.4);
   --t-blur-light: blur(6px) saturate(200%) contrast(50%) brightness(130%);
@@ -133,10 +141,14 @@
   --t-border-radius-pill: 999px;
   --t-border-radius-rounded: 100%;
   --t-box-shadow-color: color(display-p3 0 0 0 / 0.039);
-  --t-box-shadow-light: 0px 2px 4px 0px color(display-p3 0 0 0 / 0.039), 0px 0px 4px 0px color(display-p3 0 0 0 / 0.078);
-  --t-box-shadow-strong: 2px 4px 16px 0px color(display-p3 0 0 0 / 0.161), 0px 2px 4px 0px color(display-p3 0 0 0 / 0.078);
+  --t-box-shadow-light: 0px 2px 4px 0px color(display-p3 0 0 0 / 0.039),
+    0px 0px 4px 0px color(display-p3 0 0 0 / 0.078);
+  --t-box-shadow-strong: 2px 4px 16px 0px color(display-p3 0 0 0 / 0.161),
+    0px 2px 4px 0px color(display-p3 0 0 0 / 0.078);
   --t-box-shadow-underline: 0px 1px 0px 0px color(display-p3 0 0 0 / 0.361);
-  --t-box-shadow-super-heavy: 0px 0px 8px 0px color(display-p3 0 0 0 / 0.161), 0px 8px 64px -16px color(display-p3 0 0 0 / 0.478), 0px 24px 56px -16px color(display-p3 0 0 0 / 0.078);
+  --t-box-shadow-super-heavy: 0px 0px 8px 0px color(display-p3 0 0 0 / 0.161),
+    0px 8px 64px -16px color(display-p3 0 0 0 / 0.478),
+    0px 24px 56px -16px color(display-p3 0 0 0 / 0.078);
   --t-font-color-primary: color(display-p3 0.2 0.2 0.2);
   --t-font-color-secondary: color(display-p3 0.4 0.4 0.4);
   --t-font-color-tertiary: color(display-p3 0.6 0.6 0.6);

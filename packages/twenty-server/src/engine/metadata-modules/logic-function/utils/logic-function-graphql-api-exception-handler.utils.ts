@@ -11,7 +11,7 @@ import {
   LogicFunctionExceptionCode,
 } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// oxlint-disable-next-line @typescripttypescript/no-explicit-any
 export const logicFunctionGraphQLApiExceptionHandler = (error: any) => {
   if (error instanceof LogicFunctionException) {
     switch (error.code) {

@@ -11,17 +11,17 @@ const CODE_EDITOR_MIN_HEIGHT = 343;
 
 const StyledCodeEditorContainer = styled.div`
   display: flex;
-  flex-direction: column;
-  position: relative;
   flex: 1;
+  flex-direction: column;
   min-height: ${CODE_EDITOR_MIN_HEIGHT}px;
   overflow: hidden;
+  position: relative;
 `;
 
 const StyledFullScreenButtonContainer = styled.div`
   position: absolute;
-  top: ${themeCssVariables.spacing[2]};
   right: ${themeCssVariables.spacing[2]};
+  top: ${themeCssVariables.spacing[2]};
   z-index: 1;
 `;
 

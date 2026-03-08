@@ -1,4 +1,4 @@
-import { SidePanelAIChatThreadsPage } from '@/side-panel/pages/AIChatThreads/components/SidePanelAIChatThreadsPage';
+import { SidePanelAIChatThreadsPage } from '@/side-panel/pages/ai-chat-threads/components/SidePanelAIChatThreadsPage';
 import { SidePanelAskAIPage } from '@/side-panel/pages/ask-ai/components/SidePanelAskAIPage';
 import { SidePanelCalendarEventPage } from '@/side-panel/pages/calendar-event/components/SidePanelCalendarEventPage';
 import { SidePanelFrontComponentPage } from '@/side-panel/pages/front-component/components/SidePanelFrontComponentPage';

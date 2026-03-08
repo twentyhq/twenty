@@ -6,17 +6,17 @@ export const StyledMarkdownContainer = styled.div`
   line-height: 150%;
   margin: ${themeCssVariables.spacing['1.5']} 0;
   position: relative;
-  scroll-margin-top: ${themeCssVariables.spacing[10]};
   scroll-margin-bottom: ${themeCssVariables.spacing[10]};
+  scroll-margin-top: ${themeCssVariables.spacing[10]};
 
   &:empty {
     display: none;
   }
 
   .markdown-link {
+    -webkit-text-decoration: none;
     color: ${themeCssVariables.accent.accent11};
     text-decoration: none;
-    -webkit-text-decoration: none;
   }
 
   .markdown-link:visited {

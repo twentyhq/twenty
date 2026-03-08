@@ -16,9 +16,9 @@ const StyledContainer = styled.div`
   gap: 12px;
   height: 100dvh;
   min-width: ${NAVIGATION_DRAWER_CONSTRAINTS.default}px;
-  width: 100%;
-  padding: 12px 8px 12px 8px;
   overflow: hidden;
+  padding: 12px 8px 12px 8px;
+  width: 100%;
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     width: 100%;

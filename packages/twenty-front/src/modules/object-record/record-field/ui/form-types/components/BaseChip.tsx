@@ -4,27 +4,27 @@ import { IconX } from 'twenty-ui/display';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledChip = styled.div<{ deletable: boolean; danger: boolean }>`
+  align-items: center;
   background-color: ${({ danger }) =>
     danger ? themeCssVariables.color.red3 : themeCssVariables.color.blue3};
-  border-width: 1px;
-  border-style: solid;
   border-color: ${({ danger }) =>
     danger ? themeCssVariables.color.red5 : themeCssVariables.color.blue5};
   border-radius: 4px;
-  height: 20px;
+  border-style: solid;
+  border-width: 1px;
   box-sizing: border-box;
+  column-gap: ${themeCssVariables.spacing[1]};
+  cursor: ${({ deletable }) => (deletable ? 'pointer' : 'default')};
   display: inline-flex;
-  align-items: center;
   flex-direction: row;
   flex-shrink: 0;
-  column-gap: ${themeCssVariables.spacing[1]};
+  height: 20px;
   padding-left: ${themeCssVariables.spacing[1]};
-  user-select: none;
-  white-space: nowrap;
-
-  cursor: ${({ deletable }) => (deletable ? 'pointer' : 'default')};
   padding-right: ${({ deletable }) =>
     deletable ? '0' : themeCssVariables.spacing[1]};
+
+  user-select: none;
+  white-space: nowrap;
 `;
 
 const StyledLabel = styled.span<{ danger: boolean }>`
@@ -34,23 +34,23 @@ const StyledLabel = styled.span<{ danger: boolean }>`
 `;
 
 const StyledDelete = styled.button<{ danger: boolean }>`
-  box-sizing: border-box;
-  height: 20px;
-  width: 20px;
-  display: flex;
-  justify-content: center;
   align-items: center;
-  cursor: pointer;
-  font-size: ${themeCssVariables.font.size.sm};
-  user-select: none;
-  padding: 0;
-  margin: 0;
   background: none;
   border: none;
+  border-bottom-right-radius: ${themeCssVariables.border.radius.sm};
+  border-top-right-radius: ${themeCssVariables.border.radius.sm};
+  box-sizing: border-box;
   color: ${({ danger }) =>
     danger ? themeCssVariables.color.red : themeCssVariables.color.blue};
-  border-top-right-radius: ${themeCssVariables.border.radius.sm};
-  border-bottom-right-radius: ${themeCssVariables.border.radius.sm};
+  cursor: pointer;
+  display: flex;
+  font-size: ${themeCssVariables.font.size.sm};
+  height: 20px;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+  width: 20px;
 
   &:hover {
     background-color: ${({ danger }) =>

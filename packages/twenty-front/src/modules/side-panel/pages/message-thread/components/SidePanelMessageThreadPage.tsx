@@ -25,8 +25,8 @@ const StyledWrapper = styled.div`
 const StyledContainer = styled.div`
   box-sizing: border-box;
   display: flex;
-  flex-direction: column;
   flex: 1;
+  flex-direction: column;
   height: 85%;
   overflow-y: auto;
 `;
@@ -34,11 +34,11 @@ const StyledContainer = styled.div`
 const StyledButtonContainer = styled.div`
   background: ${themeCssVariables.background.secondary};
   border-top: 1px solid ${themeCssVariables.border.color.light};
+  box-sizing: border-box;
   display: flex;
   justify-content: flex-end;
   padding: ${themeCssVariables.spacing[2]};
   width: 100%;
-  box-sizing: border-box;
 `;
 
 const ALLOWED_REPLY_PROVIDERS = [
@@ -66,7 +66,7 @@ export const SidePanelMessageThreadPage = () => {
   } = useEmailThreadInSidePanel();
 
   useEffect(() => {
-    if (!messages[0]?.messageThread) {
+    if (!isDefined(messages[0]?.messageThread)) {
       return;
     }
     setMessageThread(messages[0]?.messageThread);
@@ -91,7 +91,7 @@ export const SidePanelMessageThreadPage = () => {
       ALLOWED_REPLY_PROVIDERS.includes(connectedAccountProvider) &&
       (connectedAccountProvider !== ConnectedAccountProvider.IMAP_SMTP_CALDAV ||
         isDefined(connectedAccountConnectionParameters?.SMTP)) &&
-      lastMessage &&
+      isDefined(lastMessage) &&
       messageThreadExternalId != null
     );
   }, [
@@ -103,7 +103,7 @@ export const SidePanelMessageThreadPage = () => {
   ]);
 
   const handleReplyClick = () => {
-    if (!canReply) {
+    if (!isDefined(canReply)) {
       return;
     }
 
@@ -166,14 +166,14 @@ export const SidePanelMessageThreadPage = () => {
           </>
         )}
       </StyledContainer>
-      {canReply && !messageChannelLoading && (
+      {isDefined(canReply) && !messageChannelLoading && (
         <StyledButtonContainer>
           <Button
             size="small"
             onClick={handleReplyClick}
             title={t`Reply`}
             Icon={IconArrowBackUp}
-            disabled={!canReply}
+            disabled={!isDefined(canReply)}
           />
         </StyledButtonContainer>
       )}

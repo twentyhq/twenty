@@ -14,14 +14,14 @@ type TaskListProps = {
 
 const StyledContainer = styled.div`
   align-items: flex-start;
-  width: 100%;
   align-self: stretch;
   display: flex;
   flex-direction: column;
   justify-content: center;
   padding: 8px ${themeCssVariables.spacing[6]};
-
   width: calc(100% - ${themeCssVariables.spacing[12]});
+
+  width: 100%;
 `;
 
 const StyledTitleBar = styled.div`
@@ -45,7 +45,7 @@ const StyledCount = styled.span`
 
 export const TaskList = ({ title, tasks, button }: TaskListProps) => (
   <>
-    {tasks && tasks.length > 0 && (
+    {tasks.length > 0 && (
       <StyledContainer>
         <StyledTitleBar>
           {title && (

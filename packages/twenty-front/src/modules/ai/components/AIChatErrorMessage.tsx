@@ -27,9 +27,9 @@ const StyledErrorIcon = styled.div`
 
 const StyledErrorContent = styled.div`
   display: flex;
+  flex: 1;
   flex-direction: column;
   gap: ${themeCssVariables.spacing['0.5']};
-  flex: 1;
 `;
 
 const StyledErrorTitle = styled.div`

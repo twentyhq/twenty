@@ -56,10 +56,10 @@ const StyledInputsContainer = styled.div`
 
 const StyledAdvancedSettingsSectionInputWrapper = styled.div`
   display: flex;
+  flex: 1;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[4]};
   width: 100%;
-  flex: 1;
 `;
 
 const StyledAdvancedSettingsOuterContainer = styled.div`

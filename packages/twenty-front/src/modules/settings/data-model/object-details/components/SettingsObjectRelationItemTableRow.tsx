@@ -29,27 +29,27 @@ export const OBJECT_RELATION_TABLE_ROW_GRID_TEMPLATE_COLUMNS =
   'minmax(0, 1fr) 148px 148px 36px';
 
 const StyledNameContainer = styled.div`
-  display: flex;
   align-items: center;
+  display: flex;
   flex: 1;
-  min-width: 0;
   gap: ${themeCssVariables.spacing[1]};
+  min-width: 0;
 `;
 
 const StyledNameLabel = styled.div`
-  white-space: nowrap;
-  text-overflow: ellipsis;
   overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 const StyledInactiveLabel = styled.span`
   color: ${themeCssVariables.font.color.extraLight};
-  font-size: ${themeCssVariables.font.size.sm};
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
   flex: 0 999 auto;
+  font-size: ${themeCssVariables.font.size.sm};
   min-width: 48px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 
   &::before {
     content: '·';
@@ -77,11 +77,11 @@ const StyledLinkContainer = styled.div`
 
   > a {
     color: ${themeCssVariables.font.color.primary};
+    overflow: hidden;
     text-decoration: underline;
     text-decoration-color: ${themeCssVariables.border.color.strong};
-    text-underline-offset: 2px;
-    overflow: hidden;
     text-overflow: ellipsis;
+    text-underline-offset: 2px;
     white-space: nowrap;
 
     &:hover {
@@ -121,7 +121,7 @@ export const SettingsObjectRelationItemTableRow = ({
     fieldName: fieldMetadataItem.name,
   });
 
-  // eslint-disable-next-line twenty/no-navigate-prefer-link
+  // oxlint-disable-next-line twenty/no-navigate-prefer-link
   const navigateToFieldEdit = () =>
     navigate(SettingsPath.ObjectFieldEdit, {
       objectNamePlural: objectMetadataItem.namePlural,
@@ -149,7 +149,7 @@ export const SettingsObjectRelationItemTableRow = ({
     : undefined;
 
   const targetObjectLabel =
-    isRelatedObjectLinkable && relationObjectMetadataItem
+    isRelatedObjectLinkable && isDefined(relationObjectMetadataItem)
       ? relationObjectMetadataItem.labelPlural
       : fieldMetadataItem.label;
 
@@ -162,7 +162,7 @@ export const SettingsObjectRelationItemTableRow = ({
         color={themeCssVariables.font.color.primary}
         gap={themeCssVariables.spacing[2]}
       >
-        {!!Icon && (
+        {isDefined(Icon) && (
           <Icon
             style={{
               minWidth: theme.icon.size.md,

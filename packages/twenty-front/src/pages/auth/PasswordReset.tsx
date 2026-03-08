@@ -53,10 +53,10 @@ const validationSchema = z
 type Form = z.infer<typeof validationSchema>;
 
 const StyledMainContainer = styled.div`
-  display: flex;
-  justify-content: flex-start;
   align-items: center;
+  display: flex;
   flex-direction: column;
+  justify-content: flex-start;
   width: 100%;
 `;
 

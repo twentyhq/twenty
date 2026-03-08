@@ -1,5 +1,7 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
+import { msg } from '@lingui/core/macro';
+import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
 import {
@@ -7,6 +9,10 @@ import {
   type UpdateOneResolverArgs,
 } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
+import {
+  CommonQueryRunnerException,
+  CommonQueryRunnerExceptionCode,
+} from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -68,13 +74,21 @@ export class BlocklistValidationService {
 
     for (const handle of blocklist.map((item) => item.handle)) {
       if (!handle) {
-        throw new BadRequestException('Blocklist handle is required');
+        throw new CommonQueryRunnerException(
+          'Blocklist handle is required',
+          CommonQueryRunnerExceptionCode.BAD_REQUEST,
+          { userFriendlyMessage: msg`Blocklist handle is required.` },
+        );
       }
 
       const result = emailOrDomainSchema.safeParse(handle);
 
       if (!result.success) {
-        throw new BadRequestException(result.error.issues[0].message);
+        throw new CommonQueryRunnerException(
+          result.error.issues[0].message,
+          CommonQueryRunnerExceptionCode.BAD_REQUEST,
+          { userFriendlyMessage: msg`Invalid email or domain.` },
+        );
       }
     }
   }
@@ -102,6 +116,22 @@ export class BlocklistValidationService {
         authContext,
       );
 
+    if (
+      payload.data.some(
+        (item) =>
+          isDefined(item.workspaceMemberId) &&
+          item.workspaceMemberId !== currentWorkspaceMember.id,
+      )
+    ) {
+      throw new CommonQueryRunnerException(
+        'Cannot create blocklist entry for another workspace member',
+        CommonQueryRunnerExceptionCode.BAD_REQUEST,
+        {
+          userFriendlyMessage: msg`Cannot create blocklist entry for another workspace member.`,
+        },
+      );
+    }
+
     const currentBlocklist =
       await this.blocklistRepository.getByWorkspaceMemberId(
         currentWorkspaceMember.id,
@@ -115,7 +145,11 @@ export class BlocklistValidationService {
     if (
       payload.data.some((item) => currentBlocklistHandles.includes(item.handle))
     ) {
-      throw new BadRequestException('Blocklist handle already exists');
+      throw new CommonQueryRunnerException(
+        'Blocklist handle already exists',
+        CommonQueryRunnerExceptionCode.BAD_REQUEST,
+        { userFriendlyMessage: msg`Blocklist handle already exists.` },
+      );
     }
   }
 
@@ -130,11 +164,19 @@ export class BlocklistValidationService {
     );
 
     if (!existingRecord) {
-      throw new BadRequestException('Blocklist item not found');
+      throw new CommonQueryRunnerException(
+        'Blocklist item not found',
+        CommonQueryRunnerExceptionCode.RECORD_NOT_FOUND,
+        { userFriendlyMessage: msg`Blocklist item not found.` },
+      );
     }
 
     if (existingRecord.workspaceMemberId !== payload.data.workspaceMemberId) {
-      throw new BadRequestException('Workspace member cannot be updated');
+      throw new CommonQueryRunnerException(
+        'Workspace member cannot be updated',
+        CommonQueryRunnerExceptionCode.BAD_REQUEST,
+        { userFriendlyMessage: msg`Workspace member cannot be updated.` },
+      );
     }
 
     if (existingRecord.handle === payload.data.handle) {
@@ -170,7 +212,11 @@ export class BlocklistValidationService {
       .map((blocklist) => blocklist.handle);
 
     if (currentBlocklistHandles.includes(payload.data.handle)) {
-      throw new BadRequestException('Blocklist handle already exists');
+      throw new CommonQueryRunnerException(
+        'Blocklist handle already exists',
+        CommonQueryRunnerExceptionCode.BAD_REQUEST,
+        { userFriendlyMessage: msg`Blocklist handle already exists.` },
+      );
     }
   }
 }
