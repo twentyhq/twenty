@@ -810,63 +810,6 @@ export class ApiService {
     }
   }
 
-  async registerNpmPackage(packageName: string): Promise<
-    ApiResponse<{
-      id: string;
-      universalIdentifier: string;
-      name: string;
-      isProvenanceVerified: boolean;
-      provenanceRepositoryUrl: string | null;
-    }>
-  > {
-    try {
-      const mutation = `
-        mutation RegisterNpmPackage($packageName: String!) {
-          registerNpmPackage(packageName: $packageName) {
-            id
-            universalIdentifier
-            name
-            isProvenanceVerified
-            provenanceRepositoryUrl
-          }
-        }
-      `;
-
-      const response = await this.client.post(
-        '/metadata',
-        {
-          query: mutation,
-          variables: { packageName },
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Accept: '*/*',
-          },
-        },
-      );
-
-      if (response.data.errors) {
-        return {
-          success: false,
-          error:
-            response.data.errors[0]?.message ||
-            'Failed to register npm package',
-        };
-      }
-
-      return {
-        success: true,
-        data: response.data.data.registerNpmPackage,
-      };
-    } catch (error) {
-      return {
-        success: false,
-        error,
-      };
-    }
-  }
-
   async installTarballApp({
     universalIdentifier,
   }: {

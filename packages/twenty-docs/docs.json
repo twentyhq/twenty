@@ -358,13 +358,14 @@
                 "group": "Extend",
                 "icon": "plug",
                 "pages": [
-                  "developers/extend/extend",
+                  "developers/extend/api",
+                  "developers/extend/webhooks",
                   {
-                    "group": "Capabilities",
+                    "group": "Apps",
                     "pages": [
-                      "developers/extend/capabilities/apis",
-                      "developers/extend/capabilities/webhooks",
-                      "developers/extend/capabilities/apps"
+                      "developers/extend/apps/getting-started",
+                      "developers/extend/apps/building",
+                      "developers/extend/apps/publishing"
                     ]
                   }
                 ]
@@ -6273,6 +6274,22 @@
   },
   "redirects": [
     {
+      "source": "/developers/extend/capabilities/api",
+      "destination": "/developers/extend/api"
+    },
+    {
+      "source": "/developers/extend/capabilities/apis",
+      "destination": "/developers/extend/api"
+    },
+    {
+      "source": "/developers/extend/capabilities/webhooks",
+      "destination": "/developers/extend/webhooks"
+    },
+    {
+      "source": "/developers/extend/capabilities/apps",
+      "destination": "/developers/extend/apps/getting-started"
+    },
+    {
       "source": "/developers/local-setup",
       "destination": "/developers/contribute/capabilities/local-setup"
     },
@@ -6306,23 +6323,23 @@
     },
     {
       "source": "/developers/api-and-webhooks/apis-overview",
-      "destination": "/developers/extend/capabilities/apis"
+      "destination": "/developers/extend/api"
     },
     {
       "source": "/developers/api-and-webhooks/api",
-      "destination": "/developers/extend/capabilities/apis"
+      "destination": "/developers/extend/api"
     },
     {
       "source": "/developers/api-and-webhooks/api-keys",
-      "destination": "/developers/extend/capabilities/apis"
+      "destination": "/developers/extend/api"
     },
     {
       "source": "/developers/api-and-webhooks/webhooks",
-      "destination": "/developers/extend/capabilities/webhooks"
+      "destination": "/developers/extend/webhooks"
     },
     {
       "source": "/developers/api-and-webhooks/integrations",
-      "destination": "/developers/extend/capabilities/apis"
+      "destination": "/developers/extend/api"
     },
     {
       "source": "/developers/bugs-and-requests",

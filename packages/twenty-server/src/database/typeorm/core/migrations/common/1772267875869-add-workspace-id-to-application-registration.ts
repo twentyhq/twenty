@@ -10,23 +10,13 @@ export class AddWorkspaceIdToApplicationRegistration1772267875869
       `ALTER TABLE "core"."applicationRegistration" ADD "workspaceId" uuid`,
     );
 
-    // Delete any orphaned registrations that can't be assigned a workspace
-    await queryRunner.query(`
-      DELETE FROM "core"."applicationRegistration"
-      WHERE "workspaceId" IS NULL
-    `);
-
-    await queryRunner.query(
-      `ALTER TABLE "core"."applicationRegistration" ALTER COLUMN "workspaceId" SET NOT NULL`,
-    );
-
     await queryRunner.query(`
       CREATE INDEX "IDX_APPLICATION_REGISTRATION_WORKSPACE_ID"
       ON "core"."applicationRegistration" ("workspaceId")
     `);
 
     await queryRunner.query(
-      `ALTER TABLE "core"."applicationRegistration" ADD CONSTRAINT "FK_94ab20372e448d45088357f884e" FOREIGN KEY ("workspaceId") REFERENCES "core"."workspace"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
+      `ALTER TABLE "core"."applicationRegistration" ADD CONSTRAINT "FK_94ab20372e448d45088357f884e" FOREIGN KEY ("workspaceId") REFERENCES "core"."workspace"("id") ON DELETE SET NULL ON UPDATE NO ACTION`,
     );
   }
 

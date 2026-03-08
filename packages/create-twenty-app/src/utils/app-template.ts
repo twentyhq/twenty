@@ -163,9 +163,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: twentyhq/twenty/.github/actions/publish-twenty-app@main
+      - uses: actions/setup-node@v4
         with:
-          npm-token: \${{ secrets.NPM_TOKEN }}
+          node-version: '24'
+          registry-url: https://registry.npmjs.org
+      - run: yarn install --immutable
+      - run: npx twenty app:build
+      - run: npm publish --provenance --access public
+        working-directory: .twenty/output
+        env:
+          NODE_AUTH_TOKEN: \${{ secrets.NPM_TOKEN }}
 `;
 
   await fs.writeFile(join(workflowDir, 'publish.yml'), workflowContent);

@@ -15,7 +15,10 @@ import { SearchInput } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { UndecoratedLink } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { type ApplicationRegistrationFragmentFragment } from '~/generated-metadata/graphql';
+import {
+  ApplicationRegistrationSourceType,
+  type ApplicationRegistrationFragmentFragment,
+} from '~/generated-metadata/graphql';
 
 const StyledTableContainer = styled.div`
   margin-top: ${themeCssVariables.spacing[3]};
@@ -87,13 +90,15 @@ export const SettingsAdminApps = () => {
                   <TableCell>
                     <Status
                       color={
-                        registration.sourceType === 'npm'
+                        registration.sourceType ===
+                        ApplicationRegistrationSourceType.NPM
                           ? 'green'
-                          : registration.sourceType === 'tarball'
+                          : registration.sourceType ===
+                              ApplicationRegistrationSourceType.TARBALL
                             ? 'blue'
                             : 'gray'
                       }
-                      text={registration.sourceType.toUpperCase()}
+                      text={registration.sourceType}
                     />
                   </TableCell>
                   <TableCell>

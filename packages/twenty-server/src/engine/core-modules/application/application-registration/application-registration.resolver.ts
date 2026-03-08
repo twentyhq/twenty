@@ -13,7 +13,6 @@ import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/a
 import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
 import { CreateApplicationRegistrationVariableInput } from 'src/engine/core-modules/application/application-registration-variable/dtos/create-application-registration-variable.input';
 import { UpdateApplicationRegistrationVariableInput } from 'src/engine/core-modules/application/application-registration-variable/dtos/update-application-registration-variable.input';
-import { ApplicationNpmRegistrationService } from 'src/engine/core-modules/application/application-registration/application-npm-registration.service';
 import { ApplicationRegistrationExceptionFilter } from 'src/engine/core-modules/application/application-registration/application-registration-exception-filter';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import {
@@ -63,7 +62,6 @@ export class ApplicationRegistrationResolver {
     private readonly applicationRegistrationService: ApplicationRegistrationService,
     private readonly applicationRegistrationVariableService: ApplicationRegistrationVariableService,
     private readonly applicationTarballService: ApplicationTarballService,
-    private readonly applicationNpmRegistrationService: ApplicationNpmRegistrationService,
     private readonly fileUrlService: FileUrlService,
   ) {}
 
@@ -343,24 +341,5 @@ export class ApplicationRegistrationResolver {
       targetWorkspaceSubdomain,
       currentOwnerWorkspaceId: workspaceId,
     });
-  }
-
-  @UseGuards(
-    WorkspaceAuthGuard,
-    FeatureFlagGuard,
-    SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
-  )
-  @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)
-  @Mutation(() => ApplicationRegistrationEntity)
-  async registerNpmPackage(
-    @Args('packageName') packageName: string,
-    @AuthUser() user: UserEntity,
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ): Promise<ApplicationRegistrationEntity> {
-    return this.applicationNpmRegistrationService.registerNpmPackage(
-      packageName,
-      user,
-      workspaceId,
-    );
   }
 }

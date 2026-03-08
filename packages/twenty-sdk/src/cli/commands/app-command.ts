@@ -5,7 +5,6 @@ import { AppBuildCommand } from './app/app-build';
 import { AppGenerateClientCommand } from './app/app-generate-client';
 import { AppDevCommand } from './app/app-dev';
 import { AppPublishCommand } from './app/app-publish';
-import { AppRegisterCommand } from './app/app-register';
 import { AppTypecheckCommand } from './app/app-typecheck';
 import { AppUninstallCommand } from './app/app-uninstall';
 import { AuthListCommand } from './auth/auth-list';
@@ -68,7 +67,6 @@ export const registerCommands = (program: Command): void => {
   const generateClientCommand = new AppGenerateClientCommand();
   const devCommand = new AppDevCommand();
   const publishCommand = new AppPublishCommand();
-  const registerCommand = new AppRegisterCommand();
   const typecheckCommand = new AppTypecheckCommand();
   const uninstallCommand = new AppUninstallCommand();
   const addCommand = new EntityAddCommand();
@@ -123,15 +121,6 @@ export const registerCommands = (program: Command): void => {
         token: options.token,
         tag: options.tag,
       });
-    });
-
-  program
-    .command('app:register [packageName]')
-    .description(
-      'Register ownership of an npm package (verifies your email is in npm maintainers)',
-    )
-    .action(async (packageName?: string) => {
-      await registerCommand.execute({ packageName });
     });
 
   program

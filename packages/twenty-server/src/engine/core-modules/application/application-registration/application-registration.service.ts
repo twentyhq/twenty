@@ -339,65 +339,6 @@ export class ApplicationRegistrationService {
     await this.applicationRegistrationRepository.save(registration);
   }
 
-  async upsertFromNpmRegistration(params: {
-    universalIdentifier: string;
-    packageName: string;
-    name: string;
-    description: string | null;
-    author: string | null;
-    ownerWorkspaceId: string;
-    createdByUserId: string;
-    latestAvailableVersion: string | null;
-    isProvenanceVerified: boolean;
-    provenanceRepositoryUrl: string | null;
-    provenanceVerifiedAt: Date | null;
-  }): Promise<ApplicationRegistrationEntity> {
-    const existing = await this.findOneByUniversalIdentifier(
-      params.universalIdentifier,
-    );
-
-    if (isDefined(existing)) {
-      await this.applicationRegistrationRepository.save({
-        ...existing,
-        sourceType: ApplicationRegistrationSourceType.NPM,
-        sourcePackage: params.packageName,
-        ownerWorkspaceId: params.ownerWorkspaceId,
-        createdByUserId: params.createdByUserId,
-        name: params.name,
-        description: params.description,
-        author: params.author,
-        latestAvailableVersion: params.latestAvailableVersion,
-        isProvenanceVerified: params.isProvenanceVerified,
-        provenanceRepositoryUrl: params.provenanceRepositoryUrl,
-        provenanceVerifiedAt: params.provenanceVerifiedAt,
-      });
-
-      return this.applicationRegistrationRepository.findOneOrFail({
-        where: { id: existing.id },
-      });
-    }
-
-    const registration = this.applicationRegistrationRepository.create({
-      universalIdentifier: params.universalIdentifier,
-      name: params.name,
-      description: params.description,
-      author: params.author,
-      sourceType: ApplicationRegistrationSourceType.NPM,
-      sourcePackage: params.packageName,
-      latestAvailableVersion: params.latestAvailableVersion,
-      oAuthClientId: v4(),
-      oAuthRedirectUris: [],
-      oAuthScopes: [],
-      ownerWorkspaceId: params.ownerWorkspaceId,
-      createdByUserId: params.createdByUserId,
-      isProvenanceVerified: params.isProvenanceVerified,
-      provenanceRepositoryUrl: params.provenanceRepositoryUrl,
-      provenanceVerifiedAt: params.provenanceVerifiedAt,
-    });
-
-    return this.applicationRegistrationRepository.save(registration);
-  }
-
   async findManyBySourceType(
     sourceType: ApplicationRegistrationSourceType,
   ): Promise<ApplicationRegistrationEntity[]> {
