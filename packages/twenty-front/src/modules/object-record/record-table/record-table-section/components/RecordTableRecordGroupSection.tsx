@@ -53,13 +53,13 @@ const StyledChevronContainer = styled.div`
   border-right: none;
   color: ${themeCssVariables.font.color.secondary};
   display: flex;
+  left: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px;
+  min-width: ${RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px;
+  position: sticky;
   text-align: center;
+
   vertical-align: middle;
   width: ${RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px;
-  min-width: ${RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px;
-
-  position: sticky;
-  left: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px;
 
   z-index: ${TABLE_Z_INDEX.groupSection.stickyCell};
 `;
@@ -78,11 +78,11 @@ const StyledRecordGroupSection = styled.div<{ width: number }>`
   flex-direction: row;
   gap: ${themeCssVariables.spacing[1]};
   height: ${RECORD_TABLE_ROW_HEIGHT}px;
-  width: ${({ width }) => width}px;
+  left: ${`${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH + RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px`};
   min-width: ${({ width }) => width}px;
 
   position: sticky;
-  left: ${`${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH + RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px`};
+  width: ${({ width }) => width}px;
 
   z-index: ${TABLE_Z_INDEX.groupSection.stickyCell};
 `;
@@ -100,16 +100,16 @@ const StyledFieldPlaceholderCell = styled.div<{ widthOfFields: number }>`
 `;
 
 const StyledRecordTableDragAndDropPlaceholderCell = styled.div`
+  background-color: ${themeCssVariables.background.primary};
+  border-bottom: 1px solid ${themeCssVariables.background.primary};
   height: ${RECORD_TABLE_ROW_HEIGHT}px;
-  width: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px;
+
+  left: 0;
+
   min-width: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px;
 
-  background-color: ${themeCssVariables.background.primary};
-
-  border-bottom: 1px solid ${themeCssVariables.background.primary};
-
   position: sticky;
-  left: 0;
+  width: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px;
   z-index: ${TABLE_Z_INDEX.groupSection.stickyCell};
 `;
 

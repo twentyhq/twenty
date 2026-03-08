@@ -25,6 +25,7 @@ const StyledChip = styled.div<{ variant: SortOrFilterChipVariant }>`
       }
     }};
   border-radius: 4px;
+  box-sizing: border-box;
   color: ${({ variant }) => {
     switch (variant) {
       case 'danger':
@@ -34,17 +35,16 @@ const StyledChip = styled.div<{ variant: SortOrFilterChipVariant }>`
         return themeCssVariables.color.blue;
     }
   }};
-  height: 24px;
-  box-sizing: border-box;
+  column-gap: ${themeCssVariables.spacing[1]};
   cursor: pointer;
   display: flex;
   flex-direction: row;
   flex-shrink: 0;
   font-size: ${themeCssVariables.font.size.sm};
   font-weight: ${themeCssVariables.font.weight.medium};
+  height: 24px;
   padding: ${themeCssVariables.spacing[0.5]};
   padding-left: ${themeCssVariables.spacing[1]};
-  column-gap: ${themeCssVariables.spacing[1]};
   user-select: none;
   white-space: nowrap;
 `;
@@ -55,20 +55,20 @@ const StyledIcon = styled.div`
 `;
 
 const StyledDelete = styled.button<{ variant: SortOrFilterChipVariant }>`
-  box-sizing: border-box;
-  height: 20px;
-  width: 20px;
-  display: flex;
-  justify-content: center;
   align-items: center;
-  cursor: pointer;
-  font-size: ${themeCssVariables.font.size.sm};
-  user-select: none;
-  padding: 0;
-  margin: 0;
   background: none;
   border: none;
+  box-sizing: border-box;
   color: inherit;
+  cursor: pointer;
+  display: flex;
+  font-size: ${themeCssVariables.font.size.sm};
+  height: 20px;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+  width: 20px;
 
   &:hover {
     background-color: ${({ variant }) => {

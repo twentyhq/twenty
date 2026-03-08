@@ -28,18 +28,20 @@ import { isFieldSelectValue } from '@/object-record/record-field/ui/types/guards
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { buildMorphRelationUpdateInput } from '@/object-record/record-field/ui/meta-types/input/utils/buildMorphRelationUpdateInput';
 import { isFieldArray } from '@/object-record/record-field/ui/types/guards/isFieldArray';
 import { isFieldArrayValue } from '@/object-record/record-field/ui/types/guards/isFieldArrayValue';
-import { isFieldFiles } from '@/object-record/record-field/ui/types/guards/isFieldFiles';
-import { isFieldFilesValue } from '@/object-record/record-field/ui/types/guards/isFieldFilesValue';
 import { isFieldBoolean } from '@/object-record/record-field/ui/types/guards/isFieldBoolean';
 import { isFieldBooleanValue } from '@/object-record/record-field/ui/types/guards/isFieldBooleanValue';
 import { isFieldCurrency } from '@/object-record/record-field/ui/types/guards/isFieldCurrency';
 import { isFieldCurrencyValue } from '@/object-record/record-field/ui/types/guards/isFieldCurrencyValue';
 import { isFieldDateTime } from '@/object-record/record-field/ui/types/guards/isFieldDateTime';
 import { isFieldDateTimeValue } from '@/object-record/record-field/ui/types/guards/isFieldDateTimeValue';
+import { isFieldFiles } from '@/object-record/record-field/ui/types/guards/isFieldFiles';
+import { isFieldFilesValue } from '@/object-record/record-field/ui/types/guards/isFieldFilesValue';
 import { isFieldMorphRelationManyToOne } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelationManyToOne';
 import { isFieldNumber } from '@/object-record/record-field/ui/types/guards/isFieldNumber';
 import { isFieldNumberValue } from '@/object-record/record-field/ui/types/guards/isFieldNumberValue';
@@ -55,6 +57,7 @@ import { isFieldText } from '@/object-record/record-field/ui/types/guards/isFiel
 import { isFieldTextValue } from '@/object-record/record-field/ui/types/guards/isFieldTextValue';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { getForeignKeyNameFromRelationFieldName } from '@/object-record/utils/getForeignKeyNameFromRelationFieldName';
+import { isDefined } from 'twenty-shared/utils';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const usePersistField = ({
@@ -65,6 +68,8 @@ export const usePersistField = ({
   const { objectMetadataItem } = useObjectMetadataItemById({
     objectId: objectMetadataItemId,
   });
+
+  const { objectMetadataItems } = useObjectMetadataItems();
 
   const { updateOneRecord } = useUpdateOneRecord();
 
@@ -218,25 +223,48 @@ export const usePersistField = ({
         }
 
         if (fieldIsMorphRelationManyToOne) {
-          if (valueToPersist?.id === currentValue?.id) {
+          if (
+            isDefined(valueToPersist) &&
+            valueToPersist.id === currentValue?.id
+          ) {
             return;
           }
+
+          const morphMetadata = (
+            fieldDefinition as FieldDefinition<FieldMorphRelationMetadata>
+          ).metadata;
+
+          const { updateInput, allMorphForeignKeysNulled } =
+            buildMorphRelationUpdateInput({
+              morphRelations: morphMetadata.morphRelations,
+              fieldName,
+              relationType: morphMetadata.relationType,
+              objectMetadataItems,
+              targetRecordId: valueToPersist?.id,
+              targetObjectMetadataId: valueToPersist?.objectMetadataId,
+            });
 
           const newRecord = await updateOneRecord({
             objectNameSingular: objectMetadataItem.nameSingular,
             idToUpdate: recordId,
-            updateOneRecordInput: {
-              [getForeignKeyNameFromRelationFieldName(fieldName)]:
-                valueToPersist?.id ?? null,
-            },
+            updateOneRecordInput: updateInput,
           });
+
+          const morphForeignKeyGqlFields: Record<string, true> = {};
+
+          for (const key of Object.keys(allMorphForeignKeysNulled)) {
+            morphForeignKeyGqlFields[key] = true;
+          }
 
           upsertRecordsInStore({
             partialRecords: [
-              getRecordFromRecordNode({
-                recordNode: newRecord,
-              }),
+              {
+                ...getRecordFromRecordNode({ recordNode: newRecord }),
+                ...allMorphForeignKeysNulled,
+                ...updateInput,
+              },
             ],
+            recordGqlFields: morphForeignKeyGqlFields,
           });
 
           return;
@@ -270,6 +298,7 @@ export const usePersistField = ({
     },
     [
       objectMetadataItem?.nameSingular,
+      objectMetadataItems,
       store,
       updateOneRecord,
       upsertRecordsInStore,

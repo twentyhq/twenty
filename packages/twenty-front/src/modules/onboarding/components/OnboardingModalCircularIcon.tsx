@@ -5,12 +5,12 @@ import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledCheckContainer = styled.div<{ color: string }>`
   align-items: center;
-  display: flex;
-  justify-content: center;
   border: 2px solid ${({ color }) => color};
   border-radius: ${themeCssVariables.border.radius.rounded};
   box-shadow: ${({ color }) => color && `-4px 4px 0 -2px ${color}`};
+  display: flex;
   height: 36px;
+  justify-content: center;
   width: 36px;
 `;
 

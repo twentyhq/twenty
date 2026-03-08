@@ -9,11 +9,11 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
   align-items: center;
+  box-sizing: border-box;
   display: flex;
   gap: ${themeCssVariables.spacing[1]};
   padding: ${themeCssVariables.spacing[1]};
   width: 100%;
-  box-sizing: border-box;
 `;
 
 type FieldsConfigurationGroupRenameInputProps = {

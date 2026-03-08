@@ -24,20 +24,20 @@ const StyledTableRow = styled.div<{
   cursor: ${({ cursor }) => cursor ?? 'default'};
   display: grid;
   grid-auto-columns: ${({ gridAutoColumns }) => gridAutoColumns ?? '1fr'};
-  grid-template-columns: ${({ gridTemplateColumns }) =>
-    gridTemplateColumns ?? 'none'};
+  grid-auto-flow: column;
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     grid-auto-columns: ${({ mobileGridAutoColumns, gridAutoColumns }) =>
       mobileGridAutoColumns ?? gridAutoColumns ?? '1fr'};
   }
 
+  grid-template-columns: ${({ gridTemplateColumns }) =>
+    gridTemplateColumns ?? 'none'};
   height: ${({ height }) => height ?? 'auto'};
-  grid-auto-flow: column;
+  text-decoration: none;
   transition: background-color
     calc(${themeCssVariables.animation.duration.normal} * 1s);
   width: 100%;
-  text-decoration: none;
 
   &:hover {
     background-color: ${({ onClick, to, hoverBackgroundColor }) =>

@@ -23,13 +23,13 @@ const StyledMainContainer = styled.div`
   border-top: none;
   display: flex;
   flex-direction: column;
-  overflow: auto;
+  gap: ${themeCssVariables.spacing[4]};
 
   justify-content: center;
-  padding-top: ${themeCssVariables.spacing[6]};
-  padding-right: ${themeCssVariables.spacing[6]};
+  overflow: auto;
   padding-left: ${themeCssVariables.spacing[6]};
-  gap: ${themeCssVariables.spacing[4]};
+  padding-right: ${themeCssVariables.spacing[6]};
+  padding-top: ${themeCssVariables.spacing[6]};
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     border-top: 1px solid ${themeCssVariables.border.color.medium};
@@ -51,8 +51,7 @@ export const TimelineCard = () => {
   const { timelineActivities, loading, fetchMoreRecords } =
     useTimelineActivities(targetRecord);
 
-  const isTimelineActivitiesEmpty =
-    timelineActivities.length === 0;
+  const isTimelineActivitiesEmpty = timelineActivities.length === 0;
 
   if (loading === true) {
     return <SkeletonLoader withSubSections />;

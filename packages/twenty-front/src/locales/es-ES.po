@@ -2769,17 +2769,17 @@ msgid "Choose the format used to display date value"
 msgstr "Elige el formato utilizado para mostrar el valor de la fecha"
 
 #. js-lingui-id: CiPJbh
-#: src/modules/settings/data-model/fields/forms/utils/getSettingsDataModelFieldOnClickActionDescription.util.ts
+#: src/modules/settings/data-model/fields/forms/utils/getSettingsDataModelFieldOnClickActionDescription.ts
 msgid "Choose what happens when you click a link"
 msgstr "Elige qué sucede al hacer clic en un enlace"
 
 #. js-lingui-id: D3MauW
-#: src/modules/settings/data-model/fields/forms/utils/getSettingsDataModelFieldOnClickActionDescription.util.ts
+#: src/modules/settings/data-model/fields/forms/utils/getSettingsDataModelFieldOnClickActionDescription.ts
 msgid "Choose what happens when you click a phone number"
 msgstr "Elige qué sucede al hacer clic en un número de teléfono"
 
 #. js-lingui-id: QR1yAR
-#: src/modules/settings/data-model/fields/forms/utils/getSettingsDataModelFieldOnClickActionDescription.util.ts
+#: src/modules/settings/data-model/fields/forms/utils/getSettingsDataModelFieldOnClickActionDescription.ts
 msgid "Choose what happens when you click an email"
 msgstr "Elige qué sucede al hacer clic en una dirección de correo electrónico"
 
@@ -4156,6 +4156,12 @@ msgstr "Código de país predeterminado"
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartColorPaletteOption.tsx
 msgid "Default palette"
 msgstr "Paleta predeterminada"
+
+#. js-lingui-id: U/uGBk
+#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationUngroupedEditor.tsx
+#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupEditor.tsx
+msgid "Default position/visibility for fields created in the future"
+msgstr ""
 
 #. js-lingui-id: v41VX6
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
@@ -8951,6 +8957,12 @@ msgstr "Nuevo dominio de correo electrónico"
 msgid "New Field"
 msgstr "Nuevo Campo"
 
+#. js-lingui-id: DNUCGO
+#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationUngroupedEditor.tsx
+#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupEditor.tsx
+msgid "New fields"
+msgstr ""
+
 #. js-lingui-id: 96G6Re
 #: src/modules/side-panel/pages/navigation-menu-item/hooks/useAddFolderToNavigationMenu.ts
 #: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemMainMenu.tsx
@@ -9189,7 +9201,7 @@ msgid "No custom views available"
 msgstr ""
 
 #. js-lingui-id: plhHQt
-#: src/modules/page-layout/widgets/graph/graphWidgetPieChart/components/PieChartCenterMetricLayer.tsx
+#: src/modules/page-layout/widgets/graph/graph-widget-pie-chart/components/PieChartCenterMetricLayer.tsx
 #: src/modules/page-layout/widgets/graph/components/NoDataLayer.tsx
 #: src/modules/page-layout/widgets/graph/components/GraphWidgetTooltip.tsx
 msgid "No data"
@@ -10263,7 +10275,7 @@ msgstr "Porcentaje no vacío"
 
 #. js-lingui-id: /roQKz
 #: src/modules/settings/data-model/fields/forms/number/constants/NumberDataModelSelectOptions.ts
-#: src/modules/page-layout/widgets/graph/graphWidgetPieChart/hooks/usePieChartCenterMetricData.ts
+#: src/modules/page-layout/widgets/graph/graph-widget-pie-chart/hooks/usePieChartCenterMetricData.ts
 msgid "Percentage"
 msgstr "Porcentaje"
 
@@ -10761,7 +10773,7 @@ msgstr "Valoración"
 #: src/modules/side-panel/pages/page-layout/hooks/useChartSettingsValues.ts
 #: src/modules/page-layout/widgets/graph/hooks/useGraphWidgetAggregateQuery.ts
 #: src/modules/page-layout/widgets/graph/hooks/useGraphWidgetAggregateQuery.ts
-#: src/modules/page-layout/widgets/graph/graphWidgetAggregateChart/utils/getAggregateChartOperationLabel.ts
+#: src/modules/page-layout/widgets/graph/graph-widget-aggregate-chart/utils/getAggregateChartOperationLabel.ts
 msgid "Ratio"
 msgstr "Proporción"
 
@@ -13629,7 +13641,7 @@ msgid "Tools"
 msgstr ""
 
 #. js-lingui-id: 72c5Qo
-#: src/modules/page-layout/widgets/graph/graphWidgetPieChart/hooks/usePieChartCenterMetricData.ts
+#: src/modules/page-layout/widgets/graph/graph-widget-pie-chart/hooks/usePieChartCenterMetricData.ts
 msgid "Total"
 msgstr ""
 
@@ -14353,8 +14365,8 @@ msgstr "Validar datos"
 #: src/modules/settings/admin-panel/config-variables/components/SettingsAdminConfigVariablesTable.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
-#: src/modules/page-layout/widgets/graph/graphWidgetGaugeChart/components/GraphWidgetGaugeChart.tsx
-#: src/modules/page-layout/widgets/graph/graphWidgetGaugeChart/components/GraphWidgetGaugeChart.tsx
+#: src/modules/page-layout/widgets/graph/graph-widget-gauge-chart/components/GraphWidgetGaugeChart.tsx
+#: src/modules/page-layout/widgets/graph/graph-widget-gauge-chart/components/GraphWidgetGaugeChart.tsx
 msgid "Value"
 msgstr "Valor"
 
@@ -14480,7 +14492,7 @@ msgid "View Docs"
 msgstr "Ver documentación"
 
 #. js-lingui-id: Mv1YVf
-#: src/modules/ui/feedback/snack-bar-manager/utils/build-error-action.util.ts
+#: src/modules/ui/feedback/snack-bar-manager/utils/buildErrorAction.ts
 msgid "View existing record"
 msgstr "Ver registro existente"
 

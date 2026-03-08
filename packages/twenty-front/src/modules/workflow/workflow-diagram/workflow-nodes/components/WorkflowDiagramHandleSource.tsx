@@ -11,28 +11,28 @@ const HANDLE_SCALE_ON_HOVER = 1.5;
 
 const StyledHandleContainer = styled.div`
   & .react-flow__handle {
-    height: ${NODE_HANDLE_HEIGHT_PX}px;
-    width: ${NODE_HANDLE_WIDTH_PX}px;
-    opacity: var(--handle-opacity, 1);
     background: var(--handle-bg);
     border-color: var(--handle-border-color);
+    height: ${NODE_HANDLE_HEIGHT_PX}px;
+    opacity: var(--handle-opacity, 1);
     transform: var(--handle-transform);
     transform-origin: var(--handle-transform-origin);
-
-    &::after {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: calc(100% + ${themeCssVariables.spacing[4]});
-      height: calc(100% + ${themeCssVariables.spacing[4]});
-    }
-
     transition:
       transform 0.1s ease-out,
       background 0.1s,
       border-color 0.1s;
+
+    &::after {
+      content: '';
+      height: calc(100% + ${themeCssVariables.spacing[4]});
+      left: 50%;
+      position: absolute;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: calc(100% + ${themeCssVariables.spacing[4]});
+    }
+
+    width: ${NODE_HANDLE_WIDTH_PX}px;
     z-index: 1;
 
     &.connectionindicator {

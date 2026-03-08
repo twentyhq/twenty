@@ -110,8 +110,16 @@
   --t-background-overlay-primary: #000000b8;
   --t-background-overlay-secondary: #0000005c;
   --t-background-overlay-tertiary: #0000005c;
-  --t-background-radial-gradient: radial-gradient(50% 62.62% at 50% 0%, color(display-p3 0.506 0.506 0.506) 0%, color(display-p3 0.482 0.482 0.482) 100%);
-  --t-background-radial-gradient-hover: radial-gradient(76.32% 95.59% at 50% 0%, color(display-p3 0.482 0.482 0.482) 0%, color(display-p3 0.702 0.702 0.702) 100%);
+  --t-background-radial-gradient: radial-gradient(
+    50% 62.62% at 50% 0%,
+    color(display-p3 0.506 0.506 0.506) 0%,
+    color(display-p3 0.482 0.482 0.482) 100%
+  );
+  --t-background-radial-gradient-hover: radial-gradient(
+    76.32% 95.59% at 50% 0%,
+    color(display-p3 0.482 0.482 0.482) 0%,
+    color(display-p3 0.702 0.702 0.702) 100%
+  );
   --t-background-primary-inverted: color(display-p3 0.922 0.922 0.922);
   --t-background-primary-inverted-hover: color(display-p3 0.702 0.702 0.702);
   --t-blur-light: blur(6px) saturate(200%) contrast(100%) brightness(130%);
@@ -132,11 +140,14 @@
   --t-border-radius-xxl: 40px;
   --t-border-radius-pill: 999px;
   --t-border-radius-rounded: 100%;
-  --t-box-shadow-color: rgba(0,0,0,0.6);
-  --t-box-shadow-light: 0px 2px 4px 0px rgba(0,0,0,0.04), 0px 0px 4px 0px rgba(0,0,0,0.08);
-  --t-box-shadow-strong: 2px 4px 16px 0px rgba(0,0,0,0.16), 0px 2px 4px 0px rgba(0,0,0,0.08);
-  --t-box-shadow-underline: 0px 1px 0px 0px rgba(0,0,0,0.32);
-  --t-box-shadow-super-heavy: 2px 4px 16px 0px rgba(0,0,0,0.12), 0px 2px 4px 0px rgba(0,0,0,0.04);
+  --t-box-shadow-color: rgba(0, 0, 0, 0.6);
+  --t-box-shadow-light: 0px 2px 4px 0px rgba(0, 0, 0, 0.04),
+    0px 0px 4px 0px rgba(0, 0, 0, 0.08);
+  --t-box-shadow-strong: 2px 4px 16px 0px rgba(0, 0, 0, 0.16),
+    0px 2px 4px 0px rgba(0, 0, 0, 0.08);
+  --t-box-shadow-underline: 0px 1px 0px 0px rgba(0, 0, 0, 0.32);
+  --t-box-shadow-super-heavy: 2px 4px 16px 0px rgba(0, 0, 0, 0.12),
+    0px 2px 4px 0px rgba(0, 0, 0, 0.04);
   --t-font-color-primary: color(display-p3 0.922 0.922 0.922);
   --t-font-color-secondary: color(display-p3 0.702 0.702 0.702);
   --t-font-color-tertiary: color(display-p3 0.506 0.506 0.506);

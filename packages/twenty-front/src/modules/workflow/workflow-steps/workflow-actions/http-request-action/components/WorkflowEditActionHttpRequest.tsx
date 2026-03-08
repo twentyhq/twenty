@@ -46,8 +46,8 @@ const StyledTabListContainer = styled.div`
 
 const StyledTestTabContent = styled.div`
   display: flex;
-  flex-direction: column;
   flex: 1;
+  flex-direction: column;
   gap: ${themeCssVariables.spacing[4]};
   height: 100%;
   min-height: 400px;
@@ -55,26 +55,26 @@ const StyledTestTabContent = styled.div`
 
 const StyledConfigurationTabContent = styled.div`
   display: flex;
+  flex: 1;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[4]};
   height: 100%;
-  flex: 1;
 `;
 
 const StyledFullHeightFormRawJsonFieldInputContainer = styled.div`
-  flex: 1;
   display: flex;
+  flex: 1;
   flex-direction: column;
 
   & > div:last-child {
-    flex: 1;
     display: flex;
+    flex: 1;
     flex-direction: column;
 
     & > div {
       flex: 1;
-      max-height: none !important;
       height: 100%;
+      max-height: none !important;
 
       & > div {
         height: 100%;

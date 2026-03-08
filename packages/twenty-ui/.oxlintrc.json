@@ -5,13 +5,13 @@
   "categories": {
     "correctness": "off"
   },
-  "ignorePatterns": [
-    "node_modules",
-    "generated"
-  ],
+  "ignorePatterns": ["node_modules", "generated"],
   "rules": {
     "func-style": ["error", "declaration", { "allowArrowFunctions": true }],
-    "no-console": ["warn", { "allow": ["group", "groupCollapsed", "groupEnd"] }],
+    "no-console": [
+      "warn",
+      { "allow": ["group", "groupCollapsed", "groupEnd"] }
+    ],
     "no-control-regex": "off",
     "no-debugger": "error",
     "no-duplicate-imports": "error",
@@ -35,31 +35,43 @@
 
     "typescript/no-redeclare": "error",
     "typescript/ban-ts-comment": "error",
-    "typescript/consistent-type-imports": ["error", {
-      "prefer": "type-imports",
-      "fixStyle": "inline-type-imports"
-    }],
+    "typescript/consistent-type-imports": [
+      "error",
+      {
+        "prefer": "type-imports",
+        "fixStyle": "inline-type-imports"
+      }
+    ],
     "typescript/explicit-function-return-type": "off",
     "typescript/explicit-module-boundary-types": "off",
-    "typescript/no-empty-object-type": ["error", {
-      "allowInterfaces": "with-single-extends"
-    }],
+    "typescript/no-empty-object-type": [
+      "error",
+      {
+        "allowInterfaces": "with-single-extends"
+      }
+    ],
     "typescript/no-empty-function": "off",
     "typescript/no-explicit-any": "off",
-    "typescript/no-unused-vars": ["warn", {
-      "vars": "all",
-      "varsIgnorePattern": "^_",
-      "args": "after-used",
-      "argsIgnorePattern": "^_"
-    }],
+    "typescript/no-unused-vars": [
+      "warn",
+      {
+        "vars": "all",
+        "varsIgnorePattern": "^_",
+        "args": "after-used",
+        "argsIgnorePattern": "^_"
+      }
+    ],
 
-    "twenty/enforce-module-boundaries": ["error", {
-      "depConstraints": [
-        {
-          "sourceTag": "scope:shared",
-          "onlyDependOnLibsWithTags": ["scope:shared"]
-        }
-      ]
-    }]
+    "twenty/enforce-module-boundaries": [
+      "error",
+      {
+        "depConstraints": [
+          {
+            "sourceTag": "scope:shared",
+            "onlyDependOnLibsWithTags": ["scope:shared"]
+          }
+        ]
+      }
+    ]
   }
 }

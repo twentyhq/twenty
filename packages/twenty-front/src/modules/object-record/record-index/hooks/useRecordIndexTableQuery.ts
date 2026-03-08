@@ -1,6 +1,6 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { useRecordsFieldVisibleGqlFields } from '@/object-record/record-field/hooks/useRecordsFieldVisibleGqlFields';
+import { useRelevantRecordsGqlFields } from '@/object-record/record-field/hooks/useRelevantRecordsGqlFields';
 import { useFindManyRecordIndexTableParams } from '@/object-record/record-index/hooks/useFindManyRecordIndexTableParams';
 import { SIGN_IN_BACKGROUND_MOCK_COMPANIES } from '@/sign-in-background-mock/constants/SignInBackgroundMockCompanies';
 import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
@@ -14,7 +14,7 @@ export const useRecordIndexTableQuery = (objectNameSingular: string) => {
     objectNameSingular,
   });
 
-  const recordGqlFields = useRecordsFieldVisibleGqlFields({
+  const recordGqlFields = useRelevantRecordsGqlFields({
     objectMetadataItem,
   });
 

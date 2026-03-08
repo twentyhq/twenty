@@ -19,8 +19,8 @@ const StyledDescription = styled.span`
 `;
 
 const StyledIconContainer = styled.div`
-  display: flex;
   align-items: center;
+  display: flex;
   justify-content: center;
 `;
 

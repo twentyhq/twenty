@@ -17,9 +17,9 @@ const StyledRow = styled.div`
   align-items: center;
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
+  padding: 0 ${themeCssVariables.spacing[2]};
   position: relative;
   width: 100%;
-  padding: 0 ${themeCssVariables.spacing[2]};
 `;
 
 const StyledFieldName = styled.div`

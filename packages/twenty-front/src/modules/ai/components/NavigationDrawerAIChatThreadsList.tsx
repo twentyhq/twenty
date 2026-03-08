@@ -14,8 +14,8 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledScrollableList = styled.div`
   display: flex;
-  flex-direction: column;
   flex: 1;
+  flex-direction: column;
   min-height: 0;
   overflow-y: auto;
   padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[0]};

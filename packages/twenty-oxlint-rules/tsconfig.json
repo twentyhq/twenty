@@ -3,8 +3,8 @@
   "compilerOptions": {
     "outDir": "../../.cache/tsc",
     "esModuleInterop": true,
-    "moduleResolution": "node16",
-    "module": "node16",
+    "moduleResolution": "bundler",
+    "module": "esnext",
     "types": ["node"]
   },
   "include": ["**/*.ts"]

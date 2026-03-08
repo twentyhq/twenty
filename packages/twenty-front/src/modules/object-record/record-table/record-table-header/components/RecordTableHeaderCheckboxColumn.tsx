@@ -26,27 +26,27 @@ const StyledContainer = styled.div<{
   shouldDisplayBorderBottom: boolean;
 }>`
   align-items: center;
-  display: flex;
-  height: ${RECORD_TABLE_ROW_HEIGHT}px;
-  justify-content: center;
-  min-width: 24px;
-  padding-right: ${themeCssVariables.spacing[1]};
   background-color: ${themeCssVariables.background.primary};
   border-bottom: ${({ shouldDisplayBorderBottom }) =>
     shouldDisplayBorderBottom
       ? `1px solid ${themeCssVariables.border.color.light}`
       : 'none'};
+  display: flex;
+  height: ${RECORD_TABLE_ROW_HEIGHT}px;
+  justify-content: center;
+  min-width: 24px;
+  padding-right: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledColumnHeaderCell = styled.div`
   background-color: ${themeCssVariables.background.primary};
 
-  min-width: ${RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px;
   box-sizing: border-box;
-
   cursor: pointer;
 
   max-height: ${RECORD_TABLE_ROW_HEIGHT}px;
+
+  min-width: ${RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px;
 `;
 
 export const RecordTableHeaderCheckboxColumn = () => {

@@ -1,9 +1,8 @@
 name: CI Shared
 
 on:
-  merge_group:
-
   pull_request:
+  merge_group:
 
 permissions:
   contents: read
@@ -14,6 +13,7 @@ concurrency:
 
 jobs:
   changed-files-check:
+    if: github.event_name != 'merge_group'
     uses: ./.github/workflows/changed-files.yaml
     with:
       files: |

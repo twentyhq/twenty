@@ -48,7 +48,9 @@ export const SettingsOptionCardContentButton = ({
           </StyledSettingsCardDescription>
         )}
       </StyledSettingsCardTextContainer>
-      {isDefined(Button) && <StyledButtonContainer>{Button}</StyledButtonContainer>}
+      {isDefined(Button) && (
+        <StyledButtonContainer>{Button}</StyledButtonContainer>
+      )}
     </StyledSettingsCardContent>
   );
 };
