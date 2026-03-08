@@ -4,7 +4,7 @@ import type { NavigationMenuItem } from '~/generated-metadata/graphql';
 import { isWorkspaceDroppableId } from '@/navigation-menu-item/utils/isWorkspaceDroppableId';
 
 import type { DroppableData } from '@/navigation/types/workspaceDndKitDroppableData';
-import type { ResolvedDropTarget } from '@/navigation/types/workspaceDndKitResolvedDropTarget';
+import type { SortableTargetDestination } from '@/navigation/types/workspaceDndKitSortableTargetDestination';
 import { getDestinationFromSortableTarget } from '@/navigation/utils/workspaceDndKitGetDestinationFromSortableTarget';
 
 type GetNavItemById = (
@@ -25,7 +25,7 @@ export const resolveDropTarget = (
     data?: unknown;
   } | null,
   getNavItemById: GetNavItemById,
-): ResolvedDropTarget | null => {
+): SortableTargetDestination | null => {
   if (target === null || target === undefined) {
     return null;
   }
