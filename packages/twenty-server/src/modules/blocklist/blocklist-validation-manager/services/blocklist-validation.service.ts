@@ -63,17 +63,15 @@ export class BlocklistValidationService {
       .trim()
       .pipe(z.email({ error: 'Invalid email or domain' }))
       .or(
-        z
-          .string()
-          .refine(
-            (value) =>
-              value.startsWith('@') &&
-              isValidHostname(value.slice(1), {
-                allowIp: false,
-                allowLocalhost: false,
-              }),
-            'Invalid email or domain',
-          ),
+        z.string().refine(
+          (value) =>
+            value.startsWith('@') &&
+            isValidHostname(value.slice(1), {
+              allowIp: false,
+              allowLocalhost: false,
+            }),
+          'Invalid email or domain',
+        ),
       );
 
     for (const handle of blocklist.map((item) => item.handle)) {

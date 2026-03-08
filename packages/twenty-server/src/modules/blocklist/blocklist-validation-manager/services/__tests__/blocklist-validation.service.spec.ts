@@ -39,17 +39,13 @@ describe('BlocklistValidationService', () => {
     it('should accept a multi-level subdomain with @ prefix', async () => {
       // This was the bug: old isDomain() rejected multi-level subdomains
       await expect(
-        service.validateSchema([
-          buildBlocklistItem('@sub.domain.example.com'),
-        ]),
+        service.validateSchema([buildBlocklistItem('@sub.domain.example.com')]),
       ).resolves.not.toThrow();
     });
 
     it('should accept a valid email with leading/trailing whitespace (trimmed by Zod)', async () => {
       await expect(
-        service.validateSchema([
-          buildBlocklistItem(' user@example.com '),
-        ]),
+        service.validateSchema([buildBlocklistItem(' user@example.com ')]),
       ).resolves.not.toThrow();
     });
 
