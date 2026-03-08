@@ -212,6 +212,11 @@ export const isRecordMatchingFilter = ({
             fieldMetadataItem: field,
             key: filterKey,
           }),
+      ) ??
+      objectMetadataItem.fields.find(
+        (field) =>
+          field.type === FieldMetadataType.RELATION &&
+          filterKey === `${field.name}Id`,
       );
 
     if (!isDefined(objectMetadataField)) {
