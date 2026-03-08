@@ -1,4 +1,4 @@
-import { CommandMenuItem } from '@/command-menu-item/display/components/CommandMenuItem';
+import { CommandMenuItemExecution } from '@/command-menu-item/display/components/CommandMenuItemExecution';
 import { useSelectedRecordIdOrThrow } from '@/command-menu-item/record/single-record/hooks/useSelectedRecordIdOrThrow';
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { useDeleteFavorite } from '@/favorites/hooks/useDeleteFavorite';
@@ -40,5 +40,5 @@ export const RemoveFromFavoritesSingleRecordCommand = () => {
     deleteFavorite(foundFavorite.id);
   };
 
-  return <CommandMenuItem onClick={handleClick} />;
+  return <CommandMenuItemExecution onClick={handleClick} />;
 };

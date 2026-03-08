@@ -1,4 +1,4 @@
-import { CommandMenuItem } from '@/command-menu-item/display/components/CommandMenuItem';
+import { CommandMenuItemExecution } from '@/command-menu-item/display/components/CommandMenuItemExecution';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { useRecordPageLayoutIdFromRecordStoreOrThrow } from '@/page-layout/hooks/useRecordPageLayoutIdFromRecordStoreOrThrow';
@@ -27,5 +27,5 @@ export const CancelRecordPageLayoutSingleRecordCommand = () => {
     setIsPageLayoutInEditMode(false);
   };
 
-  return <CommandMenuItem onClick={handleClick} />;
+  return <CommandMenuItemExecution onClick={handleClick} />;
 };

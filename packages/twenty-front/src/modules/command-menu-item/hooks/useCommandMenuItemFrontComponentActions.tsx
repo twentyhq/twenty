@@ -1,4 +1,4 @@
-import { CommandMenuItem } from '@/command-menu-item/display/components/CommandMenuItem';
+import { CommandMenuItemExecution } from '@/command-menu-item/display/components/CommandMenuItemExecution';
 import { HeadlessFrontComponentCommandMenuItem } from '@/command-menu-item/display/components/HeadlessFrontComponentCommandMenuItem';
 import { CommandMenuItemScope } from '@/command-menu-item/types/CommandMenuItemScope';
 import { CommandMenuItemType } from '@/command-menu-item/types/CommandMenuItemType';
@@ -114,7 +114,7 @@ const buildActionFromItem = ({
         onClick={handleClick}
       />
     ) : (
-      <CommandMenuItem onClick={handleClick} />
+      <CommandMenuItemExecution onClick={handleClick} />
     ),
   };
 };

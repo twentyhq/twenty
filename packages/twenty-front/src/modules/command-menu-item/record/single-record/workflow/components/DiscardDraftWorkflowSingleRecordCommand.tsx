@@ -1,4 +1,4 @@
-import { CommandMenuItem } from '@/command-menu-item/display/components/CommandMenuItem';
+import { CommandMenuItemExecution } from '@/command-menu-item/display/components/CommandMenuItemExecution';
 import { useSelectedRecordIdOrThrow } from '@/command-menu-item/record/single-record/hooks/useSelectedRecordIdOrThrow';
 import { useDeleteOneWorkflowVersion } from '@/workflow/hooks/useDeleteOneWorkflowVersion';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
@@ -19,5 +19,5 @@ export const DiscardDraftWorkflowSingleRecordCommand = () => {
     });
   };
 
-  return <CommandMenuItem onClick={onClick} />;
+  return <CommandMenuItemExecution onClick={onClick} />;
 };

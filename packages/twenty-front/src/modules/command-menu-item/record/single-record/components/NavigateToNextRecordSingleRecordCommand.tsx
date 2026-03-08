@@ -1,4 +1,4 @@
-import { CommandMenuItem } from '@/command-menu-item/display/components/CommandMenuItem';
+import { CommandMenuItemExecution } from '@/command-menu-item/display/components/CommandMenuItemExecution';
 import { useSelectedRecordIdOrThrow } from '@/command-menu-item/record/single-record/hooks/useSelectedRecordIdOrThrow';
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { useRecordShowPagePagination } from '@/object-record/record-show/hooks/useRecordShowPagePagination';
@@ -13,5 +13,5 @@ export const NavigateToNextRecordSingleRecordCommand = () => {
     recordId,
   );
 
-  return <CommandMenuItem onClick={navigateToNextRecord} />;
+  return <CommandMenuItemExecution onClick={navigateToNextRecord} />;
 };

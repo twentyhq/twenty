@@ -1,4 +1,4 @@
-import { CommandMenuItem } from '@/command-menu-item/display/components/CommandMenuItem';
+import { CommandMenuItemExecution } from '@/command-menu-item/display/components/CommandMenuItemExecution';
 import { useSelectedRecordIdOrThrow } from '@/command-menu-item/record/single-record/hooks/useSelectedRecordIdOrThrow';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
@@ -45,5 +45,5 @@ export const ExportNoteSingleRecordCommand = () => {
     // await exportBlockNoteEditorToDocx(editor, filename);
   };
 
-  return <CommandMenuItem onClick={handleClick} />;
+  return <CommandMenuItemExecution onClick={handleClick} />;
 };

@@ -1,4 +1,4 @@
-import { CommandMenuItem } from '@/command-menu-item/display/components/CommandMenuItem';
+import { CommandMenuItemExecution } from '@/command-menu-item/display/components/CommandMenuItemExecution';
 import { useSelectedRecordIdOrThrow } from '@/command-menu-item/record/single-record/hooks/useSelectedRecordIdOrThrow';
 import { useDuplicateDashboard } from '@/dashboards/hooks/useDuplicateDashboard';
 import { CoreObjectNameSingular, AppPath } from 'twenty-shared/types';
@@ -33,5 +33,5 @@ export const DuplicateDashboardSingleRecordCommand = () => {
     }
   };
 
-  return <CommandMenuItem onClick={handleClick} />;
+  return <CommandMenuItemExecution onClick={handleClick} />;
 };

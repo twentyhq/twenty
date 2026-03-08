@@ -1,4 +1,4 @@
-import { CommandMenuItem } from '@/command-menu-item/display/components/CommandMenuItem';
+import { CommandMenuItemExecution } from '@/command-menu-item/display/components/CommandMenuItemExecution';
 import { useSelectedRecordIdOrThrow } from '@/command-menu-item/record/single-record/hooks/useSelectedRecordIdOrThrow';
 import { useDeleteFavorite } from '@/favorites/hooks/useDeleteFavorite';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
@@ -58,5 +58,5 @@ export const DeleteSingleRecordCommand = () => {
     await deleteOneRecord(recordId);
   };
 
-  return <CommandMenuItem onClick={handleDeleteClick} />;
+  return <CommandMenuItemExecution onClick={handleDeleteClick} />;
 };

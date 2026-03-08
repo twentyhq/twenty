@@ -1,4 +1,4 @@
-import { CommandMenuItem } from '@/command-menu-item/display/components/CommandMenuItem';
+import { CommandMenuItemExecution } from '@/command-menu-item/display/components/CommandMenuItemExecution';
 import { CommandMenuItemLink } from '@/command-menu-item/display/components/CommandMenuItemLink';
 import { NoSelectionRecordCommandKeys } from '@/command-menu-item/record/no-selection/types/NoSelectionRecordCommandKeys';
 import { SingleRecordCommandKeys } from '@/command-menu-item/record/single-record/types/SingleRecordCommandKeys';
@@ -42,7 +42,7 @@ export const createMockCommandMenuItems = ({
       CommandMenuItemViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       CommandMenuItemViewType.SHOW_PAGE,
     ],
-    component: <CommandMenuItem onClick={addToFavoritesMock} />,
+    component: <CommandMenuItemExecution onClick={addToFavoritesMock} />,
   },
   {
     type: CommandMenuItemType.Standard,
@@ -56,7 +56,7 @@ export const createMockCommandMenuItems = ({
     isPinned: false,
     shouldBeRegistered: () => true,
     availableOn: [CommandMenuItemViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION],
-    component: <CommandMenuItem onClick={exportMock} />,
+    component: <CommandMenuItemExecution onClick={exportMock} />,
   },
   {
     type: CommandMenuItemType.Standard,
@@ -73,7 +73,7 @@ export const createMockCommandMenuItems = ({
       CommandMenuItemViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       CommandMenuItemViewType.SHOW_PAGE,
     ],
-    component: <CommandMenuItem onClick={deleteMock} />,
+    component: <CommandMenuItemExecution onClick={deleteMock} />,
   },
   {
     type: CommandMenuItemType.Navigation,

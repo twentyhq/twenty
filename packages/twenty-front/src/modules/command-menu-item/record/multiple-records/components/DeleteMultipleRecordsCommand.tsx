@@ -1,4 +1,4 @@
-import { CommandMenuItem } from '@/command-menu-item/display/components/CommandMenuItem';
+import { CommandMenuItemExecution } from '@/command-menu-item/display/components/CommandMenuItemExecution';
 import { CommandMenuItemConfigContext } from '@/command-menu-item/contexts/CommandMenuItemConfigContext';
 import { computeProgressText } from '@/command-menu-item/utils/computeProgressText';
 import { getCommandMenuItemLabel } from '@/command-menu-item/utils/getCommandMenuItemLabel';
@@ -98,7 +98,7 @@ export const DeleteMultipleRecordsCommand = () => {
 
   return (
     <CommandMenuItemConfigContext.Provider value={actionConfigWithProgress}>
-      <CommandMenuItem onClick={handleDeleteClick} />
+      <CommandMenuItemExecution onClick={handleDeleteClick} />
     </CommandMenuItemConfigContext.Provider>
   );
 };

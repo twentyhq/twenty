@@ -1,4 +1,4 @@
-import { CommandMenuItem } from '@/command-menu-item/display/components/CommandMenuItem';
+import { CommandMenuItemExecution } from '@/command-menu-item/display/components/CommandMenuItemExecution';
 import { CommandMenuItemScope } from '@/command-menu-item/types/CommandMenuItemScope';
 import { CommandMenuItemType } from '@/command-menu-item/types/CommandMenuItemType';
 import { CommandMenuItemContext } from '@/command-menu-item/contexts/CommandMenuItemContext';
@@ -55,7 +55,7 @@ export const useRunWorkflowRecordAgnosticCommands = () => {
         Icon,
         shouldBeRegistered: () => true,
         component: (
-          <CommandMenuItem
+          <CommandMenuItemExecution
             onClick={() => {
               runWorkflowVersion({
                 workflowVersionId: activeWorkflowVersion.id,

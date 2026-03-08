@@ -1,4 +1,4 @@
-import { CommandMenuItem } from '@/command-menu-item/display/components/CommandMenuItem';
+import { CommandMenuItemExecution } from '@/command-menu-item/display/components/CommandMenuItemExecution';
 import { useSelectedRecordIdOrThrow } from '@/command-menu-item/record/single-record/hooks/useSelectedRecordIdOrThrow';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -95,7 +95,7 @@ export const CreateRelatedRecordCommand = ({
   };
 
   return (
-    <CommandMenuItem
+    <CommandMenuItemExecution
       onClick={handleCreateRelatedRecord}
       closeSidePanelOnCommandMenuItemListActionExecution={false}
     />

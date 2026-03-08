@@ -1,4 +1,4 @@
-import { CommandMenuItem } from '@/command-menu-item/display/components/CommandMenuItem';
+import { CommandMenuItemExecution } from '@/command-menu-item/display/components/CommandMenuItemExecution';
 import { CommandMenuItemLink } from '@/command-menu-item/display/components/CommandMenuItemLink';
 import { CommandMenuItemScope } from '@/command-menu-item/types/CommandMenuItemScope';
 import { CommandMenuItemType } from '@/command-menu-item/types/CommandMenuItemType';
@@ -89,7 +89,7 @@ export const useSidePanelSearchRecords = () => {
           return {
             ...baseAction,
             component: (
-              <CommandMenuItem
+              <CommandMenuItemExecution
                 onClick={() => {
                   searchRecord.objectNameSingular === 'task'
                     ? openRecordInSidePanel({

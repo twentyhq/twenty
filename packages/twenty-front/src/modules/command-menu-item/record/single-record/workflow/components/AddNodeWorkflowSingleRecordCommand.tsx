@@ -1,4 +1,4 @@
-import { CommandMenuItem } from '@/command-menu-item/display/components/CommandMenuItem';
+import { CommandMenuItemExecution } from '@/command-menu-item/display/components/CommandMenuItemExecution';
 import { useSelectedRecordIdOrThrow } from '@/command-menu-item/record/single-record/hooks/useSelectedRecordIdOrThrow';
 import { useSidePanelWorkflowNavigation } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowNavigation';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
@@ -18,5 +18,5 @@ export const AddNodeWorkflowSingleRecordCommand = () => {
     openWorkflowCreateStepInSidePanel(workflowWithCurrentVersion.id);
   };
 
-  return <CommandMenuItem onClick={onClick} />;
+  return <CommandMenuItemExecution onClick={onClick} />;
 };

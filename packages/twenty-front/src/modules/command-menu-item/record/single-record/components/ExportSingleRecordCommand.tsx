@@ -4,7 +4,7 @@ import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/
 import { useExportSingleRecord } from '@/object-record/record-show/hooks/useExportSingleRecord';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
-import { CommandMenuItem } from '@/command-menu-item/display/components/CommandMenuItem';
+import { CommandMenuItemExecution } from '@/command-menu-item/display/components/CommandMenuItemExecution';
 
 export const ExportSingleRecordCommand = () => {
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
@@ -26,5 +26,5 @@ export const ExportSingleRecordCommand = () => {
     recordId,
   });
 
-  return <CommandMenuItem onClick={download} />;
+  return <CommandMenuItemExecution onClick={download} />;
 };

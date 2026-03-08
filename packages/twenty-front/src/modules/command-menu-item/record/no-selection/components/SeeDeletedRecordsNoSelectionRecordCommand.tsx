@@ -1,4 +1,4 @@
-import { CommandMenuItem } from '@/command-menu-item/display/components/CommandMenuItem';
+import { CommandMenuItemExecution } from '@/command-menu-item/display/components/CommandMenuItemExecution';
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { useHandleToggleTrashColumnFilter } from '@/object-record/record-index/hooks/useHandleToggleTrashColumnFilter';
@@ -28,7 +28,7 @@ export const SeeDeletedRecordsNoSelectionRecordCommand = () => {
     });
 
   return (
-    <CommandMenuItem
+    <CommandMenuItemExecution
       onClick={() => {
         handleToggleTrashColumnFilter();
         toggleSoftDeleteFilterState(true);

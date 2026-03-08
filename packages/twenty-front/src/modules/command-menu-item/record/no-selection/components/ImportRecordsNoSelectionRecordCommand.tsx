@@ -1,4 +1,4 @@
-import { CommandMenuItem } from '@/command-menu-item/display/components/CommandMenuItem';
+import { CommandMenuItemExecution } from '@/command-menu-item/display/components/CommandMenuItemExecution';
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { useOpenObjectRecordsSpreadsheetImportDialog } from '@/object-record/spreadsheet-import/hooks/useOpenObjectRecordsSpreadsheetImportDialog';
 
@@ -10,5 +10,5 @@ export const ImportRecordsNoSelectionRecordCommand = () => {
       objectMetadataItem.nameSingular,
     );
 
-  return <CommandMenuItem onClick={openObjectRecordsSpreadsheetImportDialog} />;
+  return <CommandMenuItemExecution onClick={openObjectRecordsSpreadsheetImportDialog} />;
 };

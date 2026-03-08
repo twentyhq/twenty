@@ -1,4 +1,4 @@
-import { CommandMenuItem } from '@/command-menu-item/display/components/CommandMenuItem';
+import { CommandMenuItemExecution } from '@/command-menu-item/display/components/CommandMenuItemExecution';
 import { useSelectedRecordIdOrThrow } from '@/command-menu-item/record/single-record/hooks/useSelectedRecordIdOrThrow';
 import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow';
 import { getWorkflowVisualizerComponentInstanceId } from '@/workflow/utils/getWorkflowVisualizerComponentInstanceId';
@@ -32,5 +32,5 @@ export const TidyUpWorkflowSingleRecordCommand = () => {
     await tidyUpWorkflowVersion(workflowVersionId, workflowDiagram);
   };
 
-  return <CommandMenuItem onClick={onClick} />;
+  return <CommandMenuItemExecution onClick={onClick} />;
 };

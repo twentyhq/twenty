@@ -1,4 +1,4 @@
-import { CommandMenuItem } from '@/command-menu-item/display/components/CommandMenuItem';
+import { CommandMenuItemExecution } from '@/command-menu-item/display/components/CommandMenuItemExecution';
 import { useSelectedRecordIdOrThrow } from '@/command-menu-item/record/single-record/hooks/useSelectedRecordIdOrThrow';
 import { CoreObjectNameSingular, AppPath } from 'twenty-shared/types';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -42,5 +42,5 @@ export const DuplicateWorkflowSingleRecordCommand = () => {
     }
   };
 
-  return isDefined(workflow) ? <CommandMenuItem onClick={handleClick} /> : null;
+  return isDefined(workflow) ? <CommandMenuItemExecution onClick={handleClick} /> : null;
 };
