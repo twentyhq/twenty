@@ -20,7 +20,7 @@ type CommandMenuItemContextProviderWorkflowObjectsProps = {
   objectMetadataItem: ObjectMetadataItem;
   isInSidePanel: CommandMenuItemContextType['isInSidePanel'];
   displayType: CommandMenuItemContextType['displayType'];
-  actionMenuType: CommandMenuItemContextType['actionMenuType'];
+  containerType: CommandMenuItemContextType['containerType'];
   children: React.ReactNode;
 };
 
@@ -28,7 +28,7 @@ const CommandMenuItemContextProviderWorkflowObjectsContent = ({
   objectMetadataItem,
   isInSidePanel,
   displayType,
-  actionMenuType,
+  containerType,
   children,
   selectedRecordId,
 }: CommandMenuItemContextProviderWorkflowObjectsProps & {
@@ -61,8 +61,8 @@ const CommandMenuItemContextProviderWorkflowObjectsContent = ({
       value={{
         isInSidePanel,
         displayType,
-        actionMenuType,
-        actions: [
+        containerType,
+        commandMenuItems: [
           ...actions,
           ...runWorkflowRecordAgnosticActions,
           ...commandMenuItemFrontComponentActions,
@@ -78,7 +78,7 @@ const CommandMenuItemContextProviderWorkflowObjectsWithoutWorkflow = ({
   objectMetadataItem,
   isInSidePanel,
   displayType,
-  actionMenuType,
+  containerType,
   children,
 }: CommandMenuItemContextProviderWorkflowObjectsProps & {
   workflowWithCurrentVersion: WorkflowWithCurrentVersion | undefined;
@@ -107,8 +107,8 @@ const CommandMenuItemContextProviderWorkflowObjectsWithoutWorkflow = ({
       value={{
         isInSidePanel,
         displayType,
-        actionMenuType,
-        actions: [
+        containerType,
+        commandMenuItems: [
           ...actions,
           ...runWorkflowRecordAgnosticActions,
           ...commandMenuItemFrontComponentActions,
@@ -124,7 +124,7 @@ export const CommandMenuItemContextProviderWorkflowObjects = ({
   objectMetadataItem,
   isInSidePanel,
   displayType,
-  actionMenuType,
+  containerType,
   children,
 }: CommandMenuItemContextProviderWorkflowObjectsProps) => {
   const contextStoreTargetedRecordsRule = useAtomComponentStateValue(
@@ -147,7 +147,7 @@ export const CommandMenuItemContextProviderWorkflowObjects = ({
         objectMetadataItem={objectMetadataItem}
         isInSidePanel={isInSidePanel}
         displayType={displayType}
-        actionMenuType={actionMenuType}
+        containerType={containerType}
         selectedRecordId={selectedRecord.id}
       >
         {children}
@@ -160,7 +160,7 @@ export const CommandMenuItemContextProviderWorkflowObjects = ({
       objectMetadataItem={objectMetadataItem}
       isInSidePanel={isInSidePanel}
       displayType={displayType}
-      actionMenuType={actionMenuType}
+      containerType={containerType}
       workflowWithCurrentVersion={undefined}
     >
       {children}

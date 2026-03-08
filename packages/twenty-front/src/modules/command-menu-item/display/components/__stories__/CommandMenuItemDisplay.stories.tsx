@@ -54,9 +54,9 @@ export const AsButton: Story = {
       <CommandMenuItemContext.Provider
         value={{
           isInSidePanel: false,
-          actionMenuType: 'command-menu',
+          containerType: 'command-menu-list',
           displayType: 'button',
-          actions: [],
+          commandMenuItems: [],
         }}
       >
         <Story />
@@ -92,9 +92,9 @@ export const AsListItem: Story = {
       <CommandMenuItemContext.Provider
         value={{
           isInSidePanel: false,
-          actionMenuType: 'command-menu',
+          containerType: 'command-menu-list',
           displayType: 'listItem',
-          actions: [],
+          commandMenuItems: [],
         }}
       >
         <Story />
@@ -128,9 +128,9 @@ export const AsDropdownItem: Story = {
       <CommandMenuItemContext.Provider
         value={{
           isInSidePanel: false,
-          actionMenuType: 'command-menu',
+          containerType: 'command-menu-list',
           displayType: 'dropdownItem',
-          actions: [],
+          commandMenuItems: [],
         }}
       >
         <Story />

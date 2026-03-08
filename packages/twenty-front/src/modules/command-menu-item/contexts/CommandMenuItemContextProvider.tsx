@@ -13,9 +13,9 @@ export const CommandMenuItemContextProvider = ({
   children,
   isInSidePanel,
   displayType,
-  actionMenuType,
+  containerType,
   objectMetadataItemOverride,
-}: Omit<CommandMenuItemContextType, 'actions'> & {
+}: Omit<CommandMenuItemContextType, 'commandMenuItems'> & {
   children: React.ReactNode;
   objectMetadataItemOverride?: ObjectMetadataItem;
 }) => {
@@ -48,7 +48,7 @@ export const CommandMenuItemContextProvider = ({
       <CommandMenuItemContextProviderWorkflowObjects
         isInSidePanel={isInSidePanel}
         displayType={displayType}
-        actionMenuType={actionMenuType}
+        containerType={containerType}
         objectMetadataItem={objectMetadataItem}
       >
         {children}
@@ -60,7 +60,7 @@ export const CommandMenuItemContextProvider = ({
     <CommandMenuItemContextProviderDefault
       isInSidePanel={isInSidePanel}
       displayType={displayType}
-      actionMenuType={actionMenuType}
+      containerType={containerType}
       objectMetadataItem={objectMetadataItem}
     >
       {children}

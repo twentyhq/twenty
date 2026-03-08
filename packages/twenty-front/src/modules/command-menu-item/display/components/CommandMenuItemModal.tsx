@@ -45,9 +45,9 @@ export const CommandMenuItemModal = ({
   };
 
   const actionConfig = useContext(CommandMenuItemConfigContext);
-  const { actionMenuType } = useContext(CommandMenuItemContext);
+  const { containerType } = useContext(CommandMenuItemContext);
 
-  const modalId = `${actionConfig?.key}-action-modal-${actionMenuType}`;
+  const modalId = `${actionConfig?.key}-action-modal-${containerType}`;
 
   const isModalOpened = useAtomComponentStateValue(
     isModalOpenedComponentState,

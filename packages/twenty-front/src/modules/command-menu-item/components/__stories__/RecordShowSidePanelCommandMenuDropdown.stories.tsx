@@ -42,8 +42,8 @@ const meta: Meta<typeof RecordShowSidePanelCommandMenuDropdown> = {
                 value={{
                   isInSidePanel: true,
                   displayType: 'dropdownItem',
-                  actionMenuType: 'command-menu-show-page-action-menu-dropdown',
-                  actions: createMockCommandMenuItems({
+                  containerType: 'command-menu-show-page-dropdown',
+                  commandMenuItems: createMockCommandMenuItems({
                     deleteMock,
                     addToFavoritesMock,
                     exportMock,

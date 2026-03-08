@@ -8,7 +8,7 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useContext } from 'react';
 
 export const RecordShowSidePanelCommandMenuDropdown = () => {
-  const { actions } = useContext(CommandMenuItemContext);
+  const { commandMenuItems } = useContext(CommandMenuItemContext);
 
   const commandMenuId = useAvailableComponentInstanceIdOrThrow(
     CommandMenuComponentInstanceContext,
@@ -17,7 +17,7 @@ export const RecordShowSidePanelCommandMenuDropdown = () => {
   const dropdownId =
     getSidePanelCommandMenuDropdownIdFromCommandMenuId(commandMenuId);
 
-  const recordSelectionActions = actions.filter(
+  const recordSelectionActions = commandMenuItems.filter(
     (action) => action.scope === CommandMenuItemScope.RecordSelection,
   );
 

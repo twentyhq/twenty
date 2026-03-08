@@ -15,7 +15,7 @@ export const useCloseCommandMenu = ({
   closeSidePanelOnShowPageOptionsActionExecution?: boolean;
   closeSidePanelOnCommandMenuItemListActionExecution?: boolean;
 } = {}) => {
-  const { actionMenuType, isInSidePanel } = useContext(CommandMenuItemContext);
+  const { containerType, isInSidePanel } = useContext(CommandMenuItemContext);
 
   const { closeSidePanelMenu } = useSidePanelMenu();
 
@@ -30,7 +30,7 @@ export const useCloseCommandMenu = ({
     : getCommandMenuDropdownIdFromCommandMenuId(commandMenuId);
 
   const closeCommandMenu = () => {
-    if (actionMenuType === 'command-menu') {
+    if (containerType === 'command-menu-list') {
       if (
         isDefined(closeSidePanelOnCommandMenuItemListActionExecution) &&
         !closeSidePanelOnCommandMenuItemListActionExecution
@@ -41,14 +41,14 @@ export const useCloseCommandMenu = ({
     }
 
     if (
-      actionMenuType === 'index-page-action-menu-dropdown' ||
-      actionMenuType === 'command-menu-show-page-action-menu-dropdown'
+      containerType === 'index-page-dropdown' ||
+      containerType === 'command-menu-show-page-dropdown'
     ) {
       closeDropdown(dropdownId);
     }
 
     if (
-      actionMenuType === 'command-menu-show-page-action-menu-dropdown' &&
+      containerType === 'command-menu-show-page-dropdown' &&
       isDefined(closeSidePanelOnShowPageOptionsActionExecution) &&
       closeSidePanelOnShowPageOptionsActionExecution
     ) {

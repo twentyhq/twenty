@@ -14,7 +14,7 @@ export const RecordShowSidePanelCommandMenu = () => {
         <CommandMenuItemContextProvider
           isInSidePanel={true}
           displayType="dropdownItem"
-          actionMenuType="command-menu-show-page-action-menu-dropdown"
+          containerType="command-menu-show-page-dropdown"
         >
           <RecordShowSidePanelCommandMenuDropdown />
         </CommandMenuItemContextProvider>

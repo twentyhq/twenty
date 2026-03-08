@@ -16,13 +16,13 @@ export const CommandMenuItemContextProviderDefault = ({
   objectMetadataItem,
   isInSidePanel,
   displayType,
-  actionMenuType,
+  containerType,
   children,
 }: {
   objectMetadataItem: ObjectMetadataItem;
   isInSidePanel: CommandMenuItemContextType['isInSidePanel'];
   displayType: CommandMenuItemContextType['displayType'];
-  actionMenuType: CommandMenuItemContextType['actionMenuType'];
+  containerType: CommandMenuItemContextType['containerType'];
   children: React.ReactNode;
 }) => {
   const params = useShouldCommandMenuItemBeRegisteredParams({
@@ -61,8 +61,8 @@ export const CommandMenuItemContextProviderDefault = ({
       value={{
         isInSidePanel,
         displayType,
-        actionMenuType,
-        actions: [
+        containerType,
+        commandMenuItems: [
           ...actions,
           ...runWorkflowRecordActions,
           ...runWorkflowRecordAgnosticActions,

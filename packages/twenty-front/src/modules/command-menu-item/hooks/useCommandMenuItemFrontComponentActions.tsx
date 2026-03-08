@@ -130,7 +130,7 @@ export const useCommandMenuItemFrontComponentActions = (
     contextStoreIsPageInEditModeComponentState,
   );
 
-  const { actionMenuType } = useContext(CommandMenuItemContext);
+  const { containerType } = useContext(CommandMenuItemContext);
 
   const contextStoreCurrentObjectMetadataItemId = useAtomComponentStateValue(
     contextStoreCurrentObjectMetadataItemIdComponentState,
@@ -166,8 +166,8 @@ export const useCommandMenuItemFrontComponentActions = (
   const { data } = useFindManyCommandMenuItemsQuery({
     skip:
       !isCommandMenuItemEnabled ||
-      (actionMenuType !== 'command-menu' &&
-        actionMenuType !== 'command-menu-show-page-action-menu-dropdown'),
+      (containerType !== 'command-menu-list' &&
+        containerType !== 'command-menu-show-page-dropdown'),
   });
 
   const frontComponentItems =

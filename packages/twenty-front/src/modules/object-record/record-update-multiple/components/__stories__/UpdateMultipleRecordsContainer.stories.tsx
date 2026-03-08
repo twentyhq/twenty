@@ -55,8 +55,8 @@ const meta: Meta<typeof UpdateMultipleRecordsContainer> = {
       <ApolloCoreClientContext.Provider value={mockApolloCoreClient}>
         <CommandMenuItemContext.Provider
           value={{
-            actions: [],
-            actionMenuType: 'index-page-action-menu-dropdown',
+            commandMenuItems: [],
+            containerType: 'index-page-dropdown',
             displayType: 'dropdownItem',
             isInSidePanel: true,
           }}

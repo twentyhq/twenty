@@ -31,9 +31,9 @@ const meta: Meta<typeof CommandMenuItemComponent> = {
         <CommandMenuItemContext.Provider
           value={{
             isInSidePanel: false,
-            actionMenuType: 'index-page-action-menu',
+            containerType: 'index-page-header',
             displayType: 'button',
-            actions: [addToFavoritesCommandMenuItem],
+            commandMenuItems: [addToFavoritesCommandMenuItem],
           }}
         >
           <Story />

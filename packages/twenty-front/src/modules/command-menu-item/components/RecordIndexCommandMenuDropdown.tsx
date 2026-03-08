@@ -34,9 +34,9 @@ const StyledDropdownMenuContainer = styled.div`
 
 export const RecordIndexCommandMenuDropdown = () => {
   const { t } = useLingui();
-  const { actions } = useContext(CommandMenuItemContext);
+  const { commandMenuItems } = useContext(CommandMenuItemContext);
 
-  const recordIndexActions = actions.filter(
+  const recordIndexActions = commandMenuItems.filter(
     (action) =>
       action.type === CommandMenuItemType.Standard &&
       action.scope === CommandMenuItemScope.RecordSelection,

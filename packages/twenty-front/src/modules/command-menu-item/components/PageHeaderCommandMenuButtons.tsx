@@ -13,8 +13,10 @@ const StyledActionContainer = styled(motion.div)`
 
 export const PageHeaderCommandMenuButtons = () => {
   const { theme } = useContext(ThemeContext);
-  const { actions } = useContext(CommandMenuItemContext);
-  const pinnedActions = actions.filter((entry) => entry.isPinned).toReversed();
+  const { commandMenuItems } = useContext(CommandMenuItemContext);
+  const pinnedActions = commandMenuItems
+    .filter((entry) => entry.isPinned)
+    .toReversed();
 
   const actionsWithPositionForAnimation = pinnedActions.map(
     (action, index) => ({

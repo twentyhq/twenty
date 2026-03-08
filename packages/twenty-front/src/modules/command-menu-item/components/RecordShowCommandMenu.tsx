@@ -29,7 +29,7 @@ export const RecordShowCommandMenu = () => {
         <CommandMenuItemContextProvider
           isInSidePanel={false}
           displayType="button"
-          actionMenuType="show-page-action-menu"
+          containerType="show-page-header"
         >
           {!isMobile && <PageHeaderCommandMenuButtons />}
         </CommandMenuItemContextProvider>

@@ -1,21 +1,19 @@
 import { type CommandMenuItemConfig } from '@/command-menu-item/types/CommandMenuItemConfig';
+import { type CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
 import { createContext } from 'react';
 
 export type CommandMenuItemContextType = {
   isInSidePanel: boolean;
   displayType: 'button' | 'listItem' | 'dropdownItem';
-  actionMenuType:
-    | 'command-menu'
-    | 'show-page-action-menu'
-    | 'index-page-action-menu'
-    | 'index-page-action-menu-dropdown'
-    | 'command-menu-show-page-action-menu-dropdown';
-  actions: CommandMenuItemConfig[];
+  containerType: CommandMenuItemContainerType;
+  commandMenuItems: CommandMenuItemConfig[];
 };
 
-export const CommandMenuItemContext = createContext<CommandMenuItemContextType>({
-  isInSidePanel: false,
-  actionMenuType: 'command-menu',
-  displayType: 'button',
-  actions: [],
-});
+export const CommandMenuItemContext = createContext<CommandMenuItemContextType>(
+  {
+    isInSidePanel: false,
+    containerType: 'command-menu-list',
+    displayType: 'button',
+    commandMenuItems: [],
+  },
+);

@@ -5,63 +5,69 @@ import { CommandMenuItemContext } from '@/command-menu-item/contexts/CommandMenu
 import { useContext } from 'react';
 
 export const useSidePanelActions = () => {
-  const { actions } = useContext(CommandMenuItemContext);
+  const { commandMenuItems } = useContext(CommandMenuItemContext);
 
-  const navigateActions = actions?.filter(
+  const navigateActions = commandMenuItems?.filter(
     (action) => action.type === CommandMenuItemType.Navigation,
   );
 
-  const actionRecordSelectionActions: CommandMenuItemConfig[] = actions?.filter(
-    (action) =>
-      action.type === CommandMenuItemType.Standard &&
-      action.scope === CommandMenuItemScope.RecordSelection,
-  );
+  const actionRecordSelectionActions: CommandMenuItemConfig[] =
+    commandMenuItems?.filter(
+      (action) =>
+        action.type === CommandMenuItemType.Standard &&
+        action.scope === CommandMenuItemScope.RecordSelection,
+    );
 
-  const actionObjectActions: CommandMenuItemConfig[] = actions?.filter(
+  const actionObjectActions: CommandMenuItemConfig[] = commandMenuItems?.filter(
     (action) =>
       action.type === CommandMenuItemType.Standard &&
       action.scope === CommandMenuItemScope.Object,
   );
 
-  const actionGlobalActions: CommandMenuItemConfig[] = actions?.filter(
+  const actionGlobalActions: CommandMenuItemConfig[] = commandMenuItems?.filter(
     (action) =>
       action.type === CommandMenuItemType.Standard &&
       action.scope === CommandMenuItemScope.Global,
   );
 
-  const workflowRunRecordSelectionActions: CommandMenuItemConfig[] = actions?.filter(
-    (action) =>
-      action.type === CommandMenuItemType.WorkflowRun &&
-      action.scope === CommandMenuItemScope.RecordSelection,
-  );
+  const workflowRunRecordSelectionActions: CommandMenuItemConfig[] =
+    commandMenuItems?.filter(
+      (action) =>
+        action.type === CommandMenuItemType.WorkflowRun &&
+        action.scope === CommandMenuItemScope.RecordSelection,
+    );
 
-  const workflowRunGlobalActions: CommandMenuItemConfig[] = actions?.filter(
-    (action) =>
-      action.type === CommandMenuItemType.WorkflowRun &&
-      action.scope === CommandMenuItemScope.Global,
-  );
+  const workflowRunGlobalActions: CommandMenuItemConfig[] =
+    commandMenuItems?.filter(
+      (action) =>
+        action.type === CommandMenuItemType.WorkflowRun &&
+        action.scope === CommandMenuItemScope.Global,
+    );
 
-  const frontComponentGlobalActions: CommandMenuItemConfig[] = actions?.filter(
-    (action) =>
-      action.type === CommandMenuItemType.FrontComponent &&
-      action.scope === CommandMenuItemScope.Global,
-  );
+  const frontComponentGlobalActions: CommandMenuItemConfig[] =
+    commandMenuItems?.filter(
+      (action) =>
+        action.type === CommandMenuItemType.FrontComponent &&
+        action.scope === CommandMenuItemScope.Global,
+    );
 
-  const frontComponentRecordSelectionActions: CommandMenuItemConfig[] = actions?.filter(
-    (action) =>
-      action.type === CommandMenuItemType.FrontComponent &&
-      action.scope === CommandMenuItemScope.RecordSelection,
-  );
+  const frontComponentRecordSelectionActions: CommandMenuItemConfig[] =
+    commandMenuItems?.filter(
+      (action) =>
+        action.type === CommandMenuItemType.FrontComponent &&
+        action.scope === CommandMenuItemScope.RecordSelection,
+    );
 
-  const fallbackActions: CommandMenuItemConfig[] = actions?.filter(
+  const fallbackActions: CommandMenuItemConfig[] = commandMenuItems?.filter(
     (action) => action.type === CommandMenuItemType.Fallback,
   );
 
-  const createRelatedRecordActions: CommandMenuItemConfig[] = actions?.filter(
-    (action) =>
-      action.type === CommandMenuItemType.Standard &&
-      action.scope === CommandMenuItemScope.CreateRelatedRecord,
-  );
+  const createRelatedRecordActions: CommandMenuItemConfig[] =
+    commandMenuItems?.filter(
+      (action) =>
+        action.type === CommandMenuItemType.Standard &&
+        action.scope === CommandMenuItemScope.CreateRelatedRecord,
+    );
 
   return {
     navigateActions,

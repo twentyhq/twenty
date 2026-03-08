@@ -21,14 +21,14 @@ export const RecordIndexCommandMenu = () => {
           <CommandMenuItemContextProvider
             isInSidePanel={false}
             displayType="button"
-            actionMenuType="index-page-action-menu"
+            containerType="index-page-header"
           >
             {!isMobile && <PageHeaderCommandMenuButtons />}
           </CommandMenuItemContextProvider>
           <CommandMenuItemContextProvider
             isInSidePanel={false}
             displayType="dropdownItem"
-            actionMenuType="index-page-action-menu-dropdown"
+            containerType="index-page-dropdown"
           >
             <RecordIndexCommandMenuDropdown />
           </CommandMenuItemContextProvider>

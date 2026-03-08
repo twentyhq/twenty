@@ -49,7 +49,7 @@ export const SidePanelRouter = () => {
           <CommandMenuItemContextProvider
             isInSidePanel={true}
             displayType="listItem"
-            actionMenuType="command-menu"
+            containerType="command-menu-list"
           >
             {sidePanelPageComponent}
           </CommandMenuItemContextProvider>

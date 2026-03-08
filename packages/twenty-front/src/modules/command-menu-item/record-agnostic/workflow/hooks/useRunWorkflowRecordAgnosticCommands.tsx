@@ -18,13 +18,13 @@ export const useRunWorkflowRecordAgnosticCommands = () => {
     contextStoreIsPageInEditModeComponentState,
   );
 
-  const { actionMenuType } = useContext(CommandMenuItemContext);
+  const { containerType } = useContext(CommandMenuItemContext);
 
   const { records: activeWorkflowVersions } =
     useActiveWorkflowVersionsWithManualTrigger({
       skip:
-        actionMenuType !== 'command-menu' &&
-        actionMenuType !== 'command-menu-show-page-action-menu-dropdown',
+        containerType !== 'command-menu-list' &&
+        containerType !== 'command-menu-show-page-dropdown',
     });
 
   const { runWorkflowVersion } = useRunWorkflowVersion();
