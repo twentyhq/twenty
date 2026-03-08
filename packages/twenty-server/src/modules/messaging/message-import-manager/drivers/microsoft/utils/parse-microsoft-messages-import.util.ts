@@ -13,8 +13,8 @@ export const parseMicrosoftMessagesImportError = (
 ): MessageImportDriverException => {
   if (error.statusCode === 400) {
     return new MessageImportDriverException(
-      `Invalid request to Microsoft Graph API: ${error.message}`,
-      MessageImportDriverExceptionCode.UNKNOWN,
+      `Invalid request to Microsoft Graph API - code:${error.code} message:${error.message}`,
+      MessageImportDriverExceptionCode.SYNC_CURSOR_ERROR,
       { cause: options?.cause },
     );
   }
