@@ -106,7 +106,7 @@ const computeAnimatedButtonDynamicStyles = (
                 }`
               : 'none';
           result.color = !inverted
-            ? themeCssVariables.grayScale.gray1
+            ? themeCssVariables.buttons.primaryAccentTextColor
             : themeCssVariables.color.blue;
           if (!disabled) {
             result.hoverBackground = !inverted
@@ -139,7 +139,7 @@ const computeAnimatedButtonDynamicStyles = (
                 }`
               : 'none';
           result.color = !inverted
-            ? themeCssVariables.background.primary
+            ? themeCssVariables.buttons.primaryAccentTextColor
             : themeCssVariables.color.red;
           if (!disabled) {
             result.hoverBackground = !inverted

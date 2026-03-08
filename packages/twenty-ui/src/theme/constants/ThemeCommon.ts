@@ -22,6 +22,7 @@ export const THEME_COMMON = {
   clickableElementBackgroundTransition: 'background 0.1s ease',
   lastLayerZIndex: 2147483647,
   buttons: {
+    primaryAccentTextColor: 'color(display-p3 1 1 1)',
     secondaryTextColor: ACCENT_DARK.accent11,
   },
 };
