@@ -1,9 +1,11 @@
+import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/isNavigationMenuInEditModeState';
 import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
 import { hasAnySoftDeleteFilterOnViewComponentSelector } from '@/object-record/record-filter/states/hasAnySoftDeleteFilterOnView';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
 import { isRecordTableCreateDisabled } from '@/object-record/record-table/utils/isRecordTableCreateDisabled';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { IconPlus } from 'twenty-ui/display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -20,6 +22,9 @@ export const RecordTableHeaderLabelIdentifierCellPlusButton = () => {
     useRecordTableContextOrThrow();
 
   const isMobile = useIsMobile();
+  const isNavigationMenuInEditMode = useAtomStateValue(
+    isNavigationMenuInEditModeState,
+  );
 
   const { createNewIndexRecord } = useCreateNewIndexRecord({
     objectMetadataItem,
@@ -31,10 +36,12 @@ export const RecordTableHeaderLabelIdentifierCellPlusButton = () => {
     });
   };
 
-  const isReadOnly = isObjectMetadataReadOnly({
-    objectPermissions,
-    objectMetadataItem,
-  });
+  const isReadOnly =
+    isNavigationMenuInEditMode ||
+    isObjectMetadataReadOnly({
+      objectPermissions,
+      objectMetadataItem,
+    });
 
   const hasAnySoftDeleteFilterOnView = useAtomComponentSelectorValue(
     hasAnySoftDeleteFilterOnViewComponentSelector,
