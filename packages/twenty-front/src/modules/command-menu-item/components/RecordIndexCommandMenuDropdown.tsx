@@ -1,11 +1,11 @@
 import { CommandMenuItemComponent } from '@/command-menu-item/display/components/CommandMenuItemComponent';
 import { CommandMenuItemScope } from '@/command-menu-item/types/CommandMenuItemScope';
 import { CommandMenuItemType } from '@/command-menu-item/types/CommandMenuItemType';
-import { ACTION_MENU_DROPDOWN_CLICK_OUTSIDE_ID } from '@/command-menu-item/constants/ActionMenuDropdownClickOutsideId';
+import { COMMAND_MENU_DROPDOWN_CLICK_OUTSIDE_ID } from '@/command-menu-item/constants/CommandMenuDropdownClickOutsideId';
 import { CommandMenuItemContext } from '@/command-menu-item/contexts/CommandMenuItemContext';
-import { ActionMenuComponentInstanceContext } from '@/command-menu-item/states/contexts/ActionMenuComponentInstanceContext';
-import { recordIndexActionMenuDropdownPositionComponentState } from '@/command-menu-item/states/recordIndexActionMenuDropdownPositionComponentState';
-import { getActionMenuDropdownIdFromActionMenuId } from '@/command-menu-item/utils/getActionMenuDropdownIdFromActionMenuId';
+import { CommandMenuComponentInstanceContext } from '@/command-menu-item/states/contexts/CommandMenuComponentInstanceContext';
+import { recordIndexCommandMenuDropdownPositionComponentState } from '@/command-menu-item/states/recordIndexCommandMenuDropdownPositionComponentState';
+import { getCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/utils/getCommandMenuDropdownIdFromCommandMenuId';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -32,7 +32,7 @@ const StyledDropdownMenuContainer = styled.div`
   width: 100%;
 `;
 
-export const RecordIndexActionMenuDropdown = () => {
+export const RecordIndexCommandMenuDropdown = () => {
   const { t } = useLingui();
   const { actions } = useContext(CommandMenuItemContext);
 
@@ -42,15 +42,15 @@ export const RecordIndexActionMenuDropdown = () => {
       action.scope === CommandMenuItemScope.RecordSelection,
   );
 
-  const actionMenuId = useAvailableComponentInstanceIdOrThrow(
-    ActionMenuComponentInstanceContext,
+  const commandMenuId = useAvailableComponentInstanceIdOrThrow(
+    CommandMenuComponentInstanceContext,
   );
 
-  const dropdownId = getActionMenuDropdownIdFromActionMenuId(actionMenuId);
+  const dropdownId = getCommandMenuDropdownIdFromCommandMenuId(commandMenuId);
   const { closeDropdown } = useCloseDropdown();
 
-  const recordIndexActionMenuDropdownPosition = useAtomComponentStateValue(
-    recordIndexActionMenuDropdownPositionComponentState,
+  const recordIndexCommandMenuDropdownPosition = useAtomComponentStateValue(
+    recordIndexCommandMenuDropdownPositionComponentState,
     dropdownId,
   );
 
@@ -73,13 +73,13 @@ export const RecordIndexActionMenuDropdown = () => {
       dropdownPlacement="bottom-start"
       dropdownStrategy="absolute"
       dropdownOffset={{
-        x: recordIndexActionMenuDropdownPosition.x ?? 0,
-        y: recordIndexActionMenuDropdownPosition.y ?? 0,
+        x: recordIndexCommandMenuDropdownPosition.x ?? 0,
+        y: recordIndexCommandMenuDropdownPosition.y ?? 0,
       }}
       dropdownComponents={
         <DropdownContent>
           <StyledDropdownMenuContainer
-            data-click-outside-id={ACTION_MENU_DROPDOWN_CLICK_OUTSIDE_ID}
+            data-click-outside-id={COMMAND_MENU_DROPDOWN_CLICK_OUTSIDE_ID}
           >
             <DropdownMenuItemsContainer>
               <SelectableList

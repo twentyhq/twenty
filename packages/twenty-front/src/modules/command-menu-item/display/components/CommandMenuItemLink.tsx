@@ -1,5 +1,5 @@
 import { CommandMenuItemDisplay } from '@/command-menu-item/display/components/CommandMenuItemDisplay';
-import { useCloseActionMenu } from '@/command-menu-item/hooks/useCloseActionMenu';
+import { useCloseCommandMenu } from '@/command-menu-item/hooks/useCloseCommandMenu';
 import { type PathParam } from 'react-router-dom';
 import { type AppPath } from 'twenty-shared/types';
 import { getAppPath } from 'twenty-shared/utils';
@@ -13,9 +13,9 @@ export const CommandMenuItemLink = <T extends AppPath>({
   params?: { [key in PathParam<T>]: string | null };
   queryParams?: Record<string, any>;
 }) => {
-  const { closeActionMenu } = useCloseActionMenu();
+  const { closeCommandMenu } = useCloseCommandMenu();
 
   const path = getAppPath(to, params, queryParams);
 
-  return <CommandMenuItemDisplay onClick={closeActionMenu} to={path} />;
+  return <CommandMenuItemDisplay onClick={closeCommandMenu} to={path} />;
 };

@@ -1,5 +1,5 @@
-import { ActionMenuComponentInstanceContext } from '@/command-menu-item/states/contexts/ActionMenuComponentInstanceContext';
-import { getSidePanelActionMenuDropdownIdFromActionMenuId } from '@/command-menu-item/utils/getSidePanelActionMenuDropdownIdFromActionMenuId';
+import { CommandMenuComponentInstanceContext } from '@/command-menu-item/states/contexts/CommandMenuComponentInstanceContext';
+import { getSidePanelCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/utils/getSidePanelCommandMenuDropdownIdFromCommandMenuId';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
@@ -75,8 +75,8 @@ export const RecordShowSidePanelOpenRecordButton = ({
 
   const navigate = useNavigateApp();
 
-  const actionMenuId = useAvailableComponentInstanceIdOrThrow(
-    ActionMenuComponentInstanceContext,
+  const commandMenuId = useAvailableComponentInstanceIdOrThrow(
+    CommandMenuComponentInstanceContext,
   );
 
   const { closeDropdown } = useCloseDropdown();
@@ -109,12 +109,12 @@ export const RecordShowSidePanelOpenRecordButton = ({
     });
 
     closeDropdown(
-      getSidePanelActionMenuDropdownIdFromActionMenuId(actionMenuId),
+      getSidePanelCommandMenuDropdownIdFromCommandMenuId(commandMenuId),
     );
 
     closeSidePanelMenu();
   }, [
-    actionMenuId,
+    commandMenuId,
     activeTabId,
     closeSidePanelMenu,
     closeDropdown,

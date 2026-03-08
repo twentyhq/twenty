@@ -4,7 +4,7 @@ import { t } from '@lingui/core/macro';
 import { CommandMenuItemDisplay } from '@/command-menu-item/display/components/CommandMenuItemDisplay';
 import { CommandMenuItemConfigContext } from '@/command-menu-item/contexts/CommandMenuItemConfigContext';
 import { CommandMenuItemContext } from '@/command-menu-item/contexts/CommandMenuItemContext';
-import { useCloseActionMenu } from '@/command-menu-item/hooks/useCloseActionMenu';
+import { useCloseCommandMenu } from '@/command-menu-item/hooks/useCloseCommandMenu';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
@@ -34,14 +34,14 @@ export const CommandMenuItemModal = ({
 }: CommandMenuItemModalProps) => {
   const { openModal } = useModal();
 
-  const { closeActionMenu } = useCloseActionMenu({
+  const { closeCommandMenu } = useCloseCommandMenu({
     closeSidePanelOnShowPageOptionsActionExecution,
     closeSidePanelOnCommandMenuItemListActionExecution,
   });
 
   const handleConfirmClick = async () => {
     await onConfirmClick();
-    closeActionMenu();
+    closeCommandMenu();
   };
 
   const actionConfig = useContext(CommandMenuItemConfigContext);

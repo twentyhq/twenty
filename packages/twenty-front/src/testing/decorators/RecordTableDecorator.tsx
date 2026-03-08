@@ -1,8 +1,8 @@
 import { type Decorator } from '@storybook/react-vite';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
-import { ActionMenuComponentInstanceContext } from '@/command-menu-item/states/contexts/ActionMenuComponentInstanceContext';
-import { getActionMenuIdFromRecordIndexId } from '@/command-menu-item/utils/getActionMenuIdFromRecordIndexId';
+import { CommandMenuComponentInstanceContext } from '@/command-menu-item/states/contexts/CommandMenuComponentInstanceContext';
+import { getCommandMenuIdFromRecordIndexId } from '@/command-menu-item/utils/getCommandMenuIdFromRecordIndexId';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { labelIdentifierFieldMetadataItemSelector } from '@/object-metadata/states/labelIdentifierFieldMetadataItemSelector';
@@ -235,9 +235,9 @@ export const RecordTableDecorator: Decorator = (Story, context) => {
         <RecordComponentInstanceContextsWrapper
           componentInstanceId={recordIndexId}
         >
-          <ActionMenuComponentInstanceContext.Provider
+          <CommandMenuComponentInstanceContext.Provider
             value={{
-              instanceId: getActionMenuIdFromRecordIndexId(recordIndexId),
+              instanceId: getCommandMenuIdFromRecordIndexId(recordIndexId),
             }}
           >
             <InternalTableContextProviders
@@ -248,7 +248,7 @@ export const RecordTableDecorator: Decorator = (Story, context) => {
               />
               <Story />
             </InternalTableContextProviders>
-          </ActionMenuComponentInstanceContext.Provider>
+          </CommandMenuComponentInstanceContext.Provider>
         </RecordComponentInstanceContextsWrapper>
       </ViewComponentInstanceContext.Provider>
     </RecordTableComponentInstanceContext.Provider>

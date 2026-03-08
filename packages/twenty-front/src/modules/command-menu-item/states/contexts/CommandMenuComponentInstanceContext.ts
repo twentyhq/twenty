@@ -1,4 +1,4 @@
 import { createComponentInstanceContext } from '@/ui/utilities/state/component-state/utils/createComponentInstanceContext';
 
-export const ActionMenuComponentInstanceContext =
+export const CommandMenuComponentInstanceContext =
   createComponentInstanceContext();

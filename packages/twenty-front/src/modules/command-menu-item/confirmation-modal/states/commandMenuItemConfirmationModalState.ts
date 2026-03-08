@@ -3,7 +3,7 @@ import { type ReactNode } from 'react';
 import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 import { type ButtonAccent } from 'twenty-ui/input';
 
-export type ActionMenuConfirmationModalConfig = {
+export type CommandMenuItemConfirmationModalConfig = {
   frontComponentId: string;
   title: string;
   subtitle: ReactNode;
@@ -11,8 +11,8 @@ export type ActionMenuConfirmationModalConfig = {
   confirmButtonAccent?: ButtonAccent;
 };
 
-export const actionMenuConfirmationModalConfigState =
-  createAtomState<ActionMenuConfirmationModalConfig | null>({
-    key: 'actionMenuConfirmationModalConfigState',
+export const commandMenuItemConfirmationModalConfigState =
+  createAtomState<CommandMenuItemConfirmationModalConfig | null>({
+    key: 'commandMenuItemConfirmationModalConfigState',
     defaultValue: null,
   });

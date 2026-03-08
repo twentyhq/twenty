@@ -1,8 +1,8 @@
 import { useCallback } from 'react';
 import { useStore } from 'jotai';
 
-import { getActionMenuDropdownIdFromActionMenuId } from '@/command-menu-item/utils/getActionMenuDropdownIdFromActionMenuId';
-import { getActionMenuIdFromRecordIndexId } from '@/command-menu-item/utils/getActionMenuIdFromRecordIndexId';
+import { getCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/utils/getCommandMenuDropdownIdFromCommandMenuId';
+import { getCommandMenuIdFromRecordIndexId } from '@/command-menu-item/utils/getCommandMenuIdFromRecordIndexId';
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { hasUserSelectedAllRowsComponentState } from '@/object-record/record-table/record-table-row/states/hasUserSelectedAllRowsFamilyState';
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
@@ -55,8 +55,8 @@ export const useResetTableRowSelection = (recordTableId?: string) => {
     store.set(lastSelectedRowIndexComponentCallbackState, null);
 
     closeDropdown(
-      getActionMenuDropdownIdFromActionMenuId(
-        getActionMenuIdFromRecordIndexId(recordTableIdFromContext),
+      getCommandMenuDropdownIdFromCommandMenuId(
+        getCommandMenuIdFromRecordIndexId(recordTableIdFromContext),
       ),
     );
   }, [

@@ -3,10 +3,10 @@ import { Provider as JotaiProvider } from 'jotai';
 import * as test from 'storybook/test';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
-import { CommandMenuItemActionMenuDropdown } from '@/command-menu-item/components/CommandMenuItemActionMenuDropdown';
+import { RecordShowSidePanelCommandMenuDropdown } from '@/command-menu-item/components/RecordShowSidePanelCommandMenuDropdown';
 import { CommandMenuItemContext } from '@/command-menu-item/contexts/CommandMenuItemContext';
-import { createMockActionMenuActions } from '@/command-menu-item/mock/action-menu-actions.mock';
-import { ActionMenuComponentInstanceContext } from '@/command-menu-item/states/contexts/ActionMenuComponentInstanceContext';
+import { createMockCommandMenuItems } from '@/command-menu-item/mock/command-menu-items.mock';
+import { CommandMenuComponentInstanceContext } from '@/command-menu-item/states/contexts/CommandMenuComponentInstanceContext';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
@@ -19,9 +19,9 @@ const deleteMock = test.fn();
 const addToFavoritesMock = test.fn();
 const exportMock = test.fn();
 
-const meta: Meta<typeof CommandMenuItemActionMenuDropdown> = {
-  title: 'Modules/ActionMenu/CommandMenuItemActionMenuDropdown',
-  component: CommandMenuItemActionMenuDropdown,
+const meta: Meta<typeof RecordShowSidePanelCommandMenuDropdown> = {
+  title: 'Modules/ActionMenu/RecordShowSidePanelCommandMenuDropdown',
+  component: RecordShowSidePanelCommandMenuDropdown,
   decorators: [
     (Story) => (
       <JotaiProvider store={jotaiStore}>
@@ -35,7 +35,7 @@ const meta: Meta<typeof CommandMenuItemActionMenuDropdown> = {
             }}
             contextStoreNumberOfSelectedRecords={1}
           >
-            <ActionMenuComponentInstanceContext.Provider
+            <CommandMenuComponentInstanceContext.Provider
               value={{ instanceId: 'story-action-menu' }}
             >
               <CommandMenuItemContext.Provider
@@ -43,7 +43,7 @@ const meta: Meta<typeof CommandMenuItemActionMenuDropdown> = {
                   isInSidePanel: true,
                   displayType: 'dropdownItem',
                   actionMenuType: 'command-menu-show-page-action-menu-dropdown',
-                  actions: createMockActionMenuActions({
+                  actions: createMockCommandMenuItems({
                     deleteMock,
                     addToFavoritesMock,
                     exportMock,
@@ -52,7 +52,7 @@ const meta: Meta<typeof CommandMenuItemActionMenuDropdown> = {
               >
                 <Story />
               </CommandMenuItemContext.Provider>
-            </ActionMenuComponentInstanceContext.Provider>
+            </CommandMenuComponentInstanceContext.Provider>
           </JestContextStoreSetter>
         </ContextStoreComponentInstanceContext.Provider>
       </JotaiProvider>
@@ -70,7 +70,7 @@ const meta: Meta<typeof CommandMenuItemActionMenuDropdown> = {
 
 export default meta;
 
-type Story = StoryObj<typeof CommandMenuItemActionMenuDropdown>;
+type Story = StoryObj<typeof RecordShowSidePanelCommandMenuDropdown>;
 
 export const Default: Story = {
   args: {

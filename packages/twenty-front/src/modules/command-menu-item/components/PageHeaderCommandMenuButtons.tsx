@@ -11,7 +11,7 @@ const StyledActionContainer = styled(motion.div)`
   justify-content: center;
 `;
 
-export const PageHeaderActionMenuButtons = () => {
+export const PageHeaderCommandMenuButtons = () => {
   const { theme } = useContext(ThemeContext);
   const { actions } = useContext(CommandMenuItemContext);
   const pinnedActions = actions.filter((entry) => entry.isPinned).toReversed();

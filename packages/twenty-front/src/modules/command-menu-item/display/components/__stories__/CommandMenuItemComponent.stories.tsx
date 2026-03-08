@@ -4,12 +4,12 @@ import { expect, within } from 'storybook/test';
 import { CommandMenuItemComponent } from '@/command-menu-item/display/components/CommandMenuItemComponent';
 import { SingleRecordCommandKeys } from '@/command-menu-item/record/single-record/types/SingleRecordCommandKeys';
 import { CommandMenuItemContext } from '@/command-menu-item/contexts/CommandMenuItemContext';
-import { createMockActionMenuActions } from '@/command-menu-item/mock/action-menu-actions.mock';
-import { ActionMenuComponentInstanceContext } from '@/command-menu-item/states/contexts/ActionMenuComponentInstanceContext';
+import { createMockCommandMenuItems } from '@/command-menu-item/mock/command-menu-items.mock';
+import { CommandMenuComponentInstanceContext } from '@/command-menu-item/states/contexts/CommandMenuComponentInstanceContext';
 import { getCommandMenuItemLabel } from '@/command-menu-item/utils/getCommandMenuItemLabel';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
-const mockActions = createMockActionMenuActions({});
+const mockActions = createMockCommandMenuItems({});
 
 const addToFavoritesCommandMenuItem = mockActions.find(
   (action) => action.key === SingleRecordCommandKeys.ADD_TO_FAVORITES,
@@ -25,7 +25,7 @@ const meta: Meta<typeof CommandMenuItemComponent> = {
   decorators: [
     ComponentDecorator,
     (Story) => (
-      <ActionMenuComponentInstanceContext.Provider
+      <CommandMenuComponentInstanceContext.Provider
         value={{ instanceId: 'story' }}
       >
         <CommandMenuItemContext.Provider
@@ -38,7 +38,7 @@ const meta: Meta<typeof CommandMenuItemComponent> = {
         >
           <Story />
         </CommandMenuItemContext.Provider>
-      </ActionMenuComponentInstanceContext.Provider>
+      </CommandMenuComponentInstanceContext.Provider>
     ),
   ],
   args: {

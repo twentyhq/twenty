@@ -1,21 +1,21 @@
 import { CommandMenuItemComponent } from '@/command-menu-item/display/components/CommandMenuItemComponent';
 import { CommandMenuItemScope } from '@/command-menu-item/types/CommandMenuItemScope';
 import { CommandMenuItemContext } from '@/command-menu-item/contexts/CommandMenuItemContext';
-import { ActionMenuComponentInstanceContext } from '@/command-menu-item/states/contexts/ActionMenuComponentInstanceContext';
-import { getSidePanelActionMenuDropdownIdFromActionMenuId } from '@/command-menu-item/utils/getSidePanelActionMenuDropdownIdFromActionMenuId';
+import { CommandMenuComponentInstanceContext } from '@/command-menu-item/states/contexts/CommandMenuComponentInstanceContext';
+import { getSidePanelCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/utils/getSidePanelCommandMenuDropdownIdFromCommandMenuId';
 import { OptionsDropdownMenu } from '@/ui/layout/dropdown/components/OptionsDropdownMenu';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useContext } from 'react';
 
-export const CommandMenuItemActionMenuDropdown = () => {
+export const RecordShowSidePanelCommandMenuDropdown = () => {
   const { actions } = useContext(CommandMenuItemContext);
 
-  const actionMenuId = useAvailableComponentInstanceIdOrThrow(
-    ActionMenuComponentInstanceContext,
+  const commandMenuId = useAvailableComponentInstanceIdOrThrow(
+    CommandMenuComponentInstanceContext,
   );
 
   const dropdownId =
-    getSidePanelActionMenuDropdownIdFromActionMenuId(actionMenuId);
+    getSidePanelCommandMenuDropdownIdFromCommandMenuId(commandMenuId);
 
   const recordSelectionActions = actions.filter(
     (action) => action.scope === CommandMenuItemScope.RecordSelection,
@@ -28,7 +28,7 @@ export const CommandMenuItemActionMenuDropdown = () => {
   return (
     <OptionsDropdownMenu
       dropdownId={dropdownId}
-      selectableListId={actionMenuId}
+      selectableListId={commandMenuId}
       selectableItemIdArray={selectableItemIdArray}
     >
       {recordSelectionActions.map((action) => (

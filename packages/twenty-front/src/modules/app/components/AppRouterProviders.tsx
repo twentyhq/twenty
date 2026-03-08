@@ -1,5 +1,5 @@
 import { AgentChatProvider } from '@/ai/components/AgentChatProvider';
-import { ActionMenuConfirmationModalManager } from '@/command-menu-item/confirmation-modal/components/ActionMenuConfirmationModalManager';
+import { CommandMenuItemConfirmationModalManager } from '@/command-menu-item/confirmation-modal/components/CommandMenuItemConfirmationModalManager';
 import { ApolloProvider } from '@/apollo/components/ApolloProvider';
 import { MetadataGater } from '@/metadata-store/components/MetadataGater';
 import { IsAppMetadataReadyEffect } from '@/metadata-store/effect-components/IsAppMetadataReadyEffect';
@@ -72,7 +72,7 @@ export const AppRouterProviders = () => {
                                     <PageFavicon />
                                     <Outlet />
                                     <GlobalFilePreviewModal />
-                                    <ActionMenuConfirmationModalManager />
+                                    <CommandMenuItemConfirmationModalManager />
                                     <HeadlessFrontComponentMountRoot />
                                   </StrictMode>
                                 </DialogManager>

@@ -19,7 +19,7 @@ import {
   IconUser,
 } from 'twenty-ui/display';
 
-export const createMockActionMenuActions = ({
+export const createMockCommandMenuItems = ({
   deleteMock = () => {},
   addToFavoritesMock = () => {},
   exportMock = () => {},

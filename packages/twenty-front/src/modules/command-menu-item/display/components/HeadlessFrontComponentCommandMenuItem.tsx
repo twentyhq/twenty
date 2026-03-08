@@ -1,5 +1,5 @@
 import { CommandMenuItemConfigContext } from '@/command-menu-item/contexts/CommandMenuItemConfigContext';
-import { useCloseActionMenu } from '@/command-menu-item/hooks/useCloseActionMenu';
+import { useCloseCommandMenu } from '@/command-menu-item/hooks/useCloseCommandMenu';
 import { isHeadlessFrontComponentMountedFamilySelector } from '@/front-components/selectors/isHeadlessFrontComponentMountedFamilySelector';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useContext } from 'react';
@@ -15,7 +15,7 @@ export const HeadlessFrontComponentCommandMenuItem = ({
 }) => {
   const actionConfig = useContext(CommandMenuItemConfigContext);
 
-  const { closeActionMenu } = useCloseActionMenu({
+  const { closeCommandMenu } = useCloseCommandMenu({
     closeSidePanelOnShowPageOptionsActionExecution: false,
     closeSidePanelOnCommandMenuItemListActionExecution: false,
   });
@@ -34,7 +34,7 @@ export const HeadlessFrontComponentCommandMenuItem = ({
       return;
     }
 
-    closeActionMenu();
+    closeCommandMenu();
     onClick();
   };
 

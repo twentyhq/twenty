@@ -1,9 +1,9 @@
 import { useCallback } from 'react';
 import { useStore } from 'jotai';
 
-import { ActionMenuComponentInstanceContext } from '@/command-menu-item/states/contexts/ActionMenuComponentInstanceContext';
-import { recordIndexActionMenuDropdownPositionComponentState } from '@/command-menu-item/states/recordIndexActionMenuDropdownPositionComponentState';
-import { getActionMenuDropdownIdFromActionMenuId } from '@/command-menu-item/utils/getActionMenuDropdownIdFromActionMenuId';
+import { CommandMenuComponentInstanceContext } from '@/command-menu-item/states/contexts/CommandMenuComponentInstanceContext';
+import { recordIndexCommandMenuDropdownPositionComponentState } from '@/command-menu-item/states/recordIndexCommandMenuDropdownPositionComponentState';
+import { getCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/utils/getCommandMenuDropdownIdFromCommandMenuId';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
@@ -17,7 +17,7 @@ export const useTriggerActionMenuDropdown = ({
   recordTableId: string;
 }) => {
   const actionMenuInstanceId = useAvailableComponentInstanceIdOrThrow(
-    ActionMenuComponentInstanceContext,
+    CommandMenuComponentInstanceContext,
   );
 
   const isRowSelectedFamilyState = useAtomComponentFamilyStateCallbackState(
@@ -26,11 +26,11 @@ export const useTriggerActionMenuDropdown = ({
   );
 
   const actionMenuDropdownId =
-    getActionMenuDropdownIdFromActionMenuId(actionMenuInstanceId);
+    getCommandMenuDropdownIdFromCommandMenuId(actionMenuInstanceId);
 
-  const recordIndexActionMenuDropdownPositionCallbackState =
+  const recordIndexCommandMenuDropdownPositionCallbackState =
     useAtomComponentStateCallbackState(
-      recordIndexActionMenuDropdownPositionComponentState,
+      recordIndexCommandMenuDropdownPositionComponentState,
       actionMenuDropdownId,
     );
 
@@ -42,7 +42,7 @@ export const useTriggerActionMenuDropdown = ({
     (event: React.MouseEvent, recordId: string) => {
       event.preventDefault();
 
-      store.set(recordIndexActionMenuDropdownPositionCallbackState, {
+      store.set(recordIndexCommandMenuDropdownPositionCallbackState, {
         x: event.pageX,
         y: event.pageY,
       });
@@ -60,7 +60,7 @@ export const useTriggerActionMenuDropdown = ({
       });
     },
     [
-      recordIndexActionMenuDropdownPositionCallbackState,
+      recordIndexCommandMenuDropdownPositionCallbackState,
       isRowSelectedFamilyState,
       closeSidePanelMenu,
       openDropdown,

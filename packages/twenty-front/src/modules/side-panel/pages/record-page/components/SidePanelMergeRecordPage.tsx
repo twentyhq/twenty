@@ -1,4 +1,4 @@
-import { ActionMenuComponentInstanceContext } from '@/command-menu-item/states/contexts/ActionMenuComponentInstanceContext';
+import { CommandMenuComponentInstanceContext } from '@/command-menu-item/states/contexts/CommandMenuComponentInstanceContext';
 import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
@@ -33,7 +33,7 @@ export const SidePanelMergeRecordPage = () => {
           instanceId: sidePanelPageInstanceId,
         }}
       >
-        <ActionMenuComponentInstanceContext.Provider
+        <CommandMenuComponentInstanceContext.Provider
           value={{ instanceId: sidePanelPageInstanceId }}
         >
           <StyledSidePanelRecord>
@@ -41,7 +41,7 @@ export const SidePanelMergeRecordPage = () => {
               objectNameSingular={objectMetadataItem.nameSingular}
             />
           </StyledSidePanelRecord>
-        </ActionMenuComponentInstanceContext.Provider>
+        </CommandMenuComponentInstanceContext.Provider>
       </ContextStoreComponentInstanceContext.Provider>
     </RecordComponentInstanceContextsWrapper>
   );

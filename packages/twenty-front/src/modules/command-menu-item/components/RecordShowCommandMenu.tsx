@@ -1,4 +1,4 @@
-import { PageHeaderActionMenuButtons } from '@/command-menu-item/components/PageHeaderActionMenuButtons';
+import { PageHeaderCommandMenuButtons } from '@/command-menu-item/components/PageHeaderCommandMenuButtons';
 import { CommandMenuItemContextProvider } from '@/command-menu-item/contexts/CommandMenuItemContextProvider';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
@@ -6,7 +6,7 @@ import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/s
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useIsMobile } from 'twenty-ui/utilities';
 
-export const RecordShowActionMenu = () => {
+export const RecordShowCommandMenu = () => {
   const contextStoreCurrentObjectMetadataItemId = useAtomComponentStateValue(
     contextStoreCurrentObjectMetadataItemIdComponentState,
     MAIN_CONTEXT_STORE_INSTANCE_ID,
@@ -31,7 +31,7 @@ export const RecordShowActionMenu = () => {
           displayType="button"
           actionMenuType="show-page-action-menu"
         >
-          {!isMobile && <PageHeaderActionMenuButtons />}
+          {!isMobile && <PageHeaderCommandMenuButtons />}
         </CommandMenuItemContextProvider>
       )}
     </>

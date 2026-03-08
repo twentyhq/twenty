@@ -1,4 +1,4 @@
-import { ActionMenuComponentInstanceContext } from '@/command-menu-item/states/contexts/ActionMenuComponentInstanceContext';
+import { CommandMenuComponentInstanceContext } from '@/command-menu-item/states/contexts/CommandMenuComponentInstanceContext';
 import { TimelineActivityContext } from '@/activities/timeline-activities/contexts/TimelineActivityContext';
 import { viewableRecordIdComponentState } from '@/side-panel/pages/record-page/states/viewableRecordIdComponentState';
 import { viewableRecordNameSingularComponentState } from '@/side-panel/pages/record-page/states/viewableRecordNameSingularComponentState';
@@ -72,7 +72,7 @@ export const SidePanelRecordPage = () => {
           instanceId: sidePanelPageInstanceId,
         }}
       >
-        <ActionMenuComponentInstanceContext.Provider
+        <CommandMenuComponentInstanceContext.Provider
           value={{ instanceId: sidePanelPageInstanceId }}
         >
           <StyledSidePanelRecord hasDeletedRecordBanner={!!recordDeletedAt}>
@@ -90,7 +90,7 @@ export const SidePanelRecordPage = () => {
               />
             </TimelineActivityContext.Provider>
           </StyledSidePanelRecord>
-        </ActionMenuComponentInstanceContext.Provider>
+        </CommandMenuComponentInstanceContext.Provider>
       </ContextStoreComponentInstanceContext.Provider>
     </RecordComponentInstanceContextsWrapper>
   );

@@ -1,6 +1,6 @@
 import { CommandMenuItemDisplay } from '@/command-menu-item/display/components/CommandMenuItemDisplay';
 import { CommandMenuItemConfigContext } from '@/command-menu-item/contexts/CommandMenuItemConfigContext';
-import { useCloseActionMenu } from '@/command-menu-item/hooks/useCloseActionMenu';
+import { useCloseCommandMenu } from '@/command-menu-item/hooks/useCloseCommandMenu';
 import { computeProgressText } from '@/command-menu-item/utils/computeProgressText';
 import { getCommandMenuItemLabel } from '@/command-menu-item/utils/getCommandMenuItemLabel';
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
@@ -32,7 +32,7 @@ export const ExportMultipleRecordsCommand = () => {
     filename: `${objectMetadataItem.nameSingular}.csv`,
   });
 
-  const { closeActionMenu } = useCloseActionMenu({});
+  const { closeCommandMenu } = useCloseCommandMenu({});
 
   const exportProgress = isDefined(progress)
     ? {
@@ -64,9 +64,9 @@ export const ExportMultipleRecordsCommand = () => {
   const handleClick = async () => {
     try {
       await download();
-      closeActionMenu();
+      closeCommandMenu();
     } catch (error) {
-      closeActionMenu();
+      closeCommandMenu();
       throw error;
     }
   };

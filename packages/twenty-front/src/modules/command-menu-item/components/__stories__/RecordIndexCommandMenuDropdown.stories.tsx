@@ -3,11 +3,11 @@ import { Provider as JotaiProvider } from 'jotai';
 import * as test from 'storybook/test';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
-import { RecordIndexActionMenuDropdown } from '@/command-menu-item/components/RecordIndexActionMenuDropdown';
+import { RecordIndexCommandMenuDropdown } from '@/command-menu-item/components/RecordIndexCommandMenuDropdown';
 import { CommandMenuItemContext } from '@/command-menu-item/contexts/CommandMenuItemContext';
-import { createMockActionMenuActions } from '@/command-menu-item/mock/action-menu-actions.mock';
-import { ActionMenuComponentInstanceContext } from '@/command-menu-item/states/contexts/ActionMenuComponentInstanceContext';
-import { recordIndexActionMenuDropdownPositionComponentState } from '@/command-menu-item/states/recordIndexActionMenuDropdownPositionComponentState';
+import { createMockCommandMenuItems } from '@/command-menu-item/mock/command-menu-items.mock';
+import { CommandMenuComponentInstanceContext } from '@/command-menu-item/states/contexts/CommandMenuComponentInstanceContext';
+import { recordIndexCommandMenuDropdownPositionComponentState } from '@/command-menu-item/states/recordIndexCommandMenuDropdownPositionComponentState';
 
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
@@ -18,9 +18,9 @@ const deleteMock = test.fn();
 const addToFavoritesMock = test.fn();
 const exportMock = test.fn();
 
-const meta: Meta<typeof RecordIndexActionMenuDropdown> = {
-  title: 'Modules/ActionMenu/RecordIndexActionMenuDropdown',
-  component: RecordIndexActionMenuDropdown,
+const meta: Meta<typeof RecordIndexCommandMenuDropdown> = {
+  title: 'Modules/ActionMenu/RecordIndexCommandMenuDropdown',
+  component: RecordIndexCommandMenuDropdown,
   decorators: [
     (Story) => {
       jotaiStore.set(
@@ -30,7 +30,7 @@ const meta: Meta<typeof RecordIndexActionMenuDropdown> = {
         true,
       );
       jotaiStore.set(
-        recordIndexActionMenuDropdownPositionComponentState.atomFamily({
+        recordIndexCommandMenuDropdownPositionComponentState.atomFamily({
           instanceId: 'action-menu-dropdown-story',
         }),
         { x: 10, y: 10 },
@@ -38,7 +38,7 @@ const meta: Meta<typeof RecordIndexActionMenuDropdown> = {
 
       return (
         <JotaiProvider store={jotaiStore}>
-          <ActionMenuComponentInstanceContext.Provider
+          <CommandMenuComponentInstanceContext.Provider
             value={{ instanceId: 'story-action-menu' }}
           >
             <CommandMenuItemContext.Provider
@@ -46,7 +46,7 @@ const meta: Meta<typeof RecordIndexActionMenuDropdown> = {
                 isInSidePanel: true,
                 displayType: 'dropdownItem',
                 actionMenuType: 'index-page-action-menu-dropdown',
-                actions: createMockActionMenuActions({
+                actions: createMockCommandMenuItems({
                   deleteMock,
                   addToFavoritesMock,
                   exportMock,
@@ -55,7 +55,7 @@ const meta: Meta<typeof RecordIndexActionMenuDropdown> = {
             >
               <Story />
             </CommandMenuItemContext.Provider>
-          </ActionMenuComponentInstanceContext.Provider>
+          </CommandMenuComponentInstanceContext.Provider>
         </JotaiProvider>
       );
     },
@@ -66,7 +66,7 @@ const meta: Meta<typeof RecordIndexActionMenuDropdown> = {
 
 export default meta;
 
-type Story = StoryObj<typeof RecordIndexActionMenuDropdown>;
+type Story = StoryObj<typeof RecordIndexCommandMenuDropdown>;
 
 export const Default: Story = {
   args: {

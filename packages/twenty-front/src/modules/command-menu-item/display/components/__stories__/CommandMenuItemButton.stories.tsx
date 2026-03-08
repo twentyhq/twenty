@@ -1,7 +1,7 @@
 import { CommandMenuItemButton } from '@/command-menu-item/display/components/CommandMenuItemButton';
 import { NoSelectionRecordCommandKeys } from '@/command-menu-item/record/no-selection/types/NoSelectionRecordCommandKeys';
 import { SingleRecordCommandKeys } from '@/command-menu-item/record/single-record/types/SingleRecordCommandKeys';
-import { createMockActionMenuActions } from '@/command-menu-item/mock/action-menu-actions.mock';
+import { createMockCommandMenuItems } from '@/command-menu-item/mock/command-menu-items.mock';
 import { getCommandMenuItemLabel } from '@/command-menu-item/utils/getCommandMenuItemLabel';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, within } from 'storybook/test';
@@ -20,7 +20,7 @@ type Story = StoryObj<typeof CommandMenuItemButton>;
 const deleteMock = fn();
 const addToFavoritesMock = fn();
 
-const mockActions = createMockActionMenuActions({
+const mockActions = createMockCommandMenuItems({
   deleteMock,
   addToFavoritesMock,
 });

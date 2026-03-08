@@ -1,6 +1,6 @@
-import { recordIndexActionMenuDropdownPositionComponentState } from '@/command-menu-item/states/recordIndexActionMenuDropdownPositionComponentState';
-import { getActionMenuDropdownIdFromActionMenuId } from '@/command-menu-item/utils/getActionMenuDropdownIdFromActionMenuId';
-import { getActionMenuIdFromRecordIndexId } from '@/command-menu-item/utils/getActionMenuIdFromRecordIndexId';
+import { recordIndexCommandMenuDropdownPositionComponentState } from '@/command-menu-item/states/recordIndexCommandMenuDropdownPositionComponentState';
+import { getCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/utils/getCommandMenuDropdownIdFromCommandMenuId';
+import { getCommandMenuIdFromRecordIndexId } from '@/command-menu-item/utils/getCommandMenuIdFromRecordIndexId';
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
 import { isRecordBoardCardActiveComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardActiveComponentFamilyState';
 import { isRecordBoardCardFocusedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardFocusedComponentFamilyState';
@@ -99,13 +99,13 @@ export const RecordBoardCard = () => {
     },
   );
 
-  const actionMenuId = getActionMenuIdFromRecordIndexId(recordBoardId);
+  const commandMenuId = getCommandMenuIdFromRecordIndexId(recordBoardId);
 
   const actionMenuDropdownId =
-    getActionMenuDropdownIdFromActionMenuId(actionMenuId);
+    getCommandMenuDropdownIdFromCommandMenuId(commandMenuId);
 
-  const setRecordIndexActionMenuDropdownPosition = useSetAtomComponentState(
-    recordIndexActionMenuDropdownPositionComponentState,
+  const setRecordIndexCommandMenuDropdownPosition = useSetAtomComponentState(
+    recordIndexCommandMenuDropdownPositionComponentState,
     actionMenuDropdownId,
   );
 
@@ -118,7 +118,7 @@ export const RecordBoardCard = () => {
   const handleContextMenuOpen = (event: React.MouseEvent) => {
     event.preventDefault();
     setIsRecordBoardCardSelected(true);
-    setRecordIndexActionMenuDropdownPosition({
+    setRecordIndexCommandMenuDropdownPosition({
       x: event.clientX,
       y: event.clientY,
     });

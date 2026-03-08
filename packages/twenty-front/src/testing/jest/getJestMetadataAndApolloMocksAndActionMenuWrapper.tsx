@@ -1,4 +1,4 @@
-import { ActionMenuComponentInstanceContext } from '@/command-menu-item/states/contexts/ActionMenuComponentInstanceContext';
+import { CommandMenuComponentInstanceContext } from '@/command-menu-item/states/contexts/CommandMenuComponentInstanceContext';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { type MockedResponse } from '@apollo/client/testing';
 import { type ReactNode } from 'react';
@@ -51,7 +51,7 @@ export const getJestMetadataAndApolloMocksAndActionMenuWrapper = ({
       <ContextStoreComponentInstanceContext.Provider
         value={{ instanceId: componentInstanceId }}
       >
-        <ActionMenuComponentInstanceContext.Provider
+        <CommandMenuComponentInstanceContext.Provider
           value={{
             instanceId: componentInstanceId,
           }}
@@ -74,7 +74,7 @@ export const getJestMetadataAndApolloMocksAndActionMenuWrapper = ({
               {children}
             </JestContextStoreSetter>
           </JestRecordIndexContextProviderWrapper>
-        </ActionMenuComponentInstanceContext.Provider>
+        </CommandMenuComponentInstanceContext.Provider>
       </ContextStoreComponentInstanceContext.Provider>
     </Wrapper>
   );

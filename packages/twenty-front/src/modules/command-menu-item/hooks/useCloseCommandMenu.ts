@@ -1,14 +1,14 @@
 import { CommandMenuItemContext } from '@/command-menu-item/contexts/CommandMenuItemContext';
-import { ActionMenuComponentInstanceContext } from '@/command-menu-item/states/contexts/ActionMenuComponentInstanceContext';
-import { getActionMenuDropdownIdFromActionMenuId } from '@/command-menu-item/utils/getActionMenuDropdownIdFromActionMenuId';
-import { getSidePanelActionMenuDropdownIdFromActionMenuId } from '@/command-menu-item/utils/getSidePanelActionMenuDropdownIdFromActionMenuId';
+import { CommandMenuComponentInstanceContext } from '@/command-menu-item/states/contexts/CommandMenuComponentInstanceContext';
+import { getCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/utils/getCommandMenuDropdownIdFromCommandMenuId';
+import { getSidePanelCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/utils/getSidePanelCommandMenuDropdownIdFromCommandMenuId';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-export const useCloseActionMenu = ({
+export const useCloseCommandMenu = ({
   closeSidePanelOnShowPageOptionsActionExecution = false,
   closeSidePanelOnCommandMenuItemListActionExecution = true,
 }: {
@@ -21,15 +21,15 @@ export const useCloseActionMenu = ({
 
   const { closeDropdown } = useCloseDropdown();
 
-  const actionMenuId = useAvailableComponentInstanceIdOrThrow(
-    ActionMenuComponentInstanceContext,
+  const commandMenuId = useAvailableComponentInstanceIdOrThrow(
+    CommandMenuComponentInstanceContext,
   );
 
   const dropdownId = isInSidePanel
-    ? getSidePanelActionMenuDropdownIdFromActionMenuId(actionMenuId)
-    : getActionMenuDropdownIdFromActionMenuId(actionMenuId);
+    ? getSidePanelCommandMenuDropdownIdFromCommandMenuId(commandMenuId)
+    : getCommandMenuDropdownIdFromCommandMenuId(commandMenuId);
 
-  const closeActionMenu = () => {
+  const closeCommandMenu = () => {
     if (actionMenuType === 'command-menu') {
       if (
         isDefined(closeSidePanelOnCommandMenuItemListActionExecution) &&
@@ -56,5 +56,5 @@ export const useCloseActionMenu = ({
     }
   };
 
-  return { closeActionMenu };
+  return { closeCommandMenu };
 };

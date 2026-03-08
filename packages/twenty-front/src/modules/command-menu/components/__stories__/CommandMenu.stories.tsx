@@ -20,7 +20,7 @@ import {
 } from '~/testing/mock-data/users';
 import { sleep } from '~/utils/sleep';
 
-import { ActionMenuComponentInstanceContext } from '@/command-menu-item/states/contexts/ActionMenuComponentInstanceContext';
+import { CommandMenuComponentInstanceContext } from '@/command-menu-item/states/contexts/CommandMenuComponentInstanceContext';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { SidePanelRouter } from '@/side-panel/components/SidePanelRouter';
 import { SIDE_PANEL_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelComponentInstanceId';
@@ -55,7 +55,7 @@ const ContextStoreDecorator: Decorator = (Story) => {
         <ViewComponentInstanceContext.Provider
           value={{ instanceId: SIDE_PANEL_COMPONENT_INSTANCE_ID }}
         >
-          <ActionMenuComponentInstanceContext.Provider
+          <CommandMenuComponentInstanceContext.Provider
             value={{ instanceId: SIDE_PANEL_COMPONENT_INSTANCE_ID }}
           >
             <JestContextStoreSetter
@@ -65,7 +65,7 @@ const ContextStoreDecorator: Decorator = (Story) => {
             >
               <Story />
             </JestContextStoreSetter>
-          </ActionMenuComponentInstanceContext.Provider>
+          </CommandMenuComponentInstanceContext.Provider>
         </ViewComponentInstanceContext.Provider>
       </ContextStoreComponentInstanceContext.Provider>
     </RecordComponentInstanceContextsWrapper>
