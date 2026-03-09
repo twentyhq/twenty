@@ -138,10 +138,12 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilde
             </StyledFiltersContainer>
             <StyledActionButtonWrapper>
               <CommandMenuButton
-                id="add-rule"
-                Icon={IconPlus}
-                label={t`Add rule`}
-                shortLabel={t`Add rule`}
+                action={{
+                  Icon: IconPlus,
+                  label: t`Add rule`,
+                  shortLabel: t`Add rule`,
+                  key: 'add-rule',
+                }}
                 onClick={() => handleAddFilter(rootRecordFilterGroup)}
               />
             </StyledActionButtonWrapper>

@@ -12,11 +12,7 @@ export const CommandMenuItemButton = ({
 }) => {
   return (
     <CommandMenuButton
-      id={action.key}
-      label={action.label}
-      shortLabel={action.shortLabel}
-      Icon={action.Icon}
-      isPrimaryCTA={action.isPrimaryCTA}
+      action={action}
       to={to}
       onClick={onClick}
     />

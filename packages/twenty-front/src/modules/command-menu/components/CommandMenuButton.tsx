@@ -12,11 +12,13 @@ const StyledWrapper = styled.div`
 `;
 
 export type CommandMenuButtonProps = {
-  id: string;
-  label: string | MessageDescriptor;
-  shortLabel?: string | MessageDescriptor;
-  Icon: IconComponent;
-  isPrimaryCTA?: boolean;
+  action: {
+    key: string;
+    label: string | MessageDescriptor;
+    shortLabel?: string | MessageDescriptor;
+    Icon: IconComponent;
+    isPrimaryCTA?: boolean;
+  };
   onClick?: (event?: MouseEvent<HTMLElement>) => void;
   to?: string;
 };
@@ -28,28 +30,24 @@ const getCommandMenuButtonLabel = (
 };
 
 export const CommandMenuButton = ({
-  id,
-  label,
-  shortLabel,
-  Icon,
-  isPrimaryCTA = false,
+  action,
   onClick,
   to,
 }: CommandMenuButtonProps) => {
-  const resolvedLabel = getCommandMenuButtonLabel(label);
+  const resolvedLabel = getCommandMenuButtonLabel(action.label);
 
   const resolvedShortLabel =
-    shortLabel === undefined
+    action.shortLabel === undefined
       ? undefined
-      : getCommandMenuButtonLabel(shortLabel);
+      : getCommandMenuButtonLabel(action.shortLabel);
 
-  const buttonAccent = isPrimaryCTA ? 'blue' : 'default';
+  const buttonAccent = action.isPrimaryCTA ? 'blue' : 'default';
 
   return (
     <>
       {resolvedShortLabel !== undefined ? (
         <Button
-          Icon={Icon}
+          Icon={action.Icon}
           size="small"
           variant="secondary"
           accent={buttonAccent}
@@ -59,9 +57,9 @@ export const CommandMenuButton = ({
           ariaLabel={resolvedLabel}
         />
       ) : (
-        <div id={`command-menu-button-entry-${id}`} key={id}>
+        <div id={`command-menu-item-entry-${action.key}`} key={action.key}>
           <IconButton
-            Icon={Icon}
+            Icon={action.Icon}
             size="small"
             variant="secondary"
             accent={buttonAccent}
@@ -71,7 +69,7 @@ export const CommandMenuButton = ({
           />
           <StyledWrapper>
             <AppTooltip
-              anchorSelect={`#command-menu-button-entry-${id}`}
+              anchorSelect={`#command-menu-item-entry-${action.key}`}
               content={resolvedLabel}
               delay={TooltipDelay.longDelay}
               place={TooltipPosition.Bottom}
