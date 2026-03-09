@@ -10,7 +10,7 @@ import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
-export const useCommandMenuItemConfirmationModal = () => {
+export const useCommandMenuConfirmationModal = () => {
   const store = useStore();
   const setCommandMenuItemConfirmationModalConfig = useSetAtomState(
     commandMenuItemConfirmationModalConfigState,

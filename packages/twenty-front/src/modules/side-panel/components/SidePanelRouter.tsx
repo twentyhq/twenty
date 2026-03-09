@@ -1,4 +1,4 @@
-import { CommandMenuItemContextProvider } from '@/command-menu-item/contexts/CommandMenuItemContextProvider';
+import { CommandMenuContextProvider } from '@/command-menu-item/contexts/CommandMenuContextProvider';
 import { SidePanelContainer } from '@/side-panel/components/SidePanelContainer';
 import { SidePanelTopBar } from '@/side-panel/components/SidePanelTopBar';
 import { SIDE_PANEL_PAGES_CONFIG } from '@/side-panel/constants/SidePanelPagesConfig';
@@ -51,13 +51,13 @@ export const SidePanelRouter = () => {
           <SidePanelTopBar />
         </motion.div>
         <StyledSidePanelContent>
-          <CommandMenuItemContextProvider
+          <CommandMenuContextProvider
             isInSidePanel={true}
             displayType="listItem"
             containerType="command-menu-list"
           >
             {sidePanelPageComponent}
-          </CommandMenuItemContextProvider>
+          </CommandMenuContextProvider>
         </StyledSidePanelContent>
       </SidePanelPageComponentInstanceContext.Provider>
     </SidePanelContainer>

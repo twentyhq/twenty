@@ -2,7 +2,7 @@ import { useRunWorkflowRecordCommands } from '@/command-menu-item/record/workflo
 import { useRunWorkflowRecordAgnosticCommands } from '@/command-menu-item/record-agnostic/workflow/hooks/useRunWorkflowRecordAgnosticCommands';
 import {
   CommandMenuContext,
-  type CommandMenuItemContextType,
+  type CommandMenuContextType,
 } from '@/command-menu-item/contexts/CommandMenuContext';
 import { useRegisteredCommandMenuItems } from '@/command-menu-item/hooks/useRegisteredCommandMenuItems';
 import { useShouldCommandMenuItemBeRegisteredParams } from '@/command-menu-item/hooks/useShouldCommandMenuItemBeRegisteredParams';
@@ -12,7 +12,7 @@ import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/s
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
-export const CommandMenuItemContextProviderDefault = ({
+export const CommandMenuContextProviderDefault = ({
   objectMetadataItem,
   isInSidePanel,
   displayType,
@@ -20,9 +20,9 @@ export const CommandMenuItemContextProviderDefault = ({
   children,
 }: {
   objectMetadataItem: ObjectMetadataItem;
-  isInSidePanel: CommandMenuItemContextType['isInSidePanel'];
-  displayType: CommandMenuItemContextType['displayType'];
-  containerType: CommandMenuItemContextType['containerType'];
+  isInSidePanel: CommandMenuContextType['isInSidePanel'];
+  displayType: CommandMenuContextType['displayType'];
+  containerType: CommandMenuContextType['containerType'];
   children: React.ReactNode;
 }) => {
   const params = useShouldCommandMenuItemBeRegisteredParams({

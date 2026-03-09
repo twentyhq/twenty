@@ -1,4 +1,4 @@
-import { RecordShowSidePanelCommandMenu } from '@/command-menu-item/components/RecordShowSidePanelCommandMenu';
+import { RecordPageSidePanelCommandMenu } from '@/command-menu-item/components/RecordPageSidePanelCommandMenu';
 import { RecordShowSidePanelOpenRecordButton } from '@/command-menu-item/components/RecordShowSidePanelOpenRecordButton';
 import { InformationBannerDeletedRecord } from '@/information-banner/components/deleted-record/InformationBannerDeletedRecord';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
@@ -103,7 +103,7 @@ export const PageLayoutRecordPageRenderer = ({
         {isInSidePanel && (
           <SidePanelFooter
             actions={[
-              <RecordShowSidePanelCommandMenu />,
+              <RecordPageSidePanelCommandMenu />,
               <RecordShowSidePanelOpenRecordButton
                 objectNameSingular={
                   targetRecordIdentifier.targetObjectNameSingular
