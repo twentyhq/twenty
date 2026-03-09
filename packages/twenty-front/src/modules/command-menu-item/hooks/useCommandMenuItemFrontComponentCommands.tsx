@@ -99,7 +99,7 @@ const buildCommandMenuItemFromFrontComponent = ({
     key: `command-menu-item-front-component-${item.id}`,
     scope,
     label: displayLabel,
-    shortLabel: item.shortLabel,
+    shortLabel: item.shortLabel ?? undefined,
     position: index,
     isPinned,
     Icon,
@@ -185,19 +185,18 @@ export const useCommandMenuItemFrontComponentCommands = (
     item.availabilityObjectMetadataId ===
       contextStoreCurrentObjectMetadataItemId;
 
-  const globalItems = frontComponentItems.filter(
-    (item) =>
-      objectMatches(item) &&
-      item.availabilityType === CommandMenuItemAvailabilityType.GLOBAL,
+  const frontComponentItemsWithObjectMatches =
+    frontComponentItems.filter(objectMatches);
+
+  const globalItems = frontComponentItemsWithObjectMatches.filter(
+    (item) => item.availabilityType === CommandMenuItemAvailabilityType.GLOBAL,
   );
 
-  const recordScopedItems = frontComponentItems.filter((item) => {
-    if (!objectMatches(item)) return false;
-
-    return (
-      item.availabilityType === CommandMenuItemAvailabilityType.RECORD_SELECTION
-    );
-  });
+  const recordScopedItems = frontComponentItemsWithObjectMatches.filter(
+    (item) =>
+      item.availabilityType ===
+      CommandMenuItemAvailabilityType.RECORD_SELECTION,
+  );
 
   const globalCommandMenuItems = globalItems.map((item, index) =>
     buildCommandMenuItemFromFrontComponent({
@@ -212,22 +211,21 @@ export const useCommandMenuItemFrontComponentCommands = (
     }),
   );
 
-  const recordScopedCommandMenuItems =
-    hasRecordSelection
-      ? recordScopedItems.map((item, index) =>
-          buildCommandMenuItemFromFrontComponent({
-            item,
-            scope: CommandMenuItemScope.RecordSelection,
-            index,
-            isPinned: !contextStoreIsPageInEditMode && item.isPinned,
-            getIcon,
-            openFrontComponentInSidePanel,
-            mountHeadlessFrontComponent,
-            commandMenuContextApi,
-            mountContext,
-          }),
-        )
-      : [];
+  const recordScopedCommandMenuItems = hasRecordSelection
+    ? recordScopedItems.map((item, index) =>
+        buildCommandMenuItemFromFrontComponent({
+          item,
+          scope: CommandMenuItemScope.RecordSelection,
+          index,
+          isPinned: !contextStoreIsPageInEditMode && item.isPinned,
+          getIcon,
+          openFrontComponentInSidePanel,
+          mountHeadlessFrontComponent,
+          commandMenuContextApi,
+          mountContext,
+        }),
+      )
+    : [];
 
   return [...globalCommandMenuItems, ...recordScopedCommandMenuItems].filter(
     (item) => item.shouldBeRegistered(),
