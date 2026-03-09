@@ -144,14 +144,12 @@ export class MarketplaceCatalogSyncService {
     }
 
     const url =
-      typeof repository === 'string' ? repository : repository.url ?? null;
+      typeof repository === 'string' ? repository : (repository.url ?? null);
 
     if (!isDefined(url)) {
       return null;
     }
 
-    return url
-      .replace(/^git\+/, '')
-      .replace(/\.git$/, '');
+    return url.replace(/^git\+/, '').replace(/\.git$/, '');
   }
 }
