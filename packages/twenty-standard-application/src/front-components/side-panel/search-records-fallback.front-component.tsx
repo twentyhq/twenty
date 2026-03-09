@@ -13,5 +13,5 @@ export default defineFrontComponent({
   universalIdentifier: '7f7fc9f2-0291-4264-a789-d21e8f1c774e',
   name: 'Search records fallback',
   component: SearchRecordsFallback,
-  isHeadless: false,
+  isHeadless: true,
 });

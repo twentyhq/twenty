@@ -763,7 +763,7 @@ export const STANDARD_FRONT_COMPONENTS = {
     builtComponentChecksum:
       STANDARD_FRONT_COMPONENT_BUILD_MANIFEST.searchRecords
         .builtComponentChecksum,
-    isHeadless: false,
+    isHeadless: true,
   },
   searchRecordsFallback: {
     universalIdentifier: '7f7fc9f2-0291-4264-a789-d21e8f1c774e',
@@ -777,7 +777,7 @@ export const STANDARD_FRONT_COMPONENTS = {
     builtComponentChecksum:
       STANDARD_FRONT_COMPONENT_BUILD_MANIFEST.searchRecordsFallback
         .builtComponentChecksum,
-    isHeadless: false,
+    isHeadless: true,
   },
   askAi: {
     universalIdentifier: '75d8fed0-36d9-4798-afa5-1472ecac0884',
@@ -789,7 +789,7 @@ export const STANDARD_FRONT_COMPONENTS = {
       STANDARD_FRONT_COMPONENT_BUILD_MANIFEST.askAi.builtComponentPath,
     builtComponentChecksum:
       STANDARD_FRONT_COMPONENT_BUILD_MANIFEST.askAi.builtComponentChecksum,
-    isHeadless: false,
+    isHeadless: true,
   },
   viewPreviousAiChats: {
     universalIdentifier: '5e7876fa-7a9b-487f-8e05-1a1c7ce029d9',
@@ -803,6 +803,6 @@ export const STANDARD_FRONT_COMPONENTS = {
     builtComponentChecksum:
       STANDARD_FRONT_COMPONENT_BUILD_MANIFEST.viewPreviousAiChats
         .builtComponentChecksum,
-    isHeadless: false,
+    isHeadless: true,
   },
 } as const;
