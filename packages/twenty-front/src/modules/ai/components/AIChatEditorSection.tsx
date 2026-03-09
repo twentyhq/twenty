@@ -1,6 +1,5 @@
 import { styled } from '@linaria/react';
 import { EditorContent } from '@tiptap/react';
-import { useCallback } from 'react';
 import { LightButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -123,19 +122,16 @@ export const AIChatEditorSection = () => {
 
   const { editor, handleSendAndClear } = useAIChatEditor();
 
-  const editorWrapperRefCallback = useCallback(
-    (node: HTMLDivElement | null) => {
-      if (node && focusEditorAfterMigrate) {
-        requestAnimationFrame(() => {
-          if (editor) {
-            editor.commands.focus('end');
-            setFocusEditorAfterMigrate(false);
-          }
-        });
-      }
-    },
-    [focusEditorAfterMigrate, setFocusEditorAfterMigrate, editor],
-  );
+  const editorWrapperRefCallback = (node: HTMLDivElement | null) => {
+    if (node && focusEditorAfterMigrate) {
+      requestAnimationFrame(() => {
+        if (editor) {
+          editor.commands.focus('end');
+          setFocusEditorAfterMigrate(false);
+        }
+      });
+    }
+  };
 
   return (
     <>

@@ -1,7 +1,6 @@
 import { getOperationName } from '@apollo/client/utilities';
 import { useApolloClient } from '@apollo/client';
 import { useStore } from 'jotai';
-import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { CHAT_THREADS_PAGE_SIZE } from '@/ai/constants/ChatThreads';
@@ -193,7 +192,7 @@ export const useAgentChatData = (
     },
   });
 
-  const ensureThreadForDraft = useCallback(() => {
+  const ensureThreadForDraft = () => {
     const current = store.get(currentAIChatThreadState.atom);
     if (current !== AGENT_CHAT_NEW_THREAD_DRAFT_KEY) {
       return;
@@ -213,11 +212,9 @@ export const useAgentChatData = (
     }
     setIsCreatingChatThread(true);
     createChatThread();
-  }, [store, createChatThread, setIsCreatingChatThread]);
+  };
 
-  const ensureThreadIdForSend = useCallback(async (): Promise<
-    string | null
-  > => {
+  const ensureThreadIdForSend = async (): Promise<string | null> => {
     const current = store.get(currentAIChatThreadState.atom);
     if (current !== AGENT_CHAT_NEW_THREAD_DRAFT_KEY) {
       return current;
@@ -232,7 +229,7 @@ export const useAgentChatData = (
     } finally {
       setIsCreatingChatThread(false);
     }
-  }, [store, createChatThread, setIsCreatingChatThread]);
+  };
 
   const uiMessages = mapDBMessagesToUIMessages(data?.chatMessages || []);
   const isLoading = messagesLoading || threadsLoading;

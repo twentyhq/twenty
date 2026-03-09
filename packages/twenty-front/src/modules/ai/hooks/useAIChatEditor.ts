@@ -5,7 +5,7 @@ import { Paragraph } from '@tiptap/extension-paragraph';
 import { Text } from '@tiptap/extension-text';
 import { Placeholder } from '@tiptap/extensions/placeholder';
 import { useEditor } from '@tiptap/react';
-import { useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { useAgentChatContext } from '@/ai/contexts/AgentChatContext';
@@ -136,10 +136,10 @@ export const useAIChatEditor = () => {
     mentionStorage.searchMentionRecords = searchMentionRecords;
   }
 
-  const handleSendAndClear = useCallback(() => {
+  const handleSendAndClear = () => {
     dispatchAgentChatSendMessageEvent();
     editor?.commands.clearContent();
-  }, [editor]);
+  };
 
   return { editor, handleSendAndClear };
 };
