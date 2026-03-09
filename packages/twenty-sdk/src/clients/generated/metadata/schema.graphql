@@ -904,6 +904,7 @@ type PageLayoutWidget {
   createdAt: DateTime!
   updatedAt: DateTime!
   deletedAt: DateTime
+  isOverridden: Boolean!
 }
 
 enum WidgetType {
@@ -1214,6 +1215,7 @@ type PageLayoutTab {
   createdAt: DateTime!
   updatedAt: DateTime!
   deletedAt: DateTime
+  isOverridden: Boolean!
 }
 
 type PageLayout {
@@ -3251,6 +3253,7 @@ input UpdatePageLayoutWidgetInput {
   gridPosition: GridPositionInput
   position: JSON
   configuration: JSON
+  conditionalDisplay: JSON
 }
 
 input CreatePageLayoutTabInput {
@@ -3262,6 +3265,7 @@ input CreatePageLayoutTabInput {
 input UpdatePageLayoutTabInput {
   title: String
   position: Float
+  icon: String
 }
 
 input CreatePageLayoutInput {
@@ -3287,6 +3291,7 @@ input UpdatePageLayoutTabWithWidgetsInput {
   id: UUID!
   title: String!
   position: Float!
+  icon: String
   widgets: [UpdatePageLayoutWidgetWithIdInput!]!
 }
 
@@ -3299,6 +3304,7 @@ input UpdatePageLayoutWidgetWithIdInput {
   gridPosition: GridPositionInput!
   position: JSON
   configuration: JSON
+  conditionalDisplay: JSON
 }
 
 input CreateLogicFunctionFromSourceInput {
