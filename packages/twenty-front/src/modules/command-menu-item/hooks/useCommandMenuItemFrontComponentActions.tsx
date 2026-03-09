@@ -227,5 +227,7 @@ export const useCommandMenuItemFrontComponentActions = (
     }),
   );
 
-  return [...globalCommandMenuItems, ...recordScopedCommandMenuItems];
+  return [...globalCommandMenuItems, ...recordScopedCommandMenuItems].filter(
+    (item) => item.shouldBeRegistered(),
+  );
 };
