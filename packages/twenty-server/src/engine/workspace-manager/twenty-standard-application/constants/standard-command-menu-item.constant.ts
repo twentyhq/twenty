@@ -313,8 +313,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     position: 23,
     isPinned: false,
     availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
-    conditionalAvailabilityExpression:
-      'targetObjectReadPermissions.person and (objectMetadataItem.nameSingular != "person" or pageType == "RECORD_PAGE")',
+    conditionalAvailabilityExpression: 'targetObjectReadPermissions.person',
     availabilityObjectMetadataUniversalIdentifier: null,
     frontComponentUniversalIdentifier:
       STANDARD_FRONT_COMPONENTS.goToPeople.universalIdentifier,
@@ -327,8 +326,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     position: 24,
     isPinned: false,
     availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
-    conditionalAvailabilityExpression:
-      'targetObjectReadPermissions.company and (objectMetadataItem.nameSingular != "company" or pageType == "RECORD_PAGE")',
+    conditionalAvailabilityExpression: 'targetObjectReadPermissions.company',
     availabilityObjectMetadataUniversalIdentifier: null,
     frontComponentUniversalIdentifier:
       STANDARD_FRONT_COMPONENTS.goToCompanies.universalIdentifier,
@@ -341,8 +339,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     position: 25,
     isPinned: false,
     availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
-    conditionalAvailabilityExpression:
-      'targetObjectReadPermissions.dashboard and (objectMetadataItem.nameSingular != "dashboard" or pageType == "RECORD_PAGE")',
+    conditionalAvailabilityExpression: 'targetObjectReadPermissions.dashboard',
     availabilityObjectMetadataUniversalIdentifier: null,
     frontComponentUniversalIdentifier:
       STANDARD_FRONT_COMPONENTS.goToDashboards.universalIdentifier,
@@ -356,7 +353,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     isPinned: false,
     availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
     conditionalAvailabilityExpression:
-      'targetObjectReadPermissions.opportunity and (objectMetadataItem.nameSingular != "opportunity" or pageType == "RECORD_PAGE")',
+      'targetObjectReadPermissions.opportunity',
     availabilityObjectMetadataUniversalIdentifier: null,
     frontComponentUniversalIdentifier:
       STANDARD_FRONT_COMPONENTS.goToOpportunities.universalIdentifier,
@@ -382,8 +379,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     position: 28,
     isPinned: false,
     availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
-    conditionalAvailabilityExpression:
-      'targetObjectReadPermissions.task and (objectMetadataItem.nameSingular != "task" or pageType == "RECORD_PAGE")',
+    conditionalAvailabilityExpression: 'targetObjectReadPermissions.task',
     availabilityObjectMetadataUniversalIdentifier: null,
     frontComponentUniversalIdentifier:
       STANDARD_FRONT_COMPONENTS.goToTasks.universalIdentifier,
@@ -396,8 +392,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     position: 29,
     isPinned: false,
     availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
-    conditionalAvailabilityExpression:
-      'targetObjectReadPermissions.note and (objectMetadataItem.nameSingular != "note" or pageType == "RECORD_PAGE")',
+    conditionalAvailabilityExpression: 'targetObjectReadPermissions.note',
     availabilityObjectMetadataUniversalIdentifier: null,
     frontComponentUniversalIdentifier:
       STANDARD_FRONT_COMPONENTS.goToNotes.universalIdentifier,
@@ -411,7 +406,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     isPinned: true,
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'featureFlags.IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED and selectedRecords.length > 0 and none(selectedRecords, "isRemote") and noneDefined(selectedRecords, "deletedAt") and objectPermissions.canUpdateObjectRecords and objectMetadataItem.nameSingular != "dashboard"',
+      'featureFlags.IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED and selectedRecords.length > 0 and none(selectedRecords, "isRemote") and noneDefined(selectedRecords, "deletedAt") and objectPermissions.canUpdateObjectRecords',
     availabilityObjectMetadataUniversalIdentifier: null,
     frontComponentUniversalIdentifier:
       STANDARD_FRONT_COMPONENTS.editRecordPageLayout.universalIdentifier,
@@ -425,7 +420,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     isPinned: true,
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'featureFlags.IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED and selectedRecords.length > 0 and none(selectedRecords, "isRemote") and noneDefined(selectedRecords, "deletedAt") and objectPermissions.canUpdateObjectRecords and objectMetadataItem.nameSingular != "dashboard"',
+      'featureFlags.IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED and selectedRecords.length > 0 and none(selectedRecords, "isRemote") and noneDefined(selectedRecords, "deletedAt") and objectPermissions.canUpdateObjectRecords',
     availabilityObjectMetadataUniversalIdentifier: null,
     frontComponentUniversalIdentifier:
       STANDARD_FRONT_COMPONENTS.saveRecordPageLayout.universalIdentifier,
@@ -439,7 +434,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     isPinned: true,
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'featureFlags.IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED and selectedRecords.length > 0 and none(selectedRecords, "isRemote") and noneDefined(selectedRecords, "deletedAt") and objectPermissions.canUpdateObjectRecords and objectMetadataItem.nameSingular != "dashboard"',
+      'featureFlags.IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED and selectedRecords.length > 0 and none(selectedRecords, "isRemote") and noneDefined(selectedRecords, "deletedAt") and objectPermissions.canUpdateObjectRecords',
     availabilityObjectMetadataUniversalIdentifier: null,
     frontComponentUniversalIdentifier:
       STANDARD_FRONT_COMPONENTS.cancelRecordPageLayout.universalIdentifier,
@@ -512,8 +507,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     position: 41,
     isPinned: false,
     availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
-    conditionalAvailabilityExpression:
-      'targetObjectReadPermissions.workflow and (objectMetadataItem.nameSingular != "workflow" or pageType == "RECORD_PAGE")',
+    conditionalAvailabilityExpression: 'targetObjectReadPermissions.workflow',
     availabilityObjectMetadataUniversalIdentifier: null,
     frontComponentUniversalIdentifier:
       STANDARD_FRONT_COMPONENTS.goToWorkflows.universalIdentifier,
