@@ -21,10 +21,8 @@ export const AIChatEditorFocusEffect = ({
     }
 
     const rafId = requestAnimationFrame(() => {
-      if (editor) {
-        editor.commands.focus('end');
-        setFocusEditorAfterMigrate(false);
-      }
+      editor.commands.focus('end');
+      setFocusEditorAfterMigrate(false);
     });
 
     return () => {
