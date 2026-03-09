@@ -73,5 +73,6 @@ export const createStandardPageLayoutTabFlatMetadata = ({
     deletedAt: null,
     icon,
     layoutMode,
+    overrides: null,
   };
 };

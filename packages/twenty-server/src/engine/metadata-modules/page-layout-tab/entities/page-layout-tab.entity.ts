@@ -17,7 +17,13 @@ import {
 
 import { PageLayoutWidgetEntity } from 'src/engine/metadata-modules/page-layout-widget/entities/page-layout-widget.entity';
 import { PageLayoutEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout.entity';
-import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
+import { OverridableEntity } from 'src/engine/workspace-manager/types/overridable-entity';
+
+export type PageLayoutTabOverrides = {
+  title?: string;
+  position?: number;
+  icon?: string | null;
+};
 
 @Entity({ name: 'pageLayoutTab', schema: 'core' })
 @ObjectType('PageLayoutTab')
@@ -27,7 +33,7 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
   { where: '"deletedAt" IS NULL' },
 )
 export class PageLayoutTabEntity
-  extends SyncableEntity
+  extends OverridableEntity<PageLayoutTabOverrides>
   implements Required<PageLayoutTabEntity>
 {
   @PrimaryGeneratedColumn('uuid')
