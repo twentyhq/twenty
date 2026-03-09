@@ -10,6 +10,7 @@ export const PAGE_LAYOUT_TAB_FRAGMENT = gql`
     icon
     position
     layoutMode
+    isOverridden
     widgets {
       ...PageLayoutWidgetFragment
     }
