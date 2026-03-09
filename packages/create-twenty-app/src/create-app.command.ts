@@ -19,10 +19,13 @@ export class CreateAppCommand {
   async execute(
     directory?: string,
     mode: ScaffoldingMode = 'exhaustive',
+    nonInteractive = false,
   ): Promise<void> {
     try {
       const { appName, appDisplayName, appDirectory, appDescription } =
-        await this.getAppInfos(directory);
+        nonInteractive
+          ? this.getAppInfosNonInteractive(directory!)
+          : await this.getAppInfos(directory);
 
       const exampleOptions = this.resolveExampleOptions(mode);
 
@@ -101,6 +104,20 @@ export class CreateAppCommand {
       : path.join(CURRENT_EXECUTION_DIRECTORY, kebabCase(appName));
 
     return { appName, appDisplayName, appDirectory, appDescription };
+  }
+
+  private getAppInfosNonInteractive(directory: string): {
+    appName: string;
+    appDisplayName: string;
+    appDescription: string;
+    appDirectory: string;
+  } {
+    const appName = directory.trim();
+    const appDisplayName = convertToLabel(appName);
+    const appDescription = '';
+    const appDirectory = path.join(CURRENT_EXECUTION_DIRECTORY, directory);
+
+    return { appName, appDisplayName, appDescription, appDirectory };
   }
 
   private resolveExampleOptions(mode: ScaffoldingMode): ExampleOptions {

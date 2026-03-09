@@ -18,6 +18,10 @@ const program = new Command(packageJson.name)
     '-m, --minimal',
     'Create only core entities (application-config and default-role)',
   )
+  .option(
+    '-y, --yes',
+    'Skip interactive prompts and use defaults (requires directory argument)',
+  )
   .helpOption('-h, --help', 'Display this help message.')
   .action(
     async (
@@ -25,6 +29,7 @@ const program = new Command(packageJson.name)
       options?: {
         exhaustive?: boolean;
         minimal?: boolean;
+        yes?: boolean;
       },
     ) => {
       const modeFlags = [options?.exhaustive, options?.minimal].filter(Boolean);
@@ -33,6 +38,15 @@ const program = new Command(packageJson.name)
         console.error(
           chalk.red(
             'Error: --exhaustive and --minimal are mutually exclusive.',
+          ),
+        );
+        process.exit(1);
+      }
+
+      if (options?.yes && !directory) {
+        console.error(
+          chalk.red(
+            'Error: --yes requires a directory argument.',
           ),
         );
         process.exit(1);
@@ -49,7 +63,11 @@ const program = new Command(packageJson.name)
 
       const mode: ScaffoldingMode = options?.minimal ? 'minimal' : 'exhaustive';
 
-      await new CreateAppCommand().execute(directory, mode);
+      await new CreateAppCommand().execute(
+        directory,
+        mode,
+        options?.yes ?? false,
+      );
     },
   );
 
