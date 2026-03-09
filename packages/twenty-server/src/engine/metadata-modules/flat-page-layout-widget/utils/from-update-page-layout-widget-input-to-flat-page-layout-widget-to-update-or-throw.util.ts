@@ -103,7 +103,7 @@ export const fromUpdatePageLayoutWidgetInputToFlatPageLayoutWidgetToUpdateOrThro
         update: updatedEditableProperties,
       }),
       overrides,
-    } as FlatPageLayoutWidget;
+    };
 
     if (updatedEditableProperties.objectMetadataId !== undefined) {
       const { objectMetadataUniversalIdentifier } =
