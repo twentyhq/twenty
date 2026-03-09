@@ -1,21 +1,22 @@
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 
-import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
-import { SidePanelObjectPickerSubView } from '@/side-panel/pages/navigation-menu-item/components/SidePanelObjectPickerSubView';
-import { SidePanelSystemObjectPickerSubView } from '@/side-panel/pages/navigation-menu-item/components/SidePanelSystemObjectPickerSubView';
-import { getAvailableObjectMetadataForNewSidebarItem } from '@/side-panel/pages/navigation-menu-item/utils/getAvailableObjectMetadataForNewSidebarItem';
 import { useAddObjectToNavigationMenuDraft } from '@/navigation-menu-item/hooks/useAddObjectToNavigationMenuDraft';
-import { getStandardObjectIconColor } from '@/navigation-menu-item/utils/getStandardObjectIconColor';
 import { useDraftNavigationMenuItems } from '@/navigation-menu-item/hooks/useDraftNavigationMenuItems';
 import { useNavigationMenuObjectMetadataFromDraft } from '@/navigation-menu-item/hooks/useNavigationMenuObjectMetadataFromDraft';
+import { useOpenNavigationMenuItemInSidePanel } from '@/navigation-menu-item/hooks/useOpenNavigationMenuItemInSidePanel';
 import { addMenuItemInsertionContextState } from '@/navigation-menu-item/states/addMenuItemInsertionContextState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { getStandardObjectIconColor } from '@/navigation-menu-item/utils/getStandardObjectIconColor';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { SidePanelObjectPickerSubView } from '@/side-panel/pages/navigation-menu-item/components/SidePanelObjectPickerSubView';
+import { SidePanelSystemObjectPickerSubView } from '@/side-panel/pages/navigation-menu-item/components/SidePanelSystemObjectPickerSubView';
+import { getAvailableObjectMetadataForNewSidebarItem } from '@/side-panel/pages/navigation-menu-item/utils/getAvailableObjectMetadataForNewSidebarItem';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { ViewKey } from '@/views/types/ViewKey';
+import { useIcons } from 'twenty-ui/display';
 
 type SidePanelNewSidebarItemObjectFlowProps = {
   onBack: () => void;
@@ -25,7 +26,7 @@ export const SidePanelNewSidebarItemObjectFlow = ({
   onBack,
 }: SidePanelNewSidebarItemObjectFlowProps) => {
   const { t } = useLingui();
-  const { closeSidePanelMenu } = useSidePanelMenu();
+  const { getIcon } = useIcons();
   const [objectSearchInput, setObjectSearchInput] = useState('');
   const [systemObjectSearchInput, setSystemObjectSearchInput] = useState('');
   const [isInSystemPicker, setIsInSystemPicker] = useState(false);
@@ -33,6 +34,8 @@ export const SidePanelNewSidebarItemObjectFlow = ({
   const { currentDraft } = useDraftNavigationMenuItems();
   const { objectMetadataItems } = useObjectMetadataItems();
   const { addObjectToDraft } = useAddObjectToNavigationMenuDraft();
+  const { openNavigationMenuItemInSidePanel } =
+    useOpenNavigationMenuItemInSidePanel();
   const { activeNonSystemObjectMetadataItems } =
     useFilteredObjectMetadataItems();
   const addMenuItemInsertionContext = useAtomStateValue(
@@ -68,7 +71,7 @@ export const SidePanelNewSidebarItemObjectFlow = ({
     if (objectMetadataIdsInWorkspace.has(objectMetadataItem.id)) {
       return;
     }
-    addObjectToDraft(
+    const itemId = addObjectToDraft(
       objectMetadataItem.id,
       defaultViewId,
       currentDraft,
@@ -77,13 +80,19 @@ export const SidePanelNewSidebarItemObjectFlow = ({
       getStandardObjectIconColor(objectMetadataItem.nameSingular),
     );
     setAddMenuItemInsertionContext(null);
-    closeSidePanelMenu();
+    openNavigationMenuItemInSidePanel({
+      itemId,
+      pageTitle: objectMetadataItem.labelSingular,
+      pageIcon: getIcon(objectMetadataItem.icon),
+    });
   };
 
   const handleBackToObjectList = () => {
     setIsInSystemPicker(false);
     setSystemObjectSearchInput('');
   };
+
+  const disableDrag = addMenuItemInsertionContext?.disableDrag === true;
 
   if (isInSystemPicker) {
     return (
@@ -96,6 +105,7 @@ export const SidePanelNewSidebarItemObjectFlow = ({
         onChangeObject={handleSelectObject}
         objectMenuItemVariant="add"
         emptyNoResultsText={t`All system objects are already in the sidebar`}
+        disableDrag={disableDrag}
       />
     );
   }
@@ -110,6 +120,7 @@ export const SidePanelNewSidebarItemObjectFlow = ({
       isViewItem={false}
       onChangeObject={handleSelectObject}
       objectMenuItemVariant="add"
+      disableDrag={disableDrag}
     />
   );
 };

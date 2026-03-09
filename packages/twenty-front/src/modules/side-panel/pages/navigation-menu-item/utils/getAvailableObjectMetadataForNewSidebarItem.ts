@@ -20,9 +20,9 @@ export const getAvailableObjectMetadataForNewSidebarItem = ({
   objectMetadataIdsWithIndexView,
   objectMetadataIdsWithDisplayableViews,
 }: GetAvailableObjectMetadataForNewSidebarItemProps): GetAvailableObjectMetadataForNewSidebarItemResult => {
-  const availableObjectMetadataItems = [
-    ...activeNonSystemObjectMetadataItems,
-  ].sort((a, b) => a.labelPlural.localeCompare(b.labelPlural));
+  const availableObjectMetadataItems = activeNonSystemObjectMetadataItems
+    .filter((item) => objectMetadataIdsWithIndexView.has(item.id))
+    .sort((a, b) => a.labelPlural.localeCompare(b.labelPlural));
 
   const activeSystemObjectMetadataItems = objectMetadataItems
     .filter((item) => item.isActive && item.isSystem)
