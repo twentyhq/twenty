@@ -37,14 +37,13 @@ export const CommandModal = ({
 
     const run = async () => {
       try {
-        const commandConfirmationModalResult = await openCommandConfirmationModal(
-          {
+        const commandConfirmationModalResult =
+          await openCommandConfirmationModal({
             title,
             subtitle,
             confirmButtonText,
             confirmButtonAccent,
-          },
-        );
+          });
 
         if (commandConfirmationModalResult === 'confirm') {
           await execute();

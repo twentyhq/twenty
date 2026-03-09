@@ -29,7 +29,9 @@ export const createOpenCommandConfirmationModalAdapter = (
       );
     }
 
-    let rejectCommandConfirmationModalPromise: (error: Error) => void = () => {};
+    let rejectCommandConfirmationModalPromise: (
+      error: Error,
+    ) => void = () => {};
 
     const commandConfirmationModalResultPromise =
       new Promise<CommandConfirmationModalResult>((resolve, reject) => {

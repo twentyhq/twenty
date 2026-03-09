@@ -32,9 +32,7 @@ const meta: Meta<typeof CommandMenuItemDisplay> = {
   component: CommandMenuItemDisplay,
   decorators: [
     (Story) => (
-      <CommandConfigContext.Provider
-        value={addToFavoritesCommandMenuItem}
-      >
+      <CommandConfigContext.Provider value={addToFavoritesCommandMenuItem}>
         <Story />
       </CommandConfigContext.Provider>
     ),
