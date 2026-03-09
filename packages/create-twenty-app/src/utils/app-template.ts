@@ -105,6 +105,14 @@ export const copyBaseApplicationProject = async ({
     });
   }
 
+  if (exampleOptions.includeExampleAgent) {
+    await createExampleAgent({
+      appDirectory: sourceFolderPath,
+      fileFolder: 'agents',
+      fileName: 'example-agent.ts',
+    });
+  }
+
   if (exampleOptions.includeExampleIntegrationTest) {
     await scaffoldIntegrationTest({
       appDirectory,
@@ -548,6 +556,36 @@ export default defineSkill({
   description: 'A sample skill for your application',
   icon: 'IconBrain',
   content: 'Add your skill instructions here. Skills provide context and capabilities to AI agents.',
+});
+`;
+
+  await fs.ensureDir(join(appDirectory, fileFolder ?? ''));
+  await fs.writeFile(join(appDirectory, fileFolder ?? '', fileName), content);
+};
+
+const createExampleAgent = async ({
+  appDirectory,
+  fileFolder,
+  fileName,
+}: {
+  appDirectory: string;
+  fileFolder?: string;
+  fileName: string;
+}) => {
+  const universalIdentifier = v4();
+
+  const content = `import { defineAgent } from 'twenty-sdk';
+
+export const EXAMPLE_AGENT_UNIVERSAL_IDENTIFIER =
+  '${universalIdentifier}';
+
+export default defineAgent({
+  universalIdentifier: EXAMPLE_AGENT_UNIVERSAL_IDENTIFIER,
+  name: 'example-agent',
+  label: 'Example Agent',
+  description: 'A sample AI agent for your application',
+  icon: 'IconRobot',
+  prompt: 'You are a helpful assistant. Help users with their questions and tasks.',
 });
 `;
 

@@ -113,6 +113,7 @@ export class CreateAppCommand {
         includeExampleView: false,
         includeExampleNavigationMenuItem: false,
         includeExampleSkill: false,
+        includeExampleAgent: false,
         includeExampleIntegrationTest: false,
       };
     }
@@ -126,6 +127,7 @@ export class CreateAppCommand {
       includeExampleNavigationMenuItem: true,
       includeExampleSkill: true,
       includeExampleIntegrationTest: true,
+      includeExampleAgent: true,
     };
   }
 
