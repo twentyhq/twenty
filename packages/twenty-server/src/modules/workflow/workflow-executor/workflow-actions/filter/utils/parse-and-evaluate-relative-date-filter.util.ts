@@ -18,6 +18,7 @@ import {
 } from 'date-fns';
 import {
   addUnitToDateTime,
+  assertUnreachable,
   getFirstDayOfTheWeekAsANumberForDateFNS,
   isDefined,
   type RelativeDateFilter,
@@ -170,6 +171,6 @@ function evaluateThisDirection(
         end: endOfYear(now),
       });
     default:
-      return false;
+      return assertUnreachable(unit);
   }
 }
