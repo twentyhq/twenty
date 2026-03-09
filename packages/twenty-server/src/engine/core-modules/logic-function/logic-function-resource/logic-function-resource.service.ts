@@ -343,17 +343,24 @@ export class LogicFunctionResourceService {
 
     await fs.mkdir(dirname(builtBundleFilePath), { recursive: true });
 
-    await build({
-      entryPoints: [entryFilePath],
-      outfile: builtBundleFilePath,
-      platform: 'node',
-      format: 'esm',
-      target: 'es2017',
-      bundle: true,
-      sourcemap: true,
-      packages: 'external',
-      banner: NODE_ESM_CJS_BANNER,
-    });
+    try {
+      await build({
+        entryPoints: [entryFilePath],
+        outfile: builtBundleFilePath,
+        platform: 'node',
+        format: 'esm',
+        target: 'es2022',
+        bundle: true,
+        sourcemap: true,
+        packages: 'external',
+        banner: NODE_ESM_CJS_BANNER,
+      });
+    } catch (error) {
+      throw new LogicFunctionException(
+        `Build failed: ${error instanceof Error ? error.message : String(error)}`,
+        LogicFunctionExceptionCode.LOGIC_FUNCTION_BUILD_FAILED,
+      );
+    }
 
     return builtBundleFilePath;
   }
