@@ -84,6 +84,14 @@ jobs:
           cd /tmp/e2e-test-workspace
           create-twenty-app test-app --exhaustive --yes
 
+      - name: Install scaffolded app dependencies
+        env:
+          YARN_NPM_REGISTRY_SERVER: http://localhost:4873
+          YARN_UNSAFE_HTTP_WHITELIST: localhost
+        run: |
+          cd /tmp/e2e-test-workspace/test-app
+          yarn install
+
       - name: Verify scaffolded app structure
         run: |
           cd /tmp/e2e-test-workspace/test-app
