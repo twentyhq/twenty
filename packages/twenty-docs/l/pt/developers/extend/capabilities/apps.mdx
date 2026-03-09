@@ -15,7 +15,7 @@ Os aplicativos permitem criar e gerenciar personalizações do Twenty **como có
 
 * Defina objetos e campos personalizados como código (modelo de dados gerenciado)
 * Crie funções de lógica com gatilhos personalizados
-* Definir habilidades para agentes de IA
+* Define skills and agents for AI
 * Implemente o mesmo aplicativo em vários espaços de trabalho
 
 ## Pré-requisitos
@@ -39,10 +39,10 @@ yarn twenty app:dev
 O gerador de estrutura oferece suporte a dois modos para controlar quais arquivos de exemplo são incluídos:
 
 ```bash filename="Terminal"
-# Padrão (exhaustivo): todos os exemplos (objeto, campo, função de lógica, componente de front-end, visualização, item do menu de navegação, habilidade)
+# Default (exhaustive): all examples (object, field, logic function, front component, view, navigation menu item, skill, agent)
 npx create-twenty-app@latest my-app
 
-# Mínimo: apenas arquivos principais (application-config.ts e default-role.ts)
+# Minimal: only core files (application-config.ts and default-role.ts)
 npx create-twenty-app@latest my-app --minimal
 ```
 
@@ -96,27 +96,29 @@ my-twenty-app/
   .oxlintrc.json
   tsconfig.json
   README.md
-  public/                           # Pasta de recursos públicos (imagens, fontes, etc.)
+  public/                           # Public assets folder (images, fonts, etc.)
   src/
-  ├── application-config.ts           # Obrigatório - configuração principal da aplicação
+  ├── application-config.ts           # Required - main application configuration
   ├── roles/
-  │   └── default-role.ts               # Papel padrão para funções de lógica
+  │   └── default-role.ts               # Default role for logic functions
   ├── objects/
-  │   └── example-object.ts             # Exemplo de definição de objeto personalizado
+  │   └── example-object.ts             # Example custom object definition
   ├── fields/
-  │   └── example-field.ts              # Exemplo de definição de campo independente
+  │   └── example-field.ts              # Example standalone field definition
   ├── logic-functions/
-  │   ├── hello-world.ts                # Exemplo de função de lógica
-  │   ├── pre-install.ts                # Função de lógica de pré-instalação
-  │   └── post-install.ts               # Função de lógica de pós-instalação
+  │   ├── hello-world.ts                # Example logic function
+  │   ├── pre-install.ts                # Pre-install logic function
+  │   └── post-install.ts               # Post-install logic function
   ├── front-components/
-  │   └── hello-world.tsx               # Exemplo de componente de front-end
+  │   └── hello-world.tsx               # Example front component
   ├── views/
-  │   └── example-view.ts                # Exemplo de definição de visualização salva
+  │   └── example-view.ts                # Example saved view definition
   ├── navigation-menu-items/
-  │   └── example-navigation-menu-item.ts # Exemplo de link de navegação da barra lateral
-  └── skills/
-      └── example-skill.ts                # Exemplo de definição de habilidade de agente de IA
+  │   └── example-navigation-menu-item.ts # Example sidebar navigation link
+  ├── skills/
+  │   └── example-skill.ts                # Example AI agent skill definition
+  └── agents/
+      └── example-agent.ts                # Example AI agent definition
 ```
 
 With `--minimal`, only the core files are created (`application-config.ts`, `roles/default-role.ts`, `logic-functions/pre-install.ts`, and `logic-functions/post-install.ts`).
@@ -148,6 +150,7 @@ O SDK detecta entidades analisando seus arquivos TypeScript em busca de chamadas
 | `defineView()`                     | Definições de visualizações salvas                    |
 | `defineNavigationMenuItem()`       | Definições de itens do menu de navegação              |
 | `defineSkill()`                    | Definições de habilidades de agente de IA             |
+| `defineAgent()`                    | AI agent definitions                                  |
 
 <Note>
 **A nomeação de arquivos é flexível.** A detecção de entidades é baseada em AST — o SDK varre seus arquivos fonte em busca do padrão `export default define<Entity>({...})`. Você pode organizar seus arquivos e pastas como quiser. Agrupar por tipo de entidade (por exemplo, `logic-functions/`, `roles/`) é apenas uma convenção para organização do código, não um requisito.
@@ -225,6 +228,7 @@ O SDK fornece funções utilitárias para definir as entidades do seu app. Confo
 | `defineView()`                     | Define visualizações salvas para objetos                     |
 | `defineNavigationMenuItem()`       | Define links de navegação da barra lateral                   |
 | `defineSkill()`                    | Define habilidades de agente de IA                           |
+| `defineAgent()`                    | Define AI agents with system prompts                         |
 
 Essas funções validam sua configuração em tempo de compilação e oferecem autocompletar na IDE e segurança de tipos.
 
@@ -802,6 +806,41 @@ Você pode criar novas habilidades de duas formas:
 
 * **Gerado automaticamente**: Execute `yarn twenty entity:add` e escolha a opção para adicionar uma nova habilidade.
 * **Manual**: Crie um novo arquivo e use `defineSkill()`, seguindo o mesmo padrão.
+
+### Agentes
+
+Agents define AI agents with system prompts that can operate within your workspace. Use `defineAgent()` to define agents with built-in validation:
+
+```typescript
+// src/agents/example-agent.ts
+import { defineAgent } from 'twenty-sdk';
+
+export default defineAgent({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'sales-assistant',
+  label: 'Sales Assistant',
+  description: 'An AI agent that helps with sales tasks',
+  icon: 'IconRobot',
+  prompt: `You are a sales assistant. Help users with:
+1. Researching prospects and companies
+2. Drafting personalized outreach messages
+3. Tracking follow-ups and next steps
+4. Analyzing deal pipeline and suggesting actions`,
+});
+```
+
+Pontos-chave:
+
+* `name` is a unique identifier string for the agent (kebab-case recommended).
+* `label` é o nome de exibição legível por humanos mostrado na UI.
+* `prompt` contains the system prompt — this is the instruction text that defines the agent's behavior.
+* `icon` (opcional) define o ícone exibido na UI.
+* `description` (optional) provides additional context about the agent's purpose.
+
+You can create new agents in two ways:
+
+* **Scaffolded**: Run `yarn twenty entity:add` and choose the option to add a new agent.
+* **Manual**: Create a new file and use `defineAgent()`, following the same pattern.
 
 ### Clientes tipados gerados
 
