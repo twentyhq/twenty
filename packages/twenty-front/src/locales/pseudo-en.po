@@ -4884,6 +4884,7 @@ msgstr ""
 
 #. js-lingui-id: NZubw3
 #: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Edit Layout"
 msgstr ""
 
@@ -4902,11 +4903,6 @@ msgstr ""
 #. js-lingui-id: IaSCqp
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Edit own profile information"
-msgstr ""
-
-#. js-lingui-id: ZgKSmd
-#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
-msgid "Edit Page Layout"
 msgstr ""
 
 #. js-lingui-id: h2KoTu
