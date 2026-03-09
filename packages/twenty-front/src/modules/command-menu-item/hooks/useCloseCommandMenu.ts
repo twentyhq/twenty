@@ -9,11 +9,11 @@ import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useCloseCommandMenu = ({
-  closeSidePanelOnShowPageOptionsCommandExecution = false,
-  closeSidePanelOnCommandMenuItemListCommandExecution = true,
+  closeSidePanelOnShowPageOptionsExecution = false,
+  closeSidePanelOnCommandMenuListExecution = true,
 }: {
-  closeSidePanelOnShowPageOptionsCommandExecution?: boolean;
-  closeSidePanelOnCommandMenuItemListCommandExecution?: boolean;
+  closeSidePanelOnShowPageOptionsExecution?: boolean;
+  closeSidePanelOnCommandMenuListExecution?: boolean;
 } = {}) => {
   const { containerType, isInSidePanel } = useContext(CommandMenuContext);
 
@@ -32,8 +32,8 @@ export const useCloseCommandMenu = ({
   const closeCommandMenu = () => {
     if (containerType === 'command-menu-list') {
       if (
-        isDefined(closeSidePanelOnCommandMenuItemListCommandExecution) &&
-        !closeSidePanelOnCommandMenuItemListCommandExecution
+        isDefined(closeSidePanelOnCommandMenuListExecution) &&
+        !closeSidePanelOnCommandMenuListExecution
       ) {
         return;
       }
@@ -49,8 +49,8 @@ export const useCloseCommandMenu = ({
 
     if (
       containerType === 'command-menu-show-page-dropdown' &&
-      isDefined(closeSidePanelOnShowPageOptionsCommandExecution) &&
-      closeSidePanelOnShowPageOptionsCommandExecution
+      isDefined(closeSidePanelOnShowPageOptionsExecution) &&
+      closeSidePanelOnShowPageOptionsExecution
     ) {
       closeSidePanelMenu();
     }

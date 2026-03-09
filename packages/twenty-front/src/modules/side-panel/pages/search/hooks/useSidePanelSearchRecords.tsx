@@ -101,7 +101,7 @@ export const useSidePanelSearchRecords = () => {
                         objectNameSingular: CoreObjectNameSingular.Note,
                       });
                 }}
-                closeSidePanelOnCommandMenuItemListCommandExecution={false}
+                closeSidePanelOnCommandMenuListExecution={false}
               />
             ),
           };

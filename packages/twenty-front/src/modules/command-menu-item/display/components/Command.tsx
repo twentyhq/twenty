@@ -5,18 +5,18 @@ import { useContext } from 'react';
 
 export const Command = ({
   onClick,
-  closeSidePanelOnShowPageOptionsCommandExecution = false,
-  closeSidePanelOnCommandMenuItemListCommandExecution = true,
+  closeSidePanelOnShowPageOptionsExecution = false,
+  closeSidePanelOnCommandMenuListExecution = true,
 }: {
   onClick: () => void;
-  closeSidePanelOnShowPageOptionsCommandExecution?: boolean;
-  closeSidePanelOnCommandMenuItemListCommandExecution?: boolean;
+  closeSidePanelOnShowPageOptionsExecution?: boolean;
+  closeSidePanelOnCommandMenuListExecution?: boolean;
 }) => {
   const commandMenuItemConfig = useContext(CommandConfigContext);
 
   const { closeCommandMenu } = useCloseCommandMenu({
-    closeSidePanelOnShowPageOptionsCommandExecution,
-    closeSidePanelOnCommandMenuItemListCommandExecution,
+    closeSidePanelOnShowPageOptionsExecution,
+    closeSidePanelOnCommandMenuListExecution,
   });
 
   if (!commandMenuItemConfig) {

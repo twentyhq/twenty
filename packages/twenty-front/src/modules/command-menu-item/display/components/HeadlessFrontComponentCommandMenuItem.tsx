@@ -16,8 +16,8 @@ export const HeadlessFrontComponentCommandMenuItem = ({
   const commandMenuItemConfig = useContext(CommandConfigContext);
 
   const { closeCommandMenu } = useCloseCommandMenu({
-    closeSidePanelOnShowPageOptionsCommandExecution: false,
-    closeSidePanelOnCommandMenuItemListCommandExecution: false,
+    closeSidePanelOnShowPageOptionsExecution: false,
+    closeSidePanelOnCommandMenuListExecution: false,
   });
 
   const isMounted = useAtomFamilySelectorValue(

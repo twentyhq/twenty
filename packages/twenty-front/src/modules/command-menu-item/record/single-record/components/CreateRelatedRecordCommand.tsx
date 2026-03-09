@@ -97,7 +97,7 @@ export const CreateRelatedRecordCommand = ({
   return (
     <Command
       onClick={handleCreateRelatedRecord}
-      closeSidePanelOnCommandMenuItemListCommandExecution={false}
+      closeSidePanelOnCommandMenuListExecution={false}
     />
   );
 };

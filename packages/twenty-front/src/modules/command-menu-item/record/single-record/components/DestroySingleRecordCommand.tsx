@@ -41,7 +41,7 @@ export const DestroySingleRecordCommand = () => {
       subtitle={t`Are you sure you want to destroy this record? It cannot be recovered anymore.`}
       onConfirmClick={handleDeleteClick}
       confirmButtonText={t`Permanently Destroy Record`}
-      closeSidePanelOnShowPageOptionsCommandExecution={true}
+      closeSidePanelOnShowPageOptionsExecution={true}
     />
   );
 };

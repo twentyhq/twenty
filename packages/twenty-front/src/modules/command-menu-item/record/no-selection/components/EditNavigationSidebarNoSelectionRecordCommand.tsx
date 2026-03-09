@@ -10,7 +10,7 @@ export const EditNavigationSidebarNoSelectionRecordCommand = () => {
   return (
     <Command
       onClick={() => setIsNavigationMenuInEditMode(true)}
-      closeSidePanelOnCommandMenuItemListCommandExecution
+      closeSidePanelOnCommandMenuListExecution
     />
   );
 };

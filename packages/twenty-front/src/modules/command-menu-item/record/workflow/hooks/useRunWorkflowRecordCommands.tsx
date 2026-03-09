@@ -153,7 +153,7 @@ export const useRunWorkflowRecordCommands = ({
                 activeWorkflowVersion,
               );
             }}
-            closeSidePanelOnCommandMenuItemListCommandExecution={false}
+            closeSidePanelOnCommandMenuListExecution={false}
           />
         ),
       };
