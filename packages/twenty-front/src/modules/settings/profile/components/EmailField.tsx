@@ -2,10 +2,10 @@ import { styled } from '@linaria/react';
 import { useState } from 'react';
 
 import { currentUserState } from '@/auth/states/currentUserState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useCanEditProfileField } from '@/settings/profile/hooks/useCanEditProfileField';
 import { useUpdateEmail } from '@/settings/profile/hooks/useUpdateEmail';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { IconCheck, IconPencil, IconX } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -34,8 +34,15 @@ const StyledActionWrapper = styled.div`
 const StyledActionButtonContainer = styled.div`
   align-items: center;
   display: inline-flex;
-  height: 100%;
   justify-content: center;
+
+  > div {
+    height: 100%;
+  }
+
+  > div > button {
+    height: 100%;
+  }
 `;
 
 export const EmailField = () => {
