@@ -34,6 +34,7 @@ export const AgentChatProviderContent = ({
     focusEditorAfterMigrate,
     setFocusEditorAfterMigrate,
     threadIdCreatedFromDraft,
+    setThreadIdCreatedFromDraft,
   };
 
   return (

@@ -1,3 +1,4 @@
+import { useAgentChatContext } from '@/ai/contexts/AgentChatContext';
 import {
   AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
   agentChatDraftsByThreadIdState,
@@ -21,6 +22,7 @@ export const useAIChatThreadClick = (
   options: UseAIChatThreadClickOptions = {},
 ) => {
   const { resetNavigationStack = false } = options;
+  const { setThreadIdCreatedFromDraft } = useAgentChatContext();
   const [currentAIChatThread, setCurrentAIChatThread] = useAtomState(
     currentAIChatThreadState,
   );
@@ -36,6 +38,7 @@ export const useAIChatThreadClick = (
   const { openAskAIPage } = useOpenAskAIPageInSidePanel();
 
   const handleThreadClick = (thread: AgentChatThread) => {
+    setThreadIdCreatedFromDraft(null);
     const previousDraftKey =
       currentAIChatThread ?? AGENT_CHAT_NEW_THREAD_DRAFT_KEY;
     const isSameThread = thread.id === currentAIChatThread;

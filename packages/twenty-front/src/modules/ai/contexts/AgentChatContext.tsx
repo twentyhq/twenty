@@ -8,6 +8,7 @@ export type AgentChatContextValue = {
   focusEditorAfterMigrate: boolean;
   setFocusEditorAfterMigrate: (value: boolean) => void;
   threadIdCreatedFromDraft: string | null;
+  setThreadIdCreatedFromDraft: (value: string | null) => void;
 };
 
 export const AgentChatContext = createContext<AgentChatContextValue>({
@@ -18,6 +19,7 @@ export const AgentChatContext = createContext<AgentChatContextValue>({
   focusEditorAfterMigrate: false,
   setFocusEditorAfterMigrate: () => {},
   threadIdCreatedFromDraft: null,
+  setThreadIdCreatedFromDraft: () => {},
 });
 
 export const useAgentChatContext = () => useContext(AgentChatContext);

@@ -1,5 +1,6 @@
 import { useStore } from 'jotai';
 
+import { useAgentChatContext } from '@/ai/contexts/AgentChatContext';
 import {
   AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
   agentChatDraftsByThreadIdState,
@@ -14,6 +15,7 @@ import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 export const useCreateNewAIChatThread = () => {
+  const { setThreadIdCreatedFromDraft } = useAgentChatContext();
   const [currentAIChatThread, setCurrentAIChatThread] = useAtomState(
     currentAIChatThreadState,
   );
@@ -29,6 +31,7 @@ export const useCreateNewAIChatThread = () => {
   const { openAskAIPage } = useOpenAskAIPageInSidePanel();
 
   const switchToNewChat = () => {
+    setThreadIdCreatedFromDraft(null);
     const previousDraftKey =
       currentAIChatThread ?? AGENT_CHAT_NEW_THREAD_DRAFT_KEY;
     const newChatDraft =
