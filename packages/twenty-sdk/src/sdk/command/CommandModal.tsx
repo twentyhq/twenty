@@ -2,28 +2,28 @@ import { useEffect, useState } from 'react';
 
 import {
   enqueueSnackbar,
-  getFrontComponentActionErrorDedupeKey,
-  openActionConfirmationModal,
+  getFrontComponentCommandErrorDedupeKey,
+  openCommandConfirmationModal,
   unmountFrontComponent,
   useFrontComponentId,
-  type ActionConfirmationModalAccent,
+  type CommandConfirmationModalAccent,
 } from '../front-component-api';
 
-export type ActionModalProps = {
+export type CommandModalProps = {
   title: string;
   subtitle: string;
   execute: () => void | Promise<void>;
   confirmButtonText?: string;
-  confirmButtonAccent?: ActionConfirmationModalAccent;
+  confirmButtonAccent?: CommandConfirmationModalAccent;
 };
 
-export const ActionModal = ({
+export const CommandModal = ({
   title,
   subtitle,
   execute,
   confirmButtonText,
   confirmButtonAccent,
-}: ActionModalProps) => {
+}: CommandModalProps) => {
   const [hasExecuted, setHasExecuted] = useState(false);
 
   const frontComponentId = useFrontComponentId();
@@ -37,7 +37,7 @@ export const ActionModal = ({
 
     const run = async () => {
       try {
-        const actionConfirmationModalResult = await openActionConfirmationModal(
+        const commandConfirmationModalResult = await openCommandConfirmationModal(
           {
             title,
             subtitle,
@@ -46,17 +46,17 @@ export const ActionModal = ({
           },
         );
 
-        if (actionConfirmationModalResult === 'confirm') {
+        if (commandConfirmationModalResult === 'confirm') {
           await execute();
         }
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
 
         await enqueueSnackbar({
-          message: 'Action failed',
+          message: 'Command failed',
           detailedMessage: message,
           variant: 'error',
-          dedupeKey: getFrontComponentActionErrorDedupeKey(frontComponentId),
+          dedupeKey: getFrontComponentCommandErrorDedupeKey(frontComponentId),
         });
       } finally {
         await unmountFrontComponent();

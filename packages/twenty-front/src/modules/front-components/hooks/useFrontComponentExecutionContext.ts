@@ -72,7 +72,7 @@ export const useFrontComponentExecutionContext = ({
       }
     };
 
-  const openActionConfirmationModal: FrontComponentHostCommunicationApi['openActionConfirmationModal'] =
+  const openCommandConfirmationModal: FrontComponentHostCommunicationApi['openCommandConfirmationModal'] =
     async ({ title, subtitle, confirmButtonText, confirmButtonAccent }) => {
       openConfirmationModal({
         frontComponentId,
@@ -138,7 +138,7 @@ export const useFrontComponentExecutionContext = ({
       navigate,
       requestAccessTokenRefresh,
       openSidePanelPage,
-      openActionConfirmationModal,
+      openCommandConfirmationModal,
       enqueueSnackbar,
       unmountFrontComponent,
       closeSidePanel,

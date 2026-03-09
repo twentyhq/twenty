@@ -5,25 +5,25 @@ import { type AppPath } from 'twenty-shared/types';
 import { type getAppPath } from 'twenty-shared/utils';
 import {
   enqueueSnackbar,
-  getFrontComponentActionErrorDedupeKey,
+  getFrontComponentCommandErrorDedupeKey,
   navigate,
   unmountFrontComponent,
   useFrontComponentId,
 } from '../front-component-api';
 
-export type ActionLinkProps<T extends AppPath> = {
+export type CommandLinkProps<T extends AppPath> = {
   to: T;
   params?: Parameters<typeof getAppPath<T>>[1];
   queryParams?: Record<string, any>;
   options?: NavigateOptions;
 };
 
-export const ActionLink = <T extends AppPath>({
+export const CommandLink = <T extends AppPath>({
   to,
   params,
   queryParams,
   options,
-}: ActionLinkProps<T>) => {
+}: CommandLinkProps<T>) => {
   const [hasExecuted, setHasExecuted] = useState(false);
 
   const frontComponentId = useFrontComponentId();
@@ -41,10 +41,10 @@ export const ActionLink = <T extends AppPath>({
       } catch (error) {
         if (error instanceof Error) {
           await enqueueSnackbar({
-            message: 'Action failed',
+            message: 'Command failed',
             detailedMessage: error.message,
             variant: 'error',
-            dedupeKey: getFrontComponentActionErrorDedupeKey(frontComponentId),
+            dedupeKey: getFrontComponentCommandErrorDedupeKey(frontComponentId),
           });
         }
       } finally {

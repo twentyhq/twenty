@@ -1,6 +1,6 @@
 import {
   enqueueSnackbar,
-  getFrontComponentActionErrorDedupeKey,
+  getFrontComponentCommandErrorDedupeKey,
   openSidePanelPage,
   unmountFrontComponent,
   useFrontComponentId,
@@ -9,7 +9,7 @@ import { useEffect, useState } from 'react';
 
 import { type SidePanelPages } from 'twenty-shared/types';
 
-export type ActionOpenSidePanelPageProps = {
+export type CommandOpenSidePanelPageProps = {
   page: SidePanelPages;
   pageTitle: string;
   pageIcon: string;
@@ -17,13 +17,13 @@ export type ActionOpenSidePanelPageProps = {
   shouldResetSearchState?: boolean;
 };
 
-export const ActionOpenSidePanelPage = ({
+export const CommandOpenSidePanelPage = ({
   page,
   pageTitle,
   pageIcon,
   onClick,
   shouldResetSearchState = false,
-}: ActionOpenSidePanelPageProps) => {
+}: CommandOpenSidePanelPageProps) => {
   const [hasExecuted, setHasExecuted] = useState(false);
 
   const frontComponentId = useFrontComponentId();
@@ -48,10 +48,10 @@ export const ActionOpenSidePanelPage = ({
       } catch (error) {
         if (error instanceof Error) {
           await enqueueSnackbar({
-            message: 'Action failed',
+            message: 'Command failed',
             detailedMessage: error.message,
             variant: 'error',
-            dedupeKey: getFrontComponentActionErrorDedupeKey(frontComponentId),
+            dedupeKey: getFrontComponentCommandErrorDedupeKey(frontComponentId),
           });
         }
       } finally {

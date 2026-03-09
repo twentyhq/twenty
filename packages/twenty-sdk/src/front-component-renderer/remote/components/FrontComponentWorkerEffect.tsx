@@ -1,7 +1,7 @@
 import { ThreadWebWorker, release, retain } from '@quilted/threads';
 import { RemoteReceiver } from '@remote-dom/core/receivers';
 import { useEffect, useRef } from 'react';
-import { type ActionConfirmationModalResult } from '../../../sdk/front-component-api/globals/frontComponentHostCommunicationApi';
+import { type CommandConfirmationModalResult } from '../../../sdk/front-component-api/globals/frontComponentHostCommunicationApi';
 import { type FrontComponentHostCommunicationApi } from '../../types/FrontComponentHostCommunicationApi';
 import { type WorkerExports } from '../../types/WorkerExports';
 import { createRemoteWorker } from '../worker/utils/createRemoteWorker';
@@ -12,7 +12,7 @@ const COMMAND_MENU_ITEM_CONFIRMATION_MODAL_RESULT_BROWSER_EVENT_NAME =
 
 type CommandMenuItemConfirmationModalResultBrowserEventDetail = {
   frontComponentId: string;
-  confirmationResult: ActionConfirmationModalResult;
+  confirmationResult: CommandConfirmationModalResult;
 };
 
 type FrontComponentWorkerEffectProps = {
