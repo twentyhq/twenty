@@ -77,6 +77,7 @@ jobs:
         env:
           YARN_NPM_REGISTRY_SERVER: http://localhost:4873
           YARN_UNSAFE_HTTP_WHITELIST: localhost
+          YARN_ENABLE_HARDENED_MODE: false
         run: |
           npm install -g create-twenty-app@$CI_VERSION --registry http://localhost:4873
           create-twenty-app --version
@@ -88,6 +89,7 @@ jobs:
         env:
           YARN_NPM_REGISTRY_SERVER: http://localhost:4873
           YARN_UNSAFE_HTTP_WHITELIST: localhost
+          YARN_ENABLE_HARDENED_MODE: false
         run: |
           cd /tmp/e2e-test-workspace/test-app
           yarn install
