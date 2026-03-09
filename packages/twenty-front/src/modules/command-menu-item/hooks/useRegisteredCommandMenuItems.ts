@@ -75,7 +75,9 @@ export const useRegisteredCommandMenuItems = (
       );
     }
 
-    return commandMenuItem.availableOn?.includes(CommandMenuItemViewType.GLOBAL);
+    return commandMenuItem.availableOn?.includes(
+      CommandMenuItemViewType.GLOBAL,
+    );
   });
 
   const commandMenuItems = commandMenuItemsToRegister
