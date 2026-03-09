@@ -14,6 +14,7 @@ import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 const StyledCoverImageContainer = styled.div`
   align-items: center;
   background-size: cover;
+  border: 1px solid ${themeCssVariables.border.color.medium};
   border-radius: ${themeCssVariables.border.radius.md};
   box-sizing: border-box;
   display: flex;
