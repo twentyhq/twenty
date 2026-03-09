@@ -8,6 +8,7 @@ import { useAgentChatContext } from '@/ai/contexts/AgentChatContext';
 import { AGENT_CHAT_NEW_THREAD_DRAFT_KEY } from '@/ai/states/agentChatDraftsByThreadIdState';
 import { agentChatHasMessageComponentSelector } from '@/ai/states/agentChatHasMessageComponentSelector';
 import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
+import { skipMessagesSkeletonUntilLoadedState } from '@/ai/states/skipMessagesSkeletonUntilLoadedState';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -33,8 +34,10 @@ const NUMBER_OF_SKELETONS = 6;
 
 export const AIChatSkeletonLoader = () => {
   const { theme } = useContext(ThemeContext);
-  const { threadsLoading, messagesLoading, skipMessagesSkeleton } =
-    useAgentChatContext();
+  const { threadsLoading, messagesLoading } = useAgentChatContext();
+  const skipMessagesSkeletonUntilLoaded = useAtomStateValue(
+    skipMessagesSkeletonUntilLoadedState,
+  );
   const currentAIChatThread = useAtomStateValue(currentAIChatThreadState);
 
   const hasMessages = useAtomComponentSelectorValue(
@@ -44,7 +47,8 @@ export const AIChatSkeletonLoader = () => {
   const isOnNewChatSlot =
     !isDefined(currentAIChatThread) ||
     currentAIChatThread === AGENT_CHAT_NEW_THREAD_DRAFT_KEY;
-  const showForMessagesLoading = messagesLoading && !skipMessagesSkeleton;
+  const showForMessagesLoading =
+    messagesLoading && !skipMessagesSkeletonUntilLoaded;
   const shouldRender =
     !hasMessages &&
     ((threadsLoading && isOnNewChatSlot) || showForMessagesLoading);

@@ -1,12 +1,10 @@
-import { getOperationName } from '@apollo/client/utilities';
 import { useApolloClient } from '@apollo/client';
+import { getOperationName } from '@apollo/client/utilities';
 import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
 
 import { CHAT_THREADS_PAGE_SIZE } from '@/ai/constants/ChatThreads';
 import { useAgentChatScrollToBottom } from '@/ai/hooks/useAgentChatScrollToBottom';
-import { hasTriggeredCreateForDraftState } from '@/ai/states/hasTriggeredCreateForDraftState';
-import { isCreatingForFirstSendState } from '@/ai/states/isCreatingForFirstSendState';
 import {
   AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
   agentChatDraftsByThreadIdState,
@@ -15,7 +13,12 @@ import { agentChatInputState } from '@/ai/states/agentChatInputState';
 import { agentChatUsageState } from '@/ai/states/agentChatUsageState';
 import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
 import { currentAIChatThreadTitleState } from '@/ai/states/currentAIChatThreadTitleState';
+import { focusEditorAfterMigrateState } from '@/ai/states/focusEditorAfterMigrateState';
+import { hasTriggeredCreateForDraftState } from '@/ai/states/hasTriggeredCreateForDraftState';
 import { isCreatingChatThreadState } from '@/ai/states/isCreatingChatThreadState';
+import { isCreatingForFirstSendState } from '@/ai/states/isCreatingForFirstSendState';
+import { skipMessagesSkeletonUntilLoadedState } from '@/ai/states/skipMessagesSkeletonUntilLoadedState';
+import { threadIdCreatedFromDraftState } from '@/ai/states/threadIdCreatedFromDraftState';
 import { mapDBMessagesToUIMessages } from '@/ai/utils/mapDBMessagesToUIMessages';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -28,14 +31,7 @@ import {
   useGetChatThreadsQuery,
 } from '~/generated-metadata/graphql';
 
-export type UseAgentChatDataOptions = {
-  onCreateThreadFromDraft?: (threadId: string) => void;
-  setSkipMessagesSkeleton?: (value: boolean) => void;
-};
-
-export const useAgentChatData = (options: UseAgentChatDataOptions = {}) => {
-  const { onCreateThreadFromDraft, setSkipMessagesSkeleton } = options;
-
+export const useAgentChatData = () => {
   const [currentAIChatThread, setCurrentAIChatThread] = useAtomState(
     currentAIChatThreadState,
   );
@@ -76,7 +72,9 @@ export const useAgentChatData = (options: UseAgentChatDataOptions = {}) => {
           [newThreadId]: newDraft,
           [AGENT_CHAT_NEW_THREAD_DRAFT_KEY]: '',
         }));
-        onCreateThreadFromDraft?.(newThreadId);
+        store.set(focusEditorAfterMigrateState.atom, true);
+        store.set(skipMessagesSkeletonUntilLoadedState.atom, true);
+        store.set(threadIdCreatedFromDraftState.atom, newThreadId);
       } else {
         setAgentChatDraftsByThreadId((prev) => ({
           ...prev,
@@ -184,7 +182,7 @@ export const useAgentChatData = (options: UseAgentChatDataOptions = {}) => {
     variables: { threadId: currentAIChatThread! },
     skip: !isDefined(currentAIChatThread) || isNewThread,
     onCompleted: () => {
-      setSkipMessagesSkeleton?.(false);
+      store.set(skipMessagesSkeletonUntilLoadedState.atom, false);
       scrollToBottom();
     },
   });

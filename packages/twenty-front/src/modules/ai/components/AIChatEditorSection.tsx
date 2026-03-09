@@ -10,11 +10,12 @@ import { AgentChatFileUploadButton } from '@/ai/components/internal/AgentChatFil
 import { AIChatContextUsageButton } from '@/ai/components/internal/AIChatContextUsageButton';
 import { AIChatSkeletonLoader } from '@/ai/components/internal/AIChatSkeletonLoader';
 import { SendMessageButton } from '@/ai/components/internal/SendMessageButton';
-import { useAgentChatContext } from '@/ai/contexts/AgentChatContext';
 import { useAIChatEditor } from '@/ai/hooks/useAIChatEditor';
 import { useAiModelLabel } from '@/ai/hooks/useAiModelOptions';
+import { focusEditorAfterMigrateState } from '@/ai/states/focusEditorAfterMigrateState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledInputArea = styled.div<{ isMobile: boolean }>`
@@ -117,16 +118,19 @@ export const AIChatEditorSection = () => {
   const isMobile = useIsMobile();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const smartModelLabel = useAiModelLabel(currentWorkspace?.smartModel, false);
-  const { focusEditorAfterMigrate, setFocusEditorAfterMigrate } =
-    useAgentChatContext();
+  const [focusEditorAfterMigrate, setFocusEditorAfterMigrate] = useAtomState(
+    focusEditorAfterMigrateState,
+  );
 
   const { editor, handleSendAndClear } = useAIChatEditor();
 
   const editorWrapperRefCallback = (node: HTMLDivElement | null) => {
     if (node && focusEditorAfterMigrate) {
       requestAnimationFrame(() => {
-        editor.commands.focus('end');
-        setFocusEditorAfterMigrate(false);
+        if (editor) {
+          editor.commands.focus('end');
+          setFocusEditorAfterMigrate(false);
+        }
       });
     }
   };
