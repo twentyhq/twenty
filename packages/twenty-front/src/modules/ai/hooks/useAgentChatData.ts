@@ -10,6 +10,7 @@ import { focusEditorAfterMigrateState } from '@/ai/states/focusEditorAfterMigrat
 import { hasTriggeredCreateForDraftState } from '@/ai/states/hasTriggeredCreateForDraftState';
 import { isCreatingForFirstSendState } from '@/ai/states/isCreatingForFirstSendState';
 import { skipMessagesSkeletonUntilLoadedState } from '@/ai/states/skipMessagesSkeletonUntilLoadedState';
+import { threadIdCreatedFromDraftState } from '@/ai/states/threadIdCreatedFromDraftState';
 import {
   AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
   agentChatDraftsByThreadIdState,
@@ -74,6 +75,7 @@ export const useAgentChatData = () => {
         }));
         store.set(focusEditorAfterMigrateState, true);
         store.set(skipMessagesSkeletonUntilLoadedState, true);
+        store.set(threadIdCreatedFromDraftState, newThreadId);
       } else {
         setAgentChatDraftsByThreadId((prev) => ({
           ...prev,
