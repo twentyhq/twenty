@@ -54,8 +54,7 @@ Commands:
   auth:switch          Switch the default workspace
   auth:list            List all configured workspaces
   app:dev              Watch and sync local application changes
-  app:generate-client  Build, sync to local server, and generate the typed API client
-  app:build            Build the application (no server needed)
+  app:build            Build, sync, and generate API client
   app:publish          Build and publish to npm or a Twenty server
   app:typecheck        Run TypeScript type checking on the application
   app:uninstall        Uninstall application from Twenty
@@ -133,9 +132,7 @@ Application development commands.
 
   - Behavior: Builds your application (functions and front components), computes the manifest, syncs everything to your workspace, then watches the directory for changes and re-syncs automatically. Displays an interactive UI showing build and sync status in real time. Press Ctrl+C to stop.
 
-- `twenty app:generate-client [appPath]` — One-shot build, sync to local server, and generate the typed API client. Requires a running local server.
-
-- `twenty app:build [appPath]` — Build the application into `.twenty/output/`. No server needed.
+- `twenty app:build [appPath]` — Build the application, sync to the server, generate the typed API client, then rebuild with the real client.
 
   - Options:
     - `--tarball`: Also pack the output into a `.tgz` tarball.
