@@ -15,9 +15,7 @@ describe('getSkillBaseFile', () => {
     expect(result).toContain("'71e45a58-41da-4ae4-8b73-a543c0a9d3d4'");
     expect(result).toContain("name: 'my-skill'");
     expect(result).toContain("label: 'my-skill'");
-    expect(result).toContain(
-      "description: 'Add a description for your skill'",
-    );
+    expect(result).toContain("description: 'Add a description for your skill'");
     expect(result).toContain("content: 'Add the skill content here'");
   });
 

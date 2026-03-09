@@ -25,9 +25,7 @@ describe('getNavigationMenuItemBaseFile', () => {
       viewUniversalIdentifier: 'view-uuid-123',
     });
 
-    expect(result).toContain(
-      "viewUniversalIdentifier: 'view-uuid-123'",
-    );
+    expect(result).toContain("viewUniversalIdentifier: 'view-uuid-123'");
     expect(result).not.toContain('// Link to a view:');
   });
 

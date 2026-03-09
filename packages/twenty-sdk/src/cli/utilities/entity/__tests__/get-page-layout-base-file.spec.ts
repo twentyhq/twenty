@@ -6,9 +6,7 @@ describe('getPageLayoutBaseFile', () => {
       name: 'my-layout',
     });
 
-    expect(result).toContain(
-      "import { definePageLayout } from 'twenty-sdk'",
-    );
+    expect(result).toContain("import { definePageLayout } from 'twenty-sdk'");
     expect(result).toContain('export default definePageLayout({');
     expect(result).toContain("name: 'my-layout'");
     expect(result).toContain("title: 'Overview'");

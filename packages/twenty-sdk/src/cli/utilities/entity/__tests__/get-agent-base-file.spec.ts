@@ -15,12 +15,8 @@ describe('getAgentBaseFile', () => {
     expect(result).toContain("'71e45a58-41da-4ae4-8b73-a543c0a9d3d4'");
     expect(result).toContain("name: 'my-agent'");
     expect(result).toContain("label: 'my-agent'");
-    expect(result).toContain(
-      "description: 'Add a description for your agent'",
-    );
-    expect(result).toContain(
-      "prompt: 'Add the agent system prompt here'",
-    );
+    expect(result).toContain("description: 'Add a description for your agent'");
+    expect(result).toContain("prompt: 'Add the agent system prompt here'");
   });
 
   it('should generate unique UUID when not provided', () => {
