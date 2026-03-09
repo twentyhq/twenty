@@ -6,8 +6,7 @@ export const isInSidePanel =
   null as unknown as CommandMenuContextApi['isInSidePanel'];
 export const isFavorite =
   null as unknown as CommandMenuContextApi['isFavorite'];
-export const isRemote =
-  null as unknown as CommandMenuContextApi['isRemote'];
+export const isRemote = null as unknown as CommandMenuContextApi['isRemote'];
 export const isNoteOrTask =
   null as unknown as CommandMenuContextApi['isNoteOrTask'];
 export const isSelectAll =
