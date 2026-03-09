@@ -8,6 +8,7 @@ import { useEditor } from '@tiptap/react';
 import { useCallback, useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
+import { useAgentChatContext } from '@/ai/contexts/AgentChatContext';
 import { AI_CHAT_INPUT_ID } from '@/ai/constants/AiChatInputId';
 import {
   AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
@@ -43,6 +44,7 @@ export const useAIChatEditor = () => {
   const currentAIChatThread = useAtomStateValue(currentAIChatThreadState);
   const [agentChatDraftsByThreadId, setAgentChatDraftsByThreadId] =
     useAtomState(agentChatDraftsByThreadIdState);
+  const { ensureThreadForDraft } = useAgentChatContext();
 
   const { searchMentionRecords } = useMentionSearch();
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
@@ -50,9 +52,8 @@ export const useAIChatEditor = () => {
     useRemoveFocusItemFromFocusStackById();
 
   const draftKey = currentAIChatThread ?? AGENT_CHAT_NEW_THREAD_DRAFT_KEY;
-  const initialContent = textToTiptapContent(
-    agentChatDraftsByThreadId[draftKey] ?? '',
-  );
+  const initialDraft = agentChatDraftsByThreadId[draftKey] ?? '';
+  const initialContent = textToTiptapContent(initialDraft);
 
   const extensions = useMemo(
     () => [
@@ -100,6 +101,9 @@ export const useAIChatEditor = () => {
       );
       setAgentChatInput(text);
       setAgentChatDraftsByThreadId((prev) => ({ ...prev, [draftKey]: text }));
+      if (draftKey === AGENT_CHAT_NEW_THREAD_DRAFT_KEY && text.trim() !== '') {
+        ensureThreadForDraft?.();
+      }
     },
     onFocus: () => {
       pushFocusItemToFocusStack({

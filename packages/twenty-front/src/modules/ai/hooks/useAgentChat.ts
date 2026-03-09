@@ -25,13 +25,17 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
-import { useCallback } from 'react';
+import { useStore } from 'jotai';
+import { useCallback, useState } from 'react';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { cookieStorage } from '~/utils/cookie-storage';
 
-export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
+export const useAgentChat = (
+  uiMessages: ExtendedUIMessage[],
+  ensureThreadIdForSend: () => Promise<string | null>,
+) => {
   const setTokenPair = useSetAtomState(tokenPairState);
   const setAgentChatUsage = useSetAtomState(agentChatUsageState);
 
@@ -39,17 +43,21 @@ export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
   const setCurrentAIChatThreadTitle = useSetAtomState(
     currentAIChatThreadTitleState,
   );
+  const setCurrentAIChatThread = useSetAtomState(currentAIChatThreadState);
   const apolloClient = useApolloClient();
+  const store = useStore();
 
   const agentChatSelectedFiles = useAtomStateValue(agentChatSelectedFilesState);
 
   const currentAIChatThread = useAtomStateValue(currentAIChatThreadState);
 
+  const [, setPendingThreadIdAfterFirstSend] = useState<string | null>(null);
+
   const [agentChatUploadedFiles, setAgentChatUploadedFiles] = useAtomState(
     agentChatUploadedFilesState,
   );
 
-  const [agentChatInput, setAgentChatInput] = useAtomState(agentChatInputState);
+  const [, setAgentChatInput] = useAtomState(agentChatInputState);
   const setAgentChatDraftsByThreadId = useSetAtomState(
     agentChatDraftsByThreadIdState,
   );
@@ -174,23 +182,30 @@ export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
         (part) => part.type === 'data-thread-title',
       );
 
-      if (isDefined(titlePart) && titlePart.type === 'data-thread-title') {
-        setCurrentAIChatThreadTitle(titlePart.data.title);
-        if (isDefined(currentAIChatThread)) {
-          const threadRef = apolloClient.cache.identify({
-            __typename: 'AgentChatThread',
-            id: currentAIChatThread,
-          });
-          if (isDefined(threadRef)) {
-            apolloClient.cache.modify({
-              id: threadRef,
-              fields: {
-                title: () => titlePart.data.title,
-              },
+      setPendingThreadIdAfterFirstSend((pendingId) => {
+        const threadIdForTitle = pendingId ?? currentAIChatThread;
+        if (isDefined(titlePart) && titlePart.type === 'data-thread-title') {
+          setCurrentAIChatThreadTitle(titlePart.data.title);
+          if (isDefined(threadIdForTitle)) {
+            const threadRef = apolloClient.cache.identify({
+              __typename: 'AgentChatThread',
+              id: threadIdForTitle,
             });
+            if (isDefined(threadRef)) {
+              apolloClient.cache.modify({
+                id: threadRef,
+                fields: {
+                  title: () => titlePart.data.title,
+                },
+              });
+            }
           }
         }
-      }
+        if (isDefined(pendingId)) {
+          setCurrentAIChatThread(pendingId);
+        }
+        return null;
+      });
     },
   });
 
@@ -198,28 +213,47 @@ export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
   const isLoading = isStreaming || agentChatSelectedFiles.length > 0;
 
   const handleSendMessage = useCallback(async () => {
-    if (agentChatInput.trim() === '' || isLoading || !currentAIChatThread) {
+    const draftKey =
+      store.get(currentAIChatThreadState.atom) ??
+      AGENT_CHAT_NEW_THREAD_DRAFT_KEY;
+    const contentToSend =
+      draftKey === AGENT_CHAT_NEW_THREAD_DRAFT_KEY
+        ? (
+            store.get(agentChatDraftsByThreadIdState.atom)[
+              AGENT_CHAT_NEW_THREAD_DRAFT_KEY
+            ] ?? store.get(agentChatInputState.atom)
+          ).trim()
+        : store.get(agentChatInputState.atom).trim();
+
+    if (contentToSend === '' || isLoading) {
       return;
     }
 
-    const content = agentChatInput.trim();
+    const threadId = await ensureThreadIdForSend();
+    if (!threadId) {
+      return;
+    }
+
+    if (draftKey === AGENT_CHAT_NEW_THREAD_DRAFT_KEY) {
+      setPendingThreadIdAfterFirstSend(threadId);
+    }
 
     setAgentChatInput('');
     setAgentChatDraftsByThreadId((prev) => ({
       ...prev,
-      [currentAIChatThread ?? AGENT_CHAT_NEW_THREAD_DRAFT_KEY]: '',
+      [draftKey]: '',
     }));
 
     const browsingContext = getBrowsingContext();
 
     sendMessage(
       {
-        text: content,
+        text: contentToSend,
         files: agentChatUploadedFiles,
       },
       {
         body: {
-          threadId: currentAIChatThread,
+          threadId,
           browsingContext,
         },
       },
@@ -227,14 +261,15 @@ export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
 
     setAgentChatUploadedFiles([]);
   }, [
-    agentChatInput,
+    store,
     isLoading,
-    currentAIChatThread,
+    ensureThreadIdForSend,
     setAgentChatInput,
     getBrowsingContext,
     sendMessage,
     agentChatUploadedFiles,
     setAgentChatUploadedFiles,
+    setAgentChatDraftsByThreadId,
   ]);
 
   useListenToBrowserEvent({

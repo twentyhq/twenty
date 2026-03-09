@@ -8,7 +8,6 @@ import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
 import { currentAIChatThreadTitleState } from '@/ai/states/currentAIChatThreadTitleState';
 import { useOpenAskAIPageInSidePanel } from '@/side-panel/hooks/useOpenAskAIPageInSidePanel';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
@@ -25,7 +24,6 @@ export const useAIChatThreadClick = (
   const [currentAIChatThread, setCurrentAIChatThread] = useAtomState(
     currentAIChatThreadState,
   );
-  const agentChatInput = useAtomStateValue(agentChatInputState);
   const setAgentChatInput = useSetAtomState(agentChatInputState);
   const setCurrentAIChatThreadTitle = useSetAtomState(
     currentAIChatThreadTitleState,
@@ -44,7 +42,7 @@ export const useAIChatThreadClick = (
 
     setAgentChatDraftsByThreadId((prev) => ({
       ...prev,
-      [previousDraftKey]: agentChatInput,
+      [previousDraftKey]: store.get(agentChatInputState.atom),
     }));
     setCurrentAIChatThread(thread.id);
 

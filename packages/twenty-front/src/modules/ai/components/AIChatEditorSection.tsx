@@ -1,5 +1,7 @@
 import { styled } from '@linaria/react';
 import { EditorContent } from '@tiptap/react';
+import { useStore } from 'jotai';
+import { useCallback } from 'react';
 import { LightButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -12,33 +14,34 @@ import { AIChatSkeletonLoader } from '@/ai/components/internal/AIChatSkeletonLoa
 import { SendMessageButton } from '@/ai/components/internal/SendMessageButton';
 import { useAIChatEditor } from '@/ai/hooks/useAIChatEditor';
 import { useAiModelLabel } from '@/ai/hooks/useAiModelOptions';
+import { focusEditorAfterMigrateState } from '@/ai/states/focusEditorAfterMigrateState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledInputArea = styled.div<{ isMobile: boolean }>`
   align-items: flex-end;
+  background: ${themeCssVariables.background.primary};
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
   gap: ${themeCssVariables.spacing[2]};
-  padding-inline: ${themeCssVariables.spacing[3]};
   padding-block: ${({ isMobile }) =>
     isMobile ? '0' : themeCssVariables.spacing[3]};
-  background: ${themeCssVariables.background.primary};
+  padding-inline: ${themeCssVariables.spacing[3]};
 `;
 
 const StyledInputBox = styled.div`
   background-color: ${themeCssVariables.background.transparent.lighter};
   border: 1px solid ${themeCssVariables.border.color.medium};
   border-radius: ${themeCssVariables.border.radius.sm};
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[2]};
   min-height: 140px;
   padding: ${themeCssVariables.spacing[2]};
   width: 100%;
-  box-sizing: border-box;
 
   &:focus-within {
     border-color: ${themeCssVariables.color.blue};
@@ -61,11 +64,11 @@ const StyledEditorWrapper = styled.div`
     font-size: ${themeCssVariables.font.size.md};
     font-weight: ${themeCssVariables.font.weight.regular};
     line-height: 16px;
-    outline: none;
-    padding: 0;
-    min-height: 48px;
     max-height: 320px;
+    min-height: 48px;
+    outline: none;
     overflow-y: auto;
+    padding: 0;
 
     p {
       margin: 0;
@@ -116,8 +119,21 @@ export const AIChatEditorSection = () => {
   const isMobile = useIsMobile();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const smartModelLabel = useAiModelLabel(currentWorkspace?.smartModel, false);
+  const store = useStore();
 
   const { editor, handleSendAndClear } = useAIChatEditor();
+
+  const editorWrapperRefCallback = useCallback(
+    (node: HTMLDivElement | null) => {
+      if (node && store.get(focusEditorAfterMigrateState)) {
+        store.set(focusEditorAfterMigrateState, false);
+        requestAnimationFrame(() => {
+          editor?.commands.focus('end');
+        });
+      }
+    },
+    [store, editor],
+  );
 
   return (
     <>
@@ -128,7 +144,7 @@ export const AIChatEditorSection = () => {
       <StyledInputArea isMobile={isMobile}>
         <AgentChatContextPreview />
         <StyledInputBox>
-          <StyledEditorWrapper>
+          <StyledEditorWrapper ref={editorWrapperRefCallback}>
             <EditorContent editor={editor} />
           </StyledEditorWrapper>
           <StyledButtonsContainer>

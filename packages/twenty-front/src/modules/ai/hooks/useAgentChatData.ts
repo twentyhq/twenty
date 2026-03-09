@@ -1,9 +1,15 @@
 import { getOperationName } from '@apollo/client/utilities';
+import { useApolloClient } from '@apollo/client';
 import { useStore } from 'jotai';
+import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { CHAT_THREADS_PAGE_SIZE } from '@/ai/constants/ChatThreads';
 import { useAgentChatScrollToBottom } from '@/ai/hooks/useAgentChatScrollToBottom';
+import { focusEditorAfterMigrateState } from '@/ai/states/focusEditorAfterMigrateState';
+import { hasTriggeredCreateForDraftState } from '@/ai/states/hasTriggeredCreateForDraftState';
+import { isCreatingForFirstSendState } from '@/ai/states/isCreatingForFirstSendState';
+import { skipMessagesSkeletonUntilLoadedState } from '@/ai/states/skipMessagesSkeletonUntilLoadedState';
 import {
   AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
   agentChatDraftsByThreadIdState,
@@ -18,6 +24,7 @@ import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 import {
+  type GetChatThreadsQuery,
   GetChatThreadsDocument,
   useCreateChatThreadMutation,
   useGetChatMessagesQuery,
@@ -33,38 +40,90 @@ export const useAgentChatData = () => {
   const setCurrentAIChatThreadTitle = useSetAtomState(
     currentAIChatThreadTitleState,
   );
-  const [isCreatingChatThread, setIsCreatingChatThread] = useAtomState(
-    isCreatingChatThreadState,
-  );
+  const [, setIsCreatingChatThread] = useAtomState(isCreatingChatThreadState);
   const setAgentChatDraftsByThreadId = useSetAtomState(
     agentChatDraftsByThreadIdState,
   );
   const store = useStore();
+  const apolloClient = useApolloClient();
 
   const { scrollToBottom } = useAgentChatScrollToBottom();
 
   const [createChatThread] = useCreateChatThreadMutation({
     onCompleted: (data) => {
+      if (store.get(isCreatingForFirstSendState)) {
+        store.set(isCreatingForFirstSendState, false);
+        setIsCreatingChatThread(false);
+        return;
+      }
+
       const newThreadId = data.createChatThread.id;
       const previousDraftKey =
-        currentAIChatThread ?? AGENT_CHAT_NEW_THREAD_DRAFT_KEY;
+        store.get(currentAIChatThreadState.atom) ??
+        AGENT_CHAT_NEW_THREAD_DRAFT_KEY;
+      const draftsSnapshot = store.get(agentChatDraftsByThreadIdState.atom);
       const newDraft =
-        store.get(agentChatDraftsByThreadIdState.atom)[
-          AGENT_CHAT_NEW_THREAD_DRAFT_KEY
-        ] ?? '';
+        draftsSnapshot[AGENT_CHAT_NEW_THREAD_DRAFT_KEY] ?? '';
 
       setIsCreatingChatThread(false);
-      setAgentChatDraftsByThreadId((prev) => ({
-        ...prev,
-        [previousDraftKey]: store.get(agentChatInputState.atom),
-      }));
+      if (previousDraftKey === AGENT_CHAT_NEW_THREAD_DRAFT_KEY) {
+        setAgentChatDraftsByThreadId((prev) => ({
+          ...prev,
+          [newThreadId]: newDraft,
+          [AGENT_CHAT_NEW_THREAD_DRAFT_KEY]: '',
+        }));
+        store.set(focusEditorAfterMigrateState, true);
+        store.set(skipMessagesSkeletonUntilLoadedState, true);
+      } else {
+        setAgentChatDraftsByThreadId((prev) => ({
+          ...prev,
+          [previousDraftKey]: store.get(agentChatInputState.atom),
+        }));
+      }
       setCurrentAIChatThread(newThreadId);
       setAgentChatInput(newDraft);
       setCurrentAIChatThreadTitle(null);
       setAgentChatUsage(null);
+
+      const newThread = data.createChatThread;
+      const threadListVariables = {
+        paging: { first: CHAT_THREADS_PAGE_SIZE },
+      };
+      const existing = apolloClient.cache.readQuery<GetChatThreadsQuery>({
+        query: GetChatThreadsDocument,
+        variables: threadListVariables,
+      });
+      if (isDefined(existing) && isDefined(existing.chatThreads)) {
+        const newNode = {
+          __typename: 'AgentChatThread' as const,
+          ...newThread,
+          totalInputTokens: 0,
+          totalOutputTokens: 0,
+          contextWindowTokens: null,
+          conversationSize: 0,
+          totalInputCredits: 0,
+          totalOutputCredits: 0,
+        };
+        const newEdge = {
+          __typename: 'AgentChatThreadEdge' as const,
+          node: newNode,
+          cursor: newThread.id,
+        };
+        apolloClient.cache.writeQuery({
+          query: GetChatThreadsDocument,
+          variables: threadListVariables,
+          data: {
+            chatThreads: {
+              ...existing.chatThreads,
+              edges: [newEdge, ...existing.chatThreads.edges],
+            },
+          },
+        });
+      }
     },
     onError: () => {
       setIsCreatingChatThread(false);
+      store.set(isCreatingForFirstSendState, false);
     },
     refetchQueries: [
       getOperationName(GetChatThreadsDocument) ?? 'GetChatThreads',
@@ -102,18 +161,67 @@ export const useAgentChatData = () => {
               }
             : null,
         );
-      } else if (!isCreatingChatThread) {
-        setIsCreatingChatThread(true);
-        createChatThread();
+      } else {
+        store.set(hasTriggeredCreateForDraftState, false);
+        setCurrentAIChatThread(AGENT_CHAT_NEW_THREAD_DRAFT_KEY);
+        setAgentChatInput(
+          store.get(agentChatDraftsByThreadIdState.atom)[
+            AGENT_CHAT_NEW_THREAD_DRAFT_KEY
+          ] ?? '',
+        );
+        setCurrentAIChatThreadTitle(null);
+        setAgentChatUsage(null);
       }
     },
   });
 
+  const isNewThread = currentAIChatThread === AGENT_CHAT_NEW_THREAD_DRAFT_KEY;
   const { loading: messagesLoading, data } = useGetChatMessagesQuery({
     variables: { threadId: currentAIChatThread! },
-    skip: !isDefined(currentAIChatThread),
-    onCompleted: scrollToBottom,
+    skip: !isDefined(currentAIChatThread) || isNewThread,
+    onCompleted: () => {
+      store.set(skipMessagesSkeletonUntilLoadedState, false);
+      scrollToBottom();
+    },
   });
+
+  const ensureThreadForDraft = useCallback(() => {
+    const current = store.get(currentAIChatThreadState.atom);
+    if (current !== AGENT_CHAT_NEW_THREAD_DRAFT_KEY) {
+      return;
+    }
+    const draft =
+      store.get(agentChatDraftsByThreadIdState.atom)[
+        AGENT_CHAT_NEW_THREAD_DRAFT_KEY
+      ] ?? '';
+    if (draft.trim() === '') {
+      return;
+    }
+    if (store.get(hasTriggeredCreateForDraftState)) {
+      return;
+    }
+    store.set(hasTriggeredCreateForDraftState, true);
+    createChatThread();
+  }, [store, createChatThread]);
+
+  const ensureThreadIdForSend = useCallback(async (): Promise<
+    string | null
+  > => {
+    const current = store.get(currentAIChatThreadState.atom);
+    if (current !== AGENT_CHAT_NEW_THREAD_DRAFT_KEY) {
+      return current;
+    }
+    store.set(isCreatingForFirstSendState, true);
+    setIsCreatingChatThread(true);
+    try {
+      const result = await createChatThread();
+      return result?.data?.createChatThread?.id ?? null;
+    } catch {
+      return null;
+    } finally {
+      setIsCreatingChatThread(false);
+    }
+  }, [store, createChatThread, setIsCreatingChatThread]);
 
   const uiMessages = mapDBMessagesToUIMessages(data?.chatMessages || []);
   const isLoading = messagesLoading || threadsLoading;
@@ -121,5 +229,9 @@ export const useAgentChatData = () => {
   return {
     uiMessages,
     isLoading,
+    threadsLoading,
+    messagesLoading,
+    ensureThreadForDraft,
+    ensureThreadIdForSend,
   };
 };
