@@ -9,8 +9,7 @@ export const AgentChatProviderContent = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const [focusEditorAfterMigrate, setFocusEditorAfterMigrate] =
-    useState(false);
+  const [focusEditorAfterMigrate, setFocusEditorAfterMigrate] = useState(false);
   const [skipMessagesSkeleton, setSkipMessagesSkeleton] = useState(false);
   const [threadIdCreatedFromDraft, setThreadIdCreatedFromDraft] = useState<
     string | null

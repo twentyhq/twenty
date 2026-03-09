@@ -33,9 +33,7 @@ export type UseAgentChatDataOptions = {
   setSkipMessagesSkeleton?: (value: boolean) => void;
 };
 
-export const useAgentChatData = (
-  options: UseAgentChatDataOptions = {},
-) => {
+export const useAgentChatData = (options: UseAgentChatDataOptions = {}) => {
   const { onMigrateFromDraft, setSkipMessagesSkeleton } = options;
 
   const [currentAIChatThread, setCurrentAIChatThread] = useAtomState(
@@ -68,8 +66,7 @@ export const useAgentChatData = (
         store.get(currentAIChatThreadState.atom) ??
         AGENT_CHAT_NEW_THREAD_DRAFT_KEY;
       const draftsSnapshot = store.get(agentChatDraftsByThreadIdState.atom);
-      const newDraft =
-        draftsSnapshot[AGENT_CHAT_NEW_THREAD_DRAFT_KEY] ?? '';
+      const newDraft = draftsSnapshot[AGENT_CHAT_NEW_THREAD_DRAFT_KEY] ?? '';
 
       setIsCreatingChatThread(false);
       if (previousDraftKey === AGENT_CHAT_NEW_THREAD_DRAFT_KEY) {
