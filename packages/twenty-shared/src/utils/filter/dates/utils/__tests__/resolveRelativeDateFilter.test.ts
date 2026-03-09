@@ -84,8 +84,8 @@ describe('resolveRelativeDateFilter', () => {
         referenceZdt,
       );
 
-      expect(result.start).toBe('2023-12-15');
-      expect(result.end).toBe('2024-03-15');
+      expect(result.start).toBe('2023-10-01');
+      expect(result.end).toBe('2024-01-01');
     });
 
     it('should compute start and end for NEXT 1 QUARTER', () => {
@@ -94,8 +94,8 @@ describe('resolveRelativeDateFilter', () => {
         referenceZdt,
       );
 
-      expect(result.start).toBe('2024-03-16');
-      expect(result.end).toBe('2024-06-16');
+      expect(result.start).toBe('2024-04-01');
+      expect(result.end).toBe('2024-07-01');
     });
   });
 });
