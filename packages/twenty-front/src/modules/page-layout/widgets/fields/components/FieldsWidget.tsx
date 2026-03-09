@@ -7,6 +7,7 @@ import { FieldsWidgetCellHoveredPortal } from '@/page-layout/widgets/fields/comp
 import { FieldsWidgetFieldList } from '@/page-layout/widgets/fields/components/FieldsWidgetFieldList';
 import { FieldsWidgetGroupContainer } from '@/page-layout/widgets/fields/components/FieldsWidgetGroupContainer';
 import { useFieldsWidgetGroupsForDisplay } from '@/page-layout/widgets/fields/hooks/useFieldsWidgetGroupsForDisplay';
+import { useFieldsWidgetHiddenFieldsForDisplay } from '@/page-layout/widgets/fields/hooks/useFieldsWidgetHiddenFieldsForDisplay';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { SidePanelProvider } from '@/ui/layout/side-panel/contexts/SidePanelContext';
@@ -72,9 +73,24 @@ export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
     objectNameSingular: targetRecord.targetObjectNameSingular,
   });
 
-  const flattenedFieldMetadataItems = groups.flatMap((group) =>
-    group.fields.map((field) => field.fieldMetadataItem),
-  );
+  const { hiddenFields } = useFieldsWidgetHiddenFieldsForDisplay({
+    widgetId: widget.id,
+    viewId: fieldsConfiguration.viewId ?? null,
+    objectNameSingular: targetRecord.targetObjectNameSingular,
+  });
+
+  const shouldShowHiddenFields =
+    fieldsConfiguration.shouldAllowUserToSeeHiddenFields === true &&
+    hiddenFields.length > 0;
+
+  const flattenedFieldMetadataItems = [
+    ...groups.flatMap((group) =>
+      group.fields.map((field) => field.fieldMetadataItem),
+    ),
+    ...(shouldShowHiddenFields
+      ? hiddenFields.map((field) => field.fieldMetadataItem)
+      : []),
+  ];
 
   const hasFieldsToDisplay = groups.length > 0;
 
@@ -127,6 +143,20 @@ export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
                 </StyledPropertyBox>
               </FieldsWidgetGroupContainer>
             ))
+          )}
+
+          {shouldShowHiddenFields && (
+            <FieldsWidgetGroupContainer
+              title={t`More (${hiddenFields.length})`}
+              defaultExpanded={false}
+            >
+              <StyledPropertyBox>
+                <FieldsWidgetFieldList
+                  fields={hiddenFields}
+                  instanceId={instanceId}
+                />
+              </StyledPropertyBox>
+            </FieldsWidgetGroupContainer>
           )}
 
           <FieldsWidgetCellHoveredPortal
