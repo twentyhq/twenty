@@ -1,3 +1,4 @@
+import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/isNavigationMenuInEditModeState';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
 import { hasAnySoftDeleteFilterOnViewComponentSelector } from '@/object-record/record-filter/states/hasAnySoftDeleteFilterOnView';
@@ -5,6 +6,7 @@ import { useRecordTableContextOrThrow } from '@/object-record/record-table/conte
 import { isRecordTableCreateDisabled } from '@/object-record/record-table/utils/isRecordTableCreateDisabled';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { type IconComponent } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
@@ -53,10 +55,15 @@ export const RecordTableEmptyStateDisplay = (
   const objectPermissions = useObjectPermissionsForObject(
     objectMetadataItem.id,
   );
-  const isReadOnly = isObjectMetadataReadOnly({
-    objectPermissions,
-    objectMetadataItem,
-  });
+  const isNavigationMenuInEditMode = useAtomStateValue(
+    isNavigationMenuInEditModeState,
+  );
+  const isReadOnly =
+    isNavigationMenuInEditMode ||
+    isObjectMetadataReadOnly({
+      objectPermissions,
+      objectMetadataItem,
+    });
 
   const hasAnySoftDeleteFilterOnView = useAtomComponentSelectorValue(
     hasAnySoftDeleteFilterOnViewComponentSelector,
