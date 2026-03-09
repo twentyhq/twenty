@@ -4,6 +4,7 @@ import { type FlatCommandMenuItemMaps } from 'src/engine/metadata-modules/flat-c
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFrontComponent } from 'src/engine/metadata-modules/flat-front-component/types/flat-front-component.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { STANDARD_COMMAND_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant';
 import { createStandardCommandMenuItemFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/command-menu-item/create-standard-command-menu-item-flat-metadata.util';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
@@ -16,13 +17,14 @@ export const buildStandardFlatCommandMenuItemMaps = ({
   now,
   workspaceId,
   twentyStandardApplicationId,
-  dependencyFlatEntityMaps: { flatFrontComponentMaps },
+  dependencyFlatEntityMaps: { flatFrontComponentMaps, flatObjectMetadataMaps },
 }: {
   now: string;
   workspaceId: string;
   twentyStandardApplicationId: string;
   dependencyFlatEntityMaps: {
     flatFrontComponentMaps: FlatEntityMaps<FlatFrontComponent>;
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   };
 }): FlatCommandMenuItemMaps => {
   const flatCommandMenuItemMaps: FlatCommandMenuItemMaps =
@@ -36,6 +38,7 @@ export const buildStandardFlatCommandMenuItemMaps = ({
       twentyStandardApplicationId,
       dependencyFlatEntityMaps: {
         flatFrontComponentMaps,
+        flatObjectMetadataMaps,
       },
       now,
     });

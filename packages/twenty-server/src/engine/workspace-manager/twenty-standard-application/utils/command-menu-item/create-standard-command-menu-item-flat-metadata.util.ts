@@ -4,6 +4,7 @@ import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-comma
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type FlatFrontComponent } from 'src/engine/metadata-modules/flat-front-component/types/flat-front-component.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { STANDARD_COMMAND_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 
@@ -12,7 +13,7 @@ export const createStandardCommandMenuItemFlatMetadata = ({
   commandMenuItemId,
   workspaceId,
   twentyStandardApplicationId,
-  dependencyFlatEntityMaps: { flatFrontComponentMaps },
+  dependencyFlatEntityMaps: { flatFrontComponentMaps, flatObjectMetadataMaps },
   now,
 }: {
   commandMenuItemName: keyof typeof STANDARD_COMMAND_MENU_ITEMS;
@@ -21,6 +22,7 @@ export const createStandardCommandMenuItemFlatMetadata = ({
   twentyStandardApplicationId: string;
   dependencyFlatEntityMaps: {
     flatFrontComponentMaps: FlatEntityMaps<FlatFrontComponent>;
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   };
   now: string;
 }): FlatCommandMenuItem => {
@@ -35,6 +37,27 @@ export const createStandardCommandMenuItemFlatMetadata = ({
     throw new Error(
       `Front component not found for universal identifier ${definition.frontComponentUniversalIdentifier}`,
     );
+  }
+
+  let resolvedObjectMetadataId: string | null = null;
+  let resolvedObjectMetadataUniversalIdentifier: string | null = null;
+
+  if (isDefined(definition.availabilityObjectMetadataUniversalIdentifier)) {
+    const flatObjectMetadata = findFlatEntityByUniversalIdentifier({
+      flatEntityMaps: flatObjectMetadataMaps,
+      universalIdentifier:
+        definition.availabilityObjectMetadataUniversalIdentifier,
+    });
+
+    if (!isDefined(flatObjectMetadata)) {
+      throw new Error(
+        `Object metadata not found for universal identifier ${definition.availabilityObjectMetadataUniversalIdentifier}`,
+      );
+    }
+
+    resolvedObjectMetadataId = flatObjectMetadata.id;
+    resolvedObjectMetadataUniversalIdentifier =
+      flatObjectMetadata.universalIdentifier;
   }
 
   return {
@@ -55,8 +78,9 @@ export const createStandardCommandMenuItemFlatMetadata = ({
     frontComponentId: flatFrontComponent.id,
     frontComponentUniversalIdentifier: flatFrontComponent.universalIdentifier,
     workflowVersionId: null,
-    availabilityObjectMetadataId: null,
-    availabilityObjectMetadataUniversalIdentifier: null,
+    availabilityObjectMetadataId: resolvedObjectMetadataId,
+    availabilityObjectMetadataUniversalIdentifier:
+      resolvedObjectMetadataUniversalIdentifier,
     createdAt: now,
     updatedAt: now,
   };

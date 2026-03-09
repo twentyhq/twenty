@@ -216,6 +216,7 @@ export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
     twentyStandardApplicationId,
     dependencyFlatEntityMaps: {
       flatFrontComponentMaps,
+      flatObjectMetadataMaps,
     },
   });
 
