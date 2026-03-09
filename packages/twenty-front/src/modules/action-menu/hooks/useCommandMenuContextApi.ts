@@ -3,6 +3,7 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { objectPermissionsFamilySelector } from '@/auth/states/objectPermissionsFamilySelector';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
+import { contextStoreIsPageInEditModeComponentState } from '@/context-store/states/contextStoreIsPageInEditModeComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
@@ -108,6 +109,10 @@ export const useCommandMenuContextApi = (): CommandMenuContextApi => {
     contextStoreCurrentViewTypeComponentState,
   );
 
+  const isPageInEditMode = useAtomComponentStateValue(
+    contextStoreIsPageInEditModeComponentState,
+  );
+
   const pageType =
     contextStoreCurrentViewType === ContextStoreViewType.ShowPage
       ? CommandMenuContextApiPageType.RECORD_PAGE
@@ -145,6 +150,7 @@ export const useCommandMenuContextApi = (): CommandMenuContextApi => {
   return {
     pageType,
     isInSidePanel,
+    isPageInEditMode,
     favoriteRecordIds,
     isSelectAll,
     hasAnySoftDeleteFilterOnView,
