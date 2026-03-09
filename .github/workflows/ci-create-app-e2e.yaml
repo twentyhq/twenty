@@ -74,10 +74,6 @@ jobs:
           done
 
       - name: Scaffold app using published create-twenty-app
-        env:
-          YARN_NPM_REGISTRY_SERVER: http://localhost:4873
-          YARN_UNSAFE_HTTP_WHITELIST: localhost
-          YARN_ENABLE_HARDENED_MODE: 0
         run: |
           npm install -g create-twenty-app@$CI_VERSION --registry http://localhost:4873
           create-twenty-app --version
@@ -86,12 +82,11 @@ jobs:
           create-twenty-app test-app --exhaustive --yes
 
       - name: Install scaffolded app dependencies
-        env:
-          YARN_NPM_REGISTRY_SERVER: http://localhost:4873
-          YARN_UNSAFE_HTTP_WHITELIST: localhost
-          YARN_ENABLE_HARDENED_MODE: 0
         run: |
           cd /tmp/e2e-test-workspace/test-app
+          echo 'enableHardenedMode: false' >> .yarnrc.yml
+          echo 'npmRegistryServer: "http://localhost:4873"' >> .yarnrc.yml
+          echo 'unsafeHttpWhitelist: ["localhost"]' >> .yarnrc.yml
           yarn install
 
       - name: Verify scaffolded app structure
