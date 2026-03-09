@@ -126,9 +126,11 @@ export const AIChatEditorSection = () => {
   const editorWrapperRefCallback = useCallback(
     (node: HTMLDivElement | null) => {
       if (node && focusEditorAfterMigrate) {
-        setFocusEditorAfterMigrate(false);
         requestAnimationFrame(() => {
-          editor?.commands.focus('end');
+          if (editor) {
+            editor.commands.focus('end');
+            setFocusEditorAfterMigrate(false);
+          }
         });
       }
     },
