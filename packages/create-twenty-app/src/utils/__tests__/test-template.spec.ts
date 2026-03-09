@@ -55,9 +55,9 @@ describe('scaffoldIntegrationTest', () => {
       expect(content).toContain(
         "import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/application-config'",
       );
-      expect(content).toContain('TWENTY_TEST_API_KEY');
       expect(content).toContain('appBuild');
       expect(content).toContain('appUninstall');
+      expect(content).toContain('new MetadataApiClient()');
       expect(content).toContain('findManyApplications');
       expect(content).toContain('APPLICATION_UNIVERSAL_IDENTIFIER');
     });
@@ -83,7 +83,7 @@ describe('scaffoldIntegrationTest', () => {
       expect(content).toContain('.twenty-sdk-test');
       expect(content).toContain('config.json');
       expect(content).toContain('process.env.TWENTY_API_URL');
-      expect(content).toContain('process.env.TWENTY_TEST_API_KEY');
+      expect(content).toContain('process.env.TWENTY_API_KEY');
       expect(content).toContain('assertServerIsReachable');
     });
   });
@@ -101,7 +101,8 @@ describe('scaffoldIntegrationTest', () => {
 
       const content = await fs.readFile(vitestConfigPath, 'utf8');
 
-      expect(content).toContain('TWENTY_TEST_API_KEY');
+      expect(content).toContain('TWENTY_API_KEY');
+      expect(content).not.toContain('TWENTY_TEST_API_KEY');
       expect(content).toContain('TWENTY_API_URL');
       expect(content).toContain('setup-test.ts');
       expect(content).toContain('tsconfig.spec.json');

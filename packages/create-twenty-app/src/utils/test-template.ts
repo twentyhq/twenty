@@ -45,7 +45,7 @@ export default defineConfig({
     setupFiles: ['src/__tests__/setup-test.ts'],
     env: {
       TWENTY_API_URL: 'http://localhost:3000',
-      TWENTY_TEST_API_KEY:
+      TWENTY_API_KEY:
         '${SEED_API_KEY}',
     },
   },
@@ -122,7 +122,7 @@ beforeAll(async () => {
     profiles: {
       default: {
         apiUrl: process.env.TWENTY_API_URL,
-        apiKey: process.env.TWENTY_TEST_API_KEY,
+        apiKey: process.env.TWENTY_API_KEY,
       },
     },
   };
@@ -153,7 +153,6 @@ import { MetadataApiClient } from 'twenty-sdk/clients';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 const APP_PATH = process.cwd();
-const TWENTY_API_URL = process.env.TWENTY_API_URL ?? 'http://localhost:3000';
 
 describe('App installation', () => {
   let appInstalled = false;
@@ -188,20 +187,7 @@ describe('App installation', () => {
   });
 
   it('should find the installed app in the applications list', async () => {
-    const apiKey = process.env.TWENTY_TEST_API_KEY;
-
-    if (!apiKey) {
-      throw new Error(
-        'No API key found. Set TWENTY_TEST_API_KEY in your vitest config env.',
-      );
-    }
-
-    const metadataClient = new MetadataApiClient({
-      url: \`\${TWENTY_API_URL}/metadata\`,
-      headers: {
-        Authorization: \`Bearer \${apiKey}\`,
-      },
-    });
+    const metadataClient = new MetadataApiClient();
 
     const result = await metadataClient.query({
       findManyApplications: {
