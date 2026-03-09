@@ -41,6 +41,12 @@ export class ImapSmtpCaldavService {
       },
     });
 
+    client.on('error', (error: Error) => {
+      this.logger.error(
+        `IMAP client error for ${handle}: ${error.message}`,
+      );
+    });
+
     try {
       await client.connect();
 
