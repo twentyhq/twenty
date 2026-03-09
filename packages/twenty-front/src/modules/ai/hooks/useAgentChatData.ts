@@ -29,12 +29,12 @@ import {
 } from '~/generated-metadata/graphql';
 
 export type UseAgentChatDataOptions = {
-  onMigrateFromDraft?: (threadId: string) => void;
+  onCreateThreadFromDraft?: (threadId: string) => void;
   setSkipMessagesSkeleton?: (value: boolean) => void;
 };
 
 export const useAgentChatData = (options: UseAgentChatDataOptions = {}) => {
-  const { onMigrateFromDraft, setSkipMessagesSkeleton } = options;
+  const { onCreateThreadFromDraft, setSkipMessagesSkeleton } = options;
 
   const [currentAIChatThread, setCurrentAIChatThread] = useAtomState(
     currentAIChatThreadState,
@@ -76,7 +76,7 @@ export const useAgentChatData = (options: UseAgentChatDataOptions = {}) => {
           [newThreadId]: newDraft,
           [AGENT_CHAT_NEW_THREAD_DRAFT_KEY]: '',
         }));
-        onMigrateFromDraft?.(newThreadId);
+        onCreateThreadFromDraft?.(newThreadId);
       } else {
         setAgentChatDraftsByThreadId((prev) => ({
           ...prev,

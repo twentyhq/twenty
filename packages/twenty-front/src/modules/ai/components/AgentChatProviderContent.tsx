@@ -17,7 +17,7 @@ export const AgentChatProviderContent = ({
 
   const { ensureThreadForDraft, threadsLoading, messagesLoading } =
     useAgentChatData({
-      onMigrateFromDraft: (threadId) => {
+      onCreateThreadFromDraft: (threadId) => {
         setFocusEditorAfterMigrate(true);
         setSkipMessagesSkeleton(true);
         setThreadIdCreatedFromDraft(threadId);
