@@ -10,7 +10,7 @@ import { type Currency } from '@/ui/input/components/internal/types/Currency';
 import { IMaskInput } from 'react-imask';
 import { type IconComponent } from 'twenty-ui/display';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
-import { NumberFormat } from '@/localization/constants/NumberFormat';
+import { getSeparatorsForNumberFormat } from '~/utils/format/getSeparatorsForNumberFormat';
 
 export const StyledIMaskInput = styled.div`
   > input {
@@ -68,33 +68,6 @@ export type CurrencyInputProps = {
   onClickOutside: (event: MouseEvent | TouchEvent, inputValue: string) => void;
   onChange?: (newText: string) => void;
   onSelect?: (newText: string) => void;
-};
-
-const getSeparatorsForNumberFormat = (format: NumberFormat) => {
-  switch (format) {
-    case NumberFormat.SPACES_AND_COMMA:
-      return {
-        thousandsSeparator: ' ',
-        radix: ',',
-      };
-    case NumberFormat.DOTS_AND_COMMA:
-      return {
-        thousandsSeparator: '.',
-        radix: ',',
-      };
-    case NumberFormat.APOSTROPHE_AND_DOT:
-      return {
-        thousandsSeparator: "'",
-        radix: '.',
-      };
-    case NumberFormat.SYSTEM:
-    case NumberFormat.COMMAS_AND_DOT:
-    default:
-      return {
-        thousandsSeparator: ',',
-        radix: '.',
-      };
-  }
 };
 
 export const CurrencyInput = ({
