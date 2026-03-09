@@ -215,12 +215,10 @@ export const isRecordMatchingFilter = ({
       );
 
     if (!isDefined(objectMetadataField)) {
-      throw new Error(
-        'Field metadata item "' +
-          filterKey +
-          '" not found for object metadata item ' +
-          objectMetadataItem.nameSingular,
-      );
+      // Stale cached queries can reference fields that no longer exist
+      // in the metadata (e.g. deleted or deactivated custom fields).
+      // Skip the filter condition to avoid crashing optimistic updates.
+      return true;
     }
 
     switch (objectMetadataField.type) {

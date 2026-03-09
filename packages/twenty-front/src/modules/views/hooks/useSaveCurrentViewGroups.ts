@@ -149,7 +149,7 @@ export const useSaveCurrentViewGroups = () => {
         .filter(isDefined);
 
       if (!isDefined(view.mainGroupByFieldMetadataId)) {
-        return;
+        throw new Error('mainGroupByFieldMetadataId is required');
       }
 
       await performViewGroupAPIUpdate(viewGroupsToUpdate);
