@@ -211,7 +211,7 @@
     "vitest": "1.4.0"
   },
   "engines": {
-    "node": "^24.5.0",
+    "node": ">=20.0.0",
     "npm": "please-use-yarn",
     "yarn": ">=4.0.2"
   },
