@@ -406,7 +406,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     isPinned: true,
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'pageType == "RECORD_PAGE" and featureFlags.IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED and noneDefined(selectedRecords, "deletedAt") and objectPermissions.canUpdateObjectRecords',
+      'pageType == "RECORD_PAGE" and featureFlags.IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED and noneDefined(selectedRecords, "deletedAt") and objectPermissions.canUpdateObjectRecords and objectMetadataItem.nameSingular != "dashboard"',
     availabilityObjectMetadataUniversalIdentifier: null,
     frontComponentUniversalIdentifier:
       STANDARD_FRONT_COMPONENTS.editRecordPageLayout.universalIdentifier,
@@ -668,9 +668,10 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     shortLabel: 'See runs',
     icon: 'IconHistoryToggle',
     position: 52,
-    isPinned: true,
+    isPinned: false,
     availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
-    conditionalAvailabilityExpression: 'not hasAnySoftDeleteFilterOnView',
+    conditionalAvailabilityExpression:
+      'not hasAnySoftDeleteFilterOnView and objectMetadataItem.nameSingular != "workflowRun" and objectMetadataItem.nameSingular != "workflowVersion" and objectMetadataItem.nameSingular != "workflow"',
     availabilityObjectMetadataUniversalIdentifier: null,
     frontComponentUniversalIdentifier:
       STANDARD_FRONT_COMPONENTS.goToRuns.universalIdentifier,

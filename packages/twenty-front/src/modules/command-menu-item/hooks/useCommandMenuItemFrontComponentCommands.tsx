@@ -151,6 +151,10 @@ export const useCommandMenuItemFrontComponentCommands = (
       ? contextStoreTargetedRecordsRule.selectedRecordIds
       : [];
 
+  const hasRecordSelection =
+    selectedRecordIds.length >= 1 ||
+    contextStoreTargetedRecordsRule.mode === 'exclusion';
+
   const mountContext: HeadlessFrontComponentMountContext | undefined =
     selectedRecordIds.length === 1 && isDefined(currentObjectMetadataItem)
       ? {
@@ -176,27 +180,22 @@ export const useCommandMenuItemFrontComponentCommands = (
         isDefined(item.frontComponentId),
     ) ?? [];
 
-  const selectedRecordCount =
-    contextStoreTargetedRecordsRule.mode === 'selection'
-      ? contextStoreTargetedRecordsRule.selectedRecordIds.length
-      : 0;
-
   const objectMatches = (item: CommandMenuItemWithFrontComponent) =>
     !isDefined(item.availabilityObjectMetadataId) ||
     item.availabilityObjectMetadataId ===
       contextStoreCurrentObjectMetadataItemId;
 
   const globalItems = frontComponentItems.filter(
-    (item) => item.availabilityType === CommandMenuItemAvailabilityType.GLOBAL,
+    (item) =>
+      objectMatches(item) &&
+      item.availabilityType === CommandMenuItemAvailabilityType.GLOBAL,
   );
 
   const recordScopedItems = frontComponentItems.filter((item) => {
     if (!objectMatches(item)) return false;
 
     return (
-      item.availabilityType ===
-        CommandMenuItemAvailabilityType.RECORD_SELECTION &&
-      selectedRecordCount >= 1
+      item.availabilityType === CommandMenuItemAvailabilityType.RECORD_SELECTION
     );
   });
 
@@ -213,19 +212,22 @@ export const useCommandMenuItemFrontComponentCommands = (
     }),
   );
 
-  const recordScopedCommandMenuItems = recordScopedItems.map((item, index) =>
-    buildCommandMenuItemFromFrontComponent({
-      item,
-      scope: CommandMenuItemScope.RecordSelection,
-      index,
-      isPinned: !contextStoreIsPageInEditMode && item.isPinned,
-      getIcon,
-      openFrontComponentInSidePanel,
-      mountHeadlessFrontComponent,
-      commandMenuContextApi,
-      mountContext,
-    }),
-  );
+  const recordScopedCommandMenuItems =
+    hasRecordSelection
+      ? recordScopedItems.map((item, index) =>
+          buildCommandMenuItemFromFrontComponent({
+            item,
+            scope: CommandMenuItemScope.RecordSelection,
+            index,
+            isPinned: !contextStoreIsPageInEditMode && item.isPinned,
+            getIcon,
+            openFrontComponentInSidePanel,
+            mountHeadlessFrontComponent,
+            commandMenuContextApi,
+            mountContext,
+          }),
+        )
+      : [];
 
   return [...globalCommandMenuItems, ...recordScopedCommandMenuItems].filter(
     (item) => item.shouldBeRegistered(),
