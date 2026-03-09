@@ -71,7 +71,7 @@ export const CommandMenuContextProviderDefault = ({
         displayType,
         containerType,
         commandMenuItems: isCommandMenuItemEnabled
-          ? [...commandMenuItemFrontComponentActions]
+          ? commandMenuItemFrontComponentActions
           : [
               ...commandMenuItems,
               ...runWorkflowRecordCommands,

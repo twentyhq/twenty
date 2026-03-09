@@ -1,4 +1,3 @@
-import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { Command } from '@/command-menu-item/display/components/Command';
 import { HeadlessFrontComponentCommandMenuItem } from '@/command-menu-item/display/components/HeadlessFrontComponentCommandMenuItem';
 import { CommandMenuItemScope } from '@/command-menu-item/types/CommandMenuItemScope';
@@ -12,7 +11,6 @@ import { useOpenFrontComponentInSidePanel } from '@/side-panel/hooks/useOpenFron
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { useContext } from 'react';
 import { type CommandMenuContextApi } from 'twenty-shared/types';
 import {
   evaluateConditionalAvailabilityExpression,
@@ -132,8 +130,6 @@ export const useCommandMenuItemFrontComponentCommands = (
     contextStoreIsPageInEditModeComponentState,
   );
 
-  const { containerType } = useContext(CommandMenuContext);
-
   const contextStoreCurrentObjectMetadataItemId = useAtomComponentStateValue(
     contextStoreCurrentObjectMetadataItemIdComponentState,
   );
@@ -170,10 +166,7 @@ export const useCommandMenuItemFrontComponentCommands = (
   );
 
   const { data } = useFindManyCommandMenuItemsQuery({
-    skip:
-      !isCommandMenuItemEnabled ||
-      (containerType !== 'command-menu-list' &&
-        containerType !== 'command-menu-show-page-dropdown'),
+    skip: !isCommandMenuItemEnabled,
   });
 
   const frontComponentItems =
