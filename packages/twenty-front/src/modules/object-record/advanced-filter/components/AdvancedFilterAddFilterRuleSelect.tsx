@@ -1,4 +1,4 @@
-import { CommandMenuItemButton } from '@/command-menu-item/display/components/CommandMenuItemButton';
+import { CommandMenuButton } from '@/command-menu/components/CommandMenuButton';
 import { useChildRecordFiltersAndRecordFilterGroups } from '@/object-record/advanced-filter/hooks/useChildRecordFiltersAndRecordFilterGroups';
 import { useGetDefaultFieldMetadataItemForFilter } from '@/object-record/advanced-filter/hooks/useGetDefaultFieldMetadataItemForFilter';
 import { useSetRecordFilterUsedInAdvancedFilterDropdownRow } from '@/object-record/advanced-filter/hooks/useSetRecordFilterUsedInAdvancedFilterDropdownRow';
@@ -147,13 +147,11 @@ export const AdvancedFilterAddFilterRuleSelect = ({
 
   if (!isFilterRuleGroupOptionVisible) {
     return (
-      <CommandMenuItemButton
-        action={{
-          Icon: IconPlus,
-          label: t`Add rule`,
-          shortLabel: t`Add rule`,
-          key: 'add-rule',
-        }}
+      <CommandMenuButton
+        id="add-rule"
+        Icon={IconPlus}
+        label={t`Add rule`}
+        shortLabel={t`Add rule`}
         onClick={handleAddFilter}
       />
     );
@@ -163,13 +161,11 @@ export const AdvancedFilterAddFilterRuleSelect = ({
     <Dropdown
       dropdownId={dropdownId}
       clickableComponent={
-        <CommandMenuItemButton
-          action={{
-            Icon: IconPlus,
-            label: t`Add filter rule`,
-            shortLabel: t`Add filter rule`,
-            key: 'add-filter-rule',
-          }}
+        <CommandMenuButton
+          id="add-filter-rule"
+          Icon={IconPlus}
+          label={t`Add filter rule`}
+          shortLabel={t`Add filter rule`}
         />
       }
       dropdownComponents={

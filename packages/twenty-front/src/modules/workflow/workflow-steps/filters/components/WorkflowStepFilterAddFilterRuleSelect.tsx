@@ -1,4 +1,4 @@
-import { CommandMenuItemButton } from '@/command-menu-item/display/components/CommandMenuItemButton';
+import { CommandMenuButton } from '@/command-menu/components/CommandMenuButton';
 import { getAdvancedFilterAddFilterRuleSelectDropdownId } from '@/object-record/advanced-filter/utils/getAdvancedFilterAddFilterRuleSelectDropdownId';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -95,13 +95,11 @@ export const WorkflowStepFilterAddFilterRuleSelect = ({
 
   if (!isFilterRuleGroupOptionVisible) {
     return (
-      <CommandMenuItemButton
-        action={{
-          Icon: IconPlus,
-          label: t`Add rule`,
-          shortLabel: t`Add rule`,
-          key: 'add-rule',
-        }}
+      <CommandMenuButton
+        id="add-rule"
+        Icon={IconPlus}
+        label={t`Add rule`}
+        shortLabel={t`Add rule`}
         onClick={handleAddFilter}
       />
     );
@@ -111,13 +109,11 @@ export const WorkflowStepFilterAddFilterRuleSelect = ({
     <Dropdown
       dropdownId={dropdownId}
       clickableComponent={
-        <CommandMenuItemButton
-          action={{
-            Icon: IconPlus,
-            label: t`Add filter rule`,
-            shortLabel: t`Add filter rule`,
-            key: 'add-filter-rule',
-          }}
+        <CommandMenuButton
+          id="add-filter-rule"
+          Icon={IconPlus}
+          label={t`Add filter rule`}
+          shortLabel={t`Add filter rule`}
         />
       }
       dropdownComponents={
