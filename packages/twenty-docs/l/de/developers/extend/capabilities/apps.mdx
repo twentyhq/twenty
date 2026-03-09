@@ -15,7 +15,7 @@ Mit Apps können Sie Twenty-Anpassungen **als Code** erstellen und verwalten. An
 
 * Benutzerdefinierte Objekte und Felder als Code definieren (verwaltetes Datenmodell)
 * Logikfunktionen mit benutzerdefinierten Triggern erstellen
-* Define skills and agents for AI
+* Skills und Agenten für KI definieren
 * Dieselbe App in mehreren Workspaces bereitstellen
 
 ## Voraussetzungen
@@ -39,10 +39,10 @@ yarn twenty app:dev
 Das Scaffolding-Tool unterstützt zwei Modi, um zu steuern, welche Beispieldateien enthalten sind:
 
 ```bash filename="Terminal"
-# Default (exhaustive): all examples (object, field, logic function, front component, view, navigation menu item, skill, agent)
+# Standard (umfassend): alle Beispiele (Objekt, Feld, Logikfunktion, Frontend-Komponente, View, Navigationsmenüeintrag, Skill, Agent)
 npx create-twenty-app@latest my-app
 
-# Minimal: only core files (application-config.ts and default-role.ts)
+# Minimal: nur Kerndateien (application-config.ts und default-role.ts)
 npx create-twenty-app@latest my-app --minimal
 ```
 
@@ -96,29 +96,29 @@ my-twenty-app/
   .oxlintrc.json
   tsconfig.json
   README.md
-  public/                           # Public assets folder (images, fonts, etc.)
+  public/                           # Ordner für öffentliche Assets (Bilder, Schriftarten usw.)
   src/
-  ├── application-config.ts           # Required - main application configuration
+  ├── application-config.ts           # Erforderlich - Hauptkonfiguration der Anwendung
   ├── roles/
-  │   └── default-role.ts               # Default role for logic functions
+  │   └── default-role.ts               # Standardrolle für Logikfunktionen
   ├── objects/
-  │   └── example-object.ts             # Example custom object definition
+  │   └── example-object.ts             # Beispiel für eine benutzerdefinierte Objektdefinition
   ├── fields/
-  │   └── example-field.ts              # Example standalone field definition
+  │   └── example-field.ts              # Beispiel für eine eigenständige Felddefinition
   ├── logic-functions/
-  │   ├── hello-world.ts                # Example logic function
-  │   ├── pre-install.ts                # Pre-install logic function
-  │   └── post-install.ts               # Post-install logic function
+  │   ├── hello-world.ts                # Beispiel für eine Logikfunktion
+  │   ├── pre-install.ts                # Pre-Installations-Logikfunktion
+  │   └── post-install.ts               # Post-Installations-Logikfunktion
   ├── front-components/
-  │   └── hello-world.tsx               # Example front component
+  │   └── hello-world.tsx               # Beispiel für eine Frontend-Komponente
   ├── views/
-  │   └── example-view.ts                # Example saved view definition
+  │   └── example-view.ts                # Beispiel für eine gespeicherte View-Definition
   ├── navigation-menu-items/
-  │   └── example-navigation-menu-item.ts # Example sidebar navigation link
+  │   └── example-navigation-menu-item.ts # Beispiel für einen Navigationslink in der Seitenleiste
   ├── skills/
-  │   └── example-skill.ts                # Example AI agent skill definition
+  │   └── example-skill.ts                # Beispiel für eine Skill-Definition eines KI-Agenten
   └── agents/
-      └── example-agent.ts                # Example AI agent definition
+      └── example-agent.ts                # Beispiel für eine KI-Agenten-Definition
 ```
 
 Mit `--minimal` werden nur die Kerndateien erstellt (`application-config.ts`, `roles/default-role.ts`, `logic-functions/pre-install.ts` und `logic-functions/post-install.ts`).
@@ -150,7 +150,7 @@ Das SDK erkennt Entitäten, indem es Ihre TypeScript-Dateien nach Aufrufen von *
 | `defineView()`                     | Gespeicherte View-Definitionen                                           |
 | `defineNavigationMenuItem()`       | Definitionen von Navigationsmenüeinträgen                                |
 | `defineSkill()`                    | Skill-Definitionen für KI-Agenten                                        |
-| `defineAgent()`                    | AI agent definitions                                                     |
+| `defineAgent()`                    | KI-Agenten-Definitionen                                                  |
 
 <Note>
 **Dateibenennung ist flexibel.** Die Entitätserkennung ist AST-basiert — das SDK durchsucht Ihre Quelldateien nach dem Muster `export default define<Entity>({...})`. Sie können Ihre Dateien und Ordner nach Belieben organisieren. Die Gruppierung nach Entitätstyp (z. B. `logic-functions/`, `roles/`) ist lediglich eine Konvention zur Codeorganisation, keine Voraussetzung.

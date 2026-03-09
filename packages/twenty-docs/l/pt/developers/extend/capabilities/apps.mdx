@@ -15,7 +15,7 @@ Os aplicativos permitem criar e gerenciar personalizações do Twenty **como có
 
 * Defina objetos e campos personalizados como código (modelo de dados gerenciado)
 * Crie funções de lógica com gatilhos personalizados
-* Define skills and agents for AI
+* Defina habilidades e agentes de IA
 * Implemente o mesmo aplicativo em vários espaços de trabalho
 
 ## Pré-requisitos
@@ -39,10 +39,10 @@ yarn twenty app:dev
 O gerador de estrutura oferece suporte a dois modos para controlar quais arquivos de exemplo são incluídos:
 
 ```bash filename="Terminal"
-# Default (exhaustive): all examples (object, field, logic function, front component, view, navigation menu item, skill, agent)
+# Padrão (exhaustivo): todos os exemplos (objeto, campo, função de lógica, componente de front-end, visualização, item do menu de navegação, habilidade, agente)
 npx create-twenty-app@latest my-app
 
-# Minimal: only core files (application-config.ts and default-role.ts)
+# Mínimo: apenas arquivos principais (application-config.ts e default-role.ts)
 npx create-twenty-app@latest my-app --minimal
 ```
 
@@ -150,7 +150,7 @@ O SDK detecta entidades analisando seus arquivos TypeScript em busca de chamadas
 | `defineView()`                     | Definições de visualizações salvas                    |
 | `defineNavigationMenuItem()`       | Definições de itens do menu de navegação              |
 | `defineSkill()`                    | Definições de habilidades de agente de IA             |
-| `defineAgent()`                    | AI agent definitions                                  |
+| `defineAgent()`                    | Definições de agentes de IA                           |
 
 <Note>
 **A nomeação de arquivos é flexível.** A detecção de entidades é baseada em AST — o SDK varre seus arquivos fonte em busca do padrão `export default define<Entity>({...})`. Você pode organizar seus arquivos e pastas como quiser. Agrupar por tipo de entidade (por exemplo, `logic-functions/`, `roles/`) é apenas uma convenção para organização do código, não um requisito.
