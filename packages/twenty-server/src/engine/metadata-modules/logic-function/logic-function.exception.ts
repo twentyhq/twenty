@@ -15,6 +15,7 @@ export enum LogicFunctionExceptionCode {
   LOGIC_FUNCTION_EXECUTION_TIMEOUT = 'LOGIC_FUNCTION_EXECUTION_TIMEOUT',
   LOGIC_FUNCTION_DISABLED = 'LOGIC_FUNCTION_DISABLED',
   LOGIC_FUNCTION_INVALID_SEED_PROJECT = 'LOGIC_FUNCTION_INVALID_SEED_PROJECT',
+  LOGIC_FUNCTION_BUILD_FAILED = 'LOGIC_FUNCTION_BUILD_FAILED',
 }
 
 const getLogicFunctionExceptionUserFriendlyMessage = (
@@ -41,6 +42,8 @@ const getLogicFunctionExceptionUserFriendlyMessage = (
       return msg`Logic function execution is disabled.`;
     case LogicFunctionExceptionCode.LOGIC_FUNCTION_INVALID_SEED_PROJECT:
       return msg`Invalid seed project configuration.`;
+    case LogicFunctionExceptionCode.LOGIC_FUNCTION_BUILD_FAILED:
+      return msg`Function build failed. Please check your code for syntax errors.`;
     default:
       assertUnreachable(code);
   }

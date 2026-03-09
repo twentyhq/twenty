@@ -28,6 +28,7 @@ export const logicFunctionGraphQLApiExceptionHandler = (error: any) => {
       case LogicFunctionExceptionCode.LOGIC_FUNCTION_CODE_UNCHANGED:
       case LogicFunctionExceptionCode.LOGIC_FUNCTION_CREATE_FAILED:
       case LogicFunctionExceptionCode.LOGIC_FUNCTION_INVALID_SEED_PROJECT:
+      case LogicFunctionExceptionCode.LOGIC_FUNCTION_BUILD_FAILED:
         throw error;
       case LogicFunctionExceptionCode.LOGIC_FUNCTION_DISABLED:
         throw new ForbiddenError(error);
