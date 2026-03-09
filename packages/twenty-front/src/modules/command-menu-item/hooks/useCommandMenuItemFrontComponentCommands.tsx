@@ -119,7 +119,7 @@ const buildCommandMenuItemFromFrontComponent = ({
   };
 };
 
-export const useCommandMenuItemFrontComponentActions = (
+export const useCommandMenuItemFrontComponentCommands = (
   commandMenuContextApi: CommandMenuContextApi,
 ) => {
   const { getIcon } = useIcons();

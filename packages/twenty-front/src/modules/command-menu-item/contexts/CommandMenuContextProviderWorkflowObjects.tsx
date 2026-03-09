@@ -1,12 +1,12 @@
-import { useRunWorkflowRecordAgnosticCommands } from '@/command-menu-item/record-agnostic/workflow/hooks/useRunWorkflowRecordAgnosticCommands';
 import {
   CommandMenuContext,
   type CommandMenuContextType,
 } from '@/command-menu-item/contexts/CommandMenuContext';
+import { useCommandMenuContextApi } from '@/command-menu-item/hooks/useCommandMenuContextApi';
+import { useCommandMenuItemFrontComponentCommands } from '@/command-menu-item/hooks/useCommandMenuItemFrontComponentCommands';
 import { useRegisteredCommandMenuItems } from '@/command-menu-item/hooks/useRegisteredCommandMenuItems';
 import { useShouldCommandMenuItemBeRegisteredParams } from '@/command-menu-item/hooks/useShouldCommandMenuItemBeRegisteredParams';
-import { useCommandMenuContextApi } from '@/command-menu-item/hooks/useCommandMenuContextApi';
-import { useCommandMenuItemFrontComponentActions } from '@/command-menu-item/hooks/useCommandMenuItemFrontComponentActions';
+import { useRunWorkflowRecordAgnosticCommands } from '@/command-menu-item/record-agnostic/workflow/hooks/useRunWorkflowRecordAgnosticCommands';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
@@ -56,7 +56,7 @@ const CommandMenuContextProviderWorkflowObjectsContent = ({
   const commandMenuContextApi = useCommandMenuContextApi();
 
   const commandMenuItemFrontComponentActions =
-    useCommandMenuItemFrontComponentActions(commandMenuContextApi);
+    useCommandMenuItemFrontComponentCommands(commandMenuContextApi);
 
   return (
     <CommandMenuContext.Provider
@@ -104,7 +104,7 @@ const CommandMenuContextProviderWorkflowObjectsWithoutWorkflow = ({
   const commandMenuContextApi = useCommandMenuContextApi();
 
   const commandMenuItemFrontComponentActions =
-    useCommandMenuItemFrontComponentActions(commandMenuContextApi);
+    useCommandMenuItemFrontComponentCommands(commandMenuContextApi);
 
   return (
     <CommandMenuContext.Provider
