@@ -28,6 +28,9 @@ parser.functions.isNonEmptyString = (value: unknown) => isNonEmptyString(value);
 parser.functions.includes = (array: unknown, value: unknown) =>
   Array.isArray(array) && array.includes(value);
 
+parser.functions.arrayLength = (value: unknown) =>
+  Array.isArray(value) ? value.length : 0;
+
 parser.functions.every = (array: unknown, prop: string) => {
   if (!Array.isArray(array)) return false;
   return array.every((item) => !!safeGetNestedProperty(item, prop));
@@ -44,9 +47,7 @@ parser.functions.everyEquals = (
   value: unknown,
 ) => {
   if (!Array.isArray(array)) return false;
-  return array.every(
-    (item) => safeGetNestedProperty(item, prop) === value,
-  );
+  return array.every((item) => safeGetNestedProperty(item, prop) === value);
 };
 
 parser.functions.some = (array: unknown, prop: string) => {
@@ -65,9 +66,7 @@ parser.functions.someEquals = (
   value: unknown,
 ) => {
   if (!Array.isArray(array)) return false;
-  return array.some(
-    (item) => safeGetNestedProperty(item, prop) === value,
-  );
+  return array.some((item) => safeGetNestedProperty(item, prop) === value);
 };
 
 parser.functions.none = (array: unknown, prop: string) => {
@@ -77,9 +76,7 @@ parser.functions.none = (array: unknown, prop: string) => {
 
 parser.functions.noneDefined = (array: unknown, prop: string) => {
   if (!Array.isArray(array)) return false;
-  return array.every(
-    (item) => !isDefined(safeGetNestedProperty(item, prop)),
-  );
+  return array.every((item) => !isDefined(safeGetNestedProperty(item, prop)));
 };
 
 parser.functions.noneEquals = (
@@ -88,9 +85,7 @@ parser.functions.noneEquals = (
   value: unknown,
 ) => {
   if (!Array.isArray(array)) return false;
-  return array.every(
-    (item) => safeGetNestedProperty(item, prop) !== value,
-  );
+  return array.every((item) => safeGetNestedProperty(item, prop) !== value);
 };
 
 parser.functions.someNonEmptyString = (array: unknown, prop: string) => {
