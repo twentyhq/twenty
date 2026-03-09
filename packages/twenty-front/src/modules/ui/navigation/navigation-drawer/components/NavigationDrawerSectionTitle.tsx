@@ -8,7 +8,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { styled } from '@linaria/react';
 import React from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { Label } from 'twenty-ui/display';
+import { IconChevronDown, IconChevronRight, Label } from 'twenty-ui/display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledTitle = styled.div`
@@ -16,20 +16,36 @@ const StyledTitle = styled.div`
   border-radius: ${themeCssVariables.border.radius.sm};
   display: flex;
   height: ${themeCssVariables.spacing[5]};
+  justify-content: space-between;
+  padding-bottom: ${themeCssVariables.spacing[1]};
   padding-left: ${themeCssVariables.spacing[1]};
   padding-right: ${themeCssVariables.spacing['0.5']};
   padding-top: ${themeCssVariables.spacing[1]};
-  padding-bottom: ${themeCssVariables.spacing[1]};
-  justify-content: space-between;
 
   &:hover {
-    cursor: pointer;
     background-color: ${themeCssVariables.background.transparent.light};
+    cursor: pointer;
+
+    .section-title-label {
+      color: ${themeCssVariables.font.color.tertiary};
+    }
   }
 `;
 
 const StyledLabelContainer = styled.div`
+  align-items: center;
+  display: flex;
   flex-grow: 1;
+  gap: ${themeCssVariables.spacing[1]};
+`;
+
+const StyledChevron = styled.div`
+  align-items: center;
+  display: flex;
+  opacity: 0;
+  .section-title-container:hover & {
+    opacity: 1;
+  }
 `;
 
 type StyledRightIconProps = {
@@ -52,6 +68,7 @@ type NavigationDrawerSectionTitleProps = {
   label: string;
   rightIcon?: React.ReactNode;
   alwaysShowRightIcon?: boolean;
+  isOpen?: boolean;
 };
 
 export const NavigationDrawerSectionTitle = ({
@@ -59,6 +76,7 @@ export const NavigationDrawerSectionTitle = ({
   label,
   rightIcon,
   alwaysShowRightIcon = false,
+  isOpen,
 }: NavigationDrawerSectionTitleProps) => {
   const isMobile = useIsMobile();
   const isNavigationDrawerExpanded = useAtomStateValue(
@@ -78,10 +96,21 @@ export const NavigationDrawerSectionTitle = ({
     return <NavigationDrawerSectionTitleSkeletonLoader />;
   }
 
+  const ChevronIcon = isOpen === true ? IconChevronDown : IconChevronRight;
+
   return (
     <StyledTitle className="section-title-container">
       <StyledLabelContainer onClick={handleTitleClick}>
-        <Label>{label}</Label>
+        <Label className="section-title-label">{label}</Label>
+        {isOpen !== undefined && (
+          <StyledChevron>
+            <ChevronIcon
+              size="12px"
+              stroke={themeCssVariables.icon.stroke.sm}
+              color={themeCssVariables.font.color.tertiary}
+            />
+          </StyledChevron>
+        )}
       </StyledLabelContainer>
       {isDefined(rightIcon) && (
         <StyledRightIcon

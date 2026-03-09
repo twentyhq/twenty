@@ -270,9 +270,7 @@ export const prefillWorkflows = async (
                       '{{6e089bc9-aabd-435f-865f-f31c01c8f4a7.email}}',
                     additionalEmails: [],
                   },
-                  company: {
-                    id: '{{0715b6cd-7cc1-4b98-971b-00f54dfe643b.id}}',
-                  },
+                  companyId: '{{0715b6cd-7cc1-4b98-971b-00f54dfe643b.id}}',
                 },
               },
               outputSchema: {

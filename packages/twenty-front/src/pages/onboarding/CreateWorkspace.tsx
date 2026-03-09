@@ -44,9 +44,9 @@ const StyledLoaderContainer = styled.div`
   align-items: center;
   display: flex;
   justify-content: center;
+  margin-bottom: ${themeCssVariables.spacing[8]};
   margin-top: ${themeCssVariables.spacing[8]};
   width: 100%;
-  margin-bottom: ${themeCssVariables.spacing[8]};
 `;
 
 enum PendingCreationLoaderStep {
@@ -57,10 +57,10 @@ enum PendingCreationLoaderStep {
 }
 
 const StyledPendingCreationLoader = styled.div`
-  width: 100%;
+  align-items: center;
   display: flex;
   justify-content: center;
-  align-items: center;
+  width: 100%;
 `;
 
 export const CreateWorkspace = () => {

@@ -1,9 +1,9 @@
 import { styled } from '@linaria/react';
-import type { IconComponent } from 'twenty-ui/display';
 import { useContext } from 'react';
+import type { IconComponent } from 'twenty-ui/display';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { getNavigationMenuItemIconStyleFromColor } from '@/navigation-menu-item/utils/get-navigation-menu-item-icon-style-from-color';
+import { getNavigationMenuItemIconStyleFromColor } from '@/navigation-menu-item/utils/getNavigationMenuItemIconStyleFromColor';
 
 const StyledCompositeContainer = styled.div`
   align-items: center;
@@ -21,29 +21,29 @@ const StyledObjectIconWrapper = styled.div<{
   $backgroundColor: string;
   $borderColor?: string;
 }>`
-  position: absolute;
-  inset: 0;
-  border-radius: 4px;
-  box-sizing: border-box;
-  background-color: ${({ $backgroundColor }) => $backgroundColor};
-  display: flex;
   align-items: center;
-  justify-content: center;
+  background-color: ${({ $backgroundColor }) => $backgroundColor};
   border: ${({ $borderColor }) =>
     $borderColor ? `1px solid ${$borderColor}` : 'none'};
+  border-radius: 4px;
+  box-sizing: border-box;
+  display: flex;
+  inset: 0;
+  justify-content: center;
+  position: absolute;
 `;
 
 const StyledViewOverlay = styled.div<{ $backgroundColor: string }>`
   align-items: center;
   background-color: ${({ $backgroundColor }) => $backgroundColor};
   border-radius: 4px;
-  bottom: -7px;
+  bottom: -5px;
   display: flex;
   height: 14px;
   justify-content: center;
   position: absolute;
-  right: -7px;
-  width: 14px;
+  right: -6px;
+  width: 12px;
 `;
 
 export type ObjectIconWithViewOverlayProps = {
@@ -74,8 +74,8 @@ export const ObjectIconWithViewOverlay = ({
       </StyledObjectIconWrapper>
       <StyledViewOverlay $backgroundColor={themeCssVariables.grayScale.gray4}>
         <ViewIcon
-          size="10px"
-          stroke={theme.icon.stroke.lg}
+          size="12px"
+          stroke={theme.icon.stroke.md}
           color={themeCssVariables.grayScale.gray10}
         />
       </StyledViewOverlay>

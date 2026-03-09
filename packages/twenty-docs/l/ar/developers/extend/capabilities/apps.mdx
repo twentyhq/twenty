@@ -15,7 +15,7 @@ description: أنشئ وأدِر تخصيصات Twenty على هيئة كود.
 
 * عرِّف كائنات وحقولًا مخصصة على شكل كود (نموذج بيانات مُدار)
 * أنشئ وظائف منطقية مع مشغلات مخصصة
-* حدد المهارات لوكلاء الذكاء الاصطناعي
+* تعريف المهارات والوكلاء للذكاء الاصطناعي
 * انشر التطبيق نفسه عبر مساحات عمل متعددة
 
 ## المتطلبات الأساسية
@@ -36,17 +36,14 @@ cd my-twenty-app
 yarn twenty app:dev
 ```
 
-يدعم المُنشئ ثلاثة أوضاع للتحكم في ملفات الأمثلة التي سيتم تضمينها:
+يدعم المُنشئ وضعين للتحكم في ملفات الأمثلة التي سيتم تضمينها:
 
 ```bash filename="Terminal"
-# الافتراضي (شامل): جميع الأمثلة (كائن، حقل، دالة منطقية، مكوّن الواجهة الأمامية، عرض، عنصر قائمة التنقل، مهارة)
+# الافتراضي (شامل): جميع الأمثلة (كائن، حقل، دالة منطقية، مكوّن الواجهة الأمامية، عرض، عنصر قائمة التنقل، مهارة، وكيل)
 npx create-twenty-app@latest my-app
 
 # الأدنى: الملفات الأساسية فقط (application-config.ts و default-role.ts)
 npx create-twenty-app@latest my-app --minimal
-
-# التفاعلي: اختر الأمثلة التي تريد تضمينها
-npx create-twenty-app@latest my-app --interactive
 ```
 
 من هنا يمكنك:
@@ -118,11 +115,13 @@ my-twenty-app/
   │   └── example-view.ts                # تعريف عرض محفوظ — مثال
   ├── navigation-menu-items/
   │   └── example-navigation-menu-item.ts # رابط تنقّل في الشريط الجانبي — مثال
-  └── skills/
-      └── example-skill.ts                # تعريف مهارة لوكيل الذكاء الاصطناعي — مثال},{
+  ├── skills/
+  │   └── example-skill.ts                # تعريف مهارة لوكيل الذكاء الاصطناعي — مثال
+  └── agents/
+      └── example-agent.ts                # تعريف وكيل الذكاء الاصطناعي — مثال
 ```
 
-مع `--minimal`، سيتم إنشاء الملفات الأساسية فقط (`application-config.ts`، `roles/default-role.ts`، `logic-functions/pre-install.ts`، و`logic-functions/post-install.ts`). مع `--interactive`، تختار ملفات الأمثلة التي تريد تضمينها.
+مع `--minimal`، سيتم إنشاء الملفات الأساسية فقط (`application-config.ts`، `roles/default-role.ts`، `logic-functions/pre-install.ts`، و`logic-functions/post-install.ts`).
 
 بشكل عام:
 
@@ -151,6 +150,7 @@ my-twenty-app/
 | `defineView()`                     | تعريفات العروض المحفوظة                        |
 | `defineNavigationMenuItem()`       | تعريفات عناصر قائمة التنقل                     |
 | `defineSkill()`                    | تعريفات مهارات وكيل الذكاء الاصطناعي           |
+| `defineAgent()`                    | تعريفات وكلاء الذكاء الاصطناعي                 |
 
 <Note>
 **تسمية الملفات مرنة.** يعتمد اكتشاف الكيانات على بنية الشجرة المجردة (AST) — إذ يقوم SDK بفحص ملفات المصدر لديك بحثًا عن النمط `export default define<Entity>({...})`. يمكنك تنظيم ملفاتك ومجلداتك كيفما تشاء. التجميع حسب نوع الكيان (مثلًا، `logic-functions/` و`roles/`) هو مجرد عرف لتنظيم الشيفرة، وليس مطلبًا إلزاميًا.
@@ -228,6 +228,7 @@ yarn twenty auth:status
 | `defineView()`                     | تعريف العروض المحفوظة للكائنات                       |
 | `defineNavigationMenuItem()`       | تعريف روابط التنقل في الشريط الجانبي                 |
 | `defineSkill()`                    | عرّف مهارات وكيل الذكاء الاصطناعي                    |
+| `defineAgent()`                    | Define AI agents with system prompts                 |
 
 تتحقق هذه الدوال من تكوينك وقت البناء وتوفّر إكمالًا تلقائيًا في بيئة التطوير وأمان الأنواع.
 
@@ -804,6 +805,41 @@ export default defineSkill({
 
 * **مُنشأ بالقالب**: شغِّل `yarn twenty entity:add` واختر خيار إضافة مهارة جديدة.
 * **يدوي**: أنشئ ملفًا جديدًا واستخدم `defineSkill()` مع اتباع النمط نفسه.
+
+### Agents
+
+Agents define AI agents with system prompts that can operate within your workspace. Use `defineAgent()` to define agents with built-in validation:
+
+```typescript
+// src/agents/example-agent.ts
+import { defineAgent } from 'twenty-sdk';
+
+export default defineAgent({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'sales-assistant',
+  label: 'Sales Assistant',
+  description: 'An AI agent that helps with sales tasks',
+  icon: 'IconRobot',
+  prompt: `You are a sales assistant. Help users with:
+1. Researching prospects and companies
+2. Drafting personalized outreach messages
+3. Tracking follow-ups and next steps
+4. Analyzing deal pipeline and suggesting actions`,
+});
+```
+
+النقاط الرئيسية:
+
+* `name` is a unique identifier string for the agent (kebab-case recommended).
+* `label` هو اسم العرض المقروء للبشر الظاهر في واجهة المستخدم.
+* `prompt` contains the system prompt — this is the instruction text that defines the agent's behavior.
+* `icon` (اختياري) يحدّد الأيقونة المعروضة في واجهة المستخدم.
+* `description` (optional) provides additional context about the agent's purpose.
+
+You can create new agents in two ways:
+
+* **Scaffolded**: Run `yarn twenty entity:add` and choose the option to add a new agent.
+* **Manual**: Create a new file and use `defineAgent()`, following the same pattern.
 
 ### عملاء مُولَّدون مضبوطو الأنواع
 

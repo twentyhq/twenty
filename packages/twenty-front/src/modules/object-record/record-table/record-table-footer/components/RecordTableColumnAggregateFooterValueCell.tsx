@@ -15,22 +15,22 @@ import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledCell = styled.div<{ isUnfolded: boolean; isFirstCell: boolean }>`
   align-items: center;
+  background: ${({ isUnfolded }) =>
+    isUnfolded ? themeCssVariables.background.tertiary : 'none'};
+  cursor: pointer;
   display: flex;
   flex-direction: row;
+
+  flex-grow: 1;
   flex-shrink: 0;
   font-weight: ${themeCssVariables.font.weight.medium};
-
   gap: ${themeCssVariables.spacing[1]};
   height: ${themeCssVariables.spacing[8]};
   justify-content: space-between;
-  min-width: ${themeCssVariables.spacing[7]};
-  flex-grow: 1;
+
   max-width: 100%;
 
-  cursor: pointer;
-
-  background: ${({ isUnfolded }) =>
-    isUnfolded ? themeCssVariables.background.tertiary : 'none'};
+  min-width: ${themeCssVariables.spacing[7]};
 
   padding-left: ${({ isFirstCell }) =>
     isFirstCell
@@ -41,10 +41,10 @@ const StyledCell = styled.div<{ isUnfolded: boolean; isFirstCell: boolean }>`
 const StyledIconContainer = styled.div`
   align-items: center;
   display: flex;
-  height: 20px;
-  justify-content: center;
   flex-grow: 0;
   flex-shrink: 0;
+  height: 20px;
+  justify-content: center;
   padding-right: ${themeCssVariables.spacing[2]};
 `;
 

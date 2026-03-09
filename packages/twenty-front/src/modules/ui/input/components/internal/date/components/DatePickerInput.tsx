@@ -28,15 +28,15 @@ const StyledInputContainer = styled.div`
 const StyledInput = styled.input<{ hasError?: boolean }>`
   background: transparent;
   border: none;
-  outline: none;
-  padding: 4px 8px 4px 8px;
-  font-weight: 500;
-  font-size: ${themeCssVariables.font.size.md};
-  width: 100%;
   color: ${({ hasError }) =>
     hasError
       ? themeCssVariables.color.red
       : themeCssVariables.font.color.primary};
+  font-size: ${themeCssVariables.font.size.md};
+  font-weight: 500;
+  outline: none;
+  padding: 4px 8px 4px 8px;
+  width: 100%;
 `;
 
 type DatePickerInputProps = {

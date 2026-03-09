@@ -1,5 +1,6 @@
-import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { addMenuItemInsertionContextState } from '@/navigation-menu-item/states/addMenuItemInsertionContextState';
+import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeState';
+import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useLingui } from '@lingui/react/macro';
 import { SidePanelPages } from 'twenty-shared/types';
@@ -17,12 +18,16 @@ export const useOpenAddItemToFolderPage = () => {
   const setAddMenuItemInsertionContext = useSetAtomState(
     addMenuItemInsertionContextState,
   );
+  const setSelectedNavigationMenuItemInEditMode = useSetAtomState(
+    selectedNavigationMenuItemInEditModeState,
+  );
 
   const openAddItemToFolderPage = ({
     targetFolderId,
     targetIndex,
     resetNavigationStack = true,
   }: OpenAddItemToFolderPageParams) => {
+    setSelectedNavigationMenuItemInEditMode(null);
     setAddMenuItemInsertionContext({
       targetFolderId,
       targetIndex,

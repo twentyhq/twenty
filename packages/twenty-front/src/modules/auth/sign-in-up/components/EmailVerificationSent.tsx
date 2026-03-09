@@ -21,17 +21,17 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { AnimatedEaseIn } from 'twenty-ui/utilities';
 
 const StyledContainer = styled.div`
+  align-items: center;
   display: flex;
   flex-direction: column;
-  align-items: center;
   gap: ${themeCssVariables.spacing[8]};
   width: 100%;
 `;
 
 const StyledTextContainer = styled.div`
+  align-items: center;
   display: flex;
   flex-direction: column;
-  align-items: center;
   text-align: center;
 `;
 
@@ -40,12 +40,12 @@ const StyledEmail = styled.span`
 `;
 
 const StyledButtonsContainer = styled.div`
+  align-items: center;
   display: flex;
   flex-direction: column;
-  align-items: center;
   gap: ${themeCssVariables.spacing[3]};
-  width: 100%;
   max-width: 240px;
+  width: 100%;
 `;
 
 const StyledBottomLinks = styled.div`
@@ -59,20 +59,20 @@ const StyledBottomLinks = styled.div`
 const StyledLinkButton = styled.button`
   background: none;
   border: none;
+  color: ${themeCssVariables.font.color.tertiary};
+  cursor: pointer;
   font-family: ${themeCssVariables.font.family};
   font-size: ${themeCssVariables.font.size.xs};
   font-weight: ${themeCssVariables.font.weight.regular};
   line-height: 140%;
-  color: ${themeCssVariables.font.color.tertiary};
-  cursor: pointer;
 
   &:hover {
     color: ${themeCssVariables.font.color.secondary};
   }
 
   &:disabled {
-    opacity: 0.5;
     cursor: not-allowed;
+    opacity: 0.5;
   }
 `;
 

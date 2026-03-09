@@ -18,8 +18,8 @@ const StyledMainContainer = styled.div`
   gap: ${themeCssVariables.spacing[2]};
   min-height: 0;
   padding-bottom: ${themeCssVariables.spacing[3]};
-  padding-right: ${themeCssVariables.spacing[3]};
   padding-left: 0;
+  padding-right: ${themeCssVariables.spacing[3]};
   width: 100%;
 `;
 

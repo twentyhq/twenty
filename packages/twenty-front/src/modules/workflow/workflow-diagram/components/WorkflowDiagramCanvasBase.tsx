@@ -1,4 +1,4 @@
-import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
+import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { sidePanelWidthState } from '@/side-panel/states/sidePanelWidthState';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { useListenToSidePanelClosing } from '@/ui/layout/side-panel/hooks/useListenToSidePanelClosing';
@@ -65,9 +65,9 @@ import { Tag, type TagColor } from 'twenty-ui/components';
 import { useStore } from 'jotai';
 import { themeCssVariables, ThemeContext } from 'twenty-ui/theme-constants';
 const StyledResetReactflowStyles = styled.div`
-  height: 100%;
-  width: 100%;
-  position: relative;
+  --xy-node-background-color: none;
+  --xy-node-border: none;
+  --xy-node-border-radius: none;
 
   /* Below we reset the default styling of Reactflow */
   .react-flow__node-input,
@@ -75,23 +75,23 @@ const StyledResetReactflowStyles = styled.div`
   .react-flow__node-output,
   .react-flow__node-group {
     padding: 0;
-    width: auto;
     text-align: start;
     white-space: nowrap;
+    width: auto;
   }
 
-  --xy-node-border-radius: none;
-  --xy-node-border: none;
-  --xy-node-background-color: none;
   --xy-node-boxshadow-hover: none;
   --xy-node-boxshadow-selected: none;
+  height: 100%;
+  position: relative;
+  width: 100%;
 `;
 
 const StyledStatusTagContainer = styled.div`
   left: 0;
-  top: 0;
-  position: absolute;
   padding: ${themeCssVariables.spacing[4]};
+  position: absolute;
+  top: 0;
 `;
 
 const defaultFitViewOptions = {
@@ -256,7 +256,7 @@ export const WorkflowDiagramCanvasBase = ({
   }, [workflowDiagram, workflowInsertStepIds]);
 
   const isSidePanelOpened = useAtomStateValue(isSidePanelOpenedState);
-  const { isInSidePanel } = useContext(ActionMenuContext);
+  const { isInSidePanel } = useContext(CommandMenuContext);
 
   const handleEdgesChange = (
     edgeChanges: Array<EdgeChange<WorkflowDiagramEdge>>,

@@ -2,10 +2,6 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { FIND_MANY_APPLICATION_REGISTRATIONS } from '@/settings/application-registrations/graphql/queries/findManyApplicationRegistrations';
 import { SettingsListCard } from '@/settings/components/SettingsListCard';
 import { getDocumentationUrl } from '@/support/utils/getDocumentationUrl';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
@@ -18,29 +14,20 @@ import {
   CommandBlock,
   H2Title,
   IconApps,
-  IconChevronDown,
   IconChevronRight,
   IconCopy,
-  IconDownload,
   IconFileInfo,
   IconUpload,
 } from 'twenty-ui/display';
-import { Button, ButtonGroup, IconButton } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { useContext } from 'react';
-import { MenuItem } from 'twenty-ui/navigation';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
-import {
-  REGISTER_NPM_APP_MODAL_ID,
-  SettingsRegisterNpmAppModal,
-} from '~/pages/settings/applications/components/SettingsRegisterNpmAppModal';
 import {
   SettingsUploadTarballModal,
   UPLOAD_TARBALL_MODAL_ID,
 } from '~/pages/settings/applications/components/SettingsUploadTarballModal';
-
-const REGISTER_APP_DROPDOWN_ID = 'register-app-dropdown';
 
 const StyledButtonContainer = styled.div`
   margin: ${themeCssVariables.spacing[2]} 0;
@@ -64,7 +51,6 @@ export const SettingsApplicationsDeveloperTab = () => {
   const navigate = useNavigate();
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const { openModal } = useModal();
-  const { closeDropdown } = useCloseDropdown();
 
   const { copyToClipboard } = useCopyToClipboard();
 
@@ -89,16 +75,6 @@ export const SettingsApplicationsDeveloperTab = () => {
       Icon={IconCopy}
     />
   );
-
-  const handleRegisterFromNpm = () => {
-    closeDropdown(REGISTER_APP_DROPDOWN_ID);
-    openModal(REGISTER_NPM_APP_MODAL_ID);
-  };
-
-  const handleUploadTarball = () => {
-    closeDropdown(REGISTER_APP_DROPDOWN_ID);
-    openModal(UPLOAD_TARBALL_MODAL_ID);
-  };
 
   return (
     <>
@@ -152,43 +128,15 @@ export const SettingsApplicationsDeveloperTab = () => {
         )}
       </Section>
       <StyledButtonGroupContainer>
-        <ButtonGroup size="small" variant="secondary">
-          <Button
-            Icon={IconDownload}
-            title={t`Register from npm`}
-            onClick={handleRegisterFromNpm}
-          />
-          <Dropdown
-            dropdownId={REGISTER_APP_DROPDOWN_ID}
-            clickableComponent={
-              <IconButton
-                size="small"
-                variant="secondary"
-                Icon={IconChevronDown}
-                position="right"
-              />
-            }
-            dropdownComponents={
-              <DropdownContent>
-                <DropdownMenuItemsContainer>
-                  <MenuItem
-                    LeftIcon={IconDownload}
-                    text={t`Register from npm`}
-                    onClick={handleRegisterFromNpm}
-                  />
-                  <MenuItem
-                    LeftIcon={IconUpload}
-                    text={t`Upload tarball`}
-                    onClick={handleUploadTarball}
-                  />
-                </DropdownMenuItemsContainer>
-              </DropdownContent>
-            }
-          />
-        </ButtonGroup>
+        <Button
+          Icon={IconUpload}
+          title={t`Upload tarball`}
+          size="small"
+          variant="secondary"
+          onClick={() => openModal(UPLOAD_TARBALL_MODAL_ID)}
+        />
       </StyledButtonGroupContainer>
 
-      <SettingsRegisterNpmAppModal />
       <SettingsUploadTarballModal />
     </>
   );

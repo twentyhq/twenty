@@ -17,8 +17,8 @@ import { useAuthorizeAppMutation } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 const StyledContainer = styled.div`
-  display: flex;
   align-items: center;
+  display: flex;
   flex-direction: column;
   height: 100dvh;
   justify-content: center;
@@ -42,36 +42,36 @@ const StyledText = styled.div`
 `;
 
 const StyledCardWrapper = styled.div`
-  display: flex;
-  background-color: ${themeCssVariables.background.primary};
-  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  width: 400px;
-  padding: ${themeCssVariables.spacing[6]};
-  box-shadow: ${themeCssVariables.boxShadow.strong};
+  background-color: ${themeCssVariables.background.primary};
   border-radius: ${themeCssVariables.border.radius.md};
+  box-shadow: ${themeCssVariables.boxShadow.strong};
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: ${themeCssVariables.spacing[6]};
+  width: 400px;
 `;
 
 const StyledButtonContainer = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr;
   gap: 10px;
+  grid-template-columns: 1fr 1fr;
   width: 100%;
 `;
 
 const StyledScopeList = styled.ul`
   list-style: none;
-  padding: 0;
   margin: 0 0 ${themeCssVariables.spacing[4]} 0;
+  padding: 0;
   width: 100%;
 `;
 
 const StyledScopeItem = styled.li`
+  border-bottom: 1px solid ${themeCssVariables.border.color.light};
   color: ${themeCssVariables.font.color.secondary};
   font-size: ${themeCssVariables.font.size.md};
   padding: ${themeCssVariables.spacing[1]} 0;
-  border-bottom: 1px solid ${themeCssVariables.border.color.light};
 
   &:last-child {
     border-bottom: none;
@@ -81,8 +81,8 @@ const StyledScopeItem = styled.li`
 const StyledErrorText = styled.div`
   color: ${themeCssVariables.color.red};
   font-size: ${themeCssVariables.font.size.sm};
-  text-align: center;
   padding: ${themeCssVariables.spacing[2]} 0;
+  text-align: center;
   width: 100%;
 `;
 

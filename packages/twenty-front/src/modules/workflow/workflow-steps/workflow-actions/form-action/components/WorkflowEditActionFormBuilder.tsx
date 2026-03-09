@@ -61,10 +61,10 @@ const StyledFormFieldContainer = styled.div`
 `;
 
 const StyledDraggingIndicator = styled.div`
-  position: absolute;
-  inset: -8px;
-  top: -4px;
   background-color: ${themeCssVariables.background.transparent.light};
+  inset: -8px;
+  position: absolute;
+  top: -4px;
 `;
 
 const StyledGripButtonContainer = styled.div`
@@ -95,13 +95,13 @@ const StyledFieldContainer = styled.div<{
   align-items: center;
   background: transparent;
   border: none;
+  cursor: ${({ readonly }) => (readonly ? 'default' : 'pointer')};
   display: flex;
   font-family: inherit;
   padding-left: ${themeCssVariables.spacing[2]};
   padding-right: ${themeCssVariables.spacing[2]};
-  width: 100%;
 
-  cursor: ${({ readonly }) => (readonly ? 'default' : 'pointer')};
+  width: 100%;
 
   &:hover,
   &[data-open='true'] {

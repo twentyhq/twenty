@@ -29,10 +29,10 @@ const StyledThreadsContainer = styled.div`
 `;
 
 const StyledButtonsContainer = styled.div`
-  display: flex;
-  padding: ${themeCssVariables.spacing[2]} 10px;
-  justify-content: flex-end;
   border-top: 1px solid ${themeCssVariables.border.color.medium};
+  display: flex;
+  justify-content: flex-end;
+  padding: ${themeCssVariables.spacing[2]} 10px;
 `;
 
 export const AIChatThreadsList = () => {

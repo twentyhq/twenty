@@ -15,20 +15,20 @@ const StyledRecordTableTd = styled.div<{
   hasBottomBorder?: boolean;
   zIndex: number;
 }>`
+  background: ${({ backgroundColor, isDragging }) =>
+    isDragging ? 'transparent' : backgroundColor};
+
   border-bottom: 1px solid
     ${({ borderColor, hasBottomBorder, isDragging }) =>
       hasBottomBorder && !isDragging ? borderColor : 'transparent'};
-
-  color: ${({ fontColor }) => fontColor};
   border-right: ${({ borderColor, hasRightBorder }) =>
     hasRightBorder ? `1px solid ${borderColor}` : 'none'};
+
+  color: ${({ fontColor }) => fontColor};
 
   padding: 0;
 
   text-align: left;
-
-  background: ${({ backgroundColor, isDragging }) =>
-    isDragging ? 'transparent' : backgroundColor};
 
   z-index: ${({ zIndex }) => zIndex};
 `;

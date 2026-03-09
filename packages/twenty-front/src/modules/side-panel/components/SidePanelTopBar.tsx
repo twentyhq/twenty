@@ -34,32 +34,32 @@ const StyledInputContainer = styled.div<{ isMobile: boolean }>`
   box-sizing: border-box;
 
   display: flex;
-  justify-content: space-between;
+  flex-shrink: 0;
   font-size: ${themeCssVariables.font.size.lg};
+  gap: ${themeCssVariables.spacing[4]};
   height: ${({ isMobile }) =>
     isMobile ? SIDE_PANEL_TOP_BAR_HEIGHT_MOBILE : SIDE_PANEL_TOP_BAR_HEIGHT}px;
-  margin: 0;
-  outline: none;
-  position: relative;
-  overflow: hidden;
-
-  padding: 0 ${themeCssVariables.spacing[2]};
-  gap: ${themeCssVariables.spacing[4]};
-  flex-shrink: 0;
   justify-content: space-between;
+  justify-content: space-between;
+  margin: 0;
+
+  outline: none;
+  overflow: hidden;
+  padding: 0 ${themeCssVariables.spacing[2]};
+  position: relative;
 `;
 
 const StyledInput = styled.input`
+  background-color: transparent;
   border: none;
   border-radius: 0;
-  background-color: transparent;
   color: ${themeCssVariables.font.color.primary};
+  flex: 1;
   font-size: ${themeCssVariables.font.size.md};
+  height: 24px;
   margin: 0;
   outline: none;
-  height: 24px;
   padding: 0;
-  flex: 1;
 
   &::placeholder {
     color: ${themeCssVariables.font.color.light};

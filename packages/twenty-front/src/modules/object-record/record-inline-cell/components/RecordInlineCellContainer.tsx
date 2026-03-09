@@ -55,14 +55,14 @@ const StyledLabelContainer = styled.div<{ width?: number }>`
 `;
 
 const StyledInlineCellBaseContainer = styled.div<{ readonly: boolean }>`
-  box-sizing: border-box;
-  width: 100%;
-  display: flex;
-  height: fit-content;
-  gap: ${themeCssVariables.spacing[1]};
-  user-select: none;
   align-items: center;
+  box-sizing: border-box;
   cursor: ${({ readonly }) => (readonly ? 'default' : 'pointer')};
+  display: flex;
+  gap: ${themeCssVariables.spacing[1]};
+  height: fit-content;
+  user-select: none;
+  width: 100%;
 `;
 
 export const StyledSkeletonDiv = styled.div`

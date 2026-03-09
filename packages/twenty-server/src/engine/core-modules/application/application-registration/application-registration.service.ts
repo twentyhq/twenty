@@ -327,62 +327,6 @@ export class ApplicationRegistrationService {
     await this.applicationRegistrationRepository.save(registration);
   }
 
-  async createFromNpmPackage(params: {
-    packageName: string;
-    universalIdentifier: string;
-    name: string;
-    description?: string;
-    author?: string;
-    logoUrl?: string;
-    websiteUrl?: string;
-    termsUrl?: string;
-    version?: string;
-    ownerWorkspaceId: string;
-  }): Promise<ApplicationRegistrationEntity> {
-    const existingByUid = await this.findOneByUniversalIdentifier(
-      params.universalIdentifier,
-    );
-
-    if (isDefined(existingByUid)) {
-      throw new ApplicationRegistrationException(
-        `An app with universalIdentifier "${params.universalIdentifier}" is already registered`,
-        ApplicationRegistrationExceptionCode.UNIVERSAL_IDENTIFIER_ALREADY_CLAIMED,
-      );
-    }
-
-    const existingByPackage =
-      await this.applicationRegistrationRepository.findOne({
-        where: { sourcePackage: params.packageName },
-      });
-
-    if (isDefined(existingByPackage)) {
-      throw new ApplicationRegistrationException(
-        `Package "${params.packageName}" is already registered`,
-        ApplicationRegistrationExceptionCode.INVALID_INPUT,
-      );
-    }
-
-    const registration = this.applicationRegistrationRepository.create({
-      universalIdentifier: params.universalIdentifier,
-      name: params.name,
-      description: params.description ?? null,
-      author: params.author ?? null,
-      logoUrl: params.logoUrl ?? null,
-      websiteUrl: params.websiteUrl ?? null,
-      termsUrl: params.termsUrl ?? null,
-      latestAvailableVersion: params.version ?? null,
-      sourceType: ApplicationRegistrationSourceType.NPM,
-      sourcePackage: params.packageName,
-      isListed: true,
-      oAuthClientId: v4(),
-      oAuthRedirectUris: [],
-      oAuthScopes: [],
-      ownerWorkspaceId: params.ownerWorkspaceId,
-    });
-
-    return this.applicationRegistrationRepository.save(registration);
-  }
-
   async findManyBySourceType(
     sourceType: ApplicationRegistrationSourceType,
   ): Promise<ApplicationRegistrationEntity[]> {
