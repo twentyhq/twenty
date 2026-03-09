@@ -82,9 +82,7 @@ export const registerCommands = (program: Command): void => {
 
   program
     .command('app:build [appPath]')
-    .description(
-      'Build, sync, and generate API client into .twenty/output/',
-    )
+    .description('Build, sync, and generate API client into .twenty/output/')
     .option('--tarball', 'Also pack into a .tgz tarball')
     .action(async (appPath, options) => {
       await buildCommand.execute({
