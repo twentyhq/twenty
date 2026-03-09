@@ -14,7 +14,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type ChangeEvent, useState } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, parseJson } from 'twenty-shared/utils';
 import { MenuItem, MenuItemMultiSelectAvatar } from 'twenty-ui/navigation';
 
 export const EMPTY_FILTER_VALUE = '[]';
@@ -41,7 +41,7 @@ export const ObjectFilterDropdownCurrencySelect = () => {
   const selectedCurrencies = isNonEmptyString(
     objectFilterDropdownCurrentRecordFilter?.value,
   )
-    ? (JSON.parse(objectFilterDropdownCurrentRecordFilter.value) as string[]) // TODO: replace by a safe parse
+    ? (parseJson<string[]>(objectFilterDropdownCurrentRecordFilter.value) ?? [])
     : [];
 
   const filteredSelectableItems = currenciesAsSelectableItems.filter(
