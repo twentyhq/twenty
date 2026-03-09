@@ -4,6 +4,7 @@ import {
   endOfHour,
   endOfMinute,
   endOfMonth,
+  endOfQuarter,
   endOfSecond,
   endOfWeek,
   endOfYear,
@@ -12,6 +13,7 @@ import {
   startOfHour,
   startOfMinute,
   startOfMonth,
+  startOfQuarter,
   startOfSecond,
   startOfWeek,
   startOfYear,
@@ -169,6 +171,11 @@ function evaluateThisDirection(
       return isWithinInterval(dateToCheck, {
         start: startOfYear(now),
         end: endOfYear(now),
+      });
+    case 'QUARTER':
+      return isWithinInterval(dateToCheck, {
+        start: startOfQuarter(now),
+        end: endOfQuarter(now),
       });
     default:
       return assertUnreachable(unit);
