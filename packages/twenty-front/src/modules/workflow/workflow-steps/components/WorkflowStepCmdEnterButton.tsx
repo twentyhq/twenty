@@ -4,7 +4,7 @@ import { Key } from 'ts-key-enum';
 import { Button } from 'twenty-ui/input';
 import { getOsControlSymbol } from 'twenty-ui/utilities';
 
-export const CmdEnterActionButton = ({
+export const WorkflowStepCmdEnterButton = ({
   title,
   onClick,
   disabled = false,

@@ -1,4 +1,4 @@
-import { CmdEnterActionButton } from '@/command-menu-item/components/CmdEnterActionButton';
+import { WorkflowStepCmdEnterButton } from '@/workflow/workflow-steps/components/WorkflowStepCmdEnterButton';
 import { useAiModelOptions } from '@/ai/hooks/useAiModelOptions';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
@@ -244,7 +244,7 @@ export const WorkflowEditActionAiAgent = ({
 
     if (workflowAiAgentPermissionsIsAddingPermission) {
       return [
-        <CmdEnterActionButton
+        <WorkflowStepCmdEnterButton
           key="view-role"
           title={t`View role`}
           onClick={handleViewRole}
@@ -258,7 +258,7 @@ export const WorkflowEditActionAiAgent = ({
     }
 
     return [
-      <CmdEnterActionButton
+      <WorkflowStepCmdEnterButton
         key="add-permission"
         title={t`Add permission`}
         onClick={() => setWorkflowAiAgentPermissionsIsAddingPermission(true)}
