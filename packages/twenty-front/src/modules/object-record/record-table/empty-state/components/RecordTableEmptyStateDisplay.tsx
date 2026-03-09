@@ -22,10 +22,6 @@ import {
 const StyledEmptyPlaceholderOuterContainer = styled.div`
   height: 100%;
   width: 100%;
-
-  > * {
-    align-items: flex-start;
-  }
 `;
 
 type RecordTableEmptyStateDisplayButtonComponentProps = {
