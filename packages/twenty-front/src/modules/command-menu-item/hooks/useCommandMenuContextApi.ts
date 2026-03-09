@@ -27,7 +27,7 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
-export const useCommandMenuItemContextApi = (): CommandMenuContextApi => {
+export const useCommandMenuContextApi = (): CommandMenuContextApi => {
   const store = useStore();
 
   const { isInSidePanel } = useContext(CommandMenuItemContext);
