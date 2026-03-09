@@ -414,9 +414,11 @@ const StyledShortcutLabel = styled.div<{
 `;
 
 const StyledIconContainer = styled.div`
-  align-items: center;
-  display: flex;
-  justify-content: center;
+  > div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 `;
 
 export const AnimatedButton = ({
