@@ -5,7 +5,6 @@ import { buildApplication } from '@/cli/utilities/build/common/build-application
 import { synchronizeBuiltApplication } from '@/cli/utilities/build/common/synchronize-built-application';
 import { runTypecheck } from '@/cli/utilities/build/common/typecheck-plugin';
 import { buildAndValidateManifest } from '@/cli/utilities/build/manifest/build-and-validate-manifest';
-import { ClientService } from '@/cli/utilities/client/client-service';
 import { runSafe } from '@/cli/utilities/run-safe';
 import { APP_ERROR_CODES, type CommandResult } from './types';
 
@@ -54,24 +53,6 @@ const innerAppBuild = async (
     filePaths,
   });
 
-  onProgress?.('Syncing application schema...');
-
-  const firstSyncResult = await synchronizeBuiltApplication({
-    appPath,
-    manifest,
-    builtFileInfos: firstBuildResult.builtFileInfos,
-  });
-
-  if (!firstSyncResult.success) {
-    return firstSyncResult;
-  }
-
-  onProgress?.('Generating API client...');
-
-  const clientService = new ClientService();
-
-  await clientService.generateCoreClient({ appPath });
-
   onProgress?.('Running typecheck...');
 
   const typecheckErrors = await runTypecheck(appPath);
@@ -91,31 +72,23 @@ const innerAppBuild = async (
     };
   }
 
-  onProgress?.('Rebuilding with generated client...');
+  onProgress?.('Syncing application...');
 
-  const finalBuildResult = await buildApplication({
+  const syncResult = await synchronizeBuiltApplication({
     appPath,
     manifest,
-    filePaths,
+    builtFileInfos: firstBuildResult.builtFileInfos,
   });
 
-  onProgress?.('Syncing built files...');
-
-  const finalSyncResult = await synchronizeBuiltApplication({
-    appPath,
-    manifest,
-    builtFileInfos: finalBuildResult.builtFileInfos,
-  });
-
-  if (!finalSyncResult.success) {
-    return finalSyncResult;
+  if (!syncResult.success) {
+    return syncResult;
   }
 
   const outputDir = path.join(appPath, '.twenty', 'output');
 
   const result: AppBuildResult = {
     outputDir,
-    fileCount: finalBuildResult.builtFileInfos.size,
+    fileCount: firstBuildResult.builtFileInfos.size,
   };
 
   if (options.tarball) {
