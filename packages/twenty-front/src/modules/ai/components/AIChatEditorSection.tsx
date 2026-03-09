@@ -125,10 +125,8 @@ export const AIChatEditorSection = () => {
   const editorWrapperRefCallback = (node: HTMLDivElement | null) => {
     if (node && focusEditorAfterMigrate) {
       requestAnimationFrame(() => {
-        if (editor) {
-          editor.commands.focus('end');
-          setFocusEditorAfterMigrate(false);
-        }
+        editor.commands.focus('end');
+        setFocusEditorAfterMigrate(false);
       });
     }
   };
