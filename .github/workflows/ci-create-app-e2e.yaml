@@ -87,11 +87,11 @@ jobs:
           npm set //localhost:4873/:_authToken "ci-auth-token"
 
           cd packages/twenty-sdk
-          npm publish --registry http://localhost:4873
+          npm publish --registry http://localhost:4873 --tag ci
           cd ../..
 
           cd packages/create-twenty-app
-          npm publish --registry http://localhost:4873
+          npm publish --registry http://localhost:4873 --tag ci
           cd ../..
 
       - name: Scaffold app using local build
