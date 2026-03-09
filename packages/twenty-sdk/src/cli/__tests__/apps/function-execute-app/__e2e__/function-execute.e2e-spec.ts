@@ -64,6 +64,78 @@ describe('functionExecute E2E', () => {
     });
   });
 
+  it('should execute a CoreApiClient-based function and return companies', async () => {
+    const result = await functionExecute({
+      appPath: APP_PATH,
+      functionName: 'list-companies',
+    });
+
+    expect(result).toMatchObject({
+      success: true,
+      data: { functionName: 'list-companies', status: 'SUCCESS' },
+    });
+
+    const data = (result as { success: true; data: { data: unknown } }).data
+      .data as { companies: { edges: unknown[] } };
+
+    expect(data.companies).toBeDefined();
+    expect(data.companies.edges).toMatchInlineSnapshot(`
+      [
+        {
+          "node": {
+            "name": "Housecall Pro",
+          },
+        },
+        {
+          "node": {
+            "name": "Odessa",
+          },
+        },
+        {
+          "node": {
+            "name": "airSlate",
+          },
+        },
+      ]
+    `);
+  });
+
+  it('should execute a MetadataApiClient-based function and return objects', async () => {
+    const result = await functionExecute({
+      appPath: APP_PATH,
+      functionName: 'list-objects',
+    });
+
+    expect(result).toMatchObject({
+      success: true,
+      data: { functionName: 'list-objects', status: 'SUCCESS' },
+    });
+
+    const data = (result as { success: true; data: { data: unknown } }).data
+      .data as { objects: { edges: unknown[] } };
+
+    expect(data.objects).toBeDefined();
+    expect(data.objects.edges).toMatchInlineSnapshot(`
+      [
+        {
+          "node": {
+            "nameSingular": "messageChannelMessageAssociation",
+          },
+        },
+        {
+          "node": {
+            "nameSingular": "favorite",
+          },
+        },
+        {
+          "node": {
+            "nameSingular": "company",
+          },
+        },
+      ]
+    `);
+  });
+
   it('should return FUNCTION_NOT_FOUND for a non-existent function name', async () => {
     const result = await functionExecute({
       appPath: APP_PATH,
