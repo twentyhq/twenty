@@ -13,16 +13,15 @@ export const useGetViewGroupsFilters = (): RecordFilter[] => {
   return (
     currentView.viewGroups
       .filter((recordGroup) => !recordGroup.isVisible)
-      .map((recordGroup) => {
-        return {
-          id: recordGroup.id,
-          fieldMetadataId: currentView.mainGroupByFieldMetadataId,
-          value: JSON.stringify([recordGroup.fieldValue]),
-          operand: ViewFilterOperand.IS_NOT,
-          displayValue: '',
-          type: getFilterTypeFromFieldType(FieldMetadataType.SELECT),
-          label: '',
-        };
-      }) || []
+      .map((recordGroup) => ({
+        id: recordGroup.id,
+        fieldMetadataId: currentView.mainGroupByFieldMetadataId,
+        value: JSON.stringify([recordGroup.fieldValue]),
+        operand: ViewFilterOperand.IS_NOT,
+        displayValue: '',
+        type: getFilterTypeFromFieldType(FieldMetadataType.SELECT),
+        label: '',
+      }))
+      .filter(isDefined) || []
   );
 };
