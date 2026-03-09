@@ -1,9 +1,9 @@
 import { ActionOpenSidePanelPage, defineFrontComponent } from 'twenty-sdk';
-import { CommandMenuPages } from 'twenty-shared/types';
+import { SidePanelPages } from 'twenty-shared/types';
 
 const AskAi = () => (
   <ActionOpenSidePanelPage
-    page={CommandMenuPages.AskAI}
+    page={SidePanelPages.AskAI}
     pageTitle="Ask AI"
     pageIcon="IconSparkles"
   />

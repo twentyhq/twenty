@@ -1,9 +1,9 @@
 import { ActionOpenSidePanelPage, defineFrontComponent } from 'twenty-sdk';
-import { CommandMenuPages } from 'twenty-shared/types';
+import { SidePanelPages } from 'twenty-shared/types';
 
 const SearchRecordsFallback = () => (
   <ActionOpenSidePanelPage
-    page={CommandMenuPages.SearchRecords}
+    page={SidePanelPages.SearchRecords}
     pageTitle="Search"
     pageIcon="IconSearch"
   />
