@@ -11,7 +11,8 @@
     "noEmit": true,
     "types": ["jest", "node"],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "package.json": ["./package.json"]
     },
     "jsx": "react"
   },
@@ -22,5 +23,6 @@
     "**/__mocks__/**/*",
     "vite.config.ts",
     "jest.config.mjs"
-  ]
+  ],
+  "exclude": ["src/constants/base-application/vitest.config.ts"]
 }

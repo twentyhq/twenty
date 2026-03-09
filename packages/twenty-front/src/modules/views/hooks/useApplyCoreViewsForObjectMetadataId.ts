@@ -1,5 +1,6 @@
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
+import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { recordIndexShouldHideEmptyRecordGroupsComponentState } from '@/object-record/record-index/states/recordIndexShouldHideEmptyRecordGroupsComponentState';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
@@ -9,6 +10,7 @@ import { coreViewsByObjectMetadataIdFamilySelector } from '@/views/states/select
 import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
 import { getFilterableFields } from '@/views/utils/getFilterableFields';
 import { mapViewFieldToRecordField } from '@/views/utils/mapViewFieldToRecordField';
+import { mapViewFilterGroupsToRecordFilterGroups } from '@/views/utils/mapViewFilterGroupsToRecordFilterGroups';
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
 import { useCallback } from 'react';
 import { isDefined, removePropertiesFromRecord } from 'twenty-shared/utils';
@@ -106,8 +108,37 @@ export const useApplyCoreViewsForObjectMetadataId = () => {
           );
         }
 
-        if (!isDeeplyEqual(coreView.viewSorts, existingView.viewSorts)) {
+        if (
+          !isDeeplyEqual(
+            coreView.viewFilterGroups,
+            existingView.viewFilterGroups,
+          )
+        ) {
           const view = convertCoreViewToView(coreView);
+
+          jotaiStore.set(
+            currentRecordFilterGroupsComponentState.atomFamily({
+              instanceId: getRecordIndexIdFromObjectNamePluralAndViewId(
+                objectMetadataItem.namePlural,
+                view.id,
+              ),
+            }),
+            mapViewFilterGroupsToRecordFilterGroups(
+              view.viewFilterGroups ?? [],
+            ),
+          );
+        }
+
+        if (
+          !isDeeplyEqual(
+            coreView.viewSorts.map((viewSort) =>
+              removePropertiesFromRecord(viewSort, ['createdAt', 'updatedAt']),
+            ),
+            existingView.viewSorts,
+          )
+        ) {
+          const view = convertCoreViewToView(coreView);
+
           jotaiStore.set(
             currentRecordSortsComponentState.atomFamily({
               instanceId: getRecordIndexIdFromObjectNamePluralAndViewId(

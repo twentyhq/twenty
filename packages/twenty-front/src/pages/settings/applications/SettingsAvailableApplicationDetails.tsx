@@ -5,18 +5,20 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBa
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import {
   IconApps,
   IconBox,
+  IconCheck,
   IconColumns,
   IconCommand,
   IconDownload,
+  IconEyeOff,
   IconFileText,
   IconInfoCircle,
   IconLayoutGrid,
@@ -26,8 +28,13 @@ import {
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import { PermissionFlagType } from '~/generated-metadata/graphql';
-import { useMarketplaceApps } from '~/pages/settings/applications/hooks/useMarketplaceApps';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  PermissionFlagType,
+  useFindOneApplicationByUniversalIdentifierQuery,
+  useFindOneMarketplaceAppQuery,
+} from '~/generated-metadata/graphql';
+import { useMarketplaceApps } from '~/modules/marketplace/hooks/useMarketplaceApps';
 import { SettingsApplicationPermissionsTab } from '~/pages/settings/applications/tabs/SettingsApplicationPermissionsTab';
 import { SettingsAvailableApplicationDetailContentTab } from '~/pages/settings/applications/tabs/SettingsAvailableApplicationDetailContentTab';
 
@@ -36,21 +43,21 @@ const AVAILABLE_APPLICATION_DETAIL_ID = 'available-application-detail';
 const StyledHeader = styled.div`
   align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(4)};
+  gap: ${themeCssVariables.spacing[4]};
   justify-content: space-between;
-  margin-bottom: ${({ theme }) => theme.spacing(4)};
+  margin-bottom: ${themeCssVariables.spacing[4]};
 `;
 
 const StyledHeaderLeft = styled.div`
   align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(3)};
+  gap: ${themeCssVariables.spacing[3]};
 `;
 
 const StyledLogo = styled.div`
   align-items: center;
-  background-color: ${({ theme }) => theme.background.tertiary};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+  background-color: ${themeCssVariables.background.tertiary};
+  border-radius: ${themeCssVariables.border.radius.sm};
   display: flex;
   flex-shrink: 0;
   height: 48px;
@@ -67,12 +74,12 @@ const StyledLogoImage = styled.img`
 
 const StyledLogoPlaceholder = styled.div`
   align-items: center;
-  background-color: ${({ theme }) => theme.color.blue};
-  border-radius: ${({ theme }) => theme.border.radius.xs};
-  color: ${({ theme }) => theme.font.color.inverted};
+  background-color: ${themeCssVariables.color.blue};
+  border-radius: ${themeCssVariables.border.radius.xs};
+  color: ${themeCssVariables.font.color.inverted};
   display: flex;
-  font-size: ${({ theme }) => theme.font.size.lg};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
+  font-size: ${themeCssVariables.font.size.lg};
+  font-weight: ${themeCssVariables.font.weight.medium};
   height: 32px;
   justify-content: center;
   width: 32px;
@@ -81,23 +88,23 @@ const StyledLogoPlaceholder = styled.div`
 const StyledHeaderInfo = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledAppName = styled.div`
-  color: ${({ theme }) => theme.font.color.primary};
-  font-size: ${({ theme }) => theme.font.size.lg};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
+  color: ${themeCssVariables.font.color.primary};
+  font-size: ${themeCssVariables.font.size.lg};
+  font-weight: ${themeCssVariables.font.weight.semiBold};
 `;
 
 const StyledAppDescription = styled.div`
-  color: ${({ theme }) => theme.font.color.secondary};
-  font-size: ${({ theme }) => theme.font.size.md};
+  color: ${themeCssVariables.font.color.secondary};
+  font-size: ${themeCssVariables.font.size.md};
 `;
 
 const StyledContentContainer = styled.div`
   display: flex;
-  gap: ${({ theme }) => theme.spacing(8)};
+  gap: ${themeCssVariables.spacing[8]};
 `;
 
 const StyledMainContent = styled.div`
@@ -111,7 +118,7 @@ const StyledSidebar = styled.div`
 `;
 
 const StyledSidebarSection = styled.div`
-  padding: ${({ theme }) => theme.spacing(3)} 0;
+  padding: ${themeCssVariables.spacing[3]} 0;
 
   &:first-of-type {
     padding-top: 0;
@@ -119,24 +126,24 @@ const StyledSidebarSection = styled.div`
 `;
 
 const StyledSidebarLabel = styled.div`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  margin-bottom: ${({ theme }) => theme.spacing(2)};
+  color: ${themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.sm};
+  margin-bottom: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledSidebarValue = styled.div`
-  color: ${({ theme }) => theme.font.color.primary};
-  font-size: ${({ theme }) => theme.font.size.md};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
+  color: ${themeCssVariables.font.color.primary};
+  font-size: ${themeCssVariables.font.size.md};
+  font-weight: ${themeCssVariables.font.weight.medium};
 `;
 
 const StyledContentItem = styled.div`
   align-items: center;
-  color: ${({ theme }) => theme.font.color.primary};
+  color: ${themeCssVariables.font.color.primary};
   display: flex;
-  font-size: ${({ theme }) => theme.font.size.sm};
-  gap: ${({ theme }) => theme.spacing(2)};
-  margin-bottom: ${({ theme }) => theme.spacing(2)};
+  font-size: ${themeCssVariables.font.size.sm};
+  gap: ${themeCssVariables.spacing[2]};
+  margin-bottom: ${themeCssVariables.spacing[2]};
 
   &:last-of-type {
     margin-bottom: 0;
@@ -145,11 +152,11 @@ const StyledContentItem = styled.div`
 
 const StyledLink = styled.a`
   align-items: center;
-  color: ${({ theme }) => theme.font.color.primary};
+  color: ${themeCssVariables.font.color.primary};
   display: flex;
-  font-size: ${({ theme }) => theme.font.size.sm};
-  gap: ${({ theme }) => theme.spacing(2)};
-  margin-bottom: ${({ theme }) => theme.spacing(2)};
+  font-size: ${themeCssVariables.font.size.sm};
+  gap: ${themeCssVariables.spacing[2]};
+  margin-bottom: ${themeCssVariables.spacing[2]};
   text-decoration: none;
 
   &:hover {
@@ -163,13 +170,13 @@ const StyledLink = styled.a`
 
 const StyledScreenshotsContainer = styled.div`
   align-items: center;
-  background-color: ${({ theme }) => theme.background.secondary};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.md};
+  background-color: ${themeCssVariables.background.secondary};
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  border-radius: ${themeCssVariables.border.radius.md};
   display: flex;
   height: 300px;
   justify-content: center;
-  margin-bottom: ${({ theme }) => theme.spacing(4)};
+  margin-bottom: ${themeCssVariables.spacing[4]};
   overflow: hidden;
 `;
 
@@ -181,17 +188,19 @@ const StyledScreenshotImage = styled.img`
 
 const StyledScreenshotThumbnails = styled.div`
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
-  margin-bottom: ${({ theme }) => theme.spacing(6)};
+  gap: ${themeCssVariables.spacing[2]};
+  margin-bottom: ${themeCssVariables.spacing[6]};
 `;
 
 const StyledThumbnail = styled.div<{ isSelected?: boolean }>`
   align-items: center;
-  background-color: ${({ theme }) => theme.background.secondary};
+  background-color: ${themeCssVariables.background.secondary};
   border: 1px solid
-    ${({ theme, isSelected }) =>
-      isSelected ? theme.color.blue : theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+    ${({ isSelected }) =>
+      isSelected
+        ? themeCssVariables.color.blue
+        : themeCssVariables.border.color.medium};
+  border-radius: ${themeCssVariables.border.radius.sm};
   cursor: pointer;
   display: flex;
   flex: 1;
@@ -200,7 +209,7 @@ const StyledThumbnail = styled.div<{ isSelected?: boolean }>`
   overflow: hidden;
 
   &:hover {
-    border-color: ${({ theme }) => theme.color.blue};
+    border-color: ${themeCssVariables.color.blue};
   }
 `;
 
@@ -211,30 +220,43 @@ const StyledThumbnailImage = styled.img`
 `;
 
 const StyledSectionTitle = styled.h2`
-  color: ${({ theme }) => theme.font.color.primary};
-  font-size: ${({ theme }) => theme.font.size.lg};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  margin: 0 0 ${({ theme }) => theme.spacing(3)} 0;
+  color: ${themeCssVariables.font.color.primary};
+  font-size: ${themeCssVariables.font.size.lg};
+  font-weight: ${themeCssVariables.font.weight.semiBold};
+  margin: 0 0 ${themeCssVariables.spacing[3]} 0;
 `;
 
 const StyledAboutText = styled.p`
-  color: ${({ theme }) => theme.font.color.secondary};
-  font-size: ${({ theme }) => theme.font.size.md};
+  color: ${themeCssVariables.font.color.secondary};
+  font-size: ${themeCssVariables.font.size.md};
   line-height: 1.6;
-  margin: 0 0 ${({ theme }) => theme.spacing(6)} 0;
+  margin: 0 0 ${themeCssVariables.spacing[6]} 0;
   white-space: pre-line;
 `;
 
 const StyledProvidersList = styled.ul`
-  color: ${({ theme }) => theme.font.color.secondary};
-  font-size: ${({ theme }) => theme.font.size.md};
+  color: ${themeCssVariables.font.color.secondary};
+  font-size: ${themeCssVariables.font.size.md};
   list-style-type: disc;
   margin: 0;
-  padding-left: ${({ theme }) => theme.spacing(5)};
+  padding-left: ${themeCssVariables.spacing[5]};
 `;
 
 const StyledProviderItem = styled.li`
-  margin-bottom: ${({ theme }) => theme.spacing(1)};
+  margin-bottom: ${themeCssVariables.spacing[1]};
+`;
+
+const StyledUnlistedBanner = styled.div`
+  align-items: center;
+  background-color: ${themeCssVariables.background.transparent.lighter};
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  border-radius: ${themeCssVariables.border.radius.sm};
+  color: ${themeCssVariables.font.color.secondary};
+  display: flex;
+  font-size: ${themeCssVariables.font.size.md};
+  gap: ${themeCssVariables.spacing[2]};
+  margin-bottom: ${themeCssVariables.spacing[4]};
+  padding: ${themeCssVariables.spacing[3]} ${themeCssVariables.spacing[4]};
 `;
 
 export const SettingsAvailableApplicationDetails = () => {
@@ -245,18 +267,54 @@ export const SettingsAvailableApplicationDetails = () => {
   const [selectedScreenshotIndex, setSelectedScreenshotIndex] = useState(0);
 
   const { data: marketplaceApps } = useMarketplaceApps();
-  const { install } = useInstallMarketplaceApp();
+  const { install, isInstalling } = useInstallMarketplaceApp();
   const canInstallMarketplaceApps = useHasPermissionFlag(
     PermissionFlagType.MARKETPLACE_APPS,
   );
+  const { data: installedAppData } =
+    useFindOneApplicationByUniversalIdentifierQuery({
+      variables: { universalIdentifier: availableApplicationId },
+      skip: !availableApplicationId,
+    });
 
-  const application = useMemo(() => {
-    return marketplaceApps?.find((app) => app.id === availableApplicationId);
-  }, [availableApplicationId, marketplaceApps]);
+  const listedApp = marketplaceApps?.find(
+    (app) => app.id === availableApplicationId,
+  );
+
+  const { data: singleAppData } = useFindOneMarketplaceAppQuery({
+    variables: { universalIdentifier: availableApplicationId },
+    skip: isDefined(listedApp) || !availableApplicationId,
+  });
+
+  const singleApp = singleAppData?.findOneMarketplaceApp;
+
+  const application = isDefined(listedApp)
+    ? listedApp
+    : isDefined(singleApp)
+      ? {
+          ...singleApp,
+          content: {
+            objects: (singleApp.objects ?? []).length,
+            fields:
+              (singleApp.objects ?? []).reduce(
+                (count, appObject) => count + appObject.fields.length,
+                0,
+              ) + (singleApp.fields ?? []).length,
+            functions: (singleApp.logicFunctions ?? []).length,
+            frontComponents: (singleApp.frontComponents ?? []).length,
+          },
+        }
+      : undefined;
+
+  const isUnlisted = !isDefined(listedApp) && isDefined(application);
+
+  const isAlreadyInstalled = isDefined(installedAppData?.findOneApplication);
 
   const handleInstall = async () => {
     if (isDefined(application)) {
-      await install();
+      await install({
+        universalIdentifier: application.id,
+      });
     }
   };
 
@@ -433,6 +491,12 @@ export const SettingsAvailableApplicationDetails = () => {
       ]}
     >
       <SettingsPageContainer>
+        {isUnlisted && (
+          <StyledUnlistedBanner>
+            <IconEyeOff size={16} />
+            {t`This application is not listed on the marketplace. It was shared via a direct link.`}
+          </StyledUnlistedBanner>
+        )}
         <StyledHeader>
           <StyledHeaderLeft>
             <StyledLogo>
@@ -456,11 +520,18 @@ export const SettingsAvailableApplicationDetails = () => {
           </StyledHeaderLeft>
           {canInstallMarketplaceApps && (
             <Button
-              Icon={IconDownload}
-              title={t`Install`}
-              variant="primary"
-              accent="blue"
+              Icon={isAlreadyInstalled ? IconCheck : IconDownload}
+              title={
+                isAlreadyInstalled
+                  ? t`Installed`
+                  : isInstalling
+                    ? t`Installing...`
+                    : t`Install`
+              }
+              variant={isAlreadyInstalled ? 'secondary' : 'primary'}
+              accent={isAlreadyInstalled ? 'default' : 'blue'}
               onClick={handleInstall}
+              disabled={isAlreadyInstalled || isInstalling}
             />
           )}
         </StyledHeader>

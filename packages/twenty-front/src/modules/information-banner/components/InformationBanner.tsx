@@ -1,7 +1,7 @@
 import { InformationBannerComponentInstanceContext } from '@/information-banner/states/contexts/InformationBannerComponentInstanceContext';
 import { informationBannerIsOpenComponentState } from '@/information-banner/states/informationBannerIsOpenComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import {
   Banner,
@@ -10,7 +10,7 @@ import {
   IconX,
 } from 'twenty-ui/display';
 import { Button, IconButton } from 'twenty-ui/input';
-import { GRAY_SCALE_LIGHT } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledText = styled.div`
   overflow: hidden;
@@ -18,18 +18,18 @@ const StyledText = styled.div`
   white-space: nowrap;
 `;
 
-const StyledCloseButton = styled(IconButton)`
-  color: ${GRAY_SCALE_LIGHT.gray1};
+const StyledCloseButtonContainer = styled.div`
+  color: ${themeCssVariables.grayScale.gray1};
   display: flex;
 `;
 
 const StyledContent = styled.div<{ hasCloseButton: boolean }>`
   align-items: center;
-  justify-content: center;
   display: flex;
   flex: 1;
+  gap: ${themeCssVariables.spacing[3]};
+  justify-content: center;
   margin-left: ${({ hasCloseButton }) => (hasCloseButton ? '24px' : '0')};
-  gap: ${({ theme }) => theme.spacing(3)};
 `;
 
 export const InformationBanner = ({
@@ -79,13 +79,15 @@ export const InformationBanner = ({
             )}
           </StyledContent>
           {onClose && (
-            <StyledCloseButton
-              Icon={IconX}
-              size="small"
-              variant="tertiary"
-              onClick={onClose}
-              ariaLabel={t`Close banner`}
-            />
+            <StyledCloseButtonContainer>
+              <IconButton
+                Icon={IconX}
+                size="small"
+                variant="tertiary"
+                onClick={onClose}
+                ariaLabel={t`Close banner`}
+              />
+            </StyledCloseButtonContainer>
           )}
         </Banner>
       )}

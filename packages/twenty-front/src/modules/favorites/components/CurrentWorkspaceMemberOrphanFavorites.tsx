@@ -9,18 +9,19 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { useLocation } from 'react-router-dom';
 import { IconHeartOff } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledEmptyContainer = styled.div`
   width: 100%;
 `;
 
 const StyledOrphanFavoritesContainer = styled.div`
-  margin-bottom: ${({ theme }) => theme.betweenSiblingsGap};
+  margin-bottom: ${themeCssVariables.betweenSiblingsGap};
 `;
 
 export const CurrentWorkspaceMemberOrphanFavorites = () => {
@@ -62,7 +63,10 @@ export const CurrentWorkspaceMemberOrphanFavorites = () => {
                   rightOptions={
                     <LightIconButton
                       Icon={IconHeartOff}
-                      onClick={() => deleteFavorite(favorite.id)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        deleteFavorite(favorite.id);
+                      }}
                       accent="tertiary"
                     />
                   }

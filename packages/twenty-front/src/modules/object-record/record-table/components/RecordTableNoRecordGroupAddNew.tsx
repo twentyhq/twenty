@@ -4,6 +4,7 @@ import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useU
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
 import { RecordTableActionRow } from '@/object-record/record-table/record-table-row/components/RecordTableActionRow';
+import { isRecordTableCreateDisabled } from '@/object-record/record-table/utils/isRecordTableCreateDisabled';
 import { useLoadRecordsToVirtualRows } from '@/object-record/record-table/virtualization/hooks/useLoadRecordsToVirtualRows';
 import { totalNumberOfRecordsToVirtualizeComponentState } from '@/object-record/record-table/virtualization/states/totalNumberOfRecordsToVirtualizeComponentState';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
@@ -62,6 +63,10 @@ export const RecordTableNoRecordGroupAddNew = () => {
   }
 
   if (!hasObjectUpdatePermissions) {
+    return null;
+  }
+
+  if (isRecordTableCreateDisabled(objectMetadataItem.nameSingular)) {
     return null;
   }
 

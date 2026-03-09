@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useCallback, useState } from 'react';
 import { Controller, type SubmitHandler, useForm } from 'react-hook-form';
@@ -14,17 +14,17 @@ import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboard
 import { WorkspaceLogoUploader } from '@/settings/workspace/components/WorkspaceLogoUploader';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { Modal } from '@/ui/layout/modal/components/Modal';
+import { ModalContent } from 'twenty-ui/layout';
 import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
 import { ApolloError } from '@apollo/client';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { motion } from 'framer-motion';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { Loader } from 'twenty-ui/feedback';
 import { MainButton } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useActivateWorkspaceMutation } from '~/generated-metadata/graphql';
 
 const StyledContentContainer = styled.div`
@@ -32,11 +32,11 @@ const StyledContentContainer = styled.div`
 `;
 
 const StyledSectionContainer = styled.div`
-  margin-top: ${({ theme }) => theme.spacing(8)};
+  margin-top: ${themeCssVariables.spacing[8]};
 `;
 
 const StyledButtonContainer = styled.div`
-  margin-top: ${({ theme }) => theme.spacing(8)};
+  margin-top: ${themeCssVariables.spacing[8]};
   width: 200px;
 `;
 
@@ -44,9 +44,9 @@ const StyledLoaderContainer = styled.div`
   align-items: center;
   display: flex;
   justify-content: center;
-  margin-top: ${({ theme }) => theme.spacing(8)};
+  margin-bottom: ${themeCssVariables.spacing[8]};
+  margin-top: ${themeCssVariables.spacing[8]};
   width: 100%;
-  margin-bottom: ${({ theme }) => theme.spacing(8)};
 `;
 
 enum PendingCreationLoaderStep {
@@ -56,11 +56,11 @@ enum PendingCreationLoaderStep {
   Step3 = 'step-3',
 }
 
-const StyledPendingCreationLoader = styled(motion.div)`
-  width: 100%;
+const StyledPendingCreationLoader = styled.div`
+  align-items: center;
   display: flex;
   justify-content: center;
-  align-items: center;
+  width: 100%;
 `;
 
 export const CreateWorkspace = () => {
@@ -151,7 +151,7 @@ export const CreateWorkspace = () => {
   };
 
   return (
-    <Modal.Content isVerticalCentered isHorizontalCentered>
+    <ModalContent isVerticallyCentered isHorizontallyCentered>
       {pendingCreationLoaderStep !== PendingCreationLoaderStep.None && (
         <>
           <Logo
@@ -240,6 +240,6 @@ export const CreateWorkspace = () => {
           </StyledButtonContainer>
         </>
       )}
-    </Modal.Content>
+    </ModalContent>
   );
 };

@@ -9,41 +9,44 @@ import { calculateTotalGridRows } from '@/page-layout/utils/calculateTotalGridRo
 import { generateCellId } from '@/page-layout/utils/generateCellId';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useMemo } from 'react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledGridOverlay = styled.div<{
   isDragSelecting?: boolean;
   breakpoint: PageLayoutBreakpoint;
 }>`
-  position: absolute;
-  top: ${({ theme }) => theme.spacing(2)};
-  left: ${({ theme }) => theme.spacing(2)};
-  right: ${({ theme }) => theme.spacing(2)};
-  bottom: ${({ theme }) => theme.spacing(2)};
+  bottom: ${themeCssVariables.spacing[2]};
   display: grid;
+  gap: ${themeCssVariables.spacing[2]};
+  grid-auto-rows: 55px;
   grid-template-columns: ${({ breakpoint }) =>
     breakpoint === 'mobile' ? '1fr' : 'repeat(12, 1fr)'};
-  grid-auto-rows: 55px;
-  gap: ${({ theme }) => theme.spacing(2)};
+  left: ${themeCssVariables.spacing[2]};
   pointer-events: ${({ isDragSelecting }) =>
     isDragSelecting ? 'auto' : 'none'};
+  position: absolute;
+  right: ${themeCssVariables.spacing[2]};
+  top: ${themeCssVariables.spacing[2]};
   z-index: ${PAGE_LAYOUT_GRID_OVERLAY_Z_INDEX};
 `;
 
 const StyledGridCell = styled.div<{ isSelected?: boolean }>`
-  background: ${({ isSelected, theme }) =>
-    isSelected ? theme.color.blue3 : 'transparent'};
+  background: ${({ isSelected }) =>
+    isSelected ? themeCssVariables.color.blue3 : 'transparent'};
   border: 1px solid
-    ${({ theme, isSelected }) =>
-      isSelected ? theme.color.blue7 : theme.border.color.light};
-  border-radius: ${({ theme }) => theme.border.radius.md};
+    ${({ isSelected }) =>
+      isSelected
+        ? themeCssVariables.color.blue7
+        : themeCssVariables.border.color.light};
+  border-radius: ${themeCssVariables.border.radius.md};
   cursor: pointer;
   transition: background-color 0.3s ease;
 
   &:hover {
-    background: ${({ theme }) => theme.background.transparent.lighter};
-    border-color: ${({ theme }) => theme.border.color.medium};
+    background: ${themeCssVariables.background.transparent.lighter};
+    border-color: ${themeCssVariables.border.color.medium};
   }
 `;
 
@@ -65,7 +68,7 @@ export const PageLayoutGridOverlay = () => {
   const { createWidgetFromClick } = useCreateWidgetFromClick();
 
   const numberOfRows = useMemo(() => {
-    const currentTabLayouts = pageLayoutCurrentLayouts[activeTabId ?? ''] || {
+    const currentTabLayouts = pageLayoutCurrentLayouts[activeTabId ?? ''] ?? {
       desktop: [],
       mobile: [],
     };

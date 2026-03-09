@@ -3,45 +3,26 @@ import { type SettingsRoleObjectPermissionKey } from '@/settings/roles/role-perm
 import { type SettingsRolePermissionsObjectPermission } from '@/settings/roles/role-permissions/objects-permissions/types/SettingsRolePermissionsObjectPermission';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { plural } from '@lingui/core/macro';
 import { Checkbox, CheckboxAccent } from 'twenty-ui/input';
-
-const StyledPermissionCell = styled(TableCell)`
-  align-items: center;
-  display: flex;
-  flex: 1;
-  gap: ${({ theme }) => theme.spacing(1)};
-  padding-left: ${({ theme }) => theme.spacing(2)};
-`;
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledPermissionContent = styled.div`
   align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledPermissionLabel = styled.span`
-  color: ${({ theme }) => theme.font.color.primary};
+  color: ${themeCssVariables.font.color.primary};
 `;
 
 const StyledOverrideInfo = styled.div`
   align-items: center;
-  color: ${({ theme }) => theme.font.color.tertiary};
+  color: ${themeCssVariables.font.color.tertiary};
   display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
-`;
-const StyledCheckboxCell = styled(TableCell)`
-  align-items: center;
-  display: flex;
-  justify-content: flex-end;
-  padding-right: ${({ theme }) => theme.spacing(1)};
-`;
-
-const StyledTableRow = styled(TableRow)<{ isDisabled: boolean }>`
-  align-items: center;
-  display: flex;
-  cursor: ${({ isDisabled }) => (isDisabled ? 'default' : 'pointer')};
+  gap: ${themeCssVariables.spacing[1]};
 `;
 
 type SettingsRolePermissionsObjectsTableRowProps = {
@@ -67,8 +48,11 @@ export const SettingsRolePermissionsObjectsTableRow = ({
   };
 
   return (
-    <StyledTableRow onClick={handleRowClick} isDisabled={isDisabled}>
-      <StyledPermissionCell>
+    <TableRow
+      onClick={handleRowClick}
+      cursor={isDisabled ? 'default' : 'pointer'}
+    >
+      <TableCell gap={themeCssVariables.spacing[1]}>
         <StyledPermissionContent>
           <PermissionIcon
             permission={permission.key as SettingsRoleObjectPermissionKey}
@@ -95,15 +79,19 @@ export const SettingsRolePermissionsObjectsTableRow = ({
             </>
           ) : null}
         </StyledOverrideInfo>
-      </StyledPermissionCell>
-      <StyledCheckboxCell onClick={(e) => e.stopPropagation()}>
+      </TableCell>
+      <TableCell
+        align="right"
+        padding={`0 ${themeCssVariables.spacing[1]} 0 ${themeCssVariables.spacing[2]}`}
+        onClick={(e) => e.stopPropagation()}
+      >
         <Checkbox
           checked={permission.value ?? false}
           onChange={() => permission.setValue(!permission.value)}
           disabled={isDisabled}
           accent={isRevoked ? CheckboxAccent.Orange : CheckboxAccent.Blue}
         />
-      </StyledCheckboxCell>
-    </StyledTableRow>
+      </TableCell>
+    </TableRow>
   );
 };

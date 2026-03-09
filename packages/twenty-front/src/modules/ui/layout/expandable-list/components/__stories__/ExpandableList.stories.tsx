@@ -1,26 +1,19 @@
-import styled from '@emotion/styled';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, within } from 'storybook/test';
 
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
-import { isDefined } from 'twenty-shared/utils';
 import { Tag } from 'twenty-ui/components';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { MAIN_COLOR_NAMES } from 'twenty-ui/theme';
-
-const StyledContainer = styled.div`
-  padding: ${({ theme }) => theme.spacing(1)};
-  width: 300px;
-`;
 
 const meta: Meta<typeof ExpandableList> = {
   title: 'UI/Layout/ExpandableList/ExpandableList',
   component: ExpandableList,
   decorators: [
     (Story) => (
-      <StyledContainer>
+      <div style={{ padding: 4, width: 300 }}>
         <Story />
-      </StyledContainer>
+      </div>
     ),
     ComponentDecorator,
   ],
@@ -50,19 +43,16 @@ export const WithChipCount: Story = {
 
 export const WithExpandedList: Story = {
   ...WithChipCount,
-  play: async () => {
-    const root = document.getElementsByTagName('body')[0];
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
 
-    if (!isDefined(root)) {
-      throw new Error('Root element not found');
-    }
-
-    const rootCanvas = within(root);
-
-    const chipCount = await rootCanvas.findByText(/^\+\d+$/);
+    const chipCount = await canvas.findByText(/^\+\d+$/);
 
     await userEvent.click(chipCount);
 
-    expect(await rootCanvas.findByText('Option 7')).toBeDefined();
+    const body = canvasElement.ownerDocument.body;
+    const bodyCanvas = within(body);
+
+    expect(await bodyCanvas.findByText('Option 7')).toBeDefined();
   },
 };

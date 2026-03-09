@@ -10,12 +10,12 @@ import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorato
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { RecordTableDecorator } from '~/testing/decorators/RecordTableDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
-import { getCompaniesMock } from '~/testing/mock-data/companies';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { mockedViewsData } from '~/testing/mock-data/views';
+import { mockedCompanyRecords } from '~/testing/mock-data/generated/data/companies/mock-companies-data';
+import { mockedCoreViews } from '~/testing/mock-data/generated/metadata/views/mock-views-data';
 import { sleep } from '~/utils/sleep';
 
-const companiesMock = getCompaniesMock();
+const companyView = mockedCoreViews.find((v) => v.name === 'All Companies')!;
 
 const meta: Meta = {
   title: 'Modules/ObjectRecord/RecordTable/RecordTable',
@@ -30,7 +30,7 @@ const meta: Meta = {
     ObjectMetadataItemsDecorator,
   ],
   args: {
-    recordTableId: `companies-${mockedViewsData[0].id}`,
+    recordTableId: `companies-${companyView.id}`,
     viewBarId: 'view-bar',
     objectNameSingular: 'company',
   },
@@ -73,7 +73,11 @@ export const ScrolledLeft: Story = {
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await canvas.findAllByText(companiesMock[0].name, {}, { timeout: 3000 });
+    await canvas.findAllByText(
+      mockedCompanyRecords[0].name,
+      {},
+      { timeout: 3000 },
+    );
 
     const scrollWrapper = canvasElement.ownerDocument.body.querySelector(
       '.scroll-wrapper-x-enabled',
@@ -91,7 +95,7 @@ export const ScrolledLeft: Story = {
       },
     });
 
-    await canvas.findByText(companiesMock[1].name);
+    await canvas.findByText(mockedCompanyRecords[1].name);
   },
 };
 
@@ -103,7 +107,11 @@ export const ScrolledBottom: Story = {
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await canvas.findAllByText(companiesMock[0].name, {}, { timeout: 3000 });
+    await canvas.findAllByText(
+      mockedCompanyRecords[0].name,
+      {},
+      { timeout: 3000 },
+    );
 
     const scrollWrapper = canvasElement.ownerDocument.body.querySelector(
       '.scroll-wrapper-y-enabled',
@@ -121,6 +129,6 @@ export const ScrolledBottom: Story = {
       },
     });
 
-    await canvas.findByText(companiesMock[1].name);
+    await canvas.findByText(mockedCompanyRecords[1].name);
   },
 };

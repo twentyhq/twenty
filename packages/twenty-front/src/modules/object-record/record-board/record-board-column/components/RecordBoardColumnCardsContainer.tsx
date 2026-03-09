@@ -1,6 +1,7 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { Draggable, type DroppableProvided } from '@hello-pangea/dnd';
 import { useContext } from 'react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { RecordBoardCardDraggableContainer } from '@/object-record/record-board/record-board-card/components/RecordBoardCardDraggableContainer';
 
@@ -19,7 +20,7 @@ const StyledColumnCardsContainer = styled.div`
 `;
 
 const StyledNewButtonContainer = styled.div`
-  padding-bottom: ${({ theme }) => theme.spacing(4)};
+  padding-bottom: ${themeCssVariables.spacing[4]};
 `;
 
 type RecordBoardColumnCardsContainerProps = {
@@ -46,7 +47,7 @@ export const RecordBoardColumnCardsContainer = ({
   return (
     <StyledColumnCardsContainer
       ref={droppableProvided?.innerRef}
-      // eslint-disable-next-line react/jsx-props-no-spreading
+      // oxlint-disable-next-line react/jsx-props-no-spreading
       {...droppableProvided?.droppableProps}
     >
       {recordIndexRecordIdsByGroup.map((recordId, index) => (
@@ -67,7 +68,7 @@ export const RecordBoardColumnCardsContainer = ({
         {(draggableProvided) => (
           <div
             ref={draggableProvided.innerRef}
-            // eslint-disable-next-line react/jsx-props-no-spreading
+            // oxlint-disable-next-line react/jsx-props-no-spreading
             {...draggableProvided.draggableProps}
           ></div>
         )}

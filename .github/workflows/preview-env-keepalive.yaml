@@ -2,7 +2,6 @@ name: 'Preview Environment Keep Alive'
 
 permissions:
   contents: read
-  pull-requests: write
 
 on:
   repository_dispatch:
@@ -55,14 +54,15 @@ jobs:
           port: 3000
 
       - name: Start services with correct SERVER_URL
+        env:
+          TUNNEL_URL: ${{ steps.expose-tunnel.outputs.tunnel-url }}
         run: |
           cd packages/twenty-docker/
 
-          # Update the SERVER_URL with the tunnel URL
-          echo "Setting SERVER_URL to ${{ steps.expose-tunnel.outputs.tunnel-url }}"
+          echo "Setting SERVER_URL to $TUNNEL_URL"
           sed -i '/SERVER_URL=/d' .env
           echo "" >> .env
-          echo "SERVER_URL=${{ steps.expose-tunnel.outputs.tunnel-url }}" >> .env
+          echo "SERVER_URL=$TUNNEL_URL" >> .env
 
           # Start the services
           echo "Docker compose up..."
@@ -99,54 +99,26 @@ jobs:
           fi
         working-directory: ./
 
-      - name: Output tunnel URL to logs
+      - name: Output tunnel URL
+        env:
+          TUNNEL_URL: ${{ steps.expose-tunnel.outputs.tunnel-url }}
         run: |
           echo "✅ Preview Environment Ready!"
-          echo "🔗 Preview URL: ${{ steps.expose-tunnel.outputs.tunnel-url }}"
+          echo "🔗 Preview URL: $TUNNEL_URL"
           echo "⏱️ This environment will be available for 5 hours"
+          echo "## 🚀 Preview Environment Ready!" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "Preview URL: $TUNNEL_URL" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "This environment will automatically shut down after 5 hours." >> "$GITHUB_STEP_SUMMARY"
+          echo "$TUNNEL_URL" > tunnel-url.txt
 
-      - name: Post comment on PR
-        uses: actions/github-script@v6
+      - name: Upload tunnel URL artifact
+        uses: actions/upload-artifact@v4
         with:
-          github-token: ${{secrets.GITHUB_TOKEN}}
-          script: |
-            const COMMENT_MARKER = '<!-- PR_PREVIEW_ENV -->';
-            const commentBody = `${COMMENT_MARKER}
-            🚀 **Preview Environment Ready!**
-
-            Your preview environment is available at: ${{ steps.expose-tunnel.outputs.tunnel-url }}
-
-            This environment will automatically shut down when the PR is closed or after 5 hours.`;
-
-            // Get all comments
-            const {data: comments} = await github.rest.issues.listComments({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: ${{ github.event.client_payload.pr_number }},
-            });
-
-            // Find our comment
-            const botComment = comments.find(comment => comment.body.includes(COMMENT_MARKER));
-
-            if (botComment) {
-              // Update existing comment
-              await github.rest.issues.updateComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                comment_id: botComment.id,
-                body: commentBody
-              });
-              console.log('Updated existing comment');
-            } else {
-              // Create new comment
-              await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: ${{ github.event.client_payload.pr_number }},
-                body: commentBody
-              });
-              console.log('Created new comment');
-            }
+          name: tunnel-url
+          path: tunnel-url.txt
+          retention-days: 1
 
       - name: Keep tunnel alive for 5 hours
         run: timeout 300m sleep 18000 # Stop on whichever we reach first (300m or 5hour sleep)

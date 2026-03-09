@@ -1,16 +1,21 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 export const StyledNavigationMenuItemIconContainer = styled.div<{
   $backgroundColor?: string;
+  $borderColor?: string;
 }>`
   align-items: center;
-  border-radius: ${({ theme }) => theme.border.radius.xs};
+  background-color: ${({ $backgroundColor }) =>
+    $backgroundColor ?? 'transparent'};
+  border: ${({ $borderColor }) =>
+    $borderColor ? `1px solid ${$borderColor}` : 'none'};
+  border-radius: 4px;
+  box-sizing: border-box;
   display: flex;
   flex-shrink: 0;
-  height: ${({ theme }) => theme.spacing(4.5)};
-  justify-content: center;
-  width: ${({ theme }) => theme.spacing(4.5)};
+  height: ${themeCssVariables.spacing[4]};
 
-  ${({ $backgroundColor }) =>
-    $backgroundColor ? `background-color: ${$backgroundColor};` : ''}
+  justify-content: center;
+  width: ${themeCssVariables.spacing[4]};
 `;

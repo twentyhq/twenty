@@ -9,6 +9,7 @@
 
 export { applyDiff } from './applyDiff';
 export { compareArraysOfObjectsByProperty } from './array/compareArraysOfObjectsByProperty';
+export { filterDuplicatesById } from './array/filterDuplicatesById';
 export { filterOutByProperty } from './array/filterOutByProperty';
 export { findById } from './array/findById';
 export { findByProperty } from './array/findByProperty';
@@ -21,7 +22,9 @@ export { sumByProperty } from './array/sumByProperty';
 export { upsertIntoArrayOfObjectsComparingId } from './array/upsertIntoArrayOfObjectsComparingId';
 export { upsertPropertiesOfItemIntoArrayOfObjectsComparingId } from './array/upsertPropertiesOfItemIntoArrayOfObjectsComparingId';
 export { assertUnreachable } from './assertUnreachable';
+export { base64UrlEncode } from './base64UrlEncode';
 export { computeDiffBetweenObjects } from './compute-diff-between-objects';
+export { evaluateConditionalAvailabilityExpression } from './conditional-availability/evaluateConditionalAvailabilityExpression';
 export { isPlainDateAfter } from './date/isPlainDateAfter';
 export { isPlainDateBefore } from './date/isPlainDateBefore';
 export { isPlainDateBeforeOrEqual } from './date/isPlainDateBeforeOrEqual';
@@ -146,6 +149,7 @@ export { safeParseRelativeDateFilterJSONStringified } from './safeParseRelativeD
 export { getGenericOperationName } from './sentry/getGenericOperationName';
 export { getHumanReadableNameFromCode } from './sentry/getHumanReadableNameFromCode';
 export { appendCopySuffix } from './strings/appendCopySuffix';
+export { camelToKebab } from './strings/camelToKebab';
 export { camelToSnakeCase } from './strings/camelToSnakeCase';
 export { capitalize } from './strings/capitalize';
 export { pascalCase } from './strings/pascalCase';

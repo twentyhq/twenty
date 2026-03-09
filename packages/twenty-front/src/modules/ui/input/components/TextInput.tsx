@@ -1,12 +1,14 @@
 import { InputErrorHelper } from '@/ui/input/components/InputErrorHelper';
+import { isDefined } from 'twenty-shared/utils';
 import { InputLabel } from '@/ui/input/components/InputLabel';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import {
+import { css } from '@linaria/core';
+import { styled } from '@linaria/react';
+import React, {
+  forwardRef,
   type ChangeEvent,
   type FocusEventHandler,
   type InputHTMLAttributes,
-  forwardRef,
+  useContext,
   useId,
   useRef,
   useState,
@@ -15,13 +17,13 @@ import { type IconComponent, IconEye, IconEyeOff } from 'twenty-ui/display';
 import { AutogrowWrapper } from 'twenty-ui/utilities';
 import { useCombinedRefs } from '~/hooks/useCombinedRefs';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
-
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 const StyledContainer = styled.div<Pick<TextInputComponentProps, 'fullWidth'>>`
   box-sizing: border-box;
   display: inline-flex;
   flex-direction: column;
-  width: ${({ fullWidth }) => (fullWidth ? `100%` : 'auto')};
   position: relative;
+  width: ${({ fullWidth }) => (fullWidth ? `100%` : 'auto')};
 `;
 
 const StyledInputContainer = styled.div`
@@ -39,17 +41,21 @@ type StyledAdornmentContainerProps = {
 
 const StyledAdornmentContainer = styled.div<StyledAdornmentContainerProps>`
   align-items: center;
-  background-color: ${({ theme }) => theme.background.transparent.light};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme, position }) =>
+  background-color: ${themeCssVariables.background.transparent.light};
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  border-left-style: ${({ position }) =>
+    position === 'right' ? 'none' : 'solid'};
+  border-radius: ${({ position }) =>
     position === 'left'
-      ? `${theme.border.radius.sm} 0 0 ${theme.border.radius.sm}`
-      : `0 ${theme.border.radius.sm} ${theme.border.radius.sm} 0`};
+      ? `${themeCssVariables.border.radius.sm} 0 0 ${themeCssVariables.border.radius.sm}`
+      : `0 ${themeCssVariables.border.radius.sm} ${themeCssVariables.border.radius.sm} 0`};
+  border-right-style: ${({ position }) =>
+    position === 'left' ? 'none' : 'solid'};
   box-sizing: border-box;
-  color: ${({ theme }) => theme.font.color.tertiary};
+  color: ${themeCssVariables.font.color.tertiary};
   display: flex;
-  font-size: ${({ theme }) => theme.font.size.md};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
+  font-size: ${themeCssVariables.font.size.md};
+  font-weight: ${themeCssVariables.font.weight.medium};
   height: ${({ sizeVariant }) =>
     sizeVariant === 'xs'
       ? '20px'
@@ -59,9 +65,6 @@ const StyledAdornmentContainer = styled.div<StyledAdornmentContainerProps>`
           ? '28px'
           : '32px'};
   justify-content: center;
-  min-width: fit-content;
-  padding: ${({ theme }) => theme.spacing(2)};
-  width: auto;
   line-height: ${({ sizeVariant }) =>
     sizeVariant === 'xs'
       ? '20px'
@@ -70,9 +73,10 @@ const StyledAdornmentContainer = styled.div<StyledAdornmentContainerProps>`
         : sizeVariant === 'md'
           ? '28px'
           : '32px'};
+  min-width: fit-content;
 
-  ${({ position }) =>
-    position === 'left' ? 'border-right: none;' : 'border-left: none;'}
+  padding: ${themeCssVariables.spacing[2]};
+  width: auto;
 `;
 
 const StyledInput = styled.input<
@@ -89,27 +93,29 @@ const StyledInput = styled.input<
     | 'leftAdornment'
   >
 >`
-  background-color: ${({ theme }) => theme.background.transparent.lighter};
-  border-radius: ${({ theme, leftAdornment, rightAdornment }) =>
-    leftAdornment
-      ? `0 ${theme.border.radius.sm} ${theme.border.radius.sm} 0`
-      : rightAdornment
-        ? `${theme.border.radius.sm} 0 0 ${theme.border.radius.sm}`
-        : theme.border.radius.sm};
-
+  background-color: ${themeCssVariables.background.transparent.lighter};
   border: 1px solid
-    ${({ theme, error }) =>
-      error ? theme.border.color.danger : theme.border.color.medium};
+    ${({ error }) =>
+      error
+        ? themeCssVariables.border.color.danger
+        : themeCssVariables.border.color.medium};
+
+  border-radius: ${({ leftAdornment, rightAdornment }) =>
+    leftAdornment
+      ? `0 ${themeCssVariables.border.radius.sm} ${themeCssVariables.border.radius.sm} 0`
+      : rightAdornment
+        ? `${themeCssVariables.border.radius.sm} 0 0 ${themeCssVariables.border.radius.sm}`
+        : themeCssVariables.border.radius.sm};
   box-sizing: border-box;
-  color: ${({ theme }) => theme.font.color.primary};
+  color: ${themeCssVariables.font.color.primary};
   display: flex;
   flex-grow: 1;
-  font-family: ${({ theme, inheritFontStyles }) =>
-    inheritFontStyles ? 'inherit' : theme.font.family};
-  font-size: ${({ theme, inheritFontStyles }) =>
-    inheritFontStyles ? 'inherit' : theme.font.size.md};
-  font-weight: ${({ theme, inheritFontStyles }) =>
-    inheritFontStyles ? 'inherit' : theme.font.weight.regular};
+  font-family: ${({ inheritFontStyles }) =>
+    inheritFontStyles ? 'inherit' : themeCssVariables.font.family};
+  font-size: ${({ inheritFontStyles }) =>
+    inheritFontStyles ? 'inherit' : themeCssVariables.font.size.md};
+  font-weight: ${({ inheritFontStyles }) =>
+    inheritFontStyles ? 'inherit' : themeCssVariables.font.weight.regular};
   height: ${({ sizeVariant }) =>
     sizeVariant === 'xs'
       ? '20px'
@@ -118,38 +124,40 @@ const StyledInput = styled.input<
         : sizeVariant === 'md'
           ? '28px'
           : '32px'};
+  max-width: ${({ autoGrow }) => (autoGrow ? '100%' : 'none')};
   outline: none;
-  padding: ${({ theme, sizeVariant, autoGrow }) =>
+  padding: ${({ sizeVariant, autoGrow }) =>
     autoGrow
       ? 0
       : sizeVariant === 'xs'
-        ? `${theme.spacing(2)} 0`
-        : theme.spacing(2)};
-  padding-left: ${({ theme, LeftIcon, autoGrow }) =>
+        ? `${themeCssVariables.spacing[2]} 0`
+        : themeCssVariables.spacing[2]};
+  padding-left: ${({ LeftIcon, autoGrow }) =>
     autoGrow
-      ? theme.spacing(1)
+      ? themeCssVariables.spacing[1]
       : LeftIcon
-        ? `calc(${theme.spacing(3)} + 16px)`
-        : theme.spacing(2)};
-  padding-right: ${({ theme, RightIcon, autoGrow }) =>
+        ? `calc(${themeCssVariables.spacing[3]} + 16px)`
+        : themeCssVariables.spacing[2]};
+  padding-right: ${({ RightIcon, autoGrow }) =>
     autoGrow
-      ? theme.spacing(1)
+      ? themeCssVariables.spacing[1]
       : RightIcon
-        ? `calc(${theme.spacing(3)} + 16px)`
-        : theme.spacing(2)};
-  width: ${({ theme, width }) =>
-    width ? `calc(${width}px + ${theme.spacing(0.5)})` : '100%'};
-  max-width: ${({ autoGrow }) => (autoGrow ? '100%' : 'none')};
+        ? `calc(${themeCssVariables.spacing[3]} + 16px)`
+        : themeCssVariables.spacing[2]};
   text-overflow: ellipsis;
+  width: ${({ width }) =>
+    isDefined(width)
+      ? `calc(${width}px + ${themeCssVariables.spacing[0.5]})`
+      : '100%'};
   &::placeholder,
   &::-webkit-input-placeholder {
-    color: ${({ theme }) => theme.font.color.light};
-    font-family: ${({ theme }) => theme.font.family};
-    font-weight: ${({ theme }) => theme.font.weight.medium};
+    color: ${themeCssVariables.font.color.light};
+    font-family: ${themeCssVariables.font.family};
+    font-weight: ${themeCssVariables.font.weight.medium};
   }
 
   &:disabled {
-    color: ${({ theme }) => theme.font.color.tertiary};
+    color: ${themeCssVariables.font.color.tertiary};
   }
 
   &[readonly] {
@@ -157,9 +165,9 @@ const StyledInput = styled.input<
   }
 
   &:focus {
-    ${({ theme, error }) => {
+    ${({ error }) => {
       return `
-      border-color: ${error ? theme.border.color.danger : theme.color.blue};
+      border-color: ${error ? themeCssVariables.border.color.danger : themeCssVariables.color.blue};
       `;
     }};
   }
@@ -167,32 +175,32 @@ const StyledInput = styled.input<
 
 const StyledLeftIconContainer = styled.div<{ sizeVariant: TextInputSize }>`
   align-items: center;
+  bottom: 0;
   display: flex;
   justify-content: center;
-  padding-left: ${({ theme, sizeVariant }) =>
+  margin: auto 0;
+  padding-left: ${({ sizeVariant }) =>
     sizeVariant === 'xs'
-      ? theme.spacing(0.5)
+      ? themeCssVariables.spacing[0.5]
       : sizeVariant === 'md' || sizeVariant === 'sm'
-        ? theme.spacing(1)
-        : theme.spacing(2)};
+        ? themeCssVariables.spacing[1]
+        : themeCssVariables.spacing[2]};
   position: absolute;
   top: 0;
-  bottom: 0;
-  margin: auto 0;
 `;
 
 const StyledTrailingIconContainer = styled.div<
   Pick<TextInputComponentProps, 'error'>
 >`
   align-items: center;
+  bottom: 0;
   display: flex;
   justify-content: center;
-  padding-right: ${({ theme }) => theme.spacing(2)};
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  right: 0;
   margin: auto 0;
+  padding-right: ${themeCssVariables.spacing[2]};
+  position: absolute;
+  right: 0;
+  top: 0;
 `;
 
 const StyledTrailingIcon = styled.div<{
@@ -200,8 +208,10 @@ const StyledTrailingIcon = styled.div<{
   onClick?: () => void;
 }>`
   align-items: center;
-  color: ${({ theme, isFocused }) =>
-    isFocused ? theme.font.color.secondary : theme.font.color.light};
+  color: ${({ isFocused }) =>
+    isFocused
+      ? themeCssVariables.font.color.secondary
+      : themeCssVariables.font.color.light};
   cursor: ${({ onClick }) => (onClick ? 'pointer' : 'default')};
   display: flex;
   justify-content: center;
@@ -276,7 +286,7 @@ const TextInputComponent = forwardRef<
     },
     ref,
   ) => {
-    const theme = useTheme();
+    const { theme } = useContext(ThemeContext);
     const inputRef = useRef<HTMLInputElement>(null);
     const combinedRef = useCombinedRefs(ref, inputRef);
 
@@ -329,7 +339,7 @@ const TextInputComponent = forwardRef<
             id={instanceId}
             width={width}
             data-testid={dataTestId}
-            autoComplete={autoComplete || 'off'}
+            autoComplete={autoComplete ?? 'off'}
             ref={combinedRef}
             tabIndex={tabIndex ?? 0}
             onFocus={handleFocus}
@@ -397,20 +407,49 @@ const TextInputComponent = forwardRef<
   },
 );
 
-const StyledAutogrowWrapper = styled(AutogrowWrapper)<{
-  sizeVariant?: TextInputSize;
-}>`
+const autogrowBaseStyle = css`
   box-sizing: border-box;
-  height: ${({ sizeVariant }) =>
-    sizeVariant === 'xs'
-      ? '20px'
-      : sizeVariant === 'sm'
-        ? '24px'
-        : sizeVariant === 'md'
-          ? '28px'
-          : '32px'};
-  padding: 0 ${({ theme }) => theme.spacing(1.25)};
+  padding: 0 5px;
 `;
+
+const autogrowHeightXs = css`
+  height: 20px;
+`;
+const autogrowHeightSm = css`
+  height: 24px;
+`;
+const autogrowHeightMd = css`
+  height: 28px;
+`;
+const autogrowHeightLg = css`
+  height: 32px;
+`;
+
+const AUTOGROW_HEIGHT_MAP: Record<TextInputSize, string> = {
+  xs: autogrowHeightXs,
+  sm: autogrowHeightSm,
+  md: autogrowHeightMd,
+  lg: autogrowHeightLg,
+};
+
+type StyledAutogrowWrapperProps = React.ComponentProps<
+  typeof AutogrowWrapper
+> & {
+  sizeVariant?: TextInputSize;
+};
+
+const StyledAutogrowWrapper = ({
+  sizeVariant = 'lg',
+  className,
+  children,
+  node,
+}: StyledAutogrowWrapperProps) => (
+  <AutogrowWrapper
+    children={children}
+    node={node}
+    className={`${autogrowBaseStyle} ${AUTOGROW_HEIGHT_MAP[sizeVariant]} ${className ?? ''}`}
+  />
+);
 
 const TextInputWithAutoGrowWrapper = forwardRef<
   HTMLInputElement,
@@ -421,10 +460,10 @@ const TextInputWithAutoGrowWrapper = forwardRef<
       {props.autoGrow ? (
         <StyledAutogrowWrapper
           sizeVariant={props.sizeVariant}
-          node={props.value || props.placeholder}
+          node={props.value ?? props.placeholder}
         >
           <TextInputComponent
-            // eslint-disable-next-line react/jsx-props-no-spreading
+            // oxlint-disable-next-line react/jsx-props-no-spreading
             {...props}
             ref={ref}
             fullWidth={true}
@@ -432,7 +471,7 @@ const TextInputWithAutoGrowWrapper = forwardRef<
         </StyledAutogrowWrapper>
       ) : (
         <TextInputComponent
-          // eslint-disable-next-line react/jsx-props-no-spreading
+          // oxlint-disable-next-line react/jsx-props-no-spreading
           {...props}
           ref={ref}
         />

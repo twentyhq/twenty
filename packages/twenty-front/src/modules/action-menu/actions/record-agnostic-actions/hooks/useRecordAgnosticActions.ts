@@ -14,6 +14,10 @@ export const useRecordAgnosticActions = () => {
       RECORD_AGNOSTIC_ACTIONS_CONFIG[
         RecordAgnosticActionsKeys.SEARCH_RECORDS_FALLBACK
       ],
+    [RecordAgnosticActionsKeys.EDIT_NAVIGATION_SIDEBAR]:
+      RECORD_AGNOSTIC_ACTIONS_CONFIG[
+        RecordAgnosticActionsKeys.EDIT_NAVIGATION_SIDEBAR
+      ],
   };
 
   if (isAiEnabled) {

@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { FormProvider } from 'react-hook-form';
 import QRCode from 'react-qr-code';
@@ -19,60 +19,61 @@ import { H2Title } from 'twenty-ui/display';
 import { Loader } from 'twenty-ui/feedback';
 import { Section } from 'twenty-ui/layout';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 const StyledQRCodeContainer = styled.div`
-  margin: ${({ theme }) => theme.spacing(4)} 0;
+  align-items: flex-start;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: ${({ theme }) => theme.spacing(3)};
+  gap: ${themeCssVariables.spacing[3]};
+  margin: ${themeCssVariables.spacing[4]} 0;
 `;
 
 const StyledQRCodeWrapper = styled.div`
   align-items: center;
-  background-color: ${({ theme }) => theme.background.secondary};
-  border: 1px solid ${({ theme }) => theme.border.color.light};
-  border-radius: ${({ theme }) => theme.border.radius.md};
+  background-color: ${themeCssVariables.background.secondary};
+  border: 1px solid ${themeCssVariables.border.color.light};
+  border-radius: ${themeCssVariables.border.radius.md};
   display: flex;
   justify-content: center;
-  padding: ${({ theme }) => theme.spacing(4)};
+  padding: ${themeCssVariables.spacing[4]};
 `;
 
 const StyledOTPContainer = styled.div`
   width: fit-content;
 `;
 
-const StyledQRCode = styled(QRCode)`
+const StyledQRCodeSizer = styled.div`
   height: 137px;
   width: 137px;
 `;
 
 const StyledCopySetupKeyText = styled.div`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  text-align: left;
+  color: ${themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.sm};
   line-height: 1.5;
+  text-align: left;
 `;
 
 const StyledCopySetupKeyLink = styled.button`
   background: none;
   border: none;
-  color: ${({ theme }) => theme.font.color.tertiary};
+  color: ${themeCssVariables.font.color.tertiary};
   cursor: pointer;
   display: inline;
-  font-size: ${({ theme }) => theme.font.size.sm};
+  font-size: ${themeCssVariables.font.size.sm};
+  margin-left: 0;
   padding: 0;
   text-decoration: underline;
-  margin-left: 0;
 
   &:hover {
-    color: ${({ theme }) => theme.font.color.secondary};
+    color: ${themeCssVariables.font.color.secondary};
   }
 `;
 
 const StyledDivider = styled.div`
-  margin: ${({ theme }) => theme.spacing(6)} 0;
+  margin: ${themeCssVariables.spacing[6]} 0;
   width: 100%;
 `;
 
@@ -102,7 +103,7 @@ export const SettingsTwoFactorAuthenticationMethod = () => {
   };
 
   return (
-    // eslint-disable-next-line react/jsx-props-no-spreading
+    // oxlint-disable-next-line react/jsx-props-no-spreading
     <FormProvider {...verificationForm.formConfig}>
       <SubMenuTopBarContainer
         title={t`Two Factor Authentication`}
@@ -151,7 +152,9 @@ export const SettingsTwoFactorAuthenticationMethod = () => {
                 ) : (
                   <>
                     <StyledQRCodeWrapper>
-                      <StyledQRCode value={qrCode} />
+                      <StyledQRCodeSizer>
+                        <QRCode value={qrCode} />
+                      </StyledQRCodeSizer>
                     </StyledQRCodeWrapper>
                     <StyledCopySetupKeyText>
                       <Trans>Can't scan? Copy the</Trans>{' '}

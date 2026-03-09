@@ -15,7 +15,6 @@ import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { forwardRef, type ReactNode } from 'react';
-
 type RecordTableTrProps = {
   children: ReactNode;
   recordId: string;
@@ -51,7 +50,7 @@ export const RecordTableTr = forwardRef<HTMLDivElement, RecordTableTrProps>(
       focusIndex,
     );
 
-    // eslint-disable-next-line twenty/matching-state-variable
+    // oxlint-disable-next-line twenty/matching-state-variable
     const isNextRecordTableRowActive = useAtomComponentFamilyStateValue(
       isRecordTableRowActiveComponentFamilyState,
       focusIndex + 1,
@@ -76,7 +75,7 @@ export const RecordTableTr = forwardRef<HTMLDivElement, RecordTableTrProps>(
       isRecordTableRowFocusActiveComponentState,
     );
 
-    // eslint-disable-next-line twenty/matching-state-variable
+    // oxlint-disable-next-line twenty/matching-state-variable
     const isNextRecordTableRowFocused = useAtomComponentFamilyStateValue(
       isRecordTableRowFocusedComponentFamilyState,
       focusIndex + 1,
@@ -124,7 +123,7 @@ export const RecordTableTr = forwardRef<HTMLDivElement, RecordTableTrProps>(
             isFocused={isRecordTableRowFocused}
             isRowFocusActive={isRecordTableRowFocusActive}
             recordId={recordId}
-            // eslint-disable-next-line react/jsx-props-no-spreading
+            // oxlint-disable-next-line react/jsx-props-no-spreading
             {...props}
           >
             {children}
@@ -142,7 +141,7 @@ export const RecordTableTr = forwardRef<HTMLDivElement, RecordTableTrProps>(
               !isRecordTableRowActive
             }
             data-next-row-active-or-focused={isNextRowActiveOrFocused}
-            // eslint-disable-next-line react/jsx-props-no-spreading
+            // oxlint-disable-next-line react/jsx-props-no-spreading
             {...props}
           >
             {children}

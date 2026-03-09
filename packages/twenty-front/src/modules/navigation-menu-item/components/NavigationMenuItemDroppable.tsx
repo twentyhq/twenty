@@ -1,5 +1,6 @@
-import styled from '@emotion/styled';
 import { Droppable } from '@hello-pangea/dnd';
+import { styled } from '@linaria/react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { useIsDropDisabledForSection } from '@/navigation-menu-item/hooks/useIsDropDisabledForSection';
 
@@ -11,37 +12,26 @@ type NavigationMenuItemDroppableProps = {
   isWorkspaceSection?: boolean;
 };
 
-const StyledDroppableWrapper = styled.div<{
-  isDraggingOver: boolean;
-  isDragIndicatorVisible: boolean;
-  showDropLine: boolean;
-}>`
+const StyledDroppableWrapper = styled.div`
   position: relative;
   transition: all 150ms ease-in-out;
   width: 100%;
 
-  ${({ isDraggingOver, isDragIndicatorVisible, showDropLine, theme }) =>
-    isDraggingOver &&
-    isDragIndicatorVisible &&
-    `
-        background-color: ${theme.background.transparent.blue};
+  &[data-dragging-over='true'] {
+    background-color: ${themeCssVariables.background.transparent.blue};
+  }
 
-        ${
-          showDropLine &&
-          `
-          &::before {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background-color: ${theme.color.blue};
-            border-radius: ${theme.border.radius.sm} ${theme.border.radius.sm} 0 0;
-          }
-        `
-        }
-      `}
+  &[data-dragging-over='true'][data-show-drop-line='true']::before {
+    background-color: ${themeCssVariables.color.blue};
+    border-radius: ${themeCssVariables.border.radius.sm}
+      ${themeCssVariables.border.radius.sm} 0 0;
+    bottom: 0;
+    content: '';
+    height: 2px;
+    left: 0;
+    position: absolute;
+    width: 100%;
+  }
 `;
 
 export const NavigationMenuItemDroppable = ({
@@ -57,13 +47,16 @@ export const NavigationMenuItemDroppable = ({
     <Droppable droppableId={droppableId} isDropDisabled={isDropDisabled}>
       {(provided, snapshot) => (
         <StyledDroppableWrapper
-          isDraggingOver={snapshot.isDraggingOver}
-          isDragIndicatorVisible={isDragIndicatorVisible}
-          showDropLine={showDropLine}
+          data-dragging-over={
+            snapshot.isDraggingOver && isDragIndicatorVisible
+              ? 'true'
+              : undefined
+          }
+          data-show-drop-line={showDropLine ? 'true' : undefined}
         >
           <div
             ref={provided.innerRef}
-            // eslint-disable-next-line react/jsx-props-no-spreading
+            // oxlint-disable-next-line react/jsx-props-no-spreading
             {...provided.droppableProps}
           >
             {children}

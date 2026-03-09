@@ -1,9 +1,10 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 const StyledRelationImage = styled.img<{
   flip?: boolean;
   isMobile: boolean;
 }>`
+  margin: auto;
   transform: ${({ flip, isMobile }) => {
     let transform = '';
     if (isMobile) {
@@ -14,7 +15,6 @@ const StyledRelationImage = styled.img<{
     }
     return transform.trim();
   }};
-  margin: auto;
   width: 54px;
 `;
 

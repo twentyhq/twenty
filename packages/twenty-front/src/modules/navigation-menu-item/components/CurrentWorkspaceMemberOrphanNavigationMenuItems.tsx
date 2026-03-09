@@ -1,17 +1,19 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { useLocation } from 'react-router-dom';
 import { IconHeartOff } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { NavigationItemDropTarget } from '@/navigation-menu-item/components/NavigationItemDropTarget';
-import { NavigationSections } from '@/navigation-menu-item/constants/NavigationSections.constants';
 import { NavigationMenuItemDroppable } from '@/navigation-menu-item/components/NavigationMenuItemDroppable';
 import { NavigationMenuItemIcon } from '@/navigation-menu-item/components/NavigationMenuItemIcon';
 import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/constants/NavigationMenuItemDroppableIds';
+import { NavigationSections } from '@/navigation-menu-item/constants/NavigationSections.constants';
 import { NavigationMenuItemDragContext } from '@/navigation-menu-item/contexts/NavigationMenuItemDragContext';
 import { useDeleteNavigationMenuItem } from '@/navigation-menu-item/hooks/useDeleteNavigationMenuItem';
 import { useSortedNavigationMenuItems } from '@/navigation-menu-item/hooks/useSortedNavigationMenuItems';
+import { getEffectiveNavigationMenuItemColor } from '@/navigation-menu-item/utils/getEffectiveNavigationMenuItemColor';
 import { getNavigationMenuItemSecondaryLabel } from '@/navigation-menu-item/utils/getNavigationMenuItemSecondaryLabel';
 import { isLocationMatchingNavigationMenuItem } from '@/navigation-menu-item/utils/isLocationMatchingNavigationMenuItem';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
@@ -24,7 +26,7 @@ const StyledEmptyContainer = styled.div`
 `;
 
 const StyledOrphanNavigationMenuItemsContainer = styled.div`
-  margin-bottom: ${({ theme }) => theme.betweenSiblingsGap};
+  margin-bottom: ${themeCssVariables.betweenSiblingsGap};
 `;
 
 export const CurrentWorkspaceMemberOrphanNavigationMenuItems = () => {
@@ -71,6 +73,9 @@ export const CurrentWorkspaceMemberOrphanNavigationMenuItems = () => {
                           navigationMenuItem={navigationMenuItem}
                         />
                       )}
+                      iconColor={getEffectiveNavigationMenuItemColor(
+                        navigationMenuItem,
+                      )}
                       active={isLocationMatchingNavigationMenuItem(
                         currentPath,
                         currentViewPath,
@@ -80,9 +85,10 @@ export const CurrentWorkspaceMemberOrphanNavigationMenuItems = () => {
                       rightOptions={
                         <LightIconButton
                           Icon={IconHeartOff}
-                          onClick={() =>
-                            deleteNavigationMenuItem(navigationMenuItem.id)
-                          }
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            deleteNavigationMenuItem(navigationMenuItem.id);
+                          }}
                           accent="tertiary"
                         />
                       }

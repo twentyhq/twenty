@@ -1,17 +1,18 @@
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { getTimezoneAbbreviationForZonedDateTime } from '@/ui/input/components/internal/date/utils/getTimeZoneAbbreviationForZonedDateTime';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type Temporal } from 'temporal-polyfill';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledTimezoneAbbreviation = styled.span<{ hasError?: boolean }>`
   background: transparent;
-  color: ${({ theme }) => theme.font.color.tertiary};
+  color: ${themeCssVariables.font.color.tertiary};
 
-  font-size: ${({ theme }) => theme.font.size.sm};
-  width: fit-content;
-
+  font-size: ${themeCssVariables.font.size.sm};
   user-select: none;
+
+  width: fit-content;
 `;
 
 export const TimeZoneAbbreviation = ({

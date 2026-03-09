@@ -70,7 +70,7 @@ export const SpreadsheetImport = (props: SpreadsheetImportProps) => {
   return (
     <ReactSpreadsheetImportContextProvider values={mergedProps}>
       <SpreadSheetImportModalWrapper
-        modalId={SPREADSHEET_IMPORT_MODAL_ID}
+        modalInstanceId={SPREADSHEET_IMPORT_MODAL_ID}
         onClose={confirmOnClose}
       >
         <SpreadsheetImportStepperContainer />

@@ -7,4 +7,5 @@ CREATE TABLE IF NOT EXISTS workspaceEvent
     `properties`  JSON
 )
     ENGINE = MergeTree
-        ORDER BY (workspaceId, event, userId, timestamp);
+    ORDER BY (workspaceId, timestamp, event, userId)
+    TTL timestamp + INTERVAL 3 YEAR DELETE;

@@ -1,5 +1,5 @@
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
+import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { useBuildRecordInputFromRLSPredicates } from '@/object-record/hooks/useBuildRecordInputFromRLSPredicates';
@@ -10,16 +10,13 @@ import { recordIndexOpenRecordInState } from '@/object-record/record-index/state
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { useBuildRecordInputFromFilters } from '@/object-record/record-table/hooks/useBuildRecordInputFromFilters';
-import { useRecordTitleCell } from '@/object-record/record-title-cell/hooks/useRecordTitleCell';
-import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { canOpenObjectInSidePanel } from '@/object-record/utils/canOpenObjectInSidePanel';
-import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useStore } from 'jotai';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
+import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { AppPath } from 'twenty-shared/types';
 import { findByProperty, isDefined } from 'twenty-shared/utils';
@@ -47,9 +44,9 @@ export const useCreateNewIndexRecord = ({
     recordIndexGroupFieldMetadataItemComponentState,
   );
 
-  const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
+  const { openRecordInSidePanel } = useOpenRecordInSidePanel();
 
-  const { closeCommandMenu } = useCommandMenu();
+  const { closeSidePanelMenu } = useSidePanelMenu();
 
   const { createOneRecord } = useCreateOneRecord({
     objectNameSingular: objectMetadataItem.nameSingular,
@@ -59,8 +56,6 @@ export const useCreateNewIndexRecord = ({
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
   const navigate = useNavigateApp();
-
-  const { openRecordTitleCell } = useRecordTitleCell();
 
   const { buildRecordInputFromFilters } = useBuildRecordInputFromFilters({
     objectMetadataItem,
@@ -96,31 +91,16 @@ export const useCreateNewIndexRecord = ({
         recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL &&
         canOpenObjectInSidePanel(objectMetadataItem.nameSingular)
       ) {
-        openRecordInCommandMenu({
+        openRecordInSidePanel({
           recordId,
           objectNameSingular: objectMetadataItem.nameSingular,
           isNewRecord: true,
         });
-
-        const labelIdentifierFieldMetadataItem =
-          getLabelIdentifierFieldMetadataItem(objectMetadataItem);
-
-        if (isDefined(labelIdentifierFieldMetadataItem)) {
-          openRecordTitleCell({
-            recordId,
-            fieldMetadataItemId: labelIdentifierFieldMetadataItem.id,
-            instanceId: getRecordFieldInputInstanceId({
-              recordId,
-              fieldName: labelIdentifierFieldMetadataItem.name,
-              prefix: RecordTitleCellContainerType.PageHeader,
-            }),
-          });
-        }
       } else {
         const labelIdentifierFieldMetadataItem =
           getLabelIdentifierFieldMetadataItem(objectMetadataItem);
 
-        closeCommandMenu();
+        closeSidePanelMenu();
         navigate(
           AppPath.RecordShowPage,
           {
@@ -180,13 +160,12 @@ export const useCreateNewIndexRecord = ({
       createOneRecord,
       navigate,
       objectMetadataItem,
-      openRecordInCommandMenu,
-      openRecordTitleCell,
+      openRecordInSidePanel,
       recordGroupDefinitions,
       recordIndexGroupFieldMetadataItem,
       recordIndexRecordIdsByGroupCallbackState,
       upsertRecordsInStore,
-      closeCommandMenu,
+      closeSidePanelMenu,
     ],
   );
 

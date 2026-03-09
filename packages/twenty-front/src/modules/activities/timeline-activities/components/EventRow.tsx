@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useContext } from 'react';
 
@@ -14,15 +14,16 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import { getObjectRecordIdentifier } from '@/object-metadata/utils/getObjectRecordIdentifier';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
 
 const StyledTimelineItemContainer = styled.div`
-  color: ${({ theme }) => theme.font.color.primary};
+  color: ${themeCssVariables.font.color.primary};
   display: flex;
-  gap: ${({ theme }) => theme.spacing(4)};
+  gap: ${themeCssVariables.spacing[4]};
   height: 'auto';
   justify-content: space-between;
   overflow: hidden;
@@ -35,30 +36,30 @@ const StyledLeftContainer = styled.div`
 `;
 
 const StyledIconContainer = styled.div`
-  display: flex;
   align-items: center;
-  justify-content: center;
-  color: ${({ theme }) => theme.font.color.tertiary};
+  color: ${themeCssVariables.font.color.tertiary};
+  display: flex;
   height: 16px;
-  width: 16px;
+  justify-content: center;
   margin: 5px;
-  user-select: none;
   text-decoration-line: underline;
+  user-select: none;
+  width: 16px;
   z-index: 2;
 `;
 
 const StyledVerticalLineContainer = styled.div`
   display: flex;
   flex-shrink: 0;
+  height: 100%;
   justify-content: center;
   z-index: 2;
-  height: 100%;
 `;
 
 const StyledVerticalLine = styled.div`
-  background: ${({ theme }) => theme.border.color.light};
-  width: 2px;
+  background: ${themeCssVariables.border.color.light};
   height: 100%;
+  width: 2px;
 `;
 
 const StyledSummary = styled.summary`
@@ -66,7 +67,7 @@ const StyledSummary = styled.summary`
   display: flex;
   flex: 1;
   flex-direction: row;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
   width: 100%;
 `;
 
@@ -75,11 +76,11 @@ const StyledItemContainer = styled.div<{ isMarginBottom?: boolean }>`
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(1)};
-  overflow: hidden;
-  margin-bottom: ${({ isMarginBottom, theme }) =>
-    isMarginBottom ? theme.spacing(3) : 0};
+  gap: ${themeCssVariables.spacing[1]};
+  margin-bottom: ${({ isMarginBottom }) =>
+    isMarginBottom ? themeCssVariables.spacing[3] : '0'};
   min-height: 26px;
+  overflow: hidden;
 `;
 
 type EventRowProps = {

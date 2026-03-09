@@ -81,7 +81,7 @@ export const normalizeTableData = (
             ];
 
             const fieldValue =
-              matchedOptionValues && matchedOptionValues.length > 0
+              isDefined(matchedOptionValues) && matchedOptionValues.length > 0
                 ? JSON.stringify(matchedOptionValues)
                 : undefined;
 

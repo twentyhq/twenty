@@ -1,36 +1,40 @@
+import { isDefined } from 'twenty-shared/utils';
 import { SettingsAdminTableCard } from '@/settings/admin-panel/components/SettingsAdminTableCard';
 import { SettingsAdminWorkerMetricsTooltip } from '@/settings/admin-panel/health-status/components/SettingsAdminWorkerMetricsTooltip';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { ResponsiveLine } from '@nivo/line';
+import { useContext } from 'react';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   QueueMetricsTimeRange,
   useGetQueueMetricsQuery,
 } from '~/generated-metadata/graphql';
 
 const StyledGraphContainer = styled.div`
-  background-color: ${({ theme }) => theme.background.secondary};
-  border-radius: ${({ theme }) => theme.border.radius.md};
+  background-color: ${themeCssVariables.background.secondary};
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  border-radius: ${themeCssVariables.border.radius.md};
   height: 240px;
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  margin-bottom: ${({ theme }) => theme.spacing(4)};
-  padding-top: ${({ theme }) => theme.spacing(2.5)};
+  margin-bottom: ${themeCssVariables.spacing[4]};
+  padding-top: 10px;
   width: 100%;
 `;
 
 const StyledNoDataMessage = styled.div`
   align-items: center;
-  color: ${({ theme }) => theme.font.color.light};
+  color: ${themeCssVariables.font.color.light};
   display: flex;
   height: 100%;
   justify-content: center;
 `;
 
-const StyledSettingsAdminTableCard = styled(SettingsAdminTableCard)`
-  padding-left: ${({ theme }) => theme.spacing(2)};
-  padding-right: ${({ theme }) => theme.spacing(2)};
+const StyledSettingsAdminTableCardContainer = styled.div`
+  > * {
+    padding-left: ${themeCssVariables.spacing[2]};
+    padding-right: ${themeCssVariables.spacing[2]};
+  }
 `;
 
 type SettingsAdminWorkerMetricsGraphProps = {
@@ -43,7 +47,7 @@ export const SettingsAdminWorkerMetricsGraph = ({
   queueName,
   timeRange,
 }: SettingsAdminWorkerMetricsGraphProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const { enqueueErrorSnackBar } = useSnackBar();
 
   const { loading, data } = useGetQueueMetricsQuery({
@@ -198,24 +202,26 @@ export const SettingsAdminWorkerMetricsGraph = ({
           <StyledNoDataMessage>{t`No metrics data available`}</StyledNoDataMessage>
         )}
       </StyledGraphContainer>
-      {metricsDetails && (
-        <StyledSettingsAdminTableCard
-          rounded
-          items={Object.entries(metricsDetails)
-            .filter(([key]) => key !== '__typename')
-            .map(([key, value]) => ({
-              label: key.charAt(0).toUpperCase() + key.slice(1),
-              value:
-                typeof value === 'number'
-                  ? value
-                  : Array.isArray(value)
-                    ? value.length
-                    : String(value),
-            }))}
-          gridAutoColumns="1fr 1fr"
-          labelAlign="left"
-          valueAlign="right"
-        />
+      {isDefined(metricsDetails) && (
+        <StyledSettingsAdminTableCardContainer>
+          <SettingsAdminTableCard
+            rounded
+            items={Object.entries(metricsDetails)
+              .filter(([key]) => key !== '__typename')
+              .map(([key, value]) => ({
+                label: key.charAt(0).toUpperCase() + key.slice(1),
+                value:
+                  typeof value === 'number'
+                    ? value
+                    : Array.isArray(value)
+                      ? value.length
+                      : String(value),
+              }))}
+            gridAutoColumns="1fr 1fr"
+            labelAlign="left"
+            valueAlign="right"
+          />
+        </StyledSettingsAdminTableCardContainer>
       )}
     </>
   );

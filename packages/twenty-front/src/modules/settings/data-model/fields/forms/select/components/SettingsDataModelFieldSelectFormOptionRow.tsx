@@ -6,8 +6,8 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { useContext } from 'react';
 import { t } from '@lingui/core/macro';
 import {
   ColorSample,
@@ -23,8 +23,9 @@ import {
   MenuItem,
   MenuItemSelectColor,
 } from 'twenty-ui/navigation';
-import { MAIN_COLOR_NAMES } from 'twenty-ui/theme';
 import { computeOptionValueFromLabel } from '~/pages/settings/data-model/utils/computeOptionValueFromLabel';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { MAIN_COLOR_NAMES } from 'twenty-ui/theme';
 
 const useColorLabels = (): ColorLabels => ({
   gray: t`Gray`,
@@ -70,33 +71,39 @@ type SettingsDataModelFieldSelectFormOptionRowProps = {
 const StyledRow = styled.div`
   align-items: center;
   display: flex;
-  height: ${({ theme }) => theme.spacing(6)};
-  padding: ${({ theme }) => theme.spacing(1.5)} 0;
+  height: ${themeCssVariables.spacing[6]};
+  padding: ${themeCssVariables.spacing['1.5']} 0;
 `;
 
-const StyledColorSample = styled(ColorSample)`
+const StyledColorSampleContainer = styled.span`
+  align-items: center;
   cursor: pointer;
-  margin-top: ${({ theme }) => theme.spacing(1)};
-  margin-bottom: ${({ theme }) => theme.spacing(1)};
-
-  margin-right: ${({ theme }) => theme.spacing(3.5)};
-  margin-left: ${({ theme }) => theme.spacing(3.5)};
+  display: flex;
+  margin-bottom: ${themeCssVariables.spacing[1]};
+  margin-left: 14px;
+  margin-right: 14px;
+  margin-top: ${themeCssVariables.spacing[1]};
 `;
 
-const StyledOptionInput = styled(SettingsTextInput)`Chip
+const StyledOptionInputContainer = styled.div`
   flex-grow: 1;
   width: 100%;
+
   & input {
-    height: ${({ theme }) => theme.spacing(6)};
+    height: ${themeCssVariables.spacing[6]};
   }
 `;
 
-const StyledIconGripVertical = styled(IconGripVertical)`
-  margin-right: ${({ theme }) => theme.spacing(0.75)};
+const StyledIconGripVerticalContainer = styled.span`
+  align-items: center;
+  display: flex;
+  margin-right: 3px;
 `;
 
-const StyledLightIconButton = styled(LightIconButton)`
-  margin-left: ${({ theme }) => theme.spacing(2)};
+const StyledLightIconButtonContainer = styled.span`
+  align-items: center;
+  display: flex;
+  margin-left: ${themeCssVariables.spacing[2]};
 `;
 
 export const SettingsDataModelFieldSelectFormOptionRow = ({
@@ -111,7 +118,7 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
   isNewRow,
   fieldIsNullable,
 }: SettingsDataModelFieldSelectFormOptionRowProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const colorLabels = useColorLabels();
   const SELECT_COLOR_DROPDOWN_ID = `select-color-dropdown-${option.id}`;
   const SELECT_ACTIONS_DROPDOWN_ID = `select-actions-dropdown-${option.id}`;
@@ -127,30 +134,40 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
 
   return (
     <StyledRow className={className}>
-      <StyledIconGripVertical
-        style={{ minWidth: theme.icon.size.md }}
-        size={theme.icon.size.md}
-        stroke={theme.icon.stroke.sm}
-        color={theme.font.color.extraLight}
-      />
-      <AdvancedSettingsWrapper animationDimension="width" hideDot>
-        <StyledOptionInput
-          instanceId={`select-option-value-${option.id}`}
-          value={option.value}
-          onChange={(input) =>
-            onChange({
-              ...option,
-              value: computeOptionValueFromLabel(input),
-            })
-          }
-          RightIcon={isDefault ? IconCheck : undefined}
-          maxLength={OPTION_VALUE_MAXIMUM_LENGTH}
+      <StyledIconGripVerticalContainer>
+        <IconGripVertical
+          style={{
+            minWidth: theme.icon.size.md,
+          }}
+          size={theme.icon.size.md}
+          stroke={theme.icon.stroke.sm}
+          color={theme.font.color.extraLight}
         />
+      </StyledIconGripVerticalContainer>
+      <AdvancedSettingsWrapper animationDimension="width" hideDot>
+        <StyledOptionInputContainer>
+          <SettingsTextInput
+            instanceId={`select-option-value-${option.id}`}
+            value={option.value}
+            onChange={(input) =>
+              onChange({
+                ...option,
+                value: computeOptionValueFromLabel(input),
+              })
+            }
+            RightIcon={isDefault ? IconCheck : undefined}
+            maxLength={OPTION_VALUE_MAXIMUM_LENGTH}
+          />
+        </StyledOptionInputContainer>
       </AdvancedSettingsWrapper>
       <Dropdown
         dropdownId={SELECT_COLOR_DROPDOWN_ID}
         dropdownPlacement="bottom-start"
-        clickableComponent={<StyledColorSample colorName={option.color} />}
+        clickableComponent={
+          <StyledColorSampleContainer>
+            <ColorSample colorName={option.color} />
+          </StyledColorSampleContainer>
+        }
         dropdownComponents={
           <DropdownContent>
             <DropdownMenuItemsContainer>
@@ -170,36 +187,40 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
           </DropdownContent>
         }
       />
-      <StyledOptionInput
-        instanceId={`select-option-label-${option.id}`}
-        value={option.label}
-        onChange={(label) => {
-          const optionNameHasBeenEdited = !(
-            option.value === computeOptionValueFromLabel(option.label)
-          );
-          onChange({
-            ...option,
-            label,
-            value: optionNameHasBeenEdited
-              ? option.value
-              : computeOptionValueFromLabel(label),
-          });
-        }}
-        RightIcon={isDefault ? IconCheck : undefined}
-        maxLength={OPTION_VALUE_MAXIMUM_LENGTH}
-        onInputEnter={handleInputEnter}
-        autoFocusOnMount={isNewRow}
-        autoSelectOnMount={isNewRow}
-      />
+      <StyledOptionInputContainer>
+        <SettingsTextInput
+          instanceId={`select-option-label-${option.id}`}
+          value={option.label}
+          onChange={(label) => {
+            const optionNameHasBeenEdited = !(
+              option.value === computeOptionValueFromLabel(option.label)
+            );
+            onChange({
+              ...option,
+              label,
+              value: optionNameHasBeenEdited
+                ? option.value
+                : computeOptionValueFromLabel(label),
+            });
+          }}
+          RightIcon={isDefault ? IconCheck : undefined}
+          maxLength={OPTION_VALUE_MAXIMUM_LENGTH}
+          onInputEnter={handleInputEnter}
+          autoFocusOnMount={isNewRow}
+          autoSelectOnMount={isNewRow}
+        />
+      </StyledOptionInputContainer>
       <Dropdown
         dropdownId={SELECT_ACTIONS_DROPDOWN_ID}
         dropdownPlacement="right-start"
         clickableComponent={
-          <StyledLightIconButton
-            accent="tertiary"
-            Icon={IconDotsVertical}
-            disabled={shouldForbidRemoveAsDefault}
-          />
+          <StyledLightIconButtonContainer>
+            <LightIconButton
+              accent="tertiary"
+              Icon={IconDotsVertical}
+              disabled={shouldForbidRemoveAsDefault}
+            />
+          </StyledLightIconButtonContainer>
         }
         dropdownComponents={
           shouldForbidRemoveAsDefault ? null : (

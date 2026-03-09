@@ -7,7 +7,7 @@ import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDr
 import { Table } from '@/ui/layout/table/components/Table';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
@@ -15,19 +15,22 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
-const StyledCreateObjectOverrideSection = styled(Section)`
-  border-top: 1px solid ${({ theme }) => theme.border.color.light};
-  display: flex;
-  justify-content: flex-end;
-  padding-top: ${({ theme }) => theme.spacing(2)};
-  padding-bottom: ${({ theme }) => theme.spacing(2)};
+const StyledCreateObjectOverrideSectionContainer = styled.div`
+  > * {
+    border-top: 1px solid ${themeCssVariables.border.color.light};
+    display: flex;
+    justify-content: flex-end;
+    padding-bottom: ${themeCssVariables.spacing[2]};
+    padding-top: ${themeCssVariables.spacing[2]};
+  }
 `;
 
 const StyledTableRows = styled.div`
-  padding-bottom: ${({ theme }) => theme.spacing(2)};
-  padding-top: ${({ theme }) => theme.spacing(2)};
+  padding-bottom: ${themeCssVariables.spacing[2]};
+  padding-top: ${themeCssVariables.spacing[2]};
 `;
 
 type SettingsRolePermissionsObjectLevelSectionProps = {
@@ -36,10 +39,6 @@ type SettingsRolePermissionsObjectLevelSectionProps = {
   fromAgentId?: string;
   objectMetadataItemsFromMarketplaceApp?: ObjectMetadataItem[];
 };
-
-const StyledNoOverride = styled(TableCell)`
-  color: ${({ theme }) => theme.font.color.tertiary};
-`;
 
 export const SettingsRolePermissionsObjectLevelSection = ({
   roleId,
@@ -129,25 +128,27 @@ export const SettingsRolePermissionsObjectLevelSection = ({
               ),
             )
           ) : (
-            <StyledNoOverride>
+            <TableCell color={themeCssVariables.font.color.tertiary}>
               {t`No permissions have been set for individual objects.`}
-            </StyledNoOverride>
+            </TableCell>
           )}
         </StyledTableRows>
       </Table>
       {isEditable && (
-        <StyledCreateObjectOverrideSection>
-          <Button
-            Icon={IconPlus}
-            title={t`Add rule`}
-            variant="secondary"
-            size="small"
-            disabled={
-              !settingsDraftRole.isEditable || allObjectsHaveSetPermission
-            }
-            onClick={handleAddRule}
-          />
-        </StyledCreateObjectOverrideSection>
+        <StyledCreateObjectOverrideSectionContainer>
+          <Section>
+            <Button
+              Icon={IconPlus}
+              title={t`Add rule`}
+              variant="secondary"
+              size="small"
+              disabled={
+                !settingsDraftRole.isEditable || allObjectsHaveSetPermission
+              }
+              onClick={handleAddRule}
+            />
+          </Section>
+        </StyledCreateObjectOverrideSectionContainer>
       )}
     </Section>
   );

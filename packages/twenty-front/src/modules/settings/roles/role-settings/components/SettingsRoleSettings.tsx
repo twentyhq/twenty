@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 
 import { SettingsRoleApplicability } from '@/settings/roles/role-settings/components/SettingsRoleApplicability';
@@ -14,12 +14,13 @@ import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { H2Title } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledInputsContainer = styled.div`
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
+  margin-bottom: ${themeCssVariables.spacing[2]};
   width: 100%;
-  margin-bottom: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledInputContainer = styled.div`

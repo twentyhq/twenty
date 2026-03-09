@@ -43,7 +43,6 @@ export const AdvancedFilterFieldSelectMenu = ({
 
   const [objectFilterDropdownSearchInput] = useAtomComponentState(
     objectFilterDropdownSearchInputComponentState,
-    advancedFilterFieldSelectDropdownId,
   );
 
   const { objectMetadataItem } = useContext(AdvancedFilterContext);
@@ -93,18 +92,15 @@ export const AdvancedFilterFieldSelectMenu = ({
 
   const [, setObjectFilterDropdownSubMenuFieldType] = useAtomComponentState(
     objectFilterDropdownSubMenuFieldTypeComponentState,
-    advancedFilterFieldSelectDropdownId,
   );
 
   const [, setObjectFilterDropdownIsSelectingCompositeField] =
     useAtomComponentState(
       objectFilterDropdownIsSelectingCompositeFieldComponentState,
-      advancedFilterFieldSelectDropdownId,
     );
 
   const setFieldMetadataItemIdUsedInDropdown = useSetAtomComponentState(
     fieldMetadataItemIdUsedInDropdownComponentState,
-    advancedFilterFieldSelectDropdownId,
   );
 
   const handleFieldMetadataItemSelect = (

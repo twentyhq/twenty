@@ -1,7 +1,5 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { StyledDropdownButtonContainer } from '@/ui/layout/dropdown/components/StyledDropdownButtonContainer';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
@@ -23,7 +21,12 @@ import {
   OverflowingTextWithTooltip,
   useIcons,
 } from 'twenty-ui/display';
-import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
+import { useContext } from 'react';
+import {
+  MOBILE_VIEWPORT,
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 const StyledIconContainer = styled.span`
   display: flex;
@@ -32,15 +35,15 @@ const StyledIconContainer = styled.span`
 
 const StyledDropdownLabelAdornments = styled.span`
   align-items: center;
-  color: ${({ theme }) => theme.grayScale.gray8};
+  color: ${themeCssVariables.grayScale.gray8};
   display: flex;
   flex-shrink: 0;
-  gap: ${({ theme }) => theme.spacing(1)};
-  margin-left: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
+  margin-left: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledViewName = styled.span`
-  margin-left: ${({ theme }) => theme.spacing(1)};
+  margin-left: ${themeCssVariables.spacing[1]};
   max-width: 130px;
   min-width: 0;
   overflow: hidden;
@@ -53,8 +56,7 @@ const StyledViewName = styled.span`
 `;
 
 export const ViewPickerDropdown = () => {
-  const theme = useTheme();
-
+  const { theme } = useContext(ThemeContext);
   const { currentView } = useGetCurrentViewOnly();
 
   const { updateViewFromCurrentState } = useUpdateViewFromCurrentState();
@@ -87,7 +89,7 @@ export const ViewPickerDropdown = () => {
       clickableComponent={
         <StyledDropdownButtonContainer isUnfolded={isDropdownOpen}>
           <StyledIconContainer>
-            {currentView && CurrentViewIcon ? (
+            {isDefined(currentView) && isDefined(CurrentViewIcon) ? (
               <CurrentViewIcon size={theme.icon.size.md} />
             ) : (
               <IconList size={theme.icon.size.md} />

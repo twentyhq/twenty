@@ -3,15 +3,10 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "packages/twenty-ui/src",
   "projectType": "library",
-  "tags": [
-    "scope:shared"
-  ],
+  "tags": ["scope:shared"],
   "targets": {
     "build": {
-      "dependsOn": [
-        "^build",
-        "generateBarrels"
-      ],
+      "dependsOn": ["^build", "generateBarrels"],
       "outputs": [
         "{projectRoot}/dist",
         "{projectRoot}/accessibility/package.json",
@@ -36,38 +31,38 @@
         "{projectRoot}/testing/dist",
         "{projectRoot}/theme/package.json",
         "{projectRoot}/theme/dist",
+        "{projectRoot}/theme-constants/package.json",
+        "{projectRoot}/theme-constants/dist",
         "{projectRoot}/utilities/package.json",
         "{projectRoot}/utilities/dist"
       ]
     },
+    "generateThemeConstants": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
+      "cache": true,
+      "inputs": ["{projectRoot}/scripts/generateThemeConstants.ts"],
+      "outputs": ["{projectRoot}/src/theme-constants/generated"],
+      "options": {
+        "command": "tsx {projectRoot}/scripts/generateThemeConstants.ts"
+      }
+    },
     "generateBarrels": {
       "executor": "nx:run-commands",
       "cache": true,
-      "inputs": [
-        "production",
-        "{projectRoot}/scripts/generateBarrels.ts"
-      ],
+      "inputs": ["production", "{projectRoot}/scripts/generateBarrels.ts"],
       "outputs": [
         "{projectRoot}/src/**/*/index.ts",
         "{projectRoot}/package.json"
       ],
-      "options": {
-        "command": "tsx {projectRoot}/scripts/generateBarrels.ts"
-      }
+      "options": { "command": "tsx {projectRoot}/scripts/generateBarrels.ts" }
     },
     "build:individual": {
       "executor": "nx:run-commands",
       "cache": true,
-      "dependsOn": [
-        "build"
-      ],
-      "inputs": [
-        "production",
-        "^production"
-      ],
-      "outputs": [
-        "{projectRoot}/dist/individual"
-      ],
+      "dependsOn": ["build"],
+      "inputs": ["production", "^production"],
+      "outputs": ["{projectRoot}/dist/individual"],
       "options": {
         "cwd": "{projectRoot}",
         "command": "npx vite build -c vite.config.individual.ts"
@@ -75,49 +70,17 @@
     },
     "clean": {
       "executor": "nx:run-commands",
-      "options": {
-        "command": "rimraf {projectRoot}/dist"
-      }
+      "options": { "command": "rimraf {projectRoot}/dist" }
     },
-    "lint": {
-      "options": {
-        "lintFilePatterns": [
-          "{projectRoot}/src/**/*.{ts,tsx,json}",
-          "{projectRoot}/package.json"
-        ]
-      },
-      "configurations": {
-        "fix": {}
-      }
-    },
-    "fmt": {
-      "options": {
-        "files": "src"
-      },
-      "configurations": {
-        "fix": {}
-      }
-    },
+    "lint": {},
+    "fmt": { "options": { "files": "src" }, "configurations": { "fix": {} } },
     "test": {},
     "typecheck": {},
-    "storybook:build": {
-      "configurations": {
-        "test": {}
-      }
-    },
-    "storybook:serve:dev": {
-      "options": {
-        "port": 6007
-      }
-    },
+    "storybook:build": { "configurations": { "test": {} } },
+    "storybook:serve:dev": { "options": { "port": 6007 } },
     "storybook:serve:static": {
-      "options": {
-        "buildTarget": "twenty-ui:storybook:build",
-        "port": 6007
-      },
-      "configurations": {
-        "test": {}
-      }
+      "options": { "buildTarget": "twenty-ui:storybook:build", "port": 6007 },
+      "configurations": { "test": {} }
     },
     "storybook:test": {},
     "storybook:test:no-coverage": {},

@@ -7,18 +7,19 @@ import { getTabLayoutMode } from '@/page-layout/utils/getTabLayoutMode';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { PageLayoutType } from '~/generated-metadata/graphql';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
-  background: ${({ theme }) => theme.background.secondary};
+  background: ${themeCssVariables.background.secondary};
   border-bottom-left-radius: 8px;
-  border-right: ${({ theme }) => `1px solid ${theme.border.color.medium}`};
+  border-right: 1px solid ${themeCssVariables.border.color.medium};
   border-top-left-radius: 8px;
   box-sizing: border-box;
   display: grid;
-  grid-template-rows: auto 1fr;
   grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto 1fr;
   height: 100%;
 `;
 
@@ -31,7 +32,7 @@ export const PageLayoutLeftPanel = ({
 }: PageLayoutLeftPanelProps) => {
   const { currentPageLayout } = useCurrentPageLayout();
   const targetRecordIdentifier = useTargetRecord();
-  const { isInRightDrawer } = useLayoutRenderingContext();
+  const { isInSidePanel } = useLayoutRenderingContext();
   const pinnedTab = usePageLayoutTabWithVisibleWidgetsOrThrow(pinnedLeftTabId);
 
   if (currentPageLayout?.type !== PageLayoutType.RECORD_PAGE) {
@@ -48,7 +49,7 @@ export const PageLayoutLeftPanel = ({
       <SummaryCard
         objectNameSingular={targetRecordIdentifier.targetObjectNameSingular}
         objectRecordId={targetRecordIdentifier.id}
-        isInRightDrawer={isInRightDrawer}
+        isInSidePanel={isInSidePanel}
       />
 
       <PageLayoutContentProvider

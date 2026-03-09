@@ -105,7 +105,7 @@ msgid "A required configuration is missing."
 msgstr "필수 설정이 누락되었습니다."
 
 #. js-lingui-id: FVCXUT
-#: src/engine/api/common/common-args-processors/data-arg-processor/data-arg.processor.ts
+#: src/engine/api/common/common-args-processors/data-arg-processor/data-arg-processor.service.ts
 msgid "A required field is missing."
 msgstr ""
 
@@ -371,6 +371,11 @@ msgstr "API 키 역할 구성을 찾을 수 없음."
 msgid "API key role not found."
 msgstr "API 키 역할을 찾을 수 없음."
 
+#. js-lingui-id: ue106l
+#: src/engine/core-modules/application/application.exception.ts
+msgid "Application is not installed in this workspace. Install it first."
+msgstr ""
+
 #. js-lingui-id: ltvmAF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception.ts
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
@@ -381,8 +386,23 @@ msgstr "API 키 역할을 찾을 수 없음."
 msgid "Application not found."
 msgstr "애플리케이션을 찾을 수 없음."
 
+#. js-lingui-id: DE/icK
+#: src/engine/core-modules/application/application-registration/application-registration.exception.ts
+msgid "Application registration not found."
+msgstr ""
+
+#. js-lingui-id: eiOt+9
+#: src/engine/core-modules/application/application-registration/application-registration.exception.ts
+msgid "Application registration variable not found."
+msgstr ""
+
+#. js-lingui-id: QtRMs/
+#: src/engine/core-modules/application/application.exception.ts
+msgid "Application upgrade failed."
+msgstr ""
+
 #. js-lingui-id: 9qtW5o
-#: src/engine/core-modules/applicationVariable/application-variable.exception.ts
+#: src/engine/core-modules/application/application-variable/application-variable.exception.ts
 msgid "Application variable not found."
 msgstr "애플리케이션 변수를 찾을 수 없음."
 
@@ -483,6 +503,22 @@ msgstr "결제 상품을 찾을 수 없음."
 msgid "Billing subscription not found."
 msgstr "결제 구독을 찾을 수 없음."
 
+#. js-lingui-id: 0j1d4L
+#: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
+#: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
+msgid "Blocklist handle already exists."
+msgstr ""
+
+#. js-lingui-id: Hbe5jq
+#: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
+msgid "Blocklist handle is required."
+msgstr ""
+
+#. js-lingui-id: xYLtTf
+#: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
+msgid "Blocklist item not found."
+msgstr ""
+
 #. js-lingui-id: Ara8xP
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-standalone-rich-text-body.util.ts
 msgid "Body is required for standalone rich text widget"
@@ -501,6 +537,11 @@ msgstr ""
 #. js-lingui-id: TaToDK
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-standalone-rich-text-body.util.ts
 msgid "Body must be an object for widget \"{widgetTitle}\""
+msgstr ""
+
+#. js-lingui-id: HOWEGX
+#: src/modules/blocklist/query-hooks/blocklist-update-many.pre-query.hook.ts
+msgid "Bulk update of blocklist entries is not allowed."
 msgstr ""
 
 #. js-lingui-id: AjVXBS
@@ -557,6 +598,11 @@ msgstr "시스템 객체에 권한을 추가할 수 없습니다."
 #: src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception.ts
 msgid "Cannot complete operation due to related records."
 msgstr "관련 레코드 때문에 작업을 완료할 수 없습니다."
+
+#. js-lingui-id: 6Sk/wo
+#: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
+msgid "Cannot create blocklist entry for another workspace member."
+msgstr ""
 
 #. js-lingui-id: LIPsWu
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
@@ -883,6 +929,12 @@ msgstr ""
 msgid "Contradicting field permissions have been detected on a relation field ({fieldName})."
 msgstr "관련 필드({fieldName})에서 상충되는 필드 권한이 감지되었습니다."
 
+#. js-lingui-id: xuYXJX
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
+msgid "Correct direction is required"
+msgstr ""
+
 #. js-lingui-id: Fep47m
 #: src/engine/metadata-modules/flat-entity/utils/resolve-entity-relation-universal-identifiers.util.ts
 msgid "Could not find {targetMetadataName} for given {foreignKey}"
@@ -1200,6 +1252,11 @@ msgstr "레코드 삭제 실패."
 msgid "Failed to duplicate dashboard."
 msgstr "대시보드 복제에 실패했습니다."
 
+#. js-lingui-id: Ol/51Z
+#: src/engine/core-modules/application/application.exception.ts
+msgid "Failed to extract tarball."
+msgstr ""
+
 #. js-lingui-id: HfhmrS
 #: src/engine/core-modules/admin-panel/admin-panel-queue.service.ts
 msgid "Failed to load queue jobs. Please try again later."
@@ -1281,6 +1338,8 @@ msgid "Field label identifier is required"
 msgstr "필드 라벨 식별자가 필요합니다"
 
 #. js-lingui-id: MPt365
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-validator.service.ts
@@ -1828,6 +1887,11 @@ msgstr "잘못된 깊이 매개변수입니다."
 msgid "Invalid email address."
 msgstr "잘못된 이메일 주소입니다."
 
+#. js-lingui-id: Lq9KTr
+#: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
+msgid "Invalid email or domain."
+msgstr ""
+
 #. js-lingui-id: YtFgT4
 #: src/engine/core-modules/feature-flag/feature-flag.exception.ts
 msgid "Invalid feature flag key."
@@ -1848,6 +1912,16 @@ msgstr ""
 msgid "Invalid file ID."
 msgstr "잘못된 파일 ID입니다."
 
+#. js-lingui-id: +ECOke
+#: src/engine/api/common/common-args-processors/filter-arg-processor/filter-arg-processor.service.ts
+msgid "Invalid filter : {nameSingular} object doesn't have any \"{key}\" field."
+msgstr ""
+
+#. js-lingui-id: kFbvma
+#: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-operator-for-field-type-or-throw.util.ts
+msgid "Invalid filter : Operator \"{operator}\" is not valid for this \"{fieldName}\" {fieldType} field"
+msgstr ""
+
 #. js-lingui-id: 1yoHmO
 #: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
 #: src/engine/api/rest/input-request-parsers/filter-parser-utils/parse-filter.util.ts
@@ -1859,6 +1933,26 @@ msgstr "잘못된 필터 매개변수입니다."
 #: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
 #: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
 msgid "Invalid filter value: \"{value}\""
+msgstr ""
+
+#. js-lingui-id: +GVjEm
+#: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-array-operator-value-or-throw.util.ts
+msgid "Invalid filter: \"{operator}\" operator requires an array"
+msgstr ""
+
+#. js-lingui-id: 4eM03h
+#: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-is-empty-array-operator-value-or-throw.util.ts
+msgid "Invalid filter: \"isEmptyArray\" operator requires a boolean"
+msgstr ""
+
+#. js-lingui-id: Np9Fvw
+#: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-and-transform-operator-and-value.util.ts
+msgid "Invalid filter: exactly one operator per field is required"
+msgstr ""
+
+#. js-lingui-id: gdJXPD
+#: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-and-transform-operator-and-value.util.ts
+msgid "Invalid filter: filter value must be an object"
 msgstr ""
 
 #. js-lingui-id: rFH0az
@@ -1886,6 +1980,11 @@ msgstr "유효하지 않은 시간 값. 1보다 큰 정수여야 합니다"
 #: src/engine/core-modules/sso/sso.exception.ts
 msgid "Invalid identity provider type."
 msgstr "잘못된 ID 공급자 유형입니다."
+
+#. js-lingui-id: xfXYBX
+#: src/engine/core-modules/application/application-registration/application-registration.exception.ts
+msgid "Invalid input for application registration."
+msgstr ""
 
 #. js-lingui-id: t7SpQO
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
@@ -2123,6 +2222,11 @@ msgstr "잘못된 검증 토큰입니다."
 msgid "Invalid value \"{inspectedValue}\" for FILES field \"{fieldName}\" - It should be an array of objects with \"fileId\" and \"label\" properties."
 msgstr ""
 
+#. js-lingui-id: XOA98j
+#: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-is-operator-filter-value-or-throw.util.ts
+msgid "Invalid value for \"is\" operator"
+msgstr ""
+
 #. js-lingui-id: 56bPee
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-actor-field-or-throw.util.ts
 msgid "Invalid value for actor."
@@ -2139,11 +2243,13 @@ msgid "Invalid value for currency."
 msgstr ""
 
 #. js-lingui-id: MnHbVB
+#: src/engine/api/common/common-args-processors/filter-arg-processor/validator-utils/validate-date-time-field-or-throw.util.ts
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-date-time-field-or-throw.util.ts
 msgid "Invalid value for date-time: \"{inspectedValue}\". Expected format: 'YYYY-MM-DDTHH:mm:ssZ'"
 msgstr ""
 
 #. js-lingui-id: U4Wdjc
+#: src/engine/api/common/common-args-processors/filter-arg-processor/validator-utils/validate-date-field-or-throw.util.ts
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-date-field-or-throw.util.ts
 msgid "Invalid value for date: \"{inspectedValue}\". Expected format: 'YYYY-MM-DD'"
 msgstr ""
@@ -2184,6 +2290,7 @@ msgid "Invalid value for multi-select: \"{inspectedValue}\""
 msgstr ""
 
 #. js-lingui-id: WHM6K7
+#: src/engine/api/common/common-args-processors/filter-arg-processor/validator-utils/validate-number-field-or-throw.util.ts
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-number-field-or-throw.util.ts
 msgid "Invalid value for number: \"{inspectedValue}\""
 msgstr ""
@@ -2209,11 +2316,13 @@ msgid "Invalid value for select: \"{inspectedValue}\""
 msgstr ""
 
 #. js-lingui-id: ZjemzY
+#: src/engine/api/common/common-args-processors/filter-arg-processor/validator-utils/validate-uuid-field-or-throw.util.ts
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-uuid-field-or-throw.util.ts
 msgid "Invalid value for UUID: \"{inspectedValue}\""
 msgstr ""
 
 #. js-lingui-id: Og/MZQ
+#: src/engine/api/common/common-args-processors/filter-arg-processor/validator-utils/validate-boolean-field-or-throw.util.ts
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-text-field-or-throw.util.ts
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-emails-primary-email-subfield-or-throw.util.ts
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-emails-primary-email-subfield-or-throw.util.ts
@@ -2797,6 +2906,11 @@ msgstr "트리거 유형이 제공되지 않았습니다"
 msgid "No valid authentication context found."
 msgstr "유효한 인증 컨텍스트를 찾을 수 없습니다."
 
+#. js-lingui-id: AzXrd9
+#: src/engine/core-modules/auth/services/reset-password.service.ts
+msgid "No workspace found with password auth enabled."
+msgstr ""
+
 #. js-lingui-id: NpVtef
 #: src/modules/dashboard/chart-data/utils/format-dimension-value.util.ts
 #: src/modules/dashboard/chart-data/utils/format-dimension-value.util.ts
@@ -2937,6 +3051,16 @@ msgstr "권한을 설정하려는 하나 이상의 객체를 찾을 수 없습�
 #. js-lingui-id: JZB2eY
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
 msgid "One or more records were not found."
+msgstr ""
+
+#. js-lingui-id: kx632Q
+#: src/engine/core-modules/application/application-registration/application-registration.exception.ts
+msgid "One or more redirect URIs are invalid."
+msgstr ""
+
+#. js-lingui-id: PUBUbK
+#: src/engine/core-modules/application/application-registration/application-registration.exception.ts
+msgid "One or more requested scopes are invalid."
 msgstr ""
 
 #. js-lingui-id: eYgzEd
@@ -3128,6 +3252,11 @@ msgstr ""
 #. js-lingui-id: /GJDxy
 #: src/engine/core-modules/auth/services/auth.service.ts
 msgid "Password is too weak."
+msgstr ""
+
+#. js-lingui-id: cd6AP5
+#: src/engine/core-modules/auth/services/reset-password.service.ts
+msgid "Password reset token has already been generated. Please wait for {timeToWait} to generate again."
 msgstr ""
 
 #. js-lingui-id: wT0H4O
@@ -3602,6 +3731,11 @@ msgstr "선택한 권한 중 일부가 유효하지 않습니다. 유효한 권�
 msgid "Some workspace memberships could not be found. They may no longer have access to this workspace."
 msgstr "일부 작업 공간 멤버십을 찾을 수 없습니다. 이 작업 공간에 대한 접근 권한이 더 이상 없을 수 있습니다."
 
+#. js-lingui-id: Oa7nLQ
+#: src/engine/core-modules/application/application.exception.ts
+msgid "Source channel mismatch."
+msgstr ""
+
 #. js-lingui-id: OmgwCE
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-flat-field-metadata.util.ts
 msgid "Source object cannot be the target object"
@@ -3784,6 +3918,11 @@ msgstr "찾고 있는 에이전트를 찾을 수 없습니다. 삭제되었거�
 #: src/engine/metadata-modules/permissions/permissions.service.ts
 msgid "The API key does not have a valid role assigned. Please check your API key configuration."
 msgstr "API 키에 할당된 유효한 역할이 없습니다. API 키 구성을 확인하십시오."
+
+#. js-lingui-id: MQn14a
+#: src/engine/core-modules/application/application-registration/application-registration.exception.ts
+msgid "The app source channel does not match the expected type."
+msgstr ""
 
 #. js-lingui-id: IU78DA
 #: src/engine/metadata-modules/permissions/permissions.service.ts
@@ -4092,6 +4231,11 @@ msgstr "이 하위 도메인은 이미 사용 중입니다."
 msgid "This type of record cannot be merged."
 msgstr ""
 
+#. js-lingui-id: nZbise
+#: src/engine/core-modules/application/application-registration/application-registration.exception.ts
+msgid "This universal identifier is already claimed by another registration."
+msgstr ""
+
 #. js-lingui-id: GEN5Cv
 #: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
 msgid "This user is already a member of the workspace."
@@ -4177,6 +4321,11 @@ msgstr "이중 인증 검증이 필요합니다."
 msgid "Udpated field is not a morph relation or a relation"
 msgstr ""
 
+#. js-lingui-id: SpmRxi
+#: src/engine/core-modules/application/application.exception.ts
+msgid "Unable to retrieve the application package."
+msgstr ""
+
 #. js-lingui-id: WWSSTx
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-index-metadata-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-index-metadata-validator.service.ts
@@ -4256,15 +4405,11 @@ msgstr "사용자에게 이미 역할이 할당되어 있습니다."
 
 #. js-lingui-id: l9dlVi
 #: src/engine/core-modules/auth/strategies/jwt.auth.strategy.ts
+#: src/engine/core-modules/auth/strategies/jwt.auth.strategy.spec.ts
+#: src/engine/core-modules/auth/strategies/jwt.auth.strategy.spec.ts
 #: src/engine/core-modules/auth/services/auth.service.ts
 msgid "User does not have access to this workspace"
 msgstr "사용자는 이 작업 공간에 접근할 수 없습니다"
-
-#. js-lingui-id: kZ0tmK
-#: src/engine/core-modules/auth/strategies/jwt.auth.strategy.spec.ts
-#: src/engine/core-modules/auth/strategies/jwt.auth.strategy.spec.ts
-msgid "User does not have access to this workspace."
-msgstr ""
 
 #. js-lingui-id: Sl1ElS
 #: src/engine/metadata-modules/permissions/utils/permission-graphql-api-exception-handler.util.ts
@@ -4276,6 +4421,12 @@ msgstr "사용자에게 권한이 없습니다."
 #: src/utils/__test__/custom-exception.spec.ts
 msgid "User friendly error message"
 msgstr "사용자 친화적 오류 메시지"
+
+#. js-lingui-id: NJT8W8
+#: src/modules/blocklist/query-hooks/blocklist-update-one.pre-query.hook.ts
+#: src/modules/blocklist/query-hooks/blocklist-create-many.pre-query.hook.ts
+msgid "User id is required."
+msgstr ""
 
 #. js-lingui-id: pMOjQa
 #: src/engine/core-modules/auth/token/services/access-token.service.ts
@@ -4293,6 +4444,7 @@ msgstr "사용자가 작업 공간에 속하지 않습니다"
 #: src/engine/core-modules/user/user.exception.ts
 #: src/engine/core-modules/sso/sso.exception.ts
 #: src/engine/core-modules/auth/auth.exception.ts
+#: src/engine/core-modules/auth/services/reset-password.service.ts
 msgid "User not found."
 msgstr "사용자를 찾을 수 없음."
 
@@ -4555,6 +4707,8 @@ msgstr "Kanban 집계 필드 메타데이터를 찾을 수 없습니다."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-validator.service.ts
@@ -4577,6 +4731,57 @@ msgstr ""
 #: src/engine/metadata-modules/view/exceptions/flat-view.exception.ts
 msgid "View not found."
 msgstr "뷰를 찾을 수 없음."
+
+#. js-lingui-id: ipFNcM
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
+msgid "View sort already exists"
+msgstr ""
+
+#. js-lingui-id: 3zMs+f
+#: src/engine/metadata-modules/flat-view-sort/utils/from-update-view-sort-input-to-flat-view-sort-to-update-or-throw.util.ts
+#: src/engine/metadata-modules/flat-view-sort/utils/from-destroy-view-sort-input-to-flat-view-sort-or-throw.util.ts
+#: src/engine/metadata-modules/flat-view-sort/utils/from-delete-view-sort-input-to-flat-view-sort-or-throw.util.ts
+msgid "View sort not found"
+msgstr ""
+
+#. js-lingui-id: k/ykpJ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
+msgid "View sort to delete not found"
+msgstr ""
+
+#. js-lingui-id: wEyUsU
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
+msgid "View sort to update not found"
+msgstr ""
+
+#. js-lingui-id: VXQpJ+
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
+msgid "View sort to update parent view not found"
+msgstr ""
+
+#. js-lingui-id: RP+pKP
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
+msgid "View sort with id {flatViewSortId} already exists"
+msgstr ""
+
+#. js-lingui-id: InEqWf
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
+msgid "View sort with invalid direction"
+msgstr ""
+
+#. js-lingui-id: ezJrlG
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
+msgid "View sort with invalid direction, should be ASC or DESC"
+msgstr ""
+
+#. js-lingui-id: 9/BbL9
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
+msgid "View sort with same fieldMetadataId and viewId already exists"
+msgstr ""
 
 #. js-lingui-id: toB/08
 #: src/engine/metadata-modules/flat-view/utils/from-delete-view-input-to-flat-view-or-throw.util.ts
@@ -4812,6 +5017,11 @@ msgstr "워크스페이스 ID와 역할이 일치하지 않습니다."
 msgid "Workspace is not ready to welcome new members"
 msgstr "작업 공간은 새로운 멤버를 환영할 준비가 되어 있지 않습니다"
 
+#. js-lingui-id: SWTQfb
+#: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
+msgid "Workspace member cannot be updated."
+msgstr ""
+
 #. js-lingui-id: rnnLQA
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Workspace member not found."
@@ -5021,6 +5231,11 @@ msgstr "이 보기를 수정할 권한이 없습니다."
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "You have exhausted your credits. Please upgrade your plan to continue."
 msgstr "크레딧이 모두 소진되었습니다. 계속하려면 요금제를 업그레이드해 주세요."
+
+#. js-lingui-id: nq15cs
+#: src/modules/blocklist/query-hooks/blocklist-create-one.pre-query.hook.ts
+msgid "You must be authenticated to manage blocklist."
+msgstr ""
 
 #. js-lingui-id: z+7x/s
 #: src/engine/core-modules/auth/auth.exception.ts

@@ -7,14 +7,15 @@ import {
 } from '@/auth/states/signInUpStepState';
 import { AuthenticatedMethod } from '@/auth/types/AuthenticatedMethod.enum';
 import { type SocialSSOSignInUpActionType } from '@/auth/types/socialSSOSignInUp.type';
-import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
+import { useContext } from 'react';
 import { HorizontalSeparator, IconMicrosoft } from 'twenty-ui/display';
 import { MainButton } from 'twenty-ui/input';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { LastUsedPill } from './LastUsedPill';
 import { StyledSSOButtonContainer } from './SignInUpSSOButtonStyles';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 export const SignInUpWithMicrosoft = ({
   action,
@@ -23,7 +24,7 @@ export const SignInUpWithMicrosoft = ({
   action: SocialSSOSignInUpActionType;
   isGlobalScope?: boolean;
 }) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const { t } = useLingui();
 
   const signInUpStep = useAtomStateValue(signInUpStepState);

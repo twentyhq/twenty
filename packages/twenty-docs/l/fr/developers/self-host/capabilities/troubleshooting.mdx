@@ -53,21 +53,18 @@ Assurez-vous d'exécuter yarn dans le répertoire racine, puis d'exécuter `npx 
 
 #### Lint à l'enregistrement ne fonctionne pas
 
-Cela devrait fonctionner directement avec l'extension eslint installée. Si cela ne fonctionne pas, essayez d'ajouter ceci aux paramètres de votre vscode (dans le champ du conteneur de développement) :
+Cela devrait fonctionner directement avec l'extension Oxc (`oxc.oxc-vscode`) installée. Si cela ne fonctionne pas, essayez d'ajouter ceci aux paramètres de votre vscode (dans le champ du conteneur de développement) :
 
 ```
 "editor.codeActionsOnSave": {
 
-  "source.fixAll.eslint": "explicit"
+  "source.fixAll.oxc": "explicit"
 
 }
 ```
 
 #### Pendant l'exécution de `npx nx start` ou `npx nx start twenty-front`, une erreur de mémoire est renvoyée
 
-Dans `packages/twenty-front/.env`, décommentez `VITE_DISABLE_TYPESCRIPT_CHECKER=true` et `VITE_DISABLE_ESLINT_CHECKER=true` pour désactiver les vérifications en arrière-plan, réduisant ainsi la quantité de RAM nécessaire.
-
-**Si cela ne fonctionne pas :**
 Lancez uniquement les services dont vous avez besoin, au lieu de `npx nx start`. Par exemple, si vous travaillez sur le serveur, lancez seulement `npx nx worker twenty-server`
 
 **Si cela ne fonctionne pas :**
@@ -145,7 +142,7 @@ Commentez le plugin de vérification dans `packages/twenty-ui/vite-config.ts` co
 
 ```
 plugins: [
-      react({ jsxImportSource: '@emotion/react' }),
+      react({ jsxImportSource: 'react' }),
       tsconfigPaths(),
       svgr(),
       dts(dtsConfig),

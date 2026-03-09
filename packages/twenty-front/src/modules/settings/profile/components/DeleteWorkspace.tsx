@@ -43,7 +43,7 @@ export const DeleteWorkspace = () => {
       />
 
       <ConfirmationModal
-        modalId={DELETE_WORKSPACE_MODAL_ID}
+        modalInstanceId={DELETE_WORKSPACE_MODAL_ID}
         confirmationPlaceholder={userEmail}
         confirmationValue={userEmail}
         title={t`Workspace Deletion`}

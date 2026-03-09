@@ -1,14 +1,19 @@
 import { useListenToMetadataOperationBrowserEvent } from '@/browser-event/hooks/useListenToMetadataOperationBrowserEvent';
 import { useListenToEventsForQuery } from '@/sse-db-event/hooks/useListenToEventsForQuery';
+import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { type CoreViewWithoutRelations } from '@/views/types/CoreViewWithoutRelations';
 import { useStore } from 'jotai';
 import { AllMetadataName } from '~/generated-metadata/graphql';
+import { sleep } from '~/utils/sleep';
 
 export const ViewSSEEffect = () => {
-  const queryId = 'view-metadata-sse-effect';
+  const queryId = 'views-sse-effect';
 
   const store = useStore();
+
+  const { refreshCoreViewsByObjectMetadataId } =
+    useRefreshCoreViewsByObjectMetadataId();
 
   useListenToEventsForQuery({
     queryId,
@@ -20,7 +25,7 @@ export const ViewSSEEffect = () => {
 
   useListenToMetadataOperationBrowserEvent({
     metadataName: AllMetadataName.view,
-    onMetadataOperationBrowserEvent: (eventDetail) => {
+    onMetadataOperationBrowserEvent: async (eventDetail) => {
       switch (eventDetail.operation.type) {
         case 'create': {
           const createdView = eventDetail.operation
@@ -38,6 +43,11 @@ export const ViewSSEEffect = () => {
               viewGroups: [],
             },
           ]);
+
+          await sleep(50);
+
+          refreshCoreViewsByObjectMetadataId(createdView.objectMetadataId);
+
           break;
         }
         case 'update': {

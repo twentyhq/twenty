@@ -1,8 +1,10 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { IconChartPie, TooltipDelay } from '@ui/display';
 import { MenuPicker } from '@ui/navigation/menu/components/MenuPicker';
 import { ComponentDecorator } from '@ui/testing';
+import { type ReactNode } from 'react';
+import { themeCssVariables } from '@ui/theme-constants';
 
 const meta: Meta<typeof MenuPicker> = {
   title: 'UI/Navigation/Menu/MenuPicker',
@@ -50,10 +52,14 @@ export const WithoutLabel: Story = {
 
 const StyledTitle = styled.h4`
   align-items: center;
-  color: ${({ theme }) => theme.font.color.tertiary};
+  color: ${themeCssVariables.font.color.tertiary};
   font-size: 12px;
   margin-bottom: 8px;
 `;
+
+const SectionTitle = ({ children }: { children?: ReactNode }) => {
+  return <StyledTitle>{children}</StyledTitle>;
+};
 
 export const AllStates: Story = {
   render: () => (
@@ -66,11 +72,11 @@ export const AllStates: Story = {
       }}
     >
       <div>
-        <StyledTitle>Default</StyledTitle>
+        <SectionTitle>Default</SectionTitle>
         <MenuPicker id="default" icon={IconChartPie} label="Default" />
       </div>
       <div>
-        <StyledTitle>Selected</StyledTitle>
+        <SectionTitle>Selected</SectionTitle>
         <MenuPicker
           id="selected"
           icon={IconChartPie}
@@ -79,7 +85,7 @@ export const AllStates: Story = {
         />
       </div>
       <div>
-        <StyledTitle>Disabled</StyledTitle>
+        <SectionTitle>Disabled</SectionTitle>
         <MenuPicker
           id="disabled"
           icon={IconChartPie}
@@ -88,7 +94,7 @@ export const AllStates: Story = {
         />
       </div>
       <div>
-        <StyledTitle>No Label</StyledTitle>
+        <SectionTitle>No Label</SectionTitle>
         <MenuPicker
           id="no-label"
           icon={IconChartPie}
@@ -97,7 +103,7 @@ export const AllStates: Story = {
         />
       </div>
       <div>
-        <StyledTitle> With Tooltip</StyledTitle>
+        <SectionTitle>With Tooltip</SectionTitle>
         <MenuPicker
           id="tooltip"
           icon={IconChartPie}

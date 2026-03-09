@@ -7,7 +7,7 @@ import {
   isDefined,
 } from 'twenty-shared/utils';
 
-import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -17,7 +17,7 @@ import { EXTRA_ITEM_TO_DETECT_TOO_MANY_GROUPS } from 'src/modules/dashboard/char
 import { LINE_CHART_MAXIMUM_NUMBER_OF_DATA_POINTS } from 'src/modules/dashboard/chart-data/constants/line-chart-maximum-number-of-data-points.constant';
 import { LINE_CHART_MAXIMUM_NUMBER_OF_NON_STACKED_SERIES } from 'src/modules/dashboard/chart-data/constants/line-chart-maximum-number-of-non-stacked-series.constant';
 import { LINE_CHART_MAXIMUM_NUMBER_OF_STACKED_SERIES } from 'src/modules/dashboard/chart-data/constants/line-chart-maximum-number-of-stacked-series.constant';
-import { LineChartDataOutputDTO } from 'src/modules/dashboard/chart-data/dtos/outputs/line-chart-data-output.dto';
+import { LineChartDataDTO } from 'src/modules/dashboard/chart-data/dtos/line-chart-data.dto';
 import {
   ChartDataException,
   ChartDataExceptionCode,
@@ -43,7 +43,7 @@ type GetLineChartDataParams = {
   workspaceId: string;
   objectMetadataId: string;
   configuration: LineChartConfigurationDTO;
-  authContext: AuthContext;
+  authContext: WorkspaceAuthContext;
 };
 
 @Injectable()
@@ -58,7 +58,7 @@ export class LineChartDataService {
     objectMetadataId,
     configuration,
     authContext,
-  }: GetLineChartDataParams): Promise<LineChartDataOutputDTO> {
+  }: GetLineChartDataParams): Promise<LineChartDataDTO> {
     try {
       const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
         await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
@@ -228,7 +228,7 @@ export class LineChartDataService {
     userTimezone: string;
     firstDayOfTheWeek: CalendarStartDay;
     seriesIdPrefix: string;
-  }): LineChartDataOutputDTO {
+  }): LineChartDataDTO {
     const filteredResults = configuration.omitNullValues
       ? rawResults.filter(
           (result) =>
@@ -355,7 +355,7 @@ export class LineChartDataService {
     userTimezone: string;
     firstDayOfTheWeek: CalendarStartDay;
     seriesIdPrefix: string;
-  }): LineChartDataOutputDTO {
+  }): LineChartDataDTO {
     const filteredResults = configuration.omitNullValues
       ? rawResults.filter(
           (result) =>

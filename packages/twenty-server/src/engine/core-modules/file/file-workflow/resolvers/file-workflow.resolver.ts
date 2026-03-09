@@ -7,7 +7,7 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 import type { FileUpload } from 'graphql-upload/processRequest.mjs';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
-import { FileWithSignedUrlDto } from 'src/engine/core-modules/file/dtos/file-with-sign-url.dto';
+import { FileWithSignedUrlDTO } from 'src/engine/core-modules/file/dtos/file-with-sign-url.dto';
 import { FileWorkflowService } from 'src/engine/core-modules/file/file-workflow/services/file-workflow.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
@@ -24,14 +24,14 @@ import { streamToBuffer } from 'src/utils/stream-to-buffer';
 export class FileWorkflowResolver {
   constructor(private readonly fileWorkflowService: FileWorkflowService) {}
 
-  @Mutation(() => FileWithSignedUrlDto)
+  @Mutation(() => FileWithSignedUrlDTO)
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.UPLOAD_FILE))
   async uploadWorkflowFile(
     @AuthWorkspace()
     { id: workspaceId }: WorkspaceEntity,
     @Args({ name: 'file', type: () => GraphQLUpload })
     { createReadStream, filename }: FileUpload,
-  ): Promise<FileWithSignedUrlDto> {
+  ): Promise<FileWithSignedUrlDTO> {
     const stream = createReadStream();
     const buffer = await streamToBuffer(stream);
 

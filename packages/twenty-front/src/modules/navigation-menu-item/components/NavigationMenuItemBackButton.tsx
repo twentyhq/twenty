@@ -1,30 +1,31 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { useContext } from 'react';
 import { IconX } from 'twenty-ui/display';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { currentNavigationMenuItemFolderIdState } from '@/ui/navigation/navigation-drawer/states/currentNavigationMenuItemFolderIdState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 const StyledBackButton = styled.button`
-  display: flex;
   align-items: center;
-  gap: ${({ theme }) => theme.spacing(2)};
-  padding-left: ${({ theme }) => theme.spacing(1)};
-  padding-right: ${({ theme }) => theme.spacing(0.5)};
-  padding-top: ${({ theme }) => theme.spacing(1)};
-  padding-bottom: ${({ theme }) => theme.spacing(1)};
-  width: 100%;
   background: transparent;
   border: none;
-  color: ${({ theme }) => theme.font.color.secondary};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  font-family: ${({ theme }) => theme.font.family};
+  color: ${themeCssVariables.font.color.secondary};
   cursor: pointer;
+  display: flex;
+  font-family: ${themeCssVariables.font.family};
+  font-weight: ${themeCssVariables.font.weight.medium};
+  gap: ${themeCssVariables.spacing[2]};
+  padding-bottom: ${themeCssVariables.spacing[1]};
+  padding-left: ${themeCssVariables.spacing[1]};
+  padding-right: ${themeCssVariables.spacing[0.5]};
+  padding-top: ${themeCssVariables.spacing[1]};
   text-align: left;
+  width: 100%;
 
   &:hover {
-    background: ${({ theme }) => theme.background.transparent.light};
-    border-radius: ${({ theme }) => theme.border.radius.sm};
+    background: ${themeCssVariables.background.transparent.light};
+    border-radius: ${themeCssVariables.border.radius.sm};
   }
 `;
 
@@ -35,7 +36,7 @@ type NavigationMenuItemBackButtonProps = {
 export const NavigationMenuItemBackButton = ({
   folderName,
 }: NavigationMenuItemBackButtonProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const setCurrentNavigationMenuItemFolderId = useSetAtomState(
     currentNavigationMenuItemFolderIdState,
   );

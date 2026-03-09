@@ -10,7 +10,7 @@ export type LayoutRenderingContextType = {
 
   layoutType: PageLayoutType;
 
-  isInRightDrawer: boolean;
+  isInSidePanel: boolean;
 };
 
 export const [LayoutRenderingProvider, useLayoutRenderingContext] =

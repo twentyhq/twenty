@@ -7,7 +7,7 @@ import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContaine
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import {
   autoUpdate,
   flip,
@@ -21,12 +21,12 @@ import { createPortal } from 'react-dom';
 const StyledInlineCellEditModeContainer = styled.div`
   align-items: center;
 
-  display: flex;
-  width: 100%;
-  position: absolute;
-  height: 24px;
-
   background: transparent;
+  display: flex;
+  height: 24px;
+  position: absolute;
+
+  width: 100%;
 `;
 
 type RecordInlineCellEditModeProps = {

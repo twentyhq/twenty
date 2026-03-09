@@ -53,21 +53,18 @@ Asegúrese de ejecutar yarn en el directorio raíz y luego ejecute `npx nx serve
 
 #### Lint on Save no funciona
 
-Esto debería funcionar sin configuración adicional con la extensión de ESLint instalada. Si esto no funciona, intente agregar esto a su configuración de vscode (en el ámbito del contenedor de desarrollo):
+Esto debería funcionar sin configuración adicional con la extensión de Oxlint instalada. Si esto no funciona, intente agregar esto a su configuración de vscode (en el ámbito del contenedor de desarrollo):
 
 ```
 "editor.codeActionsOnSave": {
 
-  "source.fixAll.eslint": "explicit"
+  "source.fixAll.oxc": "explicit"
 
 }
 ```
 
 #### Al ejecutar `npx nx start` o `npx nx start twenty-front`, se produce un error de falta de memoria
 
-En `packages/twenty-front/.env` descomente `VITE_DISABLE_TYPESCRIPT_CHECKER=true` y `VITE_DISABLE_ESLINT_CHECKER=true` para deshabilitar las comprobaciones en segundo plano y así reducir la cantidad de RAM necesaria.
-
-**Si no funciona:**
 Ejecute solo los servicios que necesite, en lugar de `npx nx start`. Por ejemplo, si trabaja en el servidor, ejecute solo `npx nx worker twenty-server`
 
 **Si no funciona:**
@@ -145,7 +142,7 @@ Comente el plugin checker en `packages/twenty-ui/vite-config.ts` como en el ejem
 
 ```
 plugins: [
-      react({ jsxImportSource: '@emotion/react' }),
+      react({ jsxImportSource: 'react' }),
       tsconfigPaths(),
       svgr(),
       dts(dtsConfig),

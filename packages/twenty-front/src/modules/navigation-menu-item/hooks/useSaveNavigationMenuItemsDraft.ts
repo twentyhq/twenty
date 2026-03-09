@@ -1,19 +1,18 @@
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import {
-  type CreateNavigationMenuItemInput,
-  useCreateNavigationMenuItemMutation,
-} from '~/generated-metadata/graphql';
+import { useCreateNavigationMenuItemMutation } from '~/generated-metadata/graphql';
 
 import { useDeleteNavigationMenuItem } from '@/navigation-menu-item/hooks/useDeleteNavigationMenuItem';
 import { useUpdateNavigationMenuItem } from '@/navigation-menu-item/hooks/useUpdateNavigationMenuItem';
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/states/navigationMenuItemsDraftState';
+import { buildCreateNavigationMenuItemInput } from '@/navigation-menu-item/utils/buildCreateNavigationMenuItemInput';
 import { filterWorkspaceNavigationMenuItems } from '@/navigation-menu-item/utils/filterWorkspaceNavigationMenuItems';
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/utils/isNavigationMenuItemFolder';
 import { isNavigationMenuItemLink } from '@/navigation-menu-item/utils/isNavigationMenuItemLink';
-import { useStore } from 'jotai';
+import { orderFoldersForCreation } from '@/navigation-menu-item/utils/orderFoldersForCreation';
 import { prefetchNavigationMenuItemsState } from '@/prefetch/states/prefetchNavigationMenuItemsState';
+import { useStore } from 'jotai';
 
 export const useSaveNavigationMenuItemsDraft = () => {
   const { updateNavigationMenuItem } = useUpdateNavigationMenuItem();
@@ -76,37 +75,39 @@ export const useSaveNavigationMenuItemsDraft = () => {
       await deleteNavigationMenuItem(draftItem.id);
     }
 
-    const idsToCreateIncludingRecreated = [...idsToCreate, ...idsToRecreate];
+    const itemsToCreate = [...idsToCreate, ...idsToRecreate];
+    const foldersToCreate = itemsToCreate.filter(isNavigationMenuItemFolder);
+    const nonFoldersToCreate = itemsToCreate.filter(
+      (item) => !isNavigationMenuItemFolder(item),
+    );
 
-    for (const draftItem of idsToCreateIncludingRecreated) {
-      const input: CreateNavigationMenuItemInput = {
-        position: Math.max(0, Math.round(draftItem.position)),
-      };
+    const createdFolderIdByDraftId = new Map<string, string>();
+    const resolveFolderId = (draftFolderId: string): string =>
+      createdFolderIdByDraftId.get(draftFolderId) ?? draftFolderId;
 
-      if (isNavigationMenuItemFolder(draftItem)) {
-        input.name = draftItem.name ?? undefined;
-        input.icon = draftItem.icon ?? null;
-      } else if (isNavigationMenuItemLink(draftItem)) {
-        input.name = draftItem.name ?? 'Link';
-        const linkUrl = (draftItem.link ?? '').trim();
-        input.link =
-          linkUrl.startsWith('http://') || linkUrl.startsWith('https://')
-            ? linkUrl
-            : linkUrl
-              ? `https://${linkUrl}`
-              : undefined;
-      } else if (isDefined(draftItem.viewId)) {
-        input.viewId = draftItem.viewId;
-      } else if (isDefined(draftItem.targetRecordId)) {
-        input.targetRecordId = draftItem.targetRecordId;
-        input.targetObjectMetadataId =
-          draftItem.targetObjectMetadataId ?? undefined;
+    const orderedFolders = orderFoldersForCreation(
+      foldersToCreate,
+      prefetchIds,
+    );
+    for (const draftItem of orderedFolders) {
+      const input = buildCreateNavigationMenuItemInput(
+        draftItem,
+        resolveFolderId,
+      );
+      const result = await createNavigationMenuItemMutation({
+        variables: { input },
+      });
+      const created = result.data?.createNavigationMenuItem;
+      if (isDefined(created?.id)) {
+        createdFolderIdByDraftId.set(draftItem.id, created.id);
       }
+    }
 
-      if (isDefined(draftItem.folderId)) {
-        input.folderId = draftItem.folderId;
-      }
-
+    for (const draftItem of nonFoldersToCreate) {
+      const input = buildCreateNavigationMenuItemInput(
+        draftItem,
+        resolveFolderId,
+      );
       await createNavigationMenuItemMutation({
         variables: { input },
       });
@@ -150,10 +151,13 @@ export const useSaveNavigationMenuItemsDraft = () => {
         } = { id: draftItem.id };
 
         if (positionChanged) {
-          updateInput.position = Math.max(0, Math.round(draftItem.position));
+          updateInput.position = draftItem.position;
         }
         if (folderIdChanged) {
-          updateInput.folderId = draftItem.folderId ?? null;
+          updateInput.folderId =
+            draftItem.folderId != null
+              ? resolveFolderId(draftItem.folderId)
+              : null;
         }
         if (nameChanged && isNavigationMenuItemFolder(draftItem)) {
           updateInput.name = draftItem.name ?? undefined;

@@ -6,7 +6,7 @@ import { useClearField } from '@/object-record/record-field/ui/hooks/useClearFie
 import { RATING_VALUES } from 'twenty-shared/constants';
 import { type FieldRatingValue } from 'twenty-shared/types';
 import { IconTwentyStarFilled } from 'twenty-ui/display';
-import { THEME_COMMON, ThemeContext } from 'twenty-ui/theme';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -26,18 +26,17 @@ type RatingInputProps = {
   readonly?: boolean;
 };
 
-const iconSizeMd = THEME_COMMON.icon.size.md;
-
 export const RatingInput = ({
   onChange,
   value,
   readonly,
 }: RatingInputProps) => {
-  const { theme } = useContext(ThemeContext);
   const clearField = useClearField();
+  const { theme } = useContext(ThemeContext);
 
-  const activeColor = theme.font.color.secondary;
-  const inactiveColor = theme.background.quaternary;
+  const iconSizeMd = theme.icon.size.md;
+  const activeColor = themeCssVariables.font.color.secondary;
+  const inactiveColor = themeCssVariables.background.quaternary;
 
   const [hoveredValue, setHoveredValue] = useState<FieldRatingValue>(null);
 

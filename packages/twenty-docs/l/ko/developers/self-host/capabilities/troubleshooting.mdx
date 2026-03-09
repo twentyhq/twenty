@@ -53,21 +53,18 @@ Twenty 설치 중에 적절한 스키마, 확장, 사용자를 사용하여 post
 
 #### 저장 시 린트가 작동하지 않음
 
-eslint 확장 프로그램이 설치된 상태에서는 기본 설정으로 작동해야 합니다. 작동하지 않으면 vscode 설정(개발 컨테이너 범위)에 다음을 추가해 보세요:
+Oxc 확장 (`oxc.oxc-vscode`) 프로그램이 설치된 상태에서는 기본 설정으로 작동해야 합니다. 작동하지 않으면 vscode 설정(개발 컨테이너 범위)에 다음을 추가해 보세요:
 
 ```
 "editor.codeActionsOnSave": {
 
-  "source.fixAll.eslint": "explicit"
+  "source.fixAll.oxc": "explicit"
 
 }
 ```
 
 #### `npx nx start` 또는 `npx nx start twenty-front` 실행 시 메모리 부족 오류 발생
 
-`packages/twenty-front/.env`에서 `VITE_DISABLE_TYPESCRIPT_CHECKER=true`와 `VITE_DISABLE_ESLINT_CHECKER=true`를 주석 해제하여 백그라운드 검사 기능을 비활성화하여 필요한 RAM의 양을 줄입니다.
-
-**작동하지 않는 경우:**
 `npx nx start` 대신 필요한 서비스만 실행하십시오. 예를 들어, 서버에서 작업하는 경우, `npx nx worker twenty-server`만 실행하십시오.
 
 **작동하지 않는 경우:**
@@ -145,7 +142,7 @@ npx nx worker twenty-server
 
 ```
 plugins: [
-      react({ jsxImportSource: '@emotion/react' }),
+      react({ jsxImportSource: 'react' }),
       tsconfigPaths(),
       svgr(),
       dts(dtsConfig),

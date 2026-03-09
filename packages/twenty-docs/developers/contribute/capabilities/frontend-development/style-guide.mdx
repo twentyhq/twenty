@@ -194,7 +194,7 @@ setHotkeyScopeAndMemorizePreviousScope(
 
 ### Use StyledComponents
 
-Style the components with [styled-components](https://emotion.sh/docs/styled).
+Style the components with [Linaria styled](https://github.com/callstack/linaria).
 
 ```tsx
 // ❌ Bad
@@ -260,7 +260,7 @@ const StyledButton = styled.button`
 ```
 ## Enforcing No-Type Imports
 
-Avoid type imports. To enforce this standard, an ESLint rule checks for and reports any type imports. This helps maintain consistency and readability in the TypeScript code.
+Avoid type imports. To enforce this standard, an Oxlint rule checks for and reports any type imports. This helps maintain consistency and readability in the TypeScript code.
 
 ```tsx
 // ❌ Bad
@@ -281,11 +281,11 @@ import { Meta, StoryObj } from '@storybook/react';
 
 - **Maintainability**: It enhances codebase maintainability because developers can identify and locate type-only imports when reviewing or modifying code.
 
-### ESLint Rule
+### Oxlint Rule
 
-An ESLint rule, `@typescript-eslint/consistent-type-imports`, enforces the no-type import standard. This rule will generate errors or warnings for any type import violations.
+An Oxlint rule, `typescript/consistent-type-imports`, enforces the no-type import standard. This rule will generate errors or warnings for any type import violations.
 
 Please note that this rule specifically addresses rare edge cases where unintentional type imports occur. TypeScript itself discourages this practice, as mentioned in the [TypeScript 3.8 release notes](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-8.html). In most situations, you should not need to use type-only imports.
 
-To ensure your code complies with this rule, make sure to run ESLint as part of your development workflow.
+To ensure your code complies with this rule, make sure to run Oxlint as part of your development workflow.
 

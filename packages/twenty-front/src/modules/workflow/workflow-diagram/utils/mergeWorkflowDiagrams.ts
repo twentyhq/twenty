@@ -3,7 +3,10 @@ import {
   type WorkflowDiagramNode,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 
-const nodePropertiesToPreserve: Array<keyof WorkflowDiagramNode> = ['selected'];
+const nodePropertiesToPreserve: Array<keyof WorkflowDiagramNode> = [
+  'selected',
+  'measured',
+];
 
 export const mergeWorkflowDiagrams = (
   previousDiagram: WorkflowDiagram,

@@ -1,21 +1,24 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type ReactNode, useState } from 'react';
 
 import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
 import { tableWidthResizeIsActiveState } from '@/object-record/record-table/states/tableWidthResizeIsActivedState';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { ResizablePanelEdge } from '@/ui/layout/resizable-panel/components/ResizablePanelEdge';
 import { NAVIGATION_DRAWER_COLLAPSED_WIDTH } from '@/ui/layout/resizable-panel/constants/NavigationDrawerCollapsedWidth';
 import { NAVIGATION_DRAWER_CONSTRAINTS } from '@/ui/layout/resizable-panel/constants/NavigationDrawerConstraints';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
+import { NavigationDrawerWidthEffect } from '@/ui/navigation/components/NavigationDrawerWidthEffect';
+import { NAVIGATION_DRAWER_CLICK_OUTSIDE_ID } from '@/ui/navigation/navigation-drawer/constants/NavigationDrawerClickOutsideId';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
+import { navigationDrawerActiveTabState } from '@/ui/navigation/states/navigationDrawerActiveTabState';
+import { NAVIGATION_DRAWER_TABS } from '@/ui/navigation/states/navigationDrawerTabs';
 import {
   NAVIGATION_DRAWER_WIDTH_VAR,
   navigationDrawerWidthState,
 } from '@/ui/navigation/states/navigationDrawerWidthState';
-import { NavigationDrawerWidthEffect } from '@/ui/navigation/components/NavigationDrawerWidthEffect';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 import { NavigationDrawerBackButton } from './NavigationDrawerBackButton';
 import { NavigationDrawerHeader } from './NavigationDrawerHeader';
 
@@ -29,15 +32,18 @@ const StyledAnimatedContainer = styled.div<{
   isExpanded: boolean;
   isResizing: boolean;
 }>`
+  height: 100vh;
   max-height: 100vh;
   overflow: hidden;
   position: relative;
+  transition: ${({ isResizing }) =>
+    isResizing
+      ? 'none'
+      : `width calc(${themeCssVariables.animation.duration.normal} * 1s)`};
   width: ${({ isExpanded }) =>
     isExpanded
       ? `var(${NAVIGATION_DRAWER_WIDTH_VAR})`
       : `${NAVIGATION_DRAWER_COLLAPSED_WIDTH}px`};
-  transition: ${({ isResizing, theme }) =>
-    isResizing ? 'none' : `width ${theme.animation.duration.normal}s`};
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     width: ${({ isExpanded }) => (isExpanded ? '100%' : '0')};
@@ -47,23 +53,25 @@ const StyledAnimatedContainer = styled.div<{
 const StyledContainer = styled.div<{
   isSettings?: boolean;
   isMobile?: boolean;
+  isExpanded?: boolean;
 }>`
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  width: var(${NAVIGATION_DRAWER_WIDTH_VAR});
-  gap: ${({ theme }) => theme.spacing(3)};
+  gap: ${themeCssVariables.spacing[3]};
   height: 100%;
-  padding: ${({ theme, isSettings, isMobile }) =>
+  padding: ${({ isSettings, isMobile }) =>
     isSettings
       ? isMobile
-        ? theme.spacing(3, 0, 0, 8)
-        : theme.spacing(3, 0, 4, 0)
-      : theme.spacing(3, 0, 4, 2)};
+        ? `${themeCssVariables.spacing[3]} 0 0 ${themeCssVariables.spacing[8]}`
+        : `${themeCssVariables.spacing[3]} 0 ${themeCssVariables.spacing[4]} 0`
+      : `${themeCssVariables.spacing[3]} 0 ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[2]}`};
+  width: ${({ isExpanded }) =>
+    isExpanded ? `var(${NAVIGATION_DRAWER_WIDTH_VAR})` : '100%'};
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     width: 100%;
-    padding-left: ${({ theme }) => theme.spacing(5)};
-    padding-right: ${({ theme }) => theme.spacing(5)};
+    padding-left: ${themeCssVariables.spacing[5]};
+    padding-right: ${themeCssVariables.spacing[5]};
   }
 `;
 
@@ -72,7 +80,6 @@ export const NavigationDrawer = ({
   className,
   title,
 }: NavigationDrawerProps) => {
-  const [isHovered, setIsHovered] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
   const isMobile = useIsMobile();
   const isSettingsDrawer = useIsSettingsDrawer();
@@ -82,20 +89,16 @@ export const NavigationDrawer = ({
   const [navigationDrawerWidth, setNavigationDrawerWidth] = useAtomState(
     navigationDrawerWidthState,
   );
+  const setNavigationDrawerActiveTab = useSetAtomState(
+    navigationDrawerActiveTabState,
+  );
   const setTableWidthResizeIsActive = useSetAtomState(
     tableWidthResizeIsActiveState,
   );
 
-  const handleHover = () => {
-    setIsHovered(true);
-  };
-
-  const handleMouseLeave = () => {
-    setIsHovered(false);
-  };
-
   const handleCollapse = () => {
     setIsNavigationDrawerExpanded(false);
+    setNavigationDrawerActiveTab(NAVIGATION_DRAWER_TABS.NAVIGATION_MENU);
     setIsResizing(false);
     setTableWidthResizeIsActive(true);
   };
@@ -116,21 +119,20 @@ export const NavigationDrawer = ({
       <NavigationDrawerWidthEffect />
       <StyledAnimatedContainer
         className={className}
+        data-click-outside-id={NAVIGATION_DRAWER_CLICK_OUTSIDE_ID}
         isExpanded={isNavigationDrawerExpanded}
         isResizing={isResizing}
       >
         <StyledContainer
           isSettings={isSettingsDrawer}
           isMobile={isMobile}
-          onMouseEnter={handleHover}
-          onMouseLeave={handleMouseLeave}
+          isExpanded={isNavigationDrawerExpanded}
         >
           {isSettingsDrawer && title ? (
             !isMobile && <NavigationDrawerBackButton title={title} />
           ) : (
-            <NavigationDrawerHeader showCollapseButton={isHovered} />
+            <NavigationDrawerHeader showCollapseButton />
           )}
-
           {children}
         </StyledContainer>
 

@@ -4,8 +4,7 @@ import { calendarDayRecordIdsComponentFamilySelector } from '@/object-record/rec
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { css } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { Droppable } from '@hello-pangea/dnd';
 import { useState } from 'react';
 import { Temporal } from 'temporal-polyfill';
@@ -16,36 +15,30 @@ import {
   isSamePlainDate,
 } from 'twenty-shared/utils';
 import { RecordCalendarAddNew } from '@/object-record/record-calendar/components/RecordCalendarAddNew';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div<{
   isOtherMonth: boolean;
   isDayOfWeekend: boolean;
 }>`
+  background: ${({ isOtherMonth, isDayOfWeekend }) =>
+    isOtherMonth || isDayOfWeekend
+      ? themeCssVariables.background.secondary
+      : themeCssVariables.background.primary};
+  color: ${({ isOtherMonth }) =>
+    isOtherMonth
+      ? themeCssVariables.font.color.light
+      : themeCssVariables.font.color.primary};
   display: flex;
-  width: calc(100% / 7);
   flex-direction: column;
   min-height: 122px;
-  padding: ${({ theme }) => theme.spacing(1)};
-  background: ${({ theme }) => theme.background.primary};
   min-width: 0;
-  color: ${({ theme }) => theme.font.color.primary};
+  padding: ${themeCssVariables.spacing[1]};
+  width: calc(100% / 7);
 
   &:not(:last-child) {
-    border-right: 1px solid ${({ theme }) => theme.border.color.light};
+    border-right: 1px solid ${themeCssVariables.border.color.light};
   }
-
-  ${({ isOtherMonth, theme }) =>
-    isOtherMonth &&
-    css`
-      background: ${theme.background.secondary};
-      color: ${theme.font.color.light};
-    `}
-
-  ${({ isDayOfWeekend, theme }) =>
-    isDayOfWeekend &&
-    css`
-      background: ${theme.background.secondary};
-    `}
 `;
 
 const StyledDayHeader = styled.div`
@@ -61,42 +54,44 @@ const StyledDayHeader = styled.div`
 const StyledDayHeaderDayContainer = styled.div`
   display: flex;
   margin-left: auto;
-  padding: ${({ theme }) => theme.spacing(0.5, 0.5)};
+  padding: ${themeCssVariables.spacing['0.5']}
+    ${themeCssVariables.spacing['0.5']};
 `;
 
 const StyledDayHeaderDay = styled.span<{ isToday: boolean }>`
   align-items: center;
+  background: ${({ isToday }) =>
+    isToday ? themeCssVariables.color.blue : 'transparent'};
+  border-radius: ${({ isToday }) => (isToday ? '4px' : '0')};
+  color: ${({ isToday }) =>
+    isToday
+      ? themeCssVariables.font.color.inverted
+      : themeCssVariables.font.color.primary};
   display: flex;
-  font-size: ${({ theme }) => theme.font.size.sm};
+  font-size: ${themeCssVariables.font.size.sm};
+  font-weight: ${({ isToday }) =>
+    isToday ? themeCssVariables.font.weight.medium : 'normal'};
   justify-content: center;
   line-height: 140%;
   width: 20px;
-
-  ${({ isToday, theme }) =>
-    isToday &&
-    css`
-      border-radius: 4px;
-      background: ${theme.color.blue};
-      color: ${theme.font.color.inverted};
-      font-weight: ${theme.font.weight.medium};
-    `}
 `;
 
 const StyledCardsContainer = styled.div<{ isDraggedOver?: boolean }>`
+  background: ${({ isDraggedOver }) =>
+    isDraggedOver
+      ? themeCssVariables.background.transparent.lighter
+      : 'transparent'};
+  border: ${({ isDraggedOver }) =>
+    isDraggedOver
+      ? `1px dashed ${themeCssVariables.border.color.medium}`
+      : 'none'};
+  border-radius: ${themeCssVariables.border.radius.sm};
   display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(0.5)};
   flex: 1;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing['0.5']};
   min-height: 60px;
-  border-radius: ${({ theme }) => theme.border.radius.sm};
   transition: background-color 0.1s ease;
-
-  ${({ isDraggedOver, theme }) =>
-    isDraggedOver &&
-    css`
-      background: ${theme.background.transparent.lighter};
-      border: 1px dashed ${theme.border.color.medium};
-    `}
 `;
 
 type RecordCalendarMonthBodyDayProps = {
@@ -151,7 +146,7 @@ export const RecordCalendarMonthBodyDay = ({
       <Droppable droppableId={dayKey}>
         {(droppableProvided, droppableSnapshot) => (
           <StyledCardsContainer
-            // eslint-disable-next-line react/jsx-props-no-spreading
+            // oxlint-disable-next-line react/jsx-props-no-spreading
             {...droppableProvided.droppableProps}
             ref={droppableProvided.innerRef}
             isDraggedOver={droppableSnapshot.isDraggingOver}

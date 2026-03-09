@@ -1,64 +1,60 @@
-import { css, useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { useContext } from 'react';
 import { IconX } from 'twenty-ui/display';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledChip = styled.div<{ deletable: boolean; danger: boolean }>`
-  background-color: ${({ theme, danger }) =>
-    danger ? theme.color.red3 : theme.color.blue3};
-  border-width: 1px;
-  border-style: solid;
-  border-color: ${({ theme, danger }) =>
-    danger ? theme.color.red5 : theme.color.blue5};
-  border-radius: 4px;
-  height: 20px;
-  box-sizing: border-box;
-  display: inline-flex;
   align-items: center;
+  background-color: ${({ danger }) =>
+    danger ? themeCssVariables.color.red3 : themeCssVariables.color.blue3};
+  border-color: ${({ danger }) =>
+    danger ? themeCssVariables.color.red5 : themeCssVariables.color.blue5};
+  border-radius: 4px;
+  border-style: solid;
+  border-width: 1px;
+  box-sizing: border-box;
+  column-gap: ${themeCssVariables.spacing[1]};
+  cursor: ${({ deletable }) => (deletable ? 'pointer' : 'default')};
+  display: inline-flex;
   flex-direction: row;
   flex-shrink: 0;
-  column-gap: ${({ theme }) => theme.spacing(1)};
-  padding-left: ${({ theme }) => theme.spacing(1)};
+  height: 20px;
+  padding-left: ${themeCssVariables.spacing[1]};
+  padding-right: ${({ deletable }) =>
+    deletable ? '0' : themeCssVariables.spacing[1]};
+
   user-select: none;
   white-space: nowrap;
-
-  ${({ theme, deletable }) =>
-    !deletable
-      ? css`
-          padding-right: ${theme.spacing(1)};
-        `
-      : css`
-          cursor: pointer;
-        `}
 `;
 
 const StyledLabel = styled.span<{ danger: boolean }>`
-  color: ${({ theme, danger }) =>
-    danger ? theme.color.red : theme.color.blue};
+  color: ${({ danger }) =>
+    danger ? themeCssVariables.color.red : themeCssVariables.color.blue};
   line-height: 140%;
 `;
 
 const StyledDelete = styled.button<{ danger: boolean }>`
-  box-sizing: border-box;
-  height: 20px;
-  width: 20px;
-  display: flex;
-  justify-content: center;
   align-items: center;
-  cursor: pointer;
-  font-size: ${({ theme }) => theme.font.size.sm};
-  user-select: none;
-  padding: 0;
-  margin: 0;
   background: none;
   border: none;
-  color: ${({ theme, danger }) =>
-    danger ? theme.color.red : theme.color.blue};
-  border-top-right-radius: ${({ theme }) => theme.border.radius.sm};
-  border-bottom-right-radius: ${({ theme }) => theme.border.radius.sm};
+  border-bottom-right-radius: ${themeCssVariables.border.radius.sm};
+  border-top-right-radius: ${themeCssVariables.border.radius.sm};
+  box-sizing: border-box;
+  color: ${({ danger }) =>
+    danger ? themeCssVariables.color.red : themeCssVariables.color.blue};
+  cursor: pointer;
+  display: flex;
+  font-size: ${themeCssVariables.font.size.sm};
+  height: 20px;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+  width: 20px;
 
   &:hover {
-    background-color: ${({ theme, danger }) =>
-      danger ? theme.color.red5 : theme.color.blue5};
+    background-color: ${({ danger }) =>
+      danger ? themeCssVariables.color.red5 : themeCssVariables.color.blue5};
   }
 `;
 
@@ -79,7 +75,7 @@ export const BaseChip = ({
   danger = false,
   leftIcon,
 }: BaseChipProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const isDeletable = onRemove !== undefined;
 
   return (

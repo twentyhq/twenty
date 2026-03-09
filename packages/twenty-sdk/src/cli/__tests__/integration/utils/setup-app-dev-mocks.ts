@@ -2,10 +2,6 @@ import { vi } from 'vitest';
 
 const mockApiService = {
   validateAuth: vi.fn().mockResolvedValue({ authValid: true, serverUp: true }),
-  findOneApplication: vi.fn().mockResolvedValue({ success: true, data: null }),
-  createApplication: vi
-    .fn()
-    .mockResolvedValue({ success: true, data: { id: 'mock-id' } }),
   generateApplicationToken: vi.fn().mockResolvedValue({
     success: true,
     data: {
@@ -26,6 +22,23 @@ const mockApiService = {
       },
     },
   }),
+  findApplicationRegistrationByUniversalIdentifier: vi
+    .fn()
+    .mockResolvedValue({ success: true, data: null }),
+  createApplicationRegistration: vi.fn().mockResolvedValue({
+    success: true,
+    data: {
+      applicationRegistration: {
+        id: 'mock-registration-id',
+        oAuthClientId: 'mock-client-id',
+      },
+      clientSecret: 'mock-client-secret',
+    },
+  }),
+  createDevelopmentApplication: vi.fn().mockResolvedValue({
+    success: true,
+    data: { id: 'mock-app-id', universalIdentifier: 'mock-uid' },
+  }),
   syncApplication: vi.fn().mockResolvedValue({ success: true, data: true }),
   uploadFile: vi.fn().mockResolvedValue({ success: true, data: true }),
 };
@@ -33,10 +46,13 @@ const mockApiService = {
 vi.mock('@/cli/utilities/api/api-service', () => ({
   ApiService: class {
     validateAuth = mockApiService.validateAuth;
-    findOneApplication = mockApiService.findOneApplication;
-    createApplication = mockApiService.createApplication;
     generateApplicationToken = mockApiService.generateApplicationToken;
     renewApplicationToken = mockApiService.renewApplicationToken;
+    findApplicationRegistrationByUniversalIdentifier =
+      mockApiService.findApplicationRegistrationByUniversalIdentifier;
+    createApplicationRegistration =
+      mockApiService.createApplicationRegistration;
+    createDevelopmentApplication = mockApiService.createDevelopmentApplication;
     syncApplication = mockApiService.syncApplication;
     uploadFile = mockApiService.uploadFile;
   },

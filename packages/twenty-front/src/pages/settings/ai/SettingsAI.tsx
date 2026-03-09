@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { Link } from 'react-router-dom';
 
 import { SettingsOptionCardContentButton } from '@/settings/components/SettingsOptions/SettingsOptionCardContentButton';
@@ -27,8 +27,10 @@ import { SettingsSkillsTable } from './components/SettingsSkillsTable';
 import { SettingsToolsTable } from './components/SettingsToolsTable';
 import { SETTINGS_AI_TABS } from './constants/SettingsAiTabs';
 
-const StyledLink = styled(Link)`
-  text-decoration: none;
+const StyledLinkContainer = styled.div`
+  > a {
+    text-decoration: none;
+  }
 `;
 
 export const SettingsAI = () => {
@@ -97,13 +99,15 @@ export const SettingsAI = () => {
                   title={t`System Prompt`}
                   description={t`View the AI system prompt and add custom instructions`}
                   Button={
-                    <StyledLink to={getSettingsPath(SettingsPath.AIPrompts)}>
-                      <Button
-                        title={t`Configure`}
-                        variant="secondary"
-                        size="small"
-                      />
-                    </StyledLink>
+                    <StyledLinkContainer>
+                      <Link to={getSettingsPath(SettingsPath.AIPrompts)}>
+                        <Button
+                          title={t`Configure`}
+                          variant="secondary"
+                          size="small"
+                        />
+                      </Link>
+                    </StyledLinkContainer>
                   }
                 />
               </Card>

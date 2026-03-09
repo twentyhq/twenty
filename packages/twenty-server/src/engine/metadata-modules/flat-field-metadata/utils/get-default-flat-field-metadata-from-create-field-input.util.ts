@@ -57,5 +57,6 @@ export const getDefaultFlatFieldMetadata = ({
     calendarViewUniversalIdentifiers: [],
     mainGroupByFieldMetadataViewUniversalIdentifiers: [],
     universalSettings: settings ?? null,
+    viewSortUniversalIdentifiers: [],
   } as const satisfies UniversalFlatFieldMetadata;
 };

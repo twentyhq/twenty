@@ -7,7 +7,7 @@ import {
 } from 'twenty-shared/testing';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type CreateRoleInput } from 'src/engine/metadata-modules/role/dtos/create-role-input.dto';
+import { type CreateRoleInput } from 'src/engine/metadata-modules/role/dtos/create-role.input';
 
 type TestContext = {
   input: CreateRoleInput;

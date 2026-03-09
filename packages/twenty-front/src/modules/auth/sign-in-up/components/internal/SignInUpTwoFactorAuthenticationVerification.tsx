@@ -1,5 +1,4 @@
-import { css } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 import { useAuth } from '@/auth/hooks/useAuth';
 import {
@@ -21,13 +20,14 @@ import { Controller } from 'react-hook-form';
 import { AppPath } from 'twenty-shared/types';
 import { MainButton } from 'twenty-ui/input';
 import { ClickToActionLink } from 'twenty-ui/navigation';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 const StyledMainContentContainer = styled.div`
-  margin-bottom: ${({ theme }) => theme.spacing(8)};
-  margin-top: ${({ theme }) => theme.spacing(4)};
+  margin-bottom: ${themeCssVariables.spacing[8]};
+  margin-top: ${themeCssVariables.spacing[4]};
   text-align: center;
 `;
 
@@ -39,44 +39,40 @@ const StyledForm = styled.form`
 `;
 
 const StyledSlot = styled.div<{ isActive: boolean }>`
-  position: relative;
-  width: 2.5rem;
-  height: 3.5rem;
-  font-size: 2rem;
-  display: flex;
   align-items: center;
+  border-bottom: 1px solid ${themeCssVariables.border.color.medium};
+  border-right: 1px solid ${themeCssVariables.border.color.medium};
+  border-top: 1px solid ${themeCssVariables.border.color.medium};
+  display: flex;
+  font-size: 2rem;
+  height: 3.5rem;
   justify-content: center;
-  transition: all 0.3s;
-  border-top: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-right: 1px solid ${({ theme }) => theme.border.color.medium};
+  outline-color: ${({ isActive }) =>
+    isActive
+      ? themeCssVariables.border.color.strong
+      : themeCssVariables.border.color.medium};
+  outline-style: ${({ isActive }) => (isActive ? 'solid' : 'none')};
+  outline-width: ${({ isActive }) => (isActive ? '1px' : '0')};
 
   &:first-of-type {
-    border-left: 1px solid ${({ theme }) => theme.border.color.medium};
-    border-top-left-radius: 0.375rem;
     border-bottom-left-radius: 0.375rem;
+    border-left: 1px solid ${themeCssVariables.border.color.medium};
+    border-top-left-radius: 0.375rem;
   }
 
   &:last-of-type {
-    border-top-right-radius: 0.375rem;
     border-bottom-right-radius: 0.375rem;
+    border-top-right-radius: 0.375rem;
   }
 
   .group:hover &,
   .group:focus-within & {
-    border-color: ${({ theme }) => theme.border.color.medium};
+    border-color: ${themeCssVariables.border.color.medium};
   }
 
-  outline: 0;
-  outline-color: ${({ theme }) => theme.border.color.medium};
-
-  ${({ isActive, theme }) =>
-    isActive &&
-    css`
-      outline-width: 1px;
-      outline-style: solid;
-      outline-color: ${theme.border.color.strong};
-    `}
+  position: relative;
+  transition: all 0.3s;
+  width: 2.5rem;
 `;
 
 const StyledPlaceholderChar = styled.div`
@@ -117,9 +113,9 @@ const StyledCaretContainer = styled.div`
 `;
 
 const StyledCaret = styled.div`
-  width: 1px;
+  background-color: ${themeCssVariables.font.color.light};
   height: 2rem;
-  background-color: ${({ theme }) => theme.font.color.light};
+  width: 1px;
 `;
 
 const FakeCaret = () => {
@@ -131,14 +127,14 @@ const FakeCaret = () => {
 };
 
 const StyledDashContainer = styled.div`
-  display: flex;
-  width: 2.5rem;
-  justify-content: center;
   align-items: center;
+  display: flex;
+  justify-content: center;
+  width: 2.5rem;
 `;
 
 const StyledDash = styled.div`
-  background-color: ${({ theme }) => theme.font.color.primary};
+  background-color: ${themeCssVariables.font.color.primary};
   border-radius: 9999px;
   height: 0.25rem;
   width: 0.75rem;
@@ -153,8 +149,8 @@ const FakeDash = () => {
 };
 
 const StyledOTPContainer = styled.div`
-  display: flex;
   align-items: center;
+  display: flex;
 
   &:has(:disabled) {
     opacity: 0.3;
@@ -166,16 +162,16 @@ const StyledSlotGroup = styled.div`
 `;
 const StyledTextContainer = styled.div`
   align-items: center;
-  margin-bottom: ${({ theme }) => theme.spacing(4)};
-  color: ${({ theme }) => theme.font.color.tertiary};
+  color: ${themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.sm};
 
+  margin-bottom: ${themeCssVariables.spacing[4]};
   max-width: 280px;
   text-align: center;
-  font-size: ${({ theme }) => theme.font.size.sm};
 `;
 
 const StyledActionBackLinkContainer = styled.div`
-  margin: ${({ theme }) => theme.spacing(3)} 0 0;
+  margin: ${themeCssVariables.spacing[3]} 0 0;
 `;
 
 export const SignInUpTOTPVerification = () => {
@@ -235,7 +231,7 @@ export const SignInUpTOTPVerification = () => {
         <Trans>Paste the code below</Trans>
       </StyledTextContainer>
       <StyledMainContentContainer>
-        {/* // eslint-disable-next-line react/jsx-props-no-spreading */}
+        {/* // oxlint-disable-next-line react/jsx-props-no-spreading */}
         <Controller
           name="otp"
           control={form.control}
@@ -251,7 +247,7 @@ export const SignInUpTOTPVerification = () => {
                     {slots.slice(0, 3).map((slot, idx) => (
                       <Slot
                         key={idx}
-                        // eslint-disable-next-line react/jsx-props-no-spreading
+                        // oxlint-disable-next-line react/jsx-props-no-spreading
                         {...slot}
                       />
                     ))}
@@ -263,7 +259,7 @@ export const SignInUpTOTPVerification = () => {
                     {slots.slice(3).map((slot, idx) => (
                       <Slot
                         key={idx}
-                        // eslint-disable-next-line react/jsx-props-no-spreading
+                        // oxlint-disable-next-line react/jsx-props-no-spreading
                         {...slot}
                       />
                     ))}

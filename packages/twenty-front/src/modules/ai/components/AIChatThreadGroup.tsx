@@ -1,59 +1,54 @@
-import { agentChatUsageState } from '@/ai/states/agentChatUsageState';
-import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
-import { currentAIChatThreadTitleState } from '@/ai/states/currentAIChatThreadTitleState';
-import { useOpenAskAIPageInCommandMenu } from '@/command-menu/hooks/useOpenAskAIPageInCommandMenu';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { useAIChatThreadClick } from '@/ai/hooks/useAIChatThreadClick';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { isDefined } from 'twenty-shared/utils';
+import { useContext } from 'react';
 import { IconSparkles } from 'twenty-ui/display';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { type AgentChatThread } from '~/generated-metadata/graphql';
 
 const StyledThreadsList = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledDateGroup = styled.div`
-  margin-bottom: ${({ theme }) => theme.spacing(4)};
+  margin-bottom: ${themeCssVariables.spacing[4]};
 `;
 
 const StyledDateHeader = styled.div`
-  color: ${({ theme }) => theme.font.color.light};
-  font-size: ${({ theme }) => theme.font.size.xs};
-  font-weight: 600;
-  margin-bottom: ${({ theme }) => theme.spacing(1)};
+  color: ${themeCssVariables.font.color.light};
+  font-size: ${themeCssVariables.font.size.xs};
+  font-weight: ${themeCssVariables.font.weight.medium};
+  margin-bottom: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledThreadItem = styled.div<{ isSelected?: boolean }>`
-  display: flex;
   align-items: center;
-  gap: ${({ theme }) => theme.spacing(2)};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  transition: all 0.2s ease;
-  margin-bottom: ${({ theme }) => theme.spacing(1)};
   border-left: 3px solid transparent;
+  border-radius: ${themeCssVariables.border.radius.sm};
   cursor: pointer;
-  padding: ${({ theme }) => theme.spacing(1, 0.25)};
-  right: ${({ theme }) => theme.spacing(0.75)};
+  display: flex;
+  gap: ${themeCssVariables.spacing[2]};
+  margin-bottom: ${themeCssVariables.spacing[1]};
+  padding: ${themeCssVariables.spacing[1]} 1px;
   position: relative;
-  width: calc(100% + ${({ theme }) => theme.spacing(0.25)});
+  right: 3px;
+  transition: all 0.2s ease;
+  width: calc(100% + 1px);
 
   &:hover {
-    background: ${({ theme }) => theme.background.transparent.light};
+    background: ${themeCssVariables.background.transparent.light};
   }
 `;
 
 const StyledSparkleIcon = styled.div`
   align-items: center;
-  background: ${({ theme }) => theme.background.transparent.blue};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+  background: ${themeCssVariables.background.transparent.blue};
+  border-radius: ${themeCssVariables.border.radius.sm};
   display: flex;
-  padding: ${({ theme }) => theme.spacing(1)};
   justify-content: center;
+  padding: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledThreadContent = styled.div`
@@ -62,8 +57,8 @@ const StyledThreadContent = styled.div`
 `;
 
 const StyledThreadTitle = styled.div`
-  color: ${({ theme }) => theme.font.color.secondary};
-  font-size: ${({ theme }) => theme.font.size.md};
+  color: ${themeCssVariables.font.color.secondary};
+  font-size: ${themeCssVariables.font.size.md};
   font-weight: 500;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -77,41 +72,9 @@ export const AIChatThreadGroup = ({
   threads: AgentChatThread[];
   title: string;
 }) => {
+  const { theme } = useContext(ThemeContext);
   const { t } = useLingui();
-  const theme = useTheme();
-  const [, setCurrentAIChatThread] = useAtomState(currentAIChatThreadState);
-  const setCurrentAIChatThreadTitle = useSetAtomState(
-    currentAIChatThreadTitleState,
-  );
-  const setAgentChatUsage = useSetAtomState(agentChatUsageState);
-  const { openAskAIPage } = useOpenAskAIPageInCommandMenu();
-
-  const handleThreadClick = (thread: AgentChatThread) => {
-    setCurrentAIChatThread(thread.id);
-    setCurrentAIChatThreadTitle(thread.title ?? null);
-
-    const hasUsageData =
-      (thread.conversationSize ?? 0) > 0 &&
-      isDefined(thread.contextWindowTokens);
-
-    setAgentChatUsage(
-      hasUsageData
-        ? {
-            lastMessage: null,
-            conversationSize: thread.conversationSize ?? 0,
-            contextWindowTokens: thread.contextWindowTokens ?? 0,
-            inputTokens: thread.totalInputTokens,
-            outputTokens: thread.totalOutputTokens,
-            inputCredits: thread.totalInputCredits,
-            outputCredits: thread.totalOutputCredits,
-          }
-        : null,
-    );
-
-    openAskAIPage({
-      resetNavigationStack: false,
-    });
-  };
+  const { handleThreadClick } = useAIChatThreadClick();
 
   if (threads.length === 0) {
     return null;

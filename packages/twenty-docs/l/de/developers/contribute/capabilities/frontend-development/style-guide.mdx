@@ -194,7 +194,7 @@ setHotkeyScopeAndMemorizePreviousScope(
 
 ### Verwenden Sie StyledComponents
 
-Stylen Sie die Komponenten mit [styled-components](https://emotion.sh/docs/styled).
+Stylen Sie die Komponenten mit [Linaria styled](https://github.com/callstack/linaria).
 
 ```tsx
 // ❌ Schlecht
@@ -260,7 +260,7 @@ const StyledButton = styled.button`
 
 ## Durchsetzung von No-Type Imports
 
-Vermeiden Sie Typ-Importe. Um diesen Standard durchzusetzen, überprüft eine ESLint-Regel alle Typ-Importe und meldet sie. Dies trägt zur Konsistenz und Lesbarkeit des TypeScript-Codes bei.
+Vermeiden Sie Typ-Importe. Um diesen Standard durchzusetzen, überprüft eine Oxlint-Regel alle Typ-Importe und meldet sie. Dies trägt zur Konsistenz und Lesbarkeit des TypeScript-Codes bei.
 
 ```tsx
 // ❌ Bad
@@ -281,10 +281,10 @@ import { Meta, StoryObj } from '@storybook/react';
 
 * **Wartbarkeit**: Es verbessert die Wartbarkeit der Codebasis, da Entwickler Typ-Only-Imports beim Überprüfen oder Ändern von Code identifizieren und lokalisieren können.
 
-### ESLint-Regel
+### Oxlint-Regel
 
-Eine ESLint-Regel, `@typescript-eslint/consistent-type-imports`, setzt den No-Type-Import-Standard durch. Diese Regel generiert Fehler oder Warnungen bei Verstößen gegen Typ-Importe.
+Eine Oxlint-Regel, `typescript/consistent-type-imports`, setzt den No-Type-Import-Standard durch. Diese Regel generiert Fehler oder Warnungen bei Verstößen gegen Typ-Importe.
 
 Bitte beachten Sie, dass diese Regel speziell seltene Randfälle behandelt, in denen unbeabsichtigte Typ-Importe auftreten. TypeScript selbst lehnt diese Praxis ab, wie in den [TypeScript 3.8 Release Notes](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-8.html) erwähnt. In den meisten Situationen sollten Typ-Only-Imports nicht benötigt werden.
 
-Um sicherzustellen, dass Ihr Code mit dieser Regel übereinstimmt, achten Sie darauf, ESLint als Teil Ihres Entwicklungsworkflows auszuführen.
+Um sicherzustellen, dass Ihr Code mit dieser Regel übereinstimmt, achten Sie darauf, Oxlint als Teil Ihres Entwicklungsworkflows auszuführen.

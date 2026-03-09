@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { plural, t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { type ToolUIPart } from 'ai';
@@ -12,6 +12,7 @@ import {
 } from 'twenty-ui/display';
 import { JsonTree } from 'twenty-ui/json-visualizer';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type JsonValue } from 'type-fest';
 
 import { ToolOutputResultSchema } from '@/ai/schemas/toolOutputResultSchema';
@@ -32,184 +33,191 @@ import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
-  font-family: ${({ theme }) => theme.font.family};
-  gap: ${({ theme }) => theme.spacing(1)};
+  font-family: ${themeCssVariables.font.family};
+  gap: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledStepsContentContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(1)};
-  padding-top: ${({ theme }) => theme.spacing(1)};
-  padding-bottom: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[1]};
+  padding-bottom: ${themeCssVariables.spacing[2]};
+  padding-top: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledSummaryText = styled.span`
   color: inherit;
-  font-size: ${({ theme }) => theme.font.size.md};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
-  line-height: ${({ theme }) => theme.text.lineHeight.md};
-  transition: color ${({ theme }) => theme.animation.duration.fast}s ease-in-out;
+  font-size: ${themeCssVariables.font.size.md};
+  font-weight: ${themeCssVariables.font.weight.regular};
+  line-height: ${themeCssVariables.text.lineHeight.md};
+  transition: color calc(${themeCssVariables.animation.duration.fast} * 1s)
+    ease-in-out;
 `;
 
 const StyledSummaryButton = styled.button`
   align-items: center;
   background: none;
   border: none;
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  color: ${({ theme }) => theme.font.color.tertiary};
+  border-radius: ${themeCssVariables.border.radius.sm};
+  color: ${themeCssVariables.font.color.tertiary};
   cursor: pointer;
   display: flex;
   font-family: inherit;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
   min-height: 24px;
   padding: 0;
   width: fit-content;
 
   &:hover {
-    color: ${({ theme }) => theme.font.color.primary};
+    color: ${themeCssVariables.font.color.primary};
   }
 
   &:focus-visible {
-    outline: 2px solid ${({ theme }) => theme.color.blue};
+    outline: 2px solid ${themeCssVariables.color.blue};
     outline-offset: 2px;
   }
 `;
 
 const StyledSummaryChevronContainer = styled.div<{ isExpanded: boolean }>`
   align-items: center;
-  color: ${({ theme }) => theme.font.color.light};
+  color: ${themeCssVariables.font.color.light};
   display: flex;
   justify-content: center;
   transform: rotate(${({ isExpanded }) => (isExpanded ? '90deg' : '0deg')});
-  transition: transform ${({ theme }) => theme.animation.duration.fast}s
+  transition: transform calc(${themeCssVariables.animation.duration.fast} * 1s)
     ease-in-out;
 `;
 
 const StyledRowsContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledRow = styled.div`
   align-items: center;
-  color: ${({ theme }) => theme.font.color.tertiary};
+  color: ${themeCssVariables.font.color.tertiary};
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
   min-height: 24px;
 `;
 
 const StyledRowLabel = styled.span`
   color: inherit;
-  font-size: ${({ theme }) => theme.font.size.md};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
-  line-height: ${({ theme }) => theme.text.lineHeight.md};
-  transition: color ${({ theme }) => theme.animation.duration.fast}s ease-in-out;
+  font-size: ${themeCssVariables.font.size.md};
+  font-weight: ${themeCssVariables.font.weight.regular};
+  line-height: ${themeCssVariables.text.lineHeight.md};
+  transition: color calc(${themeCssVariables.animation.duration.fast} * 1s)
+    ease-in-out;
 `;
 
 const StyledToolRowLabel = styled.div`
   color: inherit;
-  font-size: ${({ theme }) => theme.font.size.md};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
-  line-height: ${({ theme }) => theme.text.lineHeight.md};
+  font-size: ${themeCssVariables.font.size.md};
+  font-weight: ${themeCssVariables.font.weight.regular};
+  line-height: ${themeCssVariables.text.lineHeight.md};
   max-width: 100%;
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
-  transition: color ${({ theme }) => theme.animation.duration.fast}s ease-in-out;
+  transition: color calc(${themeCssVariables.animation.duration.fast} * 1s)
+    ease-in-out;
   white-space: nowrap;
 `;
 
 const StyledReasoningContainer = styled.div`
   padding-left: calc(
-    ${({ theme }) => theme.icon.size.sm}px + ${({ theme }) => theme.spacing(2)}
+    ${themeCssVariables.icon.size.sm} * 1px + ${themeCssVariables.spacing[2]}
   );
 `;
 
 const StyledReasoningText = styled.p`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-size: ${({ theme }) => theme.font.size.md};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
-  line-height: ${({ theme }) => theme.text.lineHeight.lg};
+  color: ${themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.md};
+  font-weight: ${themeCssVariables.font.weight.regular};
+  line-height: ${themeCssVariables.text.lineHeight.lg};
   margin: 0;
   white-space: pre-wrap;
 `;
 
-const StyledOrbitLoaderIcon = styled(ThinkingOrbitLoaderIcon)`
-  color: ${({ theme }) => theme.font.color.tertiary};
+const StyledOrbitLoaderIconContainer = styled.span`
+  color: ${themeCssVariables.font.color.tertiary};
+  display: flex;
 `;
 
 const StyledIconContainer = styled.div`
   align-items: center;
-  color: ${({ theme }) => theme.font.color.light};
+  color: ${themeCssVariables.font.color.light};
   display: flex;
   justify-content: center;
-  min-width: ${({ theme }) => theme.icon.size.sm}px;
+  min-width: calc(${themeCssVariables.icon.size.sm} * 1px);
 `;
 
 const StyledRowLabelContainer = styled.div`
   align-items: center;
   display: flex;
   flex: 1;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
   min-width: 0;
 `;
 
 const StyledChevronContainer = styled.div<{ isExpanded: boolean }>`
   align-items: center;
-  color: ${({ theme }) => theme.font.color.light};
+  color: ${themeCssVariables.font.color.light};
   display: flex;
   justify-content: center;
   transform: rotate(${({ isExpanded }) => (isExpanded ? '90deg' : '0deg')});
-  transition: transform ${({ theme }) => theme.animation.duration.fast}s
+  transition: transform calc(${themeCssVariables.animation.duration.fast} * 1s)
     ease-in-out;
 `;
 
 const StyledToolRowContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledToolRowButton = styled.button<{ isExpandable: boolean }>`
   align-items: center;
   background: none;
   border: none;
-  color: ${({ theme }) => theme.font.color.tertiary};
+  color: ${themeCssVariables.font.color.tertiary};
   cursor: ${({ isExpandable }) => (isExpandable ? 'pointer' : 'default')};
   display: flex;
   font-family: inherit;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
   min-height: 24px;
   padding: 0;
   text-align: left;
-  transition: color ${({ theme }) => theme.animation.duration.fast}s ease-in-out;
+  transition: color calc(${themeCssVariables.animation.duration.fast} * 1s)
+    ease-in-out;
   width: 100%;
 
   &:hover {
-    color: ${({ theme, isExpandable }) =>
-      isExpandable ? theme.font.color.primary : theme.font.color.tertiary};
+    color: ${({ isExpandable }) =>
+      isExpandable
+        ? themeCssVariables.font.color.primary
+        : themeCssVariables.font.color.tertiary};
   }
 
   &:focus-visible {
-    outline: 2px solid ${({ theme }) => theme.color.blue};
+    outline: 2px solid ${themeCssVariables.color.blue};
     outline-offset: 2px;
   }
 `;
 
 const StyledToolDetailsContainer = styled.div`
-  background: ${({ theme }) => theme.background.transparent.lighter};
-  border: 1px solid ${({ theme }) => theme.border.color.light};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  margin-left: ${({ theme }) => theme.spacing(3)};
+  background: ${themeCssVariables.background.transparent.lighter};
+  border: 1px solid ${themeCssVariables.border.color.light};
+  border-radius: ${themeCssVariables.border.radius.sm};
+  margin-left: ${themeCssVariables.spacing[3]};
   min-width: 0;
   overflow: hidden;
 `;
 
-const StyledToolTabList = styled(TabList)`
-  background-color: ${({ theme }) => theme.background.secondary};
-  padding-left: ${({ theme }) => theme.spacing(1)};
+const StyledToolTabListContainer = styled.div`
+  background-color: ${themeCssVariables.background.secondary};
+  padding-left: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledToolDetailsContent = styled.div`
@@ -217,11 +225,11 @@ const StyledToolDetailsContent = styled.div`
 `;
 
 const StyledToolJsonContent = styled.div`
-  padding: ${({ theme }) => theme.spacing(1)};
+  padding: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledJsonTreeContainer = styled.div`
-  font-size: ${({ theme }) => theme.font.size.md};
+  font-size: ${themeCssVariables.font.size.md};
   overflow-x: auto;
 
   li,
@@ -235,10 +243,10 @@ const StyledJsonTreeContainer = styled.div`
 `;
 
 const StyledToolErrorText = styled.p`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-size: ${({ theme }) => theme.font.size.md};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
-  line-height: ${({ theme }) => theme.text.lineHeight.lg};
+  color: ${themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.md};
+  font-weight: ${themeCssVariables.font.weight.regular};
+  line-height: ${themeCssVariables.text.lineHeight.lg};
   margin: 0;
   white-space: pre-wrap;
 `;
@@ -327,11 +335,13 @@ const ThinkingToolStepRow = ({
               <StyledToolErrorText>{part.errorText}</StyledToolErrorText>
             ) : (
               <StyledToolDetailsContent>
-                <StyledToolTabList
-                  tabs={toolTabs}
-                  behaveAsLinks={false}
-                  componentInstanceId={toolTabListComponentInstanceId}
-                />
+                <StyledToolTabListContainer>
+                  <TabList
+                    tabs={toolTabs}
+                    behaveAsLinks={false}
+                    componentInstanceId={toolTabListComponentInstanceId}
+                  />
+                </StyledToolTabListContainer>
                 <StyledToolJsonContent>
                   <StyledJsonTreeContainer>
                     <JsonTree
@@ -381,7 +391,13 @@ const ThinkingStepRow = ({
   return (
     <StyledRow>
       <StyledIconContainer>
-        {isActive ? <StyledOrbitLoaderIcon /> : <IconCpu size={14} />}
+        {isActive ? (
+          <StyledOrbitLoaderIconContainer>
+            <ThinkingOrbitLoaderIcon />
+          </StyledOrbitLoaderIconContainer>
+        ) : (
+          <IconCpu size={14} />
+        )}
       </StyledIconContainer>
       <StyledRowLabelContainer>
         <StyledRowLabel>{isActive ? t`Thinking` : t`Thought`}</StyledRowLabel>

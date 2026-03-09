@@ -1,7 +1,7 @@
 import { type ApolloError } from '@apollo/client';
 import { t } from '@lingui/core/macro';
 
-import { classifyMetadataError } from '@/metadata-error-handler/utils/classify-metadata-error.util';
+import { classifyMetadataError } from '@/metadata-error-handler/utils/classifyMetadataError';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import {
   type AllMetadataName,
@@ -44,6 +44,7 @@ export const useMetadataErrorHandler = () => {
     frontComponent: t`front component`,
     navigationMenuItem: t`navigation menu item`,
     webhook: t`webhook`,
+    viewSort: t`view sort`,
   } as const satisfies Record<AllMetadataName, string>;
 
   const handleMetadataError = (

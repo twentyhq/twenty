@@ -4,10 +4,6 @@ import { isDefined, resolveInput } from 'twenty-shared/utils';
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
-import {
-  RecordCrudException,
-  RecordCrudExceptionCode,
-} from 'src/engine/core-modules/record-crud/exceptions/record-crud.exception';
 import { UpsertRecordService } from 'src/engine/core-modules/record-crud/services/upsert-record.service';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import {
@@ -18,6 +14,7 @@ import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-e
 import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input';
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
 import { filterValidFieldsInRecord } from 'src/modules/workflow/workflow-executor/utils/filter-valid-fields-in-record.util';
+import { formatWorkflowRecordRelationFields } from 'src/modules/workflow/workflow-executor/utils/format-workflow-record-relation-fields.util';
 import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
 import { resolveRichTextFieldsInRecord } from 'src/modules/workflow/workflow-executor/utils/resolve-rich-text-fields-in-record.util';
 import { isWorkflowUpsertRecordAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/guards/is-workflow-upsert-record-action.guard';
@@ -74,14 +71,19 @@ export class UpsertRecordWorkflowAction implements WorkflowAction {
     ) as WorkflowUpsertRecordActionInput;
 
     if (!isDefined(workflowActionInput.objectName)) {
-      throw new RecordCrudException(
+      throw new WorkflowStepExecutorException(
         'Failed to upsert: Object name is required',
-        RecordCrudExceptionCode.INVALID_REQUEST,
+        WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
       );
     }
 
-    const filteredObjectRecord = filterValidFieldsInRecord(
+    const formattedObjectRecord = formatWorkflowRecordRelationFields(
       workflowActionInput.objectRecord,
+      objectMetadataInfo,
+    );
+
+    const filteredObjectRecord = filterValidFieldsInRecord(
+      formattedObjectRecord,
       objectMetadataInfo.flatObjectMetadata,
       objectMetadataInfo.flatFieldMetadataMaps,
     );
@@ -97,10 +99,7 @@ export class UpsertRecordWorkflowAction implements WorkflowAction {
     });
 
     if (!toolOutput.success) {
-      throw new RecordCrudException(
-        toolOutput.error || toolOutput.message,
-        RecordCrudExceptionCode.RECORD_UPSERT_FAILED,
-      );
+      return { error: toolOutput.error || toolOutput.message };
     }
 
     return {

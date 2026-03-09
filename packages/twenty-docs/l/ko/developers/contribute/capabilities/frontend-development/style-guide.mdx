@@ -194,7 +194,7 @@ setHotkeyScopeAndMemorizePreviousScope(
 
 ### StyledComponents 사용
 
-[styled-components](https://emotion.sh/docs/styled)로 구성 요소를 스타일링하십시오.
+[Linaria styled](https://github.com/callstack/linaria)로 구성 요소를 스타일링하십시오.
 
 ```tsx
 // ❌ Bad
@@ -260,7 +260,7 @@ const StyledButton = styled.button`
 
 ## No-Type Import 강제 실행
 
-타입 import를 피하십시오. 이 표준을 강화하기 위해 ESLint 규칙이 모든 타입 import를 확인하고 보고합니다. 이는 TypeScript 코드의 일관성과 가독성을 유지하는 데 도움이 됩니다.
+타입 import를 피하십시오. 이 표준을 강화하기 위해 Oxlint 규칙이 모든 타입 import를 확인하고 보고합니다. 이는 TypeScript 코드의 일관성과 가독성을 유지하는 데 도움이 됩니다.
 
 ```tsx
 // ❌ Bad
@@ -281,10 +281,10 @@ import { Meta, StoryObj } from '@storybook/react';
 
 * **유지관리성**: 이는 코드베이스 유지관리를 향상시킵니다. 개발자가 코드를 검토하거나 수정할 때 타입 전용 import를 식별하고 찾을 수 있습니다.
 
-### ESLint 규칙
+### Oxlint 규칙
 
-ESLint 규칙인 `@typescript-eslint/consistent-type-imports`는 타입 없는 import 표준을 강제합니다. 이 규칙은 모든 타입 import 위반에 대해 오류나 경고를 생성합니다.
+Oxlint 규칙인 `typescript/consistent-type-imports`는 타입 없는 import 표준을 강제합니다. 이 규칙은 모든 타입 import 위반에 대해 오류나 경고를 생성합니다.
 
 이 규칙은 의도치 않은 타입 import가 발생하는 드문 경계 사례를 구체적으로 다룹니다. 타입스크립트 자체는 [TypeScript 3.8 릴리스 노트](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-8.html)에서 이 관행을 권장하지 않습니다. 대부분의 상황에서 타입 전용 import를 사용할 필요가 없습니다.
 
-이 규칙을 준수하는 코드를 보장하기 위해 ESLint를 개발 워크플로의 일부로 실행하십시오.
+이 규칙을 준수하는 코드를 보장하기 위해 Oxlint를 개발 워크플로의 일부로 실행하십시오.

@@ -1,13 +1,13 @@
-import { useTheme } from '@emotion/react';
 import { isNonEmptyString, isString } from '@sniptt/guards';
-import { type ReactNode } from 'react';
+import { type ReactNode, useContext } from 'react';
 
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import {
   type IconComponent,
   IconGripVertical,
   OverflowingTextWithTooltip,
 } from '@ui/display';
+import { ThemeContext, themeCssVariables } from '@ui/theme-constants';
 import { type MenuItemDraggableGripMode } from '../../types/MenuItemDraggableGripMode';
 import { MenuItemIcon } from './MenuItemIcon';
 import { MenuItemIconBoxContainer } from './MenuItemIconBoxContainer';
@@ -28,7 +28,13 @@ const StyledMainText = styled.div`
   max-width: 100%;
 `;
 
-const StyledMenuItemLabelRight = styled(StyledMenuItemLabel)`
+const StyledMenuItemLabelRight = styled.div`
+  display: flex;
+  flex-direction: row;
+  font-size: ${themeCssVariables.font.size.md};
+  font-weight: ${themeCssVariables.font.weight.regular};
+  overflow: hidden;
+  white-space: nowrap;
   margin-left: auto;
 `;
 
@@ -55,13 +61,13 @@ export const MenuItemLeftContent = ({
   gripMode = 'never',
   disabled = false,
 }: MenuItemLeftContentProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   const gripIconColor = withIconContainer
-    ? theme.font.color.tertiary
+    ? themeCssVariables.font.color.tertiary
     : disabled
-      ? theme.font.color.extraLight
-      : theme.font.color.light;
+      ? themeCssVariables.font.color.extraLight
+      : themeCssVariables.font.color.light;
 
   return (
     <StyledMenuItemLeftContent className={className}>
@@ -108,7 +114,10 @@ export const MenuItemLeftContent = ({
             {isString(contextualText)
               ? isNonEmptyString(contextualText) && (
                   <StyledMenuItemContextualText>
-                    <OverflowingTextWithTooltip text={`· ${contextualText}`} />
+                    <OverflowingTextWithTooltip
+                      text={`· ${contextualText}`}
+                      tooltipContent={contextualText}
+                    />
                   </StyledMenuItemContextualText>
                 )
               : contextualText}

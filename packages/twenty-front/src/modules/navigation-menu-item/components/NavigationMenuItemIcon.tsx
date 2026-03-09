@@ -1,107 +1,119 @@
-import { useTheme } from '@emotion/react';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import { Avatar, useIcons } from 'twenty-ui/display';
+import { Avatar, IconLink, IconWorld, useIcons } from 'twenty-ui/display';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
+import { LinkIconWithLinkOverlay } from '@/navigation-menu-item/components/LinkIconWithLinkOverlay';
 import { StyledNavigationMenuItemIconContainer } from '@/navigation-menu-item/components/NavigationMenuItemIconContainer';
 import { ObjectIconWithViewOverlay } from '@/navigation-menu-item/components/ObjectIconWithViewOverlay';
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
-import { getNavigationMenuItemIconColors } from '@/navigation-menu-item/utils/getNavigationMenuItemIconColors';
+import { useObjectNavItemColor } from '@/navigation-menu-item/hooks/useObjectNavItemColor';
+import { getNavigationMenuItemIconStyleFromColor } from '@/navigation-menu-item/utils/getNavigationMenuItemIconStyleFromColor';
+import { getEffectiveNavigationMenuItemColor } from '@/navigation-menu-item/utils/getEffectiveNavigationMenuItemColor';
 import { type ProcessedNavigationMenuItem } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
 import { useGetStandardObjectIcon } from '@/object-metadata/hooks/useGetStandardObjectIcon';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { ViewKey } from '@/views/types/ViewKey';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const NavigationMenuItemIcon = ({
   navigationMenuItem,
 }: {
   navigationMenuItem: ProcessedNavigationMenuItem;
 }) => {
-  const theme = useTheme();
   const { getIcon } = useIcons();
   const isNavigationMenuItemEditingEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED,
   );
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
   const { Icon: StandardIcon, IconColor } = useGetStandardObjectIcon(
-    navigationMenuItem.objectNameSingular || '',
+    navigationMenuItem.objectNameSingular ?? '',
   );
 
   const isRecord =
     navigationMenuItem.itemType === NavigationMenuItemType.RECORD;
-  const isLink = navigationMenuItem.itemType === NavigationMenuItemType.LINK;
-  const isObjectIndexView =
-    navigationMenuItem.itemType === NavigationMenuItemType.VIEW &&
-    navigationMenuItem.viewKey === ViewKey.Index;
   const isViewWithOverlay =
     navigationMenuItem.itemType === NavigationMenuItemType.VIEW &&
-    !isObjectIndexView;
+    navigationMenuItem.viewKey !== ViewKey.Index;
 
   const objectMetadataItem = objectMetadataItems.find(
     (item) => item.nameSingular === navigationMenuItem.objectNameSingular,
   );
-  const ObjectIconForView =
+  const objectNavItemColor = useObjectNavItemColor(
+    navigationMenuItem.objectNameSingular ?? '',
+  );
+  const objectIconForView =
     objectMetadataItem?.icon != null
       ? getIcon(objectMetadataItem.icon)
       : StandardIcon;
 
-  if (
+  const canShowViewOverlay =
     isViewWithOverlay &&
-    isDefined(ObjectIconForView) &&
-    isDefined(navigationMenuItem.Icon)
-  ) {
-    const ViewIcon = getIcon(navigationMenuItem.Icon);
+    isDefined(objectIconForView) &&
+    isDefined(navigationMenuItem.Icon);
+
+  if (canShowViewOverlay) {
     return (
       <ObjectIconWithViewOverlay
-        ObjectIcon={ObjectIconForView}
-        ViewIcon={ViewIcon}
+        ObjectIcon={objectIconForView}
+        ViewIcon={getIcon(navigationMenuItem.Icon!)}
+        objectColor={objectNavItemColor}
       />
     );
   }
 
-  const IconToUse =
-    StandardIcon ||
+  if (navigationMenuItem.itemType === NavigationMenuItemType.LINK) {
+    return (
+      <LinkIconWithLinkOverlay
+        link={navigationMenuItem.link}
+        LinkIcon={IconLink}
+        DefaultIcon={IconWorld}
+        color={getEffectiveNavigationMenuItemColor(navigationMenuItem)}
+      />
+    );
+  }
+
+  const iconToUse =
+    StandardIcon ??
     (navigationMenuItem.Icon ? getIcon(navigationMenuItem.Icon) : undefined);
+  const effectiveColor =
+    getEffectiveNavigationMenuItemColor(navigationMenuItem);
+  const useStyledIcon =
+    isNavigationMenuItemEditingEnabled &&
+    !isRecord &&
+    isNonEmptyString(effectiveColor);
+  const iconStyle = useStyledIcon
+    ? getNavigationMenuItemIconStyleFromColor(effectiveColor)
+    : null;
 
-  const placeholderColorSeed = navigationMenuItem.targetRecordId ?? undefined;
-  const iconColors = getNavigationMenuItemIconColors(theme);
-  const iconBackgroundColor = isNavigationMenuItemEditingEnabled
-    ? isRecord
-      ? undefined
-      : isLink
-        ? iconColors.link
-        : isViewWithOverlay
-          ? iconColors.view
-          : iconColors.object
-    : undefined;
-
-  const iconColorToUse = iconBackgroundColor
-    ? theme.grayScale.gray1
+  const iconColorToUse = iconStyle
+    ? iconStyle.iconColor
     : StandardIcon
       ? IconColor
-      : theme.font.color.secondary;
+      : themeCssVariables.font.color.secondary;
 
   const avatar = (
     <Avatar
-      size={iconBackgroundColor ? 'sm' : 'md'}
+      size={iconStyle ? 'sm' : 'md'}
       type={navigationMenuItem.avatarType}
-      Icon={IconToUse}
+      Icon={iconToUse}
       iconColor={iconColorToUse}
       avatarUrl={navigationMenuItem.avatarUrl}
       placeholder={navigationMenuItem.labelIdentifier}
-      placeholderColorSeed={placeholderColorSeed}
+      placeholderColorSeed={navigationMenuItem.targetRecordId ?? undefined}
     />
   );
 
-  if (!iconBackgroundColor) {
+  if (!iconStyle) {
     return avatar;
   }
 
   return (
     <StyledNavigationMenuItemIconContainer
-      $backgroundColor={iconBackgroundColor}
+      $backgroundColor={iconStyle.backgroundColor}
+      $borderColor={iconStyle.borderColor}
     >
       {avatar}
     </StyledNavigationMenuItemIconContainer>

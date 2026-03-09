@@ -1,22 +1,18 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type ReactNode, useContext } from 'react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { type NavigationSections } from '@/navigation-menu-item/constants/NavigationSections.constants';
 import { NavigationDropTargetContext } from '@/navigation-menu-item/contexts/NavigationDropTargetContext';
 
-const StyledDropTarget = styled.div<{
-  $isDragOver: boolean;
-  $isDropForbidden: boolean;
-  $compact?: boolean;
-}>`
-  min-height: ${({ theme, $compact }) => ($compact ? 0 : theme.spacing(2))};
+const StyledDropTarget = styled.div<{ $compact?: boolean }>`
+  min-height: ${({ $compact }) =>
+    $compact ? 0 : themeCssVariables.spacing[2]};
   position: relative;
   transition: all 150ms ease-in-out;
 
-  ${({ $isDragOver, theme }) =>
-    $isDragOver &&
-    `
-    background-color: ${theme.background.transparent.blue};
+  &[data-drag-over='true'] {
+    background-color: ${themeCssVariables.background.transparent.blue};
 
     &::before {
       content: '';
@@ -25,28 +21,15 @@ const StyledDropTarget = styled.div<{
       left: 0;
       width: 100%;
       height: 2px;
-      background-color: ${theme.color.blue};
-      border-radius: ${theme.border.radius.sm} ${theme.border.radius.sm} 0 0;
+      background-color: ${themeCssVariables.color.blue};
+      border-radius: ${themeCssVariables.border.radius.sm}
+        ${themeCssVariables.border.radius.sm} 0 0;
     }
-  `}
+  }
 
-  ${({ $isDropForbidden, theme }) =>
-    $isDropForbidden &&
-    `
-    background-color: ${theme.background.transparent.danger};
+  &[data-drop-forbidden='true'] {
     cursor: not-allowed;
-
-    &::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      height: 2px;
-      background-color: ${theme.color.red};
-      border-radius: ${theme.border.radius.sm} ${theme.border.radius.sm} 0 0;
-    }
-  `}
+  }
 `;
 
 type NavigationItemDropTargetProps = {
@@ -55,6 +38,7 @@ type NavigationItemDropTargetProps = {
   sectionId: NavigationSections;
   children?: ReactNode;
   compact?: boolean;
+  dropTargetIdOverride?: string;
 };
 
 export const NavigationItemDropTarget = ({
@@ -63,19 +47,21 @@ export const NavigationItemDropTarget = ({
   sectionId,
   children,
   compact = false,
+  dropTargetIdOverride,
 }: NavigationItemDropTargetProps) => {
   const { activeDropTargetId, forbiddenDropTargetId } = useContext(
     NavigationDropTargetContext,
   );
-  const dropTargetId = `${sectionId}-${folderId ?? 'orphan'}-${index}`;
+  const dropTargetId =
+    dropTargetIdOverride ?? `${sectionId}-${folderId ?? 'orphan'}-${index}`;
   const isDragOver = activeDropTargetId === dropTargetId;
   const isDropForbidden = forbiddenDropTargetId === dropTargetId;
 
   return (
     <StyledDropTarget
-      $isDragOver={isDragOver}
-      $isDropForbidden={isDropForbidden}
       $compact={compact}
+      data-drag-over={isDragOver && !isDropForbidden ? 'true' : undefined}
+      data-drop-forbidden={isDropForbidden ? 'true' : undefined}
     >
       {children}
     </StyledDropTarget>

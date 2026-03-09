@@ -1,19 +1,15 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { IconButtonGroup, type IconButtonGroupProps } from 'twenty-ui/input';
-import { getWorkflowDiagramColors } from '@/workflow/workflow-diagram/utils/getWorkflowDiagramColors';
-import { css } from '@emotion/react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledIconButtonGroup = styled(IconButtonGroup)<{ selected?: boolean }>`
+const StyledIconButtonGroupContainer = styled.div`
   pointer-events: all;
+`;
 
-  ${({ selected, theme }) => {
-    if (!selected) return '';
-    const colors = getWorkflowDiagramColors({ theme });
-    return css`
-      background-color: ${colors.selected.background};
-      border: 1px solid ${colors.selected.borderColor};
-    `;
-  }}
+const StyledSelectedIconButtonGroupContainer = styled.div`
+  background-color: ${themeCssVariables.color.blue2};
+  border-color: ${themeCssVariables.color.blue};
+  pointer-events: all;
 `;
 
 type WorkflowDiagramEdgeButtonGroupProps = IconButtonGroupProps & {
@@ -24,11 +20,13 @@ export const WorkflowDiagramEdgeButtonGroup = ({
   selected = false,
   iconButtons,
 }: WorkflowDiagramEdgeButtonGroupProps) => {
+  const Container = selected
+    ? StyledSelectedIconButtonGroupContainer
+    : StyledIconButtonGroupContainer;
+
   return (
-    <StyledIconButtonGroup
-      className="nodrag nopan"
-      iconButtons={iconButtons}
-      selected={selected}
-    />
+    <Container>
+      <IconButtonGroup className="nodrag nopan" iconButtons={iconButtons} />
+    </Container>
   );
 };

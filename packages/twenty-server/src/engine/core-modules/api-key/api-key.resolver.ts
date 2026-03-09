@@ -6,10 +6,10 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
-import { CreateApiKeyInput } from 'src/engine/core-modules/api-key/dtos/create-api-key.dto';
-import { GetApiKeyInput } from 'src/engine/core-modules/api-key/dtos/get-api-key.dto';
-import { RevokeApiKeyInput } from 'src/engine/core-modules/api-key/dtos/revoke-api-key.dto';
-import { UpdateApiKeyInput } from 'src/engine/core-modules/api-key/dtos/update-api-key.dto';
+import { CreateApiKeyInput } from 'src/engine/core-modules/api-key/dtos/create-api-key.input';
+import { GetApiKeyInput } from 'src/engine/core-modules/api-key/dtos/get-api-key.input';
+import { RevokeApiKeyInput } from 'src/engine/core-modules/api-key/dtos/revoke-api-key.input';
+import { UpdateApiKeyInput } from 'src/engine/core-modules/api-key/dtos/update-api-key.input';
 import {
   ApiKeyException,
   ApiKeyExceptionCode,

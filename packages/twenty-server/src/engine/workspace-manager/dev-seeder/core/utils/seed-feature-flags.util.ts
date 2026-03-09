@@ -1,6 +1,5 @@
 import { type QueryRunner } from 'typeorm';
-
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagKey } from 'twenty-shared/types';
 
 const tableName = 'featureFlag';
 
@@ -103,21 +102,6 @@ export const seedFeatureFlags = async ({
       },
       {
         key: FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
-        key: FeatureFlagKey.IS_CORE_PICTURE_MIGRATED,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
-        key: FeatureFlagKey.IS_FILES_FIELD_MIGRATED,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
-        key: FeatureFlagKey.IS_OTHER_FILE_MIGRATED,
         workspaceId: workspaceId,
         value: true,
       },

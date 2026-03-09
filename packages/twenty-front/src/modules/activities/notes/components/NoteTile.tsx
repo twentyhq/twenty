@@ -1,20 +1,21 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 
 import { ActivityTargetsInlineCell } from '@/activities/inline-cell/components/ActivityTargetsInlineCell';
 import { useActivityTargetsComponentInstanceId } from '@/activities/inline-cell/hooks/useActivityTargetsComponentInstanceId';
 import { type Note } from '@/activities/types/Note';
 import { getActivityPreview } from '@/activities/utils/getActivityPreview';
-import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { RecordFieldsScopeContextProvider } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import { FieldContextProvider } from '@/object-record/record-field/ui/components/FieldContextProvider';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledCard = styled.div<{ isSingleNote: boolean }>`
   align-items: flex-start;
-  background: ${({ theme }) => theme.background.secondary};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.md};
+  background: ${themeCssVariables.background.secondary};
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  border-radius: ${themeCssVariables.border.radius.md};
   display: flex;
   flex-direction: column;
   height: 300px;
@@ -25,25 +26,25 @@ const StyledCard = styled.div<{ isSingleNote: boolean }>`
 const StyledCardDetailsContainer = styled.div`
   align-items: flex-start;
   align-self: stretch;
+  box-sizing: border-box;
   cursor: pointer;
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
   height: calc(100% - 45px);
   justify-content: start;
-  padding: ${({ theme }) => theme.spacing(4)};
-  width: calc(100% - ${({ theme }) => theme.spacing(8)});
-  box-sizing: border-box;
+  padding: ${themeCssVariables.spacing[4]};
+  width: calc(100% - ${themeCssVariables.spacing[8]});
 `;
 
 const StyledNoteTitle = styled.div`
-  color: ${({ theme }) => theme.font.color.primary};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
+  color: ${themeCssVariables.font.color.primary};
+  font-weight: ${themeCssVariables.font.weight.medium};
 `;
 
 const StyledCardContent = styled.div`
   align-self: stretch;
-  color: ${({ theme }) => theme.font.color.secondary};
+  color: ${themeCssVariables.font.color.secondary};
   line-break: anywhere;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -54,14 +55,14 @@ const StyledCardContent = styled.div`
 const StyledFooter = styled.div`
   align-items: center;
   align-self: stretch;
-  border-top: 1px solid ${({ theme }) => theme.border.color.light};
-  color: ${({ theme }) => theme.font.color.primary};
+  border-top: 1px solid ${themeCssVariables.border.color.light};
+  color: ${themeCssVariables.font.color.primary};
   display: flex;
   flex-direction: row;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
   justify-content: center;
-  padding: ${({ theme }) => theme.spacing(2)};
-  width: calc(100% - ${({ theme }) => theme.spacing(4)});
+  padding: ${themeCssVariables.spacing[2]};
+  width: calc(100% - ${themeCssVariables.spacing[4]});
 `;
 
 export const NoteTile = ({
@@ -71,7 +72,7 @@ export const NoteTile = ({
   note: Note;
   isSingleNote: boolean;
 }) => {
-  const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
+  const { openRecordInSidePanel } = useOpenRecordInSidePanel();
 
   const body = getActivityPreview(note?.bodyV2?.blocknote ?? null);
 
@@ -84,7 +85,7 @@ export const NoteTile = ({
     <StyledCard isSingleNote={isSingleNote}>
       <StyledCardDetailsContainer
         onClick={() =>
-          openRecordInCommandMenu({
+          openRecordInSidePanel({
             recordId: note.id,
             objectNameSingular: CoreObjectNameSingular.Note,
           })

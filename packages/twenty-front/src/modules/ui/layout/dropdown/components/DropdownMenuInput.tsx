@@ -1,5 +1,4 @@
-import { css } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import {
   forwardRef,
   useRef,
@@ -9,26 +8,38 @@ import {
 import 'react-phone-number-input/style.css';
 
 import { useRegisterInputEvents } from '@/object-record/record-field/ui/meta-types/input/hooks/useRegisterInputEvents';
-import { TEXT_INPUT_STYLE } from 'twenty-ui/theme';
+import { isDefined } from 'twenty-shared/utils';
 import { useCombinedRefs } from '~/hooks/useCombinedRefs';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledInput = styled.input<{
   withRightComponent?: boolean;
   hasError?: boolean;
 }>`
-  ${TEXT_INPUT_STYLE}
-
+  background-color: transparent;
+  border: none;
   box-sizing: border-box;
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  height: 32px;
-  position: relative;
-  width: 100%;
+  color: ${themeCssVariables.font.color.primary};
+  font-family: ${themeCssVariables.font.family};
+  font-size: inherit;
+  font-weight: ${themeCssVariables.font.weight.medium};
+  font-weight: inherit;
 
-  ${({ withRightComponent }) =>
-    withRightComponent &&
-    css`
-      padding-right: 32px;
-    `}
+  &::placeholder,
+  &::-webkit-input-placeholder {
+    color: ${themeCssVariables.font.color.light};
+    font-family: ${themeCssVariables.font.family};
+    font-weight: ${themeCssVariables.font.weight.medium};
+  }
+
+  height: 32px;
+  outline: none;
+  padding: ${themeCssVariables.spacing[0]} ${themeCssVariables.spacing[2]};
+  padding-right: ${({ withRightComponent }) =>
+    withRightComponent ? '32px' : '0'};
+  position: relative;
+
+  width: 100%;
 `;
 
 const StyledInputContainer = styled.div`
@@ -38,20 +49,20 @@ const StyledInputContainer = styled.div`
   width: 100%;
 
   &:not(:first-of-type) {
-    padding: ${({ theme }) => theme.spacing(1)};
+    padding: ${themeCssVariables.spacing[1]};
   }
 `;
 
 const StyledRightContainer = styled.div`
   position: absolute;
-  right: ${({ theme }) => theme.spacing(2)};
+  right: ${themeCssVariables.spacing[2]};
   top: 50%;
   transform: translateY(-50%);
 `;
 
 const StyledErrorDiv = styled.div`
-  color: ${({ theme }) => theme.color.red};
-  padding: 0 ${({ theme }) => theme.spacing(2)};
+  color: ${themeCssVariables.color.red};
+  padding: 0 ${themeCssVariables.spacing[2]};
 `;
 
 type HTMLInputProps = InputHTMLAttributes<HTMLInputElement>;
@@ -130,10 +141,10 @@ export const DropdownMenuInput = forwardRef<
               placeholder={placeholder}
               onChange={onChange}
               ref={combinedRef}
-              withRightComponent={!!rightComponent}
+              withRightComponent={isDefined(rightComponent)}
             />
           )}
-          {!!rightComponent && (
+          {isDefined(rightComponent) && (
             <StyledRightContainer>{rightComponent}</StyledRightContainer>
           )}
         </StyledInputContainer>

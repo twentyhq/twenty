@@ -15,7 +15,7 @@ export class LogicFunctionDriversModule {
   static forRootAsync(options: LogicFunctionModuleAsyncOptions): DynamicModule {
     const provider = {
       provide: LOGIC_FUNCTION_DRIVER,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // oxlint-disable-next-line @typescripttypescript/no-explicit-any
       useFactory: async (...args: any[]) => {
         const config = await options.useFactory(...args);
 

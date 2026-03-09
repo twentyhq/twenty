@@ -12,7 +12,8 @@ import { useOpenRecordFilterChipFromTableHeader } from '@/object-record/record-t
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useToggleScrollWrapper } from '@/ui/utilities/scroll/hooks/useToggleScrollWrapper';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useLingui } from '@lingui/react/macro';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import {
@@ -29,8 +30,8 @@ export type RecordTableColumnHeadDropdownMenuProps = {
   objectMetadataId: string;
 };
 
-const StyledDropdownMenuItemsContainer = styled(DropdownMenuItemsContainer)`
-  z-index: ${({ theme }) => theme.lastLayerZIndex};
+const StyledDropdownMenuItemsContainerWrapper = styled.div`
+  z-index: ${themeCssVariables.lastLayerZIndex};
 `;
 
 export const RecordTableColumnHeadDropdownMenu = ({
@@ -135,44 +136,46 @@ export const RecordTableColumnHeadDropdownMenu = ({
 
   return (
     <DropdownContent>
-      <StyledDropdownMenuItemsContainer>
-        {isFilterable && (
-          <MenuItem
-            LeftIcon={IconFilter}
-            onClick={handleFilterClick}
-            text={t`Filter`}
-          />
-        )}
-        {isSortable && (
-          <MenuItem
-            LeftIcon={IconSortDescending}
-            onClick={handleSortClick}
-            text={t`Sort`}
-          />
-        )}
-        {showSeparator && <DropdownMenuSeparator />}
-        {canMoveLeft && (
-          <MenuItem
-            LeftIcon={IconArrowLeft}
-            onClick={handleColumnMoveLeft}
-            text={t`Move left`}
-          />
-        )}
-        {canMoveRight && (
-          <MenuItem
-            LeftIcon={IconArrowRight}
-            onClick={handleColumnMoveRight}
-            text={t`Move right`}
-          />
-        )}
-        {canHide && (
-          <MenuItem
-            LeftIcon={IconEyeOff}
-            onClick={async () => await handleColumnVisibility()}
-            text={t`Hide`}
-          />
-        )}
-      </StyledDropdownMenuItemsContainer>
+      <StyledDropdownMenuItemsContainerWrapper>
+        <DropdownMenuItemsContainer>
+          {isFilterable && (
+            <MenuItem
+              LeftIcon={IconFilter}
+              onClick={handleFilterClick}
+              text={t`Filter`}
+            />
+          )}
+          {isSortable && (
+            <MenuItem
+              LeftIcon={IconSortDescending}
+              onClick={handleSortClick}
+              text={t`Sort`}
+            />
+          )}
+          {showSeparator && <DropdownMenuSeparator />}
+          {canMoveLeft && (
+            <MenuItem
+              LeftIcon={IconArrowLeft}
+              onClick={handleColumnMoveLeft}
+              text={t`Move left`}
+            />
+          )}
+          {canMoveRight && (
+            <MenuItem
+              LeftIcon={IconArrowRight}
+              onClick={handleColumnMoveRight}
+              text={t`Move right`}
+            />
+          )}
+          {canHide && (
+            <MenuItem
+              LeftIcon={IconEyeOff}
+              onClick={async () => await handleColumnVisibility()}
+              text={t`Hide`}
+            />
+          )}
+        </DropdownMenuItemsContainer>
+      </StyledDropdownMenuItemsContainerWrapper>
     </DropdownContent>
   );
 };

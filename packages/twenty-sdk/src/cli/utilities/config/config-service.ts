@@ -1,5 +1,7 @@
-import * as fs from 'fs-extra';
+import { readFile, writeFile } from 'node:fs/promises';
 import * as path from 'path';
+
+import { ensureDir, ensureFile } from '@/cli/utilities/file/fs-utils';
 
 import { getConfigPath } from '@/cli/utilities/config/get-config-path';
 
@@ -8,6 +10,8 @@ export type TwentyConfig = {
   apiKey?: string;
   applicationAccessToken?: string;
   applicationRefreshToken?: string;
+  oauthClientId?: string;
+  oauthClientSecret?: string;
 };
 
 type PersistedConfig = TwentyConfig & {
@@ -38,8 +42,8 @@ export class ConfigService {
   }
 
   private async readRawConfig(): Promise<PersistedConfig> {
-    await fs.ensureFile(this.configPath);
-    const content = await fs.readFile(this.configPath, 'utf8');
+    await ensureFile(this.configPath);
+    const content = await readFile(this.configPath, 'utf8');
     return JSON.parse(content || '{}');
   }
 
@@ -88,8 +92,8 @@ export class ConfigService {
 
     raw.profiles[profile] = { ...currentProfile, ...config };
 
-    await fs.ensureDir(path.dirname(this.configPath));
-    await fs.writeFile(this.configPath, JSON.stringify(raw, null, 2));
+    await ensureDir(path.dirname(this.configPath));
+    await writeFile(this.configPath, JSON.stringify(raw, null, 2));
   }
 
   async clearConfig(): Promise<void> {
@@ -112,8 +116,8 @@ export class ConfigService {
       raw.apiUrl = defaultConfig.apiUrl;
     }
 
-    await fs.ensureDir(path.dirname(this.configPath));
-    await fs.writeFile(this.configPath, JSON.stringify(raw, null, 2));
+    await ensureDir(path.dirname(this.configPath));
+    await writeFile(this.configPath, JSON.stringify(raw, null, 2));
   }
 
   private getDefaultConfig(): TwentyConfig {
@@ -153,7 +157,7 @@ export class ConfigService {
   async setDefaultWorkspace(name: string): Promise<void> {
     const raw = await this.readRawConfig();
     raw.defaultWorkspace = name;
-    await fs.ensureDir(path.dirname(this.configPath));
-    await fs.writeFile(this.configPath, JSON.stringify(raw, null, 2));
+    await ensureDir(path.dirname(this.configPath));
+    await writeFile(this.configPath, JSON.stringify(raw, null, 2));
   }
 }

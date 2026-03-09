@@ -1,5 +1,4 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { navigationDrawerExpandedMemorizedState } from '@/ui/navigation/states/navigationDrawerExpandedMemorizedState';
@@ -8,8 +7,10 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
+import { useContext } from 'react';
 import { IconX } from 'twenty-ui/display';
 import { UndecoratedLink } from 'twenty-ui/navigation';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type NavigationDrawerBackButtonProps = {
   title: string;
@@ -19,18 +20,18 @@ const StyledIconAndButtonContainer = styled.button`
   align-items: center;
   background: inherit;
   border: none;
-  color: ${({ theme }) => theme.font.color.secondary};
+  color: ${themeCssVariables.font.color.secondary};
   cursor: pointer;
   display: flex;
   flex-direction: row;
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  gap: ${({ theme }) => theme.spacing(2)};
-  padding: ${({ theme }) => theme.spacing(1.5, 1)};
+  font-family: ${themeCssVariables.font.family};
+  font-weight: ${themeCssVariables.font.weight.medium};
+  gap: ${themeCssVariables.spacing[2]};
+  padding: ${themeCssVariables.spacing['1.5']} ${themeCssVariables.spacing[1]};
   width: 100%;
-  font-family: ${({ theme }) => theme.font.family};
   &:hover {
-    background: ${({ theme }) => theme.background.transparent.light};
-    border-radius: ${({ theme }) => theme.border.radius.sm};
+    background: ${themeCssVariables.background.transparent.light};
+    border-radius: ${themeCssVariables.border.radius.sm};
   }
 `;
 
@@ -38,15 +39,15 @@ const StyledContainer = styled.div`
   align-items: center;
   display: flex;
   flex-direction: row;
-  height: ${({ theme }) => theme.spacing(8)};
+  height: ${themeCssVariables.spacing[8]};
   justify-content: space-between;
-  padding-left: ${({ theme }) => theme.spacing(5)};
+  padding-left: ${themeCssVariables.spacing[5]};
 `;
 
 export const NavigationDrawerBackButton = ({
   title,
 }: NavigationDrawerBackButtonProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const navigationMemorizedUrl = useAtomStateValue(navigationMemorizedUrlState);
 
   const setIsNavigationDrawerExpanded = useSetAtomState(

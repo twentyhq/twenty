@@ -5,7 +5,7 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { getFieldMetadataItemById } from '@/object-metadata/utils/getFieldMetadataItemById';
 import { useRecordFieldsScopeContextOrThrow } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
-import { useAddNewRecordAndOpenRightDrawer } from '@/object-record/record-field/ui/meta-types/input/hooks/useAddNewRecordAndOpenRightDrawer';
+import { useAddNewRecordAndOpenSidePanel } from '@/object-record/record-field/ui/meta-types/input/hooks/useAddNewRecordAndOpenSidePanel';
 import { useUpdateRelationOneToManyFieldInput } from '@/object-record/record-field/ui/meta-types/input/hooks/useUpdateRelationOneToManyFieldInput';
 import { type FieldRelationMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { MultipleRecordPicker } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPicker';
@@ -49,7 +49,7 @@ export const RecordDetailRelationSectionDropdownToMany = ({
     objectMetadataItems,
   });
 
-  if (!fieldMetadataItem || !objectMetadataItem) {
+  if (!isDefined(fieldMetadataItem) || !isDefined(objectMetadataItem)) {
     throw new CustomError(
       'Field metadata item or object metadata item not found',
       'FIELD_METADATA_ITEM_OR_OBJECT_METADATA_ITEM_NOT_FOUND',
@@ -118,15 +118,14 @@ export const RecordDetailRelationSectionDropdownToMany = ({
 
   const { updateRelation } = useUpdateRelationOneToManyFieldInput();
 
-  const { createNewRecordAndOpenRightDrawer } =
-    useAddNewRecordAndOpenRightDrawer({
-      fieldMetadataItem,
-      objectMetadataItem,
-      relationObjectMetadataNameSingular,
-      relationObjectMetadataItem,
-      relationFieldMetadataItem,
-      recordId,
-    });
+  const { createNewRecordAndOpenSidePanel } = useAddNewRecordAndOpenSidePanel({
+    fieldMetadataItem,
+    objectMetadataItem,
+    relationObjectMetadataNameSingular,
+    relationObjectMetadataItem,
+    relationFieldMetadataItem,
+    recordId,
+  });
 
   const handleOpenRelationPickerDropdown = () => {
     setMultipleRecordPickerSearchableObjectMetadataItems([
@@ -160,7 +159,7 @@ export const RecordDetailRelationSectionDropdownToMany = ({
   const handleCreateNew = (searchString?: string) => {
     closeDropdown(dropdownId);
 
-    createNewRecordAndOpenRightDrawer?.(searchString);
+    createNewRecordAndOpenSidePanel?.(searchString);
   };
 
   return (
@@ -183,7 +182,7 @@ export const RecordDetailRelationSectionDropdownToMany = ({
           focusId={dropdownId}
           componentInstanceId={dropdownId}
           onCreate={
-            isDefined(createNewRecordAndOpenRightDrawer)
+            isDefined(createNewRecordAndOpenSidePanel)
               ? handleCreateNew
               : undefined
           }

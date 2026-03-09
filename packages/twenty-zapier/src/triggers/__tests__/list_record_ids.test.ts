@@ -2,13 +2,13 @@ import { createAppTester, tools } from 'zapier-platform-core';
 
 import App from 'src/index';
 import { listRecordIdsKey } from 'src/triggers/list_record_ids';
-import { getBundle } from 'src/utils/getBundle';
+import { getBundleForTest } from 'src/utils/getBundleForTest';
 tools.env.inject();
 
 const appTester = createAppTester(App);
 describe('triggers.list_record_ids', () => {
   test('should run', async () => {
-    const bundle = getBundle({ nameSingular: 'company' });
+    const bundle = getBundleForTest({ nameSingular: 'company' });
     const result = await appTester(
       App.triggers[listRecordIdsKey].operation.perform,
       bundle,

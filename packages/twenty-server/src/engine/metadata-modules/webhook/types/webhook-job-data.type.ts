@@ -15,7 +15,7 @@ export type CallWebhookJobData = WebhookJobBase & {
   objectMetadata: { id: string; nameSingular: string };
   workspaceMemberId?: string;
   applicationId?: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
   record: any;
   updatedFields?: string[];
 };

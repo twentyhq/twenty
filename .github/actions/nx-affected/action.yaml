@@ -15,8 +15,22 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: Fetch main branch for diff
+      shell: bash
+      run: git fetch origin main --depth=1
     - name: Get last successful commit
+      if: env.NX_BASE == ''
       uses: nrwl/nx-set-shas@v4
+    - name: Fallback to origin/main if no base found
+      if: env.NX_BASE == ''
+      shell: bash
+      run: echo "NX_BASE=$(git rev-parse origin/main)" >> $GITHUB_ENV
     - name: Run affected command
       shell: bash
-      run: npx nx affected --nxBail --configuration=${{ inputs.configuration }} -t=${{ inputs.tasks }} --parallel=${{ inputs.parallel }} --exclude='*,!tag:${{ inputs.tag }}' ${{ inputs.args }}
+      env:
+        NX_CONFIGURATION: ${{ inputs.configuration }}
+        NX_TASKS: ${{ inputs.tasks }}
+        NX_PARALLEL: ${{ inputs.parallel }}
+        NX_TAG: ${{ inputs.tag }}
+        NX_ARGS: ${{ inputs.args }}
+      run: npx nx affected --nxBail --configuration="$NX_CONFIGURATION" -t="$NX_TASKS" --parallel="$NX_PARALLEL" --exclude="*,!tag:$NX_TAG" $NX_ARGS

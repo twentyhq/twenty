@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import {
   DragDropContext,
   Droppable,
@@ -31,7 +31,7 @@ export const DraggableList = ({
           {(provided) => (
             <div
               ref={provided.innerRef}
-              // eslint-disable-next-line react/jsx-props-no-spreading
+              // oxlint-disable-next-line react/jsx-props-no-spreading
               {...provided.droppableProps}
             >
               {draggableItems}

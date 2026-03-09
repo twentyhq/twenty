@@ -1,5 +1,5 @@
 import { NavigationDrawerItemForObjectMetadataItem } from '@/object-metadata/components/NavigationDrawerItemForObjectMetadataItem';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
@@ -28,7 +28,6 @@ type NavigationDrawerSectionForObjectMetadataItemsProps = {
   isRemote: boolean;
   objectMetadataItems: ObjectMetadataItem[];
   rightIcon?: React.ReactNode;
-  isEditMode?: boolean;
   selectedObjectMetadataItemId?: string | null;
   onObjectMetadataItemClick?: (objectMetadataItem: ObjectMetadataItem) => void;
   onActiveObjectMetadataItemClick?: (
@@ -41,7 +40,6 @@ export const NavigationDrawerSectionForObjectMetadataItems = ({
   isRemote,
   objectMetadataItems,
   rightIcon,
-  isEditMode = false,
   selectedObjectMetadataItemId = null,
   onObjectMetadataItemClick,
   onActiveObjectMetadataItemClick,
@@ -119,6 +117,7 @@ export const NavigationDrawerSectionForObjectMetadataItems = ({
             label={sectionTitle}
             onClick={() => toggleNavigationSection()}
             rightIcon={rightIcon}
+            isOpen={isNavigationSectionOpen}
           />
         </NavigationDrawerAnimatedCollapseWrapper>
         {isNavigationSectionOpen &&
@@ -127,7 +126,6 @@ export const NavigationDrawerSectionForObjectMetadataItems = ({
               <NavigationDrawerItemForObjectMetadataItem
                 key={`navigation-drawer-item-${objectMetadataItem.id}`}
                 objectMetadataItem={objectMetadataItem}
-                isEditMode={isEditMode}
                 isSelectedInEditMode={
                   selectedObjectMetadataItemId === objectMetadataItem.id
                 }

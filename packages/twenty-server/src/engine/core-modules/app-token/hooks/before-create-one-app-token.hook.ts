@@ -11,7 +11,7 @@ export class BeforeCreateOneAppToken<T extends AppTokenEntity>
 {
   async run(
     instance: CreateOneInputType<T>,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
     context: any,
   ): Promise<CreateOneInputType<T>> {
     const userId = context?.req?.user?.id;

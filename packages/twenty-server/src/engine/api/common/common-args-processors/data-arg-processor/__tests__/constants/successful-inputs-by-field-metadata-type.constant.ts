@@ -53,7 +53,9 @@ export const successfulInputsByFieldMetadataType: {
     },
     {
       input: { [joinColumnNameForManyToOneMorphRelationField1]: null },
-      expectedOutput: { [joinColumnNameForManyToOneMorphRelationField1]: null },
+      expectedOutput: {
+        [joinColumnNameForManyToOneMorphRelationField1]: null,
+      },
     },
   ],
   [FieldMetadataType.RAW_JSON]: [

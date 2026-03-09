@@ -1,12 +1,18 @@
 import { ActionOpenSidePanelPage } from '@/action-menu/actions/components/ActionOpenSidePanelPage';
+import { EditNavigationSidebarNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/components/EditNavigationSidebarNoSelectionRecordAction';
 import { RecordAgnosticActionsKeys } from '@/action-menu/actions/record-agnostic-actions/types/RecordAgnosticActionsKeys';
 import { type ActionConfig } from '@/action-menu/actions/types/ActionConfig';
 import { ActionScope } from '@/action-menu/actions/types/ActionScope';
 import { ActionType } from '@/action-menu/actions/types/ActionType';
-import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
 import { msg } from '@lingui/core/macro';
-import { CommandMenuPages } from 'twenty-shared/types';
-import { IconHistory, IconSearch, IconSparkles } from 'twenty-ui/display';
+import { ActionViewType, SidePanelPages } from 'twenty-shared/types';
+import {
+  IconHistory,
+  IconLayout,
+  IconSearch,
+  IconSparkles,
+} from 'twenty-ui/display';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const RECORD_AGNOSTIC_ACTIONS_CONFIG: Record<string, ActionConfig> = {
   [RecordAgnosticActionsKeys.SEARCH_RECORDS]: {
@@ -21,7 +27,7 @@ export const RECORD_AGNOSTIC_ACTIONS_CONFIG: Record<string, ActionConfig> = {
     availableOn: [ActionViewType.GLOBAL],
     component: (
       <ActionOpenSidePanelPage
-        page={CommandMenuPages.SearchRecords}
+        page={SidePanelPages.SearchRecords}
         pageTitle={msg`Search`}
         pageIcon={IconSearch}
         shouldResetSearchState={true}
@@ -42,7 +48,7 @@ export const RECORD_AGNOSTIC_ACTIONS_CONFIG: Record<string, ActionConfig> = {
     availableOn: [ActionViewType.GLOBAL],
     component: (
       <ActionOpenSidePanelPage
-        page={CommandMenuPages.SearchRecords}
+        page={SidePanelPages.SearchRecords}
         pageTitle={msg`Search`}
         pageIcon={IconSearch}
       />
@@ -62,7 +68,7 @@ export const RECORD_AGNOSTIC_ACTIONS_CONFIG: Record<string, ActionConfig> = {
     availableOn: [ActionViewType.GLOBAL],
     component: (
       <ActionOpenSidePanelPage
-        page={CommandMenuPages.AskAI}
+        page={SidePanelPages.AskAI}
         pageTitle={msg`Ask AI`}
         pageIcon={IconSparkles}
       />
@@ -82,11 +88,27 @@ export const RECORD_AGNOSTIC_ACTIONS_CONFIG: Record<string, ActionConfig> = {
     availableOn: [ActionViewType.GLOBAL],
     component: (
       <ActionOpenSidePanelPage
-        page={CommandMenuPages.ViewPreviousAIChats}
+        page={SidePanelPages.ViewPreviousAIChats}
         pageTitle={msg`View Previous AI Chats`}
         pageIcon={IconSparkles}
       />
     ),
     shouldBeRegistered: () => true,
+  },
+  [RecordAgnosticActionsKeys.EDIT_NAVIGATION_SIDEBAR]: {
+    type: ActionType.Navigation,
+    scope: ActionScope.Global,
+    key: RecordAgnosticActionsKeys.EDIT_NAVIGATION_SIDEBAR,
+    label: msg`Edit navigation sidebar`,
+    shortLabel: msg`Edit sidebar`,
+    position: 4,
+    Icon: IconLayout,
+    isPinned: false,
+    availableOn: [ActionViewType.GLOBAL],
+    shouldBeRegistered: ({ isFeatureFlagEnabled }) =>
+      isFeatureFlagEnabled(
+        FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED,
+      ),
+    component: <EditNavigationSidebarNoSelectionRecordAction />,
   },
 };

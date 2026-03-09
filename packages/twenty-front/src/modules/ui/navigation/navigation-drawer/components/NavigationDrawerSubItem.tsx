@@ -10,7 +10,7 @@ export const NavigationDrawerSubItem = ({
   label,
   secondaryLabel,
   Icon,
-  iconBackgroundColor,
+  iconColor,
   to,
   onClick,
   active,
@@ -23,6 +23,7 @@ export const NavigationDrawerSubItem = ({
   isDragging,
   isSelectedInEditMode,
   triggerEvent,
+  variant,
 }: NavigationDrawerSubItemProps) => {
   return (
     <NavigationDrawerItem
@@ -32,7 +33,7 @@ export const NavigationDrawerSubItem = ({
       indentationLevel={2}
       subItemState={subItemState}
       Icon={Icon}
-      iconBackgroundColor={iconBackgroundColor}
+      iconColor={iconColor}
       to={to}
       onClick={onClick}
       active={active}
@@ -44,6 +45,7 @@ export const NavigationDrawerSubItem = ({
       isDragging={isDragging}
       isSelectedInEditMode={isSelectedInEditMode}
       triggerEvent={triggerEvent}
+      variant={variant}
     />
   );
 };

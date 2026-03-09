@@ -10,7 +10,7 @@ import { isMicrosoftClientTemporaryError } from 'src/modules/messaging/message-i
 export class MicrosoftNetworkErrorHandler {
   private readonly logger = new Logger(MicrosoftNetworkErrorHandler.name);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
   public handleError(error: any): MessageImportDriverException | null {
     const isBodyString = error.body && typeof error.body === 'string';
     const isTemporaryError =

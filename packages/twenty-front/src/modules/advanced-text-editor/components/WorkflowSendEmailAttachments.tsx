@@ -2,13 +2,13 @@ import { WorkflowAttachmentChip } from '@/advanced-text-editor/components/Workfl
 import { useUploadWorkflowFile } from '@/advanced-text-editor/hooks/useUploadWorkflowFile';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { type ChangeEvent, useRef } from 'react';
+import { type ChangeEvent, useContext, useRef } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { type WorkflowAttachment } from 'twenty-shared/workflow';
 import { IconUpload } from 'twenty-ui/display';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type WorkflowSendEmailAttachmentsProps = {
   files: WorkflowAttachment[];
@@ -26,21 +26,21 @@ const StyledFileInput = styled.input`
 `;
 
 const StyledUploadArea = styled.div<{ hasFiles: boolean }>`
-  background-color: ${({ theme }) => theme.background.transparent.lighter};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+  background-color: ${themeCssVariables.background.transparent.lighter};
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  border-radius: ${themeCssVariables.border.radius.sm};
   display: flex;
   flex-direction: column;
-  min-height: ${({ hasFiles }) => (hasFiles ? 'auto' : '24px')};
   justify-content: center;
-  padding-top: ${({ theme }) => theme.spacing(1)};
-  padding-bottom: ${({ theme }) => theme.spacing(1)};
-  padding-left: ${({ theme }) => theme.spacing(2)};
-  padding-right: ${({ theme }) => theme.spacing(2)};
+  min-height: ${({ hasFiles }) => (hasFiles ? 'auto' : '24px')};
+  padding-bottom: ${themeCssVariables.spacing[1]};
+  padding-left: ${themeCssVariables.spacing[2]};
+  padding-right: ${themeCssVariables.spacing[2]};
+  padding-top: ${themeCssVariables.spacing[1]};
 
   &:hover {
-    background-color: ${({ theme }) => theme.background.transparent.light};
-    border-color: ${({ theme }) => theme.border.color.strong};
+    background-color: ${themeCssVariables.background.transparent.light};
+    border-color: ${themeCssVariables.border.color.strong};
   }
 `;
 
@@ -48,17 +48,17 @@ const StyledChipsContainer = styled.div`
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledUploadAreaLabel = styled.div`
-  justify-content: center;
-  color: ${({ theme }) => theme.font.color.tertiary};
+  color: ${themeCssVariables.font.color.secondary};
+  color: ${themeCssVariables.font.color.tertiary};
   display: flex;
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  color: ${({ theme }) => theme.font.color.secondary};
-  gap: ${({ theme }) => theme.spacing(1)};
+  font-size: ${themeCssVariables.font.size.sm};
+  font-weight: ${themeCssVariables.font.weight.medium};
+  gap: ${themeCssVariables.spacing[1]};
+  justify-content: center;
 `;
 
 export const WorkflowSendEmailAttachments = ({
@@ -66,11 +66,10 @@ export const WorkflowSendEmailAttachments = ({
   label,
   onChange,
 }: WorkflowSendEmailAttachmentsProps) => {
+  const { theme } = useContext(ThemeContext);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { uploadWorkflowFile } = useUploadWorkflowFile();
   const { t } = useLingui();
-  const theme = useTheme();
-
   const handleAddFileClick = (e: React.MouseEvent) => {
     const target = e.target as HTMLElement;
 

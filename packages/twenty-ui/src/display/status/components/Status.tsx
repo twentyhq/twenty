@@ -1,7 +1,7 @@
-import styled from '@emotion/styled';
-import { MAIN_COLOR_NAMES, type ThemeColor } from '@ui/theme';
-
+import { styled } from '@linaria/react';
 import { Loader } from '@ui/feedback/loader/components/Loader';
+import { type ThemeColor, MAIN_COLOR_NAMES } from '@ui/theme';
+import { themeCssVariables } from '@ui/theme-constants';
 
 const parseThemeColor = (color: string): ThemeColor =>
   (MAIN_COLOR_NAMES as string[]).includes(color)
@@ -14,30 +14,32 @@ const StyledStatus = styled.h3<{
   isLoaderVisible: boolean;
 }>`
   align-items: center;
-  background: ${({ color, theme }) => theme.tag.background[color]};
-  border-radius: ${({ theme }) => theme.border.radius.pill};
-  color: ${({ color, theme }) => theme.tag.text[color]};
+  background: ${({ color }) => themeCssVariables.tag.background[color]};
+  border-radius: ${themeCssVariables.border.radius.pill};
+  color: ${({ color }) => themeCssVariables.tag.text[color]};
   display: inline-flex;
-  font-size: ${({ theme }) => theme.font.size.md};
+  font-size: ${themeCssVariables.font.size.md};
   font-style: normal;
-  font-weight: ${({ theme, weight }) => theme.font.weight[weight]};
-  gap: ${({ theme }) => theme.spacing(1)};
-  height: ${({ theme }) => theme.spacing(5)};
+  font-weight: ${({ weight }) => themeCssVariables.font.weight[weight]};
+  gap: ${themeCssVariables.spacing[1]};
+  height: ${themeCssVariables.spacing[5]};
   margin: 0;
   overflow: hidden;
   padding: 0
-    ${({ theme, isLoaderVisible }) =>
-      isLoaderVisible ? theme.spacing(1) : theme.spacing(2)}
-    0 ${({ theme }) => theme.spacing(2)};
+    ${({ isLoaderVisible }) =>
+      isLoaderVisible
+        ? themeCssVariables.spacing[1]
+        : themeCssVariables.spacing[2]}
+    0 ${themeCssVariables.spacing[2]};
 
   &:before {
-    background-color: ${({ color, theme }) => theme.tag.text[color]};
-    border-radius: ${({ theme }) => theme.border.radius.rounded};
+    background-color: ${({ color }) => themeCssVariables.tag.text[color]};
+    border-radius: ${themeCssVariables.border.radius.rounded};
     content: '';
     display: block;
     flex-shrink: 0;
-    height: ${({ theme }) => theme.spacing(1)};
-    width: ${({ theme }) => theme.spacing(1)};
+    height: ${themeCssVariables.spacing[1]};
+    width: ${themeCssVariables.spacing[1]};
   }
 `;
 
@@ -63,15 +65,17 @@ export const Status = ({
   text,
   onClick,
   weight = 'regular',
-}: StatusProps) => (
-  <StyledStatus
-    className={className}
-    color={parseThemeColor(color)}
-    onClick={onClick}
-    weight={weight}
-    isLoaderVisible={isLoaderVisible}
-  >
-    <StyledContent>{text}</StyledContent>
-    {isLoaderVisible ? <Loader color={color} /> : null}
-  </StyledStatus>
-);
+}: StatusProps) => {
+  return (
+    <StyledStatus
+      className={className}
+      color={parseThemeColor(color)}
+      onClick={onClick}
+      weight={weight}
+      isLoaderVisible={isLoaderVisible}
+    >
+      <StyledContent>{text}</StyledContent>
+      {isLoaderVisible ? <Loader color={color} /> : null}
+    </StyledStatus>
+  );
+};

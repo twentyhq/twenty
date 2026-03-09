@@ -1,39 +1,50 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { IconChevronDown } from 'twenty-ui/display';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 export const StyledContainer = styled.div<{
   isNavigationDrawerExpanded: boolean;
 }>`
   align-items: center;
-  cursor: pointer;
-  color: ${({ theme }) => theme.font.color.primary};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
   border: 1px solid transparent;
+  border-radius: ${themeCssVariables.border.radius.sm};
+  color: ${themeCssVariables.font.color.primary};
+  cursor: pointer;
   display: flex;
+  gap: ${({ isNavigationDrawerExpanded }) =>
+    isNavigationDrawerExpanded ? themeCssVariables.spacing[1] : '0'};
+  height: ${themeCssVariables.spacing[5]};
   justify-content: space-between;
-  height: ${({ theme }) => theme.spacing(5)};
-  padding: calc(${({ theme }) => theme.spacing(1)} - 1px);
+  padding: calc(${themeCssVariables.spacing[1]} - 1px);
   width: ${({ isNavigationDrawerExpanded }) =>
     isNavigationDrawerExpanded ? '100%' : 'auto'};
-  gap: ${({ theme, isNavigationDrawerExpanded }) =>
-    isNavigationDrawerExpanded ? theme.spacing(1) : '0'};
   &:hover {
-    background-color: ${({ theme }) => theme.background.transparent.lighter};
-    border: 1px solid ${({ theme }) => theme.border.color.medium};
+    background-color: ${themeCssVariables.background.transparent.lighter};
+    border: 1px solid ${themeCssVariables.border.color.medium};
   }
 `;
 
 export const StyledLabel = styled.div`
   align-items: center;
   display: flex;
-  font-weight: ${({ theme }) => theme.font.weight.medium};
+  font-weight: ${themeCssVariables.font.weight.medium};
 `;
 
-export const StyledIconChevronDown = styled(IconChevronDown)<{
-  disabled?: boolean;
-}>`
+const StyledIconChevronDownContainer = styled.div<{ disabled?: boolean }>`
   align-items: center;
-  color: ${({ disabled, theme }) =>
-    disabled ? theme.font.color.extraLight : theme.font.color.tertiary};
+  color: ${({ disabled }) =>
+    disabled
+      ? themeCssVariables.font.color.extraLight
+      : themeCssVariables.font.color.tertiary};
   display: flex;
 `;
+
+export const StyledIconChevronDown = ({
+  disabled,
+  ...props
+}: { disabled?: boolean } & React.ComponentProps<typeof IconChevronDown>) => (
+  <StyledIconChevronDownContainer disabled={disabled}>
+    {/* oxlint-disable-next-line react/jsx-props-no-spreading */}
+    <IconChevronDown {...props} />
+  </StyledIconChevronDownContainer>
+);

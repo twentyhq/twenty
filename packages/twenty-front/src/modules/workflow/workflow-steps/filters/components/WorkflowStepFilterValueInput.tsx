@@ -116,7 +116,8 @@ export const WorkflowStepFilterValueInput = ({
   const isDisabled = !stepFilter.operand;
 
   const operandHasNoInput =
-    (stepFilter && !configurableViewFilterOperands.has(stepFilter.operand)) ??
+    (isDefined(stepFilter) &&
+      !configurableViewFilterOperands.has(stepFilter.operand)) ??
     true;
 
   const {

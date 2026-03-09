@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useRef, useState } from 'react';
 
@@ -7,6 +7,7 @@ import { ExpandedFieldDisplay } from '@/ui/layout/expandable-list/components/Exp
 import { type JsonValue } from 'type-fest';
 import { isDefined } from 'twenty-shared/utils';
 import { isTwoFirstDepths, JsonTree } from 'twenty-ui/json-visualizer';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 type EventLogJsonCellProps = {
@@ -18,7 +19,7 @@ const StyledJsonContainer = styled.div`
 `;
 
 const StyledEmptyCell = styled.span`
-  color: ${({ theme }) => theme.font.color.tertiary};
+  color: ${themeCssVariables.font.color.tertiary};
 `;
 
 export const EventLogJsonCell = ({ value }: EventLogJsonCellProps) => {

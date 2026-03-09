@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 import { ActivityList } from '@/activities/components/ActivityList';
 import { CustomResolverFetchMoreLoader } from '@/activities/components/CustomResolverFetchMoreLoader';
@@ -9,7 +9,7 @@ import { getTimelineThreadsFromCompanyId } from '@/activities/emails/graphql/que
 import { getTimelineThreadsFromOpportunityId } from '@/activities/emails/graphql/queries/getTimelineThreadsFromOpportunityId';
 import { getTimelineThreadsFromPersonId } from '@/activities/emails/graphql/queries/getTimelineThreadsFromPersonId';
 import { useCustomResolver } from '@/activities/hooks/useCustomResolver';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { Trans } from '@lingui/react/macro';
 import { H1Title, H1TitleFontColor } from 'twenty-ui/display';
@@ -22,6 +22,7 @@ import {
   EMPTY_PLACEHOLDER_TRANSITION_PROPS,
   Section,
 } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   type TimelineThread,
   type TimelineThreadsWithTotal,
@@ -30,19 +31,22 @@ import {
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(6)};
-  padding: ${({ theme }) => theme.spacing(6, 6, 2)};
+  gap: ${themeCssVariables.spacing[6]};
   height: 100%;
   overflow: auto;
+  padding: ${themeCssVariables.spacing[6]} ${themeCssVariables.spacing[6]}
+    ${themeCssVariables.spacing[2]};
 `;
 
-const StyledH1Title = styled(H1Title)`
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
+const StyledH1TitleWrapper = styled.div`
+  > h2 {
+    display: flex;
+    gap: ${themeCssVariables.spacing[2]};
+  }
 `;
 
 const StyledEmailCount = styled.span`
-  color: ${({ theme }) => theme.font.color.light};
+  color: ${themeCssVariables.font.color.light};
 `;
 
 export const EmailsCard = () => {
@@ -86,7 +90,7 @@ export const EmailsCard = () => {
   if (!firstQueryLoading && !timelineThreads?.length) {
     return (
       <AnimatedPlaceholderEmptyContainer
-        // eslint-disable-next-line react/jsx-props-no-spreading
+        // oxlint-disable-next-line react/jsx-props-no-spreading
         {...EMPTY_PLACEHOLDER_TRANSITION_PROPS}
       >
         <AnimatedPlaceholder type="emptyInbox" />
@@ -105,15 +109,17 @@ export const EmailsCard = () => {
   return (
     <StyledContainer>
       <Section>
-        <StyledH1Title
-          title={
-            <>
-              <Trans>Inbox</Trans>{' '}
-              <StyledEmailCount>{totalNumberOfThreads}</StyledEmailCount>
-            </>
-          }
-          fontColor={H1TitleFontColor.Primary}
-        />
+        <StyledH1TitleWrapper>
+          <H1Title
+            title={
+              <>
+                <Trans>Inbox</Trans>{' '}
+                <StyledEmailCount>{totalNumberOfThreads}</StyledEmailCount>
+              </>
+            }
+            fontColor={H1TitleFontColor.Primary}
+          />
+        </StyledH1TitleWrapper>
         {!firstQueryLoading && (
           <ActivityList>
             {timelineThreads?.map((thread: TimelineThread) => (

@@ -15,8 +15,15 @@ import { usePrefetchedNavigationMenuItemsData } from './usePrefetchedNavigationM
 type NavigationMenuItemFolder = {
   id: string;
   folderName: string;
+  icon?: string | null;
+  color?: string | null;
   navigationMenuItems: ReturnType<typeof sortNavigationMenuItems>[number][];
 };
+
+type NavigationMenuItemFolderEntry = Pick<
+  NavigationMenuItemFolder,
+  'id' | 'folderName' | 'icon' | 'color'
+>;
 
 export const useNavigationMenuItemsByFolder = () => {
   const coreViews = useAtomStateValue(coreViewsState);
@@ -34,13 +41,18 @@ export const useNavigationMenuItemsByFolder = () => {
 
   const { workspaceFolders, userFolders, itemsByFolderId } =
     allNavigationMenuItems.reduce<{
-      workspaceFolders: Array<{ id: string; name: string }>;
-      userFolders: Array<{ id: string; name: string }>;
+      workspaceFolders: NavigationMenuItemFolderEntry[];
+      userFolders: NavigationMenuItemFolderEntry[];
       itemsByFolderId: Map<string, NavigationMenuItem[]>;
     }>(
       (acc, item) => {
         if (isNavigationMenuItemFolder(item)) {
-          const folderEntry = { id: item.id, name: item.name || 'Folder' };
+          const folderEntry: NavigationMenuItemFolderEntry = {
+            id: item.id,
+            folderName: item.name || 'Folder',
+            icon: item.icon ?? undefined,
+            color: item.color ?? undefined,
+          };
           if (isDefined(item.userWorkspaceId)) {
             acc.userFolders.push(folderEntry);
           } else {
@@ -64,7 +76,7 @@ export const useNavigationMenuItemsByFolder = () => {
       },
     );
 
-  const buildFoldersList = (folders: Array<{ id: string; name: string }>) => {
+  const buildFoldersList = (folders: NavigationMenuItemFolderEntry[]) => {
     const sortedFolders = [...folders].sort((a, b) => {
       const folderA = allNavigationMenuItems.find((item) => item.id === a.id);
       const folderB = allNavigationMenuItems.find((item) => item.id === b.id);
@@ -117,7 +129,9 @@ export const useNavigationMenuItemsByFolder = () => {
 
       acc.push({
         id: folder.id,
-        folderName: folder.name,
+        folderName: folder.folderName,
+        icon: folder.icon,
+        color: folder.color,
         navigationMenuItems: sortedItems,
       });
 

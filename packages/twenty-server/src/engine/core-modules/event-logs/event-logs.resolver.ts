@@ -21,7 +21,7 @@ import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-module
 import { EventLogsService } from './event-logs.service';
 
 import { EventLogQueryInput } from './dtos/event-log-query.input';
-import { EventLogQueryResult } from './dtos/event-log-result.output';
+import { EventLogQueryResult } from './dtos/event-log-result.dto';
 
 @MetadataResolver()
 @UseFilters(

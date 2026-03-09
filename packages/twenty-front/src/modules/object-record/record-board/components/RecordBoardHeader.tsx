@@ -4,16 +4,17 @@ import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/re
 import { RecordIndexGroupAggregatesDataLoader } from '@/object-record/record-index/components/RecordIndexGroupAggregatesDataLoader';
 import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
 import { ViewType } from '@/views/types/ViewType';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledHeaderContainer = styled.div`
   display: flex;
   flex-direction: row;
   height: 40px;
-  z-index: 10;
-
   overflow: visible;
+
   width: 100%;
+  z-index: 10;
 
   &.header-sticky {
     position: sticky;
@@ -21,7 +22,7 @@ const StyledHeaderContainer = styled.div`
   }
 
   & > *:not(:first-of-type) {
-    border-left: 1px solid ${({ theme }) => theme.border.color.light};
+    border-left: 1px solid ${themeCssVariables.border.color.light};
   }
 `;
 

@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { useUpdateManyRecords } from '@/object-record/hooks/useUpdateManyRecords';
 
 type UpdateMessageFoldersSyncStatusArgs = {

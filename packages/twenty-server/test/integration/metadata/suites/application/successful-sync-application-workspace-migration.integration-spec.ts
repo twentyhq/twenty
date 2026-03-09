@@ -1,7 +1,9 @@
+import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { buildDefaultObjectManifest } from 'test/integration/metadata/suites/application/utils/build-default-object-manifest.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { uninstallApplication } from 'test/integration/metadata/suites/application/utils/uninstall-application.util';
+import { findManyObjectMetadataWithIndexes } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata-with-indexes.util';
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
 import { findRoles } from 'test/integration/metadata/suites/role/utils/find-roles.util';
 import { findSkills } from 'test/integration/metadata/suites/skill/utils/find-skills.util';
@@ -10,8 +12,6 @@ import { type FieldManifest, type Manifest } from 'twenty-shared/application';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
-import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
-import { findManyObjectMetadataWithIndexes } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata-with-indexes.util';
 
 const TEST_APP_ID = uuidv4();
 const TEST_ROLE_ID = uuidv4();
@@ -61,28 +61,48 @@ const buildManifest = (
   });
 
 describe('syncApplication', () => {
-  let appCreated = false;
-
-  beforeAll(async () => {
+  beforeEach(async () => {
     await setupApplicationForSync({
       applicationUniversalIdentifier: TEST_APP_ID,
       name: 'Test Application',
       description: 'A test application',
       sourcePath: 'test-sync',
     });
-
-    appCreated = true;
   }, 60000);
 
   afterEach(async () => {
-    if (!appCreated) {
-      return;
+    try {
+      await uninstallApplication({
+        universalIdentifier: TEST_APP_ID,
+        expectToFail: false,
+      });
+    } catch {
+      // May fail if the test didn't fully install/sync
     }
 
-    await uninstallApplication({
-      universalIdentifier: TEST_APP_ID,
-      expectToFail: false,
-    });
+    await globalThis.testDataSource.query(
+      `DELETE FROM core."role" WHERE "universalIdentifier" = $1`,
+      [TEST_ROLE_ID],
+    );
+
+    await globalThis.testDataSource.query(
+      `DELETE FROM core."file" WHERE "applicationId" IN (
+        SELECT id FROM core."application" WHERE "universalIdentifier" = $1
+      )`,
+      [TEST_APP_ID],
+    );
+
+    await globalThis.testDataSource.query(
+      `DELETE FROM core."application"
+       WHERE "universalIdentifier" = $1`,
+      [TEST_APP_ID],
+    );
+
+    await globalThis.testDataSource.query(
+      `DELETE FROM core."applicationRegistration"
+       WHERE "universalIdentifier" = $1`,
+      [TEST_APP_ID],
+    );
   });
 
   it('should return workspace migration actions on initial sync then on second sync with field rename and new role', async () => {
@@ -175,6 +195,67 @@ describe('syncApplication', () => {
       icon: 'IconBrain',
       content: '# Test Skill\n\nThis is a test skill.',
     });
+  }, 60000);
+
+  it('should delete old field and create equivalent one when field universalIdentifier changes', async () => {
+    const originalFieldId = uuidv4();
+    const updatedFieldId = uuidv4();
+
+    const testObject = buildDefaultObjectManifest({
+      nameSingular: 'ticket',
+      namePlural: 'tickets',
+      labelSingular: 'Ticket',
+      labelPlural: 'Tickets',
+      description: 'A support ticket',
+      icon: 'IconTicket',
+    });
+
+    const baseField: FieldManifest = {
+      universalIdentifier: originalFieldId,
+      type: FieldMetadataType.TEXT,
+      name: 'description',
+      label: 'Description',
+      description: 'Ticket description',
+      icon: 'IconFileDescription',
+      objectUniversalIdentifier: testObject.universalIdentifier,
+    };
+
+    const { data: firstSyncData } = await syncApplication({
+      manifest: buildBaseManifest({
+        appId: TEST_APP_ID,
+        roleId: TEST_ROLE_ID,
+        overrides: {
+          objects: [testObject],
+          fields: [baseField],
+        },
+      }),
+      expectToFail: false,
+    });
+
+    expect(firstSyncData).toMatchSnapshot(
+      extractRecordIdsAndDatesAsExpectAny(firstSyncData),
+    );
+
+    const { data: secondSyncData } = await syncApplication({
+      manifest: buildBaseManifest({
+        appId: TEST_APP_ID,
+        roleId: TEST_ROLE_ID,
+        overrides: {
+          objects: [testObject],
+          fields: [
+            {
+              ...baseField,
+              universalIdentifier: updatedFieldId,
+            },
+          ],
+        },
+      }),
+      expectToFail: false,
+    });
+
+    expect(secondSyncData).toMatchSnapshot(
+      extractRecordIdsAndDatesAsExpectAny(secondSyncData),
+    );
   }, 60000);
 
   it('should create a TEXT field on the standard Company object', async () => {

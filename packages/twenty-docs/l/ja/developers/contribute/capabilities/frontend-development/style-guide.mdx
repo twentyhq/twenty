@@ -194,7 +194,7 @@ setHotkeyScopeAndMemorizePreviousScope(
 
 ### StyledComponentsを使用する
 
-コンポーネントを[styled-components](https://emotion.sh/docs/styled)でスタイル設定する。
+コンポーネントを[Linaria styled](https://github.com/callstack/linaria)でスタイル設定する。
 
 ```tsx
 // ❌ Bad
@@ -260,7 +260,7 @@ const StyledButton = styled.button`
 
 ## タイプ無しのインポートの強制
 
-タイプインポートを避けてください。 タイプインポートを避けてください。 この標準を強制するために、ESLintルールがどのタイプのインポートもチェックして報告します。 これにより、TypeScriptコードの一貫性と可読性が維持されます。 これにより、TypeScriptコードの一貫性と可読性が維持されます。
+タイプインポートを避けてください。 タイプインポートを避けてください。 この標準を強制するために、Oxlintルールがどのタイプのインポートもチェックして報告します。 これにより、TypeScriptコードの一貫性と可読性が維持されます。 これにより、TypeScriptコードの一貫性と可読性が維持されます。
 
 ```tsx
 // ❌ Bad
@@ -281,10 +281,10 @@ import { Meta, StoryObj } from '@storybook/react';
 
 * **維持性**: コードベースの維持性を向上させます。開発者がコードを確認/変更する際に、タイプのみのインポートを特定して見つけることができるからです。
 
-### ESLintルール
+### Oxlintルール
 
-ESLint のルール `@typescript-eslint/consistent-type-imports` は、型専用インポートの標準を強制します。 このルールは、タイプインポート違反のエラーや警告を生成します。
+Oxlint のルール `typescript/consistent-type-imports` は、型専用インポートの標準を強制します。 このルールは、タイプインポート違反のエラーや警告を生成します。
 
 このルールは、意図せず型をインポートしてしまう稀なエッジケースに特化して対処することに留意してください。 TypeScript自体、[TypeScript 3.8 リリースノート](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-8.html)でこのプラクティスを避けています。 ほとんどの状況で、タイプのみのインポートを使用する必要はありません。 ほとんどの状況で、タイプのみのインポートを使用する必要はありません。 ほとんどの状況で、タイプのみのインポートを使用する必要はありません。
 
-コードがこのルールに準拠していることを確実にするため、開発ワークフローの一環として ESLint を実行してください。
+コードがこのルールに準拠していることを確実にするため、開発ワークフローの一環として Oxlint を実行してください。

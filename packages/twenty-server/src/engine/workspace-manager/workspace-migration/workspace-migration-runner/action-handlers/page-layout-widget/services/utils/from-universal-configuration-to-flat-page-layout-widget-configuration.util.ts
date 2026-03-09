@@ -313,7 +313,7 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
     }
 
     case WidgetConfigurationType.FRONT_COMPONENT: {
-      const { frontComponentUniversalIdentifier, ...rest } =
+      const { frontComponentUniversalIdentifier, configurationType } =
         universalConfiguration;
 
       if (!isDefined(frontComponentUniversalIdentifier)) {
@@ -336,7 +336,7 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
       }
 
       return {
-        ...rest,
+        configurationType,
         frontComponentId: flatFrontComponent.id,
       };
     }

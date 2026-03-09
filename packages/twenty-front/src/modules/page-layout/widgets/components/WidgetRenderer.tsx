@@ -24,11 +24,11 @@ import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingC
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentFamilyState';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import { type MouseEvent } from 'react';
+import { styled } from '@linaria/react';
+import { type MouseEvent, useContext } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { IconLock } from 'twenty-ui/display';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 import {
   PageLayoutTabLayoutMode,
   PageLayoutType,
@@ -46,7 +46,7 @@ type WidgetRendererProps = {
 };
 
 export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const { deletePageLayoutWidget } = useDeletePageLayoutWidget();
   const { handleEditWidget } = useEditPageLayoutWidget();
 
@@ -76,7 +76,7 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
 
   const { layoutMode } = usePageLayoutContentContext();
   const { isInPinnedTab } = useIsInPinnedTab();
-  const { isInRightDrawer } = useLayoutRenderingContext();
+  const { isInSidePanel } = useLayoutRenderingContext();
   const isMobile = useIsMobile();
 
   const { currentPageLayout } = useCurrentPageLayoutOrThrow();
@@ -88,6 +88,11 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
 
   const isDeletingWidgetEnabled =
     currentPageLayout.type !== PageLayoutType.RECORD_PAGE;
+
+  const isWidgetEditable =
+    isPageLayoutInEditMode &&
+    (currentPageLayout.type !== PageLayoutType.RECORD_PAGE ||
+      widget.type === WidgetType.FIELDS);
 
   // TODO: when we have more widgets without headers, we should use a more generic approach to hide the header
   // each widget type could have metadata (e.g., hasHeader: boolean or headerMode: 'always' | 'editOnly' | 'never')
@@ -127,7 +132,7 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
     isInPinnedTab,
     pageLayoutType: currentPageLayout.type,
     isMobile,
-    isInRightDrawer,
+    isInSidePanel,
   });
 
   const actions = useWidgetActions({ widget });
@@ -137,8 +142,8 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
       <WidgetCard
         headerLess={!showHeader}
         variant={variant}
-        isEditable={isPageLayoutInEditMode}
-        onClick={isPageLayoutInEditMode ? handleClick : undefined}
+        isEditable={isWidgetEditable}
+        onClick={isWidgetEditable ? handleClick : undefined}
         isEditing={isEditing}
         isDragging={isDragging}
         isResizing={isResizing}
@@ -153,7 +158,7 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
           <WidgetCardHeader
             widgetId={widget.id}
             variant={variant}
-            isInEditMode={isPageLayoutInEditMode}
+            isInEditMode={isWidgetEditable}
             isResizing={isResizing}
             isReorderEnabled={isReorderEnabled}
             isDeletingWidgetEnabled={isDeletingWidgetEnabled}
@@ -174,7 +179,7 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
         <WidgetCardContent
           variant={variant}
           hasHeader={showHeader}
-          isEditable={isPageLayoutInEditMode}
+          isEditable={isWidgetEditable}
         >
           {hasAccess ? (
             <ErrorBoundary

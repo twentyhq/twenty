@@ -1,6 +1,4 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-
+import { styled } from '@linaria/react';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { t } from '@lingui/core/macro';
@@ -9,27 +7,31 @@ import { IconBrandX, IconWorld } from 'twenty-ui/display';
 import { Checkbox } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useContext } from 'react';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledCheckboxContainer = styled.div<{ disabled: boolean }>`
-  display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: ${({ theme }) => theme.spacing(1)};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  transition: background-color
-    ${({ theme }) => theme.animation.duration.normal}s ease;
+  border-radius: ${themeCssVariables.border.radius.sm};
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
+  display: flex;
+  justify-content: space-between;
+  padding: ${themeCssVariables.spacing[1]};
+  transition: background-color
+    calc(${themeCssVariables.animation.duration.normal} * 1s) ease;
 
   &:hover {
-    background-color: ${({ theme, disabled }) =>
-      disabled ? 'transparent' : theme.background.transparent.light};
+    background-color: ${({ disabled }) =>
+      disabled
+        ? 'transparent'
+        : themeCssVariables.background.transparent.light};
   }
 `;
 
 const StyledCheckboxLabel = styled.div`
-  display: flex;
   align-items: center;
-  gap: ${({ theme }) => theme.spacing(1)};
+  display: flex;
+  gap: ${themeCssVariables.spacing[1]};
 `;
 
 type ModelConfiguration = {
@@ -56,7 +58,7 @@ export const SettingsAgentModelCapabilities = ({
   onConfigurationChange,
   disabled = false,
 }: SettingsAgentModelCapabilitiesProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const aiModels = useAtomStateValue(aiModelsState);
 
   const selectedModel = aiModels.find((m) => m.modelId === selectedModelId);

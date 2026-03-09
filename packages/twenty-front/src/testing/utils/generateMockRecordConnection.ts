@@ -1,7 +1,7 @@
 import { getRecordConnectionFromRecords } from '@/object-record/cache/utils/getRecordConnectionFromRecords';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
-import { generateMockRecord } from '~/testing/utils/generateMockRecordNode';
+import { generateMockRecord } from '~/testing/utils/generateMockRecord';
 
 export const generateMockRecordConnection = ({
   objectNameSingular,

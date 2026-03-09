@@ -1,8 +1,7 @@
 /* @license Enterprise */
 
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { Pill } from 'twenty-ui/components';
 import { H2Title, IconArrowUp, IconLock } from 'twenty-ui/display';
 import { Card, Section } from 'twenty-ui/layout';
 
@@ -13,25 +12,29 @@ import { SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilder } 
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { SettingsPath } from 'twenty-shared/types';
 import { Button } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 const StyledContent = styled.div`
-  padding-bottom: ${({ theme }) => theme.spacing(2)};
-  padding-top: ${({ theme }) => theme.spacing(4)};
+  padding-bottom: ${themeCssVariables.spacing[2]};
+  padding-top: ${themeCssVariables.spacing[4]};
 `;
 
-const StyledCard = styled(Card)`
-  margin-top: ${({ theme }) => theme.spacing(4)};
+const StyledCardContainer = styled.div`
+  margin-top: ${themeCssVariables.spacing[4]};
   overflow: hidden;
 `;
 
-const StyledPill = styled(Pill)`
+const StyledPillContainer = styled.span`
+  align-items: center;
+  background: ${themeCssVariables.background.secondary};
+  border: 1px solid ${themeCssVariables.border.color.light};
   border-radius: 40px;
-  border: 1px solid ${({ theme }) => theme.border.color.light};
-  background: ${({ theme }) => theme.background.secondary};
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  padding: ${({ theme }) => theme.spacing(1)} ${({ theme }) => theme.spacing(2)};
+  color: ${themeCssVariables.font.color.tertiary};
+  display: inline-flex;
+  font-weight: ${themeCssVariables.font.weight.medium};
+  gap: ${themeCssVariables.spacing[1]};
+  padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
 `;
 
 type SettingsRolePermissionsObjectLevelRecordLevelSectionProps = {
@@ -55,27 +58,34 @@ export const SettingsRolePermissionsObjectLevelRecordLevelSection = ({
         <H2Title
           title={t`Record-level`}
           description={t`Ability to filter the records a user can interact with`}
-          adornment={<StyledPill label={t`Organization`} Icon={IconLock} />}
+          adornment={
+            <StyledPillContainer>
+              <IconLock size={12} />
+              {t`Organization`}
+            </StyledPillContainer>
+          }
         />
-        <StyledCard rounded>
-          <SettingsOptionCardContentButton
-            Icon={IconLock}
-            title={t`Upgrade to access`}
-            description={t`This feature is part of the Organization Plan`}
-            Button={
-              isBillingEnabled && (
-                <Button
-                  title={t`Upgrade`}
-                  variant="primary"
-                  accent="blue"
-                  size="small"
-                  Icon={IconArrowUp}
-                  onClick={() => navigateSettings(SettingsPath.Billing)}
-                />
-              )
-            }
-          />
-        </StyledCard>
+        <StyledCardContainer>
+          <Card rounded>
+            <SettingsOptionCardContentButton
+              Icon={IconLock}
+              title={t`Upgrade to access`}
+              description={t`This feature is part of the Organization Plan`}
+              Button={
+                isBillingEnabled && (
+                  <Button
+                    title={t`Upgrade`}
+                    variant="primary"
+                    accent="blue"
+                    size="small"
+                    Icon={IconArrowUp}
+                    onClick={() => navigateSettings(SettingsPath.Billing)}
+                  />
+                )
+              }
+            />
+          </Card>
+        </StyledCardContainer>
       </Section>
     );
   }

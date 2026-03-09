@@ -3,8 +3,9 @@ import { Draggable } from '@hello-pangea/dnd';
 import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/states/pageLayoutTabSettingsOpenTabIdComponentState';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { StyledTabContainer, TabContent } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type PageLayoutTabListReorderableTabProps = {
   tab: SingleTabProps;
@@ -14,9 +15,9 @@ type PageLayoutTabListReorderableTabProps = {
   onSelect: () => void;
 };
 
-const StyledTabContent = styled(TabContent)<{ isBeingEdited: boolean }>`
-  outline: ${({ isBeingEdited, theme }) =>
-    isBeingEdited ? `1px solid ${theme.color.blue}` : 'none'};
+const StyledTabContentWrapper = styled.div<{ isBeingEdited: boolean }>`
+  outline: ${({ isBeingEdited }) =>
+    isBeingEdited ? `1px solid ${themeCssVariables.color.blue}` : 'none'};
   outline-offset: -1px;
 `;
 
@@ -37,9 +38,9 @@ export const PageLayoutTabListReorderableTab = ({
       {(draggableProvided, draggableSnapshot) => (
         <StyledTabContainer
           ref={draggableProvided.innerRef}
-          // eslint-disable-next-line react/jsx-props-no-spreading
+          // oxlint-disable-next-line react/jsx-props-no-spreading
           {...draggableProvided.draggableProps}
-          // eslint-disable-next-line react/jsx-props-no-spreading
+          // oxlint-disable-next-line react/jsx-props-no-spreading
           {...draggableProvided.dragHandleProps}
           onClick={draggableSnapshot.isDragging ? undefined : onSelect}
           active={isActive}
@@ -49,16 +50,17 @@ export const PageLayoutTabListReorderableTab = ({
             cursor: draggableSnapshot.isDragging ? 'grabbing' : 'pointer',
           }}
         >
-          <StyledTabContent
-            id={tab.id}
-            active={isActive}
-            disabled={disabled}
-            LeftIcon={tab.Icon}
-            title={tab.title}
-            logo={tab.logo}
-            pill={tab.pill}
-            isBeingEdited={isSettingsOpenForThisTab}
-          />
+          <StyledTabContentWrapper isBeingEdited={isSettingsOpenForThisTab}>
+            <TabContent
+              id={tab.id}
+              active={isActive}
+              disabled={disabled}
+              LeftIcon={tab.Icon}
+              title={tab.title}
+              logo={tab.logo}
+              pill={tab.pill}
+            />
+          </StyledTabContentWrapper>
         </StyledTabContainer>
       )}
     </Draggable>

@@ -34,7 +34,7 @@ test('Sign up with invite link via email', async ({
   });
 
   await test.step('Create new account', async () => {
-    await loginPage.clickLoginWithEmail();
+    await loginPage.clickLoginWithEmailIfVisible();
     await loginPage.typeEmail(email);
     await loginPage.clickContinueButton();
     await loginPage.typePassword(process.env.DEFAULT_PASSWORD);
@@ -45,6 +45,7 @@ test('Sign up with invite link via email', async ({
   });
 
   await test.step('Delete account from workspace', async () => {
+    await expect(page.getByRole('button', { name: 'Settings' })).toBeVisible();
     await leftMenu.goToSettings();
     await settingsPage.goToProfileSection();
     await profileSection.deleteAccount();

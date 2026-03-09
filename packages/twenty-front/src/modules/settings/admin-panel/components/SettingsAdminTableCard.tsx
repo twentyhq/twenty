@@ -2,52 +2,17 @@ import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import { Card } from 'twenty-ui/layout';
+import { isDefined } from 'twenty-shared/utils';
 import { type IconComponent } from 'twenty-ui/display';
-
-const StyledCard = styled(Card)`
-  background-color: ${({ theme }) => theme.background.secondary};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-`;
-
-const StyledTableRow = styled(TableRow)`
-  height: ${({ theme }) => theme.spacing(6)};
-`;
-
-const StyledTableCellLabel = styled(TableCell)<{
-  align?: 'left' | 'center' | 'right';
-}>`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  height: ${({ theme }) => theme.spacing(6)};
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
-  justify-content: ${({ align }) =>
-    align === 'right'
-      ? 'flex-end'
-      : align === 'center'
-        ? 'center'
-        : 'flex-start'};
-`;
-
-const StyledTableCellValue = styled(TableCell)<{
-  align?: 'left' | 'center' | 'right';
-}>`
-  color: ${({ theme }) => theme.font.color.primary};
-  height: ${({ theme }) => theme.spacing(6)};
-  justify-content: ${({ align }) =>
-    align === 'left'
-      ? 'flex-start'
-      : align === 'center'
-        ? 'center'
-        : 'flex-end'};
-`;
+import { Card } from 'twenty-ui/layout';
+import { useContext } from 'react';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type TableItem = {
   Icon?: IconComponent;
   label: string;
   value: string | number | React.ReactNode;
+  onClick?: () => void;
 };
 
 type SettingsAdminTableCardProps = {
@@ -67,28 +32,44 @@ export const SettingsAdminTableCard = ({
   valueAlign = 'left',
   className,
 }: SettingsAdminTableCardProps) => {
-  const theme = useTheme();
-
+  const { theme } = useContext(ThemeContext);
   return (
-    <StyledCard rounded={rounded} className={className}>
+    <Card
+      rounded={rounded}
+      className={className}
+      backgroundColor={themeCssVariables.background.secondary}
+    >
       <Table>
         <TableBody>
           {items.map((item, index) => (
-            <StyledTableRow
+            <TableRow
               key={index + item.label}
               gridAutoColumns={gridAutoColumns}
             >
-              <StyledTableCellLabel align={labelAlign}>
+              <TableCell
+                align={labelAlign}
+                color={themeCssVariables.font.color.tertiary}
+                height="auto"
+                gap={themeCssVariables.spacing[2]}
+                padding={`${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[2]}`}
+              >
                 {item.Icon && <item.Icon size={theme.icon.size.md} />}
                 <span>{item.label}</span>
-              </StyledTableCellLabel>
-              <StyledTableCellValue align={valueAlign}>
+              </TableCell>
+              <TableCell
+                align={valueAlign}
+                color={themeCssVariables.font.color.primary}
+                height="auto"
+                onClick={item.onClick}
+                clickable={isDefined(item.onClick)}
+                padding={`${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[2]}`}
+              >
                 {item.value}
-              </StyledTableCellValue>
-            </StyledTableRow>
+              </TableCell>
+            </TableRow>
           ))}
         </TableBody>
       </Table>
-    </StyledCard>
+    </Card>
   );
 };
