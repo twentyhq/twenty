@@ -46,9 +46,11 @@ const CommandMenuItemContextProviderWorkflowObjectsContent = ({
     workflowWithCurrentVersion,
   };
 
-  const actions = useRegisteredCommandMenuItems(shouldBeRegisteredParams);
+  const commandMenuItems = useRegisteredCommandMenuItems(
+    shouldBeRegisteredParams,
+  );
 
-  const runWorkflowRecordAgnosticActions =
+  const runWorkflowRecordAgnosticCommands =
     useRunWorkflowRecordAgnosticCommands();
 
   const commandMenuContextApi = useCommandMenuContextApi();
@@ -63,8 +65,8 @@ const CommandMenuItemContextProviderWorkflowObjectsContent = ({
         displayType,
         containerType,
         commandMenuItems: [
-          ...actions,
-          ...runWorkflowRecordAgnosticActions,
+          ...commandMenuItems,
+          ...runWorkflowRecordAgnosticCommands,
           ...commandMenuItemFrontComponentActions,
         ],
       }}
@@ -92,9 +94,11 @@ const CommandMenuItemContextProviderWorkflowObjectsWithoutWorkflow = ({
     workflowWithCurrentVersion: undefined,
   };
 
-  const actions = useRegisteredCommandMenuItems(shouldBeRegisteredParams);
+  const commandMenuItems = useRegisteredCommandMenuItems(
+    shouldBeRegisteredParams,
+  );
 
-  const runWorkflowRecordAgnosticActions =
+  const runWorkflowRecordAgnosticCommands =
     useRunWorkflowRecordAgnosticCommands();
 
   const commandMenuContextApi = useCommandMenuContextApi();
@@ -109,8 +113,8 @@ const CommandMenuItemContextProviderWorkflowObjectsWithoutWorkflow = ({
         displayType,
         containerType,
         commandMenuItems: [
-          ...actions,
-          ...runWorkflowRecordAgnosticActions,
+          ...commandMenuItems,
+          ...runWorkflowRecordAgnosticCommands,
           ...commandMenuItemFrontComponentActions,
         ],
       }}

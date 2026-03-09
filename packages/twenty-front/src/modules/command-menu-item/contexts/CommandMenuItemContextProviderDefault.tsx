@@ -33,7 +33,9 @@ export const CommandMenuItemContextProviderDefault = ({
     ...params,
   };
 
-  const actions = useRegisteredCommandMenuItems(shouldBeRegisteredParams);
+  const commandMenuItems = useRegisteredCommandMenuItems(
+    shouldBeRegisteredParams,
+  );
 
   const contextStoreTargetedRecordsRule = useAtomComponentStateValue(
     contextStoreTargetedRecordsRuleComponentState,
@@ -43,12 +45,12 @@ export const CommandMenuItemContextProviderDefault = ({
     contextStoreTargetedRecordsRule.mode === 'selection' &&
     contextStoreTargetedRecordsRule.selectedRecordIds.length > 0;
 
-  const runWorkflowRecordActions = useRunWorkflowRecordCommands({
+  const runWorkflowRecordCommands = useRunWorkflowRecordCommands({
     objectMetadataItem,
     skip: !isRecordSelection,
   });
 
-  const runWorkflowRecordAgnosticActions =
+  const runWorkflowRecordAgnosticCommands =
     useRunWorkflowRecordAgnosticCommands();
 
   const commandMenuContextApi = useCommandMenuContextApi();
@@ -63,9 +65,9 @@ export const CommandMenuItemContextProviderDefault = ({
         displayType,
         containerType,
         commandMenuItems: [
-          ...actions,
-          ...runWorkflowRecordActions,
-          ...runWorkflowRecordAgnosticActions,
+          ...commandMenuItems,
+          ...runWorkflowRecordCommands,
+          ...runWorkflowRecordAgnosticCommands,
           ...commandMenuItemFrontComponentActions,
         ],
       }}

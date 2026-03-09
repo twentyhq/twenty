@@ -36,55 +36,59 @@ export const useRegisteredCommandMenuItems = (
     contextStoreTargetedRecordsRule,
   );
 
-  const recordActionConfig = getCommandMenuItemConfig({
+  const recordCommandMenuItemsConfig = getCommandMenuItemConfig({
     objectMetadataItem,
   });
 
-  const relatedRecordActionConfig = useRelatedRecordCommands({
+  const relatedRecordCommandMenuItemsConfig = useRelatedRecordCommands({
     sourceObjectMetadataItem: objectMetadataItem,
     getIcon,
-    startPosition: Object.keys(recordActionConfig).length + 1,
+    startPosition: Object.keys(recordCommandMenuItemsConfig).length + 1,
   });
 
-  const recordAgnosticActionConfig = useRecordAgnosticCommands();
+  const recordAgnosticCommandMenuItemsConfig = useRecordAgnosticCommands();
 
-  const actionsConfig = {
-    ...recordActionConfig,
-    ...relatedRecordActionConfig,
-    ...recordAgnosticActionConfig,
+  const commandMenuItemsConfig = {
+    ...recordCommandMenuItemsConfig,
+    ...relatedRecordCommandMenuItemsConfig,
+    ...recordAgnosticCommandMenuItemsConfig,
   };
 
   const permissionMap = usePermissionFlagMap();
 
-  const actionsToRegister = Object.values(actionsConfig).filter((action) => {
+  const commandMenuItemsToRegister = Object.values(
+    commandMenuItemsConfig,
+  ).filter((commandMenuItem) => {
     if (contextStoreIsPageInEditMode) {
       return (
-        isDefined(action.availableOn) &&
-        action.availableOn.includes(CommandMenuItemViewType.PAGE_EDIT_MODE)
+        isDefined(commandMenuItem.availableOn) &&
+        commandMenuItem.availableOn.includes(
+          CommandMenuItemViewType.PAGE_EDIT_MODE,
+        )
       );
     }
 
     if (isDefined(viewType)) {
       return (
-        action.availableOn?.includes(viewType) ||
-        action.availableOn?.includes(CommandMenuItemViewType.GLOBAL)
+        commandMenuItem.availableOn?.includes(viewType) ||
+        commandMenuItem.availableOn?.includes(CommandMenuItemViewType.GLOBAL)
       );
     }
 
-    return action.availableOn?.includes(CommandMenuItemViewType.GLOBAL);
+    return commandMenuItem.availableOn?.includes(CommandMenuItemViewType.GLOBAL);
   });
 
-  const actions = actionsToRegister
-    .filter((action) => {
+  const commandMenuItems = commandMenuItemsToRegister
+    .filter((commandMenuItem) => {
       if (
-        isDefined(action.requiredPermissionFlag) &&
-        !permissionMap[action.requiredPermissionFlag]
+        isDefined(commandMenuItem.requiredPermissionFlag) &&
+        !permissionMap[commandMenuItem.requiredPermissionFlag]
       ) {
         return false;
       }
-      return action.shouldBeRegistered(shouldBeRegisteredParams);
+      return commandMenuItem.shouldBeRegistered(shouldBeRegisteredParams);
     })
     .sort((a, b) => a.position - b.position);
 
-  return actions;
+  return commandMenuItems;
 };
