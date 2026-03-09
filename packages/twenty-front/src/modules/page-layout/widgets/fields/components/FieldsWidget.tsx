@@ -41,13 +41,16 @@ const StyledPropertyBox = styled.div`
   padding-top: ${themeCssVariables.spacing[3]};
 `;
 
-const StyledInlineFieldsPropertyBox = styled.div`
+const StyledInlineFieldsPropertyBox = styled.div<{
+  hasMoreSection: boolean;
+}>`
   align-self: stretch;
   border-radius: ${themeCssVariables.border.radius.sm};
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[2]};
-  padding-bottom: 0;
+  padding-bottom: ${({ hasMoreSection }) =>
+    hasMoreSection ? themeCssVariables.spacing[3] : '0'};
   padding-top: 0;
 `;
 
@@ -126,7 +129,9 @@ export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
           }}
         >
           {displayMode === 'inline' ? (
-            <StyledInlineFieldsPropertyBox>
+            <StyledInlineFieldsPropertyBox
+              hasMoreSection={shouldShowHiddenFields}
+            >
               <FieldsWidgetFieldList
                 fields={groups.flatMap((group) => group.fields)}
                 instanceId={instanceId}
