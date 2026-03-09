@@ -3735,6 +3735,7 @@ export type PageLayoutTab = {
   deletedAt?: Maybe<Scalars['DateTime']>;
   icon?: Maybe<Scalars['String']>;
   id: Scalars['UUID'];
+  isOverridden: Scalars['Boolean'];
   layoutMode?: Maybe<PageLayoutTabLayoutMode>;
   pageLayoutId: Scalars['UUID'];
   position: Scalars['Float'];
@@ -3763,6 +3764,7 @@ export type PageLayoutWidget = {
   deletedAt?: Maybe<Scalars['DateTime']>;
   gridPosition: GridPosition;
   id: Scalars['UUID'];
+  isOverridden: Scalars['Boolean'];
   objectMetadataId?: Maybe<Scalars['UUID']>;
   pageLayoutTabId: Scalars['UUID'];
   position?: Maybe<PageLayoutWidgetPosition>;
@@ -4977,11 +4979,13 @@ export type UpdatePageLayoutInput = {
 };
 
 export type UpdatePageLayoutTabInput = {
+  icon?: InputMaybe<Scalars['String']>;
   position?: InputMaybe<Scalars['Float']>;
   title?: InputMaybe<Scalars['String']>;
 };
 
 export type UpdatePageLayoutTabWithWidgetsInput = {
+  icon?: InputMaybe<Scalars['String']>;
   id: Scalars['UUID'];
   position: Scalars['Float'];
   title: Scalars['String'];
@@ -4989,6 +4993,7 @@ export type UpdatePageLayoutTabWithWidgetsInput = {
 };
 
 export type UpdatePageLayoutWidgetInput = {
+  conditionalDisplay?: InputMaybe<Scalars['JSON']>;
   configuration?: InputMaybe<Scalars['JSON']>;
   gridPosition?: InputMaybe<GridPositionInput>;
   objectMetadataId?: InputMaybe<Scalars['UUID']>;
@@ -4998,6 +5003,7 @@ export type UpdatePageLayoutWidgetInput = {
 };
 
 export type UpdatePageLayoutWidgetWithIdInput = {
+  conditionalDisplay?: InputMaybe<Scalars['JSON']>;
   configuration?: InputMaybe<Scalars['JSON']>;
   gridPosition: GridPositionInput;
   id: Scalars['UUID'];
