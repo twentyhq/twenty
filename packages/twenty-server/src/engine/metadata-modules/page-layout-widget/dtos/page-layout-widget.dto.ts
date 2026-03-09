@@ -13,6 +13,7 @@ import {
 } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { type PageLayoutWidgetOverrides } from 'src/engine/metadata-modules/page-layout-widget/entities/page-layout-widget.entity';
 import { PageLayoutWidgetPositionUnion } from 'src/engine/metadata-modules/page-layout-widget/dtos/page-layout-widget-position.union';
 import { WidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/dtos/widget-configuration.interface';
 import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
@@ -74,5 +75,5 @@ export class PageLayoutWidgetDTO {
   deletedAt?: Date;
 
   @HideField()
-  overrides?: Partial<PageLayoutWidgetDTO> | null;
+  overrides?: PageLayoutWidgetOverrides | null;
 }

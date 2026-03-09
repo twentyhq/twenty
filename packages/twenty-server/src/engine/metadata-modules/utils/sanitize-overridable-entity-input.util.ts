@@ -1,3 +1,4 @@
+import isEqual from 'lodash.isequal';
 import { type AllMetadataName } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -34,6 +35,10 @@ export const sanitizeOverridableEntityInput = <
     };
   }
 
+  const sanitizedEditableProperties = {
+    ...updatedEditableProperties,
+  } as TProperties;
+
   const overridableProperties = ALL_OVERRIDABLE_PROPERTIES_BY_METADATA_NAME[
     metadataName
   ] as string[];
@@ -42,17 +47,18 @@ export const sanitizeOverridableEntityInput = <
     string,
     unknown
   > | null>((acc, property) => {
-    const isPropertyUpdated = updatedEditableProperties[property] !== undefined;
+    const isPropertyUpdated =
+      sanitizedEditableProperties[property] !== undefined;
 
     if (!isPropertyUpdated) {
       return acc;
     }
 
-    const propertyValue = updatedEditableProperties[property];
+    const propertyValue = sanitizedEditableProperties[property];
 
-    delete updatedEditableProperties[property];
+    delete sanitizedEditableProperties[property];
 
-    if (propertyValue === existingFlatEntity[property]) {
+    if (isEqual(propertyValue, existingFlatEntity[property])) {
       if (
         isDefined(acc) &&
         Object.prototype.hasOwnProperty.call(acc, property)
@@ -72,8 +78,11 @@ export const sanitizeOverridableEntityInput = <
   }, existingOverrides);
 
   if (isDefined(overrides) && Object.keys(overrides).length === 0) {
-    return { overrides: null, updatedEditableProperties };
+    return {
+      overrides: null,
+      updatedEditableProperties: sanitizedEditableProperties,
+    };
   }
 
-  return { overrides, updatedEditableProperties };
+  return { overrides, updatedEditableProperties: sanitizedEditableProperties };
 };

@@ -6,8 +6,11 @@ export const isCallerOverridingEntity = ({
   callerApplicationUniversalIdentifier: string;
   entityApplicationUniversalIdentifier: string;
   workspaceCustomApplicationUniversalIdentifier: string;
-}) =>
-  callerApplicationUniversalIdentifier ===
-    workspaceCustomApplicationUniversalIdentifier &&
-  entityApplicationUniversalIdentifier !==
-    workspaceCustomApplicationUniversalIdentifier;
+}): boolean => {
+  return (
+    callerApplicationUniversalIdentifier ===
+      workspaceCustomApplicationUniversalIdentifier &&
+    entityApplicationUniversalIdentifier !==
+      workspaceCustomApplicationUniversalIdentifier
+  );
+};
