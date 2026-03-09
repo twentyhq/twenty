@@ -132,17 +132,17 @@
         }
       }
     },
+    "test:e2e": {
+      "cache": true,
+      "dependsOn": ["^build"]
+    },
     "set-local-version": {
       "executor": "nx:run-commands",
       "cache": false,
       "options": {
         "cwd": "{projectRoot}",
-        "command": "npm version {args.version} --no-git-tag-version"
+        "command": "npm pkg set version={args.releaseVersion}"
       }
-    },
-    "test:e2e": {
-      "cache": true,
-      "dependsOn": ["^build"]
     },
     "storybook:build": {
       "executor": "nx:run-commands",

@@ -43,7 +43,7 @@ jobs:
         run: |
           CI_VERSION="0.0.0-ci.$(date +%s)"
           echo "CI_VERSION=$CI_VERSION" >> $GITHUB_ENV
-          npx nx run-many -t set-local-version -p twenty-sdk create-twenty-app --args="--version=$CI_VERSION"
+          npx nx run-many -t set-local-version -p twenty-sdk create-twenty-app --releaseVersion=$CI_VERSION
 
       - name: Build packages
         run: |
