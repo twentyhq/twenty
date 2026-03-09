@@ -70,13 +70,13 @@ type Story = StoryObj<typeof RecordIndexCommandMenuDropdown>;
 
 export const Default: Story = {
   args: {
-    actionMenuId: 'story',
+    commandMenuId: 'story',
   },
 };
 
 export const WithInteractions: Story = {
   args: {
-    actionMenuId: 'story',
+    commandMenuId: 'story',
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement.ownerDocument.body);

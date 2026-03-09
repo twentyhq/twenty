@@ -12,7 +12,7 @@ import { JestRecordIndexContextProviderWrapper } from '~/testing/jest/JestRecord
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
-export type GetJestMetadataAndApolloMocksAndActionMenuWrapperProps = {
+export type GetJestMetadataAndApolloMocksAndCommandMenuWrapperProps = {
   apolloMocks:
     | readonly MockedResponse<Record<string, any>, Record<string, any>>[]
     | undefined;
@@ -20,7 +20,7 @@ export type GetJestMetadataAndApolloMocksAndActionMenuWrapperProps = {
   componentInstanceId: string;
 } & JestContextStoreSetterMocks;
 
-export const getJestMetadataAndApolloMocksAndActionMenuWrapper = ({
+export const getJestMetadataAndApolloMocksAndCommandMenuWrapper = ({
   apolloMocks,
   onInitializeJotaiStore,
   contextStoreTargetedRecordsRule,
@@ -30,7 +30,7 @@ export const getJestMetadataAndApolloMocksAndActionMenuWrapper = ({
   contextStoreCurrentObjectMetadataNameSingular,
   contextStoreFilters,
   componentInstanceId,
-}: GetJestMetadataAndApolloMocksAndActionMenuWrapperProps) => {
+}: GetJestMetadataAndApolloMocksAndCommandMenuWrapperProps) => {
   const Wrapper = getJestMetadataAndApolloMocksWrapper({
     apolloMocks,
     onInitializeJotaiStore,

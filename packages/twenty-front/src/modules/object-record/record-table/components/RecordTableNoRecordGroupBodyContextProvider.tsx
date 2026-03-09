@@ -51,7 +51,7 @@ export const RecordTableNoRecordGroupBodyContextProvider = ({
     recordTableId,
   });
 
-  const handleActionMenuDropdown = (
+  const handleCommandMenuDropdown = (
     event: React.MouseEvent,
     recordId: string,
   ) => {
@@ -70,7 +70,7 @@ export const RecordTableNoRecordGroupBodyContextProvider = ({
         onMoveFocus: handleMoveFocus,
         onCloseTableCell: handleCloseTableCell,
         onMoveHoverToCurrentCell: handleMoveHoverToCurrentCell,
-        onActionMenuDropdownOpened: handleActionMenuDropdown,
+        onCommandMenuDropdownOpened: handleCommandMenuDropdown,
         hasUserSelectedAllRows,
       }}
     >

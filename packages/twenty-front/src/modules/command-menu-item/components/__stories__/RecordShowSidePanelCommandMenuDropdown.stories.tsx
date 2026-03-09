@@ -64,7 +64,7 @@ const meta: Meta<typeof RecordShowSidePanelCommandMenuDropdown> = {
     RouterDecorator,
   ],
   args: {
-    actionMenuId: 'story-command-menu',
+    commandMenuId: 'story-command-menu',
   },
 };
 
@@ -74,13 +74,13 @@ type Story = StoryObj<typeof RecordShowSidePanelCommandMenuDropdown>;
 
 export const Default: Story = {
   args: {
-    actionMenuId: 'story-command-menu',
+    commandMenuId: 'story-command-menu',
   },
 };
 
 export const WithButtonClicks: Story = {
   args: {
-    actionMenuId: 'story-command-menu',
+    commandMenuId: 'story-command-menu',
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement.ownerDocument.body);
