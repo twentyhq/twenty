@@ -6,11 +6,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { CHAT_THREADS_PAGE_SIZE } from '@/ai/constants/ChatThreads';
 import { useAgentChatScrollToBottom } from '@/ai/hooks/useAgentChatScrollToBottom';
-import { focusEditorAfterMigrateState } from '@/ai/states/focusEditorAfterMigrateState';
 import { hasTriggeredCreateForDraftState } from '@/ai/states/hasTriggeredCreateForDraftState';
 import { isCreatingForFirstSendState } from '@/ai/states/isCreatingForFirstSendState';
-import { skipMessagesSkeletonUntilLoadedState } from '@/ai/states/skipMessagesSkeletonUntilLoadedState';
-import { threadIdCreatedFromDraftState } from '@/ai/states/threadIdCreatedFromDraftState';
 import {
   AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
   agentChatDraftsByThreadIdState,
@@ -32,7 +29,16 @@ import {
   useGetChatThreadsQuery,
 } from '~/generated-metadata/graphql';
 
-export const useAgentChatData = () => {
+export type UseAgentChatDataOptions = {
+  onMigrateFromDraft?: (threadId: string) => void;
+  setSkipMessagesSkeleton?: (value: boolean) => void;
+};
+
+export const useAgentChatData = (
+  options: UseAgentChatDataOptions = {},
+) => {
+  const { onMigrateFromDraft, setSkipMessagesSkeleton } = options;
+
   const [currentAIChatThread, setCurrentAIChatThread] = useAtomState(
     currentAIChatThreadState,
   );
@@ -73,9 +79,7 @@ export const useAgentChatData = () => {
           [newThreadId]: newDraft,
           [AGENT_CHAT_NEW_THREAD_DRAFT_KEY]: '',
         }));
-        store.set(focusEditorAfterMigrateState, true);
-        store.set(skipMessagesSkeletonUntilLoadedState, true);
-        store.set(threadIdCreatedFromDraftState, newThreadId);
+        onMigrateFromDraft?.(newThreadId);
       } else {
         setAgentChatDraftsByThreadId((prev) => ({
           ...prev,
@@ -182,7 +186,7 @@ export const useAgentChatData = () => {
     variables: { threadId: currentAIChatThread! },
     skip: !isDefined(currentAIChatThread) || isNewThread,
     onCompleted: () => {
-      store.set(skipMessagesSkeletonUntilLoadedState, false);
+      setSkipMessagesSkeleton?.(false);
       scrollToBottom();
     },
   });

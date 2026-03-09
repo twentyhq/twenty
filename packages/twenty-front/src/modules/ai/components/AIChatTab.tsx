@@ -7,9 +7,8 @@ import { AIChatEditorSection } from '@/ai/components/AIChatEditorSection';
 import { useAIChatFileUpload } from '@/ai/hooks/useAIChatFileUpload';
 import { AGENT_CHAT_NEW_THREAD_DRAFT_KEY } from '@/ai/states/agentChatDraftsByThreadIdState';
 import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
-import { threadIdCreatedFromDraftState } from '@/ai/states/threadIdCreatedFromDraftState';
+import { useAgentChatContext } from '@/ai/contexts/AgentChatContext';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useAtomValue } from 'jotai';
 
 import { AIChatTabMessageList } from '@/ai/components/AIChatTabMessageList';
 
@@ -26,9 +25,7 @@ const StyledContainer = styled.div<{ isDraggingFile: boolean }>`
 export const AIChatTab = () => {
   const [isDraggingFile, setIsDraggingFile] = useState(false);
   const currentAIChatThread = useAtomStateValue(currentAIChatThreadState);
-  const threadIdCreatedFromDraft = useAtomValue(
-    threadIdCreatedFromDraftState,
-  );
+  const { threadIdCreatedFromDraft } = useAgentChatContext();
   const draftKey = currentAIChatThread ?? AGENT_CHAT_NEW_THREAD_DRAFT_KEY;
   const editorSectionKey =
     draftKey !== AGENT_CHAT_NEW_THREAD_DRAFT_KEY &&

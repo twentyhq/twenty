@@ -5,6 +5,9 @@ export type AgentChatContextValue = {
   threadsLoading: boolean;
   messagesLoading: boolean;
   skipMessagesSkeleton: boolean;
+  focusEditorAfterMigrate: boolean;
+  setFocusEditorAfterMigrate: (value: boolean) => void;
+  threadIdCreatedFromDraft: string | null;
 };
 
 export const AgentChatContext = createContext<AgentChatContextValue>({
@@ -12,6 +15,9 @@ export const AgentChatContext = createContext<AgentChatContextValue>({
   threadsLoading: false,
   messagesLoading: false,
   skipMessagesSkeleton: false,
+  focusEditorAfterMigrate: false,
+  setFocusEditorAfterMigrate: () => {},
+  threadIdCreatedFromDraft: null,
 });
 
 export const useAgentChatContext = () => useContext(AgentChatContext);

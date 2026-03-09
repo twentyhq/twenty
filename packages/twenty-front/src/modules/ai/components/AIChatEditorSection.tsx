@@ -1,6 +1,5 @@
 import { styled } from '@linaria/react';
 import { EditorContent } from '@tiptap/react';
-import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { LightButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -12,9 +11,9 @@ import { AgentChatFileUploadButton } from '@/ai/components/internal/AgentChatFil
 import { AIChatContextUsageButton } from '@/ai/components/internal/AIChatContextUsageButton';
 import { AIChatSkeletonLoader } from '@/ai/components/internal/AIChatSkeletonLoader';
 import { SendMessageButton } from '@/ai/components/internal/SendMessageButton';
+import { useAgentChatContext } from '@/ai/contexts/AgentChatContext';
 import { useAIChatEditor } from '@/ai/hooks/useAIChatEditor';
 import { useAiModelLabel } from '@/ai/hooks/useAiModelOptions';
-import { focusEditorAfterMigrateState } from '@/ai/states/focusEditorAfterMigrateState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -119,20 +118,21 @@ export const AIChatEditorSection = () => {
   const isMobile = useIsMobile();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const smartModelLabel = useAiModelLabel(currentWorkspace?.smartModel, false);
-  const store = useStore();
+  const { focusEditorAfterMigrate, setFocusEditorAfterMigrate } =
+    useAgentChatContext();
 
   const { editor, handleSendAndClear } = useAIChatEditor();
 
   const editorWrapperRefCallback = useCallback(
     (node: HTMLDivElement | null) => {
-      if (node && store.get(focusEditorAfterMigrateState)) {
-        store.set(focusEditorAfterMigrateState, false);
+      if (node && focusEditorAfterMigrate) {
+        setFocusEditorAfterMigrate(false);
         requestAnimationFrame(() => {
           editor?.commands.focus('end');
         });
       }
     },
-    [store, editor],
+    [focusEditorAfterMigrate, setFocusEditorAfterMigrate, editor],
   );
 
   return (
