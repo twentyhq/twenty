@@ -132,6 +132,14 @@
         }
       }
     },
+    "set-local-version": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "npm version {args.version} --no-git-tag-version"
+      }
+    },
     "test:e2e": {
       "cache": true,
       "dependsOn": ["^build"]

@@ -43,26 +43,7 @@ jobs:
         run: |
           CI_VERSION="0.0.0-ci.$(date +%s)"
           echo "CI_VERSION=$CI_VERSION" >> $GITHUB_ENV
-
-          node -e "
-            const fs = require('fs');
-            const version = '$CI_VERSION';
-            for (const pkg of ['packages/twenty-sdk/package.json', 'packages/create-twenty-app/package.json']) {
-              const json = JSON.parse(fs.readFileSync(pkg, 'utf8'));
-              json.version = version;
-              // Replace workspace:* references so npm publish can handle them
-              for (const depType of ['dependencies', 'devDependencies', 'peerDependencies']) {
-                if (!json[depType]) continue;
-                for (const [dep, ver] of Object.entries(json[depType])) {
-                  if (typeof ver === 'string' && ver.startsWith('workspace:')) {
-                    json[depType][dep] = version;
-                  }
-                }
-              }
-              fs.writeFileSync(pkg, JSON.stringify(json, null, 2) + '\n');
-              console.log('Prepared', pkg, 'for publish at version', version);
-            }
-          "
+          npx nx run-many -t set-local-version -p twenty-sdk create-twenty-app --args="--version=$CI_VERSION"
 
       - name: Build packages
         run: |
@@ -86,22 +67,21 @@ jobs:
         run: |
           npm set //localhost:4873/:_authToken "ci-auth-token"
 
-          cd packages/twenty-sdk
-          npm publish --registry http://localhost:4873 --tag ci
-          cd ../..
+          for pkg in twenty-sdk create-twenty-app; do
+            cd packages/$pkg
+            npm publish --registry http://localhost:4873 --tag ci
+            cd ../..
+          done
 
-          cd packages/create-twenty-app
-          npm publish --registry http://localhost:4873 --tag ci
-          cd ../..
-
-      - name: Scaffold app using local build
+      - name: Scaffold app using published create-twenty-app
         env:
           YARN_NPM_REGISTRY_SERVER: http://localhost:4873
           YARN_UNSAFE_HTTP_WHITELIST: localhost
         run: |
+          npm install -g create-twenty-app@$CI_VERSION --registry http://localhost:4873
           mkdir -p /tmp/e2e-test-workspace
           cd /tmp/e2e-test-workspace
-          node ${{ github.workspace }}/packages/create-twenty-app/dist/cli.cjs test-app --exhaustive --yes
+          create-twenty-app test-app --exhaustive --yes
 
       - name: Verify scaffolded app structure
         run: |
