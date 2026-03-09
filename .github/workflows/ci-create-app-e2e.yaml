@@ -118,7 +118,8 @@ jobs:
       - name: Verify SDK CLI is available
         run: |
           cd /tmp/e2e-test-workspace/test-app
-          npx twenty --version
+          test -d node_modules/twenty-sdk
+          npx --no-install twenty --version
 
   ci-create-app-e2e-status-check:
     if: always() && !cancelled()
