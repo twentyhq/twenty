@@ -74,6 +74,7 @@ export const useAgentChatData = (
 
       setIsCreatingChatThread(false);
       if (previousDraftKey === AGENT_CHAT_NEW_THREAD_DRAFT_KEY) {
+        store.set(hasTriggeredCreateForDraftState, true);
         setAgentChatDraftsByThreadId((prev) => ({
           ...prev,
           [newThreadId]: newDraft,
@@ -130,6 +131,7 @@ export const useAgentChatData = (
     onError: () => {
       setIsCreatingChatThread(false);
       store.set(isCreatingForFirstSendState, false);
+      store.set(hasTriggeredCreateForDraftState, false);
     },
     refetchQueries: [
       getOperationName(GetChatThreadsDocument) ?? 'GetChatThreads',
@@ -206,9 +208,12 @@ export const useAgentChatData = (
     if (store.get(hasTriggeredCreateForDraftState)) {
       return;
     }
-    store.set(hasTriggeredCreateForDraftState, true);
+    if (store.get(isCreatingChatThreadState.atom)) {
+      return;
+    }
+    setIsCreatingChatThread(true);
     createChatThread();
-  }, [store, createChatThread]);
+  }, [store, createChatThread, setIsCreatingChatThread]);
 
   const ensureThreadIdForSend = useCallback(async (): Promise<
     string | null
