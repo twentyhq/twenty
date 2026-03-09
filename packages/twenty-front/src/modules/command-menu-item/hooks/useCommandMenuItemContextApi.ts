@@ -22,12 +22,12 @@ import { useStore } from 'jotai';
 import { useContext } from 'react';
 import {
   CoreObjectNameSingular,
-  type CommandMenuItemContextApi,
+  type CommandMenuContextApi,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
-export const useCommandMenuItemContextApi = (): CommandMenuItemContextApi => {
+export const useCommandMenuItemContextApi = (): CommandMenuContextApi => {
   const store = useStore();
 
   const { isInSidePanel } = useContext(CommandMenuItemContext);
@@ -149,7 +149,7 @@ export const useCommandMenuItemContextApi = (): CommandMenuItemContextApi => {
     numberOfSelectedRecords: contextStoreNumberOfSelectedRecords,
     objectPermissions,
     selectedRecord:
-      selectedRecord as CommandMenuItemContextApi['selectedRecord'],
+      selectedRecord as CommandMenuContextApi['selectedRecord'],
     featureFlags,
     targetObjectReadPermissions,
     targetObjectWritePermissions,

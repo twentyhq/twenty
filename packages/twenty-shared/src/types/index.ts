@@ -14,7 +14,7 @@ export { AppBasePath } from './AppBasePath';
 export { AppPath } from './AppPath';
 export type { Arrayable } from './Arrayable';
 export type { ArraySortDirection } from './ArraySortDirection';
-export type { CommandMenuItemContextApi } from './CommandMenuItemContextApi';
+export type { CommandMenuContextApi } from './CommandMenuContextApi';
 export { CommandMenuItemViewType } from './CommandMenuItemViewType';
 export type { ActorMetadata } from './composite-types/actor.composite-type';
 export {

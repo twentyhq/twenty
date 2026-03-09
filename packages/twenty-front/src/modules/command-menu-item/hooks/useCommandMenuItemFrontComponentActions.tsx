@@ -13,7 +13,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useContext } from 'react';
-import { type CommandMenuItemContextApi } from 'twenty-shared/types';
+import { type CommandMenuContextApi } from 'twenty-shared/types';
 import {
   evaluateConditionalAvailabilityExpression,
   isDefined,
@@ -54,7 +54,7 @@ type BuildActionFromItemParams = {
     context?: HeadlessFrontComponentMountContext,
   ) => void;
   mountContext?: HeadlessFrontComponentMountContext;
-  commandMenuContextApi: CommandMenuItemContextApi;
+  commandMenuContextApi: CommandMenuContextApi;
 };
 
 // TODO: we should remove this backward compatibility logic in the future
@@ -120,7 +120,7 @@ const buildActionFromItem = ({
 };
 
 export const useCommandMenuItemFrontComponentActions = (
-  commandMenuContextApi: CommandMenuItemContextApi,
+  commandMenuContextApi: CommandMenuContextApi,
 ) => {
   const { getIcon } = useIcons();
   const { openFrontComponentInSidePanel } = useOpenFrontComponentInSidePanel();
