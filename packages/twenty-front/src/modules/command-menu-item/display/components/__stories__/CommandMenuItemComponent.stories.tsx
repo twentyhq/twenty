@@ -5,7 +5,7 @@ import { CommandMenuItemComponent } from '@/command-menu-item/display/components
 import { SingleRecordCommandKeys } from '@/command-menu-item/record/single-record/types/SingleRecordCommandKeys';
 import { CommandMenuItemContext } from '@/command-menu-item/contexts/CommandMenuItemContext';
 import { createMockCommandMenuItems } from '@/command-menu-item/mock/command-menu-items.mock';
-import { CommandMenuComponentInstanceContext } from '@/command-menu-item/states/contexts/CommandMenuComponentInstanceContext';
+import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
 import { getCommandMenuItemLabel } from '@/command-menu-item/utils/getCommandMenuItemLabel';
 import { ComponentDecorator } from 'twenty-ui/testing';
 

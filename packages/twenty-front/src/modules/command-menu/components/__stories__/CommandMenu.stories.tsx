@@ -20,7 +20,7 @@ import {
 } from '~/testing/mock-data/users';
 import { sleep } from '~/utils/sleep';
 
-import { CommandMenuComponentInstanceContext } from '@/command-menu-item/states/contexts/CommandMenuComponentInstanceContext';
+import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { SidePanelRouter } from '@/side-panel/components/SidePanelRouter';
 import { SIDE_PANEL_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelComponentInstanceId';
