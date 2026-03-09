@@ -1,11 +1,11 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CurrentWorkspaceMemberOrphanFavorites } from '@/favorites/components/CurrentWorkspaceMemberOrphanFavorites';
+import { FavoritesDragProvider } from '@/favorites/components/FavoritesDragProvider';
 import { FavoriteFolders } from '@/favorites/components/FavoritesFolders';
 import { FavoritesSkeletonLoader } from '@/favorites/components/FavoritesSkeletonLoader';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { useFavoritesByFolder } from '@/favorites/hooks/useFavoritesByFolder';
 import { isFavoriteFolderCreatingState } from '@/favorites/states/isFavoriteFolderCreatingState';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
@@ -13,11 +13,13 @@ import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
 import { isNavigationSectionOpenFamilyState } from '@/ui/navigation/navigation-drawer/states/isNavigationSectionOpenFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconFolderPlus } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
+import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 
 export const CurrentWorkspaceMemberFavoritesFolders = () => {
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
@@ -69,14 +71,21 @@ export const CurrentWorkspaceMemberFavoritesFolders = () => {
               accent="tertiary"
             />
           }
+          isOpen={isNavigationSectionOpen}
         />
       </NavigationDrawerAnimatedCollapseWrapper>
-      {isNavigationSectionOpen && (
-        <>
-          <FavoriteFolders isNavigationSectionOpen={isNavigationSectionOpen} />
+      <AnimatedExpandableContainer
+        isExpanded={isNavigationSectionOpen}
+        dimension="height"
+        mode="fit-content"
+        containAnimation
+        initial={false}
+      >
+        <FavoritesDragProvider>
+          <FavoriteFolders />
           <CurrentWorkspaceMemberOrphanFavorites />
-        </>
-      )}
+        </FavoritesDragProvider>
+      </AnimatedExpandableContainer>
     </NavigationDrawerSection>
   );
 };

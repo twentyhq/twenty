@@ -19,6 +19,7 @@ export const EXPECTED_MANIFEST: Manifest = {
     },
   ],
   skills: [],
+  agents: [],
   application: {
     applicationVariables: {
       DEFAULT_RECIPIENT_NAME: {
