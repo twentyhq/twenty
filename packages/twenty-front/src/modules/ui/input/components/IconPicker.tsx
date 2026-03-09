@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import React, { type ReactNode, useCallback, useMemo, useState } from 'react';
@@ -10,7 +11,7 @@ import { SelectableList } from '@/ui/layout/selectable-list/components/Selectabl
 import { arrayToChunks } from '~/utils/array/arrayToChunks';
 
 import { ICON_PICKER_DROPDOWN_CONTENT_WIDTH } from '@/ui/input/components/constants/IconPickerDropdownContentWidth';
-import { IconPickerScrollEffect } from '@/ui/input/hooks/IconPickerScrollEffect';
+import { IconPickerScrollEffect } from '@/ui/input/effect-components/IconPickerScrollEffect';
 import {
   ICON_PICKER_DEFAULT_VISIBLE_COUNT,
   iconPickerVisibleCountState,
@@ -104,20 +105,20 @@ const StyledLightIconButton = ({
 );
 
 const StyledLoadingMore = styled.div`
-  display: flex;
-  justify-content: center;
   align-items: center;
-  height: 40px;
+  display: flex;
   font-size: 14px;
+  height: 40px;
+  justify-content: center;
 `;
 
 const StyledMatrixItem = styled.div`
-  width: 32px;
-  height: 32px;
-  display: flex;
   align-items: center;
-  justify-content: center;
   box-sizing: border-box;
+  display: flex;
+  height: 32px;
+  justify-content: center;
+  width: 32px;
 `;
 
 const convertIconKeyToLabel = (iconKey: string) =>
@@ -212,7 +213,7 @@ export const IconPicker = ({
   const icons = getIcons();
 
   const totalMatchingIconsCount = useMemo(() => {
-    if (!icons) return 0;
+    if (!isDefined(icons)) return 0;
 
     return Object.keys(icons).filter((iconKey) => {
       const iconLabel = convertIconKeyToLabel(iconKey)
@@ -265,7 +266,8 @@ export const IconPicker = ({
       .map(({ iconKey }) => iconKey);
 
     const isSelectedIconMatchingFilter =
-      selectedIconKey && filteredAndSortedIconKeys.includes(selectedIconKey);
+      isDefined(selectedIconKey) &&
+      filteredAndSortedIconKeys.includes(selectedIconKey);
 
     return isSelectedIconMatchingFilter
       ? [
@@ -306,7 +308,7 @@ export const IconPicker = ({
         dropdownId={dropdownId}
         dropdownOffset={dropdownOffset}
         clickableComponent={
-          clickableComponent || (
+          clickableComponent ?? (
             <IconButton
               ariaLabel={t`Click to select icon ${iconAriaLabel}`}
               disabled={disabled}

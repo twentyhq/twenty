@@ -36,7 +36,7 @@ cd my-twenty-app
 yarn twenty app:dev
 ```
 
-Nástroj pro generování kostry podporuje tři režimy pro řízení toho, které ukázkové soubory jsou zahrnuty:
+Nástroj pro generování kostry podporuje dva režimy pro řízení toho, které ukázkové soubory jsou zahrnuty:
 
 ```bash filename="Terminal"
 # Výchozí (úplný): všechny příklady (objekt, pole, logická funkce, front-endová komponenta, zobrazení, položka navigační nabídky, dovednost)
@@ -44,9 +44,6 @@ npx create-twenty-app@latest my-app
 
 # Minimální: pouze základní soubory (application-config.ts a default-role.ts)
 npx create-twenty-app@latest my-app --minimal
-
-# Interaktivní: vyberte, které příklady zahrnout
-npx create-twenty-app@latest my-app --interactive
 ```
 
 Odtud můžete:
@@ -96,7 +93,7 @@ my-twenty-app/
   .yarnrc.yml
   .yarn/
     install-state.gz
-  eslint.config.mjs
+  .oxlintrc.json
   tsconfig.json
   README.md
   public/                           # Složka s veřejnými prostředky (obrázky, písma apod.)
@@ -122,7 +119,7 @@ my-twenty-app/
       └── example-skill.ts                # Ukázková definice dovednosti agenta AI
 ```
 
-S volbou `--minimal` se vytvoří pouze základní soubory (`application-config.ts`, `roles/default-role.ts`, `logic-functions/pre-install.ts` a `logic-functions/post-install.ts`). S volbou `--interactive` si vyberete, které ukázkové soubory chcete zahrnout.
+S volbou `--minimal` se vytvoří pouze základní soubory (`application-config.ts`, `roles/default-role.ts`, `logic-functions/pre-install.ts` a `logic-functions/post-install.ts`).
 
 V kostce:
 
@@ -130,7 +127,7 @@ V kostce:
 * **.gitignore**: Ignoruje běžné artefakty jako `node_modules`, `.yarn`, `generated/` (typovaný klient), `dist/`, `build/`, složky s coverage, logy a soubory `.env*`.
 * **yarn.lock**, **.yarnrc.yml**, **.yarn/**: Zamykají a konfigurují nástrojový řetězec Yarn 4 používaný projektem.
 * **.nvmrc**: Fixuje verzi Node.js požadovanou projektem.
-* **eslint.config.mjs** a **tsconfig.json**: Poskytují lintování a konfiguraci TypeScriptu pro zdrojové soubory vaší aplikace v TypeScriptu.
+* **.oxlintrc.json** and **tsconfig.json**: Provide linting and TypeScript configuration for your app's TypeScript sources.
 * **README.md**: Krátké README v kořeni aplikace se základními pokyny.
 * **public/**: Složka pro ukládání veřejných prostředků (obrázky, písma, statické soubory), které bude vaše aplikace poskytovat. Soubory umístěné zde se během synchronizace nahrají a jsou za běhu dostupné.
 * **src/**: Hlavní místo, kde definujete svou aplikaci jako kód

@@ -52,10 +52,17 @@ const StyledDisplayModeReadonlyContainer = styled.div`
   width: 100%;
 `;
 
-const StyledDisplayModeContainer = styled(StyledDisplayModeReadonlyContainer)`
-  height: 30px;
-  cursor: pointer;
+const StyledDisplayModeContainer = styled.div`
+  align-items: center;
+  background: transparent;
+  border: none;
   box-sizing: border-box;
+  cursor: pointer;
+  display: flex;
+  font-family: inherit;
+  height: 30px;
+  padding-inline: ${themeCssVariables.spacing[2]};
+  width: 100%;
 
   &:hover,
   &[data-open='true'] {
@@ -63,11 +70,11 @@ const StyledDisplayModeContainer = styled(StyledDisplayModeReadonlyContainer)`
   }
 `;
 
-const StyledInput = styled(TextInput)`
+const StyledInputContainer = styled.div`
   padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
 `;
 
-const StyledPlaceholder = styled(FormFieldPlaceholder)`
+const StyledPlaceholderContainer = styled.div`
   width: 100%;
 `;
 
@@ -303,19 +310,23 @@ export const FormArrayFieldInput = ({
                 {draftValue.value.length > 0 ? (
                   <ArrayDisplay value={draftValue.value} />
                 ) : (
-                  <StyledPlaceholder />
+                  <StyledPlaceholderContainer>
+                    <FormFieldPlaceholder />
+                  </StyledPlaceholderContainer>
                 )}
               </StyledDisplayModeReadonlyContainer>
             ) : draftValue.value.length === 0 ? (
-              <StyledInput
-                instanceId={formFieldInputInstanceId}
-                placeholder={t`Enter an item`}
-                value={newItemDraftValue}
-                copyButton={false}
-                onChange={handleFirstItemInputChange}
-                onEnter={handleFirstItemInputEnter}
-                shouldTrim={false}
-              />
+              <StyledInputContainer>
+                <TextInput
+                  instanceId={formFieldInputInstanceId}
+                  placeholder={t`Enter an item`}
+                  value={newItemDraftValue}
+                  copyButton={false}
+                  onChange={handleFirstItemInputChange}
+                  onEnter={handleFirstItemInputEnter}
+                  shouldTrim={false}
+                />
+              </StyledInputContainer>
             ) : (
               <Dropdown
                 dropdownId={dropdownId}

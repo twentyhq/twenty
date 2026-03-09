@@ -67,7 +67,7 @@ type OverflowingTextWithTooltipProps = {
 } & (
   | {
       text: string | null | undefined;
-      tooltipContent?: never;
+      tooltipContent?: string;
     }
   | {
       text: Exclude<ReactNode, string | null | undefined>;

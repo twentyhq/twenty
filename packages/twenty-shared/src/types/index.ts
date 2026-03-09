@@ -7,7 +7,6 @@
  *                              |___/
  */
 
-export { ActionViewType } from './ActionViewType';
 export type { AllowedAddressSubField } from './AddressFieldsType';
 export { ALLOWED_ADDRESS_SUBFIELDS } from './AddressFieldsType';
 export { AggregateOperations } from './AggregateOperations';
@@ -17,6 +16,7 @@ export type { Arrayable } from './Arrayable';
 export type { ArraySortDirection } from './ArraySortDirection';
 export type { CommandMenuContextApi } from './CommandMenuContextApi';
 export { CommandMenuContextApiPageType } from './CommandMenuContextApiPageType';
+export { CommandMenuItemViewType } from './CommandMenuItemViewType';
 export type { ActorMetadata } from './composite-types/actor.composite-type';
 export {
   FieldActorSource,
@@ -263,6 +263,7 @@ export { IsValidGraphQLEnumName } from './validators/is-valid-graphql-enum-name.
 export { ViewFilterGroupLogicalOperator } from './ViewFilterGroupLogicalOperator';
 export { ViewFilterOperand } from './ViewFilterOperand';
 export { ViewFilterOperandDeprecated } from './ViewFilterOperandDeprecated';
+export { ViewKey } from './ViewKey';
 export { ViewOpenRecordIn } from './ViewOpenRecordIn';
 export { ViewType } from './ViewType';
 export { ViewVisibility } from './ViewVisibility';

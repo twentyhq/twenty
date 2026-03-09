@@ -26,24 +26,25 @@ import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 import { SettingsSystemToolTableRow } from './SettingsSystemToolTableRow';
+import { TableRow } from '@/ui/layout/table/components/TableRow';
 import {
+  TOOL_TABLE_ROW_GRID_TEMPLATE_COLUMNS,
   SettingsToolTableRow,
-  StyledToolTableRow,
 } from './SettingsToolTableRow';
 
 const StyledSearchAndFilterContainer = styled.div`
+  align-items: center;
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
-  align-items: center;
   padding-bottom: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledSearchInput = styled(SettingsTextInput)`
+const StyledSearchInputContainer = styled.div`
   flex: 1;
   width: 100%;
 `;
 
-const StyledTableHeaderRow = styled(StyledToolTableRow)`
+const StyledTableHeaderRowContainer = styled.div`
   margin-bottom: ${themeCssVariables.spacing[2]};
 `;
 
@@ -171,20 +172,26 @@ export const SettingsToolsTable = () => {
           description={t`Custom tools created in your workspace`}
         />
         <StyledSearchAndFilterContainer>
-          <StyledSearchInput
-            instanceId="custom-tool-table-search"
-            LeftIcon={IconSearch}
-            placeholder={t`Search a custom tool...`}
-            value={customSearchTerm}
-            onChange={setCustomSearchTerm}
-          />
+          <StyledSearchInputContainer>
+            <SettingsTextInput
+              instanceId="custom-tool-table-search"
+              LeftIcon={IconSearch}
+              placeholder={t`Search a custom tool...`}
+              value={customSearchTerm}
+              onChange={setCustomSearchTerm}
+            />
+          </StyledSearchInputContainer>
         </StyledSearchAndFilterContainer>
         <Table>
-          <StyledTableHeaderRow>
-            <TableHeader>{t`Name`}</TableHeader>
-            <TableHeader align="right">{t`Type`}</TableHeader>
-            <TableHeader />
-          </StyledTableHeaderRow>
+          <StyledTableHeaderRowContainer>
+            <TableRow
+              gridTemplateColumns={TOOL_TABLE_ROW_GRID_TEMPLATE_COLUMNS}
+            >
+              <TableHeader>{t`Name`}</TableHeader>
+              <TableHeader align="right">{t`Type`}</TableHeader>
+              <TableHeader />
+            </TableRow>
+          </StyledTableHeaderRowContainer>
           {showSkeleton
             ? Array.from({ length: 3 }).map((_, index) => (
                 <Skeleton height={32} borderRadius={4} key={index} />
@@ -222,20 +229,26 @@ export const SettingsToolsTable = () => {
           description={t`Standard tools available to AI agents`}
         />
         <StyledSearchAndFilterContainer>
-          <StyledSearchInput
-            instanceId="builtin-tool-table-search"
-            LeftIcon={IconSearch}
-            placeholder={t`Search a built-in tool...`}
-            value={builtInSearchTerm}
-            onChange={setBuiltInSearchTerm}
-          />
+          <StyledSearchInputContainer>
+            <SettingsTextInput
+              instanceId="builtin-tool-table-search"
+              LeftIcon={IconSearch}
+              placeholder={t`Search a built-in tool...`}
+              value={builtInSearchTerm}
+              onChange={setBuiltInSearchTerm}
+            />
+          </StyledSearchInputContainer>
         </StyledSearchAndFilterContainer>
         <Table>
-          <StyledTableHeaderRow>
-            <TableHeader>{t`Name`}</TableHeader>
-            <TableHeader align="right">{t`Type`}</TableHeader>
-            <TableHeader />
-          </StyledTableHeaderRow>
+          <StyledTableHeaderRowContainer>
+            <TableRow
+              gridTemplateColumns={TOOL_TABLE_ROW_GRID_TEMPLATE_COLUMNS}
+            >
+              <TableHeader>{t`Name`}</TableHeader>
+              <TableHeader align="right">{t`Type`}</TableHeader>
+              <TableHeader />
+            </TableRow>
+          </StyledTableHeaderRowContainer>
           {filteredSystemTools.map((systemTool) => (
             <SettingsSystemToolTableRow
               key={systemTool.name}

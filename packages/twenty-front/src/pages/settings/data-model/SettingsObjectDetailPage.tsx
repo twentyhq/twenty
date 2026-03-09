@@ -37,8 +37,8 @@ import { updatedObjectNamePluralState } from '~/pages/settings/data-model/states
 
 const StyledContentContainer = styled.div`
   flex: 1;
-  width: 100%;
   padding-left: 0;
+  width: 100%;
 `;
 
 export const SettingsObjectDetailPage = () => {

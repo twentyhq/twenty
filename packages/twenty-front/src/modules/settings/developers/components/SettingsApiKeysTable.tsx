@@ -10,7 +10,7 @@ import { getSettingsPath } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useGetApiKeysQuery } from '~/generated-metadata/graphql';
 
-const StyledTableBody = styled(TableBody)`
+const StyledTableBodyContainer = styled.div`
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
 `;
 
@@ -36,17 +36,19 @@ export const SettingsApiKeysTable = () => {
         <TableHeader></TableHeader>
       </TableRow>
       {!!apiKeys?.length && (
-        <StyledTableBody>
-          {apiKeys.map((apiKey) => (
-            <SettingsApiKeysFieldItemTableRow
-              key={apiKey.id}
-              apiKey={apiKey}
-              to={getSettingsPath(SettingsPath.ApiKeyDetail, {
-                apiKeyId: apiKey.id,
-              })}
-            />
-          ))}
-        </StyledTableBody>
+        <StyledTableBodyContainer>
+          <TableBody>
+            {apiKeys.map((apiKey) => (
+              <SettingsApiKeysFieldItemTableRow
+                key={apiKey.id}
+                apiKey={apiKey}
+                to={getSettingsPath(SettingsPath.ApiKeyDetail, {
+                  apiKeyId: apiKey.id,
+                })}
+              />
+            ))}
+          </TableBody>
+        </StyledTableBodyContainer>
       )}
     </Table>
   );

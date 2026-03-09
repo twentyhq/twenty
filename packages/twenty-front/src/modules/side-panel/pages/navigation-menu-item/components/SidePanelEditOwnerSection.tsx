@@ -22,7 +22,7 @@ export const SidePanelEditOwnerSection = ({
   const { currentDraft } = useDraftNavigationMenuItems();
 
   const applicationIdFromDraft =
-    selectedItem && currentDraft
+    isDefined(selectedItem) && isDefined(currentDraft)
       ? currentDraft.find((item) => item.id === selectedItem.id)?.applicationId
       : undefined;
 

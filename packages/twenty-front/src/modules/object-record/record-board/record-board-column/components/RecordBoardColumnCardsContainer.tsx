@@ -47,7 +47,7 @@ export const RecordBoardColumnCardsContainer = ({
   return (
     <StyledColumnCardsContainer
       ref={droppableProvided?.innerRef}
-      // eslint-disable-next-line react/jsx-props-no-spreading
+      // oxlint-disable-next-line react/jsx-props-no-spreading
       {...droppableProvided?.droppableProps}
     >
       {recordIndexRecordIdsByGroup.map((recordId, index) => (
@@ -68,7 +68,7 @@ export const RecordBoardColumnCardsContainer = ({
         {(draggableProvided) => (
           <div
             ref={draggableProvided.innerRef}
-            // eslint-disable-next-line react/jsx-props-no-spreading
+            // oxlint-disable-next-line react/jsx-props-no-spreading
             {...draggableProvided.draggableProps}
           ></div>
         )}

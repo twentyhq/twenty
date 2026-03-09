@@ -42,7 +42,7 @@ export class ResolverValidationPipe implements PipeTransform {
     throw new UserInputError(errorMessage);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
   private toValidate(metatype: Type<any>): boolean {
     const types: unknown[] = [String, Boolean, Number, Array, Object];
 

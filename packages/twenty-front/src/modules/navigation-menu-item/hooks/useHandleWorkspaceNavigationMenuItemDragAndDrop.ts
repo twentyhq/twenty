@@ -5,12 +5,14 @@ import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/constants
 import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/isNavigationMenuInEditModeState';
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/states/navigationMenuItemsDraftState';
 import { openNavigationMenuItemFolderIdsState } from '@/navigation-menu-item/states/openNavigationMenuItemFolderIdsState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { getPositionBetween } from '@/navigation-menu-item/utils/getPositionBetween';
+import { isNavigationMenuItemFolder } from '@/navigation-menu-item/utils/isNavigationMenuItemFolder';
 import {
   matchesWorkspaceFolderId,
   validateAndExtractWorkspaceFolderId,
 } from '@/navigation-menu-item/utils/validateAndExtractWorkspaceFolderId';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 import { isDefined } from 'twenty-shared/utils';
 import { usePrefetchedNavigationMenuItemsData } from './usePrefetchedNavigationMenuItemsData';
@@ -83,6 +85,13 @@ export const useHandleWorkspaceNavigationMenuItemDragAndDrop = () => {
     const destinationFolderId = validateAndExtractWorkspaceFolderId(
       destination.droppableId,
     );
+
+    if (
+      isNavigationMenuItemFolder(draggedItem) &&
+      isDefined(destinationFolderId)
+    ) {
+      return;
+    }
     const sourceFolderId = validateAndExtractWorkspaceFolderId(
       source.droppableId,
     );
@@ -108,69 +117,41 @@ export const useHandleWorkspaceNavigationMenuItemDragAndDrop = () => {
     }
 
     const isSameList = sourceFolderId === destinationFolderId;
-    let reorderedDestinationList: NavigationMenuItem[];
 
     if (isSameList) {
       const listWithoutDragged = sourceList.filter(
         (item) => item.id !== draggableId,
       );
-      reorderedDestinationList = [
-        ...listWithoutDragged.slice(0, destination.index),
-        draggedItem,
-        ...listWithoutDragged.slice(destination.index),
-      ];
-    } else {
-      const destinationListWithInsertedItem = [
-        ...destinationList.slice(0, destination.index),
-        { ...draggedItem, folderId: destinationFolderId },
-        ...destinationList.slice(destination.index),
-      ];
-      reorderedDestinationList = destinationListWithInsertedItem;
-    }
-
-    const destinationWithNormalizedPositions = reorderedDestinationList.map(
-      (item, index) => ({
-        ...item,
-        position: index,
-        folderId: isSameList ? item.folderId : destinationFolderId,
-      }),
-    );
-
-    const positionUpdates = new Map<
-      string,
-      { position: number; folderId: string | null }
-    >();
-    destinationWithNormalizedPositions.forEach((item) => {
-      positionUpdates.set(item.id, {
-        position: item.position,
-        folderId: item.folderId ?? null,
-      });
-    });
-
-    if (!isSameList) {
-      const sourceListWithoutDragged = sourceList.filter(
-        (item) => item.id !== draggableId,
+      const prevItem = listWithoutDragged[destination.index - 1];
+      const nextItem = listWithoutDragged[destination.index];
+      const newPosition = getPositionBetween(
+        prevItem?.position,
+        nextItem?.position,
       );
-      sourceListWithoutDragged.forEach((item, index) => {
-        positionUpdates.set(item.id, {
-          position: index,
-          folderId: sourceFolderId,
-        });
-      });
+      const updatedDraft = navigationMenuItemsDraft.map(
+        (item): NavigationMenuItem =>
+          item.id === draggableId ? { ...item, position: newPosition } : item,
+      );
+      setNavigationMenuItemsDraft(updatedDraft);
+      return;
     }
 
+    const prevItem = destinationList[destination.index - 1];
+    const nextItem = destinationList[destination.index];
+    const newPosition = getPositionBetween(
+      prevItem?.position,
+      nextItem?.position,
+    );
     const updatedDraft = navigationMenuItemsDraft.map(
       (item): NavigationMenuItem => {
-        const update = positionUpdates.get(item.id);
-        if (!update) return item;
+        if (item.id !== draggableId) return item;
         return {
           ...item,
-          position: update.position,
-          folderId: update.folderId,
+          position: newPosition,
+          folderId: destinationFolderId,
         };
       },
     );
-
     setNavigationMenuItemsDraft(updatedDraft);
   };
 

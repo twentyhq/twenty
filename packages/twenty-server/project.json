@@ -150,18 +150,25 @@
       }
     },
     "lint": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "dependsOn": ["twenty-oxlint-rules:build"],
+      "inputs": [
+        "{projectRoot}/src/**/*.{ts,tsx}",
+        "{projectRoot}/tsconfig*.json",
+        "{workspaceRoot}/tsconfig.base.json",
+        "{projectRoot}/.oxlintrc.json",
+        "{workspaceRoot}/packages/twenty-oxlint-rules/dist/oxlint-plugin.mjs"
+      ],
       "options": {
-        "lintFilePatterns": ["{projectRoot}/src/**/*.{ts,json}"],
-        "maxWarnings": 0
+        "cwd": "{projectRoot}",
+        "command": "npx oxlint --type-aware -c .oxlintrc.json src/ && (prettier src/ --check --cache --cache-location ../../.cache/prettier/{projectRoot} --cache-strategy metadata || (echo 'ERROR: Prettier formatting check failed! Fix with: npx nx lint twenty-server --configuration=fix' && false))"
       },
       "configurations": {
-        "ci": { "lintFilePatterns": ["{projectRoot}/**/*.{ts,json}"] },
-        "fix": {}
-      }
-    },
-    "lint:diff-with-main": {
-      "options": {
-        "pattern": "\\.(ts|tsx|js|jsx|json)$"
+        "ci": {},
+        "fix": {
+          "command": "npx oxlint --type-aware --fix -c .oxlintrc.json src/ && prettier src/ --write --cache --cache-location ../../.cache/prettier/{projectRoot} --cache-strategy metadata"
+        }
       }
     },
     "test": {},

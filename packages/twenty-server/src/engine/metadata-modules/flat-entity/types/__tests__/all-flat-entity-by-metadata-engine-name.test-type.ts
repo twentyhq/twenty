@@ -23,7 +23,7 @@ type ExpectedGenericAllFlatEntityInformationByMetadataEngine = {
   [P in keyof AllFlatEntityTypesByMetadataName]: ExpectedGenericFlatEntityInformation;
 };
 
-// eslint-disable-next-line unused-imports/no-unused-vars
+// oxlint-disable-next-line unused-imports/no-unused-vars
 type Assertions = [
   Expect<
     keyof AllFlatEntityTypesByMetadataName extends AllMetadataName

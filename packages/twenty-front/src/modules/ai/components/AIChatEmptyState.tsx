@@ -11,10 +11,10 @@ import { isDefined } from 'twenty-shared/utils';
 
 const StyledEmptyState = styled.div`
   display: flex;
-  flex-direction: column;
   flex: 1;
-  justify-content: flex-end;
+  flex-direction: column;
   height: 100%;
+  justify-content: flex-end;
 `;
 
 type AIChatEmptyStateProps = {

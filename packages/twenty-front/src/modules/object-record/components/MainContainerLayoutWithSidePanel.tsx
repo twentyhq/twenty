@@ -19,12 +19,17 @@ const StyledMainContainerLayoutForDesktop = styled.div`
   padding-right: ${themeCssVariables.spacing[3]};
 `;
 
-const StyledPageBodyForDesktop = styled(PageBody)`
+const StyledPageBodyForDesktopContainer = styled.div`
+  display: flex;
   flex: 1 1 0;
+  flex-direction: column;
   min-width: 0;
   width: 0;
-  padding-bottom: 0;
-  padding-right: 0;
+
+  > * {
+    padding-bottom: 0;
+    padding-right: 0;
+  }
 `;
 
 const StyledMainContainerLayoutForMobile = styled.div`
@@ -34,11 +39,17 @@ const StyledMainContainerLayoutForMobile = styled.div`
   padding: 0;
 `;
 
-const StyledPageBodyForMobile = styled(PageBody)`
-  padding-bottom: 0;
-  padding-left: ${themeCssVariables.spacing[1]};
+const StyledPageBodyForMobileContainer = styled.div`
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
 
-  padding-right: ${themeCssVariables.spacing['1.5']};
+  > * {
+    padding-bottom: 0;
+    padding-left: ${themeCssVariables.spacing[1]};
+    padding-right: ${themeCssVariables.spacing['1.5']};
+  }
 `;
 
 export const MainContainerLayoutWithSidePanel = ({
@@ -51,7 +62,9 @@ export const MainContainerLayoutWithSidePanel = ({
   if (isMobile) {
     return (
       <StyledMainContainerLayoutForMobile>
-        <StyledPageBodyForMobile>{children}</StyledPageBodyForMobile>
+        <StyledPageBodyForMobileContainer>
+          <PageBody>{children}</PageBody>
+        </StyledPageBodyForMobileContainer>
         <CommandMenuForMobile />
       </StyledMainContainerLayoutForMobile>
     );
@@ -59,7 +72,9 @@ export const MainContainerLayoutWithSidePanel = ({
 
   return (
     <StyledMainContainerLayoutForDesktop>
-      <StyledPageBodyForDesktop>{children}</StyledPageBodyForDesktop>
+      <StyledPageBodyForDesktopContainer>
+        <PageBody>{children}</PageBody>
+      </StyledPageBodyForDesktopContainer>
       <SidePanelForDesktop />
     </StyledMainContainerLayoutForDesktop>
   );

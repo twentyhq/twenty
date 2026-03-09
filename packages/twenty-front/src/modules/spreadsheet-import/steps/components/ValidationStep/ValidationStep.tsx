@@ -40,24 +40,26 @@ const StyledContentWrapper = styled.div`
 
 const StyledToolbar = styled.div`
   align-items: center;
-  border-radius: ${themeCssVariables.border.radius.md};
-  border: 1px solid ${themeCssVariables.border.color.medium};
   background-color: ${themeCssVariables.background.secondary};
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  border-radius: ${themeCssVariables.border.radius.md};
   bottom: ${themeCssVariables.spacing[3]};
+  box-shadow: ${themeCssVariables.boxShadow.strong};
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   left: 50%;
+  padding: ${themeCssVariables.spacing[3]};
   position: absolute;
   transform: translateX(-50%);
   width: 400px;
-  padding: ${themeCssVariables.spacing[3]};
   z-index: 1;
-  box-shadow: ${themeCssVariables.boxShadow.strong};
 `;
 
-const StyledButton = styled(Button)`
-  height: 24px;
+const StyledButtonContainer = styled.div`
+  > button {
+    height: 24px;
+  }
 `;
 
 const StyledErrorToggle = styled.div`
@@ -125,7 +127,7 @@ export const ValidationStep = ({
   >(
     useMemo(
       () => addErrorsAndRunHooks(initialData, fields, rowHook, tableHook),
-      // eslint-disable-next-line react-hooks/exhaustive-deps
+      // oxlint-disable-next-line react-hooks/exhaustive-deps
       [],
     ),
   );
@@ -204,9 +206,11 @@ export const ValidationStep = ({
     if (filterByErrors) {
       return data.filter((value) => {
         if (isDefined(value?.__errors)) {
-          return Object.values(value.__errors)?.filter(
-            (err) => err.level === 'error',
-          ).length;
+          return (
+            (Object.values(value.__errors)?.filter(
+              (err) => err.level === 'error',
+            ).length ?? 0) > 0
+          );
         }
         return false;
       });
@@ -323,13 +327,15 @@ export const ValidationStep = ({
                 <Trans>Show only rows with errors</Trans>
               </StyledErrorToggleDescription>
             </StyledErrorToggle>
-            <StyledButton
-              Icon={IconTrash}
-              title={t`Remove`}
-              accent="default"
-              onClick={deleteSelectedRows}
-              disabled={selectedRows.size === 0}
-            />
+            <StyledButtonContainer>
+              <Button
+                Icon={IconTrash}
+                title={t`Remove`}
+                accent="default"
+                onClick={deleteSelectedRows}
+                disabled={selectedRows.size === 0}
+              />
+            </StyledButtonContainer>
           </StyledToolbar>
         </StyledContentWrapper>
       </ModalContent>

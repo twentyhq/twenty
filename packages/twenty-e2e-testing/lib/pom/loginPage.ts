@@ -87,7 +87,7 @@ export class LoginPage {
 
   async clickLoginWithEmailIfVisible() {
     try {
-      await this.loginWithEmailButton.click();
+      await this.loginWithEmailButton.click({ timeout: 3000 });
     } catch {
       // Button not found - email field might already be visible (SSO-only or different auth flow)
     }
@@ -106,7 +106,7 @@ export class LoginPage {
   }
 
   async typeEmail(email: string) {
-    await this.emailField.fill(email, { timeout: 10000 });
+    await this.emailField.fill(email, { timeout: 30000 });
   }
 
   async typePassword(email: string) {

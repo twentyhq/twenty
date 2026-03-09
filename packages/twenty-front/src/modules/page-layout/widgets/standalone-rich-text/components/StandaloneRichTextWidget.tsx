@@ -26,10 +26,10 @@ const StyledContainer = styled.div<{ isPageLayoutInEditMode?: boolean }>`
   display: flex;
   flex-direction: column;
   height: 100%;
-  width: 100%;
   overflow: hidden;
   padding-left: ${({ isPageLayoutInEditMode }) =>
     isPageLayoutInEditMode ? themeCssVariables.spacing[5] : 0};
+  width: 100%;
 `;
 
 type StandaloneRichTextWidgetProps = {

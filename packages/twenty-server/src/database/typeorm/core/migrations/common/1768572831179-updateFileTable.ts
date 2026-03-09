@@ -19,7 +19,7 @@ export class UpdateFileTable1768572831179 implements MigrationInterface {
         await queryRunner.query(`ROLLBACK TO SAVEPOINT ${savepointName}`);
         await queryRunner.query(`RELEASE SAVEPOINT ${savepointName}`);
       } catch (rollbackError) {
-        // eslint-disable-next-line no-console
+        // oxlint-disable-next-line no-console
         console.error(
           'Failed to rollback to savepoint in UpdateFileTable1768572831179',
           rollbackError,
@@ -27,7 +27,7 @@ export class UpdateFileTable1768572831179 implements MigrationInterface {
         throw rollbackError;
       }
 
-      // eslint-disable-next-line no-console
+      // oxlint-disable-next-line no-console
       console.error('Swallowing UpdateFileTable1768572831179 error', e);
     }
   }

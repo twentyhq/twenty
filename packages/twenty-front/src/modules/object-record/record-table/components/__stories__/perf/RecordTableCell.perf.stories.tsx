@@ -42,7 +42,7 @@ const RelationFieldValueSetterEffect = () => {
     mockPerformance.recordId,
   );
 
-  // eslint-disable-next-line twenty/matching-state-variable
+  // oxlint-disable-next-line twenty/matching-state-variable
   const setRelationRecordStore = useSetAtomFamilyState(
     recordStoreFamilyState,
     mockPerformance.relationRecordId,
@@ -181,7 +181,7 @@ const meta: Meta = {
                     onMoveFocus: () => {},
                     onCloseTableCell: () => {},
                     onMoveHoverToCurrentCell: () => {},
-                    onActionMenuDropdownOpened: () => {},
+                    onCommandMenuDropdownOpened: () => {},
                   }}
                 >
                   <RecordTableRowContextProvider

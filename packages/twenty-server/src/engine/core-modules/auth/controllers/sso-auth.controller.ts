@@ -62,7 +62,7 @@ export class SSOAuthController {
     PublicEndpointGuard,
     NoPermissionGuard,
   )
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
   async generateMetadata(@Req() req: any): Promise<string | void> {
     return generateServiceProviderMetadata({
       wantAssertionsSigned: true,

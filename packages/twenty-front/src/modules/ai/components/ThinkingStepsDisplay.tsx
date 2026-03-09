@@ -41,8 +41,8 @@ const StyledStepsContentContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[1]};
-  padding-top: ${themeCssVariables.spacing[1]};
   padding-bottom: ${themeCssVariables.spacing[2]};
+  padding-top: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledSummaryText = styled.span`
@@ -140,8 +140,9 @@ const StyledReasoningText = styled.p`
   white-space: pre-wrap;
 `;
 
-const StyledOrbitLoaderIcon = styled(ThinkingOrbitLoaderIcon)`
+const StyledOrbitLoaderIconContainer = styled.span`
   color: ${themeCssVariables.font.color.tertiary};
+  display: flex;
 `;
 
 const StyledIconContainer = styled.div`
@@ -214,7 +215,7 @@ const StyledToolDetailsContainer = styled.div`
   overflow: hidden;
 `;
 
-const StyledToolTabList = styled(TabList)`
+const StyledToolTabListContainer = styled.div`
   background-color: ${themeCssVariables.background.secondary};
   padding-left: ${themeCssVariables.spacing[1]};
 `;
@@ -334,11 +335,13 @@ const ThinkingToolStepRow = ({
               <StyledToolErrorText>{part.errorText}</StyledToolErrorText>
             ) : (
               <StyledToolDetailsContent>
-                <StyledToolTabList
-                  tabs={toolTabs}
-                  behaveAsLinks={false}
-                  componentInstanceId={toolTabListComponentInstanceId}
-                />
+                <StyledToolTabListContainer>
+                  <TabList
+                    tabs={toolTabs}
+                    behaveAsLinks={false}
+                    componentInstanceId={toolTabListComponentInstanceId}
+                  />
+                </StyledToolTabListContainer>
                 <StyledToolJsonContent>
                   <StyledJsonTreeContainer>
                     <JsonTree
@@ -388,7 +391,13 @@ const ThinkingStepRow = ({
   return (
     <StyledRow>
       <StyledIconContainer>
-        {isActive ? <StyledOrbitLoaderIcon /> : <IconCpu size={14} />}
+        {isActive ? (
+          <StyledOrbitLoaderIconContainer>
+            <ThinkingOrbitLoaderIcon />
+          </StyledOrbitLoaderIconContainer>
+        ) : (
+          <IconCpu size={14} />
+        )}
       </StyledIconContainer>
       <StyledRowLabelContainer>
         <StyledRowLabel>{isActive ? t`Thinking` : t`Thought`}</StyledRowLabel>

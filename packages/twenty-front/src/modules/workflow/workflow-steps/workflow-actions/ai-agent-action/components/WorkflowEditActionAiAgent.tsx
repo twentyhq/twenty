@@ -1,4 +1,4 @@
-import { CmdEnterActionButton } from '@/action-menu/components/CmdEnterActionButton';
+import { WorkflowStepCmdEnterButton } from '@/workflow/workflow-steps/components/WorkflowStepCmdEnterButton';
 import { useAiModelOptions } from '@/ai/hooks/useAiModelOptions';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
@@ -50,7 +50,7 @@ type WorkflowEditActionAiAgentProps = {
       };
 };
 
-const StyledTabList = styled(TabList)`
+const StyledTabListContainer = styled.div`
   background-color: ${themeCssVariables.background.secondary};
   padding-left: ${themeCssVariables.spacing[2]};
 `;
@@ -244,7 +244,7 @@ export const WorkflowEditActionAiAgent = ({
 
     if (workflowAiAgentPermissionsIsAddingPermission) {
       return [
-        <CmdEnterActionButton
+        <WorkflowStepCmdEnterButton
           key="view-role"
           title={t`View role`}
           onClick={handleViewRole}
@@ -258,7 +258,7 @@ export const WorkflowEditActionAiAgent = ({
     }
 
     return [
-      <CmdEnterActionButton
+      <WorkflowStepCmdEnterButton
         key="add-permission"
         title={t`Add permission`}
         onClick={() => setWorkflowAiAgentPermissionsIsAddingPermission(true)}
@@ -270,11 +270,13 @@ export const WorkflowEditActionAiAgent = ({
     <SidePanelSkeletonLoader />
   ) : (
     <>
-      <StyledTabList
-        tabs={tabs}
-        componentInstanceId={componentInstanceId}
-        behaveAsLinks={false}
-      />
+      <StyledTabListContainer>
+        <TabList
+          tabs={tabs}
+          componentInstanceId={componentInstanceId}
+          behaveAsLinks={false}
+        />
+      </StyledTabListContainer>
       {currentTabId === WORKFLOW_AI_AGENT_TABS.PERMISSIONS ? (
         <WorkflowStepBody paddingBlock="0" paddingInline="0">
           <WorkflowAiAgentPermissionsTab

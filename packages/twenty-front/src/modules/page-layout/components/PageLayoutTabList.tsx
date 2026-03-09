@@ -68,9 +68,14 @@ const StyledContainer = styled.div`
   }
 `;
 
-const StyledAddButton = styled.div`
-  display: flex;
+const StyledDropdownContainer = styled.div`
   align-items: center;
+  display: flex;
+`;
+
+const StyledAddButton = styled.div`
+  align-items: center;
+  display: flex;
   height: ${themeCssVariables.spacing[10]};
   margin-left: ${TAB_LIST_GAP}px;
 `;
@@ -108,10 +113,10 @@ export const PageLayoutTabList = ({
     // TODO: drop once the configuration of all record page layouts has been migrated to the backend.
     title:
       shouldTranslateTabTitles &&
-      STANDARD_PAGE_LAYOUT_TAB_TITLE_TRANSLATIONS[tab.title]
+      isDefined(STANDARD_PAGE_LAYOUT_TAB_TITLE_TRANSLATIONS[tab.title])
         ? t(STANDARD_PAGE_LAYOUT_TAB_TITLE_TRANSLATIONS[tab.title])
         : tab.title,
-    Icon: tab.icon ? getIcon(tab.icon) : undefined,
+    Icon: isDefined(tab.icon) ? getIcon(tab.icon) : undefined,
   }));
 
   const navigate = useNavigate();
@@ -366,18 +371,20 @@ export const PageLayoutTabList = ({
               />
 
               {shouldRenderReorderableDropdown && (
-                <PageLayoutTabListReorderableOverflowDropdown
-                  dropdownId={dropdownId}
-                  hiddenTabs={hiddenTabs}
-                  hiddenTabsCount={hiddenTabsCount}
-                  isActiveTabHidden={isActiveTabHidden}
-                  activeTabId={activeTabId || ''}
-                  loading={loading}
-                  onSelect={handleSelectTabFromDropdown}
-                  visibleTabCount={visibleTabCount}
-                  onClose={closeOverflowDropdown}
-                  pageLayoutType={pageLayoutType}
-                />
+                <StyledDropdownContainer>
+                  <PageLayoutTabListReorderableOverflowDropdown
+                    dropdownId={dropdownId}
+                    hiddenTabs={hiddenTabs}
+                    hiddenTabsCount={hiddenTabsCount}
+                    isActiveTabHidden={isActiveTabHidden}
+                    activeTabId={activeTabId || ''}
+                    loading={loading}
+                    onSelect={handleSelectTabFromDropdown}
+                    visibleTabCount={visibleTabCount}
+                    onClose={closeOverflowDropdown}
+                    pageLayoutType={pageLayoutType}
+                  />
+                </StyledDropdownContainer>
               )}
 
               {onAddTab && (
@@ -405,16 +412,18 @@ export const PageLayoutTabList = ({
               canReorder={canReorderTabs}
             />
             {shouldRenderStaticDropdown && (
-              <PageLayoutTabListStaticOverflowDropdown
-                dropdownId={dropdownId}
-                hiddenTabs={hiddenTabs}
-                hiddenTabsCount={hiddenTabsCount}
-                isActiveTabHidden={isActiveTabHidden}
-                activeTabId={activeTabId || ''}
-                loading={loading}
-                onSelect={handleSelectTabFromDropdown}
-                onClose={closeOverflowDropdown}
-              />
+              <StyledDropdownContainer>
+                <PageLayoutTabListStaticOverflowDropdown
+                  dropdownId={dropdownId}
+                  hiddenTabs={hiddenTabs}
+                  hiddenTabsCount={hiddenTabsCount}
+                  isActiveTabHidden={isActiveTabHidden}
+                  activeTabId={activeTabId || ''}
+                  loading={loading}
+                  onSelect={handleSelectTabFromDropdown}
+                  onClose={closeOverflowDropdown}
+                />
+              </StyledDropdownContainer>
             )}
             {onAddTab && (
               <StyledAddButton>

@@ -139,7 +139,7 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
         attempts: {
           max: 2,
           retryIf: (error) => {
-            // eslint-disable-next-line no-console
+            // oxlint-disable-next-line no-console
             console.log('retryIf error from retryLink', error);
             if (this.isAuthenticationError(error)) {
               return false;
@@ -163,14 +163,14 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
           renewalPromise = renewToken(graphqlUri, getTokenPair())
             .then((tokens) => {
               if (isDefined(tokens)) {
-                // eslint-disable-next-line no-console
+                // oxlint-disable-next-line no-console
                 console.log('setTokenPair from handleTokenRenewal');
                 onTokenPairChange?.(tokens);
                 cookieStorage.setItem('tokenPair', JSON.stringify(tokens));
               }
             })
             .catch(() => {
-              // eslint-disable-next-line no-console
+              // oxlint-disable-next-line no-console
               console.log(
                 'Failed to renew token, triggering unauthenticated error from handleTokenRenewal',
               );
@@ -234,7 +234,7 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
             });
           })
           .catch((sentryError) => {
-            // eslint-disable-next-line no-console
+            // oxlint-disable-next-line no-console
             console.error(
               'Failed to capture GraphQL error with Sentry:',
               sentryError,
@@ -248,7 +248,7 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
             onErrorCb?.(graphQLErrors);
             for (const graphQLError of graphQLErrors) {
               if (graphQLError.message === 'Unauthorized') {
-                // eslint-disable-next-line no-console
+                // oxlint-disable-next-line no-console
                 console.log('Unauthorized, triggering token renewal');
                 return handleTokenRenewal(operation, forward);
               }
@@ -262,7 +262,7 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
                   return;
                 }
                 case 'UNAUTHENTICATED': {
-                  // eslint-disable-next-line no-console
+                  // oxlint-disable-next-line no-console
                   console.log('UNAUTHENTICATED, triggering token renewal');
                   return handleTokenRenewal(operation, forward);
                 }
@@ -294,7 +294,7 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
               this.isRestOperation(operation) &&
               this.isAuthenticationError(networkError as ServerError)
             ) {
-              // eslint-disable-next-line no-console
+              // oxlint-disable-next-line no-console
               console.log(
                 'Authentication error, triggering token renewal from errorLink',
               );

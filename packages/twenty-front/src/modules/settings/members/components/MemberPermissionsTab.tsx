@@ -73,7 +73,7 @@ export const MemberPermissionsTab = ({
         label: role.label,
         value: role.id,
         Icon: getIcon(role.icon) ?? IconUser,
-      })) || [];
+      })) ?? [];
 
   const handleRoleChangeRequest = (newRoleId: string) => {
     const newRole = allRoles.find((role) => role.id === newRoleId);
@@ -111,7 +111,7 @@ export const MemberPermissionsTab = ({
     }
   };
 
-  if (!primaryRole) {
+  if (!isDefined(primaryRole)) {
     return (
       <StyledNoRoleContainer>{t`No role assigned to this member`}</StyledNoRoleContainer>
     );

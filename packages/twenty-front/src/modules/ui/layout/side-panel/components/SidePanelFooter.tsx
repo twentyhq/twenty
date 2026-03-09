@@ -9,9 +9,9 @@ const StyledContainer = styled.div`
   bottom: 0;
   box-sizing: border-box;
   display: flex;
+  gap: ${themeCssVariables.spacing[2]};
   justify-content: flex-end;
   padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
-  gap: ${themeCssVariables.spacing[2]};
   width: 100%;
 `;
 

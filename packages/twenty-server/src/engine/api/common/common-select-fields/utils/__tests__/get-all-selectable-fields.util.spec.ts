@@ -523,7 +523,7 @@ describe('getAllSelectableFields', () => {
       });
     });
 
-    it('should include MANY_TO_ONE relations without joinColumnName as regular fields', () => {
+    it('should compute join column name for MANY_TO_ONE relations without joinColumnName in settings', () => {
       const nameField = createMockField({
         id: 'field-1',
         name: 'name',
@@ -555,7 +555,7 @@ describe('getAllSelectableFields', () => {
 
       expect(result).toEqual({
         name: true,
-        company: true, // MANY_TO_ONE without joinColumnName are included as regular fields
+        companyId: true,
       });
     });
   });

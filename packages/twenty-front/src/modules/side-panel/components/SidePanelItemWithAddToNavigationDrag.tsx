@@ -1,23 +1,22 @@
 import { styled } from '@linaria/react';
-import { Draggable } from '@hello-pangea/dnd';
 import { useLingui } from '@lingui/react/macro';
-import { type ReactNode, useState } from 'react';
+import { type ReactNode, lazy, Suspense, useState } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { type IconComponent } from 'twenty-ui/display';
 
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { AddToNavigationDragHandle } from '@/navigation-menu-item/components/AddToNavigationDragHandle';
 import { addToNavPayloadRegistryState } from '@/navigation-menu-item/states/addToNavPayloadRegistryState';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import type { AddToNavigationDragPayload } from '@/navigation-menu-item/types/add-to-navigation-drag-payload';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
-const StyledDraggableMenuItem = styled.div`
-  cursor: grab;
-  width: 100%;
-
-  &:active {
-    cursor: grabbing;
-  }
-`;
+const CommandMenuItemWithAddToNavigationDragDndKit = lazy(() =>
+  import(
+    '@/command-menu/components/CommandMenuItemWithAddToNavigationDragDndKit'
+  ).then((m) => ({
+    default: m.CommandMenuItemWithAddToNavigationDragDndKit,
+  })),
+);
 
 type SidePanelItemWithAddToNavigationDragProps = {
   icon?: IconComponent;
@@ -28,7 +27,24 @@ type SidePanelItemWithAddToNavigationDragProps = {
   onClick: () => void;
   payload: AddToNavigationDragPayload;
   dragIndex?: number;
+  disabled?: boolean;
+  disableDrag?: boolean;
 };
+
+const StyledDraggableMenuItem = styled.div<{
+  $disabled?: boolean;
+  $disableDrag?: boolean;
+}>`
+  cursor: ${({ $disabled, $disableDrag }) =>
+    $disabled || $disableDrag ? 'default' : 'grab'};
+  pointer-events: ${({ $disabled }) => ($disabled ? 'none' : 'auto')};
+  width: 100%;
+
+  &:active {
+    cursor: ${({ $disabled, $disableDrag }) =>
+      $disabled || $disableDrag ? 'default' : 'grabbing'};
+  }
+`;
 
 export const SidePanelItemWithAddToNavigationDrag = ({
   icon,
@@ -39,6 +55,8 @@ export const SidePanelItemWithAddToNavigationDrag = ({
   onClick,
   payload,
   dragIndex,
+  disabled = false,
+  disableDrag = false,
 }: SidePanelItemWithAddToNavigationDragProps) => {
   const { t } = useLingui();
   const setAddToNavPayloadRegistry = useSetAtomState(
@@ -46,7 +64,8 @@ export const SidePanelItemWithAddToNavigationDrag = ({
   );
   const [isHovered, setIsHovered] = useState(false);
 
-  const contextualDescription = isHovered
+  const showDragAffordance = !disabled && !disableDrag && isHovered;
+  const contextualDescription = showDragAffordance
     ? t`Drag to add to navbar`
     : description;
 
@@ -55,23 +74,31 @@ export const SidePanelItemWithAddToNavigationDrag = ({
       icon={icon}
       customIconContent={customIconContent}
       payload={payload}
-      isHovered={isHovered}
+      isHovered={showDragAffordance}
+      disabled={disabled}
+      disableDrag={disableDrag}
     />
   );
 
   const registerPayload = () => {
-    if (dragIndex !== undefined) {
+    if (!disabled && !disableDrag && isDefined(dragIndex)) {
       setAddToNavPayloadRegistry((prev) => new Map(prev).set(id, payload));
     }
   };
 
   const menuItemContent = (
     <StyledDraggableMenuItem
+      $disabled={disabled}
+      $disableDrag={disableDrag}
       onMouseEnter={() => {
-        setIsHovered(true);
-        registerPayload();
+        if (!disabled && !disableDrag) {
+          setIsHovered(true);
+          registerPayload();
+        }
       }}
-      onMouseLeave={() => setIsHovered(false)}
+      onMouseLeave={() => {
+        if (!disabled && !disableDrag) setIsHovered(false);
+      }}
       onMouseDown={registerPayload}
     >
       <CommandMenuItem
@@ -80,27 +107,22 @@ export const SidePanelItemWithAddToNavigationDrag = ({
         description={contextualDescription}
         id={id}
         onClick={onClick}
+        disabled={disabled}
       />
     </StyledDraggableMenuItem>
   );
 
-  if (dragIndex !== undefined) {
-    return (
-      <Draggable draggableId={id} index={dragIndex} isDragDisabled={false}>
-        {(provided) => (
-          <div
-            ref={provided.innerRef}
-            // eslint-disable-next-line react/jsx-props-no-spreading
-            {...provided.draggableProps}
-            // eslint-disable-next-line react/jsx-props-no-spreading
-            {...provided.dragHandleProps}
-          >
-            {menuItemContent}
-          </div>
-        )}
-      </Draggable>
-    );
+  if (!isDefined(dragIndex) || disableDrag) {
+    return menuItemContent;
   }
 
-  return menuItemContent;
+  return (
+    <Suspense fallback={menuItemContent}>
+      <CommandMenuItemWithAddToNavigationDragDndKit
+        id={id}
+        dragIndex={dragIndex}
+        menuItemContent={menuItemContent}
+      />
+    </Suspense>
+  );
 };

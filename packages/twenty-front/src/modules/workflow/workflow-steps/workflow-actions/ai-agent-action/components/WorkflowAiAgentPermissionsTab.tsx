@@ -26,15 +26,15 @@ import { WorkflowAiAgentPermissionsFlagList } from './WorkflowAiAgentPermissions
 import { WorkflowAiAgentPermissionsObjectsList } from './WorkflowAiAgentPermissionsObjectsList';
 import { getFilteredPermissions } from './workflowAiAgentPermissions.utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-const StyledSearchInput = styled(TextInput)`
-  width: 100%;
-  height: 40px;
+const StyledSearchInputContainer = styled.div`
   border-block: 1px solid ${themeCssVariables.border.color.medium};
-  input {
-    height: 40px;
-    line-height: 40px;
+  height: 40px;
+  width: 100%;
+  & input {
     border: none;
     border-radius: 0;
+    height: 40px;
+    line-height: 40px;
     width: 100%;
   }
 `;
@@ -44,7 +44,6 @@ const StyledBackButtonText = styled.span`
 `;
 
 const StyledBackButton = styled.button`
-  width: 100%;
   align-items: center;
   background: none;
   border: none;
@@ -54,6 +53,7 @@ const StyledBackButton = styled.button`
   gap: ${themeCssVariables.spacing[1]};
   padding: ${themeCssVariables.spacing[3]};
   text-align: left;
+  width: 100%;
 
   &:hover {
     color: ${themeCssVariables.font.color.primary};
@@ -198,16 +198,18 @@ export const WorkflowAiAgentPermissionsTab = ({
         </StyledBackButton>
       )}
 
-      <StyledSearchInput
-        value={searchQuery}
-        onChange={(value: string) => setSearchQuery(value)}
-        placeholder={t`Type anything...`}
-        onKeyDown={(event) => {
-          if (isNonTextWritingKey(event.key)) {
-            event.stopPropagation();
-          }
-        }}
-      />
+      <StyledSearchInputContainer>
+        <TextInput
+          value={searchQuery}
+          onChange={(value: string) => setSearchQuery(value)}
+          placeholder={t`Type anything...`}
+          onKeyDown={(event) => {
+            if (isNonTextWritingKey(event.key)) {
+              event.stopPropagation();
+            }
+          }}
+        />
+      </StyledSearchInputContainer>
 
       {shouldShowCrudList && (
         <WorkflowAiAgentPermissionsCrudList

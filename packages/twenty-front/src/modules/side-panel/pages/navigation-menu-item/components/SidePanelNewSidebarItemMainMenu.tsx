@@ -1,4 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
+import { isDefined } from 'twenty-shared/utils';
 import {
   Avatar,
   IconBuildingSkyscraper,
@@ -6,20 +7,20 @@ import {
   IconLink,
   IconTable,
 } from 'twenty-ui/display';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
-import { SidePanelAddToNavigationDraggablePlaceholder } from '@/side-panel/components/SidePanelAddToNavigationDraggablePlaceholder';
-import { SidePanelAddToNavigationDroppable } from '@/side-panel/components/SidePanelAddToNavigationDroppable';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
+import { NavigationMenuItemStyleIcon } from '@/navigation-menu-item/components/NavigationMenuItemStyleIcon';
+import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
+import { addMenuItemInsertionContextState } from '@/navigation-menu-item/states/addMenuItemInsertionContextState';
+import { SidePanelAddToNavigationDroppable } from '@/side-panel/components/SidePanelAddToNavigationDroppable';
+import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelItemWithAddToNavigationDrag } from '@/side-panel/components/SidePanelItemWithAddToNavigationDrag';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { useAddFolderToNavigationMenu } from '@/side-panel/pages/navigation-menu-item/hooks/useAddFolderToNavigationMenu';
 import { useAddLinkToNavigationMenu } from '@/side-panel/pages/navigation-menu-item/hooks/useAddLinkToNavigationMenu';
-import { NavigationMenuItemStyleIcon } from '@/navigation-menu-item/components/NavigationMenuItemStyleIcon';
-import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 type SidePanelNewSidebarItemMainMenuProps = {
   onSelectObject: () => void;
@@ -27,104 +28,133 @@ type SidePanelNewSidebarItemMainMenuProps = {
   onSelectRecord: () => void;
 };
 
+const MAIN_MENU_ITEM_TYPES = [
+  NavigationMenuItemType.OBJECT,
+  NavigationMenuItemType.VIEW,
+  NavigationMenuItemType.RECORD,
+  NavigationMenuItemType.FOLDER,
+  NavigationMenuItemType.LINK,
+] as const;
+
 export const SidePanelNewSidebarItemMainMenu = ({
   onSelectObject,
   onSelectView,
   onSelectRecord,
 }: SidePanelNewSidebarItemMainMenuProps) => {
   const { t } = useLingui();
-  const { theme } = useContext(ThemeContext);
+  const addMenuItemInsertionContext = useAtomStateValue(
+    addMenuItemInsertionContextState,
+  );
   const { handleAddFolder } = useAddFolderToNavigationMenu();
   const { handleAddLink } = useAddLinkToNavigationMenu();
+
+  const isAddingToFolder = isDefined(
+    addMenuItemInsertionContext?.targetFolderId,
+  );
+  const isDragDisabled = addMenuItemInsertionContext?.disableDrag === true;
+  const selectableItemIds = isAddingToFolder
+    ? MAIN_MENU_ITEM_TYPES.filter(
+        (type) => type !== NavigationMenuItemType.FOLDER,
+      )
+    : [...MAIN_MENU_ITEM_TYPES];
 
   return (
     <SidePanelAddToNavigationDroppable>
       {({ innerRef, droppableProps, placeholder }) => (
-        <SidePanelList
-          commandGroups={[]}
-          selectableItemIds={['object', 'view', 'record', 'folder', 'link']}
-        >
+        <SidePanelList commandGroups={[]} selectableItemIds={selectableItemIds}>
           {/* eslint-disable-next-line react/jsx-props-no-spreading */}
           <div ref={innerRef} {...droppableProps}>
             <SidePanelGroup heading={t`Data`}>
-              <SidePanelAddToNavigationDraggablePlaceholder index={0}>
-                <SelectableListItem itemId="object" onEnter={onSelectObject}>
-                  <CommandMenuItem
-                    Icon={() => (
-                      <NavigationMenuItemStyleIcon
-                        Icon={IconBuildingSkyscraper}
-                        color="blue"
-                      />
-                    )}
-                    label={t`Object`}
-                    id="object"
-                    hasSubMenu={true}
-                    onClick={onSelectObject}
-                  />
-                </SelectableListItem>
-              </SidePanelAddToNavigationDraggablePlaceholder>
-              <SidePanelAddToNavigationDraggablePlaceholder index={1}>
-                <SelectableListItem itemId="view" onEnter={onSelectView}>
-                  <CommandMenuItem
-                    Icon={() => (
-                      <NavigationMenuItemStyleIcon
-                        Icon={IconTable}
-                        color="gray"
-                      />
-                    )}
-                    label={t`View`}
-                    id="view"
-                    hasSubMenu={true}
-                    onClick={onSelectView}
-                  />
-                </SelectableListItem>
-              </SidePanelAddToNavigationDraggablePlaceholder>
-              <SidePanelAddToNavigationDraggablePlaceholder index={2}>
-                <SelectableListItem itemId="record" onEnter={onSelectRecord}>
-                  <CommandMenuItem
-                    Icon={() => (
-                      <Avatar
-                        placeholder="L"
-                        type="rounded"
-                        backgroundColor={theme.color.green4}
-                      />
-                    )}
-                    label={t`Record`}
-                    id="record"
-                    hasSubMenu={true}
-                    onClick={onSelectRecord}
-                  />
-                </SelectableListItem>
-              </SidePanelAddToNavigationDraggablePlaceholder>
+              <SelectableListItem
+                itemId={NavigationMenuItemType.OBJECT}
+                onEnter={onSelectObject}
+              >
+                <CommandMenuItem
+                  Icon={() => (
+                    <NavigationMenuItemStyleIcon
+                      Icon={IconBuildingSkyscraper}
+                      color="blue"
+                    />
+                  )}
+                  label={t`Object`}
+                  id={NavigationMenuItemType.OBJECT}
+                  hasSubMenu={true}
+                  onClick={onSelectObject}
+                />
+              </SelectableListItem>
+              <SelectableListItem
+                itemId={NavigationMenuItemType.VIEW}
+                onEnter={onSelectView}
+              >
+                <CommandMenuItem
+                  Icon={() => (
+                    <NavigationMenuItemStyleIcon
+                      Icon={IconTable}
+                      color="gray"
+                    />
+                  )}
+                  label={t`View`}
+                  id={NavigationMenuItemType.VIEW}
+                  hasSubMenu={true}
+                  onClick={onSelectView}
+                />
+              </SelectableListItem>
+              <SelectableListItem
+                itemId={NavigationMenuItemType.RECORD}
+                onEnter={onSelectRecord}
+              >
+                <CommandMenuItem
+                  Icon={() => (
+                    <Avatar
+                      placeholder="L"
+                      type="rounded"
+                      backgroundColor={themeCssVariables.color.green4}
+                    />
+                  )}
+                  label={t`Record`}
+                  id={NavigationMenuItemType.RECORD}
+                  hasSubMenu={true}
+                  onClick={onSelectRecord}
+                />
+              </SelectableListItem>
             </SidePanelGroup>
             <SidePanelGroup heading={t`Other`}>
-              <SelectableListItem itemId="folder" onEnter={handleAddFolder}>
+              <SelectableListItem
+                itemId={NavigationMenuItemType.FOLDER}
+                onEnter={isAddingToFolder ? undefined : handleAddFolder}
+              >
                 <SidePanelItemWithAddToNavigationDrag
                   icon={IconFolder}
                   label={t`Folder`}
-                  id="folder"
+                  id={NavigationMenuItemType.FOLDER}
                   onClick={handleAddFolder}
-                  dragIndex={3}
+                  dragIndex={isDragDisabled ? undefined : 3}
                   payload={{
                     type: NavigationMenuItemType.FOLDER,
                     folderId: 'new',
                     name: t`New folder`,
                   }}
+                  disabled={isAddingToFolder}
+                  disableDrag={isDragDisabled}
                 />
               </SelectableListItem>
-              <SelectableListItem itemId="link" onEnter={handleAddLink}>
+              <SelectableListItem
+                itemId={NavigationMenuItemType.LINK}
+                onEnter={handleAddLink}
+              >
                 <SidePanelItemWithAddToNavigationDrag
                   icon={IconLink}
                   label={t`Link`}
-                  id="link"
+                  id={NavigationMenuItemType.LINK}
                   onClick={handleAddLink}
-                  dragIndex={4}
+                  dragIndex={isDragDisabled ? undefined : 4}
                   payload={{
                     type: NavigationMenuItemType.LINK,
                     linkId: 'new',
                     name: t`Link label`,
                     link: 'https://www.example.com',
                   }}
+                  disableDrag={isDragDisabled}
                 />
               </SelectableListItem>
             </SidePanelGroup>

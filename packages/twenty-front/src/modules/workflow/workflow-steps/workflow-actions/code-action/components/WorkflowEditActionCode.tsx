@@ -8,7 +8,7 @@ import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/wo
 import { type WorkflowCodeAction } from '@/workflow/types/Workflow';
 import { setNestedValue } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/setNestedValue';
 
-import { CmdEnterActionButton } from '@/action-menu/components/CmdEnterActionButton';
+import { WorkflowStepCmdEnterButton } from '@/workflow/workflow-steps/components/WorkflowStepCmdEnterButton';
 import { LogicFunctionExecutionResult } from '@/logic-functions/components/LogicFunctionExecutionResult';
 import { LogicFunctionLogs } from '@/logic-functions/components/LogicFunctionLogs';
 import { mergeDefaultFunctionInputAndFunctionInput } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/mergeDefaultFunctionInputAndFunctionInput';
@@ -55,7 +55,7 @@ const StyledCodeEditorContainer = styled.div`
   position: relative;
 `;
 
-const StyledTabList = styled(TabList)`
+const StyledTabListContainer = styled.div`
   background-color: ${themeCssVariables.background.secondary};
   padding-left: ${themeCssVariables.spacing[2]};
 `;
@@ -370,11 +370,13 @@ export const WorkflowEditActionCode = ({
     !loading && (
       <>
         <LogicFunctionTestInputInitEffect logicFunctionId={logicFunctionId} />
-        <StyledTabList
-          tabs={tabs}
-          behaveAsLinks={false}
-          componentInstanceId={WORKFLOW_LOGIC_FUNCTION_TAB_LIST_COMPONENT_ID}
-        />
+        <StyledTabListContainer>
+          <TabList
+            tabs={tabs}
+            behaveAsLinks={false}
+            componentInstanceId={WORKFLOW_LOGIC_FUNCTION_TAB_LIST_COMPONENT_ID}
+          />
+        </StyledTabListContainer>
         <WorkflowStepBody>
           {activeTabId === WorkflowLogicFunctionTabId.CODE && (
             <>
@@ -432,7 +434,7 @@ export const WorkflowEditActionCode = ({
             additionalActions={
               activeTabId === WorkflowLogicFunctionTabId.TEST
                 ? [
-                    <CmdEnterActionButton
+                    <WorkflowStepCmdEnterButton
                       title={t`Test`}
                       onClick={handleTestFunction}
                       disabled={isExecuting}

@@ -14,7 +14,7 @@ Apps let you build and manage Twenty customizations **as code**. Instead of conf
 **What you can do today:**
 - Define custom objects and fields as code (managed data model)
 - Build logic functions with custom triggers
-- Define skills for AI agents
+- Define skills and agents for AI
 - Deploy the same app across multiple workspaces
 
 ## Prerequisites
@@ -35,17 +35,14 @@ cd my-twenty-app
 yarn twenty app:dev
 ```
 
-The scaffolder supports three modes for controlling which example files are included:
+The scaffolder supports two modes for controlling which example files are included:
 
 ```bash filename="Terminal"
-# Default (exhaustive): all examples (object, field, logic function, front component, view, navigation menu item, skill)
+# Default (exhaustive): all examples (object, field, logic function, front component, view, navigation menu item, skill, agent)
 npx create-twenty-app@latest my-app
 
 # Minimal: only core files (application-config.ts and default-role.ts)
 npx create-twenty-app@latest my-app --minimal
-
-# Interactive: select which examples to include
-npx create-twenty-app@latest my-app --interactive
 ```
 
 From here you can:
@@ -95,7 +92,7 @@ my-twenty-app/
   .yarnrc.yml
   .yarn/
     install-state.gz
-  eslint.config.mjs
+  .oxlintrc.json
   tsconfig.json
   README.md
   public/                           # Public assets folder (images, fonts, etc.)
@@ -117,11 +114,13 @@ my-twenty-app/
   │   └── example-view.ts                # Example saved view definition
   ├── navigation-menu-items/
   │   └── example-navigation-menu-item.ts # Example sidebar navigation link
-  └── skills/
-      └── example-skill.ts                # Example AI agent skill definition
+  ├── skills/
+  │   └── example-skill.ts                # Example AI agent skill definition
+  └── agents/
+      └── example-agent.ts                # Example AI agent definition
 ```
 
-With `--minimal`, only the core files are created (`application-config.ts`, `roles/default-role.ts`, `logic-functions/pre-install.ts`, and `logic-functions/post-install.ts`). With `--interactive`, you choose which example files to include.
+With `--minimal`, only the core files are created (`application-config.ts`, `roles/default-role.ts`, `logic-functions/pre-install.ts`, and `logic-functions/post-install.ts`).
 
 At a high level:
 
@@ -129,7 +128,7 @@ At a high level:
 - **.gitignore**: Ignores common artifacts such as `node_modules`, `.yarn`, `generated/` (typed client), `dist/`, `build/`, coverage folders, log files, and `.env*` files.
 - **yarn.lock**, **.yarnrc.yml**, **.yarn/**: Lock and configure the Yarn 4 toolchain used by the project.
 - **.nvmrc**: Pins the Node.js version expected by the project.
-- **eslint.config.mjs** and **tsconfig.json**: Provide linting and TypeScript configuration for your app's TypeScript sources.
+- **.oxlintrc.json** and **tsconfig.json**: Provide linting and TypeScript configuration for your app's TypeScript sources.
 - **README.md**: A short README in the app root with basic instructions.
 - **public/**: A folder for storing public assets (images, fonts, static files) that will be served with your application. Files placed here are uploaded during sync and accessible at runtime.
 - **src/**: The main place where you define your application-as-code
@@ -150,6 +149,7 @@ The SDK detects entities by parsing your TypeScript files for **`export default 
 | `defineView()` | Saved view definitions |
 | `defineNavigationMenuItem()` | Navigation menu item definitions |
 | `defineSkill()` | AI agent skill definitions |
+| `defineAgent()` | AI agent definitions |
 
 <Note>
 **File naming is flexible.** Entity detection is AST-based — the SDK scans your source files for the `export default define<Entity>({...})` pattern. You can organize your files and folders however you like. Grouping by entity type (e.g., `logic-functions/`, `roles/`) is just a convention for code organization, not a requirement.
@@ -226,6 +226,7 @@ The SDK provides helper functions for defining your app entities. As described i
 | `defineView()` | Define saved views for objects |
 | `defineNavigationMenuItem()` | Define sidebar navigation links |
 | `defineSkill()` | Define AI agent skills |
+| `defineAgent()` | Define AI agents with system prompts |
 
 These functions validate your configuration at build time and provide IDE autocompletion and type safety.
 
@@ -792,6 +793,40 @@ You can create new skills in two ways:
 
 - **Scaffolded**: Run `yarn twenty entity:add` and choose the option to add a new skill.
 - **Manual**: Create a new file and use `defineSkill()`, following the same pattern.
+
+### Agents
+
+Agents define AI agents with system prompts that can operate within your workspace. Use `defineAgent()` to define agents with built-in validation:
+
+```typescript
+// src/agents/example-agent.ts
+import { defineAgent } from 'twenty-sdk';
+
+export default defineAgent({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'sales-assistant',
+  label: 'Sales Assistant',
+  description: 'An AI agent that helps with sales tasks',
+  icon: 'IconRobot',
+  prompt: `You are a sales assistant. Help users with:
+1. Researching prospects and companies
+2. Drafting personalized outreach messages
+3. Tracking follow-ups and next steps
+4. Analyzing deal pipeline and suggesting actions`,
+});
+```
+
+Key points:
+- `name` is a unique identifier string for the agent (kebab-case recommended).
+- `label` is the human-readable display name shown in the UI.
+- `prompt` contains the system prompt — this is the instruction text that defines the agent's behavior.
+- `icon` (optional) sets the icon displayed in the UI.
+- `description` (optional) provides additional context about the agent's purpose.
+
+You can create new agents in two ways:
+
+- **Scaffolded**: Run `yarn twenty entity:add` and choose the option to add a new agent.
+- **Manual**: Create a new file and use `defineAgent()`, following the same pattern.
 
 ### Generated typed clients
 
