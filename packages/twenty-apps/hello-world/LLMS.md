@@ -4,6 +4,7 @@
 - Rich app example: https://github.com/twentyhq/twenty/tree/main/packages/twenty-sdk/src/cli/__tests__/apps/rich-app
 
 ## UUID requirement
+
 - All generated UUIDs must be valid UUID v4.
 
 ## Common Pitfalls
