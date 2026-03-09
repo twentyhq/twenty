@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { type EmailDriverInterface } from 'src/engine/core-modules/email/drivers/interfaces/email-driver.interface';
 
 import { LoggerDriver } from 'src/engine/core-modules/email/drivers/logger.driver';
+import { ResendDriver } from 'src/engine/core-modules/email/drivers/resend.driver';
 import { SmtpDriver } from 'src/engine/core-modules/email/drivers/smtp.driver';
 import { EmailDriver } from 'src/engine/core-modules/email/enums/email-driver.enum';
 import { DriverFactoryBase } from 'src/engine/core-modules/twenty-config/dynamic-factory.base';
@@ -22,6 +23,14 @@ export class EmailDriverFactory extends DriverFactoryBase<EmailDriverInterface> 
       return 'logger';
     }
 
+    if (driver === EmailDriver.RESEND) {
+      const emailConfigHash = this.getConfigGroupHash(
+        ConfigVariablesGroup.EMAIL_SETTINGS,
+      );
+
+      return `resend|${emailConfigHash}`;
+    }
+
     if (driver === EmailDriver.SMTP) {
       const emailConfigHash = this.getConfigGroupHash(
         ConfigVariablesGroup.EMAIL_SETTINGS,
@@ -39,6 +48,18 @@ export class EmailDriverFactory extends DriverFactoryBase<EmailDriverInterface> 
     switch (driver) {
       case EmailDriver.LOGGER:
         return new LoggerDriver();
+
+      case EmailDriver.RESEND: {
+        const apiKey = this.twentyConfigService.get('EMAIL_SMTP_PASSWORD');
+
+        if (!apiKey) {
+          throw new Error(
+            'Resend driver requires EMAIL_SMTP_PASSWORD to be set to your Resend API key',
+          );
+        }
+
+        return new ResendDriver(apiKey);
+      }
 
       case EmailDriver.SMTP: {
         const host = this.twentyConfigService.get('EMAIL_SMTP_HOST');
