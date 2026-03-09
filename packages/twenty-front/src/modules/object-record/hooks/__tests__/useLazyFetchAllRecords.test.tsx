@@ -3,7 +3,7 @@ import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRec
 import { type MockedResponse } from '@apollo/client/testing';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import gql from 'graphql-tag';
-import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
+import { getJestMetadataAndApolloMocksAndCommandMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndCommandMenuWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
 const defaultResponseData = {
@@ -121,7 +121,7 @@ const mock: MockedResponse = {
   })),
 };
 
-const Wrapper = getJestMetadataAndApolloMocksAndActionMenuWrapper({
+const Wrapper = getJestMetadataAndApolloMocksAndCommandMenuWrapper({
   apolloMocks: [mock],
   componentInstanceId: 'recordIndexId',
   contextStoreTargetedRecordsRule: {

@@ -1,4 +1,4 @@
-import { ActionComponent } from '@/action-menu/actions/display/components/ActionComponent';
+import { CommandMenuItemComponent } from '@/command-menu-item/display/components/CommandMenuItemComponent';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelDefaultSelectionEffect } from '@/side-panel/components/SidePanelDefaultSelectionEffect';
 import { SIDE_PANEL_SELECTABLE_LIST_ID } from '@/side-panel/constants/SidePanelSelectableListId';
@@ -6,7 +6,7 @@ import { SIDE_PANEL_TOP_BAR_HEIGHT } from '@/side-panel/constants/SidePanelTopBa
 import { SIDE_PANEL_LIST_PADDING } from '@/side-panel/constants/SidePanelListPadding';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { hasUserSelectedSidePanelListItemState } from '@/side-panel/states/hasUserSelectedSidePanelListItemState';
-import { type SidePanelActionGroupConfig } from '@/side-panel/types/SidePanelActionGroupConfig';
+import { type SidePanelCommandMenuItemGroupConfig } from '@/side-panel/types/SidePanelCommandMenuItemGroupConfig';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
@@ -15,7 +15,7 @@ import { t } from '@lingui/core/macro';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
 export type SidePanelListProps = {
-  commandGroups: SidePanelActionGroupConfig[];
+  commandGroups: SidePanelCommandMenuItemGroupConfig[];
   selectableItemIds: string[];
   children?: React.ReactNode;
   loading?: boolean;
@@ -83,7 +83,7 @@ export const SidePanelList = ({
               items?.length ? (
                 <SidePanelGroup heading={heading} key={heading}>
                   {items.map((item) => (
-                    <ActionComponent action={item} key={item.key} />
+                    <CommandMenuItemComponent action={item} key={item.key} />
                   ))}
                 </SidePanelGroup>
               ) : null,

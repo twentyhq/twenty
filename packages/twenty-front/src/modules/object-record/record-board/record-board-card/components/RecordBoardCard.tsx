@@ -1,6 +1,6 @@
-import { recordIndexActionMenuDropdownPositionComponentState } from '@/action-menu/states/recordIndexActionMenuDropdownPositionComponentState';
-import { getActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getActionMenuDropdownIdFromActionMenuId';
-import { getActionMenuIdFromRecordIndexId } from '@/action-menu/utils/getActionMenuIdFromRecordIndexId';
+import { recordIndexCommandMenuDropdownPositionComponentState } from '@/command-menu-item/states/recordIndexCommandMenuDropdownPositionComponentState';
+import { getCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/utils/getCommandMenuDropdownIdFromCommandMenuId';
+import { getCommandMenuIdFromRecordIndexId } from '@/command-menu-item/utils/getCommandMenuIdFromRecordIndexId';
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
 import { isRecordBoardCardActiveComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardActiveComponentFamilyState';
 import { isRecordBoardCardFocusedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardFocusedComponentFamilyState';
@@ -99,14 +99,14 @@ export const RecordBoardCard = () => {
     },
   );
 
-  const actionMenuId = getActionMenuIdFromRecordIndexId(recordBoardId);
+  const commandMenuId = getCommandMenuIdFromRecordIndexId(recordBoardId);
 
-  const actionMenuDropdownId =
-    getActionMenuDropdownIdFromActionMenuId(actionMenuId);
+  const commandMenuDropdownId =
+    getCommandMenuDropdownIdFromCommandMenuId(commandMenuId);
 
-  const setRecordIndexActionMenuDropdownPosition = useSetAtomComponentState(
-    recordIndexActionMenuDropdownPositionComponentState,
-    actionMenuDropdownId,
+  const setRecordIndexCommandMenuDropdownPosition = useSetAtomComponentState(
+    recordIndexCommandMenuDropdownPositionComponentState,
+    commandMenuDropdownId,
   );
 
   const { openDropdown } = useOpenDropdown();
@@ -118,12 +118,12 @@ export const RecordBoardCard = () => {
   const handleContextMenuOpen = (event: React.MouseEvent) => {
     event.preventDefault();
     setIsRecordBoardCardSelected(true);
-    setRecordIndexActionMenuDropdownPosition({
+    setRecordIndexCommandMenuDropdownPosition({
       x: event.clientX,
       y: event.clientY,
     });
     openDropdown({
-      dropdownComponentInstanceIdFromProps: actionMenuDropdownId,
+      dropdownComponentInstanceIdFromProps: commandMenuDropdownId,
       globalHotkeysConfig: {
         enableGlobalHotkeysWithModifiers: true,
         enableGlobalHotkeysConflictingWithKeyboard: false,

@@ -1,8 +1,8 @@
-import { Action } from '@/action-menu/actions/components/Action';
-import { HeadlessFrontComponentAction } from '@/action-menu/actions/display/components/HeadlessFrontComponentAction';
-import { ActionScope } from '@/action-menu/actions/types/ActionScope';
-import { ActionType } from '@/action-menu/actions/types/ActionType';
-import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
+import { Command } from '@/command-menu-item/display/components/Command';
+import { HeadlessFrontComponentCommandMenuItem } from '@/command-menu-item/display/components/HeadlessFrontComponentCommandMenuItem';
+import { CommandMenuItemScope } from '@/command-menu-item/types/CommandMenuItemScope';
+import { CommandMenuItemType } from '@/command-menu-item/types/CommandMenuItemType';
+import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { useOpenFrontComponentInSidePanel } from '@/side-panel/hooks/useOpenFrontComponentInSidePanel';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreIsPageInEditModeComponentState } from '@/context-store/states/contextStoreIsPageInEditModeComponentState';
@@ -34,9 +34,9 @@ type CommandMenuItemWithFrontComponent = CommandMenuItemFieldsFragment & {
   conditionalAvailabilityExpression?: string | null;
 };
 
-type BuildActionFromItemParams = {
+type BuildCommandMenuItemFromFrontComponentParams = {
   item: CommandMenuItemWithFrontComponent;
-  scope: ActionScope;
+  scope: CommandMenuItemScope;
   index: number;
   isPinned: boolean;
   getIcon: ReturnType<typeof useIcons>['getIcon'];
@@ -59,7 +59,7 @@ type BuildActionFromItemParams = {
 
 // TODO: we should remove this backward compatibility logic in the future
 // once we have migrated all command menu items
-const buildActionFromItem = ({
+const buildCommandMenuItemFromFrontComponent = ({
   item,
   scope,
   index,
@@ -69,7 +69,7 @@ const buildActionFromItem = ({
   mountHeadlessFrontComponent,
   mountContext,
   commandMenuContextApi,
-}: BuildActionFromItemParams) => {
+}: BuildCommandMenuItemFromFrontComponentParams) => {
   const displayLabel = item.label;
 
   const Icon = getIcon(item.icon, COMMAND_MENU_DEFAULT_ICON);
@@ -95,7 +95,7 @@ const buildActionFromItem = ({
   };
 
   return {
-    type: ActionType.FrontComponent,
+    type: CommandMenuItemType.FrontComponent,
     key: `command-menu-item-front-component-${item.id}`,
     scope,
     label: displayLabel,
@@ -109,12 +109,12 @@ const buildActionFromItem = ({
         commandMenuContextApi,
       ),
     component: isHeadless ? (
-      <HeadlessFrontComponentAction
+      <HeadlessFrontComponentCommandMenuItem
         frontComponentId={item.frontComponentId}
         onClick={handleClick}
       />
     ) : (
-      <Action onClick={handleClick} />
+      <Command onClick={handleClick} />
     ),
   };
 };
@@ -130,7 +130,7 @@ export const useCommandMenuItemFrontComponentActions = (
     contextStoreIsPageInEditModeComponentState,
   );
 
-  const { actionMenuType } = useContext(ActionMenuContext);
+  const { containerType } = useContext(CommandMenuContext);
 
   const contextStoreCurrentObjectMetadataItemId = useAtomComponentStateValue(
     contextStoreCurrentObjectMetadataItemIdComponentState,
@@ -166,8 +166,8 @@ export const useCommandMenuItemFrontComponentActions = (
   const { data } = useFindManyCommandMenuItemsQuery({
     skip:
       !isCommandMenuItemEnabled ||
-      (actionMenuType !== 'command-menu' &&
-        actionMenuType !== 'command-menu-show-page-action-menu-dropdown'),
+      (containerType !== 'command-menu-list' &&
+        containerType !== 'command-menu-show-page-dropdown'),
   });
 
   const frontComponentItems =
@@ -200,10 +200,10 @@ export const useCommandMenuItemFrontComponentActions = (
     );
   });
 
-  const globalActions = globalItems.map((item, index) =>
-    buildActionFromItem({
+  const globalCommandMenuItems = globalItems.map((item, index) =>
+    buildCommandMenuItemFromFrontComponent({
       item,
-      scope: ActionScope.Global,
+      scope: CommandMenuItemScope.Global,
       index,
       isPinned: !contextStoreIsPageInEditMode && item.isPinned,
       getIcon,
@@ -213,10 +213,10 @@ export const useCommandMenuItemFrontComponentActions = (
     }),
   );
 
-  const recordScopedActions = recordScopedItems.map((item, index) =>
-    buildActionFromItem({
+  const recordScopedCommandMenuItems = recordScopedItems.map((item, index) =>
+    buildCommandMenuItemFromFrontComponent({
       item,
-      scope: ActionScope.RecordSelection,
+      scope: CommandMenuItemScope.RecordSelection,
       index,
       isPinned: !contextStoreIsPageInEditMode && item.isPinned,
       getIcon,
@@ -227,5 +227,5 @@ export const useCommandMenuItemFrontComponentActions = (
     }),
   );
 
-  return [...globalActions, ...recordScopedActions];
+  return [...globalCommandMenuItems, ...recordScopedCommandMenuItems];
 };

@@ -129,6 +129,7 @@ export const createTestWidget = (
   gridPosition: { row: 0, column: 0, rowSpan: 2, columnSpan: 2 },
   objectMetadataId: TEST_OBJECT_METADATA_ID,
   configuration: TEST_BAR_CHART_CONFIGURATION,
+  isOverridden: false,
   createdAt: '2024-01-01',
   updatedAt: '2024-01-01',
   deletedAt: null,
