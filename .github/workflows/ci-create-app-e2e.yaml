@@ -79,6 +79,7 @@ jobs:
           YARN_UNSAFE_HTTP_WHITELIST: localhost
         run: |
           npm install -g create-twenty-app@$CI_VERSION --registry http://localhost:4873
+          create-twenty-app --version
           mkdir -p /tmp/e2e-test-workspace
           cd /tmp/e2e-test-workspace
           create-twenty-app test-app --exhaustive --yes
@@ -114,6 +115,21 @@ jobs:
             }
             console.log('SDK version in scaffolded app:', sdkVersion);
           "
+
+      - name: Debug scaffolded app state
+        if: always()
+        run: |
+          cd /tmp/e2e-test-workspace/test-app
+          echo "--- package.json ---"
+          cat package.json
+          echo "--- yarn.lock (first 50 lines) ---"
+          head -50 yarn.lock || echo "No yarn.lock"
+          echo "--- .yarnrc.yml ---"
+          cat .yarnrc.yml || echo "No .yarnrc.yml"
+          echo "--- node_modules contents ---"
+          ls node_modules/ 2>/dev/null | head -30 || echo "No node_modules"
+          echo "--- node_modules/.bin ---"
+          ls node_modules/.bin/ 2>/dev/null | head -30 || echo "No .bin"
 
       - name: Verify SDK CLI is available
         run: |
