@@ -15,7 +15,7 @@ description: 以代码的形式构建并管理 Twenty 自定义项。
 
 * 以代码定义自定义对象和字段（受管理的数据模型）
 * 构建带有自定义触发器的逻辑函数
-* Define skills and agents for AI
+* 为 AI 定义技能和代理
 * 将同一个应用部署到多个工作空间
 
 ## 先决条件
@@ -39,10 +39,10 @@ yarn twenty app:dev
 脚手架工具支持两种模式，用于控制包含哪些示例文件：
 
 ```bash filename="Terminal"
-# Default (exhaustive): all examples (object, field, logic function, front component, view, navigation menu item, skill, agent)
+# 默认（完整）：所有示例（对象、字段、逻辑函数、前端组件、视图、导航菜单项、技能、代理）
 npx create-twenty-app@latest my-app
 
-# Minimal: only core files (application-config.ts and default-role.ts)
+# 最小化：仅核心文件（application-config.ts 和 default-role.ts）
 npx create-twenty-app@latest my-app --minimal
 ```
 
@@ -96,29 +96,29 @@ my-twenty-app/
   .oxlintrc.json
   tsconfig.json
   README.md
-  public/                           # Public assets folder (images, fonts, etc.)
+  public/                           # 公共资源文件夹（图片、字体等）
   src/
-  ├── application-config.ts           # Required - main application configuration
+  ├── application-config.ts           # 必需 - 主应用配置
   ├── roles/
-  │   └── default-role.ts               # Default role for logic functions
+  │   └── default-role.ts               # 逻辑函数的默认角色
   ├── objects/
-  │   └── example-object.ts             # Example custom object definition
+  │   └── example-object.ts             # 示例自定义对象定义
   ├── fields/
-  │   └── example-field.ts              # Example standalone field definition
+  │   └── example-field.ts              # 示例独立字段定义
   ├── logic-functions/
-  │   ├── hello-world.ts                # Example logic function
-  │   ├── pre-install.ts                # Pre-install logic function
-  │   └── post-install.ts               # Post-install logic function
+  │   ├── hello-world.ts                # 示例逻辑函数
+  │   ├── pre-install.ts                # 安装前逻辑函数
+  │   └── post-install.ts               # 安装后逻辑函数
   ├── front-components/
-  │   └── hello-world.tsx               # Example front component
+  │   └── hello-world.tsx               # 示例前端组件
   ├── views/
-  │   └── example-view.ts                # Example saved view definition
+  │   └── example-view.ts                # 示例已保存视图定义
   ├── navigation-menu-items/
-  │   └── example-navigation-menu-item.ts # Example sidebar navigation link
+  │   └── example-navigation-menu-item.ts # 示例侧边栏导航链接
   ├── skills/
-  │   └── example-skill.ts                # Example AI agent skill definition
+  │   └── example-skill.ts                # 示例 AI 代理技能定义
   └── agents/
-      └── example-agent.ts                # Example AI agent definition
+      └── example-agent.ts                # 示例 AI 代理定义
 ```
 
 使用 `--minimal` 时，只会创建核心文件（`application-config.ts`、`roles/default-role.ts`、`logic-functions/pre-install.ts` 和 `logic-functions/post-install.ts`）。
@@ -150,7 +150,7 @@ my-twenty-app/
 | `defineView()`                     | Saved view definitions           |
 | `defineNavigationMenuItem()`       | Navigation menu item definitions |
 | `defineSkill()`                    | AI agent skill definitions       |
-| `defineAgent()`                    | AI agent definitions             |
+| `defineAgent()`                    | AI 代理定义                          |
 
 <Note>
 **文件命名是灵活的。** 实体检测基于 AST — SDK 会扫描你的源文件以查找 `export default define<Entity>({...})` 模式。 你可以按照自己的喜好组织文件和文件夹。 按实体类型分组（例如 `logic-functions/`、`roles/`）只是代码组织的一种约定，并非必需。
@@ -171,7 +171,7 @@ export default defineObject({
 
 后续命令将添加更多文件和文件夹：
 
-* `yarn twenty app:dev` 会在 `node_modules/twenty-sdk/generated` 中自动生成两个类型化 API 客户端：`CoreApiClient`（通过 `/graphql` 获取工作区数据）和 `MetadataApiClient`（通过 `/metadata` 处理工作区配置和文件上传）。
+* `yarn twenty app:dev` will auto-generate two typed API clients in `node_modules/twenty-sdk/clients`: `CoreApiClient` (for workspace data via `/graphql`) and `MetadataApiClient` (for workspace configuration and file uploads via `/metadata`).
 * `yarn twenty entity:add` will add entity definition files under `src/` for your custom objects, functions, front components, roles, skills, and more.
 
 ## 身份验证
@@ -434,7 +434,7 @@ export default defineRole({
 // src/app/createPostCard.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk';
 import type { DatabaseEventPayload, ObjectRecordCreateEvent, CronPayload, RoutePayload } from 'twenty-sdk';
-import { CoreApiClient, type Person } from 'twenty-sdk/generated';
+import { CoreApiClient, type Person } from 'twenty-sdk/clients';
 
 const handler = async (params: RoutePayload) => {
   const client = new CoreApiClient();
@@ -679,7 +679,7 @@ const handler = async (event: RoutePayload) => {
 ```typescript
 // src/logic-functions/enrich-company.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk';
-import { CoreApiClient } from 'twenty-sdk/generated';
+import { CoreApiClient } from 'twenty-sdk/clients';
 
 const handler = async (params: { companyName: string; domain?: string }) => {
   const client = new CoreApiClient();
@@ -843,13 +843,14 @@ You can create new agents in two ways:
 
 ### 生成的类型化客户端
 
-两个类型化客户端由 `yarn twenty app:dev` 自动生成（基于你的工作区架构），并存放在 `node_modules/twenty-sdk/generated`：
+Two typed clients are auto-generated by `yarn twenty app:dev` and stored in `node_modules/twenty-sdk/clients` based on your workspace schema:
 
 * **`CoreApiClient`** — 查询 `/graphql` 端点以获取工作区数据
 * **`MetadataApiClient`** — 查询 `/metadata` 端点以获取工作区配置并处理文件上传
 
 ```typescript
-import { CoreApiClient, MetadataApiClient } from 'twenty-sdk/generated';
+import { CoreApiClient } from 'twenty-sdk/clients';
+import { MetadataApiClient } from 'twenty-sdk/clients';
 
 const client = new CoreApiClient();
 const { me } = await client.query({ me: { id: true, displayName: true } });
@@ -858,7 +859,7 @@ const metadataClient = new MetadataApiClient();
 const { currentWorkspace } = await metadataClient.query({ currentWorkspace: { id: true } });
 ```
 
-每当你的对象或字段发生变化时，`yarn twenty app:dev` 都会自动重新生成这两个客户端。
+`CoreApiClient` is re-generated automatically by `yarn twenty app:dev` whenever your objects or fields change. `MetadataApiClient` ships pre-built with the SDK.
 
 #### 逻辑函数中的运行时凭据
 
@@ -875,10 +876,10 @@ const { currentWorkspace } = await metadataClient.query({ currentWorkspace: { id
 
 #### 上传文件
 
-生成的 `MetadataApiClient` 包含一个 `uploadFile` 方法，用于将文件附加到你的工作区对象的文件类型字段。 由于标准 GraphQL 客户端不原生支持多部分文件上传，该客户端提供了一个专用方法，在底层实现了 [GraphQL 多部分请求规范](https://github.com/jaydenseric/graphql-multipart-request-spec)。
+The `MetadataApiClient` includes an `uploadFile` method for attaching files to file-type fields on your workspace objects. 由于标准 GraphQL 客户端不原生支持多部分文件上传，该客户端提供了一个专用方法，在底层实现了 [GraphQL 多部分请求规范](https://github.com/jaydenseric/graphql-multipart-request-spec)。
 
 ```typescript
-import { MetadataApiClient } from 'twenty-sdk/generated';
+import { MetadataApiClient } from 'twenty-sdk/clients';
 import * as fs from 'fs';
 
 const metadataClient = new MetadataApiClient();
