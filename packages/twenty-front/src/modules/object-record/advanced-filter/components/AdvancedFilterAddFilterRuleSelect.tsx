@@ -148,7 +148,7 @@ export const AdvancedFilterAddFilterRuleSelect = ({
   if (!isFilterRuleGroupOptionVisible) {
     return (
       <CommandMenuButton
-        action={{
+        command={{
           Icon: IconPlus,
           label: t`Add rule`,
           shortLabel: t`Add rule`,
@@ -164,7 +164,7 @@ export const AdvancedFilterAddFilterRuleSelect = ({
       dropdownId={dropdownId}
       clickableComponent={
         <CommandMenuButton
-          action={{
+          command={{
             Icon: IconPlus,
             label: t`Add filter rule`,
             shortLabel: t`Add filter rule`,

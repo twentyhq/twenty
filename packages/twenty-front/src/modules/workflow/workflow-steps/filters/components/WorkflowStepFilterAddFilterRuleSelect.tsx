@@ -96,7 +96,7 @@ export const WorkflowStepFilterAddFilterRuleSelect = ({
   if (!isFilterRuleGroupOptionVisible) {
     return (
       <CommandMenuButton
-        action={{
+        command={{
           Icon: IconPlus,
           label: t`Add rule`,
           shortLabel: t`Add rule`,
@@ -112,7 +112,7 @@ export const WorkflowStepFilterAddFilterRuleSelect = ({
       dropdownId={dropdownId}
       clickableComponent={
         <CommandMenuButton
-          action={{
+          command={{
             Icon: IconPlus,
             label: t`Add filter rule`,
             shortLabel: t`Add filter rule`,

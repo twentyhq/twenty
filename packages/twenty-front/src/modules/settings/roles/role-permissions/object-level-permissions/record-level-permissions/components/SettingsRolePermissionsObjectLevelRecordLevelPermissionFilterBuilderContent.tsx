@@ -138,7 +138,7 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilde
             </StyledFiltersContainer>
             <StyledActionButtonWrapper>
               <CommandMenuButton
-                action={{
+                command={{
                   Icon: IconPlus,
                   label: t`Add rule`,
                   shortLabel: t`Add rule`,

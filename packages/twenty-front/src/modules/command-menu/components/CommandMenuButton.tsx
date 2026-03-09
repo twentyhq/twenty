@@ -16,7 +16,7 @@ const StyledWrapper = styled.div`
 `;
 
 export type CommandMenuButtonProps = {
-  action: {
+  command: {
     key: string;
     label: string | MessageDescriptor;
     shortLabel?: string | MessageDescriptor;
@@ -34,24 +34,24 @@ const getCommandMenuButtonLabel = (
 };
 
 export const CommandMenuButton = ({
-  action,
+  command,
   onClick,
   to,
 }: CommandMenuButtonProps) => {
-  const resolvedLabel = getCommandMenuButtonLabel(action.label);
+  const resolvedLabel = getCommandMenuButtonLabel(command.label);
 
   const resolvedShortLabel =
-    action.shortLabel === undefined
+    command.shortLabel === undefined
       ? undefined
-      : getCommandMenuButtonLabel(action.shortLabel);
+      : getCommandMenuButtonLabel(command.shortLabel);
 
-  const buttonAccent = action.isPrimaryCTA ? 'blue' : 'default';
+  const buttonAccent = command.isPrimaryCTA ? 'blue' : 'default';
 
   return (
     <>
       {resolvedShortLabel !== undefined ? (
         <Button
-          Icon={action.Icon}
+          Icon={command.Icon}
           size="small"
           variant="secondary"
           accent={buttonAccent}
@@ -61,9 +61,9 @@ export const CommandMenuButton = ({
           ariaLabel={resolvedLabel}
         />
       ) : (
-        <div id={`command-menu-item-entry-${action.key}`} key={action.key}>
+        <div id={`command-menu-item-entry-${command.key}`} key={command.key}>
           <IconButton
-            Icon={action.Icon}
+            Icon={command.Icon}
             size="small"
             variant="secondary"
             accent={buttonAccent}
@@ -73,7 +73,7 @@ export const CommandMenuButton = ({
           />
           <StyledWrapper>
             <AppTooltip
-              anchorSelect={`#command-menu-item-entry-${action.key}`}
+              anchorSelect={`#command-menu-item-entry-${command.key}`}
               content={resolvedLabel}
               delay={TooltipDelay.longDelay}
               place={TooltipPosition.Bottom}
