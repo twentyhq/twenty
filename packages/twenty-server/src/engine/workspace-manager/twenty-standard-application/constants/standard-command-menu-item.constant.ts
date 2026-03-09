@@ -49,7 +49,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     isPinned: true,
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'isDefined(selectedRecord) and not selectedRecord.isRemote and not hasAnySoftDeleteFilterOnView and objectPermissions.canSoftDeleteObjectRecords and not isDefined(selectedRecord.deletedAt)',
+      'selectedRecords.length > 0 and none(selectedRecords, "isRemote") and not hasAnySoftDeleteFilterOnView and objectPermissions.canSoftDeleteObjectRecords and noneDefined(selectedRecords, "deletedAt")',
     frontComponentUniversalIdentifier:
       STANDARD_FRONT_COMPONENTS.deleteSingleRecord.universalIdentifier,
   },
@@ -62,7 +62,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     isPinned: true,
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'objectPermissions.canSoftDeleteObjectRecords and not isRemote and not hasAnySoftDeleteFilterOnView and numberOfSelectedRecords < 10000',
+      'objectPermissions.canSoftDeleteObjectRecords and not objectMetadataItem.isRemote and not hasAnySoftDeleteFilterOnView and numberOfSelectedRecords < 10000',
     frontComponentUniversalIdentifier:
       STANDARD_FRONT_COMPONENTS.deleteMultipleRecords.universalIdentifier,
   },
@@ -75,7 +75,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     isPinned: true,
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'not isRemote and isDefined(selectedRecord.deletedAt) and objectPermissions.canSoftDeleteObjectRecords and (isShowPage or hasAnySoftDeleteFilterOnView)',
+      'not objectMetadataItem.isRemote and everyDefined(selectedRecords, "deletedAt") and objectPermissions.canSoftDeleteObjectRecords and (pageType == "RECORD_PAGE" or hasAnySoftDeleteFilterOnView)',
     frontComponentUniversalIdentifier:
       STANDARD_FRONT_COMPONENTS.restoreSingleRecord.universalIdentifier,
   },
@@ -88,7 +88,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     isPinned: true,
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'objectPermissions.canSoftDeleteObjectRecords and not isRemote and hasAnySoftDeleteFilterOnView and numberOfSelectedRecords < 10000',
+      'objectPermissions.canSoftDeleteObjectRecords and not objectMetadataItem.isRemote and hasAnySoftDeleteFilterOnView and numberOfSelectedRecords < 10000',
     frontComponentUniversalIdentifier:
       STANDARD_FRONT_COMPONENTS.restoreMultipleRecords.universalIdentifier,
   },
@@ -101,7 +101,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     isPinned: true,
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'objectPermissions.canDestroyObjectRecords and not isRemote and isDefined(selectedRecord.deletedAt)',
+      'objectPermissions.canDestroyObjectRecords and not objectMetadataItem.isRemote and everyDefined(selectedRecords, "deletedAt")',
     frontComponentUniversalIdentifier:
       STANDARD_FRONT_COMPONENTS.destroySingleRecord.universalIdentifier,
   },
@@ -114,7 +114,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     isPinned: true,
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'objectPermissions.canDestroyObjectRecords and not isRemote and hasAnySoftDeleteFilterOnView and numberOfSelectedRecords < 10000',
+      'objectPermissions.canDestroyObjectRecords and not objectMetadataItem.isRemote and hasAnySoftDeleteFilterOnView and numberOfSelectedRecords < 10000',
     frontComponentUniversalIdentifier:
       STANDARD_FRONT_COMPONENTS.destroyMultipleRecords.universalIdentifier,
   },
@@ -127,7 +127,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     isPinned: true,
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'not selectedRecord.isRemote and not isFavorite and not isDefined(selectedRecord.deletedAt) and not hasAnySoftDeleteFilterOnView',
+      'selectedRecords.length > 0 and none(selectedRecords, "isRemote") and favoriteRecordIds.length < selectedRecords.length and noneDefined(selectedRecords, "deletedAt") and not hasAnySoftDeleteFilterOnView',
     frontComponentUniversalIdentifier:
       STANDARD_FRONT_COMPONENTS.addToFavorites.universalIdentifier,
   },
@@ -140,7 +140,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     isPinned: true,
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'isDefined(selectedRecord) and not selectedRecord.isRemote and isFavorite and not isDefined(selectedRecord.deletedAt) and not hasAnySoftDeleteFilterOnView',
+      'selectedRecords.length > 0 and none(selectedRecords, "isRemote") and favoriteRecordIds.length == selectedRecords.length and noneDefined(selectedRecords, "deletedAt") and not hasAnySoftDeleteFilterOnView',
     frontComponentUniversalIdentifier:
       STANDARD_FRONT_COMPONENTS.removeFromFavorites.universalIdentifier,
   },
@@ -153,7 +153,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     isPinned: false,
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'isNoteOrTask and isNonEmptyString(selectedRecord.bodyV2.blocknote)',
+      '(objectMetadataItem.nameSingular == "note" or objectMetadataItem.nameSingular == "task") and someNonEmptyString(selectedRecords, "bodyV2.blocknote")',
     frontComponentUniversalIdentifier:
       STANDARD_FRONT_COMPONENTS.exportNoteToPdf.universalIdentifier,
   },
@@ -166,7 +166,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     isPinned: false,
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'isDefined(selectedRecord) and not selectedRecord.isRemote',
+      'selectedRecords.length > 0 and none(selectedRecords, "isRemote")',
     frontComponentUniversalIdentifier:
       STANDARD_FRONT_COMPONENTS.exportFromRecordIndex.universalIdentifier,
   },
@@ -179,7 +179,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     isPinned: false,
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'isDefined(selectedRecord) and not selectedRecord.isRemote',
+      'selectedRecords.length > 0 and none(selectedRecords, "isRemote")',
     frontComponentUniversalIdentifier:
       STANDARD_FRONT_COMPONENTS.exportFromRecordShow.universalIdentifier,
   },
@@ -192,7 +192,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     isPinned: true,
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'objectPermissions.canUpdateObjectRecords and not isRemote',
+      'objectPermissions.canUpdateObjectRecords and not objectMetadataItem.isRemote',
     frontComponentUniversalIdentifier:
       STANDARD_FRONT_COMPONENTS.updateMultipleRecords.universalIdentifier,
   },
@@ -290,7 +290,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     isPinned: false,
     availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
     conditionalAvailabilityExpression:
-      'targetObjectReadPermissions.person and (objectMetadataItem.nameSingular != "person" or isShowPage)',
+      'targetObjectReadPermissions.person and (objectMetadataItem.nameSingular != "person" or pageType == "RECORD_PAGE")',
     frontComponentUniversalIdentifier:
       STANDARD_FRONT_COMPONENTS.goToPeople.universalIdentifier,
   },
@@ -303,7 +303,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     isPinned: false,
     availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
     conditionalAvailabilityExpression:
-      'targetObjectReadPermissions.company and (objectMetadataItem.nameSingular != "company" or isShowPage)',
+      'targetObjectReadPermissions.company and (objectMetadataItem.nameSingular != "company" or pageType == "RECORD_PAGE")',
     frontComponentUniversalIdentifier:
       STANDARD_FRONT_COMPONENTS.goToCompanies.universalIdentifier,
   },
@@ -316,7 +316,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     isPinned: false,
     availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
     conditionalAvailabilityExpression:
-      'targetObjectReadPermissions.dashboard and (objectMetadataItem.nameSingular != "dashboard" or isShowPage)',
+      'targetObjectReadPermissions.dashboard and (objectMetadataItem.nameSingular != "dashboard" or pageType == "RECORD_PAGE")',
     frontComponentUniversalIdentifier:
       STANDARD_FRONT_COMPONENTS.goToDashboards.universalIdentifier,
   },
@@ -329,7 +329,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     isPinned: false,
     availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
     conditionalAvailabilityExpression:
-      'targetObjectReadPermissions.opportunity and (objectMetadataItem.nameSingular != "opportunity" or isShowPage)',
+      'targetObjectReadPermissions.opportunity and (objectMetadataItem.nameSingular != "opportunity" or pageType == "RECORD_PAGE")',
     frontComponentUniversalIdentifier:
       STANDARD_FRONT_COMPONENTS.goToOpportunities.universalIdentifier,
   },
@@ -354,7 +354,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     isPinned: false,
     availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
     conditionalAvailabilityExpression:
-      'targetObjectReadPermissions.task and (objectMetadataItem.nameSingular != "task" or isShowPage)',
+      'targetObjectReadPermissions.task and (objectMetadataItem.nameSingular != "task" or pageType == "RECORD_PAGE")',
     frontComponentUniversalIdentifier:
       STANDARD_FRONT_COMPONENTS.goToTasks.universalIdentifier,
   },
@@ -367,7 +367,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     isPinned: false,
     availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
     conditionalAvailabilityExpression:
-      'targetObjectReadPermissions.note and (objectMetadataItem.nameSingular != "note" or isShowPage)',
+      'targetObjectReadPermissions.note and (objectMetadataItem.nameSingular != "note" or pageType == "RECORD_PAGE")',
     frontComponentUniversalIdentifier:
       STANDARD_FRONT_COMPONENTS.goToNotes.universalIdentifier,
   },
@@ -380,7 +380,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     isPinned: true,
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'featureFlags.IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED and isDefined(selectedRecord) and not selectedRecord.isRemote and not isDefined(selectedRecord.deletedAt) and objectPermissions.canUpdateObjectRecords and objectMetadataItem.nameSingular != "dashboard"',
+      'featureFlags.IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED and selectedRecords.length > 0 and none(selectedRecords, "isRemote") and noneDefined(selectedRecords, "deletedAt") and objectPermissions.canUpdateObjectRecords and objectMetadataItem.nameSingular != "dashboard"',
     frontComponentUniversalIdentifier:
       STANDARD_FRONT_COMPONENTS.editRecordPageLayout.universalIdentifier,
   },
@@ -393,7 +393,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     isPinned: true,
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'featureFlags.IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED and isDefined(selectedRecord) and not selectedRecord.isRemote and not isDefined(selectedRecord.deletedAt) and objectPermissions.canUpdateObjectRecords and objectMetadataItem.nameSingular != "dashboard"',
+      'featureFlags.IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED and selectedRecords.length > 0 and none(selectedRecords, "isRemote") and noneDefined(selectedRecords, "deletedAt") and objectPermissions.canUpdateObjectRecords and objectMetadataItem.nameSingular != "dashboard"',
     frontComponentUniversalIdentifier:
       STANDARD_FRONT_COMPONENTS.saveRecordPageLayout.universalIdentifier,
   },
@@ -406,7 +406,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     isPinned: true,
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'featureFlags.IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED and isDefined(selectedRecord) and not selectedRecord.isRemote and not isDefined(selectedRecord.deletedAt) and objectPermissions.canUpdateObjectRecords and objectMetadataItem.nameSingular != "dashboard"',
+      'featureFlags.IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED and selectedRecords.length > 0 and none(selectedRecords, "isRemote") and noneDefined(selectedRecords, "deletedAt") and objectPermissions.canUpdateObjectRecords and objectMetadataItem.nameSingular != "dashboard"',
     frontComponentUniversalIdentifier:
       STANDARD_FRONT_COMPONENTS.cancelRecordPageLayout.universalIdentifier,
   },
@@ -419,7 +419,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     isPinned: true,
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'isDefined(selectedRecord) and not selectedRecord.isRemote and not isDefined(selectedRecord.deletedAt) and isDefined(selectedRecord.pageLayoutId) and objectPermissions.canUpdateObjectRecords',
+      'selectedRecords.length > 0 and none(selectedRecords, "isRemote") and noneDefined(selectedRecords, "deletedAt") and everyDefined(selectedRecords, "pageLayoutId") and objectPermissions.canUpdateObjectRecords',
     frontComponentUniversalIdentifier:
       STANDARD_FRONT_COMPONENTS.editDashboardLayout.universalIdentifier,
   },
@@ -432,7 +432,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     isPinned: true,
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'isDefined(selectedRecord) and not selectedRecord.isRemote and not isDefined(selectedRecord.deletedAt) and isDefined(selectedRecord.pageLayoutId) and objectPermissions.canUpdateObjectRecords',
+      'selectedRecords.length > 0 and none(selectedRecords, "isRemote") and noneDefined(selectedRecords, "deletedAt") and everyDefined(selectedRecords, "pageLayoutId") and objectPermissions.canUpdateObjectRecords',
     frontComponentUniversalIdentifier:
       STANDARD_FRONT_COMPONENTS.saveDashboardLayout.universalIdentifier,
   },
@@ -445,7 +445,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     isPinned: true,
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'isDefined(selectedRecord) and not selectedRecord.isRemote and not isDefined(selectedRecord.deletedAt) and isDefined(selectedRecord.pageLayoutId) and objectPermissions.canUpdateObjectRecords',
+      'selectedRecords.length > 0 and none(selectedRecords, "isRemote") and noneDefined(selectedRecords, "deletedAt") and everyDefined(selectedRecords, "pageLayoutId") and objectPermissions.canUpdateObjectRecords',
     frontComponentUniversalIdentifier:
       STANDARD_FRONT_COMPONENTS.cancelDashboardLayout.universalIdentifier,
   },
@@ -458,7 +458,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     isPinned: false,
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'isDefined(selectedRecord) and not selectedRecord.isRemote and not isDefined(selectedRecord.deletedAt) and objectPermissions.canUpdateObjectRecords',
+      'selectedRecords.length > 0 and none(selectedRecords, "isRemote") and noneDefined(selectedRecords, "deletedAt") and objectPermissions.canUpdateObjectRecords',
     frontComponentUniversalIdentifier:
       STANDARD_FRONT_COMPONENTS.duplicateDashboard.universalIdentifier,
   },
@@ -471,7 +471,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     isPinned: false,
     availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
     conditionalAvailabilityExpression:
-      'targetObjectReadPermissions.workflow and (objectMetadataItem.nameSingular != "workflow" or isShowPage)',
+      'targetObjectReadPermissions.workflow and (objectMetadataItem.nameSingular != "workflow" or pageType == "RECORD_PAGE")',
     frontComponentUniversalIdentifier:
       STANDARD_FRONT_COMPONENTS.goToWorkflows.universalIdentifier,
   },
@@ -484,7 +484,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     isPinned: true,
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'isDefined(selectedRecord.currentVersion.trigger) and isDefined(selectedRecord.currentVersion.steps) and selectedRecord.currentVersion.steps.length > 0 and (selectedRecord.currentVersion.status == "DRAFT" or not includes(selectedRecord.statuses, "ACTIVE")) and not isDefined(selectedRecord.deletedAt)',
+      'everyDefined(selectedRecords, "currentVersion.trigger") and everyDefined(selectedRecords, "currentVersion.steps") and every(selectedRecords, "currentVersion.steps.length") and (everyEquals(selectedRecords, "currentVersion.status", "DRAFT") or not some(selectedRecords, "statuses.ACTIVE")) and noneDefined(selectedRecords, "deletedAt")',
     frontComponentUniversalIdentifier:
       STANDARD_FRONT_COMPONENTS.activateWorkflow.universalIdentifier,
   },
@@ -497,7 +497,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     isPinned: true,
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'isDefined(selectedRecord) and selectedRecord.currentVersion.status == "ACTIVE" and not isDefined(selectedRecord.deletedAt)',
+      'selectedRecords.length > 0 and everyEquals(selectedRecords, "currentVersion.status", "ACTIVE") and noneDefined(selectedRecords, "deletedAt")',
     frontComponentUniversalIdentifier:
       STANDARD_FRONT_COMPONENTS.deactivateWorkflow.universalIdentifier,
   },
@@ -510,7 +510,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     isPinned: true,
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'isDefined(selectedRecord) and selectedRecord.versions.length > 1 and selectedRecord.currentVersion.status == "DRAFT" and not isDefined(selectedRecord.deletedAt)',
+      'selectedRecords.length > 0 and every(selectedRecords, "versions.length") and everyEquals(selectedRecords, "currentVersion.status", "DRAFT") and noneDefined(selectedRecords, "deletedAt")',
     frontComponentUniversalIdentifier:
       STANDARD_FRONT_COMPONENTS.discardDraftWorkflow.universalIdentifier,
   },
@@ -523,7 +523,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     isPinned: true,
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'isDefined(selectedRecord.currentVersion.trigger) and isDefined(selectedRecord.currentVersion.steps) and selectedRecord.currentVersion.steps.length > 0 and ((selectedRecord.currentVersion.trigger.type == "MANUAL" and not isDefined(selectedRecord.currentVersion.trigger.settings.objectType)) or selectedRecord.currentVersion.trigger.type == "WEBHOOK" or selectedRecord.currentVersion.trigger.type == "CRON") and not isDefined(selectedRecord.deletedAt)',
+      'everyDefined(selectedRecords, "currentVersion.trigger") and everyDefined(selectedRecords, "currentVersion.steps") and every(selectedRecords, "currentVersion.steps.length") and ((everyEquals(selectedRecords, "currentVersion.trigger.type", "MANUAL") and noneDefined(selectedRecords, "currentVersion.trigger.settings.objectType")) or everyEquals(selectedRecords, "currentVersion.trigger.type", "WEBHOOK") or everyEquals(selectedRecords, "currentVersion.trigger.type", "CRON")) and noneDefined(selectedRecords, "deletedAt")',
     frontComponentUniversalIdentifier:
       STANDARD_FRONT_COMPONENTS.testWorkflow.universalIdentifier,
   },
@@ -536,7 +536,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     isPinned: false,
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'includes(selectedRecord.statuses, "ACTIVE") and includes(selectedRecord.statuses, "DRAFT") and not isDefined(selectedRecord.deletedAt)',
+      'includesEvery(selectedRecords, "statuses", "ACTIVE") and includesEvery(selectedRecords, "statuses", "DRAFT") and noneDefined(selectedRecords, "deletedAt")',
     frontComponentUniversalIdentifier:
       STANDARD_FRONT_COMPONENTS.seeActiveVersionWorkflow.universalIdentifier,
   },
@@ -549,7 +549,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     isPinned: true,
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'isDefined(selectedRecord) and not isDefined(selectedRecord.deletedAt)',
+      'selectedRecords.length > 0 and noneDefined(selectedRecords, "deletedAt")',
     frontComponentUniversalIdentifier:
       STANDARD_FRONT_COMPONENTS.seeRunsWorkflow.universalIdentifier,
   },
@@ -562,7 +562,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     isPinned: false,
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'isDefined(selectedRecord) and not isDefined(selectedRecord.deletedAt)',
+      'selectedRecords.length > 0 and noneDefined(selectedRecords, "deletedAt")',
     frontComponentUniversalIdentifier:
       STANDARD_FRONT_COMPONENTS.seeVersionsWorkflow.universalIdentifier,
   },
@@ -575,7 +575,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     isPinned: true,
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'isDefined(selectedRecord.currentVersion.trigger) and isDefined(selectedRecord.currentVersion.steps) and selectedRecord.currentVersion.steps.length > 0 and not isDefined(selectedRecord.deletedAt)',
+      'everyDefined(selectedRecords, "currentVersion.trigger") and everyDefined(selectedRecords, "currentVersion.steps") and every(selectedRecords, "currentVersion.steps.length") and noneDefined(selectedRecords, "deletedAt")',
     frontComponentUniversalIdentifier:
       STANDARD_FRONT_COMPONENTS.addNodeWorkflow.universalIdentifier,
   },
@@ -588,7 +588,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     isPinned: false,
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'isDefined(selectedRecord.currentVersion.trigger) and isDefined(selectedRecord.currentVersion.steps) and selectedRecord.currentVersion.steps.length > 0 and not isDefined(selectedRecord.deletedAt)',
+      'everyDefined(selectedRecords, "currentVersion.trigger") and everyDefined(selectedRecords, "currentVersion.steps") and every(selectedRecords, "currentVersion.steps.length") and noneDefined(selectedRecords, "deletedAt")',
     frontComponentUniversalIdentifier:
       STANDARD_FRONT_COMPONENTS.tidyUpWorkflow.universalIdentifier,
   },
@@ -601,7 +601,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     isPinned: false,
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'isDefined(selectedRecord) and isDefined(selectedRecord.currentVersion) and not isDefined(selectedRecord.deletedAt)',
+      'selectedRecords.length > 0 and everyDefined(selectedRecords, "currentVersion") and noneDefined(selectedRecords, "deletedAt")',
     frontComponentUniversalIdentifier:
       STANDARD_FRONT_COMPONENTS.duplicateWorkflow.universalIdentifier,
   },
@@ -650,7 +650,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     isPinned: true,
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'isSelectAll or selectedRecord.status == "NOT_STARTED" or selectedRecord.status == "ENQUEUED" or selectedRecord.status == "RUNNING"',
+      'isSelectAll or someEquals(selectedRecords, "status", "NOT_STARTED") or someEquals(selectedRecords, "status", "ENQUEUED") or someEquals(selectedRecords, "status", "RUNNING")',
     frontComponentUniversalIdentifier:
       STANDARD_FRONT_COMPONENTS.stopWorkflowRun.universalIdentifier,
   },
@@ -662,7 +662,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     position: 56,
     isPinned: true,
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
-    conditionalAvailabilityExpression: 'isDefined(selectedRecord.workflow)',
+    conditionalAvailabilityExpression:
+      'everyDefined(selectedRecords, "workflow")',
     frontComponentUniversalIdentifier:
       STANDARD_FRONT_COMPONENTS.seeRunsWorkflowVersion.universalIdentifier,
   },
@@ -674,7 +675,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     position: 57,
     isPinned: true,
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
-    conditionalAvailabilityExpression: 'isDefined(selectedRecord.workflow.id)',
+    conditionalAvailabilityExpression:
+      'everyDefined(selectedRecords, "workflow.id")',
     frontComponentUniversalIdentifier:
       STANDARD_FRONT_COMPONENTS.seeWorkflowWorkflowVersion.universalIdentifier,
   },
@@ -687,7 +689,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     isPinned: true,
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'isDefined(selectedRecord) and selectedRecord.status != "DRAFT"',
+      'selectedRecords.length > 0 and noneEquals(selectedRecords, "status", "DRAFT")',
     frontComponentUniversalIdentifier:
       STANDARD_FRONT_COMPONENTS.useAsDraftWorkflowVersion.universalIdentifier,
   },
@@ -699,7 +701,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     position: 59,
     isPinned: false,
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
-    conditionalAvailabilityExpression: 'isDefined(selectedRecord.workflow)',
+    conditionalAvailabilityExpression:
+      'everyDefined(selectedRecords, "workflow")',
     frontComponentUniversalIdentifier:
       STANDARD_FRONT_COMPONENTS.seeVersionsWorkflowVersion.universalIdentifier,
   },

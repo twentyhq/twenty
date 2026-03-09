@@ -88,21 +88,32 @@ export type {
 
 // Conditional availability typed variables for command menu items
 export {
-  isShowPage,
+  pageType,
   isInSidePanel,
   isFavorite,
-  isRemote,
-  isNoteOrTask,
   isSelectAll,
   hasAnySoftDeleteFilterOnView,
   numberOfSelectedRecords,
   objectPermissions,
-  selectedRecord,
+  selectedRecords,
   featureFlags,
   targetObjectReadPermissions,
   targetObjectWritePermissions,
+  objectMetadataItem,
   isDefined,
   isNonEmptyString,
+  includes,
+  every,
+  everyDefined,
+  everyEquals,
+  some,
+  someDefined,
+  someEquals,
+  none,
+  noneDefined,
+  noneEquals,
+  someNonEmptyString,
+  includesEvery,
 } from './front-component-api';
 
 // Front Component API exports

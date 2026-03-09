@@ -12,16 +12,16 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { hasAnySoftDeleteFilterOnViewComponentSelector } from '@/object-record/record-filter/states/hasAnySoftDeleteFilterOnView';
 import { useRecordIndexIdFromCurrentContextStore } from '@/object-record/record-index/hooks/useRecordIndexIdFromCurrentContextStore';
-import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { recordStoreRecordsSelector } from '@/object-record/record-store/states/selectors/recordStoreRecordsSelector';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useStore } from 'jotai';
 import { useContext } from 'react';
 import {
-  CoreObjectNameSingular,
+  CommandMenuContextApiPageType,
   type CommandMenuContextApi,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -53,28 +53,33 @@ export const useCommandMenuContextApi = (): CommandMenuContextApi => {
   const { sortedFavorites: favorites } = useFavorites();
   const { navigationMenuItems } = usePrefetchedNavigationMenuItemsData();
 
-  const recordId =
+  const recordIds =
     contextStoreTargetedRecordsRule.mode === 'selection'
-      ? contextStoreTargetedRecordsRule.selectedRecordIds[0]
+      ? contextStoreTargetedRecordsRule.selectedRecordIds
       : undefined;
 
-  const isFavorite = (() => {
-    if (!isDefined(recordId)) return false;
+  const favoriteRecordIds = (() => {
+    if (!isDefined(recordIds) || recordIds.length === 0) return [];
 
     if (isNavigationMenuItemEditingEnabled && isDefined(objectMetadataItem)) {
-      return !!navigationMenuItems?.find(
-        (item) =>
-          item.targetRecordId === recordId &&
-          item.targetObjectMetadataId === objectMetadataItem.id,
+      return recordIds.filter((recordId) =>
+        navigationMenuItems?.some(
+          (item) =>
+            item.targetRecordId === recordId &&
+            item.targetObjectMetadataId === objectMetadataItem.id,
+        ),
       );
     }
 
-    return !!favorites?.find((favorite) => favorite.recordId === recordId);
+    return recordIds.filter((recordId) =>
+      favorites?.some((favorite) => favorite.recordId === recordId),
+    );
   })();
 
-  const selectedRecord =
-    useAtomFamilyStateValue(recordStoreFamilyState, recordId ?? '') ||
-    undefined;
+  const selectedRecords = useAtomFamilySelectorValue(
+    recordStoreRecordsSelector,
+    { recordIds: recordIds ?? [] },
+  );
 
   const objectPermissionsFromHook = useObjectPermissionsForObject(
     objectMetadataItem?.id ?? '',
@@ -92,12 +97,6 @@ export const useCommandMenuContextApi = (): CommandMenuContextApi => {
         rowLevelPermissionPredicateGroups: [],
       };
 
-  const isNoteOrTask =
-    objectMetadataItem?.nameSingular === CoreObjectNameSingular.Note ||
-    objectMetadataItem?.nameSingular === CoreObjectNameSingular.Task;
-
-  const isRemote = objectMetadataItem?.isRemote ?? false;
-
   const { recordIndexId } = useRecordIndexIdFromCurrentContextStore();
 
   const hasAnySoftDeleteFilterOnView = useAtomComponentSelectorValue(
@@ -105,9 +104,14 @@ export const useCommandMenuContextApi = (): CommandMenuContextApi => {
     recordIndexId,
   );
 
-  const isShowPage =
-    useAtomComponentStateValue(contextStoreCurrentViewTypeComponentState) ===
-    ContextStoreViewType.ShowPage;
+  const contextStoreCurrentViewType = useAtomComponentStateValue(
+    contextStoreCurrentViewTypeComponentState,
+  );
+
+  const pageType =
+    contextStoreCurrentViewType === ContextStoreViewType.ShowPage
+      ? CommandMenuContextApiPageType.RECORD_PAGE
+      : CommandMenuContextApiPageType.INDEX_PAGE;
 
   const contextStoreNumberOfSelectedRecords = useAtomComponentStateValue(
     contextStoreNumberOfSelectedRecordsComponentState,
@@ -139,19 +143,17 @@ export const useCommandMenuContextApi = (): CommandMenuContextApi => {
   }
 
   return {
-    isShowPage,
+    pageType,
     isInSidePanel,
-    isFavorite,
-    isRemote,
-    isNoteOrTask,
+    favoriteRecordIds,
     isSelectAll,
     hasAnySoftDeleteFilterOnView,
     numberOfSelectedRecords: contextStoreNumberOfSelectedRecords,
     objectPermissions,
-    selectedRecord: selectedRecord as CommandMenuContextApi['selectedRecord'],
+    selectedRecords,
     featureFlags,
     targetObjectReadPermissions,
     targetObjectWritePermissions,
-    objectMetadataItem: (objectMetadataItem ?? {}) as Record<string, unknown>,
+    objectMetadataItem: objectMetadataItem ?? {},
   };
 };
