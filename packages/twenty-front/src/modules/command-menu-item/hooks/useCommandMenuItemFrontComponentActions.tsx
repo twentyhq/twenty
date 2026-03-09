@@ -34,7 +34,7 @@ type CommandMenuItemWithFrontComponent = CommandMenuItemFieldsFragment & {
   conditionalAvailabilityExpression?: string | null;
 };
 
-type BuildActionFromItemParams = {
+type BuildCommandMenuItemFromFrontComponentParams = {
   item: CommandMenuItemWithFrontComponent;
   scope: CommandMenuItemScope;
   index: number;
@@ -59,7 +59,7 @@ type BuildActionFromItemParams = {
 
 // TODO: we should remove this backward compatibility logic in the future
 // once we have migrated all command menu items
-const buildActionFromItem = ({
+const buildCommandMenuItemFromFrontComponent = ({
   item,
   scope,
   index,
@@ -69,7 +69,7 @@ const buildActionFromItem = ({
   mountHeadlessFrontComponent,
   mountContext,
   commandMenuContextApi,
-}: BuildActionFromItemParams) => {
+}: BuildCommandMenuItemFromFrontComponentParams) => {
   const displayLabel = item.label;
 
   const Icon = getIcon(item.icon, COMMAND_MENU_DEFAULT_ICON);
@@ -200,8 +200,8 @@ export const useCommandMenuItemFrontComponentActions = (
     );
   });
 
-  const globalActions = globalItems.map((item, index) =>
-    buildActionFromItem({
+  const globalCommandMenuItems = globalItems.map((item, index) =>
+    buildCommandMenuItemFromFrontComponent({
       item,
       scope: CommandMenuItemScope.Global,
       index,
@@ -213,8 +213,8 @@ export const useCommandMenuItemFrontComponentActions = (
     }),
   );
 
-  const recordScopedActions = recordScopedItems.map((item, index) =>
-    buildActionFromItem({
+  const recordScopedCommandMenuItems = recordScopedItems.map((item, index) =>
+    buildCommandMenuItemFromFrontComponent({
       item,
       scope: CommandMenuItemScope.RecordSelection,
       index,
@@ -227,5 +227,5 @@ export const useCommandMenuItemFrontComponentActions = (
     }),
   );
 
-  return [...globalActions, ...recordScopedActions];
+  return [...globalCommandMenuItems, ...recordScopedCommandMenuItems];
 };

@@ -13,11 +13,11 @@ export const HeadlessFrontComponentCommandMenuItem = ({
   frontComponentId: string;
   onClick: () => void;
 }) => {
-  const actionConfig = useContext(CommandMenuItemConfigContext);
+  const commandMenuItemConfig = useContext(CommandMenuItemConfigContext);
 
   const { closeCommandMenu } = useCloseCommandMenu({
-    closeSidePanelOnShowPageOptionsActionExecution: false,
-    closeSidePanelOnCommandMenuItemListActionExecution: false,
+    closeSidePanelOnShowPageOptionsCommandExecution: false,
+    closeSidePanelOnCommandMenuItemListCommandExecution: false,
   });
 
   const isMounted = useAtomFamilySelectorValue(
@@ -25,7 +25,7 @@ export const HeadlessFrontComponentCommandMenuItem = ({
     frontComponentId,
   );
 
-  if (!actionConfig) {
+  if (!commandMenuItemConfig) {
     return null;
   }
 

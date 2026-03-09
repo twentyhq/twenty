@@ -5,21 +5,21 @@ import { useContext } from 'react';
 
 export const CommandMenuItemExecution = ({
   onClick,
-  closeSidePanelOnShowPageOptionsActionExecution = false,
-  closeSidePanelOnCommandMenuItemListActionExecution = true,
+  closeSidePanelOnShowPageOptionsCommandExecution = false,
+  closeSidePanelOnCommandMenuItemListCommandExecution = true,
 }: {
   onClick: () => void;
-  closeSidePanelOnShowPageOptionsActionExecution?: boolean;
-  closeSidePanelOnCommandMenuItemListActionExecution?: boolean;
+  closeSidePanelOnShowPageOptionsCommandExecution?: boolean;
+  closeSidePanelOnCommandMenuItemListCommandExecution?: boolean;
 }) => {
-  const actionConfig = useContext(CommandMenuItemConfigContext);
+  const commandMenuItemConfig = useContext(CommandMenuItemConfigContext);
 
   const { closeCommandMenu } = useCloseCommandMenu({
-    closeSidePanelOnShowPageOptionsActionExecution,
-    closeSidePanelOnCommandMenuItemListActionExecution,
+    closeSidePanelOnShowPageOptionsCommandExecution,
+    closeSidePanelOnCommandMenuItemListCommandExecution,
   });
 
-  if (!actionConfig) {
+  if (!commandMenuItemConfig) {
     return null;
   }
 

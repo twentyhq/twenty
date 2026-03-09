@@ -62,7 +62,7 @@ export const useRunWorkflowRecordAgnosticCommands = () => {
                 workflowId: activeWorkflowVersion.workflowId,
               });
             }}
-            closeSidePanelOnCommandMenuItemListActionExecution={false}
+            closeSidePanelOnCommandMenuItemListCommandExecution={false}
           />
         ),
       };

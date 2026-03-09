@@ -18,8 +18,8 @@ export type CommandMenuItemModalProps = {
   confirmButtonText?: string;
   confirmButtonAccent?: ButtonAccent;
   isLoading?: boolean;
-  closeSidePanelOnShowPageOptionsActionExecution?: boolean;
-  closeSidePanelOnCommandMenuItemListActionExecution?: boolean;
+  closeSidePanelOnShowPageOptionsCommandExecution?: boolean;
+  closeSidePanelOnCommandMenuItemListCommandExecution?: boolean;
 };
 
 export const CommandMenuItemModal = ({
@@ -29,14 +29,14 @@ export const CommandMenuItemModal = ({
   confirmButtonText = t`Confirm`,
   confirmButtonAccent = 'danger',
   isLoading = false,
-  closeSidePanelOnShowPageOptionsActionExecution,
-  closeSidePanelOnCommandMenuItemListActionExecution,
+  closeSidePanelOnShowPageOptionsCommandExecution,
+  closeSidePanelOnCommandMenuItemListCommandExecution,
 }: CommandMenuItemModalProps) => {
   const { openModal } = useModal();
 
   const { closeCommandMenu } = useCloseCommandMenu({
-    closeSidePanelOnShowPageOptionsActionExecution,
-    closeSidePanelOnCommandMenuItemListActionExecution,
+    closeSidePanelOnShowPageOptionsCommandExecution,
+    closeSidePanelOnCommandMenuItemListCommandExecution,
   });
 
   const handleConfirmClick = async () => {
@@ -44,17 +44,17 @@ export const CommandMenuItemModal = ({
     closeCommandMenu();
   };
 
-  const actionConfig = useContext(CommandMenuItemConfigContext);
+  const commandMenuItemConfig = useContext(CommandMenuItemConfigContext);
   const { containerType } = useContext(CommandMenuItemContext);
 
-  const modalId = `${actionConfig?.key}-action-modal-${containerType}`;
+  const modalId = `${commandMenuItemConfig?.key}-command-menu-item-modal-${containerType}`;
 
   const isModalOpened = useAtomComponentStateValue(
     isModalOpenedComponentState,
     modalId,
   );
 
-  if (!actionConfig) {
+  if (!commandMenuItemConfig) {
     return null;
   }
 
