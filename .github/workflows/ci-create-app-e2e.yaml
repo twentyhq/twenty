@@ -138,7 +138,7 @@ jobs:
       - name: Typecheck scaffolded app
         run: |
           cd /tmp/e2e-test-workspace/test-app
-          npx tsc --noEmit
+          yarn tsc --noEmit
 
       - name: Verify SDK CLI is available
         run: |
