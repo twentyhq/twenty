@@ -776,7 +776,7 @@ msgid "Active API keys created by you or your team."
 msgstr "Active API keys created by you or your team."
 
 #. js-lingui-id: A7Ks+i
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
 msgid "Active installs"
 msgstr "Active installs"
 
@@ -786,7 +786,7 @@ msgid "Active Sync"
 msgstr "Active Sync"
 
 #. js-lingui-id: m16xKo
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
 #: src/pages/settings/ai/components/SettingsAgentEvalsTab.tsx
 msgid "Add"
 msgstr "Add"
@@ -1509,7 +1509,7 @@ msgid "Allow users to sign in with an email and password."
 msgstr "Allow users to sign in with an email and password."
 
 #. js-lingui-id: vj+OHl
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
 msgid "Allowed redirect URIs for OAuth flows"
 msgstr "Allowed redirect URIs for OAuth flows"
 
@@ -1753,24 +1753,9 @@ msgid "App"
 msgstr "App"
 
 #. js-lingui-id: zL5xow
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 msgid "App installed on this workspace"
 msgstr "App installed on this workspace"
-
-#. js-lingui-id: KbVpuI
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
-msgid "App listed on marketplace"
-msgstr "App listed on marketplace"
-
-#. js-lingui-id: hwQxsm
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
-msgid "App removed from marketplace"
-msgstr "App removed from marketplace"
-
-#. js-lingui-id: 2zAy1h
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
-msgid "App updated"
-msgstr "App updated"
 
 #. js-lingui-id: aAIQg2
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
@@ -1813,6 +1798,11 @@ msgstr "Application installed successfully."
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 msgid "Application successfully uninstalled."
 msgstr "Application successfully uninstalled."
+
+#. js-lingui-id: FoLBHp
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
+msgid "Application uninstalled from this workspace"
+msgstr "Application uninstalled from this workspace"
 
 #. js-lingui-id: V+GSWz
 #: src/modules/marketplace/hooks/useUpgradeApplication.ts
@@ -2524,9 +2514,9 @@ msgid "Can't scan? Copy the"
 msgstr "Can't scan? Copy the"
 
 #. js-lingui-id: dEgA5A
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 #: src/pages/settings/applications/components/SettingsUploadTarballModal.tsx
-#: src/pages/settings/applications/components/SettingsRegisterNpmAppModal.tsx
 #: src/pages/auth/Authorize.tsx
 #: src/modules/ui/layout/modal/components/ConfirmationModal.tsx
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
@@ -2848,24 +2838,19 @@ msgid "ClickHouse Not Configured"
 msgstr "ClickHouse Not Configured"
 
 #. js-lingui-id: b9Y4up
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Client ID"
 msgstr "Client ID"
 
-#. js-lingui-id: 77ropN
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
-msgid "Client ID copied"
-msgstr "Client ID copied"
-
 #. js-lingui-id: Bdj4LI
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Client Secret"
 msgstr "Client Secret"
 
 #. js-lingui-id: 6uKe4W
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
 msgid "Client secret rotated. Copy it now — it won't be shown again."
 msgstr "Client secret rotated. Copy it now — it won't be shown again."
 
@@ -3125,7 +3110,7 @@ msgid "Configure your emails and calendar settings."
 msgstr "Configure your emails and calendar settings."
 
 #. js-lingui-id: M1co/O
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 msgid "Configured"
 msgstr "Configured"
 
@@ -3316,7 +3301,7 @@ msgid "Continue without sync"
 msgstr "Continue without sync"
 
 #. js-lingui-id: nTcGbN
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
 msgid "Control visibility on the marketplace. Unlisted apps are still accessible via direct link."
 msgstr "Control visibility on the marketplace. Unlisted apps are still accessible via direct link."
 
@@ -3398,7 +3383,7 @@ msgid "Copy this key as it will not be visible again"
 msgstr "Copy this key as it will not be visible again"
 
 #. js-lingui-id: /P/oME
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
 msgid "Copy this secret as it will not be visible again"
 msgstr "Copy this secret as it will not be visible again"
 
@@ -3699,7 +3684,7 @@ msgid "Creating your workspace"
 msgstr "Creating your workspace"
 
 #. js-lingui-id: L3dKdL
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
 msgid "Credentials and scopes for OAuth authorization flows"
 msgstr "Credentials and scopes for OAuth authorization flows"
 
@@ -3897,7 +3882,7 @@ msgstr "Czech"
 #. js-lingui-id: Zz6Cxn
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 #: src/pages/settings/ai/SettingsSkillForm.tsx
 #: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
@@ -4228,8 +4213,8 @@ msgstr "delete"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 #: src/pages/settings/ai/SettingsSkillForm.tsx
 #: src/pages/settings/ai/SettingsSkillForm.tsx
 #: src/pages/settings/ai/components/SettingsSkillInactiveMenuDropDown.tsx
@@ -4320,7 +4305,7 @@ msgid "Delete API key"
 msgstr "Delete API key"
 
 #. js-lingui-id: JXU6Ex
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 msgid "Delete app"
 msgstr "Delete app"
 
@@ -4361,7 +4346,7 @@ msgid "Delete node"
 msgstr "Delete node"
 
 #. js-lingui-id: x9/fRy
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 msgid "Delete or transfer this app registration"
 msgstr "Delete or transfer this app registration"
 
@@ -4510,7 +4495,7 @@ msgstr "Describe what you want the AI to do..."
 
 #. js-lingui-id: Nu4oKW
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 #: src/pages/settings/applications/components/SettingsApplicationNameDescriptionTable.tsx
@@ -4608,6 +4593,7 @@ msgstr "Display text on multiple lines"
 
 #. js-lingui-id: vU/Hht
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
 msgid "Distribution"
 msgstr "Distribution"
 
@@ -4696,7 +4682,7 @@ msgid "Downgrade"
 msgstr "Downgrade"
 
 #. js-lingui-id: mzI/c+
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 #: src/modules/activities/files/components/DocumentViewer.tsx
 #: src/modules/activities/files/components/AttachmentDropdown.tsx
 msgid "Download"
@@ -4784,11 +4770,6 @@ msgstr "Duplicates"
 msgid "Dutch"
 msgstr "Dutch"
 
-#. js-lingui-id: 3MYDWJ
-#: src/pages/settings/applications/components/SettingsRegisterNpmAppModal.tsx
-msgid "e.g. @twentyhq/hello-world"
-msgstr "e.g. @twentyhq/hello-world"
-
 #. js-lingui-id: QVVmxi
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -4797,7 +4778,7 @@ msgid "E.g. backoffice integration"
 msgstr "E.g. backoffice integration"
 
 #. js-lingui-id: 88vQqv
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 msgid "e.g. my-workspace"
 msgstr "e.g. my-workspace"
 
@@ -5348,7 +5329,7 @@ msgid "Enter phone number"
 msgstr "Enter phone number"
 
 #. js-lingui-id: xV28+W
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 msgid "Enter secret value"
 msgstr "Enter secret value"
 
@@ -5383,11 +5364,6 @@ msgstr "Enter the credentials to set the connection"
 msgid "Enter the infos to set the connection"
 msgstr "Enter the infos to set the connection"
 
-#. js-lingui-id: 2tpV02
-#: src/pages/settings/applications/components/SettingsRegisterNpmAppModal.tsx
-msgid "Enter the npm package name to register as an application."
-msgstr "Enter the npm package name to register as an application."
-
 #. js-lingui-id: 3EF9HN
 #: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
 #: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
@@ -5395,7 +5371,7 @@ msgid "Enter the system prompt that defines this agent's behavior and capabiliti
 msgstr "Enter the system prompt that defines this agent's behavior and capabilities"
 
 #. js-lingui-id: tEWpbi
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 msgid "Enter the workspace subdomain to transfer this app to. You will lose access to manage it."
 msgstr "Enter the workspace subdomain to transfer this app to. You will lose access to manage it."
 
@@ -5405,7 +5381,7 @@ msgid "Enter user ID or email address"
 msgstr "Enter user ID or email address"
 
 #. js-lingui-id: pubQie
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCodeFields.tsx
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterValueInput.tsx
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterValueInput.tsx
@@ -5483,7 +5459,7 @@ msgid "Error deleting api key."
 msgstr "Error deleting api key."
 
 #. js-lingui-id: gmjkzq
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 msgid "Error deleting app"
 msgstr "Error deleting app"
 
@@ -5513,7 +5489,7 @@ msgid "Error illustration"
 msgstr "Error illustration"
 
 #. js-lingui-id: zCb/ve
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 msgid "Error installing app"
 msgstr "Error installing app"
 
@@ -5553,24 +5529,29 @@ msgid "Error resending invitation"
 msgstr "Error resending invitation"
 
 #. js-lingui-id: cpGsq/
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
 msgid "Error rotating client secret"
 msgstr "Error rotating client secret"
+
+#. js-lingui-id: RDcmKf
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
+msgid "Error uninstalling application"
+msgstr "Error uninstalling application"
 
 #. js-lingui-id: 5Vy8D1
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 msgid "Error uninstalling application."
 msgstr "Error uninstalling application."
 
-#. js-lingui-id: ZUyXma
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
-msgid "Error updating app"
-msgstr "Error updating app"
-
 #. js-lingui-id: OceoGT
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
 msgid "Error updating marketplace listing"
 msgstr "Error updating marketplace listing"
+
+#. js-lingui-id: fQYyhK
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
+msgid "Error updating redirect URIs"
+msgstr "Error updating redirect URIs"
 
 #. js-lingui-id: lX3Yil
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -5578,7 +5559,7 @@ msgid "Error updating role"
 msgstr "Error updating role"
 
 #. js-lingui-id: s+iV3f
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 msgid "Error updating variable"
 msgstr "Error updating variable"
 
@@ -6079,11 +6060,6 @@ msgstr "Failed to merge records. Please try again."
 msgid "Failed to parse context: {contextValue}"
 msgstr "Failed to parse context: {contextValue}"
 
-#. js-lingui-id: hV6mC1
-#: src/modules/marketplace/hooks/useRegisterNpmPackage.ts
-msgid "Failed to register npm package."
-msgstr "Failed to register npm package."
-
 #. js-lingui-id: A/P7PX
 #: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
 msgid "Failed to remove override"
@@ -6116,7 +6092,7 @@ msgid "Failed to save workspace instructions"
 msgstr "Failed to save workspace instructions"
 
 #. js-lingui-id: LVcnN8
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 msgid "Failed to transfer ownership. Check that the subdomain is correct."
 msgstr "Failed to transfer ownership. Check that the subdomain is correct."
 
@@ -6240,13 +6216,13 @@ msgid "Feature Flags & Impersonation"
 msgstr "Feature Flags & Impersonation"
 
 #. js-lingui-id: FkMol5
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 msgid "Featured"
 msgstr "Featured"
 
 #. js-lingui-id: znbJM3
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
 msgid "Featured apps are curated. Open a PR to request featured status."
 msgstr "Featured apps are curated. Open a PR to request featured status."
 
@@ -6622,6 +6598,7 @@ msgstr "Gauge Chart"
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
 #: src/modules/page-layout/widgets/fields/hooks/useFieldsWidgetGroupsForDisplay.ts
@@ -7029,7 +7006,7 @@ msgid "https://api.example.com/endpoint"
 msgstr "https://api.example.com/endpoint"
 
 #. js-lingui-id: 1Un+Rf
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
 msgid "https://example.com/callback"
 msgstr "https://example.com/callback"
 
@@ -7097,7 +7074,7 @@ msgid "If this is unexpected, please verify your settings."
 msgstr "If this is unexpected, please verify your settings."
 
 #. js-lingui-id: Yn4NZ1
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
 msgid "If you rotate this secret, any integration using the current secret will stop working. Please type \"{confirmationValue}\" to confirm."
 msgstr "If you rotate this secret, any integration using the current secret will stop working. Please type \"{confirmationValue}\" to confirm."
 
@@ -7336,29 +7313,28 @@ msgid "Install and manage applications"
 msgstr "Install and manage applications"
 
 #. js-lingui-id: cDDhds
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 msgid "Install on this workspace"
 msgstr "Install on this workspace"
 
 #. js-lingui-id: JXiMtM
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
 msgid "Install Stats"
 msgstr "Install Stats"
 
 #. js-lingui-id: FEkwu/
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 msgid "Install this app on the current workspace"
 msgstr "Install this app on the current workspace"
 
 #. js-lingui-id: Xry+oU
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 msgid "Installation"
 msgstr "Installation"
 
 #. js-lingui-id: eQkgKV
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsApplications.tsx
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
 msgid "Installed"
 msgstr "Installed"
 
@@ -7369,6 +7345,7 @@ msgstr "Installed applications"
 
 #. js-lingui-id: wJJ+Wy
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 msgid "Installing..."
 msgstr "Installing..."
 
@@ -8068,7 +8045,7 @@ msgid "Listed"
 msgstr "Listed"
 
 #. js-lingui-id: vxO58F
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
 msgid "Listed on marketplace"
 msgstr "Listed on marketplace"
 
@@ -8176,7 +8153,7 @@ msgid "Loading..."
 msgstr "Loading..."
 
 #. js-lingui-id: OmWlgF
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 msgid "Local development"
 msgstr "Local development"
 
@@ -8341,7 +8318,7 @@ msgid "Manage your internet accounts."
 msgstr "Manage your internet accounts."
 
 #. js-lingui-id: +pSdLP
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
 msgid "Managed by the marketplace catalog sync for npm packages"
 msgstr "Managed by the marketplace catalog sync for npm packages"
 
@@ -8357,7 +8334,7 @@ msgid "Marketplace"
 msgstr "Marketplace"
 
 #. js-lingui-id: H4eHwB
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
 msgid "Marketplace Listing"
 msgstr "Marketplace Listing"
 
@@ -8668,7 +8645,7 @@ msgid "More options"
 msgstr "More options"
 
 #. js-lingui-id: SOHptZ
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
 msgid "Most installed version"
 msgstr "Most installed version"
 
@@ -8750,7 +8727,7 @@ msgstr "mySkill"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 #: src/pages/settings/applications/components/SettingsApplicationNameDescriptionTable.tsx
@@ -8792,7 +8769,7 @@ msgid "Name and describe your function"
 msgstr "Name and describe your function"
 
 #. js-lingui-id: /CI5+c
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 msgid "Name and description are managed via your app manifest (CLI)"
 msgstr "Name and description are managed via your app manifest (CLI)"
 
@@ -9607,7 +9584,7 @@ msgid "Not Found"
 msgstr "Not Found"
 
 #. js-lingui-id: MTqQMG
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 msgid "Not set"
 msgstr "Not set"
 
@@ -9693,8 +9670,13 @@ msgstr "numbered"
 msgid "Numbered list"
 msgstr "Numbered list"
 
-#. js-lingui-id: /PKKj/
+#. js-lingui-id: b/j06W
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "OAuth"
+msgstr "OAuth"
+
+#. js-lingui-id: /PKKj/
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
 msgid "OAuth Credentials"
 msgstr "OAuth Credentials"
 
@@ -10119,7 +10101,7 @@ msgid "Owner"
 msgstr "Owner"
 
 #. js-lingui-id: RWJnRQ
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 msgid "Ownership transferred successfully"
 msgstr "Ownership transferred successfully"
 
@@ -10129,19 +10111,9 @@ msgid "p"
 msgstr "p"
 
 #. js-lingui-id: mGYa19
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 msgid "Package"
 msgstr "Package"
-
-#. js-lingui-id: VXyQnz
-#: src/pages/settings/applications/components/SettingsRegisterNpmAppModal.tsx
-msgid "Package name"
-msgstr "Package name"
-
-#. js-lingui-id: +BO/Qa
-#: src/modules/marketplace/hooks/useRegisterNpmPackage.ts
-msgid "Package registered successfully."
-msgstr "Package registered successfully."
 
 #. js-lingui-id: 6WdDG7
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
@@ -10424,7 +10396,7 @@ msgid "Please check your email for a verification link."
 msgstr "Please check your email for a verification link."
 
 #. js-lingui-id: jEw0Mr
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutIframeSettings.tsx
 msgid "Please enter a valid URL"
 msgstr "Please enter a valid URL"
@@ -10461,7 +10433,7 @@ msgid "Please type \"{confirmationValue}\" to confirm you want to delete this AP
 msgstr "Please type \"{confirmationValue}\" to confirm you want to delete this API Key. Be aware that any script using this key will stop working."
 
 #. js-lingui-id: osUElx
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 msgid "Please type \"{confirmationValue}\" to confirm you want to delete this app. All workspace installations linked to it will lose their OAuth credentials."
 msgstr "Please type \"{confirmationValue}\" to confirm you want to delete this app. All workspace installations linked to it will lose their OAuth credentials."
 
@@ -10903,9 +10875,14 @@ msgid "Red"
 msgstr "Red"
 
 #. js-lingui-id: dAZObA
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
 msgid "Redirect URIs"
 msgstr "Redirect URIs"
+
+#. js-lingui-id: FuiRGf
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
+msgid "Redirect URIs updated"
+msgstr "Redirect URIs updated"
 
 #. js-lingui-id: LfH+Ea
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
@@ -10937,23 +10914,6 @@ msgstr "Regenerate key"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Regenerate Key"
 msgstr "Regenerate Key"
-
-#. js-lingui-id: fgLNSM
-#: src/pages/settings/applications/components/SettingsRegisterNpmAppModal.tsx
-msgid "Register"
-msgstr "Register"
-
-#. js-lingui-id: kbU+zg
-#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
-#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
-#: src/pages/settings/applications/components/SettingsRegisterNpmAppModal.tsx
-msgid "Register from npm"
-msgstr "Register from npm"
-
-#. js-lingui-id: cxM2TJ
-#: src/modules/marketplace/hooks/useRegisterNpmPackage.ts
-msgid "Registration failed."
-msgstr "Registration failed."
 
 #. js-lingui-id: h9AYFD
 #: src/modules/settings/data-model/fields/forms/components/SettingsObjectNewFieldSelector.tsx
@@ -11144,7 +11104,7 @@ msgid "Request Failed"
 msgstr "Request Failed"
 
 #. js-lingui-id: TMLAx2
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 msgid "Required"
 msgstr "Required"
 
@@ -11383,13 +11343,13 @@ msgid "Romanian"
 msgstr "Romanian"
 
 #. js-lingui-id: vQrTaX
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
 msgid "Rotate client secret"
 msgstr "Rotate client secret"
 
 #. js-lingui-id: 2FBgnq
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
 msgid "Rotate secret"
 msgstr "Rotate secret"
 
@@ -11464,6 +11424,7 @@ msgid "Saturday"
 msgstr "Saturday"
 
 #. js-lingui-id: tfDRzk
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/SaveButton.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableActionButtons.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -11502,7 +11463,7 @@ msgid "Schema name"
 msgstr "Schema name"
 
 #. js-lingui-id: N/rFzD
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
 msgid "Scopes"
 msgstr "Scopes"
 
@@ -12145,7 +12106,7 @@ msgid "Serbian (Cyrillic)"
 msgstr "Serbian (Cyrillic)"
 
 #. js-lingui-id: fHVf32
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 msgid "Server Variables"
 msgstr "Server Variables"
 
@@ -12558,8 +12519,8 @@ msgid "Sort By Group"
 msgstr "Sort By Group"
 
 #. js-lingui-id: wdxz7K
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableOptionsDropdownContent.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
@@ -13047,8 +13008,8 @@ msgid "Table"
 msgstr "Table"
 
 #. js-lingui-id: HpIrmy
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 msgid "Tarball upload"
 msgstr "Tarball upload"
 
@@ -13063,7 +13024,7 @@ msgid "Target relation on Junction Object"
 msgstr "Target relation on Junction Object"
 
 #. js-lingui-id: qmwHSv
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 msgid "Target workspace subdomain"
 msgstr "Target workspace subdomain"
 
@@ -13362,6 +13323,11 @@ msgstr "This action will delete this folder and all {navigationMenuItemCount} na
 msgid "This action will delete this folder and the navigation menu item inside. Do you want to continue?"
 msgstr "This action will delete this folder and the navigation menu item inside. Do you want to continue?"
 
+#. js-lingui-id: 5AOB6g
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
+msgid "This app is installed on the current workspace"
+msgstr "This app is installed on the current workspace"
+
 #. js-lingui-id: SYslQU
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 msgid "This application is not listed on the marketplace. It was shared via a direct link."
@@ -13413,7 +13379,7 @@ msgid "This record has been deleted"
 msgstr "This record has been deleted"
 
 #. js-lingui-id: eV9Tnj
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
 msgid "This redirect URI is already added"
 msgstr "This redirect URI is already added"
 
@@ -13476,6 +13442,11 @@ msgstr "This will permanently delete the object and all its records. Type \"yes\
 #: src/modules/settings/two-factor-authentication/components/DeleteTwoFactorAuthenticationMethod.tsx
 msgid "This will permanently delete your two factor authentication method.<0/>Since 2FA is mandatory in your workspace, you will be logged out after deletion and will be asked to configure it again upon login. <1/>Please type in your email to confirm."
 msgstr "This will permanently delete your two factor authentication method.<0/>Since 2FA is mandatory in your workspace, you will be logged out after deletion and will be asked to configure it again upon login. <1/>Please type in your email to confirm."
+
+#. js-lingui-id: Uvv3gH
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
+msgid "This will remove the application and all its data from this workspace. Please type \"{confirmationValue}\" to confirm."
+msgstr "This will remove the application and all its data from this workspace. Please type \"{confirmationValue}\" to confirm."
 
 #. js-lingui-id: 4YifBe
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
@@ -13667,13 +13638,13 @@ msgid "Track your {intervalLabel} workflow credit consumption."
 msgstr "Track your {intervalLabel} workflow credit consumption."
 
 #. js-lingui-id: zPGNJm
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 msgid "Transfer"
 msgstr "Transfer"
 
 #. js-lingui-id: KSnRfc
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 msgid "Transfer ownership"
 msgstr "Transfer ownership"
 
@@ -13933,18 +13904,21 @@ msgid "Undisplayed data: max {maxItems} slices per chart."
 msgstr "Undisplayed data: max {maxItems} slices per chart."
 
 #. js-lingui-id: fo0VXg
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 msgid "Uninstall"
 msgstr "Uninstall"
 
 #. js-lingui-id: Qtg9Qc
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 msgid "Uninstall Application?"
 msgstr "Uninstall Application?"
 
 #. js-lingui-id: 7S4EZE
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 msgid "Uninstall this app from all workspaces before deleting it"
 msgstr "Uninstall this app from all workspaces before deleting it"
 
@@ -13972,14 +13946,9 @@ msgid "unit"
 msgstr "unit"
 
 #. js-lingui-id: fMyWEp
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 msgid "Universal ID"
 msgstr "Universal ID"
-
-#. js-lingui-id: dIosde
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
-msgid "Universal identifier copied"
-msgstr "Universal identifier copied"
 
 #. js-lingui-id: Ef7StM
 #: src/pages/settings/emailing-domains/utils/getEmailingDomainStatusText.ts
@@ -14243,7 +14212,7 @@ msgid "URL to Embed"
 msgstr "URL to Embed"
 
 #. js-lingui-id: 8Jr4QC
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
 msgid "Usage across all workspaces on this server"
 msgstr "Usage across all workspaces on this server"
 
@@ -14377,7 +14346,7 @@ msgid "Values"
 msgstr "Values"
 
 #. js-lingui-id: HBiN8v
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 msgid "Variable {variableKey} updated"
 msgstr "Variable {variableKey} updated"
 
@@ -14397,7 +14366,7 @@ msgid "Variable updated successfully."
 msgstr "Variable updated successfully."
 
 #. js-lingui-id: E6Zuwm
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 msgid "Variables declared by the app manifest. Fill in values here — they apply to all workspace installations."
 msgstr "Variables declared by the app manifest. Fill in values here — they apply to all workspace installations."
 
@@ -14521,6 +14490,11 @@ msgstr "view filter group"
 msgid "view group"
 msgstr "view group"
 
+#. js-lingui-id: AjN5xU
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
+msgid "View installed app"
+msgstr "View installed app"
+
 #. js-lingui-id: lh5BED
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerQueueMetricsSection.tsx
 msgid "View Jobs"
@@ -14532,7 +14506,7 @@ msgid "View Logs"
 msgstr "View Logs"
 
 #. js-lingui-id: 7PrSCy
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
 msgid "View marketplace page"
 msgstr "View marketplace page"
 
@@ -14813,7 +14787,7 @@ msgid "When enabled, newly added models are available to all workspaces by defau
 msgstr "When enabled, newly added models are available to all workspaces by default"
 
 #. js-lingui-id: mCGuXk
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
 msgid "When enabled, this app appears in the marketplace browse page"
 msgstr "When enabled, this app appears in the marketplace browse page"
 
@@ -15071,7 +15045,8 @@ msgstr "Yellow"
 
 #. js-lingui-id: 3d1wCB
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
