@@ -101,12 +101,12 @@ export const RecordBoardCard = () => {
 
   const commandMenuId = getCommandMenuIdFromRecordIndexId(recordBoardId);
 
-  const actionMenuDropdownId =
+  const commandMenuDropdownId =
     getCommandMenuDropdownIdFromCommandMenuId(commandMenuId);
 
   const setRecordIndexCommandMenuDropdownPosition = useSetAtomComponentState(
     recordIndexCommandMenuDropdownPositionComponentState,
-    actionMenuDropdownId,
+    commandMenuDropdownId,
   );
 
   const { openDropdown } = useOpenDropdown();
@@ -123,7 +123,7 @@ export const RecordBoardCard = () => {
       y: event.clientY,
     });
     openDropdown({
-      dropdownComponentInstanceIdFromProps: actionMenuDropdownId,
+      dropdownComponentInstanceIdFromProps: commandMenuDropdownId,
       globalHotkeysConfig: {
         enableGlobalHotkeysWithModifiers: true,
         enableGlobalHotkeysConflictingWithKeyboard: false,

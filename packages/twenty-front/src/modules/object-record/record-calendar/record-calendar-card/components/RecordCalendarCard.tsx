@@ -48,12 +48,12 @@ export const RecordCalendarCard = ({ recordId }: RecordCalendarCardProps) => {
 
   const commandMenuId = getCommandMenuIdFromRecordIndexId(recordCalendarId);
 
-  const actionMenuDropdownId =
+  const commandMenuDropdownId =
     getCommandMenuDropdownIdFromCommandMenuId(commandMenuId);
 
   const setRecordIndexCommandMenuDropdownPosition = useSetAtomComponentState(
     recordIndexCommandMenuDropdownPositionComponentState,
-    actionMenuDropdownId,
+    commandMenuDropdownId,
   );
 
   const { openDropdown } = useOpenDropdown();
@@ -66,7 +66,7 @@ export const RecordCalendarCard = ({ recordId }: RecordCalendarCardProps) => {
       y: event.clientY,
     });
     openDropdown({
-      dropdownComponentInstanceIdFromProps: actionMenuDropdownId,
+      dropdownComponentInstanceIdFromProps: commandMenuDropdownId,
       globalHotkeysConfig: {
         enableGlobalHotkeysWithModifiers: true,
         enableGlobalHotkeysConflictingWithKeyboard: false,

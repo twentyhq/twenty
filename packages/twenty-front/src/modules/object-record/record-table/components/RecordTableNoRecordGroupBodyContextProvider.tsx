@@ -7,7 +7,7 @@ import {
   type OpenTableCellArgs,
   useOpenRecordTableCell,
 } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCell';
-import { useTriggerActionMenuDropdown } from '@/object-record/record-table/record-table-cell/hooks/useTriggerActionMenuDropdown';
+import { useTriggerCommandMenuDropdown } from '@/object-record/record-table/record-table-cell/hooks/useTriggerCommandMenuDropdown';
 import { hasUserSelectedAllRowsComponentState } from '@/object-record/record-table/record-table-row/states/hasUserSelectedAllRowsFamilyState';
 import { type MoveFocusDirection } from '@/object-record/record-table/types/MoveFocusDirection';
 import { type TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
@@ -47,7 +47,7 @@ export const RecordTableNoRecordGroupBodyContextProvider = ({
     moveHoverToCurrentCell(cellPosition);
   };
 
-  const { triggerActionMenuDropdown } = useTriggerActionMenuDropdown({
+  const { triggerCommandMenuDropdown } = useTriggerCommandMenuDropdown({
     recordTableId,
   });
 
@@ -55,7 +55,7 @@ export const RecordTableNoRecordGroupBodyContextProvider = ({
     event: React.MouseEvent,
     recordId: string,
   ) => {
-    triggerActionMenuDropdown(event, recordId);
+    triggerCommandMenuDropdown(event, recordId);
   };
 
   const hasUserSelectedAllRows = useAtomComponentStateValue(

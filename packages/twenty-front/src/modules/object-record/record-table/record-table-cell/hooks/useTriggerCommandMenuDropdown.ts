@@ -11,12 +11,12 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 
-export const useTriggerActionMenuDropdown = ({
+export const useTriggerCommandMenuDropdown = ({
   recordTableId,
 }: {
   recordTableId: string;
 }) => {
-  const actionMenuInstanceId = useAvailableComponentInstanceIdOrThrow(
+  const commandMenuInstanceId = useAvailableComponentInstanceIdOrThrow(
     CommandMenuComponentInstanceContext,
   );
 
@@ -25,20 +25,20 @@ export const useTriggerActionMenuDropdown = ({
     recordTableId,
   );
 
-  const actionMenuDropdownId =
-    getCommandMenuDropdownIdFromCommandMenuId(actionMenuInstanceId);
+  const commandMenuDropdownId =
+    getCommandMenuDropdownIdFromCommandMenuId(commandMenuInstanceId);
 
   const recordIndexCommandMenuDropdownPositionCallbackState =
     useAtomComponentStateCallbackState(
       recordIndexCommandMenuDropdownPositionComponentState,
-      actionMenuDropdownId,
+      commandMenuDropdownId,
     );
 
   const { openDropdown } = useOpenDropdown();
   const { closeSidePanelMenu } = useSidePanelMenu();
   const store = useStore();
 
-  const triggerActionMenuDropdown = useCallback(
+  const triggerCommandMenuDropdown = useCallback(
     (event: React.MouseEvent, recordId: string) => {
       event.preventDefault();
 
@@ -56,7 +56,7 @@ export const useTriggerActionMenuDropdown = ({
       closeSidePanelMenu();
 
       openDropdown({
-        dropdownComponentInstanceIdFromProps: actionMenuDropdownId,
+        dropdownComponentInstanceIdFromProps: commandMenuDropdownId,
       });
     },
     [
@@ -64,10 +64,10 @@ export const useTriggerActionMenuDropdown = ({
       isRowSelectedFamilyState,
       closeSidePanelMenu,
       openDropdown,
-      actionMenuDropdownId,
+      commandMenuDropdownId,
       store,
     ],
   );
 
-  return { triggerActionMenuDropdown };
+  return { triggerCommandMenuDropdown };
 };
