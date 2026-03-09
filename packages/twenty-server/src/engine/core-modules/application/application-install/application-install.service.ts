@@ -110,30 +110,15 @@ export class ApplicationInstallService {
       'manifest.json',
     );
 
-    const universalIdentifier = appRegistration.universalIdentifier;
-
-    await this.ensureApplicationExists({
-      universalIdentifier,
-      name: manifest.application.displayName,
-      workspaceId: params.workspaceId,
-      applicationRegistrationId: appRegistration.id,
-      sourceType: appRegistration.sourceType,
-    });
-
-    await this.writeFilesToStorage(
-      params.extractedDir,
-      universalIdentifier,
-      params.workspaceId,
-    );
-
-    await this.applicationSyncService.synchronizeFromManifest({
-      workspaceId: params.workspaceId,
+    await this.syncFromExtractedDirectory({
+      appRegistration,
+      extractedDir: params.extractedDir,
       manifest,
-      applicationRegistrationId: appRegistration.id,
+      workspaceId: params.workspaceId,
     });
 
     this.logger.log(
-      `Successfully installed app ${universalIdentifier} from local directory`,
+      `Successfully installed app ${appRegistration.universalIdentifier} from local directory`,
     );
   }
 
@@ -154,30 +139,15 @@ export class ApplicationInstallService {
         return true;
       }
 
-      const universalIdentifier = appRegistration.universalIdentifier;
-
-      await this.ensureApplicationExists({
-        universalIdentifier,
-        name: resolvedPackage.manifest.application.displayName,
-        workspaceId: params.workspaceId,
-        applicationRegistrationId: appRegistration.id,
-        sourceType: appRegistration.sourceType,
-      });
-
-      await this.writeFilesToStorage(
-        resolvedPackage.extractedDir,
-        universalIdentifier,
-        params.workspaceId,
-      );
-
-      await this.applicationSyncService.synchronizeFromManifest({
-        workspaceId: params.workspaceId,
+      await this.syncFromExtractedDirectory({
+        appRegistration,
+        extractedDir: resolvedPackage.extractedDir,
         manifest: resolvedPackage.manifest,
-        applicationRegistrationId: appRegistration.id,
+        workspaceId: params.workspaceId,
       });
 
       this.logger.log(
-        `Successfully installed app ${universalIdentifier} v${resolvedPackage.packageJson.version ?? 'unknown'}`,
+        `Successfully installed app ${appRegistration.universalIdentifier} v${resolvedPackage.packageJson.version ?? 'unknown'}`,
       );
 
       return true;
@@ -194,6 +164,35 @@ export class ApplicationInstallService {
         );
       }
     }
+  }
+
+  private async syncFromExtractedDirectory(params: {
+    appRegistration: ApplicationRegistrationEntity;
+    extractedDir: string;
+    manifest: Manifest;
+    workspaceId: string;
+  }): Promise<void> {
+    const { appRegistration, extractedDir, manifest, workspaceId } = params;
+
+    await this.ensureApplicationExists({
+      universalIdentifier: appRegistration.universalIdentifier,
+      name: manifest.application.displayName,
+      workspaceId,
+      applicationRegistrationId: appRegistration.id,
+      sourceType: appRegistration.sourceType,
+    });
+
+    await this.writeFilesToStorage(
+      extractedDir,
+      appRegistration.universalIdentifier,
+      workspaceId,
+    );
+
+    await this.applicationSyncService.synchronizeFromManifest({
+      workspaceId,
+      manifest,
+      applicationRegistrationId: appRegistration.id,
+    });
   }
 
   private async writeFilesToStorage(

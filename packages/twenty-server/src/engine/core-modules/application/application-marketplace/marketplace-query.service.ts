@@ -105,6 +105,7 @@ export class MarketplaceQueryService {
       screenshots: displayData?.screenshots ?? [],
       aboutDescription:
         displayData?.aboutDescription ?? registration.description ?? '',
+      readme: displayData?.readme,
       providers: displayData?.providers ?? [],
       websiteUrl: registration.websiteUrl ?? undefined,
       termsUrl: registration.termsUrl ?? undefined,

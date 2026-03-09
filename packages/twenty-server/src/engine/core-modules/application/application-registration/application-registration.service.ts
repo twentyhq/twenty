@@ -71,21 +71,6 @@ export class ApplicationRegistrationService {
     return registration;
   }
 
-  async findOneByIdGlobal(id: string): Promise<ApplicationRegistrationEntity> {
-    const registration = await this.applicationRegistrationRepository.findOne({
-      where: { id },
-    });
-
-    if (!registration) {
-      throw new ApplicationRegistrationException(
-        `Application registration with id ${id} not found`,
-        ApplicationRegistrationExceptionCode.APPLICATION_REGISTRATION_NOT_FOUND,
-      );
-    }
-
-    return registration;
-  }
-
   // Global lookup — used by OAuth flow (no workspace scoping)
   async findOneByClientId(
     clientId: string,
@@ -337,14 +322,6 @@ export class ApplicationRegistrationService {
     });
 
     await this.applicationRegistrationRepository.save(registration);
-  }
-
-  async findManyBySourceType(
-    sourceType: ApplicationRegistrationSourceType,
-  ): Promise<ApplicationRegistrationEntity[]> {
-    return this.applicationRegistrationRepository.find({
-      where: { sourceType },
-    });
   }
 
   async findManyNpm(): Promise<ApplicationRegistrationEntity[]> {

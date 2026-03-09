@@ -246,6 +246,11 @@ export class MarketplaceAppDTO {
   @Field()
   aboutDescription: string;
 
+  @IsOptional()
+  @IsString()
+  @Field({ nullable: true })
+  readme?: string;
+
   @IsArray()
   @Field(() => [String])
   providers: string[];
