@@ -7,7 +7,7 @@ import { FeatureFlagKey } from '~/generated-metadata/graphql';
 export const useRecordAgnosticCommands = () => {
   const isAiEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
 
-  const actions: Record<string, CommandMenuItemConfig> = {
+  const commandMenuItems: Record<string, CommandMenuItemConfig> = {
     [RecordAgnosticCommandKeys.SEARCH_RECORDS]:
       RECORD_AGNOSTIC_COMMAND_MENU_ITEMS_CONFIG[
         RecordAgnosticCommandKeys.SEARCH_RECORDS
@@ -23,15 +23,15 @@ export const useRecordAgnosticCommands = () => {
   };
 
   if (isAiEnabled) {
-    actions[RecordAgnosticCommandKeys.ASK_AI] =
+    commandMenuItems[RecordAgnosticCommandKeys.ASK_AI] =
       RECORD_AGNOSTIC_COMMAND_MENU_ITEMS_CONFIG[
         RecordAgnosticCommandKeys.ASK_AI
       ];
-    actions[RecordAgnosticCommandKeys.VIEW_PREVIOUS_AI_CHATS] =
+    commandMenuItems[RecordAgnosticCommandKeys.VIEW_PREVIOUS_AI_CHATS] =
       RECORD_AGNOSTIC_COMMAND_MENU_ITEMS_CONFIG[
         RecordAgnosticCommandKeys.VIEW_PREVIOUS_AI_CHATS
       ];
   }
 
-  return actions;
+  return commandMenuItems;
 };
