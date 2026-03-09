@@ -51,8 +51,8 @@ export const useAgentChatData = () => {
 
   const [createChatThread] = useCreateChatThreadMutation({
     onCompleted: (data) => {
-      if (store.get(isCreatingForFirstSendState)) {
-        store.set(isCreatingForFirstSendState, false);
+      if (store.get(isCreatingForFirstSendState.atom)) {
+        store.set(isCreatingForFirstSendState.atom, false);
         setIsCreatingChatThread(false);
         return;
       }
@@ -66,7 +66,7 @@ export const useAgentChatData = () => {
 
       setIsCreatingChatThread(false);
       if (previousDraftKey === AGENT_CHAT_NEW_THREAD_DRAFT_KEY) {
-        store.set(hasTriggeredCreateForDraftState, true);
+        store.set(hasTriggeredCreateForDraftState.atom, true);
         setAgentChatDraftsByThreadId((prev) => ({
           ...prev,
           [newThreadId]: newDraft,
@@ -124,8 +124,8 @@ export const useAgentChatData = () => {
     },
     onError: () => {
       setIsCreatingChatThread(false);
-      store.set(isCreatingForFirstSendState, false);
-      store.set(hasTriggeredCreateForDraftState, false);
+      store.set(isCreatingForFirstSendState.atom, false);
+      store.set(hasTriggeredCreateForDraftState.atom, false);
     },
     refetchQueries: [
       getOperationName(GetChatThreadsDocument) ?? 'GetChatThreads',
@@ -164,7 +164,7 @@ export const useAgentChatData = () => {
             : null,
         );
       } else {
-        store.set(hasTriggeredCreateForDraftState, false);
+        store.set(hasTriggeredCreateForDraftState.atom, false);
         setCurrentAIChatThread(AGENT_CHAT_NEW_THREAD_DRAFT_KEY);
         setAgentChatInput(
           store.get(agentChatDraftsByThreadIdState.atom)[
@@ -199,7 +199,7 @@ export const useAgentChatData = () => {
     if (draft.trim() === '') {
       return;
     }
-    if (store.get(hasTriggeredCreateForDraftState)) {
+    if (store.get(hasTriggeredCreateForDraftState.atom)) {
       return;
     }
     if (store.get(isCreatingChatThreadState.atom)) {
@@ -214,7 +214,7 @@ export const useAgentChatData = () => {
     if (current !== AGENT_CHAT_NEW_THREAD_DRAFT_KEY) {
       return current;
     }
-    store.set(isCreatingForFirstSendState, true);
+    store.set(isCreatingForFirstSendState.atom, true);
     setIsCreatingChatThread(true);
     try {
       const result = await createChatThread();

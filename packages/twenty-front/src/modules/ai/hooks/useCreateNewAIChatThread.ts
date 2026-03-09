@@ -44,7 +44,7 @@ export const useCreateNewAIChatThread = () => {
       ...prev,
       [previousDraftKey]: store.get(agentChatInputState.atom),
     }));
-    store.set(hasTriggeredCreateForDraftState, false);
+    store.set(hasTriggeredCreateForDraftState.atom, false);
     setCurrentAIChatThread(AGENT_CHAT_NEW_THREAD_DRAFT_KEY);
     setAgentChatInput(newChatDraft);
     setCurrentAIChatThreadTitle(null);
