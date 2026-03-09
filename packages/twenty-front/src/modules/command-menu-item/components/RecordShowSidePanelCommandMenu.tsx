@@ -1,4 +1,4 @@
-import { RecordShowSidePanelCommandMenuDropdown } from '@/command-menu-item/components/RecordShowSidePanelCommandMenuDropdown';
+import { RecordPageSidePanelCommandMenuDropdown } from '@/command-menu-item/components/RecordPageSidePanelCommandMenuDropdown';
 import { CommandMenuItemContextProvider } from '@/command-menu-item/contexts/CommandMenuItemContextProvider';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -16,7 +16,7 @@ export const RecordShowSidePanelCommandMenu = () => {
           displayType="dropdownItem"
           containerType="command-menu-show-page-dropdown"
         >
-          <RecordShowSidePanelCommandMenuDropdown />
+          <RecordPageSidePanelCommandMenuDropdown />
         </CommandMenuItemContextProvider>
       )}
     </>

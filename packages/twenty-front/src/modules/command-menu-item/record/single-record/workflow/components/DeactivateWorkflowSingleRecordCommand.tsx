@@ -1,4 +1,4 @@
-import { CommandMenuItemExecution } from '@/command-menu-item/display/components/CommandMenuItemExecution';
+import { Command } from '@/command-menu-item/display/components/Command';
 import { useSelectedRecordIdOrThrow } from '@/command-menu-item/record/single-record/hooks/useSelectedRecordIdOrThrow';
 import { useDeactivateWorkflowVersion } from '@/workflow/hooks/useDeactivateWorkflowVersion';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
@@ -19,5 +19,5 @@ export const DeactivateWorkflowSingleRecordCommand = () => {
     });
   };
 
-  return <CommandMenuItemExecution onClick={onClick} />;
+  return <Command onClick={onClick} />;
 };

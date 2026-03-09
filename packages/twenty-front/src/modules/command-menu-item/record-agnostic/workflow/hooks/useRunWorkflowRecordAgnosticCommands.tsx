@@ -1,7 +1,7 @@
-import { CommandMenuItemExecution } from '@/command-menu-item/display/components/CommandMenuItemExecution';
+import { Command } from '@/command-menu-item/display/components/Command';
 import { CommandMenuItemScope } from '@/command-menu-item/types/CommandMenuItemScope';
 import { CommandMenuItemType } from '@/command-menu-item/types/CommandMenuItemType';
-import { CommandMenuItemContext } from '@/command-menu-item/contexts/CommandMenuItemContext';
+import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { contextStoreIsPageInEditModeComponentState } from '@/context-store/states/contextStoreIsPageInEditModeComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useActiveWorkflowVersionsWithManualTrigger } from '@/workflow/hooks/useActiveWorkflowVersionsWithManualTrigger';
@@ -18,7 +18,7 @@ export const useRunWorkflowRecordAgnosticCommands = () => {
     contextStoreIsPageInEditModeComponentState,
   );
 
-  const { containerType } = useContext(CommandMenuItemContext);
+  const { containerType } = useContext(CommandMenuContext);
 
   const { records: activeWorkflowVersions } =
     useActiveWorkflowVersionsWithManualTrigger({
@@ -55,7 +55,7 @@ export const useRunWorkflowRecordAgnosticCommands = () => {
         Icon,
         shouldBeRegistered: () => true,
         component: (
-          <CommandMenuItemExecution
+          <Command
             onClick={() => {
               runWorkflowVersion({
                 workflowVersionId: activeWorkflowVersion.id,

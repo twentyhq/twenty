@@ -1,4 +1,4 @@
-import { CommandMenuItemExecution } from '@/command-menu-item/display/components/CommandMenuItemExecution';
+import { Command } from '@/command-menu-item/display/components/Command';
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { useRecordPageLayoutIdFromRecordStoreOrThrow } from '@/page-layout/hooks/useRecordPageLayoutIdFromRecordStoreOrThrow';
 import { useSetIsPageLayoutInEditMode } from '@/page-layout/hooks/useSetIsPageLayoutInEditMode';
@@ -21,5 +21,5 @@ export const EditRecordPageLayoutSingleRecordCommand = () => {
     resetLocationHash();
   };
 
-  return <CommandMenuItemExecution onClick={handleClick} />;
+  return <Command onClick={handleClick} />;
 };

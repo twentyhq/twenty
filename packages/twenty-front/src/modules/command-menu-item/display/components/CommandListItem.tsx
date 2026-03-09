@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { Loader } from 'twenty-ui/feedback';
 
-export const CommandMenuItemListItem = ({
+export const CommandListItem = ({
   action,
   onClick,
   to,

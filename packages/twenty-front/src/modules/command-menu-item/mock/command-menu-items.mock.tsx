@@ -1,5 +1,5 @@
-import { CommandMenuItemExecution } from '@/command-menu-item/display/components/CommandMenuItemExecution';
-import { CommandMenuItemLink } from '@/command-menu-item/display/components/CommandMenuItemLink';
+import { Command } from '@/command-menu-item/display/components/Command';
+import { CommandLink } from '@/command-menu-item/display/components/CommandLink';
 import { NoSelectionRecordCommandKeys } from '@/command-menu-item/record/no-selection/types/NoSelectionRecordCommandKeys';
 import { SingleRecordCommandKeys } from '@/command-menu-item/record/single-record/types/SingleRecordCommandKeys';
 import { type CommandMenuItemConfig } from '@/command-menu-item/types/CommandMenuItemConfig';
@@ -42,7 +42,7 @@ export const createMockCommandMenuItems = ({
       CommandMenuItemViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       CommandMenuItemViewType.SHOW_PAGE,
     ],
-    component: <CommandMenuItemExecution onClick={addToFavoritesMock} />,
+    component: <Command onClick={addToFavoritesMock} />,
   },
   {
     type: CommandMenuItemType.Standard,
@@ -56,7 +56,7 @@ export const createMockCommandMenuItems = ({
     isPinned: false,
     shouldBeRegistered: () => true,
     availableOn: [CommandMenuItemViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION],
-    component: <CommandMenuItemExecution onClick={exportMock} />,
+    component: <Command onClick={exportMock} />,
   },
   {
     type: CommandMenuItemType.Standard,
@@ -73,7 +73,7 @@ export const createMockCommandMenuItems = ({
       CommandMenuItemViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       CommandMenuItemViewType.SHOW_PAGE,
     ],
-    component: <CommandMenuItemExecution onClick={deleteMock} />,
+    component: <Command onClick={deleteMock} />,
   },
   {
     type: CommandMenuItemType.Navigation,
@@ -94,7 +94,7 @@ export const createMockCommandMenuItems = ({
       objectMetadataItem?.nameSingular !== CoreObjectNameSingular.Person ||
       viewType === CommandMenuItemViewType.SHOW_PAGE,
     component: (
-      <CommandMenuItemLink
+      <CommandLink
         to={AppPath.RecordIndexPage}
         params={{ objectNamePlural: CoreObjectNamePlural.Person }}
       />

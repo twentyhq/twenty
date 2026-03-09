@@ -1,8 +1,8 @@
 import { CommandMenuItemButton } from '@/command-menu-item/display/components/CommandMenuItemButton';
-import { CommandMenuItemDropdownItem } from '@/command-menu-item/display/components/CommandMenuItemDropdownItem';
-import { CommandMenuItemListItem } from '@/command-menu-item/display/components/CommandMenuItemListItem';
-import { CommandMenuItemConfigContext } from '@/command-menu-item/contexts/CommandMenuItemConfigContext';
-import { CommandMenuItemContext } from '@/command-menu-item/contexts/CommandMenuItemContext';
+import { CommandDropdownItem } from '@/command-menu-item/display/components/CommandDropdownItem';
+import { CommandListItem } from '@/command-menu-item/display/components/CommandListItem';
+import { CommandConfigContext } from '@/command-menu-item/contexts/CommandConfigContext';
+import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { type MessageDescriptor } from '@lingui/core';
 import { useContext } from 'react';
 import { assertUnreachable } from 'twenty-shared/utils';
@@ -29,8 +29,8 @@ export const CommandMenuItemDisplay = ({
   to?: string;
   disabled?: boolean;
 }) => {
-  const action = useContext(CommandMenuItemConfigContext);
-  const { displayType } = useContext(CommandMenuItemContext);
+  const action = useContext(CommandConfigContext);
+  const { displayType } = useContext(CommandMenuContext);
 
   if (!action) {
     return null;
@@ -42,7 +42,7 @@ export const CommandMenuItemDisplay = ({
 
   if (displayType === 'listItem') {
     return (
-      <CommandMenuItemListItem
+      <CommandListItem
         action={action}
         onClick={onClick}
         to={to}
@@ -53,7 +53,7 @@ export const CommandMenuItemDisplay = ({
 
   if (displayType === 'dropdownItem') {
     return (
-      <CommandMenuItemDropdownItem action={action} onClick={onClick} to={to} />
+      <CommandDropdownItem action={action} onClick={onClick} to={to} />
     );
   }
 

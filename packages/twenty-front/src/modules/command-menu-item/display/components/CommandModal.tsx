@@ -2,8 +2,8 @@ import { type ReactNode, useContext } from 'react';
 import { t } from '@lingui/core/macro';
 
 import { CommandMenuItemDisplay } from '@/command-menu-item/display/components/CommandMenuItemDisplay';
-import { CommandMenuItemConfigContext } from '@/command-menu-item/contexts/CommandMenuItemConfigContext';
-import { CommandMenuItemContext } from '@/command-menu-item/contexts/CommandMenuItemContext';
+import { CommandConfigContext } from '@/command-menu-item/contexts/CommandConfigContext';
+import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { useCloseCommandMenu } from '@/command-menu-item/hooks/useCloseCommandMenu';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
@@ -11,7 +11,7 @@ import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpe
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { type ButtonAccent } from 'twenty-ui/input';
 
-export type CommandMenuItemModalProps = {
+export type CommandModalProps = {
   title: string;
   subtitle: ReactNode;
   onConfirmClick: () => void | Promise<void>;
@@ -22,7 +22,7 @@ export type CommandMenuItemModalProps = {
   closeSidePanelOnCommandMenuItemListCommandExecution?: boolean;
 };
 
-export const CommandMenuItemModal = ({
+export const CommandModal = ({
   title,
   subtitle,
   onConfirmClick,
@@ -31,7 +31,7 @@ export const CommandMenuItemModal = ({
   isLoading = false,
   closeSidePanelOnShowPageOptionsCommandExecution,
   closeSidePanelOnCommandMenuItemListCommandExecution,
-}: CommandMenuItemModalProps) => {
+}: CommandModalProps) => {
   const { openModal } = useModal();
 
   const { closeCommandMenu } = useCloseCommandMenu({
@@ -44,8 +44,8 @@ export const CommandMenuItemModal = ({
     closeCommandMenu();
   };
 
-  const commandMenuItemConfig = useContext(CommandMenuItemConfigContext);
-  const { containerType } = useContext(CommandMenuItemContext);
+  const commandMenuItemConfig = useContext(CommandConfigContext);
+  const { containerType } = useContext(CommandMenuContext);
 
   const modalId = `${commandMenuItemConfig?.key}-command-menu-item-modal-${containerType}`;
 

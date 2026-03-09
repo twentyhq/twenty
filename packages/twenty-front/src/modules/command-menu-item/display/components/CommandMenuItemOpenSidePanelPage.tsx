@@ -1,5 +1,5 @@
 import { CommandMenuItemDisplay } from '@/command-menu-item/display/components/CommandMenuItemDisplay';
-import { CommandMenuItemConfigContext } from '@/command-menu-item/contexts/CommandMenuItemConfigContext';
+import { CommandConfigContext } from '@/command-menu-item/contexts/CommandConfigContext';
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -22,7 +22,7 @@ export const CommandMenuItemOpenSidePanelPage = ({
   onClick?: () => void;
   shouldResetSearchState?: boolean;
 }) => {
-  const actionConfig = useContext(CommandMenuItemConfigContext);
+  const actionConfig = useContext(CommandConfigContext);
 
   const { navigateSidePanel } = useNavigateSidePanel();
 

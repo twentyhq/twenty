@@ -1,4 +1,4 @@
-import { CommandMenuItemModal } from '@/command-menu-item/display/components/CommandMenuItemModal';
+import { CommandModal } from '@/command-menu-item/display/components/CommandModal';
 import { useSelectedRecordIdOrThrow } from '@/command-menu-item/record/single-record/hooks/useSelectedRecordIdOrThrow';
 import { useDestroyOneRecord } from '@/object-record/hooks/useDestroyOneRecord';
 import { useRemoveSelectedRecordsFromRecordBoard } from '@/object-record/record-board/hooks/useRemoveSelectedRecordsFromRecordBoard';
@@ -36,7 +36,7 @@ export const DestroySingleRecordCommand = () => {
   };
 
   return (
-    <CommandMenuItemModal
+    <CommandModal
       title={t`Permanently Destroy Record`}
       subtitle={t`Are you sure you want to destroy this record? It cannot be recovered anymore.`}
       onConfirmClick={handleDeleteClick}

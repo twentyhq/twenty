@@ -1,5 +1,5 @@
 import { CommandMenuItemDisplay } from '@/command-menu-item/display/components/CommandMenuItemDisplay';
-import { CommandMenuItemConfigContext } from '@/command-menu-item/contexts/CommandMenuItemConfigContext';
+import { CommandConfigContext } from '@/command-menu-item/contexts/CommandConfigContext';
 import { useCloseCommandMenu } from '@/command-menu-item/hooks/useCloseCommandMenu';
 import { computeProgressText } from '@/command-menu-item/utils/computeProgressText';
 import { getCommandMenuItemLabel } from '@/command-menu-item/utils/getCommandMenuItemLabel';
@@ -41,7 +41,7 @@ export const ExportMultipleRecordsCommand = () => {
       }
     : undefined;
 
-  const actionConfig = useContext(CommandMenuItemConfigContext);
+  const actionConfig = useContext(CommandConfigContext);
 
   if (!isDefined(actionConfig)) {
     return null;
@@ -72,8 +72,8 @@ export const ExportMultipleRecordsCommand = () => {
   };
 
   return (
-    <CommandMenuItemConfigContext.Provider value={actionConfigWithProgress}>
+    <CommandConfigContext.Provider value={actionConfigWithProgress}>
       <CommandMenuItemDisplay onClick={handleClick} />
-    </CommandMenuItemConfigContext.Provider>
+    </CommandConfigContext.Provider>
   );
 };

@@ -1,4 +1,4 @@
-import { CommandMenuItemConfigContext } from '@/command-menu-item/contexts/CommandMenuItemConfigContext';
+import { CommandConfigContext } from '@/command-menu-item/contexts/CommandConfigContext';
 import { useCloseCommandMenu } from '@/command-menu-item/hooks/useCloseCommandMenu';
 import { isHeadlessFrontComponentMountedFamilySelector } from '@/front-components/selectors/isHeadlessFrontComponentMountedFamilySelector';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
@@ -13,7 +13,7 @@ export const HeadlessFrontComponentCommandMenuItem = ({
   frontComponentId: string;
   onClick: () => void;
 }) => {
-  const commandMenuItemConfig = useContext(CommandMenuItemConfigContext);
+  const commandMenuItemConfig = useContext(CommandConfigContext);
 
   const { closeCommandMenu } = useCloseCommandMenu({
     closeSidePanelOnShowPageOptionsCommandExecution: false,

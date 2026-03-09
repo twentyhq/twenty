@@ -1,5 +1,5 @@
 import { CommandMenuItemComponent } from '@/command-menu-item/display/components/CommandMenuItemComponent';
-import { CommandMenuItemContext } from '@/command-menu-item/contexts/CommandMenuItemContext';
+import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
 import { useContext } from 'react';
@@ -13,7 +13,7 @@ const StyledActionContainer = styled(motion.div)`
 
 export const PageHeaderCommandMenuButtons = () => {
   const { theme } = useContext(ThemeContext);
-  const { commandMenuItems } = useContext(CommandMenuItemContext);
+  const { commandMenuItems } = useContext(CommandMenuContext);
   const pinnedActions = commandMenuItems
     .filter((entry) => entry.isPinned)
     .toReversed();

@@ -3,7 +3,7 @@ import { expect, within } from 'storybook/test';
 
 import { CommandMenuItemComponent } from '@/command-menu-item/display/components/CommandMenuItemComponent';
 import { SingleRecordCommandKeys } from '@/command-menu-item/record/single-record/types/SingleRecordCommandKeys';
-import { CommandMenuItemContext } from '@/command-menu-item/contexts/CommandMenuItemContext';
+import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { createMockCommandMenuItems } from '@/command-menu-item/mock/command-menu-items.mock';
 import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
 import { getCommandMenuItemLabel } from '@/command-menu-item/utils/getCommandMenuItemLabel';
@@ -28,7 +28,7 @@ const meta: Meta<typeof CommandMenuItemComponent> = {
       <CommandMenuComponentInstanceContext.Provider
         value={{ instanceId: 'story' }}
       >
-        <CommandMenuItemContext.Provider
+        <CommandMenuContext.Provider
           value={{
             isInSidePanel: false,
             containerType: 'index-page-header',
@@ -37,7 +37,7 @@ const meta: Meta<typeof CommandMenuItemComponent> = {
           }}
         >
           <Story />
-        </CommandMenuItemContext.Provider>
+        </CommandMenuContext.Provider>
       </CommandMenuComponentInstanceContext.Provider>
     ),
   ],

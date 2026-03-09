@@ -1,4 +1,4 @@
-import { CommandMenuItemLink } from '@/command-menu-item/display/components/CommandMenuItemLink';
+import { CommandLink } from '@/command-menu-item/display/components/CommandLink';
 import { MultipleRecordsCommandKeys } from '@/command-menu-item/record/multiple-records/types/MultipleRecordsCommandKeys';
 import { NoSelectionRecordCommandKeys } from '@/command-menu-item/record/no-selection/types/NoSelectionRecordCommandKeys';
 import { NoSelectionWorkflowRecordCommandKeys } from '@/command-menu-item/record/no-selection/workflow/types/NoSelectionWorkflowRecordCommandKeys';
@@ -105,7 +105,7 @@ export const WORKFLOW_VERSIONS_COMMAND_MENU_ITEMS_CONFIG =
         shouldBeRegistered: () => true,
         availableOn: [CommandMenuItemViewType.INDEX_PAGE_NO_SELECTION],
         component: (
-          <CommandMenuItemLink
+          <CommandLink
             to={AppPath.RecordIndexPage}
             params={{ objectNamePlural: CoreObjectNamePlural.WorkflowRun }}
           />

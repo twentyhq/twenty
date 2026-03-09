@@ -1,4 +1,4 @@
-import { CommandMenuItemExecution } from '@/command-menu-item/display/components/CommandMenuItemExecution';
+import { Command } from '@/command-menu-item/display/components/Command';
 import { useSelectedRecordIdOrThrow } from '@/command-menu-item/record/single-record/hooks/useSelectedRecordIdOrThrow';
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { useCreateFavorite } from '@/favorites/hooks/useCreateFavorite';
@@ -23,5 +23,5 @@ export const AddToFavoritesSingleRecordCommand = () => {
     createFavorite(recordStore, objectMetadataItem.nameSingular);
   };
 
-  return <CommandMenuItemExecution onClick={handleClick} />;
+  return <Command onClick={handleClick} />;
 };

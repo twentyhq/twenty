@@ -1,7 +1,7 @@
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 
-import { COMMAND_MENU_ITEM_CONFIRMATION_MODAL_INSTANCE_ID } from '@/command-menu-item/confirmation-modal/constants/CommandMenuItemConfirmationModalId';
+import { COMMAND_MENU_CONFIRMATION_MODAL_INSTANCE_ID } from '@/command-menu-item/confirmation-modal/constants/CommandMenuItemConfirmationModalId';
 import {
   type CommandMenuItemConfirmationModalConfig,
   commandMenuItemConfirmationModalConfigState,
@@ -24,7 +24,7 @@ export const useCommandMenuItemConfirmationModal = () => {
       );
       const isCommandMenuItemConfirmationModalOpened = store.get(
         isModalOpenedComponentState.atomFamily({
-          instanceId: COMMAND_MENU_ITEM_CONFIRMATION_MODAL_INSTANCE_ID,
+          instanceId: COMMAND_MENU_CONFIRMATION_MODAL_INSTANCE_ID,
         }),
       );
 
@@ -39,7 +39,7 @@ export const useCommandMenuItemConfirmationModal = () => {
 
       setCommandMenuItemConfirmationModalConfig(config);
 
-      openModal(COMMAND_MENU_ITEM_CONFIRMATION_MODAL_INSTANCE_ID);
+      openModal(COMMAND_MENU_CONFIRMATION_MODAL_INSTANCE_ID);
     },
     [store, setCommandMenuItemConfirmationModalConfig, openModal],
   );

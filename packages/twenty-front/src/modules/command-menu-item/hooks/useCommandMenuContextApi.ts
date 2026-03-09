@@ -1,4 +1,4 @@
-import { CommandMenuItemContext } from '@/command-menu-item/contexts/CommandMenuItemContext';
+import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { objectPermissionsFamilySelector } from '@/auth/states/objectPermissionsFamilySelector';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
@@ -30,7 +30,7 @@ import { FeatureFlagKey } from '~/generated-metadata/graphql';
 export const useCommandMenuContextApi = (): CommandMenuContextApi => {
   const store = useStore();
 
-  const { isInSidePanel } = useContext(CommandMenuItemContext);
+  const { isInSidePanel } = useContext(CommandMenuContext);
 
   const contextStoreCurrentObjectMetadataItemId = useAtomComponentStateValue(
     contextStoreCurrentObjectMetadataItemIdComponentState,

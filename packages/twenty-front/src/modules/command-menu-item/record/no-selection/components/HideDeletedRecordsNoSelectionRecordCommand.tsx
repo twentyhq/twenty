@@ -1,4 +1,4 @@
-import { CommandMenuItemExecution } from '@/command-menu-item/display/components/CommandMenuItemExecution';
+import { Command } from '@/command-menu-item/display/components/Command';
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { useCheckIsSoftDeleteFilter } from '@/object-record/record-filter/hooks/useCheckIsSoftDeleteFilter';
@@ -52,5 +52,5 @@ export const HideDeletedRecordsNoSelectionRecordCommand = () => {
     toggleSoftDeleteFilterState(false);
   };
 
-  return <CommandMenuItemExecution onClick={handleClick} />;
+  return <Command onClick={handleClick} />;
 };

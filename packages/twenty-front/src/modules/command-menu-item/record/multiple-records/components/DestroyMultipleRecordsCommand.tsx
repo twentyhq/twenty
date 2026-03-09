@@ -1,5 +1,5 @@
-import { CommandMenuItemModal } from '@/command-menu-item/display/components/CommandMenuItemModal';
-import { CommandMenuItemConfigContext } from '@/command-menu-item/contexts/CommandMenuItemConfigContext';
+import { CommandModal } from '@/command-menu-item/display/components/CommandModal';
+import { CommandConfigContext } from '@/command-menu-item/contexts/CommandConfigContext';
 import { computeProgressText } from '@/command-menu-item/utils/computeProgressText';
 import { getCommandMenuItemLabel } from '@/command-menu-item/utils/getCommandMenuItemLabel';
 import { contextStoreAnyFieldFilterValueComponentState } from '@/context-store/states/contextStoreAnyFieldFilterValueComponentState';
@@ -77,7 +77,7 @@ export const DestroyMultipleRecordsCommand = () => {
       delayInMsBetweenMutations: 50,
     });
 
-  const actionConfig = useContext(CommandMenuItemConfigContext);
+  const actionConfig = useContext(CommandConfigContext);
 
   if (!isDefined(actionConfig)) {
     return null;
@@ -104,13 +104,13 @@ export const DestroyMultipleRecordsCommand = () => {
   };
 
   return (
-    <CommandMenuItemConfigContext.Provider value={actionConfigWithProgress}>
-      <CommandMenuItemModal
+    <CommandConfigContext.Provider value={actionConfigWithProgress}>
+      <CommandModal
         title={t`Permanently Destroy Records`}
         subtitle={t`Are you sure you want to destroy these records? They won't be recoverable anymore.`}
         onConfirmClick={handleDestroyClick}
         confirmButtonText={t`Destroy Records`}
       />
-    </CommandMenuItemConfigContext.Provider>
+    </CommandConfigContext.Provider>
   );
 };

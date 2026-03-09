@@ -1,8 +1,8 @@
 import { useRunWorkflowRecordAgnosticCommands } from '@/command-menu-item/record-agnostic/workflow/hooks/useRunWorkflowRecordAgnosticCommands';
 import {
-  CommandMenuItemContext,
+  CommandMenuContext,
   type CommandMenuItemContextType,
-} from '@/command-menu-item/contexts/CommandMenuItemContext';
+} from '@/command-menu-item/contexts/CommandMenuContext';
 import { useRegisteredCommandMenuItems } from '@/command-menu-item/hooks/useRegisteredCommandMenuItems';
 import { useShouldCommandMenuItemBeRegisteredParams } from '@/command-menu-item/hooks/useShouldCommandMenuItemBeRegisteredParams';
 import { useCommandMenuContextApi } from '@/command-menu-item/hooks/useCommandMenuContextApi';
@@ -59,7 +59,7 @@ const CommandMenuItemContextProviderWorkflowObjectsContent = ({
     useCommandMenuItemFrontComponentActions(commandMenuContextApi);
 
   return (
-    <CommandMenuItemContext.Provider
+    <CommandMenuContext.Provider
       value={{
         isInSidePanel,
         displayType,
@@ -72,7 +72,7 @@ const CommandMenuItemContextProviderWorkflowObjectsContent = ({
       }}
     >
       {children}
-    </CommandMenuItemContext.Provider>
+    </CommandMenuContext.Provider>
   );
 };
 
@@ -107,7 +107,7 @@ const CommandMenuItemContextProviderWorkflowObjectsWithoutWorkflow = ({
     useCommandMenuItemFrontComponentActions(commandMenuContextApi);
 
   return (
-    <CommandMenuItemContext.Provider
+    <CommandMenuContext.Provider
       value={{
         isInSidePanel,
         displayType,
@@ -120,7 +120,7 @@ const CommandMenuItemContextProviderWorkflowObjectsWithoutWorkflow = ({
       }}
     >
       {children}
-    </CommandMenuItemContext.Provider>
+    </CommandMenuContext.Provider>
   );
 };
 

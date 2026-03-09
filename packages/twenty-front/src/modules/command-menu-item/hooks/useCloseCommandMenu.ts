@@ -1,4 +1,4 @@
-import { CommandMenuItemContext } from '@/command-menu-item/contexts/CommandMenuItemContext';
+import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
 import { getCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/utils/getCommandMenuDropdownIdFromCommandMenuId';
 import { getSidePanelCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/utils/getSidePanelCommandMenuDropdownIdFromCommandMenuId';
@@ -15,7 +15,7 @@ export const useCloseCommandMenu = ({
   closeSidePanelOnShowPageOptionsCommandExecution?: boolean;
   closeSidePanelOnCommandMenuItemListCommandExecution?: boolean;
 } = {}) => {
-  const { containerType, isInSidePanel } = useContext(CommandMenuItemContext);
+  const { containerType, isInSidePanel } = useContext(CommandMenuContext);
 
   const { closeSidePanelMenu } = useSidePanelMenu();
 

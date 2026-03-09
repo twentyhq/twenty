@@ -1,4 +1,4 @@
-import { CommandMenuItemLink } from '@/command-menu-item/display/components/CommandMenuItemLink';
+import { CommandLink } from '@/command-menu-item/display/components/CommandLink';
 import { MultipleRecordsCommandKeys } from '@/command-menu-item/record/multiple-records/types/MultipleRecordsCommandKeys';
 import { NoSelectionRecordCommandKeys } from '@/command-menu-item/record/no-selection/types/NoSelectionRecordCommandKeys';
 import { SingleRecordCommandKeys } from '@/command-menu-item/record/single-record/types/SingleRecordCommandKeys';
@@ -33,7 +33,7 @@ export const WORKSPACE_MEMBERS_COMMAND_MENU_ITEMS_CONFIG =
         ],
         shouldBeRegistered: () => true,
         component: (
-          <CommandMenuItemLink
+          <CommandLink
             to={AppPath.SettingsCatchAll}
             params={{
               '*': SettingsPath.WorkspaceMembersPage,

@@ -1,5 +1,5 @@
-import { CommandMenuItemExecution } from '@/command-menu-item/display/components/CommandMenuItemExecution';
-import { CommandMenuItemLink } from '@/command-menu-item/display/components/CommandMenuItemLink';
+import { Command } from '@/command-menu-item/display/components/Command';
+import { CommandLink } from '@/command-menu-item/display/components/CommandLink';
 import { CommandMenuItemScope } from '@/command-menu-item/types/CommandMenuItemScope';
 import { CommandMenuItemType } from '@/command-menu-item/types/CommandMenuItemType';
 import { MAX_SEARCH_RESULTS } from '@/command-menu/constants/MaxSearchResults';
@@ -89,7 +89,7 @@ export const useSidePanelSearchRecords = () => {
           return {
             ...baseAction,
             component: (
-              <CommandMenuItemExecution
+              <Command
                 onClick={() => {
                   searchRecord.objectNameSingular === 'task'
                     ? openRecordInSidePanel({
@@ -110,7 +110,7 @@ export const useSidePanelSearchRecords = () => {
         return {
           ...baseAction,
           component: (
-            <CommandMenuItemLink
+            <CommandLink
               to={AppPath.RecordShowPage}
               params={{
                 objectNameSingular: searchRecord.objectNameSingular,

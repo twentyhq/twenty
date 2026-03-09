@@ -1,4 +1,4 @@
-import { CommandMenuItemDropdownItem } from '@/command-menu-item/display/components/CommandMenuItemDropdownItem';
+import { CommandDropdownItem } from '@/command-menu-item/display/components/CommandDropdownItem';
 import { NoSelectionRecordCommandKeys } from '@/command-menu-item/record/no-selection/types/NoSelectionRecordCommandKeys';
 import { SingleRecordCommandKeys } from '@/command-menu-item/record/single-record/types/SingleRecordCommandKeys';
 import { createMockCommandMenuItems } from '@/command-menu-item/mock/command-menu-items.mock';
@@ -8,9 +8,9 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, within } from 'storybook/test';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
 
-const meta: Meta<typeof CommandMenuItemDropdownItem> = {
-  title: 'Modules/CommandMenuItem/Display/CommandMenuItemDropdownItem',
-  component: CommandMenuItemDropdownItem,
+const meta: Meta<typeof CommandDropdownItem> = {
+  title: 'Modules/CommandMenuItem/Display/CommandDropdownItem',
+  component: CommandDropdownItem,
   decorators: [
     (Story) => (
       <SelectableListComponentInstanceContext.Provider
@@ -26,7 +26,7 @@ const meta: Meta<typeof CommandMenuItemDropdownItem> = {
 
 export default meta;
 
-type Story = StoryObj<typeof CommandMenuItemDropdownItem>;
+type Story = StoryObj<typeof CommandDropdownItem>;
 
 const deleteMock = fn();
 const addToFavoritesMock = fn();

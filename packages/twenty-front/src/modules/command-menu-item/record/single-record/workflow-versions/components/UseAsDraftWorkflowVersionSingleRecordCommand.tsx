@@ -1,4 +1,4 @@
-import { CommandMenuItemExecution } from '@/command-menu-item/display/components/CommandMenuItemExecution';
+import { Command } from '@/command-menu-item/display/components/Command';
 import { useSelectedRecordIdOrThrow } from '@/command-menu-item/record/single-record/hooks/useSelectedRecordIdOrThrow';
 import { CoreObjectNameSingular, AppPath } from 'twenty-shared/types';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
@@ -56,7 +56,7 @@ const UseAsDraftWorkflowVersionSingleRecordCommandContent = ({
 
   return (
     <>
-      <CommandMenuItemExecution onClick={handleClick} />
+      <Command onClick={handleClick} />
       <OverrideWorkflowDraftConfirmationModal
         workflowId={workflowId}
         workflowVersionIdToCopy={workflowVersionId}

@@ -1,4 +1,4 @@
-import { CommandMenuItemLink } from '@/command-menu-item/display/components/CommandMenuItemLink';
+import { CommandLink } from '@/command-menu-item/display/components/CommandLink';
 import { useSelectedRecordIdOrThrow } from '@/command-menu-item/record/single-record/hooks/useSelectedRecordIdOrThrow';
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
@@ -9,7 +9,7 @@ export const SeeRunsWorkflowSingleRecordCommand = () => {
   const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(recordId);
 
   return (
-    <CommandMenuItemLink
+    <CommandLink
       to={AppPath.RecordIndexPage}
       params={{ objectNamePlural: CoreObjectNamePlural.WorkflowRun }}
       queryParams={{

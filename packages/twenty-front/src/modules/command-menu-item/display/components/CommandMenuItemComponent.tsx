@@ -1,5 +1,5 @@
 import { type CommandMenuItemConfig } from '@/command-menu-item/types/CommandMenuItemConfig';
-import { CommandMenuItemConfigContext } from '@/command-menu-item/contexts/CommandMenuItemConfigContext';
+import { CommandConfigContext } from '@/command-menu-item/contexts/CommandConfigContext';
 
 export const CommandMenuItemComponent = ({
   action,
@@ -7,8 +7,8 @@ export const CommandMenuItemComponent = ({
   action: CommandMenuItemConfig;
 }) => {
   return (
-    <CommandMenuItemConfigContext.Provider value={action}>
+    <CommandConfigContext.Provider value={action}>
       {action.component}
-    </CommandMenuItemConfigContext.Provider>
+    </CommandConfigContext.Provider>
   );
 };

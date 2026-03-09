@@ -1,4 +1,4 @@
-import { CommandMenuItemExecution } from '@/command-menu-item/display/components/CommandMenuItemExecution';
+import { Command } from '@/command-menu-item/display/components/Command';
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
 
@@ -10,7 +10,7 @@ export const CreateNewIndexRecordNoSelectionRecordCommand = () => {
   });
 
   return (
-    <CommandMenuItemExecution
+    <Command
       onClick={() => createNewIndexRecord({ position: 'first' })}
       closeSidePanelOnCommandMenuItemListCommandExecution={false}
     />

@@ -3,8 +3,8 @@ import { Provider as JotaiProvider } from 'jotai';
 import * as test from 'storybook/test';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
-import { RecordShowSidePanelCommandMenuDropdown } from '@/command-menu-item/components/RecordShowSidePanelCommandMenuDropdown';
-import { CommandMenuItemContext } from '@/command-menu-item/contexts/CommandMenuItemContext';
+import { RecordPageSidePanelCommandMenuDropdown } from '@/command-menu-item/components/RecordPageSidePanelCommandMenuDropdown';
+import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { createMockCommandMenuItems } from '@/command-menu-item/mock/command-menu-items.mock';
 import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
@@ -19,9 +19,9 @@ const deleteMock = test.fn();
 const addToFavoritesMock = test.fn();
 const exportMock = test.fn();
 
-const meta: Meta<typeof RecordShowSidePanelCommandMenuDropdown> = {
-  title: 'Modules/CommandMenu/RecordShowSidePanelCommandMenuDropdown',
-  component: RecordShowSidePanelCommandMenuDropdown,
+const meta: Meta<typeof RecordPageSidePanelCommandMenuDropdown> = {
+  title: 'Modules/CommandMenu/RecordPageSidePanelCommandMenuDropdown',
+  component: RecordPageSidePanelCommandMenuDropdown,
   decorators: [
     (Story) => (
       <JotaiProvider store={jotaiStore}>
@@ -38,7 +38,7 @@ const meta: Meta<typeof RecordShowSidePanelCommandMenuDropdown> = {
             <CommandMenuComponentInstanceContext.Provider
               value={{ instanceId: 'story-command-menu' }}
             >
-              <CommandMenuItemContext.Provider
+              <CommandMenuContext.Provider
                 value={{
                   isInSidePanel: true,
                   displayType: 'dropdownItem',
@@ -51,7 +51,7 @@ const meta: Meta<typeof RecordShowSidePanelCommandMenuDropdown> = {
                 }}
               >
                 <Story />
-              </CommandMenuItemContext.Provider>
+              </CommandMenuContext.Provider>
             </CommandMenuComponentInstanceContext.Provider>
           </JestContextStoreSetter>
         </ContextStoreComponentInstanceContext.Provider>
@@ -70,7 +70,7 @@ const meta: Meta<typeof RecordShowSidePanelCommandMenuDropdown> = {
 
 export default meta;
 
-type Story = StoryObj<typeof RecordShowSidePanelCommandMenuDropdown>;
+type Story = StoryObj<typeof RecordPageSidePanelCommandMenuDropdown>;
 
 export const Default: Story = {
   args: {

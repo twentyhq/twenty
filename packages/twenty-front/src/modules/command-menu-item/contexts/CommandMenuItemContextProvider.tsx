@@ -1,4 +1,4 @@
-import { type CommandMenuItemContextType } from '@/command-menu-item/contexts/CommandMenuItemContext';
+import { type CommandMenuItemContextType } from '@/command-menu-item/contexts/CommandMenuContext';
 import { CommandMenuItemContextProviderDefault } from '@/command-menu-item/contexts/CommandMenuItemContextProviderDefault';
 import { CommandMenuItemContextProviderWorkflowObjects } from '@/command-menu-item/contexts/CommandMenuItemContextProviderWorkflowObjects';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';

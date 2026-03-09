@@ -1,9 +1,9 @@
-import { CommandMenuItemConfigContext } from '@/command-menu-item/contexts/CommandMenuItemConfigContext';
+import { CommandConfigContext } from '@/command-menu-item/contexts/CommandConfigContext';
 import { CommandMenuItemDisplay } from '@/command-menu-item/display/components/CommandMenuItemDisplay';
 import { useCloseCommandMenu } from '@/command-menu-item/hooks/useCloseCommandMenu';
 import { useContext } from 'react';
 
-export const CommandMenuItemExecution = ({
+export const Command = ({
   onClick,
   closeSidePanelOnShowPageOptionsCommandExecution = false,
   closeSidePanelOnCommandMenuItemListCommandExecution = true,
@@ -12,7 +12,7 @@ export const CommandMenuItemExecution = ({
   closeSidePanelOnShowPageOptionsCommandExecution?: boolean;
   closeSidePanelOnCommandMenuItemListCommandExecution?: boolean;
 }) => {
-  const commandMenuItemConfig = useContext(CommandMenuItemConfigContext);
+  const commandMenuItemConfig = useContext(CommandConfigContext);
 
   const { closeCommandMenu } = useCloseCommandMenu({
     closeSidePanelOnShowPageOptionsCommandExecution,

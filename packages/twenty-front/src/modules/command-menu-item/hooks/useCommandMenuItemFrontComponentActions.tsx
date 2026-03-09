@@ -1,8 +1,8 @@
-import { CommandMenuItemExecution } from '@/command-menu-item/display/components/CommandMenuItemExecution';
+import { Command } from '@/command-menu-item/display/components/Command';
 import { HeadlessFrontComponentCommandMenuItem } from '@/command-menu-item/display/components/HeadlessFrontComponentCommandMenuItem';
 import { CommandMenuItemScope } from '@/command-menu-item/types/CommandMenuItemScope';
 import { CommandMenuItemType } from '@/command-menu-item/types/CommandMenuItemType';
-import { CommandMenuItemContext } from '@/command-menu-item/contexts/CommandMenuItemContext';
+import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { useOpenFrontComponentInSidePanel } from '@/side-panel/hooks/useOpenFrontComponentInSidePanel';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreIsPageInEditModeComponentState } from '@/context-store/states/contextStoreIsPageInEditModeComponentState';
@@ -114,7 +114,7 @@ const buildCommandMenuItemFromFrontComponent = ({
         onClick={handleClick}
       />
     ) : (
-      <CommandMenuItemExecution onClick={handleClick} />
+      <Command onClick={handleClick} />
     ),
   };
 };
@@ -130,7 +130,7 @@ export const useCommandMenuItemFrontComponentActions = (
     contextStoreIsPageInEditModeComponentState,
   );
 
-  const { containerType } = useContext(CommandMenuItemContext);
+  const { containerType } = useContext(CommandMenuContext);
 
   const contextStoreCurrentObjectMetadataItemId = useAtomComponentStateValue(
     contextStoreCurrentObjectMetadataItemIdComponentState,

@@ -1,11 +1,11 @@
 import { type CommandMenuItemConfig } from '@/command-menu-item/types/CommandMenuItemConfig';
 import { CommandMenuItemScope } from '@/command-menu-item/types/CommandMenuItemScope';
 import { CommandMenuItemType } from '@/command-menu-item/types/CommandMenuItemType';
-import { CommandMenuItemContext } from '@/command-menu-item/contexts/CommandMenuItemContext';
+import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { useContext } from 'react';
 
 export const useSidePanelActions = () => {
-  const { commandMenuItems } = useContext(CommandMenuItemContext);
+  const { commandMenuItems } = useContext(CommandMenuContext);
 
   const navigateActions = commandMenuItems?.filter(
     (action) => action.type === CommandMenuItemType.Navigation,

@@ -1,4 +1,4 @@
-import { CommandMenuItemExecution } from '@/command-menu-item/display/components/CommandMenuItemExecution';
+import { Command } from '@/command-menu-item/display/components/Command';
 import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/isNavigationMenuInEditModeState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
@@ -8,7 +8,7 @@ export const EditNavigationSidebarNoSelectionRecordCommand = () => {
   );
 
   return (
-    <CommandMenuItemExecution
+    <Command
       onClick={() => setIsNavigationMenuInEditMode(true)}
       closeSidePanelOnCommandMenuItemListCommandExecution
     />

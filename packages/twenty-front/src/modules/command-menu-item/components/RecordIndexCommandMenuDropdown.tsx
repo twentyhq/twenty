@@ -2,7 +2,7 @@ import { CommandMenuItemComponent } from '@/command-menu-item/display/components
 import { CommandMenuItemScope } from '@/command-menu-item/types/CommandMenuItemScope';
 import { CommandMenuItemType } from '@/command-menu-item/types/CommandMenuItemType';
 import { COMMAND_MENU_DROPDOWN_CLICK_OUTSIDE_ID } from '@/command-menu-item/constants/CommandMenuDropdownClickOutsideId';
-import { CommandMenuItemContext } from '@/command-menu-item/contexts/CommandMenuItemContext';
+import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
 import { recordIndexCommandMenuDropdownPositionComponentState } from '@/command-menu-item/states/recordIndexCommandMenuDropdownPositionComponentState';
 import { getCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/utils/getCommandMenuDropdownIdFromCommandMenuId';
@@ -34,7 +34,7 @@ const StyledDropdownMenuContainer = styled.div`
 
 export const RecordIndexCommandMenuDropdown = () => {
   const { t } = useLingui();
-  const { commandMenuItems } = useContext(CommandMenuItemContext);
+  const { commandMenuItems } = useContext(CommandMenuContext);
 
   const recordIndexActions = commandMenuItems.filter(
     (action) =>

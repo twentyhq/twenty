@@ -1,4 +1,4 @@
-import { CommandMenuItemLink } from '@/command-menu-item/display/components/CommandMenuItemLink';
+import { CommandLink } from '@/command-menu-item/display/components/CommandLink';
 import { useSelectedRecordIdOrThrow } from '@/command-menu-item/record/single-record/hooks/useSelectedRecordIdOrThrow';
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
@@ -17,7 +17,7 @@ const SeeRunsWorkflowVersionSingleRecordCommandContent = ({
   const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(workflowId);
 
   return (
-    <CommandMenuItemLink
+    <CommandLink
       to={AppPath.RecordIndexPage}
       params={{ objectNamePlural: CoreObjectNamePlural.WorkflowRun }}
       queryParams={{

@@ -1,4 +1,4 @@
-import { CommandMenuItemListItem } from '@/command-menu-item/display/components/CommandMenuItemListItem';
+import { CommandListItem } from '@/command-menu-item/display/components/CommandListItem';
 import { NoSelectionRecordCommandKeys } from '@/command-menu-item/record/no-selection/types/NoSelectionRecordCommandKeys';
 import { SingleRecordCommandKeys } from '@/command-menu-item/record/single-record/types/SingleRecordCommandKeys';
 import { createMockCommandMenuItems } from '@/command-menu-item/mock/command-menu-items.mock';
@@ -8,7 +8,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, within } from 'storybook/test';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
 
-type Story = StoryObj<typeof CommandMenuItemListItem>;
+type Story = StoryObj<typeof CommandListItem>;
 
 const deleteMock = fn();
 const addToFavoritesMock = fn();
@@ -26,9 +26,9 @@ const goToPeopleCommandMenuItem = mockActions.find(
   (action) => action.key === NoSelectionRecordCommandKeys.GO_TO_PEOPLE,
 );
 
-const meta: Meta<typeof CommandMenuItemListItem> = {
-  title: 'Modules/CommandMenuItem/Display/CommandMenuItemListItem',
-  component: CommandMenuItemListItem,
+const meta: Meta<typeof CommandListItem> = {
+  title: 'Modules/CommandMenuItem/Display/CommandListItem',
+  component: CommandListItem,
   decorators: [
     (Story) => (
       <SelectableListComponentInstanceContext.Provider

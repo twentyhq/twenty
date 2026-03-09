@@ -1,4 +1,4 @@
-import { CommandMenuItemLink } from '@/command-menu-item/display/components/CommandMenuItemLink';
+import { CommandLink } from '@/command-menu-item/display/components/CommandLink';
 import { useSelectedRecordIdOrThrow } from '@/command-menu-item/record/single-record/hooks/useSelectedRecordIdOrThrow';
 import { CoreObjectNameSingular, AppPath } from 'twenty-shared/types';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
@@ -9,7 +9,7 @@ export const SeeWorkflowWorkflowVersionSingleRecordCommand = () => {
   const recordStore = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
 
   return (
-    <CommandMenuItemLink
+    <CommandLink
       to={AppPath.RecordShowPage}
       params={{
         objectNameSingular: CoreObjectNameSingular.Workflow,

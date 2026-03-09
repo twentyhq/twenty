@@ -9,7 +9,7 @@ export type CommandMenuItemContextType = {
   commandMenuItems: CommandMenuItemConfig[];
 };
 
-export const CommandMenuItemContext = createContext<CommandMenuItemContextType>(
+export const CommandMenuContext = createContext<CommandMenuItemContextType>(
   {
     isInSidePanel: false,
     containerType: 'command-menu-list',

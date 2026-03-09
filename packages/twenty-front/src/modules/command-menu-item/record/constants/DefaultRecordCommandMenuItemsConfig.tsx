@@ -1,4 +1,4 @@
-import { CommandMenuItemLink } from '@/command-menu-item/display/components/CommandMenuItemLink';
+import { CommandLink } from '@/command-menu-item/display/components/CommandLink';
 import { DeleteMultipleRecordsCommand } from '@/command-menu-item/record/multiple-records/components/DeleteMultipleRecordsCommand';
 import { DestroyMultipleRecordsCommand } from '@/command-menu-item/record/multiple-records/components/DestroyMultipleRecordsCommand';
 import { ExportMultipleRecordsCommand } from '@/command-menu-item/record/multiple-records/components/ExportMultipleRecordsCommand';
@@ -532,7 +532,7 @@ export const DEFAULT_RECORD_COMMAND_MENU_ITEMS_CONFIG: Record<
       CommandMenuItemViewType.PAGE_EDIT_MODE,
     ],
     component: (
-      <CommandMenuItemLink
+      <CommandLink
         to={AppPath.RecordIndexPage}
         params={{ objectNamePlural: CoreObjectNamePlural.Workflow }}
       />
@@ -564,7 +564,7 @@ export const DEFAULT_RECORD_COMMAND_MENU_ITEMS_CONFIG: Record<
       (objectMetadataItem?.nameSingular !== CoreObjectNameSingular.Person ||
         viewType === CommandMenuItemViewType.SHOW_PAGE),
     component: (
-      <CommandMenuItemLink
+      <CommandLink
         to={AppPath.RecordIndexPage}
         params={{ objectNamePlural: CoreObjectNamePlural.Person }}
       />
@@ -596,7 +596,7 @@ export const DEFAULT_RECORD_COMMAND_MENU_ITEMS_CONFIG: Record<
       (objectMetadataItem?.nameSingular !== CoreObjectNameSingular.Company ||
         viewType === CommandMenuItemViewType.SHOW_PAGE),
     component: (
-      <CommandMenuItemLink
+      <CommandLink
         to={AppPath.RecordIndexPage}
         params={{ objectNamePlural: CoreObjectNamePlural.Company }}
       />
@@ -627,7 +627,7 @@ export const DEFAULT_RECORD_COMMAND_MENU_ITEMS_CONFIG: Record<
       (objectMetadataItem?.nameSingular !== CoreObjectNameSingular.Dashboard ||
         viewType === CommandMenuItemViewType.SHOW_PAGE),
     component: (
-      <CommandMenuItemLink
+      <CommandLink
         to={AppPath.RecordIndexPage}
         params={{ objectNamePlural: CoreObjectNamePlural.Dashboard }}
       />
@@ -660,7 +660,7 @@ export const DEFAULT_RECORD_COMMAND_MENU_ITEMS_CONFIG: Record<
         CoreObjectNameSingular.Opportunity ||
         viewType === CommandMenuItemViewType.SHOW_PAGE),
     component: (
-      <CommandMenuItemLink
+      <CommandLink
         to={AppPath.RecordIndexPage}
         params={{ objectNamePlural: CoreObjectNamePlural.Opportunity }}
       />
@@ -684,7 +684,7 @@ export const DEFAULT_RECORD_COMMAND_MENU_ITEMS_CONFIG: Record<
     ],
     shouldBeRegistered: () => true,
     component: (
-      <CommandMenuItemLink
+      <CommandLink
         to={AppPath.SettingsCatchAll}
         params={{
           '*': SettingsPath.ProfilePage,
@@ -718,7 +718,7 @@ export const DEFAULT_RECORD_COMMAND_MENU_ITEMS_CONFIG: Record<
       (objectMetadataItem?.nameSingular !== CoreObjectNameSingular.Task ||
         viewType === CommandMenuItemViewType.SHOW_PAGE),
     component: (
-      <CommandMenuItemLink
+      <CommandLink
         to={AppPath.RecordIndexPage}
         params={{ objectNamePlural: CoreObjectNamePlural.Task }}
       />
@@ -750,7 +750,7 @@ export const DEFAULT_RECORD_COMMAND_MENU_ITEMS_CONFIG: Record<
       (objectMetadataItem?.nameSingular !== CoreObjectNameSingular.Note ||
         viewType === CommandMenuItemViewType.SHOW_PAGE),
     component: (
-      <CommandMenuItemLink
+      <CommandLink
         to={AppPath.RecordIndexPage}
         params={{ objectNamePlural: CoreObjectNamePlural.Note }}
       />

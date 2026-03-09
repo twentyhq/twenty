@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { MenuItem } from 'twenty-ui/navigation';
 
-export const CommandMenuItemDropdownItem = ({
+export const CommandDropdownItem = ({
   action,
   onClick,
   to,

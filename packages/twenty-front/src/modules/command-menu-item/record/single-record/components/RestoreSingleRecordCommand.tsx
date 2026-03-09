@@ -1,4 +1,4 @@
-import { CommandMenuItemModal } from '@/command-menu-item/display/components/CommandMenuItemModal';
+import { CommandModal } from '@/command-menu-item/display/components/CommandModal';
 import { useSelectedRecordIdOrThrow } from '@/command-menu-item/record/single-record/hooks/useSelectedRecordIdOrThrow';
 import { useRestoreManyRecords } from '@/object-record/hooks/useRestoreManyRecords';
 import { useRemoveSelectedRecordsFromRecordBoard } from '@/object-record/record-board/hooks/useRemoveSelectedRecordsFromRecordBoard';
@@ -30,7 +30,7 @@ export const RestoreSingleRecordCommand = () => {
   };
 
   return (
-    <CommandMenuItemModal
+    <CommandModal
       title={t`Restore Record`}
       subtitle={t`Are you sure you want to restore this record?`}
       onConfirmClick={handleRestoreClick}

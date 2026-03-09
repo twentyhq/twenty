@@ -1,4 +1,4 @@
-import { CommandMenuItemExecution } from '@/command-menu-item/display/components/CommandMenuItemExecution';
+import { Command } from '@/command-menu-item/display/components/Command';
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
@@ -41,5 +41,5 @@ export const CreateNewViewNoSelectionRecordCommand = () => {
     });
   };
 
-  return <CommandMenuItemExecution onClick={handleAddViewButtonClick} />;
+  return <Command onClick={handleAddViewButtonClick} />;
 };

@@ -1,4 +1,4 @@
-import { CommandMenuItemModal } from '@/command-menu-item/display/components/CommandMenuItemModal';
+import { CommandModal } from '@/command-menu-item/display/components/CommandModal';
 import { contextStoreAnyFieldFilterValueComponentState } from '@/context-store/states/contextStoreAnyFieldFilterValueComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreFilterGroupsComponentState } from '@/context-store/states/contextStoreFilterGroupsComponentState';
@@ -90,7 +90,7 @@ export const RestoreMultipleRecordsCommand = () => {
   };
 
   return (
-    <CommandMenuItemModal
+    <CommandModal
       title={t`Restore Records`}
       subtitle={t`Are you sure you want to restore these records?`}
       onConfirmClick={handleRestoreClick}

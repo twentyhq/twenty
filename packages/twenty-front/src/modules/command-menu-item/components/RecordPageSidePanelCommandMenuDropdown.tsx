@@ -1,14 +1,14 @@
 import { CommandMenuItemComponent } from '@/command-menu-item/display/components/CommandMenuItemComponent';
 import { CommandMenuItemScope } from '@/command-menu-item/types/CommandMenuItemScope';
-import { CommandMenuItemContext } from '@/command-menu-item/contexts/CommandMenuItemContext';
+import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
 import { getSidePanelCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/utils/getSidePanelCommandMenuDropdownIdFromCommandMenuId';
 import { OptionsDropdownMenu } from '@/ui/layout/dropdown/components/OptionsDropdownMenu';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useContext } from 'react';
 
-export const RecordShowSidePanelCommandMenuDropdown = () => {
-  const { commandMenuItems } = useContext(CommandMenuItemContext);
+export const RecordPageSidePanelCommandMenuDropdown = () => {
+  const { commandMenuItems } = useContext(CommandMenuContext);
 
   const commandMenuId = useAvailableComponentInstanceIdOrThrow(
     CommandMenuComponentInstanceContext,

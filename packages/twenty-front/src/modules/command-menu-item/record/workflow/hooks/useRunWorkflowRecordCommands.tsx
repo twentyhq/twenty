@@ -1,4 +1,4 @@
-import { CommandMenuItemExecution } from '@/command-menu-item/display/components/CommandMenuItemExecution';
+import { Command } from '@/command-menu-item/display/components/Command';
 import { isBulkRecordsManualTrigger } from '@/command-menu-item/record/utils/isBulkRecordsManualTrigger';
 import { CommandMenuItemScope } from '@/command-menu-item/types/CommandMenuItemScope';
 import { CommandMenuItemType } from '@/command-menu-item/types/CommandMenuItemType';
@@ -142,7 +142,7 @@ export const useRunWorkflowRecordCommands = ({
           activeWorkflowVersion.trigger?.settings?.isPinned,
         shouldBeRegistered: () => true,
         component: (
-          <CommandMenuItemExecution
+          <Command
             onClick={async () => {
               if (!isDefined(selectedRecordIds)) {
                 return;
