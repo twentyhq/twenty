@@ -2,12 +2,12 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { promises as fs } from 'fs';
-import { join } from 'path';
 import { tmpdir } from 'os';
+import { join } from 'path';
 
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
-import { DataSource, Repository } from 'typeorm';
 import { FeatureFlagKey } from 'twenty-shared/types';
+import { DataSource, Repository } from 'typeorm';
 
 import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
@@ -194,25 +194,32 @@ export class DevSeederService {
     seed: AppSeedDefinition,
     workspaceId: string,
   ): Promise<void> {
-    const registration = await this.appRegistrationRepository.upsert(
-      {
+    let registration = await this.appRegistrationRepository.findOne({
+      where: {
         universalIdentifier: seed.registration.universalIdentifier,
-        name: seed.registration.name,
-        description: seed.registration.description,
-        sourceType: seed.registration.sourceType,
-        sourcePackage: seed.registration.sourcePackage,
-        author: seed.registration.author,
-        oAuthClientId: `20202020-seed-${seed.registration.universalIdentifier.slice(0, 8)}`,
-        oAuthClientSecretHash: 'seed',
-        oAuthRedirectUris: [],
-        oAuthScopes: [],
-        ownerWorkspaceId: workspaceId,
-        createdByUserId: null,
       },
-      ['universalIdentifier'],
-    );
+    });
 
-    const registrationId = registration.identifiers[0].id;
+    if (!registration) {
+      registration = await this.appRegistrationRepository.save(
+        this.appRegistrationRepository.create({
+          universalIdentifier: seed.registration.universalIdentifier,
+          name: seed.registration.name,
+          description: seed.registration.description,
+          sourceType: seed.registration.sourceType,
+          sourcePackage: seed.registration.sourcePackage,
+          author: seed.registration.author,
+          oAuthClientId: `20202020-seed-${seed.registration.universalIdentifier.slice(0, 8)}`,
+          oAuthClientSecretHash: 'seed',
+          oAuthRedirectUris: [],
+          oAuthScopes: [],
+          ownerWorkspaceId: workspaceId,
+          createdByUserId: null,
+        }),
+      );
+    }
+
+    const registrationId = registration.id;
 
     const tmpDir = await fs.mkdtemp(join(tmpdir(), 'twenty-seed-app-'));
 
