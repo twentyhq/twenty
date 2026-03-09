@@ -1,5 +1,5 @@
-import { AgentChatContext } from '@/ai/contexts/AgentChatContext';
 import { AgentChatDataEffect } from '@/ai/components/AgentChatDataEffect';
+import { AgentChatContext } from '@/ai/contexts/AgentChatContext';
 import { useAgentChatData } from '@/ai/hooks/useAgentChatData';
 import { AgentChatComponentInstanceContext } from '@/ai/states/AgentChatComponentInstanceContext';
 import { skipMessagesSkeletonUntilLoadedState } from '@/ai/states/skipMessagesSkeletonUntilLoadedState';
