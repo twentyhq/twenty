@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
+import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
 import { SIDE_PANEL_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelComponentInstanceId';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
@@ -56,13 +56,13 @@ export const SidePanelContainer = ({ children }: SidePanelContainerProps) => {
       <ContextStoreComponentInstanceContext.Provider
         value={{ instanceId: SIDE_PANEL_COMPONENT_INSTANCE_ID }}
       >
-        <ActionMenuComponentInstanceContext.Provider
+        <CommandMenuComponentInstanceContext.Provider
           value={{ instanceId: SIDE_PANEL_COMPONENT_INSTANCE_ID }}
         >
           <StyledSidePanelContainer isMobile={isMobile}>
             {children}
           </StyledSidePanelContainer>
-        </ActionMenuComponentInstanceContext.Provider>
+        </CommandMenuComponentInstanceContext.Provider>
       </ContextStoreComponentInstanceContext.Provider>
     </RecordComponentInstanceContextsWrapper>
   );

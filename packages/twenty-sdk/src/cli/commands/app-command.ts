@@ -2,7 +2,6 @@ import { formatPath } from '@/cli/utilities/file/file-path';
 import chalk from 'chalk';
 import type { Command } from 'commander';
 import { AppBuildCommand } from './app/app-build';
-import { AppGenerateClientCommand } from './app/app-generate-client';
 import { AppDevCommand } from './app/app-dev';
 import { AppPublishCommand } from './app/app-publish';
 import { AppTypecheckCommand } from './app/app-typecheck';
@@ -64,7 +63,6 @@ export const registerCommands = (program: Command): void => {
 
   // App commands
   const buildCommand = new AppBuildCommand();
-  const generateClientCommand = new AppGenerateClientCommand();
   const devCommand = new AppDevCommand();
   const publishCommand = new AppPublishCommand();
   const typecheckCommand = new AppTypecheckCommand();
@@ -83,21 +81,8 @@ export const registerCommands = (program: Command): void => {
     });
 
   program
-    .command('app:generate-client [appPath]')
-    .description(
-      'Build, sync to local server, and generate the typed API client',
-    )
-    .action(async (appPath) => {
-      await generateClientCommand.execute({
-        appPath: formatPath(appPath),
-      });
-    });
-
-  program
     .command('app:build [appPath]')
-    .description(
-      'Build the application into .twenty/output/ (no server needed)',
-    )
+    .description('Build, sync, and generate API client into .twenty/output/')
     .option('--tarball', 'Also pack into a .tgz tarball')
     .action(async (appPath, options) => {
       await buildCommand.execute({

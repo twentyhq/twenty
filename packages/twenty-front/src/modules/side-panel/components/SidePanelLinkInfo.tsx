@@ -1,14 +1,14 @@
 import { useLingui } from '@lingui/react/macro';
-import { IconLink } from 'twenty-ui/display';
+import { IconLink, IconWorld } from 'twenty-ui/display';
 
-import { SidePanelPageInfoLayout } from '@/side-panel/components/SidePanelPageInfoLayout';
-import { sidePanelPageInfoState } from '@/side-panel/states/sidePanelPageInfoState';
-import { sidePanelShouldFocusTitleInputComponentState } from '@/side-panel/states/sidePanelShouldFocusTitleInputComponentState';
-import { NavigationMenuItemStyleIcon } from '@/navigation-menu-item/components/NavigationMenuItemStyleIcon';
+import { LinkIconWithLinkOverlay } from '@/navigation-menu-item/components/LinkIconWithLinkOverlay';
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import { useUpdateLinkInDraft } from '@/navigation-menu-item/hooks/useUpdateLinkInDraft';
 import { useWorkspaceSectionItems } from '@/navigation-menu-item/hooks/useWorkspaceSectionItems';
 import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeState';
+import { SidePanelPageInfoLayout } from '@/side-panel/components/SidePanelPageInfoLayout';
+import { sidePanelPageInfoState } from '@/side-panel/states/sidePanelPageInfoState';
+import { sidePanelShouldFocusTitleInputComponentState } from '@/side-panel/states/sidePanelShouldFocusTitleInputComponentState';
 import { TitleInput } from '@/ui/input/components/TitleInput';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -59,8 +59,10 @@ export const SidePanelLinkInfo = () => {
   return (
     <SidePanelPageInfoLayout
       icon={
-        <NavigationMenuItemStyleIcon
-          Icon={IconLink}
+        <LinkIconWithLinkOverlay
+          link={selectedItem.link}
+          LinkIcon={IconLink}
+          DefaultIcon={IconWorld}
           color={selectedItem.color}
         />
       }
