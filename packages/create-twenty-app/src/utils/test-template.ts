@@ -213,6 +213,8 @@ describe('App installation', () => {
   await fs.writeFile(join(appDirectory, fileFolder ?? '', fileName), content);
 };
 
+const DEFAULT_TWENTY_VERSION = 'latest';
+
 const createGithubWorkflow = async (appDirectory: string) => {
   const content = `name: CI
 
@@ -221,6 +223,9 @@ on:
     branches:
       - main
   pull_request: {}
+
+env:
+  TWENTY_VERSION: ${DEFAULT_TWENTY_VERSION}
 
 jobs:
   test:
@@ -233,7 +238,7 @@ jobs:
         id: twenty
         uses: twentyhq/twenty/.github/actions/spawn-twenty-docker-image@main
         with:
-          twenty-version: v0.40.0
+          twenty-version: \${{ env.TWENTY_VERSION }}
           github-token: \${{ secrets.GITHUB_TOKEN }}
 
       - name: Enable Corepack

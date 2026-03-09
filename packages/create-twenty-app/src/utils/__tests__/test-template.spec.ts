@@ -129,6 +129,8 @@ describe('scaffoldIntegrationTest', () => {
       const content = await fs.readFile(workflowPath, 'utf8');
 
       expect(content).toContain('name: CI');
+      expect(content).toContain('TWENTY_VERSION: latest');
+      expect(content).toContain('twenty-version: ${{ env.TWENTY_VERSION }}');
       expect(content).toContain('actions/checkout@v4');
       expect(content).toContain('spawn-twenty-docker-image@main');
       expect(content).toContain('actions/setup-node@v4');
