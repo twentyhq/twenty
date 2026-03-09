@@ -2,8 +2,12 @@ import { styled } from '@linaria/react';
 import { i18n, type MessageDescriptor } from '@lingui/core';
 import { isString } from '@sniptt/guards';
 import { type MouseEvent } from 'react';
-import { AppTooltip, TooltipDelay, TooltipPosition } from 'twenty-ui/display';
-import { type IconComponent } from 'twenty-ui/display';
+import {
+  AppTooltip,
+  type IconComponent,
+  TooltipDelay,
+  TooltipPosition,
+} from 'twenty-ui/display';
 import { Button, IconButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 

@@ -25,8 +25,9 @@ export const useTriggerCommandMenuDropdown = ({
     recordTableId,
   );
 
-  const commandMenuDropdownId =
-    getCommandMenuDropdownIdFromCommandMenuId(commandMenuInstanceId);
+  const commandMenuDropdownId = getCommandMenuDropdownIdFromCommandMenuId(
+    commandMenuInstanceId,
+  );
 
   const recordIndexCommandMenuDropdownPositionCallbackState =
     useAtomComponentStateCallbackState(

@@ -148,8 +148,7 @@ export const useCommandMenuContextApi = (): CommandMenuContextApi => {
     hasAnySoftDeleteFilterOnView,
     numberOfSelectedRecords: contextStoreNumberOfSelectedRecords,
     objectPermissions,
-    selectedRecord:
-      selectedRecord as CommandMenuContextApi['selectedRecord'],
+    selectedRecord: selectedRecord as CommandMenuContextApi['selectedRecord'],
     featureFlags,
     targetObjectReadPermissions,
     targetObjectWritePermissions,

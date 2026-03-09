@@ -10,11 +10,5 @@ export const CommandMenuItemButton = ({
   onClick?: (event?: React.MouseEvent<HTMLElement>) => void;
   to?: string;
 }) => {
-  return (
-    <CommandMenuButton
-      action={action}
-      to={to}
-      onClick={onClick}
-    />
-  );
+  return <CommandMenuButton action={action} to={to} onClick={onClick} />;
 };
