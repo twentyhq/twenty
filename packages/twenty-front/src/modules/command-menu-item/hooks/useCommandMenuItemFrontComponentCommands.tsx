@@ -36,6 +36,7 @@ type CommandMenuItemWithFrontComponent = CommandMenuItemFieldsFragment & {
 
 type BuildCommandMenuItemFromFrontComponentParams = {
   item: CommandMenuItemWithFrontComponent;
+  type?: CommandMenuItemType;
   scope: CommandMenuItemScope;
   index: number;
   isPinned: boolean;
@@ -61,6 +62,7 @@ type BuildCommandMenuItemFromFrontComponentParams = {
 // once we have migrated all command menu items
 const buildCommandMenuItemFromFrontComponent = ({
   item,
+  type = CommandMenuItemType.FrontComponent,
   scope,
   index,
   isPinned,
@@ -95,7 +97,7 @@ const buildCommandMenuItemFromFrontComponent = ({
   };
 
   return {
-    type: CommandMenuItemType.FrontComponent,
+    type,
     key: `command-menu-item-front-component-${item.id}`,
     scope,
     label: displayLabel,
@@ -198,6 +200,11 @@ export const useCommandMenuItemFrontComponentCommands = (
       CommandMenuItemAvailabilityType.RECORD_SELECTION,
   );
 
+  const fallbackItems = frontComponentItemsWithObjectMatches.filter(
+    (item) =>
+      item.availabilityType === CommandMenuItemAvailabilityType.FALLBACK,
+  );
+
   const globalCommandMenuItems = globalItems.map((item, index) =>
     buildCommandMenuItemFromFrontComponent({
       item,
@@ -227,7 +234,23 @@ export const useCommandMenuItemFrontComponentCommands = (
       )
     : [];
 
-  return [...globalCommandMenuItems, ...recordScopedCommandMenuItems].filter(
-    (item) => item.shouldBeRegistered(),
+  const fallbackCommandMenuItems = fallbackItems.map((item, index) =>
+    buildCommandMenuItemFromFrontComponent({
+      item,
+      type: CommandMenuItemType.Fallback,
+      scope: CommandMenuItemScope.Global,
+      index,
+      isPinned: false,
+      getIcon,
+      openFrontComponentInSidePanel,
+      mountHeadlessFrontComponent,
+      commandMenuContextApi,
+    }),
   );
+
+  return [
+    ...globalCommandMenuItems,
+    ...recordScopedCommandMenuItems,
+    ...fallbackCommandMenuItems,
+  ].filter((item) => item.shouldBeRegistered());
 };

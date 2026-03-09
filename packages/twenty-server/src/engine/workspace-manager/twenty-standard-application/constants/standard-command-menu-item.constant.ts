@@ -799,7 +799,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     icon: 'IconSearch',
     position: 61,
     isPinned: false,
-    availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
+    availabilityType: CommandMenuItemAvailabilityType.FALLBACK,
     conditionalAvailabilityExpression: null,
     availabilityObjectMetadataUniversalIdentifier: null,
     frontComponentUniversalIdentifier:
