@@ -4,8 +4,6 @@ import { vi } from 'vitest';
 import { appBuild } from '@/cli/public-operations/app-build';
 import { appUninstall } from '@/cli/public-operations/app-uninstall';
 import { functionExecute } from '@/cli/public-operations/function-execute';
-import { synchronizeBuiltApplication } from '@/cli/utilities/build/common/synchronize-built-application';
-import { buildAndValidateManifest } from '@/cli/utilities/build/manifest/build-and-validate-manifest';
 import { ADD_NUMBERS_UNIVERSAL_IDENTIFIER } from '../src/logic-functions/add-numbers.function';
 
 const APP_PATH = resolve(__dirname, '../');
@@ -18,24 +16,6 @@ describe('functionExecute E2E', () => {
       throw new Error(
         `appBuild failed: ${buildResult.error.code} – ${buildResult.error.message}`,
       );
-    }
-
-    const manifestResult = await buildAndValidateManifest(APP_PATH);
-
-    if (!manifestResult.success) {
-      throw new Error(
-        `Manifest build failed: ${manifestResult.errors.join('\n')}`,
-      );
-    }
-
-    const syncResult = await synchronizeBuiltApplication({
-      appPath: APP_PATH,
-      manifest: manifestResult.manifest,
-      builtFileInfos: new Map(),
-    });
-
-    if (!syncResult.success) {
-      throw new Error('synchronizeBuiltApplication failed');
     }
 
     // The server may need a moment to make uploaded files readable
