@@ -121,6 +121,30 @@ parser.functions.includesEvery = (
   });
 };
 
+parser.functions.includesSome = (
+  array: unknown,
+  prop: string,
+  value: unknown,
+) => {
+  if (!Array.isArray(array)) return false;
+  return array.some((item) => {
+    const arr = safeGetNestedProperty(item, prop);
+    return Array.isArray(arr) && arr.includes(value);
+  });
+};
+
+parser.functions.includesNone = (
+  array: unknown,
+  prop: string,
+  value: unknown,
+) => {
+  if (!Array.isArray(array)) return false;
+  return array.every((item) => {
+    const arr = safeGetNestedProperty(item, prop);
+    return Array.isArray(arr) && !arr.includes(value);
+  });
+};
+
 export const evaluateConditionalAvailabilityExpression = (
   expression: string | null | undefined,
   context: EvaluationContext,

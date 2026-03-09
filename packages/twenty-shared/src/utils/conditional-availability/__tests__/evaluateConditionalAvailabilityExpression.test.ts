@@ -9,6 +9,7 @@ const buildContext = (
 ): CommandMenuContextApi => ({
   pageType: CommandMenuContextApiPageType.INDEX_PAGE,
   isInSidePanel: false,
+  isPageInEditMode: false,
   favoriteRecordIds: [],
   isSelectAll: false,
   hasAnySoftDeleteFilterOnView: false,
@@ -100,6 +101,167 @@ describe('evaluateConditionalAvailabilityExpression', () => {
       expect(
         evaluateConditionalAvailabilityExpression(expression, context),
       ).toBe(false);
+    });
+  });
+
+  describe('includesSome', () => {
+    it('should return true when some records include the value in the array prop', () => {
+      const expression =
+        'includesSome(selectedRecords, "statuses", "ACTIVE")';
+
+      const context = buildContext({
+        selectedRecords: [
+          { id: 'id-1', statuses: ['ACTIVE'] },
+          { id: 'id-2', statuses: ['DRAFT'] },
+        ],
+      });
+
+      expect(
+        evaluateConditionalAvailabilityExpression(expression, context),
+      ).toBe(true);
+    });
+
+    it('should return false when no record includes the value in the array prop', () => {
+      const expression =
+        'includesSome(selectedRecords, "statuses", "ACTIVE")';
+
+      const context = buildContext({
+        selectedRecords: [
+          { id: 'id-1', statuses: ['DRAFT'] },
+          { id: 'id-2', statuses: ['DRAFT'] },
+        ],
+      });
+
+      expect(
+        evaluateConditionalAvailabilityExpression(expression, context),
+      ).toBe(false);
+    });
+  });
+
+  describe('includesNone', () => {
+    it('should return true when no record includes the value in the array prop', () => {
+      const expression =
+        'includesNone(selectedRecords, "statuses", "ACTIVE")';
+
+      const context = buildContext({
+        selectedRecords: [
+          { id: 'id-1', statuses: ['DRAFT'] },
+          { id: 'id-2', statuses: ['DRAFT'] },
+        ],
+      });
+
+      expect(
+        evaluateConditionalAvailabilityExpression(expression, context),
+      ).toBe(true);
+    });
+
+    it('should return false when any record includes the value in the array prop', () => {
+      const expression =
+        'includesNone(selectedRecords, "statuses", "ACTIVE")';
+
+      const context = buildContext({
+        selectedRecords: [
+          { id: 'id-1', statuses: ['ACTIVE'] },
+          { id: 'id-2', statuses: ['DRAFT'] },
+        ],
+      });
+
+      expect(
+        evaluateConditionalAvailabilityExpression(expression, context),
+      ).toBe(false);
+    });
+
+    it('should return false when all records include the value in the array prop', () => {
+      const expression =
+        'includesNone(selectedRecords, "statuses", "ACTIVE")';
+
+      const context = buildContext({
+        selectedRecords: [
+          { id: 'id-1', statuses: ['ACTIVE', 'DRAFT'] },
+          { id: 'id-2', statuses: ['ACTIVE'] },
+        ],
+      });
+
+      expect(
+        evaluateConditionalAvailabilityExpression(expression, context),
+      ).toBe(false);
+    });
+  });
+
+  describe('activateWorkflow expression regression', () => {
+    const activateWorkflowExpression =
+      'everyDefined(selectedRecords, "currentVersion.trigger") and everyDefined(selectedRecords, "currentVersion.steps") and every(selectedRecords, "currentVersion.steps.length") and (everyEquals(selectedRecords, "currentVersion.status", "DRAFT") or includesNone(selectedRecords, "statuses", "ACTIVE")) and noneDefined(selectedRecords, "deletedAt")';
+
+    it('should not show Activate for an already-active workflow', () => {
+      const context = buildContext({
+        selectedRecords: [
+          {
+            id: 'wf-1',
+            deletedAt: null,
+            statuses: ['ACTIVE'],
+            currentVersion: {
+              status: 'ACTIVE',
+              trigger: { type: 'MANUAL' },
+              steps: [{ id: 'step-1' }],
+            },
+          },
+        ],
+      });
+
+      expect(
+        evaluateConditionalAvailabilityExpression(
+          activateWorkflowExpression,
+          context,
+        ),
+      ).toBe(false);
+    });
+
+    it('should show Activate for a draft workflow with no active version', () => {
+      const context = buildContext({
+        selectedRecords: [
+          {
+            id: 'wf-1',
+            deletedAt: null,
+            statuses: ['DRAFT'],
+            currentVersion: {
+              status: 'DRAFT',
+              trigger: { type: 'MANUAL' },
+              steps: [{ id: 'step-1' }],
+            },
+          },
+        ],
+      });
+
+      expect(
+        evaluateConditionalAvailabilityExpression(
+          activateWorkflowExpression,
+          context,
+        ),
+      ).toBe(true);
+    });
+
+    it('should show Activate for a draft version when another version is active', () => {
+      const context = buildContext({
+        selectedRecords: [
+          {
+            id: 'wf-1',
+            deletedAt: null,
+            statuses: ['ACTIVE', 'DRAFT'],
+            currentVersion: {
+              status: 'DRAFT',
+              trigger: { type: 'MANUAL' },
+              steps: [{ id: 'step-1' }],
+            },
+          },
+        ],
+      });
+
+      expect(
+        evaluateConditionalAvailabilityExpression(
+          activateWorkflowExpression,
+          context,
+        ),
+      ).toBe(true);
     });
   });
 });
