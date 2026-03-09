@@ -42,6 +42,29 @@ const resolveFieldMetadataIdOrThrow = ({
   return flatFieldMetadata.id;
 };
 
+const resolveFieldMetadataId = ({
+  fieldMetadataUniversalIdentifier,
+  flatFieldMetadataMaps,
+}: {
+  fieldMetadataUniversalIdentifier: string | null;
+  flatFieldMetadataMaps: MetadataFlatEntityMaps<'fieldMetadata'>;
+}): string | null => {
+  if (!isDefined(fieldMetadataUniversalIdentifier)) {
+    return null;
+  }
+
+  const flatFieldMetadata = findFlatEntityByUniversalIdentifier({
+    flatEntityMaps: flatFieldMetadataMaps,
+    universalIdentifier: fieldMetadataUniversalIdentifier,
+  });
+
+  if (!isDefined(flatFieldMetadata)) {
+    return null;
+  }
+
+  return flatFieldMetadata.id;
+};
+
 const convertUniversalFilterToChartFilter = ({
   filter,
   flatFieldMetadataMaps,
@@ -55,15 +78,23 @@ const convertUniversalFilterToChartFilter = ({
 
   return {
     ...filter,
-    recordFilters: filter.recordFilters?.map(
-      ({ fieldMetadataUniversalIdentifier, ...rest }) => ({
-        ...rest,
-        fieldMetadataId: resolveFieldMetadataIdOrThrow({
+    recordFilters: filter.recordFilters
+      ?.map(({ fieldMetadataUniversalIdentifier, ...rest }) => {
+        const fieldMetadataId = resolveFieldMetadataId({
           fieldMetadataUniversalIdentifier,
           flatFieldMetadataMaps,
-        }),
-      }),
-    ),
+        });
+
+        if (!isDefined(fieldMetadataId)) {
+          return undefined;
+        }
+
+        return {
+          ...rest,
+          fieldMetadataId,
+        };
+      })
+      .filter(isDefined),
   };
 };
 

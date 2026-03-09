@@ -135,4 +135,25 @@ export const validateChartConfigurationFieldReferences = ({
     default:
       break;
   }
+
+  if (isDefined(configuration.filter?.recordFilters)) {
+    for (const recordFilter of configuration.filter.recordFilters) {
+      const filterField = findActiveFlatFieldMetadataById(
+        recordFilter.fieldMetadataId,
+        flatFieldMetadataMaps,
+      );
+
+      if (!isDefined(filterField)) {
+        throw new Error(
+          `Filter references a field that no longer exists (fieldMetadataId: "${recordFilter.fieldMetadataId}"). Please remove or update the filter.`,
+        );
+      }
+
+      if (filterField.objectMetadataId !== objectMetadataId) {
+        throw new Error(
+          `Filter field "${recordFilter.fieldMetadataId}" must belong to objectMetadataId "${objectMetadataId}".`,
+        );
+      }
+    }
+  }
 };
