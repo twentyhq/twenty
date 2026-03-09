@@ -1,4 +1,4 @@
-import { readdir, rm } from 'node:fs/promises';
+import { readdir, readFile, rm } from 'node:fs/promises';
 import { join } from 'path';
 
 import { appBuild } from '@/cli/public-operations/app-build';
@@ -42,5 +42,25 @@ describe('rich-app app:build', () => {
       .sort();
 
     expect(functionFiles.length).toBeGreaterThan(0);
+  });
+
+  // app:build only creates client stubs (empty CoreApiClient / MetadataApiClient)
+  // because it doesn't sync with the server or generate the real API client.
+  // Logic functions that use CoreApiClient will get an empty class at runtime.
+  // When this is fixed, update this test to assert the client IS fully generated.
+  // See: https://github.com/twentyhq/twenty/pull/18460
+  it('should only produce client stubs (not a fully generated CoreApiClient)', async () => {
+    const clientIndexPath = join(
+      APP_PATH,
+      'node_modules',
+      'twenty-sdk',
+      GENERATED_DIR,
+      'core',
+      'index.ts',
+    );
+
+    const content = await readFile(clientIndexPath, 'utf-8');
+
+    expect(content).toBe('export class CoreApiClient {}\n');
   });
 });
