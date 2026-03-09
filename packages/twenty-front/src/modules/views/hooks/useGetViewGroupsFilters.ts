@@ -6,14 +6,14 @@ import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
 export const useGetViewGroupsFilters = (): RecordFilter[] => {
   const { currentView } = useGetCurrentViewOnly();
 
+  if (!isDefined(currentView?.mainGroupByFieldMetadataId)) {
+    return [];
+  }
+
   return (
-    currentView?.viewGroups
+    currentView.viewGroups
       .filter((recordGroup) => !recordGroup.isVisible)
       .map((recordGroup) => {
-        if (!isDefined(currentView.mainGroupByFieldMetadataId)) {
-          throw new Error('mainGroupByFieldMetadataId is required');
-        }
-
         return {
           id: recordGroup.id,
           fieldMetadataId: currentView.mainGroupByFieldMetadataId,
@@ -23,7 +23,6 @@ export const useGetViewGroupsFilters = (): RecordFilter[] => {
           type: getFilterTypeFromFieldType(FieldMetadataType.SELECT),
           label: '',
         };
-      })
-      .filter(isDefined) || []
+      }) || []
   );
 };
