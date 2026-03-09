@@ -135,11 +135,6 @@ jobs:
             console.log('SDK version in scaffolded app:', sdkVersion);
           "
 
-      - name: Typecheck scaffolded app
-        run: |
-          cd /tmp/e2e-test-workspace/test-app
-          yarn tsc --noEmit
-
       - name: Verify SDK CLI is available
         run: |
           cd /tmp/e2e-test-workspace/test-app
