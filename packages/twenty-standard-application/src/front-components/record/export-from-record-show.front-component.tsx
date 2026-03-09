@@ -1,7 +1,7 @@
-import { Action, defineFrontComponent } from 'twenty-sdk';
+import { Command, defineFrontComponent } from 'twenty-sdk';
 
 // TODO: implement execute logic
-const ExportFromRecordShow = () => <Action execute={async () => {}} />;
+const ExportFromRecordShow = () => <Command execute={async () => {}} />;
 
 export default defineFrontComponent({
   universalIdentifier: '74d8f880-1be1-432e-b475-8970deed809e',

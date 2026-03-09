@@ -1,8 +1,8 @@
-import { ActionLink, defineFrontComponent } from 'twenty-sdk';
+import { CommandLink, defineFrontComponent } from 'twenty-sdk';
 import { AppPath } from 'twenty-shared/types';
 
 const GoToOpportunities = () => (
-  <ActionLink to={AppPath.OpportunitiesPage} />
+  <CommandLink to={AppPath.OpportunitiesPage} />
 );
 
 export default defineFrontComponent({

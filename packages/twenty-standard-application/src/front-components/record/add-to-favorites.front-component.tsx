@@ -1,7 +1,7 @@
-import { Action, defineFrontComponent } from 'twenty-sdk';
+import { Command, defineFrontComponent } from 'twenty-sdk';
 
 // TODO: implement execute logic
-const AddToFavorites = () => <Action execute={async () => {}} />;
+const AddToFavorites = () => <Command execute={async () => {}} />;
 
 export default defineFrontComponent({
   universalIdentifier: '5694b053-1f42-416c-a26a-375f826aa9b3',

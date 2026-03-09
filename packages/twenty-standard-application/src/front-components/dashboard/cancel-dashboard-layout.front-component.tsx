@@ -1,7 +1,7 @@
-import { Action, defineFrontComponent } from 'twenty-sdk';
+import { Command, defineFrontComponent } from 'twenty-sdk';
 
 // TODO: implement execute logic
-const CancelDashboardLayout = () => <Action execute={async () => {}} />;
+const CancelDashboardLayout = () => <Command execute={async () => {}} />;
 
 export default defineFrontComponent({
   universalIdentifier: 'dac81512-3890-4ba5-8471-bd94738ab80a',

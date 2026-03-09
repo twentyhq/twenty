@@ -1,7 +1,7 @@
-import { Action, defineFrontComponent } from 'twenty-sdk';
+import { Command, defineFrontComponent } from 'twenty-sdk';
 
 // TODO: implement execute logic
-const NavigateToPreviousRecord = () => <Action execute={async () => {}} />;
+const NavigateToPreviousRecord = () => <Command execute={async () => {}} />;
 
 export default defineFrontComponent({
   universalIdentifier: 'b53c54b9-152a-4100-975c-1bc582bfb951',

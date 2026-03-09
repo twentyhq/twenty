@@ -1,7 +1,7 @@
-import { Action, defineFrontComponent } from 'twenty-sdk';
+import { Command, defineFrontComponent } from 'twenty-sdk';
 
 // TODO: implement execute logic
-const DiscardDraftWorkflow = () => <Action execute={async () => {}} />;
+const DiscardDraftWorkflow = () => <Command execute={async () => {}} />;
 
 export default defineFrontComponent({
   universalIdentifier: '972dc871-7f9c-4035-957c-e6662f4df7c5',

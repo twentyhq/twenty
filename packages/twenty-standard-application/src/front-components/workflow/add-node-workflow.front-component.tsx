@@ -1,7 +1,7 @@
-import { Action, defineFrontComponent } from 'twenty-sdk';
+import { Command, defineFrontComponent } from 'twenty-sdk';
 
 // TODO: implement execute logic
-const AddNodeWorkflow = () => <Action execute={async () => {}} />;
+const AddNodeWorkflow = () => <Command execute={async () => {}} />;
 
 export default defineFrontComponent({
   universalIdentifier: 'da1e499c-1298-4ec4-9a7b-5f2276075888',

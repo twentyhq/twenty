@@ -1,8 +1,8 @@
-import { ActionOpenSidePanelPage, defineFrontComponent } from 'twenty-sdk';
+import { CommandOpenSidePanelPage, defineFrontComponent } from 'twenty-sdk';
 import { SidePanelPages } from 'twenty-shared/types';
 
 const ViewPreviousAiChats = () => (
-  <ActionOpenSidePanelPage
+  <CommandOpenSidePanelPage
     page={SidePanelPages.ViewPreviousAIChats}
     pageTitle="Previous AI Chats"
     pageIcon="IconHistory"

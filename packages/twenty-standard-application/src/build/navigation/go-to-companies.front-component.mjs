@@ -2105,9 +2105,9 @@ var require_scheduler_development = __commonJS({
             }
           }
         }
-        function compare(a5, b5) {
-          var diff = a5.sortIndex - b5.sortIndex;
-          return diff !== 0 ? diff : a5.id - b5.id;
+        function compare(a5, b) {
+          var diff = a5.sortIndex - b.sortIndex;
+          return diff !== 0 ? diff : a5.id - b.id;
         }
         var ImmediatePriority = 1;
         var UserBlockingPriority = 2;
@@ -4541,7 +4541,7 @@ var require_react_dom_development = __commonJS({
           var warnedForNaNValue = false;
           var warnedForInfinityValue = false;
           var camelize = function(string4) {
-            return string4.replace(hyphenPattern, function(_5, character) {
+            return string4.replace(hyphenPattern, function(_6, character) {
               return character.toUpperCase();
             });
           };
@@ -5599,13 +5599,13 @@ var require_react_dom_development = __commonJS({
             restoreStateIfNeeded();
           }
         }
-        function batchedUpdates(fn2, a5, b5) {
+        function batchedUpdates(fn2, a5, b) {
           if (isInsideEventHandler) {
-            return fn2(a5, b5);
+            return fn2(a5, b);
           }
           isInsideEventHandler = true;
           try {
-            return batchedUpdatesImpl(fn2, a5, b5);
+            return batchedUpdatesImpl(fn2, a5, b);
           } finally {
             isInsideEventHandler = false;
             finishEventHandler();
@@ -5669,7 +5669,7 @@ var require_react_dom_development = __commonJS({
             passiveBrowserEventsSupported = false;
           }
         }
-        function invokeGuardedCallbackProd(name, func, context, a5, b5, c6, d6, e, f) {
+        function invokeGuardedCallbackProd(name, func, context, a5, b, c6, d6, e, f) {
           var funcArgs = Array.prototype.slice.call(arguments, 3);
           try {
             func.apply(context, funcArgs);
@@ -5681,7 +5681,7 @@ var require_react_dom_development = __commonJS({
         {
           if (typeof window !== "undefined" && typeof window.dispatchEvent === "function" && typeof document !== "undefined" && typeof document.createEvent === "function") {
             var fakeNode = document.createElement("react");
-            invokeGuardedCallbackImpl = function invokeGuardedCallbackDev(name, func, context, a5, b5, c6, d6, e, f) {
+            invokeGuardedCallbackImpl = function invokeGuardedCallbackDev(name, func, context, a5, b, c6, d6, e, f) {
               if (typeof document === "undefined" || document === null) {
                 throw new Error("The `document` global was defined when React was initialized, but is not defined anymore. This can happen in a test environment if a component schedules an update from an asynchronous callback, but the test has already finished running. To solve this, you can either unmount the component at the end of your test (and ensure that any asynchronous operations get canceled in `componentWillUnmount`), or you can change the test itself to be asynchronous.");
               }
@@ -5756,12 +5756,12 @@ var require_react_dom_development = __commonJS({
             caughtError = error46;
           }
         };
-        function invokeGuardedCallback(name, func, context, a5, b5, c6, d6, e, f) {
+        function invokeGuardedCallback(name, func, context, a5, b, c6, d6, e, f) {
           hasError = false;
           caughtError = null;
           invokeGuardedCallbackImpl$1.apply(reporter, arguments);
         }
-        function invokeGuardedCallbackAndCatchFirstError(name, func, context, a5, b5, c6, d6, e, f) {
+        function invokeGuardedCallbackAndCatchFirstError(name, func, context, a5, b, c6, d6, e, f) {
           invokeGuardedCallback.apply(this, arguments);
           if (hasError) {
             var error46 = clearCaughtError();
@@ -5991,7 +5991,7 @@ var require_react_dom_development = __commonJS({
             return fiber;
           }
           var a5 = fiber;
-          var b5 = alternate;
+          var b = alternate;
           while (true) {
             var parentA = a5.return;
             if (parentA === null) {
@@ -6001,7 +6001,7 @@ var require_react_dom_development = __commonJS({
             if (parentB === null) {
               var nextParent = parentA.return;
               if (nextParent !== null) {
-                a5 = b5 = nextParent;
+                a5 = b = nextParent;
                 continue;
               }
               break;
@@ -6013,7 +6013,7 @@ var require_react_dom_development = __commonJS({
                   assertIsMounted(parentA);
                   return fiber;
                 }
-                if (child === b5) {
+                if (child === b) {
                   assertIsMounted(parentA);
                   return alternate;
                 }
@@ -6021,9 +6021,9 @@ var require_react_dom_development = __commonJS({
               }
               throw new Error("Unable to find node on an unmounted component.");
             }
-            if (a5.return !== b5.return) {
+            if (a5.return !== b.return) {
               a5 = parentA;
-              b5 = parentB;
+              b = parentB;
             } else {
               var didFindChild = false;
               var _child = parentA.child;
@@ -6031,12 +6031,12 @@ var require_react_dom_development = __commonJS({
                 if (_child === a5) {
                   didFindChild = true;
                   a5 = parentA;
-                  b5 = parentB;
+                  b = parentB;
                   break;
                 }
-                if (_child === b5) {
+                if (_child === b) {
                   didFindChild = true;
-                  b5 = parentA;
+                  b = parentA;
                   a5 = parentB;
                   break;
                 }
@@ -6048,12 +6048,12 @@ var require_react_dom_development = __commonJS({
                   if (_child === a5) {
                     didFindChild = true;
                     a5 = parentB;
-                    b5 = parentA;
+                    b = parentA;
                     break;
                   }
-                  if (_child === b5) {
+                  if (_child === b) {
                     didFindChild = true;
-                    b5 = parentB;
+                    b = parentB;
                     a5 = parentA;
                     break;
                   }
@@ -6064,7 +6064,7 @@ var require_react_dom_development = __commonJS({
                 }
               }
             }
-            if (a5.alternate !== b5) {
+            if (a5.alternate !== b) {
               throw new Error("Return fibers should always be each others' alternates. This error is likely caused by a bug in React. Please file an issue.");
             }
           }
@@ -6928,26 +6928,26 @@ var require_react_dom_development = __commonJS({
         function laneToIndex(lane) {
           return pickArbitraryLaneIndex(lane);
         }
-        function includesSomeLane(a5, b5) {
-          return (a5 & b5) !== NoLanes;
+        function includesSomeLane(a5, b) {
+          return (a5 & b) !== NoLanes;
         }
         function isSubsetOfLanes(set3, subset) {
           return (set3 & subset) === subset;
         }
-        function mergeLanes(a5, b5) {
-          return a5 | b5;
+        function mergeLanes(a5, b) {
+          return a5 | b;
         }
         function removeLanes(set3, subset) {
           return set3 & ~subset;
         }
-        function intersectLanes(a5, b5) {
-          return a5 & b5;
+        function intersectLanes(a5, b) {
+          return a5 & b;
         }
         function laneToLanes(lane) {
           return lane;
         }
-        function higherPriorityLane(a5, b5) {
-          return a5 !== NoLane && a5 < b5 ? a5 : b5;
+        function higherPriorityLane(a5, b) {
+          return a5 !== NoLane && a5 < b ? a5 : b;
         }
         function createLaneMap(initial) {
           var laneMap = [];
@@ -7124,14 +7124,14 @@ var require_react_dom_development = __commonJS({
             currentUpdatePriority = previousPriority;
           }
         }
-        function higherEventPriority(a5, b5) {
-          return a5 !== 0 && a5 < b5 ? a5 : b5;
+        function higherEventPriority(a5, b) {
+          return a5 !== 0 && a5 < b ? a5 : b;
         }
-        function lowerEventPriority(a5, b5) {
-          return a5 === 0 || a5 > b5 ? a5 : b5;
+        function lowerEventPriority(a5, b) {
+          return a5 === 0 || a5 > b ? a5 : b;
         }
-        function isHigherEventPriority(a5, b5) {
-          return a5 !== 0 && a5 < b5;
+        function isHigherEventPriority(a5, b) {
+          return a5 !== 0 && a5 < b;
         }
         function lanesToEventPriority(lanes) {
           var lane = getHighestPriorityLane(lanes);
@@ -20996,13 +20996,13 @@ var require_react_dom_development = __commonJS({
             }
           }
         }
-        function discreteUpdates(fn2, a5, b5, c6, d6) {
+        function discreteUpdates(fn2, a5, b, c6, d6) {
           var previousPriority = getCurrentUpdatePriority();
           var prevTransition = ReactCurrentBatchConfig$3.transition;
           try {
             ReactCurrentBatchConfig$3.transition = null;
             setCurrentUpdatePriority(DiscreteEventPriority);
-            return fn2(a5, b5, c6, d6);
+            return fn2(a5, b, c6, d6);
           } finally {
             setCurrentUpdatePriority(previousPriority);
             ReactCurrentBatchConfig$3.transition = prevTransition;
@@ -25291,18 +25291,18 @@ function $constructor(name, initializer3, params) {
     (_a2 = inst._zod).traits ?? (_a2.traits = /* @__PURE__ */ new Set());
     inst._zod.traits.add(name);
     initializer3(inst, def);
-    for (const k5 in _5.prototype) {
+    for (const k5 in _6.prototype) {
       if (!(k5 in inst))
-        Object.defineProperty(inst, k5, { value: _5.prototype[k5].bind(inst) });
+        Object.defineProperty(inst, k5, { value: _6.prototype[k5].bind(inst) });
     }
-    inst._zod.constr = _5;
+    inst._zod.constr = _6;
     inst._zod.def = def;
   }
   const Parent = params?.Parent ?? Object;
   class Definition extends Parent {
   }
   Object.defineProperty(Definition, "name", { value: name });
-  function _5(def) {
+  function _6(def) {
     var _a2;
     const inst = params?.Parent ? new Definition() : this;
     init(inst, def);
@@ -25312,16 +25312,16 @@ function $constructor(name, initializer3, params) {
     }
     return inst;
   }
-  Object.defineProperty(_5, "init", { value: init });
-  Object.defineProperty(_5, Symbol.hasInstance, {
+  Object.defineProperty(_6, "init", { value: init });
+  Object.defineProperty(_6, Symbol.hasInstance, {
     value: (inst) => {
       if (params?.Parent && inst instanceof params.Parent)
         return true;
       return inst?._zod?.traits?.has(name);
     }
   });
-  Object.defineProperty(_5, "name", { value: name });
-  return _5;
+  Object.defineProperty(_6, "name", { value: name });
+  return _6;
 }
 var $brand = Symbol("zod_brand");
 var $ZodAsyncError = class extends Error {
@@ -25416,17 +25416,17 @@ function assertIs(_arg) {
 function assertNever(_x) {
   throw new Error();
 }
-function assert(_5) {
+function assert(_6) {
 }
 function getEnumValues(entries) {
   const numericValues = Object.values(entries).filter((v) => typeof v === "number");
-  const values = Object.entries(entries).filter(([k5, _5]) => numericValues.indexOf(+k5) === -1).map(([_5, v]) => v);
+  const values = Object.entries(entries).filter(([k5, _6]) => numericValues.indexOf(+k5) === -1).map(([_6, v]) => v);
   return values;
 }
 function joinValues(array2, separator = "|") {
   return array2.map((val) => stringifyPrimitive(val)).join(separator);
 }
-function jsonStringifyReplacer(_5, value) {
+function jsonStringifyReplacer(_6, value) {
   if (typeof value === "bigint")
     return value.toString();
   return value;
@@ -25552,7 +25552,7 @@ var allowsEval = cached(() => {
     const F = Function;
     new F("");
     return true;
-  } catch (_5) {
+  } catch (_6) {
     return false;
   }
 });
@@ -25660,31 +25660,31 @@ function normalizeParams(_params) {
 function createTransparentProxy(getter) {
   let target;
   return new Proxy({}, {
-    get(_5, prop, receiver) {
+    get(_6, prop, receiver) {
       target ?? (target = getter());
       return Reflect.get(target, prop, receiver);
     },
-    set(_5, prop, value, receiver) {
+    set(_6, prop, value, receiver) {
       target ?? (target = getter());
       return Reflect.set(target, prop, value, receiver);
     },
-    has(_5, prop) {
+    has(_6, prop) {
       target ?? (target = getter());
       return Reflect.has(target, prop);
     },
-    deleteProperty(_5, prop) {
+    deleteProperty(_6, prop) {
       target ?? (target = getter());
       return Reflect.deleteProperty(target, prop);
     },
-    ownKeys(_5) {
+    ownKeys(_6) {
       target ?? (target = getter());
       return Reflect.ownKeys(target);
     },
-    getOwnPropertyDescriptor(_5, prop) {
+    getOwnPropertyDescriptor(_6, prop) {
       target ?? (target = getter());
       return Reflect.getOwnPropertyDescriptor(target, prop);
     },
-    defineProperty(_5, prop, descriptor) {
+    defineProperty(_6, prop, descriptor) {
       target ?? (target = getter());
       return Reflect.defineProperty(target, prop, descriptor);
     }
@@ -25787,15 +25787,15 @@ function safeExtend(schema, shape) {
   };
   return clone(schema, def);
 }
-function merge(a5, b5) {
+function merge(a5, b) {
   const def = mergeDefs(a5._zod.def, {
     get shape() {
-      const _shape = { ...a5._zod.def.shape, ...b5._zod.def.shape };
+      const _shape = { ...a5._zod.def.shape, ...b._zod.def.shape };
       assignProp(this, "shape", _shape);
       return _shape;
     },
     get catchall() {
-      return b5._zod.def.catchall;
+      return b._zod.def.catchall;
     },
     checks: []
     // delete existing checks
@@ -25929,7 +25929,7 @@ function issue(...args) {
   return { ...iss };
 }
 function cleanEnum(obj) {
-  return Object.entries(obj).filter(([k5, _5]) => {
+  return Object.entries(obj).filter(([k5, _6]) => {
     return Number.isNaN(Number.parseInt(k5, 10));
   }).map((el) => el[1]);
 }
@@ -25968,7 +25968,7 @@ function hexToUint8Array(hex3) {
   return bytes;
 }
 function uint8ArrayToHex(bytes) {
-  return Array.from(bytes).map((b5) => b5.toString(16).padStart(2, "0")).join("");
+  return Array.from(bytes).map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 var Class = class {
   constructor(..._args) {
@@ -26107,7 +26107,7 @@ function toDotPath(_path) {
 }
 function prettifyError(error45) {
   const lines = [];
-  const issues = [...error45.issues].sort((a5, b5) => (a5.path ?? []).length - (b5.path ?? []).length);
+  const issues = [...error45.issues].sort((a5, b) => (a5.path ?? []).length - (b.path ?? []).length);
   for (const issue2 of issues) {
     lines.push(`\u2716 ${issue2.message}`);
     if (issue2.path?.length)
@@ -26969,13 +26969,13 @@ var $ZodType = /* @__PURE__ */ $constructor("$ZodType", (inst, def) => {
           continue;
         }
         const currLen = payload.issues.length;
-        const _5 = ch2._zod.check(payload);
-        if (_5 instanceof Promise && ctx?.async === false) {
+        const _6 = ch2._zod.check(payload);
+        if (_6 instanceof Promise && ctx?.async === false) {
           throw new $ZodAsyncError();
         }
-        if (asyncResult || _5 instanceof Promise) {
+        if (asyncResult || _6 instanceof Promise) {
           asyncResult = (asyncResult ?? Promise.resolve()).then(async () => {
-            await _5;
+            await _6;
             const nextLen = payload.issues.length;
             if (nextLen === currLen)
               return;
@@ -27037,7 +27037,7 @@ var $ZodType = /* @__PURE__ */ $constructor("$ZodType", (inst, def) => {
       try {
         const r5 = safeParse(inst, value);
         return r5.success ? { value: r5.data } : { issues: r5.error?.issues };
-      } catch (_5) {
+      } catch (_6) {
         return safeParseAsync(inst, value).then((r5) => r5.success ? { value: r5.data } : { issues: r5.error?.issues });
       }
     },
@@ -27048,11 +27048,11 @@ var $ZodType = /* @__PURE__ */ $constructor("$ZodType", (inst, def) => {
 var $ZodString = /* @__PURE__ */ $constructor("$ZodString", (inst, def) => {
   $ZodType.init(inst, def);
   inst._zod.pattern = [...inst?._zod.bag?.patterns ?? []].pop() ?? string(inst._zod.bag);
-  inst._zod.parse = (payload, _5) => {
+  inst._zod.parse = (payload, _6) => {
     if (def.coerce)
       try {
         payload.value = String(payload.value);
-      } catch (_6) {
+      } catch (_7) {
       }
     if (typeof payload.value === "string")
       return payload;
@@ -27137,7 +27137,7 @@ var $ZodURL = /* @__PURE__ */ $constructor("$ZodURL", (inst, def) => {
         payload.value = trimmed;
       }
       return;
-    } catch (_5) {
+    } catch (_6) {
       payload.issues.push({
         code: "invalid_format",
         format: "url",
@@ -27367,7 +27367,7 @@ var $ZodNumber = /* @__PURE__ */ $constructor("$ZodNumber", (inst, def) => {
     if (def.coerce)
       try {
         payload.value = Number(payload.value);
-      } catch (_5) {
+      } catch (_6) {
       }
     const input = payload.value;
     if (typeof input === "number" && !Number.isNaN(input) && Number.isFinite(input)) {
@@ -27395,7 +27395,7 @@ var $ZodBoolean = /* @__PURE__ */ $constructor("$ZodBoolean", (inst, def) => {
     if (def.coerce)
       try {
         payload.value = Boolean(payload.value);
-      } catch (_5) {
+      } catch (_6) {
       }
     const input = payload.value;
     if (typeof input === "boolean")
@@ -27416,7 +27416,7 @@ var $ZodBigInt = /* @__PURE__ */ $constructor("$ZodBigInt", (inst, def) => {
     if (def.coerce)
       try {
         payload.value = BigInt(payload.value);
-      } catch (_5) {
+      } catch (_6) {
       }
     if (typeof payload.value === "bigint")
       return payload;
@@ -27927,19 +27927,19 @@ var $ZodIntersection = /* @__PURE__ */ $constructor("$ZodIntersection", (inst, d
     return handleIntersectionResults(payload, left, right);
   };
 });
-function mergeValues(a5, b5) {
-  if (a5 === b5) {
+function mergeValues(a5, b) {
+  if (a5 === b) {
     return { valid: true, data: a5 };
   }
-  if (a5 instanceof Date && b5 instanceof Date && +a5 === +b5) {
+  if (a5 instanceof Date && b instanceof Date && +a5 === +b) {
     return { valid: true, data: a5 };
   }
-  if (isPlainObject(a5) && isPlainObject(b5)) {
-    const bKeys = Object.keys(b5);
+  if (isPlainObject(a5) && isPlainObject(b)) {
+    const bKeys = Object.keys(b);
     const sharedKeys = Object.keys(a5).filter((key) => bKeys.indexOf(key) !== -1);
-    const newObj = { ...a5, ...b5 };
+    const newObj = { ...a5, ...b };
     for (const key of sharedKeys) {
-      const sharedValue = mergeValues(a5[key], b5[key]);
+      const sharedValue = mergeValues(a5[key], b[key]);
       if (!sharedValue.valid) {
         return {
           valid: false,
@@ -27950,14 +27950,14 @@ function mergeValues(a5, b5) {
     }
     return { valid: true, data: newObj };
   }
-  if (Array.isArray(a5) && Array.isArray(b5)) {
-    if (a5.length !== b5.length) {
+  if (Array.isArray(a5) && Array.isArray(b)) {
+    if (a5.length !== b.length) {
       return { valid: false, mergeErrorPath: [] };
     }
     const newArray = [];
     for (let index = 0; index < a5.length; index++) {
       const itemA = a5[index];
-      const itemB = b5[index];
+      const itemB = b[index];
       const sharedValue = mergeValues(itemA, itemB);
       if (!sharedValue.valid) {
         return {
@@ -28749,7 +28749,7 @@ var $ZodLazy = /* @__PURE__ */ $constructor("$ZodLazy", (inst, def) => {
 var $ZodCustom = /* @__PURE__ */ $constructor("$ZodCustom", (inst, def) => {
   $ZodCheck.init(inst, def);
   $ZodType.init(inst, def);
-  inst._zod.parse = (payload, _5) => {
+  inst._zod.parse = (payload, _6) => {
     return payload;
   };
   inst._zod.check = (payload) => {
@@ -35442,14 +35442,14 @@ var JSONSchemaGenerator = class {
               ...params,
               path: [...params.path, "allOf", 0]
             });
-            const b5 = this.process(def.right, {
+            const b = this.process(def.right, {
               ...params,
               path: [...params.path, "allOf", 1]
             });
             const isSimpleIntersection = (val) => "allOf" in val && Object.keys(val).length === 1;
             const allOf = [
               ...isSimpleIntersection(a5) ? a5.allOf : [a5],
-              ...isSimpleIntersection(b5) ? b5.allOf : [b5]
+              ...isSimpleIntersection(b) ? b.allOf : [b]
             ];
             json2.allOf = allOf;
             break;
@@ -35889,7 +35889,7 @@ function toJSONSchema(input, _params) {
     const gen2 = new JSONSchemaGenerator(_params);
     const defs = {};
     for (const entry of input._idmap.entries()) {
-      const [_5, schema] = entry;
+      const [_6, schema] = entry;
       gen2.process(schema);
     }
     const schemas = {};
@@ -37516,18 +37516,18 @@ function La(e, n, a5) {
       i.push((function() {
         for (var p5 = i.pop(), y6 = [], w = u6.value; w-- > 0; )
           y6.unshift(i.pop());
-        var b5 = i.pop(), v = function() {
+        var b = i.pop(), v = function() {
           for (var m5 = Object.assign({}, a5), j = 0, $5 = y6.length; j < $5; j++)
             m5[y6[j]] = arguments[j];
           return La(p5, n, m5);
         };
         return Object.defineProperty(v, "name", {
-          value: b5,
+          value: b,
           writable: false
-        }), a5[b5] = v, v;
+        }), a5[b] = v, v;
       })());
     else if (d6 === Ae)
-      i.push(v1(u6, n));
+      i.push(S1(u6, n));
     else if (d6 === os)
       i.push(u6);
     else if (d6 === Ta)
@@ -37545,7 +37545,7 @@ function La(e, n, a5) {
     throw new Error("invalid Expression (parity)");
   return i[0] === 0 ? 0 : Hn(i[0], a5);
 }
-function v1(e, n, a5) {
+function S1(e, n, a5) {
   return us(e) ? e : {
     type: os,
     value: function(i) {
@@ -37762,7 +37762,7 @@ he.prototype.isWhitespace = function() {
     n = this.expression.charAt(this.pos);
   return e;
 };
-var S1 = /^[0-9a-f]{4}$/i;
+var $1 = /^[0-9a-f]{4}$/i;
 he.prototype.unescape = function(e) {
   var n = e.indexOf("\\");
   if (n < 0)
@@ -37800,7 +37800,7 @@ he.prototype.unescape = function(e) {
         break;
       case "u":
         var t5 = e.substring(n + 1, n + 5);
-        S1.test(t5) || this.parseError("Illegal escape sequence: \\u" + t5), a5 += String.fromCharCode(parseInt(t5, 16)), n += 4;
+        $1.test(t5) || this.parseError("Illegal escape sequence: \\u" + t5), a5 += String.fromCharCode(parseInt(t5, 16)), n += 4;
         break;
       default:
         throw this.parseError('Illegal escape sequence: "\\' + i + '"');
@@ -37995,23 +37995,23 @@ se.prototype.parseAndExpression = function(e) {
     this.parseComparison(n), e.push(new q(Ae, n)), e.push(On("and"));
   }
 };
-var $1 = ["==", "!=", "<", "<=", ">=", ">", "in"];
+var C1 = ["==", "!=", "<", "<=", ">=", ">", "in"];
 se.prototype.parseComparison = function(e) {
-  for (this.parseAddSub(e); this.accept(oe, $1); ) {
+  for (this.parseAddSub(e); this.accept(oe, C1); ) {
     var n = this.current;
     this.parseAddSub(e), e.push(On(n.value));
   }
 };
-var C1 = ["+", "-", "||"];
+var L1 = ["+", "-", "||"];
 se.prototype.parseAddSub = function(e) {
-  for (this.parseTerm(e); this.accept(oe, C1); ) {
+  for (this.parseTerm(e); this.accept(oe, L1); ) {
     var n = this.current;
     this.parseTerm(e), e.push(On(n.value));
   }
 };
-var L1 = ["*", "/", "%"];
+var Y1 = ["*", "/", "%"];
 se.prototype.parseTerm = function(e) {
-  for (this.parseFactor(e); this.accept(oe, L1); ) {
+  for (this.parseFactor(e); this.accept(oe, Y1); ) {
     var n = this.current;
     this.parseFactor(e), e.push(On(n.value));
   }
@@ -38082,91 +38082,91 @@ se.prototype.parseMemberExpression = function(e) {
       throw new Error("unexpected symbol: " + n.value);
   }
 };
-function Y1(e, n) {
+function k1(e, n) {
   return Number(e) + Number(n);
 }
-function k1(e, n) {
+function I1(e, n) {
   return e - n;
 }
-function I1(e, n) {
+function Z1(e, n) {
   return e * n;
 }
-function Z1(e, n) {
+function T1(e, n) {
   return e / n;
 }
-function T1(e, n) {
+function M1(e, n) {
   return e % n;
 }
-function M1(e, n) {
+function J1(e, n) {
   return Array.isArray(e) && Array.isArray(n) ? e.concat(n) : "" + e + n;
 }
-function J1(e, n) {
+function D1(e, n) {
   return e === n;
 }
-function D1(e, n) {
+function P1(e, n) {
   return e !== n;
 }
-function P1(e, n) {
+function A1(e, n) {
   return e > n;
 }
-function A1(e, n) {
+function N1(e, n) {
   return e < n;
 }
-function N1(e, n) {
+function H1(e, n) {
   return e >= n;
 }
-function H1(e, n) {
+function X1(e, n) {
   return e <= n;
 }
-function X1(e, n) {
+function E1(e, n) {
   return !!(e && n);
 }
-function E1(e, n) {
+function B1(e, n) {
   return !!(e || n);
 }
-function B1(e, n) {
+function x1(e, n) {
   return Va(n, e);
 }
-function x1(e) {
+function F1(e) {
   return (Math.exp(e) - Math.exp(-e)) / 2;
 }
-function F1(e) {
+function R1(e) {
   return (Math.exp(e) + Math.exp(-e)) / 2;
 }
-function R1(e) {
+function G1(e) {
   return e === 1 / 0 ? 1 : e === -1 / 0 ? -1 : (Math.exp(e) - Math.exp(-e)) / (Math.exp(e) + Math.exp(-e));
 }
-function G1(e) {
+function _1(e) {
   return e === -1 / 0 ? e : Math.log(e + Math.sqrt(e * e + 1));
 }
-function _1(e) {
+function Q1(e) {
   return Math.log(e + Math.sqrt(e * e - 1));
 }
-function Q1(e) {
+function O1(e) {
   return Math.log((1 + e) / (1 - e)) / 2;
 }
 function ll(e) {
   return Math.log(e) * Math.LOG10E;
 }
-function O1(e) {
+function W1(e) {
   return -e;
 }
-function W1(e) {
+function K1(e) {
   return !e;
 }
-function K1(e) {
+function U1(e) {
   return e < 0 ? Math.ceil(e) : Math.floor(e);
 }
-function U1(e) {
+function z1(e) {
   return Math.random() * (e || 1);
 }
 function gl(e) {
   return gs(e + 1);
 }
-function z1(e) {
+function q1(e) {
   return isFinite(e) && e === Math.round(e);
 }
-var q1 = 4.7421875;
+var V1 = 4.7421875;
 var gu = [
   0.9999999999999971,
   57.15623566586292,
@@ -38186,7 +38186,7 @@ var gu = [
 ];
 function gs(e) {
   var n, a5;
-  if (z1(e)) {
+  if (q1(e)) {
     if (e <= 0)
       return isFinite(e) ? 1 / 0 : NaN;
     if (e > 171)
@@ -38206,9 +38206,9 @@ function gs(e) {
   --e, a5 = gu[0];
   for (var c6 = 1; c6 < gu.length; ++c6)
     a5 += gu[c6] / (e + c6);
-  return n = e + q1 + 0.5, Math.sqrt(2 * Math.PI) * Math.pow(n, e + 0.5) * Math.exp(-n) * a5;
+  return n = e + V1 + 0.5, Math.sqrt(2 * Math.PI) * Math.pow(n, e + 0.5) * Math.exp(-n) * a5;
 }
-function V1(e) {
+function ep(e) {
   return Array.isArray(e) ? e.length : String(e).length;
 }
 function hl() {
@@ -38221,22 +38221,22 @@ function hl() {
 function cl(e, n, a5) {
   return e ? n : a5;
 }
-function ep(e, n) {
+function np(e, n) {
   return typeof n > "u" || +n == 0 ? Math.round(e) : (e = +e, n = -+n, isNaN(e) || !(typeof n == "number" && n % 1 === 0) ? NaN : (e = e.toString().split("e"), e = Math.round(+(e[0] + "e" + (e[1] ? +e[1] - n : -n))), e = e.toString().split("e"), +(e[0] + "e" + (e[1] ? +e[1] + n : n))));
 }
-function np(e, n, a5) {
+function ap(e, n, a5) {
   return a5 && (a5[e] = n), n;
 }
-function ap(e, n) {
+function ip(e, n) {
   return e[n | 0];
 }
-function ip(e) {
+function tp(e) {
   return arguments.length === 1 && Array.isArray(e) ? Math.max.apply(Math, e) : Math.max.apply(Math, arguments);
 }
-function tp(e) {
+function op(e) {
   return arguments.length === 1 && Array.isArray(e) ? Math.min.apply(Math, e) : Math.min.apply(Math, arguments);
 }
-function op(e, n) {
+function up(e, n) {
   if (typeof e != "function")
     throw new Error("First argument to map is not a function");
   if (!Array.isArray(n))
@@ -38245,7 +38245,7 @@ function op(e, n) {
     return e(a5, i);
   });
 }
-function up(e, n, a5) {
+function rp(e, n, a5) {
   if (typeof e != "function")
     throw new Error("First argument to fold is not a function");
   if (!Array.isArray(a5))
@@ -38254,7 +38254,7 @@ function up(e, n, a5) {
     return e(i, t5, o5);
   }, n);
 }
-function rp(e, n) {
+function sp(e, n) {
   if (typeof e != "function")
     throw new Error("First argument to filter is not a function");
   if (!Array.isArray(n))
@@ -38263,30 +38263,30 @@ function rp(e, n) {
     return e(a5, i);
   });
 }
-function sp(e, n) {
+function dp(e, n) {
   if (!(Array.isArray(n) || typeof n == "string"))
     throw new Error("Second argument to indexOf is not a string or array");
   return n.indexOf(e);
 }
-function dp(e, n) {
+function lp(e, n) {
   if (!Array.isArray(n))
     throw new Error("Second argument to join is not an array");
   return n.join(e);
 }
-function lp(e) {
+function gp(e) {
   return (e > 0) - (e < 0) || +e;
 }
 var fl = 1 / 3;
-function gp(e) {
+function hp(e) {
   return e < 0 ? -Math.pow(-e, fl) : Math.pow(e, fl);
 }
-function hp(e) {
+function cp(e) {
   return Math.exp(e) - 1;
 }
-function cp(e) {
+function fp(e) {
   return Math.log(1 + e);
 }
-function fp(e) {
+function pp(e) {
   return Math.log(e) / Math.LN2;
 }
 function Ma(e) {
@@ -38297,59 +38297,59 @@ function Ma(e) {
     asin: Math.asin,
     acos: Math.acos,
     atan: Math.atan,
-    sinh: Math.sinh || x1,
-    cosh: Math.cosh || F1,
-    tanh: Math.tanh || R1,
-    asinh: Math.asinh || G1,
-    acosh: Math.acosh || _1,
-    atanh: Math.atanh || Q1,
+    sinh: Math.sinh || F1,
+    cosh: Math.cosh || R1,
+    tanh: Math.tanh || G1,
+    asinh: Math.asinh || _1,
+    acosh: Math.acosh || Q1,
+    atanh: Math.atanh || O1,
     sqrt: Math.sqrt,
-    cbrt: Math.cbrt || gp,
+    cbrt: Math.cbrt || hp,
     log: Math.log,
-    log2: Math.log2 || fp,
+    log2: Math.log2 || pp,
     ln: Math.log,
     lg: Math.log10 || ll,
     log10: Math.log10 || ll,
-    expm1: Math.expm1 || hp,
-    log1p: Math.log1p || cp,
+    expm1: Math.expm1 || cp,
+    log1p: Math.log1p || fp,
     abs: Math.abs,
     ceil: Math.ceil,
     floor: Math.floor,
     round: Math.round,
-    trunc: Math.trunc || K1,
-    "-": O1,
+    trunc: Math.trunc || U1,
+    "-": W1,
     "+": Number,
     exp: Math.exp,
-    not: W1,
-    length: V1,
+    not: K1,
+    length: ep,
     "!": gl,
-    sign: Math.sign || lp
+    sign: Math.sign || gp
   }, this.binaryOps = {
-    "+": Y1,
-    "-": k1,
-    "*": I1,
-    "/": Z1,
-    "%": T1,
+    "+": k1,
+    "-": I1,
+    "*": Z1,
+    "/": T1,
+    "%": M1,
     "^": Math.pow,
-    "||": M1,
-    "==": J1,
-    "!=": D1,
-    ">": P1,
-    "<": A1,
-    ">=": N1,
-    "<=": H1,
-    and: X1,
-    or: E1,
-    in: B1,
-    "=": np,
-    "[": ap
+    "||": J1,
+    "==": D1,
+    "!=": P1,
+    ">": A1,
+    "<": N1,
+    ">=": H1,
+    "<=": X1,
+    and: E1,
+    or: B1,
+    in: x1,
+    "=": ap,
+    "[": ip
   }, this.ternaryOps = {
     "?": cl
   }, this.functions = {
-    random: U1,
+    random: z1,
     fac: gl,
-    min: tp,
-    max: ip,
+    min: op,
+    max: tp,
     hypot: Math.hypot || hl,
     pyt: Math.hypot || hl,
     // backward compat
@@ -38357,12 +38357,12 @@ function Ma(e) {
     atan2: Math.atan2,
     if: cl,
     gamma: gs,
-    roundTo: ep,
-    map: op,
-    fold: up,
-    filter: rp,
-    indexOf: sp,
-    join: dp
+    roundTo: np,
+    map: up,
+    fold: rp,
+    filter: sp,
+    indexOf: dp,
+    join: lp
   }, this.consts = {
     E: Math.E,
     PI: Math.PI,
@@ -38412,11 +38412,11 @@ var pl = {
   "[": "array",
   "()=": "fndef"
 };
-function pp(e) {
+function yp(e) {
   return pl.hasOwnProperty(e) ? pl[e] : e;
 }
 Ma.prototype.isOperatorEnabled = function(e) {
-  var n = pp(e), a5 = this.options.operators || {};
+  var n = yp(e), a5 = this.options.operators || {};
   return !(n in a5) || !!a5[n];
 };
 var jt = { exports: {} };
@@ -38519,7 +38519,7 @@ function pn() {
 var Ti = {};
 var $t = { exports: {} };
 var wl;
-function yp() {
+function bp() {
   return wl || (wl = 1, (function(e, n) {
     n.__esModule = true;
     var a5 = He();
@@ -38543,7 +38543,7 @@ function yp() {
 }
 var Ct = { exports: {} };
 var ml;
-function bp() {
+function wp() {
   return ml || (ml = 1, (function(e, n) {
     n.__esModule = true;
     function a5(r5) {
@@ -38567,7 +38567,7 @@ function bp() {
             for (var y6 = l6.length; f < y6; f++)
               f in l6 && p5(f, f, f === l6.length - 1);
           else if (typeof Symbol == "function" && l6[Symbol.iterator]) {
-            for (var w = [], b5 = l6[Symbol.iterator](), v = b5.next(); !v.done; v = b5.next())
+            for (var w = [], b = l6[Symbol.iterator](), v = b.next(); !v.done; v = b.next())
               w.push(v.value);
             l6 = w;
             for (var y6 = l6.length; f < y6; f++)
@@ -38586,7 +38586,7 @@ function bp() {
 }
 var Lt = { exports: {} };
 var jl;
-function wp() {
+function mp() {
   return jl || (jl = 1, (function(e, n) {
     n.__esModule = true;
     function a5(o5) {
@@ -38603,7 +38603,7 @@ function wp() {
 }
 var Yt = { exports: {} };
 var vl;
-function mp() {
+function jp() {
   return vl || (vl = 1, (function(e, n) {
     n.__esModule = true;
     function a5(r5) {
@@ -38629,7 +38629,7 @@ function mp() {
 }
 var kt = { exports: {} };
 var Sl;
-function jp() {
+function vp() {
   return Sl || (Sl = 1, (function(e, n) {
     n.__esModule = true, n.default = function(a5) {
       a5.registerHelper("log", function() {
@@ -38643,7 +38643,7 @@ function jp() {
 }
 var It = { exports: {} };
 var $l;
-function vp() {
+function Sp() {
   return $l || ($l = 1, (function(e, n) {
     n.__esModule = true, n.default = function(a5) {
       a5.registerHelper("lookup", function(i, t5, o5) {
@@ -38654,7 +38654,7 @@ function vp() {
 }
 var Zt = { exports: {} };
 var Cl;
-function Sp() {
+function $p() {
   return Cl || (Cl = 1, (function(e, n) {
     n.__esModule = true;
     function a5(r5) {
@@ -38685,19 +38685,19 @@ function g2() {
   function e(w) {
     return w && w.__esModule ? w : { default: w };
   }
-  var n = yp(), a5 = e(n), i = bp(), t5 = e(i), o5 = wp(), r5 = e(o5), l6 = mp(), h = e(l6), c6 = jp(), g6 = e(c6), f = vp(), u6 = e(f), d6 = Sp(), s5 = e(d6);
+  var n = bp(), a5 = e(n), i = wp(), t5 = e(i), o5 = mp(), r5 = e(o5), l6 = jp(), h = e(l6), c6 = vp(), g6 = e(c6), f = Sp(), u6 = e(f), d6 = $p(), s5 = e(d6);
   function p5(w) {
     a5.default(w), t5.default(w), r5.default(w), h.default(w), g6.default(w), u6.default(w), s5.default(w);
   }
-  function y6(w, b5, v) {
-    w.helpers[b5] && (w.hooks[b5] = w.helpers[b5], v || delete w.helpers[b5]);
+  function y6(w, b, v) {
+    w.helpers[b] && (w.hooks[b] = w.helpers[b], v || delete w.helpers[b]);
   }
   return Ti;
 }
 var Tt = {};
 var Mt = { exports: {} };
 var Yl;
-function $p() {
+function Cp() {
   return Yl || (Yl = 1, (function(e, n) {
     n.__esModule = true;
     var a5 = He();
@@ -38715,13 +38715,13 @@ function $p() {
   })(Mt, Mt.exports)), Mt.exports;
 }
 var kl;
-function Cp() {
+function Lp() {
   if (kl) return Tt;
   kl = 1, Tt.__esModule = true, Tt.registerDefaultDecorators = i;
   function e(t5) {
     return t5 && t5.__esModule ? t5 : { default: t5 };
   }
-  var n = $p(), a5 = e(n);
+  var n = Cp(), a5 = e(n);
   function i(t5) {
     a5.default(t5);
   }
@@ -38760,7 +38760,7 @@ function h2() {
 var _a = {};
 var Dt = {};
 var Zl;
-function Lp() {
+function Yp() {
   if (Zl) return Dt;
   Zl = 1, Dt.__esModule = true, Dt.createNewLookupObject = n;
   var e = He();
@@ -38778,7 +38778,7 @@ function c2() {
   function e(g6) {
     return g6 && g6.__esModule ? g6 : { default: g6 };
   }
-  var n = Lp(), a5 = h2(), i = e(a5), t5 = /* @__PURE__ */ Object.create(null);
+  var n = Yp(), a5 = h2(), i = e(a5), t5 = /* @__PURE__ */ Object.create(null);
   function o5(g6) {
     var f = /* @__PURE__ */ Object.create(null);
     f.constructor = false, f.__defineGetter__ = false, f.__defineSetter__ = false, f.__lookupGetter__ = false;
@@ -38819,7 +38819,7 @@ function hs() {
   function e(y6) {
     return y6 && y6.__esModule ? y6 : { default: y6 };
   }
-  var n = He(), a5 = pn(), i = e(a5), t5 = g2(), o5 = Cp(), r5 = h2(), l6 = e(r5), h = c2(), c6 = "4.7.8";
+  var n = He(), a5 = pn(), i = e(a5), t5 = g2(), o5 = Lp(), r5 = h2(), l6 = e(r5), h = c2(), c6 = "4.7.8";
   gn.VERSION = c6;
   var g6 = 8;
   gn.COMPILER_REVISION = g6;
@@ -38838,43 +38838,43 @@ function hs() {
   };
   gn.REVISION_CHANGES = u6;
   var d6 = "[object Object]";
-  function s5(y6, w, b5) {
-    this.helpers = y6 || {}, this.partials = w || {}, this.decorators = b5 || {}, t5.registerDefaultHelpers(this), o5.registerDefaultDecorators(this);
+  function s5(y6, w, b) {
+    this.helpers = y6 || {}, this.partials = w || {}, this.decorators = b || {}, t5.registerDefaultHelpers(this), o5.registerDefaultDecorators(this);
   }
   s5.prototype = {
     constructor: s5,
     logger: l6.default,
     log: l6.default.log,
-    registerHelper: function(w, b5) {
+    registerHelper: function(w, b) {
       if (n.toString.call(w) === d6) {
-        if (b5)
+        if (b)
           throw new i.default("Arg not supported with multiple helpers");
         n.extend(this.helpers, w);
       } else
-        this.helpers[w] = b5;
+        this.helpers[w] = b;
     },
     unregisterHelper: function(w) {
       delete this.helpers[w];
     },
-    registerPartial: function(w, b5) {
+    registerPartial: function(w, b) {
       if (n.toString.call(w) === d6)
         n.extend(this.partials, w);
       else {
-        if (typeof b5 > "u")
+        if (typeof b > "u")
           throw new i.default('Attempting to register a partial called "' + w + '" as undefined');
-        this.partials[w] = b5;
+        this.partials[w] = b;
       }
     },
     unregisterPartial: function(w) {
       delete this.partials[w];
     },
-    registerDecorator: function(w, b5) {
+    registerDecorator: function(w, b) {
       if (n.toString.call(w) === d6) {
-        if (b5)
+        if (b)
           throw new i.default("Arg not supported with multiple decorators");
         n.extend(this.decorators, w);
       } else
-        this.decorators[w] = b5;
+        this.decorators[w] = b;
     },
     unregisterDecorator: function(w) {
       delete this.decorators[w];
@@ -38892,7 +38892,7 @@ function hs() {
 }
 var Pt = { exports: {} };
 var Jl;
-function Yp() {
+function kp() {
   return Jl || (Jl = 1, (function(e, n) {
     n.__esModule = true;
     function a5(i) {
@@ -38906,7 +38906,7 @@ function Yp() {
 var Xn = {};
 var At = {};
 var Dl;
-function kp() {
+function Ip() {
   if (Dl) return At;
   Dl = 1, At.__esModule = true, At.wrapHelper = e;
   function e(n, a5) {
@@ -38921,7 +38921,7 @@ function kp() {
   return At;
 }
 var Pl;
-function Ip() {
+function Zp() {
   if (Pl) return Xn;
   Pl = 1, Xn.__esModule = true, Xn.checkRevision = g6, Xn.template = f, Xn.wrapProgram = u6, Xn.resolvePartial = d6, Xn.invokePartial = s5, Xn.noop = p5;
   function e(m5) {
@@ -38936,7 +38936,7 @@ function Ip() {
         Object.prototype.hasOwnProperty.call(m5, $5) && (j[$5] = m5[$5]);
     return j.default = m5, j;
   }
-  var a5 = He(), i = n(a5), t5 = pn(), o5 = e(t5), r5 = hs(), l6 = g2(), h = kp(), c6 = c2();
+  var a5 = He(), i = n(a5), t5 = pn(), o5 = e(t5), r5 = hs(), l6 = g2(), h = Ip(), c6 = c2();
   function g6(m5) {
     var j = m5 && m5[0] || 1, $5 = r5.COMPILER_REVISION;
     if (!(j >= r5.LAST_COMPATIBLE_COMPILER_REVISION && j <= r5.COMPILER_REVISION))
@@ -38953,13 +38953,13 @@ function Ip() {
       throw new o5.default("Unknown template object: " + typeof m5);
     m5.main.decorator = m5.main_d, j.VM.checkRevision(m5.compiler);
     var $5 = m5.compiler && m5.compiler[0] === 7;
-    function S5(I5, k5, Z) {
-      Z.hash && (k5 = i.extend({}, k5, Z.hash), Z.ids && (Z.ids[0] = true)), I5 = j.VM.resolvePartial.call(this, I5, k5, Z);
-      var A5 = i.extend({}, Z, {
+    function S5(I, k5, Z) {
+      Z.hash && (k5 = i.extend({}, k5, Z.hash), Z.ids && (Z.ids[0] = true)), I = j.VM.resolvePartial.call(this, I, k5, Z);
+      var A = i.extend({}, Z, {
         hooks: this.hooks,
         protoAccessControl: this.protoAccessControl
-      }), R6 = j.VM.invokePartial.call(this, I5, k5, A5);
-      if (R6 == null && j.compile && (Z.partials[Z.name] = j.compile(I5, m5.compilerOptions, j), R6 = Z.partials[Z.name](k5, A5)), R6 != null) {
+      }), R6 = j.VM.invokePartial.call(this, I, k5, A);
+      if (R6 == null && j.compile && (Z.partials[Z.name] = j.compile(I, m5.compilerOptions, j), R6 = Z.partials[Z.name](k5, A)), R6 != null) {
         if (Z.indent) {
           for (var ae = R6.split(`
 `), de = 0, Ce = ae.length; de < Ce && !(!ae[de] && de + 1 === Ce); de++)
@@ -38972,20 +38972,20 @@ function Ip() {
         throw new o5.default("The partial " + Z.name + " could not be compiled when running in runtime-only mode");
     }
     var L6 = {
-      strict: function(k5, Z, A5) {
+      strict: function(k5, Z, A) {
         if (!k5 || !(Z in k5))
           throw new o5.default('"' + Z + '" not defined in ' + k5, {
-            loc: A5
+            loc: A
           });
         return L6.lookupProperty(k5, Z);
       },
       lookupProperty: function(k5, Z) {
-        var A5 = k5[Z];
-        if (A5 == null || Object.prototype.hasOwnProperty.call(k5, Z) || c6.resultIsAllowed(A5, L6.protoAccessControl, Z))
-          return A5;
+        var A = k5[Z];
+        if (A == null || Object.prototype.hasOwnProperty.call(k5, Z) || c6.resultIsAllowed(A, L6.protoAccessControl, Z))
+          return A;
       },
       lookup: function(k5, Z) {
-        for (var A5 = k5.length, R6 = 0; R6 < A5; R6++) {
+        for (var A = k5.length, R6 = 0; R6 < A; R6++) {
           var ae = k5[R6] && L6.lookupProperty(k5[R6], Z);
           if (ae != null)
             return k5[R6][Z];
@@ -39001,9 +39001,9 @@ function Ip() {
         return Z.decorator = m5[k5 + "_d"], Z;
       },
       programs: [],
-      program: function(k5, Z, A5, R6, ae) {
+      program: function(k5, Z, A, R6, ae) {
         var de = this.programs[k5], Ce = this.fn(k5);
-        return Z || ae || R6 || A5 ? de = u6(this, k5, Ce, Z, A5, R6, ae) : de || (de = this.programs[k5] = u6(this, k5, Ce)), de;
+        return Z || ae || R6 || A ? de = u6(this, k5, Ce, Z, A, R6, ae) : de || (de = this.programs[k5] = u6(this, k5, Ce)), de;
       },
       data: function(k5, Z) {
         for (; k5 && Z--; )
@@ -39011,47 +39011,47 @@ function Ip() {
         return k5;
       },
       mergeIfNeeded: function(k5, Z) {
-        var A5 = k5 || Z;
-        return k5 && Z && k5 !== Z && (A5 = i.extend({}, Z, k5)), A5;
+        var A = k5 || Z;
+        return k5 && Z && k5 !== Z && (A = i.extend({}, Z, k5)), A;
       },
       // An empty object to use as replacement for null-contexts
       nullContext: Object.seal({}),
       noop: j.VM.noop,
       compilerInfo: m5.compiler
     };
-    function M5(I5) {
+    function M5(I) {
       var k5 = arguments.length <= 1 || arguments[1] === void 0 ? {} : arguments[1], Z = k5.data;
-      M5._setup(k5), !k5.partial && m5.useData && (Z = y6(I5, Z));
-      var A5 = void 0, R6 = m5.useBlockParams ? [] : void 0;
-      m5.useDepths && (k5.depths ? A5 = I5 != k5.depths[0] ? [I5].concat(k5.depths) : k5.depths : A5 = [I5]);
+      M5._setup(k5), !k5.partial && m5.useData && (Z = y6(I, Z));
+      var A = void 0, R6 = m5.useBlockParams ? [] : void 0;
+      m5.useDepths && (k5.depths ? A = I != k5.depths[0] ? [I].concat(k5.depths) : k5.depths : A = [I]);
       function ae(de) {
-        return "" + m5.main(L6, de, L6.helpers, L6.partials, Z, R6, A5);
+        return "" + m5.main(L6, de, L6.helpers, L6.partials, Z, R6, A);
       }
-      return ae = w(m5.main, ae, L6, k5.depths || [], Z, R6), ae(I5, k5);
+      return ae = w(m5.main, ae, L6, k5.depths || [], Z, R6), ae(I, k5);
     }
-    return M5.isTop = true, M5._setup = function(I5) {
-      if (I5.partial)
-        L6.protoAccessControl = I5.protoAccessControl, L6.helpers = I5.helpers, L6.partials = I5.partials, L6.decorators = I5.decorators, L6.hooks = I5.hooks;
+    return M5.isTop = true, M5._setup = function(I) {
+      if (I.partial)
+        L6.protoAccessControl = I.protoAccessControl, L6.helpers = I.helpers, L6.partials = I.partials, L6.decorators = I.decorators, L6.hooks = I.hooks;
       else {
-        var k5 = i.extend({}, j.helpers, I5.helpers);
-        b5(k5, L6), L6.helpers = k5, m5.usePartial && (L6.partials = L6.mergeIfNeeded(I5.partials, j.partials)), (m5.usePartial || m5.useDecorators) && (L6.decorators = i.extend({}, j.decorators, I5.decorators)), L6.hooks = {}, L6.protoAccessControl = c6.createProtoAccessControl(I5);
-        var Z = I5.allowCallsToHelperMissing || $5;
+        var k5 = i.extend({}, j.helpers, I.helpers);
+        b(k5, L6), L6.helpers = k5, m5.usePartial && (L6.partials = L6.mergeIfNeeded(I.partials, j.partials)), (m5.usePartial || m5.useDecorators) && (L6.decorators = i.extend({}, j.decorators, I.decorators)), L6.hooks = {}, L6.protoAccessControl = c6.createProtoAccessControl(I);
+        var Z = I.allowCallsToHelperMissing || $5;
         l6.moveHelperToHooks(L6, "helperMissing", Z), l6.moveHelperToHooks(L6, "blockHelperMissing", Z);
       }
-    }, M5._child = function(I5, k5, Z, A5) {
+    }, M5._child = function(I, k5, Z, A) {
       if (m5.useBlockParams && !Z)
         throw new o5.default("must pass block params");
-      if (m5.useDepths && !A5)
+      if (m5.useDepths && !A)
         throw new o5.default("must pass parent depths");
-      return u6(L6, I5, m5[I5], k5, 0, Z, A5);
+      return u6(L6, I, m5[I], k5, 0, Z, A);
     }, M5;
   }
-  function u6(m5, j, $5, S5, L6, M5, I5) {
+  function u6(m5, j, $5, S5, L6, M5, I) {
     function k5(Z) {
-      var A5 = arguments.length <= 1 || arguments[1] === void 0 ? {} : arguments[1], R6 = I5;
-      return I5 && Z != I5[0] && !(Z === m5.nullContext && I5[0] === null) && (R6 = [Z].concat(I5)), $5(m5, Z, m5.helpers, m5.partials, A5.data || S5, M5 && [A5.blockParams].concat(M5), R6);
+      var A = arguments.length <= 1 || arguments[1] === void 0 ? {} : arguments[1], R6 = I;
+      return I && Z != I[0] && !(Z === m5.nullContext && I[0] === null) && (R6 = [Z].concat(I)), $5(m5, Z, m5.helpers, m5.partials, A.data || S5, M5 && [A.blockParams].concat(M5), R6);
     }
-    return k5 = w($5, k5, m5, I5, S5, M5), k5.program = j, k5.depth = I5 ? I5.length : 0, k5.blockParams = L6 || 0, k5;
+    return k5 = w($5, k5, m5, I, S5, M5), k5.program = j, k5.depth = I ? I.length : 0, k5.blockParams = L6 || 0, k5;
   }
   function d6(m5, j, $5) {
     return m5 ? !m5.call && !$5.name && ($5.name = m5, m5 = $5.partials[m5]) : $5.name === "@partial-block" ? m5 = $5.data["partial-block"] : m5 = $5.partials[$5.name], m5;
@@ -39080,12 +39080,12 @@ function Ip() {
   }
   function w(m5, j, $5, S5, L6, M5) {
     if (m5.decorator) {
-      var I5 = {};
-      j = m5.decorator(j, I5, $5, S5 && S5[0], L6, M5, S5), i.extend(j, I5);
+      var I = {};
+      j = m5.decorator(j, I, $5, S5 && S5[0], L6, M5, S5), i.extend(j, I);
     }
     return j;
   }
-  function b5(m5, j) {
+  function b(m5, j) {
     Object.keys(m5).forEach(function($5) {
       var S5 = m5[$5];
       m5[$5] = v(S5, j);
@@ -39117,27 +39117,27 @@ function f2() {
   })(Nt, Nt.exports)), Nt.exports;
 }
 var Nl;
-function Zp() {
+function Tp() {
   return Nl || (Nl = 1, (function(e, n) {
     n.__esModule = true;
-    function a5(b5) {
-      return b5 && b5.__esModule ? b5 : { default: b5 };
+    function a5(b) {
+      return b && b.__esModule ? b : { default: b };
     }
-    function i(b5) {
-      if (b5 && b5.__esModule)
-        return b5;
+    function i(b) {
+      if (b && b.__esModule)
+        return b;
       var v = {};
-      if (b5 != null)
-        for (var m5 in b5)
-          Object.prototype.hasOwnProperty.call(b5, m5) && (v[m5] = b5[m5]);
-      return v.default = b5, v;
+      if (b != null)
+        for (var m5 in b)
+          Object.prototype.hasOwnProperty.call(b, m5) && (v[m5] = b[m5]);
+      return v.default = b, v;
     }
-    var t5 = hs(), o5 = i(t5), r5 = Yp(), l6 = a5(r5), h = pn(), c6 = a5(h), g6 = He(), f = i(g6), u6 = Ip(), d6 = i(u6), s5 = f2(), p5 = a5(s5);
+    var t5 = hs(), o5 = i(t5), r5 = kp(), l6 = a5(r5), h = pn(), c6 = a5(h), g6 = He(), f = i(g6), u6 = Zp(), d6 = i(u6), s5 = f2(), p5 = a5(s5);
     function y6() {
-      var b5 = new o5.HandlebarsEnvironment();
-      return f.extend(b5, o5), b5.SafeString = l6.default, b5.Exception = c6.default, b5.Utils = f, b5.escapeExpression = f.escapeExpression, b5.VM = d6, b5.template = function(v) {
-        return d6.template(v, b5);
-      }, b5;
+      var b = new o5.HandlebarsEnvironment();
+      return f.extend(b, o5), b.SafeString = l6.default, b.Exception = c6.default, b.Utils = f, b.escapeExpression = f.escapeExpression, b.VM = d6, b.template = function(v) {
+        return d6.template(v, b);
+      }, b;
     }
     var w = y6();
     w.create = y6, p5.default(w), w.default = w, n.default = w, e.exports = n.default;
@@ -39173,7 +39173,7 @@ function p2() {
 var Qa = {};
 var Xt = { exports: {} };
 var Xl;
-function Tp() {
+function Mp() {
   return Xl || (Xl = 1, (function(e, n) {
     n.__esModule = true;
     var a5 = (function() {
@@ -39438,12 +39438,12 @@ function Tp() {
           f.push(y6);
           var w = this.lexer.options && this.lexer.options.ranges;
           typeof this.yy.parseError == "function" && (this.parseError = this.yy.parseError);
-          function b5() {
-            var A5;
-            return A5 = h.lexer.lex() || 1, typeof A5 != "number" && (A5 = h.symbols_[A5] || A5), A5;
+          function b() {
+            var A;
+            return A = h.lexer.lex() || 1, typeof A != "number" && (A = h.symbols_[A] || A), A;
           }
-          for (var v, m5, j, $5, S5 = {}, L6, M5, I5, k5; ; ) {
-            if (m5 = c6[c6.length - 1], this.defaultActions[m5] ? j = this.defaultActions[m5] : ((v === null || typeof v > "u") && (v = b5()), j = u6[m5] && u6[m5][v]), typeof j > "u" || !j.length || !j[0]) {
+          for (var v, m5, j, $5, S5 = {}, L6, M5, I, k5; ; ) {
+            if (m5 = c6[c6.length - 1], this.defaultActions[m5] ? j = this.defaultActions[m5] : ((v === null || typeof v > "u") && (v = b()), j = u6[m5] && u6[m5][v]), typeof j > "u" || !j.length || !j[0]) {
               var Z = "";
               {
                 k5 = [];
@@ -39462,7 +39462,7 @@ Expecting ` + k5.join(", ") + ", got '" + (this.terminals_[v] || v) + "'" : Z = 
               case 2:
                 if (M5 = this.productions_[j[1]][1], S5.$ = g6[g6.length - M5], S5._$ = { first_line: f[f.length - (M5 || 1)].first_line, last_line: f[f.length - 1].last_line, first_column: f[f.length - (M5 || 1)].first_column, last_column: f[f.length - 1].last_column }, w && (S5._$.range = [f[f.length - (M5 || 1)].range[0], f[f.length - 1].range[1]]), $5 = this.performAction.call(S5, d6, p5, s5, this.yy, j[1], g6, f), typeof $5 < "u")
                   return $5;
-                M5 && (c6 = c6.slice(0, -1 * M5 * 2), g6 = g6.slice(0, -1 * M5), f = f.slice(0, -1 * M5)), c6.push(this.productions_[j[1]][0]), g6.push(S5.$), f.push(S5._$), I5 = u6[c6[c6.length - 2]][c6[c6.length - 1]], c6.push(I5);
+                M5 && (c6 = c6.slice(0, -1 * M5 * 2), g6 = g6.slice(0, -1 * M5), f = f.slice(0, -1 * M5)), c6.push(this.productions_[j[1]][0]), g6.push(S5.$), f.push(S5._$), I = u6[c6[c6.length - 2]][c6[c6.length - 1]], c6.push(I);
                 break;
               case 3:
                 return true;
@@ -39762,7 +39762,7 @@ function y2() {
   })(Bt, Bt.exports)), Bt.exports;
 }
 var Bl;
-function Mp() {
+function Jp() {
   return Bl || (Bl = 1, (function(e, n) {
     n.__esModule = true;
     function a5(g6) {
@@ -39779,7 +39779,7 @@ function Mp() {
       for (var d6 = g6.body, s5 = 0, p5 = d6.length; s5 < p5; s5++) {
         var y6 = d6[s5], w = this.accept(y6);
         if (w) {
-          var b5 = r5(d6, s5, u6), v = l6(d6, s5, u6), m5 = w.openStandalone && b5, j = w.closeStandalone && v, $5 = w.inlineStandalone && b5 && v;
+          var b = r5(d6, s5, u6), v = l6(d6, s5, u6), m5 = w.openStandalone && b, j = w.closeStandalone && v, $5 = w.inlineStandalone && b && v;
           w.close && h(d6, s5, true), w.open && c6(d6, s5, true), f && $5 && (h(d6, s5), c6(d6, s5) && y6.type === "PartialStatement" && (y6.indent = /([ \t]+$)/.exec(d6[s5 - 1].original)[1])), f && m5 && (h((y6.program || y6.inverse).body), c6(d6, s5)), f && j && (h(d6, s5), c6((y6.inverse || y6.program).body));
         }
       }
@@ -39848,7 +39848,7 @@ function Mp() {
 }
 var Ge = {};
 var xl;
-function Jp() {
+function Dp() {
   if (xl) return Ge;
   xl = 1, Ge.__esModule = true, Ge.SourceLocation = t5, Ge.id = o5, Ge.stripFlags = r5, Ge.stripComment = l6, Ge.preparePath = h, Ge.prepareMustache = c6, Ge.prepareRawBlock = g6, Ge.prepareBlock = f, Ge.prepareProgram = u6, Ge.preparePartialBlock = d6;
   function e(s5) {
@@ -39884,25 +39884,25 @@ function Jp() {
   }
   function h(s5, p5, y6) {
     y6 = this.locInfo(y6);
-    for (var w = s5 ? "@" : "", b5 = [], v = 0, m5 = 0, j = p5.length; m5 < j; m5++) {
+    for (var w = s5 ? "@" : "", b = [], v = 0, m5 = 0, j = p5.length; m5 < j; m5++) {
       var $5 = p5[m5].part, S5 = p5[m5].original !== $5;
       if (w += (p5[m5].separator || "") + $5, !S5 && ($5 === ".." || $5 === "." || $5 === "this")) {
-        if (b5.length > 0)
+        if (b.length > 0)
           throw new a5.default("Invalid path: " + w, { loc: y6 });
         $5 === ".." && v++;
       } else
-        b5.push($5);
+        b.push($5);
     }
     return {
       type: "PathExpression",
       data: s5,
       depth: v,
-      parts: b5,
+      parts: b,
       original: w,
       loc: y6
     };
   }
-  function c6(s5, p5, y6, w, b5, v) {
+  function c6(s5, p5, y6, w, b, v) {
     var m5 = w.charAt(3) || w.charAt(2), j = m5 !== "{" && m5 !== "&", $5 = /\*/.test(w);
     return {
       type: $5 ? "Decorator" : "MustacheStatement",
@@ -39910,13 +39910,13 @@ function Jp() {
       params: p5,
       hash: y6,
       escaped: j,
-      strip: b5,
+      strip: b,
       loc: this.locInfo(v)
     };
   }
   function g6(s5, p5, y6, w) {
     i(s5, y6), w = this.locInfo(w);
-    var b5 = {
+    var b = {
       type: "Program",
       body: p5,
       strip: {},
@@ -39927,14 +39927,14 @@ function Jp() {
       path: s5.path,
       params: s5.params,
       hash: s5.hash,
-      program: b5,
+      program: b,
       openStrip: {},
       inverseStrip: {},
       closeStrip: {},
       loc: w
     };
   }
-  function f(s5, p5, y6, w, b5, v) {
+  function f(s5, p5, y6, w, b, v) {
     w && w.path && i(s5, w);
     var m5 = /\*/.test(s5.open);
     p5.blockParams = s5.blockParams;
@@ -39944,7 +39944,7 @@ function Jp() {
         throw new a5.default("Unexpected inverse block on decorator", y6);
       y6.chain && (y6.program.body[0].closeStrip = w.strip), $5 = y6.strip, j = y6.program;
     }
-    return b5 && (b5 = j, j = p5, p5 = b5), {
+    return b && (b = j, j = p5, p5 = b), {
       type: m5 ? "DecoratorBlock" : "BlockStatement",
       path: s5.path,
       params: s5.params,
@@ -39994,7 +39994,7 @@ function Jp() {
   return Ge;
 }
 var Fl;
-function Dp() {
+function Pp() {
   if (Fl) return Qa;
   Fl = 1, Qa.__esModule = true, Qa.parseWithoutProcessing = g6, Qa.parse = f;
   function e(u6) {
@@ -40009,7 +40009,7 @@ function Dp() {
   function n(u6) {
     return u6 && u6.__esModule ? u6 : { default: u6 };
   }
-  var a5 = Tp(), i = n(a5), t5 = Mp(), o5 = n(t5), r5 = Jp(), l6 = e(r5), h = He();
+  var a5 = Mp(), i = n(a5), t5 = Jp(), o5 = n(t5), r5 = Dp(), l6 = e(r5), h = He();
   Qa.parser = i.default;
   var c6 = {};
   h.extend(c6, l6);
@@ -40030,7 +40030,7 @@ function Dp() {
 }
 var Oa = {};
 var Rl;
-function Pp() {
+function Ap() {
   if (Rl) return Oa;
   Rl = 1, Oa.__esModule = true, Oa.Compiler = l6, Oa.precompile = h, Oa.compile = c6;
   function e(u6) {
@@ -40107,8 +40107,8 @@ function Pp() {
       p5.length || (this.options.explicitPartialContext ? this.opcode("pushLiteral", "undefined") : p5.push({ type: "PathExpression", parts: [], depth: 0 }));
       var y6 = d6.name.original, w = d6.name.type === "SubExpression";
       w && this.accept(d6.name), this.setupFullMustacheParams(d6, s5, void 0, true);
-      var b5 = d6.indent || "";
-      this.options.preventIndent && b5 && (this.opcode("appendContent", b5), b5 = ""), this.opcode("invokePartial", w, y6, b5), this.opcode("append");
+      var b = d6.indent || "";
+      this.options.preventIndent && b && (this.opcode("appendContent", b), b = ""), this.opcode("invokePartial", w, y6, b), this.opcode("append");
     },
     PartialBlockStatement: function(d6) {
       this.PartialStatement(d6);
@@ -40130,20 +40130,20 @@ function Pp() {
       s5 === "simple" ? this.simpleSexpr(d6) : s5 === "helper" ? this.helperSexpr(d6) : this.ambiguousSexpr(d6);
     },
     ambiguousSexpr: function(d6, s5, p5) {
-      var y6 = d6.path, w = y6.parts[0], b5 = s5 != null || p5 != null;
-      this.opcode("getContext", y6.depth), this.opcode("pushProgram", s5), this.opcode("pushProgram", p5), y6.strict = true, this.accept(y6), this.opcode("invokeAmbiguous", w, b5);
+      var y6 = d6.path, w = y6.parts[0], b = s5 != null || p5 != null;
+      this.opcode("getContext", y6.depth), this.opcode("pushProgram", s5), this.opcode("pushProgram", p5), y6.strict = true, this.accept(y6), this.opcode("invokeAmbiguous", w, b);
     },
     simpleSexpr: function(d6) {
       var s5 = d6.path;
       s5.strict = true, this.accept(s5), this.opcode("resolvePossibleLambda");
     },
     helperSexpr: function(d6, s5, p5) {
-      var y6 = this.setupFullMustacheParams(d6, s5, p5), w = d6.path, b5 = w.parts[0];
-      if (this.options.knownHelpers[b5])
-        this.opcode("invokeKnownHelper", y6.length, b5);
+      var y6 = this.setupFullMustacheParams(d6, s5, p5), w = d6.path, b = w.parts[0];
+      if (this.options.knownHelpers[b])
+        this.opcode("invokeKnownHelper", y6.length, b);
       else {
         if (this.options.knownHelpersOnly)
-          throw new a5.default("You specified knownHelpersOnly, but used the unknown helper " + b5, d6);
+          throw new a5.default("You specified knownHelpersOnly, but used the unknown helper " + b, d6);
         w.strict = true, w.falsy = true, this.accept(w), this.opcode("invokeHelper", y6.length, w.original, o5.default.helpers.simpleId(w));
       }
     },
@@ -40189,8 +40189,8 @@ function Pp() {
     classifySexpr: function(d6) {
       var s5 = o5.default.helpers.simpleId(d6.path), p5 = s5 && !!this.blockParamIndex(d6.path.parts[0]), y6 = !p5 && o5.default.helpers.helperExpression(d6), w = !p5 && (y6 || s5);
       if (w && !y6) {
-        var b5 = d6.path.parts[0], v = this.options;
-        v.knownHelpers[b5] ? y6 = true : v.knownHelpersOnly && (w = false);
+        var b = d6.path.parts[0], v = this.options;
+        v.knownHelpers[b] ? y6 = true : v.knownHelpersOnly && (w = false);
       }
       return y6 ? "helper" : w ? "ambiguous" : "simple";
     },
@@ -40239,16 +40239,16 @@ function Pp() {
     d6 = i.extend({}, d6), "data" in d6 || (d6.data = true), d6.compat && (d6.useDepths = true);
     var p5 = void 0;
     function y6() {
-      var b5 = s5.parse(u6, d6), v = new s5.Compiler().compile(b5, d6), m5 = new s5.JavaScriptCompiler().compile(v, d6, void 0, true);
+      var b = s5.parse(u6, d6), v = new s5.Compiler().compile(b, d6), m5 = new s5.JavaScriptCompiler().compile(v, d6, void 0, true);
       return s5.template(m5);
     }
-    function w(b5, v) {
-      return p5 || (p5 = y6()), p5.call(this, b5, v);
+    function w(b, v) {
+      return p5 || (p5 = y6()), p5.call(this, b, v);
     }
-    return w._setup = function(b5) {
-      return p5 || (p5 = y6()), p5._setup(b5);
-    }, w._child = function(b5, v, m5, j) {
-      return p5 || (p5 = y6()), p5._child(b5, v, m5, j);
+    return w._setup = function(b) {
+      return p5 || (p5 = y6()), p5._setup(b);
+    }, w._child = function(b, v, m5, j) {
+      return p5 || (p5 = y6()), p5._child(b, v, m5, j);
     }, w;
   }
   function g6(u6, d6) {
@@ -40283,7 +40283,7 @@ var hu = {};
 var Rt = {};
 var Gt = {};
 var Gl;
-function Ap() {
+function Np() {
   if (Gl) return Gt;
   Gl = 1;
   var e = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/".split("");
@@ -40300,7 +40300,7 @@ var _l;
 function b2() {
   if (_l) return Rt;
   _l = 1;
-  var e = Ap(), n = 5, a5 = 1 << n, i = a5 - 1, t5 = a5;
+  var e = Np(), n = 5, a5 = 1 << n, i = a5 - 1, t5 = a5;
   function o5(l6) {
     return l6 < 0 ? (-l6 << 1) + 1 : (l6 << 1) + 0;
   }
@@ -40362,8 +40362,8 @@ function Ui() {
           return m5;
         j = $5.path;
       }
-      for (var S5 = e.isAbsolute(j), L6 = j.split(/\/+/), M5, I5 = 0, k5 = L6.length - 1; k5 >= 0; k5--)
-        M5 = L6[k5], M5 === "." ? L6.splice(k5, 1) : M5 === ".." ? I5++ : I5 > 0 && (M5 === "" ? (L6.splice(k5 + 1, I5), I5 = 0) : (L6.splice(k5, 2), I5--));
+      for (var S5 = e.isAbsolute(j), L6 = j.split(/\/+/), M5, I = 0, k5 = L6.length - 1; k5 >= 0; k5--)
+        M5 = L6[k5], M5 === "." ? L6.splice(k5, 1) : M5 === ".." ? I++ : I > 0 && (M5 === "" ? (L6.splice(k5 + 1, I), I = 0) : (L6.splice(k5, 2), I--));
       return j = L6.join("/"), j === "" && (j = S5 ? "/" : "."), $5 ? ($5.path = j, o5($5)) : j;
     }
     e.normalize = r5;
@@ -40437,10 +40437,10 @@ function Ui() {
       return $5 !== 0 || ($5 = m5.generatedColumn - j.generatedColumn, $5 !== 0) || ($5 = y6(m5.source, j.source), $5 !== 0) || ($5 = m5.originalLine - j.originalLine, $5 !== 0) || ($5 = m5.originalColumn - j.originalColumn, $5 !== 0) ? $5 : y6(m5.name, j.name);
     }
     e.compareByGeneratedPositionsInflated = w;
-    function b5(m5) {
+    function b(m5) {
       return JSON.parse(m5.replace(/^\)]}'[^\n]*\n/, ""));
     }
-    e.parseSourceMapInput = b5;
+    e.parseSourceMapInput = b;
     function v(m5, j, $5) {
       if (j = j || "", m5 && (m5[m5.length - 1] !== "/" && j[0] !== "/" && (m5 += "/"), j = m5 + j), $5) {
         var S5 = t5($5);
@@ -40501,7 +40501,7 @@ function w2() {
 }
 var pu = {};
 var Wl;
-function Np() {
+function Hp() {
   if (Wl) return pu;
   Wl = 1;
   var e = Ui();
@@ -40524,7 +40524,7 @@ var Kl;
 function m2() {
   if (Kl) return hu;
   Kl = 1;
-  var e = b2(), n = Ui(), a5 = w2().ArraySet, i = Np().MappingList;
+  var e = b2(), n = Ui(), a5 = w2().ArraySet, i = Hp().MappingList;
   function t5(o5) {
     o5 || (o5 = {}), this._file = n.getArg(o5, "file", null), this._sourceRoot = n.getArg(o5, "sourceRoot", null), this._skipValidation = n.getArg(o5, "skipValidation", false), this._sources = new a5(), this._names = new a5(), this._mappings = new i(), this._sourcesContents = null;
   }
@@ -40607,12 +40607,12 @@ function m2() {
       }));
     }
   }, t5.prototype._serializeMappings = function() {
-    for (var r5 = 0, l6 = 1, h = 0, c6 = 0, g6 = 0, f = 0, u6 = "", d6, s5, p5, y6, w = this._mappings.toArray(), b5 = 0, v = w.length; b5 < v; b5++) {
-      if (s5 = w[b5], d6 = "", s5.generatedLine !== l6)
+    for (var r5 = 0, l6 = 1, h = 0, c6 = 0, g6 = 0, f = 0, u6 = "", d6, s5, p5, y6, w = this._mappings.toArray(), b = 0, v = w.length; b < v; b++) {
+      if (s5 = w[b], d6 = "", s5.generatedLine !== l6)
         for (r5 = 0; s5.generatedLine !== l6; )
           d6 += ";", l6++;
-      else if (b5 > 0) {
-        if (!n.compareByGeneratedPositionsInflated(s5, w[b5 - 1]))
+      else if (b > 0) {
+        if (!n.compareByGeneratedPositionsInflated(s5, w[b - 1]))
           continue;
         d6 += ",";
       }
@@ -40642,7 +40642,7 @@ function m2() {
 var Ji = {};
 var yu = {};
 var Ul;
-function Hp() {
+function Xp() {
   return Ul || (Ul = 1, (function(e) {
     e.GREATEST_LOWER_BOUND = 1, e.LEAST_UPPER_BOUND = 2;
     function n(a5, i, t5, o5, r5, l6) {
@@ -40670,7 +40670,7 @@ function Hp() {
 }
 var bu = {};
 var zl;
-function Xp() {
+function Ep() {
   if (zl) return bu;
   zl = 1;
   function e(i, t5, o5) {
@@ -40696,10 +40696,10 @@ function Xp() {
   }, bu;
 }
 var ql;
-function Ep() {
+function Bp() {
   if (ql) return Ji;
   ql = 1;
-  var e = Ui(), n = Hp(), a5 = w2().ArraySet, i = b2(), t5 = Xp().quickSort;
+  var e = Ui(), n = Xp(), a5 = w2().ArraySet, i = b2(), t5 = Ep().quickSort;
   function o5(c6, g6) {
     var f = c6;
     return typeof c6 == "string" && (f = e.parseSourceMapInput(c6)), f.sections != null ? new h(f, g6) : new r5(f, g6);
@@ -40737,9 +40737,9 @@ function Ep() {
     }
     var y6 = this.sourceRoot;
     p5.map(function(w) {
-      var b5 = w.source === null ? null : this._sources.at(w.source);
-      return b5 = e.computeSourceURL(y6, b5, this._sourceMapURL), {
-        source: b5,
+      var b = w.source === null ? null : this._sources.at(w.source);
+      return b = e.computeSourceURL(y6, b, this._sourceMapURL), {
+        source: b,
         generatedLine: w.generatedLine,
         generatedColumn: w.generatedColumn,
         originalLine: w.originalLine,
@@ -40785,14 +40785,14 @@ function Ep() {
   function r5(c6, g6) {
     var f = c6;
     typeof c6 == "string" && (f = e.parseSourceMapInput(c6));
-    var u6 = e.getArg(f, "version"), d6 = e.getArg(f, "sources"), s5 = e.getArg(f, "names", []), p5 = e.getArg(f, "sourceRoot", null), y6 = e.getArg(f, "sourcesContent", null), w = e.getArg(f, "mappings"), b5 = e.getArg(f, "file", null);
+    var u6 = e.getArg(f, "version"), d6 = e.getArg(f, "sources"), s5 = e.getArg(f, "names", []), p5 = e.getArg(f, "sourceRoot", null), y6 = e.getArg(f, "sourcesContent", null), w = e.getArg(f, "mappings"), b = e.getArg(f, "file", null);
     if (u6 != this._version)
       throw new Error("Unsupported version: " + u6);
     p5 && (p5 = e.normalize(p5)), d6 = d6.map(String).map(e.normalize).map(function(v) {
       return p5 && e.isAbsolute(p5) && e.isAbsolute(v) ? e.relative(p5, v) : v;
     }), this._names = a5.fromArray(s5.map(String), true), this._sources = a5.fromArray(d6, true), this._absoluteSources = this._sources.toArray().map(function(v) {
       return e.computeSourceURL(p5, v, g6);
-    }), this.sourceRoot = p5, this.sourcesContent = y6, this._mappings = w, this._sourceMapURL = g6, this.file = b5;
+    }), this.sourceRoot = p5, this.sourcesContent = y6, this._mappings = w, this._sourceMapURL = g6, this.file = b;
   }
   r5.prototype = Object.create(o5.prototype), r5.prototype.consumer = o5, r5.prototype._findSourceIndex = function(c6) {
     var g6 = c6;
@@ -40811,8 +40811,8 @@ function Ep() {
     ), u6.file = g6._file, u6._sourceMapURL = f, u6._absoluteSources = u6._sources.toArray().map(function($5) {
       return e.computeSourceURL(u6.sourceRoot, $5, f);
     });
-    for (var p5 = g6._mappings.toArray().slice(), y6 = u6.__generatedMappings = [], w = u6.__originalMappings = [], b5 = 0, v = p5.length; b5 < v; b5++) {
-      var m5 = p5[b5], j = new l6();
+    for (var p5 = g6._mappings.toArray().slice(), y6 = u6.__generatedMappings = [], w = u6.__originalMappings = [], b = 0, v = p5.length; b < v; b++) {
+      var m5 = p5[b], j = new l6();
       j.generatedLine = m5.generatedLine, j.generatedColumn = m5.generatedColumn, m5.source && (j.source = s5.indexOf(m5.source), j.originalLine = m5.originalLine, j.originalColumn = m5.originalColumn, m5.name && (j.name = d6.indexOf(m5.name)), w.push(j)), y6.push(j);
     }
     return t5(u6.__originalMappings, e.compareByOriginalPositions), u6;
@@ -40825,26 +40825,26 @@ function Ep() {
     this.generatedLine = 0, this.generatedColumn = 0, this.source = null, this.originalLine = null, this.originalColumn = null, this.name = null;
   }
   r5.prototype._parseMappings = function(g6, f) {
-    for (var u6 = 1, d6 = 0, s5 = 0, p5 = 0, y6 = 0, w = 0, b5 = g6.length, v = 0, m5 = {}, j = {}, $5 = [], S5 = [], L6, M5, I5, k5, Z; v < b5; )
+    for (var u6 = 1, d6 = 0, s5 = 0, p5 = 0, y6 = 0, w = 0, b = g6.length, v = 0, m5 = {}, j = {}, $5 = [], S5 = [], L6, M5, I, k5, Z; v < b; )
       if (g6.charAt(v) === ";")
         u6++, v++, d6 = 0;
       else if (g6.charAt(v) === ",")
         v++;
       else {
-        for (L6 = new l6(), L6.generatedLine = u6, k5 = v; k5 < b5 && !this._charIsMappingSeparator(g6, k5); k5++)
+        for (L6 = new l6(), L6.generatedLine = u6, k5 = v; k5 < b && !this._charIsMappingSeparator(g6, k5); k5++)
           ;
-        if (M5 = g6.slice(v, k5), I5 = m5[M5], I5)
+        if (M5 = g6.slice(v, k5), I = m5[M5], I)
           v += M5.length;
         else {
-          for (I5 = []; v < k5; )
-            i.decode(g6, v, j), Z = j.value, v = j.rest, I5.push(Z);
-          if (I5.length === 2)
+          for (I = []; v < k5; )
+            i.decode(g6, v, j), Z = j.value, v = j.rest, I.push(Z);
+          if (I.length === 2)
             throw new Error("Found a source, but no line and column");
-          if (I5.length === 3)
+          if (I.length === 3)
             throw new Error("Found a source and line, but no column");
-          m5[M5] = I5;
+          m5[M5] = I;
         }
-        L6.generatedColumn = d6 + I5[0], d6 = L6.generatedColumn, I5.length > 1 && (L6.source = y6 + I5[1], y6 += I5[1], L6.originalLine = s5 + I5[2], s5 = L6.originalLine, L6.originalLine += 1, L6.originalColumn = p5 + I5[3], p5 = L6.originalColumn, I5.length > 4 && (L6.name = w + I5[4], w += I5[4])), S5.push(L6), typeof L6.originalLine == "number" && $5.push(L6);
+        L6.generatedColumn = d6 + I[0], d6 = L6.generatedColumn, I.length > 1 && (L6.source = y6 + I[1], y6 += I[1], L6.originalLine = s5 + I[2], s5 = L6.originalLine, L6.originalLine += 1, L6.originalColumn = p5 + I[3], p5 = L6.originalColumn, I.length > 4 && (L6.name = w + I[4], w += I[4])), S5.push(L6), typeof L6.originalLine == "number" && $5.push(L6);
       }
     t5(S5, e.compareByGeneratedPositionsDeflated), this.__generatedMappings = S5, t5($5, e.compareByOriginalPositions), this.__originalMappings = $5;
   }, r5.prototype._findMapping = function(g6, f, u6, d6, s5, p5) {
@@ -40969,15 +40969,15 @@ function Ep() {
     this._sections = d6.map(function(p5) {
       if (p5.url)
         throw new Error("Support for url field in sections not implemented.");
-      var y6 = e.getArg(p5, "offset"), w = e.getArg(y6, "line"), b5 = e.getArg(y6, "column");
-      if (w < s5.line || w === s5.line && b5 < s5.column)
+      var y6 = e.getArg(p5, "offset"), w = e.getArg(y6, "line"), b = e.getArg(y6, "column");
+      if (w < s5.line || w === s5.line && b < s5.column)
         throw new Error("Section offsets must be ordered and non-overlapping.");
       return s5 = y6, {
         generatedOffset: {
           // The offset fields are 0-based, but we use 1-based indices when
           // encoding/decoding from VLQ.
           generatedLine: w + 1,
-          generatedColumn: b5 + 1
+          generatedColumn: b + 1
         },
         consumer: new o5(e.getArg(p5, "map"), g6)
       };
@@ -41049,15 +41049,15 @@ function Ep() {
       for (var d6 = this._sections[u6], s5 = d6.consumer._generatedMappings, p5 = 0; p5 < s5.length; p5++) {
         var y6 = s5[p5], w = d6.consumer._sources.at(y6.source);
         w = e.computeSourceURL(d6.consumer.sourceRoot, w, this._sourceMapURL), this._sources.add(w), w = this._sources.indexOf(w);
-        var b5 = null;
-        y6.name && (b5 = d6.consumer._names.at(y6.name), this._names.add(b5), b5 = this._names.indexOf(b5));
+        var b = null;
+        y6.name && (b = d6.consumer._names.at(y6.name), this._names.add(b), b = this._names.indexOf(b));
         var v = {
           source: w,
           generatedLine: y6.generatedLine + (d6.generatedOffset.generatedLine - 1),
           generatedColumn: y6.generatedColumn + (d6.generatedOffset.generatedLine === y6.generatedLine ? d6.generatedOffset.generatedColumn - 1 : 0),
           originalLine: y6.originalLine,
           originalColumn: y6.originalColumn,
-          name: b5
+          name: b
         };
         this.__generatedMappings.push(v), typeof v.originalLine == "number" && this.__originalMappings.push(v);
       }
@@ -41066,7 +41066,7 @@ function Ep() {
 }
 var wu = {};
 var Vl;
-function Bp() {
+function xp() {
   if (Vl) return wu;
   Vl = 1;
   var e = m2().SourceMapGenerator, n = Ui(), a5 = /(\r?\n)/, i = 10, t5 = "$$$isSourceNode$$$";
@@ -41075,43 +41075,43 @@ function Bp() {
   }
   return o5.fromStringWithSourceMap = function(l6, h, c6) {
     var g6 = new o5(), f = l6.split(a5), u6 = 0, d6 = function() {
-      var b5 = m5(), v = m5() || "";
-      return b5 + v;
+      var b = m5(), v = m5() || "";
+      return b + v;
       function m5() {
         return u6 < f.length ? f[u6++] : void 0;
       }
     }, s5 = 1, p5 = 0, y6 = null;
-    return h.eachMapping(function(b5) {
+    return h.eachMapping(function(b) {
       if (y6 !== null)
-        if (s5 < b5.generatedLine)
+        if (s5 < b.generatedLine)
           w(y6, d6()), s5++, p5 = 0;
         else {
-          var v = f[u6] || "", m5 = v.substr(0, b5.generatedColumn - p5);
-          f[u6] = v.substr(b5.generatedColumn - p5), p5 = b5.generatedColumn, w(y6, m5), y6 = b5;
+          var v = f[u6] || "", m5 = v.substr(0, b.generatedColumn - p5);
+          f[u6] = v.substr(b.generatedColumn - p5), p5 = b.generatedColumn, w(y6, m5), y6 = b;
           return;
         }
-      for (; s5 < b5.generatedLine; )
+      for (; s5 < b.generatedLine; )
         g6.add(d6()), s5++;
-      if (p5 < b5.generatedColumn) {
+      if (p5 < b.generatedColumn) {
         var v = f[u6] || "";
-        g6.add(v.substr(0, b5.generatedColumn)), f[u6] = v.substr(b5.generatedColumn), p5 = b5.generatedColumn;
+        g6.add(v.substr(0, b.generatedColumn)), f[u6] = v.substr(b.generatedColumn), p5 = b.generatedColumn;
       }
-      y6 = b5;
-    }, this), u6 < f.length && (y6 && w(y6, d6()), g6.add(f.splice(u6).join(""))), h.sources.forEach(function(b5) {
-      var v = h.sourceContentFor(b5);
-      v != null && (c6 != null && (b5 = n.join(c6, b5)), g6.setSourceContent(b5, v));
+      y6 = b;
+    }, this), u6 < f.length && (y6 && w(y6, d6()), g6.add(f.splice(u6).join(""))), h.sources.forEach(function(b) {
+      var v = h.sourceContentFor(b);
+      v != null && (c6 != null && (b = n.join(c6, b)), g6.setSourceContent(b, v));
     }), g6;
-    function w(b5, v) {
-      if (b5 === null || b5.source === void 0)
+    function w(b, v) {
+      if (b === null || b.source === void 0)
         g6.add(v);
       else {
-        var m5 = c6 ? n.join(c6, b5.source) : b5.source;
+        var m5 = c6 ? n.join(c6, b.source) : b.source;
         g6.add(new o5(
-          b5.originalLine,
-          b5.originalColumn,
+          b.originalLine,
+          b.originalColumn,
           m5,
           v,
-          b5.name
+          b.name
         ));
       }
     }
@@ -41193,8 +41193,8 @@ function Bp() {
           column: h.column
         }
       }), f = null, g6 = false);
-      for (var w = 0, b5 = p5.length; w < b5; w++)
-        p5.charCodeAt(w) === i ? (h.line++, h.column = 0, w + 1 === b5 ? (f = null, g6 = false) : g6 && c6.addMapping({
+      for (var w = 0, b = p5.length; w < b; w++)
+        p5.charCodeAt(w) === i ? (h.line++, h.column = 0, w + 1 === b ? (f = null, g6 = false) : g6 && c6.addMapping({
           source: y6.source,
           original: {
             line: y6.line,
@@ -41212,16 +41212,16 @@ function Bp() {
   }, wu.SourceNode = o5, wu;
 }
 var eg;
-function xp() {
-  return eg || (eg = 1, Mi.SourceMapGenerator = m2().SourceMapGenerator, Mi.SourceMapConsumer = Ep().SourceMapConsumer, Mi.SourceNode = Bp().SourceNode), Mi;
+function Fp() {
+  return eg || (eg = 1, Mi.SourceMapGenerator = m2().SourceMapGenerator, Mi.SourceMapConsumer = Bp().SourceMapConsumer, Mi.SourceNode = xp().SourceNode), Mi;
 }
 var ng;
-function Fp() {
+function Rp() {
   return ng || (ng = 1, (function(e, n) {
     n.__esModule = true;
     var a5 = He(), i = void 0;
     try {
-      var t5 = xp();
+      var t5 = Fp();
       i = t5.SourceNode;
     } catch {
     }
@@ -41310,13 +41310,13 @@ function Fp() {
   })(Ft, Ft.exports)), Ft.exports;
 }
 var ag;
-function Rp() {
+function Gp() {
   return ag || (ag = 1, (function(e, n) {
     n.__esModule = true;
     function a5(u6) {
       return u6 && u6.__esModule ? u6 : { default: u6 };
     }
-    var i = hs(), t5 = pn(), o5 = a5(t5), r5 = He(), l6 = Fp(), h = a5(l6);
+    var i = hs(), t5 = pn(), o5 = a5(t5), r5 = He(), l6 = Rp(), h = a5(l6);
     function c6(u6) {
       this.value = u6;
     }
@@ -41352,9 +41352,9 @@ function Rp() {
           programs: [],
           environments: []
         }, this.preamble(), this.stackSlot = 0, this.stackVars = [], this.aliases = {}, this.registers = { list: [] }, this.hashes = [], this.compileStack = [], this.inlineStack = [], this.blockParams = [], this.compileChildren(d6, s5), this.useDepths = this.useDepths || d6.useDepths || d6.useDecorators || this.options.compat, this.useBlockParams = this.useBlockParams || d6.useBlockParams;
-        var w = d6.opcodes, b5 = void 0, v = void 0, m5 = void 0, j = void 0;
+        var w = d6.opcodes, b = void 0, v = void 0, m5 = void 0, j = void 0;
         for (m5 = 0, j = w.length; m5 < j; m5++)
-          b5 = w[m5], this.source.currentLocation = b5.loc, v = v || b5.loc, this[b5.opcode].apply(this, b5.args);
+          b = w[m5], this.source.currentLocation = b.loc, v = v || b.loc, this[b.opcode].apply(this, b.args);
         if (this.source.currentLocation = v, this.pushSource(""), this.stackSlot || this.inlineStack.length || this.compileStack.length)
           throw new o5.default("Compile completed with content left on stack");
         this.decorators.isEmpty() ? this.decorators = void 0 : (this.useDecorators = true, this.decorators.prepend(["var decorators = container.decorators, ", this.lookupPropertyFunctionVarDeclaration(), `;
@@ -41369,9 +41369,9 @@ function Rp() {
           main: $5
         };
         this.decorators && (S5.main_d = this.decorators, S5.useDecorators = true);
-        var L6 = this.context, M5 = L6.programs, I5 = L6.decorators;
+        var L6 = this.context, M5 = L6.programs, I = L6.decorators;
         for (m5 = 0, j = M5.length; m5 < j; m5++)
-          M5[m5] && (S5[m5] = M5[m5], I5[m5] && (S5[m5 + "_d"] = I5[m5], S5.useDecorators = true));
+          M5[m5] && (S5[m5] = M5[m5], I[m5] && (S5[m5 + "_d"] = I[m5], S5.useDecorators = true));
         return this.environment.usePartial && (S5.usePartial = true), this.options.data && (S5.useData = true), this.useDepths && (S5.useDepths = true), this.useBlockParams && (S5.useBlockParams = true), this.options.compat && (S5.compat = true), y6 ? S5.compilerOptions = this.options : (S5.compiler = JSON.stringify(S5.compiler), this.source.currentLocation = { start: { line: 1, column: 0 } }, S5 = this.objectLiteral(S5), s5.srcName ? (S5 = S5.toStringWithSourceMap({ file: s5.destName }), S5.map = S5.map && S5.map.toString()) : S5 = S5.toString()), S5;
       },
       preamble: function() {
@@ -41385,17 +41385,17 @@ function Rp() {
           var j = s5.aliases[m5];
           j.children && j.referenceCount > 1 && (p5 += ", alias" + ++w + "=" + m5, j.children[0] = "alias" + w);
         }), this.lookupPropertyFunctionIsUsed && (p5 += ", " + this.lookupPropertyFunctionVarDeclaration());
-        var b5 = ["container", "depth0", "helpers", "partials", "data"];
-        (this.useBlockParams || this.useDepths) && b5.push("blockParams"), this.useDepths && b5.push("depths");
+        var b = ["container", "depth0", "helpers", "partials", "data"];
+        (this.useBlockParams || this.useDepths) && b.push("blockParams"), this.useDepths && b.push("depths");
         var v = this.mergeSource(p5);
-        return d6 ? (b5.push(v), Function.apply(this, b5)) : this.source.wrap(["function(", b5.join(","), `) {
+        return d6 ? (b.push(v), Function.apply(this, b)) : this.source.wrap(["function(", b.join(","), `) {
   `, v, "}"]);
       },
       mergeSource: function(d6) {
-        var s5 = this.environment.isSimple, p5 = !this.forceBuffer, y6 = void 0, w = void 0, b5 = void 0, v = void 0;
+        var s5 = this.environment.isSimple, p5 = !this.forceBuffer, y6 = void 0, w = void 0, b = void 0, v = void 0;
         return this.source.each(function(m5) {
-          m5.appendToBuffer ? (b5 ? m5.prepend("  + ") : b5 = m5, v = m5) : (b5 && (w ? b5.prepend("buffer += ") : y6 = true, v.add(";"), b5 = v = void 0), w = true, s5 || (p5 = false));
-        }), p5 ? b5 ? (b5.prepend("return "), v.add(";")) : w || this.source.push('return "";') : (d6 += ", buffer = " + (y6 ? "" : this.initializeBuffer()), b5 ? (b5.prepend("return buffer + "), v.add(";")) : this.source.push("return buffer;")), d6 && this.source.prepend("var " + d6.substring(2) + (y6 ? "" : `;
+          m5.appendToBuffer ? (b ? m5.prepend("  + ") : b = m5, v = m5) : (b && (w ? b.prepend("buffer += ") : y6 = true, v.add(";"), b = v = void 0), w = true, s5 || (p5 = false));
+        }), p5 ? b ? (b.prepend("return "), v.add(";")) : w || this.source.push('return "";') : (d6 += ", buffer = " + (y6 ? "" : this.initializeBuffer()), b ? (b.prepend("return buffer + "), v.add(";")) : this.source.push("return buffer;")), d6 && this.source.prepend("var " + d6.substring(2) + (y6 ? "" : `;
 `)), this.source.merge();
       },
       lookupPropertyFunctionVarDeclaration: function() {
@@ -41522,14 +41522,14 @@ function Rp() {
         d6 ? this.pushStackLiteral("container.data(data, " + d6 + ")") : this.pushStackLiteral("data"), this.resolvePath("data", s5, 0, true, p5);
       },
       resolvePath: function(d6, s5, p5, y6, w) {
-        var b5 = this;
+        var b = this;
         if (this.options.strict || this.options.assumeObjects) {
           this.push(f(this.options.strict && w, this, s5, p5, d6));
           return;
         }
         for (var v = s5.length; p5 < v; p5++)
           this.replaceStack(function(m5) {
-            var j = b5.nameLookup(m5, s5[p5], d6);
+            var j = b.nameLookup(m5, s5[p5], d6);
             return y6 ? [" && ", j] : [" != null ? ", j, " : ", m5];
           });
       },
@@ -41616,9 +41616,9 @@ function Rp() {
       //
       // If the helper is not found, `helperMissing` is called.
       invokeHelper: function(d6, s5, p5) {
-        var y6 = this.popStack(), w = this.setupHelper(d6, s5), b5 = [];
-        p5 && b5.push(w.name), b5.push(y6), this.options.strict || b5.push(this.aliasable("container.hooks.helperMissing"));
-        var v = ["(", this.itemsSeparatedBy(b5, "||"), ")"], m5 = this.source.functionCall(v, "call", w.callParams);
+        var y6 = this.popStack(), w = this.setupHelper(d6, s5), b = [];
+        p5 && b.push(w.name), b.push(y6), this.options.strict || b.push(this.aliasable("container.hooks.helperMissing"));
+        var v = ["(", this.itemsSeparatedBy(b, "||"), ")"], m5 = this.source.functionCall(v, "call", w.callParams);
         this.push(m5);
       },
       itemsSeparatedBy: function(d6, s5) {
@@ -41655,8 +41655,8 @@ function Rp() {
         this.useRegister("helper");
         var p5 = this.popStack();
         this.emptyHash();
-        var y6 = this.setupHelper(0, d6, s5), w = this.lastHelper = this.nameLookup("helpers", d6, "helper"), b5 = ["(", "(helper = ", w, " || ", p5, ")"];
-        this.options.strict || (b5[0] = "(helper = ", b5.push(" != null ? helper : ", this.aliasable("container.hooks.helperMissing"))), this.push(["(", b5, y6.paramsInit ? ["),(", y6.paramsInit] : [], "),", "(typeof helper === ", this.aliasable('"function"'), " ? ", this.source.functionCall("helper", "call", y6.callParams), " : helper))"]);
+        var y6 = this.setupHelper(0, d6, s5), w = this.lastHelper = this.nameLookup("helpers", d6, "helper"), b = ["(", "(helper = ", w, " || ", p5, ")"];
+        this.options.strict || (b[0] = "(helper = ", b.push(" != null ? helper : ", this.aliasable("container.hooks.helperMissing"))), this.push(["(", b, y6.paramsInit ? ["),(", y6.paramsInit] : [], "),", "(typeof helper === ", this.aliasable('"function"'), " ? ", this.source.functionCall("helper", "call", y6.callParams), " : helper))"]);
       },
       // [invokePartial]
       //
@@ -41678,8 +41678,8 @@ function Rp() {
       assignToHash: function(d6) {
         var s5 = this.popStack(), p5 = void 0, y6 = void 0, w = void 0;
         this.trackIds && (w = this.popStack()), this.stringParams && (y6 = this.popStack(), p5 = this.popStack());
-        var b5 = this.hash;
-        p5 && (b5.contexts[d6] = p5), y6 && (b5.types[d6] = y6), w && (b5.ids[d6] = w), b5.values[d6] = s5;
+        var b = this.hash;
+        p5 && (b.contexts[d6] = p5), y6 && (b.types[d6] = y6), w && (b.ids[d6] = w), b.values[d6] = s5;
       },
       pushId: function(d6, s5, p5) {
         d6 === "BlockParam" ? this.pushStackLiteral("blockParams[" + s5[0] + "].path[" + s5[1] + "]" + (p5 ? " + " + JSON.stringify("." + p5) : "")) : d6 === "PathExpression" ? this.pushString(s5) : d6 === "SubExpression" ? this.pushStackLiteral("true") : this.pushStackLiteral("null");
@@ -41687,8 +41687,8 @@ function Rp() {
       // HELPERS
       compiler: g6,
       compileChildren: function(d6, s5) {
-        for (var p5 = d6.children, y6 = void 0, w = void 0, b5 = 0, v = p5.length; b5 < v; b5++) {
-          y6 = p5[b5], w = new this.compiler();
+        for (var p5 = d6.children, y6 = void 0, w = void 0, b = 0, v = p5.length; b < v; b++) {
+          y6 = p5[b], w = new this.compiler();
           var m5 = this.matchExistingProgram(y6);
           if (m5 == null) {
             this.context.programs.push("");
@@ -41725,13 +41725,13 @@ function Rp() {
         var s5 = ["("], p5 = void 0, y6 = void 0, w = void 0;
         if (!this.isInline())
           throw new o5.default("replaceStack on non-inline");
-        var b5 = this.popStack(true);
-        if (b5 instanceof c6)
-          p5 = [b5.value], s5 = ["(", p5], w = true;
+        var b = this.popStack(true);
+        if (b instanceof c6)
+          p5 = [b.value], s5 = ["(", p5], w = true;
         else {
           y6 = true;
           var v = this.incrStack();
-          s5 = ["((", this.push(v), " = ", b5, ")"], p5 = this.topStack();
+          s5 = ["((", this.push(v), " = ", b, ")"], p5 = this.topStack();
         }
         var m5 = d6.call(this, p5);
         w || this.popStack(), y6 && this.stackSlot--, this.push(s5.concat(m5, ")"));
@@ -41787,22 +41787,22 @@ function Rp() {
         return s5 ? (s5.referenceCount++, s5) : (s5 = this.aliases[d6] = this.source.wrap(d6), s5.aliasable = true, s5.referenceCount = 1, s5);
       },
       setupHelper: function(d6, s5, p5) {
-        var y6 = [], w = this.setupHelperArgs(s5, d6, y6, p5), b5 = this.nameLookup("helpers", s5, "helper"), v = this.aliasable(this.contextName(0) + " != null ? " + this.contextName(0) + " : (container.nullContext || {})");
+        var y6 = [], w = this.setupHelperArgs(s5, d6, y6, p5), b = this.nameLookup("helpers", s5, "helper"), v = this.aliasable(this.contextName(0) + " != null ? " + this.contextName(0) + " : (container.nullContext || {})");
         return {
           params: y6,
           paramsInit: w,
-          name: b5,
+          name: b,
           callParams: [v].concat(y6)
         };
       },
       setupParams: function(d6, s5, p5) {
-        var y6 = {}, w = [], b5 = [], v = [], m5 = !p5, j = void 0;
+        var y6 = {}, w = [], b = [], v = [], m5 = !p5, j = void 0;
         m5 && (p5 = []), y6.name = this.quotedString(d6), y6.hash = this.popStack(), this.trackIds && (y6.hashIds = this.popStack()), this.stringParams && (y6.hashTypes = this.popStack(), y6.hashContexts = this.popStack());
         var $5 = this.popStack(), S5 = this.popStack();
         (S5 || $5) && (y6.fn = S5 || "container.noop", y6.inverse = $5 || "container.noop");
         for (var L6 = s5; L6--; )
-          j = this.popStack(), p5[L6] = j, this.trackIds && (v[L6] = this.popStack()), this.stringParams && (b5[L6] = this.popStack(), w[L6] = this.popStack());
-        return m5 && (y6.args = this.source.generateArray(p5)), this.trackIds && (y6.ids = this.source.generateArray(v)), this.stringParams && (y6.types = this.source.generateArray(b5), y6.contexts = this.source.generateArray(w)), this.options.data && (y6.data = "data"), this.useBlockParams && (y6.blockParams = "blockParams"), y6;
+          j = this.popStack(), p5[L6] = j, this.trackIds && (v[L6] = this.popStack()), this.stringParams && (b[L6] = this.popStack(), w[L6] = this.popStack());
+        return m5 && (y6.args = this.source.generateArray(p5)), this.trackIds && (y6.ids = this.source.generateArray(v)), this.stringParams && (y6.types = this.source.generateArray(b), y6.contexts = this.source.generateArray(w)), this.options.data && (y6.data = "data"), this.useBlockParams && (y6.blockParams = "blockParams"), y6;
       },
       setupHelperArgs: function(d6, s5, p5, y6) {
         var w = this.setupParams(d6, s5, p5);
@@ -41815,8 +41815,8 @@ function Rp() {
       return !g6.RESERVED_WORDS[u6] && /^[a-zA-Z_$][0-9a-zA-Z_$]*$/.test(u6);
     };
     function f(u6, d6, s5, p5, y6) {
-      var w = d6.popStack(), b5 = s5.length;
-      for (u6 && b5--; p5 < b5; p5++)
+      var w = d6.popStack(), b = s5.length;
+      for (u6 && b--; p5 < b; p5++)
         w = d6.nameLookup(w, s5[p5], y6);
       return u6 ? [d6.aliasable("container.strict"), "(", w, ", ", d6.quotedString(s5[p5]), ", ", JSON.stringify(d6.source.currentLocation), " )"] : w;
     }
@@ -41824,28 +41824,28 @@ function Rp() {
   })(xt, xt.exports)), xt.exports;
 }
 var ig;
-function Gp() {
+function _p() {
   return ig || (ig = 1, (function(e, n) {
     n.__esModule = true;
-    function a5(b5) {
-      return b5 && b5.__esModule ? b5 : { default: b5 };
+    function a5(b) {
+      return b && b.__esModule ? b : { default: b };
     }
-    var i = Zp(), t5 = a5(i), o5 = p2(), r5 = a5(o5), l6 = Dp(), h = Pp(), c6 = Rp(), g6 = a5(c6), f = y2(), u6 = a5(f), d6 = f2(), s5 = a5(d6), p5 = t5.default.create;
+    var i = Tp(), t5 = a5(i), o5 = p2(), r5 = a5(o5), l6 = Pp(), h = Ap(), c6 = Gp(), g6 = a5(c6), f = y2(), u6 = a5(f), d6 = f2(), s5 = a5(d6), p5 = t5.default.create;
     function y6() {
-      var b5 = p5();
-      return b5.compile = function(v, m5) {
-        return h.compile(v, m5, b5);
-      }, b5.precompile = function(v, m5) {
-        return h.precompile(v, m5, b5);
-      }, b5.AST = r5.default, b5.Compiler = h.Compiler, b5.JavaScriptCompiler = g6.default, b5.Parser = l6.parser, b5.parse = l6.parse, b5.parseWithoutProcessing = l6.parseWithoutProcessing, b5;
+      var b = p5();
+      return b.compile = function(v, m5) {
+        return h.compile(v, m5, b);
+      }, b.precompile = function(v, m5) {
+        return h.precompile(v, m5, b);
+      }, b.AST = r5.default, b.Compiler = h.Compiler, b.JavaScriptCompiler = g6.default, b.Parser = l6.parser, b.parse = l6.parse, b.parseWithoutProcessing = l6.parseWithoutProcessing, b;
     }
     var w = y6();
     w.create = y6, s5.default(w), w.Visitor = u6.default, w.default = w, n.default = w, e.exports = n.default;
   })(jt, jt.exports)), jt.exports;
 }
-Gp();
+_p();
 P.CURRENCY + "", P.EMAILS + "", P.LINKS + "", P.PHONES + "", P.FULL_NAME + "", P.ADDRESS + "", P.ACTOR + "", P.RICH_TEXT_V2 + "";
-var _p = {
+var Qp = {
   AED: { label: "UAE dirham" },
   AFN: { label: "Afghan afghani" },
   ALL: { label: "Albanian lek" },
@@ -42001,20 +42001,20 @@ var _p = {
   ZWG: { label: "Zimbabwe Gold" }
 };
 P.TEXT, P.FULL_NAME, P.UUID;
-var Qp = (e) => /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(e);
+var Op = (e) => /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(e);
 var mu;
 var tg;
-function Op() {
+function Wp() {
   if (tg) return mu;
   tg = 1;
-  var e = "[object Symbol]", n = /[^\x00-\x2f\x3a-\x40\x5b-\x60\x7b-\x7f]+/g, a5 = /[\xc0-\xd6\xd8-\xf6\xf8-\xff\u0100-\u017f]/g, i = "\\ud800-\\udfff", t5 = "\\u0300-\\u036f\\ufe20-\\ufe23", o5 = "\\u20d0-\\u20f0", r5 = "\\u2700-\\u27bf", l6 = "a-z\\xdf-\\xf6\\xf8-\\xff", h = "\\xac\\xb1\\xd7\\xf7", c6 = "\\x00-\\x2f\\x3a-\\x40\\x5b-\\x60\\x7b-\\xbf", g6 = "\\u2000-\\u206f", f = " \\t\\x0b\\f\\xa0\\ufeff\\n\\r\\u2028\\u2029\\u1680\\u180e\\u2000\\u2001\\u2002\\u2003\\u2004\\u2005\\u2006\\u2007\\u2008\\u2009\\u200a\\u202f\\u205f\\u3000", u6 = "A-Z\\xc0-\\xd6\\xd8-\\xde", d6 = "\\ufe0e\\ufe0f", s5 = h + c6 + g6 + f, p5 = "['\u2019]", y6 = "[" + i + "]", w = "[" + s5 + "]", b5 = "[" + t5 + o5 + "]", v = "\\d+", m5 = "[" + r5 + "]", j = "[" + l6 + "]", $5 = "[^" + i + s5 + v + r5 + l6 + u6 + "]", S5 = "\\ud83c[\\udffb-\\udfff]", L6 = "(?:" + b5 + "|" + S5 + ")", M5 = "[^" + i + "]", I5 = "(?:\\ud83c[\\udde6-\\uddff]){2}", k5 = "[\\ud800-\\udbff][\\udc00-\\udfff]", Z = "[" + u6 + "]", A5 = "\\u200d", R6 = "(?:" + j + "|" + $5 + ")", ae = "(?:" + Z + "|" + $5 + ")", de = "(?:" + p5 + "(?:d|ll|m|re|s|t|ve))?", Ce = "(?:" + p5 + "(?:D|LL|M|RE|S|T|VE))?", Te = L6 + "?", le = "[" + d6 + "]?", Dn = "(?:" + A5 + "(?:" + [M5, I5, k5].join("|") + ")" + le + Te + ")*", Pn = le + Te + Dn, An = "(?:" + [m5, I5, k5].join("|") + ")" + Pn, vn = "(?:" + [M5 + b5 + "?", b5, I5, k5, y6].join("|") + ")", T = RegExp(p5, "g"), D5 = RegExp(b5, "g"), F = RegExp(S5 + "(?=" + S5 + ")|" + vn + Pn, "g"), G5 = RegExp([
+  var e = "[object Symbol]", n = /[^\x00-\x2f\x3a-\x40\x5b-\x60\x7b-\x7f]+/g, a5 = /[\xc0-\xd6\xd8-\xf6\xf8-\xff\u0100-\u017f]/g, i = "\\ud800-\\udfff", t5 = "\\u0300-\\u036f\\ufe20-\\ufe23", o5 = "\\u20d0-\\u20f0", r5 = "\\u2700-\\u27bf", l6 = "a-z\\xdf-\\xf6\\xf8-\\xff", h = "\\xac\\xb1\\xd7\\xf7", c6 = "\\x00-\\x2f\\x3a-\\x40\\x5b-\\x60\\x7b-\\xbf", g6 = "\\u2000-\\u206f", f = " \\t\\x0b\\f\\xa0\\ufeff\\n\\r\\u2028\\u2029\\u1680\\u180e\\u2000\\u2001\\u2002\\u2003\\u2004\\u2005\\u2006\\u2007\\u2008\\u2009\\u200a\\u202f\\u205f\\u3000", u6 = "A-Z\\xc0-\\xd6\\xd8-\\xde", d6 = "\\ufe0e\\ufe0f", s5 = h + c6 + g6 + f, p5 = "['\u2019]", y6 = "[" + i + "]", w = "[" + s5 + "]", b = "[" + t5 + o5 + "]", v = "\\d+", m5 = "[" + r5 + "]", j = "[" + l6 + "]", $5 = "[^" + i + s5 + v + r5 + l6 + u6 + "]", S5 = "\\ud83c[\\udffb-\\udfff]", L6 = "(?:" + b + "|" + S5 + ")", M5 = "[^" + i + "]", I = "(?:\\ud83c[\\udde6-\\uddff]){2}", k5 = "[\\ud800-\\udbff][\\udc00-\\udfff]", Z = "[" + u6 + "]", A = "\\u200d", R6 = "(?:" + j + "|" + $5 + ")", ae = "(?:" + Z + "|" + $5 + ")", de = "(?:" + p5 + "(?:d|ll|m|re|s|t|ve))?", Ce = "(?:" + p5 + "(?:D|LL|M|RE|S|T|VE))?", Te = L6 + "?", le = "[" + d6 + "]?", Dn = "(?:" + A + "(?:" + [M5, I, k5].join("|") + ")" + le + Te + ")*", Pn = le + Te + Dn, An = "(?:" + [m5, I, k5].join("|") + ")" + Pn, vn = "(?:" + [M5 + b + "?", b, I, k5, y6].join("|") + ")", T5 = RegExp(p5, "g"), D5 = RegExp(b, "g"), F = RegExp(S5 + "(?=" + S5 + ")|" + vn + Pn, "g"), G5 = RegExp([
     Z + "?" + j + "+" + de + "(?=" + [w, Z, "$"].join("|") + ")",
     ae + "+" + Ce + "(?=" + [w, Z + R6, "$"].join("|") + ")",
     Z + "?" + R6 + "+" + de,
     Z + "+" + Ce,
     v,
     An
-  ].join("|"), "g"), Q5 = RegExp("[" + A5 + i + t5 + o5 + d6 + "]"), E = /[a-z][A-Z]|[A-Z]{2,}[a-z]|[0-9][a-zA-Z]|[a-zA-Z][0-9]|[^a-zA-Z0-9 ]/, B = {
+  ].join("|"), "g"), Q = RegExp("[" + A + i + t5 + o5 + d6 + "]"), E = /[a-z][A-Z]|[A-Z]{2,}[a-z]|[0-9][a-zA-Z]|[a-zA-Z][0-9]|[^a-zA-Z0-9 ]/, B = {
     // Latin-1 Supplement block.
     \u00C0: "A",
     \u00C1: "A",
@@ -42226,7 +42226,7 @@ function Op() {
   }
   var ye = pe(B);
   function Re(J5) {
-    return Q5.test(J5);
+    return Q.test(J5);
   }
   function me(J5) {
     return E.test(J5);
@@ -42269,7 +42269,7 @@ function Op() {
   }
   function tu(J5) {
     return function(x5) {
-      return fe(_5(ee2(x5).replace(T, "")), J5, "");
+      return fe(_6(ee2(x5).replace(T5, "")), J5, "");
     };
   }
   function Ii(J5) {
@@ -42291,14 +42291,14 @@ function Op() {
     return J5 = C5(J5), J5 && J5.replace(a5, ye).replace(D5, "");
   }
   var ie = iu("toUpperCase");
-  function _5(J5, x5, W) {
+  function _6(J5, x5, W) {
     return J5 = C5(J5), x5 = x5, x5 === void 0 ? me(J5) ? rn(J5) : tn(J5) : J5.match(x5) || [];
   }
   return mu = Y, mu;
 }
-var Wp = Op();
-var Up = "en";
-var zp = {
+var Kp = Wp();
+var zp = "en";
+var qp = {
   en: "en",
   "pseudo-en": "pseudo-en",
   "af-ZA": "af-ZA",
@@ -42331,10 +42331,10 @@ var zp = {
   "zh-CN": "zh-CN",
   "zh-TW": "zh-TW"
 };
-var qp = { version: 4, country_calling_codes: { 1: ["US", "AG", "AI", "AS", "BB", "BM", "BS", "CA", "DM", "DO", "GD", "GU", "JM", "KN", "KY", "LC", "MP", "MS", "PR", "SX", "TC", "TT", "VC", "VG", "VI"], 7: ["RU", "KZ"], 20: ["EG"], 27: ["ZA"], 30: ["GR"], 31: ["NL"], 32: ["BE"], 33: ["FR"], 34: ["ES"], 36: ["HU"], 39: ["IT", "VA"], 40: ["RO"], 41: ["CH"], 43: ["AT"], 44: ["GB", "GG", "IM", "JE"], 45: ["DK"], 46: ["SE"], 47: ["NO", "SJ"], 48: ["PL"], 49: ["DE"], 51: ["PE"], 52: ["MX"], 53: ["CU"], 54: ["AR"], 55: ["BR"], 56: ["CL"], 57: ["CO"], 58: ["VE"], 60: ["MY"], 61: ["AU", "CC", "CX"], 62: ["ID"], 63: ["PH"], 64: ["NZ"], 65: ["SG"], 66: ["TH"], 81: ["JP"], 82: ["KR"], 84: ["VN"], 86: ["CN"], 90: ["TR"], 91: ["IN"], 92: ["PK"], 93: ["AF"], 94: ["LK"], 95: ["MM"], 98: ["IR"], 211: ["SS"], 212: ["MA", "EH"], 213: ["DZ"], 216: ["TN"], 218: ["LY"], 220: ["GM"], 221: ["SN"], 222: ["MR"], 223: ["ML"], 224: ["GN"], 225: ["CI"], 226: ["BF"], 227: ["NE"], 228: ["TG"], 229: ["BJ"], 230: ["MU"], 231: ["LR"], 232: ["SL"], 233: ["GH"], 234: ["NG"], 235: ["TD"], 236: ["CF"], 237: ["CM"], 238: ["CV"], 239: ["ST"], 240: ["GQ"], 241: ["GA"], 242: ["CG"], 243: ["CD"], 244: ["AO"], 245: ["GW"], 246: ["IO"], 247: ["AC"], 248: ["SC"], 249: ["SD"], 250: ["RW"], 251: ["ET"], 252: ["SO"], 253: ["DJ"], 254: ["KE"], 255: ["TZ"], 256: ["UG"], 257: ["BI"], 258: ["MZ"], 260: ["ZM"], 261: ["MG"], 262: ["RE", "YT"], 263: ["ZW"], 264: ["NA"], 265: ["MW"], 266: ["LS"], 267: ["BW"], 268: ["SZ"], 269: ["KM"], 290: ["SH", "TA"], 291: ["ER"], 297: ["AW"], 298: ["FO"], 299: ["GL"], 350: ["GI"], 351: ["PT"], 352: ["LU"], 353: ["IE"], 354: ["IS"], 355: ["AL"], 356: ["MT"], 357: ["CY"], 358: ["FI", "AX"], 359: ["BG"], 370: ["LT"], 371: ["LV"], 372: ["EE"], 373: ["MD"], 374: ["AM"], 375: ["BY"], 376: ["AD"], 377: ["MC"], 378: ["SM"], 380: ["UA"], 381: ["RS"], 382: ["ME"], 383: ["XK"], 385: ["HR"], 386: ["SI"], 387: ["BA"], 389: ["MK"], 420: ["CZ"], 421: ["SK"], 423: ["LI"], 500: ["FK"], 501: ["BZ"], 502: ["GT"], 503: ["SV"], 504: ["HN"], 505: ["NI"], 506: ["CR"], 507: ["PA"], 508: ["PM"], 509: ["HT"], 590: ["GP", "BL", "MF"], 591: ["BO"], 592: ["GY"], 593: ["EC"], 594: ["GF"], 595: ["PY"], 596: ["MQ"], 597: ["SR"], 598: ["UY"], 599: ["CW", "BQ"], 670: ["TL"], 672: ["NF"], 673: ["BN"], 674: ["NR"], 675: ["PG"], 676: ["TO"], 677: ["SB"], 678: ["VU"], 679: ["FJ"], 680: ["PW"], 681: ["WF"], 682: ["CK"], 683: ["NU"], 685: ["WS"], 686: ["KI"], 687: ["NC"], 688: ["TV"], 689: ["PF"], 690: ["TK"], 691: ["FM"], 692: ["MH"], 850: ["KP"], 852: ["HK"], 853: ["MO"], 855: ["KH"], 856: ["LA"], 880: ["BD"], 886: ["TW"], 960: ["MV"], 961: ["LB"], 962: ["JO"], 963: ["SY"], 964: ["IQ"], 965: ["KW"], 966: ["SA"], 967: ["YE"], 968: ["OM"], 970: ["PS"], 971: ["AE"], 972: ["IL"], 973: ["BH"], 974: ["QA"], 975: ["BT"], 976: ["MN"], 977: ["NP"], 992: ["TJ"], 993: ["TM"], 994: ["AZ"], 995: ["GE"], 996: ["KG"], 998: ["UZ"] }, countries: { AC: ["247", "00", "(?:[01589]\\d|[46])\\d{4}", [5, 6]], AD: ["376", "00", "(?:1|6\\d)\\d{7}|[135-9]\\d{5}", [6, 8, 9], [["(\\d{3})(\\d{3})", "$1 $2", ["[135-9]"]], ["(\\d{4})(\\d{4})", "$1 $2", ["1"]], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["6"]]]], AE: ["971", "00", "(?:[4-7]\\d|9[0-689])\\d{7}|800\\d{2,9}|[2-4679]\\d{7}", [5, 6, 7, 8, 9, 10, 11, 12], [["(\\d{3})(\\d{2,9})", "$1 $2", ["60|8"]], ["(\\d)(\\d{3})(\\d{4})", "$1 $2 $3", ["[236]|[479][2-8]"], "0$1"], ["(\\d{3})(\\d)(\\d{5})", "$1 $2 $3", ["[479]"]], ["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["5"], "0$1"]], "0"], AF: ["93", "00", "[2-7]\\d{8}", [9], [["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["[2-7]"], "0$1"]], "0"], AG: ["1", "011", "(?:268|[58]\\d\\d|900)\\d{7}", [10], 0, "1", 0, "([457]\\d{6})$|1", "268$1", 0, "268"], AI: ["1", "011", "(?:264|[58]\\d\\d|900)\\d{7}", [10], 0, "1", 0, "([2457]\\d{6})$|1", "264$1", 0, "264"], AL: ["355", "00", "(?:700\\d\\d|900)\\d{3}|8\\d{5,7}|(?:[2-5]|6\\d)\\d{7}", [6, 7, 8, 9], [["(\\d{3})(\\d{3,4})", "$1 $2", ["80|9"], "0$1"], ["(\\d)(\\d{3})(\\d{4})", "$1 $2 $3", ["4[2-6]"], "0$1"], ["(\\d{2})(\\d{3})(\\d{3})", "$1 $2 $3", ["[2358][2-5]|4"], "0$1"], ["(\\d{3})(\\d{5})", "$1 $2", ["[23578]"], "0$1"], ["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["6"], "0$1"]], "0"], AM: ["374", "00", "(?:[1-489]\\d|55|60|77)\\d{6}", [8], [["(\\d{3})(\\d{2})(\\d{3})", "$1 $2 $3", ["[89]0"], "0 $1"], ["(\\d{3})(\\d{5})", "$1 $2", ["2|3[12]"], "(0$1)"], ["(\\d{2})(\\d{6})", "$1 $2", ["1|47"], "(0$1)"], ["(\\d{2})(\\d{6})", "$1 $2", ["[3-9]"], "0$1"]], "0"], AO: ["244", "00", "[29]\\d{8}", [9], [["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["[29]"]]]], AR: ["54", "00", "(?:11|[89]\\d\\d)\\d{8}|[2368]\\d{9}", [10, 11], [["(\\d{4})(\\d{2})(\\d{4})", "$1 $2-$3", ["2(?:2[024-9]|3[0-59]|47|6[245]|9[02-8])|3(?:3[28]|4[03-9]|5[2-46-8]|7[1-578]|8[2-9])", "2(?:[23]02|6(?:[25]|4[6-8])|9(?:[02356]|4[02568]|72|8[23]))|3(?:3[28]|4(?:[04679]|3[5-8]|5[4-68]|8[2379])|5(?:[2467]|3[237]|8[2-5])|7[1-578]|8(?:[2469]|3[2578]|5[4-8]|7[36-8]|8[5-8]))|2(?:2[24-9]|3[1-59]|47)", "2(?:[23]02|6(?:[25]|4(?:64|[78]))|9(?:[02356]|4(?:[0268]|5[2-6])|72|8[23]))|3(?:3[28]|4(?:[04679]|3[78]|5(?:4[46]|8)|8[2379])|5(?:[2467]|3[237]|8[23])|7[1-578]|8(?:[2469]|3[278]|5[56][46]|86[3-6]))|2(?:2[24-9]|3[1-59]|47)|38(?:[58][78]|7[378])|3(?:4[35][56]|58[45]|8(?:[38]5|54|76))[4-6]", "2(?:[23]02|6(?:[25]|4(?:64|[78]))|9(?:[02356]|4(?:[0268]|5[2-6])|72|8[23]))|3(?:3[28]|4(?:[04679]|3(?:5(?:4[0-25689]|[56])|[78])|58|8[2379])|5(?:[2467]|3[237]|8(?:[23]|4(?:[45]|60)|5(?:4[0-39]|5|64)))|7[1-578]|8(?:[2469]|3[278]|54(?:4|5[13-7]|6[89])|86[3-6]))|2(?:2[24-9]|3[1-59]|47)|38(?:[58][78]|7[378])|3(?:454|85[56])[46]|3(?:4(?:36|5[56])|8(?:[38]5|76))[4-6]"], "0$1", 1], ["(\\d{2})(\\d{4})(\\d{4})", "$1 $2-$3", ["1"], "0$1", 1], ["(\\d{3})(\\d{3})(\\d{4})", "$1-$2-$3", ["[68]"], "0$1"], ["(\\d{3})(\\d{3})(\\d{4})", "$1 $2-$3", ["[23]"], "0$1", 1], ["(\\d)(\\d{4})(\\d{2})(\\d{4})", "$2 15-$3-$4", ["9(?:2[2-469]|3[3-578])", "9(?:2(?:2[024-9]|3[0-59]|47|6[245]|9[02-8])|3(?:3[28]|4[03-9]|5[2-46-8]|7[1-578]|8[2-9]))", "9(?:2(?:[23]02|6(?:[25]|4[6-8])|9(?:[02356]|4[02568]|72|8[23]))|3(?:3[28]|4(?:[04679]|3[5-8]|5[4-68]|8[2379])|5(?:[2467]|3[237]|8[2-5])|7[1-578]|8(?:[2469]|3[2578]|5[4-8]|7[36-8]|8[5-8])))|92(?:2[24-9]|3[1-59]|47)", "9(?:2(?:[23]02|6(?:[25]|4(?:64|[78]))|9(?:[02356]|4(?:[0268]|5[2-6])|72|8[23]))|3(?:3[28]|4(?:[04679]|3[78]|5(?:4[46]|8)|8[2379])|5(?:[2467]|3[237]|8[23])|7[1-578]|8(?:[2469]|3[278]|5(?:[56][46]|[78])|7[378]|8(?:6[3-6]|[78]))))|92(?:2[24-9]|3[1-59]|47)|93(?:4[35][56]|58[45]|8(?:[38]5|54|76))[4-6]", "9(?:2(?:[23]02|6(?:[25]|4(?:64|[78]))|9(?:[02356]|4(?:[0268]|5[2-6])|72|8[23]))|3(?:3[28]|4(?:[04679]|3(?:5(?:4[0-25689]|[56])|[78])|5(?:4[46]|8)|8[2379])|5(?:[2467]|3[237]|8(?:[23]|4(?:[45]|60)|5(?:4[0-39]|5|64)))|7[1-578]|8(?:[2469]|3[278]|5(?:4(?:4|5[13-7]|6[89])|[56][46]|[78])|7[378]|8(?:6[3-6]|[78]))))|92(?:2[24-9]|3[1-59]|47)|93(?:4(?:36|5[56])|8(?:[38]5|76))[4-6]"], "0$1", 0, "$1 $2 $3-$4"], ["(\\d)(\\d{2})(\\d{4})(\\d{4})", "$2 15-$3-$4", ["91"], "0$1", 0, "$1 $2 $3-$4"], ["(\\d{3})(\\d{3})(\\d{5})", "$1-$2-$3", ["8"], "0$1"], ["(\\d)(\\d{3})(\\d{3})(\\d{4})", "$2 15-$3-$4", ["9"], "0$1", 0, "$1 $2 $3-$4"]], "0", 0, "0?(?:(11|2(?:2(?:02?|[13]|2[13-79]|4[1-6]|5[2457]|6[124-8]|7[1-4]|8[13-6]|9[1267])|3(?:02?|1[467]|2[03-6]|3[13-8]|[49][2-6]|5[2-8]|[67])|4(?:7[3-578]|9)|6(?:[0136]|2[24-6]|4[6-8]?|5[15-8])|80|9(?:0[1-3]|[19]|2\\d|3[1-6]|4[02568]?|5[2-4]|6[2-46]|72?|8[23]?))|3(?:3(?:2[79]|6|8[2578])|4(?:0[0-24-9]|[12]|3[5-8]?|4[24-7]|5[4-68]?|6[02-9]|7[126]|8[2379]?|9[1-36-8])|5(?:1|2[1245]|3[237]?|4[1-46-9]|6[2-4]|7[1-6]|8[2-5]?)|6[24]|7(?:[069]|1[1568]|2[15]|3[145]|4[13]|5[14-8]|7[2-57]|8[126])|8(?:[01]|2[15-7]|3[2578]?|4[13-6]|5[4-8]?|6[1-357-9]|7[36-8]?|8[5-8]?|9[124])))15)?", "9$1"], AS: ["1", "011", "(?:[58]\\d\\d|684|900)\\d{7}", [10], 0, "1", 0, "([267]\\d{6})$|1", "684$1", 0, "684"], AT: ["43", "00", "1\\d{3,12}|2\\d{6,12}|43(?:(?:0\\d|5[02-9])\\d{3,9}|2\\d{4,5}|[3467]\\d{4}|8\\d{4,6}|9\\d{4,7})|5\\d{4,12}|8\\d{7,12}|9\\d{8,12}|(?:[367]\\d|4[0-24-9])\\d{4,11}", [4, 5, 6, 7, 8, 9, 10, 11, 12, 13], [["(\\d)(\\d{3,12})", "$1 $2", ["1(?:11|[2-9])"], "0$1"], ["(\\d{3})(\\d{2})", "$1 $2", ["517"], "0$1"], ["(\\d{2})(\\d{3,5})", "$1 $2", ["5[079]"], "0$1"], ["(\\d{3})(\\d{3,10})", "$1 $2", ["(?:31|4)6|51|6(?:5[0-3579]|[6-9])|7(?:20|32|8)|[89]"], "0$1"], ["(\\d{4})(\\d{3,9})", "$1 $2", ["[2-467]|5[2-6]"], "0$1"], ["(\\d{2})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["5"], "0$1"], ["(\\d{2})(\\d{4})(\\d{4,7})", "$1 $2 $3", ["5"], "0$1"]], "0"], AU: ["61", "001[14-689]|14(?:1[14]|34|4[17]|[56]6|7[47]|88)0011", "1(?:[0-79]\\d{7}(?:\\d(?:\\d{2})?)?|8[0-24-9]\\d{7})|[2-478]\\d{8}|1\\d{4,7}", [5, 6, 7, 8, 9, 10, 12], [["(\\d{2})(\\d{3,4})", "$1 $2", ["16"], "0$1"], ["(\\d{2})(\\d{3})(\\d{2,4})", "$1 $2 $3", ["16"], "0$1"], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["14|4"], "0$1"], ["(\\d)(\\d{4})(\\d{4})", "$1 $2 $3", ["[2378]"], "(0$1)"], ["(\\d{4})(\\d{3})(\\d{3})", "$1 $2 $3", ["1(?:30|[89])"]]], "0", 0, "(183[12])|0", 0, 0, 0, [["(?:(?:(?:2(?:[0-26-9]\\d|3[0-8]|4[02-9]|5[0135-9])|7(?:[013-57-9]\\d|2[0-8]))\\d|3(?:(?:[0-3589]\\d|6[1-9]|7[0-35-9])\\d|4(?:[0-578]\\d|90)))\\d\\d|8(?:51(?:0(?:0[03-9]|[12479]\\d|3[2-9]|5[0-8]|6[1-9]|8[0-7])|1(?:[0235689]\\d|1[0-69]|4[0-589]|7[0-47-9])|2(?:0[0-79]|[18][13579]|2[14-9]|3[0-46-9]|[4-6]\\d|7[89]|9[0-4])|3\\d\\d)|(?:6[0-8]|[78]\\d)\\d{3}|9(?:[02-9]\\d{3}|1(?:(?:[0-58]\\d|6[0135-9])\\d|7(?:0[0-24-9]|[1-9]\\d)|9(?:[0-46-9]\\d|5[0-79])))))\\d{3}", [9]], ["4(?:79[01]|83[0-389]|94[0-4])\\d{5}|4(?:[0-36]\\d|4[047-9]|5[0-25-9]|7[02-8]|8[0-24-9]|9[0-37-9])\\d{6}", [9]], ["180(?:0\\d{3}|2)\\d{3}", [7, 10]], ["190[0-26]\\d{6}", [10]], 0, 0, 0, ["163\\d{2,6}", [5, 6, 7, 8, 9]], ["14(?:5(?:1[0458]|[23][458])|71\\d)\\d{4}", [9]], ["13(?:00\\d{6}(?:\\d{2})?|45[0-4]\\d{3})|13\\d{4}", [6, 8, 10, 12]]], "0011"], AW: ["297", "00", "(?:[25-79]\\d\\d|800)\\d{4}", [7], [["(\\d{3})(\\d{4})", "$1 $2", ["[25-9]"]]]], AX: ["358", "00|99(?:[01469]|5(?:[14]1|3[23]|5[59]|77|88|9[09]))", "2\\d{4,9}|35\\d{4,5}|(?:60\\d\\d|800)\\d{4,6}|7\\d{5,11}|(?:[14]\\d|3[0-46-9]|50)\\d{4,8}", [5, 6, 7, 8, 9, 10, 11, 12], 0, "0", 0, 0, 0, 0, "18", 0, "00"], AZ: ["994", "00", "365\\d{6}|(?:[124579]\\d|60|88)\\d{7}", [9], [["(\\d{3})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["90"], "0$1"], ["(\\d{2})(\\d{3})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["1[28]|2|365|46", "1[28]|2|365[45]|46", "1[28]|2|365(?:4|5[02])|46"], "(0$1)"], ["(\\d{2})(\\d{3})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[13-9]"], "0$1"]], "0"], BA: ["387", "00", "6\\d{8}|(?:[35689]\\d|49|70)\\d{6}", [8, 9], [["(\\d{2})(\\d{3})(\\d{3})", "$1 $2 $3", ["6[1-3]|[7-9]"], "0$1"], ["(\\d{2})(\\d{3})(\\d{3})", "$1 $2-$3", ["[3-5]|6[56]"], "0$1"], ["(\\d{2})(\\d{2})(\\d{2})(\\d{3})", "$1 $2 $3 $4", ["6"], "0$1"]], "0"], BB: ["1", "011", "(?:246|[58]\\d\\d|900)\\d{7}", [10], 0, "1", 0, "([2-9]\\d{6})$|1", "246$1", 0, "246"], BD: ["880", "00", "[1-469]\\d{9}|8[0-79]\\d{7,8}|[2-79]\\d{8}|[2-9]\\d{7}|[3-9]\\d{6}|[57-9]\\d{5}", [6, 7, 8, 9, 10], [["(\\d{2})(\\d{4,6})", "$1-$2", ["31[5-8]|[459]1"], "0$1"], ["(\\d{3})(\\d{3,7})", "$1-$2", ["3(?:[67]|8[013-9])|4(?:6[168]|7|[89][18])|5(?:6[128]|9)|6(?:[15]|28|4[14])|7[2-589]|8(?:0[014-9]|[12])|9[358]|(?:3[2-5]|4[235]|5[2-578]|6[0389]|76|8[3-7]|9[24])1|(?:44|66)[01346-9]"], "0$1"], ["(\\d{4})(\\d{3,6})", "$1-$2", ["[13-9]|22"], "0$1"], ["(\\d)(\\d{7,8})", "$1-$2", ["2"], "0$1"]], "0"], BE: ["32", "00", "4\\d{8}|[1-9]\\d{7}", [8, 9], [["(\\d{3})(\\d{2})(\\d{3})", "$1 $2 $3", ["(?:80|9)0"], "0$1"], ["(\\d)(\\d{3})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[239]|4[23]"], "0$1"], ["(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[15-8]"], "0$1"], ["(\\d{3})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["4"], "0$1"]], "0"], BF: ["226", "00", "[025-7]\\d{7}", [8], [["(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[025-7]"]]]], BG: ["359", "00", "00800\\d{7}|[2-7]\\d{6,7}|[89]\\d{6,8}|2\\d{5}", [6, 7, 8, 9, 12], [["(\\d)(\\d)(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["2"], "0$1"], ["(\\d{3})(\\d{4})", "$1 $2", ["43[1-6]|70[1-9]"], "0$1"], ["(\\d)(\\d{3})(\\d{3,4})", "$1 $2 $3", ["2"], "0$1"], ["(\\d{2})(\\d{3})(\\d{2,3})", "$1 $2 $3", ["[356]|4[124-7]|7[1-9]|8[1-6]|9[1-7]"], "0$1"], ["(\\d{3})(\\d{2})(\\d{3})", "$1 $2 $3", ["(?:70|8)0"], "0$1"], ["(\\d{3})(\\d{3})(\\d{2})", "$1 $2 $3", ["43[1-7]|7"], "0$1"], ["(\\d{2})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["[48]|9[08]"], "0$1"], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["9"], "0$1"]], "0"], BH: ["973", "00", "[136-9]\\d{7}", [8], [["(\\d{4})(\\d{4})", "$1 $2", ["[13679]|8[02-4679]"]]]], BI: ["257", "00", "(?:[267]\\d|31)\\d{6}", [8], [["(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[2367]"]]]], BJ: ["229", "00", "[24-689]\\d{7}", [8], [["(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[24-689]"]]]], BL: ["590", "00", "590\\d{6}|(?:69|80|9\\d)\\d{7}", [9], 0, "0", 0, 0, 0, 0, 0, [["590(?:2[7-9]|3[3-7]|5[12]|87)\\d{4}"], ["69(?:0\\d\\d|1(?:2[2-9]|3[0-5])|4(?:0[89]|1[2-6]|9\\d)|6(?:1[016-9]|5[0-4]|[67]\\d))\\d{4}"], ["80[0-5]\\d{6}"], 0, 0, 0, 0, 0, ["9(?:(?:39[5-7]|76[018])\\d|475[0-5])\\d{4}"]]], BM: ["1", "011", "(?:441|[58]\\d\\d|900)\\d{7}", [10], 0, "1", 0, "([2-9]\\d{6})$|1", "441$1", 0, "441"], BN: ["673", "00", "[2-578]\\d{6}", [7], [["(\\d{3})(\\d{4})", "$1 $2", ["[2-578]"]]]], BO: ["591", "00(?:1\\d)?", "8001\\d{5}|(?:[2-467]\\d|50)\\d{6}", [8, 9], [["(\\d)(\\d{7})", "$1 $2", ["[235]|4[46]"]], ["(\\d{8})", "$1", ["[67]"]], ["(\\d{3})(\\d{2})(\\d{4})", "$1 $2 $3", ["8"]]], "0", 0, "0(1\\d)?"], BQ: ["599", "00", "(?:[34]1|7\\d)\\d{5}", [7], 0, 0, 0, 0, 0, 0, "[347]"], BR: ["55", "00(?:1[245]|2[1-35]|31|4[13]|[56]5|99)", "(?:[1-46-9]\\d\\d|5(?:[0-46-9]\\d|5[0-46-9]))\\d{8}|[1-9]\\d{9}|[3589]\\d{8}|[34]\\d{7}", [8, 9, 10, 11], [["(\\d{4})(\\d{4})", "$1-$2", ["300|4(?:0[02]|37)", "4(?:02|37)0|[34]00"]], ["(\\d{3})(\\d{2,3})(\\d{4})", "$1 $2 $3", ["(?:[358]|90)0"], "0$1"], ["(\\d{2})(\\d{4})(\\d{4})", "$1 $2-$3", ["(?:[14689][1-9]|2[12478]|3[1-578]|5[13-5]|7[13-579])[2-57]"], "($1)"], ["(\\d{2})(\\d{5})(\\d{4})", "$1 $2-$3", ["[16][1-9]|[2-57-9]"], "($1)"]], "0", 0, "(?:0|90)(?:(1[245]|2[1-35]|31|4[13]|[56]5|99)(\\d{10,11}))?", "$2"], BS: ["1", "011", "(?:242|[58]\\d\\d|900)\\d{7}", [10], 0, "1", 0, "([3-8]\\d{6})$|1", "242$1", 0, "242"], BT: ["975", "00", "[17]\\d{7}|[2-8]\\d{6}", [7, 8], [["(\\d)(\\d{3})(\\d{3})", "$1 $2 $3", ["[2-68]|7[246]"]], ["(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["1[67]|7"]]]], BW: ["267", "00", "(?:0800|(?:[37]|800)\\d)\\d{6}|(?:[2-6]\\d|90)\\d{5}", [7, 8, 10], [["(\\d{2})(\\d{5})", "$1 $2", ["90"]], ["(\\d{3})(\\d{4})", "$1 $2", ["[24-6]|3[15-9]"]], ["(\\d{2})(\\d{3})(\\d{3})", "$1 $2 $3", ["[37]"]], ["(\\d{4})(\\d{3})(\\d{3})", "$1 $2 $3", ["0"]], ["(\\d{3})(\\d{4})(\\d{3})", "$1 $2 $3", ["8"]]]], BY: ["375", "810", "(?:[12]\\d|33|44|902)\\d{7}|8(?:0[0-79]\\d{5,7}|[1-7]\\d{9})|8(?:1[0-489]|[5-79]\\d)\\d{7}|8[1-79]\\d{6,7}|8[0-79]\\d{5}|8\\d{5}", [6, 7, 8, 9, 10, 11], [["(\\d{3})(\\d{3})", "$1 $2", ["800"], "8 $1"], ["(\\d{3})(\\d{2})(\\d{2,4})", "$1 $2 $3", ["800"], "8 $1"], ["(\\d{4})(\\d{2})(\\d{3})", "$1 $2-$3", ["1(?:5[169]|6[3-5]|7[179])|2(?:1[35]|2[34]|3[3-5])", "1(?:5[169]|6(?:3[1-3]|4|5[125])|7(?:1[3-9]|7[0-24-6]|9[2-7]))|2(?:1[35]|2[34]|3[3-5])"], "8 0$1"], ["(\\d{3})(\\d{2})(\\d{2})(\\d{2})", "$1 $2-$3-$4", ["1(?:[56]|7[467])|2[1-3]"], "8 0$1"], ["(\\d{2})(\\d{3})(\\d{2})(\\d{2})", "$1 $2-$3-$4", ["[1-4]"], "8 0$1"], ["(\\d{3})(\\d{3,4})(\\d{4})", "$1 $2 $3", ["[89]"], "8 $1"]], "8", 0, "0|80?", 0, 0, 0, 0, "8~10"], BZ: ["501", "00", "(?:0800\\d|[2-8])\\d{6}", [7, 11], [["(\\d{3})(\\d{4})", "$1-$2", ["[2-8]"]], ["(\\d)(\\d{3})(\\d{4})(\\d{3})", "$1-$2-$3-$4", ["0"]]]], CA: ["1", "011", "(?:[2-8]\\d|90)\\d{8}|3\\d{6}", [7, 10], 0, "1", 0, 0, 0, 0, 0, [["(?:2(?:04|[23]6|[48]9|50|63)|3(?:06|43|54|6[578]|82)|4(?:03|1[68]|[26]8|3[178]|50|74)|5(?:06|1[49]|48|79|8[147])|6(?:04|[18]3|39|47|72)|7(?:0[59]|42|53|78|8[02])|8(?:[06]7|19|25|7[39])|90[25])[2-9]\\d{6}", [10]], ["", [10]], ["8(?:00|33|44|55|66|77|88)[2-9]\\d{6}", [10]], ["900[2-9]\\d{6}", [10]], ["52(?:3(?:[2-46-9][02-9]\\d|5(?:[02-46-9]\\d|5[0-46-9]))|4(?:[2-478][02-9]\\d|5(?:[034]\\d|2[024-9]|5[0-46-9])|6(?:0[1-9]|[2-9]\\d)|9(?:[05-9]\\d|2[0-5]|49)))\\d{4}|52[34][2-9]1[02-9]\\d{4}|(?:5(?:00|2[125-9]|33|44|66|77|88)|622)[2-9]\\d{6}", [10]], 0, ["310\\d{4}", [7]], 0, ["600[2-9]\\d{6}", [10]]]], CC: ["61", "001[14-689]|14(?:1[14]|34|4[17]|[56]6|7[47]|88)0011", "1(?:[0-79]\\d{8}(?:\\d{2})?|8[0-24-9]\\d{7})|[148]\\d{8}|1\\d{5,7}", [6, 7, 8, 9, 10, 12], 0, "0", 0, "([59]\\d{7})$|0", "8$1", 0, 0, [["8(?:51(?:0(?:02|31|60|89)|1(?:18|76)|223)|91(?:0(?:1[0-2]|29)|1(?:[28]2|50|79)|2(?:10|64)|3(?:[06]8|22)|4[29]8|62\\d|70[23]|959))\\d{3}", [9]], ["4(?:79[01]|83[0-389]|94[0-4])\\d{5}|4(?:[0-36]\\d|4[047-9]|5[0-25-9]|7[02-8]|8[0-24-9]|9[0-37-9])\\d{6}", [9]], ["180(?:0\\d{3}|2)\\d{3}", [7, 10]], ["190[0-26]\\d{6}", [10]], 0, 0, 0, 0, ["14(?:5(?:1[0458]|[23][458])|71\\d)\\d{4}", [9]], ["13(?:00\\d{6}(?:\\d{2})?|45[0-4]\\d{3})|13\\d{4}", [6, 8, 10, 12]]], "0011"], CD: ["243", "00", "[189]\\d{8}|[1-68]\\d{6}", [7, 9], [["(\\d{2})(\\d{2})(\\d{3})", "$1 $2 $3", ["88"], "0$1"], ["(\\d{2})(\\d{5})", "$1 $2", ["[1-6]"], "0$1"], ["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["1"], "0$1"], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["[89]"], "0$1"]], "0"], CF: ["236", "00", "(?:[27]\\d{3}|8776)\\d{4}", [8], [["(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[278]"]]]], CG: ["242", "00", "222\\d{6}|(?:0\\d|80)\\d{7}", [9], [["(\\d)(\\d{4})(\\d{4})", "$1 $2 $3", ["8"]], ["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["[02]"]]]], CH: ["41", "00", "8\\d{11}|[2-9]\\d{8}", [9], [["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["8[047]|90"], "0$1"], ["(\\d{2})(\\d{3})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[2-79]|81"], "0$1"], ["(\\d{3})(\\d{2})(\\d{3})(\\d{2})(\\d{2})", "$1 $2 $3 $4 $5", ["8"], "0$1"]], "0"], CI: ["225", "00", "[02]\\d{9}", [10], [["(\\d{2})(\\d{2})(\\d)(\\d{5})", "$1 $2 $3 $4", ["2"]], ["(\\d{2})(\\d{2})(\\d{2})(\\d{4})", "$1 $2 $3 $4", ["0"]]]], CK: ["682", "00", "[2-578]\\d{4}", [5], [["(\\d{2})(\\d{3})", "$1 $2", ["[2-578]"]]]], CL: ["56", "(?:0|1(?:1[0-69]|2[02-5]|5[13-58]|69|7[0167]|8[018]))0", "12300\\d{6}|6\\d{9,10}|[2-9]\\d{8}", [9, 10, 11], [["(\\d{5})(\\d{4})", "$1 $2", ["219", "2196"], "($1)"], ["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["44"]], ["(\\d)(\\d{4})(\\d{4})", "$1 $2 $3", ["2[1-36]"], "($1)"], ["(\\d)(\\d{4})(\\d{4})", "$1 $2 $3", ["9[2-9]"]], ["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["3[2-5]|[47]|5[1-3578]|6[13-57]|8(?:0[1-9]|[1-9])"], "($1)"], ["(\\d{3})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["60|8"]], ["(\\d{4})(\\d{3})(\\d{4})", "$1 $2 $3", ["1"]], ["(\\d{3})(\\d{3})(\\d{2})(\\d{3})", "$1 $2 $3 $4", ["60"]]]], CM: ["237", "00", "[26]\\d{8}|88\\d{6,7}", [8, 9], [["(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["88"]], ["(\\d)(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4 $5", ["[26]|88"]]]], CN: ["86", "00|1(?:[12]\\d|79)\\d\\d00", "1[127]\\d{8,9}|2\\d{9}(?:\\d{2})?|[12]\\d{6,7}|86\\d{6}|(?:1[03-689]\\d|6)\\d{7,9}|(?:[3-579]\\d|8[0-57-9])\\d{6,9}", [7, 8, 9, 10, 11, 12], [["(\\d{2})(\\d{5,6})", "$1 $2", ["(?:10|2[0-57-9])[19]", "(?:10|2[0-57-9])(?:10|9[56])", "10(?:10|9[56])|2[0-57-9](?:100|9[56])"], "0$1"], ["(\\d{3})(\\d{5,6})", "$1 $2", ["3(?:[157]|35|49|9[1-68])|4(?:[17]|2[179]|6[47-9]|8[23])|5(?:[1357]|2[37]|4[36]|6[1-46]|80)|6(?:3[1-5]|6[0238]|9[12])|7(?:01|[1579]|2[248]|3[014-9]|4[3-6]|6[023689])|8(?:1[236-8]|2[5-7]|[37]|8[36-8]|9[1-8])|9(?:0[1-3689]|1[1-79]|[379]|4[13]|5[1-5])|(?:4[35]|59|85)[1-9]", "(?:3(?:[157]\\d|35|49|9[1-68])|4(?:[17]\\d|2[179]|[35][1-9]|6[47-9]|8[23])|5(?:[1357]\\d|2[37]|4[36]|6[1-46]|80|9[1-9])|6(?:3[1-5]|6[0238]|9[12])|7(?:01|[1579]\\d|2[248]|3[014-9]|4[3-6]|6[023689])|8(?:1[236-8]|2[5-7]|[37]\\d|5[1-9]|8[36-8]|9[1-8])|9(?:0[1-3689]|1[1-79]|[379]\\d|4[13]|5[1-5]))[19]", "85[23](?:10|95)|(?:3(?:[157]\\d|35|49|9[1-68])|4(?:[17]\\d|2[179]|[35][1-9]|6[47-9]|8[23])|5(?:[1357]\\d|2[37]|4[36]|6[1-46]|80|9[1-9])|6(?:3[1-5]|6[0238]|9[12])|7(?:01|[1579]\\d|2[248]|3[014-9]|4[3-6]|6[023689])|8(?:1[236-8]|2[5-7]|[37]\\d|5[14-9]|8[36-8]|9[1-8])|9(?:0[1-3689]|1[1-79]|[379]\\d|4[13]|5[1-5]))(?:10|9[56])", "85[23](?:100|95)|(?:3(?:[157]\\d|35|49|9[1-68])|4(?:[17]\\d|2[179]|[35][1-9]|6[47-9]|8[23])|5(?:[1357]\\d|2[37]|4[36]|6[1-46]|80|9[1-9])|6(?:3[1-5]|6[0238]|9[12])|7(?:01|[1579]\\d|2[248]|3[014-9]|4[3-6]|6[023689])|8(?:1[236-8]|2[5-7]|[37]\\d|5[14-9]|8[36-8]|9[1-8])|9(?:0[1-3689]|1[1-79]|[379]\\d|4[13]|5[1-5]))(?:100|9[56])"], "0$1"], ["(\\d{3})(\\d{3})(\\d{4})", "$1 $2 $3", ["(?:4|80)0"]], ["(\\d{2})(\\d{4})(\\d{4})", "$1 $2 $3", ["10|2(?:[02-57-9]|1[1-9])", "10|2(?:[02-57-9]|1[1-9])", "10[0-79]|2(?:[02-57-9]|1[1-79])|(?:10|21)8(?:0[1-9]|[1-9])"], "0$1", 1], ["(\\d{3})(\\d{3})(\\d{4})", "$1 $2 $3", ["3(?:[3-59]|7[02-68])|4(?:[26-8]|3[3-9]|5[2-9])|5(?:3[03-9]|[468]|7[028]|9[2-46-9])|6|7(?:[0-247]|3[04-9]|5[0-4689]|6[2368])|8(?:[1-358]|9[1-7])|9(?:[013479]|5[1-5])|(?:[34]1|55|79|87)[02-9]"], "0$1", 1], ["(\\d{3})(\\d{7,8})", "$1 $2", ["9"]], ["(\\d{4})(\\d{3})(\\d{4})", "$1 $2 $3", ["80"], "0$1", 1], ["(\\d{3})(\\d{4})(\\d{4})", "$1 $2 $3", ["[3-578]"], "0$1", 1], ["(\\d{3})(\\d{4})(\\d{4})", "$1 $2 $3", ["1[3-9]"]], ["(\\d{2})(\\d{3})(\\d{3})(\\d{4})", "$1 $2 $3 $4", ["[12]"], "0$1", 1]], "0", 0, "(1(?:[12]\\d|79)\\d\\d)|0", 0, 0, 0, 0, "00"], CO: ["57", "00(?:4(?:[14]4|56)|[579])", "(?:60\\d\\d|9101)\\d{6}|(?:1\\d|3)\\d{9}", [10, 11], [["(\\d{3})(\\d{7})", "$1 $2", ["6"], "($1)"], ["(\\d{3})(\\d{7})", "$1 $2", ["3[0-357]|91"]], ["(\\d)(\\d{3})(\\d{7})", "$1-$2-$3", ["1"], "0$1", 0, "$1 $2 $3"]], "0", 0, "0([3579]|4(?:[14]4|56))?"], CR: ["506", "00", "(?:8\\d|90)\\d{8}|(?:[24-8]\\d{3}|3005)\\d{4}", [8, 10], [["(\\d{4})(\\d{4})", "$1 $2", ["[2-7]|8[3-9]"]], ["(\\d{3})(\\d{3})(\\d{4})", "$1-$2-$3", ["[89]"]]], 0, 0, "(19(?:0[0-2468]|1[09]|20|66|77|99))"], CU: ["53", "119", "(?:[2-7]|8\\d\\d)\\d{7}|[2-47]\\d{6}|[34]\\d{5}", [6, 7, 8, 10], [["(\\d{2})(\\d{4,6})", "$1 $2", ["2[1-4]|[34]"], "(0$1)"], ["(\\d)(\\d{6,7})", "$1 $2", ["7"], "(0$1)"], ["(\\d)(\\d{7})", "$1 $2", ["[56]"], "0$1"], ["(\\d{3})(\\d{7})", "$1 $2", ["8"], "0$1"]], "0"], CV: ["238", "0", "(?:[2-59]\\d\\d|800)\\d{4}", [7], [["(\\d{3})(\\d{2})(\\d{2})", "$1 $2 $3", ["[2-589]"]]]], CW: ["599", "00", "(?:[34]1|60|(?:7|9\\d)\\d)\\d{5}", [7, 8], [["(\\d{3})(\\d{4})", "$1 $2", ["[3467]"]], ["(\\d)(\\d{3})(\\d{4})", "$1 $2 $3", ["9[4-8]"]]], 0, 0, 0, 0, 0, "[69]"], CX: ["61", "001[14-689]|14(?:1[14]|34|4[17]|[56]6|7[47]|88)0011", "1(?:[0-79]\\d{8}(?:\\d{2})?|8[0-24-9]\\d{7})|[148]\\d{8}|1\\d{5,7}", [6, 7, 8, 9, 10, 12], 0, "0", 0, "([59]\\d{7})$|0", "8$1", 0, 0, [["8(?:51(?:0(?:01|30|59|88)|1(?:17|46|75)|2(?:22|35))|91(?:00[6-9]|1(?:[28]1|49|78)|2(?:09|63)|3(?:12|26|75)|4(?:56|97)|64\\d|7(?:0[01]|1[0-2])|958))\\d{3}", [9]], ["4(?:79[01]|83[0-389]|94[0-4])\\d{5}|4(?:[0-36]\\d|4[047-9]|5[0-25-9]|7[02-8]|8[0-24-9]|9[0-37-9])\\d{6}", [9]], ["180(?:0\\d{3}|2)\\d{3}", [7, 10]], ["190[0-26]\\d{6}", [10]], 0, 0, 0, 0, ["14(?:5(?:1[0458]|[23][458])|71\\d)\\d{4}", [9]], ["13(?:00\\d{6}(?:\\d{2})?|45[0-4]\\d{3})|13\\d{4}", [6, 8, 10, 12]]], "0011"], CY: ["357", "00", "(?:[279]\\d|[58]0)\\d{6}", [8], [["(\\d{2})(\\d{6})", "$1 $2", ["[257-9]"]]]], CZ: ["420", "00", "(?:[2-578]\\d|60)\\d{7}|9\\d{8,11}", [9], [["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["[2-8]|9[015-7]"]], ["(\\d{2})(\\d{3})(\\d{3})(\\d{2})", "$1 $2 $3 $4", ["96"]], ["(\\d{2})(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3 $4", ["9"]], ["(\\d{3})(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3 $4", ["9"]]]], DE: ["49", "00", "[2579]\\d{5,14}|49(?:[34]0|69|8\\d)\\d\\d?|49(?:37|49|60|7[089]|9\\d)\\d{1,3}|49(?:2[024-9]|3[2-689]|7[1-7])\\d{1,8}|(?:1|[368]\\d|4[0-8])\\d{3,13}|49(?:[015]\\d|2[13]|31|[46][1-8])\\d{1,9}", [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], [["(\\d{2})(\\d{3,13})", "$1 $2", ["3[02]|40|[68]9"], "0$1"], ["(\\d{3})(\\d{3,12})", "$1 $2", ["2(?:0[1-389]|1[124]|2[18]|3[14])|3(?:[35-9][15]|4[015])|906|(?:2[4-9]|4[2-9]|[579][1-9]|[68][1-8])1", "2(?:0[1-389]|12[0-8])|3(?:[35-9][15]|4[015])|906|2(?:[13][14]|2[18])|(?:2[4-9]|4[2-9]|[579][1-9]|[68][1-8])1"], "0$1"], ["(\\d{4})(\\d{2,11})", "$1 $2", ["[24-6]|3(?:[3569][02-46-9]|4[2-4679]|7[2-467]|8[2-46-8])|70[2-8]|8(?:0[2-9]|[1-8])|90[7-9]|[79][1-9]", "[24-6]|3(?:3(?:0[1-467]|2[127-9]|3[124578]|7[1257-9]|8[1256]|9[145])|4(?:2[135]|4[13578]|9[1346])|5(?:0[14]|2[1-3589]|6[1-4]|7[13468]|8[13568])|6(?:2[1-489]|3[124-6]|6[13]|7[12579]|8[1-356]|9[135])|7(?:2[1-7]|4[145]|6[1-5]|7[1-4])|8(?:21|3[1468]|6|7[1467]|8[136])|9(?:0[12479]|2[1358]|4[134679]|6[1-9]|7[136]|8[147]|9[1468]))|70[2-8]|8(?:0[2-9]|[1-8])|90[7-9]|[79][1-9]|3[68]4[1347]|3(?:47|60)[1356]|3(?:3[46]|46|5[49])[1246]|3[4579]3[1357]"], "0$1"], ["(\\d{3})(\\d{4})", "$1 $2", ["138"], "0$1"], ["(\\d{5})(\\d{2,10})", "$1 $2", ["3"], "0$1"], ["(\\d{3})(\\d{5,11})", "$1 $2", ["181"], "0$1"], ["(\\d{3})(\\d)(\\d{4,10})", "$1 $2 $3", ["1(?:3|80)|9"], "0$1"], ["(\\d{3})(\\d{7,8})", "$1 $2", ["1[67]"], "0$1"], ["(\\d{3})(\\d{7,12})", "$1 $2", ["8"], "0$1"], ["(\\d{5})(\\d{6})", "$1 $2", ["185", "1850", "18500"], "0$1"], ["(\\d{3})(\\d{4})(\\d{4})", "$1 $2 $3", ["7"], "0$1"], ["(\\d{4})(\\d{7})", "$1 $2", ["18[68]"], "0$1"], ["(\\d{4})(\\d{7})", "$1 $2", ["15[1279]"], "0$1"], ["(\\d{5})(\\d{6})", "$1 $2", ["15[03568]", "15(?:[0568]|31)"], "0$1"], ["(\\d{3})(\\d{8})", "$1 $2", ["18"], "0$1"], ["(\\d{3})(\\d{2})(\\d{7,8})", "$1 $2 $3", ["1(?:6[023]|7)"], "0$1"], ["(\\d{4})(\\d{2})(\\d{7})", "$1 $2 $3", ["15[279]"], "0$1"], ["(\\d{3})(\\d{2})(\\d{8})", "$1 $2 $3", ["15"], "0$1"]], "0"], DJ: ["253", "00", "(?:2\\d|77)\\d{6}", [8], [["(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[27]"]]]], DK: ["45", "00", "[2-9]\\d{7}", [8], [["(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[2-9]"]]]], DM: ["1", "011", "(?:[58]\\d\\d|767|900)\\d{7}", [10], 0, "1", 0, "([2-7]\\d{6})$|1", "767$1", 0, "767"], DO: ["1", "011", "(?:[58]\\d\\d|900)\\d{7}", [10], 0, "1", 0, 0, 0, 0, "8001|8[024]9"], DZ: ["213", "00", "(?:[1-4]|[5-79]\\d|80)\\d{7}", [8, 9], [["(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[1-4]"], "0$1"], ["(\\d{2})(\\d{3})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["9"], "0$1"], ["(\\d{3})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[5-8]"], "0$1"]], "0"], EC: ["593", "00", "1\\d{9,10}|(?:[2-7]|9\\d)\\d{7}", [8, 9, 10, 11], [["(\\d)(\\d{3})(\\d{4})", "$1 $2-$3", ["[2-7]"], "(0$1)", 0, "$1-$2-$3"], ["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["9"], "0$1"], ["(\\d{4})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["1"]]], "0"], EE: ["372", "00", "8\\d{9}|[4578]\\d{7}|(?:[3-8]\\d|90)\\d{5}", [7, 8, 10], [["(\\d{3})(\\d{4})", "$1 $2", ["[369]|4[3-8]|5(?:[0-2]|5[0-478]|6[45])|7[1-9]|88", "[369]|4[3-8]|5(?:[02]|1(?:[0-8]|95)|5[0-478]|6(?:4[0-4]|5[1-589]))|7[1-9]|88"]], ["(\\d{4})(\\d{3,4})", "$1 $2", ["[45]|8(?:00|[1-49])", "[45]|8(?:00[1-9]|[1-49])"]], ["(\\d{2})(\\d{2})(\\d{4})", "$1 $2 $3", ["7"]], ["(\\d{4})(\\d{3})(\\d{3})", "$1 $2 $3", ["8"]]]], EG: ["20", "00", "[189]\\d{8,9}|[24-6]\\d{8}|[135]\\d{7}", [8, 9, 10], [["(\\d)(\\d{7,8})", "$1 $2", ["[23]"], "0$1"], ["(\\d{2})(\\d{6,7})", "$1 $2", ["1[35]|[4-6]|8[2468]|9[235-7]"], "0$1"], ["(\\d{3})(\\d{3})(\\d{4})", "$1 $2 $3", ["[89]"], "0$1"], ["(\\d{2})(\\d{8})", "$1 $2", ["1"], "0$1"]], "0"], EH: ["212", "00", "[5-8]\\d{8}", [9], 0, "0", 0, 0, 0, 0, "528[89]"], ER: ["291", "00", "[178]\\d{6}", [7], [["(\\d)(\\d{3})(\\d{3})", "$1 $2 $3", ["[178]"], "0$1"]], "0"], ES: ["34", "00", "[5-9]\\d{8}", [9], [["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["[89]00"]], ["(\\d{3})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[5-9]"]]]], ET: ["251", "00", "(?:11|[2-579]\\d)\\d{7}", [9], [["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["[1-579]"], "0$1"]], "0"], FI: ["358", "00|99(?:[01469]|5(?:[14]1|3[23]|5[59]|77|88|9[09]))", "[1-35689]\\d{4}|7\\d{10,11}|(?:[124-7]\\d|3[0-46-9])\\d{8}|[1-9]\\d{5,8}", [5, 6, 7, 8, 9, 10, 11, 12], [["(\\d{5})", "$1", ["20[2-59]"], "0$1"], ["(\\d{3})(\\d{3,7})", "$1 $2", ["(?:[1-3]0|[68])0|70[07-9]"], "0$1"], ["(\\d{2})(\\d{4,8})", "$1 $2", ["[14]|2[09]|50|7[135]"], "0$1"], ["(\\d{2})(\\d{6,10})", "$1 $2", ["7"], "0$1"], ["(\\d)(\\d{4,9})", "$1 $2", ["(?:1[49]|[2568])[1-8]|3(?:0[1-9]|[1-9])|9"], "0$1"]], "0", 0, 0, 0, 0, "1[03-79]|[2-9]", 0, "00"], FJ: ["679", "0(?:0|52)", "45\\d{5}|(?:0800\\d|[235-9])\\d{6}", [7, 11], [["(\\d{3})(\\d{4})", "$1 $2", ["[235-9]|45"]], ["(\\d{4})(\\d{3})(\\d{4})", "$1 $2 $3", ["0"]]], 0, 0, 0, 0, 0, 0, 0, "00"], FK: ["500", "00", "[2-7]\\d{4}", [5]], FM: ["691", "00", "(?:[39]\\d\\d|820)\\d{4}", [7], [["(\\d{3})(\\d{4})", "$1 $2", ["[389]"]]]], FO: ["298", "00", "[2-9]\\d{5}", [6], [["(\\d{6})", "$1", ["[2-9]"]]], 0, 0, "(10(?:01|[12]0|88))"], FR: ["33", "00", "[1-9]\\d{8}", [9], [["(\\d{3})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["8"], "0 $1"], ["(\\d)(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4 $5", ["[1-79]"], "0$1"]], "0"], GA: ["241", "00", "(?:[067]\\d|11)\\d{6}|[2-7]\\d{6}", [7, 8], [["(\\d)(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[2-7]"], "0$1"], ["(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["0"]], ["(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["11|[67]"], "0$1"]], 0, 0, "0(11\\d{6}|60\\d{6}|61\\d{6}|6[256]\\d{6}|7[467]\\d{6})", "$1"], GB: ["44", "00", "[1-357-9]\\d{9}|[18]\\d{8}|8\\d{6}", [7, 9, 10], [["(\\d{3})(\\d{4})", "$1 $2", ["800", "8001", "80011", "800111", "8001111"], "0$1"], ["(\\d{3})(\\d{2})(\\d{2})", "$1 $2 $3", ["845", "8454", "84546", "845464"], "0$1"], ["(\\d{3})(\\d{6})", "$1 $2", ["800"], "0$1"], ["(\\d{5})(\\d{4,5})", "$1 $2", ["1(?:38|5[23]|69|76|94)", "1(?:(?:38|69)7|5(?:24|39)|768|946)", "1(?:3873|5(?:242|39[4-6])|(?:697|768)[347]|9467)"], "0$1"], ["(\\d{4})(\\d{5,6})", "$1 $2", ["1(?:[2-69][02-9]|[78])"], "0$1"], ["(\\d{2})(\\d{4})(\\d{4})", "$1 $2 $3", ["[25]|7(?:0|6[02-9])", "[25]|7(?:0|6(?:[03-9]|2[356]))"], "0$1"], ["(\\d{4})(\\d{6})", "$1 $2", ["7"], "0$1"], ["(\\d{3})(\\d{3})(\\d{4})", "$1 $2 $3", ["[1389]"], "0$1"]], "0", 0, 0, 0, 0, 0, [["(?:1(?:1(?:3(?:[0-58]\\d\\d|73[0-35])|4(?:(?:[0-5]\\d|70)\\d|69[7-9])|(?:(?:5[0-26-9]|[78][0-49])\\d|6(?:[0-4]\\d|50))\\d)|(?:2(?:(?:0[024-9]|2[3-9]|3[3-79]|4[1-689]|[58][02-9]|6[0-47-9]|7[013-9]|9\\d)\\d|1(?:[0-7]\\d|8[0-3]))|(?:3(?:0\\d|1[0-8]|[25][02-9]|3[02-579]|[468][0-46-9]|7[1-35-79]|9[2-578])|4(?:0[03-9]|[137]\\d|[28][02-57-9]|4[02-69]|5[0-8]|[69][0-79])|5(?:0[1-35-9]|[16]\\d|2[024-9]|3[015689]|4[02-9]|5[03-9]|7[0-35-9]|8[0-468]|9[0-57-9])|6(?:0[034689]|1\\d|2[0-35689]|[38][013-9]|4[1-467]|5[0-69]|6[13-9]|7[0-8]|9[0-24578])|7(?:0[0246-9]|2\\d|3[0236-8]|4[03-9]|5[0-46-9]|6[013-9]|7[0-35-9]|8[024-9]|9[02-9])|8(?:0[35-9]|2[1-57-9]|3[02-578]|4[0-578]|5[124-9]|6[2-69]|7\\d|8[02-9]|9[02569])|9(?:0[02-589]|[18]\\d|2[02-689]|3[1-57-9]|4[2-9]|5[0-579]|6[2-47-9]|7[0-24578]|9[2-57]))\\d)\\d)|2(?:0[013478]|3[0189]|4[017]|8[0-46-9]|9[0-2])\\d{3})\\d{4}|1(?:2(?:0(?:46[1-4]|87[2-9])|545[1-79]|76(?:2\\d|3[1-8]|6[1-6])|9(?:7(?:2[0-4]|3[2-5])|8(?:2[2-8]|7[0-47-9]|8[3-5])))|3(?:6(?:38[2-5]|47[23])|8(?:47[04-9]|64[0157-9]))|4(?:044[1-7]|20(?:2[23]|8\\d)|6(?:0(?:30|5[2-57]|6[1-8]|7[2-8])|140)|8(?:052|87[1-3]))|5(?:2(?:4(?:3[2-79]|6\\d)|76\\d)|6(?:26[06-9]|686))|6(?:06(?:4\\d|7[4-79])|295[5-7]|35[34]\\d|47(?:24|61)|59(?:5[08]|6[67]|74)|9(?:55[0-4]|77[23]))|7(?:26(?:6[13-9]|7[0-7])|(?:442|688)\\d|50(?:2[0-3]|[3-68]2|76))|8(?:27[56]\\d|37(?:5[2-5]|8[239])|843[2-58])|9(?:0(?:0(?:6[1-8]|85)|52\\d)|3583|4(?:66[1-8]|9(?:2[01]|81))|63(?:23|3[1-4])|9561))\\d{3}", [9, 10]], ["7(?:457[0-57-9]|700[01]|911[028])\\d{5}|7(?:[1-3]\\d\\d|4(?:[0-46-9]\\d|5[0-689])|5(?:0[0-8]|[13-9]\\d|2[0-35-9])|7(?:0[1-9]|[1-7]\\d|8[02-9]|9[0-689])|8(?:[014-9]\\d|[23][0-8])|9(?:[024-9]\\d|1[02-9]|3[0-689]))\\d{6}", [10]], ["80[08]\\d{7}|800\\d{6}|8001111"], ["(?:8(?:4[2-5]|7[0-3])|9(?:[01]\\d|8[2-49]))\\d{7}|845464\\d", [7, 10]], ["70\\d{8}", [10]], 0, ["(?:3[0347]|55)\\d{8}", [10]], ["76(?:464|652)\\d{5}|76(?:0[0-28]|2[356]|34|4[01347]|5[49]|6[0-369]|77|8[14]|9[139])\\d{6}", [10]], ["56\\d{8}", [10]]], 0, " x"], GD: ["1", "011", "(?:473|[58]\\d\\d|900)\\d{7}", [10], 0, "1", 0, "([2-9]\\d{6})$|1", "473$1", 0, "473"], GE: ["995", "00", "(?:[3-57]\\d\\d|800)\\d{6}", [9], [["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["70"], "0$1"], ["(\\d{2})(\\d{3})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["32"], "0$1"], ["(\\d{3})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[57]"]], ["(\\d{3})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[348]"], "0$1"]], "0"], GF: ["594", "00", "[56]94\\d{6}|(?:80|9\\d)\\d{7}", [9], [["(\\d{3})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[56]|9[47]"], "0$1"], ["(\\d{3})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[89]"], "0$1"]], "0"], GG: ["44", "00", "(?:1481|[357-9]\\d{3})\\d{6}|8\\d{6}(?:\\d{2})?", [7, 9, 10], 0, "0", 0, "([25-9]\\d{5})$|0", "1481$1", 0, 0, [["1481[25-9]\\d{5}", [10]], ["7(?:(?:781|839)\\d|911[17])\\d{5}", [10]], ["80[08]\\d{7}|800\\d{6}|8001111"], ["(?:8(?:4[2-5]|7[0-3])|9(?:[01]\\d|8[0-3]))\\d{7}|845464\\d", [7, 10]], ["70\\d{8}", [10]], 0, ["(?:3[0347]|55)\\d{8}", [10]], ["76(?:464|652)\\d{5}|76(?:0[0-28]|2[356]|34|4[01347]|5[49]|6[0-369]|77|8[14]|9[139])\\d{6}", [10]], ["56\\d{8}", [10]]]], GH: ["233", "00", "(?:[235]\\d{3}|800)\\d{5}", [8, 9], [["(\\d{3})(\\d{5})", "$1 $2", ["8"], "0$1"], ["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["[235]"], "0$1"]], "0"], GI: ["350", "00", "(?:[25]\\d|60)\\d{6}", [8], [["(\\d{3})(\\d{5})", "$1 $2", ["2"]]]], GL: ["299", "00", "(?:19|[2-689]\\d|70)\\d{4}", [6], [["(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3", ["19|[2-9]"]]]], GM: ["220", "00", "[2-9]\\d{6}", [7], [["(\\d{3})(\\d{4})", "$1 $2", ["[2-9]"]]]], GN: ["224", "00", "722\\d{6}|(?:3|6\\d)\\d{7}", [8, 9], [["(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["3"]], ["(\\d{3})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[67]"]]]], GP: ["590", "00", "590\\d{6}|(?:69|80|9\\d)\\d{7}", [9], [["(\\d{3})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[569]"], "0$1"], ["(\\d{3})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["8"], "0$1"]], "0", 0, 0, 0, 0, 0, [["590(?:0[1-68]|[14][0-24-9]|2[0-68]|3[1-9]|5[3-579]|[68][0-689]|7[08]|9\\d)\\d{4}"], ["69(?:0\\d\\d|1(?:2[2-9]|3[0-5])|4(?:0[89]|1[2-6]|9\\d)|6(?:1[016-9]|5[0-4]|[67]\\d))\\d{4}"], ["80[0-5]\\d{6}"], 0, 0, 0, 0, 0, ["9(?:(?:39[5-7]|76[018])\\d|475[0-5])\\d{4}"]]], GQ: ["240", "00", "222\\d{6}|(?:3\\d|55|[89]0)\\d{7}", [9], [["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["[235]"]], ["(\\d{3})(\\d{6})", "$1 $2", ["[89]"]]]], GR: ["30", "00", "5005000\\d{3}|8\\d{9,11}|(?:[269]\\d|70)\\d{8}", [10, 11, 12], [["(\\d{2})(\\d{4})(\\d{4})", "$1 $2 $3", ["21|7"]], ["(\\d{4})(\\d{6})", "$1 $2", ["2(?:2|3[2-57-9]|4[2-469]|5[2-59]|6[2-9]|7[2-69]|8[2-49])|5"]], ["(\\d{3})(\\d{3})(\\d{4})", "$1 $2 $3", ["[2689]"]], ["(\\d{3})(\\d{3,4})(\\d{5})", "$1 $2 $3", ["8"]]]], GT: ["502", "00", "80\\d{6}|(?:1\\d{3}|[2-7])\\d{7}", [8, 11], [["(\\d{4})(\\d{4})", "$1 $2", ["[2-8]"]], ["(\\d{4})(\\d{3})(\\d{4})", "$1 $2 $3", ["1"]]]], GU: ["1", "011", "(?:[58]\\d\\d|671|900)\\d{7}", [10], 0, "1", 0, "([2-9]\\d{6})$|1", "671$1", 0, "671"], GW: ["245", "00", "[49]\\d{8}|4\\d{6}", [7, 9], [["(\\d{3})(\\d{4})", "$1 $2", ["40"]], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["[49]"]]]], GY: ["592", "001", "(?:[2-8]\\d{3}|9008)\\d{3}", [7], [["(\\d{3})(\\d{4})", "$1 $2", ["[2-9]"]]]], HK: ["852", "00(?:30|5[09]|[126-9]?)", "8[0-46-9]\\d{6,7}|9\\d{4,7}|(?:[2-7]|9\\d{3})\\d{7}", [5, 6, 7, 8, 9, 11], [["(\\d{3})(\\d{2,5})", "$1 $2", ["900", "9003"]], ["(\\d{4})(\\d{4})", "$1 $2", ["[2-7]|8[1-4]|9(?:0[1-9]|[1-8])"]], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["8"]], ["(\\d{3})(\\d{2})(\\d{3})(\\d{3})", "$1 $2 $3 $4", ["9"]]], 0, 0, 0, 0, 0, 0, 0, "00"], HN: ["504", "00", "8\\d{10}|[237-9]\\d{7}", [8, 11], [["(\\d{4})(\\d{4})", "$1-$2", ["[237-9]"]]]], HR: ["385", "00", "(?:[24-69]\\d|3[0-79])\\d{7}|80\\d{5,7}|[1-79]\\d{7}|6\\d{5,6}", [6, 7, 8, 9], [["(\\d{2})(\\d{2})(\\d{2,3})", "$1 $2 $3", ["6[01]"], "0$1"], ["(\\d{3})(\\d{2})(\\d{2,3})", "$1 $2 $3", ["8"], "0$1"], ["(\\d)(\\d{4})(\\d{3})", "$1 $2 $3", ["1"], "0$1"], ["(\\d{2})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["6|7[245]"], "0$1"], ["(\\d{2})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["9"], "0$1"], ["(\\d{2})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["[2-57]"], "0$1"], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["8"], "0$1"]], "0"], HT: ["509", "00", "(?:[2-489]\\d|55)\\d{6}", [8], [["(\\d{2})(\\d{2})(\\d{4})", "$1 $2 $3", ["[2-589]"]]]], HU: ["36", "00", "[235-7]\\d{8}|[1-9]\\d{7}", [8, 9], [["(\\d)(\\d{3})(\\d{4})", "$1 $2 $3", ["1"], "(06 $1)"], ["(\\d{2})(\\d{3})(\\d{3})", "$1 $2 $3", ["[27][2-9]|3[2-7]|4[24-9]|5[2-79]|6|8[2-57-9]|9[2-69]"], "(06 $1)"], ["(\\d{2})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["[2-9]"], "06 $1"]], "06"], ID: ["62", "00[89]", "(?:(?:00[1-9]|8\\d)\\d{4}|[1-36])\\d{6}|00\\d{10}|[1-9]\\d{8,10}|[2-9]\\d{7}", [7, 8, 9, 10, 11, 12, 13], [["(\\d)(\\d{3})(\\d{3})", "$1 $2 $3", ["15"]], ["(\\d{2})(\\d{5,9})", "$1 $2", ["2[124]|[36]1"], "(0$1)"], ["(\\d{3})(\\d{5,7})", "$1 $2", ["800"], "0$1"], ["(\\d{3})(\\d{5,8})", "$1 $2", ["[2-79]"], "(0$1)"], ["(\\d{3})(\\d{3,4})(\\d{3})", "$1-$2-$3", ["8[1-35-9]"], "0$1"], ["(\\d{3})(\\d{6,8})", "$1 $2", ["1"], "0$1"], ["(\\d{3})(\\d{3})(\\d{4})", "$1 $2 $3", ["804"], "0$1"], ["(\\d{3})(\\d)(\\d{3})(\\d{3})", "$1 $2 $3 $4", ["80"], "0$1"], ["(\\d{3})(\\d{4})(\\d{4,5})", "$1-$2-$3", ["8"], "0$1"]], "0"], IE: ["353", "00", "(?:1\\d|[2569])\\d{6,8}|4\\d{6,9}|7\\d{8}|8\\d{8,9}", [7, 8, 9, 10], [["(\\d{2})(\\d{5})", "$1 $2", ["2[24-9]|47|58|6[237-9]|9[35-9]"], "(0$1)"], ["(\\d{3})(\\d{5})", "$1 $2", ["[45]0"], "(0$1)"], ["(\\d)(\\d{3,4})(\\d{4})", "$1 $2 $3", ["1"], "(0$1)"], ["(\\d{2})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["[2569]|4[1-69]|7[14]"], "(0$1)"], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["70"], "0$1"], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["81"], "(0$1)"], ["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["[78]"], "0$1"], ["(\\d{4})(\\d{3})(\\d{3})", "$1 $2 $3", ["1"]], ["(\\d{2})(\\d{4})(\\d{4})", "$1 $2 $3", ["4"], "(0$1)"], ["(\\d{2})(\\d)(\\d{3})(\\d{4})", "$1 $2 $3 $4", ["8"], "0$1"]], "0"], IL: ["972", "0(?:0|1[2-9])", "1\\d{6}(?:\\d{3,5})?|[57]\\d{8}|[1-489]\\d{7}", [7, 8, 9, 10, 11, 12], [["(\\d{4})(\\d{3})", "$1-$2", ["125"]], ["(\\d{4})(\\d{2})(\\d{2})", "$1-$2-$3", ["121"]], ["(\\d)(\\d{3})(\\d{4})", "$1-$2-$3", ["[2-489]"], "0$1"], ["(\\d{2})(\\d{3})(\\d{4})", "$1-$2-$3", ["[57]"], "0$1"], ["(\\d{4})(\\d{3})(\\d{3})", "$1-$2-$3", ["12"]], ["(\\d{4})(\\d{6})", "$1-$2", ["159"]], ["(\\d)(\\d{3})(\\d{3})(\\d{3})", "$1-$2-$3-$4", ["1[7-9]"]], ["(\\d{3})(\\d{1,2})(\\d{3})(\\d{4})", "$1-$2 $3-$4", ["15"]]], "0"], IM: ["44", "00", "1624\\d{6}|(?:[3578]\\d|90)\\d{8}", [10], 0, "0", 0, "([25-8]\\d{5})$|0", "1624$1", 0, "74576|(?:16|7[56])24"], IN: ["91", "00", "(?:000800|[2-9]\\d\\d)\\d{7}|1\\d{7,12}", [8, 9, 10, 11, 12, 13], [["(\\d{8})", "$1", ["5(?:0|2[23]|3[03]|[67]1|88)", "5(?:0|2(?:21|3)|3(?:0|3[23])|616|717|888)", "5(?:0|2(?:21|3)|3(?:0|3[23])|616|717|8888)"], 0, 1], ["(\\d{4})(\\d{4,5})", "$1 $2", ["180", "1800"], 0, 1], ["(\\d{3})(\\d{3})(\\d{4})", "$1 $2 $3", ["140"], 0, 1], ["(\\d{2})(\\d{4})(\\d{4})", "$1 $2 $3", ["11|2[02]|33|4[04]|79[1-7]|80[2-46]", "11|2[02]|33|4[04]|79(?:[1-6]|7[19])|80(?:[2-4]|6[0-589])", "11|2[02]|33|4[04]|79(?:[124-6]|3(?:[02-9]|1[0-24-9])|7(?:1|9[1-6]))|80(?:[2-4]|6[0-589])"], "0$1", 1], ["(\\d{3})(\\d{3})(\\d{4})", "$1 $2 $3", ["1(?:2[0-249]|3[0-25]|4[145]|[68]|7[1257])|2(?:1[257]|3[013]|4[01]|5[0137]|6[0158]|78|8[1568])|3(?:26|4[1-3]|5[34]|6[01489]|7[02-46]|8[159])|4(?:1[36]|2[1-47]|5[12]|6[0-26-9]|7[0-24-9]|8[013-57]|9[014-7])|5(?:1[025]|22|[36][25]|4[28]|5[12]|[78]1)|6(?:12|[2-4]1|5[17]|6[13]|80)|7(?:12|3[134]|4[47]|61|88)|8(?:16|2[014]|3[126]|6[136]|7[078]|8[34]|91)|(?:43|59|75)[15]|(?:1[59]|29|67|72)[14]", "1(?:2[0-24]|3[0-25]|4[145]|[59][14]|6[1-9]|7[1257]|8[1-57-9])|2(?:1[257]|3[013]|4[01]|5[0137]|6[058]|78|8[1568]|9[14])|3(?:26|4[1-3]|5[34]|6[01489]|7[02-46]|8[159])|4(?:1[36]|2[1-47]|3[15]|5[12]|6[0-26-9]|7[0-24-9]|8[013-57]|9[014-7])|5(?:1[025]|22|[36][25]|4[28]|[578]1|9[15])|674|7(?:(?:2[14]|3[34]|5[15])[2-6]|61[346]|88[0-8])|8(?:70[2-6]|84[235-7]|91[3-7])|(?:1(?:29|60|8[06])|261|552|6(?:12|[2-47]1|5[17]|6[13]|80)|7(?:12|31|4[47])|8(?:16|2[014]|3[126]|6[136]|7[78]|83))[2-7]", "1(?:2[0-24]|3[0-25]|4[145]|[59][14]|6[1-9]|7[1257]|8[1-57-9])|2(?:1[257]|3[013]|4[01]|5[0137]|6[058]|78|8[1568]|9[14])|3(?:26|4[1-3]|5[34]|6[01489]|7[02-46]|8[159])|4(?:1[36]|2[1-47]|3[15]|5[12]|6[0-26-9]|7[0-24-9]|8[013-57]|9[014-7])|5(?:1[025]|22|[36][25]|4[28]|[578]1|9[15])|6(?:12(?:[2-6]|7[0-8])|74[2-7])|7(?:(?:2[14]|5[15])[2-6]|3171|61[346]|88(?:[2-7]|82))|8(?:70[2-6]|84(?:[2356]|7[19])|91(?:[3-6]|7[19]))|73[134][2-6]|(?:74[47]|8(?:16|2[014]|3[126]|6[136]|7[78]|83))(?:[2-6]|7[19])|(?:1(?:29|60|8[06])|261|552|6(?:[2-4]1|5[17]|6[13]|7(?:1|4[0189])|80)|7(?:12|88[01]))[2-7]"], "0$1", 1], ["(\\d{4})(\\d{3})(\\d{3})", "$1 $2 $3", ["1(?:[2-479]|5[0235-9])|[2-5]|6(?:1[1358]|2[2457-9]|3[2-5]|4[235-7]|5[2-689]|6[24578]|7[235689]|8[1-6])|7(?:1[013-9]|28|3[129]|4[1-35689]|5[29]|6[02-5]|70)|807", "1(?:[2-479]|5[0235-9])|[2-5]|6(?:1[1358]|2(?:[2457]|84|95)|3(?:[2-4]|55)|4[235-7]|5[2-689]|6[24578]|7[235689]|8[1-6])|7(?:1(?:[013-8]|9[6-9])|28[6-8]|3(?:17|2[0-49]|9[2-57])|4(?:1[2-4]|[29][0-7]|3[0-8]|[56]|8[0-24-7])|5(?:2[1-3]|9[0-6])|6(?:0[5689]|2[5-9]|3[02-8]|4|5[0-367])|70[13-7])|807[19]", "1(?:[2-479]|5(?:[0236-9]|5[013-9]))|[2-5]|6(?:2(?:84|95)|355|83)|73179|807(?:1|9[1-3])|(?:1552|6(?:1[1358]|2[2457]|3[2-4]|4[235-7]|5[2-689]|6[24578]|7[235689]|8[124-6])\\d|7(?:1(?:[013-8]\\d|9[6-9])|28[6-8]|3(?:2[0-49]|9[2-57])|4(?:1[2-4]|[29][0-7]|3[0-8]|[56]\\d|8[0-24-7])|5(?:2[1-3]|9[0-6])|6(?:0[5689]|2[5-9]|3[02-8]|4\\d|5[0-367])|70[13-7]))[2-7]"], "0$1", 1], ["(\\d{5})(\\d{5})", "$1 $2", ["[6-9]"], "0$1", 1], ["(\\d{4})(\\d{2,4})(\\d{4})", "$1 $2 $3", ["1(?:6|8[06])", "1(?:6|8[06]0)"], 0, 1], ["(\\d{4})(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3 $4", ["18"], 0, 1]], "0"], IO: ["246", "00", "3\\d{6}", [7], [["(\\d{3})(\\d{4})", "$1 $2", ["3"]]]], IQ: ["964", "00", "(?:1|7\\d\\d)\\d{7}|[2-6]\\d{7,8}", [8, 9, 10], [["(\\d)(\\d{3})(\\d{4})", "$1 $2 $3", ["1"], "0$1"], ["(\\d{2})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["[2-6]"], "0$1"], ["(\\d{3})(\\d{3})(\\d{4})", "$1 $2 $3", ["7"], "0$1"]], "0"], IR: ["98", "00", "[1-9]\\d{9}|(?:[1-8]\\d\\d|9)\\d{3,4}", [4, 5, 6, 7, 10], [["(\\d{4,5})", "$1", ["96"], "0$1"], ["(\\d{2})(\\d{4,5})", "$1 $2", ["(?:1[137]|2[13-68]|3[1458]|4[145]|5[1468]|6[16]|7[1467]|8[13467])[12689]"], "0$1"], ["(\\d{3})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["9"], "0$1"], ["(\\d{2})(\\d{4})(\\d{4})", "$1 $2 $3", ["[1-8]"], "0$1"]], "0"], IS: ["354", "00|1(?:0(?:01|[12]0)|100)", "(?:38\\d|[4-9])\\d{6}", [7, 9], [["(\\d{3})(\\d{4})", "$1 $2", ["[4-9]"]], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["3"]]], 0, 0, 0, 0, 0, 0, 0, "00"], IT: ["39", "00", "0\\d{5,10}|1\\d{8,10}|3(?:[0-8]\\d{7,10}|9\\d{7,8})|(?:43|55|70)\\d{8}|8\\d{5}(?:\\d{2,4})?", [6, 7, 8, 9, 10, 11], [["(\\d{2})(\\d{4,6})", "$1 $2", ["0[26]"]], ["(\\d{3})(\\d{3,6})", "$1 $2", ["0[13-57-9][0159]|8(?:03|4[17]|9[2-5])", "0[13-57-9][0159]|8(?:03|4[17]|9(?:2|3[04]|[45][0-4]))"]], ["(\\d{4})(\\d{2,6})", "$1 $2", ["0(?:[13-579][2-46-8]|8[236-8])"]], ["(\\d{4})(\\d{4})", "$1 $2", ["894"]], ["(\\d{2})(\\d{3,4})(\\d{4})", "$1 $2 $3", ["0[26]|5"]], ["(\\d{3})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["1(?:44|[679])|[378]|43"]], ["(\\d{3})(\\d{3,4})(\\d{4})", "$1 $2 $3", ["0[13-57-9][0159]|14"]], ["(\\d{2})(\\d{4})(\\d{5})", "$1 $2 $3", ["0[26]"]], ["(\\d{4})(\\d{3})(\\d{4})", "$1 $2 $3", ["0"]], ["(\\d{3})(\\d{4})(\\d{4,5})", "$1 $2 $3", ["3"]]], 0, 0, 0, 0, 0, 0, [["0669[0-79]\\d{1,6}|0(?:1(?:[0159]\\d|[27][1-5]|31|4[1-4]|6[1356]|8[2-57])|2\\d\\d|3(?:[0159]\\d|2[1-4]|3[12]|[48][1-6]|6[2-59]|7[1-7])|4(?:[0159]\\d|[23][1-9]|4[245]|6[1-5]|7[1-4]|81)|5(?:[0159]\\d|2[1-5]|3[2-6]|4[1-79]|6[4-6]|7[1-578]|8[3-8])|6(?:[0-57-9]\\d|6[0-8])|7(?:[0159]\\d|2[12]|3[1-7]|4[2-46]|6[13569]|7[13-6]|8[1-59])|8(?:[0159]\\d|2[3-578]|3[1-356]|[6-8][1-5])|9(?:[0159]\\d|[238][1-5]|4[12]|6[1-8]|7[1-6]))\\d{2,7}"], ["3[2-9]\\d{7,8}|(?:31|43)\\d{8}", [9, 10]], ["80(?:0\\d{3}|3)\\d{3}", [6, 9]], ["(?:0878\\d{3}|89(?:2\\d|3[04]|4(?:[0-4]|[5-9]\\d\\d)|5[0-4]))\\d\\d|(?:1(?:44|6[346])|89(?:38|5[5-9]|9))\\d{6}", [6, 8, 9, 10]], ["1(?:78\\d|99)\\d{6}", [9, 10]], 0, 0, 0, ["55\\d{8}", [10]], ["84(?:[08]\\d{3}|[17])\\d{3}", [6, 9]]]], JE: ["44", "00", "1534\\d{6}|(?:[3578]\\d|90)\\d{8}", [10], 0, "0", 0, "([0-24-8]\\d{5})$|0", "1534$1", 0, 0, [["1534[0-24-8]\\d{5}"], ["7(?:(?:(?:50|82)9|937)\\d|7(?:00[378]|97\\d))\\d{5}"], ["80(?:07(?:35|81)|8901)\\d{4}"], ["(?:8(?:4(?:4(?:4(?:05|42|69)|703)|5(?:041|800))|7(?:0002|1206))|90(?:066[59]|1810|71(?:07|55)))\\d{4}"], ["701511\\d{4}"], 0, ["(?:3(?:0(?:07(?:35|81)|8901)|3\\d{4}|4(?:4(?:4(?:05|42|69)|703)|5(?:041|800))|7(?:0002|1206))|55\\d{4})\\d{4}"], ["76(?:464|652)\\d{5}|76(?:0[0-28]|2[356]|34|4[01347]|5[49]|6[0-369]|77|8[14]|9[139])\\d{6}"], ["56\\d{8}"]]], JM: ["1", "011", "(?:[58]\\d\\d|658|900)\\d{7}", [10], 0, "1", 0, 0, 0, 0, "658|876"], JO: ["962", "00", "(?:(?:[2689]|7\\d)\\d|32|53)\\d{6}", [8, 9], [["(\\d)(\\d{3})(\\d{4})", "$1 $2 $3", ["[2356]|87"], "(0$1)"], ["(\\d{3})(\\d{5,6})", "$1 $2", ["[89]"], "0$1"], ["(\\d{2})(\\d{7})", "$1 $2", ["70"], "0$1"], ["(\\d)(\\d{4})(\\d{4})", "$1 $2 $3", ["7"], "0$1"]], "0"], JP: ["81", "010", "00[1-9]\\d{6,14}|[257-9]\\d{9}|(?:00|[1-9]\\d\\d)\\d{6}", [8, 9, 10, 11, 12, 13, 14, 15, 16, 17], [["(\\d{3})(\\d{3})(\\d{3})", "$1-$2-$3", ["(?:12|57|99)0"], "0$1"], ["(\\d{4})(\\d)(\\d{4})", "$1-$2-$3", ["1(?:26|3[79]|4[56]|5[4-68]|6[3-5])|499|5(?:76|97)|746|8(?:3[89]|47|51)|9(?:80|9[16])", "1(?:267|3(?:7[247]|9[278])|466|5(?:47|58|64)|6(?:3[245]|48|5[4-68]))|499[2468]|5(?:76|97)9|7468|8(?:3(?:8[7-9]|96)|477|51[2-9])|9(?:802|9(?:1[23]|69))|1(?:45|58)[67]", "1(?:267|3(?:7[247]|9[278])|466|5(?:47|58|64)|6(?:3[245]|48|5[4-68]))|499[2468]|5(?:769|979[2-69])|7468|8(?:3(?:8[7-9]|96[2457-9])|477|51[2-9])|9(?:802|9(?:1[23]|69))|1(?:45|58)[67]"], "0$1"], ["(\\d{2})(\\d{3})(\\d{4})", "$1-$2-$3", ["60"], "0$1"], ["(\\d)(\\d{4})(\\d{4})", "$1-$2-$3", ["[36]|4(?:2[09]|7[01])", "[36]|4(?:2(?:0|9[02-69])|7(?:0[019]|1))"], "0$1"], ["(\\d{2})(\\d{3})(\\d{4})", "$1-$2-$3", ["1(?:1|5[45]|77|88|9[69])|2(?:2[1-37]|3[0-269]|4[59]|5|6[24]|7[1-358]|8[1369]|9[0-38])|4(?:[28][1-9]|3[0-57]|[45]|6[248]|7[2-579]|9[29])|5(?:2|3[0459]|4[0-369]|5[29]|8[02389]|9[0-389])|7(?:2[02-46-9]|34|[58]|6[0249]|7[57]|9[2-6])|8(?:2[124589]|3[26-9]|49|51|6|7[0-468]|8[68]|9[019])|9(?:[23][1-9]|4[15]|5[138]|6[1-3]|7[156]|8[189]|9[1-489])", "1(?:1|5(?:4[018]|5[017])|77|88|9[69])|2(?:2(?:[127]|3[014-9])|3[0-269]|4[59]|5(?:[1-3]|5[0-69]|9[19])|62|7(?:[1-35]|8[0189])|8(?:[16]|3[0134]|9[0-5])|9(?:[028]|17))|4(?:2(?:[13-79]|8[014-6])|3[0-57]|[45]|6[248]|7[2-47]|8[1-9]|9[29])|5(?:2|3(?:[045]|9[0-8])|4[0-369]|5[29]|8[02389]|9[0-3])|7(?:2[02-46-9]|34|[58]|6[0249]|7[57]|9(?:[23]|4[0-59]|5[01569]|6[0167]))|8(?:2(?:[1258]|4[0-39]|9[0-2469])|3(?:[29]|60)|49|51|6(?:[0-24]|36|5[0-3589]|7[23]|9[01459])|7[0-468]|8[68])|9(?:[23][1-9]|4[15]|5[138]|6[1-3]|7[156]|8[189]|9(?:[1289]|3[34]|4[0178]))|(?:264|837)[016-9]|2(?:57|93)[015-9]|(?:25[0468]|422|838)[01]|(?:47[59]|59[89]|8(?:6[68]|9))[019]", "1(?:1|5(?:4[018]|5[017])|77|88|9[69])|2(?:2[127]|3[0-269]|4[59]|5(?:[1-3]|5[0-69]|9(?:17|99))|6(?:2|4[016-9])|7(?:[1-35]|8[0189])|8(?:[16]|3[0134]|9[0-5])|9(?:[028]|17))|4(?:2(?:[13-79]|8[014-6])|3[0-57]|[45]|6[248]|7[2-47]|9[29])|5(?:2|3(?:[045]|9(?:[0-58]|6[4-9]|7[0-35689]))|4[0-369]|5[29]|8[02389]|9[0-3])|7(?:2[02-46-9]|34|[58]|6[0249]|7[57]|9(?:[23]|4[0-59]|5[01569]|6[0167]))|8(?:2(?:[1258]|4[0-39]|9[0169])|3(?:[29]|60|7(?:[017-9]|6[6-8]))|49|51|6(?:[0-24]|36[2-57-9]|5(?:[0-389]|5[23])|6(?:[01]|9[178])|7(?:2[2-468]|3[78])|9[0145])|7[0-468]|8[68])|9(?:4[15]|5[138]|7[156]|8[189]|9(?:[1289]|3(?:31|4[357])|4[0178]))|(?:8294|96)[1-3]|2(?:57|93)[015-9]|(?:223|8699)[014-9]|(?:25[0468]|422|838)[01]|(?:48|8292|9[23])[1-9]|(?:47[59]|59[89]|8(?:68|9))[019]"], "0$1"], ["(\\d{3})(\\d{2})(\\d{4})", "$1-$2-$3", ["[14]|[289][2-9]|5[3-9]|7[2-4679]"], "0$1"], ["(\\d{3})(\\d{3})(\\d{4})", "$1-$2-$3", ["800"], "0$1"], ["(\\d{2})(\\d{4})(\\d{4})", "$1-$2-$3", ["[257-9]"], "0$1"]], "0", 0, "(000[259]\\d{6})$|(?:(?:003768)0?)|0", "$1"], KE: ["254", "000", "(?:[17]\\d\\d|900)\\d{6}|(?:2|80)0\\d{6,7}|[4-6]\\d{6,8}", [7, 8, 9, 10], [["(\\d{2})(\\d{5,7})", "$1 $2", ["[24-6]"], "0$1"], ["(\\d{3})(\\d{6})", "$1 $2", ["[17]"], "0$1"], ["(\\d{3})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["[89]"], "0$1"]], "0"], KG: ["996", "00", "8\\d{9}|[235-9]\\d{8}", [9, 10], [["(\\d{4})(\\d{5})", "$1 $2", ["3(?:1[346]|[24-79])"], "0$1"], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["[235-79]|88"], "0$1"], ["(\\d{3})(\\d{3})(\\d)(\\d{2,3})", "$1 $2 $3 $4", ["8"], "0$1"]], "0"], KH: ["855", "00[14-9]", "1\\d{9}|[1-9]\\d{7,8}", [8, 9, 10], [["(\\d{2})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["[1-9]"], "0$1"], ["(\\d{4})(\\d{3})(\\d{3})", "$1 $2 $3", ["1"]]], "0"], KI: ["686", "00", "(?:[37]\\d|6[0-79])\\d{6}|(?:[2-48]\\d|50)\\d{3}", [5, 8], 0, "0"], KM: ["269", "00", "[3478]\\d{6}", [7], [["(\\d{3})(\\d{2})(\\d{2})", "$1 $2 $3", ["[3478]"]]]], KN: ["1", "011", "(?:[58]\\d\\d|900)\\d{7}", [10], 0, "1", 0, "([2-7]\\d{6})$|1", "869$1", 0, "869"], KP: ["850", "00|99", "85\\d{6}|(?:19\\d|[2-7])\\d{7}", [8, 10], [["(\\d{2})(\\d{3})(\\d{3})", "$1 $2 $3", ["8"], "0$1"], ["(\\d)(\\d{3})(\\d{4})", "$1 $2 $3", ["[2-7]"], "0$1"], ["(\\d{3})(\\d{3})(\\d{4})", "$1 $2 $3", ["1"], "0$1"]], "0"], KR: ["82", "00(?:[125689]|3(?:[46]5|91)|7(?:00|27|3|55|6[126]))", "00[1-9]\\d{8,11}|(?:[12]|5\\d{3})\\d{7}|[13-6]\\d{9}|(?:[1-6]\\d|80)\\d{7}|[3-6]\\d{4,5}|(?:00|7)0\\d{8}", [5, 6, 8, 9, 10, 11, 12, 13, 14], [["(\\d{2})(\\d{3,4})", "$1-$2", ["(?:3[1-3]|[46][1-4]|5[1-5])1"], "0$1"], ["(\\d{4})(\\d{4})", "$1-$2", ["1"]], ["(\\d)(\\d{3,4})(\\d{4})", "$1-$2-$3", ["2"], "0$1"], ["(\\d{2})(\\d{3})(\\d{4})", "$1-$2-$3", ["[36]0|8"], "0$1"], ["(\\d{2})(\\d{3,4})(\\d{4})", "$1-$2-$3", ["[1346]|5[1-5]"], "0$1"], ["(\\d{2})(\\d{4})(\\d{4})", "$1-$2-$3", ["[57]"], "0$1"], ["(\\d{2})(\\d{5})(\\d{4})", "$1-$2-$3", ["5"], "0$1"]], "0", 0, "0(8(?:[1-46-8]|5\\d\\d))?"], KW: ["965", "00", "18\\d{5}|(?:[2569]\\d|41)\\d{6}", [7, 8], [["(\\d{4})(\\d{3,4})", "$1 $2", ["[169]|2(?:[235]|4[1-35-9])|52"]], ["(\\d{3})(\\d{5})", "$1 $2", ["[245]"]]]], KY: ["1", "011", "(?:345|[58]\\d\\d|900)\\d{7}", [10], 0, "1", 0, "([2-9]\\d{6})$|1", "345$1", 0, "345"], KZ: ["7", "810", "(?:33622|8\\d{8})\\d{5}|[78]\\d{9}", [10, 14], 0, "8", 0, 0, 0, 0, "33|7", 0, "8~10"], LA: ["856", "00", "[23]\\d{9}|3\\d{8}|(?:[235-8]\\d|41)\\d{6}", [8, 9, 10], [["(\\d{2})(\\d{3})(\\d{3})", "$1 $2 $3", ["2[13]|3[14]|[4-8]"], "0$1"], ["(\\d{2})(\\d{2})(\\d{2})(\\d{3})", "$1 $2 $3 $4", ["30[0135-9]"], "0$1"], ["(\\d{2})(\\d{2})(\\d{3})(\\d{3})", "$1 $2 $3 $4", ["[23]"], "0$1"]], "0"], LB: ["961", "00", "[27-9]\\d{7}|[13-9]\\d{6}", [7, 8], [["(\\d)(\\d{3})(\\d{3})", "$1 $2 $3", ["[13-69]|7(?:[2-57]|62|8[0-7]|9[04-9])|8[02-9]"], "0$1"], ["(\\d{2})(\\d{3})(\\d{3})", "$1 $2 $3", ["[27-9]"]]], "0"], LC: ["1", "011", "(?:[58]\\d\\d|758|900)\\d{7}", [10], 0, "1", 0, "([2-8]\\d{6})$|1", "758$1", 0, "758"], LI: ["423", "00", "[68]\\d{8}|(?:[2378]\\d|90)\\d{5}", [7, 9], [["(\\d{3})(\\d{2})(\\d{2})", "$1 $2 $3", ["[2379]|8(?:0[09]|7)", "[2379]|8(?:0(?:02|9)|7)"]], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["8"]], ["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["69"]], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["6"]]], "0", 0, "(1001)|0"], LK: ["94", "00", "[1-9]\\d{8}", [9], [["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["7"], "0$1"], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["[1-689]"], "0$1"]], "0"], LR: ["231", "00", "(?:[245]\\d|33|77|88)\\d{7}|(?:2\\d|[4-6])\\d{6}", [7, 8, 9], [["(\\d)(\\d{3})(\\d{3})", "$1 $2 $3", ["4[67]|[56]"], "0$1"], ["(\\d{2})(\\d{3})(\\d{3})", "$1 $2 $3", ["2"], "0$1"], ["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["[2-578]"], "0$1"]], "0"], LS: ["266", "00", "(?:[256]\\d\\d|800)\\d{5}", [8], [["(\\d{4})(\\d{4})", "$1 $2", ["[2568]"]]]], LT: ["370", "00", "(?:[3469]\\d|52|[78]0)\\d{6}", [8], [["(\\d)(\\d{3})(\\d{4})", "$1 $2 $3", ["52[0-7]"], "(0-$1)", 1], ["(\\d{3})(\\d{2})(\\d{3})", "$1 $2 $3", ["[7-9]"], "0 $1", 1], ["(\\d{2})(\\d{6})", "$1 $2", ["37|4(?:[15]|6[1-8])"], "(0-$1)", 1], ["(\\d{3})(\\d{5})", "$1 $2", ["[3-6]"], "(0-$1)", 1]], "0", 0, "[08]"], LU: ["352", "00", "35[013-9]\\d{4,8}|6\\d{8}|35\\d{2,4}|(?:[2457-9]\\d|3[0-46-9])\\d{2,9}", [4, 5, 6, 7, 8, 9, 10, 11], [["(\\d{2})(\\d{3})", "$1 $2", ["2(?:0[2-689]|[2-9])|[3-57]|8(?:0[2-9]|[13-9])|9(?:0[89]|[2-579])"]], ["(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3", ["2(?:0[2-689]|[2-9])|[3-57]|8(?:0[2-9]|[13-9])|9(?:0[89]|[2-579])"]], ["(\\d{2})(\\d{2})(\\d{3})", "$1 $2 $3", ["20[2-689]"]], ["(\\d{2})(\\d{2})(\\d{2})(\\d{1,2})", "$1 $2 $3 $4", ["2(?:[0367]|4[3-8])"]], ["(\\d{3})(\\d{2})(\\d{3})", "$1 $2 $3", ["80[01]|90[015]"]], ["(\\d{2})(\\d{2})(\\d{2})(\\d{3})", "$1 $2 $3 $4", ["20"]], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["6"]], ["(\\d{2})(\\d{2})(\\d{2})(\\d{2})(\\d{1,2})", "$1 $2 $3 $4 $5", ["2(?:[0367]|4[3-8])"]], ["(\\d{2})(\\d{2})(\\d{2})(\\d{1,5})", "$1 $2 $3 $4", ["[3-57]|8[13-9]|9(?:0[89]|[2-579])|(?:2|80)[2-9]"]]], 0, 0, "(15(?:0[06]|1[12]|[35]5|4[04]|6[26]|77|88|99)\\d)"], LV: ["371", "00", "(?:[268]\\d|90)\\d{6}", [8], [["(\\d{2})(\\d{3})(\\d{3})", "$1 $2 $3", ["[269]|8[01]"]]]], LY: ["218", "00", "[2-9]\\d{8}", [9], [["(\\d{2})(\\d{7})", "$1-$2", ["[2-9]"], "0$1"]], "0"], MA: ["212", "00", "[5-8]\\d{8}", [9], [["(\\d{3})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["5[45]"], "0$1"], ["(\\d{4})(\\d{5})", "$1-$2", ["5(?:2[2-46-9]|3[3-9]|9)|8(?:0[89]|92)"], "0$1"], ["(\\d{2})(\\d{7})", "$1-$2", ["8"], "0$1"], ["(\\d{3})(\\d{6})", "$1-$2", ["[5-7]"], "0$1"]], "0", 0, 0, 0, 0, 0, [["5(?:2(?:[0-25-79]\\d|3[1-578]|4[02-46-8]|8[0235-7])|3(?:[0-47]\\d|5[02-9]|6[02-8]|8[014-9]|9[3-9])|(?:4[067]|5[03])\\d)\\d{5}"], ["(?:6(?:[0-79]\\d|8[0-247-9])|7(?:[0167]\\d|2[0-4]|5[01]|8[0-3]))\\d{6}"], ["80[0-7]\\d{6}"], ["89\\d{7}"], 0, 0, 0, 0, ["(?:592(?:4[0-2]|93)|80[89]\\d\\d)\\d{4}"]]], MC: ["377", "00", "(?:[3489]|6\\d)\\d{7}", [8, 9], [["(\\d{2})(\\d{3})(\\d{3})", "$1 $2 $3", ["4"], "0$1"], ["(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[389]"]], ["(\\d)(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4 $5", ["6"], "0$1"]], "0"], MD: ["373", "00", "(?:[235-7]\\d|[89]0)\\d{6}", [8], [["(\\d{3})(\\d{5})", "$1 $2", ["[89]"], "0$1"], ["(\\d{2})(\\d{3})(\\d{3})", "$1 $2 $3", ["22|3"], "0$1"], ["(\\d{3})(\\d{2})(\\d{3})", "$1 $2 $3", ["[25-7]"], "0$1"]], "0"], ME: ["382", "00", "(?:20|[3-79]\\d)\\d{6}|80\\d{6,7}", [8, 9], [["(\\d{2})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["[2-9]"], "0$1"]], "0"], MF: ["590", "00", "590\\d{6}|(?:69|80|9\\d)\\d{7}", [9], 0, "0", 0, 0, 0, 0, 0, [["590(?:0[079]|[14]3|[27][79]|3[03-7]|5[0-268]|87)\\d{4}"], ["69(?:0\\d\\d|1(?:2[2-9]|3[0-5])|4(?:0[89]|1[2-6]|9\\d)|6(?:1[016-9]|5[0-4]|[67]\\d))\\d{4}"], ["80[0-5]\\d{6}"], 0, 0, 0, 0, 0, ["9(?:(?:39[5-7]|76[018])\\d|475[0-5])\\d{4}"]]], MG: ["261", "00", "[23]\\d{8}", [9], [["(\\d{2})(\\d{2})(\\d{3})(\\d{2})", "$1 $2 $3 $4", ["[23]"], "0$1"]], "0", 0, "([24-9]\\d{6})$|0", "20$1"], MH: ["692", "011", "329\\d{4}|(?:[256]\\d|45)\\d{5}", [7], [["(\\d{3})(\\d{4})", "$1-$2", ["[2-6]"]]], "1"], MK: ["389", "00", "[2-578]\\d{7}", [8], [["(\\d)(\\d{3})(\\d{4})", "$1 $2 $3", ["2|34[47]|4(?:[37]7|5[47]|64)"], "0$1"], ["(\\d{2})(\\d{3})(\\d{3})", "$1 $2 $3", ["[347]"], "0$1"], ["(\\d{3})(\\d)(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[58]"], "0$1"]], "0"], ML: ["223", "00", "[24-9]\\d{7}", [8], [["(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[24-9]"]]]], MM: ["95", "00", "1\\d{5,7}|95\\d{6}|(?:[4-7]|9[0-46-9])\\d{6,8}|(?:2|8\\d)\\d{5,8}", [6, 7, 8, 9, 10], [["(\\d)(\\d{2})(\\d{3})", "$1 $2 $3", ["16|2"], "0$1"], ["(\\d{2})(\\d{2})(\\d{3})", "$1 $2 $3", ["[45]|6(?:0[23]|[1-689]|7[235-7])|7(?:[0-4]|5[2-7])|8[1-6]"], "0$1"], ["(\\d)(\\d{3})(\\d{3,4})", "$1 $2 $3", ["[12]"], "0$1"], ["(\\d{2})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["[4-7]|8[1-35]"], "0$1"], ["(\\d)(\\d{3})(\\d{4,6})", "$1 $2 $3", ["9(?:2[0-4]|[35-9]|4[137-9])"], "0$1"], ["(\\d)(\\d{4})(\\d{4})", "$1 $2 $3", ["2"], "0$1"], ["(\\d{3})(\\d{3})(\\d{4})", "$1 $2 $3", ["8"], "0$1"], ["(\\d)(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3 $4", ["92"], "0$1"], ["(\\d)(\\d{5})(\\d{4})", "$1 $2 $3", ["9"], "0$1"]], "0"], MN: ["976", "001", "[12]\\d{7,9}|[5-9]\\d{7}", [8, 9, 10], [["(\\d{2})(\\d{2})(\\d{4})", "$1 $2 $3", ["[12]1"], "0$1"], ["(\\d{4})(\\d{4})", "$1 $2", ["[5-9]"]], ["(\\d{3})(\\d{5,6})", "$1 $2", ["[12]2[1-3]"], "0$1"], ["(\\d{4})(\\d{5,6})", "$1 $2", ["[12](?:27|3[2-8]|4[2-68]|5[1-4689])", "[12](?:27|3[2-8]|4[2-68]|5[1-4689])[0-3]"], "0$1"], ["(\\d{5})(\\d{4,5})", "$1 $2", ["[12]"], "0$1"]], "0"], MO: ["853", "00", "0800\\d{3}|(?:28|[68]\\d)\\d{6}", [7, 8], [["(\\d{4})(\\d{3})", "$1 $2", ["0"]], ["(\\d{4})(\\d{4})", "$1 $2", ["[268]"]]]], MP: ["1", "011", "[58]\\d{9}|(?:67|90)0\\d{7}", [10], 0, "1", 0, "([2-9]\\d{6})$|1", "670$1", 0, "670"], MQ: ["596", "00", "596\\d{6}|(?:69|80|9\\d)\\d{7}", [9], [["(\\d{3})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[569]"], "0$1"], ["(\\d{3})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["8"], "0$1"]], "0"], MR: ["222", "00", "(?:[2-4]\\d\\d|800)\\d{5}", [8], [["(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[2-48]"]]]], MS: ["1", "011", "(?:[58]\\d\\d|664|900)\\d{7}", [10], 0, "1", 0, "([34]\\d{6})$|1", "664$1", 0, "664"], MT: ["356", "00", "3550\\d{4}|(?:[2579]\\d\\d|800)\\d{5}", [8], [["(\\d{4})(\\d{4})", "$1 $2", ["[2357-9]"]]]], MU: ["230", "0(?:0|[24-7]0|3[03])", "(?:[57]|8\\d\\d)\\d{7}|[2-468]\\d{6}", [7, 8, 10], [["(\\d{3})(\\d{4})", "$1 $2", ["[2-46]|8[013]"]], ["(\\d{4})(\\d{4})", "$1 $2", ["[57]"]], ["(\\d{5})(\\d{5})", "$1 $2", ["8"]]], 0, 0, 0, 0, 0, 0, 0, "020"], MV: ["960", "0(?:0|19)", "(?:800|9[0-57-9]\\d)\\d{7}|[34679]\\d{6}", [7, 10], [["(\\d{3})(\\d{4})", "$1-$2", ["[34679]"]], ["(\\d{3})(\\d{3})(\\d{4})", "$1 $2 $3", ["[89]"]]], 0, 0, 0, 0, 0, 0, 0, "00"], MW: ["265", "00", "(?:[1289]\\d|31|77)\\d{7}|1\\d{6}", [7, 9], [["(\\d)(\\d{3})(\\d{3})", "$1 $2 $3", ["1[2-9]"], "0$1"], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["2"], "0$1"], ["(\\d{3})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[137-9]"], "0$1"]], "0"], MX: ["52", "0[09]", "[2-9]\\d{9}", [10], [["(\\d{2})(\\d{4})(\\d{4})", "$1 $2 $3", ["33|5[56]|81"]], ["(\\d{3})(\\d{3})(\\d{4})", "$1 $2 $3", ["[2-9]"]]], 0, 0, 0, 0, 0, 0, 0, "00"], MY: ["60", "00", "1\\d{8,9}|(?:3\\d|[4-9])\\d{7}", [8, 9, 10], [["(\\d)(\\d{3})(\\d{4})", "$1-$2 $3", ["[4-79]"], "0$1"], ["(\\d{2})(\\d{3})(\\d{3,4})", "$1-$2 $3", ["1(?:[02469]|[378][1-9]|53)|8", "1(?:[02469]|[37][1-9]|53|8(?:[1-46-9]|5[7-9]))|8"], "0$1"], ["(\\d)(\\d{4})(\\d{4})", "$1-$2 $3", ["3"], "0$1"], ["(\\d)(\\d{3})(\\d{2})(\\d{4})", "$1-$2-$3-$4", ["1(?:[367]|80)"]], ["(\\d{3})(\\d{3})(\\d{4})", "$1-$2 $3", ["15"], "0$1"], ["(\\d{2})(\\d{4})(\\d{4})", "$1-$2 $3", ["1"], "0$1"]], "0"], MZ: ["258", "00", "(?:2|8\\d)\\d{7}", [8, 9], [["(\\d{2})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["2|8[2-79]"]], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["8"]]]], NA: ["264", "00", "[68]\\d{7,8}", [8, 9], [["(\\d{2})(\\d{3})(\\d{3})", "$1 $2 $3", ["88"], "0$1"], ["(\\d{2})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["6"], "0$1"], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["87"], "0$1"], ["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["8"], "0$1"]], "0"], NC: ["687", "00", "(?:050|[2-57-9]\\d\\d)\\d{3}", [6], [["(\\d{2})(\\d{2})(\\d{2})", "$1.$2.$3", ["[02-57-9]"]]]], NE: ["227", "00", "[027-9]\\d{7}", [8], [["(\\d{2})(\\d{3})(\\d{3})", "$1 $2 $3", ["08"]], ["(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[089]|2[013]|7[0467]"]]]], NF: ["672", "00", "[13]\\d{5}", [6], [["(\\d{2})(\\d{4})", "$1 $2", ["1[0-3]"]], ["(\\d)(\\d{5})", "$1 $2", ["[13]"]]], 0, 0, "([0-258]\\d{4})$", "3$1"], NG: ["234", "009", "2[0-24-9]\\d{8}|[78]\\d{10,13}|[7-9]\\d{9}|[1-9]\\d{7}|[124-7]\\d{6}", [7, 8, 10, 11, 12, 13, 14], [["(\\d{2})(\\d{2})(\\d{3})", "$1 $2 $3", ["78"], "0$1"], ["(\\d)(\\d{3})(\\d{3,4})", "$1 $2 $3", ["[12]|9(?:0[3-9]|[1-9])"], "0$1"], ["(\\d{2})(\\d{3})(\\d{2,3})", "$1 $2 $3", ["[3-6]|7(?:0[0-689]|[1-79])|8[2-9]"], "0$1"], ["(\\d{3})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["[7-9]"], "0$1"], ["(\\d{3})(\\d{3})(\\d{4})", "$1 $2 $3", ["20[129]"], "0$1"], ["(\\d{4})(\\d{2})(\\d{4})", "$1 $2 $3", ["2"], "0$1"], ["(\\d{3})(\\d{4})(\\d{4,5})", "$1 $2 $3", ["[78]"], "0$1"], ["(\\d{3})(\\d{5})(\\d{5,6})", "$1 $2 $3", ["[78]"], "0$1"]], "0"], NI: ["505", "00", "(?:1800|[25-8]\\d{3})\\d{4}", [8], [["(\\d{4})(\\d{4})", "$1 $2", ["[125-8]"]]]], NL: ["31", "00", "(?:[124-7]\\d\\d|3(?:[02-9]\\d|1[0-8]))\\d{6}|8\\d{6,9}|9\\d{6,10}|1\\d{4,5}", [5, 6, 7, 8, 9, 10, 11], [["(\\d{3})(\\d{4,7})", "$1 $2", ["[89]0"], "0$1"], ["(\\d{2})(\\d{7})", "$1 $2", ["66"], "0$1"], ["(\\d)(\\d{8})", "$1 $2", ["6"], "0$1"], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["1[16-8]|2[259]|3[124]|4[17-9]|5[124679]"], "0$1"], ["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["[1-578]|91"], "0$1"], ["(\\d{3})(\\d{3})(\\d{5})", "$1 $2 $3", ["9"], "0$1"]], "0"], NO: ["47", "00", "(?:0|[2-9]\\d{3})\\d{4}", [5, 8], [["(\\d{3})(\\d{2})(\\d{3})", "$1 $2 $3", ["8"]], ["(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[2-79]"]]], 0, 0, 0, 0, 0, "[02-689]|7[0-8]"], NP: ["977", "00", "(?:1\\d|9)\\d{9}|[1-9]\\d{7}", [8, 10, 11], [["(\\d)(\\d{7})", "$1-$2", ["1[2-6]"], "0$1"], ["(\\d{2})(\\d{6})", "$1-$2", ["1[01]|[2-8]|9(?:[1-59]|[67][2-6])"], "0$1"], ["(\\d{3})(\\d{7})", "$1-$2", ["9"]]], "0"], NR: ["674", "00", "(?:444|(?:55|8\\d)\\d|666)\\d{4}", [7], [["(\\d{3})(\\d{4})", "$1 $2", ["[4-68]"]]]], NU: ["683", "00", "(?:[4-7]|888\\d)\\d{3}", [4, 7], [["(\\d{3})(\\d{4})", "$1 $2", ["8"]]]], NZ: ["64", "0(?:0|161)", "[1289]\\d{9}|50\\d{5}(?:\\d{2,3})?|[27-9]\\d{7,8}|(?:[34]\\d|6[0-35-9])\\d{6}|8\\d{4,6}", [5, 6, 7, 8, 9, 10], [["(\\d{2})(\\d{3,8})", "$1 $2", ["8[1-79]"], "0$1"], ["(\\d{3})(\\d{2})(\\d{2,3})", "$1 $2 $3", ["50[036-8]|8|90", "50(?:[0367]|88)|8|90"], "0$1"], ["(\\d)(\\d{3})(\\d{4})", "$1 $2 $3", ["24|[346]|7[2-57-9]|9[2-9]"], "0$1"], ["(\\d{3})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["2(?:10|74)|[589]"], "0$1"], ["(\\d{2})(\\d{3,4})(\\d{4})", "$1 $2 $3", ["1|2[028]"], "0$1"], ["(\\d{2})(\\d{3})(\\d{3,5})", "$1 $2 $3", ["2(?:[169]|7[0-35-9])|7"], "0$1"]], "0", 0, 0, 0, 0, 0, 0, "00"], OM: ["968", "00", "(?:1505|[279]\\d{3}|500)\\d{4}|800\\d{5,6}", [7, 8, 9], [["(\\d{3})(\\d{4,6})", "$1 $2", ["[58]"]], ["(\\d{2})(\\d{6})", "$1 $2", ["2"]], ["(\\d{4})(\\d{4})", "$1 $2", ["[179]"]]]], PA: ["507", "00", "(?:00800|8\\d{3})\\d{6}|[68]\\d{7}|[1-57-9]\\d{6}", [7, 8, 10, 11], [["(\\d{3})(\\d{4})", "$1-$2", ["[1-57-9]"]], ["(\\d{4})(\\d{4})", "$1-$2", ["[68]"]], ["(\\d{3})(\\d{3})(\\d{4})", "$1 $2 $3", ["8"]]]], PE: ["51", "00|19(?:1[124]|77|90)00", "(?:[14-8]|9\\d)\\d{7}", [8, 9], [["(\\d{3})(\\d{5})", "$1 $2", ["80"], "(0$1)"], ["(\\d)(\\d{7})", "$1 $2", ["1"], "(0$1)"], ["(\\d{2})(\\d{6})", "$1 $2", ["[4-8]"], "(0$1)"], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["9"]]], "0", 0, 0, 0, 0, 0, 0, "00", " Anexo "], PF: ["689", "00", "4\\d{5}(?:\\d{2})?|8\\d{7,8}", [6, 8, 9], [["(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3", ["44"]], ["(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["4|8[7-9]"]], ["(\\d{3})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["8"]]]], PG: ["675", "00|140[1-3]", "(?:180|[78]\\d{3})\\d{4}|(?:[2-589]\\d|64)\\d{5}", [7, 8], [["(\\d{3})(\\d{4})", "$1 $2", ["18|[2-69]|85"]], ["(\\d{4})(\\d{4})", "$1 $2", ["[78]"]]], 0, 0, 0, 0, 0, 0, 0, "00"], PH: ["63", "00", "(?:[2-7]|9\\d)\\d{8}|2\\d{5}|(?:1800|8)\\d{7,9}", [6, 8, 9, 10, 11, 12, 13], [["(\\d)(\\d{5})", "$1 $2", ["2"], "(0$1)"], ["(\\d{4})(\\d{4,6})", "$1 $2", ["3(?:23|39|46)|4(?:2[3-6]|[35]9|4[26]|76)|544|88[245]|(?:52|64|86)2", "3(?:230|397|461)|4(?:2(?:35|[46]4|51)|396|4(?:22|63)|59[347]|76[15])|5(?:221|446)|642[23]|8(?:622|8(?:[24]2|5[13]))"], "(0$1)"], ["(\\d{5})(\\d{4})", "$1 $2", ["346|4(?:27|9[35])|883", "3469|4(?:279|9(?:30|56))|8834"], "(0$1)"], ["(\\d)(\\d{4})(\\d{4})", "$1 $2 $3", ["2"], "(0$1)"], ["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["[3-7]|8[2-8]"], "(0$1)"], ["(\\d{3})(\\d{3})(\\d{4})", "$1 $2 $3", ["[89]"], "0$1"], ["(\\d{4})(\\d{3})(\\d{4})", "$1 $2 $3", ["1"]], ["(\\d{4})(\\d{1,2})(\\d{3})(\\d{4})", "$1 $2 $3 $4", ["1"]]], "0"], PK: ["92", "00", "122\\d{6}|[24-8]\\d{10,11}|9(?:[013-9]\\d{8,10}|2(?:[01]\\d\\d|2(?:[06-8]\\d|1[01]))\\d{7})|(?:[2-8]\\d{3}|92(?:[0-7]\\d|8[1-9]))\\d{6}|[24-9]\\d{8}|[89]\\d{7}", [8, 9, 10, 11, 12], [["(\\d{3})(\\d{3})(\\d{2,7})", "$1 $2 $3", ["[89]0"], "0$1"], ["(\\d{4})(\\d{5})", "$1 $2", ["1"]], ["(\\d{3})(\\d{6,7})", "$1 $2", ["2(?:3[2358]|4[2-4]|9[2-8])|45[3479]|54[2-467]|60[468]|72[236]|8(?:2[2-689]|3[23578]|4[3478]|5[2356])|9(?:2[2-8]|3[27-9]|4[2-6]|6[3569]|9[25-8])", "9(?:2[3-8]|98)|(?:2(?:3[2358]|4[2-4]|9[2-8])|45[3479]|54[2-467]|60[468]|72[236]|8(?:2[2-689]|3[23578]|4[3478]|5[2356])|9(?:22|3[27-9]|4[2-6]|6[3569]|9[25-7]))[2-9]"], "(0$1)"], ["(\\d{2})(\\d{7,8})", "$1 $2", ["(?:2[125]|4[0-246-9]|5[1-35-7]|6[1-8]|7[14]|8[16]|91)[2-9]"], "(0$1)"], ["(\\d{5})(\\d{5})", "$1 $2", ["58"], "(0$1)"], ["(\\d{3})(\\d{7})", "$1 $2", ["3"], "0$1"], ["(\\d{2})(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3 $4", ["2[125]|4[0-246-9]|5[1-35-7]|6[1-8]|7[14]|8[16]|91"], "(0$1)"], ["(\\d{3})(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3 $4", ["[24-9]"], "(0$1)"]], "0"], PL: ["48", "00", "(?:6|8\\d\\d)\\d{7}|[1-9]\\d{6}(?:\\d{2})?|[26]\\d{5}", [6, 7, 8, 9, 10], [["(\\d{5})", "$1", ["19"]], ["(\\d{3})(\\d{3})", "$1 $2", ["11|20|64"]], ["(\\d{2})(\\d{2})(\\d{3})", "$1 $2 $3", ["(?:1[2-8]|2[2-69]|3[2-4]|4[1-468]|5[24-689]|6[1-3578]|7[14-7]|8[1-79]|9[145])1", "(?:1[2-8]|2[2-69]|3[2-4]|4[1-468]|5[24-689]|6[1-3578]|7[14-7]|8[1-79]|9[145])19"]], ["(\\d{3})(\\d{2})(\\d{2,3})", "$1 $2 $3", ["64"]], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["21|39|45|5[0137]|6[0469]|7[02389]|8(?:0[14]|8)"]], ["(\\d{2})(\\d{3})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["1[2-8]|[2-7]|8[1-79]|9[145]"]], ["(\\d{3})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["8"]]]], PM: ["508", "00", "[45]\\d{5}|(?:708|80\\d)\\d{6}", [6, 9], [["(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3", ["[45]"], "0$1"], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["7"]], ["(\\d{3})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["8"], "0$1"]], "0"], PR: ["1", "011", "(?:[589]\\d\\d|787)\\d{7}", [10], 0, "1", 0, 0, 0, 0, "787|939"], PS: ["970", "00", "[2489]2\\d{6}|(?:1\\d|5)\\d{8}", [8, 9, 10], [["(\\d)(\\d{3})(\\d{4})", "$1 $2 $3", ["[2489]"], "0$1"], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["5"], "0$1"], ["(\\d{4})(\\d{3})(\\d{3})", "$1 $2 $3", ["1"]]], "0"], PT: ["351", "00", "1693\\d{5}|(?:[26-9]\\d|30)\\d{7}", [9], [["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["2[12]"]], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["16|[236-9]"]]]], PW: ["680", "01[12]", "(?:[24-8]\\d\\d|345|900)\\d{4}", [7], [["(\\d{3})(\\d{4})", "$1 $2", ["[2-9]"]]]], PY: ["595", "00", "59\\d{4,6}|9\\d{5,10}|(?:[2-46-8]\\d|5[0-8])\\d{4,7}", [6, 7, 8, 9, 10, 11], [["(\\d{3})(\\d{3,6})", "$1 $2", ["[2-9]0"], "0$1"], ["(\\d{2})(\\d{5})", "$1 $2", ["[26]1|3[289]|4[1246-8]|7[1-3]|8[1-36]"], "(0$1)"], ["(\\d{3})(\\d{4,5})", "$1 $2", ["2[279]|3[13-5]|4[359]|5|6(?:[34]|7[1-46-8])|7[46-8]|85"], "(0$1)"], ["(\\d{2})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["2[14-68]|3[26-9]|4[1246-8]|6(?:1|75)|7[1-35]|8[1-36]"], "(0$1)"], ["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["87"]], ["(\\d{3})(\\d{6})", "$1 $2", ["9(?:[5-79]|8[1-7])"], "0$1"], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["[2-8]"], "0$1"], ["(\\d{4})(\\d{3})(\\d{4})", "$1 $2 $3", ["9"]]], "0"], QA: ["974", "00", "800\\d{4}|(?:2|800)\\d{6}|(?:0080|[3-7])\\d{7}", [7, 8, 9, 11], [["(\\d{3})(\\d{4})", "$1 $2", ["2[16]|8"]], ["(\\d{4})(\\d{4})", "$1 $2", ["[3-7]"]]]], RE: ["262", "00", "(?:26|[689]\\d)\\d{7}", [9], [["(\\d{3})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[2689]"], "0$1"]], "0", 0, 0, 0, 0, 0, [["26(?:2\\d\\d|3(?:0\\d|1[0-6]))\\d{4}"], ["69(?:2\\d\\d|3(?:[06][0-6]|1[013]|2[0-2]|3[0-39]|4\\d|5[0-5]|7[0-37]|8[0-8]|9[0-479]))\\d{4}"], ["80\\d{7}"], ["89[1-37-9]\\d{6}"], 0, 0, 0, 0, ["9(?:399[0-3]|479[0-5]|76(?:2[278]|3[0-37]))\\d{4}"], ["8(?:1[019]|2[0156]|84|90)\\d{6}"]]], RO: ["40", "00", "(?:[236-8]\\d|90)\\d{7}|[23]\\d{5}", [6, 9], [["(\\d{3})(\\d{3})", "$1 $2", ["2[3-6]", "2[3-6]\\d9"], "0$1"], ["(\\d{2})(\\d{4})", "$1 $2", ["219|31"], "0$1"], ["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["[23]1"], "0$1"], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["[236-9]"], "0$1"]], "0", 0, 0, 0, 0, 0, 0, 0, " int "], RS: ["381", "00", "38[02-9]\\d{6,9}|6\\d{7,9}|90\\d{4,8}|38\\d{5,6}|(?:7\\d\\d|800)\\d{3,9}|(?:[12]\\d|3[0-79])\\d{5,10}", [6, 7, 8, 9, 10, 11, 12], [["(\\d{3})(\\d{3,9})", "$1 $2", ["(?:2[389]|39)0|[7-9]"], "0$1"], ["(\\d{2})(\\d{5,10})", "$1 $2", ["[1-36]"], "0$1"]], "0"], RU: ["7", "810", "8\\d{13}|[347-9]\\d{9}", [10, 14], [["(\\d{4})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["7(?:1[0-8]|2[1-9])", "7(?:1(?:[0-356]2|4[29]|7|8[27])|2(?:1[23]|[2-9]2))", "7(?:1(?:[0-356]2|4[29]|7|8[27])|2(?:13[03-69]|62[013-9]))|72[1-57-9]2"], "8 ($1)", 1], ["(\\d{5})(\\d)(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["7(?:1[0-68]|2[1-9])", "7(?:1(?:[06][3-6]|[18]|2[35]|[3-5][3-5])|2(?:[13][3-5]|[24-689]|7[457]))", "7(?:1(?:0(?:[356]|4[023])|[18]|2(?:3[013-9]|5)|3[45]|43[013-79]|5(?:3[1-8]|4[1-7]|5)|6(?:3[0-35-9]|[4-6]))|2(?:1(?:3[178]|[45])|[24-689]|3[35]|7[457]))|7(?:14|23)4[0-8]|71(?:33|45)[1-79]"], "8 ($1)", 1], ["(\\d{3})(\\d{3})(\\d{4})", "$1 $2 $3", ["7"], "8 ($1)", 1], ["(\\d{3})(\\d{3})(\\d{2})(\\d{2})", "$1 $2-$3-$4", ["[349]|8(?:[02-7]|1[1-8])"], "8 ($1)", 1], ["(\\d{4})(\\d{4})(\\d{3})(\\d{3})", "$1 $2 $3 $4", ["8"], "8 ($1)"]], "8", 0, 0, 0, 0, "3[04-689]|[489]", 0, "8~10"], RW: ["250", "00", "(?:06|[27]\\d\\d|[89]00)\\d{6}", [8, 9], [["(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["0"]], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["2"]], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["[7-9]"], "0$1"]], "0"], SA: ["966", "00", "92\\d{7}|(?:[15]|8\\d)\\d{8}", [9, 10], [["(\\d{4})(\\d{5})", "$1 $2", ["9"]], ["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["1"], "0$1"], ["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["5"], "0$1"], ["(\\d{3})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["81"], "0$1"], ["(\\d{3})(\\d{3})(\\d{4})", "$1 $2 $3", ["8"]]], "0"], SB: ["677", "0[01]", "[6-9]\\d{6}|[1-6]\\d{4}", [5, 7], [["(\\d{2})(\\d{5})", "$1 $2", ["6[89]|7|8[4-9]|9(?:[1-8]|9[0-8])"]]]], SC: ["248", "010|0[0-2]", "(?:[2489]\\d|64)\\d{5}", [7], [["(\\d)(\\d{3})(\\d{3})", "$1 $2 $3", ["[246]|9[57]"]]], 0, 0, 0, 0, 0, 0, 0, "00"], SD: ["249", "00", "[19]\\d{8}", [9], [["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["[19]"], "0$1"]], "0"], SE: ["46", "00", "(?:[26]\\d\\d|9)\\d{9}|[1-9]\\d{8}|[1-689]\\d{7}|[1-4689]\\d{6}|2\\d{5}", [6, 7, 8, 9, 10], [["(\\d{2})(\\d{2,3})(\\d{2})", "$1-$2 $3", ["20"], "0$1", 0, "$1 $2 $3"], ["(\\d{3})(\\d{4})", "$1-$2", ["9(?:00|39|44|9)"], "0$1", 0, "$1 $2"], ["(\\d{2})(\\d{3})(\\d{2})", "$1-$2 $3", ["[12][136]|3[356]|4[0246]|6[03]|90[1-9]"], "0$1", 0, "$1 $2 $3"], ["(\\d)(\\d{2,3})(\\d{2})(\\d{2})", "$1-$2 $3 $4", ["8"], "0$1", 0, "$1 $2 $3 $4"], ["(\\d{3})(\\d{2,3})(\\d{2})", "$1-$2 $3", ["1[2457]|2(?:[247-9]|5[0138])|3[0247-9]|4[1357-9]|5[0-35-9]|6(?:[125689]|4[02-57]|7[0-2])|9(?:[125-8]|3[02-5]|4[0-3])"], "0$1", 0, "$1 $2 $3"], ["(\\d{3})(\\d{2,3})(\\d{3})", "$1-$2 $3", ["9(?:00|39|44)"], "0$1", 0, "$1 $2 $3"], ["(\\d{2})(\\d{2,3})(\\d{2})(\\d{2})", "$1-$2 $3 $4", ["1[13689]|2[0136]|3[1356]|4[0246]|54|6[03]|90[1-9]"], "0$1", 0, "$1 $2 $3 $4"], ["(\\d{2})(\\d{3})(\\d{2})(\\d{2})", "$1-$2 $3 $4", ["10|7"], "0$1", 0, "$1 $2 $3 $4"], ["(\\d)(\\d{3})(\\d{3})(\\d{2})", "$1-$2 $3 $4", ["8"], "0$1", 0, "$1 $2 $3 $4"], ["(\\d{3})(\\d{2})(\\d{2})(\\d{2})", "$1-$2 $3 $4", ["[13-5]|2(?:[247-9]|5[0138])|6(?:[124-689]|7[0-2])|9(?:[125-8]|3[02-5]|4[0-3])"], "0$1", 0, "$1 $2 $3 $4"], ["(\\d{3})(\\d{2})(\\d{2})(\\d{3})", "$1-$2 $3 $4", ["9"], "0$1", 0, "$1 $2 $3 $4"], ["(\\d{3})(\\d{2})(\\d{3})(\\d{2})(\\d{2})", "$1-$2 $3 $4 $5", ["[26]"], "0$1", 0, "$1 $2 $3 $4 $5"]], "0"], SG: ["65", "0[0-3]\\d", "(?:(?:1\\d|8)\\d\\d|7000)\\d{7}|[3689]\\d{7}", [8, 10, 11], [["(\\d{4})(\\d{4})", "$1 $2", ["[369]|8(?:0[1-9]|[1-9])"]], ["(\\d{3})(\\d{3})(\\d{4})", "$1 $2 $3", ["8"]], ["(\\d{4})(\\d{4})(\\d{3})", "$1 $2 $3", ["7"]], ["(\\d{4})(\\d{3})(\\d{4})", "$1 $2 $3", ["1"]]]], SH: ["290", "00", "(?:[256]\\d|8)\\d{3}", [4, 5], 0, 0, 0, 0, 0, 0, "[256]"], SI: ["386", "00|10(?:22|66|88|99)", "[1-7]\\d{7}|8\\d{4,7}|90\\d{4,6}", [5, 6, 7, 8], [["(\\d{2})(\\d{3,6})", "$1 $2", ["8[09]|9"], "0$1"], ["(\\d{3})(\\d{5})", "$1 $2", ["59|8"], "0$1"], ["(\\d{2})(\\d{3})(\\d{3})", "$1 $2 $3", ["[37][01]|4[0139]|51|6"], "0$1"], ["(\\d)(\\d{3})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[1-57]"], "(0$1)"]], "0", 0, 0, 0, 0, 0, 0, "00"], SJ: ["47", "00", "0\\d{4}|(?:[489]\\d|79)\\d{6}", [5, 8], 0, 0, 0, 0, 0, 0, "79"], SK: ["421", "00", "[2-689]\\d{8}|[2-59]\\d{6}|[2-5]\\d{5}", [6, 7, 9], [["(\\d)(\\d{2})(\\d{3,4})", "$1 $2 $3", ["21"], "0$1"], ["(\\d{2})(\\d{2})(\\d{2,3})", "$1 $2 $3", ["[3-5][1-8]1", "[3-5][1-8]1[67]"], "0$1"], ["(\\d)(\\d{3})(\\d{3})(\\d{2})", "$1/$2 $3 $4", ["2"], "0$1"], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["[689]"], "0$1"], ["(\\d{2})(\\d{3})(\\d{2})(\\d{2})", "$1/$2 $3 $4", ["[3-5]"], "0$1"]], "0"], SL: ["232", "00", "(?:[237-9]\\d|66)\\d{6}", [8], [["(\\d{2})(\\d{6})", "$1 $2", ["[236-9]"], "(0$1)"]], "0"], SM: ["378", "00", "(?:0549|[5-7]\\d)\\d{6}", [8, 10], [["(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[5-7]"]], ["(\\d{4})(\\d{6})", "$1 $2", ["0"]]], 0, 0, "([89]\\d{5})$", "0549$1"], SN: ["221", "00", "(?:[378]\\d|93)\\d{7}", [9], [["(\\d{3})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["8"]], ["(\\d{2})(\\d{3})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[379]"]]]], SO: ["252", "00", "[346-9]\\d{8}|[12679]\\d{7}|[1-5]\\d{6}|[1348]\\d{5}", [6, 7, 8, 9], [["(\\d{2})(\\d{4})", "$1 $2", ["8[125]"]], ["(\\d{6})", "$1", ["[134]"]], ["(\\d)(\\d{6})", "$1 $2", ["[15]|2[0-79]|3[0-46-8]|4[0-7]"]], ["(\\d)(\\d{7})", "$1 $2", ["(?:2|90)4|[67]"]], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["[348]|64|79|90"]], ["(\\d{2})(\\d{5,7})", "$1 $2", ["1|28|6[0-35-9]|77|9[2-9]"]]], "0"], SR: ["597", "00", "(?:[2-5]|68|[78]\\d)\\d{5}", [6, 7], [["(\\d{2})(\\d{2})(\\d{2})", "$1-$2-$3", ["56"]], ["(\\d{3})(\\d{3})", "$1-$2", ["[2-5]"]], ["(\\d{3})(\\d{4})", "$1-$2", ["[6-8]"]]]], SS: ["211", "00", "[19]\\d{8}", [9], [["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["[19]"], "0$1"]], "0"], ST: ["239", "00", "(?:22|9\\d)\\d{5}", [7], [["(\\d{3})(\\d{4})", "$1 $2", ["[29]"]]]], SV: ["503", "00", "[267]\\d{7}|(?:80\\d|900)\\d{4}(?:\\d{4})?", [7, 8, 11], [["(\\d{3})(\\d{4})", "$1 $2", ["[89]"]], ["(\\d{4})(\\d{4})", "$1 $2", ["[267]"]], ["(\\d{3})(\\d{4})(\\d{4})", "$1 $2 $3", ["[89]"]]]], SX: ["1", "011", "7215\\d{6}|(?:[58]\\d\\d|900)\\d{7}", [10], 0, "1", 0, "(5\\d{6})$|1", "721$1", 0, "721"], SY: ["963", "00", "[1-39]\\d{8}|[1-5]\\d{7}", [8, 9], [["(\\d{2})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["[1-5]"], "0$1", 1], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["9"], "0$1", 1]], "0"], SZ: ["268", "00", "0800\\d{4}|(?:[237]\\d|900)\\d{6}", [8, 9], [["(\\d{4})(\\d{4})", "$1 $2", ["[0237]"]], ["(\\d{5})(\\d{4})", "$1 $2", ["9"]]]], TA: ["290", "00", "8\\d{3}", [4], 0, 0, 0, 0, 0, 0, "8"], TC: ["1", "011", "(?:[58]\\d\\d|649|900)\\d{7}", [10], 0, "1", 0, "([2-479]\\d{6})$|1", "649$1", 0, "649"], TD: ["235", "00|16", "(?:22|[689]\\d|77)\\d{6}", [8], [["(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[26-9]"]]], 0, 0, 0, 0, 0, 0, 0, "00"], TG: ["228", "00", "[279]\\d{7}", [8], [["(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[279]"]]]], TH: ["66", "00[1-9]", "(?:001800|[2-57]|[689]\\d)\\d{7}|1\\d{7,9}", [8, 9, 10, 13], [["(\\d)(\\d{3})(\\d{4})", "$1 $2 $3", ["2"], "0$1"], ["(\\d{2})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["[13-9]"], "0$1"], ["(\\d{4})(\\d{3})(\\d{3})", "$1 $2 $3", ["1"]]], "0"], TJ: ["992", "810", "[0-57-9]\\d{8}", [9], [["(\\d{6})(\\d)(\\d{2})", "$1 $2 $3", ["331", "3317"]], ["(\\d{3})(\\d{2})(\\d{4})", "$1 $2 $3", ["44[02-479]|[34]7"]], ["(\\d{4})(\\d)(\\d{4})", "$1 $2 $3", ["3(?:[1245]|3[12])"]], ["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["[0-57-9]"]]], 0, 0, 0, 0, 0, 0, 0, "8~10"], TK: ["690", "00", "[2-47]\\d{3,6}", [4, 5, 6, 7]], TL: ["670", "00", "7\\d{7}|(?:[2-47]\\d|[89]0)\\d{5}", [7, 8], [["(\\d{3})(\\d{4})", "$1 $2", ["[2-489]|70"]], ["(\\d{4})(\\d{4})", "$1 $2", ["7"]]]], TM: ["993", "810", "(?:[1-6]\\d|71)\\d{6}", [8], [["(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2-$3-$4", ["12"], "(8 $1)"], ["(\\d{3})(\\d)(\\d{2})(\\d{2})", "$1 $2-$3-$4", ["[1-5]"], "(8 $1)"], ["(\\d{2})(\\d{6})", "$1 $2", ["[67]"], "8 $1"]], "8", 0, 0, 0, 0, 0, 0, "8~10"], TN: ["216", "00", "[2-57-9]\\d{7}", [8], [["(\\d{2})(\\d{3})(\\d{3})", "$1 $2 $3", ["[2-57-9]"]]]], TO: ["676", "00", "(?:0800|(?:[5-8]\\d\\d|999)\\d)\\d{3}|[2-8]\\d{4}", [5, 7], [["(\\d{2})(\\d{3})", "$1-$2", ["[2-4]|50|6[09]|7[0-24-69]|8[05]"]], ["(\\d{4})(\\d{3})", "$1 $2", ["0"]], ["(\\d{3})(\\d{4})", "$1 $2", ["[5-9]"]]]], TR: ["90", "00", "4\\d{6}|8\\d{11,12}|(?:[2-58]\\d\\d|900)\\d{7}", [7, 10, 12, 13], [["(\\d{3})(\\d{3})(\\d{4})", "$1 $2 $3", ["512|8[01589]|90"], "0$1", 1], ["(\\d{3})(\\d{3})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["5(?:[0-59]|61)", "5(?:[0-59]|61[06])", "5(?:[0-59]|61[06]1)"], "0$1", 1], ["(\\d{3})(\\d{3})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[24][1-8]|3[1-9]"], "(0$1)", 1], ["(\\d{3})(\\d{3})(\\d{6,7})", "$1 $2 $3", ["80"], "0$1", 1]], "0"], TT: ["1", "011", "(?:[58]\\d\\d|900)\\d{7}", [10], 0, "1", 0, "([2-46-8]\\d{6})$|1", "868$1", 0, "868"], TV: ["688", "00", "(?:2|7\\d\\d|90)\\d{4}", [5, 6, 7], [["(\\d{2})(\\d{3})", "$1 $2", ["2"]], ["(\\d{2})(\\d{4})", "$1 $2", ["90"]], ["(\\d{2})(\\d{5})", "$1 $2", ["7"]]]], TW: ["886", "0(?:0[25-79]|19)", "[2-689]\\d{8}|7\\d{9,10}|[2-8]\\d{7}|2\\d{6}", [7, 8, 9, 10, 11], [["(\\d{2})(\\d)(\\d{4})", "$1 $2 $3", ["202"], "0$1"], ["(\\d{2})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["[258]0"], "0$1"], ["(\\d)(\\d{3,4})(\\d{4})", "$1 $2 $3", ["[23568]|4(?:0[02-48]|[1-47-9])|7[1-9]", "[23568]|4(?:0[2-48]|[1-47-9])|(?:400|7)[1-9]"], "0$1"], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["[49]"], "0$1"], ["(\\d{2})(\\d{4})(\\d{4,5})", "$1 $2 $3", ["7"], "0$1"]], "0", 0, 0, 0, 0, 0, 0, 0, "#"], TZ: ["255", "00[056]", "(?:[25-8]\\d|41|90)\\d{7}", [9], [["(\\d{3})(\\d{2})(\\d{4})", "$1 $2 $3", ["[89]"], "0$1"], ["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["[24]"], "0$1"], ["(\\d{2})(\\d{7})", "$1 $2", ["5"]], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["[67]"], "0$1"]], "0"], UA: ["380", "00", "[89]\\d{9}|[3-9]\\d{8}", [9, 10], [["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["6[12][29]|(?:3[1-8]|4[136-8]|5[12457]|6[49])2|(?:56|65)[24]", "6[12][29]|(?:35|4[1378]|5[12457]|6[49])2|(?:56|65)[24]|(?:3[1-46-8]|46)2[013-9]"], "0$1"], ["(\\d{4})(\\d{5})", "$1 $2", ["3[1-8]|4(?:[1367]|[45][6-9]|8[4-6])|5(?:[1-5]|6[0135689]|7[4-6])|6(?:[12][3-7]|[459])", "3[1-8]|4(?:[1367]|[45][6-9]|8[4-6])|5(?:[1-5]|6(?:[015689]|3[02389])|7[4-6])|6(?:[12][3-7]|[459])"], "0$1"], ["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["[3-7]|89|9[1-9]"], "0$1"], ["(\\d{3})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["[89]"], "0$1"]], "0", 0, 0, 0, 0, 0, 0, "0~0"], UG: ["256", "00[057]", "800\\d{6}|(?:[29]0|[347]\\d)\\d{7}", [9], [["(\\d{4})(\\d{5})", "$1 $2", ["202", "2024"], "0$1"], ["(\\d{3})(\\d{6})", "$1 $2", ["[27-9]|4(?:6[45]|[7-9])"], "0$1"], ["(\\d{2})(\\d{7})", "$1 $2", ["[34]"], "0$1"]], "0"], US: ["1", "011", "[2-9]\\d{9}|3\\d{6}", [10], [["(\\d{3})(\\d{4})", "$1-$2", ["310"], 0, 1], ["(\\d{3})(\\d{3})(\\d{4})", "($1) $2-$3", ["[2-9]"], 0, 1, "$1-$2-$3"]], "1", 0, 0, 0, 0, 0, [["(?:3052(?:0[0-8]|[1-9]\\d)|5056(?:[0-35-9]\\d|4[468])|7302[0-4]\\d)\\d{4}|(?:305[3-9]|472[24]|505[2-57-9]|7306|983[2-47-9])\\d{6}|(?:2(?:0[1-35-9]|1[02-9]|2[03-57-9]|3[1459]|4[08]|5[1-46]|6[0279]|7[0269]|8[13])|3(?:0[1-47-9]|1[02-9]|2[013569]|3[0-24679]|4[167]|5[0-2]|6[01349]|8[056])|4(?:0[124-9]|1[02-579]|2[3-5]|3[0245]|4[023578]|58|6[349]|7[0589]|8[04])|5(?:0[1-47-9]|1[0235-8]|20|3[0149]|4[01]|5[179]|6[1-47]|7[0-5]|8[0256])|6(?:0[1-35-9]|1[024-9]|2[03689]|3[016]|4[0156]|5[01679]|6[0-279]|78|8[0-29])|7(?:0[1-46-8]|1[2-9]|2[04-8]|3[1247]|4[037]|5[47]|6[02359]|7[0-59]|8[156])|8(?:0[1-68]|1[02-8]|2[068]|3[0-2589]|4[03578]|5[046-9]|6[02-5]|7[028])|9(?:0[1346-9]|1[02-9]|2[0589]|3[0146-8]|4[01357-9]|5[12469]|7[0-389]|8[04-69]))[2-9]\\d{6}"], [""], ["8(?:00|33|44|55|66|77|88)[2-9]\\d{6}"], ["900[2-9]\\d{6}"], ["52(?:3(?:[2-46-9][02-9]\\d|5(?:[02-46-9]\\d|5[0-46-9]))|4(?:[2-478][02-9]\\d|5(?:[034]\\d|2[024-9]|5[0-46-9])|6(?:0[1-9]|[2-9]\\d)|9(?:[05-9]\\d|2[0-5]|49)))\\d{4}|52[34][2-9]1[02-9]\\d{4}|5(?:00|2[125-9]|33|44|66|77|88)[2-9]\\d{6}"], 0, 0, 0, ["305209\\d{4}"]]], UY: ["598", "0(?:0|1[3-9]\\d)", "0004\\d{2,9}|[1249]\\d{7}|(?:[49]\\d|80)\\d{5}", [6, 7, 8, 9, 10, 11, 12, 13], [["(\\d{3})(\\d{3,4})", "$1 $2", ["0"]], ["(\\d{3})(\\d{4})", "$1 $2", ["[49]0|8"], "0$1"], ["(\\d{2})(\\d{3})(\\d{3})", "$1 $2 $3", ["9"], "0$1"], ["(\\d{4})(\\d{4})", "$1 $2", ["[124]"]], ["(\\d{3})(\\d{3})(\\d{2,4})", "$1 $2 $3", ["0"]], ["(\\d{3})(\\d{3})(\\d{3})(\\d{2,4})", "$1 $2 $3 $4", ["0"]]], "0", 0, 0, 0, 0, 0, 0, "00", " int. "], UZ: ["998", "00", "(?:20|33|[5-79]\\d|88)\\d{7}", [9], [["(\\d{2})(\\d{3})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[235-9]"]]]], VA: ["39", "00", "0\\d{5,10}|3[0-8]\\d{7,10}|55\\d{8}|8\\d{5}(?:\\d{2,4})?|(?:1\\d|39)\\d{7,8}", [6, 7, 8, 9, 10, 11], 0, 0, 0, 0, 0, 0, "06698"], VC: ["1", "011", "(?:[58]\\d\\d|784|900)\\d{7}", [10], 0, "1", 0, "([2-7]\\d{6})$|1", "784$1", 0, "784"], VE: ["58", "00", "[68]00\\d{7}|(?:[24]\\d|[59]0)\\d{8}", [10], [["(\\d{3})(\\d{7})", "$1-$2", ["[24-689]"], "0$1"]], "0"], VG: ["1", "011", "(?:284|[58]\\d\\d|900)\\d{7}", [10], 0, "1", 0, "([2-578]\\d{6})$|1", "284$1", 0, "284"], VI: ["1", "011", "[58]\\d{9}|(?:34|90)0\\d{7}", [10], 0, "1", 0, "([2-9]\\d{6})$|1", "340$1", 0, "340"], VN: ["84", "00", "[12]\\d{9}|[135-9]\\d{8}|[16]\\d{7}|[16-8]\\d{6}", [7, 8, 9, 10], [["(\\d{2})(\\d{5})", "$1 $2", ["80"], "0$1", 1], ["(\\d{4})(\\d{4,6})", "$1 $2", ["1"], 0, 1], ["(\\d{2})(\\d{3})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["6"], "0$1", 1], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["[357-9]"], "0$1", 1], ["(\\d{2})(\\d{4})(\\d{4})", "$1 $2 $3", ["2[48]"], "0$1", 1], ["(\\d{3})(\\d{4})(\\d{3})", "$1 $2 $3", ["2"], "0$1", 1]], "0"], VU: ["678", "00", "[57-9]\\d{6}|(?:[238]\\d|48)\\d{3}", [5, 7], [["(\\d{3})(\\d{4})", "$1 $2", ["[57-9]"]]]], WF: ["681", "00", "(?:40|72)\\d{4}|8\\d{5}(?:\\d{3})?", [6, 9], [["(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3", ["[478]"]], ["(\\d{3})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["8"]]]], WS: ["685", "0", "(?:[2-6]|8\\d{5})\\d{4}|[78]\\d{6}|[68]\\d{5}", [5, 6, 7, 10], [["(\\d{5})", "$1", ["[2-5]|6[1-9]"]], ["(\\d{3})(\\d{3,7})", "$1 $2", ["[68]"]], ["(\\d{2})(\\d{5})", "$1 $2", ["7"]]]], XK: ["383", "00", "2\\d{7,8}|3\\d{7,11}|(?:4\\d\\d|[89]00)\\d{5}", [8, 9, 10, 11, 12], [["(\\d{3})(\\d{5})", "$1 $2", ["[89]"], "0$1"], ["(\\d{2})(\\d{3})(\\d{3})", "$1 $2 $3", ["[2-4]"], "0$1"], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["2|39"], "0$1"], ["(\\d{2})(\\d{7,10})", "$1 $2", ["3"], "0$1"]], "0"], YE: ["967", "00", "(?:1|7\\d)\\d{7}|[1-7]\\d{6}", [7, 8, 9], [["(\\d)(\\d{3})(\\d{3,4})", "$1 $2 $3", ["[1-6]|7(?:[24-6]|8[0-7])"], "0$1"], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["7"], "0$1"]], "0"], YT: ["262", "00", "(?:80|9\\d)\\d{7}|(?:26|63)9\\d{6}", [9], 0, "0", 0, 0, 0, 0, 0, [["269(?:0[0-467]|15|5[0-4]|6\\d|[78]0)\\d{4}"], ["639(?:0[0-79]|1[019]|[267]\\d|3[09]|40|5[05-9]|9[04-79])\\d{4}"], ["80\\d{7}"], 0, 0, 0, 0, 0, ["9(?:(?:39|47)8[01]|769\\d)\\d{4}"]]], ZA: ["27", "00", "[1-79]\\d{8}|8\\d{4,9}", [5, 6, 7, 8, 9, 10], [["(\\d{2})(\\d{3,4})", "$1 $2", ["8[1-4]"], "0$1"], ["(\\d{2})(\\d{3})(\\d{2,3})", "$1 $2 $3", ["8[1-4]"], "0$1"], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["860"], "0$1"], ["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["[1-9]"], "0$1"], ["(\\d{3})(\\d{3})(\\d{4})", "$1 $2 $3", ["8"], "0$1"]], "0"], ZM: ["260", "00", "800\\d{6}|(?:21|63|[79]\\d)\\d{7}", [9], [["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["[28]"], "0$1"], ["(\\d{2})(\\d{7})", "$1 $2", ["[79]"], "0$1"]], "0"], ZW: ["263", "00", "2(?:[0-57-9]\\d{6,8}|6[0-24-9]\\d{6,7})|[38]\\d{9}|[35-8]\\d{8}|[3-6]\\d{7}|[1-689]\\d{6}|[1-3569]\\d{5}|[1356]\\d{4}", [5, 6, 7, 8, 9, 10], [["(\\d{3})(\\d{3,5})", "$1 $2", ["2(?:0[45]|2[278]|[49]8)|3(?:[09]8|17)|6(?:[29]8|37|75)|[23][78]|(?:33|5[15]|6[68])[78]"], "0$1"], ["(\\d)(\\d{3})(\\d{2,4})", "$1 $2 $3", ["[49]"], "0$1"], ["(\\d{3})(\\d{4})", "$1 $2", ["80"], "0$1"], ["(\\d{2})(\\d{7})", "$1 $2", ["24|8[13-59]|(?:2[05-79]|39|5[45]|6[15-8])2", "2(?:02[014]|4|[56]20|[79]2)|392|5(?:42|525)|6(?:[16-8]21|52[013])|8[13-59]"], "(0$1)"], ["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["7"], "0$1"], ["(\\d{3})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["2(?:1[39]|2[0157]|[378]|[56][14])|3(?:12|29)", "2(?:1[39]|2[0157]|[378]|[56][14])|3(?:123|29)"], "0$1"], ["(\\d{4})(\\d{6})", "$1 $2", ["8"], "0$1"], ["(\\d{2})(\\d{3,5})", "$1 $2", ["1|2(?:0[0-36-9]|12|29|[56])|3(?:1[0-689]|[24-6])|5(?:[0236-9]|1[2-4])|6(?:[013-59]|7[0-46-9])|(?:33|55|6[68])[0-69]|(?:29|3[09]|62)[0-79]"], "0$1"], ["(\\d{2})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["29[013-9]|39|54"], "0$1"], ["(\\d{4})(\\d{3,5})", "$1 $2", ["(?:25|54)8", "258|5483"], "0$1"]], "0"] }, nonGeographic: { 800: ["800", 0, "(?:00|[1-9]\\d)\\d{6}", [8], [["(\\d{4})(\\d{4})", "$1 $2", ["\\d"]]], 0, 0, 0, 0, 0, 0, [0, 0, ["(?:00|[1-9]\\d)\\d{6}"]]], 808: ["808", 0, "[1-9]\\d{7}", [8], [["(\\d{4})(\\d{4})", "$1 $2", ["[1-9]"]]], 0, 0, 0, 0, 0, 0, [0, 0, 0, 0, 0, 0, 0, 0, 0, ["[1-9]\\d{7}"]]], 870: ["870", 0, "7\\d{11}|[35-7]\\d{8}", [9, 12], [["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["[35-7]"]]], 0, 0, 0, 0, 0, 0, [0, ["(?:[356]|774[45])\\d{8}|7[6-8]\\d{7}"]]], 878: ["878", 0, "10\\d{10}", [12], [["(\\d{2})(\\d{5})(\\d{5})", "$1 $2 $3", ["1"]]], 0, 0, 0, 0, 0, 0, [0, 0, 0, 0, 0, 0, 0, 0, ["10\\d{10}"]]], 881: ["881", 0, "6\\d{9}|[0-36-9]\\d{8}", [9, 10], [["(\\d)(\\d{3})(\\d{5})", "$1 $2 $3", ["[0-37-9]"]], ["(\\d)(\\d{3})(\\d{5,6})", "$1 $2 $3", ["6"]]], 0, 0, 0, 0, 0, 0, [0, ["6\\d{9}|[0-36-9]\\d{8}"]]], 882: ["882", 0, "[13]\\d{6}(?:\\d{2,5})?|[19]\\d{7}|(?:[25]\\d\\d|4)\\d{7}(?:\\d{2})?", [7, 8, 9, 10, 11, 12], [["(\\d{2})(\\d{5})", "$1 $2", ["16|342"]], ["(\\d{2})(\\d{6})", "$1 $2", ["49"]], ["(\\d{2})(\\d{2})(\\d{4})", "$1 $2 $3", ["1[36]|9"]], ["(\\d{2})(\\d{4})(\\d{3})", "$1 $2 $3", ["3[23]"]], ["(\\d{2})(\\d{3,4})(\\d{4})", "$1 $2 $3", ["16"]], ["(\\d{2})(\\d{4})(\\d{4})", "$1 $2 $3", ["10|23|3(?:[15]|4[57])|4|51"]], ["(\\d{3})(\\d{4})(\\d{4})", "$1 $2 $3", ["34"]], ["(\\d{2})(\\d{4,5})(\\d{5})", "$1 $2 $3", ["[1-35]"]]], 0, 0, 0, 0, 0, 0, [0, ["342\\d{4}|(?:337|49)\\d{6}|(?:3(?:2|47|7\\d{3})|50\\d{3})\\d{7}", [7, 8, 9, 10, 12]], 0, 0, 0, 0, 0, 0, ["1(?:3(?:0[0347]|[13][0139]|2[035]|4[013568]|6[0459]|7[06]|8[15-8]|9[0689])\\d{4}|6\\d{5,10})|(?:345\\d|9[89])\\d{6}|(?:10|2(?:3|85\\d)|3(?:[15]|[69]\\d\\d)|4[15-8]|51)\\d{8}"]]], 883: ["883", 0, "(?:[1-4]\\d|51)\\d{6,10}", [8, 9, 10, 11, 12], [["(\\d{3})(\\d{3})(\\d{2,8})", "$1 $2 $3", ["[14]|2[24-689]|3[02-689]|51[24-9]"]], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["510"]], ["(\\d{3})(\\d{3})(\\d{4})", "$1 $2 $3", ["21"]], ["(\\d{4})(\\d{4})(\\d{4})", "$1 $2 $3", ["51[13]"]], ["(\\d{3})(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3 $4", ["[235]"]]], 0, 0, 0, 0, 0, 0, [0, 0, 0, 0, 0, 0, 0, 0, ["(?:2(?:00\\d\\d|10)|(?:370[1-9]|51\\d0)\\d)\\d{7}|51(?:00\\d{5}|[24-9]0\\d{4,7})|(?:1[0-79]|2[24-689]|3[02-689]|4[0-4])0\\d{5,9}"]]], 888: ["888", 0, "\\d{11}", [11], [["(\\d{3})(\\d{3})(\\d{5})", "$1 $2 $3"]], 0, 0, 0, 0, 0, 0, [0, 0, 0, 0, 0, 0, ["\\d{11}"]]], 979: ["979", 0, "[1359]\\d{8}", [9], [["(\\d)(\\d{4})(\\d{4})", "$1 $2 $3", ["[1359]"]]], 0, 0, 0, 0, 0, 0, [0, 0, 0, ["[1359]\\d{8}"]]] } };
+var Vp = { version: 4, country_calling_codes: { 1: ["US", "AG", "AI", "AS", "BB", "BM", "BS", "CA", "DM", "DO", "GD", "GU", "JM", "KN", "KY", "LC", "MP", "MS", "PR", "SX", "TC", "TT", "VC", "VG", "VI"], 7: ["RU", "KZ"], 20: ["EG"], 27: ["ZA"], 30: ["GR"], 31: ["NL"], 32: ["BE"], 33: ["FR"], 34: ["ES"], 36: ["HU"], 39: ["IT", "VA"], 40: ["RO"], 41: ["CH"], 43: ["AT"], 44: ["GB", "GG", "IM", "JE"], 45: ["DK"], 46: ["SE"], 47: ["NO", "SJ"], 48: ["PL"], 49: ["DE"], 51: ["PE"], 52: ["MX"], 53: ["CU"], 54: ["AR"], 55: ["BR"], 56: ["CL"], 57: ["CO"], 58: ["VE"], 60: ["MY"], 61: ["AU", "CC", "CX"], 62: ["ID"], 63: ["PH"], 64: ["NZ"], 65: ["SG"], 66: ["TH"], 81: ["JP"], 82: ["KR"], 84: ["VN"], 86: ["CN"], 90: ["TR"], 91: ["IN"], 92: ["PK"], 93: ["AF"], 94: ["LK"], 95: ["MM"], 98: ["IR"], 211: ["SS"], 212: ["MA", "EH"], 213: ["DZ"], 216: ["TN"], 218: ["LY"], 220: ["GM"], 221: ["SN"], 222: ["MR"], 223: ["ML"], 224: ["GN"], 225: ["CI"], 226: ["BF"], 227: ["NE"], 228: ["TG"], 229: ["BJ"], 230: ["MU"], 231: ["LR"], 232: ["SL"], 233: ["GH"], 234: ["NG"], 235: ["TD"], 236: ["CF"], 237: ["CM"], 238: ["CV"], 239: ["ST"], 240: ["GQ"], 241: ["GA"], 242: ["CG"], 243: ["CD"], 244: ["AO"], 245: ["GW"], 246: ["IO"], 247: ["AC"], 248: ["SC"], 249: ["SD"], 250: ["RW"], 251: ["ET"], 252: ["SO"], 253: ["DJ"], 254: ["KE"], 255: ["TZ"], 256: ["UG"], 257: ["BI"], 258: ["MZ"], 260: ["ZM"], 261: ["MG"], 262: ["RE", "YT"], 263: ["ZW"], 264: ["NA"], 265: ["MW"], 266: ["LS"], 267: ["BW"], 268: ["SZ"], 269: ["KM"], 290: ["SH", "TA"], 291: ["ER"], 297: ["AW"], 298: ["FO"], 299: ["GL"], 350: ["GI"], 351: ["PT"], 352: ["LU"], 353: ["IE"], 354: ["IS"], 355: ["AL"], 356: ["MT"], 357: ["CY"], 358: ["FI", "AX"], 359: ["BG"], 370: ["LT"], 371: ["LV"], 372: ["EE"], 373: ["MD"], 374: ["AM"], 375: ["BY"], 376: ["AD"], 377: ["MC"], 378: ["SM"], 380: ["UA"], 381: ["RS"], 382: ["ME"], 383: ["XK"], 385: ["HR"], 386: ["SI"], 387: ["BA"], 389: ["MK"], 420: ["CZ"], 421: ["SK"], 423: ["LI"], 500: ["FK"], 501: ["BZ"], 502: ["GT"], 503: ["SV"], 504: ["HN"], 505: ["NI"], 506: ["CR"], 507: ["PA"], 508: ["PM"], 509: ["HT"], 590: ["GP", "BL", "MF"], 591: ["BO"], 592: ["GY"], 593: ["EC"], 594: ["GF"], 595: ["PY"], 596: ["MQ"], 597: ["SR"], 598: ["UY"], 599: ["CW", "BQ"], 670: ["TL"], 672: ["NF"], 673: ["BN"], 674: ["NR"], 675: ["PG"], 676: ["TO"], 677: ["SB"], 678: ["VU"], 679: ["FJ"], 680: ["PW"], 681: ["WF"], 682: ["CK"], 683: ["NU"], 685: ["WS"], 686: ["KI"], 687: ["NC"], 688: ["TV"], 689: ["PF"], 690: ["TK"], 691: ["FM"], 692: ["MH"], 850: ["KP"], 852: ["HK"], 853: ["MO"], 855: ["KH"], 856: ["LA"], 880: ["BD"], 886: ["TW"], 960: ["MV"], 961: ["LB"], 962: ["JO"], 963: ["SY"], 964: ["IQ"], 965: ["KW"], 966: ["SA"], 967: ["YE"], 968: ["OM"], 970: ["PS"], 971: ["AE"], 972: ["IL"], 973: ["BH"], 974: ["QA"], 975: ["BT"], 976: ["MN"], 977: ["NP"], 992: ["TJ"], 993: ["TM"], 994: ["AZ"], 995: ["GE"], 996: ["KG"], 998: ["UZ"] }, countries: { AC: ["247", "00", "(?:[01589]\\d|[46])\\d{4}", [5, 6]], AD: ["376", "00", "(?:1|6\\d)\\d{7}|[135-9]\\d{5}", [6, 8, 9], [["(\\d{3})(\\d{3})", "$1 $2", ["[135-9]"]], ["(\\d{4})(\\d{4})", "$1 $2", ["1"]], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["6"]]]], AE: ["971", "00", "(?:[4-7]\\d|9[0-689])\\d{7}|800\\d{2,9}|[2-4679]\\d{7}", [5, 6, 7, 8, 9, 10, 11, 12], [["(\\d{3})(\\d{2,9})", "$1 $2", ["60|8"]], ["(\\d)(\\d{3})(\\d{4})", "$1 $2 $3", ["[236]|[479][2-8]"], "0$1"], ["(\\d{3})(\\d)(\\d{5})", "$1 $2 $3", ["[479]"]], ["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["5"], "0$1"]], "0"], AF: ["93", "00", "[2-7]\\d{8}", [9], [["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["[2-7]"], "0$1"]], "0"], AG: ["1", "011", "(?:268|[58]\\d\\d|900)\\d{7}", [10], 0, "1", 0, "([457]\\d{6})$|1", "268$1", 0, "268"], AI: ["1", "011", "(?:264|[58]\\d\\d|900)\\d{7}", [10], 0, "1", 0, "([2457]\\d{6})$|1", "264$1", 0, "264"], AL: ["355", "00", "(?:700\\d\\d|900)\\d{3}|8\\d{5,7}|(?:[2-5]|6\\d)\\d{7}", [6, 7, 8, 9], [["(\\d{3})(\\d{3,4})", "$1 $2", ["80|9"], "0$1"], ["(\\d)(\\d{3})(\\d{4})", "$1 $2 $3", ["4[2-6]"], "0$1"], ["(\\d{2})(\\d{3})(\\d{3})", "$1 $2 $3", ["[2358][2-5]|4"], "0$1"], ["(\\d{3})(\\d{5})", "$1 $2", ["[23578]"], "0$1"], ["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["6"], "0$1"]], "0"], AM: ["374", "00", "(?:[1-489]\\d|55|60|77)\\d{6}", [8], [["(\\d{3})(\\d{2})(\\d{3})", "$1 $2 $3", ["[89]0"], "0 $1"], ["(\\d{3})(\\d{5})", "$1 $2", ["2|3[12]"], "(0$1)"], ["(\\d{2})(\\d{6})", "$1 $2", ["1|47"], "(0$1)"], ["(\\d{2})(\\d{6})", "$1 $2", ["[3-9]"], "0$1"]], "0"], AO: ["244", "00", "[29]\\d{8}", [9], [["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["[29]"]]]], AR: ["54", "00", "(?:11|[89]\\d\\d)\\d{8}|[2368]\\d{9}", [10, 11], [["(\\d{4})(\\d{2})(\\d{4})", "$1 $2-$3", ["2(?:2[024-9]|3[0-59]|47|6[245]|9[02-8])|3(?:3[28]|4[03-9]|5[2-46-8]|7[1-578]|8[2-9])", "2(?:[23]02|6(?:[25]|4[6-8])|9(?:[02356]|4[02568]|72|8[23]))|3(?:3[28]|4(?:[04679]|3[5-8]|5[4-68]|8[2379])|5(?:[2467]|3[237]|8[2-5])|7[1-578]|8(?:[2469]|3[2578]|5[4-8]|7[36-8]|8[5-8]))|2(?:2[24-9]|3[1-59]|47)", "2(?:[23]02|6(?:[25]|4(?:64|[78]))|9(?:[02356]|4(?:[0268]|5[2-6])|72|8[23]))|3(?:3[28]|4(?:[04679]|3[78]|5(?:4[46]|8)|8[2379])|5(?:[2467]|3[237]|8[23])|7[1-578]|8(?:[2469]|3[278]|5[56][46]|86[3-6]))|2(?:2[24-9]|3[1-59]|47)|38(?:[58][78]|7[378])|3(?:4[35][56]|58[45]|8(?:[38]5|54|76))[4-6]", "2(?:[23]02|6(?:[25]|4(?:64|[78]))|9(?:[02356]|4(?:[0268]|5[2-6])|72|8[23]))|3(?:3[28]|4(?:[04679]|3(?:5(?:4[0-25689]|[56])|[78])|58|8[2379])|5(?:[2467]|3[237]|8(?:[23]|4(?:[45]|60)|5(?:4[0-39]|5|64)))|7[1-578]|8(?:[2469]|3[278]|54(?:4|5[13-7]|6[89])|86[3-6]))|2(?:2[24-9]|3[1-59]|47)|38(?:[58][78]|7[378])|3(?:454|85[56])[46]|3(?:4(?:36|5[56])|8(?:[38]5|76))[4-6]"], "0$1", 1], ["(\\d{2})(\\d{4})(\\d{4})", "$1 $2-$3", ["1"], "0$1", 1], ["(\\d{3})(\\d{3})(\\d{4})", "$1-$2-$3", ["[68]"], "0$1"], ["(\\d{3})(\\d{3})(\\d{4})", "$1 $2-$3", ["[23]"], "0$1", 1], ["(\\d)(\\d{4})(\\d{2})(\\d{4})", "$2 15-$3-$4", ["9(?:2[2-469]|3[3-578])", "9(?:2(?:2[024-9]|3[0-59]|47|6[245]|9[02-8])|3(?:3[28]|4[03-9]|5[2-46-8]|7[1-578]|8[2-9]))", "9(?:2(?:[23]02|6(?:[25]|4[6-8])|9(?:[02356]|4[02568]|72|8[23]))|3(?:3[28]|4(?:[04679]|3[5-8]|5[4-68]|8[2379])|5(?:[2467]|3[237]|8[2-5])|7[1-578]|8(?:[2469]|3[2578]|5[4-8]|7[36-8]|8[5-8])))|92(?:2[24-9]|3[1-59]|47)", "9(?:2(?:[23]02|6(?:[25]|4(?:64|[78]))|9(?:[02356]|4(?:[0268]|5[2-6])|72|8[23]))|3(?:3[28]|4(?:[04679]|3[78]|5(?:4[46]|8)|8[2379])|5(?:[2467]|3[237]|8[23])|7[1-578]|8(?:[2469]|3[278]|5(?:[56][46]|[78])|7[378]|8(?:6[3-6]|[78]))))|92(?:2[24-9]|3[1-59]|47)|93(?:4[35][56]|58[45]|8(?:[38]5|54|76))[4-6]", "9(?:2(?:[23]02|6(?:[25]|4(?:64|[78]))|9(?:[02356]|4(?:[0268]|5[2-6])|72|8[23]))|3(?:3[28]|4(?:[04679]|3(?:5(?:4[0-25689]|[56])|[78])|5(?:4[46]|8)|8[2379])|5(?:[2467]|3[237]|8(?:[23]|4(?:[45]|60)|5(?:4[0-39]|5|64)))|7[1-578]|8(?:[2469]|3[278]|5(?:4(?:4|5[13-7]|6[89])|[56][46]|[78])|7[378]|8(?:6[3-6]|[78]))))|92(?:2[24-9]|3[1-59]|47)|93(?:4(?:36|5[56])|8(?:[38]5|76))[4-6]"], "0$1", 0, "$1 $2 $3-$4"], ["(\\d)(\\d{2})(\\d{4})(\\d{4})", "$2 15-$3-$4", ["91"], "0$1", 0, "$1 $2 $3-$4"], ["(\\d{3})(\\d{3})(\\d{5})", "$1-$2-$3", ["8"], "0$1"], ["(\\d)(\\d{3})(\\d{3})(\\d{4})", "$2 15-$3-$4", ["9"], "0$1", 0, "$1 $2 $3-$4"]], "0", 0, "0?(?:(11|2(?:2(?:02?|[13]|2[13-79]|4[1-6]|5[2457]|6[124-8]|7[1-4]|8[13-6]|9[1267])|3(?:02?|1[467]|2[03-6]|3[13-8]|[49][2-6]|5[2-8]|[67])|4(?:7[3-578]|9)|6(?:[0136]|2[24-6]|4[6-8]?|5[15-8])|80|9(?:0[1-3]|[19]|2\\d|3[1-6]|4[02568]?|5[2-4]|6[2-46]|72?|8[23]?))|3(?:3(?:2[79]|6|8[2578])|4(?:0[0-24-9]|[12]|3[5-8]?|4[24-7]|5[4-68]?|6[02-9]|7[126]|8[2379]?|9[1-36-8])|5(?:1|2[1245]|3[237]?|4[1-46-9]|6[2-4]|7[1-6]|8[2-5]?)|6[24]|7(?:[069]|1[1568]|2[15]|3[145]|4[13]|5[14-8]|7[2-57]|8[126])|8(?:[01]|2[15-7]|3[2578]?|4[13-6]|5[4-8]?|6[1-357-9]|7[36-8]?|8[5-8]?|9[124])))15)?", "9$1"], AS: ["1", "011", "(?:[58]\\d\\d|684|900)\\d{7}", [10], 0, "1", 0, "([267]\\d{6})$|1", "684$1", 0, "684"], AT: ["43", "00", "1\\d{3,12}|2\\d{6,12}|43(?:(?:0\\d|5[02-9])\\d{3,9}|2\\d{4,5}|[3467]\\d{4}|8\\d{4,6}|9\\d{4,7})|5\\d{4,12}|8\\d{7,12}|9\\d{8,12}|(?:[367]\\d|4[0-24-9])\\d{4,11}", [4, 5, 6, 7, 8, 9, 10, 11, 12, 13], [["(\\d)(\\d{3,12})", "$1 $2", ["1(?:11|[2-9])"], "0$1"], ["(\\d{3})(\\d{2})", "$1 $2", ["517"], "0$1"], ["(\\d{2})(\\d{3,5})", "$1 $2", ["5[079]"], "0$1"], ["(\\d{3})(\\d{3,10})", "$1 $2", ["(?:31|4)6|51|6(?:5[0-3579]|[6-9])|7(?:20|32|8)|[89]"], "0$1"], ["(\\d{4})(\\d{3,9})", "$1 $2", ["[2-467]|5[2-6]"], "0$1"], ["(\\d{2})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["5"], "0$1"], ["(\\d{2})(\\d{4})(\\d{4,7})", "$1 $2 $3", ["5"], "0$1"]], "0"], AU: ["61", "001[14-689]|14(?:1[14]|34|4[17]|[56]6|7[47]|88)0011", "1(?:[0-79]\\d{7}(?:\\d(?:\\d{2})?)?|8[0-24-9]\\d{7})|[2-478]\\d{8}|1\\d{4,7}", [5, 6, 7, 8, 9, 10, 12], [["(\\d{2})(\\d{3,4})", "$1 $2", ["16"], "0$1"], ["(\\d{2})(\\d{3})(\\d{2,4})", "$1 $2 $3", ["16"], "0$1"], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["14|4"], "0$1"], ["(\\d)(\\d{4})(\\d{4})", "$1 $2 $3", ["[2378]"], "(0$1)"], ["(\\d{4})(\\d{3})(\\d{3})", "$1 $2 $3", ["1(?:30|[89])"]]], "0", 0, "(183[12])|0", 0, 0, 0, [["(?:(?:(?:2(?:[0-26-9]\\d|3[0-8]|4[02-9]|5[0135-9])|7(?:[013-57-9]\\d|2[0-8]))\\d|3(?:(?:[0-3589]\\d|6[1-9]|7[0-35-9])\\d|4(?:[0-578]\\d|90)))\\d\\d|8(?:51(?:0(?:0[03-9]|[12479]\\d|3[2-9]|5[0-8]|6[1-9]|8[0-7])|1(?:[0235689]\\d|1[0-69]|4[0-589]|7[0-47-9])|2(?:0[0-79]|[18][13579]|2[14-9]|3[0-46-9]|[4-6]\\d|7[89]|9[0-4])|3\\d\\d)|(?:6[0-8]|[78]\\d)\\d{3}|9(?:[02-9]\\d{3}|1(?:(?:[0-58]\\d|6[0135-9])\\d|7(?:0[0-24-9]|[1-9]\\d)|9(?:[0-46-9]\\d|5[0-79])))))\\d{3}", [9]], ["4(?:79[01]|83[0-389]|94[0-4])\\d{5}|4(?:[0-36]\\d|4[047-9]|5[0-25-9]|7[02-8]|8[0-24-9]|9[0-37-9])\\d{6}", [9]], ["180(?:0\\d{3}|2)\\d{3}", [7, 10]], ["190[0-26]\\d{6}", [10]], 0, 0, 0, ["163\\d{2,6}", [5, 6, 7, 8, 9]], ["14(?:5(?:1[0458]|[23][458])|71\\d)\\d{4}", [9]], ["13(?:00\\d{6}(?:\\d{2})?|45[0-4]\\d{3})|13\\d{4}", [6, 8, 10, 12]]], "0011"], AW: ["297", "00", "(?:[25-79]\\d\\d|800)\\d{4}", [7], [["(\\d{3})(\\d{4})", "$1 $2", ["[25-9]"]]]], AX: ["358", "00|99(?:[01469]|5(?:[14]1|3[23]|5[59]|77|88|9[09]))", "2\\d{4,9}|35\\d{4,5}|(?:60\\d\\d|800)\\d{4,6}|7\\d{5,11}|(?:[14]\\d|3[0-46-9]|50)\\d{4,8}", [5, 6, 7, 8, 9, 10, 11, 12], 0, "0", 0, 0, 0, 0, "18", 0, "00"], AZ: ["994", "00", "365\\d{6}|(?:[124579]\\d|60|88)\\d{7}", [9], [["(\\d{3})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["90"], "0$1"], ["(\\d{2})(\\d{3})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["1[28]|2|365|46", "1[28]|2|365[45]|46", "1[28]|2|365(?:4|5[02])|46"], "(0$1)"], ["(\\d{2})(\\d{3})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[13-9]"], "0$1"]], "0"], BA: ["387", "00", "6\\d{8}|(?:[35689]\\d|49|70)\\d{6}", [8, 9], [["(\\d{2})(\\d{3})(\\d{3})", "$1 $2 $3", ["6[1-3]|[7-9]"], "0$1"], ["(\\d{2})(\\d{3})(\\d{3})", "$1 $2-$3", ["[3-5]|6[56]"], "0$1"], ["(\\d{2})(\\d{2})(\\d{2})(\\d{3})", "$1 $2 $3 $4", ["6"], "0$1"]], "0"], BB: ["1", "011", "(?:246|[58]\\d\\d|900)\\d{7}", [10], 0, "1", 0, "([2-9]\\d{6})$|1", "246$1", 0, "246"], BD: ["880", "00", "[1-469]\\d{9}|8[0-79]\\d{7,8}|[2-79]\\d{8}|[2-9]\\d{7}|[3-9]\\d{6}|[57-9]\\d{5}", [6, 7, 8, 9, 10], [["(\\d{2})(\\d{4,6})", "$1-$2", ["31[5-8]|[459]1"], "0$1"], ["(\\d{3})(\\d{3,7})", "$1-$2", ["3(?:[67]|8[013-9])|4(?:6[168]|7|[89][18])|5(?:6[128]|9)|6(?:[15]|28|4[14])|7[2-589]|8(?:0[014-9]|[12])|9[358]|(?:3[2-5]|4[235]|5[2-578]|6[0389]|76|8[3-7]|9[24])1|(?:44|66)[01346-9]"], "0$1"], ["(\\d{4})(\\d{3,6})", "$1-$2", ["[13-9]|22"], "0$1"], ["(\\d)(\\d{7,8})", "$1-$2", ["2"], "0$1"]], "0"], BE: ["32", "00", "4\\d{8}|[1-9]\\d{7}", [8, 9], [["(\\d{3})(\\d{2})(\\d{3})", "$1 $2 $3", ["(?:80|9)0"], "0$1"], ["(\\d)(\\d{3})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[239]|4[23]"], "0$1"], ["(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[15-8]"], "0$1"], ["(\\d{3})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["4"], "0$1"]], "0"], BF: ["226", "00", "[025-7]\\d{7}", [8], [["(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[025-7]"]]]], BG: ["359", "00", "00800\\d{7}|[2-7]\\d{6,7}|[89]\\d{6,8}|2\\d{5}", [6, 7, 8, 9, 12], [["(\\d)(\\d)(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["2"], "0$1"], ["(\\d{3})(\\d{4})", "$1 $2", ["43[1-6]|70[1-9]"], "0$1"], ["(\\d)(\\d{3})(\\d{3,4})", "$1 $2 $3", ["2"], "0$1"], ["(\\d{2})(\\d{3})(\\d{2,3})", "$1 $2 $3", ["[356]|4[124-7]|7[1-9]|8[1-6]|9[1-7]"], "0$1"], ["(\\d{3})(\\d{2})(\\d{3})", "$1 $2 $3", ["(?:70|8)0"], "0$1"], ["(\\d{3})(\\d{3})(\\d{2})", "$1 $2 $3", ["43[1-7]|7"], "0$1"], ["(\\d{2})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["[48]|9[08]"], "0$1"], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["9"], "0$1"]], "0"], BH: ["973", "00", "[136-9]\\d{7}", [8], [["(\\d{4})(\\d{4})", "$1 $2", ["[13679]|8[02-4679]"]]]], BI: ["257", "00", "(?:[267]\\d|31)\\d{6}", [8], [["(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[2367]"]]]], BJ: ["229", "00", "[24-689]\\d{7}", [8], [["(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[24-689]"]]]], BL: ["590", "00", "590\\d{6}|(?:69|80|9\\d)\\d{7}", [9], 0, "0", 0, 0, 0, 0, 0, [["590(?:2[7-9]|3[3-7]|5[12]|87)\\d{4}"], ["69(?:0\\d\\d|1(?:2[2-9]|3[0-5])|4(?:0[89]|1[2-6]|9\\d)|6(?:1[016-9]|5[0-4]|[67]\\d))\\d{4}"], ["80[0-5]\\d{6}"], 0, 0, 0, 0, 0, ["9(?:(?:39[5-7]|76[018])\\d|475[0-5])\\d{4}"]]], BM: ["1", "011", "(?:441|[58]\\d\\d|900)\\d{7}", [10], 0, "1", 0, "([2-9]\\d{6})$|1", "441$1", 0, "441"], BN: ["673", "00", "[2-578]\\d{6}", [7], [["(\\d{3})(\\d{4})", "$1 $2", ["[2-578]"]]]], BO: ["591", "00(?:1\\d)?", "8001\\d{5}|(?:[2-467]\\d|50)\\d{6}", [8, 9], [["(\\d)(\\d{7})", "$1 $2", ["[235]|4[46]"]], ["(\\d{8})", "$1", ["[67]"]], ["(\\d{3})(\\d{2})(\\d{4})", "$1 $2 $3", ["8"]]], "0", 0, "0(1\\d)?"], BQ: ["599", "00", "(?:[34]1|7\\d)\\d{5}", [7], 0, 0, 0, 0, 0, 0, "[347]"], BR: ["55", "00(?:1[245]|2[1-35]|31|4[13]|[56]5|99)", "(?:[1-46-9]\\d\\d|5(?:[0-46-9]\\d|5[0-46-9]))\\d{8}|[1-9]\\d{9}|[3589]\\d{8}|[34]\\d{7}", [8, 9, 10, 11], [["(\\d{4})(\\d{4})", "$1-$2", ["300|4(?:0[02]|37)", "4(?:02|37)0|[34]00"]], ["(\\d{3})(\\d{2,3})(\\d{4})", "$1 $2 $3", ["(?:[358]|90)0"], "0$1"], ["(\\d{2})(\\d{4})(\\d{4})", "$1 $2-$3", ["(?:[14689][1-9]|2[12478]|3[1-578]|5[13-5]|7[13-579])[2-57]"], "($1)"], ["(\\d{2})(\\d{5})(\\d{4})", "$1 $2-$3", ["[16][1-9]|[2-57-9]"], "($1)"]], "0", 0, "(?:0|90)(?:(1[245]|2[1-35]|31|4[13]|[56]5|99)(\\d{10,11}))?", "$2"], BS: ["1", "011", "(?:242|[58]\\d\\d|900)\\d{7}", [10], 0, "1", 0, "([3-8]\\d{6})$|1", "242$1", 0, "242"], BT: ["975", "00", "[17]\\d{7}|[2-8]\\d{6}", [7, 8], [["(\\d)(\\d{3})(\\d{3})", "$1 $2 $3", ["[2-68]|7[246]"]], ["(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["1[67]|7"]]]], BW: ["267", "00", "(?:0800|(?:[37]|800)\\d)\\d{6}|(?:[2-6]\\d|90)\\d{5}", [7, 8, 10], [["(\\d{2})(\\d{5})", "$1 $2", ["90"]], ["(\\d{3})(\\d{4})", "$1 $2", ["[24-6]|3[15-9]"]], ["(\\d{2})(\\d{3})(\\d{3})", "$1 $2 $3", ["[37]"]], ["(\\d{4})(\\d{3})(\\d{3})", "$1 $2 $3", ["0"]], ["(\\d{3})(\\d{4})(\\d{3})", "$1 $2 $3", ["8"]]]], BY: ["375", "810", "(?:[12]\\d|33|44|902)\\d{7}|8(?:0[0-79]\\d{5,7}|[1-7]\\d{9})|8(?:1[0-489]|[5-79]\\d)\\d{7}|8[1-79]\\d{6,7}|8[0-79]\\d{5}|8\\d{5}", [6, 7, 8, 9, 10, 11], [["(\\d{3})(\\d{3})", "$1 $2", ["800"], "8 $1"], ["(\\d{3})(\\d{2})(\\d{2,4})", "$1 $2 $3", ["800"], "8 $1"], ["(\\d{4})(\\d{2})(\\d{3})", "$1 $2-$3", ["1(?:5[169]|6[3-5]|7[179])|2(?:1[35]|2[34]|3[3-5])", "1(?:5[169]|6(?:3[1-3]|4|5[125])|7(?:1[3-9]|7[0-24-6]|9[2-7]))|2(?:1[35]|2[34]|3[3-5])"], "8 0$1"], ["(\\d{3})(\\d{2})(\\d{2})(\\d{2})", "$1 $2-$3-$4", ["1(?:[56]|7[467])|2[1-3]"], "8 0$1"], ["(\\d{2})(\\d{3})(\\d{2})(\\d{2})", "$1 $2-$3-$4", ["[1-4]"], "8 0$1"], ["(\\d{3})(\\d{3,4})(\\d{4})", "$1 $2 $3", ["[89]"], "8 $1"]], "8", 0, "0|80?", 0, 0, 0, 0, "8~10"], BZ: ["501", "00", "(?:0800\\d|[2-8])\\d{6}", [7, 11], [["(\\d{3})(\\d{4})", "$1-$2", ["[2-8]"]], ["(\\d)(\\d{3})(\\d{4})(\\d{3})", "$1-$2-$3-$4", ["0"]]]], CA: ["1", "011", "(?:[2-8]\\d|90)\\d{8}|3\\d{6}", [7, 10], 0, "1", 0, 0, 0, 0, 0, [["(?:2(?:04|[23]6|[48]9|50|63)|3(?:06|43|54|6[578]|82)|4(?:03|1[68]|[26]8|3[178]|50|74)|5(?:06|1[49]|48|79|8[147])|6(?:04|[18]3|39|47|72)|7(?:0[59]|42|53|78|8[02])|8(?:[06]7|19|25|7[39])|90[25])[2-9]\\d{6}", [10]], ["", [10]], ["8(?:00|33|44|55|66|77|88)[2-9]\\d{6}", [10]], ["900[2-9]\\d{6}", [10]], ["52(?:3(?:[2-46-9][02-9]\\d|5(?:[02-46-9]\\d|5[0-46-9]))|4(?:[2-478][02-9]\\d|5(?:[034]\\d|2[024-9]|5[0-46-9])|6(?:0[1-9]|[2-9]\\d)|9(?:[05-9]\\d|2[0-5]|49)))\\d{4}|52[34][2-9]1[02-9]\\d{4}|(?:5(?:00|2[125-9]|33|44|66|77|88)|622)[2-9]\\d{6}", [10]], 0, ["310\\d{4}", [7]], 0, ["600[2-9]\\d{6}", [10]]]], CC: ["61", "001[14-689]|14(?:1[14]|34|4[17]|[56]6|7[47]|88)0011", "1(?:[0-79]\\d{8}(?:\\d{2})?|8[0-24-9]\\d{7})|[148]\\d{8}|1\\d{5,7}", [6, 7, 8, 9, 10, 12], 0, "0", 0, "([59]\\d{7})$|0", "8$1", 0, 0, [["8(?:51(?:0(?:02|31|60|89)|1(?:18|76)|223)|91(?:0(?:1[0-2]|29)|1(?:[28]2|50|79)|2(?:10|64)|3(?:[06]8|22)|4[29]8|62\\d|70[23]|959))\\d{3}", [9]], ["4(?:79[01]|83[0-389]|94[0-4])\\d{5}|4(?:[0-36]\\d|4[047-9]|5[0-25-9]|7[02-8]|8[0-24-9]|9[0-37-9])\\d{6}", [9]], ["180(?:0\\d{3}|2)\\d{3}", [7, 10]], ["190[0-26]\\d{6}", [10]], 0, 0, 0, 0, ["14(?:5(?:1[0458]|[23][458])|71\\d)\\d{4}", [9]], ["13(?:00\\d{6}(?:\\d{2})?|45[0-4]\\d{3})|13\\d{4}", [6, 8, 10, 12]]], "0011"], CD: ["243", "00", "[189]\\d{8}|[1-68]\\d{6}", [7, 9], [["(\\d{2})(\\d{2})(\\d{3})", "$1 $2 $3", ["88"], "0$1"], ["(\\d{2})(\\d{5})", "$1 $2", ["[1-6]"], "0$1"], ["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["1"], "0$1"], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["[89]"], "0$1"]], "0"], CF: ["236", "00", "(?:[27]\\d{3}|8776)\\d{4}", [8], [["(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[278]"]]]], CG: ["242", "00", "222\\d{6}|(?:0\\d|80)\\d{7}", [9], [["(\\d)(\\d{4})(\\d{4})", "$1 $2 $3", ["8"]], ["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["[02]"]]]], CH: ["41", "00", "8\\d{11}|[2-9]\\d{8}", [9], [["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["8[047]|90"], "0$1"], ["(\\d{2})(\\d{3})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[2-79]|81"], "0$1"], ["(\\d{3})(\\d{2})(\\d{3})(\\d{2})(\\d{2})", "$1 $2 $3 $4 $5", ["8"], "0$1"]], "0"], CI: ["225", "00", "[02]\\d{9}", [10], [["(\\d{2})(\\d{2})(\\d)(\\d{5})", "$1 $2 $3 $4", ["2"]], ["(\\d{2})(\\d{2})(\\d{2})(\\d{4})", "$1 $2 $3 $4", ["0"]]]], CK: ["682", "00", "[2-578]\\d{4}", [5], [["(\\d{2})(\\d{3})", "$1 $2", ["[2-578]"]]]], CL: ["56", "(?:0|1(?:1[0-69]|2[02-5]|5[13-58]|69|7[0167]|8[018]))0", "12300\\d{6}|6\\d{9,10}|[2-9]\\d{8}", [9, 10, 11], [["(\\d{5})(\\d{4})", "$1 $2", ["219", "2196"], "($1)"], ["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["44"]], ["(\\d)(\\d{4})(\\d{4})", "$1 $2 $3", ["2[1-36]"], "($1)"], ["(\\d)(\\d{4})(\\d{4})", "$1 $2 $3", ["9[2-9]"]], ["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["3[2-5]|[47]|5[1-3578]|6[13-57]|8(?:0[1-9]|[1-9])"], "($1)"], ["(\\d{3})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["60|8"]], ["(\\d{4})(\\d{3})(\\d{4})", "$1 $2 $3", ["1"]], ["(\\d{3})(\\d{3})(\\d{2})(\\d{3})", "$1 $2 $3 $4", ["60"]]]], CM: ["237", "00", "[26]\\d{8}|88\\d{6,7}", [8, 9], [["(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["88"]], ["(\\d)(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4 $5", ["[26]|88"]]]], CN: ["86", "00|1(?:[12]\\d|79)\\d\\d00", "1[127]\\d{8,9}|2\\d{9}(?:\\d{2})?|[12]\\d{6,7}|86\\d{6}|(?:1[03-689]\\d|6)\\d{7,9}|(?:[3-579]\\d|8[0-57-9])\\d{6,9}", [7, 8, 9, 10, 11, 12], [["(\\d{2})(\\d{5,6})", "$1 $2", ["(?:10|2[0-57-9])[19]", "(?:10|2[0-57-9])(?:10|9[56])", "10(?:10|9[56])|2[0-57-9](?:100|9[56])"], "0$1"], ["(\\d{3})(\\d{5,6})", "$1 $2", ["3(?:[157]|35|49|9[1-68])|4(?:[17]|2[179]|6[47-9]|8[23])|5(?:[1357]|2[37]|4[36]|6[1-46]|80)|6(?:3[1-5]|6[0238]|9[12])|7(?:01|[1579]|2[248]|3[014-9]|4[3-6]|6[023689])|8(?:1[236-8]|2[5-7]|[37]|8[36-8]|9[1-8])|9(?:0[1-3689]|1[1-79]|[379]|4[13]|5[1-5])|(?:4[35]|59|85)[1-9]", "(?:3(?:[157]\\d|35|49|9[1-68])|4(?:[17]\\d|2[179]|[35][1-9]|6[47-9]|8[23])|5(?:[1357]\\d|2[37]|4[36]|6[1-46]|80|9[1-9])|6(?:3[1-5]|6[0238]|9[12])|7(?:01|[1579]\\d|2[248]|3[014-9]|4[3-6]|6[023689])|8(?:1[236-8]|2[5-7]|[37]\\d|5[1-9]|8[36-8]|9[1-8])|9(?:0[1-3689]|1[1-79]|[379]\\d|4[13]|5[1-5]))[19]", "85[23](?:10|95)|(?:3(?:[157]\\d|35|49|9[1-68])|4(?:[17]\\d|2[179]|[35][1-9]|6[47-9]|8[23])|5(?:[1357]\\d|2[37]|4[36]|6[1-46]|80|9[1-9])|6(?:3[1-5]|6[0238]|9[12])|7(?:01|[1579]\\d|2[248]|3[014-9]|4[3-6]|6[023689])|8(?:1[236-8]|2[5-7]|[37]\\d|5[14-9]|8[36-8]|9[1-8])|9(?:0[1-3689]|1[1-79]|[379]\\d|4[13]|5[1-5]))(?:10|9[56])", "85[23](?:100|95)|(?:3(?:[157]\\d|35|49|9[1-68])|4(?:[17]\\d|2[179]|[35][1-9]|6[47-9]|8[23])|5(?:[1357]\\d|2[37]|4[36]|6[1-46]|80|9[1-9])|6(?:3[1-5]|6[0238]|9[12])|7(?:01|[1579]\\d|2[248]|3[014-9]|4[3-6]|6[023689])|8(?:1[236-8]|2[5-7]|[37]\\d|5[14-9]|8[36-8]|9[1-8])|9(?:0[1-3689]|1[1-79]|[379]\\d|4[13]|5[1-5]))(?:100|9[56])"], "0$1"], ["(\\d{3})(\\d{3})(\\d{4})", "$1 $2 $3", ["(?:4|80)0"]], ["(\\d{2})(\\d{4})(\\d{4})", "$1 $2 $3", ["10|2(?:[02-57-9]|1[1-9])", "10|2(?:[02-57-9]|1[1-9])", "10[0-79]|2(?:[02-57-9]|1[1-79])|(?:10|21)8(?:0[1-9]|[1-9])"], "0$1", 1], ["(\\d{3})(\\d{3})(\\d{4})", "$1 $2 $3", ["3(?:[3-59]|7[02-68])|4(?:[26-8]|3[3-9]|5[2-9])|5(?:3[03-9]|[468]|7[028]|9[2-46-9])|6|7(?:[0-247]|3[04-9]|5[0-4689]|6[2368])|8(?:[1-358]|9[1-7])|9(?:[013479]|5[1-5])|(?:[34]1|55|79|87)[02-9]"], "0$1", 1], ["(\\d{3})(\\d{7,8})", "$1 $2", ["9"]], ["(\\d{4})(\\d{3})(\\d{4})", "$1 $2 $3", ["80"], "0$1", 1], ["(\\d{3})(\\d{4})(\\d{4})", "$1 $2 $3", ["[3-578]"], "0$1", 1], ["(\\d{3})(\\d{4})(\\d{4})", "$1 $2 $3", ["1[3-9]"]], ["(\\d{2})(\\d{3})(\\d{3})(\\d{4})", "$1 $2 $3 $4", ["[12]"], "0$1", 1]], "0", 0, "(1(?:[12]\\d|79)\\d\\d)|0", 0, 0, 0, 0, "00"], CO: ["57", "00(?:4(?:[14]4|56)|[579])", "(?:60\\d\\d|9101)\\d{6}|(?:1\\d|3)\\d{9}", [10, 11], [["(\\d{3})(\\d{7})", "$1 $2", ["6"], "($1)"], ["(\\d{3})(\\d{7})", "$1 $2", ["3[0-357]|91"]], ["(\\d)(\\d{3})(\\d{7})", "$1-$2-$3", ["1"], "0$1", 0, "$1 $2 $3"]], "0", 0, "0([3579]|4(?:[14]4|56))?"], CR: ["506", "00", "(?:8\\d|90)\\d{8}|(?:[24-8]\\d{3}|3005)\\d{4}", [8, 10], [["(\\d{4})(\\d{4})", "$1 $2", ["[2-7]|8[3-9]"]], ["(\\d{3})(\\d{3})(\\d{4})", "$1-$2-$3", ["[89]"]]], 0, 0, "(19(?:0[0-2468]|1[09]|20|66|77|99))"], CU: ["53", "119", "(?:[2-7]|8\\d\\d)\\d{7}|[2-47]\\d{6}|[34]\\d{5}", [6, 7, 8, 10], [["(\\d{2})(\\d{4,6})", "$1 $2", ["2[1-4]|[34]"], "(0$1)"], ["(\\d)(\\d{6,7})", "$1 $2", ["7"], "(0$1)"], ["(\\d)(\\d{7})", "$1 $2", ["[56]"], "0$1"], ["(\\d{3})(\\d{7})", "$1 $2", ["8"], "0$1"]], "0"], CV: ["238", "0", "(?:[2-59]\\d\\d|800)\\d{4}", [7], [["(\\d{3})(\\d{2})(\\d{2})", "$1 $2 $3", ["[2-589]"]]]], CW: ["599", "00", "(?:[34]1|60|(?:7|9\\d)\\d)\\d{5}", [7, 8], [["(\\d{3})(\\d{4})", "$1 $2", ["[3467]"]], ["(\\d)(\\d{3})(\\d{4})", "$1 $2 $3", ["9[4-8]"]]], 0, 0, 0, 0, 0, "[69]"], CX: ["61", "001[14-689]|14(?:1[14]|34|4[17]|[56]6|7[47]|88)0011", "1(?:[0-79]\\d{8}(?:\\d{2})?|8[0-24-9]\\d{7})|[148]\\d{8}|1\\d{5,7}", [6, 7, 8, 9, 10, 12], 0, "0", 0, "([59]\\d{7})$|0", "8$1", 0, 0, [["8(?:51(?:0(?:01|30|59|88)|1(?:17|46|75)|2(?:22|35))|91(?:00[6-9]|1(?:[28]1|49|78)|2(?:09|63)|3(?:12|26|75)|4(?:56|97)|64\\d|7(?:0[01]|1[0-2])|958))\\d{3}", [9]], ["4(?:79[01]|83[0-389]|94[0-4])\\d{5}|4(?:[0-36]\\d|4[047-9]|5[0-25-9]|7[02-8]|8[0-24-9]|9[0-37-9])\\d{6}", [9]], ["180(?:0\\d{3}|2)\\d{3}", [7, 10]], ["190[0-26]\\d{6}", [10]], 0, 0, 0, 0, ["14(?:5(?:1[0458]|[23][458])|71\\d)\\d{4}", [9]], ["13(?:00\\d{6}(?:\\d{2})?|45[0-4]\\d{3})|13\\d{4}", [6, 8, 10, 12]]], "0011"], CY: ["357", "00", "(?:[279]\\d|[58]0)\\d{6}", [8], [["(\\d{2})(\\d{6})", "$1 $2", ["[257-9]"]]]], CZ: ["420", "00", "(?:[2-578]\\d|60)\\d{7}|9\\d{8,11}", [9], [["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["[2-8]|9[015-7]"]], ["(\\d{2})(\\d{3})(\\d{3})(\\d{2})", "$1 $2 $3 $4", ["96"]], ["(\\d{2})(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3 $4", ["9"]], ["(\\d{3})(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3 $4", ["9"]]]], DE: ["49", "00", "[2579]\\d{5,14}|49(?:[34]0|69|8\\d)\\d\\d?|49(?:37|49|60|7[089]|9\\d)\\d{1,3}|49(?:2[024-9]|3[2-689]|7[1-7])\\d{1,8}|(?:1|[368]\\d|4[0-8])\\d{3,13}|49(?:[015]\\d|2[13]|31|[46][1-8])\\d{1,9}", [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], [["(\\d{2})(\\d{3,13})", "$1 $2", ["3[02]|40|[68]9"], "0$1"], ["(\\d{3})(\\d{3,12})", "$1 $2", ["2(?:0[1-389]|1[124]|2[18]|3[14])|3(?:[35-9][15]|4[015])|906|(?:2[4-9]|4[2-9]|[579][1-9]|[68][1-8])1", "2(?:0[1-389]|12[0-8])|3(?:[35-9][15]|4[015])|906|2(?:[13][14]|2[18])|(?:2[4-9]|4[2-9]|[579][1-9]|[68][1-8])1"], "0$1"], ["(\\d{4})(\\d{2,11})", "$1 $2", ["[24-6]|3(?:[3569][02-46-9]|4[2-4679]|7[2-467]|8[2-46-8])|70[2-8]|8(?:0[2-9]|[1-8])|90[7-9]|[79][1-9]", "[24-6]|3(?:3(?:0[1-467]|2[127-9]|3[124578]|7[1257-9]|8[1256]|9[145])|4(?:2[135]|4[13578]|9[1346])|5(?:0[14]|2[1-3589]|6[1-4]|7[13468]|8[13568])|6(?:2[1-489]|3[124-6]|6[13]|7[12579]|8[1-356]|9[135])|7(?:2[1-7]|4[145]|6[1-5]|7[1-4])|8(?:21|3[1468]|6|7[1467]|8[136])|9(?:0[12479]|2[1358]|4[134679]|6[1-9]|7[136]|8[147]|9[1468]))|70[2-8]|8(?:0[2-9]|[1-8])|90[7-9]|[79][1-9]|3[68]4[1347]|3(?:47|60)[1356]|3(?:3[46]|46|5[49])[1246]|3[4579]3[1357]"], "0$1"], ["(\\d{3})(\\d{4})", "$1 $2", ["138"], "0$1"], ["(\\d{5})(\\d{2,10})", "$1 $2", ["3"], "0$1"], ["(\\d{3})(\\d{5,11})", "$1 $2", ["181"], "0$1"], ["(\\d{3})(\\d)(\\d{4,10})", "$1 $2 $3", ["1(?:3|80)|9"], "0$1"], ["(\\d{3})(\\d{7,8})", "$1 $2", ["1[67]"], "0$1"], ["(\\d{3})(\\d{7,12})", "$1 $2", ["8"], "0$1"], ["(\\d{5})(\\d{6})", "$1 $2", ["185", "1850", "18500"], "0$1"], ["(\\d{3})(\\d{4})(\\d{4})", "$1 $2 $3", ["7"], "0$1"], ["(\\d{4})(\\d{7})", "$1 $2", ["18[68]"], "0$1"], ["(\\d{4})(\\d{7})", "$1 $2", ["15[1279]"], "0$1"], ["(\\d{5})(\\d{6})", "$1 $2", ["15[03568]", "15(?:[0568]|31)"], "0$1"], ["(\\d{3})(\\d{8})", "$1 $2", ["18"], "0$1"], ["(\\d{3})(\\d{2})(\\d{7,8})", "$1 $2 $3", ["1(?:6[023]|7)"], "0$1"], ["(\\d{4})(\\d{2})(\\d{7})", "$1 $2 $3", ["15[279]"], "0$1"], ["(\\d{3})(\\d{2})(\\d{8})", "$1 $2 $3", ["15"], "0$1"]], "0"], DJ: ["253", "00", "(?:2\\d|77)\\d{6}", [8], [["(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[27]"]]]], DK: ["45", "00", "[2-9]\\d{7}", [8], [["(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[2-9]"]]]], DM: ["1", "011", "(?:[58]\\d\\d|767|900)\\d{7}", [10], 0, "1", 0, "([2-7]\\d{6})$|1", "767$1", 0, "767"], DO: ["1", "011", "(?:[58]\\d\\d|900)\\d{7}", [10], 0, "1", 0, 0, 0, 0, "8001|8[024]9"], DZ: ["213", "00", "(?:[1-4]|[5-79]\\d|80)\\d{7}", [8, 9], [["(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[1-4]"], "0$1"], ["(\\d{2})(\\d{3})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["9"], "0$1"], ["(\\d{3})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[5-8]"], "0$1"]], "0"], EC: ["593", "00", "1\\d{9,10}|(?:[2-7]|9\\d)\\d{7}", [8, 9, 10, 11], [["(\\d)(\\d{3})(\\d{4})", "$1 $2-$3", ["[2-7]"], "(0$1)", 0, "$1-$2-$3"], ["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["9"], "0$1"], ["(\\d{4})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["1"]]], "0"], EE: ["372", "00", "8\\d{9}|[4578]\\d{7}|(?:[3-8]\\d|90)\\d{5}", [7, 8, 10], [["(\\d{3})(\\d{4})", "$1 $2", ["[369]|4[3-8]|5(?:[0-2]|5[0-478]|6[45])|7[1-9]|88", "[369]|4[3-8]|5(?:[02]|1(?:[0-8]|95)|5[0-478]|6(?:4[0-4]|5[1-589]))|7[1-9]|88"]], ["(\\d{4})(\\d{3,4})", "$1 $2", ["[45]|8(?:00|[1-49])", "[45]|8(?:00[1-9]|[1-49])"]], ["(\\d{2})(\\d{2})(\\d{4})", "$1 $2 $3", ["7"]], ["(\\d{4})(\\d{3})(\\d{3})", "$1 $2 $3", ["8"]]]], EG: ["20", "00", "[189]\\d{8,9}|[24-6]\\d{8}|[135]\\d{7}", [8, 9, 10], [["(\\d)(\\d{7,8})", "$1 $2", ["[23]"], "0$1"], ["(\\d{2})(\\d{6,7})", "$1 $2", ["1[35]|[4-6]|8[2468]|9[235-7]"], "0$1"], ["(\\d{3})(\\d{3})(\\d{4})", "$1 $2 $3", ["[89]"], "0$1"], ["(\\d{2})(\\d{8})", "$1 $2", ["1"], "0$1"]], "0"], EH: ["212", "00", "[5-8]\\d{8}", [9], 0, "0", 0, 0, 0, 0, "528[89]"], ER: ["291", "00", "[178]\\d{6}", [7], [["(\\d)(\\d{3})(\\d{3})", "$1 $2 $3", ["[178]"], "0$1"]], "0"], ES: ["34", "00", "[5-9]\\d{8}", [9], [["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["[89]00"]], ["(\\d{3})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[5-9]"]]]], ET: ["251", "00", "(?:11|[2-579]\\d)\\d{7}", [9], [["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["[1-579]"], "0$1"]], "0"], FI: ["358", "00|99(?:[01469]|5(?:[14]1|3[23]|5[59]|77|88|9[09]))", "[1-35689]\\d{4}|7\\d{10,11}|(?:[124-7]\\d|3[0-46-9])\\d{8}|[1-9]\\d{5,8}", [5, 6, 7, 8, 9, 10, 11, 12], [["(\\d{5})", "$1", ["20[2-59]"], "0$1"], ["(\\d{3})(\\d{3,7})", "$1 $2", ["(?:[1-3]0|[68])0|70[07-9]"], "0$1"], ["(\\d{2})(\\d{4,8})", "$1 $2", ["[14]|2[09]|50|7[135]"], "0$1"], ["(\\d{2})(\\d{6,10})", "$1 $2", ["7"], "0$1"], ["(\\d)(\\d{4,9})", "$1 $2", ["(?:1[49]|[2568])[1-8]|3(?:0[1-9]|[1-9])|9"], "0$1"]], "0", 0, 0, 0, 0, "1[03-79]|[2-9]", 0, "00"], FJ: ["679", "0(?:0|52)", "45\\d{5}|(?:0800\\d|[235-9])\\d{6}", [7, 11], [["(\\d{3})(\\d{4})", "$1 $2", ["[235-9]|45"]], ["(\\d{4})(\\d{3})(\\d{4})", "$1 $2 $3", ["0"]]], 0, 0, 0, 0, 0, 0, 0, "00"], FK: ["500", "00", "[2-7]\\d{4}", [5]], FM: ["691", "00", "(?:[39]\\d\\d|820)\\d{4}", [7], [["(\\d{3})(\\d{4})", "$1 $2", ["[389]"]]]], FO: ["298", "00", "[2-9]\\d{5}", [6], [["(\\d{6})", "$1", ["[2-9]"]]], 0, 0, "(10(?:01|[12]0|88))"], FR: ["33", "00", "[1-9]\\d{8}", [9], [["(\\d{3})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["8"], "0 $1"], ["(\\d)(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4 $5", ["[1-79]"], "0$1"]], "0"], GA: ["241", "00", "(?:[067]\\d|11)\\d{6}|[2-7]\\d{6}", [7, 8], [["(\\d)(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[2-7]"], "0$1"], ["(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["0"]], ["(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["11|[67]"], "0$1"]], 0, 0, "0(11\\d{6}|60\\d{6}|61\\d{6}|6[256]\\d{6}|7[467]\\d{6})", "$1"], GB: ["44", "00", "[1-357-9]\\d{9}|[18]\\d{8}|8\\d{6}", [7, 9, 10], [["(\\d{3})(\\d{4})", "$1 $2", ["800", "8001", "80011", "800111", "8001111"], "0$1"], ["(\\d{3})(\\d{2})(\\d{2})", "$1 $2 $3", ["845", "8454", "84546", "845464"], "0$1"], ["(\\d{3})(\\d{6})", "$1 $2", ["800"], "0$1"], ["(\\d{5})(\\d{4,5})", "$1 $2", ["1(?:38|5[23]|69|76|94)", "1(?:(?:38|69)7|5(?:24|39)|768|946)", "1(?:3873|5(?:242|39[4-6])|(?:697|768)[347]|9467)"], "0$1"], ["(\\d{4})(\\d{5,6})", "$1 $2", ["1(?:[2-69][02-9]|[78])"], "0$1"], ["(\\d{2})(\\d{4})(\\d{4})", "$1 $2 $3", ["[25]|7(?:0|6[02-9])", "[25]|7(?:0|6(?:[03-9]|2[356]))"], "0$1"], ["(\\d{4})(\\d{6})", "$1 $2", ["7"], "0$1"], ["(\\d{3})(\\d{3})(\\d{4})", "$1 $2 $3", ["[1389]"], "0$1"]], "0", 0, 0, 0, 0, 0, [["(?:1(?:1(?:3(?:[0-58]\\d\\d|73[0-35])|4(?:(?:[0-5]\\d|70)\\d|69[7-9])|(?:(?:5[0-26-9]|[78][0-49])\\d|6(?:[0-4]\\d|50))\\d)|(?:2(?:(?:0[024-9]|2[3-9]|3[3-79]|4[1-689]|[58][02-9]|6[0-47-9]|7[013-9]|9\\d)\\d|1(?:[0-7]\\d|8[0-3]))|(?:3(?:0\\d|1[0-8]|[25][02-9]|3[02-579]|[468][0-46-9]|7[1-35-79]|9[2-578])|4(?:0[03-9]|[137]\\d|[28][02-57-9]|4[02-69]|5[0-8]|[69][0-79])|5(?:0[1-35-9]|[16]\\d|2[024-9]|3[015689]|4[02-9]|5[03-9]|7[0-35-9]|8[0-468]|9[0-57-9])|6(?:0[034689]|1\\d|2[0-35689]|[38][013-9]|4[1-467]|5[0-69]|6[13-9]|7[0-8]|9[0-24578])|7(?:0[0246-9]|2\\d|3[0236-8]|4[03-9]|5[0-46-9]|6[013-9]|7[0-35-9]|8[024-9]|9[02-9])|8(?:0[35-9]|2[1-57-9]|3[02-578]|4[0-578]|5[124-9]|6[2-69]|7\\d|8[02-9]|9[02569])|9(?:0[02-589]|[18]\\d|2[02-689]|3[1-57-9]|4[2-9]|5[0-579]|6[2-47-9]|7[0-24578]|9[2-57]))\\d)\\d)|2(?:0[013478]|3[0189]|4[017]|8[0-46-9]|9[0-2])\\d{3})\\d{4}|1(?:2(?:0(?:46[1-4]|87[2-9])|545[1-79]|76(?:2\\d|3[1-8]|6[1-6])|9(?:7(?:2[0-4]|3[2-5])|8(?:2[2-8]|7[0-47-9]|8[3-5])))|3(?:6(?:38[2-5]|47[23])|8(?:47[04-9]|64[0157-9]))|4(?:044[1-7]|20(?:2[23]|8\\d)|6(?:0(?:30|5[2-57]|6[1-8]|7[2-8])|140)|8(?:052|87[1-3]))|5(?:2(?:4(?:3[2-79]|6\\d)|76\\d)|6(?:26[06-9]|686))|6(?:06(?:4\\d|7[4-79])|295[5-7]|35[34]\\d|47(?:24|61)|59(?:5[08]|6[67]|74)|9(?:55[0-4]|77[23]))|7(?:26(?:6[13-9]|7[0-7])|(?:442|688)\\d|50(?:2[0-3]|[3-68]2|76))|8(?:27[56]\\d|37(?:5[2-5]|8[239])|843[2-58])|9(?:0(?:0(?:6[1-8]|85)|52\\d)|3583|4(?:66[1-8]|9(?:2[01]|81))|63(?:23|3[1-4])|9561))\\d{3}", [9, 10]], ["7(?:457[0-57-9]|700[01]|911[028])\\d{5}|7(?:[1-3]\\d\\d|4(?:[0-46-9]\\d|5[0-689])|5(?:0[0-8]|[13-9]\\d|2[0-35-9])|7(?:0[1-9]|[1-7]\\d|8[02-9]|9[0-689])|8(?:[014-9]\\d|[23][0-8])|9(?:[024-9]\\d|1[02-9]|3[0-689]))\\d{6}", [10]], ["80[08]\\d{7}|800\\d{6}|8001111"], ["(?:8(?:4[2-5]|7[0-3])|9(?:[01]\\d|8[2-49]))\\d{7}|845464\\d", [7, 10]], ["70\\d{8}", [10]], 0, ["(?:3[0347]|55)\\d{8}", [10]], ["76(?:464|652)\\d{5}|76(?:0[0-28]|2[356]|34|4[01347]|5[49]|6[0-369]|77|8[14]|9[139])\\d{6}", [10]], ["56\\d{8}", [10]]], 0, " x"], GD: ["1", "011", "(?:473|[58]\\d\\d|900)\\d{7}", [10], 0, "1", 0, "([2-9]\\d{6})$|1", "473$1", 0, "473"], GE: ["995", "00", "(?:[3-57]\\d\\d|800)\\d{6}", [9], [["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["70"], "0$1"], ["(\\d{2})(\\d{3})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["32"], "0$1"], ["(\\d{3})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[57]"]], ["(\\d{3})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[348]"], "0$1"]], "0"], GF: ["594", "00", "[56]94\\d{6}|(?:80|9\\d)\\d{7}", [9], [["(\\d{3})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[56]|9[47]"], "0$1"], ["(\\d{3})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[89]"], "0$1"]], "0"], GG: ["44", "00", "(?:1481|[357-9]\\d{3})\\d{6}|8\\d{6}(?:\\d{2})?", [7, 9, 10], 0, "0", 0, "([25-9]\\d{5})$|0", "1481$1", 0, 0, [["1481[25-9]\\d{5}", [10]], ["7(?:(?:781|839)\\d|911[17])\\d{5}", [10]], ["80[08]\\d{7}|800\\d{6}|8001111"], ["(?:8(?:4[2-5]|7[0-3])|9(?:[01]\\d|8[0-3]))\\d{7}|845464\\d", [7, 10]], ["70\\d{8}", [10]], 0, ["(?:3[0347]|55)\\d{8}", [10]], ["76(?:464|652)\\d{5}|76(?:0[0-28]|2[356]|34|4[01347]|5[49]|6[0-369]|77|8[14]|9[139])\\d{6}", [10]], ["56\\d{8}", [10]]]], GH: ["233", "00", "(?:[235]\\d{3}|800)\\d{5}", [8, 9], [["(\\d{3})(\\d{5})", "$1 $2", ["8"], "0$1"], ["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["[235]"], "0$1"]], "0"], GI: ["350", "00", "(?:[25]\\d|60)\\d{6}", [8], [["(\\d{3})(\\d{5})", "$1 $2", ["2"]]]], GL: ["299", "00", "(?:19|[2-689]\\d|70)\\d{4}", [6], [["(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3", ["19|[2-9]"]]]], GM: ["220", "00", "[2-9]\\d{6}", [7], [["(\\d{3})(\\d{4})", "$1 $2", ["[2-9]"]]]], GN: ["224", "00", "722\\d{6}|(?:3|6\\d)\\d{7}", [8, 9], [["(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["3"]], ["(\\d{3})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[67]"]]]], GP: ["590", "00", "590\\d{6}|(?:69|80|9\\d)\\d{7}", [9], [["(\\d{3})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[569]"], "0$1"], ["(\\d{3})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["8"], "0$1"]], "0", 0, 0, 0, 0, 0, [["590(?:0[1-68]|[14][0-24-9]|2[0-68]|3[1-9]|5[3-579]|[68][0-689]|7[08]|9\\d)\\d{4}"], ["69(?:0\\d\\d|1(?:2[2-9]|3[0-5])|4(?:0[89]|1[2-6]|9\\d)|6(?:1[016-9]|5[0-4]|[67]\\d))\\d{4}"], ["80[0-5]\\d{6}"], 0, 0, 0, 0, 0, ["9(?:(?:39[5-7]|76[018])\\d|475[0-5])\\d{4}"]]], GQ: ["240", "00", "222\\d{6}|(?:3\\d|55|[89]0)\\d{7}", [9], [["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["[235]"]], ["(\\d{3})(\\d{6})", "$1 $2", ["[89]"]]]], GR: ["30", "00", "5005000\\d{3}|8\\d{9,11}|(?:[269]\\d|70)\\d{8}", [10, 11, 12], [["(\\d{2})(\\d{4})(\\d{4})", "$1 $2 $3", ["21|7"]], ["(\\d{4})(\\d{6})", "$1 $2", ["2(?:2|3[2-57-9]|4[2-469]|5[2-59]|6[2-9]|7[2-69]|8[2-49])|5"]], ["(\\d{3})(\\d{3})(\\d{4})", "$1 $2 $3", ["[2689]"]], ["(\\d{3})(\\d{3,4})(\\d{5})", "$1 $2 $3", ["8"]]]], GT: ["502", "00", "80\\d{6}|(?:1\\d{3}|[2-7])\\d{7}", [8, 11], [["(\\d{4})(\\d{4})", "$1 $2", ["[2-8]"]], ["(\\d{4})(\\d{3})(\\d{4})", "$1 $2 $3", ["1"]]]], GU: ["1", "011", "(?:[58]\\d\\d|671|900)\\d{7}", [10], 0, "1", 0, "([2-9]\\d{6})$|1", "671$1", 0, "671"], GW: ["245", "00", "[49]\\d{8}|4\\d{6}", [7, 9], [["(\\d{3})(\\d{4})", "$1 $2", ["40"]], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["[49]"]]]], GY: ["592", "001", "(?:[2-8]\\d{3}|9008)\\d{3}", [7], [["(\\d{3})(\\d{4})", "$1 $2", ["[2-9]"]]]], HK: ["852", "00(?:30|5[09]|[126-9]?)", "8[0-46-9]\\d{6,7}|9\\d{4,7}|(?:[2-7]|9\\d{3})\\d{7}", [5, 6, 7, 8, 9, 11], [["(\\d{3})(\\d{2,5})", "$1 $2", ["900", "9003"]], ["(\\d{4})(\\d{4})", "$1 $2", ["[2-7]|8[1-4]|9(?:0[1-9]|[1-8])"]], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["8"]], ["(\\d{3})(\\d{2})(\\d{3})(\\d{3})", "$1 $2 $3 $4", ["9"]]], 0, 0, 0, 0, 0, 0, 0, "00"], HN: ["504", "00", "8\\d{10}|[237-9]\\d{7}", [8, 11], [["(\\d{4})(\\d{4})", "$1-$2", ["[237-9]"]]]], HR: ["385", "00", "(?:[24-69]\\d|3[0-79])\\d{7}|80\\d{5,7}|[1-79]\\d{7}|6\\d{5,6}", [6, 7, 8, 9], [["(\\d{2})(\\d{2})(\\d{2,3})", "$1 $2 $3", ["6[01]"], "0$1"], ["(\\d{3})(\\d{2})(\\d{2,3})", "$1 $2 $3", ["8"], "0$1"], ["(\\d)(\\d{4})(\\d{3})", "$1 $2 $3", ["1"], "0$1"], ["(\\d{2})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["6|7[245]"], "0$1"], ["(\\d{2})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["9"], "0$1"], ["(\\d{2})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["[2-57]"], "0$1"], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["8"], "0$1"]], "0"], HT: ["509", "00", "(?:[2-489]\\d|55)\\d{6}", [8], [["(\\d{2})(\\d{2})(\\d{4})", "$1 $2 $3", ["[2-589]"]]]], HU: ["36", "00", "[235-7]\\d{8}|[1-9]\\d{7}", [8, 9], [["(\\d)(\\d{3})(\\d{4})", "$1 $2 $3", ["1"], "(06 $1)"], ["(\\d{2})(\\d{3})(\\d{3})", "$1 $2 $3", ["[27][2-9]|3[2-7]|4[24-9]|5[2-79]|6|8[2-57-9]|9[2-69]"], "(06 $1)"], ["(\\d{2})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["[2-9]"], "06 $1"]], "06"], ID: ["62", "00[89]", "(?:(?:00[1-9]|8\\d)\\d{4}|[1-36])\\d{6}|00\\d{10}|[1-9]\\d{8,10}|[2-9]\\d{7}", [7, 8, 9, 10, 11, 12, 13], [["(\\d)(\\d{3})(\\d{3})", "$1 $2 $3", ["15"]], ["(\\d{2})(\\d{5,9})", "$1 $2", ["2[124]|[36]1"], "(0$1)"], ["(\\d{3})(\\d{5,7})", "$1 $2", ["800"], "0$1"], ["(\\d{3})(\\d{5,8})", "$1 $2", ["[2-79]"], "(0$1)"], ["(\\d{3})(\\d{3,4})(\\d{3})", "$1-$2-$3", ["8[1-35-9]"], "0$1"], ["(\\d{3})(\\d{6,8})", "$1 $2", ["1"], "0$1"], ["(\\d{3})(\\d{3})(\\d{4})", "$1 $2 $3", ["804"], "0$1"], ["(\\d{3})(\\d)(\\d{3})(\\d{3})", "$1 $2 $3 $4", ["80"], "0$1"], ["(\\d{3})(\\d{4})(\\d{4,5})", "$1-$2-$3", ["8"], "0$1"]], "0"], IE: ["353", "00", "(?:1\\d|[2569])\\d{6,8}|4\\d{6,9}|7\\d{8}|8\\d{8,9}", [7, 8, 9, 10], [["(\\d{2})(\\d{5})", "$1 $2", ["2[24-9]|47|58|6[237-9]|9[35-9]"], "(0$1)"], ["(\\d{3})(\\d{5})", "$1 $2", ["[45]0"], "(0$1)"], ["(\\d)(\\d{3,4})(\\d{4})", "$1 $2 $3", ["1"], "(0$1)"], ["(\\d{2})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["[2569]|4[1-69]|7[14]"], "(0$1)"], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["70"], "0$1"], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["81"], "(0$1)"], ["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["[78]"], "0$1"], ["(\\d{4})(\\d{3})(\\d{3})", "$1 $2 $3", ["1"]], ["(\\d{2})(\\d{4})(\\d{4})", "$1 $2 $3", ["4"], "(0$1)"], ["(\\d{2})(\\d)(\\d{3})(\\d{4})", "$1 $2 $3 $4", ["8"], "0$1"]], "0"], IL: ["972", "0(?:0|1[2-9])", "1\\d{6}(?:\\d{3,5})?|[57]\\d{8}|[1-489]\\d{7}", [7, 8, 9, 10, 11, 12], [["(\\d{4})(\\d{3})", "$1-$2", ["125"]], ["(\\d{4})(\\d{2})(\\d{2})", "$1-$2-$3", ["121"]], ["(\\d)(\\d{3})(\\d{4})", "$1-$2-$3", ["[2-489]"], "0$1"], ["(\\d{2})(\\d{3})(\\d{4})", "$1-$2-$3", ["[57]"], "0$1"], ["(\\d{4})(\\d{3})(\\d{3})", "$1-$2-$3", ["12"]], ["(\\d{4})(\\d{6})", "$1-$2", ["159"]], ["(\\d)(\\d{3})(\\d{3})(\\d{3})", "$1-$2-$3-$4", ["1[7-9]"]], ["(\\d{3})(\\d{1,2})(\\d{3})(\\d{4})", "$1-$2 $3-$4", ["15"]]], "0"], IM: ["44", "00", "1624\\d{6}|(?:[3578]\\d|90)\\d{8}", [10], 0, "0", 0, "([25-8]\\d{5})$|0", "1624$1", 0, "74576|(?:16|7[56])24"], IN: ["91", "00", "(?:000800|[2-9]\\d\\d)\\d{7}|1\\d{7,12}", [8, 9, 10, 11, 12, 13], [["(\\d{8})", "$1", ["5(?:0|2[23]|3[03]|[67]1|88)", "5(?:0|2(?:21|3)|3(?:0|3[23])|616|717|888)", "5(?:0|2(?:21|3)|3(?:0|3[23])|616|717|8888)"], 0, 1], ["(\\d{4})(\\d{4,5})", "$1 $2", ["180", "1800"], 0, 1], ["(\\d{3})(\\d{3})(\\d{4})", "$1 $2 $3", ["140"], 0, 1], ["(\\d{2})(\\d{4})(\\d{4})", "$1 $2 $3", ["11|2[02]|33|4[04]|79[1-7]|80[2-46]", "11|2[02]|33|4[04]|79(?:[1-6]|7[19])|80(?:[2-4]|6[0-589])", "11|2[02]|33|4[04]|79(?:[124-6]|3(?:[02-9]|1[0-24-9])|7(?:1|9[1-6]))|80(?:[2-4]|6[0-589])"], "0$1", 1], ["(\\d{3})(\\d{3})(\\d{4})", "$1 $2 $3", ["1(?:2[0-249]|3[0-25]|4[145]|[68]|7[1257])|2(?:1[257]|3[013]|4[01]|5[0137]|6[0158]|78|8[1568])|3(?:26|4[1-3]|5[34]|6[01489]|7[02-46]|8[159])|4(?:1[36]|2[1-47]|5[12]|6[0-26-9]|7[0-24-9]|8[013-57]|9[014-7])|5(?:1[025]|22|[36][25]|4[28]|5[12]|[78]1)|6(?:12|[2-4]1|5[17]|6[13]|80)|7(?:12|3[134]|4[47]|61|88)|8(?:16|2[014]|3[126]|6[136]|7[078]|8[34]|91)|(?:43|59|75)[15]|(?:1[59]|29|67|72)[14]", "1(?:2[0-24]|3[0-25]|4[145]|[59][14]|6[1-9]|7[1257]|8[1-57-9])|2(?:1[257]|3[013]|4[01]|5[0137]|6[058]|78|8[1568]|9[14])|3(?:26|4[1-3]|5[34]|6[01489]|7[02-46]|8[159])|4(?:1[36]|2[1-47]|3[15]|5[12]|6[0-26-9]|7[0-24-9]|8[013-57]|9[014-7])|5(?:1[025]|22|[36][25]|4[28]|[578]1|9[15])|674|7(?:(?:2[14]|3[34]|5[15])[2-6]|61[346]|88[0-8])|8(?:70[2-6]|84[235-7]|91[3-7])|(?:1(?:29|60|8[06])|261|552|6(?:12|[2-47]1|5[17]|6[13]|80)|7(?:12|31|4[47])|8(?:16|2[014]|3[126]|6[136]|7[78]|83))[2-7]", "1(?:2[0-24]|3[0-25]|4[145]|[59][14]|6[1-9]|7[1257]|8[1-57-9])|2(?:1[257]|3[013]|4[01]|5[0137]|6[058]|78|8[1568]|9[14])|3(?:26|4[1-3]|5[34]|6[01489]|7[02-46]|8[159])|4(?:1[36]|2[1-47]|3[15]|5[12]|6[0-26-9]|7[0-24-9]|8[013-57]|9[014-7])|5(?:1[025]|22|[36][25]|4[28]|[578]1|9[15])|6(?:12(?:[2-6]|7[0-8])|74[2-7])|7(?:(?:2[14]|5[15])[2-6]|3171|61[346]|88(?:[2-7]|82))|8(?:70[2-6]|84(?:[2356]|7[19])|91(?:[3-6]|7[19]))|73[134][2-6]|(?:74[47]|8(?:16|2[014]|3[126]|6[136]|7[78]|83))(?:[2-6]|7[19])|(?:1(?:29|60|8[06])|261|552|6(?:[2-4]1|5[17]|6[13]|7(?:1|4[0189])|80)|7(?:12|88[01]))[2-7]"], "0$1", 1], ["(\\d{4})(\\d{3})(\\d{3})", "$1 $2 $3", ["1(?:[2-479]|5[0235-9])|[2-5]|6(?:1[1358]|2[2457-9]|3[2-5]|4[235-7]|5[2-689]|6[24578]|7[235689]|8[1-6])|7(?:1[013-9]|28|3[129]|4[1-35689]|5[29]|6[02-5]|70)|807", "1(?:[2-479]|5[0235-9])|[2-5]|6(?:1[1358]|2(?:[2457]|84|95)|3(?:[2-4]|55)|4[235-7]|5[2-689]|6[24578]|7[235689]|8[1-6])|7(?:1(?:[013-8]|9[6-9])|28[6-8]|3(?:17|2[0-49]|9[2-57])|4(?:1[2-4]|[29][0-7]|3[0-8]|[56]|8[0-24-7])|5(?:2[1-3]|9[0-6])|6(?:0[5689]|2[5-9]|3[02-8]|4|5[0-367])|70[13-7])|807[19]", "1(?:[2-479]|5(?:[0236-9]|5[013-9]))|[2-5]|6(?:2(?:84|95)|355|83)|73179|807(?:1|9[1-3])|(?:1552|6(?:1[1358]|2[2457]|3[2-4]|4[235-7]|5[2-689]|6[24578]|7[235689]|8[124-6])\\d|7(?:1(?:[013-8]\\d|9[6-9])|28[6-8]|3(?:2[0-49]|9[2-57])|4(?:1[2-4]|[29][0-7]|3[0-8]|[56]\\d|8[0-24-7])|5(?:2[1-3]|9[0-6])|6(?:0[5689]|2[5-9]|3[02-8]|4\\d|5[0-367])|70[13-7]))[2-7]"], "0$1", 1], ["(\\d{5})(\\d{5})", "$1 $2", ["[6-9]"], "0$1", 1], ["(\\d{4})(\\d{2,4})(\\d{4})", "$1 $2 $3", ["1(?:6|8[06])", "1(?:6|8[06]0)"], 0, 1], ["(\\d{4})(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3 $4", ["18"], 0, 1]], "0"], IO: ["246", "00", "3\\d{6}", [7], [["(\\d{3})(\\d{4})", "$1 $2", ["3"]]]], IQ: ["964", "00", "(?:1|7\\d\\d)\\d{7}|[2-6]\\d{7,8}", [8, 9, 10], [["(\\d)(\\d{3})(\\d{4})", "$1 $2 $3", ["1"], "0$1"], ["(\\d{2})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["[2-6]"], "0$1"], ["(\\d{3})(\\d{3})(\\d{4})", "$1 $2 $3", ["7"], "0$1"]], "0"], IR: ["98", "00", "[1-9]\\d{9}|(?:[1-8]\\d\\d|9)\\d{3,4}", [4, 5, 6, 7, 10], [["(\\d{4,5})", "$1", ["96"], "0$1"], ["(\\d{2})(\\d{4,5})", "$1 $2", ["(?:1[137]|2[13-68]|3[1458]|4[145]|5[1468]|6[16]|7[1467]|8[13467])[12689]"], "0$1"], ["(\\d{3})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["9"], "0$1"], ["(\\d{2})(\\d{4})(\\d{4})", "$1 $2 $3", ["[1-8]"], "0$1"]], "0"], IS: ["354", "00|1(?:0(?:01|[12]0)|100)", "(?:38\\d|[4-9])\\d{6}", [7, 9], [["(\\d{3})(\\d{4})", "$1 $2", ["[4-9]"]], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["3"]]], 0, 0, 0, 0, 0, 0, 0, "00"], IT: ["39", "00", "0\\d{5,10}|1\\d{8,10}|3(?:[0-8]\\d{7,10}|9\\d{7,8})|(?:43|55|70)\\d{8}|8\\d{5}(?:\\d{2,4})?", [6, 7, 8, 9, 10, 11], [["(\\d{2})(\\d{4,6})", "$1 $2", ["0[26]"]], ["(\\d{3})(\\d{3,6})", "$1 $2", ["0[13-57-9][0159]|8(?:03|4[17]|9[2-5])", "0[13-57-9][0159]|8(?:03|4[17]|9(?:2|3[04]|[45][0-4]))"]], ["(\\d{4})(\\d{2,6})", "$1 $2", ["0(?:[13-579][2-46-8]|8[236-8])"]], ["(\\d{4})(\\d{4})", "$1 $2", ["894"]], ["(\\d{2})(\\d{3,4})(\\d{4})", "$1 $2 $3", ["0[26]|5"]], ["(\\d{3})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["1(?:44|[679])|[378]|43"]], ["(\\d{3})(\\d{3,4})(\\d{4})", "$1 $2 $3", ["0[13-57-9][0159]|14"]], ["(\\d{2})(\\d{4})(\\d{5})", "$1 $2 $3", ["0[26]"]], ["(\\d{4})(\\d{3})(\\d{4})", "$1 $2 $3", ["0"]], ["(\\d{3})(\\d{4})(\\d{4,5})", "$1 $2 $3", ["3"]]], 0, 0, 0, 0, 0, 0, [["0669[0-79]\\d{1,6}|0(?:1(?:[0159]\\d|[27][1-5]|31|4[1-4]|6[1356]|8[2-57])|2\\d\\d|3(?:[0159]\\d|2[1-4]|3[12]|[48][1-6]|6[2-59]|7[1-7])|4(?:[0159]\\d|[23][1-9]|4[245]|6[1-5]|7[1-4]|81)|5(?:[0159]\\d|2[1-5]|3[2-6]|4[1-79]|6[4-6]|7[1-578]|8[3-8])|6(?:[0-57-9]\\d|6[0-8])|7(?:[0159]\\d|2[12]|3[1-7]|4[2-46]|6[13569]|7[13-6]|8[1-59])|8(?:[0159]\\d|2[3-578]|3[1-356]|[6-8][1-5])|9(?:[0159]\\d|[238][1-5]|4[12]|6[1-8]|7[1-6]))\\d{2,7}"], ["3[2-9]\\d{7,8}|(?:31|43)\\d{8}", [9, 10]], ["80(?:0\\d{3}|3)\\d{3}", [6, 9]], ["(?:0878\\d{3}|89(?:2\\d|3[04]|4(?:[0-4]|[5-9]\\d\\d)|5[0-4]))\\d\\d|(?:1(?:44|6[346])|89(?:38|5[5-9]|9))\\d{6}", [6, 8, 9, 10]], ["1(?:78\\d|99)\\d{6}", [9, 10]], 0, 0, 0, ["55\\d{8}", [10]], ["84(?:[08]\\d{3}|[17])\\d{3}", [6, 9]]]], JE: ["44", "00", "1534\\d{6}|(?:[3578]\\d|90)\\d{8}", [10], 0, "0", 0, "([0-24-8]\\d{5})$|0", "1534$1", 0, 0, [["1534[0-24-8]\\d{5}"], ["7(?:(?:(?:50|82)9|937)\\d|7(?:00[378]|97\\d))\\d{5}"], ["80(?:07(?:35|81)|8901)\\d{4}"], ["(?:8(?:4(?:4(?:4(?:05|42|69)|703)|5(?:041|800))|7(?:0002|1206))|90(?:066[59]|1810|71(?:07|55)))\\d{4}"], ["701511\\d{4}"], 0, ["(?:3(?:0(?:07(?:35|81)|8901)|3\\d{4}|4(?:4(?:4(?:05|42|69)|703)|5(?:041|800))|7(?:0002|1206))|55\\d{4})\\d{4}"], ["76(?:464|652)\\d{5}|76(?:0[0-28]|2[356]|34|4[01347]|5[49]|6[0-369]|77|8[14]|9[139])\\d{6}"], ["56\\d{8}"]]], JM: ["1", "011", "(?:[58]\\d\\d|658|900)\\d{7}", [10], 0, "1", 0, 0, 0, 0, "658|876"], JO: ["962", "00", "(?:(?:[2689]|7\\d)\\d|32|53)\\d{6}", [8, 9], [["(\\d)(\\d{3})(\\d{4})", "$1 $2 $3", ["[2356]|87"], "(0$1)"], ["(\\d{3})(\\d{5,6})", "$1 $2", ["[89]"], "0$1"], ["(\\d{2})(\\d{7})", "$1 $2", ["70"], "0$1"], ["(\\d)(\\d{4})(\\d{4})", "$1 $2 $3", ["7"], "0$1"]], "0"], JP: ["81", "010", "00[1-9]\\d{6,14}|[257-9]\\d{9}|(?:00|[1-9]\\d\\d)\\d{6}", [8, 9, 10, 11, 12, 13, 14, 15, 16, 17], [["(\\d{3})(\\d{3})(\\d{3})", "$1-$2-$3", ["(?:12|57|99)0"], "0$1"], ["(\\d{4})(\\d)(\\d{4})", "$1-$2-$3", ["1(?:26|3[79]|4[56]|5[4-68]|6[3-5])|499|5(?:76|97)|746|8(?:3[89]|47|51)|9(?:80|9[16])", "1(?:267|3(?:7[247]|9[278])|466|5(?:47|58|64)|6(?:3[245]|48|5[4-68]))|499[2468]|5(?:76|97)9|7468|8(?:3(?:8[7-9]|96)|477|51[2-9])|9(?:802|9(?:1[23]|69))|1(?:45|58)[67]", "1(?:267|3(?:7[247]|9[278])|466|5(?:47|58|64)|6(?:3[245]|48|5[4-68]))|499[2468]|5(?:769|979[2-69])|7468|8(?:3(?:8[7-9]|96[2457-9])|477|51[2-9])|9(?:802|9(?:1[23]|69))|1(?:45|58)[67]"], "0$1"], ["(\\d{2})(\\d{3})(\\d{4})", "$1-$2-$3", ["60"], "0$1"], ["(\\d)(\\d{4})(\\d{4})", "$1-$2-$3", ["[36]|4(?:2[09]|7[01])", "[36]|4(?:2(?:0|9[02-69])|7(?:0[019]|1))"], "0$1"], ["(\\d{2})(\\d{3})(\\d{4})", "$1-$2-$3", ["1(?:1|5[45]|77|88|9[69])|2(?:2[1-37]|3[0-269]|4[59]|5|6[24]|7[1-358]|8[1369]|9[0-38])|4(?:[28][1-9]|3[0-57]|[45]|6[248]|7[2-579]|9[29])|5(?:2|3[0459]|4[0-369]|5[29]|8[02389]|9[0-389])|7(?:2[02-46-9]|34|[58]|6[0249]|7[57]|9[2-6])|8(?:2[124589]|3[26-9]|49|51|6|7[0-468]|8[68]|9[019])|9(?:[23][1-9]|4[15]|5[138]|6[1-3]|7[156]|8[189]|9[1-489])", "1(?:1|5(?:4[018]|5[017])|77|88|9[69])|2(?:2(?:[127]|3[014-9])|3[0-269]|4[59]|5(?:[1-3]|5[0-69]|9[19])|62|7(?:[1-35]|8[0189])|8(?:[16]|3[0134]|9[0-5])|9(?:[028]|17))|4(?:2(?:[13-79]|8[014-6])|3[0-57]|[45]|6[248]|7[2-47]|8[1-9]|9[29])|5(?:2|3(?:[045]|9[0-8])|4[0-369]|5[29]|8[02389]|9[0-3])|7(?:2[02-46-9]|34|[58]|6[0249]|7[57]|9(?:[23]|4[0-59]|5[01569]|6[0167]))|8(?:2(?:[1258]|4[0-39]|9[0-2469])|3(?:[29]|60)|49|51|6(?:[0-24]|36|5[0-3589]|7[23]|9[01459])|7[0-468]|8[68])|9(?:[23][1-9]|4[15]|5[138]|6[1-3]|7[156]|8[189]|9(?:[1289]|3[34]|4[0178]))|(?:264|837)[016-9]|2(?:57|93)[015-9]|(?:25[0468]|422|838)[01]|(?:47[59]|59[89]|8(?:6[68]|9))[019]", "1(?:1|5(?:4[018]|5[017])|77|88|9[69])|2(?:2[127]|3[0-269]|4[59]|5(?:[1-3]|5[0-69]|9(?:17|99))|6(?:2|4[016-9])|7(?:[1-35]|8[0189])|8(?:[16]|3[0134]|9[0-5])|9(?:[028]|17))|4(?:2(?:[13-79]|8[014-6])|3[0-57]|[45]|6[248]|7[2-47]|9[29])|5(?:2|3(?:[045]|9(?:[0-58]|6[4-9]|7[0-35689]))|4[0-369]|5[29]|8[02389]|9[0-3])|7(?:2[02-46-9]|34|[58]|6[0249]|7[57]|9(?:[23]|4[0-59]|5[01569]|6[0167]))|8(?:2(?:[1258]|4[0-39]|9[0169])|3(?:[29]|60|7(?:[017-9]|6[6-8]))|49|51|6(?:[0-24]|36[2-57-9]|5(?:[0-389]|5[23])|6(?:[01]|9[178])|7(?:2[2-468]|3[78])|9[0145])|7[0-468]|8[68])|9(?:4[15]|5[138]|7[156]|8[189]|9(?:[1289]|3(?:31|4[357])|4[0178]))|(?:8294|96)[1-3]|2(?:57|93)[015-9]|(?:223|8699)[014-9]|(?:25[0468]|422|838)[01]|(?:48|8292|9[23])[1-9]|(?:47[59]|59[89]|8(?:68|9))[019]"], "0$1"], ["(\\d{3})(\\d{2})(\\d{4})", "$1-$2-$3", ["[14]|[289][2-9]|5[3-9]|7[2-4679]"], "0$1"], ["(\\d{3})(\\d{3})(\\d{4})", "$1-$2-$3", ["800"], "0$1"], ["(\\d{2})(\\d{4})(\\d{4})", "$1-$2-$3", ["[257-9]"], "0$1"]], "0", 0, "(000[259]\\d{6})$|(?:(?:003768)0?)|0", "$1"], KE: ["254", "000", "(?:[17]\\d\\d|900)\\d{6}|(?:2|80)0\\d{6,7}|[4-6]\\d{6,8}", [7, 8, 9, 10], [["(\\d{2})(\\d{5,7})", "$1 $2", ["[24-6]"], "0$1"], ["(\\d{3})(\\d{6})", "$1 $2", ["[17]"], "0$1"], ["(\\d{3})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["[89]"], "0$1"]], "0"], KG: ["996", "00", "8\\d{9}|[235-9]\\d{8}", [9, 10], [["(\\d{4})(\\d{5})", "$1 $2", ["3(?:1[346]|[24-79])"], "0$1"], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["[235-79]|88"], "0$1"], ["(\\d{3})(\\d{3})(\\d)(\\d{2,3})", "$1 $2 $3 $4", ["8"], "0$1"]], "0"], KH: ["855", "00[14-9]", "1\\d{9}|[1-9]\\d{7,8}", [8, 9, 10], [["(\\d{2})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["[1-9]"], "0$1"], ["(\\d{4})(\\d{3})(\\d{3})", "$1 $2 $3", ["1"]]], "0"], KI: ["686", "00", "(?:[37]\\d|6[0-79])\\d{6}|(?:[2-48]\\d|50)\\d{3}", [5, 8], 0, "0"], KM: ["269", "00", "[3478]\\d{6}", [7], [["(\\d{3})(\\d{2})(\\d{2})", "$1 $2 $3", ["[3478]"]]]], KN: ["1", "011", "(?:[58]\\d\\d|900)\\d{7}", [10], 0, "1", 0, "([2-7]\\d{6})$|1", "869$1", 0, "869"], KP: ["850", "00|99", "85\\d{6}|(?:19\\d|[2-7])\\d{7}", [8, 10], [["(\\d{2})(\\d{3})(\\d{3})", "$1 $2 $3", ["8"], "0$1"], ["(\\d)(\\d{3})(\\d{4})", "$1 $2 $3", ["[2-7]"], "0$1"], ["(\\d{3})(\\d{3})(\\d{4})", "$1 $2 $3", ["1"], "0$1"]], "0"], KR: ["82", "00(?:[125689]|3(?:[46]5|91)|7(?:00|27|3|55|6[126]))", "00[1-9]\\d{8,11}|(?:[12]|5\\d{3})\\d{7}|[13-6]\\d{9}|(?:[1-6]\\d|80)\\d{7}|[3-6]\\d{4,5}|(?:00|7)0\\d{8}", [5, 6, 8, 9, 10, 11, 12, 13, 14], [["(\\d{2})(\\d{3,4})", "$1-$2", ["(?:3[1-3]|[46][1-4]|5[1-5])1"], "0$1"], ["(\\d{4})(\\d{4})", "$1-$2", ["1"]], ["(\\d)(\\d{3,4})(\\d{4})", "$1-$2-$3", ["2"], "0$1"], ["(\\d{2})(\\d{3})(\\d{4})", "$1-$2-$3", ["[36]0|8"], "0$1"], ["(\\d{2})(\\d{3,4})(\\d{4})", "$1-$2-$3", ["[1346]|5[1-5]"], "0$1"], ["(\\d{2})(\\d{4})(\\d{4})", "$1-$2-$3", ["[57]"], "0$1"], ["(\\d{2})(\\d{5})(\\d{4})", "$1-$2-$3", ["5"], "0$1"]], "0", 0, "0(8(?:[1-46-8]|5\\d\\d))?"], KW: ["965", "00", "18\\d{5}|(?:[2569]\\d|41)\\d{6}", [7, 8], [["(\\d{4})(\\d{3,4})", "$1 $2", ["[169]|2(?:[235]|4[1-35-9])|52"]], ["(\\d{3})(\\d{5})", "$1 $2", ["[245]"]]]], KY: ["1", "011", "(?:345|[58]\\d\\d|900)\\d{7}", [10], 0, "1", 0, "([2-9]\\d{6})$|1", "345$1", 0, "345"], KZ: ["7", "810", "(?:33622|8\\d{8})\\d{5}|[78]\\d{9}", [10, 14], 0, "8", 0, 0, 0, 0, "33|7", 0, "8~10"], LA: ["856", "00", "[23]\\d{9}|3\\d{8}|(?:[235-8]\\d|41)\\d{6}", [8, 9, 10], [["(\\d{2})(\\d{3})(\\d{3})", "$1 $2 $3", ["2[13]|3[14]|[4-8]"], "0$1"], ["(\\d{2})(\\d{2})(\\d{2})(\\d{3})", "$1 $2 $3 $4", ["30[0135-9]"], "0$1"], ["(\\d{2})(\\d{2})(\\d{3})(\\d{3})", "$1 $2 $3 $4", ["[23]"], "0$1"]], "0"], LB: ["961", "00", "[27-9]\\d{7}|[13-9]\\d{6}", [7, 8], [["(\\d)(\\d{3})(\\d{3})", "$1 $2 $3", ["[13-69]|7(?:[2-57]|62|8[0-7]|9[04-9])|8[02-9]"], "0$1"], ["(\\d{2})(\\d{3})(\\d{3})", "$1 $2 $3", ["[27-9]"]]], "0"], LC: ["1", "011", "(?:[58]\\d\\d|758|900)\\d{7}", [10], 0, "1", 0, "([2-8]\\d{6})$|1", "758$1", 0, "758"], LI: ["423", "00", "[68]\\d{8}|(?:[2378]\\d|90)\\d{5}", [7, 9], [["(\\d{3})(\\d{2})(\\d{2})", "$1 $2 $3", ["[2379]|8(?:0[09]|7)", "[2379]|8(?:0(?:02|9)|7)"]], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["8"]], ["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["69"]], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["6"]]], "0", 0, "(1001)|0"], LK: ["94", "00", "[1-9]\\d{8}", [9], [["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["7"], "0$1"], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["[1-689]"], "0$1"]], "0"], LR: ["231", "00", "(?:[245]\\d|33|77|88)\\d{7}|(?:2\\d|[4-6])\\d{6}", [7, 8, 9], [["(\\d)(\\d{3})(\\d{3})", "$1 $2 $3", ["4[67]|[56]"], "0$1"], ["(\\d{2})(\\d{3})(\\d{3})", "$1 $2 $3", ["2"], "0$1"], ["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["[2-578]"], "0$1"]], "0"], LS: ["266", "00", "(?:[256]\\d\\d|800)\\d{5}", [8], [["(\\d{4})(\\d{4})", "$1 $2", ["[2568]"]]]], LT: ["370", "00", "(?:[3469]\\d|52|[78]0)\\d{6}", [8], [["(\\d)(\\d{3})(\\d{4})", "$1 $2 $3", ["52[0-7]"], "(0-$1)", 1], ["(\\d{3})(\\d{2})(\\d{3})", "$1 $2 $3", ["[7-9]"], "0 $1", 1], ["(\\d{2})(\\d{6})", "$1 $2", ["37|4(?:[15]|6[1-8])"], "(0-$1)", 1], ["(\\d{3})(\\d{5})", "$1 $2", ["[3-6]"], "(0-$1)", 1]], "0", 0, "[08]"], LU: ["352", "00", "35[013-9]\\d{4,8}|6\\d{8}|35\\d{2,4}|(?:[2457-9]\\d|3[0-46-9])\\d{2,9}", [4, 5, 6, 7, 8, 9, 10, 11], [["(\\d{2})(\\d{3})", "$1 $2", ["2(?:0[2-689]|[2-9])|[3-57]|8(?:0[2-9]|[13-9])|9(?:0[89]|[2-579])"]], ["(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3", ["2(?:0[2-689]|[2-9])|[3-57]|8(?:0[2-9]|[13-9])|9(?:0[89]|[2-579])"]], ["(\\d{2})(\\d{2})(\\d{3})", "$1 $2 $3", ["20[2-689]"]], ["(\\d{2})(\\d{2})(\\d{2})(\\d{1,2})", "$1 $2 $3 $4", ["2(?:[0367]|4[3-8])"]], ["(\\d{3})(\\d{2})(\\d{3})", "$1 $2 $3", ["80[01]|90[015]"]], ["(\\d{2})(\\d{2})(\\d{2})(\\d{3})", "$1 $2 $3 $4", ["20"]], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["6"]], ["(\\d{2})(\\d{2})(\\d{2})(\\d{2})(\\d{1,2})", "$1 $2 $3 $4 $5", ["2(?:[0367]|4[3-8])"]], ["(\\d{2})(\\d{2})(\\d{2})(\\d{1,5})", "$1 $2 $3 $4", ["[3-57]|8[13-9]|9(?:0[89]|[2-579])|(?:2|80)[2-9]"]]], 0, 0, "(15(?:0[06]|1[12]|[35]5|4[04]|6[26]|77|88|99)\\d)"], LV: ["371", "00", "(?:[268]\\d|90)\\d{6}", [8], [["(\\d{2})(\\d{3})(\\d{3})", "$1 $2 $3", ["[269]|8[01]"]]]], LY: ["218", "00", "[2-9]\\d{8}", [9], [["(\\d{2})(\\d{7})", "$1-$2", ["[2-9]"], "0$1"]], "0"], MA: ["212", "00", "[5-8]\\d{8}", [9], [["(\\d{3})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["5[45]"], "0$1"], ["(\\d{4})(\\d{5})", "$1-$2", ["5(?:2[2-46-9]|3[3-9]|9)|8(?:0[89]|92)"], "0$1"], ["(\\d{2})(\\d{7})", "$1-$2", ["8"], "0$1"], ["(\\d{3})(\\d{6})", "$1-$2", ["[5-7]"], "0$1"]], "0", 0, 0, 0, 0, 0, [["5(?:2(?:[0-25-79]\\d|3[1-578]|4[02-46-8]|8[0235-7])|3(?:[0-47]\\d|5[02-9]|6[02-8]|8[014-9]|9[3-9])|(?:4[067]|5[03])\\d)\\d{5}"], ["(?:6(?:[0-79]\\d|8[0-247-9])|7(?:[0167]\\d|2[0-4]|5[01]|8[0-3]))\\d{6}"], ["80[0-7]\\d{6}"], ["89\\d{7}"], 0, 0, 0, 0, ["(?:592(?:4[0-2]|93)|80[89]\\d\\d)\\d{4}"]]], MC: ["377", "00", "(?:[3489]|6\\d)\\d{7}", [8, 9], [["(\\d{2})(\\d{3})(\\d{3})", "$1 $2 $3", ["4"], "0$1"], ["(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[389]"]], ["(\\d)(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4 $5", ["6"], "0$1"]], "0"], MD: ["373", "00", "(?:[235-7]\\d|[89]0)\\d{6}", [8], [["(\\d{3})(\\d{5})", "$1 $2", ["[89]"], "0$1"], ["(\\d{2})(\\d{3})(\\d{3})", "$1 $2 $3", ["22|3"], "0$1"], ["(\\d{3})(\\d{2})(\\d{3})", "$1 $2 $3", ["[25-7]"], "0$1"]], "0"], ME: ["382", "00", "(?:20|[3-79]\\d)\\d{6}|80\\d{6,7}", [8, 9], [["(\\d{2})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["[2-9]"], "0$1"]], "0"], MF: ["590", "00", "590\\d{6}|(?:69|80|9\\d)\\d{7}", [9], 0, "0", 0, 0, 0, 0, 0, [["590(?:0[079]|[14]3|[27][79]|3[03-7]|5[0-268]|87)\\d{4}"], ["69(?:0\\d\\d|1(?:2[2-9]|3[0-5])|4(?:0[89]|1[2-6]|9\\d)|6(?:1[016-9]|5[0-4]|[67]\\d))\\d{4}"], ["80[0-5]\\d{6}"], 0, 0, 0, 0, 0, ["9(?:(?:39[5-7]|76[018])\\d|475[0-5])\\d{4}"]]], MG: ["261", "00", "[23]\\d{8}", [9], [["(\\d{2})(\\d{2})(\\d{3})(\\d{2})", "$1 $2 $3 $4", ["[23]"], "0$1"]], "0", 0, "([24-9]\\d{6})$|0", "20$1"], MH: ["692", "011", "329\\d{4}|(?:[256]\\d|45)\\d{5}", [7], [["(\\d{3})(\\d{4})", "$1-$2", ["[2-6]"]]], "1"], MK: ["389", "00", "[2-578]\\d{7}", [8], [["(\\d)(\\d{3})(\\d{4})", "$1 $2 $3", ["2|34[47]|4(?:[37]7|5[47]|64)"], "0$1"], ["(\\d{2})(\\d{3})(\\d{3})", "$1 $2 $3", ["[347]"], "0$1"], ["(\\d{3})(\\d)(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[58]"], "0$1"]], "0"], ML: ["223", "00", "[24-9]\\d{7}", [8], [["(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[24-9]"]]]], MM: ["95", "00", "1\\d{5,7}|95\\d{6}|(?:[4-7]|9[0-46-9])\\d{6,8}|(?:2|8\\d)\\d{5,8}", [6, 7, 8, 9, 10], [["(\\d)(\\d{2})(\\d{3})", "$1 $2 $3", ["16|2"], "0$1"], ["(\\d{2})(\\d{2})(\\d{3})", "$1 $2 $3", ["[45]|6(?:0[23]|[1-689]|7[235-7])|7(?:[0-4]|5[2-7])|8[1-6]"], "0$1"], ["(\\d)(\\d{3})(\\d{3,4})", "$1 $2 $3", ["[12]"], "0$1"], ["(\\d{2})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["[4-7]|8[1-35]"], "0$1"], ["(\\d)(\\d{3})(\\d{4,6})", "$1 $2 $3", ["9(?:2[0-4]|[35-9]|4[137-9])"], "0$1"], ["(\\d)(\\d{4})(\\d{4})", "$1 $2 $3", ["2"], "0$1"], ["(\\d{3})(\\d{3})(\\d{4})", "$1 $2 $3", ["8"], "0$1"], ["(\\d)(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3 $4", ["92"], "0$1"], ["(\\d)(\\d{5})(\\d{4})", "$1 $2 $3", ["9"], "0$1"]], "0"], MN: ["976", "001", "[12]\\d{7,9}|[5-9]\\d{7}", [8, 9, 10], [["(\\d{2})(\\d{2})(\\d{4})", "$1 $2 $3", ["[12]1"], "0$1"], ["(\\d{4})(\\d{4})", "$1 $2", ["[5-9]"]], ["(\\d{3})(\\d{5,6})", "$1 $2", ["[12]2[1-3]"], "0$1"], ["(\\d{4})(\\d{5,6})", "$1 $2", ["[12](?:27|3[2-8]|4[2-68]|5[1-4689])", "[12](?:27|3[2-8]|4[2-68]|5[1-4689])[0-3]"], "0$1"], ["(\\d{5})(\\d{4,5})", "$1 $2", ["[12]"], "0$1"]], "0"], MO: ["853", "00", "0800\\d{3}|(?:28|[68]\\d)\\d{6}", [7, 8], [["(\\d{4})(\\d{3})", "$1 $2", ["0"]], ["(\\d{4})(\\d{4})", "$1 $2", ["[268]"]]]], MP: ["1", "011", "[58]\\d{9}|(?:67|90)0\\d{7}", [10], 0, "1", 0, "([2-9]\\d{6})$|1", "670$1", 0, "670"], MQ: ["596", "00", "596\\d{6}|(?:69|80|9\\d)\\d{7}", [9], [["(\\d{3})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[569]"], "0$1"], ["(\\d{3})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["8"], "0$1"]], "0"], MR: ["222", "00", "(?:[2-4]\\d\\d|800)\\d{5}", [8], [["(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[2-48]"]]]], MS: ["1", "011", "(?:[58]\\d\\d|664|900)\\d{7}", [10], 0, "1", 0, "([34]\\d{6})$|1", "664$1", 0, "664"], MT: ["356", "00", "3550\\d{4}|(?:[2579]\\d\\d|800)\\d{5}", [8], [["(\\d{4})(\\d{4})", "$1 $2", ["[2357-9]"]]]], MU: ["230", "0(?:0|[24-7]0|3[03])", "(?:[57]|8\\d\\d)\\d{7}|[2-468]\\d{6}", [7, 8, 10], [["(\\d{3})(\\d{4})", "$1 $2", ["[2-46]|8[013]"]], ["(\\d{4})(\\d{4})", "$1 $2", ["[57]"]], ["(\\d{5})(\\d{5})", "$1 $2", ["8"]]], 0, 0, 0, 0, 0, 0, 0, "020"], MV: ["960", "0(?:0|19)", "(?:800|9[0-57-9]\\d)\\d{7}|[34679]\\d{6}", [7, 10], [["(\\d{3})(\\d{4})", "$1-$2", ["[34679]"]], ["(\\d{3})(\\d{3})(\\d{4})", "$1 $2 $3", ["[89]"]]], 0, 0, 0, 0, 0, 0, 0, "00"], MW: ["265", "00", "(?:[1289]\\d|31|77)\\d{7}|1\\d{6}", [7, 9], [["(\\d)(\\d{3})(\\d{3})", "$1 $2 $3", ["1[2-9]"], "0$1"], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["2"], "0$1"], ["(\\d{3})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[137-9]"], "0$1"]], "0"], MX: ["52", "0[09]", "[2-9]\\d{9}", [10], [["(\\d{2})(\\d{4})(\\d{4})", "$1 $2 $3", ["33|5[56]|81"]], ["(\\d{3})(\\d{3})(\\d{4})", "$1 $2 $3", ["[2-9]"]]], 0, 0, 0, 0, 0, 0, 0, "00"], MY: ["60", "00", "1\\d{8,9}|(?:3\\d|[4-9])\\d{7}", [8, 9, 10], [["(\\d)(\\d{3})(\\d{4})", "$1-$2 $3", ["[4-79]"], "0$1"], ["(\\d{2})(\\d{3})(\\d{3,4})", "$1-$2 $3", ["1(?:[02469]|[378][1-9]|53)|8", "1(?:[02469]|[37][1-9]|53|8(?:[1-46-9]|5[7-9]))|8"], "0$1"], ["(\\d)(\\d{4})(\\d{4})", "$1-$2 $3", ["3"], "0$1"], ["(\\d)(\\d{3})(\\d{2})(\\d{4})", "$1-$2-$3-$4", ["1(?:[367]|80)"]], ["(\\d{3})(\\d{3})(\\d{4})", "$1-$2 $3", ["15"], "0$1"], ["(\\d{2})(\\d{4})(\\d{4})", "$1-$2 $3", ["1"], "0$1"]], "0"], MZ: ["258", "00", "(?:2|8\\d)\\d{7}", [8, 9], [["(\\d{2})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["2|8[2-79]"]], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["8"]]]], NA: ["264", "00", "[68]\\d{7,8}", [8, 9], [["(\\d{2})(\\d{3})(\\d{3})", "$1 $2 $3", ["88"], "0$1"], ["(\\d{2})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["6"], "0$1"], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["87"], "0$1"], ["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["8"], "0$1"]], "0"], NC: ["687", "00", "(?:050|[2-57-9]\\d\\d)\\d{3}", [6], [["(\\d{2})(\\d{2})(\\d{2})", "$1.$2.$3", ["[02-57-9]"]]]], NE: ["227", "00", "[027-9]\\d{7}", [8], [["(\\d{2})(\\d{3})(\\d{3})", "$1 $2 $3", ["08"]], ["(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[089]|2[013]|7[0467]"]]]], NF: ["672", "00", "[13]\\d{5}", [6], [["(\\d{2})(\\d{4})", "$1 $2", ["1[0-3]"]], ["(\\d)(\\d{5})", "$1 $2", ["[13]"]]], 0, 0, "([0-258]\\d{4})$", "3$1"], NG: ["234", "009", "2[0-24-9]\\d{8}|[78]\\d{10,13}|[7-9]\\d{9}|[1-9]\\d{7}|[124-7]\\d{6}", [7, 8, 10, 11, 12, 13, 14], [["(\\d{2})(\\d{2})(\\d{3})", "$1 $2 $3", ["78"], "0$1"], ["(\\d)(\\d{3})(\\d{3,4})", "$1 $2 $3", ["[12]|9(?:0[3-9]|[1-9])"], "0$1"], ["(\\d{2})(\\d{3})(\\d{2,3})", "$1 $2 $3", ["[3-6]|7(?:0[0-689]|[1-79])|8[2-9]"], "0$1"], ["(\\d{3})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["[7-9]"], "0$1"], ["(\\d{3})(\\d{3})(\\d{4})", "$1 $2 $3", ["20[129]"], "0$1"], ["(\\d{4})(\\d{2})(\\d{4})", "$1 $2 $3", ["2"], "0$1"], ["(\\d{3})(\\d{4})(\\d{4,5})", "$1 $2 $3", ["[78]"], "0$1"], ["(\\d{3})(\\d{5})(\\d{5,6})", "$1 $2 $3", ["[78]"], "0$1"]], "0"], NI: ["505", "00", "(?:1800|[25-8]\\d{3})\\d{4}", [8], [["(\\d{4})(\\d{4})", "$1 $2", ["[125-8]"]]]], NL: ["31", "00", "(?:[124-7]\\d\\d|3(?:[02-9]\\d|1[0-8]))\\d{6}|8\\d{6,9}|9\\d{6,10}|1\\d{4,5}", [5, 6, 7, 8, 9, 10, 11], [["(\\d{3})(\\d{4,7})", "$1 $2", ["[89]0"], "0$1"], ["(\\d{2})(\\d{7})", "$1 $2", ["66"], "0$1"], ["(\\d)(\\d{8})", "$1 $2", ["6"], "0$1"], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["1[16-8]|2[259]|3[124]|4[17-9]|5[124679]"], "0$1"], ["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["[1-578]|91"], "0$1"], ["(\\d{3})(\\d{3})(\\d{5})", "$1 $2 $3", ["9"], "0$1"]], "0"], NO: ["47", "00", "(?:0|[2-9]\\d{3})\\d{4}", [5, 8], [["(\\d{3})(\\d{2})(\\d{3})", "$1 $2 $3", ["8"]], ["(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[2-79]"]]], 0, 0, 0, 0, 0, "[02-689]|7[0-8]"], NP: ["977", "00", "(?:1\\d|9)\\d{9}|[1-9]\\d{7}", [8, 10, 11], [["(\\d)(\\d{7})", "$1-$2", ["1[2-6]"], "0$1"], ["(\\d{2})(\\d{6})", "$1-$2", ["1[01]|[2-8]|9(?:[1-59]|[67][2-6])"], "0$1"], ["(\\d{3})(\\d{7})", "$1-$2", ["9"]]], "0"], NR: ["674", "00", "(?:444|(?:55|8\\d)\\d|666)\\d{4}", [7], [["(\\d{3})(\\d{4})", "$1 $2", ["[4-68]"]]]], NU: ["683", "00", "(?:[4-7]|888\\d)\\d{3}", [4, 7], [["(\\d{3})(\\d{4})", "$1 $2", ["8"]]]], NZ: ["64", "0(?:0|161)", "[1289]\\d{9}|50\\d{5}(?:\\d{2,3})?|[27-9]\\d{7,8}|(?:[34]\\d|6[0-35-9])\\d{6}|8\\d{4,6}", [5, 6, 7, 8, 9, 10], [["(\\d{2})(\\d{3,8})", "$1 $2", ["8[1-79]"], "0$1"], ["(\\d{3})(\\d{2})(\\d{2,3})", "$1 $2 $3", ["50[036-8]|8|90", "50(?:[0367]|88)|8|90"], "0$1"], ["(\\d)(\\d{3})(\\d{4})", "$1 $2 $3", ["24|[346]|7[2-57-9]|9[2-9]"], "0$1"], ["(\\d{3})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["2(?:10|74)|[589]"], "0$1"], ["(\\d{2})(\\d{3,4})(\\d{4})", "$1 $2 $3", ["1|2[028]"], "0$1"], ["(\\d{2})(\\d{3})(\\d{3,5})", "$1 $2 $3", ["2(?:[169]|7[0-35-9])|7"], "0$1"]], "0", 0, 0, 0, 0, 0, 0, "00"], OM: ["968", "00", "(?:1505|[279]\\d{3}|500)\\d{4}|800\\d{5,6}", [7, 8, 9], [["(\\d{3})(\\d{4,6})", "$1 $2", ["[58]"]], ["(\\d{2})(\\d{6})", "$1 $2", ["2"]], ["(\\d{4})(\\d{4})", "$1 $2", ["[179]"]]]], PA: ["507", "00", "(?:00800|8\\d{3})\\d{6}|[68]\\d{7}|[1-57-9]\\d{6}", [7, 8, 10, 11], [["(\\d{3})(\\d{4})", "$1-$2", ["[1-57-9]"]], ["(\\d{4})(\\d{4})", "$1-$2", ["[68]"]], ["(\\d{3})(\\d{3})(\\d{4})", "$1 $2 $3", ["8"]]]], PE: ["51", "00|19(?:1[124]|77|90)00", "(?:[14-8]|9\\d)\\d{7}", [8, 9], [["(\\d{3})(\\d{5})", "$1 $2", ["80"], "(0$1)"], ["(\\d)(\\d{7})", "$1 $2", ["1"], "(0$1)"], ["(\\d{2})(\\d{6})", "$1 $2", ["[4-8]"], "(0$1)"], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["9"]]], "0", 0, 0, 0, 0, 0, 0, "00", " Anexo "], PF: ["689", "00", "4\\d{5}(?:\\d{2})?|8\\d{7,8}", [6, 8, 9], [["(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3", ["44"]], ["(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["4|8[7-9]"]], ["(\\d{3})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["8"]]]], PG: ["675", "00|140[1-3]", "(?:180|[78]\\d{3})\\d{4}|(?:[2-589]\\d|64)\\d{5}", [7, 8], [["(\\d{3})(\\d{4})", "$1 $2", ["18|[2-69]|85"]], ["(\\d{4})(\\d{4})", "$1 $2", ["[78]"]]], 0, 0, 0, 0, 0, 0, 0, "00"], PH: ["63", "00", "(?:[2-7]|9\\d)\\d{8}|2\\d{5}|(?:1800|8)\\d{7,9}", [6, 8, 9, 10, 11, 12, 13], [["(\\d)(\\d{5})", "$1 $2", ["2"], "(0$1)"], ["(\\d{4})(\\d{4,6})", "$1 $2", ["3(?:23|39|46)|4(?:2[3-6]|[35]9|4[26]|76)|544|88[245]|(?:52|64|86)2", "3(?:230|397|461)|4(?:2(?:35|[46]4|51)|396|4(?:22|63)|59[347]|76[15])|5(?:221|446)|642[23]|8(?:622|8(?:[24]2|5[13]))"], "(0$1)"], ["(\\d{5})(\\d{4})", "$1 $2", ["346|4(?:27|9[35])|883", "3469|4(?:279|9(?:30|56))|8834"], "(0$1)"], ["(\\d)(\\d{4})(\\d{4})", "$1 $2 $3", ["2"], "(0$1)"], ["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["[3-7]|8[2-8]"], "(0$1)"], ["(\\d{3})(\\d{3})(\\d{4})", "$1 $2 $3", ["[89]"], "0$1"], ["(\\d{4})(\\d{3})(\\d{4})", "$1 $2 $3", ["1"]], ["(\\d{4})(\\d{1,2})(\\d{3})(\\d{4})", "$1 $2 $3 $4", ["1"]]], "0"], PK: ["92", "00", "122\\d{6}|[24-8]\\d{10,11}|9(?:[013-9]\\d{8,10}|2(?:[01]\\d\\d|2(?:[06-8]\\d|1[01]))\\d{7})|(?:[2-8]\\d{3}|92(?:[0-7]\\d|8[1-9]))\\d{6}|[24-9]\\d{8}|[89]\\d{7}", [8, 9, 10, 11, 12], [["(\\d{3})(\\d{3})(\\d{2,7})", "$1 $2 $3", ["[89]0"], "0$1"], ["(\\d{4})(\\d{5})", "$1 $2", ["1"]], ["(\\d{3})(\\d{6,7})", "$1 $2", ["2(?:3[2358]|4[2-4]|9[2-8])|45[3479]|54[2-467]|60[468]|72[236]|8(?:2[2-689]|3[23578]|4[3478]|5[2356])|9(?:2[2-8]|3[27-9]|4[2-6]|6[3569]|9[25-8])", "9(?:2[3-8]|98)|(?:2(?:3[2358]|4[2-4]|9[2-8])|45[3479]|54[2-467]|60[468]|72[236]|8(?:2[2-689]|3[23578]|4[3478]|5[2356])|9(?:22|3[27-9]|4[2-6]|6[3569]|9[25-7]))[2-9]"], "(0$1)"], ["(\\d{2})(\\d{7,8})", "$1 $2", ["(?:2[125]|4[0-246-9]|5[1-35-7]|6[1-8]|7[14]|8[16]|91)[2-9]"], "(0$1)"], ["(\\d{5})(\\d{5})", "$1 $2", ["58"], "(0$1)"], ["(\\d{3})(\\d{7})", "$1 $2", ["3"], "0$1"], ["(\\d{2})(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3 $4", ["2[125]|4[0-246-9]|5[1-35-7]|6[1-8]|7[14]|8[16]|91"], "(0$1)"], ["(\\d{3})(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3 $4", ["[24-9]"], "(0$1)"]], "0"], PL: ["48", "00", "(?:6|8\\d\\d)\\d{7}|[1-9]\\d{6}(?:\\d{2})?|[26]\\d{5}", [6, 7, 8, 9, 10], [["(\\d{5})", "$1", ["19"]], ["(\\d{3})(\\d{3})", "$1 $2", ["11|20|64"]], ["(\\d{2})(\\d{2})(\\d{3})", "$1 $2 $3", ["(?:1[2-8]|2[2-69]|3[2-4]|4[1-468]|5[24-689]|6[1-3578]|7[14-7]|8[1-79]|9[145])1", "(?:1[2-8]|2[2-69]|3[2-4]|4[1-468]|5[24-689]|6[1-3578]|7[14-7]|8[1-79]|9[145])19"]], ["(\\d{3})(\\d{2})(\\d{2,3})", "$1 $2 $3", ["64"]], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["21|39|45|5[0137]|6[0469]|7[02389]|8(?:0[14]|8)"]], ["(\\d{2})(\\d{3})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["1[2-8]|[2-7]|8[1-79]|9[145]"]], ["(\\d{3})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["8"]]]], PM: ["508", "00", "[45]\\d{5}|(?:708|80\\d)\\d{6}", [6, 9], [["(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3", ["[45]"], "0$1"], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["7"]], ["(\\d{3})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["8"], "0$1"]], "0"], PR: ["1", "011", "(?:[589]\\d\\d|787)\\d{7}", [10], 0, "1", 0, 0, 0, 0, "787|939"], PS: ["970", "00", "[2489]2\\d{6}|(?:1\\d|5)\\d{8}", [8, 9, 10], [["(\\d)(\\d{3})(\\d{4})", "$1 $2 $3", ["[2489]"], "0$1"], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["5"], "0$1"], ["(\\d{4})(\\d{3})(\\d{3})", "$1 $2 $3", ["1"]]], "0"], PT: ["351", "00", "1693\\d{5}|(?:[26-9]\\d|30)\\d{7}", [9], [["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["2[12]"]], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["16|[236-9]"]]]], PW: ["680", "01[12]", "(?:[24-8]\\d\\d|345|900)\\d{4}", [7], [["(\\d{3})(\\d{4})", "$1 $2", ["[2-9]"]]]], PY: ["595", "00", "59\\d{4,6}|9\\d{5,10}|(?:[2-46-8]\\d|5[0-8])\\d{4,7}", [6, 7, 8, 9, 10, 11], [["(\\d{3})(\\d{3,6})", "$1 $2", ["[2-9]0"], "0$1"], ["(\\d{2})(\\d{5})", "$1 $2", ["[26]1|3[289]|4[1246-8]|7[1-3]|8[1-36]"], "(0$1)"], ["(\\d{3})(\\d{4,5})", "$1 $2", ["2[279]|3[13-5]|4[359]|5|6(?:[34]|7[1-46-8])|7[46-8]|85"], "(0$1)"], ["(\\d{2})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["2[14-68]|3[26-9]|4[1246-8]|6(?:1|75)|7[1-35]|8[1-36]"], "(0$1)"], ["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["87"]], ["(\\d{3})(\\d{6})", "$1 $2", ["9(?:[5-79]|8[1-7])"], "0$1"], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["[2-8]"], "0$1"], ["(\\d{4})(\\d{3})(\\d{4})", "$1 $2 $3", ["9"]]], "0"], QA: ["974", "00", "800\\d{4}|(?:2|800)\\d{6}|(?:0080|[3-7])\\d{7}", [7, 8, 9, 11], [["(\\d{3})(\\d{4})", "$1 $2", ["2[16]|8"]], ["(\\d{4})(\\d{4})", "$1 $2", ["[3-7]"]]]], RE: ["262", "00", "(?:26|[689]\\d)\\d{7}", [9], [["(\\d{3})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[2689]"], "0$1"]], "0", 0, 0, 0, 0, 0, [["26(?:2\\d\\d|3(?:0\\d|1[0-6]))\\d{4}"], ["69(?:2\\d\\d|3(?:[06][0-6]|1[013]|2[0-2]|3[0-39]|4\\d|5[0-5]|7[0-37]|8[0-8]|9[0-479]))\\d{4}"], ["80\\d{7}"], ["89[1-37-9]\\d{6}"], 0, 0, 0, 0, ["9(?:399[0-3]|479[0-5]|76(?:2[278]|3[0-37]))\\d{4}"], ["8(?:1[019]|2[0156]|84|90)\\d{6}"]]], RO: ["40", "00", "(?:[236-8]\\d|90)\\d{7}|[23]\\d{5}", [6, 9], [["(\\d{3})(\\d{3})", "$1 $2", ["2[3-6]", "2[3-6]\\d9"], "0$1"], ["(\\d{2})(\\d{4})", "$1 $2", ["219|31"], "0$1"], ["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["[23]1"], "0$1"], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["[236-9]"], "0$1"]], "0", 0, 0, 0, 0, 0, 0, 0, " int "], RS: ["381", "00", "38[02-9]\\d{6,9}|6\\d{7,9}|90\\d{4,8}|38\\d{5,6}|(?:7\\d\\d|800)\\d{3,9}|(?:[12]\\d|3[0-79])\\d{5,10}", [6, 7, 8, 9, 10, 11, 12], [["(\\d{3})(\\d{3,9})", "$1 $2", ["(?:2[389]|39)0|[7-9]"], "0$1"], ["(\\d{2})(\\d{5,10})", "$1 $2", ["[1-36]"], "0$1"]], "0"], RU: ["7", "810", "8\\d{13}|[347-9]\\d{9}", [10, 14], [["(\\d{4})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["7(?:1[0-8]|2[1-9])", "7(?:1(?:[0-356]2|4[29]|7|8[27])|2(?:1[23]|[2-9]2))", "7(?:1(?:[0-356]2|4[29]|7|8[27])|2(?:13[03-69]|62[013-9]))|72[1-57-9]2"], "8 ($1)", 1], ["(\\d{5})(\\d)(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["7(?:1[0-68]|2[1-9])", "7(?:1(?:[06][3-6]|[18]|2[35]|[3-5][3-5])|2(?:[13][3-5]|[24-689]|7[457]))", "7(?:1(?:0(?:[356]|4[023])|[18]|2(?:3[013-9]|5)|3[45]|43[013-79]|5(?:3[1-8]|4[1-7]|5)|6(?:3[0-35-9]|[4-6]))|2(?:1(?:3[178]|[45])|[24-689]|3[35]|7[457]))|7(?:14|23)4[0-8]|71(?:33|45)[1-79]"], "8 ($1)", 1], ["(\\d{3})(\\d{3})(\\d{4})", "$1 $2 $3", ["7"], "8 ($1)", 1], ["(\\d{3})(\\d{3})(\\d{2})(\\d{2})", "$1 $2-$3-$4", ["[349]|8(?:[02-7]|1[1-8])"], "8 ($1)", 1], ["(\\d{4})(\\d{4})(\\d{3})(\\d{3})", "$1 $2 $3 $4", ["8"], "8 ($1)"]], "8", 0, 0, 0, 0, "3[04-689]|[489]", 0, "8~10"], RW: ["250", "00", "(?:06|[27]\\d\\d|[89]00)\\d{6}", [8, 9], [["(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["0"]], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["2"]], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["[7-9]"], "0$1"]], "0"], SA: ["966", "00", "92\\d{7}|(?:[15]|8\\d)\\d{8}", [9, 10], [["(\\d{4})(\\d{5})", "$1 $2", ["9"]], ["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["1"], "0$1"], ["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["5"], "0$1"], ["(\\d{3})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["81"], "0$1"], ["(\\d{3})(\\d{3})(\\d{4})", "$1 $2 $3", ["8"]]], "0"], SB: ["677", "0[01]", "[6-9]\\d{6}|[1-6]\\d{4}", [5, 7], [["(\\d{2})(\\d{5})", "$1 $2", ["6[89]|7|8[4-9]|9(?:[1-8]|9[0-8])"]]]], SC: ["248", "010|0[0-2]", "(?:[2489]\\d|64)\\d{5}", [7], [["(\\d)(\\d{3})(\\d{3})", "$1 $2 $3", ["[246]|9[57]"]]], 0, 0, 0, 0, 0, 0, 0, "00"], SD: ["249", "00", "[19]\\d{8}", [9], [["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["[19]"], "0$1"]], "0"], SE: ["46", "00", "(?:[26]\\d\\d|9)\\d{9}|[1-9]\\d{8}|[1-689]\\d{7}|[1-4689]\\d{6}|2\\d{5}", [6, 7, 8, 9, 10], [["(\\d{2})(\\d{2,3})(\\d{2})", "$1-$2 $3", ["20"], "0$1", 0, "$1 $2 $3"], ["(\\d{3})(\\d{4})", "$1-$2", ["9(?:00|39|44|9)"], "0$1", 0, "$1 $2"], ["(\\d{2})(\\d{3})(\\d{2})", "$1-$2 $3", ["[12][136]|3[356]|4[0246]|6[03]|90[1-9]"], "0$1", 0, "$1 $2 $3"], ["(\\d)(\\d{2,3})(\\d{2})(\\d{2})", "$1-$2 $3 $4", ["8"], "0$1", 0, "$1 $2 $3 $4"], ["(\\d{3})(\\d{2,3})(\\d{2})", "$1-$2 $3", ["1[2457]|2(?:[247-9]|5[0138])|3[0247-9]|4[1357-9]|5[0-35-9]|6(?:[125689]|4[02-57]|7[0-2])|9(?:[125-8]|3[02-5]|4[0-3])"], "0$1", 0, "$1 $2 $3"], ["(\\d{3})(\\d{2,3})(\\d{3})", "$1-$2 $3", ["9(?:00|39|44)"], "0$1", 0, "$1 $2 $3"], ["(\\d{2})(\\d{2,3})(\\d{2})(\\d{2})", "$1-$2 $3 $4", ["1[13689]|2[0136]|3[1356]|4[0246]|54|6[03]|90[1-9]"], "0$1", 0, "$1 $2 $3 $4"], ["(\\d{2})(\\d{3})(\\d{2})(\\d{2})", "$1-$2 $3 $4", ["10|7"], "0$1", 0, "$1 $2 $3 $4"], ["(\\d)(\\d{3})(\\d{3})(\\d{2})", "$1-$2 $3 $4", ["8"], "0$1", 0, "$1 $2 $3 $4"], ["(\\d{3})(\\d{2})(\\d{2})(\\d{2})", "$1-$2 $3 $4", ["[13-5]|2(?:[247-9]|5[0138])|6(?:[124-689]|7[0-2])|9(?:[125-8]|3[02-5]|4[0-3])"], "0$1", 0, "$1 $2 $3 $4"], ["(\\d{3})(\\d{2})(\\d{2})(\\d{3})", "$1-$2 $3 $4", ["9"], "0$1", 0, "$1 $2 $3 $4"], ["(\\d{3})(\\d{2})(\\d{3})(\\d{2})(\\d{2})", "$1-$2 $3 $4 $5", ["[26]"], "0$1", 0, "$1 $2 $3 $4 $5"]], "0"], SG: ["65", "0[0-3]\\d", "(?:(?:1\\d|8)\\d\\d|7000)\\d{7}|[3689]\\d{7}", [8, 10, 11], [["(\\d{4})(\\d{4})", "$1 $2", ["[369]|8(?:0[1-9]|[1-9])"]], ["(\\d{3})(\\d{3})(\\d{4})", "$1 $2 $3", ["8"]], ["(\\d{4})(\\d{4})(\\d{3})", "$1 $2 $3", ["7"]], ["(\\d{4})(\\d{3})(\\d{4})", "$1 $2 $3", ["1"]]]], SH: ["290", "00", "(?:[256]\\d|8)\\d{3}", [4, 5], 0, 0, 0, 0, 0, 0, "[256]"], SI: ["386", "00|10(?:22|66|88|99)", "[1-7]\\d{7}|8\\d{4,7}|90\\d{4,6}", [5, 6, 7, 8], [["(\\d{2})(\\d{3,6})", "$1 $2", ["8[09]|9"], "0$1"], ["(\\d{3})(\\d{5})", "$1 $2", ["59|8"], "0$1"], ["(\\d{2})(\\d{3})(\\d{3})", "$1 $2 $3", ["[37][01]|4[0139]|51|6"], "0$1"], ["(\\d)(\\d{3})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[1-57]"], "(0$1)"]], "0", 0, 0, 0, 0, 0, 0, "00"], SJ: ["47", "00", "0\\d{4}|(?:[489]\\d|79)\\d{6}", [5, 8], 0, 0, 0, 0, 0, 0, "79"], SK: ["421", "00", "[2-689]\\d{8}|[2-59]\\d{6}|[2-5]\\d{5}", [6, 7, 9], [["(\\d)(\\d{2})(\\d{3,4})", "$1 $2 $3", ["21"], "0$1"], ["(\\d{2})(\\d{2})(\\d{2,3})", "$1 $2 $3", ["[3-5][1-8]1", "[3-5][1-8]1[67]"], "0$1"], ["(\\d)(\\d{3})(\\d{3})(\\d{2})", "$1/$2 $3 $4", ["2"], "0$1"], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["[689]"], "0$1"], ["(\\d{2})(\\d{3})(\\d{2})(\\d{2})", "$1/$2 $3 $4", ["[3-5]"], "0$1"]], "0"], SL: ["232", "00", "(?:[237-9]\\d|66)\\d{6}", [8], [["(\\d{2})(\\d{6})", "$1 $2", ["[236-9]"], "(0$1)"]], "0"], SM: ["378", "00", "(?:0549|[5-7]\\d)\\d{6}", [8, 10], [["(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[5-7]"]], ["(\\d{4})(\\d{6})", "$1 $2", ["0"]]], 0, 0, "([89]\\d{5})$", "0549$1"], SN: ["221", "00", "(?:[378]\\d|93)\\d{7}", [9], [["(\\d{3})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["8"]], ["(\\d{2})(\\d{3})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[379]"]]]], SO: ["252", "00", "[346-9]\\d{8}|[12679]\\d{7}|[1-5]\\d{6}|[1348]\\d{5}", [6, 7, 8, 9], [["(\\d{2})(\\d{4})", "$1 $2", ["8[125]"]], ["(\\d{6})", "$1", ["[134]"]], ["(\\d)(\\d{6})", "$1 $2", ["[15]|2[0-79]|3[0-46-8]|4[0-7]"]], ["(\\d)(\\d{7})", "$1 $2", ["(?:2|90)4|[67]"]], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["[348]|64|79|90"]], ["(\\d{2})(\\d{5,7})", "$1 $2", ["1|28|6[0-35-9]|77|9[2-9]"]]], "0"], SR: ["597", "00", "(?:[2-5]|68|[78]\\d)\\d{5}", [6, 7], [["(\\d{2})(\\d{2})(\\d{2})", "$1-$2-$3", ["56"]], ["(\\d{3})(\\d{3})", "$1-$2", ["[2-5]"]], ["(\\d{3})(\\d{4})", "$1-$2", ["[6-8]"]]]], SS: ["211", "00", "[19]\\d{8}", [9], [["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["[19]"], "0$1"]], "0"], ST: ["239", "00", "(?:22|9\\d)\\d{5}", [7], [["(\\d{3})(\\d{4})", "$1 $2", ["[29]"]]]], SV: ["503", "00", "[267]\\d{7}|(?:80\\d|900)\\d{4}(?:\\d{4})?", [7, 8, 11], [["(\\d{3})(\\d{4})", "$1 $2", ["[89]"]], ["(\\d{4})(\\d{4})", "$1 $2", ["[267]"]], ["(\\d{3})(\\d{4})(\\d{4})", "$1 $2 $3", ["[89]"]]]], SX: ["1", "011", "7215\\d{6}|(?:[58]\\d\\d|900)\\d{7}", [10], 0, "1", 0, "(5\\d{6})$|1", "721$1", 0, "721"], SY: ["963", "00", "[1-39]\\d{8}|[1-5]\\d{7}", [8, 9], [["(\\d{2})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["[1-5]"], "0$1", 1], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["9"], "0$1", 1]], "0"], SZ: ["268", "00", "0800\\d{4}|(?:[237]\\d|900)\\d{6}", [8, 9], [["(\\d{4})(\\d{4})", "$1 $2", ["[0237]"]], ["(\\d{5})(\\d{4})", "$1 $2", ["9"]]]], TA: ["290", "00", "8\\d{3}", [4], 0, 0, 0, 0, 0, 0, "8"], TC: ["1", "011", "(?:[58]\\d\\d|649|900)\\d{7}", [10], 0, "1", 0, "([2-479]\\d{6})$|1", "649$1", 0, "649"], TD: ["235", "00|16", "(?:22|[689]\\d|77)\\d{6}", [8], [["(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[26-9]"]]], 0, 0, 0, 0, 0, 0, 0, "00"], TG: ["228", "00", "[279]\\d{7}", [8], [["(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[279]"]]]], TH: ["66", "00[1-9]", "(?:001800|[2-57]|[689]\\d)\\d{7}|1\\d{7,9}", [8, 9, 10, 13], [["(\\d)(\\d{3})(\\d{4})", "$1 $2 $3", ["2"], "0$1"], ["(\\d{2})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["[13-9]"], "0$1"], ["(\\d{4})(\\d{3})(\\d{3})", "$1 $2 $3", ["1"]]], "0"], TJ: ["992", "810", "[0-57-9]\\d{8}", [9], [["(\\d{6})(\\d)(\\d{2})", "$1 $2 $3", ["331", "3317"]], ["(\\d{3})(\\d{2})(\\d{4})", "$1 $2 $3", ["44[02-479]|[34]7"]], ["(\\d{4})(\\d)(\\d{4})", "$1 $2 $3", ["3(?:[1245]|3[12])"]], ["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["[0-57-9]"]]], 0, 0, 0, 0, 0, 0, 0, "8~10"], TK: ["690", "00", "[2-47]\\d{3,6}", [4, 5, 6, 7]], TL: ["670", "00", "7\\d{7}|(?:[2-47]\\d|[89]0)\\d{5}", [7, 8], [["(\\d{3})(\\d{4})", "$1 $2", ["[2-489]|70"]], ["(\\d{4})(\\d{4})", "$1 $2", ["7"]]]], TM: ["993", "810", "(?:[1-6]\\d|71)\\d{6}", [8], [["(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1 $2-$3-$4", ["12"], "(8 $1)"], ["(\\d{3})(\\d)(\\d{2})(\\d{2})", "$1 $2-$3-$4", ["[1-5]"], "(8 $1)"], ["(\\d{2})(\\d{6})", "$1 $2", ["[67]"], "8 $1"]], "8", 0, 0, 0, 0, 0, 0, "8~10"], TN: ["216", "00", "[2-57-9]\\d{7}", [8], [["(\\d{2})(\\d{3})(\\d{3})", "$1 $2 $3", ["[2-57-9]"]]]], TO: ["676", "00", "(?:0800|(?:[5-8]\\d\\d|999)\\d)\\d{3}|[2-8]\\d{4}", [5, 7], [["(\\d{2})(\\d{3})", "$1-$2", ["[2-4]|50|6[09]|7[0-24-69]|8[05]"]], ["(\\d{4})(\\d{3})", "$1 $2", ["0"]], ["(\\d{3})(\\d{4})", "$1 $2", ["[5-9]"]]]], TR: ["90", "00", "4\\d{6}|8\\d{11,12}|(?:[2-58]\\d\\d|900)\\d{7}", [7, 10, 12, 13], [["(\\d{3})(\\d{3})(\\d{4})", "$1 $2 $3", ["512|8[01589]|90"], "0$1", 1], ["(\\d{3})(\\d{3})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["5(?:[0-59]|61)", "5(?:[0-59]|61[06])", "5(?:[0-59]|61[06]1)"], "0$1", 1], ["(\\d{3})(\\d{3})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[24][1-8]|3[1-9]"], "(0$1)", 1], ["(\\d{3})(\\d{3})(\\d{6,7})", "$1 $2 $3", ["80"], "0$1", 1]], "0"], TT: ["1", "011", "(?:[58]\\d\\d|900)\\d{7}", [10], 0, "1", 0, "([2-46-8]\\d{6})$|1", "868$1", 0, "868"], TV: ["688", "00", "(?:2|7\\d\\d|90)\\d{4}", [5, 6, 7], [["(\\d{2})(\\d{3})", "$1 $2", ["2"]], ["(\\d{2})(\\d{4})", "$1 $2", ["90"]], ["(\\d{2})(\\d{5})", "$1 $2", ["7"]]]], TW: ["886", "0(?:0[25-79]|19)", "[2-689]\\d{8}|7\\d{9,10}|[2-8]\\d{7}|2\\d{6}", [7, 8, 9, 10, 11], [["(\\d{2})(\\d)(\\d{4})", "$1 $2 $3", ["202"], "0$1"], ["(\\d{2})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["[258]0"], "0$1"], ["(\\d)(\\d{3,4})(\\d{4})", "$1 $2 $3", ["[23568]|4(?:0[02-48]|[1-47-9])|7[1-9]", "[23568]|4(?:0[2-48]|[1-47-9])|(?:400|7)[1-9]"], "0$1"], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["[49]"], "0$1"], ["(\\d{2})(\\d{4})(\\d{4,5})", "$1 $2 $3", ["7"], "0$1"]], "0", 0, 0, 0, 0, 0, 0, 0, "#"], TZ: ["255", "00[056]", "(?:[25-8]\\d|41|90)\\d{7}", [9], [["(\\d{3})(\\d{2})(\\d{4})", "$1 $2 $3", ["[89]"], "0$1"], ["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["[24]"], "0$1"], ["(\\d{2})(\\d{7})", "$1 $2", ["5"]], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["[67]"], "0$1"]], "0"], UA: ["380", "00", "[89]\\d{9}|[3-9]\\d{8}", [9, 10], [["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["6[12][29]|(?:3[1-8]|4[136-8]|5[12457]|6[49])2|(?:56|65)[24]", "6[12][29]|(?:35|4[1378]|5[12457]|6[49])2|(?:56|65)[24]|(?:3[1-46-8]|46)2[013-9]"], "0$1"], ["(\\d{4})(\\d{5})", "$1 $2", ["3[1-8]|4(?:[1367]|[45][6-9]|8[4-6])|5(?:[1-5]|6[0135689]|7[4-6])|6(?:[12][3-7]|[459])", "3[1-8]|4(?:[1367]|[45][6-9]|8[4-6])|5(?:[1-5]|6(?:[015689]|3[02389])|7[4-6])|6(?:[12][3-7]|[459])"], "0$1"], ["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["[3-7]|89|9[1-9]"], "0$1"], ["(\\d{3})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["[89]"], "0$1"]], "0", 0, 0, 0, 0, 0, 0, "0~0"], UG: ["256", "00[057]", "800\\d{6}|(?:[29]0|[347]\\d)\\d{7}", [9], [["(\\d{4})(\\d{5})", "$1 $2", ["202", "2024"], "0$1"], ["(\\d{3})(\\d{6})", "$1 $2", ["[27-9]|4(?:6[45]|[7-9])"], "0$1"], ["(\\d{2})(\\d{7})", "$1 $2", ["[34]"], "0$1"]], "0"], US: ["1", "011", "[2-9]\\d{9}|3\\d{6}", [10], [["(\\d{3})(\\d{4})", "$1-$2", ["310"], 0, 1], ["(\\d{3})(\\d{3})(\\d{4})", "($1) $2-$3", ["[2-9]"], 0, 1, "$1-$2-$3"]], "1", 0, 0, 0, 0, 0, [["(?:3052(?:0[0-8]|[1-9]\\d)|5056(?:[0-35-9]\\d|4[468])|7302[0-4]\\d)\\d{4}|(?:305[3-9]|472[24]|505[2-57-9]|7306|983[2-47-9])\\d{6}|(?:2(?:0[1-35-9]|1[02-9]|2[03-57-9]|3[1459]|4[08]|5[1-46]|6[0279]|7[0269]|8[13])|3(?:0[1-47-9]|1[02-9]|2[013569]|3[0-24679]|4[167]|5[0-2]|6[01349]|8[056])|4(?:0[124-9]|1[02-579]|2[3-5]|3[0245]|4[023578]|58|6[349]|7[0589]|8[04])|5(?:0[1-47-9]|1[0235-8]|20|3[0149]|4[01]|5[179]|6[1-47]|7[0-5]|8[0256])|6(?:0[1-35-9]|1[024-9]|2[03689]|3[016]|4[0156]|5[01679]|6[0-279]|78|8[0-29])|7(?:0[1-46-8]|1[2-9]|2[04-8]|3[1247]|4[037]|5[47]|6[02359]|7[0-59]|8[156])|8(?:0[1-68]|1[02-8]|2[068]|3[0-2589]|4[03578]|5[046-9]|6[02-5]|7[028])|9(?:0[1346-9]|1[02-9]|2[0589]|3[0146-8]|4[01357-9]|5[12469]|7[0-389]|8[04-69]))[2-9]\\d{6}"], [""], ["8(?:00|33|44|55|66|77|88)[2-9]\\d{6}"], ["900[2-9]\\d{6}"], ["52(?:3(?:[2-46-9][02-9]\\d|5(?:[02-46-9]\\d|5[0-46-9]))|4(?:[2-478][02-9]\\d|5(?:[034]\\d|2[024-9]|5[0-46-9])|6(?:0[1-9]|[2-9]\\d)|9(?:[05-9]\\d|2[0-5]|49)))\\d{4}|52[34][2-9]1[02-9]\\d{4}|5(?:00|2[125-9]|33|44|66|77|88)[2-9]\\d{6}"], 0, 0, 0, ["305209\\d{4}"]]], UY: ["598", "0(?:0|1[3-9]\\d)", "0004\\d{2,9}|[1249]\\d{7}|(?:[49]\\d|80)\\d{5}", [6, 7, 8, 9, 10, 11, 12, 13], [["(\\d{3})(\\d{3,4})", "$1 $2", ["0"]], ["(\\d{3})(\\d{4})", "$1 $2", ["[49]0|8"], "0$1"], ["(\\d{2})(\\d{3})(\\d{3})", "$1 $2 $3", ["9"], "0$1"], ["(\\d{4})(\\d{4})", "$1 $2", ["[124]"]], ["(\\d{3})(\\d{3})(\\d{2,4})", "$1 $2 $3", ["0"]], ["(\\d{3})(\\d{3})(\\d{3})(\\d{2,4})", "$1 $2 $3 $4", ["0"]]], "0", 0, 0, 0, 0, 0, 0, "00", " int. "], UZ: ["998", "00", "(?:20|33|[5-79]\\d|88)\\d{7}", [9], [["(\\d{2})(\\d{3})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["[235-9]"]]]], VA: ["39", "00", "0\\d{5,10}|3[0-8]\\d{7,10}|55\\d{8}|8\\d{5}(?:\\d{2,4})?|(?:1\\d|39)\\d{7,8}", [6, 7, 8, 9, 10, 11], 0, 0, 0, 0, 0, 0, "06698"], VC: ["1", "011", "(?:[58]\\d\\d|784|900)\\d{7}", [10], 0, "1", 0, "([2-7]\\d{6})$|1", "784$1", 0, "784"], VE: ["58", "00", "[68]00\\d{7}|(?:[24]\\d|[59]0)\\d{8}", [10], [["(\\d{3})(\\d{7})", "$1-$2", ["[24-689]"], "0$1"]], "0"], VG: ["1", "011", "(?:284|[58]\\d\\d|900)\\d{7}", [10], 0, "1", 0, "([2-578]\\d{6})$|1", "284$1", 0, "284"], VI: ["1", "011", "[58]\\d{9}|(?:34|90)0\\d{7}", [10], 0, "1", 0, "([2-9]\\d{6})$|1", "340$1", 0, "340"], VN: ["84", "00", "[12]\\d{9}|[135-9]\\d{8}|[16]\\d{7}|[16-8]\\d{6}", [7, 8, 9, 10], [["(\\d{2})(\\d{5})", "$1 $2", ["80"], "0$1", 1], ["(\\d{4})(\\d{4,6})", "$1 $2", ["1"], 0, 1], ["(\\d{2})(\\d{3})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["6"], "0$1", 1], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["[357-9]"], "0$1", 1], ["(\\d{2})(\\d{4})(\\d{4})", "$1 $2 $3", ["2[48]"], "0$1", 1], ["(\\d{3})(\\d{4})(\\d{3})", "$1 $2 $3", ["2"], "0$1", 1]], "0"], VU: ["678", "00", "[57-9]\\d{6}|(?:[238]\\d|48)\\d{3}", [5, 7], [["(\\d{3})(\\d{4})", "$1 $2", ["[57-9]"]]]], WF: ["681", "00", "(?:40|72)\\d{4}|8\\d{5}(?:\\d{3})?", [6, 9], [["(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3", ["[478]"]], ["(\\d{3})(\\d{2})(\\d{2})(\\d{2})", "$1 $2 $3 $4", ["8"]]]], WS: ["685", "0", "(?:[2-6]|8\\d{5})\\d{4}|[78]\\d{6}|[68]\\d{5}", [5, 6, 7, 10], [["(\\d{5})", "$1", ["[2-5]|6[1-9]"]], ["(\\d{3})(\\d{3,7})", "$1 $2", ["[68]"]], ["(\\d{2})(\\d{5})", "$1 $2", ["7"]]]], XK: ["383", "00", "2\\d{7,8}|3\\d{7,11}|(?:4\\d\\d|[89]00)\\d{5}", [8, 9, 10, 11, 12], [["(\\d{3})(\\d{5})", "$1 $2", ["[89]"], "0$1"], ["(\\d{2})(\\d{3})(\\d{3})", "$1 $2 $3", ["[2-4]"], "0$1"], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["2|39"], "0$1"], ["(\\d{2})(\\d{7,10})", "$1 $2", ["3"], "0$1"]], "0"], YE: ["967", "00", "(?:1|7\\d)\\d{7}|[1-7]\\d{6}", [7, 8, 9], [["(\\d)(\\d{3})(\\d{3,4})", "$1 $2 $3", ["[1-6]|7(?:[24-6]|8[0-7])"], "0$1"], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["7"], "0$1"]], "0"], YT: ["262", "00", "(?:80|9\\d)\\d{7}|(?:26|63)9\\d{6}", [9], 0, "0", 0, 0, 0, 0, 0, [["269(?:0[0-467]|15|5[0-4]|6\\d|[78]0)\\d{4}"], ["639(?:0[0-79]|1[019]|[267]\\d|3[09]|40|5[05-9]|9[04-79])\\d{4}"], ["80\\d{7}"], 0, 0, 0, 0, 0, ["9(?:(?:39|47)8[01]|769\\d)\\d{4}"]]], ZA: ["27", "00", "[1-79]\\d{8}|8\\d{4,9}", [5, 6, 7, 8, 9, 10], [["(\\d{2})(\\d{3,4})", "$1 $2", ["8[1-4]"], "0$1"], ["(\\d{2})(\\d{3})(\\d{2,3})", "$1 $2 $3", ["8[1-4]"], "0$1"], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["860"], "0$1"], ["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["[1-9]"], "0$1"], ["(\\d{3})(\\d{3})(\\d{4})", "$1 $2 $3", ["8"], "0$1"]], "0"], ZM: ["260", "00", "800\\d{6}|(?:21|63|[79]\\d)\\d{7}", [9], [["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["[28]"], "0$1"], ["(\\d{2})(\\d{7})", "$1 $2", ["[79]"], "0$1"]], "0"], ZW: ["263", "00", "2(?:[0-57-9]\\d{6,8}|6[0-24-9]\\d{6,7})|[38]\\d{9}|[35-8]\\d{8}|[3-6]\\d{7}|[1-689]\\d{6}|[1-3569]\\d{5}|[1356]\\d{4}", [5, 6, 7, 8, 9, 10], [["(\\d{3})(\\d{3,5})", "$1 $2", ["2(?:0[45]|2[278]|[49]8)|3(?:[09]8|17)|6(?:[29]8|37|75)|[23][78]|(?:33|5[15]|6[68])[78]"], "0$1"], ["(\\d)(\\d{3})(\\d{2,4})", "$1 $2 $3", ["[49]"], "0$1"], ["(\\d{3})(\\d{4})", "$1 $2", ["80"], "0$1"], ["(\\d{2})(\\d{7})", "$1 $2", ["24|8[13-59]|(?:2[05-79]|39|5[45]|6[15-8])2", "2(?:02[014]|4|[56]20|[79]2)|392|5(?:42|525)|6(?:[16-8]21|52[013])|8[13-59]"], "(0$1)"], ["(\\d{2})(\\d{3})(\\d{4})", "$1 $2 $3", ["7"], "0$1"], ["(\\d{3})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["2(?:1[39]|2[0157]|[378]|[56][14])|3(?:12|29)", "2(?:1[39]|2[0157]|[378]|[56][14])|3(?:123|29)"], "0$1"], ["(\\d{4})(\\d{6})", "$1 $2", ["8"], "0$1"], ["(\\d{2})(\\d{3,5})", "$1 $2", ["1|2(?:0[0-36-9]|12|29|[56])|3(?:1[0-689]|[24-6])|5(?:[0236-9]|1[2-4])|6(?:[013-59]|7[0-46-9])|(?:33|55|6[68])[0-69]|(?:29|3[09]|62)[0-79]"], "0$1"], ["(\\d{2})(\\d{3})(\\d{3,4})", "$1 $2 $3", ["29[013-9]|39|54"], "0$1"], ["(\\d{4})(\\d{3,5})", "$1 $2", ["(?:25|54)8", "258|5483"], "0$1"]], "0"] }, nonGeographic: { 800: ["800", 0, "(?:00|[1-9]\\d)\\d{6}", [8], [["(\\d{4})(\\d{4})", "$1 $2", ["\\d"]]], 0, 0, 0, 0, 0, 0, [0, 0, ["(?:00|[1-9]\\d)\\d{6}"]]], 808: ["808", 0, "[1-9]\\d{7}", [8], [["(\\d{4})(\\d{4})", "$1 $2", ["[1-9]"]]], 0, 0, 0, 0, 0, 0, [0, 0, 0, 0, 0, 0, 0, 0, 0, ["[1-9]\\d{7}"]]], 870: ["870", 0, "7\\d{11}|[35-7]\\d{8}", [9, 12], [["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["[35-7]"]]], 0, 0, 0, 0, 0, 0, [0, ["(?:[356]|774[45])\\d{8}|7[6-8]\\d{7}"]]], 878: ["878", 0, "10\\d{10}", [12], [["(\\d{2})(\\d{5})(\\d{5})", "$1 $2 $3", ["1"]]], 0, 0, 0, 0, 0, 0, [0, 0, 0, 0, 0, 0, 0, 0, ["10\\d{10}"]]], 881: ["881", 0, "6\\d{9}|[0-36-9]\\d{8}", [9, 10], [["(\\d)(\\d{3})(\\d{5})", "$1 $2 $3", ["[0-37-9]"]], ["(\\d)(\\d{3})(\\d{5,6})", "$1 $2 $3", ["6"]]], 0, 0, 0, 0, 0, 0, [0, ["6\\d{9}|[0-36-9]\\d{8}"]]], 882: ["882", 0, "[13]\\d{6}(?:\\d{2,5})?|[19]\\d{7}|(?:[25]\\d\\d|4)\\d{7}(?:\\d{2})?", [7, 8, 9, 10, 11, 12], [["(\\d{2})(\\d{5})", "$1 $2", ["16|342"]], ["(\\d{2})(\\d{6})", "$1 $2", ["49"]], ["(\\d{2})(\\d{2})(\\d{4})", "$1 $2 $3", ["1[36]|9"]], ["(\\d{2})(\\d{4})(\\d{3})", "$1 $2 $3", ["3[23]"]], ["(\\d{2})(\\d{3,4})(\\d{4})", "$1 $2 $3", ["16"]], ["(\\d{2})(\\d{4})(\\d{4})", "$1 $2 $3", ["10|23|3(?:[15]|4[57])|4|51"]], ["(\\d{3})(\\d{4})(\\d{4})", "$1 $2 $3", ["34"]], ["(\\d{2})(\\d{4,5})(\\d{5})", "$1 $2 $3", ["[1-35]"]]], 0, 0, 0, 0, 0, 0, [0, ["342\\d{4}|(?:337|49)\\d{6}|(?:3(?:2|47|7\\d{3})|50\\d{3})\\d{7}", [7, 8, 9, 10, 12]], 0, 0, 0, 0, 0, 0, ["1(?:3(?:0[0347]|[13][0139]|2[035]|4[013568]|6[0459]|7[06]|8[15-8]|9[0689])\\d{4}|6\\d{5,10})|(?:345\\d|9[89])\\d{6}|(?:10|2(?:3|85\\d)|3(?:[15]|[69]\\d\\d)|4[15-8]|51)\\d{8}"]]], 883: ["883", 0, "(?:[1-4]\\d|51)\\d{6,10}", [8, 9, 10, 11, 12], [["(\\d{3})(\\d{3})(\\d{2,8})", "$1 $2 $3", ["[14]|2[24-689]|3[02-689]|51[24-9]"]], ["(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3", ["510"]], ["(\\d{3})(\\d{3})(\\d{4})", "$1 $2 $3", ["21"]], ["(\\d{4})(\\d{4})(\\d{4})", "$1 $2 $3", ["51[13]"]], ["(\\d{3})(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3 $4", ["[235]"]]], 0, 0, 0, 0, 0, 0, [0, 0, 0, 0, 0, 0, 0, 0, ["(?:2(?:00\\d\\d|10)|(?:370[1-9]|51\\d0)\\d)\\d{7}|51(?:00\\d{5}|[24-9]0\\d{4,7})|(?:1[0-79]|2[24-689]|3[02-689]|4[0-4])0\\d{5,9}"]]], 888: ["888", 0, "\\d{11}", [11], [["(\\d{3})(\\d{3})(\\d{5})", "$1 $2 $3"]], 0, 0, 0, 0, 0, 0, [0, 0, 0, 0, 0, 0, ["\\d{11}"]]], 979: ["979", 0, "[1359]\\d{8}", [9], [["(\\d)(\\d{4})(\\d{4})", "$1 $2 $3", ["[1359]"]]], 0, 0, 0, 0, 0, 0, [0, 0, 0, ["[1359]\\d{8}"]]] } };
 function j2(e, n) {
   var a5 = Array.prototype.slice.call(n);
-  return a5.push(qp), e.apply(this, a5);
+  return a5.push(Vp), e.apply(this, a5);
 }
 function og(e, n) {
   e = e.split("-"), n = n.split("-");
@@ -42347,9 +42347,9 @@ function og(e, n) {
   }
   return e[1] && n[1] ? e[1] > n[1] ? 1 : e[1] < n[1] ? -1 : 0 : !e[1] && n[1] ? 1 : e[1] && !n[1] ? -1 : 0;
 }
-var Vp = {}.constructor;
+var ey = {}.constructor;
 function ju(e) {
-  return e != null && e.constructor === Vp;
+  return e != null && e.constructor === ey;
 }
 function _r(e) {
   "@babel/helpers - typeof";
@@ -42363,22 +42363,22 @@ function So(e, n) {
   if (!(e instanceof n))
     throw new TypeError("Cannot call a class as a function");
 }
-function ey(e, n) {
+function ny(e, n) {
   for (var a5 = 0; a5 < n.length; a5++) {
     var i = n[a5];
     i.enumerable = i.enumerable || false, i.configurable = true, "value" in i && (i.writable = true), Object.defineProperty(e, i.key, i);
   }
 }
 function $o(e, n, a5) {
-  return n && ey(e.prototype, n), Object.defineProperty(e, "prototype", { writable: false }), e;
+  return n && ny(e.prototype, n), Object.defineProperty(e, "prototype", { writable: false }), e;
 }
-var ny = "1.2.0";
-var ay = "1.7.35";
+var ay = "1.2.0";
+var iy = "1.7.35";
 var ug = " ext. ";
-var iy = /^\d+$/;
+var ty = /^\d+$/;
 var v2 = /* @__PURE__ */ (function() {
   function e(n) {
-    So(this, e), ry(n), this.metadata = n, S2.call(this, n);
+    So(this, e), sy(n), this.metadata = n, S2.call(this, n);
   }
   return $o(e, [{
     key: "getCountries",
@@ -42431,7 +42431,7 @@ var v2 = /* @__PURE__ */ (function() {
   }, {
     key: "selectNumberingPlan",
     value: function(a5, i) {
-      if (a5 && iy.test(a5) && (i = a5, a5 = null), a5 && a5 !== "001") {
+      if (a5 && ty.test(a5) && (i = a5, a5 = null), a5 && a5 !== "001") {
         if (!this.hasCountry(a5))
           throw new Error("Unknown country: ".concat(a5));
         this.numberingPlan = new rg(this.getCountryMetadata(a5), this);
@@ -42622,7 +42622,7 @@ var rg = /* @__PURE__ */ (function() {
     value: function() {
       var a5 = this, i = this._getFormats(this.metadata) || this._getFormats(this.getDefaultCountryMetadataForRegion()) || [];
       return i.map(function(t5) {
-        return new ty(t5, a5);
+        return new oy(t5, a5);
       });
     }
   }, {
@@ -42691,7 +42691,7 @@ var rg = /* @__PURE__ */ (function() {
     key: "type",
     value: function(a5) {
       if (this.hasTypes() && sg(this.types(), a5))
-        return new uy(sg(this.types(), a5), this);
+        return new ry(sg(this.types(), a5), this);
     }
   }, {
     key: "ext",
@@ -42700,7 +42700,7 @@ var rg = /* @__PURE__ */ (function() {
     }
   }]), e;
 })();
-var ty = /* @__PURE__ */ (function() {
+var oy = /* @__PURE__ */ (function() {
   function e(n, a5) {
     So(this, e), this._format = n, this.metadata = a5;
   }
@@ -42739,7 +42739,7 @@ var ty = /* @__PURE__ */ (function() {
     key: "usesNationalPrefix",
     value: function() {
       return !!(this.nationalPrefixFormattingRule() && // Check that national prefix formatting rule is not a "dummy" one.
-      !oy.test(this.nationalPrefixFormattingRule()));
+      !uy.test(this.nationalPrefixFormattingRule()));
     }
   }, {
     key: "internationalFormat",
@@ -42748,8 +42748,8 @@ var ty = /* @__PURE__ */ (function() {
     }
   }]), e;
 })();
-var oy = /^\(?\$1\)?$/;
-var uy = /* @__PURE__ */ (function() {
+var uy = /^\(?\$1\)?$/;
+var ry = /* @__PURE__ */ (function() {
   function e(n, a5) {
     So(this, e), this.type = n, this.metadata = a5;
   }
@@ -42790,39 +42790,39 @@ function sg(e, n) {
       return e[9];
   }
 }
-function ry(e) {
+function sy(e) {
   if (!e)
     throw new Error("[libphonenumber-js] `metadata` argument not passed. Check your arguments.");
   if (!ju(e) || !ju(e.countries))
-    throw new Error("[libphonenumber-js] `metadata` argument was passed but it's not a valid metadata. Must be an object having `.countries` child object property. Got ".concat(ju(e) ? "an object of shape: { " + Object.keys(e).join(", ") + " }" : "a " + sy(e) + ": " + e, "."));
+    throw new Error("[libphonenumber-js] `metadata` argument was passed but it's not a valid metadata. Must be an object having `.countries` child object property. Got ".concat(ju(e) ? "an object of shape: { " + Object.keys(e).join(", ") + " }" : "a " + dy(e) + ": " + e, "."));
 }
-var sy = function(n) {
+var dy = function(n) {
   return _r(n);
 };
-function dy(e, n) {
+function ly(e, n) {
   if (n = new v2(n), n.hasCountry(e))
     return n.country(e).countryCallingCode();
   throw new Error("Unknown country: ".concat(e));
 }
 function S2(e) {
   var n = e.version;
-  typeof n == "number" ? (this.v1 = n === 1, this.v2 = n === 2, this.v3 = n === 3, this.v4 = n === 4) : n ? og(n, ny) === -1 ? this.v2 = true : og(n, ay) === -1 ? this.v3 = true : this.v4 = true : this.v1 = true;
+  typeof n == "number" ? (this.v1 = n === 1, this.v2 = n === 2, this.v3 = n === 3, this.v4 = n === 4) : n ? og(n, ay) === -1 ? this.v2 = true : og(n, iy) === -1 ? this.v3 = true : this.v4 = true : this.v1 = true;
 }
-function ly(e) {
+function gy(e) {
   return new v2(e).getCountries();
 }
 function $2() {
+  return j2(gy, arguments);
+}
+function hy() {
   return j2(ly, arguments);
 }
-function gy() {
-  return j2(dy, arguments);
-}
-Object.keys(zp).reduce((e, n) => {
+Object.keys(qp).reduce((e, n) => {
   const a5 = n.split("-")[0].toLowerCase();
-  return (!e[a5] || n === Up) && (e[a5] = n), e;
+  return (!e[a5] || n === zp) && (e[a5] = n), e;
 }, {});
 var oa = typeof globalThis < "u" ? globalThis : typeof window < "u" ? window : typeof global < "u" ? global : typeof self < "u" ? self : {};
-function hy(e) {
+function cy(e) {
   if (Object.prototype.hasOwnProperty.call(e, "__esModule")) return e;
   var n = e.default;
   if (typeof n == "function") {
@@ -42859,7 +42859,7 @@ function C2() {
 }
 var Su;
 var lg;
-function cy() {
+function fy() {
   if (lg) return Su;
   lg = 1;
   var e;
@@ -42928,7 +42928,7 @@ function cy() {
       var d6 = u6 !== null && typeof u6 == "object", s5 = a5.call(u6) === "[object Function]", p5 = i(u6), y6 = d6 && a5.call(u6) === "[object String]", w = [];
       if (!d6 && !s5 && !p5)
         throw new TypeError("Object.keys called on a non-object");
-      var b5 = r5 && s5;
+      var b = r5 && s5;
       if (y6 && u6.length > 0 && !n.call(u6, 0))
         for (var v = 0; v < u6.length; ++v)
           w.push(String(v));
@@ -42937,7 +42937,7 @@ function cy() {
           w.push(String(m5));
       else
         for (var j in u6)
-          !(b5 && j === "prototype") && n.call(u6, j) && w.push(String(j));
+          !(b && j === "prototype") && n.call(u6, j) && w.push(String(j));
       if (o5)
         for (var $5 = f(u6), S5 = 0; S5 < l6.length; ++S5)
           !($5 && l6[S5] === "constructor") && n.call(u6, l6[S5]) && w.push(l6[S5]);
@@ -42953,7 +42953,7 @@ function cs() {
   gg = 1;
   var e = Array.prototype.slice, n = C2(), a5 = Object.keys, i = a5 ? function(o5) {
     return a5(o5);
-  } : cy(), t5 = Object.keys;
+  } : fy(), t5 = Object.keys;
   return i.shim = function() {
     if (Object.keys) {
       var o5 = (function() {
@@ -42994,7 +42994,7 @@ function an() {
 }
 var bg;
 var wg;
-function fy() {
+function py() {
   return wg || (wg = 1, bg = Object.getOwnPropertyDescriptor), bg;
 }
 var Lu;
@@ -43002,7 +43002,7 @@ var mg;
 function Ja() {
   if (mg) return Lu;
   mg = 1;
-  var e = /* @__PURE__ */ fy();
+  var e = /* @__PURE__ */ py();
   if (e)
     try {
       e([], "length");
@@ -43099,67 +43099,67 @@ function L2() {
 }
 var Ig;
 var Zg;
-function py() {
+function yy() {
   return Zg || (Zg = 1, Ig = EvalError), Ig;
 }
 var Tg;
 var Mg;
-function yy() {
+function by() {
   return Mg || (Mg = 1, Tg = RangeError), Tg;
 }
 var Jg;
 var Dg;
-function by() {
+function wy() {
   return Dg || (Dg = 1, Jg = ReferenceError), Jg;
 }
 var Pg;
 var Ag;
-function wy() {
+function my() {
   return Ag || (Ag = 1, Pg = URIError), Pg;
 }
 var Ng;
 var Hg;
-function my() {
+function jy() {
   return Hg || (Hg = 1, Ng = Math.abs), Ng;
 }
 var Xg;
 var Eg;
-function jy() {
+function vy() {
   return Eg || (Eg = 1, Xg = Math.floor), Xg;
 }
 var Bg;
 var xg;
-function vy() {
+function Sy() {
   return xg || (xg = 1, Bg = Math.max), Bg;
 }
 var Fg;
 var Rg;
-function Sy() {
+function $y() {
   return Rg || (Rg = 1, Fg = Math.min), Fg;
 }
 var Gg;
 var _g;
-function $y() {
+function Cy() {
   return _g || (_g = 1, Gg = Math.pow), Gg;
 }
 var Qg;
 var Og;
-function Cy() {
+function Ly() {
   return Og || (Og = 1, Qg = Math.round), Qg;
 }
 var Wg;
 var Kg;
-function Ly() {
+function Yy() {
   return Kg || (Kg = 1, Wg = Number.isNaN || function(e) {
     return e !== e;
   }), Wg;
 }
 var Zu;
 var Ug;
-function Yy() {
+function ky() {
   if (Ug) return Zu;
   Ug = 1;
-  var e = /* @__PURE__ */ Ly();
+  var e = /* @__PURE__ */ Yy();
   return Zu = function(n) {
     return e(n) || n === 0 ? n : n < 0 ? -1 : 1;
   }, Zu;
@@ -43220,7 +43220,7 @@ function k2() {
 }
 var Ju;
 var ih;
-function ky() {
+function Iy() {
   if (ih) return Ju;
   ih = 1;
   var e = "Function.prototype.bind called on incompatible ", n = Object.prototype.toString, a5 = Math.max, i = "[object Function]", t5 = function(l6, h) {
@@ -43269,7 +43269,7 @@ var th;
 function zi() {
   if (th) return Du;
   th = 1;
-  var e = ky();
+  var e = Iy();
   return Du = Function.prototype.bind || e, Du;
 }
 var oh;
@@ -43284,7 +43284,7 @@ function js() {
 }
 var dh;
 var lh;
-function Iy() {
+function Zy() {
   return lh || (lh = 1, dh = typeof Reflect < "u" && Reflect && Reflect.apply), dh;
 }
 var Pu;
@@ -43292,7 +43292,7 @@ var gh;
 function I2() {
   if (gh) return Pu;
   gh = 1;
-  var e = zi(), n = js(), a5 = ms(), i = Iy();
+  var e = zi(), n = js(), a5 = ms(), i = Zy();
   return Pu = i || e.call(a5, n), Pu;
 }
 var Au;
@@ -43309,7 +43309,7 @@ function vs() {
 }
 var Nu;
 var ch;
-function Zy() {
+function Ty() {
   if (ch) return Nu;
   ch = 1;
   var e = vs(), n = /* @__PURE__ */ Ja(), a5;
@@ -43337,7 +43337,7 @@ var fh;
 function Ss() {
   if (fh) return Hu;
   fh = 1;
-  var e = Y2(), n = k2(), a5 = /* @__PURE__ */ Zy();
+  var e = Y2(), n = k2(), a5 = /* @__PURE__ */ Ty();
   return Hu = e ? function(i) {
     return e(i);
   } : n ? function(i) {
@@ -43361,24 +43361,24 @@ var yh;
 function Wn() {
   if (yh) return Eu;
   yh = 1;
-  var e, n = /* @__PURE__ */ bs(), a5 = /* @__PURE__ */ L2(), i = /* @__PURE__ */ py(), t5 = /* @__PURE__ */ yy(), o5 = /* @__PURE__ */ by(), r5 = /* @__PURE__ */ fs(), l6 = /* @__PURE__ */ an(), h = /* @__PURE__ */ wy(), c6 = /* @__PURE__ */ my(), g6 = /* @__PURE__ */ jy(), f = /* @__PURE__ */ vy(), u6 = /* @__PURE__ */ Sy(), d6 = /* @__PURE__ */ $y(), s5 = /* @__PURE__ */ Cy(), p5 = /* @__PURE__ */ Yy(), y6 = Function, w = function(E) {
+  var e, n = /* @__PURE__ */ bs(), a5 = /* @__PURE__ */ L2(), i = /* @__PURE__ */ yy(), t5 = /* @__PURE__ */ by(), o5 = /* @__PURE__ */ wy(), r5 = /* @__PURE__ */ fs(), l6 = /* @__PURE__ */ an(), h = /* @__PURE__ */ my(), c6 = /* @__PURE__ */ jy(), g6 = /* @__PURE__ */ vy(), f = /* @__PURE__ */ Sy(), u6 = /* @__PURE__ */ $y(), d6 = /* @__PURE__ */ Cy(), s5 = /* @__PURE__ */ Ly(), p5 = /* @__PURE__ */ ky(), y6 = Function, w = function(E) {
     try {
       return y6('"use strict"; return (' + E + ").constructor;")();
     } catch {
     }
-  }, b5 = /* @__PURE__ */ Ja(), v = /* @__PURE__ */ Co(), m5 = function() {
+  }, b = /* @__PURE__ */ Ja(), v = /* @__PURE__ */ Co(), m5 = function() {
     throw new l6();
-  }, j = b5 ? (function() {
+  }, j = b ? (function() {
     try {
       return arguments.callee, m5;
     } catch {
       try {
-        return b5(arguments, "callee").get;
+        return b(arguments, "callee").get;
       } catch {
         return m5;
       }
     }
-  })() : m5, $5 = ws()(), S5 = Ss(), L6 = k2(), M5 = Y2(), I5 = js(), k5 = ms(), Z = {}, A5 = typeof Uint8Array > "u" || !S5 ? e : S5(Uint8Array), R6 = {
+  })() : m5, $5 = ws()(), S5 = Ss(), L6 = k2(), M5 = Y2(), I = js(), k5 = ms(), Z = {}, A = typeof Uint8Array > "u" || !S5 ? e : S5(Uint8Array), R6 = {
     __proto__: null,
     "%AggregateError%": typeof AggregateError > "u" ? e : AggregateError,
     "%Array%": Array,
@@ -43422,7 +43422,7 @@ function Wn() {
     "%Math%": Math,
     "%Number%": Number,
     "%Object%": n,
-    "%Object.getOwnPropertyDescriptor%": b5,
+    "%Object.getOwnPropertyDescriptor%": b,
     "%parseFloat%": parseFloat,
     "%parseInt%": parseInt,
     "%Promise%": typeof Promise > "u" ? e : Promise,
@@ -43439,7 +43439,7 @@ function Wn() {
     "%Symbol%": $5 ? Symbol : e,
     "%SyntaxError%": r5,
     "%ThrowTypeError%": j,
-    "%TypedArray%": A5,
+    "%TypedArray%": A,
     "%TypeError%": l6,
     "%Uint8Array%": typeof Uint8Array > "u" ? e : Uint8Array,
     "%Uint8ClampedArray%": typeof Uint8ClampedArray > "u" ? e : Uint8ClampedArray,
@@ -43450,7 +43450,7 @@ function Wn() {
     "%WeakRef%": typeof WeakRef > "u" ? e : WeakRef,
     "%WeakSet%": typeof WeakSet > "u" ? e : WeakSet,
     "%Function.prototype.call%": k5,
-    "%Function.prototype.apply%": I5,
+    "%Function.prototype.apply%": I,
     "%Object.defineProperty%": v,
     "%Object.getPrototypeOf%": L6,
     "%Math.abs%": c6,
@@ -43538,7 +43538,7 @@ function Wn() {
     "%URIErrorPrototype%": ["URIError", "prototype"],
     "%WeakMapPrototype%": ["WeakMap", "prototype"],
     "%WeakSetPrototype%": ["WeakSet", "prototype"]
-  }, Te = zi(), le = /* @__PURE__ */ $s(), Dn = Te.call(k5, Array.prototype.concat), Pn = Te.call(I5, Array.prototype.splice), An = Te.call(k5, String.prototype.replace), vn = Te.call(k5, String.prototype.slice), T = Te.call(k5, RegExp.prototype.exec), D5 = /[^%.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(?:\.|\[\])(?:\.|\[\]|%$))/g, F = /\\(\\)?/g, G5 = function(E) {
+  }, Te = zi(), le = /* @__PURE__ */ $s(), Dn = Te.call(k5, Array.prototype.concat), Pn = Te.call(I, Array.prototype.splice), An = Te.call(k5, String.prototype.replace), vn = Te.call(k5, String.prototype.slice), T5 = Te.call(k5, RegExp.prototype.exec), D5 = /[^%.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(?:\.|\[\])(?:\.|\[\]|%$))/g, F = /\\(\\)?/g, G5 = function(E) {
     var B = vn(E, 0, 1), N = vn(E, -1);
     if (B === "%" && N !== "%")
       throw new r5("invalid intrinsic syntax, expected closing `%`");
@@ -43548,7 +43548,7 @@ function Wn() {
     return An(E, D5, function(O5, fe, V, tn) {
       H[H.length] = V ? An(tn, F, "$1") : fe || O5;
     }), H;
-  }, Q5 = function(E, B) {
+  }, Q = function(E, B) {
     var N = E, H;
     if (le(Ce, N) && (H = Ce[N], N = "%" + H[0] + "%"), le(R6, N)) {
       var O5 = R6[N];
@@ -43567,9 +43567,9 @@ function Wn() {
       throw new l6("intrinsic name must be a non-empty string");
     if (arguments.length > 1 && typeof B != "boolean")
       throw new l6('"allowMissing" argument must be a boolean');
-    if (T(/^%?[^%]*%?$/, E) === null)
+    if (T5(/^%?[^%]*%?$/, E) === null)
       throw new r5("`%` may not be present anywhere but at the beginning and end of the intrinsic name");
-    var N = G5(E), H = N.length > 0 ? N[0] : "", O5 = Q5("%" + H + "%", B), fe = O5.name, V = O5.value, tn = false, pe = O5.alias;
+    var N = G5(E), H = N.length > 0 ? N[0] : "", O5 = Q("%" + H + "%", B), fe = O5.name, V = O5.value, tn = false, pe = O5.alias;
     pe && (H = pe[0], Pn(N, Dn([0, 1], pe)));
     for (var ye = 1, Re = true; ye < N.length; ye += 1) {
       var me = N[ye], on = vn(me, 0, 1), un = vn(me, -1);
@@ -43583,8 +43583,8 @@ function Wn() {
             throw new l6("base intrinsic for " + E + " exists, but the property is not available.");
           return;
         }
-        if (b5 && ye + 1 >= N.length) {
-          var rn = b5(V, me);
+        if (b && ye + 1 >= N.length) {
+          var rn = b(V, me);
           Re = !!rn, Re && "get" in rn && !("originalValue" in rn.get) ? V = rn.get : V = V[me];
         } else
           Re = le(V, me), V = V[me];
@@ -43596,7 +43596,7 @@ function Wn() {
 }
 var Bu;
 var bh;
-function Ty() {
+function My() {
   if (bh) return Bu;
   bh = 1;
   var e = /* @__PURE__ */ Wn(), n = /* @__PURE__ */ ps(), a5 = /* @__PURE__ */ ys()(), i = /* @__PURE__ */ Ja(), t5 = /* @__PURE__ */ an(), o5 = e("%Math.floor%");
@@ -43627,7 +43627,7 @@ function Ty() {
 }
 var xu;
 var wh;
-function My() {
+function Jy() {
   if (wh) return xu;
   wh = 1;
   var e = zi(), n = js(), a5 = I2();
@@ -43638,7 +43638,7 @@ function My() {
 var mh;
 function ci() {
   return mh || (mh = 1, (function(e) {
-    var n = /* @__PURE__ */ Ty(), a5 = /* @__PURE__ */ Co(), i = vs(), t5 = My();
+    var n = /* @__PURE__ */ My(), a5 = /* @__PURE__ */ Co(), i = vs(), t5 = Jy();
     e.exports = function(o5) {
       var r5 = i(arguments), l6 = o5.length - (arguments.length - 1);
       return n(
@@ -43686,10 +43686,10 @@ function Z2() {
           o5(f, y6) && t5(u6, y6);
         }
       for (var w = 0; w < u6.length; ++w) {
-        var b5 = u6[w];
-        if (o5(f, b5)) {
-          var v = f[b5];
-          c6[b5] = v;
+        var b = u6[w];
+        if (o5(f, b)) {
+          var v = f[b];
+          c6[b] = v;
         }
       }
     }
@@ -43727,7 +43727,7 @@ function T2() {
 }
 var _u;
 var $h;
-function Jy() {
+function Dy() {
   if ($h) return _u;
   $h = 1;
   var e = Da(), n = T2();
@@ -43744,10 +43744,10 @@ function Jy() {
 }
 var Qu;
 var Ch;
-function Dy() {
+function Py() {
   if (Ch) return Qu;
   Ch = 1;
-  var e = Da(), n = ci(), a5 = Z2(), i = T2(), t5 = Jy(), o5 = n.apply(i()), r5 = function(l6, h) {
+  var e = Da(), n = ci(), a5 = Z2(), i = T2(), t5 = Dy(), o5 = n.apply(i()), r5 = function(l6, h) {
     return o5(Object, arguments);
   };
   return e(r5, {
@@ -43769,7 +43769,7 @@ function Yo() {
 }
 var Wu;
 var Yh;
-function Py() {
+function Ay() {
   if (Yh) return Wu;
   Yh = 1;
   var e = function() {
@@ -43797,10 +43797,10 @@ function Py() {
 }
 var Ku;
 var kh;
-function Ay() {
+function Ny() {
   if (kh) return Ku;
   kh = 1;
-  var e = /* @__PURE__ */ ps(), n = /* @__PURE__ */ ys()(), a5 = Py().functionsHaveConfigurableNames(), i = /* @__PURE__ */ an();
+  var e = /* @__PURE__ */ ps(), n = /* @__PURE__ */ ys()(), a5 = Ay().functionsHaveConfigurableNames(), i = /* @__PURE__ */ an();
   return Ku = function(t5, o5) {
     if (typeof t5 != "function")
       throw new i("`fn` is not a function");
@@ -43825,7 +43825,7 @@ var Ih;
 function M2() {
   if (Ih) return Uu;
   Ih = 1;
-  var e = Ay(), n = /* @__PURE__ */ an(), a5 = Object;
+  var e = Ny(), n = /* @__PURE__ */ an(), a5 = Object;
   return Uu = e(function() {
     if (this == null || this !== a5(this))
       throw new n("RegExp.prototype.flags getter called on non-object");
@@ -43861,7 +43861,7 @@ function J2() {
 }
 var qu;
 var Th;
-function Ny() {
+function Hy() {
   if (Th) return qu;
   Th = 1;
   var e = Da().supportsDescriptors, n = J2(), a5 = /* @__PURE__ */ Ja(), i = Object.defineProperty, t5 = /* @__PURE__ */ L2(), o5 = Ss(), r5 = /a/;
@@ -43878,10 +43878,10 @@ function Ny() {
 }
 var Vu;
 var Mh;
-function Hy() {
+function Xy() {
   if (Mh) return Vu;
   Mh = 1;
-  var e = Da(), n = ci(), a5 = M2(), i = J2(), t5 = Ny(), o5 = n(i());
+  var e = Da(), n = ci(), a5 = M2(), i = J2(), t5 = Hy(), o5 = n(i());
   return e(o5, {
     getPolyfill: i,
     implementation: a5,
@@ -43913,18 +43913,18 @@ function D2() {
   })();
   return i.isLegacyArguments = t5, nr = o5 ? i : t5, nr;
 }
-var Xy = {};
-var Ey = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+var Ey = {};
+var By = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
-  default: Xy
+  default: Ey
 }, Symbol.toStringTag, { value: "Module" }));
-var By = /* @__PURE__ */ hy(Ey);
+var xy = /* @__PURE__ */ cy(By);
 var ar;
 var Ph;
 function ko() {
   if (Ph) return ar;
   Ph = 1;
-  var e = typeof Map == "function" && Map.prototype, n = Object.getOwnPropertyDescriptor && e ? Object.getOwnPropertyDescriptor(Map.prototype, "size") : null, a5 = e && n && typeof n.get == "function" ? n.get : null, i = e && Map.prototype.forEach, t5 = typeof Set == "function" && Set.prototype, o5 = Object.getOwnPropertyDescriptor && t5 ? Object.getOwnPropertyDescriptor(Set.prototype, "size") : null, r5 = t5 && o5 && typeof o5.get == "function" ? o5.get : null, l6 = t5 && Set.prototype.forEach, h = typeof WeakMap == "function" && WeakMap.prototype, c6 = h ? WeakMap.prototype.has : null, g6 = typeof WeakSet == "function" && WeakSet.prototype, f = g6 ? WeakSet.prototype.has : null, u6 = typeof WeakRef == "function" && WeakRef.prototype, d6 = u6 ? WeakRef.prototype.deref : null, s5 = Boolean.prototype.valueOf, p5 = Object.prototype.toString, y6 = Function.prototype.toString, w = String.prototype.match, b5 = String.prototype.slice, v = String.prototype.replace, m5 = String.prototype.toUpperCase, j = String.prototype.toLowerCase, $5 = RegExp.prototype.test, S5 = Array.prototype.concat, L6 = Array.prototype.join, M5 = Array.prototype.slice, I5 = Math.floor, k5 = typeof BigInt == "function" ? BigInt.prototype.valueOf : null, Z = Object.getOwnPropertySymbols, A5 = typeof Symbol == "function" && typeof Symbol.iterator == "symbol" ? Symbol.prototype.toString : null, R6 = typeof Symbol == "function" && typeof Symbol.iterator == "object", ae = typeof Symbol == "function" && Symbol.toStringTag && (typeof Symbol.toStringTag === R6 || true) ? Symbol.toStringTag : null, de = Object.prototype.propertyIsEnumerable, Ce = (typeof Reflect == "function" ? Reflect.getPrototypeOf : Object.getPrototypeOf) || ([].__proto__ === Array.prototype ? function(C5) {
+  var e = typeof Map == "function" && Map.prototype, n = Object.getOwnPropertyDescriptor && e ? Object.getOwnPropertyDescriptor(Map.prototype, "size") : null, a5 = e && n && typeof n.get == "function" ? n.get : null, i = e && Map.prototype.forEach, t5 = typeof Set == "function" && Set.prototype, o5 = Object.getOwnPropertyDescriptor && t5 ? Object.getOwnPropertyDescriptor(Set.prototype, "size") : null, r5 = t5 && o5 && typeof o5.get == "function" ? o5.get : null, l6 = t5 && Set.prototype.forEach, h = typeof WeakMap == "function" && WeakMap.prototype, c6 = h ? WeakMap.prototype.has : null, g6 = typeof WeakSet == "function" && WeakSet.prototype, f = g6 ? WeakSet.prototype.has : null, u6 = typeof WeakRef == "function" && WeakRef.prototype, d6 = u6 ? WeakRef.prototype.deref : null, s5 = Boolean.prototype.valueOf, p5 = Object.prototype.toString, y6 = Function.prototype.toString, w = String.prototype.match, b = String.prototype.slice, v = String.prototype.replace, m5 = String.prototype.toUpperCase, j = String.prototype.toLowerCase, $5 = RegExp.prototype.test, S5 = Array.prototype.concat, L6 = Array.prototype.join, M5 = Array.prototype.slice, I = Math.floor, k5 = typeof BigInt == "function" ? BigInt.prototype.valueOf : null, Z = Object.getOwnPropertySymbols, A = typeof Symbol == "function" && typeof Symbol.iterator == "symbol" ? Symbol.prototype.toString : null, R6 = typeof Symbol == "function" && typeof Symbol.iterator == "object", ae = typeof Symbol == "function" && Symbol.toStringTag && (typeof Symbol.toStringTag === R6 || true) ? Symbol.toStringTag : null, de = Object.prototype.propertyIsEnumerable, Ce = (typeof Reflect == "function" ? Reflect.getPrototypeOf : Object.getPrototypeOf) || ([].__proto__ === Array.prototype ? function(C5) {
     return C5.__proto__;
   } : null);
   function Te(C5, Y) {
@@ -43932,15 +43932,15 @@ function ko() {
       return Y;
     var z = /[0-9](?=(?:[0-9]{3})+(?![0-9]))/g;
     if (typeof C5 == "number") {
-      var ee2 = C5 < 0 ? -I5(-C5) : I5(C5);
+      var ee2 = C5 < 0 ? -I(-C5) : I(C5);
       if (ee2 !== C5) {
-        var ie = String(ee2), _5 = b5.call(Y, ie.length + 1);
-        return v.call(ie, z, "$&_") + "." + v.call(v.call(_5, /([0-9]{3})/g, "$&_"), /_$/, "");
+        var ie = String(ee2), _6 = b.call(Y, ie.length + 1);
+        return v.call(ie, z, "$&_") + "." + v.call(v.call(_6, /([0-9]{3})/g, "$&_"), /_$/, "");
       }
     }
     return v.call(Y, z, "$&_");
   }
-  var le = By, Dn = le.custom, Pn = fe(Dn) ? Dn : null, An = {
+  var le = xy, Dn = le.custom, Pn = fe(Dn) ? Dn : null, An = {
     __proto__: null,
     double: '"',
     single: "'"
@@ -43950,19 +43950,19 @@ function ko() {
     single: /(['\\])/g
   };
   ar = function C5(Y, z, ee2, ie) {
-    var _5 = z || {};
-    if (pe(_5, "quoteStyle") && !pe(An, _5.quoteStyle))
+    var _6 = z || {};
+    if (pe(_6, "quoteStyle") && !pe(An, _6.quoteStyle))
       throw new TypeError('option "quoteStyle" must be "single" or "double"');
-    if (pe(_5, "maxStringLength") && (typeof _5.maxStringLength == "number" ? _5.maxStringLength < 0 && _5.maxStringLength !== 1 / 0 : _5.maxStringLength !== null))
+    if (pe(_6, "maxStringLength") && (typeof _6.maxStringLength == "number" ? _6.maxStringLength < 0 && _6.maxStringLength !== 1 / 0 : _6.maxStringLength !== null))
       throw new TypeError('option "maxStringLength", if provided, must be a positive integer, Infinity, or `null`');
-    var J5 = pe(_5, "customInspect") ? _5.customInspect : true;
+    var J5 = pe(_6, "customInspect") ? _6.customInspect : true;
     if (typeof J5 != "boolean" && J5 !== "symbol")
       throw new TypeError("option \"customInspect\", if provided, must be `true`, `false`, or `'symbol'`");
-    if (pe(_5, "indent") && _5.indent !== null && _5.indent !== "	" && !(parseInt(_5.indent, 10) === _5.indent && _5.indent > 0))
+    if (pe(_6, "indent") && _6.indent !== null && _6.indent !== "	" && !(parseInt(_6.indent, 10) === _6.indent && _6.indent > 0))
       throw new TypeError('option "indent" must be "\\t", an integer > 0, or `null`');
-    if (pe(_5, "numericSeparator") && typeof _5.numericSeparator != "boolean")
+    if (pe(_6, "numericSeparator") && typeof _6.numericSeparator != "boolean")
       throw new TypeError('option "numericSeparator", if provided, must be `true` or `false`');
-    var x5 = _5.numericSeparator;
+    var x5 = _6.numericSeparator;
     if (typeof Y > "u")
       return "undefined";
     if (Y === null)
@@ -43970,7 +43970,7 @@ function ko() {
     if (typeof Y == "boolean")
       return Y ? "true" : "false";
     if (typeof Y == "string")
-      return Nn(Y, _5);
+      return Nn(Y, _6);
     if (typeof Y == "number") {
       if (Y === 0)
         return 1 / 0 / Y > 0 ? "0" : "-0";
@@ -43981,10 +43981,10 @@ function ko() {
       var be = String(Y) + "n";
       return x5 ? Te(Y, be) : be;
     }
-    var we = typeof _5.depth > "u" ? 5 : _5.depth;
+    var we = typeof _6.depth > "u" ? 5 : _6.depth;
     if (typeof ee2 > "u" && (ee2 = 0), ee2 >= we && we > 0 && typeof Y == "object")
       return G5(Y) ? "[Array]" : "[Object]";
-    var dn = tu(_5, ee2);
+    var dn = tu(_6, ee2);
     if (typeof ie > "u")
       ie = [];
     else if (me(ie, Y) >= 0)
@@ -43992,23 +43992,23 @@ function ko() {
     function ln(Ga, bt, Kf) {
       if (bt && (ie = M5.call(ie), ie.push(bt)), Kf) {
         var rl = {
-          depth: _5.depth
+          depth: _6.depth
         };
-        return pe(_5, "quoteStyle") && (rl.quoteStyle = _5.quoteStyle), C5(Ga, rl, ee2 + 1, ie);
+        return pe(_6, "quoteStyle") && (rl.quoteStyle = _6.quoteStyle), C5(Ga, rl, ee2 + 1, ie);
       }
-      return C5(Ga, _5, ee2 + 1, ie);
+      return C5(Ga, _6, ee2 + 1, ie);
     }
     if (typeof Y == "function" && !E(Y)) {
       var el = Re(Y), nl = Ra(Y, ln);
       return "[Function" + (el ? ": " + el : " (anonymous)") + "]" + (nl.length > 0 ? " { " + L6.call(nl, ", ") + " }" : "");
     }
     if (fe(Y)) {
-      var al = R6 ? v.call(String(Y), /^(Symbol\(.*\))_[^)]*$/, "$1") : A5.call(Y);
+      var al = R6 ? v.call(String(Y), /^(Symbol\(.*\))_[^)]*$/, "$1") : A.call(Y);
       return typeof Y == "object" && !R6 ? Sn(al) : al;
     }
     if (sn(Y)) {
       for (var Zi = "<" + j.call(String(Y.nodeName)), ou = Y.attributes || [], yt = 0; yt < ou.length; yt++)
-        Zi += " " + ou[yt].name + "=" + T(D5(ou[yt].value), "double", _5);
+        Zi += " " + ou[yt].name + "=" + T5(D5(ou[yt].value), "double", _6);
       return Zi += ">", Y.childNodes && Y.childNodes.length && (Zi += "..."), Zi += "</" + j.call(String(Y.nodeName)) + ">", Zi;
     }
     if (G5(Y)) {
@@ -44057,13 +44057,13 @@ function ko() {
       return "{ [object Window] }";
     if (typeof globalThis < "u" && Y === globalThis || typeof oa < "u" && Y === oa)
       return "{ [object globalThis] }";
-    if (!Q5(Y) && !E(Y)) {
-      var su = Ra(Y, ln), ol = Ce ? Ce(Y) === Object.prototype : Y instanceof Object || Y.constructor === Object, du = Y instanceof Object ? "" : "null prototype", ul = !ol && ae && Object(Y) === Y && ae in Y ? b5.call(ye(Y), 8, -1) : du ? "Object" : "", Wf = ol || typeof Y.constructor != "function" ? "" : Y.constructor.name ? Y.constructor.name + " " : "", lu = Wf + (ul || du ? "[" + L6.call(S5.call([], ul || [], du || []), ": ") + "] " : "");
+    if (!Q(Y) && !E(Y)) {
+      var su = Ra(Y, ln), ol = Ce ? Ce(Y) === Object.prototype : Y instanceof Object || Y.constructor === Object, du = Y instanceof Object ? "" : "null prototype", ul = !ol && ae && Object(Y) === Y && ae in Y ? b.call(ye(Y), 8, -1) : du ? "Object" : "", Wf = ol || typeof Y.constructor != "function" ? "" : Y.constructor.name ? Y.constructor.name + " " : "", lu = Wf + (ul || du ? "[" + L6.call(S5.call([], ul || [], du || []), ": ") + "] " : "");
       return su.length === 0 ? lu + "{}" : dn ? lu + "{" + Ii(su, dn) + "}" : lu + "{ " + L6.call(su, ", ") + " }";
     }
     return String(Y);
   };
-  function T(C5, Y, z) {
+  function T5(C5, Y, z) {
     var ee2 = z.quoteStyle || Y, ie = An[ee2];
     return ie + C5 + ie;
   }
@@ -44076,7 +44076,7 @@ function ko() {
   function G5(C5) {
     return ye(C5) === "[object Array]" && F(C5);
   }
-  function Q5(C5) {
+  function Q(C5) {
     return ye(C5) === "[object Date]" && F(C5);
   }
   function E(C5) {
@@ -44099,10 +44099,10 @@ function ko() {
       return C5 && typeof C5 == "object" && C5 instanceof Symbol;
     if (typeof C5 == "symbol")
       return true;
-    if (!C5 || typeof C5 != "object" || !A5)
+    if (!C5 || typeof C5 != "object" || !A)
       return false;
     try {
-      return A5.call(C5), true;
+      return A.call(C5), true;
     } catch {
     }
     return false;
@@ -44214,12 +44214,12 @@ function ko() {
   function Nn(C5, Y) {
     if (C5.length > Y.maxStringLength) {
       var z = C5.length - Y.maxStringLength, ee2 = "... " + z + " more character" + (z > 1 ? "s" : "");
-      return Nn(b5.call(C5, 0, Y.maxStringLength), Y) + ee2;
+      return Nn(b.call(C5, 0, Y.maxStringLength), Y) + ee2;
     }
     var ie = vn[Y.quoteStyle || "single"];
     ie.lastIndex = 0;
-    var _5 = v.call(v.call(C5, ie, "\\$1"), /[\x00-\x1f]/g, ea);
-    return T(_5, "single", Y);
+    var _6 = v.call(v.call(C5, ie, "\\$1"), /[\x00-\x1f]/g, ea);
+    return T5(_6, "single", Y);
   }
   function ea(C5) {
     var Y = C5.charCodeAt(0), z = {
@@ -44276,24 +44276,24 @@ function ko() {
       for (var ie = 0; ie < C5.length; ie++)
         ee2[ie] = pe(C5, ie) ? Y(C5[ie], C5) : "";
     }
-    var _5 = typeof Z == "function" ? Z(C5) : [], J5;
+    var _6 = typeof Z == "function" ? Z(C5) : [], J5;
     if (R6) {
       J5 = {};
-      for (var x5 = 0; x5 < _5.length; x5++)
-        J5["$" + _5[x5]] = _5[x5];
+      for (var x5 = 0; x5 < _6.length; x5++)
+        J5["$" + _6[x5]] = _6[x5];
     }
     for (var W in C5)
       pe(C5, W) && (z && String(Number(W)) === W && W < C5.length || R6 && J5["$" + W] instanceof Symbol || ($5.call(/[^\w$]/, W) ? ee2.push(Y(W, C5) + ": " + Y(C5[W], C5)) : ee2.push(W + ": " + Y(C5[W], C5))));
     if (typeof Z == "function")
-      for (var be = 0; be < _5.length; be++)
-        de.call(C5, _5[be]) && ee2.push("[" + Y(_5[be]) + "]: " + Y(C5[_5[be]], C5));
+      for (var be = 0; be < _6.length; be++)
+        de.call(C5, _6[be]) && ee2.push("[" + Y(_6[be]) + "]: " + Y(C5[_6[be]], C5));
     return ee2;
   }
   return ar;
 }
 var ir;
 var Ah;
-function xy() {
+function Fy() {
   if (Ah) return ir;
   Ah = 1;
   var e = /* @__PURE__ */ ko(), n = /* @__PURE__ */ an(), a5 = function(l6, h, c6) {
@@ -44387,7 +44387,7 @@ function P2() {
 }
 var or;
 var Hh;
-function Fy() {
+function Ry() {
   if (Hh) return or;
   Hh = 1;
   var e = /* @__PURE__ */ Wn(), n = /* @__PURE__ */ Xe(), a5 = /* @__PURE__ */ ko(), i = P2(), t5 = /* @__PURE__ */ an(), o5 = e("%WeakMap%", true), r5 = n("WeakMap.prototype.get", true), l6 = n("WeakMap.prototype.set", true), h = n("WeakMap.prototype.has", true), c6 = n("WeakMap.prototype.delete", true);
@@ -44426,7 +44426,7 @@ var Xh;
 function A2() {
   if (Xh) return ur;
   Xh = 1;
-  var e = /* @__PURE__ */ an(), n = /* @__PURE__ */ ko(), a5 = xy(), i = P2(), t5 = Fy(), o5 = t5 || i || a5;
+  var e = /* @__PURE__ */ an(), n = /* @__PURE__ */ ko(), a5 = Fy(), i = P2(), t5 = Ry(), o5 = t5 || i || a5;
   return ur = function() {
     var r5, l6 = {
       assert: function(h) {
@@ -44451,7 +44451,7 @@ function A2() {
 }
 var rr;
 var Eh;
-function Ry() {
+function Gy() {
   if (Eh) return rr;
   Eh = 1;
   var e = /* @__PURE__ */ $s(), n = A2()(), a5 = /* @__PURE__ */ an(), i = {
@@ -44502,10 +44502,10 @@ function Ry() {
 }
 var sr;
 var Bh;
-function Gy() {
+function _y() {
   if (Bh) return sr;
   Bh = 1;
-  var e = Ry(), n = /* @__PURE__ */ fs(), a5 = typeof StopIteration == "object" ? StopIteration : null;
+  var e = Gy(), n = /* @__PURE__ */ fs(), a5 = typeof StopIteration == "object" ? StopIteration : null;
   return sr = function(i) {
     if (!a5)
       throw new n("this environment lacks StopIteration");
@@ -44624,10 +44624,10 @@ function E2() {
   }, hr;
 }
 var _h;
-function _y() {
+function Qy() {
   if (_h) return Di.exports;
   _h = 1;
-  var e = D2(), n = /* @__PURE__ */ Gy();
+  var e = D2(), n = /* @__PURE__ */ _y();
   if (ws()() || Lo()()) {
     var a5 = Symbol.iterator;
     Di.exports = function(L6) {
@@ -44638,8 +44638,8 @@ function _y() {
     };
   } else {
     var i = N2(), t5 = H2(), o5 = /* @__PURE__ */ Wn(), r5 = o5("%Map%", true), l6 = o5("%Set%", true), h = Yo(), c6 = h("Array.prototype.push"), g6 = h("String.prototype.charCodeAt"), f = h("String.prototype.slice"), u6 = function(L6, M5) {
-      var I5 = L6.length;
-      if (M5 + 1 >= I5)
+      var I = L6.length;
+      if (M5 + 1 >= I)
         return M5 + 1;
       var k5 = g6(L6, M5);
       if (k5 < 55296 || k5 > 56319)
@@ -44650,9 +44650,9 @@ function _y() {
       var M5 = 0;
       return {
         next: function() {
-          var I5 = M5 >= L6.length, k5;
-          return I5 || (k5 = L6[M5], M5 += 1), {
-            done: I5,
+          var I = M5 >= L6.length, k5;
+          return I || (k5 = L6[M5], M5 += 1), {
+            done: I,
             value: k5
           };
         }
@@ -44661,11 +44661,11 @@ function _y() {
       if (i(L6) || e(L6))
         return d6(L6);
       if (t5(L6)) {
-        var I5 = 0;
+        var I = 0;
         return {
           next: function() {
-            var k5 = u6(L6, I5), Z = f(L6, I5, k5);
-            return I5 = k5, {
+            var k5 = u6(L6, I), Z = f(L6, I, k5);
+            return I = k5, {
               done: k5 > L6.length,
               value: Z
             };
@@ -44681,7 +44681,7 @@ function _y() {
           return s5(L6, true);
       };
     else {
-      var p5 = /* @__PURE__ */ X2(), y6 = /* @__PURE__ */ E2(), w = h("Map.prototype.forEach", true), b5 = h("Set.prototype.forEach", true);
+      var p5 = /* @__PURE__ */ X2(), y6 = /* @__PURE__ */ E2(), w = h("Map.prototype.forEach", true), b = h("Set.prototype.forEach", true);
       if (typeof process > "u" || !process.versions || !process.versions.node)
         var v = h("Map.prototype.iterator", true), m5 = h("Set.prototype.iterator", true);
       var j = h("Map.prototype.@@iterator", true) || h("Map.prototype._es6-shim iterator_", true), $5 = h("Set.prototype.@@iterator", true) || h("Set.prototype._es6-shim iterator_", true), S5 = function(L6) {
@@ -44702,11 +44702,11 @@ function _y() {
             return n(m5(L6));
           if ($5)
             return $5(L6);
-          if (b5) {
-            var I5 = [];
-            return b5(L6, function(k5) {
-              c6(I5, k5);
-            }), d6(I5);
+          if (b) {
+            var I = [];
+            return b(L6, function(k5) {
+              c6(I, k5);
+            }), d6(I);
           }
         }
       };
@@ -44741,7 +44741,7 @@ function x2() {
 }
 var pr;
 var Wh;
-function Qy() {
+function Oy() {
   if (Wh) return pr;
   Wh = 1;
   var e = x2(), n = Da();
@@ -44756,10 +44756,10 @@ function Qy() {
 }
 var yr;
 var Kh;
-function Oy() {
+function Wy() {
   if (Kh) return yr;
   Kh = 1;
-  var e = Da(), n = ci(), a5 = B2(), i = x2(), t5 = Qy(), o5 = n(i(), Object);
+  var e = Da(), n = ci(), a5 = B2(), i = x2(), t5 = Oy(), o5 = n(i(), Object);
   return e(o5, {
     getPolyfill: i,
     implementation: a5,
@@ -44788,7 +44788,7 @@ function F2() {
 }
 var wr;
 var zh;
-function Wy() {
+function Ky() {
   if (zh) return wr;
   zh = 1;
   var e = /* @__PURE__ */ Xe(), n = e("Date.prototype.getDay"), a5 = function(r5) {
@@ -44849,7 +44849,7 @@ function R2() {
 }
 var jr;
 var Vh;
-function Ky() {
+function Uy() {
   if (Vh) return jr;
   Vh = 1;
   var e = /* @__PURE__ */ Xe(), n = e("SharedArrayBuffer.prototype.byteLength", true);
@@ -44867,7 +44867,7 @@ function Ky() {
 }
 var vr;
 var e0;
-function Uy() {
+function zy() {
   if (e0) return vr;
   e0 = 1;
   var e = /* @__PURE__ */ Xe(), n = e("Number.prototype.toString"), a5 = function(r5) {
@@ -44883,7 +44883,7 @@ function Uy() {
 }
 var Sr;
 var n0;
-function zy() {
+function qy() {
   if (n0) return Sr;
   n0 = 1;
   var e = /* @__PURE__ */ Xe(), n = e("Boolean.prototype.toString"), a5 = e("Object.prototype.toString"), i = function(r5) {
@@ -44900,7 +44900,7 @@ function zy() {
 var _t = { exports: {} };
 var $r;
 var a0;
-function qy() {
+function Vy() {
   if (a0) return $r;
   a0 = 1;
   var e = /* @__PURE__ */ Xe(), n = R2(), a5 = e("RegExp.prototype.exec"), i = /* @__PURE__ */ an();
@@ -44913,10 +44913,10 @@ function qy() {
   }, $r;
 }
 var i0;
-function Vy() {
+function eb() {
   if (i0) return _t.exports;
   i0 = 1;
-  var e = /* @__PURE__ */ Xe(), n = e("Object.prototype.toString"), a5 = ws()(), i = /* @__PURE__ */ qy();
+  var e = /* @__PURE__ */ Xe(), n = e("Object.prototype.toString"), a5 = ws()(), i = /* @__PURE__ */ Vy();
   if (a5) {
     var t5 = e("Symbol.prototype.toString"), o5 = i(/^Symbol\(.*\)$/), r5 = function(l6) {
       return typeof l6.valueOf() != "symbol" ? false : o5(t5(l6));
@@ -44941,7 +44941,7 @@ function Vy() {
 var Qt = { exports: {} };
 var Cr;
 var t0;
-function eb() {
+function nb() {
   if (t0) return Cr;
   t0 = 1;
   var e = typeof BigInt < "u" && BigInt;
@@ -44950,10 +44950,10 @@ function eb() {
   }, Cr;
 }
 var o0;
-function nb() {
+function ab() {
   if (o0) return Qt.exports;
   o0 = 1;
-  var e = eb()();
+  var e = nb()();
   if (e) {
     var n = BigInt.prototype.valueOf, a5 = function(i) {
       try {
@@ -44973,10 +44973,10 @@ function nb() {
 }
 var Lr;
 var u0;
-function ab() {
+function ib() {
   if (u0) return Lr;
   u0 = 1;
-  var e = H2(), n = Uy(), a5 = zy(), i = Vy(), t5 = nb();
+  var e = H2(), n = zy(), a5 = qy(), i = eb(), t5 = ab();
   return Lr = function(o5) {
     if (o5 == null || typeof o5 != "object" && typeof o5 != "function")
       return null;
@@ -44994,7 +44994,7 @@ function ab() {
 }
 var Yr;
 var r0;
-function ib() {
+function tb() {
   if (r0) return Yr;
   r0 = 1;
   var e = typeof WeakMap == "function" && WeakMap.prototype ? WeakMap : null, n = typeof WeakSet == "function" && WeakSet.prototype ? WeakSet : null, a5;
@@ -45022,7 +45022,7 @@ function ib() {
 }
 var Ot = { exports: {} };
 var s0;
-function tb() {
+function ob() {
   if (s0) return Ot.exports;
   s0 = 1;
   var e = /* @__PURE__ */ Wn(), n = Yo(), a5 = e("%WeakSet%", true), i = n("WeakSet.prototype.has", true);
@@ -45051,10 +45051,10 @@ function tb() {
 }
 var kr;
 var d0;
-function ob() {
+function ub() {
   if (d0) return kr;
   d0 = 1;
-  var e = /* @__PURE__ */ X2(), n = /* @__PURE__ */ E2(), a5 = ib(), i = /* @__PURE__ */ tb();
+  var e = /* @__PURE__ */ X2(), n = /* @__PURE__ */ E2(), a5 = tb(), i = /* @__PURE__ */ ob();
   return kr = function(t5) {
     if (t5 && typeof t5 == "object") {
       if (e(t5))
@@ -45071,7 +45071,7 @@ function ob() {
 }
 var Ir;
 var l0;
-function ub() {
+function rb() {
   if (l0) return Ir;
   l0 = 1;
   var e = Function.prototype.toString, n = typeof Reflect == "object" && Reflect !== null && Reflect.apply, a5, i;
@@ -45084,21 +45084,21 @@ function ub() {
       }), i = {}, n(function() {
         throw 42;
       }, null, a5);
-    } catch (b5) {
-      b5 !== i && (n = null);
+    } catch (b) {
+      b !== i && (n = null);
     }
   else
     n = null;
-  var t5 = /^\s*class\b/, o5 = function(b5) {
+  var t5 = /^\s*class\b/, o5 = function(b) {
     try {
-      var v = e.call(b5);
+      var v = e.call(b);
       return t5.test(v);
     } catch {
       return false;
     }
-  }, r5 = function(b5) {
+  }, r5 = function(b) {
     try {
-      return o5(b5) ? false : (e.call(b5), true);
+      return o5(b) ? false : (e.call(b), true);
     } catch {
       return false;
     }
@@ -45107,47 +45107,47 @@ function ub() {
   };
   if (typeof document == "object") {
     var w = document.all;
-    l6.call(w) === l6.call(document.all) && (y6 = function(b5) {
-      if ((p5 || !b5) && (typeof b5 > "u" || typeof b5 == "object"))
+    l6.call(w) === l6.call(document.all) && (y6 = function(b) {
+      if ((p5 || !b) && (typeof b > "u" || typeof b == "object"))
         try {
-          var v = l6.call(b5);
-          return (v === f || v === u6 || v === d6 || v === h) && b5("") == null;
+          var v = l6.call(b);
+          return (v === f || v === u6 || v === d6 || v === h) && b("") == null;
         } catch {
         }
       return false;
     });
   }
-  return Ir = n ? function(b5) {
-    if (y6(b5))
+  return Ir = n ? function(b) {
+    if (y6(b))
       return true;
-    if (!b5 || typeof b5 != "function" && typeof b5 != "object")
+    if (!b || typeof b != "function" && typeof b != "object")
       return false;
     try {
-      n(b5, null, a5);
+      n(b, null, a5);
     } catch (v) {
       if (v !== i)
         return false;
     }
-    return !o5(b5) && r5(b5);
-  } : function(b5) {
-    if (y6(b5))
+    return !o5(b) && r5(b);
+  } : function(b) {
+    if (y6(b))
       return true;
-    if (!b5 || typeof b5 != "function" && typeof b5 != "object")
+    if (!b || typeof b != "function" && typeof b != "object")
       return false;
     if (s5)
-      return r5(b5);
-    if (o5(b5))
+      return r5(b);
+    if (o5(b))
       return false;
-    var v = l6.call(b5);
-    return v !== c6 && v !== g6 && !/^\[object HTML/.test(v) ? false : r5(b5);
+    var v = l6.call(b);
+    return v !== c6 && v !== g6 && !/^\[object HTML/.test(v) ? false : r5(b);
   }, Ir;
 }
 var Zr;
 var g0;
-function rb() {
+function sb() {
   if (g0) return Zr;
   g0 = 1;
-  var e = ub(), n = Object.prototype.toString, a5 = Object.prototype.hasOwnProperty, i = function(l6, h, c6) {
+  var e = rb(), n = Object.prototype.toString, a5 = Object.prototype.hasOwnProperty, i = function(l6, h, c6) {
     for (var g6 = 0, f = l6.length; g6 < f; g6++)
       a5.call(l6, g6) && (c6 == null ? h(l6[g6], g6, l6) : h.call(c6, l6[g6], g6, l6));
   }, t5 = function(l6, h, c6) {
@@ -45169,7 +45169,7 @@ function rb() {
 }
 var h0;
 var c0;
-function sb() {
+function db() {
   return c0 || (c0 = 1, h0 = [
     "Float32Array",
     "Float64Array",
@@ -45186,10 +45186,10 @@ function sb() {
 }
 var Tr;
 var f0;
-function db() {
+function lb() {
   if (f0) return Tr;
   f0 = 1;
-  var e = /* @__PURE__ */ sb(), n = typeof globalThis > "u" ? oa : globalThis;
+  var e = /* @__PURE__ */ db(), n = typeof globalThis > "u" ? oa : globalThis;
   return Tr = function() {
     for (var a5 = [], i = 0; i < e.length; i++)
       typeof n[e[i]] == "function" && (a5[a5.length] = e[i]);
@@ -45198,10 +45198,10 @@ function db() {
 }
 var Mr;
 var p0;
-function lb() {
+function gb() {
   if (p0) return Mr;
   p0 = 1;
-  var e = rb(), n = /* @__PURE__ */ db(), a5 = ci(), i = /* @__PURE__ */ Xe(), t5 = /* @__PURE__ */ Ja(), o5 = Ss(), r5 = i("Object.prototype.toString"), l6 = Pa()(), h = typeof globalThis > "u" ? oa : globalThis, c6 = n(), g6 = i("String.prototype.slice"), f = i("Array.prototype.indexOf", true) || function(p5, y6) {
+  var e = sb(), n = /* @__PURE__ */ lb(), a5 = ci(), i = /* @__PURE__ */ Xe(), t5 = /* @__PURE__ */ Ja(), o5 = Ss(), r5 = i("Object.prototype.toString"), l6 = Pa()(), h = typeof globalThis > "u" ? oa : globalThis, c6 = n(), g6 = i("String.prototype.slice"), f = i("Array.prototype.indexOf", true) || function(p5, y6) {
     for (var w = 0; w < p5.length; w += 1)
       if (p5[w] === y6)
         return w;
@@ -45210,12 +45210,12 @@ function lb() {
   l6 && t5 && o5 ? e(c6, function(p5) {
     var y6 = new h[p5]();
     if (Symbol.toStringTag in y6 && o5) {
-      var w = o5(y6), b5 = t5(w, Symbol.toStringTag);
-      if (!b5 && w) {
+      var w = o5(y6), b = t5(w, Symbol.toStringTag);
+      if (!b && w) {
         var v = o5(w);
-        b5 = t5(v, Symbol.toStringTag);
+        b = t5(v, Symbol.toStringTag);
       }
-      u6["$" + p5] = a5(b5.get);
+      u6["$" + p5] = a5(b.get);
     }
   }) : e(c6, function(p5) {
     var y6 = new h[p5](), w = y6.slice || y6.set;
@@ -45232,11 +45232,11 @@ function lb() {
       /** @type {Record<`\$${import('.').TypedArrayName}`, Getter>} */
       u6,
       /** @type {(getter: Getter, name: `\$${import('.').TypedArrayName}`) => void} */
-      function(w, b5) {
+      function(w, b) {
         if (!y6)
           try {
-            "$" + w(p5) === b5 && (y6 = /** @type {import('.').TypedArrayName} */
-            g6(b5, 1));
+            "$" + w(p5) === b && (y6 = /** @type {import('.').TypedArrayName} */
+            g6(b, 1));
           } catch {
           }
       }
@@ -45247,11 +45247,11 @@ function lb() {
       /** @type {Record<`\$${import('.').TypedArrayName}`, Getter>} */
       u6,
       /** @type {(getter: Getter, name: `\$${import('.').TypedArrayName}`) => void} */
-      function(w, b5) {
+      function(w, b) {
         if (!y6)
           try {
             w(p5), y6 = /** @type {import('.').TypedArrayName} */
-            g6(b5, 1);
+            g6(b, 1);
           } catch {
           }
       }
@@ -45269,7 +45269,7 @@ function lb() {
 }
 var Jr;
 var y0;
-function gb() {
+function hb() {
   if (y0) return Jr;
   y0 = 1;
   var e = /* @__PURE__ */ Xe(), n = e("ArrayBuffer.prototype.byteLength", true), a5 = /* @__PURE__ */ F2();
@@ -45279,172 +45279,172 @@ function gb() {
 }
 var Dr;
 var b0;
-function hb() {
+function cb() {
   if (b0) return Dr;
   b0 = 1;
-  var e = Dy(), n = Yo(), a5 = Hy(), i = /* @__PURE__ */ Wn(), t5 = _y(), o5 = A2(), r5 = Oy(), l6 = D2(), h = N2(), c6 = /* @__PURE__ */ F2(), g6 = /* @__PURE__ */ Wy(), f = R2(), u6 = /* @__PURE__ */ Ky(), d6 = cs(), s5 = ab(), p5 = /* @__PURE__ */ ob(), y6 = /* @__PURE__ */ lb(), w = /* @__PURE__ */ gb(), b5 = n("SharedArrayBuffer.prototype.byteLength", true), v = n("Date.prototype.getTime"), m5 = Object.getPrototypeOf, j = n("Object.prototype.toString"), $5 = i("%Set%", true), S5 = n("Map.prototype.has", true), L6 = n("Map.prototype.get", true), M5 = n("Map.prototype.size", true), I5 = n("Set.prototype.add", true), k5 = n("Set.prototype.delete", true), Z = n("Set.prototype.has", true), A5 = n("Set.prototype.size", true);
-  function R6(T, D5, F, G5) {
-    for (var Q5 = t5(T), E; (E = Q5.next()) && !E.done; )
+  var e = Py(), n = Yo(), a5 = Xy(), i = /* @__PURE__ */ Wn(), t5 = Qy(), o5 = A2(), r5 = Wy(), l6 = D2(), h = N2(), c6 = /* @__PURE__ */ F2(), g6 = /* @__PURE__ */ Ky(), f = R2(), u6 = /* @__PURE__ */ Uy(), d6 = cs(), s5 = ib(), p5 = /* @__PURE__ */ ub(), y6 = /* @__PURE__ */ gb(), w = /* @__PURE__ */ hb(), b = n("SharedArrayBuffer.prototype.byteLength", true), v = n("Date.prototype.getTime"), m5 = Object.getPrototypeOf, j = n("Object.prototype.toString"), $5 = i("%Set%", true), S5 = n("Map.prototype.has", true), L6 = n("Map.prototype.get", true), M5 = n("Map.prototype.size", true), I = n("Set.prototype.add", true), k5 = n("Set.prototype.delete", true), Z = n("Set.prototype.has", true), A = n("Set.prototype.size", true);
+  function R6(T5, D5, F, G5) {
+    for (var Q = t5(T5), E; (E = Q.next()) && !E.done; )
       if (le(D5, E.value, F, G5))
-        return k5(T, E.value), true;
+        return k5(T5, E.value), true;
     return false;
   }
-  function ae(T) {
-    if (typeof T > "u")
+  function ae(T5) {
+    if (typeof T5 > "u")
       return null;
-    if (typeof T != "object")
-      return typeof T == "symbol" ? false : typeof T == "string" || typeof T == "number" ? +T == +T : true;
+    if (typeof T5 != "object")
+      return typeof T5 == "symbol" ? false : typeof T5 == "string" || typeof T5 == "number" ? +T5 == +T5 : true;
   }
-  function de(T, D5, F, G5, Q5, E) {
+  function de(T5, D5, F, G5, Q, E) {
     var B = ae(F);
     if (B != null)
       return B;
-    var N = L6(D5, B), H = e({}, Q5, { strict: false });
-    return typeof N > "u" && !S5(D5, B) || !le(G5, N, H, E) ? false : !S5(T, B) && le(G5, N, H, E);
+    var N = L6(D5, B), H = e({}, Q, { strict: false });
+    return typeof N > "u" && !S5(D5, B) || !le(G5, N, H, E) ? false : !S5(T5, B) && le(G5, N, H, E);
   }
-  function Ce(T, D5, F) {
+  function Ce(T5, D5, F) {
     var G5 = ae(F);
-    return G5 ?? (Z(D5, G5) && !Z(T, G5));
+    return G5 ?? (Z(D5, G5) && !Z(T5, G5));
   }
-  function Te(T, D5, F, G5, Q5, E) {
-    for (var B = t5(T), N, H; (N = B.next()) && !N.done; )
+  function Te(T5, D5, F, G5, Q, E) {
+    for (var B = t5(T5), N, H; (N = B.next()) && !N.done; )
       if (H = N.value, // eslint-disable-next-line no-use-before-define
-      le(F, H, Q5, E) && le(G5, L6(D5, H), Q5, E))
-        return k5(T, H), true;
+      le(F, H, Q, E) && le(G5, L6(D5, H), Q, E))
+        return k5(T5, H), true;
     return false;
   }
-  function le(T, D5, F, G5) {
-    var Q5 = F || {};
-    if (Q5.strict ? r5(T, D5) : T === D5)
+  function le(T5, D5, F, G5) {
+    var Q = F || {};
+    if (Q.strict ? r5(T5, D5) : T5 === D5)
       return true;
-    var E = s5(T), B = s5(D5);
+    var E = s5(T5), B = s5(D5);
     if (E !== B)
       return false;
-    if (!T || !D5 || typeof T != "object" && typeof D5 != "object")
-      return Q5.strict ? r5(T, D5) : T == D5;
-    var N = G5.has(T), H = G5.has(D5), O5;
+    if (!T5 || !D5 || typeof T5 != "object" && typeof D5 != "object")
+      return Q.strict ? r5(T5, D5) : T5 == D5;
+    var N = G5.has(T5), H = G5.has(D5), O5;
     if (N && H) {
-      if (G5.get(T) === G5.get(D5))
+      if (G5.get(T5) === G5.get(D5))
         return true;
     } else
       O5 = {};
-    return N || G5.set(T, O5), H || G5.set(D5, O5), vn(T, D5, Q5, G5);
+    return N || G5.set(T5, O5), H || G5.set(D5, O5), vn(T5, D5, Q, G5);
   }
-  function Dn(T) {
-    return !T || typeof T != "object" || typeof T.length != "number" || typeof T.copy != "function" || typeof T.slice != "function" || T.length > 0 && typeof T[0] != "number" ? false : !!(T.constructor && T.constructor.isBuffer && T.constructor.isBuffer(T));
+  function Dn(T5) {
+    return !T5 || typeof T5 != "object" || typeof T5.length != "number" || typeof T5.copy != "function" || typeof T5.slice != "function" || T5.length > 0 && typeof T5[0] != "number" ? false : !!(T5.constructor && T5.constructor.isBuffer && T5.constructor.isBuffer(T5));
   }
-  function Pn(T, D5, F, G5) {
-    if (A5(T) !== A5(D5))
+  function Pn(T5, D5, F, G5) {
+    if (A(T5) !== A(D5))
       return false;
-    for (var Q5 = t5(T), E = t5(D5), B, N, H; (B = Q5.next()) && !B.done; )
+    for (var Q = t5(T5), E = t5(D5), B, N, H; (B = Q.next()) && !B.done; )
       if (B.value && typeof B.value == "object")
-        H || (H = new $5()), I5(H, B.value);
+        H || (H = new $5()), I(H, B.value);
       else if (!Z(D5, B.value)) {
-        if (F.strict || !Ce(T, D5, B.value))
+        if (F.strict || !Ce(T5, D5, B.value))
           return false;
-        H || (H = new $5()), I5(H, B.value);
+        H || (H = new $5()), I(H, B.value);
       }
     if (H) {
       for (; (N = E.next()) && !N.done; )
         if (N.value && typeof N.value == "object") {
           if (!R6(H, N.value, F.strict, G5))
             return false;
-        } else if (!F.strict && !Z(T, N.value) && !R6(H, N.value, F.strict, G5))
+        } else if (!F.strict && !Z(T5, N.value) && !R6(H, N.value, F.strict, G5))
           return false;
-      return A5(H) === 0;
+      return A(H) === 0;
     }
     return true;
   }
-  function An(T, D5, F, G5) {
-    if (M5(T) !== M5(D5))
+  function An(T5, D5, F, G5) {
+    if (M5(T5) !== M5(D5))
       return false;
-    for (var Q5 = t5(T), E = t5(D5), B, N, H, O5, fe, V; (B = Q5.next()) && !B.done; )
+    for (var Q = t5(T5), E = t5(D5), B, N, H, O5, fe, V; (B = Q.next()) && !B.done; )
       if (O5 = B.value[0], fe = B.value[1], O5 && typeof O5 == "object")
-        H || (H = new $5()), I5(H, O5);
+        H || (H = new $5()), I(H, O5);
       else if (V = L6(D5, O5), typeof V > "u" && !S5(D5, O5) || !le(fe, V, F, G5)) {
-        if (F.strict || !de(T, D5, O5, fe, F, G5))
+        if (F.strict || !de(T5, D5, O5, fe, F, G5))
           return false;
-        H || (H = new $5()), I5(H, O5);
+        H || (H = new $5()), I(H, O5);
       }
     if (H) {
       for (; (N = E.next()) && !N.done; )
         if (O5 = N.value[0], V = N.value[1], O5 && typeof O5 == "object") {
-          if (!Te(H, T, O5, V, F, G5))
+          if (!Te(H, T5, O5, V, F, G5))
             return false;
-        } else if (!F.strict && (!T.has(O5) || !le(L6(T, O5), V, F, G5)) && !Te(H, T, O5, V, e({}, F, { strict: false }), G5))
+        } else if (!F.strict && (!T5.has(O5) || !le(L6(T5, O5), V, F, G5)) && !Te(H, T5, O5, V, e({}, F, { strict: false }), G5))
           return false;
-      return A5(H) === 0;
+      return A(H) === 0;
     }
     return true;
   }
-  function vn(T, D5, F, G5) {
-    var Q5, E;
-    if (typeof T != typeof D5 || T == null || D5 == null || j(T) !== j(D5) || l6(T) !== l6(D5))
+  function vn(T5, D5, F, G5) {
+    var Q, E;
+    if (typeof T5 != typeof D5 || T5 == null || D5 == null || j(T5) !== j(D5) || l6(T5) !== l6(D5))
       return false;
-    var B = h(T), N = h(D5);
+    var B = h(T5), N = h(D5);
     if (B !== N)
       return false;
-    var H = T instanceof Error, O5 = D5 instanceof Error;
-    if (H !== O5 || (H || O5) && (T.name !== D5.name || T.message !== D5.message))
+    var H = T5 instanceof Error, O5 = D5 instanceof Error;
+    if (H !== O5 || (H || O5) && (T5.name !== D5.name || T5.message !== D5.message))
       return false;
-    var fe = f(T), V = f(D5);
-    if (fe !== V || (fe || V) && (T.source !== D5.source || a5(T) !== a5(D5)))
+    var fe = f(T5), V = f(D5);
+    if (fe !== V || (fe || V) && (T5.source !== D5.source || a5(T5) !== a5(D5)))
       return false;
-    var tn = g6(T), pe = g6(D5);
-    if (tn !== pe || (tn || pe) && v(T) !== v(D5) || F.strict && m5 && m5(T) !== m5(D5))
+    var tn = g6(T5), pe = g6(D5);
+    if (tn !== pe || (tn || pe) && v(T5) !== v(D5) || F.strict && m5 && m5(T5) !== m5(D5))
       return false;
-    var ye = y6(T), Re = y6(D5);
+    var ye = y6(T5), Re = y6(D5);
     if (ye !== Re)
       return false;
     if (ye || Re) {
-      if (T.length !== D5.length)
+      if (T5.length !== D5.length)
         return false;
-      for (Q5 = 0; Q5 < T.length; Q5++)
-        if (T[Q5] !== D5[Q5])
+      for (Q = 0; Q < T5.length; Q++)
+        if (T5[Q] !== D5[Q])
           return false;
       return true;
     }
-    var me = Dn(T), on = Dn(D5);
+    var me = Dn(T5), on = Dn(D5);
     if (me !== on)
       return false;
     if (me || on) {
-      if (T.length !== D5.length)
+      if (T5.length !== D5.length)
         return false;
-      for (Q5 = 0; Q5 < T.length; Q5++)
-        if (T[Q5] !== D5[Q5])
+      for (Q = 0; Q < T5.length; Q++)
+        if (T5[Q] !== D5[Q])
           return false;
       return true;
     }
-    var un = c6(T), rn = c6(D5);
+    var un = c6(T5), rn = c6(D5);
     if (un !== rn)
       return false;
     if (un || rn)
-      return w(T) !== w(D5) ? false : typeof Uint8Array == "function" && le(new Uint8Array(T), new Uint8Array(D5), F, G5);
-    var xa = u6(T), Fa = u6(D5);
+      return w(T5) !== w(D5) ? false : typeof Uint8Array == "function" && le(new Uint8Array(T5), new Uint8Array(D5), F, G5);
+    var xa = u6(T5), Fa = u6(D5);
     if (xa !== Fa)
       return false;
     if (xa || Fa)
-      return b5(T) !== b5(D5) ? false : typeof Uint8Array == "function" && le(new Uint8Array(T), new Uint8Array(D5), F, G5);
-    if (typeof T != typeof D5)
+      return b(T5) !== b(D5) ? false : typeof Uint8Array == "function" && le(new Uint8Array(T5), new Uint8Array(D5), F, G5);
+    if (typeof T5 != typeof D5)
       return false;
-    var sn = d6(T), Nn = d6(D5);
+    var sn = d6(T5), Nn = d6(D5);
     if (sn.length !== Nn.length)
       return false;
-    for (sn.sort(), Nn.sort(), Q5 = sn.length - 1; Q5 >= 0; Q5--)
-      if (sn[Q5] != Nn[Q5])
+    for (sn.sort(), Nn.sort(), Q = sn.length - 1; Q >= 0; Q--)
+      if (sn[Q] != Nn[Q])
         return false;
-    for (Q5 = sn.length - 1; Q5 >= 0; Q5--)
-      if (E = sn[Q5], !le(T[E], D5[E], F, G5))
+    for (Q = sn.length - 1; Q >= 0; Q--)
+      if (E = sn[Q], !le(T5[E], D5[E], F, G5))
         return false;
-    var ea = p5(T), Sn = p5(D5);
-    return ea !== Sn ? false : ea === "Set" || Sn === "Set" ? Pn(T, D5, F, G5) : ea === "Map" ? An(T, D5, F, G5) : true;
+    var ea = p5(T5), Sn = p5(D5);
+    return ea !== Sn ? false : ea === "Set" || Sn === "Set" ? Pn(T5, D5, F, G5) : ea === "Map" ? An(T5, D5, F, G5) : true;
   }
-  return Dr = function(T, D5, F) {
-    return le(T, D5, F, o5());
+  return Dr = function(T5, D5, F) {
+    return le(T5, D5, F, o5());
   }, Dr;
 }
-hb();
-var cb = /* @__PURE__ */ new Set([
+cb();
+var fb = /* @__PURE__ */ new Set([
   "__proto__",
   "constructor",
   "prototype"
@@ -45454,7 +45454,7 @@ var yn = (e, n) => {
   const a5 = n.split(".");
   let i = e;
   for (const t5 of a5) {
-    if (!Ki(i) || typeof i != "object" || cb.has(t5)) return;
+    if (!Ki(i) || typeof i != "object" || fb.has(t5)) return;
     i = i[t5];
   }
   return i;
@@ -45525,7 +45525,7 @@ function ui(e, n) {
     writable: !n
   }), e);
 }
-function fb(e) {
+function pb(e) {
   return Qn((n) => ({
     get: n,
     configurable: 1
@@ -45645,11 +45645,11 @@ function To(e, n, a5) {
   }
   return i;
 }
-function pb(e) {
+function yb(e) {
   if (e !== void 0)
     return Ze(e);
 }
-function yb(e) {
+function bb(e) {
   if (e !== void 0)
     return En(e);
 }
@@ -45661,7 +45661,7 @@ function En(e) {
   return z2(Ys(e));
 }
 function Ys(e) {
-  return U2(Y3(e));
+  return U2(k3(e));
 }
 function K2(e, n) {
   if (n == null)
@@ -45670,7 +45670,7 @@ function K2(e, n) {
 }
 function Vi(e) {
   if (!Be(e))
-    throw new TypeError(z4);
+    throw new TypeError(q4);
   return e;
 }
 function ks(e, n, a5 = e) {
@@ -45680,17 +45680,17 @@ function ks(e, n, a5 = e) {
 }
 function U2(e, n = "number") {
   if (!Number.isInteger(e))
-    throw new RangeError(_4(n, e));
+    throw new RangeError(Q4(n, e));
   return e || 0;
 }
 function z2(e, n = "number") {
   if (e <= 0)
-    throw new RangeError(Q4(n, e));
+    throw new RangeError(O4(n, e));
   return e;
 }
 function Is(e) {
   if (typeof e == "symbol")
-    throw new TypeError(U4);
+    throw new TypeError(z4);
   return String(e);
 }
 function Vt(e, n) {
@@ -45700,14 +45700,14 @@ function Zs(e) {
   if (typeof e == "string")
     return BigInt(e);
   if (typeof e != "bigint")
-    throw new TypeError(K4(e));
+    throw new TypeError(U4(e));
   return e;
 }
 function q2(e, n = "number") {
   if (typeof e == "bigint")
-    throw new TypeError(W4(n));
+    throw new TypeError(K4(n));
   if (e = Number(e), !Number.isFinite(e))
-    throw new RangeError(O4(n, e));
+    throw new RangeError(W4(n, e));
   return e;
 }
 function Pe(e, n) {
@@ -45774,7 +45774,7 @@ function We(e) {
   })), e;
 }
 function Tn(e) {
-  if (!e || V2(e, D3, J3))
+  if (!e || V2(e, P3, D3))
     throw new RangeError(ja);
   return e;
 }
@@ -45868,11 +45868,11 @@ function oc(e) {
   return Xi(n.getUTCDay() - a5, 7) || 7;
 }
 function uc(e) {
-  return this.id === Ci ? (({ isoYear: n }) => n < 1 ? ["gregory-inverse", 1 - n] : ["gregory", n])(e) : this.id === ca ? N3(e) : [];
+  return this.id === Ci ? (({ isoYear: n }) => n < 1 ? ["gregory-inverse", 1 - n] : ["gregory", n])(e) : this.id === ca ? H3(e) : [];
 }
-function bb(e) {
+function wb(e) {
   const n = Ne(e);
-  if (n < A3) {
+  if (n < N3) {
     const { isoYear: o5 } = e;
     return o5 < 1 ? ["japanese-inverse", 1 - o5] : ["japanese", o5];
   }
@@ -45904,7 +45904,7 @@ function ue(e) {
 }
 function Po(e, n = 0) {
   e = Mn(e);
-  const a5 = Zf(e), i = Q3(e, n);
+  const a5 = Zf(e), i = O3(e, n);
   return [If(e), i, a5];
 }
 function wi(e, n, a5, i = 9, t5 = 0, o5 = 4) {
@@ -45925,8 +45925,8 @@ function Es(e) {
 function sc(e, n) {
   return Bs(Mn(e), n);
 }
-function wb(e) {
-  const n = No(e, xr), a5 = fa(xr, G3, n, 0);
+function mb(e) {
+  const n = No(e, xr), a5 = fa(xr, _3, n, 0);
   if (!a5)
     throw new RangeError(ma(xr, a5));
   return a5;
@@ -45974,7 +45974,7 @@ function No(e, n) {
 }
 function Ho(e) {
   return {
-    overflow: H3[e]
+    overflow: X3[e]
   };
 }
 function Rs(e, n, a5 = 9, i = 0, t5) {
@@ -45984,7 +45984,7 @@ function Rs(e, n, a5 = 9, i = 0, t5) {
   if (o5 = Is(o5), o5 === "auto")
     return t5 ? i : null;
   let r5 = Kr[o5];
-  if (r5 === void 0 && (r5 = Z3[o5]), r5 === void 0)
+  if (r5 === void 0 && (r5 = T3[o5]), r5 === void 0)
     throw new RangeError(uf(e, o5, Kr));
   return _n(e, r5, i, a5, 1, wd), r5;
 }
@@ -45999,7 +45999,7 @@ function fa(e, n, a5, i = 0) {
 }
 function gc(e, n) {
   if (n > e)
-    throw new RangeError(w3);
+    throw new RangeError(m3);
 }
 function Kn(e) {
   return {
@@ -46019,7 +46019,7 @@ function mn(e, n = e.calendar) {
   return {
     branding: Li,
     calendar: n,
-    ...bn(T3, e)
+    ...bn(M3, e)
   };
 }
 function Un(e, n = e.calendar) {
@@ -46059,7 +46059,7 @@ function $e(e) {
 function Gs(e) {
   return Ds(e.epochNanoseconds, zn)[0];
 }
-function mb(e) {
+function jb(e) {
   return ((n, a5 = 1) => {
     const [i, t5] = n, o5 = Math.floor(t5 / a5), r5 = ge / a5;
     return BigInt(i) * BigInt(r5) + BigInt(o5);
@@ -46068,10 +46068,10 @@ function mb(e) {
 function hc(e) {
   return e.epochNanoseconds;
 }
-function jb(e, n, a5, i, t5) {
-  const o5 = Ia(i), [r5, l6] = ((w, b5) => {
-    const v = b5((w = No(w, qr))[Lf]);
-    let m5 = _3(w);
+function vb(e, n, a5, i, t5) {
+  const o5 = Ia(i), [r5, l6] = ((w, b) => {
+    const v = b((w = No(w, qr))[Lf]);
+    let m5 = Q3(w);
     return m5 = K2(qr, m5), [m5, v];
   })(t5, e), h = Math.max(r5, o5);
   if (!l6 && _i(h, l6))
@@ -46083,8 +46083,8 @@ function jb(e, n, a5, i, t5) {
   const [c6, g6, f] = Fo(n, a5, l6), u6 = Vs(f), d6 = Ro(f), s5 = ed(f), p5 = d6(g6, c6, i);
   si(l6) || (We(c6), We(p5));
   const y6 = s5(g6, c6, p5, r5);
-  return _i(r5, l6) ? $0(y6, r5) : ((w, b5, v, m5, j, $5, S5) => {
-    const L6 = pa(w), [M5, I5] = _s(m5, Ld(v, w), v, L6, j, $5, S5), k5 = Qs(b5, M5, I5);
+  return _i(r5, l6) ? $0(y6, r5) : ((w, b, v, m5, j, $5, S5) => {
+    const L6 = pa(w), [M5, I] = _s(m5, Ld(v, w), v, L6, j, $5, S5), k5 = Qs(b, M5, I);
     return w[re[v]] + k5 * L6;
   })(y6, u6(p5), r5, g6, c6, u6, d6);
 }
@@ -46104,11 +46104,11 @@ function Qs(e, n, a5) {
     throw new RangeError($i);
   return In(kn(n, e)) / i;
 }
-function vb(e, n) {
+function Sb(e, n) {
   const [a5, i, t5] = Ao(n, 5, 1);
   return Kn(Eo(e.epochNanoseconds, a5, i, t5, 1));
 }
-function Sb(e, n, a5) {
+function $b(e, n, a5) {
   let { epochNanoseconds: i, timeZone: t5, calendar: o5 } = n;
   const [r5, l6, h] = Ao(a5);
   if (r5 === 0 && l6 === 1)
@@ -46116,10 +46116,10 @@ function Sb(e, n, a5) {
   const c6 = e(t5);
   if (r5 === 6)
     i = ((g6, f, u6, d6) => {
-      const s5 = nn(u6, f), [p5, y6] = g6(s5), w = u6.epochNanoseconds, b5 = ha(f, p5), v = ha(f, y6);
-      if (V2(w, b5, v))
+      const s5 = nn(u6, f), [p5, y6] = g6(s5), w = u6.epochNanoseconds, b = ha(f, p5), v = ha(f, y6);
+      if (V2(w, b, v))
         throw new RangeError($i);
-      return bc(Qs(w, b5, v), d6) ? v : b5;
+      return bc(Qs(w, b, v), d6) ? v : b;
     })(pc, c6, n, h);
   else {
     const g6 = c6.R(i);
@@ -46127,21 +46127,21 @@ function Sb(e, n, a5) {
   }
   return wn(i, t5, o5);
 }
-function $b(e, n) {
+function Cb(e, n) {
   return mn(cc(e, ...Ao(n)), e.calendar);
 }
-function Cb(e, n) {
+function Lb(e, n) {
   const [a5, i, t5] = Ao(n, 5);
   var o5;
   return Jn((o5 = t5, Os(e, et(a5, i), o5)[0]));
 }
-function Lb(e, n) {
+function Yb(e, n) {
   const a5 = e(n.timeZone), i = nn(n, a5), [t5, o5] = pc(i), r5 = In(kn(ha(a5, t5), ha(a5, o5)), qo, 1);
   if (r5 <= 0)
     throw new RangeError($i);
   return r5;
 }
-function Yb(e, n) {
+function kb(e, n) {
   const { timeZone: a5, calendar: i } = n, t5 = ((o5, r5, l6) => ha(r5, o5(nn(l6, r5))))(yc, e(a5), n);
   return wn(t5, a5, i);
 }
@@ -46169,25 +46169,25 @@ function pc(e) {
   return [n, Na(n, 1)];
 }
 function yc(e) {
-  return M3(6, e);
+  return J3(6, e);
 }
-function kb(e, n, a5) {
+function Ib(e, n, a5) {
   const i = Math.min(Ia(e), 6);
   return ji(Bo(ke(e, i), n, a5), i);
 }
 function Xo(e, n, a5, i, t5, o5, r5, l6, h, c6) {
   if (i === 0 && t5 === 1)
     return e;
-  const g6 = _i(i, l6) ? si(l6) && i < 6 && a5 >= 6 ? Zb : Ib : Tb;
+  const g6 = _i(i, l6) ? si(l6) && i < 6 && a5 >= 6 ? Tb : Zb : Mb;
   let [f, u6, d6] = g6(e, n, a5, i, t5, o5, r5, l6, h, c6);
-  return d6 && i !== 7 && (f = ((s5, p5, y6, w, b5, v, m5, j) => {
+  return d6 && i !== 7 && (f = ((s5, p5, y6, w, b, v, m5, j) => {
     const $5 = pa(s5);
     for (let S5 = w + 1; S5 <= y6; S5++) {
       if (S5 === 7 && y6 !== 7)
         continue;
       const L6 = Ld(S5, s5);
       L6[re[S5]] += $5;
-      const M5 = In(kn(m5(j(b5, v, L6)), p5));
+      const M5 = In(kn(m5(j(b, v, L6)), p5));
       if (M5 && Math.sign(M5) !== $5)
         break;
       s5 = L6;
@@ -46212,16 +46212,16 @@ function ga(e, n, a5) {
   return bc(e / n, a5) * n;
 }
 function bc(e, n) {
-  return K3[n](e);
+  return U3[n](e);
 }
-function Ib(e, n, a5, i, t5, o5) {
+function Zb(e, n, a5, i, t5, o5) {
   const r5 = pa(e), l6 = ke(e), h = Eo(l6, i, t5, o5), c6 = kn(l6, h), g6 = Math.sign(h[0] - l6[0]) === r5, f = ji(h, Math.min(a5, 6));
   return [{
     ...e,
     ...f
   }, ri(n, c6), g6];
 }
-function Zb(e, n, a5, i, t5, o5, r5, l6, h, c6) {
+function Tb(e, n, a5, i, t5, o5, r5, l6, h, c6) {
   const g6 = pa(e) || 1, f = In(ke(e, 5)), u6 = et(i, t5);
   let d6 = ga(f, u6, o5);
   const [s5, p5] = _s(r5, {
@@ -46230,14 +46230,14 @@ function Zb(e, n, a5, i, t5, o5, r5, l6, h, c6) {
   }, 6, g6, l6, h, c6), y6 = d6 - In(kn(s5, p5));
   let w = 0;
   y6 && Math.sign(y6) !== g6 ? n = ka(s5, d6) : (w += g6, d6 = ga(y6, u6, o5), n = ka(p5, d6));
-  const b5 = Go(d6);
+  const b = Go(d6);
   return [{
     ...e,
-    ...b5,
+    ...b,
     days: e.days + w
   }, n, !!w];
 }
-function Tb(e, n, a5, i, t5, o5, r5, l6, h, c6) {
+function Mb(e, n, a5, i, t5, o5, r5, l6, h, c6) {
   const g6 = pa(e), f = re[i], u6 = Ld(i, e);
   i === 7 && (e = {
     ...e,
@@ -46245,8 +46245,8 @@ function Tb(e, n, a5, i, t5, o5, r5, l6, h, c6) {
   });
   const d6 = Zo(e[f], t5) * t5;
   u6[f] = d6;
-  const [s5, p5] = _s(r5, u6, i, t5 * g6, l6, h, c6), y6 = d6 + Qs(n, s5, p5) * g6 * t5, w = ga(y6, t5, o5), b5 = Math.sign(w - y6) === g6;
-  return u6[f] = w, [u6, b5 ? p5 : s5, b5];
+  const [s5, p5] = _s(r5, u6, i, t5 * g6, l6, h, c6), y6 = d6 + Qs(n, s5, p5) * g6 * t5, w = ga(y6, t5, o5), b = Math.sign(w - y6) === g6;
+  return u6[f] = w, [u6, b ? p5 : s5, b];
 }
 function C0(e, n, a5, i) {
   const [t5, o5, r5, l6] = ((c6) => {
@@ -46262,13 +46262,13 @@ function C0(e, n, a5, i) {
 function L0(e, n, a5) {
   const [i, t5, o5, r5, l6, h] = ((c6) => {
     c6 = Mn(c6);
-    const g6 = Td(c6), f = lc(c6), u6 = W3(c6), d6 = dt(c6, 4), s5 = st(c6, 4);
-    return [g6, O3(c6), u6, d6, ...dc(s5, f)];
+    const g6 = Td(c6), f = lc(c6), u6 = K3(c6), d6 = dt(c6, 4), s5 = st(c6, 4);
+    return [g6, W3(c6), u6, d6, ...dc(s5, f)];
   })(a5);
-  return ((c6, g6, f, u6, d6, s5, p5, y6, w, b5) => {
+  return ((c6, g6, f, u6, d6, s5, p5, y6, w, b) => {
     u6 = Bo(u6, w, y6, 1);
     const v = c6(f).R(u6);
-    return Ws(yi(u6, v), b5) + nt(so(v), p5) + ((m5, j) => j !== 1 ? "[" + (j === 2 ? "!" : "") + m5 + "]" : "")(f, s5) + Ks(g6, d6);
+    return Ws(yi(u6, v), b) + nt(so(v), p5) + ((m5, j) => j !== 1 ? "[" + (j === 2 ? "!" : "") + m5 + "]" : "")(f, s5) + Ks(g6, d6);
   })(e, n.calendar, n.timeZone, n.epochNanoseconds, i, t5, o5, r5, l6, h);
 }
 function Y0(e, n) {
@@ -46284,7 +46284,7 @@ function I0(e, n) {
   return wc(e.calendar, mc, e, Es(n));
 }
 function Z0(e, n) {
-  return wc(e.calendar, Mb, e, Es(n));
+  return wc(e.calendar, Jb, e, Es(n));
 }
 function T0(e, n) {
   const [a5, i, t5] = sc(n);
@@ -46295,7 +46295,7 @@ function Pr(e, n) {
   const [a5, i, t5] = sc(n, 3);
   return i > 1 && Ha(e = {
     ...e,
-    ...kb(e, i, a5)
+    ...Ib(e, i, a5)
   }), ((o5, r5) => {
     const { sign: l6 } = o5, h = l6 === -1 ? xe(o5) : o5, { hours: c6, minutes: g6 } = h, [f, u6] = Ds(ke(h, 3), Yn, da);
     Cc(f);
@@ -46334,7 +46334,7 @@ function mc(e) {
   const { isoYear: n } = e;
   return (n < 0 || n > 9999 ? Sc(n) + to(6, Math.abs(n)) : to(4, n)) + "-" + fn(e.isoMonth);
 }
-function Mb(e) {
+function Jb(e) {
   return fn(e.isoMonth) + "-" + fn(e.isoDay);
 }
 function jc(e, n) {
@@ -46355,7 +46355,7 @@ function vc(e, n) {
 }
 function Us(e, n) {
   let a5 = to(9, e);
-  return a5 = n === void 0 ? a5.replace(q3, "") : a5.slice(0, n), a5 ? "." + a5 : "";
+  return a5 = n === void 0 ? a5.replace(V3, "") : a5.slice(0, n), a5 ? "." + a5 : "";
 }
 function Sc(e) {
   return e < 0 ? "-" : "+";
@@ -46365,7 +46365,7 @@ function Ca(e, n) {
     useGrouping: 0
   }) : "";
 }
-function Jb(e, n) {
+function Db(e, n) {
   const { epochNanoseconds: a5 } = e, i = (n.R ? n : n(e.timeZone)).R(a5), t5 = yi(a5, i);
   return {
     calendar: e.calendar,
@@ -46390,7 +46390,7 @@ function mi(e, n, a5, i = 0, t5 = 0, o5, r5) {
     if (h !== void 0)
       return h;
     if (i === 0)
-      throw new RangeError(h3);
+      throw new RangeError(c3);
   }
   return r5 ? Ye(n) : at(e, n, t5, l6);
 }
@@ -46398,14 +46398,14 @@ function at(e, n, a5 = 0, i = e.I(n)) {
   if (i.length === 1)
     return i[0];
   if (a5 === 1)
-    throw new RangeError(c3);
+    throw new RangeError(f3);
   if (i.length)
     return i[a5 === 3 ? 1 : 0];
   const t5 = Ye(n), o5 = ((l6, h) => {
     const c6 = l6.R(ka(h, -ge));
     return ((g6) => {
       if (g6 > ge)
-        throw new RangeError(g3);
+        throw new RangeError(h3);
       return g6;
     })(l6.R(ka(h, ge)) - c6);
   })(e, t5), r5 = o5 * (a5 === 2 ? -1 : 1);
@@ -46421,7 +46421,7 @@ function ha(e, n) {
 function J0(e, n, a5) {
   return Kn(Tn(ri(n.epochNanoseconds, ((i) => {
     if (Lc(i))
-      throw new RangeError(y3);
+      throw new RangeError(b3);
     return ke(i, 5);
   })(e ? xe(a5) : a5))));
 }
@@ -46516,7 +46516,7 @@ function Ro(e) {
   return e ? ne(zs, e) : qs;
 }
 function ed(e) {
-  return e ? ne(a4, e) : i4;
+  return e ? ne(i4, e) : t4;
 }
 function si(e) {
   return e && e.epochNanoseconds;
@@ -46527,8 +46527,8 @@ function _i(e, n) {
 function X0(e, n, a5, i, t5, o5, r5) {
   const l6 = e(Mn(r5).relativeTo), h = Math.max(Ia(t5), Ia(o5));
   if (_i(h, l6))
-    return $e(Ha(((p5, y6, w, b5) => {
-      const v = ri(ke(p5), ke(y6), b5 ? -1 : 1);
+    return $e(Ha(((p5, y6, w, b) => {
+      const v = ri(ke(p5), ke(y6), b ? -1 : 1);
       if (!Number.isFinite(v[0]))
         throw new RangeError(ja);
       return {
@@ -46542,23 +46542,23 @@ function X0(e, n, a5, i, t5, o5, r5) {
   const [c6, g6, f] = Fo(n, a5, l6), u6 = Ro(f), d6 = ed(f), s5 = u6(g6, c6, t5);
   return $e(d6(g6, c6, u6(g6, s5, o5), h));
 }
-function Db(e, n, a5, i, t5) {
+function Pb(e, n, a5, i, t5) {
   const o5 = Ia(i), [r5, l6, h, c6, g6] = (($5, S5, L6) => {
     $5 = No($5, co);
     let M5 = kf($5);
-    const I5 = L6($5[Lf]);
+    const I = L6($5[Lf]);
     let k5 = xs($5);
     const Z = dt($5, 7);
-    let A5 = st($5);
-    if (M5 === void 0 && A5 === void 0)
-      throw new RangeError(b3);
-    if (A5 == null && (A5 = 0), M5 == null && (M5 = Math.max(A5, S5)), gc(M5, A5), k5 = Fs(k5, A5, 1), k5 > 1 && A5 > 5 && M5 !== A5)
+    let A = st($5);
+    if (M5 === void 0 && A === void 0)
+      throw new RangeError(w3);
+    if (A == null && (A = 0), M5 == null && (M5 = Math.max(A, S5)), gc(M5, A), k5 = Fs(k5, A, 1), k5 > 1 && A > 5 && M5 !== A)
       throw new RangeError("For calendar units with roundingIncrement > 1, use largestUnit = smallestUnit");
-    return [M5, A5, k5, Z, I5];
+    return [M5, A, k5, Z, I];
   })(t5, o5, e), f = Math.max(o5, r5);
   if (!g6 && f <= 6)
-    return $e(Ha((($5, S5, L6, M5, I5) => {
-      const k5 = Eo(ke($5), L6, M5, I5);
+    return $e(Ha((($5, S5, L6, M5, I) => {
+      const k5 = Eo(ke($5), L6, M5, I);
       return {
         ...Ie,
         ...ji(k5, S5)
@@ -46568,15 +46568,15 @@ function Db(e, n, a5, i, t5) {
     return i;
   if (!g6)
     throw new RangeError(Uo);
-  const [u6, d6, s5] = Fo(n, a5, g6), p5 = Vs(s5), y6 = Ro(s5), w = ed(s5), b5 = y6(d6, u6, i);
-  si(g6) || (We(u6), We(b5));
-  let v = w(d6, u6, b5, r5);
+  const [u6, d6, s5] = Fo(n, a5, g6), p5 = Vs(s5), y6 = Ro(s5), w = ed(s5), b = y6(d6, u6, i);
+  si(g6) || (We(u6), We(b));
+  let v = w(d6, u6, b, r5);
   const m5 = i.sign, j = pa(v);
   if (m5 && j && m5 !== j)
     throw new RangeError($i);
-  return v = Xo(v, p5(b5), r5, l6, h, c6, d6, u6, p5, y6), $e(v);
+  return v = Xo(v, p5(b), r5, l6, h, c6, d6, u6, p5, y6), $e(v);
 }
-function Pb(e) {
+function Ab(e) {
   return e.sign === -1 ? nd(e) : e;
 }
 function nd(e) {
@@ -46588,7 +46588,7 @@ function xe(e) {
     n[a5] = -1 * e[a5] || 0;
   return n;
 }
-function Ab(e) {
+function Nb(e) {
   return !e.sign;
 }
 function pa(e, n = re) {
@@ -46597,20 +46597,20 @@ function pa(e, n = re) {
     const t5 = Math.sign(e[i]);
     if (t5) {
       if (a5 && a5 !== t5)
-        throw new RangeError(p3);
+        throw new RangeError(y3);
       a5 = t5;
     }
   }
   return a5;
 }
 function Ha(e) {
-  for (const n of I3)
+  for (const n of Z3)
     _n(n, e[n], -K0, K0, 1);
   return Cc(In(ke(e), Yn)), e;
 }
 function Cc(e) {
   if (!Number.isSafeInteger(e))
-    throw new RangeError(f3);
+    throw new RangeError(p3);
 }
 function ke(e, n = 6) {
   return O2(e, n, re);
@@ -46633,14 +46633,14 @@ function Ia(e) {
     ;
   return n;
 }
-function Nb(e, n) {
+function Hb(e, n) {
   return [e, n];
 }
 function E0(e) {
   const n = Math.floor(e / no) * no;
   return [n, n + no];
 }
-function Hb(e) {
+function Xb(e) {
   const n = ya(e = Vt(e));
   if (!n)
     throw new RangeError(Qe(e));
@@ -46654,7 +46654,7 @@ function Hb(e) {
   }
   return n.timeZone && ud(n.timeZone, 1), Kn(As(Do(n), a5));
 }
-function Xb(e) {
+function Eb(e) {
   const n = ya(Ze(e));
   if (!n)
     throw new RangeError(Qe(e));
@@ -46664,7 +46664,7 @@ function Xb(e) {
     throw new RangeError(Qe(e));
   return Ic(n);
 }
-function Eb(e, n) {
+function Bb(e, n) {
   const a5 = ya(Ze(e));
   if (!a5 || !a5.timeZone)
     throw new RangeError(Qe(e));
@@ -46677,7 +46677,7 @@ function Xa(e) {
     throw new RangeError(Qe(e));
   return n;
 }
-function Bb(e) {
+function xb(e) {
   const n = ya(Ze(e));
   if (!n || n.j)
     throw new RangeError(Qe(e));
@@ -46700,7 +46700,7 @@ function ad(e, n, a5) {
     isoYear: Fn
   }), Un(i.C ? kc(i) : Ic(i));
 }
-function xb(e, n) {
+function Fb(e, n) {
   const a5 = td(Ze(n));
   if (a5)
     return id(a5), Ri(Ps(Aa(a5)));
@@ -46711,16 +46711,16 @@ function id(e) {
   if (e.calendar !== te)
     throw new RangeError(xn(e.calendar));
 }
-function Fb(e, n) {
+function Rb(e, n) {
   const a5 = od(Ze(n));
   if (a5)
     return id(a5), ro(Aa(a5));
   const i = ad(n, 0, 1), { calendar: t5 } = i, o5 = e(t5), [r5, l6, h] = o5.v(i), [c6, g6] = o5.q(r5, l6), [f, u6] = o5.G(c6, g6, h);
   return ro(cn(o5.V(f, u6, h)), t5);
 }
-function Rb(e) {
+function Gb(e) {
   let n, a5 = ((i) => {
-    const t5 = o8.exec(i);
+    const t5 = u8.exec(i);
     return t5 ? (_o(t5[10]), Mc(t5)) : void 0;
   })(Ze(e));
   if (!a5) {
@@ -46738,9 +46738,9 @@ function Rb(e) {
     throw new RangeError(Qe(e));
   return Jn(bi(a5, 1));
 }
-function Gb(e) {
+function _b(e) {
   const n = ((a5) => {
-    const i = s8.exec(a5);
+    const i = d8.exec(a5);
     return i ? ((t5) => {
       function o5(g6, f, u6) {
         let d6 = 0, s5 = 0;
@@ -46769,11 +46769,11 @@ function Gb(e) {
     throw new RangeError(Qe(e));
   return $e(Ha(n));
 }
-function _b(e) {
+function Qb(e) {
   const n = ya(e) || td(e) || od(e);
   return n ? n.calendar : e;
 }
-function Qb(e) {
+function Ob(e) {
   const n = ya(e);
   return n && (n.timeZone || n.j && Ba || n.offset) || e;
 }
@@ -46795,7 +46795,7 @@ function Zc(e) {
   };
 }
 function ya(e) {
-  const n = t8.exec(e);
+  const n = o8.exec(e);
   return n ? ((a5) => {
     const i = a5[10], t5 = (i || "").toUpperCase() === "Z";
     return {
@@ -46811,7 +46811,7 @@ function ya(e) {
   })(n) : void 0;
 }
 function td(e) {
-  const n = a8.exec(e);
+  const n = i8.exec(e);
   return n ? ((a5) => ({
     isoYear: Tc(a5),
     isoMonth: parseInt(a5[4]),
@@ -46820,7 +46820,7 @@ function td(e) {
   }))(n) : void 0;
 }
 function od(e) {
-  const n = i8.exec(e);
+  const n = t8.exec(e);
   return n ? ((a5) => ({
     isoYear: Fn,
     isoMonth: parseInt(a5[1]),
@@ -46829,14 +46829,14 @@ function od(e) {
   }))(n) : void 0;
 }
 function ud(e, n) {
-  const a5 = u8.exec(e);
+  const a5 = r8.exec(e);
   return a5 ? ((i, t5) => {
     const o5 = i[4] || i[5];
     if (t5 && o5)
       throw new RangeError(xn(o5));
     return ((r5) => {
       if (Math.abs(r5) >= ge)
-        throw new RangeError(l3);
+        throw new RangeError(g3);
       return r5;
     })((ai(i[2]) * qo + ai(i[3]) * zo + ai(i[4]) * Yn + rd(i[5] || "")) * sd(i[1]));
   })(a5, n) : void 0;
@@ -46859,7 +46859,7 @@ function Mc(e) {
 function _o(e) {
   let n, a5;
   const i = [];
-  if (e.replace(r8, (t5, o5, r5) => {
+  if (e.replace(s8, (t5, o5, r5) => {
     const l6 = !!o5, [h, c6] = r5.split("=").reverse();
     if (c6) {
       if (c6 === "u-ca")
@@ -46891,16 +46891,16 @@ function sd(e) {
 function ai(e) {
   return e === void 0 ? 0 : parseInt(e);
 }
-function Ob(e) {
+function Wb(e) {
   return dd(Ze(e));
 }
 function dd(e) {
   const n = ld(e);
   return typeof n == "number" ? nt(n) : n ? ((a5) => {
-    if (g8.test(a5))
+    if (h8.test(a5))
       throw new RangeError(lf(a5));
-    if (l8.test(a5))
-      throw new RangeError(d3);
+    if (g8.test(a5))
+      throw new RangeError(l3);
     return a5.toLowerCase().split("/").map((i, t5) => (i.length <= 3 || /\d/.test(i)) && !/etc|yap/.test(i) ? i.toUpperCase() : i.replace(/baja|dumont|[a-z]+/g, (o5, r5) => o5.length <= 2 && !t5 || o5 === "in" || o5 === "chat" ? o5.toUpperCase() : o5.length > 2 || !r5 ? m0(o5).replace(/island|noronha|murdo|rivadavia|urville/, m0) : o5)).join("/");
   })(e) : Ba;
 }
@@ -46910,7 +46910,7 @@ function B0(e) {
 }
 function ld(e) {
   const n = ud(e = e.toUpperCase(), 1);
-  return n !== void 0 ? n : e !== Ba ? d8(e) : void 0;
+  return n !== void 0 ? n : e !== Ba ? l8(e) : void 0;
 }
 function Jc(e, n) {
   return Ve(e.epochNanoseconds, n.epochNanoseconds);
@@ -46918,7 +46918,7 @@ function Jc(e, n) {
 function Dc(e, n) {
   return Ve(e.epochNanoseconds, n.epochNanoseconds);
 }
-function Wb(e, n, a5, i, t5, o5) {
+function Kb(e, n, a5, i, t5, o5) {
   const r5 = e(Mn(o5).relativeTo), l6 = Math.max(Ia(i), Ia(t5));
   if (_2(re, i, t5))
     return 0;
@@ -46938,17 +46938,14 @@ function Si(e, n) {
 function gd(e, n) {
   return ua(la(e), la(n));
 }
-function Kb(e, n) {
+function Ub(e, n) {
   return !Jc(e, n);
 }
-function Ub(e, n) {
+function zb(e, n) {
   return !Dc(e, n) && !!Ac(e.timeZone, n.timeZone) && e.calendar === n.calendar;
 }
-function zb(e, n) {
-  return !Pc(e, n) && e.calendar === n.calendar;
-}
 function qb(e, n) {
-  return !Si(e, n) && e.calendar === n.calendar;
+  return !Pc(e, n) && e.calendar === n.calendar;
 }
 function Vb(e, n) {
   return !Si(e, n) && e.calendar === n.calendar;
@@ -46957,6 +46954,9 @@ function e4(e, n) {
   return !Si(e, n) && e.calendar === n.calendar;
 }
 function n4(e, n) {
+  return !Si(e, n) && e.calendar === n.calendar;
+}
+function a4(e, n) {
   return !gd(e, n);
 }
 function Ac(e, n) {
@@ -46978,8 +46978,8 @@ function F0(e, n, a5, i, t5, o5) {
     if (l6 < 6)
       s5 = Qo(f, u6, l6, h, c6, g6);
     else {
-      const p5 = n(((w, b5) => {
-        if (!Ac(w, b5))
+      const p5 = n(((w, b) => {
+        if (!Ac(w, b))
           throw new RangeError(gf);
         return w;
       })(i.timeZone, t5.timeZone)), y6 = e(r5);
@@ -47034,11 +47034,11 @@ function Q0(e, n, a5, i) {
   };
   return $e(e ? xe(c6) : c6);
 }
-function a4(e, n, a5, i, t5, o5) {
+function i4(e, n, a5, i, t5, o5) {
   const r5 = Ve(i.epochNanoseconds, a5.epochNanoseconds);
   return r5 ? t5 < 6 ? Ec(a5.epochNanoseconds, i.epochNanoseconds, t5) : Hc(n, e, a5, i, r5, t5, o5) : Ie;
 }
-function i4(e, n, a5, i, t5) {
+function t4(e, n, a5, i, t5) {
   const o5 = Ye(n), r5 = Ye(a5), l6 = Ve(r5, o5);
   return l6 ? i <= 6 ? Ec(o5, r5, i) : Xc(e, n, a5, l6, i, t5) : Ie;
 }
@@ -47047,10 +47047,10 @@ function Hc(e, n, a5, i, t5, o5, r5) {
     function y6() {
       return S5 = {
         ...Na(v, j++ * -p5),
-        ...b5
+        ...b
       }, L6 = at(u6, S5), Ve(m5, L6) === -p5;
     }
-    const w = nn(d6, u6), b5 = bn(jn, w), v = nn(s5, u6), m5 = s5.epochNanoseconds;
+    const w = nn(d6, u6), b = bn(jn, w), v = nn(s5, u6), m5 = s5.epochNanoseconds;
     let j = 0;
     const $5 = hd(w, v);
     let S5, L6;
@@ -47115,9 +47115,9 @@ function cd(e) {
   return Oo(this.p(n), Ne(e)) + 1;
 }
 function fd(e) {
-  const n = h8.exec(e);
+  const n = c8.exec(e);
   if (!n)
-    throw new RangeError(r3(e));
+    throw new RangeError(s3(e));
   return [parseInt(n[1]), !!n[2]];
 }
 function it(e, n) {
@@ -47136,12 +47136,12 @@ function Qr(e) {
   return jf[_c(e)];
 }
 function Gc(e) {
-  return C3[_c(e)];
+  return L3[_c(e)];
 }
 function _c(e) {
   return Za(e.id || te);
 }
-function t4(e) {
+function o4(e) {
   function n(t5) {
     return ((o5, r5) => ({
       ...Qc(o5, r5),
@@ -47152,18 +47152,18 @@ function t4(e) {
   const a5 = Ed(e), i = Za(e);
   return {
     id: e,
-    h: o4(n),
-    l: u4(n)
+    h: u4(n),
+    l: r4(n)
   };
 }
-function o4(e) {
+function u4(e) {
   return qe((n) => {
     const a5 = Ne(n);
     return e(a5);
   }, WeakMap);
 }
-function u4(e) {
-  const n = e(0).year - P3;
+function r4(e) {
+  const n = e(0).year - A3;
   return qe((a5) => {
     let i, t5 = pi(a5 - n), o5 = 0;
     const r5 = [], l6 = [];
@@ -47253,9 +47253,9 @@ function Za(e) {
 function Uc(e, n) {
   return (a5) => a5 === te ? e : a5 === Ci || a5 === ca ? Object.assign(Object.create(e), {
     id: a5
-  }) : Object.assign(Object.create(n), c8(a5));
+  }) : Object.assign(Object.create(n), f8(a5));
 }
-function r4(e, n, a5, i) {
+function s4(e, n, a5, i) {
   const t5 = ba(a5, i, Vn, [], yf);
   if (t5.timeZone !== void 0) {
     const o5 = a5.F(t5), r5 = ot(t5), l6 = e(t5.timeZone);
@@ -47272,36 +47272,36 @@ function r4(e, n, a5, i) {
     ...Ke
   };
 }
-function s4(e, n, a5, i, t5, o5) {
+function d4(e, n, a5, i, t5, o5) {
   const r5 = ba(a5, t5, Vn, ff, yf), l6 = e(r5.timeZone), [h, c6, g6] = Po(o5), f = a5.F(r5, Ho(h)), u6 = ot(r5, h);
   return wn(mi(n(l6), {
     ...f,
     ...u6
   }, r5.offset !== void 0 ? Xa(r5.offset) : void 0, c6, g6), l6, i);
 }
-function d4(e, n, a5) {
+function l4(e, n, a5) {
   const i = ba(e, n, Vn, [], qn), t5 = ue(a5);
   return mn(We({
     ...e.F(i, Ho(t5)),
     ...ot(i, t5)
   }));
 }
-function l4(e, n, a5, i = []) {
+function g4(e, n, a5, i = []) {
   const t5 = ba(e, n, Vn, i);
   return e.F(t5, a5);
 }
-function g4(e, n, a5, i) {
+function h4(e, n, a5, i) {
   const t5 = ba(e, n, Sd, i);
   return e.K(t5, a5);
 }
-function h4(e, n, a5, i) {
+function c4(e, n, a5, i) {
   const t5 = ba(e, a5, Vn, rt);
   return n && t5.month !== void 0 && t5.monthCode === void 0 && t5.year === void 0 && (t5.year = Fn), e._(t5, i);
 }
-function c4(e, n) {
+function f4(e, n) {
   return Jn(ot(en(e, Ur, [], 1), ue(n)));
 }
-function f4(e) {
+function p4(e) {
   const n = en(e, $d);
   return $e(Ha({
     ...Ie,
@@ -47316,9 +47316,9 @@ function en(e, n, a5, i = !a5) {
   let o5, r5 = 0;
   for (const l6 of n) {
     if (l6 === o5)
-      throw new RangeError(V4(l6));
+      throw new RangeError(e3(l6));
     if (l6 === "constructor" || l6 === "__proto__")
-      throw new RangeError(q4(l6));
+      throw new RangeError(V4(l6));
     let h = e[l6];
     if (h !== void 0)
       r5 = 1, U0[l6] && (h = U0[l6](h, l6)), t5[l6] = h;
@@ -47339,13 +47339,13 @@ function ot(e, n) {
     ...e
   }), n);
 }
-function p4(e, n, a5, i, t5) {
+function y4(e, n, a5, i, t5) {
   const { calendar: o5, timeZone: r5 } = a5, l6 = e(o5), h = n(r5), c6 = [...l6.fields(Vn), ...pf].sort(), g6 = ((w) => {
-    const b5 = nn(w, U), v = nt(b5.offsetNanoseconds), m5 = nu(w.calendar), [j, $5, S5] = m5.v(b5), [L6, M5] = m5.q(j, $5), I5 = it(L6, M5);
+    const b = nn(w, U), v = nt(b.offsetNanoseconds), m5 = nu(w.calendar), [j, $5, S5] = m5.v(b), [L6, M5] = m5.q(j, $5), I = it(L6, M5);
     return {
-      ...v8(b5),
+      ...S8(b),
       year: j,
-      monthCode: I5,
+      monthCode: I,
       day: S5,
       offset: v
     };
@@ -47358,7 +47358,7 @@ function p4(e, n, a5, i, t5) {
     ...bi(Bd(d6), s5)
   }, Xa(d6.offset), p5, y6), r5, o5);
 }
-function y4(e, n, a5, i) {
+function b4(e, n, a5, i) {
   const t5 = e(n.calendar), o5 = [...t5.fields(Vn), ...qn].sort(), r5 = {
     ...qc(l6 = n),
     hour: l6.isoHour,
@@ -47378,11 +47378,11 @@ function y4(e, n, a5, i) {
     ...bi(Bd(f), c6)
   }));
 }
-function b4(e, n, a5, i) {
+function w4(e, n, a5, i) {
   const t5 = e(n.calendar), o5 = t5.fields(Vn).sort(), r5 = qc(n), l6 = en(a5, o5), h = t5.k(r5, l6);
   return t5.F(h, i);
 }
-function w4(e, n, a5, i) {
+function m4(e, n, a5, i) {
   const t5 = e(n.calendar), o5 = t5.fields(Sd).sort(), r5 = ((c6) => {
     const g6 = nu(c6.calendar), [f, u6] = g6.v(c6), [d6, s5] = g6.q(f, u6);
     return {
@@ -47392,7 +47392,7 @@ function w4(e, n, a5, i) {
   })(n), l6 = en(a5, o5), h = t5.k(r5, l6);
   return t5.K(h, i);
 }
-function m4(e, n, a5, i) {
+function j4(e, n, a5, i) {
   const t5 = e(n.calendar), o5 = t5.fields(Vn).sort(), r5 = ((c6) => {
     const g6 = nu(c6.calendar), [f, u6, d6] = g6.v(c6), [s5, p5] = g6.q(f, u6);
     return {
@@ -47402,13 +47402,13 @@ function m4(e, n, a5, i) {
   })(n), l6 = en(a5, o5), h = t5.k(r5, l6);
   return t5._(h, i);
 }
-function j4(e, n, a5) {
+function v4(e, n, a5) {
   return Jn(((i, t5, o5) => ot({
     ...bn(Ur, i),
     ...en(t5, Ur)
   }, ue(o5)))(e, n, a5));
 }
-function v4(e, n) {
+function S4(e, n) {
   return $e((a5 = e, i = n, Ha({
     ...a5,
     ...en(i, $d)
@@ -47425,18 +47425,18 @@ function Ar(e, n) {
   let { era: t5, eraYear: o5, year: r5 } = n;
   if (t5 !== void 0 || o5 !== void 0) {
     if (t5 === void 0 || o5 === void 0)
-      throw new TypeError(i3);
+      throw new TypeError(t3);
     if (!a5)
-      throw new RangeError(a3);
+      throw new RangeError(i3);
     const l6 = a5[i[t5] || t5];
     if (l6 === void 0)
-      throw new RangeError(o3(t5));
+      throw new RangeError(u3(t5));
     const h = Rc(o5, l6);
     if (r5 !== void 0 && r5 !== h)
-      throw new RangeError(t3);
+      throw new RangeError(o3);
     r5 = h;
   } else if (r5 === void 0)
-    throw new TypeError(u3(a5));
+    throw new TypeError(r3(a5));
   return r5;
 }
 function zt(e, n, a5, i) {
@@ -47467,7 +47467,7 @@ function zt(e, n, a5, i) {
       return s5;
     })(e, o5, a5, i);
     if (t5 !== void 0 && t5 !== r5)
-      throw new RangeError(s3);
+      throw new RangeError(d3);
     t5 = r5, i = 1;
   } else if (t5 === void 0)
     throw new TypeError(rf);
@@ -47493,23 +47493,23 @@ function qc(e) {
     day: t5
   };
 }
-function S4(e) {
+function $4(e) {
   return Kn(Tn(Js(Zs(e))));
 }
-function $4(e, n, a5, i, t5 = te) {
+function C4(e, n, a5, i, t5 = te) {
   return wn(Tn(Js(Zs(a5))), n(i), e(t5));
 }
-function C4(e, n, a5, i, t5 = 0, o5 = 0, r5 = 0, l6 = 0, h = 0, c6 = 0, g6 = te) {
+function L4(e, n, a5, i, t5 = 0, o5 = 0, r5 = 0, l6 = 0, h = 0, c6 = 0, g6 = te) {
   return mn(We(Do(Qn(Pe, fi(Vo, [n, a5, i, t5, o5, r5, l6, h, c6])))), e(g6));
 }
-function L4(e, n, a5, i, t5 = te) {
+function Y4(e, n, a5, i, t5 = te) {
   return Un(cn(Aa(Qn(Pe, {
     isoYear: n,
     isoMonth: a5,
     isoDay: i
   }))), e(t5));
 }
-function Y4(e, n, a5, i = te, t5 = 1) {
+function k4(e, n, a5, i = te, t5 = 1) {
   const o5 = Pe(n), r5 = Pe(a5), l6 = e(i);
   return Ri(Ps(Aa({
     isoYear: o5,
@@ -47517,7 +47517,7 @@ function Y4(e, n, a5, i = te, t5 = 1) {
     isoDay: Pe(t5)
   })), l6);
 }
-function k4(e, n, a5, i = te, t5 = Fn) {
+function I4(e, n, a5, i = te, t5 = Fn) {
   const o5 = Pe(n), r5 = Pe(a5), l6 = e(i);
   return ro(cn(Aa({
     isoYear: Pe(t5),
@@ -47525,16 +47525,16 @@ function k4(e, n, a5, i = te, t5 = Fn) {
     isoDay: r5
   })), l6);
 }
-function I4(e = 0, n = 0, a5 = 0, i = 0, t5 = 0, o5 = 0) {
+function Z4(e = 0, n = 0, a5 = 0, i = 0, t5 = 0, o5 = 0) {
   return Jn(bi(Qn(Pe, fi(jn, [e, n, a5, i, t5, o5])), 1));
 }
-function Z4(e = 0, n = 0, a5 = 0, i = 0, t5 = 0, o5 = 0, r5 = 0, l6 = 0, h = 0, c6 = 0) {
+function T4(e = 0, n = 0, a5 = 0, i = 0, t5 = 0, o5 = 0, r5 = 0, l6 = 0, h = 0, c6 = 0) {
   return $e(Ha(Qn(Ts, fi(re, [e, n, a5, i, t5, o5, r5, l6, h, c6]))));
 }
-function T4(e, n, a5 = te) {
+function M4(e, n, a5 = te) {
   return wn(e.epochNanoseconds, n, a5);
 }
-function M4(e) {
+function J4(e) {
   return Kn(e.epochNanoseconds);
 }
 function Vc(e, n) {
@@ -47546,14 +47546,14 @@ function ef(e, n) {
 function nf(e, n) {
   return Jn(nn(n, e));
 }
-function J4(e, n, a5, i) {
+function D4(e, n, a5, i) {
   const t5 = ((o5, r5, l6, h) => {
     const c6 = ((g6) => Zf(Mn(g6)))(h);
     return at(o5(r5), l6, c6);
   })(e, a5, n, i);
   return wn(Tn(t5), a5, n.calendar);
 }
-function D4(e, n, a5, i, t5) {
+function P4(e, n, a5, i, t5) {
   const o5 = e(t5.timeZone), r5 = t5.plainTime, l6 = r5 !== void 0 ? n(r5) : void 0, h = a5(o5);
   let c6;
   return c6 = l6 ? at(h, {
@@ -47564,34 +47564,34 @@ function D4(e, n, a5, i, t5) {
     ...Ke
   }), wn(c6, o5, i.calendar);
 }
-function P4(e, n = Ke) {
+function A4(e, n = Ke) {
   return mn(We({
     ...e,
     ...n
   }));
 }
-function A4(e, n, a5) {
+function N4(e, n, a5) {
   return ((i, t5) => {
     const o5 = ba(i, t5, bf);
     return i.K(o5, void 0);
   })(e(n.calendar), a5);
 }
-function N4(e, n, a5) {
+function H4(e, n, a5) {
   return ((i, t5) => {
     const o5 = ba(i, t5, wf);
     return i._(o5);
   })(e(n.calendar), a5);
 }
-function H4(e, n, a5, i) {
+function X4(e, n, a5, i) {
   return ((t5, o5, r5) => zc(t5, o5, bf, Vi(r5), rt))(e(n.calendar), a5, i);
 }
-function X4(e, n, a5, i) {
+function E4(e, n, a5, i) {
   return ((t5, o5, r5) => zc(t5, o5, wf, Vi(r5), md))(e(n.calendar), a5, i);
 }
-function E4(e) {
+function B4(e) {
   return Kn(Tn(oo(Ts(e), zn)));
 }
-function B4(e) {
+function x4(e) {
   return Kn(Tn(Js(Zs(e))));
 }
 function Ea(e, n, a5) {
@@ -47616,27 +47616,27 @@ function Ea(e, n, a5) {
 }
 function wa(e, n = af, a5 = 0) {
   const [i, , , t5] = e;
-  return (o5, r5 = B8, ...l6) => {
+  return (o5, r5 = x8, ...l6) => {
     const h = n(t5 && t5(...l6), o5, r5, i, a5), c6 = h.resolvedOptions();
-    return [h, ...x4(e, c6, l6)];
+    return [h, ...F4(e, c6, l6)];
   };
 }
 function af(e, n, a5, i, t5) {
   if (a5 = i(a5, t5), e) {
     if (a5.timeZone !== void 0)
-      throw new TypeError(j3);
+      throw new TypeError(v3);
     a5.timeZone = e;
   }
   return new ra(n, a5);
 }
-function x4(e, n, a5) {
+function F4(e, n, a5) {
   const [, i, t5] = e;
   return a5.map((o5) => (o5.calendar && ((r5, l6, h) => {
     if ((h || r5 !== te) && r5 !== l6)
       throw new RangeError(df);
   })(o5.calendar, n.calendar, t5), i(o5, n)));
 }
-function F4(e, n, a5) {
+function R4(e, n, a5) {
   const i = n.timeZone, t5 = e(i), o5 = {
     ...nn(n, t5),
     ...a5 || Ke
@@ -47644,7 +47644,7 @@ function F4(e, n, a5) {
   let r5;
   return r5 = a5 ? mi(t5, o5, o5.offsetNanoseconds, 2) : ha(t5, o5), wn(r5, i, n.calendar);
 }
-function R4(e, n = Ke) {
+function G4(e, n = Ke) {
   return mn(We({
     ...e,
     ...n
@@ -47656,7 +47656,7 @@ function yd(e, n) {
     calendar: n
   };
 }
-function G4(e, n) {
+function _4(e, n) {
   return {
     ...e,
     timeZone: n
@@ -47672,30 +47672,30 @@ function Or() {
 function Pi() {
   return z0 || (z0 = new ra().resolvedOptions().timeZone);
 }
-var _4 = (e, n) => `Non-integer ${e}: ${n}`;
-var Q4 = (e, n) => `Non-positive ${e}: ${n}`;
-var O4 = (e, n) => `Non-finite ${e}: ${n}`;
-var W4 = (e) => `Cannot convert bigint to ${e}`;
-var K4 = (e) => `Invalid bigint: ${e}`;
-var U4 = "Cannot convert Symbol to string";
-var z4 = "Invalid object";
+var Q4 = (e, n) => `Non-integer ${e}: ${n}`;
+var O4 = (e, n) => `Non-positive ${e}: ${n}`;
+var W4 = (e, n) => `Non-finite ${e}: ${n}`;
+var K4 = (e) => `Cannot convert bigint to ${e}`;
+var U4 = (e) => `Invalid bigint: ${e}`;
+var z4 = "Cannot convert Symbol to string";
+var q4 = "Invalid object";
 var tf = (e, n, a5, i, t5) => t5 ? tf(e, t5[n], t5[a5], t5[i]) : ma(e, n) + `; must be between ${a5}-${i}`;
 var ma = (e, n) => `Invalid ${e}: ${n}`;
 var bd = (e) => `Missing ${e}`;
-var q4 = (e) => `Invalid field ${e}`;
-var V4 = (e) => `Duplicate field ${e}`;
+var V4 = (e) => `Invalid field ${e}`;
+var e3 = (e) => `Duplicate field ${e}`;
 var of = (e) => "No valid fields: " + e.join();
-var e3 = "Invalid bag";
+var n3 = "Invalid bag";
 var uf = (e, n, a5) => ma(e, n) + "; must be " + Object.keys(a5).join();
-var n3 = "Cannot use valueOf";
+var a3 = "Cannot use valueOf";
 var Wr = "Invalid calling context";
-var a3 = "Forbidden era/eraYear";
-var i3 = "Mismatching era/eraYear";
-var t3 = "Mismatching year/eraYear";
-var o3 = (e) => `Invalid era: ${e}`;
-var u3 = (e) => "Missing year" + (e ? "/era/eraYear" : "");
-var r3 = (e) => `Invalid monthCode: ${e}`;
-var s3 = "Mismatching month/monthCode";
+var i3 = "Forbidden era/eraYear";
+var t3 = "Mismatching era/eraYear";
+var o3 = "Mismatching year/eraYear";
+var u3 = (e) => `Invalid era: ${e}`;
+var r3 = (e) => "Missing year" + (e ? "/era/eraYear" : "");
+var s3 = (e) => `Invalid monthCode: ${e}`;
+var d3 = "Mismatching month/monthCode";
 var rf = "Missing month/monthCode";
 var Ai = "Invalid leap month";
 var $i = "Invalid protocol results";
@@ -47703,23 +47703,23 @@ var sf = (e) => ma("Calendar", e);
 var df = "Mismatching Calendars";
 var lf = (e) => ma("TimeZone", e);
 var gf = "Mismatching TimeZones";
-var d3 = "Forbidden ICU TimeZone";
-var l3 = "Out-of-bounds offset";
-var g3 = "Out-of-bounds TimeZone gap";
-var h3 = "Invalid TimeZone offset";
-var c3 = "Ambiguous offset";
+var l3 = "Forbidden ICU TimeZone";
+var g3 = "Out-of-bounds offset";
+var h3 = "Out-of-bounds TimeZone gap";
+var c3 = "Invalid TimeZone offset";
+var f3 = "Ambiguous offset";
 var ja = "Out-of-bounds date";
-var f3 = "Out-of-bounds duration";
-var p3 = "Cannot mix duration signs";
+var p3 = "Out-of-bounds duration";
+var y3 = "Cannot mix duration signs";
 var Uo = "Missing relativeTo";
-var y3 = "Cannot use large units";
-var b3 = "Required smallestUnit or largestUnit";
-var w3 = "smallestUnit > largestUnit";
+var b3 = "Cannot use large units";
+var w3 = "Required smallestUnit or largestUnit";
+var m3 = "smallestUnit > largestUnit";
 var Qe = (e) => `Cannot parse: ${e}`;
 var xn = (e) => `Invalid substring: ${e}`;
-var m3 = (e) => `Cannot format ${e}`;
+var j3 = (e) => `Cannot format ${e}`;
 var Er = "Mismatching types for formatting";
-var j3 = "Cannot specify TimeZone";
+var v3 = "Cannot specify TimeZone";
 var hf = /* @__PURE__ */ ne(Io, (e, n) => n);
 var di = /* @__PURE__ */ ne(Io, (e, n, a5) => a5);
 var fn = /* @__PURE__ */ ne(to, 2);
@@ -47747,12 +47747,12 @@ var ge = 864e11;
 var Zn = [1, ut, zn, Yn, zo, qo, ge];
 var qn = /* @__PURE__ */ wd.slice(0, 6);
 var Ur = /* @__PURE__ */ qi(qn);
-var v3 = ["offset"];
+var S3 = ["offset"];
 var ff = ["timeZone"];
-var pf = /* @__PURE__ */ qn.concat(v3);
+var pf = /* @__PURE__ */ qn.concat(S3);
 var yf = /* @__PURE__ */ pf.concat(ff);
 var zr = ["era", "eraYear"];
-var S3 = /* @__PURE__ */ zr.concat(["year"]);
+var $3 = /* @__PURE__ */ zr.concat(["year"]);
 var md = ["year"];
 var jd = ["monthCode"];
 var vd = /* @__PURE__ */ ["month"].concat(jd);
@@ -47760,7 +47760,7 @@ var rt = ["day"];
 var Sd = /* @__PURE__ */ vd.concat(md);
 var bf = /* @__PURE__ */ jd.concat(md);
 var Vn = /* @__PURE__ */ rt.concat(Sd);
-var $3 = /* @__PURE__ */ rt.concat(vd);
+var C3 = /* @__PURE__ */ rt.concat(vd);
 var wf = /* @__PURE__ */ rt.concat(jd);
 var mf = /* @__PURE__ */ di(qn, 0);
 var te = "iso8601";
@@ -47827,44 +47827,44 @@ var vf = {
     minguo: "roc"
   }
 };
-var C3 = {
+var L3 = {
   chinese: 13,
   dangi: 13,
   hebrew: -6
 };
 var Ze = /* @__PURE__ */ ne(ks, "string");
-var L3 = /* @__PURE__ */ ne(ks, "boolean");
-var Y3 = /* @__PURE__ */ ne(ks, "number");
+var Y3 = /* @__PURE__ */ ne(ks, "boolean");
+var k3 = /* @__PURE__ */ ne(ks, "number");
 var re = /* @__PURE__ */ wd.map((e) => e + "s");
 var $d = /* @__PURE__ */ qi(re);
-var k3 = /* @__PURE__ */ re.slice(0, 6);
+var I3 = /* @__PURE__ */ re.slice(0, 6);
 var Sf = /* @__PURE__ */ re.slice(6);
-var I3 = /* @__PURE__ */ Sf.slice(1);
-var Z3 = /* @__PURE__ */ hf(re);
+var Z3 = /* @__PURE__ */ Sf.slice(1);
+var T3 = /* @__PURE__ */ hf(re);
 var Ie = /* @__PURE__ */ di(re, 0);
-var Cd = /* @__PURE__ */ di(k3, 0);
+var Cd = /* @__PURE__ */ di(I3, 0);
 var Ld = /* @__PURE__ */ ne(Q2, re);
 var jn = ["isoNanosecond", "isoMicrosecond", "isoMillisecond", "isoSecond", "isoMinute", "isoHour"];
 var Yd = ["isoDay", "isoMonth", "isoYear"];
 var Vo = /* @__PURE__ */ jn.concat(Yd);
 var kd = /* @__PURE__ */ qi(Yd);
 var $f = /* @__PURE__ */ qi(jn);
-var T3 = /* @__PURE__ */ qi(Vo);
+var M3 = /* @__PURE__ */ qi(Vo);
 var Ke = /* @__PURE__ */ di($f, 0);
-var M3 = /* @__PURE__ */ ne(Q2, Vo);
+var J3 = /* @__PURE__ */ ne(Q2, Vo);
 var Id = 1e8;
 var Zd = Id * Oe;
-var J3 = [Id, 0];
-var D3 = [-Id, 0];
+var D3 = [Id, 0];
+var P3 = [-Id, 0];
 var Oi = 275760;
 var Wi = -271821;
 var ra = Intl.DateTimeFormat;
 var Cf = "en-GB";
-var P3 = 1970;
+var A3 = 1970;
 var Fn = 1972;
 var na = 12;
-var A3 = /* @__PURE__ */ pi(1868, 9, 8);
-var N3 = /* @__PURE__ */ qe(bb, WeakMap);
+var N3 = /* @__PURE__ */ pi(1868, 9, 8);
+var H3 = /* @__PURE__ */ qe(wb, WeakMap);
 var co = "smallestUnit";
 var qr = "unit";
 var Ei = "roundingIncrement";
@@ -47875,35 +47875,35 @@ var Yf = {
   constrain: 0,
   reject: 1
 };
-var H3 = /* @__PURE__ */ Object.keys(Yf);
-var X3 = {
+var X3 = /* @__PURE__ */ Object.keys(Yf);
+var E3 = {
   compatible: 0,
   reject: 1,
   earlier: 2,
   later: 3
 };
-var E3 = {
+var B3 = {
   reject: 0,
   use: 1,
   prefer: 2,
   ignore: 3
 };
-var B3 = {
+var x3 = {
   auto: 0,
   never: 1,
   critical: 2,
   always: 3
 };
-var x3 = {
+var F3 = {
   auto: 0,
   never: 1,
   critical: 2
 };
-var F3 = {
+var R3 = {
   auto: 0,
   never: 1
 };
-var R3 = {
+var G3 = {
   floor: 0,
   halfFloor: 1,
   ceil: 2,
@@ -47914,20 +47914,20 @@ var R3 = {
   halfExpand: 7,
   halfEven: 8
 };
-var G3 = {
+var _3 = {
   previous: -1,
   next: 1
 };
 var st = /* @__PURE__ */ ne(Rs, co);
 var kf = /* @__PURE__ */ ne(Rs, "largestUnit");
-var _3 = /* @__PURE__ */ ne(Rs, qr);
+var Q3 = /* @__PURE__ */ ne(Rs, qr);
 var If = /* @__PURE__ */ ne(fa, "overflow", Yf);
-var Zf = /* @__PURE__ */ ne(fa, "disambiguation", X3);
-var Q3 = /* @__PURE__ */ ne(fa, "offset", E3);
-var Td = /* @__PURE__ */ ne(fa, "calendarName", B3);
-var O3 = /* @__PURE__ */ ne(fa, "timeZoneName", x3);
-var W3 = /* @__PURE__ */ ne(fa, "offset", F3);
-var dt = /* @__PURE__ */ ne(fa, "roundingMode", R3);
+var Zf = /* @__PURE__ */ ne(fa, "disambiguation", E3);
+var O3 = /* @__PURE__ */ ne(fa, "offset", B3);
+var Td = /* @__PURE__ */ ne(fa, "calendarName", x3);
+var W3 = /* @__PURE__ */ ne(fa, "timeZoneName", F3);
+var K3 = /* @__PURE__ */ ne(fa, "offset", R3);
+var dt = /* @__PURE__ */ ne(fa, "roundingMode", G3);
 var Md = "PlainYearMonth";
 var Jd = "PlainMonthDay";
 var lt = "PlainDate";
@@ -47936,19 +47936,19 @@ var Dd = "PlainTime";
 var va = "ZonedDateTime";
 var Pd = "Instant";
 var Ad = "Duration";
-var K3 = [Math.floor, (e) => Wt(e) ? Math.floor(e) : Math.round(e), Math.ceil, (e) => Wt(e) ? Math.ceil(e) : Math.round(e), Math.trunc, (e) => Wt(e) ? Math.trunc(e) || 0 : Math.round(e), (e) => e < 0 ? Math.floor(e) : Math.ceil(e), (e) => Math.sign(e) * Math.round(Math.abs(e)) || 0, (e) => Wt(e) ? (e = Math.trunc(e) || 0) + e % 2 : Math.round(e)];
+var U3 = [Math.floor, (e) => Wt(e) ? Math.floor(e) : Math.round(e), Math.ceil, (e) => Wt(e) ? Math.ceil(e) : Math.round(e), Math.trunc, (e) => Wt(e) ? Math.trunc(e) || 0 : Math.round(e), (e) => e < 0 ? Math.floor(e) : Math.ceil(e), (e) => Math.sign(e) * Math.round(Math.abs(e)) || 0, (e) => Wt(e) ? (e = Math.trunc(e) || 0) + e % 2 : Math.round(e)];
 var Ba = "UTC";
 var no = 5184e3;
-var U3 = /* @__PURE__ */ uo(1847);
-var z3 = /* @__PURE__ */ uo(/* @__PURE__ */ (/* @__PURE__ */ new Date()).getUTCFullYear() + 10);
-var q3 = /0+$/;
-var nn = /* @__PURE__ */ qe(Jb, WeakMap);
+var z3 = /* @__PURE__ */ uo(1847);
+var q3 = /* @__PURE__ */ uo(/* @__PURE__ */ (/* @__PURE__ */ new Date()).getUTCFullYear() + 10);
+var V3 = /0+$/;
+var nn = /* @__PURE__ */ qe(Db, WeakMap);
 var K0 = 2 ** 32 - 1;
 var U = /* @__PURE__ */ qe((e) => {
   const n = ld(e);
-  return typeof n == "object" ? new e8(n) : new V3(n || 0);
+  return typeof n == "object" ? new n8(n) : new e8(n || 0);
 });
-var V3 = class {
+var e8 = class {
   constructor(n) {
     this.$ = n;
   }
@@ -47968,7 +47968,7 @@ var V3 = class {
   O() {
   }
 };
-var e8 = class {
+var n8 = class {
   constructor(n) {
     this.nn = ((a5) => {
       function i(c6) {
@@ -47983,8 +47983,8 @@ var e8 = class {
         }
         return d6;
       }
-      const o5 = qe(a5), r5 = qe(Nb);
-      let l6 = U3, h = z3;
+      const o5 = qe(a5), r5 = qe(Hb);
+      let l6 = z3, h = q3;
       return {
         tn(c6) {
           const g6 = i(c6 - 86400), f = i(c6 + 86400), u6 = c6 - g6, d6 = c6 - f;
@@ -48001,9 +48001,9 @@ var e8 = class {
           for (; p5(); ) {
             const y6 = o5(u6), w = o5(d6);
             if (y6 !== w) {
-              const b5 = r5(u6, d6);
-              t5(b5, y6, w);
-              const v = b5[0];
+              const b = r5(u6, d6);
+              t5(b, y6, w);
+              const v = b[0];
               if ((ua(v, c6) || 1) === g6)
                 return v;
             }
@@ -48035,17 +48035,17 @@ var ao = "(?:[.,](\\d{1,9}))?";
 var Tf = `(?:(?:${Nd}(\\d{6}))|(\\d{4}))-?(\\d{2})`;
 var Hd = "(\\d{2})(?::?(\\d{2})(?::?(\\d{2})" + ao + ")?)?";
 var Xd = Nd + Hd;
-var n8 = Tf + "-?(\\d{2})(?:[T ]" + Hd + "(Z|" + Xd + ")?)?";
+var a8 = Tf + "-?(\\d{2})(?:[T ]" + Hd + "(Z|" + Xd + ")?)?";
 var Mf = "\\[(!?)([^\\]]*)\\]";
 var eu = `((?:${Mf}){0,9})`;
-var a8 = /* @__PURE__ */ vi(Tf + eu);
-var i8 = /* @__PURE__ */ vi("(?:--)?(\\d{2})-?(\\d{2})" + eu);
-var t8 = /* @__PURE__ */ vi(n8 + eu);
-var o8 = /* @__PURE__ */ vi("T?" + Hd + "(?:" + Xd + ")?" + eu);
-var u8 = /* @__PURE__ */ vi(Xd);
-var r8 = /* @__PURE__ */ new RegExp(Mf, "g");
-var s8 = /* @__PURE__ */ vi(`${Nd}?P(\\d+Y)?(\\d+M)?(\\d+W)?(\\d+D)?(?:T(?:(\\d+)${ao}H)?(?:(\\d+)${ao}M)?(?:(\\d+)${ao}S)?)?`);
-var d8 = /* @__PURE__ */ qe((e) => new ra(Cf, {
+var i8 = /* @__PURE__ */ vi(Tf + eu);
+var t8 = /* @__PURE__ */ vi("(?:--)?(\\d{2})-?(\\d{2})" + eu);
+var o8 = /* @__PURE__ */ vi(a8 + eu);
+var u8 = /* @__PURE__ */ vi("T?" + Hd + "(?:" + Xd + ")?" + eu);
+var r8 = /* @__PURE__ */ vi(Xd);
+var s8 = /* @__PURE__ */ new RegExp(Mf, "g");
+var d8 = /* @__PURE__ */ vi(`${Nd}?P(\\d+Y)?(\\d+M)?(\\d+W)?(\\d+D)?(?:T(?:(\\d+)${ao}H)?(?:(\\d+)${ao}M)?(?:(\\d+)${ao}S)?)?`);
+var l8 = /* @__PURE__ */ qe((e) => new ra(Cf, {
   timeZone: e,
   era: "short",
   year: "numeric",
@@ -48055,10 +48055,10 @@ var d8 = /* @__PURE__ */ qe((e) => new ra(Cf, {
   minute: "numeric",
   second: "numeric"
 }));
-var l8 = /^(AC|AE|AG|AR|AS|BE|BS|CA|CN|CS|CT|EA|EC|IE|IS|JS|MI|NE|NS|PL|PN|PR|PS|SS|VS)T$/;
-var g8 = /[^\w\/:+-]+/;
-var h8 = /^M(\d{2})(L?)$/;
-var c8 = /* @__PURE__ */ qe(t4);
+var g8 = /^(AC|AE|AG|AR|AS|BE|BS|CA|CN|CS|CT|EA|EC|IE|IS|JS|MI|NE|NS|PL|PN|PR|PS|SS|VS)T$/;
+var h8 = /[^\w\/:+-]+/;
+var c8 = /^M(\d{2})(L?)$/;
+var f8 = /* @__PURE__ */ qe(o4);
 var Ed = /* @__PURE__ */ qe((e) => new ra(Cf, {
   calendar: e,
   timeZone: Ba,
@@ -48075,8 +48075,8 @@ var Jf = {
       t5 = ((c6, g6, f, u6, d6) => {
         let [s5, p5, y6] = c6.v(g6);
         if (f) {
-          const [w, b5] = c6.q(s5, p5);
-          s5 += f, p5 = go(w, b5, c6.L(s5)), p5 = _n("month", p5, 1, c6.B(s5), d6);
+          const [w, b] = c6.q(s5, p5);
+          s5 += f, p5 = go(w, b, c6.L(s5)), p5 = _n("month", p5, 1, c6.B(s5), d6);
         }
         return u6 && ([s5, p5] = c6.un(s5, p5, u6)), y6 = _n("day", y6, 1, c6.U(s5, p5), d6), c6.p(s5, p5, y6);
       })(this, e, o5, r5, i);
@@ -48108,17 +48108,17 @@ var Jf = {
     let [o5, r5, l6] = ((h, c6, g6, f, u6, d6, s5) => {
       let p5 = u6 - c6, y6 = d6 - g6, w = s5 - f;
       if (p5 || y6) {
-        const b5 = Math.sign(p5 || y6);
+        const b = Math.sign(p5 || y6);
         let v = h.U(u6, d6), m5 = 0;
-        if (Math.sign(w) === -b5) {
+        if (Math.sign(w) === -b) {
           const j = v;
-          [u6, d6] = h.un(u6, d6, -b5), p5 = u6 - c6, y6 = d6 - g6, v = h.U(u6, d6), m5 = b5 < 0 ? -j : v;
+          [u6, d6] = h.un(u6, d6, -b), p5 = u6 - c6, y6 = d6 - g6, v = h.U(u6, d6), m5 = b < 0 ? -j : v;
         }
         if (w = s5 - Math.min(f, v) + m5, p5) {
           const [j, $5] = h.q(c6, g6), [S5, L6] = h.q(u6, d6);
-          if (y6 = S5 - j || Number(L6) - Number($5), Math.sign(y6) === -b5) {
-            const M5 = b5 < 0 && -h.B(u6);
-            p5 = (u6 -= b5) - c6, y6 = d6 - go(j, $5, h.L(u6)) + (M5 || h.B(u6));
+          if (y6 = S5 - j || Number(L6) - Number($5), Math.sign(y6) === -b) {
+            const M5 = b < 0 && -h.B(u6);
+            p5 = (u6 -= b) - c6, y6 = d6 - go(j, $5, h.L(u6)) + (M5 || h.B(u6));
           }
         }
       }
@@ -48174,7 +48174,7 @@ var Jf = {
   },
   k(e, n) {
     const a5 = Object.assign(/* @__PURE__ */ Object.create(null), e);
-    return Hr(a5, n, vd), Qr(this) && (Hr(a5, n, S3), this.id === ca && Hr(a5, n, $3, zr)), a5;
+    return Hr(a5, n, vd), Qr(this) && (Hr(a5, n, $3), this.id === ca && Hr(a5, n, C3, zr)), a5;
   },
   inLeapYear(e) {
     const [n] = this.v(e);
@@ -48208,17 +48208,17 @@ var Jf = {
     return 7;
   }
 };
-var f8 = {
+var p8 = {
   v: Hs,
   hn: uc,
   q: nc
 };
-var p8 = {
+var y8 = {
   dayOfYear: cd,
   v: Hs,
   p: pi
 };
-var y8 = /* @__PURE__ */ Object.assign({}, p8, {
+var b8 = /* @__PURE__ */ Object.assign({}, y8, {
   weekOfYear: xc,
   yearOfWeek: Fc,
   m(e) {
@@ -48234,7 +48234,7 @@ var y8 = /* @__PURE__ */ Object.assign({}, p8, {
     return f ? f > a5(0) && (f = 1, u6++) : (f = a5(-1), u6--), [f, u6, g6];
   }
 });
-var b8 = /* @__PURE__ */ Object.assign({}, Jf, y8, {
+var w8 = /* @__PURE__ */ Object.assign({}, Jf, b8, {
   v: Hs,
   hn: uc,
   q: nc,
@@ -48264,12 +48264,12 @@ var b8 = /* @__PURE__ */ Object.assign({}, Jf, y8, {
   },
   day: (e) => e.isoDay
 });
-var w8 = {
+var m8 = {
   v: ho,
   hn: Kc,
   q: Wc
 };
-var m8 = {
+var j8 = {
   dayOfYear: cd,
   v: ho,
   p: Qi,
@@ -48279,7 +48279,7 @@ var m8 = {
     return [];
   }
 };
-var j8 = /* @__PURE__ */ Object.assign({}, Jf, m8, {
+var v8 = /* @__PURE__ */ Object.assign({}, Jf, j8, {
   v: ho,
   hn: Kc,
   q: Wc,
@@ -48372,8 +48372,8 @@ var j8 = /* @__PURE__ */ Object.assign({}, Jf, m8, {
     return this.h(e).day;
   }
 });
-var nu = /* @__PURE__ */ Uc(f8, w8);
-var K = /* @__PURE__ */ Uc(b8, j8);
+var nu = /* @__PURE__ */ Uc(p8, m8);
+var K = /* @__PURE__ */ Uc(w8, v8);
 var U0 = {
   era: Vt,
   eraYear: Pe,
@@ -48392,7 +48392,7 @@ var U0 = {
   }
 };
 var Bd = /* @__PURE__ */ ne(G2, qn, jn);
-var v8 = /* @__PURE__ */ ne(G2, jn, qn);
+var S8 = /* @__PURE__ */ ne(G2, jn, qn);
 var sa = "numeric";
 var gt = ["timeZoneName"];
 var Df = {
@@ -48412,46 +48412,46 @@ var Rd = {
   second: sa
 };
 var Gd = /* @__PURE__ */ Object.assign({}, Fd, Rd);
-var S8 = /* @__PURE__ */ Object.assign({}, Gd, {
+var $8 = /* @__PURE__ */ Object.assign({}, Gd, {
   timeZoneName: "short"
 });
-var $8 = /* @__PURE__ */ Object.keys(xd);
-var C8 = /* @__PURE__ */ Object.keys(Df);
-var L8 = /* @__PURE__ */ Object.keys(Fd);
-var Y8 = /* @__PURE__ */ Object.keys(Rd);
+var C8 = /* @__PURE__ */ Object.keys(xd);
+var L8 = /* @__PURE__ */ Object.keys(Df);
+var Y8 = /* @__PURE__ */ Object.keys(Fd);
+var k8 = /* @__PURE__ */ Object.keys(Rd);
 var _d = ["dateStyle"];
-var k8 = /* @__PURE__ */ $8.concat(_d);
 var I8 = /* @__PURE__ */ C8.concat(_d);
-var Qd = /* @__PURE__ */ L8.concat(_d, ["weekday"]);
-var ht = /* @__PURE__ */ Y8.concat(["dayPeriod", "timeStyle", "fractionalSecondDigits"]);
+var Z8 = /* @__PURE__ */ L8.concat(_d);
+var Qd = /* @__PURE__ */ Y8.concat(_d, ["weekday"]);
+var ht = /* @__PURE__ */ k8.concat(["dayPeriod", "timeStyle", "fractionalSecondDigits"]);
 var Od = /* @__PURE__ */ Qd.concat(ht);
-var Z8 = /* @__PURE__ */ gt.concat(ht);
-var T8 = /* @__PURE__ */ gt.concat(Qd);
-var M8 = /* @__PURE__ */ gt.concat(["day", "weekday"], ht);
-var J8 = /* @__PURE__ */ gt.concat(["year", "weekday"], ht);
-var D8 = /* @__PURE__ */ Ea(Od, Gd);
-var P8 = /* @__PURE__ */ Ea(Od, S8);
-var A8 = /* @__PURE__ */ Ea(Od, Gd, gt);
-var N8 = /* @__PURE__ */ Ea(Qd, Fd, Z8);
-var H8 = /* @__PURE__ */ Ea(ht, Rd, T8);
-var X8 = /* @__PURE__ */ Ea(k8, xd, M8);
-var E8 = /* @__PURE__ */ Ea(I8, Df, J8);
-var B8 = {};
+var T8 = /* @__PURE__ */ gt.concat(ht);
+var M8 = /* @__PURE__ */ gt.concat(Qd);
+var J8 = /* @__PURE__ */ gt.concat(["day", "weekday"], ht);
+var D8 = /* @__PURE__ */ gt.concat(["year", "weekday"], ht);
+var P8 = /* @__PURE__ */ Ea(Od, Gd);
+var A8 = /* @__PURE__ */ Ea(Od, $8);
+var N8 = /* @__PURE__ */ Ea(Od, Gd, gt);
+var H8 = /* @__PURE__ */ Ea(Qd, Fd, T8);
+var X8 = /* @__PURE__ */ Ea(ht, Rd, M8);
+var E8 = /* @__PURE__ */ Ea(I8, xd, J8);
+var B8 = /* @__PURE__ */ Ea(Z8, Df, D8);
+var x8 = {};
 var Pf = new ra(void 0, {
   calendar: te
 }).resolvedOptions().calendar === te;
-var Af = [D8, Gs];
-var x8 = [P8, Gs, 0, (e, n) => {
+var Af = [P8, Gs];
+var F8 = [A8, Gs, 0, (e, n) => {
   const a5 = e.timeZone;
   if (n && n.timeZone !== a5)
     throw new RangeError(gf);
   return a5;
 }];
-var Nf = [A8, Ne];
-var Hf = [N8, Ne];
-var Xf = [H8, (e) => la(e) / zn];
-var Ef = [X8, Ne, Pf];
-var Bf = [E8, Ne, Pf];
+var Nf = [N8, Ne];
+var Hf = [H8, Ne];
+var Xf = [X8, (e) => la(e) / zn];
+var Ef = [E8, Ne, Pf];
+var Bf = [B8, Ne, Pf];
 var z0;
 function Sa(e, n, a5, i, t5) {
   function o5(...h) {
@@ -48471,7 +48471,7 @@ function Sa(e, n, a5, i, t5) {
     return c6;
   }
   return Object.defineProperties(o5.prototype, {
-    ...fb(Qn(r5, a5)),
+    ...pb(Qn(r5, a5)),
     ...ui(Qn(r5, i)),
     ...Cs("Temporal." + e)
   }), Object.defineProperties(o5, {
@@ -48484,7 +48484,7 @@ function Sa(e, n, a5, i, t5) {
 }
 function Yi(e) {
   if (Fe(e) || e.calendar !== void 0 || e.timeZone !== void 0)
-    throw new TypeError(e3);
+    throw new TypeError(n3);
   return e;
 }
 function ct(e) {
@@ -48502,7 +48502,7 @@ function au(e) {
       throw new TypeError(sf(e));
     return n;
   }
-  return ((n) => Ko(_b(Ze(n))))(e);
+  return ((n) => Ko(Qb(Ze(n))))(e);
 }
 function Wd(e) {
   const n = {};
@@ -48514,7 +48514,7 @@ function Wd(e) {
   return n;
 }
 function $a() {
-  throw new TypeError(n3);
+  throw new TypeError(a3);
 }
 function ze(e) {
   if (Be(e)) {
@@ -48523,14 +48523,14 @@ function ze(e) {
       throw new TypeError(lf(e));
     return n;
   }
-  return ((n) => dd(Qb(Ze(n))))(e);
+  return ((n) => dd(Ob(Ze(n))))(e);
 }
 function ve(e) {
   if (Be(e)) {
     const n = Fe(e);
-    return n && n.branding === Ad ? n : f4(e);
+    return n && n.branding === Ad ? n : p4(e);
   }
-  return Gb(e);
+  return _b(e);
 }
 function Ni(e) {
   if (e !== void 0) {
@@ -48545,11 +48545,11 @@ function Ni(e) {
       }
       const a5 = ct(e);
       return {
-        ...r4(ze, U, K(a5), e),
+        ...s4(ze, U, K(a5), e),
         calendar: a5
       };
     }
-    return Xb(e);
+    return Eb(e);
   }
 }
 function aa(e, n) {
@@ -48563,9 +48563,9 @@ function aa(e, n) {
       case va:
         return ue(n), nf(U, i);
     }
-    return c4(e, n);
+    return f4(e, n);
   }
-  const a5 = Rb(e);
+  const a5 = Gb(e);
   return ue(n), a5;
 }
 function Kd(e) {
@@ -48585,9 +48585,9 @@ function Wa(e, n) {
       case va:
         return ue(n), Vc(U, i);
     }
-    return d4(K(ct(e)), e, n);
+    return l4(K(ct(e)), e, n);
   }
-  const a5 = Bb(e);
+  const a5 = xb(e);
   return ue(n), a5;
 }
 function q0(e, n) {
@@ -48596,17 +48596,17 @@ function q0(e, n) {
     if (i && i.branding === Jd)
       return ue(n), i;
     const t5 = xf(e);
-    return h4(K(t5 || te), !t5, e, n);
+    return c4(K(t5 || te), !t5, e, n);
   }
-  const a5 = Fb(K, e);
+  const a5 = Rb(K, e);
   return ue(n), a5;
 }
 function Ka(e, n) {
   if (Be(e)) {
     const i = Fe(e);
-    return i && i.branding === Md ? (ue(n), i) : g4(K(ct(e)), e, n);
+    return i && i.branding === Md ? (ue(n), i) : h4(K(ct(e)), e, n);
   }
-  const a5 = xb(K, e);
+  const a5 = Fb(K, e);
   return ue(n), a5;
 }
 function Ua(e, n) {
@@ -48620,7 +48620,7 @@ function Ua(e, n) {
       case va:
         return ue(n), ef(U, i);
     }
-    return l4(K(ct(e)), e, n);
+    return g4(K(ct(e)), e, n);
   }
   const a5 = ad(e);
   return ue(n), a5;
@@ -48631,9 +48631,9 @@ function za(e, n) {
     if (a5 && a5.branding === va)
       return Po(n), a5;
     const i = ct(e);
-    return s4(ze, U, K(i), i, e, n);
+    return d4(ze, U, K(i), i, e, n);
   }
-  return Eb(e, n);
+  return Bb(e, n);
 }
 function V0(e) {
   return Qn((n) => (a5) => n(Vr(a5)), e);
@@ -48652,15 +48652,15 @@ function qa(e) {
           return Kn(n.epochNanoseconds);
       }
   }
-  return Hb(e);
+  return Xb(e);
 }
-function F8() {
+function R8() {
   function e(o5, r5) {
     return new n(o5, r5);
   }
   function n(o5, r5 = /* @__PURE__ */ Object.create(null)) {
     po.set(this, ((l6, h) => {
-      const c6 = new ra(l6, h), g6 = c6.resolvedOptions(), f = g6.locale, u6 = bn(Object.keys(h), g6), d6 = qe(_8), s5 = (p5, ...y6) => {
+      const c6 = new ra(l6, h), g6 = c6.resolvedOptions(), f = g6.locale, u6 = bn(Object.keys(h), g6), d6 = qe(Q8), s5 = (p5, ...y6) => {
         if (p5) {
           if (y6.length !== 2)
             throw new TypeError(Er);
@@ -48670,22 +48670,22 @@ function F8() {
         }
         p5 || y6[0] !== void 0 || (y6 = []);
         const w = y6.map((m5) => Fe(m5) || Number(m5));
-        let b5, v = 0;
+        let b, v = 0;
         for (const m5 of w) {
           const j = typeof m5 == "object" ? m5.branding : void 0;
-          if (v++ && j !== b5)
+          if (v++ && j !== b)
             throw new TypeError(Er);
-          b5 = j;
+          b = j;
         }
-        return b5 ? d6(b5)(f, u6, ...w) : [c6, ...w];
+        return b ? d6(b)(f, u6, ...w) : [c6, ...w];
       };
       return s5.X = c6, s5;
     })(o5, r5));
   }
   const a5 = ra.prototype, i = Object.getOwnPropertyDescriptors(a5), t5 = Object.getOwnPropertyDescriptors(ra);
   for (const o5 in i) {
-    const r5 = i[o5], l6 = o5.startsWith("format") && R8(o5);
-    typeof r5.value == "function" ? r5.value = o5 === "constructor" ? e : l6 || G8(o5) : l6 && (r5.get = function() {
+    const r5 = i[o5], l6 = o5.startsWith("format") && G8(o5);
+    typeof r5.value == "function" ? r5.value = o5 === "constructor" ? e : l6 || _8(o5) : l6 && (r5.get = function() {
       if (!po.has(this))
         throw new TypeError(Wr);
       return (...h) => l6.apply(this, h);
@@ -48693,34 +48693,34 @@ function F8() {
   }
   return t5.prototype.value = n.prototype = Object.create({}, i), Object.defineProperties(e, t5), e;
 }
-function R8(e) {
+function G8(e) {
   return Object.defineProperties(function(...n) {
     const a5 = po.get(this), [i, ...t5] = a5(e.includes("Range"), ...n);
     return i[e](...t5);
   }, xi(e));
 }
-function G8(e) {
+function _8(e) {
   return Object.defineProperties(function(...n) {
     return po.get(this).X[e](...n);
   }, xi(e));
 }
-function _8(e) {
-  const n = z8[e];
+function Q8(e) {
+  const n = q8[e];
   if (!n)
-    throw new TypeError(m3(e));
+    throw new TypeError(j3(e));
   return wa(n, qe(af), 1);
 }
 var fo = /* @__PURE__ */ new WeakMap();
 var Fe = /* @__PURE__ */ fo.get.bind(fo);
 var e2 = /* @__PURE__ */ fo.set.bind(fo);
 var Ff = {
-  era: pb,
+  era: yb,
   eraYear: W2,
   year: Ys,
   month: En,
   daysInMonth: En,
   daysInYear: En,
-  inLeapYear: L3,
+  inLeapYear: Y3,
   monthsInYear: En
 };
 var Ud = {
@@ -48729,42 +48729,42 @@ var Ud = {
 var Rf = {
   day: En
 };
-var Q8 = {
+var O8 = {
   dayOfWeek: En,
   dayOfYear: En,
-  weekOfYear: yb,
+  weekOfYear: bb,
   yearOfWeek: W2,
   daysInWeek: En
 };
-var zd = /* @__PURE__ */ Wd(/* @__PURE__ */ Object.assign({}, Ff, Ud, Rf, Q8));
-var O8 = /* @__PURE__ */ Wd({
+var zd = /* @__PURE__ */ Wd(/* @__PURE__ */ Object.assign({}, Ff, Ud, Rf, O8));
+var W8 = /* @__PURE__ */ Wd({
   ...Ff,
   ...Ud
 });
-var W8 = /* @__PURE__ */ Wd({
+var K8 = /* @__PURE__ */ Wd({
   ...Ud,
   ...Rf
 });
 var ft = {
   calendarId: (e) => e.calendar
 };
-var K8 = /* @__PURE__ */ Io((e) => (n) => n[e], re.concat("sign"));
+var U8 = /* @__PURE__ */ Io((e) => (n) => n[e], re.concat("sign"));
 var qd = /* @__PURE__ */ Io((e, n) => (a5) => a5[jn[n]], qn);
 var Gf = {
   epochMilliseconds: Gs,
-  epochNanoseconds: mb
+  epochNanoseconds: jb
 };
-var [U8, ce] = Sa(Ad, Z4, {
-  ...K8,
-  blank: Ab
+var [z8, ce] = Sa(Ad, T4, {
+  ...U8,
+  blank: Nb
 }, {
-  with: (e, n) => ce(v4(e, n)),
+  with: (e, n) => ce(S4(e, n)),
   negated: (e) => ce(nd(e)),
-  abs: (e) => ce(Pb(e)),
+  abs: (e) => ce(Ab(e)),
   add: (e, n, a5) => ce(X0(Ni, K, U, 0, e, ve(n), a5)),
   subtract: (e, n, a5) => ce(X0(Ni, K, U, 1, e, ve(n), a5)),
-  round: (e, n) => ce(Db(Ni, K, U, e, n)),
-  total: (e, n) => jb(Ni, K, U, e, n),
+  round: (e, n) => ce(Pb(Ni, K, U, e, n)),
+  total: (e, n) => vb(Ni, K, U, e, n),
   toLocaleString(e, n, a5) {
     return Intl.DurationFormat ? new Intl.DurationFormat(n, a5).format(this) : Pr(e);
   },
@@ -48773,9 +48773,9 @@ var [U8, ce] = Sa(Ad, Z4, {
   valueOf: $a
 }, {
   from: (e) => ce(ve(e)),
-  compare: (e, n, a5) => Wb(Ni, K, U, ve(e), ve(n), a5)
+  compare: (e, n, a5) => Kb(Ni, K, U, ve(e), ve(n), a5)
 });
-var z8 = {
+var q8 = {
   Instant: Af,
   PlainDateTime: Nf,
   PlainDate: Hf,
@@ -48783,25 +48783,25 @@ var z8 = {
   PlainYearMonth: Ef,
   PlainMonthDay: Bf
 };
-var q8 = /* @__PURE__ */ wa(Af);
-var V8 = /* @__PURE__ */ wa(x8);
-var ew = /* @__PURE__ */ wa(Nf);
-var nw = /* @__PURE__ */ wa(Hf);
-var aw = /* @__PURE__ */ wa(Xf);
-var iw = /* @__PURE__ */ wa(Ef);
-var tw = /* @__PURE__ */ wa(Bf);
-var [ow, ta] = Sa(Dd, I4, qd, {
+var V8 = /* @__PURE__ */ wa(Af);
+var ew = /* @__PURE__ */ wa(F8);
+var nw = /* @__PURE__ */ wa(Nf);
+var aw = /* @__PURE__ */ wa(Hf);
+var iw = /* @__PURE__ */ wa(Xf);
+var tw = /* @__PURE__ */ wa(Ef);
+var ow = /* @__PURE__ */ wa(Bf);
+var [uw, ta] = Sa(Dd, Z4, qd, {
   with(e, n, a5) {
-    return ta(j4(this, Yi(n), a5));
+    return ta(v4(this, Yi(n), a5));
   },
   add: (e, n) => ta(H0(0, e, ve(n))),
   subtract: (e, n) => ta(H0(1, e, ve(n))),
   until: (e, n, a5) => ce(Q0(0, e, aa(n), a5)),
   since: (e, n, a5) => ce(Q0(1, e, aa(n), a5)),
-  round: (e, n) => ta(Cb(e, n)),
-  equals: (e, n) => n4(e, aa(n)),
+  round: (e, n) => ta(Lb(e, n)),
+  equals: (e, n) => a4(e, aa(n)),
   toLocaleString(e, n, a5) {
-    const [i, t5] = aw(n, a5, e);
+    const [i, t5] = iw(n, a5, e);
     return i.format(t5);
   },
   toString: T0,
@@ -48811,25 +48811,25 @@ var [ow, ta] = Sa(Dd, I4, qd, {
   from: (e, n) => ta(aa(e, n)),
   compare: (e, n) => gd(aa(e), aa(n))
 });
-var [uw, $n] = Sa(Li, ne(C4, tt), {
+var [rw, $n] = Sa(Li, ne(L4, tt), {
   ...ft,
   ...zd,
   ...qd
 }, {
-  with: (e, n, a5) => $n(y4(K, e, Yi(n), a5)),
+  with: (e, n, a5) => $n(b4(K, e, Yi(n), a5)),
   withCalendar: (e, n) => $n(yd(e, au(n))),
-  withPlainTime: (e, n) => $n(R4(e, Kd(n))),
+  withPlainTime: (e, n) => $n(G4(e, Kd(n))),
   add: (e, n, a5) => $n(P0(K, 0, e, ve(n), a5)),
   subtract: (e, n, a5) => $n(P0(K, 1, e, ve(n), a5)),
   until: (e, n, a5) => ce(R0(K, 0, e, Wa(n), a5)),
   since: (e, n, a5) => ce(R0(K, 1, e, Wa(n), a5)),
-  round: (e, n) => $n($b(e, n)),
-  equals: (e, n) => zb(e, Wa(n)),
-  toZonedDateTime: (e, n, a5) => Je(J4(U, e, ze(n), a5)),
+  round: (e, n) => $n(Cb(e, n)),
+  equals: (e, n) => qb(e, Wa(n)),
+  toZonedDateTime: (e, n, a5) => Je(D4(U, e, ze(n), a5)),
   toPlainDate: (e) => Cn(Un(e)),
   toPlainTime: (e) => ta(Jn(e)),
   toLocaleString(e, n, a5) {
-    const [i, t5] = ew(n, a5, e);
+    const [i, t5] = nw(n, a5, e);
     return i.format(t5);
   },
   toString: Y0,
@@ -48839,17 +48839,17 @@ var [uw, $n] = Sa(Li, ne(C4, tt), {
   from: (e, n) => $n(Wa(e, n)),
   compare: (e, n) => Pc(Wa(e), Wa(n))
 });
-var [rw, es] = Sa(Jd, ne(k4, tt), {
+var [sw, es] = Sa(Jd, ne(I4, tt), {
   ...ft,
-  ...W8
+  ...K8
 }, {
-  with: (e, n, a5) => es(m4(K, e, Yi(n), a5)),
-  equals: (e, n) => e4(e, q0(n)),
+  with: (e, n, a5) => es(j4(K, e, Yi(n), a5)),
+  equals: (e, n) => n4(e, q0(n)),
   toPlainDate(e, n) {
-    return Cn(X4(K, e, this, n));
+    return Cn(E4(K, e, this, n));
   },
   toLocaleString(e, n, a5) {
-    const [i, t5] = tw(n, a5, e);
+    const [i, t5] = ow(n, a5, e);
     return i.format(t5);
   },
   toString: Z0,
@@ -48858,21 +48858,21 @@ var [rw, es] = Sa(Jd, ne(k4, tt), {
 }, {
   from: (e, n) => es(q0(e, n))
 });
-var [sw, Hi] = Sa(Md, ne(Y4, tt), {
+var [dw, Hi] = Sa(Md, ne(k4, tt), {
   ...ft,
-  ...O8
+  ...W8
 }, {
-  with: (e, n, a5) => Hi(w4(K, e, Yi(n), a5)),
+  with: (e, n, a5) => Hi(m4(K, e, Yi(n), a5)),
   add: (e, n, a5) => Hi(N0(K, 0, e, ve(n), a5)),
   subtract: (e, n, a5) => Hi(N0(K, 1, e, ve(n), a5)),
   until: (e, n, a5) => ce(_0(K, 0, e, Ka(n), a5)),
   since: (e, n, a5) => ce(_0(K, 1, e, Ka(n), a5)),
-  equals: (e, n) => Vb(e, Ka(n)),
+  equals: (e, n) => e4(e, Ka(n)),
   toPlainDate(e, n) {
-    return Cn(H4(K, e, this, n));
+    return Cn(X4(K, e, this, n));
   },
   toLocaleString(e, n, a5) {
-    const [i, t5] = iw(n, a5, e);
+    const [i, t5] = tw(n, a5, e);
     return i.format(t5);
   },
   toString: I0,
@@ -48882,32 +48882,32 @@ var [sw, Hi] = Sa(Md, ne(Y4, tt), {
   from: (e, n) => Hi(Ka(e, n)),
   compare: (e, n) => Si(Ka(e), Ka(n))
 });
-var [dw, Cn] = Sa(lt, ne(L4, tt), {
+var [lw, Cn] = Sa(lt, ne(Y4, tt), {
   ...ft,
   ...zd
 }, {
-  with: (e, n, a5) => Cn(b4(K, e, Yi(n), a5)),
+  with: (e, n, a5) => Cn(w4(K, e, Yi(n), a5)),
   withCalendar: (e, n) => Cn(yd(e, au(n))),
   add: (e, n, a5) => Cn(A0(K, 0, e, ve(n), a5)),
   subtract: (e, n, a5) => Cn(A0(K, 1, e, ve(n), a5)),
   until: (e, n, a5) => ce(G0(K, 0, e, Ua(n), a5)),
   since: (e, n, a5) => ce(G0(K, 1, e, Ua(n), a5)),
-  equals: (e, n) => qb(e, Ua(n)),
+  equals: (e, n) => Vb(e, Ua(n)),
   toZonedDateTime(e, n) {
     const a5 = Be(n) ? n : {
       timeZone: n
     };
-    return Je(D4(ze, aa, U, e, a5));
+    return Je(P4(ze, aa, U, e, a5));
   },
-  toPlainDateTime: (e, n) => $n(P4(e, Kd(n))),
+  toPlainDateTime: (e, n) => $n(A4(e, Kd(n))),
   toPlainYearMonth(e) {
-    return Hi(A4(K, e, this));
+    return Hi(N4(K, e, this));
   },
   toPlainMonthDay(e) {
-    return es(N4(K, e, this));
+    return es(H4(K, e, this));
   },
   toLocaleString(e, n, a5) {
-    const [i, t5] = nw(n, a5, e);
+    const [i, t5] = aw(n, a5, e);
     return i.format(t5);
   },
   toString: k0,
@@ -48917,7 +48917,7 @@ var [dw, Cn] = Sa(lt, ne(L4, tt), {
   from: (e, n) => Cn(Ua(e, n)),
   compare: (e, n) => Si(Ua(e), Ua(n))
 });
-var [lw, Je] = Sa(va, ne($4, tt, Ob), {
+var [gw, Je] = Sa(va, ne(C4, tt, Wb), {
   ...Gf,
   ...ft,
   ...V0(zd),
@@ -48925,32 +48925,32 @@ var [lw, Je] = Sa(va, ne($4, tt, Ob), {
   offset: (e) => nt(Vr(e).offsetNanoseconds),
   offsetNanoseconds: (e) => Vr(e).offsetNanoseconds,
   timeZoneId: (e) => e.timeZone,
-  hoursInDay: (e) => Lb(U, e)
+  hoursInDay: (e) => Yb(U, e)
 }, {
-  with: (e, n, a5) => Je(p4(K, U, e, Yi(n), a5)),
+  with: (e, n, a5) => Je(y4(K, U, e, Yi(n), a5)),
   withCalendar: (e, n) => Je(yd(e, au(n))),
-  withTimeZone: (e, n) => Je(G4(e, ze(n))),
-  withPlainTime: (e, n) => Je(F4(U, e, Kd(n))),
+  withTimeZone: (e, n) => Je(_4(e, ze(n))),
+  withPlainTime: (e, n) => Je(R4(U, e, Kd(n))),
   add: (e, n, a5) => Je(D0(K, U, 0, e, ve(n), a5)),
   subtract: (e, n, a5) => Je(D0(K, U, 1, e, ve(n), a5)),
   until: (e, n, a5) => ce($e(F0(K, U, 0, e, za(n), a5))),
   since: (e, n, a5) => ce($e(F0(K, U, 1, e, za(n), a5))),
-  round: (e, n) => Je(Sb(U, e, n)),
-  startOfDay: (e) => Je(Yb(U, e)),
-  equals: (e, n) => Ub(e, za(n)),
-  toInstant: (e) => ia(M4(e)),
+  round: (e, n) => Je($b(U, e, n)),
+  startOfDay: (e) => Je(kb(U, e)),
+  equals: (e, n) => zb(e, za(n)),
+  toInstant: (e) => ia(J4(e)),
   toPlainDateTime: (e) => $n(Vc(U, e)),
   toPlainDate: (e) => Cn(ef(U, e)),
   toPlainTime: (e) => ta(nf(U, e)),
   toLocaleString(e, n, a5 = {}) {
-    const [i, t5] = V8(n, a5, e);
+    const [i, t5] = ew(n, a5, e);
     return i.format(t5);
   },
   toString: (e, n) => L0(U, e, n),
   toJSON: (e) => L0(U, e),
   valueOf: $a,
   getTimeZoneTransition(e, n) {
-    const { timeZone: a5, epochNanoseconds: i } = e, t5 = wb(n), o5 = U(a5).O(i, t5);
+    const { timeZone: a5, epochNanoseconds: i } = e, t5 = mb(n), o5 = U(a5).O(i, t5);
     return o5 ? Je({
       ...e,
       epochNanoseconds: o5
@@ -48960,16 +48960,16 @@ var [lw, Je] = Sa(va, ne($4, tt, Ob), {
   from: (e, n) => Je(za(e, n)),
   compare: (e, n) => Dc(za(e), za(n))
 });
-var [gw, ia] = Sa(Pd, S4, Gf, {
+var [hw, ia] = Sa(Pd, $4, Gf, {
   add: (e, n) => ia(J0(0, e, ve(n))),
   subtract: (e, n) => ia(J0(1, e, ve(n))),
   until: (e, n, a5) => ce(x0(0, e, qa(n), a5)),
   since: (e, n, a5) => ce(x0(1, e, qa(n), a5)),
-  round: (e, n) => ia(vb(e, n)),
-  equals: (e, n) => Kb(e, qa(n)),
-  toZonedDateTimeISO: (e, n) => Je(T4(e, ze(n))),
+  round: (e, n) => ia(Sb(e, n)),
+  equals: (e, n) => Ub(e, qa(n)),
+  toZonedDateTimeISO: (e, n) => Je(M4(e, ze(n))),
   toLocaleString(e, n, a5) {
-    const [i, t5] = q8(n, a5, e);
+    const [i, t5] = V8(n, a5, e);
     return i.format(t5);
   },
   toString: (e, n) => C0(ze, U, e, n),
@@ -48977,11 +48977,11 @@ var [gw, ia] = Sa(Pd, S4, Gf, {
   valueOf: $a
 }, {
   from: (e) => ia(qa(e)),
-  fromEpochMilliseconds: (e) => ia(E4(e)),
-  fromEpochNanoseconds: (e) => ia(B4(e)),
+  fromEpochMilliseconds: (e) => ia(B4(e)),
+  fromEpochNanoseconds: (e) => ia(x4(e)),
   compare: (e, n) => Jc(qa(e), qa(n))
 });
-var hw = /* @__PURE__ */ Object.defineProperties({}, {
+var cw = /* @__PURE__ */ Object.defineProperties({}, {
   ...Cs("Temporal.Now"),
   ...ui({
     timeZoneId: () => Pi(),
@@ -48995,21 +48995,21 @@ var hw = /* @__PURE__ */ Object.defineProperties({}, {
 ({
   ...Cs("Temporal"),
   ...ui({
-    PlainYearMonth: sw,
-    PlainMonthDay: rw,
-    PlainDate: dw,
-    PlainTime: ow,
-    PlainDateTime: uw,
-    ZonedDateTime: lw,
-    Instant: gw,
-    Duration: U8,
-    Now: hw
+    PlainYearMonth: dw,
+    PlainMonthDay: sw,
+    PlainDate: lw,
+    PlainTime: uw,
+    PlainDateTime: rw,
+    ZonedDateTime: gw,
+    Instant: hw,
+    Duration: z8,
+    Now: cw
   })
 });
-var cw = /* @__PURE__ */ F8();
+var fw = /* @__PURE__ */ R8();
 var po = /* @__PURE__ */ new WeakMap();
 ui({
-  DateTimeFormat: cw
+  DateTimeFormat: fw
 });
 P.NUMBER, P.NUMERIC, P.CURRENCY, P.RATING, P.POSITION;
 P.TEXT, P.RICH_TEXT, P.RICH_TEXT_V2;
@@ -49038,10 +49038,10 @@ external_exports.preprocess(
     }
   },
   external_exports.array(
-    external_exports.string().refine((e) => Qp(e) || ns(e), "Must be a valid UUID or a variable with {{ }} syntax")
+    external_exports.string().refine((e) => Op(e) || ns(e), "Must be a valid UUID or a variable with {{ }} syntax")
   )
 ).catch([]);
-var pw = external_exports.object({
+var yw = external_exports.object({
   isCurrentWorkspaceMemberSelected: external_exports.boolean().optional(),
   selectedRecordIds: external_exports.array(external_exports.string())
 });
@@ -49054,16 +49054,16 @@ external_exports.string().transform((e, n) => {
       message: a5.message
     }), external_exports.NEVER;
   }
-}).pipe(pw);
+}).pipe(yw);
 Object.entries(
-  _p
+  Qp
 ).map(([e, { label: n }]) => ({
   value: e,
   label: `${n} (${e})`
 }));
 var Fr;
 var n2;
-function yw() {
+function bw() {
   if (n2) return Fr;
   n2 = 1;
   var e = "[object Symbol]", n = /[\\^$.*+?()[\]{}|]/g, a5 = RegExp(n.source), i = typeof oa == "object" && oa && oa.Object === Object && oa, t5 = typeof self == "object" && self && self.Object === Object && self, o5 = i || t5 || Function("return this")(), r5 = Object.prototype, l6 = r5.toString, h = o5.Symbol, c6 = h ? h.prototype : void 0, g6 = c6 ? c6.toString : void 0;
@@ -49089,19 +49089,19 @@ function yw() {
   }
   return Fr = p5, Fr;
 }
-yw();
-var bw = zod_default.enum([
+bw();
+var ww = zod_default.enum([
   qt.MONDAY,
   qt.SATURDAY,
   qt.SUNDAY
 ]);
-var ww = zod_default.union([zod_default.coerce.number().int().positive(), zod_default.literal("undefined")]).transform((e) => e === "undefined" ? void 0 : e);
-var mw = zod_default.enum([
+var mw = zod_default.union([zod_default.coerce.number().int().positive(), zod_default.literal("undefined")]).transform((e) => e === "undefined" ? void 0 : e);
+var jw = zod_default.enum([
   "NEXT",
   "THIS",
   "PAST"
 ]);
-var jw = zod_default.enum([
+var vw = zod_default.enum([
   "SECOND",
   "MINUTE",
   "HOUR",
@@ -49110,26 +49110,26 @@ var jw = zod_default.enum([
   "MONTH",
   "YEAR"
 ]);
-var vw = zod_default.object({
-  direction: mw,
-  amount: ww.nullish(),
-  unit: jw,
+var Sw = zod_default.object({
+  direction: jw,
+  amount: mw.nullish(),
+  unit: vw,
   timezone: zod_default.string().nullish(),
-  firstDayOfTheWeek: bw.nullish()
+  firstDayOfTheWeek: ww.nullish()
 }).refine((e) => !(e.amount === void 0 && e.direction !== "THIS"), {
   error: "Amount cannot be 'undefined' unless direction is 'THIS'"
 });
-var Sw = /((?:THIS)|(?:PAST)|(?:NEXT))_(\d*)_(DAY|MONTH|YEAR|WEEK|HOUR|MINUTE|SECOND)(?:(?:;;([^;;]*);;)?(?:(MONDAY|SUNDAY|SATURDAY);;)?)?/;
+var $w = /((?:THIS)|(?:PAST)|(?:NEXT))_(\d*)_(DAY|MONTH|YEAR|WEEK|HOUR|MINUTE|SECOND)(?:(?:;;([^;;]*);;)?(?:(MONDAY|SUNDAY|SATURDAY);;)?)?/;
 zod_default.string().transform((e, n) => {
   const a5 = new RegExp(
-    Sw
+    $w
   ).exec(e);
   if (!(0, import_guards.isNonEmptyArray)(a5))
     return n.addIssue(
       `Cannot parse stringified inline relative date filter, value : "${e}"`
     ), zod_default.NEVER;
   const [i, t5, o5, r5, l6, h] = a5;
-  return vw.parse({
+  return Sw.parse({
     direction: t5,
     amount: o5,
     unit: r5,
@@ -49138,13 +49138,13 @@ zod_default.string().transform((e, n) => {
   });
 });
 Le.Is + "", X.IS, Le.IsNotNull + "", X.IS_NOT_NULL, Le.IsNot + "", X.IS_NOT, Le.LessThanOrEqual + "", X.LESS_THAN_OR_EQUAL, Le.GreaterThanOrEqual + "", X.GREATER_THAN_OR_EQUAL, Le.IsBefore + "", X.IS_BEFORE, Le.IsAfter + "", X.IS_AFTER, Le.Contains + "", X.CONTAINS, Le.DoesNotContain + "", X.DOES_NOT_CONTAIN, Le.IsEmpty + "", X.IS_EMPTY, Le.IsNotEmpty + "", X.IS_NOT_EMPTY, Le.IsRelative + "", X.IS_RELATIVE, Le.IsInPast + "", X.IS_IN_PAST, Le.IsInFuture + "", X.IS_IN_FUTURE, Le.IsToday + "", X.IS_TODAY, X.IS + "", X.IS, X.IS_NOT_NULL + "", X.IS_NOT_NULL, X.IS_NOT + "", X.IS_NOT, X.LESS_THAN_OR_EQUAL + "", X.LESS_THAN_OR_EQUAL, X.GREATER_THAN_OR_EQUAL + "", X.GREATER_THAN_OR_EQUAL, X.IS_BEFORE + "", X.IS_BEFORE, X.IS_AFTER + "", X.IS_AFTER, X.CONTAINS + "", X.CONTAINS, X.DOES_NOT_CONTAIN + "", X.DOES_NOT_CONTAIN, X.IS_EMPTY + "", X.IS_EMPTY, X.IS_NOT_EMPTY + "", X.IS_NOT_EMPTY, X.IS_RELATIVE + "", X.IS_RELATIVE, X.IS_IN_PAST + "", X.IS_IN_PAST, X.IS_IN_FUTURE + "", X.IS_IN_FUTURE, X.IS_TODAY + "", X.IS_TODAY, X.VECTOR_SEARCH + "", X.VECTOR_SEARCH;
-var $w = (e) => e.startsWith("http://") || e.startsWith("https://") || e.startsWith("HTTPS://") || e.startsWith("HTTP://") ? e : `https://${e}`;
-var Cw = (e, n) => {
+var Cw = (e) => e.startsWith("http://") || e.startsWith("https://") || e.startsWith("HTTPS://") || e.startsWith("HTTP://") ? e : `https://${e}`;
+var Lw = (e, n) => {
   const t5 = /^(((?!-))(xn--|_)?[a-z0-9-]{0,61}[a-z0-9]{1,1}\.){1,10}(xn--)?([a-z0-9][a-z0-9-]{0,60}|[a-z0-9-]{1,30}\.[a-z]{2,})$/.test(e), o5 = /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(e), r5 = e === "localhost" || e === "127.0.0.1";
   return r5 && false || o5 && false ? false : t5 || r5 || o5;
 };
 external_exports.string().transform((e, n) => {
-  const a5 = e.trim(), i = $w(a5), t5 = i.replace("https://", "").replace("http://", "").replace("HTTPS://", "").replace("HTTP://", "");
+  const a5 = e.trim(), i = Cw(a5), t5 = i.replace("https://", "").replace("http://", "").replace("HTTPS://", "").replace("HTTP://", "");
   if (/^\d+(?:\/[a-zA-Z]*)?$/.test(t5))
     return n.addIssue({
       code: "custom",
@@ -49152,7 +49152,7 @@ external_exports.string().transform((e, n) => {
     }), external_exports.NEVER;
   try {
     const o5 = new URL(i);
-    return Cw(o5.hostname) ? i : (n.addIssue({
+    return Lw(o5.hostname) ? i : (n.addIssue({
       code: "custom",
       message: "domain is not a valid url"
     }), external_exports.NEVER);
@@ -49166,7 +49166,7 @@ external_exports.string().transform((e, n) => {
 var ns = (e) => /^{{[^{}]+}}$/.test(e);
 var a2 = /* @__PURE__ */ new Map();
 for (const e of $2()) {
-  const n = gy(e), a5 = a2.get(n);
+  const n = hy(e), a5 = a2.get(n);
   a5 ? a5.push(e) : a2.set(n, [e]);
 }
 new Set($2());
@@ -49189,7 +49189,7 @@ function Vd(e) {
 function i2(e) {
   return /[\u2E80-\u2E99\u2E9B-\u2EF3\u2F00-\u2FD5\u3005\u3007\u3021-\u3029\u3038-\u303B\u3400-\u4DBF\u4E00-\u9FFC\uF900-\uFA6D\uFA70-\uFAD9]|\uD81B[\uDFF0\uDFF1]|[\uD840-\uD868\uD86A-\uD86C\uD86F-\uD872\uD874-\uD879\uD880-\uD883][\uDC00-\uDFFF]|\uD869[\uDC00-\uDEDD\uDF00-\uDFFF]|\uD86D[\uDC00-\uDF34\uDF40-\uDFFF]|\uD86E[\uDC00-\uDC1D\uDC20-\uDFFF]|\uD873[\uDC00-\uDEA1\uDEB0-\uDFFF]|\uD87A[\uDC00-\uDFE0]|\uD87E[\uDC00-\uDE1D]|\uD884[\uDC00-\uDF4A]/.test(e);
 }
-function Lw(e) {
+function Yw(e) {
   return /[\s!-#%-\*,-\/:;\?@\[-\]_\{\}\xA1\xA7\xAB\xB6\xB7\xBB\xBF\u037E\u0387\u055A-\u055F\u0589\u058A\u05BE\u05C0\u05C3\u05C6\u05F3\u05F4\u0609\u060A\u060C\u060D\u061B\u061E\u061F\u066A-\u066D\u06D4\u0700-\u070D\u07F7-\u07F9\u0830-\u083E\u085E\u0964\u0965\u0970\u09FD\u0A76\u0AF0\u0C77\u0C84\u0DF4\u0E4F\u0E5A\u0E5B\u0F04-\u0F12\u0F14\u0F3A-\u0F3D\u0F85\u0FD0-\u0FD4\u0FD9\u0FDA\u104A-\u104F\u10FB\u1360-\u1368\u1400\u166E\u169B\u169C\u16EB-\u16ED\u1735\u1736\u17D4-\u17D6\u17D8-\u17DA\u1800-\u180A\u1944\u1945\u1A1E\u1A1F\u1AA0-\u1AA6\u1AA8-\u1AAD\u1B5A-\u1B60\u1BFC-\u1BFF\u1C3B-\u1C3F\u1C7E\u1C7F\u1CC0-\u1CC7\u1CD3\u2010-\u2027\u2030-\u2043\u2045-\u2051\u2053-\u205E\u207D\u207E\u208D\u208E\u2308-\u230B\u2329\u232A\u2768-\u2775\u27C5\u27C6\u27E6-\u27EF\u2983-\u2998\u29D8-\u29DB\u29FC\u29FD\u2CF9-\u2CFC\u2CFE\u2CFF\u2D70\u2E00-\u2E2E\u2E30-\u2E4F\u2E52\u3001-\u3003\u3008-\u3011\u3014-\u301F\u3030\u303D\u30A0\u30FB\uA4FE\uA4FF\uA60D-\uA60F\uA673\uA67E\uA6F2-\uA6F7\uA874-\uA877\uA8CE\uA8CF\uA8F8-\uA8FA\uA8FC\uA92E\uA92F\uA95F\uA9C1-\uA9CD\uA9DE\uA9DF\uAA5C-\uAA5F\uAADE\uAADF\uAAF0\uAAF1\uABEB\uFD3E\uFD3F\uFE10-\uFE19\uFE30-\uFE52\uFE54-\uFE61\uFE63\uFE68\uFE6A\uFE6B\uFF01-\uFF03\uFF05-\uFF0A\uFF0C-\uFF0F\uFF1A\uFF1B\uFF1F\uFF20\uFF3B-\uFF3D\uFF3F\uFF5B\uFF5D\uFF5F-\uFF65]|\uD800[\uDD00-\uDD02\uDF9F\uDFD0]|\uD801\uDD6F|\uD802[\uDC57\uDD1F\uDD3F\uDE50-\uDE58\uDE7F\uDEF0-\uDEF6\uDF39-\uDF3F\uDF99-\uDF9C]|\uD803[\uDEAD\uDF55-\uDF59]|\uD804[\uDC47-\uDC4D\uDCBB\uDCBC\uDCBE-\uDCC1\uDD40-\uDD43\uDD74\uDD75\uDDC5-\uDDC8\uDDCD\uDDDB\uDDDD-\uDDDF\uDE38-\uDE3D\uDEA9]|\uD805[\uDC4B-\uDC4F\uDC5A\uDC5B\uDC5D\uDCC6\uDDC1-\uDDD7\uDE41-\uDE43\uDE60-\uDE6C\uDF3C-\uDF3E]|\uD806[\uDC3B\uDD44-\uDD46\uDDE2\uDE3F-\uDE46\uDE9A-\uDE9C\uDE9E-\uDEA2]|\uD807[\uDC41-\uDC45\uDC70\uDC71\uDEF7\uDEF8\uDFFF]|\uD809[\uDC70-\uDC74]|\uD81A[\uDE6E\uDE6F\uDEF5\uDF37-\uDF3B\uDF44]|\uD81B[\uDE97-\uDE9A\uDFE2]|\uD82F\uDC9F|\uD836[\uDE87-\uDE8B]|\uD83A[\uDD5E\uDD5F]/.test(e);
 }
 function De(e) {
@@ -49278,7 +49278,7 @@ var Qf = class {
         default:
           g6 = this.map[c6] || i.unknown || "";
       }
-      r5 && (!l6 || f || Lw(g6) || (g6 = " " + g6), l6 = !!g6 && i2(c6)), o5 += g6, t5 += c6.length, h += c6.length - 1;
+      r5 && (!l6 || f || Yw(g6) || (g6 = " " + g6), l6 = !!g6 && i2(c6)), o5 += g6, t5 += c6.length, h += c6.length - 1;
     }
     return o5;
   }
@@ -49336,13 +49336,13 @@ var Qf = class {
     return l6.length && (t5 = this.replaceString(t5, l6)), t5;
   }
 };
-var Yw = Object.assign(Object.assign({}, De(is)), { allowedChars: "a-zA-Z0-9-_.~", lowercase: true, separator: "-", uppercase: false, fixChineseSpacing: true });
+var kw = Object.assign(Object.assign({}, De(is)), { allowedChars: "a-zA-Z0-9-_.~", lowercase: true, separator: "-", uppercase: false, fixChineseSpacing: true });
 var ei = new Qf();
 var t2 = ei.transliterate.bind(ei);
 t2.config = ei.config.bind(ei), t2.setData = ei.setData.bind(ei);
 var ni = new class extends Qf {
   get options() {
-    return De(Object.assign(Object.assign({}, Yw), this.confOptions));
+    return De(Object.assign(Object.assign({}, kw), this.confOptions));
   }
   config(e, n = false) {
     return n && (this.confOptions = {}), e && typeof e == "object" && (this.confOptions = De(e)), this.confOptions;
@@ -49598,7 +49598,7 @@ var Of = [
     }
   }
 ];
-var kw = {
+var Iw = {
   "remote-style": "RemoteStyle"
 };
 var Hw = {
@@ -49608,7 +49608,7 @@ var Hw = {
       e.name
     ])
   ),
-  ...kw
+  ...Iw
 };
 ({
   ...Object.fromEntries(
@@ -49623,17 +49623,17 @@ var import_guards2 = __toESM(require_build(), 1);
 init_react();
 var S = /* @__PURE__ */ ((e) => (e.DAY = "DAY", e.MONTH = "MONTH", e.QUARTER = "QUARTER", e.YEAR = "YEAR", e.WEEK = "WEEK", e.DAY_OF_THE_WEEK = "DAY_OF_THE_WEEK", e.MONTH_OF_THE_YEAR = "MONTH_OF_THE_YEAR", e.QUARTER_OF_THE_YEAR = "QUARTER_OF_THE_YEAR", e.NONE = "NONE", e))(S || {});
 S.DAY, S.WEEK, S.MONTH, S.QUARTER, S.YEAR;
-var Q = "__twentySdkExecutionContext__";
+var q5 = "__twentySdkExecutionContext__";
 var M = "__twentySdkContextListeners__";
 var k = () => (globalThis[M] || (globalThis[M] = /* @__PURE__ */ new Set()), globalThis[M]);
-var x = () => globalThis[Q];
+var x = () => globalThis[q5];
 var $ = (e) => {
   k().add(e);
 };
 var X5 = (e) => {
   k().delete(e);
 };
-var y = (e) => {
+var T = (e) => {
   const t5 = Nw.enqueueSnackbar;
   if (!Ki(t5))
     throw new Error("enqueueSnackbarFunction is not set");
@@ -49645,7 +49645,7 @@ var J = (e, t5, n, i) => {
     throw new Error("navigateFunction is not set");
   return a5(e, t5, n, i);
 };
-var C = () => {
+var y = () => {
   const e = Nw.unmountFrontComponent;
   if (!Ki(e))
     throw new Error("unmountFrontComponentFunction is not set");
@@ -49665,14 +49665,14 @@ var L = (e) => {
 };
 var ee = (e) => e.frontComponentId;
 var g = () => L(ee);
-var A = (e) => `${e}-action-error`;
-var et2 = ({
+var P5 = (e) => `${e}-command-error`;
+var tt2 = ({
   to: e,
   params: t5,
   queryParams: n,
   options: i
 }) => {
-  const [a5, r5] = (0, react_exports.useState)(false), c6 = g();
+  const [a5, r5] = (0, react_exports.useState)(false), d6 = g();
   return (0, react_exports.useEffect)(() => {
     if (a5)
       return;
@@ -49680,17 +49680,17 @@ var et2 = ({
       try {
         await J(e, t5, n, i);
       } catch (E) {
-        E instanceof Error && await y({
-          message: "Action failed",
+        E instanceof Error && await T({
+          message: "Command failed",
           detailedMessage: E.message,
           variant: "error",
-          dedupeKey: A(c6)
+          dedupeKey: P5(d6)
         });
       } finally {
-        await C();
+        await y();
       }
     })();
-  }, [e, t5, n, i, a5, c6]), null;
+  }, [e, t5, n, i, a5, d6]), null;
 };
 
 var s = /* @__PURE__ */ ((e) => (e.Verify = "/verify", e.VerifyEmail = "/verify-email", e.SignInUp = "/welcome", e.Invite = "/invite/:workspaceInviteHash", e.ResetPassword = "/reset-password/:passwordResetToken", e.CreateWorkspace = "/create/workspace", e.CreateProfile = "/create/profile", e.SyncEmails = "/sync/emails", e.InviteTeam = "/invite-team", e.PlanRequired = "/plan-required", e.PlanRequiredSuccess = "/plan-required/payment-success", e.BookCallDecision = "/book-call-decision", e.BookCall = "/book-call", e.Index = "/", e.TasksPage = "/objects/tasks", e.OpportunitiesPage = "/objects/opportunities", e.RecordIndexPage = "/objects/:objectNamePlural", e.RecordShowPage = "/object/:objectNameSingular/:objectRecordId", e.Settings = "settings", e.SettingsCatchAll = "/settings/*", e.Developers = "developers", e.DevelopersCatchAll = "/developers/*", e.Authorize = "/authorize", e.NotFoundWildcard = "*", e.NotFound = "/not-found", e))(s || {});
@@ -49721,7 +49721,7 @@ function y5(e, n, g6) {
 
 var R = /* @__PURE__ */ ((E) => (E.ACTOR = "ACTOR", E.ADDRESS = "ADDRESS", E.ARRAY = "ARRAY", E.BOOLEAN = "BOOLEAN", E.CURRENCY = "CURRENCY", E.DATE = "DATE", E.DATE_TIME = "DATE_TIME", E.EMAILS = "EMAILS", E.FILES = "FILES", E.FULL_NAME = "FULL_NAME", E.LINKS = "LINKS", E.MORPH_RELATION = "MORPH_RELATION", E.MULTI_SELECT = "MULTI_SELECT", E.NUMBER = "NUMBER", E.NUMERIC = "NUMERIC", E.PHONES = "PHONES", E.POSITION = "POSITION", E.RATING = "RATING", E.RAW_JSON = "RAW_JSON", E.RELATION = "RELATION", E.RICH_TEXT = "RICH_TEXT", E.RICH_TEXT_V2 = "RICH_TEXT_V2", E.SELECT = "SELECT", E.TEXT = "TEXT", E.TS_VECTOR = "TS_VECTOR", E.UUID = "UUID", E))(R || {});
 
-var I = /* @__PURE__ */ ((E) => (E.EMAIL = "EMAIL", E.CALENDAR = "CALENDAR", E.WORKFLOW = "WORKFLOW", E.AGENT = "AGENT", E.API = "API", E.IMPORT = "IMPORT", E.MANUAL = "MANUAL", E.SYSTEM = "SYSTEM", E.WEBHOOK = "WEBHOOK", E.APPLICATION = "APPLICATION", E))(I || {});
+var _5 = /* @__PURE__ */ ((E) => (E.EMAIL = "EMAIL", E.CALENDAR = "CALENDAR", E.WORKFLOW = "WORKFLOW", E.AGENT = "AGENT", E.API = "API", E.IMPORT = "IMPORT", E.MANUAL = "MANUAL", E.SYSTEM = "SYSTEM", E.WEBHOOK = "WEBHOOK", E.APPLICATION = "APPLICATION", E))(_5 || {});
 var p = {
   type: R.ACTOR,
   properties: [
@@ -49730,11 +49730,11 @@ var p = {
       type: R.SELECT,
       hidden: false,
       isRequired: true,
-      options: Object.keys(I).map(
+      options: Object.keys(_5).map(
         (E, s5) => ({
           id: y5(),
           // @ts-expect-error legacy noImplicitAny
-          label: `${I[E].toLowerCase()}`,
+          label: `${_5[E].toLowerCase()}`,
           value: E,
           position: s5
         })
@@ -49830,7 +49830,7 @@ var l5 = {
     }
   ]
 };
-var R5 = {
+var c5 = {
   type: R.EMAILS,
   properties: [
     {
@@ -49848,7 +49848,7 @@ var R5 = {
     }
   ]
 };
-var c5 = {
+var R5 = {
   type: R.FULL_NAME,
   properties: [
     {
@@ -49938,23 +49938,23 @@ var u5 = {
     }
   ]
 };
-var P5 = external_exports.object({
+var g5 = external_exports.object({
   blocknote: external_exports.string().nullable().optional(),
   markdown: external_exports.string().nullable()
 });
-var g5 = /* @__PURE__ */ new Map([
+var EE = /* @__PURE__ */ new Map([
   [R.LINKS, L5],
   [R.CURRENCY, l5],
-  [R.FULL_NAME, c5],
+  [R.FULL_NAME, R5],
   [R.ADDRESS, d5],
   [R.ACTOR, p],
-  [R.EMAILS, R5],
+  [R.EMAILS, c5],
   [R.PHONES, D],
   [R.RICH_TEXT_V2, u5]
 ]);
 
 var GoToCompanies = () => /* @__PURE__ */ jsx(
-  et2,
+  tt2,
   {
     to: s.RecordIndexPage,
     params: { objectNamePlural: "companies" }

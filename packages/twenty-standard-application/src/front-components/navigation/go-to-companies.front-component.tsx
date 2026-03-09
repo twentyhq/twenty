@@ -1,8 +1,8 @@
-import { ActionLink, defineFrontComponent } from 'twenty-sdk';
+import { CommandLink, defineFrontComponent } from 'twenty-sdk';
 import { AppPath } from 'twenty-shared/types';
 
 const GoToCompanies = () => (
-  <ActionLink
+  <CommandLink
     to={AppPath.RecordIndexPage}
     params={{ objectNamePlural: 'companies' }}
   />

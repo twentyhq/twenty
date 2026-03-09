@@ -1,7 +1,7 @@
-import { Action, defineFrontComponent } from 'twenty-sdk';
+import { Command, defineFrontComponent } from 'twenty-sdk';
 
 // TODO: implement execute logic
-const HideDeletedRecords = () => <Action execute={async () => {}} />;
+const HideDeletedRecords = () => <Command execute={async () => {}} />;
 
 export default defineFrontComponent({
   universalIdentifier: '75e93e21-effb-48ef-ba1c-588c358fd56f',

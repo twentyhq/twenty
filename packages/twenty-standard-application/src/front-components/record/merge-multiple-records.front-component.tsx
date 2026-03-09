@@ -1,7 +1,7 @@
-import { Action, defineFrontComponent } from 'twenty-sdk';
+import { Command, defineFrontComponent } from 'twenty-sdk';
 
 // TODO: implement execute logic
-const MergeMultipleRecords = () => <Action execute={async () => {}} />;
+const MergeMultipleRecords = () => <Command execute={async () => {}} />;
 
 export default defineFrontComponent({
   universalIdentifier: '9c6757aa-ecdd-4b21-8466-fb1e8f0bfcb8',

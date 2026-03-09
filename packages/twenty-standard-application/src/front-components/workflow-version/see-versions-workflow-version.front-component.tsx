@@ -1,7 +1,7 @@
-import { Action, defineFrontComponent } from 'twenty-sdk';
+import { Command, defineFrontComponent } from 'twenty-sdk';
 
 // TODO: implement execute logic
-const SeeVersionsWorkflowVersion = () => <Action execute={async () => {}} />;
+const SeeVersionsWorkflowVersion = () => <Command execute={async () => {}} />;
 
 export default defineFrontComponent({
   universalIdentifier: 'a93c9f09-7a7f-4665-982a-0709a652c5bd',
