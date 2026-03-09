@@ -37,10 +37,10 @@ export { DATE_TIME_PICKER_MONTH_YEAR_PANEL_DROPDOWN_ID } from '@/ui/input/compon
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledOuterWrapper = styled.div`
-  position: relative;
+  align-items: flex-start;
   display: flex;
   flex-direction: row;
-  align-items: flex-start;
+  position: relative;
   width: 280px;
 `;
 

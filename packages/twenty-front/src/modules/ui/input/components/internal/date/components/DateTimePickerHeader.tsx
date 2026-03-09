@@ -73,9 +73,9 @@ const StyledTimeInputContainer = styled.div`
 `;
 
 const StyledClockIcon = styled.div`
-  display: flex;
   align-items: center;
   color: ${themeCssVariables.font.color.tertiary};
+  display: flex;
   flex-shrink: 0;
 `;
 
@@ -102,8 +102,8 @@ const StyledTimeInput = styled.input`
 `;
 
 const StyledRightControls = styled.div`
-  display: flex;
   align-items: center;
+  display: flex;
   gap: ${themeCssVariables.spacing[1]};
 `;
 
