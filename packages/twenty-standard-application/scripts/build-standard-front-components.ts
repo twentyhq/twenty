@@ -58,6 +58,7 @@ const buildStandardFrontComponents = async () => {
     outbase: FRONT_COMPONENTS_DIR,
     outExtension: { '.js': '.mjs' },
     jsx: 'automatic',
+    minify: true,
     sourcemap: true,
     metafile: true,
     logLevel: 'silent',
