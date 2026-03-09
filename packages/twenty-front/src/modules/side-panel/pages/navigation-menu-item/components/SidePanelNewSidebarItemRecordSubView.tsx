@@ -3,17 +3,19 @@ import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useDebounce } from 'use-debounce';
 
-import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
-import { SidePanelAddToNavigationDroppable } from '@/side-panel/components/SidePanelAddToNavigationDroppable';
-import { SidePanelList } from '@/side-panel/components/SidePanelList';
-import { SidePanelSubViewWithSearch } from '@/side-panel/components/SidePanelSubViewWithSearch';
 import { MAX_SEARCH_RESULTS } from '@/command-menu/constants/MaxSearchResults';
-import { SidePanelNewSidebarItemRecordItem } from '@/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemRecordItem';
 import { useDraftNavigationMenuItems } from '@/navigation-menu-item/hooks/useDraftNavigationMenuItems';
+import { addMenuItemInsertionContextState } from '@/navigation-menu-item/states/addMenuItemInsertionContextState';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
+import { SidePanelAddToNavigationDroppable } from '@/side-panel/components/SidePanelAddToNavigationDroppable';
+import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
+import { SidePanelList } from '@/side-panel/components/SidePanelList';
+import { SidePanelSubViewWithSearch } from '@/side-panel/components/SidePanelSubViewWithSearch';
+import { SidePanelNewSidebarItemRecordItem } from '@/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemRecordItem';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSearchQuery } from '~/generated/graphql';
 
 type SearchRecordBase = {
@@ -25,12 +27,19 @@ type SearchRecordBase = {
 
 type SidePanelNewSidebarItemRecordSubViewProps = {
   onBack: () => void;
+  disableDrag?: boolean;
 };
 
 export const SidePanelNewSidebarItemRecordSubView = ({
   onBack,
+  disableDrag: disableDragProp,
 }: SidePanelNewSidebarItemRecordSubViewProps) => {
   const { t } = useLingui();
+  const addMenuItemInsertionContext = useAtomStateValue(
+    addMenuItemInsertionContextState,
+  );
+  const disableDrag =
+    disableDragProp ?? addMenuItemInsertionContext?.disableDrag === true;
   const { currentDraft } = useDraftNavigationMenuItems();
   const { objectMetadataItems } = useObjectMetadataItems();
   const [recordSearchInput, setRecordSearchInput] = useState('');
@@ -105,7 +114,8 @@ export const SidePanelNewSidebarItemRecordSubView = ({
                   <SidePanelNewSidebarItemRecordItem
                     key={record.recordId}
                     record={record}
-                    dragIndex={index}
+                    dragIndex={disableDrag ? undefined : index}
+                    disableDrag={disableDrag}
                   />
                 ))}
               </SidePanelGroup>

@@ -16,6 +16,10 @@ export const useRecordAgnosticCommands = () => {
       RECORD_AGNOSTIC_COMMAND_MENU_ITEMS_CONFIG[
         RecordAgnosticCommandKeys.SEARCH_RECORDS_FALLBACK
       ],
+    [RecordAgnosticCommandKeys.EDIT_NAVIGATION_SIDEBAR]:
+      RECORD_AGNOSTIC_COMMAND_MENU_ITEMS_CONFIG[
+        RecordAgnosticCommandKeys.EDIT_NAVIGATION_SIDEBAR
+      ],
   };
 
   if (isAiEnabled) {

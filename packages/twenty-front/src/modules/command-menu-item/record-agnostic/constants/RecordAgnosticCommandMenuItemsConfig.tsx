@@ -1,11 +1,18 @@
 import { CommandMenuItemOpenSidePanelPage } from '@/command-menu-item/display/components/CommandMenuItemOpenSidePanelPage';
 import { RecordAgnosticCommandKeys } from '@/command-menu-item/record-agnostic/types/RecordAgnosticCommandKeys';
+import { EditNavigationSidebarNoSelectionRecordCommand } from '@/command-menu-item/record/no-selection/components/EditNavigationSidebarNoSelectionRecordCommand';
 import { type CommandMenuItemConfig } from '@/command-menu-item/types/CommandMenuItemConfig';
 import { CommandMenuItemScope } from '@/command-menu-item/types/CommandMenuItemScope';
 import { CommandMenuItemType } from '@/command-menu-item/types/CommandMenuItemType';
 import { CommandMenuItemViewType, SidePanelPages } from 'twenty-shared/types';
 import { msg } from '@lingui/core/macro';
-import { IconHistory, IconSearch, IconSparkles } from 'twenty-ui/display';
+import {
+  IconHistory,
+  IconLayout,
+  IconSearch,
+  IconSparkles,
+} from 'twenty-ui/display';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const RECORD_AGNOSTIC_COMMAND_MENU_ITEMS_CONFIG: Record<
   string,
@@ -90,5 +97,21 @@ export const RECORD_AGNOSTIC_COMMAND_MENU_ITEMS_CONFIG: Record<
       />
     ),
     shouldBeRegistered: () => true,
+  },
+  [RecordAgnosticCommandKeys.EDIT_NAVIGATION_SIDEBAR]: {
+    type: CommandMenuItemType.Navigation,
+    scope: CommandMenuItemScope.Global,
+    key: RecordAgnosticCommandKeys.EDIT_NAVIGATION_SIDEBAR,
+    label: msg`Edit navigation sidebar`,
+    shortLabel: msg`Edit sidebar`,
+    position: 4,
+    Icon: IconLayout,
+    isPinned: false,
+    availableOn: [CommandMenuItemViewType.GLOBAL],
+    shouldBeRegistered: ({ isFeatureFlagEnabled }) =>
+      isFeatureFlagEnabled(
+        FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED,
+      ),
+    component: <EditNavigationSidebarNoSelectionRecordCommand />,
   },
 };

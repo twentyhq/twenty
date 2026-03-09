@@ -8,7 +8,7 @@ import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
-import { useContext } from 'react';
+import React, { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { ThemeContext } from 'twenty-ui/theme-constants';
 
@@ -21,11 +21,16 @@ export const SidePanelRouter = () => {
   const sidePanelPage = useAtomStateValue(sidePanelPageState);
   const sidePanelPageInfo = useAtomStateValue(sidePanelPageInfoState);
 
-  const sidePanelPageComponent = isDefined(sidePanelPage) ? (
-    SIDE_PANEL_PAGES_CONFIG.get(sidePanelPage)
-  ) : (
-    <></>
-  );
+  const rawPageComponent = isDefined(sidePanelPage)
+    ? SIDE_PANEL_PAGES_CONFIG.get(sidePanelPage)
+    : null;
+
+  const sidePanelPageComponent =
+    isDefined(rawPageComponent) && React.isValidElement(rawPageComponent)
+      ? React.cloneElement(rawPageComponent, {
+          key: sidePanelPageInfo.instanceId,
+        })
+      : rawPageComponent;
 
   const { theme } = useContext(ThemeContext);
 

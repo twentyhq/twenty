@@ -63,7 +63,10 @@ export const CurrentWorkspaceMemberOrphanFavorites = () => {
                   rightOptions={
                     <LightIconButton
                       Icon={IconHeartOff}
-                      onClick={() => deleteFavorite(favorite.id)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        deleteFavorite(favorite.id);
+                      }}
                       accent="tertiary"
                     />
                   }
