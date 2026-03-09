@@ -1,7 +1,7 @@
 import { join } from 'path';
 import { type Manifest } from 'twenty-shared/application';
 
-import { EXPECTED_MANIFEST } from '@/cli/__tests__/apps/root-app/__integration__/app-dev/expected-manifest';
+import { EXPECTED_MANIFEST } from '@/app-seeds/root-app/__integration__/app-dev/expected-manifest';
 import { normalizeManifestForComparison } from '@/cli/__tests__/integration/utils/normalize-manifest.util';
 import { pathExists, readJson } from '@/cli/utilities/file/fs-utils';
 

@@ -1,7 +1,7 @@
 import {
   RECIPIENT_EMAIL_FIELD_UNIVERSAL_IDENTIFIER,
   RECIPIENT_UNIVERSAL_IDENTIFIER,
-} from '@/cli/__tests__/apps/rich-app/src/objects/recipient.object';
+} from '@/app-seeds/rich-app/src/objects/recipient.object';
 import { defineView } from '@/sdk';
 import { ViewType } from 'twenty-shared/types';
 

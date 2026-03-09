@@ -1,6 +1,6 @@
-import { POST_CARD_RECIPIENT_UNIVERSAL_IDENTIFIER } from '@/cli/__tests__/apps/rich-app/src/objects/post-card-recipient.object';
+import { POST_CARD_RECIPIENT_UNIVERSAL_IDENTIFIER } from '@/app-seeds/rich-app/src/objects/post-card-recipient.object';
 import { defineField, FieldType, RelationType } from '@/sdk';
-import { POST_CARD_UNIVERSAL_IDENTIFIER } from '@/cli/__tests__/apps/rich-app/src/objects/post-card.object';
+import { POST_CARD_UNIVERSAL_IDENTIFIER } from '@/app-seeds/rich-app/src/objects/post-card.object';
 
 export const POST_CARD_RECIPIENTS_ON_POST_CARD_ID =
   'a1a2b3c4-0001-4a7b-8c9d-0e1f2a3b4c5d';

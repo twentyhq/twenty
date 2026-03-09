@@ -1,7 +1,7 @@
 import {
   POST_CARD_RECIPIENT_UNIVERSAL_IDENTIFIER,
   SENT_AT_FIELD_UNIVERSAL_IDENTIFIER,
-} from '@/cli/__tests__/apps/rich-app/src/objects/post-card-recipient.object';
+} from '@/app-seeds/rich-app/src/objects/post-card-recipient.object';
 import { defineView } from '@/sdk';
 import { ViewType } from 'twenty-shared/types';
 

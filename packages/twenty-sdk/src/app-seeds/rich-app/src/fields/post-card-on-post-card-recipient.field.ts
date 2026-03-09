@@ -1,10 +1,10 @@
 import {
   POST_CARD_ON_POST_CARD_RECIPIENT_ID,
   POST_CARD_RECIPIENTS_ON_POST_CARD_ID,
-} from '@/cli/__tests__/apps/rich-app/src/fields/post-card-recipients-on-post-card.field';
-import { POST_CARD_RECIPIENT_UNIVERSAL_IDENTIFIER } from '@/cli/__tests__/apps/rich-app/src/objects/post-card-recipient.object';
+} from '@/app-seeds/rich-app/src/fields/post-card-recipients-on-post-card.field';
+import { POST_CARD_RECIPIENT_UNIVERSAL_IDENTIFIER } from '@/app-seeds/rich-app/src/objects/post-card-recipient.object';
 import { defineField, FieldType, OnDeleteAction, RelationType } from '@/sdk';
-import { POST_CARD_UNIVERSAL_IDENTIFIER } from '@/cli/__tests__/apps/rich-app/src/objects/post-card.object';
+import { POST_CARD_UNIVERSAL_IDENTIFIER } from '@/app-seeds/rich-app/src/objects/post-card.object';
 
 export default defineField({
   universalIdentifier: POST_CARD_ON_POST_CARD_RECIPIENT_ID,

@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { promises as fs } from 'fs';
 import { join, relative } from 'path';
 
+import { type Manifest } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
@@ -21,6 +22,7 @@ import {
   type ResolvedPackage,
 } from 'src/engine/core-modules/application/application-package/application-package-fetcher.service';
 import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
+import { readJsonFileOrThrow } from 'src/engine/core-modules/application/application-package/utils/read-json-file.util';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 
@@ -91,6 +93,47 @@ export class ApplicationInstallService {
         }),
       lockKey,
       { ttl: 60_000, ms: 500, maxRetries: 120 },
+    );
+  }
+
+  async installFromLocalDirectory(params: {
+    appRegistrationId: string;
+    extractedDir: string;
+    workspaceId: string;
+  }): Promise<void> {
+    const appRegistration = await this.appRegistrationRepository.findOneOrFail({
+      where: { id: params.appRegistrationId },
+    });
+
+    const manifest = await readJsonFileOrThrow<Manifest>(
+      params.extractedDir,
+      'manifest.json',
+    );
+
+    const universalIdentifier = appRegistration.universalIdentifier;
+
+    await this.ensureApplicationExists({
+      universalIdentifier,
+      name: manifest.application.displayName,
+      workspaceId: params.workspaceId,
+      applicationRegistrationId: appRegistration.id,
+      sourceType: appRegistration.sourceType,
+    });
+
+    await this.writeFilesToStorage(
+      params.extractedDir,
+      universalIdentifier,
+      params.workspaceId,
+    );
+
+    await this.applicationSyncService.synchronizeFromManifest({
+      workspaceId: params.workspaceId,
+      manifest,
+      applicationRegistrationId: appRegistration.id,
+    });
+
+    this.logger.log(
+      `Successfully installed app ${universalIdentifier} from local directory`,
     );
   }
 

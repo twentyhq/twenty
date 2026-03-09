@@ -2,7 +2,7 @@ import { defineView } from '@/sdk';
 import {
   CONTENT_FIELD_UNIVERSAL_IDENTIFIER,
   POST_CARD_UNIVERSAL_IDENTIFIER,
-} from '@/cli/__tests__/apps/rich-app/src/objects/post-card.object';
+} from '@/app-seeds/rich-app/src/objects/post-card.object';
 import { ViewType } from 'twenty-shared/types';
 
 export const ALL_POST_CARDS_VIEW_ID = 'b1a2b3c4-0001-4a7b-8c9d-0e1f2a3b4c5d';

@@ -39,6 +39,10 @@
       {
         "include": "engine/workspace-manager/dev-seeder/data/sample-files/**",
         "outDir": "dist/assets"
+      },
+      {
+        "include": "engine/workspace-manager/dev-seeder/core/constants/*.json",
+        "outDir": "dist"
       }
     ]
   },
