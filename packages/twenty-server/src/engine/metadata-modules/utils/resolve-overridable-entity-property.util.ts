@@ -1,5 +1,3 @@
-import { isDefined } from 'twenty-shared/utils';
-
 export const resolveOverridableEntityProperty = <
   TEntity extends { overrides?: Partial<TEntity> | null },
   K extends string & keyof TEntity,
@@ -9,5 +7,5 @@ export const resolveOverridableEntityProperty = <
 ): TEntity[K] => {
   const overrideValue = entity.overrides?.[property];
 
-  return isDefined(overrideValue) ? overrideValue : entity[property];
+  return overrideValue !== undefined ? overrideValue : entity[property];
 };

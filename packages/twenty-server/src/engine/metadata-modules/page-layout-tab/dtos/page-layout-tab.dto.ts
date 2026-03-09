@@ -55,6 +55,9 @@ export class PageLayoutTabDTO {
   @Field(() => Date, { nullable: true })
   deletedAt?: Date | null;
 
+  @Field(() => Boolean, { nullable: false })
+  isOverridden: boolean;
+
   @HideField()
   overrides?: PageLayoutTabOverrides | null;
 }

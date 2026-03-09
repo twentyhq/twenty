@@ -59,4 +59,15 @@ describe('resolveOverridableEntityProperty', () => {
       'Base Title',
     );
   });
+
+  it('should return null when override explicitly sets a nullable property to null', () => {
+    const entity: TestEntity = {
+      title: 'Base Title',
+      position: 0,
+      icon: 'IconStar',
+      overrides: { icon: null },
+    };
+
+    expect(resolveOverridableEntityProperty(entity, 'icon')).toBeNull();
+  });
 });
