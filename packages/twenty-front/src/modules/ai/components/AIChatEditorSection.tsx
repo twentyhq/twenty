@@ -8,14 +8,13 @@ import { AIChatStandaloneError } from '@/ai/components/AIChatStandaloneError';
 import { AgentChatContextPreview } from '@/ai/components/internal/AgentChatContextPreview';
 import { AgentChatFileUploadButton } from '@/ai/components/internal/AgentChatFileUploadButton';
 import { AIChatContextUsageButton } from '@/ai/components/internal/AIChatContextUsageButton';
+import { AIChatEditorFocusEffect } from '@/ai/components/internal/AIChatEditorFocusEffect';
 import { AIChatSkeletonLoader } from '@/ai/components/internal/AIChatSkeletonLoader';
 import { SendMessageButton } from '@/ai/components/internal/SendMessageButton';
 import { useAIChatEditor } from '@/ai/hooks/useAIChatEditor';
 import { useAiModelLabel } from '@/ai/hooks/useAiModelOptions';
-import { focusEditorAfterMigrateState } from '@/ai/states/focusEditorAfterMigrateState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledInputArea = styled.div<{ isMobile: boolean }>`
@@ -118,25 +117,12 @@ export const AIChatEditorSection = () => {
   const isMobile = useIsMobile();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const smartModelLabel = useAiModelLabel(currentWorkspace?.smartModel, false);
-  const [focusEditorAfterMigrate, setFocusEditorAfterMigrate] = useAtomState(
-    focusEditorAfterMigrateState,
-  );
 
   const { editor, handleSendAndClear } = useAIChatEditor();
 
-  const editorWrapperRefCallback = (node: HTMLDivElement | null) => {
-    if (node && focusEditorAfterMigrate) {
-      requestAnimationFrame(() => {
-        if (editor) {
-          editor.commands.focus('end');
-          setFocusEditorAfterMigrate(false);
-        }
-      });
-    }
-  };
-
   return (
     <>
+      <AIChatEditorFocusEffect editor={editor} />
       <AIChatEmptyState editor={editor} />
       <AIChatStandaloneError />
       <AIChatSkeletonLoader />
@@ -144,7 +130,7 @@ export const AIChatEditorSection = () => {
       <StyledInputArea isMobile={isMobile}>
         <AgentChatContextPreview />
         <StyledInputBox>
-          <StyledEditorWrapper ref={editorWrapperRefCallback}>
+          <StyledEditorWrapper>
             <EditorContent editor={editor} />
           </StyledEditorWrapper>
           <StyledButtonsContainer>
