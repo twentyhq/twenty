@@ -1,5 +1,6 @@
 import { ViewFilterGroupLogicalOperator } from '@/views/types/ViewFilterGroupLogicalOperator';
 import { RecordFilterGroupLogicalOperator } from 'twenty-shared/types';
+import { assertUnreachable } from 'twenty-shared/utils';
 
 export const mapViewFilterGroupLogicalOperatorToRecordFilterGroupLogicalOperator =
   ({
@@ -7,14 +8,14 @@ export const mapViewFilterGroupLogicalOperatorToRecordFilterGroupLogicalOperator
   }: {
     viewFilterGroupLogicalOperator: ViewFilterGroupLogicalOperator;
   }) => {
-    return (
-      {
-        [ViewFilterGroupLogicalOperator.AND]:
-          RecordFilterGroupLogicalOperator.AND,
-        [ViewFilterGroupLogicalOperator.OR]:
-          RecordFilterGroupLogicalOperator.OR,
-        [ViewFilterGroupLogicalOperator.NOT]:
-          RecordFilterGroupLogicalOperator.NOT,
-      }[viewFilterGroupLogicalOperator] ?? RecordFilterGroupLogicalOperator.AND
-    );
+    switch (viewFilterGroupLogicalOperator) {
+      case ViewFilterGroupLogicalOperator.AND:
+        return RecordFilterGroupLogicalOperator.AND;
+      case ViewFilterGroupLogicalOperator.OR:
+        return RecordFilterGroupLogicalOperator.OR;
+      case ViewFilterGroupLogicalOperator.NOT:
+        return RecordFilterGroupLogicalOperator.NOT;
+      default:
+        throw assertUnreachable(viewFilterGroupLogicalOperator);
+    }
   };
