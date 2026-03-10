@@ -17,28 +17,28 @@ type FormFieldInputInnerContainerProps = {
 const StyledFormFieldInputInnerContainer = styled.div<
   Omit<FormFieldInputInnerContainerProps, 'formFieldInputInstanceId'>
 >`
+  align-items: center;
   background-color: ${themeCssVariables.background.transparent.lighter};
   border: 1px solid ${themeCssVariables.border.color.medium};
   border-bottom-left-radius: ${themeCssVariables.border.radius.sm};
   border-bottom-right-radius: ${({ multiline, hasRightElement }) =>
     multiline || !hasRightElement ? themeCssVariables.border.radius.sm : '0'};
-
   border-right: ${({ multiline, hasRightElement }) =>
     multiline || !hasRightElement ? 'auto' : 'none'};
   border-top-left-radius: ${themeCssVariables.border.radius.sm};
   border-top-right-radius: ${({ multiline, hasRightElement }) =>
     multiline || !hasRightElement ? themeCssVariables.border.radius.sm : '0'};
-  align-items: center;
   box-sizing: border-box;
   display: flex;
   justify-content: space-between;
   overflow-x: auto;
   overflow-y: ${({ multiline }) => (multiline ? 'auto' : 'hidden')};
   scrollbar-width: none;
+  width: 100%;
+
   &::-webkit-scrollbar {
     display: none;
   }
-  width: 100%;
 
   &:hover,
   &[data-open='true'] {
