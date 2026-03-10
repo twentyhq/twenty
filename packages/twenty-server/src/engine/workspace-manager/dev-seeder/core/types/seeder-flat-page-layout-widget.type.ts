@@ -10,4 +10,5 @@ export type SeederFlatPageLayoutWidget = Pick<
   | 'position'
   | 'configuration'
   | 'objectMetadataId'
+  | 'overrides'
 >;

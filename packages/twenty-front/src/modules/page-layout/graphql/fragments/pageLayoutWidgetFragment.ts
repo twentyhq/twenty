@@ -6,6 +6,7 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
     title
     type
     objectMetadataId
+    isOverridden
     createdAt
     updatedAt
     deletedAt

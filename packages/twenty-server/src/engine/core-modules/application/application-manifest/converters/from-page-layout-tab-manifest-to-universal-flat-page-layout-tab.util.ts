@@ -27,5 +27,6 @@ export const fromPageLayoutTabManifestToUniversalFlatPageLayoutTab = ({
     createdAt: now,
     updatedAt: now,
     deletedAt: null,
+    overrides: null,
   };
 };

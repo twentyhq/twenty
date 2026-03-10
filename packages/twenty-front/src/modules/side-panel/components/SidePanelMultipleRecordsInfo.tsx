@@ -1,6 +1,6 @@
-import { DEFAULT_RECORD_ACTIONS_CONFIG } from '@/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig';
-import { MultipleRecordsActionKeys } from '@/action-menu/actions/record-actions/multiple-records/types/MultipleRecordsActionKeys';
-import { getActionLabel } from '@/action-menu/utils/getActionLabel';
+import { DEFAULT_RECORD_COMMAND_MENU_ITEMS_CONFIG } from '@/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig';
+import { MultipleRecordsCommandKeys } from '@/command-menu-item/record/multiple-records/types/MultipleRecordsCommandKeys';
+import { getCommandMenuItemLabel } from '@/command-menu-item/utils/getCommandMenuItemLabel';
 import { SidePanelPageInfoLayout } from '@/side-panel/components/SidePanelPageInfoLayout';
 import { useFindManyRecordsSelectedInContextStore } from '@/context-store/hooks/useFindManyRecordsSelectedInContextStore';
 import { t } from '@lingui/core/macro';
@@ -21,13 +21,13 @@ export const SidePanelMultipleRecordsInfo = ({
   });
 
   const { Icon, label } =
-    DEFAULT_RECORD_ACTIONS_CONFIG[MultipleRecordsActionKeys.UPDATE];
+    DEFAULT_RECORD_COMMAND_MENU_ITEMS_CONFIG[MultipleRecordsCommandKeys.UPDATE];
 
   return (
     <SidePanelPageInfoLayout
       icon={<Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />}
       iconColor={theme.font.color.tertiary}
-      title={getActionLabel(label)}
+      title={getCommandMenuItemLabel(label)}
       label={t`${totalCount} selected`}
     />
   );

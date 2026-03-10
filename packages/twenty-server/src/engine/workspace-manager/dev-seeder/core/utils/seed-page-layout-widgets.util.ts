@@ -42,6 +42,7 @@ export const seedPageLayoutWidgets = async ({
       configuration: widget.configuration,
       universalIdentifier: v4(),
       applicationId: workspaceCustomApplicationId,
+      overrides: widget.overrides ?? null,
     };
   });
 
@@ -61,6 +62,7 @@ export const seedPageLayoutWidgets = async ({
         'workspaceId',
         'universalIdentifier',
         'applicationId',
+        'overrides',
       ])
       .values(pageLayoutWidgets)
       .orIgnore()
