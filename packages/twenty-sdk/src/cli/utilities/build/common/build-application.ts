@@ -9,10 +9,7 @@ import {
 import { FileFolder } from 'twenty-shared/types';
 
 import { esbuildOneShotBuild } from '@/cli/utilities/build/common/esbuild-one-shot-build';
-import {
-  LOGIC_FUNCTION_EXTERNAL_MODULES,
-  createSdkClientsResolverPlugin,
-} from '@/cli/utilities/build/common/esbuild-watcher';
+import { LOGIC_FUNCTION_EXTERNAL_MODULES } from '@/cli/utilities/build/common/esbuild-watcher';
 import { FRONT_COMPONENT_EXTERNAL_MODULES } from '@/cli/utilities/build/common/front-component-build/constants/front-component-external-modules';
 import { getFrontComponentBuildPlugins } from '@/cli/utilities/build/common/front-component-build/utils/get-front-component-build-plugins';
 import { type OnFileBuiltCallback } from '@/cli/utilities/build/common/restartable-watcher-interface';
@@ -80,7 +77,6 @@ export const buildApplication = async (
       metafile: true,
       logLevel: 'silent',
       banner: NODE_ESM_CJS_BANNER,
-      plugins: [createSdkClientsResolverPlugin(options.appPath)],
     },
     onFileBuilt: collectFileBuilt,
   });
@@ -101,10 +97,7 @@ export const buildApplication = async (
       sourcemap: true,
       metafile: true,
       logLevel: 'silent',
-      plugins: [
-        createSdkClientsResolverPlugin(options.appPath),
-        ...getFrontComponentBuildPlugins(),
-      ],
+      plugins: [...getFrontComponentBuildPlugins()],
     },
     onFileBuilt: collectFileBuilt,
   });
