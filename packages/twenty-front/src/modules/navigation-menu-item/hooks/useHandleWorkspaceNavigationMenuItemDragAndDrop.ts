@@ -138,7 +138,8 @@ export const useHandleWorkspaceNavigationMenuItemDragAndDrop = () => {
             })()
           : destination.index;
       const destIndexInListWithoutDragged =
-        sourceIndexInList < destinationIndexInFullList
+        sourceIndexInList < destinationIndexInFullList &&
+        destinationIndexInFullList < listWithoutDragged.length
           ? destinationIndexInFullList - 1
           : destinationIndexInFullList;
       const prevItem = listWithoutDragged[destIndexInListWithoutDragged - 1];
