@@ -17,6 +17,7 @@ import { focusEditorAfterMigrateState } from '@/ai/states/focusEditorAfterMigrat
 import { hasTriggeredCreateForDraftState } from '@/ai/states/hasTriggeredCreateForDraftState';
 import { isCreatingChatThreadState } from '@/ai/states/isCreatingChatThreadState';
 import { isCreatingForFirstSendState } from '@/ai/states/isCreatingForFirstSendState';
+import { pendingCreateFromDraftPromiseState } from '@/ai/states/pendingCreateFromDraftPromiseState';
 import { skipMessagesSkeletonUntilLoadedState } from '@/ai/states/skipMessagesSkeletonUntilLoadedState';
 import { threadIdCreatedFromDraftState } from '@/ai/states/threadIdCreatedFromDraftState';
 import { mapDBMessagesToUIMessages } from '@/ai/utils/mapDBMessagesToUIMessages';
@@ -43,6 +44,9 @@ export const useAgentChatData = () => {
   const [, setIsCreatingChatThread] = useAtomState(isCreatingChatThreadState);
   const setAgentChatDraftsByThreadId = useSetAtomState(
     agentChatDraftsByThreadIdState,
+  );
+  const setPendingCreateFromDraftPromise = useSetAtomState(
+    pendingCreateFromDraftPromiseState,
   );
   const store = useStore();
   const apolloClient = useApolloClient();
@@ -206,13 +210,32 @@ export const useAgentChatData = () => {
       return;
     }
     setIsCreatingChatThread(true);
-    createChatThread();
+    const createPromise = createChatThread();
+    const threadIdPromise = createPromise.then(
+      (result) => result?.data?.createChatThread?.id ?? null,
+    );
+    setPendingCreateFromDraftPromise(threadIdPromise);
+    threadIdPromise.finally(() => {
+      setPendingCreateFromDraftPromise(null);
+    });
   };
 
   const ensureThreadIdForSend = async (): Promise<string | null> => {
     const current = store.get(currentAIChatThreadState.atom);
     if (current !== AGENT_CHAT_NEW_THREAD_DRAFT_KEY) {
       return current;
+    }
+    const inFlightCreate = store.get(pendingCreateFromDraftPromiseState.atom);
+    if (
+      store.get(isCreatingChatThreadState.atom) &&
+      isDefined(inFlightCreate)
+    ) {
+      try {
+        const threadId = await inFlightCreate;
+        return threadId;
+      } catch {
+        return null;
+      }
     }
     store.set(isCreatingForFirstSendState.atom, true);
     setIsCreatingChatThread(true);
