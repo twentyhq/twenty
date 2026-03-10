@@ -42,7 +42,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     isPinned: true,
     availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
     conditionalAvailabilityExpression:
-      'objectPermissions.canUpdateObjectRecords and not hasAnySoftDeleteFilterOnView',
+      'pageType == "INDEX_PAGE" and objectPermissions.canUpdateObjectRecords and not hasAnySoftDeleteFilterOnView',
     availabilityObjectMetadataUniversalIdentifier: null,
     frontComponentUniversalIdentifier:
       STANDARD_FRONT_COMPONENTS.createNewRecord.universalIdentifier,
@@ -53,7 +53,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     shortLabel: 'Delete',
     icon: 'IconTrash',
     position: 3,
-    isPinned: true,
+    isPinned: false,
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
       'numberOfSelectedRecords == 1 and not hasAnySoftDeleteFilterOnView and objectPermissions.canSoftDeleteObjectRecords and noneDefined(selectedRecords, "deletedAt")',
@@ -67,7 +67,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     shortLabel: 'Delete',
     icon: 'IconTrash',
     position: 4,
-    isPinned: true,
+    isPinned: false,
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
       'numberOfSelectedRecords >= 2 and objectPermissions.canSoftDeleteObjectRecords and not hasAnySoftDeleteFilterOnView and numberOfSelectedRecords < 10000',
@@ -109,7 +109,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     shortLabel: 'Destroy',
     icon: 'IconTrashX',
     position: 7,
-    isPinned: true,
+    isPinned: false,
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
       'numberOfSelectedRecords == 1 and objectPermissions.canDestroyObjectRecords and everyDefined(selectedRecords, "deletedAt")',
@@ -123,7 +123,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     shortLabel: 'Destroy',
     icon: 'IconTrashX',
     position: 8,
-    isPinned: true,
+    isPinned: false,
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
       'numberOfSelectedRecords >= 2 and objectPermissions.canDestroyObjectRecords and hasAnySoftDeleteFilterOnView and numberOfSelectedRecords < 10000',
@@ -403,7 +403,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     shortLabel: 'Edit Layout',
     icon: 'IconPencil',
     position: 30,
-    isPinned: true,
+    isPinned: false,
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
       'pageType == "RECORD_PAGE" and featureFlags.IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED and noneDefined(selectedRecords, "deletedAt") and objectPermissions.canUpdateObjectRecords and objectMetadataItem.nameSingular != "dashboard"',
