@@ -321,11 +321,11 @@ export default defineObject({
 لكن هذا غير مستحسن.
 </Note>
 
-### Defining fields on existing objects
+### تعريف الحقول على الكائنات الموجودة
 
-Use `defineField()` to add custom fields to existing objects — both standard objects (like `company`, `person`, `opportunity`) and custom objects defined by other apps. Each field lives in its own file and references the target object by its `universalIdentifier`.
+استخدم `defineField()` لإضافة حقول مخصصة إلى الكائنات الموجودة — سواء الكائنات القياسية (مثل `company` و`person` و`opportunity`) أو الكائنات المخصصة التي تُعرِّفها تطبيقات أخرى. يوجد كل حقل في ملفه الخاص ويشير إلى الكائن الهدف بواسطة `universalIdentifier` الخاص به.
 
-To reference standard objects, import `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS` from `twenty-sdk`. This constant provides stable identifiers for all built-in objects and their fields:
+للإشارة إلى الكائنات القياسية، استورد `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS` من `twenty-sdk`. يوفر هذا الثابت معرِّفات مستقرة لجميع الكائنات المضمنة وحقولها:
 
 ```typescript
 // src/fields/apollo-total-funding.field.ts
@@ -349,22 +349,22 @@ export default defineField({
 
 النقاط الرئيسية:
 
-* `objectUniversalIdentifier` tells Twenty which object to attach the field to. Use `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.<objectName>.universalIdentifier` for standard objects.
-* Each field requires its own stable `universalIdentifier`, a `name`, `type`, `label`, and the target `objectUniversalIdentifier`.
-* You can scaffold new fields using `yarn twenty entity:add` and choosing the field option.
-* `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS` is also exported as `STANDARD_OBJECT` for convenience — both refer to the same constant.
+* `objectUniversalIdentifier` يُحدِّد لـ Twenty الكائن الذي سيُرفَق به الحقل. استخدم `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.<objectName>.universalIdentifier` للكائنات القياسية.
+* يتطلب كل حقل `universalIdentifier` ثابتًا خاصًا به، و`name`، و`type`، و`label`، و`objectUniversalIdentifier` الخاص بالكائن الهدف.
+* يمكنك إنشاء حقول جديدة باستخدام `yarn twenty entity:add` واختيار خيار الحقل.
+* يُصدَّر `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS` أيضًا باسم `STANDARD_OBJECT` لسهولة الاستخدام — كلاهما يشير إلى الثابت نفسه.
 
-Available standard objects include: `attachment`, `blocklist`, `calendarChannel`, `calendarEvent`, `calendarEventParticipant`, `company`, `connectedAccount`, `dashboard`, `favorite`, `favoriteFolder`, `message`, `messageChannel`, `messageParticipant`, `messageThread`, `note`, `noteTarget`, `opportunity`, `person`, `task`, `taskTarget`, `timelineActivity`, `workflow`, `workflowAutomatedTrigger`, `workflowRun`, `workflowVersion`, and `workspaceMember`.
+تشمل الكائنات القياسية المتاحة: `attachment`، `blocklist`، `calendarChannel`، `calendarEvent`، `calendarEventParticipant`، `company`، `connectedAccount`، `dashboard`، `favorite`، `favoriteFolder`، `message`، `messageChannel`، `messageParticipant`، `messageThread`، `note`، `noteTarget`، `opportunity`، `person`، `task`، `taskTarget`، `timelineActivity`، `workflow`، `workflowAutomatedTrigger`، `workflowRun`، `workflowVersion`، و`workspaceMember`.
 
-Each standard object also exposes its field identifiers. For example, to reference a specific field on a standard object in role permissions:
+يُوفِّر كل كائن قياسي أيضًا معرّفات حقوله. على سبيل المثال، للإشارة إلى حقل محدد على كائن قياسي ضمن أذونات الأدوار:
 
 ```typescript
 STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.fields.name.universalIdentifier
 ```
 
-#### Relation fields on existing objects
+#### حقول العلاقات على الكائنات الموجودة
 
-You can also define relation fields that link existing objects to your custom objects:
+يمكنك أيضًا تعريف حقول علاقات تربط الكائنات الموجودة بكائناتك المخصصة:
 
 ```typescript
 // src/fields/people-on-call-recording.field.ts
