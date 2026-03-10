@@ -179,8 +179,7 @@ export class FlatViewValidatorService {
 
     const parentObjectStillExists = isDefined(
       findFlatEntityByUniversalIdentifier({
-        universalIdentifier:
-          existingFlatView.objectMetadataUniversalIdentifier,
+        universalIdentifier: existingFlatView.objectMetadataUniversalIdentifier,
         flatEntityMaps: optimisticFlatObjectMetadataMaps,
       }),
     );
