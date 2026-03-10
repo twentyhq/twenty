@@ -31,6 +31,7 @@ import {
 
 import { ASSET_PATH } from 'src/constants/assets-path';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { COMMON_LAYER_DEPENDENCIES_DIRNAME } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/common-layer-dependencies-dirname';
 import { copyBuilder } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-builder';
 import { copyCommonLayerDependencies } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-common-layer-dependencies';
 import { copyExecutor } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-executor';
@@ -51,7 +52,7 @@ const UPDATE_FUNCTION_DURATION_TIMEOUT_IN_SECONDS = 60;
 const CREDENTIALS_DURATION_IN_SECONDS = 60 * 60; // 1h
 const BUILDER_LAMBDA_TIMEOUT_SECONDS = 300;
 const BUILDER_LAMBDA_MEMORY_MB = 1024;
-const COMMON_LAYER_NAME = 'twenty-common-layer-dependencies';
+const COMMON_LAYER_NAME_PREFIX = 'twenty-common-layer';
 const TRANSPILER_LAMBDA_TIMEOUT_SECONDS = 60;
 const TRANSPILER_LAMBDA_MEMORY_MB = 512;
 
@@ -187,6 +188,34 @@ export class LambdaDriver implements LogicFunctionDriver {
 
   private builderFunctionName: string | undefined;
   private transpilerFunctionName: string | undefined;
+  private commonLayerName: string | undefined;
+
+  private async getCommonLayerName(): Promise<string> {
+    if (isDefined(this.commonLayerName)) {
+      return this.commonLayerName;
+    }
+
+    const [packageJson, yarnLock] = await Promise.all([
+      fs.readFile(
+        join(COMMON_LAYER_DEPENDENCIES_DIRNAME, 'package.json'),
+        'utf-8',
+      ),
+      fs.readFile(
+        join(COMMON_LAYER_DEPENDENCIES_DIRNAME, 'yarn.lock'),
+        'utf-8',
+      ),
+    ]);
+
+    const checksum = createHash('sha256')
+      .update(packageJson)
+      .update(yarnLock)
+      .digest('hex')
+      .slice(0, 12);
+
+    this.commonLayerName = `${COMMON_LAYER_NAME_PREFIX}-${checksum}`;
+
+    return this.commonLayerName;
+  }
 
   private async getBuilderFunctionName(): Promise<string> {
     if (isDefined(this.builderFunctionName)) {
@@ -221,7 +250,8 @@ export class LambdaDriver implements LogicFunctionDriver {
   }
 
   private async ensureCommonLayerExists(): Promise<string> {
-    const existingArn = await this.getExistingLayerArn(COMMON_LAYER_NAME);
+    const commonLayerName = await this.getCommonLayerName();
+    const existingArn = await this.getExistingLayerArn(commonLayerName);
 
     if (isDefined(existingArn)) {
       return existingArn;
@@ -239,7 +269,7 @@ export class LambdaDriver implements LogicFunctionDriver {
 
     const result = await lambdaClient.send(
       new PublishLayerVersionCommand({
-        LayerName: COMMON_LAYER_NAME,
+        LayerName: commonLayerName,
         Content: { ZipFile: await fs.readFile(lambdaZipPath) },
         CompatibleRuntimes: [
           LogicFunctionRuntime.NODE18,
