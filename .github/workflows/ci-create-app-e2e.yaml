@@ -22,14 +22,37 @@ jobs:
         packages/create-twenty-app/**
         packages/twenty-sdk/**
         packages/twenty-shared/**
+        packages/twenty-server/**
         !packages/create-twenty-app/package.json
         !packages/twenty-sdk/package.json
         !packages/twenty-shared/package.json
+        !packages/twenty-server/package.json
   create-app-e2e:
     needs: changed-files-check
     if: needs.changed-files-check.outputs.any_changed == 'true'
     timeout-minutes: 30
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest-4-cores
+    services:
+      postgres:
+        image: twentycrm/twenty-postgres-spilo
+        env:
+          PGUSER_SUPERUSER: postgres
+          PGPASSWORD_SUPERUSER: postgres
+          ALLOW_NOSSL: 'true'
+          SPILO_PROVIDER: 'local'
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis
+        ports:
+          - 6379:6379
+    env:
+      NODE_ENV: test
     steps:
       - name: Fetch custom Github Actions and base branch history
         uses: actions/checkout@v4
@@ -120,26 +143,41 @@ jobs:
             console.log('SDK version in scaffolded app:', sdkVersion);
           "
 
-      - name: Debug scaffolded app state
-        if: always()
-        run: |
-          cd /tmp/e2e-test-workspace/test-app
-          echo "--- package.json ---"
-          cat package.json
-          echo "--- yarn.lock (first 50 lines) ---"
-          head -50 yarn.lock || echo "No yarn.lock"
-          echo "--- .yarnrc.yml ---"
-          cat .yarnrc.yml || echo "No .yarnrc.yml"
-          echo "--- node_modules contents ---"
-          ls node_modules/ 2>/dev/null | head -30 || echo "No node_modules"
-          echo "--- node_modules/.bin ---"
-          ls node_modules/.bin/ 2>/dev/null | head -30 || echo "No .bin"
-
       - name: Verify SDK CLI is available
         run: |
           cd /tmp/e2e-test-workspace/test-app
-          test -d node_modules/twenty-sdk
           npx --no-install twenty --version
+
+      - name: Create databases
+        run: |
+          PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "default";'
+          PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "test";'
+
+      - name: Setup server environment
+        run: npx nx reset:env twenty-server
+
+      - name: Build twenty-server
+        run: npx nx build twenty-server
+
+      - name: Reset database
+        run: npx nx database:reset twenty-server
+
+      - name: Start twenty-server
+        run: |
+          npx nx start:ci twenty-server &
+          for i in $(seq 1 30); do
+            if curl -s http://localhost:3000/healthz > /dev/null 2>&1; then
+              echo "Server is ready"
+              break
+            fi
+            echo "Waiting for server... ($i/30)"
+            sleep 2
+          done
+
+      - name: Run scaffolded app integration test
+        run: |
+          cd /tmp/e2e-test-workspace/test-app
+          yarn test
 
   ci-create-app-e2e-status-check:
     if: always() && !cancelled()
