@@ -374,6 +374,13 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
       case FieldMetadataType.ACTOR: {
         const actorFilter = filterValue as ActorFilter;
 
+        if (isDefined(actorFilter.source)) {
+          return isMatchingSelectFilter({
+            selectFilter: actorFilter.source,
+            value: recordFieldValue.source,
+          });
+        }
+
         return (
           actorFilter.name === undefined ||
           isMatchingStringFilter({

@@ -11,6 +11,8 @@ import { type IconComponent } from 'twenty-ui/display';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 export const StyledIMaskInput = styled.div`
+  display: contents;
+
   > input {
     background-color: transparent;
     border: none;

@@ -1,3 +1,4 @@
+import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableCellCheckbox } from '@/object-record/record-table/record-table-cell/components/RecordTableCellCheckbox';
 import { RecordTableCellDragAndDrop } from '@/object-record/record-table/record-table-cell/components/RecordTableCellDragAndDrop';
 import { RecordTableLastEmptyCell } from '@/object-record/record-table/record-table-cell/components/RecordTableLastEmptyCell';
@@ -6,7 +7,6 @@ import { RecordTableDraggableTr } from '@/object-record/record-table/record-tabl
 import { RecordTableFieldsCells } from '@/object-record/record-table/record-table-row/components/RecordTableFieldsCells';
 import { RecordTableRowArrowKeysEffect } from '@/object-record/record-table/record-table-row/components/RecordTableRowArrowKeysEffect';
 import { RecordTableRowHotkeyEffect } from '@/object-record/record-table/record-table-row/components/RecordTableRowHotkeyEffect';
-import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { isRecordTableRowFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableRowFocusActiveComponentState';
 import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowFocusedComponentFamilyState';
 import { RecordTableRowVirtualizedSkeleton } from '@/object-record/record-table/virtualization/components/RecordTableRowVirtualizedSkeleton';
@@ -52,17 +52,17 @@ export const RecordTableRowVirtualizedFullData = ({
       draggableIndex={realIndex}
       focusIndex={realIndex}
     >
+      <RecordTableCellDragAndDrop />
+      <RecordTableCellCheckbox />
+      <RecordTableFieldsCells />
+      <RecordTablePlusButtonCellPlaceholder />
+      <RecordTableLastEmptyCell />
       {isRecordTableRowFocusActive && isRecordTableRowFocused && (
         <>
           <RecordTableRowHotkeyEffect />
           <RecordTableRowArrowKeysEffect />
         </>
       )}
-      <RecordTableCellDragAndDrop />
-      <RecordTableCellCheckbox />
-      <RecordTableFieldsCells />
-      <RecordTablePlusButtonCellPlaceholder />
-      <RecordTableLastEmptyCell />
     </RecordTableDraggableTr>
   );
 };

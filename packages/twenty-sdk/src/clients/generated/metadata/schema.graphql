@@ -1169,6 +1169,7 @@ type FieldsConfiguration {
   configurationType: WidgetConfigurationType!
   viewId: String
   newFieldDefaultConfiguration: NewFieldDefaultConfiguration
+  shouldAllowUserToSeeHiddenFields: Boolean
 }
 
 type FilesConfiguration {
@@ -1580,7 +1581,6 @@ enum FeatureFlagKey {
   IS_JSON_FILTER_ENABLED
   IS_AI_ENABLED
   IS_APPLICATION_ENABLED
-  IS_APPLICATION_INSTALLATION_FROM_TARBALL_ENABLED
   IS_MARKETPLACE_ENABLED
   IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED
   IS_PUBLIC_DOMAIN_ENABLED

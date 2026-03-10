@@ -16,7 +16,9 @@ import {
   type RadialBarCustomLayerProps,
   ResponsiveRadialBar,
 } from '@nivo/radial-bar';
+import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 import { H1Title, H1TitleFontColor } from 'twenty-ui/display';
 
 type GraphWidgetGaugeChartProps = {
@@ -69,7 +71,8 @@ export const GraphWidgetGaugeChart = ({
   customFormatter,
   onGaugeClick,
 }: GraphWidgetGaugeChartProps) => {
-  const colorRegistry = createGraphColorRegistry();
+  const { theme } = useContext(ThemeContext);
+  const colorRegistry = createGraphColorRegistry(theme.color);
 
   const formatOptions: GraphValueFormatOptions = {
     displayType,

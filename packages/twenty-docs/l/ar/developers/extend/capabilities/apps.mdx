@@ -171,7 +171,7 @@ export default defineObject({
 
 ستضيف الأوامر اللاحقة مزيدًا من الملفات والمجلدات:
 
-* سيقوم `yarn twenty app:dev` بتوليد عميلين API مضبوطي الأنواع تلقائيًا في `node_modules/twenty-sdk/generated`: `CoreApiClient` (لبيانات مساحة العمل عبر `/graphql`) و`MetadataApiClient` (لتكوين مساحة العمل وتحميل الملفات عبر `/metadata`).
+* سيقوم `yarn twenty app:dev` بتوليد عميلين API مضبوطي الأنواع تلقائيًا في `node_modules/twenty-sdk/clients`: `CoreApiClient` (لبيانات مساحة العمل عبر `/graphql`) و`MetadataApiClient` (لتكوين مساحة العمل وتحميل الملفات عبر `/metadata`).
 * `yarn twenty entity:add` سيضيف ملفات تعريف الكيانات ضمن `src/` لكائناتك المخصّصة، والوظائف، ومكوّنات الواجهة الأمامية، والأدوار، والمهارات، وغير ذلك.
 
 ## المصادقة
@@ -228,7 +228,7 @@ yarn twenty auth:status
 | `defineView()`                     | تعريف العروض المحفوظة للكائنات                       |
 | `defineNavigationMenuItem()`       | تعريف روابط التنقل في الشريط الجانبي                 |
 | `defineSkill()`                    | عرّف مهارات وكيل الذكاء الاصطناعي                    |
-| `defineAgent()`                    | Define AI agents with system prompts                 |
+| `defineAgent()`                    | عرِّف وكلاء الذكاء الاصطناعي باستخدام موجهات النظام  |
 
 تتحقق هذه الدوال من تكوينك وقت البناء وتوفّر إكمالًا تلقائيًا في بيئة التطوير وأمان الأنواع.
 
@@ -320,6 +320,72 @@ export default defineObject({
 يمكنك تجاوز الحقول الافتراضية من خلال تعريف حقل بالاسم نفسه في مصفوفة `fields` الخاصة بك،
 لكن هذا غير مستحسن.
 </Note>
+
+### تعريف الحقول على الكائنات الموجودة
+
+استخدم `defineField()` لإضافة حقول مخصصة إلى الكائنات الموجودة — سواء الكائنات القياسية (مثل `company` و`person` و`opportunity`) أو الكائنات المخصصة التي تُعرِّفها تطبيقات أخرى. يوجد كل حقل في ملفه الخاص ويشير إلى الكائن الهدف بواسطة `universalIdentifier` الخاص به.
+
+للإشارة إلى الكائنات القياسية، استورد `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS` من `twenty-sdk`. يوفر هذا الثابت معرِّفات مستقرة لجميع الكائنات المضمنة وحقولها:
+
+```typescript
+// src/fields/apollo-total-funding.field.ts
+import {
+  defineField,
+  FieldType,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk';
+
+export default defineField({
+  universalIdentifier: 'c90ae72d-4ddf-4f22-882f-eef98c91e40e',
+  objectUniversalIdentifier:
+    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+  type: FieldType.CURRENCY,
+  name: 'apolloTotalFunding',
+  label: 'Total Funding',
+  description: 'Total funding raised by the company',
+  icon: 'IconCash',
+});
+```
+
+النقاط الرئيسية:
+
+* `objectUniversalIdentifier` يُحدِّد لـ Twenty الكائن الذي سيُرفَق به الحقل. استخدم `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.<objectName>.universalIdentifier` للكائنات القياسية.
+* يتطلب كل حقل `universalIdentifier` ثابتًا خاصًا به، و`name`، و`type`، و`label`، و`objectUniversalIdentifier` الخاص بالكائن الهدف.
+* يمكنك إنشاء حقول جديدة باستخدام `yarn twenty entity:add` واختيار خيار الحقل.
+* يُصدَّر `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS` أيضًا باسم `STANDARD_OBJECT` لسهولة الاستخدام — كلاهما يشير إلى الثابت نفسه.
+
+تشمل الكائنات القياسية المتاحة: `attachment`، `blocklist`، `calendarChannel`، `calendarEvent`، `calendarEventParticipant`، `company`، `connectedAccount`، `dashboard`، `favorite`، `favoriteFolder`، `message`، `messageChannel`، `messageParticipant`، `messageThread`، `note`، `noteTarget`، `opportunity`، `person`، `task`، `taskTarget`، `timelineActivity`، `workflow`، `workflowAutomatedTrigger`، `workflowRun`، `workflowVersion`، و`workspaceMember`.
+
+يُوفِّر كل كائن قياسي أيضًا معرّفات حقوله. على سبيل المثال، للإشارة إلى حقل محدد على كائن قياسي ضمن أذونات الأدوار:
+
+```typescript
+STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.fields.name.universalIdentifier
+```
+
+#### حقول العلاقات على الكائنات الموجودة
+
+يمكنك أيضًا تعريف حقول علاقات تربط الكائنات الموجودة بكائناتك المخصصة:
+
+```typescript
+// src/fields/people-on-call-recording.field.ts
+import { defineField, FieldType, RelationType, STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk';
+import { CALL_RECORDING_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/objects/call-recording';
+import { CALL_RECORDING_ON_PERSON_ID } from 'src/fields/call-recording-on-person.field';
+
+export default defineField({
+  universalIdentifier: '4a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d',
+  objectUniversalIdentifier:
+    CALL_RECORDING_OBJECT_UNIVERSAL_IDENTIFIER,
+  type: FieldType.RELATION,
+  name: 'person',
+  label: 'Person',
+  relationTargetObjectMetadataUniversalIdentifier:
+    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
+  relationTargetFieldMetadataUniversalIdentifier:
+    CALL_RECORDING_ON_PERSON_ID,
+  relationType: RelationType.MANY_TO_ONE,
+});
+```
 
 ### تكوين التطبيق (application-config.ts)
 
@@ -434,7 +500,7 @@ export default defineRole({
 // src/app/createPostCard.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk';
 import type { DatabaseEventPayload, ObjectRecordCreateEvent, CronPayload, RoutePayload } from 'twenty-sdk';
-import { CoreApiClient, type Person } from 'twenty-sdk/generated';
+import { CoreApiClient, type Person } from 'twenty-sdk/clients';
 
 const handler = async (params: RoutePayload) => {
   const client = new CoreApiClient();
@@ -679,7 +745,7 @@ const handler = async (event: RoutePayload) => {
 ```typescript
 // src/logic-functions/enrich-company.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk';
-import { CoreApiClient } from 'twenty-sdk/generated';
+import { CoreApiClient } from 'twenty-sdk/clients';
 
 const handler = async (params: { companyName: string; domain?: string }) => {
   const client = new CoreApiClient();
@@ -771,6 +837,255 @@ export default defineFrontComponent({
 * **مُنشأ بالقالب**: شغّل `yarn twenty entity:add` واختر خيار إضافة مكوّن أمامي جديد.
 * **يدوي**: أنشئ ملفًا جديدًا `.tsx` واستخدم `defineFrontComponent()` مع اتباع النمط نفسه.
 
+#### Where front components can be used
+
+Front components can render in two locations within Twenty:
+
+* **Side panel** — Non-headless front components open in the right-hand side panel. This is the default behavior when a front component is triggered from the command menu.
+* **Widgets (dashboards and record pages)** — Front components can be embedded as widgets inside page layouts. When configuring a dashboard or a record page layout, users can add a front component widget.
+
+#### Headless vs non-headless
+
+Front components come in two rendering modes controlled by the `isHeadless` option:
+
+**Non-headless (default)** — The component renders a visible UI. When triggered from the command menu it opens in the side panel. This is the default behavior when `isHeadless` is `false` or omitted.
+
+**Headless** — The component mounts invisibly in the background. It does not open the side panel. Headless components are designed for actions that execute logic and then unmount themselves — for example, running an async task, navigating to a page, or showing a confirmation modal. They pair naturally with the SDK Command components described below.
+
+```typescript
+export default defineFrontComponent({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'my-action',
+  description: 'Runs an action without opening the side panel',
+  component: MyAction,
+  isHeadless: true,
+  command: {
+    universalIdentifier: 'b2c3d4e5-f6a7-8901-bcde-f12345678901',
+    label: 'Run my action',
+  },
+});
+```
+
+#### Adding command menu items
+
+To make a front component appear as an item in Twenty's command menu, add the `command` property to `defineFrontComponent()`. When users open the command menu (Cmd+K / Ctrl+K), the item shows up and triggers the front component on click.
+
+The `command` object accepts the following fields:
+
+| الحقل                                   | النوع                                       | الوصف                                                                                      |
+| --------------------------------------- | ------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| `universalIdentifier`                   | `string` (required)                         | Unique ID for the command menu item                                                        |
+| `التسمية`                               | `string` (required)                         | Display label shown in the command menu                                                    |
+| `أيقونة`                                | `string` (optional)                         | Icon name (e.g., `'IconSparkles'`)                                                         |
+| `isPinned`                              | `boolean` (optional)                        | Whether the command is pinned at the top of the menu                                       |
+| `availabilityType`                      | `'GLOBAL' \| 'RECORD_SELECTION'` (optional) | `GLOBAL` shows the command everywhere; `RECORD_SELECTION` shows it only in record contexts |
+| `availabilityObjectUniversalIdentifier` | `string` (optional)                         | Restrict the command to a specific object type (e.g., Person)                              |
+
+Here is an example from the call-recording app that adds a command scoped to Person records:
+
+```typescript
+import { defineFrontComponent } from 'twenty-sdk';
+
+export default defineFrontComponent({
+  universalIdentifier: 'c3d4e5f6-a7b8-9012-cdef-123456789012',
+  name: 'Summarize Person Call Recordings',
+  description: 'Generates a summary of call recordings for a person',
+  component: SummarizePersonRecordings,
+  command: {
+    universalIdentifier: 'd4e5f6a7-b8c9-0123-defa-234567890123',
+    label: 'Summarize call recordings',
+    icon: 'IconSparkles',
+    isPinned: false,
+    availabilityType: 'RECORD_SELECTION',
+    availabilityObjectUniversalIdentifier:
+      '20202020-e674-48e5-a542-72570eee7213',
+  },
+});
+```
+
+When the command is synced, it appears in the command menu. If the front component is non-headless the side panel opens with the component rendered inside. If it is headless the component mounts in the background and executes its logic.
+
+#### SDK Command components
+
+The `twenty-sdk` package provides four Command helper components designed for headless front components. Each component executes an action on mount, handles errors by showing a snackbar notification, and automatically unmounts the front component when done.
+
+Import them from `twenty-sdk/command`:
+
+* **`Command`** — Runs an async callback via the `execute` prop.
+* **`CommandLink`** — Navigates to an app path. Props: `to`, `params`, `queryParams`, `options`.
+* **`CommandModal`** — Opens a confirmation modal. If the user confirms, executes the `execute` callback. Props: `title`, `subtitle`, `execute`, `confirmButtonText`, `confirmButtonAccent`.
+* **`CommandOpenSidePanelPage`** — Opens a specific side panel page. Props: `page`, `pageTitle`, `pageIcon`.
+
+Here is a full example of a headless front component using `Command` to run an action from the command menu:
+
+```typescript
+// src/front-components/run-action.tsx
+import { defineFrontComponent } from 'twenty-sdk';
+import { Command } from 'twenty-sdk/command';
+import { CoreApiClient } from 'twenty-sdk/clients';
+
+const RunAction = () => {
+  const execute = async () => {
+    const client = new CoreApiClient();
+
+    await client.mutation({
+      createTask: {
+        __args: { data: { title: 'Created by my app' } },
+        id: true,
+      },
+    });
+  };
+
+  return <Command execute={execute} />;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'e5f6a7b8-c9d0-1234-efab-345678901234',
+  name: 'run-action',
+  description: 'Creates a task from the command menu',
+  component: RunAction,
+  isHeadless: true,
+  command: {
+    universalIdentifier: 'f6a7b8c9-d0e1-2345-fabc-456789012345',
+    label: 'Run my action',
+    icon: 'IconPlayerPlay',
+  },
+});
+```
+
+And an example using `CommandModal` to ask for confirmation before executing:
+
+```typescript
+// src/front-components/delete-draft.tsx
+import { defineFrontComponent } from 'twenty-sdk';
+import { CommandModal } from 'twenty-sdk/command';
+
+const DeleteDraft = () => {
+  const execute = async () => {
+    // perform the deletion
+  };
+
+  return (
+    <CommandModal
+      title="Delete draft?"
+      subtitle="This action cannot be undone."
+      execute={execute}
+      confirmButtonText="Delete"
+      confirmButtonAccent="danger"
+    />
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'a7b8c9d0-e1f2-3456-abcd-567890123456',
+  name: 'delete-draft',
+  description: 'Deletes a draft with confirmation',
+  component: DeleteDraft,
+  isHeadless: true,
+  command: {
+    universalIdentifier: 'b8c9d0e1-f2a3-4567-bcde-678901234567',
+    label: 'Delete draft',
+    icon: 'IconTrash',
+  },
+});
+```
+
+#### Execution context
+
+Every front component receives an execution context that provides information about where and how it is running. Access context values using hooks from `twenty-sdk`:
+
+| Hook                    | Return type      | الوصف                                                                                                                                                             |
+| ----------------------- | ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `useFrontComponentId()` | `string`         | The unique ID of the current front component instance                                                                                                             |
+| `useRecordId()`         | `string \| null` | The ID of the current record, when the component runs in a record context (e.g., a record page widget or a command scoped to a record). Returns `null` otherwise. |
+| `useUserId()`           | `string \| null` | The ID of the current user                                                                                                                                        |
+
+```typescript
+import { useRecordId, useUserId } from 'twenty-sdk';
+
+const MyWidget = () => {
+  const recordId = useRecordId();
+  const userId = useUserId();
+
+  return (
+    <div>
+      <p>Record: {recordId ?? 'none'}</p>
+      <p>User: {userId ?? 'anonymous'}</p>
+    </div>
+  );
+};
+```
+
+The context is reactive — if the surrounding record changes, hooks automatically return the updated values.
+
+#### Host API functions
+
+Front components run in an isolated sandbox but can interact with Twenty's UI through a set of functions provided by the host. Import them directly from `twenty-sdk`:
+
+```typescript
+import {
+  navigate,
+  closeSidePanel,
+  enqueueSnackbar,
+  unmountFrontComponent,
+  openSidePanelPage,
+  openCommandConfirmationModal,
+} from 'twenty-sdk';
+```
+
+| دالة                           | Signature                                                | الوصف                                                                                                                                                                   |
+| ------------------------------ | -------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `التنقل`                       | `(to, params?, queryParams?, options?) => Promise<void>` | Navigate to a typed app path within Twenty                                                                                                                              |
+| `closeSidePanel`               | `() => Promise<void>`                                    | Close the side panel                                                                                                                                                    |
+| `enqueueSnackbar`              | `(params) => Promise<void>`                              | Show a snackbar notification. Params: `message`, `variant` (`'error'`, `'success'`, `'info'`, `'warning'`), optional `duration`, `detailedMessage`, `dedupeKey`         |
+| `unmountFrontComponent`        | `() => Promise<void>`                                    | Unmount the current front component (used by headless components to clean up after execution)                                                                           |
+| `openSidePanelPage`            | `(params) => Promise<void>`                              | Open a page in the side panel. Params: `page`, `pageTitle`, `pageIcon`, `shouldResetSearchState`                                                                        |
+| `openCommandConfirmationModal` | `(params) => Promise<'confirm' \| 'cancel'>`             | Show a confirmation modal and wait for the user's response. Params: `title`, `subtitle`, `confirmButtonText`, `confirmButtonAccent` (`'default'`, `'blue'`, `'danger'`) |
+
+Here is an example that uses the host API to show a snackbar and close the side panel after an action completes:
+
+```typescript
+import { defineFrontComponent, useRecordId } from 'twenty-sdk';
+import { enqueueSnackbar, closeSidePanel } from 'twenty-sdk';
+import { CoreApiClient } from 'twenty-sdk/clients';
+
+const ArchiveRecord = () => {
+  const recordId = useRecordId();
+
+  const handleArchive = async () => {
+    const client = new CoreApiClient();
+
+    await client.mutation({
+      updateTask: {
+        __args: { id: recordId, data: { status: 'ARCHIVED' } },
+        id: true,
+      },
+    });
+
+    await enqueueSnackbar({
+      message: 'Record archived',
+      variant: 'success',
+    });
+
+    await closeSidePanel();
+  };
+
+  return (
+    <div style={{ padding: '20px' }}>
+      <p>Archive this record?</p>
+      <button onClick={handleArchive}>Archive</button>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'c9d0e1f2-a3b4-5678-cdef-789012345678',
+  name: 'archive-record',
+  description: 'Archives the current record',
+  component: ArchiveRecord,
+});
+```
+
 ### المهارات
 
 تُحدِّد المهارات تعليمات وإمكانات قابلة لإعادة الاستخدام يمكن لوكلاء الذكاء الاصطناعي استخدامها داخل مساحة العمل لديك. استخدم `defineSkill()` لتعريف مهارات مع تحقّق مدمج:
@@ -806,9 +1121,9 @@ export default defineSkill({
 * **مُنشأ بالقالب**: شغِّل `yarn twenty entity:add` واختر خيار إضافة مهارة جديدة.
 * **يدوي**: أنشئ ملفًا جديدًا واستخدم `defineSkill()` مع اتباع النمط نفسه.
 
-### Agents
+### الوكلاء
 
-Agents define AI agents with system prompts that can operate within your workspace. Use `defineAgent()` to define agents with built-in validation:
+تمكّنك ميزة الوكلاء من تعريف وكلاء ذكاء اصطناعي قادرين على العمل ضمن مساحة عملك، باستخدام موجهات النظام. استخدم `defineAgent()` لتعريف وكلاء مع تحقق مدمج:
 
 ```typescript
 // src/agents/example-agent.ts
@@ -830,26 +1145,27 @@ export default defineAgent({
 
 النقاط الرئيسية:
 
-* `name` is a unique identifier string for the agent (kebab-case recommended).
+* `name` هي سلسلة معرّف فريدة للوكيل (يُنصَح باستخدام kebab-case).
 * `label` هو اسم العرض المقروء للبشر الظاهر في واجهة المستخدم.
-* `prompt` contains the system prompt — this is the instruction text that defines the agent's behavior.
+* `prompt` يحتوي موجه النظام — وهو نص التعليمات الذي يحدد سلوك الوكيل.
 * `icon` (اختياري) يحدّد الأيقونة المعروضة في واجهة المستخدم.
-* `description` (optional) provides additional context about the agent's purpose.
+* `description` (اختياري) يوفّر سياقًا إضافيًا حول غرض الوكيل.
 
-You can create new agents in two ways:
+يمكنك إنشاء وكلاء جدد بطريقتين:
 
-* **Scaffolded**: Run `yarn twenty entity:add` and choose the option to add a new agent.
-* **Manual**: Create a new file and use `defineAgent()`, following the same pattern.
+* **مُنشأ بالقالب**: شغِّل `yarn twenty entity:add` واختر خيار إضافة وكيل جديد.
+* **يدوي**: أنشئ ملفًا جديدًا واستخدم `defineAgent()` مع اتباع النمط نفسه.
 
 ### عملاء مُولَّدون مضبوطو الأنواع
 
-يتم توليد عميلين مضبوطي الأنواع تلقائيًا بواسطة `yarn twenty app:dev` وتخزينهما في `node_modules/twenty-sdk/generated` استنادًا إلى مخطط مساحة العمل لديك:
+يتم توليد عميلين مضبوطي الأنواع تلقائيًا بواسطة `yarn twenty app:dev` وتخزينهما في `node_modules/twenty-sdk/clients` استنادًا إلى مخطط مساحة العمل لديك:
 
 * **`CoreApiClient`** — يُجري استعلامات إلى نقطة النهاية `/graphql` للحصول على بيانات مساحة العمل
 * **`MetadataApiClient`** — يستعلم عن نقطة النهاية `/metadata` لتكوين مساحة العمل وتحميل الملفات.
 
 ```typescript
-import { CoreApiClient, MetadataApiClient } from 'twenty-sdk/generated';
+import { CoreApiClient } from 'twenty-sdk/clients';
+import { MetadataApiClient } from 'twenty-sdk/clients';
 
 const client = new CoreApiClient();
 const { me } = await client.query({ me: { id: true, displayName: true } });
@@ -858,7 +1174,7 @@ const metadataClient = new MetadataApiClient();
 const { currentWorkspace } = await metadataClient.query({ currentWorkspace: { id: true } });
 ```
 
-يُعاد توليد كلا العميلين تلقائيًا بواسطة `yarn twenty app:dev` كلما تغيّرت كائناتك أو حقولك.
+`CoreApiClient` يُعاد توليده تلقائيًا بواسطة `yarn twenty app:dev` كلما تغيّرت كائناتك أو حقولك. `MetadataApiClient` يأتي مُجهزًا مسبقًا مع SDK.
 
 #### بيانات الاعتماد وقت التشغيل في الوظائف المنطقية
 
@@ -875,10 +1191,10 @@ const { currentWorkspace } = await metadataClient.query({ currentWorkspace: { id
 
 #### رفع الملفات
 
-يتضمن `MetadataApiClient` المُولَّد طريقة `uploadFile` لإرفاق الملفات بالحقول من نوع ملف ضمن كائنات مساحة العمل الخاصة بك. نظرًا لأن عملاء GraphQL القياسيون لا يدعمون تحميل الملفات متعددة الأجزاء افتراضيًا، يوفر العميل هذه الطريقة المخصصة التي تطبق [مواصفة طلب GraphQL متعدد الأجزاء](https://github.com/jaydenseric/graphql-multipart-request-spec) في الخلفية.
+يتضمن `MetadataApiClient` طريقة `uploadFile` لإرفاق الملفات بالحقول من نوع ملف ضمن كائنات مساحة العمل الخاصة بك. نظرًا لأن عملاء GraphQL القياسيون لا يدعمون تحميل الملفات متعددة الأجزاء افتراضيًا، يوفر العميل هذه الطريقة المخصصة التي تطبق [مواصفة طلب GraphQL متعدد الأجزاء](https://github.com/jaydenseric/graphql-multipart-request-spec) في الخلفية.
 
 ```typescript
-import { MetadataApiClient } from 'twenty-sdk/generated';
+import { MetadataApiClient } from 'twenty-sdk/clients';
 import * as fs from 'fs';
 
 const metadataClient = new MetadataApiClient();
