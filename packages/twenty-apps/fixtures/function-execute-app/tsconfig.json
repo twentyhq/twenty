@@ -9,7 +9,8 @@
     "jsx": "react-jsx",
     "baseUrl": ".",
     "paths": {
-      "src/*": ["./src/*"]
+      "src/*": ["./src/*"],
+      "twenty-sdk": ["../../../twenty-sdk/src/sdk"]
     }
   },
   "include": ["**/*"],
