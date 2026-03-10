@@ -10,6 +10,7 @@ import {
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { LOGIC_FUNCTION_EXECUTOR_TMPDIR_FOLDER } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/logic-function-executor-tmpdir-folder';
+import { generateCoreClientInLayer } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/generate-core-client-in-layer';
 import { ConsoleListener } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/intercept-console';
 import { TemporaryDirManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/temporary-dir-manager';
 import { HANDLER_NAME_REGEX } from 'src/engine/metadata-modules/logic-function/constants/handler.contant';
@@ -17,21 +18,31 @@ import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-
 import { copyYarnEngineAndBuildDependencies } from 'src/engine/core-modules/application/application-package/utils/copy-yarn-engine-and-build-dependencies';
 import type { LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
 
+export type GetWorkspaceGraphQLSchemaFn = (
+  workspaceId: string,
+) => Promise<string>;
+
 export interface LocalDriverOptions {
   logicFunctionResourceService: LogicFunctionResourceService;
+  getWorkspaceGraphQLSchema: GetWorkspaceGraphQLSchemaFn;
 }
 
 export class LocalDriver implements LogicFunctionDriver {
   private readonly logicFunctionResourceService: LogicFunctionResourceService;
+  private readonly getWorkspaceGraphQLSchema: GetWorkspaceGraphQLSchemaFn;
 
   constructor(options: LocalDriverOptions) {
     this.logicFunctionResourceService = options.logicFunctionResourceService;
+    this.getWorkspaceGraphQLSchema = options.getWorkspaceGraphQLSchema;
   }
 
   private getInMemoryLayerFolderPath = (flatApplication: FlatApplication) => {
     const checksum = flatApplication.yarnLockChecksum ?? 'default';
 
-    return join(LOGIC_FUNCTION_EXECUTOR_TMPDIR_FOLDER, checksum);
+    return join(
+      LOGIC_FUNCTION_EXECUTOR_TMPDIR_FOLDER,
+      `${checksum}-${flatApplication.workspaceId}`,
+    );
   };
 
   private async createLayerIfNotExists({
@@ -46,14 +57,27 @@ export class LocalDriver implements LogicFunctionDriver {
 
     try {
       await fs.access(inMemoryLayerFolderPath);
+
+      return;
     } catch {
-      await this.logicFunctionResourceService.copyDependenciesInMemory({
-        applicationUniversalIdentifier,
-        workspaceId: flatApplication.workspaceId,
-        inMemoryFolderPath: inMemoryLayerFolderPath,
-      });
-      await copyYarnEngineAndBuildDependencies(inMemoryLayerFolderPath);
+      // Layer doesn't exist yet — create it
     }
+
+    await this.logicFunctionResourceService.copyDependenciesInMemory({
+      applicationUniversalIdentifier,
+      workspaceId: flatApplication.workspaceId,
+      inMemoryFolderPath: inMemoryLayerFolderPath,
+    });
+    await copyYarnEngineAndBuildDependencies(inMemoryLayerFolderPath);
+
+    const schema = await this.getWorkspaceGraphQLSchema(
+      flatApplication.workspaceId,
+    );
+
+    await generateCoreClientInLayer({
+      layerPath: inMemoryLayerFolderPath,
+      schema,
+    });
   }
 
   async delete() {}

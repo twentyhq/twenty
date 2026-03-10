@@ -71,6 +71,48 @@ const buildClientWrapperSource = (
 const escapeRegExp = (value: string): string =>
   value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
+const injectClientWrapper = async (
+  output: string,
+  templateSource: string,
+  options: ClientWrapperOptions,
+): Promise<void> => {
+  const clientContent = buildClientWrapperSource(templateSource, options);
+
+  await appendFile(join(output, 'index.ts'), clientContent);
+};
+
+// Generates the core API client from a pre-fetched schema string.
+// Used by the server at app-install time (no HTTP introspection needed).
+export const generateCoreClientFromSchema = async ({
+  schema,
+  outputPath,
+  clientWrapperTemplateSource = twentyClientTemplateSource,
+}: {
+  schema: string;
+  outputPath: string;
+  clientWrapperTemplateSource?: string;
+}): Promise<void> => {
+  const tempPath = `${outputPath}.tmp`;
+
+  await ensureDir(tempPath);
+  await emptyDir(tempPath);
+
+  await generate({
+    schema,
+    output: tempPath,
+    scalarTypes: COMMON_SCALAR_TYPES,
+  });
+
+  await injectClientWrapper(tempPath, clientWrapperTemplateSource, {
+    apiClientName: 'CoreApiClient',
+    defaultUrl: `\`\${process.env.${DEFAULT_API_URL_NAME}}/graphql\``,
+    includeUploadFile: true,
+  });
+
+  await remove(outputPath);
+  await move(tempPath, outputPath);
+};
+
 export class ClientService {
   private apiService: ApiService;
   private clientWrapperTemplateSource: string;
@@ -103,7 +145,6 @@ export class ClientService {
       CLIENTS_GENERATED_DIR,
     );
     const coreOutputPath = join(generatedDir, 'core');
-    const tempPath = `${coreOutputPath}.tmp`;
 
     const coreSchemaResponse = await this.apiService.getSchema({ authToken });
 
@@ -113,23 +154,11 @@ export class ClientService {
       );
     }
 
-    await ensureDir(tempPath);
-    await emptyDir(tempPath);
-
-    await generate({
+    await generateCoreClientFromSchema({
       schema: coreSchemaResponse.data,
-      output: tempPath,
-      scalarTypes: COMMON_SCALAR_TYPES,
+      outputPath: coreOutputPath,
+      clientWrapperTemplateSource: this.clientWrapperTemplateSource,
     });
-
-    await this.injectClientWrapper(tempPath, {
-      apiClientName: 'CoreApiClient',
-      defaultUrl: `\`\${process.env.${DEFAULT_API_URL_NAME}}/graphql\``,
-      includeUploadFile: true,
-    });
-
-    await remove(coreOutputPath);
-    await move(tempPath, coreOutputPath);
   }
 
   async generateMetadataClient({
@@ -157,22 +186,14 @@ export class ClientService {
       },
     });
 
-    await this.injectClientWrapper(outputPath, {
-      apiClientName: 'MetadataApiClient',
-      defaultUrl: `\`\${process.env.${DEFAULT_API_URL_NAME}}/metadata\``,
-      includeUploadFile: true,
-    });
-  }
-
-  private async injectClientWrapper(
-    output: string,
-    options: ClientWrapperOptions,
-  ): Promise<void> {
-    const clientContent = buildClientWrapperSource(
+    await injectClientWrapper(
+      outputPath,
       this.clientWrapperTemplateSource,
-      options,
+      {
+        apiClientName: 'MetadataApiClient',
+        defaultUrl: `\`\${process.env.${DEFAULT_API_URL_NAME}}/metadata\``,
+        includeUploadFile: true,
+      },
     );
-
-    await appendFile(join(output, 'index.ts'), clientContent);
   }
 }

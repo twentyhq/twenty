@@ -41,6 +41,8 @@ import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-functi
 import { copyYarnEngineAndBuildDependencies } from 'src/engine/core-modules/application/application-package/utils/copy-yarn-engine-and-build-dependencies';
 import { type LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
 import { callWithTimeout } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/call-with-timeout';
+import { generateCoreClientInLayer } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/generate-core-client-in-layer';
+import { type GetWorkspaceGraphQLSchemaFn } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local.driver';
 
 const UPDATE_FUNCTION_DURATION_TIMEOUT_IN_SECONDS = 60;
 const CREDENTIALS_DURATION_IN_SECONDS = 60 * 60; // 1h
@@ -54,6 +56,7 @@ type LambdaDriverExecutorPayload = {
 
 export interface LambdaDriverOptions extends LambdaClientConfig {
   logicFunctionResourceService: LogicFunctionResourceService;
+  getWorkspaceGraphQLSchema: GetWorkspaceGraphQLSchemaFn;
   region: string;
   lambdaRole: string;
   subhostingRole?: string;
@@ -64,11 +67,13 @@ export class LambdaDriver implements LogicFunctionDriver {
   private credentialsExpiry: Date | null = null;
   private readonly options: LambdaDriverOptions;
   private readonly logicFunctionResourceService: LogicFunctionResourceService;
+  private readonly getWorkspaceGraphQLSchema: GetWorkspaceGraphQLSchemaFn;
 
   constructor(options: LambdaDriverOptions) {
     this.options = options;
     this.lambdaClient = undefined;
     this.logicFunctionResourceService = options.logicFunctionResourceService;
+    this.getWorkspaceGraphQLSchema = options.getWorkspaceGraphQLSchema;
   }
 
   private async getLambdaClient() {
@@ -135,7 +140,11 @@ export class LambdaDriver implements LogicFunctionDriver {
   }
 
   private getLayerName(flatApplication: FlatApplication) {
-    return flatApplication.yarnLockChecksum ?? 'default';
+    const checksum = flatApplication.yarnLockChecksum ?? 'default';
+
+    // Layer must be workspace-scoped because the generated core API client
+    // is derived from the workspace's GraphQL schema.
+    return `${checksum}-${flatApplication.workspaceId}`;
   }
 
   private async createLayerIfNotExists({
@@ -174,6 +183,15 @@ export class LambdaDriver implements LogicFunctionDriver {
       inMemoryFolderPath: nodeDependenciesFolder,
     });
     await copyYarnEngineAndBuildDependencies(nodeDependenciesFolder);
+
+    const schema = await this.getWorkspaceGraphQLSchema(
+      flatApplication.workspaceId,
+    );
+
+    await generateCoreClientInLayer({
+      layerPath: nodeDependenciesFolder,
+      schema,
+    });
 
     await createZipFile(sourceTemporaryDir, lambdaZipPath);
 

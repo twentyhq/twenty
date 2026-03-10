@@ -5,15 +5,31 @@ import {
   type LogicFunctionModuleOptions,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 
+import { printSchema } from 'graphql';
+
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import type { LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
+import { type WorkspaceSchemaFactory } from 'src/engine/api/graphql/workspace-schema.factory';
+import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 export const logicFunctionModuleFactory = async (
   twentyConfigService: TwentyConfigService,
   logicFunctionResourceService: LogicFunctionResourceService,
+  workspaceSchemaFactory: WorkspaceSchemaFactory,
 ): Promise<LogicFunctionModuleOptions> => {
   const driverType = twentyConfigService.get('LOGIC_FUNCTION_TYPE');
-  const options = { logicFunctionResourceService };
+
+  const getWorkspaceGraphQLSchema = async (
+    workspaceId: string,
+  ): Promise<string> => {
+    const schema = await workspaceSchemaFactory.createGraphQLSchema(
+      { id: workspaceId } as WorkspaceEntity,
+    );
+
+    return printSchema(schema);
+  };
+
+  const options = { logicFunctionResourceService, getWorkspaceGraphQLSchema };
 
   switch (driverType) {
     case LogicFunctionDriverType.DISABLED: {
