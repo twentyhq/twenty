@@ -2,8 +2,8 @@
   "name": "twenty-standard-application",
   "private": true,
   "version": "0.1.0",
-  "main": "src/index.ts",
-  "types": "src/index.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "license": "AGPL-3.0",
   "scripts": {
     "build": "tsx scripts/build-standard-front-components.ts"

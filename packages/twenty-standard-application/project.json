@@ -9,7 +9,11 @@
       "cache": true,
       "options": {
         "cwd": "packages/twenty-standard-application",
-        "command": "tsx scripts/build-standard-front-components.ts"
+        "commands": [
+          "tsx scripts/build-standard-front-components.ts",
+          "tsc -p tsconfig.build.json"
+        ],
+        "parallel": false
       },
       "dependsOn": ["^build"]
     }
