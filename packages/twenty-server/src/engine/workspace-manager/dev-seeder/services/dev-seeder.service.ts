@@ -1,10 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
-import { promises as fs } from 'fs';
-import { tmpdir } from 'os';
-import { join } from 'path';
-
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { DataSource, Repository } from 'typeorm';
@@ -219,31 +215,14 @@ export class DevSeederService {
       );
     }
 
-    const registrationId = registration.id;
+    await this.applicationInstallService.installFromLocalDirectory({
+      appRegistrationId: registration.id,
+      extractedDir: seed.outputDir,
+      workspaceId,
+    });
 
-    const tmpDir = await fs.mkdtemp(join(tmpdir(), 'twenty-seed-app-'));
-
-    try {
-      await fs.writeFile(
-        join(tmpDir, 'manifest.json'),
-        JSON.stringify(seed.manifest),
-      );
-      await fs.writeFile(
-        join(tmpDir, 'package.json'),
-        JSON.stringify(seed.packageJson),
-      );
-
-      await this.applicationInstallService.installFromLocalDirectory({
-        appRegistrationId: registrationId,
-        extractedDir: tmpDir,
-        workspaceId,
-      });
-
-      this.logger.log(
-        `Seeded app "${seed.registration.name}" (${seed.registration.sourceType})`,
-      );
-    } finally {
-      await fs.rm(tmpDir, { recursive: true, force: true });
-    }
+    this.logger.log(
+      `Seeded app "${seed.registration.name}" (${seed.registration.sourceType})`,
+    );
   }
 }
