@@ -81,7 +81,7 @@ describe('isPrivateIp', () => {
     });
   });
 
-  describe('IPv4-mapped IPv6 private addresses', () => {
+  describe('IPv4-mapped IPv6 in dotted-decimal form', () => {
     it('should detect ::ffff:10.x.x.x as private', () => {
       expect(isPrivateIp('::ffff:10.0.0.1')).toBe(true);
     });
@@ -96,6 +96,40 @@ describe('isPrivateIp', () => {
 
     it('should detect ::ffff:169.254.x.x as private', () => {
       expect(isPrivateIp('::ffff:169.254.169.254')).toBe(true);
+    });
+
+    it('should allow ::ffff:8.8.8.8 (public) through', () => {
+      expect(isPrivateIp('::ffff:8.8.8.8')).toBe(false);
+    });
+  });
+
+  describe('IPv4-mapped IPv6 in hex form (Node.js URL-normalized)', () => {
+    it('should detect ::ffff:7f00:1 (127.0.0.1) as private', () => {
+      expect(isPrivateIp('::ffff:7f00:1')).toBe(true);
+    });
+
+    it('should detect ::ffff:a9fe:a9fe (169.254.169.254) as private', () => {
+      expect(isPrivateIp('::ffff:a9fe:a9fe')).toBe(true);
+    });
+
+    it('should detect ::ffff:a00:1 (10.0.0.1) as private', () => {
+      expect(isPrivateIp('::ffff:a00:1')).toBe(true);
+    });
+
+    it('should detect ::ffff:c0a8:101 (192.168.1.1) as private', () => {
+      expect(isPrivateIp('::ffff:c0a8:101')).toBe(true);
+    });
+
+    it('should detect ::ffff:ac10:1 (172.16.0.1) as private', () => {
+      expect(isPrivateIp('::ffff:ac10:1')).toBe(true);
+    });
+
+    it('should detect ::ffff:0:0 (0.0.0.0) as private', () => {
+      expect(isPrivateIp('::ffff:0:0')).toBe(true);
+    });
+
+    it('should allow ::ffff:808:808 (8.8.8.8, public) through', () => {
+      expect(isPrivateIp('::ffff:808:808')).toBe(false);
     });
   });
 
@@ -124,16 +158,18 @@ describe('isPrivateIp', () => {
     it('should not detect 11.x.x.x as private', () => {
       expect(isPrivateIp('11.0.0.1')).toBe(false);
     });
+
+    it('should not detect public IPv6 as private', () => {
+      expect(isPrivateIp('2001:4860:4860::8888')).toBe(false);
+    });
   });
 
   describe('edge cases and bypass attempts', () => {
     it('should handle decimal notation for 127.0.0.1', () => {
-      // 127.0.0.1 in decimal = 2130706433
       expect(isPrivateIp('2130706433')).toBe(true);
     });
 
     it('should handle full decimal notation for loopback', () => {
-      // Standard 4-octet loopback address
       expect(isPrivateIp('127.0.0.1')).toBe(true);
     });
 
@@ -142,12 +178,10 @@ describe('isPrivateIp', () => {
     });
 
     it('should handle hex-encoded private IPs', () => {
-      // 0x7f = 127, so 0x7f.0.0.1 = 127.0.0.1
       expect(isPrivateIp('0x7f.0.0.1')).toBe(true);
     });
 
     it('should handle standard private IP in 10.x range', () => {
-      // Standard 10.x.x.x private range
       expect(isPrivateIp('10.0.0.1')).toBe(true);
     });
   });
@@ -157,8 +191,12 @@ describe('isPrivateIp', () => {
       expect(isPrivateIp('169.254.169.254')).toBe(true);
     });
 
-    it('should block Azure metadata endpoint', () => {
-      expect(isPrivateIp('169.254.169.254')).toBe(true);
+    it('should block metadata via hex-form IPv4-mapped IPv6', () => {
+      expect(isPrivateIp('::ffff:a9fe:a9fe')).toBe(true);
+    });
+
+    it('should block metadata via dotted IPv4-mapped IPv6', () => {
+      expect(isPrivateIp('::ffff:169.254.169.254')).toBe(true);
     });
   });
 });
