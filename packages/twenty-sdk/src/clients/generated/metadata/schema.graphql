@@ -2058,6 +2058,7 @@ type CommandMenuItem {
 enum CommandMenuItemAvailabilityType {
   GLOBAL
   RECORD_SELECTION
+  FALLBACK
 }
 
 type AgentChatThread {

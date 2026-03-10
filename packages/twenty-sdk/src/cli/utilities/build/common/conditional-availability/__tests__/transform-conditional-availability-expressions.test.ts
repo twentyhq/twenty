@@ -2,7 +2,10 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 import { transformConditionalAvailabilityExpressionsForEsBuildPlugin } from '@/cli/utilities/build/common/conditional-availability/utils/transform-conditional-availability-expressions';
-import { type CommandMenuContextApi } from 'twenty-shared/types';
+import {
+  CommandMenuContextApiPageType,
+  type CommandMenuContextApi,
+} from 'twenty-shared/types';
 import { evaluateConditionalAvailabilityExpression } from 'twenty-shared/utils';
 
 const MOCKS_DIR = path.join(__dirname, '__mocks__');
@@ -13,11 +16,10 @@ const readMock = (filename: string): string =>
 const buildMockCommandMenuContextApi = (
   overrides: Partial<CommandMenuContextApi> = {},
 ): CommandMenuContextApi => ({
-  isShowPage: false,
+  pageType: CommandMenuContextApiPageType.INDEX_PAGE,
   isInSidePanel: false,
-  isFavorite: false,
-  isRemote: false,
-  isNoteOrTask: false,
+  isPageInEditMode: false,
+  favoriteRecordIds: [],
   isSelectAll: false,
   hasAnySoftDeleteFilterOnView: false,
   numberOfSelectedRecords: 0,
@@ -31,10 +33,11 @@ const buildMockCommandMenuContextApi = (
     rowLevelPermissionPredicates: [],
     rowLevelPermissionPredicateGroups: [],
   },
-  selectedRecord: undefined,
+  selectedRecords: [],
   featureFlags: {},
   targetObjectReadPermissions: {},
   targetObjectWritePermissions: {},
+  objectMetadataItem: {},
   ...overrides,
 });
 
@@ -156,35 +159,37 @@ describe('transformConditionalAvailabilityExpressionsForEsBuildPlugin', () => {
 
     it('should handle multiple expressions in one source', () => {
       const source = [
-        'const a = { conditionalAvailabilityExpression: isShowPage };',
-        'const b = { conditionalAvailabilityExpression: isFavorite && !isRemote };',
+        'const a = { conditionalAvailabilityExpression: pageType === "RECORD_PAGE" };',
+        'const b = { conditionalAvailabilityExpression: favoriteRecordIds.length > 0 && !objectMetadataItem.isRemote };',
       ].join('\n');
       const transformed =
         transformConditionalAvailabilityExpressionsForEsBuildPlugin(source);
 
       expect(transformed).toContain(
-        'conditionalAvailabilityExpression: "isShowPage"',
+        'conditionalAvailabilityExpression: "pageType == \\"RECORD_PAGE\\""',
       );
       expect(transformed).toContain(
-        'conditionalAvailabilityExpression: "isFavorite and not isRemote"',
+        'conditionalAvailabilityExpression: "arrayLength(favoriteRecordIds) > 0 and not objectMetadataItem.isRemote"',
       );
     });
 
     it('should handle extra spaces around colon', () => {
       const source =
-        '{ conditionalAvailabilityExpression  :  isShowPage && isFavorite }';
+        '{ conditionalAvailabilityExpression  :  pageType === "RECORD_PAGE" && favoriteRecordIds.length > 0 }';
       const transformed =
         transformConditionalAvailabilityExpressionsForEsBuildPlugin(source);
 
-      expect(transformed).toContain('"isShowPage and isFavorite"');
+      expect(transformed).toContain(
+        '"pageType == \\"RECORD_PAGE\\" and arrayLength(favoriteRecordIds) > 0"',
+      );
     });
   });
 
   describe('e2e: mock file -> transform -> evaluate', () => {
     describe('simple-boolean-front-component', () => {
-      it('should evaluate isShowPage when true', () => {
+      it('should evaluate pageType when RECORD_PAGE', () => {
         const context = buildMockCommandMenuContextApi({
-          isShowPage: true,
+          pageType: CommandMenuContextApiPageType.RECORD_PAGE,
         });
 
         expect(
@@ -195,9 +200,9 @@ describe('transformConditionalAvailabilityExpressionsForEsBuildPlugin', () => {
         ).toBe(true);
       });
 
-      it('should evaluate isShowPage when false', () => {
+      it('should evaluate pageType when INDEX_PAGE', () => {
         const context = buildMockCommandMenuContextApi({
-          isShowPage: false,
+          pageType: CommandMenuContextApiPageType.INDEX_PAGE,
         });
 
         expect(
@@ -297,13 +302,15 @@ describe('transformConditionalAvailabilityExpressionsForEsBuildPlugin', () => {
       it('should allow soft delete for local record with selection', () => {
         const context = buildMockCommandMenuContextApi({
           numberOfSelectedRecords: 2,
-          selectedRecord: {
-            id: 'rec-1',
-            createdAt: '2024-01-01',
-            updatedAt: '2024-01-01',
-            deletedAt: null,
-            isRemote: false,
-          },
+          selectedRecords: [
+            {
+              id: 'rec-1',
+              createdAt: '2024-01-01',
+              updatedAt: '2024-01-01',
+              deletedAt: null,
+              isRemote: false,
+            },
+          ],
         });
 
         expect(
@@ -317,13 +324,15 @@ describe('transformConditionalAvailabilityExpressionsForEsBuildPlugin', () => {
       it('should deny soft delete when record is remote', () => {
         const context = buildMockCommandMenuContextApi({
           numberOfSelectedRecords: 1,
-          selectedRecord: {
-            id: 'rec-1',
-            createdAt: '2024-01-01',
-            updatedAt: '2024-01-01',
-            deletedAt: null,
-            isRemote: true,
-          },
+          selectedRecords: [
+            {
+              id: 'rec-1',
+              createdAt: '2024-01-01',
+              updatedAt: '2024-01-01',
+              deletedAt: null,
+              isRemote: true,
+            },
+          ],
         });
 
         expect(
@@ -338,9 +347,9 @@ describe('transformConditionalAvailabilityExpressionsForEsBuildPlugin', () => {
     describe('parenthesized-expression-front-component', () => {
       it('should allow when favorite and not remote', () => {
         const context = buildMockCommandMenuContextApi({
-          isShowPage: false,
-          isFavorite: true,
-          isRemote: false,
+          pageType: CommandMenuContextApiPageType.INDEX_PAGE,
+          favoriteRecordIds: ['rec-1'],
+          objectMetadataItem: { isRemote: false },
         });
 
         expect(
@@ -351,11 +360,11 @@ describe('transformConditionalAvailabilityExpressionsForEsBuildPlugin', () => {
         ).toBe(true);
       });
 
-      it('should deny when remote even if show page', () => {
+      it('should deny when remote even if record page', () => {
         const context = buildMockCommandMenuContextApi({
-          isShowPage: true,
-          isFavorite: false,
-          isRemote: true,
+          pageType: CommandMenuContextApiPageType.RECORD_PAGE,
+          favoriteRecordIds: [],
+          objectMetadataItem: { isRemote: true },
         });
 
         expect(
@@ -370,12 +379,14 @@ describe('transformConditionalAvailabilityExpressionsForEsBuildPlugin', () => {
     describe('custom-function-front-component', () => {
       it('should return false when deletedAt is null', () => {
         const context = buildMockCommandMenuContextApi({
-          selectedRecord: {
-            id: 'rec-1',
-            createdAt: '2024-01-01',
-            updatedAt: '2024-01-01',
-            deletedAt: null,
-          },
+          selectedRecords: [
+            {
+              id: 'rec-1',
+              createdAt: '2024-01-01',
+              updatedAt: '2024-01-01',
+              deletedAt: null,
+            },
+          ],
         });
 
         expect(
@@ -388,12 +399,14 @@ describe('transformConditionalAvailabilityExpressionsForEsBuildPlugin', () => {
 
       it('should return true when deletedAt is set', () => {
         const context = buildMockCommandMenuContextApi({
-          selectedRecord: {
-            id: 'rec-1',
-            createdAt: '2024-01-01',
-            updatedAt: '2024-01-01',
-            deletedAt: '2024-06-01',
-          },
+          selectedRecords: [
+            {
+              id: 'rec-1',
+              createdAt: '2024-01-01',
+              updatedAt: '2024-01-01',
+              deletedAt: '2024-06-01',
+            },
+          ],
         });
 
         expect(
@@ -406,16 +419,18 @@ describe('transformConditionalAvailabilityExpressionsForEsBuildPlugin', () => {
     });
 
     describe('string-comparison-front-component', () => {
-      it('should match when on show page and company name matches', () => {
+      it('should match when on record page and company name matches', () => {
         const context = buildMockCommandMenuContextApi({
-          isShowPage: true,
-          selectedRecord: {
-            id: 'rec-1',
-            createdAt: '2024-01-01',
-            updatedAt: '2024-01-01',
-            deletedAt: null,
-            company: { name: 'apple' },
-          },
+          pageType: CommandMenuContextApiPageType.RECORD_PAGE,
+          selectedRecords: [
+            {
+              id: 'rec-1',
+              createdAt: '2024-01-01',
+              updatedAt: '2024-01-01',
+              deletedAt: null,
+              company: { name: 'apple' },
+            },
+          ],
         });
 
         expect(
@@ -428,14 +443,16 @@ describe('transformConditionalAvailabilityExpressionsForEsBuildPlugin', () => {
 
       it('should not match when company name differs', () => {
         const context = buildMockCommandMenuContextApi({
-          isShowPage: true,
-          selectedRecord: {
-            id: 'rec-1',
-            createdAt: '2024-01-01',
-            updatedAt: '2024-01-01',
-            deletedAt: null,
-            company: { name: 'google' },
-          },
+          pageType: CommandMenuContextApiPageType.RECORD_PAGE,
+          selectedRecords: [
+            {
+              id: 'rec-1',
+              createdAt: '2024-01-01',
+              updatedAt: '2024-01-01',
+              deletedAt: null,
+              company: { name: 'google' },
+            },
+          ],
         });
 
         expect(
@@ -448,9 +465,9 @@ describe('transformConditionalAvailabilityExpressionsForEsBuildPlugin', () => {
     });
 
     describe('target-permissions-front-component', () => {
-      it('should allow when on show page with write permission', () => {
+      it('should allow when on record page with write permission', () => {
         const context = buildMockCommandMenuContextApi({
-          isShowPage: true,
+          pageType: CommandMenuContextApiPageType.RECORD_PAGE,
           targetObjectWritePermissions: { person: true },
         });
 
@@ -462,9 +479,9 @@ describe('transformConditionalAvailabilityExpressionsForEsBuildPlugin', () => {
         ).toBe(true);
       });
 
-      it('should deny when not on show page', () => {
+      it('should deny when not on record page', () => {
         const context = buildMockCommandMenuContextApi({
-          isShowPage: false,
+          pageType: CommandMenuContextApiPageType.INDEX_PAGE,
           targetObjectWritePermissions: { person: true },
         });
 

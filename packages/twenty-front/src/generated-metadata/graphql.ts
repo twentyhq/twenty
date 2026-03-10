@@ -853,6 +853,7 @@ export type CommandMenuItem = {
 };
 
 export enum CommandMenuItemAvailabilityType {
+  FALLBACK = 'FALLBACK',
   GLOBAL = 'GLOBAL',
   RECORD_SELECTION = 'RECORD_SELECTION'
 }
