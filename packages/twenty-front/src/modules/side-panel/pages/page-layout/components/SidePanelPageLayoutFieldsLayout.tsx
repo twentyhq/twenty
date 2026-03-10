@@ -1,18 +1,15 @@
-import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
-import { SidePanelSubPageNavigationHeader } from '@/side-panel/pages/common/components/SidePanelSubPageNavigationHeader';
-import { usePageLayoutIdForRecordPageLayoutFromContextStoreTargetedRecord } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdForRecordPageLayoutFromContextStoreTargetedRecord';
-import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
 import { useTemporaryFieldsConfiguration } from '@/page-layout/hooks/useTemporaryFieldsConfiguration';
 import { FieldsConfigurationEditor } from '@/page-layout/widgets/fields/components/FieldsConfigurationEditor';
 import { FieldsWidgetGroupsDraftInitializationEffect } from '@/page-layout/widgets/fields/components/FieldsWidgetGroupsDraftInitializationEffect';
+import { usePageLayoutIdForRecordPageLayoutFromContextStoreTargetedRecord } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdForRecordPageLayoutFromContextStoreTargetedRecord';
+import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   type FieldsConfiguration,
   WidgetConfigurationType,
 } from '~/generated-metadata/graphql';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledOuterContainer = styled.div`
   display: flex;
@@ -30,8 +27,6 @@ const StyledContainer = styled.div`
 `;
 
 export const SidePanelPageLayoutFieldsLayout = () => {
-  const { goBackFromSidePanel } = useSidePanelHistory();
-
   const { pageLayoutId } =
     usePageLayoutIdForRecordPageLayoutFromContextStoreTargetedRecord();
 
@@ -52,10 +47,6 @@ export const SidePanelPageLayoutFieldsLayout = () => {
 
   return (
     <StyledOuterContainer>
-      <SidePanelSubPageNavigationHeader
-        title={t`Layout`}
-        onBackClick={goBackFromSidePanel}
-      />
       <StyledContainer>
         <FieldsWidgetGroupsDraftInitializationEffect
           viewId={fieldsConfiguration.viewId ?? null}

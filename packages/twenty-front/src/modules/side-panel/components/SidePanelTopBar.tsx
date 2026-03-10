@@ -1,29 +1,27 @@
-import { SidePanelBackButton } from '@/side-panel/components/SidePanelBackButton';
 import { SidePanelPageInfo } from '@/side-panel/components/SidePanelPageInfo';
 import { SidePanelTopBarInputFocusEffect } from '@/side-panel/components/SidePanelTopBarInputFocusEffect';
 import { SidePanelTopBarRightCornerIcon } from '@/side-panel/components/SidePanelTopBarRightCornerIcon';
+import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { SIDE_PANEL_TOP_BAR_HEIGHT } from '@/side-panel/constants/SidePanelTopBarHeight';
 import { SIDE_PANEL_TOP_BAR_HEIGHT_MOBILE } from '@/side-panel/constants/SidePanelTopBarHeightMobile';
-import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
-import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useSidePanelContextChips } from '@/side-panel/hooks/useSidePanelContextChips';
-import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { styled } from '@linaria/react';
-import { useLingui } from '@lingui/react/macro';
-import { AnimatePresence, motion } from 'framer-motion';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { styled } from '@linaria/react';
+import { useLingui } from '@lingui/react/macro';
+import { motion } from 'framer-motion';
 import { useContext, useRef } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
 import { IconX } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
-import { useIsMobile } from 'twenty-ui/utilities';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useIsMobile } from 'twenty-ui/utilities';
 
 const StyledInputContainer = styled.div<{ isMobile: boolean }>`
   align-items: center;
@@ -93,10 +91,6 @@ export const SidePanelTopBar = () => {
 
   const sidePanelPage = useAtomStateValue(sidePanelPageState);
 
-  const sidePanelNavigationStack = useAtomStateValue(
-    sidePanelNavigationStackState,
-  );
-
   const { theme } = useContext(ThemeContext);
 
   const { contextChips } = useSidePanelContextChips();
@@ -124,45 +118,28 @@ export const SidePanelTopBar = () => {
     });
   };
 
-  const canGoBack = sidePanelNavigationStack.length > 1;
-
-  const shouldShowCloseButton =
-    !isMobile && sidePanelNavigationStack.length === 1;
-
-  const shouldShowBackButton = canGoBack;
+  const shouldShowCloseButton = !isMobile;
 
   const lastChip = contextChips.at(-1);
 
   return (
     <StyledInputContainer isMobile={isMobile}>
       <StyledContentContainer>
-        <AnimatePresence>
-          {shouldShowBackButton && (
-            <motion.div
-              exit={{ opacity: 0, width: 0 }}
-              transition={{
-                duration: theme.animation.duration.instant,
-              }}
-            >
-              <SidePanelBackButton />
-            </motion.div>
-          )}
-          {shouldShowCloseButton && (
-            <motion.div
-              exit={{ opacity: 0, width: 0 }}
-              transition={{
-                duration: theme.animation.duration.instant,
-              }}
-            >
-              <IconButton
-                Icon={IconX}
-                size="small"
-                variant="tertiary"
-                onClick={closeSidePanelMenu}
-              />
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {shouldShowCloseButton && (
+          <motion.div
+            exit={{ opacity: 0, width: 0 }}
+            transition={{
+              duration: theme.animation.duration.instant,
+            }}
+          >
+            <IconButton
+              Icon={IconX}
+              size="small"
+              variant="tertiary"
+              onClick={closeSidePanelMenu}
+            />
+          </motion.div>
+        )}
         {lastChip &&
           sidePanelPage !== SidePanelPages.Root &&
           sidePanelPage !== SidePanelPages.SearchRecords && (

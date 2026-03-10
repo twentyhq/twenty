@@ -2,7 +2,10 @@ import { CommandMenuContextProvider } from '@/command-menu-item/contexts/Command
 import { SidePanelContainer } from '@/side-panel/components/SidePanelContainer';
 import { SidePanelTopBar } from '@/side-panel/components/SidePanelTopBar';
 import { SIDE_PANEL_PAGES_CONFIG } from '@/side-panel/constants/SidePanelPagesConfig';
+import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
+import { SidePanelSubPageNavigationHeader } from '@/side-panel/pages/common/components/SidePanelSubPageNavigationHeader';
 import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
+import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { sidePanelPageInfoState } from '@/side-panel/states/sidePanelPageInfoState';
 import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -20,6 +23,12 @@ const StyledSidePanelContent = styled.div`
 export const SidePanelRouter = () => {
   const sidePanelPage = useAtomStateValue(sidePanelPageState);
   const sidePanelPageInfo = useAtomStateValue(sidePanelPageInfoState);
+  const sidePanelNavigationStack = useAtomStateValue(
+    sidePanelNavigationStackState,
+  );
+  const { goBackFromSidePanel } = useSidePanelHistory();
+
+  const isSubPage = sidePanelNavigationStack.length > 1;
 
   const rawPageComponent = isDefined(sidePanelPage)
     ? SIDE_PANEL_PAGES_CONFIG.get(sidePanelPage)
@@ -50,6 +59,12 @@ export const SidePanelRouter = () => {
         >
           <SidePanelTopBar />
         </motion.div>
+        {isSubPage && isDefined(sidePanelPageInfo.title) && (
+          <SidePanelSubPageNavigationHeader
+            title={sidePanelPageInfo.title}
+            onBackClick={goBackFromSidePanel}
+          />
+        )}
         <StyledSidePanelContent>
           <CommandMenuContextProvider
             isInSidePanel={true}
