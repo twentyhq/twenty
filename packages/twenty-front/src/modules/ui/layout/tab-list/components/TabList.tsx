@@ -1,5 +1,6 @@
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { TAB_LIST_GAP } from '@/ui/layout/tab-list/constants/TabListGap';
+import { TAB_LIST_HEIGHT } from '@/ui/layout/tab-list/constants/TabListHeight';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
 import { type TabListProps } from '@/ui/layout/tab-list/types/TabListProps';
@@ -18,7 +19,7 @@ import { TabListFromUrlOptionalEffect } from './TabListFromUrlOptionalEffect';
 const StyledContainer = styled.div`
   box-sizing: border-box;
   display: flex;
-  height: ${themeCssVariables.spacing[10]};
+  height: ${TAB_LIST_HEIGHT};
   position: relative;
   user-select: none;
   width: 100%;
