@@ -1,6 +1,6 @@
-import { recordIndexActionMenuDropdownPositionComponentState } from '@/action-menu/states/recordIndexActionMenuDropdownPositionComponentState';
-import { getActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getActionMenuDropdownIdFromActionMenuId';
-import { getActionMenuIdFromRecordIndexId } from '@/action-menu/utils/getActionMenuIdFromRecordIndexId';
+import { recordIndexCommandMenuDropdownPositionComponentState } from '@/command-menu-item/states/recordIndexCommandMenuDropdownPositionComponentState';
+import { getCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/utils/getCommandMenuDropdownIdFromCommandMenuId';
+import { getCommandMenuIdFromRecordIndexId } from '@/command-menu-item/utils/getCommandMenuIdFromRecordIndexId';
 import { RecordCalendarCardCellEditModePortal } from '@/object-record/record-calendar/record-calendar-card/anchored-portal/components/RecordCalendarCardCellEditModePortal';
 import { RecordCalendarCardCellHoveredPortal } from '@/object-record/record-calendar/record-calendar-card/anchored-portal/components/RecordCalendarCardCellHoveredPortal';
 import { RecordCalendarCardBody } from '@/object-record/record-calendar/record-calendar-card/components/RecordCalendarCardBody';
@@ -46,14 +46,14 @@ export const RecordCalendarCard = ({ recordId }: RecordCalendarCardProps) => {
     RecordCalendarComponentInstanceContext,
   );
 
-  const actionMenuId = getActionMenuIdFromRecordIndexId(recordCalendarId);
+  const commandMenuId = getCommandMenuIdFromRecordIndexId(recordCalendarId);
 
-  const actionMenuDropdownId =
-    getActionMenuDropdownIdFromActionMenuId(actionMenuId);
+  const commandMenuDropdownId =
+    getCommandMenuDropdownIdFromCommandMenuId(commandMenuId);
 
-  const setRecordIndexActionMenuDropdownPosition = useSetAtomComponentState(
-    recordIndexActionMenuDropdownPositionComponentState,
-    actionMenuDropdownId,
+  const setRecordIndexCommandMenuDropdownPosition = useSetAtomComponentState(
+    recordIndexCommandMenuDropdownPositionComponentState,
+    commandMenuDropdownId,
   );
 
   const { openDropdown } = useOpenDropdown();
@@ -61,12 +61,12 @@ export const RecordCalendarCard = ({ recordId }: RecordCalendarCardProps) => {
   const handleContextMenuOpen = (event: React.MouseEvent) => {
     event.preventDefault();
     setIsRecordCalendarCardSelected(true);
-    setRecordIndexActionMenuDropdownPosition({
+    setRecordIndexCommandMenuDropdownPosition({
       x: event.clientX,
       y: event.clientY,
     });
     openDropdown({
-      dropdownComponentInstanceIdFromProps: actionMenuDropdownId,
+      dropdownComponentInstanceIdFromProps: commandMenuDropdownId,
       globalHotkeysConfig: {
         enableGlobalHotkeysWithModifiers: true,
         enableGlobalHotkeysConflictingWithKeyboard: false,

@@ -1,7 +1,7 @@
 import { getDateGranularityPluralLabel } from '@/side-panel/pages/page-layout/utils/getDateGranularityPluralLabel';
-import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
-import { LINE_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartConstants';
-import { PIE_CHART_MAXIMUM_NUMBER_OF_SLICES } from '@/page-layout/widgets/graph/graphWidgetPieChart/constants/PieChartMaximumNumberOfSlices.constant';
+import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graph-widget-bar-chart/constants/BarChartConstants';
+import { LINE_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graph-widget-line-chart/constants/LineChartConstants';
+import { PIE_CHART_MAXIMUM_NUMBER_OF_SLICES } from '@/page-layout/widgets/graph/graph-widget-pie-chart/constants/PieChartMaximumNumberOfSlices.constant';
 import { t } from '@lingui/core/macro';
 import { type ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';

@@ -13,6 +13,10 @@ import {
   RULE_NAME as enforceModuleBoundariesName,
 } from './rules/enforce-module-boundaries';
 import {
+  rule as folderStructure,
+  RULE_NAME as folderStructureName,
+} from './rules/folder-structure';
+import {
   rule as graphqlResolversShouldBeGuarded,
   RULE_NAME as graphqlResolversShouldBeGuardedName,
 } from './rules/graphql-resolvers-should-be-guarded';
@@ -67,6 +71,7 @@ export default definePlugin({
     [componentPropsNamingName]: componentPropsNaming,
     [effectComponentsName]: effectComponents,
     [enforceModuleBoundariesName]: enforceModuleBoundaries,
+    [folderStructureName]: folderStructure,
     [graphqlResolversShouldBeGuardedName]: graphqlResolversShouldBeGuarded,
     [injectWorkspaceRepositoryName]: injectWorkspaceRepository,
     [matchingStateVariableName]: matchingStateVariable,

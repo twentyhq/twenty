@@ -9,7 +9,7 @@ import { RecordTableHeaderCellContainer } from '@/object-record/record-table/rec
 import { hasRecordGroupsComponentSelector } from '@/object-record/record-group/states/selectors/hasRecordGroupsComponentSelector';
 import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZIndex';
 import { RecordTableHeaderLabelIdentifierCellPlusButton } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderLabelIdentifierCellPlusButton';
-import { getVisibleFieldWithLowestPosition } from '@/object-record/record-table/record-table-header/utils/getVisibleFieldWithLowestPosition.util';
+import { getVisibleFieldWithLowestPosition } from '@/object-record/record-table/record-table-header/utils/getVisibleFieldWithLowestPosition';
 import { isRecordTableRowActiveComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowActiveComponentFamilyState';
 import { isRecordTableRowFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableRowFocusActiveComponentState';
 import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowFocusedComponentFamilyState';
@@ -27,7 +27,7 @@ const StyledPlusButtonWrapper = styled.div`
   position: absolute;
   right: 0;
   top: 0;
-  z-index: ${TABLE_Z_INDEX.headerColumns.withoutGroups.headerColumnsSticky};
+  z-index: ${TABLE_Z_INDEX.headerColumns.headerColumnsSticky};
 `;
 
 export const RecordTableHeaderFirstCell = () => {

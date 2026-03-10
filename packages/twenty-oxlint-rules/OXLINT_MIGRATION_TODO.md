@@ -25,7 +25,7 @@ These plugins were in use but have no oxlint equivalent. Consider whether altern
 
 | Plugin | Where Used | What It Did | Replacement / Status |
 |--------|-----------|-------------|---------------------|
-| `eslint-plugin-project-structure` | Frontend | Enforced folder naming and structure conventions for `src/modules/` (kebab-case dirs, allowed subdirs like hooks/utils/components, file naming for hooks/utils). Config still in `folderStructure.json`. | No equivalent. Could be implemented as a custom oxlint rule or a standalone CI script. |
+| `eslint-plugin-project-structure` | Frontend | Enforced folder naming and structure conventions for `src/modules/` (kebab-case dirs, allowed subdirs like hooks/utils/components, file naming for hooks/utils). Config still in `folderStructure.json`. | Re-implemented as `twenty/folder-structure` custom oxlint rule. Enabled as `"warn"` — 403 pre-existing violations (160 non-kebab-case names, 215 depth > 4, 28 naming). |
 | `lingui/*` | Frontend, emails | i18n extraction and consistency rules | No equivalent |
 | `@stylistic/*` | Server | Formatting rules (indentation, spacing) | Use Prettier instead |
 | `import/order`, `simple-import-sort/imports` | Server | Import sorting and ordering | No equivalent |
@@ -48,4 +48,8 @@ The `oxc.oxc-vscode` extension provides inline diagnostics for built-in oxlint r
    - Enable TypeScript's `verbatimModuleSyntax` (major migration)
    - Keep disabled until oxlint supports decorator-aware type import analysis
 2. **Max consts per file** (`twenty-server`): Manually split 24 constant files to have at most 1 exported const each, then re-enable the rule.
-3. **Folder structure enforcement** (`twenty-front`): Implement as a custom oxlint rule or a standalone CI check script that validates `src/modules/` against `folderStructure.json`.
+3. **Folder structure enforcement** (`twenty-front`): Re-implemented as `twenty/folder-structure` custom oxlint rule (enabled as `"warn"`). 403 pre-existing violations to address:
+   - 160 non-kebab-case module folder names (e.g. `graphWidgetBarChart` → `graph-widget-bar-chart`)
+   - 215 modules nested deeper than 4 levels
+   - 28 util/hook file naming violations (`.util.ts` suffixes, kebab-case filenames, PascalCase)
+   - Promote to `"error"` once violations are resolved

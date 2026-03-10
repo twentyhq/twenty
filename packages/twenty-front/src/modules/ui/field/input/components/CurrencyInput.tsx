@@ -13,6 +13,8 @@ import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { getSeparatorsForNumberFormat } from '~/utils/format/getSeparatorsForNumberFormat';
 
 export const StyledIMaskInput = styled.div`
+  display: contents;
+
   > input {
     background-color: transparent;
     border: none;

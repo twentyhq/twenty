@@ -1,4 +1,3 @@
-import { hasRecordGroupsComponentSelector } from '@/object-record/record-group/states/selectors/hasRecordGroupsComponentSelector';
 import { RecordTableColumnWidthEffect } from '@/object-record/record-table/components/RecordTableColumnWidthEffect';
 import {
   getRecordTableColumnWidthInlineStyles,
@@ -18,7 +17,6 @@ import { resizeFieldOffsetComponentState } from '@/object-record/record-table/st
 import { shouldCompactRecordTableFirstColumnComponentState } from '@/object-record/record-table/states/shouldCompactRecordTableFirstColumnComponentState';
 import { computeVisibleRecordFieldsWidthOnTable } from '@/object-record/record-table/utils/computeVisibleRecordFieldsWidthOnTable';
 import { RecordTableVirtualizedDataChangedEffect } from '@/object-record/record-table/virtualization/components/RecordTableVirtualizedDataChangedEffect';
-import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
 import { useMemo } from 'react';
@@ -81,10 +79,6 @@ export const RecordTableEmpty = ({ tableBodyRef }: RecordTableEmptyProps) => {
     emptyTableContainerComputedWidth,
   );
 
-  const hasRecordGroups = useAtomComponentSelectorValue(
-    hasRecordGroupsComponentSelector,
-  );
-
   const columnWidthStyles = useMemo(
     () => getRecordTableColumnWidthInlineStyles(visibleRecordFields),
     [visibleRecordFields],
@@ -96,7 +90,6 @@ export const RecordTableEmpty = ({ tableBodyRef }: RecordTableEmptyProps) => {
         ref={tableBodyRef}
         style={columnWidthStyles}
         id={RECORD_TABLE_HTML_ID}
-        hasRecordGroups={hasRecordGroups}
       >
         <RecordTableHeader />
       </RecordTableStyleWrapper>

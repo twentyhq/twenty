@@ -1,14 +1,15 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import { Avatar, useIcons } from 'twenty-ui/display';
+import { Avatar, IconLink, IconWorld, useIcons } from 'twenty-ui/display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
+import { LinkIconWithLinkOverlay } from '@/navigation-menu-item/components/LinkIconWithLinkOverlay';
 import { StyledNavigationMenuItemIconContainer } from '@/navigation-menu-item/components/NavigationMenuItemIconContainer';
 import { ObjectIconWithViewOverlay } from '@/navigation-menu-item/components/ObjectIconWithViewOverlay';
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import { useObjectNavItemColor } from '@/navigation-menu-item/hooks/useObjectNavItemColor';
-import { getNavigationMenuItemIconStyleFromColor } from '@/navigation-menu-item/utils/get-navigation-menu-item-icon-style-from-color';
+import { getNavigationMenuItemIconStyleFromColor } from '@/navigation-menu-item/utils/getNavigationMenuItemIconStyleFromColor';
 import { getEffectiveNavigationMenuItemColor } from '@/navigation-menu-item/utils/getEffectiveNavigationMenuItemColor';
 import { type ProcessedNavigationMenuItem } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
 import { useGetStandardObjectIcon } from '@/object-metadata/hooks/useGetStandardObjectIcon';
@@ -59,6 +60,17 @@ export const NavigationMenuItemIcon = ({
         ObjectIcon={objectIconForView}
         ViewIcon={getIcon(navigationMenuItem.Icon!)}
         objectColor={objectNavItemColor}
+      />
+    );
+  }
+
+  if (navigationMenuItem.itemType === NavigationMenuItemType.LINK) {
+    return (
+      <LinkIconWithLinkOverlay
+        link={navigationMenuItem.link}
+        LinkIcon={IconLink}
+        DefaultIcon={IconWorld}
+        color={getEffectiveNavigationMenuItemColor(navigationMenuItem)}
       />
     );
   }

@@ -28,7 +28,7 @@ import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
 import { ROLE_ASSIGNMENT_CONFIRMATION_MODAL_ID } from '@/settings/roles/role-assignment/constants/RoleAssignmentConfirmationModalId';
 import { ROLE_TARGET_CONFIG } from '@/settings/roles/role-assignment/constants/RoleTargetConfig';
-import { buildRoleMaps } from '@/settings/roles/role-assignment/utils/build-role-maps';
+import { buildRoleMaps } from '@/settings/roles/role-assignment/utils/buildRoleMaps';
 
 type SettingsRoleAssignmentProps = {
   roleId: string;

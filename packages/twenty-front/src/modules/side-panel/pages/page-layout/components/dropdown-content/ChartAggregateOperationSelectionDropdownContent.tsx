@@ -8,9 +8,9 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { DateAggregateOperations } from '@/object-record/record-table/constants/DateAggregateOperations';
 import { getAvailableAggregateOperationsForFieldMetadataType } from '@/object-record/record-table/record-table-footer/utils/getAvailableAggregateOperationsForFieldMetadataType';
 import { DASHBOARD_AGGREGATE_OPERATION_RATIO } from '@/page-layout/widgets/graph/constants/DashboardAggregateOperationRatio';
-import { type AggregateChartOperation } from '@/page-layout/widgets/graph/graphWidgetAggregateChart/types/AggregateChartOperation';
-import { getAggregateChartOperationLabel } from '@/page-layout/widgets/graph/graphWidgetAggregateChart/utils/getAggregateChartOperationLabel';
-import { getAvailableAggregateOperationsForAggregateChart } from '@/page-layout/widgets/graph/graphWidgetAggregateChart/utils/getAvailableAggregateOperationsForAggregateChart';
+import { type AggregateChartOperation } from '@/page-layout/widgets/graph/graph-widget-aggregate-chart/types/AggregateChartOperation';
+import { getAggregateChartOperationLabel } from '@/page-layout/widgets/graph/graph-widget-aggregate-chart/utils/getAggregateChartOperationLabel';
+import { getAvailableAggregateOperationsForAggregateChart } from '@/page-layout/widgets/graph/graph-widget-aggregate-chart/utils/getAvailableAggregateOperationsForAggregateChart';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';

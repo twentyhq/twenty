@@ -53,6 +53,7 @@ export const useCreatePageLayoutTab = (pageLayoutIdFromProps?: string) => {
         position: maxPosition + 1,
         pageLayoutId: pageLayoutId,
         widgets: [],
+        isOverridden: false,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
         deletedAt: null,

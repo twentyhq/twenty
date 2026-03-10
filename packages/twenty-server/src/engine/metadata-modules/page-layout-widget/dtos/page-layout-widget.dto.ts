@@ -1,4 +1,9 @@
-import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
+import {
+  Field,
+  HideField,
+  ObjectType,
+  registerEnumType,
+} from '@nestjs/graphql';
 
 import { IDField } from '@ptc-org/nestjs-query-graphql';
 import GraphQLJSON from 'graphql-type-json';
@@ -8,6 +13,7 @@ import {
 } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { type PageLayoutWidgetOverrides } from 'src/engine/metadata-modules/page-layout-widget/entities/page-layout-widget.entity';
 import { PageLayoutWidgetPositionUnion } from 'src/engine/metadata-modules/page-layout-widget/dtos/page-layout-widget-position.union';
 import { WidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/dtos/widget-configuration.interface';
 import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
@@ -67,4 +73,10 @@ export class PageLayoutWidgetDTO {
 
   @Field(() => Date, { nullable: true })
   deletedAt?: Date;
+
+  @Field(() => Boolean, { nullable: false })
+  isOverridden: boolean;
+
+  @HideField()
+  overrides?: PageLayoutWidgetOverrides | null;
 }
