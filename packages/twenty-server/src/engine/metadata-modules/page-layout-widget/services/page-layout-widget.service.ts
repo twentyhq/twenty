@@ -126,11 +126,13 @@ export class PageLayoutWidgetService {
     configuration,
     objectMetadataId,
     widgetType,
+    widgetTitle,
     workspaceId,
   }: {
     configuration: AllPageLayoutWidgetConfiguration;
     objectMetadataId?: string | null;
     widgetType?: WidgetType | null;
+    widgetTitle?: string | null;
     workspaceId: string;
   }): Promise<void> {
     const needsChartValidation =
@@ -158,8 +160,13 @@ export class PageLayoutWidgetService {
         flatObjectMetadataMaps,
       });
     } catch (error) {
+      const chartContextPrefix = isDefined(widgetTitle)
+        ? `Chart "${widgetTitle}": `
+        : '';
+
       throw new PageLayoutWidgetException(
-        error instanceof Error ? error.message : String(error),
+        chartContextPrefix +
+          (error instanceof Error ? error.message : String(error)),
         PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
       );
     }
@@ -279,6 +286,7 @@ export class PageLayoutWidgetService {
         configuration: createInput.configuration,
         objectMetadataId: createInput.objectMetadataId ?? null,
         widgetType: createInput.type,
+        widgetTitle: createInput.title,
         workspaceId,
       });
     }
@@ -395,12 +403,15 @@ export class PageLayoutWidgetService {
         : existingWidget.objectMetadataId;
       const effectiveWidgetType =
         processedUpdateData.type ?? existingWidget.type;
+      const effectiveWidgetTitle =
+        processedUpdateData.title ?? existingWidget.title;
 
       if (isDefined(effectiveConfiguration)) {
         await this.validateChartFieldReferencesIfApplicable({
           configuration: effectiveConfiguration,
           objectMetadataId: effectiveObjectMetadataId,
           widgetType: effectiveWidgetType,
+          widgetTitle: effectiveWidgetTitle,
           workspaceId,
         });
       }

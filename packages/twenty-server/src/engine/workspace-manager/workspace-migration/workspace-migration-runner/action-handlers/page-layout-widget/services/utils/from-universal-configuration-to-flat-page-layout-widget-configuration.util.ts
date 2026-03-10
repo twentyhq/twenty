@@ -9,6 +9,7 @@ import {
   FlatEntityMapsExceptionCode,
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { type MetadataFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-maps.type';
+import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
@@ -27,17 +28,10 @@ const resolveFieldMetadataIdOrThrow = ({
     );
   }
 
-  const flatFieldMetadata = findFlatEntityByUniversalIdentifier({
+  const flatFieldMetadata = findFlatEntityByUniversalIdentifierOrThrow({
     flatEntityMaps: flatFieldMetadataMaps,
     universalIdentifier: fieldMetadataUniversalIdentifier,
   });
-
-  if (!isDefined(flatFieldMetadata)) {
-    throw new FlatEntityMapsException(
-      `Field metadata not found for universal identifier: ${fieldMetadataUniversalIdentifier}`,
-      FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
-    );
-  }
 
   return flatFieldMetadata.id;
 };

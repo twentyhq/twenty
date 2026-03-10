@@ -144,8 +144,19 @@ export const validateChartConfigurationFieldReferences = ({
       );
 
       if (!isDefined(filterField)) {
+        const inactiveOrMissingField = findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: recordFilter.fieldMetadataId,
+          flatEntityMaps: flatFieldMetadataMaps,
+        });
+
+        const fieldLabelOrName = inactiveOrMissingField?.label
+          ? `"${inactiveOrMissingField.label}"`
+          : inactiveOrMissingField?.name
+            ? `"${inactiveOrMissingField.name}"`
+            : 'this field';
+
         throw new Error(
-          `Filter references a field that no longer exists (fieldMetadataId: "${recordFilter.fieldMetadataId}"). Please remove or update the filter.`,
+          `One of the chart filters uses ${fieldLabelOrName}, but it was deleted. Please remove or replace this filter rule.`,
         );
       }
 
