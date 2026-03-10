@@ -22,15 +22,19 @@ type StateAtom<ValueType> = WritableAtom<
   void
 >;
 
+type LocalStorageOptions = { getOnInit?: boolean };
+
 export const createAtomState = <ValueType>({
   key,
   defaultValue,
   useLocalStorage = false,
+  localStorageOptions,
   useCookieStorage,
 }: {
   key: string;
   defaultValue: ValueType;
   useLocalStorage?: boolean;
+  localStorageOptions?: LocalStorageOptions;
   useCookieStorage?: CookieStorageConfig<ValueType>;
 }): State<ValueType> => {
   let baseAtom: StateAtom<ValueType>;
@@ -51,6 +55,8 @@ export const createAtomState = <ValueType>({
     baseAtom = atomWithStorage<ValueType>(
       key,
       defaultValue,
+      undefined,
+      localStorageOptions ?? undefined,
     ) as StateAtom<ValueType>;
   } else {
     baseAtom = atom(defaultValue);

@@ -386,6 +386,12 @@ describe('copyBaseApplicationProject', () => {
           ),
         ).toBe(true);
 
+        expect(
+          await fs.pathExists(
+            join(testAppDirectory, '.github', 'workflows', 'ci.yml'),
+          ),
+        ).toBe(true);
+
         // Install functions should always exist
         expect(
           await fs.pathExists(
@@ -462,6 +468,12 @@ describe('copyBaseApplicationProject', () => {
         expect(
           await fs.pathExists(
             join(srcPath, '__tests__', 'app-install.integration-test.ts'),
+          ),
+        ).toBe(false);
+
+        expect(
+          await fs.pathExists(
+            join(testAppDirectory, '.github', 'workflows', 'ci.yml'),
           ),
         ).toBe(false);
       });
