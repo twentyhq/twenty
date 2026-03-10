@@ -12005,6 +12005,11 @@ msgstr ""
 msgid "Select matching field"
 msgstr ""
 
+#. js-lingui-id: ezY8Ut
+#: src/modules/ui/input/components/internal/date/components/DateTimePickerHeader.tsx
+msgid "Select month and year"
+msgstr ""
+
 #. js-lingui-id: 8eJcRS
 #: src/modules/settings/data-model/new-object/components/SettingsAvailableStandardObjectsSection.tsx
 msgid "Select one or several standard objects to activate below"
