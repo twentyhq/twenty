@@ -1,11 +1,30 @@
 // @ts-nocheck
-// Twenty patch over @genql/runtime's createClient.
-// Wraps generateGraphqlOperation calls in try/catch so synchronous
-// throws from convention-based inference are returned as rejected promises.
-import { createFetcher } from '../runtime/fetcher';
-import type { LinkedType } from '../runtime/types';
-import type { ClientOptions } from '../runtime/createClient';
-import { generateGraphqlOperation } from './patched-generate-graphql-operation';
+// Creates a lightweight GraphQL client that uses convention-based
+// type inference. No genql dependency.
+import type { LinkedType, ClientOptions, GraphqlOperation } from './types';
+import { CoreGraphqlError } from './graphql-error';
+import { generateGraphqlOperation } from './generate-graphql-operation';
+
+const createFetcher = (options: ClientOptions) => {
+  const { fetcher: customFetcher } = options;
+
+  if (!customFetcher) {
+    throw new Error(
+      'CoreApiClient requires a custom fetcher. ' +
+        'Direct URL-based fetching is not supported in stub mode.',
+    );
+  }
+
+  return async (operation: GraphqlOperation) => {
+    const json = await customFetcher(operation);
+
+    if (json?.errors?.length) {
+      throw new CoreGraphqlError(json.errors, json.data);
+    }
+
+    return json.data;
+  };
+};
 
 export const createClient = ({
   queryRoot,
@@ -25,8 +44,6 @@ export const createClient = ({
 
   if (queryRoot) {
     client.query = (request: any) => {
-      if (!queryRoot) throw new Error('queryRoot argument is missing');
-
       try {
         return fetcher(
           generateGraphqlOperation('query', queryRoot, request),
@@ -38,9 +55,6 @@ export const createClient = ({
   }
   if (mutationRoot) {
     client.mutation = (request: any) => {
-      if (!mutationRoot)
-        throw new Error('mutationRoot argument is missing');
-
       try {
         return fetcher(
           generateGraphqlOperation('mutation', mutationRoot, request),

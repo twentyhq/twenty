@@ -17,10 +17,10 @@ describe('CoreApiClient', () => {
     process.env = savedEnv;
   });
 
-  // The genql runtime fetcher wrapper expects the custom fetcher to return
+  // The internal fetcher wrapper expects the custom fetcher to return
   // the raw JSON response `{ data, errors }`. It then extracts `.data` and
-  // throws GenqlError on errors. Our CoreApiClient's custom fetcher returns
-  // the full payload from assertResponseIsSuccessful.
+  // throws CoreGraphqlError on errors. CoreApiClient's custom fetcher
+  // returns the full payload from assertResponseIsSuccessful.
   const createMockFetch = (
     responseData: Record<string, unknown>,
     statusOverrides?: { status?: number; statusText?: string },

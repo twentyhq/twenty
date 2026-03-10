@@ -1,18 +1,13 @@
 // @ts-nocheck
-// Twenty patches barrel — re-exports the genql runtime with
-// patched createClient and generateGraphqlOperation.
+// Twenty core client internals — fully self-contained, no genql dependency.
 
-// Re-export everything from the unmodified genql runtime
-export type { ClientOptions } from '../runtime/createClient';
-export type { FieldsSelection } from '../runtime/typeSelection';
-export type { GraphqlOperation } from '../runtime/generateGraphqlOperation';
-export { linkTypeMap } from '../runtime/linkTypeMap';
-export { createFetcher } from '../runtime/fetcher';
-export { GenqlError } from '../runtime/error';
-export const everything = {
-  __scalar: true,
-};
+export { generateGraphqlOperation } from './generate-graphql-operation';
+export { createClient } from './create-client';
+export { CoreGraphqlError } from './graphql-error';
 
-// Override with Twenty-patched versions
-export { createClient } from './patched-create-client';
-export { generateGraphqlOperation } from './patched-generate-graphql-operation';
+export type { GraphqlOperation, ClientOptions } from './types';
+
+// FieldsSelection is a no-op identity type in stub mode (no real type map).
+// When genql codegen runs during app:dev, the generated index.ts replaces
+// this entire file with real typed selections.
+export type FieldsSelection<_TSource, _TFields> = _TSource;

@@ -1,30 +1,31 @@
 // @ts-nocheck
-// Stub — overwritten by `twenty app:build` or `twenty app:dev`
-// Uses the genql runtime with convention-based type inference so
-// logic functions work without code generation.
-import type {
-  QueryGenqlSelection,
-  Query,
-  MutationGenqlSelection,
-  Mutation,
-  SubscriptionGenqlSelection,
-  Subscription,
-} from './schema';
+// Core API client stub — fully self-contained, no genql dependency.
+// Uses convention-based type inference so logic functions work
+// without code generation. Overwritten by `twenty app:dev` for
+// full type safety during local development.
 import {
-  linkTypeMap,
   createClient as createClientOriginal,
   generateGraphqlOperation,
+  CoreGraphqlError,
   type FieldsSelection,
   type GraphqlOperation,
   type ClientOptions,
-  GenqlError,
 } from './twenty-patches';
-export type { FieldsSelection } from './twenty-patches';
-export { GenqlError };
 
-import types from './types';
-export * from './schema';
-const typeMap = linkTypeMap(types as any);
+export type { FieldsSelection } from './twenty-patches';
+export { CoreGraphqlError };
+
+// Empty roots — the type map is not used in stub mode.
+// Convention-based inference in generateGraphqlOperation handles
+// argument type resolution instead.
+const EMPTY_ROOT = { name: '', fields: {}, scalar: [] };
+
+export type Query = {};
+export type QueryGenqlSelection = {};
+export type Mutation = {};
+export type MutationGenqlSelection = {};
+export type Subscription = {};
+export type SubscriptionGenqlSelection = {};
 
 export interface Client {
   query<R extends QueryGenqlSelection>(
@@ -41,9 +42,9 @@ export const createClient = function (options?: ClientOptions): Client {
     url: undefined,
 
     ...options,
-    queryRoot: typeMap.Query!,
-    mutationRoot: typeMap.Mutation!,
-    subscriptionRoot: typeMap.Subscription!,
+    queryRoot: EMPTY_ROOT,
+    mutationRoot: EMPTY_ROOT,
+    subscriptionRoot: EMPTY_ROOT,
   }) as any;
 };
 
@@ -58,7 +59,7 @@ export type QueryResult<fields extends QueryGenqlSelection> = FieldsSelection<
 export const generateQueryOp: (
   fields: QueryGenqlSelection & { __name?: string },
 ) => GraphqlOperation = function (fields) {
-  return generateGraphqlOperation('query', typeMap.Query!, fields as any);
+  return generateGraphqlOperation('query', EMPTY_ROOT, fields as any);
 };
 
 export type MutationResult<fields extends MutationGenqlSelection> =
@@ -66,7 +67,7 @@ export type MutationResult<fields extends MutationGenqlSelection> =
 export const generateMutationOp: (
   fields: MutationGenqlSelection & { __name?: string },
 ) => GraphqlOperation = function (fields) {
-  return generateGraphqlOperation('mutation', typeMap.Mutation!, fields as any);
+  return generateGraphqlOperation('mutation', EMPTY_ROOT, fields as any);
 };
 
 export type SubscriptionResult<fields extends SubscriptionGenqlSelection> =
@@ -76,7 +77,7 @@ export const generateSubscriptionOp: (
 ) => GraphqlOperation = function (fields) {
   return generateGraphqlOperation(
     'subscription',
-    typeMap.Subscription!,
+    EMPTY_ROOT,
     fields as any,
   );
 };
@@ -294,7 +295,7 @@ export class CoreApiClient {
     });
 
     if (result.errors) {
-      throw new GenqlError(result.errors, result.data);
+      throw new CoreGraphqlError(result.errors, result.data);
     }
 
     const data = result.data as Record<string, unknown>;

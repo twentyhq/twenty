@@ -1,18 +1,35 @@
 // @ts-nocheck
-// Twenty patch over @genql/runtime's generateGraphqlOperation.
-// Adds convention-based type inference so the core client works
-// without a genql-generated type map (stub mode).
-import type { LinkedField, LinkedType } from '../runtime/types';
+// Generates GraphQL operation strings from a declarative request object.
+// Uses convention-based type inference for argument types so the core
+// client works without a genql-generated type map.
 import type {
-  Fields,
-  Request,
-  Context,
+  LinkedField,
+  LinkedType,
   GraphqlOperation,
-} from '../runtime/generateGraphqlOperation';
+} from './types';
 import { inferArgType } from './twenty-arg-type-inference';
 
-// Returns undefined instead of throwing when the type map is empty
-// (stub mode), so convention-based inference can take over.
+type Request = boolean | number | Fields;
+
+type Fields = {
+  [field: string]: Request;
+};
+
+type Variables = {
+  [name: string]: {
+    value: unknown;
+    typing: [LinkedType, string];
+  };
+};
+
+type Context = {
+  root: LinkedType;
+  varCounter: number;
+  variables: Variables;
+  fragmentCounter: number;
+  fragments: string[];
+};
+
 const getFieldFromPath = (
   root: LinkedType | undefined,
   path: string[],
@@ -22,16 +39,16 @@ const getFieldFromPath = (
   if (!root) return undefined;
   if (path.length === 0) return undefined;
 
-  for (const f of path) {
+  for (const fieldName of path) {
     const type = current ? current.type : root;
 
     if (!type?.fields) return undefined;
 
     const possibleTypes = Object.keys(type.fields)
-      .filter((i) => i.startsWith('on_'))
+      .filter((key) => key.startsWith('on_'))
       .reduce(
-        (types, fieldName) => {
-          const field = type.fields && type.fields[fieldName];
+        (types, key) => {
+          const field = type.fields && type.fields[key];
           if (field) types.push(field.type);
           return types;
         },
@@ -41,7 +58,7 @@ const getFieldFromPath = (
     let field: LinkedField | null = null;
 
     for (const possibleType of possibleTypes) {
-      const found = possibleType.fields && possibleType.fields[f];
+      const found = possibleType.fields && possibleType.fields[fieldName];
       if (found) {
         field = found;
         break;
@@ -102,7 +119,9 @@ const parseRequest = (
     Object.keys(request).length > 0
   ) {
     const fields = request;
-    const fieldNames = Object.keys(fields).filter((k) => Boolean(fields[k]));
+    const fieldNames = Object.keys(fields).filter((key) =>
+      Boolean(fields[key]),
+    );
 
     if (fieldNames.length === 0) {
       throw new Error(
@@ -119,7 +138,7 @@ const parseRequest = (
 
     if (fieldNames.includes('__scalar')) {
       const falsyFieldNames = new Set(
-        Object.keys(fields).filter((k) => !Boolean(fields[k])),
+        Object.keys(fields).filter((key) => !Boolean(fields[key])),
       );
       if (scalarFields?.length) {
         ctx.fragmentCounter++;
@@ -129,22 +148,27 @@ const parseRequest = (
           `fragment ${scalarFieldsFragment} on ${
             type.name
           }{${scalarFields
-            .filter((f) => !falsyFieldNames.has(f))
+            .filter((scalarField) => !falsyFieldNames.has(scalarField))
             .join(',')}}`,
         );
       }
     }
 
     const fieldsSelection = fieldNames
-      .filter((f) => !['__scalar', '__name'].includes(f))
-      .map((f) => {
-        const parsed = parseRequest(fields[f], ctx, [...path, f]);
+      .filter(
+        (fieldName) => !['__scalar', '__name'].includes(fieldName),
+      )
+      .map((fieldName) => {
+        const parsed = parseRequest(fields[fieldName], ctx, [
+          ...path,
+          fieldName,
+        ]);
 
-        if (f.startsWith('on_')) {
+        if (fieldName.startsWith('on_')) {
           ctx.fragmentCounter++;
           const implementationFragment = `f${ctx.fragmentCounter}`;
 
-          const typeMatch = f.match(/^on_(.+)/);
+          const typeMatch = fieldName.match(/^on_(.+)/);
 
           if (!typeMatch || !typeMatch[1])
             throw new Error('match failed');
@@ -155,7 +179,7 @@ const parseRequest = (
 
           return `...${implementationFragment}`;
         } else {
-          return `${f}${parsed}`;
+          return `${fieldName}${parsed}`;
         }
       })
       .concat(
@@ -187,9 +211,9 @@ export const generateGraphqlOperation = (
 
   const varsString =
     varNames.length > 0
-      ? `(${varNames.map((v) => {
-            const variableType = ctx.variables[v].typing[1];
-            return `$${v}:${variableType}`;
+      ? `(${varNames.map((varName) => {
+            const variableType = ctx.variables[varName].typing[1];
+            return `$${varName}:${variableType}`;
           })})`
       : '';
 
@@ -201,11 +225,11 @@ export const generateGraphqlOperation = (
       ...ctx.fragments,
     ].join(','),
     variables: Object.keys(ctx.variables).reduce<{
-      [name: string]: any;
+      [name: string]: unknown;
     }>(
-      (r, v) => {
-        r[v] = ctx.variables[v].value;
-        return r;
+      (result, varName) => {
+        result[varName] = ctx.variables[varName].value;
+        return result;
       },
       {},
     ),
