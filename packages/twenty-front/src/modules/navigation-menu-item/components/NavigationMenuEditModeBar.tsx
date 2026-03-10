@@ -1,17 +1,18 @@
-import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
-import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { useNavigationMenuItemsDraftState } from '@/navigation-menu-item/hooks/useNavigationMenuItemsDraftState';
 import { useSaveNavigationMenuItemsDraft } from '@/navigation-menu-item/hooks/useSaveNavigationMenuItemsDraft';
 import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/isNavigationMenuInEditModeState';
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/states/navigationMenuItemsDraftState';
 import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeState';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
+import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useContext, useState } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
 import { IconCheck, useIcons } from 'twenty-ui/display';
@@ -96,24 +97,34 @@ export const NavigationMenuEditModeBar = () => {
 
   const IconPaint = getIcon('IconPaint');
 
-  if (!showNavigationMenuEditModeBar) {
-    return null;
-  }
-
   return (
-    <StyledContainer>
-      <StyledTitle>
-        <IconPaint size={theme.icon.size.md} />
-        {t`Layout customization`}
-      </StyledTitle>
-      <SaveAndCancelButtons
-        onSave={handleSave}
-        onCancel={cancelEditMode}
-        isSaveDisabled={!isDirty || isSaving}
-        isLoading={isSaving}
-        inverted
-        saveIcon={IconCheck}
-      />
-    </StyledContainer>
+    <AnimatePresence>
+      {showNavigationMenuEditModeBar && (
+        <motion.div
+          initial={{ height: 0, opacity: 0 }}
+          animate={{ height: 'auto', opacity: 1 }}
+          exit={{ height: 0, opacity: 0 }}
+          transition={{
+            duration: theme.animation.duration.normal,
+            ease: 'easeInOut',
+          }}
+        >
+          <StyledContainer>
+            <StyledTitle>
+              <IconPaint size={theme.icon.size.md} />
+              {t`Layout customization`}
+            </StyledTitle>
+            <SaveAndCancelButtons
+              onSave={handleSave}
+              onCancel={cancelEditMode}
+              isSaveDisabled={!isDirty || isSaving}
+              isLoading={isSaving}
+              inverted
+              saveIcon={IconCheck}
+            />
+          </StyledContainer>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 };

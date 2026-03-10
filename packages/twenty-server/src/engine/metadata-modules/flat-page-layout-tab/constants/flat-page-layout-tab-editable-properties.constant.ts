@@ -3,4 +3,5 @@ import { type MetadataEntityPropertyName } from 'src/engine/metadata-modules/fla
 export const FLAT_PAGE_LAYOUT_TAB_EDITABLE_PROPERTIES = [
   'title',
   'position',
+  'icon',
 ] as const satisfies MetadataEntityPropertyName<'pageLayoutTab'>[];

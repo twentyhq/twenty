@@ -15,7 +15,7 @@ Uygulamalar, Twenty özelleştirmelerini **kod olarak** oluşturup yönetmenizi 
 
 * Özel nesneleri ve alanları kod olarak tanımlayın (yönetilen veri modeli)
 * Özel tetikleyicilerle mantık fonksiyonları oluşturun
-* Yapay zekâ ajanları için becerileri tanımlayın
+* Yapay zekâ için yetenekleri ve ajanları tanımlayın
 * Aynı uygulamayı birden çok çalışma alanına dağıtın
 
 ## Ön Gereksinimler
@@ -39,7 +39,7 @@ yarn twenty app:dev
 İskelet oluşturucu, hangi örnek dosyaların dahil edileceğini kontrol etmek için iki modu destekler:
 
 ```bash filename="Terminal"
-# Varsayılan (kapsamlı): tüm örnekler (nesne, alan, mantık fonksiyonu, ön bileşen, görünüm, gezinme menüsü öğesi, yetenek)
+# Varsayılan (kapsamlı): tüm örnekler (nesne, alan, mantık fonksiyonu, ön bileşen, görünüm, gezinme menüsü öğesi, yetenek, ajan)
 npx create-twenty-app@latest my-app
 
 # Minimal: yalnızca çekirdek dosyalar (application-config.ts ve default-role.ts)
@@ -115,8 +115,10 @@ my-twenty-app/
   │   └── example-view.ts                # Örnek kaydedilmiş görünüm tanımı
   ├── navigation-menu-items/
   │   └── example-navigation-menu-item.ts # Örnek kenar çubuğu gezinme bağlantısı
-  └── skills/
-      └── example-skill.ts                # Örnek yapay zekâ ajanı yetenek tanımı
+  ├── skills/
+  │   └── example-skill.ts                # Örnek yapay zekâ ajanı yetenek tanımı
+  └── agents/
+      └── example-agent.ts                # Örnek yapay zekâ ajanı tanımı
 ```
 
 `--minimal` ile yalnızca çekirdek dosyalar oluşturulur (`application-config.ts`, `roles/default-role.ts`, `logic-functions/pre-install.ts` ve `logic-functions/post-install.ts`).
@@ -148,6 +150,7 @@ SDK, TypeScript dosyalarınızı **`export default define<Entity>({...})`** ça�
 | `defineView()`                     | Kaydedilmiş görünüm tanımları                            |
 | `defineNavigationMenuItem()`       | Gezinme menüsü öğesi tanımları                           |
 | `defineSkill()`                    | Yapay zekâ ajanı yetenek tanımları                       |
+| `defineAgent()`                    | Yapay zekâ ajanı tanımları                               |
 
 <Note>
 **Dosya adlandırma esnektir.** Varlık algılama AST tabanlıdır — SDK, kaynak dosyalarınızı `export default define<Entity>({...})` desenini bulmak için tarar. Dosyalarınızı ve klasörlerinizi dilediğiniz gibi düzenleyebilirsiniz. Varlık türüne göre gruplama (örn. `logic-functions/`, `roles/`) bir gereklilik değil, yalnızca kod organizasyonu için bir gelenektir.
@@ -168,7 +171,7 @@ export default defineObject({
 
 İlerideki komutlar daha fazla dosya ve klasör ekleyecektir:
 
-* `yarn twenty app:dev`, `node_modules/twenty-sdk/generated` içinde iki tiplendirilmiş API istemcisini otomatik olarak oluşturur: `CoreApiClient` (`/graphql` üzerinden çalışma alanı verileri için) ve `MetadataApiClient` (çalışma alanı yapılandırması ve `/metadata` üzerinden dosya yüklemeleri için).
+* `yarn twenty app:dev`, `node_modules/twenty-sdk/clients` içinde iki tiplendirilmiş API istemcisini otomatik olarak oluşturur: `CoreApiClient` (`/graphql` üzerinden çalışma alanı verileri için) ve `MetadataApiClient` (çalışma alanı yapılandırması ve `/metadata` üzerinden dosya yüklemeleri için).
 * `yarn twenty entity:add`, özel nesneleriniz, fonksiyonlarınız, ön bileşenleriniz, rolleriniz, yetenekleriniz ve daha fazlası için `src/` altında varlık tanım dosyaları ekler.
 
 ## Kimlik Doğrulama
@@ -225,6 +228,7 @@ SDK, uygulama varlıklarınızı tanımlamak için yardımcı fonksiyonlar sağl
 | `defineView()`                     | Nesneler için kaydedilmiş görünümler tanımlayın                           |
 | `defineNavigationMenuItem()`       | Kenar çubuğu gezinme bağlantılarını tanımlayın                            |
 | `defineSkill()`                    | Yapay zekâ ajanı yeteneklerini tanımlayın                                 |
+| `defineAgent()`                    | Sistem istemleriyle yapay zekâ ajanları tanımlayın                        |
 
 Bu fonksiyonlar, derleme zamanında yapılandırmanızı doğrular ve IDE otomatik tamamlama ile tür güvenliği sağlar.
 
@@ -316,6 +320,72 @@ Bunları `fields` dizinizde tanımlamanız gerekmez — yalnızca özel alanlar�
 `fields` dizinizde aynı ada sahip bir alan tanımlayarak varsayılan alanları geçersiz kılabilirsiniz,
 ancak bu önerilmez.
 </Note>
+
+### Mevcut nesneler üzerinde alanları tanımlama
+
+Mevcut nesnelere özel alanlar eklemek için `defineField()` kullanın — hem standart nesnelere (ör. `company`, `person`, `opportunity`) hem de diğer uygulamalar tarafından tanımlanan özel nesnelere. Her alan kendi dosyasında bulunur ve hedef nesneye `universalIdentifier` ile başvurur.
+
+Standart nesnelere başvurmak için `twenty-sdk` içinden `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS` öğesini içe aktarın. Bu sabit, tüm yerleşik nesneler ve onların alanları için kararlı tanımlayıcılar sağlar:
+
+```typescript
+// src/fields/apollo-total-funding.field.ts
+import {
+  defineField,
+  FieldType,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk';
+
+export default defineField({
+  universalIdentifier: 'c90ae72d-4ddf-4f22-882f-eef98c91e40e',
+  objectUniversalIdentifier:
+    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+  type: FieldType.CURRENCY,
+  name: 'apolloTotalFunding',
+  label: 'Total Funding',
+  description: 'Total funding raised by the company',
+  icon: 'IconCash',
+});
+```
+
+Önemli noktalar:
+
+* `objectUniversalIdentifier`, alanın hangi nesneye ekleneceğini Twenty'ye bildirir. `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.<objectName>.universalIdentifier` standart nesneler için kullanın.
+* Her alan için kararlı bir `universalIdentifier`, `name`, `type`, `label` ve hedef `objectUniversalIdentifier` gerekir.
+* `yarn twenty entity:add` kullanarak yeni alanlar oluşturabilir ve alan seçeneğini seçebilirsiniz.
+* `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS`, kolaylık olması için `STANDARD_OBJECT` olarak da dışa aktarılır — her ikisi de aynı sabite atıfta bulunur.
+
+Kullanılabilir standart nesneler şunları içerir: `attachment`, `blocklist`, `calendarChannel`, `calendarEvent`, `calendarEventParticipant`, `company`, `connectedAccount`, `dashboard`, `favorite`, `favoriteFolder`, `message`, `messageChannel`, `messageParticipant`, `messageThread`, `note`, `noteTarget`, `opportunity`, `person`, `task`, `taskTarget`, `timelineActivity`, `workflow`, `workflowAutomatedTrigger`, `workflowRun`, `workflowVersion` ve `workspaceMember`.
+
+Her standart nesne ayrıca alan tanımlayıcılarını da sunar. Örneğin, rol izinlerinde standart bir nesnedeki belirli bir alana başvurmak için:
+
+```typescript
+STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.fields.name.universalIdentifier
+```
+
+#### Mevcut nesnelerde ilişki alanları
+
+Mevcut nesneleri özel nesnelerinize bağlayan ilişki alanlarını da tanımlayabilirsiniz:
+
+```typescript
+// src/fields/people-on-call-recording.field.ts
+import { defineField, FieldType, RelationType, STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk';
+import { CALL_RECORDING_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/objects/call-recording';
+import { CALL_RECORDING_ON_PERSON_ID } from 'src/fields/call-recording-on-person.field';
+
+export default defineField({
+  universalIdentifier: '4a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d',
+  objectUniversalIdentifier:
+    CALL_RECORDING_OBJECT_UNIVERSAL_IDENTIFIER,
+  type: FieldType.RELATION,
+  name: 'person',
+  label: 'Person',
+  relationTargetObjectMetadataUniversalIdentifier:
+    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
+  relationTargetFieldMetadataUniversalIdentifier:
+    CALL_RECORDING_ON_PERSON_ID,
+  relationType: RelationType.MANY_TO_ONE,
+});
+```
 
 ### Uygulama yapılandırması (application-config.ts)
 
@@ -430,7 +500,7 @@ Her fonksiyon dosyası, bir işleyici ve isteğe bağlı tetikleyiciler içeren 
 // src/app/createPostCard.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk';
 import type { DatabaseEventPayload, ObjectRecordCreateEvent, CronPayload, RoutePayload } from 'twenty-sdk';
-import { CoreApiClient, type Person } from 'twenty-sdk/generated';
+import { CoreApiClient, type Person } from 'twenty-sdk/clients';
 
 const handler = async (params: RoutePayload) => {
   const client = new CoreApiClient();
@@ -675,7 +745,7 @@ Bir mantık işlevini bir araç olarak işaretlemek için `isTool: true` olarak 
 ```typescript
 // src/logic-functions/enrich-company.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk';
-import { CoreApiClient } from 'twenty-sdk/generated';
+import { CoreApiClient } from 'twenty-sdk/clients';
 
 const handler = async (params: { companyName: string; domain?: string }) => {
   const client = new CoreApiClient();
@@ -767,6 +837,255 @@ Yeni ön uç bileşenlerini iki şekilde oluşturabilirsiniz:
 * **Şablondan**: `yarn twenty entity:add` çalıştırın ve yeni bir ön uç bileşeni ekleme seçeneğini seçin.
 * **Manuel**: Aynı deseni izleyerek yeni bir `.tsx` dosyası oluşturun ve `defineFrontComponent()` kullanın.
 
+#### Where front components can be used
+
+Front components can render in two locations within Twenty:
+
+* **Side panel** — Non-headless front components open in the right-hand side panel. This is the default behavior when a front component is triggered from the command menu.
+* **Widgets (dashboards and record pages)** — Front components can be embedded as widgets inside page layouts. When configuring a dashboard or a record page layout, users can add a front component widget.
+
+#### Headless vs non-headless
+
+Front components come in two rendering modes controlled by the `isHeadless` option:
+
+**Non-headless (default)** — The component renders a visible UI. When triggered from the command menu it opens in the side panel. This is the default behavior when `isHeadless` is `false` or omitted.
+
+**Headless** — The component mounts invisibly in the background. It does not open the side panel. Headless components are designed for actions that execute logic and then unmount themselves — for example, running an async task, navigating to a page, or showing a confirmation modal. They pair naturally with the SDK Command components described below.
+
+```typescript
+export default defineFrontComponent({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'my-action',
+  description: 'Runs an action without opening the side panel',
+  component: MyAction,
+  isHeadless: true,
+  command: {
+    universalIdentifier: 'b2c3d4e5-f6a7-8901-bcde-f12345678901',
+    label: 'Run my action',
+  },
+});
+```
+
+#### Adding command menu items
+
+To make a front component appear as an item in Twenty's command menu, add the `command` property to `defineFrontComponent()`. When users open the command menu (Cmd+K / Ctrl+K), the item shows up and triggers the front component on click.
+
+The `command` object accepts the following fields:
+
+| Alan                                    | Tür                                         | Açıklama                                                                                   |
+| --------------------------------------- | ------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| `universalIdentifier`                   | `string` (required)                         | Unique ID for the command menu item                                                        |
+| `etiket`                                | `string` (required)                         | Display label shown in the command menu                                                    |
+| `simge`                                 | `string` (optional)                         | Icon name (e.g., `'IconSparkles'`)                                                         |
+| `isPinned`                              | `boolean` (optional)                        | Whether the command is pinned at the top of the menu                                       |
+| `availabilityType`                      | `'GLOBAL' \| 'RECORD_SELECTION'` (optional) | `GLOBAL` shows the command everywhere; `RECORD_SELECTION` shows it only in record contexts |
+| `availabilityObjectUniversalIdentifier` | `string` (optional)                         | Restrict the command to a specific object type (e.g., Person)                              |
+
+Here is an example from the call-recording app that adds a command scoped to Person records:
+
+```typescript
+import { defineFrontComponent } from 'twenty-sdk';
+
+export default defineFrontComponent({
+  universalIdentifier: 'c3d4e5f6-a7b8-9012-cdef-123456789012',
+  name: 'Summarize Person Call Recordings',
+  description: 'Generates a summary of call recordings for a person',
+  component: SummarizePersonRecordings,
+  command: {
+    universalIdentifier: 'd4e5f6a7-b8c9-0123-defa-234567890123',
+    label: 'Summarize call recordings',
+    icon: 'IconSparkles',
+    isPinned: false,
+    availabilityType: 'RECORD_SELECTION',
+    availabilityObjectUniversalIdentifier:
+      '20202020-e674-48e5-a542-72570eee7213',
+  },
+});
+```
+
+When the command is synced, it appears in the command menu. If the front component is non-headless the side panel opens with the component rendered inside. If it is headless the component mounts in the background and executes its logic.
+
+#### SDK Command components
+
+The `twenty-sdk` package provides four Command helper components designed for headless front components. Each component executes an action on mount, handles errors by showing a snackbar notification, and automatically unmounts the front component when done.
+
+Import them from `twenty-sdk/command`:
+
+* **`Command`** — Runs an async callback via the `execute` prop.
+* **`CommandLink`** — Navigates to an app path. Props: `to`, `params`, `queryParams`, `options`.
+* **`CommandModal`** — Opens a confirmation modal. If the user confirms, executes the `execute` callback. Props: `title`, `subtitle`, `execute`, `confirmButtonText`, `confirmButtonAccent`.
+* **`CommandOpenSidePanelPage`** — Opens a specific side panel page. Props: `page`, `pageTitle`, `pageIcon`.
+
+Here is a full example of a headless front component using `Command` to run an action from the command menu:
+
+```typescript
+// src/front-components/run-action.tsx
+import { defineFrontComponent } from 'twenty-sdk';
+import { Command } from 'twenty-sdk/command';
+import { CoreApiClient } from 'twenty-sdk/clients';
+
+const RunAction = () => {
+  const execute = async () => {
+    const client = new CoreApiClient();
+
+    await client.mutation({
+      createTask: {
+        __args: { data: { title: 'Created by my app' } },
+        id: true,
+      },
+    });
+  };
+
+  return <Command execute={execute} />;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'e5f6a7b8-c9d0-1234-efab-345678901234',
+  name: 'run-action',
+  description: 'Creates a task from the command menu',
+  component: RunAction,
+  isHeadless: true,
+  command: {
+    universalIdentifier: 'f6a7b8c9-d0e1-2345-fabc-456789012345',
+    label: 'Run my action',
+    icon: 'IconPlayerPlay',
+  },
+});
+```
+
+And an example using `CommandModal` to ask for confirmation before executing:
+
+```typescript
+// src/front-components/delete-draft.tsx
+import { defineFrontComponent } from 'twenty-sdk';
+import { CommandModal } from 'twenty-sdk/command';
+
+const DeleteDraft = () => {
+  const execute = async () => {
+    // perform the deletion
+  };
+
+  return (
+    <CommandModal
+      title="Delete draft?"
+      subtitle="This action cannot be undone."
+      execute={execute}
+      confirmButtonText="Delete"
+      confirmButtonAccent="danger"
+    />
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'a7b8c9d0-e1f2-3456-abcd-567890123456',
+  name: 'delete-draft',
+  description: 'Deletes a draft with confirmation',
+  component: DeleteDraft,
+  isHeadless: true,
+  command: {
+    universalIdentifier: 'b8c9d0e1-f2a3-4567-bcde-678901234567',
+    label: 'Delete draft',
+    icon: 'IconTrash',
+  },
+});
+```
+
+#### Execution context
+
+Every front component receives an execution context that provides information about where and how it is running. Access context values using hooks from `twenty-sdk`:
+
+| Hook                    | Return type      | Açıklama                                                                                                                                                          |
+| ----------------------- | ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `useFrontComponentId()` | `string`         | The unique ID of the current front component instance                                                                                                             |
+| `useRecordId()`         | `string \| null` | The ID of the current record, when the component runs in a record context (e.g., a record page widget or a command scoped to a record). Returns `null` otherwise. |
+| `useUserId()`           | `string \| null` | The ID of the current user                                                                                                                                        |
+
+```typescript
+import { useRecordId, useUserId } from 'twenty-sdk';
+
+const MyWidget = () => {
+  const recordId = useRecordId();
+  const userId = useUserId();
+
+  return (
+    <div>
+      <p>Record: {recordId ?? 'none'}</p>
+      <p>User: {userId ?? 'anonymous'}</p>
+    </div>
+  );
+};
+```
+
+The context is reactive — if the surrounding record changes, hooks automatically return the updated values.
+
+#### Host API functions
+
+Front components run in an isolated sandbox but can interact with Twenty's UI through a set of functions provided by the host. Import them directly from `twenty-sdk`:
+
+```typescript
+import {
+  navigate,
+  closeSidePanel,
+  enqueueSnackbar,
+  unmountFrontComponent,
+  openSidePanelPage,
+  openCommandConfirmationModal,
+} from 'twenty-sdk';
+```
+
+| Fonksiyon                      | Signature                                                | Açıklama                                                                                                                                                                |
+| ------------------------------ | -------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `gezin`                        | `(to, params?, queryParams?, options?) => Promise<void>` | Navigate to a typed app path within Twenty                                                                                                                              |
+| `closeSidePanel`               | `() => Promise<void>`                                    | Close the side panel                                                                                                                                                    |
+| `enqueueSnackbar`              | `(params) => Promise<void>`                              | Show a snackbar notification. Params: `message`, `variant` (`'error'`, `'success'`, `'info'`, `'warning'`), optional `duration`, `detailedMessage`, `dedupeKey`         |
+| `unmountFrontComponent`        | `() => Promise<void>`                                    | Unmount the current front component (used by headless components to clean up after execution)                                                                           |
+| `openSidePanelPage`            | `(params) => Promise<void>`                              | Open a page in the side panel. Params: `page`, `pageTitle`, `pageIcon`, `shouldResetSearchState`                                                                        |
+| `openCommandConfirmationModal` | `(params) => Promise<'confirm' \| 'cancel'>`             | Show a confirmation modal and wait for the user's response. Params: `title`, `subtitle`, `confirmButtonText`, `confirmButtonAccent` (`'default'`, `'blue'`, `'danger'`) |
+
+Here is an example that uses the host API to show a snackbar and close the side panel after an action completes:
+
+```typescript
+import { defineFrontComponent, useRecordId } from 'twenty-sdk';
+import { enqueueSnackbar, closeSidePanel } from 'twenty-sdk';
+import { CoreApiClient } from 'twenty-sdk/clients';
+
+const ArchiveRecord = () => {
+  const recordId = useRecordId();
+
+  const handleArchive = async () => {
+    const client = new CoreApiClient();
+
+    await client.mutation({
+      updateTask: {
+        __args: { id: recordId, data: { status: 'ARCHIVED' } },
+        id: true,
+      },
+    });
+
+    await enqueueSnackbar({
+      message: 'Record archived',
+      variant: 'success',
+    });
+
+    await closeSidePanel();
+  };
+
+  return (
+    <div style={{ padding: '20px' }}>
+      <p>Archive this record?</p>
+      <button onClick={handleArchive}>Archive</button>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'c9d0e1f2-a3b4-5678-cdef-789012345678',
+  name: 'archive-record',
+  description: 'Archives the current record',
+  component: ArchiveRecord,
+});
+```
+
 ### Beceriler
 
 Yetenekler, yapay zekâ ajanlarının çalışma alanınızda kullanabileceği yeniden kullanılabilir yönergeleri ve kabiliyetleri tanımlar. Yerleşik doğrulamayla yetenekleri tanımlamak için `defineSkill()` kullanın:
@@ -802,15 +1121,51 @@ Yeni yetenekleri iki şekilde oluşturabilirsiniz:
 * **Şablondan**: `yarn twenty entity:add` komutunu çalıştırın ve yeni bir yetenek ekleme seçeneğini seçin.
 * **Manuel**: Yeni bir dosya oluşturun ve aynı deseni izleyerek `defineSkill()` kullanın.
 
+### Temsilciler
+
+Ajanlar, çalışma alanınızda çalışabilen sistem istemlerine sahip yapay zekâ ajanlarını tanımlar. Yerleşik doğrulamayla ajanları tanımlamak için `defineAgent()` kullanın:
+
+```typescript
+// src/agents/example-agent.ts
+import { defineAgent } from 'twenty-sdk';
+
+export default defineAgent({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'sales-assistant',
+  label: 'Sales Assistant',
+  description: 'An AI agent that helps with sales tasks',
+  icon: 'IconRobot',
+  prompt: `You are a sales assistant. Help users with:
+1. Researching prospects and companies
+2. Drafting personalized outreach messages
+3. Tracking follow-ups and next steps
+4. Analyzing deal pipeline and suggesting actions`,
+});
+```
+
+Önemli noktalar:
+
+* `name`, ajan için benzersiz bir tanımlayıcı dizedir (kebab-case önerilir).
+* `label`, UI'de gösterilen, insan tarafından okunabilir addır.
+* `prompt`, sistem istemini içerir — bu, ajanın davranışını tanımlayan talimat metnidir.
+* `icon` (isteğe bağlı), UI'de gösterilen simgeyi ayarlar.
+* `description` (isteğe bağlı), ajanın amacı hakkında ek bağlam sağlar.
+
+Yeni ajanları iki şekilde oluşturabilirsiniz:
+
+* **Şablondan**: `yarn twenty entity:add` komutunu çalıştırın ve yeni bir ajan ekleme seçeneğini seçin.
+* **Manuel**: Yeni bir dosya oluşturun ve aynı deseni izleyerek `defineAgent()` kullanın.
+
 ### Oluşturulan tiplendirilmiş istemciler
 
-Çalışma alanı şemanıza göre `yarn twenty app:dev` tarafından iki tiplendirilmiş istemci otomatik olarak oluşturulur ve `node_modules/twenty-sdk/generated` içine kaydedilir:
+Çalışma alanı şemanıza göre `yarn twenty app:dev` tarafından iki tiplendirilmiş istemci otomatik olarak oluşturulur ve `node_modules/twenty-sdk/clients` içine kaydedilir:
 
 * **`CoreApiClient`** — çalışma alanı verileri için `/graphql` uç noktasını sorgular
 * **`MetadataApiClient`** — çalışma alanı yapılandırması ve dosya yüklemeleri için `/metadata` uç noktasını sorgular.
 
 ```typescript
-import { CoreApiClient, MetadataApiClient } from 'twenty-sdk/generated';
+import { CoreApiClient } from 'twenty-sdk/clients';
+import { MetadataApiClient } from 'twenty-sdk/clients';
 
 const client = new CoreApiClient();
 const { me } = await client.query({ me: { id: true, displayName: true } });
@@ -819,7 +1174,7 @@ const metadataClient = new MetadataApiClient();
 const { currentWorkspace } = await metadataClient.query({ currentWorkspace: { id: true } });
 ```
 
-Her iki istemci de, nesneleriniz veya alanlarınız değiştiğinde, `yarn twenty app:dev` tarafından otomatik olarak yeniden oluşturulur.
+`CoreApiClient`, nesneleriniz veya alanlarınız değiştiğinde `yarn twenty app:dev` tarafından otomatik olarak yeniden oluşturulur. `MetadataApiClient`, SDK ile birlikte önceden hazırlanmış olarak gelir.
 
 #### Mantık fonksiyonlarında çalışma zamanı kimlik bilgileri
 
@@ -836,10 +1191,10 @@ Notlar:
 
 #### Dosya yükleme
 
-Oluşturulan `MetadataApiClient`, çalışma alanı nesnelerinizdeki dosya türündeki alanlara dosya eklemek için bir `uploadFile` yöntemi içerir. Standart GraphQL istemcileri çok parçalı dosya yüklemelerini yerel olarak desteklemediğinden, istemci arka planda [GraphQL çok parçalı istek belirtimi](https://github.com/jaydenseric/graphql-multipart-request-spec) uygulayan bu özel yöntemi sağlar.
+`MetadataApiClient`, çalışma alanı nesnelerinizdeki dosya türündeki alanlara dosya eklemek için bir `uploadFile` yöntemi içerir. Standart GraphQL istemcileri çok parçalı dosya yüklemelerini yerel olarak desteklemediğinden, istemci arka planda [GraphQL çok parçalı istek belirtimi](https://github.com/jaydenseric/graphql-multipart-request-spec) uygulayan bu özel yöntemi sağlar.
 
 ```typescript
-import { MetadataApiClient } from 'twenty-sdk/generated';
+import { MetadataApiClient } from 'twenty-sdk/clients';
 import * as fs from 'fs';
 
 const metadataClient = new MetadataApiClient();

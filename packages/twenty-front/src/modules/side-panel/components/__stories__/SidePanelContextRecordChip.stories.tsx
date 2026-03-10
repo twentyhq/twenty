@@ -12,7 +12,7 @@ import { recordStoreFamilyState } from '@/object-record/record-store/states/reco
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { ComponentDecorator } from 'twenty-ui/testing';
-import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
+import { getJestMetadataAndApolloMocksAndCommandMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndCommandMenuWrapper';
 import { mockedCompanyRecords } from '~/testing/mock-data/generated/data/companies/mock-companies-data';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
@@ -145,7 +145,7 @@ const createContextStoreWrapper = ({
   companies: typeof mockedCompanyRecords;
   componentInstanceId: string;
 }) => {
-  return getJestMetadataAndApolloMocksAndActionMenuWrapper({
+  return getJestMetadataAndApolloMocksAndCommandMenuWrapper({
     apolloMocks: [
       {
         request: {

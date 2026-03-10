@@ -1,5 +1,6 @@
 import { appPublish } from '@/cli/public-operations/app-publish';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
+import { checkSdkVersionCompatibility } from '@/cli/utilities/version/check-sdk-version-compatibility';
 import chalk from 'chalk';
 
 export type AppPublishCommandOptions = {
@@ -12,6 +13,9 @@ export type AppPublishCommandOptions = {
 export class AppPublishCommand {
   async execute(options: AppPublishCommandOptions): Promise<void> {
     const appPath = options.appPath ?? CURRENT_EXECUTION_DIRECTORY;
+
+    await checkSdkVersionCompatibility(appPath);
+
     const isServerPublish = !!options.server;
 
     console.log(

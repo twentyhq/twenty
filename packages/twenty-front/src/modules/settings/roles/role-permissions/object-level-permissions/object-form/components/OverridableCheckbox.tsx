@@ -11,15 +11,15 @@ const StyledOverridableCheckboxContainer = styled.div`
   align-items: center;
   display: inline-flex;
   justify-content: flex-start;
-  width: calc(${themeCssVariables.icon.size.xl} * 2);
+  width: calc(${themeCssVariables.icon.size.xl} * 2 * 1px);
 `;
 
 const StyledOverridableCheckboxContainerItem = styled.div`
   align-items: center;
   display: flex;
-  height: ${themeCssVariables.icon.size.xl};
+  height: calc(${themeCssVariables.icon.size.xl} * 1px);
   justify-content: center;
-  width: ${themeCssVariables.icon.size.xl};
+  width: calc(${themeCssVariables.icon.size.xl} * 1px);
 `;
 
 const StyledIconWrapper = styled.div<{
