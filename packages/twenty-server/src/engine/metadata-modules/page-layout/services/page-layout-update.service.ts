@@ -23,7 +23,7 @@ import { UpdatePageLayoutTabWithWidgetsInput } from 'src/engine/metadata-modules
 import { UpdatePageLayoutWidgetWithIdInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/update-page-layout-widget-with-id.input';
 import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 import { isChartFieldsForValidation } from 'src/engine/metadata-modules/page-layout-widget/utils/is-chart-fields-for-validation.util';
-import { validateChartConfigurationFieldReferencesOrThrow } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-chart-configuration-field-references-or-throw.util';
+import { validateChartConfigurationFieldReferences } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-chart-configuration-field-references.util';
 import { UpdatePageLayoutWithTabsInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/update-page-layout-with-tabs.input';
 import { PageLayoutDTO } from 'src/engine/metadata-modules/page-layout/dtos/page-layout.dto';
 import {
@@ -650,7 +650,7 @@ export class PageLayoutUpdateService {
       return;
     }
 
-    validateChartConfigurationFieldReferencesOrThrow({
+    validateChartConfigurationFieldReferences({
       configuration,
       objectMetadataId: widgetInput.objectMetadataId,
       widgetType: widgetInput.type,

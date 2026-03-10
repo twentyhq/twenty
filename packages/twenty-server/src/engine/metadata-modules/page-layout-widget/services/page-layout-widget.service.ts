@@ -29,7 +29,7 @@ import {
 import { type AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/types/all-page-layout-widget-configuration.type';
 import { fromFlatPageLayoutWidgetToPageLayoutWidgetDto } from 'src/engine/metadata-modules/page-layout-widget/utils/from-flat-page-layout-widget-to-page-layout-widget-dto.util';
 import { isChartFieldsForValidation } from 'src/engine/metadata-modules/page-layout-widget/utils/is-chart-fields-for-validation.util';
-import { validateChartConfigurationFieldReferencesOrThrow } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-chart-configuration-field-references-or-throw.util';
+import { validateChartConfigurationFieldReferences } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-chart-configuration-field-references.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { DashboardSyncService } from 'src/modules/dashboard-sync/services/dashboard-sync.service';
@@ -151,7 +151,7 @@ export class PageLayoutWidgetService {
         },
       );
 
-    validateChartConfigurationFieldReferencesOrThrow({
+    validateChartConfigurationFieldReferences({
       configuration,
       objectMetadataId,
       widgetType,
