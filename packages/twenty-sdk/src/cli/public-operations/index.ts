@@ -8,8 +8,6 @@ export type { AuthLogoutOptions } from './auth-logout';
 export { appBuild } from './app-build';
 export type { AppBuildOptions, AppBuildResult } from './app-build';
 
-// Client generation
-export { generateCoreClientFromSchema } from '@/cli/utilities/client/client-service';
 export { appPublish } from './app-publish';
 export type { AppPublishOptions, AppPublishResult } from './app-publish';
 export { appUninstall } from './app-uninstall';

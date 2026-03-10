@@ -55701,6 +55701,21 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"twenty-client-sdk@workspace:packages/twenty-client-sdk":
+  version: 0.0.0-use.local
+  resolution: "twenty-client-sdk@workspace:packages/twenty-client-sdk"
+  dependencies:
+    "@genql/cli": "npm:^3.0.3"
+    "@genql/runtime": "npm:^2.10.0"
+    graphql: "npm:^16.8.1"
+    twenty-shared: "workspace:*"
+    typescript: "npm:^5.9.2"
+    vite: "npm:^7.0.0"
+    vite-plugin-dts: "npm:^4.5.4"
+    vite-tsconfig-paths: "npm:^4.2.1"
+  languageName: unknown
+  linkType: soft
+
 "twenty-docs@workspace:packages/twenty-docs":
   version: 0.0.0-use.local
   resolution: "twenty-docs@workspace:packages/twenty-docs"
@@ -56125,6 +56140,7 @@ __metadata:
     tsdav: "npm:^2.1.5"
     tslib: "npm:2.8.1"
     twenty-emails: "workspace:*"
+    twenty-sdk: "workspace:*"
     twenty-shared: "workspace:*"
     type-fest: "npm:4.10.1"
     typeorm: "patch:typeorm@0.3.20#./patches/typeorm+0.3.20.patch"
