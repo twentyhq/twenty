@@ -35,14 +35,6 @@ const StyledActionButtonContainer = styled.div`
   align-items: center;
   display: inline-flex;
   justify-content: center;
-
-  > div {
-    height: 100%;
-  }
-
-  > div > button {
-    height: 100%;
-  }
 `;
 
 export const EmailField = () => {
@@ -108,7 +100,7 @@ export const EmailField = () => {
                 Icon={IconCheck}
                 variant="secondary"
                 position="left"
-                size="small"
+                size="medium"
                 onClick={handleSave}
                 disabled={isSaveDisabled}
                 type="button"
@@ -119,7 +111,7 @@ export const EmailField = () => {
                 Icon={IconX}
                 variant="secondary"
                 position="right"
-                size="small"
+                size="medium"
                 onClick={handleCancelEditing}
                 type="button"
               />
@@ -131,7 +123,7 @@ export const EmailField = () => {
               <Button
                 Icon={IconPencil}
                 variant="secondary"
-                size="small"
+                size="medium"
                 onClick={handleStartEditing}
                 disabled={!canEdit}
                 type="button"
