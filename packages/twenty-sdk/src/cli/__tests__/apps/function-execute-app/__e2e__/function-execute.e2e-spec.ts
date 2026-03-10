@@ -1,12 +1,13 @@
-import { resolve } from 'path';
 import { vi } from 'vitest';
 
 import { appBuild } from '@/cli/public-operations/app-build';
 import { appUninstall } from '@/cli/public-operations/app-uninstall';
 import { functionExecute } from '@/cli/public-operations/function-execute';
-import { ADD_NUMBERS_UNIVERSAL_IDENTIFIER } from '../src/logic-functions/add-numbers.function';
+import { FUNCTION_EXECUTE_APP_PATH } from '@/cli/__tests__/apps/fixture-paths';
 
-const APP_PATH = resolve(__dirname, '../');
+const ADD_NUMBERS_UNIVERSAL_IDENTIFIER = 'f9e5589c-e951-4d99-85db-0a305ab53502';
+
+const APP_PATH = FUNCTION_EXECUTE_APP_PATH;
 
 describe('functionExecute E2E', () => {
   beforeAll(async () => {
@@ -18,8 +19,6 @@ describe('functionExecute E2E', () => {
       );
     }
 
-    // The server may need a moment to make uploaded files readable
-    // by the execution engine. Retry until the handler becomes available.
     await vi.waitFor(
       async () => {
         const result = await functionExecute({
