@@ -5,6 +5,7 @@ import {
   IsArray,
   IsNotEmpty,
   IsNumber,
+  IsOptional,
   IsString,
   IsUUID,
   ValidateNested,
@@ -28,6 +29,11 @@ export class UpdatePageLayoutTabWithWidgetsInput {
   @IsNumber()
   @IsNotEmpty()
   position: number;
+
+  @Field(() => String, { nullable: true })
+  @IsString()
+  @IsOptional()
+  icon?: string | null;
 
   @Field(() => [UpdatePageLayoutWidgetWithIdInput])
   @IsArray()

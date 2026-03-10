@@ -1,4 +1,4 @@
-import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
+import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { useSidePanelWorkflowNavigation } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowNavigation';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
@@ -37,7 +37,7 @@ export const WorkflowDiagramStepNodeEditable = ({
 
   const { resetWorkflowInsertStepIds } = useResetWorkflowInsertStepIds();
 
-  const { isInSidePanel } = useContext(ActionMenuContext);
+  const { isInSidePanel } = useContext(CommandMenuContext);
 
   const setSidePanelNavigationStack = useSetAtomState(
     sidePanelNavigationStackState,

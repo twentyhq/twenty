@@ -758,12 +758,12 @@ msgstr "Actions que les utilisateurs peuvent effectuer sur cet objet"
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 #: src/modules/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "Activate"
 msgstr "Activer"
 
 #. js-lingui-id: tu8A/k
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "Activate Workflow"
 msgstr "Activer le workflow"
 
@@ -812,8 +812,8 @@ msgid "Add a new company we're in touch with (e.g. name, website, industry). Det
 msgstr ""
 
 #. js-lingui-id: m3/V2n
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "Add a node"
 msgstr "Ajouter un nœud"
 
@@ -1086,10 +1086,10 @@ msgstr "Ajouter aux favoris"
 
 #. js-lingui-id: pBsoKL
 #: src/modules/favorites/components/PageFavoriteButton.tsx
-#: src/modules/action-menu/mock/action-menu-actions.mock.tsx
-#: src/modules/action-menu/mock/action-menu-actions.mock.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/mock/command-menu-items.mock.tsx
+#: src/modules/command-menu-item/mock/command-menu-items.mock.tsx
 msgid "Add to favorites"
 msgstr "Ajouter aux favoris"
 
@@ -1885,22 +1885,22 @@ msgid "Are you sure you want to delete this skill? This action cannot be undone.
 msgstr ""
 
 #. js-lingui-id: OJOR8q
-#: src/modules/action-menu/actions/record-actions/multiple-records/components/DestroyMultipleRecordsAction.tsx
+#: src/modules/command-menu-item/record/multiple-records/components/DestroyMultipleRecordsCommand.tsx
 msgid "Are you sure you want to destroy these records? They won't be recoverable anymore."
 msgstr "Êtes-vous sûr de vouloir détruire ces enregistrements ? Ils ne seront plus récupérables."
 
 #. js-lingui-id: UK5TO6
-#: src/modules/action-menu/actions/record-actions/single-record/components/DestroySingleRecordAction.tsx
+#: src/modules/command-menu-item/record/single-record/components/DestroySingleRecordCommand.tsx
 msgid "Are you sure you want to destroy this record? It cannot be recovered anymore."
 msgstr "Êtes-vous sûr de vouloir détruire cet enregistrement ? Il ne pourra pas être récupéré."
 
 #. js-lingui-id: mcHVC1
-#: src/modules/action-menu/actions/record-actions/multiple-records/components/RestoreMultipleRecordsAction.tsx
+#: src/modules/command-menu-item/record/multiple-records/components/RestoreMultipleRecordsCommand.tsx
 msgid "Are you sure you want to restore these records?"
 msgstr "Êtes-vous sûr de vouloir restaurer ces enregistrements ?"
 
 #. js-lingui-id: lmgkf0
-#: src/modules/action-menu/actions/record-actions/single-record/components/RestoreSingleRecordAction.tsx
+#: src/modules/command-menu-item/record/single-record/components/RestoreSingleRecordCommand.tsx
 msgid "Are you sure you want to restore this record?"
 msgstr "Êtes-vous sûr de vouloir restaurer cet enregistrement ?"
 
@@ -1938,9 +1938,9 @@ msgstr "Ascendant"
 #: src/modules/side-panel/hooks/useOpenAskAIPageInSidePanel.ts
 #: src/modules/side-panel/components/SidePanelAskAIInfo.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
-#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
-#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
-#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
+#: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
 msgid "Ask AI"
 msgstr "Demander à l'IA"
 
@@ -2533,14 +2533,14 @@ msgstr "Impossible de scanner ? Copiez le"
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DashboardCommandMenuItemsConfig.tsx
 msgid "Cancel"
 msgstr "Annuler"
 
 #. js-lingui-id: HYLdMN
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DashboardCommandMenuItemsConfig.tsx
 msgid "Cancel Edition"
 msgstr "Annuler l'édition"
 
@@ -2984,7 +2984,7 @@ msgstr "Vue compacte"
 
 #. js-lingui-id: s2QZS6
 #: src/modules/sign-in-background-mock/components/SignInBackgroundMockPage.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Companies"
 msgstr "Entreprises"
 
@@ -3124,6 +3124,7 @@ msgstr ""
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModal.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModal.tsx
+#: src/modules/command-menu-item/display/components/CommandModal.tsx
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -3132,7 +3133,6 @@ msgstr ""
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
-#: src/modules/action-menu/actions/components/ActionModal.tsx
 msgid "Confirm"
 msgstr "Confirmer"
 
@@ -3502,8 +3502,8 @@ msgid "Create"
 msgstr "Créer"
 
 #. js-lingui-id: M1NpGt
-#: src/modules/action-menu/actions/record-agnostic-actions/hooks/useRelatedRecordActions.ts
-#: src/modules/action-menu/actions/record-agnostic-actions/hooks/useRelatedRecordActions.ts
+#: src/modules/command-menu-item/record-agnostic/hooks/useRelatedRecordCommands.ts
+#: src/modules/command-menu-item/record-agnostic/hooks/useRelatedRecordCommands.ts
 msgid "Create {targetObjectLabelSingular}"
 msgstr "Créer {targetObjectLabelSingular}"
 
@@ -3574,12 +3574,12 @@ msgid "Create date field"
 msgstr "Créer un champ de date"
 
 #. js-lingui-id: kCNBJG
-#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DashboardCommandMenuItemsConfig.tsx
 msgid "Create new dashboard"
 msgstr "Créer un nouveau tableau de bord"
 
 #. js-lingui-id: d0DCww
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Create new record"
 msgstr "Créer un nouvel enregistrement"
 
@@ -3589,7 +3589,7 @@ msgid "Create new view"
 msgstr "Créer une nouvelle vue"
 
 #. js-lingui-id: UDbEyl
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "Create new workflow"
 msgstr "Créer un nouveau workflow"
 
@@ -3631,8 +3631,8 @@ msgid "Create view"
 msgstr "Créer une vue"
 
 #. js-lingui-id: 3D0MXY
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Create View"
 msgstr "Créer une vue"
 
@@ -3910,12 +3910,12 @@ msgid "Dark"
 msgstr "Sombre"
 
 #. js-lingui-id: ogQzcZ
-#: src/modules/action-menu/actions/record-actions/single-record/dashboard-actions/components/DuplicateDashboardSingleRecordAction.tsx
+#: src/modules/command-menu-item/record/single-record/dashboard/components/DuplicateDashboardSingleRecordCommand.tsx
 msgid "Dashboard duplicated successfully"
 msgstr "Tableau de bord dupliqué avec succès"
 
 #. js-lingui-id: w6iIMm
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Dashboards"
 msgstr "Tableaux de bord"
 
@@ -4065,7 +4065,7 @@ msgstr "Jours entre déclencheurs"
 #: src/pages/settings/ai/SettingsSkillForm.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "Deactivate"
 msgstr "Désactiver"
 
@@ -4096,7 +4096,7 @@ msgid "Deactivate this field"
 msgstr "Désactiver ce champ"
 
 #. js-lingui-id: 4tpC8V
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "Deactivate Workflow"
 msgstr "Désactiver le workflow"
 
@@ -4249,13 +4249,13 @@ msgstr "supprimer"
 #: src/modules/object-record/record-field/ui/meta-types/input/components/MultiItemFieldMenuItem.tsx
 #: src/modules/navigation-menu-item/components/NavigationMenuItemFolderNavigationDrawerItemDropdown.tsx
 #: src/modules/favorites/components/FavoriteFolderNavigationDrawerItemDropdown.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/mock/command-menu-items.mock.tsx
+#: src/modules/command-menu-item/mock/command-menu-items.mock.tsx
 #: src/modules/blocknote-editor/components/CustomSideMenu.tsx
 #: src/modules/activities/files/components/AttachmentDropdown.tsx
-#: src/modules/action-menu/mock/action-menu-actions.mock.tsx
-#: src/modules/action-menu/mock/action-menu-actions.mock.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Delete"
 msgstr "Supprimer"
 
@@ -4315,12 +4315,12 @@ msgid "Delete app"
 msgstr ""
 
 #. js-lingui-id: ikGfT5
-#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DashboardCommandMenuItemsConfig.tsx
 msgid "Delete dashboard"
 msgstr "Supprimer le tableau de bord"
 
 #. js-lingui-id: qnWLDf
-#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DashboardCommandMenuItemsConfig.tsx
 msgid "Delete dashboards"
 msgstr "Supprimer les tableaux de bord"
 
@@ -4356,7 +4356,7 @@ msgid "Delete or transfer this app registration"
 msgstr ""
 
 #. js-lingui-id: kf0A63
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Delete records"
 msgstr "Supprimer des enregistrements"
 
@@ -4426,12 +4426,12 @@ msgid "Delete widget"
 msgstr ""
 
 #. js-lingui-id: UA2IpC
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "Delete workflow"
 msgstr "Supprimer le workflow"
 
 #. js-lingui-id: ABwG9x
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "Delete workflows"
 msgstr "Supprimer les workflows"
 
@@ -4459,7 +4459,7 @@ msgid "Deleted record"
 msgstr ""
 
 #. js-lingui-id: WH/5rN
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Deleted records"
 msgstr "Enregistrements supprimés"
 
@@ -4525,8 +4525,8 @@ msgid "destroy"
 msgstr "détruire"
 
 #. js-lingui-id: 2xxBws
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Destroy"
 msgstr "Détruire"
 
@@ -4536,7 +4536,7 @@ msgid "Destroy {objectLabelPlural}"
 msgstr "Détruire {objectLabelPlural}"
 
 #. js-lingui-id: kG5yO6
-#: src/modules/action-menu/actions/record-actions/multiple-records/components/DestroyMultipleRecordsAction.tsx
+#: src/modules/command-menu-item/record/multiple-records/components/DestroyMultipleRecordsCommand.tsx
 msgid "Destroy Records"
 msgstr "Détruire les enregistrements"
 
@@ -4566,8 +4566,8 @@ msgid "Developers links"
 msgstr ""
 
 #. js-lingui-id: zAg2B9
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "Discard Draft"
 msgstr "Rejeter le brouillon"
 
@@ -4740,13 +4740,13 @@ msgstr "Déposez le fichier ici..."
 
 #. js-lingui-id: euc6Ns
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutTabSettings.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DashboardCommandMenuItemsConfig.tsx
 msgid "Duplicate"
 msgstr ""
 
 #. js-lingui-id: MR2sZ1
-#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DashboardCommandMenuItemsConfig.tsx
 msgid "Duplicate Dashboard"
 msgstr "Dupliquer le tableau de bord"
 
@@ -4761,7 +4761,7 @@ msgid "Duplicate widget"
 msgstr ""
 
 #. js-lingui-id: 2RpRNn
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "Duplicate Workflow"
 msgstr ""
 
@@ -4833,7 +4833,7 @@ msgstr "eddy@gmail.com, @apple.com"
 #: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
 #: src/modules/object-record/record-field/ui/meta-types/input/components/MultiItemFieldMenuItem.tsx
 #: src/modules/object-record/record-field/ui/form-types/components/FormMultiSelectFieldInput.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DashboardCommandMenuItemsConfig.tsx
 msgid "Edit"
 msgstr "Éditer"
 
@@ -4849,7 +4849,7 @@ msgid "Edit Account"
 msgstr "Modifier le compte"
 
 #. js-lingui-id: GpnfNN
-#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DashboardCommandMenuItemsConfig.tsx
 msgid "Edit Dashboard"
 msgstr "Modifier le tableau de bord"
 
@@ -4888,7 +4888,8 @@ msgid "Edit iFrame"
 msgstr "Modifier le cadre iFrame"
 
 #. js-lingui-id: NZubw3
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Edit Layout"
 msgstr ""
 
@@ -4900,18 +4901,13 @@ msgid "Edit link"
 msgstr ""
 
 #. js-lingui-id: m52s8z
-#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
+#: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
 msgid "Edit navigation sidebar"
 msgstr ""
 
 #. js-lingui-id: IaSCqp
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Edit own profile information"
-msgstr ""
-
-#. js-lingui-id: ZgKSmd
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
-msgid "Edit Page Layout"
 msgstr ""
 
 #. js-lingui-id: h2KoTu
@@ -4930,7 +4926,7 @@ msgid "Edit Records on All Objects"
 msgstr "Modifier les enregistrements sur tous les objets"
 
 #. js-lingui-id: DpuBzU
-#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
+#: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
 msgid "Edit sidebar"
 msgstr ""
 
@@ -5873,15 +5869,15 @@ msgstr "Expire dans {dateDiff}"
 
 #. js-lingui-id: GS+Mus
 #: src/modules/object-record/record-index/export/hooks/useRecordIndexExportRecords.ts
-#: src/modules/action-menu/mock/action-menu-actions.mock.tsx
-#: src/modules/action-menu/mock/action-menu-actions.mock.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/mock/command-menu-items.mock.tsx
+#: src/modules/command-menu-item/mock/command-menu-items.mock.tsx
 msgid "Export"
 msgstr "Exporter"
 
@@ -5901,69 +5897,69 @@ msgid "Export CSV"
 msgstr "Exporter CSV"
 
 #. js-lingui-id: KVvnDa
-#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DashboardCommandMenuItemsConfig.tsx
 msgid "Export dashboard"
 msgstr "Exporter le tableau de bord"
 
 #. js-lingui-id: wVUjld
-#: src/modules/action-menu/actions/record-actions/constants/WorkspaceMembersActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkspaceMembersActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkspaceMembersCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkspaceMembersCommandMenuItemsConfig.tsx
 msgid "Export member"
 msgstr ""
 
 #. js-lingui-id: D0b3Ip
-#: src/modules/action-menu/actions/record-actions/constants/WorkspaceMembersActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkspaceMembersCommandMenuItemsConfig.tsx
 msgid "Export members"
 msgstr ""
 
 #. js-lingui-id: ep2rbf
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Export records"
 msgstr "Exporter les enregistrements"
 
 #. js-lingui-id: iHK6np
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowRunsCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowRunsCommandMenuItemsConfig.tsx
 msgid "Export run"
 msgstr "Exporter l'exécution"
 
 #. js-lingui-id: vwtAUW
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowRunsCommandMenuItemsConfig.tsx
 msgid "Export runs"
 msgstr "Exporter les exécutions"
 
 #. js-lingui-id: q46CjD
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Export to PDF"
 msgstr "Exporter en PDF"
 
 #. js-lingui-id: BuprEs
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowVersionsCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowVersionsCommandMenuItemsConfig.tsx
 msgid "Export version"
 msgstr "Exporter la version"
 
 #. js-lingui-id: 4FLUle
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowVersionsCommandMenuItemsConfig.tsx
 msgid "Export versions"
 msgstr "Exporter les versions"
 
 #. js-lingui-id: DaGxE0
-#: src/modules/action-menu/actions/record-actions/constants/WorkspaceMembersActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkspaceMembersCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowRunsCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Export view"
 msgstr "Exporter la vue"
 
 #. js-lingui-id: +FMXdE
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "Export workflow"
 msgstr "Exporter le workflow"
 
 #. js-lingui-id: XcAij/
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "Export workflows"
 msgstr "Exporter les workflows"
 
@@ -6021,12 +6017,12 @@ msgid "Failed to delete skill"
 msgstr ""
 
 #. js-lingui-id: NUmmdc
-#: src/modules/action-menu/actions/record-actions/single-record/dashboard-actions/components/DuplicateDashboardSingleRecordAction.tsx
+#: src/modules/command-menu-item/record/single-record/dashboard/components/DuplicateDashboardSingleRecordCommand.tsx
 msgid "Failed to duplicate dashboard"
 msgstr "Échec de la duplication du tableau de bord"
 
 #. js-lingui-id: WYXxQF
-#: src/modules/action-menu/actions/record-actions/single-record/workflow-actions/components/DuplicateWorkflowSingleRecordAction.tsx
+#: src/modules/command-menu-item/record/single-record/workflow/components/DuplicateWorkflowSingleRecordCommand.tsx
 msgid "Failed to duplicate workflow"
 msgstr ""
 
@@ -6664,12 +6660,12 @@ msgid "Go Back"
 msgstr ""
 
 #. js-lingui-id: mUbv8L
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Go to Companies"
 msgstr "Aller aux Entreprises"
 
 #. js-lingui-id: dvMw7T
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Go to Dashboards"
 msgstr "Aller aux tableaux de bord"
 
@@ -6679,24 +6675,24 @@ msgid "Go to Draft"
 msgstr "Aller au brouillon"
 
 #. js-lingui-id: BQE4ob
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Go to Notes"
 msgstr "Aller aux notes"
 
 #. js-lingui-id: buPcNi
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Go to Opportunities"
 msgstr "Aller aux opportunités"
 
 #. js-lingui-id: MrE/Qb
-#: src/modules/action-menu/mock/action-menu-actions.mock.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/mock/command-menu-items.mock.tsx
 msgid "Go to People"
 msgstr "Aller aux personnes"
 
 #. js-lingui-id: iS69s6
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowVersionsCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "Go to runs"
 msgstr "Aller aux exécutions"
 
@@ -6705,17 +6701,17 @@ msgstr "Aller aux exécutions"
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateRemote.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Go to Settings"
 msgstr "Aller aux paramètres"
 
 #. js-lingui-id: BM24SF
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Go to Tasks"
 msgstr "Aller aux tâches"
 
 #. js-lingui-id: 203RqP
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Go to Workflows"
 msgstr "Aller aux workflows"
 
@@ -6909,32 +6905,32 @@ msgid "Hide"
 msgstr "Cacher"
 
 #. js-lingui-id: OlbYor
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Hide deleted"
 msgstr "Masquer les supprimés"
 
 #. js-lingui-id: rp2bZI
-#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DashboardCommandMenuItemsConfig.tsx
 msgid "Hide deleted dashboards"
 msgstr ""
 
 #. js-lingui-id: OTmbll
-#: src/modules/action-menu/actions/record-actions/constants/WorkspaceMembersActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkspaceMembersCommandMenuItemsConfig.tsx
 msgid "Hide deleted members"
 msgstr ""
 
 #. js-lingui-id: FHhlye
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Hide deleted records"
 msgstr "Masquer les enregistrements supprimés"
 
 #. js-lingui-id: 0dZtKR
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowRunsCommandMenuItemsConfig.tsx
 msgid "Hide deleted runs"
 msgstr "Masquer les exécutions supprimées"
 
 #. js-lingui-id: aOZAIB
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "Hide deleted workflows"
 msgstr "Masquer les workflows supprimés"
 
@@ -7172,7 +7168,7 @@ msgstr "L'usurpation d'identité est désactivée pour cet espace de travail"
 
 #. js-lingui-id: l3s5ri
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Import"
 msgstr "Importer"
 
@@ -7192,12 +7188,12 @@ msgid "Import only selected folders/labels"
 msgstr "Importer uniquement les dossiers/étiquettes sélectionnés"
 
 #. js-lingui-id: eECp4f
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Import records"
 msgstr "Importer les enregistrements"
 
 #. js-lingui-id: ZsIcZZ
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "Import workflows"
 msgstr "Importer les workflows"
 
@@ -8284,7 +8280,7 @@ msgid "Manage favorite"
 msgstr "Gérer les favoris"
 
 #. js-lingui-id: 8XlVuA
-#: src/modules/action-menu/actions/record-actions/constants/WorkspaceMembersActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkspaceMembersCommandMenuItemsConfig.tsx
 msgid "Manage in settings"
 msgstr ""
 
@@ -8294,7 +8290,7 @@ msgid "Manage Members"
 msgstr "Gérer les membres"
 
 #. js-lingui-id: 5hEFxA
-#: src/modules/action-menu/actions/record-actions/constants/WorkspaceMembersActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkspaceMembersCommandMenuItemsConfig.tsx
 msgid "Manage members in settings"
 msgstr ""
 
@@ -8464,7 +8460,7 @@ msgstr "Membres - Paramètres"
 
 #. js-lingui-id: UODtG8
 #: src/modules/object-record/record-merge/components/MergeRecordsFooter.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Merge"
 msgstr "Fusionner"
 
@@ -8475,7 +8471,7 @@ msgstr "Aperçu de la fusion"
 
 #. js-lingui-id: Cmeamd
 #: src/modules/side-panel/hooks/useOpenMergeRecordsPageInSidePanel.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Merge records"
 msgstr "Fusionner les enregistrements"
 
@@ -8648,7 +8644,7 @@ msgid "More ({remainingCount})"
 msgstr ""
 
 #. js-lingui-id: JcD7qf
-#: src/modules/action-menu/components/RecordIndexActionMenuDropdown.tsx
+#: src/modules/command-menu-item/components/RecordIndexCommandMenuDropdown.tsx
 msgid "More actions"
 msgstr "Plus d'actions"
 
@@ -8821,42 +8817,42 @@ msgid "Navbar"
 msgstr "Barre de navigation"
 
 #. js-lingui-id: dVQ33h
-#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DashboardCommandMenuItemsConfig.tsx
 msgid "Navigate to next dashboard"
 msgstr "Aller au tableau de bord suivant"
 
 #. js-lingui-id: 2T8KCk
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Navigate to next record"
 msgstr "Aller à l'enregistrement suivant"
 
 #. js-lingui-id: veSA19
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowVersionsCommandMenuItemsConfig.tsx
 msgid "Navigate to next version"
 msgstr "Aller à la version suivante"
 
 #. js-lingui-id: ZTEho+
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "Navigate to next workflow"
 msgstr "Aller au workflow suivant"
 
 #. js-lingui-id: /Qu2VT
-#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DashboardCommandMenuItemsConfig.tsx
 msgid "Navigate to previous dashboard"
 msgstr "Aller au tableau de bord précédent"
 
 #. js-lingui-id: 2tw9bo
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Navigate to previous record"
 msgstr "Aller à l'enregistrement précédent"
 
 #. js-lingui-id: I+Pm5V
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowVersionsCommandMenuItemsConfig.tsx
 msgid "Navigate to previous version"
 msgstr "Aller à la version précédente"
 
 #. js-lingui-id: QVUN3K
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "Navigate to previous workflow"
 msgstr "Aller au workflow précédent"
 
@@ -8989,7 +8985,7 @@ msgid "New Password"
 msgstr "Nouveau mot de passe"
 
 #. js-lingui-id: BcCzLv
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "New record"
 msgstr "Nouvel enregistrement"
 
@@ -9629,7 +9625,7 @@ msgstr ""
 
 #. js-lingui-id: 1DBGsz
 #: src/modules/page-layout/constants/StandardPageLayoutTabTitleTranslations.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Notes"
 msgstr "Notes"
 
@@ -9919,7 +9915,7 @@ msgstr "Seuls l'horodatage et les participants seront partagés avec votre équi
 
 #. js-lingui-id: 1TNIig
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
-#: src/modules/action-menu/components/RecordShowSidePanelOpenRecordButton.tsx
+#: src/modules/command-menu-item/components/RecordShowSidePanelOpenRecordButton.tsx
 msgid "Open"
 msgstr "Ouvrir"
 
@@ -9965,7 +9961,7 @@ msgid "Operational"
 msgstr "Opérationnel"
 
 #. js-lingui-id: 4MyDFl
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Opportunities"
 msgstr "Opportunités"
 
@@ -10224,8 +10220,8 @@ msgid "Pending"
 msgstr "En attente"
 
 #. js-lingui-id: 1wdjme
-#: src/modules/action-menu/mock/action-menu-actions.mock.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/mock/command-menu-items.mock.tsx
 msgid "People"
 msgstr "Personnes"
 
@@ -10274,43 +10270,43 @@ msgid "Permanent deletion. Enter the number of days."
 msgstr "Suppression permanente. Entrez le nombre de jours."
 
 #. js-lingui-id: rDky0a
-#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DashboardCommandMenuItemsConfig.tsx
 msgid "Permanently destroy dashboard"
 msgstr "Détruire définitivement le tableau de bord"
 
 #. js-lingui-id: n7S2Oo
-#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DashboardCommandMenuItemsConfig.tsx
 msgid "Permanently destroy dashboards"
 msgstr "Détruire définitivement les tableaux de bord"
 
 #. js-lingui-id: Bv3y5w
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Permanently destroy record"
 msgstr "Détruire définitivement l'enregistrement"
 
 #. js-lingui-id: 35dBYb
-#: src/modules/action-menu/actions/record-actions/single-record/components/DestroySingleRecordAction.tsx
-#: src/modules/action-menu/actions/record-actions/single-record/components/DestroySingleRecordAction.tsx
+#: src/modules/command-menu-item/record/single-record/components/DestroySingleRecordCommand.tsx
+#: src/modules/command-menu-item/record/single-record/components/DestroySingleRecordCommand.tsx
 msgid "Permanently Destroy Record"
 msgstr "Détruire définitivement l'enregistrement"
 
 #. js-lingui-id: xjWlSJ
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Permanently destroy records"
 msgstr "Détruire définitivement les enregistrements"
 
 #. js-lingui-id: YyP8vD
-#: src/modules/action-menu/actions/record-actions/multiple-records/components/DestroyMultipleRecordsAction.tsx
+#: src/modules/command-menu-item/record/multiple-records/components/DestroyMultipleRecordsCommand.tsx
 msgid "Permanently Destroy Records"
 msgstr "Détruire définitivement les enregistrements"
 
 #. js-lingui-id: 0bQ5ba
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "Permanently destroy workflow"
 msgstr "Détruire définitivement le workflow"
 
 #. js-lingui-id: uKWXhB
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "Permanently destroy workflows"
 msgstr "Détruire définitivement les workflows"
 
@@ -10549,7 +10545,7 @@ msgid "Previous"
 msgstr "Précédent"
 
 #. js-lingui-id: 2WAUd8
-#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
+#: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
 msgid "Previous AI Chats"
 msgstr "Discussions AI Précédentes"
 
@@ -11030,8 +11026,8 @@ msgstr "Supprimer le filtre supprimé"
 
 #. js-lingui-id: T/pF0Z
 #: src/modules/favorites/components/PageFavoriteButton.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Remove from favorites"
 msgstr "Retirer des favoris"
 
@@ -11202,40 +11198,40 @@ msgstr ""
 
 #. js-lingui-id: yKu/3Y
 #: src/modules/information-banner/components/deleted-record/InformationBannerDeletedRecord.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Restore"
 msgstr "Restaurer"
 
 #. js-lingui-id: XRAM5d
-#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DashboardCommandMenuItemsConfig.tsx
 msgid "Restore dashboard"
 msgstr "Restaurer le tableau de bord"
 
 #. js-lingui-id: jC7v7d
-#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DashboardCommandMenuItemsConfig.tsx
 msgid "Restore dashboards"
 msgstr ""
 
 #. js-lingui-id: y4Ib1n
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Restore record"
 msgstr "Restaurer l'enregistrement"
 
 #. js-lingui-id: NzMNOA
-#: src/modules/action-menu/actions/record-actions/single-record/components/RestoreSingleRecordAction.tsx
-#: src/modules/action-menu/actions/record-actions/single-record/components/RestoreSingleRecordAction.tsx
+#: src/modules/command-menu-item/record/single-record/components/RestoreSingleRecordCommand.tsx
+#: src/modules/command-menu-item/record/single-record/components/RestoreSingleRecordCommand.tsx
 msgid "Restore Record"
 msgstr "Restaurer l'enregistrement"
 
 #. js-lingui-id: Vw369F
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Restore records"
 msgstr "Restaurer les enregistrements"
 
 #. js-lingui-id: Xqj0Cb
-#: src/modules/action-menu/actions/record-actions/multiple-records/components/RestoreMultipleRecordsAction.tsx
-#: src/modules/action-menu/actions/record-actions/multiple-records/components/RestoreMultipleRecordsAction.tsx
+#: src/modules/command-menu-item/record/multiple-records/components/RestoreMultipleRecordsCommand.tsx
+#: src/modules/command-menu-item/record/multiple-records/components/RestoreMultipleRecordsCommand.tsx
 msgid "Restore Records"
 msgstr "Restaurer les enregistrements"
 
@@ -11444,8 +11440,8 @@ msgstr "Samedi"
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/SaveButton.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableActionButtons.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DashboardCommandMenuItemsConfig.tsx
 msgid "Save"
 msgstr "Enregistrer"
 
@@ -11455,12 +11451,12 @@ msgid "Save as new view"
 msgstr "Enregistrer comme nouvelle vue"
 
 #. js-lingui-id: 7GK4Vt
-#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DashboardCommandMenuItemsConfig.tsx
 msgid "Save Dashboard"
 msgstr "Enregistrer le tableau de bord"
 
 #. js-lingui-id: BZVCCj
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Save Page Layout"
 msgstr ""
 
@@ -11499,10 +11495,10 @@ msgstr ""
 #: src/modules/side-panel/hooks/useOpenRecordsSearchPageInSidePanel.ts
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentWorkspaceMemberPickerDropdown.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
-#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
-#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
-#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
-#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
+#: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
 msgid "Search"
 msgstr "Recherche"
 
@@ -11701,8 +11697,8 @@ msgid "Search options"
 msgstr "Options de recherche"
 
 #. js-lingui-id: IMeaSJ
-#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
-#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
+#: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
 msgid "Search records"
 msgstr "Rechercher des enregistrements"
 
@@ -11807,8 +11803,8 @@ msgid "See {objectLabelPlural}"
 msgstr "Voir {objectLabelPlural}"
 
 #. js-lingui-id: QREcJS
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "See active version"
 msgstr "Voir la version active"
 
@@ -11818,27 +11814,27 @@ msgid "See all {relationLabelPlural} linked to this record"
 msgstr ""
 
 #. js-lingui-id: f4Lu+X
-#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DashboardCommandMenuItemsConfig.tsx
 msgid "See deleted dashboards"
 msgstr ""
 
 #. js-lingui-id: 8O9AJI
-#: src/modules/action-menu/actions/record-actions/constants/WorkspaceMembersActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkspaceMembersCommandMenuItemsConfig.tsx
 msgid "See deleted members"
 msgstr ""
 
 #. js-lingui-id: BxIUpp
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "See deleted records"
 msgstr "Voir les enregistrements supprimés"
 
 #. js-lingui-id: Z+SGGW
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowRunsCommandMenuItemsConfig.tsx
 msgid "See deleted runs"
 msgstr "Voir les exécutions supprimées"
 
 #. js-lingui-id: 5jZIe5
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "See deleted workflows"
 msgstr "Voir les workflows supprimés"
 
@@ -11853,43 +11849,43 @@ msgid "See Records on All Objects"
 msgstr "Voir les enregistrements sur tous les objets"
 
 #. js-lingui-id: OpPn5Z
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowVersionsCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowVersionsCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowVersionsCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "See runs"
 msgstr "Voir les exécutions"
 
 #. js-lingui-id: gGEfj/
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowRunsCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowRunsCommandMenuItemsConfig.tsx
 msgid "See version"
 msgstr "Voir les versions"
 
 #. js-lingui-id: EtyY4+
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowVersionsCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "See versions"
 msgstr "Voir les versions"
 
 #. js-lingui-id: lYhPN0
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowVersionsCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "See versions history"
 msgstr "Voir l'historique des versions"
 
 #. js-lingui-id: qEKLJV
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowVersionsCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowVersionsCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowRunsCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowRunsCommandMenuItemsConfig.tsx
 msgid "See workflow"
 msgstr "Voir le workflow"
 
 #. js-lingui-id: MVYiTN
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "See Workflows"
 msgstr "Voir les workflows"
 
@@ -12222,7 +12218,7 @@ msgstr "Configuration de votre base de données..."
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 #: src/modules/object-record/record-merge/hooks/useMergeRecordsContainerTabs.ts
 #: src/modules/navigation/components/NavigationDrawerOtherSection.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Settings"
 msgstr "Paramètres"
 
@@ -12656,8 +12652,8 @@ msgid "Step filter options"
 msgstr "Options de filtre de l'étape"
 
 #. js-lingui-id: ygCKqB
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowRunsCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowRunsCommandMenuItemsConfig.tsx
 msgid "Stop"
 msgstr "Arrêter"
 
@@ -13056,7 +13052,7 @@ msgstr "Titre de la tâche"
 
 #. js-lingui-id: GtycJ/
 #: src/modules/page-layout/constants/StandardPageLayoutTabTitleTranslations.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Tasks"
 msgstr "Tâches"
 
@@ -13083,12 +13079,12 @@ msgstr "Conditions d'utilisation"
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCode.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCode.tsx
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionCodeEditorTab.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "Test"
 msgstr "Test"
 
 #. js-lingui-id: bU9B27
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "Test Workflow"
 msgstr "Tester le workflow"
 
@@ -13475,13 +13471,13 @@ msgid "Thought"
 msgstr ""
 
 #. js-lingui-id: 5g/sE8
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "Tidy up"
 msgstr "Ranger"
 
 #. js-lingui-id: Vqn9Z1
 #: src/modules/workflow/workflow-diagram/components/WorkflowDiagramRightClickCommandMenu.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "Tidy up workflow"
 msgstr "Ranger le flux de travail"
 
@@ -14078,13 +14074,13 @@ msgstr "mettre à jour"
 #: src/pages/settings/applications/components/SettingsApplicationTableRow.tsx
 #: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
 #: src/modules/information-banner/components/billing/InformationBannerBillingSubscriptionPaused.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Update"
 msgstr "Mettre à jour"
 
 #. js-lingui-id: 0KAL3W
 #: src/modules/side-panel/hooks/useOpenUpdateMultipleRecordsPageInSidePanel.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Update records"
 msgstr ""
 
@@ -14233,8 +14229,8 @@ msgid "Usage across all workspaces on this server"
 msgstr ""
 
 #. js-lingui-id: 6dMpmz
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowVersionsCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowVersionsCommandMenuItemsConfig.tsx
 msgid "Use as draft"
 msgstr "Utiliser comme brouillon"
 
@@ -14527,8 +14523,8 @@ msgid "View marketplace page"
 msgstr ""
 
 #. js-lingui-id: ecVcAx
-#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
-#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
+#: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
 msgid "View Previous AI Chats"
 msgstr "Voir les Discussions AI Précédentes"
 
@@ -14861,7 +14857,7 @@ msgid "Workflow agents"
 msgstr ""
 
 #. js-lingui-id: 2jzcC5
-#: src/modules/action-menu/actions/record-actions/single-record/workflow-actions/components/DuplicateWorkflowSingleRecordAction.tsx
+#: src/modules/command-menu-item/record/single-record/workflow/components/DuplicateWorkflowSingleRecordCommand.tsx
 msgid "Workflow duplicated successfully"
 msgstr ""
 
@@ -15127,7 +15123,7 @@ msgid "You have scheduled a metered tier change. Do you want to cancel it?"
 msgstr "Vous avez programmé un changement de niveau mesuré. Voulez-vous l'annuler ?"
 
 #. js-lingui-id: qXzOWu
-#: src/modules/action-menu/actions/record-actions/run-workflow-actions/hooks/useRunWorkflowRecordActions.tsx
+#: src/modules/command-menu-item/record/workflow/hooks/useRunWorkflowRecordCommands.tsx
 msgid "You selected {selectedCountFormatted} records but manual triggers can run on at most {limitFormatted} records at once. Only the first {limitFormatted} records will be processed."
 msgstr ""
 

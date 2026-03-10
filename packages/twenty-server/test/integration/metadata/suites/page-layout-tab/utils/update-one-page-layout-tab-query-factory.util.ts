@@ -33,6 +33,7 @@ export const updateOnePageLayoutTabQueryFactory = ({
     input: {
       title: input.title,
       position: input.position,
+      icon: input.icon,
     },
   },
 });

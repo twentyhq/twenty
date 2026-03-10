@@ -758,12 +758,12 @@ msgstr "사용자가 이 객체에서 수행할 수 있는 작업"
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 #: src/modules/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "Activate"
 msgstr "활성화"
 
 #. js-lingui-id: tu8A/k
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "Activate Workflow"
 msgstr "워크플로 활성화"
 
@@ -812,8 +812,8 @@ msgid "Add a new company we're in touch with (e.g. name, website, industry). Det
 msgstr ""
 
 #. js-lingui-id: m3/V2n
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "Add a node"
 msgstr "노드 추가"
 
@@ -1086,10 +1086,10 @@ msgstr "즐겨찾기에 추가"
 
 #. js-lingui-id: pBsoKL
 #: src/modules/favorites/components/PageFavoriteButton.tsx
-#: src/modules/action-menu/mock/action-menu-actions.mock.tsx
-#: src/modules/action-menu/mock/action-menu-actions.mock.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/mock/command-menu-items.mock.tsx
+#: src/modules/command-menu-item/mock/command-menu-items.mock.tsx
 msgid "Add to favorites"
 msgstr "즐겨찾기에 추가"
 
@@ -1885,22 +1885,22 @@ msgid "Are you sure you want to delete this skill? This action cannot be undone.
 msgstr ""
 
 #. js-lingui-id: OJOR8q
-#: src/modules/action-menu/actions/record-actions/multiple-records/components/DestroyMultipleRecordsAction.tsx
+#: src/modules/command-menu-item/record/multiple-records/components/DestroyMultipleRecordsCommand.tsx
 msgid "Are you sure you want to destroy these records? They won't be recoverable anymore."
 msgstr "이 기록들을 파괴하시겠습니까? 더 이상 복구할 수 없습니다."
 
 #. js-lingui-id: UK5TO6
-#: src/modules/action-menu/actions/record-actions/single-record/components/DestroySingleRecordAction.tsx
+#: src/modules/command-menu-item/record/single-record/components/DestroySingleRecordCommand.tsx
 msgid "Are you sure you want to destroy this record? It cannot be recovered anymore."
 msgstr "이 기록을 파괴하시겠습니까? 더 이상 복구할 수 없습니다."
 
 #. js-lingui-id: mcHVC1
-#: src/modules/action-menu/actions/record-actions/multiple-records/components/RestoreMultipleRecordsAction.tsx
+#: src/modules/command-menu-item/record/multiple-records/components/RestoreMultipleRecordsCommand.tsx
 msgid "Are you sure you want to restore these records?"
 msgstr "이 기록들을 복원하시겠습니까?"
 
 #. js-lingui-id: lmgkf0
-#: src/modules/action-menu/actions/record-actions/single-record/components/RestoreSingleRecordAction.tsx
+#: src/modules/command-menu-item/record/single-record/components/RestoreSingleRecordCommand.tsx
 msgid "Are you sure you want to restore this record?"
 msgstr "이 기록을 복원하시겠습니까?"
 
@@ -1938,9 +1938,9 @@ msgstr "오름차순"
 #: src/modules/side-panel/hooks/useOpenAskAIPageInSidePanel.ts
 #: src/modules/side-panel/components/SidePanelAskAIInfo.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
-#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
-#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
-#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
+#: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
 msgid "Ask AI"
 msgstr "AI에게 질문하기"
 
@@ -2533,14 +2533,14 @@ msgstr "스캔이 불가능합니까?"
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DashboardCommandMenuItemsConfig.tsx
 msgid "Cancel"
 msgstr "취소"
 
 #. js-lingui-id: HYLdMN
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DashboardCommandMenuItemsConfig.tsx
 msgid "Cancel Edition"
 msgstr "판 취소"
 
@@ -2984,7 +2984,7 @@ msgstr "컴팩트 보기"
 
 #. js-lingui-id: s2QZS6
 #: src/modules/sign-in-background-mock/components/SignInBackgroundMockPage.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Companies"
 msgstr "회사"
 
@@ -3124,6 +3124,7 @@ msgstr ""
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModal.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModal.tsx
+#: src/modules/command-menu-item/display/components/CommandModal.tsx
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -3132,7 +3133,6 @@ msgstr ""
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
-#: src/modules/action-menu/actions/components/ActionModal.tsx
 msgid "Confirm"
 msgstr "확인"
 
@@ -3502,8 +3502,8 @@ msgid "Create"
 msgstr "생성"
 
 #. js-lingui-id: M1NpGt
-#: src/modules/action-menu/actions/record-agnostic-actions/hooks/useRelatedRecordActions.ts
-#: src/modules/action-menu/actions/record-agnostic-actions/hooks/useRelatedRecordActions.ts
+#: src/modules/command-menu-item/record-agnostic/hooks/useRelatedRecordCommands.ts
+#: src/modules/command-menu-item/record-agnostic/hooks/useRelatedRecordCommands.ts
 msgid "Create {targetObjectLabelSingular}"
 msgstr "{targetObjectLabelSingular} 생성"
 
@@ -3574,12 +3574,12 @@ msgid "Create date field"
 msgstr "날짜 필드 생성"
 
 #. js-lingui-id: kCNBJG
-#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DashboardCommandMenuItemsConfig.tsx
 msgid "Create new dashboard"
 msgstr "새 대시보드 생성"
 
 #. js-lingui-id: d0DCww
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Create new record"
 msgstr "새 레코드 생성"
 
@@ -3589,7 +3589,7 @@ msgid "Create new view"
 msgstr "새 보기 생성"
 
 #. js-lingui-id: UDbEyl
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "Create new workflow"
 msgstr "새 워크플로 만들기"
 
@@ -3631,8 +3631,8 @@ msgid "Create view"
 msgstr "보기 생성"
 
 #. js-lingui-id: 3D0MXY
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Create View"
 msgstr "보기 생성"
 
@@ -3910,12 +3910,12 @@ msgid "Dark"
 msgstr "다크"
 
 #. js-lingui-id: ogQzcZ
-#: src/modules/action-menu/actions/record-actions/single-record/dashboard-actions/components/DuplicateDashboardSingleRecordAction.tsx
+#: src/modules/command-menu-item/record/single-record/dashboard/components/DuplicateDashboardSingleRecordCommand.tsx
 msgid "Dashboard duplicated successfully"
 msgstr "대시보드가 성공적으로 복제되었습니다"
 
 #. js-lingui-id: w6iIMm
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Dashboards"
 msgstr "대시보드"
 
@@ -4065,7 +4065,7 @@ msgstr "트리거 간의 일 수"
 #: src/pages/settings/ai/SettingsSkillForm.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "Deactivate"
 msgstr "비활성화"
 
@@ -4096,7 +4096,7 @@ msgid "Deactivate this field"
 msgstr "이 필드 비활성화"
 
 #. js-lingui-id: 4tpC8V
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "Deactivate Workflow"
 msgstr "워크플로 비활성화"
 
@@ -4249,13 +4249,13 @@ msgstr "삭제"
 #: src/modules/object-record/record-field/ui/meta-types/input/components/MultiItemFieldMenuItem.tsx
 #: src/modules/navigation-menu-item/components/NavigationMenuItemFolderNavigationDrawerItemDropdown.tsx
 #: src/modules/favorites/components/FavoriteFolderNavigationDrawerItemDropdown.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/mock/command-menu-items.mock.tsx
+#: src/modules/command-menu-item/mock/command-menu-items.mock.tsx
 #: src/modules/blocknote-editor/components/CustomSideMenu.tsx
 #: src/modules/activities/files/components/AttachmentDropdown.tsx
-#: src/modules/action-menu/mock/action-menu-actions.mock.tsx
-#: src/modules/action-menu/mock/action-menu-actions.mock.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Delete"
 msgstr "삭제"
 
@@ -4315,12 +4315,12 @@ msgid "Delete app"
 msgstr ""
 
 #. js-lingui-id: ikGfT5
-#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DashboardCommandMenuItemsConfig.tsx
 msgid "Delete dashboard"
 msgstr "대시보드 삭제"
 
 #. js-lingui-id: qnWLDf
-#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DashboardCommandMenuItemsConfig.tsx
 msgid "Delete dashboards"
 msgstr "대시보드 삭제"
 
@@ -4356,7 +4356,7 @@ msgid "Delete or transfer this app registration"
 msgstr ""
 
 #. js-lingui-id: kf0A63
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Delete records"
 msgstr "레코드 삭제"
 
@@ -4426,12 +4426,12 @@ msgid "Delete widget"
 msgstr ""
 
 #. js-lingui-id: UA2IpC
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "Delete workflow"
 msgstr "워크플로 삭제"
 
 #. js-lingui-id: ABwG9x
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "Delete workflows"
 msgstr "워크플로 삭제"
 
@@ -4459,7 +4459,7 @@ msgid "Deleted record"
 msgstr ""
 
 #. js-lingui-id: WH/5rN
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Deleted records"
 msgstr "삭제된 레코드"
 
@@ -4525,8 +4525,8 @@ msgid "destroy"
 msgstr "파기"
 
 #. js-lingui-id: 2xxBws
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Destroy"
 msgstr "파기"
 
@@ -4536,7 +4536,7 @@ msgid "Destroy {objectLabelPlural}"
 msgstr "{objectLabelPlural} 파기"
 
 #. js-lingui-id: kG5yO6
-#: src/modules/action-menu/actions/record-actions/multiple-records/components/DestroyMultipleRecordsAction.tsx
+#: src/modules/command-menu-item/record/multiple-records/components/DestroyMultipleRecordsCommand.tsx
 msgid "Destroy Records"
 msgstr "기록 파기"
 
@@ -4566,8 +4566,8 @@ msgid "Developers links"
 msgstr ""
 
 #. js-lingui-id: zAg2B9
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "Discard Draft"
 msgstr "초안 삭제"
 
@@ -4740,13 +4740,13 @@ msgstr "파일을 여기에 드롭하세요..."
 
 #. js-lingui-id: euc6Ns
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutTabSettings.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DashboardCommandMenuItemsConfig.tsx
 msgid "Duplicate"
 msgstr ""
 
 #. js-lingui-id: MR2sZ1
-#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DashboardCommandMenuItemsConfig.tsx
 msgid "Duplicate Dashboard"
 msgstr "대시보드 복제"
 
@@ -4761,7 +4761,7 @@ msgid "Duplicate widget"
 msgstr ""
 
 #. js-lingui-id: 2RpRNn
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "Duplicate Workflow"
 msgstr ""
 
@@ -4833,7 +4833,7 @@ msgstr "eddy@gmail.com, @apple.com"
 #: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
 #: src/modules/object-record/record-field/ui/meta-types/input/components/MultiItemFieldMenuItem.tsx
 #: src/modules/object-record/record-field/ui/form-types/components/FormMultiSelectFieldInput.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DashboardCommandMenuItemsConfig.tsx
 msgid "Edit"
 msgstr "편집"
 
@@ -4849,7 +4849,7 @@ msgid "Edit Account"
 msgstr "계정 편집"
 
 #. js-lingui-id: GpnfNN
-#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DashboardCommandMenuItemsConfig.tsx
 msgid "Edit Dashboard"
 msgstr "대시보드 편집"
 
@@ -4888,7 +4888,8 @@ msgid "Edit iFrame"
 msgstr "iFrame 편집"
 
 #. js-lingui-id: NZubw3
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Edit Layout"
 msgstr ""
 
@@ -4900,18 +4901,13 @@ msgid "Edit link"
 msgstr ""
 
 #. js-lingui-id: m52s8z
-#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
+#: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
 msgid "Edit navigation sidebar"
 msgstr ""
 
 #. js-lingui-id: IaSCqp
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Edit own profile information"
-msgstr ""
-
-#. js-lingui-id: ZgKSmd
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
-msgid "Edit Page Layout"
 msgstr ""
 
 #. js-lingui-id: h2KoTu
@@ -4930,7 +4926,7 @@ msgid "Edit Records on All Objects"
 msgstr "모든 객체의 기록 편집"
 
 #. js-lingui-id: DpuBzU
-#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
+#: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
 msgid "Edit sidebar"
 msgstr ""
 
@@ -5873,15 +5869,15 @@ msgstr "{dateDiff}에 만료"
 
 #. js-lingui-id: GS+Mus
 #: src/modules/object-record/record-index/export/hooks/useRecordIndexExportRecords.ts
-#: src/modules/action-menu/mock/action-menu-actions.mock.tsx
-#: src/modules/action-menu/mock/action-menu-actions.mock.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/mock/command-menu-items.mock.tsx
+#: src/modules/command-menu-item/mock/command-menu-items.mock.tsx
 msgid "Export"
 msgstr "내보내기"
 
@@ -5901,69 +5897,69 @@ msgid "Export CSV"
 msgstr "CSV 내보내기"
 
 #. js-lingui-id: KVvnDa
-#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DashboardCommandMenuItemsConfig.tsx
 msgid "Export dashboard"
 msgstr "대시보드 내보내기"
 
 #. js-lingui-id: wVUjld
-#: src/modules/action-menu/actions/record-actions/constants/WorkspaceMembersActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkspaceMembersActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkspaceMembersCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkspaceMembersCommandMenuItemsConfig.tsx
 msgid "Export member"
 msgstr ""
 
 #. js-lingui-id: D0b3Ip
-#: src/modules/action-menu/actions/record-actions/constants/WorkspaceMembersActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkspaceMembersCommandMenuItemsConfig.tsx
 msgid "Export members"
 msgstr ""
 
 #. js-lingui-id: ep2rbf
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Export records"
 msgstr "레코드 내보내기"
 
 #. js-lingui-id: iHK6np
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowRunsCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowRunsCommandMenuItemsConfig.tsx
 msgid "Export run"
 msgstr "실행 내보내기"
 
 #. js-lingui-id: vwtAUW
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowRunsCommandMenuItemsConfig.tsx
 msgid "Export runs"
 msgstr "실행 내보내기"
 
 #. js-lingui-id: q46CjD
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Export to PDF"
 msgstr "PDF로 내보내기"
 
 #. js-lingui-id: BuprEs
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowVersionsCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowVersionsCommandMenuItemsConfig.tsx
 msgid "Export version"
 msgstr "버전 내보내기"
 
 #. js-lingui-id: 4FLUle
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowVersionsCommandMenuItemsConfig.tsx
 msgid "Export versions"
 msgstr "버전 내보내기"
 
 #. js-lingui-id: DaGxE0
-#: src/modules/action-menu/actions/record-actions/constants/WorkspaceMembersActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkspaceMembersCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowRunsCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Export view"
 msgstr "보기 내보내기"
 
 #. js-lingui-id: +FMXdE
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "Export workflow"
 msgstr "워크플로 내보내기"
 
 #. js-lingui-id: XcAij/
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "Export workflows"
 msgstr "워크플로 내보내기"
 
@@ -6021,12 +6017,12 @@ msgid "Failed to delete skill"
 msgstr ""
 
 #. js-lingui-id: NUmmdc
-#: src/modules/action-menu/actions/record-actions/single-record/dashboard-actions/components/DuplicateDashboardSingleRecordAction.tsx
+#: src/modules/command-menu-item/record/single-record/dashboard/components/DuplicateDashboardSingleRecordCommand.tsx
 msgid "Failed to duplicate dashboard"
 msgstr "대시보드 복제에 실패했습니다"
 
 #. js-lingui-id: WYXxQF
-#: src/modules/action-menu/actions/record-actions/single-record/workflow-actions/components/DuplicateWorkflowSingleRecordAction.tsx
+#: src/modules/command-menu-item/record/single-record/workflow/components/DuplicateWorkflowSingleRecordCommand.tsx
 msgid "Failed to duplicate workflow"
 msgstr ""
 
@@ -6664,12 +6660,12 @@ msgid "Go Back"
 msgstr ""
 
 #. js-lingui-id: mUbv8L
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Go to Companies"
 msgstr "회사로 이동"
 
 #. js-lingui-id: dvMw7T
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Go to Dashboards"
 msgstr "대시보드로 이동"
 
@@ -6679,24 +6675,24 @@ msgid "Go to Draft"
 msgstr "초안으로 이동"
 
 #. js-lingui-id: BQE4ob
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Go to Notes"
 msgstr "메모로 이동"
 
 #. js-lingui-id: buPcNi
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Go to Opportunities"
 msgstr "기회로 이동"
 
 #. js-lingui-id: MrE/Qb
-#: src/modules/action-menu/mock/action-menu-actions.mock.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/mock/command-menu-items.mock.tsx
 msgid "Go to People"
 msgstr "사람으로 이동"
 
 #. js-lingui-id: iS69s6
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowVersionsCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "Go to runs"
 msgstr "실행으로 이동"
 
@@ -6705,17 +6701,17 @@ msgstr "실행으로 이동"
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateRemote.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Go to Settings"
 msgstr "설정으로 이동"
 
 #. js-lingui-id: BM24SF
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Go to Tasks"
 msgstr "작업으로 이동"
 
 #. js-lingui-id: 203RqP
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Go to Workflows"
 msgstr "워크플로우로 이동"
 
@@ -6909,32 +6905,32 @@ msgid "Hide"
 msgstr "숨기기"
 
 #. js-lingui-id: OlbYor
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Hide deleted"
 msgstr "삭제 숨기기"
 
 #. js-lingui-id: rp2bZI
-#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DashboardCommandMenuItemsConfig.tsx
 msgid "Hide deleted dashboards"
 msgstr ""
 
 #. js-lingui-id: OTmbll
-#: src/modules/action-menu/actions/record-actions/constants/WorkspaceMembersActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkspaceMembersCommandMenuItemsConfig.tsx
 msgid "Hide deleted members"
 msgstr ""
 
 #. js-lingui-id: FHhlye
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Hide deleted records"
 msgstr "삭제된 레코드 숨기기"
 
 #. js-lingui-id: 0dZtKR
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowRunsCommandMenuItemsConfig.tsx
 msgid "Hide deleted runs"
 msgstr "삭제된 실행 숨기기"
 
 #. js-lingui-id: aOZAIB
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "Hide deleted workflows"
 msgstr "삭제된 워크플로 숨기기"
 
@@ -7172,7 +7168,7 @@ msgstr "이 워크스페이스에서는 대리 로그인이 비활성화되어 �
 
 #. js-lingui-id: l3s5ri
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Import"
 msgstr "가져오기"
 
@@ -7192,12 +7188,12 @@ msgid "Import only selected folders/labels"
 msgstr "선택된 폴더/레이블만 가져오기"
 
 #. js-lingui-id: eECp4f
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Import records"
 msgstr "레코드 가져오기"
 
 #. js-lingui-id: ZsIcZZ
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "Import workflows"
 msgstr "워크플로 가져오기"
 
@@ -8284,7 +8280,7 @@ msgid "Manage favorite"
 msgstr "즐겨찾기 관리"
 
 #. js-lingui-id: 8XlVuA
-#: src/modules/action-menu/actions/record-actions/constants/WorkspaceMembersActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkspaceMembersCommandMenuItemsConfig.tsx
 msgid "Manage in settings"
 msgstr ""
 
@@ -8294,7 +8290,7 @@ msgid "Manage Members"
 msgstr "회원 관리"
 
 #. js-lingui-id: 5hEFxA
-#: src/modules/action-menu/actions/record-actions/constants/WorkspaceMembersActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkspaceMembersCommandMenuItemsConfig.tsx
 msgid "Manage members in settings"
 msgstr ""
 
@@ -8464,7 +8460,7 @@ msgstr "멤버 - 설정"
 
 #. js-lingui-id: UODtG8
 #: src/modules/object-record/record-merge/components/MergeRecordsFooter.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Merge"
 msgstr "병합"
 
@@ -8475,7 +8471,7 @@ msgstr "병합 미리보기"
 
 #. js-lingui-id: Cmeamd
 #: src/modules/side-panel/hooks/useOpenMergeRecordsPageInSidePanel.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Merge records"
 msgstr "레코드 병합"
 
@@ -8648,7 +8644,7 @@ msgid "More ({remainingCount})"
 msgstr ""
 
 #. js-lingui-id: JcD7qf
-#: src/modules/action-menu/components/RecordIndexActionMenuDropdown.tsx
+#: src/modules/command-menu-item/components/RecordIndexCommandMenuDropdown.tsx
 msgid "More actions"
 msgstr "추가 작업"
 
@@ -8821,42 +8817,42 @@ msgid "Navbar"
 msgstr "내비게이션 바"
 
 #. js-lingui-id: dVQ33h
-#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DashboardCommandMenuItemsConfig.tsx
 msgid "Navigate to next dashboard"
 msgstr "다음 대시보드로 이동"
 
 #. js-lingui-id: 2T8KCk
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Navigate to next record"
 msgstr "다음 레코드로 이동"
 
 #. js-lingui-id: veSA19
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowVersionsCommandMenuItemsConfig.tsx
 msgid "Navigate to next version"
 msgstr "다음 버전으로 이동"
 
 #. js-lingui-id: ZTEho+
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "Navigate to next workflow"
 msgstr "다음 워크플로로 이동"
 
 #. js-lingui-id: /Qu2VT
-#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DashboardCommandMenuItemsConfig.tsx
 msgid "Navigate to previous dashboard"
 msgstr "이전 대시보드로 이동"
 
 #. js-lingui-id: 2tw9bo
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Navigate to previous record"
 msgstr "이전 레코드로 이동"
 
 #. js-lingui-id: I+Pm5V
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowVersionsCommandMenuItemsConfig.tsx
 msgid "Navigate to previous version"
 msgstr "이전 버전으로 이동"
 
 #. js-lingui-id: QVUN3K
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "Navigate to previous workflow"
 msgstr "이전 워크플로로 이동"
 
@@ -8989,7 +8985,7 @@ msgid "New Password"
 msgstr "새 비밀번호"
 
 #. js-lingui-id: BcCzLv
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "New record"
 msgstr "새 레코드"
 
@@ -9629,7 +9625,7 @@ msgstr ""
 
 #. js-lingui-id: 1DBGsz
 #: src/modules/page-layout/constants/StandardPageLayoutTabTitleTranslations.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Notes"
 msgstr "노트"
 
@@ -9919,7 +9915,7 @@ msgstr "타임스탬프 및 참가자만 팀과 공유됩니다."
 
 #. js-lingui-id: 1TNIig
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
-#: src/modules/action-menu/components/RecordShowSidePanelOpenRecordButton.tsx
+#: src/modules/command-menu-item/components/RecordShowSidePanelOpenRecordButton.tsx
 msgid "Open"
 msgstr "열기"
 
@@ -9965,7 +9961,7 @@ msgid "Operational"
 msgstr "정상 운영"
 
 #. js-lingui-id: 4MyDFl
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Opportunities"
 msgstr "기회"
 
@@ -10224,8 +10220,8 @@ msgid "Pending"
 msgstr "보류 중"
 
 #. js-lingui-id: 1wdjme
-#: src/modules/action-menu/mock/action-menu-actions.mock.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/mock/command-menu-items.mock.tsx
 msgid "People"
 msgstr "사람들"
 
@@ -10274,43 +10270,43 @@ msgid "Permanent deletion. Enter the number of days."
 msgstr "영구 삭제. 날짜를 입력하세요."
 
 #. js-lingui-id: rDky0a
-#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DashboardCommandMenuItemsConfig.tsx
 msgid "Permanently destroy dashboard"
 msgstr "대시보드 영구 삭제"
 
 #. js-lingui-id: n7S2Oo
-#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DashboardCommandMenuItemsConfig.tsx
 msgid "Permanently destroy dashboards"
 msgstr "대시보드 영구 삭제"
 
 #. js-lingui-id: Bv3y5w
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Permanently destroy record"
 msgstr "레코드 영구 삭제"
 
 #. js-lingui-id: 35dBYb
-#: src/modules/action-menu/actions/record-actions/single-record/components/DestroySingleRecordAction.tsx
-#: src/modules/action-menu/actions/record-actions/single-record/components/DestroySingleRecordAction.tsx
+#: src/modules/command-menu-item/record/single-record/components/DestroySingleRecordCommand.tsx
+#: src/modules/command-menu-item/record/single-record/components/DestroySingleRecordCommand.tsx
 msgid "Permanently Destroy Record"
 msgstr "기록을 영구적으로 파기합니다"
 
 #. js-lingui-id: xjWlSJ
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Permanently destroy records"
 msgstr "레코드 영구 삭제"
 
 #. js-lingui-id: YyP8vD
-#: src/modules/action-menu/actions/record-actions/multiple-records/components/DestroyMultipleRecordsAction.tsx
+#: src/modules/command-menu-item/record/multiple-records/components/DestroyMultipleRecordsCommand.tsx
 msgid "Permanently Destroy Records"
 msgstr "기록을 영구적으로 파기합니다"
 
 #. js-lingui-id: 0bQ5ba
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "Permanently destroy workflow"
 msgstr "워크플로 영구 삭제"
 
 #. js-lingui-id: uKWXhB
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "Permanently destroy workflows"
 msgstr "워크플로 영구 삭제"
 
@@ -10549,7 +10545,7 @@ msgid "Previous"
 msgstr "이전"
 
 #. js-lingui-id: 2WAUd8
-#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
+#: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
 msgid "Previous AI Chats"
 msgstr "이전 AI 채팅"
 
@@ -11030,8 +11026,8 @@ msgstr "삭제된 필터 제거"
 
 #. js-lingui-id: T/pF0Z
 #: src/modules/favorites/components/PageFavoriteButton.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Remove from favorites"
 msgstr "즐겨찾기에서 제거"
 
@@ -11202,40 +11198,40 @@ msgstr ""
 
 #. js-lingui-id: yKu/3Y
 #: src/modules/information-banner/components/deleted-record/InformationBannerDeletedRecord.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Restore"
 msgstr "복원"
 
 #. js-lingui-id: XRAM5d
-#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DashboardCommandMenuItemsConfig.tsx
 msgid "Restore dashboard"
 msgstr "대시보드 복원"
 
 #. js-lingui-id: jC7v7d
-#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DashboardCommandMenuItemsConfig.tsx
 msgid "Restore dashboards"
 msgstr ""
 
 #. js-lingui-id: y4Ib1n
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Restore record"
 msgstr "레코드 복원"
 
 #. js-lingui-id: NzMNOA
-#: src/modules/action-menu/actions/record-actions/single-record/components/RestoreSingleRecordAction.tsx
-#: src/modules/action-menu/actions/record-actions/single-record/components/RestoreSingleRecordAction.tsx
+#: src/modules/command-menu-item/record/single-record/components/RestoreSingleRecordCommand.tsx
+#: src/modules/command-menu-item/record/single-record/components/RestoreSingleRecordCommand.tsx
 msgid "Restore Record"
 msgstr "레코드 복원"
 
 #. js-lingui-id: Vw369F
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Restore records"
 msgstr "레코드 복원"
 
 #. js-lingui-id: Xqj0Cb
-#: src/modules/action-menu/actions/record-actions/multiple-records/components/RestoreMultipleRecordsAction.tsx
-#: src/modules/action-menu/actions/record-actions/multiple-records/components/RestoreMultipleRecordsAction.tsx
+#: src/modules/command-menu-item/record/multiple-records/components/RestoreMultipleRecordsCommand.tsx
+#: src/modules/command-menu-item/record/multiple-records/components/RestoreMultipleRecordsCommand.tsx
 msgid "Restore Records"
 msgstr "기록 복원"
 
@@ -11444,8 +11440,8 @@ msgstr "토요일"
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/SaveButton.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableActionButtons.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DashboardCommandMenuItemsConfig.tsx
 msgid "Save"
 msgstr "저장"
 
@@ -11455,12 +11451,12 @@ msgid "Save as new view"
 msgstr "새 보기로 저장"
 
 #. js-lingui-id: 7GK4Vt
-#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DashboardCommandMenuItemsConfig.tsx
 msgid "Save Dashboard"
 msgstr "대시보드 저장"
 
 #. js-lingui-id: BZVCCj
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Save Page Layout"
 msgstr ""
 
@@ -11499,10 +11495,10 @@ msgstr ""
 #: src/modules/side-panel/hooks/useOpenRecordsSearchPageInSidePanel.ts
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentWorkspaceMemberPickerDropdown.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
-#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
-#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
-#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
-#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
+#: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
 msgid "Search"
 msgstr "검색"
 
@@ -11701,8 +11697,8 @@ msgid "Search options"
 msgstr "검색 옵션"
 
 #. js-lingui-id: IMeaSJ
-#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
-#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
+#: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
 msgid "Search records"
 msgstr "레코드 검색"
 
@@ -11807,8 +11803,8 @@ msgid "See {objectLabelPlural}"
 msgstr "{objectLabelPlural} 보기"
 
 #. js-lingui-id: QREcJS
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "See active version"
 msgstr "활성 버전 보기"
 
@@ -11818,27 +11814,27 @@ msgid "See all {relationLabelPlural} linked to this record"
 msgstr ""
 
 #. js-lingui-id: f4Lu+X
-#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DashboardCommandMenuItemsConfig.tsx
 msgid "See deleted dashboards"
 msgstr ""
 
 #. js-lingui-id: 8O9AJI
-#: src/modules/action-menu/actions/record-actions/constants/WorkspaceMembersActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkspaceMembersCommandMenuItemsConfig.tsx
 msgid "See deleted members"
 msgstr ""
 
 #. js-lingui-id: BxIUpp
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "See deleted records"
 msgstr "삭제된 레코드 보기"
 
 #. js-lingui-id: Z+SGGW
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowRunsCommandMenuItemsConfig.tsx
 msgid "See deleted runs"
 msgstr "삭제된 실행 보기"
 
 #. js-lingui-id: 5jZIe5
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "See deleted workflows"
 msgstr "삭제된 워크플로 보기"
 
@@ -11853,43 +11849,43 @@ msgid "See Records on All Objects"
 msgstr "모든 객체의 기록 보기"
 
 #. js-lingui-id: OpPn5Z
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowVersionsCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowVersionsCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowVersionsCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "See runs"
 msgstr "실행 보기"
 
 #. js-lingui-id: gGEfj/
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowRunsCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowRunsCommandMenuItemsConfig.tsx
 msgid "See version"
 msgstr "버전 보기"
 
 #. js-lingui-id: EtyY4+
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowVersionsCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "See versions"
 msgstr "버전 보기"
 
 #. js-lingui-id: lYhPN0
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowVersionsCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "See versions history"
 msgstr "버전 기록 보기"
 
 #. js-lingui-id: qEKLJV
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowVersionsCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowVersionsCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowRunsCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowRunsCommandMenuItemsConfig.tsx
 msgid "See workflow"
 msgstr "워크플로우 보기"
 
 #. js-lingui-id: MVYiTN
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "See Workflows"
 msgstr "워크플로우 보기"
 
@@ -12222,7 +12218,7 @@ msgstr "데이터베이스 설정 중..."
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 #: src/modules/object-record/record-merge/hooks/useMergeRecordsContainerTabs.ts
 #: src/modules/navigation/components/NavigationDrawerOtherSection.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Settings"
 msgstr "설정"
 
@@ -12656,8 +12652,8 @@ msgid "Step filter options"
 msgstr "단계 필터 옵션"
 
 #. js-lingui-id: ygCKqB
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowRunsCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowRunsCommandMenuItemsConfig.tsx
 msgid "Stop"
 msgstr "정지"
 
@@ -13056,7 +13052,7 @@ msgstr "작업 제목"
 
 #. js-lingui-id: GtycJ/
 #: src/modules/page-layout/constants/StandardPageLayoutTabTitleTranslations.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Tasks"
 msgstr "작업"
 
@@ -13083,12 +13079,12 @@ msgstr "서비스 약관"
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCode.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCode.tsx
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionCodeEditorTab.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "Test"
 msgstr "테스트"
 
 #. js-lingui-id: bU9B27
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "Test Workflow"
 msgstr "테스트 워크플로"
 
@@ -13473,13 +13469,13 @@ msgid "Thought"
 msgstr ""
 
 #. js-lingui-id: 5g/sE8
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "Tidy up"
 msgstr "정리"
 
 #. js-lingui-id: Vqn9Z1
 #: src/modules/workflow/workflow-diagram/components/WorkflowDiagramRightClickCommandMenu.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "Tidy up workflow"
 msgstr "워크플로우 정리"
 
@@ -14076,13 +14072,13 @@ msgstr "업데이트"
 #: src/pages/settings/applications/components/SettingsApplicationTableRow.tsx
 #: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
 #: src/modules/information-banner/components/billing/InformationBannerBillingSubscriptionPaused.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Update"
 msgstr "업데이트"
 
 #. js-lingui-id: 0KAL3W
 #: src/modules/side-panel/hooks/useOpenUpdateMultipleRecordsPageInSidePanel.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Update records"
 msgstr ""
 
@@ -14231,8 +14227,8 @@ msgid "Usage across all workspaces on this server"
 msgstr ""
 
 #. js-lingui-id: 6dMpmz
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowVersionsCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowVersionsCommandMenuItemsConfig.tsx
 msgid "Use as draft"
 msgstr "초안으로 사용"
 
@@ -14525,8 +14521,8 @@ msgid "View marketplace page"
 msgstr ""
 
 #. js-lingui-id: ecVcAx
-#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
-#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
+#: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
 msgid "View Previous AI Chats"
 msgstr "이전 AI 채팅 보기"
 
@@ -14859,7 +14855,7 @@ msgid "Workflow agents"
 msgstr ""
 
 #. js-lingui-id: 2jzcC5
-#: src/modules/action-menu/actions/record-actions/single-record/workflow-actions/components/DuplicateWorkflowSingleRecordAction.tsx
+#: src/modules/command-menu-item/record/single-record/workflow/components/DuplicateWorkflowSingleRecordCommand.tsx
 msgid "Workflow duplicated successfully"
 msgstr ""
 
@@ -15125,7 +15121,7 @@ msgid "You have scheduled a metered tier change. Do you want to cancel it?"
 msgstr "계획된 계측된 계층 변경이 있습니다. 취소하시겠습니까?"
 
 #. js-lingui-id: qXzOWu
-#: src/modules/action-menu/actions/record-actions/run-workflow-actions/hooks/useRunWorkflowRecordActions.tsx
+#: src/modules/command-menu-item/record/workflow/hooks/useRunWorkflowRecordCommands.tsx
 msgid "You selected {selectedCountFormatted} records but manual triggers can run on at most {limitFormatted} records at once. Only the first {limitFormatted} records will be processed."
 msgstr ""
 
