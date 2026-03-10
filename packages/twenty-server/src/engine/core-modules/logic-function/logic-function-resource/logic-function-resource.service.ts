@@ -196,6 +196,29 @@ export class LogicFunctionResourceService {
     }
   }
 
+  async uploadBuiltFile({
+    workspaceId,
+    applicationUniversalIdentifier,
+    builtHandlerPath,
+    builtCode,
+  }: Identifier & {
+    builtHandlerPath: string;
+    builtCode: string;
+  }): Promise<void> {
+    await this.fileStorageService.writeFile({
+      workspaceId,
+      applicationUniversalIdentifier,
+      fileFolder: FileFolder.BuiltLogicFunction,
+      resourcePath: builtHandlerPath,
+      sourceFile: builtCode,
+      mimeType: 'application/javascript',
+      settings: {
+        isTemporaryFile: false,
+        toDelete: false,
+      },
+    });
+  }
+
   async getSourceFile({
     sourceHandlerPath,
     workspaceId,

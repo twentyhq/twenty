@@ -25,6 +25,8 @@ import {
   type LogicFunctionExecuteParams,
   type LogicFunctionExecuteResult,
   type LogicFunctionDriver,
+  type LogicFunctionTranspileParams,
+  type LogicFunctionTranspileResult,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 
 import { ASSET_PATH } from 'src/constants/assets-path';
@@ -32,6 +34,7 @@ import { type FlatApplication } from 'src/engine/core-modules/application/types/
 import { copyBuilder } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-builder';
 import { copyCommonLayerDependencies } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-common-layer-dependencies';
 import { copyExecutor } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-executor';
+import { copyTranspiler } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-transpiler';
 import { createZipFile } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/create-zip-file';
 import { TemporaryDirManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/temporary-dir-manager';
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
@@ -49,12 +52,22 @@ const CREDENTIALS_DURATION_IN_SECONDS = 60 * 60; // 1h
 const BUILDER_LAMBDA_TIMEOUT_SECONDS = 300;
 const BUILDER_LAMBDA_MEMORY_MB = 1024;
 const COMMON_LAYER_NAME = 'twenty-common-layer-dependencies';
+const TRANSPILER_LAMBDA_TIMEOUT_SECONDS = 60;
+const TRANSPILER_LAMBDA_MEMORY_MB = 512;
 
 const BUILDER_HANDLER_PATH = resolve(
   __dirname,
   join(
     ASSET_PATH,
     'engine/core-modules/logic-function/logic-function-drivers/constants/builder/index.mjs',
+  ),
+);
+
+const TRANSPILER_HANDLER_PATH = resolve(
+  __dirname,
+  join(
+    ASSET_PATH,
+    'engine/core-modules/logic-function/logic-function-drivers/constants/transpiler/index.mjs',
   ),
 );
 
@@ -73,6 +86,17 @@ export type BuilderLambdaPayload = {
 
 export type BuilderLambdaResult = {
   zipBase64: string;
+};
+
+export type TranspilerLambdaPayload = {
+  action: 'transpile';
+  sourceCode: string;
+  sourceFileName: string;
+  builtFileName: string;
+};
+
+export type TranspilerLambdaResult = {
+  builtCode: string;
 };
 
 export interface LambdaDriverOptions extends LambdaClientConfig {
@@ -162,6 +186,7 @@ export class LambdaDriver implements LogicFunctionDriver {
   }
 
   private builderFunctionName: string | undefined;
+  private transpilerFunctionName: string | undefined;
 
   private async getBuilderFunctionName(): Promise<string> {
     if (isDefined(this.builderFunctionName)) {
@@ -177,6 +202,22 @@ export class LambdaDriver implements LogicFunctionDriver {
     this.builderFunctionName = `twenty-builder-${checksum}`;
 
     return this.builderFunctionName;
+  }
+
+  private async getTranspilerFunctionName(): Promise<string> {
+    if (isDefined(this.transpilerFunctionName)) {
+      return this.transpilerFunctionName;
+    }
+
+    const handlerContent = await fs.readFile(TRANSPILER_HANDLER_PATH, 'utf-8');
+    const checksum = createHash('sha256')
+      .update(handlerContent)
+      .digest('hex')
+      .slice(0, 12);
+
+    this.transpilerFunctionName = `twenty-transpiler-${checksum}`;
+
+    return this.transpilerFunctionName;
   }
 
   private async ensureCommonLayerExists(): Promise<string> {
@@ -303,6 +344,102 @@ export class LambdaDriver implements LogicFunctionDriver {
     }
 
     return parsedResult;
+  }
+
+  private async ensureTranspilerLambdaExists(): Promise<void> {
+    const transpilerFunctionName = await this.getTranspilerFunctionName();
+    const lambdaClient = await this.getLambdaClient();
+
+    try {
+      await lambdaClient.send(
+        new GetFunctionCommand({ FunctionName: transpilerFunctionName }),
+      );
+
+      return;
+    } catch (error) {
+      if (!(error instanceof ResourceNotFoundException)) {
+        throw error;
+      }
+    }
+    const temporaryDirManager = new TemporaryDirManager();
+    const { sourceTemporaryDir, lambdaZipPath } =
+      await temporaryDirManager.init();
+
+    await copyTranspiler(sourceTemporaryDir);
+
+    await createZipFile(sourceTemporaryDir, lambdaZipPath);
+
+    const commonLayerArn = await this.ensureCommonLayerExists();
+
+    const params: CreateFunctionCommandInput = {
+      Code: {
+        ZipFile: await fs.readFile(lambdaZipPath),
+      },
+      FunctionName: transpilerFunctionName,
+      Layers: [commonLayerArn],
+      Handler: 'index.handler',
+      Role: this.options.lambdaRole,
+      Runtime: LogicFunctionRuntime.NODE22,
+      Timeout: TRANSPILER_LAMBDA_TIMEOUT_SECONDS,
+      MemorySize: TRANSPILER_LAMBDA_MEMORY_MB,
+    };
+
+    await lambdaClient.send(new CreateFunctionCommand(params));
+
+    await temporaryDirManager.clean();
+
+    await this.waitFunctionUpdates(transpilerFunctionName);
+  }
+
+  async transpile({
+    sourceCode,
+    sourceFileName,
+    builtFileName,
+  }: LogicFunctionTranspileParams): Promise<LogicFunctionTranspileResult> {
+    await this.ensureTranspilerLambdaExists();
+
+    const lambdaClient = await this.getLambdaClient();
+    const transpilerFunctionName = await this.getTranspilerFunctionName();
+
+    const payload: TranspilerLambdaPayload = {
+      action: 'transpile',
+      sourceCode,
+      sourceFileName,
+      builtFileName,
+    };
+
+    const result = await callWithTimeout({
+      callback: () =>
+        lambdaClient.send(
+          new InvokeCommand({
+            FunctionName: transpilerFunctionName,
+            Payload: JSON.stringify(payload),
+            LogType: LogType.Tail,
+          }),
+        ),
+      timeoutMs: TRANSPILER_LAMBDA_TIMEOUT_SECONDS * 1000,
+    });
+
+    if (result.FunctionError) {
+      const parsedResult = result.Payload
+        ? JSON.parse(result.Payload.transformToString())
+        : {};
+
+      throw new LogicFunctionException(
+        `Transpiler Lambda failed: ${JSON.stringify(parsedResult)}`,
+        LogicFunctionExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
+      );
+    }
+
+    const parsedResult: TranspilerLambdaResult = result.Payload
+      ? JSON.parse(result.Payload.transformToString())
+      : {};
+
+    if (!parsedResult.builtCode) {
+      throw new Error('Transpiler Lambda did not return builtCode');
+    }
+
+    return { builtCode: parsedResult.builtCode };
   }
 
   private async getExistingLayerArn(

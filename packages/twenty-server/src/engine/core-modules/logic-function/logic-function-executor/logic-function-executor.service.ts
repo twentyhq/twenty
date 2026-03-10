@@ -10,6 +10,8 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   LogicFunctionDriver,
   type LogicFunctionExecuteResult,
+  type LogicFunctionTranspileParams,
+  type LogicFunctionTranspileResult,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 
 import { FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
@@ -99,6 +101,12 @@ export class LogicFunctionExecutorService {
     });
 
     return resultLogicFunction;
+  }
+
+  async transpile(
+    params: LogicFunctionTranspileParams,
+  ): Promise<LogicFunctionTranspileResult> {
+    return this.driver.transpile(params);
   }
 
   private async throttleExecution(workspaceId: string) {
