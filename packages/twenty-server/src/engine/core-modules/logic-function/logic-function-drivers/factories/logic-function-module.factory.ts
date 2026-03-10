@@ -1,11 +1,10 @@
 import { fromNodeProviderChain } from '@aws-sdk/credential-providers';
+import { printSchema } from 'graphql';
 
 import {
   LogicFunctionDriverType,
   type LogicFunctionModuleOptions,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
-
-import { printSchema } from 'graphql';
 
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import type { LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';

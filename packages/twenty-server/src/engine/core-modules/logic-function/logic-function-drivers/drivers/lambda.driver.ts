@@ -11,7 +11,6 @@ import {
   Lambda,
   type LambdaClientConfig,
   ListLayerVersionsCommand,
-  type ListLayerVersionsCommandInput,
   LogType,
   PublishLayerVersionCommand,
   type PublishLayerVersionCommandInput,
@@ -30,6 +29,8 @@ import {
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { copyExecutor } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-executor';
 import { createZipFile } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/create-zip-file';
+import { type GetWorkspaceGraphQLSchemaFn } from 'src/engine/core-modules/logic-function/logic-function-drivers/types/get-workspace-graphql-schema.type';
+import { generateCoreClientInLayer } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/generate-core-client-in-layer';
 import { TemporaryDirManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/temporary-dir-manager';
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
 import { LogicFunctionRuntime } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
@@ -41,8 +42,6 @@ import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-functi
 import { copyYarnEngineAndBuildDependencies } from 'src/engine/core-modules/application/application-package/utils/copy-yarn-engine-and-build-dependencies';
 import { type LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
 import { callWithTimeout } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/call-with-timeout';
-import { generateCoreClientInLayer } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/generate-core-client-in-layer';
-import { type GetWorkspaceGraphQLSchemaFn } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local.driver';
 
 const UPDATE_FUNCTION_DURATION_TIMEOUT_IN_SECONDS = 60;
 const CREDENTIALS_DURATION_IN_SECONDS = 60 * 60; // 1h
@@ -139,36 +138,83 @@ export class LambdaDriver implements LogicFunctionDriver {
     );
   }
 
-  private getLayerName(flatApplication: FlatApplication) {
+  private getDepsLayerName(flatApplication: FlatApplication): string {
     const checksum = flatApplication.yarnLockChecksum ?? 'default';
 
-    // Layer must be workspace-scoped because the generated core API client
-    // is derived from the workspace's GraphQL schema.
-    return `${checksum}-${flatApplication.workspaceId}`;
+    return `deps-${checksum}`;
   }
 
-  private async createLayerIfNotExists({
-    flatApplication,
-    applicationUniversalIdentifier,
-  }: {
-    flatApplication: FlatApplication;
-    applicationUniversalIdentifier: string;
-  }): Promise<string> {
-    const layerName = this.getLayerName(flatApplication);
+  private getSdkLayerName(workspaceId: string): string {
+    return `sdk-${workspaceId}`;
+  }
 
-    const listLayerParams: ListLayerVersionsCommandInput = {
+  private async findExistingLayerArn(
+    layerName: string,
+  ): Promise<string | undefined> {
+    const listLayerCommand = new ListLayerVersionsCommand({
       LayerName: layerName,
       MaxItems: 1,
-    };
-
-    const listLayerCommand = new ListLayerVersionsCommand(listLayerParams);
+    });
 
     const listLayerResult = await (
       await this.getLambdaClient()
     ).send(listLayerCommand);
 
-    if (isDefined(listLayerResult.LayerVersions?.[0]?.LayerVersionArn)) {
-      return listLayerResult.LayerVersions[0].LayerVersionArn;
+    return listLayerResult.LayerVersions?.[0]?.LayerVersionArn;
+  }
+
+  private async publishLayer({
+    layerName,
+    zipPath,
+  }: {
+    layerName: string;
+    zipPath: string;
+  }): Promise<string> {
+    const params: PublishLayerVersionCommandInput = {
+      LayerName: layerName,
+      Content: {
+        ZipFile: await fs.readFile(zipPath),
+      },
+      CompatibleRuntimes: [
+        LogicFunctionRuntime.NODE18,
+        LogicFunctionRuntime.NODE22,
+      ],
+    };
+
+    const result = await (
+      await this.getLambdaClient()
+    ).send(new PublishLayerVersionCommand(params));
+
+    if (!isDefined(result.LayerVersionArn)) {
+      throw new Error('New layer version ARN is undefined');
+    }
+
+    return result.LayerVersionArn;
+  }
+
+  // Returns builtNodeModulesPath when freshly built so ensureSdkLayer
+  // can copy twenty-client-sdk without a second yarn install.
+  // Caller is responsible for calling cleanup.
+  private async ensureDepsLayer({
+    flatApplication,
+    applicationUniversalIdentifier,
+  }: {
+    flatApplication: FlatApplication;
+    applicationUniversalIdentifier: string;
+  }): Promise<{
+    arn: string;
+    builtNodeModulesPath: string | undefined;
+    cleanup: () => Promise<void>;
+  }> {
+    const layerName = this.getDepsLayerName(flatApplication);
+    const existingArn = await this.findExistingLayerArn(layerName);
+
+    if (isDefined(existingArn)) {
+      return {
+        arn: existingArn,
+        builtNodeModulesPath: undefined,
+        cleanup: async () => {},
+      };
     }
 
     const temporaryDirManager = new TemporaryDirManager();
@@ -184,6 +230,73 @@ export class LambdaDriver implements LogicFunctionDriver {
     });
     await copyYarnEngineAndBuildDependencies(nodeDependenciesFolder);
 
+    await createZipFile(sourceTemporaryDir, lambdaZipPath);
+
+    const arn = await this.publishLayer({ layerName, zipPath: lambdaZipPath });
+
+    return {
+      arn,
+      builtNodeModulesPath: join(nodeDependenciesFolder, 'node_modules'),
+      cleanup: () => temporaryDirManager.clean(),
+    };
+  }
+
+  private async ensureSdkLayer({
+    flatApplication,
+    applicationUniversalIdentifier,
+    stubSourcePath,
+  }: {
+    flatApplication: FlatApplication;
+    applicationUniversalIdentifier: string;
+    stubSourcePath?: string;
+  }): Promise<string> {
+    const layerName = this.getSdkLayerName(flatApplication.workspaceId);
+    const existingArn = await this.findExistingLayerArn(layerName);
+
+    if (isDefined(existingArn)) {
+      return existingArn;
+    }
+
+    const temporaryDirManager = new TemporaryDirManager();
+    const { sourceTemporaryDir, lambdaZipPath } =
+      await temporaryDirManager.init();
+
+    const nodeDependenciesFolder = join(sourceTemporaryDir, 'nodejs');
+
+    const targetSdkPath = join(
+      nodeDependenciesFolder,
+      'node_modules',
+      'twenty-client-sdk',
+    );
+
+    if (isDefined(stubSourcePath)) {
+      await fs.cp(stubSourcePath, targetSdkPath, { recursive: true });
+    } else {
+      // Deps layer was a cache hit — get the stub via a fresh install.
+      // This only happens when the deps layer already exists but the SDK
+      // layer doesn't (e.g. new workspace on existing app dependencies).
+      const installDirManager = new TemporaryDirManager();
+      const { sourceTemporaryDir: installDir } =
+        await installDirManager.init();
+
+      const installNodejs = join(installDir, 'nodejs');
+
+      await this.logicFunctionResourceService.copyDependenciesInMemory({
+        applicationUniversalIdentifier,
+        workspaceId: flatApplication.workspaceId,
+        inMemoryFolderPath: installNodejs,
+      });
+      await copyYarnEngineAndBuildDependencies(installNodejs);
+
+      await fs.cp(
+        join(installNodejs, 'node_modules', 'twenty-client-sdk'),
+        targetSdkPath,
+        { recursive: true },
+      );
+
+      await installDirManager.clean();
+    }
+
     const schema = await this.getWorkspaceGraphQLSchema(
       flatApplication.workspaceId,
     );
@@ -195,28 +308,11 @@ export class LambdaDriver implements LogicFunctionDriver {
 
     await createZipFile(sourceTemporaryDir, lambdaZipPath);
 
-    const params: PublishLayerVersionCommandInput = {
-      LayerName: layerName,
-      Content: {
-        ZipFile: await fs.readFile(lambdaZipPath),
-      },
-      CompatibleRuntimes: [
-        LogicFunctionRuntime.NODE18,
-        LogicFunctionRuntime.NODE22,
-      ],
-    };
-
-    const command = new PublishLayerVersionCommand(params);
-
-    const result = await (await this.getLambdaClient()).send(command);
+    const arn = await this.publishLayer({ layerName, zipPath: lambdaZipPath });
 
     await temporaryDirManager.clean();
 
-    if (!isDefined(result.LayerVersionArn)) {
-      throw new Error('new layer version arn if undefined');
-    }
-
-    return result.LayerVersionArn;
+    return arn;
   }
 
   private async getLambdaExecutor(flatLogicFunction: FlatLogicFunction) {
@@ -257,15 +353,20 @@ export class LambdaDriver implements LogicFunctionDriver {
 
     const layers = lambdaExecutor.Configuration?.Layers;
 
-    if (!isDefined(layers) || layers.length !== 1) {
+    if (!isDefined(layers) || layers.length !== 2) {
       await this.delete(flatLogicFunction);
 
       return false;
     }
 
-    const layerName = this.getLayerName(flatApplication);
+    const depsLayerName = this.getDepsLayerName(flatApplication);
+    const sdkLayerName = this.getSdkLayerName(flatApplication.workspaceId);
 
-    if (layers[0].Arn?.includes(layerName)) {
+    const hasExpectedLayers =
+      layers.some((layer) => layer.Arn?.includes(depsLayerName)) &&
+      layers.some((layer) => layer.Arn?.includes(sdkLayerName));
+
+    if (hasExpectedLayers) {
       return true;
     }
 
@@ -287,10 +388,26 @@ export class LambdaDriver implements LogicFunctionDriver {
       return;
     }
 
-    const layerArn = await this.createLayerIfNotExists({
+    const {
+      arn: depsLayerArn,
+      builtNodeModulesPath,
+      cleanup: cleanupDepsLayer,
+    } = await this.ensureDepsLayer({
       flatApplication,
       applicationUniversalIdentifier,
     });
+
+    const stubSourcePath = builtNodeModulesPath
+      ? join(builtNodeModulesPath, 'twenty-client-sdk')
+      : undefined;
+
+    const sdkLayerArn = await this.ensureSdkLayer({
+      flatApplication,
+      applicationUniversalIdentifier,
+      stubSourcePath,
+    });
+
+    await cleanupDepsLayer();
 
     const temporaryDirManager = new TemporaryDirManager();
 
@@ -301,16 +418,18 @@ export class LambdaDriver implements LogicFunctionDriver {
 
     await createZipFile(sourceTemporaryDir, lambdaZipPath);
 
+    // SDK layer listed last so it overwrites the stub twenty-client-sdk
+    // from the deps layer (later layers take precedence in /opt merge).
     const params: CreateFunctionCommandInput = {
       Code: {
         ZipFile: await fs.readFile(lambdaZipPath),
       },
       FunctionName: flatLogicFunction.id,
-      Layers: [layerArn],
+      Layers: [depsLayerArn, sdkLayerArn],
       Handler: 'index.handler',
       Role: this.options.lambdaRole,
       Runtime: flatLogicFunction.runtime,
-      Timeout: 900, // timeout is handled by the logic function service
+      Timeout: 900,
     };
 
     const command = new CreateFunctionCommand(params);

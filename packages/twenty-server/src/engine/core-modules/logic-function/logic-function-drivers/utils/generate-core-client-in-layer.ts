@@ -1,8 +1,6 @@
-import { join } from 'path';
+import { join } from 'node:path';
 
-import { generateCoreClientFromSchema } from 'twenty-sdk/cli';
-
-const CLIENTS_GENERATED_DIR = 'src/clients/generated';
+import { replaceCoreClient } from 'twenty-client-sdk/generate';
 
 export const generateCoreClientInLayer = async ({
   layerPath,
@@ -11,16 +9,8 @@ export const generateCoreClientInLayer = async ({
   layerPath: string;
   schema: string;
 }): Promise<void> => {
-  const coreOutputPath = join(
-    layerPath,
-    'node_modules',
-    'twenty-sdk',
-    CLIENTS_GENERATED_DIR,
-    'core',
-  );
-
-  await generateCoreClientFromSchema({
+  await replaceCoreClient({
+    packageRoot: join(layerPath, 'node_modules', 'twenty-client-sdk'),
     schema,
-    outputPath: coreOutputPath,
   });
 };
