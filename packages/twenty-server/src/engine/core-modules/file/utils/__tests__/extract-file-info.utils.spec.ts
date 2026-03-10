@@ -1,33 +1,5 @@
 import { extractFileInfo } from '../extract-file-info.utils';
 
-const mockFromBuffer = jest.fn();
-
-jest.mock(
-  'file-type',
-  () => ({
-    FileTypeParser: jest.fn().mockImplementation(() => ({
-      fromBuffer: mockFromBuffer,
-    })),
-    supportedMimeTypes: new Set([
-      'image/png',
-      'image/jpeg',
-      'image/gif',
-      'image/webp',
-      'application/pdf',
-      'application/zip',
-    ]),
-  }),
-  { virtual: true },
-);
-
-jest.mock(
-  '@file-type/pdf',
-  () => ({
-    detectPdf: { id: 'pdf', detect: jest.fn() },
-  }),
-  { virtual: true },
-);
-
 const pngBuffer = Buffer.from([
   0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0x00, 0x00, 0x00, 0x0d, 0x49,
   0x48, 0x44, 0x52,
@@ -37,10 +9,6 @@ const textBuffer = Buffer.from('Hello, world!', 'utf-8');
 const zipBuffer = Buffer.from([0x50, 0x4b, 0x03, 0x04]);
 
 describe('extractFileInfo', () => {
-  beforeEach(() => {
-    mockFromBuffer.mockReset();
-  });
-
   it.each([
     {
       name: 'PNG',
@@ -73,8 +41,6 @@ describe('extractFileInfo', () => {
   ])(
     'should detect $name from buffer magic numbers',
     async ({ buffer, filename, ext, mime }) => {
-      mockFromBuffer.mockResolvedValue({ ext, mime });
-
       const result = await extractFileInfo({ file: buffer, filename });
 
       expect(result).toEqual({ mimeType: mime, ext });
