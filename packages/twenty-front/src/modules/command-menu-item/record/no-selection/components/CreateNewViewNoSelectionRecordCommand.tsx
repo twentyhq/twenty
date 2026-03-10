@@ -1,0 +1,45 @@
+import { Command } from '@/command-menu-item/display/components/Command';
+import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
+import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
+import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
+import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
+import { VIEW_PICKER_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerDropdownId';
+import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
+import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
+
+export const CreateNewViewNoSelectionRecordCommand = () => {
+  const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
+  const { openDropdown } = useOpenDropdown();
+
+  const contextStoreCurrentViewId = useAtomComponentStateValue(
+    contextStoreCurrentViewIdComponentState,
+  );
+
+  if (!contextStoreCurrentViewId) {
+    throw new Error('Current view ID is not defined');
+  }
+
+  const recordIndexId = getRecordIndexIdFromObjectNamePluralAndViewId(
+    objectMetadataItem.namePlural,
+    contextStoreCurrentViewId,
+  );
+
+  const setViewPickerReferenceViewId = useSetAtomComponentState(
+    viewPickerReferenceViewIdComponentState,
+    recordIndexId,
+  );
+
+  const { setViewPickerMode } = useViewPickerMode(recordIndexId);
+
+  const handleAddViewButtonClick = () => {
+    setViewPickerReferenceViewId(contextStoreCurrentViewId);
+    setViewPickerMode('create-empty');
+    openDropdown({
+      dropdownComponentInstanceIdFromProps: VIEW_PICKER_DROPDOWN_ID,
+    });
+  };
+
+  return <Command onClick={handleAddViewButtonClick} />;
+};

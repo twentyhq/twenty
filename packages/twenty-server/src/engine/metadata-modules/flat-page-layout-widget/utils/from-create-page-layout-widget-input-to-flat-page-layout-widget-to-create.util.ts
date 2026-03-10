@@ -73,6 +73,7 @@ export const fromCreatePageLayoutWidgetInputToFlatPageLayoutWidgetToCreate = ({
     applicationId: flatApplication.id,
     applicationUniversalIdentifier: flatApplication.universalIdentifier,
     conditionalDisplay: null,
+    overrides: null,
     universalConfiguration:
       fromPageLayoutWidgetConfigurationToUniversalConfiguration({
         configuration: createPageLayoutWidgetInput.configuration,

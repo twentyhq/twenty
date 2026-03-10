@@ -3,6 +3,9 @@ import { Card } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledListContainer = styled.div`
+  max-width: 100%;
+  width: 100%;
+
   > * {
     & > :not(:last-child) {
       border-bottom: 1px solid ${themeCssVariables.border.color.light};

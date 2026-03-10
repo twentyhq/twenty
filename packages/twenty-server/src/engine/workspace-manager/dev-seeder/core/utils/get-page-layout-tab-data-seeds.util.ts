@@ -11,7 +11,10 @@ type PageLayoutTabSeed = {
   position: number;
   pageLayoutId: string;
   workspaceId: string;
-} & Pick<FlatPageLayoutTab, 'applicationId' | 'universalIdentifier'>;
+} & Pick<
+  FlatPageLayoutTab,
+  'applicationId' | 'universalIdentifier' | 'overrides'
+>;
 
 export const getPageLayoutTabDataSeeds = ({
   applicationId,
@@ -31,6 +34,7 @@ export const getPageLayoutTabDataSeeds = ({
     workspaceId,
     universalIdentifier: v4(),
     applicationId,
+    overrides: null,
   },
   {
     id: generateSeedId(workspaceId, PAGE_LAYOUT_TAB_SEEDS.SALES_DETAILS),
@@ -43,6 +47,7 @@ export const getPageLayoutTabDataSeeds = ({
     workspaceId,
     universalIdentifier: v4(),
     applicationId,
+    overrides: null,
   },
   {
     id: generateSeedId(workspaceId, PAGE_LAYOUT_TAB_SEEDS.CUSTOMER_OVERVIEW),
@@ -55,6 +60,7 @@ export const getPageLayoutTabDataSeeds = ({
     workspaceId,
     universalIdentifier: v4(),
     applicationId,
+    overrides: null,
   },
   {
     id: generateSeedId(workspaceId, PAGE_LAYOUT_TAB_SEEDS.CUSTOMER_ANALYTICS),
@@ -67,6 +73,7 @@ export const getPageLayoutTabDataSeeds = ({
     workspaceId,
     universalIdentifier: v4(),
     applicationId,
+    overrides: null,
   },
   {
     id: generateSeedId(workspaceId, PAGE_LAYOUT_TAB_SEEDS.TEAM_OVERVIEW),
@@ -76,6 +83,7 @@ export const getPageLayoutTabDataSeeds = ({
     workspaceId,
     universalIdentifier: v4(),
     applicationId,
+    overrides: null,
   },
   {
     id: generateSeedId(workspaceId, PAGE_LAYOUT_TAB_SEEDS.TEAM_METRICS),
@@ -85,5 +93,6 @@ export const getPageLayoutTabDataSeeds = ({
     workspaceId,
     universalIdentifier: v4(),
     applicationId,
+    overrides: null,
   },
 ];
