@@ -36,14 +36,6 @@ const StyledActionButtonContainer = styled.div`
   display: inline-flex;
   height: 100%;
   justify-content: center;
-
-  & > div {
-    height: 100%;
-  }
-
-  & button {
-    height: 100%;
-  }
 `;
 
 export const EmailField = () => {

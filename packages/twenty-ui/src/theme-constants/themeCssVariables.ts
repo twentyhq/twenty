@@ -103,7 +103,6 @@ export const themeCssVariables = {
     'var(--t-clickable-element-background-transition)',
   lastLayerZIndex: 'var(--t-last-layer-z-index)',
   buttons: {
-    primaryAccentTextColor: 'var(--t-buttons-primary-accent-text-color)',
     secondaryTextColor: 'var(--t-buttons-secondary-text-color)',
   },
   accent: {
