@@ -28,7 +28,11 @@ export const useFieldsWidgetHiddenFields = ({
 
       const result: FieldsWidgetGroupField[] = [];
 
-      for (const group of view.viewFieldGroups) {
+      const sortedGroups = view.viewFieldGroups.toSorted(
+        (a, b) => a.position - b.position,
+      );
+
+      for (const group of sortedGroups) {
         const groupFields = [...(group.viewFields ?? [])].sort(
           (a, b) => a.position - b.position,
         );

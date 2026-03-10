@@ -71,8 +71,16 @@ export const useFieldsWidgetHiddenFieldsForDisplay = ({
       let globalIndex = 0;
       const result: FieldsWidgetGroupField[] = [];
 
-      for (const group of draftGroupsForWidget) {
-        for (const field of group.fields) {
+      const sortedGroups = [...draftGroupsForWidget].sort(
+        (a, b) => a.position - b.position,
+      );
+
+      for (const group of sortedGroups) {
+        const sortedFields = [...group.fields].sort(
+          (a, b) => a.position - b.position,
+        );
+
+        for (const field of sortedFields) {
           if (field.isVisible && group.isVisible) {
             continue;
           }
