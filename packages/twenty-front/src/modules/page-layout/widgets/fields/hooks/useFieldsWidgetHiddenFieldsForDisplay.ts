@@ -4,6 +4,7 @@ import { fieldsWidgetUngroupedFieldsDraftComponentState } from '@/page-layout/st
 import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
 import { useFieldsWidgetHiddenFields } from '@/page-layout/widgets/fields/hooks/useFieldsWidgetHiddenFields';
 import { type FieldsWidgetGroupField } from '@/page-layout/widgets/fields/types/FieldsWidgetGroup';
+import { getHiddenFieldsFromGroups } from '@/page-layout/widgets/fields/utils/getHiddenFieldsFromGroups';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -68,32 +69,7 @@ export const useFieldsWidgetHiddenFieldsForDisplay = ({
     }
 
     if (isPageLayoutInEditMode && hasDraftGroups) {
-      let globalIndex = 0;
-      const result: FieldsWidgetGroupField[] = [];
-
-      const sortedGroups = [...draftGroupsForWidget].sort(
-        (a, b) => a.position - b.position,
-      );
-
-      for (const group of sortedGroups) {
-        const sortedFields = [...group.fields].sort(
-          (a, b) => a.position - b.position,
-        );
-
-        for (const field of sortedFields) {
-          if (field.isVisible && group.isVisible) {
-            continue;
-          }
-
-          result.push({
-            ...field,
-            isVisible: false,
-            globalIndex: globalIndex++,
-          });
-        }
-      }
-
-      return result;
+      return getHiddenFieldsFromGroups(draftGroupsForWidget);
     }
 
     return viewHiddenFields;

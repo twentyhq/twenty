@@ -1,5 +1,9 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { type FieldsWidgetGroupField } from '@/page-layout/widgets/fields/types/FieldsWidgetGroup';
+import {
+  type FieldsWidgetGroup,
+  type FieldsWidgetGroupField,
+} from '@/page-layout/widgets/fields/types/FieldsWidgetGroup';
+import { getHiddenFieldsFromGroups } from '@/page-layout/widgets/fields/utils/getHiddenFieldsFromGroups';
 import { useViewById } from '@/views/hooks/useViewById';
 import { useMemo } from 'react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
@@ -24,42 +28,36 @@ export const useFieldsWidgetHiddenFields = ({
     }
 
     if (isDefined(view) && isNonEmptyArray(view.viewFieldGroups)) {
-      let globalIndex = 0;
+      const groups: FieldsWidgetGroup[] = view.viewFieldGroups.map((group) => {
+        const fields: FieldsWidgetGroupField[] = (group.viewFields ?? [])
+          .map((viewField) => {
+            const fieldMetadataItem = objectMetadataItem.fields.find(
+              (f) => f.id === viewField.fieldMetadataId,
+            );
 
-      const result: FieldsWidgetGroupField[] = [];
+            if (!isDefined(fieldMetadataItem)) {
+              return null;
+            }
 
-      const sortedGroups = view.viewFieldGroups.toSorted(
-        (a, b) => a.position - b.position,
-      );
+            return {
+              fieldMetadataItem,
+              position: viewField.position,
+              isVisible: viewField.isVisible,
+              globalIndex: 0,
+            };
+          })
+          .filter(isDefined);
 
-      for (const group of sortedGroups) {
-        const groupFields = [...(group.viewFields ?? [])].sort(
-          (a, b) => a.position - b.position,
-        );
+        return {
+          id: group.id,
+          name: group.name,
+          position: group.position,
+          isVisible: group.isVisible,
+          fields,
+        };
+      });
 
-        for (const viewField of groupFields) {
-          if (viewField.isVisible && group.isVisible) {
-            continue;
-          }
-
-          const fieldMetadataItem = objectMetadataItem.fields.find(
-            (f) => f.id === viewField.fieldMetadataId,
-          );
-
-          if (!isDefined(fieldMetadataItem)) {
-            continue;
-          }
-
-          result.push({
-            fieldMetadataItem,
-            position: viewField.position,
-            isVisible: false,
-            globalIndex: globalIndex++,
-          });
-        }
-      }
-
-      return result;
+      return getHiddenFieldsFromGroups(groups);
     }
 
     if (isDefined(view) && view.viewFields.length > 0) {
