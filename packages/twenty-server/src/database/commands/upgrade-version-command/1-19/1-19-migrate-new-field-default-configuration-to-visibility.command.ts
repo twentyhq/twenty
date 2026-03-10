@@ -7,7 +7,10 @@ import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/
 import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
+import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Command({
   name: 'upgrade:1-19:migrate-new-field-default-configuration-to-visibility',
@@ -22,6 +25,9 @@ export class MigrateNewFieldDefaultConfigurationToVisibilityCommand extends Acti
     private readonly coreDataSource: DataSource,
     protected readonly twentyORMGlobalManager: GlobalWorkspaceOrmManager,
     protected readonly dataSourceService: DataSourceService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
+    private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
   ) {
     super(workspaceRepository, twentyORMGlobalManager, dataSourceService);
   }
@@ -85,6 +91,20 @@ export class MigrateNewFieldDefaultConfigurationToVisibilityCommand extends Acti
 
       this.logger.log(
         `Successfully migrated ${widgets.length} widget(s) for workspace ${workspaceId}`,
+      );
+
+      await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+        'flatPageLayoutWidgetMaps',
+      ]);
+
+      await this.workspaceMetadataVersionService.incrementMetadataVersion(
+        workspaceId,
+      );
+
+      await this.workspaceCacheStorageService.flush(workspaceId);
+
+      this.logger.log(
+        `Cache invalidated and metadata version incremented for workspace ${workspaceId}`,
       );
     } finally {
       await queryRunner.release();
