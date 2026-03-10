@@ -15,12 +15,11 @@ type TaskListProps = {
 const StyledContainer = styled.div`
   align-items: flex-start;
   align-self: stretch;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   justify-content: center;
   padding: 8px ${themeCssVariables.spacing[6]};
-  width: calc(100% - ${themeCssVariables.spacing[12]});
-
   width: 100%;
 `;
 
