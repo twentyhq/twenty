@@ -15,7 +15,6 @@ import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAto
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { type WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
@@ -58,24 +57,23 @@ const CommandMenuContextProviderWorkflowObjectsContent = ({
 
   const commandMenuContextApi = useCommandMenuContextApi();
 
-  const enrichedCommandMenuContextApi = useMemo(
-    () => ({
-      ...commandMenuContextApi,
-      selectedRecords: isDefined(workflowWithCurrentVersion)
-        ? commandMenuContextApi.selectedRecords.map((record) =>
-            record.id === workflowWithCurrentVersion.id
-              ? {
-                  ...record,
-                  currentVersion: workflowWithCurrentVersion.currentVersion,
-                  versions: workflowWithCurrentVersion.versions,
-                  statuses: workflowWithCurrentVersion.statuses,
-                }
-              : record,
-          )
-        : commandMenuContextApi.selectedRecords,
-    }),
-    [commandMenuContextApi, workflowWithCurrentVersion],
-  );
+  const enrichedSelectedRecords = isDefined(workflowWithCurrentVersion)
+    ? commandMenuContextApi.selectedRecords.map((record) =>
+        record.id === workflowWithCurrentVersion.id
+          ? {
+              ...record,
+              currentVersion: workflowWithCurrentVersion.currentVersion,
+              versions: workflowWithCurrentVersion.versions,
+              statuses: workflowWithCurrentVersion.statuses,
+            }
+          : record,
+      )
+    : commandMenuContextApi.selectedRecords;
+
+  const enrichedCommandMenuContextApi = {
+    ...commandMenuContextApi,
+    selectedRecords: enrichedSelectedRecords,
+  };
 
   const commandMenuItemFrontComponentActions =
     useCommandMenuItemFrontComponentCommands(enrichedCommandMenuContextApi);
