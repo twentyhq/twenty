@@ -86,13 +86,20 @@ export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
     fieldsConfiguration.shouldAllowUserToSeeHiddenFields === true &&
     hiddenFields.length > 0;
 
+  const visibleFields = groups.flatMap((group) => group.fields);
+
+  const hiddenFieldsWithOffsetGlobalIndex = shouldShowHiddenFields
+    ? hiddenFields.map((field) => ({
+        ...field,
+        globalIndex: field.globalIndex + visibleFields.length,
+      }))
+    : [];
+
   const flattenedFieldMetadataItems = [
-    ...groups.flatMap((group) =>
-      group.fields.map((field) => field.fieldMetadataItem),
+    ...visibleFields.map((field) => field.fieldMetadataItem),
+    ...hiddenFieldsWithOffsetGlobalIndex.map(
+      (field) => field.fieldMetadataItem,
     ),
-    ...(shouldShowHiddenFields
-      ? hiddenFields.map((field) => field.fieldMetadataItem)
-      : []),
   ];
 
   const hasFieldsToDisplay = groups.length > 0;
@@ -152,12 +159,12 @@ export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
 
           {shouldShowHiddenFields && (
             <FieldsWidgetGroupContainer
-              title={t`More (${hiddenFields.length})`}
+              title={t`More (${hiddenFieldsWithOffsetGlobalIndex.length})`}
               defaultExpanded={false}
             >
               <StyledPropertyBox>
                 <FieldsWidgetFieldList
-                  fields={hiddenFields}
+                  fields={hiddenFieldsWithOffsetGlobalIndex}
                   instanceId={instanceId}
                 />
               </StyledPropertyBox>
