@@ -108,5 +108,6 @@ export const createStandardPageLayoutWidgetFlatMetadata = ({
     updatedAt: now,
     deletedAt: null,
     conditionalDisplay: conditionalDisplay ?? null,
+    overrides: null,
   };
 };

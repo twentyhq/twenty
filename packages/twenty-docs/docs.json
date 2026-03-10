@@ -358,13 +358,14 @@
                 "group": "Extend",
                 "icon": "plug",
                 "pages": [
-                  "developers/extend/extend",
+                  "developers/extend/api",
+                  "developers/extend/webhooks",
                   {
-                    "group": "Capabilities",
+                    "group": "Apps",
                     "pages": [
-                      "developers/extend/capabilities/apis",
-                      "developers/extend/capabilities/webhooks",
-                      "developers/extend/capabilities/apps"
+                      "developers/extend/apps/getting-started",
+                      "developers/extend/apps/building",
+                      "developers/extend/apps/publishing"
                     ]
                   }
                 ]
@@ -803,13 +804,14 @@
                 "group": "Étendre",
                 "icon": "plug",
                 "pages": [
-                  "l/fr/developers/extend/extend",
+                  "l/fr/developers/extend/api",
+                  "l/fr/developers/extend/webhooks",
                   {
-                    "group": "Capacités",
+                    "group": "Apps",
                     "pages": [
-                      "l/fr/developers/extend/capabilities/apis",
-                      "l/fr/developers/extend/capabilities/webhooks",
-                      "l/fr/developers/extend/capabilities/apps"
+                      "l/fr/developers/extend/apps/getting-started",
+                      "l/fr/developers/extend/apps/building",
+                      "l/fr/developers/extend/apps/publishing"
                     ]
                   }
                 ]
@@ -1248,13 +1250,14 @@
                 "group": "التوسيع",
                 "icon": "plug",
                 "pages": [
-                  "l/ar/developers/extend/extend",
+                  "l/ar/developers/extend/api",
+                  "l/ar/developers/extend/webhooks",
                   {
-                    "group": "القدرات",
+                    "group": "Apps",
                     "pages": [
-                      "l/ar/developers/extend/capabilities/apis",
-                      "l/ar/developers/extend/capabilities/webhooks",
-                      "l/ar/developers/extend/capabilities/apps"
+                      "l/ar/developers/extend/apps/getting-started",
+                      "l/ar/developers/extend/apps/building",
+                      "l/ar/developers/extend/apps/publishing"
                     ]
                   }
                 ]
@@ -1693,13 +1696,14 @@
                 "group": "Rozšíření",
                 "icon": "plug",
                 "pages": [
-                  "l/cs/developers/extend/extend",
+                  "l/cs/developers/extend/api",
+                  "l/cs/developers/extend/webhooks",
                   {
-                    "group": "Možnosti",
+                    "group": "Apps",
                     "pages": [
-                      "l/cs/developers/extend/capabilities/apis",
-                      "l/cs/developers/extend/capabilities/webhooks",
-                      "l/cs/developers/extend/capabilities/apps"
+                      "l/cs/developers/extend/apps/getting-started",
+                      "l/cs/developers/extend/apps/building",
+                      "l/cs/developers/extend/apps/publishing"
                     ]
                   }
                 ]
@@ -2138,13 +2142,14 @@
                 "group": "Erweitern",
                 "icon": "plug",
                 "pages": [
-                  "l/de/developers/extend/extend",
+                  "l/de/developers/extend/api",
+                  "l/de/developers/extend/webhooks",
                   {
-                    "group": "Funktionen",
+                    "group": "Apps",
                     "pages": [
-                      "l/de/developers/extend/capabilities/apis",
-                      "l/de/developers/extend/capabilities/webhooks",
-                      "l/de/developers/extend/capabilities/apps"
+                      "l/de/developers/extend/apps/getting-started",
+                      "l/de/developers/extend/apps/building",
+                      "l/de/developers/extend/apps/publishing"
                     ]
                   }
                 ]
@@ -2583,13 +2588,14 @@
                 "group": "Ampliar",
                 "icon": "plug",
                 "pages": [
-                  "l/es/developers/extend/extend",
+                  "l/es/developers/extend/api",
+                  "l/es/developers/extend/webhooks",
                   {
-                    "group": "Capacidades",
+                    "group": "Apps",
                     "pages": [
-                      "l/es/developers/extend/capabilities/apis",
-                      "l/es/developers/extend/capabilities/webhooks",
-                      "l/es/developers/extend/capabilities/apps"
+                      "l/es/developers/extend/apps/getting-started",
+                      "l/es/developers/extend/apps/building",
+                      "l/es/developers/extend/apps/publishing"
                     ]
                   }
                 ]
@@ -3028,13 +3034,14 @@
                 "group": "Estendi",
                 "icon": "plug",
                 "pages": [
-                  "l/it/developers/extend/extend",
+                  "l/it/developers/extend/api",
+                  "l/it/developers/extend/webhooks",
                   {
-                    "group": "Funzionalità",
+                    "group": "Apps",
                     "pages": [
-                      "l/it/developers/extend/capabilities/apis",
-                      "l/it/developers/extend/capabilities/webhooks",
-                      "l/it/developers/extend/capabilities/apps"
+                      "l/it/developers/extend/apps/getting-started",
+                      "l/it/developers/extend/apps/building",
+                      "l/it/developers/extend/apps/publishing"
                     ]
                   }
                 ]
@@ -3473,13 +3480,14 @@
                 "group": "拡張",
                 "icon": "plug",
                 "pages": [
-                  "l/ja/developers/extend/extend",
+                  "l/ja/developers/extend/api",
+                  "l/ja/developers/extend/webhooks",
                   {
-                    "group": "機能",
+                    "group": "Apps",
                     "pages": [
-                      "l/ja/developers/extend/capabilities/apis",
-                      "l/ja/developers/extend/capabilities/webhooks",
-                      "l/ja/developers/extend/capabilities/apps"
+                      "l/ja/developers/extend/apps/getting-started",
+                      "l/ja/developers/extend/apps/building",
+                      "l/ja/developers/extend/apps/publishing"
                     ]
                   }
                 ]
@@ -3918,13 +3926,14 @@
                 "group": "확장",
                 "icon": "plug",
                 "pages": [
-                  "l/ko/developers/extend/extend",
+                  "l/ko/developers/extend/api",
+                  "l/ko/developers/extend/webhooks",
                   {
-                    "group": "기능",
+                    "group": "Apps",
                     "pages": [
-                      "l/ko/developers/extend/capabilities/apis",
-                      "l/ko/developers/extend/capabilities/webhooks",
-                      "l/ko/developers/extend/capabilities/apps"
+                      "l/ko/developers/extend/apps/getting-started",
+                      "l/ko/developers/extend/apps/building",
+                      "l/ko/developers/extend/apps/publishing"
                     ]
                   }
                 ]
@@ -4363,13 +4372,14 @@
                 "group": "Extend",
                 "icon": "plug",
                 "pages": [
-                  "l/pt/developers/extend/extend",
+                  "l/pt/developers/extend/api",
+                  "l/pt/developers/extend/webhooks",
                   {
-                    "group": "Capabilities",
+                    "group": "Apps",
                     "pages": [
-                      "l/pt/developers/extend/capabilities/apis",
-                      "l/pt/developers/extend/capabilities/webhooks",
-                      "l/pt/developers/extend/capabilities/apps"
+                      "l/pt/developers/extend/apps/getting-started",
+                      "l/pt/developers/extend/apps/building",
+                      "l/pt/developers/extend/apps/publishing"
                     ]
                   }
                 ]
@@ -4808,13 +4818,14 @@
                 "group": "Extend",
                 "icon": "plug",
                 "pages": [
-                  "l/ro/developers/extend/extend",
+                  "l/ro/developers/extend/api",
+                  "l/ro/developers/extend/webhooks",
                   {
-                    "group": "Capabilities",
+                    "group": "Apps",
                     "pages": [
-                      "l/ro/developers/extend/capabilities/apis",
-                      "l/ro/developers/extend/capabilities/webhooks",
-                      "l/ro/developers/extend/capabilities/apps"
+                      "l/ro/developers/extend/apps/getting-started",
+                      "l/ro/developers/extend/apps/building",
+                      "l/ro/developers/extend/apps/publishing"
                     ]
                   }
                 ]
@@ -5253,13 +5264,14 @@
                 "group": "Расширяйте",
                 "icon": "plug",
                 "pages": [
-                  "l/ru/developers/extend/extend",
+                  "l/ru/developers/extend/api",
+                  "l/ru/developers/extend/webhooks",
                   {
-                    "group": "Возможности",
+                    "group": "Apps",
                     "pages": [
-                      "l/ru/developers/extend/capabilities/apis",
-                      "l/ru/developers/extend/capabilities/webhooks",
-                      "l/ru/developers/extend/capabilities/apps"
+                      "l/ru/developers/extend/apps/getting-started",
+                      "l/ru/developers/extend/apps/building",
+                      "l/ru/developers/extend/apps/publishing"
                     ]
                   }
                 ]
@@ -5698,13 +5710,14 @@
                 "group": "Genişlet",
                 "icon": "plug",
                 "pages": [
-                  "l/tr/developers/extend/extend",
+                  "l/tr/developers/extend/api",
+                  "l/tr/developers/extend/webhooks",
                   {
-                    "group": "Yetkinlikler",
+                    "group": "Apps",
                     "pages": [
-                      "l/tr/developers/extend/capabilities/apis",
-                      "l/tr/developers/extend/capabilities/webhooks",
-                      "l/tr/developers/extend/capabilities/apps"
+                      "l/tr/developers/extend/apps/getting-started",
+                      "l/tr/developers/extend/apps/building",
+                      "l/tr/developers/extend/apps/publishing"
                     ]
                   }
                 ]
@@ -6143,13 +6156,14 @@
                 "group": "扩展",
                 "icon": "plug",
                 "pages": [
-                  "l/zh/developers/extend/extend",
+                  "l/zh/developers/extend/api",
+                  "l/zh/developers/extend/webhooks",
                   {
-                    "group": "功能",
+                    "group": "Apps",
                     "pages": [
-                      "l/zh/developers/extend/capabilities/apis",
-                      "l/zh/developers/extend/capabilities/webhooks",
-                      "l/zh/developers/extend/capabilities/apps"
+                      "l/zh/developers/extend/apps/getting-started",
+                      "l/zh/developers/extend/apps/building",
+                      "l/zh/developers/extend/apps/publishing"
                     ]
                   }
                 ]
@@ -6273,6 +6287,22 @@
   },
   "redirects": [
     {
+      "source": "/developers/extend/capabilities/api",
+      "destination": "/developers/extend/api"
+    },
+    {
+      "source": "/developers/extend/capabilities/apis",
+      "destination": "/developers/extend/api"
+    },
+    {
+      "source": "/developers/extend/capabilities/webhooks",
+      "destination": "/developers/extend/webhooks"
+    },
+    {
+      "source": "/developers/extend/capabilities/apps",
+      "destination": "/developers/extend/apps/getting-started"
+    },
+    {
       "source": "/developers/local-setup",
       "destination": "/developers/contribute/capabilities/local-setup"
     },
@@ -6302,27 +6332,27 @@
     },
     {
       "source": "/developers/api-and-webhooks",
-      "destination": "/developers/extend/extend"
+      "destination": "/developers/extend/api"
     },
     {
       "source": "/developers/api-and-webhooks/apis-overview",
-      "destination": "/developers/extend/capabilities/apis"
+      "destination": "/developers/extend/api"
     },
     {
       "source": "/developers/api-and-webhooks/api",
-      "destination": "/developers/extend/capabilities/apis"
+      "destination": "/developers/extend/api"
     },
     {
       "source": "/developers/api-and-webhooks/api-keys",
-      "destination": "/developers/extend/capabilities/apis"
+      "destination": "/developers/extend/api"
     },
     {
       "source": "/developers/api-and-webhooks/webhooks",
-      "destination": "/developers/extend/capabilities/webhooks"
+      "destination": "/developers/extend/webhooks"
     },
     {
       "source": "/developers/api-and-webhooks/integrations",
-      "destination": "/developers/extend/capabilities/apis"
+      "destination": "/developers/extend/api"
     },
     {
       "source": "/developers/bugs-and-requests",

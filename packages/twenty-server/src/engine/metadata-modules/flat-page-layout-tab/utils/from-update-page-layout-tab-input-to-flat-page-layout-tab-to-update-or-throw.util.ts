@@ -13,6 +13,8 @@ import {
   PageLayoutTabException,
   PageLayoutTabExceptionCode,
 } from 'src/engine/metadata-modules/page-layout-tab/exceptions/page-layout-tab.exception';
+import { isCallerOverridingEntity } from 'src/engine/metadata-modules/utils/is-caller-overriding-entity.util';
+import { sanitizeOverridableEntityInput } from 'src/engine/metadata-modules/utils/sanitize-overridable-entity-input.util';
 import { mergeUpdateInExistingRecord } from 'src/utils/merge-update-in-existing-record.util';
 
 export type UpdatePageLayoutTabInputWithId = {
@@ -23,9 +25,13 @@ export type UpdatePageLayoutTabInputWithId = {
 export const fromUpdatePageLayoutTabInputToFlatPageLayoutTabToUpdateOrThrow = ({
   updatePageLayoutTabInput: rawUpdatePageLayoutTabInput,
   flatPageLayoutTabMaps,
+  callerApplicationUniversalIdentifier,
+  workspaceCustomApplicationUniversalIdentifier,
 }: {
   updatePageLayoutTabInput: UpdatePageLayoutTabInputWithId;
   flatPageLayoutTabMaps: FlatPageLayoutTabMaps;
+  callerApplicationUniversalIdentifier: string;
+  workspaceCustomApplicationUniversalIdentifier: string;
 }): FlatPageLayoutTab => {
   const { id: pageLayoutTabToUpdateId } = extractAndSanitizeObjectStringFields(
     rawUpdatePageLayoutTabInput,
@@ -44,14 +50,32 @@ export const fromUpdatePageLayoutTabInputToFlatPageLayoutTabToUpdateOrThrow = ({
     );
   }
 
-  const updatedEditableFieldProperties = extractAndSanitizeObjectStringFields(
+  const editableProperties = extractAndSanitizeObjectStringFields(
     rawUpdatePageLayoutTabInput.update,
     FLAT_PAGE_LAYOUT_TAB_EDITABLE_PROPERTIES,
   );
 
-  return mergeUpdateInExistingRecord({
-    existing: existingFlatPageLayoutTabToUpdate,
-    properties: [...FLAT_PAGE_LAYOUT_TAB_EDITABLE_PROPERTIES],
-    update: updatedEditableFieldProperties,
+  const shouldOverride = isCallerOverridingEntity({
+    callerApplicationUniversalIdentifier,
+    entityApplicationUniversalIdentifier:
+      existingFlatPageLayoutTabToUpdate.applicationUniversalIdentifier,
+    workspaceCustomApplicationUniversalIdentifier,
   });
+
+  const { overrides, updatedEditableProperties } =
+    sanitizeOverridableEntityInput({
+      metadataName: 'pageLayoutTab',
+      existingFlatEntity: existingFlatPageLayoutTabToUpdate,
+      updatedEditableProperties: editableProperties,
+      shouldOverride,
+    });
+
+  return {
+    ...mergeUpdateInExistingRecord({
+      existing: existingFlatPageLayoutTabToUpdate,
+      properties: [...FLAT_PAGE_LAYOUT_TAB_EDITABLE_PROPERTIES],
+      update: updatedEditableProperties,
+    }),
+    overrides,
+  } as FlatPageLayoutTab;
 };
