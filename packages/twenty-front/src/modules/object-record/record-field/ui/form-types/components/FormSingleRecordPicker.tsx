@@ -27,14 +27,6 @@ const StyledFormSelectContainerWrapper = styled.div<{ readonly?: boolean }>`
   display: flex;
   height: 32px;
   width: 100%;
-
-  &:hover > div,
-  &[data-open='true'] > div {
-    background-color: ${({ readonly }) =>
-      readonly
-        ? 'transparent'
-        : themeCssVariables.background.transparent.light};
-  }
 `;
 
 const StyledIconButton = styled.div`
@@ -192,6 +184,7 @@ export const FormSingleRecordPicker = ({
                 <FormFieldInputInnerContainer
                   formFieldInputInstanceId={componentId}
                   hasRightElement={isDefined(VariablePicker) && !disabled}
+                  hoverable
                   preventFocusStackUpdate={true}
                 >
                   <FormSingleRecordFieldChip

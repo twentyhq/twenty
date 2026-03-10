@@ -7,6 +7,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type FormFieldInputInnerContainerProps = {
   hasRightElement: boolean;
+  hoverable?: boolean;
   multiline?: boolean;
   readonly?: boolean;
   preventFocusStackUpdate?: boolean;
@@ -38,6 +39,14 @@ const StyledFormFieldInputInnerContainer = styled.div<
     display: none;
   }
   width: 100%;
+
+  &:hover,
+  &[data-open='true'] {
+    background-color: ${({ hoverable }) =>
+      hoverable
+        ? themeCssVariables.background.transparent.light
+        : themeCssVariables.background.transparent.lighter};
+  }
 `;
 
 export const FormFieldInputInnerContainer = forwardRef(
@@ -48,6 +57,7 @@ export const FormFieldInputInnerContainer = forwardRef(
       onFocus,
       onBlur,
       hasRightElement,
+      hoverable,
       multiline,
       readonly,
       preventFocusStackUpdate = false,
@@ -92,6 +102,7 @@ export const FormFieldInputInnerContainer = forwardRef(
         ref={ref}
         className={className}
         hasRightElement={hasRightElement}
+        hoverable={hoverable}
         multiline={multiline}
         readonly={readonly}
         onFocus={handleFocus}
