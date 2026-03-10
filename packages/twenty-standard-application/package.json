@@ -10,10 +10,11 @@
   },
   "devDependencies": {
     "esbuild": "^0.25.10",
-    "twenty-shared": "workspace:*",
     "react": "^18.3.1",
+    "tinyglobby": "^0.2.15",
     "tsx": "^4.19.3",
-    "twenty-sdk": "workspace:*"
+    "twenty-sdk": "workspace:*",
+    "twenty-shared": "workspace:*"
   },
   "engines": {
     "node": "^24.5.0"

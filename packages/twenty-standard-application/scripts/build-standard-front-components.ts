@@ -2,10 +2,8 @@ import crypto from 'crypto';
 import esbuild from 'esbuild';
 import fs from 'fs';
 import path from 'path';
-import {
-  FRONT_COMPONENT_EXTERNAL_MODULES,
-  getFrontComponentBuildPlugins,
-} from 'twenty-sdk/build';
+import { glob } from 'tinyglobby';
+import { getBaseFrontComponentBuildOptions } from 'twenty-sdk/build';
 import { kebabToCamelCase } from 'twenty-shared/utils';
 
 const FRONT_COMPONENTS_DIR = path.resolve(__dirname, '../src/front-components');
@@ -17,24 +15,14 @@ const MANIFEST_OUTPUT_PATH = path.resolve(
   '../src/standard-front-component-build-manifest.ts',
 );
 
-const findTsxFilesRecursively = (dir: string): string[] => {
-  const results: string[] = [];
-
-  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-    const fullPath = path.join(dir, entry.name);
-
-    if (entry.isDirectory()) {
-      results.push(...findTsxFilesRecursively(fullPath));
-    } else if (entry.name.endsWith('.front-component.tsx')) {
-      results.push(fullPath);
-    }
-  }
-
-  return results;
-};
-
 const buildStandardFrontComponents = async () => {
-  const tsxFiles = findTsxFilesRecursively(FRONT_COMPONENTS_DIR).sort();
+  const tsxFiles = (
+    await glob(['**/*.front-component.tsx'], {
+      cwd: FRONT_COMPONENTS_DIR,
+      absolute: true,
+      onlyFiles: true,
+    })
+  ).sort();
 
   if (tsxFiles.length === 0) {
     throw new Error(
@@ -45,20 +33,11 @@ const buildStandardFrontComponents = async () => {
   fs.mkdirSync(BUILT_OUTPUT_DIR, { recursive: true });
 
   await esbuild.build({
+    ...getBaseFrontComponentBuildOptions(),
     entryPoints: tsxFiles,
-    bundle: true,
-    splitting: false,
-    format: 'esm',
     outdir: BUILT_OUTPUT_DIR,
     outbase: FRONT_COMPONENTS_DIR,
-    outExtension: { '.js': '.mjs' },
-    jsx: 'automatic',
     minify: true,
-    sourcemap: true,
-    metafile: true,
-    logLevel: 'silent',
-    external: FRONT_COMPONENT_EXTERNAL_MODULES,
-    plugins: [...getFrontComponentBuildPlugins()],
   });
 
   const manifestEntries: Record<

@@ -56171,8 +56171,10 @@ __metadata:
   dependencies:
     esbuild: "npm:^0.25.10"
     react: "npm:^18.3.1"
+    tinyglobby: "npm:^0.2.15"
     tsx: "npm:^4.19.3"
     twenty-sdk: "workspace:*"
+    twenty-shared: "workspace:*"
   languageName: unknown
   linkType: soft
 
