@@ -837,20 +837,20 @@ export default defineFrontComponent({
 * **مُنشأ بالقالب**: شغّل `yarn twenty entity:add` واختر خيار إضافة مكوّن أمامي جديد.
 * **يدوي**: أنشئ ملفًا جديدًا `.tsx` واستخدم `defineFrontComponent()` مع اتباع النمط نفسه.
 
-#### Where front components can be used
+#### أين يمكن استخدام مكوّنات الواجهة الأمامية
 
-Front components can render in two locations within Twenty:
+يمكن عرض مكوّنات الواجهة الأمامية في موقعين داخل Twenty:
 
-* **Side panel** — Non-headless front components open in the right-hand side panel. This is the default behavior when a front component is triggered from the command menu.
-* **Widgets (dashboards and record pages)** — Front components can be embedded as widgets inside page layouts. When configuring a dashboard or a record page layout, users can add a front component widget.
+* **اللوحة الجانبية** — المكوّنات غير عديمة الرأس تفتح في اللوحة الجانبية اليمنى. هذا هو السلوك الافتراضي عندما يتم تشغيل مكوّن واجهة أمامية من قائمة الأوامر.
+* **الويدجت (لوحات المعلومات وصفحات السجلات)** — يمكن تضمين مكوّنات الواجهة الأمامية كويدجت داخل تخطيطات الصفحات. عند تكوين لوحة معلومات أو تخطيط صفحة سجل، يمكن للمستخدمين إضافة ويدجت لمكوّن واجهة أمامية.
 
-#### Headless vs non-headless
+#### عديم الرأس مقابل غير عديم الرأس
 
-Front components come in two rendering modes controlled by the `isHeadless` option:
+تأتي مكوّنات الواجهة الأمامية بوضعَي عرض يتحكّم بهما الخيار `isHeadless`:
 
-**Non-headless (default)** — The component renders a visible UI. When triggered from the command menu it opens in the side panel. This is the default behavior when `isHeadless` is `false` or omitted.
+**غير عديم الرأس (افتراضي)** — يعرض المكوّن واجهة مستخدم مرئية. عند تشغيله من قائمة الأوامر يفتح في اللوحة الجانبية. هذا هو السلوك الافتراضي عندما تكون `isHeadless` تساوي `false` أو يتم تجاهلها.
 
-**Headless** — The component mounts invisibly in the background. It does not open the side panel. Headless components are designed for actions that execute logic and then unmount themselves — for example, running an async task, navigating to a page, or showing a confirmation modal. They pair naturally with the SDK Command components described below.
+**عديم الرأس** — يتم تركيب المكوّن بشكل غير مرئي في الخلفية. لا يفتح اللوحة الجانبية. تم تصميم المكوّنات عديمة الرأس لإجراءات تنفّذ منطقًا ثم تُزيل تركيبها ذاتيًا — على سبيل المثال، تشغيل مهمة غير متزامنة، أو الانتقال إلى صفحة، أو إظهار نافذة تأكيد منبثقة. تتوافق بشكل طبيعي مع مكوّنات Command في SDK الموصوفة أدناه.
 
 ```typescript
 export default defineFrontComponent({
@@ -866,22 +866,22 @@ export default defineFrontComponent({
 });
 ```
 
-#### Adding command menu items
+#### إضافة عناصر قائمة الأوامر
 
-To make a front component appear as an item in Twenty's command menu, add the `command` property to `defineFrontComponent()`. When users open the command menu (Cmd+K / Ctrl+K), the item shows up and triggers the front component on click.
+لجعل مكوّن واجهة أمامية يظهر كعنصر في قائمة الأوامر في Twenty، أضف الخاصية `command` إلى `defineFrontComponent()`. عند فتح المستخدمين لقائمة الأوامر (Cmd+K / Ctrl+K)، يظهر العنصر ويشغّل مكوّن الواجهة الأمامية عند النقر.
 
-The `command` object accepts the following fields:
+يقبل كائن `command` الحقول التالية:
 
-| الحقل                                   | النوع                                       | الوصف                                                                                      |
-| --------------------------------------- | ------------------------------------------- | ------------------------------------------------------------------------------------------ |
-| `universalIdentifier`                   | `string` (required)                         | Unique ID for the command menu item                                                        |
-| `التسمية`                               | `string` (required)                         | Display label shown in the command menu                                                    |
-| `أيقونة`                                | `string` (optional)                         | Icon name (e.g., `'IconSparkles'`)                                                         |
-| `isPinned`                              | `boolean` (optional)                        | Whether the command is pinned at the top of the menu                                       |
-| `availabilityType`                      | `'GLOBAL' \| 'RECORD_SELECTION'` (optional) | `GLOBAL` shows the command everywhere; `RECORD_SELECTION` shows it only in record contexts |
-| `availabilityObjectUniversalIdentifier` | `string` (optional)                         | Restrict the command to a specific object type (e.g., Person)                              |
+| الحقل                                   | النوع                                      | الوصف                                                                           |
+| --------------------------------------- | ------------------------------------------ | ------------------------------------------------------------------------------- |
+| `universalIdentifier`                   | `string` (إلزامي)                          | معرّف فريد لعنصر قائمة الأوامر                                                  |
+| `التسمية`                               | `string` (إلزامي)                          | التسمية المعروضة في قائمة الأوامر                                               |
+| `أيقونة`                                | `string` (اختياري)                         | اسم الأيقونة (مثال: `'IconSparkles'`)                                           |
+| `isPinned`                              | `boolean` (اختياري)                        | ما إذا كان الأمر مثبتًا أعلى القائمة                                            |
+| `availabilityType`                      | `'GLOBAL' \| 'RECORD_SELECTION'` (اختياري) | `GLOBAL` يعرض الأمر في كل مكان؛ `RECORD_SELECTION` يعرضه فقط في سياقات السجلّات |
+| `availabilityObjectUniversalIdentifier` | `string` (اختياري)                         | تقييد الأمر بنوع كائن محدّد (مثال: Person)                                      |
 
-Here is an example from the call-recording app that adds a command scoped to Person records:
+إليك مثالًا من تطبيق تسجيل المكالمات يضيف أمرًا محصورًا بسجلات Person:
 
 ```typescript
 import { defineFrontComponent } from 'twenty-sdk';
@@ -903,20 +903,20 @@ export default defineFrontComponent({
 });
 ```
 
-When the command is synced, it appears in the command menu. If the front component is non-headless the side panel opens with the component rendered inside. If it is headless the component mounts in the background and executes its logic.
+عند مزامنة الأمر، يظهر في قائمة الأوامر. إذا كان مكوّن الواجهة الأمامية غير عديم الرأس، تُفتح اللوحة الجانبية مع عرض المكوّن بداخلها. إذا كان عديم الرأس، فسيتم تركيب المكوّن في الخلفية وتنفيذ منطقه.
 
-#### SDK Command components
+#### مكوّنات Command في SDK
 
-The `twenty-sdk` package provides four Command helper components designed for headless front components. Each component executes an action on mount, handles errors by showing a snackbar notification, and automatically unmounts the front component when done.
+توفر حزمة `twenty-sdk` أربعة مكوّنات مساعدة من نوع Command مصممة للمكوّنات عديمة الرأس في الواجهة الأمامية. كل مكوّن ينفّذ إجراءً عند التركيب، ويتعامل مع الأخطاء بعرض إشعار Snackbar، ويزيل تركيب مكوّن الواجهة الأمامية تلقائيًا عند الانتهاء.
 
-Import them from `twenty-sdk/command`:
+استوردها من `twenty-sdk/command`:
 
-* **`Command`** — Runs an async callback via the `execute` prop.
-* **`CommandLink`** — Navigates to an app path. Props: `to`, `params`, `queryParams`, `options`.
-* **`CommandModal`** — Opens a confirmation modal. If the user confirms, executes the `execute` callback. Props: `title`, `subtitle`, `execute`, `confirmButtonText`, `confirmButtonAccent`.
-* **`CommandOpenSidePanelPage`** — Opens a specific side panel page. Props: `page`, `pageTitle`, `pageIcon`.
+* **`Command`** — يشغّل رد نداء غير متزامن عبر الخاصية `execute`.
+* **`CommandLink`** — ينتقل إلى مسار في التطبيق. الخصائص: `to`، `params`، `queryParams`، `options`.
+* **`CommandModal`** — يفتح نافذة تأكيد منبثقة. إذا أكّد المستخدم، ينفّذ رد النداء `execute`. الخصائص: `title`، `subtitle`، `execute`، `confirmButtonText`، `confirmButtonAccent`.
+* **`CommandOpenSidePanelPage`** — يفتح صفحة محدّدة في اللوحة الجانبية. الخصائص: `page`، `pageTitle`، `pageIcon`.
 
-Here is a full example of a headless front component using `Command` to run an action from the command menu:
+فيما يلي مثال كامل لمكوّن واجهة أمامية عديم الرأس يستخدم `Command` لتشغيل إجراء من قائمة الأوامر:
 
 ```typescript
 // src/front-components/run-action.tsx
@@ -953,7 +953,7 @@ export default defineFrontComponent({
 });
 ```
 
-And an example using `CommandModal` to ask for confirmation before executing:
+ومثال يستخدم `CommandModal` لطلب التأكيد قبل التنفيذ:
 
 ```typescript
 // src/front-components/delete-draft.tsx
@@ -990,15 +990,15 @@ export default defineFrontComponent({
 });
 ```
 
-#### Execution context
+#### سياق التنفيذ
 
-Every front component receives an execution context that provides information about where and how it is running. Access context values using hooks from `twenty-sdk`:
+يتلقّى كل مكوّن واجهة أمامية سياق تنفيذ يوفّر معلومات حول مكان وكيفية تشغيله. يمكنك الوصول إلى قيم السياق باستخدام الخطافات من `twenty-sdk`:
 
-| Hook                    | Return type      | الوصف                                                                                                                                                             |
-| ----------------------- | ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `useFrontComponentId()` | `string`         | The unique ID of the current front component instance                                                                                                             |
-| `useRecordId()`         | `string \| null` | The ID of the current record, when the component runs in a record context (e.g., a record page widget or a command scoped to a record). Returns `null` otherwise. |
-| `useUserId()`           | `string \| null` | The ID of the current user                                                                                                                                        |
+| الخطّاف                 | نوع القيمة المرجعة | الوصف                                                                                                               |
+| ----------------------- | ------------------ | ------------------------------------------------------------------------------------------------------------------- |
+| `useFrontComponentId()` | `string`           | المعرّف الفريد لمثيل مكوّن الواجهة الأمامية الحالي                                                                  |
+| `useRecordId()`         | `string \| null`   | معرّف السجل الحالي، عندما يعمل المكوّن في سياق سجل (مثال: ويدجت صفحة سجل أو أمر محصور بسجل). يُرجع `null` خلاف ذلك. |
+| `useUserId()`           | `string \| null`   | معرّف المستخدم الحالي                                                                                               |
 
 ```typescript
 import { useRecordId, useUserId } from 'twenty-sdk';
@@ -1016,11 +1016,11 @@ const MyWidget = () => {
 };
 ```
 
-The context is reactive — if the surrounding record changes, hooks automatically return the updated values.
+السياق تفاعلي — إذا تغيّر السجل المحيط، فستُرجع الخطافات القيم المحدّثة تلقائيًا.
 
-#### Host API functions
+#### دوال واجهة برمجة تطبيقات المضيف
 
-Front components run in an isolated sandbox but can interact with Twenty's UI through a set of functions provided by the host. Import them directly from `twenty-sdk`:
+تعمل مكوّنات الواجهة الأمامية في بيئة معزولة، لكنها تستطيع التفاعل مع واجهة مستخدم Twenty عبر مجموعة من الدوال التي يوفّرها المضيف. استوردها مباشرةً من `twenty-sdk`:
 
 ```typescript
 import {
@@ -1033,16 +1033,16 @@ import {
 } from 'twenty-sdk';
 ```
 
-| دالة                           | Signature                                                | الوصف                                                                                                                                                                   |
-| ------------------------------ | -------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `التنقل`                       | `(to, params?, queryParams?, options?) => Promise<void>` | Navigate to a typed app path within Twenty                                                                                                                              |
-| `closeSidePanel`               | `() => Promise<void>`                                    | Close the side panel                                                                                                                                                    |
-| `enqueueSnackbar`              | `(params) => Promise<void>`                              | Show a snackbar notification. Params: `message`, `variant` (`'error'`, `'success'`, `'info'`, `'warning'`), optional `duration`, `detailedMessage`, `dedupeKey`         |
-| `unmountFrontComponent`        | `() => Promise<void>`                                    | Unmount the current front component (used by headless components to clean up after execution)                                                                           |
-| `openSidePanelPage`            | `(params) => Promise<void>`                              | Open a page in the side panel. Params: `page`, `pageTitle`, `pageIcon`, `shouldResetSearchState`                                                                        |
-| `openCommandConfirmationModal` | `(params) => Promise<'confirm' \| 'cancel'>`             | Show a confirmation modal and wait for the user's response. Params: `title`, `subtitle`, `confirmButtonText`, `confirmButtonAccent` (`'default'`, `'blue'`, `'danger'`) |
+| دالة                           | التوقيع                                                  | الوصف                                                                                                                                                         |
+| ------------------------------ | -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `التنقل`                       | `(to, params?, queryParams?, options?) => Promise<void>` | الانتقال إلى مسار تطبيق محدّد النوع داخل Twenty                                                                                                               |
+| `closeSidePanel`               | `() => Promise<void>`                                    | إغلاق اللوحة الجانبية                                                                                                                                         |
+| `enqueueSnackbar`              | `(params) => Promise<void>`                              | عرض إشعار Snackbar. المعاملات: `message`، `variant` (`'error'`، `'success'`، `'info'`، `'warning'`)، `duration` اختياري، `detailedMessage`، `dedupeKey`       |
+| `unmountFrontComponent`        | `() => Promise<void>`                                    | إلغاء تركيب مكوّن الواجهة الأمامية الحالي (تستخدمه المكوّنات عديمة الرأس للتنظيف بعد التنفيذ)                                                                 |
+| `openSidePanelPage`            | `(params) => Promise<void>`                              | فتح صفحة في اللوحة الجانبية. المعاملات: `page`، `pageTitle`، `pageIcon`، `shouldResetSearchState`                                                             |
+| `openCommandConfirmationModal` | `(params) => Promise<'confirm' \| 'cancel'>`             | عرض نافذة تأكيد منبثقة والانتظار لرد المستخدم. المعاملات: `title`، `subtitle`، `confirmButtonText`، `confirmButtonAccent` (`'default'`، `'blue'`، `'danger'`) |
 
-Here is an example that uses the host API to show a snackbar and close the side panel after an action completes:
+فيما يلي مثال يستخدم واجهة برمجة تطبيقات المضيف لعرض Snackbar وإغلاق اللوحة الجانبية بعد اكتمال الإجراء:
 
 ```typescript
 import { defineFrontComponent, useRecordId } from 'twenty-sdk';
