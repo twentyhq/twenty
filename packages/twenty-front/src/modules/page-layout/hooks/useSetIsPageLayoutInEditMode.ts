@@ -3,11 +3,8 @@ import { contextStoreIsPageInEditModeComponentState } from '@/context-store/stat
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { currentPageLayoutIdState } from '@/page-layout/states/currentPageLayoutIdState';
 import { fieldsWidgetEditorModeDraftComponentState } from '@/page-layout/states/fieldsWidgetEditorModeDraftComponentState';
-import { fieldsWidgetEditorModePersistedComponentState } from '@/page-layout/states/fieldsWidgetEditorModePersistedComponentState';
 import { fieldsWidgetGroupsDraftComponentState } from '@/page-layout/states/fieldsWidgetGroupsDraftComponentState';
-import { fieldsWidgetGroupsPersistedComponentState } from '@/page-layout/states/fieldsWidgetGroupsPersistedComponentState';
 import { fieldsWidgetUngroupedFieldsDraftComponentState } from '@/page-layout/states/fieldsWidgetUngroupedFieldsDraftComponentState';
-import { fieldsWidgetUngroupedFieldsPersistedComponentState } from '@/page-layout/states/fieldsWidgetUngroupedFieldsPersistedComponentState';
 import { hasInitializedFieldsWidgetGroupsDraftComponentState } from '@/page-layout/states/hasInitializedFieldsWidgetGroupsDraftComponentState';
 import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
 import { SIDE_PANEL_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelComponentInstanceId';
@@ -39,20 +36,9 @@ export const useSetIsPageLayoutInEditMode = (pageLayoutIdFromProps: string) => {
     pageLayoutId,
   );
 
-  const fieldsWidgetGroupsPersistedState = useAtomComponentStateCallbackState(
-    fieldsWidgetGroupsPersistedComponentState,
-    pageLayoutId,
-  );
-
   const fieldsWidgetUngroupedFieldsDraftState =
     useAtomComponentStateCallbackState(
       fieldsWidgetUngroupedFieldsDraftComponentState,
-      pageLayoutId,
-    );
-
-  const fieldsWidgetUngroupedFieldsPersistedState =
-    useAtomComponentStateCallbackState(
-      fieldsWidgetUngroupedFieldsPersistedComponentState,
       pageLayoutId,
     );
 
@@ -60,12 +46,6 @@ export const useSetIsPageLayoutInEditMode = (pageLayoutIdFromProps: string) => {
     fieldsWidgetEditorModeDraftComponentState,
     pageLayoutId,
   );
-
-  const fieldsWidgetEditorModePersistedState =
-    useAtomComponentStateCallbackState(
-      fieldsWidgetEditorModePersistedComponentState,
-      pageLayoutId,
-    );
 
   const hasInitializedFieldsWidgetGroupsDraftState =
     useAtomComponentStateCallbackState(
@@ -79,11 +59,8 @@ export const useSetIsPageLayoutInEditMode = (pageLayoutIdFromProps: string) => {
     (value: boolean) => {
       if (value) {
         store.set(fieldsWidgetGroupsDraftState, {});
-        store.set(fieldsWidgetGroupsPersistedState, {});
         store.set(fieldsWidgetUngroupedFieldsDraftState, {});
-        store.set(fieldsWidgetUngroupedFieldsPersistedState, {});
         store.set(fieldsWidgetEditorModeDraftState, {});
-        store.set(fieldsWidgetEditorModePersistedState, {});
         store.set(hasInitializedFieldsWidgetGroupsDraftState, {});
       }
 
@@ -108,11 +85,8 @@ export const useSetIsPageLayoutInEditMode = (pageLayoutIdFromProps: string) => {
       isPageLayoutInEditModeState,
       contextStoreIsFullTabWidgetInEditModeState,
       fieldsWidgetGroupsDraftState,
-      fieldsWidgetGroupsPersistedState,
       fieldsWidgetUngroupedFieldsDraftState,
-      fieldsWidgetUngroupedFieldsPersistedState,
       fieldsWidgetEditorModeDraftState,
-      fieldsWidgetEditorModePersistedState,
       hasInitializedFieldsWidgetGroupsDraftState,
       pageLayoutId,
       store,
