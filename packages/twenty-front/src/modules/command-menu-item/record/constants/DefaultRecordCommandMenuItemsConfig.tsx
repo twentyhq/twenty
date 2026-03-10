@@ -445,8 +445,10 @@ export const DEFAULT_RECORD_COMMAND_MENU_ITEMS_CONFIG: Record<
     Icon: IconFileImport,
     accent: 'default',
     isPinned: false,
-    shouldBeRegistered: ({ objectMetadataItem, hasAnySoftDeleteFilterOnView }) =>
-      !objectMetadataItem?.isSystem && !hasAnySoftDeleteFilterOnView,
+    shouldBeRegistered: ({
+      objectMetadataItem,
+      hasAnySoftDeleteFilterOnView,
+    }) => !objectMetadataItem?.isSystem && !hasAnySoftDeleteFilterOnView,
     availableOn: [CommandMenuItemViewType.INDEX_PAGE_NO_SELECTION],
     component: <ImportRecordsNoSelectionRecordCommand />,
     requiredPermissionFlag: PermissionFlagType.IMPORT_CSV,
