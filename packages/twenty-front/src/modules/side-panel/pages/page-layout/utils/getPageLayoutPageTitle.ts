@@ -12,7 +12,7 @@ export const getPageLayoutPageTitle = (page: PageLayoutSidePanelPage) => {
     case SidePanelPages.PageLayoutIframeSettings:
       return t`iFrame Settings`;
     case SidePanelPages.PageLayoutGraphFilter:
-      return t`Configure filters`;
+      return t`Filter`;
     case SidePanelPages.PageLayoutTabSettings:
       return t`Tab Settings`;
     case SidePanelPages.PageLayoutFieldsSettings:
