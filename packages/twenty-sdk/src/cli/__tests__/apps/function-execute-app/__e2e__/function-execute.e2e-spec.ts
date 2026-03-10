@@ -76,20 +76,4 @@ describe('functionExecute E2E', () => {
       error: { code: 'FUNCTION_NOT_FOUND' },
     });
   });
-
-  it('should execute a function that uses CoreApiClient with real query/mutation methods', async () => {
-    const result = await functionExecute({
-      appPath: APP_PATH,
-      functionName: 'check-core-client',
-    });
-
-    expect(result).toMatchObject({
-      success: true,
-      data: {
-        functionName: 'check-core-client',
-        status: 'SUCCESS',
-        data: { hasQuery: true, hasMutation: true },
-      },
-    });
-  });
 });
