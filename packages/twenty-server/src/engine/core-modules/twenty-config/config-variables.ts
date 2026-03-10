@@ -564,17 +564,6 @@ export class ConfigVariables {
   LOGIC_FUNCTION_LAMBDA_SECRET_ACCESS_KEY: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.LOGIC_FUNCTION_CONFIG,
-    description:
-      'S3 bucket for storing layer zip files built by the builder Lambda',
-    type: ConfigVariableType.STRING,
-  })
-  @ValidateIf(
-    (env) => env.LOGIC_FUNCTION_TYPE === LogicFunctionDriverType.LAMBDA,
-  )
-  LOGIC_FUNCTION_LAMBDA_LAYER_BUCKET: string;
-
-  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.CODE_INTERPRETER_CONFIG,
     description:
       'Code interpreter driver type - LOCAL for development (unsafe), E2B for sandboxed execution',

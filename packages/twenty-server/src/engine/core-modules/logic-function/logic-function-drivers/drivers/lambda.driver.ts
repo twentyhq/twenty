@@ -18,8 +18,6 @@ import {
   ResourceNotFoundException,
   waitUntilFunctionUpdatedV2,
 } from '@aws-sdk/client-lambda';
-import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
-import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { AssumeRoleCommand, STSClient } from '@aws-sdk/client-sts';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -71,22 +69,21 @@ export type BuilderLambdaPayload = {
   action: 'createLayer';
   packageJson: string;
   yarnLock: string;
-  presignedUploadUrl: string;
+};
+
+export type BuilderLambdaResult = {
+  zipBase64: string;
 };
 
 export interface LambdaDriverOptions extends LambdaClientConfig {
   logicFunctionResourceService: LogicFunctionResourceService;
   region: string;
   lambdaRole: string;
-  layerBucketName: string;
   subhostingRole?: string;
 }
 
-const PRESIGNED_URL_EXPIRY_SECONDS = BUILDER_LAMBDA_TIMEOUT_SECONDS + 60;
-
 export class LambdaDriver implements LogicFunctionDriver {
   private lambdaClient: Lambda | undefined;
-  private s3Client: S3Client | undefined;
   private credentialsExpiry: Date | null = null;
   private readonly options: LambdaDriverOptions;
   private readonly logicFunctionResourceService: LogicFunctionResourceService;
@@ -113,24 +110,6 @@ export class LambdaDriver implements LogicFunctionDriver {
     }
 
     return this.lambdaClient;
-  }
-
-  private async getS3Client() {
-    if (
-      !isDefined(this.s3Client) ||
-      (isDefined(this.options.subhostingRole) &&
-        isDefined(this.credentialsExpiry) &&
-        new Date() >= this.credentialsExpiry)
-    ) {
-      this.s3Client = new S3Client({
-        region: this.options.region,
-        ...(isDefined(this.options.subhostingRole) && {
-          credentials: await this.getAssumeRoleCredentials(),
-        }),
-      });
-    }
-
-    return this.s3Client;
   }
 
   private async getAssumeRoleCredentials() {
@@ -287,7 +266,7 @@ export class LambdaDriver implements LogicFunctionDriver {
 
   private async invokeBuilderLambda(
     payload: BuilderLambdaPayload,
-  ): Promise<void> {
+  ): Promise<BuilderLambdaResult> {
     const lambdaClient = await this.getLambdaClient();
 
     const builderFunctionName = await this.getBuilderFunctionName();
@@ -314,47 +293,16 @@ export class LambdaDriver implements LogicFunctionDriver {
         LogicFunctionExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
       );
     }
-  }
 
-  private async generatePresignedPutUrl(s3Key: string): Promise<string> {
-    const s3Client = await this.getS3Client();
+    const parsedResult: BuilderLambdaResult = result.Payload
+      ? JSON.parse(result.Payload.transformToString())
+      : {};
 
-    return getSignedUrl(
-      s3Client,
-      new PutObjectCommand({
-        Bucket: this.options.layerBucketName,
-        Key: s3Key,
-        ContentType: 'application/zip',
-      }),
-      { expiresIn: PRESIGNED_URL_EXPIRY_SECONDS },
-    );
-  }
-
-  private async publishLayerFromS3(
-    layerName: string,
-    s3Key: string,
-    compatibleRuntimes: LogicFunctionRuntime[],
-  ): Promise<string> {
-    const lambdaClient = await this.getLambdaClient();
-
-    const result = await lambdaClient.send(
-      new PublishLayerVersionCommand({
-        LayerName: layerName,
-        Content: {
-          S3Bucket: this.options.layerBucketName,
-          S3Key: s3Key,
-        },
-        CompatibleRuntimes: compatibleRuntimes,
-      }),
-    );
-
-    if (!result.LayerVersionArn) {
-      throw new Error(
-        `PublishLayerVersion did not return a LayerVersionArn for layer '${layerName}'`,
-      );
+    if (!parsedResult.zipBase64) {
+      throw new Error('Builder Lambda did not return zipBase64');
     }
 
-    return result.LayerVersionArn;
+    return parsedResult;
   }
 
   private async getExistingLayerArn(
@@ -417,20 +365,30 @@ export class LambdaDriver implements LogicFunctionDriver {
 
     await this.ensureBuilderLambdaExists();
 
-    const s3Key = `layer-builds/${layerName}.zip`;
-    const presignedUploadUrl = await this.generatePresignedPutUrl(s3Key);
-
-    await this.invokeBuilderLambda({
+    const { zipBase64 } = await this.invokeBuilderLambda({
       action: 'createLayer',
       packageJson,
       yarnLock,
-      presignedUploadUrl,
     });
 
-    await this.publishLayerFromS3(layerName, s3Key, [
-      LogicFunctionRuntime.NODE18,
-      LogicFunctionRuntime.NODE22,
-    ]);
+    const lambdaClient = await this.getLambdaClient();
+
+    const publishResult = await lambdaClient.send(
+      new PublishLayerVersionCommand({
+        LayerName: layerName,
+        Content: { ZipFile: Buffer.from(zipBase64, 'base64') },
+        CompatibleRuntimes: [
+          LogicFunctionRuntime.NODE18,
+          LogicFunctionRuntime.NODE22,
+        ],
+      }),
+    );
+
+    if (!publishResult.LayerVersionArn) {
+      throw new Error(
+        `PublishLayerVersion did not return a LayerVersionArn for layer '${layerName}'`,
+      );
+    }
   }
 
   private async getLayerArn({
