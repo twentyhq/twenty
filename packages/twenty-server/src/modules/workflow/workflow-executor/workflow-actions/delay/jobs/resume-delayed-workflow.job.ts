@@ -94,6 +94,13 @@ export class ResumeDelayedWorkflowJob {
           },
         );
       } catch (error) {
+        if (
+          error instanceof WorkflowRunException &&
+          error.code === WorkflowRunExceptionCode.WORKFLOW_RUN_NOT_FOUND
+        ) {
+          return;
+        }
+
         await this.workflowRunWorkspaceService.endWorkflowRun({
           workflowRunId,
           workspaceId,
