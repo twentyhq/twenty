@@ -76,4 +76,24 @@ describe('functionExecute E2E', () => {
       error: { code: 'FUNCTION_NOT_FOUND' },
     });
   });
+
+  // Verifies that CoreApiClient is fully generated (not just stubs) after
+  // appGenerateClient. If app:build is used without client generation, the
+  // bundled CoreApiClient would be an empty stub and this test would fail.
+  // See: https://github.com/twentyhq/twenty/pull/18460
+  it('should execute a function that uses CoreApiClient with real query/mutation methods', async () => {
+    const result = await functionExecute({
+      appPath: APP_PATH,
+      functionName: 'check-core-client',
+    });
+
+    expect(result).toMatchObject({
+      success: true,
+      data: {
+        functionName: 'check-core-client',
+        status: 'SUCCESS',
+        data: { hasQuery: true, hasMutation: true },
+      },
+    });
+  });
 });
