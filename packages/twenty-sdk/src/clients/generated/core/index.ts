@@ -18,8 +18,8 @@ import {
   type GraphqlOperation,
   type ClientOptions,
   GenqlError,
-} from './runtime';
-export type { FieldsSelection } from './runtime';
+} from './twenty-patches';
+export type { FieldsSelection } from './twenty-patches';
 export { GenqlError };
 
 import types from './types';
