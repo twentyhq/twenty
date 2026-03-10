@@ -77,7 +77,7 @@ export const SidePanelPageLayoutFieldsSettings = () => {
     <StyledContainer>
       <StyledSidePanelContainer>
         <SidePanelList commandGroups={[]} selectableItemIds={selectableItemIds}>
-          <SidePanelGroup heading={t`Customize`}>
+          <SidePanelGroup heading={t`Data and display`}>
             <SelectableListItem
               itemId="layout"
               onEnter={handleNavigateToLayout}
@@ -92,8 +92,6 @@ export const SidePanelPageLayoutFieldsSettings = () => {
                 contextualTextPosition="right"
               />
             </SelectableListItem>
-          </SidePanelGroup>
-          <SidePanelGroup heading={t`New fields`}>
             <NewFieldDefaultVisibilityToggle
               pageLayoutId={pageLayoutId}
               widgetId={widgetInEditMode.id}
