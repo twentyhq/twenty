@@ -413,12 +413,8 @@ const StyledShortcutLabel = styled.div<{
   font-weight: ${themeCssVariables.font.weight.medium};
 `;
 
-const StyledIconContainer = styled.div`
-  > div {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+const StyledMotion = styled(motion.div)`
+  display: flex;
 `;
 
 export const AnimatedButton = ({
@@ -493,18 +489,14 @@ export const AnimatedButton = ({
       data-globally-prevent-click-outside={dataGloballyPreventClickOutside}
     >
       {Icon && (
-        <StyledIconContainer>
-          <motion.div animate={animate} transition={transition}>
-            <Icon size={theme.icon.size.sm} />
-          </motion.div>
-        </StyledIconContainer>
+        <StyledMotion animate={animate} transition={transition}>
+          <Icon size={theme.icon.size.sm} />
+        </StyledMotion>
       )}
       {animatedSvg && (
-        <StyledIconContainer>
-          <motion.div animate={animate} transition={transition}>
-            {animatedSvg}
-          </motion.div>
-        </StyledIconContainer>
+        <StyledMotion animate={animate} transition={transition}>
+          {animatedSvg}
+        </StyledMotion>
       )}
       {title}
       {hotkeys && !isMobile && (
