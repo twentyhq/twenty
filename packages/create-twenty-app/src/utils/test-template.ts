@@ -25,6 +25,7 @@ export const scaffoldIntegrationTest = async ({
 
   await createVitestConfig(appDirectory);
   await createTsconfigSpec(appDirectory);
+  await createGithubWorkflow(appDirectory);
 };
 
 const createVitestConfig = async (appDirectory: string) => {
@@ -210,4 +211,57 @@ describe('App installation', () => {
 
   await fs.ensureDir(join(appDirectory, fileFolder ?? ''));
   await fs.writeFile(join(appDirectory, fileFolder ?? '', fileName), content);
+};
+
+const DEFAULT_TWENTY_VERSION = 'latest';
+
+const createGithubWorkflow = async (appDirectory: string) => {
+  const content = `name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request: {}
+
+env:
+  TWENTY_VERSION: ${DEFAULT_TWENTY_VERSION}
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Spawn Twenty instance
+        id: twenty
+        uses: twentyhq/twenty/.github/actions/spawn-twenty-docker-image@main
+        with:
+          twenty-version: \${{ env.TWENTY_VERSION }}
+          github-token: \${{ secrets.GITHUB_TOKEN }}
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Run integration tests
+        run: yarn test
+        env:
+          TWENTY_API_URL: \${{ steps.twenty.outputs.server-url }}
+          TWENTY_TEST_API_KEY: \${{ steps.twenty.outputs.access-token }}
+`;
+
+  const workflowDir = join(appDirectory, '.github', 'workflows');
+
+  await fs.ensureDir(workflowDir);
+  await fs.writeFile(join(workflowDir, 'ci.yml'), content);
 };

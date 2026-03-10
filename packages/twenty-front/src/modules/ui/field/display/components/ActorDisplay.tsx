@@ -7,7 +7,6 @@ import { AvatarOrIcon, Chip } from 'twenty-ui/components';
 import {
   IconApi,
   IconCalendar,
-  IconCsv,
   IconGmail,
   IconGoogleCalendar,
   IconMail,
@@ -16,6 +15,7 @@ import {
   IconPlug,
   IconRobot,
   IconSettingsAutomation,
+  IconUpload,
   IconWebhook,
 } from 'twenty-ui/display';
 
@@ -49,7 +49,7 @@ export const ActorDisplay = ({
       case 'API':
         return IconApi;
       case 'IMPORT':
-        return IconCsv;
+        return IconUpload;
       case 'EMAIL':
         return PROVIDORS_ICON_MAPPING.EMAIL[context?.provider ?? 'default'];
       case 'CALENDAR':

@@ -1,7 +1,18 @@
 import { z } from 'zod';
 
 export const HttpRequestInputZodSchema = z.object({
-  url: z.string().describe('The URL to make the request to'),
+  url: z
+    .string()
+    .url()
+    .refine(
+      (value) => {
+        const protocol = new URL(value).protocol;
+
+        return protocol === 'http:' || protocol === 'https:';
+      },
+      { message: 'Only HTTP and HTTPS URLs are allowed' },
+    )
+    .describe('The URL to make the request to (HTTP or HTTPS only)'),
   method: z
     .enum(['GET', 'POST', 'PUT', 'PATCH', 'DELETE'])
     .describe('The HTTP method to use'),
