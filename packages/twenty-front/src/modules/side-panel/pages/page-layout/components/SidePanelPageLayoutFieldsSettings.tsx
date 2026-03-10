@@ -1,11 +1,12 @@
-import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
+import { useFieldsWidgetGroups } from '@/page-layout/widgets/fields/hooks/useFieldsWidgetGroups';
+import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
+import { NewFieldDefaultVisibilityToggle } from '@/side-panel/pages/page-layout/components/NewFieldDefaultVisibilityToggle';
 import { WidgetSettingsFooter } from '@/side-panel/pages/page-layout/components/WidgetSettingsFooter';
 import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
 import { usePageLayoutIdForRecordPageLayoutFromContextStoreTargetedRecord } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdForRecordPageLayoutFromContextStoreTargetedRecord';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
-import { useFieldsWidgetGroups } from '@/page-layout/widgets/fields/hooks/useFieldsWidgetGroups';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -61,6 +62,7 @@ export const SidePanelPageLayoutFieldsSettings = () => {
 
   const selectableItemIds = [
     'layout',
+    'new-field-default-visibility',
     'display-more-fields-button',
     'action-button',
     'move-down',
@@ -90,6 +92,12 @@ export const SidePanelPageLayoutFieldsSettings = () => {
                 contextualTextPosition="right"
               />
             </SelectableListItem>
+          </SidePanelGroup>
+          <SidePanelGroup heading={t`New fields`}>
+            <NewFieldDefaultVisibilityToggle
+              pageLayoutId={pageLayoutId}
+              widgetId={widgetInEditMode.id}
+            />
           </SidePanelGroup>
         </SidePanelList>
       </StyledSidePanelContainer>
