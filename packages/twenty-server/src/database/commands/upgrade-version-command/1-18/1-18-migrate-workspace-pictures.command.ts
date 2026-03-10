@@ -1,7 +1,8 @@
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import FileType from 'file-type';
+import { FileTypeParser } from 'file-type';
+import { detectPdf } from '@file-type/pdf';
 import { Command } from 'nest-commander';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { FileFolder } from 'twenty-shared/types';
@@ -204,7 +205,8 @@ export class MigrateWorkspacePicturesCommand extends ActiveOrSuspendedWorkspaces
       const httpClient = this.secureHttpClientService.getHttpClient();
       const buffer = await getImageBufferFromUrl(logoUrl, httpClient);
 
-      const type = await FileType.fromBuffer(buffer);
+      const parser = new FileTypeParser({ customDetectors: [detectPdf] });
+      const type = await parser.fromBuffer(buffer);
 
       if (!isDefined(type) || !type.mime.startsWith('image/')) {
         this.logger.warn(
