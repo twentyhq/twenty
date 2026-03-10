@@ -50,7 +50,7 @@ export const RecordTableCellFirstRowFirstColumn = ({
 } & (Partial<DraggableProvidedDragHandleProps> | null)) => {
   const { theme } = useContext(ThemeContext);
 
-  const zIndex = TABLE_Z_INDEX.cell.withoutGroups.sticky;
+  const zIndex = TABLE_Z_INDEX.cell.sticky;
 
   const tdBackgroundColor = isSelected
     ? theme.accent.quaternary
