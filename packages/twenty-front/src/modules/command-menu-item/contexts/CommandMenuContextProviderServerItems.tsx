@@ -3,7 +3,7 @@ import {
   type CommandMenuContextType,
 } from '@/command-menu-item/contexts/CommandMenuContext';
 import { useCommandMenuContextApi } from '@/command-menu-item/hooks/useCommandMenuContextApi';
-import { useCommandMenuItemFrontComponentActions } from '@/command-menu-item/hooks/useCommandMenuItemFrontComponentActions';
+import { useCommandMenuItemFrontComponentCommands } from '@/command-menu-item/hooks/useCommandMenuItemFrontComponentCommands';
 
 export const CommandMenuContextProviderServerItems = ({
   isInSidePanel,
@@ -19,7 +19,7 @@ export const CommandMenuContextProviderServerItems = ({
   const commandMenuContextApi = useCommandMenuContextApi();
 
   const commandMenuItemFrontComponentActions =
-    useCommandMenuItemFrontComponentActions(commandMenuContextApi);
+    useCommandMenuItemFrontComponentCommands(commandMenuContextApi);
 
   return (
     <CommandMenuContext.Provider

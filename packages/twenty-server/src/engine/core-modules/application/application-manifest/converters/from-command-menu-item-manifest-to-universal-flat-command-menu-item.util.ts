@@ -9,6 +9,7 @@ const AVAILABILITY_TYPE_MAP: Record<
 > = {
   GLOBAL: CommandMenuItemAvailabilityType.GLOBAL,
   RECORD_SELECTION: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+  FALLBACK: CommandMenuItemAvailabilityType.FALLBACK,
 };
 
 export const fromCommandMenuItemManifestToUniversalFlatCommandMenuItem = ({

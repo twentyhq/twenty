@@ -18,6 +18,7 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
 export enum CommandMenuItemAvailabilityType {
   GLOBAL = 'GLOBAL',
   RECORD_SELECTION = 'RECORD_SELECTION',
+  FALLBACK = 'FALLBACK',
 }
 
 @Entity({ name: 'commandMenuItem', schema: 'core' })
