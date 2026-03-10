@@ -7,7 +7,7 @@ import { useCloseAnyOpenDropdown } from '@/ui/layout/dropdown/hooks/useCloseAnyO
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
-import { previousDropdownFocusIdState } from '@/ui/layout/dropdown/states/previousDropdownFocusIdState';
+import { previousDropdownFocusIdStackState } from '@/ui/layout/dropdown/states/previousDropdownFocusIdStackState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 
@@ -35,7 +35,7 @@ describe('useCloseAnyOpenDropdown', () => {
       false,
     );
     jotaiStore.set(activeDropdownFocusIdState.atom, null);
-    jotaiStore.set(previousDropdownFocusIdState.atom, []);
+    jotaiStore.set(previousDropdownFocusIdStackState.atom, []);
   });
 
   it('should open dropdown and then close it with closeAnyOpenDropdown', async () => {
@@ -86,7 +86,7 @@ describe('useCloseAnyOpenDropdown', () => {
       true,
     );
     jotaiStore.set(activeDropdownFocusIdState.atom, dropdownIdC);
-    jotaiStore.set(previousDropdownFocusIdState.atom, [
+    jotaiStore.set(previousDropdownFocusIdStackState.atom, [
       dropdownIdA,
       dropdownIdB,
     ]);
@@ -115,7 +115,7 @@ describe('useCloseAnyOpenDropdown', () => {
       ),
     ).toBe(false);
     expect(jotaiStore.get(activeDropdownFocusIdState.atom)).toBeNull();
-    expect(jotaiStore.get(previousDropdownFocusIdState.atom)).toEqual([]);
+    expect(jotaiStore.get(previousDropdownFocusIdStackState.atom)).toEqual([]);
   });
 
   it('should do nothing when no dropdowns are open', () => {
@@ -128,6 +128,6 @@ describe('useCloseAnyOpenDropdown', () => {
     });
 
     expect(jotaiStore.get(activeDropdownFocusIdState.atom)).toBeNull();
-    expect(jotaiStore.get(previousDropdownFocusIdState.atom)).toEqual([]);
+    expect(jotaiStore.get(previousDropdownFocusIdStackState.atom)).toEqual([]);
   });
 });
