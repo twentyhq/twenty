@@ -1,6 +1,6 @@
 import { type CommandMenuContextType } from '@/command-menu-item/contexts/CommandMenuContext';
 import { CommandMenuContextProviderLegacy } from '@/command-menu-item/contexts/CommandMenuContextProviderLegacy';
-import { CommandMenuContextProviderServerItems } from '@/command-menu-item/contexts/CommandMenuContextProviderServerItems';
+import { CommandMenuContextProviderServerItems } from '@/command-menu-item/server-items/contexts/CommandMenuContextProviderServerItems';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';

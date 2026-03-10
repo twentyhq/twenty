@@ -2,8 +2,8 @@ import {
   CommandMenuContext,
   type CommandMenuContextType,
 } from '@/command-menu-item/contexts/CommandMenuContext';
-import { useCommandMenuContextApi } from '@/command-menu-item/hooks/useCommandMenuContextApi';
-import { useCommandMenuItemFrontComponentCommands } from '@/command-menu-item/hooks/useCommandMenuItemFrontComponentCommands';
+import { useCommandMenuContextApi } from '@/command-menu-item/server-items/hooks/useCommandMenuContextApi';
+import { useCommandMenuItemFrontComponentCommands } from '@/command-menu-item/server-items/hooks/useCommandMenuItemFrontComponentCommands';
 
 export const CommandMenuContextProviderServerItems = ({
   isInSidePanel,
