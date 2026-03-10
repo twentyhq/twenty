@@ -36,9 +36,28 @@ export class AddAppRegistrationSourceFields1772267875870
         ADD CONSTRAINT "CHK_NPM_HAS_SOURCE_PACKAGE"
         CHECK ("sourceType" <> 'npm' OR "sourcePackage" IS NOT NULL)`,
     );
+
+    await queryRunner.query(
+      `ALTER TABLE "core"."applicationRegistration" ADD COLUMN "provenanceRepositoryUrl" text`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "core"."applicationRegistration" ADD COLUMN "isProvenanceVerified" boolean NOT NULL DEFAULT false`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "core"."applicationRegistration" ADD COLUMN "provenanceVerifiedAt" timestamptz`,
+    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(
+      `ALTER TABLE "core"."applicationRegistration" DROP COLUMN "provenanceVerifiedAt"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "core"."applicationRegistration" DROP COLUMN "isProvenanceVerified"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "core"."applicationRegistration" DROP COLUMN "provenanceRepositoryUrl"`,
+    );
     await queryRunner.query(
       `ALTER TABLE "core"."applicationRegistration" DROP CONSTRAINT IF EXISTS "CHK_NPM_HAS_SOURCE_PACKAGE"`,
     );

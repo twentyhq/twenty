@@ -1,15 +1,12 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
-import { Args, Mutation, Query } from '@nestjs/graphql';
+import { Args, Mutation } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
-import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
-import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
-import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/application.dto';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -27,35 +24,8 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 @UseGuards(WorkspaceAuthGuard, FeatureFlagGuard)
 export class ApplicationInstallResolver {
   constructor(
-    private readonly applicationService: ApplicationService,
     private readonly applicationInstallService: ApplicationInstallService,
   ) {}
-
-  @Query(() => [ApplicationDTO])
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))
-  async findManyApplications(
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ) {
-    return this.applicationService.findManyApplications(workspaceId);
-  }
-
-  @Query(() => ApplicationDTO)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))
-  async findOneApplication(
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-    @Args('id', { type: () => UUIDScalarType, nullable: true }) id?: string,
-    @Args('universalIdentifier', {
-      type: () => UUIDScalarType,
-      nullable: true,
-    })
-    universalIdentifier?: string,
-  ) {
-    return await this.applicationService.findOneApplicationOrThrow({
-      id,
-      universalIdentifier,
-      workspaceId,
-    });
-  }
 
   @Mutation(() => Boolean)
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))

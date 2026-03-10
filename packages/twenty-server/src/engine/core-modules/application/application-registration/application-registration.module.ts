@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { ApplicationNpmRegistrationService } from 'src/engine/core-modules/application/application-registration/application-npm-registration.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationResolver } from 'src/engine/core-modules/application/application-registration/application-registration.resolver';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
@@ -34,9 +35,11 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
     ApplicationRegistrationService,
     ApplicationRegistrationResolver,
     ApplicationTarballService,
+    ApplicationNpmRegistrationService,
   ],
   exports: [
     ApplicationRegistrationService,
+    ApplicationNpmRegistrationService,
     ApplicationRegistrationVariableModule,
   ],
 })

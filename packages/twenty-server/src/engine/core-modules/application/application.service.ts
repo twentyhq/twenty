@@ -30,24 +30,6 @@ export class ApplicationService {
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
   ) {}
 
-  async findApplicationRoleId(
-    applicationId: string,
-    workspaceId: string,
-  ): Promise<string> {
-    const application = await this.applicationRepository.findOne({
-      where: { id: applicationId, workspaceId },
-    });
-
-    if (!isDefined(application) || !isDefined(application.defaultRoleId)) {
-      throw new ApplicationException(
-        `Could not find application ${applicationId}`,
-        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
-      );
-    }
-
-    return application.defaultRoleId;
-  }
-
   async findWorkspaceTwentyStandardAndCustomApplicationOrThrow({
     workspace: workspaceInput,
     workspaceId,

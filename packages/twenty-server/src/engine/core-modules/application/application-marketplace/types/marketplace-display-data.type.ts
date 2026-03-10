@@ -8,6 +8,7 @@ export type MarketplaceDisplayData = {
   logo?: string;
   screenshots?: string[];
   aboutDescription?: string;
+  readme?: string;
   providers?: string[];
   objects?: MarketplaceDisplayObject[];
   fields?: MarketplaceDisplayField[];

@@ -9,6 +9,7 @@ import { ApplicationManifestModule } from 'src/engine/core-modules/application/a
 import { ApplicationPackageModule } from 'src/engine/core-modules/application/application-package/application-package.module';
 import { ApplicationInstallResolver } from 'src/engine/core-modules/application/application-install/application-install.resolver';
 import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
+import { ApplicationQueryResolver } from 'src/engine/core-modules/application/application-install/application-query.resolver';
 import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-storage.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 
@@ -23,7 +24,11 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     PermissionsModule,
     FileStorageModule,
   ],
-  providers: [ApplicationInstallResolver, ApplicationInstallService],
+  providers: [
+    ApplicationInstallResolver,
+    ApplicationQueryResolver,
+    ApplicationInstallService,
+  ],
   exports: [ApplicationInstallService],
 })
 export class ApplicationInstallModule {}

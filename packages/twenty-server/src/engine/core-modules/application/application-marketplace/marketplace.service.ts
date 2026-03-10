@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
 import { MarketplaceAppDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app.dto';
+import { type NpmPackument } from 'src/engine/core-modules/application/application-marketplace/types/npm-packument.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 const npmSearchResultSchema = z.object({
@@ -27,6 +28,31 @@ export class MarketplaceService {
   private readonly logger = new Logger(MarketplaceService.name);
 
   constructor(private readonly twentyConfigService: TwentyConfigService) {}
+
+  async fetchPackument(packageName: string): Promise<NpmPackument | null> {
+    const registryUrl = this.twentyConfigService.get('APP_REGISTRY_URL');
+
+    try {
+      const { data } = await axios.get<NpmPackument>(
+        `${registryUrl}/${encodeURIComponent(packageName)}`,
+        {
+          headers: {
+            Accept: 'application/json',
+            'User-Agent': 'Twenty-Marketplace',
+          },
+          timeout: 10_000,
+        },
+      );
+
+      return data;
+    } catch (error) {
+      this.logger.warn(
+        `Failed to fetch packument for ${packageName}: ${error instanceof Error ? error.message : String(error)}`,
+      );
+
+      return null;
+    }
+  }
 
   async fetchAppsFromNpmRegistry(): Promise<MarketplaceAppDTO[]> {
     const registryUrl = this.twentyConfigService.get('APP_REGISTRY_URL');
@@ -53,6 +79,11 @@ export class MarketplaceService {
       return parsed.data.objects
         .map((result) => {
           const { name, version, description, author, links } = result.package;
+
+          if (!this.hasValidAppPrefix(name)) {
+            return null;
+          }
+
           const twentyKeyword = (result.package.keywords ?? []).find(
             (keyword) => keyword.startsWith('twenty-uid:'),
           );
@@ -91,5 +122,12 @@ export class MarketplaceService {
 
       return [];
     }
+  }
+
+  private hasValidAppPrefix(packageName: string): boolean {
+    return (
+      packageName.startsWith('twenty-app-') ||
+      /^@[^/]+\/twenty-app-/.test(packageName)
+    );
   }
 }

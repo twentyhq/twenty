@@ -63,6 +63,10 @@ export class ApplicationTarballService {
         };
       }>(contentDir, 'manifest.json');
 
+      const packageJson = await readJsonFile<{
+        version?: string;
+      }>(contentDir, 'package.json');
+
       if (manifest === null) {
         throw new ApplicationRegistrationException(
           'manifest.json not found or invalid in tarball',
@@ -137,6 +141,9 @@ export class ApplicationTarballService {
       await this.appRegistrationRepository.update(appRegistration.id, {
         sourceType: ApplicationRegistrationSourceType.TARBALL,
         tarballFileId: savedFile.id,
+        ...(isDefined(packageJson?.version) && {
+          latestAvailableVersion: packageJson.version,
+        }),
       });
 
       this.logger.log(

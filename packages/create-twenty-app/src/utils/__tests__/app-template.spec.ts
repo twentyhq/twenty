@@ -101,7 +101,7 @@ describe('copyBaseApplicationProject', () => {
     expect(await fs.pathExists(packageJsonPath)).toBe(true);
 
     const packageJson = await fs.readJson(packageJsonPath);
-    expect(packageJson.name).toBe('my-test-app');
+    expect(packageJson.name).toBe('twenty-app-my-test-app');
     expect(packageJson.version).toBe('0.1.0');
     expect(packageJson.devDependencies['twenty-sdk']).toBe(
       createTwentyAppPackageJson.version,

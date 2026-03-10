@@ -71,21 +71,6 @@ export class ApplicationRegistrationService {
     return registration;
   }
 
-  async findOneByIdGlobal(id: string): Promise<ApplicationRegistrationEntity> {
-    const registration = await this.applicationRegistrationRepository.findOne({
-      where: { id },
-    });
-
-    if (!registration) {
-      throw new ApplicationRegistrationException(
-        `Application registration with id ${id} not found`,
-        ApplicationRegistrationExceptionCode.APPLICATION_REGISTRATION_NOT_FOUND,
-      );
-    }
-
-    return registration;
-  }
-
   // Global lookup — used by OAuth flow (no workspace scoping)
   async findOneByClientId(
     clientId: string,
@@ -220,8 +205,6 @@ export class ApplicationRegistrationService {
       updateData.oAuthScopes = update.oAuthScopes;
     if (isDefined(update.websiteUrl)) updateData.websiteUrl = update.websiteUrl;
     if (isDefined(update.termsUrl)) updateData.termsUrl = update.termsUrl;
-    if (isDefined(update.isListed)) updateData.isListed = update.isListed;
-
     if (Object.keys(updateData).length > 0) {
       await this.applicationRegistrationRepository.update(id, updateData);
     }
@@ -276,11 +259,18 @@ export class ApplicationRegistrationService {
       | 'websiteUrl'
       | 'termsUrl'
       | 'latestAvailableVersion'
-      | 'isListed'
       | 'isFeatured'
       | 'marketplaceDisplayData'
       | 'ownerWorkspaceId'
-    >,
+    > &
+      Partial<
+        Pick<
+          ApplicationRegistrationEntity,
+          | 'isProvenanceVerified'
+          | 'provenanceRepositoryUrl'
+          | 'provenanceVerifiedAt'
+        >
+      >,
   ): Promise<void> {
     const existing = await this.findOneByUniversalIdentifier(
       params.universalIdentifier,
@@ -299,6 +289,11 @@ export class ApplicationRegistrationService {
         termsUrl: params.termsUrl,
         latestAvailableVersion: params.latestAvailableVersion,
         marketplaceDisplayData: params.marketplaceDisplayData,
+        ...(isDefined(params.isProvenanceVerified) && {
+          isProvenanceVerified: params.isProvenanceVerified,
+          provenanceRepositoryUrl: params.provenanceRepositoryUrl ?? null,
+          provenanceVerifiedAt: params.provenanceVerifiedAt ?? null,
+        }),
       });
 
       return;
@@ -315,29 +310,23 @@ export class ApplicationRegistrationService {
       websiteUrl: params.websiteUrl,
       termsUrl: params.termsUrl,
       latestAvailableVersion: params.latestAvailableVersion,
-      isListed: params.isListed,
       isFeatured: params.isFeatured,
       marketplaceDisplayData: params.marketplaceDisplayData,
       oAuthClientId: v4(),
       oAuthRedirectUris: [],
       oAuthScopes: [],
       ownerWorkspaceId: params.ownerWorkspaceId,
+      isProvenanceVerified: params.isProvenanceVerified ?? false,
+      provenanceRepositoryUrl: params.provenanceRepositoryUrl ?? null,
+      provenanceVerifiedAt: params.provenanceVerifiedAt ?? null,
     });
 
     await this.applicationRegistrationRepository.save(registration);
   }
 
-  async findManyBySourceType(
-    sourceType: ApplicationRegistrationSourceType,
-  ): Promise<ApplicationRegistrationEntity[]> {
+  async findManyNpm(): Promise<ApplicationRegistrationEntity[]> {
     return this.applicationRegistrationRepository.find({
-      where: { sourceType },
-    });
-  }
-
-  async findManyListed(): Promise<ApplicationRegistrationEntity[]> {
-    return this.applicationRegistrationRepository.find({
-      where: { isListed: true },
+      where: { sourceType: ApplicationRegistrationSourceType.NPM },
     });
   }
 

@@ -65,13 +65,6 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
     }
   }
 
-  async resolveNpmPackage(
-    packageName: string,
-    targetVersion?: string,
-  ): Promise<ResolvedPackage> {
-    return this.resolveFromNpm(packageName, targetVersion);
-  }
-
   async resolvePackage(
     appRegistration: ApplicationRegistrationEntity,
     options?: { targetVersion?: string },

@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { promises as fs } from 'fs';
 import { join, relative } from 'path';
 
+import { type Manifest } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
@@ -21,6 +22,7 @@ import {
   type ResolvedPackage,
 } from 'src/engine/core-modules/application/application-package/application-package-fetcher.service';
 import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
+import { readJsonFileOrThrow } from 'src/engine/core-modules/application/application-package/utils/read-json-file.util';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 
@@ -94,6 +96,32 @@ export class ApplicationInstallService {
     );
   }
 
+  async installFromLocalDirectory(params: {
+    appRegistrationId: string;
+    extractedDir: string;
+    workspaceId: string;
+  }): Promise<void> {
+    const appRegistration = await this.appRegistrationRepository.findOneOrFail({
+      where: { id: params.appRegistrationId },
+    });
+
+    const manifest = await readJsonFileOrThrow<Manifest>(
+      params.extractedDir,
+      'manifest.json',
+    );
+
+    await this.syncFromExtractedDirectory({
+      appRegistration,
+      extractedDir: params.extractedDir,
+      manifest,
+      workspaceId: params.workspaceId,
+    });
+
+    this.logger.log(
+      `Successfully installed app ${appRegistration.universalIdentifier} from local directory`,
+    );
+  }
+
   private async doInstallApplication(
     appRegistration: ApplicationRegistrationEntity,
     params: { version?: string; workspaceId: string },
@@ -111,30 +139,15 @@ export class ApplicationInstallService {
         return true;
       }
 
-      const universalIdentifier = appRegistration.universalIdentifier;
-
-      await this.ensureApplicationExists({
-        universalIdentifier,
-        name: resolvedPackage.manifest.application.displayName,
-        workspaceId: params.workspaceId,
-        applicationRegistrationId: appRegistration.id,
-        sourceType: appRegistration.sourceType,
-      });
-
-      await this.writeFilesToStorage(
-        resolvedPackage.extractedDir,
-        universalIdentifier,
-        params.workspaceId,
-      );
-
-      await this.applicationSyncService.synchronizeFromManifest({
-        workspaceId: params.workspaceId,
+      await this.syncFromExtractedDirectory({
+        appRegistration,
+        extractedDir: resolvedPackage.extractedDir,
         manifest: resolvedPackage.manifest,
-        applicationRegistrationId: appRegistration.id,
+        workspaceId: params.workspaceId,
       });
 
       this.logger.log(
-        `Successfully installed app ${universalIdentifier} v${resolvedPackage.packageJson.version ?? 'unknown'}`,
+        `Successfully installed app ${appRegistration.universalIdentifier} v${resolvedPackage.packageJson.version ?? 'unknown'}`,
       );
 
       return true;
@@ -151,6 +164,35 @@ export class ApplicationInstallService {
         );
       }
     }
+  }
+
+  private async syncFromExtractedDirectory(params: {
+    appRegistration: ApplicationRegistrationEntity;
+    extractedDir: string;
+    manifest: Manifest;
+    workspaceId: string;
+  }): Promise<void> {
+    const { appRegistration, extractedDir, manifest, workspaceId } = params;
+
+    await this.ensureApplicationExists({
+      universalIdentifier: appRegistration.universalIdentifier,
+      name: manifest.application.displayName,
+      workspaceId,
+      applicationRegistrationId: appRegistration.id,
+      sourceType: appRegistration.sourceType,
+    });
+
+    await this.writeFilesToStorage(
+      extractedDir,
+      appRegistration.universalIdentifier,
+      workspaceId,
+    );
+
+    await this.applicationSyncService.synchronizeFromManifest({
+      workspaceId,
+      manifest,
+      applicationRegistrationId: appRegistration.id,
+    });
   }
 
   private async writeFilesToStorage(

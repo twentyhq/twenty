@@ -137,15 +137,22 @@ export class ApplicationRegistrationEntity {
   termsUrl: string | null;
 
   @Field(() => Boolean)
-  @Column({ type: 'boolean', default: false })
-  isListed: boolean;
-
-  @Field(() => Boolean)
   @Column({ name: 'isFeatured', type: 'boolean', default: false })
   isFeatured: boolean;
 
   @Column({ type: 'jsonb', nullable: true })
   marketplaceDisplayData: MarketplaceDisplayData | null;
+
+  @Field(() => String, { nullable: true })
+  @Column({ nullable: true, type: 'text' })
+  provenanceRepositoryUrl: string | null;
+
+  @Field(() => Boolean)
+  @Column({ type: 'boolean', default: false })
+  isProvenanceVerified: boolean;
+
+  @Column({ nullable: true, type: 'timestamptz' })
+  provenanceVerifiedAt: Date | null;
 
   @OneToMany(
     () => ApplicationRegistrationVariableEntity,

@@ -356,7 +356,7 @@ export type ApplicationRegistration = {
   description?: Maybe<Scalars['String']>;
   id: Scalars['UUID'];
   isFeatured: Scalars['Boolean'];
-  isListed: Scalars['Boolean'];
+  isProvenanceVerified: Scalars['Boolean'];
   latestAvailableVersion?: Maybe<Scalars['String']>;
   logoUrl?: Maybe<Scalars['String']>;
   name: Scalars['String'];
@@ -364,6 +364,7 @@ export type ApplicationRegistration = {
   oAuthRedirectUris: Array<Scalars['String']>;
   oAuthScopes: Array<Scalars['String']>;
   ownerWorkspaceId?: Maybe<Scalars['UUID']>;
+  provenanceRepositoryUrl?: Maybe<Scalars['String']>;
   sourcePackage?: Maybe<Scalars['String']>;
   sourceType: ApplicationRegistrationSourceType;
   termsUrl?: Maybe<Scalars['String']>;
@@ -1643,7 +1644,6 @@ export type FeatureFlag = {
 export enum FeatureFlagKey {
   IS_AI_ENABLED = 'IS_AI_ENABLED',
   IS_APPLICATION_ENABLED = 'IS_APPLICATION_ENABLED',
-  IS_APPLICATION_INSTALLATION_FROM_TARBALL_ENABLED = 'IS_APPLICATION_INSTALLATION_FROM_TARBALL_ENABLED',
   IS_ATTACHMENT_MIGRATED = 'IS_ATTACHMENT_MIGRATED',
   IS_COMMAND_MENU_ITEM_ENABLED = 'IS_COMMAND_MENU_ITEM_ENABLED',
   IS_DASHBOARD_V2_ENABLED = 'IS_DASHBOARD_V2_ENABLED',
@@ -4850,7 +4850,6 @@ export type UpdateApplicationRegistrationInput = {
 export type UpdateApplicationRegistrationPayload = {
   author?: InputMaybe<Scalars['String']>;
   description?: InputMaybe<Scalars['String']>;
-  isListed?: InputMaybe<Scalars['Boolean']>;
   logoUrl?: InputMaybe<Scalars['String']>;
   name?: InputMaybe<Scalars['String']>;
   oAuthRedirectUris?: InputMaybe<Array<Scalars['String']>>;
@@ -6497,7 +6496,7 @@ export type GetAdminAiModelsQuery = { __typename?: 'Query', getAdminAiModels: { 
 export type FindAllApplicationRegistrationsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type FindAllApplicationRegistrationsQuery = { __typename?: 'Query', findAllApplicationRegistrations: Array<{ __typename?: 'ApplicationRegistration', id: string, universalIdentifier: string, name: string, description?: string | null, logoUrl?: string | null, author?: string | null, oAuthClientId: string, oAuthRedirectUris: Array<string>, oAuthScopes: Array<string>, sourceType: ApplicationRegistrationSourceType, sourcePackage?: string | null, latestAvailableVersion?: string | null, websiteUrl?: string | null, termsUrl?: string | null, isListed: boolean, isFeatured: boolean, ownerWorkspaceId?: string | null, createdAt: string, updatedAt: string }> };
+export type FindAllApplicationRegistrationsQuery = { __typename?: 'Query', findAllApplicationRegistrations: Array<{ __typename?: 'ApplicationRegistration', id: string, universalIdentifier: string, name: string, description?: string | null, logoUrl?: string | null, author?: string | null, oAuthClientId: string, oAuthRedirectUris: Array<string>, oAuthScopes: Array<string>, sourceType: ApplicationRegistrationSourceType, sourcePackage?: string | null, latestAvailableVersion?: string | null, websiteUrl?: string | null, termsUrl?: string | null, isFeatured: boolean, provenanceRepositoryUrl?: string | null, isProvenanceVerified: boolean, ownerWorkspaceId?: string | null, createdAt: string, updatedAt: string }> };
 
 export type CreateDatabaseConfigVariableMutationVariables = Exact<{
   key: Scalars['String'];
@@ -6601,7 +6600,7 @@ export type GetSystemHealthStatusQueryVariables = Exact<{ [key: string]: never; 
 
 export type GetSystemHealthStatusQuery = { __typename?: 'Query', getSystemHealthStatus: { __typename?: 'SystemHealth', services: Array<{ __typename?: 'SystemHealthService', id: HealthIndicatorId, label: string, status: AdminPanelHealthServiceStatus }> } };
 
-export type ApplicationRegistrationFragmentFragment = { __typename?: 'ApplicationRegistration', id: string, universalIdentifier: string, name: string, description?: string | null, logoUrl?: string | null, author?: string | null, oAuthClientId: string, oAuthRedirectUris: Array<string>, oAuthScopes: Array<string>, sourceType: ApplicationRegistrationSourceType, sourcePackage?: string | null, latestAvailableVersion?: string | null, websiteUrl?: string | null, termsUrl?: string | null, isListed: boolean, isFeatured: boolean, ownerWorkspaceId?: string | null, createdAt: string, updatedAt: string };
+export type ApplicationRegistrationFragmentFragment = { __typename?: 'ApplicationRegistration', id: string, universalIdentifier: string, name: string, description?: string | null, logoUrl?: string | null, author?: string | null, oAuthClientId: string, oAuthRedirectUris: Array<string>, oAuthScopes: Array<string>, sourceType: ApplicationRegistrationSourceType, sourcePackage?: string | null, latestAvailableVersion?: string | null, websiteUrl?: string | null, termsUrl?: string | null, isFeatured: boolean, provenanceRepositoryUrl?: string | null, isProvenanceVerified: boolean, ownerWorkspaceId?: string | null, createdAt: string, updatedAt: string };
 
 export type DeleteApplicationRegistrationMutationVariables = Exact<{
   id: Scalars['String'];
@@ -6630,7 +6629,7 @@ export type UpdateApplicationRegistrationMutationVariables = Exact<{
 }>;
 
 
-export type UpdateApplicationRegistrationMutation = { __typename?: 'Mutation', updateApplicationRegistration: { __typename?: 'ApplicationRegistration', id: string, universalIdentifier: string, name: string, description?: string | null, logoUrl?: string | null, author?: string | null, oAuthClientId: string, oAuthRedirectUris: Array<string>, oAuthScopes: Array<string>, sourceType: ApplicationRegistrationSourceType, sourcePackage?: string | null, latestAvailableVersion?: string | null, websiteUrl?: string | null, termsUrl?: string | null, isListed: boolean, isFeatured: boolean, ownerWorkspaceId?: string | null, createdAt: string, updatedAt: string } };
+export type UpdateApplicationRegistrationMutation = { __typename?: 'Mutation', updateApplicationRegistration: { __typename?: 'ApplicationRegistration', id: string, universalIdentifier: string, name: string, description?: string | null, logoUrl?: string | null, author?: string | null, oAuthClientId: string, oAuthRedirectUris: Array<string>, oAuthScopes: Array<string>, sourceType: ApplicationRegistrationSourceType, sourcePackage?: string | null, latestAvailableVersion?: string | null, websiteUrl?: string | null, termsUrl?: string | null, isFeatured: boolean, provenanceRepositoryUrl?: string | null, isProvenanceVerified: boolean, ownerWorkspaceId?: string | null, createdAt: string, updatedAt: string } };
 
 export type UpdateApplicationRegistrationVariableMutationVariables = Exact<{
   input: UpdateApplicationRegistrationVariableInput;
@@ -6670,14 +6669,14 @@ export type FindApplicationRegistrationVariablesQuery = { __typename?: 'Query', 
 export type FindManyApplicationRegistrationsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type FindManyApplicationRegistrationsQuery = { __typename?: 'Query', findManyApplicationRegistrations: Array<{ __typename?: 'ApplicationRegistration', id: string, universalIdentifier: string, name: string, description?: string | null, logoUrl?: string | null, author?: string | null, oAuthClientId: string, oAuthRedirectUris: Array<string>, oAuthScopes: Array<string>, sourceType: ApplicationRegistrationSourceType, sourcePackage?: string | null, latestAvailableVersion?: string | null, websiteUrl?: string | null, termsUrl?: string | null, isListed: boolean, isFeatured: boolean, ownerWorkspaceId?: string | null, createdAt: string, updatedAt: string }> };
+export type FindManyApplicationRegistrationsQuery = { __typename?: 'Query', findManyApplicationRegistrations: Array<{ __typename?: 'ApplicationRegistration', id: string, universalIdentifier: string, name: string, description?: string | null, logoUrl?: string | null, author?: string | null, oAuthClientId: string, oAuthRedirectUris: Array<string>, oAuthScopes: Array<string>, sourceType: ApplicationRegistrationSourceType, sourcePackage?: string | null, latestAvailableVersion?: string | null, websiteUrl?: string | null, termsUrl?: string | null, isFeatured: boolean, provenanceRepositoryUrl?: string | null, isProvenanceVerified: boolean, ownerWorkspaceId?: string | null, createdAt: string, updatedAt: string }> };
 
 export type FindOneApplicationRegistrationQueryVariables = Exact<{
   id: Scalars['String'];
 }>;
 
 
-export type FindOneApplicationRegistrationQuery = { __typename?: 'Query', findOneApplicationRegistration: { __typename?: 'ApplicationRegistration', id: string, universalIdentifier: string, name: string, description?: string | null, logoUrl?: string | null, author?: string | null, oAuthClientId: string, oAuthRedirectUris: Array<string>, oAuthScopes: Array<string>, sourceType: ApplicationRegistrationSourceType, sourcePackage?: string | null, latestAvailableVersion?: string | null, websiteUrl?: string | null, termsUrl?: string | null, isListed: boolean, isFeatured: boolean, ownerWorkspaceId?: string | null, createdAt: string, updatedAt: string } };
+export type FindOneApplicationRegistrationQuery = { __typename?: 'Query', findOneApplicationRegistration: { __typename?: 'ApplicationRegistration', id: string, universalIdentifier: string, name: string, description?: string | null, logoUrl?: string | null, author?: string | null, oAuthClientId: string, oAuthRedirectUris: Array<string>, oAuthScopes: Array<string>, sourceType: ApplicationRegistrationSourceType, sourcePackage?: string | null, latestAvailableVersion?: string | null, websiteUrl?: string | null, termsUrl?: string | null, isFeatured: boolean, provenanceRepositoryUrl?: string | null, isProvenanceVerified: boolean, ownerWorkspaceId?: string | null, createdAt: string, updatedAt: string } };
 
 export type UninstallApplicationMutationVariables = Exact<{
   universalIdentifier: Scalars['String'];
@@ -8029,8 +8028,9 @@ export const ApplicationRegistrationFragmentFragmentDoc = gql`
   latestAvailableVersion
   websiteUrl
   termsUrl
-  isListed
   isFeatured
+  provenanceRepositoryUrl
+  isProvenanceVerified
   ownerWorkspaceId
   createdAt
   updatedAt
