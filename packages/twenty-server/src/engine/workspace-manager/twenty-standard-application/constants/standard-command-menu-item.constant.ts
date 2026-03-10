@@ -134,7 +134,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   addToFavorites: {
     universalIdentifier: '38bf80c3-bd55-4753-80ba-38aa66429a03',
     label: 'Add to favorites',
-    shortLabel: '',
+    shortLabel: null,
     icon: 'IconHeart',
     position: 9,
     isPinned: true,
@@ -148,7 +148,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   removeFromFavorites: {
     universalIdentifier: '3ea42507-44fa-4895-a36d-cbfef7355a50',
     label: 'Remove from favorites',
-    shortLabel: '',
+    shortLabel: null,
     icon: 'IconHeartOff',
     position: 10,
     isPinned: true,
