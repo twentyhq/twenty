@@ -1,7 +1,7 @@
 import {
   CommandMenuContextApiPageType,
   type CommandMenuContextApi,
-} from 'twenty-shared/types';
+} from '@/types';
 import { evaluateConditionalAvailabilityExpression } from '../evaluateConditionalAvailabilityExpression';
 
 const buildContext = (

@@ -11,5 +11,6 @@ export const toExprEval = (raw: string): string =>
       .replace(/===/g, '==')
       .replace(/&&/g, 'and')
       .replace(/\|\|/g, 'or')
-      .replace(/!(?!=)/g, 'not '),
+      .replace(/!(?!=)/g, 'not ')
+      .replace(/,(\s*\))/g, '$1'),
   );

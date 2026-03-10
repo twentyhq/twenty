@@ -18,6 +18,7 @@ const buildMockCommandMenuContextApi = (
 ): CommandMenuContextApi => ({
   pageType: CommandMenuContextApiPageType.INDEX_PAGE,
   isInSidePanel: false,
+  isPageInEditMode: false,
   favoriteRecordIds: [],
   isSelectAll: false,
   hasAnySoftDeleteFilterOnView: false,
@@ -168,7 +169,7 @@ describe('transformConditionalAvailabilityExpressionsForEsBuildPlugin', () => {
         'conditionalAvailabilityExpression: "pageType == \\"RECORD_PAGE\\""',
       );
       expect(transformed).toContain(
-        'conditionalAvailabilityExpression: "favoriteRecordIds.length > 0 and not objectMetadataItem.isRemote"',
+        'conditionalAvailabilityExpression: "arrayLength(favoriteRecordIds) > 0 and not objectMetadataItem.isRemote"',
       );
     });
 
@@ -179,7 +180,7 @@ describe('transformConditionalAvailabilityExpressionsForEsBuildPlugin', () => {
         transformConditionalAvailabilityExpressionsForEsBuildPlugin(source);
 
       expect(transformed).toContain(
-        '"pageType == \\"RECORD_PAGE\\" and favoriteRecordIds.length > 0"',
+        '"pageType == \\"RECORD_PAGE\\" and arrayLength(favoriteRecordIds) > 0"',
       );
     });
   });
