@@ -12,6 +12,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined, parseJson } from 'twenty-shared/utils';
+import { z } from 'zod';
 
 export const EMPTY_FILTER_VALUE = '[]';
 export const MAX_ITEMS_TO_DISPLAY = 3;
@@ -39,7 +40,10 @@ export const ObjectFilterDropdownSourceSelect = ({
   const selectedSources = isNonEmptyString(
     objectFilterDropdownCurrentRecordFilter?.value,
   )
-    ? (parseJson<string[]>(objectFilterDropdownCurrentRecordFilter.value) ?? [])
+    ? (z
+        .array(z.string())
+        .safeParse(parseJson(objectFilterDropdownCurrentRecordFilter.value))
+        .data ?? [])
     : [];
 
   const sourceTypes = getActorSourceMultiSelectOptions(selectedSources);

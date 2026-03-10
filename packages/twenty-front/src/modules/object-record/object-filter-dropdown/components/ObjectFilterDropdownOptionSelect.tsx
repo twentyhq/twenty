@@ -24,6 +24,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { MAX_OPTIONS_TO_DISPLAY } from 'twenty-shared/constants';
 import { isDefined, parseJson } from 'twenty-shared/utils';
 import { MenuItem, MenuItemMultiSelect } from 'twenty-ui/navigation';
+import { z } from 'zod';
 
 export const EMPTY_FILTER_VALUE = '';
 
@@ -58,8 +59,10 @@ export const ObjectFilterDropdownOptionSelect = ({
   const selectedOptions = useMemo(
     () =>
       isNonEmptyString(objectFilterDropdownCurrentRecordFilter?.value)
-        ? (parseJson<string[]>(objectFilterDropdownCurrentRecordFilter.value) ??
-          [])
+        ? (z
+            .array(z.string())
+            .safeParse(parseJson(objectFilterDropdownCurrentRecordFilter.value))
+            .data ?? [])
         : [],
     [objectFilterDropdownCurrentRecordFilter?.value],
   );

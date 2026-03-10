@@ -17,6 +17,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { type ChangeEvent, useState } from 'react';
 import { isDefined, parseJson } from 'twenty-shared/utils';
 import { MenuItem, MenuItemMultiSelectAvatar } from 'twenty-ui/navigation';
+import { z } from 'zod';
 
 export const EMPTY_FILTER_VALUE = '[]';
 export const MAX_ITEMS_TO_DISPLAY = 5;
@@ -44,7 +45,10 @@ export const ObjectFilterDropdownCountrySelect = () => {
   const selectedCountryNames = isNonEmptyString(
     objectFilterDropdownCurrentRecordFilter?.value,
   )
-    ? (parseJson<string[]>(objectFilterDropdownCurrentRecordFilter.value) ?? [])
+    ? (z
+        .array(z.string())
+        .safeParse(parseJson(objectFilterDropdownCurrentRecordFilter.value))
+        .data ?? [])
     : [];
 
   const filteredSelectableItems = countriesAsSelectableItems.filter(
