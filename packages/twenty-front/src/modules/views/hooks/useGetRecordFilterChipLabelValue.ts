@@ -18,6 +18,13 @@ export const useGetRecordFilterChipLabelValue = () => {
 
     const recordFilterDisplayValue = getRecordFilterDisplayValue(recordFilter);
 
+    console.log({
+      operandLabelShort,
+      operandIsEmptiness,
+      recordFilterIsEmpty,
+      recordFilterDisplayValue,
+    });
+
     if (!operandIsEmptiness && !recordFilterIsEmpty) {
       return `${operandLabelShort} ${recordFilterDisplayValue}`;
     }
