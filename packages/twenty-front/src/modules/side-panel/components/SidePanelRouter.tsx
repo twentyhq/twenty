@@ -2,6 +2,7 @@ import { CommandMenuContextProvider } from '@/command-menu-item/contexts/Command
 import { SidePanelContainer } from '@/side-panel/components/SidePanelContainer';
 import { SidePanelTopBar } from '@/side-panel/components/SidePanelTopBar';
 import { SIDE_PANEL_PAGES_CONFIG } from '@/side-panel/constants/SidePanelPagesConfig';
+import { SIDE_PANEL_SUB_PAGES } from '@/side-panel/constants/SidePanelSubPages';
 import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
 import { SidePanelSubPageNavigationHeader } from '@/side-panel/pages/common/components/SidePanelSubPageNavigationHeader';
 import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
@@ -28,7 +29,9 @@ export const SidePanelRouter = () => {
   );
   const { goBackFromSidePanel } = useSidePanelHistory();
 
-  const isSubPage = sidePanelNavigationStack.length > 1;
+  const isSubPage =
+    sidePanelNavigationStack.length > 1 &&
+    SIDE_PANEL_SUB_PAGES.has(sidePanelPage);
 
   const rawPageComponent = isDefined(sidePanelPage)
     ? SIDE_PANEL_PAGES_CONFIG.get(sidePanelPage)

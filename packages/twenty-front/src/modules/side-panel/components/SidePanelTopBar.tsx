@@ -1,11 +1,14 @@
+import { SidePanelBackButton } from '@/side-panel/components/SidePanelBackButton';
 import { SidePanelPageInfo } from '@/side-panel/components/SidePanelPageInfo';
 import { SidePanelTopBarInputFocusEffect } from '@/side-panel/components/SidePanelTopBarInputFocusEffect';
 import { SidePanelTopBarRightCornerIcon } from '@/side-panel/components/SidePanelTopBarRightCornerIcon';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
+import { SIDE_PANEL_SUB_PAGES } from '@/side-panel/constants/SidePanelSubPages';
 import { SIDE_PANEL_TOP_BAR_HEIGHT } from '@/side-panel/constants/SidePanelTopBarHeight';
 import { SIDE_PANEL_TOP_BAR_HEIGHT_MOBILE } from '@/side-panel/constants/SidePanelTopBarHeightMobile';
 import { useSidePanelContextChips } from '@/side-panel/hooks/useSidePanelContextChips';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
+import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
@@ -118,13 +121,21 @@ export const SidePanelTopBar = () => {
     });
   };
 
-  const shouldShowCloseButton = !isMobile;
+  const sidePanelNavigationStack = useAtomStateValue(
+    sidePanelNavigationStackState,
+  );
+
+  const isOnSubPage = SIDE_PANEL_SUB_PAGES.has(sidePanelPage);
+  const canGoBack = sidePanelNavigationStack.length > 1;
+  const shouldShowBackButton = !isMobile && canGoBack && !isOnSubPage;
+  const shouldShowCloseButton = !isMobile && !shouldShowBackButton;
 
   const lastChip = contextChips.at(-1);
 
   return (
     <StyledInputContainer isMobile={isMobile}>
       <StyledContentContainer>
+        {shouldShowBackButton && <SidePanelBackButton />}
         {shouldShowCloseButton && (
           <motion.div
             exit={{ opacity: 0, width: 0 }}
