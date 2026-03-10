@@ -1,15 +1,8 @@
 import { type CommandMenuContextType } from '@/command-menu-item/contexts/CommandMenuContext';
-import { CommandMenuContextProviderDefault } from '@/command-menu-item/contexts/CommandMenuContextProviderDefault';
+import { CommandMenuContextProviderLegacy } from '@/command-menu-item/contexts/CommandMenuContextProviderLegacy';
 import { CommandMenuContextProviderServerItems } from '@/command-menu-item/contexts/CommandMenuContextProviderServerItems';
-import { CommandMenuContextProviderWorkflowObjects } from '@/command-menu-item/contexts/CommandMenuContextProviderWorkflowObjects';
-import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { isDefined } from 'twenty-shared/utils';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const CommandMenuContextProvider = ({
@@ -26,19 +19,6 @@ export const CommandMenuContextProvider = ({
     FeatureFlagKey.IS_COMMAND_MENU_ITEM_ENABLED,
   );
 
-  const contextStoreCurrentObjectMetadataItemId = useAtomComponentStateValue(
-    contextStoreCurrentObjectMetadataItemIdComponentState,
-  );
-
-  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
-
-  const objectMetadataItem =
-    objectMetadataItemOverride ??
-    objectMetadataItems.find(
-      (objectMetadataItem) =>
-        objectMetadataItem.id === contextStoreCurrentObjectMetadataItemId,
-    );
-
   if (isCommandMenuItemEnabled) {
     return (
       <CommandMenuContextProviderServerItems
@@ -51,34 +31,14 @@ export const CommandMenuContextProvider = ({
     );
   }
 
-  if (!isDefined(objectMetadataItem)) {
-    return null;
-  }
-
-  const isWorkflowObject =
-    objectMetadataItem.nameSingular === CoreObjectNameSingular.Workflow;
-
-  if (isWorkflowObject) {
-    return (
-      <CommandMenuContextProviderWorkflowObjects
-        isInSidePanel={isInSidePanel}
-        displayType={displayType}
-        containerType={containerType}
-        objectMetadataItem={objectMetadataItem}
-      >
-        {children}
-      </CommandMenuContextProviderWorkflowObjects>
-    );
-  }
-
   return (
-    <CommandMenuContextProviderDefault
+    <CommandMenuContextProviderLegacy
       isInSidePanel={isInSidePanel}
       displayType={displayType}
       containerType={containerType}
-      objectMetadataItem={objectMetadataItem}
+      objectMetadataItemOverride={objectMetadataItemOverride}
     >
       {children}
-    </CommandMenuContextProviderDefault>
+    </CommandMenuContextProviderLegacy>
   );
 };

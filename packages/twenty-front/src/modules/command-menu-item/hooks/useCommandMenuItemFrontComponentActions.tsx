@@ -11,7 +11,6 @@ import { useMountHeadlessFrontComponent } from '@/front-components/hooks/useMoun
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useContext } from 'react';
 import { type CommandMenuContextApi } from 'twenty-shared/types';
 import {
@@ -25,7 +24,6 @@ import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants
 import {
   CommandMenuItemAvailabilityType,
   type CommandMenuItemFieldsFragment,
-  FeatureFlagKey,
   useFindManyCommandMenuItemsQuery,
 } from '~/generated-metadata/graphql';
 
@@ -159,15 +157,10 @@ export const useCommandMenuItemFrontComponentActions = (
         }
       : undefined;
 
-  const isCommandMenuItemEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_COMMAND_MENU_ITEM_ENABLED,
-  );
-
   const { data } = useFindManyCommandMenuItemsQuery({
     skip:
-      !isCommandMenuItemEnabled ||
-      (containerType !== 'command-menu-list' &&
-        containerType !== 'command-menu-show-page-dropdown'),
+      containerType !== 'command-menu-list' &&
+      containerType !== 'command-menu-show-page-dropdown',
   });
 
   const frontComponentItems =
