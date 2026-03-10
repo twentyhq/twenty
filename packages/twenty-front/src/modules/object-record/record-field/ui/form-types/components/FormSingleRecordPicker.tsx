@@ -14,7 +14,6 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
-import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -28,23 +27,19 @@ const StyledFormSelectContainerWrapper = styled.div<{ readonly?: boolean }>`
   display: flex;
   height: 32px;
   width: 100%;
-`;
 
-const formSelectInnerContainerClassName = css`
-  align-items: center;
-  justify-content: space-between;
-  padding-right: ${themeCssVariables.spacing[2]};
-`;
-
-const formSelectInnerContainerHoverClassName = css`
-  &:hover,
-  &[data-open='true'] {
-    background-color: ${themeCssVariables.background.transparent.light};
+  &:hover > div,
+  &[data-open='true'] > div {
+    background-color: ${({ readonly }) =>
+      readonly
+        ? 'transparent'
+        : themeCssVariables.background.transparent.light};
   }
 `;
 
 const StyledIconButton = styled.div`
   display: flex;
+  padding-right: ${themeCssVariables.spacing[2]};
 `;
 
 export type RecordId = string;
@@ -170,7 +165,6 @@ export const FormSingleRecordPicker = ({
         {disabled ? (
           <StyledFormSelectContainerWrapper readonly>
             <FormFieldInputInnerContainer
-              className={formSelectInnerContainerClassName}
               formFieldInputInstanceId={componentId}
               hasRightElement={false}
             >
@@ -196,7 +190,6 @@ export const FormSingleRecordPicker = ({
             clickableComponent={
               <StyledFormSelectContainerWrapper>
                 <FormFieldInputInnerContainer
-                  className={`${formSelectInnerContainerClassName} ${formSelectInnerContainerHoverClassName}`}
                   formFieldInputInstanceId={componentId}
                   hasRightElement={isDefined(VariablePicker) && !disabled}
                   preventFocusStackUpdate={true}

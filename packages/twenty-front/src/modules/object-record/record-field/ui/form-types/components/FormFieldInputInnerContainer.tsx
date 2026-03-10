@@ -27,8 +27,10 @@ const StyledFormFieldInputInnerContainer = styled.div<
   border-top-left-radius: ${themeCssVariables.border.radius.sm};
   border-top-right-radius: ${({ multiline, hasRightElement }) =>
     multiline || !hasRightElement ? themeCssVariables.border.radius.sm : '0'};
+  align-items: center;
   box-sizing: border-box;
   display: flex;
+  justify-content: space-between;
   overflow-x: auto;
   overflow-y: ${({ multiline }) => (multiline ? 'auto' : 'hidden')};
   scrollbar-width: none;
