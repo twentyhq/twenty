@@ -25,6 +25,7 @@ import {
   CommandMenuContextApiPageType,
   type CommandMenuContextApi,
 } from 'twenty-shared/types';
+import { isNonEmptyArray } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
@@ -60,7 +61,9 @@ export const useCommandMenuContextApi = (): CommandMenuContextApi => {
       : undefined;
 
   const favoriteRecordIds = (() => {
-    if (!isDefined(recordIds) || recordIds.length === 0) return [];
+    if (!isNonEmptyArray(recordIds)){
+      return [];
+    }
 
     if (isNavigationMenuItemEditingEnabled && isDefined(objectMetadataItem)) {
       return recordIds.filter((recordId) =>

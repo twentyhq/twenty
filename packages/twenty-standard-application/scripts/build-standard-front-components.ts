@@ -6,11 +6,9 @@ import {
   FRONT_COMPONENT_EXTERNAL_MODULES,
   getFrontComponentBuildPlugins,
 } from 'twenty-sdk/build';
+import { kebabToCamelCase } from 'twenty-shared/utils';
 
-const FRONT_COMPONENTS_DIR = path.resolve(
-  __dirname,
-  '../src/front-components',
-);
+const FRONT_COMPONENTS_DIR = path.resolve(__dirname, '../src/front-components');
 
 const BUILT_OUTPUT_DIR = path.resolve(__dirname, '../src/build');
 
@@ -18,9 +16,6 @@ const MANIFEST_OUTPUT_PATH = path.resolve(
   __dirname,
   '../src/standard-front-component-build-manifest.ts',
 );
-
-const kebabToCamelCase = (str: string): string =>
-  str.replace(/-([a-z])/g, (_, char) => char.toUpperCase());
 
 const findTsxFilesRecursively = (dir: string): string[] => {
   const results: string[] = [];
