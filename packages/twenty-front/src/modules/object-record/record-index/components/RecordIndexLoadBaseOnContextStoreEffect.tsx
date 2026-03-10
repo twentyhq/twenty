@@ -41,7 +41,7 @@ export const RecordIndexLoadBaseOnContextStoreEffect = () => {
     if (isDefined(view)) {
       loadRecordIndexStates(view, objectMetadataItem);
       setLoadedViewId(contextStoreCurrentViewId);
-    } else if (objectMetadataItem.isSystem) {
+    } else {
       createDefaultViewForObject(objectMetadataItem);
     }
   }, [
