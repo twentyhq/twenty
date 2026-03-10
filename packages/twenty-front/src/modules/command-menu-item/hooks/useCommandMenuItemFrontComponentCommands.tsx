@@ -36,7 +36,6 @@ type BuildCommandMenuItemFromFrontComponentParams = {
   item: CommandMenuItemWithFrontComponent;
   type?: CommandMenuItemType;
   scope: CommandMenuItemScope;
-  index: number;
   isPinned: boolean;
   getIcon: ReturnType<typeof useIcons>['getIcon'];
   openFrontComponentInSidePanel: (params: {
@@ -62,7 +61,6 @@ const buildCommandMenuItemFromFrontComponent = ({
   item,
   type = CommandMenuItemType.FrontComponent,
   scope,
-  index,
   isPinned,
   getIcon,
   openFrontComponentInSidePanel,
@@ -100,7 +98,7 @@ const buildCommandMenuItemFromFrontComponent = ({
     scope,
     label: displayLabel,
     shortLabel: item.shortLabel ?? undefined,
-    position: index,
+    position: item.position,
     isPinned,
     Icon,
     shouldBeRegistered: () =>
@@ -198,11 +196,10 @@ export const useCommandMenuItemFrontComponentCommands = (
       item.availabilityType === CommandMenuItemAvailabilityType.FALLBACK,
   );
 
-  const globalCommandMenuItems = globalItems.map((item, index) =>
+  const globalCommandMenuItems = globalItems.map((item) =>
     buildCommandMenuItemFromFrontComponent({
       item,
       scope: CommandMenuItemScope.Global,
-      index,
       isPinned: !contextStoreIsPageInEditMode && item.isPinned,
       getIcon,
       openFrontComponentInSidePanel,
@@ -212,11 +209,10 @@ export const useCommandMenuItemFrontComponentCommands = (
   );
 
   const recordScopedCommandMenuItems = hasRecordSelection
-    ? recordScopedItems.map((item, index) =>
+    ? recordScopedItems.map((item) =>
         buildCommandMenuItemFromFrontComponent({
           item,
           scope: CommandMenuItemScope.RecordSelection,
-          index,
           isPinned: !contextStoreIsPageInEditMode && item.isPinned,
           getIcon,
           openFrontComponentInSidePanel,
@@ -227,12 +223,11 @@ export const useCommandMenuItemFrontComponentCommands = (
       )
     : [];
 
-  const fallbackCommandMenuItems = fallbackItems.map((item, index) =>
+  const fallbackCommandMenuItems = fallbackItems.map((item) =>
     buildCommandMenuItemFromFrontComponent({
       item,
       type: CommandMenuItemType.Fallback,
       scope: CommandMenuItemScope.Global,
-      index,
       isPinned: false,
       getIcon,
       openFrontComponentInSidePanel,
@@ -245,5 +240,7 @@ export const useCommandMenuItemFrontComponentCommands = (
     ...globalCommandMenuItems,
     ...recordScopedCommandMenuItems,
     ...fallbackCommandMenuItems,
-  ].filter((item) => item.shouldBeRegistered());
+  ]
+    .filter((item) => item.shouldBeRegistered())
+    .sort((a, b) => a.position - b.position);
 };
