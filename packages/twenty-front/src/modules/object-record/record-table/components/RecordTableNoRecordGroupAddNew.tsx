@@ -66,7 +66,7 @@ export const RecordTableNoRecordGroupAddNew = () => {
     return null;
   }
 
-  if (isRecordTableCreateDisabled(objectMetadataItem.nameSingular)) {
+  if (isRecordTableCreateDisabled(objectMetadataItem)) {
     return null;
   }
 

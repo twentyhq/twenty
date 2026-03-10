@@ -17,6 +17,7 @@ const getViewId = (
   viewIdFromQueryParams: string | null,
   indexViewId?: string,
   lastVisitedViewId?: string,
+  firstAvailableViewId?: string,
 ) => {
   if (isDefined(viewIdFromQueryParams)) {
     return viewIdFromQueryParams;
@@ -28,6 +29,10 @@ const getViewId = (
 
   if (isDefined(indexViewId)) {
     return indexViewId;
+  }
+
+  if (isDefined(firstAvailableViewId)) {
+    return firstAvailableViewId;
   }
 
   return undefined;
@@ -70,7 +75,16 @@ export const MainContextStoreProvider = () => {
       view.key === ViewKey.INDEX,
   )?.id;
 
-  const viewId = getViewId(viewIdQueryParam, indexViewId, lastVisitedViewId);
+  const firstAvailableViewId = coreViews.find(
+    (view) => view.objectMetadataId === objectMetadataItem?.id,
+  )?.id;
+
+  const viewId = getViewId(
+    viewIdQueryParam,
+    indexViewId,
+    lastVisitedViewId,
+    firstAvailableViewId,
+  );
   const showAuthModal = useShowAuthModal();
 
   const shouldComputeContextStore =
