@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { promises as fs } from 'fs';
 import { join, relative } from 'path';
 
+import { type Manifest } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
@@ -92,6 +93,55 @@ export class ApplicationInstallService {
       lockKey,
       { ttl: 60_000, ms: 500, maxRetries: 120 },
     );
+  }
+
+  async installFromLocalDirectory(params: {
+    appRegistrationId: string;
+    extractedDir: string;
+    workspaceId: string;
+  }): Promise<boolean> {
+    const appRegistration = await this.appRegistrationRepository.findOne({
+      where: { id: params.appRegistrationId },
+    });
+
+    if (!appRegistration) {
+      throw new ApplicationException(
+        `Application registration with id ${params.appRegistrationId} not found`,
+        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
+      );
+    }
+
+    const manifestContent = await fs.readFile(
+      join(params.extractedDir, 'manifest.json'),
+      'utf-8',
+    );
+    const manifest: Manifest = JSON.parse(manifestContent);
+
+    await this.ensureApplicationExists({
+      universalIdentifier: appRegistration.universalIdentifier,
+      name: manifest.application.displayName,
+      workspaceId: params.workspaceId,
+      applicationRegistrationId: appRegistration.id,
+      sourceType: appRegistration.sourceType,
+    });
+
+    await this.writeFilesToStorage(
+      params.extractedDir,
+      appRegistration.universalIdentifier,
+      params.workspaceId,
+    );
+
+    await this.applicationSyncService.synchronizeFromManifest({
+      workspaceId: params.workspaceId,
+      manifest,
+      applicationRegistrationId: appRegistration.id,
+    });
+
+    this.logger.log(
+      `Installed app from local directory: ${appRegistration.universalIdentifier}`,
+    );
+
+    return true;
   }
 
   private async doInstallApplication(

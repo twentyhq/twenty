@@ -1,10 +1,16 @@
-import { Injectable } from '@nestjs/common';
-import { InjectDataSource } from '@nestjs/typeorm';
+import { Injectable, Logger } from '@nestjs/common';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
+
+import { promises as fs } from 'fs';
+import { tmpdir } from 'os';
+import { join } from 'path';
 
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
-import { DataSource } from 'typeorm';
 import { FeatureFlagKey } from 'twenty-shared/types';
+import { DataSource, Repository } from 'typeorm';
 
+import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
+import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
@@ -14,6 +20,10 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
+import {
+  APP_SEEDS,
+  type AppSeedDefinition,
+} from 'src/engine/workspace-manager/dev-seeder/core/constants/app-seeds.constant';
 import { SeededWorkspacesIds } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { DevSeederPermissionsService } from 'src/engine/workspace-manager/dev-seeder/core/services/dev-seeder-permissions.service';
 import { seedCoreSchema } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-core-schema.util';
@@ -27,6 +37,8 @@ import { TwentyStandardApplicationService } from 'src/engine/workspace-manager/t
 
 @Injectable()
 export class DevSeederService {
+  private readonly logger = new Logger(DevSeederService.name);
+
   constructor(
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
     private readonly twentyConfigService: TwentyConfigService,
@@ -37,7 +49,10 @@ export class DevSeederService {
     private readonly devSeederPermissionsService: DevSeederPermissionsService,
     private readonly devSeederDataService: DevSeederDataService,
     private readonly applicationService: ApplicationService,
+    private readonly applicationInstallService: ApplicationInstallService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    @InjectRepository(ApplicationRegistrationEntity)
+    private readonly appRegistrationRepository: Repository<ApplicationRegistrationEntity>,
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
   ) {}
@@ -82,6 +97,8 @@ export class DevSeederService {
         workspaceId,
       },
     );
+
+    await this.seedApps(workspaceId);
 
     await this.devSeederMetadataService.seed({
       dataSourceMetadata,
@@ -165,5 +182,68 @@ export class DevSeederService {
     );
 
     await this.workspaceCacheStorageService.flush(workspaceId, undefined);
+  }
+
+  private async seedApps(workspaceId: string): Promise<void> {
+    for (const seed of APP_SEEDS) {
+      await this.seedOneApp(seed, workspaceId);
+    }
+  }
+
+  private async seedOneApp(
+    seed: AppSeedDefinition,
+    workspaceId: string,
+  ): Promise<void> {
+    let registration = await this.appRegistrationRepository.findOne({
+      where: {
+        universalIdentifier: seed.registration.universalIdentifier,
+      },
+    });
+
+    if (!registration) {
+      registration = await this.appRegistrationRepository.save(
+        this.appRegistrationRepository.create({
+          universalIdentifier: seed.registration.universalIdentifier,
+          name: seed.registration.name,
+          description: seed.registration.description,
+          sourceType: seed.registration.sourceType,
+          sourcePackage: seed.registration.sourcePackage,
+          author: seed.registration.author,
+          oAuthClientId: `20202020-seed-${seed.registration.universalIdentifier.slice(0, 8)}`,
+          oAuthClientSecretHash: 'seed',
+          oAuthRedirectUris: [],
+          oAuthScopes: [],
+          ownerWorkspaceId: workspaceId,
+          createdByUserId: null,
+        }),
+      );
+    }
+
+    const registrationId = registration.id;
+
+    const tmpDir = await fs.mkdtemp(join(tmpdir(), 'twenty-seed-app-'));
+
+    try {
+      await fs.writeFile(
+        join(tmpDir, 'manifest.json'),
+        JSON.stringify(seed.manifest),
+      );
+      await fs.writeFile(
+        join(tmpDir, 'package.json'),
+        JSON.stringify(seed.packageJson),
+      );
+
+      await this.applicationInstallService.installFromLocalDirectory({
+        appRegistrationId: registrationId,
+        extractedDir: tmpDir,
+        workspaceId,
+      });
+
+      this.logger.log(
+        `Seeded app "${seed.registration.name}" (${seed.registration.sourceType})`,
+      );
+    } finally {
+      await fs.rm(tmpDir, { recursive: true, force: true });
+    }
   }
 }
