@@ -1,30 +1,34 @@
-// Based on code from node-ip by indutny
-// Licensed under MIT License
-// https://github.com/indutny/node-ip
+import { BlockList } from 'net';
 
-const ipv6Regex =
-  /^(::)?(((\d{1,3}\.){3}(\d{1,3}){1})?([0-9a-f]){0,4}:{0,2}){1,8}(::)?$/i;
+const PRIVATE_RANGES = new BlockList();
 
-const fromLong = (ipl: number) => {
+PRIVATE_RANGES.addSubnet('0.0.0.0', 8);
+PRIVATE_RANGES.addSubnet('10.0.0.0', 8);
+PRIVATE_RANGES.addSubnet('100.64.0.0', 10);
+PRIVATE_RANGES.addSubnet('127.0.0.0', 8);
+PRIVATE_RANGES.addSubnet('169.254.0.0', 16);
+PRIVATE_RANGES.addSubnet('172.16.0.0', 12);
+PRIVATE_RANGES.addSubnet('192.0.0.0', 24);
+PRIVATE_RANGES.addSubnet('192.0.2.0', 24);
+PRIVATE_RANGES.addSubnet('192.168.0.0', 16);
+PRIVATE_RANGES.addSubnet('198.18.0.0', 15);
+PRIVATE_RANGES.addSubnet('198.51.100.0', 24);
+PRIVATE_RANGES.addSubnet('203.0.113.0', 24);
+PRIVATE_RANGES.addSubnet('224.0.0.0', 4);
+PRIVATE_RANGES.addSubnet('240.0.0.0', 4);
+
+PRIVATE_RANGES.addSubnet('::1', 128, 'ipv6');
+PRIVATE_RANGES.addSubnet('::', 128, 'ipv6');
+PRIVATE_RANGES.addSubnet('fc00::', 7, 'ipv6');
+PRIVATE_RANGES.addSubnet('fe80::', 10, 'ipv6');
+
+const fromLong = (ipl: number): string => {
   return `${ipl >>> 24}.${(ipl >> 16) & 255}.${(ipl >> 8) & 255}.${ipl & 255}`;
 };
 
-const isLoopback = (addr: string) => {
-  if (!/\./.test(addr) && !/:/.test(addr)) {
-    addr = fromLong(Number(addr));
-  }
-
-  return (
-    /^(::f{4}:)?127\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})/.test(addr) ||
-    /^0177\./.test(addr) ||
-    /^0x7f\./i.test(addr) ||
-    /^fe80::1$/i.test(addr) ||
-    /^::1$/.test(addr) ||
-    /^::$/.test(addr)
-  );
-};
-
-const normalizeToLong = (addr: string) => {
+// Parses IPv4 in any encoding (dotted decimal, octal, hex, bare integer)
+// into a 32-bit unsigned integer. Returns -1 for invalid input.
+const normalizeToLong = (addr: string): number => {
   const parts = addr.split('.').map((part) => {
     if (part.startsWith('0x') || part.startsWith('0X')) {
       return parseInt(part, 16);
@@ -65,37 +69,60 @@ const normalizeToLong = (addr: string) => {
   return val >>> 0;
 };
 
-// IPv6 addresses always contain colons; the colon check prevents the
-// loose regex from false-positiving on bare decimal/hex IPv4 like '0'.
-const isIpV6 = (hostname: string) =>
-  hostname.includes(':') && ipv6Regex.test(hostname);
+// Extracts the embedded IPv4 from an IPv4-mapped IPv6 address in hex
+// notation (e.g. ::ffff:a9fe:a9fe → 169.254.169.254). Returns null
+// if the address is not in this form.
+const HEX_MAPPED_RE = /^::ffff:([0-9a-f]{1,4}):([0-9a-f]{1,4})$/i;
 
-export const isPrivateIp = (addr: string) => {
-  if (isLoopback(addr)) {
-    return true;
+const extractIpv4FromHexMappedIpv6 = (addr: string): string | null => {
+  const match = addr.match(HEX_MAPPED_RE);
+
+  if (!match) {
+    return null;
   }
 
-  if (!isIpV6(addr)) {
-    const ipl = normalizeToLong(addr);
+  const hi = parseInt(match[1], 16);
+  const lo = parseInt(match[2], 16);
 
-    if (ipl < 0) {
-      throw new Error('invalid ipv4 address');
-    }
-    addr = fromLong(ipl);
+  return `${(hi >> 8) & 0xff}.${hi & 0xff}.${(lo >> 8) & 0xff}.${lo & 0xff}`;
+};
+
+// Extracts the embedded IPv4 from an IPv4-mapped IPv6 address in
+// dotted-decimal notation (e.g. ::ffff:127.0.0.1 → 127.0.0.1).
+const DOTTED_MAPPED_RE = /^::ffff:(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})$/i;
+
+const extractIpv4FromDottedMappedIpv6 = (addr: string): string | null => {
+  const match = addr.match(DOTTED_MAPPED_RE);
+
+  return match ? match[1] : null;
+};
+
+export const isPrivateIp = (addr: string): boolean => {
+  // IPv4-mapped IPv6 in hex form — the form Node.js URL parser produces.
+  const hexMappedIpv4 = extractIpv4FromHexMappedIpv6(addr);
+
+  if (hexMappedIpv4 !== null) {
+    return PRIVATE_RANGES.check(hexMappedIpv4);
   }
 
-  return (
-    // 0.0.0.0/8 — "this host on this network" (RFC 1122), reaches localhost
-    /^(::f{4}:)?0\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})$/i.test(addr) ||
-    /^(::f{4}:)?10\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})$/i.test(addr) ||
-    /^(::f{4}:)?192\.168\.([0-9]{1,3})\.([0-9]{1,3})$/i.test(addr) ||
-    /^(::f{4}:)?172\.(1[6-9]|2\d|30|31)\.([0-9]{1,3})\.([0-9]{1,3})$/i.test(
-      addr,
-    ) ||
-    /^(::f{4}:)?169\.254\.([0-9]{1,3})\.([0-9]{1,3})$/i.test(addr) ||
-    /^f[cd][0-9a-f]{2}:/i.test(addr) ||
-    /^fe80:/i.test(addr) ||
-    /^::1$/.test(addr) ||
-    /^::$/.test(addr)
-  );
+  // IPv4-mapped IPv6 in dotted-decimal form (::ffff:D.D.D.D)
+  const dottedMappedIpv4 = extractIpv4FromDottedMappedIpv6(addr);
+
+  if (dottedMappedIpv4 !== null) {
+    return PRIVATE_RANGES.check(dottedMappedIpv4);
+  }
+
+  // Pure IPv6 (any address containing a colon that isn't IPv4-mapped)
+  if (addr.includes(':')) {
+    return PRIVATE_RANGES.check(addr, 'ipv6');
+  }
+
+  // IPv4 in any encoding (standard, octal, hex, bare integer)
+  const ipl = normalizeToLong(addr);
+
+  if (ipl < 0) {
+    throw new Error('invalid ipv4 address');
+  }
+
+  return PRIVATE_RANGES.check(fromLong(ipl));
 };
