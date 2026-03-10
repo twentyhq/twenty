@@ -45,15 +45,6 @@ const StyledWidgetCard = styled.div<WidgetCardStyledProps>`
     }
     return 'none';
   }};
-  border-bottom: ${(props) => {
-    const { variant, isEditable, isLastWidget } = props;
-    if (variant === 'side-column' && !isEditable) {
-      return isLastWidget !== true
-        ? `1px solid ${themeCssVariables.border.color.light}`
-        : 'none';
-    }
-    return `1px solid ${computeBorderColor(props)}`;
-  }};
   border-color: ${(props) => computeBorderColor(props)};
   border-radius: ${({ variant, isEditable }) =>
     variant === 'dashboard' || variant === 'record-page' || isEditable
@@ -67,6 +58,15 @@ const StyledWidgetCard = styled.div<WidgetCardStyledProps>`
     variant === 'dashboard' || variant === 'record-page' || isEditable
       ? '1px'
       : '0'};
+  border-bottom: ${(props) => {
+    const { variant, isEditable, isLastWidget } = props;
+    if (variant === 'side-column' && !isEditable) {
+      return isLastWidget !== true
+        ? `1px solid ${themeCssVariables.border.color.light}`
+        : 'none';
+    }
+    return `1px solid ${computeBorderColor(props)}`;
+  }};
 
   box-sizing: border-box;
 
@@ -103,6 +103,21 @@ const StyledWidgetCard = styled.div<WidgetCardStyledProps>`
 
   &:hover {
     border-color: ${(props) => {
+      if (
+        props.isEditable &&
+        !props.isDragging &&
+        !props.isEditing &&
+        !props.isResizing
+      ) {
+        return themeCssVariables.border.color.strong;
+      }
+      return computeBorderColor(props);
+    }};
+    border-bottom-color: ${(props) => {
+      const { variant, isEditable, isLastWidget } = props;
+      if (variant === 'side-column' && !isEditable && isLastWidget !== true) {
+        return themeCssVariables.border.color.light;
+      }
       if (
         props.isEditable &&
         !props.isDragging &&

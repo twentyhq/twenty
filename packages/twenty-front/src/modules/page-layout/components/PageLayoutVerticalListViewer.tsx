@@ -29,8 +29,7 @@ const StyledVerticalListContainer = styled.div<{
 const StyledFieldsWidgetWrapper = styled.div<{
   variant: PageLayoutVerticalListViewerVariant;
 }>`
-  padding: ${({ variant }) =>
-    variant === 'side-column' ? themeCssVariables.spacing[1] : '0'};
+
 `;
 
 type PageLayoutVerticalListViewerProps = {
