@@ -180,7 +180,9 @@ jobs:
       - name: Execute hello-world logic function
         run: |
           cd /tmp/e2e-test-workspace/test-app
-          npx --no-install twenty function:execute --functionName hello-world-logic-function
+          EXEC_OUTPUT=$(npx --no-install twenty function:execute --functionName hello-world-logic-function)
+          echo "$EXEC_OUTPUT"
+          echo "$EXEC_OUTPUT" | grep -q "Hello, World!"
 
       - name: Run scaffolded app integration test
         run: |
