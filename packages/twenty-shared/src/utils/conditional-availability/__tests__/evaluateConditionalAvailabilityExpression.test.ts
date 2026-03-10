@@ -106,8 +106,7 @@ describe('evaluateConditionalAvailabilityExpression', () => {
 
   describe('includesSome', () => {
     it('should return true when some records include the value in the array prop', () => {
-      const expression =
-        'includesSome(selectedRecords, "statuses", "ACTIVE")';
+      const expression = 'includesSome(selectedRecords, "statuses", "ACTIVE")';
 
       const context = buildContext({
         selectedRecords: [
@@ -122,8 +121,7 @@ describe('evaluateConditionalAvailabilityExpression', () => {
     });
 
     it('should return false when no record includes the value in the array prop', () => {
-      const expression =
-        'includesSome(selectedRecords, "statuses", "ACTIVE")';
+      const expression = 'includesSome(selectedRecords, "statuses", "ACTIVE")';
 
       const context = buildContext({
         selectedRecords: [
@@ -140,8 +138,7 @@ describe('evaluateConditionalAvailabilityExpression', () => {
 
   describe('includesNone', () => {
     it('should return true when no record includes the value in the array prop', () => {
-      const expression =
-        'includesNone(selectedRecords, "statuses", "ACTIVE")';
+      const expression = 'includesNone(selectedRecords, "statuses", "ACTIVE")';
 
       const context = buildContext({
         selectedRecords: [
@@ -156,8 +153,7 @@ describe('evaluateConditionalAvailabilityExpression', () => {
     });
 
     it('should return false when any record includes the value in the array prop', () => {
-      const expression =
-        'includesNone(selectedRecords, "statuses", "ACTIVE")';
+      const expression = 'includesNone(selectedRecords, "statuses", "ACTIVE")';
 
       const context = buildContext({
         selectedRecords: [
@@ -172,8 +168,7 @@ describe('evaluateConditionalAvailabilityExpression', () => {
     });
 
     it('should return false when all records include the value in the array prop', () => {
-      const expression =
-        'includesNone(selectedRecords, "statuses", "ACTIVE")';
+      const expression = 'includesNone(selectedRecords, "statuses", "ACTIVE")';
 
       const context = buildContext({
         selectedRecords: [
