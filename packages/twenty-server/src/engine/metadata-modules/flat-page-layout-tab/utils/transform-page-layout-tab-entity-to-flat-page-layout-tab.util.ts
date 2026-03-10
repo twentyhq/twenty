@@ -53,5 +53,6 @@ export const transformPageLayoutTabEntityToFlatPageLayoutTab = ({
     widgetUniversalIdentifiers: pageLayoutTabEntity.widgets.map(
       (widget) => widget.universalIdentifier,
     ),
+    overrides: pageLayoutTabEntity.overrides ?? null,
   };
 };

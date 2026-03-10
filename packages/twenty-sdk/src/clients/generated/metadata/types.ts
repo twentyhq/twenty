@@ -1897,6 +1897,9 @@ export default {
             "deletedAt": [
                 4
             ],
+            "isOverridden": [
+                6
+            ],
             "__typename": [
                 1
             ]
@@ -2516,6 +2519,9 @@ export default {
             ],
             "deletedAt": [
                 4
+            ],
+            "isOverridden": [
+                6
             ],
             "__typename": [
                 1
@@ -8561,6 +8567,9 @@ export default {
             "configuration": [
                 15
             ],
+            "conditionalDisplay": [
+                15
+            ],
             "__typename": [
                 1
             ]
@@ -8585,6 +8594,9 @@ export default {
             ],
             "position": [
                 11
+            ],
+            "icon": [
+                1
             ],
             "__typename": [
                 1
@@ -8645,6 +8657,9 @@ export default {
             "position": [
                 11
             ],
+            "icon": [
+                1
+            ],
             "widgets": [
                 349
             ],
@@ -8675,6 +8690,9 @@ export default {
                 15
             ],
             "configuration": [
+                15
+            ],
+            "conditionalDisplay": [
                 15
             ],
             "__typename": [

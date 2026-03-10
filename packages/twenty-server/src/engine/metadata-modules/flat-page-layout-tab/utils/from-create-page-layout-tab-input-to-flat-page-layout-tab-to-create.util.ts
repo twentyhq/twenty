@@ -57,5 +57,6 @@ export const fromCreatePageLayoutTabInputToFlatPageLayoutTabToCreate = ({
     widgetUniversalIdentifiers: [],
     icon: null,
     layoutMode: PageLayoutTabLayoutMode.GRID,
+    overrides: null,
   };
 };

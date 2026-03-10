@@ -4,23 +4,12 @@ import { installApplication } from 'test/integration/metadata/suites/application
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { uninstallApplication } from 'test/integration/metadata/suites/application/utils/uninstall-application.util';
-import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { v4 as uuidv4 } from 'uuid';
-import { FeatureFlagKey } from 'twenty-shared/types';
 
 const INVALID_UUID_APP_ID = uuidv4();
 const INVALID_UUID_ROLE_ID = uuidv4();
 
 describe('Install application should fail when entity does not exist', () => {
-  beforeAll(async () => {
-    await updateFeatureFlag({
-      featureFlag:
-        FeatureFlagKey.IS_APPLICATION_INSTALLATION_FROM_TARBALL_ENABLED,
-      value: true,
-      expectToFail: false,
-    });
-  });
-
   beforeEach(async () => {
     await setupApplicationForSync({
       applicationUniversalIdentifier: INVALID_UUID_APP_ID,
@@ -29,15 +18,6 @@ describe('Install application should fail when entity does not exist', () => {
       sourcePath: 'test-invalid-uuid',
     });
   }, 60000);
-
-  afterAll(async () => {
-    await updateFeatureFlag({
-      featureFlag:
-        FeatureFlagKey.IS_APPLICATION_INSTALLATION_FROM_TARBALL_ENABLED,
-      value: false,
-      expectToFail: false,
-    });
-  });
 
   afterEach(async () => {
     try {
