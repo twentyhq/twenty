@@ -126,7 +126,6 @@ describe('copyBaseApplicationProject', () => {
     expect(gitignoreContent).toContain(GENERATED_DIR);
   });
 
-
   it('should create application-config.ts with defineApplication and correct values', async () => {
     await copyBaseApplicationProject({
       appName: 'my-test-app',

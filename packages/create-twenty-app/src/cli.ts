@@ -44,11 +44,7 @@ const program = new Command(packageJson.name)
       }
 
       if (options?.yes && !directory) {
-        console.error(
-          chalk.red(
-            'Error: --yes requires a directory argument.',
-          ),
-        );
+        console.error(chalk.red('Error: --yes requires a directory argument.'));
         process.exit(1);
       }
 
