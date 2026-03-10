@@ -2,10 +2,10 @@ import { styled } from '@linaria/react';
 import { useState } from 'react';
 
 import { currentUserState } from '@/auth/states/currentUserState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useCanEditProfileField } from '@/settings/profile/hooks/useCanEditProfileField';
 import { useUpdateEmail } from '@/settings/profile/hooks/useUpdateEmail';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { IconCheck, IconPencil, IconX } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -35,6 +35,7 @@ const StyledActionButtonContainer = styled.div`
   align-items: stretch;
   display: inline-flex;
   height: 100%;
+  justify-content: center;
 
   & > div {
     height: 100%;
@@ -108,7 +109,7 @@ export const EmailField = () => {
                 Icon={IconCheck}
                 variant="secondary"
                 position="left"
-                size="small"
+                size="medium"
                 onClick={handleSave}
                 disabled={isSaveDisabled}
                 type="button"
@@ -119,7 +120,7 @@ export const EmailField = () => {
                 Icon={IconX}
                 variant="secondary"
                 position="right"
-                size="small"
+                size="medium"
                 onClick={handleCancelEditing}
                 type="button"
               />
@@ -131,7 +132,7 @@ export const EmailField = () => {
               <Button
                 Icon={IconPencil}
                 variant="secondary"
-                size="small"
+                size="medium"
                 onClick={handleStartEditing}
                 disabled={!canEdit}
                 type="button"

@@ -21,6 +21,7 @@ const StyledCoverImageContainer = styled.div`
   justify-content: center;
   margin-bottom: ${themeCssVariables.spacing[8]};
   min-height: 153px;
+  overflow: hidden;
   position: relative;
 `;
 
