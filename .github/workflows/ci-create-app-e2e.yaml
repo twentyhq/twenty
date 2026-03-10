@@ -148,31 +148,22 @@ jobs:
           cd /tmp/e2e-test-workspace/test-app
           npx --no-install twenty --version
 
-      - name: Create databases
-        run: |
-          PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "default";'
-          PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "test";'
-
       - name: Setup server environment
-        run: npx nx reset:env twenty-server
+        run: npx nx reset:env:e2e-testing-server twenty-server
 
       - name: Build twenty-server
         run: npx nx build twenty-server
 
-      - name: Reset database
-        run: npx nx database:reset twenty-server
+      - name: Create and setup database
+        run: |
+          PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "default";'
+          PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "test";'
+          npx nx run twenty-server:database:reset
 
       - name: Start twenty-server
         run: |
-          npx nx start:ci twenty-server &
-          for i in $(seq 1 30); do
-            if curl -s http://localhost:3000/healthz > /dev/null 2>&1; then
-              echo "Server is ready"
-              break
-            fi
-            echo "Waiting for server... ($i/30)"
-            sleep 2
-          done
+          npx nx start twenty-server &
+          timeout 60 bash -c 'until curl -s http://localhost:3000/healthz; do sleep 2; done'
 
       - name: Run scaffolded app integration test
         run: |
