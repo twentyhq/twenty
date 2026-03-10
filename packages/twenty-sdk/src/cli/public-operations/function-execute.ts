@@ -61,8 +61,7 @@ const innerFunctionExecute = async (
       success: false,
       error: {
         code: APP_ERROR_CODES.MANIFEST_NOT_FOUND,
-        message:
-          'Manifest not found. Run `app:build`, `app:generate-client`, or `app:dev` first.',
+        message: 'Manifest not found. Run `app:build` or `app:dev` first.',
       },
     };
   }

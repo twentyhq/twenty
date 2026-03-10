@@ -11,7 +11,7 @@ import { FileFolder } from 'twenty-shared/types';
 import { esbuildOneShotBuild } from '@/cli/utilities/build/common/esbuild-one-shot-build';
 import {
   LOGIC_FUNCTION_EXTERNAL_MODULES,
-  createSdkGeneratedResolverPlugin,
+  createSdkClientsResolverPlugin,
 } from '@/cli/utilities/build/common/esbuild-watcher';
 import { getBaseFrontComponentBuildOptions } from '@/cli/utilities/build/common/front-component-build/utils/get-base-front-component-build-options';
 import { getFrontComponentBuildPlugins } from '@/cli/utilities/build/common/front-component-build/utils/get-front-component-build-plugins';
@@ -80,7 +80,7 @@ export const buildApplication = async (
       metafile: true,
       logLevel: 'silent',
       banner: NODE_ESM_CJS_BANNER,
-      plugins: [createSdkGeneratedResolverPlugin(options.appPath)],
+      plugins: [createSdkClientsResolverPlugin(options.appPath)],
     },
     onFileBuilt: collectFileBuilt,
   });
@@ -94,7 +94,7 @@ export const buildApplication = async (
       outdir: join(options.appPath, OUTPUT_DIR),
       tsconfig: join(options.appPath, 'tsconfig.json'),
       plugins: [
-        createSdkGeneratedResolverPlugin(options.appPath),
+        createSdkClientsResolverPlugin(options.appPath),
         ...getFrontComponentBuildPlugins(),
       ],
     },

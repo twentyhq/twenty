@@ -29,19 +29,19 @@ import { SingleRecordCommandKeys } from '@/command-menu-item/record/single-recor
 import { type CommandMenuItemConfig } from '@/command-menu-item/types/CommandMenuItemConfig';
 import { CommandMenuItemScope } from '@/command-menu-item/types/CommandMenuItemScope';
 import { CommandMenuItemType } from '@/command-menu-item/types/CommandMenuItemType';
-import {
-  CommandMenuItemViewType,
-  CoreObjectNameSingular,
-  AppPath,
-  SettingsPath,
-} from 'twenty-shared/types';
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
+import { msg } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import {
   BACKEND_BATCH_REQUEST_MAX_COUNT,
   MUTATION_MAX_MERGE_RECORDS,
 } from 'twenty-shared/constants';
-import { msg } from '@lingui/core/macro';
-import { isNonEmptyString } from '@sniptt/guards';
+import {
+  AppPath,
+  CommandMenuItemViewType,
+  CoreObjectNameSingular,
+  SettingsPath,
+} from 'twenty-shared/types';
 import {
   IconArrowMerge,
   IconBuildingSkyscraper,
@@ -72,8 +72,8 @@ import {
 
 import { isDefined } from 'twenty-shared/utils';
 import {
-  PermissionFlagType,
   FeatureFlagKey,
+  PermissionFlagType,
 } from '~/generated-metadata/graphql';
 
 export const DEFAULT_RECORD_COMMAND_MENU_ITEMS_CONFIG: Record<
@@ -760,9 +760,9 @@ export const DEFAULT_RECORD_COMMAND_MENU_ITEMS_CONFIG: Record<
 
   [RecordPageLayoutSingleRecordCommandKeys.EDIT_RECORD_PAGE_LAYOUT]: {
     key: RecordPageLayoutSingleRecordCommandKeys.EDIT_RECORD_PAGE_LAYOUT,
-    label: msg`Edit Page Layout`,
+    label: msg`Edit Layout`,
     shortLabel: msg`Edit Layout`,
-    isPinned: true,
+    isPinned: false,
     position: 30,
     Icon: IconPencil,
     type: CommandMenuItemType.Standard,

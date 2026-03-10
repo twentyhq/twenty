@@ -1,9 +1,16 @@
-import { Field, Float, ObjectType, registerEnumType } from '@nestjs/graphql';
+import {
+  Field,
+  Float,
+  HideField,
+  ObjectType,
+  registerEnumType,
+} from '@nestjs/graphql';
 
 import { IDField } from '@ptc-org/nestjs-query-graphql';
 import { PageLayoutTabLayoutMode } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { type PageLayoutTabOverrides } from 'src/engine/metadata-modules/page-layout-tab/entities/page-layout-tab.entity';
 import { PageLayoutWidgetDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/page-layout-widget.dto';
 
 registerEnumType(PageLayoutTabLayoutMode, {
@@ -47,4 +54,10 @@ export class PageLayoutTabDTO {
 
   @Field(() => Date, { nullable: true })
   deletedAt?: Date | null;
+
+  @Field(() => Boolean, { nullable: false })
+  isOverridden: boolean;
+
+  @HideField()
+  overrides?: PageLayoutTabOverrides | null;
 }
