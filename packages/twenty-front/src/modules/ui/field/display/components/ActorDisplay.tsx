@@ -3,11 +3,10 @@ import { type FieldActorValue } from '@/object-record/record-field/ui/types/Fiel
 import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
-import { AvatarChip, Chip } from 'twenty-ui/components';
+import { AvatarOrIcon, Chip } from 'twenty-ui/components';
 import {
   IconApi,
   IconCalendar,
-  IconCsv,
   IconGmail,
   IconGoogleCalendar,
   IconMail,
@@ -16,6 +15,7 @@ import {
   IconPlug,
   IconRobot,
   IconSettingsAutomation,
+  IconUpload,
   IconWebhook,
 } from 'twenty-ui/display';
 
@@ -49,7 +49,7 @@ export const ActorDisplay = ({
       case 'API':
         return IconApi;
       case 'IMPORT':
-        return IconCsv;
+        return IconUpload;
       case 'EMAIL':
         return PROVIDORS_ICON_MAPPING.EMAIL[context?.provider ?? 'default'];
       case 'CALENDAR':
@@ -79,7 +79,7 @@ export const ActorDisplay = ({
       label={name ?? ''}
       emptyLabel={t`Untitled`}
       leftComponent={
-        <AvatarChip
+        <AvatarOrIcon
           placeholderColorSeed={workspaceMemberId ?? undefined}
           avatarType={workspaceMemberId ? 'rounded' : 'squared'}
           placeholder={name}

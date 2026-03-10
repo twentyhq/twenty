@@ -62,11 +62,7 @@ const ChakraComponent = () => {
             >
               Increment
             </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setCount(0)}
-            >
+            <Button variant="outline" size="sm" onClick={() => setCount(0)}>
               Reset
             </Button>
           </HStack>

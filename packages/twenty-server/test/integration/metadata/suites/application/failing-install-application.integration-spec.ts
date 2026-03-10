@@ -4,68 +4,56 @@ import { installApplication } from 'test/integration/metadata/suites/application
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { uninstallApplication } from 'test/integration/metadata/suites/application/utils/uninstall-application.util';
-import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { v4 as uuidv4 } from 'uuid';
-
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 
 const INVALID_UUID_APP_ID = uuidv4();
 const INVALID_UUID_ROLE_ID = uuidv4();
 
 describe('Install application should fail when entity does not exist', () => {
-  let appCreated = false;
-
-  beforeAll(async () => {
-    await updateFeatureFlag({
-      featureFlag:
-        FeatureFlagKey.IS_APPLICATION_INSTALLATION_FROM_TARBALL_ENABLED,
-      value: true,
-      expectToFail: false,
-    });
-
+  beforeEach(async () => {
     await setupApplicationForSync({
       applicationUniversalIdentifier: INVALID_UUID_APP_ID,
       name: 'Test Invalid UUID App',
       description: 'App for testing UUID v4 validation',
       sourcePath: 'test-invalid-uuid',
     });
-
-    appCreated = true;
   }, 60000);
 
-  afterAll(async () => {
-    await updateFeatureFlag({
-      featureFlag:
-        FeatureFlagKey.IS_APPLICATION_INSTALLATION_FROM_TARBALL_ENABLED,
-      value: false,
-      expectToFail: false,
-    });
-  });
-
   afterEach(async () => {
-    if (!appCreated) {
-      return;
+    try {
+      await uninstallApplication({
+        universalIdentifier: INVALID_UUID_APP_ID,
+        expectToFail: false,
+      });
+    } catch {
+      // May fail if the test didn't install/sync
     }
 
-    await uninstallApplication({
-      universalIdentifier: INVALID_UUID_APP_ID,
-      expectToFail: false,
-    });
+    await globalThis.testDataSource.query(
+      `DELETE FROM core."file" WHERE "applicationId" IN (
+        SELECT id FROM core."application" WHERE "universalIdentifier" = $1
+      )`,
+      [INVALID_UUID_APP_ID],
+    );
+
+    await globalThis.testDataSource.query(
+      `DELETE FROM core."application"
+       WHERE "universalIdentifier" = $1`,
+      [INVALID_UUID_APP_ID],
+    );
+
+    await globalThis.testDataSource.query(
+      `DELETE FROM core."applicationRegistration"
+       WHERE "universalIdentifier" = $1`,
+      [INVALID_UUID_APP_ID],
+    );
   });
 
-  it('should fail with execution error when deleting non-existent field metadata', async () => {
+  it('should fail with execution error when installing non-existent app registration', async () => {
     const { errors } = await installApplication({
       expectToFail: true,
       input: {
-        workspaceMigration: {
-          actions: [
-            {
-              type: 'delete',
-              metadataName: 'fieldMetadata',
-              universalIdentifier: '20202020-6110-4547-9fd0-2525257a2c3f',
-            },
-          ],
-        },
+        appRegistrationId: '20202020-0000-0000-0000-000000000000',
       },
     });
 

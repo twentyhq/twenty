@@ -15,21 +15,21 @@ import { type WorkflowDatabaseEventTrigger } from '@/workflow/types/Workflow';
 import { splitWorkflowTriggerEventName } from '@/workflow/utils/splitWorkflowTriggerEventName';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useCallback, useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { IconChevronLeft, IconSettings, useIcons } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledLabel = styled.span`
-  color: ${({ theme }) => theme.font.color.light};
+  color: ${themeCssVariables.font.color.light};
   display: block;
-  font-size: ${({ theme }) => theme.font.size.xs};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  margin-bottom: ${({ theme }) => theme.spacing(1)};
+  font-size: ${themeCssVariables.font.size.xs};
+  font-weight: ${themeCssVariables.font.weight.semiBold};
+  margin-bottom: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledRecordTypeSelectContainer = styled.div<{ fullWidth?: boolean }>`
@@ -63,7 +63,6 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
   trigger,
   triggerOptions,
 }: WorkflowEditTriggerDatabaseEventFormProps) => {
-  const theme = useTheme();
   const { getIcon } = useIcons();
   const { t } = useLingui();
   const [searchInputValue, setSearchInputValue] = useState('');
@@ -145,7 +144,11 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
       ...trigger,
       settings: {
         ...trigger.settings,
-        fields: fields ? (Array.isArray(fields) ? fields : [fields]) : null,
+        fields: isDefined(fields)
+          ? Array.isArray(fields)
+            ? fields
+            : [fields]
+          : null,
       },
     });
   };
@@ -250,7 +253,7 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
                   ))}
               </>
             }
-            dropdownOffset={{ y: parseInt(theme.spacing(1), 10) }}
+            dropdownOffset={{ y: 4 }}
           />
         </StyledRecordTypeSelectContainer>
         {isDefined(selectedObjectMetadataItem) && isFieldFilteringSupported && (

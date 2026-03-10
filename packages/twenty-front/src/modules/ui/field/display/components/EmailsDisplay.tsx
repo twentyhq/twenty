@@ -5,7 +5,6 @@ import { ExpandableList } from '@/ui/layout/expandable-list/components/Expandabl
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
 import { RoundedLink } from 'twenty-ui/navigation';
-import { THEME_COMMON } from 'twenty-ui/theme';
 
 type EmailsDisplayProps = {
   value?: FieldEmailsValue;
@@ -13,12 +12,10 @@ type EmailsDisplayProps = {
   onEmailClick?: (email: string, event: React.MouseEvent<HTMLElement>) => void;
 };
 
-const themeSpacing = THEME_COMMON.spacingMultiplicator;
-
 const StyledContainer = styled.div`
   align-items: center;
   display: flex;
-  gap: ${themeSpacing * 1}px;
+  gap: 4px;
   justify-content: flex-start;
 
   max-width: 100%;

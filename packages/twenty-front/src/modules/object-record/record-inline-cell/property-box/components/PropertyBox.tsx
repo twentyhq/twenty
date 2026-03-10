@@ -1,6 +1,6 @@
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
-import isPropValid from '@emotion/is-prop-valid';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { PageLayoutType } from '~/generated-metadata/graphql';
 
 interface PropertyBoxProps {
@@ -9,21 +9,20 @@ interface PropertyBoxProps {
   dataTestId?: string;
 }
 
-const StyledPropertyBoxContainer = styled('div', {
-  shouldForwardProp: (prop) =>
-    isPropValid(prop) && prop !== 'noHorizontalPadding',
-})<{ noHorizontalPadding?: boolean }>`
+const StyledPropertyBoxContainer = styled.div<{
+  noHorizontalPadding?: boolean;
+}>`
   align-self: stretch;
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+  border-radius: ${themeCssVariables.border.radius.sm};
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(2)};
-  padding-top: ${({ theme }) => theme.spacing(3)};
-  padding-bottom: ${({ theme }) => theme.spacing(3)};
-  padding-left: ${({ theme, noHorizontalPadding }) =>
-    noHorizontalPadding ? 0 : theme.spacing(3)};
-  padding-right: ${({ theme, noHorizontalPadding }) =>
-    noHorizontalPadding ? 0 : theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
+  padding-bottom: ${themeCssVariables.spacing[3]};
+  padding-left: ${({ noHorizontalPadding }) =>
+    noHorizontalPadding ? 0 : themeCssVariables.spacing[3]};
+  padding-right: ${({ noHorizontalPadding }) =>
+    noHorizontalPadding ? 0 : themeCssVariables.spacing[2]};
+  padding-top: ${themeCssVariables.spacing[3]};
 `;
 
 export const PropertyBox = ({

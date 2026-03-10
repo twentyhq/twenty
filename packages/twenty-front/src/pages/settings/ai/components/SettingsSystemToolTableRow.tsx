@@ -1,5 +1,5 @@
 import { useLazyQuery } from '@apollo/client';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 
@@ -20,6 +20,7 @@ import {
 } from 'twenty-ui/display';
 import { JsonTree } from 'twenty-ui/json-visualizer';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { type JsonValue } from 'type-fest';
 
@@ -40,24 +41,25 @@ export type SettingsSystemToolTableRowProps = {
   tool: SystemTool;
 };
 
-export const StyledSystemToolTableRow = styled(TableRow)<{
-  isExpandable?: boolean;
-}>`
-  grid-template-columns: 1fr 100px 36px;
-  opacity: 0.7;
-  cursor: ${({ isExpandable }) => (isExpandable ? 'pointer' : 'default')};
+const StyledSystemToolTableRowContainer = styled.div`
+  > div,
+  > a {
+    opacity: 0.7;
 
-  &:hover {
-    opacity: ${({ isExpandable }) => (isExpandable ? 0.85 : 0.7)};
+    &[data-clickable='true']:hover {
+      opacity: 0.85;
+    }
   }
 `;
 
-const StyledNameTableCell = styled(TableCell)`
-  color: ${({ theme }) => theme.font.color.primary};
-  gap: ${({ theme }) => theme.spacing(2)};
-  min-width: 0;
-  overflow: hidden;
-`;
+export const StyledSystemToolTableRow = (
+  props: React.ComponentProps<typeof TableRow>,
+) => (
+  <StyledSystemToolTableRowContainer>
+    {/* oxlint-disable-next-line react/jsx-props-no-spreading */}
+    <TableRow gridTemplateColumns="1fr 100px 36px" {...props} />
+  </StyledSystemToolTableRowContainer>
+);
 
 const StyledIconContainer = styled.div`
   align-items: center;
@@ -65,28 +67,23 @@ const StyledIconContainer = styled.div`
   flex-shrink: 0;
 `;
 
-const StyledActionTableCell = styled(TableCell)`
-  justify-content: flex-end;
-  padding-right: ${({ theme }) => theme.spacing(2)};
-`;
-
 const StyledExpandableContent = styled.div`
-  background-color: ${({ theme }) => theme.background.secondary};
-  border-top: 1px solid ${({ theme }) => theme.border.color.light};
-  padding: ${({ theme }) => theme.spacing(4)};
+  background-color: ${themeCssVariables.background.secondary};
+  border-top: 1px solid ${themeCssVariables.border.color.light};
+  padding: ${themeCssVariables.spacing[4]};
 `;
 
 const StyledSectionTitle = styled.div`
-  color: ${({ theme }) => theme.font.color.secondary};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  margin-bottom: ${({ theme }) => theme.spacing(2)};
+  color: ${themeCssVariables.font.color.secondary};
+  font-size: ${themeCssVariables.font.size.sm};
+  font-weight: ${themeCssVariables.font.weight.medium};
+  margin-bottom: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledDescription = styled.div`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  margin-bottom: ${({ theme }) => theme.spacing(4)};
+  color: ${themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.sm};
+  margin-bottom: ${themeCssVariables.spacing[4]};
 `;
 
 const getCategoryIcon = (category: string) => {
@@ -110,7 +107,6 @@ export const SettingsSystemToolTableRow = ({
   const [isExpanded, setIsExpanded] = useState(false);
   const { copyToClipboard } = useCopyToClipboard();
 
-  // Fetch inputSchema for this specific tool on first expand
   const [fetchSchema, { data: schemaData, loading: schemaLoading }] =
     useLazyQuery<GetToolInputSchemaQuery>(GET_TOOL_INPUT_SCHEMA, {
       variables: { toolName: tool.name },
@@ -135,24 +131,32 @@ export const SettingsSystemToolTableRow = ({
       <StyledSystemToolTableRow
         key={tool.name}
         onClick={handleRowClick}
-        isExpandable
+        isClickable
       >
-        <StyledNameTableCell>
+        <TableCell
+          color={themeCssVariables.font.color.primary}
+          gap={themeCssVariables.spacing[2]}
+          minWidth="0"
+          overflow="hidden"
+        >
           <StyledIconContainer>
             <Icon size={16} />
           </StyledIconContainer>
           <OverflowingTextWithTooltip text={tool.name} />
-        </StyledNameTableCell>
+        </TableCell>
         <TableCell>
           <SettingsItemTypeTag item={{ isCustom: false }} />
         </TableCell>
-        <StyledActionTableCell>
+        <TableCell
+          align="right"
+          padding={`0 ${themeCssVariables.spacing[2]} 0 0`}
+        >
           {isExpanded ? (
             <IconChevronDown size={16} />
           ) : (
             <IconChevronRight size={16} />
           )}
-        </StyledActionTableCell>
+        </TableCell>
       </StyledSystemToolTableRow>
 
       <AnimatedExpandableContainer isExpanded={isExpanded} mode="fit-content">

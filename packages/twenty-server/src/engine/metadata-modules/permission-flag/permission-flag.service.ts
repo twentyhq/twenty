@@ -104,7 +104,7 @@ export class PermissionFlagService {
         try {
           await queryRunner.rollbackTransaction();
         } catch (error) {
-          // eslint-disable-next-line no-console
+          // oxlint-disable-next-line no-console
           console.trace(`Failed to rollback transaction: ${error.message}`);
         }
       }

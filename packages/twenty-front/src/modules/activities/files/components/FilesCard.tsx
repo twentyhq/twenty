@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type ChangeEvent, useRef, useState } from 'react';
 
 import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
@@ -70,7 +70,7 @@ export const FilesCard = () => {
     inputFileRef?.current?.click?.();
   };
 
-  const isAttachmentsEmpty = !attachments || attachments.length === 0;
+  const isAttachmentsEmpty = attachments.length === 0;
 
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: targetRecord.targetObjectNameSingular,
@@ -104,7 +104,7 @@ export const FilesCard = () => {
           />
         ) : (
           <AnimatedPlaceholderEmptyContainer
-            // eslint-disable-next-line react/jsx-props-no-spreading
+            // oxlint-disable-next-line react/jsx-props-no-spreading
             {...EMPTY_PLACEHOLDER_TRANSITION_PROPS}
           >
             <AnimatedPlaceholder type="noFile" />

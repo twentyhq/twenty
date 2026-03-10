@@ -30,14 +30,14 @@ export class MyService {
 
     // Track a workspace event
     auditService.insertWorkspaceEvent(CUSTOM_DOMAIN_ACTIVATED_EVENT, {});
-    
+
     // Track an object event
     auditService.createObjectEvent(OBJECT_RECORD_CREATED_EVENT, {
       recordId: 'record-id',
       objectMetadataId: 'object-metadata-id',
       // other properties
     });
-    
+
     // Track a pageview
     auditService.createPageviewEvent('page-name', {
       href: '/path',
@@ -82,12 +82,14 @@ Then update the `events.type.ts` file:
 
 ```typescript
 // src/engine/core-modules/analytics/types/events.type.ts
-import { MY_EVENT, MyEventTrackEvent } from '../utils/events/track/my-feature/my-event';
+import {
+  MY_EVENT,
+  MyEventTrackEvent,
+} from '../utils/events/track/my-feature/my-event';
 
 // Add to the union type
-export type TrackEventName = 
-  | typeof MY_EVENT
-  // ... other event names;
+export type TrackEventName = typeof MY_EVENT;
+// ... other event names;
 
 // Add to the TrackEvents interface
 export interface TrackEvents {
@@ -96,9 +98,8 @@ export interface TrackEvents {
 }
 
 // The TrackEventProperties type will automatically use the new event
-export type TrackEventProperties<T extends TrackEventName> = T extends keyof TrackEvents
-  ? TrackEvents[T]['properties']
-  : object;
+export type TrackEventProperties<T extends TrackEventName> =
+  T extends keyof TrackEvents ? TrackEvents[T]['properties'] : object;
 ```
 
 ## API
@@ -136,9 +137,8 @@ export interface TrackEvents {
 }
 
 // Use the mapping to extract properties for each event type
-export type TrackEventProperties<T extends TrackEventName> = T extends keyof TrackEvents
-  ? TrackEvents[T]['properties']
-  : object;
+export type TrackEventProperties<T extends TrackEventName> =
+  T extends keyof TrackEvents ? TrackEvents[T]['properties'] : object;
 ```
 
 This approach makes it easier to add new events without having to modify a complex nested conditional type.

@@ -1,19 +1,33 @@
-import styled from '@emotion/styled';
 import {
   DragDropContext,
   Draggable,
   Droppable,
   type DropResult,
 } from '@hello-pangea/dnd';
+import { styled } from '@linaria/react';
 
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
+import { fieldsWidgetGroupsDraftComponentState } from '@/page-layout/states/fieldsWidgetGroupsDraftComponentState';
+import { fieldsWidgetUngroupedFieldsDraftComponentState } from '@/page-layout/states/fieldsWidgetUngroupedFieldsDraftComponentState';
 import { FieldsConfigurationGroupEditor } from '@/page-layout/widgets/fields/components/FieldsConfigurationGroupEditor';
+import { FieldsConfigurationUngroupedEditor } from '@/page-layout/widgets/fields/components/FieldsConfigurationUngroupedEditor';
+import { NEW_FIELDS_INDICATOR_DRAGGABLE_ID } from '@/page-layout/widgets/fields/constants/NewFieldsIndicatorDraggableId';
 import { useCreateFieldsWidgetEditorGroup } from '@/page-layout/widgets/fields/hooks/useCreateFieldsWidgetEditorGroup';
-import { useFieldsWidgetGroupsDraft } from '@/page-layout/widgets/fields/hooks/useFieldsWidgetGroupsDraft';
+import { useDeleteFieldsWidgetEditorGroup } from '@/page-layout/widgets/fields/hooks/useDeleteFieldsWidgetEditorGroup';
+import { useFieldsWidgetEditorMode } from '@/page-layout/widgets/fields/hooks/useFieldsWidgetEditorMode';
+import { useGetNewFieldDefaultConfiguration } from '@/page-layout/widgets/fields/hooks/useGetNewFieldDefaultConfiguration';
 import { useMoveFieldInDraft } from '@/page-layout/widgets/fields/hooks/useMoveFieldInDraft';
+import { useMoveUngroupedFieldInDraft } from '@/page-layout/widgets/fields/hooks/useMoveUngroupedFieldInDraft';
 import { useReorderFieldsWidgetEditorGroups } from '@/page-layout/widgets/fields/hooks/useReorderFieldsWidgetEditorGroups';
 import { useToggleFieldVisibilityInDraft } from '@/page-layout/widgets/fields/hooks/useToggleFieldVisibilityInDraft';
+import { useToggleUngroupedFieldVisibilityInDraft } from '@/page-layout/widgets/fields/hooks/useToggleUngroupedFieldVisibilityInDraft';
+import { useUpdateFieldsWidgetEditorGroup } from '@/page-layout/widgets/fields/hooks/useUpdateFieldsWidgetEditorGroup';
+import { useUpdateNewFieldDefaultConfiguration } from '@/page-layout/widgets/fields/hooks/useUpdateNewFieldDefaultConfiguration';
+import { getFieldsConfigurationGroupRenameDropdownId } from '@/page-layout/widgets/fields/utils/getFieldsConfigurationGroupRenameDropdownId';
+import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useLingui } from '@lingui/react/macro';
+import { useState } from 'react';
 
 const StyledGroupsDroppable = styled.div`
   display: flex;
@@ -33,10 +47,24 @@ export const FieldsConfigurationEditor = ({
   const { t } = useLingui();
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
 
-  const { draftGroups } = useFieldsWidgetGroupsDraft({
+  const { editorMode } = useFieldsWidgetEditorMode({
     pageLayoutId,
     widgetId,
   });
+
+  const fieldsWidgetGroupsDraft = useAtomComponentStateValue(
+    fieldsWidgetGroupsDraftComponentState,
+    pageLayoutId,
+  );
+
+  const draftGroups = fieldsWidgetGroupsDraft[widgetId] ?? [];
+
+  const fieldsWidgetUngroupedFieldsDraft = useAtomComponentStateValue(
+    fieldsWidgetUngroupedFieldsDraftComponentState,
+    pageLayoutId,
+  );
+
+  const ungroupedFields = fieldsWidgetUngroupedFieldsDraft[widgetId] ?? [];
 
   const { createGroup } = useCreateFieldsWidgetEditorGroup({
     pageLayoutId,
@@ -58,8 +86,62 @@ export const FieldsConfigurationEditor = ({
     widgetId,
   });
 
+  const { moveField: moveUngroupedField } = useMoveUngroupedFieldInDraft({
+    pageLayoutId,
+    widgetId,
+  });
+
+  const { toggleFieldVisibility: toggleUngroupedFieldVisibility } =
+    useToggleUngroupedFieldVisibilityInDraft({
+      pageLayoutId,
+      widgetId,
+    });
+
+  const { updateGroup } = useUpdateFieldsWidgetEditorGroup({
+    pageLayoutId,
+    widgetId,
+  });
+
+  const { deleteGroup } = useDeleteFieldsWidgetEditorGroup({
+    pageLayoutId,
+    widgetId,
+  });
+
+  const { newFieldDefaultConfiguration } = useGetNewFieldDefaultConfiguration({
+    pageLayoutId,
+    widgetId,
+  });
+
+  const { updateNewFieldDefaultConfiguration } =
+    useUpdateNewFieldDefaultConfiguration({
+      pageLayoutId,
+      widgetId,
+    });
+
+  const { openDropdown } = useOpenDropdown();
+
+  const [renamingGroupValue, setRenamingGroupValue] = useState('');
+
+  const handleStartRename = ({ groupName }: { groupName: string }) => {
+    setRenamingGroupValue(groupName);
+  };
+
+  const handleRenameGroup = ({
+    groupId,
+    newName,
+  }: {
+    groupId: string;
+    newName: string;
+  }) => {
+    updateGroup({ groupId, name: newName });
+  };
+
+  const handleDeleteGroup = ({ groupId }: { groupId: string }) => {
+    deleteGroup(groupId);
+  };
+
   const handleDragEnd = (result: DropResult) => {
-    const { source, destination, type } = result;
+    const { source, destination, type, draggableId } = result;
 
     if (!destination) {
       return;
@@ -69,6 +151,17 @@ export const FieldsConfigurationEditor = ({
       source.droppableId === destination.droppableId &&
       source.index === destination.index
     ) {
+      return;
+    }
+
+    if (draggableId === NEW_FIELDS_INDICATOR_DRAGGABLE_ID) {
+      const cleanDestinationGroupId = destination.droppableId.replace(
+        'group-',
+        '',
+      );
+      updateNewFieldDefaultConfiguration({
+        viewFieldGroupId: cleanDestinationGroupId,
+      });
       return;
     }
 
@@ -116,10 +209,33 @@ export const FieldsConfigurationEditor = ({
     );
   };
 
-  const handleAddGroup = () => {
+  const handleAddGroup = ({ afterGroupId }: { afterGroupId?: string }) => {
     const newGroupName = t`New Group`;
-    createGroup(newGroupName);
+    const newGroupId = createGroup({ name: newGroupName, afterGroupId });
+
+    setRenamingGroupValue(newGroupName);
+    openDropdown({
+      dropdownComponentInstanceIdFromProps:
+        getFieldsConfigurationGroupRenameDropdownId(newGroupId),
+    });
   };
+
+  if (editorMode === 'ungrouped') {
+    return (
+      <FieldsConfigurationUngroupedEditor
+        ungroupedFields={ungroupedFields}
+        onMoveField={moveUngroupedField}
+        onToggleFieldVisibility={toggleUngroupedFieldVisibility}
+        onAddGroup={() => handleAddGroup({})}
+        newFieldsIsVisible={newFieldDefaultConfiguration.isVisible}
+        onToggleNewFieldsVisibility={() =>
+          updateNewFieldDefaultConfiguration({
+            isVisible: !newFieldDefaultConfiguration.isVisible,
+          })
+        }
+      />
+    );
+  }
 
   const sortedGroups = [...draftGroups].sort((a, b) => a.position - b.position);
 
@@ -133,7 +249,7 @@ export const FieldsConfigurationEditor = ({
         {(provided) => (
           <StyledGroupsDroppable
             ref={provided.innerRef}
-            // eslint-disable-next-line react/jsx-props-no-spreading
+            // oxlint-disable-next-line react/jsx-props-no-spreading
             {...provided.droppableProps}
           >
             {sortedGroups.map((group, index) => (
@@ -149,9 +265,25 @@ export const FieldsConfigurationEditor = ({
                     objectMetadataItem={objectMetadataItem}
                     draggableProvided={draggableProvided}
                     isDragging={snapshot.isDragging}
-                    onAddGroup={handleAddGroup}
+                    onAddGroup={() =>
+                      handleAddGroup({ afterGroupId: group.id })
+                    }
                     onToggleFieldVisibility={(fieldMetadataId) =>
                       toggleFieldVisibility(group.id, fieldMetadataId)
+                    }
+                    onRenameGroup={handleRenameGroup}
+                    onDeleteGroup={handleDeleteGroup}
+                    renamingGroupValue={renamingGroupValue}
+                    onRenamingGroupValueChange={setRenamingGroupValue}
+                    onStartRename={handleStartRename}
+                    showNewFieldsItem={
+                      group.id === newFieldDefaultConfiguration.viewFieldGroupId
+                    }
+                    newFieldsIsVisible={newFieldDefaultConfiguration.isVisible}
+                    onToggleNewFieldsVisibility={() =>
+                      updateNewFieldDefaultConfiguration({
+                        isVisible: !newFieldDefaultConfiguration.isVisible,
+                      })
                     }
                   />
                 )}

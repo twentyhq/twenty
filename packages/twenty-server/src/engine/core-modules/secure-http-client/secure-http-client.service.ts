@@ -1,6 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import axios, { type AxiosInstance, type CreateAxiosDefaults } from 'axios';
+import axiosRetry from 'axios-retry';
+import { isDefined } from 'twenty-shared/utils';
 
 import { createSsrfSafeAgent } from 'src/engine/core-modules/secure-http-client/utils/create-ssrf-safe-agent.util';
 import { resolveAndValidateHostname } from 'src/engine/core-modules/secure-http-client/utils/resolve-and-validate-hostname.util';
@@ -9,6 +11,12 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { type OutboundRequestContext } from './outbound-request-context.type';
 
 const MAX_REDIRECTS = 5;
+const ALLOWED_PROTOCOLS = new Set(['http:', 'https:']);
+
+type SecureHttpClientConfig = CreateAxiosDefaults & {
+  retries?: number;
+  shouldResetTimeout?: boolean;
+};
 
 @Injectable()
 export class SecureHttpClientService {
@@ -22,24 +30,55 @@ export class SecureHttpClientService {
   // When context is provided, outbound requests are logged with
   // workspace/user info for GuardDuty correlation.
   getHttpClient(
-    config?: CreateAxiosDefaults,
+    config?: SecureHttpClientConfig,
     context?: OutboundRequestContext,
   ): AxiosInstance {
+    const { retries, shouldResetTimeout, ...axiosConfig } = config ?? {};
+
     const isSafeModeEnabled = this.twentyConfigService.get(
       'OUTBOUND_HTTP_SAFE_MODE_ENABLED',
     );
 
     const client = isSafeModeEnabled
       ? axios.create({
-          ...config,
+          ...axiosConfig,
           httpAgent: createSsrfSafeAgent('http'),
           httpsAgent: createSsrfSafeAgent('https'),
           maxRedirects: Math.min(
-            config?.maxRedirects ?? MAX_REDIRECTS,
+            axiosConfig.maxRedirects ?? MAX_REDIRECTS,
             MAX_REDIRECTS,
           ),
         })
-      : axios.create(config);
+      : axios.create(axiosConfig);
+
+    if (isDefined(retries) && retries > 0) {
+      axiosRetry(client, {
+        retries,
+        shouldResetTimeout,
+        retryCondition: (error) =>
+          axiosRetry.isNetworkOrIdempotentRequestError(error) &&
+          error.code !== 'ECONNABORTED' &&
+          error.code !== 'ETIMEDOUT',
+      });
+    }
+
+    if (isSafeModeEnabled) {
+      client.interceptors.request.use((requestConfig) => {
+        const url = requestConfig.url || requestConfig.baseURL;
+
+        if (url) {
+          const parsed = new URL(url, requestConfig.baseURL);
+
+          if (!ALLOWED_PROTOCOLS.has(parsed.protocol)) {
+            throw new Error(
+              `Protocol ${parsed.protocol} is not allowed. Only HTTP and HTTPS are permitted.`,
+            );
+          }
+        }
+
+        return requestConfig;
+      });
+    }
 
     if (context) {
       client.interceptors.request.use((requestConfig) => {

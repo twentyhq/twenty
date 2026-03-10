@@ -52,7 +52,7 @@ export const useHotkeysOnFocusedElement = ({
         keyboardEvent,
         hotkeysEvent,
         callback: () => {
-          if (!pendingHotkey) {
+          if (!isDefined(pendingHotkey)) {
             callback(keyboardEvent, hotkeysEvent);
             return;
           }

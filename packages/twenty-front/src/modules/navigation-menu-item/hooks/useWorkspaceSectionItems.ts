@@ -5,12 +5,14 @@ import { NavigationMenuItemType } from '@/navigation-menu-item/constants/Navigat
 import { type ProcessedNavigationMenuItem } from '@/navigation-menu-item/types/processed-navigation-menu-item';
 import { getObjectMetadataForNavigationMenuItem } from '@/navigation-menu-item/utils/getObjectMetadataForNavigationMenuItem';
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/utils/isNavigationMenuItemFolder';
+import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
 import { isDefined } from 'twenty-shared/utils';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 import { useNavigationMenuItemsByFolder } from './useNavigationMenuItemsByFolder';
 import { usePrefetchedNavigationMenuItemsData } from './usePrefetchedNavigationMenuItemsData';
@@ -36,6 +38,7 @@ export const useWorkspaceSectionItems = (): FlatWorkspaceItem[] => {
     useNavigationMenuItemsByFolder();
   const coreViews = useAtomStateValue(coreViewsState);
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
   const views = coreViews.map(convertCoreViewToView);
 
@@ -76,7 +79,13 @@ export const useWorkspaceSectionItems = (): FlatWorkspaceItem[] => {
           objectMetadataItems,
           views,
         );
-        if (isDefined(objectMetadataItem)) {
+        if (
+          isDefined(objectMetadataItem) &&
+          getObjectPermissionsForObject(
+            objectPermissionsByObjectMetadataId,
+            objectMetadataItem.id,
+          ).canReadObjectRecords
+        ) {
           acc.push(processedItem);
         }
       }

@@ -1,16 +1,17 @@
 import { originalDragSelectionComponentState } from '@/object-record/record-drag/states/originalDragSelectionComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledRecordBoardCardStackCard = styled.div<{ offset: number }>`
-  position: absolute;
-  top: ${({ offset }) => (offset === 1 ? 2 : (offset - 1) * 4 + 2)}px;
-  left: 0;
-  right: 0;
+  background-color: ${themeCssVariables.accent.tertiary};
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  border-radius: ${themeCssVariables.border.radius.sm};
   height: 100%;
-  background-color: ${({ theme }) => theme.accent.tertiary};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: ${({ offset }) => (offset === 1 ? 2 : (offset - 1) * 4 + 2)}px;
   z-index: ${({ offset }) => -offset};
 `;
 

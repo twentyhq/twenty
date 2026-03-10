@@ -1,7 +1,9 @@
 import { useCallback } from 'react';
 
 import { billingCheckoutSessionState } from '@/auth/states/billingCheckoutSessionState';
+import { returnToPathState } from '@/auth/states/returnToPathState';
 import { type BillingCheckoutSession } from '@/auth/types/billingCheckoutSession.type';
+import { isValidReturnToPath } from '@/auth/utils/isValidReturnToPath';
 import { BILLING_CHECKOUT_SESSION_DEFAULT_VALUE } from '@/billing/constants/BillingCheckoutSessionDefaultValue';
 import deepEqual from 'deep-equal';
 import { useStore } from 'jotai';
@@ -9,7 +11,7 @@ import { useStore } from 'jotai';
 export const useInitializeQueryParamState = () => {
   const store = useStore();
   const initializeQueryParamState = useCallback(() => {
-    const handlers = {
+    const handlers: Record<string, (value: string) => void> = {
       billingCheckoutSession: (value: string) => {
         const billingCheckoutSession = store.get(
           billingCheckoutSessionState.atom,
@@ -32,7 +34,7 @@ export const useInitializeQueryParamState = () => {
             );
           }
         } catch (error) {
-          // eslint-disable-next-line no-console
+          // oxlint-disable-next-line no-console
           console.error(
             'Failed to parse billingCheckoutSession from URL',
             error,
@@ -41,6 +43,11 @@ export const useInitializeQueryParamState = () => {
             billingCheckoutSessionState.atom,
             BILLING_CHECKOUT_SESSION_DEFAULT_VALUE,
           );
+        }
+      },
+      returnToPath: (value: string) => {
+        if (isValidReturnToPath(value)) {
+          store.set(returnToPathState.atom, value);
         }
       },
     };

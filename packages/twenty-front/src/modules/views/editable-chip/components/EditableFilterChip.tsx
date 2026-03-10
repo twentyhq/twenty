@@ -8,6 +8,7 @@ import { useGetRecordFilterChipLabelValue } from '@/views/hooks/useGetRecordFilt
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { useIcons } from 'twenty-ui/display';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 type EditableFilterChipProps = {
   recordFilter: RecordFilter;
@@ -34,6 +35,7 @@ export const EditableFilterChip = ({
 
   const subFieldLabel =
     isCompositeFieldType(fieldMetadataItem.type) &&
+    fieldMetadataItem.type !== FieldMetadataType.ACTOR &&
     isNonEmptyString(recordFilterSubFieldName) &&
     isValidSubFieldName(recordFilterSubFieldName)
       ? getCompositeSubFieldLabel(

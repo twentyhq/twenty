@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
@@ -7,17 +7,18 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useCanEditProfileField } from '@/settings/profile/hooks/useCanEditProfileField';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { logError } from '~/utils/logError';
 
 const StyledComboInputContainer = styled.div`
   display: flex;
   flex-direction: row;
   > * + * {
-    margin-left: ${({ theme }) => theme.spacing(4)};
+    margin-left: ${themeCssVariables.spacing[4]};
   }
 `;
 

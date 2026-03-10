@@ -4,29 +4,30 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 import { useUpsertStepFilterSettings } from '@/workflow/workflow-steps/filters/hooks/useUpsertStepFilterSettings';
 import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/filters/states/context/WorkflowStepFilterContext';
 
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useContext, useMemo } from 'react';
 import { StepLogicalOperator, type StepFilterGroup } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledText = styled.div`
   align-items: center;
-  color: ${({ theme }) => theme.font.color.primary};
+  color: ${themeCssVariables.font.color.primary};
   display: flex;
-  height: ${({ theme }) => theme.spacing(8)};
+  height: ${themeCssVariables.spacing[8]};
 `;
 
 const StyledNumber = styled.span`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  margin-right: ${({ theme }) => theme.spacing(1)};
+  color: ${themeCssVariables.font.color.tertiary};
+  margin-right: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledContainer = styled.div`
   align-items: start;
+  color: ${themeCssVariables.font.color.tertiary};
   display: flex;
-  min-width: ${({ theme }) => theme.spacing(20)};
-  color: ${({ theme }) => theme.font.color.tertiary};
+  min-width: ${themeCssVariables.spacing[20]};
 `;
 
 type WorkflowStepFilterLogicalOperatorCellProps = {

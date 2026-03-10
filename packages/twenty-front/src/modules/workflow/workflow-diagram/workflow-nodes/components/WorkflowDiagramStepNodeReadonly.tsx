@@ -1,6 +1,6 @@
-import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
-import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
-import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
+import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
+import { useSidePanelWorkflowNavigation } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowNavigation';
+import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
@@ -48,12 +48,12 @@ export const WorkflowDiagramStepNodeReadonly = ({
 
   const selected = workflowSelectedNode === id;
 
-  const { openWorkflowViewStepInCommandMenu } = useWorkflowCommandMenu();
+  const { openWorkflowViewStepInSidePanel } = useSidePanelWorkflowNavigation();
 
-  const { isInRightDrawer } = useContext(ActionMenuContext);
+  const { isInSidePanel } = useContext(CommandMenuContext);
 
-  const setCommandMenuNavigationStack = useSetAtomState(
-    commandMenuNavigationStackState,
+  const setSidePanelNavigationStack = useSetAtomState(
+    sidePanelNavigationStackState,
   );
 
   const handleClick = () => {
@@ -64,13 +64,13 @@ export const WorkflowDiagramStepNodeReadonly = ({
       throw new Error('Workflow ID and Version ID must be defined');
     }
 
-    if (!isInRightDrawer) {
-      setCommandMenuNavigationStack([]);
+    if (!isInSidePanel) {
+      setSidePanelNavigationStack([]);
     }
 
     setWorkflowSelectedNode(id);
 
-    openWorkflowViewStepInCommandMenu({
+    openWorkflowViewStepInSidePanel({
       workflowId: workflowVisualizerWorkflowId,
       workflowVersionId: workflowVisualizerWorkflowVersionId,
       title: data.name,

@@ -2,8 +2,7 @@ import { type OrchestratorStateEvent } from '@/cli/utilities/dev/orchestrator/de
 import { DevUiApplicationPanel } from '@/cli/utilities/dev/ui/components/dev-ui-application-panel';
 import { DevUiEntityLegend } from '@/cli/utilities/dev/ui/components/dev-ui-entity-section';
 import { DevUiEventItem } from '@/cli/utilities/dev/ui/components/dev-ui-event-log';
-import { InkProvider } from '@/cli/utilities/dev/ui/dev-ui-ink-context';
-import { useInk } from '@/cli/utilities/dev/ui/dev-ui-ink-context';
+import { InkProvider, useInk } from '@/cli/utilities/dev/ui/dev-ui-ink-context';
 import { type DevUiStateManager } from '@/cli/utilities/dev/ui/dev-ui-state-manager';
 import React, { useReducer, useEffect } from 'react';
 

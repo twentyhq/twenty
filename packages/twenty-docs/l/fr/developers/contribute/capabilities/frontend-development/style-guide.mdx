@@ -194,7 +194,7 @@ setHotkeyScopeAndMemorizePreviousScope(
 
 ### Utilisez StyledComponents
 
-Styliser les composants avec [styled-components](https://emotion.sh/docs/styled).
+Styliser les composants avec [Linaria styled](https://github.com/callstack/linaria).
 
 ```tsx
 // ❌ Bad
@@ -260,7 +260,7 @@ const StyledButton = styled.button`
 
 ## Application d'interdiction d'importations de type
 
-Évitez les importations de type. Pour appliquer cette norme, une règle ESLint vérifie et signale toutes les importations de type. Cela aide à maintenir la cohérence et la lisibilité dans le code TypeScript.
+Évitez les importations de type. Pour appliquer cette norme, une règle Oxlint vérifie et signale toutes les importations de type. Cela aide à maintenir la cohérence et la lisibilité dans le code TypeScript.
 
 ```tsx
 // ❌ Bad
@@ -281,10 +281,10 @@ import { Meta, StoryObj } from '@storybook/react';
 
 * **Maintenabilité** : Cela améliore la maintenabilité de la base de code car les développeurs peuvent identifier et localiser les importations uniquement de type lors de la révision ou de la modification du code.
 
-### Règle ESLint
+### règle Oxlint
 
-Une règle ESLint, `@typescript-eslint/consistent-type-imports`, impose la convention des imports "type-only". Cette règle génère des erreurs ou des avertissements pour toutes les violations d'importations de type.
+Une règle Oxlint, `typescript/consistent-type-imports`, impose la convention des imports "type-only". Cette règle génère des erreurs ou des avertissements pour toutes les violations d'importations de type.
 
 Veillez à ce que cette règle aborde spécifiquement les rares cas particuliers où se produisent des importations de type involontaires. TypeScript lui-même déconseille cette pratique, comme mentionné dans les [notes de version de TypeScript 3.8](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-8.html). Dans la majorité des situations, vous ne devriez pas avoir besoin d'utiliser des importations uniquement de type.
 
-Pour garantir la conformité de votre code avec cette règle, assurez-vous d'exécuter ESLint dans le cadre de votre flux de travail de développement.
+Pour garantir la conformité de votre code avec cette règle, assurez-vous d'exécuter Oxlint dans le cadre de votre flux de travail de développement.

@@ -1,4 +1,4 @@
-export type ScaffoldingMode = 'exhaustive' | 'minimal' | 'interactive';
+export type ScaffoldingMode = 'exhaustive' | 'minimal';
 
 export type ExampleOptions = {
   includeExampleObject: boolean;
@@ -8,4 +8,6 @@ export type ExampleOptions = {
   includeExampleView: boolean;
   includeExampleNavigationMenuItem: boolean;
   includeExampleSkill: boolean;
+  includeExampleAgent: boolean;
+  includeExampleIntegrationTest: boolean;
 };

@@ -15,11 +15,8 @@ import { mapViewFilterGroupLogicalOperatorToRecordFilterGroupLogicalOperator } f
 import { act } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { type CoreViewFilterGroup } from '~/generated-metadata/graphql';
-import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
-import {
-  mockedCoreViewsData,
-  mockedViewsData,
-} from '~/testing/mock-data/views';
+import { getJestMetadataAndApolloMocksAndCommandMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndCommandMenuWrapper';
+import { mockedCoreViews } from '~/testing/mock-data/generated/metadata/views/mock-views-data';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
 const mockObjectMetadataItemNameSingular = 'company';
@@ -48,8 +45,10 @@ describe('useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups', () => {
     positionInViewFilterGroup: 0,
   };
 
-  const allCompaniesView = mockedViewsData[0];
-  const allCompaniesCoreView = mockedCoreViewsData[0];
+  const allCompaniesCoreView = mockedCoreViews.find(
+    (v) => v.name === 'All Companies',
+  )!;
+  const allCompaniesView = allCompaniesCoreView as unknown as View;
 
   const mockCoreViewFilterGroup: Omit<CoreViewFilterGroup, 'workspaceId'> = {
     __typename: 'CoreViewFilterGroup',
@@ -88,7 +87,7 @@ describe('useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups', () => {
         };
       },
       {
-        wrapper: getJestMetadataAndApolloMocksAndActionMenuWrapper({
+        wrapper: getJestMetadataAndApolloMocksAndCommandMenuWrapper({
           apolloMocks: [],
           componentInstanceId: 'instanceId',
           contextStoreCurrentViewId: mockView.id,
@@ -140,7 +139,7 @@ describe('useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups', () => {
         };
       },
       {
-        wrapper: getJestMetadataAndApolloMocksAndActionMenuWrapper({
+        wrapper: getJestMetadataAndApolloMocksAndCommandMenuWrapper({
           apolloMocks: [],
           componentInstanceId: 'instanceId',
           contextStoreCurrentObjectMetadataNameSingular:
@@ -181,7 +180,7 @@ describe('useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups', () => {
         };
       },
       {
-        wrapper: getJestMetadataAndApolloMocksAndActionMenuWrapper({
+        wrapper: getJestMetadataAndApolloMocksAndCommandMenuWrapper({
           apolloMocks: [],
           componentInstanceId: 'instanceId',
           contextStoreCurrentObjectMetadataNameSingular:

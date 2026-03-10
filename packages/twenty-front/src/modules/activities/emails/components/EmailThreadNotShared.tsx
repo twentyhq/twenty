@@ -1,28 +1,29 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { useContext } from 'react';
 import { AppTooltip, IconLock, TooltipDelay } from 'twenty-ui/display';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { MessageChannelVisibility } from '~/generated/graphql';
 
 const StyledContainer = styled.div<{ isCompact?: boolean }>`
   align-items: center;
-  display: flex;
-  flex: ${({ isCompact }) => (isCompact ? '0 0 auto' : '1 0 0')};
-  gap: ${({ theme }) => theme.spacing(1)};
-  height: 20px;
-  margin-left: auto;
-  width: ${({ isCompact }) => (isCompact ? 'auto' : '100%')};
-  min-width: ${({ theme }) => `${theme.spacing(21)}`};
-  padding: ${({ theme }) => theme.spacing(0, 1)};
-
+  background: ${themeCssVariables.background.transparent.lighter};
+  border: 1px solid ${themeCssVariables.border.color.light};
   border-radius: 4px;
-  border: 1px solid ${({ theme }) => theme.border.color.light};
-  background: ${({ theme }) => theme.background.transparent.lighter};
-
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
-  font-size: ${({ theme }) => theme.font.size.sm};
+  color: ${themeCssVariables.font.color.tertiary};
+  display: flex;
   flex: 1;
+  flex: ${({ isCompact }) => (isCompact ? '0 0 auto' : '1 0 0')};
+  font-size: ${themeCssVariables.font.size.sm};
+
+  font-weight: ${themeCssVariables.font.weight.regular};
+  gap: ${themeCssVariables.spacing[1]};
+  height: 20px;
+
+  margin-left: auto;
+  min-width: ${themeCssVariables.spacing[21]};
+  padding: ${themeCssVariables.spacing[0]} ${themeCssVariables.spacing[1]};
+  width: ${({ isCompact }) => (isCompact ? 'auto' : '100%')};
 `;
 
 type EmailThreadNotSharedProps = {
@@ -32,8 +33,8 @@ type EmailThreadNotSharedProps = {
 export const EmailThreadNotShared = ({
   visibility,
 }: EmailThreadNotSharedProps) => {
+  const { theme } = useContext(ThemeContext);
   const { t } = useLingui();
-  const theme = useTheme();
   const containerId = 'email-thread-not-shared';
   const isCompact = visibility === MessageChannelVisibility.SUBJECT;
 

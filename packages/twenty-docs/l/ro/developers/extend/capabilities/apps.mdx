@@ -15,7 +15,7 @@ Aplicațiile vă permit să construiți și să gestionați personalizările Twe
 
 * Definiți obiecte și câmpuri personalizate sub formă de cod (model de date gestionat)
 * Creați funcții de logică cu declanșatoare personalizate
-* Definiți abilități pentru agenți de IA
+* Definiți abilități și agenți pentru AI
 * Implementați aceeași aplicație în mai multe spații de lucru
 
 ## Cerințe
@@ -36,42 +36,39 @@ cd my-twenty-app
 yarn twenty app:dev
 ```
 
-Generatorul de schelet acceptă trei moduri pentru a controla ce fișiere de exemplu sunt incluse:
+Generatorul de schelet acceptă două moduri pentru a controla ce fișiere de exemplu sunt incluse:
 
 ```bash filename="Terminal"
-# Implicit (exhaustiv): toate exemplele (obiect, câmp, funcție logică, componentă de interfață, vizualizare, element de meniu de navigare, abilitate)
+# Implicit (exhaustiv): toate exemplele (obiect, câmp, funcție logică, componentă de interfață, vizualizare, element de meniu de navigare, abilitate, agent)
 npx create-twenty-app@latest my-app
 
 # Minimal: doar fișierele de bază (application-config.ts și default-role.ts)
 npx create-twenty-app@latest my-app --minimal
-
-# Interactiv: selectezi ce exemple să incluzi
-npx create-twenty-app@latest my-app --interactive
 ```
 
 De aici puteți:
 
 ```bash filename="Terminal"
-# Add a new entity to your application (guided)
+# Adaugă o entitate nouă în aplicația ta (ghidat)
 yarn twenty entity:add
 
-# Watch your application's function logs
+# Urmărește jurnalele funcțiilor aplicației tale
 yarn twenty function:logs
 
-# Execute a function by name
+# Execută o funcție după nume
 yarn twenty function:execute -n my-function -p '{"name": "test"}'
 
-# Execute the pre-install function
+# Execută funcția de pre-instalare
 yarn twenty function:execute --preInstall
 
-# Execute the post-install function
+# Execută funcția post-instalare
 yarn twenty function:execute --postInstall
 
-# Uninstall the application from the current workspace
+# Dezinstalează aplicația din spațiul de lucru curent
 yarn twenty app:uninstall
 
-# Display commands' help
-yarn twenty help
+# Afișează ajutorul pentru comenzi
+yarn twenty help},{
 ```
 
 Consultați și: paginile de referință CLI pentru [create-twenty-app](https://www.npmjs.com/package/create-twenty-app) și [twenty-sdk CLI](https://www.npmjs.com/package/twenty-sdk).
@@ -83,7 +80,7 @@ Când rulați `npx create-twenty-app@latest my-twenty-app`, generatorul:
 * Copiază o aplicație de bază minimală în `my-twenty-app/`
 * Adaugă o dependență locală `twenty-sdk` și configurația Yarn 4
 * Creează fișiere de configurare și scripturi conectate la CLI-ul `twenty`
-* Generates core files (application config, default function role, pre-install and post-install functions) plus example files based on the scaffolding mode
+* Generează fișierele de bază (configurația aplicației, rolul implicit al funcțiilor, funcțiile de pre-instalare și post-instalare) plus fișiere de exemplu în funcție de modul de generare a scheletului.
 
 O aplicație proaspăt generată cu modul implicit `--exhaustive` arată astfel:
 
@@ -96,33 +93,35 @@ my-twenty-app/
   .yarnrc.yml
   .yarn/
     install-state.gz
-  eslint.config.mjs
+  .oxlintrc.json
   tsconfig.json
   README.md
-  public/                           # Public assets folder (images, fonts, etc.)
+  public/                           # Director pentru resurse publice (imagini, fonturi etc.)
   src/
-  ├── application-config.ts           # Required - main application configuration
+  ├── application-config.ts           # Obligatoriu - configurația principală a aplicației
   ├── roles/
-  │   └── default-role.ts               # Default role for logic functions
+  │   └── default-role.ts               # Rol implicit pentru funcțiile logice
   ├── objects/
-  │   └── example-object.ts             # Example custom object definition
+  │   └── example-object.ts             # Exemplu de definiție a unui obiect personalizat
   ├── fields/
-  │   └── example-field.ts              # Example standalone field definition
+  │   └── example-field.ts              # Exemplu de definiție de câmp independent
   ├── logic-functions/
-  │   ├── hello-world.ts                # Example logic function
-  │   ├── pre-install.ts                # Pre-install logic function
-  │   └── post-install.ts               # Post-install logic function
+  │   ├── hello-world.ts                # Exemplu de funcție logică
+  │   ├── pre-install.ts                # Funcție logică de pre-instalare
+  │   └── post-install.ts               # Funcție logică post-instalare
   ├── front-components/
-  │   └── hello-world.tsx               # Example front component
+  │   └── hello-world.tsx               # Exemplu de componentă de interfață
   ├── views/
-  │   └── example-view.ts                # Example saved view definition
+  │   └── example-view.ts                # Exemplu de definiție a unei vizualizări salvate
   ├── navigation-menu-items/
-  │   └── example-navigation-menu-item.ts # Example sidebar navigation link
-  └── skills/
-      └── example-skill.ts                # Example AI agent skill definition
+  │   └── example-navigation-menu-item.ts # Exemplu de link de navigare în bara laterală
+  ├── skills/
+  │   └── example-skill.ts                # Exemplu de definiție a unei abilități a agentului AI
+  └── agents/
+      └── example-agent.ts                # Exemplu de definiție a unui agent AI
 ```
 
-With `--minimal`, only the core files are created (`application-config.ts`, `roles/default-role.ts`, `logic-functions/pre-install.ts`, and `logic-functions/post-install.ts`). Cu `--interactive`, alegi ce fișiere de exemplu să incluzi.
+Cu `--minimal`, sunt create doar fișierele de bază (`application-config.ts`, `roles/default-role.ts`, `logic-functions/pre-install.ts` și `logic-functions/post-install.ts`).
 
 Pe scurt:
 
@@ -130,7 +129,7 @@ Pe scurt:
 * **.gitignore**: Ignoră artefacte comune precum `node_modules`, `.yarn`, `generated/` (client tipizat), `dist/`, `build/`, foldere de coverage, fișiere jurnal și fișiere `.env*`.
 * **yarn.lock**, **.yarnrc.yml**, **.yarn/**: Blochează și configurează lanțul de instrumente Yarn 4 folosit de proiect.
 * **.nvmrc**: Fixează versiunea Node.js așteptată de proiect.
-* **eslint.config.mjs** și **tsconfig.json**: Oferă linting și configurație TypeScript pentru fișierele TypeScript ale aplicației.
+* **.oxlintrc.json** and **tsconfig.json**: Provide linting and TypeScript configuration for your app's TypeScript sources.
 * **README.md**: Un README scurt în rădăcina aplicației, cu instrucțiuni de bază.
 * **public/**: Un folder pentru stocarea resurselor publice (imagini, fonturi, fișiere statice) care vor fi servite împreună cu aplicația ta. Fișierele plasate aici sunt încărcate în timpul sincronizării și sunt accesibile la rulare.
 * **src/**: Locul principal unde vă definiți aplicația sub formă de cod
@@ -139,18 +138,19 @@ Pe scurt:
 
 SDK-ul detectează entitățile analizând fișierele TypeScript pentru apeluri **`export default define<Entity>({...})`**. Fiecare tip de entitate are o funcție ajutătoare corespunzătoare, exportată din `twenty-sdk`:
 
-| Funcție ajutătoare                 | Tipul entității                                       |
-| ---------------------------------- | ----------------------------------------------------- |
-| `defineObject()`                   | Definiții de obiecte personalizate                    |
-| `defineLogicFunction()`            | Definiții de funcții de logică                        |
-| `definePreInstallLogicFunction()`  | Pre-install logic function (runs before installation) |
-| `definePostInstallLogicFunction()` | Post-install logic function (runs after installation) |
-| `defineFrontComponent()`           | Definiții ale componentelor de interfață              |
-| `defineRole()`                     | Definiții de rol                                      |
-| `defineField()`                    | Extensii de câmp pentru obiectele existente           |
-| `defineView()`                     | Definiții pentru vizualizări salvate                  |
-| `defineNavigationMenuItem()`       | Definiții pentru elemente de meniu de navigare        |
-| `defineSkill()`                    | Definiții ale abilităților agentului AI               |
+| Funcție ajutătoare                 | Tipul entității                                                |
+| ---------------------------------- | -------------------------------------------------------------- |
+| `defineObject()`                   | Definiții de obiecte personalizate                             |
+| `defineLogicFunction()`            | Definiții de funcții de logică                                 |
+| `definePreInstallLogicFunction()`  | Funcție logică de pre-instalare (rulează înainte de instalare) |
+| `definePostInstallLogicFunction()` | Funcție logică post-instalare (rulează după instalare)         |
+| `defineFrontComponent()`           | Definiții ale componentelor de interfață                       |
+| `defineRole()`                     | Definiții de rol                                               |
+| `defineField()`                    | Extensii de câmp pentru obiectele existente                    |
+| `defineView()`                     | Definiții pentru vizualizări salvate                           |
+| `defineNavigationMenuItem()`       | Definiții pentru elemente de meniu de navigare                 |
+| `defineSkill()`                    | Definiții ale abilităților agentului AI                        |
+| `defineAgent()`                    | Definiții ale agenților AI                                     |
 
 <Note>
 **Denumirea fișierelor este flexibilă.** Detectarea entităților se bazează pe AST — SDK-ul scanează fișierele sursă pentru tiparul `export default define<Entity>({...})`. Puteți organiza fișierele și folderele cum doriți. Gruparea după tipul de entitate (de exemplu, `logic-functions/`, `roles/`) este doar o convenție pentru organizarea codului, nu o cerință.
@@ -171,7 +171,7 @@ export default defineObject({
 
 Comenzile ulterioare vor adăuga mai multe fișiere și foldere:
 
-* `yarn twenty app:dev` will auto-generate two typed API clients in `node_modules/twenty-sdk/generated`: `CoreApiClient` (for workspace data via `/graphql`) and `MetadataApiClient` (for workspace configuration and file uploads via `/metadata`).
+* `yarn twenty app:dev` va genera automat doi clienți API tipizați în `node_modules/twenty-sdk/clients`: `CoreApiClient` (pentru datele spațiului de lucru prin `/graphql`) și `MetadataApiClient` (pentru configurarea spațiului de lucru și încărcarea fișierelor prin `/metadata`).
 * `yarn twenty entity:add` va adăuga fișiere de definire a entităților în `src/` pentru obiectele, funcțiile, componentele front-end, rolurile, abilitățile și altele.
 
 ## Autentificare
@@ -220,14 +220,15 @@ SDK-ul oferă funcții ajutătoare pentru definirea entităților aplicației. D
 | `defineApplication()`              | Configurați metadatele aplicației (obligatoriu, una per aplicație)     |
 | `defineObject()`                   | Definiți obiecte personalizate cu câmpuri                              |
 | `defineLogicFunction()`            | Definiți funcții de logică cu handleri                                 |
-| `definePreInstallLogicFunction()`  | Define a pre-install logic function (one per app)                      |
-| `definePostInstallLogicFunction()` | Define a post-install logic function (one per app)                     |
+| `definePreInstallLogicFunction()`  | Definește o funcție logică de pre-instalare (una per aplicație)        |
+| `definePostInstallLogicFunction()` | Definește o funcție logică post-instalare (una per aplicație)          |
 | `defineFrontComponent()`           | Definiți componente Front pentru interfața de utilizator personalizată |
 | `defineRole()`                     | Configurați permisiunile rolurilor și accesul la obiecte               |
 | `defineField()`                    | Extindeți obiectele existente cu câmpuri suplimentare                  |
 | `defineView()`                     | Definește vizualizări salvate pentru obiecte                           |
 | `defineNavigationMenuItem()`       | Definește linkuri de navigare în bara laterală                         |
 | `defineSkill()`                    | Definiți abilități pentru agentul AI                                   |
+| `defineAgent()`                    | Definiți agenți AI cu prompturi de sistem                              |
 
 Aceste funcții validează configurația în timpul build-ului și oferă completare automată în IDE și siguranța tipurilor.
 
@@ -320,6 +321,72 @@ Puteți suprascrie câmpurile implicite definind un câmp cu același nume în t
 dar acest lucru nu este recomandat.
 </Note>
 
+### Definirea câmpurilor pe obiecte existente
+
+Folosiți `defineField()` pentru a adăuga câmpuri personalizate la obiectele existente — atât obiecte standard (precum `company`, `person`, `opportunity`), cât și obiecte personalizate definite de alte aplicații. Fiecare câmp se află în propriul fișier și face referire la obiectul țintă prin `universalIdentifier`.
+
+Pentru a face referire la obiectele standard, importați `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS` din `twenty-sdk`. Această constantă furnizează identificatori stabili pentru toate obiectele integrate și câmpurile lor:
+
+```typescript
+// src/fields/apollo-total-funding.field.ts
+import {
+  defineField,
+  FieldType,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk';
+
+export default defineField({
+  universalIdentifier: 'c90ae72d-4ddf-4f22-882f-eef98c91e40e',
+  objectUniversalIdentifier:
+    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+  type: FieldType.CURRENCY,
+  name: 'apolloTotalFunding',
+  label: 'Total Funding',
+  description: 'Total funding raised by the company',
+  icon: 'IconCash',
+});
+```
+
+Puncte cheie:
+
+* `objectUniversalIdentifier` îi indică lui Twenty la care obiect să atașeze câmpul. Folosiți `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.<objectName>.universalIdentifier` pentru obiectele standard.
+* Fiecare câmp necesită propriul `universalIdentifier` stabil, un `name`, `type`, `label` și `objectUniversalIdentifier` țintă.
+* Puteți genera câmpuri noi folosind `yarn twenty entity:add` și alegând opțiunea pentru câmp.
+* `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS` este exportată și ca `STANDARD_OBJECT` pentru comoditate — ambele se referă la aceeași constantă.
+
+Obiectele standard disponibile includ: `attachment`, `blocklist`, `calendarChannel`, `calendarEvent`, `calendarEventParticipant`, `company`, `connectedAccount`, `dashboard`, `favorite`, `favoriteFolder`, `message`, `messageChannel`, `messageParticipant`, `messageThread`, `note`, `noteTarget`, `opportunity`, `person`, `task`, `taskTarget`, `timelineActivity`, `workflow`, `workflowAutomatedTrigger`, `workflowRun`, `workflowVersion` și `workspaceMember`.
+
+Fiecare obiect standard expune, de asemenea, identificatorii câmpurilor sale. De exemplu, pentru a face referire la un câmp specific pe un obiect standard în permisiunile de rol:
+
+```typescript
+STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.fields.name.universalIdentifier
+```
+
+#### Câmpuri de relație pe obiecte existente
+
+Puteți defini, de asemenea, câmpuri de relație care leagă obiectele existente de obiectele dvs. personalizate:
+
+```typescript
+// src/fields/people-on-call-recording.field.ts
+import { defineField, FieldType, RelationType, STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk';
+import { CALL_RECORDING_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/objects/call-recording';
+import { CALL_RECORDING_ON_PERSON_ID } from 'src/fields/call-recording-on-person.field';
+
+export default defineField({
+  universalIdentifier: '4a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d',
+  objectUniversalIdentifier:
+    CALL_RECORDING_OBJECT_UNIVERSAL_IDENTIFIER,
+  type: FieldType.RELATION,
+  name: 'person',
+  label: 'Person',
+  relationTargetObjectMetadataUniversalIdentifier:
+    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
+  relationTargetFieldMetadataUniversalIdentifier:
+    CALL_RECORDING_ON_PERSON_ID,
+  relationType: RelationType.MANY_TO_ONE,
+});
+```
+
 ### Configurația aplicației (application-config.ts)
 
 Fiecare aplicație are un singur fișier `application-config.ts` care descrie:
@@ -327,7 +394,7 @@ Fiecare aplicație are un singur fișier `application-config.ts` care descrie:
 * **Cine este aplicația**: identificatori, nume de afișare și descriere.
 * **Cum rulează funcțiile**: ce rol folosesc pentru permisiuni.
 * **(Opțional) variabile**: perechi cheie–valoare expuse funcțiilor ca variabile de mediu.
-* **(Optional) pre-install function**: a logic function that runs before the app is installed.
+* **(Opțional) funcție de pre-instalare**: o funcție logică care rulează înainte ca aplicația să fie instalată.
 * **(Opțional) funcție post-instalare**: o funcție logică care rulează după instalarea aplicației.
 
 Folosiți `defineApplication()` pentru a defini configurația aplicației:
@@ -359,7 +426,7 @@ Notițe:
 * Câmpurile `universalIdentifier` sunt ID-uri deterministe pe care le dețineți; generați-le o singură dată și păstrați-le stabile între sincronizări.
 * `applicationVariables` devin variabile de mediu pentru funcțiile dvs. (de exemplu, `DEFAULT_RECIPIENT_NAME` este disponibil ca `process.env.DEFAULT_RECIPIENT_NAME`).
 * `defaultRoleUniversalIdentifier` trebuie să corespundă fișierului de rol (vedeți mai jos).
-* Pre-install and post-install functions are automatically detected during the manifest build. See [Pre-install functions](#pre-install-functions) and [Post-install functions](#post-install-functions).
+* Funcțiile de pre-instalare și post-instalare sunt detectate automat în timpul construirii manifestului. Vezi [Funcții de pre-instalare](#pre-install-functions) și [Funcții post-instalare](#post-install-functions).
 
 #### Roluri și permisiuni
 
@@ -433,7 +500,7 @@ Fiecare fișier de funcție folosește `defineLogicFunction()` pentru a exporta 
 // src/app/createPostCard.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk';
 import type { DatabaseEventPayload, ObjectRecordCreateEvent, CronPayload, RoutePayload } from 'twenty-sdk';
-import { CoreApiClient, type Person } from 'twenty-sdk/generated';
+import { CoreApiClient, type Person } from 'twenty-sdk/clients';
 
 const handler = async (params: RoutePayload) => {
   const client = new CoreApiClient();
@@ -498,11 +565,11 @@ Notițe:
 * Matricea `triggers` este opțională. Funcțiile fără declanșatoare pot fi folosite ca funcții utilitare apelate de alte funcții.
 * Puteți combina mai multe tipuri de declanșatoare într-o singură funcție.
 
-### Pre-install functions
+### Funcții de pre-instalare
 
-A pre-install function is a logic function that runs automatically before your app is installed on a workspace. This is useful for validation tasks, prerequisite checks, or preparing workspace state before the main installation proceeds.
+O funcție de pre-instalare este o funcție logică ce rulează automat înainte ca aplicația ta să fie instalată într-un spațiu de lucru. Aceasta este utilă pentru sarcini de validare, verificări ale condițiilor prealabile sau pregătirea stării spațiului de lucru înainte ca instalarea principală să continue.
 
-When you scaffold a new app with `create-twenty-app`, a pre-install function is generated for you at `src/logic-functions/pre-install.ts`:
+Când creezi scheletul unei aplicații noi cu `create-twenty-app`, ți se generează o funcție de pre-instalare la `src/logic-functions/pre-install.ts`:
 
 ```typescript
 // src/logic-functions/pre-install.ts
@@ -521,7 +588,7 @@ export default definePreInstallLogicFunction({
 });
 ```
 
-You can also manually execute the pre-install function at any time using the CLI:
+Poți, de asemenea, să execuți manual funcția de pre-instalare oricând folosind CLI:
 
 ```bash filename="Terminal"
 yarn twenty function:execute --preInstall
@@ -529,12 +596,12 @@ yarn twenty function:execute --preInstall
 
 Puncte cheie:
 
-* Pre-install functions use `definePreInstallLogicFunction()` — a specialized variant that omits trigger settings (`cronTriggerSettings`, `databaseEventTriggerSettings`, `httpRouteTriggerSettings`, `isTool`).
-* The handler receives an `InstallLogicFunctionPayload` with `{ previousVersion: string }` — the version of the app that was previously installed (or an empty string for fresh installs).
-* Only one pre-install function is allowed per application. The manifest build will error if more than one is detected.
-* The function's `universalIdentifier` is automatically set as `preInstallLogicFunctionUniversalIdentifier` on the application manifest during the build — you do not need to reference it in `defineApplication()`.
-* The default timeout is set to 300 seconds (5 minutes) to allow for longer preparation tasks.
-* Pre-install functions do not need triggers — they are invoked by the platform before installation or manually via `function:execute --preInstall`.
+* Funcțiile de pre-instalare folosesc `definePreInstallLogicFunction()` — o variantă specializată care omite setările de declanșare (`cronTriggerSettings`, `databaseEventTriggerSettings`, `httpRouteTriggerSettings`, `isTool`).
+* Handlerul primește un `InstallLogicFunctionPayload` cu `{ previousVersion: string }` — versiunea aplicației care a fost instalată anterior (sau un șir gol pentru instalări noi).
+* Este permisă o singură funcție de pre-instalare per aplicație. Construirea manifestului va genera o eroare dacă este detectată mai mult de una.
+* Proprietatea `universalIdentifier` a funcției este setată automat ca `preInstallLogicFunctionUniversalIdentifier` în manifestul aplicației în timpul build-ului — nu este nevoie să o referi în `defineApplication()`.
+* Timpul de expirare implicit este setat la 300 de secunde (5 minute) pentru a permite sarcini de pregătire mai lungi.
+* Funcțiile de pre-instalare nu au nevoie de declanșatoare — sunt invocate de platformă înainte de instalare sau manual prin `function:execute --preInstall`.
 
 ### Funcții post-instalare
 
@@ -567,10 +634,10 @@ yarn twenty function:execute --postInstall
 
 Puncte cheie:
 
-* Post-install functions use `definePostInstallLogicFunction()` — a specialized variant that omits trigger settings (`cronTriggerSettings`, `databaseEventTriggerSettings`, `httpRouteTriggerSettings`, `isTool`).
-* The handler receives an `InstallLogicFunctionPayload` with `{ previousVersion: string }` — the version of the app that was previously installed (or an empty string for fresh installs).
-* Only one post-install function is allowed per application. The manifest build will error if more than one is detected.
-* The function's `universalIdentifier` is automatically set as `postInstallLogicFunctionUniversalIdentifier` on the application manifest during the build — you do not need to reference it in `defineApplication()`.
+* Funcțiile de post-instalare folosesc `definePostInstallLogicFunction()` — o variantă specializată care omite setările de declanșare (`cronTriggerSettings`, `databaseEventTriggerSettings`, `httpRouteTriggerSettings`, `isTool`).
+* Handlerul primește un `InstallLogicFunctionPayload` cu `{ previousVersion: string }` — versiunea aplicației care a fost instalată anterior (sau un șir gol pentru instalări noi).
+* Este permisă o singură funcție de post-instalare per aplicație. Construirea manifestului va genera o eroare dacă este detectată mai mult de una.
+* Proprietatea `universalIdentifier` a funcției este setată automat ca `postInstallLogicFunctionUniversalIdentifier` în manifestul aplicației în timpul build-ului — nu este nevoie să o referi în `defineApplication()`.
 * Timpul de expirare implicit este setat la 300 de secunde (5 minute) pentru a permite sarcini de configurare mai lungi, cum ar fi popularea datelor.
 * Funcțiile post-instalare nu au nevoie de declanșatoare — sunt invocate de platformă în timpul instalării sau manual prin `function:execute --postInstall`.
 
@@ -678,7 +745,7 @@ Pentru a marca o funcție logică drept instrument, setați `isTool: true` și f
 ```typescript
 // src/logic-functions/enrich-company.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk';
-import { CoreApiClient } from 'twenty-sdk/generated';
+import { CoreApiClient } from 'twenty-sdk/clients';
 
 const handler = async (params: { companyName: string; domain?: string }) => {
   const client = new CoreApiClient();
@@ -805,15 +872,51 @@ Puteți crea abilități noi în două moduri:
 * **Generat**: Rulați `yarn twenty entity:add` și alegeți opțiunea de a adăuga o abilitate nouă.
 * **Manual**: Creați un fișier nou și folosiți `defineSkill()`, urmând același model.
 
+### Agenți
+
+Agenții sunt agenți AI definiți cu prompturi de sistem, care pot funcționa în spațiul dvs. de lucru. Utilizați `defineAgent()` pentru a defini agenți cu validare încorporată:
+
+```typescript
+// src/agents/example-agent.ts
+import { defineAgent } from 'twenty-sdk';
+
+export default defineAgent({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'sales-assistant',
+  label: 'Sales Assistant',
+  description: 'An AI agent that helps with sales tasks',
+  icon: 'IconRobot',
+  prompt: `You are a sales assistant. Help users with:
+1. Researching prospects and companies
+2. Drafting personalized outreach messages
+3. Tracking follow-ups and next steps
+4. Analyzing deal pipeline and suggesting actions`,
+});
+```
+
+Puncte cheie:
+
+* `name` este un șir identificator unic pentru agent (se recomandă kebab-case).
+* `label` este numele lizibil afișat în interfața cu utilizatorul (UI).
+* `prompt` conține promptul de sistem — acesta este textul de instrucțiuni care definește comportamentul agentului.
+* `icon` (opțional) setează pictograma afișată în UI.
+* `description` (opțional) oferă context suplimentar despre scopul agentului.
+
+Puteți crea agenți noi în două moduri:
+
+* **Generat**: Rulați `yarn twenty entity:add` și alegeți opțiunea de a adăuga un agent nou.
+* **Manual**: Creați un fișier nou și folosiți `defineAgent()`, urmând același model.
+
 ### Generated typed clients
 
-Two typed clients are auto-generated by `yarn twenty app:dev` and stored in `node_modules/twenty-sdk/generated` based on your workspace schema:
+Doi clienți tipizați sunt generați automat de `yarn twenty app:dev` și stocați în `node_modules/twenty-sdk/clients`, pe baza schemei spațiului tău de lucru:
 
 * **`CoreApiClient`** — queries the `/graphql` endpoint for workspace data
 * **`MetadataApiClient`** — interoghează endpointul `/metadata` pentru configurarea spațiului de lucru și încărcarea fișierelor
 
 ```typescript
-import { CoreApiClient, MetadataApiClient } from 'twenty-sdk/generated';
+import { CoreApiClient } from 'twenty-sdk/clients';
+import { MetadataApiClient } from 'twenty-sdk/clients';
 
 const client = new CoreApiClient();
 const { me } = await client.query({ me: { id: true, displayName: true } });
@@ -822,7 +925,7 @@ const metadataClient = new MetadataApiClient();
 const { currentWorkspace } = await metadataClient.query({ currentWorkspace: { id: true } });
 ```
 
-Ambii clienți sunt regenerați automat de `yarn twenty app:dev` ori de câte ori obiectele sau câmpurile tale se schimbă.
+`CoreApiClient` este regenerat automat de `yarn twenty app:dev` ori de câte ori obiectele sau câmpurile tale se schimbă. `MetadataApiClient` este livrat preconstruit împreună cu SDK-ul.
 
 #### Acreditări la runtime în funcțiile de logică
 
@@ -839,10 +942,10 @@ Notițe:
 
 #### Încărcarea fișierelor
 
-Clientul `MetadataApiClient` generat include o metodă `uploadFile` pentru atașarea fișierelor la câmpuri de tip fișier ale obiectelor din spațiul tău de lucru. Deoarece clienții GraphQL standard nu acceptă în mod nativ încărcarea fișierelor multipart, clientul oferă această metodă dedicată care implementează, sub capotă, [specificația cererilor GraphQL multipart](https://github.com/jaydenseric/graphql-multipart-request-spec).
+`MetadataApiClient` include o metodă `uploadFile` pentru atașarea fișierelor la câmpuri de tip fișier ale obiectelor din spațiul tău de lucru. Deoarece clienții GraphQL standard nu acceptă în mod nativ încărcarea fișierelor multipart, clientul oferă această metodă dedicată care implementează, sub capotă, [specificația cererilor GraphQL multipart](https://github.com/jaydenseric/graphql-multipart-request-spec).
 
 ```typescript
-import { MetadataApiClient } from 'twenty-sdk/generated';
+import { MetadataApiClient } from 'twenty-sdk/clients';
 import * as fs from 'fs';
 
 const metadataClient = new MetadataApiClient();

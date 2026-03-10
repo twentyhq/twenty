@@ -1,24 +1,15 @@
-import { ThemeProvider } from '@emotion/react';
 import { type Preview } from '@storybook/react-vite';
-import { THEME_LIGHT, ThemeContextProvider } from '@ui/theme';
+import '@ui/theme-constants/theme-light.css';
+import '@ui/theme-constants/theme-dark.css';
+import { ThemeProvider } from '@ui/theme-constants';
 
 const preview: Preview = {
   tags: ['autodocs'],
   decorators: [
     (Story) => {
-      // const mode = useDarkMode() ? 'Dark' : 'Light';
-
-      const theme = THEME_LIGHT;
-
-      /*  useEffect(() => {
-        document.documentElement.className = mode === 'Dark' ? 'dark' : 'light';
-      }, [mode]);*/
-
       return (
-        <ThemeProvider theme={theme}>
-          <ThemeContextProvider theme={theme}>
-            <Story />
-          </ThemeContextProvider>
+        <ThemeProvider colorScheme="light">
+          <Story />
         </ThemeProvider>
       );
     },

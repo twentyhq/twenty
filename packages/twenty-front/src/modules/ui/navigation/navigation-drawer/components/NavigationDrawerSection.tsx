@@ -1,10 +1,11 @@
 import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useIsMobile } from 'twenty-ui/utilities';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledSection = styled.div<{ isSettingsDrawer?: boolean }>`
-  margin-bottom: ${({ theme, isSettingsDrawer }) =>
-    isSettingsDrawer ? theme.spacing(3) : 0};
+  margin-bottom: ${({ isSettingsDrawer }) =>
+    isSettingsDrawer ? themeCssVariables.spacing[3] : '0'};
   width: 100%;
 `;
 
@@ -14,20 +15,24 @@ const StyledSectionInnerContainerMinusScrollPadding = styled.div<{
 }>`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.betweenSiblingsGap};
-  width: ${({ isMobile, theme, isSettingsDrawer }) =>
-    `calc(100% - ${isMobile || isSettingsDrawer ? 0 : theme.spacing(2)})`};
+  gap: ${themeCssVariables.betweenSiblingsGap};
+  width: ${({ isMobile, isSettingsDrawer }) =>
+    isMobile || isSettingsDrawer
+      ? '100%'
+      : `calc(100% - ${themeCssVariables.spacing[2]})`};
 `;
 
 export const NavigationDrawerSection = ({
   children,
+  className,
 }: {
   children: React.ReactNode;
+  className?: string;
 }) => {
   const isMobile = useIsMobile();
   const isSettingsDrawer = useIsSettingsDrawer();
   return (
-    <StyledSection isSettingsDrawer={isSettingsDrawer}>
+    <StyledSection isSettingsDrawer={isSettingsDrawer} className={className}>
       <StyledSectionInnerContainerMinusScrollPadding
         isMobile={isMobile}
         isSettingsDrawer={isSettingsDrawer}

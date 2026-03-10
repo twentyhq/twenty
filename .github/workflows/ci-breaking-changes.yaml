@@ -16,8 +16,6 @@ env:
 
 permissions:
   contents: read
-  pull-requests: write
-  checks: write
 
 jobs:
   changed-files-check:
@@ -34,7 +32,7 @@ jobs:
     needs: changed-files-check
     if: needs.changed-files-check.outputs.any_changed == 'true'
     timeout-minutes: 45
-    runs-on: depot-ubuntu-24.04
+    runs-on: ubuntu-latest
     services:
       postgres:
         image: twentycrm/twenty-postgres-spilo
@@ -72,7 +70,7 @@ jobs:
       - name: Checkout current branch
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 10
 
       - name: Try to merge main into current branch
         id: merge_attempt
@@ -584,182 +582,16 @@ jobs:
             echo "::warning::REST Metadata API analysis tool error - continuing workflow"
           fi
 
-      - name: Comment API Changes on PR
+      - name: Upload breaking changes report
         if: always()
-        uses: actions/github-script@v7
+        uses: actions/upload-artifact@v4
         with:
-          script: |
-            const fs = require('fs');
-            let hasChanges = false;
-            let comment = '';
-
-            try {
-              if (fs.existsSync('graphql-schema-diff.md')) {
-                const graphqlDiff = fs.readFileSync('graphql-schema-diff.md', 'utf8');
-                if (graphqlDiff.trim()) {
-                  if (!hasChanges) {
-                    comment = '## 📊 API Changes Report\n\n';
-                    hasChanges = true;
-                  }
-                  comment += '### GraphQL Schema Changes\n' + graphqlDiff + '\n\n';
-                }
-              }
-
-              if (fs.existsSync('graphql-metadata-diff.md')) {
-                const graphqlMetadataDiff = fs.readFileSync('graphql-metadata-diff.md', 'utf8');
-                if (graphqlMetadataDiff.trim()) {
-                  if (!hasChanges) {
-                    comment = '## 📊 API Changes Report\n\n';
-                    hasChanges = true;
-                  }
-                  comment += '### GraphQL Metadata Schema Changes\n' + graphqlMetadataDiff + '\n\n';
-                }
-              }
-
-              if (fs.existsSync('rest-api-diff.md')) {
-                const restDiff = fs.readFileSync('rest-api-diff.md', 'utf8');
-                if (restDiff.trim()) {
-                  if (!hasChanges) {
-                    comment = '## 📊 API Changes Report\n\n';
-                    hasChanges = true;
-                  }
-                  comment += restDiff + '\n\n';
-                }
-              }
-
-              if (fs.existsSync('rest-metadata-api-diff.md')) {
-                const metadataDiff = fs.readFileSync('rest-metadata-api-diff.md', 'utf8');
-                if (metadataDiff.trim()) {
-                  if (!hasChanges) {
-                    comment = '## 📊 API Changes Report\n\n';
-                    hasChanges = true;
-                  }
-                  comment += metadataDiff + '\n\n';
-                }
-              }
-
-              // Only post comment if there are changes
-              if (hasChanges) {
-                // Add branch state information only if there were conflicts
-                const branchState = process.env.BRANCH_STATE || 'unknown';
-                let branchStateNote = '';
-
-                if (branchState === 'conflicts') {
-                  branchStateNote = '\n\n⚠️ **Note**: Could not merge with `main` due to conflicts. This comparison shows changes between the current branch and `main` as separate states.\n';
-                }
-                // Check if there are any breaking changes detected
-                let hasBreakingChanges = false;
-                let breakingChangeNote = '';
-
-                // Check for breaking changes in any of the diff files
-                if (fs.existsSync('rest-api-diff.md')) {
-                  const restDiff = fs.readFileSync('rest-api-diff.md', 'utf8');
-                  if (restDiff.includes('Breaking Changes') || restDiff.includes('🚨') ||
-                      restDiff.includes('Removed Endpoints') || restDiff.includes('Changed Operations')) {
-                    hasBreakingChanges = true;
-                  }
-                }
-
-                if (fs.existsSync('rest-metadata-api-diff.md')) {
-                  const metadataDiff = fs.readFileSync('rest-metadata-api-diff.md', 'utf8');
-                  if (metadataDiff.includes('Breaking Changes') || metadataDiff.includes('🚨') ||
-                      metadataDiff.includes('Removed Endpoints') || metadataDiff.includes('Changed Operations')) {
-                    hasBreakingChanges = true;
-                  }
-                }
-
-                // Also check GraphQL changes for breaking changes indicators
-                if (fs.existsSync('graphql-schema-diff.md')) {
-                  const graphqlDiff = fs.readFileSync('graphql-schema-diff.md', 'utf8');
-                  if (graphqlDiff.includes('Breaking changes') || graphqlDiff.includes('BREAKING')) {
-                    hasBreakingChanges = true;
-                  }
-                }
-
-                if (fs.existsSync('graphql-metadata-diff.md')) {
-                  const graphqlMetadataDiff = fs.readFileSync('graphql-metadata-diff.md', 'utf8');
-                  if (graphqlMetadataDiff.includes('Breaking changes') || graphqlMetadataDiff.includes('BREAKING')) {
-                    hasBreakingChanges = true;
-                  }
-                }
-
-                // Check PR title for "breaking"
-                const prTitle = ${{ toJSON(github.event.pull_request.title) }};
-                const titleContainsBreaking = prTitle.toLowerCase().includes('breaking');
-
-                if (hasBreakingChanges) {
-                  if (titleContainsBreaking) {
-                    breakingChangeNote = '\n\n## ✅ Breaking Change Protocol\n\n' +
-                      '**This PR title contains "breaking" and breaking changes were detected - the CI will fail as expected.**\n\n' +
-                      '📝 **Action Required**: Please add `BREAKING CHANGE:` to your commit message to trigger a major version bump.\n\n' +
-                      'Example:\n```\nfeat: add new API endpoint\n\nBREAKING CHANGE: removed deprecated field from User schema\n```';
-                  } else {
-                    breakingChangeNote = '\n\n## ⚠️ Breaking Change Protocol\n\n' +
-                      '**Breaking changes detected but PR title does not contain "breaking" - CI will pass but action needed.**\n\n' +
-                      '🔄 **Options**:\n' +
-                      '1. **If this IS a breaking change**: Add "breaking" to your PR title and add `BREAKING CHANGE:` to your commit message\n' +
-                      '2. **If this is NOT a breaking change**: The API diff tool may have false positives - please review carefully\n\n' +
-                      'For breaking changes, add to commit message:\n```\nfeat: add new API endpoint\n\nBREAKING CHANGE: removed deprecated field from User schema\n```';
-                  }
-                }
-
-                const COMMENT_MARKER = '<!-- API_CHANGES_REPORT -->';
-                const commentBody = COMMENT_MARKER + '\n' + comment + branchStateNote + '\n⚠️ **Please review these API changes carefully before merging.**' + breakingChangeNote;
-
-                // Get all comments to find existing API changes comment
-                const {data: comments} = await github.rest.issues.listComments({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  issue_number: context.issue.number,
-                });
-
-                // Find our existing comment
-                const botComment = comments.find(comment => comment.body.includes(COMMENT_MARKER));
-
-                if (botComment) {
-                  // Update existing comment
-                  await github.rest.issues.updateComment({
-                    owner: context.repo.owner,
-                    repo: context.repo.repo,
-                    comment_id: botComment.id,
-                    body: commentBody
-                  });
-                  console.log('Updated existing API changes comment');
-                } else {
-                  // Create new comment
-                  await github.rest.issues.createComment({
-                    issue_number: context.issue.number,
-                    owner: context.repo.owner,
-                    repo: context.repo.repo,
-                    body: commentBody
-                  });
-                  console.log('Created new API changes comment');
-                }
-              } else {
-                console.log('No API changes detected - skipping PR comment');
-
-                // Check if there's an existing comment to remove
-                const {data: comments} = await github.rest.issues.listComments({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  issue_number: context.issue.number,
-                });
-
-                const COMMENT_MARKER = '<!-- API_CHANGES_REPORT -->';
-                const botComment = comments.find(comment => comment.body.includes(COMMENT_MARKER));
-
-                if (botComment) {
-                  await github.rest.issues.deleteComment({
-                    owner: context.repo.owner,
-                    repo: context.repo.repo,
-                    comment_id: botComment.id,
-                  });
-                  console.log('Deleted existing API changes comment (no changes detected)');
-                }
-              }
-            } catch (error) {
-              console.log('Could not post comment:', error);
-            }
+          name: breaking-changes-report
+          path: |
+            *-diff.md
+            *-diff.json
+          if-no-files-found: ignore
+          retention-days: 3
 
       - name: Cleanup servers
         if: always()
@@ -771,16 +603,4 @@ jobs:
             kill $(cat /tmp/main-server.pid) || true
           fi
 
-      # - name: Upload API specifications and diffs
-      #   if: always()
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: api-specifications-and-diffs
-      #     path: |
-      #       /tmp/main-server.log
-      #       /tmp/current-server.log
-      #       *-api.json
-      #       *-schema-introspection.json
-      #       *-diff.md
-      #       *-diff.json
 

@@ -20,6 +20,7 @@ import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
 import { regroupEntitiesByRelatedEntityId } from 'src/engine/workspace-cache/utils/regroup-entities-by-related-entity-id';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
+import { ViewSortEntity } from 'src/engine/metadata-modules/view-sort/entities/view-sort.entity';
 
 @Injectable()
 @WorkspaceCache('flatFieldMetadataMaps')
@@ -39,6 +40,8 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends WorkspaceCachePro
     private readonly viewFilterRepository: Repository<ViewFilterEntity>,
     @InjectRepository(ViewGroupEntity)
     private readonly viewGroupRepository: Repository<ViewGroupEntity>,
+    @InjectRepository(ViewSortEntity)
+    private readonly viewSortRepository: Repository<ViewSortEntity>,
     @InjectRepository(ViewEntity)
     private readonly viewRepository: Repository<ViewEntity>,
   ) {
@@ -54,6 +57,7 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends WorkspaceCachePro
       applications,
       viewFields,
       viewFilters,
+      viewSorts,
       views,
     ] = await Promise.all([
       this.fieldMetadataRepository.find({
@@ -80,6 +84,11 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends WorkspaceCachePro
         select: ['id', 'universalIdentifier', 'fieldMetadataId'],
         withDeleted: true,
       }),
+      this.viewSortRepository.find({
+        where: { workspaceId },
+        select: ['id', 'universalIdentifier', 'fieldMetadataId'],
+        withDeleted: true,
+      }),
       this.viewRepository.find({
         where: { workspaceId },
         select: [
@@ -99,6 +108,7 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends WorkspaceCachePro
       calendarViewsByFieldId,
       kanbanViewsByFieldId,
       mainGroupByFieldMetadataViewsByFieldId,
+      viewSortsByFieldId,
     ] = (
       [
         {
@@ -120,6 +130,10 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends WorkspaceCachePro
         {
           entities: views,
           foreignKey: 'mainGroupByFieldMetadataId',
+        },
+        {
+          entities: viewSorts,
+          foreignKey: 'fieldMetadataId',
         },
       ] as const
     ).map(regroupEntitiesByRelatedEntityId);
@@ -147,6 +161,7 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends WorkspaceCachePro
             mainGroupByFieldMetadataViewsByFieldId.get(
               fieldMetadataEntity.id,
             ) || [],
+          viewSorts: viewSortsByFieldId.get(fieldMetadataEntity.id) || [],
         },
         fieldMetadataIdToUniversalIdentifierMap,
         objectMetadataIdToUniversalIdentifierMap,

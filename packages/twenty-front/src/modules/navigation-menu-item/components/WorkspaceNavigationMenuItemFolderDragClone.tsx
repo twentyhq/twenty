@@ -1,10 +1,11 @@
-import { useTheme } from '@emotion/react';
 import {
   type DraggableProvided,
   type DraggableRubric,
   type DraggableStateSnapshot,
 } from '@hello-pangea/dnd';
+import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 import { NavigationMenuItemIcon } from '@/navigation-menu-item/components/NavigationMenuItemIcon';
 import { getNavigationMenuItemSecondaryLabel } from '@/navigation-menu-item/utils/getNavigationMenuItemSecondaryLabel';
@@ -32,7 +33,7 @@ export const WorkspaceNavigationMenuItemFolderDragClone = ({
   navigationMenuItemFolderContentLength,
   selectedNavigationMenuItemIndex,
 }: WorkspaceNavigationMenuItemFolderDragCloneProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
   const navigationMenuItem = navigationMenuItems[rubric.source.index];
 
@@ -43,9 +44,9 @@ export const WorkspaceNavigationMenuItemFolderDragClone = ({
   return (
     <div
       ref={draggableProvided.innerRef}
-      // eslint-disable-next-line react/jsx-props-no-spreading
+      // oxlint-disable-next-line react/jsx-props-no-spreading
       {...draggableProvided.draggableProps}
-      // eslint-disable-next-line react/jsx-props-no-spreading
+      // oxlint-disable-next-line react/jsx-props-no-spreading
       {...draggableProvided.dragHandleProps}
       style={{
         ...draggableProvided.draggableProps.style,

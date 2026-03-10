@@ -102,12 +102,12 @@ export const ObjectFilterDropdownDateInput = () => {
     : null;
 
   const relativeDate =
-    resolvedValue && typeof resolvedValue === 'object'
+    isDefined(resolvedValue) && typeof resolvedValue === 'object'
       ? resolvedValue
       : undefined;
 
   const safePlainDateValue: string | undefined =
-    resolvedValue && typeof resolvedValue === 'string'
+    isDefined(resolvedValue) && typeof resolvedValue === 'string'
       ? resolvedValue
       : undefined;
 

@@ -1,8 +1,9 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 import { AIChatThreadGroup } from '@/ai/components/AIChatThreadGroup';
 import { AIChatThreadsListEffect } from '@/ai/components/AIChatThreadsListEffect';
 import { AIChatSkeletonLoader } from '@/ai/components/internal/AIChatSkeletonLoader';
+import { useChatThreads } from '@/ai/hooks/useChatThreads';
 import { useCreateNewAIChatThread } from '@/ai/hooks/useCreateNewAIChatThread';
 import { groupThreadsByDate } from '@/ai/utils/groupThreadsByDate';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
@@ -10,12 +11,12 @@ import { t } from '@lingui/core/macro';
 import { Key } from 'ts-key-enum';
 import { capitalize } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { getOsControlSymbol } from 'twenty-ui/utilities';
-import { useGetChatThreadsQuery } from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div`
-  background: ${({ theme }) => theme.background.secondary};
-  border-right: 1px solid ${({ theme }) => theme.border.color.light};
+  background: ${themeCssVariables.background.secondary};
+  border-right: 1px solid ${themeCssVariables.border.color.light};
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -24,33 +25,33 @@ const StyledContainer = styled.div`
 const StyledThreadsContainer = styled.div`
   flex: 1;
   overflow-y: auto;
-  padding: ${({ theme }) => theme.spacing(3)};
+  padding: ${themeCssVariables.spacing[3]};
 `;
 
 const StyledButtonsContainer = styled.div`
+  border-top: 1px solid ${themeCssVariables.border.color.medium};
   display: flex;
-  padding: ${({ theme }) => theme.spacing(2, 2.5)};
   justify-content: flex-end;
-  border-top: 1px solid ${({ theme }) => theme.border.color.medium};
+  padding: ${themeCssVariables.spacing[2]} 10px;
 `;
 
 export const AIChatThreadsList = () => {
-  const { createChatThread } = useCreateNewAIChatThread();
+  const { switchToNewChat } = useCreateNewAIChatThread();
 
   const focusId = 'threads-list';
 
   useHotkeysOnFocusedElement({
     keys: [`${Key.Control}+${Key.Enter}`, `${Key.Meta}+${Key.Enter}`],
-    callback: () => createChatThread(),
+    callback: () => switchToNewChat(),
     focusId,
-    dependencies: [createChatThread],
+    dependencies: [switchToNewChat],
   });
 
-  const { data: { chatThreads = [] } = {}, loading } = useGetChatThreadsQuery();
+  const { threads, hasNextPage, loading, fetchMoreRef } = useChatThreads();
 
-  const groupedThreads = groupThreadsByDate(chatThreads);
+  const groupedThreads = groupThreadsByDate(threads);
 
-  if (loading === true) {
+  if (loading && threads.length === 0) {
     return <AIChatSkeletonLoader />;
   }
 
@@ -59,13 +60,16 @@ export const AIChatThreadsList = () => {
       <AIChatThreadsListEffect focusId={focusId} />
       <StyledContainer>
         <StyledThreadsContainer>
-          {Object.entries(groupedThreads).map(([title, threads]) => (
+          {Object.entries(groupedThreads).map(([title, threadsInGroup]) => (
             <AIChatThreadGroup
               key={title}
               title={capitalize(title)}
-              threads={threads}
+              threads={threadsInGroup}
             />
           ))}
+          {hasNextPage ? (
+            <div ref={fetchMoreRef} style={{ minHeight: 1 }} />
+          ) : null}
         </StyledThreadsContainer>
         <StyledButtonsContainer>
           <Button
@@ -73,7 +77,7 @@ export const AIChatThreadsList = () => {
             accent="blue"
             size="medium"
             title={t`New chat`}
-            onClick={() => createChatThread()}
+            onClick={() => switchToNewChat()}
             hotkeys={[getOsControlSymbol(), '⏎']}
           />
         </StyledButtonsContainer>

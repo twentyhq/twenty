@@ -1,21 +1,22 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { H2Title, IconCopy } from 'twenty-ui/display';
 import { Button, CodeEditor } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 const StyledWrapper = styled.div`
-  background-color: ${({ theme }) => theme.background.secondary};
-  border: 1px solid ${({ theme }) => theme.border.color.light};
-  border-radius: ${({ theme }) => theme.border.radius.md};
+  background-color: ${themeCssVariables.background.secondary};
+  border: 1px solid ${themeCssVariables.border.color.light};
+  border-radius: ${themeCssVariables.border.radius.md};
 `;
 
 const StyledCopyButton = styled.div`
   position: absolute;
-  top: ${({ theme }) => theme.spacing(3)};
-  right: ${({ theme }) => theme.spacing(3)};
+  right: ${themeCssVariables.spacing[3]};
+  top: ${themeCssVariables.spacing[3]};
   z-index: 1;
 `;
 
@@ -95,7 +96,7 @@ export const SettingsAIMCP = () => {
                 top: 12,
               },
             }}
-            height="220px"
+            height={230}
           />
         </StyledEditorContainer>
       </StyledWrapper>

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { transformRichTextV2Value } from 'src/engine/core-modules/record-transformer/utils/transform-rich-text-v2.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -327,24 +327,32 @@ export class PageLayoutWidgetService {
       existingFlatPageLayoutWidgetMaps,
     );
 
-    const {
-      flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
-      flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
-      flatFrontComponentMaps: existingFlatFrontComponentMaps,
-      flatViewFieldGroupMaps: existingFlatViewFieldGroupMaps,
-      flatViewMaps: existingFlatViewMaps,
-    } = await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+    const [
       {
-        workspaceId,
-        flatMapsKeys: [
-          'flatObjectMetadataMaps',
-          'flatFieldMetadataMaps',
-          'flatFrontComponentMaps',
-          'flatViewFieldGroupMaps',
-          'flatViewMaps',
-        ],
+        flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+        flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
+        flatFrontComponentMaps: existingFlatFrontComponentMaps,
+        flatViewFieldGroupMaps: existingFlatViewFieldGroupMaps,
+        flatViewMaps: existingFlatViewMaps,
       },
-    );
+      { workspaceCustomFlatApplication },
+    ] = await Promise.all([
+      this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: [
+            'flatObjectMetadataMaps',
+            'flatFieldMetadataMaps',
+            'flatFrontComponentMaps',
+            'flatViewFieldGroupMaps',
+            'flatViewMaps',
+          ],
+        },
+      ),
+      this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      ),
+    ]);
 
     const isConfigurationBeingUpdated = Object.prototype.hasOwnProperty.call(
       updateData,
@@ -377,6 +385,10 @@ export class PageLayoutWidgetService {
         flatFrontComponentMaps: existingFlatFrontComponentMaps,
         flatViewFieldGroupMaps: existingFlatViewFieldGroupMaps,
         flatViewMaps: existingFlatViewMaps,
+        callerApplicationUniversalIdentifier:
+          workspaceCustomFlatApplication.universalIdentifier,
+        workspaceCustomApplicationUniversalIdentifier:
+          workspaceCustomFlatApplication.universalIdentifier,
       });
 
     const shouldValidateChartFields =

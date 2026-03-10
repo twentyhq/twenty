@@ -40,7 +40,7 @@ export function formatData<T>(
 
   const { fieldIdByName, fieldIdByJoinColumnName } = fieldMaps;
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
   const newData: Record<string, any> = {};
 
   for (const [key, value] of Object.entries(data)) {
@@ -73,10 +73,10 @@ export function formatData<T>(
 }
 
 export function formatCompositeField(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
   value: any,
   fieldMetadata: FlatFieldMetadata,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
 ): Record<string, any> {
   const compositeType = compositeTypeDefinitions.get(
     fieldMetadata.type as CompositeFieldMetadataType,
@@ -88,7 +88,7 @@ export function formatCompositeField(
     );
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
   const formattedCompositeField: Record<string, any> = {};
 
   for (const property of compositeType.properties) {
@@ -107,7 +107,7 @@ export function formatCompositeField(
 }
 
 function formatFieldMetadataValue(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
   value: any,
   fieldMetadata: FlatFieldMetadata,
 ) {

@@ -1,19 +1,20 @@
 import { type CalendarChannel } from '@/accounts/types/CalendarChannel';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { SettingsAccountsEventVisibilitySettingsCard } from '@/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { Section } from '@react-email/components';
 import { H2Title, IconUserPlus } from 'twenty-ui/display';
 import { Card } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type CalendarChannelVisibility } from '~/generated/graphql';
 
 const StyledDetailsContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(6)};
+  gap: ${themeCssVariables.spacing[6]};
 `;
 
 type SettingsAccountsCalendarChannelDetailsProps = {

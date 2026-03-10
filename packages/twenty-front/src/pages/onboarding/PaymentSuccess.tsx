@@ -2,9 +2,9 @@ import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { OnboardingModalCircularIcon } from '@/onboarding/components/OnboardingModalCircularIcon';
-import { Modal } from '@/ui/layout/modal/components/Modal';
+import { ModalContent } from 'twenty-ui/layout';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -17,14 +17,10 @@ import { AnimatedEaseIn } from 'twenty-ui/utilities';
 import { useGetCurrentUserLazyQuery } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
-const StyledModalContent = styled(Modal.Content)`
-  gap: ${({ theme }) => theme.spacing(8)};
-`;
-
 const StyledTitleContainer = styled.div`
+  align-items: center;
   display: flex;
   flex-direction: column;
-  align-items: center;
   text-align: center;
 `;
 
@@ -66,7 +62,7 @@ export const PaymentSuccess = () => {
   };
 
   return (
-    <StyledModalContent isVerticalCentered isHorizontalCentered>
+    <ModalContent gap={8} isVerticallyCentered isHorizontallyCentered>
       <AnimatedEaseIn>
         <OnboardingModalCircularIcon Icon={IconCheck} />
       </AnimatedEaseIn>
@@ -81,6 +77,6 @@ export const PaymentSuccess = () => {
         Icon={() => (isLoading ? <Loader /> : null)}
         disabled={isLoading}
       />
-    </StyledModalContent>
+    </ModalContent>
   );
 };

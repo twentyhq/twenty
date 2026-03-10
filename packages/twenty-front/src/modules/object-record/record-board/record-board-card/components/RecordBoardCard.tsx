@@ -1,6 +1,6 @@
-import { recordIndexActionMenuDropdownPositionComponentState } from '@/action-menu/states/recordIndexActionMenuDropdownPositionComponentState';
-import { getActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getActionMenuDropdownIdFromActionMenuId';
-import { getActionMenuIdFromRecordIndexId } from '@/action-menu/utils/getActionMenuIdFromRecordIndexId';
+import { recordIndexCommandMenuDropdownPositionComponentState } from '@/command-menu-item/states/recordIndexCommandMenuDropdownPositionComponentState';
+import { getCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/utils/getCommandMenuDropdownIdFromCommandMenuId';
+import { getCommandMenuIdFromRecordIndexId } from '@/command-menu-item/utils/getCommandMenuIdFromRecordIndexId';
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
 import { isRecordBoardCardActiveComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardActiveComponentFamilyState';
 import { isRecordBoardCardFocusedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardFocusedComponentFamilyState';
@@ -30,23 +30,21 @@ import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hoo
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useContext } from 'react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { AnimatedEaseInOut } from 'twenty-ui/utilities';
 import { useDebouncedCallback } from 'use-debounce';
 
 const StyledCardContainer = styled.div<{ isPrimaryMultiDrag?: boolean }>`
   position: relative;
-  ${({ isPrimaryMultiDrag }) =>
-    isPrimaryMultiDrag &&
-    `
-    transform: scale(1.02);
-    z-index: 10;
-  `}
+  transform: ${({ isPrimaryMultiDrag }) =>
+    isPrimaryMultiDrag ? 'scale(1.02)' : 'none'};
+  z-index: ${({ isPrimaryMultiDrag }) => (isPrimaryMultiDrag ? '10' : 'auto')};
 `;
 
 const StyledBoardCardWrapper = styled.div`
-  padding-bottom: ${({ theme }) => theme.spacing(2)};
+  padding-bottom: ${themeCssVariables.spacing[2]};
   width: 100%;
 `;
 
@@ -101,14 +99,14 @@ export const RecordBoardCard = () => {
     },
   );
 
-  const actionMenuId = getActionMenuIdFromRecordIndexId(recordBoardId);
+  const commandMenuId = getCommandMenuIdFromRecordIndexId(recordBoardId);
 
-  const actionMenuDropdownId =
-    getActionMenuDropdownIdFromActionMenuId(actionMenuId);
+  const commandMenuDropdownId =
+    getCommandMenuDropdownIdFromCommandMenuId(commandMenuId);
 
-  const setRecordIndexActionMenuDropdownPosition = useSetAtomComponentState(
-    recordIndexActionMenuDropdownPositionComponentState,
-    actionMenuDropdownId,
+  const setRecordIndexCommandMenuDropdownPosition = useSetAtomComponentState(
+    recordIndexCommandMenuDropdownPositionComponentState,
+    commandMenuDropdownId,
   );
 
   const { openDropdown } = useOpenDropdown();
@@ -120,12 +118,12 @@ export const RecordBoardCard = () => {
   const handleContextMenuOpen = (event: React.MouseEvent) => {
     event.preventDefault();
     setIsRecordBoardCardSelected(true);
-    setRecordIndexActionMenuDropdownPosition({
+    setRecordIndexCommandMenuDropdownPosition({
       x: event.clientX,
       y: event.clientY,
     });
     openDropdown({
-      dropdownComponentInstanceIdFromProps: actionMenuDropdownId,
+      dropdownComponentInstanceIdFromProps: commandMenuDropdownId,
       globalHotkeysConfig: {
         enableGlobalHotkeysWithModifiers: true,
         enableGlobalHotkeysConflictingWithKeyboard: false,

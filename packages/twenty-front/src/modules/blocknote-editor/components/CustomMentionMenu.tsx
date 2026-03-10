@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { autoUpdate, useFloating } from '@floating-ui/react';
 import { motion } from 'framer-motion';
 import { type MouseEvent as ReactMouseEvent } from 'react';

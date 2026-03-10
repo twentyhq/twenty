@@ -1,6 +1,7 @@
 import {
   AggregateOperations,
   GraphOrderBy,
+  PageLayoutTabLayoutMode,
   WidgetConfigurationType,
   WidgetType,
   type PageLayoutWidget,
@@ -27,6 +28,7 @@ describe('convertLayoutsToWidgets', () => {
         aggregateFieldMetadataId: 'id',
         displayDataLabel: false,
       },
+      isOverridden: false,
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-01T00:00:00Z',
       deletedAt: null,
@@ -51,6 +53,7 @@ describe('convertLayoutsToWidgets', () => {
         orderBy: GraphOrderBy.VALUE_DESC,
         displayDataLabel: false,
       },
+      isOverridden: false,
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-01T00:00:00Z',
       deletedAt: null,
@@ -73,7 +76,23 @@ describe('convertLayoutsToWidgets', () => {
       columnSpan: 4,
       rowSpan: 5,
     });
+    expect(result[0].position).toEqual({
+      __typename: 'PageLayoutWidgetGridPosition',
+      layoutMode: PageLayoutTabLayoutMode.GRID,
+      column: 2,
+      row: 3,
+      columnSpan: 4,
+      rowSpan: 5,
+    });
     expect(result[1].gridPosition).toEqual({
+      column: 6,
+      row: 7,
+      columnSpan: 8,
+      rowSpan: 9,
+    });
+    expect(result[1].position).toEqual({
+      __typename: 'PageLayoutWidgetGridPosition',
+      layoutMode: PageLayoutTabLayoutMode.GRID,
       column: 6,
       row: 7,
       columnSpan: 8,

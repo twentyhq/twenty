@@ -1,7 +1,9 @@
 import { formatPath } from '@/cli/utilities/file/file-path';
 import chalk from 'chalk';
 import type { Command } from 'commander';
+import { AppBuildCommand } from './app/app-build';
 import { AppDevCommand } from './app/app-dev';
+import { AppPublishCommand } from './app/app-publish';
 import { AppTypecheckCommand } from './app/app-typecheck';
 import { AppUninstallCommand } from './app/app-uninstall';
 import { AuthListCommand } from './auth/auth-list';
@@ -60,7 +62,9 @@ export const registerCommands = (program: Command): void => {
     });
 
   // App commands
+  const buildCommand = new AppBuildCommand();
   const devCommand = new AppDevCommand();
+  const publishCommand = new AppPublishCommand();
   const typecheckCommand = new AppTypecheckCommand();
   const uninstallCommand = new AppUninstallCommand();
   const addCommand = new EntityAddCommand();
@@ -73,6 +77,34 @@ export const registerCommands = (program: Command): void => {
     .action(async (appPath) => {
       await devCommand.execute({
         appPath: formatPath(appPath),
+      });
+    });
+
+  program
+    .command('app:build [appPath]')
+    .description('Build, sync, and generate API client into .twenty/output/')
+    .option('--tarball', 'Also pack into a .tgz tarball')
+    .action(async (appPath, options) => {
+      await buildCommand.execute({
+        appPath: formatPath(appPath),
+        tarball: options.tarball,
+      });
+    });
+
+  program
+    .command('app:publish [appPath]')
+    .description(
+      'Build and publish to npm, or to a Twenty server with --server',
+    )
+    .option('--server <url>', 'Publish to a Twenty server instead of npm')
+    .option('--token <token>', 'Auth token for the server')
+    .option('--tag <tag>', 'npm dist-tag (e.g. beta, next)')
+    .action(async (appPath, options) => {
+      await publishCommand.execute({
+        appPath: formatPath(appPath),
+        server: options.server,
+        token: options.token,
+        tag: options.tag,
       });
     });
 

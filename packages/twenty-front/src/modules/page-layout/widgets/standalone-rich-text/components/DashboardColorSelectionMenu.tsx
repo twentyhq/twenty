@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { IconCheck } from 'twenty-ui/display';
 
@@ -10,35 +10,36 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSectionLabel } from '@/ui/layout/dropdown/components/DropdownMenuSectionLabel';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { useTheme } from '@emotion/react';
+import { themeCssVariables, ThemeContext } from 'twenty-ui/theme-constants';
+import { useContext } from 'react';
 
 const StyledColorMenuItem = styled.div`
   align-items: center;
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+  border-radius: ${themeCssVariables.border.radius.sm};
   cursor: pointer;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
-  min-height: ${({ theme }) => theme.spacing(6)};
-  padding: ${({ theme }) => theme.spacing(1)} ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
+  min-height: ${themeCssVariables.spacing[6]};
+  padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
 
   &:hover {
-    background: ${({ theme }) => theme.background.transparent.light};
+    background: ${themeCssVariables.background.transparent.light};
   }
 `;
 
 const StyledColorName = styled.span`
-  color: ${({ theme }) => theme.font.color.primary};
+  color: ${themeCssVariables.font.color.primary};
   flex: 1;
-  font-size: ${({ theme }) => theme.font.size.sm};
+  font-size: ${themeCssVariables.font.size.sm};
 `;
 
 const StyledCheckIcon = styled.div`
   align-items: center;
-  color: ${({ theme }) => theme.font.color.primary};
+  color: ${themeCssVariables.font.color.primary};
   display: flex;
-  height: ${({ theme }) => theme.spacing(4)};
+  height: ${themeCssVariables.spacing[4]};
   justify-content: center;
-  width: ${({ theme }) => theme.spacing(4)};
+  width: ${themeCssVariables.spacing[4]};
 `;
 
 type DashboardColorSelectionMenuProps = {
@@ -55,7 +56,7 @@ export const DashboardColorSelectionMenu = ({
   onBackgroundColorSelect,
 }: DashboardColorSelectionMenuProps) => {
   const { t } = useLingui();
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   return (
     <DropdownContent>
       <DropdownMenuItemsContainer hasMaxHeight>

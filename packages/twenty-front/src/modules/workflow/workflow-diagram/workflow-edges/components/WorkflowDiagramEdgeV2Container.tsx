@@ -1,13 +1,12 @@
-import { css } from '@emotion/react';
-import styled from '@emotion/styled';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from '@linaria/react';
 
 const StyledContainer = styled.div<{ labelX: number; labelY: number }>`
-  padding: ${({ theme }) => theme.spacing(1)};
+  padding: ${themeCssVariables.spacing[1]};
   pointer-events: all;
-  ${({ labelX, labelY }) => css`
-    transform: translate(-50%, -50%) translate(${labelX}px, ${labelY}px);
-  `}
   position: absolute;
+  transform: ${({ labelX, labelY }) =>
+    `translate(-50%, -50%) translate(${labelX}px, ${labelY}px)`};
 `;
 
 export { StyledContainer as WorkflowDiagramEdgeV2Container };

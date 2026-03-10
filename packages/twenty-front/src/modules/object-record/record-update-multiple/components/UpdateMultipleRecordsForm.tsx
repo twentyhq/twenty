@@ -5,16 +5,19 @@ import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/is
 import { type UpdateMultipleRecordsState } from '@/object-record/record-update-multiple/components/UpdateMultipleRecordsContainer';
 import { isUpdateRecordValueEmpty } from '@/object-record/record-update-multiple/utils/isUpdateRecordValueEmpty';
 import { shouldDisplayFormMultiEditField } from '@/object-record/record-update-multiple/utils/shouldDisplayFormMultiEditField';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { Section } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledSection = styled(Section)`
-  display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(6)};
-  padding: ${({ theme }) => theme.spacing(4)} ${({ theme }) => theme.spacing(3)};
-  width: auto;
+const StyledSectionContainer = styled.div`
+  > * {
+    display: flex;
+    flex-direction: column;
+    gap: ${themeCssVariables.spacing[6]};
+    padding: ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[3]};
+    width: auto;
+  }
 `;
 
 export type UpdateMultipleRecordsFormProps = {
@@ -49,35 +52,37 @@ export const UpdateMultipleRecordsForm = ({
   }));
 
   return (
-    <StyledSection>
-      {fieldsWithDefinitions.map(({ fieldMetadataItem, fieldDefinition }) => {
-        const fieldName = fieldDefinition.metadata.fieldName;
-        const isRelation = isFieldRelation(fieldDefinition);
-        const fieldNameOrRelationIdName =
-          isRelation && fieldMetadataItem.type === FieldMetadataType.RELATION
-            ? (fieldMetadataItem.settings?.joinColumnName as string)
-            : fieldName;
+    <StyledSectionContainer>
+      <Section>
+        {fieldsWithDefinitions.map(({ fieldMetadataItem, fieldDefinition }) => {
+          const fieldName = fieldDefinition.metadata.fieldName;
+          const isRelation = isFieldRelation(fieldDefinition);
+          const fieldNameOrRelationIdName =
+            isRelation && fieldMetadataItem.type === FieldMetadataType.RELATION
+              ? (fieldMetadataItem.settings?.joinColumnName as string)
+              : fieldName;
 
-        const value = values[fieldNameOrRelationIdName];
+          const value = values[fieldNameOrRelationIdName];
 
-        const handleValueChange = (newValue: any) => {
-          if (isUpdateRecordValueEmpty(newValue)) {
-            onChange(fieldNameOrRelationIdName, undefined);
-          } else {
-            onChange(fieldNameOrRelationIdName, newValue);
-          }
-        };
+          const handleValueChange = (newValue: any) => {
+            if (isUpdateRecordValueEmpty(newValue)) {
+              onChange(fieldNameOrRelationIdName, undefined);
+            } else {
+              onChange(fieldNameOrRelationIdName, newValue);
+            }
+          };
 
-        return (
-          <FormFieldInput
-            key={fieldDefinition.metadata.fieldName}
-            readonly={disabled}
-            field={fieldDefinition}
-            defaultValue={value}
-            onChange={handleValueChange}
-          />
-        );
-      })}
-    </StyledSection>
+          return (
+            <FormFieldInput
+              key={fieldDefinition.metadata.fieldName}
+              readonly={disabled}
+              field={fieldDefinition}
+              defaultValue={value}
+              onChange={handleValueChange}
+            />
+          );
+        })}
+      </Section>
+    </StyledSectionContainer>
   );
 };

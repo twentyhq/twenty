@@ -1,8 +1,9 @@
 import { createReactBlockSpec } from '@blocknote/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type ChangeEvent, useRef } from 'react';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { type AttachmentFileCategory } from '@/activities/files/types/AttachmentFileCategory';
 import { getFileType } from '@/activities/files/utils/getFileType';
@@ -18,23 +19,23 @@ const StyledFileInput = styled.input`
 const StyledFileLine = styled.div`
   align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledLink = styled.a`
   align-items: center;
-  color: ${({ theme }) => theme.font.color.primary};
+  color: ${themeCssVariables.font.color.primary};
   display: flex;
   text-decoration: none;
   :hover {
-    color: ${({ theme }) => theme.font.color.secondary};
+    color: ${themeCssVariables.font.color.secondary};
   }
 `;
 
 const StyledUploadFileContainer = styled.div`
   align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 export const FileBlock = createReactBlockSpec(
@@ -42,10 +43,10 @@ export const FileBlock = createReactBlockSpec(
     type: 'file',
     propSchema: {
       url: {
-        default: '' as string,
+        default: '',
       },
       name: {
-        default: '' as string,
+        default: '',
       },
       fileCategory: {
         default: 'OTHER' as AttachmentFileCategory,
@@ -55,7 +56,7 @@ export const FileBlock = createReactBlockSpec(
   },
   {
     render: ({ block, editor }) => {
-      // eslint-disable-next-line react-hooks/rules-of-hooks
+      // oxlint-disable-next-line react-hooks/rules-of-hooks
       const inputFileRef = useRef<HTMLInputElement>(null);
 
       const handleUploadAttachment = async (file: File) => {

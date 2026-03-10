@@ -194,7 +194,7 @@ setHotkeyScopeAndMemorizePreviousScope(
 
 ### Use StyledComponents
 
-Estilize os componentes com [styled-components](https://emotion.sh/docs/styled).
+Estilize os componentes com [Linaria styled](https://github.com/callstack/linaria).
 
 ```tsx
 // ❌ Bad
@@ -260,7 +260,7 @@ const StyledButton = styled.button`
 
 ## Impor Importações Sem Tipo
 
-Evite importações de tipo. Para impor esse padrão, uma regra do ESLint verifica e relata qualquer violação de importação de tipos. Isso ajuda a manter a consistência e a legibilidade no código TypeScript.
+Evite importações de tipo. Para impor esse padrão, uma regra do Oxlint verifica e relata quaisquer importações de tipos. Isso ajuda a manter a consistência e a legibilidade no código TypeScript.
 
 ```tsx
 // ❌ Bad
@@ -281,10 +281,10 @@ import { Meta, StoryObj } from '@storybook/react';
 
 * **Manutenção**: Melhora a manutenibilidade da base de código porque os desenvolvedores podem identificar e localizar importações somente de tipo ao revisar ou modificar o código.
 
-### Regra ESLint
+### Regra do Oxlint
 
-Uma regra do ESLint, `@typescript-eslint/consistent-type-imports`, aplica o padrão de importação sem tipo. Esta regra gerará erros ou avisos para qualquer violação de importação de tipo.
+Uma regra do Oxlint, `typescript/consistent-type-imports`, aplica o padrão de não usar importações de tipos. Esta regra gerará erros ou avisos para qualquer violação de importação de tipo.
 
 Observe que esta regra trata especificamente de casos isolados onde importações de tipos não intencionais ocorrem. O próprio TypeScript desencoraja essa prática, conforme mencionado nas [notas de lançamento do TypeScript 3.8](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-8.html). Na maioria das situações, não é necessário usar importações somente de tipo.
 
-Para garantir que seu código esteja em conformidade com essa regra, certifique-se de executar o ESLint como parte do seu fluxo de trabalho de desenvolvimento.
+Para garantir que seu código esteja em conformidade com essa regra, certifique-se de executar o Oxlint como parte do seu fluxo de trabalho de desenvolvimento.

@@ -10,7 +10,10 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { GraphQLJSON } from 'graphql-type-json';
-import { PageLayoutWidgetPosition } from 'twenty-shared/types';
+import {
+  PageLayoutWidgetConditionalDisplay,
+  PageLayoutWidgetPosition,
+} from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { GridPositionInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/grid-position.input';
@@ -49,4 +52,9 @@ export class UpdatePageLayoutWidgetInput {
   @IsObject()
   @IsOptional()
   configuration?: AllPageLayoutWidgetConfiguration;
+
+  @Field(() => GraphQLJSON, { nullable: true })
+  @IsObject()
+  @IsOptional()
+  conditionalDisplay?: PageLayoutWidgetConditionalDisplay | null;
 }

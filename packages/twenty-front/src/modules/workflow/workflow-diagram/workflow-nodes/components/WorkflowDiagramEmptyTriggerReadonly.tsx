@@ -1,6 +1,6 @@
-import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
-import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
-import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
+import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
+import { useSidePanelWorkflowNavigation } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowNavigation';
+import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
@@ -35,12 +35,12 @@ export const WorkflowDiagramEmptyTriggerReadonly = ({ id }: { id: string }) => {
     workflowSelectedNodeComponentState,
   );
 
-  const { isInRightDrawer } = useContext(ActionMenuContext);
+  const { isInSidePanel } = useContext(CommandMenuContext);
 
-  const { openWorkflowViewStepInCommandMenu } = useWorkflowCommandMenu();
+  const { openWorkflowViewStepInSidePanel } = useSidePanelWorkflowNavigation();
 
-  const setCommandMenuNavigationStack = useSetAtomState(
-    commandMenuNavigationStackState,
+  const setSidePanelNavigationStack = useSetAtomState(
+    sidePanelNavigationStackState,
   );
 
   const selected = workflowSelectedNode === id;
@@ -55,13 +55,13 @@ export const WorkflowDiagramEmptyTriggerReadonly = ({ id }: { id: string }) => {
       );
     }
 
-    if (!isInRightDrawer) {
-      setCommandMenuNavigationStack([]);
+    if (!isInSidePanel) {
+      setSidePanelNavigationStack([]);
     }
 
     setWorkflowSelectedNode(TRIGGER_STEP_ID);
 
-    openWorkflowViewStepInCommandMenu({
+    openWorkflowViewStepInSidePanel({
       workflowId: workflowVisualizerWorkflowId,
       workflowVersionId: workflowVisualizerWorkflowVersionId,
       title: t`Add a Trigger`,

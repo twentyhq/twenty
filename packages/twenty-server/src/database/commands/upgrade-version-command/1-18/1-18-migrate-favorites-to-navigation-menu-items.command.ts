@@ -3,15 +3,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType, FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { In, IsNull, Not, Or, Repository } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 
 import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
-import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -286,6 +285,7 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
           name: favoriteFolder.name,
           link: null,
           icon: null,
+          color: null,
           position: favoriteFolder.position,
           workspaceId,
           applicationId: workspaceCustomApplicationId,
@@ -320,6 +320,7 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
           name: favoriteFolder.name,
           link: null,
           icon: null,
+          color: null,
           position: favoriteFolder.position,
           workspaceId,
           applicationId: workspaceCustomApplicationId,
@@ -528,6 +529,7 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
             name: null,
             link: null,
             icon: null,
+            color: null,
             position: favorite.position,
             workspaceId,
             applicationId,
@@ -582,6 +584,7 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
         name: null,
         link: null,
         icon: null,
+        color: null,
         position: favorite.position,
         workspaceId,
         applicationId: workspaceCustomApplicationId,

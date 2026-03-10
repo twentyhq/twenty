@@ -6,6 +6,7 @@ import {
   TargetFunction,
 } from '@/cli/utilities/build/manifest/manifest-extract-config';
 import { extractManifestFromFile } from '@/cli/utilities/build/manifest/manifest-extract-config-from-file';
+import { getDefaultFieldsInObjectFields } from '@/cli/utilities/build/manifest/utils/get-default-fields-in-object-fields';
 import {
   type ApplicationConfig,
   type FrontComponentConfig,
@@ -14,14 +15,16 @@ import {
 import { type ObjectConfig } from '@/sdk/objects/object-config';
 import { type PageLayoutConfig } from '@/sdk/page-layouts/page-layout-config';
 import { type ViewConfig } from '@/sdk/views/view-config';
-import { glob } from 'fast-glob';
-import { readFile } from 'fs-extra';
+import { readFile } from 'node:fs/promises';
 import { basename, extname, relative } from 'path';
+import { glob } from 'tinyglobby';
 import {
+  type AgentManifest,
   type ApplicationManifest,
   type AssetManifest,
   ASSETS_DIR,
   type FieldManifest,
+  type FrontComponentCommandManifest,
   type FrontComponentManifest,
   type LogicFunctionManifest,
   type Manifest,
@@ -34,7 +37,6 @@ import {
 } from 'twenty-shared/application';
 import { getInputSchemaFromSourceCode } from 'twenty-shared/logic-function';
 import { assertUnreachable } from 'twenty-shared/utils';
-import { getDefaultFieldsInObjectFields } from '@/cli/utilities/build/manifest/utils/get-default-fields-in-object-fields';
 
 const loadSources = async (appPath: string): Promise<string[]> => {
   return await glob(['**/*.ts', '**/*.tsx'], {
@@ -67,6 +69,7 @@ export const buildManifest = async (
   const fields: FieldManifest[] = [];
   const roles: RoleManifest[] = [];
   const skills: SkillManifest[] = [];
+  const agents: AgentManifest[] = [];
   const logicFunctions: LogicFunctionManifest[] = [];
   const frontComponents: FrontComponentManifest[] = [];
   const publicAssets: AssetManifest[] = [];
@@ -81,6 +84,7 @@ export const buildManifest = async (
   const fieldsFilePaths: string[] = [];
   const rolesFilePaths: string[] = [];
   const skillsFilePaths: string[] = [];
+  const agentsFilePaths: string[] = [];
   const logicFunctionsFilePaths: string[] = [];
   const frontComponentsFilePaths: string[] = [];
   const publicAssetsFilePaths: string[] = [];
@@ -183,6 +187,16 @@ export const buildManifest = async (
         skillsFilePaths.push(relativePath);
         break;
       }
+      case ManifestEntityKey.Agents: {
+        const extract = await extractManifestFromFile<AgentManifest>({
+          appPath,
+          filePath,
+        });
+        agents.push(extract.config);
+        errors.push(...extract.errors);
+        agentsFilePaths.push(relativePath);
+        break;
+      }
       case ManifestEntityKey.LogicFunctions: {
         const extract = await extractManifestFromFile<LogicFunctionConfig>({
           appPath,
@@ -237,7 +251,7 @@ export const buildManifest = async (
 
         errors.push(...extract.errors);
 
-        const { component, ...rest } = extract.config;
+        const { component, command, ...rest } = extract.config;
 
         const relativeFilePath = relative(appPath, filePath);
 
@@ -248,6 +262,8 @@ export const buildManifest = async (
           builtComponentPath: relativeFilePath.replace(/\.tsx?$/, '.mjs'),
           builtComponentChecksum: '',
           isHeadless: rest.isHeadless ?? false,
+          // transformed by conditionalAvailabilityTransformPlugin
+          command: command as FrontComponentCommandManifest,
         };
 
         frontComponents.push(config);
@@ -360,6 +376,7 @@ export const buildManifest = async (
         fields,
         roles,
         skills,
+        agents,
         logicFunctions,
         frontComponents,
         publicAssets,
@@ -374,6 +391,7 @@ export const buildManifest = async (
     fields: fieldsFilePaths,
     roles: rolesFilePaths,
     skills: skillsFilePaths,
+    agents: agentsFilePaths,
     logicFunctions: logicFunctionsFilePaths,
     frontComponents: frontComponentsFilePaths,
     publicAssets: publicAssetsFilePaths,

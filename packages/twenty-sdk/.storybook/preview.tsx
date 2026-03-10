@@ -1,25 +1,17 @@
-import { ThemeProvider } from '@emotion/react';
 import { type Preview } from '@storybook/react-vite';
-import { THEME_LIGHT, ThemeContextProvider } from 'twenty-ui/theme';
+import { ThemeProvider } from 'twenty-ui/theme-constants';
 
 const preview: Preview = {
   tags: ['autodocs'],
   decorators: [
     (Story) => {
-      const theme = THEME_LIGHT;
-
       return (
-        <ThemeProvider theme={theme}>
-          <ThemeContextProvider theme={theme}>
-            <Story />
-          </ThemeContextProvider>
+        <ThemeProvider colorScheme="light">
+          <Story />
         </ThemeProvider>
       );
     },
   ],
-  args: {
-    theme: THEME_LIGHT,
-  },
 };
 
 export default preview;

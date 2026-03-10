@@ -1,6 +1,6 @@
-import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
-import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
-import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
+import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
+import { useSidePanelWorkflowNavigation } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowNavigation';
+import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
@@ -33,19 +33,19 @@ export const WorkflowDiagramStepNodeEditable = ({
 
   const selected = workflowSelectedNode === id;
 
-  const { openWorkflowEditStepInCommandMenu } = useWorkflowCommandMenu();
+  const { openWorkflowEditStepInSidePanel } = useSidePanelWorkflowNavigation();
 
   const { resetWorkflowInsertStepIds } = useResetWorkflowInsertStepIds();
 
-  const { isInRightDrawer } = useContext(ActionMenuContext);
+  const { isInSidePanel } = useContext(CommandMenuContext);
 
-  const setCommandMenuNavigationStack = useSetAtomState(
-    commandMenuNavigationStackState,
+  const setSidePanelNavigationStack = useSetAtomState(
+    sidePanelNavigationStackState,
   );
 
   const handleClick = () => {
-    if (!isInRightDrawer) {
-      setCommandMenuNavigationStack([]);
+    if (!isInSidePanel) {
+      setSidePanelNavigationStack([]);
     }
 
     resetWorkflowInsertStepIds();
@@ -53,7 +53,7 @@ export const WorkflowDiagramStepNodeEditable = ({
     setWorkflowSelectedNode(id);
 
     if (isDefined(workflowVisualizerWorkflowId)) {
-      openWorkflowEditStepInCommandMenu(
+      openWorkflowEditStepInSidePanel(
         workflowVisualizerWorkflowId,
         data.name,
         getIcon(getWorkflowNodeIconKey(data)),

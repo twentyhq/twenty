@@ -1,5 +1,5 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { useContext, useState } from 'react';
+import { styled } from '@linaria/react';
 import { type Node, type NodeProps } from '@xyflow/react';
 import { Link } from 'react-router-dom';
 
@@ -11,26 +11,26 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { ObjectFieldRowWithoutRelation } from '@/settings/data-model/graph-overview/components/SettingsDataModelOverviewFieldWithoutRelation';
 import '@xyflow/react/dist/style.css';
-import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
+import { isDefined, getSettingsPath } from 'twenty-shared/utils';
 import { IconChevronDown, IconChevronUp, useIcons } from 'twenty-ui/display';
 import { SettingsItemTypeTag } from '@/settings/components/SettingsItemTypeTag';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type SettingsDataModelOverviewObjectNode = Node<ObjectMetadataItem, 'object'>;
 type SettingsDataModelOverviewObjectProps =
   NodeProps<SettingsDataModelOverviewObjectNode>;
 
 const StyledNode = styled.div`
-  background-color: ${({ theme }) => theme.background.secondary};
-  border-radius: ${({ theme }) => theme.border.radius.md};
+  background-color: ${themeCssVariables.background.secondary};
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  border-radius: ${themeCssVariables.border.radius.md};
+  box-shadow: ${themeCssVariables.boxShadow.light};
   display: flex;
   flex-direction: column;
+  gap: ${themeCssVariables.spacing[2]};
+  padding: ${themeCssVariables.spacing[2]};
   width: 220px;
-  padding: ${({ theme }) => theme.spacing(2)};
-  gap: ${({ theme }) => theme.spacing(2)};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  box-shadow: ${({ theme }) => theme.boxShadow.light};
 `;
 
 const StyledHeader = styled.div`
@@ -43,66 +43,67 @@ const StyledObjectName = styled.div`
   border: 0;
   border-radius: 4px 4px 0 0;
   display: flex;
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  gap: ${({ theme }) => theme.spacing(1)};
+  font-weight: ${themeCssVariables.font.weight.medium};
+  gap: ${themeCssVariables.spacing[1]};
   position: relative;
   text-align: center;
 `;
 
 const StyledInnerCard = styled.div`
-  border: 1px solid ${({ theme }) => theme.border.color.light};
-  background-color: ${({ theme }) => theme.background.primary};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  padding: ${({ theme }) => theme.spacing(2)} 0
-    ${({ theme }) => theme.spacing(2)} 0;
+  background-color: ${themeCssVariables.background.primary};
+  border: 1px solid ${themeCssVariables.border.color.light};
+  border-radius: ${themeCssVariables.border.radius.sm};
+  color: ${themeCssVariables.font.color.tertiary};
   display: flex;
   flex-flow: column nowrap;
-  gap: ${({ theme }) => theme.spacing(0.5)};
-  color: ${({ theme }) => theme.font.color.tertiary};
+  gap: ${themeCssVariables.spacing['0.5']};
+  padding: ${themeCssVariables.spacing[2]} 0 ${themeCssVariables.spacing[2]} 0;
 `;
 
 const StyledCardRow = styled.div`
   align-items: center;
   display: flex;
+  gap: ${themeCssVariables.spacing[1]};
   height: 24px;
-  gap: ${({ theme }) => theme.spacing(1)};
 `;
 
 const StyledCardRowOther = styled.div`
   align-items: center;
   cursor: pointer;
   display: flex;
+  gap: ${themeCssVariables.spacing[2]};
   height: 24px;
-  padding: 0 ${({ theme }) => theme.spacing(2)};
-  gap: ${({ theme }) => theme.spacing(2)};
+  padding: 0 ${themeCssVariables.spacing[2]};
 
   &:hover {
-    background-color: ${({ theme }) => theme.background.tertiary};
+    background-color: ${themeCssVariables.background.tertiary};
   }
 `;
 
 const StyledCardRowText = styled.div``;
 
 const StyledObjectInstanceCount = styled.div`
-  color: ${({ theme }) => theme.font.color.tertiary};
+  color: ${themeCssVariables.font.color.tertiary};
 `;
 
-const StyledObjectLink = styled(Link)`
-  align-items: center;
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
-  text-decoration: none;
-  color: ${({ theme }) => theme.font.color.primary};
+const StyledObjectLinkContainer = styled.div`
+  > a {
+    align-items: center;
+    color: ${themeCssVariables.font.color.primary};
+    display: flex;
+    gap: ${themeCssVariables.spacing[1]};
+    text-decoration: none;
 
-  &:hover {
-    color: ${({ theme }) => theme.font.color.secondary};
+    &:hover {
+      color: ${themeCssVariables.font.color.secondary};
+    }
   }
 `;
 
 export const SettingsDataModelOverviewObject = ({
   data: objectMetadataItem,
 }: SettingsDataModelOverviewObjectProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const { getIcon } = useIcons();
   const [otherFieldsExpanded, setOtherFieldsExpanded] = useState(false);
 
@@ -124,14 +125,16 @@ export const SettingsDataModelOverviewObject = ({
     <StyledNode>
       <StyledHeader>
         <StyledObjectName onMouseEnter={() => {}} onMouseLeave={() => {}}>
-          <StyledObjectLink
-            to={getSettingsPath(SettingsPath.Objects, {
-              objectNamePlural: objectMetadataItem.namePlural,
-            })}
-          >
-            {Icon && <Icon size={theme.icon.size.md} />}
-            {objectMetadataItem.labelPlural}
-          </StyledObjectLink>
+          <StyledObjectLinkContainer>
+            <Link
+              to={getSettingsPath(SettingsPath.Objects, {
+                objectNamePlural: objectMetadataItem.namePlural,
+              })}
+            >
+              {isDefined(Icon) && <Icon size={theme.icon.size.md} />}
+              {objectMetadataItem.labelPlural}
+            </Link>
+          </StyledObjectLinkContainer>
           <StyledObjectInstanceCount> · {totalCount}</StyledObjectInstanceCount>
         </StyledObjectName>
         <SettingsItemTypeTag item={objectMetadataItem} />

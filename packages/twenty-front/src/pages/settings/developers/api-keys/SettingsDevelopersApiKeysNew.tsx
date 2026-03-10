@@ -134,7 +134,7 @@ export const SettingsDevelopersApiKeysNew = () => {
       ]}
       actionButton={
         <SaveAndCancelButtons
-          isSaveDisabled={!canSave}
+          isSaveDisabled={!isDefined(canSave)}
           onCancel={() => {
             navigateSettings(SettingsPath.ApiWebhooks);
           }}

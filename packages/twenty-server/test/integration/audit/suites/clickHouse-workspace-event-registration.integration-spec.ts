@@ -1,6 +1,10 @@
 import process from 'process';
 
-import { type ClickHouseClient, createClient } from '@clickhouse/client';
+import {
+  type ClickHouseClient,
+  ClickHouseLogLevel,
+  createClient,
+} from '@clickhouse/client';
 import request from 'supertest';
 
 import { CUSTOM_DOMAIN_ACTIVATED_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/custom-domain/custom-domain-activated';
@@ -14,6 +18,7 @@ describe('ClickHouse Event Registration (integration)', () => {
 
     clickHouseClient = createClient({
       url: process.env.CLICKHOUSE_URL,
+      log: { level: ClickHouseLogLevel.OFF },
     });
 
     await clickHouseClient.query({
@@ -68,9 +73,9 @@ describe('ClickHouse Event Registration (integration)', () => {
     expect(rows.length).toEqual(1);
     expect(rows[0].properties).toEqual(variables.properties);
     expect(rows[0].event).toEqual(variables.event);
-    // workspaceId and userWorkspaceId are empty/undefined for unauthenticated requests
+    // workspaceId and userId are empty/undefined for unauthenticated requests
     expect(rows[0].workspaceId ?? '').toEqual('');
-    expect(rows[0].userWorkspaceId ?? '').toEqual('');
+    expect(rows[0].userId ?? '').toEqual('');
     expect(rows[0].timestamp).toHaveLength(23);
   });
 });

@@ -1,6 +1,6 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
-import { ACTION_MENU_DROPDOWN_CLICK_OUTSIDE_ID } from '@/action-menu/constants/ActionMenuDropdownClickOutsideId';
+import { COMMAND_MENU_DROPDOWN_CLICK_OUTSIDE_ID } from '@/command-menu-item/constants/CommandMenuDropdownClickOutsideId';
 import { COMMAND_MENU_CLICK_OUTSIDE_ID } from '@/command-menu/constants/CommandMenuClickOutsideId';
 import { RecordCalendarTopBar } from '@/object-record/record-calendar/components/RecordCalendarTopBar';
 import { RECORD_CALENDAR_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-calendar/constants/RecordCalendarClickOutsideListenerId';
@@ -14,14 +14,16 @@ import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useLis
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { LINK_CHIP_CLICK_OUTSIDE_ID } from 'twenty-ui/components';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainerContainer = styled.div`
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  height: inherit;
-  gap: ${({ theme }) => theme.spacing(2)};
-  padding: ${({ theme }) => theme.spacing(2)};
-  padding-left: ${({ theme }) => theme.spacing(1)};
+  gap: ${themeCssVariables.spacing[2]};
+  height: 100%;
+  padding: ${themeCssVariables.spacing[2]};
+  padding-left: ${themeCssVariables.spacing[1]};
 `;
 
 export const RecordCalendar = () => {
@@ -33,7 +35,7 @@ export const RecordCalendar = () => {
 
   useListenClickOutside({
     excludedClickOutsideIds: [
-      ACTION_MENU_DROPDOWN_CLICK_OUTSIDE_ID,
+      COMMAND_MENU_DROPDOWN_CLICK_OUTSIDE_ID,
       COMMAND_MENU_CLICK_OUTSIDE_ID,
       MODAL_BACKDROP_CLICK_OUTSIDE_ID,
       PAGE_ACTION_CONTAINER_CLICK_OUTSIDE_ID,

@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
@@ -6,12 +6,12 @@ import { useTasks } from '@/activities/tasks/hooks/useTasks';
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { type Task } from '@/activities/types/Task';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
 import groupBy from 'lodash.groupby';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { IconPlus } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import {
@@ -72,7 +72,7 @@ export const TaskGroups = ({ targetableObject }: TaskGroupsProps) => {
   if (isTasksEmpty) {
     return (
       <AnimatedPlaceholderEmptyContainer
-        // eslint-disable-next-line react/jsx-props-no-spreading
+        // oxlint-disable-next-line react/jsx-props-no-spreading
         {...EMPTY_PLACEHOLDER_TRANSITION_PROPS}
       >
         <AnimatedPlaceholder type="noTask" />

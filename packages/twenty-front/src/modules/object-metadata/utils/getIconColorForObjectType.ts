@@ -1,17 +1,11 @@
-import { type Theme } from '@emotion/react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-export const getIconColorForObjectType = ({
-  objectType,
-  theme,
-}: {
-  objectType: string;
-  theme: Theme;
-}): string => {
+export const getIconColorForObjectType = (objectType: string): string => {
   switch (objectType) {
     case 'note':
-      return theme.color.yellow;
+      return themeCssVariables.color.yellow;
     case 'task':
-      return theme.color.blue;
+      return themeCssVariables.color.blue;
     default:
       return 'currentColor';
   }

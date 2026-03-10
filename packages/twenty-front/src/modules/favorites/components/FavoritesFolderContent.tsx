@@ -34,7 +34,7 @@ export const FavoritesFolderContent = ({
           {(provided) => (
             <div
               ref={provided.innerRef}
-              // eslint-disable-next-line react/jsx-props-no-spreading
+              // oxlint-disable-next-line react/jsx-props-no-spreading
               {...provided.droppableProps}
             >
               {favorites.map((favorite, index) => (
@@ -54,7 +54,10 @@ export const FavoritesFolderContent = ({
                       rightOptions={
                         <LightIconButton
                           Icon={IconHeartOff}
-                          onClick={() => deleteFavorite(favorite.id)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            deleteFavorite(favorite.id);
+                          }}
                           accent="tertiary"
                         />
                       }

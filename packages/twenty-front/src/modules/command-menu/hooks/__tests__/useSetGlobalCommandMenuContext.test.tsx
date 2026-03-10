@@ -1,11 +1,11 @@
 import { renderHook } from '@testing-library/react';
 import { act } from 'react';
 
-import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
-import { COMMAND_MENU_PREVIOUS_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuPreviousComponentInstanceId';
+import { SIDE_PANEL_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelComponentInstanceId';
+import { SIDE_PANEL_PREVIOUS_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelPreviousComponentInstanceId';
 import { useSetGlobalCommandMenuContext } from '@/command-menu/hooks/useSetGlobalCommandMenuContext';
-import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageInfoState';
-import { hasUserSelectedCommandState } from '@/command-menu/states/hasUserSelectedCommandState';
+import { sidePanelPageInfoState } from '@/side-panel/states/sidePanelPageInfoState';
+import { hasUserSelectedSidePanelListItemState } from '@/side-panel/states/hasUserSelectedSidePanelListItemState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { contextStoreAnyFieldFilterValueComponentState } from '@/context-store/states/contextStoreAnyFieldFilterValueComponentState';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
@@ -15,8 +15,8 @@ import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/s
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
-import { getPeopleRecordConnectionMock } from '~/testing/mock-data/people';
+import { getJestMetadataAndApolloMocksAndCommandMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndCommandMenuWrapper';
+import { mockedPersonRecords } from '~/testing/mock-data/generated/data/people/mock-people-data';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 import { contextStoreFilterGroupsComponentState } from '@/context-store/states/contextStoreFilterGroupsComponentState';
 
@@ -24,7 +24,7 @@ const personMockObjectMetadataItem = generatedMockObjectMetadataItems.find(
   (item) => item.nameSingular === 'person',
 )!;
 
-const peopleMock = getPeopleRecordConnectionMock();
+const peopleMock = [...mockedPersonRecords];
 
 jotaiStore.set(
   recordStoreFamilyState.atomFamily(peopleMock[0].id),
@@ -35,9 +35,9 @@ jotaiStore.set(
   peopleMock[1],
 );
 
-const wrapper = getJestMetadataAndApolloMocksAndActionMenuWrapper({
+const wrapper = getJestMetadataAndApolloMocksAndCommandMenuWrapper({
   apolloMocks: [],
-  componentInstanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID,
+  componentInstanceId: SIDE_PANEL_COMPONENT_INSTANCE_ID,
   contextStoreCurrentObjectMetadataNameSingular:
     personMockObjectMetadataItem.nameSingular,
   contextStoreCurrentViewId: 'my-view-id',
@@ -62,32 +62,32 @@ describe('useSetGlobalCommandMenuContext', () => {
 
         const contextStoreTargetedRecordsRule = useAtomComponentStateValue(
           contextStoreTargetedRecordsRuleComponentState,
-          COMMAND_MENU_COMPONENT_INSTANCE_ID,
+          SIDE_PANEL_COMPONENT_INSTANCE_ID,
         );
 
         const contextStoreNumberOfSelectedRecords = useAtomComponentStateValue(
           contextStoreNumberOfSelectedRecordsComponentState,
-          COMMAND_MENU_COMPONENT_INSTANCE_ID,
+          SIDE_PANEL_COMPONENT_INSTANCE_ID,
         );
 
         const contextStoreFilters = useAtomComponentStateValue(
           contextStoreFiltersComponentState,
-          COMMAND_MENU_COMPONENT_INSTANCE_ID,
+          SIDE_PANEL_COMPONENT_INSTANCE_ID,
         );
 
         const contextStoreFilterGroups = useAtomComponentStateValue(
           contextStoreFilterGroupsComponentState,
-          COMMAND_MENU_COMPONENT_INSTANCE_ID,
+          SIDE_PANEL_COMPONENT_INSTANCE_ID,
         );
 
         const contextStoreAnyFieldFilterValue = useAtomComponentStateValue(
           contextStoreAnyFieldFilterValueComponentState,
-          COMMAND_MENU_COMPONENT_INSTANCE_ID,
+          SIDE_PANEL_COMPONENT_INSTANCE_ID,
         );
 
         const contextStoreCurrentViewType = useAtomComponentStateValue(
           contextStoreCurrentViewTypeComponentState,
-          COMMAND_MENU_COMPONENT_INSTANCE_ID,
+          SIDE_PANEL_COMPONENT_INSTANCE_ID,
         );
 
         return {
@@ -115,16 +115,16 @@ describe('useSetGlobalCommandMenuContext', () => {
     expect(result.current.contextStoreCurrentViewType).toBe(
       ContextStoreViewType.Table,
     );
-    const commandMenuPageInfo = jotaiStore.get(commandMenuPageInfoState.atom);
-    expect(commandMenuPageInfo).toEqual({
+    const sidePanelPageInfo = jotaiStore.get(sidePanelPageInfoState.atom);
+    expect(sidePanelPageInfo).toEqual({
       title: undefined,
       Icon: undefined,
       instanceId: '',
     });
-    const hasUserSelectedCommand = jotaiStore.get(
-      hasUserSelectedCommandState.atom,
+    const hasUserSelectedSidePanelListItem = jotaiStore.get(
+      hasUserSelectedSidePanelListItemState.atom,
     );
-    expect(hasUserSelectedCommand).toBe(false);
+    expect(hasUserSelectedSidePanelListItem).toBe(false);
 
     act(() => {
       result.current.setGlobalCommandMenuContext();
@@ -140,18 +140,16 @@ describe('useSetGlobalCommandMenuContext', () => {
     expect(result.current.contextStoreCurrentViewType).toBe(
       ContextStoreViewType.Table,
     );
-    const commandMenuPageInfoAfter = jotaiStore.get(
-      commandMenuPageInfoState.atom,
-    );
-    expect(commandMenuPageInfoAfter).toEqual({
+    const sidePanelPageInfoAfter = jotaiStore.get(sidePanelPageInfoState.atom);
+    expect(sidePanelPageInfoAfter).toEqual({
       title: undefined,
       Icon: undefined,
       instanceId: '',
     });
-    const hasUserSelectedCommandAfter = jotaiStore.get(
-      hasUserSelectedCommandState.atom,
+    const hasUserSelectedSidePanelListItemAfter = jotaiStore.get(
+      hasUserSelectedSidePanelListItemState.atom,
     );
-    expect(hasUserSelectedCommandAfter).toBe(false);
+    expect(hasUserSelectedSidePanelListItemAfter).toBe(false);
   });
 
   it('should copy context store states to previous instance before resetting', () => {
@@ -160,16 +158,16 @@ describe('useSetGlobalCommandMenuContext', () => {
         const { setGlobalCommandMenuContext } =
           useSetGlobalCommandMenuContext();
 
-        // eslint-disable-next-line twenty/matching-state-variable
+        // oxlint-disable-next-line twenty/matching-state-variable
         const previousTargetedRecordsRule = useAtomComponentStateValue(
           contextStoreTargetedRecordsRuleComponentState,
-          COMMAND_MENU_PREVIOUS_COMPONENT_INSTANCE_ID,
+          SIDE_PANEL_PREVIOUS_COMPONENT_INSTANCE_ID,
         );
 
-        // eslint-disable-next-line twenty/matching-state-variable
+        // oxlint-disable-next-line twenty/matching-state-variable
         const previousNumberOfSelectedRecords = useAtomComponentStateValue(
           contextStoreNumberOfSelectedRecordsComponentState,
-          COMMAND_MENU_PREVIOUS_COMPONENT_INSTANCE_ID,
+          SIDE_PANEL_PREVIOUS_COMPONENT_INSTANCE_ID,
         );
 
         return {

@@ -1,7 +1,7 @@
 import type { WorkflowRunStepStatus } from '@/workflow/types/Workflow';
 import { getWorkflowDiagramColors } from '@/workflow/workflow-diagram/utils/getWorkflowDiagramColors';
-import { css } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledNodeContainer = styled.div<{
   runStatus?: WorkflowRunStepStatus;
@@ -9,47 +9,48 @@ const StyledNodeContainer = styled.div<{
   selected: boolean;
 }>`
   align-items: center;
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
-  max-width: 240px;
-  min-width: 44px;
-  padding: ${({ theme }) => theme.spacing(2)};
-  border-radius: ${({ theme }) => theme.border.radius.md};
-  border-width: 1px;
+  background: ${({ runStatus, selected }) => {
+    const colors = getWorkflowDiagramColors({ runStatus });
+    return selected ? colors.selected.background : colors.unselected.background;
+  }};
+  border-color: ${({ runStatus, selected }) => {
+    const colors = getWorkflowDiagramColors({ runStatus });
+    return selected
+      ? colors.selected.borderColor
+      : colors.unselected.borderColor;
+  }};
+  border-radius: ${themeCssVariables.border.radius.md};
   border-style: solid;
+  border-width: 1px;
   box-sizing: border-box;
   cursor: pointer;
+  display: flex;
+  gap: ${themeCssVariables.spacing[2]};
+  max-width: 240px;
+  min-width: 44px;
+  padding: ${themeCssVariables.spacing[2]};
+
   position: relative;
+
   transition: border-color 0.1s;
 
-  ${({ theme, runStatus, selected, isConnectable }) => {
-    const colors = getWorkflowDiagramColors({ theme, runStatus });
+  &:hover {
+    background: ${({ runStatus, selected }) => {
+      const colors = getWorkflowDiagramColors({ runStatus });
+      const bg = selected
+        ? colors.selected.background
+        : colors.unselected.background;
+      return `linear-gradient(0deg, ${themeCssVariables.background.transparent.lighter} 0%, ${themeCssVariables.background.transparent.lighter} 100%), ${bg}`;
+    }};
 
-    const background = selected
-      ? colors.selected.background
-      : colors.unselected.background;
-
-    return css`
-      background: ${background};
-      border-color: ${selected
+    border-color: ${({ runStatus, selected, isConnectable }) => {
+      if (isConnectable === true) return themeCssVariables.color.blue;
+      const colors = getWorkflowDiagramColors({ runStatus });
+      return selected
         ? colors.selected.borderColor
-        : colors.unselected.borderColor};
-
-      &:hover {
-        background: linear-gradient(
-            0deg,
-            ${theme.background.transparent.lighter} 0%,
-            ${theme.background.transparent.lighter} 100%
-          ),
-          ${background};
-
-        ${isConnectable &&
-        css`
-          border-color: ${theme.color.blue} !important;
-        `};
-      }
-    `;
-  }}
+        : colors.unselected.borderColor;
+    }};
+  }
 `;
 
 export { StyledNodeContainer as WorkflowNodeContainer };

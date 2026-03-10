@@ -5,6 +5,7 @@ export const ALL_METADATA_NAME = {
   viewField: 'viewField',
   viewFieldGroup: 'viewFieldGroup',
   viewGroup: 'viewGroup',
+  viewSort: 'viewSort',
   rowLevelPermissionPredicate: 'rowLevelPermissionPredicate',
   rowLevelPermissionPredicateGroup: 'rowLevelPermissionPredicateGroup',
   viewFilterGroup: 'viewFilterGroup',

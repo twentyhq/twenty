@@ -2,7 +2,7 @@ import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { OverflowingTextWithTooltip, Status } from 'twenty-ui/display';
@@ -28,15 +28,16 @@ type SettingsDnsRecordsTableProps = {
   records: DnsRecord[];
 };
 
-const StyledTableRow = styled(TableRow)`
-  & > * {
-    min-width: 0;
+const StyledTableRowContainer = styled.div`
+  > * > * {
     max-width: 100%;
+    min-width: 0;
     overflow: hidden;
   }
 `;
 
-const StyledTableCell = styled(TableCell)`
+const StyledTableCellFontWrapper = styled.div`
+  display: contents;
   font-family: monospace;
 `;
 
@@ -45,7 +46,7 @@ export const SettingsDnsRecordsTable = ({
 }: SettingsDnsRecordsTableProps) => {
   const { copyToClipboard } = useCopyToClipboard();
 
-  if (!records || records.length === 0) {
+  if (records.length === 0) {
     return null;
   }
 
@@ -69,53 +70,69 @@ export const SettingsDnsRecordsTable = ({
 
   return (
     <Table>
-      <StyledTableRow gridAutoColumns={gridAutoColumns}>
-        <TableHeader align="center">{t`Type`}</TableHeader>
-        <TableHeader align="center">{t`Key`}</TableHeader>
-        <TableHeader align="center">{t`Value`}</TableHeader>
-        {hasPriorityRecords && (
-          <TableHeader align="center">{t`Priority`}</TableHeader>
-        )}
-        {hasTtlRecords && <TableHeader align="center">{t`TTL`}</TableHeader>}
-        {hasStatusRecords && (
-          <TableHeader align="center">{t`Status`}</TableHeader>
-        )}
-      </StyledTableRow>
+      <StyledTableRowContainer>
+        <TableRow gridAutoColumns={gridAutoColumns}>
+          <TableHeader align="center">{t`Type`}</TableHeader>
+          <TableHeader align="center">{t`Key`}</TableHeader>
+          <TableHeader align="center">{t`Value`}</TableHeader>
+          {hasPriorityRecords && (
+            <TableHeader align="center">{t`Priority`}</TableHeader>
+          )}
+          {hasTtlRecords && <TableHeader align="center">{t`TTL`}</TableHeader>}
+          {hasStatusRecords && (
+            <TableHeader align="center">{t`Status`}</TableHeader>
+          )}
+        </TableRow>
+      </StyledTableRowContainer>
 
       {records.map((record) => (
-        <StyledTableRow key={record.value} gridAutoColumns={gridAutoColumns}>
-          <TableCell>{record.type}</TableCell>
-          <StyledTableCell
-            onClick={() => {
-              copyToClipboard(record.key || '');
-            }}
-          >
-            <OverflowingTextWithTooltip text={record.key} />
-          </StyledTableCell>
+        <StyledTableRowContainer key={record.value}>
+          <TableRow gridAutoColumns={gridAutoColumns}>
+            <TableCell>{record.type}</TableCell>
+            <StyledTableCellFontWrapper>
+              <TableCell
+                onClick={() => {
+                  copyToClipboard(record.key || '');
+                }}
+              >
+                <OverflowingTextWithTooltip text={record.key} />
+              </TableCell>
+            </StyledTableCellFontWrapper>
 
-          <StyledTableCell
-            onClick={() => {
-              copyToClipboard(record.value);
-            }}
-          >
-            <OverflowingTextWithTooltip text={record.value} />
-          </StyledTableCell>
+            <StyledTableCellFontWrapper>
+              <TableCell
+                onClick={() => {
+                  copyToClipboard(record.value);
+                }}
+              >
+                <OverflowingTextWithTooltip text={record.value} />
+              </TableCell>
+            </StyledTableCellFontWrapper>
 
-          {hasPriorityRecords && (
-            <StyledTableCell>{record.priority}</StyledTableCell>
-          )}
-          {hasTtlRecords && <StyledTableCell>{record.ttl}</StyledTableCell>}
-          {hasStatusRecords && (
-            <StyledTableCell>
-              {'status' in record ? (
-                <Status
-                  color={record.statusColor}
-                  text={capitalize(record.status)}
-                />
-              ) : null}
-            </StyledTableCell>
-          )}
-        </StyledTableRow>
+            {hasPriorityRecords && (
+              <StyledTableCellFontWrapper>
+                <TableCell>{record.priority}</TableCell>
+              </StyledTableCellFontWrapper>
+            )}
+            {hasTtlRecords && (
+              <StyledTableCellFontWrapper>
+                <TableCell>{record.ttl}</TableCell>
+              </StyledTableCellFontWrapper>
+            )}
+            {hasStatusRecords && (
+              <StyledTableCellFontWrapper>
+                <TableCell>
+                  {'status' in record ? (
+                    <Status
+                      color={record.statusColor}
+                      text={capitalize(record.status)}
+                    />
+                  ) : null}
+                </TableCell>
+              </StyledTableCellFontWrapper>
+            )}
+          </TableRow>
+        </StyledTableRowContainer>
       ))}
     </Table>
   );

@@ -1,5 +1,6 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useContext } from 'react';
+import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { RECORD_TABLE_COLUMN_CHECKBOX_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnCheckboxWidth';
 import { RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnDragAndDropWidth';
@@ -12,60 +13,62 @@ import { RecordTableColumnFooterWithDropdown } from '@/object-record/record-tabl
 import { getRecordTableColumnFieldWidthClassName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthClassName';
 import { cx } from '@linaria/core';
 import { findByProperty, isDefined } from 'twenty-shared/utils';
-import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 
 const StyledColumnFooterCell = styled.div<{
   columnWidth: number;
   isFirstCell: boolean;
-  isTableWithGroups: boolean;
 }>`
-  background-color: ${({ theme }) => theme.background.primary};
-  color: ${({ theme }) => theme.font.color.tertiary};
+  background-color: ${themeCssVariables.background.primary};
+  border-right: solid 1px ${themeCssVariables.background.primary};
 
-  border-right: solid 1px ${({ theme }) => theme.background.primary};
+  bottom: 0;
+
+  color: ${themeCssVariables.font.color.tertiary};
+
+  height: ${RECORD_TABLE_ROW_HEIGHT}px;
+  left: ${({ isFirstCell }) =>
+    isFirstCell
+      ? `${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH + RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px`
+      : 'auto'};
+
+  min-width: ${({ columnWidth }) => columnWidth}px;
+  &:hover {
+    background: ${themeCssVariables.background.secondary};
+  }
+  overflow: hidden;
 
   padding: 0;
 
-  ${({ columnWidth }) => `
-      min-width: ${columnWidth}px;
-      width: ${columnWidth}px;
-      `}
-  text-align: left;
-  ${({ theme }) => {
-    return `
-    &:hover {
-      background: ${theme.background.secondary};
-    };
-    `;
-  }};
-  height: ${RECORD_TABLE_ROW_HEIGHT}px;
-
-  overflow: hidden;
-
   position: sticky;
-  bottom: 0;
+  text-align: left;
 
-  ${({ isFirstCell }) =>
-    isFirstCell
-      ? `
-    @media (max-width: ${MOBILE_VIEWPORT}px) {
-            width: ${RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE}px;
-            max-width: ${RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE}px;
-            min-width: ${RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE}px;
-          }
-  `
-      : ''}
+  width: ${({ columnWidth }) => columnWidth}px;
 
-  ${({ isFirstCell, isTableWithGroups }) =>
+  z-index: ${({ isFirstCell }) =>
     isFirstCell
-      ? `left: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH + RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px; z-index: ${isTableWithGroups ? TABLE_Z_INDEX.footer.tableWithGroups.stickyColumn : TABLE_Z_INDEX.footer.tableWithoutGroups.stickyColumn};`
-      : `z-index: ${isTableWithGroups ? TABLE_Z_INDEX.footer.tableWithGroups.default : TABLE_Z_INDEX.footer.tableWithoutGroups.default};`}
+      ? TABLE_Z_INDEX.footer.stickyColumn
+      : TABLE_Z_INDEX.footer.default};
+
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    max-width: ${({ isFirstCell }) =>
+      isFirstCell
+        ? `${RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE}px`
+        : 'none'};
+    min-width: ${({ isFirstCell }) =>
+      isFirstCell
+        ? `${RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE}px`
+        : '0'};
+    width: ${({ isFirstCell }) =>
+      isFirstCell
+        ? `${RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE}px`
+        : 'auto'};
+  }
 `;
 
 const StyledColumnFootContainer = styled.div`
   position: relative;
-  z-index: 1;
   width: 100%;
+  z-index: 1;
 `;
 
 export const RecordTableAggregateFooterCell = ({
@@ -85,8 +88,6 @@ export const RecordTableAggregateFooterCell = ({
     findByProperty('fieldMetadataItemId', fieldMetadataId),
   );
 
-  const isTableWithGroups = isDefined(currentRecordGroupId);
-
   const isFirstCell = columnIndex === 0;
 
   if (!isDefined(recordField)) {
@@ -101,7 +102,6 @@ export const RecordTableAggregateFooterCell = ({
         'footer-cell',
         getRecordTableColumnFieldWidthClassName(columnIndex),
       )}
-      isTableWithGroups={isTableWithGroups}
     >
       <StyledColumnFootContainer>
         <RecordTableColumnFooterWithDropdown

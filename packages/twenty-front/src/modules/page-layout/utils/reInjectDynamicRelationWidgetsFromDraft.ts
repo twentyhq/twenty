@@ -4,7 +4,7 @@ import { isDynamicRelationWidget } from '@/page-layout/utils/isDynamicRelationWi
 import { WidgetType } from '~/generated-metadata/graphql';
 
 export const reInjectDynamicRelationWidgetsFromDraft = (
-  serverLayout: PageLayout,
+  persistedLayout: PageLayout,
   previousDraft: DraftPageLayout,
 ): PageLayout => {
   const dynamicWidgetsByTabId = new Map(
@@ -19,12 +19,12 @@ export const reInjectDynamicRelationWidgetsFromDraft = (
   );
 
   if (!hasDynamicWidgets) {
-    return serverLayout;
+    return persistedLayout;
   }
 
   return {
-    ...serverLayout,
-    tabs: serverLayout.tabs.map((tab) => {
+    ...persistedLayout,
+    tabs: persistedLayout.tabs.map((tab) => {
       const relationWidgets = dynamicWidgetsByTabId.get(tab.id);
 
       if (!relationWidgets || relationWidgets.length === 0) {

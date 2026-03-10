@@ -1,6 +1,7 @@
 import { RecordCalendarMonthBodyDay } from '@/object-record/record-calendar/month/components/RecordCalendarMonthBodyDay';
 import { useRecordCalendarMonthContextOrThrow } from '@/object-record/record-calendar/month/contexts/RecordCalendarMonthContext';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { eachDayOfInterval, endOfWeek } from 'date-fns';
 import { type Temporal } from 'temporal-polyfill';
 import {
@@ -9,12 +10,12 @@ import {
 } from 'twenty-shared/utils';
 
 const StyledContainer = styled.div`
-  display: flex;
   align-items: stretch;
+  display: flex;
   flex: 1;
 
   &:not(:last-of-type) {
-    border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+    border-bottom: 1px solid ${themeCssVariables.border.color.light};
   }
 `;
 

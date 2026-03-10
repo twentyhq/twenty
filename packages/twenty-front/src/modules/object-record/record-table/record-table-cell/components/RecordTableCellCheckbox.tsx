@@ -1,5 +1,6 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useCallback } from 'react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { RECORD_TABLE_COLUMN_CHECKBOX_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnCheckboxWidth';
 import { RECORD_TABLE_COLUMN_CHECKBOX_WIDTH_CLASS_NAME } from '@/object-record/record-table/constants/RecordTableColumnCheckboxWidthClassName';
@@ -17,13 +18,8 @@ const StyledContainer = styled.div`
   height: ${RECORD_TABLE_ROW_HEIGHT}px;
   justify-content: center;
   min-width: ${RECORD_TABLE_COLUMN_CHECKBOX_WIDTH};
+  padding-right: ${themeCssVariables.spacing[1]};
   width: ${RECORD_TABLE_COLUMN_CHECKBOX_WIDTH};
-  padding-right: ${({ theme }) => theme.spacing(1)};
-`;
-
-// TODO: refactor
-const StyledRecordTableTd = styled(RecordTableCellStyleWrapper)`
-  border-left: 1px solid transparent;
 `;
 
 export const RecordTableCellCheckbox = () => {
@@ -42,7 +38,7 @@ export const RecordTableCellCheckbox = () => {
   );
 
   return (
-    <StyledRecordTableTd
+    <RecordTableCellStyleWrapper
       isSelected={isSelected}
       hasRightBorder={false}
       widthClassName={RECORD_TABLE_COLUMN_CHECKBOX_WIDTH_CLASS_NAME}
@@ -50,6 +46,6 @@ export const RecordTableCellCheckbox = () => {
       <StyledContainer onClick={handleClick} data-select-disable>
         <Checkbox hoverable checked={isSelected} />
       </StyledContainer>
-    </StyledRecordTableTd>
+    </RecordTableCellStyleWrapper>
   );
 };

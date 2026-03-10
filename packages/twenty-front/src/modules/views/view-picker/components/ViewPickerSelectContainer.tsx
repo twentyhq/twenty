@@ -1,11 +1,12 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledSelectContainer = styled.div`
+  color: ${themeCssVariables.font.color.light};
   display: flex;
-  width: calc(100% - ${({ theme }) => theme.spacing(2)});
-  margin: ${({ theme }) => theme.spacing(1)};
-  color: ${({ theme }) => theme.font.color.light};
+  margin: ${themeCssVariables.spacing[1]};
   user-select: none;
+  width: calc(100% - ${themeCssVariables.spacing[2]});
 `;
 
 export { StyledSelectContainer as ViewPickerSelectContainer };

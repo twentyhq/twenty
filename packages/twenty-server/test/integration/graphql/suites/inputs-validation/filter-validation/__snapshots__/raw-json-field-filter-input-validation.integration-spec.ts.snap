@@ -1,0 +1,9 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`Filter input validation - RAW_JSON Gql filter input - failure RAW_JSON field type - should fail with filter : {"rawJsonField":{"like":[]}} 1`] = `"String cannot represent a non string value: []"`;
+
+exports[`Filter input validation - RAW_JSON Gql filter input - failure RAW_JSON field type - should fail with filter : {"rawJsonField":{"like":{}}} 1`] = `"String cannot represent a non string value: {}"`;
+
+exports[`Filter input validation - RAW_JSON Gql filter input - failure RAW_JSON field type - should fail with filter : {"rawJsonField":{"like":2}} 1`] = `"String cannot represent a non string value: 2"`;
+
+exports[`Filter input validation - RAW_JSON Gql filter input - failure RAW_JSON field type - should fail with filter : {"rawJsonField":{"like":true}} 1`] = `"String cannot represent a non string value: true"`;

@@ -1,9 +1,10 @@
-import { computeProgressText } from '@/action-menu/utils/computeProgressText';
-import { SIDE_PANEL_FOCUS_ID } from '@/command-menu/constants/SidePanelFocusId';
+import { computeProgressText } from '@/command-menu-item/utils/computeProgressText';
+import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { type ObjectRecordQueryProgress } from '@/object-record/types/ObjectRecordQueryProgress';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { Key } from 'ts-key-enum';
 import { IconBoxMultiple } from 'twenty-ui/display';
@@ -11,18 +12,18 @@ import { Button } from 'twenty-ui/input';
 
 const StyledFooterContainer = styled.div`
   align-items: flex-end;
-  background: ${({ theme }) => theme.background.primary};
-  border-top: 1px solid ${({ theme }) => theme.border.color.light};
+  background: ${themeCssVariables.background.primary};
+  border-top: 1px solid ${themeCssVariables.border.color.light};
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
   justify-content: flex-end;
-  padding: ${({ theme }) => theme.spacing(2)};
+  padding: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledFooterActions = styled.div`
-  display: flex;
   align-items: flex-end;
-  gap: ${({ theme }) => theme.spacing(2)};
+  display: flex;
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 type UpdateMultipleRecordsFooterProps = {

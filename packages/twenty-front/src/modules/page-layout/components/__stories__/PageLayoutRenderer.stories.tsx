@@ -10,7 +10,7 @@ import { expect, within } from 'storybook/test';
 
 import { FIND_ONE_PAGE_LAYOUT } from '@/dashboards/graphql/queries/findOnePageLayout';
 import { ApolloCoreClientContext } from '@/object-metadata/contexts/ApolloCoreClientContext';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { generateGroupByAggregateQuery } from '@/object-record/record-aggregate/utils/generateGroupByAggregateQuery';
 import { PageLayoutRenderer } from '@/page-layout/components/PageLayoutRenderer';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
@@ -71,6 +71,7 @@ const mixedGraphsPageLayoutMocks = {
       title: 'Mixed Graphs',
       position: 0,
       pageLayoutId: 'mixed-graphs-layout',
+      isOverridden: false,
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-01T00:00:00Z',
       deletedAt: null,
@@ -95,6 +96,7 @@ const mixedGraphsPageLayoutMocks = {
             aggregateOperation: AggregateOperations.COUNT,
             aggregateFieldMetadataId: idField.id,
           },
+          isOverridden: false,
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
           deletedAt: null,
@@ -120,6 +122,7 @@ const mixedGraphsPageLayoutMocks = {
             aggregateFieldMetadataId: idField.id,
             displayDataLabel: false,
           },
+          isOverridden: false,
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
           deletedAt: null,
@@ -146,6 +149,7 @@ const mixedGraphsPageLayoutMocks = {
             groupByFieldMetadataId: createdAtField.id,
             orderBy: GraphOrderBy.VALUE_DESC,
           },
+          isOverridden: false,
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
           deletedAt: null,
@@ -175,6 +179,7 @@ const mixedGraphsPageLayoutMocks = {
             axisNameDisplay: AxisNameDisplay.BOTH,
             displayDataLabel: false,
           } satisfies BarChartConfiguration,
+          isOverridden: false,
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
           deletedAt: null,
@@ -277,7 +282,7 @@ const meta: Meta<typeof PageLayoutRenderer> = {
           <CoreClientProviderWrapper>
             <LayoutRenderingProvider
               value={{
-                isInRightDrawer: false,
+                isInSidePanel: false,
                 layoutType: PageLayoutType.DASHBOARD,
                 targetRecordIdentifier: {
                   targetObjectNameSingular: CoreObjectNameSingular.Dashboard,

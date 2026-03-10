@@ -8,26 +8,27 @@ import { useRestrictUpdateOnAllFieldsOfObject } from '@/settings/roles/role-perm
 import { OverridableCheckbox } from '@/settings/roles/role-permissions/object-level-permissions/object-form/components/OverridableCheckbox';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { Label } from 'twenty-ui/display';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledSectionHeader = styled.div`
   align-items: center;
-  background-color: ${({ theme }) => theme.background.transparent.lighter};
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+  background-color: ${themeCssVariables.background.transparent.lighter};
+  border-bottom: 1px solid ${themeCssVariables.border.color.light};
   display: grid;
   grid-template-columns: ${FIELD_LEVEL_PERMISSION_TABLE_GRID_TEMPLATE_COLUMNS};
 
-  height: ${({ theme }) => theme.spacing(6)};
+  height: ${themeCssVariables.spacing[6]};
 
-  padding-left: ${({ theme }) => theme.spacing(2)};
+  padding-left: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledCheckboxContainer = styled.div`
   display: flex;
   justify-content: flex-end;
-  padding-right: ${({ theme }) => theme.spacing(1)};
+  padding-right: ${themeCssVariables.spacing[1]};
 `;
 
 export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTableAllHeaderRow =

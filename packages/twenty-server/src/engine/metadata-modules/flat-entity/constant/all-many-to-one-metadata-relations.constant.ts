@@ -420,10 +420,28 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
     workspace: null,
     application: null,
   },
+  viewSort: {
+    application: null,
+    workspace: null,
+    fieldMetadata: {
+      foreignKey: 'fieldMetadataId',
+      universalForeignKey: 'fieldMetadataUniversalIdentifier',
+      inverseOneToManyProperty: null,
+      isNullable: false,
+      metadataName: 'fieldMetadata',
+    },
+    view: {
+      foreignKey: 'viewId',
+      universalForeignKey: 'viewUniversalIdentifier',
+      inverseOneToManyProperty: 'viewSorts',
+      isNullable: false,
+      metadataName: 'view',
+    },
+  },
 } as const satisfies ManyToOneMetadataRelationsProperties;
 
 // satisfies with complex mapped types involving nested generics doesn't always catch missing required keys
-// eslint-disable-next-line unused-imports/no-unused-vars
+// oxlint-disable-next-line unused-imports/no-unused-vars
 type Assertions = [
   Expect<
     AllMetadataName extends keyof typeof ALL_MANY_TO_ONE_METADATA_RELATIONS

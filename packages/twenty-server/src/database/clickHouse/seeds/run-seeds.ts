@@ -1,8 +1,8 @@
-/* eslint-disable no-console */
-import { createClient } from '@clickhouse/client';
+/* oxlint-disable no-console */
+import { createClient, ClickHouseLogLevel } from '@clickhouse/client';
 import { config } from 'dotenv';
 
-import { fixtures } from './fixtures';
+import { objectEventFixtures, workspaceEventFixtures } from './fixtures';
 
 config({
   path: process.env.NODE_ENV === 'test' ? '.env.test' : '.env',
@@ -11,15 +11,26 @@ config({
 
 const client = createClient({
   url: process.env.CLICKHOUSE_URL,
+  log: { level: ClickHouseLogLevel.OFF },
 });
 
 async function seedEvents() {
   try {
-    console.log(`⚡ Seeding ${fixtures.length} events...`);
+    console.log(
+      `⚡ Seeding ${workspaceEventFixtures.length} workspace events...`,
+    );
 
     await client.insert({
       table: 'workspaceEvent',
-      values: fixtures,
+      values: workspaceEventFixtures,
+      format: 'JSONEachRow',
+    });
+
+    console.log(`⚡ Seeding ${objectEventFixtures.length} object events...`);
+
+    await client.insert({
+      table: 'objectEvent',
+      values: objectEventFixtures,
       format: 'JSONEachRow',
     });
 

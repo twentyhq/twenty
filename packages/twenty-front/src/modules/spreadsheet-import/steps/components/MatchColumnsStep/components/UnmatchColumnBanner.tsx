@@ -1,53 +1,56 @@
-import { useTheme } from '@emotion/react';
-import isPropValid from '@emotion/is-prop-valid';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
 import { Banner, IconChevronDown, IconInfoCircle } from 'twenty-ui/display';
+import { useContext } from 'react';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledBanner = styled(Banner, {
-  shouldForwardProp: (prop) => isPropValid(prop) && prop !== 'allMatched',
-})<{ allMatched: boolean }>`
-  background: ${({ allMatched, theme }) =>
-    allMatched ? theme.accent.secondary : theme.background.transparent.light};
-  border-radius: ${({ theme }) => theme.spacing(2)};
-  padding: ${({ theme }) => theme.spacing(2) + ' ' + theme.spacing(2.5)};
+const StyledBannerContainer = styled.div<{ allMatched: boolean }>`
+  > div {
+    background: ${({ allMatched }) =>
+      allMatched
+        ? themeCssVariables.accent.secondary
+        : themeCssVariables.background.transparent.light};
+    border-radius: ${themeCssVariables.spacing[2]};
+    padding: ${themeCssVariables.spacing[2]} 10px;
+  }
 `;
 
-const StyledText = styled('div', {
-  shouldForwardProp: (prop) => isPropValid(prop) && prop !== 'allMatched',
-})<{ allMatched: boolean }>`
-  color: ${({ allMatched, theme }) =>
-    allMatched ? theme.color.blue : theme.font.color.secondary};
+const StyledText = styled.div<{ allMatched: boolean }>`
+  color: ${({ allMatched }) =>
+    allMatched
+      ? themeCssVariables.color.blue
+      : themeCssVariables.font.color.secondary};
   flex: 1;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 `;
 
-const StyledTransitionedIconChevronDown = styled(IconChevronDown, {
-  shouldForwardProp: (prop) =>
-    isPropValid(prop) && !['isExpanded', 'allMatched'].includes(prop),
-})<{
+const StyledIconChevronDownWrapper = styled.div<{
   isExpanded: boolean;
   allMatched: boolean;
 }>`
-  color: ${({ allMatched, theme }) =>
-    allMatched ? theme.color.blue : theme.font.color.secondary};
+  align-items: center;
+  color: ${({ allMatched }) =>
+    allMatched
+      ? themeCssVariables.color.blue
+      : themeCssVariables.font.color.secondary};
+  cursor: pointer;
+  display: flex;
   transform: ${({ isExpanded }) =>
     isExpanded ? 'rotate(180deg)' : 'rotate(0deg)'};
-  transition: ${({ theme }) =>
-    `transform ${theme.animation.duration.normal}s ease`};
-  cursor: pointer;
+  transition: transform
+    calc(${themeCssVariables.animation.duration.normal} * 1s) ease;
 `;
 
 const StyledClickableContainer = styled.div`
-  cursor: pointer;
-  display: flex;
-
-  flex-direction: row;
-  width: 100%;
-  justify-content: center;
   align-items: center;
+  cursor: pointer;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  width: 100%;
 `;
 
 export const UnmatchColumnBanner = ({
@@ -61,26 +64,29 @@ export const UnmatchColumnBanner = ({
   buttonOnClick?: () => void;
   allMatched: boolean;
 }) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   return (
-    <StyledBanner allMatched={allMatched}>
-      <IconInfoCircle
-        color={allMatched ? theme.color.blue : theme.font.color.secondary}
-        size={theme.icon.size.md}
-      />
-      {isDefined(buttonOnClick) ? (
-        <StyledClickableContainer onClick={buttonOnClick}>
+    <StyledBannerContainer allMatched={allMatched}>
+      <Banner>
+        <IconInfoCircle
+          color={allMatched ? theme.color.blue : theme.font.color.secondary}
+          size={theme.icon.size.md}
+        />
+        {isDefined(buttonOnClick) ? (
+          <StyledClickableContainer onClick={buttonOnClick}>
+            <StyledText allMatched={allMatched}>{message}</StyledText>
+            <StyledIconChevronDownWrapper
+              isExpanded={isExpanded}
+              allMatched={allMatched}
+            >
+              <IconChevronDown size={theme.icon.size.md} />
+            </StyledIconChevronDownWrapper>
+          </StyledClickableContainer>
+        ) : (
           <StyledText allMatched={allMatched}>{message}</StyledText>
-          <StyledTransitionedIconChevronDown
-            isExpanded={isExpanded}
-            allMatched={allMatched}
-            size={theme.icon.size.md}
-          />
-        </StyledClickableContainer>
-      ) : (
-        <StyledText allMatched={allMatched}>{message}</StyledText>
-      )}
-    </StyledBanner>
+        )}
+      </Banner>
+    </StyledBannerContainer>
   );
 };

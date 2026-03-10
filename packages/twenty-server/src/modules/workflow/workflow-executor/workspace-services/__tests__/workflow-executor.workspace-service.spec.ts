@@ -14,6 +14,7 @@ import {
   type WorkflowAction,
   WorkflowActionType,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { WorkflowExecutorWorkspaceService } from 'src/modules/workflow/workflow-executor/workspace-services/workflow-executor.workspace-service';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
@@ -56,6 +57,10 @@ describe('WorkflowExecutorWorkspaceService', () => {
     canBillMeteredProduct: jest.fn().mockReturnValue(true),
   };
 
+  const mockExceptionHandlerService = {
+    captureExceptions: jest.fn(),
+  };
+
   const mockMessageQueueService = {
     add: jest.fn(),
   };
@@ -83,6 +88,10 @@ describe('WorkflowExecutorWorkspaceService', () => {
         {
           provide: BillingService,
           useValue: mockBillingService,
+        },
+        {
+          provide: ExceptionHandlerService,
+          useValue: mockExceptionHandlerService,
         },
         {
           provide: `MESSAGE_QUEUE_${MessageQueue.workflowQueue}`,
@@ -483,6 +492,102 @@ describe('WorkflowExecutorWorkspaceService', () => {
       expect(result).toEqual({
         nextStepIdsToExecute: ['step-a'],
         nextStepIdsToSkip: ['step-b'],
+      });
+    });
+
+    it('should return nextStepIds for a fail-safe iterator instead of entering the loop', async () => {
+      const step = {
+        id: 'iterator-1',
+        type: WorkflowActionType.ITERATOR,
+        nextStepIds: ['after-loop'],
+        settings: {
+          input: {
+            initialLoopStepIds: ['loop-step-1'],
+          },
+        },
+      } as WorkflowAction;
+
+      const result = await service.getNextStepIdsToExecute({
+        executedStep: step,
+        executedStepOutput: {
+          shouldFailSafely: true,
+        },
+      });
+
+      expect(result).toEqual({
+        nextStepIdsToExecute: ['after-loop'],
+      });
+    });
+
+    it('should return nextStepIdsToFailSafely for all branches when if-else is fail-safe', async () => {
+      const step = {
+        id: 'if-else-1',
+        type: WorkflowActionType.IF_ELSE,
+        nextStepIds: [],
+        settings: {
+          input: {
+            branches: [
+              {
+                id: 'branch-if',
+                filterGroupId: 'fg1',
+                nextStepIds: ['step-a'],
+              },
+              {
+                id: 'branch-else',
+                nextStepIds: ['step-b'],
+              },
+            ],
+            stepFilterGroups: [],
+            stepFilters: [],
+          },
+        },
+      } as unknown as WorkflowAction;
+
+      const result = await service.getNextStepIdsToExecute({
+        executedStep: step,
+        executedStepOutput: {
+          shouldFailSafely: true,
+        },
+      });
+
+      expect(result).toEqual({
+        nextStepIdsToFailSafely: ['step-a', 'step-b'],
+      });
+    });
+
+    it('should return nextStepIdsToSkip for all branches when if-else has no matching branch', async () => {
+      const step = {
+        id: 'if-else-1',
+        type: WorkflowActionType.IF_ELSE,
+        nextStepIds: [],
+        settings: {
+          input: {
+            branches: [
+              {
+                id: 'branch-if',
+                filterGroupId: 'fg1',
+                nextStepIds: ['step-a'],
+              },
+              {
+                id: 'branch-else',
+                nextStepIds: ['step-b'],
+              },
+            ],
+            stepFilterGroups: [],
+            stepFilters: [],
+          },
+        },
+      } as unknown as WorkflowAction;
+
+      const result = await service.getNextStepIdsToExecute({
+        executedStep: step,
+        executedStepOutput: {
+          shouldSkipStepExecution: true,
+        },
+      });
+
+      expect(result).toEqual({
+        nextStepIdsToSkip: ['step-a', 'step-b'],
       });
     });
 

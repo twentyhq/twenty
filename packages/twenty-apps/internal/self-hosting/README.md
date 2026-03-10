@@ -2,25 +2,6 @@
 
 Used to manage billing and telemetry of self-hosted instances
 
-## Requirements
-- twenty-cli `npm install -g twenty-cli`
-- an `apiKey`. Go to `https://twenty.com/settings/api-webhooks` to generate one
-
-
-## Install to your Twenty workspace
-
-```bash
-twenty auth login
-twenty app sync
-```
-
-## Environment Variables
-
-This application requires the following environment variables to be set:
-
-- `TWENTY_API_URL`: The Twenty instance API URL where selfHostingUser records will be created
-- `TWENTY_API_KEY`: API key for authentication (generate at `/settings/api-webhooks`)
-
 ## Features
 
 ### Telemetry Webhook

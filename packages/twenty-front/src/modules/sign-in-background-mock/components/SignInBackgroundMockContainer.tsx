@@ -1,6 +1,6 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
-import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
+import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
@@ -85,7 +85,7 @@ export const SignInBackgroundMockContainer = () => {
                 recordTableId={recordIndexId}
                 viewId={viewBarId}
               />
-              <ActionMenuComponentInstanceContext.Provider
+              <CommandMenuComponentInstanceContext.Provider
                 value={{ instanceId: recordIndexId }}
               >
                 {isDefined(objectMetadataItem) && (
@@ -103,7 +103,7 @@ export const SignInBackgroundMockContainer = () => {
                     />
                   </>
                 )}
-              </ActionMenuComponentInstanceContext.Provider>
+              </CommandMenuComponentInstanceContext.Provider>
             </ContextStoreComponentInstanceContext.Provider>
           </RecordComponentInstanceContextsWrapper>
         </ViewComponentInstanceContext.Provider>

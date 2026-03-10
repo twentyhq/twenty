@@ -2,37 +2,40 @@ import { ImageBubbleMenu } from '@/advanced-text-editor/components/ImageBubbleMe
 import { LinkBubbleMenu } from '@/advanced-text-editor/components/LinkBubbleMenu';
 import { TextBubbleMenu } from '@/advanced-text-editor/components/TextBubbleMenu';
 import { FORM_FIELD_PLACEHOLDER_STYLES } from '@/object-record/record-field/ui/form-types/constants/FormFieldPlaceholderStyles';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { EditorContent, type Editor } from '@tiptap/react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledEditorContainer = styled.div<{
   readonly?: boolean;
   minHeight: number;
   maxWidth: number;
 }>`
-  height: 100%;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
+  height: 100%;
   width: 100%;
-  box-sizing: border-box;
 
   .editor-content {
     flex-grow: 1;
-    width: 100%;
     height: 100%;
     min-height: ${({ minHeight }) => minHeight}px;
+    width: 100%;
   }
 
   .tiptap {
-    padding: ${({ theme }) => `${theme.spacing(1)} ${theme.spacing(2)}`};
-    box-sizing: border-box;
-    height: 100%;
-    color: ${({ theme, readonly }) =>
-      readonly ? theme.font.color.light : theme.font.color.primary};
-    font-family: ${({ theme }) => theme.font.family};
-    font-size: ${({ theme }) => theme.font.size.sm};
-    font-weight: ${({ theme }) => theme.font.weight.regular};
     border: none !important;
+    box-sizing: border-box;
+    color: ${({ readonly }) =>
+      readonly
+        ? themeCssVariables.font.color.light
+        : themeCssVariables.font.color.primary};
+    font-family: ${themeCssVariables.font.family};
+    font-size: ${themeCssVariables.font.size.sm};
+    font-weight: ${themeCssVariables.font.weight.regular};
+    height: 100%;
+    padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
 
     p.is-editor-empty:first-of-type::before {
       ${FORM_FIELD_PLACEHOLDER_STYLES}
@@ -48,10 +51,10 @@ const StyledEditorContainer = styled.div<{
     }
 
     .variable-tag {
-      background-color: ${({ theme }) => theme.color.blue3};
-      border-radius: ${({ theme }) => theme.border.radius.sm};
-      color: ${({ theme }) => theme.color.blue};
-      padding: ${({ theme }) => theme.spacing(1)};
+      background-color: ${themeCssVariables.color.blue3};
+      border-radius: ${themeCssVariables.border.radius.sm};
+      color: ${themeCssVariables.color.blue};
+      padding: ${themeCssVariables.spacing[1]};
     }
 
     h1 {
@@ -67,8 +70,8 @@ const StyledEditorContainer = styled.div<{
     }
 
     li {
-      margin-bottom: ${({ theme }) => theme.spacing(2)};
       line-height: 1.5;
+      margin-bottom: ${themeCssVariables.spacing[2]};
     }
   }
 

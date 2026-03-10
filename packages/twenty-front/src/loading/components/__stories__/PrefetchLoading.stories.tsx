@@ -30,7 +30,7 @@ export default meta;
 export type Story = StoryObj<typeof RecordIndexPage>;
 
 export const Default: Story = {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // oxlint-disable-next-line @typescripttypescript/ban-ts-comment
   // @ts-ignore
   decorators: [PrefetchLoadingDecorator, PageDecorator],
   play: async ({ canvasElement }) => {
@@ -38,7 +38,7 @@ export const Default: Story = {
 
     await canvas.findByText('Search');
     await canvas.findByText('Settings');
-    await canvas.findByText('Linkedin');
+    await canvas.findByText('Opened');
     await canvas.findByText('Companies');
   },
 };

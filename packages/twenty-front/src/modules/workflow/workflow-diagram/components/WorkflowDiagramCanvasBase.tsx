@@ -1,7 +1,7 @@
-import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
-import { commandMenuWidthState } from '@/command-menu/states/commandMenuWidthState';
-import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
-import { useListenToSidePanelClosing } from '@/ui/layout/right-drawer/hooks/useListenToSidePanelClosing';
+import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
+import { sidePanelWidthState } from '@/side-panel/states/sidePanelWidthState';
+import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
+import { useListenToSidePanelClosing } from '@/ui/layout/side-panel/hooks/useListenToSidePanelClosing';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
@@ -32,8 +32,7 @@ import { getConnectionOptionsForSourceHandle } from '@/workflow/workflow-diagram
 import { WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID } from '@/workflow/workflow-diagram/workflow-nodes/constants/WorkflowDiagramNodeDefaultSourceHandleId';
 import { WORKFLOW_DIAGRAM_NODE_DEFAULT_TARGET_HANDLE_ID } from '@/workflow/workflow-diagram/workflow-nodes/constants/WorkflowDiagramNodeDefaultTargetHandleId';
 import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/states/workflowInsertStepIdsComponentState';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import {
   Background,
   ReactFlow,
@@ -64,11 +63,11 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { isDefined } from 'twenty-shared/utils';
 import { Tag, type TagColor } from 'twenty-ui/components';
 import { useStore } from 'jotai';
-
+import { themeCssVariables, ThemeContext } from 'twenty-ui/theme-constants';
 const StyledResetReactflowStyles = styled.div`
-  height: 100%;
-  width: 100%;
-  position: relative;
+  --xy-node-background-color: none;
+  --xy-node-border: none;
+  --xy-node-border-radius: none;
 
   /* Below we reset the default styling of Reactflow */
   .react-flow__node-input,
@@ -76,23 +75,23 @@ const StyledResetReactflowStyles = styled.div`
   .react-flow__node-output,
   .react-flow__node-group {
     padding: 0;
-    width: auto;
     text-align: start;
     white-space: nowrap;
+    width: auto;
   }
 
-  --xy-node-border-radius: none;
-  --xy-node-border: none;
-  --xy-node-background-color: none;
   --xy-node-boxshadow-hover: none;
   --xy-node-boxshadow-selected: none;
+  height: 100%;
+  position: relative;
+  width: 100%;
 `;
 
 const StyledStatusTagContainer = styled.div`
   left: 0;
-  top: 0;
+  padding: ${themeCssVariables.spacing[4]};
   position: absolute;
-  padding: ${({ theme }) => theme.spacing(4)};
+  top: 0;
 `;
 
 const defaultFitViewOptions = {
@@ -165,9 +164,8 @@ export const WorkflowDiagramCanvasBase = ({
     event: MouseEvent | React.MouseEvent<Element, MouseEvent>;
   }) => void;
 }) => {
+  const { theme, colorScheme } = useContext(ThemeContext);
   const store = useStore();
-  const theme = useTheme();
-
   const reactflow = useReactFlow();
 
   const workflowDiagram = useAtomComponentStateValue(
@@ -257,8 +255,8 @@ export const WorkflowDiagramCanvasBase = ({
     return { nodes, edges };
   }, [workflowDiagram, workflowInsertStepIds]);
 
-  const isCommandMenuOpened = useAtomStateValue(isCommandMenuOpenedState);
-  const { isInRightDrawer } = useContext(ActionMenuContext);
+  const isSidePanelOpened = useAtomStateValue(isSidePanelOpenedState);
+  const { isInSidePanel } = useContext(CommandMenuContext);
 
   const handleEdgesChange = (
     edgeChanges: Array<EdgeChange<WorkflowDiagramEdge>>,
@@ -287,14 +285,14 @@ export const WorkflowDiagramCanvasBase = ({
   const setFlowViewport = useCallback(
     ({
       workflowDiagramFlowInitialized,
-      isCommandMenuOpened,
+      isSidePanelOpened,
       workflowDiagram,
-      isInRightDrawer,
+      isInSidePanel,
     }: {
       workflowDiagramFlowInitialized: boolean;
-      isCommandMenuOpened: boolean;
+      isSidePanelOpened: boolean;
       workflowDiagram: WorkflowDiagram | undefined;
-      isInRightDrawer: boolean;
+      isInSidePanel: boolean;
     }) => {
       if (!isDefined(containerRef.current) || !workflowDiagramFlowInitialized) {
         return;
@@ -319,12 +317,12 @@ export const WorkflowDiagramCanvasBase = ({
 
       let adjustedContainerWidth = baseContainerWidth;
 
-      const commandMenuWidth = store.get(commandMenuWidthState.atom);
+      const sidePanelWidth = store.get(sidePanelWidthState.atom);
 
-      if (!isInRightDrawer && isCommandMenuOpened) {
-        adjustedContainerWidth = baseContainerWidth - commandMenuWidth;
-      } else if (!isInRightDrawer && hasViewportBeenMoved) {
-        adjustedContainerWidth = baseContainerWidth + commandMenuWidth;
+      if (!isInSidePanel && isSidePanelOpened) {
+        adjustedContainerWidth = baseContainerWidth - sidePanelWidth;
+      } else if (!isInSidePanel && hasViewportBeenMoved) {
+        adjustedContainerWidth = baseContainerWidth + sidePanelWidth;
       }
 
       const flowBounds = reactflow.getNodesBounds(nodes);
@@ -346,16 +344,16 @@ export const WorkflowDiagramCanvasBase = ({
   const handleSetFlowViewportOnChange = useCallback(
     ({
       workflowDiagramFlowInitialized,
-      isCommandMenuOpened,
-      isInRightDrawer,
+      isSidePanelOpened,
+      isInSidePanel,
     }: {
       workflowDiagramFlowInitialized: boolean;
-      isCommandMenuOpened: boolean;
-      isInRightDrawer: boolean;
+      isSidePanelOpened: boolean;
+      isInSidePanel: boolean;
     }) => {
       setFlowViewport({
-        isInRightDrawer,
-        isCommandMenuOpened,
+        isInSidePanel,
+        isSidePanelOpened,
         workflowDiagramFlowInitialized,
         workflowDiagram: store.get(workflowDiagramCallbackState),
       });
@@ -366,14 +364,14 @@ export const WorkflowDiagramCanvasBase = ({
   useEffect(() => {
     handleSetFlowViewportOnChange({
       workflowDiagramFlowInitialized,
-      isCommandMenuOpened,
-      isInRightDrawer,
+      isSidePanelOpened,
+      isInSidePanel,
     });
   }, [
     handleSetFlowViewportOnChange,
-    isCommandMenuOpened,
+    isSidePanelOpened,
     workflowDiagramFlowInitialized,
-    isInRightDrawer,
+    isInSidePanel,
   ]);
 
   const handleNodesChanges = useCallback(
@@ -409,19 +407,19 @@ export const WorkflowDiagramCanvasBase = ({
       }
 
       setFlowViewport({
-        isCommandMenuOpened,
+        isSidePanelOpened,
         workflowDiagramFlowInitialized,
         workflowDiagram: updatedWorkflowDiagram,
-        isInRightDrawer,
+        isInSidePanel,
       });
     },
     [
-      isCommandMenuOpened,
+      isSidePanelOpened,
       setFlowViewport,
       workflowDiagramFlowInitialized,
       workflowDiagramCallbackState,
       workflowDiagramWaitingNodesDimensions,
-      isInRightDrawer,
+      isInSidePanel,
       store,
     ],
   );
@@ -625,6 +623,7 @@ export const WorkflowDiagramCanvasBase = ({
         preventScrolling={true}
         connectionLineComponent={WorkflowDiagramConnection}
         connectionRadius={0}
+        colorMode={colorScheme}
       >
         <Background color={theme.border.color.medium} size={2} />
 

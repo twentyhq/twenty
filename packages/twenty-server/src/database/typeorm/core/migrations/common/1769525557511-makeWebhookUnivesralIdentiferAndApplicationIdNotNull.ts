@@ -24,7 +24,7 @@ export class MakeWebhookUnivesralIdentiferAndApplicationIdNotNull1769525557511
         await queryRunner.query(`ROLLBACK TO SAVEPOINT ${savepointName}`);
         await queryRunner.query(`RELEASE SAVEPOINT ${savepointName}`);
       } catch (rollbackError) {
-        // eslint-disable-next-line no-console
+        // oxlint-disable-next-line no-console
         console.error(
           'Failed to rollback to savepoint in MakeWebhookUnivesralIdentiferAndApplicationIdNotNull1769525557511',
           rollbackError,
@@ -32,7 +32,7 @@ export class MakeWebhookUnivesralIdentiferAndApplicationIdNotNull1769525557511
         throw rollbackError;
       }
 
-      // eslint-disable-next-line no-console
+      // oxlint-disable-next-line no-console
       console.error(
         'Swallowing MakeWebhookUnivesralIdentiferAndApplicationIdNotNull1769525557511 error',
         e,

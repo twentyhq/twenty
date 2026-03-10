@@ -2,7 +2,6 @@ name: CI Server
 
 on:
   pull_request:
-
   merge_group:
 
 permissions:
@@ -13,10 +12,11 @@ concurrency:
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 env:
-  SERVER_SETUP_CACHE_KEY: server-setup
+  SERVER_BUILD_CACHE_KEY: server-build
 
 jobs:
   changed-files-check:
+    if: github.event_name != 'merge_group'
     uses: ./.github/workflows/changed-files.yaml
     with:
       files: |
@@ -25,13 +25,62 @@ jobs:
         packages/twenty-server/**
         packages/twenty-front/src/generated/**
         packages/twenty-front/src/generated-metadata/**
+        packages/twenty-sdk/src/clients/generated/metadata/**
         packages/twenty-emails/**
         packages/twenty-shared/**
-  server-setup:
+
+  server-build:
     needs: changed-files-check
     if: needs.changed-files-check.outputs.any_changed == 'true'
     timeout-minutes: 30
-    runs-on: depot-ubuntu-24.04-8
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch custom Github Actions and base branch history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 10
+      - name: Install dependencies
+        uses: ./.github/actions/yarn-install
+      - name: Restore server build cache
+        id: restore-server-build-cache
+        uses: ./.github/actions/restore-cache
+        with:
+          key: ${{ env.SERVER_BUILD_CACHE_KEY }}
+      - name: Build twenty-shared
+        run: npx nx build twenty-shared
+      - name: Server / Write .env
+        run: npx nx reset:env twenty-server
+      - name: Server / Build
+        run: npx nx build twenty-server
+      - name: Save server build cache
+        uses: ./.github/actions/save-cache
+        with:
+          key: ${{ steps.restore-server-build-cache.outputs.cache-primary-key }}
+
+  server-lint-typecheck:
+    needs: changed-files-check
+    if: needs.changed-files-check.outputs.any_changed == 'true'
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch custom Github Actions and base branch history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 10
+      - name: Install dependencies
+        uses: ./.github/actions/yarn-install
+      - name: Build twenty-shared
+        run: npx nx build twenty-shared
+      - name: Server / Run lint & typecheck
+        uses: ./.github/actions/nx-affected
+        with:
+          tag: scope:backend
+          tasks: lint,typecheck
+
+  server-validation:
+    needs: server-build
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
     services:
       postgres:
         image: twentycrm/twenty-postgres-spilo
@@ -55,21 +104,15 @@ jobs:
       - name: Fetch custom Github Actions and base branch history
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 10
       - name: Install dependencies
         uses: ./.github/actions/yarn-install
-      - name: Restore server setup
-        id: restore-server-setup-cache
+      - name: Restore server build cache
         uses: ./.github/actions/restore-cache
         with:
-          key: ${{ env.SERVER_SETUP_CACHE_KEY }}
+          key: ${{ env.SERVER_BUILD_CACHE_KEY }}
       - name: Build twenty-shared
         run: npx nx build twenty-shared
-      - name: Server / Run lint & typecheck
-        uses: ./.github/actions/nx-affected
-        with:
-          tag: scope:backend
-          tasks: lint,typecheck
       - name: Server / Write .env
         run: npx nx reset:env twenty-server
       - name: Server / Build
@@ -84,10 +127,8 @@ jobs:
         run: |
           timeout 30s npx nx run twenty-server:worker || exit_code=$?
           if [ $exit_code -eq 124 ]; then
-            # If timeout was reached (exit code 124), consider it a success
             exit 0
           elif [ $exit_code -ne 0 ]; then
-            # If worker failed for other reasons, fail the build
             exit $exit_code
           fi
       - name: Server / Start
@@ -118,13 +159,13 @@ jobs:
 
             exit 1
           fi
-      - name: GraphQL / Check for Pending Generation
+      - name: Check for Pending Code Generation
         run: |
-          # Run GraphQL generation commands
+          HAS_ERRORS=false
+
           npx nx run twenty-front:graphql:generate
           npx nx run twenty-front:graphql:generate --configuration=metadata
 
-          # Check if GraphQL generated files were modified
           if ! git diff --quiet -- packages/twenty-front/src/generated packages/twenty-front/src/generated-metadata; then
             echo "::error::GraphQL schema changes detected. Please run 'npx nx run twenty-front:graphql:generate' and 'npx nx run twenty-front:graphql:generate --configuration=metadata' and commit the changes."
             echo ""
@@ -133,29 +174,42 @@ jobs:
             git diff -- packages/twenty-front/src/generated packages/twenty-front/src/generated-metadata
             echo "==================================================="
             echo ""
-            echo "Please run 'npx nx run twenty-front:graphql:generate' and 'npx nx run twenty-front:graphql:generate --configuration=metadata' and commit the changes."
+            HAS_ERRORS=true
+          fi
+
+          npx nx run twenty-sdk:generate-metadata-client
+
+          if ! git diff --quiet -- packages/twenty-sdk/src/clients/generated/metadata; then
+            echo "::error::SDK metadata client changes detected. Please run 'npx nx run twenty-sdk:generate-metadata-client' and commit the changes."
             echo ""
+            echo "The following SDK metadata client changes were detected:"
+            echo "==================================================="
+            git diff -- packages/twenty-sdk/src/clients/generated/metadata
+            echo "==================================================="
+            echo ""
+            HAS_ERRORS=true
+          fi
+
+          if [ "$HAS_ERRORS" = true ]; then
             exit 1
           fi
-      - name: Save server setup
-        uses: ./.github/actions/save-cache
-        with:
-          key: ${{ steps.restore-server-setup-cache.outputs.cache-primary-key }}
   server-test:
+    needs: server-build
     timeout-minutes: 30
-    runs-on: depot-ubuntu-24.04-8
-    needs: server-setup
+    runs-on: ubuntu-latest
     steps:
       - name: Fetch custom Github Actions and base branch history
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 10
       - name: Install dependencies
         uses: ./.github/actions/yarn-install
-      - name: Restore server setup
+      - name: Restore server build cache
         uses: ./.github/actions/restore-cache
         with:
-          key: ${{ env.SERVER_SETUP_CACHE_KEY }}
+          key: ${{ env.SERVER_BUILD_CACHE_KEY }}
+      - name: Build twenty-shared
+        run: npx nx build twenty-shared
       - name: Server / Run Tests
         uses: ./.github/actions/nx-affected
         with:
@@ -164,12 +218,12 @@ jobs:
 
   server-integration-test:
     timeout-minutes: 30
-    runs-on: depot-ubuntu-24.04-8
-    needs: server-setup
+    runs-on: ubuntu-latest
+    needs: server-build
     strategy:
       fail-fast: false
       matrix:
-        shard: [1, 2, 3, 4, 5, 6, 7, 8]
+        shard: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     services:
       postgres:
         image: twentycrm/twenty-postgres-spilo
@@ -207,12 +261,12 @@ jobs:
       ANALYTICS_ENABLED: true
       CLICKHOUSE_URL: "http://default:clickhousePassword@localhost:8123/twenty"
       CLICKHOUSE_PASSWORD: clickhousePassword
-      SHARD_COUNTER: 8
+      SHARD_COUNTER: 10
     steps:
       - name: Fetch custom Github Actions and base branch history
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 10
       - name: Install dependencies
         uses: ./.github/actions/yarn-install
       - name: Update .env.test for integrations tests
@@ -223,10 +277,10 @@ jobs:
           echo "BILLING_STRIPE_BASE_PLAN_PRODUCT_ID=test-base-plan-product-id" >> .env.test
           echo "BILLING_STRIPE_WEBHOOK_SECRET=test-webhook-secret" >> .env.test
           echo "BILLING_PLAN_REQUIRED_LINK=http://localhost:3001/stripe-redirection" >> .env.test
-      - name: Restore server setup
+      - name: Restore server build cache
         uses: ./.github/actions/restore-cache
         with:
-          key: ${{ env.SERVER_SETUP_CACHE_KEY }}
+          key: ${{ env.SERVER_BUILD_CACHE_KEY }}
       - name: Server / Build
         run: npx nx build twenty-server
       - name: Build dependencies
@@ -247,11 +301,20 @@ jobs:
           tasks: 'test:integration'
           configuration: 'with-db-reset'
           args: --shard=${{ matrix.shard }}/${{ env.SHARD_COUNTER }}
+
   ci-server-status-check:
     if: always() && !cancelled()
     timeout-minutes: 5
-    runs-on: depot-ubuntu-24.04
-    needs: [changed-files-check, server-setup, server-test, server-integration-test]
+    runs-on: ubuntu-latest
+    needs:
+      [
+        changed-files-check,
+        server-build,
+        server-lint-typecheck,
+        server-validation,
+        server-test,
+        server-integration-test,
+      ]
     steps:
       - name: Fail job if any needs failed
         if: contains(needs.*.result, 'failure')

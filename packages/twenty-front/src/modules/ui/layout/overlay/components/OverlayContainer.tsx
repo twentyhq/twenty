@@ -1,23 +1,24 @@
-import styled from '@emotion/styled';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from '@linaria/react';
 
-// eslint-disable-next-line twenty/styled-components-prefixed-with-styled
+// oxlint-disable-next-line twenty/styled-components-prefixed-with-styled
 export const OverlayContainer = styled.div<{
   borderRadius?: 'sm' | 'md';
   hasDangerBorder?: boolean;
 }>`
   align-items: center;
-  display: flex;
+  backdrop-filter: ${themeCssVariables.blur.medium};
 
-  backdrop-filter: ${({ theme }) => theme.blur.medium};
+  background: ${themeCssVariables.background.transparent.primary};
 
-  border-radius: ${({ theme, borderRadius }) =>
-    theme.border.radius[borderRadius ?? 'md']};
-
-  background: ${({ theme }) => theme.background.transparent.primary};
   border: 1px solid
-    ${({ theme, hasDangerBorder }) =>
-      theme.border.color[hasDangerBorder ? 'danger' : 'medium']};
-  box-shadow: ${({ theme }) => theme.boxShadow.strong};
+    ${({ hasDangerBorder }) =>
+      themeCssVariables.border.color[hasDangerBorder ? 'danger' : 'medium']};
+
+  border-radius: ${({ borderRadius }) =>
+    themeCssVariables.border.radius[borderRadius ?? 'md']};
+  box-shadow: ${themeCssVariables.boxShadow.strong};
+  display: flex;
 
   overflow: hidden;
 

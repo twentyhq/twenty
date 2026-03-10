@@ -42,7 +42,7 @@ const RelationFieldValueSetterEffect = () => {
     mockPerformance.recordId,
   );
 
-  // eslint-disable-next-line twenty/matching-state-variable
+  // oxlint-disable-next-line twenty/matching-state-variable
   const setRelationRecordStore = useSetAtomFamilyState(
     recordStoreFamilyState,
     mockPerformance.relationRecordId,
@@ -163,6 +163,7 @@ const meta: Meta = {
                 viewBarId: mockPerformance.recordId,
                 // TODO: update performance mocks with new data, and merge with common mocks if possible
                 objectMetadataItem: mockPerformance.objectMetadataItem as any,
+                objectMetadataItems: [],
                 objectNameSingular:
                   mockPerformance.objectMetadataItem.nameSingular,
                 objectPermissions: {
@@ -180,7 +181,7 @@ const meta: Meta = {
                     onMoveFocus: () => {},
                     onCloseTableCell: () => {},
                     onMoveHoverToCurrentCell: () => {},
-                    onActionMenuDropdownOpened: () => {},
+                    onCommandMenuDropdownOpened: () => {},
                   }}
                 >
                   <RecordTableRowContextProvider

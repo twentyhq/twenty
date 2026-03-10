@@ -7,10 +7,8 @@
  *                              |___/
  */
 
-export type {
-  ApplicationMarketplaceData,
-  ApplicationManifest,
-} from './applicationType';
+export type { AgentManifest } from './agentManifestType';
+export type { ApplicationManifest } from './applicationType';
 export type { ApplicationVariables } from './applicationVariablesType';
 export type { AssetManifest } from './assetManifestType';
 export { API_CLIENT_DIR } from './constants/ApiClientDirectory';
@@ -52,6 +50,7 @@ export type {
   FieldPermissionManifest,
   RoleManifest,
 } from './roleManifestType';
+export type { ServerVariables } from './server-variables.type';
 export type { SkillManifest } from './skillManifestType';
 export type { SyncableEntityOptions } from './syncableEntityOptionsType';
 export type {

@@ -1,9 +1,8 @@
-import isPropValid from '@emotion/is-prop-valid';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import { useState } from 'react';
+import { styled } from '@linaria/react';
+import { useContext, useState } from 'react';
 import { IconChevronDown } from 'twenty-ui/display';
 import { AnimatedExpandableContainer, Section } from 'twenty-ui/layout';
+import { themeCssVariables, ThemeContext } from 'twenty-ui/theme-constants';
 
 const StyledHeader = styled.header`
   align-items: center;
@@ -14,18 +13,17 @@ const StyledHeader = styled.header`
 `;
 
 const StyledTitleLabel = styled.div`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
+  color: ${themeCssVariables.font.color.tertiary};
+  font-weight: ${themeCssVariables.font.weight.medium};
 `;
 
-const StyledChevronIcon = styled(IconChevronDown, {
-  shouldForwardProp: (prop) => isPropValid(prop) && prop !== 'isExpanded',
-})<{ isExpanded: boolean }>`
-  color: ${({ theme }) => theme.font.color.tertiary};
+const StyledChevronWrapper = styled.div<{ isExpanded: boolean }>`
+  color: ${themeCssVariables.font.color.tertiary};
+  display: flex;
   transform: ${({ isExpanded }) =>
     isExpanded ? 'rotate(180deg)' : 'rotate(0deg)'};
-  transition: ${({ theme }) =>
-    `transform ${theme.animation.duration.normal}s ease`};
+  transition: transform
+    calc(${themeCssVariables.animation.duration.normal} * 1s) ease;
 `;
 
 type FieldsWidgetGroupContainerProps = {
@@ -37,8 +35,8 @@ export const FieldsWidgetGroupContainer = ({
   children,
   title,
 }: FieldsWidgetGroupContainerProps) => {
+  const { theme } = useContext(ThemeContext);
   const [isExpanded, setIsExpanded] = useState(true);
-  const theme = useTheme();
 
   const handleToggleGroup = () =>
     setIsExpanded((previousIsExpanded) => !previousIsExpanded);
@@ -47,11 +45,12 @@ export const FieldsWidgetGroupContainer = ({
     <Section>
       <StyledHeader onClick={handleToggleGroup}>
         <StyledTitleLabel>{title}</StyledTitleLabel>
-        <StyledChevronIcon
-          isExpanded={isExpanded}
-          size={theme.icon.size.md}
-          stroke={theme.icon.stroke.sm}
-        />
+        <StyledChevronWrapper isExpanded={isExpanded}>
+          <IconChevronDown
+            size={theme.icon.size.md}
+            stroke={theme.icon.stroke.sm}
+          />
+        </StyledChevronWrapper>
       </StyledHeader>
       <AnimatedExpandableContainer
         isExpanded={isExpanded}

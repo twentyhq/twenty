@@ -10,11 +10,10 @@ import { settingsObjectFieldsFamilyState } from '@/settings/data-model/object-de
 import { isFieldTypeSupportedInSettings } from '@/settings/data-model/utils/isFieldTypeSupportedInSettings';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { useContext, useMemo } from 'react';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
-import { useMemo } from 'react';
 import { FieldMetadataType, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import {
@@ -25,6 +24,7 @@ import {
 } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import { UndecoratedLink } from 'twenty-ui/navigation';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { RelationType } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { type SettingsObjectDetailTableItem } from '~/pages/settings/data-model/types/SettingsObjectDetailTableItem';
@@ -36,51 +36,42 @@ type SettingsObjectFieldItemTableRowProps = {
   mode: 'view' | 'new-field';
 };
 
-export const StyledObjectFieldTableRow = styled(TableRow)`
-  grid-template-columns: minmax(0, 1fr) 148px 148px 36px;
-`;
-
-const StyledNameTableCell = styled(TableCell)`
-  color: ${({ theme }) => theme.font.color.primary};
-  gap: ${({ theme }) => theme.spacing(2)};
-`;
+export const OBJECT_FIELD_TABLE_ROW_GRID_TEMPLATE_COLUMNS =
+  'minmax(0, 1fr) 148px 148px 36px';
 
 const StyledNameContainer = styled.div`
-  display: flex;
   align-items: center;
+  display: flex;
   flex: 1;
+  gap: ${themeCssVariables.spacing[1]};
   min-width: 0;
-  gap: ${({ theme }) => theme.spacing(1)};
 `;
 
 const StyledNameLabel = styled.div`
-  white-space: nowrap;
-  text-overflow: ellipsis;
   overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 const StyledInactiveLabel = styled.span`
-  color: ${({ theme }) => theme.font.color.extraLight};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
+  color: ${themeCssVariables.font.color.extraLight};
   flex: 0 999 auto;
+  font-size: ${themeCssVariables.font.size.sm};
   min-width: 48px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 
   &::before {
     content: '·';
-    margin-right: ${({ theme }) => theme.spacing(1)};
+    margin-right: ${themeCssVariables.spacing[1]};
   }
 `;
 
-const StyledIconTableCell = styled(TableCell)`
-  justify-content: center;
-  padding-right: ${({ theme }) => theme.spacing(1)};
-`;
-
-const StyledIconChevronRight = styled(IconChevronRight)`
-  color: ${({ theme }) => theme.font.color.tertiary};
+const StyledIconChevronRightContainer = styled.span`
+  align-items: center;
+  color: ${themeCssVariables.font.color.tertiary};
+  display: flex;
 `;
 
 export const SettingsObjectFieldItemTableRow = ({
@@ -88,6 +79,7 @@ export const SettingsObjectFieldItemTableRow = ({
   mode,
   status,
 }: SettingsObjectFieldItemTableRowProps) => {
+  const { theme } = useContext(ThemeContext);
   const { t } = useLingui();
   const { fieldMetadataItem, objectMetadataItem } =
     settingsObjectDetailTableItem;
@@ -98,7 +90,6 @@ export const SettingsObjectFieldItemTableRow = ({
 
   const navigate = useNavigateSettings();
 
-  const theme = useTheme();
   const { getIcon } = useIcons();
   const Icon = getIcon(fieldMetadataItem.icon);
 
@@ -128,7 +119,7 @@ export const SettingsObjectFieldItemTableRow = ({
     fieldName: fieldMetadataItem.name,
   });
 
-  // eslint-disable-next-line twenty/no-navigate-prefer-link
+  // oxlint-disable-next-line twenty/no-navigate-prefer-link
   const navigateToFieldEdit = () =>
     navigate(SettingsPath.ObjectFieldEdit, {
       objectNamePlural: objectMetadataItem.namePlural,
@@ -177,14 +168,20 @@ export const SettingsObjectFieldItemTableRow = ({
       : relationObjectMetadataItem?.labelPlural;
 
   return (
-    <StyledObjectFieldTableRow
+    <TableRow
+      gridTemplateColumns={OBJECT_FIELD_TABLE_ROW_GRID_TEMPLATE_COLUMNS}
       onClick={mode === 'view' ? navigateToFieldEdit : undefined}
     >
       <UndecoratedLink to={linkToNavigate}>
-        <StyledNameTableCell>
-          {!!Icon && (
+        <TableCell
+          color={themeCssVariables.font.color.primary}
+          gap={themeCssVariables.spacing[2]}
+        >
+          {isDefined(Icon) && (
             <Icon
-              style={{ minWidth: theme.icon.size.md }}
+              style={{
+                minWidth: theme.icon.size.md,
+              }}
               size={theme.icon.size.md}
               stroke={theme.icon.stroke.sm}
             />
@@ -197,7 +194,7 @@ export const SettingsObjectFieldItemTableRow = ({
               <StyledInactiveLabel>{t`Deactivated`}</StyledInactiveLabel>
             )}
           </StyledNameContainer>
-        </StyledNameTableCell>
+        </TableCell>
       </UndecoratedLink>
 
       <TableCell>
@@ -230,14 +227,19 @@ export const SettingsObjectFieldItemTableRow = ({
           }}
         />
       </TableCell>
-      <StyledIconTableCell>
+      <TableCell
+        align="center"
+        padding={`0 ${themeCssVariables.spacing[1]} 0 ${themeCssVariables.spacing[2]}`}
+      >
         {status === 'active' ? (
           mode === 'view' ? (
             <UndecoratedLink to={linkToNavigate}>
-              <StyledIconChevronRight
-                size={theme.icon.size.md}
-                stroke={theme.icon.stroke.sm}
-              />
+              <StyledIconChevronRightContainer>
+                <IconChevronRight
+                  size={theme.icon.size.md}
+                  stroke={theme.icon.stroke.sm}
+                />
+              </StyledIconChevronRightContainer>
             </UndecoratedLink>
           ) : (
             canToggleField && (
@@ -271,7 +273,7 @@ export const SettingsObjectFieldItemTableRow = ({
             onClick={handleToggleField}
           />
         )}
-      </StyledIconTableCell>
-    </StyledObjectFieldTableRow>
+      </TableCell>
+    </TableRow>
   );
 };

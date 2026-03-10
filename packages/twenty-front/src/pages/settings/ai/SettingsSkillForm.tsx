@@ -1,5 +1,5 @@
 import { ApolloError } from '@apollo/client';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useParams } from 'react-router-dom';
 import { useDebouncedCallback } from 'use-debounce';
 
@@ -14,7 +14,6 @@ import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { TitleInput } from '@/ui/input/components/TitleInput';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
@@ -30,6 +29,7 @@ import {
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Card, Section } from 'twenty-ui/layout';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   useActivateSkillMutation,
   useCreateSkillMutation,
@@ -45,20 +45,20 @@ import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/
 
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 const StyledFormContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(4)};
+  gap: ${themeCssVariables.spacing[4]};
 `;
 
 const StyledIconNameRow = styled.div`
   align-items: flex-start;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledNameContainer = styled.div`
@@ -66,30 +66,30 @@ const StyledNameContainer = styled.div`
 `;
 
 const StyledAdvancedSettingsOuterContainer = styled.div`
-  padding-top: ${({ theme }) => theme.spacing(4)};
+  padding-top: ${themeCssVariables.spacing[4]};
 `;
 
 const StyledAdvancedSettingsContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(4)};
+  gap: ${themeCssVariables.spacing[4]};
   width: 100%;
 `;
 
 const StyledHeaderTitle = styled.div`
-  color: ${({ theme }) => theme.font.color.primary};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  font-size: ${({ theme }) => theme.font.size.lg};
-  width: fit-content;
+  color: ${themeCssVariables.font.color.primary};
+  font-size: ${themeCssVariables.font.size.lg};
+  font-weight: ${themeCssVariables.font.weight.semiBold};
   max-width: 420px;
+  width: fit-content;
   & > input:disabled {
-    color: ${({ theme }) => theme.font.color.primary};
+    color: ${themeCssVariables.font.color.primary};
   }
 `;
 
 const StyledDangerButtonsContainer = styled.div`
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 type SkillFormValues = {
@@ -104,11 +104,11 @@ type SkillFormValues = {
 const DELETE_SKILL_MODAL_ID = 'delete-skill-modal';
 
 export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
+  const { theme } = useContext(ThemeContext);
   const { skillId = '' } = useParams<{ skillId: string }>();
   const navigate = useNavigateSettings();
   const navigateApp = useNavigateApp();
   const { enqueueErrorSnackBar } = useSnackBar();
-  const theme = useTheme();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isReadonlyMode, setIsReadonlyMode] = useState(false);
   const [originalFormValues, setOriginalFormValues] =
@@ -582,7 +582,7 @@ export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
       </SettingsPageContainer>
 
       <ConfirmationModal
-        modalId={DELETE_SKILL_MODAL_ID}
+        modalInstanceId={DELETE_SKILL_MODAL_ID}
         title={t`Delete Skill`}
         subtitle={t`Are you sure you want to delete this skill? This action cannot be undone.`}
         onConfirmClick={handleDelete}

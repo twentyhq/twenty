@@ -6,14 +6,16 @@ import { SETTINGS_LOGIC_FUNCTION_TAB_LIST_COMPONENT_ID } from '@/settings/logic-
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { H2Title, IconPlayerPlay } from 'twenty-ui/display';
 import { Button, CoreEditorHeader } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 
-const StyledTabList = styled(TabList)`
-  border-bottom: none;
+const StyledTabListContainer = styled.div`
+  > * {
+    border-bottom: none;
+  }
 `;
 
 export const SettingsLogicFunctionCodeEditorTab = ({
@@ -44,12 +46,14 @@ export const SettingsLogicFunctionCodeEditorTab = ({
   );
 
   const HeaderTabList = (
-    <StyledTabList
-      tabs={files.map((file) => {
-        return { id: file.path, title: file.path.split('/').at(-1) || '' };
-      })}
-      componentInstanceId={SETTINGS_LOGIC_FUNCTION_TAB_LIST_COMPONENT_ID}
-    />
+    <StyledTabListContainer>
+      <TabList
+        tabs={files.map((file) => {
+          return { id: file.path, title: file.path.split('/').at(-1) || '' };
+        })}
+        componentInstanceId={SETTINGS_LOGIC_FUNCTION_TAB_LIST_COMPONENT_ID}
+      />
+    </StyledTabListContainer>
   );
 
   return (

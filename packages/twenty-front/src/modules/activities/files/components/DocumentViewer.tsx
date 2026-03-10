@@ -7,13 +7,13 @@ import {
 import { getFileType } from '@/activities/files/utils/getFileType';
 import DocViewer, { DocViewerRenderers } from '@cyntler/react-doc-viewer';
 import '@cyntler/react-doc-viewer/dist/index.css';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconDownload } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { getFileNameAndExtension } from '~/utils/file/getFileNameAndExtension';
 
 const MS_OFFICE_EXTENSIONS = [
@@ -27,12 +27,12 @@ const MS_OFFICE_EXTENSIONS = [
 ];
 
 const StyledDocumentViewerContainer = styled.div`
+  background: ${themeCssVariables.background.secondary};
   display: flex;
   flex-direction: column;
   height: calc(100vh - 200px);
   min-height: 500px;
   width: 100%;
-  background: ${({ theme }) => theme.background.secondary};
 
   #react-doc-viewer #header-bar {
     display: none;
@@ -45,73 +45,73 @@ const StyledDocumentViewerContainer = styled.div`
   #react-doc-viewer,
   #proxy-renderer,
   #msdoc-renderer {
+    background: none;
     display: flex;
     flex-direction: column;
     height: 100%;
-    width: 100%;
     overflow: auto;
-    background: none;
+    width: 100%;
   }
 `;
 
 const StyledUnavailablePreviewContainer = styled.div`
+  align-items: center;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  gap: ${themeCssVariables.spacing[4]};
   height: 100%;
-  gap: ${({ theme }) => theme.spacing(4)};
-  padding: ${({ theme }) => theme.spacing(8)};
+  justify-content: center;
+  padding: ${themeCssVariables.spacing[8]};
   text-align: center;
 `;
 
 const StyledMessage = styled.div`
-  color: ${({ theme }) => theme.font.color.secondary};
-  font-size: ${({ theme }) => theme.font.size.lg};
+  color: ${themeCssVariables.font.color.secondary};
+  font-size: ${themeCssVariables.font.size.lg};
   max-width: 400px;
 `;
 
 const StyledLightMessage = styled.div`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-size: ${({ theme }) => theme.font.size.sm};
+  color: ${themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.sm};
 `;
 
 const StyledTitle = styled.div`
-  color: ${({ theme }) => theme.font.color.primary};
-  font-size: ${({ theme }) => theme.font.size.xl};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
+  color: ${themeCssVariables.font.color.primary};
+  font-size: ${themeCssVariables.font.size.xl};
+  font-weight: ${themeCssVariables.font.weight.semiBold};
 `;
 
 const StyledCsvTable = styled.table`
   border-collapse: collapse;
-  font-size: ${({ theme }) => theme.font.size.sm};
+  font-size: ${themeCssVariables.font.size.sm};
   text-align: left;
   width: 100%;
 
   th {
-    border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
-    color: ${({ theme }) => theme.font.color.tertiary};
-    font-weight: ${({ theme }) => theme.font.weight.medium};
-    height: ${({ theme }) => theme.spacing(8)};
-    padding: 0 ${({ theme }) => theme.spacing(2)};
+    border-bottom: 1px solid ${themeCssVariables.border.color.light};
+    color: ${themeCssVariables.font.color.tertiary};
+    font-weight: ${themeCssVariables.font.weight.medium};
+    height: ${themeCssVariables.spacing[8]};
+    padding: 0 ${themeCssVariables.spacing[2]};
   }
 
   td {
-    color: ${({ theme }) => theme.font.color.secondary};
-    height: ${({ theme }) => theme.spacing(8)};
+    color: ${themeCssVariables.font.color.secondary};
+    height: ${themeCssVariables.spacing[8]};
     max-width: 200px;
     overflow: hidden;
-    padding: 0 ${({ theme }) => theme.spacing(2)};
+    padding: 0 ${themeCssVariables.spacing[2]};
     text-overflow: ellipsis;
     white-space: nowrap;
   }
 
   tbody tr {
-    border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+    border-bottom: 1px solid ${themeCssVariables.border.color.light};
   }
 
   tbody tr:hover {
-    background-color: ${({ theme }) => theme.background.transparent.light};
+    background-color: ${themeCssVariables.background.transparent.light};
   }
 `;
 
@@ -199,8 +199,8 @@ export const DocumentViewer = ({
   documentUrl,
   documentExtension,
 }: DocumentViewerProps) => {
+  const { theme } = useContext(ThemeContext);
   const { t } = useLingui();
-  const theme = useTheme();
   const [csvPreview, setCsvPreview] = useState<CsvPreviewData | undefined>(
     undefined,
   );

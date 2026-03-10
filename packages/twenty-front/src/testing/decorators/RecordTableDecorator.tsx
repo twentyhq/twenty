@@ -1,8 +1,8 @@
 import { type Decorator } from '@storybook/react-vite';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
-import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
-import { getActionMenuIdFromRecordIndexId } from '@/action-menu/utils/getActionMenuIdFromRecordIndexId';
+import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
+import { getCommandMenuIdFromRecordIndexId } from '@/command-menu-item/utils/getCommandMenuIdFromRecordIndexId';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { labelIdentifierFieldMetadataItemSelector } from '@/object-metadata/states/labelIdentifierFieldMetadataItemSelector';
@@ -36,9 +36,10 @@ import { type View } from '@/views/types/View';
 import { mapViewFieldToRecordField } from '@/views/utils/mapViewFieldToRecordField';
 import { useEffect, useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { getCompaniesMock } from '~/testing/mock-data/companies';
-import { mockedViewFieldsData } from '~/testing/mock-data/view-fields';
-import { mockedViewsData } from '~/testing/mock-data/views';
+import { mockedCompanyRecords } from '~/testing/mock-data/generated/data/companies/mock-companies-data';
+import { mockedCoreViews } from '~/testing/mock-data/generated/metadata/views/mock-views-data';
+
+const companyView = mockedCoreViews.find((v) => v.name === 'All Companies')!;
 
 const InternalTableStateLoaderEffect = ({
   objectMetadataItem,
@@ -64,17 +65,15 @@ const InternalTableStateLoaderEffect = ({
 
   const view = useMemo(() => {
     return {
-      ...mockedViewsData[0],
-      viewFields: mockedViewFieldsData.filter(
-        (viewField) => viewField.viewId === mockedViewsData[0].id,
-      ),
+      ...companyView,
+      viewFields: companyView.viewFields,
     } as unknown as View;
   }, []);
 
   useEffect(() => {
     loadRecordIndexStates(view, objectMetadataItem);
     setRecordTableData({
-      records: getCompaniesMock(),
+      records: [...mockedCompanyRecords],
     });
     const recordFields = view.viewFields
       .map(mapViewFieldToRecordField)
@@ -105,6 +104,7 @@ const InternalTableContextProviders = ({
   children: React.ReactNode;
   objectMetadataItem: ObjectMetadataItem;
 }) => {
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
   const currentRecordFields = useAtomComponentStateValue(
@@ -175,6 +175,7 @@ const InternalTableContextProviders = ({
         value={{
           objectNameSingular: objectMetadataItem.nameSingular,
           objectMetadataItem: objectMetadataItem,
+          objectMetadataItems: objectMetadataItems,
           recordTableId: objectMetadataItem.namePlural,
           viewBarId: 'view-bar',
           objectPermissions: getObjectPermissionsFromMapByObjectMetadataId({
@@ -190,7 +191,7 @@ const InternalTableContextProviders = ({
           value={{
             onCloseTableCell: () => {},
             onOpenTableCell: () => {},
-            onActionMenuDropdownOpened: () => {},
+            onCommandMenuDropdownOpened: () => {},
             onMoveFocus: () => {},
             onMoveHoverToCurrentCell: () => {},
           }}
@@ -221,7 +222,7 @@ export const RecordTableDecorator: Decorator = (Story, context) => {
 
   const recordIndexId = getRecordIndexIdFromObjectNamePluralAndViewId(
     objectMetadataItem.namePlural,
-    mockedViewsData[0].id,
+    companyView.id,
   );
 
   return (
@@ -234,9 +235,9 @@ export const RecordTableDecorator: Decorator = (Story, context) => {
         <RecordComponentInstanceContextsWrapper
           componentInstanceId={recordIndexId}
         >
-          <ActionMenuComponentInstanceContext.Provider
+          <CommandMenuComponentInstanceContext.Provider
             value={{
-              instanceId: getActionMenuIdFromRecordIndexId(recordIndexId),
+              instanceId: getCommandMenuIdFromRecordIndexId(recordIndexId),
             }}
           >
             <InternalTableContextProviders
@@ -247,7 +248,7 @@ export const RecordTableDecorator: Decorator = (Story, context) => {
               />
               <Story />
             </InternalTableContextProviders>
-          </ActionMenuComponentInstanceContext.Provider>
+          </CommandMenuComponentInstanceContext.Provider>
         </RecordComponentInstanceContextsWrapper>
       </ViewComponentInstanceContext.Provider>
     </RecordTableComponentInstanceContext.Provider>

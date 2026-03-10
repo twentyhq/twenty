@@ -12,7 +12,7 @@ export const useIsInPinnedTab = () => {
   const isMobile = useIsMobile();
 
   const { tabId } = usePageLayoutContentContext();
-  const { isInRightDrawer } = useLayoutRenderingContext();
+  const { isInSidePanel } = useLayoutRenderingContext();
   const { currentPageLayout } = useCurrentPageLayoutOrThrow();
 
   const isPageLayoutInEditMode = useAtomComponentStateValue(
@@ -22,7 +22,7 @@ export const useIsInPinnedTab = () => {
   const tabsWithVisibleWidgets = getTabsWithVisibleWidgets({
     tabs: currentPageLayout.tabs,
     isMobile,
-    isInRightDrawer,
+    isInSidePanel,
     isEditMode: isPageLayoutInEditMode,
   });
 
@@ -30,7 +30,7 @@ export const useIsInPinnedTab = () => {
     tabs: tabsWithVisibleWidgets,
     pageLayoutType: currentPageLayout.type,
     isMobile,
-    isInRightDrawer,
+    isInSidePanel,
   });
 
   return {

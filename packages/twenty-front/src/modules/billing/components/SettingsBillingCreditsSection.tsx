@@ -8,12 +8,13 @@ import { useCurrentMetered } from '@/billing/hooks/useCurrentMetered';
 import { useGetWorkflowNodeExecutionUsage } from '@/billing/hooks/useGetWorkflowNodeExecutionUsage';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
-import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
+import { useContext } from 'react';
 import { formatToShortNumber } from 'twenty-shared/utils';
 import { H2Title, HorizontalSeparator } from 'twenty-ui/display';
 import { ProgressBar } from 'twenty-ui/feedback';
 import { Section } from 'twenty-ui/layout';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 import { SubscriptionStatus } from '~/generated-metadata/graphql';
 
 export const SettingsBillingCreditsSection = ({
@@ -23,6 +24,7 @@ export const SettingsBillingCreditsSection = ({
     CurrentWorkspace['currentBillingSubscription']
   >;
 }) => {
+  const { theme } = useContext(ThemeContext);
   const subscriptionStatus = useSubscriptionStatus();
   const { formatNumber } = useNumberFormat();
 
@@ -58,8 +60,6 @@ export const SettingsBillingCreditsSection = ({
   const meteredBillingPrices = getCurrentMeteredPricesByInterval(
     currentBillingSubscription.interval,
   );
-
-  const theme = useTheme();
 
   return (
     <>

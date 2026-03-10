@@ -24,6 +24,10 @@ import { type FrontComponentHostCommunicationApi } from '../../types/FrontCompon
 import { type HostToWorkerRenderContext } from '../../types/HostToWorkerRenderContext';
 import { type WorkerExports } from '../../types/WorkerExports';
 import { exposeGlobals } from '../utils/exposeGlobals';
+import {
+  createOpenCommandConfirmationModalAdapter,
+  handleCommandConfirmationModalResult,
+} from './utils/createCommandConfirmationModalBridge';
 import { setWorkerEnv } from './utils/setWorkerEnv';
 
 installStylePropertyOnRemoteElements();
@@ -97,11 +101,18 @@ const initializeHostCommunicationApi: WorkerExports['initializeHostCommunication
       hostApi.requestAccessTokenRefresh;
     frontComponentHostCommunicationApi.openSidePanelPage =
       hostApi.openSidePanelPage;
+    frontComponentHostCommunicationApi.openCommandConfirmationModal =
+      createOpenCommandConfirmationModalAdapter(hostApi);
     frontComponentHostCommunicationApi.unmountFrontComponent =
       hostApi.unmountFrontComponent;
     frontComponentHostCommunicationApi.enqueueSnackbar =
       hostApi.enqueueSnackbar;
     frontComponentHostCommunicationApi.closeSidePanel = hostApi.closeSidePanel;
+  };
+
+const onConfirmationModalResult: WorkerExports['onConfirmationModalResult'] =
+  async (result) => {
+    await handleCommandConfirmationModalResult(result);
   };
 
 const updateContext: WorkerExports['updateContext'] = async (
@@ -113,5 +124,6 @@ const updateContext: WorkerExports['updateContext'] = async (
 ThreadWebWorker.self.export({
   render,
   initializeHostCommunicationApi,
+  onConfirmationModalResult,
   updateContext,
 });

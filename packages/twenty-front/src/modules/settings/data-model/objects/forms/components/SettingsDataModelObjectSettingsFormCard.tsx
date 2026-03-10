@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useMemo } from 'react';
 
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
@@ -9,23 +9,31 @@ import { SettingsDataModelObjectPreview } from '@/settings/data-model/objects/co
 import { SettingsDataModelObjectIdentifiersForm } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectIdentifiersForm';
 import { Trans } from '@lingui/react/macro';
 import { Card, CardContent } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type SettingsDataModelObjectSettingsFormCardProps = {
   objectMetadataItem: ObjectMetadataItem;
 };
 
-const StyledTopCardContent = styled(CardContent)`
-  background-color: ${({ theme }) => theme.background.transparent.lighter};
+const StyledTopCardContentContainer = styled.div`
+  > * {
+    background-color: ${themeCssVariables.background.transparent.lighter};
+  }
 `;
 
-const StyledObjectSummaryCard = styled(Card)`
-  border-radius: ${({ theme }) => theme.border.radius.md};
-  color: ${({ theme }) => theme.font.color.primary};
+const StyledObjectSummaryCardContainer = styled.div`
   max-width: 480px;
+
+  > * {
+    border-radius: ${themeCssVariables.border.radius.md};
+    color: ${themeCssVariables.font.color.primary};
+  }
 `;
 
-const StyledObjectSummaryCardContent = styled(CardContent)`
-  padding: ${({ theme }) => theme.spacing(2)};
+const StyledObjectSummaryCardContentContainer = styled.div`
+  > * {
+    padding: ${themeCssVariables.spacing[2]};
+  }
 `;
 
 export const SettingsDataModelObjectSettingsFormCard = ({
@@ -41,26 +49,32 @@ export const SettingsDataModelObjectSettingsFormCard = ({
 
   return (
     <Card fullWidth>
-      <StyledTopCardContent divider>
-        <SettingsDataModelCardTitle>
-          <Trans>Preview</Trans>
-        </SettingsDataModelCardTitle>
-        {labelIdentifierFieldMetadataItem ? (
-          <SettingsDataModelFieldPreviewWidget
-            objectNameSingular={objectMetadataItem.nameSingular}
-            fieldMetadataItem={labelIdentifierFieldMetadataItem}
-            withFieldLabel={false}
-          />
-        ) : (
-          <StyledObjectSummaryCard>
-            <StyledObjectSummaryCardContent>
-              <SettingsDataModelObjectPreview
-                objectMetadataItems={[objectMetadataItem]}
-              />
-            </StyledObjectSummaryCardContent>
-          </StyledObjectSummaryCard>
-        )}
-      </StyledTopCardContent>
+      <StyledTopCardContentContainer>
+        <CardContent divider>
+          <SettingsDataModelCardTitle>
+            <Trans>Preview</Trans>
+          </SettingsDataModelCardTitle>
+          {labelIdentifierFieldMetadataItem ? (
+            <SettingsDataModelFieldPreviewWidget
+              objectNameSingular={objectMetadataItem.nameSingular}
+              fieldMetadataItem={labelIdentifierFieldMetadataItem}
+              withFieldLabel={false}
+            />
+          ) : (
+            <StyledObjectSummaryCardContainer>
+              <Card>
+                <StyledObjectSummaryCardContentContainer>
+                  <CardContent>
+                    <SettingsDataModelObjectPreview
+                      objectMetadataItems={[objectMetadataItem]}
+                    />
+                  </CardContent>
+                </StyledObjectSummaryCardContentContainer>
+              </Card>
+            </StyledObjectSummaryCardContainer>
+          )}
+        </CardContent>
+      </StyledTopCardContentContainer>
       <CardContent>
         <SettingsDataModelObjectIdentifiersForm
           objectMetadataItem={objectMetadataItem}

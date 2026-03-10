@@ -14,7 +14,7 @@ import { ConsoleListener } from 'src/engine/core-modules/logic-function/logic-fu
 import { TemporaryDirManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/temporary-dir-manager';
 import { HANDLER_NAME_REGEX } from 'src/engine/metadata-modules/logic-function/constants/handler.contant';
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
-import { copyYarnEngineAndBuildDependencies } from 'src/engine/core-modules/application/utils/copy-yarn-engine-and-build-dependencies';
+import { copyYarnEngineAndBuildDependencies } from 'src/engine/core-modules/application/application-package/utils/copy-yarn-engine-and-build-dependencies';
 import type { LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
 
 export interface LocalDriverOptions {
@@ -253,7 +253,7 @@ export class LocalDriver implements LogicFunctionDriver {
             const json = process.argv[2];
             payload = json ? JSON.parse(json) : undefined;
             const out = await mod.${handlerName}(payload);
-            console.log(JSON.stringify({ ok: true, result: out }));
+            process.stdout.write(JSON.stringify({ ok: true, result: out }));
             process.exit(0);
           }
         } catch (err) {
@@ -261,7 +261,7 @@ export class LocalDriver implements LogicFunctionDriver {
           if (process.send) {
             process.send({ ok: false, error: msg, stack: err?.stack });
           } else {
-            console.error(msg);
+            process.stdout.write(msg);
           }
           process.exit(1);
         }

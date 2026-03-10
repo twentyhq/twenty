@@ -1,9 +1,17 @@
+import { appendFile } from 'node:fs/promises';
+import { join } from 'path';
+
+import { CLIENTS_GENERATED_DIR } from '@/cli/constants/clients-dir';
 import { ApiService } from '@/cli/utilities/api/api-service';
 import twentyClientTemplateSource from '@/cli/utilities/client/twenty-client-template.ts?raw';
+import {
+  emptyDir,
+  ensureDir,
+  move,
+  remove,
+} from '@/cli/utilities/file/fs-utils';
 import { generate } from '@genql/cli';
-import * as fs from 'fs-extra';
-import { join } from 'path';
-import { DEFAULT_API_URL_NAME, GENERATED_DIR } from 'twenty-shared/application';
+import { DEFAULT_API_URL_NAME } from 'twenty-shared/application';
 
 type ClientWrapperOptions = {
   apiClientName: string;
@@ -22,8 +30,11 @@ const STRIPPED_TYPES_END = '// __STRIPPED_DURING_INJECTION_END__';
 const UPLOAD_FILE_START = '// __UPLOAD_FILE_START__';
 const UPLOAD_FILE_END = '// __UPLOAD_FILE_END__';
 
-const buildClientWrapperSource = (options: ClientWrapperOptions): string => {
-  let source = twentyClientTemplateSource;
+const buildClientWrapperSource = (
+  templateSource: string,
+  options: ClientWrapperOptions,
+): string => {
+  let source = templateSource;
 
   source = source.replace(
     new RegExp(
@@ -62,25 +73,39 @@ const escapeRegExp = (value: string): string =>
 
 export class ClientService {
   private apiService: ApiService;
+  private clientWrapperTemplateSource: string;
 
-  constructor() {
-    this.apiService = new ApiService({ disableInterceptors: true });
+  constructor(options?: {
+    clientWrapperTemplateSource?: string;
+    serverUrl?: string;
+    token?: string;
+  }) {
+    this.clientWrapperTemplateSource =
+      options?.clientWrapperTemplateSource ?? twentyClientTemplateSource;
+    this.apiService = new ApiService({
+      disableInterceptors: true,
+      serverUrl: options?.serverUrl,
+      token: options?.token,
+    });
   }
 
-  async generate({
+  async generateCoreClient({
     appPath,
     authToken,
   }: {
     appPath: string;
     authToken?: string;
   }): Promise<void> {
-    const outputPath = this.resolveGeneratedPath(appPath);
-    const tempPath = `${outputPath}.tmp`;
+    const generatedDir = join(
+      appPath,
+      'node_modules',
+      'twenty-sdk',
+      CLIENTS_GENERATED_DIR,
+    );
+    const coreOutputPath = join(generatedDir, 'core');
+    const tempPath = `${coreOutputPath}.tmp`;
 
-    const [coreSchemaResponse, metadataSchemaResponse] = await Promise.all([
-      this.apiService.getSchema({ authToken }),
-      this.apiService.getMetadataSchema({ authToken }),
-    ]);
+    const coreSchemaResponse = await this.apiService.getSchema({ authToken });
 
     if (!coreSchemaResponse.success) {
       throw new Error(
@@ -88,92 +113,66 @@ export class ClientService {
       );
     }
 
+    await ensureDir(tempPath);
+    await emptyDir(tempPath);
+
+    await generate({
+      schema: coreSchemaResponse.data,
+      output: tempPath,
+      scalarTypes: COMMON_SCALAR_TYPES,
+    });
+
+    await this.injectClientWrapper(tempPath, {
+      apiClientName: 'CoreApiClient',
+      defaultUrl: `\`\${process.env.${DEFAULT_API_URL_NAME}}/graphql\``,
+      includeUploadFile: true,
+    });
+
+    await remove(coreOutputPath);
+    await move(tempPath, coreOutputPath);
+  }
+
+  async generateMetadataClient({
+    outputPath,
+  }: {
+    outputPath: string;
+  }): Promise<void> {
+    const metadataSchemaResponse = await this.apiService.getMetadataSchema();
+
     if (!metadataSchemaResponse.success) {
       throw new Error(
         `Failed to introspect metadata schema: ${JSON.stringify(metadataSchemaResponse.error)}`,
       );
     }
 
-    await fs.ensureDir(tempPath);
-    await fs.emptyDir(tempPath);
+    await ensureDir(outputPath);
+    await emptyDir(outputPath);
 
-    await Promise.all([
-      generate({
-        schema: coreSchemaResponse.data,
-        output: join(tempPath, 'core'),
-        scalarTypes: COMMON_SCALAR_TYPES,
-      }),
-      generate({
-        schema: metadataSchemaResponse.data,
-        output: join(tempPath, 'metadata'),
-        scalarTypes: {
-          ...COMMON_SCALAR_TYPES,
-          Upload: 'File',
-        },
-      }),
-    ]);
-
-    await this.injectClientWrapper(join(tempPath, 'core'), {
-      apiClientName: 'CoreApiClient',
-      defaultUrl: `\`\${process.env.${DEFAULT_API_URL_NAME}}/graphql\``,
-      includeUploadFile: false,
+    await generate({
+      schema: metadataSchemaResponse.data,
+      output: outputPath,
+      scalarTypes: {
+        ...COMMON_SCALAR_TYPES,
+        Upload: 'File',
+      },
     });
 
-    await this.injectClientWrapper(join(tempPath, 'metadata'), {
+    await this.injectClientWrapper(outputPath, {
       apiClientName: 'MetadataApiClient',
       defaultUrl: `\`\${process.env.${DEFAULT_API_URL_NAME}}/metadata\``,
       includeUploadFile: true,
     });
-
-    await this.writeBarrelIndex(tempPath);
-
-    await fs.remove(outputPath);
-    await fs.move(tempPath, outputPath);
-  }
-
-  async ensureGeneratedClientStub({
-    appPath,
-  }: {
-    appPath: string;
-  }): Promise<void> {
-    const outputPath = this.resolveGeneratedPath(appPath);
-
-    if (await fs.pathExists(join(outputPath, 'index.ts'))) {
-      return;
-    }
-
-    await fs.ensureDir(join(outputPath, 'core'));
-    await fs.ensureDir(join(outputPath, 'metadata'));
-
-    await fs.writeFile(
-      join(outputPath, 'core', 'index.ts'),
-      'export class CoreApiClient {}\n',
-    );
-    await fs.writeFile(
-      join(outputPath, 'metadata', 'index.ts'),
-      'export class MetadataApiClient {}\n',
-    );
-    await this.writeBarrelIndex(outputPath);
-  }
-
-  private resolveGeneratedPath(appPath: string): string {
-    return join(appPath, 'node_modules', 'twenty-sdk', GENERATED_DIR);
-  }
-
-  private async writeBarrelIndex(outputDir: string): Promise<void> {
-    const barrelContent = `export { CoreApiClient } from './core/index';
-export { MetadataApiClient } from './metadata/index';
-`;
-
-    await fs.writeFile(join(outputDir, 'index.ts'), barrelContent);
   }
 
   private async injectClientWrapper(
     output: string,
     options: ClientWrapperOptions,
   ): Promise<void> {
-    const clientContent = buildClientWrapperSource(options);
+    const clientContent = buildClientWrapperSource(
+      this.clientWrapperTemplateSource,
+      options,
+    );
 
-    await fs.appendFile(join(output, 'index.ts'), clientContent);
+    await appendFile(join(output, 'index.ts'), clientContent);
   }
 }

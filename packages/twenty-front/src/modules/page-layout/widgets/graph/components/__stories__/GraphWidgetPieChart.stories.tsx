@@ -1,8 +1,8 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { GraphWidgetTestWrapper } from '@/page-layout/widgets/graph/__tests__/GraphWidgetTestWrapper';
-import { GraphWidgetPieChart } from '@/page-layout/widgets/graph/graphWidgetPieChart/components/GraphWidgetPieChart';
+import { GraphWidgetPieChart } from '@/page-layout/widgets/graph/graph-widget-pie-chart/components/GraphWidgetPieChart';
 import { CatalogDecorator, ComponentDecorator } from 'twenty-ui/testing';
 import {
   AggregateOperations,

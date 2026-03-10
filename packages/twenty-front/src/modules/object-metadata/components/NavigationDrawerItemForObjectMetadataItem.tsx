@@ -2,10 +2,11 @@ import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainCo
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { ObjectIconWithViewOverlay } from '@/navigation-menu-item/components/ObjectIconWithViewOverlay';
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
-import { getNavigationMenuItemIconColors } from '@/navigation-menu-item/utils/getNavigationMenuItemIconColors';
+import { useObjectNavItemColor } from '@/navigation-menu-item/hooks/useObjectNavItemColor';
+import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/isNavigationMenuInEditModeState';
+import { getStandardObjectIconColor } from '@/navigation-menu-item/utils/getStandardObjectIconColor';
 import { type ProcessedNavigationMenuItem } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
 import { lastVisitedViewPerObjectMetadataItemState } from '@/navigation/states/lastVisitedViewPerObjectMetadataItemState';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerItemsCollapsableContainer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemsCollapsableContainer';
@@ -13,12 +14,11 @@ import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/compo
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { coreViewsFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/coreViewsFromObjectMetadataItemFamilySelector';
 import { ViewKey } from '@/views/types/ViewKey';
-import { useTheme } from '@emotion/react';
 import { useLocation } from 'react-router-dom';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { AppPath } from 'twenty-shared/types';
+import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
 import { Avatar, useIcons } from 'twenty-ui/display';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
@@ -29,7 +29,6 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 export type NavigationDrawerItemForObjectMetadataItemProps = {
   objectMetadataItem: ObjectMetadataItem;
   navigationMenuItem?: ProcessedNavigationMenuItem;
-  isEditMode?: boolean;
   isSelectedInEditMode?: boolean;
   onEditModeClick?: () => void;
   onActiveItemClickWhenNotInEditMode?: () => void;
@@ -39,17 +38,17 @@ export type NavigationDrawerItemForObjectMetadataItemProps = {
 export const NavigationDrawerItemForObjectMetadataItem = ({
   objectMetadataItem,
   navigationMenuItem,
-  isEditMode = false,
   isSelectedInEditMode = false,
   onEditModeClick,
-  onActiveItemClickWhenNotInEditMode,
+  onActiveItemClickWhenNotInEditMode: _onActiveItemClickWhenNotInEditMode,
   isDragging = false,
 }: NavigationDrawerItemForObjectMetadataItemProps) => {
-  const theme = useTheme();
+  const isNavigationMenuInEditMode = useAtomStateValue(
+    isNavigationMenuInEditModeState,
+  );
   const isNavigationMenuItemEditingEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED,
   );
-  const iconColors = getNavigationMenuItemIconColors(theme);
   const lastVisitedViewPerObjectMetadataItem = useAtomStateValue(
     lastVisitedViewPerObjectMetadataItemState,
   );
@@ -68,6 +67,9 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
     lastVisitedViewPerObjectMetadataItem?.[objectMetadataItem.id];
 
   const { getIcon } = useIcons();
+  const objectNavItemColor = useObjectNavItemColor(
+    objectMetadataItem.nameSingular,
+  );
   const location = useLocation();
   const currentPath = location.pathname;
   const currentPathWithSearch = `${location.pathname}${location.search}`;
@@ -99,18 +101,9 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
         }) + '/',
       );
 
-  const shouldUseClickHandler = isEditMode
-    ? Boolean(onEditModeClick)
-    : isActive && Boolean(onActiveItemClickWhenNotInEditMode);
+  const handleClick = isNavigationMenuInEditMode ? onEditModeClick : undefined;
 
-  const handleClick = shouldUseClickHandler
-    ? isEditMode
-      ? onEditModeClick
-      : onActiveItemClickWhenNotInEditMode
-    : undefined;
-
-  const shouldNavigate =
-    !isEditMode && !(isActive && onActiveItemClickWhenNotInEditMode);
+  const shouldNavigate = !isNavigationMenuInEditMode;
 
   const isViewWithCustomName =
     isView &&
@@ -141,13 +134,17 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
           <ObjectIconWithViewOverlay
             ObjectIcon={getIcon(objectMetadataItem.icon)}
             ViewIcon={getIcon(navigationMenuItem!.Icon!)}
+            objectColor={objectNavItemColor}
           />
         )
       : getIcon(objectMetadataItem.icon);
 
-  const iconBackgroundColor =
-    isNavigationMenuItemEditingEnabled && !isRecord && !isViewWithCustomName
-      ? iconColors.object
+  const iconThemeColor =
+    isNavigationMenuItemEditingEnabled && !isRecord
+      ? isDefined(navigationMenuItem?.color)
+        ? navigationMenuItem.color
+        : (getStandardObjectIconColor(objectMetadataItem.nameSingular) ??
+          'gray')
       : undefined;
 
   const secondaryLabel =
@@ -214,7 +211,7 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
       label={label}
       secondaryLabel={secondaryLabel}
       to={
-        isEditMode || isDragging
+        isNavigationMenuInEditMode || isDragging
           ? undefined
           : shouldNavigate
             ? navigationPath
@@ -222,11 +219,11 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
       }
       onClick={handleClick}
       Icon={Icon}
-      iconBackgroundColor={iconBackgroundColor}
+      iconColor={iconThemeColor}
       active={isActive}
       isSelectedInEditMode={isSelectedInEditMode}
       isDragging={isDragging}
-      triggerEvent={isEditMode ? 'CLICK' : undefined}
+      triggerEvent={isNavigationMenuInEditMode ? 'CLICK' : undefined}
     />
   );
 };

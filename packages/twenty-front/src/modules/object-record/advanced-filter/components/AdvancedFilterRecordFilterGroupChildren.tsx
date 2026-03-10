@@ -2,20 +2,23 @@ import { AdvancedFilterAddFilterRuleSelect } from '@/object-record/advanced-filt
 import { AdvancedFilterRecordFilterRow } from '@/object-record/advanced-filter/components/AdvancedFilterRecordFilterRow';
 
 import { useChildRecordFiltersAndRecordFilterGroups } from '@/object-record/advanced-filter/hooks/useChildRecordFiltersAndRecordFilterGroups';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div<{ isGrayBackground?: boolean }>`
   align-items: start;
-  background-color: ${({ theme, isGrayBackground }) =>
-    isGrayBackground ? theme.background.transparent.lighter : 'transparent'};
-  border: ${({ theme }) => `1px solid ${theme.border.color.medium}`};
-  border-radius: ${({ theme }) => theme.border.radius.md};
+  background-color: ${({ isGrayBackground }) =>
+    isGrayBackground
+      ? themeCssVariables.background.transparent.lighter
+      : 'transparent'};
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  border-radius: ${themeCssVariables.border.radius.md};
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(2)};
-  padding: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
+  padding: ${themeCssVariables.spacing[2]};
 `;
 
 type AdvancedFilterRecordFilterGroupChildrenProps = {

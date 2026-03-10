@@ -1,46 +1,45 @@
 import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
 import { useAggregateRecordsForRecordTableColumnFooter } from '@/object-record/record-table/record-table-footer/hooks/useAggregateRecordsForRecordTableColumnFooter';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { Trans } from '@lingui/react/macro';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { isDefined } from 'twenty-shared/utils';
 import { OverflowingTextWithTooltip } from 'twenty-ui/display';
 
 const StyledText = styled.span`
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  display: flex;
-  height: 20px;
   align-items: center;
-  gap: 4px;
+  display: flex;
   flex-grow: 1;
+  gap: 4px;
+  height: 20px;
+  overflow: hidden;
+  padding-left: ${themeCssVariables.spacing[2]};
+  text-overflow: ellipsis;
 
-  padding-left: ${({ theme }) => theme.spacing(2)};
+  white-space: nowrap;
   z-index: 1;
 `;
 
-const StyledScrollableContainer = styled.div`
-  overflow-x: auto;
-  white-space: nowrap;
-  scrollbar-width: none;
+const StyledValueContainer = styled.div`
   -ms-overflow-style: none;
+  align-items: center;
+  display: flex;
+  gap: 4px;
 
   &::-webkit-scrollbar {
     display: none;
   }
-`;
 
-const StyledValueContainer = styled(StyledScrollableContainer)`
-  align-items: center;
-  display: flex;
-  gap: 4px;
   height: ${RECORD_TABLE_ROW_HEIGHT}px;
   justify-content: flex-end;
+  overflow-x: auto;
   padding: 0 8px;
+  scrollbar-width: none;
+  white-space: nowrap;
 `;
 
 const StyledValue = styled.div`
-  color: ${({ theme }) => theme.font.color.primary};
+  color: ${themeCssVariables.font.color.primary};
   max-width: 100%;
 `;
 

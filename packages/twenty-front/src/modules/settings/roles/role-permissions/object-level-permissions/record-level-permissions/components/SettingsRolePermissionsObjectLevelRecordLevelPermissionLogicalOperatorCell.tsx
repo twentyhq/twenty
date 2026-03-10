@@ -1,6 +1,6 @@
 /* @license Enterprise */
 
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { capitalize } from 'twenty-shared/utils';
@@ -12,20 +12,21 @@ import { AdvancedFilterContext } from '@/object-record/advanced-filter/states/co
 import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
 import { Select } from '@/ui/input/components/Select';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledText = styled.div`
   align-items: center;
-  color: ${({ theme }) => theme.font.color.tertiary};
+  color: ${themeCssVariables.font.color.tertiary};
   display: flex;
-  height: ${({ theme }) => theme.spacing(8)};
-  padding-left: ${({ theme }) => theme.spacing(2)};
+  height: ${themeCssVariables.spacing[8]};
+  padding-left: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledContainer = styled.div`
   align-items: start;
+  color: ${themeCssVariables.font.color.tertiary};
   display: flex;
-  min-width: ${({ theme }) => theme.spacing(16)};
-  color: ${({ theme }) => theme.font.color.tertiary};
+  min-width: ${themeCssVariables.spacing[16]};
 `;
 
 type SettingsRolePermissionsObjectLevelRecordLevelPermissionLogicalOperatorCellProps =

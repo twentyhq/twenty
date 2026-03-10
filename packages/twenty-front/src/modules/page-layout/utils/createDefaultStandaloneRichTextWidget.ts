@@ -1,5 +1,6 @@
 import {
   type GridPosition,
+  PageLayoutTabLayoutMode,
   type PageLayoutWidget,
   type RichTextV2Body,
   WidgetConfigurationType,
@@ -24,7 +25,16 @@ export const createDefaultStandaloneRichTextWidget = (
       body,
     },
     gridPosition,
+    position: {
+      __typename: 'PageLayoutWidgetGridPosition',
+      layoutMode: PageLayoutTabLayoutMode.GRID,
+      row: gridPosition.row,
+      column: gridPosition.column,
+      rowSpan: gridPosition.rowSpan,
+      columnSpan: gridPosition.columnSpan,
+    },
     objectMetadataId: objectMetadataId ?? null,
+    isOverridden: false,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     deletedAt: null,

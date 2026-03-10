@@ -1,6 +1,6 @@
 'use client';
 
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 import { CardContainer } from '@/app/_components/contributors/CardContainer';
 import { PullRequestItem } from '@/app/_components/contributors/PullRequestItem';

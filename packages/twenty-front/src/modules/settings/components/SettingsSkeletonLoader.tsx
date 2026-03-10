@@ -1,9 +1,10 @@
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { PageBody } from '@/ui/layout/page/components/PageBody';
 import { PageHeader } from '@/ui/layout/page/components/PageHeader';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { useContext } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -12,11 +13,12 @@ const StyledContainer = styled.div`
 `;
 
 const StyledTitleLoaderContainer = styled.div`
-  margin: ${({ theme }) => theme.spacing(8, 8, 2)};
+  margin: ${themeCssVariables.spacing[8]} ${themeCssVariables.spacing[8]}
+    ${themeCssVariables.spacing[2]};
 `;
 
 export const SettingsSkeletonLoader = () => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   return (
     <StyledContainer>
       <PageHeader

@@ -1,13 +1,14 @@
 /* @license Enterprise */
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { TextInput } from '@/ui/input/components/TextInput';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { Controller, useFormContext } from 'react-hook-form';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { H2Title, IconReload, IconTrash } from 'twenty-ui/display';
 import { Button, ButtonGroup } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { SettingsDomainRecords } from '@/settings/domains/components/SettingsDomainRecords';
 import { CheckCustomDomainValidRecordsEffect } from '@/settings/domains/components/CheckCustomDomainValidRecordsEffect';
 import { useCheckCustomDomainValidRecords } from '@/settings/domains/hooks/useCheckCustomDomainValidRecords';
@@ -15,24 +16,24 @@ import { customDomainRecordsState } from '@/settings/domains/states/customDomain
 
 const StyledDomainFormWrapper = styled.div`
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledButtonGroup = styled(ButtonGroup)`
-  & > :not(:first-of-type) > button {
+const StyledButtonGroupContainer = styled.div`
+  > * > :not(:first-of-type) > button {
     border-left: none;
   }
 `;
 
-const StyledButton = styled(Button)`
+const StyledButtonContainer = styled.div`
   align-self: flex-start;
 `;
 
 const StyledRecordsWrapper = styled.div`
-  margin-top: ${({ theme }) => theme.spacing(2)};
+  margin-top: ${themeCssVariables.spacing[2]};
 
   & > :not(:first-of-type) {
-    margin-top: ${({ theme }) => theme.spacing(4)};
+    margin-top: ${themeCssVariables.spacing[4]};
   }
 `;
 
@@ -79,21 +80,27 @@ export const SettingsCustomDomain = () => {
           )}
         />
         {currentWorkspace?.customDomain && (
-          <StyledButtonGroup>
-            <StyledButton
-              isLoading={isLoading}
-              Icon={IconReload}
-              title={t`Reload`}
-              variant="primary"
-              onClick={checkCustomDomainRecords}
-              type="button"
-            />
-            <StyledButton
-              Icon={IconTrash}
-              variant="primary"
-              onClick={deleteCustomDomain}
-            />
-          </StyledButtonGroup>
+          <StyledButtonGroupContainer>
+            <ButtonGroup>
+              <StyledButtonContainer>
+                <Button
+                  isLoading={isLoading}
+                  Icon={IconReload}
+                  title={t`Reload`}
+                  variant="primary"
+                  onClick={checkCustomDomainRecords}
+                  type="button"
+                />
+              </StyledButtonContainer>
+              <StyledButtonContainer>
+                <Button
+                  Icon={IconTrash}
+                  variant="primary"
+                  onClick={deleteCustomDomain}
+                />
+              </StyledButtonContainer>
+            </ButtonGroup>
+          </StyledButtonGroupContainer>
         )}
       </StyledDomainFormWrapper>
       {currentWorkspace?.customDomain && (

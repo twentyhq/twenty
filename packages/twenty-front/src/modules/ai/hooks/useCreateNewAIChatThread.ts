@@ -1,27 +1,56 @@
+import { useStore } from 'jotai';
+
+import {
+  AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
+  agentChatDraftsByThreadIdState,
+} from '@/ai/states/agentChatDraftsByThreadIdState';
+import { agentChatInputState } from '@/ai/states/agentChatInputState';
 import { agentChatUsageState } from '@/ai/states/agentChatUsageState';
 import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
 import { currentAIChatThreadTitleState } from '@/ai/states/currentAIChatThreadTitleState';
-import { useOpenAskAIPageInCommandMenu } from '@/command-menu/hooks/useOpenAskAIPageInCommandMenu';
+import { hasTriggeredCreateForDraftState } from '@/ai/states/hasTriggeredCreateForDraftState';
+import { threadIdCreatedFromDraftState } from '@/ai/states/threadIdCreatedFromDraftState';
+import { useOpenAskAIPageInSidePanel } from '@/side-panel/hooks/useOpenAskAIPageInSidePanel';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { useCreateChatThreadMutation } from '~/generated-metadata/graphql';
 
 export const useCreateNewAIChatThread = () => {
-  const [, setCurrentAIChatThread] = useAtomState(currentAIChatThreadState);
+  const setThreadIdCreatedFromDraft = useSetAtomState(
+    threadIdCreatedFromDraftState,
+  );
+  const [currentAIChatThread, setCurrentAIChatThread] = useAtomState(
+    currentAIChatThreadState,
+  );
+  const setAgentChatInput = useSetAtomState(agentChatInputState);
   const setAgentChatUsage = useSetAtomState(agentChatUsageState);
   const setCurrentAIChatThreadTitle = useSetAtomState(
     currentAIChatThreadTitleState,
   );
+  const setAgentChatDraftsByThreadId = useSetAtomState(
+    agentChatDraftsByThreadIdState,
+  );
+  const store = useStore();
+  const { openAskAIPage } = useOpenAskAIPageInSidePanel();
 
-  const { openAskAIPage } = useOpenAskAIPageInCommandMenu();
-  const [createChatThread] = useCreateChatThreadMutation({
-    onCompleted: (data) => {
-      setCurrentAIChatThread(data.createChatThread.id);
-      setCurrentAIChatThreadTitle(null);
-      setAgentChatUsage(null);
-      openAskAIPage({ resetNavigationStack: false });
-    },
-  });
+  const switchToNewChat = () => {
+    setThreadIdCreatedFromDraft(null);
+    const previousDraftKey =
+      currentAIChatThread ?? AGENT_CHAT_NEW_THREAD_DRAFT_KEY;
+    const newChatDraft =
+      store.get(agentChatDraftsByThreadIdState.atom)[
+        AGENT_CHAT_NEW_THREAD_DRAFT_KEY
+      ] ?? '';
+    setAgentChatDraftsByThreadId((prev) => ({
+      ...prev,
+      [previousDraftKey]: store.get(agentChatInputState.atom),
+    }));
+    store.set(hasTriggeredCreateForDraftState.atom, false);
+    setCurrentAIChatThread(AGENT_CHAT_NEW_THREAD_DRAFT_KEY);
+    setAgentChatInput(newChatDraft);
+    setCurrentAIChatThreadTitle(null);
+    setAgentChatUsage(null);
+    openAskAIPage({ resetNavigationStack: false });
+  };
 
-  return { createChatThread };
+  return { switchToNewChat };
 };

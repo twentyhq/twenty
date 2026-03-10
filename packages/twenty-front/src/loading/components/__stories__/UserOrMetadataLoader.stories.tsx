@@ -79,7 +79,7 @@ export type Story = StoryObj<typeof RecordIndexPage>;
 
 export const Default: Story = {
   parameters: userMetadataLoaderMocks,
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // oxlint-disable-next-line @typescripttypescript/ban-ts-comment
   // @ts-ignore
   decorators: [PageDecorator],
   play: async ({ canvasElement }) => {

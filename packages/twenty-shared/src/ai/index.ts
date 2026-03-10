@@ -13,10 +13,12 @@ export type {
 } from './types/agent-response-schema.type';
 export type {
   CodeExecutionFile,
+  ExtendedFileUIPart,
   CodeExecutionState,
   CodeExecutionData,
   DataMessagePart,
 } from './types/DataMessagePart';
+export { isExtendedFileUIPart } from './types/DataMessagePart';
 export type {
   AIChatUsageMetadata,
   AIChatModelMetadata,
@@ -24,3 +26,4 @@ export type {
 } from './types/ExtendedUIMessage';
 export type { ExtendedUIMessagePart } from './types/ExtendedUIMessagePart';
 export type { ModelConfiguration } from './types/model-configuration.type';
+export type { NavigateAppToolOutput } from './types/NavigateAppToolOutput';

@@ -1,6 +1,6 @@
 {
   "name": "twenty-sdk",
-  "version": "0.6.2",
+  "version": "0.7.0-canary.0",
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",
   "types": "dist/sdk/index.d.ts",
@@ -9,7 +9,6 @@
   },
   "files": [
     "dist",
-    "generated",
     "README.md",
     "package.json"
   ],
@@ -35,25 +34,20 @@
       "import": "./dist/ui/index.mjs",
       "require": "./dist/ui/index.cjs"
     },
+    "./cli": {
+      "types": "./dist/cli/public-operations/index.d.ts",
+      "import": "./dist/operations.mjs",
+      "require": "./dist/operations.cjs"
+    },
     "./front-component-renderer": {
       "types": "./dist/front-component-renderer/index.d.ts",
       "import": "./dist/front-component-renderer/index.mjs",
       "require": "./dist/front-component-renderer/index.cjs"
     },
-    "./generated": {
-      "types": "./generated/index.ts",
-      "import": "./generated/index.ts",
-      "require": "./generated/index.ts"
-    },
-    "./generated/core": {
-      "types": "./generated/core/index.ts",
-      "import": "./generated/core/index.ts",
-      "require": "./generated/core/index.ts"
-    },
-    "./generated/metadata": {
-      "types": "./generated/metadata/index.ts",
-      "import": "./generated/metadata/index.ts",
-      "require": "./generated/metadata/index.ts"
+    "./clients": {
+      "types": "./dist/clients/index.d.ts",
+      "import": "./dist/clients.mjs",
+      "require": "./dist/clients.cjs"
     }
   },
   "license": "AGPL-3.0",
@@ -66,25 +60,21 @@
     "@remote-dom/core": "^1.10.1",
     "@remote-dom/react": "^1.2.2",
     "@sniptt/guards": "^0.2.0",
-    "archiver": "^7.0.1",
     "axios": "^1.13.5",
     "chalk": "^5.3.0",
     "chokidar": "^4.0.0",
     "commander": "^12.0.0",
     "dotenv": "^16.4.0",
     "esbuild": "^0.25.0",
-    "fast-glob": "^3.3.0",
-    "fs-extra": "^11.2.0",
     "graphql": "^16.8.1",
     "graphql-sse": "^2.5.4",
     "ink": "^5.1.1",
     "inquirer": "^10.0.0",
     "jsonc-parser": "^3.2.0",
-    "lodash.camelcase": "^4.3.0",
-    "lodash.kebabcase": "^4.1.1",
     "preact": "^10.28.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "tinyglobby": "^0.2.15",
     "typescript": "^5.9.2",
     "uuid": "^13.0.0",
     "vite": "^7.0.0",
@@ -92,21 +82,18 @@
     "zod": "^4.1.11"
   },
   "devDependencies": {
+    "@emotion/styled": "^11.14.0",
     "@mui/material": "^7.3.8",
     "@prettier/sync": "^0.5.2",
-    "@storybook/addon-vitest": "^10.1.11",
-    "@storybook/react-vite": "^10.1.11",
-    "@types/archiver": "^6.0.0",
-    "@types/fs-extra": "^11.0.0",
+    "@storybook/addon-vitest": "^10.2.13",
+    "@storybook/react-vite": "^10.2.13",
     "@types/inquirer": "^9.0.0",
-    "@types/lodash.camelcase": "^4.3.7",
-    "@types/lodash.kebabcase": "^4.1.9",
     "@types/node": "^24.0.0",
     "@types/react": "18.2.66",
     "@types/react-dom": "18.2.22",
     "@vitest/browser-playwright": "^4.0.18",
     "playwright": "^1.56.1",
-    "storybook": "^10.1.11",
+    "storybook": "^10.2.13",
     "ts-morph": "^25.0.0",
     "tsx": "^4.7.0",
     "twenty-shared": "workspace:*",
@@ -120,20 +107,17 @@
   },
   "typesVersions": {
     "*": {
+      "cli": [
+        "dist/cli/public-operations/index.d.ts"
+      ],
       "ui": [
         "dist/ui/index.d.ts"
       ],
       "front-component-renderer": [
         "dist/front-component-renderer/index.d.ts"
       ],
-      "generated": [
-        "generated/index.ts"
-      ],
-      "generated/core": [
-        "generated/core/index.ts"
-      ],
-      "generated/metadata": [
-        "generated/metadata/index.ts"
+      "clients": [
+        "dist/clients/index.d.ts"
       ]
     }
   }

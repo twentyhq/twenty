@@ -8,21 +8,18 @@ import {
   type GraphQLInputObjectType,
   type GraphQLInputType,
   GraphQLList,
-  GraphQLNonNull,
   type GraphQLOutputType,
   type GraphQLScalarType,
   GraphQLString,
-  type GraphQLType,
 } from 'graphql';
 import GraphQLJSON from 'graphql-type-json';
 import {
   AggregateOperations,
+  type FieldMetadataDefaultValue,
   type FieldMetadataSettings,
   FieldMetadataType,
   NumberDataType,
-  type FieldMetadataDefaultValue,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 
 import { OrderByDirectionType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/enum';
 import {
@@ -52,13 +49,12 @@ import { getNumberFilterType } from 'src/engine/api/graphql/workspace-schema-bui
 import { getNumberScalarType } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-number-scalar-type.util';
 
 export interface TypeOptions {
-  nullable?: boolean;
-  isArray?: boolean;
-  arrayDepth?: number;
-  defaultValue?: FieldMetadataDefaultValue<FieldMetadataType>;
   settings?: FieldMetadataSettings<FieldMetadataType>;
   isIdField?: boolean;
-  isRelationConnectField?: boolean;
+  nullable?: boolean;
+  defaultValue?: FieldMetadataDefaultValue<FieldMetadataType>;
+  isArray?: boolean;
+  arrayDepth?: number;
 }
 
 const StringArrayScalarType = new GraphQLList(GraphQLString);
@@ -240,46 +236,5 @@ export class TypeMapperService {
     ]);
 
     return typeOrderByMapping.get(aggregationType);
-  }
-
-  applyTypeOptions<T extends GraphQLType = GraphQLType>(
-    typeRef: T,
-    options: TypeOptions,
-  ): T {
-    let graphqlType: T | GraphQLList<T> | GraphQLNonNull<T> = typeRef;
-
-    if (options.isArray) {
-      graphqlType = this.mapToGqlList(
-        graphqlType,
-        options.arrayDepth ?? 1,
-        options.nullable ?? false,
-      );
-    }
-
-    if (options.nullable === false && !isDefined(options.defaultValue)) {
-      graphqlType = new GraphQLNonNull(graphqlType) as unknown as T;
-    }
-
-    return graphqlType as T;
-  }
-
-  private mapToGqlList<T extends GraphQLType = GraphQLType>(
-    targetType: T,
-    depth: number,
-    nullable: boolean,
-  ): GraphQLList<T> {
-    const targetTypeNonNull = nullable
-      ? targetType
-      : new GraphQLNonNull(targetType);
-
-    if (depth === 0) {
-      return targetType as GraphQLList<T>;
-    }
-
-    return this.mapToGqlList<T>(
-      new GraphQLList(targetTypeNonNull) as unknown as T,
-      depth - 1,
-      nullable,
-    );
   }
 }

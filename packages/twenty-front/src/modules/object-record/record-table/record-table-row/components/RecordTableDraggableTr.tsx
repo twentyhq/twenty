@@ -1,6 +1,6 @@
-import { useTheme } from '@emotion/react';
 import { Draggable } from '@hello-pangea/dnd';
-import { type ReactNode } from 'react';
+import { type ReactNode, useContext } from 'react';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 import { RecordTableRowDraggableContextProvider } from '@/object-record/record-table/contexts/RecordTableRowDraggableContext';
 import { RecordTableRowMultiDragPreview } from '@/object-record/record-table/record-table-row/components/RecordTableRowMultiDragPreview';
@@ -26,7 +26,7 @@ export const RecordTableDraggableTr = ({
   onClick,
   children,
 }: RecordTableDraggableTrProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   const { isSecondaryDragged } = useIsTableRowSecondaryDragged(recordId);
 
@@ -44,7 +44,7 @@ export const RecordTableDraggableTr = ({
             focusIndex={focusIndex}
             ref={draggableProvided.innerRef}
             className={className}
-            // eslint-disable-next-line react/jsx-props-no-spreading
+            // oxlint-disable-next-line react/jsx-props-no-spreading
             {...draggableProvided.draggableProps}
             style={{
               ...draggableProvided.draggableProps.style,
@@ -58,10 +58,8 @@ export const RecordTableDraggableTr = ({
             }}
             isDragging={draggableSnapshot.isDragging}
             data-testid={`row-id-${recordId}`}
-            data-virtualized-id={recordId}
             data-selectable-id={recordId}
             onClick={onClick}
-            isFirstRowOfGroup={false}
           >
             <RecordTableRowDraggableContextProvider
               value={{

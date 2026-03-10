@@ -9,16 +9,17 @@ import { useWorkspaceBypass } from '@/auth/sign-in-up/hooks/useWorkspaceBypass';
 import { SignInUpStep } from '@/auth/states/signInUpStepState';
 import { workspaceAuthBypassProvidersState } from '@/workspace/states/workspaceAuthBypassProvidersState';
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { Trans } from '@lingui/react/macro';
 import { FormProvider } from 'react-hook-form';
 import { HorizontalSeparator } from 'twenty-ui/display';
 import { ClickToActionLink } from 'twenty-ui/navigation';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledContentContainer = styled.div`
-  margin-bottom: ${({ theme }) => theme.spacing(8)};
-  margin-top: ${({ theme }) => theme.spacing(4)};
+  margin-bottom: ${themeCssVariables.spacing[8]};
+  margin-top: ${themeCssVariables.spacing[4]};
   min-width: 200px;
 `;
 
@@ -65,7 +66,7 @@ export const SignInUpWorkspaceScopeForm = () => {
           <HorizontalSeparator />
         ) : null}
         {providers.password && (
-          // eslint-disable-next-line react/jsx-props-no-spreading
+          // oxlint-disable-next-line react/jsx-props-no-spreading
           <FormProvider {...form}>
             <SignInUpWithCredentials />
           </FormProvider>

@@ -34,7 +34,7 @@ export const CalendarEventParticipantsResponseStatus = ({
         <CalendarEventParticipantsResponseStatusField
           key={responseStatus}
           responseStatus={responseStatus}
-          participants={groupedParticipants[responseStatus] || []}
+          participants={groupedParticipants[responseStatus] ?? []}
         />
       ))}
     </>

@@ -191,8 +191,12 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
       objectRecords.reverse();
     }
 
-    const parentObjectRecordsAggregatedValues =
-      await aggregateQueryBuilder.getRawOne();
+    const hasAggregatedFields =
+      Object.keys(args.selectedFieldsResult.aggregate ?? {}).length > 0;
+
+    const parentObjectRecordsAggregatedValues = hasAggregatedFields
+      ? await aggregateQueryBuilder.getRawOne()
+      : undefined;
 
     if (isDefined(args.selectedFieldsResult.relations)) {
       await this.processNestedRelationsHelper.processNestedRelations({
@@ -231,11 +235,11 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
 
     return {
       ...args,
-      filter: this.queryRunnerArgsFactory.overrideFilterByFieldMetadata(
-        args.filter,
+      filter: this.filterArgProcessor.process({
+        filter: args.filter,
         flatObjectMetadata,
         flatFieldMetadataMaps,
-      ),
+      }),
     };
   }
 

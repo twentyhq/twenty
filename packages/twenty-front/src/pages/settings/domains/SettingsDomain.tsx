@@ -23,8 +23,8 @@ import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { SettingsCustomDomain } from '@/settings/domains/components/SettingsCustomDomain';
 import { SettingsSubdomain } from '@/settings/domains/components/SettingsSubdomain';
 import { useState } from 'react';
-import { getSubdomainValidationSchema } from '@/settings/domains/utils/get-subdomain-validation-schema';
-import { getDomainValidationSchema } from '@/settings/domains/utils/get-domain-validation-schema';
+import { getSubdomainValidationSchema } from '@/settings/domains/utils/getSubdomainValidationSchema';
+import { getDomainValidationSchema } from '@/settings/domains/utils/getDomainValidationSchema';
 import { useCheckCustomDomainValidRecords } from '@/settings/domains/hooks/useCheckCustomDomainValidRecords';
 import { isCloudflareIntegrationEnabledState } from '@/client-config/states/isCloudflareIntegrationEnabledState';
 
@@ -184,7 +184,7 @@ export const SettingsDomain = () => {
       });
     }
 
-    if (!values || !currentWorkspace) {
+    if (!isDefined(values) || !isDefined(currentWorkspace)) {
       return enqueueErrorSnackBar({
         message: t`Invalid form values`,
       });
@@ -206,7 +206,7 @@ export const SettingsDomain = () => {
   return (
     <>
       <form onSubmit={form.handleSubmit(handleSave)}>
-        {/* eslint-disable-next-line react/jsx-props-no-spreading */}
+        {/* oxlint-disable-next-line react/jsx-props-no-spreading */}
         <FormProvider {...form}>
           <SubMenuTopBarContainer
             title={t`Domain`}
@@ -237,7 +237,7 @@ export const SettingsDomain = () => {
         </FormProvider>
       </form>
       <ConfirmationModal
-        modalId={SUBDOMAIN_CHANGE_CONFIRMATION_MODAL_ID}
+        modalInstanceId={SUBDOMAIN_CHANGE_CONFIRMATION_MODAL_ID}
         title={t`Change subdomain?`}
         subtitle={t`You're about to change your workspace subdomain. This action will log out all users.`}
         onConfirmClick={() => {

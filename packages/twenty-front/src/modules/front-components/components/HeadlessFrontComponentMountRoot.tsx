@@ -1,7 +1,10 @@
 import { Suspense, lazy } from 'react';
 
-import { mountedHeadlessFrontComponentIdsState } from '@/front-components/states/mountedHeadlessFrontComponentIdsState';
+import { mountedHeadlessFrontComponentMapsState } from '@/front-components/states/mountedHeadlessFrontComponentMapsState';
+import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { isDefined } from 'twenty-shared/utils';
+import { PageLayoutType } from '~/generated-metadata/graphql';
 
 const FrontComponentRenderer = lazy(() =>
   import('@/front-components/components/FrontComponentRenderer').then(
@@ -10,21 +13,39 @@ const FrontComponentRenderer = lazy(() =>
 );
 
 export const HeadlessFrontComponentMountRoot = () => {
-  const mountedHeadlessFrontComponentIds = useAtomStateValue(
-    mountedHeadlessFrontComponentIdsState,
+  const mountedHeadlessFrontComponentMaps = useAtomStateValue(
+    mountedHeadlessFrontComponentMapsState,
   );
 
-  if (mountedHeadlessFrontComponentIds.size === 0) {
+  if (mountedHeadlessFrontComponentMaps.size === 0) {
     return null;
   }
 
   return (
     <>
-      {[...mountedHeadlessFrontComponentIds].map((frontComponentId) => (
-        <Suspense key={frontComponentId} fallback={null}>
-          <FrontComponentRenderer frontComponentId={frontComponentId} />
-        </Suspense>
-      ))}
+      {[...mountedHeadlessFrontComponentMaps.entries()].map(
+        ([frontComponentId, mountContext]) => (
+          <Suspense key={frontComponentId} fallback={null}>
+            <LayoutRenderingProvider
+              value={{
+                targetRecordIdentifier:
+                  isDefined(mountContext) &&
+                  isDefined(mountContext.objectNameSingular)
+                    ? {
+                        id: mountContext.recordId,
+                        targetObjectNameSingular:
+                          mountContext.objectNameSingular,
+                      }
+                    : undefined,
+                layoutType: PageLayoutType.DASHBOARD,
+                isInSidePanel: false,
+              }}
+            >
+              <FrontComponentRenderer frontComponentId={frontComponentId} />
+            </LayoutRenderingProvider>
+          </Suspense>
+        ),
+      )}
     </>
   );
 };

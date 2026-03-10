@@ -1,22 +1,23 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type IconComponent } from '@ui/display/icon/types/IconComponent';
+import { ThemeContext, themeCssVariables } from '@ui/theme-constants';
+import { useContext } from 'react';
 
 const StyledIconButton = styled.div<{ isActive?: boolean }>`
   align-items: center;
-  background-color: ${({ isActive, theme }) =>
-    isActive ? theme.background.transparent.light : 'none'};
-  border-radius: ${({ theme }) => theme.spacing(1)};
+  background-color: ${({ isActive }) =>
+    isActive ? themeCssVariables.background.transparent.light : 'none'};
+  border-radius: ${themeCssVariables.spacing[1]};
   cursor: pointer;
   display: flex;
-  height: ${({ theme }) => theme.spacing(10)};
+  height: ${themeCssVariables.spacing[10]};
   justify-content: center;
-  transition: background-color ${({ theme }) => theme.animation.duration.fast}s
-    ease;
-  width: ${({ theme }) => theme.spacing(10)};
+  transition: background-color
+    calc(${themeCssVariables.animation.duration.fast} * 1s) ease;
+  width: ${themeCssVariables.spacing[10]};
 
   &:hover {
-    background-color: ${({ theme }) => theme.background.transparent.light};
+    background-color: ${themeCssVariables.background.transparent.light};
   }
 `;
 
@@ -31,11 +32,14 @@ export const NavigationBarItem = ({
   isActive,
   onClick,
 }: NavigationBarItemProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   return (
     <StyledIconButton isActive={isActive} onClick={onClick}>
-      <Icon color={theme.color.gray10} size={theme.icon.size.lg} />
+      <Icon
+        color={themeCssVariables.grayScale.gray10}
+        size={theme.icon.size.lg}
+      />
     </StyledIconButton>
   );
 };

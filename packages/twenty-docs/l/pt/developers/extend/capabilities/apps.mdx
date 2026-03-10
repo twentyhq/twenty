@@ -15,7 +15,7 @@ Os aplicativos permitem criar e gerenciar personalizações do Twenty **como có
 
 * Defina objetos e campos personalizados como código (modelo de dados gerenciado)
 * Crie funções de lógica com gatilhos personalizados
-* Definir habilidades para agentes de IA
+* Defina habilidades e agentes de IA
 * Implemente o mesmo aplicativo em vários espaços de trabalho
 
 ## Pré-requisitos
@@ -36,17 +36,14 @@ cd my-twenty-app
 yarn twenty app:dev
 ```
 
-O gerador de estrutura oferece suporte a três modos para controlar quais arquivos de exemplo são incluídos:
+O gerador de estrutura oferece suporte a dois modos para controlar quais arquivos de exemplo são incluídos:
 
 ```bash filename="Terminal"
-# Padrão (exhaustivo): todos os exemplos (objeto, campo, função de lógica, componente de front-end, visualização, item do menu de navegação, habilidade)
+# Padrão (exhaustivo): todos os exemplos (objeto, campo, função de lógica, componente de front-end, visualização, item do menu de navegação, habilidade, agente)
 npx create-twenty-app@latest my-app
 
 # Mínimo: apenas arquivos principais (application-config.ts e default-role.ts)
 npx create-twenty-app@latest my-app --minimal
-
-# Interativo: selecione quais exemplos incluir
-npx create-twenty-app@latest my-app --interactive
 ```
 
 A partir daqui você pode:
@@ -96,7 +93,7 @@ my-twenty-app/
   .yarnrc.yml
   .yarn/
     install-state.gz
-  eslint.config.mjs
+  .oxlintrc.json
   tsconfig.json
   README.md
   public/                           # Public assets folder (images, fonts, etc.)
@@ -118,11 +115,13 @@ my-twenty-app/
   │   └── example-view.ts                # Example saved view definition
   ├── navigation-menu-items/
   │   └── example-navigation-menu-item.ts # Example sidebar navigation link
-  └── skills/
-      └── example-skill.ts                # Example AI agent skill definition
+  ├── skills/
+  │   └── example-skill.ts                # Example AI agent skill definition
+  └── agents/
+      └── example-agent.ts                # Example AI agent definition
 ```
 
-With `--minimal`, only the core files are created (`application-config.ts`, `roles/default-role.ts`, `logic-functions/pre-install.ts`, and `logic-functions/post-install.ts`). Com `--interactive`, você escolhe quais arquivos de exemplo incluir.
+With `--minimal`, only the core files are created (`application-config.ts`, `roles/default-role.ts`, `logic-functions/pre-install.ts`, and `logic-functions/post-install.ts`).
 
 Em alto nível:
 
@@ -130,7 +129,7 @@ Em alto nível:
 * **.gitignore**: Ignora artefatos comuns como `node_modules`, `.yarn`, `generated/` (cliente tipado), `dist/`, `build/`, pastas de cobertura, arquivos de log e arquivos `.env*`.
 * **yarn.lock**, **.yarnrc.yml**, **.yarn/**: Bloqueiam e configuram a ferramenta Yarn 4 usada pelo projeto.
 * **.nvmrc**: Fixa a versão do Node.js esperada pelo projeto.
-* **eslint.config.mjs** e **tsconfig.json**: Fornecem lint e configuração do TypeScript para os fontes TypeScript do seu aplicativo.
+* **.oxlintrc.json** e **tsconfig.json**: Fornecem lint e configuração do TypeScript para os fontes TypeScript do seu aplicativo.
 * **README.md**: Um README curto na raiz do aplicativo com instruções básicas.
 * **public/**: Uma pasta para armazenar recursos públicos (imagens, fontes, arquivos estáticos) que serão servidos com sua aplicação. Os arquivos colocados aqui são enviados durante a sincronização e ficam acessíveis em tempo de execução.
 * **src/**: O local principal onde você define seu aplicativo como código
@@ -151,6 +150,7 @@ O SDK detecta entidades analisando seus arquivos TypeScript em busca de chamadas
 | `defineView()`                     | Definições de visualizações salvas                    |
 | `defineNavigationMenuItem()`       | Definições de itens do menu de navegação              |
 | `defineSkill()`                    | Definições de habilidades de agente de IA             |
+| `defineAgent()`                    | Definições de agentes de IA                           |
 
 <Note>
 **A nomeação de arquivos é flexível.** A detecção de entidades é baseada em AST — o SDK varre seus arquivos fonte em busca do padrão `export default define<Entity>({...})`. Você pode organizar seus arquivos e pastas como quiser. Agrupar por tipo de entidade (por exemplo, `logic-functions/`, `roles/`) é apenas uma convenção para organização do código, não um requisito.
@@ -171,7 +171,7 @@ export default defineObject({
 
 Comandos posteriores adicionarão mais arquivos e pastas:
 
-* `yarn twenty app:dev` irá gerar automaticamente dois clientes de API tipados em `node_modules/twenty-sdk/generated`: `CoreApiClient` (para dados do espaço de trabalho via `/graphql`) e `MetadataApiClient` (para configuração do espaço de trabalho e envio de arquivos via `/metadata`).
+* `yarn twenty app:dev` irá gerar automaticamente dois clientes de API tipados em `node_modules/twenty-sdk/clients`: `CoreApiClient` (para dados do espaço de trabalho via `/graphql`) e `MetadataApiClient` (para configuração do espaço de trabalho e envio de ficheiros via `/metadata`).
 * `yarn twenty entity:add` adicionará arquivos de definição de entidade em `src/` para seus objetos, funções, componentes de front-end, papéis e habilidades personalizados, entre outros.
 
 ## Autenticação
@@ -228,6 +228,7 @@ O SDK fornece funções utilitárias para definir as entidades do seu app. Confo
 | `defineView()`                     | Define visualizações salvas para objetos                     |
 | `defineNavigationMenuItem()`       | Define links de navegação da barra lateral                   |
 | `defineSkill()`                    | Define habilidades de agente de IA                           |
+| `defineAgent()`                    | Defina agentes de IA com prompts do sistema                  |
 
 Essas funções validam sua configuração em tempo de compilação e oferecem autocompletar na IDE e segurança de tipos.
 
@@ -319,6 +320,72 @@ Você não precisa definir esses no seu array `fields` — adicione apenas seus 
 Você pode substituir os campos padrão definindo um campo com o mesmo nome no seu array `fields`,
 mas isso não é recomendado.
 </Note>
+
+### Defining fields on existing objects
+
+Use `defineField()` to add custom fields to existing objects — both standard objects (like `company`, `person`, `opportunity`) and custom objects defined by other apps. Each field lives in its own file and references the target object by its `universalIdentifier`.
+
+To reference standard objects, import `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS` from `twenty-sdk`. This constant provides stable identifiers for all built-in objects and their fields:
+
+```typescript
+// src/fields/apollo-total-funding.field.ts
+import {
+  defineField,
+  FieldType,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk';
+
+export default defineField({
+  universalIdentifier: 'c90ae72d-4ddf-4f22-882f-eef98c91e40e',
+  objectUniversalIdentifier:
+    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+  type: FieldType.CURRENCY,
+  name: 'apolloTotalFunding',
+  label: 'Total Funding',
+  description: 'Total funding raised by the company',
+  icon: 'IconCash',
+});
+```
+
+Pontos-chave:
+
+* `objectUniversalIdentifier` tells Twenty which object to attach the field to. Use `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.<objectName>.universalIdentifier` for standard objects.
+* Each field requires its own stable `universalIdentifier`, a `name`, `type`, `label`, and the target `objectUniversalIdentifier`.
+* You can scaffold new fields using `yarn twenty entity:add` and choosing the field option.
+* `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS` is also exported as `STANDARD_OBJECT` for convenience — both refer to the same constant.
+
+Available standard objects include: `attachment`, `blocklist`, `calendarChannel`, `calendarEvent`, `calendarEventParticipant`, `company`, `connectedAccount`, `dashboard`, `favorite`, `favoriteFolder`, `message`, `messageChannel`, `messageParticipant`, `messageThread`, `note`, `noteTarget`, `opportunity`, `person`, `task`, `taskTarget`, `timelineActivity`, `workflow`, `workflowAutomatedTrigger`, `workflowRun`, `workflowVersion`, and `workspaceMember`.
+
+Each standard object also exposes its field identifiers. For example, to reference a specific field on a standard object in role permissions:
+
+```typescript
+STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.fields.name.universalIdentifier
+```
+
+#### Relation fields on existing objects
+
+You can also define relation fields that link existing objects to your custom objects:
+
+```typescript
+// src/fields/people-on-call-recording.field.ts
+import { defineField, FieldType, RelationType, STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk';
+import { CALL_RECORDING_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/objects/call-recording';
+import { CALL_RECORDING_ON_PERSON_ID } from 'src/fields/call-recording-on-person.field';
+
+export default defineField({
+  universalIdentifier: '4a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d',
+  objectUniversalIdentifier:
+    CALL_RECORDING_OBJECT_UNIVERSAL_IDENTIFIER,
+  type: FieldType.RELATION,
+  name: 'person',
+  label: 'Person',
+  relationTargetObjectMetadataUniversalIdentifier:
+    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
+  relationTargetFieldMetadataUniversalIdentifier:
+    CALL_RECORDING_ON_PERSON_ID,
+  relationType: RelationType.MANY_TO_ONE,
+});
+```
 
 ### Configuração do aplicativo (application-config.ts)
 
@@ -433,7 +500,7 @@ Cada arquivo de função usa `defineLogicFunction()` para exportar uma configura
 // src/app/createPostCard.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk';
 import type { DatabaseEventPayload, ObjectRecordCreateEvent, CronPayload, RoutePayload } from 'twenty-sdk';
-import { CoreApiClient, type Person } from 'twenty-sdk/generated';
+import { CoreApiClient, type Person } from 'twenty-sdk/clients';
 
 const handler = async (params: RoutePayload) => {
   const client = new CoreApiClient();
@@ -678,7 +745,7 @@ Para marcar uma função lógica como ferramenta, defina `isTool: true` e forne�
 ```typescript
 // src/logic-functions/enrich-company.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk';
-import { CoreApiClient } from 'twenty-sdk/generated';
+import { CoreApiClient } from 'twenty-sdk/clients';
 
 const handler = async (params: { companyName: string; domain?: string }) => {
   const client = new CoreApiClient();
@@ -806,25 +873,60 @@ Você pode criar novas habilidades de duas formas:
 * **Gerado automaticamente**: Execute `yarn twenty entity:add` e escolha a opção para adicionar uma nova habilidade.
 * **Manual**: Crie um novo arquivo e use `defineSkill()`, seguindo o mesmo padrão.
 
+### Agentes
+
+Agentes definem agentes de IA com prompts do sistema que podem operar no seu espaço de trabalho. Use `defineAgent()` para definir agentes com validação integrada:
+
+```typescript
+// src/agents/example-agent.ts
+import { defineAgent } from 'twenty-sdk';
+
+export default defineAgent({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'sales-assistant',
+  label: 'Sales Assistant',
+  description: 'An AI agent that helps with sales tasks',
+  icon: 'IconRobot',
+  prompt: `You are a sales assistant. Help users with:
+1. Researching prospects and companies
+2. Drafting personalized outreach messages
+3. Tracking follow-ups and next steps
+4. Analyzing deal pipeline and suggesting actions`,
+});
+```
+
+Pontos-chave:
+
+* `name` é uma string de identificador exclusivo para o agente (recomenda-se kebab-case).
+* `label` é o nome de exibição legível por humanos mostrado na UI.
+* `prompt` contém o prompt do sistema — este é o texto de instruções que define o comportamento do agente.
+* `icon` (opcional) define o ícone exibido na UI.
+* `description` (opcional) fornece contexto adicional sobre a finalidade do agente.
+
+Você pode criar novos agentes de duas formas:
+
+* **Gerado automaticamente**: Execute `yarn twenty entity:add` e escolha a opção para adicionar um novo agente.
+* **Manual**: Crie um novo arquivo e use `defineAgent()`, seguindo o mesmo padrão.
+
 ### Clientes tipados gerados
 
-Dois clientes tipados são gerados automaticamente pelo `yarn twenty app:dev` e armazenados em `node_modules/twenty-sdk/generated` com base no esquema do seu espaço de trabalho:
+Dois clientes tipados são gerados automaticamente pelo `yarn twenty app:dev` e armazenados em `node_modules/twenty-sdk/clients` com base no esquema do seu espaço de trabalho:
 
 * **`CoreApiClient`** — consulta o endpoint `/graphql` para dados do espaço de trabalho
 * **`MetadataApiClient`** — consulta o endpoint `/metadata` para obter a configuração do espaço de trabalho e o carregamento de ficheiros
 
 ```typescript
-import { CoreApiClient, MetadataApiClient } from 'twenty-sdk/generated';
+import { CoreApiClient } from 'twenty-sdk/clients';
+import { MetadataApiClient } from 'twenty-sdk/clients';
 
 const client = new CoreApiClient();
 const { me } = await client.query({ me: { id: true, displayName: true } });
 
 const metadataClient = new MetadataApiClient();
 const { currentWorkspace } = await metadataClient.query({ currentWorkspace: { id: true } });
-
 ```
 
-Ambos os clientes são regenerados automaticamente pelo `yarn twenty app:dev` sempre que seus objetos ou campos forem alterados.
+`CoreApiClient` é regenerado automaticamente pelo `yarn twenty app:dev` sempre que os seus objetos ou campos forem alterados. `MetadataApiClient` é fornecido pré-compilado com o SDK.
 
 #### Credenciais em tempo de execução em funções de lógica
 
@@ -841,10 +943,10 @@ Notas:
 
 #### Carregamento de ficheiros
 
-O `MetadataApiClient` gerado inclui um método `uploadFile` para anexar ficheiros a campos do tipo ficheiro nos objetos do seu espaço de trabalho. Como os clientes GraphQL padrão não suportam nativamente o carregamento de ficheiros multipart, o cliente fornece este método dedicado que implementa, nos bastidores, a [especificação de pedidos multipart do GraphQL](https://github.com/jaydenseric/graphql-multipart-request-spec).
+`MetadataApiClient` inclui um método `uploadFile` para anexar ficheiros a campos do tipo ficheiro nos objetos do seu espaço de trabalho. Como os clientes GraphQL padrão não suportam nativamente o carregamento de ficheiros multipart, o cliente fornece este método dedicado que implementa, nos bastidores, a [especificação de pedidos multipart do GraphQL](https://github.com/jaydenseric/graphql-multipart-request-spec).
 
 ```typescript
-import { MetadataApiClient } from 'twenty-sdk/generated';
+import { MetadataApiClient } from 'twenty-sdk/clients';
 import * as fs from 'fs';
 
 const metadataClient = new MetadataApiClient();
@@ -860,7 +962,6 @@ const uploadedFile = await metadataClient.uploadFile(
 
 console.log(uploadedFile);
 // { id: '...', path: '...', size: 12345, createdAt: '...', url: 'https://...' }
-
 ```
 
 A assinatura do método:

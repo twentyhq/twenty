@@ -16,11 +16,8 @@ import {
   type CoreViewFilter,
   ViewFilterOperand as CoreViewFilterOperand,
 } from '~/generated-metadata/graphql';
-import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
-import {
-  mockedCoreViewsData,
-  mockedViewsData,
-} from '~/testing/mock-data/views';
+import { getJestMetadataAndApolloMocksAndCommandMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndCommandMenuWrapper';
+import { mockedCoreViews } from '~/testing/mock-data/generated/metadata/views/mock-views-data';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 import { useApplyCurrentViewFiltersToCurrentRecordFilters } from '@/views/hooks/useApplyCurrentViewFiltersToCurrentRecordFilters';
 
@@ -41,8 +38,10 @@ describe('useApplyCurrentViewFiltersToCurrentRecordFilters', () => {
     resetJotaiStore();
   });
 
-  const allCompaniesView = mockedViewsData[0];
-  const allCompaniesCoreView = mockedCoreViewsData[0];
+  const allCompaniesCoreView = mockedCoreViews.find(
+    (v) => v.name === 'All Companies',
+  )!;
+  const allCompaniesView = allCompaniesCoreView as unknown as View;
 
   const mockFieldMetadataItem = mockObjectMetadataItem.fields[0];
 
@@ -99,7 +98,7 @@ describe('useApplyCurrentViewFiltersToCurrentRecordFilters', () => {
         };
       },
       {
-        wrapper: getJestMetadataAndApolloMocksAndActionMenuWrapper({
+        wrapper: getJestMetadataAndApolloMocksAndCommandMenuWrapper({
           apolloMocks: [],
           componentInstanceId: 'instanceId',
           contextStoreCurrentObjectMetadataNameSingular:
@@ -149,7 +148,7 @@ describe('useApplyCurrentViewFiltersToCurrentRecordFilters', () => {
         };
       },
       {
-        wrapper: getJestMetadataAndApolloMocksAndActionMenuWrapper({
+        wrapper: getJestMetadataAndApolloMocksAndCommandMenuWrapper({
           apolloMocks: [],
           componentInstanceId: 'instanceId',
           contextStoreCurrentObjectMetadataNameSingular:
@@ -190,7 +189,7 @@ describe('useApplyCurrentViewFiltersToCurrentRecordFilters', () => {
         };
       },
       {
-        wrapper: getJestMetadataAndApolloMocksAndActionMenuWrapper({
+        wrapper: getJestMetadataAndApolloMocksAndCommandMenuWrapper({
           apolloMocks: [],
           componentInstanceId: 'instanceId',
           contextStoreCurrentObjectMetadataNameSingular:

@@ -1,6 +1,6 @@
 {
   "name": "hello-world",
-  "version": "0.2.2",
+  "version": "0.1.0",
   "license": "MIT",
   "engines": {
     "node": "^24.5.0",
@@ -9,16 +9,20 @@
   },
   "packageManager": "yarn@4.9.2",
   "scripts": {
-    "create-entity": "twenty app add",
-    "dev": "twenty app dev",
-    "sync": "twenty app sync",
-    "uninstall": "twenty app uninstall",
-    "auth": "twenty auth login"
-  },
-  "dependencies": {
-    "twenty-sdk": "0.2.4"
+    "twenty": "twenty",
+    "lint": "oxlint -c .oxlintrc.json .",
+    "lint:fix": "oxlint --fix -c .oxlintrc.json .",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "devDependencies": {
-    "@types/node": "^24.7.2"
+    "@types/node": "^24.7.2",
+    "@types/react": "^18.2.0",
+    "oxlint": "^0.16.0",
+    "react": "^18.2.0",
+    "twenty-sdk": "0.6.4",
+    "typescript": "^5.9.3",
+    "vite-tsconfig-paths": "^4.2.1",
+    "vitest": "^3.1.1"
   }
 }

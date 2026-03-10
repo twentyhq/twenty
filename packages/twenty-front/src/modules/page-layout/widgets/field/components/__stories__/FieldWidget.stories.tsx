@@ -10,7 +10,7 @@ import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { ApolloCoreClientContext } from '@/object-metadata/contexts/ApolloCoreClientContext';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { isAppMetadataReadyState } from '@/metadata-store/states/isAppMetadataReadyState';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { PageLayoutContentProvider } from '@/page-layout/contexts/PageLayoutContentContext';
@@ -299,6 +299,7 @@ const createPageLayoutWithWidget = (
       position: 0,
       pageLayoutId: PAGE_LAYOUT_TEST_INSTANCE_ID,
       widgets: [widget],
+      isOverridden: false,
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-01T00:00:00Z',
       deletedAt: null,
@@ -352,6 +353,7 @@ export const TextFieldWidget: Story = {
         fieldMetadataId: nameField.id,
         layout: 'FIELD',
       },
+      isOverridden: false,
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-01T00:00:00Z',
       deletedAt: null,
@@ -387,7 +389,7 @@ export const TextFieldWidget: Story = {
             <PageLayoutTestWrapper store={jotaiStore}>
               <LayoutRenderingProvider
                 value={{
-                  isInRightDrawer: false,
+                  isInSidePanel: false,
                   layoutType: PageLayoutType.RECORD_PAGE,
                   targetRecordIdentifier: {
                     id: TEST_RECORD_ID,
@@ -445,6 +447,7 @@ export const AddressFieldWidget: Story = {
         fieldMetadataId: addressField.id,
         layout: 'FIELD',
       },
+      isOverridden: false,
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-01T00:00:00Z',
       deletedAt: null,
@@ -480,7 +483,7 @@ export const AddressFieldWidget: Story = {
             <PageLayoutTestWrapper store={jotaiStore}>
               <LayoutRenderingProvider
                 value={{
-                  isInRightDrawer: false,
+                  isInSidePanel: false,
                   layoutType: PageLayoutType.RECORD_PAGE,
                   targetRecordIdentifier: {
                     id: TEST_RECORD_ID,
@@ -541,6 +544,7 @@ export const NumberFieldWidget: Story = {
         fieldMetadataId: employeesField.id,
         layout: 'FIELD',
       },
+      isOverridden: false,
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-01T00:00:00Z',
       deletedAt: null,
@@ -576,7 +580,7 @@ export const NumberFieldWidget: Story = {
             <PageLayoutTestWrapper store={jotaiStore}>
               <LayoutRenderingProvider
                 value={{
-                  isInRightDrawer: false,
+                  isInSidePanel: false,
                   layoutType: PageLayoutType.RECORD_PAGE,
                   targetRecordIdentifier: {
                     id: TEST_RECORD_ID,
@@ -634,6 +638,7 @@ export const LinkFieldWidget: Story = {
         fieldMetadataId: linkedinField.id,
         layout: 'FIELD',
       },
+      isOverridden: false,
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-01T00:00:00Z',
       deletedAt: null,
@@ -669,7 +674,7 @@ export const LinkFieldWidget: Story = {
             <PageLayoutTestWrapper store={jotaiStore}>
               <LayoutRenderingProvider
                 value={{
-                  isInRightDrawer: false,
+                  isInSidePanel: false,
                   layoutType: PageLayoutType.RECORD_PAGE,
                   targetRecordIdentifier: {
                     id: TEST_RECORD_ID,
@@ -727,6 +732,7 @@ export const ManyToOneRelationFieldWidget: Story = {
         fieldMetadataId: accountOwnerField.id,
         layout: 'FIELD',
       },
+      isOverridden: false,
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-01T00:00:00Z',
       deletedAt: null,
@@ -772,7 +778,7 @@ export const ManyToOneRelationFieldWidget: Story = {
             <PageLayoutTestWrapper store={jotaiStore}>
               <LayoutRenderingProvider
                 value={{
-                  isInRightDrawer: false,
+                  isInSidePanel: false,
                   layoutType: PageLayoutType.RECORD_PAGE,
                   targetRecordIdentifier: {
                     id: TEST_RECORD_ID,
@@ -830,6 +836,7 @@ export const OneToManyRelationFieldWidget: Story = {
         fieldMetadataId: companyPeopleField.id,
         layout: 'FIELD',
       },
+      isOverridden: false,
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-01T00:00:00Z',
       deletedAt: null,
@@ -867,7 +874,7 @@ export const OneToManyRelationFieldWidget: Story = {
             <PageLayoutTestWrapper store={jotaiStore}>
               <LayoutRenderingProvider
                 value={{
-                  isInRightDrawer: false,
+                  isInSidePanel: false,
                   layoutType: PageLayoutType.RECORD_PAGE,
                   targetRecordIdentifier: {
                     id: TEST_RECORD_ID,
@@ -925,6 +932,7 @@ export const BooleanFieldWidget: Story = {
         fieldMetadataId: idealCustomerProfileField.id,
         layout: 'FIELD',
       },
+      isOverridden: false,
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-01T00:00:00Z',
       deletedAt: null,
@@ -960,7 +968,7 @@ export const BooleanFieldWidget: Story = {
             <PageLayoutTestWrapper store={jotaiStore}>
               <LayoutRenderingProvider
                 value={{
-                  isInRightDrawer: false,
+                  isInSidePanel: false,
                   layoutType: PageLayoutType.RECORD_PAGE,
                   targetRecordIdentifier: {
                     id: TEST_RECORD_ID,
@@ -1017,6 +1025,7 @@ export const CurrencyFieldWidget: Story = {
         fieldMetadataId: annualRecurringRevenueField.id,
         layout: 'FIELD',
       },
+      isOverridden: false,
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-01T00:00:00Z',
       deletedAt: null,
@@ -1052,7 +1061,7 @@ export const CurrencyFieldWidget: Story = {
             <PageLayoutTestWrapper store={jotaiStore}>
               <LayoutRenderingProvider
                 value={{
-                  isInRightDrawer: false,
+                  isInSidePanel: false,
                   layoutType: PageLayoutType.RECORD_PAGE,
                   targetRecordIdentifier: {
                     id: TEST_RECORD_ID,
@@ -1109,6 +1118,7 @@ export const EmailsFieldWidget: Story = {
         fieldMetadataId: personEmailsField.id,
         layout: 'FIELD',
       },
+      isOverridden: false,
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-01T00:00:00Z',
       deletedAt: null,
@@ -1144,7 +1154,7 @@ export const EmailsFieldWidget: Story = {
             <PageLayoutTestWrapper store={jotaiStore}>
               <LayoutRenderingProvider
                 value={{
-                  isInRightDrawer: false,
+                  isInSidePanel: false,
                   layoutType: PageLayoutType.RECORD_PAGE,
                   targetRecordIdentifier: {
                     id: TEST_PERSON_RECORD_ID,
@@ -1202,6 +1212,7 @@ export const PhonesFieldWidget: Story = {
         fieldMetadataId: personPhonesField.id,
         layout: 'FIELD',
       },
+      isOverridden: false,
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-01T00:00:00Z',
       deletedAt: null,
@@ -1237,7 +1248,7 @@ export const PhonesFieldWidget: Story = {
             <PageLayoutTestWrapper store={jotaiStore}>
               <LayoutRenderingProvider
                 value={{
-                  isInRightDrawer: false,
+                  isInSidePanel: false,
                   layoutType: PageLayoutType.RECORD_PAGE,
                   targetRecordIdentifier: {
                     id: TEST_PERSON_RECORD_ID,
@@ -1295,6 +1306,7 @@ export const SelectFieldWidget: Story = {
         fieldMetadataId: opportunityStageField.id,
         layout: 'FIELD',
       },
+      isOverridden: false,
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-01T00:00:00Z',
       deletedAt: null,
@@ -1330,7 +1342,7 @@ export const SelectFieldWidget: Story = {
             <PageLayoutTestWrapper store={jotaiStore}>
               <LayoutRenderingProvider
                 value={{
-                  isInRightDrawer: false,
+                  isInSidePanel: false,
                   layoutType: PageLayoutType.RECORD_PAGE,
                   targetRecordIdentifier: {
                     id: TEST_OPPORTUNITY_RECORD_ID,
@@ -1389,6 +1401,7 @@ export const MultiSelectFieldWidget: Story = {
         fieldMetadataId: companyWorkPolicyField.id,
         layout: 'FIELD',
       },
+      isOverridden: false,
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-01T00:00:00Z',
       deletedAt: null,
@@ -1424,7 +1437,7 @@ export const MultiSelectFieldWidget: Story = {
             <PageLayoutTestWrapper store={jotaiStore}>
               <LayoutRenderingProvider
                 value={{
-                  isInRightDrawer: false,
+                  isInSidePanel: false,
                   layoutType: PageLayoutType.RECORD_PAGE,
                   targetRecordIdentifier: {
                     id: TEST_RECORD_ID,
@@ -1486,6 +1499,7 @@ export const TimelineActivityRelationFieldWidget: Story = {
         fieldMetadataId: timelineActivityWorkspaceMemberField.id,
         layout: 'FIELD',
       },
+      isOverridden: false,
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-01T00:00:00Z',
       deletedAt: null,
@@ -1526,7 +1540,7 @@ export const TimelineActivityRelationFieldWidget: Story = {
             <PageLayoutTestWrapper store={jotaiStore}>
               <LayoutRenderingProvider
                 value={{
-                  isInRightDrawer: false,
+                  isInSidePanel: false,
                   layoutType: PageLayoutType.RECORD_PAGE,
                   targetRecordIdentifier: {
                     id: TEST_TIMELINE_ACTIVITY_RECORD_ID,
@@ -1584,6 +1598,7 @@ export const ManyToOneRelationCardWidget: Story = {
         fieldMetadataId: accountOwnerField.id,
         layout: 'CARD',
       },
+      isOverridden: false,
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-01T00:00:00Z',
       deletedAt: null,
@@ -1628,7 +1643,7 @@ export const ManyToOneRelationCardWidget: Story = {
             <PageLayoutTestWrapper store={jotaiStore}>
               <LayoutRenderingProvider
                 value={{
-                  isInRightDrawer: false,
+                  isInSidePanel: false,
                   layoutType: PageLayoutType.RECORD_PAGE,
                   targetRecordIdentifier: {
                     id: TEST_RECORD_ID,
@@ -1695,6 +1710,7 @@ export const OneToManyRelationCardWidget: Story = {
         fieldMetadataId: companyPeopleField.id,
         layout: 'CARD',
       },
+      isOverridden: false,
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-01T00:00:00Z',
       deletedAt: null,
@@ -1731,7 +1747,7 @@ export const OneToManyRelationCardWidget: Story = {
             <PageLayoutTestWrapper store={jotaiStore}>
               <LayoutRenderingProvider
                 value={{
-                  isInRightDrawer: false,
+                  isInSidePanel: false,
                   layoutType: PageLayoutType.RECORD_PAGE,
                   targetRecordIdentifier: {
                     id: TEST_RECORD_ID,
@@ -1789,6 +1805,7 @@ export const TimelineActivityRelationCardWidget: Story = {
         fieldMetadataId: timelineActivityWorkspaceMemberField.id,
         layout: 'CARD',
       },
+      isOverridden: false,
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-01T00:00:00Z',
       deletedAt: null,
@@ -1828,7 +1845,7 @@ export const TimelineActivityRelationCardWidget: Story = {
             <PageLayoutTestWrapper store={jotaiStore}>
               <LayoutRenderingProvider
                 value={{
-                  isInRightDrawer: false,
+                  isInSidePanel: false,
                   layoutType: PageLayoutType.RECORD_PAGE,
                   targetRecordIdentifier: {
                     id: TEST_TIMELINE_ACTIVITY_RECORD_ID,
@@ -1949,6 +1966,7 @@ export const OneToManyRelationCardWidgetWithProgressiveLoading: Story = {
         fieldMetadataId: companyPeopleField.id,
         layout: 'CARD',
       },
+      isOverridden: false,
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-01T00:00:00Z',
       deletedAt: null,
@@ -1988,7 +2006,7 @@ export const OneToManyRelationCardWidgetWithProgressiveLoading: Story = {
             <PageLayoutTestWrapper store={jotaiStore}>
               <LayoutRenderingProvider
                 value={{
-                  isInRightDrawer: false,
+                  isInSidePanel: false,
                   layoutType: PageLayoutType.RECORD_PAGE,
                   targetRecordIdentifier: {
                     id: TEST_RECORD_ID,

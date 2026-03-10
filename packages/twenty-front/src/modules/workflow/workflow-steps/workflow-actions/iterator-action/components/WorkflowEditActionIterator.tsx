@@ -1,4 +1,5 @@
 import { FormArrayFieldInput } from '@/object-record/record-field/ui/form-types/components/FormArrayFieldInput';
+import { FormBooleanFieldToggleInput } from '@/object-record/record-field/ui/form-types/components/FormBooleanFieldToggleInput';
 import { type FieldArrayValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { type WorkflowIteratorAction } from '@/workflow/types/Workflow';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
@@ -56,6 +57,8 @@ export const WorkflowEditActionIterator = ({
   const [formData, setFormData] = useState({
     items: parsedItems,
     initialLoopStepIds: action.settings.input.initialLoopStepIds || [],
+    shouldContinueOnIterationFailure:
+      action.settings.input.shouldContinueOnIterationFailure ?? false,
   });
 
   const saveAction = useDebouncedCallback(
@@ -71,6 +74,8 @@ export const WorkflowEditActionIterator = ({
           input: {
             items: updatedFormData.items,
             initialLoopStepIds: updatedFormData.initialLoopStepIds,
+            shouldContinueOnIterationFailure:
+              updatedFormData.shouldContinueOnIterationFailure,
           },
         },
       });
@@ -80,7 +85,7 @@ export const WorkflowEditActionIterator = ({
 
   const handleFieldChange = (
     field: string,
-    value: string | FieldArrayValue,
+    value: string | FieldArrayValue | boolean,
   ) => {
     if (actionOptions.readonly === true) {
       return;
@@ -103,6 +108,15 @@ export const WorkflowEditActionIterator = ({
           }
           readonly={actionOptions.readonly}
           VariablePicker={WorkflowVariablePicker}
+        />
+        <FormBooleanFieldToggleInput
+          description={t`Continue on iteration failure`}
+          value={formData.shouldContinueOnIterationFailure}
+          onChange={(value) =>
+            handleFieldChange('shouldContinueOnIterationFailure', value)
+          }
+          disabled={actionOptions.readonly}
+          hint={t`Will continue to the next iteration even if the current one fails`}
         />
       </WorkflowStepBody>
       {!actionOptions.readonly && <WorkflowStepFooter stepId={action.id} />}

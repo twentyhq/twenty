@@ -2,18 +2,19 @@ import { GRAPH_TOOLTIP_MAX_WIDTH_PX } from '@/page-layout/widgets/graph/componen
 import { GRAPH_TOOLTIP_MIN_WIDTH_PX } from '@/page-layout/widgets/graph/components/constants/GraphTooltipMinWidthPx';
 import { GRAPH_TOOLTIP_SCROLL_MAX_HEIGHT_PX } from '@/page-layout/widgets/graph/components/constants/GraphTooltipScrollMaxHeightPx';
 import { GraphWidgetLegendDot } from '@/page-layout/widgets/graph/components/GraphWidgetLegendDot';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
+import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconArrowUpRight } from 'twenty-ui/display';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledTooltip = styled.div`
-  background: ${({ theme }) => theme.background.primary};
-  border: 1px solid ${({ theme }) => theme.border.color.light};
-  border-radius: ${({ theme }) => theme.border.radius.md};
-  box-shadow: ${({ theme }) => theme.boxShadow.strong};
+  background: ${themeCssVariables.background.primary};
+  border: 1px solid ${themeCssVariables.border.color.light};
+  border-radius: ${themeCssVariables.border.radius.md};
+  box-shadow: ${themeCssVariables.boxShadow.strong};
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -25,47 +26,47 @@ const StyledTooltip = styled.div`
 const StyledTooltipContent = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(3)};
-  padding: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[3]};
+  padding: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledTooltipRow = styled.div`
   align-items: center;
   display: flex;
 
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledTooltipRowContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${themeCssVariables.spacing[2]};
   max-height: ${GRAPH_TOOLTIP_SCROLL_MAX_HEIGHT_PX}px;
   overflow-y: auto;
 `;
 
 const StyledTooltipLink = styled.div`
   align-items: center;
-  color: ${({ theme }) => theme.font.color.light};
+  color: ${themeCssVariables.font.color.light};
   cursor: pointer;
   display: flex;
+  font-weight: ${themeCssVariables.font.weight.regular};
+  height: ${themeCssVariables.spacing[6]};
   justify-content: space-between;
-  height: ${({ theme }) => theme.spacing(6)};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
-  padding-inline: ${({ theme }) => theme.spacing(2)};
   line-height: 140%;
+  padding-inline: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledTooltipSeparator = styled.div`
-  background-color: ${({ theme }) => theme.border.color.light};
+  background-color: ${themeCssVariables.border.color.light};
   min-height: 1px;
   width: 100%;
 `;
 
 const StyledTooltipHeader = styled.div`
-  color: ${({ theme }) => theme.font.color.primary};
-  font-size: ${({ theme }) => theme.font.size.xs};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
+  color: ${themeCssVariables.font.color.primary};
+  font-size: ${themeCssVariables.font.size.xs};
+  font-weight: ${themeCssVariables.font.weight.medium};
   line-height: 140%;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -74,39 +75,47 @@ const StyledTooltipHeader = styled.div`
 
 const StyledTooltipRowRightContent = styled.div`
   align-items: center;
+  color: ${themeCssVariables.font.color.extraLight};
   display: flex;
+  font-size: ${themeCssVariables.font.size.xs};
+  font-weight: ${themeCssVariables.font.weight.regular};
+  gap: ${themeCssVariables.spacing[2]};
   justify-content: space-between;
-  font-size: ${({ theme }) => theme.font.size.xs};
-  color: ${({ theme }) => theme.font.color.extraLight};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
-  gap: ${({ theme }) => theme.spacing(2)};
   min-width: 0;
   width: 100%;
 `;
 
 const StyledTooltipLabel = styled.span<{ isHighlighted?: boolean }>`
-  color: ${({ theme, isHighlighted }) =>
-    isHighlighted ? theme.font.color.secondary : theme.font.color.tertiary};
+  color: ${({ isHighlighted }) =>
+    isHighlighted
+      ? themeCssVariables.font.color.secondary
+      : themeCssVariables.font.color.tertiary};
   flex: 1;
+  font-weight: ${({ isHighlighted }) =>
+    isHighlighted
+      ? themeCssVariables.font.weight.medium
+      : themeCssVariables.font.weight.regular};
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-weight: ${({ theme, isHighlighted }) =>
-    isHighlighted ? theme.font.weight.medium : theme.font.weight.regular};
 `;
 
 const StyledNoDataMessage = styled.span`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-size: ${({ theme }) => theme.font.size.xs};
+  color: ${themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.xs};
 `;
 
 const StyledTooltipValue = styled.span<{ isHighlighted?: boolean }>`
-  color: ${({ theme, isHighlighted }) =>
-    isHighlighted ? theme.font.color.tertiary : theme.font.color.extraLight};
+  color: ${({ isHighlighted }) =>
+    isHighlighted
+      ? themeCssVariables.font.color.tertiary
+      : themeCssVariables.font.color.extraLight};
   flex-shrink: 0;
-  font-weight: ${({ theme, isHighlighted }) =>
-    isHighlighted ? theme.font.weight.semiBold : theme.font.weight.medium};
+  font-weight: ${({ isHighlighted }) =>
+    isHighlighted
+      ? themeCssVariables.font.weight.semiBold
+      : themeCssVariables.font.weight.medium};
   white-space: nowrap;
 `;
 
@@ -114,10 +123,10 @@ const StyledHorizontalSectionPadding = styled.div<{
   addTop?: boolean;
   addBottom?: boolean;
 }>`
-  padding-inline: ${({ theme }) => theme.spacing(1)};
-  margin-top: ${({ addTop, theme }) => (addTop ? theme.spacing(1) : 0)};
-  margin-bottom: ${({ addBottom, theme }) =>
-    addBottom ? theme.spacing(1) : 0};
+  margin-bottom: ${({ addBottom }) =>
+    addBottom ? themeCssVariables.spacing[1] : 0};
+  margin-top: ${({ addTop }) => (addTop ? themeCssVariables.spacing[1] : 0)};
+  padding-inline: ${themeCssVariables.spacing[1]};
 `;
 
 export type GraphWidgetTooltipItem = {
@@ -141,7 +150,7 @@ export const GraphWidgetTooltip = ({
   highlightedKey,
   onGraphWidgetTooltipClick,
 }: GraphWidgetTooltipProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   const filteredItems = items.filter(
     (item) => item.value !== 0 && isNonEmptyString(item.formattedValue),

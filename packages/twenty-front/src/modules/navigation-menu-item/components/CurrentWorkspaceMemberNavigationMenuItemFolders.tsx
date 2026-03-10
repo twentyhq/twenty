@@ -3,6 +3,7 @@ import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconFolderPlus } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
+import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 import { CurrentWorkspaceMemberOrphanNavigationMenuItems } from '@/navigation-menu-item/components/CurrentWorkspaceMemberOrphanNavigationMenuItems';
 import { NavigationMenuItemFolders } from '@/navigation-menu-item/components/NavigationMenuItemFolders';
 import { NavigationMenuItemSkeletonLoader } from '@/navigation-menu-item/components/NavigationMenuItemSkeletonLoader';
@@ -50,10 +51,9 @@ export const CurrentWorkspaceMemberNavigationMenuItemFolders = () => {
   }
 
   if (
-    (!navigationMenuItemsSorted || navigationMenuItemsSorted.length === 0) &&
+    navigationMenuItemsSorted.length === 0 &&
     !isNavigationMenuItemFolderCreating &&
-    (!userNavigationMenuItemsByFolder ||
-      userNavigationMenuItemsByFolder.length === 0)
+    userNavigationMenuItemsByFolder.length === 0
   ) {
     return null;
   }
@@ -71,16 +71,19 @@ export const CurrentWorkspaceMemberNavigationMenuItemFolders = () => {
               accent="tertiary"
             />
           }
+          isOpen={isNavigationSectionOpen}
         />
       </NavigationDrawerAnimatedCollapseWrapper>
-      {isNavigationSectionOpen && (
-        <>
-          <NavigationMenuItemFolders
-            isNavigationSectionOpen={isNavigationSectionOpen}
-          />
-          <CurrentWorkspaceMemberOrphanNavigationMenuItems />
-        </>
-      )}
+      <AnimatedExpandableContainer
+        isExpanded={isNavigationSectionOpen}
+        dimension="height"
+        mode="fit-content"
+        containAnimation
+        initial={false}
+      >
+        <NavigationMenuItemFolders />
+        <CurrentWorkspaceMemberOrphanNavigationMenuItems />
+      </AnimatedExpandableContainer>
     </NavigationDrawerSection>
   );
 };

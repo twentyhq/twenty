@@ -7,7 +7,7 @@ import { useImpersonationAuth } from '@/settings/admin-panel/hooks/useImpersonat
 import { useImpersonationRedirect } from '@/settings/admin-panel/hooks/useImpersonationRedirect';
 import { userLookupResultState } from '@/settings/admin-panel/states/userLookupResultState';
 import { type WorkspaceInfo } from '@/settings/admin-panel/types/WorkspaceInfo';
-import { getWorkspaceSchemaName } from '@/settings/admin-panel/utils/get-workspace-schema-name.util';
+import { getWorkspaceSchemaName } from '@/settings/admin-panel/utils/getWorkspaceSchemaName';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
@@ -15,14 +15,14 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useState } from 'react';
 import { getImageAbsoluteURI, isDefined } from 'twenty-shared/utils';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { AvatarChip, Chip } from 'twenty-ui/components';
+import { AvatarOrIcon, Chip } from 'twenty-ui/components';
 import {
   H2Title,
   IconEyeShare,
@@ -33,6 +33,7 @@ import {
 } from 'twenty-ui/display';
 import { Button, Toggle } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import {
   type FeatureFlagKey,
@@ -47,12 +48,12 @@ type SettingsAdminWorkspaceContentProps = {
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(3)};
-  margin-top: ${({ theme }) => theme.spacing(6)};
+  gap: ${themeCssVariables.spacing[3]};
+  margin-top: ${themeCssVariables.spacing[6]};
 `;
 
 const StyledButtonContainer = styled.div`
-  margin-top: ${({ theme }) => theme.spacing(3)};
+  margin-top: ${themeCssVariables.spacing[3]};
 `;
 
 export const SettingsAdminWorkspaceContent = ({
@@ -151,7 +152,7 @@ export const SettingsAdminWorkspaceContent = ({
           label={activeWorkspace?.name ?? ''}
           emptyLabel={t`Untitled`}
           leftComponent={
-            <AvatarChip
+            <AvatarOrIcon
               avatarUrl={
                 getImageAbsoluteURI({
                   imageUrl: isNonEmptyString(activeWorkspace?.logo)

@@ -2,7 +2,7 @@ import { act, renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
 import { textfieldDefinition } from '@/object-record/record-field/ui/__mocks__/fieldDefinitions';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
@@ -33,15 +33,15 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <JotaiProvider store={jotaiStore}>
-      <RecordTableComponentInstance recordTableId={recordTableId}>
-        <RecordTableContextProvider
-          recordTableId={recordTableId}
-          viewBarId="viewBarId"
-          objectNameSingular={CoreObjectNameSingular.Person}
-          onRecordIdentifierClick={() => {}}
-        >
-          <RecordComponentInstanceContextsWrapper
-            componentInstanceId={recordTableId}
+      <RecordComponentInstanceContextsWrapper
+        componentInstanceId={recordTableId}
+      >
+        <RecordTableComponentInstance recordTableId={recordTableId}>
+          <RecordTableContextProvider
+            recordTableId={recordTableId}
+            viewBarId="viewBarId"
+            objectNameSingular={CoreObjectNameSingular.Person}
+            onRecordIdentifierClick={() => {}}
           >
             <FieldContext.Provider
               value={{
@@ -63,9 +63,9 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => {
                 </RecordTableRowDraggableContextProvider>
               </RecordTableRowContextProvider>
             </FieldContext.Provider>
-          </RecordComponentInstanceContextsWrapper>
-        </RecordTableContextProvider>
-      </RecordTableComponentInstance>
+          </RecordTableContextProvider>
+        </RecordTableComponentInstance>
+      </RecordComponentInstanceContextsWrapper>
     </JotaiProvider>
   );
 };

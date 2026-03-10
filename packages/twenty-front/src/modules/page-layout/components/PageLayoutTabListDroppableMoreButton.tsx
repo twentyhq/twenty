@@ -1,21 +1,23 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { Droppable } from '@hello-pangea/dnd';
 
 import { PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS } from '@/page-layout/components/PageLayoutTabListDroppableIds';
 import { TabMoreButton } from '@/ui/layout/tab-list/components/TabMoreButton';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type PageLayoutTabListDroppableMoreButtonProps = {
   hiddenTabsCount: number;
   isActiveTabHidden: boolean;
 };
 
-const StyledTabMoreButton = styled(TabMoreButton)<{ isDraggingOver: boolean }>`
-  ${({ isDraggingOver, theme }) =>
-    isDraggingOver &&
-    `
-    background-color: ${theme.background.transparent.blue};
+const StyledTabMoreButtonWrapper = styled.div<{ isDraggingOver: boolean }>`
+  ${({ isDraggingOver }) =>
+    isDraggingOver
+      ? `
+    background-color: ${themeCssVariables.background.transparent.blue};
     pointer-events: none;
-  `}
+  `
+      : ''}
 `;
 
 export const PageLayoutTabListDroppableMoreButton = ({
@@ -27,14 +29,15 @@ export const PageLayoutTabListDroppableMoreButton = ({
       {(provided, snapshot) => (
         <div
           ref={provided.innerRef}
-          // eslint-disable-next-line react/jsx-props-no-spreading
+          // oxlint-disable-next-line react/jsx-props-no-spreading
           {...provided.droppableProps}
         >
-          <StyledTabMoreButton
-            hiddenTabsCount={hiddenTabsCount}
-            active={isActiveTabHidden}
-            isDraggingOver={snapshot.isDraggingOver}
-          />
+          <StyledTabMoreButtonWrapper isDraggingOver={snapshot.isDraggingOver}>
+            <TabMoreButton
+              hiddenTabsCount={hiddenTabsCount}
+              active={isActiveTabHidden}
+            />
+          </StyledTabMoreButtonWrapper>
         </div>
       )}
     </Droppable>

@@ -18,7 +18,7 @@ export class CaptchaModule {
       provide: CAPTCHA_DRIVER,
       useFactory: async (
         secureHttpClientService: SecureHttpClientService,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // oxlint-disable-next-line @typescripttypescript/no-explicit-any
         ...args: any[]
       ) => {
         const config = await options.useFactory(...args);

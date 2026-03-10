@@ -1,4 +1,4 @@
-import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
+import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { ApolloCoreClientContext } from '@/object-metadata/contexts/ApolloCoreClientContext';
 import { UpdateMultipleRecordsContainer } from '@/object-record/record-update-multiple/components/UpdateMultipleRecordsContainer';
@@ -53,16 +53,16 @@ const meta: Meta<typeof UpdateMultipleRecordsContainer> = {
   decorators: [
     (Story) => (
       <ApolloCoreClientContext.Provider value={mockApolloCoreClient}>
-        <ActionMenuContext.Provider
+        <CommandMenuContext.Provider
           value={{
-            actions: [],
-            actionMenuType: 'index-page-action-menu-dropdown',
+            commandMenuItems: [],
+            containerType: 'index-page-dropdown',
             displayType: 'dropdownItem',
-            isInRightDrawer: true,
+            isInSidePanel: true,
           }}
         >
           <Story />
-        </ActionMenuContext.Provider>
+        </CommandMenuContext.Provider>
       </ApolloCoreClientContext.Provider>
     ),
     ContextStoreDecorator,
