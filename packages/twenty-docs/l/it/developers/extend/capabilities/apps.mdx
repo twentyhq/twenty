@@ -321,11 +321,11 @@ Puoi sovrascrivere i campi predefiniti definendo un campo con lo stesso nome nel
 ma non è consigliato.
 </Note>
 
-### Defining fields on existing objects
+### Definire campi sugli oggetti esistenti
 
-Use `defineField()` to add custom fields to existing objects — both standard objects (like `company`, `person`, `opportunity`) and custom objects defined by other apps. Each field lives in its own file and references the target object by its `universalIdentifier`.
+Usa `defineField()` per aggiungere campi personalizzati agli oggetti esistenti — sia agli oggetti standard (come `company`, `person`, `opportunity`) sia agli oggetti personalizzati definiti da altre app. Ogni campo risiede nel proprio file e fa riferimento all'oggetto di destinazione tramite il suo `universalIdentifier`.
 
-To reference standard objects, import `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS` from `twenty-sdk`. This constant provides stable identifiers for all built-in objects and their fields:
+Per fare riferimento agli oggetti standard, importa `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS` da `twenty-sdk`. Questa costante fornisce identificatori stabili per tutti gli oggetti integrati e per i relativi campi:
 
 ```typescript
 // src/fields/apollo-total-funding.field.ts
@@ -349,22 +349,22 @@ export default defineField({
 
 Punti chiave:
 
-* `objectUniversalIdentifier` tells Twenty which object to attach the field to. Use `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.<objectName>.universalIdentifier` for standard objects.
-* Each field requires its own stable `universalIdentifier`, a `name`, `type`, `label`, and the target `objectUniversalIdentifier`.
-* You can scaffold new fields using `yarn twenty entity:add` and choosing the field option.
-* `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS` is also exported as `STANDARD_OBJECT` for convenience — both refer to the same constant.
+* `objectUniversalIdentifier` indica a Twenty a quale oggetto associare il campo. Usa `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.<objectName>.universalIdentifier` per gli oggetti standard.
+* Ogni campo richiede un proprio `universalIdentifier` stabile, un `name`, `type`, `label` e l'`objectUniversalIdentifier` di destinazione.
+* Puoi generare nuovi campi usando `yarn twenty entity:add` e scegliendo l'opzione campo.
+* `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS` è anche esportato come `STANDARD_OBJECT` per comodità — entrambi si riferiscono alla stessa costante.
 
-Available standard objects include: `attachment`, `blocklist`, `calendarChannel`, `calendarEvent`, `calendarEventParticipant`, `company`, `connectedAccount`, `dashboard`, `favorite`, `favoriteFolder`, `message`, `messageChannel`, `messageParticipant`, `messageThread`, `note`, `noteTarget`, `opportunity`, `person`, `task`, `taskTarget`, `timelineActivity`, `workflow`, `workflowAutomatedTrigger`, `workflowRun`, `workflowVersion`, and `workspaceMember`.
+Gli oggetti standard disponibili includono: `attachment`, `blocklist`, `calendarChannel`, `calendarEvent`, `calendarEventParticipant`, `company`, `connectedAccount`, `dashboard`, `favorite`, `favoriteFolder`, `message`, `messageChannel`, `messageParticipant`, `messageThread`, `note`, `noteTarget`, `opportunity`, `person`, `task`, `taskTarget`, `timelineActivity`, `workflow`, `workflowAutomatedTrigger`, `workflowRun`, `workflowVersion` e `workspaceMember`.
 
-Each standard object also exposes its field identifiers. For example, to reference a specific field on a standard object in role permissions:
+Ogni oggetto standard espone anche gli identificatori dei propri campi. Ad esempio, per fare riferimento a un campo specifico su un oggetto standard nelle autorizzazioni dei ruoli:
 
 ```typescript
 STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.fields.name.universalIdentifier
 ```
 
-#### Relation fields on existing objects
+#### Campi di relazione su oggetti esistenti
 
-You can also define relation fields that link existing objects to your custom objects:
+Puoi anche definire campi di relazione che collegano oggetti esistenti ai tuoi oggetti personalizzati:
 
 ```typescript
 // src/fields/people-on-call-recording.field.ts
