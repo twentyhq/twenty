@@ -1,4 +1,4 @@
-import { appendFile, writeFile } from 'node:fs/promises';
+import { appendFile, copyFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
 import { generate } from '@genql/cli';
@@ -15,9 +15,10 @@ const COMMON_SCALAR_TYPES = {
   UUID: 'string',
 };
 
+export const GENERATED_CORE_DIR = 'generated-core';
+
 // Generates the core API client from a GraphQL schema string.
-// Produces both TypeScript source (for dev/typecheck) and a compiled
-// ESM bundle (for runtime in Lambda/local execution layers).
+// Produces both TypeScript source and compiled ESM/CJS bundles.
 export const generateCoreClientFromSchema = async ({
   schema,
   outputPath,
@@ -55,8 +56,31 @@ export const generateCoreClientFromSchema = async ({
   await compileGeneratedClient(outputPath);
 };
 
-// Bundles the generated TypeScript into a single ESM file so the
-// package works at runtime without a separate build step.
+// Generates the core client and replaces the pre-built stub inside
+// an installed twenty-client-sdk package (dist/core.mjs and dist/core.cjs).
+// Generated source files are kept in dist/generated-core/ for consumers
+// that need the raw .ts files (e.g. the app:dev upload step).
+export const replaceCoreClient = async ({
+  packageRoot,
+  schema,
+}: {
+  packageRoot: string;
+  schema: string;
+}): Promise<void> => {
+  const generatedPath = join(packageRoot, 'dist', GENERATED_CORE_DIR);
+
+  await generateCoreClientFromSchema({ schema, outputPath: generatedPath });
+
+  await copyFile(
+    join(generatedPath, 'index.mjs'),
+    join(packageRoot, 'dist', 'core.mjs'),
+  );
+  await copyFile(
+    join(generatedPath, 'index.cjs'),
+    join(packageRoot, 'dist', 'core.cjs'),
+  );
+};
+
 const compileGeneratedClient = async (
   generatedDir: string,
 ): Promise<void> => {
@@ -74,7 +98,6 @@ const compileGeneratedClient = async (
     minify: false,
   });
 
-  // Also produce a CJS bundle for require() consumers
   await build({
     entryPoints: [entryPoint],
     outfile: join(generatedDir, 'index.cjs'),
@@ -86,7 +109,6 @@ const compileGeneratedClient = async (
     minify: false,
   });
 
-  // Write a minimal package.json so Node resolves from the compiled output
   await writeFile(
     join(generatedDir, 'package.json'),
     JSON.stringify(

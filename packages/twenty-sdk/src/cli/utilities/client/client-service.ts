@@ -1,9 +1,8 @@
-import { copyFile } from 'node:fs/promises';
 import { join } from 'path';
 
 import { ApiService } from '@/cli/utilities/api/api-service';
 import {
-  generateCoreClientFromSchema,
+  replaceCoreClient,
   generateMetadataClient,
 } from 'twenty-client-sdk/generate';
 
@@ -25,13 +24,6 @@ export class ClientService {
     appPath: string;
     authToken?: string;
   }): Promise<void> {
-    const clientSdkRoot = join(
-      appPath,
-      'node_modules',
-      'twenty-client-sdk',
-    );
-    const coreOutputPath = join(clientSdkRoot, 'dist', 'generated-core');
-
     const coreSchemaResponse = await this.apiService.getSchema({ authToken });
 
     if (!coreSchemaResponse.success) {
@@ -40,20 +32,10 @@ export class ClientService {
       );
     }
 
-    await generateCoreClientFromSchema({
+    await replaceCoreClient({
+      packageRoot: join(appPath, 'node_modules', 'twenty-client-sdk'),
       schema: coreSchemaResponse.data,
-      outputPath: coreOutputPath,
     });
-
-    // Replace the pre-built stub with the generated compiled bundles
-    await copyFile(
-      join(coreOutputPath, 'index.mjs'),
-      join(clientSdkRoot, 'dist', 'core.mjs'),
-    );
-    await copyFile(
-      join(coreOutputPath, 'index.cjs'),
-      join(clientSdkRoot, 'dist', 'core.cjs'),
-    );
   }
 
   async generateMetadataClient({
