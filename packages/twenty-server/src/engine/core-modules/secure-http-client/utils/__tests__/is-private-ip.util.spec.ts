@@ -144,6 +144,63 @@ describe('isPrivateIp', () => {
     });
   });
 
+  describe('carrier-grade NAT (100.64.0.0/10)', () => {
+    it('should detect 100.64.0.0 as private', () => {
+      expect(isPrivateIp('100.64.0.0')).toBe(true);
+    });
+
+    it('should detect 100.127.255.255 (end of range) as private', () => {
+      expect(isPrivateIp('100.127.255.255')).toBe(true);
+    });
+
+    it('should not detect 100.63.255.255 (just below range) as private', () => {
+      expect(isPrivateIp('100.63.255.255')).toBe(false);
+    });
+
+    it('should not detect 100.128.0.0 (just above range) as private', () => {
+      expect(isPrivateIp('100.128.0.0')).toBe(false);
+    });
+  });
+
+  describe('IANA special purpose and documentation ranges', () => {
+    it('should detect 192.0.0.0/24 (IANA special purpose) as private', () => {
+      expect(isPrivateIp('192.0.0.1')).toBe(true);
+    });
+
+    it('should detect 192.0.2.0/24 (TEST-NET-1) as private', () => {
+      expect(isPrivateIp('192.0.2.1')).toBe(true);
+    });
+
+    it('should detect 198.51.100.0/24 (TEST-NET-2) as private', () => {
+      expect(isPrivateIp('198.51.100.1')).toBe(true);
+    });
+
+    it('should detect 203.0.113.0/24 (TEST-NET-3) as private', () => {
+      expect(isPrivateIp('203.0.113.1')).toBe(true);
+    });
+
+    it('should detect 198.18.0.0/15 (benchmarking) as private', () => {
+      expect(isPrivateIp('198.18.0.1')).toBe(true);
+      expect(isPrivateIp('198.19.255.255')).toBe(true);
+    });
+
+    it('should not detect 198.20.0.0 (outside benchmarking) as private', () => {
+      expect(isPrivateIp('198.20.0.0')).toBe(false);
+    });
+  });
+
+  describe('multicast and reserved ranges', () => {
+    it('should detect 224.0.0.0/4 (multicast) as private', () => {
+      expect(isPrivateIp('224.0.0.1')).toBe(true);
+      expect(isPrivateIp('239.255.255.255')).toBe(true);
+    });
+
+    it('should detect 240.0.0.0/4 (reserved) as private', () => {
+      expect(isPrivateIp('240.0.0.1')).toBe(true);
+      expect(isPrivateIp('255.255.255.254')).toBe(true);
+    });
+  });
+
   describe('public IP addresses', () => {
     it('should not detect public IPv4 addresses as private', () => {
       expect(isPrivateIp('8.8.8.8')).toBe(false);
