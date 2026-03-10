@@ -177,15 +177,15 @@ jobs:
           npx --no-install twenty app:build
           test -d .twenty/output
 
-      - name: Run scaffolded app integration test
-        run: |
-          cd /tmp/e2e-test-workspace/test-app
-          yarn test
-
       - name: Execute hello-world logic function
         run: |
           cd /tmp/e2e-test-workspace/test-app
           npx --no-install twenty function:execute --functionName hello-world-logic-function
+
+      - name: Run scaffolded app integration test
+        run: |
+          cd /tmp/e2e-test-workspace/test-app
+          yarn test
 
   ci-create-app-e2e-status-check:
     if: always() && !cancelled()
