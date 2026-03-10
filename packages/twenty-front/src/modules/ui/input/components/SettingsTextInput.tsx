@@ -1,3 +1,4 @@
+import { css, cx } from '@linaria/core';
 import { type FocusEventHandler, useEffect, useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
 
@@ -10,6 +11,12 @@ import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { isDefined } from 'twenty-shared/utils';
+
+const settingsTextInputClass = css`
+  && {
+    width: 100%;
+  }
+`;
 
 export type SettingsTextInputProps = TextInputComponentProps & {
   instanceId: string;
@@ -29,6 +36,7 @@ export const SettingsTextInput = ({
   autoFocusOnMount,
   autoSelectOnMount,
   dataTestId,
+  className,
   ...props
 }: SettingsTextInputProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -124,6 +132,7 @@ export const SettingsTextInput = ({
       ref={inputRef}
       // oxlint-disable-next-line react/jsx-props-no-spreading
       {...props}
+      className={cx(settingsTextInputClass, className)}
       dataTestId={dataTestId}
       onFocus={handleFocus}
       onBlur={handleBlur}
