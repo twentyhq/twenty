@@ -1,7 +1,7 @@
 import { detectCalendarStartDay } from '@/localization/utils/detection/detectCalendarStartDay';
+import { stringifyRelativeDateFilter } from '@/views/view-filter-value/utils/stringifyRelativeDateFilter';
 import { FirstDayOfTheWeek } from 'twenty-shared/types';
 import { type RelativeDateFilter } from 'twenty-shared/utils';
-import { stringifyRelativeDateFilter } from '@/views/view-filter-value/utils/stringifyRelativeDateFilter';
 
 jest.mock('@/localization/utils/detection/detectCalendarStartDay');
 
@@ -68,6 +68,11 @@ describe('stringifyRelativeDateFilter', () => {
         amount: 1,
         unit: 'MONTH',
       };
+      const quarterFilter: RelativeDateFilter = {
+        direction: 'PAST',
+        amount: 1,
+        unit: 'QUARTER',
+      };
       const yearFilter: RelativeDateFilter = {
         direction: 'PAST',
         amount: 1,
@@ -80,6 +85,7 @@ describe('stringifyRelativeDateFilter', () => {
       expect(stringifyRelativeDateFilter(dayFilter)).toBe('PAST_1_DAY');
       expect(stringifyRelativeDateFilter(weekFilter)).toBe('PAST_1_WEEK');
       expect(stringifyRelativeDateFilter(monthFilter)).toBe('PAST_1_MONTH');
+      expect(stringifyRelativeDateFilter(quarterFilter)).toBe('PAST_1_QUARTER');
       expect(stringifyRelativeDateFilter(yearFilter)).toBe('PAST_1_YEAR');
     });
   });
