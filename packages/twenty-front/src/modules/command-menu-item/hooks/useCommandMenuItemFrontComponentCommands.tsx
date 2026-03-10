@@ -2,17 +2,15 @@ import { Command } from '@/command-menu-item/display/components/Command';
 import { HeadlessFrontComponentCommandMenuItem } from '@/command-menu-item/display/components/HeadlessFrontComponentCommandMenuItem';
 import { CommandMenuItemScope } from '@/command-menu-item/types/CommandMenuItemScope';
 import { CommandMenuItemType } from '@/command-menu-item/types/CommandMenuItemType';
-import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
-import { useOpenFrontComponentInSidePanel } from '@/side-panel/hooks/useOpenFrontComponentInSidePanel';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreIsPageInEditModeComponentState } from '@/context-store/states/contextStoreIsPageInEditModeComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { useMountHeadlessFrontComponent } from '@/front-components/hooks/useMountHeadlessFrontComponent';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { useOpenFrontComponentInSidePanel } from '@/side-panel/hooks/useOpenFrontComponentInSidePanel';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { useContext } from 'react';
 import { type CommandMenuContextApi } from 'twenty-shared/types';
 import {
   evaluateConditionalAvailabilityExpression,
@@ -36,8 +34,8 @@ type CommandMenuItemWithFrontComponent = CommandMenuItemFieldsFragment & {
 
 type BuildCommandMenuItemFromFrontComponentParams = {
   item: CommandMenuItemWithFrontComponent;
+  type?: CommandMenuItemType;
   scope: CommandMenuItemScope;
-  index: number;
   isPinned: boolean;
   getIcon: ReturnType<typeof useIcons>['getIcon'];
   openFrontComponentInSidePanel: (params: {
@@ -61,8 +59,8 @@ type BuildCommandMenuItemFromFrontComponentParams = {
 // once we have migrated all command menu items
 const buildCommandMenuItemFromFrontComponent = ({
   item,
+  type = CommandMenuItemType.FrontComponent,
   scope,
-  index,
   isPinned,
   getIcon,
   openFrontComponentInSidePanel,
@@ -95,12 +93,12 @@ const buildCommandMenuItemFromFrontComponent = ({
   };
 
   return {
-    type: CommandMenuItemType.FrontComponent,
+    type,
     key: `command-menu-item-front-component-${item.id}`,
     scope,
     label: displayLabel,
-    shortLabel: displayLabel,
-    position: index,
+    shortLabel: item.shortLabel ?? undefined,
+    position: item.position,
     isPinned,
     Icon,
     shouldBeRegistered: () =>
@@ -119,7 +117,7 @@ const buildCommandMenuItemFromFrontComponent = ({
   };
 };
 
-export const useCommandMenuItemFrontComponentActions = (
+export const useCommandMenuItemFrontComponentCommands = (
   commandMenuContextApi: CommandMenuContextApi,
 ) => {
   const { getIcon } = useIcons();
@@ -129,8 +127,6 @@ export const useCommandMenuItemFrontComponentActions = (
   const contextStoreIsPageInEditMode = useAtomComponentStateValue(
     contextStoreIsPageInEditModeComponentState,
   );
-
-  const { containerType } = useContext(CommandMenuContext);
 
   const contextStoreCurrentObjectMetadataItemId = useAtomComponentStateValue(
     contextStoreCurrentObjectMetadataItemIdComponentState,
@@ -151,6 +147,10 @@ export const useCommandMenuItemFrontComponentActions = (
       ? contextStoreTargetedRecordsRule.selectedRecordIds
       : [];
 
+  const hasRecordSelection =
+    selectedRecordIds.length >= 1 ||
+    contextStoreTargetedRecordsRule.mode === 'exclusion';
+
   const mountContext: HeadlessFrontComponentMountContext | undefined =
     selectedRecordIds.length === 1 && isDefined(currentObjectMetadataItem)
       ? {
@@ -164,10 +164,7 @@ export const useCommandMenuItemFrontComponentActions = (
   );
 
   const { data } = useFindManyCommandMenuItemsQuery({
-    skip:
-      !isCommandMenuItemEnabled ||
-      (containerType !== 'command-menu-list' &&
-        containerType !== 'command-menu-show-page-dropdown'),
+    skip: !isCommandMenuItemEnabled,
   });
 
   const frontComponentItems =
@@ -176,35 +173,33 @@ export const useCommandMenuItemFrontComponentActions = (
         isDefined(item.frontComponentId),
     ) ?? [];
 
-  const selectedRecordCount =
-    contextStoreTargetedRecordsRule.mode === 'selection'
-      ? contextStoreTargetedRecordsRule.selectedRecordIds.length
-      : 0;
-
   const objectMatches = (item: CommandMenuItemWithFrontComponent) =>
     !isDefined(item.availabilityObjectMetadataId) ||
     item.availabilityObjectMetadataId ===
       contextStoreCurrentObjectMetadataItemId;
 
-  const globalItems = frontComponentItems.filter(
+  const frontComponentItemsWithObjectMatches =
+    frontComponentItems.filter(objectMatches);
+
+  const globalItems = frontComponentItemsWithObjectMatches.filter(
     (item) => item.availabilityType === CommandMenuItemAvailabilityType.GLOBAL,
   );
 
-  const recordScopedItems = frontComponentItems.filter((item) => {
-    if (!objectMatches(item)) return false;
-
-    return (
+  const recordScopedItems = frontComponentItemsWithObjectMatches.filter(
+    (item) =>
       item.availabilityType ===
-        CommandMenuItemAvailabilityType.RECORD_SELECTION &&
-      selectedRecordCount >= 1
-    );
-  });
+      CommandMenuItemAvailabilityType.RECORD_SELECTION,
+  );
 
-  const globalCommandMenuItems = globalItems.map((item, index) =>
+  const fallbackItems = frontComponentItemsWithObjectMatches.filter(
+    (item) =>
+      item.availabilityType === CommandMenuItemAvailabilityType.FALLBACK,
+  );
+
+  const globalCommandMenuItems = globalItems.map((item) =>
     buildCommandMenuItemFromFrontComponent({
       item,
       scope: CommandMenuItemScope.Global,
-      index,
       isPinned: !contextStoreIsPageInEditMode && item.isPinned,
       getIcon,
       openFrontComponentInSidePanel,
@@ -213,19 +208,39 @@ export const useCommandMenuItemFrontComponentActions = (
     }),
   );
 
-  const recordScopedCommandMenuItems = recordScopedItems.map((item, index) =>
+  const recordScopedCommandMenuItems = hasRecordSelection
+    ? recordScopedItems.map((item) =>
+        buildCommandMenuItemFromFrontComponent({
+          item,
+          scope: CommandMenuItemScope.RecordSelection,
+          isPinned: !contextStoreIsPageInEditMode && item.isPinned,
+          getIcon,
+          openFrontComponentInSidePanel,
+          mountHeadlessFrontComponent,
+          commandMenuContextApi,
+          mountContext,
+        }),
+      )
+    : [];
+
+  const fallbackCommandMenuItems = fallbackItems.map((item) =>
     buildCommandMenuItemFromFrontComponent({
       item,
-      scope: CommandMenuItemScope.RecordSelection,
-      index,
-      isPinned: !contextStoreIsPageInEditMode && item.isPinned,
+      type: CommandMenuItemType.Fallback,
+      scope: CommandMenuItemScope.Global,
+      isPinned: false,
       getIcon,
       openFrontComponentInSidePanel,
       mountHeadlessFrontComponent,
       commandMenuContextApi,
-      mountContext,
     }),
   );
 
-  return [...globalCommandMenuItems, ...recordScopedCommandMenuItems];
+  return [
+    ...globalCommandMenuItems,
+    ...recordScopedCommandMenuItems,
+    ...fallbackCommandMenuItems,
+  ]
+    .filter((item) => item.shouldBeRegistered())
+    .sort((a, b) => a.position - b.position);
 };
