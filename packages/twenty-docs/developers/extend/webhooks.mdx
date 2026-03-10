@@ -99,7 +99,11 @@ const expectedSignature = crypto
   .update(stringToSign)
   .digest("hex");
 
-const isValid = expectedSignature === req.headers["x-twenty-webhook-signature"];
+const receivedSignature = req.headers["x-twenty-webhook-signature"];
+const isValid = crypto.timingSafeEqual(
+  Buffer.from(expectedSignature, "hex"),
+  Buffer.from(receivedSignature, "hex")
+);
 ```
 
 ## Webhooks vs Workflows
