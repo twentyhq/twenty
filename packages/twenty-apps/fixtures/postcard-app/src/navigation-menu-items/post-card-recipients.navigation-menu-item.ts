@@ -1,0 +1,8 @@
+import { defineNavigationMenuItem } from 'twenty-sdk';
+import { ALL_POST_CARD_RECIPIENTS_VIEW_ID } from '../views/all-post-card-recipients.view';
+
+export default defineNavigationMenuItem({
+  universalIdentifier: 'c1a2b3c4-0003-4a7b-8c9d-0e1f2a3b4c5d',
+  position: 2,
+  viewUniversalIdentifier: ALL_POST_CARD_RECIPIENTS_VIEW_ID,
+});
