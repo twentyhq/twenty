@@ -23,9 +23,7 @@ export class CreateAppCommand {
   ): Promise<void> {
     try {
       const { appName, appDisplayName, appDirectory, appDescription } =
-        nonInteractive
-          ? this.getAppInfosNonInteractive(directory!)
-          : await this.getAppInfos(directory);
+        await this.getAppInfos(directory, nonInteractive);
 
       const exampleOptions = this.resolveExampleOptions(mode);
 
@@ -57,18 +55,23 @@ export class CreateAppCommand {
     }
   }
 
-  private async getAppInfos(directory?: string): Promise<{
+  private async getAppInfos(
+    directory?: string,
+    nonInteractive = false,
+  ): Promise<{
     appName: string;
     appDisplayName: string;
     appDescription: string;
     appDirectory: string;
   }> {
+    const shouldPrompt = !nonInteractive;
+
     const { name, displayName, description } = await inquirer.prompt([
       {
         type: 'input',
         name: 'name',
         message: 'Application name:',
-        when: () => !directory,
+        when: () => shouldPrompt && !directory,
         default: 'my-awesome-app',
         validate: (input) => {
           if (input.length === 0) return 'Application name is required';
@@ -79,14 +82,16 @@ export class CreateAppCommand {
         type: 'input',
         name: 'displayName',
         message: 'Application display name:',
-        default: (answers: any) => {
-          return convertToLabel(answers?.name ?? directory);
+        when: () => shouldPrompt,
+        default: (answers: { name?: string }) => {
+          return convertToLabel(answers?.name ?? directory ?? '');
         },
       },
       {
         type: 'input',
         name: 'description',
         message: 'Application description (optional):',
+        when: () => shouldPrompt,
         default: '',
       },
     ]);
@@ -95,29 +100,16 @@ export class CreateAppCommand {
 
     const appName = computedName.trim();
 
-    const appDisplayName = displayName.trim();
+    const appDisplayName =
+      displayName?.trim() ?? convertToLabel(appName);
 
-    const appDescription = description.trim();
+    const appDescription = description?.trim() ?? '';
 
     const appDirectory = directory
       ? path.join(CURRENT_EXECUTION_DIRECTORY, directory)
       : path.join(CURRENT_EXECUTION_DIRECTORY, kebabCase(appName));
 
     return { appName, appDisplayName, appDirectory, appDescription };
-  }
-
-  private getAppInfosNonInteractive(directory: string): {
-    appName: string;
-    appDisplayName: string;
-    appDescription: string;
-    appDirectory: string;
-  } {
-    const appName = directory.trim();
-    const appDisplayName = convertToLabel(appName);
-    const appDescription = '';
-    const appDirectory = path.join(CURRENT_EXECUTION_DIRECTORY, directory);
-
-    return { appName, appDisplayName, appDescription, appDirectory };
   }
 
   private resolveExampleOptions(mode: ScaffoldingMode): ExampleOptions {
