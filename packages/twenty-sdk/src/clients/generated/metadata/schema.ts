@@ -1790,7 +1790,7 @@ export interface CommandMenuItem {
     __typename: 'CommandMenuItem'
 }
 
-export type CommandMenuItemAvailabilityType = 'GLOBAL' | 'RECORD_SELECTION'
+export type CommandMenuItemAvailabilityType = 'GLOBAL' | 'RECORD_SELECTION' | 'FALLBACK'
 
 export interface AgentChatThread {
     id: Scalars['UUID']
@@ -8534,7 +8534,8 @@ export const enumLogicFunctionExecutionStatus = {
 
 export const enumCommandMenuItemAvailabilityType = {
    GLOBAL: 'GLOBAL' as const,
-   RECORD_SELECTION: 'RECORD_SELECTION' as const
+   RECORD_SELECTION: 'RECORD_SELECTION' as const,
+   FALLBACK: 'FALLBACK' as const
 }
 
 export const enumModelFamily = {
