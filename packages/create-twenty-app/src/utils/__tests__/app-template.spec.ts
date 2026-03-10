@@ -25,6 +25,7 @@ const ALL_EXAMPLES: ExampleOptions = {
   includeExampleView: true,
   includeExampleNavigationMenuItem: true,
   includeExampleSkill: true,
+  includeExampleAgent: true,
   includeExampleIntegrationTest: true,
 };
 
@@ -41,6 +42,7 @@ const NO_EXAMPLES: ExampleOptions = {
   includeExampleObject: false,
   includeExampleField: false,
   includeExampleSkill: false,
+  includeExampleAgent: false,
   includeExampleLogicFunction: false,
   includeExampleFrontComponent: false,
   includeExampleView: false,
@@ -476,6 +478,7 @@ describe('copyBaseApplicationProject', () => {
             includeExampleObject: false,
             includeExampleField: false,
             includeExampleSkill: false,
+            includeExampleAgent: false,
             includeExampleLogicFunction: false,
             includeExampleFrontComponent: true,
             includeExampleView: false,
@@ -513,6 +516,7 @@ describe('copyBaseApplicationProject', () => {
           exampleOptions: {
             includeExampleObject: false,
             includeExampleSkill: false,
+            includeExampleAgent: false,
             includeExampleField: false,
             includeExampleLogicFunction: true,
             includeExampleFrontComponent: false,
