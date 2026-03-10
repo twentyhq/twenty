@@ -41,7 +41,6 @@ import { type DateTimeFilter } from '@/types/RecordGqlOperationFilter';
 import {
   checkIfShouldComputeEmptinessFilter,
   checkIfShouldSkipFiltering,
-  CustomError,
   getFilterTypeFromFieldType,
   getNextPeriodStart,
   getPeriodStart,
@@ -130,10 +129,7 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
             },
           };
         default:
-          throw new CustomError(
-            `Unknown operand ${recordFilter.operand} for ${filterType} filter`,
-            'UNKNOWN_OPERAND_FOR_FILTER',
-          );
+          return;
       }
     case 'TS_VECTOR':
       switch (recordFilter.operand) {
