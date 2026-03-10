@@ -27,6 +27,7 @@ FROM common-deps AS twenty-server-build
 # Copy sourcecode after installing dependences to accelerate subsequents builds
 COPY ./packages/twenty-emails /app/packages/twenty-emails
 COPY ./packages/twenty-shared /app/packages/twenty-shared
+COPY ./packages/twenty-ui /app/packages/twenty-ui
 COPY ./packages/twenty-sdk /app/packages/twenty-sdk
 COPY ./packages/twenty-standard-application /app/packages/twenty-standard-application
 COPY ./packages/twenty-server /app/packages/twenty-server

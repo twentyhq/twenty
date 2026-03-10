@@ -188,6 +188,129 @@ describe('evaluateConditionalAvailabilityExpression', () => {
     });
   });
 
+  describe('empty array guard against vacuous truth', () => {
+    it('should return false for every() on empty selectedRecords', () => {
+      const context = buildContext({ selectedRecords: [] });
+
+      expect(
+        evaluateConditionalAvailabilityExpression(
+          'every(selectedRecords, "active")',
+          context,
+        ),
+      ).toBe(false);
+    });
+
+    it('should return false for everyDefined() on empty selectedRecords', () => {
+      const context = buildContext({ selectedRecords: [] });
+
+      expect(
+        evaluateConditionalAvailabilityExpression(
+          'everyDefined(selectedRecords, "name")',
+          context,
+        ),
+      ).toBe(false);
+    });
+
+    it('should return false for none() on empty selectedRecords', () => {
+      const context = buildContext({ selectedRecords: [] });
+
+      expect(
+        evaluateConditionalAvailabilityExpression(
+          'none(selectedRecords, "deletedAt")',
+          context,
+        ),
+      ).toBe(false);
+    });
+
+    it('should return false for noneDefined() on empty selectedRecords', () => {
+      const context = buildContext({ selectedRecords: [] });
+
+      expect(
+        evaluateConditionalAvailabilityExpression(
+          'noneDefined(selectedRecords, "deletedAt")',
+          context,
+        ),
+      ).toBe(false);
+    });
+
+    it('should return false for everyEquals() on empty selectedRecords', () => {
+      const context = buildContext({ selectedRecords: [] });
+
+      expect(
+        evaluateConditionalAvailabilityExpression(
+          'everyEquals(selectedRecords, "status", "DRAFT")',
+          context,
+        ),
+      ).toBe(false);
+    });
+
+    it('should return false for noneEquals() on empty selectedRecords', () => {
+      const context = buildContext({ selectedRecords: [] });
+
+      expect(
+        evaluateConditionalAvailabilityExpression(
+          'noneEquals(selectedRecords, "status", "ACTIVE")',
+          context,
+        ),
+      ).toBe(false);
+    });
+
+    it('should return false for includesEvery() on empty selectedRecords', () => {
+      const context = buildContext({ selectedRecords: [] });
+
+      expect(
+        evaluateConditionalAvailabilityExpression(
+          'includesEvery(selectedRecords, "statuses", "ACTIVE")',
+          context,
+        ),
+      ).toBe(false);
+    });
+
+    it('should return false for includesNone() on empty selectedRecords', () => {
+      const context = buildContext({ selectedRecords: [] });
+
+      expect(
+        evaluateConditionalAvailabilityExpression(
+          'includesNone(selectedRecords, "statuses", "ACTIVE")',
+          context,
+        ),
+      ).toBe(false);
+    });
+
+    it('should return false for some() on empty selectedRecords', () => {
+      const context = buildContext({ selectedRecords: [] });
+
+      expect(
+        evaluateConditionalAvailabilityExpression(
+          'some(selectedRecords, "active")',
+          context,
+        ),
+      ).toBe(false);
+    });
+
+    it('should return false for someDefined() on empty selectedRecords', () => {
+      const context = buildContext({ selectedRecords: [] });
+
+      expect(
+        evaluateConditionalAvailabilityExpression(
+          'someDefined(selectedRecords, "name")',
+          context,
+        ),
+      ).toBe(false);
+    });
+
+    it('should return false for includesSome() on empty selectedRecords', () => {
+      const context = buildContext({ selectedRecords: [] });
+
+      expect(
+        evaluateConditionalAvailabilityExpression(
+          'includesSome(selectedRecords, "statuses", "ACTIVE")',
+          context,
+        ),
+      ).toBe(false);
+    });
+  });
+
   describe('activateWorkflow expression regression', () => {
     const activateWorkflowExpression =
       'everyDefined(selectedRecords, "currentVersion.trigger") and everyDefined(selectedRecords, "currentVersion.steps") and every(selectedRecords, "currentVersion.steps.length") and (everyEquals(selectedRecords, "currentVersion.status", "DRAFT") or includesNone(selectedRecords, "statuses", "ACTIVE")) and noneDefined(selectedRecords, "deletedAt")';

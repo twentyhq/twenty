@@ -1,4 +1,9 @@
-import { isNonEmptyString, isObject, isString } from '@sniptt/guards';
+import {
+  isNonEmptyArray,
+  isNonEmptyString,
+  isObject,
+  isString,
+} from '@sniptt/guards';
 import { type EvaluationContext, Parser } from 'expr-eval';
 
 import { isDefined } from '../validation/isDefined';
@@ -43,7 +48,9 @@ const createArrayPropCheck = (
   predicate: (value: unknown) => boolean,
 ) => {
   return (array: unknown, prop: string) => {
-    if (!Array.isArray(array)) return false;
+    if (!isNonEmptyArray(array)) {
+      return false;
+    }
 
     return array[method]((item) =>
       predicate(safeGetNestedProperty(item, prop)),
@@ -56,7 +63,9 @@ const createArrayPropValueCheck = (
   predicate: (value: unknown, target: unknown) => boolean,
 ) => {
   return (array: unknown, prop: string, value: unknown) => {
-    if (!Array.isArray(array)) return false;
+    if (!isNonEmptyArray(array)) {
+      return false;
+    }
 
     return array[method]((item) =>
       predicate(safeGetNestedProperty(item, prop), value),
