@@ -28,9 +28,7 @@ const StyledVerticalListContainer = styled.div<{
 
 const StyledFieldsWidgetWrapper = styled.div<{
   variant: PageLayoutVerticalListViewerVariant;
-}>`
-
-`;
+}>``;
 
 type PageLayoutVerticalListViewerProps = {
   widgets: PageLayoutWidget[];
