@@ -34,7 +34,7 @@ export class LocalDriver implements LogicFunctionDriver {
     return join(LOGIC_FUNCTION_EXECUTOR_TMPDIR_FOLDER, checksum);
   };
 
-  async createLayerIfNotExist({
+  private async createLayerIfNotExist({
     flatApplication,
     applicationUniversalIdentifier,
   }: {
@@ -79,7 +79,7 @@ export class LocalDriver implements LogicFunctionDriver {
     env,
     timeoutMs = 900_000,
   }: LogicFunctionExecuteParams): Promise<LogicFunctionExecuteResult> {
-    await this.build({
+    await this.createLayerIfNotExist({
       flatApplication,
       applicationUniversalIdentifier,
     });

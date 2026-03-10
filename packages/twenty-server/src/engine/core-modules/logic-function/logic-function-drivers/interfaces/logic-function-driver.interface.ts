@@ -20,17 +20,6 @@ export type LogicFunctionExecuteResult = {
   error?: LogicFunctionExecuteError;
 };
 
-export type LogicFunctionCreateLayerParams = {
-  flatApplication: FlatApplication;
-  applicationUniversalIdentifier: string;
-};
-
-export type LogicFunctionBuildParams = {
-  flatLogicFunction: FlatLogicFunction;
-  flatApplication: FlatApplication;
-  applicationUniversalIdentifier: string;
-};
-
 export type LogicFunctionExecuteParams = {
   flatLogicFunction: FlatLogicFunction;
   flatApplication: FlatApplication;
@@ -42,8 +31,6 @@ export type LogicFunctionExecuteParams = {
 
 export interface LogicFunctionDriver {
   delete(flatLogicFunction: FlatLogicFunction): Promise<void>;
-  createLayerIfNotExist(params: LogicFunctionCreateLayerParams): Promise<void>;
-  build(params: LogicFunctionBuildParams): Promise<void>;
   execute(
     params: LogicFunctionExecuteParams,
   ): Promise<LogicFunctionExecuteResult>;

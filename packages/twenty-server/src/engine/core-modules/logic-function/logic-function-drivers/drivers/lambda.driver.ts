@@ -343,7 +343,7 @@ export class LambdaDriver implements LogicFunctionDriver {
     return { packageJson, yarnLock };
   }
 
-  async createLayerIfNotExist({
+  private async createLayerIfNotExist({
     flatApplication,
     applicationUniversalIdentifier,
   }: {
@@ -477,7 +477,7 @@ export class LambdaDriver implements LogicFunctionDriver {
     return false;
   }
 
-  async build({
+  private async build({
     flatLogicFunction,
     flatApplication,
     applicationUniversalIdentifier,
