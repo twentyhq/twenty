@@ -20,8 +20,6 @@ const StyledContainer = styled.div`
   justify-content: center;
   padding: 8px ${themeCssVariables.spacing[6]};
   width: calc(100% - ${themeCssVariables.spacing[12]});
-
-  width: 100%;
 `;
 
 const StyledTitleBar = styled.div`
