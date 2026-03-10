@@ -7,8 +7,8 @@ import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 const StyledSidePanelContainer = styled.div`
   display: flex;
   flex-direction: column;
-  width: 100%;
   padding: ${themeCssVariables.spacing[4]};
+  width: 100%;
 `;
 
 const StyledSkeletonLoader = () => {

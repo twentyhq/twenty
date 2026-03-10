@@ -16,6 +16,7 @@ import { getNavigationMenuItemBaseFile } from '@/cli/utilities/entity/entity-nav
 import { getObjectBaseFile } from '@/cli/utilities/entity/entity-object-template';
 import { getPageLayoutBaseFile } from '@/cli/utilities/entity/entity-page-layout-template';
 import { getRoleBaseFile } from '@/cli/utilities/entity/entity-role-template';
+import { getAgentBaseFile } from '@/cli/utilities/entity/entity-agent-template';
 import { getSkillBaseFile } from '@/cli/utilities/entity/entity-skill-template';
 import { getViewBaseFile } from '@/cli/utilities/entity/entity-view-template';
 import { ensureDir, pathExists } from '@/cli/utilities/file/fs-utils';
@@ -25,6 +26,7 @@ const APP_FOLDER = 'src';
 
 export class EntityAddCommand {
   private lastObjectUniversalIdentifier: string | undefined;
+  private lastNameFieldUniversalIdentifier: string | undefined;
 
   async execute(entityType?: SyncableEntity, path?: string): Promise<void> {
     try {
@@ -75,13 +77,16 @@ export class EntityAddCommand {
 
         const name = entityData.nameSingular;
         const objectUniversalIdentifier = v4();
+        const nameFieldUniversalIdentifier = v4();
 
         this.lastObjectUniversalIdentifier = objectUniversalIdentifier;
+        this.lastNameFieldUniversalIdentifier = nameFieldUniversalIdentifier;
 
         const file = getObjectBaseFile({
           data: entityData,
           name,
           universalIdentifier: objectUniversalIdentifier,
+          nameFieldUniversalIdentifier,
         });
 
         return { name, file };
@@ -134,6 +139,16 @@ export class EntityAddCommand {
         const name = await this.getEntityName(entity);
 
         const file = getSkillBaseFile({
+          name,
+        });
+
+        return { name, file };
+      }
+
+      case SyncableEntity.Agent: {
+        const name = await this.getEntityName(entity);
+
+        const file = getAgentBaseFile({
           name,
         });
 
@@ -202,6 +217,17 @@ export class EntityAddCommand {
       name: `all-${kebabCase(objectName)}`,
       universalIdentifier: viewUniversalIdentifier,
       objectUniversalIdentifier: this.lastObjectUniversalIdentifier,
+      fields: this.lastNameFieldUniversalIdentifier
+        ? [
+            {
+              fieldMetadataUniversalIdentifier:
+                this.lastNameFieldUniversalIdentifier,
+              position: 0,
+              isVisible: true,
+              size: 200,
+            },
+          ]
+        : [],
     });
 
     const viewFolderPath = customPath

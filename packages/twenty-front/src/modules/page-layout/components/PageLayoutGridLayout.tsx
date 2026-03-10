@@ -57,10 +57,10 @@ const StyledGridContainer = styled.div`
   box-sizing: border-box;
   flex: 1;
   min-height: 100%;
-  position: relative;
   padding: ${themeCssVariables.spacing[2]};
-  width: 100%;
+  position: relative;
   user-select: none;
+  width: 100%;
 
   .react-grid-placeholder {
     background: ${themeCssVariables.color.blue7} !important;

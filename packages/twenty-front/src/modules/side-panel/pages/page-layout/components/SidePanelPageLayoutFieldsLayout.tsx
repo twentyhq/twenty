@@ -25,8 +25,8 @@ const StyledContainer = styled.div`
   flex: 1;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[3]};
-  padding: ${themeCssVariables.spacing[2]};
   overflow-y: auto;
+  padding: ${themeCssVariables.spacing[2]};
 `;
 
 export const SidePanelPageLayoutFieldsLayout = () => {

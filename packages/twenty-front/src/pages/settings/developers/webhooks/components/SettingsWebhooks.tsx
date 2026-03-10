@@ -23,8 +23,8 @@ const StyledButtonContainer = styled.div`
 const StyledContainer = styled.div<{ isMobile: boolean }>`
   display: flex;
   flex-direction: column;
-  overflow: hidden;
   gap: ${themeCssVariables.spacing[2]};
+  overflow: hidden;
 `;
 
 export const SettingsWebhooks = () => {

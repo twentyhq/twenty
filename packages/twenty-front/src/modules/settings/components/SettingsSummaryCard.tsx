@@ -13,8 +13,8 @@ const StyledCardContentContainer = styled.div`
     align-items: center;
     display: flex;
     gap: ${themeCssVariables.spacing[2]};
-    padding: ${themeCssVariables.spacing[2]};
     min-height: ${themeCssVariables.spacing[6]};
+    padding: ${themeCssVariables.spacing[2]};
   }
 `;
 

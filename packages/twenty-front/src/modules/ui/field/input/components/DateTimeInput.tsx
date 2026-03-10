@@ -2,6 +2,7 @@ import { useCallback, useRef, useState } from 'react';
 
 import { useRegisterInputEvents } from '@/object-record/record-field/ui/meta-types/input/hooks/useRegisterInputEvents';
 import {
+  DATE_TIME_PICKER_MONTH_YEAR_PANEL_DROPDOWN_ID,
   DateTimePicker,
   MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
   MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
@@ -65,10 +66,12 @@ export const DateTimeInput = ({
 
   const { closeDropdown: closeDropdownMonthSelect } = useCloseDropdown();
   const { closeDropdown: closeDropdownYearSelect } = useCloseDropdown();
+  const { closeDropdown: closeMonthYearPanel } = useCloseDropdown();
 
   const handleEnter = () => {
     closeDropdownYearSelect(MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID);
     closeDropdownMonthSelect(MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID);
+    closeMonthYearPanel(DATE_TIME_PICKER_MONTH_YEAR_PANEL_DROPDOWN_ID);
 
     onEnter(internalValue);
   };
@@ -76,6 +79,7 @@ export const DateTimeInput = ({
   const handleEscape = () => {
     closeDropdownYearSelect(MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID);
     closeDropdownMonthSelect(MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID);
+    closeMonthYearPanel(DATE_TIME_PICKER_MONTH_YEAR_PANEL_DROPDOWN_ID);
 
     onEscape(internalValue);
   };
@@ -87,6 +91,7 @@ export const DateTimeInput = ({
       if (currentFocusId === instanceId) {
         closeDropdownYearSelect(MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID);
         closeDropdownMonthSelect(MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID);
+        closeMonthYearPanel(DATE_TIME_PICKER_MONTH_YEAR_PANEL_DROPDOWN_ID);
         onClickOutside(event, internalValue);
       }
     },
@@ -94,6 +99,7 @@ export const DateTimeInput = ({
       instanceId,
       closeDropdownYearSelect,
       closeDropdownMonthSelect,
+      closeMonthYearPanel,
       onClickOutside,
       internalValue,
       store,

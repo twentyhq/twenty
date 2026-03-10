@@ -13,4 +13,9 @@ export class UpdatePageLayoutTabInput {
   @IsNumber()
   @IsOptional()
   position?: number;
+
+  @Field(() => String, { nullable: true })
+  @IsString()
+  @IsOptional()
+  icon?: string | null;
 }

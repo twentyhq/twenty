@@ -7,11 +7,6 @@ import { getMonthSelectOptions } from '@/ui/input/components/internal/date/utils
 import { ClickOutsideListenerContext } from '@/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
 import { IconChevronLeft, IconChevronRight } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
-import {
-  MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
-  MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
-} from './DateTimePicker';
-
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { Temporal } from 'temporal-polyfill';
@@ -19,21 +14,25 @@ import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledCustomDatePickerHeader = styled.div`
-  align-items: center;
-  display: flex;
-  justify-content: flex-end;
-  padding-left: ${themeCssVariables.spacing[2]};
-  padding-right: ${themeCssVariables.spacing[2]};
-  padding-top: ${themeCssVariables.spacing[2]};
-
-  gap: ${themeCssVariables.spacing[1]};
-`;
-
-const years = Array.from(
+const MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID =
+  'date-picker-month-and-year-dropdown-month-select';
+const MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID =
+  'date-picker-month-and-year-dropdown-year-select';
+const YEARS_SELECT_OPTIONS = Array.from(
   { length: 200 },
   (_, i) => new Date().getFullYear() + 50 - i,
 ).map((year) => ({ label: year.toString(), value: year }));
+
+const StyledCustomDatePickerHeader = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${themeCssVariables.spacing[1]};
+  justify-content: flex-end;
+  padding-left: ${themeCssVariables.spacing[2]};
+  padding-right: ${themeCssVariables.spacing[2]};
+
+  padding-top: ${themeCssVariables.spacing[2]};
+`;
 
 type DatePickerHeaderProps = {
   date: string | null;
@@ -89,7 +88,7 @@ export const DatePickerHeader = ({
             dropdownId={MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID}
             onChange={onChangeYear}
             value={dateParsed?.year}
-            options={years}
+            options={YEARS_SELECT_OPTIONS}
             fullWidth
           />
         </ClickOutsideListenerContext.Provider>

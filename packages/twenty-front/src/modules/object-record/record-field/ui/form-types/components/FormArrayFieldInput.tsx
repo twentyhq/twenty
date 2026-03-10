@@ -56,13 +56,13 @@ const StyledDisplayModeContainer = styled.div`
   align-items: center;
   background: transparent;
   border: none;
+  box-sizing: border-box;
+  cursor: pointer;
   display: flex;
   font-family: inherit;
+  height: 30px;
   padding-inline: ${themeCssVariables.spacing[2]};
   width: 100%;
-  height: 30px;
-  cursor: pointer;
-  box-sizing: border-box;
 
   &:hover,
   &[data-open='true'] {

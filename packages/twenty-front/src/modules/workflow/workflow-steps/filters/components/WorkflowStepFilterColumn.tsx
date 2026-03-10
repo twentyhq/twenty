@@ -22,8 +22,8 @@ type WorkflowStepFilterColumnProps = {
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
   gap: ${themeCssVariables.spacing[1]};
+  justify-content: space-between;
 `;
 
 export const WorkflowStepFilterColumn = ({

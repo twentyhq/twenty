@@ -13,9 +13,9 @@ const StyledCoverContainer = styled.div`
   display: flex;
   height: 153px;
   justify-content: center;
-  position: relative;
-  margin-top: ${themeCssVariables.spacing[4]};
   margin-bottom: ${themeCssVariables.spacing[4]};
+  margin-top: ${themeCssVariables.spacing[4]};
+  position: relative;
 `;
 
 type StyledSettingsApiPlaygroundCoverImageProps = {

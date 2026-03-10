@@ -14,8 +14,8 @@ import { IconButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
-  display: flex;
   align-items: center;
+  display: flex;
   justify-content: space-between;
   padding-block: ${themeCssVariables.spacing[2]};
   padding-inline: ${themeCssVariables.spacing[3]};

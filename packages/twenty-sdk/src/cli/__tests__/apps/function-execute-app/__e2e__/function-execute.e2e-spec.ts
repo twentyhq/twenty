@@ -18,9 +18,8 @@ describe('functionExecute E2E', () => {
       );
     }
 
-    // Although appBuild uploads files before syncing the manifest, the server
-    // may need a moment to make them readable by the execution engine.
-    // Retry a dummy execution until the handler file becomes available.
+    // The server may need a moment to make uploaded files readable
+    // by the execution engine. Retry until the handler becomes available.
     await vi.waitFor(
       async () => {
         const result = await functionExecute({

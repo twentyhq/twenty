@@ -23,8 +23,8 @@ const StyledCreateObjectOverrideSectionContainer = styled.div`
     border-top: 1px solid ${themeCssVariables.border.color.light};
     display: flex;
     justify-content: flex-end;
-    padding-top: ${themeCssVariables.spacing[2]};
     padding-bottom: ${themeCssVariables.spacing[2]};
+    padding-top: ${themeCssVariables.spacing[2]};
   }
 `;
 

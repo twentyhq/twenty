@@ -7,9 +7,9 @@ import { useContext } from 'react';
 import { Avatar } from 'twenty-ui/display';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 const StyledIconWrapper = styled.div<{ withIconBackground?: boolean }>`
+  align-items: center;
   background: ${({ withIconBackground }) =>
     withIconBackground ? themeCssVariables.background.primary : 'unset'};
-  border-radius: ${themeCssVariables.border.radius.sm};
   border: 1px solid
     ${({ withIconBackground }) =>
       withIconBackground
@@ -18,8 +18,8 @@ const StyledIconWrapper = styled.div<{ withIconBackground?: boolean }>`
   &:not(:first-of-type) {
     margin-left: -${themeCssVariables.spacing[1]};
   }
+  border-radius: ${themeCssVariables.border.radius.sm};
   display: flex;
-  align-items: center;
   justify-content: center;
 `;
 

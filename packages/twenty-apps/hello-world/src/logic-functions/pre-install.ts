@@ -5,7 +5,7 @@ const handler = async (payload: InstallLogicFunctionPayload): Promise<void> => {
 };
 
 export default definePreInstallLogicFunction({
-  universalIdentifier: '68d005d4-1110-4fa0-8227-71e06d6b9f30',
+  universalIdentifier: '1272ffdb-8e2f-492c-ab37-66c2b97e9c23',
   name: 'pre-install',
   description: 'Runs before installation to prepare the application.',
   timeoutSeconds: 300,

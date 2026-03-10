@@ -26,6 +26,7 @@ const StyledCard = styled.div<{ isSingleNote: boolean }>`
 const StyledCardDetailsContainer = styled.div`
   align-items: flex-start;
   align-self: stretch;
+  box-sizing: border-box;
   cursor: pointer;
   display: flex;
   flex-direction: column;
@@ -34,7 +35,6 @@ const StyledCardDetailsContainer = styled.div`
   justify-content: start;
   padding: ${themeCssVariables.spacing[4]};
   width: calc(100% - ${themeCssVariables.spacing[8]});
-  box-sizing: border-box;
 `;
 
 const StyledNoteTitle = styled.div`

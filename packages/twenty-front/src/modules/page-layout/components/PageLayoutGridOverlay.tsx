@@ -17,18 +17,18 @@ const StyledGridOverlay = styled.div<{
   isDragSelecting?: boolean;
   breakpoint: PageLayoutBreakpoint;
 }>`
-  position: absolute;
-  top: ${themeCssVariables.spacing[2]};
-  left: ${themeCssVariables.spacing[2]};
-  right: ${themeCssVariables.spacing[2]};
   bottom: ${themeCssVariables.spacing[2]};
   display: grid;
+  gap: ${themeCssVariables.spacing[2]};
+  grid-auto-rows: 55px;
   grid-template-columns: ${({ breakpoint }) =>
     breakpoint === 'mobile' ? '1fr' : 'repeat(12, 1fr)'};
-  grid-auto-rows: 55px;
-  gap: ${themeCssVariables.spacing[2]};
+  left: ${themeCssVariables.spacing[2]};
   pointer-events: ${({ isDragSelecting }) =>
     isDragSelecting ? 'auto' : 'none'};
+  position: absolute;
+  right: ${themeCssVariables.spacing[2]};
+  top: ${themeCssVariables.spacing[2]};
   z-index: ${PAGE_LAYOUT_GRID_OVERLAY_Z_INDEX};
 `;
 

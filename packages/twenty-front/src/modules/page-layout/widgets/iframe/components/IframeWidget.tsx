@@ -9,45 +9,45 @@ import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div<{ $isEditMode: boolean }>`
-  box-sizing: border-box;
-  border-radius: ${themeCssVariables.border.radius.md};
   background: ${themeCssVariables.background.primary};
+  border-radius: ${themeCssVariables.border.radius.md};
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   height: 100%;
   overflow: hidden;
+  pointer-events: ${({ $isEditMode }) => ($isEditMode ? 'none' : 'auto')};
   position: relative;
   width: 100%;
-  pointer-events: ${({ $isEditMode }) => ($isEditMode ? 'none' : 'auto')};
 `;
 
 const StyledIframe = styled.iframe<{ $isEditMode: boolean }>`
   border: none;
   flex: 1;
   height: 100%;
-  width: 100%;
   pointer-events: ${({ $isEditMode }) => ($isEditMode ? 'none' : 'auto')};
+  width: 100%;
 `;
 
 const StyledLoadingContainer = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  padding-top: ${themeCssVariables.spacing[2]};
-  padding-left: ${themeCssVariables.spacing[2]};
   background: ${themeCssVariables.background.primary};
+  bottom: 0;
+  left: 0;
+  padding-left: ${themeCssVariables.spacing[2]};
+  padding-top: ${themeCssVariables.spacing[2]};
   pointer-events: none;
+  position: absolute;
+  right: 0;
+  top: 0;
   z-index: 1;
 `;
 
 const StyledErrorContainer = styled.div`
+  align-items: center;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
   height: 100%;
+  justify-content: center;
   padding: ${themeCssVariables.spacing[4]};
   text-align: center;
 `;

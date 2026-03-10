@@ -1,4 +1,4 @@
-import { CmdEnterActionButton } from '@/action-menu/components/CmdEnterActionButton';
+import { WorkflowStepCmdEnterButton } from '@/workflow/workflow-steps/components/WorkflowStepCmdEnterButton';
 import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
 import { FormFieldInput } from '@/object-record/record-field/ui/components/FormFieldInput';
 import { FormSingleRecordPicker } from '@/object-record/record-field/ui/form-types/components/FormSingleRecordPicker';
@@ -183,7 +183,7 @@ export const WorkflowEditActionFormFiller = ({
       {!actionOptions.readonly && (
         <SidePanelFooter
           actions={[
-            <CmdEnterActionButton
+            <WorkflowStepCmdEnterButton
               title={t`Submit`}
               onClick={onSubmit}
               disabled={!canSubmit}

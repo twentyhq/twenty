@@ -33,9 +33,9 @@ import {
 } from './SettingsToolTableRow';
 
 const StyledSearchAndFilterContainer = styled.div`
+  align-items: center;
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
-  align-items: center;
   padding-bottom: ${themeCssVariables.spacing[2]};
 `;
 
@@ -179,6 +179,7 @@ export const SettingsToolsTable = () => {
               placeholder={t`Search a custom tool...`}
               value={customSearchTerm}
               onChange={setCustomSearchTerm}
+              fullWidth
             />
           </StyledSearchInputContainer>
         </StyledSearchAndFilterContainer>
@@ -236,6 +237,7 @@ export const SettingsToolsTable = () => {
               placeholder={t`Search a built-in tool...`}
               value={builtInSearchTerm}
               onChange={setBuiltInSearchTerm}
+              fullWidth
             />
           </StyledSearchInputContainer>
         </StyledSearchAndFilterContainer>

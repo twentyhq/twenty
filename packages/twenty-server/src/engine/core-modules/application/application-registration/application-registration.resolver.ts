@@ -3,37 +3,41 @@ import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import GraphQLUpload from 'graphql-upload/GraphQLUpload.mjs';
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { FeatureFlagKey } from 'twenty-shared/types';
+import { FeatureFlagKey, FileFolder } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import type { FileUpload } from 'graphql-upload/processRequest.mjs';
 
+import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
+import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.entity';
+import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
+import { CreateApplicationRegistrationVariableInput } from 'src/engine/core-modules/application/application-registration-variable/dtos/create-application-registration-variable.input';
+import { UpdateApplicationRegistrationVariableInput } from 'src/engine/core-modules/application/application-registration-variable/dtos/update-application-registration-variable.input';
 import { ApplicationRegistrationExceptionFilter } from 'src/engine/core-modules/application/application-registration/application-registration-exception-filter';
-import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration/application-registration-variable.entity';
-import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration/application-registration-variable.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
-import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
-import {
-  AppTarballUploadService,
-  MAX_TARBALL_UPLOAD_SIZE_BYTES,
-} from 'src/engine/core-modules/application/application-registration/services/app-tarball-upload.service';
-import { ApplicationRegistrationStatsDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-stats.dto';
-import { CreateApplicationRegistrationInput } from 'src/engine/core-modules/application/application-registration/dtos/create-application-registration.input';
-import { CreateApplicationRegistrationDTO } from 'src/engine/core-modules/application/application-registration/dtos/create-application-registration.dto';
-import { PublicApplicationRegistrationDTO } from 'src/engine/core-modules/application/application-registration/dtos/public-application-registration.dto';
-import { CreateApplicationRegistrationVariableInput } from 'src/engine/core-modules/application/application-registration/dtos/create-application-registration-variable.input';
-import { RotateClientSecretDTO } from 'src/engine/core-modules/application/application-registration/dtos/rotate-client-secret.dto';
-import { UpdateApplicationRegistrationInput } from 'src/engine/core-modules/application/application-registration/dtos/update-application-registration.input';
-import { UpdateApplicationRegistrationVariableInput } from 'src/engine/core-modules/application/application-registration/dtos/update-application-registration-variable.input';
 import {
   ApplicationRegistrationException,
   ApplicationRegistrationExceptionCode,
 } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
+import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
+import {
+  ApplicationTarballService,
+  MAX_TARBALL_UPLOAD_SIZE_BYTES,
+} from 'src/engine/core-modules/application/application-registration/application-tarball.service';
+import { ApplicationRegistrationStatsDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-stats.dto';
+import { CreateApplicationRegistrationDTO } from 'src/engine/core-modules/application/application-registration/dtos/create-application-registration.dto';
+import { CreateApplicationRegistrationInput } from 'src/engine/core-modules/application/application-registration/dtos/create-application-registration.input';
+import { PublicApplicationRegistrationDTO } from 'src/engine/core-modules/application/application-registration/dtos/public-application-registration.dto';
+import { RotateClientSecretDTO } from 'src/engine/core-modules/application/application-registration/dtos/rotate-client-secret.dto';
+import { TransferApplicationRegistrationOwnershipInput } from 'src/engine/core-modules/application/application-registration/dtos/transfer-application-registration-ownership.input';
+import { UpdateApplicationRegistrationInput } from 'src/engine/core-modules/application/application-registration/dtos/update-application-registration.input';
+import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
+import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import {
@@ -57,7 +61,8 @@ export class ApplicationRegistrationResolver {
   constructor(
     private readonly applicationRegistrationService: ApplicationRegistrationService,
     private readonly applicationRegistrationVariableService: ApplicationRegistrationVariableService,
-    private readonly appTarballUploadService: AppTarballUploadService,
+    private readonly applicationTarballService: ApplicationTarballService,
+    private readonly fileUrlService: FileUrlService,
   ) {}
 
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
@@ -279,10 +284,62 @@ export class ApplicationRegistrationResolver {
       );
     }
 
-    return this.appTarballUploadService.uploadTarball({
+    return this.applicationTarballService.uploadTarball({
       tarballBuffer,
       universalIdentifier,
       ownerWorkspaceId: workspaceId,
+    });
+  }
+
+  @UseGuards(
+    WorkspaceAuthGuard,
+    FeatureFlagGuard,
+    SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
+  )
+  @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)
+  @Query(() => String, { nullable: true })
+  async applicationRegistrationTarballUrl(
+    @Args('id') id: string,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ): Promise<string | null> {
+    const registration = await this.applicationRegistrationService.findOneById(
+      id,
+      workspaceId,
+    );
+
+    if (
+      registration.sourceType !== ApplicationRegistrationSourceType.TARBALL ||
+      !isDefined(registration.tarballFileId)
+    ) {
+      return null;
+    }
+
+    return this.fileUrlService.signFileByIdUrl({
+      fileId: registration.tarballFileId,
+      workspaceId,
+      fileFolder: FileFolder.AppTarball,
+    });
+  }
+
+  @UseGuards(
+    WorkspaceAuthGuard,
+    FeatureFlagGuard,
+    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+  )
+  @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)
+  @Mutation(() => ApplicationRegistrationEntity)
+  async transferApplicationRegistrationOwnership(
+    @Args()
+    {
+      applicationRegistrationId,
+      targetWorkspaceSubdomain,
+    }: TransferApplicationRegistrationOwnershipInput,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ): Promise<ApplicationRegistrationEntity> {
+    return this.applicationRegistrationService.transferOwnership({
+      applicationRegistrationId,
+      targetWorkspaceSubdomain,
+      currentOwnerWorkspaceId: workspaceId,
     });
   }
 }

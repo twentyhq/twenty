@@ -6,6 +6,7 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
     title
     type
     objectMetadataId
+    isOverridden
     createdAt
     updatedAt
     deletedAt
@@ -166,6 +167,10 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
       ... on FieldsConfiguration {
         configurationType
         viewId
+        newFieldDefaultConfiguration {
+          isVisible
+          viewFieldGroupId
+        }
       }
       ... on FilesConfiguration {
         configurationType

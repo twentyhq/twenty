@@ -1,5 +1,8 @@
-import { createOneApplication } from 'test/integration/metadata/suites/application/utils/create-one-application.util';
+import crypto from 'crypto';
+
 import { uploadApplicationFile } from 'test/integration/metadata/suites/application/utils/upload-application-file.util';
+
+const TEST_WORKSPACE_ID = '20202020-1c25-4d02-bf25-6aeccf7ea419';
 
 export const setupApplicationForSync = async ({
   applicationUniversalIdentifier,
@@ -12,16 +15,46 @@ export const setupApplicationForSync = async ({
   description: string;
   sourcePath: string;
 }) => {
-  await createOneApplication({
-    universalIdentifier: applicationUniversalIdentifier,
-    name,
-    description,
-    version: '1.0.0',
-    sourcePath,
-    expectToFail: false,
-  });
+  const registrationId = crypto.randomUUID();
+  const applicationId = crypto.randomUUID();
+  const oAuthClientId = crypto.randomUUID();
 
-  // File upload uses multipart which requires real timers
+  await globalThis.testDataSource.query(
+    `INSERT INTO core."applicationRegistration"
+      (id, "universalIdentifier", name, description, "oAuthClientId",
+       "oAuthRedirectUris", "oAuthScopes", "workspaceId", "sourceType")
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+    [
+      registrationId,
+      applicationUniversalIdentifier,
+      name,
+      description,
+      oAuthClientId,
+      [],
+      [],
+      TEST_WORKSPACE_ID,
+      'local',
+    ],
+  );
+
+  await globalThis.testDataSource.query(
+    `INSERT INTO core."application"
+      (id, "universalIdentifier", name, description, version, "sourcePath",
+       "sourceType", "workspaceId", "applicationRegistrationId")
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+    [
+      applicationId,
+      applicationUniversalIdentifier,
+      name,
+      description,
+      '1.0.0',
+      sourcePath,
+      'local',
+      TEST_WORKSPACE_ID,
+      registrationId,
+    ],
+  );
+
   jest.useRealTimers();
 
   const packageJson = JSON.stringify({

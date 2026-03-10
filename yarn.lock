@@ -4090,6 +4090,76 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@dnd-kit/abstract@npm:^0.3.2":
+  version: 0.3.2
+  resolution: "@dnd-kit/abstract@npm:0.3.2"
+  dependencies:
+    "@dnd-kit/geometry": "npm:^0.3.2"
+    "@dnd-kit/state": "npm:^0.3.2"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/b4443f867576718791a57f10a5a422d06273753f4ef5b1025bda05c94aefee9928fbb8b845a5ceb2f481424fbc6c2c67fb7a2acc1f54a4d336a12b627bb53fb5
+  languageName: node
+  linkType: hard
+
+"@dnd-kit/collision@npm:^0.3.2":
+  version: 0.3.2
+  resolution: "@dnd-kit/collision@npm:0.3.2"
+  dependencies:
+    "@dnd-kit/abstract": "npm:^0.3.2"
+    "@dnd-kit/geometry": "npm:^0.3.2"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/dde6c6c3b692460402f3b60aaf45d6f13dd329bfdce825edd31a82b2193c46a032ea77dd96fc9342bd04cb0069dec1a88ae383086fb2979da317684cf0ea6687
+  languageName: node
+  linkType: hard
+
+"@dnd-kit/dom@npm:^0.3.2":
+  version: 0.3.2
+  resolution: "@dnd-kit/dom@npm:0.3.2"
+  dependencies:
+    "@dnd-kit/abstract": "npm:^0.3.2"
+    "@dnd-kit/collision": "npm:^0.3.2"
+    "@dnd-kit/geometry": "npm:^0.3.2"
+    "@dnd-kit/state": "npm:^0.3.2"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/4e759457b8bf8e76452574d5ef80dd3868e03d7b72ea6fac7c63a8f5c86ddc182e66300c6c46b8427159fa91becaa9039d980a1cc11f9a68f1dca54d2a9b1c50
+  languageName: node
+  linkType: hard
+
+"@dnd-kit/geometry@npm:^0.3.2":
+  version: 0.3.2
+  resolution: "@dnd-kit/geometry@npm:0.3.2"
+  dependencies:
+    "@dnd-kit/state": "npm:^0.3.2"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/eed63886251a3a81ceebb20b35538e274d357fc65015697285daa9503fa154b3525bee3159cc864a496c926f22c124b708335812416185134553baf62c266cea
+  languageName: node
+  linkType: hard
+
+"@dnd-kit/react@npm:^0.3.2":
+  version: 0.3.2
+  resolution: "@dnd-kit/react@npm:0.3.2"
+  dependencies:
+    "@dnd-kit/abstract": "npm:^0.3.2"
+    "@dnd-kit/dom": "npm:^0.3.2"
+    "@dnd-kit/state": "npm:^0.3.2"
+    tslib: "npm:^2.6.2"
+  peerDependencies:
+    react: ^18.0.0 || ^19.0.0
+    react-dom: ^18.0.0 || ^19.0.0
+  checksum: 10c0/92a5b2f4005d9684a2a86efcfc56898f8e98a045dea85862858afb6406b08ba559e52dc1b151777d50577c7cb1aa040bf98c8410df7fda11862ebe128a68fd10
+  languageName: node
+  linkType: hard
+
+"@dnd-kit/state@npm:^0.3.2":
+  version: 0.3.2
+  resolution: "@dnd-kit/state@npm:0.3.2"
+  dependencies:
+    "@preact/signals-core": "npm:^1.10.0"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/9fcbb8a1e7924bfb5eaeb65a34fcd65bb37f739a85eaa303ae3562a1ef9aae4156c60baf397e4923cdb038b908ad18758fb42fcd6cde1ca45dace26d052c96fa
+  languageName: node
+  linkType: hard
+
 "@docsearch/css@npm:3.6.2":
   version: 3.6.2
   resolution: "@docsearch/css@npm:3.6.2"
@@ -16288,6 +16358,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@preact/signals-core@npm:^1.10.0":
+  version: 1.13.0
+  resolution: "@preact/signals-core@npm:1.13.0"
+  checksum: 10c0/25f536b90f5dbd116e037a27b51f5ca69914a957b5fa3c1d8af2857d145257fdb106e86cb6e1d5d22bc6feb1215d4448bf208482d2349f832720548bc788ca08
+  languageName: node
+  linkType: hard
+
 "@preact/signals-core@npm:^1.8.0":
   version: 1.12.2
   resolution: "@preact/signals-core@npm:1.12.2"
@@ -22953,6 +23030,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@trysound/sax@npm:0.2.0":
+  version: 0.2.0
+  resolution: "@trysound/sax@npm:0.2.0"
+  checksum: 10c0/44907308549ce775a41c38a815f747009ac45929a45d642b836aa6b0a536e4978d30b8d7d680bbd116e9dd73b7dbe2ef0d1369dcfc2d09e83ba381e485ecbe12
+  languageName: node
+  linkType: hard
+
 "@ts-gql/tag@npm:^0.7.3":
   version: 0.7.3
   resolution: "@ts-gql/tag@npm:0.7.3"
@@ -29565,7 +29649,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"brace-expansion@npm:^2.0.1, brace-expansion@npm:^2.0.2":
+"brace-expansion@npm:^2.0.1":
   version: 2.0.2
   resolution: "brace-expansion@npm:2.0.2"
   dependencies:
@@ -45030,7 +45114,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"minimatch@npm:10.2.4, minimatch@npm:^10.1.1, minimatch@npm:^10.2.2":
+"minimatch@npm:10.2.4, minimatch@npm:^10.2.2":
   version: 10.2.4
   resolution: "minimatch@npm:10.2.4"
   dependencies:
@@ -45039,7 +45123,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"minimatch@npm:3.1.2":
+"minimatch@npm:3.1.2, minimatch@npm:^3.0.2, minimatch@npm:^3.0.4, minimatch@npm:^3.1.1, minimatch@npm:^3.1.2":
   version: 3.1.2
   resolution: "minimatch@npm:3.1.2"
   dependencies:
@@ -45066,48 +45150,48 @@ __metadata:
   languageName: node
   linkType: hard
 
-"minimatch@npm:^3.0.2, minimatch@npm:^3.0.4, minimatch@npm:^3.1.1, minimatch@npm:^3.1.2":
-  version: 3.1.5
-  resolution: "minimatch@npm:3.1.5"
+"minimatch@npm:^10.1.1":
+  version: 10.1.1
+  resolution: "minimatch@npm:10.1.1"
   dependencies:
-    brace-expansion: "npm:^1.1.7"
-  checksum: 10c0/2ecbdc0d33f07bddb0315a8b5afbcb761307a8778b48f0b312418ccbced99f104a2d17d8aca7573433c70e8ccd1c56823a441897a45e384ea76ef401a26ace70
+    "@isaacs/brace-expansion": "npm:^5.0.0"
+  checksum: 10c0/c85d44821c71973d636091fddbfbffe62370f5ee3caf0241c5b60c18cd289e916200acb2361b7e987558cd06896d153e25d505db9fc1e43e6b4b6752e2702902
   languageName: node
   linkType: hard
 
 "minimatch@npm:^5.0.1, minimatch@npm:^5.1.0":
-  version: 5.1.9
-  resolution: "minimatch@npm:5.1.9"
+  version: 5.1.6
+  resolution: "minimatch@npm:5.1.6"
   dependencies:
     brace-expansion: "npm:^2.0.1"
-  checksum: 10c0/4202718683815a7288b13e470160a4f9560cf392adef4f453927505817e01ef6b3476ecde13cfcaed17e7326dd3b69ad44eb2daeb19a217c5500f9277893f1d6
+  checksum: 10c0/3defdfd230914f22a8da203747c42ee3c405c39d4d37ffda284dac5e45b7e1f6c49aa8be606509002898e73091ff2a3bbfc59c2c6c71d4660609f63aa92f98e3
   languageName: node
   linkType: hard
 
 "minimatch@npm:^7.2.0":
-  version: 7.4.9
-  resolution: "minimatch@npm:7.4.9"
+  version: 7.4.6
+  resolution: "minimatch@npm:7.4.6"
   dependencies:
-    brace-expansion: "npm:^2.0.2"
-  checksum: 10c0/8d5406a9697edb9b7ea02697d58cabcb3d3a9a4a02caa1cf57b9ab5ae22c78b2945600661a78f91d1545f77521f97f3cb5f8cb066e58356a121b50e4e60ccdbe
+    brace-expansion: "npm:^2.0.1"
+  checksum: 10c0/e587bf3d90542555a3d58aca94c549b72d58b0a66545dd00eef808d0d66e5d9a163d3084da7f874e83ca8cc47e91c670e6c6f6593a3e7bb27fcc0e6512e87c67
   languageName: node
   linkType: hard
 
 "minimatch@npm:^8.0.2":
-  version: 8.0.7
-  resolution: "minimatch@npm:8.0.7"
+  version: 8.0.4
+  resolution: "minimatch@npm:8.0.4"
   dependencies:
     brace-expansion: "npm:^2.0.1"
-  checksum: 10c0/46d9dee24174f8a9eadec97ba36cba2e63f1fff8b36324e1825229bd9307ffee7ffd2f5a2749b29ba796eda877cd9c1687f9d1b399a10b290346561f2a8145f8
+  checksum: 10c0/a0a394c356dd5b4cb7f821720841a82fa6f07c9c562c5b716909d1b6ec5e56a7e4c4b5029da26dd256b7d2b3a3f38cbf9ddd8680e887b9b5282b09c05501c1ca
   languageName: node
   linkType: hard
 
 "minimatch@npm:^9.0.0, minimatch@npm:^9.0.3, minimatch@npm:^9.0.4, minimatch@npm:^9.0.5":
-  version: 9.0.9
-  resolution: "minimatch@npm:9.0.9"
+  version: 9.0.5
+  resolution: "minimatch@npm:9.0.5"
   dependencies:
-    brace-expansion: "npm:^2.0.2"
-  checksum: 10c0/0b6a58530dbb00361745aa6c8cffaba4c90f551afe7c734830bd95fd88ebf469dd7355a027824ea1d09e37181cfeb0a797fb17df60c15ac174303ac110eb7e86
+    brace-expansion: "npm:^2.0.1"
+  checksum: 10c0/de96cf5e35bdf0eab3e2c853522f98ffbe9a36c37797778d2665231ec1f20a9447a7e567cb640901f89e4daaa95ae5d70c65a9e8aa2bb0019b6facbc3c0575ed
   languageName: node
   linkType: hard
 
@@ -52182,13 +52266,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sax@npm:^1.5.0":
-  version: 1.5.0
-  resolution: "sax@npm:1.5.0"
-  checksum: 10c0/bc3b60a7bfecd40b18256596e96b32df2488339ae1e00a77f842b568f0831228a16c3bd357ec500241ec0b9dc7a475a1286427795c4a8c50bb8e8878f3435dd8
-  languageName: node
-  linkType: hard
-
 "saxes@npm:^6.0.0":
   version: 6.0.0
   resolution: "saxes@npm:6.0.0"
@@ -54483,36 +54560,36 @@ __metadata:
   linkType: hard
 
 "svgo@npm:^2.8.0":
-  version: 2.8.2
-  resolution: "svgo@npm:2.8.2"
+  version: 2.8.0
+  resolution: "svgo@npm:2.8.0"
   dependencies:
+    "@trysound/sax": "npm:0.2.0"
     commander: "npm:^7.2.0"
     css-select: "npm:^4.1.3"
     css-tree: "npm:^1.1.3"
     csso: "npm:^4.2.0"
     picocolors: "npm:^1.0.0"
-    sax: "npm:^1.5.0"
     stable: "npm:^0.1.8"
   bin:
-    svgo: ./bin/svgo
-  checksum: 10c0/a3a533e1678aecdfa1c67f06d71f104da7ef574a3f63a8dfeda10368b42428c67d09a06b4eee233c5ed49ac815f1febb6193cba0f611a21bfc00366d7930205d
+    svgo: bin/svgo
+  checksum: 10c0/0741f5d5cad63111a90a0ce7a1a5a9013f6d293e871b75efe39addb57f29a263e45294e485a4d2ff9cc260a5d142c8b5937b2234b4ef05efdd2706fb2d360ecc
   languageName: node
   linkType: hard
 
 "svgo@npm:^3.0.2":
-  version: 3.3.3
-  resolution: "svgo@npm:3.3.3"
+  version: 3.3.2
+  resolution: "svgo@npm:3.3.2"
   dependencies:
+    "@trysound/sax": "npm:0.2.0"
     commander: "npm:^7.2.0"
     css-select: "npm:^5.1.0"
     css-tree: "npm:^2.3.1"
     css-what: "npm:^6.1.0"
     csso: "npm:^5.0.5"
     picocolors: "npm:^1.0.0"
-    sax: "npm:^1.5.0"
   bin:
     svgo: ./bin/svgo
-  checksum: 10c0/06568c6b0430f96748c557f0b17dc7de79b19fa16d13d7523527ede0ec727fc6d8e6a10e13ff106dc4372d2e6063a1dca7c455c495efb1b83857480425f9b965
+  checksum: 10c0/a6badbd3d1d6dbb177f872787699ab34320b990d12e20798ecae915f0008796a0f3c69164f1485c9def399e0ce0a5683eb4a8045e51a5e1c364bb13a0d9f79e1
   languageName: node
   linkType: hard
 
@@ -55677,6 +55754,7 @@ __metadata:
     "@calcom/embed-react": "npm:^1.5.3"
     "@cyntler/react-doc-viewer": "npm:^1.17.0"
     "@dagrejs/dagre": "npm:^1.1.8"
+    "@dnd-kit/react": "npm:^0.3.2"
     "@floating-ui/react": "npm:^0.24.3"
     "@graphiql/plugin-explorer": "npm:^1.0.2"
     "@graphiql/react": "npm:^0.23.0"
@@ -55776,6 +55854,12 @@ __metadata:
     use-debounce: "npm:^10.0.0"
     vite-plugin-svgr: "npm:^4.3.0"
     vite-tsconfig-paths: "npm:^4.2.1"
+  languageName: unknown
+  linkType: soft
+
+"twenty-oxlint-rules@workspace:packages/twenty-oxlint-rules":
+  version: 0.0.0-use.local
+  resolution: "twenty-oxlint-rules@workspace:packages/twenty-oxlint-rules"
   languageName: unknown
   linkType: soft
 
@@ -55968,6 +56052,7 @@ __metadata:
     express: "npm:4.22.1"
     express-session: "npm:^1.18.2"
     file-type: "npm:16.5.4"
+    fuse.js: "npm:^7.1.0"
     gaxios: "npm:5.1.3"
     google-auth-library: "npm:8.9.0"
     googleapis: "npm:105.0.0"

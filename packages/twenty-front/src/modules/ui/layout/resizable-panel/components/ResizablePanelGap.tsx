@@ -8,8 +8,8 @@ const StyledGap = styled.div<{ gapWidth: number }>`
   cursor: col-resize;
   flex-shrink: 0;
   height: 100%;
-  width: ${({ gapWidth }) => gapWidth}px;
   transition: width 0.15s ease;
+  width: ${({ gapWidth }) => gapWidth}px;
 `;
 
 type ResizablePanelGapProps = {

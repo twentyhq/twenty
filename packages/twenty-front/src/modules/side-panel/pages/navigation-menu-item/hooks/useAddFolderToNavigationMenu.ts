@@ -7,7 +7,6 @@ import { useNavigationMenuItemsDraftState } from '@/navigation-menu-item/hooks/u
 import { useOpenNavigationMenuItemInSidePanel } from '@/navigation-menu-item/hooks/useOpenNavigationMenuItemInSidePanel';
 import { addMenuItemInsertionContextState } from '@/navigation-menu-item/states/addMenuItemInsertionContextState';
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/states/navigationMenuItemsDraftState';
-import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
@@ -17,9 +16,6 @@ export const useAddFolderToNavigationMenu = () => {
   const { workspaceNavigationMenuItems } = useNavigationMenuItemsDraftState();
   const navigationMenuItemsDraft = useAtomStateValue(
     navigationMenuItemsDraftState,
-  );
-  const setSelectedNavigationMenuItemInEditMode = useSetAtomState(
-    selectedNavigationMenuItemInEditModeState,
   );
   const { openNavigationMenuItemInSidePanel } =
     useOpenNavigationMenuItemInSidePanel();
@@ -46,8 +42,8 @@ export const useAddFolderToNavigationMenu = () => {
     );
 
     setAddMenuItemInsertionContext(null);
-    setSelectedNavigationMenuItemInEditMode(itemId);
     openNavigationMenuItemInSidePanel({
+      itemId,
       pageTitle: t`Edit folder`,
       pageIcon: IconFolder,
       focusTitleInput: true,

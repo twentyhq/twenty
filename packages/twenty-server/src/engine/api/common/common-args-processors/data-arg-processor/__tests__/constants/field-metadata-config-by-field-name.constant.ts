@@ -161,7 +161,7 @@ export const fieldMetadataConfigByFieldName: Record<
     isNullable: true,
   },
   [joinColumnNameForManyToOneMorphRelationField1]: {
-    name: joinColumnNameForManyToOneMorphRelationField1,
+    name: joinColumnNameForManyToOneMorphRelationField1.replace(/Id$/, ''),
     type: FieldMetadataType.MORPH_RELATION,
     isNullable: true,
     settings: {

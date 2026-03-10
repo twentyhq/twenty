@@ -48,10 +48,10 @@ const StyledInputContainer = styled.div`
 
 const StyledAdvancedSettingsSectionInputWrapper = styled.div`
   display: flex;
+  flex: 1;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[4]};
   width: 100%;
-  flex: 1;
 `;
 
 const StyledAdvancedSettingsOuterContainer = styled.div`
@@ -86,8 +86,8 @@ const StyledConflictBanner = styled.div`
 const StyledBannerContent = styled.div`
   align-items: center;
   display: flex;
-  gap: ${themeCssVariables.spacing[2]};
   flex: 1;
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledBannerText = styled.span`

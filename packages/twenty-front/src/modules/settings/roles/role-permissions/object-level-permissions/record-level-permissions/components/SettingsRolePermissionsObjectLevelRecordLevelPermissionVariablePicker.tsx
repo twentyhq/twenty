@@ -14,15 +14,13 @@ const StyledRecordLevelPermissionPickerContainer = styled.div<{
   readonly?: boolean;
 }>`
   align-items: center;
-  display: flex;
-  justify-content: center;
-
   background-color: ${({ multiline }) =>
     multiline
       ? 'transparent'
       : themeCssVariables.background.transparent.lighter};
   border: ${({ multiline }) =>
     multiline ? 'none' : `1px solid ${themeCssVariables.border.color.medium}`};
+
   border-bottom-right-radius: ${({ multiline }) =>
     multiline ? '0' : themeCssVariables.border.radius.sm};
   border-radius: ${({ multiline }) =>
@@ -34,6 +32,8 @@ const StyledRecordLevelPermissionPickerContainer = styled.div<{
       ? themeCssVariables.font.color.primary
       : themeCssVariables.font.color.tertiary};
   cursor: ${({ multiline }) => (multiline ? 'default' : 'pointer')};
+  display: flex;
+  justify-content: center;
   padding: ${({ multiline }) =>
     multiline
       ? `${themeCssVariables.spacing['0.5']} ${themeCssVariables.spacing[0]}`

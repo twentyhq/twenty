@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
-import { previousDropdownFocusIdState } from '@/ui/layout/dropdown/states/previousDropdownFocusIdState';
+import { previousDropdownFocusIdStackState } from '@/ui/layout/dropdown/states/previousDropdownFocusIdStackState';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
@@ -16,20 +16,15 @@ export const useCloseAnyOpenDropdown = () => {
   const store = useStore();
 
   const closeAnyOpenDropdown = useCallback(() => {
-    const previousDropdownFocusId = store.get(
-      previousDropdownFocusIdState.atom,
-    );
-
+    const previousStack = store.get(previousDropdownFocusIdStackState.atom);
     const activeDropdownFocusId = store.get(activeDropdownFocusIdState.atom);
 
     const thereIsNoDropdownOpen =
-      !isDefined(activeDropdownFocusId) && !isDefined(previousDropdownFocusId);
+      !isDefined(activeDropdownFocusId) && previousStack.length === 0;
 
     if (thereIsNoDropdownOpen) {
       return;
     }
-
-    const thereIsOneNestedDropdownOpen = isDefined(previousDropdownFocusId);
 
     if (isDefined(activeDropdownFocusId)) {
       closeDropdown(activeDropdownFocusId);
@@ -38,14 +33,14 @@ export const useCloseAnyOpenDropdown = () => {
       });
     }
 
-    if (thereIsOneNestedDropdownOpen) {
-      closeDropdown(previousDropdownFocusId);
+    for (const previousId of previousStack) {
+      closeDropdown(previousId);
       removeFocusItemFromFocusStackById({
-        focusId: previousDropdownFocusId,
+        focusId: previousId,
       });
     }
 
-    store.set(previousDropdownFocusIdState.atom, null);
+    store.set(previousDropdownFocusIdStackState.atom, []);
     store.set(activeDropdownFocusIdState.atom, null);
   }, [closeDropdown, removeFocusItemFromFocusStackById, store]);
 

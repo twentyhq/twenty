@@ -3,6 +3,7 @@ import { v4 } from 'uuid';
 export const getObjectBaseFile = ({
   data,
   universalIdentifier = v4(),
+  nameFieldUniversalIdentifier = v4(),
 }: {
   data: {
     nameSingular: string;
@@ -12,8 +13,12 @@ export const getObjectBaseFile = ({
   };
   name: string;
   universalIdentifier?: string;
+  nameFieldUniversalIdentifier?: string;
 }) => {
-  return `import { defineObject } from 'twenty-sdk';
+  return `import { defineObject, FieldType } from 'twenty-sdk';
+
+export const NAME_FIELD_UNIVERSAL_IDENTIFIER =
+  '${nameFieldUniversalIdentifier}';
 
 export default defineObject({
   universalIdentifier: '${universalIdentifier}',
@@ -22,15 +27,16 @@ export default defineObject({
   labelSingular: '${data.labelSingular}',
   labelPlural: '${data.labelPlural}',
   icon: 'IconBox',
+  labelIdentifierFieldMetadataUniversalIdentifier: NAME_FIELD_UNIVERSAL_IDENTIFIER,
   fields: [
-    // Add your fields here using defineField helper
-    // Example:
-    // {
-    //   universalIdentifier: '...',
-    //   type: FieldMetadataType.TEXT,
-    //   name: 'description',
-    //   label: 'Description',
-    // },
+    {
+      universalIdentifier: NAME_FIELD_UNIVERSAL_IDENTIFIER,
+      type: FieldType.TEXT,
+      name: 'name',
+      label: 'Name',
+      description: 'Name of the ${data.nameSingular}',
+      icon: 'IconAbc',
+    },
   ],
 });
 `;

@@ -16,7 +16,7 @@ import {
 } from 'typeorm';
 
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
-import { AppRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/app-registration-source-type.enum';
+import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { ApplicationVariableEntity } from 'src/engine/core-modules/application/application-variable/application-variable.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
@@ -53,8 +53,8 @@ export class ApplicationEntity extends WorkspaceRelatedEntity {
   @Column({ nullable: true, type: 'text' })
   version: string | null;
 
-  @Column({ type: 'text', default: AppRegistrationSourceType.LOCAL })
-  sourceType: AppRegistrationSourceType;
+  @Column({ type: 'text', default: ApplicationRegistrationSourceType.LOCAL })
+  sourceType: ApplicationRegistrationSourceType;
 
   @Column({ nullable: false, type: 'text' })
   sourcePath: string;

@@ -16,6 +16,7 @@ import {
   WorkflowVersionStepExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
+import { setAllIteratorsStepInfosAsStopped } from 'src/modules/workflow/common/utils/set-all-iterators-step-infos-as-stopped.util';
 import { workflowHasRunningSteps } from 'src/modules/workflow/common/utils/workflow-has-running-steps.util';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { WorkflowVersionStepOperationsWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-operations.workspace-service';
@@ -218,17 +219,29 @@ export class WorkflowRunnerWorkspaceService {
 
     let newStatus: WorkflowRunStatus;
 
-    if (
-      workflowHasRunningSteps({
-        stepInfos: workflowRun.state.stepInfos,
-        steps: workflowRun.state.flow.steps,
-      })
-    ) {
+    const stepInfos = workflowRun.state.stepInfos;
+    const steps = workflowRun.state.flow.steps;
+
+    if (workflowHasRunningSteps({ stepInfos, steps })) {
+      const stoppedIteratorStepInfos = setAllIteratorsStepInfosAsStopped({
+        stepInfos,
+        steps,
+      });
+
+      const mergedStepInfos = {
+        ...stepInfos,
+        ...stoppedIteratorStepInfos,
+      };
+
       await this.workflowRunWorkspaceService.updateWorkflowRun({
         workflowRunId,
         workspaceId,
         partialUpdate: {
           status: WorkflowRunStatus.STOPPING,
+          state: {
+            ...workflowRun.state,
+            stepInfos: mergedStepInfos,
+          },
         },
       });
       newStatus = WorkflowRunStatus.STOPPING;

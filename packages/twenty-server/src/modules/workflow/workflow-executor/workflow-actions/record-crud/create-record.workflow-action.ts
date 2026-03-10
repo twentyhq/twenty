@@ -11,6 +11,7 @@ import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
 import { buildWorkflowActorMetadata } from 'src/modules/workflow/workflow-executor/utils/build-workflow-actor-metadata.util';
 import { filterValidFieldsInRecord } from 'src/modules/workflow/workflow-executor/utils/filter-valid-fields-in-record.util';
+import { formatWorkflowRecordRelationFields } from 'src/modules/workflow/workflow-executor/utils/format-workflow-record-relation-fields.util';
 import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
 import { resolveRichTextFieldsInRecord } from 'src/modules/workflow/workflow-executor/utils/resolve-rich-text-fields-in-record.util';
 import { type WorkflowCreateRecordActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/types/workflow-record-crud-action-input.type';
@@ -58,8 +59,13 @@ export class CreateRecordWorkflowAction implements WorkflowAction {
       context,
     ) as WorkflowCreateRecordActionInput;
 
-    const filteredObjectRecord = filterValidFieldsInRecord(
+    const formattedObjectRecord = formatWorkflowRecordRelationFields(
       workflowActionInput.objectRecord,
+      objectMetadataInfo,
+    );
+
+    const filteredObjectRecord = filterValidFieldsInRecord(
+      formattedObjectRecord,
       objectMetadataInfo.flatObjectMetadata,
       objectMetadataInfo.flatFieldMetadataMaps,
     );

@@ -9,6 +9,7 @@
 
 export { applyDiff } from './applyDiff';
 export { compareArraysOfObjectsByProperty } from './array/compareArraysOfObjectsByProperty';
+export { filterDuplicatesById } from './array/filterDuplicatesById';
 export { filterOutByProperty } from './array/filterOutByProperty';
 export { findById } from './array/findById';
 export { findByProperty } from './array/findByProperty';

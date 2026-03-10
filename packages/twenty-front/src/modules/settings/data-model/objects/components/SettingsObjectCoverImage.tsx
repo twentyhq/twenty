@@ -14,13 +14,15 @@ import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 const StyledCoverImageContainer = styled.div`
   align-items: center;
   background-size: cover;
+  border: 1px solid ${themeCssVariables.border.color.medium};
   border-radius: ${themeCssVariables.border.radius.md};
   box-sizing: border-box;
   display: flex;
-  min-height: 153px;
   justify-content: center;
-  position: relative;
   margin-bottom: ${themeCssVariables.spacing[8]};
+  min-height: 153px;
+  overflow: hidden;
+  position: relative;
 `;
 
 const StyledButtonContainer = styled.div`

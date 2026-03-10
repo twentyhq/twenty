@@ -12,13 +12,13 @@ import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 const StyledInlineCellBaseContainer = styled.div`
   align-items: center;
   box-sizing: border-box;
-  width: 100%;
   display: flex;
-
   gap: ${themeCssVariables.spacing[1]};
 
   position: relative;
+
   user-select: none;
+  width: 100%;
 `;
 
 const StyledPropertyBoxContainer = styled.div`

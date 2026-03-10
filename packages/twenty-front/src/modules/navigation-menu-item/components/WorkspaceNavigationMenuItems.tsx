@@ -24,6 +24,7 @@ import { navigationMenuItemsDraftState } from '@/navigation-menu-item/states/nav
 import { openNavigationMenuItemFolderIdsState } from '@/navigation-menu-item/states/openNavigationMenuItemFolderIdsState';
 import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeState';
 import { filterWorkspaceNavigationMenuItems } from '@/navigation-menu-item/utils/filterWorkspaceNavigationMenuItems';
+import { preloadWorkspaceDndKit } from '@/navigation/preloadWorkspaceDndKit';
 import { NavigationDrawerSectionForObjectMetadataItemsSkeletonLoader } from '@/object-metadata/components/NavigationDrawerSectionForObjectMetadataItemsSkeletonLoader';
 import { NavigationDrawerSectionForWorkspaceItems } from '@/object-metadata/components/NavigationDrawerSectionForWorkspaceItems';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
@@ -137,9 +138,6 @@ export const WorkspaceNavigationMenuItems = () => {
     });
   };
 
-  const isEditMode =
-    isNavigationMenuItemEditingEnabled && isNavigationMenuInEditMode;
-
   if (loading) {
     return <NavigationDrawerSectionForObjectMetadataItemsSkeletonLoader />;
   }
@@ -151,7 +149,7 @@ export const WorkspaceNavigationMenuItems = () => {
       rightIcon={
         isNavigationMenuItemEditingEnabled ? (
           <StyledRightIconsContainer>
-            {isEditMode ? (
+            {isNavigationMenuInEditMode ? (
               <LightIconButton
                 Icon={IconPlus}
                 accent="tertiary"
@@ -159,25 +157,21 @@ export const WorkspaceNavigationMenuItems = () => {
                 onClick={handleAddMenuItem}
               />
             ) : (
-              <LightIconButton
-                Icon={IconTool}
-                accent="tertiary"
-                size="small"
-                onClick={handleEditClick}
-              />
+              <div onMouseEnter={preloadWorkspaceDndKit}>
+                <LightIconButton
+                  Icon={IconTool}
+                  accent="tertiary"
+                  size="small"
+                  onClick={handleEditClick}
+                />
+              </div>
             )}
           </StyledRightIconsContainer>
         ) : undefined
       }
-      onAddMenuItem={
-        isNavigationMenuItemEditingEnabled && isEditMode
-          ? handleAddMenuItem
-          : undefined
-      }
-      isEditMode={isEditMode}
       selectedNavigationMenuItemId={selectedNavigationMenuItemInEditMode}
       onNavigationMenuItemClick={
-        isEditMode ? handleNavigationMenuItemClick : undefined
+        isNavigationMenuInEditMode ? handleNavigationMenuItemClick : undefined
       }
       onActiveObjectMetadataItemClick={
         isNavigationMenuItemEditingEnabled

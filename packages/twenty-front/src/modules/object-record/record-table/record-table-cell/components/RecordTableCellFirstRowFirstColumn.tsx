@@ -15,20 +15,20 @@ const StyledRecordTableTd = styled.div<{
   hasBottomBorder?: boolean;
   zIndex: number;
 }>`
+  background: ${({ backgroundColor, isDragging }) =>
+    isDragging ? 'transparent' : backgroundColor};
+
   border-bottom: 1px solid
     ${({ borderColor, hasBottomBorder, isDragging }) =>
       hasBottomBorder && !isDragging ? borderColor : 'transparent'};
-
-  color: ${({ fontColor }) => fontColor};
   border-right: ${({ borderColor, hasRightBorder }) =>
     hasRightBorder ? `1px solid ${borderColor}` : 'none'};
+
+  color: ${({ fontColor }) => fontColor};
 
   padding: 0;
 
   text-align: left;
-
-  background: ${({ backgroundColor, isDragging }) =>
-    isDragging ? 'transparent' : backgroundColor};
 
   z-index: ${({ zIndex }) => zIndex};
 `;
@@ -50,7 +50,7 @@ export const RecordTableCellFirstRowFirstColumn = ({
 } & (Partial<DraggableProvidedDragHandleProps> | null)) => {
   const { theme } = useContext(ThemeContext);
 
-  const zIndex = TABLE_Z_INDEX.cell.withoutGroups.sticky;
+  const zIndex = TABLE_Z_INDEX.cell.sticky;
 
   const tdBackgroundColor = isSelected
     ? theme.accent.quaternary

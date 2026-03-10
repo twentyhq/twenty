@@ -35,14 +35,14 @@ const StyledNavigationButtonContainer = styled.div`
 `;
 
 const StyledLeftSection = styled.div`
-  display: flex;
   align-items: center;
+  display: flex;
   gap: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledNavigationSection = styled.div`
-  display: flex;
   align-items: center;
+  display: flex;
   gap: ${themeCssVariables.spacing[1]};
   justify-content: flex-end;
 `;

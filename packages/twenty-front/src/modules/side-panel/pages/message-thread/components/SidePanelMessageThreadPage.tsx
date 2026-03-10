@@ -25,8 +25,8 @@ const StyledWrapper = styled.div`
 const StyledContainer = styled.div`
   box-sizing: border-box;
   display: flex;
-  flex-direction: column;
   flex: 1;
+  flex-direction: column;
   height: 85%;
   overflow-y: auto;
 `;
@@ -34,11 +34,11 @@ const StyledContainer = styled.div`
 const StyledButtonContainer = styled.div`
   background: ${themeCssVariables.background.secondary};
   border-top: 1px solid ${themeCssVariables.border.color.light};
+  box-sizing: border-box;
   display: flex;
   justify-content: flex-end;
   padding: ${themeCssVariables.spacing[2]};
   width: 100%;
-  box-sizing: border-box;
 `;
 
 const ALLOWED_REPLY_PROVIDERS = [
