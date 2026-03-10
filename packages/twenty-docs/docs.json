@@ -1250,7 +1250,7 @@
                 "pages": [
                   "l/ar/developers/extend/extend",
                   {
-                    "group": "القدرات",
+                    "group": "Capabilities",
                     "pages": [
                       "l/ar/developers/extend/capabilities/apis",
                       "l/ar/developers/extend/capabilities/webhooks",
@@ -2140,7 +2140,7 @@
                 "pages": [
                   "l/de/developers/extend/extend",
                   {
-                    "group": "Funktionen",
+                    "group": "Capabilities",
                     "pages": [
                       "l/de/developers/extend/capabilities/apis",
                       "l/de/developers/extend/capabilities/webhooks",
@@ -3030,7 +3030,7 @@
                 "pages": [
                   "l/it/developers/extend/extend",
                   {
-                    "group": "Funzionalità",
+                    "group": "Capabilities",
                     "pages": [
                       "l/it/developers/extend/capabilities/apis",
                       "l/it/developers/extend/capabilities/webhooks",
@@ -5255,7 +5255,7 @@
                 "pages": [
                   "l/ru/developers/extend/extend",
                   {
-                    "group": "Возможности",
+                    "group": "Capabilities",
                     "pages": [
                       "l/ru/developers/extend/capabilities/apis",
                       "l/ru/developers/extend/capabilities/webhooks",
@@ -5700,7 +5700,7 @@
                 "pages": [
                   "l/tr/developers/extend/extend",
                   {
-                    "group": "Yetkinlikler",
+                    "group": "Capabilities",
                     "pages": [
                       "l/tr/developers/extend/capabilities/apis",
                       "l/tr/developers/extend/capabilities/webhooks",
@@ -6145,7 +6145,7 @@
                 "pages": [
                   "l/zh/developers/extend/extend",
                   {
-                    "group": "功能",
+                    "group": "Capabilities",
                     "pages": [
                       "l/zh/developers/extend/capabilities/apis",
                       "l/zh/developers/extend/capabilities/webhooks",

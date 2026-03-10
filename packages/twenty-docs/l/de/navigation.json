@@ -149,8 +149,8 @@
         "extend": {
           "label": "Erweitern",
           "groups": {
-            "extendCapabilities": {
-              "label": "Funktionen"
+            "apps": {
+              "label": "Apps"
             }
           }
         },

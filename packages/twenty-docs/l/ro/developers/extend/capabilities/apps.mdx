@@ -321,6 +321,72 @@ Puteți suprascrie câmpurile implicite definind un câmp cu același nume în t
 dar acest lucru nu este recomandat.
 </Note>
 
+### Definirea câmpurilor pentru obiecte existente
+
+Folosiți `defineField()` pentru a adăuga câmpuri personalizate la obiectele existente — atât obiecte standard (precum `company`, `person`, `opportunity`), cât și obiecte personalizate definite de alte aplicații. Fiecare câmp se află în propriul fișier și face referire la obiectul țintă prin `universalIdentifier`.
+
+Pentru a face referire la obiectele standard, importați `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS` din `twenty-sdk`. Această constantă furnizează identificatori stabili pentru toate obiectele integrate și câmpurile lor:
+
+```typescript
+// src/fields/apollo-total-funding.field.ts
+import {
+  defineField,
+  FieldType,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk';
+
+export default defineField({
+  universalIdentifier: 'c90ae72d-4ddf-4f22-882f-eef98c91e40e',
+  objectUniversalIdentifier:
+    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+  type: FieldType.CURRENCY,
+  name: 'apolloTotalFunding',
+  label: 'Total Funding',
+  description: 'Total funding raised by the company',
+  icon: 'IconCash',
+});
+```
+
+Puncte cheie:
+
+* `objectUniversalIdentifier` îi indică lui Twenty la care obiect să atașeze câmpul. Folosiți `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.<objectName>.universalIdentifier` pentru obiectele standard.
+* Fiecare câmp necesită propriul `universalIdentifier` stabil, un `name`, `type`, `label` și `objectUniversalIdentifier` țintă.
+* Puteți genera câmpuri noi folosind `yarn twenty entity:add` și alegând opțiunea pentru câmp.
+* `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS` este exportată și ca `STANDARD_OBJECT` pentru comoditate — ambele se referă la aceeași constantă.
+
+Obiectele standard disponibile includ: `attachment`, `blocklist`, `calendarChannel`, `calendarEvent`, `calendarEventParticipant`, `company`, `connectedAccount`, `dashboard`, `favorite`, `favoriteFolder`, `message`, `messageChannel`, `messageParticipant`, `messageThread`, `note`, `noteTarget`, `opportunity`, `person`, `task`, `taskTarget`, `timelineActivity`, `workflow`, `workflowAutomatedTrigger`, `workflowRun`, `workflowVersion` și `workspaceMember`.
+
+Fiecare obiect standard expune, de asemenea, identificatorii câmpurilor sale. De exemplu, pentru a face referire la un câmp specific pe un obiect standard în permisiunile de rol:
+
+```typescript
+STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.fields.name.universalIdentifier
+```
+
+#### Câmpuri de relație pe obiecte existente
+
+Puteți defini, de asemenea, câmpuri de relație care leagă obiectele existente de obiectele dvs. personalizate:
+
+```typescript
+// src/fields/people-on-call-recording.field.ts
+import { defineField, FieldType, RelationType, STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk';
+import { CALL_RECORDING_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/objects/call-recording';
+import { CALL_RECORDING_ON_PERSON_ID } from 'src/fields/call-recording-on-person.field';
+
+export default defineField({
+  universalIdentifier: '4a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d',
+  objectUniversalIdentifier:
+    CALL_RECORDING_OBJECT_UNIVERSAL_IDENTIFIER,
+  type: FieldType.RELATION,
+  name: 'person',
+  label: 'Person',
+  relationTargetObjectMetadataUniversalIdentifier:
+    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
+  relationTargetFieldMetadataUniversalIdentifier:
+    CALL_RECORDING_ON_PERSON_ID,
+  relationType: RelationType.MANY_TO_ONE,
+});
+```
+
 ### Configurația aplicației (application-config.ts)
 
 Fiecare aplicație are un singur fișier `application-config.ts` care descrie:
