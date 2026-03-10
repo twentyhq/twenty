@@ -3836,7 +3836,6 @@ msgid "Customization"
 msgstr "사용자 지정"
 
 #. js-lingui-id: srRMnJ
-#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutFieldsSettings.tsx
 #: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNavigationMenuItemEditPage.tsx
 #: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNavigationMenuItemEditPage.tsx
 #: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditObjectViewBase.tsx
@@ -3927,6 +3926,11 @@ msgstr "대시보드"
 #: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemMainMenu.tsx
 msgid "Data"
 msgstr "데이터"
+
+#. js-lingui-id: nxnCld
+#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutFieldsSettings.tsx
+msgid "Data and display"
+msgstr ""
 
 #. js-lingui-id: TtG/MN
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
@@ -4575,6 +4579,11 @@ msgstr "초안 삭제"
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelsGeneral.tsx
 msgid "Display"
 msgstr "표시"
+
+#. js-lingui-id: Ldgs6e
+#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutFieldsSettings.tsx
+msgid "Display \"More fields\" button"
+msgstr ""
 
 #. js-lingui-id: r/aDR/
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
@@ -8637,6 +8646,12 @@ msgstr ""
 #: src/modules/ui/layout/tab-list/components/TabMoreButton.tsx
 msgid "More"
 msgstr "더보기"
+
+#. js-lingui-id: G2I8i7
+#. placeholder {0}: hiddenFieldsWithOffsetGlobalIndex.length
+#: src/modules/page-layout/widgets/fields/components/FieldsWidget.tsx
+msgid "More ({0})"
+msgstr ""
 
 #. js-lingui-id: f0jmdR
 #: src/modules/page-layout/widgets/field/components/FieldWidgetShowMoreButton.tsx

@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 
 import { Pill } from '@ui/components/Pill/Pill';
 import { ThemeContext, themeCssVariables } from '@ui/theme-constants';
+import { GRAY_SCALE_LIGHT } from '@ui/theme/constants/GrayScaleLight';
 import {
   type ButtonAccent,
   type ButtonPosition,
@@ -106,7 +107,7 @@ const computeAnimatedButtonDynamicStyles = (
                 }`
               : 'none';
           result.color = !inverted
-            ? themeCssVariables.grayScale.gray1
+            ? GRAY_SCALE_LIGHT.gray1
             : themeCssVariables.color.blue;
           if (!disabled) {
             result.hoverBackground = !inverted
@@ -170,10 +171,10 @@ const computeAnimatedButtonDynamicStyles = (
                 : 'transparent'
             : variant === 'secondary'
               ? focus || disabled
-                ? themeCssVariables.grayScale.gray1
+                ? GRAY_SCALE_LIGHT.gray1
                 : themeCssVariables.background.transparent.primary
               : focus
-                ? themeCssVariables.grayScale.gray1
+                ? GRAY_SCALE_LIGHT.gray1
                 : 'transparent';
           result.borderWidthOverride = '1px 1px 1px 1px';
           result.boxShadow =
@@ -212,10 +213,10 @@ const computeAnimatedButtonDynamicStyles = (
                 : 'transparent'
             : variant === 'secondary'
               ? focus || disabled
-                ? themeCssVariables.grayScale.gray1
+                ? GRAY_SCALE_LIGHT.gray1
                 : themeCssVariables.background.transparent.primary
               : focus
-                ? themeCssVariables.grayScale.gray1
+                ? GRAY_SCALE_LIGHT.gray1
                 : 'transparent';
           result.borderWidthOverride = '1px 1px 1px 1px';
           result.boxShadow =
@@ -254,10 +255,10 @@ const computeAnimatedButtonDynamicStyles = (
                 : 'transparent'
             : variant === 'secondary'
               ? focus || disabled
-                ? themeCssVariables.grayScale.gray1
+                ? GRAY_SCALE_LIGHT.gray1
                 : themeCssVariables.background.transparent.primary
               : focus
-                ? themeCssVariables.grayScale.gray1
+                ? GRAY_SCALE_LIGHT.gray1
                 : 'transparent';
           result.borderWidthOverride = '1px 1px 1px 1px';
           result.boxShadow =
