@@ -888,6 +888,7 @@ export interface FieldsConfiguration {
     configurationType: WidgetConfigurationType
     viewId?: Scalars['String']
     newFieldDefaultConfiguration?: NewFieldDefaultConfiguration
+    shouldAllowUserToSeeHiddenFields?: Scalars['Boolean']
     __typename: 'FieldsConfiguration'
 }
 
@@ -3752,6 +3753,7 @@ export interface FieldsConfigurationGenqlSelection{
     configurationType?: boolean | number
     viewId?: boolean | number
     newFieldDefaultConfiguration?: NewFieldDefaultConfigurationGenqlSelection
+    shouldAllowUserToSeeHiddenFields?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
