@@ -22,12 +22,14 @@ export const GENERATED_CORE_DIR = 'generated-core';
 export const generateCoreClientFromSchema = async ({
   schema,
   outputPath,
-  clientWrapperTemplateSource = twentyClientTemplateSource,
+  clientWrapperTemplateSource,
 }: {
   schema: string;
   outputPath: string;
   clientWrapperTemplateSource?: string;
 }): Promise<void> => {
+  const templateSource =
+    clientWrapperTemplateSource ?? twentyClientTemplateSource;
   const tempPath = `${outputPath}.tmp`;
 
   await ensureDir(tempPath);
@@ -39,14 +41,11 @@ export const generateCoreClientFromSchema = async ({
     scalarTypes: COMMON_SCALAR_TYPES,
   });
 
-  const clientContent = buildClientWrapperSource(
-    clientWrapperTemplateSource,
-    {
-      apiClientName: 'CoreApiClient',
-      defaultUrl: `\`\${process.env.${DEFAULT_API_URL_NAME}}/graphql\``,
-      includeUploadFile: true,
-    },
-  );
+  const clientContent = buildClientWrapperSource(templateSource, {
+    apiClientName: 'CoreApiClient',
+    defaultUrl: `\`\${process.env.${DEFAULT_API_URL_NAME}}/graphql\``,
+    includeUploadFile: true,
+  });
 
   await appendFile(join(tempPath, 'index.ts'), clientContent);
 

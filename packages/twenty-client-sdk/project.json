@@ -20,6 +20,16 @@
         "parallel": false
       }
     },
+    "generate-metadata-client": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "dependsOn": ["^build"],
+      "outputs": ["{projectRoot}/src/generated/metadata"],
+      "options": {
+        "cwd": "packages/twenty-client-sdk",
+        "command": "tsx scripts/generate-metadata-client.ts"
+      }
+    },
     "typecheck": {},
     "lint": {}
   }

@@ -78,7 +78,7 @@ export const generateSubscriptionOp: (
   )
 }
 
-// MetadataApiClient (auto-injected by twenty-sdk)
+// MetadataApiClient (auto-injected by twenty-client-sdk)
 // Ambient type stubs for the genql-generated code this template gets
 // injected into. They enable full typecheck/lint on this file.
 

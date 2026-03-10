@@ -2506,58 +2506,44 @@ export interface EventLogQueryResult {
 }
 
 export interface Query {
-    getPageLayoutWidgets: PageLayoutWidget[]
-    getPageLayoutWidget: PageLayoutWidget
-    getPageLayoutTabs: PageLayoutTab[]
-    getPageLayoutTab: PageLayoutTab
-    getPageLayouts: PageLayout[]
-    getPageLayout?: PageLayout
-    findOneLogicFunction: LogicFunction
-    findManyLogicFunctions: LogicFunction[]
-    getAvailablePackages: Scalars['JSON']
-    getLogicFunctionSourceCode?: Scalars['String']
-    objectRecordCounts: ObjectRecordCount[]
-    object: Object
-    objects: ObjectConnection
-    getCoreViewFields: CoreViewField[]
-    getCoreViewField?: CoreViewField
+    getCoreViewFilterGroups: CoreViewFilterGroup[]
+    getCoreViewFilterGroup?: CoreViewFilterGroup
+    getCoreViewFilters: CoreViewFilter[]
+    getCoreViewFilter?: CoreViewFilter
     getCoreViews: CoreView[]
     getCoreView?: CoreView
     getCoreViewSorts: CoreViewSort[]
     getCoreViewSort?: CoreViewSort
     getCoreViewGroups: CoreViewGroup[]
     getCoreViewGroup?: CoreViewGroup
-    getCoreViewFilterGroups: CoreViewFilterGroup[]
-    getCoreViewFilterGroup?: CoreViewFilterGroup
-    getCoreViewFilters: CoreViewFilter[]
-    getCoreViewFilter?: CoreViewFilter
     getCoreViewFieldGroups: CoreViewFieldGroup[]
     getCoreViewFieldGroup?: CoreViewFieldGroup
-    index: Index
-    indexMetadatas: IndexConnection
-    commandMenuItems: CommandMenuItem[]
-    commandMenuItem?: CommandMenuItem
-    frontComponents: FrontComponent[]
-    frontComponent?: FrontComponent
-    findManyAgents: Agent[]
-    findOneAgent: Agent
+    getCoreViewFields: CoreViewField[]
+    getCoreViewField?: CoreViewField
+    apiKeys: ApiKey[]
+    apiKey?: ApiKey
+    currentUser: User
     billingPortalSession: BillingSession
     listPlans: BillingPlan[]
     getMeteredProductsUsage: BillingMeteredProductUsage[]
-    navigationMenuItems: NavigationMenuItem[]
-    navigationMenuItem?: NavigationMenuItem
-    apiKeys: ApiKey[]
-    apiKey?: ApiKey
-    getRoles: Role[]
     findWorkspaceInvitations: WorkspaceInvitation[]
     getApprovedAccessDomains: ApprovedAccessDomain[]
-    getToolIndex: ToolIndexEntry[]
-    getToolInputSchema?: Scalars['JSON']
-    field: Field
-    fields: FieldConnection
-    currentUser: User
     currentWorkspace: Workspace
     getPublicWorkspaceDataByDomain: PublicWorkspaceData
+    findManyAgents: Agent[]
+    findOneAgent: Agent
+    objectRecordCounts: ObjectRecordCount[]
+    object: Object
+    objects: ObjectConnection
+    index: Index
+    indexMetadatas: IndexConnection
+    getRoles: Role[]
+    field: Field
+    fields: FieldConnection
+    getPageLayoutTabs: PageLayoutTab[]
+    getPageLayoutTab: PageLayoutTab
+    getPageLayouts: PageLayout[]
+    getPageLayout?: PageLayout
     checkUserExists: CheckUserExist
     checkWorkspaceInviteHashIsValid: WorkspaceInviteHashValid
     findWorkspaceFromInviteHash: Workspace
@@ -2575,10 +2561,24 @@ export interface Query {
     chatThread: AgentChatThread
     chatMessages: AgentMessage[]
     getAISystemPromptPreview: AISystemPromptPreview
+    getToolIndex: ToolIndexEntry[]
+    getToolInputSchema?: Scalars['JSON']
+    findOneLogicFunction: LogicFunction
+    findManyLogicFunctions: LogicFunction[]
+    getAvailablePackages: Scalars['JSON']
+    getLogicFunctionSourceCode?: Scalars['String']
+    navigationMenuItems: NavigationMenuItem[]
+    navigationMenuItem?: NavigationMenuItem
     skills: Skill[]
     skill?: Skill
     chatThreads: AgentChatThreadConnection
     agentTurns: AgentTurn[]
+    commandMenuItems: CommandMenuItem[]
+    commandMenuItem?: CommandMenuItem
+    frontComponents: FrontComponent[]
+    frontComponent?: FrontComponent
+    getPageLayoutWidgets: PageLayoutWidget[]
+    getPageLayoutWidget: PageLayoutWidget
     eventLogs: EventLogQueryResult
     pieChartData: PieChartData
     lineChartData: LineChartData
@@ -2622,28 +2622,14 @@ export interface Mutation {
     removeQueryFromEventStream: Scalars['Boolean']
     createObjectEvent: Analytics
     trackAnalytics: Analytics
-    createPageLayoutWidget: PageLayoutWidget
-    updatePageLayoutWidget: PageLayoutWidget
-    destroyPageLayoutWidget: Scalars['Boolean']
-    createPageLayoutTab: PageLayoutTab
-    updatePageLayoutTab: PageLayoutTab
-    destroyPageLayoutTab: Scalars['Boolean']
-    createPageLayout: PageLayout
-    updatePageLayout: PageLayout
-    destroyPageLayout: Scalars['Boolean']
-    updatePageLayoutWithTabsAndWidgets: PageLayout
-    deleteOneLogicFunction: LogicFunction
-    createOneLogicFunction: LogicFunction
-    executeOneLogicFunction: LogicFunctionExecutionResult
-    updateOneLogicFunction: Scalars['Boolean']
-    createOneObject: Object
-    deleteOneObject: Object
-    updateOneObject: Object
-    updateCoreViewField: CoreViewField
-    createCoreViewField: CoreViewField
-    createManyCoreViewFields: CoreViewField[]
-    deleteCoreViewField: CoreViewField
-    destroyCoreViewField: CoreViewField
+    createCoreViewFilterGroup: CoreViewFilterGroup
+    updateCoreViewFilterGroup: CoreViewFilterGroup
+    deleteCoreViewFilterGroup: Scalars['Boolean']
+    destroyCoreViewFilterGroup: Scalars['Boolean']
+    createCoreViewFilter: CoreViewFilter
+    updateCoreViewFilter: CoreViewFilter
+    deleteCoreViewFilter: CoreViewFilter
+    destroyCoreViewFilter: CoreViewFilter
     createCoreView: CoreView
     updateCoreView: CoreView
     deleteCoreView: Scalars['Boolean']
@@ -2657,35 +2643,33 @@ export interface Mutation {
     updateCoreViewGroup: CoreViewGroup
     deleteCoreViewGroup: CoreViewGroup
     destroyCoreViewGroup: CoreViewGroup
-    createCoreViewFilterGroup: CoreViewFilterGroup
-    updateCoreViewFilterGroup: CoreViewFilterGroup
-    deleteCoreViewFilterGroup: Scalars['Boolean']
-    destroyCoreViewFilterGroup: Scalars['Boolean']
-    createCoreViewFilter: CoreViewFilter
-    updateCoreViewFilter: CoreViewFilter
-    deleteCoreViewFilter: CoreViewFilter
-    destroyCoreViewFilter: CoreViewFilter
     updateCoreViewFieldGroup: CoreViewFieldGroup
     createCoreViewFieldGroup: CoreViewFieldGroup
     createManyCoreViewFieldGroups: CoreViewFieldGroup[]
     deleteCoreViewFieldGroup: CoreViewFieldGroup
     destroyCoreViewFieldGroup: CoreViewFieldGroup
     upsertFieldsWidget: CoreView
-    createCommandMenuItem: CommandMenuItem
-    updateCommandMenuItem: CommandMenuItem
-    deleteCommandMenuItem: CommandMenuItem
-    createFrontComponent: FrontComponent
-    updateFrontComponent: FrontComponent
-    deleteFrontComponent: FrontComponent
-    createOneAgent: Agent
-    updateOneAgent: Agent
-    deleteOneAgent: Agent
+    updateCoreViewField: CoreViewField
+    createCoreViewField: CoreViewField
+    createManyCoreViewFields: CoreViewField[]
+    deleteCoreViewField: CoreViewField
+    destroyCoreViewField: CoreViewField
     uploadAIChatFile: FileWithSignedUrl
     uploadWorkflowFile: FileWithSignedUrl
     uploadWorkspaceLogo: FileWithSignedUrl
     uploadWorkspaceMemberProfilePicture: FileWithSignedUrl
     uploadFilesFieldFile: FileWithSignedUrl
     uploadFilesFieldFileByUniversalIdentifier: FileWithSignedUrl
+    createApiKey: ApiKey
+    updateApiKey?: ApiKey
+    revokeApiKey?: ApiKey
+    assignRoleToApiKey: Scalars['Boolean']
+    deleteUser: User
+    deleteUserFromWorkspace: UserWorkspace
+    updateUserEmail: Scalars['Boolean']
+    resendEmailVerificationToken: ResendEmailVerificationToken
+    skipSyncEmailOnboardingStep: OnboardingStepSuccess
+    skipBookOnboardingStep: OnboardingStepSuccess
     checkoutSession: BillingSession
     switchSubscriptionInterval: BillingUpdate
     switchBillingPlan: BillingUpdate
@@ -2694,13 +2678,22 @@ export interface Mutation {
     setMeteredSubscriptionPrice: BillingUpdate
     endSubscriptionTrialPeriod: BillingEndTrialPeriod
     cancelSwitchMeteredPrice: BillingUpdate
-    createNavigationMenuItem: NavigationMenuItem
-    updateNavigationMenuItem: NavigationMenuItem
-    deleteNavigationMenuItem: NavigationMenuItem
-    createApiKey: ApiKey
-    updateApiKey?: ApiKey
-    revokeApiKey?: ApiKey
-    assignRoleToApiKey: Scalars['Boolean']
+    deleteWorkspaceInvitation: Scalars['String']
+    resendWorkspaceInvitation: SendInvitations
+    sendInvitations: SendInvitations
+    createApprovedAccessDomain: ApprovedAccessDomain
+    deleteApprovedAccessDomain: Scalars['Boolean']
+    validateApprovedAccessDomain: ApprovedAccessDomain
+    activateWorkspace: Workspace
+    updateWorkspace: Workspace
+    deleteCurrentWorkspace: Workspace
+    checkCustomDomainValidRecords?: DomainValidRecords
+    createOneAgent: Agent
+    updateOneAgent: Agent
+    deleteOneAgent: Agent
+    createOneObject: Object
+    deleteOneObject: Object
+    updateOneObject: Object
     updateWorkspaceMemberRole: WorkspaceMember
     createOneRole: Role
     updateOneRole: Role
@@ -2711,25 +2704,16 @@ export interface Mutation {
     upsertRowLevelPermissionPredicates: UpsertRowLevelPermissionPredicatesResult
     assignRoleToAgent: Scalars['Boolean']
     removeRoleFromAgent: Scalars['Boolean']
-    skipSyncEmailOnboardingStep: OnboardingStepSuccess
-    skipBookOnboardingStep: OnboardingStepSuccess
-    deleteWorkspaceInvitation: Scalars['String']
-    resendWorkspaceInvitation: SendInvitations
-    sendInvitations: SendInvitations
-    createApprovedAccessDomain: ApprovedAccessDomain
-    deleteApprovedAccessDomain: Scalars['Boolean']
-    validateApprovedAccessDomain: ApprovedAccessDomain
     createOneField: Field
     updateOneField: Field
     deleteOneField: Field
-    deleteUser: User
-    deleteUserFromWorkspace: UserWorkspace
-    updateUserEmail: Scalars['Boolean']
-    resendEmailVerificationToken: ResendEmailVerificationToken
-    activateWorkspace: Workspace
-    updateWorkspace: Workspace
-    deleteCurrentWorkspace: Workspace
-    checkCustomDomainValidRecords?: DomainValidRecords
+    createPageLayoutTab: PageLayoutTab
+    updatePageLayoutTab: PageLayoutTab
+    destroyPageLayoutTab: Scalars['Boolean']
+    createPageLayout: PageLayout
+    updatePageLayout: PageLayout
+    destroyPageLayout: Scalars['Boolean']
+    updatePageLayoutWithTabsAndWidgets: PageLayout
     getAuthorizationUrlForSSO: GetAuthorizationUrlForSSO
     getLoginTokenFromCredentials: LoginToken
     signIn: AvailableWorkspacesAndAccessTokens
@@ -2767,6 +2751,13 @@ export interface Mutation {
     updateWebhook: Webhook
     deleteWebhook: Webhook
     createChatThread: AgentChatThread
+    deleteOneLogicFunction: LogicFunction
+    createOneLogicFunction: LogicFunction
+    executeOneLogicFunction: LogicFunctionExecutionResult
+    updateOneLogicFunction: Scalars['Boolean']
+    createNavigationMenuItem: NavigationMenuItem
+    updateNavigationMenuItem: NavigationMenuItem
+    deleteNavigationMenuItem: NavigationMenuItem
     createSkill: Skill
     updateSkill: Skill
     deleteSkill: Skill
@@ -2774,6 +2765,15 @@ export interface Mutation {
     deactivateSkill: Skill
     evaluateAgentTurn: AgentTurnEvaluation
     runEvaluationInput: AgentTurn
+    createCommandMenuItem: CommandMenuItem
+    updateCommandMenuItem: CommandMenuItem
+    deleteCommandMenuItem: CommandMenuItem
+    createFrontComponent: FrontComponent
+    updateFrontComponent: FrontComponent
+    deleteFrontComponent: FrontComponent
+    createPageLayoutWidget: PageLayoutWidget
+    updatePageLayoutWidget: PageLayoutWidget
+    destroyPageLayoutWidget: Scalars['Boolean']
     duplicateDashboard: DuplicatedDashboard
     impersonate: Impersonate
     startChannelSync: ChannelSyncSuccess
@@ -5487,16 +5487,32 @@ export interface EventLogQueryResultGenqlSelection{
 }
 
 export interface QueryGenqlSelection{
-    getPageLayoutWidgets?: (PageLayoutWidgetGenqlSelection & { __args: {pageLayoutTabId: Scalars['String']} })
-    getPageLayoutWidget?: (PageLayoutWidgetGenqlSelection & { __args: {id: Scalars['String']} })
-    getPageLayoutTabs?: (PageLayoutTabGenqlSelection & { __args: {pageLayoutId: Scalars['String']} })
-    getPageLayoutTab?: (PageLayoutTabGenqlSelection & { __args: {id: Scalars['String']} })
-    getPageLayouts?: (PageLayoutGenqlSelection & { __args?: {objectMetadataId?: (Scalars['String'] | null), pageLayoutType?: (PageLayoutType | null)} })
-    getPageLayout?: (PageLayoutGenqlSelection & { __args: {id: Scalars['String']} })
-    findOneLogicFunction?: (LogicFunctionGenqlSelection & { __args: {input: LogicFunctionIdInput} })
-    findManyLogicFunctions?: LogicFunctionGenqlSelection
-    getAvailablePackages?: { __args: {input: LogicFunctionIdInput} }
-    getLogicFunctionSourceCode?: { __args: {input: LogicFunctionIdInput} }
+    getCoreViewFilterGroups?: (CoreViewFilterGroupGenqlSelection & { __args?: {viewId?: (Scalars['String'] | null)} })
+    getCoreViewFilterGroup?: (CoreViewFilterGroupGenqlSelection & { __args: {id: Scalars['String']} })
+    getCoreViewFilters?: (CoreViewFilterGenqlSelection & { __args?: {viewId?: (Scalars['String'] | null)} })
+    getCoreViewFilter?: (CoreViewFilterGenqlSelection & { __args: {id: Scalars['String']} })
+    getCoreViews?: (CoreViewGenqlSelection & { __args?: {objectMetadataId?: (Scalars['String'] | null), viewTypes?: (ViewType[] | null)} })
+    getCoreView?: (CoreViewGenqlSelection & { __args: {id: Scalars['String']} })
+    getCoreViewSorts?: (CoreViewSortGenqlSelection & { __args?: {viewId?: (Scalars['String'] | null)} })
+    getCoreViewSort?: (CoreViewSortGenqlSelection & { __args: {id: Scalars['String']} })
+    getCoreViewGroups?: (CoreViewGroupGenqlSelection & { __args?: {viewId?: (Scalars['String'] | null)} })
+    getCoreViewGroup?: (CoreViewGroupGenqlSelection & { __args: {id: Scalars['String']} })
+    getCoreViewFieldGroups?: (CoreViewFieldGroupGenqlSelection & { __args: {viewId: Scalars['String']} })
+    getCoreViewFieldGroup?: (CoreViewFieldGroupGenqlSelection & { __args: {id: Scalars['String']} })
+    getCoreViewFields?: (CoreViewFieldGenqlSelection & { __args: {viewId: Scalars['String']} })
+    getCoreViewField?: (CoreViewFieldGenqlSelection & { __args: {id: Scalars['String']} })
+    apiKeys?: ApiKeyGenqlSelection
+    apiKey?: (ApiKeyGenqlSelection & { __args: {input: GetApiKeyInput} })
+    currentUser?: UserGenqlSelection
+    billingPortalSession?: (BillingSessionGenqlSelection & { __args?: {returnUrlPath?: (Scalars['String'] | null)} })
+    listPlans?: BillingPlanGenqlSelection
+    getMeteredProductsUsage?: BillingMeteredProductUsageGenqlSelection
+    findWorkspaceInvitations?: WorkspaceInvitationGenqlSelection
+    getApprovedAccessDomains?: ApprovedAccessDomainGenqlSelection
+    currentWorkspace?: WorkspaceGenqlSelection
+    getPublicWorkspaceDataByDomain?: (PublicWorkspaceDataGenqlSelection & { __args?: {origin?: (Scalars['String'] | null)} })
+    findManyAgents?: AgentGenqlSelection
+    findOneAgent?: (AgentGenqlSelection & { __args: {input: AgentIdInput} })
     objectRecordCounts?: ObjectRecordCountGenqlSelection
     object?: (ObjectGenqlSelection & { __args: {
     /** The id of the record to find. */
@@ -5506,20 +5522,6 @@ export interface QueryGenqlSelection{
     paging: CursorPaging, 
     /** Specify to filter the records returned. */
     filter: ObjectFilter} })
-    getCoreViewFields?: (CoreViewFieldGenqlSelection & { __args: {viewId: Scalars['String']} })
-    getCoreViewField?: (CoreViewFieldGenqlSelection & { __args: {id: Scalars['String']} })
-    getCoreViews?: (CoreViewGenqlSelection & { __args?: {objectMetadataId?: (Scalars['String'] | null), viewTypes?: (ViewType[] | null)} })
-    getCoreView?: (CoreViewGenqlSelection & { __args: {id: Scalars['String']} })
-    getCoreViewSorts?: (CoreViewSortGenqlSelection & { __args?: {viewId?: (Scalars['String'] | null)} })
-    getCoreViewSort?: (CoreViewSortGenqlSelection & { __args: {id: Scalars['String']} })
-    getCoreViewGroups?: (CoreViewGroupGenqlSelection & { __args?: {viewId?: (Scalars['String'] | null)} })
-    getCoreViewGroup?: (CoreViewGroupGenqlSelection & { __args: {id: Scalars['String']} })
-    getCoreViewFilterGroups?: (CoreViewFilterGroupGenqlSelection & { __args?: {viewId?: (Scalars['String'] | null)} })
-    getCoreViewFilterGroup?: (CoreViewFilterGroupGenqlSelection & { __args: {id: Scalars['String']} })
-    getCoreViewFilters?: (CoreViewFilterGenqlSelection & { __args?: {viewId?: (Scalars['String'] | null)} })
-    getCoreViewFilter?: (CoreViewFilterGenqlSelection & { __args: {id: Scalars['String']} })
-    getCoreViewFieldGroups?: (CoreViewFieldGroupGenqlSelection & { __args: {viewId: Scalars['String']} })
-    getCoreViewFieldGroup?: (CoreViewFieldGroupGenqlSelection & { __args: {id: Scalars['String']} })
     index?: (IndexGenqlSelection & { __args: {
     /** The id of the record to find. */
     id: Scalars['UUID']} })
@@ -5528,24 +5530,7 @@ export interface QueryGenqlSelection{
     paging: CursorPaging, 
     /** Specify to filter the records returned. */
     filter: IndexFilter} })
-    commandMenuItems?: CommandMenuItemGenqlSelection
-    commandMenuItem?: (CommandMenuItemGenqlSelection & { __args: {id: Scalars['UUID']} })
-    frontComponents?: FrontComponentGenqlSelection
-    frontComponent?: (FrontComponentGenqlSelection & { __args: {id: Scalars['UUID']} })
-    findManyAgents?: AgentGenqlSelection
-    findOneAgent?: (AgentGenqlSelection & { __args: {input: AgentIdInput} })
-    billingPortalSession?: (BillingSessionGenqlSelection & { __args?: {returnUrlPath?: (Scalars['String'] | null)} })
-    listPlans?: BillingPlanGenqlSelection
-    getMeteredProductsUsage?: BillingMeteredProductUsageGenqlSelection
-    navigationMenuItems?: NavigationMenuItemGenqlSelection
-    navigationMenuItem?: (NavigationMenuItemGenqlSelection & { __args: {id: Scalars['UUID']} })
-    apiKeys?: ApiKeyGenqlSelection
-    apiKey?: (ApiKeyGenqlSelection & { __args: {input: GetApiKeyInput} })
     getRoles?: RoleGenqlSelection
-    findWorkspaceInvitations?: WorkspaceInvitationGenqlSelection
-    getApprovedAccessDomains?: ApprovedAccessDomainGenqlSelection
-    getToolIndex?: ToolIndexEntryGenqlSelection
-    getToolInputSchema?: { __args: {toolName: Scalars['String']} }
     field?: (FieldGenqlSelection & { __args: {
     /** The id of the record to find. */
     id: Scalars['UUID']} })
@@ -5554,9 +5539,10 @@ export interface QueryGenqlSelection{
     paging: CursorPaging, 
     /** Specify to filter the records returned. */
     filter: FieldFilter} })
-    currentUser?: UserGenqlSelection
-    currentWorkspace?: WorkspaceGenqlSelection
-    getPublicWorkspaceDataByDomain?: (PublicWorkspaceDataGenqlSelection & { __args?: {origin?: (Scalars['String'] | null)} })
+    getPageLayoutTabs?: (PageLayoutTabGenqlSelection & { __args: {pageLayoutId: Scalars['String']} })
+    getPageLayoutTab?: (PageLayoutTabGenqlSelection & { __args: {id: Scalars['String']} })
+    getPageLayouts?: (PageLayoutGenqlSelection & { __args?: {objectMetadataId?: (Scalars['String'] | null), pageLayoutType?: (PageLayoutType | null)} })
+    getPageLayout?: (PageLayoutGenqlSelection & { __args: {id: Scalars['String']} })
     checkUserExists?: (CheckUserExistGenqlSelection & { __args: {email: Scalars['String'], captchaToken?: (Scalars['String'] | null)} })
     checkWorkspaceInviteHashIsValid?: (WorkspaceInviteHashValidGenqlSelection & { __args: {inviteHash: Scalars['String']} })
     findWorkspaceFromInviteHash?: (WorkspaceGenqlSelection & { __args: {inviteHash: Scalars['String']} })
@@ -5574,6 +5560,14 @@ export interface QueryGenqlSelection{
     chatThread?: (AgentChatThreadGenqlSelection & { __args: {id: Scalars['UUID']} })
     chatMessages?: (AgentMessageGenqlSelection & { __args: {threadId: Scalars['UUID']} })
     getAISystemPromptPreview?: AISystemPromptPreviewGenqlSelection
+    getToolIndex?: ToolIndexEntryGenqlSelection
+    getToolInputSchema?: { __args: {toolName: Scalars['String']} }
+    findOneLogicFunction?: (LogicFunctionGenqlSelection & { __args: {input: LogicFunctionIdInput} })
+    findManyLogicFunctions?: LogicFunctionGenqlSelection
+    getAvailablePackages?: { __args: {input: LogicFunctionIdInput} }
+    getLogicFunctionSourceCode?: { __args: {input: LogicFunctionIdInput} }
+    navigationMenuItems?: NavigationMenuItemGenqlSelection
+    navigationMenuItem?: (NavigationMenuItemGenqlSelection & { __args: {id: Scalars['UUID']} })
     skills?: SkillGenqlSelection
     skill?: (SkillGenqlSelection & { __args: {id: Scalars['UUID']} })
     chatThreads?: (AgentChatThreadConnectionGenqlSelection & { __args: {
@@ -5584,6 +5578,12 @@ export interface QueryGenqlSelection{
     /** Specify to sort results. */
     sorting: AgentChatThreadSort[]} })
     agentTurns?: (AgentTurnGenqlSelection & { __args: {agentId: Scalars['UUID']} })
+    commandMenuItems?: CommandMenuItemGenqlSelection
+    commandMenuItem?: (CommandMenuItemGenqlSelection & { __args: {id: Scalars['UUID']} })
+    frontComponents?: FrontComponentGenqlSelection
+    frontComponent?: (FrontComponentGenqlSelection & { __args: {id: Scalars['UUID']} })
+    getPageLayoutWidgets?: (PageLayoutWidgetGenqlSelection & { __args: {pageLayoutTabId: Scalars['String']} })
+    getPageLayoutWidget?: (PageLayoutWidgetGenqlSelection & { __args: {id: Scalars['String']} })
     eventLogs?: (EventLogQueryResultGenqlSelection & { __args: {input: EventLogQueryInput} })
     pieChartData?: (PieChartDataGenqlSelection & { __args: {input: PieChartDataInput} })
     lineChartData?: (LineChartDataGenqlSelection & { __args: {input: LineChartDataInput} })
@@ -5611,15 +5611,15 @@ export interface QueryGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface LogicFunctionIdInput {
-/** The id of the function. */
-id: Scalars['ID']}
+export interface GetApiKeyInput {id: Scalars['UUID']}
 
 export interface AgentIdInput {
 /** The id of the agent. */
 id: Scalars['UUID']}
 
-export interface GetApiKeyInput {id: Scalars['UUID']}
+export interface LogicFunctionIdInput {
+/** The id of the function. */
+id: Scalars['ID']}
 
 export interface AgentChatThreadFilter {and?: (AgentChatThreadFilter[] | null),or?: (AgentChatThreadFilter[] | null),id?: (UUIDFilterComparison | null),updatedAt?: (DateFieldComparison | null)}
 
@@ -5646,28 +5646,14 @@ export interface MutationGenqlSelection{
     removeQueryFromEventStream?: { __args: {input: RemoveQueryFromEventStreamInput} }
     createObjectEvent?: (AnalyticsGenqlSelection & { __args: {event: Scalars['String'], recordId: Scalars['UUID'], objectMetadataId: Scalars['UUID'], properties?: (Scalars['JSON'] | null)} })
     trackAnalytics?: (AnalyticsGenqlSelection & { __args: {type: AnalyticsType, name?: (Scalars['String'] | null), event?: (Scalars['String'] | null), properties?: (Scalars['JSON'] | null)} })
-    createPageLayoutWidget?: (PageLayoutWidgetGenqlSelection & { __args: {input: CreatePageLayoutWidgetInput} })
-    updatePageLayoutWidget?: (PageLayoutWidgetGenqlSelection & { __args: {id: Scalars['String'], input: UpdatePageLayoutWidgetInput} })
-    destroyPageLayoutWidget?: { __args: {id: Scalars['String']} }
-    createPageLayoutTab?: (PageLayoutTabGenqlSelection & { __args: {input: CreatePageLayoutTabInput} })
-    updatePageLayoutTab?: (PageLayoutTabGenqlSelection & { __args: {id: Scalars['String'], input: UpdatePageLayoutTabInput} })
-    destroyPageLayoutTab?: { __args: {id: Scalars['String']} }
-    createPageLayout?: (PageLayoutGenqlSelection & { __args: {input: CreatePageLayoutInput} })
-    updatePageLayout?: (PageLayoutGenqlSelection & { __args: {id: Scalars['String'], input: UpdatePageLayoutInput} })
-    destroyPageLayout?: { __args: {id: Scalars['String']} }
-    updatePageLayoutWithTabsAndWidgets?: (PageLayoutGenqlSelection & { __args: {id: Scalars['String'], input: UpdatePageLayoutWithTabsInput} })
-    deleteOneLogicFunction?: (LogicFunctionGenqlSelection & { __args: {input: LogicFunctionIdInput} })
-    createOneLogicFunction?: (LogicFunctionGenqlSelection & { __args: {input: CreateLogicFunctionFromSourceInput} })
-    executeOneLogicFunction?: (LogicFunctionExecutionResultGenqlSelection & { __args: {input: ExecuteOneLogicFunctionInput} })
-    updateOneLogicFunction?: { __args: {input: UpdateLogicFunctionFromSourceInput} }
-    createOneObject?: (ObjectGenqlSelection & { __args: {input: CreateOneObjectInput} })
-    deleteOneObject?: (ObjectGenqlSelection & { __args: {input: DeleteOneObjectInput} })
-    updateOneObject?: (ObjectGenqlSelection & { __args: {input: UpdateOneObjectInput} })
-    updateCoreViewField?: (CoreViewFieldGenqlSelection & { __args: {input: UpdateViewFieldInput} })
-    createCoreViewField?: (CoreViewFieldGenqlSelection & { __args: {input: CreateViewFieldInput} })
-    createManyCoreViewFields?: (CoreViewFieldGenqlSelection & { __args: {inputs: CreateViewFieldInput[]} })
-    deleteCoreViewField?: (CoreViewFieldGenqlSelection & { __args: {input: DeleteViewFieldInput} })
-    destroyCoreViewField?: (CoreViewFieldGenqlSelection & { __args: {input: DestroyViewFieldInput} })
+    createCoreViewFilterGroup?: (CoreViewFilterGroupGenqlSelection & { __args: {input: CreateViewFilterGroupInput} })
+    updateCoreViewFilterGroup?: (CoreViewFilterGroupGenqlSelection & { __args: {id: Scalars['String'], input: UpdateViewFilterGroupInput} })
+    deleteCoreViewFilterGroup?: { __args: {id: Scalars['String']} }
+    destroyCoreViewFilterGroup?: { __args: {id: Scalars['String']} }
+    createCoreViewFilter?: (CoreViewFilterGenqlSelection & { __args: {input: CreateViewFilterInput} })
+    updateCoreViewFilter?: (CoreViewFilterGenqlSelection & { __args: {input: UpdateViewFilterInput} })
+    deleteCoreViewFilter?: (CoreViewFilterGenqlSelection & { __args: {input: DeleteViewFilterInput} })
+    destroyCoreViewFilter?: (CoreViewFilterGenqlSelection & { __args: {input: DestroyViewFilterInput} })
     createCoreView?: (CoreViewGenqlSelection & { __args: {input: CreateViewInput} })
     updateCoreView?: (CoreViewGenqlSelection & { __args: {id: Scalars['String'], input: UpdateViewInput} })
     deleteCoreView?: { __args: {id: Scalars['String']} }
@@ -5681,35 +5667,33 @@ export interface MutationGenqlSelection{
     updateCoreViewGroup?: (CoreViewGroupGenqlSelection & { __args: {input: UpdateViewGroupInput} })
     deleteCoreViewGroup?: (CoreViewGroupGenqlSelection & { __args: {input: DeleteViewGroupInput} })
     destroyCoreViewGroup?: (CoreViewGroupGenqlSelection & { __args: {input: DestroyViewGroupInput} })
-    createCoreViewFilterGroup?: (CoreViewFilterGroupGenqlSelection & { __args: {input: CreateViewFilterGroupInput} })
-    updateCoreViewFilterGroup?: (CoreViewFilterGroupGenqlSelection & { __args: {id: Scalars['String'], input: UpdateViewFilterGroupInput} })
-    deleteCoreViewFilterGroup?: { __args: {id: Scalars['String']} }
-    destroyCoreViewFilterGroup?: { __args: {id: Scalars['String']} }
-    createCoreViewFilter?: (CoreViewFilterGenqlSelection & { __args: {input: CreateViewFilterInput} })
-    updateCoreViewFilter?: (CoreViewFilterGenqlSelection & { __args: {input: UpdateViewFilterInput} })
-    deleteCoreViewFilter?: (CoreViewFilterGenqlSelection & { __args: {input: DeleteViewFilterInput} })
-    destroyCoreViewFilter?: (CoreViewFilterGenqlSelection & { __args: {input: DestroyViewFilterInput} })
     updateCoreViewFieldGroup?: (CoreViewFieldGroupGenqlSelection & { __args: {input: UpdateViewFieldGroupInput} })
     createCoreViewFieldGroup?: (CoreViewFieldGroupGenqlSelection & { __args: {input: CreateViewFieldGroupInput} })
     createManyCoreViewFieldGroups?: (CoreViewFieldGroupGenqlSelection & { __args: {inputs: CreateViewFieldGroupInput[]} })
     deleteCoreViewFieldGroup?: (CoreViewFieldGroupGenqlSelection & { __args: {input: DeleteViewFieldGroupInput} })
     destroyCoreViewFieldGroup?: (CoreViewFieldGroupGenqlSelection & { __args: {input: DestroyViewFieldGroupInput} })
     upsertFieldsWidget?: (CoreViewGenqlSelection & { __args: {input: UpsertFieldsWidgetInput} })
-    createCommandMenuItem?: (CommandMenuItemGenqlSelection & { __args: {input: CreateCommandMenuItemInput} })
-    updateCommandMenuItem?: (CommandMenuItemGenqlSelection & { __args: {input: UpdateCommandMenuItemInput} })
-    deleteCommandMenuItem?: (CommandMenuItemGenqlSelection & { __args: {id: Scalars['UUID']} })
-    createFrontComponent?: (FrontComponentGenqlSelection & { __args: {input: CreateFrontComponentInput} })
-    updateFrontComponent?: (FrontComponentGenqlSelection & { __args: {input: UpdateFrontComponentInput} })
-    deleteFrontComponent?: (FrontComponentGenqlSelection & { __args: {id: Scalars['UUID']} })
-    createOneAgent?: (AgentGenqlSelection & { __args: {input: CreateAgentInput} })
-    updateOneAgent?: (AgentGenqlSelection & { __args: {input: UpdateAgentInput} })
-    deleteOneAgent?: (AgentGenqlSelection & { __args: {input: AgentIdInput} })
+    updateCoreViewField?: (CoreViewFieldGenqlSelection & { __args: {input: UpdateViewFieldInput} })
+    createCoreViewField?: (CoreViewFieldGenqlSelection & { __args: {input: CreateViewFieldInput} })
+    createManyCoreViewFields?: (CoreViewFieldGenqlSelection & { __args: {inputs: CreateViewFieldInput[]} })
+    deleteCoreViewField?: (CoreViewFieldGenqlSelection & { __args: {input: DeleteViewFieldInput} })
+    destroyCoreViewField?: (CoreViewFieldGenqlSelection & { __args: {input: DestroyViewFieldInput} })
     uploadAIChatFile?: (FileWithSignedUrlGenqlSelection & { __args: {file: Scalars['Upload']} })
     uploadWorkflowFile?: (FileWithSignedUrlGenqlSelection & { __args: {file: Scalars['Upload']} })
     uploadWorkspaceLogo?: (FileWithSignedUrlGenqlSelection & { __args: {file: Scalars['Upload']} })
     uploadWorkspaceMemberProfilePicture?: (FileWithSignedUrlGenqlSelection & { __args: {file: Scalars['Upload']} })
     uploadFilesFieldFile?: (FileWithSignedUrlGenqlSelection & { __args: {file: Scalars['Upload'], fieldMetadataId: Scalars['String']} })
     uploadFilesFieldFileByUniversalIdentifier?: (FileWithSignedUrlGenqlSelection & { __args: {file: Scalars['Upload'], fieldMetadataUniversalIdentifier: Scalars['String']} })
+    createApiKey?: (ApiKeyGenqlSelection & { __args: {input: CreateApiKeyInput} })
+    updateApiKey?: (ApiKeyGenqlSelection & { __args: {input: UpdateApiKeyInput} })
+    revokeApiKey?: (ApiKeyGenqlSelection & { __args: {input: RevokeApiKeyInput} })
+    assignRoleToApiKey?: { __args: {apiKeyId: Scalars['UUID'], roleId: Scalars['UUID']} }
+    deleteUser?: UserGenqlSelection
+    deleteUserFromWorkspace?: (UserWorkspaceGenqlSelection & { __args: {workspaceMemberIdToDelete: Scalars['String']} })
+    updateUserEmail?: { __args: {newEmail: Scalars['String'], verifyEmailRedirectPath?: (Scalars['String'] | null)} }
+    resendEmailVerificationToken?: (ResendEmailVerificationTokenGenqlSelection & { __args: {email: Scalars['String'], origin: Scalars['String']} })
+    skipSyncEmailOnboardingStep?: OnboardingStepSuccessGenqlSelection
+    skipBookOnboardingStep?: OnboardingStepSuccessGenqlSelection
     checkoutSession?: (BillingSessionGenqlSelection & { __args: {recurringInterval: SubscriptionInterval, plan: BillingPlanKey, requirePaymentMethod: Scalars['Boolean'], successUrlPath?: (Scalars['String'] | null)} })
     switchSubscriptionInterval?: BillingUpdateGenqlSelection
     switchBillingPlan?: BillingUpdateGenqlSelection
@@ -5718,13 +5702,22 @@ export interface MutationGenqlSelection{
     setMeteredSubscriptionPrice?: (BillingUpdateGenqlSelection & { __args: {priceId: Scalars['String']} })
     endSubscriptionTrialPeriod?: BillingEndTrialPeriodGenqlSelection
     cancelSwitchMeteredPrice?: BillingUpdateGenqlSelection
-    createNavigationMenuItem?: (NavigationMenuItemGenqlSelection & { __args: {input: CreateNavigationMenuItemInput} })
-    updateNavigationMenuItem?: (NavigationMenuItemGenqlSelection & { __args: {input: UpdateOneNavigationMenuItemInput} })
-    deleteNavigationMenuItem?: (NavigationMenuItemGenqlSelection & { __args: {id: Scalars['UUID']} })
-    createApiKey?: (ApiKeyGenqlSelection & { __args: {input: CreateApiKeyInput} })
-    updateApiKey?: (ApiKeyGenqlSelection & { __args: {input: UpdateApiKeyInput} })
-    revokeApiKey?: (ApiKeyGenqlSelection & { __args: {input: RevokeApiKeyInput} })
-    assignRoleToApiKey?: { __args: {apiKeyId: Scalars['UUID'], roleId: Scalars['UUID']} }
+    deleteWorkspaceInvitation?: { __args: {appTokenId: Scalars['String']} }
+    resendWorkspaceInvitation?: (SendInvitationsGenqlSelection & { __args: {appTokenId: Scalars['String']} })
+    sendInvitations?: (SendInvitationsGenqlSelection & { __args: {emails: Scalars['String'][], roleId?: (Scalars['UUID'] | null)} })
+    createApprovedAccessDomain?: (ApprovedAccessDomainGenqlSelection & { __args: {input: CreateApprovedAccessDomainInput} })
+    deleteApprovedAccessDomain?: { __args: {input: DeleteApprovedAccessDomainInput} }
+    validateApprovedAccessDomain?: (ApprovedAccessDomainGenqlSelection & { __args: {input: ValidateApprovedAccessDomainInput} })
+    activateWorkspace?: (WorkspaceGenqlSelection & { __args: {data: ActivateWorkspaceInput} })
+    updateWorkspace?: (WorkspaceGenqlSelection & { __args: {data: UpdateWorkspaceInput} })
+    deleteCurrentWorkspace?: WorkspaceGenqlSelection
+    checkCustomDomainValidRecords?: DomainValidRecordsGenqlSelection
+    createOneAgent?: (AgentGenqlSelection & { __args: {input: CreateAgentInput} })
+    updateOneAgent?: (AgentGenqlSelection & { __args: {input: UpdateAgentInput} })
+    deleteOneAgent?: (AgentGenqlSelection & { __args: {input: AgentIdInput} })
+    createOneObject?: (ObjectGenqlSelection & { __args: {input: CreateOneObjectInput} })
+    deleteOneObject?: (ObjectGenqlSelection & { __args: {input: DeleteOneObjectInput} })
+    updateOneObject?: (ObjectGenqlSelection & { __args: {input: UpdateOneObjectInput} })
     updateWorkspaceMemberRole?: (WorkspaceMemberGenqlSelection & { __args: {workspaceMemberId: Scalars['UUID'], roleId: Scalars['UUID']} })
     createOneRole?: (RoleGenqlSelection & { __args: {createRoleInput: CreateRoleInput} })
     updateOneRole?: (RoleGenqlSelection & { __args: {updateRoleInput: UpdateRoleInput} })
@@ -5735,25 +5728,16 @@ export interface MutationGenqlSelection{
     upsertRowLevelPermissionPredicates?: (UpsertRowLevelPermissionPredicatesResultGenqlSelection & { __args: {input: UpsertRowLevelPermissionPredicatesInput} })
     assignRoleToAgent?: { __args: {agentId: Scalars['UUID'], roleId: Scalars['UUID']} }
     removeRoleFromAgent?: { __args: {agentId: Scalars['UUID']} }
-    skipSyncEmailOnboardingStep?: OnboardingStepSuccessGenqlSelection
-    skipBookOnboardingStep?: OnboardingStepSuccessGenqlSelection
-    deleteWorkspaceInvitation?: { __args: {appTokenId: Scalars['String']} }
-    resendWorkspaceInvitation?: (SendInvitationsGenqlSelection & { __args: {appTokenId: Scalars['String']} })
-    sendInvitations?: (SendInvitationsGenqlSelection & { __args: {emails: Scalars['String'][], roleId?: (Scalars['UUID'] | null)} })
-    createApprovedAccessDomain?: (ApprovedAccessDomainGenqlSelection & { __args: {input: CreateApprovedAccessDomainInput} })
-    deleteApprovedAccessDomain?: { __args: {input: DeleteApprovedAccessDomainInput} }
-    validateApprovedAccessDomain?: (ApprovedAccessDomainGenqlSelection & { __args: {input: ValidateApprovedAccessDomainInput} })
     createOneField?: (FieldGenqlSelection & { __args: {input: CreateOneFieldMetadataInput} })
     updateOneField?: (FieldGenqlSelection & { __args: {input: UpdateOneFieldMetadataInput} })
     deleteOneField?: (FieldGenqlSelection & { __args: {input: DeleteOneFieldInput} })
-    deleteUser?: UserGenqlSelection
-    deleteUserFromWorkspace?: (UserWorkspaceGenqlSelection & { __args: {workspaceMemberIdToDelete: Scalars['String']} })
-    updateUserEmail?: { __args: {newEmail: Scalars['String'], verifyEmailRedirectPath?: (Scalars['String'] | null)} }
-    resendEmailVerificationToken?: (ResendEmailVerificationTokenGenqlSelection & { __args: {email: Scalars['String'], origin: Scalars['String']} })
-    activateWorkspace?: (WorkspaceGenqlSelection & { __args: {data: ActivateWorkspaceInput} })
-    updateWorkspace?: (WorkspaceGenqlSelection & { __args: {data: UpdateWorkspaceInput} })
-    deleteCurrentWorkspace?: WorkspaceGenqlSelection
-    checkCustomDomainValidRecords?: DomainValidRecordsGenqlSelection
+    createPageLayoutTab?: (PageLayoutTabGenqlSelection & { __args: {input: CreatePageLayoutTabInput} })
+    updatePageLayoutTab?: (PageLayoutTabGenqlSelection & { __args: {id: Scalars['String'], input: UpdatePageLayoutTabInput} })
+    destroyPageLayoutTab?: { __args: {id: Scalars['String']} }
+    createPageLayout?: (PageLayoutGenqlSelection & { __args: {input: CreatePageLayoutInput} })
+    updatePageLayout?: (PageLayoutGenqlSelection & { __args: {id: Scalars['String'], input: UpdatePageLayoutInput} })
+    destroyPageLayout?: { __args: {id: Scalars['String']} }
+    updatePageLayoutWithTabsAndWidgets?: (PageLayoutGenqlSelection & { __args: {id: Scalars['String'], input: UpdatePageLayoutWithTabsInput} })
     getAuthorizationUrlForSSO?: (GetAuthorizationUrlForSSOGenqlSelection & { __args: {input: GetAuthorizationUrlForSSOInput} })
     getLoginTokenFromCredentials?: (LoginTokenGenqlSelection & { __args: {email: Scalars['String'], password: Scalars['String'], captchaToken?: (Scalars['String'] | null), locale?: (Scalars['String'] | null), verifyEmailRedirectPath?: (Scalars['String'] | null), origin: Scalars['String']} })
     signIn?: (AvailableWorkspacesAndAccessTokensGenqlSelection & { __args: {email: Scalars['String'], password: Scalars['String'], captchaToken?: (Scalars['String'] | null), locale?: (Scalars['String'] | null), verifyEmailRedirectPath?: (Scalars['String'] | null)} })
@@ -5791,6 +5775,13 @@ export interface MutationGenqlSelection{
     updateWebhook?: (WebhookGenqlSelection & { __args: {input: UpdateWebhookInput} })
     deleteWebhook?: (WebhookGenqlSelection & { __args: {id: Scalars['UUID']} })
     createChatThread?: AgentChatThreadGenqlSelection
+    deleteOneLogicFunction?: (LogicFunctionGenqlSelection & { __args: {input: LogicFunctionIdInput} })
+    createOneLogicFunction?: (LogicFunctionGenqlSelection & { __args: {input: CreateLogicFunctionFromSourceInput} })
+    executeOneLogicFunction?: (LogicFunctionExecutionResultGenqlSelection & { __args: {input: ExecuteOneLogicFunctionInput} })
+    updateOneLogicFunction?: { __args: {input: UpdateLogicFunctionFromSourceInput} }
+    createNavigationMenuItem?: (NavigationMenuItemGenqlSelection & { __args: {input: CreateNavigationMenuItemInput} })
+    updateNavigationMenuItem?: (NavigationMenuItemGenqlSelection & { __args: {input: UpdateOneNavigationMenuItemInput} })
+    deleteNavigationMenuItem?: (NavigationMenuItemGenqlSelection & { __args: {id: Scalars['UUID']} })
     createSkill?: (SkillGenqlSelection & { __args: {input: CreateSkillInput} })
     updateSkill?: (SkillGenqlSelection & { __args: {input: UpdateSkillInput} })
     deleteSkill?: (SkillGenqlSelection & { __args: {id: Scalars['UUID']} })
@@ -5798,6 +5789,15 @@ export interface MutationGenqlSelection{
     deactivateSkill?: (SkillGenqlSelection & { __args: {id: Scalars['UUID']} })
     evaluateAgentTurn?: (AgentTurnEvaluationGenqlSelection & { __args: {turnId: Scalars['UUID']} })
     runEvaluationInput?: (AgentTurnGenqlSelection & { __args: {agentId: Scalars['UUID'], input: Scalars['String']} })
+    createCommandMenuItem?: (CommandMenuItemGenqlSelection & { __args: {input: CreateCommandMenuItemInput} })
+    updateCommandMenuItem?: (CommandMenuItemGenqlSelection & { __args: {input: UpdateCommandMenuItemInput} })
+    deleteCommandMenuItem?: (CommandMenuItemGenqlSelection & { __args: {id: Scalars['UUID']} })
+    createFrontComponent?: (FrontComponentGenqlSelection & { __args: {input: CreateFrontComponentInput} })
+    updateFrontComponent?: (FrontComponentGenqlSelection & { __args: {input: UpdateFrontComponentInput} })
+    deleteFrontComponent?: (FrontComponentGenqlSelection & { __args: {id: Scalars['UUID']} })
+    createPageLayoutWidget?: (PageLayoutWidgetGenqlSelection & { __args: {input: CreatePageLayoutWidgetInput} })
+    updatePageLayoutWidget?: (PageLayoutWidgetGenqlSelection & { __args: {id: Scalars['String'], input: UpdatePageLayoutWidgetInput} })
+    destroyPageLayoutWidget?: { __args: {id: Scalars['String']} }
     duplicateDashboard?: (DuplicatedDashboardGenqlSelection & { __args: {id: Scalars['UUID']} })
     impersonate?: (ImpersonateGenqlSelection & { __args: {userId: Scalars['UUID'], workspaceId: Scalars['UUID']} })
     startChannelSync?: (ChannelSyncSuccessGenqlSelection & { __args: {connectedAccountId: Scalars['UUID']} })
@@ -5839,74 +5839,26 @@ export interface AddQuerySubscriptionInput {eventStreamId: Scalars['String'],que
 
 export interface RemoveQueryFromEventStreamInput {eventStreamId: Scalars['String'],queryId: Scalars['String']}
 
-export interface CreatePageLayoutWidgetInput {pageLayoutTabId: Scalars['UUID'],title: Scalars['String'],type: WidgetType,objectMetadataId?: (Scalars['UUID'] | null),gridPosition: GridPositionInput,position?: (Scalars['JSON'] | null),configuration: Scalars['JSON']}
+export interface CreateViewFilterGroupInput {id?: (Scalars['UUID'] | null),parentViewFilterGroupId?: (Scalars['UUID'] | null),logicalOperator?: (ViewFilterGroupLogicalOperator | null),positionInViewFilterGroup?: (Scalars['Float'] | null),viewId: Scalars['UUID']}
 
-export interface GridPositionInput {row: Scalars['Float'],column: Scalars['Float'],rowSpan: Scalars['Float'],columnSpan: Scalars['Float']}
+export interface UpdateViewFilterGroupInput {id?: (Scalars['UUID'] | null),parentViewFilterGroupId?: (Scalars['UUID'] | null),logicalOperator?: (ViewFilterGroupLogicalOperator | null),positionInViewFilterGroup?: (Scalars['Float'] | null),viewId?: (Scalars['UUID'] | null)}
 
-export interface UpdatePageLayoutWidgetInput {title?: (Scalars['String'] | null),type?: (WidgetType | null),objectMetadataId?: (Scalars['UUID'] | null),gridPosition?: (GridPositionInput | null),position?: (Scalars['JSON'] | null),configuration?: (Scalars['JSON'] | null),conditionalDisplay?: (Scalars['JSON'] | null)}
+export interface CreateViewFilterInput {id?: (Scalars['UUID'] | null),fieldMetadataId: Scalars['UUID'],operand?: (ViewFilterOperand | null),value: Scalars['JSON'],viewFilterGroupId?: (Scalars['UUID'] | null),positionInViewFilterGroup?: (Scalars['Float'] | null),subFieldName?: (Scalars['String'] | null),viewId: Scalars['UUID']}
 
-export interface CreatePageLayoutTabInput {title: Scalars['String'],position?: (Scalars['Float'] | null),pageLayoutId: Scalars['UUID']}
-
-export interface UpdatePageLayoutTabInput {title?: (Scalars['String'] | null),position?: (Scalars['Float'] | null),icon?: (Scalars['String'] | null)}
-
-export interface CreatePageLayoutInput {name: Scalars['String'],type?: (PageLayoutType | null),objectMetadataId?: (Scalars['UUID'] | null)}
-
-export interface UpdatePageLayoutInput {name?: (Scalars['String'] | null),type?: (PageLayoutType | null),objectMetadataId?: (Scalars['UUID'] | null)}
-
-export interface UpdatePageLayoutWithTabsInput {name: Scalars['String'],type: PageLayoutType,objectMetadataId?: (Scalars['UUID'] | null),tabs: UpdatePageLayoutTabWithWidgetsInput[]}
-
-export interface UpdatePageLayoutTabWithWidgetsInput {id: Scalars['UUID'],title: Scalars['String'],position: Scalars['Float'],icon?: (Scalars['String'] | null),widgets: UpdatePageLayoutWidgetWithIdInput[]}
-
-export interface UpdatePageLayoutWidgetWithIdInput {id: Scalars['UUID'],pageLayoutTabId: Scalars['UUID'],title: Scalars['String'],type: WidgetType,objectMetadataId?: (Scalars['UUID'] | null),gridPosition: GridPositionInput,position?: (Scalars['JSON'] | null),configuration?: (Scalars['JSON'] | null),conditionalDisplay?: (Scalars['JSON'] | null)}
-
-export interface CreateLogicFunctionFromSourceInput {id?: (Scalars['UUID'] | null),universalIdentifier?: (Scalars['UUID'] | null),name: Scalars['String'],description?: (Scalars['String'] | null),timeoutSeconds?: (Scalars['Float'] | null),toolInputSchema?: (Scalars['JSON'] | null),isTool?: (Scalars['Boolean'] | null),source?: (Scalars['JSON'] | null),cronTriggerSettings?: (Scalars['JSON'] | null),databaseEventTriggerSettings?: (Scalars['JSON'] | null),httpRouteTriggerSettings?: (Scalars['JSON'] | null)}
-
-export interface ExecuteOneLogicFunctionInput {
-/** Id of the logic function to execute */
+export interface UpdateViewFilterInput {
+/** The id of the view filter to update */
 id: Scalars['UUID'],
-/** Payload in JSON format */
-payload: Scalars['JSON']}
+/** The view filter to update */
+update: UpdateViewFilterInputUpdates}
 
-export interface UpdateLogicFunctionFromSourceInput {
-/** Id of the logic function to update */
-id: Scalars['UUID'],
-/** The logic function updates */
-update: UpdateLogicFunctionFromSourceInputUpdates}
+export interface UpdateViewFilterInputUpdates {fieldMetadataId?: (Scalars['UUID'] | null),operand?: (ViewFilterOperand | null),value?: (Scalars['JSON'] | null),viewFilterGroupId?: (Scalars['UUID'] | null),positionInViewFilterGroup?: (Scalars['Float'] | null),subFieldName?: (Scalars['String'] | null)}
 
-export interface UpdateLogicFunctionFromSourceInputUpdates {name?: (Scalars['String'] | null),description?: (Scalars['String'] | null),timeoutSeconds?: (Scalars['Float'] | null),sourceHandlerCode?: (Scalars['String'] | null),toolInputSchema?: (Scalars['JSON'] | null),handlerName?: (Scalars['String'] | null),sourceHandlerPath?: (Scalars['String'] | null),isTool?: (Scalars['Boolean'] | null),cronTriggerSettings?: (Scalars['JSON'] | null),databaseEventTriggerSettings?: (Scalars['JSON'] | null),httpRouteTriggerSettings?: (Scalars['JSON'] | null)}
-
-export interface CreateOneObjectInput {
-/** The object to create */
-object: CreateObjectInput}
-
-export interface CreateObjectInput {nameSingular: Scalars['String'],namePlural: Scalars['String'],labelSingular: Scalars['String'],labelPlural: Scalars['String'],description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),shortcut?: (Scalars['String'] | null),skipNameField?: (Scalars['Boolean'] | null),isRemote?: (Scalars['Boolean'] | null),primaryKeyColumnType?: (Scalars['String'] | null),primaryKeyFieldMetadataSettings?: (Scalars['JSON'] | null),isLabelSyncedWithName?: (Scalars['Boolean'] | null)}
-
-export interface DeleteOneObjectInput {
-/** The id of the record to delete. */
+export interface DeleteViewFilterInput {
+/** The id of the view filter to delete. */
 id: Scalars['UUID']}
 
-export interface UpdateOneObjectInput {update: UpdateObjectPayload,
-/** The id of the object to update */
-id: Scalars['UUID']}
-
-export interface UpdateObjectPayload {labelSingular?: (Scalars['String'] | null),labelPlural?: (Scalars['String'] | null),nameSingular?: (Scalars['String'] | null),namePlural?: (Scalars['String'] | null),description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),shortcut?: (Scalars['String'] | null),isActive?: (Scalars['Boolean'] | null),labelIdentifierFieldMetadataId?: (Scalars['UUID'] | null),imageIdentifierFieldMetadataId?: (Scalars['UUID'] | null),isLabelSyncedWithName?: (Scalars['Boolean'] | null)}
-
-export interface UpdateViewFieldInput {
-/** The id of the view field to update */
-id: Scalars['UUID'],
-/** The view field to update */
-update: UpdateViewFieldInputUpdates}
-
-export interface UpdateViewFieldInputUpdates {isVisible?: (Scalars['Boolean'] | null),size?: (Scalars['Float'] | null),position?: (Scalars['Float'] | null),aggregateOperation?: (AggregateOperations | null),viewFieldGroupId?: (Scalars['UUID'] | null)}
-
-export interface CreateViewFieldInput {id?: (Scalars['UUID'] | null),fieldMetadataId: Scalars['UUID'],viewId: Scalars['UUID'],isVisible?: (Scalars['Boolean'] | null),size?: (Scalars['Float'] | null),position?: (Scalars['Float'] | null),aggregateOperation?: (AggregateOperations | null),viewFieldGroupId?: (Scalars['UUID'] | null)}
-
-export interface DeleteViewFieldInput {
-/** The id of the view field to delete. */
-id: Scalars['UUID']}
-
-export interface DestroyViewFieldInput {
-/** The id of the view field to destroy. */
+export interface DestroyViewFilterInput {
+/** The id of the view filter to destroy. */
 id: Scalars['UUID']}
 
 export interface CreateViewInput {id?: (Scalars['UUID'] | null),name: Scalars['String'],objectMetadataId: Scalars['UUID'],type?: (ViewType | null),key?: (ViewKey | null),icon: Scalars['String'],position?: (Scalars['Float'] | null),isCompact?: (Scalars['Boolean'] | null),shouldHideEmptyGroups?: (Scalars['Boolean'] | null),openRecordIn?: (ViewOpenRecordIn | null),kanbanAggregateOperation?: (AggregateOperations | null),kanbanAggregateOperationFieldMetadataId?: (Scalars['UUID'] | null),anyFieldFilterValue?: (Scalars['String'] | null),calendarLayout?: (ViewCalendarLayout | null),calendarFieldMetadataId?: (Scalars['UUID'] | null),mainGroupByFieldMetadataId?: (Scalars['UUID'] | null),visibility?: (ViewVisibility | null)}
@@ -5949,28 +5901,6 @@ export interface DestroyViewGroupInput {
 /** The id of the view group to destroy. */
 id: Scalars['UUID']}
 
-export interface CreateViewFilterGroupInput {id?: (Scalars['UUID'] | null),parentViewFilterGroupId?: (Scalars['UUID'] | null),logicalOperator?: (ViewFilterGroupLogicalOperator | null),positionInViewFilterGroup?: (Scalars['Float'] | null),viewId: Scalars['UUID']}
-
-export interface UpdateViewFilterGroupInput {id?: (Scalars['UUID'] | null),parentViewFilterGroupId?: (Scalars['UUID'] | null),logicalOperator?: (ViewFilterGroupLogicalOperator | null),positionInViewFilterGroup?: (Scalars['Float'] | null),viewId?: (Scalars['UUID'] | null)}
-
-export interface CreateViewFilterInput {id?: (Scalars['UUID'] | null),fieldMetadataId: Scalars['UUID'],operand?: (ViewFilterOperand | null),value: Scalars['JSON'],viewFilterGroupId?: (Scalars['UUID'] | null),positionInViewFilterGroup?: (Scalars['Float'] | null),subFieldName?: (Scalars['String'] | null),viewId: Scalars['UUID']}
-
-export interface UpdateViewFilterInput {
-/** The id of the view filter to update */
-id: Scalars['UUID'],
-/** The view filter to update */
-update: UpdateViewFilterInputUpdates}
-
-export interface UpdateViewFilterInputUpdates {fieldMetadataId?: (Scalars['UUID'] | null),operand?: (ViewFilterOperand | null),value?: (Scalars['JSON'] | null),viewFilterGroupId?: (Scalars['UUID'] | null),positionInViewFilterGroup?: (Scalars['Float'] | null),subFieldName?: (Scalars['String'] | null)}
-
-export interface DeleteViewFilterInput {
-/** The id of the view filter to delete. */
-id: Scalars['UUID']}
-
-export interface DestroyViewFilterInput {
-/** The id of the view filter to destroy. */
-id: Scalars['UUID']}
-
 export interface UpdateViewFieldGroupInput {
 /** The id of the view field group to update */
 id: Scalars['UUID'],
@@ -6003,39 +5933,59 @@ export interface UpsertFieldsWidgetFieldInput {
 /** The id of the view field */
 viewFieldId: Scalars['UUID'],isVisible: Scalars['Boolean'],position: Scalars['Float']}
 
-export interface CreateCommandMenuItemInput {workflowVersionId?: (Scalars['UUID'] | null),frontComponentId?: (Scalars['UUID'] | null),label: Scalars['String'],icon?: (Scalars['String'] | null),shortLabel?: (Scalars['String'] | null),position?: (Scalars['Float'] | null),isPinned?: (Scalars['Boolean'] | null),availabilityType?: (CommandMenuItemAvailabilityType | null),conditionalAvailabilityExpression?: (Scalars['String'] | null),availabilityObjectMetadataId?: (Scalars['UUID'] | null)}
-
-export interface UpdateCommandMenuItemInput {id: Scalars['UUID'],label?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),shortLabel?: (Scalars['String'] | null),position?: (Scalars['Float'] | null),isPinned?: (Scalars['Boolean'] | null),availabilityType?: (CommandMenuItemAvailabilityType | null),availabilityObjectMetadataId?: (Scalars['UUID'] | null)}
-
-export interface CreateFrontComponentInput {id?: (Scalars['UUID'] | null),name: Scalars['String'],description?: (Scalars['String'] | null),sourceComponentPath: Scalars['String'],builtComponentPath: Scalars['String'],componentName: Scalars['String'],builtComponentChecksum: Scalars['String']}
-
-export interface UpdateFrontComponentInput {
-/** The id of the front component to update */
+export interface UpdateViewFieldInput {
+/** The id of the view field to update */
 id: Scalars['UUID'],
-/** The front component fields to update */
-update: UpdateFrontComponentInputUpdates}
+/** The view field to update */
+update: UpdateViewFieldInputUpdates}
 
-export interface UpdateFrontComponentInputUpdates {name?: (Scalars['String'] | null),description?: (Scalars['String'] | null)}
+export interface UpdateViewFieldInputUpdates {isVisible?: (Scalars['Boolean'] | null),size?: (Scalars['Float'] | null),position?: (Scalars['Float'] | null),aggregateOperation?: (AggregateOperations | null),viewFieldGroupId?: (Scalars['UUID'] | null)}
 
-export interface CreateAgentInput {name?: (Scalars['String'] | null),label: Scalars['String'],icon?: (Scalars['String'] | null),description?: (Scalars['String'] | null),prompt: Scalars['String'],modelId: Scalars['String'],roleId?: (Scalars['UUID'] | null),responseFormat?: (Scalars['JSON'] | null),modelConfiguration?: (Scalars['JSON'] | null),evaluationInputs?: (Scalars['String'][] | null)}
+export interface CreateViewFieldInput {id?: (Scalars['UUID'] | null),fieldMetadataId: Scalars['UUID'],viewId: Scalars['UUID'],isVisible?: (Scalars['Boolean'] | null),size?: (Scalars['Float'] | null),position?: (Scalars['Float'] | null),aggregateOperation?: (AggregateOperations | null),viewFieldGroupId?: (Scalars['UUID'] | null)}
 
-export interface UpdateAgentInput {id: Scalars['UUID'],name?: (Scalars['String'] | null),label?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),description?: (Scalars['String'] | null),prompt?: (Scalars['String'] | null),modelId?: (Scalars['String'] | null),roleId?: (Scalars['UUID'] | null),responseFormat?: (Scalars['JSON'] | null),modelConfiguration?: (Scalars['JSON'] | null),evaluationInputs?: (Scalars['String'][] | null)}
+export interface DeleteViewFieldInput {
+/** The id of the view field to delete. */
+id: Scalars['UUID']}
 
-export interface CreateNavigationMenuItemInput {userWorkspaceId?: (Scalars['UUID'] | null),targetRecordId?: (Scalars['UUID'] | null),targetObjectMetadataId?: (Scalars['UUID'] | null),viewId?: (Scalars['UUID'] | null),name?: (Scalars['String'] | null),link?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),color?: (Scalars['String'] | null),folderId?: (Scalars['UUID'] | null),position?: (Scalars['Float'] | null)}
-
-export interface UpdateOneNavigationMenuItemInput {
-/** The id of the record to update */
-id: Scalars['UUID'],
-/** The record to update */
-update: UpdateNavigationMenuItemInput}
-
-export interface UpdateNavigationMenuItemInput {folderId?: (Scalars['UUID'] | null),position?: (Scalars['Float'] | null),name?: (Scalars['String'] | null),link?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),color?: (Scalars['String'] | null)}
+export interface DestroyViewFieldInput {
+/** The id of the view field to destroy. */
+id: Scalars['UUID']}
 
 export interface CreateApiKeyInput {name: Scalars['String'],expiresAt: Scalars['String'],revokedAt?: (Scalars['String'] | null),roleId: Scalars['UUID']}
 
 export interface UpdateApiKeyInput {id: Scalars['UUID'],name?: (Scalars['String'] | null),expiresAt?: (Scalars['String'] | null),revokedAt?: (Scalars['String'] | null)}
 
 export interface RevokeApiKeyInput {id: Scalars['UUID']}
+
+export interface CreateApprovedAccessDomainInput {domain: Scalars['String'],email: Scalars['String']}
+
+export interface DeleteApprovedAccessDomainInput {id: Scalars['UUID']}
+
+export interface ValidateApprovedAccessDomainInput {validationToken: Scalars['String'],approvedAccessDomainId: Scalars['UUID']}
+
+export interface ActivateWorkspaceInput {displayName?: (Scalars['String'] | null)}
+
+export interface UpdateWorkspaceInput {subdomain?: (Scalars['String'] | null),customDomain?: (Scalars['String'] | null),displayName?: (Scalars['String'] | null),logo?: (Scalars['String'] | null),inviteHash?: (Scalars['String'] | null),isPublicInviteLinkEnabled?: (Scalars['Boolean'] | null),allowImpersonation?: (Scalars['Boolean'] | null),isGoogleAuthEnabled?: (Scalars['Boolean'] | null),isMicrosoftAuthEnabled?: (Scalars['Boolean'] | null),isPasswordAuthEnabled?: (Scalars['Boolean'] | null),isGoogleAuthBypassEnabled?: (Scalars['Boolean'] | null),isMicrosoftAuthBypassEnabled?: (Scalars['Boolean'] | null),isPasswordAuthBypassEnabled?: (Scalars['Boolean'] | null),defaultRoleId?: (Scalars['UUID'] | null),isTwoFactorAuthenticationEnforced?: (Scalars['Boolean'] | null),trashRetentionDays?: (Scalars['Float'] | null),eventLogRetentionDays?: (Scalars['Float'] | null),fastModel?: (Scalars['String'] | null),smartModel?: (Scalars['String'] | null),aiAdditionalInstructions?: (Scalars['String'] | null),editableProfileFields?: (Scalars['String'][] | null),autoEnableNewAiModels?: (Scalars['Boolean'] | null),disabledAiModelIds?: (Scalars['String'][] | null),enabledAiModelIds?: (Scalars['String'][] | null),useRecommendedModels?: (Scalars['Boolean'] | null)}
+
+export interface CreateAgentInput {name?: (Scalars['String'] | null),label: Scalars['String'],icon?: (Scalars['String'] | null),description?: (Scalars['String'] | null),prompt: Scalars['String'],modelId: Scalars['String'],roleId?: (Scalars['UUID'] | null),responseFormat?: (Scalars['JSON'] | null),modelConfiguration?: (Scalars['JSON'] | null),evaluationInputs?: (Scalars['String'][] | null)}
+
+export interface UpdateAgentInput {id: Scalars['UUID'],name?: (Scalars['String'] | null),label?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),description?: (Scalars['String'] | null),prompt?: (Scalars['String'] | null),modelId?: (Scalars['String'] | null),roleId?: (Scalars['UUID'] | null),responseFormat?: (Scalars['JSON'] | null),modelConfiguration?: (Scalars['JSON'] | null),evaluationInputs?: (Scalars['String'][] | null)}
+
+export interface CreateOneObjectInput {
+/** The object to create */
+object: CreateObjectInput}
+
+export interface CreateObjectInput {nameSingular: Scalars['String'],namePlural: Scalars['String'],labelSingular: Scalars['String'],labelPlural: Scalars['String'],description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),shortcut?: (Scalars['String'] | null),skipNameField?: (Scalars['Boolean'] | null),isRemote?: (Scalars['Boolean'] | null),primaryKeyColumnType?: (Scalars['String'] | null),primaryKeyFieldMetadataSettings?: (Scalars['JSON'] | null),isLabelSyncedWithName?: (Scalars['Boolean'] | null)}
+
+export interface DeleteOneObjectInput {
+/** The id of the record to delete. */
+id: Scalars['UUID']}
+
+export interface UpdateOneObjectInput {update: UpdateObjectPayload,
+/** The id of the object to update */
+id: Scalars['UUID']}
+
+export interface UpdateObjectPayload {labelSingular?: (Scalars['String'] | null),labelPlural?: (Scalars['String'] | null),nameSingular?: (Scalars['String'] | null),namePlural?: (Scalars['String'] | null),description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),shortcut?: (Scalars['String'] | null),isActive?: (Scalars['Boolean'] | null),labelIdentifierFieldMetadataId?: (Scalars['UUID'] | null),imageIdentifierFieldMetadataId?: (Scalars['UUID'] | null),isLabelSyncedWithName?: (Scalars['Boolean'] | null)}
 
 export interface CreateRoleInput {id?: (Scalars['String'] | null),label: Scalars['String'],description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),canUpdateAllSettings?: (Scalars['Boolean'] | null),canAccessAllTools?: (Scalars['Boolean'] | null),canReadAllObjectRecords?: (Scalars['Boolean'] | null),canUpdateAllObjectRecords?: (Scalars['Boolean'] | null),canSoftDeleteAllObjectRecords?: (Scalars['Boolean'] | null),canDestroyAllObjectRecords?: (Scalars['Boolean'] | null),canBeAssignedToUsers?: (Scalars['Boolean'] | null),canBeAssignedToAgents?: (Scalars['Boolean'] | null),canBeAssignedToApiKeys?: (Scalars['Boolean'] | null)}
 
@@ -6061,12 +6011,6 @@ export interface RowLevelPermissionPredicateInput {id?: (Scalars['UUID'] | null)
 
 export interface RowLevelPermissionPredicateGroupInput {id?: (Scalars['UUID'] | null),objectMetadataId: Scalars['UUID'],parentRowLevelPermissionPredicateGroupId?: (Scalars['UUID'] | null),logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator,positionInRowLevelPermissionPredicateGroup?: (Scalars['Float'] | null)}
 
-export interface CreateApprovedAccessDomainInput {domain: Scalars['String'],email: Scalars['String']}
-
-export interface DeleteApprovedAccessDomainInput {id: Scalars['UUID']}
-
-export interface ValidateApprovedAccessDomainInput {validationToken: Scalars['String'],approvedAccessDomainId: Scalars['UUID']}
-
 export interface CreateOneFieldMetadataInput {
 /** The record to create */
 field: CreateFieldInput}
@@ -6085,9 +6029,21 @@ export interface DeleteOneFieldInput {
 /** The id of the field to delete. */
 id: Scalars['UUID']}
 
-export interface ActivateWorkspaceInput {displayName?: (Scalars['String'] | null)}
+export interface CreatePageLayoutTabInput {title: Scalars['String'],position?: (Scalars['Float'] | null),pageLayoutId: Scalars['UUID']}
 
-export interface UpdateWorkspaceInput {subdomain?: (Scalars['String'] | null),customDomain?: (Scalars['String'] | null),displayName?: (Scalars['String'] | null),logo?: (Scalars['String'] | null),inviteHash?: (Scalars['String'] | null),isPublicInviteLinkEnabled?: (Scalars['Boolean'] | null),allowImpersonation?: (Scalars['Boolean'] | null),isGoogleAuthEnabled?: (Scalars['Boolean'] | null),isMicrosoftAuthEnabled?: (Scalars['Boolean'] | null),isPasswordAuthEnabled?: (Scalars['Boolean'] | null),isGoogleAuthBypassEnabled?: (Scalars['Boolean'] | null),isMicrosoftAuthBypassEnabled?: (Scalars['Boolean'] | null),isPasswordAuthBypassEnabled?: (Scalars['Boolean'] | null),defaultRoleId?: (Scalars['UUID'] | null),isTwoFactorAuthenticationEnforced?: (Scalars['Boolean'] | null),trashRetentionDays?: (Scalars['Float'] | null),eventLogRetentionDays?: (Scalars['Float'] | null),fastModel?: (Scalars['String'] | null),smartModel?: (Scalars['String'] | null),aiAdditionalInstructions?: (Scalars['String'] | null),editableProfileFields?: (Scalars['String'][] | null),autoEnableNewAiModels?: (Scalars['Boolean'] | null),disabledAiModelIds?: (Scalars['String'][] | null),enabledAiModelIds?: (Scalars['String'][] | null),useRecommendedModels?: (Scalars['Boolean'] | null)}
+export interface UpdatePageLayoutTabInput {title?: (Scalars['String'] | null),position?: (Scalars['Float'] | null),icon?: (Scalars['String'] | null)}
+
+export interface CreatePageLayoutInput {name: Scalars['String'],type?: (PageLayoutType | null),objectMetadataId?: (Scalars['UUID'] | null)}
+
+export interface UpdatePageLayoutInput {name?: (Scalars['String'] | null),type?: (PageLayoutType | null),objectMetadataId?: (Scalars['UUID'] | null)}
+
+export interface UpdatePageLayoutWithTabsInput {name: Scalars['String'],type: PageLayoutType,objectMetadataId?: (Scalars['UUID'] | null),tabs: UpdatePageLayoutTabWithWidgetsInput[]}
+
+export interface UpdatePageLayoutTabWithWidgetsInput {id: Scalars['UUID'],title: Scalars['String'],position: Scalars['Float'],icon?: (Scalars['String'] | null),widgets: UpdatePageLayoutWidgetWithIdInput[]}
+
+export interface UpdatePageLayoutWidgetWithIdInput {id: Scalars['UUID'],pageLayoutTabId: Scalars['UUID'],title: Scalars['String'],type: WidgetType,objectMetadataId?: (Scalars['UUID'] | null),gridPosition: GridPositionInput,position?: (Scalars['JSON'] | null),configuration?: (Scalars['JSON'] | null),conditionalDisplay?: (Scalars['JSON'] | null)}
+
+export interface GridPositionInput {row: Scalars['Float'],column: Scalars['Float'],rowSpan: Scalars['Float'],columnSpan: Scalars['Float']}
 
 export interface GetAuthorizationUrlForSSOInput {identityProviderId: Scalars['UUID'],workspaceInviteHash?: (Scalars['String'] | null)}
 
@@ -6121,9 +6077,53 @@ update: UpdateWebhookInputUpdates}
 
 export interface UpdateWebhookInputUpdates {targetUrl?: (Scalars['String'] | null),operations?: (Scalars['String'][] | null),description?: (Scalars['String'] | null),secret?: (Scalars['String'] | null)}
 
+export interface CreateLogicFunctionFromSourceInput {id?: (Scalars['UUID'] | null),universalIdentifier?: (Scalars['UUID'] | null),name: Scalars['String'],description?: (Scalars['String'] | null),timeoutSeconds?: (Scalars['Float'] | null),toolInputSchema?: (Scalars['JSON'] | null),isTool?: (Scalars['Boolean'] | null),source?: (Scalars['JSON'] | null),cronTriggerSettings?: (Scalars['JSON'] | null),databaseEventTriggerSettings?: (Scalars['JSON'] | null),httpRouteTriggerSettings?: (Scalars['JSON'] | null)}
+
+export interface ExecuteOneLogicFunctionInput {
+/** Id of the logic function to execute */
+id: Scalars['UUID'],
+/** Payload in JSON format */
+payload: Scalars['JSON']}
+
+export interface UpdateLogicFunctionFromSourceInput {
+/** Id of the logic function to update */
+id: Scalars['UUID'],
+/** The logic function updates */
+update: UpdateLogicFunctionFromSourceInputUpdates}
+
+export interface UpdateLogicFunctionFromSourceInputUpdates {name?: (Scalars['String'] | null),description?: (Scalars['String'] | null),timeoutSeconds?: (Scalars['Float'] | null),sourceHandlerCode?: (Scalars['String'] | null),toolInputSchema?: (Scalars['JSON'] | null),handlerName?: (Scalars['String'] | null),sourceHandlerPath?: (Scalars['String'] | null),isTool?: (Scalars['Boolean'] | null),cronTriggerSettings?: (Scalars['JSON'] | null),databaseEventTriggerSettings?: (Scalars['JSON'] | null),httpRouteTriggerSettings?: (Scalars['JSON'] | null)}
+
+export interface CreateNavigationMenuItemInput {userWorkspaceId?: (Scalars['UUID'] | null),targetRecordId?: (Scalars['UUID'] | null),targetObjectMetadataId?: (Scalars['UUID'] | null),viewId?: (Scalars['UUID'] | null),name?: (Scalars['String'] | null),link?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),color?: (Scalars['String'] | null),folderId?: (Scalars['UUID'] | null),position?: (Scalars['Float'] | null)}
+
+export interface UpdateOneNavigationMenuItemInput {
+/** The id of the record to update */
+id: Scalars['UUID'],
+/** The record to update */
+update: UpdateNavigationMenuItemInput}
+
+export interface UpdateNavigationMenuItemInput {folderId?: (Scalars['UUID'] | null),position?: (Scalars['Float'] | null),name?: (Scalars['String'] | null),link?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),color?: (Scalars['String'] | null)}
+
 export interface CreateSkillInput {id?: (Scalars['UUID'] | null),name: Scalars['String'],label: Scalars['String'],icon?: (Scalars['String'] | null),description?: (Scalars['String'] | null),content: Scalars['String']}
 
 export interface UpdateSkillInput {id: Scalars['UUID'],name?: (Scalars['String'] | null),label?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),description?: (Scalars['String'] | null),content?: (Scalars['String'] | null),isActive?: (Scalars['Boolean'] | null)}
+
+export interface CreateCommandMenuItemInput {workflowVersionId?: (Scalars['UUID'] | null),frontComponentId?: (Scalars['UUID'] | null),label: Scalars['String'],icon?: (Scalars['String'] | null),shortLabel?: (Scalars['String'] | null),position?: (Scalars['Float'] | null),isPinned?: (Scalars['Boolean'] | null),availabilityType?: (CommandMenuItemAvailabilityType | null),conditionalAvailabilityExpression?: (Scalars['String'] | null),availabilityObjectMetadataId?: (Scalars['UUID'] | null)}
+
+export interface UpdateCommandMenuItemInput {id: Scalars['UUID'],label?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),shortLabel?: (Scalars['String'] | null),position?: (Scalars['Float'] | null),isPinned?: (Scalars['Boolean'] | null),availabilityType?: (CommandMenuItemAvailabilityType | null),availabilityObjectMetadataId?: (Scalars['UUID'] | null)}
+
+export interface CreateFrontComponentInput {id?: (Scalars['UUID'] | null),name: Scalars['String'],description?: (Scalars['String'] | null),sourceComponentPath: Scalars['String'],builtComponentPath: Scalars['String'],componentName: Scalars['String'],builtComponentChecksum: Scalars['String']}
+
+export interface UpdateFrontComponentInput {
+/** The id of the front component to update */
+id: Scalars['UUID'],
+/** The front component fields to update */
+update: UpdateFrontComponentInputUpdates}
+
+export interface UpdateFrontComponentInputUpdates {name?: (Scalars['String'] | null),description?: (Scalars['String'] | null)}
+
+export interface CreatePageLayoutWidgetInput {pageLayoutTabId: Scalars['UUID'],title: Scalars['String'],type: WidgetType,objectMetadataId?: (Scalars['UUID'] | null),gridPosition: GridPositionInput,position?: (Scalars['JSON'] | null),configuration: Scalars['JSON']}
+
+export interface UpdatePageLayoutWidgetInput {title?: (Scalars['String'] | null),type?: (WidgetType | null),objectMetadataId?: (Scalars['UUID'] | null),gridPosition?: (GridPositionInput | null),position?: (Scalars['JSON'] | null),configuration?: (Scalars['JSON'] | null),conditionalDisplay?: (Scalars['JSON'] | null)}
 
 export interface EmailAccountConnectionParameters {IMAP?: (ConnectionParameters | null),SMTP?: (ConnectionParameters | null),CALDAV?: (ConnectionParameters | null)}
 
