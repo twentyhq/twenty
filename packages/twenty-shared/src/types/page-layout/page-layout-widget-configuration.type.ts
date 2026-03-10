@@ -99,6 +99,7 @@ export type FieldsConfiguration = {
   configurationType: 'FIELDS';
   viewId?: string | null;
   newFieldDefaultVisibility?: boolean | null;
+  shouldAllowUserToSeeHiddenFields?: boolean;
 };
 
 export type FieldRichTextConfiguration = {

@@ -20,7 +20,7 @@ const StyledContainer = styled.div`
   flex-direction: column;
   justify-content: center;
   padding: 8px ${themeCssVariables.spacing[6]};
-  width: 100%;
+  width: calc(100% - ${themeCssVariables.spacing[12]});
 `;
 
 const StyledTitleBar = styled.div`

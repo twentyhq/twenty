@@ -27,4 +27,9 @@ export class FieldsConfigurationDTO implements FieldsConfiguration {
   @IsOptional()
   @IsBoolean()
   newFieldDefaultVisibility: boolean | null;
+
+  @Field(() => Boolean, { nullable: true })
+  @IsOptional()
+  @IsBoolean()
+  shouldAllowUserToSeeHiddenFields?: boolean;
 }

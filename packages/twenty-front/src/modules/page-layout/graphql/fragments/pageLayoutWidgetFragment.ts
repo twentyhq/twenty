@@ -168,6 +168,7 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         configurationType
         viewId
         newFieldDefaultVisibility
+        shouldAllowUserToSeeHiddenFields
       }
       ... on FilesConfiguration {
         configurationType

@@ -32,8 +32,9 @@ const StyledActionWrapper = styled.div`
 `;
 
 const StyledActionButtonContainer = styled.div`
-  align-items: center;
+  align-items: stretch;
   display: inline-flex;
+  height: 100%;
   justify-content: center;
 `;
 
