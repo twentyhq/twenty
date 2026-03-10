@@ -52,11 +52,7 @@ const resolveFieldMetadataId = ({
     universalIdentifier: fieldMetadataUniversalIdentifier,
   });
 
-  if (!isDefined(flatFieldMetadata)) {
-    return null;
-  }
-
-  return flatFieldMetadata.id;
+  return flatFieldMetadata?.id ?? null;
 };
 
 const convertUniversalFilterToChartFilter = ({

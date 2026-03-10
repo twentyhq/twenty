@@ -29,7 +29,7 @@ import {
 import { type AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/types/all-page-layout-widget-configuration.type';
 import { fromFlatPageLayoutWidgetToPageLayoutWidgetDto } from 'src/engine/metadata-modules/page-layout-widget/utils/from-flat-page-layout-widget-to-page-layout-widget-dto.util';
 import { isChartFieldsForValidation } from 'src/engine/metadata-modules/page-layout-widget/utils/is-chart-fields-for-validation.util';
-import { validateChartConfigurationFieldReferences } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-chart-configuration-field-references.util';
+import { validateChartConfigurationFieldReferencesOrThrow } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-chart-configuration-field-references-or-throw.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { DashboardSyncService } from 'src/modules/dashboard-sync/services/dashboard-sync.service';
@@ -151,25 +151,14 @@ export class PageLayoutWidgetService {
         },
       );
 
-    try {
-      validateChartConfigurationFieldReferences({
-        configuration,
-        objectMetadataId,
-        widgetType,
-        flatFieldMetadataMaps,
-        flatObjectMetadataMaps,
-      });
-    } catch (error) {
-      const chartContextPrefix = isDefined(widgetTitle)
-        ? `Chart "${widgetTitle}": `
-        : '';
-
-      throw new PageLayoutWidgetException(
-        chartContextPrefix +
-          (error instanceof Error ? error.message : String(error)),
-        PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
-      );
-    }
+    validateChartConfigurationFieldReferencesOrThrow({
+      configuration,
+      objectMetadataId,
+      widgetType,
+      widgetTitle,
+      flatFieldMetadataMaps,
+      flatObjectMetadataMaps,
+    });
   }
 
   async findByPageLayoutTabId({

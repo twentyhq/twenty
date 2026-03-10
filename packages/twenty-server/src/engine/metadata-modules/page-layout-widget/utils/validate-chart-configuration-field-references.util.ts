@@ -149,14 +149,14 @@ export const validateChartConfigurationFieldReferences = ({
           flatEntityMaps: flatFieldMetadataMaps,
         });
 
-        const fieldLabelOrName = inactiveOrMissingField?.label
+        const fieldLabelNameOrId = inactiveOrMissingField?.label
           ? `"${inactiveOrMissingField.label}"`
           : inactiveOrMissingField?.name
             ? `"${inactiveOrMissingField.name}"`
-            : 'this field';
+            : `field id "${recordFilter.fieldMetadataId}"`;
 
         throw new Error(
-          `One of the chart filters uses ${fieldLabelOrName}, but it was deleted. Please remove or replace this filter rule.`,
+          `One of the chart filters uses ${fieldLabelNameOrId}, but it was deleted. Please remove or replace this filter rule.`,
         );
       }
 
