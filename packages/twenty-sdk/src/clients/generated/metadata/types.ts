@@ -2418,6 +2418,9 @@ export default {
             "newFieldDefaultConfiguration": [
                 73
             ],
+            "shouldAllowUserToSeeHiddenFields": [
+                6
+            ],
             "__typename": [
                 1
             ]

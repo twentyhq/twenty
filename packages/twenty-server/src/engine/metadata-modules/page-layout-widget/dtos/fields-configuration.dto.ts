@@ -42,4 +42,9 @@ export class FieldsConfigurationDTO implements FieldsConfiguration {
   @ValidateNested()
   @Type(() => NewFieldDefaultConfigurationDTO)
   newFieldDefaultConfiguration: NewFieldDefaultConfigurationDTO | null;
+
+  @Field(() => Boolean, { nullable: true })
+  @IsOptional()
+  @IsBoolean()
+  shouldAllowUserToSeeHiddenFields?: boolean;
 }
