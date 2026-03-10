@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
 import { type AllMetadataName } from 'twenty-shared/metadata';
@@ -6,6 +6,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { DataSource } from 'typeorm';
 
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
+import { LOGIC_FUNCTION_DRIVER } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/logic-function-driver.constants';
+import { type LogicFunctionDriver } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
@@ -34,6 +36,8 @@ export class WorkspaceMigrationRunnerService {
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    @Inject(LOGIC_FUNCTION_DRIVER)
+    private readonly logicFunctionDriver: LogicFunctionDriver,
     private readonly logger: LoggerService,
   ) {}
 
@@ -56,6 +60,10 @@ export class WorkspaceMigrationRunnerService {
         this.workspaceMetadataVersionService.incrementMetadataVersion(
           workspaceId,
         ),
+      );
+      // TODO challenge and explo mutating a isSdkClientLayertoBuilt in related application instead
+      asyncOperations.push(
+        this.logicFunctionDriver.invalidateSdkLayer(workspaceId),
       );
     }
 

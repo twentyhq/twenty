@@ -34,6 +34,7 @@ export interface LogicFunctionDriver {
   execute(
     params: LogicFunctionExecuteParams,
   ): Promise<LogicFunctionExecuteResult>;
+  invalidateSdkLayer(workspaceId: string): Promise<void>;
 }
 
 export enum LogicFunctionDriverType {

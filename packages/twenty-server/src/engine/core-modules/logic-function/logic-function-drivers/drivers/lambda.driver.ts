@@ -5,6 +5,7 @@ import {
   CreateFunctionCommand,
   type CreateFunctionCommandInput,
   DeleteFunctionCommand,
+  DeleteLayerVersionCommand,
   GetFunctionCommand,
   InvokeCommand,
   type InvokeCommandInput,
@@ -21,17 +22,20 @@ import { AssumeRoleCommand, STSClient } from '@aws-sdk/client-sts';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
+  type LogicFunctionDriver,
   type LogicFunctionExecuteParams,
   type LogicFunctionExecuteResult,
-  type LogicFunctionDriver,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 
+import { copyYarnEngineAndBuildDependencies } from 'src/engine/core-modules/application/application-package/utils/copy-yarn-engine-and-build-dependencies';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { type GetWorkspaceGraphQLSchemaFn } from 'src/engine/core-modules/logic-function/logic-function-drivers/types/get-workspace-graphql-schema.type';
+import { callWithTimeout } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/call-with-timeout';
 import { copyExecutor } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-executor';
 import { createZipFile } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/create-zip-file';
-import { type GetWorkspaceGraphQLSchemaFn } from 'src/engine/core-modules/logic-function/logic-function-drivers/types/get-workspace-graphql-schema.type';
 import { generateCoreClientInLayer } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/generate-core-client-in-layer';
 import { TemporaryDirManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/temporary-dir-manager';
+import { type LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
 import { LogicFunctionRuntime } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import {
@@ -39,9 +43,6 @@ import {
   LogicFunctionExceptionCode,
 } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
-import { copyYarnEngineAndBuildDependencies } from 'src/engine/core-modules/application/application-package/utils/copy-yarn-engine-and-build-dependencies';
-import { type LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
-import { callWithTimeout } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/call-with-timeout';
 
 const UPDATE_FUNCTION_DURATION_TIMEOUT_IN_SECONDS = 60;
 const CREDENTIALS_DURATION_IN_SECONDS = 60 * 60; // 1h
@@ -144,8 +145,14 @@ export class LambdaDriver implements LogicFunctionDriver {
     return `deps-${checksum}`;
   }
 
-  private getSdkLayerName(workspaceId: string): string {
-    return `sdk-${workspaceId}`;
+  private getSdkLayerName({
+    workspaceId,
+    applicationUniversalIdentifier,
+  }: {
+    workspaceId: string;
+    applicationUniversalIdentifier: string;
+  }): string {
+    return `sdk-${workspaceId}-${applicationUniversalIdentifier}`;
   }
 
   private async findExistingLayerArn(
@@ -276,8 +283,7 @@ export class LambdaDriver implements LogicFunctionDriver {
       // This only happens when the deps layer already exists but the SDK
       // layer doesn't (e.g. new workspace on existing app dependencies).
       const installDirManager = new TemporaryDirManager();
-      const { sourceTemporaryDir: installDir } =
-        await installDirManager.init();
+      const { sourceTemporaryDir: installDir } = await installDirManager.init();
 
       const installNodejs = join(installDir, 'nodejs');
 
@@ -339,6 +345,40 @@ export class LambdaDriver implements LogicFunctionDriver {
 
       await (await this.getLambdaClient()).send(deleteFunctionCommand);
     }
+  }
+
+  // We only ever publish a single layer version, but we paginate defensively
+  // to handle potential duplicates from concurrent build() race conditions.
+  async invalidateSdkLayer(workspaceId: string): Promise<void> {
+    const layerName = this.getSdkLayerName(workspaceId);
+    const lambdaClient = await this.getLambdaClient();
+
+    let marker: string | undefined;
+
+    do {
+      const listResult = await lambdaClient.send(
+        new ListLayerVersionsCommand({
+          LayerName: layerName,
+          MaxItems: 50,
+          Marker: marker,
+        }),
+      );
+
+      const versions = listResult.LayerVersions ?? [];
+
+      await Promise.all(
+        versions.map((version) =>
+          lambdaClient.send(
+            new DeleteLayerVersionCommand({
+              LayerName: layerName,
+              VersionNumber: version.Version,
+            }),
+          ),
+        ),
+      );
+
+      marker = listResult.NextMarker;
+    } while (isDefined(marker));
   }
 
   private async isAlreadyBuilt(

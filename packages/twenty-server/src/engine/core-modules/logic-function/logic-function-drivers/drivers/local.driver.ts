@@ -108,6 +108,12 @@ export class LocalDriver implements LogicFunctionDriver {
 
   async delete() {}
 
+  async invalidateSdkLayer(workspaceId: string): Promise<void> {
+    const sdkLayerPath = this.getSdkLayerPath(workspaceId);
+
+    await fs.rm(sdkLayerPath, { recursive: true, force: true });
+  }
+
   private async build({
     flatApplication,
     applicationUniversalIdentifier,
