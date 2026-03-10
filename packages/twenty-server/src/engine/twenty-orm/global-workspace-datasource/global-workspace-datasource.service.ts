@@ -44,6 +44,7 @@ export class GlobalWorkspaceDataSourceService
           query_timeout: this.twentyConfigService.get(
             'PG_DATABASE_PRIMARY_TIMEOUT_MS',
           ),
+          min: this.twentyConfigService.get('PG_POOL_MIN_CONNECTIONS'),
           idleTimeoutMillis: this.twentyConfigService.get(
             'PG_POOL_IDLE_TIMEOUT_MS',
           ),
@@ -79,6 +80,7 @@ export class GlobalWorkspaceDataSourceService
             query_timeout: this.twentyConfigService.get(
               'PG_DATABASE_REPLICA_TIMEOUT_MS',
             ),
+            min: this.twentyConfigService.get('PG_POOL_MIN_CONNECTIONS'),
             idleTimeoutMillis: this.twentyConfigService.get(
               'PG_POOL_IDLE_TIMEOUT_MS',
             ),

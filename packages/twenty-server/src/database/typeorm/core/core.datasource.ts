@@ -73,6 +73,7 @@ export const typeORMCoreModuleOptions: TypeOrmModuleOptions = {
       : undefined,
   extra: {
     query_timeout: 15000,
+    min: parseInt(process.env.PG_POOL_MIN_CONNECTIONS ?? '5', 10),
   },
 };
 

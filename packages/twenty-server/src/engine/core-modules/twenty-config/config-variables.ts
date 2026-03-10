@@ -929,6 +929,17 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,
+    description:
+      'Minimum number of clients maintained in pg connection pool to avoid cold start latency',
+    isEnvOnly: true,
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  @IsOptional()
+  PG_POOL_MIN_CONNECTIONS = 5;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
     description: 'Idle timeout in milliseconds for pg connection pool clients',
     isEnvOnly: true,
     type: ConfigVariableType.NUMBER,

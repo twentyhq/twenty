@@ -56,13 +56,6 @@ export class RunWorkflowJob {
           });
         }
       } catch (error) {
-        if (
-          error instanceof WorkflowRunException &&
-          error.code === WorkflowRunExceptionCode.WORKFLOW_RUN_NOT_FOUND
-        ) {
-          return;
-        }
-
         await this.workflowRunWorkspaceService.endWorkflowRun({
           workspaceId,
           workflowRunId,
