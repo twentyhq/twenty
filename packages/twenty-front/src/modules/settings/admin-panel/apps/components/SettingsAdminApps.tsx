@@ -15,10 +15,7 @@ import { SearchInput } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { UndecoratedLink } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import {
-  ApplicationRegistrationSourceType,
-  type ApplicationRegistrationFragmentFragment,
-} from '~/generated-metadata/graphql';
+import { type ApplicationRegistrationFragmentFragment } from '~/generated-metadata/graphql';
 
 const StyledTableContainer = styled.div`
   margin-top: ${themeCssVariables.spacing[3]};
@@ -68,7 +65,7 @@ export const SettingsAdminApps = () => {
             <TableRow gridTemplateColumns={TABLE_GRID}>
               <TableHeader>{t`Name`}</TableHeader>
               <TableHeader>{t`Source`}</TableHeader>
-              <TableHeader>{t`Type`}</TableHeader>
+              <TableHeader>{t`Listed`}</TableHeader>
               <TableHeader>{t`Featured`}</TableHeader>
             </TableRow>
           </StyledTableHeaderRowContainer>
@@ -89,16 +86,8 @@ export const SettingsAdminApps = () => {
                   </TableCell>
                   <TableCell>
                     <Status
-                      color={
-                        registration.sourceType ===
-                        ApplicationRegistrationSourceType.NPM
-                          ? 'green'
-                          : registration.sourceType ===
-                              ApplicationRegistrationSourceType.TARBALL
-                            ? 'blue'
-                            : 'gray'
-                      }
-                      text={registration.sourceType}
+                      color={registration.isListed ? 'green' : 'gray'}
+                      text={registration.isListed ? t`Yes` : t`No`}
                     />
                   </TableCell>
                   <TableCell>
