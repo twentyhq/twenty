@@ -1169,6 +1169,7 @@ type FieldsConfiguration {
   configurationType: WidgetConfigurationType!
   viewId: String
   newFieldDefaultConfiguration: NewFieldDefaultConfiguration
+  shouldAllowUserToSeeHiddenFields: Boolean
 }
 
 type FilesConfiguration {

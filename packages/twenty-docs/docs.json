@@ -1253,7 +1253,7 @@
                   "l/ar/developers/extend/api",
                   "l/ar/developers/extend/webhooks",
                   {
-                    "group": "Apps",
+                    "group": "التطبيقات",
                     "pages": [
                       "l/ar/developers/extend/apps/getting-started",
                       "l/ar/developers/extend/apps/building",
@@ -3037,7 +3037,7 @@
                   "l/it/developers/extend/api",
                   "l/it/developers/extend/webhooks",
                   {
-                    "group": "Apps",
+                    "group": "App",
                     "pages": [
                       "l/it/developers/extend/apps/getting-started",
                       "l/it/developers/extend/apps/building",
@@ -4375,7 +4375,7 @@
                   "l/pt/developers/extend/api",
                   "l/pt/developers/extend/webhooks",
                   {
-                    "group": "Apps",
+                    "group": "Aplicativos",
                     "pages": [
                       "l/pt/developers/extend/apps/getting-started",
                       "l/pt/developers/extend/apps/building",
@@ -4821,7 +4821,7 @@
                   "l/ro/developers/extend/api",
                   "l/ro/developers/extend/webhooks",
                   {
-                    "group": "Apps",
+                    "group": "Aplicații",
                     "pages": [
                       "l/ro/developers/extend/apps/getting-started",
                       "l/ro/developers/extend/apps/building",
@@ -5267,7 +5267,7 @@
                   "l/ru/developers/extend/api",
                   "l/ru/developers/extend/webhooks",
                   {
-                    "group": "Apps",
+                    "group": "Приложения",
                     "pages": [
                       "l/ru/developers/extend/apps/getting-started",
                       "l/ru/developers/extend/apps/building",
@@ -5713,7 +5713,7 @@
                   "l/tr/developers/extend/api",
                   "l/tr/developers/extend/webhooks",
                   {
-                    "group": "Apps",
+                    "group": "Uygulamalar",
                     "pages": [
                       "l/tr/developers/extend/apps/getting-started",
                       "l/tr/developers/extend/apps/building",
@@ -6159,7 +6159,7 @@
                   "l/zh/developers/extend/api",
                   "l/zh/developers/extend/webhooks",
                   {
-                    "group": "Apps",
+                    "group": "应用",
                     "pages": [
                       "l/zh/developers/extend/apps/getting-started",
                       "l/zh/developers/extend/apps/building",
