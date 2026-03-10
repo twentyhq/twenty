@@ -10,7 +10,7 @@ import { coreViewsState } from '@/views/states/coreViewState';
 import { useLocation, useParams, useSearchParams } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { ViewKey } from '~/generated-metadata/graphql';
+import { ViewKey, ViewType } from '~/generated-metadata/graphql';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
 const getViewId = (
@@ -51,7 +51,7 @@ export const MainContextStoreProvider = () => {
   const objectNameSingular = useParams().objectNameSingular ?? '';
 
   const [searchParams] = useSearchParams();
-  const viewIdQueryParam = searchParams.get('viewId');
+  const viewIdQueryParamRaw = searchParams.get('viewId');
 
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
   const metadataStore = useAtomFamilyStateValue(metadataStoreState, 'views');
@@ -65,9 +65,29 @@ export const MainContextStoreProvider = () => {
 
   const { getLastVisitedViewIdFromObjectNamePlural } = useLastVisitedView();
 
-  const lastVisitedViewId = getLastVisitedViewIdFromObjectNamePlural(
+  const viewIdQueryParamView = coreViews.find(
+    (view) => view.id === viewIdQueryParamRaw,
+  );
+
+  const viewIdQueryParam =
+    isDefined(viewIdQueryParamView) &&
+    viewIdQueryParamView.type !== ViewType.FIELDS_WIDGET
+      ? viewIdQueryParamRaw
+      : null;
+
+  const lastVisitedViewIdRaw = getLastVisitedViewIdFromObjectNamePlural(
     objectMetadataItem?.namePlural ?? '',
   );
+
+  const lastVisitedView = coreViews.find(
+    (view) => view.id === lastVisitedViewIdRaw,
+  );
+
+  const lastVisitedViewId =
+    isDefined(lastVisitedView) &&
+    lastVisitedView.type !== ViewType.FIELDS_WIDGET
+      ? lastVisitedViewIdRaw
+      : undefined;
 
   const indexViewId = coreViews.find(
     (view) =>
@@ -76,7 +96,9 @@ export const MainContextStoreProvider = () => {
   )?.id;
 
   const firstAvailableViewId = coreViews.find(
-    (view) => view.objectMetadataId === objectMetadataItem?.id,
+    (view) =>
+      view.objectMetadataId === objectMetadataItem?.id &&
+      view.type !== ViewType.FIELDS_WIDGET,
   )?.id;
 
   const viewId = getViewId(
@@ -85,6 +107,7 @@ export const MainContextStoreProvider = () => {
     lastVisitedViewId,
     firstAvailableViewId,
   );
+
   const showAuthModal = useShowAuthModal();
 
   const shouldComputeContextStore =
