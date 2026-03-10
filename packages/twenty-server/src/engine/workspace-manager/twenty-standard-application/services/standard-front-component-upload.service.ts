@@ -48,17 +48,6 @@ export class StandardFrontComponentUploadService {
         continue;
       }
 
-      const fileAlreadyExists = await this.fileStorageService.checkFileExists({
-        workspaceId,
-        applicationUniversalIdentifier,
-        fileFolder: FileFolder.BuiltFrontComponent,
-        resourcePath: entry.builtComponentPath,
-      });
-
-      if (fileAlreadyExists) {
-        continue;
-      }
-
       const fileContent = fs.readFileSync(localFilePath);
 
       await this.fileStorageService.writeFile({
