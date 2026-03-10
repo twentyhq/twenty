@@ -224,6 +224,28 @@ describe('SecureHttpClientService', () => {
       );
     });
 
+    it('should reject non-http baseURL when url is empty string', () => {
+      const service = new SecureHttpClientService(
+        createMockConfigService({ OUTBOUND_HTTP_SAFE_MODE_ENABLED: true }),
+      );
+      const client = service.getHttpClient();
+
+      const interceptorHandlers = (
+        client.interceptors.request as unknown as {
+          handlers: Array<{ fulfilled: Function }>;
+        }
+      ).handlers;
+
+      const protocolInterceptor = interceptorHandlers[0].fulfilled;
+
+      expect(() =>
+        protocolInterceptor({
+          url: '',
+          baseURL: 'ftp://internal-server/data',
+        }),
+      ).toThrow('Protocol ftp: is not allowed');
+    });
+
     it('should not add protocol interceptor when safe mode is off', () => {
       const service = new SecureHttpClientService(createMockConfigService());
       const client = service.getHttpClient();

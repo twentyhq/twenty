@@ -64,7 +64,7 @@ export class SecureHttpClientService {
 
     if (isSafeModeEnabled) {
       client.interceptors.request.use((requestConfig) => {
-        const url = requestConfig.url ?? requestConfig.baseURL;
+        const url = requestConfig.url || requestConfig.baseURL;
 
         if (url) {
           const parsed = new URL(url, requestConfig.baseURL);
