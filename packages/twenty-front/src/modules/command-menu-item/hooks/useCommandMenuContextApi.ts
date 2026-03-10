@@ -19,13 +19,13 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { isNonEmptyArray } from '@sniptt/guards';
 import { useStore } from 'jotai';
 import { useContext } from 'react';
 import {
   CommandMenuContextApiPageType,
   type CommandMenuContextApi,
 } from 'twenty-shared/types';
-import { isNonEmptyArray } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
@@ -61,7 +61,7 @@ export const useCommandMenuContextApi = (): CommandMenuContextApi => {
       : undefined;
 
   const favoriteRecordIds = (() => {
-    if (!isNonEmptyArray(recordIds)){
+    if (!isNonEmptyArray(recordIds)) {
       return [];
     }
 
@@ -112,7 +112,7 @@ export const useCommandMenuContextApi = (): CommandMenuContextApi => {
     contextStoreCurrentViewTypeComponentState,
   );
 
-  const isPageInEditMode = useAtomComponentStateValue(
+  const contextStoreIsPageInEditMode = useAtomComponentStateValue(
     contextStoreIsPageInEditModeComponentState,
   );
 
@@ -153,7 +153,7 @@ export const useCommandMenuContextApi = (): CommandMenuContextApi => {
   return {
     pageType,
     isInSidePanel,
-    isPageInEditMode,
+    isPageInEditMode: contextStoreIsPageInEditMode,
     favoriteRecordIds,
     isSelectAll,
     hasAnySoftDeleteFilterOnView,
