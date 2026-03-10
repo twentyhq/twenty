@@ -171,7 +171,7 @@ export default defineObject({
 
 ستضيف الأوامر اللاحقة مزيدًا من الملفات والمجلدات:
 
-* سيقوم `yarn twenty app:dev` بتوليد عميلين API مضبوطي الأنواع تلقائيًا في `node_modules/twenty-sdk/generated`: `CoreApiClient` (لبيانات مساحة العمل عبر `/graphql`) و`MetadataApiClient` (لتكوين مساحة العمل وتحميل الملفات عبر `/metadata`).
+* سيقوم `yarn twenty app:dev` بتوليد عميلين API مضبوطي الأنواع تلقائيًا في `node_modules/twenty-sdk/clients`: `CoreApiClient` (لبيانات مساحة العمل عبر `/graphql`) و`MetadataApiClient` (لتكوين مساحة العمل وتحميل الملفات عبر `/metadata`).
 * `yarn twenty entity:add` سيضيف ملفات تعريف الكيانات ضمن `src/` لكائناتك المخصّصة، والوظائف، ومكوّنات الواجهة الأمامية، والأدوار، والمهارات، وغير ذلك.
 
 ## المصادقة
@@ -228,7 +228,7 @@ yarn twenty auth:status
 | `defineView()`                     | تعريف العروض المحفوظة للكائنات                       |
 | `defineNavigationMenuItem()`       | تعريف روابط التنقل في الشريط الجانبي                 |
 | `defineSkill()`                    | عرّف مهارات وكيل الذكاء الاصطناعي                    |
-| `defineAgent()`                    | Define AI agents with system prompts                 |
+| `defineAgent()`                    | عرِّف وكلاء الذكاء الاصطناعي باستخدام موجهات النظام  |
 
 تتحقق هذه الدوال من تكوينك وقت البناء وتوفّر إكمالًا تلقائيًا في بيئة التطوير وأمان الأنواع.
 
@@ -320,6 +320,72 @@ export default defineObject({
 يمكنك تجاوز الحقول الافتراضية من خلال تعريف حقل بالاسم نفسه في مصفوفة `fields` الخاصة بك،
 لكن هذا غير مستحسن.
 </Note>
+
+### تعريف الحقول على الكائنات الموجودة
+
+استخدم `defineField()` لإضافة حقول مخصصة إلى الكائنات الموجودة — سواء الكائنات القياسية (مثل `company` و`person` و`opportunity`) أو الكائنات المخصصة التي تُعرِّفها تطبيقات أخرى. يوجد كل حقل في ملفه الخاص ويشير إلى الكائن الهدف بواسطة `universalIdentifier` الخاص به.
+
+للإشارة إلى الكائنات القياسية، استورد `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS` من `twenty-sdk`. يوفر هذا الثابت معرِّفات مستقرة لجميع الكائنات المضمنة وحقولها:
+
+```typescript
+// src/fields/apollo-total-funding.field.ts
+import {
+  defineField,
+  FieldType,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk';
+
+export default defineField({
+  universalIdentifier: 'c90ae72d-4ddf-4f22-882f-eef98c91e40e',
+  objectUniversalIdentifier:
+    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+  type: FieldType.CURRENCY,
+  name: 'apolloTotalFunding',
+  label: 'Total Funding',
+  description: 'Total funding raised by the company',
+  icon: 'IconCash',
+});
+```
+
+النقاط الرئيسية:
+
+* `objectUniversalIdentifier` يُحدِّد لـ Twenty الكائن الذي سيُرفَق به الحقل. استخدم `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.<objectName>.universalIdentifier` للكائنات القياسية.
+* يتطلب كل حقل `universalIdentifier` ثابتًا خاصًا به، و`name`، و`type`، و`label`، و`objectUniversalIdentifier` الخاص بالكائن الهدف.
+* يمكنك إنشاء حقول جديدة باستخدام `yarn twenty entity:add` واختيار خيار الحقل.
+* يُصدَّر `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS` أيضًا باسم `STANDARD_OBJECT` لسهولة الاستخدام — كلاهما يشير إلى الثابت نفسه.
+
+تشمل الكائنات القياسية المتاحة: `attachment`، `blocklist`، `calendarChannel`، `calendarEvent`، `calendarEventParticipant`، `company`، `connectedAccount`، `dashboard`، `favorite`، `favoriteFolder`، `message`، `messageChannel`، `messageParticipant`، `messageThread`، `note`، `noteTarget`، `opportunity`، `person`، `task`، `taskTarget`، `timelineActivity`، `workflow`، `workflowAutomatedTrigger`، `workflowRun`، `workflowVersion`، و`workspaceMember`.
+
+يُوفِّر كل كائن قياسي أيضًا معرّفات حقوله. على سبيل المثال، للإشارة إلى حقل محدد على كائن قياسي ضمن أذونات الأدوار:
+
+```typescript
+STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.fields.name.universalIdentifier
+```
+
+#### حقول العلاقات على الكائنات الموجودة
+
+يمكنك أيضًا تعريف حقول علاقات تربط الكائنات الموجودة بكائناتك المخصصة:
+
+```typescript
+// src/fields/people-on-call-recording.field.ts
+import { defineField, FieldType, RelationType, STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk';
+import { CALL_RECORDING_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/objects/call-recording';
+import { CALL_RECORDING_ON_PERSON_ID } from 'src/fields/call-recording-on-person.field';
+
+export default defineField({
+  universalIdentifier: '4a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d',
+  objectUniversalIdentifier:
+    CALL_RECORDING_OBJECT_UNIVERSAL_IDENTIFIER,
+  type: FieldType.RELATION,
+  name: 'person',
+  label: 'Person',
+  relationTargetObjectMetadataUniversalIdentifier:
+    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
+  relationTargetFieldMetadataUniversalIdentifier:
+    CALL_RECORDING_ON_PERSON_ID,
+  relationType: RelationType.MANY_TO_ONE,
+});
+```
 
 ### تكوين التطبيق (application-config.ts)
 
@@ -434,7 +500,7 @@ export default defineRole({
 // src/app/createPostCard.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk';
 import type { DatabaseEventPayload, ObjectRecordCreateEvent, CronPayload, RoutePayload } from 'twenty-sdk';
-import { CoreApiClient, type Person } from 'twenty-sdk/generated';
+import { CoreApiClient, type Person } from 'twenty-sdk/clients';
 
 const handler = async (params: RoutePayload) => {
   const client = new CoreApiClient();
@@ -679,7 +745,7 @@ const handler = async (event: RoutePayload) => {
 ```typescript
 // src/logic-functions/enrich-company.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk';
-import { CoreApiClient } from 'twenty-sdk/generated';
+import { CoreApiClient } from 'twenty-sdk/clients';
 
 const handler = async (params: { companyName: string; domain?: string }) => {
   const client = new CoreApiClient();
@@ -806,9 +872,9 @@ export default defineSkill({
 * **مُنشأ بالقالب**: شغِّل `yarn twenty entity:add` واختر خيار إضافة مهارة جديدة.
 * **يدوي**: أنشئ ملفًا جديدًا واستخدم `defineSkill()` مع اتباع النمط نفسه.
 
-### Agents
+### الوكلاء
 
-Agents define AI agents with system prompts that can operate within your workspace. Use `defineAgent()` to define agents with built-in validation:
+تمكّنك ميزة الوكلاء من تعريف وكلاء ذكاء اصطناعي قادرين على العمل ضمن مساحة عملك، باستخدام موجهات النظام. استخدم `defineAgent()` لتعريف وكلاء مع تحقق مدمج:
 
 ```typescript
 // src/agents/example-agent.ts
@@ -830,26 +896,27 @@ export default defineAgent({
 
 النقاط الرئيسية:
 
-* `name` is a unique identifier string for the agent (kebab-case recommended).
+* `name` هي سلسلة معرّف فريدة للوكيل (يُنصَح باستخدام kebab-case).
 * `label` هو اسم العرض المقروء للبشر الظاهر في واجهة المستخدم.
-* `prompt` contains the system prompt — this is the instruction text that defines the agent's behavior.
+* `prompt` يحتوي موجه النظام — وهو نص التعليمات الذي يحدد سلوك الوكيل.
 * `icon` (اختياري) يحدّد الأيقونة المعروضة في واجهة المستخدم.
-* `description` (optional) provides additional context about the agent's purpose.
+* `description` (اختياري) يوفّر سياقًا إضافيًا حول غرض الوكيل.
 
-You can create new agents in two ways:
+يمكنك إنشاء وكلاء جدد بطريقتين:
 
-* **Scaffolded**: Run `yarn twenty entity:add` and choose the option to add a new agent.
-* **Manual**: Create a new file and use `defineAgent()`, following the same pattern.
+* **مُنشأ بالقالب**: شغِّل `yarn twenty entity:add` واختر خيار إضافة وكيل جديد.
+* **يدوي**: أنشئ ملفًا جديدًا واستخدم `defineAgent()` مع اتباع النمط نفسه.
 
 ### عملاء مُولَّدون مضبوطو الأنواع
 
-يتم توليد عميلين مضبوطي الأنواع تلقائيًا بواسطة `yarn twenty app:dev` وتخزينهما في `node_modules/twenty-sdk/generated` استنادًا إلى مخطط مساحة العمل لديك:
+يتم توليد عميلين مضبوطي الأنواع تلقائيًا بواسطة `yarn twenty app:dev` وتخزينهما في `node_modules/twenty-sdk/clients` استنادًا إلى مخطط مساحة العمل لديك:
 
 * **`CoreApiClient`** — يُجري استعلامات إلى نقطة النهاية `/graphql` للحصول على بيانات مساحة العمل
 * **`MetadataApiClient`** — يستعلم عن نقطة النهاية `/metadata` لتكوين مساحة العمل وتحميل الملفات.
 
 ```typescript
-import { CoreApiClient, MetadataApiClient } from 'twenty-sdk/generated';
+import { CoreApiClient } from 'twenty-sdk/clients';
+import { MetadataApiClient } from 'twenty-sdk/clients';
 
 const client = new CoreApiClient();
 const { me } = await client.query({ me: { id: true, displayName: true } });
@@ -858,7 +925,7 @@ const metadataClient = new MetadataApiClient();
 const { currentWorkspace } = await metadataClient.query({ currentWorkspace: { id: true } });
 ```
 
-يُعاد توليد كلا العميلين تلقائيًا بواسطة `yarn twenty app:dev` كلما تغيّرت كائناتك أو حقولك.
+`CoreApiClient` يُعاد توليده تلقائيًا بواسطة `yarn twenty app:dev` كلما تغيّرت كائناتك أو حقولك. `MetadataApiClient` يأتي مُجهزًا مسبقًا مع SDK.
 
 #### بيانات الاعتماد وقت التشغيل في الوظائف المنطقية
 
@@ -875,10 +942,10 @@ const { currentWorkspace } = await metadataClient.query({ currentWorkspace: { id
 
 #### رفع الملفات
 
-يتضمن `MetadataApiClient` المُولَّد طريقة `uploadFile` لإرفاق الملفات بالحقول من نوع ملف ضمن كائنات مساحة العمل الخاصة بك. نظرًا لأن عملاء GraphQL القياسيون لا يدعمون تحميل الملفات متعددة الأجزاء افتراضيًا، يوفر العميل هذه الطريقة المخصصة التي تطبق [مواصفة طلب GraphQL متعدد الأجزاء](https://github.com/jaydenseric/graphql-multipart-request-spec) في الخلفية.
+يتضمن `MetadataApiClient` طريقة `uploadFile` لإرفاق الملفات بالحقول من نوع ملف ضمن كائنات مساحة العمل الخاصة بك. نظرًا لأن عملاء GraphQL القياسيون لا يدعمون تحميل الملفات متعددة الأجزاء افتراضيًا، يوفر العميل هذه الطريقة المخصصة التي تطبق [مواصفة طلب GraphQL متعدد الأجزاء](https://github.com/jaydenseric/graphql-multipart-request-spec) في الخلفية.
 
 ```typescript
-import { MetadataApiClient } from 'twenty-sdk/generated';
+import { MetadataApiClient } from 'twenty-sdk/clients';
 import * as fs from 'fs';
 
 const metadataClient = new MetadataApiClient();

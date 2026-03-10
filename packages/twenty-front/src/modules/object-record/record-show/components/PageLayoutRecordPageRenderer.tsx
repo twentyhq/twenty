@@ -33,8 +33,6 @@ const StyledContentContainer = styled.div<{ isInSidePanel: boolean }>`
   background: ${themeCssVariables.background.primary};
   flex: 1;
   overflow-y: auto;
-  padding-bottom: ${({ isInSidePanel }) =>
-    isInSidePanel ? themeCssVariables.spacing[16] : 0};
 `;
 
 export const PageLayoutRecordPageRenderer = ({

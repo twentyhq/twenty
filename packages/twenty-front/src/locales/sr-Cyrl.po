@@ -3836,7 +3836,6 @@ msgid "Customization"
 msgstr "Прилагођавање"
 
 #. js-lingui-id: srRMnJ
-#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutFieldsSettings.tsx
 #: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNavigationMenuItemEditPage.tsx
 #: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNavigationMenuItemEditPage.tsx
 #: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditObjectViewBase.tsx
@@ -3927,6 +3926,11 @@ msgstr "Контролне табле"
 #: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemMainMenu.tsx
 msgid "Data"
 msgstr "Подаци"
+
+#. js-lingui-id: nxnCld
+#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutFieldsSettings.tsx
+msgid "Data and display"
+msgstr ""
 
 #. js-lingui-id: TtG/MN
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
@@ -4575,6 +4579,11 @@ msgstr "Одбаци нацрт"
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelsGeneral.tsx
 msgid "Display"
 msgstr "Приказ"
+
+#. js-lingui-id: Ldgs6e
+#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutFieldsSettings.tsx
+msgid "Display \"More fields\" button"
+msgstr ""
 
 #. js-lingui-id: r/aDR/
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
@@ -8638,6 +8647,12 @@ msgstr ""
 msgid "More"
 msgstr "Још"
 
+#. js-lingui-id: G2I8i7
+#. placeholder {0}: hiddenFieldsWithOffsetGlobalIndex.length
+#: src/modules/page-layout/widgets/fields/components/FieldsWidget.tsx
+msgid "More ({0})"
+msgstr ""
+
 #. js-lingui-id: f0jmdR
 #: src/modules/page-layout/widgets/field/components/FieldWidgetShowMoreButton.tsx
 msgid "More ({remainingCount})"
@@ -12009,6 +12024,11 @@ msgstr "Изаберите ред заглавља"
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
 msgid "Select matching field"
 msgstr "Изаберите одговарајуће поље"
+
+#. js-lingui-id: ezY8Ut
+#: src/modules/ui/input/components/internal/date/components/DateTimePickerHeader.tsx
+msgid "Select month and year"
+msgstr ""
 
 #. js-lingui-id: 8eJcRS
 #: src/modules/settings/data-model/new-object/components/SettingsAvailableStandardObjectsSection.tsx

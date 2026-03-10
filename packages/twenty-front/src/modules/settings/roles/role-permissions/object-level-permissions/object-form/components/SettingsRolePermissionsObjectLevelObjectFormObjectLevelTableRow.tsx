@@ -126,6 +126,7 @@ export const SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow =
 
     return (
       <TableRow
+        gridAutoColumns="1fr 48px"
         onClick={handleCheckboxChange}
         cursor={!isEditable ? 'default' : 'pointer'}
       >
