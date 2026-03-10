@@ -49,21 +49,6 @@
       "import": "./dist/build.mjs",
       "require": "./dist/build.cjs"
     },
-    "./generated": {
-      "types": "./generated/index.ts",
-      "import": "./generated/index.ts",
-      "require": "./generated/index.ts"
-    },
-    "./generated/core": {
-      "types": "./generated/core/index.ts",
-      "import": "./generated/core/index.ts",
-      "require": "./generated/core/index.ts"
-    },
-    "./generated/metadata": {
-      "types": "./generated/metadata/index.ts",
-      "import": "./generated/metadata/index.ts",
-      "require": "./generated/metadata/index.ts"
-    },
     "./clients": {
       "types": "./dist/clients/index.d.ts",
       "import": "./dist/clients.mjs",
