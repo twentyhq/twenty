@@ -23,9 +23,9 @@ const StyledThinkingText = styled.div`
 
 const StyledReasoningContainer = styled.div`
   background: ${themeCssVariables.background.transparent.lighter};
+  border: 1px solid ${themeCssVariables.border.color.light};
   border-radius: ${themeCssVariables.border.radius.sm};
   padding: ${themeCssVariables.spacing[3]};
-  border: 1px solid ${themeCssVariables.border.color.light};
 `;
 
 const StyledReasoningText = styled.div`
@@ -54,8 +54,8 @@ const StyledToggleButton = styled.div`
 `;
 
 const StyledIconContainer = styled.div`
-  display: flex;
   align-items: center;
+  display: flex;
   gap: ${themeCssVariables.spacing[1]};
 `;
 

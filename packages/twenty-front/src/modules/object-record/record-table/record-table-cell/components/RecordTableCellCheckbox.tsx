@@ -18,8 +18,8 @@ const StyledContainer = styled.div`
   height: ${RECORD_TABLE_ROW_HEIGHT}px;
   justify-content: center;
   min-width: ${RECORD_TABLE_COLUMN_CHECKBOX_WIDTH};
-  width: ${RECORD_TABLE_COLUMN_CHECKBOX_WIDTH};
   padding-right: ${themeCssVariables.spacing[1]};
+  width: ${RECORD_TABLE_COLUMN_CHECKBOX_WIDTH};
 `;
 
 const StyledRecordTableTdContainer = styled.div`

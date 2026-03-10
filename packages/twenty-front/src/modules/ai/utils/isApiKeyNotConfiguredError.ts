@@ -1,4 +1,4 @@
-import { AIChatErrorCode } from '@/ai/utils/AIChatErrorCode';
+import { AIChatErrorCode } from '@/ai/utils/aiChatErrorCode';
 import { isAIChatErrorOfType } from '@/ai/utils/isAIChatErrorOfType';
 
 export const isApiKeyNotConfiguredError = (

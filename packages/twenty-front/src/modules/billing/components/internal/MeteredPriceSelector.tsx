@@ -97,7 +97,12 @@ export const MeteredPriceSelector = ({
     selectedPriceId !== currentMeteredPrice?.stripePriceId;
 
   const isUpgrade = () => {
-    if (!isChanged || !isDefined(selectedPrice) || !isDefined(currentMeteredPrice)) return false;
+    if (
+      !isChanged ||
+      !isDefined(selectedPrice) ||
+      !isDefined(currentMeteredPrice)
+    )
+      return false;
     return (
       (selectedPrice.tiers as BillingPriceTiers)[0].flatAmount >
       (currentMeteredPrice.tiers as BillingPriceTiers)[0].flatAmount

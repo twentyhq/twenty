@@ -31,9 +31,9 @@ const StyledIconWrapper = styled.div<{ isRevoked?: boolean }>`
 
 const StyledIcon = styled.div<{ isRevoked?: boolean }>`
   align-items: center;
-  display: flex;
   color: ${({ isRevoked }) =>
     isRevoked ? themeCssVariables.color.orange : themeCssVariables.color.blue};
+  display: flex;
   justify-content: center;
 `;
 

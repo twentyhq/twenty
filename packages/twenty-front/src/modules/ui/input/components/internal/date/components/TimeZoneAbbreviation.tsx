@@ -10,9 +10,9 @@ const StyledTimezoneAbbreviation = styled.span<{ hasError?: boolean }>`
   color: ${themeCssVariables.font.color.tertiary};
 
   font-size: ${themeCssVariables.font.size.sm};
-  width: fit-content;
-
   user-select: none;
+
+  width: fit-content;
 `;
 
 export const TimeZoneAbbreviation = ({

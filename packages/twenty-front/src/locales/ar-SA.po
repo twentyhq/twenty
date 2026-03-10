@@ -758,12 +758,12 @@ msgstr "الإجراءات التي يمكن للمستخدمين تنفيذها
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 #: src/modules/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "Activate"
 msgstr "تفعيل"
 
 #. js-lingui-id: tu8A/k
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "Activate Workflow"
 msgstr "تفعيل سير العمل"
 
@@ -781,7 +781,7 @@ msgid "Active API keys created by you or your team."
 msgstr "مفاتيح واجهة برمجة التطبيقات النشطة التي تم إنشاؤها من قبلك أو فريقك."
 
 #. js-lingui-id: A7Ks+i
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
 msgid "Active installs"
 msgstr ""
 
@@ -791,7 +791,7 @@ msgid "Active Sync"
 msgstr "المزامنة النشطة"
 
 #. js-lingui-id: m16xKo
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
 #: src/pages/settings/ai/components/SettingsAgentEvalsTab.tsx
 msgid "Add"
 msgstr "إضافة"
@@ -812,8 +812,8 @@ msgid "Add a new company we're in touch with (e.g. name, website, industry). Det
 msgstr ""
 
 #. js-lingui-id: m3/V2n
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "Add a node"
 msgstr "إضافة عقدة"
 
@@ -941,7 +941,7 @@ msgid "Add item to folder"
 msgstr ""
 
 #. js-lingui-id: gaZXkv
-#: src/modules/object-metadata/components/NavigationDrawerSectionForWorkspaceItems.tsx
+#: src/modules/object-metadata/components/WorkspaceSectionAddMenuItemButton.tsx
 #: src/modules/navigation-menu-item/components/WorkspaceNavigationMenuItemsFolder.tsx
 msgid "Add menu item"
 msgstr ""
@@ -1086,10 +1086,10 @@ msgstr "إضافة إلى المفضلة"
 
 #. js-lingui-id: pBsoKL
 #: src/modules/favorites/components/PageFavoriteButton.tsx
-#: src/modules/action-menu/mock/action-menu-actions.mock.tsx
-#: src/modules/action-menu/mock/action-menu-actions.mock.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/mock/command-menu-items.mock.tsx
+#: src/modules/command-menu-item/mock/command-menu-items.mock.tsx
 msgid "Add to favorites"
 msgstr "إضافة إلى المفضلات"
 
@@ -1514,7 +1514,7 @@ msgid "Allow users to sign in with an email and password."
 msgstr "السماح للمستخدمين بتسجيل الدخول باستخدام البريد الإلكتروني وكلمة المرور."
 
 #. js-lingui-id: vj+OHl
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
 msgid "Allowed redirect URIs for OAuth flows"
 msgstr ""
 
@@ -1758,23 +1758,8 @@ msgid "App"
 msgstr ""
 
 #. js-lingui-id: zL5xow
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 msgid "App installed on this workspace"
-msgstr ""
-
-#. js-lingui-id: KbVpuI
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
-msgid "App listed on marketplace"
-msgstr ""
-
-#. js-lingui-id: hwQxsm
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
-msgid "App removed from marketplace"
-msgstr ""
-
-#. js-lingui-id: 2zAy1h
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
-msgid "App updated"
 msgstr ""
 
 #. js-lingui-id: aAIQg2
@@ -1817,6 +1802,11 @@ msgstr ""
 #. js-lingui-id: +tE2x9
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 msgid "Application successfully uninstalled."
+msgstr ""
+
+#. js-lingui-id: FoLBHp
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
+msgid "Application uninstalled from this workspace"
 msgstr ""
 
 #. js-lingui-id: V+GSWz
@@ -1895,22 +1885,22 @@ msgid "Are you sure you want to delete this skill? This action cannot be undone.
 msgstr ""
 
 #. js-lingui-id: OJOR8q
-#: src/modules/action-menu/actions/record-actions/multiple-records/components/DestroyMultipleRecordsAction.tsx
+#: src/modules/command-menu-item/record/multiple-records/components/DestroyMultipleRecordsCommand.tsx
 msgid "Are you sure you want to destroy these records? They won't be recoverable anymore."
 msgstr "هل أنت متأكد أنك تريد إتلاف هذه السجلات؟ لن تكون قابلة للاسترداد بعد الآن."
 
 #. js-lingui-id: UK5TO6
-#: src/modules/action-menu/actions/record-actions/single-record/components/DestroySingleRecordAction.tsx
+#: src/modules/command-menu-item/record/single-record/components/DestroySingleRecordCommand.tsx
 msgid "Are you sure you want to destroy this record? It cannot be recovered anymore."
 msgstr "هل أنت متأكد أنك تريد تدمير هذا السجل؟ لن يمكن استرجاعه بعد الآن."
 
 #. js-lingui-id: mcHVC1
-#: src/modules/action-menu/actions/record-actions/multiple-records/components/RestoreMultipleRecordsAction.tsx
+#: src/modules/command-menu-item/record/multiple-records/components/RestoreMultipleRecordsCommand.tsx
 msgid "Are you sure you want to restore these records?"
 msgstr "هل أنت متأكد أنك تريد استعادة هذه السجلات؟"
 
 #. js-lingui-id: lmgkf0
-#: src/modules/action-menu/actions/record-actions/single-record/components/RestoreSingleRecordAction.tsx
+#: src/modules/command-menu-item/record/single-record/components/RestoreSingleRecordCommand.tsx
 msgid "Are you sure you want to restore this record?"
 msgstr "هل أنت متأكد أنك تريد استعادة هذا السجل؟"
 
@@ -1948,9 +1938,9 @@ msgstr "تصاعدي"
 #: src/modules/side-panel/hooks/useOpenAskAIPageInSidePanel.ts
 #: src/modules/side-panel/components/SidePanelAskAIInfo.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
-#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
-#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
-#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
+#: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
 msgid "Ask AI"
 msgstr "اسأل الذكاء الاصطناعي"
 
@@ -2529,9 +2519,9 @@ msgid "Can't scan? Copy the"
 msgstr "هل لا يمكنك المسح؟ انسخ الـ"
 
 #. js-lingui-id: dEgA5A
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 #: src/pages/settings/applications/components/SettingsUploadTarballModal.tsx
-#: src/pages/settings/applications/components/SettingsRegisterNpmAppModal.tsx
 #: src/pages/auth/Authorize.tsx
 #: src/modules/ui/layout/modal/components/ConfirmationModal.tsx
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
@@ -2543,14 +2533,14 @@ msgstr "هل لا يمكنك المسح؟ انسخ الـ"
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DashboardCommandMenuItemsConfig.tsx
 msgid "Cancel"
 msgstr "إلغاء"
 
 #. js-lingui-id: HYLdMN
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DashboardCommandMenuItemsConfig.tsx
 msgid "Cancel Edition"
 msgstr "إلغاء التعديل"
 
@@ -2769,17 +2759,17 @@ msgid "Choose the format used to display date value"
 msgstr "اختر التنسيق المستخدم لعرض قيمة التاريخ"
 
 #. js-lingui-id: CiPJbh
-#: src/modules/settings/data-model/fields/forms/utils/getSettingsDataModelFieldOnClickActionDescription.util.ts
+#: src/modules/settings/data-model/fields/forms/utils/getSettingsDataModelFieldOnClickActionDescription.ts
 msgid "Choose what happens when you click a link"
 msgstr "اختر ما يحدث عند النقر على رابط"
 
 #. js-lingui-id: D3MauW
-#: src/modules/settings/data-model/fields/forms/utils/getSettingsDataModelFieldOnClickActionDescription.util.ts
+#: src/modules/settings/data-model/fields/forms/utils/getSettingsDataModelFieldOnClickActionDescription.ts
 msgid "Choose what happens when you click a phone number"
 msgstr "اختر ما يحدث عند النقر على رقم هاتف"
 
 #. js-lingui-id: QR1yAR
-#: src/modules/settings/data-model/fields/forms/utils/getSettingsDataModelFieldOnClickActionDescription.util.ts
+#: src/modules/settings/data-model/fields/forms/utils/getSettingsDataModelFieldOnClickActionDescription.ts
 msgid "Choose what happens when you click an email"
 msgstr "اختر ما يحدث عند النقر على عنوان بريد إلكتروني"
 
@@ -2853,24 +2843,19 @@ msgid "ClickHouse Not Configured"
 msgstr ""
 
 #. js-lingui-id: b9Y4up
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Client ID"
 msgstr "معرف العميل"
 
-#. js-lingui-id: 77ropN
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
-msgid "Client ID copied"
-msgstr ""
-
 #. js-lingui-id: Bdj4LI
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Client Secret"
 msgstr "سر العميل"
 
 #. js-lingui-id: 6uKe4W
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
 msgid "Client secret rotated. Copy it now — it won't be shown again."
 msgstr ""
 
@@ -2999,7 +2984,7 @@ msgstr "عرض مضغوط"
 
 #. js-lingui-id: s2QZS6
 #: src/modules/sign-in-background-mock/components/SignInBackgroundMockPage.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Companies"
 msgstr "الشركات"
 
@@ -3130,7 +3115,7 @@ msgid "Configure your emails and calendar settings."
 msgstr "ضبط إعدادات بريدك الإلكتروني والتقويم."
 
 #. js-lingui-id: M1co/O
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 msgid "Configured"
 msgstr ""
 
@@ -3139,6 +3124,7 @@ msgstr ""
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModal.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModal.tsx
+#: src/modules/command-menu-item/display/components/CommandModal.tsx
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -3147,7 +3133,6 @@ msgstr ""
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
-#: src/modules/action-menu/actions/components/ActionModal.tsx
 msgid "Confirm"
 msgstr "تأكيد"
 
@@ -3321,7 +3306,7 @@ msgid "Continue without sync"
 msgstr "المتابعة بدون مزامنة"
 
 #. js-lingui-id: nTcGbN
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
 msgid "Control visibility on the marketplace. Unlisted apps are still accessible via direct link."
 msgstr ""
 
@@ -3403,7 +3388,7 @@ msgid "Copy this key as it will not be visible again"
 msgstr "انسخ هذا المفتاح لأنه لن يظهر مرة أخرى"
 
 #. js-lingui-id: /P/oME
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
 msgid "Copy this secret as it will not be visible again"
 msgstr ""
 
@@ -3517,8 +3502,8 @@ msgid "Create"
 msgstr "إنشاء"
 
 #. js-lingui-id: M1NpGt
-#: src/modules/action-menu/actions/record-agnostic-actions/hooks/useRelatedRecordActions.ts
-#: src/modules/action-menu/actions/record-agnostic-actions/hooks/useRelatedRecordActions.ts
+#: src/modules/command-menu-item/record-agnostic/hooks/useRelatedRecordCommands.ts
+#: src/modules/command-menu-item/record-agnostic/hooks/useRelatedRecordCommands.ts
 msgid "Create {targetObjectLabelSingular}"
 msgstr "إنشاء {targetObjectLabelSingular}"
 
@@ -3589,12 +3574,12 @@ msgid "Create date field"
 msgstr "إنشاء حقل تاريخ"
 
 #. js-lingui-id: kCNBJG
-#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DashboardCommandMenuItemsConfig.tsx
 msgid "Create new dashboard"
 msgstr "إنشاء لوحة تحكم جديدة"
 
 #. js-lingui-id: d0DCww
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Create new record"
 msgstr "إنشاء سجل جديد"
 
@@ -3604,7 +3589,7 @@ msgid "Create new view"
 msgstr "إنشاء عرض جديد"
 
 #. js-lingui-id: UDbEyl
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "Create new workflow"
 msgstr "إنشاء سير عمل جديد"
 
@@ -3646,8 +3631,8 @@ msgid "Create view"
 msgstr "إنشاء عرض"
 
 #. js-lingui-id: 3D0MXY
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Create View"
 msgstr "إنشاء عرض"
 
@@ -3704,7 +3689,7 @@ msgid "Creating your workspace"
 msgstr "إنشاء مساحة العمل الخاصة بك"
 
 #. js-lingui-id: L3dKdL
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
 msgid "Credentials and scopes for OAuth authorization flows"
 msgstr ""
 
@@ -3902,7 +3887,7 @@ msgstr "التشيكية"
 #. js-lingui-id: Zz6Cxn
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 #: src/pages/settings/ai/SettingsSkillForm.tsx
 #: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
@@ -3925,12 +3910,12 @@ msgid "Dark"
 msgstr "داكن"
 
 #. js-lingui-id: ogQzcZ
-#: src/modules/action-menu/actions/record-actions/single-record/dashboard-actions/components/DuplicateDashboardSingleRecordAction.tsx
+#: src/modules/command-menu-item/record/single-record/dashboard/components/DuplicateDashboardSingleRecordCommand.tsx
 msgid "Dashboard duplicated successfully"
 msgstr "تم تكرار لوحة القيادة بنجاح"
 
 #. js-lingui-id: w6iIMm
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Dashboards"
 msgstr "لوحات القيادة"
 
@@ -4080,7 +4065,7 @@ msgstr "أيام بين المشغلات"
 #: src/pages/settings/ai/SettingsSkillForm.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "Deactivate"
 msgstr "تعطيل"
 
@@ -4111,7 +4096,7 @@ msgid "Deactivate this field"
 msgstr "إلغاء تنشيط هذا الحقل"
 
 #. js-lingui-id: 4tpC8V
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "Deactivate Workflow"
 msgstr "إلغاء تنشيط سير العمل"
 
@@ -4156,6 +4141,12 @@ msgstr "رمز البلد الافتراضي"
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartColorPaletteOption.tsx
 msgid "Default palette"
 msgstr "لوحة الألوان الافتراضية"
+
+#. js-lingui-id: U/uGBk
+#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationUngroupedEditor.tsx
+#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupEditor.tsx
+msgid "Default position/visibility for fields created in the future"
+msgstr ""
 
 #. js-lingui-id: v41VX6
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
@@ -4227,8 +4218,8 @@ msgstr "حذف"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 #: src/pages/settings/ai/SettingsSkillForm.tsx
 #: src/pages/settings/ai/SettingsSkillForm.tsx
 #: src/pages/settings/ai/components/SettingsSkillInactiveMenuDropDown.tsx
@@ -4258,13 +4249,13 @@ msgstr "حذف"
 #: src/modules/object-record/record-field/ui/meta-types/input/components/MultiItemFieldMenuItem.tsx
 #: src/modules/navigation-menu-item/components/NavigationMenuItemFolderNavigationDrawerItemDropdown.tsx
 #: src/modules/favorites/components/FavoriteFolderNavigationDrawerItemDropdown.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/mock/command-menu-items.mock.tsx
+#: src/modules/command-menu-item/mock/command-menu-items.mock.tsx
 #: src/modules/blocknote-editor/components/CustomSideMenu.tsx
 #: src/modules/activities/files/components/AttachmentDropdown.tsx
-#: src/modules/action-menu/mock/action-menu-actions.mock.tsx
-#: src/modules/action-menu/mock/action-menu-actions.mock.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Delete"
 msgstr "حذف"
 
@@ -4319,17 +4310,17 @@ msgid "Delete API key"
 msgstr "حذف مفتاح API"
 
 #. js-lingui-id: JXU6Ex
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 msgid "Delete app"
 msgstr ""
 
 #. js-lingui-id: ikGfT5
-#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DashboardCommandMenuItemsConfig.tsx
 msgid "Delete dashboard"
 msgstr "حذف لوحة القيادة"
 
 #. js-lingui-id: qnWLDf
-#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DashboardCommandMenuItemsConfig.tsx
 msgid "Delete dashboards"
 msgstr "حذف لوحات القيادة"
 
@@ -4360,12 +4351,12 @@ msgid "Delete node"
 msgstr "حذف العقدة"
 
 #. js-lingui-id: x9/fRy
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 msgid "Delete or transfer this app registration"
 msgstr ""
 
 #. js-lingui-id: kf0A63
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Delete records"
 msgstr "حذف السجلات"
 
@@ -4435,12 +4426,12 @@ msgid "Delete widget"
 msgstr ""
 
 #. js-lingui-id: UA2IpC
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "Delete workflow"
 msgstr "حذف مجرى العمل"
 
 #. js-lingui-id: ABwG9x
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "Delete workflows"
 msgstr "حذف Workflows"
 
@@ -4468,7 +4459,7 @@ msgid "Deleted record"
 msgstr ""
 
 #. js-lingui-id: WH/5rN
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Deleted records"
 msgstr "السجلات المحذوفة"
 
@@ -4509,7 +4500,7 @@ msgstr "صف ما تريد أن يقوم به الذكاء الاصطناعي...
 
 #. js-lingui-id: Nu4oKW
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 #: src/pages/settings/applications/components/SettingsApplicationNameDescriptionTable.tsx
@@ -4534,8 +4525,8 @@ msgid "destroy"
 msgstr "تدمير"
 
 #. js-lingui-id: 2xxBws
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Destroy"
 msgstr "تدمير"
 
@@ -4545,7 +4536,7 @@ msgid "Destroy {objectLabelPlural}"
 msgstr "إتلاف {objectLabelPlural}"
 
 #. js-lingui-id: kG5yO6
-#: src/modules/action-menu/actions/record-actions/multiple-records/components/DestroyMultipleRecordsAction.tsx
+#: src/modules/command-menu-item/record/multiple-records/components/DestroyMultipleRecordsCommand.tsx
 msgid "Destroy Records"
 msgstr "إتلاف السجلات"
 
@@ -4575,8 +4566,8 @@ msgid "Developers links"
 msgstr ""
 
 #. js-lingui-id: zAg2B9
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "Discard Draft"
 msgstr "تجاهل المسودة"
 
@@ -4607,6 +4598,7 @@ msgstr "عرض النصوص في عدة خطوط"
 
 #. js-lingui-id: vU/Hht
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
 msgid "Distribution"
 msgstr ""
 
@@ -4695,7 +4687,7 @@ msgid "Downgrade"
 msgstr "خفض المستوى"
 
 #. js-lingui-id: mzI/c+
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 #: src/modules/activities/files/components/DocumentViewer.tsx
 #: src/modules/activities/files/components/AttachmentDropdown.tsx
 msgid "Download"
@@ -4748,13 +4740,13 @@ msgstr "أسقط الملف هنا..."
 
 #. js-lingui-id: euc6Ns
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutTabSettings.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DashboardCommandMenuItemsConfig.tsx
 msgid "Duplicate"
 msgstr ""
 
 #. js-lingui-id: MR2sZ1
-#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DashboardCommandMenuItemsConfig.tsx
 msgid "Duplicate Dashboard"
 msgstr "تكرار لوحة القيادة"
 
@@ -4769,7 +4761,7 @@ msgid "Duplicate widget"
 msgstr ""
 
 #. js-lingui-id: 2RpRNn
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "Duplicate Workflow"
 msgstr ""
 
@@ -4783,11 +4775,6 @@ msgstr "النسخ المكررة"
 msgid "Dutch"
 msgstr "الهولندية"
 
-#. js-lingui-id: 3MYDWJ
-#: src/pages/settings/applications/components/SettingsRegisterNpmAppModal.tsx
-msgid "e.g. @twentyhq/hello-world"
-msgstr ""
-
 #. js-lingui-id: QVVmxi
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -4796,7 +4783,7 @@ msgid "E.g. backoffice integration"
 msgstr "مثلاً تكامل الدعم الخلفي"
 
 #. js-lingui-id: 88vQqv
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 msgid "e.g. my-workspace"
 msgstr ""
 
@@ -4846,7 +4833,7 @@ msgstr "eddy@gmail.com, @apple.com"
 #: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
 #: src/modules/object-record/record-field/ui/meta-types/input/components/MultiItemFieldMenuItem.tsx
 #: src/modules/object-record/record-field/ui/form-types/components/FormMultiSelectFieldInput.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DashboardCommandMenuItemsConfig.tsx
 msgid "Edit"
 msgstr "تحرير"
 
@@ -4862,7 +4849,7 @@ msgid "Edit Account"
 msgstr "تحرير الحساب"
 
 #. js-lingui-id: GpnfNN
-#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DashboardCommandMenuItemsConfig.tsx
 msgid "Edit Dashboard"
 msgstr "تعديل لوحة القيادة"
 
@@ -4901,7 +4888,7 @@ msgid "Edit iFrame"
 msgstr "تعديل الإطار المضمّن"
 
 #. js-lingui-id: NZubw3
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Edit Layout"
 msgstr ""
 
@@ -4912,13 +4899,18 @@ msgstr ""
 msgid "Edit link"
 msgstr ""
 
+#. js-lingui-id: m52s8z
+#: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
+msgid "Edit navigation sidebar"
+msgstr ""
+
 #. js-lingui-id: IaSCqp
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Edit own profile information"
 msgstr ""
 
 #. js-lingui-id: ZgKSmd
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Edit Page Layout"
 msgstr ""
 
@@ -4936,6 +4928,11 @@ msgstr ""
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
 msgid "Edit Records on All Objects"
 msgstr "تحرير السجلات في جميع العناصر"
+
+#. js-lingui-id: DpuBzU
+#: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
+msgid "Edit sidebar"
+msgstr ""
 
 #. js-lingui-id: eMFB6/
 #: src/modules/views/view-picker/components/ViewPickerContentEditMode.tsx
@@ -5347,7 +5344,7 @@ msgid "Enter phone number"
 msgstr "أدخل رقم الهاتف"
 
 #. js-lingui-id: xV28+W
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 msgid "Enter secret value"
 msgstr ""
 
@@ -5382,11 +5379,6 @@ msgstr "أدخل بيانات الاعتماد لتعيين الاتصال"
 msgid "Enter the infos to set the connection"
 msgstr "أدخل المعلومات لتعيين الاتصال"
 
-#. js-lingui-id: 2tpV02
-#: src/pages/settings/applications/components/SettingsRegisterNpmAppModal.tsx
-msgid "Enter the npm package name to register as an application."
-msgstr ""
-
 #. js-lingui-id: 3EF9HN
 #: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
 #: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
@@ -5394,7 +5386,7 @@ msgid "Enter the system prompt that defines this agent's behavior and capabiliti
 msgstr "أدخل الأمر الموجه للنظام الذي يحدد سلوك وقدرات هذا الوكيل"
 
 #. js-lingui-id: tEWpbi
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 msgid "Enter the workspace subdomain to transfer this app to. You will lose access to manage it."
 msgstr ""
 
@@ -5404,7 +5396,7 @@ msgid "Enter user ID or email address"
 msgstr "أدخل معرف المستخدم أو عنوان البريد الإلكتروني"
 
 #. js-lingui-id: pubQie
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCodeFields.tsx
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterValueInput.tsx
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterValueInput.tsx
@@ -5482,7 +5474,7 @@ msgid "Error deleting api key."
 msgstr "خطأ في حذف مفتاح الواجهة البرمجية."
 
 #. js-lingui-id: gmjkzq
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 msgid "Error deleting app"
 msgstr ""
 
@@ -5512,7 +5504,7 @@ msgid "Error illustration"
 msgstr "رسم توضيحي للخطأ"
 
 #. js-lingui-id: zCb/ve
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 msgid "Error installing app"
 msgstr ""
 
@@ -5552,8 +5544,13 @@ msgid "Error resending invitation"
 msgstr "خطأ في إعادة إرسال الدعوة"
 
 #. js-lingui-id: cpGsq/
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
 msgid "Error rotating client secret"
+msgstr ""
+
+#. js-lingui-id: RDcmKf
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
+msgid "Error uninstalling application"
 msgstr ""
 
 #. js-lingui-id: 5Vy8D1
@@ -5561,14 +5558,14 @@ msgstr ""
 msgid "Error uninstalling application."
 msgstr ""
 
-#. js-lingui-id: ZUyXma
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
-msgid "Error updating app"
+#. js-lingui-id: OceoGT
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
+msgid "Error updating marketplace listing"
 msgstr ""
 
-#. js-lingui-id: OceoGT
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
-msgid "Error updating marketplace listing"
+#. js-lingui-id: fQYyhK
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
+msgid "Error updating redirect URIs"
 msgstr ""
 
 #. js-lingui-id: lX3Yil
@@ -5577,7 +5574,7 @@ msgid "Error updating role"
 msgstr "خطأ في تحديث الدور"
 
 #. js-lingui-id: s+iV3f
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 msgid "Error updating variable"
 msgstr ""
 
@@ -5876,15 +5873,15 @@ msgstr "ينتهي في {dateDiff}"
 
 #. js-lingui-id: GS+Mus
 #: src/modules/object-record/record-index/export/hooks/useRecordIndexExportRecords.ts
-#: src/modules/action-menu/mock/action-menu-actions.mock.tsx
-#: src/modules/action-menu/mock/action-menu-actions.mock.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/mock/command-menu-items.mock.tsx
+#: src/modules/command-menu-item/mock/command-menu-items.mock.tsx
 msgid "Export"
 msgstr "تصدير"
 
@@ -5904,69 +5901,69 @@ msgid "Export CSV"
 msgstr "تصدير CSV"
 
 #. js-lingui-id: KVvnDa
-#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DashboardCommandMenuItemsConfig.tsx
 msgid "Export dashboard"
 msgstr "تصدير لوحة القيادة"
 
 #. js-lingui-id: wVUjld
-#: src/modules/action-menu/actions/record-actions/constants/WorkspaceMembersActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkspaceMembersActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkspaceMembersCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkspaceMembersCommandMenuItemsConfig.tsx
 msgid "Export member"
 msgstr ""
 
 #. js-lingui-id: D0b3Ip
-#: src/modules/action-menu/actions/record-actions/constants/WorkspaceMembersActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkspaceMembersCommandMenuItemsConfig.tsx
 msgid "Export members"
 msgstr ""
 
 #. js-lingui-id: ep2rbf
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Export records"
 msgstr "تصدير السجلات"
 
 #. js-lingui-id: iHK6np
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowRunsCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowRunsCommandMenuItemsConfig.tsx
 msgid "Export run"
 msgstr "تصدير التشغيل"
 
 #. js-lingui-id: vwtAUW
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowRunsCommandMenuItemsConfig.tsx
 msgid "Export runs"
 msgstr "تصدير التشغيلات"
 
 #. js-lingui-id: q46CjD
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Export to PDF"
 msgstr "تصدير إلى PDF"
 
 #. js-lingui-id: BuprEs
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowVersionsCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowVersionsCommandMenuItemsConfig.tsx
 msgid "Export version"
 msgstr "تصدير الإصدار"
 
 #. js-lingui-id: 4FLUle
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowVersionsCommandMenuItemsConfig.tsx
 msgid "Export versions"
 msgstr "تصدير الإصدارات"
 
 #. js-lingui-id: DaGxE0
-#: src/modules/action-menu/actions/record-actions/constants/WorkspaceMembersActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkspaceMembersCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowRunsCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Export view"
 msgstr "تصدير العرض"
 
 #. js-lingui-id: +FMXdE
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "Export workflow"
 msgstr "تصدير عملية"
 
 #. js-lingui-id: XcAij/
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "Export workflows"
 msgstr "تصدير العمليات"
 
@@ -6024,12 +6021,12 @@ msgid "Failed to delete skill"
 msgstr ""
 
 #. js-lingui-id: NUmmdc
-#: src/modules/action-menu/actions/record-actions/single-record/dashboard-actions/components/DuplicateDashboardSingleRecordAction.tsx
+#: src/modules/command-menu-item/record/single-record/dashboard/components/DuplicateDashboardSingleRecordCommand.tsx
 msgid "Failed to duplicate dashboard"
 msgstr "فشل في تكرار لوحة القيادة"
 
 #. js-lingui-id: WYXxQF
-#: src/modules/action-menu/actions/record-actions/single-record/workflow-actions/components/DuplicateWorkflowSingleRecordAction.tsx
+#: src/modules/command-menu-item/record/single-record/workflow/components/DuplicateWorkflowSingleRecordCommand.tsx
 msgid "Failed to duplicate workflow"
 msgstr ""
 
@@ -6078,11 +6075,6 @@ msgstr "فشل دمج السجلات. يُرجى المحاولة مرة أخر�
 msgid "Failed to parse context: {contextValue}"
 msgstr "فشل في تحليل السياق: {contextValue}"
 
-#. js-lingui-id: hV6mC1
-#: src/modules/marketplace/hooks/useRegisterNpmPackage.ts
-msgid "Failed to register npm package."
-msgstr ""
-
 #. js-lingui-id: A/P7PX
 #: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
 msgid "Failed to remove override"
@@ -6115,7 +6107,7 @@ msgid "Failed to save workspace instructions"
 msgstr ""
 
 #. js-lingui-id: LVcnN8
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 msgid "Failed to transfer ownership. Check that the subdomain is correct."
 msgstr ""
 
@@ -6239,13 +6231,13 @@ msgid "Feature Flags & Impersonation"
 msgstr "أعلام الميزات والانتحال"
 
 #. js-lingui-id: FkMol5
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 msgid "Featured"
 msgstr ""
 
 #. js-lingui-id: znbJM3
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
 msgid "Featured apps are curated. Open a PR to request featured status."
 msgstr ""
 
@@ -6621,6 +6613,7 @@ msgstr "الرسم البياني القياسي"
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
 #: src/modules/page-layout/widgets/fields/hooks/useFieldsWidgetGroupsForDisplay.ts
@@ -6671,12 +6664,12 @@ msgid "Go Back"
 msgstr ""
 
 #. js-lingui-id: mUbv8L
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Go to Companies"
 msgstr "اذهب إلى الشركات"
 
 #. js-lingui-id: dvMw7T
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Go to Dashboards"
 msgstr "اذهب إلى لوحات المعلومات"
 
@@ -6686,24 +6679,24 @@ msgid "Go to Draft"
 msgstr "اذهب إلى المسودة"
 
 #. js-lingui-id: BQE4ob
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Go to Notes"
 msgstr "اذهب إلى الملاحظات"
 
 #. js-lingui-id: buPcNi
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Go to Opportunities"
 msgstr "اذهب إلى الفرص"
 
 #. js-lingui-id: MrE/Qb
-#: src/modules/action-menu/mock/action-menu-actions.mock.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/mock/command-menu-items.mock.tsx
 msgid "Go to People"
 msgstr "اذهب إلى الأشخاص"
 
 #. js-lingui-id: iS69s6
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowVersionsCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "Go to runs"
 msgstr "انتقل إلى العمليات"
 
@@ -6712,17 +6705,17 @@ msgstr "انتقل إلى العمليات"
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateRemote.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Go to Settings"
 msgstr "انتقل إلى الإعدادات"
 
 #. js-lingui-id: BM24SF
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Go to Tasks"
 msgstr "اذهب إلى المهام"
 
 #. js-lingui-id: 203RqP
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Go to Workflows"
 msgstr "اذهب إلى سير العمل"
 
@@ -6916,32 +6909,32 @@ msgid "Hide"
 msgstr "إخفاء"
 
 #. js-lingui-id: OlbYor
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Hide deleted"
 msgstr "إخفاء المحذوفين"
 
 #. js-lingui-id: rp2bZI
-#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DashboardCommandMenuItemsConfig.tsx
 msgid "Hide deleted dashboards"
 msgstr ""
 
 #. js-lingui-id: OTmbll
-#: src/modules/action-menu/actions/record-actions/constants/WorkspaceMembersActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkspaceMembersCommandMenuItemsConfig.tsx
 msgid "Hide deleted members"
 msgstr ""
 
 #. js-lingui-id: FHhlye
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Hide deleted records"
 msgstr "إخفاء السجلات المحذوفة"
 
 #. js-lingui-id: 0dZtKR
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowRunsCommandMenuItemsConfig.tsx
 msgid "Hide deleted runs"
 msgstr "إخفاء التشغيلات المحذوفة"
 
 #. js-lingui-id: aOZAIB
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "Hide deleted workflows"
 msgstr "إخفاء الإجراءات المحذوفة"
 
@@ -7028,7 +7021,7 @@ msgid "https://api.example.com/endpoint"
 msgstr "https://api.example.com/endpoint"
 
 #. js-lingui-id: 1Un+Rf
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
 msgid "https://example.com/callback"
 msgstr ""
 
@@ -7096,7 +7089,7 @@ msgid "If this is unexpected, please verify your settings."
 msgstr "إذا كان ذلك غير متوقع، يرجى التحقق من إعداداتك."
 
 #. js-lingui-id: Yn4NZ1
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
 msgid "If you rotate this secret, any integration using the current secret will stop working. Please type \"{confirmationValue}\" to confirm."
 msgstr ""
 
@@ -7179,7 +7172,7 @@ msgstr "التقمص معطل لهذه المساحة"
 
 #. js-lingui-id: l3s5ri
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Import"
 msgstr "استيراد"
 
@@ -7199,12 +7192,12 @@ msgid "Import only selected folders/labels"
 msgstr "استيراد المجلدات/التسميات المحددة فقط"
 
 #. js-lingui-id: eECp4f
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Import records"
 msgstr "استيراد السجلات"
 
 #. js-lingui-id: ZsIcZZ
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "Import workflows"
 msgstr "استيراد مجرى العمل"
 
@@ -7335,29 +7328,28 @@ msgid "Install and manage applications"
 msgstr "تثبيت وإدارة التطبيقات"
 
 #. js-lingui-id: cDDhds
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 msgid "Install on this workspace"
 msgstr ""
 
 #. js-lingui-id: JXiMtM
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
 msgid "Install Stats"
 msgstr ""
 
 #. js-lingui-id: FEkwu/
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 msgid "Install this app on the current workspace"
 msgstr ""
 
 #. js-lingui-id: Xry+oU
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 msgid "Installation"
 msgstr ""
 
 #. js-lingui-id: eQkgKV
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsApplications.tsx
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
 msgid "Installed"
 msgstr ""
 
@@ -7368,6 +7360,7 @@ msgstr "التطبيقات المثبتة"
 
 #. js-lingui-id: wJJ+Wy
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 msgid "Installing..."
 msgstr ""
 
@@ -8034,6 +8027,7 @@ msgstr "تم نسخ الرابط إلى الحافظة"
 #. js-lingui-id: vH3ZQY
 #: src/modules/side-panel/pages/navigation-menu-item/hooks/useAddLinkToNavigationMenu.ts
 #: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemMainMenu.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditLinkItemView.tsx
 #: src/modules/side-panel/components/SidePanelLinkInfo.tsx
 #: src/modules/side-panel/components/SidePanelLinkInfo.tsx
 #: src/modules/navigation-menu-item/hooks/useHandleAddToNavigationDrop.ts
@@ -8067,7 +8061,7 @@ msgid "Listed"
 msgstr ""
 
 #. js-lingui-id: vxO58F
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
 msgid "Listed on marketplace"
 msgstr ""
 
@@ -8175,7 +8169,7 @@ msgid "Loading..."
 msgstr "تحميل..."
 
 #. js-lingui-id: OmWlgF
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 msgid "Local development"
 msgstr ""
 
@@ -8290,7 +8284,7 @@ msgid "Manage favorite"
 msgstr "إدارة المفضلة"
 
 #. js-lingui-id: 8XlVuA
-#: src/modules/action-menu/actions/record-actions/constants/WorkspaceMembersActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkspaceMembersCommandMenuItemsConfig.tsx
 msgid "Manage in settings"
 msgstr ""
 
@@ -8300,7 +8294,7 @@ msgid "Manage Members"
 msgstr "إدارة الأعضاء"
 
 #. js-lingui-id: 5hEFxA
-#: src/modules/action-menu/actions/record-actions/constants/WorkspaceMembersActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkspaceMembersCommandMenuItemsConfig.tsx
 msgid "Manage members in settings"
 msgstr ""
 
@@ -8340,7 +8334,7 @@ msgid "Manage your internet accounts."
 msgstr "إدارة حساباتك على الإنترنت."
 
 #. js-lingui-id: +pSdLP
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
 msgid "Managed by the marketplace catalog sync for npm packages"
 msgstr ""
 
@@ -8356,7 +8350,7 @@ msgid "Marketplace"
 msgstr ""
 
 #. js-lingui-id: H4eHwB
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
 msgid "Marketplace Listing"
 msgstr ""
 
@@ -8470,7 +8464,7 @@ msgstr "الأعضاء - إعدادات"
 
 #. js-lingui-id: UODtG8
 #: src/modules/object-record/record-merge/components/MergeRecordsFooter.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Merge"
 msgstr "دمج"
 
@@ -8481,7 +8475,7 @@ msgstr "معاينة الدمج"
 
 #. js-lingui-id: Cmeamd
 #: src/modules/side-panel/hooks/useOpenMergeRecordsPageInSidePanel.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Merge records"
 msgstr "دمج السجلات"
 
@@ -8654,7 +8648,7 @@ msgid "More ({remainingCount})"
 msgstr ""
 
 #. js-lingui-id: JcD7qf
-#: src/modules/action-menu/components/RecordIndexActionMenuDropdown.tsx
+#: src/modules/command-menu-item/components/RecordIndexCommandMenuDropdown.tsx
 msgid "More actions"
 msgstr "إجراءات إضافية"
 
@@ -8667,7 +8661,7 @@ msgid "More options"
 msgstr "مزيد من الخيارات"
 
 #. js-lingui-id: SOHptZ
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
 msgid "Most installed version"
 msgstr ""
 
@@ -8749,7 +8743,7 @@ msgstr ""
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 #: src/pages/settings/applications/components/SettingsApplicationNameDescriptionTable.tsx
@@ -8791,7 +8785,7 @@ msgid "Name and describe your function"
 msgstr "اسم وصِف وظيفتك"
 
 #. js-lingui-id: /CI5+c
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 msgid "Name and description are managed via your app manifest (CLI)"
 msgstr ""
 
@@ -8827,42 +8821,42 @@ msgid "Navbar"
 msgstr "شريط التنقل"
 
 #. js-lingui-id: dVQ33h
-#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DashboardCommandMenuItemsConfig.tsx
 msgid "Navigate to next dashboard"
 msgstr "الانتقال إلى لوحة القيادة التالية"
 
 #. js-lingui-id: 2T8KCk
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Navigate to next record"
 msgstr "الانتقال إلى السجل التالي"
 
 #. js-lingui-id: veSA19
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowVersionsCommandMenuItemsConfig.tsx
 msgid "Navigate to next version"
 msgstr "الانتقال إلى النسخة التالية"
 
 #. js-lingui-id: ZTEho+
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "Navigate to next workflow"
 msgstr "الانتقال إلى عملية العمل التالية"
 
 #. js-lingui-id: /Qu2VT
-#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DashboardCommandMenuItemsConfig.tsx
 msgid "Navigate to previous dashboard"
 msgstr "الانتقال إلى لوحة القيادة السابقة"
 
 #. js-lingui-id: 2tw9bo
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Navigate to previous record"
 msgstr "الانتقال إلى السجل السابق"
 
 #. js-lingui-id: I+Pm5V
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowVersionsCommandMenuItemsConfig.tsx
 msgid "Navigate to previous version"
 msgstr "الانتقال إلى النسخة السابقة"
 
 #. js-lingui-id: QVUN3K
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "Navigate to previous workflow"
 msgstr "الانتقال إلى عملية العمل السابقة"
 
@@ -8951,6 +8945,12 @@ msgstr "نطاق بريد إلكتروني جديد"
 msgid "New Field"
 msgstr "حقل جديد"
 
+#. js-lingui-id: DNUCGO
+#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationUngroupedEditor.tsx
+#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupEditor.tsx
+msgid "New fields"
+msgstr ""
+
 #. js-lingui-id: 96G6Re
 #: src/modules/side-panel/pages/navigation-menu-item/hooks/useAddFolderToNavigationMenu.ts
 #: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemMainMenu.tsx
@@ -8989,13 +8989,14 @@ msgid "New Password"
 msgstr "كلمة سر جديدة"
 
 #. js-lingui-id: BcCzLv
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "New record"
 msgstr "سجل جديد"
 
 #. js-lingui-id: x6Ckh1
 #: src/modules/side-panel/pages/navigation-menu-item/hooks/useNavigationMenuItemEditOrganizeActions.ts
 #: src/modules/side-panel/hooks/useSidePanelMenu.ts
+#: src/modules/object-metadata/components/WorkspaceSectionAddMenuItemButton.tsx
 #: src/modules/navigation-menu-item/hooks/useOpenAddItemToFolderPage.ts
 #: src/modules/navigation-menu-item/components/WorkspaceNavigationMenuItems.tsx
 msgid "New sidebar item"
@@ -9189,7 +9190,7 @@ msgid "No custom views available"
 msgstr ""
 
 #. js-lingui-id: plhHQt
-#: src/modules/page-layout/widgets/graph/graphWidgetPieChart/components/PieChartCenterMetricLayer.tsx
+#: src/modules/page-layout/widgets/graph/graph-widget-pie-chart/components/PieChartCenterMetricLayer.tsx
 #: src/modules/page-layout/widgets/graph/components/NoDataLayer.tsx
 #: src/modules/page-layout/widgets/graph/components/GraphWidgetTooltip.tsx
 msgid "No data"
@@ -9600,7 +9601,7 @@ msgid "Not Found"
 msgstr "غير موجود"
 
 #. js-lingui-id: MTqQMG
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 msgid "Not set"
 msgstr ""
 
@@ -9628,7 +9629,7 @@ msgstr ""
 
 #. js-lingui-id: 1DBGsz
 #: src/modules/page-layout/constants/StandardPageLayoutTabTitleTranslations.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Notes"
 msgstr "الملاحظات"
 
@@ -9686,8 +9687,13 @@ msgstr ""
 msgid "Numbered list"
 msgstr ""
 
-#. js-lingui-id: /PKKj/
+#. js-lingui-id: b/j06W
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "OAuth"
+msgstr ""
+
+#. js-lingui-id: /PKKj/
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
 msgid "OAuth Credentials"
 msgstr ""
 
@@ -9913,7 +9919,7 @@ msgstr "سيتم مشاركة الطابع الزمني والمشاركين ف�
 
 #. js-lingui-id: 1TNIig
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
-#: src/modules/action-menu/components/RecordShowSidePanelOpenRecordButton.tsx
+#: src/modules/command-menu-item/components/RecordShowSidePanelOpenRecordButton.tsx
 msgid "Open"
 msgstr "افتح"
 
@@ -9959,7 +9965,7 @@ msgid "Operational"
 msgstr "قيد التشغيل"
 
 #. js-lingui-id: 4MyDFl
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Opportunities"
 msgstr "الفرص"
 
@@ -10112,7 +10118,7 @@ msgid "Owner"
 msgstr ""
 
 #. js-lingui-id: RWJnRQ
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 msgid "Ownership transferred successfully"
 msgstr ""
 
@@ -10122,18 +10128,8 @@ msgid "p"
 msgstr ""
 
 #. js-lingui-id: mGYa19
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 msgid "Package"
-msgstr ""
-
-#. js-lingui-id: VXyQnz
-#: src/pages/settings/applications/components/SettingsRegisterNpmAppModal.tsx
-msgid "Package name"
-msgstr ""
-
-#. js-lingui-id: +BO/Qa
-#: src/modules/marketplace/hooks/useRegisterNpmPackage.ts
-msgid "Package registered successfully."
 msgstr ""
 
 #. js-lingui-id: 6WdDG7
@@ -10228,8 +10224,8 @@ msgid "Pending"
 msgstr "قيد الانتظار"
 
 #. js-lingui-id: 1wdjme
-#: src/modules/action-menu/mock/action-menu-actions.mock.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/mock/command-menu-items.mock.tsx
 msgid "People"
 msgstr "الأشخاص"
 
@@ -10263,7 +10259,7 @@ msgstr "النسبة المئوية غير الفارغة"
 
 #. js-lingui-id: /roQKz
 #: src/modules/settings/data-model/fields/forms/number/constants/NumberDataModelSelectOptions.ts
-#: src/modules/page-layout/widgets/graph/graphWidgetPieChart/hooks/usePieChartCenterMetricData.ts
+#: src/modules/page-layout/widgets/graph/graph-widget-pie-chart/hooks/usePieChartCenterMetricData.ts
 msgid "Percentage"
 msgstr "النسبة المئوية"
 
@@ -10278,43 +10274,43 @@ msgid "Permanent deletion. Enter the number of days."
 msgstr "الحذف الدائم. أدخل عدد الأيام."
 
 #. js-lingui-id: rDky0a
-#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DashboardCommandMenuItemsConfig.tsx
 msgid "Permanently destroy dashboard"
 msgstr "تدمير لوحة القيادة نهائيًا"
 
 #. js-lingui-id: n7S2Oo
-#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DashboardCommandMenuItemsConfig.tsx
 msgid "Permanently destroy dashboards"
 msgstr "تدمير لوحات القيادة نهائيًا"
 
 #. js-lingui-id: Bv3y5w
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Permanently destroy record"
 msgstr "تدمير السجل نهائيًا"
 
 #. js-lingui-id: 35dBYb
-#: src/modules/action-menu/actions/record-actions/single-record/components/DestroySingleRecordAction.tsx
-#: src/modules/action-menu/actions/record-actions/single-record/components/DestroySingleRecordAction.tsx
+#: src/modules/command-menu-item/record/single-record/components/DestroySingleRecordCommand.tsx
+#: src/modules/command-menu-item/record/single-record/components/DestroySingleRecordCommand.tsx
 msgid "Permanently Destroy Record"
 msgstr "اتلاف السجل نهائيًا"
 
 #. js-lingui-id: xjWlSJ
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Permanently destroy records"
 msgstr "تدمير السجلات نهائيًا"
 
 #. js-lingui-id: YyP8vD
-#: src/modules/action-menu/actions/record-actions/multiple-records/components/DestroyMultipleRecordsAction.tsx
+#: src/modules/command-menu-item/record/multiple-records/components/DestroyMultipleRecordsCommand.tsx
 msgid "Permanently Destroy Records"
 msgstr "إتلاف السجلات نهائيًا"
 
 #. js-lingui-id: 0bQ5ba
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "Permanently destroy workflow"
 msgstr "تدمير سير العمل نهائيًا"
 
 #. js-lingui-id: uKWXhB
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "Permanently destroy workflows"
 msgstr "تدمير عمليات العمل نهائيًا"
 
@@ -10417,7 +10413,7 @@ msgid "Please check your email for a verification link."
 msgstr "يرجى التحقق من بريدك الإلكتروني لوجود رابط تحقق."
 
 #. js-lingui-id: jEw0Mr
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutIframeSettings.tsx
 msgid "Please enter a valid URL"
 msgstr "الرجاء إدخال عنوان URL صحيح"
@@ -10454,7 +10450,7 @@ msgid "Please type \"{confirmationValue}\" to confirm you want to delete this AP
 msgstr "الرجاء كتابة \"{confirmationValue}\" لتأكيد رغبتك في حذف مفتاح API هذا. كن على علم بأن أي سكربت يستعمل هذا المفتاح سوف يتوقف عن العمل."
 
 #. js-lingui-id: osUElx
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 msgid "Please type \"{confirmationValue}\" to confirm you want to delete this app. All workspace installations linked to it will lose their OAuth credentials."
 msgstr ""
 
@@ -10553,7 +10549,7 @@ msgid "Previous"
 msgstr "السابق"
 
 #. js-lingui-id: 2WAUd8
-#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
+#: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
 msgid "Previous AI Chats"
 msgstr "الذكاءات الاصطناعية السابقة"
 
@@ -10761,7 +10757,7 @@ msgstr "تقييم"
 #: src/modules/side-panel/pages/page-layout/hooks/useChartSettingsValues.ts
 #: src/modules/page-layout/widgets/graph/hooks/useGraphWidgetAggregateQuery.ts
 #: src/modules/page-layout/widgets/graph/hooks/useGraphWidgetAggregateQuery.ts
-#: src/modules/page-layout/widgets/graph/graphWidgetAggregateChart/utils/getAggregateChartOperationLabel.ts
+#: src/modules/page-layout/widgets/graph/graph-widget-aggregate-chart/utils/getAggregateChartOperationLabel.ts
 msgid "Ratio"
 msgstr "النسبة"
 
@@ -10896,8 +10892,13 @@ msgid "Red"
 msgstr "أحمر"
 
 #. js-lingui-id: dAZObA
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
 msgid "Redirect URIs"
+msgstr ""
+
+#. js-lingui-id: FuiRGf
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
+msgid "Redirect URIs updated"
 msgstr ""
 
 #. js-lingui-id: LfH+Ea
@@ -10930,23 +10931,6 @@ msgstr "\\\\"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Regenerate Key"
 msgstr "\\\\"
-
-#. js-lingui-id: fgLNSM
-#: src/pages/settings/applications/components/SettingsRegisterNpmAppModal.tsx
-msgid "Register"
-msgstr ""
-
-#. js-lingui-id: kbU+zg
-#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
-#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
-#: src/pages/settings/applications/components/SettingsRegisterNpmAppModal.tsx
-msgid "Register from npm"
-msgstr ""
-
-#. js-lingui-id: cxM2TJ
-#: src/modules/marketplace/hooks/useRegisterNpmPackage.ts
-msgid "Registration failed."
-msgstr ""
 
 #. js-lingui-id: h9AYFD
 #: src/modules/settings/data-model/fields/forms/components/SettingsObjectNewFieldSelector.tsx
@@ -11046,8 +11030,8 @@ msgstr "إزالة الفلتر المحذوف"
 
 #. js-lingui-id: T/pF0Z
 #: src/modules/favorites/components/PageFavoriteButton.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Remove from favorites"
 msgstr "\\\\"
 
@@ -11137,7 +11121,7 @@ msgid "Request Failed"
 msgstr "فشل الطلب"
 
 #. js-lingui-id: TMLAx2
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 msgid "Required"
 msgstr ""
 
@@ -11218,40 +11202,40 @@ msgstr ""
 
 #. js-lingui-id: yKu/3Y
 #: src/modules/information-banner/components/deleted-record/InformationBannerDeletedRecord.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Restore"
 msgstr "استعادة"
 
 #. js-lingui-id: XRAM5d
-#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DashboardCommandMenuItemsConfig.tsx
 msgid "Restore dashboard"
 msgstr "استعادة لوحة القيادة"
 
 #. js-lingui-id: jC7v7d
-#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DashboardCommandMenuItemsConfig.tsx
 msgid "Restore dashboards"
 msgstr ""
 
 #. js-lingui-id: y4Ib1n
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Restore record"
 msgstr "استعادة السجل"
 
 #. js-lingui-id: NzMNOA
-#: src/modules/action-menu/actions/record-actions/single-record/components/RestoreSingleRecordAction.tsx
-#: src/modules/action-menu/actions/record-actions/single-record/components/RestoreSingleRecordAction.tsx
+#: src/modules/command-menu-item/record/single-record/components/RestoreSingleRecordCommand.tsx
+#: src/modules/command-menu-item/record/single-record/components/RestoreSingleRecordCommand.tsx
 msgid "Restore Record"
 msgstr "استعادة السجل"
 
 #. js-lingui-id: Vw369F
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Restore records"
 msgstr "استعادة السجلات"
 
 #. js-lingui-id: Xqj0Cb
-#: src/modules/action-menu/actions/record-actions/multiple-records/components/RestoreMultipleRecordsAction.tsx
-#: src/modules/action-menu/actions/record-actions/multiple-records/components/RestoreMultipleRecordsAction.tsx
+#: src/modules/command-menu-item/record/multiple-records/components/RestoreMultipleRecordsCommand.tsx
+#: src/modules/command-menu-item/record/multiple-records/components/RestoreMultipleRecordsCommand.tsx
 msgid "Restore Records"
 msgstr "استعادة السجلات"
 
@@ -11376,13 +11360,13 @@ msgid "Romanian"
 msgstr "الرومانية"
 
 #. js-lingui-id: vQrTaX
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
 msgid "Rotate client secret"
 msgstr ""
 
 #. js-lingui-id: 2FBgnq
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
 msgid "Rotate secret"
 msgstr ""
 
@@ -11457,10 +11441,11 @@ msgid "Saturday"
 msgstr "السبت"
 
 #. js-lingui-id: tfDRzk
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/SaveButton.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableActionButtons.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DashboardCommandMenuItemsConfig.tsx
 msgid "Save"
 msgstr "حفظ"
 
@@ -11470,12 +11455,12 @@ msgid "Save as new view"
 msgstr "احفظ كعرض جديد"
 
 #. js-lingui-id: 7GK4Vt
-#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DashboardCommandMenuItemsConfig.tsx
 msgid "Save Dashboard"
 msgstr "حفظ لوحة القيادة"
 
 #. js-lingui-id: BZVCCj
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Save Page Layout"
 msgstr ""
 
@@ -11495,7 +11480,7 @@ msgid "Schema name"
 msgstr "اسم المخطط"
 
 #. js-lingui-id: N/rFzD
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
 msgid "Scopes"
 msgstr ""
 
@@ -11514,10 +11499,10 @@ msgstr ""
 #: src/modules/side-panel/hooks/useOpenRecordsSearchPageInSidePanel.ts
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentWorkspaceMemberPickerDropdown.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
-#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
-#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
-#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
-#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
+#: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
 msgid "Search"
 msgstr "\\\\"
 
@@ -11716,8 +11701,8 @@ msgid "Search options"
 msgstr "ابحث في الخيارات"
 
 #. js-lingui-id: IMeaSJ
-#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
-#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
+#: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
 msgid "Search records"
 msgstr "\\\\"
 
@@ -11822,8 +11807,8 @@ msgid "See {objectLabelPlural}"
 msgstr "عرض {objectLabelPlural}"
 
 #. js-lingui-id: QREcJS
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "See active version"
 msgstr "\\\\"
 
@@ -11833,27 +11818,27 @@ msgid "See all {relationLabelPlural} linked to this record"
 msgstr ""
 
 #. js-lingui-id: f4Lu+X
-#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DashboardCommandMenuItemsConfig.tsx
 msgid "See deleted dashboards"
 msgstr ""
 
 #. js-lingui-id: 8O9AJI
-#: src/modules/action-menu/actions/record-actions/constants/WorkspaceMembersActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkspaceMembersCommandMenuItemsConfig.tsx
 msgid "See deleted members"
 msgstr ""
 
 #. js-lingui-id: BxIUpp
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "See deleted records"
 msgstr "عرض السجلات المحذوفة"
 
 #. js-lingui-id: Z+SGGW
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowRunsCommandMenuItemsConfig.tsx
 msgid "See deleted runs"
 msgstr "رؤية تشغيلات محذوفة"
 
 #. js-lingui-id: 5jZIe5
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "See deleted workflows"
 msgstr "رؤية مجرى العمل المحذوفة"
 
@@ -11868,43 +11853,43 @@ msgid "See Records on All Objects"
 msgstr "عرض السجلات في جميع العناصر"
 
 #. js-lingui-id: OpPn5Z
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowVersionsCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowVersionsCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowVersionsCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "See runs"
 msgstr "\\\\"
 
 #. js-lingui-id: gGEfj/
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowRunsCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowRunsCommandMenuItemsConfig.tsx
 msgid "See version"
 msgstr "انظر النسخة"
 
 #. js-lingui-id: EtyY4+
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowVersionsCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "See versions"
 msgstr "\\\\"
 
 #. js-lingui-id: lYhPN0
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowVersionsCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "See versions history"
 msgstr "\\\\"
 
 #. js-lingui-id: qEKLJV
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowVersionsCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowVersionsCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowRunsCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowRunsCommandMenuItemsConfig.tsx
 msgid "See workflow"
 msgstr "انظر دورة العمل"
 
 #. js-lingui-id: MVYiTN
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "See Workflows"
 msgstr "اطّلع على سير العمل"
 
@@ -12138,7 +12123,7 @@ msgid "Serbian (Cyrillic)"
 msgstr "الصربية (السيريلية)"
 
 #. js-lingui-id: fHVf32
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 msgid "Server Variables"
 msgstr ""
 
@@ -12237,7 +12222,7 @@ msgstr "إعداد قاعدة البيانات الخاصة بك..."
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 #: src/modules/object-record/record-merge/hooks/useMergeRecordsContainerTabs.ts
 #: src/modules/navigation/components/NavigationDrawerOtherSection.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Settings"
 msgstr "\\ا\\ل\\إ\\ع\\د\\ا\\د\\ا\\ت"
 
@@ -12551,8 +12536,8 @@ msgid "Sort By Group"
 msgstr "فرز حسب المجموعة"
 
 #. js-lingui-id: wdxz7K
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableOptionsDropdownContent.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
@@ -12671,8 +12656,8 @@ msgid "Step filter options"
 msgstr "خيارات تصفية الخطوة"
 
 #. js-lingui-id: ygCKqB
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowRunsCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowRunsCommandMenuItemsConfig.tsx
 msgid "Stop"
 msgstr "توقف"
 
@@ -12951,7 +12936,6 @@ msgstr ""
 #: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelSystemObjectPickerSubView.tsx
 #: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelSystemObjectPickerSubView.tsx
 #: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelObjectPickerSubView.tsx
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelObjectPickerSubView.tsx
 #: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemViewSystemSubView.tsx
 #: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemViewSystemSubView.tsx
 #: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemViewObjectPickerSubView.tsx
@@ -13040,8 +13024,8 @@ msgid "Table"
 msgstr "جدول"
 
 #. js-lingui-id: HpIrmy
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 msgid "Tarball upload"
 msgstr ""
 
@@ -13056,7 +13040,7 @@ msgid "Target relation on Junction Object"
 msgstr ""
 
 #. js-lingui-id: qmwHSv
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 msgid "Target workspace subdomain"
 msgstr ""
 
@@ -13072,7 +13056,7 @@ msgstr "عنوان المهمة"
 
 #. js-lingui-id: GtycJ/
 #: src/modules/page-layout/constants/StandardPageLayoutTabTitleTranslations.ts
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Tasks"
 msgstr "المهام"
 
@@ -13099,12 +13083,12 @@ msgstr "شروط الخدمة"
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCode.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCode.tsx
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionCodeEditorTab.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "Test"
 msgstr "تجربة"
 
 #. js-lingui-id: bU9B27
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "Test Workflow"
 msgstr "تجربة سير العمل"
 
@@ -13353,6 +13337,11 @@ msgstr ""
 msgid "This action will delete this folder and the navigation menu item inside. Do you want to continue?"
 msgstr ""
 
+#. js-lingui-id: 5AOB6g
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
+msgid "This app is installed on the current workspace"
+msgstr ""
+
 #. js-lingui-id: SYslQU
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 msgid "This application is not listed on the marketplace. It was shared via a direct link."
@@ -13404,7 +13393,7 @@ msgid "This record has been deleted"
 msgstr "تم حذف هذا السجل"
 
 #. js-lingui-id: eV9Tnj
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
 msgid "This redirect URI is already added"
 msgstr ""
 
@@ -13468,6 +13457,11 @@ msgstr "سيؤدي هذا إلى حذف الكائن وجميع سجلاته ن�
 msgid "This will permanently delete your two factor authentication method.<0/>Since 2FA is mandatory in your workspace, you will be logged out after deletion and will be asked to configure it again upon login. <1/>Please type in your email to confirm."
 msgstr "سيؤدي ذلك إلى حذف طريقة المصادقة الثنائية الخاصة بك بشكل دائم.<0/>نظرًا لأن المصادقة الثنائية إلزامية في مساحة العمل لديك، سيتم تسجيل خروجك بعد الحذف وسيُطلب منك تهيئتها مرة أخرى عند تسجيل الدخول. <1/>الرجاء إدخال بريدك الإلكتروني للتأكيد."
 
+#. js-lingui-id: Uvv3gH
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
+msgid "This will remove the application and all its data from this workspace. Please type \"{confirmationValue}\" to confirm."
+msgstr ""
+
 #. js-lingui-id: 4YifBe
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
 msgid "This will revert the database value to environment/default value. The database override will be removed and the system will use the environment settings."
@@ -13479,13 +13473,13 @@ msgid "Thought"
 msgstr ""
 
 #. js-lingui-id: 5g/sE8
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "Tidy up"
 msgstr "ترتيب"
 
 #. js-lingui-id: Vqn9Z1
 #: src/modules/workflow/workflow-diagram/components/WorkflowDiagramRightClickCommandMenu.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "Tidy up workflow"
 msgstr "ترتيب سير العمل"
 
@@ -13627,7 +13621,7 @@ msgid "Tools"
 msgstr ""
 
 #. js-lingui-id: 72c5Qo
-#: src/modules/page-layout/widgets/graph/graphWidgetPieChart/hooks/usePieChartCenterMetricData.ts
+#: src/modules/page-layout/widgets/graph/graph-widget-pie-chart/hooks/usePieChartCenterMetricData.ts
 msgid "Total"
 msgstr ""
 
@@ -13658,13 +13652,13 @@ msgid "Track your {intervalLabel} workflow credit consumption."
 msgstr "تتبع استهلاكك من اعتمادات سير العمل {intervalLabel}."
 
 #. js-lingui-id: zPGNJm
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 msgid "Transfer"
 msgstr ""
 
 #. js-lingui-id: KSnRfc
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 msgid "Transfer ownership"
 msgstr ""
 
@@ -13924,18 +13918,21 @@ msgid "Undisplayed data: max {maxItems} slices per chart."
 msgstr ""
 
 #. js-lingui-id: fo0VXg
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 msgid "Uninstall"
 msgstr ""
 
 #. js-lingui-id: Qtg9Qc
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 msgid "Uninstall Application?"
 msgstr ""
 
 #. js-lingui-id: 7S4EZE
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 msgid "Uninstall this app from all workspaces before deleting it"
 msgstr ""
 
@@ -13963,13 +13960,8 @@ msgid "unit"
 msgstr "وحدة"
 
 #. js-lingui-id: fMyWEp
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 msgid "Universal ID"
-msgstr ""
-
-#. js-lingui-id: dIosde
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
-msgid "Universal identifier copied"
 msgstr ""
 
 #. js-lingui-id: Ef7StM
@@ -14084,13 +14076,13 @@ msgstr "تحديث"
 #: src/pages/settings/applications/components/SettingsApplicationTableRow.tsx
 #: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
 #: src/modules/information-banner/components/billing/InformationBannerBillingSubscriptionPaused.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Update"
 msgstr "تحديث"
 
 #. js-lingui-id: 0KAL3W
 #: src/modules/side-panel/hooks/useOpenUpdateMultipleRecordsPageInSidePanel.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Update records"
 msgstr ""
 
@@ -14234,13 +14226,13 @@ msgid "URL to Embed"
 msgstr "رابط لتضمين"
 
 #. js-lingui-id: 8Jr4QC
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
 msgid "Usage across all workspaces on this server"
 msgstr ""
 
 #. js-lingui-id: 6dMpmz
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowVersionsCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/WorkflowVersionsCommandMenuItemsConfig.tsx
 msgid "Use as draft"
 msgstr "استخدم كمسودة"
 
@@ -14351,8 +14343,8 @@ msgstr "تحقق من البيانات"
 #: src/modules/settings/admin-panel/config-variables/components/SettingsAdminConfigVariablesTable.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
-#: src/modules/page-layout/widgets/graph/graphWidgetGaugeChart/components/GraphWidgetGaugeChart.tsx
-#: src/modules/page-layout/widgets/graph/graphWidgetGaugeChart/components/GraphWidgetGaugeChart.tsx
+#: src/modules/page-layout/widgets/graph/graph-widget-gauge-chart/components/GraphWidgetGaugeChart.tsx
+#: src/modules/page-layout/widgets/graph/graph-widget-gauge-chart/components/GraphWidgetGaugeChart.tsx
 msgid "Value"
 msgstr "القيمة"
 
@@ -14368,7 +14360,7 @@ msgid "Values"
 msgstr "القيم"
 
 #. js-lingui-id: HBiN8v
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 msgid "Variable {variableKey} updated"
 msgstr ""
 
@@ -14388,7 +14380,7 @@ msgid "Variable updated successfully."
 msgstr "تم تحديث المتغير بنجاح."
 
 #. js-lingui-id: E6Zuwm
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 msgid "Variables declared by the app manifest. Fill in values here — they apply to all workspace installations."
 msgstr ""
 
@@ -14478,7 +14470,7 @@ msgid "View Docs"
 msgstr "عرض الوثائق"
 
 #. js-lingui-id: Mv1YVf
-#: src/modules/ui/feedback/snack-bar-manager/utils/build-error-action.util.ts
+#: src/modules/ui/feedback/snack-bar-manager/utils/buildErrorAction.ts
 msgid "View existing record"
 msgstr "عرض السجل الموجود"
 
@@ -14512,6 +14504,11 @@ msgstr ""
 msgid "view group"
 msgstr "مجموعة العرض"
 
+#. js-lingui-id: AjN5xU
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
+msgid "View installed app"
+msgstr ""
+
 #. js-lingui-id: lh5BED
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerQueueMetricsSection.tsx
 msgid "View Jobs"
@@ -14523,13 +14520,13 @@ msgid "View Logs"
 msgstr ""
 
 #. js-lingui-id: 7PrSCy
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
 msgid "View marketplace page"
 msgstr ""
 
 #. js-lingui-id: ecVcAx
-#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
-#: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
+#: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
 msgid "View Previous AI Chats"
 msgstr "عرض الذكاءات الاصطناعية السابقة"
 
@@ -14802,7 +14799,7 @@ msgid "When enabled, newly added models are available to all workspaces by defau
 msgstr ""
 
 #. js-lingui-id: mCGuXk
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
 msgid "When enabled, this app appears in the marketplace browse page"
 msgstr ""
 
@@ -14860,7 +14857,7 @@ msgid "Workflow agents"
 msgstr ""
 
 #. js-lingui-id: 2jzcC5
-#: src/modules/action-menu/actions/record-actions/single-record/workflow-actions/components/DuplicateWorkflowSingleRecordAction.tsx
+#: src/modules/command-menu-item/record/single-record/workflow/components/DuplicateWorkflowSingleRecordCommand.tsx
 msgid "Workflow duplicated successfully"
 msgstr ""
 
@@ -15060,7 +15057,8 @@ msgstr "أصفر"
 
 #. js-lingui-id: 3d1wCB
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
@@ -15125,7 +15123,7 @@ msgid "You have scheduled a metered tier change. Do you want to cancel it?"
 msgstr "لقد قمت بجدولة تغيير الطبقة المقاسة. هل تريد إلغاؤه؟"
 
 #. js-lingui-id: qXzOWu
-#: src/modules/action-menu/actions/record-actions/run-workflow-actions/hooks/useRunWorkflowRecordActions.tsx
+#: src/modules/command-menu-item/record/workflow/hooks/useRunWorkflowRecordCommands.tsx
 msgid "You selected {selectedCountFormatted} records but manual triggers can run on at most {limitFormatted} records at once. Only the first {limitFormatted} records will be processed."
 msgstr ""
 

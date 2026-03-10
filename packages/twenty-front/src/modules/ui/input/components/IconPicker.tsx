@@ -11,7 +11,7 @@ import { SelectableList } from '@/ui/layout/selectable-list/components/Selectabl
 import { arrayToChunks } from '~/utils/array/arrayToChunks';
 
 import { ICON_PICKER_DROPDOWN_CONTENT_WIDTH } from '@/ui/input/components/constants/IconPickerDropdownContentWidth';
-import { IconPickerScrollEffect } from '@/ui/input/hooks/IconPickerScrollEffect';
+import { IconPickerScrollEffect } from '@/ui/input/effect-components/IconPickerScrollEffect';
 import {
   ICON_PICKER_DEFAULT_VISIBLE_COUNT,
   iconPickerVisibleCountState,
@@ -105,20 +105,20 @@ const StyledLightIconButton = ({
 );
 
 const StyledLoadingMore = styled.div`
-  display: flex;
-  justify-content: center;
   align-items: center;
-  height: 40px;
+  display: flex;
   font-size: 14px;
+  height: 40px;
+  justify-content: center;
 `;
 
 const StyledMatrixItem = styled.div`
-  width: 32px;
-  height: 32px;
-  display: flex;
   align-items: center;
-  justify-content: center;
   box-sizing: border-box;
+  display: flex;
+  height: 32px;
+  justify-content: center;
+  width: 32px;
 `;
 
 const convertIconKeyToLabel = (iconKey: string) =>

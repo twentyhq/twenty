@@ -53,9 +53,9 @@ const StyledTable = styled.div<{
 
   display: flex;
   flex-wrap: wrap;
-  width: 100%;
-
   position: relative;
+
+  width: 100%;
 
   div.header-cell {
     position: sticky;
@@ -72,9 +72,9 @@ const StyledTable = styled.div<{
   }
 
   div.header-cell:nth-of-type(1) {
-    left: 0px;
-
     background-color: ${themeCssVariables.background.primary};
+
+    left: 0px;
 
     z-index: ${({ hasRecordGroups }) =>
       hasRecordGroups
@@ -83,10 +83,10 @@ const StyledTable = styled.div<{
   }
 
   div.header-cell:nth-of-type(2) {
-    left: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px;
-    top: 0;
-
     background-color: ${themeCssVariables.background.primary};
+    left: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px;
+
+    top: 0;
 
     z-index: ${({ hasRecordGroups }) =>
       hasRecordGroups
@@ -95,10 +95,10 @@ const StyledTable = styled.div<{
   }
 
   div.header-cell:nth-of-type(3) {
-    left: ${`${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH + RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px`};
-    right: 0;
-
     background-color: ${themeCssVariables.background.primary};
+    left: ${`${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH + RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px`};
+
+    right: 0;
 
     z-index: ${({ hasRecordGroups }) =>
       hasRecordGroups
@@ -109,8 +109,8 @@ const StyledTable = styled.div<{
   }
 
   div.table-cell:nth-of-type(1) {
-    position: sticky;
     left: 0px;
+    position: sticky;
     z-index: ${({ hasRecordGroups }) =>
       hasRecordGroups
         ? TABLE_Z_INDEX.cell.withGroups.sticky
@@ -118,8 +118,8 @@ const StyledTable = styled.div<{
   }
 
   div.table-cell:nth-of-type(2) {
-    position: sticky;
     left: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px;
+    position: sticky;
     z-index: ${({ hasRecordGroups }) =>
       hasRecordGroups
         ? TABLE_Z_INDEX.cell.withGroups.sticky
@@ -127,15 +127,15 @@ const StyledTable = styled.div<{
   }
 
   div.table-cell-0-0 {
-    position: sticky;
     left: ${`${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH + RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px`};
+    position: sticky;
 
     ${HorizontalScrollBoxShadowCSS}
   }
 
   div.table-cell:nth-of-type(3) {
-    position: sticky;
     left: ${`${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH + RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px`};
+    position: sticky;
     z-index: ${({ hasRecordGroups }) =>
       hasRecordGroups
         ? TABLE_Z_INDEX.cell.withGroups.sticky
@@ -145,43 +145,43 @@ const StyledTable = styled.div<{
   }
 
   div.${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH_CLASS_NAME} {
-    width: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px;
-    min-width: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px;
     max-width: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px;
+    min-width: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px;
+    width: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px;
   }
 
   div.${RECORD_TABLE_COLUMN_CHECKBOX_WIDTH_CLASS_NAME} {
-    width: ${RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px;
-    min-width: ${RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px;
     max-width: ${RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px;
+    min-width: ${RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px;
+    width: ${RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px;
   }
 
   div.${RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH_CLASS_NAME} {
-    width: ${RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH}px;
-    min-width: ${RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH}px;
     max-width: ${RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH}px;
+    min-width: ${RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH}px;
+    width: ${RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH}px;
   }
 
   ${columnFieldWidthRules}
 
   div.${RECORD_TABLE_COLUMN_LAST_EMPTY_COLUMN_WIDTH_CLASS_NAME} {
-    width: var(${RECORD_TABLE_COLUMN_LAST_EMPTY_COLUMN_WIDTH_VARIABLE_NAME});
-    min-width: var(
-      ${RECORD_TABLE_COLUMN_LAST_EMPTY_COLUMN_WIDTH_VARIABLE_NAME}
-    );
     max-width: var(
       ${RECORD_TABLE_COLUMN_LAST_EMPTY_COLUMN_WIDTH_VARIABLE_NAME}
     );
+    min-width: var(
+      ${RECORD_TABLE_COLUMN_LAST_EMPTY_COLUMN_WIDTH_VARIABLE_NAME}
+    );
+    width: var(${RECORD_TABLE_COLUMN_LAST_EMPTY_COLUMN_WIDTH_VARIABLE_NAME});
   }
 
   div.${RECORD_TABLE_COLUMN_WITH_GROUP_LAST_EMPTY_COLUMN_WIDTH_CLASS_NAME} {
-    width: var(
+    max-width: var(
       ${RECORD_TABLE_COLUMN_WITH_GROUP_LAST_EMPTY_COLUMN_WIDTH_VARIABLE_NAME}
     );
     min-width: var(
       ${RECORD_TABLE_COLUMN_WITH_GROUP_LAST_EMPTY_COLUMN_WIDTH_VARIABLE_NAME}
     );
-    max-width: var(
+    width: var(
       ${RECORD_TABLE_COLUMN_WITH_GROUP_LAST_EMPTY_COLUMN_WIDTH_VARIABLE_NAME}
     );
   }

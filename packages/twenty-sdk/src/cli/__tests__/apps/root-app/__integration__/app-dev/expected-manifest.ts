@@ -18,6 +18,7 @@ export const EXPECTED_MANIFEST: Manifest = {
     apiClientChecksum: null,
   },
   skills: [],
+  agents: [],
   publicAssets: [],
   fields: [
     {

@@ -4,7 +4,7 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
-import { getDateFnsLocale } from '@/ui/field/display/utils/getDateFnsLocale.util';
+import { getDateFnsLocale } from '@/ui/field/display/utils/getDateFnsLocale';
 import { Select } from '@/ui/input/components/Select';
 
 import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItems';

@@ -21,7 +21,5 @@
     "jest.config.mjs",
     "vite.config.*.ts"
   ],
-  "exclude": [
-    "src/individual-entry.ts"
-  ]
+  "exclude": ["src/individual-entry.ts"]
 }

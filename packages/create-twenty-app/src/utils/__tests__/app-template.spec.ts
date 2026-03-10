@@ -25,6 +25,7 @@ const ALL_EXAMPLES: ExampleOptions = {
   includeExampleView: true,
   includeExampleNavigationMenuItem: true,
   includeExampleSkill: true,
+  includeExampleAgent: true,
   includeExampleIntegrationTest: true,
 };
 
@@ -41,6 +42,7 @@ const NO_EXAMPLES: ExampleOptions = {
   includeExampleObject: false,
   includeExampleField: false,
   includeExampleSkill: false,
+  includeExampleAgent: false,
   includeExampleLogicFunction: false,
   includeExampleFrontComponent: false,
   includeExampleView: false,
@@ -476,6 +478,7 @@ describe('copyBaseApplicationProject', () => {
             includeExampleObject: false,
             includeExampleField: false,
             includeExampleSkill: false,
+            includeExampleAgent: false,
             includeExampleLogicFunction: false,
             includeExampleFrontComponent: true,
             includeExampleView: false,
@@ -513,6 +516,7 @@ describe('copyBaseApplicationProject', () => {
           exampleOptions: {
             includeExampleObject: false,
             includeExampleSkill: false,
+            includeExampleAgent: false,
             includeExampleField: false,
             includeExampleLogicFunction: true,
             includeExampleFrontComponent: false,
@@ -673,15 +677,24 @@ describe('copyBaseApplicationProject', () => {
 
       const content = await fs.readFile(viewPath, 'utf8');
 
-      expect(content).toContain("import { defineView } from 'twenty-sdk'");
       expect(content).toContain(
-        "import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/objects/example-object'",
+        "import { defineView, ViewKey } from 'twenty-sdk'",
+      );
+      expect(content).toContain(
+        "import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER, NAME_FIELD_UNIVERSAL_IDENTIFIER } from 'src/objects/example-object'",
       );
       expect(content).toContain('export default defineView({');
       expect(content).toContain(
         'objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER',
       );
-      expect(content).toContain("name: 'example-view'");
+      expect(content).toContain("name: 'All example items'");
+      expect(content).toContain('fields: [');
+      expect(content).toContain(
+        'fieldMetadataUniversalIdentifier: NAME_FIELD_UNIVERSAL_IDENTIFIER',
+      );
+      expect(content).toContain('isVisible: true');
+      expect(content).toContain('key: ViewKey.INDEX');
+      expect(content).toContain('size: 200');
     });
   });
 
@@ -712,6 +725,7 @@ describe('copyBaseApplicationProject', () => {
       expect(content).toContain('export default defineNavigationMenuItem({');
       expect(content).toContain("name: 'example-navigation-menu-item'");
       expect(content).toContain("icon: 'IconList'");
+      expect(content).toContain("color: 'blue'");
       expect(content).toContain('position: 0');
     });
   });

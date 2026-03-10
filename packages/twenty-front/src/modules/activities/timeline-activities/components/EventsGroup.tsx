@@ -45,9 +45,9 @@ const StyledMonthSeperator = styled.div`
   align-self: stretch;
   color: ${themeCssVariables.font.color.light};
   display: flex;
-  gap: ${themeCssVariables.spacing[4]};
-  font-weight: ${themeCssVariables.font.weight.semiBold};
   font-size: ${themeCssVariables.font.size.xs};
+  font-weight: ${themeCssVariables.font.weight.semiBold};
+  gap: ${themeCssVariables.spacing[4]};
 `;
 const StyledMonthSeperatorLine = styled.div`
   background: ${themeCssVariables.border.color.light};

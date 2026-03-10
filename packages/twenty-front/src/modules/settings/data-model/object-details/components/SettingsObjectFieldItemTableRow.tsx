@@ -40,27 +40,27 @@ export const OBJECT_FIELD_TABLE_ROW_GRID_TEMPLATE_COLUMNS =
   'minmax(0, 1fr) 148px 148px 36px';
 
 const StyledNameContainer = styled.div`
-  display: flex;
   align-items: center;
+  display: flex;
   flex: 1;
-  min-width: 0;
   gap: ${themeCssVariables.spacing[1]};
+  min-width: 0;
 `;
 
 const StyledNameLabel = styled.div`
-  white-space: nowrap;
-  text-overflow: ellipsis;
   overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 const StyledInactiveLabel = styled.span`
   color: ${themeCssVariables.font.color.extraLight};
-  font-size: ${themeCssVariables.font.size.sm};
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
   flex: 0 999 auto;
+  font-size: ${themeCssVariables.font.size.sm};
   min-width: 48px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 
   &::before {
     content: '·';

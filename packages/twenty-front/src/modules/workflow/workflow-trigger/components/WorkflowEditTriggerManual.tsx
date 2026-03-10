@@ -121,7 +121,10 @@ export const WorkflowEditTriggerManual = ({
             options={availableMetadata}
             disabled={triggerOptions.readonly}
             onChange={(objectNameSingular) => {
-              if (triggerOptions.readonly === true || !isDefined(availability)) {
+              if (
+                triggerOptions.readonly === true ||
+                !isDefined(availability)
+              ) {
                 return;
               }
 

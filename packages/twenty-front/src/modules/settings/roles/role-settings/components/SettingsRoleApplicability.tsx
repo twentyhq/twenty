@@ -10,14 +10,14 @@ import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 const StyledCheckboxContainer = styled.div<{ disabled: boolean }>`
-  display: flex;
   align-items: center;
+  border-radius: ${themeCssVariables.border.radius.sm};
+  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
+  display: flex;
   justify-content: space-between;
   padding: ${themeCssVariables.spacing[1]};
-  border-radius: ${themeCssVariables.border.radius.sm};
   transition: background-color
     calc(${themeCssVariables.animation.duration.normal} * 1s) ease;
-  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
 
   &:hover {
     background-color: ${themeCssVariables.background.transparent.light};
@@ -25,8 +25,8 @@ const StyledCheckboxContainer = styled.div<{ disabled: boolean }>`
 `;
 
 const StyledCheckboxLabel = styled.div`
-  display: flex;
   align-items: center;
+  display: flex;
   gap: ${themeCssVariables.spacing[1]};
 `;
 

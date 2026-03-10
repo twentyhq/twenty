@@ -162,12 +162,12 @@
       ],
       "options": {
         "cwd": "{projectRoot}",
-        "command": "npx oxlint --type-aware -c .oxlintrc.json src/"
+        "command": "npx oxlint --type-aware -c .oxlintrc.json src/ && (prettier src/ --check --cache --cache-location ../../.cache/prettier/{projectRoot} --cache-strategy metadata || (echo 'ERROR: Prettier formatting check failed! Fix with: npx nx lint twenty-server --configuration=fix' && false))"
       },
       "configurations": {
         "ci": {},
         "fix": {
-          "command": "npx oxlint --type-aware --fix -c .oxlintrc.json src/"
+          "command": "npx oxlint --type-aware --fix -c .oxlintrc.json src/ && prettier src/ --write --cache --cache-location ../../.cache/prettier/{projectRoot} --cache-strategy metadata"
         }
       }
     },

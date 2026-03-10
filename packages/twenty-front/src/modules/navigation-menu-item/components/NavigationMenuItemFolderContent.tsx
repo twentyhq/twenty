@@ -58,9 +58,10 @@ export const NavigationMenuItemFolderContent = ({
                     rightOptions={
                       <LightIconButton
                         Icon={IconHeartOff}
-                        onClick={() =>
-                          deleteNavigationMenuItem(navigationMenuItem.id)
-                        }
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          deleteNavigationMenuItem(navigationMenuItem.id);
+                        }}
                         accent="tertiary"
                       />
                     }

@@ -12,26 +12,24 @@ const StyledChip = styled.button<{
   maxWidth?: string;
   onClick?: () => void;
 }>`
-  all: unset;
   align-items: center;
-  justify-content: center;
+  all: unset;
   background: ${themeCssVariables.background.transparent.light};
   border: 1px solid ${themeCssVariables.border.color.medium};
   border-radius: ${themeCssVariables.border.radius.md};
   box-sizing: border-box;
-  display: flex;
-  gap: ${themeCssVariables.spacing[1]};
-  height: ${themeCssVariables.spacing[6]};
-  /* If the chip has text, we add extra padding to have a more balanced design */
-  padding: 0
-    ${({ withText }) =>
-      withText ? themeCssVariables.spacing[2] : themeCssVariables.spacing[1]};
-  font-family: inherit;
-  font-size: ${themeCssVariables.font.size.sm};
-  font-weight: ${themeCssVariables.font.weight.medium};
-  line-height: ${themeCssVariables.text.lineHeight.lg};
   color: ${themeCssVariables.font.color.primary};
   cursor: ${({ onClick }) => (isDefined(onClick) ? 'pointer' : 'default')};
+  display: flex;
+  font-family: inherit;
+  /* If the chip has text, we add extra padding to have a more balanced design */
+  font-size: ${themeCssVariables.font.size.sm};
+  font-weight: ${themeCssVariables.font.weight.medium};
+  gap: ${themeCssVariables.spacing[1]};
+  height: ${themeCssVariables.spacing[6]};
+  justify-content: center;
+  line-height: ${themeCssVariables.text.lineHeight.lg};
+  max-width: ${({ maxWidth }) => maxWidth ?? ''};
 
   &:hover {
     background: ${({ onClick }) =>
@@ -39,7 +37,9 @@ const StyledChip = styled.button<{
         ? themeCssVariables.background.transparent.medium
         : themeCssVariables.background.transparent.light};
   }
-  max-width: ${({ maxWidth }) => maxWidth ?? ''};
+  padding: 0
+    ${({ withText }) =>
+      withText ? themeCssVariables.spacing[2] : themeCssVariables.spacing[1]};
 `;
 
 const StyledIconsContainer = styled.div`

@@ -1,6 +1,6 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
-import { GraphWidgetAggregateChart } from '@/page-layout/widgets/graph/graphWidgetAggregateChart/components/GraphWidgetAggregateChart';
+import { GraphWidgetAggregateChart } from '@/page-layout/widgets/graph/graph-widget-aggregate-chart/components/GraphWidgetAggregateChart';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 const meta: Meta<typeof GraphWidgetAggregateChart> = {

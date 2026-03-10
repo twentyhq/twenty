@@ -1,6 +1,6 @@
-import { type ActionConfig } from '@/action-menu/actions/types/ActionConfig';
-import { ActionScope } from '@/action-menu/actions/types/ActionScope';
-import { ActionType } from '@/action-menu/actions/types/ActionType';
+import { type CommandMenuItemConfig } from '@/command-menu-item/types/CommandMenuItemConfig';
+import { CommandMenuItemScope } from '@/command-menu-item/types/CommandMenuItemScope';
+import { CommandMenuItemType } from '@/command-menu-item/types/CommandMenuItemType';
 import { renderHook } from '@testing-library/react';
 import { IconPlus } from 'twenty-ui/display';
 import { useFilterActionsWithSidePanelSearch } from '@/side-panel/pages/root/hooks/useFilterActionsWithSidePanelSearch';
@@ -8,12 +8,12 @@ import { useFilterActionsWithSidePanelSearch } from '@/side-panel/pages/root/hoo
 const MockComponent = <div>Mock Component</div>;
 
 describe('useFilterActionsWithSidePanelSearch', () => {
-  const mockActions: ActionConfig[] = [
+  const mockActions: CommandMenuItemConfig[] = [
     {
       key: 'action-1',
       label: 'Create Record',
-      type: ActionType.Standard,
-      scope: ActionScope.Global,
+      type: CommandMenuItemType.Standard,
+      scope: CommandMenuItemScope.Global,
       position: 1,
       Icon: IconPlus,
       shouldBeRegistered: () => true,
@@ -23,8 +23,8 @@ describe('useFilterActionsWithSidePanelSearch', () => {
     {
       key: 'action-2',
       label: 'Delete Record',
-      type: ActionType.Standard,
-      scope: ActionScope.RecordSelection,
+      type: CommandMenuItemType.Standard,
+      scope: CommandMenuItemScope.RecordSelection,
       position: 2,
       Icon: IconPlus,
       shouldBeRegistered: () => true,
@@ -34,8 +34,8 @@ describe('useFilterActionsWithSidePanelSearch', () => {
     {
       key: 'action-3',
       label: 'Update Record',
-      type: ActionType.Standard,
-      scope: ActionScope.Object,
+      type: CommandMenuItemType.Standard,
+      scope: CommandMenuItemScope.Object,
       position: 3,
       Icon: IconPlus,
       shouldBeRegistered: () => true,
