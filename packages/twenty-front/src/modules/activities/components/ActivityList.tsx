@@ -3,7 +3,6 @@ import { Card } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledListContainer = styled.div`
-  max-width: 100%;
   width: 100%;
 
   > * {
