@@ -2,8 +2,6 @@ import {
   CommandMenuContext,
   type CommandMenuContextType,
 } from '@/command-menu-item/contexts/CommandMenuContext';
-import { useCommandMenuContextApi } from '@/command-menu-item/hooks/useCommandMenuContextApi';
-import { useCommandMenuItemFrontComponentCommands } from '@/command-menu-item/hooks/useCommandMenuItemFrontComponentCommands';
 import { useRegisteredCommandMenuItems } from '@/command-menu-item/hooks/useRegisteredCommandMenuItems';
 import { useShouldCommandMenuItemBeRegisteredParams } from '@/command-menu-item/hooks/useShouldCommandMenuItemBeRegisteredParams';
 import { useRunWorkflowRecordAgnosticCommands } from '@/command-menu-item/record-agnostic/workflow/hooks/useRunWorkflowRecordAgnosticCommands';
@@ -14,9 +12,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { type WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isDefined } from 'twenty-shared/utils';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 type CommandMenuContextProviderWorkflowObjectsProps = {
   objectMetadataItem: ObjectMetadataItem;
@@ -55,42 +51,16 @@ const CommandMenuContextProviderWorkflowObjectsContent = ({
   const runWorkflowRecordAgnosticCommands =
     useRunWorkflowRecordAgnosticCommands();
 
-  const commandMenuContextApi = useCommandMenuContextApi();
-
-  const enrichedSelectedRecords = isDefined(workflowWithCurrentVersion)
-    ? commandMenuContextApi.selectedRecords.map((record) =>
-        record.id === workflowWithCurrentVersion.id
-          ? {
-              ...record,
-              currentVersion: workflowWithCurrentVersion.currentVersion,
-              versions: workflowWithCurrentVersion.versions,
-              statuses: workflowWithCurrentVersion.statuses,
-            }
-          : record,
-      )
-    : commandMenuContextApi.selectedRecords;
-
-  const enrichedCommandMenuContextApi = {
-    ...commandMenuContextApi,
-    selectedRecords: enrichedSelectedRecords,
-  };
-
-  const commandMenuItemFrontComponentActions =
-    useCommandMenuItemFrontComponentCommands(enrichedCommandMenuContextApi);
-
-  const isCommandMenuItemEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_COMMAND_MENU_ITEM_ENABLED,
-  );
-
   return (
     <CommandMenuContext.Provider
       value={{
         isInSidePanel,
         displayType,
         containerType,
-        commandMenuItems: isCommandMenuItemEnabled
-          ? commandMenuItemFrontComponentActions
-          : [...commandMenuItems, ...runWorkflowRecordAgnosticCommands],
+        commandMenuItems: [
+          ...commandMenuItems,
+          ...runWorkflowRecordAgnosticCommands,
+        ],
       }}
     >
       {children}
@@ -123,24 +93,16 @@ const CommandMenuContextProviderWorkflowObjectsWithoutWorkflow = ({
   const runWorkflowRecordAgnosticCommands =
     useRunWorkflowRecordAgnosticCommands();
 
-  const commandMenuContextApi = useCommandMenuContextApi();
-
-  const commandMenuItemFrontComponentActions =
-    useCommandMenuItemFrontComponentCommands(commandMenuContextApi);
-
-  const isCommandMenuItemEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_COMMAND_MENU_ITEM_ENABLED,
-  );
-
   return (
     <CommandMenuContext.Provider
       value={{
         isInSidePanel,
         displayType,
         containerType,
-        commandMenuItems: isCommandMenuItemEnabled
-          ? commandMenuItemFrontComponentActions
-          : [...commandMenuItems, ...runWorkflowRecordAgnosticCommands],
+        commandMenuItems: [
+          ...commandMenuItems,
+          ...runWorkflowRecordAgnosticCommands,
+        ],
       }}
     >
       {children}
