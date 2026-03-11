@@ -1,9 +1,9 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class AddEngineComponentKeyToCommandMenuItem1773245779156
+export class AddEngineComponentKeyToCommandMenuItem1773248251018
   implements MigrationInterface
 {
-  name = 'AddEngineComponentKeyToCommandMenuItem1773245779156';
+  name = 'AddEngineComponentKeyToCommandMenuItem1773248251018';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
@@ -16,13 +16,13 @@ export class AddEngineComponentKeyToCommandMenuItem1773245779156
       `ALTER TABLE "core"."commandMenuItem" ADD "engineComponentKey" "core"."commandMenuItem_enginecomponentkey_enum"`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."commandMenuItem" ADD CONSTRAINT "CHK_command_menu_item_workflow_or_front_component_or_standard_key" CHECK (("workflowVersionId" IS NOT NULL AND "frontComponentId" IS NULL AND "engineComponentKey" IS NULL) OR ("workflowVersionId" IS NULL AND "frontComponentId" IS NOT NULL AND "engineComponentKey" IS NULL) OR ("workflowVersionId" IS NULL AND "frontComponentId" IS NULL AND "engineComponentKey" IS NOT NULL))`,
+      `ALTER TABLE "core"."commandMenuItem" ADD CONSTRAINT "CHK_cmd_menu_item_wf_or_front_comp_or_engine_key" CHECK (("workflowVersionId" IS NOT NULL AND "frontComponentId" IS NULL AND "engineComponentKey" IS NULL) OR ("workflowVersionId" IS NULL AND "frontComponentId" IS NOT NULL AND "engineComponentKey" IS NULL) OR ("workflowVersionId" IS NULL AND "frontComponentId" IS NULL AND "engineComponentKey" IS NOT NULL))`,
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "core"."commandMenuItem" DROP CONSTRAINT "CHK_command_menu_item_workflow_or_front_component_or_standard_key"`,
+      `ALTER TABLE "core"."commandMenuItem" DROP CONSTRAINT "CHK_cmd_menu_item_wf_or_front_comp_or_engine_key"`,
     );
     await queryRunner.query(
       `ALTER TABLE "core"."commandMenuItem" DROP COLUMN "engineComponentKey"`,

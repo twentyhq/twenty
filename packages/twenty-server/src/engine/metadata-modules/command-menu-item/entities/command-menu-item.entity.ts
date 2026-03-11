@@ -58,7 +58,7 @@ export enum EngineComponentKey {
   'availabilityObjectMetadataId',
 ])
 @Check(
-  'CHK_command_menu_item_workflow_or_front_component_or_standard_key',
+  'CHK_cmd_menu_item_wf_or_front_comp_or_engine_key',
   '("workflowVersionId" IS NOT NULL AND "frontComponentId" IS NULL AND "engineComponentKey" IS NULL) OR ("workflowVersionId" IS NULL AND "frontComponentId" IS NOT NULL AND "engineComponentKey" IS NULL) OR ("workflowVersionId" IS NULL AND "frontComponentId" IS NULL AND "engineComponentKey" IS NOT NULL)',
 )
 export class CommandMenuItemEntity
