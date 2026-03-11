@@ -1,0 +1,54 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`Permission flag upsert should fail when permissionFlagKeys contains invalid enum value 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "http": {
+      "status": 400,
+    },
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "Value \\"INVALID_FLAG\\" does not exist in \\"PermissionFlagType\\" enum.",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Permission flag upsert should fail when role is not editable (system role) 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "ROLE_NOT_EDITABLE",
+    "userFriendlyMessage": "This role cannot be modified because it is a system role. Only custom roles can be edited.",
+  },
+  "message": "Role is not editable",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Permission flag upsert should fail when roleId does not exist 1`] = `
+{
+  "extensions": {
+    "code": "NOT_FOUND",
+    "subCode": "ROLE_NOT_FOUND",
+    "userFriendlyMessage": "The role you are trying to modify could not be found.",
+  },
+  "message": "Role not found",
+  "name": "NotFoundError",
+}
+`;
+
+exports[`Permission flag upsert should fail when roleId is not a valid UUID 1`] = `
+{
+  "extensions": {
+    "code": "GRAPHQL_VALIDATION_FAILED",
+    "http": {
+      "status": 400,
+    },
+    "userFriendlyMessage": "An error occurred.",
+    "value": "invalid-uuid",
+  },
+  "message": "Invalid UUID: 'invalid-uuid'",
+  "name": "ValidationError",
+}
+`;
