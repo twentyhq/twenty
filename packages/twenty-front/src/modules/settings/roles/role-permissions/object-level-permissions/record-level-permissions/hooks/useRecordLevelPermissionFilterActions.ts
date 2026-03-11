@@ -1,10 +1,6 @@
 /* @license Enterprise */
 
-import {
-  FieldMetadataType,
-  RecordFilterGroupLogicalOperator,
-  CoreObjectNameSingular,
-} from 'twenty-shared/types';
+import { RecordFilterGroupLogicalOperator } from 'twenty-shared/types';
 import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
@@ -60,13 +56,8 @@ export const useRecordLevelPermissionFilterActions = ({
   const getDefaultFieldMetadataItemForRLS = () => {
     const availableFieldMetadataItemsForRls =
       availableFieldMetadataItemsForFilter.filter((fieldMetadataItem) => {
-        return (
-          RECORD_LEVEL_PERMISSION_PREDICATE_FIELD_TYPES.includes(
-            fieldMetadataItem.type,
-          ) ||
-          (fieldMetadataItem.type === FieldMetadataType.RELATION &&
-            fieldMetadataItem.relation?.targetObjectMetadata.nameSingular ===
-              CoreObjectNameSingular.WorkspaceMember)
+        return RECORD_LEVEL_PERMISSION_PREDICATE_FIELD_TYPES.includes(
+          fieldMetadataItem.type,
         );
       });
 

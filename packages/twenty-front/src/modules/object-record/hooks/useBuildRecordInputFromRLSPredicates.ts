@@ -13,6 +13,7 @@ import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/uti
 import { buildRecordInputFromFilter } from '@/object-record/record-table/utils/buildRecordInputFromFilter';
 import { buildCompositeValueFromSubField } from '@/object-record/record-table/utils/buildValueFromFilter';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { isUndefined } from '@sniptt/guards';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
@@ -76,8 +77,19 @@ export const useBuildRecordInputFromRLSPredicates = ({
       );
     }
 
-    let workspaceMemberFieldValue =
-      currentWorkspaceMemberRecord?.[workspaceMemberFieldMetadataItem.name];
+    let workspaceMemberFieldValue: unknown;
+
+    if (workspaceMemberFieldMetadataItem.type === FieldMetadataType.RELATION) {
+      const joinColumnName =
+        workspaceMemberFieldMetadataItem.settings?.joinColumnName ??
+        `${workspaceMemberFieldMetadataItem.name}Id`;
+
+      workspaceMemberFieldValue =
+        currentWorkspaceMemberRecord?.[joinColumnName];
+    } else {
+      workspaceMemberFieldValue =
+        currentWorkspaceMemberRecord?.[workspaceMemberFieldMetadataItem.name];
+    }
 
     if (isCompositeFieldType(workspaceMemberFieldMetadataItem.type)) {
       if (!workspaceMemberSubFieldName) {

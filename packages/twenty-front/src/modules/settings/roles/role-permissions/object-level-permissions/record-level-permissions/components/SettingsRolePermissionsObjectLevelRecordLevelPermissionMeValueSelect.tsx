@@ -137,6 +137,17 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelec
           }
 
           if (field.type === targetFieldType) {
+            if (
+              targetFieldType === FieldMetadataType.RELATION &&
+              isDefined(selectedFieldMetadataItem)
+            ) {
+              return (
+                field.relation?.targetObjectMetadata.nameSingular ===
+                selectedFieldMetadataItem.relation?.targetObjectMetadata
+                  .nameSingular
+              );
+            }
+
             return true;
           }
 

@@ -68,6 +68,8 @@ export const buildRowLevelPermissionRecordFilter = ({
     return null;
   }
 
+  let hasUnresolvableRelationPredicate = false;
+
   const recordFilters = predicates
     .map((predicate) => {
       const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
@@ -105,51 +107,73 @@ export const buildRowLevelPermissionRecordFilter = ({
           return null;
         }
 
-        const rawWorkspaceMemberValue = Object.entries(workspaceMember).find(
-          ([key]) => key === workspaceMemberFieldMetadata.name,
-        )?.[1];
+        if (workspaceMemberFieldMetadata.type === FieldMetadataType.RELATION) {
+          const joinColumnName = (
+            workspaceMemberFieldMetadata.settings as {
+              joinColumnName?: string;
+            } | null
+          )?.joinColumnName;
 
-        const workspaceMemberSubFieldName =
-          predicate.workspaceMemberSubFieldName;
+          if (!isDefined(joinColumnName)) {
+            return null;
+          }
 
-        if (!isDefined(rawWorkspaceMemberValue)) {
-          return null;
-        }
+          const fkValue = Object.entries(workspaceMember).find(
+            ([key]) => key === joinColumnName,
+          )?.[1];
 
-        if (
-          isDefined(workspaceMemberSubFieldName) &&
-          isCompositeFieldMetadataType(workspaceMemberFieldMetadata.type) &&
-          typeof rawWorkspaceMemberValue === 'object'
-        ) {
-          predicateValue = rawWorkspaceMemberValue[workspaceMemberSubFieldName];
+          if (!isDefined(fkValue) || typeof fkValue !== 'string') {
+            hasUnresolvableRelationPredicate = true;
+
+            return null;
+          }
+
+          predicateValue = { selectedRecordIds: [fkValue] };
         } else {
-          predicateValue = rawWorkspaceMemberValue;
-        }
+          const rawWorkspaceMemberValue = Object.entries(workspaceMember).find(
+            ([key]) => key === workspaceMemberFieldMetadata.name,
+          )?.[1];
 
-        if (!isDefined(predicateValue)) {
-          return null;
-        }
+          const workspaceMemberSubFieldName =
+            predicate.workspaceMemberSubFieldName;
 
-        // Validate that workspace member enum value is compatible with target field enum options
-        const isEnumValueCompatible = validateEnumValueCompatibility({
-          workspaceMemberFieldMetadata,
-          targetFieldMetadata: fieldMetadata,
-          predicateValue,
-        });
+          if (!isDefined(rawWorkspaceMemberValue)) {
+            return null;
+          }
 
-        if (!isEnumValueCompatible) {
-          return null;
-        }
+          if (
+            isDefined(workspaceMemberSubFieldName) &&
+            isCompositeFieldMetadataType(workspaceMemberFieldMetadata.type) &&
+            typeof rawWorkspaceMemberValue === 'object'
+          ) {
+            predicateValue =
+              rawWorkspaceMemberValue[workspaceMemberSubFieldName];
+          } else {
+            predicateValue = rawWorkspaceMemberValue;
+          }
 
-        // When workspace member field is SELECT or MULTI_SELECT and value is a string,
-        // wrap it in an array to match the frontend format (which uses multi-select UI)
-        if (
-          (workspaceMemberFieldMetadata.type === FieldMetadataType.SELECT ||
-            workspaceMemberFieldMetadata.type ===
-              FieldMetadataType.MULTI_SELECT) &&
-          typeof predicateValue === 'string'
-        ) {
-          predicateValue = [predicateValue];
+          if (!isDefined(predicateValue)) {
+            return null;
+          }
+
+          const isEnumValueCompatible = validateEnumValueCompatibility({
+            workspaceMemberFieldMetadata,
+            targetFieldMetadata: fieldMetadata,
+            predicateValue,
+          });
+
+          if (!isEnumValueCompatible) {
+            return null;
+          }
+
+          if (
+            (workspaceMemberFieldMetadata.type === FieldMetadataType.SELECT ||
+              workspaceMemberFieldMetadata.type ===
+                FieldMetadataType.MULTI_SELECT) &&
+            typeof predicateValue === 'string'
+          ) {
+            predicateValue = [predicateValue];
+          }
         }
       }
 
@@ -170,6 +194,10 @@ export const buildRowLevelPermissionRecordFilter = ({
       } satisfies RecordFilter;
     })
     .filter(isDefined);
+
+  if (hasUnresolvableRelationPredicate) {
+    return { id: { is: 'NULL' } };
+  }
 
   const relevantGroupIds = new Set<string>();
 

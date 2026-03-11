@@ -3,7 +3,6 @@
 import { useLingui } from '@lingui/react/macro';
 import { getFilterTypeFromFieldType } from 'twenty-shared/utils';
 
-import { CoreObjectNameSingular, FieldMetadataType } from 'twenty-shared/types';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { AdvancedFilterFieldSelectSearchInput } from '@/object-record/advanced-filter/components/AdvancedFilterFieldSelectSearchInput';
 import { useAdvancedFilterFieldSelectDropdown } from '@/object-record/advanced-filter/hooks/useAdvancedFilterFieldSelectDropdown';
@@ -60,12 +59,9 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectF
           fieldMetadataItem.label
             .toLocaleLowerCase()
             .includes(objectFilterDropdownSearchInput.toLocaleLowerCase()) &&
-          (RECORD_LEVEL_PERMISSION_PREDICATE_FIELD_TYPES.includes(
+          RECORD_LEVEL_PERMISSION_PREDICATE_FIELD_TYPES.includes(
             fieldMetadataItem.type,
-          ) ||
-            (fieldMetadataItem.type === FieldMetadataType.RELATION &&
-              fieldMetadataItem.relation?.targetObjectMetadata.nameSingular ===
-                CoreObjectNameSingular.WorkspaceMember)),
+          ),
       )
       .sort((a, b) => a.label.localeCompare(b.label));
 

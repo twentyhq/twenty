@@ -20,6 +20,7 @@ import { getCompositeSubFieldType } from '@/object-record/object-filter-dropdown
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { FormFieldInput } from '@/object-record/record-field/ui/components/FormFieldInput';
 import { FormMultiSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormMultiSelectFieldInput';
+import { FormRelationToOneFieldInput } from '@/object-record/record-field/ui/form-types/components/FormRelationToOneFieldInput';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { type CompositeFieldType } from '@/settings/data-model/types/CompositeFieldType';
 import { createRecordLevelPermissionVariablePicker } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionVariablePicker';
@@ -312,6 +313,58 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInput =
               options={fieldMetadataItem?.options ?? []}
               VariablePicker={RecordLevelPermissionPicker}
               dropdownWidth={200}
+            />
+          </StyledFormFieldInputWrapper>
+        </StyledContainer>
+      );
+    }
+
+    if (fieldMetadataItem.type === FieldMetadataType.RELATION) {
+      const targetObjectNameSingular =
+        fieldMetadataItem.relation?.targetObjectMetadata.nameSingular;
+
+      let defaultRecordId: string | undefined;
+
+      if (isDefined(recordFilter.value) && recordFilter.value !== '') {
+        try {
+          const parsed = JSON.parse(recordFilter.value);
+
+          if (
+            isDefined(parsed) &&
+            Array.isArray(parsed.selectedRecordIds) &&
+            parsed.selectedRecordIds.length > 0
+          ) {
+            defaultRecordId = parsed.selectedRecordIds[0];
+          }
+        } catch {
+          // value may not be valid JSON yet
+        }
+      }
+
+      const handleRelationChange = (value: JsonValue) => {
+        if (!isDefined(value) || value === '') {
+          applyObjectFilterDropdownFilterValue('');
+
+          return;
+        }
+
+        const filterValue = JSON.stringify({
+          isCurrentWorkspaceMemberSelected: false,
+          selectedRecordIds: [value],
+        });
+
+        applyObjectFilterDropdownFilterValue(filterValue);
+      };
+
+      return (
+        <StyledContainer>
+          <StyledFormFieldInputWrapper>
+            <FormRelationToOneFieldInput
+              label=""
+              objectNameSingular={targetObjectNameSingular}
+              defaultValue={defaultRecordId}
+              onChange={handleRelationChange}
+              VariablePicker={RecordLevelPermissionPicker}
             />
           </StyledFormFieldInputWrapper>
         </StyledContainer>
