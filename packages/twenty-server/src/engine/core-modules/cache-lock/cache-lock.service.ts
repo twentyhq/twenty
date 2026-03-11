@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
@@ -42,6 +42,6 @@ export class CacheLockService {
       await this.delay(ms);
     }
 
-    throw new Error(`Failed to acquire lock for key: ${key}`);
+    throw new ConflictException(`Failed to acquire lock for key: ${key}`);
   }
 }

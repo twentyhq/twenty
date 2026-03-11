@@ -1,3 +1,4 @@
+import { ConflictException } from '@nestjs/common';
 import { Test, type TestingModule } from '@nestjs/testing';
 
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
@@ -58,7 +59,7 @@ describe('CacheLockService', () => {
     expect(cacheStorageService.releaseLock).toHaveBeenCalledWith('key');
   });
 
-  it('should throw an error if lock cannot be acquired after max retries', async () => {
+  it('should throw a ConflictException if lock cannot be acquired after max retries', async () => {
     cacheStorageService.acquireLock.mockResolvedValue(false);
 
     const fn = jest.fn();
@@ -67,7 +68,7 @@ describe('CacheLockService', () => {
 
     await expect(
       service.withLock(fn, 'key', { ms, maxRetries }),
-    ).rejects.toThrow('Failed to acquire lock for key: key');
+    ).rejects.toThrow(ConflictException);
 
     expect(cacheStorageService.acquireLock).toHaveBeenCalledTimes(maxRetries);
     expect(fn).not.toHaveBeenCalled();
