@@ -1,7 +1,6 @@
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/contexts/WidgetComponentInstanceContext';
-import { SidePanelSubPageRouter } from '@/side-panel/components/SidePanelSubPageRouter';
 import { ChartSettings } from '@/side-panel/pages/page-layout/components/ChartSettings';
 import { WidgetSettingsFooter } from '@/side-panel/pages/page-layout/components/WidgetSettingsFooter';
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/side-panel/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
@@ -38,15 +37,13 @@ export const SidePanelPageLayoutChartSettings = () => {
   }
 
   return (
-    <SidePanelSubPageRouter>
-      <StyledContainer>
-        <WidgetComponentInstanceContext.Provider
-          value={{ instanceId: widgetInEditMode.id }}
-        >
-          <ChartSettings widget={widgetInEditMode} />
-          <WidgetSettingsFooter pageLayoutId={pageLayoutId} />
-        </WidgetComponentInstanceContext.Provider>
-      </StyledContainer>
-    </SidePanelSubPageRouter>
+    <StyledContainer>
+      <WidgetComponentInstanceContext.Provider
+        value={{ instanceId: widgetInEditMode.id }}
+      >
+        <ChartSettings widget={widgetInEditMode} />
+        <WidgetSettingsFooter pageLayoutId={pageLayoutId} />
+      </WidgetComponentInstanceContext.Provider>
+    </StyledContainer>
   );
 };

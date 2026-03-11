@@ -3,7 +3,6 @@ import { CommandMenuItemToggle } from '@/command-menu/components/CommandMenuItem
 import { useFieldsWidgetGroups } from '@/page-layout/widgets/fields/hooks/useFieldsWidgetGroups';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
-import { SidePanelSubPageRouter } from '@/side-panel/components/SidePanelSubPageRouter';
 import { useSidePanelSubPageHistory } from '@/side-panel/hooks/useSidePanelSubPageHistory';
 import { NewFieldDefaultVisibilityToggle } from '@/side-panel/pages/page-layout/components/NewFieldDefaultVisibilityToggle';
 import { WidgetSettingsFooter } from '@/side-panel/pages/page-layout/components/WidgetSettingsFooter';
@@ -90,49 +89,44 @@ export const SidePanelPageLayoutFieldsSettings = () => {
   ];
 
   return (
-    <SidePanelSubPageRouter>
-      <StyledContainer>
-        <StyledSidePanelContainer>
-          <SidePanelList
-            commandGroups={[]}
-            selectableItemIds={selectableItemIds}
-          >
-            <SidePanelGroup heading={t`Data and display`}>
-              <SelectableListItem
-                itemId="layout"
-                onEnter={handleNavigateToLayout}
-              >
-                <CommandMenuItem
-                  id="layout"
-                  label={t`Layout`}
-                  Icon={IconLayoutSidebarRight}
-                  hasSubMenu
-                  onClick={handleNavigateToLayout}
-                  description={t`${totalFieldsCount} fields`}
-                  contextualTextPosition="right"
-                />
-              </SelectableListItem>
-              <SelectableListItem
-                itemId="display-more-fields-button"
-                onEnter={handleToggleShouldAllowUserToSeeHiddenFields}
-              >
-                <CommandMenuItemToggle
-                  LeftIcon={IconChevronDown}
-                  text={t`Display "More fields" button`}
-                  id="display-more-fields-button"
-                  toggled={isShouldAllowUserToSeeHiddenFieldsToggled}
-                  onToggleChange={handleToggleShouldAllowUserToSeeHiddenFields}
-                />
-              </SelectableListItem>
-              <NewFieldDefaultVisibilityToggle
-                pageLayoutId={pageLayoutId}
-                widgetId={widgetInEditMode.id}
+    <StyledContainer>
+      <StyledSidePanelContainer>
+        <SidePanelList commandGroups={[]} selectableItemIds={selectableItemIds}>
+          <SidePanelGroup heading={t`Data and display`}>
+            <SelectableListItem
+              itemId="layout"
+              onEnter={handleNavigateToLayout}
+            >
+              <CommandMenuItem
+                id="layout"
+                label={t`Layout`}
+                Icon={IconLayoutSidebarRight}
+                hasSubMenu
+                onClick={handleNavigateToLayout}
+                description={t`${totalFieldsCount} fields`}
+                contextualTextPosition="right"
               />
-            </SidePanelGroup>
-          </SidePanelList>
-        </StyledSidePanelContainer>
-        <WidgetSettingsFooter pageLayoutId={pageLayoutId} />
-      </StyledContainer>
-    </SidePanelSubPageRouter>
+            </SelectableListItem>
+            <SelectableListItem
+              itemId="display-more-fields-button"
+              onEnter={handleToggleShouldAllowUserToSeeHiddenFields}
+            >
+              <CommandMenuItemToggle
+                LeftIcon={IconChevronDown}
+                text={t`Display "More fields" button`}
+                id="display-more-fields-button"
+                toggled={isShouldAllowUserToSeeHiddenFieldsToggled}
+                onToggleChange={handleToggleShouldAllowUserToSeeHiddenFields}
+              />
+            </SelectableListItem>
+            <NewFieldDefaultVisibilityToggle
+              pageLayoutId={pageLayoutId}
+              widgetId={widgetInEditMode.id}
+            />
+          </SidePanelGroup>
+        </SidePanelList>
+      </StyledSidePanelContainer>
+      <WidgetSettingsFooter pageLayoutId={pageLayoutId} />
+    </StyledContainer>
   );
 };
