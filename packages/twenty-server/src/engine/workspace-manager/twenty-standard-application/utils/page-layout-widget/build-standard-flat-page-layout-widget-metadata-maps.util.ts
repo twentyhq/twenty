@@ -128,18 +128,12 @@ const buildFieldsWidgetConfiguration = ({
       configuration: {
         configurationType: WidgetConfigurationType.FIELDS,
         viewId: null,
-        newFieldDefaultConfiguration: {
-          isVisible: true,
-          viewFieldGroupId: null,
-        },
+        newFieldDefaultVisibility: true,
       },
       universalConfiguration: {
         configurationType: WidgetConfigurationType.FIELDS,
         viewId: null,
-        newFieldDefaultConfiguration: {
-          isVisible: true,
-          viewFieldGroupId: null,
-        },
+        newFieldDefaultVisibility: true,
       },
     };
   }
@@ -167,32 +161,16 @@ const buildFieldsWidgetConfiguration = ({
 
   const viewUniversalIdentifier = viewDefinition?.universalIdentifier ?? null;
 
-  const otherViewFieldGroupId =
-    views[recordPageFieldsViewName]?.viewFieldGroups?.other?.id ?? null;
-
-  const otherViewFieldGroupUniversalIdentifier =
-    viewDefinition?.viewFieldGroups?.other?.universalIdentifier ?? null;
-
-  const newFieldDefaultConfiguration = {
-    isVisible: true,
-    viewFieldGroupId: otherViewFieldGroupId,
-  };
-
-  const universalNewFieldDefaultConfiguration = {
-    isVisible: true,
-    viewFieldGroupId: otherViewFieldGroupUniversalIdentifier,
-  };
-
   return {
     configuration: {
       configurationType: WidgetConfigurationType.FIELDS,
       viewId,
-      newFieldDefaultConfiguration,
+      newFieldDefaultVisibility: true,
     },
     universalConfiguration: {
       configurationType: WidgetConfigurationType.FIELDS,
       viewId: viewUniversalIdentifier,
-      newFieldDefaultConfiguration: universalNewFieldDefaultConfiguration,
+      newFieldDefaultVisibility: true,
     },
   };
 };

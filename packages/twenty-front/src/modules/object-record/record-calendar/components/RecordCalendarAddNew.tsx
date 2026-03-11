@@ -62,6 +62,7 @@ export const RecordCalendarAddNew = ({
   if (
     hasAnySoftDeleteFilterOnView === true ||
     hasObjectUpdatePermissions === false ||
+    objectMetadataItem.isSystem === true ||
     calendarFieldMetadataItem === undefined ||
     isCalendarFieldReadOnly === true
   ) {
