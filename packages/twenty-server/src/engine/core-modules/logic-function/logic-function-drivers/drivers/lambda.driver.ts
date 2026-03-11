@@ -306,9 +306,10 @@ export class LambdaDriver implements LogicFunctionDriver {
       await installDirManager.clean();
     }
 
-    const schema = await this.getWorkspaceGraphQLSchema(
-      flatApplication.workspaceId,
-    );
+    const schema = await this.getWorkspaceGraphQLSchema({
+      workspaceId: flatApplication.workspaceId,
+      applicationId: flatApplication.id,
+    });
 
     await generateCoreClientInLayer({
       layerPath: nodeDependenciesFolder,

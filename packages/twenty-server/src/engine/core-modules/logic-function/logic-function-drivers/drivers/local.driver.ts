@@ -111,9 +111,10 @@ export class LocalDriver implements LogicFunctionDriver {
 
     await fs.cp(depsClientSdkPath, sdkClientSdkPath, { recursive: true });
 
-    const schema = await this.getWorkspaceGraphQLSchema(
-      flatApplication.workspaceId,
-    );
+    const schema = await this.getWorkspaceGraphQLSchema({
+      workspaceId: flatApplication.workspaceId,
+      applicationId: flatApplication.id,
+    });
 
     await generateCoreClientInLayer({
       layerPath: sdkLayerPath,

@@ -18,11 +18,16 @@ export const logicFunctionModuleFactory = async (
 ): Promise<LogicFunctionModuleOptions> => {
   const driverType = twentyConfigService.get('LOGIC_FUNCTION_TYPE');
 
-  const getWorkspaceGraphQLSchema = async (
-    workspaceId: string,
-  ): Promise<string> => {
+  const getWorkspaceGraphQLSchema = async ({
+    workspaceId,
+    applicationId,
+  }: {
+    workspaceId: string;
+    applicationId: string;
+  }): Promise<string> => {
     const schema = await workspaceSchemaFactory.createGraphQLSchema(
       { id: workspaceId } as WorkspaceEntity,
+      applicationId,
     );
 
     return printSchema(schema);
