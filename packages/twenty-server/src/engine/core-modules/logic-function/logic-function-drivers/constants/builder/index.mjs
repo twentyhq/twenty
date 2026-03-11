@@ -1,12 +1,13 @@
 import { randomBytes } from 'crypto';
 import { createWriteStream, promises as fs } from 'fs';
-import { join } from 'path';
+import { join, resolve } from 'path';
 
 import archiver from 'archiver';
 import { pipeline } from 'stream/promises';
 
 const YARN_INSTALL_TIMEOUT_MS = 240_000;
-const YARN_ENGINE_PATH = '.yarn/releases/yarn-4.9.2.cjs';
+const YARN_ENGINE_DIR = resolve('yarn-engine');
+const YARN_ENGINE_PATH = join(YARN_ENGINE_DIR, '.yarn/releases/yarn-4.9.2.cjs');
 
 const writePackageFiles = async (nodejsDir, packageJson, yarnLock) => {
   await fs.mkdir(nodejsDir, { recursive: true });
@@ -31,15 +32,21 @@ const runYarnInstall = async (nodejsDir) => {
   // Yarn needs a writable HOME for its global cache/config.
   cleanEnv.HOME = '/tmp';
 
-  await execFilePromise(
-    process.execPath,
-    [YARN_ENGINE_PATH, 'workspaces', 'focus', '--all', '--production'],
-    {
-      cwd: nodejsDir,
-      env: cleanEnv,
-      timeout: YARN_INSTALL_TIMEOUT_MS,
-    },
-  );
+  try {
+    await execFilePromise(
+      process.execPath,
+      [YARN_ENGINE_PATH, 'workspaces', 'focus', '--all', '--production'],
+      {
+        cwd: nodejsDir,
+        env: cleanEnv,
+        timeout: YARN_INSTALL_TIMEOUT_MS,
+      },
+    );
+  } catch (error) {
+    const details = [error?.stdout, error?.stderr].filter(Boolean).join('\n');
+
+    throw new Error(`yarn install failed: ${details || error?.message}`);
+  }
 
   // Remove everything except node_modules
   const entries = await fs.readdir(nodejsDir);
@@ -98,5 +105,9 @@ export const handler = async (event) => {
   } finally {
     await fs.rm(buildDir, { recursive: true, force: true });
     await fs.rm(zipPath, { force: true });
+    await fs.rm(join(YARN_ENGINE_DIR, '.yarn/cache'), {
+      recursive: true,
+      force: true,
+    });
   }
 };

@@ -17,8 +17,6 @@ export const copyBuilder = async (buildDirectory: string) => {
 
   await fs.cp(BUILDER_FILE_PATH, buildDirectory, { recursive: true });
 
-  // Bundle the yarn engine alongside the handler so the builder Lambda
-  // can copy it into /tmp at runtime without external dependencies.
   const yarnEngineDestination = join(buildDirectory, 'yarn-engine');
 
   await fs.cp(YARN_ENGINE_DIRNAME, yarnEngineDestination, { recursive: true });
