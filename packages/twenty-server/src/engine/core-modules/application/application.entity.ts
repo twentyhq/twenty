@@ -97,6 +97,9 @@ export class ApplicationEntity extends WorkspaceRelatedEntity {
   @Column({ nullable: false, type: 'boolean', default: true })
   canBeUninstalled: boolean;
 
+  @Column({ nullable: false, type: 'boolean', default: false })
+  isSdkLayerStale: boolean;
+
   @Column({ nullable: true, type: 'uuid' })
   applicationRegistrationId: string | null;
 

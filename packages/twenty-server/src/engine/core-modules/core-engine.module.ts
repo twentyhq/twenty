@@ -73,8 +73,8 @@ import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/
 import { ChannelSyncModule } from 'src/modules/connected-account/channel-sync/channel-sync.module';
 import { DashboardModule } from 'src/modules/dashboard/dashboard.module';
 import { LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
-import { CoreGraphQLApiModule } from 'src/engine/api/graphql/core-graphql-api.module';
-import { WorkspaceSchemaFactory } from 'src/engine/api/graphql/workspace-schema.factory';
+import { LogicFunctionResourceModule } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.module';
+import { SdkClientGenerationService } from 'src/engine/core-modules/logic-function/logic-function-resource/sdk-client-generation.service';
 
 import { AuditModule } from './audit/audit.module';
 import { ClientConfigModule } from './client-config/client-config.module';
@@ -155,12 +155,12 @@ import { FileModule } from './file/file.module';
     AiModelsModule,
     AiBillingModule,
     LogicFunctionModule.forRootAsync({
-      imports: [CoreGraphQLApiModule],
+      imports: [LogicFunctionResourceModule],
       useFactory: logicFunctionModuleFactory,
       inject: [
         TwentyConfigService,
         LogicFunctionResourceService,
-        WorkspaceSchemaFactory,
+        SdkClientGenerationService,
       ],
     }),
     CodeInterpreterModule.forRootAsync({

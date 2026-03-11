@@ -29,13 +29,12 @@ import {
 
 import { copyYarnEngineAndBuildDependencies } from 'src/engine/core-modules/application/application-package/utils/copy-yarn-engine-and-build-dependencies';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import { type GetWorkspaceGraphQLSchemaFn } from 'src/engine/core-modules/logic-function/logic-function-drivers/types/get-workspace-graphql-schema.type';
 import { callWithTimeout } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/call-with-timeout';
 import { copyExecutor } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-executor';
 import { createZipFile } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/create-zip-file';
-import { generateCoreClientInLayer } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/generate-core-client-in-layer';
 import { TemporaryDirManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/temporary-dir-manager';
 import { type LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
+import { type SdkClientGenerationService } from 'src/engine/core-modules/logic-function/logic-function-resource/sdk-client-generation.service';
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
 import { LogicFunctionRuntime } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import {
@@ -56,7 +55,7 @@ type LambdaDriverExecutorPayload = {
 
 export interface LambdaDriverOptions extends LambdaClientConfig {
   logicFunctionResourceService: LogicFunctionResourceService;
-  getWorkspaceGraphQLSchema: GetWorkspaceGraphQLSchemaFn;
+  sdkClientGenerationService: SdkClientGenerationService;
   region: string;
   lambdaRole: string;
   subhostingRole?: string;
@@ -67,13 +66,13 @@ export class LambdaDriver implements LogicFunctionDriver {
   private credentialsExpiry: Date | null = null;
   private readonly options: LambdaDriverOptions;
   private readonly logicFunctionResourceService: LogicFunctionResourceService;
-  private readonly getWorkspaceGraphQLSchema: GetWorkspaceGraphQLSchemaFn;
+  private readonly sdkClientGenerationService: SdkClientGenerationService;
 
   constructor(options: LambdaDriverOptions) {
     this.options = options;
     this.lambdaClient = undefined;
     this.logicFunctionResourceService = options.logicFunctionResourceService;
-    this.getWorkspaceGraphQLSchema = options.getWorkspaceGraphQLSchema;
+    this.sdkClientGenerationService = options.sdkClientGenerationService;
   }
 
   private async getLambdaClient() {
@@ -261,11 +260,20 @@ export class LambdaDriver implements LogicFunctionDriver {
       workspaceId: flatApplication.workspaceId,
       applicationUniversalIdentifier,
     });
-    const existingArn = await this.findExistingLayerArn(layerName);
 
-    if (isDefined(existingArn)) {
-      return existingArn;
+    if (!flatApplication.isSdkLayerStale) {
+      const existingArn = await this.findExistingLayerArn(layerName);
+
+      if (isDefined(existingArn)) {
+        return existingArn;
+      }
     }
+
+    // Stale or missing — delete old versions and rebuild from file storage
+    await this.deleteAllLayerVersions({
+      lambdaClient: await this.getLambdaClient(),
+      layerName,
+    });
 
     const temporaryDirManager = new TemporaryDirManager();
     const { sourceTemporaryDir, lambdaZipPath } =
@@ -282,9 +290,6 @@ export class LambdaDriver implements LogicFunctionDriver {
     if (isDefined(stubSourcePath)) {
       await fs.cp(stubSourcePath, targetSdkPath, { recursive: true });
     } else {
-      // Deps layer was a cache hit — get the stub via a fresh install.
-      // This only happens when the deps layer already exists but the SDK
-      // layer doesn't (e.g. new workspace on existing app dependencies).
       const installDirManager = new TemporaryDirManager();
       const { sourceTemporaryDir: installDir } = await installDirManager.init();
 
@@ -306,14 +311,10 @@ export class LambdaDriver implements LogicFunctionDriver {
       await installDirManager.clean();
     }
 
-    const schema = await this.getWorkspaceGraphQLSchema({
+    await this.sdkClientGenerationService.downloadClientToLayer({
       workspaceId: flatApplication.workspaceId,
-      applicationId: flatApplication.id,
-    });
-
-    await generateCoreClientInLayer({
-      layerPath: nodeDependenciesFolder,
-      schema,
+      applicationUniversalIdentifier,
+      layerClientSdkDistPath: join(targetSdkPath, 'dist'),
     });
 
     await createZipFile(sourceTemporaryDir, lambdaZipPath);
@@ -321,6 +322,11 @@ export class LambdaDriver implements LogicFunctionDriver {
     const arn = await this.publishLayer({ layerName, zipPath: lambdaZipPath });
 
     await temporaryDirManager.clean();
+
+    await this.sdkClientGenerationService.markSdkLayerFresh({
+      applicationId: flatApplication.id,
+      workspaceId: flatApplication.workspaceId,
+    });
 
     return arn;
   }
@@ -349,24 +355,6 @@ export class LambdaDriver implements LogicFunctionDriver {
 
       await (await this.getLambdaClient()).send(deleteFunctionCommand);
     }
-  }
-
-  // We only ever publish a single layer version, but we paginate defensively
-  // to handle potential duplicates from concurrent build() race conditions.
-  async invalidateSdkLayer({
-    workspaceId,
-    applicationUniversalIdentifier,
-  }: {
-    workspaceId: string;
-    applicationUniversalIdentifier: string;
-  }): Promise<void> {
-    const layerName = this.getSdkLayerName({
-      workspaceId,
-      applicationUniversalIdentifier,
-    });
-    const lambdaClient = await this.getLambdaClient();
-
-    await this.deleteAllLayerVersions({ lambdaClient, layerName });
   }
 
   private async deleteAllLayerVersions({
@@ -456,14 +444,17 @@ export class LambdaDriver implements LogicFunctionDriver {
     applicationUniversalIdentifier: string;
   }) {
     if (
-      await this.isAlreadyBuilt({
+      !flatApplication.isSdkLayerStale &&
+      (await this.isAlreadyBuilt({
         flatLogicFunction,
         flatApplication,
         applicationUniversalIdentifier,
-      })
+      }))
     ) {
       return;
     }
+
+    await this.delete(flatLogicFunction);
 
     const {
       arn: depsLayerArn,

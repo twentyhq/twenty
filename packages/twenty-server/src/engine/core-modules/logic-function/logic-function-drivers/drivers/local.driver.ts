@@ -10,27 +10,26 @@ import {
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { LOGIC_FUNCTION_EXECUTOR_TMPDIR_FOLDER } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/logic-function-executor-tmpdir-folder';
-import { type GetWorkspaceGraphQLSchemaFn } from 'src/engine/core-modules/logic-function/logic-function-drivers/types/get-workspace-graphql-schema.type';
-import { generateCoreClientInLayer } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/generate-core-client-in-layer';
 import { ConsoleListener } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/intercept-console';
 import { TemporaryDirManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/temporary-dir-manager';
 import { HANDLER_NAME_REGEX } from 'src/engine/metadata-modules/logic-function/constants/handler.contant';
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
 import { copyYarnEngineAndBuildDependencies } from 'src/engine/core-modules/application/application-package/utils/copy-yarn-engine-and-build-dependencies';
 import type { LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
+import type { SdkClientGenerationService } from 'src/engine/core-modules/logic-function/logic-function-resource/sdk-client-generation.service';
 
 export interface LocalDriverOptions {
   logicFunctionResourceService: LogicFunctionResourceService;
-  getWorkspaceGraphQLSchema: GetWorkspaceGraphQLSchemaFn;
+  sdkClientGenerationService: SdkClientGenerationService;
 }
 
 export class LocalDriver implements LogicFunctionDriver {
   private readonly logicFunctionResourceService: LogicFunctionResourceService;
-  private readonly getWorkspaceGraphQLSchema: GetWorkspaceGraphQLSchemaFn;
+  private readonly sdkClientGenerationService: SdkClientGenerationService;
 
   constructor(options: LocalDriverOptions) {
     this.logicFunctionResourceService = options.logicFunctionResourceService;
-    this.getWorkspaceGraphQLSchema = options.getWorkspaceGraphQLSchema;
+    this.sdkClientGenerationService = options.sdkClientGenerationService;
   }
 
   private getDepsLayerPath(flatApplication: FlatApplication): string {
@@ -90,13 +89,16 @@ export class LocalDriver implements LogicFunctionDriver {
       applicationUniversalIdentifier,
     });
 
-    try {
-      await fs.access(sdkLayerPath);
+    const layerExists = await fs
+      .access(sdkLayerPath)
+      .then(() => true)
+      .catch(() => false);
 
+    if (layerExists && !flatApplication.isSdkLayerStale) {
       return;
-    } catch {
-      // Layer doesn't exist yet
     }
+
+    await fs.rm(sdkLayerPath, { recursive: true, force: true });
 
     const depsClientSdkPath = join(
       this.getDepsLayerPath(flatApplication),
@@ -111,33 +113,19 @@ export class LocalDriver implements LogicFunctionDriver {
 
     await fs.cp(depsClientSdkPath, sdkClientSdkPath, { recursive: true });
 
-    const schema = await this.getWorkspaceGraphQLSchema({
+    await this.sdkClientGenerationService.downloadClientToLayer({
       workspaceId: flatApplication.workspaceId,
-      applicationId: flatApplication.id,
+      applicationUniversalIdentifier,
+      layerClientSdkDistPath: join(sdkClientSdkPath, 'dist'),
     });
 
-    await generateCoreClientInLayer({
-      layerPath: sdkLayerPath,
-      schema,
+    await this.sdkClientGenerationService.markSdkLayerFresh({
+      applicationId: flatApplication.id,
+      workspaceId: flatApplication.workspaceId,
     });
   }
 
   async delete() {}
-
-  async invalidateSdkLayer({
-    workspaceId,
-    applicationUniversalIdentifier,
-  }: {
-    workspaceId: string;
-    applicationUniversalIdentifier: string;
-  }): Promise<void> {
-    const sdkLayerPath = this.getSdkLayerPath({
-      workspaceId,
-      applicationUniversalIdentifier,
-    });
-
-    await fs.rm(sdkLayerPath, { recursive: true, force: true });
-  }
 
   private async build({
     flatApplication,

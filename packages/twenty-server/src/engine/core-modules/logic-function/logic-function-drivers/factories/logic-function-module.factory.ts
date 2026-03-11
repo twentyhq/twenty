@@ -1,5 +1,4 @@
 import { fromNodeProviderChain } from '@aws-sdk/credential-providers';
-import { printSchema } from 'graphql';
 
 import {
   LogicFunctionDriverType,
@@ -8,32 +7,16 @@ import {
 
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import type { LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
-import { type WorkspaceSchemaFactory } from 'src/engine/api/graphql/workspace-schema.factory';
-import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import type { SdkClientGenerationService } from 'src/engine/core-modules/logic-function/logic-function-resource/sdk-client-generation.service';
 
 export const logicFunctionModuleFactory = async (
   twentyConfigService: TwentyConfigService,
   logicFunctionResourceService: LogicFunctionResourceService,
-  workspaceSchemaFactory: WorkspaceSchemaFactory,
+  sdkClientGenerationService: SdkClientGenerationService,
 ): Promise<LogicFunctionModuleOptions> => {
   const driverType = twentyConfigService.get('LOGIC_FUNCTION_TYPE');
 
-  const getWorkspaceGraphQLSchema = async ({
-    workspaceId,
-    applicationId,
-  }: {
-    workspaceId: string;
-    applicationId: string;
-  }): Promise<string> => {
-    const schema = await workspaceSchemaFactory.createGraphQLSchema(
-      { id: workspaceId } as WorkspaceEntity,
-      applicationId,
-    );
-
-    return printSchema(schema);
-  };
-
-  const options = { logicFunctionResourceService, getWorkspaceGraphQLSchema };
+  const options = { logicFunctionResourceService, sdkClientGenerationService };
 
   switch (driverType) {
     case LogicFunctionDriverType.DISABLED: {

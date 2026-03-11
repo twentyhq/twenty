@@ -1,13 +1,15 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
+import { printSchema } from 'graphql';
 import { type AllMetadataName } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 import { DataSource } from 'typeorm';
 
+import { WorkspaceSchemaFactory } from 'src/engine/api/graphql/workspace-schema.factory';
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
-import { LOGIC_FUNCTION_DRIVER } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/logic-function-driver.constants';
-import { type LogicFunctionDriver } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
+import { SdkClientGenerationService } from 'src/engine/core-modules/logic-function/logic-function-resource/sdk-client-generation.service';
+import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
@@ -36,8 +38,8 @@ export class WorkspaceMigrationRunnerService {
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    @Inject(LOGIC_FUNCTION_DRIVER)
-    private readonly logicFunctionDriver: LogicFunctionDriver,
+    private readonly sdkClientGenerationService: SdkClientGenerationService,
+    private readonly workspaceSchemaFactory: WorkspaceSchemaFactory,
     private readonly logger: LoggerService,
   ) {}
 
@@ -255,14 +257,22 @@ export class WorkspaceMigrationRunnerService {
         workspaceId,
       });
 
-      const shouldInvalidateSdkLayer =
+      const shouldRegenerateSdkClient =
         allFlatEntityMapsKeys.includes('flatObjectMetadataMaps') ||
         allFlatEntityMapsKeys.includes('flatFieldMetadataMaps');
 
-      if (shouldInvalidateSdkLayer) {
-        await this.logicFunctionDriver.invalidateSdkLayer({
+      if (shouldRegenerateSdkClient) {
+        const graphqlSchema =
+          await this.workspaceSchemaFactory.createGraphQLSchema(
+            { id: workspaceId } as WorkspaceEntity,
+            applicationId,
+          );
+
+        await this.sdkClientGenerationService.generateAndStore({
           workspaceId,
+          applicationId,
           applicationUniversalIdentifier,
+          schema: printSchema(graphqlSchema),
         });
       }
 
