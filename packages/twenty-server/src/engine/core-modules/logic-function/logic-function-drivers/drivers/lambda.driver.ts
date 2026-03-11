@@ -35,7 +35,7 @@ import { COMMON_LAYER_DEPENDENCIES_DIRNAME } from 'src/engine/core-modules/logic
 import { copyBuilder } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-builder';
 import { copyCommonLayerDependencies } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-common-layer-dependencies';
 import { copyExecutor } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-executor';
-import { copyTranspiler } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-transpiler';
+import { copyYarnInstall } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-yarn-install';
 import { createZipFile } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/create-zip-file';
 import { TemporaryDirManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/temporary-dir-manager';
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
@@ -50,25 +50,25 @@ import { callWithTimeout } from 'src/engine/core-modules/logic-function/logic-fu
 
 const UPDATE_FUNCTION_DURATION_TIMEOUT_IN_SECONDS = 60;
 const CREDENTIALS_DURATION_IN_SECONDS = 60 * 60; // 1h
-const BUILDER_LAMBDA_TIMEOUT_SECONDS = 300;
-const BUILDER_LAMBDA_MEMORY_MB = 1024;
+const YARN_INSTALL_LAMBDA_TIMEOUT_SECONDS = 300;
+const YARN_INSTALL_LAMBDA_MEMORY_MB = 1024;
 const COMMON_LAYER_NAME_PREFIX = 'twenty-common-layer';
-const TRANSPILER_LAMBDA_TIMEOUT_SECONDS = 60;
-const TRANSPILER_LAMBDA_MEMORY_MB = 512;
+const BUILDER_LAMBDA_TIMEOUT_SECONDS = 60;
+const BUILDER_LAMBDA_MEMORY_MB = 512;
+
+const YARN_INSTALL_HANDLER_PATH = resolve(
+  __dirname,
+  join(
+    ASSET_PATH,
+    'engine/core-modules/logic-function/logic-function-drivers/constants/yarn-install/index.mjs',
+  ),
+);
 
 const BUILDER_HANDLER_PATH = resolve(
   __dirname,
   join(
     ASSET_PATH,
     'engine/core-modules/logic-function/logic-function-drivers/constants/builder/index.mjs',
-  ),
-);
-
-const TRANSPILER_HANDLER_PATH = resolve(
-  __dirname,
-  join(
-    ASSET_PATH,
-    'engine/core-modules/logic-function/logic-function-drivers/constants/transpiler/index.mjs',
   ),
 );
 
@@ -79,24 +79,24 @@ type LambdaDriverExecutorPayload = {
   handlerName: string;
 };
 
-export type BuilderLambdaPayload = {
+export type YarnInstallLambdaPayload = {
   action: 'createLayer';
   packageJson: string;
   yarnLock: string;
 };
 
-export type BuilderLambdaResult = {
+export type YarnInstallLambdaResult = {
   zipBase64: string;
 };
 
-export type TranspilerLambdaPayload = {
+export type BuilderLambdaPayload = {
   action: 'transpile';
   sourceCode: string;
   sourceFileName: string;
   builtFileName: string;
 };
 
-export type TranspilerLambdaResult = {
+export type BuilderLambdaResult = {
   builtCode: string;
 };
 
@@ -182,8 +182,8 @@ export class LambdaDriver implements LogicFunctionDriver {
     return flatApplication.yarnLockChecksum ?? 'default';
   }
 
+  private yarnInstallFunctionName: string | undefined;
   private builderFunctionName: string | undefined;
-  private transpilerFunctionName: string | undefined;
   private commonLayerName: string | undefined;
 
   private async getCommonLayerName(): Promise<string> {
@@ -213,6 +213,25 @@ export class LambdaDriver implements LogicFunctionDriver {
     return this.commonLayerName;
   }
 
+  private async getYarnInstallFunctionName(): Promise<string> {
+    if (isDefined(this.yarnInstallFunctionName)) {
+      return this.yarnInstallFunctionName;
+    }
+
+    const handlerContent = await fs.readFile(
+      YARN_INSTALL_HANDLER_PATH,
+      'utf-8',
+    );
+    const checksum = createHash('sha256')
+      .update(handlerContent)
+      .digest('hex')
+      .slice(0, 12);
+
+    this.yarnInstallFunctionName = `twenty-yarn-install-${checksum}`;
+
+    return this.yarnInstallFunctionName;
+  }
+
   private async getBuilderFunctionName(): Promise<string> {
     if (isDefined(this.builderFunctionName)) {
       return this.builderFunctionName;
@@ -227,22 +246,6 @@ export class LambdaDriver implements LogicFunctionDriver {
     this.builderFunctionName = `twenty-builder-${checksum}`;
 
     return this.builderFunctionName;
-  }
-
-  private async getTranspilerFunctionName(): Promise<string> {
-    if (isDefined(this.transpilerFunctionName)) {
-      return this.transpilerFunctionName;
-    }
-
-    const handlerContent = await fs.readFile(TRANSPILER_HANDLER_PATH, 'utf-8');
-    const checksum = createHash('sha256')
-      .update(handlerContent)
-      .digest('hex')
-      .slice(0, 12);
-
-    this.transpilerFunctionName = `twenty-transpiler-${checksum}`;
-
-    return this.transpilerFunctionName;
   }
 
   private async ensureCommonLayerExists(): Promise<string> {
@@ -285,6 +288,95 @@ export class LambdaDriver implements LogicFunctionDriver {
     } finally {
       await temporaryDirManager.clean();
     }
+  }
+
+  private async ensureYarnInstallLambdaExists(): Promise<void> {
+    const yarnInstallFunctionName = await this.getYarnInstallFunctionName();
+    const lambdaClient = await this.getLambdaClient();
+
+    try {
+      await lambdaClient.send(
+        new GetFunctionCommand({ FunctionName: yarnInstallFunctionName }),
+      );
+
+      return;
+    } catch (error) {
+      if (!(error instanceof ResourceNotFoundException)) {
+        throw error;
+      }
+    }
+
+    const commonLayerArn = await this.ensureCommonLayerExists();
+
+    const temporaryDirManager = new TemporaryDirManager();
+    const { sourceTemporaryDir, lambdaZipPath } =
+      await temporaryDirManager.init();
+
+    try {
+      await copyYarnInstall(sourceTemporaryDir);
+
+      await createZipFile(sourceTemporaryDir, lambdaZipPath);
+
+      const params: CreateFunctionCommandInput = {
+        Code: {
+          ZipFile: await fs.readFile(lambdaZipPath),
+        },
+        FunctionName: yarnInstallFunctionName,
+        Layers: [commonLayerArn],
+        Handler: 'index.handler',
+        Role: this.options.lambdaRole,
+        Runtime: LogicFunctionRuntime.NODE22,
+        Timeout: YARN_INSTALL_LAMBDA_TIMEOUT_SECONDS,
+        MemorySize: YARN_INSTALL_LAMBDA_MEMORY_MB,
+      };
+
+      await lambdaClient.send(new CreateFunctionCommand(params));
+    } finally {
+      await temporaryDirManager.clean();
+    }
+
+    await this.waitFunctionActive(yarnInstallFunctionName);
+  }
+
+  private async invokeYarnInstallLambda(
+    payload: YarnInstallLambdaPayload,
+  ): Promise<YarnInstallLambdaResult> {
+    const lambdaClient = await this.getLambdaClient();
+
+    const yarnInstallFunctionName = await this.getYarnInstallFunctionName();
+
+    const result = await callWithTimeout({
+      callback: () =>
+        lambdaClient.send(
+          new InvokeCommand({
+            FunctionName: yarnInstallFunctionName,
+            Payload: JSON.stringify(payload),
+            LogType: LogType.Tail,
+          }),
+        ),
+      timeoutMs: YARN_INSTALL_LAMBDA_TIMEOUT_SECONDS * 1000,
+    });
+
+    if (result.FunctionError) {
+      const parsedResult = result.Payload
+        ? JSON.parse(result.Payload.transformToString())
+        : {};
+
+      throw new LogicFunctionException(
+        `Yarn install Lambda failed: ${JSON.stringify(parsedResult)}`,
+        LogicFunctionExceptionCode.LOGIC_FUNCTION_CREATE_FAILED,
+      );
+    }
+
+    const parsedResult: YarnInstallLambdaResult = result.Payload
+      ? JSON.parse(result.Payload.transformToString())
+      : {};
+
+    if (!parsedResult.zipBase64) {
+      throw new Error('Yarn install Lambda did not return zipBase64');
+    }
+
+    return parsedResult;
   }
 
   private async ensureBuilderLambdaExists(): Promise<void> {
@@ -335,12 +427,22 @@ export class LambdaDriver implements LogicFunctionDriver {
     await this.waitFunctionActive(builderFunctionName);
   }
 
-  private async invokeBuilderLambda(
-    payload: BuilderLambdaPayload,
-  ): Promise<BuilderLambdaResult> {
-    const lambdaClient = await this.getLambdaClient();
+  async transpile({
+    sourceCode,
+    sourceFileName,
+    builtFileName,
+  }: LogicFunctionTranspileParams): Promise<LogicFunctionTranspileResult> {
+    await this.ensureBuilderLambdaExists();
 
+    const lambdaClient = await this.getLambdaClient();
     const builderFunctionName = await this.getBuilderFunctionName();
+
+    const payload: BuilderLambdaPayload = {
+      action: 'transpile',
+      sourceCode,
+      sourceFileName,
+      builtFileName,
+    };
 
     const result = await callWithTimeout({
       callback: () =>
@@ -369,107 +471,8 @@ export class LambdaDriver implements LogicFunctionDriver {
       ? JSON.parse(result.Payload.transformToString())
       : {};
 
-    if (!parsedResult.zipBase64) {
-      throw new Error('Builder Lambda did not return zipBase64');
-    }
-
-    return parsedResult;
-  }
-
-  private async ensureTranspilerLambdaExists(): Promise<void> {
-    const transpilerFunctionName = await this.getTranspilerFunctionName();
-    const lambdaClient = await this.getLambdaClient();
-
-    try {
-      await lambdaClient.send(
-        new GetFunctionCommand({ FunctionName: transpilerFunctionName }),
-      );
-
-      return;
-    } catch (error) {
-      if (!(error instanceof ResourceNotFoundException)) {
-        throw error;
-      }
-    }
-
-    const commonLayerArn = await this.ensureCommonLayerExists();
-
-    const temporaryDirManager = new TemporaryDirManager();
-    const { sourceTemporaryDir, lambdaZipPath } =
-      await temporaryDirManager.init();
-
-    try {
-      await copyTranspiler(sourceTemporaryDir);
-
-      await createZipFile(sourceTemporaryDir, lambdaZipPath);
-
-      const params: CreateFunctionCommandInput = {
-        Code: {
-          ZipFile: await fs.readFile(lambdaZipPath),
-        },
-        FunctionName: transpilerFunctionName,
-        Layers: [commonLayerArn],
-        Handler: 'index.handler',
-        Role: this.options.lambdaRole,
-        Runtime: LogicFunctionRuntime.NODE22,
-        Timeout: TRANSPILER_LAMBDA_TIMEOUT_SECONDS,
-        MemorySize: TRANSPILER_LAMBDA_MEMORY_MB,
-      };
-
-      await lambdaClient.send(new CreateFunctionCommand(params));
-    } finally {
-      await temporaryDirManager.clean();
-    }
-
-    await this.waitFunctionActive(transpilerFunctionName);
-  }
-
-  async transpile({
-    sourceCode,
-    sourceFileName,
-    builtFileName,
-  }: LogicFunctionTranspileParams): Promise<LogicFunctionTranspileResult> {
-    await this.ensureTranspilerLambdaExists();
-
-    const lambdaClient = await this.getLambdaClient();
-    const transpilerFunctionName = await this.getTranspilerFunctionName();
-
-    const payload: TranspilerLambdaPayload = {
-      action: 'transpile',
-      sourceCode,
-      sourceFileName,
-      builtFileName,
-    };
-
-    const result = await callWithTimeout({
-      callback: () =>
-        lambdaClient.send(
-          new InvokeCommand({
-            FunctionName: transpilerFunctionName,
-            Payload: JSON.stringify(payload),
-            LogType: LogType.Tail,
-          }),
-        ),
-      timeoutMs: TRANSPILER_LAMBDA_TIMEOUT_SECONDS * 1000,
-    });
-
-    if (result.FunctionError) {
-      const parsedResult = result.Payload
-        ? JSON.parse(result.Payload.transformToString())
-        : {};
-
-      throw new LogicFunctionException(
-        `Transpiler Lambda failed: ${JSON.stringify(parsedResult)}`,
-        LogicFunctionExceptionCode.LOGIC_FUNCTION_CREATE_FAILED,
-      );
-    }
-
-    const parsedResult: TranspilerLambdaResult = result.Payload
-      ? JSON.parse(result.Payload.transformToString())
-      : {};
-
     if (!parsedResult.builtCode) {
-      throw new Error('Transpiler Lambda did not return builtCode');
+      throw new Error('Builder Lambda did not return builtCode');
     }
 
     return { builtCode: parsedResult.builtCode };
@@ -535,9 +538,9 @@ export class LambdaDriver implements LogicFunctionDriver {
       applicationUniversalIdentifier,
     );
 
-    await this.ensureBuilderLambdaExists();
+    await this.ensureYarnInstallLambdaExists();
 
-    const { zipBase64 } = await this.invokeBuilderLambda({
+    const { zipBase64 } = await this.invokeYarnInstallLambda({
       action: 'createLayer',
       packageJson,
       yarnLock,
@@ -587,7 +590,7 @@ export class LambdaDriver implements LogicFunctionDriver {
 
     if (!isDefined(newArn)) {
       throw new Error(
-        `Layer '${layerName}' was not created by the builder Lambda`,
+        `Layer '${layerName}' was not created by the yarn install Lambda`,
       );
     }
 

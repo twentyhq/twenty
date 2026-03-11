@@ -1,113 +1,65 @@
 import { randomBytes } from 'crypto';
-import { createWriteStream, promises as fs } from 'fs';
-import { join, resolve } from 'path';
+import { promises as fs } from 'fs';
+import { dirname, resolve } from 'path';
 
-import archiver from 'archiver';
-import { pipeline } from 'stream/promises';
+import { build } from 'esbuild';
 
-const YARN_INSTALL_TIMEOUT_MS = 240_000;
-const YARN_ENGINE_DIR = resolve('yarn-engine');
-const YARN_ENGINE_PATH = join(YARN_ENGINE_DIR, '.yarn/releases/yarn-4.9.2.cjs');
-
-const writePackageFiles = async (nodejsDir, packageJson, yarnLock) => {
-  await fs.mkdir(nodejsDir, { recursive: true });
-  await Promise.all([
-    fs.writeFile(join(nodejsDir, 'package.json'), packageJson, 'utf-8'),
-    fs.writeFile(join(nodejsDir, 'yarn.lock'), yarnLock, 'utf-8'),
-  ]);
+const BANNER = {
+  js: "import { createRequire as __createRequire } from 'module';\nconst require = __createRequire(import.meta.url);",
 };
 
-const copyYarnEngine = async (nodejsDir) => {
-  await fs.cp('yarn-engine', nodejsDir, { recursive: true });
-};
+const assertPathInsideDir = (filePath, dir) => {
+  const resolved = resolve(dir, filePath);
 
-const runYarnInstall = async (nodejsDir) => {
-  const { execFile } = await import('child_process');
-  const { promisify } = await import('util');
-  const execFilePromise = promisify(execFile);
-
-  const { NODE_OPTIONS: _nodeOptions, ...cleanEnv } = process.env;
-
-  // Lambda runs as a sandboxed user whose $HOME doesn't exist.
-  // Yarn needs a writable HOME for its global cache/config.
-  cleanEnv.HOME = '/tmp';
-
-  try {
-    await execFilePromise(
-      process.execPath,
-      [YARN_ENGINE_PATH, 'workspaces', 'focus', '--all', '--production'],
-      {
-        cwd: nodejsDir,
-        env: cleanEnv,
-        timeout: YARN_INSTALL_TIMEOUT_MS,
-      },
-    );
-  } catch (error) {
-    const details = [error?.stdout, error?.stderr].filter(Boolean).join('\n');
-
-    throw new Error(`yarn install failed: ${details || error?.message}`);
+  if (!resolved.startsWith(dir + '/')) {
+    throw new Error(`Path traversal detected: ${filePath}`);
   }
 
-  // Remove everything except node_modules
-  const entries = await fs.readdir(nodejsDir);
-
-  await Promise.all(
-    entries
-      .filter((entry) => entry !== 'node_modules')
-      .map(async (entry) => {
-        const fullPath = join(nodejsDir, entry);
-        const stat = await fs.stat(fullPath);
-
-        return stat.isDirectory()
-          ? fs.rm(fullPath, { recursive: true, force: true })
-          : fs.rm(fullPath);
-      }),
-  );
-};
-
-const createZip = async (buildDir, zipPath) => {
-  const output = createWriteStream(zipPath);
-  const archive = archiver('zip', { zlib: { level: 9 } });
-
-  const p = pipeline(archive, output);
-
-  archive.directory(buildDir, false);
-  archive.finalize();
-
-  return p;
+  return resolved;
 };
 
 export const handler = async (event) => {
-  const { action, packageJson, yarnLock } = event;
+  const { action, sourceCode, sourceFileName, builtFileName } = event;
 
-  if (action !== 'createLayer') {
+  if (action !== 'transpile') {
     throw new Error(`Unknown action: ${action}`);
   }
 
-  if (!packageJson || !yarnLock) {
-    throw new Error('Missing required fields: packageJson, yarnLock');
+  if (!sourceCode || !sourceFileName || !builtFileName) {
+    throw new Error(
+      'Missing required fields: sourceCode, sourceFileName, builtFileName',
+    );
   }
 
   const randomId = randomBytes(16).toString('hex');
-  const buildDir = `/tmp/${randomId}`;
-  const nodejsDir = join(buildDir, 'nodejs');
-  const zipPath = `/tmp/${randomId}.zip`;
+  const workDir = `/tmp/${randomId}`;
+
+  await fs.mkdir(workDir, { recursive: true });
 
   try {
-    await writePackageFiles(nodejsDir, packageJson, yarnLock);
-    await copyYarnEngine(nodejsDir);
-    await runYarnInstall(nodejsDir);
-    await createZip(buildDir, zipPath);
+    const entryFilePath = assertPathInsideDir(sourceFileName, workDir);
+    const outFilePath = assertPathInsideDir(builtFileName, workDir);
 
-    const zipBase64 = (await fs.readFile(zipPath)).toString('base64');
+    await fs.mkdir(dirname(entryFilePath), { recursive: true });
+    await fs.writeFile(entryFilePath, sourceCode, 'utf-8');
+    await fs.mkdir(dirname(outFilePath), { recursive: true });
 
-    return { zipBase64 };
-  } finally {
-    await fs.rm(buildDir, { recursive: true, force: true });
-    await fs.rm(zipPath, { force: true });
-    await fs.rm(join(YARN_ENGINE_DIR, '.yarn/cache'), {
-      recursive: true,
-      force: true,
+    await build({
+      entryPoints: [entryFilePath],
+      outfile: outFilePath,
+      platform: 'node',
+      format: 'esm',
+      target: 'es2017',
+      bundle: true,
+      sourcemap: true,
+      packages: 'external',
+      banner: BANNER,
     });
+
+    const builtCode = await fs.readFile(outFilePath, 'utf-8');
+
+    return { builtCode };
+  } finally {
+    await fs.rm(workDir, { recursive: true, force: true });
   }
 };

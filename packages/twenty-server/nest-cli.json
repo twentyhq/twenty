@@ -33,11 +33,11 @@
         "outDir": "dist/assets"
       },
       {
-        "include": "engine/core-modules/logic-function/logic-function-drivers/constants/builder/index.mjs",
+        "include": "engine/core-modules/logic-function/logic-function-drivers/constants/yarn-install/index.mjs",
         "outDir": "dist/assets"
       },
       {
-        "include": "engine/core-modules/logic-function/logic-function-drivers/constants/transpiler/index.mjs",
+        "include": "engine/core-modules/logic-function/logic-function-drivers/constants/builder/index.mjs",
         "outDir": "dist/assets"
       },
       {
