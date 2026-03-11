@@ -61,7 +61,7 @@ export const fromCommandMenuItemEntityToFlatCommandMenuItem = ({
     id: commandMenuItemEntity.id,
     workflowVersionId: commandMenuItemEntity.workflowVersionId,
     frontComponentId: commandMenuItemEntity.frontComponentId,
-    standardFrontComponentKey: commandMenuItemEntity.standardFrontComponentKey,
+    engineComponentKey: commandMenuItemEntity.engineComponentKey,
     label: commandMenuItemEntity.label,
     icon: commandMenuItemEntity.icon,
     shortLabel: commandMenuItemEntity.shortLabel,

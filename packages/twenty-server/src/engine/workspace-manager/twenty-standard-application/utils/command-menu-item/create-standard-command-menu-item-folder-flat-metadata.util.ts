@@ -2,7 +2,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import {
   type CommandMenuItemAvailabilityType,
-  StandardFrontComponentKey,
+  EngineComponentKey,
 } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -20,7 +20,7 @@ export const createStandardCommandMenuItemFolderFlatMetadata = ({
   isPinned,
   availabilityType,
   frontComponentUniversalIdentifier,
-  standardFrontComponentKey = null,
+  engineComponentKey = null,
   availabilityObjectMetadataUniversalIdentifier,
   conditionalAvailabilityExpression = null,
   commandMenuItemId,
@@ -37,7 +37,7 @@ export const createStandardCommandMenuItemFolderFlatMetadata = ({
   isPinned: boolean;
   availabilityType: CommandMenuItemAvailabilityType;
   frontComponentUniversalIdentifier: string | null;
-  standardFrontComponentKey?: StandardFrontComponentKey | null;
+  engineComponentKey?: EngineComponentKey | null;
   availabilityObjectMetadataUniversalIdentifier: string | null;
   conditionalAvailabilityExpression?: string | null;
   commandMenuItemId: string;
@@ -107,7 +107,7 @@ export const createStandardCommandMenuItemFolderFlatMetadata = ({
     frontComponentId: resolvedFrontComponentId,
     frontComponentUniversalIdentifier:
       resolvedFrontComponentUniversalIdentifier,
-    standardFrontComponentKey,
+    engineComponentKey,
     workflowVersionId: null,
     availabilityObjectMetadataId: resolvedObjectMetadataId,
     availabilityObjectMetadataUniversalIdentifier:

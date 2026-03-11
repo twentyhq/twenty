@@ -13,7 +13,7 @@ import {
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import {
   CommandMenuItemAvailabilityType,
-  StandardFrontComponentKey,
+  EngineComponentKey,
 } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
 
 @InputType()
@@ -58,8 +58,8 @@ export class UpdateCommandMenuItemInput {
   @Field(() => UUIDScalarType, { nullable: true })
   availabilityObjectMetadataId?: string;
 
-  @IsEnum(StandardFrontComponentKey)
+  @IsEnum(EngineComponentKey)
   @IsOptional()
-  @Field(() => StandardFrontComponentKey, { nullable: true })
-  standardFrontComponentKey?: StandardFrontComponentKey;
+  @Field(() => EngineComponentKey, { nullable: true })
+  engineComponentKey?: EngineComponentKey;
 }

@@ -8,5 +8,5 @@ export const FLAT_COMMAND_MENU_ITEM_EDITABLE_PROPERTIES = [
   'isPinned',
   'availabilityType',
   'availabilityObjectMetadataId',
-  'standardFrontComponentKey',
+  'engineComponentKey',
 ] as const satisfies MetadataEntityPropertyName<'commandMenuItem'>[];

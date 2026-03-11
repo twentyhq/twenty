@@ -1,4 +1,4 @@
-import { STANDARD_FRONT_COMPONENT_KEY_COMPONENT_MAP } from '@/command-menu-item/constants/StandardFrontComponentKeyComponentMap';
+import { ENGINE_COMPONENT_KEY_COMPONENT_MAP } from '@/command-menu-item/constants/EngineComponentKeyComponentMap';
 import { Command } from '@/command-menu-item/display/components/Command';
 import { HeadlessFrontComponentCommandMenuItem } from '@/command-menu-item/display/components/HeadlessFrontComponentCommandMenuItem';
 import { CommandMenuItemScope } from '@/command-menu-item/types/CommandMenuItemScope';
@@ -23,7 +23,7 @@ import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants
 import {
   CommandMenuItemAvailabilityType,
   type CommandMenuItemFieldsFragment,
-  type StandardFrontComponentKey,
+  type EngineComponentKey,
   useFindManyCommandMenuItemsQuery,
 } from '~/generated-metadata/graphql';
 
@@ -121,7 +121,7 @@ const buildCommandMenuItemFromFrontComponent = ({
 
 type BuildCommandMenuItemFromStandardKeyParams = {
   item: CommandMenuItemWithSource;
-  standardFrontComponentKey: StandardFrontComponentKey;
+  engineComponentKey: EngineComponentKey;
   type?: CommandMenuItemType;
   scope: CommandMenuItemScope;
   isPinned: boolean;
@@ -131,7 +131,7 @@ type BuildCommandMenuItemFromStandardKeyParams = {
 
 const buildCommandMenuItemFromStandardKey = ({
   item,
-  standardFrontComponentKey,
+  engineComponentKey,
   type = CommandMenuItemType.Standard,
   scope,
   isPinned,
@@ -141,7 +141,7 @@ const buildCommandMenuItemFromStandardKey = ({
   const Icon = getIcon(item.icon, COMMAND_MENU_DEFAULT_ICON);
 
   const component =
-    STANDARD_FRONT_COMPONENT_KEY_COMPONENT_MAP[standardFrontComponentKey];
+    ENGINE_COMPONENT_KEY_COMPONENT_MAP[engineComponentKey];
 
   return {
     type,
@@ -225,10 +225,10 @@ export const useCommandMenuItemFrontComponentCommands = (
     isPinned: boolean;
     typeOverride?: CommandMenuItemType;
   }) => {
-    if (isDefined(item.standardFrontComponentKey)) {
+    if (isDefined(item.engineComponentKey)) {
       return buildCommandMenuItemFromStandardKey({
         item,
-        standardFrontComponentKey: item.standardFrontComponentKey,
+        engineComponentKey: item.engineComponentKey,
         type: typeOverride,
         scope,
         isPinned,

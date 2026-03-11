@@ -19,73 +19,73 @@ import { TestWorkflowSingleRecordCommand } from '@/command-menu-item/record/sing
 import { TidyUpWorkflowSingleRecordCommand } from '@/command-menu-item/record/single-record/workflow/components/TidyUpWorkflowSingleRecordCommand';
 import { StopWorkflowRunSingleRecordCommand } from '@/command-menu-item/record/single-record/workflow-runs/components/StopWorkflowRunSingleRecordCommand';
 import { UseAsDraftWorkflowVersionSingleRecordCommand } from '@/command-menu-item/record/single-record/workflow-versions/components/UseAsDraftWorkflowVersionSingleRecordCommand';
-import { StandardFrontComponentKey } from '~/generated-metadata/graphql';
+import { EngineComponentKey } from '~/generated-metadata/graphql';
 
-export const STANDARD_FRONT_COMPONENT_KEY_COMPONENT_MAP: Record<
-  StandardFrontComponentKey,
+export const ENGINE_COMPONENT_KEY_COMPONENT_MAP: Record<
+  EngineComponentKey,
   React.ReactNode
 > = {
-  [StandardFrontComponentKey.CREATE_NEW_RECORD]: (
+  [EngineComponentKey.CREATE_NEW_RECORD]: (
     <CreateNewIndexRecordNoSelectionRecordCommand />
   ),
-  [StandardFrontComponentKey.DELETE_SINGLE_RECORD]: (
+  [EngineComponentKey.DELETE_SINGLE_RECORD]: (
     <DeleteSingleRecordCommand />
   ),
-  [StandardFrontComponentKey.DELETE_MULTIPLE_RECORDS]: (
+  [EngineComponentKey.DELETE_MULTIPLE_RECORDS]: (
     <DeleteMultipleRecordsCommand />
   ),
-  [StandardFrontComponentKey.RESTORE_SINGLE_RECORD]: (
+  [EngineComponentKey.RESTORE_SINGLE_RECORD]: (
     <RestoreSingleRecordCommand />
   ),
-  [StandardFrontComponentKey.RESTORE_MULTIPLE_RECORDS]: (
+  [EngineComponentKey.RESTORE_MULTIPLE_RECORDS]: (
     <RestoreMultipleRecordsCommand />
   ),
-  [StandardFrontComponentKey.DESTROY_SINGLE_RECORD]: (
+  [EngineComponentKey.DESTROY_SINGLE_RECORD]: (
     <DestroySingleRecordCommand />
   ),
-  [StandardFrontComponentKey.DESTROY_MULTIPLE_RECORDS]: (
+  [EngineComponentKey.DESTROY_MULTIPLE_RECORDS]: (
     <DestroyMultipleRecordsCommand />
   ),
-  [StandardFrontComponentKey.ADD_TO_FAVORITES]: (
+  [EngineComponentKey.ADD_TO_FAVORITES]: (
     <AddToFavoritesSingleRecordCommand />
   ),
-  [StandardFrontComponentKey.REMOVE_FROM_FAVORITES]: (
+  [EngineComponentKey.REMOVE_FROM_FAVORITES]: (
     <RemoveFromFavoritesSingleRecordCommand />
   ),
-  [StandardFrontComponentKey.MERGE_MULTIPLE_RECORDS]: (
+  [EngineComponentKey.MERGE_MULTIPLE_RECORDS]: (
     <MergeMultipleRecordsCommand />
   ),
-  [StandardFrontComponentKey.DUPLICATE_DASHBOARD]: (
+  [EngineComponentKey.DUPLICATE_DASHBOARD]: (
     <DuplicateDashboardSingleRecordCommand />
   ),
-  [StandardFrontComponentKey.DUPLICATE_WORKFLOW]: (
+  [EngineComponentKey.DUPLICATE_WORKFLOW]: (
     <DuplicateWorkflowSingleRecordCommand />
   ),
-  [StandardFrontComponentKey.ACTIVATE_WORKFLOW]: (
+  [EngineComponentKey.ACTIVATE_WORKFLOW]: (
     <ActivateWorkflowSingleRecordCommand />
   ),
-  [StandardFrontComponentKey.DEACTIVATE_WORKFLOW]: (
+  [EngineComponentKey.DEACTIVATE_WORKFLOW]: (
     <DeactivateWorkflowSingleRecordCommand />
   ),
-  [StandardFrontComponentKey.DISCARD_DRAFT_WORKFLOW]: (
+  [EngineComponentKey.DISCARD_DRAFT_WORKFLOW]: (
     <DiscardDraftWorkflowSingleRecordCommand />
   ),
-  [StandardFrontComponentKey.TEST_WORKFLOW]: (
+  [EngineComponentKey.TEST_WORKFLOW]: (
     <TestWorkflowSingleRecordCommand />
   ),
-  [StandardFrontComponentKey.STOP_WORKFLOW_RUN]: (
+  [EngineComponentKey.STOP_WORKFLOW_RUN]: (
     <StopWorkflowRunSingleRecordCommand />
   ),
-  [StandardFrontComponentKey.USE_AS_DRAFT_WORKFLOW_VERSION]: (
+  [EngineComponentKey.USE_AS_DRAFT_WORKFLOW_VERSION]: (
     <UseAsDraftWorkflowVersionSingleRecordCommand />
   ),
-  [StandardFrontComponentKey.SAVE_RECORD_PAGE_LAYOUT]: (
+  [EngineComponentKey.SAVE_RECORD_PAGE_LAYOUT]: (
     <SaveRecordPageLayoutSingleRecordCommand />
   ),
-  [StandardFrontComponentKey.SAVE_DASHBOARD_LAYOUT]: (
+  [EngineComponentKey.SAVE_DASHBOARD_LAYOUT]: (
     <SaveDashboardSingleRecordCommand />
   ),
-  [StandardFrontComponentKey.TIDY_UP_WORKFLOW]: (
+  [EngineComponentKey.TIDY_UP_WORKFLOW]: (
     <TidyUpWorkflowSingleRecordCommand />
   ),
 };

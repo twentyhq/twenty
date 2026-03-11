@@ -41,21 +41,21 @@ export class FlatCommandMenuItemValidatorService {
     const hasFrontComponentUniversalIdentifier = isDefined(
       flatCommandMenuItem.frontComponentUniversalIdentifier,
     );
-    const hasStandardFrontComponentKey = isDefined(
-      flatCommandMenuItem.standardFrontComponentKey,
+    const hasEngineComponentKey = isDefined(
+      flatCommandMenuItem.engineComponentKey,
     );
 
     const sourceCount = [
       hasWorkflowVersionId,
       hasFrontComponentUniversalIdentifier,
-      hasStandardFrontComponentKey,
+      hasEngineComponentKey,
     ].filter(Boolean).length;
 
     if (sourceCount !== 1) {
       validationResult.errors.push({
         code: CommandMenuItemExceptionCode.WORKFLOW_OR_FRONT_COMPONENT_REQUIRED,
-        message: t`Exactly one of workflowVersionId, frontComponentUniversalIdentifier or standardFrontComponentKey is required`,
-        userFriendlyMessage: msg`Exactly one of workflow version, front component or standard front component key is required`,
+        message: t`Exactly one of workflowVersionId, frontComponentUniversalIdentifier or engineComponentKey is required`,
+        userFriendlyMessage: msg`Exactly one of workflow version, front component or engine component key is required`,
       });
     }
 

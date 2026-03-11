@@ -87,7 +87,7 @@ export const createStandardCommandMenuItemFlatMetadata = ({
     frontComponentId: resolvedFrontComponentId,
     frontComponentUniversalIdentifier:
       resolvedFrontComponentUniversalIdentifier,
-    standardFrontComponentKey: definition.standardFrontComponentKey,
+    engineComponentKey: definition.engineComponentKey,
     workflowVersionId: null,
     availabilityObjectMetadataId: resolvedObjectMetadataId,
     availabilityObjectMetadataUniversalIdentifier:

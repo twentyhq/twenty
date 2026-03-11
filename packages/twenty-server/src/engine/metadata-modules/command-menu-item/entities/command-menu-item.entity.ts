@@ -21,7 +21,7 @@ export enum CommandMenuItemAvailabilityType {
   FALLBACK = 'FALLBACK',
 }
 
-export enum StandardFrontComponentKey {
+export enum EngineComponentKey {
   CREATE_NEW_RECORD = 'CREATE_NEW_RECORD',
   DELETE_SINGLE_RECORD = 'DELETE_SINGLE_RECORD',
   DELETE_MULTIPLE_RECORDS = 'DELETE_MULTIPLE_RECORDS',
@@ -59,7 +59,7 @@ export enum StandardFrontComponentKey {
 ])
 @Check(
   'CHK_command_menu_item_workflow_or_front_component_or_standard_key',
-  '("workflowVersionId" IS NOT NULL AND "frontComponentId" IS NULL AND "standardFrontComponentKey" IS NULL) OR ("workflowVersionId" IS NULL AND "frontComponentId" IS NOT NULL AND "standardFrontComponentKey" IS NULL) OR ("workflowVersionId" IS NULL AND "frontComponentId" IS NULL AND "standardFrontComponentKey" IS NOT NULL)',
+  '("workflowVersionId" IS NOT NULL AND "frontComponentId" IS NULL AND "engineComponentKey" IS NULL) OR ("workflowVersionId" IS NULL AND "frontComponentId" IS NOT NULL AND "engineComponentKey" IS NULL) OR ("workflowVersionId" IS NULL AND "frontComponentId" IS NULL AND "engineComponentKey" IS NOT NULL)',
 )
 export class CommandMenuItemEntity
   extends SyncableEntity
@@ -83,10 +83,10 @@ export class CommandMenuItemEntity
 
   @Column({
     type: 'enum',
-    enum: StandardFrontComponentKey,
+    enum: EngineComponentKey,
     nullable: true,
   })
-  standardFrontComponentKey: StandardFrontComponentKey | null;
+  engineComponentKey: EngineComponentKey | null;
 
   @Column({ nullable: false })
   label: string;
