@@ -1,7 +1,6 @@
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCache';
-
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
 import { generateDepthRecordGqlFieldsFromRecord } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromRecord';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
@@ -60,44 +59,42 @@ export const useRecordOneToManyFieldAttachTargetRecord = () => {
       objectPermissionsByObjectMetadataId,
     });
 
-    if (!cachedTargetRecord) {
-      throw new Error('Could not find cached related record');
-    }
+    if (isDefined(cachedTargetRecord)) {
+      const previousRecordId = cachedTargetRecord[`${targetGQLFieldName}Id`];
 
-    const previousRecordId = cachedTargetRecord?.[`${targetGQLFieldName}Id`];
+      if (isDefined(previousRecordId)) {
+        const previousRecord = getRecordFromCache({
+          objectMetadataItem: sourceObjectMetadataItem,
+          recordId: previousRecordId,
+          cache: apolloCoreClient.cache,
+          objectMetadataItems,
+          objectPermissionsByObjectMetadataId,
+        });
 
-    if (isDefined(previousRecordId)) {
-      const previousRecord = getRecordFromCache({
-        objectMetadataItem: sourceObjectMetadataItem,
-        recordId: previousRecordId,
-        cache: apolloCoreClient.cache,
-        objectMetadataItems,
-        objectPermissionsByObjectMetadataId,
-      });
-
-      const previousRecordWithRelation = {
-        ...cachedTargetRecord,
-        [targetGQLFieldName]: previousRecord,
-      };
-
-      const gqlFields = generateDepthRecordGqlFieldsFromRecord({
-        objectMetadataItem: targetObjectMetadataItem,
-        objectMetadataItems,
-        record: previousRecordWithRelation,
-        depth: 1,
-      });
-
-      updateRecordFromCache({
-        objectMetadataItems,
-        objectMetadataItem: targetObjectMetadataItem,
-        cache: apolloCoreClient.cache,
-        record: {
+        const previousRecordWithRelation = {
           ...cachedTargetRecord,
           [targetGQLFieldName]: previousRecord,
-        },
-        recordGqlFields: gqlFields,
-        objectPermissionsByObjectMetadataId,
-      });
+        };
+
+        const gqlFields = generateDepthRecordGqlFieldsFromRecord({
+          objectMetadataItem: targetObjectMetadataItem,
+          objectMetadataItems,
+          record: previousRecordWithRelation,
+          depth: 1,
+        });
+
+        updateRecordFromCache({
+          objectMetadataItems,
+          objectMetadataItem: targetObjectMetadataItem,
+          cache: apolloCoreClient.cache,
+          record: {
+            ...cachedTargetRecord,
+            [targetGQLFieldName]: previousRecord,
+          },
+          recordGqlFields: gqlFields,
+          objectPermissionsByObjectMetadataId,
+        });
+      }
     }
 
     await updateOneRecord({
