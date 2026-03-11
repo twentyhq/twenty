@@ -261,32 +261,34 @@ export class LambdaDriver implements LogicFunctionDriver {
     const { sourceTemporaryDir, lambdaZipPath } =
       await temporaryDirManager.init();
 
-    await copyCommonLayerDependencies(sourceTemporaryDir);
+    try {
+      await copyCommonLayerDependencies(sourceTemporaryDir);
 
-    await createZipFile(sourceTemporaryDir, lambdaZipPath);
+      await createZipFile(sourceTemporaryDir, lambdaZipPath);
 
-    const lambdaClient = await this.getLambdaClient();
+      const lambdaClient = await this.getLambdaClient();
 
-    const result = await lambdaClient.send(
-      new PublishLayerVersionCommand({
-        LayerName: commonLayerName,
-        Content: { ZipFile: await fs.readFile(lambdaZipPath) },
-        CompatibleRuntimes: [
-          LogicFunctionRuntime.NODE18,
-          LogicFunctionRuntime.NODE22,
-        ],
-      }),
-    );
-
-    await temporaryDirManager.clean();
-
-    if (!result.LayerVersionArn) {
-      throw new Error(
-        'PublishLayerVersion did not return a LayerVersionArn for common layer',
+      const result = await lambdaClient.send(
+        new PublishLayerVersionCommand({
+          LayerName: commonLayerName,
+          Content: { ZipFile: await fs.readFile(lambdaZipPath) },
+          CompatibleRuntimes: [
+            LogicFunctionRuntime.NODE18,
+            LogicFunctionRuntime.NODE22,
+          ],
+        }),
       );
-    }
 
-    return result.LayerVersionArn;
+      if (!result.LayerVersionArn) {
+        throw new Error(
+          'PublishLayerVersion did not return a LayerVersionArn for common layer',
+        );
+      }
+
+      return result.LayerVersionArn;
+    } finally {
+      await temporaryDirManager.clean();
+    }
   }
 
   private async ensureBuilderLambdaExists(): Promise<void> {
@@ -311,26 +313,28 @@ export class LambdaDriver implements LogicFunctionDriver {
     const { sourceTemporaryDir, lambdaZipPath } =
       await temporaryDirManager.init();
 
-    await copyBuilder(sourceTemporaryDir);
+    try {
+      await copyBuilder(sourceTemporaryDir);
 
-    await createZipFile(sourceTemporaryDir, lambdaZipPath);
+      await createZipFile(sourceTemporaryDir, lambdaZipPath);
 
-    const params: CreateFunctionCommandInput = {
-      Code: {
-        ZipFile: await fs.readFile(lambdaZipPath),
-      },
-      FunctionName: builderFunctionName,
-      Layers: [commonLayerArn],
-      Handler: 'index.handler',
-      Role: this.options.lambdaRole,
-      Runtime: LogicFunctionRuntime.NODE22,
-      Timeout: BUILDER_LAMBDA_TIMEOUT_SECONDS,
-      MemorySize: BUILDER_LAMBDA_MEMORY_MB,
-    };
+      const params: CreateFunctionCommandInput = {
+        Code: {
+          ZipFile: await fs.readFile(lambdaZipPath),
+        },
+        FunctionName: builderFunctionName,
+        Layers: [commonLayerArn],
+        Handler: 'index.handler',
+        Role: this.options.lambdaRole,
+        Runtime: LogicFunctionRuntime.NODE22,
+        Timeout: BUILDER_LAMBDA_TIMEOUT_SECONDS,
+        MemorySize: BUILDER_LAMBDA_MEMORY_MB,
+      };
 
-    await lambdaClient.send(new CreateFunctionCommand(params));
-
-    await temporaryDirManager.clean();
+      await lambdaClient.send(new CreateFunctionCommand(params));
+    } finally {
+      await temporaryDirManager.clean();
+    }
 
     await this.waitFunctionUpdates(builderFunctionName);
   }
@@ -361,7 +365,7 @@ export class LambdaDriver implements LogicFunctionDriver {
 
       throw new LogicFunctionException(
         `Builder Lambda failed: ${JSON.stringify(parsedResult)}`,
-        LogicFunctionExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
+        LogicFunctionExceptionCode.LOGIC_FUNCTION_CREATE_FAILED,
       );
     }
 
@@ -391,32 +395,35 @@ export class LambdaDriver implements LogicFunctionDriver {
         throw error;
       }
     }
+
+    const commonLayerArn = await this.ensureCommonLayerExists();
+
     const temporaryDirManager = new TemporaryDirManager();
     const { sourceTemporaryDir, lambdaZipPath } =
       await temporaryDirManager.init();
 
-    await copyTranspiler(sourceTemporaryDir);
+    try {
+      await copyTranspiler(sourceTemporaryDir);
 
-    await createZipFile(sourceTemporaryDir, lambdaZipPath);
+      await createZipFile(sourceTemporaryDir, lambdaZipPath);
 
-    const commonLayerArn = await this.ensureCommonLayerExists();
+      const params: CreateFunctionCommandInput = {
+        Code: {
+          ZipFile: await fs.readFile(lambdaZipPath),
+        },
+        FunctionName: transpilerFunctionName,
+        Layers: [commonLayerArn],
+        Handler: 'index.handler',
+        Role: this.options.lambdaRole,
+        Runtime: LogicFunctionRuntime.NODE22,
+        Timeout: TRANSPILER_LAMBDA_TIMEOUT_SECONDS,
+        MemorySize: TRANSPILER_LAMBDA_MEMORY_MB,
+      };
 
-    const params: CreateFunctionCommandInput = {
-      Code: {
-        ZipFile: await fs.readFile(lambdaZipPath),
-      },
-      FunctionName: transpilerFunctionName,
-      Layers: [commonLayerArn],
-      Handler: 'index.handler',
-      Role: this.options.lambdaRole,
-      Runtime: LogicFunctionRuntime.NODE22,
-      Timeout: TRANSPILER_LAMBDA_TIMEOUT_SECONDS,
-      MemorySize: TRANSPILER_LAMBDA_MEMORY_MB,
-    };
-
-    await lambdaClient.send(new CreateFunctionCommand(params));
-
-    await temporaryDirManager.clean();
+      await lambdaClient.send(new CreateFunctionCommand(params));
+    } finally {
+      await temporaryDirManager.clean();
+    }
 
     await this.waitFunctionUpdates(transpilerFunctionName);
   }
@@ -457,7 +464,7 @@ export class LambdaDriver implements LogicFunctionDriver {
 
       throw new LogicFunctionException(
         `Transpiler Lambda failed: ${JSON.stringify(parsedResult)}`,
-        LogicFunctionExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
+        LogicFunctionExceptionCode.LOGIC_FUNCTION_CREATE_FAILED,
       );
     }
 
@@ -494,20 +501,22 @@ export class LambdaDriver implements LogicFunctionDriver {
     const temporaryDirManager = new TemporaryDirManager();
     const { sourceTemporaryDir } = await temporaryDirManager.init();
 
-    await this.logicFunctionResourceService.copyDependenciesInMemory({
-      applicationUniversalIdentifier,
-      workspaceId: flatApplication.workspaceId,
-      inMemoryFolderPath: sourceTemporaryDir,
-    });
+    try {
+      await this.logicFunctionResourceService.copyDependenciesInMemory({
+        applicationUniversalIdentifier,
+        workspaceId: flatApplication.workspaceId,
+        inMemoryFolderPath: sourceTemporaryDir,
+      });
 
-    const [packageJson, yarnLock] = await Promise.all([
-      fs.readFile(`${sourceTemporaryDir}/package.json`, 'utf-8'),
-      fs.readFile(`${sourceTemporaryDir}/yarn.lock`, 'utf-8'),
-    ]);
+      const [packageJson, yarnLock] = await Promise.all([
+        fs.readFile(`${sourceTemporaryDir}/package.json`, 'utf-8'),
+        fs.readFile(`${sourceTemporaryDir}/yarn.lock`, 'utf-8'),
+      ]);
 
-    await temporaryDirManager.clean();
-
-    return { packageJson, yarnLock };
+      return { packageJson, yarnLock };
+    } finally {
+      await temporaryDirManager.clean();
+    }
   }
 
   private async createLayerIfNotExist({

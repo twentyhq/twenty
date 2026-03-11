@@ -1,10 +1,20 @@
 import { promises as fs } from 'fs';
-import { join, dirname } from 'path';
+import { join, dirname, resolve } from 'path';
 
 import { build } from 'esbuild';
 
 const BANNER = {
   js: "import { createRequire as __createRequire } from 'module';\nconst require = __createRequire(import.meta.url);",
+};
+
+const assertPathInsideDir = (filePath, dir) => {
+  const resolved = resolve(dir, filePath);
+
+  if (!resolved.startsWith(dir + '/')) {
+    throw new Error(`Path traversal detected: ${filePath}`);
+  }
+
+  return resolved;
 };
 
 export const handler = async (event) => {
@@ -25,8 +35,8 @@ export const handler = async (event) => {
   await fs.rm(workDir, { recursive: true, force: true });
   await fs.mkdir(workDir, { recursive: true });
 
-  const entryFilePath = join(workDir, sourceFileName);
-  const outFilePath = join(workDir, builtFileName);
+  const entryFilePath = assertPathInsideDir(sourceFileName, workDir);
+  const outFilePath = assertPathInsideDir(builtFileName, workDir);
 
   await fs.mkdir(dirname(entryFilePath), { recursive: true });
   await fs.writeFile(entryFilePath, sourceCode, 'utf-8');
