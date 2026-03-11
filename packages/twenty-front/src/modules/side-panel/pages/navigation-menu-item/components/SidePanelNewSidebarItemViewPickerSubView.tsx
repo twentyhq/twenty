@@ -27,7 +27,7 @@ import { ViewVisibility } from '~/generated-metadata/graphql';
 
 type SidePanelNewSidebarItemViewPickerSubViewProps = {
   selectedObjectMetadataIdForView: string;
-  onBack: () => void;
+  onBack?: () => void;
 };
 
 export const SidePanelNewSidebarItemViewPickerSubView = ({
@@ -102,7 +102,7 @@ export const SidePanelNewSidebarItemViewPickerSubView = ({
 
   return (
     <SidePanelSubViewWithSearch
-      backBarTitle={backBarTitle}
+      backBarTitle={onBack ? backBarTitle : undefined}
       onBack={onBack}
       searchPlaceholder={t`Search a view...`}
       searchValue={searchValue}

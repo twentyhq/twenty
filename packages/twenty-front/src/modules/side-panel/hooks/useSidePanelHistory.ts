@@ -1,16 +1,17 @@
 import { useCallback } from 'react';
 
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
+import { hasUserSelectedSidePanelListItemState } from '@/side-panel/states/hasUserSelectedSidePanelListItemState';
 import { sidePanelNavigationMorphItemsByPageState } from '@/side-panel/states/sidePanelNavigationMorphItemsByPageState';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { sidePanelPageInfoState } from '@/side-panel/states/sidePanelPageInfoState';
 import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
-import { hasUserSelectedSidePanelListItemState } from '@/side-panel/states/hasUserSelectedSidePanelListItemState';
+import { sidePanelSubPageStackComponentState } from '@/side-panel/states/sidePanelSubPageStackComponentState';
 import { getShowPageTabListComponentId } from '@/ui/layout/show-page/utils/getShowPageTabListComponentId';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { isNonEmptyArray } from '@sniptt/guards';
-import { isDefined } from 'twenty-shared/utils';
 import { useStore } from 'jotai';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useSidePanelHistory = () => {
   const store = useStore();
@@ -50,6 +51,13 @@ export const useSidePanelHistory = () => {
         const newMorphItems = new Map(currentMorphItems);
         newMorphItems.delete(removedItem.pageId);
         store.set(sidePanelNavigationMorphItemsByPageState.atom, newMorphItems);
+
+        store.set(
+          sidePanelSubPageStackComponentState.atomFamily({
+            instanceId: removedItem.pageId,
+          }),
+          [],
+        );
 
         const morphItems = currentMorphItems.get(removedItem.pageId);
         if (isNonEmptyArray(morphItems)) {
@@ -99,6 +107,13 @@ export const useSidePanelHistory = () => {
 
       for (const [pageId, morphItems] of currentMorphItems.entries()) {
         if (!newNavigationStack.some((item) => item.pageId === pageId)) {
+          store.set(
+            sidePanelSubPageStackComponentState.atomFamily({
+              instanceId: pageId,
+            }),
+            [],
+          );
+
           store.set(
             activeTabIdComponentState.atomFamily({
               instanceId: getShowPageTabListComponentId({

@@ -1,5 +1,3 @@
-import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
-import { SidePanelSubPageNavigationHeader } from '@/side-panel/pages/common/components/SidePanelSubPageNavigationHeader';
 import { ChartFiltersSettingsInitializeStateEffect } from '@/side-panel/pages/page-layout/components/ChartFiltersSettingsInitializeStateEffect';
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/side-panel/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
 import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
@@ -15,9 +13,9 @@ import { RecordFiltersComponentInstanceContext } from '@/object-record/record-fi
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
-import { useStore } from 'jotai';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { useStore } from 'jotai';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledChartFiltersPageContainer = styled.div`
@@ -38,8 +36,6 @@ export const ChartFiltersSettings = ({
   objectMetadataItem,
   widget,
 }: ChartFiltersSettingsProps) => {
-  const { goBackFromSidePanel } = useSidePanelHistory();
-
   const { instanceId } = getChartFiltersSettingsInstanceId({
     widgetId: widget.id,
     objectMetadataItemId: objectMetadataItem.id,
@@ -79,32 +75,26 @@ export const ChartFiltersSettings = ({
   };
 
   return (
-    <>
-      <SidePanelSubPageNavigationHeader
-        title={t`Filter`}
-        onBackClick={goBackFromSidePanel}
-      />
-      <StyledChartFiltersPageContainer>
-        <div>
-          <InputLabel>{t`Conditions`}</InputLabel>
-          <RecordFilterGroupsComponentInstanceContext.Provider
+    <StyledChartFiltersPageContainer>
+      <div>
+        <InputLabel>{t`Conditions`}</InputLabel>
+        <RecordFilterGroupsComponentInstanceContext.Provider
+          value={{ instanceId }}
+        >
+          <RecordFiltersComponentInstanceContext.Provider
             value={{ instanceId }}
           >
-            <RecordFiltersComponentInstanceContext.Provider
-              value={{ instanceId }}
-            >
-              <AdvancedFilterSidePanelContainer
-                onUpdate={handleFiltersUpdate}
-                objectMetadataItem={objectMetadataItem}
-                isWorkflowFindRecords={false}
-              />
-              <ChartFiltersSettingsInitializeStateEffect
-                initialChartFilters={chartWidgetConfiguration.filter}
-              />
-            </RecordFiltersComponentInstanceContext.Provider>
-          </RecordFilterGroupsComponentInstanceContext.Provider>
-        </div>
-      </StyledChartFiltersPageContainer>
-    </>
+            <AdvancedFilterSidePanelContainer
+              onUpdate={handleFiltersUpdate}
+              objectMetadataItem={objectMetadataItem}
+              isWorkflowFindRecords={false}
+            />
+            <ChartFiltersSettingsInitializeStateEffect
+              initialChartFilters={chartWidgetConfiguration.filter}
+            />
+          </RecordFiltersComponentInstanceContext.Provider>
+        </RecordFilterGroupsComponentInstanceContext.Provider>
+      </div>
+    </StyledChartFiltersPageContainer>
   );
 };

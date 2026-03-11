@@ -1,9 +1,10 @@
+import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
+import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { GRAPH_TYPE_INFORMATION } from '@/side-panel/pages/page-layout/constants/GraphTypeInformation';
 import { getCurrentGraphTypeFromConfig } from '@/side-panel/pages/page-layout/utils/getCurrentGraphTypeFromConfig';
 import { isWidgetConfigurationOfTypeGraph } from '@/side-panel/pages/page-layout/utils/isWidgetConfigurationOfTypeGraph';
-import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
-import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { t } from '@lingui/core/macro';
+import { useContext } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -14,7 +15,6 @@ import {
   type IconComponent,
 } from 'twenty-ui/display';
 import { ThemeContext } from 'twenty-ui/theme-constants';
-import { useContext } from 'react';
 
 type PageLayoutHeaderInfo = {
   headerIcon: IconComponent | undefined;
@@ -105,8 +105,7 @@ export const usePageLayoutHeaderInfo = ({
       };
     }
 
-    case SidePanelPages.PageLayoutGraphTypeSelect:
-    case SidePanelPages.PageLayoutGraphFilter: {
+    case SidePanelPages.PageLayoutGraphTypeSelect: {
       if (!isDefined(pageLayoutEditingWidgetId)) {
         return null;
       }
@@ -127,12 +126,6 @@ export const usePageLayoutHeaderInfo = ({
         widgetInEditMode.configuration,
       );
       const graphTypeInfo = GRAPH_TYPE_INFORMATION[currentGraphType];
-      const graphTypeLabel = t(graphTypeInfo.label);
-
-      const headerType =
-        sidePanelPage === SidePanelPages.PageLayoutGraphFilter
-          ? graphTypeLabel
-          : t`Chart`;
 
       const title = isDefined(editedTitle)
         ? editedTitle
@@ -143,16 +136,15 @@ export const usePageLayoutHeaderInfo = ({
       return {
         headerIcon: graphTypeInfo.icon,
         headerIconColor: iconColor,
-        headerType,
+        headerType: t`Chart`,
         title,
-        isReadonly: sidePanelPage === SidePanelPages.PageLayoutGraphFilter,
+        isReadonly: false,
         tab: undefined,
         widgetInEditMode,
       };
     }
 
-    case SidePanelPages.PageLayoutFieldsSettings:
-    case SidePanelPages.PageLayoutFieldsLayout: {
+    case SidePanelPages.PageLayoutFieldsSettings: {
       if (!isDefined(pageLayoutEditingWidgetId)) {
         return null;
       }

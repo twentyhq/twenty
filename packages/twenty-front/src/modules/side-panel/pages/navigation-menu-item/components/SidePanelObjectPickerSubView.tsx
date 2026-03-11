@@ -16,7 +16,7 @@ type SidePanelObjectPickerSubViewProps = {
   objects: ObjectMetadataItem[];
   searchValue: string;
   onSearchChange: (value: string) => void;
-  onBack: () => void;
+  onBack?: () => void;
   onOpenSystemPicker: () => void;
   isViewItem: boolean;
   onSelectObjectForViewEdit?: (objectMetadataItem: ObjectMetadataItem) => void;
@@ -85,7 +85,7 @@ export const SidePanelObjectPickerSubView = ({
 
   return (
     <SidePanelSubViewWithSearch
-      backBarTitle={t`Pick an object`}
+      backBarTitle={onBack ? t`Pick an object` : undefined}
       onBack={onBack}
       searchPlaceholder={t`Search an object...`}
       searchValue={searchValue}

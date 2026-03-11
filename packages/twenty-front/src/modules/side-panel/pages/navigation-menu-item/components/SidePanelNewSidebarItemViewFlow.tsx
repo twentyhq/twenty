@@ -5,25 +5,26 @@ import { useDraftNavigationMenuItems } from '@/navigation-menu-item/hooks/useDra
 import { useNavigationMenuObjectMetadataFromDraft } from '@/navigation-menu-item/hooks/useNavigationMenuObjectMetadataFromDraft';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { useSidePanelSubPageHistory } from '@/side-panel/hooks/useSidePanelSubPageHistory';
 import { SidePanelNewSidebarItemViewObjectPickerSubView } from '@/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemViewObjectPickerSubView';
 import { SidePanelNewSidebarItemViewPickerSubView } from '@/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemViewPickerSubView';
 import { SidePanelNewSidebarItemViewSystemSubView } from '@/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemViewSystemSubView';
 import { getAvailableObjectMetadataForNewSidebarItem } from '@/side-panel/pages/navigation-menu-item/utils/getAvailableObjectMetadataForNewSidebarItem';
+import { SidePanelSubPages } from '@/side-panel/types/SidePanelSubPages';
 import { ViewKey } from '@/views/types/ViewKey';
 import { ViewType } from '@/views/types/ViewType';
 
-type SidePanelNewSidebarItemViewFlowProps = {
-  onBack: () => void;
-};
+export const SidePanelNewSidebarItemViewFlow = () => {
+  const {
+    currentSidePanelSubPage,
+    navigateToSidePanelSubPage,
+    goBackFromSidePanelSubPage,
+  } = useSidePanelSubPageHistory();
 
-export const SidePanelNewSidebarItemViewFlow = ({
-  onBack,
-}: SidePanelNewSidebarItemViewFlowProps) => {
   const [selectedObjectMetadataIdForView, setSelectedObjectMetadataIdForView] =
     useState<string | null>(null);
   const [objectSearchInput, setObjectSearchInput] = useState('');
   const [systemObjectSearchInput, setSystemObjectSearchInput] = useState('');
-  const [isInSystemPicker, setIsInSystemPicker] = useState(false);
 
   const { currentDraft } = useDraftNavigationMenuItems();
   const { objectMetadataItems } = useObjectMetadataItems();
@@ -52,64 +53,71 @@ export const SidePanelNewSidebarItemViewFlow = ({
   });
 
   const handleBackFromViewPicker = () => {
-    const selectedObjectMetadataItem = isDefined(
-      selectedObjectMetadataIdForView,
-    )
-      ? objectMetadataItems.find(
-          (item) => item.id === selectedObjectMetadataIdForView,
-        )
-      : undefined;
-    const cameFromSystemObjects = selectedObjectMetadataItem?.isSystem ?? false;
-
     setSelectedObjectMetadataIdForView(null);
-    setIsInSystemPicker(cameFromSystemObjects);
-  };
-
-  const handleBackFromSystemPicker = () => {
-    setIsInSystemPicker(false);
+    goBackFromSidePanelSubPage();
   };
 
   const handleSelectObject = (objectId: string) => {
     setSelectedObjectMetadataIdForView(objectId);
+    const objectMetadataItem = objectMetadataItems.find(
+      (item) => item.id === objectId,
+    );
+    navigateToSidePanelSubPage(
+      SidePanelSubPages.NewSidebarItemViewPicker,
+      objectMetadataItem?.labelPlural,
+    );
   };
 
   const handleSelectObjectFromSystem = (objectId: string) => {
     setSelectedObjectMetadataIdForView(objectId);
-    setIsInSystemPicker(false);
+    const objectMetadataItem = objectMetadataItems.find(
+      (item) => item.id === objectId,
+    );
+    navigateToSidePanelSubPage(
+      SidePanelSubPages.NewSidebarItemViewPicker,
+      objectMetadataItem?.labelPlural,
+    );
   };
 
-  if (isDefined(selectedObjectMetadataIdForView) && !isInSystemPicker) {
-    return (
-      <SidePanelNewSidebarItemViewPickerSubView
-        selectedObjectMetadataIdForView={selectedObjectMetadataIdForView}
-        onBack={handleBackFromViewPicker}
-      />
-    );
-  }
-
-  if (isInSystemPicker) {
-    return (
-      <SidePanelNewSidebarItemViewSystemSubView
-        systemObjects={availableSystemObjectMetadataItemsForView}
-        searchValue={systemObjectSearchInput}
-        onSearchChange={setSystemObjectSearchInput}
-        onBack={handleBackFromSystemPicker}
-        onSelectObject={(item) => handleSelectObjectFromSystem(item.id)}
-      />
-    );
-  }
-
-  return (
-    <SidePanelNewSidebarItemViewObjectPickerSubView
-      objects={objectMetadataItemsWithViews}
-      searchValue={objectSearchInput}
-      onSearchChange={setObjectSearchInput}
-      onBack={onBack}
-      onOpenSystemPicker={() => setIsInSystemPicker(true)}
-      onSelectObject={(item) => handleSelectObject(item.id)}
-      showSystemObjectsOption={
-        availableSystemObjectMetadataItemsForView.length > 0
+  switch (currentSidePanelSubPage?.subPage) {
+    case SidePanelSubPages.NewSidebarItemViewPicker:
+      if (!isDefined(selectedObjectMetadataIdForView)) {
+        return null;
       }
-    />
-  );
+      return (
+        <SidePanelNewSidebarItemViewPickerSubView
+          selectedObjectMetadataIdForView={selectedObjectMetadataIdForView}
+          onBack={handleBackFromViewPicker}
+        />
+      );
+    case SidePanelSubPages.NewSidebarItemViewSystemPicker:
+      return (
+        <SidePanelNewSidebarItemViewSystemSubView
+          systemObjects={availableSystemObjectMetadataItemsForView}
+          searchValue={systemObjectSearchInput}
+          onSearchChange={setSystemObjectSearchInput}
+          onBack={goBackFromSidePanelSubPage}
+          onSelectObject={(item) => handleSelectObjectFromSystem(item.id)}
+        />
+      );
+    case SidePanelSubPages.NewSidebarItemViewObjectPicker:
+    default:
+      return (
+        <SidePanelNewSidebarItemViewObjectPickerSubView
+          objects={objectMetadataItemsWithViews}
+          searchValue={objectSearchInput}
+          onSearchChange={setObjectSearchInput}
+          onBack={goBackFromSidePanelSubPage}
+          onOpenSystemPicker={() =>
+            navigateToSidePanelSubPage(
+              SidePanelSubPages.NewSidebarItemViewSystemPicker,
+            )
+          }
+          onSelectObject={(item) => handleSelectObject(item.id)}
+          showSystemObjectsOption={
+            availableSystemObjectMetadataItemsForView.length > 0
+          }
+        />
+      );
+  }
 };

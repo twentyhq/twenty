@@ -1,21 +1,21 @@
 import { useLingui } from '@lingui/react/macro';
 import { IconSettings, useIcons } from 'twenty-ui/display';
 
-import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
-import { SidePanelList } from '@/side-panel/components/SidePanelList';
-import { SidePanelSubViewWithSearch } from '@/side-panel/components/SidePanelSubViewWithSearch';
-import { useSidePanelFilteredPickerItems } from '@/side-panel/hooks/useSidePanelFilteredPickerItems';
 import { NavigationMenuItemStyleIcon } from '@/navigation-menu-item/components/NavigationMenuItemStyleIcon';
 import { getStandardObjectIconColor } from '@/navigation-menu-item/utils/getStandardObjectIconColor';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
+import { SidePanelList } from '@/side-panel/components/SidePanelList';
+import { SidePanelSubViewWithSearch } from '@/side-panel/components/SidePanelSubViewWithSearch';
+import { useSidePanelFilteredPickerItems } from '@/side-panel/hooks/useSidePanelFilteredPickerItems';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 
 type SidePanelNewSidebarItemViewObjectPickerSubViewProps = {
   objects: ObjectMetadataItem[];
   searchValue: string;
   onSearchChange: (value: string) => void;
-  onBack: () => void;
+  onBack?: () => void;
   onOpenSystemPicker: () => void;
   onSelectObject: (objectMetadataItem: ObjectMetadataItem) => void;
   showSystemObjectsOption?: boolean;
@@ -45,7 +45,7 @@ export const SidePanelNewSidebarItemViewObjectPickerSubView = ({
 
   return (
     <SidePanelSubViewWithSearch
-      backBarTitle={t`Pick an object`}
+      backBarTitle={onBack ? t`Pick an object` : undefined}
       onBack={onBack}
       searchPlaceholder={t`Search an object...`}
       searchValue={searchValue}

@@ -1,14 +1,14 @@
-import { ChartFiltersSettings } from '@/side-panel/pages/page-layout/components/ChartFiltersSettings';
-import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/side-panel/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
-import { isChartWidget } from '@/side-panel/pages/page-layout/utils/isChartWidget';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
+import { ChartFiltersSettings } from '@/side-panel/pages/page-layout/components/ChartFiltersSettings';
+import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/side-panel/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
+import { isChartWidget } from '@/side-panel/pages/page-layout/utils/isChartWidget';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
 
-export const SidePanelPageLayoutGraphFilter = () => {
+export const SidePanelChartFilterSubPage = () => {
   const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
 
   const pageLayoutDraft = useAtomComponentStateValue(
@@ -29,29 +29,26 @@ export const SidePanelPageLayoutGraphFilter = () => {
 
   if (
     !isDefined(widgetInEditMode) ||
-    !isDefined(widgetInEditMode.objectMetadataId) ||
-    !isChartWidget(widgetInEditMode)
+    !isChartWidget(widgetInEditMode) ||
+    !isDefined(widgetInEditMode.objectMetadataId)
   ) {
     return null;
   }
 
   const objectMetadataItem = objectMetadataItems.find(
-    (objectMetadataItem) =>
-      objectMetadataItem.id === widgetInEditMode?.objectMetadataId,
+    (item) => item.id === widgetInEditMode.objectMetadataId,
   );
 
   if (!isDefined(objectMetadataItem)) {
     throw new Error(
-      `Object metadata item not found for id ${widgetInEditMode?.objectMetadataId}`,
+      `Object metadata item not found for id ${widgetInEditMode.objectMetadataId}`,
     );
   }
 
   return (
-    <>
-      <ChartFiltersSettings
-        widget={widgetInEditMode}
-        objectMetadataItem={objectMetadataItem}
-      />
-    </>
+    <ChartFiltersSettings
+      widget={widgetInEditMode}
+      objectMetadataItem={objectMetadataItem}
+    />
   );
 };
