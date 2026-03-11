@@ -75,7 +75,7 @@ export const FieldsConfigurationGroupDropdown = ({
               LeftIcon={IconNewSection}
               onClick={handleAddGroup}
               accent="default"
-              text={t`Add a Section`}
+              text={t`Add a Group`}
             />
           </DropdownMenuItemsContainer>
         </DropdownContent>

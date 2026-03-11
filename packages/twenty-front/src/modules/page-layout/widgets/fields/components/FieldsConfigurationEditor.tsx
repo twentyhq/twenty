@@ -34,7 +34,7 @@ const StyledGroupsDroppable = styled.div`
   width: 100%;
 `;
 
-const StyledAddSectionButtonContainer = styled.div`
+const StyledAddGroupButtonContainer = styled.div`
   border: 1px solid transparent;
 `;
 
@@ -257,15 +257,15 @@ export const FieldsConfigurationEditor = ({
             ))}
             {provided.placeholder}
 
-            <StyledAddSectionButtonContainer>
+            <StyledAddGroupButtonContainer>
               <MenuItem
                 LeftIcon={IconNewSection}
-                text={t`Add a Section`}
+                text={t`Add a Group`}
                 onClick={() => handleAddGroup({})}
                 withIconContainer
                 withIconContainerBackground={false}
               />
-            </StyledAddSectionButtonContainer>
+            </StyledAddGroupButtonContainer>
           </StyledGroupsDroppable>
         )}
       </Droppable>
