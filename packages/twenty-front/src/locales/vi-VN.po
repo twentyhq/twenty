@@ -4144,12 +4144,6 @@ msgstr "Mã quốc gia mặc định"
 msgid "Default palette"
 msgstr "Bảng màu mặc định"
 
-#. js-lingui-id: U/uGBk
-#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationUngroupedEditor.tsx
-#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupEditor.tsx
-msgid "Default position/visibility for fields created in the future"
-msgstr ""
-
 #. js-lingui-id: v41VX6
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
@@ -8929,12 +8923,6 @@ msgstr "Tên miền Email mới"
 msgid "New Field"
 msgstr "Trường mới"
 
-#. js-lingui-id: DNUCGO
-#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationUngroupedEditor.tsx
-#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupEditor.tsx
-msgid "New fields"
-msgstr ""
-
 #. js-lingui-id: 96G6Re
 #: src/modules/side-panel/pages/navigation-menu-item/hooks/useAddFolderToNavigationMenu.ts
 #: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemMainMenu.tsx
@@ -12150,6 +12138,11 @@ msgstr "Đặt làm chính"
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 msgid "Set email visibility, manage your blocklist and more."
 msgstr "Thiết lập hiển thị email, quản lý danh sách chặn và hơn thế nữa."
+
+#. js-lingui-id: qFjlHh
+#: src/modules/side-panel/pages/page-layout/components/NewFieldDefaultVisibilityToggle.tsx
+msgid "Set fields created in the future as \"visible\""
+msgstr ""
 
 #. js-lingui-id: 6KA8xy
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts

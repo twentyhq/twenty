@@ -1,5 +1,5 @@
-import { Command } from '@/command-menu-item/display/components/Command';
 import { STANDARD_FRONT_COMPONENT_KEY_COMPONENT_MAP } from '@/command-menu-item/constants/StandardFrontComponentKeyComponentMap';
+import { Command } from '@/command-menu-item/display/components/Command';
 import { HeadlessFrontComponentCommandMenuItem } from '@/command-menu-item/display/components/HeadlessFrontComponentCommandMenuItem';
 import { CommandMenuItemScope } from '@/command-menu-item/types/CommandMenuItemScope';
 import { CommandMenuItemType } from '@/command-menu-item/types/CommandMenuItemType';
@@ -11,7 +11,6 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { useOpenFrontComponentInSidePanel } from '@/side-panel/hooks/useOpenFrontComponentInSidePanel';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { type CommandMenuContextApi } from 'twenty-shared/types';
 import {
   evaluateConditionalAvailabilityExpression,
@@ -24,7 +23,6 @@ import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants
 import {
   CommandMenuItemAvailabilityType,
   type CommandMenuItemFieldsFragment,
-  FeatureFlagKey,
   type StandardFrontComponentKey,
   useFindManyCommandMenuItemsQuery,
 } from '~/generated-metadata/graphql';
@@ -205,13 +203,7 @@ export const useCommandMenuItemFrontComponentCommands = (
         }
       : undefined;
 
-  const isCommandMenuItemEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_COMMAND_MENU_ITEM_ENABLED,
-  );
-
-  const { data } = useFindManyCommandMenuItemsQuery({
-    skip: !isCommandMenuItemEnabled,
-  });
+  const { data } = useFindManyCommandMenuItemsQuery();
 
   const allItems = data?.commandMenuItems ?? [];
 
