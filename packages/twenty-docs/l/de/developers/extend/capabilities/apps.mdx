@@ -837,20 +837,20 @@ Sie können neue Frontend-Komponenten auf zwei Arten erstellen:
 * **Generiert**: Führen Sie `yarn twenty entity:add` aus und wählen Sie die Option zum Hinzufügen einer neuen Frontend-Komponente.
 * **Manuell**: Erstellen Sie eine neue `.tsx`-Datei und verwenden Sie `defineFrontComponent()` nach demselben Muster.
 
-#### Where front components can be used
+#### Wo Front-Komponenten verwendet werden können
 
-Front components can render in two locations within Twenty:
+Front-Komponenten können an zwei Stellen innerhalb von Twenty gerendert werden:
 
-* **Side panel** — Non-headless front components open in the right-hand side panel. This is the default behavior when a front component is triggered from the command menu.
-* **Widgets (dashboards and record pages)** — Front components can be embedded as widgets inside page layouts. When configuring a dashboard or a record page layout, users can add a front component widget.
+* **Seitenpanel** — Nicht-Headless-Front-Komponenten werden im rechten Seitenpanel geöffnet. Dies ist das Standardverhalten, wenn eine Front-Komponente über das Befehlsmenü ausgelöst wird.
+* **Widgets (Dashboards und Datensatzseiten)** — Front-Komponenten können als Widgets in Seitenlayouts eingebettet werden. Beim Konfigurieren eines Dashboards oder eines Datensatzseiten-Layouts können Benutzer ein Front-Komponenten-Widget hinzufügen.
 
-#### Headless vs non-headless
+#### Headless vs. Nicht-Headless
 
-Front components come in two rendering modes controlled by the `isHeadless` option:
+Front-Komponenten gibt es in zwei Rendering-Modi, die durch die Option `isHeadless` gesteuert werden:
 
-**Non-headless (default)** — The component renders a visible UI. When triggered from the command menu it opens in the side panel. This is the default behavior when `isHeadless` is `false` or omitted.
+**Nicht-Headless (Standard)** — Die Komponente rendert eine sichtbare UI. Wird sie über das Befehlsmenü ausgelöst, öffnet sie sich im Seitenpanel. Dies ist das Standardverhalten, wenn `isHeadless` `false` ist oder weggelassen wird.
 
-**Headless** — The component mounts invisibly in the background. It does not open the side panel. Headless components are designed for actions that execute logic and then unmount themselves — for example, running an async task, navigating to a page, or showing a confirmation modal. They pair naturally with the SDK Command components described below.
+**Headless** — Die Komponente wird unsichtbar im Hintergrund gemountet. Sie öffnet das Seitenpanel nicht. Headless-Komponenten sind für Aktionen konzipiert, die Logik ausführen und sich anschließend selbst unmounten — zum Beispiel das Ausführen einer asynchronen Aufgabe, das Navigieren zu einer Seite oder das Anzeigen eines Bestätigungsdialogs. Sie lassen sich gut mit den unten beschriebenen SDK-Command-Komponenten kombinieren.
 
 ```typescript
 export default defineFrontComponent({
@@ -866,22 +866,22 @@ export default defineFrontComponent({
 });
 ```
 
-#### Adding command menu items
+#### Befehlsmenü-Einträge hinzufügen
 
-To make a front component appear as an item in Twenty's command menu, add the `command` property to `defineFrontComponent()`. When users open the command menu (Cmd+K / Ctrl+K), the item shows up and triggers the front component on click.
+Damit eine Front-Komponente als Eintrag im Befehlsmenü von Twenty erscheint, fügen Sie die Eigenschaft `command` zu `defineFrontComponent()` hinzu. Wenn Benutzer das Befehlsmenü öffnen (Cmd+K / Ctrl+K), erscheint der Eintrag und löst beim Klicken die Front-Komponente aus.
 
-The `command` object accepts the following fields:
+Das Objekt `command` akzeptiert die folgenden Felder:
 
-| Feld                                    | Typ                                         | Beschreibung                                                                               |
-| --------------------------------------- | ------------------------------------------- | ------------------------------------------------------------------------------------------ |
-| `universalIdentifier`                   | `string` (required)                         | Unique ID for the command menu item                                                        |
-| `beschriftung`                          | `string` (required)                         | Display label shown in the command menu                                                    |
-| `symbol`                                | `string` (optional)                         | Icon name (e.g., `'IconSparkles'`)                                                         |
-| `isPinned`                              | `boolean` (optional)                        | Whether the command is pinned at the top of the menu                                       |
-| `availabilityType`                      | `'GLOBAL' \| 'RECORD_SELECTION'` (optional) | `GLOBAL` shows the command everywhere; `RECORD_SELECTION` shows it only in record contexts |
-| `availabilityObjectUniversalIdentifier` | `string` (optional)                         | Restrict the command to a specific object type (e.g., Person)                              |
+| Feld                                    | Typ                                         | Beschreibung                                                                                    |
+| --------------------------------------- | ------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| `universalIdentifier`                   | `string` (erforderlich)                     | Eindeutige ID für den Befehlsmenü-Eintrag                                                       |
+| `beschriftung`                          | `string` (erforderlich)                     | Angezeigtes Label im Befehlsmenü                                                                |
+| `symbol`                                | `string` (optional)                         | Iconname (z. B. 'IconSparkles')                                                                 |
+| `isPinned`                              | `boolean` (optional)                        | Ob der Befehl oben im Menü angeheftet ist                                                       |
+| `availabilityType`                      | `'GLOBAL' \| 'RECORD_SELECTION'` (optional) | `GLOBAL` zeigt den Befehl überall an; `RECORD_SELECTION` zeigt ihn nur in Datensatzkontexten an |
+| `availabilityObjectUniversalIdentifier` | `string` (optional)                         | Beschränkt den Befehl auf einen bestimmten Objekttyp (z. B. Person)                             |
 
-Here is an example from the call-recording app that adds a command scoped to Person records:
+Hier ist ein Beispiel aus der Call-Recording-App, das einen auf Person-Datensätze beschränkten Befehl hinzufügt:
 
 ```typescript
 import { defineFrontComponent } from 'twenty-sdk';
@@ -903,20 +903,20 @@ export default defineFrontComponent({
 });
 ```
 
-When the command is synced, it appears in the command menu. If the front component is non-headless the side panel opens with the component rendered inside. If it is headless the component mounts in the background and executes its logic.
+Wenn der Befehl synchronisiert wird, erscheint er im Befehlsmenü. Wenn die Front-Komponente Nicht-Headless ist, öffnet sich das Seitenpanel und die Komponente wird darin gerendert. Wenn sie Headless ist, wird die Komponente im Hintergrund gemountet und führt ihre Logik aus.
 
-#### SDK Command components
+#### SDK-Command-Komponenten
 
-The `twenty-sdk` package provides four Command helper components designed for headless front components. Each component executes an action on mount, handles errors by showing a snackbar notification, and automatically unmounts the front component when done.
+Das Paket `twenty-sdk` stellt vier Command-Hilfskomponenten bereit, die für Headless-Front-Komponenten ausgelegt sind. Jede Komponente führt beim Mounten eine Aktion aus, behandelt Fehler durch Anzeige einer Snackbar-Benachrichtigung und unmountet die Front-Komponente nach Abschluss automatisch.
 
-Import them from `twenty-sdk/command`:
+Importieren Sie sie aus `twenty-sdk/command`:
 
-* **`Command`** — Runs an async callback via the `execute` prop.
-* **`CommandLink`** — Navigates to an app path. Props: `to`, `params`, `queryParams`, `options`.
-* **`CommandModal`** — Opens a confirmation modal. If the user confirms, executes the `execute` callback. Props: `title`, `subtitle`, `execute`, `confirmButtonText`, `confirmButtonAccent`.
-* **`CommandOpenSidePanelPage`** — Opens a specific side panel page. Props: `page`, `pageTitle`, `pageIcon`.
+* **`Command`** — Führt einen asynchronen Callback über das Prop `execute` aus.
+* **`CommandLink`** — Navigiert zu einem App-Pfad. Props: `to`, `params`, `queryParams`, `options`.
+* **`CommandModal`** — Öffnet einen Bestätigungsdialog. Bestätigt der Benutzer, wird der Callback `execute` ausgeführt. Props: `title`, `subtitle`, `execute`, `confirmButtonText`, `confirmButtonAccent`.
+* **`CommandOpenSidePanelPage`** — Öffnet eine bestimmte Seite im Seitenpanel. Props: `page`, `pageTitle`, `pageIcon`.
 
-Here is a full example of a headless front component using `Command` to run an action from the command menu:
+Hier ist ein vollständiges Beispiel einer Headless-Front-Komponente, die `Command` verwendet, um eine Aktion aus dem Befehlsmenü auszuführen:
 
 ```typescript
 // src/front-components/run-action.tsx
@@ -953,7 +953,7 @@ export default defineFrontComponent({
 });
 ```
 
-And an example using `CommandModal` to ask for confirmation before executing:
+Und ein Beispiel, das `CommandModal` verwendet, um vor der Ausführung um Bestätigung zu bitten:
 
 ```typescript
 // src/front-components/delete-draft.tsx
@@ -990,15 +990,15 @@ export default defineFrontComponent({
 });
 ```
 
-#### Execution context
+#### Ausführungskontext
 
-Every front component receives an execution context that provides information about where and how it is running. Access context values using hooks from `twenty-sdk`:
+Jede Front-Komponente erhält einen Ausführungskontext, der Informationen darüber liefert, wo und wie sie ausgeführt wird. Greifen Sie mit Hooks aus `twenty-sdk` auf Kontextwerte zu:
 
-| Hook                    | Return type      | Beschreibung                                                                                                                                                      |
-| ----------------------- | ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `useFrontComponentId()` | `string`         | The unique ID of the current front component instance                                                                                                             |
-| `useRecordId()`         | `string \| null` | The ID of the current record, when the component runs in a record context (e.g., a record page widget or a command scoped to a record). Returns `null` otherwise. |
-| `useUserId()`           | `string \| null` | The ID of the current user                                                                                                                                        |
+| Hook                    | Rückgabetyp      | Beschreibung                                                                                                                                                                                                                         |
+| ----------------------- | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `useFrontComponentId()` | `string`         | Die eindeutige ID der aktuellen Front-Komponenteninstanz                                                                                                                                                                             |
+| `useRecordId()`         | `string \| null` | Die ID des aktuellen Datensatzes, wenn die Komponente in einem Datensatzkontext ausgeführt wird (z. B. ein Widget auf einer Datensatzseite oder ein auf einen Datensatz beschränkter Befehl). Andernfalls wird `null` zurückgegeben. |
+| `useUserId()`           | `string \| null` | Die ID des aktuellen Benutzers                                                                                                                                                                                                       |
 
 ```typescript
 import { useRecordId, useUserId } from 'twenty-sdk';
@@ -1016,11 +1016,11 @@ const MyWidget = () => {
 };
 ```
 
-The context is reactive — if the surrounding record changes, hooks automatically return the updated values.
+Der Kontext ist reaktiv — ändert sich der umgebende Datensatz, liefern die Hooks automatisch die aktualisierten Werte.
 
-#### Host API functions
+#### Host-API-Funktionen
 
-Front components run in an isolated sandbox but can interact with Twenty's UI through a set of functions provided by the host. Import them directly from `twenty-sdk`:
+Front-Komponenten laufen in einer isolierten Sandbox, können jedoch über eine Reihe vom Host bereitgestellter Funktionen mit der UI von Twenty interagieren. Importieren Sie sie direkt aus `twenty-sdk`:
 
 ```typescript
 import {
@@ -1033,16 +1033,16 @@ import {
 } from 'twenty-sdk';
 ```
 
-| Funktion                       | Signature                                                | Beschreibung                                                                                                                                                            |
-| ------------------------------ | -------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `navigieren`                   | `(to, params?, queryParams?, options?) => Promise<void>` | Navigate to a typed app path within Twenty                                                                                                                              |
-| `closeSidePanel`               | `() => Promise<void>`                                    | Close the side panel                                                                                                                                                    |
-| `enqueueSnackbar`              | `(params) => Promise<void>`                              | Show a snackbar notification. Params: `message`, `variant` (`'error'`, `'success'`, `'info'`, `'warning'`), optional `duration`, `detailedMessage`, `dedupeKey`         |
-| `unmountFrontComponent`        | `() => Promise<void>`                                    | Unmount the current front component (used by headless components to clean up after execution)                                                                           |
-| `openSidePanelPage`            | `(params) => Promise<void>`                              | Open a page in the side panel. Params: `page`, `pageTitle`, `pageIcon`, `shouldResetSearchState`                                                                        |
-| `openCommandConfirmationModal` | `(params) => Promise<'confirm' \| 'cancel'>`             | Show a confirmation modal and wait for the user's response. Params: `title`, `subtitle`, `confirmButtonText`, `confirmButtonAccent` (`'default'`, `'blue'`, `'danger'`) |
+| Funktion                       | Signatur                                                 | Beschreibung                                                                                                                                                                               |
+| ------------------------------ | -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `navigieren`                   | `(to, params?, queryParams?, options?) => Promise<void>` | Navigieren Sie zu einem typisierten App-Pfad innerhalb von Twenty                                                                                                                          |
+| `closeSidePanel`               | `() => Promise<void>`                                    | Seitenpanel schließen                                                                                                                                                                      |
+| `enqueueSnackbar`              | `(params) => Promise<void>`                              | Eine Snackbar-Benachrichtigung anzeigen. Parameter: `message`, `variant` (`'error'`, `'success'`, `'info'`, `'warning'`), optional `duration`, `detailedMessage`, `dedupeKey`              |
+| `unmountFrontComponent`        | `() => Promise<void>`                                    | Die aktuelle Front-Komponente unmounten (wird von Headless-Komponenten verwendet, um nach der Ausführung aufzuräumen)                                                                      |
+| `openSidePanelPage`            | `(params) => Promise<void>`                              | Eine Seite im Seitenpanel öffnen. Parameter: `page`, `pageTitle`, `pageIcon`, `shouldResetSearchState`                                                                                     |
+| `openCommandConfirmationModal` | `(params) => Promise<'confirm' \| 'cancel'>`             | Einen Bestätigungsdialog anzeigen und auf die Antwort des Benutzers warten. Parameter: `title`, `subtitle`, `confirmButtonText`, `confirmButtonAccent` (`'default'`, `'blue'`, `'danger'`) |
 
-Here is an example that uses the host API to show a snackbar and close the side panel after an action completes:
+Hier ist ein Beispiel, das die Host-API verwendet, um nach Abschluss einer Aktion eine Snackbar anzuzeigen und das Seitenpanel zu schließen:
 
 ```typescript
 import { defineFrontComponent, useRecordId } from 'twenty-sdk';

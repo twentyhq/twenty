@@ -837,20 +837,20 @@ Yeni ön uç bileşenlerini iki şekilde oluşturabilirsiniz:
 * **Şablondan**: `yarn twenty entity:add` çalıştırın ve yeni bir ön uç bileşeni ekleme seçeneğini seçin.
 * **Manuel**: Aynı deseni izleyerek yeni bir `.tsx` dosyası oluşturun ve `defineFrontComponent()` kullanın.
 
-#### Where front components can be used
+#### Ön bileşenlerin kullanılabileceği yerler
 
-Front components can render in two locations within Twenty:
+Ön bileşenler, Twenty içinde iki konumda işlenebilir:
 
-* **Side panel** — Non-headless front components open in the right-hand side panel. This is the default behavior when a front component is triggered from the command menu.
-* **Widgets (dashboards and record pages)** — Front components can be embedded as widgets inside page layouts. When configuring a dashboard or a record page layout, users can add a front component widget.
+* **Yan panel** — Headless olmayan ön bileşenler, sağ taraftaki yan panelde açılır. Bir ön bileşen komut menüsünden tetiklendiğinde varsayılan davranış budur.
+* **Widget'lar (panolar ve kayıt sayfaları)** — Ön bileşenler, sayfa düzenlerine widget olarak gömülebilir. Bir pano veya kayıt sayfası düzeni yapılandırılırken kullanıcılar bir ön bileşen widget'ı ekleyebilir.
 
-#### Headless vs non-headless
+#### Headless ve headless olmayan
 
-Front components come in two rendering modes controlled by the `isHeadless` option:
+Ön bileşenler, `isHeadless` seçeneğiyle kontrol edilen iki işleme kipiyle gelir:
 
-**Non-headless (default)** — The component renders a visible UI. When triggered from the command menu it opens in the side panel. This is the default behavior when `isHeadless` is `false` or omitted.
+**Headless olmayan (varsayılan)** — Bileşen görünür bir kullanıcı arayüzü (UI) oluşturur. Komut menüsünden tetiklendiğinde yan panelde açılır. `isHeadless` `false` olduğunda veya belirtilmediğinde bu varsayılan davranıştır.
 
-**Headless** — The component mounts invisibly in the background. It does not open the side panel. Headless components are designed for actions that execute logic and then unmount themselves — for example, running an async task, navigating to a page, or showing a confirmation modal. They pair naturally with the SDK Command components described below.
+**Headless** — Bileşen arka planda görünmez şekilde bağlanır. Yan paneli açmaz. Headless bileşenler, mantığı çalıştırıp ardından kendilerini kaldıran eylemler için tasarlanmıştır — örneğin, bir async görevi çalıştırma, bir sayfaya gitme veya bir onay modalı gösterme. Aşağıda açıklanan SDK Command bileşenleriyle doğal olarak eşleşirler.
 
 ```typescript
 export default defineFrontComponent({
@@ -866,22 +866,22 @@ export default defineFrontComponent({
 });
 ```
 
-#### Adding command menu items
+#### Komut menüsüne öğe ekleme
 
-To make a front component appear as an item in Twenty's command menu, add the `command` property to `defineFrontComponent()`. When users open the command menu (Cmd+K / Ctrl+K), the item shows up and triggers the front component on click.
+Bir ön bileşenin Twenty'nin komut menüsünde bir öğe olarak görünmesi için `defineFrontComponent()` içine `command` özelliğini ekleyin. Kullanıcılar komut menüsünü (Cmd+K / Ctrl+K) açtığında, öğe görüntülenir ve tıklandığında ön bileşeni tetikler.
 
-The `command` object accepts the following fields:
+`command` nesnesi aşağıdaki alanları kabul eder:
 
-| Alan                                    | Tür                                         | Açıklama                                                                                   |
-| --------------------------------------- | ------------------------------------------- | ------------------------------------------------------------------------------------------ |
-| `universalIdentifier`                   | `string` (required)                         | Unique ID for the command menu item                                                        |
-| `etiket`                                | `string` (required)                         | Display label shown in the command menu                                                    |
-| `simge`                                 | `string` (optional)                         | Icon name (e.g., `'IconSparkles'`)                                                         |
-| `isPinned`                              | `boolean` (optional)                        | Whether the command is pinned at the top of the menu                                       |
-| `availabilityType`                      | `'GLOBAL' \| 'RECORD_SELECTION'` (optional) | `GLOBAL` shows the command everywhere; `RECORD_SELECTION` shows it only in record contexts |
-| `availabilityObjectUniversalIdentifier` | `string` (optional)                         | Restrict the command to a specific object type (e.g., Person)                              |
+| Alan                                    | Tür                                             | Açıklama                                                                                         |
+| --------------------------------------- | ----------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| `universalIdentifier`                   | `string` (zorunlu)                              | Komut menüsü öğesi için benzersiz kimlik                                                         |
+| `etiket`                                | `string` (zorunlu)                              | Komut menüsünde gösterilen etiket                                                                |
+| `simge`                                 | `string` (isteğe bağlı)                         | Simge adı (ör. `'IconSparkles'`)                                                                 |
+| `isPinned`                              | `boolean` (isteğe bağlı)                        | Komutun menünün en üstüne sabitlenip sabitlenmediği                                              |
+| `availabilityType`                      | `'GLOBAL' \| 'RECORD_SELECTION'` (isteğe bağlı) | `GLOBAL` komutu her yerde gösterir; `RECORD_SELECTION` ise yalnızca kayıt bağlamlarında gösterir |
+| `availabilityObjectUniversalIdentifier` | `string` (isteğe bağlı)                         | Komutu belirli bir nesne türüyle sınırlandırın (ör. Person)                                      |
 
-Here is an example from the call-recording app that adds a command scoped to Person records:
+Person kayıtlarına özel bir komut ekleyen çağrı kaydı uygulamasından bir örnek:
 
 ```typescript
 import { defineFrontComponent } from 'twenty-sdk';
@@ -903,20 +903,20 @@ export default defineFrontComponent({
 });
 ```
 
-When the command is synced, it appears in the command menu. If the front component is non-headless the side panel opens with the component rendered inside. If it is headless the component mounts in the background and executes its logic.
+Komut senkronize edildiğinde komut menüsünde görünür. Ön bileşen headless değilse, yan panel bileşen içeride işlenmiş halde açılır. Headless ise bileşen arka planda bağlanır ve mantığını yürütür.
 
-#### SDK Command components
+#### SDK Command bileşenleri
 
-The `twenty-sdk` package provides four Command helper components designed for headless front components. Each component executes an action on mount, handles errors by showing a snackbar notification, and automatically unmounts the front component when done.
+`twenty-sdk` paketi, headless ön bileşenler için tasarlanmış dört Command yardımcı bileşeni sağlar. Her bileşen bağlandığında bir eylem yürütür, hataları bir snackbar bildirimi göstererek ele alır ve tamamlandığında ön bileşeni otomatik olarak kaldırır.
 
-Import them from `twenty-sdk/command`:
+Bunları `twenty-sdk/command` içinden içe aktarın:
 
-* **`Command`** — Runs an async callback via the `execute` prop.
-* **`CommandLink`** — Navigates to an app path. Props: `to`, `params`, `queryParams`, `options`.
-* **`CommandModal`** — Opens a confirmation modal. If the user confirms, executes the `execute` callback. Props: `title`, `subtitle`, `execute`, `confirmButtonText`, `confirmButtonAccent`.
-* **`CommandOpenSidePanelPage`** — Opens a specific side panel page. Props: `page`, `pageTitle`, `pageIcon`.
+* **`Command`** — `execute` prop'u aracılığıyla async bir geri çağrıyı çalıştırır.
+* **`CommandLink`** — Bir uygulama yoluna gider. Props: `to`, `params`, `queryParams`, `options`.
+* **`CommandModal`** — Bir onay modalı açar. Kullanıcı onaylarsa `execute` geri çağrısını yürütür. Props: `title`, `subtitle`, `execute`, `confirmButtonText`, `confirmButtonAccent`.
+* **`CommandOpenSidePanelPage`** — Belirli bir yan panel sayfasını açar. Props: `page`, `pageTitle`, `pageIcon`.
 
-Here is a full example of a headless front component using `Command` to run an action from the command menu:
+`Command` kullanarak komut menüsünden bir eylem çalıştıran headless bir ön bileşenin tam örneği:
 
 ```typescript
 // src/front-components/run-action.tsx
@@ -953,7 +953,7 @@ export default defineFrontComponent({
 });
 ```
 
-And an example using `CommandModal` to ask for confirmation before executing:
+Ve yürütmeden önce onay istemek için `CommandModal` kullanan bir örnek:
 
 ```typescript
 // src/front-components/delete-draft.tsx
@@ -990,15 +990,15 @@ export default defineFrontComponent({
 });
 ```
 
-#### Execution context
+#### Yürütme bağlamı
 
-Every front component receives an execution context that provides information about where and how it is running. Access context values using hooks from `twenty-sdk`:
+Her ön bileşen, nerede ve nasıl çalıştığına dair bilgi sağlayan bir yürütme bağlamı alır. Bağlam değerlerine `twenty-sdk` içindeki hook'ları kullanarak erişin:
 
-| Hook                    | Return type      | Açıklama                                                                                                                                                          |
-| ----------------------- | ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `useFrontComponentId()` | `string`         | The unique ID of the current front component instance                                                                                                             |
-| `useRecordId()`         | `string \| null` | The ID of the current record, when the component runs in a record context (e.g., a record page widget or a command scoped to a record). Returns `null` otherwise. |
-| `useUserId()`           | `string \| null` | The ID of the current user                                                                                                                                        |
+| Hook                    | Dönüş türü       | Açıklama                                                                                                                                                  |
+| ----------------------- | ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `useFrontComponentId()` | `string`         | Geçerli ön bileşen örneğinin benzersiz kimliği                                                                                                            |
+| `useRecordId()`         | `string \| null` | Bileşen bir kayıt bağlamında çalıştığında (ör. bir kayıt sayfası widget'ı veya bir kayda özel bir komut) geçerli kaydın kimliği. Aksi halde `null` döner. |
+| `useUserId()`           | `string \| null` | Geçerli kullanıcının kimliği                                                                                                                              |
 
 ```typescript
 import { useRecordId, useUserId } from 'twenty-sdk';
@@ -1016,11 +1016,11 @@ const MyWidget = () => {
 };
 ```
 
-The context is reactive — if the surrounding record changes, hooks automatically return the updated values.
+Bağlam tepkiseldir — çevredeki kayıt değişirse, hook'lar güncellenmiş değerleri otomatik olarak döndürür.
 
-#### Host API functions
+#### Host API işlevleri
 
-Front components run in an isolated sandbox but can interact with Twenty's UI through a set of functions provided by the host. Import them directly from `twenty-sdk`:
+Ön bileşenler yalıtılmış bir korumalı alanda çalışır ancak host tarafından sağlanan bir dizi işleve aracılığıyla Twenty'nin arayüzüyle etkileşime girebilir. Bunları doğrudan `twenty-sdk` içinden içe aktarın:
 
 ```typescript
 import {
@@ -1033,16 +1033,16 @@ import {
 } from 'twenty-sdk';
 ```
 
-| Fonksiyon                      | Signature                                                | Açıklama                                                                                                                                                                |
-| ------------------------------ | -------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `gezin`                        | `(to, params?, queryParams?, options?) => Promise<void>` | Navigate to a typed app path within Twenty                                                                                                                              |
-| `closeSidePanel`               | `() => Promise<void>`                                    | Close the side panel                                                                                                                                                    |
-| `enqueueSnackbar`              | `(params) => Promise<void>`                              | Show a snackbar notification. Params: `message`, `variant` (`'error'`, `'success'`, `'info'`, `'warning'`), optional `duration`, `detailedMessage`, `dedupeKey`         |
-| `unmountFrontComponent`        | `() => Promise<void>`                                    | Unmount the current front component (used by headless components to clean up after execution)                                                                           |
-| `openSidePanelPage`            | `(params) => Promise<void>`                              | Open a page in the side panel. Params: `page`, `pageTitle`, `pageIcon`, `shouldResetSearchState`                                                                        |
-| `openCommandConfirmationModal` | `(params) => Promise<'confirm' \| 'cancel'>`             | Show a confirmation modal and wait for the user's response. Params: `title`, `subtitle`, `confirmButtonText`, `confirmButtonAccent` (`'default'`, `'blue'`, `'danger'`) |
+| Fonksiyon                      | İmza                                                     | Açıklama                                                                                                                                                                      |
+| ------------------------------ | -------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `gezin`                        | `(to, params?, queryParams?, options?) => Promise<void>` | Twenty içinde tiplendirilmiş bir uygulama yoluna gidin                                                                                                                        |
+| `closeSidePanel`               | `() => Promise<void>`                                    | Yan paneli kapat                                                                                                                                                              |
+| `enqueueSnackbar`              | `(params) => Promise<void>`                              | Bir snackbar bildirimi gösterin. Parametreler: `message`, `variant` (`'error'`, `'success'`, `'info'`, `'warning'`), isteğe bağlı `duration`, `detailedMessage`, `dedupeKey`  |
+| `unmountFrontComponent`        | `() => Promise<void>`                                    | Geçerli ön bileşeni kaldırın (yürütmeden sonra temizlemek için headless bileşenler tarafından kullanılır)                                                                     |
+| `openSidePanelPage`            | `(params) => Promise<void>`                              | Yan panelde bir sayfa açın. Parametreler: `page`, `pageTitle`, `pageIcon`, `shouldResetSearchState`                                                                           |
+| `openCommandConfirmationModal` | `(params) => Promise<'confirm' \| 'cancel'>`             | Bir onay modalı gösterin ve kullanıcının yanıtını bekleyin. Parametreler: `title`, `subtitle`, `confirmButtonText`, `confirmButtonAccent` (`'default'`, `'blue'`, `'danger'`) |
 
-Here is an example that uses the host API to show a snackbar and close the side panel after an action completes:
+Bir eylem tamamlandıktan sonra bir snackbar göstermek ve yan paneli kapatmak için host API'sini kullanan bir örnek:
 
 ```typescript
 import { defineFrontComponent, useRecordId } from 'twenty-sdk';
