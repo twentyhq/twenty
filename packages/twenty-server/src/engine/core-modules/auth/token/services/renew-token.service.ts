@@ -86,9 +86,13 @@ export class RenewTokenService {
             impersonatedUserWorkspaceId,
           });
 
+    // Coerce null → undefined so that workspaceId is omitted from the JWT
+    // payload. When the key is present with a null value, verifyJwtToken's
+    // `'workspaceId' in payload` check selects null as the secret body and
+    // rejects the token with "Invalid token type" on the next renewal.
     const refreshToken = await this.refreshTokenService.generateRefreshToken({
       userId: user.id,
-      workspaceId,
+      workspaceId: workspaceId ?? undefined,
       authProvider: resolvedAuthProvider,
       targetedTokenType,
       isImpersonating,

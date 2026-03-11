@@ -16,12 +16,13 @@ import { RenewTokenService } from './renew-token.service';
 
 describe('RenewTokenService', () => {
   let service: RenewTokenService;
+  let module: TestingModule;
   let appTokenRepository: Repository<AppTokenEntity>;
   let accessTokenService: AccessTokenService;
   let refreshTokenService: RefreshTokenService;
 
   beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
+    module = await Test.createTestingModule({
       providers: [
         RenewTokenService,
         {
@@ -180,6 +181,60 @@ describe('RenewTokenService', () => {
           isImpersonating: true,
           impersonatorUserWorkspaceId: 'uw-imp',
           impersonatedUserWorkspaceId: 'uw-orig',
+        }),
+      );
+    });
+
+    it('should pass undefined workspaceId when renewing a workspace-agnostic token with null workspaceId', async () => {
+      const mockRefreshToken = 'valid-refresh-token';
+      const mockUser = { id: 'user-id' } as UserEntity;
+      const mockTokenId = 'token-id';
+      const mockWAToken = {
+        token: 'new-wa-token',
+        expiresAt: new Date(),
+      };
+      const mockNewRefreshToken = {
+        token: 'new-refresh-token',
+        expiresAt: new Date(),
+        targetedTokenType: JwtTokenTypeEnum.WORKSPACE_AGNOSTIC,
+      };
+      const mockAppToken = {
+        id: mockTokenId,
+        workspaceId: null,
+      } as AppTokenEntity;
+
+      const workspaceAgnosticTokenService = module.get<WorkspaceAgnosticTokenService>(
+        WorkspaceAgnosticTokenService,
+      );
+
+      jest.spyOn(refreshTokenService, 'verifyRefreshToken').mockResolvedValue({
+        user: mockUser,
+        token: mockAppToken as AppTokenEntity,
+        authProvider: AuthProviderEnum.Google,
+        targetedTokenType: JwtTokenTypeEnum.WORKSPACE_AGNOSTIC,
+        isImpersonating: false,
+        impersonatorUserWorkspaceId: undefined,
+        impersonatedUserWorkspaceId: undefined,
+      });
+      jest.spyOn(appTokenRepository, 'update').mockResolvedValue({} as any);
+      jest
+        .spyOn(workspaceAgnosticTokenService, 'generateWorkspaceAgnosticToken')
+        .mockResolvedValue(mockWAToken);
+      const refreshSpy = jest
+        .spyOn(refreshTokenService, 'generateRefreshToken')
+        .mockResolvedValue(mockNewRefreshToken);
+
+      await service.generateTokensFromRefreshToken(mockRefreshToken);
+
+      // workspaceId must be undefined (not null) so it is omitted from the
+      // JWT payload — a null value would cause verifyJwtToken to reject the
+      // token with "Invalid token type" on the next renewal.
+      expect(refreshSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          userId: mockUser.id,
+          workspaceId: undefined,
+          authProvider: AuthProviderEnum.Google,
+          targetedTokenType: JwtTokenTypeEnum.WORKSPACE_AGNOSTIC,
         }),
       );
     });

@@ -58,8 +58,12 @@ export class JwtWrapperService {
 
     const type = payload.type;
 
+    // Prefer workspaceId when present and non-null, then fall back to userId.
+    // Tokens renewed from a workspace-agnostic session may carry an explicit
+    // `workspaceId: null` key — the `in` operator would match it, but the
+    // null value is not a valid secret body. Using isDefined guards both cases.
     const appSecretBody =
-      'workspaceId' in payload
+      'workspaceId' in payload && isDefined(payload.workspaceId)
         ? payload.workspaceId
         : 'userId' in payload
           ? payload.userId
@@ -67,7 +71,7 @@ export class JwtWrapperService {
 
     if (!isDefined(appSecretBody)) {
       throw new AuthException(
-        'Invalid token type',
+        `Invalid token type: missing secret body for type ${type ?? 'undefined'}`,
         AuthExceptionCode.INVALID_JWT_TOKEN_TYPE,
       );
     }
