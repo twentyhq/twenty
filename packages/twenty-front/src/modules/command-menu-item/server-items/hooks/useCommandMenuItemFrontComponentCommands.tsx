@@ -140,8 +140,7 @@ const buildCommandMenuItemFromStandardKey = ({
 }: BuildCommandMenuItemFromStandardKeyParams) => {
   const Icon = getIcon(item.icon, COMMAND_MENU_DEFAULT_ICON);
 
-  const component =
-    ENGINE_COMPONENT_KEY_COMPONENT_MAP[engineComponentKey];
+  const component = ENGINE_COMPONENT_KEY_COMPONENT_MAP[engineComponentKey];
 
   return {
     type,

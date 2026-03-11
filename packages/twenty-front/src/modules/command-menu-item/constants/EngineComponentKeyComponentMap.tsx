@@ -28,33 +28,23 @@ export const ENGINE_COMPONENT_KEY_COMPONENT_MAP: Record<
   [EngineComponentKey.CREATE_NEW_RECORD]: (
     <CreateNewIndexRecordNoSelectionRecordCommand />
   ),
-  [EngineComponentKey.DELETE_SINGLE_RECORD]: (
-    <DeleteSingleRecordCommand />
-  ),
+  [EngineComponentKey.DELETE_SINGLE_RECORD]: <DeleteSingleRecordCommand />,
   [EngineComponentKey.DELETE_MULTIPLE_RECORDS]: (
     <DeleteMultipleRecordsCommand />
   ),
-  [EngineComponentKey.RESTORE_SINGLE_RECORD]: (
-    <RestoreSingleRecordCommand />
-  ),
+  [EngineComponentKey.RESTORE_SINGLE_RECORD]: <RestoreSingleRecordCommand />,
   [EngineComponentKey.RESTORE_MULTIPLE_RECORDS]: (
     <RestoreMultipleRecordsCommand />
   ),
-  [EngineComponentKey.DESTROY_SINGLE_RECORD]: (
-    <DestroySingleRecordCommand />
-  ),
+  [EngineComponentKey.DESTROY_SINGLE_RECORD]: <DestroySingleRecordCommand />,
   [EngineComponentKey.DESTROY_MULTIPLE_RECORDS]: (
     <DestroyMultipleRecordsCommand />
   ),
-  [EngineComponentKey.ADD_TO_FAVORITES]: (
-    <AddToFavoritesSingleRecordCommand />
-  ),
+  [EngineComponentKey.ADD_TO_FAVORITES]: <AddToFavoritesSingleRecordCommand />,
   [EngineComponentKey.REMOVE_FROM_FAVORITES]: (
     <RemoveFromFavoritesSingleRecordCommand />
   ),
-  [EngineComponentKey.MERGE_MULTIPLE_RECORDS]: (
-    <MergeMultipleRecordsCommand />
-  ),
+  [EngineComponentKey.MERGE_MULTIPLE_RECORDS]: <MergeMultipleRecordsCommand />,
   [EngineComponentKey.DUPLICATE_DASHBOARD]: (
     <DuplicateDashboardSingleRecordCommand />
   ),
@@ -70,9 +60,7 @@ export const ENGINE_COMPONENT_KEY_COMPONENT_MAP: Record<
   [EngineComponentKey.DISCARD_DRAFT_WORKFLOW]: (
     <DiscardDraftWorkflowSingleRecordCommand />
   ),
-  [EngineComponentKey.TEST_WORKFLOW]: (
-    <TestWorkflowSingleRecordCommand />
-  ),
+  [EngineComponentKey.TEST_WORKFLOW]: <TestWorkflowSingleRecordCommand />,
   [EngineComponentKey.STOP_WORKFLOW_RUN]: (
     <StopWorkflowRunSingleRecordCommand />
   ),
@@ -85,7 +73,5 @@ export const ENGINE_COMPONENT_KEY_COMPONENT_MAP: Record<
   [EngineComponentKey.SAVE_DASHBOARD_LAYOUT]: (
     <SaveDashboardSingleRecordCommand />
   ),
-  [EngineComponentKey.TIDY_UP_WORKFLOW]: (
-    <TidyUpWorkflowSingleRecordCommand />
-  ),
+  [EngineComponentKey.TIDY_UP_WORKFLOW]: <TidyUpWorkflowSingleRecordCommand />,
 };

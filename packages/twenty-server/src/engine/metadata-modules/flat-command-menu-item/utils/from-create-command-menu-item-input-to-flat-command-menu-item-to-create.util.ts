@@ -71,8 +71,7 @@ export const fromCreateCommandMenuItemInputToFlatCommandMenuItemToCreate = ({
     workflowVersionId: createCommandMenuItemInput.workflowVersionId ?? null,
     frontComponentId: createCommandMenuItemInput.frontComponentId ?? null,
     frontComponentUniversalIdentifier,
-    engineComponentKey:
-      createCommandMenuItemInput.engineComponentKey ?? null,
+    engineComponentKey: createCommandMenuItemInput.engineComponentKey ?? null,
     label: createCommandMenuItemInput.label,
     icon: createCommandMenuItemInput.icon ?? null,
     shortLabel: createCommandMenuItemInput.shortLabel ?? null,
