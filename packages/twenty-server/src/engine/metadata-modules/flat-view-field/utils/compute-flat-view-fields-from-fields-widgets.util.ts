@@ -160,7 +160,6 @@ export const computeFlatViewFieldsFromFieldsWidgets = ({
         continue;
       }
 
-      // Find the last view field group for this view dynamically
       const viewFieldGroupId = findLastViewFieldGroupId({
         viewId,
         flatViewFieldGroupMaps,
