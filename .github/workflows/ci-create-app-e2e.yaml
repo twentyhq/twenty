@@ -162,7 +162,7 @@ jobs:
         run: |
           npx nx start twenty-server &
           echo "Waiting for server to be ready..."
-          timeout 60 bash -c 'until curl -s http://localhost:3000/health; do sleep 2; done'
+          timeout 60 bash -c 'until curl -sf http://localhost:3000/health; do sleep 2; done'
 
       - name: Authenticate with twenty-server
         env:
