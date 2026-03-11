@@ -53,7 +53,10 @@ export class DevSeederService {
     private readonly coreDataSource: DataSource,
   ) {}
 
-  public async seedDev(workspaceId: SeededWorkspacesIds): Promise<void> {
+  public async seedDev(
+    workspaceId: SeededWorkspacesIds,
+    options: { includeApps?: boolean } = {},
+  ): Promise<void> {
     const isBillingEnabled = this.twentyConfigService.get('IS_BILLING_ENABLED');
     const appVersion = this.twentyConfigService.get('APP_VERSION');
 
@@ -94,7 +97,9 @@ export class DevSeederService {
       },
     );
 
-    await this.seedApps(workspaceId);
+    if (options.includeApps) {
+      await this.seedApps(workspaceId);
+    }
 
     await this.devSeederMetadataService.seed({
       dataSourceMetadata,
