@@ -1,7 +1,9 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class CoreMigrationCheck1773245779156 implements MigrationInterface {
-  name = 'CoreMigrationCheck1773245779156';
+export class AddEngineComponentKeyToCommandMenuItem1773245779156
+  implements MigrationInterface
+{
+  name = 'AddEngineComponentKeyToCommandMenuItem1773245779156';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
