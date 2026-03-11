@@ -80,7 +80,7 @@ export class CreateAppCommand {
         name: 'name',
         message: 'Application name:',
         when: () => !hasName,
-        default: 'my-awesome-app',
+        default: 'my-twenty-app',
         validate: (input) => {
           if (input.length === 0) return 'Application name is required';
           return true;
@@ -110,7 +110,7 @@ export class CreateAppCommand {
       options.name ??
       name ??
       directory ??
-      'my-awesome-app'
+      'my-twenty-app'
     ).trim();
 
     const appDisplayName =

@@ -126,6 +126,22 @@ describe('copyBaseApplicationProject', () => {
     expect(gitignoreContent).toContain(GENERATED_DIR);
   });
 
+  it('should create yarn.lock file', async () => {
+    await copyBaseApplicationProject({
+      appName: 'my-test-app',
+      appDisplayName: 'My Test App',
+      appDescription: 'A test application',
+      appDirectory: testAppDirectory,
+      exampleOptions: ALL_EXAMPLES,
+    });
+
+    const yarnLockPath = join(testAppDirectory, 'yarn.lock');
+    expect(await fs.pathExists(yarnLockPath)).toBe(true);
+
+    const yarnLockContent = await fs.readFile(yarnLockPath, 'utf8');
+    expect(yarnLockContent).toContain('yarn lockfile v1');
+  });
+
   it('should create application-config.ts with defineApplication and correct values', async () => {
     await copyBaseApplicationProject({
       appName: 'my-test-app',
