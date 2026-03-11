@@ -4162,6 +4162,7 @@ enum AllMetadataName {
   pageLayoutTab
   commandMenuItem
   navigationMenuItem
+  permissionFlag
   frontComponent
   webhook
 }
