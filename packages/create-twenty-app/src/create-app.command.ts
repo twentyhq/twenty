@@ -106,7 +106,12 @@ export class CreateAppCommand {
       },
     ]);
 
-    const appName = (options.name ?? name ?? directory ?? 'my-awesome-app').trim();
+    const appName = (
+      options.name ??
+      name ??
+      directory ??
+      'my-awesome-app'
+    ).trim();
 
     const appDisplayName =
       (options.displayName ?? displayName)?.trim() || convertToLabel(appName);
