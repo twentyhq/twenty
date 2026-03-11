@@ -12,7 +12,7 @@ import {
   AppTokenEntity,
   AppTokenType,
 } from 'src/engine/core-modules/app-token/app-token.entity';
-import { ENTERPRISE_PUBLIC_KEY } from 'src/engine/core-modules/enterprise/constants/enterprise-public-key.constant';
+import { ENTERPRISE_JWT_PUBLIC_KEY } from 'src/engine/core-modules/enterprise/constants/enterprise-public-key.constant';
 import {
   type EnterpriseKeyPayload,
   type EnterpriseLicenseInfo,
@@ -493,7 +493,7 @@ export class EnterprisePlanService implements OnModuleInit {
         'sha256',
         Buffer.from(signingInput),
         {
-          key: ENTERPRISE_PUBLIC_KEY,
+          key: ENTERPRISE_JWT_PUBLIC_KEY,
           padding: crypto.constants.RSA_PKCS1_PADDING,
         },
         signatureBuffer,
