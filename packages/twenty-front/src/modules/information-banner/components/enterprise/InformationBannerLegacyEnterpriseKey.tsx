@@ -16,7 +16,7 @@ export const InformationBannerLegacyEnterpriseKey = () => {
   const navigate = useNavigate();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
-  const setIsOpen = useSetAtomComponentState(
+  const setInformationBannerIsOpen = useSetAtomComponentState(
     informationBannerIsOpenComponentState,
     COMPONENT_INSTANCE_ID,
   );
@@ -39,7 +39,7 @@ export const InformationBannerLegacyEnterpriseKey = () => {
       buttonOnClick={() =>
         navigate(getSettingsPath(SettingsPath.AdminPanelEnterprise))
       }
-      onClose={() => setIsOpen(false)}
+      onClose={() => setInformationBannerIsOpen(false)}
     />
   );
 };

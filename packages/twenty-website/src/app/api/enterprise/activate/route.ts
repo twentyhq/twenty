@@ -39,8 +39,8 @@ export async function GET(request: Request) {
 
     const customer = session.customer;
     const licensee =
-      customer && typeof customer !== 'string'
-        ? customer.name ?? customer.email ?? 'Unknown'
+      customer && typeof customer !== 'string' && !customer.deleted
+        ? (customer.name ?? customer.email ?? 'Unknown')
         : 'Unknown';
 
     const enterpriseKey = signEnterpriseKey(subscription.id, licensee);
