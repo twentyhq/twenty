@@ -73,6 +73,7 @@ export const FieldsWidgetFieldItem = ({
         isDisplayModeFixHeight: true,
         isRecordFieldReadOnly: isRecordFieldReadOnly({
           isRecordReadOnly,
+          isSystemObject: objectMetadataItem.isSystem,
           objectPermissions: getObjectPermissionsFromMapByObjectMetadataId({
             objectPermissionsByObjectMetadataId,
             objectMetadataId: objectMetadataItem.id,
@@ -80,6 +81,7 @@ export const FieldsWidgetFieldItem = ({
           fieldMetadataItem: {
             id: fieldMetadataItem.id,
             isUIReadOnly: fieldMetadataItem.isUIReadOnly ?? false,
+            isCustom: fieldMetadataItem.isCustom ?? false,
           },
         }),
         onMouseEnter,

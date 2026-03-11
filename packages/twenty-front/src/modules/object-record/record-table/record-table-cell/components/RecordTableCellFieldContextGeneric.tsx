@@ -101,10 +101,12 @@ export const RecordTableCellFieldContextGeneric = ({
         displayedMaxRows: 1,
         isRecordFieldReadOnly: isRecordFieldReadOnly({
           isRecordReadOnly: isRecordReadOnly ?? false,
+          isSystemObject: objectMetadataItem.isSystem,
           objectPermissions,
           fieldMetadataItem: {
             id: fieldDefinition.fieldMetadataId,
             isUIReadOnly: fieldDefinition.metadata.isUIReadOnly ?? false,
+            isCustom: fieldDefinition.metadata.isCustom ?? false,
           },
         }),
         isForbidden: !hasObjectReadPermissions,
