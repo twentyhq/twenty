@@ -7,7 +7,33 @@ export class AddStandardFrontComponentKeyToCommandMenuItem1772932588833
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "core"."commandMenuItem" ADD "standardFrontComponentKey" character varying`,
+      `CREATE TYPE "core"."commandMenuItem_standardfrontcomponentkey_enum" AS ENUM(
+        'CREATE_NEW_RECORD',
+        'DELETE_SINGLE_RECORD',
+        'DELETE_MULTIPLE_RECORDS',
+        'RESTORE_SINGLE_RECORD',
+        'RESTORE_MULTIPLE_RECORDS',
+        'DESTROY_SINGLE_RECORD',
+        'DESTROY_MULTIPLE_RECORDS',
+        'ADD_TO_FAVORITES',
+        'REMOVE_FROM_FAVORITES',
+        'MERGE_MULTIPLE_RECORDS',
+        'DUPLICATE_DASHBOARD',
+        'DUPLICATE_WORKFLOW',
+        'ACTIVATE_WORKFLOW',
+        'DEACTIVATE_WORKFLOW',
+        'DISCARD_DRAFT_WORKFLOW',
+        'TEST_WORKFLOW',
+        'STOP_WORKFLOW_RUN',
+        'USE_AS_DRAFT_WORKFLOW_VERSION',
+        'SAVE_RECORD_PAGE_LAYOUT',
+        'SAVE_DASHBOARD_LAYOUT',
+        'TIDY_UP_WORKFLOW'
+      )`,
+    );
+
+    await queryRunner.query(
+      `ALTER TABLE "core"."commandMenuItem" ADD "standardFrontComponentKey" "core"."commandMenuItem_standardfrontcomponentkey_enum"`,
     );
 
     await queryRunner.query(
@@ -30,6 +56,10 @@ export class AddStandardFrontComponentKeyToCommandMenuItem1772932588833
 
     await queryRunner.query(
       `ALTER TABLE "core"."commandMenuItem" DROP COLUMN "standardFrontComponentKey"`,
+    );
+
+    await queryRunner.query(
+      `DROP TYPE "core"."commandMenuItem_standardfrontcomponentkey_enum"`,
     );
 
     await queryRunner.query(

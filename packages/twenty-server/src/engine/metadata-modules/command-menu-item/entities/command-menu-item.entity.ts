@@ -81,7 +81,11 @@ export class CommandMenuItemEntity
   @JoinColumn({ name: 'frontComponentId' })
   frontComponent: Relation<FrontComponentEntity> | null;
 
-  @Column({ nullable: true, type: 'varchar' })
+  @Column({
+    type: 'enum',
+    enum: StandardFrontComponentKey,
+    nullable: true,
+  })
   standardFrontComponentKey: StandardFrontComponentKey | null;
 
   @Column({ nullable: false })
