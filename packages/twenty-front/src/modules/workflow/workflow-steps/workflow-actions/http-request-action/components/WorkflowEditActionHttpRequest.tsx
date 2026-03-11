@@ -4,7 +4,7 @@ import { Select } from '@/ui/input/components/Select';
 import { type WorkflowHttpRequestAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 
-import { CmdEnterActionButton } from '@/action-menu/components/CmdEnterActionButton';
+import { WorkflowStepCmdEnterButton } from '@/workflow/workflow-steps/components/WorkflowStepCmdEnterButton';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
@@ -212,7 +212,7 @@ export const WorkflowEditActionHttpRequest = ({
           additionalActions={
             activeTabId === WorkflowHttpRequestTabId.TEST
               ? [
-                  <CmdEnterActionButton
+                  <WorkflowStepCmdEnterButton
                     title={t`Test`}
                     onClick={handleTestRequest}
                     disabled={isTesting}

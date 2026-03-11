@@ -164,6 +164,7 @@
     "tsc-alias": "^1.8.16",
     "tsconfig-paths": "^4.2.0",
     "tsx": "^4.17.0",
+    "verdaccio": "^6.3.1",
     "vite": "^7.0.0",
     "vitest": "^4.0.18"
   },
@@ -206,6 +207,7 @@
       "packages/twenty-e2e-testing",
       "packages/twenty-shared",
       "packages/twenty-sdk",
+      "packages/twenty-standard-application",
       "packages/twenty-apps",
       "packages/twenty-cli",
       "packages/create-twenty-app",

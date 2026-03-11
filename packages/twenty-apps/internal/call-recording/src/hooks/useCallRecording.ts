@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useRecordId } from 'twenty-sdk';
-import { CoreApiClient } from 'twenty-sdk/generated';
+import { CoreApiClient } from 'twenty-sdk/clients';
 import { isDefined } from 'twenty-shared/utils';
 
 type CallRecording = {

@@ -3,7 +3,7 @@ import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { SIDE_PANEL_PREVIOUS_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelPreviousComponentInstanceId';
 import { SIDE_PANEL_RESET_CONTEXT_TO_SELECTION } from '@/side-panel/constants/SidePanelResetContextToSelection';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
-import { type SidePanelActionGroupConfig } from '@/side-panel/types/SidePanelActionGroupConfig';
+import { type SidePanelCommandMenuItemGroupConfig } from '@/side-panel/types/SidePanelCommandMenuItemGroupConfig';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { SidePanelResetContextToSelectionButton } from '@/side-panel/pages/root/components/SidePanelResetContextToSelectionButton';
@@ -49,7 +49,7 @@ export const SidePanelRootPage = () => {
     (item) => item.id === contextStoreCurrentObjectMetadataItemId,
   );
 
-  const commandGroups: SidePanelActionGroupConfig[] = [
+  const commandGroups: SidePanelCommandMenuItemGroupConfig[] = [
     {
       heading: t`Record Selection`,
       items: matchingStandardActionRecordSelectionActions

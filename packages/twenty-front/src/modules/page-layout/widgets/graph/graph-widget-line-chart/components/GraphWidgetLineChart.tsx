@@ -34,8 +34,9 @@ import {
   type Point,
   type SliceTooltipProps,
 } from '@nivo/line';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useContext, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 import { useDebouncedCallback } from 'use-debounce';
 
 type CrosshairLayerProps = LineCustomSvgLayerProps<LineSeries>;
@@ -91,7 +92,8 @@ export const GraphWidgetLineChart = ({
   customFormatter,
   onSliceClick,
 }: GraphWidgetLineChartProps) => {
-  const colorRegistry = createGraphColorRegistry();
+  const { theme } = useContext(ThemeContext);
+  const colorRegistry = createGraphColorRegistry(theme.color);
   const chartTheme = useLineChartTheme();
   const containerRef = useRef<HTMLDivElement>(null);
   const [chartWidth, setChartWidth] = useState(0);

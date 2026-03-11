@@ -8,5 +8,6 @@ export type ExampleOptions = {
   includeExampleView: boolean;
   includeExampleNavigationMenuItem: boolean;
   includeExampleSkill: boolean;
+  includeExampleAgent: boolean;
   includeExampleIntegrationTest: boolean;
 };

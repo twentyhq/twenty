@@ -102,6 +102,21 @@ const StyledWidgetCard = styled.div<WidgetCardStyledProps>`
   width: 100%;
 
   &:hover {
+    border-bottom-color: ${(props) => {
+      const { variant, isEditable, isLastWidget } = props;
+      if (variant === 'side-column' && !isEditable && isLastWidget !== true) {
+        return themeCssVariables.border.color.light;
+      }
+      if (
+        props.isEditable &&
+        !props.isDragging &&
+        !props.isEditing &&
+        !props.isResizing
+      ) {
+        return themeCssVariables.border.color.strong;
+      }
+      return computeBorderColor(props);
+    }};
     border-color: ${(props) => {
       if (
         props.isEditable &&

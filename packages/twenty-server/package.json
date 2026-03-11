@@ -28,6 +28,7 @@
     "@aws-sdk/client-sesv2": "3.1001.0",
     "@aws-sdk/client-sts": "3.1001.0",
     "@aws-sdk/credential-providers": "3.1001.0",
+    "@aws-sdk/s3-request-presigner": "3.1001.0",
     "@azure/msal-node": "^3.8.4",
     "@babel/preset-env": "7.26.9",
     "@blocknote/server-util": "^0.47.1",
@@ -227,7 +228,8 @@
     "@yarnpkg/types": "^4.0.0",
     "rimraf": "^5.0.5",
     "twenty-emails": "workspace:*",
-    "twenty-shared": "workspace:*"
+    "twenty-shared": "workspace:*",
+    "twenty-standard-application": "workspace:*"
   },
   "engines": {
     "node": "^24.5.0",

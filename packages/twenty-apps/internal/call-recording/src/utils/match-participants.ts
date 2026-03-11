@@ -1,4 +1,4 @@
-import { CoreApiClient } from 'twenty-sdk/generated';
+import { CoreApiClient } from 'twenty-sdk/clients';
 
 export interface Participant {
   id: string;

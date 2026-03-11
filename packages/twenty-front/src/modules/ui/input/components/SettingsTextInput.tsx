@@ -122,6 +122,7 @@ export const SettingsTextInput = ({
   return (
     <TextInput
       ref={inputRef}
+      fullWidth
       // oxlint-disable-next-line react/jsx-props-no-spreading
       {...props}
       dataTestId={dataTestId}

@@ -1,4 +1,4 @@
-import { defineFrontComponent, isDefined, selectedRecord } from '@/sdk';
+import { defineFrontComponent, someDefined, selectedRecords } from '@/sdk';
 
 const MyComponent = () => null;
 
@@ -8,6 +8,9 @@ export default defineFrontComponent({
   command: {
     universalIdentifier: 'custom-function-cmd',
     label: 'Custom Function',
-    conditionalAvailabilityExpression: isDefined(selectedRecord.deletedAt),
+    conditionalAvailabilityExpression: someDefined(
+      selectedRecords,
+      'deletedAt',
+    ),
   },
 });
