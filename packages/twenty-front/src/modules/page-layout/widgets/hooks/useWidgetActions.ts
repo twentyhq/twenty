@@ -77,6 +77,7 @@ export const useWidgetActions = ({
 
   const isFieldReadOnly = isRecordFieldReadOnly({
     isRecordReadOnly,
+    isSystemObject: objectMetadataItem.isSystem,
     objectPermissions: getObjectPermissionsFromMapByObjectMetadataId({
       objectPermissionsByObjectMetadataId,
       objectMetadataId: objectMetadataItem.id,
@@ -84,6 +85,7 @@ export const useWidgetActions = ({
     fieldMetadataItem: {
       id: fieldMetadataItem.id,
       isUIReadOnly: fieldMetadataItem.isUIReadOnly ?? false,
+      isCustom: fieldMetadataItem.isCustom ?? false,
     },
   });
 
