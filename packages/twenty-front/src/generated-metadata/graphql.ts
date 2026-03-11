@@ -840,6 +840,7 @@ export type CommandMenuItem = {
   availabilityType: CommandMenuItemAvailabilityType;
   conditionalAvailabilityExpression?: Maybe<Scalars['String']>;
   createdAt: Scalars['DateTime'];
+  engineComponentKey?: Maybe<EngineComponentKey>;
   frontComponent?: Maybe<FrontComponent>;
   frontComponentId?: Maybe<Scalars['UUID']>;
   icon?: Maybe<Scalars['String']>;
@@ -848,7 +849,6 @@ export type CommandMenuItem = {
   label: Scalars['String'];
   position: Scalars['Float'];
   shortLabel?: Maybe<Scalars['String']>;
-  engineComponentKey?: Maybe<EngineComponentKey>;
   updatedAt: Scalars['DateTime'];
   workflowVersionId?: Maybe<Scalars['UUID']>;
 };
@@ -1125,13 +1125,13 @@ export type CreateCommandMenuItemInput = {
   availabilityObjectMetadataId?: InputMaybe<Scalars['UUID']>;
   availabilityType?: InputMaybe<CommandMenuItemAvailabilityType>;
   conditionalAvailabilityExpression?: InputMaybe<Scalars['String']>;
+  engineComponentKey?: InputMaybe<EngineComponentKey>;
   frontComponentId?: InputMaybe<Scalars['UUID']>;
   icon?: InputMaybe<Scalars['String']>;
   isPinned?: InputMaybe<Scalars['Boolean']>;
   label: Scalars['String'];
   position?: InputMaybe<Scalars['Float']>;
   shortLabel?: InputMaybe<Scalars['String']>;
-  engineComponentKey?: InputMaybe<EngineComponentKey>;
   workflowVersionId?: InputMaybe<Scalars['UUID']>;
 };
 
@@ -1572,6 +1572,30 @@ export type EmailsConfiguration = {
   __typename?: 'EmailsConfiguration';
   configurationType: WidgetConfigurationType;
 };
+
+export enum EngineComponentKey {
+  ACTIVATE_WORKFLOW = 'ACTIVATE_WORKFLOW',
+  ADD_TO_FAVORITES = 'ADD_TO_FAVORITES',
+  CREATE_NEW_RECORD = 'CREATE_NEW_RECORD',
+  DEACTIVATE_WORKFLOW = 'DEACTIVATE_WORKFLOW',
+  DELETE_MULTIPLE_RECORDS = 'DELETE_MULTIPLE_RECORDS',
+  DELETE_SINGLE_RECORD = 'DELETE_SINGLE_RECORD',
+  DESTROY_MULTIPLE_RECORDS = 'DESTROY_MULTIPLE_RECORDS',
+  DESTROY_SINGLE_RECORD = 'DESTROY_SINGLE_RECORD',
+  DISCARD_DRAFT_WORKFLOW = 'DISCARD_DRAFT_WORKFLOW',
+  DUPLICATE_DASHBOARD = 'DUPLICATE_DASHBOARD',
+  DUPLICATE_WORKFLOW = 'DUPLICATE_WORKFLOW',
+  MERGE_MULTIPLE_RECORDS = 'MERGE_MULTIPLE_RECORDS',
+  REMOVE_FROM_FAVORITES = 'REMOVE_FROM_FAVORITES',
+  RESTORE_MULTIPLE_RECORDS = 'RESTORE_MULTIPLE_RECORDS',
+  RESTORE_SINGLE_RECORD = 'RESTORE_SINGLE_RECORD',
+  SAVE_DASHBOARD_LAYOUT = 'SAVE_DASHBOARD_LAYOUT',
+  SAVE_RECORD_PAGE_LAYOUT = 'SAVE_RECORD_PAGE_LAYOUT',
+  STOP_WORKFLOW_RUN = 'STOP_WORKFLOW_RUN',
+  TEST_WORKFLOW = 'TEST_WORKFLOW',
+  TIDY_UP_WORKFLOW = 'TIDY_UP_WORKFLOW',
+  USE_AS_DRAFT_WORKFLOW_VERSION = 'USE_AS_DRAFT_WORKFLOW_VERSION'
+}
 
 export type EventLogDateRangeInput = {
   end?: InputMaybe<Scalars['DateTime']>;
@@ -4701,30 +4725,6 @@ export type StandaloneRichTextConfiguration = {
   configurationType: WidgetConfigurationType;
 };
 
-export enum EngineComponentKey {
-  ACTIVATE_WORKFLOW = 'ACTIVATE_WORKFLOW',
-  ADD_TO_FAVORITES = 'ADD_TO_FAVORITES',
-  CREATE_NEW_RECORD = 'CREATE_NEW_RECORD',
-  DEACTIVATE_WORKFLOW = 'DEACTIVATE_WORKFLOW',
-  DELETE_MULTIPLE_RECORDS = 'DELETE_MULTIPLE_RECORDS',
-  DELETE_SINGLE_RECORD = 'DELETE_SINGLE_RECORD',
-  DESTROY_MULTIPLE_RECORDS = 'DESTROY_MULTIPLE_RECORDS',
-  DESTROY_SINGLE_RECORD = 'DESTROY_SINGLE_RECORD',
-  DISCARD_DRAFT_WORKFLOW = 'DISCARD_DRAFT_WORKFLOW',
-  DUPLICATE_DASHBOARD = 'DUPLICATE_DASHBOARD',
-  DUPLICATE_WORKFLOW = 'DUPLICATE_WORKFLOW',
-  MERGE_MULTIPLE_RECORDS = 'MERGE_MULTIPLE_RECORDS',
-  REMOVE_FROM_FAVORITES = 'REMOVE_FROM_FAVORITES',
-  RESTORE_MULTIPLE_RECORDS = 'RESTORE_MULTIPLE_RECORDS',
-  RESTORE_SINGLE_RECORD = 'RESTORE_SINGLE_RECORD',
-  SAVE_DASHBOARD_LAYOUT = 'SAVE_DASHBOARD_LAYOUT',
-  SAVE_RECORD_PAGE_LAYOUT = 'SAVE_RECORD_PAGE_LAYOUT',
-  STOP_WORKFLOW_RUN = 'STOP_WORKFLOW_RUN',
-  TEST_WORKFLOW = 'TEST_WORKFLOW',
-  TIDY_UP_WORKFLOW = 'TIDY_UP_WORKFLOW',
-  USE_AS_DRAFT_WORKFLOW_VERSION = 'USE_AS_DRAFT_WORKFLOW_VERSION'
-}
-
 export type StandardOverrides = {
   __typename?: 'StandardOverrides';
   description?: Maybe<Scalars['String']>;
@@ -4893,13 +4893,13 @@ export type UpdateApplicationRegistrationVariablePayload = {
 export type UpdateCommandMenuItemInput = {
   availabilityObjectMetadataId?: InputMaybe<Scalars['UUID']>;
   availabilityType?: InputMaybe<CommandMenuItemAvailabilityType>;
+  engineComponentKey?: InputMaybe<EngineComponentKey>;
   icon?: InputMaybe<Scalars['String']>;
   id: Scalars['UUID'];
   isPinned?: InputMaybe<Scalars['Boolean']>;
   label?: InputMaybe<Scalars['String']>;
   position?: InputMaybe<Scalars['Float']>;
   shortLabel?: InputMaybe<Scalars['String']>;
-  engineComponentKey?: InputMaybe<EngineComponentKey>;
 };
 
 export type UpdateFieldInput = {
