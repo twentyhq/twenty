@@ -1,27 +1,13 @@
-import { existsSync } from 'fs';
-import { dirname, join, resolve } from 'path';
+import { dirname, join } from 'path';
 
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 
-const findMonorepoRoot = (): string => {
-  let current = resolve(__dirname);
-
-  while (current !== dirname(current)) {
-    if (existsSync(join(current, 'nx.json'))) {
-      return current;
-    }
-    current = dirname(current);
-  }
-
-  return process.cwd();
-};
-
-const FIXTURES_ROOT = join(
-  findMonorepoRoot(),
-  'packages',
-  'twenty-apps',
-  'fixtures',
+// Resolve via Node module resolution, same pattern as standard-front-component-upload.service.ts
+const PACKAGES_ROOT = dirname(
+  dirname(require.resolve('twenty-standard-application/package.json')),
 );
+
+const FIXTURES_ROOT = join(PACKAGES_ROOT, 'twenty-apps', 'fixtures');
 
 export type AppSeedDefinition = {
   registration: {
