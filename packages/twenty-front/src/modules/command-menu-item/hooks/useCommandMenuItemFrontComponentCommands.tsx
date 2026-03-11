@@ -222,12 +222,17 @@ export const useCommandMenuItemFrontComponentCommands = (
 
   const itemsWithObjectMatches = allItems.filter(objectMatches);
 
-  const buildCommandMenuItem = (
-    item: CommandMenuItemFieldsFragment,
-    scope: CommandMenuItemScope,
-    isPinned: boolean,
-    typeOverride?: CommandMenuItemType,
-  ) => {
+  const buildCommandMenuItem = ({
+    item,
+    scope,
+    isPinned,
+    typeOverride,
+  }: {
+    item: CommandMenuItemFieldsFragment;
+    scope: CommandMenuItemScope;
+    isPinned: boolean;
+    typeOverride?: CommandMenuItemType;
+  }) => {
     if (isDefined(item.standardFrontComponentKey)) {
       return buildCommandMenuItemFromStandardKey({
         item,
@@ -274,34 +279,34 @@ export const useCommandMenuItemFrontComponentCommands = (
 
   const globalCommandMenuItems = globalItems
     .map((item) =>
-      buildCommandMenuItem(
+      buildCommandMenuItem({
         item,
-        CommandMenuItemScope.Global,
-        !contextStoreIsPageInEditMode && item.isPinned,
-      ),
+        scope: CommandMenuItemScope.Global,
+        isPinned: !contextStoreIsPageInEditMode && item.isPinned,
+      }),
     )
     .filter(isDefined);
 
   const recordScopedCommandMenuItems = hasRecordSelection
     ? recordScopedItems
         .map((item) =>
-          buildCommandMenuItem(
+          buildCommandMenuItem({
             item,
-            CommandMenuItemScope.RecordSelection,
-            !contextStoreIsPageInEditMode && item.isPinned,
-          ),
+            scope: CommandMenuItemScope.RecordSelection,
+            isPinned: !contextStoreIsPageInEditMode && item.isPinned,
+          }),
         )
         .filter(isDefined)
     : [];
 
   const fallbackCommandMenuItems = fallbackItems
     .map((item) =>
-      buildCommandMenuItem(
+      buildCommandMenuItem({
         item,
-        CommandMenuItemScope.Global,
-        false,
-        CommandMenuItemType.Fallback,
-      ),
+        scope: CommandMenuItemScope.Global,
+        isPinned: false,
+        typeOverride: CommandMenuItemType.Fallback,
+      }),
     )
     .filter(isDefined);
 
