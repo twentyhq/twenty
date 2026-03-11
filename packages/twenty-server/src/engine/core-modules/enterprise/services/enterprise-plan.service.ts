@@ -13,7 +13,6 @@ import {
   AppTokenType,
 } from 'src/engine/core-modules/app-token/app-token.entity';
 import { ENTERPRISE_PUBLIC_KEY } from 'src/engine/core-modules/enterprise/constants/enterprise-public-key.constant';
-import { ENTERPRISE_VALIDITY_TOKEN_DEFAULT_EXPIRATION_MS } from 'src/engine/core-modules/enterprise/constants/enterprise-validity-token-default-expiration-days.constant';
 import {
   type EnterpriseKeyPayload,
   type EnterpriseLicenseInfo,
@@ -92,44 +91,41 @@ export class EnterprisePlanService implements OnModuleInit {
   }
 
   private async saveNewValidityTokenToDb(token: string): Promise<void> {
-    await this.appTokenRepository.update(
-      {
-        type: AppTokenType.EnterpriseValidityToken,
-        userId: IsNull(),
-        workspaceId: IsNull(),
-        revokedAt: IsNull(),
-      },
-      { revokedAt: new Date() },
-    );
-
     const payload = this.verifyJwt<EnterpriseValidityPayload>(token);
 
-    await this.appTokenRepository.save({
-      type: AppTokenType.EnterpriseValidityToken,
-      value: token,
-      userId: null,
-      workspaceId: null,
-      expiresAt: payload?.exp
-        ? new Date(payload.exp * 1000)
-        : new Date(
-            Date.now() + ENTERPRISE_VALIDITY_TOKEN_DEFAULT_EXPIRATION_MS,
-          ),
-    });
+    if (!isDefined(payload)) {
+      return;
+    }
+
+    await this.appTokenRepository.manager.transaction(
+      async (transactionalEntityManager) => {
+        await transactionalEntityManager.update(
+          this.appTokenRepository.target,
+          {
+            type: AppTokenType.EnterpriseValidityToken,
+            userId: IsNull(),
+            workspaceId: IsNull(),
+            revokedAt: IsNull(),
+          },
+          { revokedAt: new Date() },
+        );
+
+        await transactionalEntityManager.save(this.appTokenRepository.target, {
+          type: AppTokenType.EnterpriseValidityToken,
+          value: token,
+          userId: null,
+          workspaceId: null,
+          expiresAt: new Date(payload.exp * 1000),
+        });
+      },
+    );
   }
 
   hasValidSignedEnterpriseKey(): boolean {
-    if (this.twentyConfigService.isBillingEnabled()) {
-      return true;
-    }
-
     return isDefined(this.cachedKeyPayload);
   }
 
   hasValidEnterpriseValidityToken(): boolean {
-    if (this.twentyConfigService.isBillingEnabled()) {
-      return true;
-    }
-
     if (isDefined(this.cachedValidityPayload)) {
       const now = Math.floor(Date.now() / 1000);
 
@@ -175,15 +171,6 @@ export class EnterprisePlanService implements OnModuleInit {
   }
 
   async getLicenseInfo(): Promise<EnterpriseLicenseInfo> {
-    if (this.twentyConfigService.isBillingEnabled()) {
-      return {
-        isValid: true,
-        licensee: null,
-        expiresAt: null,
-        subscriptionId: null,
-      };
-    }
-
     this.refreshKeyPayload();
     await this.loadValidityTokenFromDb();
 
@@ -235,10 +222,6 @@ export class EnterprisePlanService implements OnModuleInit {
   }
 
   async refreshValidityToken(): Promise<boolean> {
-    if (this.twentyConfigService.isBillingEnabled()) {
-      return true;
-    }
-
     const enterpriseKey = this.twentyConfigService.get('ENTERPRISE_KEY');
 
     if (!enterpriseKey) {
@@ -301,10 +284,6 @@ export class EnterprisePlanService implements OnModuleInit {
   }
 
   async reportSeats(seatCount: number): Promise<boolean> {
-    if (this.twentyConfigService.isBillingEnabled()) {
-      return false;
-    }
-
     const enterpriseKey = this.twentyConfigService.get('ENTERPRISE_KEY');
 
     if (!enterpriseKey) {
@@ -353,10 +332,6 @@ export class EnterprisePlanService implements OnModuleInit {
     currentPeriodEnd: Date | null;
     isCancellationScheduled: boolean;
   } | null> {
-    if (this.twentyConfigService.isBillingEnabled()) {
-      return null;
-    }
-
     this.refreshKeyPayload();
 
     const enterpriseKey = this.twentyConfigService.get('ENTERPRISE_KEY');
@@ -406,10 +381,6 @@ export class EnterprisePlanService implements OnModuleInit {
   }
 
   async getPortalUrl(returnUrl?: string): Promise<string | null> {
-    if (this.twentyConfigService.isBillingEnabled()) {
-      return null;
-    }
-
     const apiUrl = this.twentyConfigService.get('ENTERPRISE_API_URL');
 
     if (!apiUrl) {
@@ -464,10 +435,6 @@ export class EnterprisePlanService implements OnModuleInit {
     billingInterval: 'monthly' | 'yearly' = 'monthly',
     seatCount: number,
   ): Promise<string | null> {
-    if (this.twentyConfigService.isBillingEnabled()) {
-      return null;
-    }
-
     const apiUrl = this.twentyConfigService.get('ENTERPRISE_API_URL');
 
     if (!apiUrl) {
