@@ -37,10 +37,7 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
     return true;
   }
 
-  async run(
-    _passedParams: string[],
-    options: SeedDevOptions,
-  ): Promise<void> {
+  async run(_passedParams: string[], options: SeedDevOptions): Promise<void> {
     try {
       for (const workspaceId of this.workspaceIds) {
         await this.devSeederService.seedDev(workspaceId, {

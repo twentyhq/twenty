@@ -6263,14 +6263,6 @@ export type GetLogicFunctionSourceCodeQuery = { __typename?: 'Query', getLogicFu
 
 export type MarketplaceAppFieldsFragment = { __typename?: 'MarketplaceApp', id: string, name: string, description: string, icon: string, version: string, author: string, category: string, logo?: string | null, screenshots: Array<string>, aboutDescription: string, providers: Array<string>, websiteUrl?: string | null, termsUrl?: string | null, sourcePackage?: string | null, isFeatured: boolean, objects: Array<{ __typename?: 'MarketplaceAppObject', universalIdentifier: string, nameSingular: string, namePlural: string, labelSingular: string, labelPlural: string, description?: string | null, icon?: string | null, fields: Array<{ __typename?: 'MarketplaceAppField', universalIdentifier?: string | null, name: string, type: string, label: string, description?: string | null, icon?: string | null }> }>, fields: Array<{ __typename?: 'MarketplaceAppField', name: string, type: string, label: string, description?: string | null, icon?: string | null, objectUniversalIdentifier?: string | null }>, logicFunctions: Array<{ __typename?: 'MarketplaceAppLogicFunction', name: string, description?: string | null, timeoutSeconds?: number | null }>, frontComponents: Array<{ __typename?: 'MarketplaceAppFrontComponent', name: string, description?: string | null }>, defaultRole?: { __typename?: 'MarketplaceAppDefaultRole', id: string, label: string, description?: string | null, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, canUpdateAllSettings: boolean, canAccessAllTools: boolean, permissionFlags: Array<string>, objectPermissions: Array<{ __typename?: 'MarketplaceAppRoleObjectPermission', objectUniversalIdentifier: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null }>, fieldPermissions: Array<{ __typename?: 'MarketplaceAppRoleFieldPermission', objectUniversalIdentifier: string, fieldUniversalIdentifier: string, canReadFieldValue?: boolean | null, canUpdateFieldValue?: boolean | null }> } | null };
 
-export type InstallApplicationMutationVariables = Exact<{
-  appRegistrationId: Scalars['String'];
-  version?: InputMaybe<Scalars['String']>;
-}>;
-
-
-export type InstallApplicationMutation = { __typename?: 'Mutation', installApplication: boolean };
-
 export type InstallMarketplaceAppMutationVariables = Exact<{
   universalIdentifier: Scalars['String'];
   version?: InputMaybe<Scalars['String']>;
@@ -6286,14 +6278,6 @@ export type UpgradeApplicationMutationVariables = Exact<{
 
 
 export type UpgradeApplicationMutation = { __typename?: 'Mutation', upgradeApplication: boolean };
-
-export type UploadAppTarballMutationVariables = Exact<{
-  file: Scalars['Upload'];
-  universalIdentifier?: InputMaybe<Scalars['String']>;
-}>;
-
-
-export type UploadAppTarballMutation = { __typename?: 'Mutation', uploadAppTarball: { __typename?: 'ApplicationRegistration', id: string, universalIdentifier: string, name: string } };
 
 export type FindManyMarketplaceAppsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -11547,38 +11531,6 @@ export function useGetLogicFunctionSourceCodeLazyQuery(baseOptions?: Apollo.Lazy
 export type GetLogicFunctionSourceCodeQueryHookResult = ReturnType<typeof useGetLogicFunctionSourceCodeQuery>;
 export type GetLogicFunctionSourceCodeLazyQueryHookResult = ReturnType<typeof useGetLogicFunctionSourceCodeLazyQuery>;
 export type GetLogicFunctionSourceCodeQueryResult = Apollo.QueryResult<GetLogicFunctionSourceCodeQuery, GetLogicFunctionSourceCodeQueryVariables>;
-export const InstallApplicationDocument = gql`
-    mutation InstallApplication($appRegistrationId: String!, $version: String) {
-  installApplication(appRegistrationId: $appRegistrationId, version: $version)
-}
-    `;
-export type InstallApplicationMutationFn = Apollo.MutationFunction<InstallApplicationMutation, InstallApplicationMutationVariables>;
-
-/**
- * __useInstallApplicationMutation__
- *
- * To run a mutation, you first call `useInstallApplicationMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useInstallApplicationMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [installApplicationMutation, { data, loading, error }] = useInstallApplicationMutation({
- *   variables: {
- *      appRegistrationId: // value for 'appRegistrationId'
- *      version: // value for 'version'
- *   },
- * });
- */
-export function useInstallApplicationMutation(baseOptions?: Apollo.MutationHookOptions<InstallApplicationMutation, InstallApplicationMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<InstallApplicationMutation, InstallApplicationMutationVariables>(InstallApplicationDocument, options);
-      }
-export type InstallApplicationMutationHookResult = ReturnType<typeof useInstallApplicationMutation>;
-export type InstallApplicationMutationResult = Apollo.MutationResult<InstallApplicationMutation>;
-export type InstallApplicationMutationOptions = Apollo.BaseMutationOptions<InstallApplicationMutation, InstallApplicationMutationVariables>;
 export const InstallMarketplaceAppDocument = gql`
     mutation InstallMarketplaceApp($universalIdentifier: String!, $version: String) {
   installMarketplaceApp(
@@ -11649,42 +11601,6 @@ export function useUpgradeApplicationMutation(baseOptions?: Apollo.MutationHookO
 export type UpgradeApplicationMutationHookResult = ReturnType<typeof useUpgradeApplicationMutation>;
 export type UpgradeApplicationMutationResult = Apollo.MutationResult<UpgradeApplicationMutation>;
 export type UpgradeApplicationMutationOptions = Apollo.BaseMutationOptions<UpgradeApplicationMutation, UpgradeApplicationMutationVariables>;
-export const UploadAppTarballDocument = gql`
-    mutation UploadAppTarball($file: Upload!, $universalIdentifier: String) {
-  uploadAppTarball(file: $file, universalIdentifier: $universalIdentifier) {
-    id
-    universalIdentifier
-    name
-  }
-}
-    `;
-export type UploadAppTarballMutationFn = Apollo.MutationFunction<UploadAppTarballMutation, UploadAppTarballMutationVariables>;
-
-/**
- * __useUploadAppTarballMutation__
- *
- * To run a mutation, you first call `useUploadAppTarballMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUploadAppTarballMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [uploadAppTarballMutation, { data, loading, error }] = useUploadAppTarballMutation({
- *   variables: {
- *      file: // value for 'file'
- *      universalIdentifier: // value for 'universalIdentifier'
- *   },
- * });
- */
-export function useUploadAppTarballMutation(baseOptions?: Apollo.MutationHookOptions<UploadAppTarballMutation, UploadAppTarballMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UploadAppTarballMutation, UploadAppTarballMutationVariables>(UploadAppTarballDocument, options);
-      }
-export type UploadAppTarballMutationHookResult = ReturnType<typeof useUploadAppTarballMutation>;
-export type UploadAppTarballMutationResult = Apollo.MutationResult<UploadAppTarballMutation>;
-export type UploadAppTarballMutationOptions = Apollo.BaseMutationOptions<UploadAppTarballMutation, UploadAppTarballMutationVariables>;
 export const FindManyMarketplaceAppsDocument = gql`
     query FindManyMarketplaceApps {
   findManyMarketplaceApps {
