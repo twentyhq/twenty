@@ -74,14 +74,14 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
   configuration,
   fieldMetadataUniversalIdentifierById,
   frontComponentUniversalIdentifierById = {},
-  _viewFieldGroupUniversalIdentifierById = {},
+  viewFieldGroupUniversalIdentifierById: _viewFieldGroupUniversalIdentifierById = {},
   viewUniversalIdentifierById = {},
   shouldThrowOnMissingIdentifier = false,
 }: {
   configuration: PageLayoutWidgetConfiguration;
   fieldMetadataUniversalIdentifierById: Partial<Record<string, string>>;
   frontComponentUniversalIdentifierById?: Partial<Record<string, string>>;
-  _viewFieldGroupUniversalIdentifierById?: Partial<Record<string, string>>;
+  viewFieldGroupUniversalIdentifierById?: Partial<Record<string, string>>;
   viewUniversalIdentifierById?: Partial<Record<string, string>>;
   shouldThrowOnMissingIdentifier?: boolean;
 }): UniversalPageLayoutWidgetConfiguration => {
