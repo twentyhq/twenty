@@ -1,7 +1,8 @@
-import { type CommandMenuContextType } from '@/command-menu-item/contexts/CommandMenuContext';
-import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { type CommandMenuContextApi } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+
+import { type CommandMenuContextType } from '@/command-menu-item/contexts/CommandMenuContext';
+import { useWorkflowsWithCurrentVersions } from '@/command-menu-item/server-items/hooks/useWorkflowsWithCurrentVersions';
 
 import { CommandMenuContextProviderServerItemsContent } from './CommandMenuContextProviderServerItemsContent';
 
@@ -18,27 +19,33 @@ export const CommandMenuContextProviderServerItemsWithWorkflowEnrichment = ({
   containerType,
   children,
   commandMenuContextApi,
-  selectedWorkflowRecordId,
+  selectedWorkflowRecordIds,
 }: CommandMenuContextProviderServerItemsWithWorkflowEnrichmentProps & {
   commandMenuContextApi: CommandMenuContextApi;
-  selectedWorkflowRecordId: string;
+  selectedWorkflowRecordIds: string[];
 }) => {
-  const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(
-    selectedWorkflowRecordId,
+  const workflowsWithCurrentVersions = useWorkflowsWithCurrentVersions(
+    selectedWorkflowRecordIds,
   );
 
-  const enrichedSelectedRecords = isDefined(workflowWithCurrentVersion)
-    ? commandMenuContextApi.selectedRecords.map((record) =>
-        record.id === workflowWithCurrentVersion.id
-          ? {
-              ...record,
-              currentVersion: workflowWithCurrentVersion.currentVersion,
-              versions: workflowWithCurrentVersion.versions,
-              statuses: workflowWithCurrentVersion.statuses,
-            }
-          : record,
-      )
-    : commandMenuContextApi.selectedRecords;
+  const enrichedSelectedRecords = commandMenuContextApi.selectedRecords.map(
+    (record) => {
+      const workflowWithCurrentVersion = workflowsWithCurrentVersions.find(
+        (workflow) => workflow.id === record.id,
+      );
+
+      if (!isDefined(workflowWithCurrentVersion)) {
+        return record;
+      }
+
+      return {
+        ...record,
+        currentVersion: workflowWithCurrentVersion.currentVersion,
+        versions: workflowWithCurrentVersion.versions,
+        statuses: workflowWithCurrentVersion.statuses,
+      };
+    },
+  );
 
   const enrichedCommandMenuContextApi = {
     ...commandMenuContextApi,

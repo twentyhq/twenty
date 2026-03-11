@@ -1,7 +1,8 @@
-import { useCommandMenuContextApi } from '@/command-menu-item/server-items/hooks/useCommandMenuContextApi';
-import { type CommandMenuContextType } from '@/command-menu-item/contexts/CommandMenuContext';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+
+import { useCommandMenuContextApi } from '@/command-menu-item/server-items/hooks/useCommandMenuContextApi';
+import { type CommandMenuContextType } from '@/command-menu-item/contexts/CommandMenuContext';
 
 import { CommandMenuContextProviderServerItemsContent } from './CommandMenuContextProviderServerItemsContent';
 import { CommandMenuContextProviderServerItemsWithWorkflowEnrichment } from './CommandMenuContextProviderServerItemsWithWorkflowEnrichment';
@@ -24,20 +25,23 @@ export const CommandMenuContextProviderServerItems = ({
   const currentObjectNameSingular =
     commandMenuContextApi.objectMetadataItem.nameSingular;
 
-  const selectedWorkflowRecordId =
-    currentObjectNameSingular === CoreObjectNameSingular.Workflow &&
-    commandMenuContextApi.selectedRecords.length === 1
-      ? commandMenuContextApi.selectedRecords[0]?.id
-      : undefined;
+  const isWorkflow =
+    currentObjectNameSingular === CoreObjectNameSingular.Workflow;
 
-  if (isDefined(selectedWorkflowRecordId)) {
+  const selectedWorkflowRecordIds = isWorkflow
+    ? commandMenuContextApi.selectedRecords
+        .map((record) => record.id)
+        .filter(isDefined)
+    : [];
+
+  if (selectedWorkflowRecordIds.length > 0) {
     return (
       <CommandMenuContextProviderServerItemsWithWorkflowEnrichment
         isInSidePanel={isInSidePanel}
         displayType={displayType}
         containerType={containerType}
         commandMenuContextApi={commandMenuContextApi}
-        selectedWorkflowRecordId={selectedWorkflowRecordId}
+        selectedWorkflowRecordIds={selectedWorkflowRecordIds}
       >
         {children}
       </CommandMenuContextProviderServerItemsWithWorkflowEnrichment>
