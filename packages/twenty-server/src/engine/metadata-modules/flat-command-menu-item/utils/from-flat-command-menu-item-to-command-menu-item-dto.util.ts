@@ -7,6 +7,8 @@ export const fromFlatCommandMenuItemToCommandMenuItemDto = (
   id: flatCommandMenuItem.id,
   workflowVersionId: flatCommandMenuItem.workflowVersionId ?? undefined,
   frontComponentId: flatCommandMenuItem.frontComponentId ?? undefined,
+  standardFrontComponentKey:
+    flatCommandMenuItem.standardFrontComponentKey ?? undefined,
   label: flatCommandMenuItem.label,
   icon: flatCommandMenuItem.icon ?? undefined,
   shortLabel: flatCommandMenuItem.shortLabel ?? undefined,

@@ -21,6 +21,30 @@ export enum CommandMenuItemAvailabilityType {
   FALLBACK = 'FALLBACK',
 }
 
+export enum StandardFrontComponentKey {
+  CREATE_NEW_RECORD = 'CREATE_NEW_RECORD',
+  DELETE_SINGLE_RECORD = 'DELETE_SINGLE_RECORD',
+  DELETE_MULTIPLE_RECORDS = 'DELETE_MULTIPLE_RECORDS',
+  RESTORE_SINGLE_RECORD = 'RESTORE_SINGLE_RECORD',
+  RESTORE_MULTIPLE_RECORDS = 'RESTORE_MULTIPLE_RECORDS',
+  DESTROY_SINGLE_RECORD = 'DESTROY_SINGLE_RECORD',
+  DESTROY_MULTIPLE_RECORDS = 'DESTROY_MULTIPLE_RECORDS',
+  ADD_TO_FAVORITES = 'ADD_TO_FAVORITES',
+  REMOVE_FROM_FAVORITES = 'REMOVE_FROM_FAVORITES',
+  MERGE_MULTIPLE_RECORDS = 'MERGE_MULTIPLE_RECORDS',
+  DUPLICATE_DASHBOARD = 'DUPLICATE_DASHBOARD',
+  DUPLICATE_WORKFLOW = 'DUPLICATE_WORKFLOW',
+  ACTIVATE_WORKFLOW = 'ACTIVATE_WORKFLOW',
+  DEACTIVATE_WORKFLOW = 'DEACTIVATE_WORKFLOW',
+  DISCARD_DRAFT_WORKFLOW = 'DISCARD_DRAFT_WORKFLOW',
+  TEST_WORKFLOW = 'TEST_WORKFLOW',
+  STOP_WORKFLOW_RUN = 'STOP_WORKFLOW_RUN',
+  USE_AS_DRAFT_WORKFLOW_VERSION = 'USE_AS_DRAFT_WORKFLOW_VERSION',
+  SAVE_RECORD_PAGE_LAYOUT = 'SAVE_RECORD_PAGE_LAYOUT',
+  SAVE_DASHBOARD_LAYOUT = 'SAVE_DASHBOARD_LAYOUT',
+  TIDY_UP_WORKFLOW = 'TIDY_UP_WORKFLOW',
+}
+
 @Entity({ name: 'commandMenuItem', schema: 'core' })
 @Index('IDX_COMMAND_MENU_ITEM_WORKFLOW_VERSION_ID_WORKSPACE_ID', [
   'workflowVersionId',
@@ -34,8 +58,8 @@ export enum CommandMenuItemAvailabilityType {
   'availabilityObjectMetadataId',
 ])
 @Check(
-  'CHK_command_menu_item_workflow_or_front_component',
-  '("workflowVersionId" IS NOT NULL AND "frontComponentId" IS NULL) OR ("workflowVersionId" IS NULL AND "frontComponentId" IS NOT NULL)',
+  'CHK_command_menu_item_workflow_or_front_component_or_standard_key',
+  '("workflowVersionId" IS NOT NULL AND "frontComponentId" IS NULL AND "standardFrontComponentKey" IS NULL) OR ("workflowVersionId" IS NULL AND "frontComponentId" IS NOT NULL AND "standardFrontComponentKey" IS NULL) OR ("workflowVersionId" IS NULL AND "frontComponentId" IS NULL AND "standardFrontComponentKey" IS NOT NULL)',
 )
 export class CommandMenuItemEntity
   extends SyncableEntity
@@ -56,6 +80,9 @@ export class CommandMenuItemEntity
   })
   @JoinColumn({ name: 'frontComponentId' })
   frontComponent: Relation<FrontComponentEntity> | null;
+
+  @Column({ nullable: true, type: 'varchar' })
+  standardFrontComponentKey: StandardFrontComponentKey | null;
 
   @Column({ nullable: false })
   label: string;

@@ -18,11 +18,18 @@ import {
 } from 'class-validator';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
+import {
+  CommandMenuItemAvailabilityType,
+  StandardFrontComponentKey,
+} from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
 import { FrontComponentDTO } from 'src/engine/metadata-modules/front-component/dtos/front-component.dto';
 
 registerEnumType(CommandMenuItemAvailabilityType, {
   name: 'CommandMenuItemAvailabilityType',
+});
+
+registerEnumType(StandardFrontComponentKey, {
+  name: 'StandardFrontComponentKey',
 });
 
 @ObjectType('CommandMenuItem')
@@ -44,6 +51,11 @@ export class CommandMenuItemDTO {
 
   @Field(() => FrontComponentDTO, { nullable: true })
   frontComponent?: FrontComponentDTO | null;
+
+  @IsEnum(StandardFrontComponentKey)
+  @IsOptional()
+  @Field(() => StandardFrontComponentKey, { nullable: true })
+  standardFrontComponentKey?: StandardFrontComponentKey;
 
   @IsString()
   @IsNotEmpty()

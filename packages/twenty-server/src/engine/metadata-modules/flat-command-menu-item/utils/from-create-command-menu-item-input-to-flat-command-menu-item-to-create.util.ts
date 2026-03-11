@@ -32,10 +32,19 @@ export const fromCreateCommandMenuItemInputToFlatCommandMenuItemToCreate = ({
   const hasFrontComponentId = isDefined(
     createCommandMenuItemInput.frontComponentId,
   );
+  const hasStandardFrontComponentKey = isDefined(
+    createCommandMenuItemInput.standardFrontComponentKey,
+  );
 
-  if (hasWorkflowVersionId === hasFrontComponentId) {
+  const sourceCount = [
+    hasWorkflowVersionId,
+    hasFrontComponentId,
+    hasStandardFrontComponentKey,
+  ].filter(Boolean).length;
+
+  if (sourceCount !== 1) {
     throw new CommandMenuItemException(
-      'Exactly one of workflowVersionId or frontComponentId is required',
+      'Exactly one of workflowVersionId, frontComponentId or standardFrontComponentKey is required',
       CommandMenuItemExceptionCode.WORKFLOW_OR_FRONT_COMPONENT_REQUIRED,
     );
   }
@@ -62,6 +71,8 @@ export const fromCreateCommandMenuItemInputToFlatCommandMenuItemToCreate = ({
     workflowVersionId: createCommandMenuItemInput.workflowVersionId ?? null,
     frontComponentId: createCommandMenuItemInput.frontComponentId ?? null,
     frontComponentUniversalIdentifier,
+    standardFrontComponentKey:
+      createCommandMenuItemInput.standardFrontComponentKey ?? null,
     label: createCommandMenuItemInput.label,
     icon: createCommandMenuItemInput.icon ?? null,
     shortLabel: createCommandMenuItemInput.shortLabel ?? null,

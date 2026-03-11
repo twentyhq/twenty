@@ -11,7 +11,10 @@ import {
 } from 'class-validator';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
+import {
+  CommandMenuItemAvailabilityType,
+  StandardFrontComponentKey,
+} from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
 
 @InputType()
 export class UpdateCommandMenuItemInput {
@@ -54,4 +57,9 @@ export class UpdateCommandMenuItemInput {
   @IsOptional()
   @Field(() => UUIDScalarType, { nullable: true })
   availabilityObjectMetadataId?: string;
+
+  @IsEnum(StandardFrontComponentKey)
+  @IsOptional()
+  @Field(() => StandardFrontComponentKey, { nullable: true })
+  standardFrontComponentKey?: StandardFrontComponentKey;
 }

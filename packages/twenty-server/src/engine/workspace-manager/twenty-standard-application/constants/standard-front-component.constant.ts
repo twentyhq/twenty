@@ -29,131 +29,6 @@ export const STANDARD_FRONT_COMPONENTS = {
         .builtComponentChecksum,
     isHeadless: true,
   },
-  createNewRecord: {
-    universalIdentifier: '1e6e57bb-89c4-482e-bf44-d62ad1c05d2f',
-    name: 'Create new record',
-    componentName: 'CreateNewRecord',
-    sourceComponentPath:
-      'front-components/record/create-new-record.front-component.tsx',
-    builtComponentPath:
-      STANDARD_FRONT_COMPONENT_BUILD_MANIFEST.createNewRecord
-        .builtComponentPath,
-    builtComponentChecksum:
-      STANDARD_FRONT_COMPONENT_BUILD_MANIFEST.createNewRecord
-        .builtComponentChecksum,
-    isHeadless: true,
-  },
-  deleteSingleRecord: {
-    universalIdentifier: 'cbc7e92f-d4fe-4956-ba66-a81b7f9713c6',
-    name: 'Delete single record',
-    componentName: 'DeleteSingleRecord',
-    sourceComponentPath:
-      'front-components/record/delete-single-record.front-component.tsx',
-    builtComponentPath:
-      STANDARD_FRONT_COMPONENT_BUILD_MANIFEST.deleteSingleRecord
-        .builtComponentPath,
-    builtComponentChecksum:
-      STANDARD_FRONT_COMPONENT_BUILD_MANIFEST.deleteSingleRecord
-        .builtComponentChecksum,
-    isHeadless: true,
-  },
-  deleteMultipleRecords: {
-    universalIdentifier: '35c25fd2-6060-440a-b734-aa3016c11f47',
-    name: 'Delete multiple records',
-    componentName: 'DeleteMultipleRecords',
-    sourceComponentPath:
-      'front-components/record/delete-multiple-records.front-component.tsx',
-    builtComponentPath:
-      STANDARD_FRONT_COMPONENT_BUILD_MANIFEST.deleteMultipleRecords
-        .builtComponentPath,
-    builtComponentChecksum:
-      STANDARD_FRONT_COMPONENT_BUILD_MANIFEST.deleteMultipleRecords
-        .builtComponentChecksum,
-    isHeadless: true,
-  },
-  restoreSingleRecord: {
-    universalIdentifier: '88262225-1253-4dfe-9bf7-563b73e6d9ea',
-    name: 'Restore single record',
-    componentName: 'RestoreSingleRecord',
-    sourceComponentPath:
-      'front-components/record/restore-single-record.front-component.tsx',
-    builtComponentPath:
-      STANDARD_FRONT_COMPONENT_BUILD_MANIFEST.restoreSingleRecord
-        .builtComponentPath,
-    builtComponentChecksum:
-      STANDARD_FRONT_COMPONENT_BUILD_MANIFEST.restoreSingleRecord
-        .builtComponentChecksum,
-    isHeadless: true,
-  },
-  restoreMultipleRecords: {
-    universalIdentifier: '105ff959-838c-44bc-8a92-60d61093ebc4',
-    name: 'Restore multiple records',
-    componentName: 'RestoreMultipleRecords',
-    sourceComponentPath:
-      'front-components/record/restore-multiple-records.front-component.tsx',
-    builtComponentPath:
-      STANDARD_FRONT_COMPONENT_BUILD_MANIFEST.restoreMultipleRecords
-        .builtComponentPath,
-    builtComponentChecksum:
-      STANDARD_FRONT_COMPONENT_BUILD_MANIFEST.restoreMultipleRecords
-        .builtComponentChecksum,
-    isHeadless: true,
-  },
-  destroySingleRecord: {
-    universalIdentifier: '212d9e7d-e149-417b-9a0f-5024835349e6',
-    name: 'Destroy single record',
-    componentName: 'DestroySingleRecord',
-    sourceComponentPath:
-      'front-components/record/destroy-single-record.front-component.tsx',
-    builtComponentPath:
-      STANDARD_FRONT_COMPONENT_BUILD_MANIFEST.destroySingleRecord
-        .builtComponentPath,
-    builtComponentChecksum:
-      STANDARD_FRONT_COMPONENT_BUILD_MANIFEST.destroySingleRecord
-        .builtComponentChecksum,
-    isHeadless: true,
-  },
-  destroyMultipleRecords: {
-    universalIdentifier: 'f647d17d-b4ae-4a4c-99a9-4e5e4e3068a2',
-    name: 'Destroy multiple records',
-    componentName: 'DestroyMultipleRecords',
-    sourceComponentPath:
-      'front-components/record/destroy-multiple-records.front-component.tsx',
-    builtComponentPath:
-      STANDARD_FRONT_COMPONENT_BUILD_MANIFEST.destroyMultipleRecords
-        .builtComponentPath,
-    builtComponentChecksum:
-      STANDARD_FRONT_COMPONENT_BUILD_MANIFEST.destroyMultipleRecords
-        .builtComponentChecksum,
-    isHeadless: true,
-  },
-  addToFavorites: {
-    universalIdentifier: '5694b053-1f42-416c-a26a-375f826aa9b3',
-    name: 'Add to favorites',
-    componentName: 'AddToFavorites',
-    sourceComponentPath:
-      'front-components/record/add-to-favorites.front-component.tsx',
-    builtComponentPath:
-      STANDARD_FRONT_COMPONENT_BUILD_MANIFEST.addToFavorites.builtComponentPath,
-    builtComponentChecksum:
-      STANDARD_FRONT_COMPONENT_BUILD_MANIFEST.addToFavorites
-        .builtComponentChecksum,
-    isHeadless: true,
-  },
-  removeFromFavorites: {
-    universalIdentifier: '21105d6a-33a2-4ae3-8edb-c33c38d2e091',
-    name: 'Remove from favorites',
-    componentName: 'RemoveFromFavorites',
-    sourceComponentPath:
-      'front-components/record/remove-from-favorites.front-component.tsx',
-    builtComponentPath:
-      STANDARD_FRONT_COMPONENT_BUILD_MANIFEST.removeFromFavorites
-        .builtComponentPath,
-    builtComponentChecksum:
-      STANDARD_FRONT_COMPONENT_BUILD_MANIFEST.removeFromFavorites
-        .builtComponentChecksum,
-    isHeadless: true,
-  },
   exportNoteToPdf: {
     universalIdentifier: '980399e9-e530-4430-bf47-7f3f482434b4',
     name: 'Export note to PDF',
@@ -207,20 +82,6 @@ export const STANDARD_FRONT_COMPONENTS = {
         .builtComponentPath,
     builtComponentChecksum:
       STANDARD_FRONT_COMPONENT_BUILD_MANIFEST.updateMultipleRecords
-        .builtComponentChecksum,
-    isHeadless: true,
-  },
-  mergeMultipleRecords: {
-    universalIdentifier: '9c6757aa-ecdd-4b21-8466-fb1e8f0bfcb8',
-    name: 'Merge multiple records',
-    componentName: 'MergeMultipleRecords',
-    sourceComponentPath:
-      'front-components/record/merge-multiple-records.front-component.tsx',
-    builtComponentPath:
-      STANDARD_FRONT_COMPONENT_BUILD_MANIFEST.mergeMultipleRecords
-        .builtComponentPath,
-    builtComponentChecksum:
-      STANDARD_FRONT_COMPONENT_BUILD_MANIFEST.mergeMultipleRecords
         .builtComponentChecksum,
     isHeadless: true,
   },
@@ -407,20 +268,6 @@ export const STANDARD_FRONT_COMPONENTS = {
         .builtComponentChecksum,
     isHeadless: true,
   },
-  saveRecordPageLayout: {
-    universalIdentifier: '7956ba3a-fd4d-466e-96b5-9e3e8b637c44',
-    name: 'Save record page layout',
-    componentName: 'SaveRecordPageLayout',
-    sourceComponentPath:
-      'front-components/page-layout/save-record-page-layout.front-component.tsx',
-    builtComponentPath:
-      STANDARD_FRONT_COMPONENT_BUILD_MANIFEST.saveRecordPageLayout
-        .builtComponentPath,
-    builtComponentChecksum:
-      STANDARD_FRONT_COMPONENT_BUILD_MANIFEST.saveRecordPageLayout
-        .builtComponentChecksum,
-    isHeadless: true,
-  },
   cancelRecordPageLayout: {
     universalIdentifier: 'd392762b-4c42-4471-9c45-c92e66728380',
     name: 'Cancel record page layout edition',
@@ -449,20 +296,6 @@ export const STANDARD_FRONT_COMPONENTS = {
         .builtComponentChecksum,
     isHeadless: true,
   },
-  saveDashboardLayout: {
-    universalIdentifier: '5d7b4510-79e8-440f-8707-21741c00d262',
-    name: 'Save dashboard layout',
-    componentName: 'SaveDashboardLayout',
-    sourceComponentPath:
-      'front-components/dashboard/save-dashboard-layout.front-component.tsx',
-    builtComponentPath:
-      STANDARD_FRONT_COMPONENT_BUILD_MANIFEST.saveDashboardLayout
-        .builtComponentPath,
-    builtComponentChecksum:
-      STANDARD_FRONT_COMPONENT_BUILD_MANIFEST.saveDashboardLayout
-        .builtComponentChecksum,
-    isHeadless: true,
-  },
   cancelDashboardLayout: {
     universalIdentifier: 'dac81512-3890-4ba5-8471-bd94738ab80a',
     name: 'Cancel dashboard layout edition',
@@ -477,20 +310,6 @@ export const STANDARD_FRONT_COMPONENTS = {
         .builtComponentChecksum,
     isHeadless: true,
   },
-  duplicateDashboard: {
-    universalIdentifier: 'e2bec30e-a6b0-47ff-9708-45855ae96fe7',
-    name: 'Duplicate dashboard',
-    componentName: 'DuplicateDashboard',
-    sourceComponentPath:
-      'front-components/dashboard/duplicate-dashboard.front-component.tsx',
-    builtComponentPath:
-      STANDARD_FRONT_COMPONENT_BUILD_MANIFEST.duplicateDashboard
-        .builtComponentPath,
-    builtComponentChecksum:
-      STANDARD_FRONT_COMPONENT_BUILD_MANIFEST.duplicateDashboard
-        .builtComponentChecksum,
-    isHeadless: true,
-  },
   goToWorkflows: {
     universalIdentifier: '9d313f79-170f-47cc-b9c4-a2076a86232f',
     name: 'Go to Workflows',
@@ -501,61 +320,6 @@ export const STANDARD_FRONT_COMPONENTS = {
       STANDARD_FRONT_COMPONENT_BUILD_MANIFEST.goToWorkflows.builtComponentPath,
     builtComponentChecksum:
       STANDARD_FRONT_COMPONENT_BUILD_MANIFEST.goToWorkflows
-        .builtComponentChecksum,
-    isHeadless: true,
-  },
-  activateWorkflow: {
-    universalIdentifier: '97b89dc4-cef9-4439-9358-35c98616eb1e',
-    name: 'Activate workflow',
-    componentName: 'ActivateWorkflow',
-    sourceComponentPath:
-      'front-components/workflow/activate-workflow.front-component.tsx',
-    builtComponentPath:
-      STANDARD_FRONT_COMPONENT_BUILD_MANIFEST.activateWorkflow
-        .builtComponentPath,
-    builtComponentChecksum:
-      STANDARD_FRONT_COMPONENT_BUILD_MANIFEST.activateWorkflow
-        .builtComponentChecksum,
-    isHeadless: true,
-  },
-  deactivateWorkflow: {
-    universalIdentifier: 'cbf92077-1892-47e0-9435-14ea8f50a510',
-    name: 'Deactivate workflow',
-    componentName: 'DeactivateWorkflow',
-    sourceComponentPath:
-      'front-components/workflow/deactivate-workflow.front-component.tsx',
-    builtComponentPath:
-      STANDARD_FRONT_COMPONENT_BUILD_MANIFEST.deactivateWorkflow
-        .builtComponentPath,
-    builtComponentChecksum:
-      STANDARD_FRONT_COMPONENT_BUILD_MANIFEST.deactivateWorkflow
-        .builtComponentChecksum,
-    isHeadless: true,
-  },
-  discardDraftWorkflow: {
-    universalIdentifier: '972dc871-7f9c-4035-957c-e6662f4df7c5',
-    name: 'Discard draft workflow',
-    componentName: 'DiscardDraftWorkflow',
-    sourceComponentPath:
-      'front-components/workflow/discard-draft-workflow.front-component.tsx',
-    builtComponentPath:
-      STANDARD_FRONT_COMPONENT_BUILD_MANIFEST.discardDraftWorkflow
-        .builtComponentPath,
-    builtComponentChecksum:
-      STANDARD_FRONT_COMPONENT_BUILD_MANIFEST.discardDraftWorkflow
-        .builtComponentChecksum,
-    isHeadless: true,
-  },
-  testWorkflow: {
-    universalIdentifier: '39e9aa5a-cacc-4543-9053-f1fbf923e170',
-    name: 'Test workflow',
-    componentName: 'TestWorkflow',
-    sourceComponentPath:
-      'front-components/workflow/test-workflow.front-component.tsx',
-    builtComponentPath:
-      STANDARD_FRONT_COMPONENT_BUILD_MANIFEST.testWorkflow.builtComponentPath,
-    builtComponentChecksum:
-      STANDARD_FRONT_COMPONENT_BUILD_MANIFEST.testWorkflow
         .builtComponentChecksum,
     isHeadless: true,
   },
@@ -615,33 +379,6 @@ export const STANDARD_FRONT_COMPONENTS = {
         .builtComponentChecksum,
     isHeadless: true,
   },
-  tidyUpWorkflow: {
-    universalIdentifier: '3dac631e-dfb7-4570-ac27-15d98ee8ec43',
-    name: 'Tidy up workflow',
-    componentName: 'TidyUpWorkflow',
-    sourceComponentPath:
-      'front-components/workflow/tidy-up-workflow.front-component.tsx',
-    builtComponentPath:
-      STANDARD_FRONT_COMPONENT_BUILD_MANIFEST.tidyUpWorkflow.builtComponentPath,
-    builtComponentChecksum:
-      STANDARD_FRONT_COMPONENT_BUILD_MANIFEST.tidyUpWorkflow
-        .builtComponentChecksum,
-    isHeadless: true,
-  },
-  duplicateWorkflow: {
-    universalIdentifier: '566a48c5-5342-446f-a041-9db59bcdab6b',
-    name: 'Duplicate workflow',
-    componentName: 'DuplicateWorkflow',
-    sourceComponentPath:
-      'front-components/workflow/duplicate-workflow.front-component.tsx',
-    builtComponentPath:
-      STANDARD_FRONT_COMPONENT_BUILD_MANIFEST.duplicateWorkflow
-        .builtComponentPath,
-    builtComponentChecksum:
-      STANDARD_FRONT_COMPONENT_BUILD_MANIFEST.duplicateWorkflow
-        .builtComponentChecksum,
-    isHeadless: true,
-  },
   goToRuns: {
     universalIdentifier: '0bd0ccfc-1909-4d19-b694-610878f07a3a',
     name: 'Go to runs',
@@ -682,20 +419,6 @@ export const STANDARD_FRONT_COMPONENTS = {
         .builtComponentChecksum,
     isHeadless: true,
   },
-  stopWorkflowRun: {
-    universalIdentifier: '110fb676-2a09-4ac0-bd19-7261bc588967',
-    name: 'Stop workflow run',
-    componentName: 'StopWorkflowRun',
-    sourceComponentPath:
-      'front-components/workflow-run/stop-workflow-run.front-component.tsx',
-    builtComponentPath:
-      STANDARD_FRONT_COMPONENT_BUILD_MANIFEST.stopWorkflowRun
-        .builtComponentPath,
-    builtComponentChecksum:
-      STANDARD_FRONT_COMPONENT_BUILD_MANIFEST.stopWorkflowRun
-        .builtComponentChecksum,
-    isHeadless: true,
-  },
   seeRunsWorkflowVersion: {
     universalIdentifier: '3d673f94-ecf9-4e38-8eac-684cf4cad617',
     name: 'See runs (workflow version)',
@@ -721,20 +444,6 @@ export const STANDARD_FRONT_COMPONENTS = {
         .builtComponentPath,
     builtComponentChecksum:
       STANDARD_FRONT_COMPONENT_BUILD_MANIFEST.seeWorkflowWorkflowVersion
-        .builtComponentChecksum,
-    isHeadless: true,
-  },
-  useAsDraftWorkflowVersion: {
-    universalIdentifier: 'cb11ab5c-974a-4942-bb8a-77efa6b5bb26',
-    name: 'Use as draft (workflow version)',
-    componentName: 'UseAsDraftWorkflowVersion',
-    sourceComponentPath:
-      'front-components/workflow-version/use-as-draft-workflow-version.front-component.tsx',
-    builtComponentPath:
-      STANDARD_FRONT_COMPONENT_BUILD_MANIFEST.useAsDraftWorkflowVersion
-        .builtComponentPath,
-    builtComponentChecksum:
-      STANDARD_FRONT_COMPONENT_BUILD_MANIFEST.useAsDraftWorkflowVersion
         .builtComponentChecksum,
     isHeadless: true,
   },

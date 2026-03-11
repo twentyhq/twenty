@@ -1,6 +1,9 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { type CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
+import {
+  type CommandMenuItemAvailabilityType,
+  StandardFrontComponentKey,
+} from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
@@ -17,6 +20,7 @@ export const createStandardCommandMenuItemFolderFlatMetadata = ({
   isPinned,
   availabilityType,
   frontComponentUniversalIdentifier,
+  standardFrontComponentKey = null,
   availabilityObjectMetadataUniversalIdentifier,
   conditionalAvailabilityExpression = null,
   commandMenuItemId,
@@ -32,7 +36,8 @@ export const createStandardCommandMenuItemFolderFlatMetadata = ({
   position: number;
   isPinned: boolean;
   availabilityType: CommandMenuItemAvailabilityType;
-  frontComponentUniversalIdentifier: string;
+  frontComponentUniversalIdentifier: string | null;
+  standardFrontComponentKey?: StandardFrontComponentKey | null;
   availabilityObjectMetadataUniversalIdentifier: string | null;
   conditionalAvailabilityExpression?: string | null;
   commandMenuItemId: string;
@@ -44,15 +49,24 @@ export const createStandardCommandMenuItemFolderFlatMetadata = ({
   };
   now: string;
 }): FlatCommandMenuItem => {
-  const flatFrontComponent = findFlatEntityByUniversalIdentifier({
-    flatEntityMaps: flatFrontComponentMaps,
-    universalIdentifier: frontComponentUniversalIdentifier,
-  });
+  let resolvedFrontComponentId: string | null = null;
+  let resolvedFrontComponentUniversalIdentifier: string | null = null;
 
-  if (!isDefined(flatFrontComponent)) {
-    throw new Error(
-      `Front component not found for universal identifier ${frontComponentUniversalIdentifier}`,
-    );
+  if (isDefined(frontComponentUniversalIdentifier)) {
+    const flatFrontComponent = findFlatEntityByUniversalIdentifier({
+      flatEntityMaps: flatFrontComponentMaps,
+      universalIdentifier: frontComponentUniversalIdentifier,
+    });
+
+    if (!isDefined(flatFrontComponent)) {
+      throw new Error(
+        `Front component not found for universal identifier ${frontComponentUniversalIdentifier}`,
+      );
+    }
+
+    resolvedFrontComponentId = flatFrontComponent.id;
+    resolvedFrontComponentUniversalIdentifier =
+      flatFrontComponent.universalIdentifier;
   }
 
   let resolvedObjectMetadataId: string | null = null;
@@ -90,8 +104,10 @@ export const createStandardCommandMenuItemFolderFlatMetadata = ({
     availabilityType,
     conditionalAvailabilityExpression:
       conditionalAvailabilityExpression ?? null,
-    frontComponentId: flatFrontComponent.id,
-    frontComponentUniversalIdentifier: flatFrontComponent.universalIdentifier,
+    frontComponentId: resolvedFrontComponentId,
+    frontComponentUniversalIdentifier:
+      resolvedFrontComponentUniversalIdentifier,
+    standardFrontComponentKey,
     workflowVersionId: null,
     availabilityObjectMetadataId: resolvedObjectMetadataId,
     availabilityObjectMetadataUniversalIdentifier:
