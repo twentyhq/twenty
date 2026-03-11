@@ -72,13 +72,13 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
   flatFieldMetadataMaps,
   flatFrontComponentMaps,
   flatViewMaps,
-  flatViewFieldGroupMaps,
+  _flatViewFieldGroupMaps,
 }: {
   universalConfiguration: FlatPageLayoutWidget['universalConfiguration'];
   flatFieldMetadataMaps: MetadataFlatEntityMaps<'fieldMetadata'>;
   flatFrontComponentMaps: MetadataFlatEntityMaps<'frontComponent'>;
   flatViewMaps: MetadataFlatEntityMaps<'view'>;
-  flatViewFieldGroupMaps: MetadataFlatEntityMaps<'viewFieldGroup'>;
+  _flatViewFieldGroupMaps: MetadataFlatEntityMaps<'viewFieldGroup'>;
 }): FlatPageLayoutWidget['configuration'] => {
   switch (universalConfiguration.configurationType) {
     case WidgetConfigurationType.AGGREGATE_CHART: {

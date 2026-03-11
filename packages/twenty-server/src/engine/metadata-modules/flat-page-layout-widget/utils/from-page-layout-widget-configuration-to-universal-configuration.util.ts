@@ -74,7 +74,7 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
   configuration,
   fieldMetadataUniversalIdentifierById,
   frontComponentUniversalIdentifierById = {},
-  viewFieldGroupUniversalIdentifierById = {},
+  _viewFieldGroupUniversalIdentifierById = {},
   viewUniversalIdentifierById = {},
   shouldThrowOnMissingIdentifier = false,
 }: {
