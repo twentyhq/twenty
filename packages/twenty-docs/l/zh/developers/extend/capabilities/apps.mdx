@@ -321,11 +321,11 @@ export default defineObject({
 但不建议这样做。
 </Note>
 
-### Defining fields on existing objects
+### 在现有对象上定义字段
 
-Use `defineField()` to add custom fields to existing objects — both standard objects (like `company`, `person`, `opportunity`) and custom objects defined by other apps. Each field lives in its own file and references the target object by its `universalIdentifier`.
+使用 `defineField()` 向现有对象添加自定义字段——包括标准对象（如 `company`、`person`、`opportunity`）以及由其他应用定义的自定义对象。 每个字段位于其各自的文件中，并通过其 `universalIdentifier` 引用目标对象。
 
-To reference standard objects, import `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS` from `twenty-sdk`. This constant provides stable identifiers for all built-in objects and their fields:
+要引用标准对象，请从 `twenty-sdk` 导入 `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS`。 该常量为所有内置对象及其字段提供稳定的标识符：
 
 ```typescript
 // src/fields/apollo-total-funding.field.ts
@@ -349,22 +349,22 @@ export default defineField({
 
 关键点：
 
-* `objectUniversalIdentifier` tells Twenty which object to attach the field to. Use `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.<objectName>.universalIdentifier` for standard objects.
-* Each field requires its own stable `universalIdentifier`, a `name`, `type`, `label`, and the target `objectUniversalIdentifier`.
-* You can scaffold new fields using `yarn twenty entity:add` and choosing the field option.
-* `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS` is also exported as `STANDARD_OBJECT` for convenience — both refer to the same constant.
+* `objectUniversalIdentifier` 告诉 Twenty 将该字段附加到哪个对象。 使用 `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.<objectName>.universalIdentifier` 用于标准对象。
+* 每个字段都需要其自身稳定的 `universalIdentifier`、`name`、`type`、`label`，以及目标 `objectUniversalIdentifier`。
+* 你可以使用 `yarn twenty entity:add` 脚手架创建新字段，并选择字段选项。
+* `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS` 也以 `STANDARD_OBJECT` 的名称导出以方便使用——二者指向同一常量。
 
-Available standard objects include: `attachment`, `blocklist`, `calendarChannel`, `calendarEvent`, `calendarEventParticipant`, `company`, `connectedAccount`, `dashboard`, `favorite`, `favoriteFolder`, `message`, `messageChannel`, `messageParticipant`, `messageThread`, `note`, `noteTarget`, `opportunity`, `person`, `task`, `taskTarget`, `timelineActivity`, `workflow`, `workflowAutomatedTrigger`, `workflowRun`, `workflowVersion`, and `workspaceMember`.
+可用的标准对象包括：`attachment`、`blocklist`、`calendarChannel`、`calendarEvent`、`calendarEventParticipant`、`company`、`connectedAccount`、`dashboard`、`favorite`、`favoriteFolder`、`message`、`messageChannel`、`messageParticipant`、`messageThread`、`note`、`noteTarget`、`opportunity`、`person`、`task`、`taskTarget`、`timelineActivity`、`workflow`、`workflowAutomatedTrigger`、`workflowRun`、`workflowVersion` 和 `workspaceMember`。
 
-Each standard object also exposes its field identifiers. For example, to reference a specific field on a standard object in role permissions:
+每个标准对象还会暴露其字段标识符。 例如，要在角色权限中引用标准对象上的特定字段：
 
 ```typescript
 STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.fields.name.universalIdentifier
 ```
 
-#### Relation fields on existing objects
+#### 现有对象上的关联字段
 
-You can also define relation fields that link existing objects to your custom objects:
+你还可以定义关联字段，将现有对象链接到你的自定义对象：
 
 ```typescript
 // src/fields/people-on-call-recording.field.ts
@@ -836,6 +836,255 @@ export default defineFrontComponent({
 
 * **脚手架生成**：运行 `yarn twenty entity:add` 并选择添加新前端组件的选项。
 * **手动**：创建一个新的 `.tsx` 文件，并使用 `defineFrontComponent()`，遵循相同的模式。
+
+#### 前端组件可用位置
+
+在 Twenty 中，前端组件可在两个位置进行渲染：
+
+* **侧边栏** — 非无头的前端组件会在右侧侧边栏中打开。 当前端组件从命令菜单触发时，这是默认行为。
+* **小部件（仪表盘和记录页面）** — 前端组件可以作为小部件嵌入页面布局中。 在配置仪表盘或记录页面布局时，用户可以添加前端组件小部件。
+
+#### 无头与非无头
+
+前端组件有两种由 `isHeadless` 选项控制的渲染模式：
+
+**非无头（默认）** — 该组件会渲染可见的 UI。 从命令菜单触发时，它会在侧边栏中打开。 当 `isHeadless` 为 `false` 或被省略时，这是默认行为。
+
+**无头** — 该组件会在后台以不可见的方式挂载。 它不会打开侧边栏。 无头组件旨在用于执行逻辑后自行卸载的操作——例如运行异步任务、导航到某个页面或显示确认模态框。 它们与下文介绍的 SDK Command 组件天然契合。
+
+```typescript
+export default defineFrontComponent({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'my-action',
+  description: 'Runs an action without opening the side panel',
+  component: MyAction,
+  isHeadless: true,
+  command: {
+    universalIdentifier: 'b2c3d4e5-f6a7-8901-bcde-f12345678901',
+    label: 'Run my action',
+  },
+});
+```
+
+#### 添加命令菜单项
+
+要让前端组件作为一项出现在 Twenty 的命令菜单中，请在 `defineFrontComponent()` 中添加 `command` 属性。 当用户打开命令菜单（Cmd+K / Ctrl+K）时，该项会显示，并在点击时触发该前端组件。
+
+`command` 对象接受以下字段：
+
+| 字段                                      | 类型                                    | 描述                                                 |
+| --------------------------------------- | ------------------------------------- | -------------------------------------------------- |
+| `universalIdentifier`                   | `string` (必填)                         | 命令菜单项的唯一 ID                                        |
+| `标签`                                    | `string` (必填)                         | 在命令菜单中显示的标签                                        |
+| `图标`                                    | `string` (可选)                         | 图标名称（例如，`'IconSparkles'`）                          |
+| `isPinned`                              | `boolean` (可选)                        | 该命令是否固定在菜单顶部                                       |
+| `availabilityType`                      | `'GLOBAL' \| 'RECORD_SELECTION'` (可选) | `GLOBAL` 会在任意位置显示该命令；`RECORD_SELECTION` 仅在记录上下文中显示 |
+| `availabilityObjectUniversalIdentifier` | `string` (可选)                         | 将该命令限制为特定对象类型（例如，Person）                           |
+
+以下是来自通话录音应用的示例，它添加了一个作用域为 Person 记录的命令：
+
+```typescript
+import { defineFrontComponent } from 'twenty-sdk';
+
+export default defineFrontComponent({
+  universalIdentifier: 'c3d4e5f6-a7b8-9012-cdef-123456789012',
+  name: 'Summarize Person Call Recordings',
+  description: 'Generates a summary of call recordings for a person',
+  component: SummarizePersonRecordings,
+  command: {
+    universalIdentifier: 'd4e5f6a7-b8c9-0123-defa-234567890123',
+    label: 'Summarize call recordings',
+    icon: 'IconSparkles',
+    isPinned: false,
+    availabilityType: 'RECORD_SELECTION',
+    availabilityObjectUniversalIdentifier:
+      '20202020-e674-48e5-a542-72570eee7213',
+  },
+});
+```
+
+当该命令同步后，它会出现在命令菜单中。 如果前端组件为非无头，侧边栏将打开并在其中渲染该组件。 如果为无头，该组件会在后台挂载并执行其逻辑。
+
+#### SDK Command 组件
+
+`twenty-sdk` 包提供了四个为无头前端组件设计的 Command 辅助组件。 每个组件都会在挂载时执行一个操作，通过显示 snackbar 通知来处理错误，并在完成后自动卸载该前端组件。
+
+从 `twenty-sdk/command` 导入它们：
+
+* **`Command`** — 通过 `execute` 属性运行异步回调。
+* **`CommandLink`** — 导航到某个应用路径。 属性：`to`、`params`、`queryParams`、`options`。
+* **`CommandModal`** — 打开一个确认模态框。 如果用户确认，则执行 `execute` 回调。 属性：`title`、`subtitle`、`execute`、`confirmButtonText`、`confirmButtonAccent`。
+* **`CommandOpenSidePanelPage`** — 打开特定的侧边栏页面。 属性：`page`、`pageTitle`、`pageIcon`。
+
+下面是一个完整示例：无头前端组件使用 `Command` 从命令菜单运行一个操作：
+
+```typescript
+// src/front-components/run-action.tsx
+import { defineFrontComponent } from 'twenty-sdk';
+import { Command } from 'twenty-sdk/command';
+import { CoreApiClient } from 'twenty-sdk/clients';
+
+const RunAction = () => {
+  const execute = async () => {
+    const client = new CoreApiClient();
+
+    await client.mutation({
+      createTask: {
+        __args: { data: { title: 'Created by my app' } },
+        id: true,
+      },
+    });
+  };
+
+  return <Command execute={execute} />;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'e5f6a7b8-c9d0-1234-efab-345678901234',
+  name: 'run-action',
+  description: 'Creates a task from the command menu',
+  component: RunAction,
+  isHeadless: true,
+  command: {
+    universalIdentifier: 'f6a7b8c9-d0e1-2345-fabc-456789012345',
+    label: 'Run my action',
+    icon: 'IconPlayerPlay',
+  },
+});
+```
+
+另一个示例：使用 `CommandModal` 在执行前请求确认：
+
+```typescript
+// src/front-components/delete-draft.tsx
+import { defineFrontComponent } from 'twenty-sdk';
+import { CommandModal } from 'twenty-sdk/command';
+
+const DeleteDraft = () => {
+  const execute = async () => {
+    // perform the deletion
+  };
+
+  return (
+    <CommandModal
+      title="Delete draft?"
+      subtitle="This action cannot be undone."
+      execute={execute}
+      confirmButtonText="Delete"
+      confirmButtonAccent="danger"
+    />
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'a7b8c9d0-e1f2-3456-abcd-567890123456',
+  name: 'delete-draft',
+  description: 'Deletes a draft with confirmation',
+  component: DeleteDraft,
+  isHeadless: true,
+  command: {
+    universalIdentifier: 'b8c9d0e1-f2a3-4567-bcde-678901234567',
+    label: 'Delete draft',
+    icon: 'IconTrash',
+  },
+});
+```
+
+#### 执行上下文
+
+每个前端组件都会接收一个执行上下文，提供其运行位置与方式的信息。 使用来自 `twenty-sdk` 的钩子来访问上下文值：
+
+| 钩子                      | 返回类型             | 描述                                                            |
+| ----------------------- | ---------------- | ------------------------------------------------------------- |
+| `useFrontComponentId()` | `string`         | 当前前端组件实例的唯一 ID                                                |
+| `useRecordId()`         | `string \| null` | 当组件在记录上下文中运行时（例如记录页面小部件或作用域限定于某条记录的命令），当前记录的 ID。 否则返回 `null`。 |
+| `useUserId()`           | `string \| null` | 当前用户的 ID                                                      |
+
+```typescript
+import { useRecordId, useUserId } from 'twenty-sdk';
+
+const MyWidget = () => {
+  const recordId = useRecordId();
+  const userId = useUserId();
+
+  return (
+    <div>
+      <p>Record: {recordId ?? 'none'}</p>
+      <p>User: {userId ?? 'anonymous'}</p>
+    </div>
+  );
+};
+```
+
+该上下文是响应式的——如果周围的记录发生变化，钩子会自动返回更新后的值。
+
+#### 宿主 API 函数
+
+前端组件在隔离的沙箱中运行，但可以通过宿主提供的一组函数与 Twenty 的 UI 进行交互。 直接从 `twenty-sdk` 导入它们：
+
+```typescript
+import {
+  navigate,
+  closeSidePanel,
+  enqueueSnackbar,
+  unmountFrontComponent,
+  openSidePanelPage,
+  openCommandConfirmationModal,
+} from 'twenty-sdk';
+```
+
+| 函数                             | 签名                                                       | 描述                                                                                                                                |
+| ------------------------------ | -------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| `导航`                           | `(to, params?, queryParams?, options?) => Promise<void>` | 在 Twenty 内导航到一个类型化的应用路径                                                                                                           |
+| `closeSidePanel`               | `() => Promise<void>`                                    | 关闭侧边栏                                                                                                                             |
+| `enqueueSnackbar`              | `(params) => Promise<void>`                              | 显示一条 snackbar 通知。 参数：`message`、`variant`（`'error'`、`'success'`、`'info'`、`'warning'`），可选的 `duration`、`detailedMessage`、`dedupeKey` |
+| `unmountFrontComponent`        | `() => Promise<void>`                                    | 卸载当前前端组件（供无头组件在执行后进行清理）                                                                                                           |
+| `openSidePanelPage`            | `(params) => Promise<void>`                              | 在侧边栏中打开一个页面。 参数：`page`、`pageTitle`、`pageIcon`、`shouldResetSearchState`                                                            |
+| `openCommandConfirmationModal` | `(params) => Promise<'confirm' \| 'cancel'>`             | 显示一个确认模态框并等待用户的响应。 参数：`title`、`subtitle`、`confirmButtonText`、`confirmButtonAccent`（`'default'`、`'blue'`、`'danger'`）               |
+
+下面是一个示例，使用宿主 API 在操作完成后显示一条 snackbar 并关闭侧边栏：
+
+```typescript
+import { defineFrontComponent, useRecordId } from 'twenty-sdk';
+import { enqueueSnackbar, closeSidePanel } from 'twenty-sdk';
+import { CoreApiClient } from 'twenty-sdk/clients';
+
+const ArchiveRecord = () => {
+  const recordId = useRecordId();
+
+  const handleArchive = async () => {
+    const client = new CoreApiClient();
+
+    await client.mutation({
+      updateTask: {
+        __args: { id: recordId, data: { status: 'ARCHIVED' } },
+        id: true,
+      },
+    });
+
+    await enqueueSnackbar({
+      message: 'Record archived',
+      variant: 'success',
+    });
+
+    await closeSidePanel();
+  };
+
+  return (
+    <div style={{ padding: '20px' }}>
+      <p>Archive this record?</p>
+      <button onClick={handleArchive}>Archive</button>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'c9d0e1f2-a3b4-5678-cdef-789012345678',
+  name: 'archive-record',
+  description: 'Archives the current record',
+  component: ArchiveRecord,
+});
+```
 
 ### 技能
 

@@ -9,6 +9,8 @@ import { buildStandardFlatFieldMetadataMaps } from 'src/engine/workspace-manager
 import { getStandardObjectMetadataRelatedEntityIds } from 'src/engine/workspace-manager/twenty-standard-application/utils/get-standard-object-metadata-related-entity-ids.util';
 import { getStandardPageLayoutMetadataRelatedEntityIds } from 'src/engine/workspace-manager/twenty-standard-application/utils/get-standard-page-layout-metadata-related-entity-ids.util';
 import { buildStandardFlatIndexMetadataMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/build-standard-flat-index-metadata-maps.util';
+import { buildStandardFlatCommandMenuItemMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/command-menu-item/build-standard-flat-command-menu-item-maps.util';
+import { buildStandardFlatFrontComponentMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/front-component/build-standard-flat-front-component-maps.util';
 import { buildStandardFlatNavigationMenuItemMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/navigation-menu-item/build-standard-flat-navigation-menu-item-maps.util';
 import { buildStandardFlatObjectMetadataMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/build-standard-flat-object-metadata-maps.util';
 import { buildStandardFlatPageLayoutTabMetadataMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/page-layout-tab/build-standard-flat-page-layout-tab-metadata-maps.util';
@@ -201,6 +203,23 @@ export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
     },
   });
 
+  const flatFrontComponentMaps = buildStandardFlatFrontComponentMaps({
+    now,
+    workspaceId,
+    twentyStandardApplicationId,
+    dependencyFlatEntityMaps: undefined,
+  });
+
+  const flatCommandMenuItemMaps = buildStandardFlatCommandMenuItemMaps({
+    now,
+    workspaceId,
+    twentyStandardApplicationId,
+    dependencyFlatEntityMaps: {
+      flatFrontComponentMaps,
+      flatObjectMetadataMaps,
+    },
+  });
+
   const allFlatEntityMaps: TwentyStandardAllFlatEntityMaps = {
     flatViewFieldMaps,
     flatViewFieldGroupMaps,
@@ -217,6 +236,8 @@ export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
     flatPageLayoutMaps,
     flatPageLayoutTabMaps,
     flatPageLayoutWidgetMaps,
+    flatFrontComponentMaps,
+    flatCommandMenuItemMaps,
   };
 
   const idByUniversalIdentifierByMetadataName: IdByUniversalIdentifierByMetadataName =

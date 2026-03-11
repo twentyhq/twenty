@@ -116,8 +116,13 @@ export const DEFAULT_RECORD_COMMAND_MENU_ITEMS_CONFIG: Record<
     position: 2,
     isPinned: true,
     Icon: IconPlus,
-    shouldBeRegistered: ({ objectPermissions, hasAnySoftDeleteFilterOnView }) =>
-      (objectPermissions.canUpdateObjectRecords &&
+    shouldBeRegistered: ({
+      objectMetadataItem,
+      objectPermissions,
+      hasAnySoftDeleteFilterOnView,
+    }) =>
+      (!objectMetadataItem?.isSystem &&
+        objectPermissions.canUpdateObjectRecords &&
         !hasAnySoftDeleteFilterOnView) ??
       false,
     availableOn: [CommandMenuItemViewType.INDEX_PAGE_NO_SELECTION],
@@ -440,8 +445,10 @@ export const DEFAULT_RECORD_COMMAND_MENU_ITEMS_CONFIG: Record<
     Icon: IconFileImport,
     accent: 'default',
     isPinned: false,
-    shouldBeRegistered: ({ hasAnySoftDeleteFilterOnView }) =>
-      !hasAnySoftDeleteFilterOnView,
+    shouldBeRegistered: ({
+      objectMetadataItem,
+      hasAnySoftDeleteFilterOnView,
+    }) => !objectMetadataItem?.isSystem && !hasAnySoftDeleteFilterOnView,
     availableOn: [CommandMenuItemViewType.INDEX_PAGE_NO_SELECTION],
     component: <ImportRecordsNoSelectionRecordCommand />,
     requiredPermissionFlag: PermissionFlagType.IMPORT_CSV,

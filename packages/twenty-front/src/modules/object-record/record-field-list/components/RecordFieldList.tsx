@@ -124,6 +124,7 @@ export const RecordFieldList = ({
                     })}`,
                     isRecordFieldReadOnly: isRecordFieldReadOnly({
                       isRecordReadOnly,
+                      isSystemObject: objectMetadataItem.isSystem,
                       objectPermissions:
                         getObjectPermissionsFromMapByObjectMetadataId({
                           objectPermissionsByObjectMetadataId,
@@ -132,6 +133,7 @@ export const RecordFieldList = ({
                       fieldMetadataItem: {
                         id: fieldMetadataItem.id,
                         isUIReadOnly: fieldMetadataItem.isUIReadOnly ?? false,
+                        isCustom: fieldMetadataItem.isCustom ?? false,
                       },
                     }),
                   }}
@@ -172,6 +174,7 @@ export const RecordFieldList = ({
                   isDisplayModeFixHeight: true,
                   isRecordFieldReadOnly: isRecordFieldReadOnly({
                     isRecordReadOnly,
+                    isSystemObject: objectMetadataItem.isSystem,
                     objectPermissions:
                       getObjectPermissionsFromMapByObjectMetadataId({
                         objectPermissionsByObjectMetadataId,
@@ -180,6 +183,7 @@ export const RecordFieldList = ({
                     fieldMetadataItem: {
                       id: fieldMetadataItem.id,
                       isUIReadOnly: fieldMetadataItem.isUIReadOnly ?? false,
+                      isCustom: fieldMetadataItem.isCustom ?? false,
                     },
                   }),
                   onMouseEnter: () =>
@@ -246,6 +250,7 @@ export const RecordFieldList = ({
               isDisplayModeFixHeight: true,
               isRecordFieldReadOnly: isRecordFieldReadOnly({
                 isRecordReadOnly,
+                isSystemObject: objectMetadataItem.isSystem,
                 objectPermissions:
                   getObjectPermissionsFromMapByObjectMetadataId({
                     objectPermissionsByObjectMetadataId,
@@ -254,6 +259,7 @@ export const RecordFieldList = ({
                 fieldMetadataItem: {
                   id: fieldMetadataItem.id,
                   isUIReadOnly: fieldMetadataItem.isUIReadOnly ?? false,
+                  isCustom: fieldMetadataItem.isCustom ?? false,
                 },
               }),
             }}

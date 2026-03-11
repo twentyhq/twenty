@@ -837,6 +837,255 @@ Yeni ön uç bileşenlerini iki şekilde oluşturabilirsiniz:
 * **Şablondan**: `yarn twenty entity:add` çalıştırın ve yeni bir ön uç bileşeni ekleme seçeneğini seçin.
 * **Manuel**: Aynı deseni izleyerek yeni bir `.tsx` dosyası oluşturun ve `defineFrontComponent()` kullanın.
 
+#### Ön bileşenlerin kullanılabileceği yerler
+
+Ön bileşenler, Twenty içinde iki konumda işlenebilir:
+
+* **Yan panel** — Headless olmayan ön bileşenler, sağ taraftaki yan panelde açılır. Bir ön bileşen komut menüsünden tetiklendiğinde varsayılan davranış budur.
+* **Widget'lar (panolar ve kayıt sayfaları)** — Ön bileşenler, sayfa düzenlerine widget olarak gömülebilir. Bir pano veya kayıt sayfası düzeni yapılandırılırken kullanıcılar bir ön bileşen widget'ı ekleyebilir.
+
+#### Headless ve headless olmayan
+
+Ön bileşenler, `isHeadless` seçeneğiyle kontrol edilen iki işleme kipiyle gelir:
+
+**Headless olmayan (varsayılan)** — Bileşen görünür bir kullanıcı arayüzü (UI) oluşturur. Komut menüsünden tetiklendiğinde yan panelde açılır. `isHeadless` `false` olduğunda veya belirtilmediğinde bu varsayılan davranıştır.
+
+**Headless** — Bileşen arka planda görünmez şekilde bağlanır. Yan paneli açmaz. Headless bileşenler, mantığı çalıştırıp ardından kendilerini kaldıran eylemler için tasarlanmıştır — örneğin, bir async görevi çalıştırma, bir sayfaya gitme veya bir onay modalı gösterme. Aşağıda açıklanan SDK Command bileşenleriyle doğal olarak eşleşirler.
+
+```typescript
+export default defineFrontComponent({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'my-action',
+  description: 'Runs an action without opening the side panel',
+  component: MyAction,
+  isHeadless: true,
+  command: {
+    universalIdentifier: 'b2c3d4e5-f6a7-8901-bcde-f12345678901',
+    label: 'Run my action',
+  },
+});
+```
+
+#### Komut menüsüne öğe ekleme
+
+Bir ön bileşenin Twenty'nin komut menüsünde bir öğe olarak görünmesi için `defineFrontComponent()` içine `command` özelliğini ekleyin. Kullanıcılar komut menüsünü (Cmd+K / Ctrl+K) açtığında, öğe görüntülenir ve tıklandığında ön bileşeni tetikler.
+
+`command` nesnesi aşağıdaki alanları kabul eder:
+
+| Alan                                    | Tür                                             | Açıklama                                                                                         |
+| --------------------------------------- | ----------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| `universalIdentifier`                   | `string` (zorunlu)                              | Komut menüsü öğesi için benzersiz kimlik                                                         |
+| `etiket`                                | `string` (zorunlu)                              | Komut menüsünde gösterilen etiket                                                                |
+| `simge`                                 | `string` (isteğe bağlı)                         | Simge adı (ör. `'IconSparkles'`)                                                                 |
+| `isPinned`                              | `boolean` (isteğe bağlı)                        | Komutun menünün en üstüne sabitlenip sabitlenmediği                                              |
+| `availabilityType`                      | `'GLOBAL' \| 'RECORD_SELECTION'` (isteğe bağlı) | `GLOBAL` komutu her yerde gösterir; `RECORD_SELECTION` ise yalnızca kayıt bağlamlarında gösterir |
+| `availabilityObjectUniversalIdentifier` | `string` (isteğe bağlı)                         | Komutu belirli bir nesne türüyle sınırlandırın (ör. Person)                                      |
+
+Person kayıtlarına özel bir komut ekleyen çağrı kaydı uygulamasından bir örnek:
+
+```typescript
+import { defineFrontComponent } from 'twenty-sdk';
+
+export default defineFrontComponent({
+  universalIdentifier: 'c3d4e5f6-a7b8-9012-cdef-123456789012',
+  name: 'Summarize Person Call Recordings',
+  description: 'Generates a summary of call recordings for a person',
+  component: SummarizePersonRecordings,
+  command: {
+    universalIdentifier: 'd4e5f6a7-b8c9-0123-defa-234567890123',
+    label: 'Summarize call recordings',
+    icon: 'IconSparkles',
+    isPinned: false,
+    availabilityType: 'RECORD_SELECTION',
+    availabilityObjectUniversalIdentifier:
+      '20202020-e674-48e5-a542-72570eee7213',
+  },
+});
+```
+
+Komut senkronize edildiğinde komut menüsünde görünür. Ön bileşen headless değilse, yan panel bileşen içeride işlenmiş halde açılır. Headless ise bileşen arka planda bağlanır ve mantığını yürütür.
+
+#### SDK Command bileşenleri
+
+`twenty-sdk` paketi, headless ön bileşenler için tasarlanmış dört Command yardımcı bileşeni sağlar. Her bileşen bağlandığında bir eylem yürütür, hataları bir snackbar bildirimi göstererek ele alır ve tamamlandığında ön bileşeni otomatik olarak kaldırır.
+
+Bunları `twenty-sdk/command` içinden içe aktarın:
+
+* **`Command`** — `execute` prop'u aracılığıyla async bir geri çağrıyı çalıştırır.
+* **`CommandLink`** — Bir uygulama yoluna gider. Props: `to`, `params`, `queryParams`, `options`.
+* **`CommandModal`** — Bir onay modalı açar. Kullanıcı onaylarsa `execute` geri çağrısını yürütür. Props: `title`, `subtitle`, `execute`, `confirmButtonText`, `confirmButtonAccent`.
+* **`CommandOpenSidePanelPage`** — Belirli bir yan panel sayfasını açar. Props: `page`, `pageTitle`, `pageIcon`.
+
+`Command` kullanarak komut menüsünden bir eylem çalıştıran headless bir ön bileşenin tam örneği:
+
+```typescript
+// src/front-components/run-action.tsx
+import { defineFrontComponent } from 'twenty-sdk';
+import { Command } from 'twenty-sdk/command';
+import { CoreApiClient } from 'twenty-sdk/clients';
+
+const RunAction = () => {
+  const execute = async () => {
+    const client = new CoreApiClient();
+
+    await client.mutation({
+      createTask: {
+        __args: { data: { title: 'Created by my app' } },
+        id: true,
+      },
+    });
+  };
+
+  return <Command execute={execute} />;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'e5f6a7b8-c9d0-1234-efab-345678901234',
+  name: 'run-action',
+  description: 'Creates a task from the command menu',
+  component: RunAction,
+  isHeadless: true,
+  command: {
+    universalIdentifier: 'f6a7b8c9-d0e1-2345-fabc-456789012345',
+    label: 'Run my action',
+    icon: 'IconPlayerPlay',
+  },
+});
+```
+
+Ve yürütmeden önce onay istemek için `CommandModal` kullanan bir örnek:
+
+```typescript
+// src/front-components/delete-draft.tsx
+import { defineFrontComponent } from 'twenty-sdk';
+import { CommandModal } from 'twenty-sdk/command';
+
+const DeleteDraft = () => {
+  const execute = async () => {
+    // perform the deletion
+  };
+
+  return (
+    <CommandModal
+      title="Delete draft?"
+      subtitle="This action cannot be undone."
+      execute={execute}
+      confirmButtonText="Delete"
+      confirmButtonAccent="danger"
+    />
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'a7b8c9d0-e1f2-3456-abcd-567890123456',
+  name: 'delete-draft',
+  description: 'Deletes a draft with confirmation',
+  component: DeleteDraft,
+  isHeadless: true,
+  command: {
+    universalIdentifier: 'b8c9d0e1-f2a3-4567-bcde-678901234567',
+    label: 'Delete draft',
+    icon: 'IconTrash',
+  },
+});
+```
+
+#### Yürütme bağlamı
+
+Her ön bileşen, nerede ve nasıl çalıştığına dair bilgi sağlayan bir yürütme bağlamı alır. Bağlam değerlerine `twenty-sdk` içindeki hook'ları kullanarak erişin:
+
+| Hook                    | Dönüş türü       | Açıklama                                                                                                                                                  |
+| ----------------------- | ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `useFrontComponentId()` | `string`         | Geçerli ön bileşen örneğinin benzersiz kimliği                                                                                                            |
+| `useRecordId()`         | `string \| null` | Bileşen bir kayıt bağlamında çalıştığında (ör. bir kayıt sayfası widget'ı veya bir kayda özel bir komut) geçerli kaydın kimliği. Aksi halde `null` döner. |
+| `useUserId()`           | `string \| null` | Geçerli kullanıcının kimliği                                                                                                                              |
+
+```typescript
+import { useRecordId, useUserId } from 'twenty-sdk';
+
+const MyWidget = () => {
+  const recordId = useRecordId();
+  const userId = useUserId();
+
+  return (
+    <div>
+      <p>Record: {recordId ?? 'none'}</p>
+      <p>User: {userId ?? 'anonymous'}</p>
+    </div>
+  );
+};
+```
+
+Bağlam tepkiseldir — çevredeki kayıt değişirse, hook'lar güncellenmiş değerleri otomatik olarak döndürür.
+
+#### Host API işlevleri
+
+Ön bileşenler yalıtılmış bir korumalı alanda çalışır ancak host tarafından sağlanan bir dizi işleve aracılığıyla Twenty'nin arayüzüyle etkileşime girebilir. Bunları doğrudan `twenty-sdk` içinden içe aktarın:
+
+```typescript
+import {
+  navigate,
+  closeSidePanel,
+  enqueueSnackbar,
+  unmountFrontComponent,
+  openSidePanelPage,
+  openCommandConfirmationModal,
+} from 'twenty-sdk';
+```
+
+| Fonksiyon                      | İmza                                                     | Açıklama                                                                                                                                                                      |
+| ------------------------------ | -------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `gezin`                        | `(to, params?, queryParams?, options?) => Promise<void>` | Twenty içinde tiplendirilmiş bir uygulama yoluna gidin                                                                                                                        |
+| `closeSidePanel`               | `() => Promise<void>`                                    | Yan paneli kapat                                                                                                                                                              |
+| `enqueueSnackbar`              | `(params) => Promise<void>`                              | Bir snackbar bildirimi gösterin. Parametreler: `message`, `variant` (`'error'`, `'success'`, `'info'`, `'warning'`), isteğe bağlı `duration`, `detailedMessage`, `dedupeKey`  |
+| `unmountFrontComponent`        | `() => Promise<void>`                                    | Geçerli ön bileşeni kaldırın (yürütmeden sonra temizlemek için headless bileşenler tarafından kullanılır)                                                                     |
+| `openSidePanelPage`            | `(params) => Promise<void>`                              | Yan panelde bir sayfa açın. Parametreler: `page`, `pageTitle`, `pageIcon`, `shouldResetSearchState`                                                                           |
+| `openCommandConfirmationModal` | `(params) => Promise<'confirm' \| 'cancel'>`             | Bir onay modalı gösterin ve kullanıcının yanıtını bekleyin. Parametreler: `title`, `subtitle`, `confirmButtonText`, `confirmButtonAccent` (`'default'`, `'blue'`, `'danger'`) |
+
+Bir eylem tamamlandıktan sonra bir snackbar göstermek ve yan paneli kapatmak için host API'sini kullanan bir örnek:
+
+```typescript
+import { defineFrontComponent, useRecordId } from 'twenty-sdk';
+import { enqueueSnackbar, closeSidePanel } from 'twenty-sdk';
+import { CoreApiClient } from 'twenty-sdk/clients';
+
+const ArchiveRecord = () => {
+  const recordId = useRecordId();
+
+  const handleArchive = async () => {
+    const client = new CoreApiClient();
+
+    await client.mutation({
+      updateTask: {
+        __args: { id: recordId, data: { status: 'ARCHIVED' } },
+        id: true,
+      },
+    });
+
+    await enqueueSnackbar({
+      message: 'Record archived',
+      variant: 'success',
+    });
+
+    await closeSidePanel();
+  };
+
+  return (
+    <div style={{ padding: '20px' }}>
+      <p>Archive this record?</p>
+      <button onClick={handleArchive}>Archive</button>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'c9d0e1f2-a3b4-5678-cdef-789012345678',
+  name: 'archive-record',
+  description: 'Archives the current record',
+  component: ArchiveRecord,
+});
+```
+
 ### Beceriler
 
 Yetenekler, yapay zekâ ajanlarının çalışma alanınızda kullanabileceği yeniden kullanılabilir yönergeleri ve kabiliyetleri tanımlar. Yerleşik doğrulamayla yetenekleri tanımlamak için `defineSkill()` kullanın:
