@@ -4144,12 +4144,6 @@ msgstr "默認國際冠碼"
 msgid "Default palette"
 msgstr "預設調色盤"
 
-#. js-lingui-id: U/uGBk
-#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationUngroupedEditor.tsx
-#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupEditor.tsx
-msgid "Default position/visibility for fields created in the future"
-msgstr ""
-
 #. js-lingui-id: v41VX6
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
@@ -8929,12 +8923,6 @@ msgstr "新電子郵件域名"
 msgid "New Field"
 msgstr "新字段"
 
-#. js-lingui-id: DNUCGO
-#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationUngroupedEditor.tsx
-#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupEditor.tsx
-msgid "New fields"
-msgstr ""
-
 #. js-lingui-id: 96G6Re
 #: src/modules/side-panel/pages/navigation-menu-item/hooks/useAddFolderToNavigationMenu.ts
 #: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemMainMenu.tsx
@@ -12150,6 +12138,11 @@ msgstr "設為主要"
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 msgid "Set email visibility, manage your blocklist and more."
 msgstr "設置電子郵件可見性，管理您的屏蔽列表等。"
+
+#. js-lingui-id: qFjlHh
+#: src/modules/side-panel/pages/page-layout/components/NewFieldDefaultVisibilityToggle.tsx
+msgid "Set fields created in the future as \"visible\""
+msgstr ""
 
 #. js-lingui-id: 6KA8xy
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts

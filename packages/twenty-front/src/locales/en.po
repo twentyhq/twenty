@@ -4139,12 +4139,6 @@ msgstr "Default Country Code"
 msgid "Default palette"
 msgstr "Default palette"
 
-#. js-lingui-id: U/uGBk
-#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationUngroupedEditor.tsx
-#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupEditor.tsx
-msgid "Default position/visibility for fields created in the future"
-msgstr "Default position/visibility for fields created in the future"
-
 #. js-lingui-id: v41VX6
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
@@ -8924,12 +8918,6 @@ msgstr "New Emailing Domain"
 msgid "New Field"
 msgstr "New Field"
 
-#. js-lingui-id: DNUCGO
-#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationUngroupedEditor.tsx
-#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupEditor.tsx
-msgid "New fields"
-msgstr "New fields"
-
 #. js-lingui-id: 96G6Re
 #: src/modules/side-panel/pages/navigation-menu-item/hooks/useAddFolderToNavigationMenu.ts
 #: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemMainMenu.tsx
@@ -12145,6 +12133,11 @@ msgstr "Set as Primary"
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 msgid "Set email visibility, manage your blocklist and more."
 msgstr "Set email visibility, manage your blocklist and more."
+
+#. js-lingui-id: qFjlHh
+#: src/modules/side-panel/pages/page-layout/components/NewFieldDefaultVisibilityToggle.tsx
+msgid "Set fields created in the future as \"visible\""
+msgstr "Set fields created in the future as \"visible\""
 
 #. js-lingui-id: 6KA8xy
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
