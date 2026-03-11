@@ -1,11 +1,13 @@
 import { useBasePageLayout } from '@/page-layout/hooks/useBasePageLayout';
 import { usePageLayoutWithRelationWidgets } from '@/page-layout/hooks/usePageLayoutWithRelationWidgets';
+import { useSetIsPageLayoutInEditMode } from '@/page-layout/hooks/useSetIsPageLayoutInEditMode';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutIsInitializedComponentState } from '@/page-layout/states/pageLayoutIsInitializedComponentState';
 import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
 import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { convertPageLayoutToTabLayouts } from '@/page-layout/utils/convertPageLayoutToTabLayouts';
+import { isPageLayoutEmpty } from '@/page-layout/utils/isPageLayoutEmpty';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useStore } from 'jotai';
@@ -15,12 +17,10 @@ import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 type PageLayoutInitializationQueryEffectProps = {
   pageLayoutId: string;
-  onInitialized?: (pageLayout: PageLayout) => void;
 };
 
 export const PageLayoutInitializationQueryEffect = ({
   pageLayoutId,
-  onInitialized,
 }: PageLayoutInitializationQueryEffectProps) => {
   const [pageLayoutIsInitialized, setPageLayoutIsInitialized] =
     useAtomComponentState(pageLayoutIsInitializedComponentState);
@@ -28,6 +28,9 @@ export const PageLayoutInitializationQueryEffect = ({
   const basePageLayout = useBasePageLayout(pageLayoutId);
 
   const pageLayout = usePageLayoutWithRelationWidgets(basePageLayout);
+
+  const { setIsPageLayoutInEditMode } =
+    useSetIsPageLayoutInEditMode(pageLayoutId);
 
   const pageLayoutPersistedComponentCallbackState =
     useAtomComponentStateCallbackState(pageLayoutPersistedComponentState);
@@ -48,22 +51,26 @@ export const PageLayoutInitializationQueryEffect = ({
 
       if (!isDeeplyEqual(layout, currentPersisted)) {
         store.set(pageLayoutPersistedComponentCallbackState, layout);
-        store.set(pageLayoutDraftComponentCallbackState, {
-          id: layout.id,
-          name: layout.name,
-          type: layout.type,
-          objectMetadataId: layout.objectMetadataId,
-          tabs: layout.tabs,
-        });
-
-        const tabLayouts = convertPageLayoutToTabLayouts(layout);
-        store.set(pageLayoutCurrentLayoutsComponentCallbackState, tabLayouts);
       }
+
+      store.set(pageLayoutDraftComponentCallbackState, {
+        id: layout.id,
+        name: layout.name,
+        type: layout.type,
+        objectMetadataId: layout.objectMetadataId,
+        tabs: layout.tabs,
+      });
+
+      const tabLayouts = convertPageLayoutToTabLayouts(layout);
+      store.set(pageLayoutCurrentLayoutsComponentCallbackState, tabLayouts);
+
+      setIsPageLayoutInEditMode(isPageLayoutEmpty(layout));
     },
     [
       pageLayoutCurrentLayoutsComponentCallbackState,
       pageLayoutDraftComponentCallbackState,
       pageLayoutPersistedComponentCallbackState,
+      setIsPageLayoutInEditMode,
       store,
     ],
   );
@@ -71,14 +78,12 @@ export const PageLayoutInitializationQueryEffect = ({
   useEffect(() => {
     if (!pageLayoutIsInitialized && isDefined(pageLayout)) {
       initializePageLayout(pageLayout);
-      onInitialized?.(pageLayout);
       setPageLayoutIsInitialized(true);
     }
   }, [
     initializePageLayout,
     pageLayoutIsInitialized,
     pageLayout,
-    onInitialized,
     setPageLayoutIsInitialized,
   ]);
 
