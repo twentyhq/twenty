@@ -29,7 +29,6 @@ export const SettingsTextInput = ({
   autoFocusOnMount,
   autoSelectOnMount,
   dataTestId,
-  className,
   ...props
 }: SettingsTextInputProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
