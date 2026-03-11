@@ -100,7 +100,7 @@ jobs:
           create-twenty-app --version
           mkdir -p /tmp/e2e-test-workspace
           cd /tmp/e2e-test-workspace
-          create-twenty-app test-app --exhaustive --yes
+          create-twenty-app test-app --exhaustive --display-name "Test App" --description "E2E test app"
 
       - name: Install scaffolded app dependencies
         run: |
