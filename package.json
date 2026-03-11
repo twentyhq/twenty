@@ -207,6 +207,7 @@
       "packages/twenty-shared",
       "packages/twenty-sdk",
       "packages/twenty-client-sdk",
+      "packages/twenty-standard-application",
       "packages/twenty-apps",
       "packages/twenty-cli",
       "packages/create-twenty-app",

@@ -29,6 +29,7 @@ export const SettingsTextInput = ({
   autoFocusOnMount,
   autoSelectOnMount,
   dataTestId,
+  className,
   ...props
 }: SettingsTextInputProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -122,6 +123,7 @@ export const SettingsTextInput = ({
   return (
     <TextInput
       ref={inputRef}
+      fullWidth
       // oxlint-disable-next-line react/jsx-props-no-spreading
       {...props}
       dataTestId={dataTestId}

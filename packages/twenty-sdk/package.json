@@ -43,6 +43,11 @@
       "types": "./dist/front-component-renderer/index.d.ts",
       "import": "./dist/front-component-renderer/index.mjs",
       "require": "./dist/front-component-renderer/index.cjs"
+    },
+    "./build": {
+      "types": "./dist/build/index.d.ts",
+      "import": "./dist/build.mjs",
+      "require": "./dist/build.cjs"
     }
   },
   "license": "AGPL-3.0",

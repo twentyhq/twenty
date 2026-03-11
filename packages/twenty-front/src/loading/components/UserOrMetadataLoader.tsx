@@ -13,16 +13,19 @@ const StyledContainer = styled.div`
   box-sizing: border-box;
   display: flex;
   flex-direction: row;
-  gap: 12px;
   height: 100dvh;
   min-width: ${NAVIGATION_DRAWER_CONSTRAINTS.default}px;
   overflow: hidden;
-  padding: 12px 8px 12px 8px;
   width: 100%;
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     width: 100%;
   }
+`;
+
+const StyledLeftPanelWrapper = styled.div`
+  flex-shrink: 0;
+  padding: 12px 0 12px 8px;
 `;
 
 export const UserOrMetadataLoader = () => {
@@ -36,7 +39,9 @@ export const UserOrMetadataLoader = () => {
           backdropZIndex={RootStackingContextZIndices.RootModalBackDrop}
         />
       )}
-      <LeftPanelSkeletonLoader />
+      <StyledLeftPanelWrapper>
+        <LeftPanelSkeletonLoader />
+      </StyledLeftPanelWrapper>
       <RightPanelSkeletonLoader />
     </StyledContainer>
   );

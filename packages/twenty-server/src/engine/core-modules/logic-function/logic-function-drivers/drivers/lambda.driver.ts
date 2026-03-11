@@ -1,5 +1,6 @@
+import { createHash } from 'crypto';
 import * as fs from 'fs/promises';
-import { join } from 'path';
+import { resolve, join } from 'path';
 
 import {
   CreateFunctionCommand,
@@ -12,12 +13,14 @@ import {
   Lambda,
   type LambdaClientConfig,
   ListLayerVersionsCommand,
+  type ListLayerVersionsCommandInput,
   LogType,
   PublishLayerVersionCommand,
-  type PublishLayerVersionCommandInput,
   ResourceNotFoundException,
-  waitUntilFunctionUpdatedV2,
+  waitUntilFunctionActiveV2,
 } from '@aws-sdk/client-lambda';
+import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { AssumeRoleCommand, STSClient } from '@aws-sdk/client-sts';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -25,16 +28,22 @@ import {
   type LogicFunctionDriver,
   type LogicFunctionExecuteParams,
   type LogicFunctionExecuteResult,
+  type LogicFunctionTranspileParams,
+  type LogicFunctionTranspileResult,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 
-import { copyYarnEngineAndBuildDependencies } from 'src/engine/core-modules/application/application-package/utils/copy-yarn-engine-and-build-dependencies';
+import { ASSET_PATH } from 'src/constants/assets-path';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import { callWithTimeout } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/call-with-timeout';
+import { COMMON_LAYER_DEPENDENCIES_DIRNAME } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/common-layer-dependencies-dirname';
+import { copyBuilder } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-builder';
+import { copyCommonLayerDependencies } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-common-layer-dependencies';
 import { copyExecutor } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-executor';
+import { copyYarnInstall } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-yarn-install';
 import { createZipFile } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/create-zip-file';
 import { TemporaryDirManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/temporary-dir-manager';
 import { type LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
 import { type SdkClientGenerationService } from 'src/engine/core-modules/logic-function/logic-function-resource/sdk-client-generation.service';
+import { callWithTimeout } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/call-with-timeout';
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
 import { LogicFunctionRuntime } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import {
@@ -45,6 +54,27 @@ import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-functi
 
 const UPDATE_FUNCTION_DURATION_TIMEOUT_IN_SECONDS = 60;
 const CREDENTIALS_DURATION_IN_SECONDS = 60 * 60; // 1h
+const YARN_INSTALL_LAMBDA_TIMEOUT_SECONDS = 300;
+const YARN_INSTALL_LAMBDA_MEMORY_MB = 1024;
+const COMMON_LAYER_NAME_PREFIX = 'twenty-common-layer';
+const BUILDER_LAMBDA_TIMEOUT_SECONDS = 60;
+const BUILDER_LAMBDA_MEMORY_MB = 512;
+
+const YARN_INSTALL_HANDLER_PATH = resolve(
+  __dirname,
+  join(
+    ASSET_PATH,
+    'engine/core-modules/logic-function/logic-function-drivers/constants/yarn-install/index.mjs',
+  ),
+);
+
+const BUILDER_HANDLER_PATH = resolve(
+  __dirname,
+  join(
+    ASSET_PATH,
+    'engine/core-modules/logic-function/logic-function-drivers/constants/builder/index.mjs',
+  ),
+);
 
 type LambdaDriverExecutorPayload = {
   code: string;
@@ -53,12 +83,36 @@ type LambdaDriverExecutorPayload = {
   handlerName: string;
 };
 
+export type YarnInstallLambdaPayload = {
+  action: 'createLayer';
+  packageJson: string;
+  yarnLock: string;
+  presignedUploadUrl: string;
+};
+
+export type YarnInstallLambdaResult = {
+  success: boolean;
+};
+
+export type BuilderLambdaPayload = {
+  action: 'transpile';
+  sourceCode: string;
+  sourceFileName: string;
+  builtFileName: string;
+};
+
+export type BuilderLambdaResult = {
+  builtCode: string;
+};
+
 export interface LambdaDriverOptions extends LambdaClientConfig {
   logicFunctionResourceService: LogicFunctionResourceService;
   sdkClientGenerationService: SdkClientGenerationService;
   region: string;
   lambdaRole: string;
   subhostingRole?: string;
+  layerBucket: string;
+  layerBucketRegion: string;
 }
 
 export class LambdaDriver implements LogicFunctionDriver {
@@ -124,17 +178,33 @@ export class LambdaDriver implements LogicFunctionDriver {
     };
   }
 
-  private async waitFunctionUpdates(
-    flatLogicFunction: FlatLogicFunction,
+  private async generatePresignedUploadUrl(
+    s3Key: string,
+    expiresIn: number = 300,
+  ): Promise<string> {
+    const s3Client = new S3Client({
+      region: this.options.layerBucketRegion,
+      credentials: isDefined(this.options.subhostingRole)
+        ? await this.getAssumeRoleCredentials()
+        : this.options.credentials,
+    });
+
+    const putCommand = new PutObjectCommand({
+      Bucket: this.options.layerBucket,
+      Key: s3Key,
+      ContentType: 'application/zip',
+    });
+
+    return getSignedUrl(s3Client, putCommand, { expiresIn });
+  }
+
+  private async waitFunctionActive(
+    functionName: string,
     maxWaitTime: number = UPDATE_FUNCTION_DURATION_TIMEOUT_IN_SECONDS,
   ) {
-    const waitParams = {
-      FunctionName: flatLogicFunction.id,
-    };
-
-    await waitUntilFunctionUpdatedV2(
+    await waitUntilFunctionActiveV2(
       { client: await this.getLambdaClient(), maxWaitTime },
-      waitParams,
+      { FunctionName: functionName },
     );
   }
 
@@ -154,17 +224,313 @@ export class LambdaDriver implements LogicFunctionDriver {
     return `sdk-${workspaceId}-${applicationUniversalIdentifier}`;
   }
 
-  private async findExistingLayerArn(
+  private yarnInstallFunctionName: string | undefined;
+  private builderFunctionName: string | undefined;
+  private commonLayerName: string | undefined;
+
+  private async getCommonLayerName(): Promise<string> {
+    if (isDefined(this.commonLayerName)) {
+      return this.commonLayerName;
+    }
+
+    const [packageJson, yarnLock] = await Promise.all([
+      fs.readFile(
+        join(COMMON_LAYER_DEPENDENCIES_DIRNAME, 'package.json'),
+        'utf-8',
+      ),
+      fs.readFile(
+        join(COMMON_LAYER_DEPENDENCIES_DIRNAME, 'yarn.lock'),
+        'utf-8',
+      ),
+    ]);
+
+    const checksum = createHash('sha256')
+      .update(packageJson)
+      .update(yarnLock)
+      .digest('hex')
+      .slice(0, 12);
+
+    this.commonLayerName = `${COMMON_LAYER_NAME_PREFIX}-${checksum}`;
+
+    return this.commonLayerName;
+  }
+
+  private async getYarnInstallFunctionName(): Promise<string> {
+    if (isDefined(this.yarnInstallFunctionName)) {
+      return this.yarnInstallFunctionName;
+    }
+
+    const handlerContent = await fs.readFile(
+      YARN_INSTALL_HANDLER_PATH,
+      'utf-8',
+    );
+    const checksum = createHash('sha256')
+      .update(handlerContent)
+      .digest('hex')
+      .slice(0, 12);
+
+    this.yarnInstallFunctionName = `twenty-yarn-install-${checksum}`;
+
+    return this.yarnInstallFunctionName;
+  }
+
+  private async getBuilderFunctionName(): Promise<string> {
+    if (isDefined(this.builderFunctionName)) {
+      return this.builderFunctionName;
+    }
+
+    const handlerContent = await fs.readFile(BUILDER_HANDLER_PATH, 'utf-8');
+    const checksum = createHash('sha256')
+      .update(handlerContent)
+      .digest('hex')
+      .slice(0, 12);
+
+    this.builderFunctionName = `twenty-builder-${checksum}`;
+
+    return this.builderFunctionName;
+  }
+
+  private async ensureCommonLayerExists(): Promise<string> {
+    const commonLayerName = await this.getCommonLayerName();
+    const existingArn = await this.getExistingLayerArn(commonLayerName);
+
+    if (isDefined(existingArn)) {
+      return existingArn;
+    }
+
+    const temporaryDirManager = new TemporaryDirManager();
+    const { sourceTemporaryDir, lambdaZipPath } =
+      await temporaryDirManager.init();
+
+    try {
+      await copyCommonLayerDependencies(sourceTemporaryDir);
+
+      await createZipFile(sourceTemporaryDir, lambdaZipPath);
+
+      const lambdaClient = await this.getLambdaClient();
+
+      const result = await lambdaClient.send(
+        new PublishLayerVersionCommand({
+          LayerName: commonLayerName,
+          Content: { ZipFile: await fs.readFile(lambdaZipPath) },
+          CompatibleRuntimes: [
+            LogicFunctionRuntime.NODE18,
+            LogicFunctionRuntime.NODE22,
+          ],
+        }),
+      );
+
+      if (!result.LayerVersionArn) {
+        throw new Error(
+          'PublishLayerVersion did not return a LayerVersionArn for common layer',
+        );
+      }
+
+      return result.LayerVersionArn;
+    } finally {
+      await temporaryDirManager.clean();
+    }
+  }
+
+  private async ensureYarnInstallLambdaExists(): Promise<void> {
+    const yarnInstallFunctionName = await this.getYarnInstallFunctionName();
+    const lambdaClient = await this.getLambdaClient();
+
+    try {
+      await lambdaClient.send(
+        new GetFunctionCommand({ FunctionName: yarnInstallFunctionName }),
+      );
+
+      return;
+    } catch (error) {
+      if (!(error instanceof ResourceNotFoundException)) {
+        throw error;
+      }
+    }
+
+    const commonLayerArn = await this.ensureCommonLayerExists();
+
+    const temporaryDirManager = new TemporaryDirManager();
+    const { sourceTemporaryDir, lambdaZipPath } =
+      await temporaryDirManager.init();
+
+    try {
+      await copyYarnInstall(sourceTemporaryDir);
+
+      await createZipFile(sourceTemporaryDir, lambdaZipPath);
+
+      const params: CreateFunctionCommandInput = {
+        Code: {
+          ZipFile: await fs.readFile(lambdaZipPath),
+        },
+        FunctionName: yarnInstallFunctionName,
+        Layers: [commonLayerArn],
+        Handler: 'index.handler',
+        Role: this.options.lambdaRole,
+        Runtime: LogicFunctionRuntime.NODE22,
+        Timeout: YARN_INSTALL_LAMBDA_TIMEOUT_SECONDS,
+        MemorySize: YARN_INSTALL_LAMBDA_MEMORY_MB,
+      };
+
+      await lambdaClient.send(new CreateFunctionCommand(params));
+    } finally {
+      await temporaryDirManager.clean();
+    }
+
+    await this.waitFunctionActive(yarnInstallFunctionName);
+  }
+
+  private async invokeYarnInstallLambda(
+    payload: YarnInstallLambdaPayload,
+  ): Promise<YarnInstallLambdaResult> {
+    const lambdaClient = await this.getLambdaClient();
+
+    const yarnInstallFunctionName = await this.getYarnInstallFunctionName();
+
+    const result = await callWithTimeout({
+      callback: () =>
+        lambdaClient.send(
+          new InvokeCommand({
+            FunctionName: yarnInstallFunctionName,
+            Payload: JSON.stringify(payload),
+            LogType: LogType.Tail,
+          }),
+        ),
+      timeoutMs: YARN_INSTALL_LAMBDA_TIMEOUT_SECONDS * 1000,
+    });
+
+    if (result.FunctionError) {
+      const parsedResult = result.Payload
+        ? JSON.parse(result.Payload.transformToString())
+        : {};
+
+      throw new LogicFunctionException(
+        `Yarn install Lambda failed: ${JSON.stringify(parsedResult)}`,
+        LogicFunctionExceptionCode.LOGIC_FUNCTION_CREATE_FAILED,
+      );
+    }
+
+    const parsedResult: YarnInstallLambdaResult = result.Payload
+      ? JSON.parse(result.Payload.transformToString())
+      : {};
+
+    if (!parsedResult.success) {
+      throw new Error('Yarn install Lambda did not report success');
+    }
+
+    return parsedResult;
+  }
+
+  private async ensureBuilderLambdaExists(): Promise<void> {
+    const builderFunctionName = await this.getBuilderFunctionName();
+    const lambdaClient = await this.getLambdaClient();
+
+    try {
+      await lambdaClient.send(
+        new GetFunctionCommand({ FunctionName: builderFunctionName }),
+      );
+
+      return;
+    } catch (error) {
+      if (!(error instanceof ResourceNotFoundException)) {
+        throw error;
+      }
+    }
+
+    const commonLayerArn = await this.ensureCommonLayerExists();
+
+    const temporaryDirManager = new TemporaryDirManager();
+    const { sourceTemporaryDir, lambdaZipPath } =
+      await temporaryDirManager.init();
+
+    try {
+      await copyBuilder(sourceTemporaryDir);
+
+      await createZipFile(sourceTemporaryDir, lambdaZipPath);
+
+      const params: CreateFunctionCommandInput = {
+        Code: {
+          ZipFile: await fs.readFile(lambdaZipPath),
+        },
+        FunctionName: builderFunctionName,
+        Layers: [commonLayerArn],
+        Handler: 'index.handler',
+        Role: this.options.lambdaRole,
+        Runtime: LogicFunctionRuntime.NODE22,
+        Timeout: BUILDER_LAMBDA_TIMEOUT_SECONDS,
+        MemorySize: BUILDER_LAMBDA_MEMORY_MB,
+      };
+
+      await lambdaClient.send(new CreateFunctionCommand(params));
+    } finally {
+      await temporaryDirManager.clean();
+    }
+
+    await this.waitFunctionActive(builderFunctionName);
+  }
+
+  async transpile({
+    sourceCode,
+    sourceFileName,
+    builtFileName,
+  }: LogicFunctionTranspileParams): Promise<LogicFunctionTranspileResult> {
+    await this.ensureBuilderLambdaExists();
+
+    const lambdaClient = await this.getLambdaClient();
+    const builderFunctionName = await this.getBuilderFunctionName();
+
+    const payload: BuilderLambdaPayload = {
+      action: 'transpile',
+      sourceCode,
+      sourceFileName,
+      builtFileName,
+    };
+
+    const result = await callWithTimeout({
+      callback: () =>
+        lambdaClient.send(
+          new InvokeCommand({
+            FunctionName: builderFunctionName,
+            Payload: JSON.stringify(payload),
+            LogType: LogType.Tail,
+          }),
+        ),
+      timeoutMs: BUILDER_LAMBDA_TIMEOUT_SECONDS * 1000,
+    });
+
+    if (result.FunctionError) {
+      const parsedResult = result.Payload
+        ? JSON.parse(result.Payload.transformToString())
+        : {};
+
+      throw new LogicFunctionException(
+        `Builder Lambda failed: ${JSON.stringify(parsedResult)}`,
+        LogicFunctionExceptionCode.LOGIC_FUNCTION_CREATE_FAILED,
+      );
+    }
+
+    const parsedResult: BuilderLambdaResult = result.Payload
+      ? JSON.parse(result.Payload.transformToString())
+      : {};
+
+    if (!parsedResult.builtCode) {
+      throw new Error('Builder Lambda did not return builtCode');
+    }
+
+    return { builtCode: parsedResult.builtCode };
+  }
+
+  private async getExistingLayerArn(
     layerName: string,
   ): Promise<string | undefined> {
-    const listLayerCommand = new ListLayerVersionsCommand({
+    const listLayerParams: ListLayerVersionsCommandInput = {
       LayerName: layerName,
       MaxItems: 1,
-    });
+    };
 
     const listLayerResult = await (
       await this.getLambdaClient()
-    ).send(listLayerCommand);
+    ).send(new ListLayerVersionsCommand(listLayerParams));
 
     return listLayerResult.LayerVersions?.[0]?.LayerVersionArn;
   }
@@ -176,20 +542,18 @@ export class LambdaDriver implements LogicFunctionDriver {
     layerName: string;
     zipBuffer: Buffer;
   }): Promise<string> {
-    const params: PublishLayerVersionCommandInput = {
-      LayerName: layerName,
-      Content: {
-        ZipFile: zipBuffer,
-      },
-      CompatibleRuntimes: [
-        LogicFunctionRuntime.NODE18,
-        LogicFunctionRuntime.NODE22,
-      ],
-    };
-
     const result = await (
       await this.getLambdaClient()
-    ).send(new PublishLayerVersionCommand(params));
+    ).send(
+      new PublishLayerVersionCommand({
+        LayerName: layerName,
+        Content: { ZipFile: zipBuffer },
+        CompatibleRuntimes: [
+          LogicFunctionRuntime.NODE18,
+          LogicFunctionRuntime.NODE22,
+        ],
+      }),
+    );
 
     if (!isDefined(result.LayerVersionArn)) {
       throw new Error('New layer version ARN is undefined');
@@ -198,7 +562,87 @@ export class LambdaDriver implements LogicFunctionDriver {
     return result.LayerVersionArn;
   }
 
-  private async ensureDepsLayer({
+  private async getDependencyContents(
+    flatApplication: FlatApplication,
+    applicationUniversalIdentifier: string,
+  ): Promise<{ packageJson: string; yarnLock: string }> {
+    const temporaryDirManager = new TemporaryDirManager();
+    const { sourceTemporaryDir } = await temporaryDirManager.init();
+
+    try {
+      await this.logicFunctionResourceService.copyDependenciesInMemory({
+        applicationUniversalIdentifier,
+        workspaceId: flatApplication.workspaceId,
+        inMemoryFolderPath: sourceTemporaryDir,
+      });
+
+      const [packageJson, yarnLock] = await Promise.all([
+        fs.readFile(`${sourceTemporaryDir}/package.json`, 'utf-8'),
+        fs.readFile(`${sourceTemporaryDir}/yarn.lock`, 'utf-8'),
+      ]);
+
+      return { packageJson, yarnLock };
+    } finally {
+      await temporaryDirManager.clean();
+    }
+  }
+
+  private async createLayerIfNotExist({
+    flatApplication,
+    applicationUniversalIdentifier,
+  }: {
+    flatApplication: FlatApplication;
+    applicationUniversalIdentifier: string;
+  }): Promise<void> {
+    const layerName = this.getDepsLayerName(flatApplication);
+
+    const existingArn = await this.getExistingLayerArn(layerName);
+
+    if (isDefined(existingArn)) {
+      return;
+    }
+
+    const { packageJson, yarnLock } = await this.getDependencyContents(
+      flatApplication,
+      applicationUniversalIdentifier,
+    );
+
+    await this.ensureYarnInstallLambdaExists();
+
+    const s3Key = `lambda-layers/${layerName}.zip`;
+
+    const presignedUploadUrl = await this.generatePresignedUploadUrl(s3Key);
+
+    await this.invokeYarnInstallLambda({
+      action: 'createLayer',
+      packageJson,
+      yarnLock,
+      presignedUploadUrl,
+    });
+
+    const bucket = this.options.layerBucket;
+
+    const lambdaClient = await this.getLambdaClient();
+
+    const publishResult = await lambdaClient.send(
+      new PublishLayerVersionCommand({
+        LayerName: layerName,
+        Content: { S3Bucket: bucket, S3Key: s3Key },
+        CompatibleRuntimes: [
+          LogicFunctionRuntime.NODE18,
+          LogicFunctionRuntime.NODE22,
+        ],
+      }),
+    );
+
+    if (!publishResult.LayerVersionArn) {
+      throw new Error(
+        `PublishLayerVersion did not return a LayerVersionArn for layer '${layerName}'`,
+      );
+    }
+  }
+
+  private async getLayerArn({
     flatApplication,
     applicationUniversalIdentifier,
   }: {
@@ -206,34 +650,27 @@ export class LambdaDriver implements LogicFunctionDriver {
     applicationUniversalIdentifier: string;
   }): Promise<string> {
     const layerName = this.getDepsLayerName(flatApplication);
-    const existingArn = await this.findExistingLayerArn(layerName);
+
+    const existingArn = await this.getExistingLayerArn(layerName);
 
     if (isDefined(existingArn)) {
       return existingArn;
     }
 
-    const temporaryDirManager = new TemporaryDirManager();
-    const { sourceTemporaryDir, lambdaZipPath } =
-      await temporaryDirManager.init();
-
-    const nodeDependenciesFolder = join(sourceTemporaryDir, 'nodejs');
-
-    await this.logicFunctionResourceService.copyDependenciesInMemory({
+    await this.createLayerIfNotExist({
+      flatApplication,
       applicationUniversalIdentifier,
-      workspaceId: flatApplication.workspaceId,
-      inMemoryFolderPath: nodeDependenciesFolder,
     });
-    await copyYarnEngineAndBuildDependencies(nodeDependenciesFolder);
 
-    await createZipFile(sourceTemporaryDir, lambdaZipPath);
+    const newArn = await this.getExistingLayerArn(layerName);
 
-    const zipBuffer = await fs.readFile(lambdaZipPath);
+    if (!isDefined(newArn)) {
+      throw new Error(
+        `Layer '${layerName}' was not created by the yarn install Lambda`,
+      );
+    }
 
-    const arn = await this.publishLayer({ layerName, zipBuffer });
-
-    await temporaryDirManager.clean();
-
-    return arn;
+    return newArn;
   }
 
   private async ensureSdkLayer({
@@ -249,7 +686,7 @@ export class LambdaDriver implements LogicFunctionDriver {
     });
 
     if (!flatApplication.isSdkLayerStale) {
-      const existingArn = await this.findExistingLayerArn(layerName);
+      const existingArn = await this.getExistingLayerArn(layerName);
 
       if (isDefined(existingArn)) {
         return existingArn;
@@ -440,7 +877,7 @@ export class LambdaDriver implements LogicFunctionDriver {
 
     await this.delete(flatLogicFunction);
 
-    const depsLayerArn = await this.ensureDepsLayer({
+    const depsLayerArn = await this.getLayerArn({
       flatApplication,
       applicationUniversalIdentifier,
     });
@@ -509,7 +946,7 @@ export class LambdaDriver implements LogicFunctionDriver {
       applicationUniversalIdentifier,
     });
 
-    await this.waitFunctionUpdates(flatLogicFunction);
+    await this.waitFunctionActive(flatLogicFunction.id);
 
     const startTime = Date.now();
 

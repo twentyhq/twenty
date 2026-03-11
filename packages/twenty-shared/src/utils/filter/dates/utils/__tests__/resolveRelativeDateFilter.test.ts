@@ -67,5 +67,35 @@ describe('resolveRelativeDateFilter', () => {
       expect(result.start).toBe('2024-01-01');
       expect(result.end).toBe('2025-01-01');
     });
+
+    it('should compute start and end for THIS QUARTER', () => {
+      const result = resolveRelativeDateFilter(
+        { direction: 'THIS', amount: 1, unit: 'QUARTER' },
+        referenceZdt,
+      );
+
+      expect(result.start).toBe('2024-01-01');
+      expect(result.end).toBe('2024-04-01');
+    });
+
+    it('should compute start and end for PAST 1 QUARTER', () => {
+      const result = resolveRelativeDateFilter(
+        { direction: 'PAST', amount: 1, unit: 'QUARTER' },
+        referenceZdt,
+      );
+
+      expect(result.start).toBe('2023-10-01');
+      expect(result.end).toBe('2024-01-01');
+    });
+
+    it('should compute start and end for NEXT 1 QUARTER', () => {
+      const result = resolveRelativeDateFilter(
+        { direction: 'NEXT', amount: 1, unit: 'QUARTER' },
+        referenceZdt,
+      );
+
+      expect(result.start).toBe('2024-04-01');
+      expect(result.end).toBe('2024-07-01');
+    });
   });
 });

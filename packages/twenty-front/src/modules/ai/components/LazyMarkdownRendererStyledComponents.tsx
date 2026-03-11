@@ -29,7 +29,7 @@ export const StyledMarkdownContainer = styled.div`
 
   strong,
   b {
-    font-weight: ${themeCssVariables.font.weight.semiBold};
+    font-weight: ${themeCssVariables.font.weight.medium};
   }
 
   h1,
@@ -108,10 +108,10 @@ export const StyledMarkdownContainer = styled.div`
   :not(pre) > code {
     background-color: ${themeCssVariables.background.tertiary};
     border-radius: ${themeCssVariables.border.radius.sm};
-    color: ${themeCssVariables.font.color.primary};
+    color: ${themeCssVariables.color.red10};
     font-family: ${themeCssVariables.code.font.family}, monospace;
-    font-size: 0.9em;
-    padding: 1.5px 3px;
+    font-size: 1em;
+    padding: ${themeCssVariables.spacing[0]} ${themeCssVariables.spacing[1]};
     transition: all calc(${themeCssVariables.animation.duration.fast} * 1s) ease;
   }
 

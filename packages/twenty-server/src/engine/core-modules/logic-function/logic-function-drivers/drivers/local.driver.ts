@@ -1,11 +1,16 @@
 import { promises as fs } from 'fs';
 import { spawn } from 'node:child_process';
-import { join } from 'path';
+import { dirname, join } from 'path';
+
+import { build } from 'esbuild';
+import { NODE_ESM_CJS_BANNER } from 'twenty-shared/application';
 
 import {
   type LogicFunctionExecuteParams,
   type LogicFunctionExecuteResult,
   type LogicFunctionDriver,
+  type LogicFunctionTranspileParams,
+  type LogicFunctionTranspileResult,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
@@ -52,7 +57,7 @@ export class LocalDriver implements LogicFunctionDriver {
     );
   }
 
-  private async ensureDepsLayer({
+  private async createLayerIfNotExist({
     flatApplication,
     applicationUniversalIdentifier,
   }: {
@@ -118,16 +123,52 @@ export class LocalDriver implements LogicFunctionDriver {
     });
   }
 
+  async transpile({
+    sourceCode,
+    sourceFileName,
+    builtFileName,
+  }: LogicFunctionTranspileParams): Promise<LogicFunctionTranspileResult> {
+    const temporaryDirManager = new TemporaryDirManager();
+    const { sourceTemporaryDir } = await temporaryDirManager.init();
+
+    try {
+      const entryFilePath = join(sourceTemporaryDir, sourceFileName);
+      const builtBundleFilePath = join(sourceTemporaryDir, builtFileName);
+
+      await fs.mkdir(dirname(entryFilePath), { recursive: true });
+      await fs.writeFile(entryFilePath, sourceCode, 'utf-8');
+      await fs.mkdir(dirname(builtBundleFilePath), { recursive: true });
+
+      await build({
+        entryPoints: [entryFilePath],
+        outfile: builtBundleFilePath,
+        platform: 'node',
+        format: 'esm',
+        target: 'es2017',
+        bundle: true,
+        sourcemap: true,
+        packages: 'external',
+        banner: NODE_ESM_CJS_BANNER,
+      });
+
+      const builtCode = await fs.readFile(builtBundleFilePath, 'utf-8');
+
+      return { builtCode };
+    } finally {
+      await temporaryDirManager.clean();
+    }
+  }
+
   async delete() {}
 
-  private async build({
+  async build({
     flatApplication,
     applicationUniversalIdentifier,
   }: {
     flatApplication: FlatApplication;
     applicationUniversalIdentifier: string;
   }) {
-    await this.ensureDepsLayer({
+    await this.createLayerIfNotExist({
       flatApplication,
       applicationUniversalIdentifier,
     });
@@ -191,7 +232,7 @@ export class LocalDriver implements LogicFunctionDriver {
     env,
     timeoutMs = 900_000,
   }: LogicFunctionExecuteParams): Promise<LogicFunctionExecuteResult> {
-    await this.build({
+    await this.createLayerIfNotExist({
       flatApplication,
       applicationUniversalIdentifier,
     });
@@ -231,7 +272,7 @@ export class LocalDriver implements LogicFunctionDriver {
               (_key, value) => {
                 if (typeof value === 'object' && value !== null) {
                   if (seen.has(value)) {
-                    return '[Circular]'; // Handle circular references
+                    return '[Circular]';
                   }
                   seen.add(value);
                 }

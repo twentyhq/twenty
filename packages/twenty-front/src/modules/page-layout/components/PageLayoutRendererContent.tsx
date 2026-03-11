@@ -48,6 +48,7 @@ const StyledPageLayoutTabListContainer = styled.div`
 
 const StyledScrollWrapperContainer = styled.div`
   flex: 1;
+  min-height: 0;
 `;
 
 export const PageLayoutRendererContent = () => {

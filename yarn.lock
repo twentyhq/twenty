@@ -1662,6 +1662,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@aws-sdk/s3-request-presigner@npm:3.1001.0":
+  version: 3.1001.0
+  resolution: "@aws-sdk/s3-request-presigner@npm:3.1001.0"
+  dependencies:
+    "@aws-sdk/signature-v4-multi-region": "npm:^3.996.4"
+    "@aws-sdk/types": "npm:^3.973.4"
+    "@aws-sdk/util-format-url": "npm:^3.972.6"
+    "@smithy/middleware-endpoint": "npm:^4.4.21"
+    "@smithy/protocol-http": "npm:^5.3.10"
+    "@smithy/smithy-client": "npm:^4.12.1"
+    "@smithy/types": "npm:^4.13.0"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/51cbe9bcef780a391bf5e0a084490ff40bba317d6741ed14b3b5d5f6c761fc161e71de7241527e02f8b56e0b6ac4bce9045a43aeed8a79cb0418d4f78f2134dd
+  languageName: node
+  linkType: hard
+
 "@aws-sdk/signature-v4-multi-region@npm:^3.996.4":
   version: 3.996.4
   resolution: "@aws-sdk/signature-v4-multi-region@npm:3.996.4"
@@ -1711,6 +1727,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@aws-sdk/types@npm:^3.973.5":
+  version: 3.973.5
+  resolution: "@aws-sdk/types@npm:3.973.5"
+  dependencies:
+    "@smithy/types": "npm:^4.13.0"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/9d21676eb696afc71e915b96f87ae8c67f53a52b3cf3b20f6c35e05654c5a36b67f917310ecd1dd6b696be2019e184dc5bd278318ee1f0051e51f80b292ed578
+  languageName: node
+  linkType: hard
+
 "@aws-sdk/util-arn-parser@npm:^3.972.2":
   version: 3.972.2
   resolution: "@aws-sdk/util-arn-parser@npm:3.972.2"
@@ -1730,6 +1756,18 @@ __metadata:
     "@smithy/util-endpoints": "npm:^3.3.1"
     tslib: "npm:^2.6.2"
   checksum: 10c0/a8fa65d58c66de68c71085eb622f16fcb86c37e558a1e7a1ceeb6eb3ca0495e3920e54bcc8f53045ef8931d6298dc2e10ea759cffe8d41965359988ea9d99346
+  languageName: node
+  linkType: hard
+
+"@aws-sdk/util-format-url@npm:^3.972.6":
+  version: 3.972.7
+  resolution: "@aws-sdk/util-format-url@npm:3.972.7"
+  dependencies:
+    "@aws-sdk/types": "npm:^3.973.5"
+    "@smithy/querystring-builder": "npm:^4.2.11"
+    "@smithy/types": "npm:^4.13.0"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/eb3511476c49c1044184f78f0ee9a3d057fb4f91711700d9e2b53ad715d59e97a2782314fb25eec0d8310c53349a4471edf6fbf3be42c6db5a7a30bb682f3e63
   languageName: node
   linkType: hard
 
@@ -21097,6 +21135,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@smithy/querystring-builder@npm:^4.2.11":
+  version: 4.2.11
+  resolution: "@smithy/querystring-builder@npm:4.2.11"
+  dependencies:
+    "@smithy/types": "npm:^4.13.0"
+    "@smithy/util-uri-escape": "npm:^4.2.2"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/88790ee8c7a01730beba913fdf38d1790113c82c956d20cccd43a5b527f19e23df7eff86ddf41e3e615d0af562e31f61a7fed014c9fce8db924623258a4d14f8
+  languageName: node
+  linkType: hard
+
 "@smithy/querystring-parser@npm:^4.2.10":
   version: 4.2.10
   resolution: "@smithy/querystring-parser@npm:4.2.10"
@@ -21362,6 +21411,15 @@ __metadata:
   dependencies:
     tslib: "npm:^2.6.2"
   checksum: 10c0/cad0a1a589be437718bff36466add86c14e87da3f241dc706d7b6f13cde0eeafc0ab3837e866279a42cd468574e0ecba6480133f91853b086b9c02151c6dad85
+  languageName: node
+  linkType: hard
+
+"@smithy/util-uri-escape@npm:^4.2.2":
+  version: 4.2.2
+  resolution: "@smithy/util-uri-escape@npm:4.2.2"
+  dependencies:
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/33b6546086c975278d16b5029e6555df551b4bd1e3a84042544d1ef956a287fe033b317954b1737b2773e82b6f27ebde542956ff79ef0e8a813dc0dbf9d34a58
   languageName: node
   linkType: hard
 
@@ -50590,7 +50648,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:18.3.1, react@npm:^18, react@npm:^18.2.0":
+"react@npm:18.3.1, react@npm:^18, react@npm:^18.2.0, react@npm:^18.3.1":
   version: 18.3.1
   resolution: "react@npm:18.3.1"
   dependencies:
@@ -55950,6 +56008,7 @@ __metadata:
     "@aws-sdk/client-sesv2": "npm:3.1001.0"
     "@aws-sdk/client-sts": "npm:3.1001.0"
     "@aws-sdk/credential-providers": "npm:3.1001.0"
+    "@aws-sdk/s3-request-presigner": "npm:3.1001.0"
     "@azure/msal-node": "npm:^3.8.4"
     "@babel/preset-env": "npm:7.26.9"
     "@blocknote/server-util": "npm:^0.47.1"
@@ -56142,6 +56201,7 @@ __metadata:
     twenty-client-sdk: "workspace:*"
     twenty-emails: "workspace:*"
     twenty-shared: "workspace:*"
+    twenty-standard-application: "workspace:*"
     type-fest: "npm:4.10.1"
     typeorm: "patch:typeorm@0.3.20#./patches/typeorm+0.3.20.patch"
     unzipper: "npm:^0.12.3"
@@ -56177,6 +56237,19 @@ __metadata:
     vite-plugin-dts: "npm:3.8.1"
     vite-tsconfig-paths: "npm:^4.2.1"
     zod: "npm:^4.1.11"
+  languageName: unknown
+  linkType: soft
+
+"twenty-standard-application@workspace:*, twenty-standard-application@workspace:packages/twenty-standard-application":
+  version: 0.0.0-use.local
+  resolution: "twenty-standard-application@workspace:packages/twenty-standard-application"
+  dependencies:
+    esbuild: "npm:^0.25.10"
+    react: "npm:^18.3.1"
+    tinyglobby: "npm:^0.2.15"
+    tsx: "npm:^4.19.3"
+    twenty-sdk: "workspace:*"
+    twenty-shared: "workspace:*"
   languageName: unknown
   linkType: soft
 
