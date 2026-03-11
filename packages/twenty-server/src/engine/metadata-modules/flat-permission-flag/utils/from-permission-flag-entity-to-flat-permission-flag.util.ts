@@ -1,7 +1,4 @@
-import {
-  isDefined,
-  removePropertiesFromRecord,
-} from 'twenty-shared/utils';
+import { isDefined, removePropertiesFromRecord } from 'twenty-shared/utils';
 
 import {
   FlatEntityMapsException,
@@ -48,7 +45,8 @@ export const fromPermissionFlagEntityToFlatPermissionFlag = ({
     ...permissionFlagEntityWithoutRelations,
     createdAt: permissionFlagEntity.createdAt.toISOString(),
     updatedAt: permissionFlagEntity.updatedAt.toISOString(),
-    universalIdentifier: permissionFlagEntityWithoutRelations.universalIdentifier,
+    universalIdentifier:
+      permissionFlagEntityWithoutRelations.universalIdentifier,
     applicationUniversalIdentifier,
     roleUniversalIdentifier,
   };
