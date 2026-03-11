@@ -59,6 +59,11 @@ const program = new Command(packageJson.name)
         process.exit(1);
       }
 
+      if (options?.name !== undefined && options.name.trim().length === 0) {
+        console.error(chalk.red('Error: --name cannot be empty.'));
+        process.exit(1);
+      }
+
       const mode: ScaffoldingMode = options?.minimal ? 'minimal' : 'exhaustive';
 
       await new CreateAppCommand().execute({
