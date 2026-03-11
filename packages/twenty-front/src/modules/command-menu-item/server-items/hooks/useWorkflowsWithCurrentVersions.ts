@@ -13,7 +13,7 @@ const getCurrentVersionId = (workflow: Workflow): string | undefined => {
     (version) => version.status === 'DRAFT',
   );
 
-  const sortedVersions = [...workflow.versions].sort((a, b) =>
+  const sortedVersions = workflow.versions.toSorted((a, b) =>
     a.createdAt > b.createdAt ? -1 : 1,
   );
 
