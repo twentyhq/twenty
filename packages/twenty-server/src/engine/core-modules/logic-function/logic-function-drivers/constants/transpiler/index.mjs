@@ -1,3 +1,4 @@
+import { randomBytes } from 'crypto';
 import { promises as fs } from 'fs';
 import { join, dirname, resolve } from 'path';
 
@@ -30,33 +31,35 @@ export const handler = async (event) => {
     );
   }
 
-  const workDir = '/tmp/transpile';
+  const randomId = randomBytes(16).toString('hex');
+  const workDir = `/tmp/${randomId}`;
 
-  await fs.rm(workDir, { recursive: true, force: true });
   await fs.mkdir(workDir, { recursive: true });
 
-  const entryFilePath = assertPathInsideDir(sourceFileName, workDir);
-  const outFilePath = assertPathInsideDir(builtFileName, workDir);
+  try {
+    const entryFilePath = assertPathInsideDir(sourceFileName, workDir);
+    const outFilePath = assertPathInsideDir(builtFileName, workDir);
 
-  await fs.mkdir(dirname(entryFilePath), { recursive: true });
-  await fs.writeFile(entryFilePath, sourceCode, 'utf-8');
-  await fs.mkdir(dirname(outFilePath), { recursive: true });
+    await fs.mkdir(dirname(entryFilePath), { recursive: true });
+    await fs.writeFile(entryFilePath, sourceCode, 'utf-8');
+    await fs.mkdir(dirname(outFilePath), { recursive: true });
 
-  await build({
-    entryPoints: [entryFilePath],
-    outfile: outFilePath,
-    platform: 'node',
-    format: 'esm',
-    target: 'es2017',
-    bundle: true,
-    sourcemap: true,
-    packages: 'external',
-    banner: BANNER,
-  });
+    await build({
+      entryPoints: [entryFilePath],
+      outfile: outFilePath,
+      platform: 'node',
+      format: 'esm',
+      target: 'es2017',
+      bundle: true,
+      sourcemap: true,
+      packages: 'external',
+      banner: BANNER,
+    });
 
-  const builtCode = await fs.readFile(outFilePath, 'utf-8');
+    const builtCode = await fs.readFile(outFilePath, 'utf-8');
 
-  await fs.rm(workDir, { recursive: true, force: true });
-
-  return { builtCode };
+    return { builtCode };
+  } finally {
+    await fs.rm(workDir, { recursive: true, force: true });
+  }
 };
