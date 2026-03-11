@@ -111,6 +111,7 @@ jobs:
 
       - name: Verify installed app versions
         run: |
+          cd /tmp/e2e-test-workspace/test-app
           echo "--- Checking package.json references correct SDK version ---"
           node -e "
             const pkg = require('./package.json');
