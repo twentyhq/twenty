@@ -203,6 +203,8 @@ This handles everything: starts Postgres + Redis (auto-detects local services vs
 - `--reset` — wipe data and restart fresh
 - **Skip the setup script** for tasks that only read code — architecture questions, code review, documentation, etc.
 
+**Note:** CI workflows (GitHub Actions) manage services via Actions service containers and run setup steps individually — they don't use this script.
+
 ## Important Files
 - `nx.json` - Nx workspace configuration with task definitions
 - `tsconfig.base.json` - Base TypeScript configuration
