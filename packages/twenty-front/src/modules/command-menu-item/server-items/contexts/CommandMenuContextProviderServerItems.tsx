@@ -1,36 +1,57 @@
-import {
-  CommandMenuContext,
-  type CommandMenuContextType,
-} from '@/command-menu-item/contexts/CommandMenuContext';
 import { useCommandMenuContextApi } from '@/command-menu-item/server-items/hooks/useCommandMenuContextApi';
-import { useCommandMenuItemFrontComponentCommands } from '@/command-menu-item/server-items/hooks/useCommandMenuItemFrontComponentCommands';
+import { type CommandMenuContextType } from '@/command-menu-item/contexts/CommandMenuContext';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+
+import { CommandMenuContextProviderServerItemsContent } from './CommandMenuContextProviderServerItemsContent';
+import { CommandMenuContextProviderServerItemsWithWorkflowEnrichment } from './CommandMenuContextProviderServerItemsWithWorkflowEnrichment';
+
+type CommandMenuContextProviderServerItemsProps = {
+  isInSidePanel: CommandMenuContextType['isInSidePanel'];
+  displayType: CommandMenuContextType['displayType'];
+  containerType: CommandMenuContextType['containerType'];
+  children: React.ReactNode;
+};
 
 export const CommandMenuContextProviderServerItems = ({
   isInSidePanel,
   displayType,
   containerType,
   children,
-}: {
-  isInSidePanel: CommandMenuContextType['isInSidePanel'];
-  displayType: CommandMenuContextType['displayType'];
-  containerType: CommandMenuContextType['containerType'];
-  children: React.ReactNode;
-}) => {
+}: CommandMenuContextProviderServerItemsProps) => {
   const commandMenuContextApi = useCommandMenuContextApi();
 
-  const commandMenuItemFrontComponentActions =
-    useCommandMenuItemFrontComponentCommands(commandMenuContextApi);
+  const currentObjectNameSingular =
+    commandMenuContextApi.objectMetadataItem.nameSingular;
+
+  const selectedWorkflowRecordId =
+    currentObjectNameSingular === CoreObjectNameSingular.Workflow &&
+    commandMenuContextApi.selectedRecords.length === 1
+      ? commandMenuContextApi.selectedRecords[0]?.id
+      : undefined;
+
+  if (isDefined(selectedWorkflowRecordId)) {
+    return (
+      <CommandMenuContextProviderServerItemsWithWorkflowEnrichment
+        isInSidePanel={isInSidePanel}
+        displayType={displayType}
+        containerType={containerType}
+        commandMenuContextApi={commandMenuContextApi}
+        selectedWorkflowRecordId={selectedWorkflowRecordId}
+      >
+        {children}
+      </CommandMenuContextProviderServerItemsWithWorkflowEnrichment>
+    );
+  }
 
   return (
-    <CommandMenuContext.Provider
-      value={{
-        isInSidePanel,
-        displayType,
-        containerType,
-        commandMenuItems: commandMenuItemFrontComponentActions,
-      }}
+    <CommandMenuContextProviderServerItemsContent
+      isInSidePanel={isInSidePanel}
+      displayType={displayType}
+      containerType={containerType}
+      commandMenuContextApi={commandMenuContextApi}
     >
       {children}
-    </CommandMenuContext.Provider>
+    </CommandMenuContextProviderServerItemsContent>
   );
 };
