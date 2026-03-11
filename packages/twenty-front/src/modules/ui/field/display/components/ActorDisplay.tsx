@@ -1,11 +1,11 @@
 import { type FieldActorValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 
 import { t } from '@lingui/core/macro';
-import { useMemo } from 'react';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
-import { AvatarOrIcon, Chip } from 'twenty-ui/components';
+import { AvatarOrIcon, Chip, ChipVariant } from 'twenty-ui/components';
 import {
   IconApi,
+  IconArrowUp,
   IconCalendar,
   IconGmail,
   IconGoogleCalendar,
@@ -15,7 +15,6 @@ import {
   IconPlug,
   IconRobot,
   IconSettingsAutomation,
-  IconUpload,
   IconWebhook,
 } from 'twenty-ui/display';
 
@@ -23,7 +22,7 @@ type ActorDisplayProps = Partial<FieldActorValue> & {
   avatarUrl?: string | null;
 };
 
-const PROVIDORS_ICON_MAPPING = {
+const PROVIDERS_ICON_MAPPING = {
   EMAIL: {
     [ConnectedAccountProvider.MICROSOFT]: IconMicrosoftOutlook,
     [ConnectedAccountProvider.GOOGLE]: IconGmail,
@@ -44,40 +43,46 @@ export const ActorDisplay = ({
   avatarUrl,
   context,
 }: ActorDisplayProps) => {
-  const LeftIcon = useMemo(() => {
-    switch (source) {
-      case 'API':
-        return IconApi;
-      case 'IMPORT':
-        return IconUpload;
-      case 'EMAIL':
-        return PROVIDORS_ICON_MAPPING.EMAIL[context?.provider ?? 'default'];
-      case 'CALENDAR':
-        return (
-          PROVIDORS_ICON_MAPPING.CALENDAR[
-            context?.provider as keyof typeof PROVIDORS_ICON_MAPPING.CALENDAR
-          ] ?? PROVIDORS_ICON_MAPPING.CALENDAR.default
-        );
-      case 'SYSTEM':
-        return IconRobot;
-      case 'WORKFLOW':
-        return IconSettingsAutomation;
-      case 'WEBHOOK':
-        return IconWebhook;
-      case 'APPLICATION':
-        return IconPlug;
-      default:
-        return undefined;
-    }
-  }, [source, context?.provider]);
+  let LeftIcon;
 
-  const isIconInverted =
-    source === 'API' || source === 'IMPORT' || source === 'SYSTEM';
+  switch (source) {
+    case 'API':
+      LeftIcon = IconApi;
+      break;
+    case 'IMPORT':
+      LeftIcon = IconArrowUp;
+      break;
+    case 'EMAIL':
+      LeftIcon = PROVIDERS_ICON_MAPPING.EMAIL[context?.provider ?? 'default'];
+      break;
+    case 'CALENDAR':
+      LeftIcon =
+        PROVIDERS_ICON_MAPPING.CALENDAR[
+          context?.provider as keyof typeof PROVIDERS_ICON_MAPPING.CALENDAR
+        ] ?? PROVIDERS_ICON_MAPPING.CALENDAR.default;
+      break;
+    case 'SYSTEM':
+      LeftIcon = IconRobot;
+      break;
+    case 'WORKFLOW':
+      LeftIcon = IconSettingsAutomation;
+      break;
+    case 'WEBHOOK':
+      LeftIcon = IconWebhook;
+      break;
+    case 'APPLICATION':
+      LeftIcon = IconPlug;
+      break;
+    default:
+      LeftIcon = undefined;
+  }
 
   return (
     <Chip
       label={name ?? ''}
+      clickable={false}
       emptyLabel={t`Untitled`}
+      variant={ChipVariant.Transparent}
       leftComponent={
         <AvatarOrIcon
           placeholderColorSeed={workspaceMemberId ?? undefined}
@@ -85,7 +90,6 @@ export const ActorDisplay = ({
           placeholder={name}
           Icon={LeftIcon}
           avatarUrl={avatarUrl ?? undefined}
-          isIconInverted={isIconInverted}
         />
       }
     />
