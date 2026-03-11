@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { createReadStream } from 'fs';
 import * as fs from 'fs/promises';
-import { join, resolve } from 'path';
+import { join } from 'path';
 
 import { replaceCoreClient } from 'twenty-client-sdk/generate';
 import { FileFolder } from 'twenty-shared/types';
@@ -12,16 +12,11 @@ import { Repository } from 'typeorm';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { createZipFile } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/create-zip-file';
+import { SDK_CLIENT_PACKAGE_DIRNAME } from 'src/engine/core-modules/logic-function/logic-function-resource/constants/sdk-client-package-dirname';
 import { TemporaryDirManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/temporary-dir-manager';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
 const SDK_CLIENT_ARCHIVE_NAME = 'twenty-client-sdk.zip';
-
-const getStubPackageRoot = (): string => {
-  const coreEntryPath = require.resolve('twenty-client-sdk/core');
-
-  return resolve(coreEntryPath, '..', '..');
-};
 
 @Injectable()
 export class SdkClientGenerationService {
@@ -50,13 +45,12 @@ export class SdkClientGenerationService {
     try {
       const { sourceTemporaryDir } = await temporaryDirManager.init();
 
-      const stubPackageRoot = getStubPackageRoot();
       const tempPackageRoot = join(sourceTemporaryDir, 'twenty-client-sdk');
 
-      await fs.cp(stubPackageRoot, tempPackageRoot, {
+      await fs.cp(SDK_CLIENT_PACKAGE_DIRNAME, tempPackageRoot, {
         recursive: true,
         filter: (source) =>
-          !source.includes('node_modules') && !source.includes('src'),
+          !source.includes('node_modules') && !source.includes('/src'),
       });
 
       await replaceCoreClient({ packageRoot: tempPackageRoot, schema });
