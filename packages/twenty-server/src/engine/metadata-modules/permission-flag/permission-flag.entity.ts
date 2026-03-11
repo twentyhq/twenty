@@ -12,11 +12,11 @@ import {
 } from 'typeorm';
 
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
-import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity';
+import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
 @Entity('permissionFlag')
 @Unique('IDX_PERMISSION_FLAG_FLAG_ROLE_ID_UNIQUE', ['flag', 'roleId'])
-export class PermissionFlagEntity extends WorkspaceRelatedEntity {
+export class PermissionFlagEntity extends SyncableEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
