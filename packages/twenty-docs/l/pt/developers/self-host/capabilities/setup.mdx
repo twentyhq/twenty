@@ -308,10 +308,10 @@ O Twenty oferece suporte a funções lógicas para fluxos de trabalho e ao inter
 **Em desenvolvimento (NODE_ENV=development):** Ambos têm como padrão **LOCAL** por conveniência ao executar localmente.
 
 <Warning>
-**Aviso de segurança:** O driver local (`LOGIC_FUNCTION_TYPE=LOCAL` ou `CODE_INTERPRETER_TYPE=LOCAL`) executa código diretamente no host em um processo Node.js sem sandbox. Deve ser usado apenas para código confiável em desenvolvimento. For production deployments handling untrusted code, use `LOGIC_FUNCTION_TYPE=LAMBDA` or `CODE_INTERPRETER_TYPE=E2B` (with sandboxing), or keep them disabled.
+**Aviso de segurança:** O driver local (`LOGIC_FUNCTION_TYPE=LOCAL` ou `CODE_INTERPRETER_TYPE=LOCAL`) executa código diretamente no host em um processo Node.js sem sandbox. Deve ser usado apenas para código confiável em desenvolvimento. Para implantações de produção que lidam com código não confiável, use `LOGIC_FUNCTION_TYPE=LAMBDA` ou `CODE_INTERPRETER_TYPE=E2B` (com sandbox), ou mantenha-os desativados.
 </Warning>
 
-### Logic Functions - Available Drivers
+### Funções lógicas - Drivers disponíveis
 
 | Driver     | Variável de ambiente           | Caso de uso                                | Nível de segurança                     |
 | ---------- | ------------------------------ | ------------------------------------------ | -------------------------------------- |
@@ -319,7 +319,7 @@ O Twenty oferece suporte a funções lógicas para fluxos de trabalho e ao inter
 | Local      | `LOGIC_FUNCTION_TYPE=LOCAL`    | Desenvolvimento e ambientes confiáveis     | Baixo (sem sandbox)                    |
 | Lambda     | `LOGIC_FUNCTION_TYPE=LAMBDA`   | Produção com código não confiável          | Alto (isolamento em nível de hardware) |
 
-### Logic Functions - Recommended Configuration
+### Funções lógicas - Configuração recomendada
 
 **Para desenvolvimento:**
 
@@ -343,14 +343,14 @@ LOGIC_FUNCTION_LAMBDA_SECRET_ACCESS_KEY=your-secret-key
 LOGIC_FUNCTION_TYPE=DISABLED  # default when NODE_ENV=production
 ```
 
-### Code Interpreter - Available Drivers
+### Interpretador de código - Drivers disponíveis
 
-| Driver     | Variável de ambiente             | Caso de uso                         | Nível de segurança      |
-| ---------- | -------------------------------- | ----------------------------------- | ----------------------- |
-| Desativado | `CODE_INTERPRETER_TYPE=DISABLED` | Disable AI code execution           | N/A                     |
-| Local      | `CODE_INTERPRETER_TYPE=LOCAL`    | Development only                    | Baixo (sem sandbox)     |
-| E2B        | `CODE_INTERPRETER_TYPE=E_2_B`    | Production with sandboxed execution | High (isolated sandbox) |
+| Driver     | Variável de ambiente             | Caso de uso                          | Nível de segurança     |
+| ---------- | -------------------------------- | ------------------------------------ | ---------------------- |
+| Desativado | `CODE_INTERPRETER_TYPE=DISABLED` | Desativar a execução de código de IA | N/A                    |
+| Local      | `CODE_INTERPRETER_TYPE=LOCAL`    | Apenas para desenvolvimento          | Baixo (sem sandbox)    |
+| E2B        | `CODE_INTERPRETER_TYPE=E_2_B`    | Produção com execução em sandbox     | Alto (sandbox isolado) |
 
 <Note>
-When using `LOGIC_FUNCTION_TYPE=DISABLED` or `CODE_INTERPRETER_TYPE=DISABLED`, any attempt to execute will return an error. This is useful if you want to run Twenty without these capabilities.
+Ao usar `LOGIC_FUNCTION_TYPE=DISABLED` ou `CODE_INTERPRETER_TYPE=DISABLED`, qualquer tentativa de execução retornará um erro. Isso é útil se você quiser executar o Twenty sem esses recursos.
 </Note>

@@ -308,10 +308,10 @@ Twenty, iş akışları için mantıksal işlevleri ve yapay zekâ veri analizi 
 **Geliştirmede (NODE_ENV=development):** Yerel olarak çalıştırırken kolaylık olması için her ikisinin varsayılanı **LOCAL**dır.
 
 <Warning>
-**Güvenlik Notu:** Yerel sürücü (`LOGIC_FUNCTION_TYPE=LOCAL` veya `CODE_INTERPRETER_TYPE=LOCAL`), herhangi bir sandbox olmadan kodu ana makinede doğrudan bir Node.js sürecinde çalıştırır. Yalnızca geliştirirken güvenilen kod için kullanılmalıdır. For production deployments handling untrusted code, use `LOGIC_FUNCTION_TYPE=LAMBDA` or `CODE_INTERPRETER_TYPE=E2B` (with sandboxing), or keep them disabled.
+**Güvenlik Notu:** Yerel sürücü (`LOGIC_FUNCTION_TYPE=LOCAL` veya `CODE_INTERPRETER_TYPE=LOCAL`), herhangi bir sandbox olmadan kodu ana makinede doğrudan bir Node.js sürecinde çalıştırır. Yalnızca geliştirirken güvenilen kod için kullanılmalıdır. Üretim dağıtımlarında güvenilmeyen kodu işlerken, `LOGIC_FUNCTION_TYPE=LAMBDA` veya `CODE_INTERPRETER_TYPE=E2B` (korumalı alanla) kullanın ya da bunları devre dışı bırakın.
 </Warning>
 
-### Logic Functions - Available Drivers
+### Mantıksal İşlevler - Kullanılabilir Sürücüler
 
 | Sürücü     | Ortam Değişkeni                | Kullanım alanı                                 | Güvenlik Düzeyi                      |
 | ---------- | ------------------------------ | ---------------------------------------------- | ------------------------------------ |
@@ -319,7 +319,7 @@ Twenty, iş akışları için mantıksal işlevleri ve yapay zekâ veri analizi 
 | Yerel      | `LOGIC_FUNCTION_TYPE=LOCAL`    | Geliştirme ve güvenilir ortamlar               | Düşük (sandbox yok)                  |
 | Lambda     | `LOGIC_FUNCTION_TYPE=LAMBDA`   | Güvenilmeyen kodla üretim                      | Yüksek (donanım düzeyinde izolasyon) |
 
-### Logic Functions - Recommended Configuration
+### Mantıksal İşlevler - Önerilen Yapılandırma
 
 **Geliştirme için:**
 
@@ -343,14 +343,14 @@ LOGIC_FUNCTION_LAMBDA_SECRET_ACCESS_KEY=your-secret-key
 LOGIC_FUNCTION_TYPE=DISABLED  # default when NODE_ENV=production
 ```
 
-### Code Interpreter - Available Drivers
+### Kod Yorumlayıcısı - Kullanılabilir Sürücüler
 
-| Sürücü     | Ortam Değişkeni                  | Kullanım Senaryosu                  | Güvenlik Düzeyi         |
-| ---------- | -------------------------------- | ----------------------------------- | ----------------------- |
-| Devre dışı | `CODE_INTERPRETER_TYPE=DISABLED` | Disable AI code execution           | Uygulanamaz             |
-| Yerel      | `CODE_INTERPRETER_TYPE=LOCAL`    | Development only                    | Düşük (sandbox yok)     |
-| E2B        | `CODE_INTERPRETER_TYPE=E_2_B`    | Production with sandboxed execution | High (isolated sandbox) |
+| Sürücü     | Ortam Değişkeni                  | Kullanım Senaryosu                            | Güvenlik Düzeyi                   |
+| ---------- | -------------------------------- | --------------------------------------------- | --------------------------------- |
+| Devre dışı | `CODE_INTERPRETER_TYPE=DISABLED` | Yapay zekâ kod yürütmesini devre dışı bırakın | Uygulanamaz                       |
+| Yerel      | `CODE_INTERPRETER_TYPE=LOCAL`    | Yalnızca geliştirme için                      | Düşük (sandbox yok)               |
+| E2B        | `CODE_INTERPRETER_TYPE=E_2_B`    | Korumalı alanlı yürütmeyle üretim             | Yüksek (yalıtılmış korumalı alan) |
 
 <Note>
-When using `LOGIC_FUNCTION_TYPE=DISABLED` or `CODE_INTERPRETER_TYPE=DISABLED`, any attempt to execute will return an error. This is useful if you want to run Twenty without these capabilities.
+`LOGIC_FUNCTION_TYPE=DISABLED` veya `CODE_INTERPRETER_TYPE=DISABLED` kullanıldığında, herhangi bir yürütme girişimi bir hata döndürür. Bu, Twenty'yi bu yetenekler olmadan çalıştırmak istiyorsanız kullanışlıdır.
 </Note>
