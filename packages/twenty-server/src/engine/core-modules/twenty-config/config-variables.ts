@@ -571,7 +571,8 @@ export class ConfigVariables {
   @ValidateIf(
     (env) => env.LOGIC_FUNCTION_TYPE === LogicFunctionDriverType.LAMBDA,
   )
-  LOGIC_FUNCTION_LAMBDA_LAYER_BUCKET: string;
+  @IsOptional()
+  LOGIC_FUNCTION_LAMBDA_LAYER_BUCKET?: string;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LOGIC_FUNCTION_CONFIG,
@@ -582,8 +583,9 @@ export class ConfigVariables {
   @ValidateIf(
     (env) => env.LOGIC_FUNCTION_TYPE === LogicFunctionDriverType.LAMBDA,
   )
+  @IsOptional()
   @IsAWSRegion()
-  LOGIC_FUNCTION_LAMBDA_LAYER_BUCKET_REGION: AwsRegion;
+  LOGIC_FUNCTION_LAMBDA_LAYER_BUCKET_REGION?: AwsRegion;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.CODE_INTERPRETER_CONFIG,

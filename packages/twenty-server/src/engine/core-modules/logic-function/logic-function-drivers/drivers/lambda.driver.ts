@@ -179,7 +179,9 @@ export class LambdaDriver implements LogicFunctionDriver {
   ): Promise<string> {
     const s3Client = new S3Client({
       region: this.options.layerBucketRegion,
-      credentials: this.options.credentials,
+      credentials: isDefined(this.options.subhostingRole)
+        ? await this.getAssumeRoleCredentials()
+        : this.options.credentials,
     });
 
     const putCommand = new PutObjectCommand({
