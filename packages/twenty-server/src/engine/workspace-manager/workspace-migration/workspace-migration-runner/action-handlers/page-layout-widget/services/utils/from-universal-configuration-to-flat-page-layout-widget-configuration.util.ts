@@ -257,7 +257,7 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
     case WidgetConfigurationType.FIELDS: {
       const {
         viewId: viewUniversalIdentifier,
-        newFieldDefaultConfiguration: universalNewFieldDefaultConfiguration,
+        newFieldDefaultVisibility,
         ...rest
       } = universalConfiguration;
 
@@ -279,37 +279,7 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
         viewId = flatView.id;
       }
 
-      let newFieldDefaultConfiguration:
-        | { isVisible: boolean; viewFieldGroupId: string | null }
-        | null
-        | undefined = universalNewFieldDefaultConfiguration;
-
-      if (
-        isDefined(universalNewFieldDefaultConfiguration) &&
-        isDefined(universalNewFieldDefaultConfiguration.viewFieldGroupId)
-      ) {
-        const viewFieldGroupUniversalIdentifier =
-          universalNewFieldDefaultConfiguration.viewFieldGroupId;
-
-        const flatViewFieldGroup = findFlatEntityByUniversalIdentifier({
-          flatEntityMaps: flatViewFieldGroupMaps,
-          universalIdentifier: viewFieldGroupUniversalIdentifier,
-        });
-
-        if (!isDefined(flatViewFieldGroup)) {
-          throw new FlatEntityMapsException(
-            `View field group not found for universal identifier: ${viewFieldGroupUniversalIdentifier}`,
-            FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
-          );
-        }
-
-        newFieldDefaultConfiguration = {
-          isVisible: universalNewFieldDefaultConfiguration.isVisible,
-          viewFieldGroupId: flatViewFieldGroup.id,
-        };
-      }
-
-      return { ...rest, viewId, newFieldDefaultConfiguration };
+      return { ...rest, viewId, newFieldDefaultVisibility };
     }
 
     case WidgetConfigurationType.FRONT_COMPONENT: {

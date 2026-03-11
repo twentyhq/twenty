@@ -874,11 +874,6 @@ type RatioAggregateConfig {
   optionValue: String!
 }
 
-type NewFieldDefaultConfiguration {
-  isVisible: Boolean!
-  viewFieldGroupId: String
-}
-
 type RichTextV2Body {
   blocknote: String
   markdown: String
@@ -1168,7 +1163,8 @@ type FieldRichTextConfiguration {
 type FieldsConfiguration {
   configurationType: WidgetConfigurationType!
   viewId: String
-  newFieldDefaultConfiguration: NewFieldDefaultConfiguration
+  newFieldDefaultVisibility: Boolean
+  shouldAllowUserToSeeHiddenFields: Boolean
 }
 
 type FilesConfiguration {
@@ -1580,7 +1576,6 @@ enum FeatureFlagKey {
   IS_JSON_FILTER_ENABLED
   IS_AI_ENABLED
   IS_APPLICATION_ENABLED
-  IS_APPLICATION_INSTALLATION_FROM_TARBALL_ENABLED
   IS_MARKETPLACE_ENABLED
   IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED
   IS_PUBLIC_DOMAIN_ENABLED
@@ -2058,6 +2053,7 @@ type CommandMenuItem {
 enum CommandMenuItemAvailabilityType {
   GLOBAL
   RECORD_SELECTION
+  FALLBACK
 }
 
 type AgentChatThread {

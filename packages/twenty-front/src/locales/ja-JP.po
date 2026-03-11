@@ -3836,7 +3836,6 @@ msgid "Customization"
 msgstr "カスタマイズ"
 
 #. js-lingui-id: srRMnJ
-#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutFieldsSettings.tsx
 #: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNavigationMenuItemEditPage.tsx
 #: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNavigationMenuItemEditPage.tsx
 #: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditObjectViewBase.tsx
@@ -3927,6 +3926,11 @@ msgstr "ダッシュボード"
 #: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemMainMenu.tsx
 msgid "Data"
 msgstr "データ"
+
+#. js-lingui-id: nxnCld
+#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutFieldsSettings.tsx
+msgid "Data and display"
+msgstr ""
 
 #. js-lingui-id: TtG/MN
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
@@ -4576,6 +4580,11 @@ msgstr "下書きを破棄"
 msgid "Display"
 msgstr "表示"
 
+#. js-lingui-id: Ldgs6e
+#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutFieldsSettings.tsx
+msgid "Display \"More fields\" button"
+msgstr ""
+
 #. js-lingui-id: r/aDR/
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
 msgid "Display a button in the top navbar to trigger this workflow"
@@ -4889,6 +4898,7 @@ msgstr "iFrameを編集する"
 
 #. js-lingui-id: NZubw3
 #: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Edit Layout"
 msgstr ""
 
@@ -4907,11 +4917,6 @@ msgstr ""
 #. js-lingui-id: IaSCqp
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Edit own profile information"
-msgstr ""
-
-#. js-lingui-id: ZgKSmd
-#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
-msgid "Edit Page Layout"
 msgstr ""
 
 #. js-lingui-id: h2KoTu
@@ -8642,6 +8647,12 @@ msgstr ""
 msgid "More"
 msgstr "もっと"
 
+#. js-lingui-id: G2I8i7
+#. placeholder {0}: hiddenFieldsWithOffsetGlobalIndex.length
+#: src/modules/page-layout/widgets/fields/components/FieldsWidget.tsx
+msgid "More ({0})"
+msgstr ""
+
 #. js-lingui-id: f0jmdR
 #: src/modules/page-layout/widgets/field/components/FieldWidgetShowMoreButton.tsx
 msgid "More ({remainingCount})"
@@ -12013,6 +12024,11 @@ msgstr "ヘッダー行を選択する"
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
 msgid "Select matching field"
 msgstr "一致するフィールドを選択"
+
+#. js-lingui-id: ezY8Ut
+#: src/modules/ui/input/components/internal/date/components/DateTimePickerHeader.tsx
+msgid "Select month and year"
+msgstr ""
 
 #. js-lingui-id: 8eJcRS
 #: src/modules/settings/data-model/new-object/components/SettingsAvailableStandardObjectsSection.tsx

@@ -165,11 +165,10 @@ const StyledInput = styled.input<
   }
 
   &:focus {
-    ${({ error }) => {
-      return `
-      border-color: ${error ? themeCssVariables.border.color.danger : themeCssVariables.color.blue};
-      `;
-    }};
+    border-color: ${({ error }) =>
+      error
+        ? themeCssVariables.border.color.danger
+        : themeCssVariables.color.blue};
   }
 `;
 

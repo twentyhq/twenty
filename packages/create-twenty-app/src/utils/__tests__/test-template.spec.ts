@@ -110,6 +110,37 @@ describe('scaffoldIntegrationTest', () => {
     });
   });
 
+  describe('github workflow', () => {
+    it('should create .github/workflows/ci.yml with correct structure', async () => {
+      await scaffoldIntegrationTest({
+        appDirectory: testAppDirectory,
+        sourceFolderPath,
+      });
+
+      const workflowPath = join(
+        testAppDirectory,
+        '.github',
+        'workflows',
+        'ci.yml',
+      );
+
+      expect(await fs.pathExists(workflowPath)).toBe(true);
+
+      const content = await fs.readFile(workflowPath, 'utf8');
+
+      expect(content).toContain('name: CI');
+      expect(content).toContain('TWENTY_VERSION: latest');
+      expect(content).toContain('twenty-version: ${{ env.TWENTY_VERSION }}');
+      expect(content).toContain('actions/checkout@v4');
+      expect(content).toContain('spawn-twenty-docker-image@main');
+      expect(content).toContain('actions/setup-node@v4');
+      expect(content).toContain('yarn install --immutable');
+      expect(content).toContain('yarn test');
+      expect(content).toContain('TWENTY_API_URL');
+      expect(content).toContain('TWENTY_TEST_API_KEY');
+    });
+  });
+
   describe('tsconfig.spec.json', () => {
     it('should create tsconfig.spec.json extending the base tsconfig', async () => {
       await scaffoldIntegrationTest({

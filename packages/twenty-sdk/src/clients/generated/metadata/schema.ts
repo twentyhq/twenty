@@ -644,12 +644,6 @@ export interface RatioAggregateConfig {
     __typename: 'RatioAggregateConfig'
 }
 
-export interface NewFieldDefaultConfiguration {
-    isVisible: Scalars['Boolean']
-    viewFieldGroupId?: Scalars['String']
-    __typename: 'NewFieldDefaultConfiguration'
-}
-
 export interface RichTextV2Body {
     blocknote?: Scalars['String']
     markdown?: Scalars['String']
@@ -887,7 +881,8 @@ export interface FieldRichTextConfiguration {
 export interface FieldsConfiguration {
     configurationType: WidgetConfigurationType
     viewId?: Scalars['String']
-    newFieldDefaultConfiguration?: NewFieldDefaultConfiguration
+    newFieldDefaultVisibility?: Scalars['Boolean']
+    shouldAllowUserToSeeHiddenFields?: Scalars['Boolean']
     __typename: 'FieldsConfiguration'
 }
 
@@ -1295,7 +1290,7 @@ export interface FeatureFlag {
     __typename: 'FeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_UNIQUE_INDEXES_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_AI_ENABLED' | 'IS_APPLICATION_ENABLED' | 'IS_APPLICATION_INSTALLATION_FROM_TARBALL_ENABLED' | 'IS_MARKETPLACE_ENABLED' | 'IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED' | 'IS_PUBLIC_DOMAIN_ENABLED' | 'IS_EMAILING_DOMAIN_ENABLED' | 'IS_DASHBOARD_V2_ENABLED' | 'IS_ATTACHMENT_MIGRATED' | 'IS_NOTE_TARGET_MIGRATED' | 'IS_TASK_TARGET_MIGRATED' | 'IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED' | 'IS_JUNCTION_RELATIONS_ENABLED' | 'IS_COMMAND_MENU_ITEM_ENABLED' | 'IS_NAVIGATION_MENU_ITEM_ENABLED' | 'IS_DATE_TIME_WHOLE_DAY_FILTER_ENABLED' | 'IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED' | 'IS_DRAFT_EMAIL_ENABLED'
+export type FeatureFlagKey = 'IS_UNIQUE_INDEXES_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_AI_ENABLED' | 'IS_APPLICATION_ENABLED' | 'IS_MARKETPLACE_ENABLED' | 'IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED' | 'IS_PUBLIC_DOMAIN_ENABLED' | 'IS_EMAILING_DOMAIN_ENABLED' | 'IS_DASHBOARD_V2_ENABLED' | 'IS_ATTACHMENT_MIGRATED' | 'IS_NOTE_TARGET_MIGRATED' | 'IS_TASK_TARGET_MIGRATED' | 'IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED' | 'IS_JUNCTION_RELATIONS_ENABLED' | 'IS_COMMAND_MENU_ITEM_ENABLED' | 'IS_NAVIGATION_MENU_ITEM_ENABLED' | 'IS_DATE_TIME_WHOLE_DAY_FILTER_ENABLED' | 'IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED' | 'IS_DRAFT_EMAIL_ENABLED'
 
 export interface SSOIdentityProvider {
     id: Scalars['UUID']
@@ -1790,7 +1785,7 @@ export interface CommandMenuItem {
     __typename: 'CommandMenuItem'
 }
 
-export type CommandMenuItemAvailabilityType = 'GLOBAL' | 'RECORD_SELECTION'
+export type CommandMenuItemAvailabilityType = 'GLOBAL' | 'RECORD_SELECTION' | 'FALLBACK'
 
 export interface AgentChatThread {
     id: Scalars['UUID']
@@ -3487,13 +3482,6 @@ export interface RatioAggregateConfigGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface NewFieldDefaultConfigurationGenqlSelection{
-    isVisible?: boolean | number
-    viewFieldGroupId?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
 export interface RichTextV2BodyGenqlSelection{
     blocknote?: boolean | number
     markdown?: boolean | number
@@ -3751,7 +3739,8 @@ export interface FieldRichTextConfigurationGenqlSelection{
 export interface FieldsConfigurationGenqlSelection{
     configurationType?: boolean | number
     viewId?: boolean | number
-    newFieldDefaultConfiguration?: NewFieldDefaultConfigurationGenqlSelection
+    newFieldDefaultVisibility?: boolean | number
+    shouldAllowUserToSeeHiddenFields?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -6450,14 +6439,6 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
-    const NewFieldDefaultConfiguration_possibleTypes: string[] = ['NewFieldDefaultConfiguration']
-    export const isNewFieldDefaultConfiguration = (obj?: { __typename?: any } | null): obj is NewFieldDefaultConfiguration => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isNewFieldDefaultConfiguration"')
-      return NewFieldDefaultConfiguration_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
     const RichTextV2Body_possibleTypes: string[] = ['RichTextV2Body']
     export const isRichTextV2Body = (obj?: { __typename?: any } | null): obj is RichTextV2Body => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isRichTextV2Body"')
@@ -8504,7 +8485,6 @@ export const enumFeatureFlagKey = {
    IS_JSON_FILTER_ENABLED: 'IS_JSON_FILTER_ENABLED' as const,
    IS_AI_ENABLED: 'IS_AI_ENABLED' as const,
    IS_APPLICATION_ENABLED: 'IS_APPLICATION_ENABLED' as const,
-   IS_APPLICATION_INSTALLATION_FROM_TARBALL_ENABLED: 'IS_APPLICATION_INSTALLATION_FROM_TARBALL_ENABLED' as const,
    IS_MARKETPLACE_ENABLED: 'IS_MARKETPLACE_ENABLED' as const,
    IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED: 'IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED' as const,
    IS_PUBLIC_DOMAIN_ENABLED: 'IS_PUBLIC_DOMAIN_ENABLED' as const,
@@ -8535,7 +8515,8 @@ export const enumLogicFunctionExecutionStatus = {
 
 export const enumCommandMenuItemAvailabilityType = {
    GLOBAL: 'GLOBAL' as const,
-   RECORD_SELECTION: 'RECORD_SELECTION' as const
+   RECORD_SELECTION: 'RECORD_SELECTION' as const,
+   FALLBACK: 'FALLBACK' as const
 }
 
 export const enumModelFamily = {
