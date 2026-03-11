@@ -182,7 +182,13 @@ export class DevSeederService {
 
   private async seedApps(workspaceId: string): Promise<void> {
     for (const seed of APP_SEEDS) {
-      await this.seedOneApp(seed, workspaceId);
+      try {
+        await this.seedOneApp(seed, workspaceId);
+      } catch (error) {
+        this.logger.error(
+          `Failed to seed app "${seed.registration.name}": ${error}`,
+        );
+      }
     }
   }
 

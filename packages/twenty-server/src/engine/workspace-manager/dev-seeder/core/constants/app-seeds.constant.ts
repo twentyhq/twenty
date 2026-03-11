@@ -1,9 +1,23 @@
-import { join } from 'path';
+import { existsSync } from 'fs';
+import { dirname, join, resolve } from 'path';
 
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 
+const findMonorepoRoot = (): string => {
+  let current = resolve(__dirname);
+
+  while (current !== dirname(current)) {
+    if (existsSync(join(current, 'nx.json'))) {
+      return current;
+    }
+    current = dirname(current);
+  }
+
+  return process.cwd();
+};
+
 const FIXTURES_ROOT = join(
-  process.cwd(),
+  findMonorepoRoot(),
   'packages',
   'twenty-apps',
   'fixtures',
