@@ -16,7 +16,7 @@ import {
   LogType,
   PublishLayerVersionCommand,
   ResourceNotFoundException,
-  waitUntilFunctionUpdatedV2,
+  waitUntilFunctionActiveV2,
 } from '@aws-sdk/client-lambda';
 import { AssumeRoleCommand, STSClient } from '@aws-sdk/client-sts';
 import { isDefined } from 'twenty-shared/utils';
@@ -168,17 +168,13 @@ export class LambdaDriver implements LogicFunctionDriver {
     };
   }
 
-  private async waitFunctionUpdates(
+  private async waitFunctionActive(
     functionName: string,
     maxWaitTime: number = UPDATE_FUNCTION_DURATION_TIMEOUT_IN_SECONDS,
   ) {
-    const waitParams = {
-      FunctionName: functionName,
-    };
-
-    await waitUntilFunctionUpdatedV2(
+    await waitUntilFunctionActiveV2(
       { client: await this.getLambdaClient(), maxWaitTime },
-      waitParams,
+      { FunctionName: functionName },
     );
   }
 
@@ -336,7 +332,7 @@ export class LambdaDriver implements LogicFunctionDriver {
       await temporaryDirManager.clean();
     }
 
-    await this.waitFunctionUpdates(builderFunctionName);
+    await this.waitFunctionActive(builderFunctionName);
   }
 
   private async invokeBuilderLambda(
@@ -425,7 +421,7 @@ export class LambdaDriver implements LogicFunctionDriver {
       await temporaryDirManager.clean();
     }
 
-    await this.waitFunctionUpdates(transpilerFunctionName);
+    await this.waitFunctionActive(transpilerFunctionName);
   }
 
   async transpile({
@@ -728,7 +724,7 @@ export class LambdaDriver implements LogicFunctionDriver {
       applicationUniversalIdentifier,
     });
 
-    await this.waitFunctionUpdates(flatLogicFunction.id);
+    await this.waitFunctionActive(flatLogicFunction.id);
 
     const startTime = Date.now();
 

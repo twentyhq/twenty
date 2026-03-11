@@ -1,6 +1,6 @@
 import { randomBytes } from 'crypto';
 import { promises as fs } from 'fs';
-import { join, dirname, resolve } from 'path';
+import { dirname, resolve } from 'path';
 
 import { build } from 'esbuild';
 
