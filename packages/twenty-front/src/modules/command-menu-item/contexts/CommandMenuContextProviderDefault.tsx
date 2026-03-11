@@ -1,16 +1,18 @@
-import { useRunWorkflowRecordCommands } from '@/command-menu-item/record/workflow/hooks/useRunWorkflowRecordCommands';
-import { useRunWorkflowRecordAgnosticCommands } from '@/command-menu-item/record-agnostic/workflow/hooks/useRunWorkflowRecordAgnosticCommands';
 import {
   CommandMenuContext,
   type CommandMenuContextType,
 } from '@/command-menu-item/contexts/CommandMenuContext';
+import { useCommandMenuContextApi } from '@/command-menu-item/hooks/useCommandMenuContextApi';
+import { useCommandMenuItemFrontComponentCommands } from '@/command-menu-item/hooks/useCommandMenuItemFrontComponentCommands';
 import { useRegisteredCommandMenuItems } from '@/command-menu-item/hooks/useRegisteredCommandMenuItems';
 import { useShouldCommandMenuItemBeRegisteredParams } from '@/command-menu-item/hooks/useShouldCommandMenuItemBeRegisteredParams';
-import { useCommandMenuContextApi } from '@/command-menu-item/hooks/useCommandMenuContextApi';
-import { useCommandMenuItemFrontComponentActions } from '@/command-menu-item/hooks/useCommandMenuItemFrontComponentActions';
+import { useRunWorkflowRecordAgnosticCommands } from '@/command-menu-item/record-agnostic/workflow/hooks/useRunWorkflowRecordAgnosticCommands';
+import { useRunWorkflowRecordCommands } from '@/command-menu-item/record/workflow/hooks/useRunWorkflowRecordCommands';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const CommandMenuContextProviderDefault = ({
   objectMetadataItem,
@@ -56,7 +58,11 @@ export const CommandMenuContextProviderDefault = ({
   const commandMenuContextApi = useCommandMenuContextApi();
 
   const commandMenuItemFrontComponentActions =
-    useCommandMenuItemFrontComponentActions(commandMenuContextApi);
+    useCommandMenuItemFrontComponentCommands(commandMenuContextApi);
+
+  const isCommandMenuItemEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_COMMAND_MENU_ITEM_ENABLED,
+  );
 
   return (
     <CommandMenuContext.Provider
@@ -64,12 +70,13 @@ export const CommandMenuContextProviderDefault = ({
         isInSidePanel,
         displayType,
         containerType,
-        commandMenuItems: [
-          ...commandMenuItems,
-          ...runWorkflowRecordCommands,
-          ...runWorkflowRecordAgnosticCommands,
-          ...commandMenuItemFrontComponentActions,
-        ],
+        commandMenuItems: isCommandMenuItemEnabled
+          ? commandMenuItemFrontComponentActions
+          : [
+              ...commandMenuItems,
+              ...runWorkflowRecordCommands,
+              ...runWorkflowRecordAgnosticCommands,
+            ],
       }}
     >
       {children}

@@ -1,5 +1,6 @@
 import { appBuild } from '@/cli/public-operations/app-build';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
+import { checkSdkVersionCompatibility } from '@/cli/utilities/version/check-sdk-version-compatibility';
 import chalk from 'chalk';
 
 export type AppBuildCommandOptions = {
@@ -10,6 +11,8 @@ export type AppBuildCommandOptions = {
 export class AppBuildCommand {
   async execute(options: AppBuildCommandOptions): Promise<void> {
     const appPath = options.appPath ?? CURRENT_EXECUTION_DIRECTORY;
+
+    await checkSdkVersionCompatibility(appPath);
 
     console.log(chalk.blue('Building application...'));
     console.log(chalk.gray(`App path: ${appPath}`));

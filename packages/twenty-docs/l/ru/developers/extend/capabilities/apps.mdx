@@ -837,6 +837,255 @@ export default defineFrontComponent({
 * **Сгенерировано**: Запустите `yarn twenty entity:add` и выберите опцию добавления нового фронтенд-компонента.
 * **Вручную**: Создайте новый файл `.tsx` и используйте `defineFrontComponent()`, следуя тому же шаблону.
 
+#### Где можно использовать фронт-компоненты
+
+Фронт-компоненты могут отображаться в двух местах внутри Twenty:
+
+* **Боковая панель** — фронт-компоненты с интерфейсом открываются в правой боковой панели. Это поведение по умолчанию, когда фронт-компонент запускается из меню команд.
+* **Виджеты (дашборды и страницы записей)** — фронт-компоненты можно встраивать как виджеты в макеты страниц. При настройке дашборда или макета страницы записи пользователи могут добавить виджет фронт-компонента.
+
+#### Headless и non-headless
+
+Фронт-компоненты поддерживают два режима отображения, управляемых опцией `isHeadless`:
+
+**Non-headless (по умолчанию)** — компонент отображает видимый интерфейс. При запуске из меню команд он открывается в боковой панели. Это поведение по умолчанию, когда `isHeadless` имеет значение `false` или опущен.
+
+**Headless** — компонент монтируется невидимо в фоновом режиме. Он не открывает боковую панель. Компоненты headless предназначены для действий, которые выполняют логику и затем размонтируются — например, запуск асинхронной задачи, переход на страницу или показ модального окна подтверждения. Они естественно сочетаются с компонентами SDK Command, описанными ниже.
+
+```typescript
+export default defineFrontComponent({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'my-action',
+  description: 'Runs an action without opening the side panel',
+  component: MyAction,
+  isHeadless: true,
+  command: {
+    universalIdentifier: 'b2c3d4e5-f6a7-8901-bcde-f12345678901',
+    label: 'Run my action',
+  },
+});
+```
+
+#### Добавление элементов меню команд
+
+Чтобы фронт-компонент отображался как элемент в меню команд Twenty, добавьте свойство `command` в `defineFrontComponent()`. Когда пользователи открывают меню команд (Cmd+K / Ctrl+K), элемент появляется и при клике запускает фронт-компонент.
+
+Объект `command` принимает следующие поля:
+
+| Поле                                    | Тип                                              | Описание                                                                                      |
+| --------------------------------------- | ------------------------------------------------ | --------------------------------------------------------------------------------------------- |
+| `universalIdentifier`                   | `string` (обязательно)                           | Уникальный ID для элемента меню команд                                                        |
+| `метка`                                 | `string` (обязательно)                           | Отображаемая метка в меню команд                                                              |
+| `иконка`                                | `string` (необязательно)                         | Имя иконки (например, `'IconSparkles'`)                                                       |
+| `isPinned`                              | `boolean` (необязательно)                        | Закреплена ли команда в верхней части меню                                                    |
+| `availabilityType`                      | `'GLOBAL' \| 'RECORD_SELECTION'` (необязательно) | `GLOBAL` показывает команду везде; `RECORD_SELECTION` показывает её только в контексте записи |
+| `availabilityObjectUniversalIdentifier` | `string` (необязательно)                         | Ограничивает команду конкретным типом объекта (например, Person)                              |
+
+Вот пример из приложения записи звонков, которое добавляет команду, ограниченную записями Person:
+
+```typescript
+import { defineFrontComponent } from 'twenty-sdk';
+
+export default defineFrontComponent({
+  universalIdentifier: 'c3d4e5f6-a7b8-9012-cdef-123456789012',
+  name: 'Summarize Person Call Recordings',
+  description: 'Generates a summary of call recordings for a person',
+  component: SummarizePersonRecordings,
+  command: {
+    universalIdentifier: 'd4e5f6a7-b8c9-0123-defa-234567890123',
+    label: 'Summarize call recordings',
+    icon: 'IconSparkles',
+    isPinned: false,
+    availabilityType: 'RECORD_SELECTION',
+    availabilityObjectUniversalIdentifier:
+      '20202020-e674-48e5-a542-72570eee7213',
+  },
+});
+```
+
+Когда команда синхронизируется, она появляется в меню команд. Если фронт-компонент с интерфейсом, открывается боковая панель с отображаемым внутри компонентом. Если он headless, компонент монтируется в фоновом режиме и выполняет свою логику.
+
+#### Компоненты SDK Command
+
+Пакет `twenty-sdk` предоставляет четыре вспомогательных компонента Command, предназначенных для headless фронт-компонентов. Каждый компонент выполняет действие при монтировании, обрабатывает ошибки, показывая уведомление snackbar, и автоматически размонтирует фронт-компонент по завершении.
+
+Импортируйте их из `twenty-sdk/command`:
+
+* **`Command`** — запускает асинхронный колбэк через проп `execute`.
+* **`CommandLink`** — переходит по пути внутри приложения. Пропы: `to`, `params`, `queryParams`, `options`.
+* **`CommandModal`** — открывает модальное окно подтверждения. Если пользователь подтвердит, выполняет колбэк `execute`. Пропы: `title`, `subtitle`, `execute`, `confirmButtonText`, `confirmButtonAccent`.
+* **`CommandOpenSidePanelPage`** — открывает конкретную страницу боковой панели. Пропы: `page`, `pageTitle`, `pageIcon`.
+
+Полный пример headless фронт-компонента, использующего `Command` для запуска действия из меню команд:
+
+```typescript
+// src/front-components/run-action.tsx
+import { defineFrontComponent } from 'twenty-sdk';
+import { Command } from 'twenty-sdk/command';
+import { CoreApiClient } from 'twenty-sdk/clients';
+
+const RunAction = () => {
+  const execute = async () => {
+    const client = new CoreApiClient();
+
+    await client.mutation({
+      createTask: {
+        __args: { data: { title: 'Created by my app' } },
+        id: true,
+      },
+    });
+  };
+
+  return <Command execute={execute} />;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'e5f6a7b8-c9d0-1234-efab-345678901234',
+  name: 'run-action',
+  description: 'Creates a task from the command menu',
+  component: RunAction,
+  isHeadless: true,
+  command: {
+    universalIdentifier: 'f6a7b8c9-d0e1-2345-fabc-456789012345',
+    label: 'Run my action',
+    icon: 'IconPlayerPlay',
+  },
+});
+```
+
+А также пример с использованием `CommandModal` для запроса подтверждения перед выполнением:
+
+```typescript
+// src/front-components/delete-draft.tsx
+import { defineFrontComponent } from 'twenty-sdk';
+import { CommandModal } from 'twenty-sdk/command';
+
+const DeleteDraft = () => {
+  const execute = async () => {
+    // perform the deletion
+  };
+
+  return (
+    <CommandModal
+      title="Delete draft?"
+      subtitle="This action cannot be undone."
+      execute={execute}
+      confirmButtonText="Delete"
+      confirmButtonAccent="danger"
+    />
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'a7b8c9d0-e1f2-3456-abcd-567890123456',
+  name: 'delete-draft',
+  description: 'Deletes a draft with confirmation',
+  component: DeleteDraft,
+  isHeadless: true,
+  command: {
+    universalIdentifier: 'b8c9d0e1-f2a3-4567-bcde-678901234567',
+    label: 'Delete draft',
+    icon: 'IconTrash',
+  },
+});
+```
+
+#### Контекст выполнения
+
+Каждый фронт-компонент получает контекст выполнения, который предоставляет информацию о том, где и как он запущен. Получайте значения контекста с помощью хуков из `twenty-sdk`:
+
+| Хук                     | Тип возвращаемого значения | Описание                                                                                                                                                                              |
+| ----------------------- | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `useFrontComponentId()` | `строка`                   | Уникальный ID текущего экземпляра фронт-компонента                                                                                                                                    |
+| `useRecordId()`         | `string \| null`           | ID текущей записи, когда компонент запускается в контексте записи (например, виджет на странице записи или команда с областью действия записи). В противном случае возвращает `null`. |
+| `useUserId()`           | `string \| null`           | ID текущего пользователя                                                                                                                                                              |
+
+```typescript
+import { useRecordId, useUserId } from 'twenty-sdk';
+
+const MyWidget = () => {
+  const recordId = useRecordId();
+  const userId = useUserId();
+
+  return (
+    <div>
+      <p>Record: {recordId ?? 'none'}</p>
+      <p>User: {userId ?? 'anonymous'}</p>
+    </div>
+  );
+};
+```
+
+Контекст реактивный: если окружающая запись изменяется, хуки автоматически возвращают обновлённые значения.
+
+#### Функции API хоста
+
+Фронт-компоненты выполняются в изолированной песочнице, но могут взаимодействовать с интерфейсом Twenty через набор функций, предоставляемых хостом. Импортируйте их напрямую из `twenty-sdk`:
+
+```typescript
+import {
+  navigate,
+  closeSidePanel,
+  enqueueSnackbar,
+  unmountFrontComponent,
+  openSidePanelPage,
+  openCommandConfirmationModal,
+} from 'twenty-sdk';
+```
+
+| Функция                        | Сигнатура                                                | Описание                                                                                                                                                                              |
+| ------------------------------ | -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `навигация`                    | `(to, params?, queryParams?, options?) => Promise<void>` | Переход по типизированному пути приложения внутри Twenty                                                                                                                              |
+| `closeSidePanel`               | `() => Promise<void>`                                    | Закрыть боковую панель                                                                                                                                                                |
+| `enqueueSnackbar`              | `(params) => Promise<void>`                              | Показать уведомление snackbar. Параметры: `message`, `variant` (`'error'`, `'success'`, `'info'`, `'warning'`), необязательно `duration`, `detailedMessage`, `dedupeKey`              |
+| `unmountFrontComponent`        | `() => Promise<void>`                                    | Размонтировать текущий фронт-компонент (используется headless-компонентами для очистки после выполнения)                                                                              |
+| `openSidePanelPage`            | `(params) => Promise<void>`                              | Открыть страницу в боковой панели. Параметры: `page`, `pageTitle`, `pageIcon`, `shouldResetSearchState`                                                                               |
+| `openCommandConfirmationModal` | `(params) => Promise<'confirm' \| 'cancel'>`             | Показать модальное окно подтверждения и дождаться ответа пользователя. Параметры: `title`, `subtitle`, `confirmButtonText`, `confirmButtonAccent` (`'default'`, `'blue'`, `'danger'`) |
+
+Пример, который использует API хоста для показа snackbar и закрытия боковой панели после завершения действия:
+
+```typescript
+import { defineFrontComponent, useRecordId } from 'twenty-sdk';
+import { enqueueSnackbar, closeSidePanel } from 'twenty-sdk';
+import { CoreApiClient } from 'twenty-sdk/clients';
+
+const ArchiveRecord = () => {
+  const recordId = useRecordId();
+
+  const handleArchive = async () => {
+    const client = new CoreApiClient();
+
+    await client.mutation({
+      updateTask: {
+        __args: { id: recordId, data: { status: 'ARCHIVED' } },
+        id: true,
+      },
+    });
+
+    await enqueueSnackbar({
+      message: 'Record archived',
+      variant: 'success',
+    });
+
+    await closeSidePanel();
+  };
+
+  return (
+    <div style={{ padding: '20px' }}>
+      <p>Archive this record?</p>
+      <button onClick={handleArchive}>Archive</button>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'c9d0e1f2-a3b4-5678-cdef-789012345678',
+  name: 'archive-record',
+  description: 'Archives the current record',
+  component: ArchiveRecord,
+});
+```
+
 ### Навыки
 
 Навыки определяют многократно используемые инструкции и возможности, которые агенты ИИ могут использовать в вашем рабочем пространстве. Используйте `defineSkill()` для определения навыков со встроенной валидацией:

@@ -44,6 +44,11 @@
       "import": "./dist/front-component-renderer/index.mjs",
       "require": "./dist/front-component-renderer/index.cjs"
     },
+    "./build": {
+      "types": "./dist/build/index.d.ts",
+      "import": "./dist/build.mjs",
+      "require": "./dist/build.cjs"
+    },
     "./clients": {
       "types": "./dist/clients/index.d.ts",
       "import": "./dist/clients.mjs",

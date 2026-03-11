@@ -13,7 +13,7 @@ import {
   LOGIC_FUNCTION_EXTERNAL_MODULES,
   createSdkClientsResolverPlugin,
 } from '@/cli/utilities/build/common/esbuild-watcher';
-import { FRONT_COMPONENT_EXTERNAL_MODULES } from '@/cli/utilities/build/common/front-component-build/constants/front-component-external-modules';
+import { getBaseFrontComponentBuildOptions } from '@/cli/utilities/build/common/front-component-build/utils/get-base-front-component-build-options';
 import { getFrontComponentBuildPlugins } from '@/cli/utilities/build/common/front-component-build/utils/get-front-component-build-plugins';
 import { type OnFileBuiltCallback } from '@/cli/utilities/build/common/restartable-watcher-interface';
 import { type EntityFilePaths } from '@/cli/utilities/build/manifest/manifest-extract-config';
@@ -90,17 +90,9 @@ export const buildApplication = async (
     sourcePaths: frontComponents,
     fileFolder: FileFolder.BuiltFrontComponent,
     buildOptions: {
-      bundle: true,
-      splitting: false,
-      format: 'esm',
+      ...getBaseFrontComponentBuildOptions(),
       outdir: join(options.appPath, OUTPUT_DIR),
-      outExtension: { '.js': '.mjs' },
-      external: FRONT_COMPONENT_EXTERNAL_MODULES,
       tsconfig: join(options.appPath, 'tsconfig.json'),
-      jsx: 'automatic',
-      sourcemap: true,
-      metafile: true,
-      logLevel: 'silent',
       plugins: [
         createSdkClientsResolverPlugin(options.appPath),
         ...getFrontComponentBuildPlugins(),

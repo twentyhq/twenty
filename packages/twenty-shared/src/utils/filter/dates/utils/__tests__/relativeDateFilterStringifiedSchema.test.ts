@@ -62,6 +62,44 @@ describe('relativeDateFilterStringifiedSchema', () => {
     }
   });
 
+  it('should parse a valid PAST QUARTER filter string', () => {
+    const result =
+      relativeDateFilterStringifiedSchema.safeParse('PAST_2_QUARTER');
+
+    expect(result.success).toBe(true);
+
+    if (result.success) {
+      expect(result.data.direction).toBe('PAST');
+      expect(result.data.amount).toBe(2);
+      expect(result.data.unit).toBe('QUARTER');
+    }
+  });
+
+  it('should parse a THIS QUARTER filter string', () => {
+    const result =
+      relativeDateFilterStringifiedSchema.safeParse('THIS_1_QUARTER');
+
+    expect(result.success).toBe(true);
+
+    if (result.success) {
+      expect(result.data.direction).toBe('THIS');
+      expect(result.data.unit).toBe('QUARTER');
+    }
+  });
+
+  it('should parse a valid NEXT QUARTER filter string', () => {
+    const result =
+      relativeDateFilterStringifiedSchema.safeParse('NEXT_1_QUARTER');
+
+    expect(result.success).toBe(true);
+
+    if (result.success) {
+      expect(result.data.direction).toBe('NEXT');
+      expect(result.data.amount).toBe(1);
+      expect(result.data.unit).toBe('QUARTER');
+    }
+  });
+
   it('should fail for invalid strings', () => {
     const result =
       relativeDateFilterStringifiedSchema.safeParse('INVALID_STRING');

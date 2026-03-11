@@ -837,6 +837,255 @@ Puoi creare nuovi componenti front-end in due modi:
 * **Generata dallo scaffolder**: Esegui `yarn twenty entity:add` e scegli l'opzione per aggiungere un nuovo componente front-end.
 * **Manuale**: Crea un nuovo file `.tsx` e usa `defineFrontComponent()`, seguendo lo stesso schema.
 
+#### Dove possono essere utilizzati i componenti front.
+
+I componenti front possono essere renderizzati in due posizioni all'interno di Twenty:
+
+* **Pannello laterale** — I componenti front non headless si aprono nel pannello laterale destro. Questo è il comportamento predefinito quando un componente front viene avviato dal menu comandi.
+* **Widget (dashboard e pagine dei record)** — I componenti front possono essere incorporati come widget all'interno dei layout di pagina. Quando si configura una dashboard o il layout di una pagina record, gli utenti possono aggiungere un widget del componente front.
+
+#### Headless vs non headless
+
+I componenti front prevedono due modalità di rendering controllate dall'opzione `isHeadless`:
+
+**Non headless (predefinito)** — Il componente renderizza un'interfaccia utente visibile. Quando viene avviato dal menu comandi, si apre nel pannello laterale. Questo è il comportamento predefinito quando `isHeadless` è `false` o omesso.
+
+**Headless** — Il componente viene montato in modo invisibile in background. Non apre il pannello laterale. I componenti headless sono pensati per azioni che eseguono una logica e poi si smontano — ad esempio, eseguire un'attività asincrona, navigare a una pagina o mostrare una finestra modale di conferma. Si abbinano naturalmente ai componenti Command dell'SDK descritti di seguito.
+
+```typescript
+export default defineFrontComponent({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'my-action',
+  description: 'Runs an action without opening the side panel',
+  component: MyAction,
+  isHeadless: true,
+  command: {
+    universalIdentifier: 'b2c3d4e5-f6a7-8901-bcde-f12345678901',
+    label: 'Run my action',
+  },
+});
+```
+
+#### Aggiungere voci al menu comandi
+
+Per far comparire un componente front come voce nel menu comandi di Twenty, aggiungi la proprietà `command` a `defineFrontComponent()`. Quando gli utenti aprono il menu comandi (Cmd+K / Ctrl+K), la voce viene mostrata e al clic attiva il componente front.
+
+L'oggetto `command` accetta i seguenti campi:
+
+| Campo                                   | Tipo                                           | Descrizione                                                                                   |
+| --------------------------------------- | ---------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| `universalIdentifier`                   | `string` (obbligatorio)                        | ID univoco per la voce del menu comandi                                                       |
+| `etichetta`                             | `string` (obbligatorio)                        | Etichetta visualizzata nel menu comandi                                                       |
+| `icona`                                 | `string` (facoltativo)                         | Nome dell'icona (ad es., `'IconSparkles'`)                                                    |
+| `isPinned`                              | `boolean` (facoltativo)                        | Indica se il comando è fissato in alto nel menu                                               |
+| `availabilityType`                      | `'GLOBAL' \| 'RECORD_SELECTION'` (facoltativo) | `GLOBAL` mostra il comando ovunque; `RECORD_SELECTION` lo mostra solo nei contesti dei record |
+| `availabilityObjectUniversalIdentifier` | `string` (facoltativo)                         | Limita il comando a uno specifico tipo di oggetto (ad es., Person)                            |
+
+Ecco un esempio dall'app di registrazione delle chiamate che aggiunge un comando limitato ai record Person:
+
+```typescript
+import { defineFrontComponent } from 'twenty-sdk';
+
+export default defineFrontComponent({
+  universalIdentifier: 'c3d4e5f6-a7b8-9012-cdef-123456789012',
+  name: 'Summarize Person Call Recordings',
+  description: 'Generates a summary of call recordings for a person',
+  component: SummarizePersonRecordings,
+  command: {
+    universalIdentifier: 'd4e5f6a7-b8c9-0123-defa-234567890123',
+    label: 'Summarize call recordings',
+    icon: 'IconSparkles',
+    isPinned: false,
+    availabilityType: 'RECORD_SELECTION',
+    availabilityObjectUniversalIdentifier:
+      '20202020-e674-48e5-a542-72570eee7213',
+  },
+});
+```
+
+Quando il comando viene sincronizzato, appare nel menu comandi. Se il componente front è non headless, si apre il pannello laterale con il componente renderizzato al suo interno. Se è headless, il componente viene montato in background ed esegue la propria logica.
+
+#### Componenti Command dell'SDK
+
+Il pacchetto `twenty-sdk` fornisce quattro componenti di supporto Command progettati per i componenti front headless. Ogni componente esegue un'azione al montaggio, gestisce gli errori mostrando una notifica snackbar e smonta automaticamente il componente front al termine.
+
+Importali da `twenty-sdk/command`:
+
+* **`Command`** — Esegue una callback asincrona tramite la prop `execute`.
+* **`CommandLink`** — Naviga verso un percorso dell'app. Props: `to`, `params`, `queryParams`, `options`.
+* **`CommandModal`** — Apre una finestra modale di conferma. Se l'utente conferma, esegue la callback `execute`. Props: `title`, `subtitle`, `execute`, `confirmButtonText`, `confirmButtonAccent`.
+* **`CommandOpenSidePanelPage`** — Apre una specifica pagina del pannello laterale. Props: `page`, `pageTitle`, `pageIcon`.
+
+Ecco un esempio completo di componente front headless che usa `Command` per eseguire un'azione dal menu comandi:
+
+```typescript
+// src/front-components/run-action.tsx
+import { defineFrontComponent } from 'twenty-sdk';
+import { Command } from 'twenty-sdk/command';
+import { CoreApiClient } from 'twenty-sdk/clients';
+
+const RunAction = () => {
+  const execute = async () => {
+    const client = new CoreApiClient();
+
+    await client.mutation({
+      createTask: {
+        __args: { data: { title: 'Created by my app' } },
+        id: true,
+      },
+    });
+  };
+
+  return <Command execute={execute} />;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'e5f6a7b8-c9d0-1234-efab-345678901234',
+  name: 'run-action',
+  description: 'Creates a task from the command menu',
+  component: RunAction,
+  isHeadless: true,
+  command: {
+    universalIdentifier: 'f6a7b8c9-d0e1-2345-fabc-456789012345',
+    label: 'Run my action',
+    icon: 'IconPlayerPlay',
+  },
+});
+```
+
+E un esempio che usa `CommandModal` per chiedere conferma prima di eseguire:
+
+```typescript
+// src/front-components/delete-draft.tsx
+import { defineFrontComponent } from 'twenty-sdk';
+import { CommandModal } from 'twenty-sdk/command';
+
+const DeleteDraft = () => {
+  const execute = async () => {
+    // perform the deletion
+  };
+
+  return (
+    <CommandModal
+      title="Delete draft?"
+      subtitle="This action cannot be undone."
+      execute={execute}
+      confirmButtonText="Delete"
+      confirmButtonAccent="danger"
+    />
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'a7b8c9d0-e1f2-3456-abcd-567890123456',
+  name: 'delete-draft',
+  description: 'Deletes a draft with confirmation',
+  component: DeleteDraft,
+  isHeadless: true,
+  command: {
+    universalIdentifier: 'b8c9d0e1-f2a3-4567-bcde-678901234567',
+    label: 'Delete draft',
+    icon: 'IconTrash',
+  },
+});
+```
+
+#### Contesto di esecuzione
+
+Ogni componente front riceve un contesto di esecuzione che fornisce informazioni su dove e come sta funzionando. Accedi ai valori del contesto usando gli hook di `twenty-sdk`:
+
+| Hook                    | Tipo restituito  | Descrizione                                                                                                                                                                                             |
+| ----------------------- | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `useFrontComponentId()` | `string`         | L'ID univoco dell'istanza corrente del componente front                                                                                                                                                 |
+| `useRecordId()`         | `string \| null` | L'ID del record corrente, quando il componente viene eseguito in un contesto di record (ad es., un widget di pagina record o un comando con ambito a un record). In caso contrario, restituisce `null`. |
+| `useUserId()`           | `string \| null` | L'ID dell'utente corrente                                                                                                                                                                               |
+
+```typescript
+import { useRecordId, useUserId } from 'twenty-sdk';
+
+const MyWidget = () => {
+  const recordId = useRecordId();
+  const userId = useUserId();
+
+  return (
+    <div>
+      <p>Record: {recordId ?? 'none'}</p>
+      <p>User: {userId ?? 'anonymous'}</p>
+    </div>
+  );
+};
+```
+
+Il contesto è reattivo — se il record circostante cambia, gli hook restituiscono automaticamente i valori aggiornati.
+
+#### Funzioni dell'API host
+
+I componenti front vengono eseguiti in una sandbox isolata ma possono interagire con l'interfaccia di Twenty tramite un insieme di funzioni fornite dall'host. Importale direttamente da `twenty-sdk`:
+
+```typescript
+import {
+  navigate,
+  closeSidePanel,
+  enqueueSnackbar,
+  unmountFrontComponent,
+  openSidePanelPage,
+  openCommandConfirmationModal,
+} from 'twenty-sdk';
+```
+
+| Funzione                       | Firma                                                    | Descrizione                                                                                                                                                                              |
+| ------------------------------ | -------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `naviga`                       | `(to, params?, queryParams?, options?) => Promise<void>` | Naviga verso un percorso tipizzato dell'app all'interno di Twenty                                                                                                                        |
+| `closeSidePanel`               | `() => Promise<void>`                                    | Chiudi il pannello laterale                                                                                                                                                              |
+| `enqueueSnackbar`              | `(params) => Promise<void>`                              | Mostra una notifica snackbar. Parametri: `message`, `variant` (`'error'`, `'success'`, `'info'`, `'warning'`), `duration` opzionale, `detailedMessage`, `dedupeKey`                      |
+| `unmountFrontComponent`        | `() => Promise<void>`                                    | Smonta il componente front corrente (usato dai componenti headless per pulire dopo l'esecuzione)                                                                                         |
+| `openSidePanelPage`            | `(params) => Promise<void>`                              | Apri una pagina nel pannello laterale. Parametri: `page`, `pageTitle`, `pageIcon`, `shouldResetSearchState`                                                                              |
+| `openCommandConfirmationModal` | `(params) => Promise<'confirm' \| 'cancel'>`             | Mostra una finestra modale di conferma e attende la risposta dell'utente. Parametri: `title`, `subtitle`, `confirmButtonText`, `confirmButtonAccent` (`'default'`, `'blue'`, `'danger'`) |
+
+Ecco un esempio che usa l'API host per mostrare una snackbar e chiudere il pannello laterale dopo il completamento di un'azione:
+
+```typescript
+import { defineFrontComponent, useRecordId } from 'twenty-sdk';
+import { enqueueSnackbar, closeSidePanel } from 'twenty-sdk';
+import { CoreApiClient } from 'twenty-sdk/clients';
+
+const ArchiveRecord = () => {
+  const recordId = useRecordId();
+
+  const handleArchive = async () => {
+    const client = new CoreApiClient();
+
+    await client.mutation({
+      updateTask: {
+        __args: { id: recordId, data: { status: 'ARCHIVED' } },
+        id: true,
+      },
+    });
+
+    await enqueueSnackbar({
+      message: 'Record archived',
+      variant: 'success',
+    });
+
+    await closeSidePanel();
+  };
+
+  return (
+    <div style={{ padding: '20px' }}>
+      <p>Archive this record?</p>
+      <button onClick={handleArchive}>Archive</button>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'c9d0e1f2-a3b4-5678-cdef-789012345678',
+  name: 'archive-record',
+  description: 'Archives the current record',
+  component: ArchiveRecord,
+});
+```
+
 ### Abilità
 
 Skills define reusable instructions and capabilities that AI agents can use within your workspace. Use `defineSkill()` to define skills with built-in validation:
