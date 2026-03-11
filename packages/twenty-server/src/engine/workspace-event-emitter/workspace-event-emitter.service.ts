@@ -307,13 +307,18 @@ export class WorkspaceEventEmitterService {
 
     const objectNameSingular = workspaceEventBatch.objectMetadata.nameSingular;
 
-    const subscriberRLSFilter = this.buildSubscriberRLSFilter(
-      streamData.authContext,
-      roleId,
-      workspaceEventBatch.objectMetadata,
-      permissionsContext,
-      flatWorkspaceMemberMaps,
-    );
+    const { filter: subscriberRLSFilter, hasUnresolvablePredicate } =
+      this.buildSubscriberRLSFilter(
+        streamData.authContext,
+        roleId,
+        workspaceEventBatch.objectMetadata,
+        permissionsContext,
+        flatWorkspaceMemberMaps,
+      );
+
+    if (hasUnresolvablePredicate) {
+      return;
+    }
 
     const restrictedFields = objectPermissions.restrictedFields;
 
@@ -486,7 +491,10 @@ export class WorkspaceEventEmitterService {
       flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
     },
     flatWorkspaceMemberMaps: FlatWorkspaceMemberMaps,
-  ): RecordGqlOperationFilter | null {
+  ): {
+    filter: RecordGqlOperationFilter | null;
+    hasUnresolvablePredicate: boolean;
+  } {
     const workspaceMember = isDefined(subscriberAuthContext.workspaceMemberId)
       ? flatWorkspaceMemberMaps.byId[subscriberAuthContext.workspaceMemberId]
       : undefined;

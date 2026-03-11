@@ -48,18 +48,25 @@ export const applyRowLevelPermissionPredicates = <T extends ObjectLiteral>({
     ? internalContext.userWorkspaceRoleMap[userWorkspaceId]
     : undefined;
 
-  const recordFilter = buildRowLevelPermissionRecordFilter({
-    flatRowLevelPermissionPredicateMaps:
-      internalContext.flatRowLevelPermissionPredicateMaps,
-    flatRowLevelPermissionPredicateGroupMaps:
-      internalContext.flatRowLevelPermissionPredicateGroupMaps,
-    flatFieldMetadataMaps: internalContext.flatFieldMetadataMaps,
-    objectMetadata,
-    roleId,
-    workspaceMember: isUserAuthContext(authContext)
-      ? authContext.workspaceMember
-      : undefined,
-  });
+  const { filter: recordFilter, hasUnresolvablePredicate } =
+    buildRowLevelPermissionRecordFilter({
+      flatRowLevelPermissionPredicateMaps:
+        internalContext.flatRowLevelPermissionPredicateMaps,
+      flatRowLevelPermissionPredicateGroupMaps:
+        internalContext.flatRowLevelPermissionPredicateGroupMaps,
+      flatFieldMetadataMaps: internalContext.flatFieldMetadataMaps,
+      objectMetadata,
+      roleId,
+      workspaceMember: isUserAuthContext(authContext)
+        ? authContext.workspaceMember
+        : undefined,
+    });
+
+  if (hasUnresolvablePredicate) {
+    queryBuilder.andWhere('1 = 0');
+
+    return;
+  }
 
   if (!recordFilter || Object.keys(recordFilter).length === 0) {
     return;

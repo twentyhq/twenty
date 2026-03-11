@@ -265,7 +265,10 @@ describe('WorkspaceEventEmitterService', () => {
       }),
     };
 
-    (buildRowLevelPermissionRecordFilter as jest.Mock).mockReturnValue({});
+    (buildRowLevelPermissionRecordFilter as jest.Mock).mockReturnValue({
+      filter: {},
+      hasUnresolvablePredicate: false,
+    });
     (
       isRecordMatchingRLSRowLevelPermissionPredicate as jest.Mock
     ).mockReturnValue(true);
@@ -752,9 +755,10 @@ describe('WorkspaceEventEmitterService', () => {
     it('should combine query filter with RLS filter', async () => {
       const rlsFilter: RecordGqlOperationFilter = { status: { eq: 'active' } };
 
-      (buildRowLevelPermissionRecordFilter as jest.Mock).mockReturnValue(
-        rlsFilter,
-      );
+      (buildRowLevelPermissionRecordFilter as jest.Mock).mockReturnValue({
+        filter: rlsFilter,
+        hasUnresolvablePredicate: false,
+      });
 
       const streamDataWithFilter: EventStreamData = {
         ...mockStreamData,
@@ -1020,9 +1024,10 @@ describe('WorkspaceEventEmitterService', () => {
           assigneeId: { eq: workspaceMemberId },
         };
 
-        (buildRowLevelPermissionRecordFilter as jest.Mock).mockReturnValue(
-          rlsFilter,
-        );
+        (buildRowLevelPermissionRecordFilter as jest.Mock).mockReturnValue({
+          filter: rlsFilter,
+          hasUnresolvablePredicate: false,
+        });
 
         const streamDataWithWorkspaceMember: EventStreamData = {
           authContext: {
@@ -1104,9 +1109,10 @@ describe('WorkspaceEventEmitterService', () => {
           locale: { eq: 'en' },
         };
 
-        (buildRowLevelPermissionRecordFilter as jest.Mock).mockReturnValue(
-          rlsFilter,
-        );
+        (buildRowLevelPermissionRecordFilter as jest.Mock).mockReturnValue({
+          filter: rlsFilter,
+          hasUnresolvablePredicate: false,
+        });
 
         const streamDataWithWorkspaceMember: EventStreamData = {
           authContext: {
@@ -1169,7 +1175,10 @@ describe('WorkspaceEventEmitterService', () => {
           idByUserId: {},
         };
 
-        (buildRowLevelPermissionRecordFilter as jest.Mock).mockReturnValue({});
+        (buildRowLevelPermissionRecordFilter as jest.Mock).mockReturnValue({
+          filter: {},
+          hasUnresolvablePredicate: false,
+        });
 
         const streamDataWithWorkspaceMember: EventStreamData = {
           authContext: {

@@ -41,6 +41,11 @@ type BuildRowLevelPermissionRecordFilterArgs = {
   workspaceMember?: UserWorkspaceAuthContext['workspaceMember'];
 };
 
+type BuildRowLevelPermissionRecordFilterResult = {
+  filter: RecordGqlOperationFilter | null;
+  hasUnresolvablePredicate: boolean;
+};
+
 export const buildRowLevelPermissionRecordFilter = ({
   flatRowLevelPermissionPredicateMaps,
   flatRowLevelPermissionPredicateGroupMaps,
@@ -48,9 +53,9 @@ export const buildRowLevelPermissionRecordFilter = ({
   objectMetadata,
   roleId,
   workspaceMember,
-}: BuildRowLevelPermissionRecordFilterArgs): RecordGqlOperationFilter | null => {
+}: BuildRowLevelPermissionRecordFilterArgs): BuildRowLevelPermissionRecordFilterResult => {
   if (!isDefined(roleId)) {
-    return null;
+    return { filter: null, hasUnresolvablePredicate: false };
   }
 
   const predicates = Object.values(
@@ -65,10 +70,10 @@ export const buildRowLevelPermissionRecordFilter = ({
     );
 
   if (predicates.length === 0) {
-    return null;
+    return { filter: null, hasUnresolvablePredicate: false };
   }
 
-  let hasUnresolvableRelationPredicate = false;
+  let hasUnresolvablePredicate = false;
 
   const recordFilters = predicates
     .map((predicate) => {
@@ -118,17 +123,22 @@ export const buildRowLevelPermissionRecordFilter = ({
             return null;
           }
 
-          const fkValue = Object.entries(workspaceMember).find(
-            ([key]) => key === joinColumnName,
-          )?.[1];
+          const workspaceMemberJoinColumnValue = Object.entries(
+            workspaceMember,
+          ).find(([key]) => key === joinColumnName)?.[1];
 
-          if (!isDefined(fkValue) || typeof fkValue !== 'string') {
-            hasUnresolvableRelationPredicate = true;
+          if (
+            !isDefined(workspaceMemberJoinColumnValue) ||
+            typeof workspaceMemberJoinColumnValue !== 'string'
+          ) {
+            hasUnresolvablePredicate = true;
 
             return null;
           }
 
-          predicateValue = { selectedRecordIds: [fkValue] };
+          predicateValue = {
+            selectedRecordIds: [workspaceMemberJoinColumnValue],
+          };
         } else {
           const rawWorkspaceMemberValue = Object.entries(workspaceMember).find(
             ([key]) => key === workspaceMemberFieldMetadata.name,
@@ -138,6 +148,8 @@ export const buildRowLevelPermissionRecordFilter = ({
             predicate.workspaceMemberSubFieldName;
 
           if (!isDefined(rawWorkspaceMemberValue)) {
+            hasUnresolvablePredicate = true;
+
             return null;
           }
 
@@ -153,6 +165,8 @@ export const buildRowLevelPermissionRecordFilter = ({
           }
 
           if (!isDefined(predicateValue)) {
+            hasUnresolvablePredicate = true;
+
             return null;
           }
 
@@ -163,6 +177,8 @@ export const buildRowLevelPermissionRecordFilter = ({
           });
 
           if (!isEnumValueCompatible) {
+            hasUnresolvablePredicate = true;
+
             return null;
           }
 
@@ -194,10 +210,6 @@ export const buildRowLevelPermissionRecordFilter = ({
       } satisfies RecordFilter;
     })
     .filter(isDefined);
-
-  if (hasUnresolvableRelationPredicate) {
-    return { id: { is: 'NULL' } };
-  }
 
   const relevantGroupIds = new Set<string>();
 
@@ -260,12 +272,15 @@ export const buildRowLevelPermissionRecordFilter = ({
       options: field.options as PartialFieldMetadataItemOption[],
     }));
 
-  return computeRecordGqlOperationFilter({
-    recordFilters,
-    recordFilterGroups,
-    fields: fieldMetadataItems,
-    filterValueDependencies: {
-      currentWorkspaceMemberId: workspaceMember?.id,
-    },
-  });
+  return {
+    filter: computeRecordGqlOperationFilter({
+      recordFilters,
+      recordFilterGroups,
+      fields: fieldMetadataItems,
+      filterValueDependencies: {
+        currentWorkspaceMemberId: workspaceMember?.id,
+      },
+    }),
+    hasUnresolvablePredicate,
+  };
 };

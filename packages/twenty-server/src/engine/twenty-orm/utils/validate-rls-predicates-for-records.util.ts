@@ -47,18 +47,26 @@ export const validateRLSPredicatesForRecords = <T extends ObjectLiteral>({
     return;
   }
 
-  const recordFilter = buildRowLevelPermissionRecordFilter({
-    flatRowLevelPermissionPredicateMaps:
-      internalContext.flatRowLevelPermissionPredicateMaps,
-    flatRowLevelPermissionPredicateGroupMaps:
-      internalContext.flatRowLevelPermissionPredicateGroupMaps,
-    flatFieldMetadataMaps: internalContext.flatFieldMetadataMaps,
-    objectMetadata,
-    roleId,
-    workspaceMember: isUserAuthContext(authContext)
-      ? authContext.workspaceMember
-      : undefined,
-  });
+  const { filter: recordFilter, hasUnresolvablePredicate } =
+    buildRowLevelPermissionRecordFilter({
+      flatRowLevelPermissionPredicateMaps:
+        internalContext.flatRowLevelPermissionPredicateMaps,
+      flatRowLevelPermissionPredicateGroupMaps:
+        internalContext.flatRowLevelPermissionPredicateGroupMaps,
+      flatFieldMetadataMaps: internalContext.flatFieldMetadataMaps,
+      objectMetadata,
+      roleId,
+      workspaceMember: isUserAuthContext(authContext)
+        ? authContext.workspaceMember
+        : undefined,
+    });
+
+  if (hasUnresolvablePredicate) {
+    throw new TwentyORMException(
+      errorMessage,
+      TwentyORMExceptionCode.RLS_VALIDATION_FAILED,
+    );
+  }
 
   if (!recordFilter || Object.keys(recordFilter).length === 0) {
     return;
