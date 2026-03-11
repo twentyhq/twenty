@@ -20,7 +20,7 @@ const program = new Command(packageJson.name)
   )
   .option(
     '-y, --yes',
-    'Skip interactive prompts and use defaults (requires directory argument)',
+    'Skip interactive prompts and use defaults',
   )
   .helpOption('-h, --help', 'Display this help message.')
   .action(
@@ -40,11 +40,6 @@ const program = new Command(packageJson.name)
             'Error: --exhaustive and --minimal are mutually exclusive.',
           ),
         );
-        process.exit(1);
-      }
-
-      if (options?.yes && !directory) {
-        console.error(chalk.red('Error: --yes requires a directory argument.'));
         process.exit(1);
       }
 

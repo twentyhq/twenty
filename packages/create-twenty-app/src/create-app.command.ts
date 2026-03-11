@@ -96,12 +96,11 @@ export class CreateAppCommand {
       },
     ]);
 
-    const computedName = name ?? directory;
+    const DEFAULT_APP_NAME = 'my-twenty-app';
 
-    const appName = computedName.trim();
+    const appName = (name ?? directory ?? DEFAULT_APP_NAME).trim();
 
-    const appDisplayName =
-      displayName?.trim() ?? convertToLabel(appName);
+    const appDisplayName = displayName?.trim() ?? convertToLabel(appName);
 
     const appDescription = description?.trim() ?? '';
 
