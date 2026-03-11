@@ -1,13 +1,19 @@
 import { Injectable } from '@nestjs/common';
 
-import { type Readable } from 'stream';
+import * as fs from 'fs/promises';
+import { join } from 'path';
+import { Readable } from 'stream';
 
+import { build } from 'esbuild';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { SdkClientGenerationService } from 'src/engine/core-modules/logic-function/logic-function-resource/sdk-client-generation.service';
+import { TemporaryDirManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/temporary-dir-manager';
+import { streamToBuffer } from 'src/utils/stream-to-buffer';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -32,6 +38,7 @@ export class FrontComponentService {
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationService: ApplicationService,
     private readonly fileStorageService: FileStorageService,
+    private readonly sdkClientGenerationService: SdkClientGenerationService,
   ) {}
 
   async findAll(workspaceId: string): Promise<FrontComponentDTO[]> {
@@ -315,11 +322,101 @@ export class FrontComponentService {
       },
     );
 
-    return this.fileStorageService.readFile({
+    const applicationUniversalIdentifier = application.universalIdentifier;
+
+    const rawStream = await this.fileStorageService.readFile({
       workspaceId,
-      applicationUniversalIdentifier: application.universalIdentifier,
+      applicationUniversalIdentifier,
       fileFolder: FileFolder.BuiltFrontComponent,
       resourcePath: frontComponent.builtComponentPath,
     });
+
+    const rawSource = (await streamToBuffer(rawStream)).toString('utf-8');
+
+    const hasSdkImport =
+      rawSource.includes('twenty-client-sdk/core') ||
+      rawSource.includes('twenty-client-sdk');
+
+    if (!hasSdkImport) {
+      return Readable.from(Buffer.from(rawSource));
+    }
+
+    return this.bundleWithSdkClient({
+      rawSource,
+      workspaceId,
+      applicationUniversalIdentifier,
+    });
+  }
+
+  // Re-bundles the front component .mjs with the generated
+  // twenty-client-sdk inlined so the output is self-contained.
+  private async bundleWithSdkClient({
+    rawSource,
+    workspaceId,
+    applicationUniversalIdentifier,
+  }: {
+    rawSource: string;
+    workspaceId: string;
+    applicationUniversalIdentifier: string;
+  }): Promise<Readable> {
+    const temporaryDirManager = new TemporaryDirManager();
+
+    try {
+      const { sourceTemporaryDir } = await temporaryDirManager.init();
+
+      const entryPath = join(sourceTemporaryDir, 'entry.mjs');
+
+      await fs.writeFile(entryPath, rawSource);
+
+      const sdkPackagePath = join(
+        sourceTemporaryDir,
+        'node_modules',
+        'twenty-client-sdk',
+      );
+
+      await fs.mkdir(join(sourceTemporaryDir, 'node_modules'), {
+        recursive: true,
+      });
+
+      await this.sdkClientGenerationService.downloadAndExtractToPackage({
+        workspaceId,
+        applicationUniversalIdentifier,
+        targetPackagePath: sdkPackagePath,
+      });
+
+      const stubPackageJson = join(sdkPackagePath, 'package.json');
+      const hasPackageJson = await fs
+        .access(stubPackageJson)
+        .then(() => true)
+        .catch(() => false);
+
+      if (!hasPackageJson) {
+        await fs.writeFile(
+          stubPackageJson,
+          JSON.stringify({
+            name: 'twenty-client-sdk',
+            exports: {
+              '.': { import: './dist/index.mjs' },
+              './core': { import: './dist/core.mjs' },
+            },
+          }),
+        );
+      }
+
+      const result = await build({
+        entryPoints: [entryPath],
+        bundle: true,
+        format: 'esm',
+        write: false,
+        nodePaths: [join(sourceTemporaryDir, 'node_modules')],
+        logLevel: 'silent',
+      });
+
+      const bundledCode = result.outputFiles?.[0]?.text ?? rawSource;
+
+      return Readable.from(Buffer.from(bundledCode));
+    } finally {
+      await temporaryDirManager.clean();
+    }
   }
 }

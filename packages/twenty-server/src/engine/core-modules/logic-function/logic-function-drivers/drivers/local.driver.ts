@@ -100,23 +100,18 @@ export class LocalDriver implements LogicFunctionDriver {
 
     await fs.rm(sdkLayerPath, { recursive: true, force: true });
 
-    const depsClientSdkPath = join(
-      this.getDepsLayerPath(flatApplication),
-      'node_modules',
-      'twenty-client-sdk',
-    );
     const sdkClientSdkPath = join(
       sdkLayerPath,
       'node_modules',
       'twenty-client-sdk',
     );
 
-    await fs.cp(depsClientSdkPath, sdkClientSdkPath, { recursive: true });
+    await fs.mkdir(sdkClientSdkPath, { recursive: true });
 
-    await this.sdkClientGenerationService.downloadClientToLayer({
+    await this.sdkClientGenerationService.downloadAndExtractToPackage({
       workspaceId: flatApplication.workspaceId,
       applicationUniversalIdentifier,
-      layerClientSdkDistPath: join(sdkClientSdkPath, 'dist'),
+      targetPackagePath: sdkClientSdkPath,
     });
 
     await this.sdkClientGenerationService.markSdkLayerFresh({

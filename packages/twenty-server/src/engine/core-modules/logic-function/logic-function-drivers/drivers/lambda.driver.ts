@@ -198,29 +198,18 @@ export class LambdaDriver implements LogicFunctionDriver {
     return result.LayerVersionArn;
   }
 
-  // Returns builtNodeModulesPath when freshly built so ensureSdkLayer
-  // can copy twenty-client-sdk without a second yarn install.
-  // Caller is responsible for calling cleanup.
   private async ensureDepsLayer({
     flatApplication,
     applicationUniversalIdentifier,
   }: {
     flatApplication: FlatApplication;
     applicationUniversalIdentifier: string;
-  }): Promise<{
-    arn: string;
-    builtNodeModulesPath: string | undefined;
-    cleanup: () => Promise<void>;
-  }> {
+  }): Promise<string> {
     const layerName = this.getDepsLayerName(flatApplication);
     const existingArn = await this.findExistingLayerArn(layerName);
 
     if (isDefined(existingArn)) {
-      return {
-        arn: existingArn,
-        builtNodeModulesPath: undefined,
-        cleanup: async () => {},
-      };
+      return existingArn;
     }
 
     const temporaryDirManager = new TemporaryDirManager();
@@ -240,21 +229,17 @@ export class LambdaDriver implements LogicFunctionDriver {
 
     const arn = await this.publishLayer({ layerName, zipPath: lambdaZipPath });
 
-    return {
-      arn,
-      builtNodeModulesPath: join(nodeDependenciesFolder, 'node_modules'),
-      cleanup: () => temporaryDirManager.clean(),
-    };
+    await temporaryDirManager.clean();
+
+    return arn;
   }
 
   private async ensureSdkLayer({
     flatApplication,
     applicationUniversalIdentifier,
-    stubSourcePath,
   }: {
     flatApplication: FlatApplication;
     applicationUniversalIdentifier: string;
-    stubSourcePath?: string;
   }): Promise<string> {
     const layerName = this.getSdkLayerName({
       workspaceId: flatApplication.workspaceId,
@@ -269,7 +254,6 @@ export class LambdaDriver implements LogicFunctionDriver {
       }
     }
 
-    // Stale or missing — delete old versions and rebuild from file storage
     await this.deleteAllLayerVersions({
       lambdaClient: await this.getLambdaClient(),
       layerName,
@@ -279,42 +263,19 @@ export class LambdaDriver implements LogicFunctionDriver {
     const { sourceTemporaryDir, lambdaZipPath } =
       await temporaryDirManager.init();
 
-    const nodeDependenciesFolder = join(sourceTemporaryDir, 'nodejs');
-
     const targetSdkPath = join(
-      nodeDependenciesFolder,
+      sourceTemporaryDir,
+      'nodejs',
       'node_modules',
       'twenty-client-sdk',
     );
 
-    if (isDefined(stubSourcePath)) {
-      await fs.cp(stubSourcePath, targetSdkPath, { recursive: true });
-    } else {
-      const installDirManager = new TemporaryDirManager();
-      const { sourceTemporaryDir: installDir } = await installDirManager.init();
+    await fs.mkdir(targetSdkPath, { recursive: true });
 
-      const installNodejs = join(installDir, 'nodejs');
-
-      await this.logicFunctionResourceService.copyDependenciesInMemory({
-        applicationUniversalIdentifier,
-        workspaceId: flatApplication.workspaceId,
-        inMemoryFolderPath: installNodejs,
-      });
-      await copyYarnEngineAndBuildDependencies(installNodejs);
-
-      await fs.cp(
-        join(installNodejs, 'node_modules', 'twenty-client-sdk'),
-        targetSdkPath,
-        { recursive: true },
-      );
-
-      await installDirManager.clean();
-    }
-
-    await this.sdkClientGenerationService.downloadClientToLayer({
+    await this.sdkClientGenerationService.downloadAndExtractToPackage({
       workspaceId: flatApplication.workspaceId,
       applicationUniversalIdentifier,
-      layerClientSdkDistPath: join(targetSdkPath, 'dist'),
+      targetPackagePath: targetSdkPath,
     });
 
     await createZipFile(sourceTemporaryDir, lambdaZipPath);
@@ -456,26 +417,15 @@ export class LambdaDriver implements LogicFunctionDriver {
 
     await this.delete(flatLogicFunction);
 
-    const {
-      arn: depsLayerArn,
-      builtNodeModulesPath,
-      cleanup: cleanupDepsLayer,
-    } = await this.ensureDepsLayer({
+    const depsLayerArn = await this.ensureDepsLayer({
       flatApplication,
       applicationUniversalIdentifier,
     });
-
-    const stubSourcePath = builtNodeModulesPath
-      ? join(builtNodeModulesPath, 'twenty-client-sdk')
-      : undefined;
 
     const sdkLayerArn = await this.ensureSdkLayer({
       flatApplication,
       applicationUniversalIdentifier,
-      stubSourcePath,
     });
-
-    await cleanupDepsLayer();
 
     const temporaryDirManager = new TemporaryDirManager();
 
