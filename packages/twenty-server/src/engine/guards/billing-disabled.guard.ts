@@ -14,4 +14,3 @@ export class BillingDisabledGuard implements CanActivate {
     return !this.twentyConfigService.isBillingEnabled();
   }
 }
-
