@@ -8,9 +8,7 @@ import {
   type WorkflowWithCurrentVersion,
 } from '@/workflow/types/Workflow';
 
-const getCurrentVersionId = (
-  workflow: Workflow,
-): string | undefined => {
+const getCurrentVersionId = (workflow: Workflow): string | undefined => {
   const draftVersion = workflow.versions.find(
     (version) => version.status === 'DRAFT',
   );
