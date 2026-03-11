@@ -255,10 +255,16 @@ export class WorkspaceMigrationRunnerService {
         workspaceId,
       });
 
-      await this.logicFunctionDriver.invalidateSdkLayer({
-        workspaceId,
-        applicationUniversalIdentifier,
-      });
+      const shouldInvalidateSdkLayer =
+        allFlatEntityMapsKeys.includes('flatObjectMetadataMaps') ||
+        allFlatEntityMapsKeys.includes('flatFieldMetadataMaps');
+
+      if (shouldInvalidateSdkLayer) {
+        await this.logicFunctionDriver.invalidateSdkLayer({
+          workspaceId,
+          applicationUniversalIdentifier,
+        });
+      }
 
       this.logger.timeEnd('Runner', 'Total execution');
 
