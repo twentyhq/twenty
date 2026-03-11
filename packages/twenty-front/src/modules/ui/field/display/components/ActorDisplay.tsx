@@ -16,6 +16,7 @@ import {
   IconRobot,
   IconSettingsAutomation,
   IconWebhook,
+  type IconComponent,
 } from 'twenty-ui/display';
 
 type ActorDisplayProps = Partial<FieldActorValue> & {
@@ -36,6 +37,38 @@ const PROVIDERS_ICON_MAPPING = {
   },
 };
 
+const getLeftIcon = ({
+  source,
+  context,
+}: Pick<ActorDisplayProps, 'source' | 'context'>):
+  | IconComponent
+  | undefined => {
+  switch (source) {
+    case 'API':
+      return IconApi;
+    case 'IMPORT':
+      return IconArrowUp;
+    case 'EMAIL':
+      return PROVIDERS_ICON_MAPPING.EMAIL[context?.provider ?? 'default'];
+    case 'CALENDAR':
+      return (
+        PROVIDERS_ICON_MAPPING.CALENDAR[
+          context?.provider as keyof typeof PROVIDERS_ICON_MAPPING.CALENDAR
+        ] ?? PROVIDERS_ICON_MAPPING.CALENDAR.default
+      );
+    case 'SYSTEM':
+      return IconRobot;
+    case 'WORKFLOW':
+      return IconSettingsAutomation;
+    case 'WEBHOOK':
+      return IconWebhook;
+    case 'APPLICATION':
+      return IconPlug;
+    default:
+      return undefined;
+  }
+};
+
 export const ActorDisplay = ({
   name,
   source,
@@ -43,39 +76,7 @@ export const ActorDisplay = ({
   avatarUrl,
   context,
 }: ActorDisplayProps) => {
-  let LeftIcon;
-
-  switch (source) {
-    case 'API':
-      LeftIcon = IconApi;
-      break;
-    case 'IMPORT':
-      LeftIcon = IconArrowUp;
-      break;
-    case 'EMAIL':
-      LeftIcon = PROVIDERS_ICON_MAPPING.EMAIL[context?.provider ?? 'default'];
-      break;
-    case 'CALENDAR':
-      LeftIcon =
-        PROVIDERS_ICON_MAPPING.CALENDAR[
-          context?.provider as keyof typeof PROVIDERS_ICON_MAPPING.CALENDAR
-        ] ?? PROVIDERS_ICON_MAPPING.CALENDAR.default;
-      break;
-    case 'SYSTEM':
-      LeftIcon = IconRobot;
-      break;
-    case 'WORKFLOW':
-      LeftIcon = IconSettingsAutomation;
-      break;
-    case 'WEBHOOK':
-      LeftIcon = IconWebhook;
-      break;
-    case 'APPLICATION':
-      LeftIcon = IconPlug;
-      break;
-    default:
-      LeftIcon = undefined;
-  }
+  const LeftIcon = getLeftIcon({ source, context });
 
   return (
     <Chip
