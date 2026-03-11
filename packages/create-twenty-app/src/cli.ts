@@ -18,6 +18,15 @@ const program = new Command(packageJson.name)
     '-m, --minimal',
     'Create only core entities (application-config and default-role)',
   )
+  .option('-n, --name <name>', 'Application name (skips prompt)')
+  .option(
+    '-d, --display-name <displayName>',
+    'Application display name (skips prompt)',
+  )
+  .option(
+    '--description <description>',
+    'Application description (skips prompt)',
+  )
   .helpOption('-h, --help', 'Display this help message.')
   .action(
     async (
@@ -25,6 +34,9 @@ const program = new Command(packageJson.name)
       options?: {
         exhaustive?: boolean;
         minimal?: boolean;
+        name?: string;
+        displayName?: string;
+        description?: string;
       },
     ) => {
       const modeFlags = [options?.exhaustive, options?.minimal].filter(Boolean);
@@ -47,9 +59,20 @@ const program = new Command(packageJson.name)
         process.exit(1);
       }
 
+      if (options?.name !== undefined && options.name.trim().length === 0) {
+        console.error(chalk.red('Error: --name cannot be empty.'));
+        process.exit(1);
+      }
+
       const mode: ScaffoldingMode = options?.minimal ? 'minimal' : 'exhaustive';
 
-      await new CreateAppCommand().execute(directory, mode);
+      await new CreateAppCommand().execute({
+        directory,
+        mode,
+        name: options?.name,
+        displayName: options?.displayName,
+        description: options?.description,
+      });
     },
   );
 
