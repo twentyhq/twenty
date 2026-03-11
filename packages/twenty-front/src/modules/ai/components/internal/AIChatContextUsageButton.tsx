@@ -1,19 +1,20 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { HorizontalSeparator } from 'twenty-ui/display';
 import { ProgressBar } from 'twenty-ui/feedback';
-import { ThemeContext } from 'twenty-ui/theme';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { ContextUsageProgressRing } from '@/ai/components/internal/ContextUsageProgressRing';
-import { SettingsBillingLabelValueItem } from '@/billing/components/internal/SettingsBillingLabelValueItem';
+import { agentChatHasMessageComponentSelector } from '@/ai/states/agentChatHasMessageComponentSelector';
 import {
   agentChatUsageState,
   type AgentChatLastMessageUsage,
 } from '@/ai/states/agentChatUsageState';
+import { SettingsBillingLabelValueItem } from '@/billing/components/internal/SettingsBillingLabelValueItem';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledContainer = styled.div`
@@ -42,11 +43,11 @@ const StyledHoverCard = styled.div`
   background: ${themeCssVariables.background.primary};
   border: 1px solid ${themeCssVariables.border.color.medium};
   border-radius: ${themeCssVariables.border.radius.md};
+  bottom: calc(100% + 8px);
   box-shadow: ${themeCssVariables.boxShadow.strong};
+  left: 0;
   min-width: 280px;
   position: absolute;
-  left: 0;
-  bottom: calc(100% + 8px);
   z-index: ${themeCssVariables.lastLayerZIndex};
 `;
 
@@ -114,9 +115,16 @@ const getCachedLabel = (lastMessage: AgentChatLastMessageUsage): string => {
 
 export const AIChatContextUsageButton = () => {
   const { t } = useLingui();
-  const { theme } = useContext(ThemeContext);
   const [isHovered, setIsHovered] = useState(false);
   const agentChatUsage = useAtomStateValue(agentChatUsageState);
+
+  const hasMessages = useAtomComponentSelectorValue(
+    agentChatHasMessageComponentSelector,
+  );
+
+  if (!hasMessages) {
+    return null;
+  }
 
   if (!agentChatUsage) {
     return (
@@ -165,19 +173,22 @@ export const AIChatContextUsageButton = () => {
               value={percentage}
               barColor={
                 percentage > 80
-                  ? theme.color.red
+                  ? themeCssVariables.color.red
                   : percentage > 60
-                    ? theme.color.orange
-                    : theme.color.blue
+                    ? themeCssVariables.color.orange
+                    : themeCssVariables.color.blue
               }
-              backgroundColor={theme.background.tertiary}
+              backgroundColor={themeCssVariables.background.tertiary}
               withBorderRadius
             />
           </StyledSection>
 
           {isDefined(lastMessage) && (
             <>
-              <HorizontalSeparator noMargin color={theme.background.tertiary} />
+              <HorizontalSeparator
+                noMargin
+                color={themeCssVariables.background.tertiary}
+              />
               <StyledSection>
                 <StyledSectionTitle>{t`Last message`}</StyledSectionTitle>
                 <SettingsBillingLabelValueItem
@@ -196,7 +207,10 @@ export const AIChatContextUsageButton = () => {
             </>
           )}
 
-          <HorizontalSeparator noMargin color={theme.background.tertiary} />
+          <HorizontalSeparator
+            noMargin
+            color={themeCssVariables.background.tertiary}
+          />
           <StyledSection>
             <StyledSectionTitle>{t`Conversation`}</StyledSectionTitle>
             <SettingsBillingLabelValueItem

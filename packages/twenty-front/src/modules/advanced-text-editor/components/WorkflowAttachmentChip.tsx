@@ -6,8 +6,7 @@ import { useContext } from 'react';
 import { type WorkflowAttachment } from 'twenty-shared/workflow';
 import { AvatarOrIcon } from 'twenty-ui/components';
 import { IconX } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type WorkflowAttachmentChipProps = {
   file: WorkflowAttachment;
@@ -37,22 +36,22 @@ const StyledLabel = styled.span`
 `;
 
 const StyledDelete = styled.button`
-  height: 20px;
-  width: 20px;
-  display: flex;
-  justify-content: center;
   align-items: center;
-  margin: 0;
-  padding: 0;
-  cursor: pointer;
-  font-size: ${themeCssVariables.font.size.sm};
-  user-select: none;
-  flex-shrink: 0;
   background: none;
   border: none;
-  color: ${themeCssVariables.font.color.tertiary};
-  border-top-right-radius: ${themeCssVariables.border.radius.sm};
   border-bottom-right-radius: ${themeCssVariables.border.radius.sm};
+  border-top-right-radius: ${themeCssVariables.border.radius.sm};
+  color: ${themeCssVariables.font.color.tertiary};
+  cursor: pointer;
+  display: flex;
+  flex-shrink: 0;
+  font-size: ${themeCssVariables.font.size.sm};
+  height: 20px;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+  width: 20px;
 
   &:hover {
     background-color: ${themeCssVariables.background.transparent.medium};
@@ -65,8 +64,8 @@ export const WorkflowAttachmentChip = ({
   onRemove,
   readonly = false,
 }: WorkflowAttachmentChipProps) => {
-  const iconColors = useFileCategoryColors();
   const { theme } = useContext(ThemeContext);
+  const iconColors = useFileCategoryColors();
 
   return (
     <StyledChip data-chip deletable={!readonly}>

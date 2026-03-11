@@ -5,14 +5,15 @@ import { SettingsListSkeletonCard } from '@/settings/components/SettingsListSkel
 
 import { type IconComponent, IconPlus } from 'twenty-ui/display';
 import { Card, CardFooter } from 'twenty-ui/layout';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { SettingsListItemCardContent } from './SettingsListItemCardContent';
 
-const StyledFooter = styled(CardFooter)`
-  align-items: center;
-  display: flex;
-  padding: ${themeCssVariables.spacing[1]};
+const StyledFooterContainer = styled.div`
+  > * {
+    align-items: center;
+    display: flex;
+    padding: ${themeCssVariables.spacing[1]};
+  }
 `;
 
 const StyledButton = styled.button`
@@ -21,13 +22,13 @@ const StyledButton = styled.button`
   border: none;
   border-radius: ${themeCssVariables.border.radius.sm};
   color: ${themeCssVariables.font.color.secondary};
-  gap: ${themeCssVariables.spacing[2]};
-  padding: 0 ${themeCssVariables.spacing[1]};
-  padding-left: ${themeCssVariables.spacing[2]};
   cursor: pointer;
   display: flex;
   flex: 1 0 0;
+  gap: ${themeCssVariables.spacing[2]};
   height: ${themeCssVariables.spacing[8]};
+  padding: 0 ${themeCssVariables.spacing[1]};
+  padding-left: ${themeCssVariables.spacing[2]};
   width: 100%;
 
   &:hover {
@@ -92,12 +93,14 @@ export const SettingsListCard = <
         />
       ))}
       {hasFooter && (
-        <StyledFooter divider={!!items.length}>
-          <StyledButton onClick={onFooterButtonClick}>
-            <IconPlus size={theme.icon.size.md} />
-            {footerButtonLabel}
-          </StyledButton>
-        </StyledFooter>
+        <StyledFooterContainer>
+          <CardFooter divider={!!items.length}>
+            <StyledButton onClick={onFooterButtonClick}>
+              <IconPlus size={theme.icon.size.md} />
+              {footerButtonLabel}
+            </StyledButton>
+          </CardFooter>
+        </StyledFooterContainer>
       )}
     </Card>
   );

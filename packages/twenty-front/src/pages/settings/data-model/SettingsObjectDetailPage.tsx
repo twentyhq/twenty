@@ -29,7 +29,7 @@ import {
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { UndecoratedLink } from 'twenty-ui/navigation';
-import { ThemeContext } from 'twenty-ui/theme';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { SETTINGS_OBJECT_DETAIL_TABS } from '~/pages/settings/data-model/constants/SettingsObjectDetailTabs';
@@ -37,15 +37,14 @@ import { updatedObjectNamePluralState } from '~/pages/settings/data-model/states
 
 const StyledContentContainer = styled.div`
   flex: 1;
-  width: 100%;
   padding-left: 0;
+  width: 100%;
 `;
 
 export const SettingsObjectDetailPage = () => {
+  const { theme } = useContext(ThemeContext);
   const navigateApp = useNavigateApp();
   const { t } = useLingui();
-  const { theme } = useContext(ThemeContext);
-
   const { objectNamePlural = '' } = useParams();
 
   const { findObjectMetadataItemByNamePlural } =

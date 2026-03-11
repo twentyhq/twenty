@@ -13,9 +13,9 @@ export const computeInsertIndexAndPosition = (
   );
   const insertRef = itemsInFolder[targetIndex];
   const lastInFolder = itemsInFolder[itemsInFolder.length - 1];
-  const flatIndex = insertRef
+  const flatIndex = isDefined(insertRef)
     ? currentDraft.indexOf(insertRef)
-    : lastInFolder
+    : isDefined(lastInFolder)
       ? currentDraft.indexOf(lastInFolder) + 1
       : currentDraft.length;
   const prevPosition = itemsInFolder[targetIndex - 1]?.position ?? 0;

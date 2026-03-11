@@ -4,8 +4,8 @@ import { NavigationDrawerAIChatThreadsList } from '@/ai/components/NavigationDra
 
 const StyledAIChatThreadsListWrapper = styled.div`
   display: flex;
-  flex-direction: column;
   flex: 1;
+  flex-direction: column;
   min-height: 0;
 `;
 

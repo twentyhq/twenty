@@ -28,6 +28,7 @@ describe('getTabsWithVisibleWidgets', () => {
       configurationType: WidgetConfigurationType.FIELDS,
       viewId: null,
     },
+    isOverridden: false,
     createdAt: '2024-01-01T00:00:00.000Z',
     updatedAt: '2024-01-01T00:00:00.000Z',
     deletedAt: null,
@@ -45,6 +46,7 @@ describe('getTabsWithVisibleWidgets', () => {
     title: `Tab ${id}`,
     position: 0,
     widgets,
+    isOverridden: false,
     createdAt: '2024-01-01T00:00:00.000Z',
     updatedAt: '2024-01-01T00:00:00.000Z',
     deletedAt: null,
@@ -65,7 +67,7 @@ describe('getTabsWithVisibleWidgets', () => {
       const result = getTabsWithVisibleWidgets({
         tabs,
         isMobile: false,
-        isInRightDrawer: false,
+        isInSidePanel: false,
         isEditMode: false,
       });
 
@@ -89,7 +91,7 @@ describe('getTabsWithVisibleWidgets', () => {
       const result = getTabsWithVisibleWidgets({
         tabs,
         isMobile: false,
-        isInRightDrawer: false,
+        isInSidePanel: false,
         isEditMode: false,
       });
 
@@ -115,7 +117,7 @@ describe('getTabsWithVisibleWidgets', () => {
       const result = getTabsWithVisibleWidgets({
         tabs,
         isMobile: false,
-        isInRightDrawer: false,
+        isInSidePanel: false,
         isEditMode: false,
       });
 
@@ -133,7 +135,7 @@ describe('getTabsWithVisibleWidgets', () => {
       const result = getTabsWithVisibleWidgets({
         tabs,
         isMobile: false,
-        isInRightDrawer: false,
+        isInSidePanel: false,
         isEditMode: false,
       });
 
@@ -148,7 +150,7 @@ describe('getTabsWithVisibleWidgets', () => {
       const result = getTabsWithVisibleWidgets({
         tabs,
         isMobile: false,
-        isInRightDrawer: false,
+        isInSidePanel: false,
         isEditMode: false,
       });
 
@@ -173,7 +175,7 @@ describe('getTabsWithVisibleWidgets', () => {
       const result = getTabsWithVisibleWidgets({
         tabs,
         isMobile: false,
-        isInRightDrawer: false,
+        isInSidePanel: false,
         isEditMode: true,
       });
 
@@ -194,7 +196,7 @@ describe('getTabsWithVisibleWidgets', () => {
       const result = getTabsWithVisibleWidgets({
         tabs,
         isMobile: false,
-        isInRightDrawer: false,
+        isInSidePanel: false,
         isEditMode: true,
       });
 
@@ -210,7 +212,7 @@ describe('getTabsWithVisibleWidgets', () => {
       const result = getTabsWithVisibleWidgets({
         tabs,
         isMobile: false,
-        isInRightDrawer: false,
+        isInSidePanel: false,
         isEditMode: true,
       });
 
@@ -234,7 +236,7 @@ describe('getTabsWithVisibleWidgets', () => {
       const result = getTabsWithVisibleWidgets({
         tabs,
         isMobile: false,
-        isInRightDrawer: false,
+        isInSidePanel: false,
         isEditMode: true,
       });
 
@@ -249,7 +251,7 @@ describe('getTabsWithVisibleWidgets', () => {
       const result = getTabsWithVisibleWidgets({
         tabs: [],
         isMobile: false,
-        isInRightDrawer: false,
+        isInSidePanel: false,
         isEditMode: false,
       });
 
@@ -270,7 +272,7 @@ describe('getTabsWithVisibleWidgets', () => {
       getTabsWithVisibleWidgets({
         tabs,
         isMobile: false,
-        isInRightDrawer: false,
+        isInSidePanel: false,
         isEditMode: false,
       });
 
@@ -306,7 +308,7 @@ describe('getTabsWithVisibleWidgets', () => {
       const result = getTabsWithVisibleWidgets({
         tabs,
         isMobile: false,
-        isInRightDrawer: false,
+        isInSidePanel: false,
         isEditMode: false,
       });
 

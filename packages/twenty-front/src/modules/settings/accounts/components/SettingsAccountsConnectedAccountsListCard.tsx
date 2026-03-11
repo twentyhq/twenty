@@ -19,11 +19,13 @@ const StyledTableRows = styled.div`
   padding-top: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledAddAccountSection = styled(Section)`
-  border-top: 1px solid ${themeCssVariables.border.color.light};
-  display: flex;
-  justify-content: flex-end;
-  padding-top: ${themeCssVariables.spacing[2]};
+const StyledAddAccountSectionContainer = styled.div`
+  > * {
+    border-top: 1px solid ${themeCssVariables.border.color.light};
+    display: flex;
+    justify-content: flex-end;
+    padding-top: ${themeCssVariables.spacing[2]};
+  }
 `;
 
 export const SettingsAccountsConnectedAccountsListCard = ({
@@ -51,15 +53,17 @@ export const SettingsAccountsConnectedAccountsListCard = ({
           ))}
         </StyledTableRows>
       </Table>
-      <StyledAddAccountSection>
-        <Button
-          Icon={IconPlus}
-          title={t`Add account`}
-          variant="secondary"
-          size="small"
-          onClick={() => navigateSettings(SettingsPath.NewAccount)}
-        />
-      </StyledAddAccountSection>
+      <StyledAddAccountSectionContainer>
+        <Section>
+          <Button
+            Icon={IconPlus}
+            title={t`Add account`}
+            variant="secondary"
+            size="small"
+            onClick={() => navigateSettings(SettingsPath.NewAccount)}
+          />
+        </Section>
+      </StyledAddAccountSectionContainer>
     </Section>
   );
 };

@@ -16,8 +16,8 @@ import { isRecordTableRowFocusActiveComponentState } from '@/object-record/recor
 import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowFocusedComponentFamilyState';
 import { isRecordTableScrolledVerticallyComponentState } from '@/object-record/record-table/states/isRecordTableScrolledVerticallyComponentState';
 import { allRowsSelectedStatusComponentSelector } from '@/object-record/record-table/states/selectors/allRowsSelectedStatusComponentSelector';
-import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { cx } from '@linaria/core';
 import { Checkbox } from 'twenty-ui/input';
@@ -26,27 +26,27 @@ const StyledContainer = styled.div<{
   shouldDisplayBorderBottom: boolean;
 }>`
   align-items: center;
-  display: flex;
-  height: ${RECORD_TABLE_ROW_HEIGHT}px;
-  justify-content: center;
-  min-width: 24px;
-  padding-right: ${themeCssVariables.spacing[1]};
   background-color: ${themeCssVariables.background.primary};
   border-bottom: ${({ shouldDisplayBorderBottom }) =>
     shouldDisplayBorderBottom
       ? `1px solid ${themeCssVariables.border.color.light}`
       : 'none'};
+  display: flex;
+  height: ${RECORD_TABLE_ROW_HEIGHT}px;
+  justify-content: center;
+  min-width: 24px;
+  padding-right: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledColumnHeaderCell = styled.div`
   background-color: ${themeCssVariables.background.primary};
 
-  min-width: ${RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px;
   box-sizing: border-box;
-
   cursor: pointer;
 
   max-height: ${RECORD_TABLE_ROW_HEIGHT}px;
+
+  min-width: ${RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px;
 `;
 
 export const RecordTableHeaderCheckboxColumn = () => {

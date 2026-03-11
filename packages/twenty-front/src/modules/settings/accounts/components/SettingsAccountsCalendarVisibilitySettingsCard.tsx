@@ -11,8 +11,10 @@ type SettingsAccountsEventVisibilitySettingsCardProps = {
   value?: CalendarChannelVisibility;
 };
 
-const StyledCardMedia = styled(SettingsAccountsVisibilityIcon)`
-  height: ${themeCssVariables.spacing[6]};
+const StyledCardMediaContainer = styled.div`
+  > * {
+    height: ${themeCssVariables.spacing[6]};
+  }
 `;
 
 const eventSettingsVisibilityOptions = [
@@ -20,13 +22,21 @@ const eventSettingsVisibilityOptions = [
     title: msg`Everything`,
     description: msg`The whole event details will be shared with your team.`,
     value: CalendarChannelVisibility.SHARE_EVERYTHING,
-    cardMedia: <StyledCardMedia subject="active" body="active" />,
+    cardMedia: (
+      <StyledCardMediaContainer>
+        <SettingsAccountsVisibilityIcon subject="active" body="active" />
+      </StyledCardMediaContainer>
+    ),
   },
   {
     title: msg`Metadata`,
     description: msg`Only date & participants will be shared with your team.`,
     value: CalendarChannelVisibility.METADATA,
-    cardMedia: <StyledCardMedia subject="active" body="inactive" />,
+    cardMedia: (
+      <StyledCardMediaContainer>
+        <SettingsAccountsVisibilityIcon subject="active" body="inactive" />
+      </StyledCardMediaContainer>
+    ),
   },
 ];
 

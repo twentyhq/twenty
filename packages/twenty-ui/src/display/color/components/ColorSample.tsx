@@ -1,8 +1,8 @@
 import { styled } from '@linaria/react';
 
+import { isDefined } from 'twenty-shared/utils';
 import { type ThemeColor } from '@ui/theme';
 import { themeCssVariables } from '@ui/theme-constants';
-import { isDefined } from 'twenty-shared/utils';
 
 export type ColorSampleVariant = 'default' | 'pipeline';
 

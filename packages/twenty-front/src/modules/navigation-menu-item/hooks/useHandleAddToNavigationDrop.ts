@@ -12,12 +12,11 @@ import { useAddObjectToNavigationMenuDraft } from '@/navigation-menu-item/hooks/
 import { useAddRecordToNavigationMenuDraft } from '@/navigation-menu-item/hooks/useAddRecordToNavigationMenuDraft';
 import { useAddViewToNavigationMenuDraft } from '@/navigation-menu-item/hooks/useAddViewToNavigationMenuDraft';
 import { useNavigationMenuItemsDraftState } from '@/navigation-menu-item/hooks/useNavigationMenuItemsDraftState';
-import { useOpenNavigationMenuItemInCommandMenu } from '@/navigation-menu-item/hooks/useOpenNavigationMenuItemInCommandMenu';
+import { useOpenNavigationMenuItemInSidePanel } from '@/navigation-menu-item/hooks/useOpenNavigationMenuItemInSidePanel';
 import { addToNavPayloadRegistryState } from '@/navigation-menu-item/states/addToNavPayloadRegistryState';
 import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/isNavigationMenuInEditModeState';
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/states/navigationMenuItemsDraftState';
 import { openNavigationMenuItemFolderIdsState } from '@/navigation-menu-item/states/openNavigationMenuItemFolderIdsState';
-import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeState';
 import { getObjectMetadataIdsInDraft } from '@/navigation-menu-item/utils/getObjectMetadataIdsInDraft';
 import { getStandardObjectIconColor } from '@/navigation-menu-item/utils/getStandardObjectIconColor';
 import { isWorkspaceDroppableId } from '@/navigation-menu-item/utils/isWorkspaceDroppableId';
@@ -40,14 +39,11 @@ export const useHandleAddToNavigationDrop = () => {
   const navigationMenuItemsDraft = useAtomStateValue(
     navigationMenuItemsDraftState,
   );
-  const { openNavigationMenuItemInCommandMenu } =
-    useOpenNavigationMenuItemInCommandMenu();
+  const { openNavigationMenuItemInSidePanel } =
+    useOpenNavigationMenuItemInSidePanel();
   const { objectMetadataItems } = useObjectMetadataItems();
   const coreViews = useAtomStateValue(coreViewsState);
   const { getIcon } = useIcons();
-  const setSelectedNavigationMenuItemInEditMode = useSetAtomState(
-    selectedNavigationMenuItemInEditModeState,
-  );
   const setIsNavigationMenuInEditMode = useSetAtomState(
     isNavigationMenuInEditModeState,
   );
@@ -92,11 +88,13 @@ export const useHandleAddToNavigationDrop = () => {
 
       const openEditForNewNavItem = (
         newItemId: string,
-        options: Parameters<typeof openNavigationMenuItemInCommandMenu>[0],
+        options: Omit<
+          Parameters<typeof openNavigationMenuItemInSidePanel>[0],
+          'itemId'
+        >,
       ) => {
         setIsNavigationMenuInEditMode(true);
-        setSelectedNavigationMenuItemInEditMode(newItemId);
-        openNavigationMenuItemInCommandMenu(options);
+        openNavigationMenuItemInSidePanel({ ...options, itemId: newItemId });
       };
 
       switch (payload.type) {
@@ -220,10 +218,9 @@ export const useHandleAddToNavigationDrop = () => {
       getIcon,
       navigationMenuItemsDraft,
       objectMetadataItems,
-      openNavigationMenuItemInCommandMenu,
+      openNavigationMenuItemInSidePanel,
       setOpenNavigationMenuItemFolderIds,
       setIsNavigationMenuInEditMode,
-      setSelectedNavigationMenuItemInEditMode,
       workspaceNavigationMenuItems,
       store,
     ],

@@ -12,13 +12,12 @@ import { useContext } from 'react';
 import { type Temporal } from 'temporal-polyfill';
 import { IconPlus } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledButton = styled(Button)`
-  padding: ${themeCssVariables.spacing['0.5']};
-  min-width: unset;
+const StyledButtonContainer = styled.div`
   height: auto;
+  min-width: unset;
+  padding: ${themeCssVariables.spacing['0.5']};
 `;
 
 type RecordCalendarAddNewProps = {
@@ -28,10 +27,9 @@ type RecordCalendarAddNewProps = {
 export const RecordCalendarAddNew = ({
   cardDate,
 }: RecordCalendarAddNewProps) => {
+  const { theme } = useContext(ThemeContext);
   const { userTimezone } = useUserTimezone();
   const { objectMetadataItem } = useRecordCalendarContextOrThrow();
-  const { theme } = useContext(ThemeContext);
-
   const { createNewIndexRecord } = useCreateNewIndexRecord({
     objectMetadataItem,
   });
@@ -71,17 +69,19 @@ export const RecordCalendarAddNew = ({
   }
 
   return (
-    <StyledButton
-      onClick={async () => {
-        await createNewIndexRecord({
-          [calendarFieldMetadataItem.name]: cardDate
-            .toZonedDateTime(userTimezone)
-            .toInstant()
-            .toString(),
-        });
-      }}
-      variant="tertiary"
-      Icon={() => <IconPlus size={theme.icon.size.sm} />}
-    />
+    <StyledButtonContainer>
+      <Button
+        onClick={async () => {
+          await createNewIndexRecord({
+            [calendarFieldMetadataItem.name]: cardDate
+              .toZonedDateTime(userTimezone)
+              .toInstant()
+              .toString(),
+          });
+        }}
+        variant="tertiary"
+        Icon={() => <IconPlus size={theme.icon.size.sm} />}
+      />
+    </StyledButtonContainer>
   );
 };

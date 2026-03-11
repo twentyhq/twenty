@@ -33,7 +33,7 @@ export const NavigationMenuItemFolderContent = ({
         {(provided) => (
           <div
             ref={provided.innerRef}
-            // eslint-disable-next-line react/jsx-props-no-spreading
+            // oxlint-disable-next-line react/jsx-props-no-spreading
             {...provided.droppableProps}
           >
             {navigationMenuItems.map((navigationMenuItem, index) => (
@@ -58,9 +58,10 @@ export const NavigationMenuItemFolderContent = ({
                     rightOptions={
                       <LightIconButton
                         Icon={IconHeartOff}
-                        onClick={() =>
-                          deleteNavigationMenuItem(navigationMenuItem.id)
-                        }
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          deleteNavigationMenuItem(navigationMenuItem.id);
+                        }}
                         accent="tertiary"
                       />
                     }

@@ -10,8 +10,8 @@
   "packageManager": "yarn@4.9.2",
   "scripts": {
     "twenty": "twenty",
-    "lint": "eslint",
-    "lint:fix": "eslint --fix"
+    "lint": "oxlint -c .oxlintrc.json .",
+    "lint:fix": "oxlint --fix -c .oxlintrc.json ."
   },
   "dependencies": {
     "@emotion/react": "^11.11.1",
@@ -23,9 +23,8 @@
   "devDependencies": {
     "@types/node": "^24.7.2",
     "@types/react": "^18.2.0",
-    "eslint": "^9.32.0",
+    "oxlint": "^0.16.0",
     "react": "^18.2.0",
-    "typescript": "^5.9.3",
-    "typescript-eslint": "^8.50.0"
+    "typescript": "^5.9.3"
   }
 }

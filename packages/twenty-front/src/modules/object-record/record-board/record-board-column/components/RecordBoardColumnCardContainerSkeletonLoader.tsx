@@ -1,8 +1,7 @@
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { SkeletonTheme } from 'react-loading-skeleton';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { RecordCardBodyContainer } from '@/object-record/record-card/components/RecordCardBodyContainer';
@@ -24,21 +23,20 @@ const StyledBodyContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing['0.5']};
-  padding-top: 4px;
   padding-bottom: 4px;
+  padding-top: 4px;
 `;
 
 const StyledStaticCellSkeleton = styled.div<{ width: number; height: number }>`
   background-color: ${themeCssVariables.background.tertiary};
   border-radius: ${themeCssVariables.border.radius.sm};
 
-  width: ${({ width }) => width}px;
   height: ${({ height }) => height}px;
+  width: ${({ width }) => width}px;
 `;
 
 export const RecordBoardColumnCardContainerSkeletonLoader = () => {
   const { theme } = useContext(ThemeContext);
-
   const { currentView } = useGetCurrentViewOnly();
 
   const isCompactModeActive = currentView?.isCompact ?? false;

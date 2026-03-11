@@ -6,17 +6,17 @@ export const StyledMarkdownContainer = styled.div`
   line-height: 150%;
   margin: ${themeCssVariables.spacing['1.5']} 0;
   position: relative;
-  scroll-margin-top: ${themeCssVariables.spacing[10]};
   scroll-margin-bottom: ${themeCssVariables.spacing[10]};
+  scroll-margin-top: ${themeCssVariables.spacing[10]};
 
   &:empty {
     display: none;
   }
 
   .markdown-link {
+    -webkit-text-decoration: none;
     color: ${themeCssVariables.accent.accent11};
     text-decoration: none;
-    -webkit-text-decoration: none;
   }
 
   .markdown-link:visited {
@@ -29,7 +29,7 @@ export const StyledMarkdownContainer = styled.div`
 
   strong,
   b {
-    font-weight: ${themeCssVariables.font.weight.semiBold};
+    font-weight: ${themeCssVariables.font.weight.medium};
   }
 
   h1,
@@ -108,10 +108,10 @@ export const StyledMarkdownContainer = styled.div`
   :not(pre) > code {
     background-color: ${themeCssVariables.background.tertiary};
     border-radius: ${themeCssVariables.border.radius.sm};
-    color: ${themeCssVariables.font.color.primary};
+    color: ${themeCssVariables.color.red10};
     font-family: ${themeCssVariables.code.font.family}, monospace;
-    font-size: 0.9em;
-    padding: 1.5px 3px;
+    font-size: 1em;
+    padding: ${themeCssVariables.spacing[0]} ${themeCssVariables.spacing[1]};
     transition: all calc(${themeCssVariables.animation.duration.fast} * 1s) ease;
   }
 

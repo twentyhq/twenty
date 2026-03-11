@@ -72,7 +72,7 @@ export class AppLogger {
   debug(message: string, ...args: unknown[]): void {
     this.captureLog('debug', message, ...args);
     if (this.shouldLog('debug')) {
-      // eslint-disable-next-line no-console
+      // oxlint-disable-next-line no-console
       console.log(`[${this.context}] ${message}`, ...args);
     }
   }
@@ -80,7 +80,7 @@ export class AppLogger {
   info(message: string, ...args: unknown[]): void {
     this.captureLog('info', message, ...args);
     if (this.shouldLog('info')) {
-      // eslint-disable-next-line no-console
+      // oxlint-disable-next-line no-console
       console.log(`[${this.context}] ${message}`, ...args);
     }
   }
@@ -88,7 +88,7 @@ export class AppLogger {
   warn(message: string, ...args: unknown[]): void {
     this.captureLog('warn', message, ...args);
     if (this.shouldLog('warn')) {
-      // eslint-disable-next-line no-console
+      // oxlint-disable-next-line no-console
       console.warn(`[${this.context}] ${message}`, ...args);
     }
   }
@@ -96,7 +96,7 @@ export class AppLogger {
   error(message: string, ...args: unknown[]): void {
     this.captureLog('error', message, ...args);
     if (this.shouldLog('error')) {
-      // eslint-disable-next-line no-console
+      // oxlint-disable-next-line no-console
       console.error(`[${this.context}] ${message}`, ...args);
     }
   }
@@ -104,7 +104,7 @@ export class AppLogger {
   // For fatal errors, security issues, or data corruption - always visible
   critical(message: string, ...args: unknown[]): void {
     this.captureLog('error', `CRITICAL: ${message}`, ...args);
-    // eslint-disable-next-line no-console
+    // oxlint-disable-next-line no-console
     console.error(`[${this.context}] CRITICAL: ${message}`, ...args);
   }
 

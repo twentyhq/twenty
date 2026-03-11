@@ -32,7 +32,7 @@ export const ApiKeyNameInput = ({
   const [updateApiKey] = useUpdateApiKeyMutation();
 
   // TODO: Enhance this with react-web-hook-form (https://www.react-hook-form.com)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  // oxlint-disable-next-line react-hooks/exhaustive-deps
   const debouncedUpdate = useCallback(
     useDebouncedCallback(async (name: string) => {
       if (isDefined(onNameUpdate)) {

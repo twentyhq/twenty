@@ -1,4 +1,4 @@
-/* eslint-disable */
+/* oxlint-disable */
 // @ts-nocheck
 import { ObjectMetadataItemsQuery } from '~/generated-metadata/graphql';
 

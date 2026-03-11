@@ -21,15 +21,15 @@ const CONTAINER_HEIGHT = 300;
 const StyledContainer = styled.div`
   box-sizing: border-box;
   height: ${CONTAINER_HEIGHT}px;
-  width: 400px;
-  position: relative;
   overflow-y: auto;
+  position: relative;
+  width: 400px;
 `;
 
 const StyledSwitchModeButtonContainer = styled.div`
   position: fixed;
-  top: ${themeCssVariables.spacing[1]};
   right: ${themeCssVariables.spacing[1]};
+  top: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledCodeEditorContainer = styled.div`

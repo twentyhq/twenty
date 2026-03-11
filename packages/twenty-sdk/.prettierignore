@@ -1,0 +1,4 @@
+dist
+storybook-static
+coverage
+src/clients/generated

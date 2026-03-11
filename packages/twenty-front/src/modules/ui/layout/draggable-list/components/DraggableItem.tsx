@@ -1,8 +1,8 @@
 import { Draggable } from '@hello-pangea/dnd';
 import { isFunction } from '@sniptt/guards';
-import { isDefined } from 'twenty-shared/utils';
 import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme';
+import { isDefined } from 'twenty-shared/utils';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 type DraggableItemProps = {
   draggableId: string;
@@ -30,7 +30,6 @@ export const DraggableItem = ({
   containerOffsetY,
 }: DraggableItemProps) => {
   const { theme } = useContext(ThemeContext);
-
   return (
     <Draggable
       key={draggableId}
@@ -46,9 +45,9 @@ export const DraggableItem = ({
         return (
           <div
             ref={draggableProvided.innerRef}
-            // eslint-disable-next-line react/jsx-props-no-spreading
+            // oxlint-disable-next-line react/jsx-props-no-spreading
             {...draggableProvided.draggableProps}
-            // eslint-disable-next-line react/jsx-props-no-spreading
+            // oxlint-disable-next-line react/jsx-props-no-spreading
             {...draggableProvided.dragHandleProps}
             style={{
               ...draggableComponentStyles,

@@ -6,7 +6,7 @@ import { isFieldIdentifierDisplay } from '@/object-record/record-field/ui/meta-t
 import { RECORD_CHIP_CLICK_OUTSIDE_ID } from '@/object-record/record-table/constants/RecordChipClickOutsideId';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { useOpenRecordTableCellFromCell } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellFromCell';
-import { ThemeContext } from 'twenty-ui/theme';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 const StyledBaseContainer = styled.div<{
   fontColorMedium: string;
@@ -19,18 +19,18 @@ const StyledBaseContainer = styled.div<{
   cursor: ${({ isReadOnly }) => (isReadOnly ? 'default' : 'pointer')};
   display: flex;
   height: 32px;
-  user-select: none;
-
   position: relative;
 
+  user-select: none;
+
   &:hover {
-    outline: ${({ isReadOnly, fontColorMedium }) =>
-      isReadOnly ? `1px solid ${fontColorMedium}` : 'unset'};
-    border-radius: ${({ isReadOnly }) => (isReadOnly ? '0px' : 'unset')};
     background-color: ${({ isReadOnly, backgroundColorSecondary }) =>
       isReadOnly ? backgroundColorSecondary : 'unset'};
+    border-radius: ${({ isReadOnly }) => (isReadOnly ? '0px' : 'unset')};
     color: ${({ isReadOnly, fontColorSecondary }) =>
       isReadOnly ? fontColorSecondary : 'unset'};
+    outline: ${({ isReadOnly, fontColorMedium }) =>
+      isReadOnly ? `1px solid ${fontColorMedium}` : 'unset'};
 
     svg {
       color: ${({ isReadOnly, fontColorSecondary }) =>

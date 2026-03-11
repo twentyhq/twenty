@@ -1,10 +1,9 @@
 import { useAIChatThreadClick } from '@/ai/hooks/useAIChatThreadClick';
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
 import { useLingui } from '@lingui/react/macro';
+import { useContext } from 'react';
 import { IconSparkles } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { type AgentChatThread } from '~/generated-metadata/graphql';
 
 const StyledThreadsList = styled.div`
@@ -25,17 +24,17 @@ const StyledDateHeader = styled.div`
 `;
 
 const StyledThreadItem = styled.div<{ isSelected?: boolean }>`
-  display: flex;
   align-items: center;
-  gap: ${themeCssVariables.spacing[2]};
-  border-radius: ${themeCssVariables.border.radius.sm};
-  transition: all 0.2s ease;
-  margin-bottom: ${themeCssVariables.spacing[1]};
   border-left: 3px solid transparent;
+  border-radius: ${themeCssVariables.border.radius.sm};
   cursor: pointer;
+  display: flex;
+  gap: ${themeCssVariables.spacing[2]};
+  margin-bottom: ${themeCssVariables.spacing[1]};
   padding: ${themeCssVariables.spacing[1]} 1px;
-  right: 3px;
   position: relative;
+  right: 3px;
+  transition: all 0.2s ease;
   width: calc(100% + 1px);
 
   &:hover {
@@ -48,8 +47,8 @@ const StyledSparkleIcon = styled.div`
   background: ${themeCssVariables.background.transparent.blue};
   border-radius: ${themeCssVariables.border.radius.sm};
   display: flex;
-  padding: ${themeCssVariables.spacing[1]};
   justify-content: center;
+  padding: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledThreadContent = styled.div`
@@ -73,8 +72,8 @@ export const AIChatThreadGroup = ({
   threads: AgentChatThread[];
   title: string;
 }) => {
-  const { t } = useLingui();
   const { theme } = useContext(ThemeContext);
+  const { t } = useLingui();
   const { handleThreadClick } = useAIChatThreadClick();
 
   if (threads.length === 0) {

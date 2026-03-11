@@ -7,5 +7,8 @@
  *                              |___/
  */
 
-export { MOBILE_VIEWPORT, ICON_SIZES, ICON_STROKES } from './constants';
+export { MOBILE_VIEWPORT } from './constants';
+export { getNextThemeColor } from './getNextThemeColor';
 export { themeCssVariables } from './themeCssVariables';
+export type { ThemeType, ThemeContextType } from './ThemeProvider';
+export { ThemeContext, ThemeProvider } from './ThemeProvider';

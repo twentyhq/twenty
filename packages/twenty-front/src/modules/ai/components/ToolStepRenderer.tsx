@@ -4,8 +4,7 @@ import { useContext, useState } from 'react';
 import { IconChevronDown, IconChevronUp } from 'twenty-ui/display';
 import { JsonTree } from 'twenty-ui/json-visualizer';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { CodeExecutionDisplay } from '@/ai/components/CodeExecutionDisplay';
 import { ShimmeringText } from '@/ai/components/ShimmeringText';
@@ -49,14 +48,14 @@ const StyledToggleButton = styled.div<{ isExpandable: boolean }>`
   align-items: center;
   background: none;
   border: none;
+  color: ${themeCssVariables.font.color.tertiary};
   cursor: ${({ isExpandable }) => (isExpandable ? 'pointer' : 'auto')};
   display: flex;
-  color: ${themeCssVariables.font.color.tertiary};
   gap: ${themeCssVariables.spacing[1]};
+  justify-content: space-between;
   padding: ${themeCssVariables.spacing[1]} 0;
   transition: color calc(${themeCssVariables.animation.duration.fast} * 1s)
     ease-in-out;
-  justify-content: space-between;
   width: 100%;
 
   &:hover {
@@ -74,14 +73,14 @@ const StyledToolName = styled.span`
 `;
 
 const StyledLeftContent = styled.div`
-  display: flex;
   align-items: center;
+  display: flex;
   gap: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledRightContent = styled.div`
-  display: flex;
   align-items: center;
+  display: flex;
   gap: ${themeCssVariables.spacing[2]};
 `;
 
@@ -92,8 +91,8 @@ const StyledDisplayMessage = styled.span`
 `;
 
 const StyledIconTextContainer = styled.div`
-  display: flex;
   align-items: center;
+  display: flex;
   gap: ${themeCssVariables.spacing[1]};
 
   svg {
@@ -113,15 +112,15 @@ const StyledTab = styled.div<{ isActive: boolean }>`
     isActive
       ? themeCssVariables.font.color.primary
       : themeCssVariables.font.color.tertiary};
+  cursor: pointer;
   font-size: ${themeCssVariables.font.size.sm};
   font-weight: ${({ isActive }) =>
     isActive
       ? themeCssVariables.font.weight.medium
       : themeCssVariables.font.weight.regular};
-  cursor: pointer;
+  padding-bottom: ${themeCssVariables.spacing[2]};
   transition: color calc(${themeCssVariables.animation.duration.fast} * 1s)
     ease-in-out;
-  padding-bottom: ${themeCssVariables.spacing[2]};
 
   &:hover {
     color: ${themeCssVariables.font.color.primary};
@@ -137,8 +136,8 @@ export const ToolStepRenderer = ({
   toolPart: ToolUIPart;
   isStreaming: boolean;
 }) => {
-  const { t } = useLingui();
   const { theme } = useContext(ThemeContext);
+  const { t } = useLingui();
   const { copyToClipboard } = useCopyToClipboard();
   const [isExpanded, setIsExpanded] = useState(false);
   const [activeTab, setActiveTab] = useState<TabType>('output');

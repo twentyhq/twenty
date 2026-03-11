@@ -1,5 +1,5 @@
-import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
-import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
+import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
+import { useSidePanelWorkflowNavigation } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowNavigation';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useWorkflowRun } from '@/workflow/hooks/useWorkflowRun';
@@ -63,11 +63,12 @@ export const WorkflowRunVisualizerEffect = ({
       workflowRunDiagramAutomaticallyOpenedStepsComponentState,
     );
 
-  const { openWorkflowRunViewStepInCommandMenu } = useWorkflowCommandMenu();
+  const { openWorkflowRunViewStepInSidePanel } =
+    useSidePanelWorkflowNavigation();
 
   const { populateStepsOutputSchema } = useStepsOutputSchema();
 
-  const { isInRightDrawer } = useContext(ActionMenuContext);
+  const { isInSidePanel } = useContext(CommandMenuContext);
 
   const store = useStore();
 
@@ -95,11 +96,11 @@ export const WorkflowRunVisualizerEffect = ({
     ({
       workflowRunState,
       workflowVersionId: versionId,
-      isInRightDrawer: inRightDrawer,
+      isInSidePanel: inSidePanel,
     }: {
       workflowRunState: WorkflowRunState | undefined;
       workflowVersionId: string | undefined;
-      isInRightDrawer: boolean;
+      isInSidePanel: boolean;
     }) => {
       if (!(isDefined(workflowRunState) && isDefined(versionId))) {
         store.set(flow, undefined);
@@ -144,7 +145,7 @@ export const WorkflowRunVisualizerEffect = ({
         workflowRunDiagramAutomaticallyOpenedSteps.some(
           (step) =>
             step.stepId === stepToOpenByDefault.id &&
-            step.isInRightDrawer === inRightDrawer,
+            step.isInSidePanel === inSidePanel,
         );
 
       const currentWorkflowVisualizerWorkflowId = store.get(
@@ -156,7 +157,7 @@ export const WorkflowRunVisualizerEffect = ({
         );
       }
 
-      if (inRightDrawer) {
+      if (inSidePanel) {
         store.set(workflowDiagram, baseWorkflowRunDiagram);
       } else {
         const workflowRunDiagram = selectWorkflowDiagramNode({
@@ -177,11 +178,11 @@ export const WorkflowRunVisualizerEffect = ({
         ...workflowRunDiagramAutomaticallyOpenedSteps,
         {
           stepId: stepToOpenByDefault.id,
-          isInRightDrawer: inRightDrawer,
+          isInSidePanel: inSidePanel,
         },
       ]);
 
-      openWorkflowRunViewStepInCommandMenu({
+      openWorkflowRunViewStepInSidePanel({
         workflowId: currentWorkflowVisualizerWorkflowId,
         workflowRunId,
         title: stepToOpenByDefault.data.name,
@@ -193,7 +194,7 @@ export const WorkflowRunVisualizerEffect = ({
     [
       flow,
       getIcon,
-      openWorkflowRunViewStepInCommandMenu,
+      openWorkflowRunViewStepInSidePanel,
       workflowDiagram,
       workflowDiagramStatusState,
       workflowRunDiagramAutomaticallyOpenedStepsState,
@@ -208,11 +209,11 @@ export const WorkflowRunVisualizerEffect = ({
     handleWorkflowRunDiagramGeneration({
       workflowRunState: workflowRun?.state ?? undefined,
       workflowVersionId: workflowRun?.workflowVersionId,
-      isInRightDrawer,
+      isInSidePanel,
     });
   }, [
     handleWorkflowRunDiagramGeneration,
-    isInRightDrawer,
+    isInSidePanel,
     workflowRun?.state,
     workflowRun?.workflowVersionId,
   ]);

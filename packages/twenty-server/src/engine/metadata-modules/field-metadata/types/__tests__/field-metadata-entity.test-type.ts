@@ -78,7 +78,7 @@ type RelationFieldMetadata = FieldMetadataEntity<FieldMetadataType.RELATION>;
 type MorphRelationFieldMetadata =
   FieldMetadataEntity<FieldMetadataType.MORPH_RELATION>;
 
-// eslint-disable-next-line unused-imports/no-unused-vars
+// oxlint-disable-next-line unused-imports/no-unused-vars
 type RelationAssertions = [
   Expect<HasAllProperties<UUIDFieldMetadata, NotDefinedRelationRecord>>,
   Expect<HasAllProperties<TextFieldMetadata, NotDefinedRelationRecord>>,
@@ -115,7 +115,7 @@ type NotDefinedSettings = {
   settings: never | null;
 };
 
-// eslint-disable-next-line unused-imports/no-unused-vars
+// oxlint-disable-next-line unused-imports/no-unused-vars
 type SettingsAssertions = [
   Expect<HasAllProperties<CurrencyFieldMetadata, NotDefinedSettings>>,
   Expect<HasAllProperties<FullNameFieldMetadata, NotDefinedSettings>>,
@@ -239,7 +239,7 @@ type SettingsAssertions = [
   >,
 ];
 
-// eslint-disable-next-line unused-imports/no-unused-vars
+// oxlint-disable-next-line unused-imports/no-unused-vars
 type DefaultValueAssertions = [
   Expect<
     HasAllProperties<
@@ -453,7 +453,7 @@ type NotDefinedOptions = {
   options: never | null;
 };
 
-// eslint-disable-next-line unused-imports/no-unused-vars
+// oxlint-disable-next-line unused-imports/no-unused-vars
 type OptionsAssertions = [
   Expect<
     HasAllProperties<

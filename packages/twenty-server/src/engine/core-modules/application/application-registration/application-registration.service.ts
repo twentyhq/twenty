@@ -5,22 +5,23 @@ import crypto from 'crypto';
 
 import * as bcrypt from 'bcrypt';
 import { isDefined } from 'twenty-shared/utils';
-import { type Repository } from 'typeorm';
+import { IsNull, type Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
+import { ALL_OAUTH_SCOPES } from 'src/engine/core-modules/application/application-oauth/constants/oauth-scopes';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import {
   ApplicationRegistrationException,
   ApplicationRegistrationExceptionCode,
 } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
-import { ALL_OAUTH_SCOPES } from 'src/engine/core-modules/application/application-registration/constants/oauth-scopes';
 import { type ApplicationRegistrationStatsDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-stats.dto';
 import { type CreateApplicationRegistrationInput } from 'src/engine/core-modules/application/application-registration/dtos/create-application-registration.input';
 import { type PublicApplicationRegistrationDTO } from 'src/engine/core-modules/application/application-registration/dtos/public-application-registration.dto';
 import { type UpdateApplicationRegistrationInput } from 'src/engine/core-modules/application/application-registration/dtos/update-application-registration.input';
+import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { validateRedirectUri } from 'src/engine/core-modules/auth/utils/validate-redirect-uri.util';
-
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 const BCRYPT_SALT_ROUNDS = 10;
 
 @Injectable()
@@ -30,6 +31,8 @@ export class ApplicationRegistrationService {
     private readonly applicationRegistrationRepository: Repository<ApplicationRegistrationEntity>,
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
+    @InjectRepository(WorkspaceEntity)
+    private readonly workspaceRepository: Repository<WorkspaceEntity>,
   ) {}
 
   async findMany(
@@ -41,12 +44,36 @@ export class ApplicationRegistrationService {
     });
   }
 
+  async findAll(): Promise<ApplicationRegistrationEntity[]> {
+    return this.applicationRegistrationRepository.find({
+      order: { createdAt: 'DESC' },
+    });
+  }
+
   async findOneById(
     id: string,
     ownerWorkspaceId: string,
   ): Promise<ApplicationRegistrationEntity> {
     const registration = await this.applicationRegistrationRepository.findOne({
-      where: { id, ownerWorkspaceId },
+      where: [
+        { id, ownerWorkspaceId },
+        { id, ownerWorkspaceId: IsNull() },
+      ],
+    });
+
+    if (!registration) {
+      throw new ApplicationRegistrationException(
+        `Application registration with id ${id} not found`,
+        ApplicationRegistrationExceptionCode.APPLICATION_REGISTRATION_NOT_FOUND,
+      );
+    }
+
+    return registration;
+  }
+
+  async findOneByIdGlobal(id: string): Promise<ApplicationRegistrationEntity> {
+    const registration = await this.applicationRegistrationRepository.findOne({
+      where: { id },
     });
 
     if (!registration) {
@@ -193,6 +220,7 @@ export class ApplicationRegistrationService {
       updateData.oAuthScopes = update.oAuthScopes;
     if (isDefined(update.websiteUrl)) updateData.websiteUrl = update.websiteUrl;
     if (isDefined(update.termsUrl)) updateData.termsUrl = update.termsUrl;
+    if (isDefined(update.isListed)) updateData.isListed = update.isListed;
 
     if (Object.keys(updateData).length > 0) {
       await this.applicationRegistrationRepository.update(id, updateData);
@@ -235,6 +263,84 @@ export class ApplicationRegistrationService {
     return bcrypt.compare(clientSecret, registration.oAuthClientSecretHash);
   }
 
+  async upsertFromCatalog(
+    params: Pick<
+      ApplicationRegistrationEntity,
+      | 'universalIdentifier'
+      | 'name'
+      | 'description'
+      | 'author'
+      | 'sourceType'
+      | 'sourcePackage'
+      | 'logoUrl'
+      | 'websiteUrl'
+      | 'termsUrl'
+      | 'latestAvailableVersion'
+      | 'isListed'
+      | 'isFeatured'
+      | 'marketplaceDisplayData'
+      | 'ownerWorkspaceId'
+    >,
+  ): Promise<void> {
+    const existing = await this.findOneByUniversalIdentifier(
+      params.universalIdentifier,
+    );
+
+    if (isDefined(existing)) {
+      await this.applicationRegistrationRepository.save({
+        ...existing,
+        name: params.name,
+        description: params.description,
+        author: params.author,
+        sourceType: params.sourceType,
+        sourcePackage: params.sourcePackage,
+        logoUrl: params.logoUrl,
+        websiteUrl: params.websiteUrl,
+        termsUrl: params.termsUrl,
+        latestAvailableVersion: params.latestAvailableVersion,
+        marketplaceDisplayData: params.marketplaceDisplayData,
+      });
+
+      return;
+    }
+
+    const registration = this.applicationRegistrationRepository.create({
+      universalIdentifier: params.universalIdentifier,
+      name: params.name,
+      description: params.description,
+      author: params.author,
+      sourceType: params.sourceType,
+      sourcePackage: params.sourcePackage,
+      logoUrl: params.logoUrl,
+      websiteUrl: params.websiteUrl,
+      termsUrl: params.termsUrl,
+      latestAvailableVersion: params.latestAvailableVersion,
+      isListed: params.isListed,
+      isFeatured: params.isFeatured,
+      marketplaceDisplayData: params.marketplaceDisplayData,
+      oAuthClientId: v4(),
+      oAuthRedirectUris: [],
+      oAuthScopes: [],
+      ownerWorkspaceId: params.ownerWorkspaceId,
+    });
+
+    await this.applicationRegistrationRepository.save(registration);
+  }
+
+  async findManyBySourceType(
+    sourceType: ApplicationRegistrationSourceType,
+  ): Promise<ApplicationRegistrationEntity[]> {
+    return this.applicationRegistrationRepository.find({
+      where: { sourceType },
+    });
+  }
+
+  async findManyListed(): Promise<ApplicationRegistrationEntity[]> {
+    return this.applicationRegistrationRepository.find({
+      where: { isListed: true },
+    });
+  }
+
   async getStats(
     applicationRegistrationId: string,
     ownerWorkspaceId: string,
@@ -267,6 +373,43 @@ export class ApplicationRegistrationService {
       mostInstalledVersion,
       versionDistribution,
     };
+  }
+
+  async transferOwnership(params: {
+    applicationRegistrationId: string;
+    targetWorkspaceSubdomain: string;
+    currentOwnerWorkspaceId: string;
+  }): Promise<ApplicationRegistrationEntity> {
+    const registration = await this.findOneById(
+      params.applicationRegistrationId,
+      params.currentOwnerWorkspaceId,
+    );
+
+    const targetWorkspace = await this.workspaceRepository.findOne({
+      where: { subdomain: params.targetWorkspaceSubdomain },
+    });
+
+    if (!isDefined(targetWorkspace)) {
+      throw new ApplicationRegistrationException(
+        `No workspace found with subdomain "${params.targetWorkspaceSubdomain}"`,
+        ApplicationRegistrationExceptionCode.APPLICATION_REGISTRATION_NOT_FOUND,
+      );
+    }
+
+    if (targetWorkspace.id === params.currentOwnerWorkspaceId) {
+      throw new ApplicationRegistrationException(
+        'Cannot transfer ownership to the same workspace',
+        ApplicationRegistrationExceptionCode.INVALID_INPUT,
+      );
+    }
+
+    await this.applicationRegistrationRepository.update(registration.id, {
+      ownerWorkspaceId: targetWorkspace.id,
+    });
+
+    return this.applicationRegistrationRepository.findOneOrFail({
+      where: { id: registration.id },
+    });
   }
 
   private async generateClientSecret(): Promise<{

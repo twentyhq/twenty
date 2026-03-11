@@ -13,29 +13,22 @@ import { styled } from '@linaria/react';
 import { useContext, useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { v4 } from 'uuid';
 import {
   type FieldPermission,
   RelationType,
 } from '~/generated-metadata/graphql';
 
-export const StyledObjectFieldTableRow = styled(TableRow)`
-  grid-template-columns: 180px minmax(0, 1fr) 60px 60px;
-`;
-
-const StyledNameTableCell = styled(TableCell)`
-  color: ${themeCssVariables.font.color.primary};
-  gap: ${themeCssVariables.spacing[2]};
-`;
+export const FIELD_PERMISSION_TABLE_ROW_GRID_TEMPLATE_COLUMNS =
+  '180px minmax(0, 1fr) 60px 60px';
 
 const StyledNameLabel = styled.div`
-  white-space: nowrap;
-  text-overflow: ellipsis;
   overflow: hidden;
-
+  text-overflow: ellipsis;
   user-select: none;
+
+  white-space: nowrap;
 `;
 
 type SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRowProps = {
@@ -157,11 +150,18 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRow =
     const shouldShowEmptyTableHeader = cannotAllowFieldUpdateRestrict;
 
     return (
-      <StyledObjectFieldTableRow>
-        <StyledNameTableCell>
-          {!!Icon && (
+      <TableRow
+        gridTemplateColumns={FIELD_PERMISSION_TABLE_ROW_GRID_TEMPLATE_COLUMNS}
+      >
+        <TableCell
+          color={themeCssVariables.font.color.primary}
+          gap={themeCssVariables.spacing[2]}
+        >
+          {isDefined(Icon) && (
             <Icon
-              style={{ minWidth: theme.icon.size.md }}
+              style={{
+                minWidth: theme.icon.size.md,
+              }}
               size={theme.icon.size.md}
               stroke={theme.icon.stroke.sm}
             />
@@ -169,7 +169,7 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRow =
           <StyledNameLabel title={fieldMetadataItem.label}>
             {fieldMetadataItem.label}
           </StyledNameLabel>
-        </StyledNameTableCell>
+        </TableCell>
         <TableCell>
           <SettingsObjectFieldDataType
             Icon={RelationIcon}
@@ -211,6 +211,6 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRow =
             </TableCell>
           )}
         </>
-      </StyledObjectFieldTableRow>
+      </TableRow>
     );
   };

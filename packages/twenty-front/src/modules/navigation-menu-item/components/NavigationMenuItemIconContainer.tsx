@@ -6,16 +6,16 @@ export const StyledNavigationMenuItemIconContainer = styled.div<{
   $borderColor?: string;
 }>`
   align-items: center;
+  background-color: ${({ $backgroundColor }) =>
+    $backgroundColor ?? 'transparent'};
+  border: ${({ $borderColor }) =>
+    $borderColor ? `1px solid ${$borderColor}` : 'none'};
   border-radius: 4px;
   box-sizing: border-box;
   display: flex;
   flex-shrink: 0;
   height: ${themeCssVariables.spacing[4]};
+
   justify-content: center;
   width: ${themeCssVariables.spacing[4]};
-
-  background-color: ${({ $backgroundColor }) =>
-    $backgroundColor ?? 'transparent'};
-  border: ${({ $borderColor }) =>
-    $borderColor ? `1px solid ${$borderColor}` : 'none'};
 `;

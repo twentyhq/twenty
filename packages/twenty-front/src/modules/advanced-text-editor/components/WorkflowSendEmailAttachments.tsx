@@ -8,8 +8,7 @@ import { type ChangeEvent, useContext, useRef } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { type WorkflowAttachment } from 'twenty-shared/workflow';
 import { IconUpload } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type WorkflowSendEmailAttachmentsProps = {
   files: WorkflowAttachment[];
@@ -32,12 +31,12 @@ const StyledUploadArea = styled.div<{ hasFiles: boolean }>`
   border-radius: ${themeCssVariables.border.radius.sm};
   display: flex;
   flex-direction: column;
-  min-height: ${({ hasFiles }) => (hasFiles ? 'auto' : '24px')};
   justify-content: center;
-  padding-top: ${themeCssVariables.spacing[1]};
+  min-height: ${({ hasFiles }) => (hasFiles ? 'auto' : '24px')};
   padding-bottom: ${themeCssVariables.spacing[1]};
   padding-left: ${themeCssVariables.spacing[2]};
   padding-right: ${themeCssVariables.spacing[2]};
+  padding-top: ${themeCssVariables.spacing[1]};
 
   &:hover {
     background-color: ${themeCssVariables.background.transparent.light};
@@ -53,13 +52,13 @@ const StyledChipsContainer = styled.div`
 `;
 
 const StyledUploadAreaLabel = styled.div`
-  justify-content: center;
+  color: ${themeCssVariables.font.color.secondary};
   color: ${themeCssVariables.font.color.tertiary};
   display: flex;
   font-size: ${themeCssVariables.font.size.sm};
   font-weight: ${themeCssVariables.font.weight.medium};
-  color: ${themeCssVariables.font.color.secondary};
   gap: ${themeCssVariables.spacing[1]};
+  justify-content: center;
 `;
 
 export const WorkflowSendEmailAttachments = ({
@@ -67,11 +66,10 @@ export const WorkflowSendEmailAttachments = ({
   label,
   onChange,
 }: WorkflowSendEmailAttachmentsProps) => {
+  const { theme } = useContext(ThemeContext);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { uploadWorkflowFile } = useUploadWorkflowFile();
   const { t } = useLingui();
-  const { theme } = useContext(ThemeContext);
-
   const handleAddFileClick = (e: React.MouseEvent) => {
     const target = e.target as HTMLElement;
 

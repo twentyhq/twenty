@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+/* oxlint-disable no-console */
 import { graphqlRequest, writeGeneratedFile } from './utils.js';
 
 // Apollo Client automatically adds __typename to every object level;

@@ -12,11 +12,8 @@ import { SettingsDataModelSetFieldValueEffect } from '@/settings/data-model/fiel
 import { SettingsDataModelSetLabelIdentifierRecordEffect } from '@/settings/data-model/fields/preview/components/SettingsDataModelSetLabelIdentifierRecordEffect';
 import { useFieldPreviewValue } from '@/settings/data-model/fields/preview/hooks/useFieldPreviewValue';
 import { useIcons } from 'twenty-ui/display';
-import {
-  ICON_SIZES,
-  ICON_STROKES,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { useContext } from 'react';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 type SettingsDataModelFieldPreviewProps = {
@@ -38,14 +35,14 @@ const StyledFieldPreview = styled.div<{ shrink?: boolean }>`
   gap: ${themeCssVariables.spacing[2]};
   height: fit-content;
   line-height: 24px;
+  margin-top: ${themeCssVariables.spacing[2]};
   overflow: hidden;
   padding: 0
     ${({ shrink }) =>
       shrink ? themeCssVariables.spacing[1] : themeCssVariables.spacing[2]};
-  white-space: nowrap;
-  margin-top: ${themeCssVariables.spacing[2]};
-  padding-top: ${themeCssVariables.spacing[2]};
   padding-bottom: ${themeCssVariables.spacing[2]};
+  padding-top: ${themeCssVariables.spacing[2]};
+  white-space: nowrap;
 `;
 
 const StyledFieldLabel = styled.div`
@@ -66,6 +63,7 @@ export const SettingsDataModelFieldPreview = ({
       objectNameSingular: objectNameSingular,
     });
 
+  const { theme } = useContext(ThemeContext);
   const { getIcon } = useIcons();
   const FieldIcon = getIcon(fieldMetadataItem.icon);
 
@@ -115,7 +113,10 @@ export const SettingsDataModelFieldPreview = ({
           <StyledFieldPreview shrink={shrink}>
             {!!withFieldLabel && (
               <StyledFieldLabel>
-                <FieldIcon size={ICON_SIZES.md} stroke={ICON_STROKES.sm} />
+                <FieldIcon
+                  size={theme.icon.size.md}
+                  stroke={theme.icon.stroke.sm}
+                />
                 {fieldMetadataItem.label}:
               </StyledFieldLabel>
             )}

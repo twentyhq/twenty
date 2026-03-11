@@ -1,6 +1,7 @@
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { TabListHiddenMeasurements } from '@/ui/layout/tab-list/components/TabListHiddenMeasurements';
 import { TAB_LIST_GAP } from '@/ui/layout/tab-list/constants/TabListGap';
+import { TAB_LIST_HEIGHT } from '@/ui/layout/tab-list/constants/TabListHeight';
 import { useTabListMeasurements } from '@/ui/layout/tab-list/hooks/useTabListMeasurements';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
@@ -11,42 +12,36 @@ import { styled } from '@linaria/react';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { TabButton } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { TabListDropdown } from './TabListDropdown';
 import { TabListFromUrlOptionalEffect } from './TabListFromUrlOptionalEffect';
 
 const StyledContainer = styled.div`
   box-sizing: border-box;
   display: flex;
-  height: ${themeCssVariables.spacing[10]};
+  height: ${TAB_LIST_HEIGHT};
   position: relative;
   user-select: none;
   width: 100%;
 `;
 
+const StyledDropdownContainer = styled.div`
+  align-items: center;
+  display: flex;
+`;
+
 const StyledTabContainer = styled.div`
   display: flex;
   gap: ${TAB_LIST_GAP}px;
-  position: relative;
-  overflow: hidden;
   max-width: 100%;
-
-  &::after {
-    background-color: ${themeCssVariables.border.color.light};
-    bottom: 0;
-    content: '';
-    height: 1px;
-    left: 0;
-    position: absolute;
-    right: 0;
-  }
+  overflow: hidden;
+  position: relative;
 `;
 
 export const TabList = ({
   tabs,
   loading,
   behaveAsLinks = true,
-  isInRightDrawer,
+  isInSidePanel,
   className,
   componentInstanceId,
   onChangeTab,
@@ -118,7 +113,7 @@ export const TabList = ({
     >
       <>
         <TabListFromUrlOptionalEffect
-          isInRightDrawer={!!isInRightDrawer}
+          isInSidePanel={!!isInSidePanel}
           tabListIds={tabs.map((tab) => tab.id)}
         />
 
@@ -156,20 +151,22 @@ export const TabList = ({
             </StyledTabContainer>
 
             {hasHiddenTabs && (
-              <TabListDropdown
-                dropdownId={dropdownId}
-                onClose={() => {
-                  closeDropdown(dropdownId);
-                }}
-                overflow={{
-                  hiddenTabsCount,
-                  isActiveTabHidden,
-                }}
-                hiddenTabs={hiddenTabs}
-                activeTabId={activeTabId || ''}
-                onTabSelect={handleTabSelectFromDropdown}
-                loading={loading}
-              />
+              <StyledDropdownContainer>
+                <TabListDropdown
+                  dropdownId={dropdownId}
+                  onClose={() => {
+                    closeDropdown(dropdownId);
+                  }}
+                  overflow={{
+                    hiddenTabsCount,
+                    isActiveTabHidden,
+                  }}
+                  hiddenTabs={hiddenTabs}
+                  activeTabId={activeTabId || ''}
+                  onTabSelect={handleTabSelectFromDropdown}
+                  loading={loading}
+                />
+              </StyledDropdownContainer>
             )}
           </StyledContainer>
         </NodeDimension>

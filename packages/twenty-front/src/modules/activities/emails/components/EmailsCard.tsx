@@ -32,15 +32,17 @@ const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[6]};
-  padding: ${themeCssVariables.spacing[6]} ${themeCssVariables.spacing[6]}
-    ${themeCssVariables.spacing[2]};
   height: 100%;
   overflow: auto;
+  padding: ${themeCssVariables.spacing[6]} ${themeCssVariables.spacing[6]}
+    ${themeCssVariables.spacing[2]};
 `;
 
-const StyledH1Title = styled(H1Title)`
-  display: flex;
-  gap: ${themeCssVariables.spacing[2]};
+const StyledH1TitleWrapper = styled.div`
+  > h2 {
+    display: flex;
+    gap: ${themeCssVariables.spacing[2]};
+  }
 `;
 
 const StyledEmailCount = styled.span`
@@ -88,7 +90,7 @@ export const EmailsCard = () => {
   if (!firstQueryLoading && !timelineThreads?.length) {
     return (
       <AnimatedPlaceholderEmptyContainer
-        // eslint-disable-next-line react/jsx-props-no-spreading
+        // oxlint-disable-next-line react/jsx-props-no-spreading
         {...EMPTY_PLACEHOLDER_TRANSITION_PROPS}
       >
         <AnimatedPlaceholder type="emptyInbox" />
@@ -107,15 +109,17 @@ export const EmailsCard = () => {
   return (
     <StyledContainer>
       <Section>
-        <StyledH1Title
-          title={
-            <>
-              <Trans>Inbox</Trans>{' '}
-              <StyledEmailCount>{totalNumberOfThreads}</StyledEmailCount>
-            </>
-          }
-          fontColor={H1TitleFontColor.Primary}
-        />
+        <StyledH1TitleWrapper>
+          <H1Title
+            title={
+              <>
+                <Trans>Inbox</Trans>{' '}
+                <StyledEmailCount>{totalNumberOfThreads}</StyledEmailCount>
+              </>
+            }
+            fontColor={H1TitleFontColor.Primary}
+          />
+        </StyledH1TitleWrapper>
         {!firstQueryLoading && (
           <ActivityList>
             {timelineThreads?.map((thread: TimelineThread) => (

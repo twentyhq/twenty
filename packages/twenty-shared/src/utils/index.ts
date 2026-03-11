@@ -9,6 +9,7 @@
 
 export { applyDiff } from './applyDiff';
 export { compareArraysOfObjectsByProperty } from './array/compareArraysOfObjectsByProperty';
+export { filterDuplicatesById } from './array/filterDuplicatesById';
 export { filterOutByProperty } from './array/filterOutByProperty';
 export { findById } from './array/findById';
 export { findByProperty } from './array/findByProperty';
@@ -151,6 +152,7 @@ export { appendCopySuffix } from './strings/appendCopySuffix';
 export { camelToKebab } from './strings/camelToKebab';
 export { camelToSnakeCase } from './strings/camelToSnakeCase';
 export { capitalize } from './strings/capitalize';
+export { kebabToCamelCase } from './strings/kebabToCamelCase';
 export { pascalCase } from './strings/pascalCase';
 export { pascalToKebab } from './strings/pascalToKebab';
 export { stringifySafely } from './strings/stringifySafely';

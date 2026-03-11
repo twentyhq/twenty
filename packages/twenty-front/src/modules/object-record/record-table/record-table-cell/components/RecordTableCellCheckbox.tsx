@@ -18,13 +18,8 @@ const StyledContainer = styled.div`
   height: ${RECORD_TABLE_ROW_HEIGHT}px;
   justify-content: center;
   min-width: ${RECORD_TABLE_COLUMN_CHECKBOX_WIDTH};
-  width: ${RECORD_TABLE_COLUMN_CHECKBOX_WIDTH};
   padding-right: ${themeCssVariables.spacing[1]};
-`;
-
-// TODO: refactor
-const StyledRecordTableTd = styled(RecordTableCellStyleWrapper)`
-  border-left: 1px solid transparent;
+  width: ${RECORD_TABLE_COLUMN_CHECKBOX_WIDTH};
 `;
 
 export const RecordTableCellCheckbox = () => {
@@ -43,7 +38,7 @@ export const RecordTableCellCheckbox = () => {
   );
 
   return (
-    <StyledRecordTableTd
+    <RecordTableCellStyleWrapper
       isSelected={isSelected}
       hasRightBorder={false}
       widthClassName={RECORD_TABLE_COLUMN_CHECKBOX_WIDTH_CLASS_NAME}
@@ -51,6 +46,6 @@ export const RecordTableCellCheckbox = () => {
       <StyledContainer onClick={handleClick} data-select-disable>
         <Checkbox hoverable checked={isSelected} />
       </StyledContainer>
-    </StyledRecordTableTd>
+    </RecordTableCellStyleWrapper>
   );
 };

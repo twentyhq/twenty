@@ -7,9 +7,10 @@ import { FieldsWidgetCellHoveredPortal } from '@/page-layout/widgets/fields/comp
 import { FieldsWidgetFieldList } from '@/page-layout/widgets/fields/components/FieldsWidgetFieldList';
 import { FieldsWidgetGroupContainer } from '@/page-layout/widgets/fields/components/FieldsWidgetGroupContainer';
 import { useFieldsWidgetGroupsForDisplay } from '@/page-layout/widgets/fields/hooks/useFieldsWidgetGroupsForDisplay';
+import { useFieldsWidgetHiddenFieldsForDisplay } from '@/page-layout/widgets/fields/hooks/useFieldsWidgetHiddenFieldsForDisplay';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
-import { RightDrawerProvider } from '@/ui/layout/right-drawer/contexts/RightDrawerContext';
+import { SidePanelProvider } from '@/ui/layout/side-panel/contexts/SidePanelContext';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import {
@@ -36,12 +37,20 @@ const StyledPropertyBox = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[2]};
-  padding-top: ${themeCssVariables.spacing[3]};
   padding-bottom: ${themeCssVariables.spacing[3]};
+  padding-top: ${themeCssVariables.spacing[3]};
 `;
 
-const StyledInlineFieldsPropertyBox = styled(StyledPropertyBox)`
-  padding-bottom: 0;
+const StyledInlineFieldsPropertyBox = styled.div<{
+  hasMoreSection: boolean;
+}>`
+  align-self: stretch;
+  border-radius: ${themeCssVariables.border.radius.sm};
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[2]};
+  padding-bottom: ${({ hasMoreSection }) =>
+    hasMoreSection ? themeCssVariables.spacing[3] : '0'};
   padding-top: 0;
 `;
 
@@ -51,9 +60,9 @@ type FieldsWidgetProps = {
 
 export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
   const targetRecord = useTargetRecord();
-  const { isInRightDrawer } = useLayoutRenderingContext();
+  const { isInSidePanel } = useLayoutRenderingContext();
 
-  const instanceId = `fields-${widget.id}-${targetRecord.id}${isInRightDrawer ? '-right-drawer' : ''}`;
+  const instanceId = `fields-${widget.id}-${targetRecord.id}${isInSidePanel ? '-side-panel' : ''}`;
 
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: targetRecord.targetObjectNameSingular,
@@ -67,18 +76,40 @@ export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
     objectNameSingular: targetRecord.targetObjectNameSingular,
   });
 
-  const flattenedFieldMetadataItems = groups.flatMap((group) =>
-    group.fields.map((field) => field.fieldMetadataItem),
-  );
+  const { hiddenFields } = useFieldsWidgetHiddenFieldsForDisplay({
+    widgetId: widget.id,
+    viewId: fieldsConfiguration.viewId ?? null,
+    objectNameSingular: targetRecord.targetObjectNameSingular,
+  });
+
+  const shouldShowHiddenFields =
+    fieldsConfiguration.shouldAllowUserToSeeHiddenFields === true &&
+    hiddenFields.length > 0;
+
+  const visibleFields = groups.flatMap((group) => group.fields);
+
+  const hiddenFieldsWithOffsetGlobalIndex = shouldShowHiddenFields
+    ? hiddenFields.map((field) => ({
+        ...field,
+        globalIndex: field.globalIndex + visibleFields.length,
+      }))
+    : [];
+
+  const flattenedFieldMetadataItems = [
+    ...visibleFields.map((field) => field.fieldMetadataItem),
+    ...hiddenFieldsWithOffsetGlobalIndex.map(
+      (field) => field.fieldMetadataItem,
+    ),
+  ];
 
   const hasFieldsToDisplay = groups.length > 0;
 
   if (!hasFieldsToDisplay) {
     return (
-      <RightDrawerProvider value={{ isInRightDrawer }}>
+      <SidePanelProvider value={{ isInSidePanel }}>
         <StyledContainer>
           <AnimatedPlaceholderEmptyContainer
-            // eslint-disable-next-line react/jsx-props-no-spreading
+            // oxlint-disable-next-line react/jsx-props-no-spreading
             {...EMPTY_PLACEHOLDER_TRANSITION_PROPS}
           >
             <AnimatedPlaceholder type="noRecord" />
@@ -92,7 +123,7 @@ export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
             </AnimatedPlaceholderEmptyTextContainer>
           </AnimatedPlaceholderEmptyContainer>
         </StyledContainer>
-      </RightDrawerProvider>
+      </SidePanelProvider>
     );
   }
 
@@ -105,7 +136,9 @@ export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
           }}
         >
           {displayMode === 'inline' ? (
-            <StyledInlineFieldsPropertyBox>
+            <StyledInlineFieldsPropertyBox
+              hasMoreSection={shouldShowHiddenFields}
+            >
               <FieldsWidgetFieldList
                 fields={groups.flatMap((group) => group.fields)}
                 instanceId={instanceId}
@@ -122,6 +155,20 @@ export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
                 </StyledPropertyBox>
               </FieldsWidgetGroupContainer>
             ))
+          )}
+
+          {shouldShowHiddenFields && (
+            <FieldsWidgetGroupContainer
+              title={t`More (${hiddenFieldsWithOffsetGlobalIndex.length})`}
+              defaultExpanded={false}
+            >
+              <StyledPropertyBox>
+                <FieldsWidgetFieldList
+                  fields={hiddenFieldsWithOffsetGlobalIndex}
+                  instanceId={instanceId}
+                />
+              </StyledPropertyBox>
+            </FieldsWidgetGroupContainer>
           )}
 
           <FieldsWidgetCellHoveredPortal

@@ -14,6 +14,7 @@ describe('getTabsByDisplayMode', () => {
     title: `Tab ${id}`,
     position: 0,
     widgets: [],
+    isOverridden: false,
     createdAt: '2024-01-01T00:00:00.000Z',
     updatedAt: '2024-01-01T00:00:00.000Z',
   });
@@ -39,7 +40,7 @@ describe('getTabsByDisplayMode', () => {
         tabs: pageLayout.tabs,
         pageLayoutType: pageLayout.type,
         isMobile: true,
-        isInRightDrawer: false,
+        isInSidePanel: false,
       });
 
       expect(result.tabsToRenderInTabList).toEqual(tabs);
@@ -54,7 +55,7 @@ describe('getTabsByDisplayMode', () => {
         tabs: pageLayout.tabs,
         pageLayoutType: pageLayout.type,
         isMobile: true,
-        isInRightDrawer: false,
+        isInSidePanel: false,
       });
 
       expect(result.pinnedLeftTab).toBeUndefined();
@@ -67,7 +68,7 @@ describe('getTabsByDisplayMode', () => {
         tabs: pageLayout.tabs,
         pageLayoutType: pageLayout.type,
         isMobile: true,
-        isInRightDrawer: false,
+        isInSidePanel: false,
       });
 
       expect(result.tabsToRenderInTabList).toEqual([]);
@@ -82,7 +83,7 @@ describe('getTabsByDisplayMode', () => {
         tabs: pageLayout.tabs,
         pageLayoutType: pageLayout.type,
         isMobile: true,
-        isInRightDrawer: false,
+        isInSidePanel: false,
       });
 
       expect(result.tabsToRenderInTabList).toEqual(tabs);
@@ -90,7 +91,7 @@ describe('getTabsByDisplayMode', () => {
     });
   });
 
-  describe('when isInRightDrawer is true', () => {
+  describe('when isInSidePanel is true', () => {
     it('should return all tabs in tabsToRenderInTabList', () => {
       const tabs = [
         createMockTab('tab-1'),
@@ -103,7 +104,7 @@ describe('getTabsByDisplayMode', () => {
         tabs: pageLayout.tabs,
         pageLayoutType: pageLayout.type,
         isMobile: false,
-        isInRightDrawer: true,
+        isInSidePanel: true,
       });
 
       expect(result.tabsToRenderInTabList).toEqual(tabs);
@@ -118,7 +119,7 @@ describe('getTabsByDisplayMode', () => {
         tabs: pageLayout.tabs,
         pageLayoutType: pageLayout.type,
         isMobile: false,
-        isInRightDrawer: true,
+        isInSidePanel: true,
       });
 
       expect(result.pinnedLeftTab).toBeUndefined();
@@ -131,7 +132,7 @@ describe('getTabsByDisplayMode', () => {
         tabs: pageLayout.tabs,
         pageLayoutType: pageLayout.type,
         isMobile: false,
-        isInRightDrawer: true,
+        isInSidePanel: true,
       });
 
       expect(result.tabsToRenderInTabList).toEqual([]);
@@ -146,7 +147,7 @@ describe('getTabsByDisplayMode', () => {
         tabs: pageLayout.tabs,
         pageLayoutType: pageLayout.type,
         isMobile: false,
-        isInRightDrawer: true,
+        isInSidePanel: true,
       });
 
       expect(result.tabsToRenderInTabList).toEqual(tabs);
@@ -154,7 +155,7 @@ describe('getTabsByDisplayMode', () => {
     });
   });
 
-  describe('when isMobile is false and isInRightDrawer is false', () => {
+  describe('when isMobile is false and isInSidePanel is false', () => {
     it('should return first tab as pinnedLeftTab and rest in tabsToRenderInTabList', () => {
       const tabs = [
         createMockTab('tab-1'),
@@ -167,7 +168,7 @@ describe('getTabsByDisplayMode', () => {
         tabs: pageLayout.tabs,
         pageLayoutType: pageLayout.type,
         isMobile: false,
-        isInRightDrawer: false,
+        isInSidePanel: false,
       });
 
       expect(result.pinnedLeftTab).toBeDefined();
@@ -188,7 +189,7 @@ describe('getTabsByDisplayMode', () => {
         tabs: pageLayout.tabs,
         pageLayoutType: pageLayout.type,
         isMobile: false,
-        isInRightDrawer: false,
+        isInSidePanel: false,
       });
 
       expect(result.pinnedLeftTab).toBeDefined();
@@ -202,7 +203,7 @@ describe('getTabsByDisplayMode', () => {
         tabs: pageLayout.tabs,
         pageLayoutType: pageLayout.type,
         isMobile: false,
-        isInRightDrawer: false,
+        isInSidePanel: false,
       });
 
       expect(result.pinnedLeftTab).toBeUndefined();
@@ -217,7 +218,7 @@ describe('getTabsByDisplayMode', () => {
         tabs: pageLayout.tabs,
         pageLayoutType: pageLayout.type,
         isMobile: false,
-        isInRightDrawer: false,
+        isInSidePanel: false,
       });
 
       expect(result.pinnedLeftTab).toBeUndefined();
@@ -232,7 +233,7 @@ describe('getTabsByDisplayMode', () => {
         tabs: pageLayout.tabs,
         pageLayoutType: pageLayout.type,
         isMobile: false,
-        isInRightDrawer: false,
+        isInSidePanel: false,
       });
 
       expect(result.tabsToRenderInTabList).toEqual([]);
@@ -247,7 +248,7 @@ describe('getTabsByDisplayMode', () => {
         tabs: pageLayout.tabs,
         pageLayoutType: pageLayout.type,
         isMobile: false,
-        isInRightDrawer: false,
+        isInSidePanel: false,
       });
 
       expect(result.pinnedLeftTab?.id).toBe('tab-1');
@@ -265,13 +266,13 @@ describe('getTabsByDisplayMode', () => {
         tabs: pageLayout.tabs,
         pageLayoutType: pageLayout.type,
         isMobile: true,
-        isInRightDrawer: false,
+        isInSidePanel: false,
       });
       const resultDesktop = getTabsByDisplayMode({
         tabs: pageLayout.tabs,
         pageLayoutType: pageLayout.type,
         isMobile: false,
-        isInRightDrawer: false,
+        isInSidePanel: false,
       });
 
       expect(resultMobile.tabsToRenderInTabList).toEqual(tabs);
@@ -289,13 +290,13 @@ describe('getTabsByDisplayMode', () => {
         tabs: pageLayout.tabs,
         pageLayoutType: pageLayout.type,
         isMobile: true,
-        isInRightDrawer: false,
+        isInSidePanel: false,
       });
       const resultDesktop = getTabsByDisplayMode({
         tabs: pageLayout.tabs,
         pageLayoutType: pageLayout.type,
         isMobile: false,
-        isInRightDrawer: false,
+        isInSidePanel: false,
       });
 
       expect(resultMobile.tabsToRenderInTabList).toEqual(tabs);
@@ -314,7 +315,7 @@ describe('getTabsByDisplayMode', () => {
         tabs: pageLayout.tabs,
         pageLayoutType: pageLayout.type,
         isMobile: false,
-        isInRightDrawer: false,
+        isInSidePanel: false,
       });
 
       expect(pageLayout.tabs).toHaveLength(originalTabsLength);
@@ -332,7 +333,7 @@ describe('getTabsByDisplayMode', () => {
         tabs: pageLayout.tabs,
         pageLayoutType: pageLayout.type,
         isMobile: false,
-        isInRightDrawer: false,
+        isInSidePanel: false,
       });
 
       expect(result.pinnedLeftTab).toBeUndefined();
@@ -351,13 +352,13 @@ describe('getTabsByDisplayMode', () => {
         tabs: pageLayout.tabs,
         pageLayoutType: pageLayout.type,
         isMobile: false,
-        isInRightDrawer: false,
+        isInSidePanel: false,
       });
       const result2 = getTabsByDisplayMode({
         tabs: pageLayout.tabs,
         pageLayoutType: pageLayout.type,
         isMobile: false,
-        isInRightDrawer: false,
+        isInSidePanel: false,
       });
 
       expect(result1).toEqual(result2);
@@ -371,13 +372,13 @@ describe('getTabsByDisplayMode', () => {
         tabs: pageLayout.tabs,
         pageLayoutType: pageLayout.type,
         isMobile: true,
-        isInRightDrawer: false,
+        isInSidePanel: false,
       });
       const desktopResult = getTabsByDisplayMode({
         tabs: pageLayout.tabs,
         pageLayoutType: pageLayout.type,
         isMobile: false,
-        isInRightDrawer: false,
+        isInSidePanel: false,
       });
 
       expect(mobileResult.tabsToRenderInTabList.length).toBe(2);
@@ -395,13 +396,13 @@ describe('getTabsByDisplayMode', () => {
         tabs: pageLayout.tabs,
         pageLayoutType: pageLayout.type,
         isMobile: true,
-        isInRightDrawer: false,
+        isInSidePanel: false,
       });
       const desktopResult = getTabsByDisplayMode({
         tabs: pageLayout.tabs,
         pageLayoutType: pageLayout.type,
         isMobile: false,
-        isInRightDrawer: false,
+        isInSidePanel: false,
       });
 
       expect(mobileResult.tabsToRenderInTabList).toEqual(tabs);
@@ -412,7 +413,7 @@ describe('getTabsByDisplayMode', () => {
     });
   });
 
-  describe('when both isMobile and isInRightDrawer are true', () => {
+  describe('when both isMobile and isInSidePanel are true', () => {
     it('should behave the same as when only one is true', () => {
       const tabs = [createMockTab('tab-1'), createMockTab('tab-2')];
       const pageLayout = createMockPageLayout(tabs);
@@ -421,23 +422,23 @@ describe('getTabsByDisplayMode', () => {
         tabs: pageLayout.tabs,
         pageLayoutType: pageLayout.type,
         isMobile: true,
-        isInRightDrawer: true,
+        isInSidePanel: true,
       });
       const resultOnlyMobile = getTabsByDisplayMode({
         tabs: pageLayout.tabs,
         pageLayoutType: pageLayout.type,
         isMobile: true,
-        isInRightDrawer: false,
+        isInSidePanel: false,
       });
-      const resultOnlyRightDrawer = getTabsByDisplayMode({
+      const resultOnlySidePanel = getTabsByDisplayMode({
         tabs: pageLayout.tabs,
         pageLayoutType: pageLayout.type,
         isMobile: false,
-        isInRightDrawer: true,
+        isInSidePanel: true,
       });
 
       expect(resultBothTrue).toEqual(resultOnlyMobile);
-      expect(resultBothTrue).toEqual(resultOnlyRightDrawer);
+      expect(resultBothTrue).toEqual(resultOnlySidePanel);
       expect(resultBothTrue.tabsToRenderInTabList).toEqual(tabs);
       expect(resultBothTrue.pinnedLeftTab).toBeUndefined();
     });

@@ -6,6 +6,7 @@ import { type ColumnDefinition } from '@/object-record/record-table/types/Column
 export type ViewField = {
   __typename: 'ViewField';
   id: string;
+  viewId?: string;
   fieldMetadataId: string;
   position: number;
   isVisible: boolean;

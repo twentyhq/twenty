@@ -6,8 +6,8 @@ import { type SettingsDataModelObjectAboutFormValues } from '@/settings/data-mod
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { TextArea } from '@/ui/input/components/TextArea';
-import { useContext } from 'react';
 import { styled } from '@linaria/react';
+import { useContext } from 'react';
 import { useLingui } from '@lingui/react/macro';
 import { plural } from 'pluralize';
 import { Controller, useFormContext } from 'react-hook-form';
@@ -22,8 +22,7 @@ import {
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Card } from 'twenty-ui/layout';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { type StringKeyOf } from 'type-fest';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/computeMetadataNameFromLabel';
@@ -49,10 +48,10 @@ const StyledInputContainer = styled.div`
 
 const StyledAdvancedSettingsSectionInputWrapper = styled.div`
   display: flex;
+  flex: 1;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[4]};
   width: 100%;
-  flex: 1;
 `;
 
 const StyledAdvancedSettingsOuterContainer = styled.div`
@@ -87,8 +86,8 @@ const StyledConflictBanner = styled.div`
 const StyledBannerContent = styled.div`
   align-items: center;
   display: flex;
-  gap: ${themeCssVariables.spacing[2]};
   flex: 1;
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledBannerText = styled.span`
@@ -96,14 +95,16 @@ const StyledBannerText = styled.span`
   flex: 1;
 `;
 
-const StyledConflictButton = styled(Button)`
-  border-color: ${themeCssVariables.color.blue};
-  color: ${themeCssVariables.color.blue};
-  &:hover {
-    background: ${themeCssVariables.accent.secondary};
-  }
-  &:focus-visible {
-    box-shadow: 0 0 0 3px ${themeCssVariables.accent.tertiary};
+const StyledConflictButtonContainer = styled.div`
+  > button {
+    border-color: ${themeCssVariables.color.blue};
+    color: ${themeCssVariables.color.blue};
+    &:hover {
+      background: ${themeCssVariables.accent.secondary};
+    }
+    &:focus-visible {
+      box-shadow: 0 0 0 3px ${themeCssVariables.accent.tertiary};
+    }
   }
 `;
 
@@ -115,10 +116,10 @@ export const SettingsDataModelObjectAboutForm = ({
   objectMetadataItem,
   conflictingObjectMetadataItem,
 }: SettingsDataModelObjectAboutFormProps) => {
+  const { theme } = useContext(ThemeContext);
   const { control, watch, setValue } =
     useFormContext<SettingsDataModelObjectAboutFormValues>();
   const { t } = useLingui();
-  const { theme } = useContext(ThemeContext);
   const navigateSettings = useNavigateSettings();
 
   const isLabelSyncedWithName = watch('isLabelSyncedWithName');
@@ -282,18 +283,20 @@ export const SettingsDataModelObjectAboutForm = ({
                     {t`An object with this name already exists`}
                   </StyledBannerText>
                 </StyledBannerContent>
-                <StyledConflictButton
-                  size="small"
-                  variant="secondary"
-                  accent="blue"
-                  title={t`Open`}
-                  onClick={() =>
-                    navigateSettings(SettingsPath.ObjectDetail, {
-                      objectNamePlural:
-                        conflictingObjectMetadataItem.namePlural,
-                    })
-                  }
-                />
+                <StyledConflictButtonContainer>
+                  <Button
+                    size="small"
+                    variant="secondary"
+                    accent="blue"
+                    title={t`Open`}
+                    onClick={() =>
+                      navigateSettings(SettingsPath.ObjectDetail, {
+                        objectNamePlural:
+                          conflictingObjectMetadataItem.namePlural,
+                      })
+                    }
+                  />
+                </StyledConflictButtonContainer>
               </StyledConflictBanner>
             )}
             {[

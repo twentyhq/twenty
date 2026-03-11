@@ -7,14 +7,13 @@ import {
 import { extractSecretFromOtpUri } from '@/settings/two-factor-authentication/utils/extractSecretFromOtpUri';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { useContext } from 'react';
 import QRCode from 'react-qr-code';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { IconCopy } from 'twenty-ui/display';
 import { Loader } from 'twenty-ui/feedback';
 import { MainButton } from 'twenty-ui/input';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useContext } from 'react';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
@@ -26,12 +25,12 @@ const StyledMainContentContainer = styled.div`
 
 const StyledTextContainer = styled.div`
   align-items: center;
-  margin-bottom: ${themeCssVariables.spacing[4]};
   color: ${themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.sm};
 
+  margin-bottom: ${themeCssVariables.spacing[4]};
   max-width: 280px;
   text-align: center;
-  font-size: ${themeCssVariables.font.size.sm};
 
   & > a {
     color: ${themeCssVariables.font.color.tertiary};
@@ -51,14 +50,14 @@ const StyledForm = styled.div`
 `;
 
 const StyledCopySetupKeyLink = styled.button`
+  align-items: center;
   background: none;
   border: none;
   color: ${themeCssVariables.font.color.secondary};
   cursor: pointer;
   display: flex;
-  align-items: center;
-  gap: ${themeCssVariables.spacing[1]};
   font-size: ${themeCssVariables.font.size.sm};
+  gap: ${themeCssVariables.spacing[1]};
   margin-top: ${themeCssVariables.spacing[2]};
   padding: 0;
   text-decoration: underline;
@@ -69,8 +68,8 @@ const StyledCopySetupKeyLink = styled.button`
 `;
 
 export const SignInUpTwoFactorAuthenticationProvision = () => {
-  const { t } = useLingui();
   const { theme } = useContext(ThemeContext);
+  const { t } = useLingui();
   const { copyToClipboard } = useCopyToClipboard();
   const qrCode = useAtomStateValue(qrCodeState);
   const setSignInUpStep = useSetAtomState(signInUpStepState);

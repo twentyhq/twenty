@@ -7,7 +7,7 @@ import {
   StyledEventRowItemColumn,
 } from '@/activities/timeline-activities/rows/components/EventRowDynamicComponent';
 import { isTimelineActivityWithLinkedRecord } from '@/activities/timeline-activities/types/TimelineActivity';
-import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
+import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { type CoreObjectNameSingular } from 'twenty-shared/types';
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -19,11 +19,11 @@ type EventRowActivityProps = EventRowDynamicComponentProps;
 const StyledLinkedActivity = styled.span`
   color: ${themeCssVariables.font.color.primary};
   cursor: pointer;
-  text-decoration: underline;
-  width: 100%;
   overflow: hidden;
+  text-decoration: underline;
   text-overflow: ellipsis;
   white-space: nowrap;
+  width: 100%;
 `;
 
 const StyledRowContainer = styled.div`
@@ -96,7 +96,7 @@ export const EventRowActivity = ({
   };
   const activityTitle = computeActivityTitle();
 
-  const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
+  const { openRecordInSidePanel } = useOpenRecordInSidePanel();
 
   return (
     <StyledEventRow>
@@ -108,7 +108,7 @@ export const EventRowActivity = ({
           </StyledEventRowItemAction>
           <StyledLinkedActivity
             onClick={() =>
-              openRecordInCommandMenu({
+              openRecordInSidePanel({
                 recordId: event.linkedRecordId,
                 objectNameSingular,
               })

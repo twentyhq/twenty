@@ -5,7 +5,8 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { isDefined } from 'twenty-shared/utils';
 import { type IconComponent } from 'twenty-ui/display';
 import { Card } from 'twenty-ui/layout';
-import { ICON_SIZES, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useContext } from 'react';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type TableItem = {
   Icon?: IconComponent;
@@ -31,6 +32,7 @@ export const SettingsAdminTableCard = ({
   valueAlign = 'left',
   className,
 }: SettingsAdminTableCardProps) => {
+  const { theme } = useContext(ThemeContext);
   return (
     <Card
       rounded={rounded}
@@ -43,23 +45,24 @@ export const SettingsAdminTableCard = ({
             <TableRow
               key={index + item.label}
               gridAutoColumns={gridAutoColumns}
-              height={themeCssVariables.spacing[6]}
             >
               <TableCell
                 align={labelAlign}
                 color={themeCssVariables.font.color.tertiary}
-                height={themeCssVariables.spacing[6]}
+                height="auto"
                 gap={themeCssVariables.spacing[2]}
+                padding={`${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[2]}`}
               >
-                {item.Icon && <item.Icon size={ICON_SIZES.md} />}
+                {item.Icon && <item.Icon size={theme.icon.size.md} />}
                 <span>{item.label}</span>
               </TableCell>
               <TableCell
                 align={valueAlign}
                 color={themeCssVariables.font.color.primary}
-                height={themeCssVariables.spacing[6]}
+                height="auto"
                 onClick={item.onClick}
                 clickable={isDefined(item.onClick)}
+                padding={`${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[2]}`}
               >
                 {item.value}
               </TableCell>

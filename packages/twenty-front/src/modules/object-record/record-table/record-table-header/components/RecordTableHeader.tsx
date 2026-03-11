@@ -1,4 +1,5 @@
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
+import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZIndex';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableHeaderAddColumnButton } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderAddColumnButton';
 import { RecordTableHeaderCell } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderCell';
@@ -8,7 +9,16 @@ import { RecordTableHeaderFirstCell } from '@/object-record/record-table/record-
 import { RecordTableHeaderFirstScrollableCell } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderFirstScrollableCell';
 import { RecordTableHeaderLastEmptyColumn } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderLastEmptyColumn';
 import { useResizeTableHeader } from '@/object-record/record-table/record-table-header/hooks/useResizeTableHeader';
+import { styled } from '@linaria/react';
 import { filterOutByProperty } from 'twenty-shared/utils';
+
+const StyledHeaderContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  position: sticky;
+  top: 0;
+  z-index: ${TABLE_Z_INDEX.headerRow};
+`;
 
 export const RecordTableHeader = () => {
   const { visibleRecordFields } = useRecordTableContextOrThrow();
@@ -26,7 +36,7 @@ export const RecordTableHeader = () => {
   useResizeTableHeader();
 
   return (
-    <>
+    <StyledHeaderContainer>
       <RecordTableHeaderDragDropColumn />
       <RecordTableHeaderCheckboxColumn />
       <RecordTableHeaderFirstCell />
@@ -42,6 +52,6 @@ export const RecordTableHeader = () => {
       )}
       <RecordTableHeaderAddColumnButton />
       <RecordTableHeaderLastEmptyColumn />
-    </>
+    </StyledHeaderContainer>
   );
 };

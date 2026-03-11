@@ -7,9 +7,7 @@ import {
   IconRadiusTopRight,
 } from 'twenty-ui/display';
 import { ResizeHandle } from 'twenty-ui/layout';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { ThemeContext } from 'twenty-ui/theme';
-
+import { themeCssVariables, ThemeContext } from 'twenty-ui/theme-constants';
 type WidgetHandleAxis = 'n' | 's' | 'e' | 'w' | 'ne' | 'nw' | 'se' | 'sw';
 type WidgetHorizontalHandleAxis = 'n' | 's';
 type WidgetVerticalHandleAxis = 'e' | 'w';
@@ -27,12 +25,12 @@ const StyledCornerIconWrapper = styled.div<{
   cursor: 'nwse-resize' | 'nesw-resize';
   position: 'ne' | 'nw' | 'se' | 'sw';
 }>`
-  display: flex;
-  justify-content: center;
   align-items: center;
   cursor: ${({ cursor }) => cursor};
-  width: ${themeCssVariables.spacing[4]};
+  display: flex;
   height: ${themeCssVariables.spacing[4]};
+  justify-content: center;
+  width: ${themeCssVariables.spacing[4]};
 
   & svg {
     color: transparent;
@@ -71,11 +69,11 @@ const StyledVerticalHandle = styled.div`
 const StyledVerticalHandleWrapper = styled.div<{
   widgetHandleAxis: WidgetVerticalHandleAxis;
 }>`
-  cursor: col-resize;
   border-radius: ${themeCssVariables.border.radius.sm};
+  cursor: col-resize;
+  padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[2]};
   transform: ${({ widgetHandleAxis }) =>
     widgetHandleAxis === 'w' ? 'translateX(-50%)' : 'translateX(50%)'};
-  padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[2]};
 
   :hover {
     & > div {
@@ -87,15 +85,6 @@ const StyledVerticalHandleWrapper = styled.div<{
 const StyledResizeHandleWrapper = styled.div<{
   widgetHandleAxis?: WidgetHandleAxis;
 }>`
-  position: absolute;
-
-  top: ${({ widgetHandleAxis }) => {
-    if (widgetHandleAxis === 'w' || widgetHandleAxis === 'e') return '50%';
-    if (widgetHandleAxis === 'n') return themeCssVariables.spacing[1.5];
-    if (widgetHandleAxis === 'ne' || widgetHandleAxis === 'nw') return '0';
-    return 'auto';
-  }};
-
   bottom: ${({ widgetHandleAxis }) => {
     if (widgetHandleAxis === 's') return themeCssVariables.spacing[1.5];
     if (widgetHandleAxis === 'se' || widgetHandleAxis === 'sw') return '0';
@@ -109,9 +98,18 @@ const StyledResizeHandleWrapper = styled.div<{
     return 'auto';
   }};
 
+  position: absolute;
+
   right: ${({ widgetHandleAxis }) => {
     if (widgetHandleAxis === 'e') return themeCssVariables.spacing[1.5];
     if (widgetHandleAxis === 'se' || widgetHandleAxis === 'ne') return '0';
+    return 'auto';
+  }};
+
+  top: ${({ widgetHandleAxis }) => {
+    if (widgetHandleAxis === 'w' || widgetHandleAxis === 'e') return '50%';
+    if (widgetHandleAxis === 'n') return themeCssVariables.spacing[1.5];
+    if (widgetHandleAxis === 'ne' || widgetHandleAxis === 'nw') return '0';
     return 'auto';
   }};
 

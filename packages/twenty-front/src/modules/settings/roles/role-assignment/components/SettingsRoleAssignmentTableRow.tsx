@@ -12,8 +12,7 @@ import {
   OverflowingTextWithTooltip,
   useIcons,
 } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { type Agent, type ApiKeyForRole } from '~/generated-metadata/graphql';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { formatDateString } from '~/utils/string/formatDateString';
@@ -34,13 +33,9 @@ const StyledNameCell = styled.div`
 const StyledNameContainer = styled.div`
   align-items: center;
   display: flex;
-  overflow: hidden;
   gap: ${themeCssVariables.spacing[2]};
-  width: 100%;
-`;
-
-const StyledTableCell = styled(TableCell)`
   overflow: hidden;
+  width: 100%;
 `;
 
 export type RoleTarget =
@@ -55,10 +50,10 @@ type SettingsRoleAssignmentTableRowProps = {
 export const SettingsRoleAssignmentTableRow = ({
   roleTarget,
 }: SettingsRoleAssignmentTableRowProps) => {
-  const { theme } = useContext(ThemeContext);
   const currentWorkspaceMembers = useAtomStateValue(
     currentWorkspaceMembersState,
   );
+  const { theme } = useContext(ThemeContext);
   const { getIcon } = useIcons();
   const { dateFormat, timeZone } = useContext(UserContext);
   const dateLocale = useAtomStateValue(dateLocaleState);
@@ -120,17 +115,17 @@ export const SettingsRoleAssignmentTableRow = ({
 
   return (
     <TableRow gridAutoColumns="2fr 4fr">
-      <StyledTableCell>
+      <TableCell overflow="hidden">
         <StyledNameContainer>
           <StyledIconWrapper>{renderIcon()}</StyledIconWrapper>
           <StyledNameCell>
             <OverflowingTextWithTooltip text={renderName()} />
           </StyledNameCell>
         </StyledNameContainer>
-      </StyledTableCell>
-      <StyledTableCell>
+      </TableCell>
+      <TableCell overflow="hidden">
         <OverflowingTextWithTooltip text={renderSecondaryInfo()} />
-      </StyledTableCell>
+      </TableCell>
     </TableRow>
   );
 };

@@ -1,8 +1,8 @@
-import { type TypedAggregateChartConfiguration } from '@/command-menu/pages/page-layout/types/TypedAggregateChartConfiguration';
-import { type TypedBarChartConfiguration } from '@/command-menu/pages/page-layout/types/TypedBarChartConfiguration';
-import { type TypedGaugeChartConfiguration } from '@/command-menu/pages/page-layout/types/TypedGaugeChartConfiguration';
-import { type TypedLineChartConfiguration } from '@/command-menu/pages/page-layout/types/TypedLineChartConfiguration';
-import { type TypedPieChartConfiguration } from '@/command-menu/pages/page-layout/types/TypedPieChartConfiguration';
+import { type TypedAggregateChartConfiguration } from '@/side-panel/pages/page-layout/types/TypedAggregateChartConfiguration';
+import { type TypedBarChartConfiguration } from '@/side-panel/pages/page-layout/types/TypedBarChartConfiguration';
+import { type TypedGaugeChartConfiguration } from '@/side-panel/pages/page-layout/types/TypedGaugeChartConfiguration';
+import { type TypedLineChartConfiguration } from '@/side-panel/pages/page-layout/types/TypedLineChartConfiguration';
+import { type TypedPieChartConfiguration } from '@/side-panel/pages/page-layout/types/TypedPieChartConfiguration';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
 import {
@@ -129,6 +129,7 @@ export const createTestWidget = (
   gridPosition: { row: 0, column: 0, rowSpan: 2, columnSpan: 2 },
   objectMetadataId: TEST_OBJECT_METADATA_ID,
   configuration: TEST_BAR_CHART_CONFIGURATION,
+  isOverridden: false,
   createdAt: '2024-01-01',
   updatedAt: '2024-01-01',
   deletedAt: null,

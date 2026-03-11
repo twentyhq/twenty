@@ -28,8 +28,7 @@ import { isNonEmptyArray } from '@sniptt/guards';
 import { useContext, useId, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { MenuItem } from 'twenty-ui/navigation';
 import { toSpliced } from '~/utils/array/toSpliced';
 
@@ -53,10 +52,17 @@ const StyledDisplayModeReadonlyContainer = styled.div`
   width: 100%;
 `;
 
-const StyledDisplayModeContainer = styled(StyledDisplayModeReadonlyContainer)`
-  height: 30px;
-  cursor: pointer;
+const StyledDisplayModeContainer = styled.div`
+  align-items: center;
+  background: transparent;
+  border: none;
   box-sizing: border-box;
+  cursor: pointer;
+  display: flex;
+  font-family: inherit;
+  height: 30px;
+  padding-inline: ${themeCssVariables.spacing[2]};
+  width: 100%;
 
   &:hover,
   &[data-open='true'] {
@@ -64,11 +70,11 @@ const StyledDisplayModeContainer = styled(StyledDisplayModeReadonlyContainer)`
   }
 `;
 
-const StyledInput = styled(TextInput)`
+const StyledInputContainer = styled.div`
   padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
 `;
 
-const StyledPlaceholder = styled(FormFieldPlaceholder)`
+const StyledPlaceholderContainer = styled.div`
   width: 100%;
 `;
 
@@ -87,7 +93,6 @@ export const FormArrayFieldInput = ({
 }: FormArrayFieldInputProps) => {
   const { t } = useLingui();
   const { theme } = useContext(ThemeContext);
-
   const instanceId = useId();
 
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
@@ -305,25 +310,29 @@ export const FormArrayFieldInput = ({
                 {draftValue.value.length > 0 ? (
                   <ArrayDisplay value={draftValue.value} />
                 ) : (
-                  <StyledPlaceholder />
+                  <StyledPlaceholderContainer>
+                    <FormFieldPlaceholder />
+                  </StyledPlaceholderContainer>
                 )}
               </StyledDisplayModeReadonlyContainer>
             ) : draftValue.value.length === 0 ? (
-              <StyledInput
-                instanceId={formFieldInputInstanceId}
-                placeholder={t`Enter an item`}
-                value={newItemDraftValue}
-                copyButton={false}
-                onChange={handleFirstItemInputChange}
-                onEnter={handleFirstItemInputEnter}
-                shouldTrim={false}
-              />
+              <StyledInputContainer>
+                <TextInput
+                  instanceId={formFieldInputInstanceId}
+                  placeholder={t`Enter an item`}
+                  value={newItemDraftValue}
+                  copyButton={false}
+                  onChange={handleFirstItemInputChange}
+                  onEnter={handleFirstItemInputEnter}
+                  shouldTrim={false}
+                />
+              </StyledInputContainer>
             ) : (
               <Dropdown
                 dropdownId={dropdownId}
                 dropdownPlacement="bottom-start"
                 dropdownOffset={{
-                  y: parseSpacingValueAsNumber(theme.spacing(1)),
+                  y: parseSpacingValueAsNumber(theme.spacing[1]),
                 }}
                 clickableComponent={
                   <StyledDisplayModeContainer data-open={isDropdownOpen}>

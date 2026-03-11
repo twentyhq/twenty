@@ -1,4 +1,3 @@
-import { useContext } from 'react';
 import { styled } from '@linaria/react';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -11,8 +10,8 @@ import { RecordFieldComponentInstanceContext } from '@/object-record/record-fiel
 import { SettingsDataModelSetFieldValueEffect } from '@/settings/data-model/fields/preview/components/SettingsDataModelSetFieldValueEffect';
 import { useFieldPreviewValue } from '@/settings/data-model/fields/preview/hooks/useFieldPreviewValue';
 import { useIcons } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useContext } from 'react';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { v4 } from 'uuid';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
@@ -35,14 +34,14 @@ const StyledFieldPreview = styled.div<{ shrink?: boolean }>`
   gap: ${themeCssVariables.spacing[2]};
   height: fit-content;
   line-height: 24px;
+  margin-top: ${themeCssVariables.spacing[2]};
   overflow: hidden;
   padding: 0
     ${({ shrink }) =>
       shrink ? themeCssVariables.spacing[1] : themeCssVariables.spacing[2]};
-  white-space: nowrap;
-  margin-top: ${themeCssVariables.spacing[2]};
-  padding-top: ${themeCssVariables.spacing[2]};
   padding-bottom: ${themeCssVariables.spacing[2]};
+  padding-top: ${themeCssVariables.spacing[2]};
+  white-space: nowrap;
 `;
 
 const StyledFieldLabel = styled.div`
@@ -62,9 +61,7 @@ export const SettingsDataModelRelationFieldPreview = ({
     useObjectMetadataItem({
       objectNameSingular: relationTargetObjectNameSingular,
     });
-
   const { theme } = useContext(ThemeContext);
-
   const { getIcon } = useIcons();
   const FieldIcon = getIcon(fieldMetadataItem.icon);
 

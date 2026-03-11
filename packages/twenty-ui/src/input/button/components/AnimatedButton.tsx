@@ -2,11 +2,12 @@ import { styled } from '@linaria/react';
 import { useIsMobile } from '@ui/utilities';
 import { getOsShortcutSeparator } from '@ui/utilities/device/getOsShortcutSeparator';
 import { type MotionProps, motion } from 'framer-motion';
-import React, { useMemo } from 'react';
+import React, { useContext, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 
 import { Pill } from '@ui/components/Pill/Pill';
-import { ICON_SIZES, themeCssVariables } from '@ui/theme-constants';
+import { ThemeContext, themeCssVariables } from '@ui/theme-constants';
+import { GRAY_SCALE_LIGHT } from '@ui/theme/constants/GrayScaleLight';
 import {
   type ButtonAccent,
   type ButtonPosition,
@@ -106,7 +107,7 @@ const computeAnimatedButtonDynamicStyles = (
                 }`
               : 'none';
           result.color = !inverted
-            ? themeCssVariables.grayScale.gray1
+            ? GRAY_SCALE_LIGHT.gray1
             : themeCssVariables.color.blue;
           if (!disabled) {
             result.hoverBackground = !inverted
@@ -170,10 +171,10 @@ const computeAnimatedButtonDynamicStyles = (
                 : 'transparent'
             : variant === 'secondary'
               ? focus || disabled
-                ? themeCssVariables.grayScale.gray1
+                ? GRAY_SCALE_LIGHT.gray1
                 : themeCssVariables.background.transparent.primary
               : focus
-                ? themeCssVariables.grayScale.gray1
+                ? GRAY_SCALE_LIGHT.gray1
                 : 'transparent';
           result.borderWidthOverride = '1px 1px 1px 1px';
           result.boxShadow =
@@ -212,10 +213,10 @@ const computeAnimatedButtonDynamicStyles = (
                 : 'transparent'
             : variant === 'secondary'
               ? focus || disabled
-                ? themeCssVariables.grayScale.gray1
+                ? GRAY_SCALE_LIGHT.gray1
                 : themeCssVariables.background.transparent.primary
               : focus
-                ? themeCssVariables.grayScale.gray1
+                ? GRAY_SCALE_LIGHT.gray1
                 : 'transparent';
           result.borderWidthOverride = '1px 1px 1px 1px';
           result.boxShadow =
@@ -254,10 +255,10 @@ const computeAnimatedButtonDynamicStyles = (
                 : 'transparent'
             : variant === 'secondary'
               ? focus || disabled
-                ? themeCssVariables.grayScale.gray1
+                ? GRAY_SCALE_LIGHT.gray1
                 : themeCssVariables.background.transparent.primary
               : focus
-                ? themeCssVariables.grayScale.gray1
+                ? GRAY_SCALE_LIGHT.gray1
                 : 'transparent';
           result.borderWidthOverride = '1px 1px 1px 1px';
           result.boxShadow =
@@ -413,10 +414,8 @@ const StyledShortcutLabel = styled.div<{
   font-weight: ${themeCssVariables.font.weight.medium};
 `;
 
-const StyledIconContainer = styled.div`
-  align-items: center;
+const StyledMotion = styled(motion.div)`
   display: flex;
-  justify-content: center;
 `;
 
 export const AnimatedButton = ({
@@ -446,6 +445,7 @@ export const AnimatedButton = ({
   dataGloballyPreventClickOutside,
   soonLabel = 'Soon',
 }: AnimatedButtonProps) => {
+  const { theme } = useContext(ThemeContext);
   const isMobile = useIsMobile();
   const isDisabled = soon || disabled;
 
@@ -490,18 +490,14 @@ export const AnimatedButton = ({
       data-globally-prevent-click-outside={dataGloballyPreventClickOutside}
     >
       {Icon && (
-        <StyledIconContainer>
-          <motion.div animate={animate} transition={transition}>
-            <Icon size={ICON_SIZES.sm} />
-          </motion.div>
-        </StyledIconContainer>
+        <StyledMotion animate={animate} transition={transition}>
+          <Icon size={theme.icon.size.sm} />
+        </StyledMotion>
       )}
       {animatedSvg && (
-        <StyledIconContainer>
-          <motion.div animate={animate} transition={transition}>
-            {animatedSvg}
-          </motion.div>
-        </StyledIconContainer>
+        <StyledMotion animate={animate} transition={transition}>
+          {animatedSvg}
+        </StyledMotion>
       )}
       {title}
       {hotkeys && !isMobile && (

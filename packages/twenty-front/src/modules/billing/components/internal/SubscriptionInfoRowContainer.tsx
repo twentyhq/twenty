@@ -2,8 +2,7 @@ import { type IconComponent } from 'twenty-ui/display';
 import React, { useContext } from 'react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type SubscriptionInfoRowContainerProps = {
   Icon: IconComponent;
@@ -14,22 +13,22 @@ type SubscriptionInfoRowContainerProps = {
 
 const StyledContainer = styled.div`
   align-items: center;
-  gap: ${themeCssVariables.spacing[1]};
   color: ${themeCssVariables.font.color.primary};
   display: grid;
+  gap: ${themeCssVariables.spacing[1]};
   grid-template-columns: repeat(3, 1fr);
 `;
 
 const StyledIconLabelContainer = styled.div`
   align-items: center;
-  gap: ${themeCssVariables.spacing[1]};
   color: ${themeCssVariables.font.color.tertiary};
   display: flex;
+  gap: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledLabelContainer = styled.div`
-  text-overflow: ellipsis;
   overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
 `;
 
@@ -56,6 +55,7 @@ export const SubscriptionInfoRowContainer = ({
   nextValue,
 }: SubscriptionInfoRowContainerProps) => {
   const { theme } = useContext(ThemeContext);
+
   return (
     <StyledContainer>
       <StyledIconLabelContainer>

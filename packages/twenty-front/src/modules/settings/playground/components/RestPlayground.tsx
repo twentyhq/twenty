@@ -6,9 +6,8 @@ import { styled } from '@linaria/react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
   border: 1px solid ${themeCssVariables.border.color.medium};
@@ -31,8 +30,8 @@ const StyledContainer = styled.div`
 
   .scalar-app .text-pretty {
     overflow-wrap: break-word;
-    word-break: normal;
     white-space: normal;
+    word-break: normal;
   }
 `;
 
@@ -51,7 +50,7 @@ type RestPlaygroundProps = {
 };
 
 export const RestPlayground = ({ onError, schema }: RestPlaygroundProps) => {
-  const { theme } = useContext(ThemeContext);
+  const { theme, colorScheme } = useContext(ThemeContext);
   const playgroundApiKey = useAtomStateValue(playgroundApiKeyState);
 
   if (!playgroundApiKey) {
@@ -85,7 +84,7 @@ export const RestPlayground = ({ onError, schema }: RestPlaygroundProps) => {
               },
             },
             baseServerURL: REACT_APP_SERVER_BASE_URL + '/' + schema,
-            forceDarkModeState: theme.name === 'dark' ? 'dark' : 'light',
+            forceDarkModeState: colorScheme === 'dark' ? 'dark' : 'light',
             hideClientButton: true,
             hideDarkModeToggle: true,
             hideModels: schema === 'metadata',

@@ -1,12 +1,12 @@
 import { type AttachmentFileCategory } from '@/activities/files/types/AttachmentFileCategory';
+import { isDefined } from 'twenty-shared/utils';
 import { useFileIconColors } from '@/file/hooks/useFileIconColors';
 import { IconMapping } from '@/file/utils/fileIconMappings';
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
 import { type FileCategory } from 'twenty-shared/types';
 import { AvatarOrIcon } from 'twenty-ui/components';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useContext } from 'react';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type FileIconSize = 'small' | 'medium';
 
@@ -47,7 +47,9 @@ export const FileIcon = ({
     <StyledIconContainer
       background={iconColors[fileCategory] ?? theme.color.gray}
     >
-      {Icon && <Icon size={theme.icon.size.sm} stroke={theme.icon.stroke.sm} />}
+      {isDefined(Icon) && (
+        <Icon size={theme.icon.size.sm} stroke={theme.icon.stroke.sm} />
+      )}
     </StyledIconContainer>
   );
 };

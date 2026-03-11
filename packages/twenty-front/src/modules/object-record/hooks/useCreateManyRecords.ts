@@ -142,26 +142,30 @@ export const useCreateManyRecords = <
       }
     });
 
-    const recordsCreatedInCache = recordOptimisticRecordsInput
-      .map((recordToCreate) =>
-        createOneRecordInCache({
+    const recordsCreatedInCache = recordOptimisticRecordsInput.flatMap(
+      (recordToCreate) => {
+        const created = createOneRecordInCache({
           ...recordToCreate,
           __typename: getObjectTypename(objectMetadataItem.nameSingular),
-        }),
-      )
-      .filter(isDefined);
+        });
+
+        return created !== undefined && created !== null ? [created] : [];
+      },
+    );
 
     if (recordsCreatedInCache.length > 0) {
-      const recordNodeCreatedInCache = recordsCreatedInCache
-        .map((record) =>
-          getRecordNodeFromRecord({
+      const recordNodeCreatedInCache = recordsCreatedInCache.flatMap(
+        (record) => {
+          const node = getRecordNodeFromRecord({
             objectMetadataItem,
             objectMetadataItems,
             record: record,
             computeReferences: false,
-          }),
-        )
-        .filter(isDefined);
+          });
+
+          return node !== undefined && node !== null ? [node] : [];
+        },
+      );
 
       triggerCreateRecordsOptimisticEffect({
         cache: apolloCoreClient.cache,

@@ -11,8 +11,7 @@ import {
   type IconComponent,
 } from 'twenty-ui/display';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { v4 as uuidV4 } from 'uuid';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import {
@@ -38,15 +37,15 @@ export const StyledShowPageSummaryCard = styled.div<{
   isMobile: boolean;
 }>`
   align-items: center;
+  border-bottom: 1px solid ${themeCssVariables.border.color.light};
+  box-sizing: border-box;
   display: flex;
   flex-direction: ${({ isMobile }) => (isMobile ? 'row' : 'column')};
   gap: ${({ isMobile }) =>
     isMobile ? themeCssVariables.spacing[2] : themeCssVariables.spacing[3]};
+  height: ${({ isMobile }) => (isMobile ? '77px' : '127px')};
   justify-content: ${({ isMobile }) => (isMobile ? 'flex-start' : 'center')};
   padding: ${themeCssVariables.spacing[4]};
-  border-bottom: 1px solid ${themeCssVariables.border.color.light};
-  height: ${({ isMobile }) => (isMobile ? '77px' : '127px')};
-  box-sizing: border-box;
 `;
 
 const StyledInfoContainer = styled.div<{ isMobile: boolean }>`

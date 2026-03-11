@@ -85,7 +85,7 @@ export const SignInUpWorkspaceScopeFormEffect = () => {
       signInUpStep === SignInUpStep.Init &&
       !workspaceAuthProviders.google &&
       !workspaceAuthProviders.microsoft &&
-      !workspaceAuthProviders.sso
+      workspaceAuthProviders.sso.length === 0
     ) {
       continueWithEmail();
       return;

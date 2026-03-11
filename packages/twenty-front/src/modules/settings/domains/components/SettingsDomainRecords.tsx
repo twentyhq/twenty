@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsDnsRecordsTable } from '@/settings/components/SettingsDnsRecordsTable';
 import { t } from '@lingui/core/macro';
@@ -46,9 +47,9 @@ export const SettingsDomainRecords = ({
 
     return {
       statusColor:
-        record && record.status === 'error'
+        isDefined(record) && record.status === 'error'
           ? 'red'
-          : record && record.status === 'pending'
+          : isDefined(record) && record.status === 'pending'
             ? 'yellow'
             : defaultValues.statusColor,
       ...record,

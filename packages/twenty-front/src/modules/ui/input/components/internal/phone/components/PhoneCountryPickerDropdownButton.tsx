@@ -13,8 +13,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import 'react-phone-number-input/style.css';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronDown, IconWorld } from 'twenty-ui/display';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { ThemeContext } from 'twenty-ui/theme';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type StyledDropdownButtonProps = {
   isUnfolded: boolean;
@@ -25,17 +24,17 @@ const StyledDropdownButtonContainer = styled.div<StyledDropdownButtonProps>`
   background: none;
   border-radius: ${themeCssVariables.border.radius.xs} 0 0
     ${themeCssVariables.border.radius.xs};
+  border-right: 1px solid ${themeCssVariables.border.color.medium};
   color: ${({ color }) => color ?? 'none'};
   cursor: pointer;
+
   display: flex;
 
   height: 32px;
-
   padding-left: ${themeCssVariables.spacing[2]};
   padding-right: ${themeCssVariables.spacing[1]};
-  user-select: none;
 
-  border-right: 1px solid ${themeCssVariables.border.color.medium};
+  user-select: none;
 
   &:hover {
     background-color: ${themeCssVariables.background.transparent.light};
@@ -53,8 +52,8 @@ const StyledIconContainer = styled.div`
     align-items: center;
     display: flex;
     height: 12px;
-    width: 16px;
     justify-content: center;
+    width: 16px;
   }
 `;
 
@@ -63,8 +62,8 @@ const StyledCheveronIconContainer = styled.div`
     align-items: center;
     display: flex;
     height: 14px;
-    width: 14px;
     justify-content: center;
+    width: 14px;
   }
 `;
 
@@ -75,8 +74,6 @@ export const PhoneCountryPickerDropdownButton = ({
   value: string;
   onChange: (countryCode: string) => void;
 }) => {
-  const { theme } = useContext(ThemeContext);
-
   const [selectedCountry, setSelectedCountry] = useState<Country>();
 
   const isDropdownOpen = useAtomComponentStateValue(
@@ -92,6 +89,7 @@ export const PhoneCountryPickerDropdownButton = ({
   };
 
   const countries = useCountries();
+  const { theme } = useContext(ThemeContext);
 
   useEffect(() => {
     const country = countries.find(({ countryCode }) => countryCode === value);

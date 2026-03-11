@@ -8,6 +8,7 @@ import { VariableChipStandalone } from '@/object-record/record-field/ui/form-typ
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import { styled } from '@linaria/react';
+import { isDefined } from 'twenty-shared/utils';
 import { t } from '@lingui/core/macro';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -43,7 +44,6 @@ export const FormSingleRecordFieldChip = ({
   disabled,
 }: FormSingleRecordFieldChipProps) => {
   if (
-    !!draftValue &&
     draftValue.type === 'variable' &&
     isStandaloneVariableString(draftValue.value)
   ) {
@@ -56,7 +56,7 @@ export const FormSingleRecordFieldChip = ({
     );
   }
 
-  if (!!draftValue && draftValue.type === 'static' && !!selectedRecord) {
+  if (draftValue.type === 'static' && isDefined(selectedRecord)) {
     return (
       <StyledRecordChipContainer>
         <RecordChip

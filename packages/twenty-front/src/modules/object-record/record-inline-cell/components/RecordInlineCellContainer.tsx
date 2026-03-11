@@ -1,7 +1,6 @@
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useFieldFocus } from '@/object-record/record-field/ui/hooks/useFieldFocus';
@@ -56,14 +55,14 @@ const StyledLabelContainer = styled.div<{ width?: number }>`
 `;
 
 const StyledInlineCellBaseContainer = styled.div<{ readonly: boolean }>`
-  box-sizing: border-box;
-  width: 100%;
-  display: flex;
-  height: fit-content;
-  gap: ${themeCssVariables.spacing[1]};
-  user-select: none;
   align-items: center;
+  box-sizing: border-box;
   cursor: ${({ readonly }) => (readonly ? 'default' : 'pointer')};
+  display: flex;
+  gap: ${themeCssVariables.spacing[1]};
+  height: fit-content;
+  user-select: none;
+  width: 100%;
 `;
 
 export const StyledSkeletonDiv = styled.div`
@@ -73,6 +72,7 @@ export const StyledSkeletonDiv = styled.div`
 export const RecordInlineCellContainer = () => {
   const { readonly, IconLabel, label, labelWidth, showLabel } =
     useRecordInlineCellContext();
+  const { theme } = useContext(ThemeContext);
 
   const { recordId, fieldDefinition, onMouseEnter, onMouseLeave, anchorId } =
     useContext(FieldContext);
@@ -97,7 +97,6 @@ export const RecordInlineCellContainer = () => {
     onMouseLeave?.();
   };
 
-  const { theme } = useContext(ThemeContext);
   const labelId = `label-${getRecordFieldInputInstanceId({
     recordId,
     fieldName: fieldDefinition?.metadata?.fieldName,

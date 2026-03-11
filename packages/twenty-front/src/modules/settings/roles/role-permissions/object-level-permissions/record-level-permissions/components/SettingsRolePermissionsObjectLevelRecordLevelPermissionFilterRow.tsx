@@ -2,7 +2,7 @@
 
 import { styled } from '@linaria/react';
 
-import { AdvancedFilterCommandMenuRecordFilterOperandSelect } from '@/object-record/advanced-filter/command-menu/components/AdvancedFilterCommandMenuRecordFilterOperandSelect';
+import { AdvancedFilterSidePanelRecordFilterOperandSelect } from '@/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelRecordFilterOperandSelect';
 import { AdvancedFilterRecordFilterOptionsDropdown } from '@/object-record/advanced-filter/components/AdvancedFilterRecordFilterOptionsDropdown';
 import { getAdvancedFilterObjectFilterDropdownComponentInstanceId } from '@/object-record/advanced-filter/utils/getAdvancedFilterObjectFilterDropdownComponentInstanceId';
 import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
@@ -14,9 +14,9 @@ import { SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInput } fro
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledFilterRow = styled.div`
+  align-items: center;
   display: flex;
   flex-direction: row;
-  align-items: center;
   gap: ${themeCssVariables.spacing[2]};
 `;
 
@@ -53,7 +53,7 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterRow =
             recordFilterId={recordFilter.id}
           />
           <StyledOperandSelectContainer>
-            <AdvancedFilterCommandMenuRecordFilterOperandSelect
+            <AdvancedFilterSidePanelRecordFilterOperandSelect
               recordFilterId={recordFilter.id}
             />
           </StyledOperandSelectContainer>

@@ -17,8 +17,10 @@ import { getColorByEmailingDomainStatus } from '~/pages/settings/emailing-domain
 import { getTextByEmailingDomainStatus } from '~/pages/settings/emailing-domains/utils/getEmailingDomainStatusText';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 
-const StyledLink = styled(Link)`
-  text-decoration: none;
+const StyledLinkContainer = styled.div`
+  > a {
+    text-decoration: none;
+  }
 `;
 
 export const SettingsEmailingDomains = () => {
@@ -38,9 +40,11 @@ export const SettingsEmailingDomains = () => {
   };
 
   return isLoading || !emailingDomains.length ? (
-    <StyledLink to={getSettingsPath(SettingsPath.NewEmailingDomain)}>
-      <SettingsCard title={t`Add Emailing Domain`} Icon={<IconMail />} />
-    </StyledLink>
+    <StyledLinkContainer>
+      <Link to={getSettingsPath(SettingsPath.NewEmailingDomain)}>
+        <SettingsCard title={t`Add Emailing Domain`} Icon={<IconMail />} />
+      </Link>
+    </StyledLinkContainer>
   ) : (
     <>
       <SettingsListCard

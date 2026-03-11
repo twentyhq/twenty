@@ -4,30 +4,29 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 
 import { styled } from '@linaria/react';
+import { useContext } from 'react';
 import { IconChevronDown } from 'twenty-ui/display';
 import { type SelectOption } from 'twenty-ui/input';
 import { MenuItemSelect } from 'twenty-ui/navigation';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledDropdownMenuInnerSelectDropdownButton = styled.div`
   align-items: center;
+  box-sizing: border-box;
   color: ${themeCssVariables.font.color.secondary};
+  cursor: pointer;
+
   display: flex;
   font-size: ${themeCssVariables.font.size.sm};
 
   font-weight: ${themeCssVariables.font.weight.medium};
+
   height: ${themeCssVariables.spacing[7]};
-
   justify-content: space-between;
-
   padding-left: ${themeCssVariables.spacing[2]};
+
   padding-right: ${themeCssVariables.spacing[2]};
   width: 100%;
-
-  box-sizing: border-box;
-  cursor: pointer;
 `;
 
 export type DropdownMenuInnerSelectProps = {
@@ -46,7 +45,6 @@ export const DropdownMenuInnerSelect = ({
   widthInPixels,
 }: DropdownMenuInnerSelectProps) => {
   const { theme } = useContext(ThemeContext);
-
   const { closeDropdown } = useCloseDropdown();
 
   return (

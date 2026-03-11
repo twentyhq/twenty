@@ -10,27 +10,28 @@ type FieldWidgetShowMoreButtonProps = {
 };
 
 const StyledButton = styled.button`
-  display: flex;
-  width: 100%;
   align-items: center;
-  gap: ${themeCssVariables.spacing[1]};
-  height: 24px;
-  box-sizing: border-box;
-  padding: 0;
-  border: none;
   background: transparent;
+  border: none;
+  box-sizing: border-box;
   color: ${themeCssVariables.font.color.tertiary};
+  cursor: pointer;
+  display: flex;
   font-family: ${themeCssVariables.font.family};
   font-weight: ${themeCssVariables.font.weight.regular};
-  cursor: pointer;
+  gap: ${themeCssVariables.spacing[1]};
+  height: 24px;
+  padding: 0;
   transition: color ${themeCssVariables.animation.duration.instant}s ease;
+  width: 100%;
 
   &:hover {
     color: ${themeCssVariables.font.color.primary};
   }
 `;
 
-const StyledIcon = styled(IconChevronDown)`
+const StyledIconContainer = styled.span`
+  display: flex;
   height: 16px;
   width: 16px;
 `;
@@ -41,7 +42,9 @@ export const FieldWidgetShowMoreButton = ({
 }: FieldWidgetShowMoreButtonProps) => {
   return (
     <StyledButton data-testid="field-widget-show-more-button" onClick={onClick}>
-      <StyledIcon />
+      <StyledIconContainer>
+        <IconChevronDown />
+      </StyledIconContainer>
       {t`More (${remainingCount})`}
     </StyledButton>
   );

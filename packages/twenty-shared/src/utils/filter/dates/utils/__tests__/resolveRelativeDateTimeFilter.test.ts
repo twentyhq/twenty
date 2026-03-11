@@ -26,6 +26,18 @@ describe('resolveRelativeDateTimeFilter', () => {
       expect(result.end?.day).toBe(23);
     });
 
+    it('should compute for NEXT 1 QUARTER', () => {
+      const result = resolveRelativeDateTimeFilter(
+        { direction: 'NEXT', amount: 1, unit: 'QUARTER' },
+        referenceZdt,
+      );
+
+      expect(result.start?.month).toBe(4);
+      expect(result.start?.day).toBe(1);
+      expect(result.end?.month).toBe(7);
+      expect(result.end?.day).toBe(1);
+    });
+
     it('should throw if amount is undefined', () => {
       expect(() =>
         resolveRelativeDateTimeFilter(
@@ -56,6 +68,20 @@ describe('resolveRelativeDateTimeFilter', () => {
 
       expect(result.end?.hour).toBe(0);
       expect(result.start?.day).toBe(12);
+    });
+
+    it('should compute for PAST 1 QUARTER', () => {
+      const result = resolveRelativeDateTimeFilter(
+        { direction: 'PAST', amount: 1, unit: 'QUARTER' },
+        referenceZdt,
+      );
+
+      expect(result.start?.month).toBe(10);
+      expect(result.start?.year).toBe(2023);
+      expect(result.start?.day).toBe(1);
+      expect(result.end?.month).toBe(1);
+      expect(result.end?.year).toBe(2024);
+      expect(result.end?.day).toBe(1);
     });
 
     it('should throw if amount is undefined', () => {

@@ -1,4 +1,3 @@
-import { useContext } from 'react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { format } from 'date-fns';
@@ -14,10 +13,10 @@ import { getCalendarEventEndDate } from '@/activities/calendar/utils/getCalendar
 import { getCalendarEventStartDate } from '@/activities/calendar/utils/getCalendarEventStartDate';
 import { hasCalendarEventEnded } from '@/activities/calendar/utils/hasCalendarEventEnded';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { useOpenCalendarEventInCommandMenu } from '@/command-menu/hooks/useOpenCalendarEventInCommandMenu';
+import { useOpenCalendarEventInSidePanel } from '@/side-panel/hooks/useOpenCalendarEventInSidePanel';
+import { useContext } from 'react';
 import { IconArrowRight } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type CalendarEventRowProps = {
   calendarEvent: TimelineCalendarEvent;
@@ -26,11 +25,11 @@ type CalendarEventRowProps = {
 
 const StyledContainer = styled.div<{ showTitle?: boolean }>`
   align-items: center;
+  cursor: ${({ showTitle }) => (showTitle ? 'pointer' : 'not-allowed')};
   display: inline-flex;
   gap: ${themeCssVariables.spacing[3]};
   height: ${themeCssVariables.spacing[6]};
   position: relative;
-  cursor: ${({ showTitle }) => (showTitle ? 'pointer' : 'not-allowed')};
 `;
 
 const StyledAttendanceIndicator = styled.div<{ active?: boolean }>`
@@ -38,23 +37,23 @@ const StyledAttendanceIndicator = styled.div<{ active?: boolean }>`
     active
       ? themeCssVariables.tag.background.red
       : themeCssVariables.tag.background.gray};
+  border-radius: ${themeCssVariables.border.radius.xs};
   height: 100%;
   width: ${themeCssVariables.spacing[1]};
-  border-radius: ${themeCssVariables.border.radius.xs};
 `;
 
 const StyledLabels = styled.div`
   align-items: center;
-  display: flex;
   color: ${themeCssVariables.font.color.primary};
-  gap: ${themeCssVariables.spacing[2]};
+  display: flex;
   flex: 1 0 auto;
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledTime = styled.div`
   align-items: center;
-  display: flex;
   color: ${themeCssVariables.font.color.tertiary};
+  display: flex;
   gap: ${themeCssVariables.spacing[1]};
   width: ${themeCssVariables.spacing[26]};
 `;
@@ -78,8 +77,7 @@ export const CalendarEventRow = ({
 }: CalendarEventRowProps) => {
   const { theme } = useContext(ThemeContext);
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
-  const { openCalendarEventInCommandMenu } =
-    useOpenCalendarEventInCommandMenu();
+  const { openCalendarEventInSidePanel } = useOpenCalendarEventInSidePanel();
 
   const startsAt = getCalendarEventStartDate(calendarEvent);
   const endsAt = getCalendarEventEndDate(calendarEvent);
@@ -103,7 +101,7 @@ export const CalendarEventRow = ({
       onClick={
         showTitle
           ? () => {
-              openCalendarEventInCommandMenu(calendarEvent.id);
+              openCalendarEventInSidePanel(calendarEvent.id);
             }
           : undefined
       }

@@ -3,9 +3,7 @@ import {
   type DatabaseEventPayload,
   type ObjectRecordUpdateEvent,
 } from 'twenty-sdk';
-import { CoreApiClient } from 'twenty-sdk/generated';
-
-
+import { CoreApiClient } from 'twenty-sdk/clients';
 
 type CompanyRecord = {
   id: string;
@@ -37,8 +35,6 @@ type ApolloOrganization = {
 type ApolloEnrichResponse = {
   organization?: ApolloOrganization;
 };
-
-
 
 const extractDomain = (
   domainName?: CompanyRecord['domainName'],
@@ -172,7 +168,6 @@ const updateCompanyInTwenty = async (
   }
 };
 
-
 type CompanyUpdateEvent = DatabaseEventPayload<
   ObjectRecordUpdateEvent<CompanyRecord>
 >;
@@ -180,7 +175,6 @@ type CompanyUpdateEvent = DatabaseEventPayload<
 const handler = async (
   event: CompanyUpdateEvent,
 ): Promise<object | undefined> => {
-
 
     const { recordId, properties } = event;
     const { after: companyAfter } = properties;
@@ -205,7 +199,6 @@ const handler = async (
     if (Object.keys(updateData).length === 0) {
       return { skipped: true, reason: 'no enrichment data to apply' };
     }
-
 
     await updateCompanyInTwenty(recordId, updateData);
 

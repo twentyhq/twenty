@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+/* oxlint-disable no-console */
 /**
  * Fetch historical Fireflies meetings and insert into Twenty.
  *
@@ -218,5 +218,4 @@ main().catch((error) => {
   }
   process.exit(1);
 });
-
 

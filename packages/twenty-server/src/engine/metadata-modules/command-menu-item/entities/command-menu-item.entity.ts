@@ -17,8 +17,8 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
 
 export enum CommandMenuItemAvailabilityType {
   GLOBAL = 'GLOBAL',
-  SINGLE_RECORD = 'SINGLE_RECORD',
-  BULK_RECORDS = 'BULK_RECORDS',
+  RECORD_SELECTION = 'RECORD_SELECTION',
+  FALLBACK = 'FALLBACK',
 }
 
 @Entity({ name: 'commandMenuItem', schema: 'core' })
@@ -62,6 +62,12 @@ export class CommandMenuItemEntity
 
   @Column({ nullable: true, type: 'varchar' })
   icon: string | null;
+
+  @Column({ nullable: true, type: 'varchar' })
+  shortLabel: string | null;
+
+  @Column({ nullable: false, type: 'double precision', default: 0 })
+  position: number;
 
   @Column({ default: false })
   isPinned: boolean;

@@ -11,18 +11,18 @@ import { OverflowingTextWithTooltip } from 'twenty-ui/display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledDiv = styled.div`
+  align-items: center;
   background: inherit;
   border: none;
   border-radius: ${themeCssVariables.border.radius.sm};
+  box-sizing: border-box;
   color: ${themeCssVariables.font.color.primary};
   cursor: pointer;
-  overflow: hidden;
-  height: 24px;
-  padding: ${themeCssVariables.spacing[0]} 5px;
-  box-sizing: border-box;
   display: flex;
-  align-items: center;
+  height: 24px;
   justify-content: center;
+  overflow: hidden;
+  padding: ${themeCssVariables.spacing[0]} 5px;
   :hover {
     background: ${themeCssVariables.background.transparent.light};
   }

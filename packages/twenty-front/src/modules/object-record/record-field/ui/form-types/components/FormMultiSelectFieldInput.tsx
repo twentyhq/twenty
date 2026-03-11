@@ -25,8 +25,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { VisibilityHidden } from 'twenty-ui/accessibility';
 import { IconChevronDown } from 'twenty-ui/display';
 import { type SelectOption } from 'twenty-ui/input';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type FormMultiSelectFieldInputProps = {
   label?: string;
@@ -51,22 +50,24 @@ const StyledDisplayModeReadonlyContainer = styled.div`
   width: 100%;
 `;
 
-const StyledDisplayModeContainer = styled(StyledDisplayModeReadonlyContainer)`
+const StyledDisplayModeContainer = styled.div`
+  align-items: center;
+  background: transparent;
+  border: none;
   cursor: pointer;
-
-  &:hover,
-  &[data-open='true'] {
-    background-color: ${themeCssVariables.background.transparent.lighter};
-  }
+  display: flex;
+  font-family: inherit;
+  padding-inline: ${themeCssVariables.spacing[2]};
+  width: 100%;
 `;
 
 const StyledSelectInputContainer = styled.div`
   position: absolute;
-  z-index: 1;
   top: ${themeCssVariables.spacing[9]};
+  z-index: 1;
 `;
 
-const StyledPlaceholder = styled(FormFieldPlaceholder)`
+const StyledPlaceholderContainer = styled.div`
   width: 100%;
 `;
 
@@ -90,8 +91,8 @@ export const FormMultiSelectFieldInput = ({
   hint,
   dropdownWidth,
 }: FormMultiSelectFieldInputProps) => {
-  const instanceId = useId();
   const { theme } = useContext(ThemeContext);
+  const instanceId = useId();
 
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const { removeFocusItemFromFocusStackById } =
@@ -214,6 +215,7 @@ export const FormMultiSelectFieldInput = ({
         <FormFieldInputInnerContainer
           formFieldInputInstanceId={instanceId}
           hasRightElement={isDefined(VariablePicker) && !readonly}
+          hoverable={!readonly}
         >
           {draftValue.type === 'static' ? (
             readonly ? (
@@ -224,7 +226,9 @@ export const FormMultiSelectFieldInput = ({
                     options={selectedOptions}
                   />
                 ) : (
-                  <StyledPlaceholder />
+                  <StyledPlaceholderContainer>
+                    <FormFieldPlaceholder />
+                  </StyledPlaceholderContainer>
                 )}
                 <IconChevronDown
                   size={theme.icon.size.md}
@@ -244,7 +248,11 @@ export const FormMultiSelectFieldInput = ({
                     options={selectedOptions}
                   />
                 ) : (
-                  <StyledPlaceholder>{placeholderText}</StyledPlaceholder>
+                  <StyledPlaceholderContainer>
+                    <FormFieldPlaceholder>
+                      {placeholderText}
+                    </FormFieldPlaceholder>
+                  </StyledPlaceholderContainer>
                 )}
                 <IconChevronDown
                   size={theme.icon.size.md}

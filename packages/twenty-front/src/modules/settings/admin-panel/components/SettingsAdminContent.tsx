@@ -7,6 +7,7 @@ import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { t } from '@lingui/core/macro';
 import {
+  IconApps,
   IconHeart,
   IconKey,
   IconSettings2,
@@ -27,6 +28,12 @@ export const SettingsAdminContent = () => {
       title: t`General`,
       Icon: IconSettings2,
       disabled: !canAccessFullAdminPanel && !canImpersonate,
+    },
+    {
+      id: SETTINGS_ADMIN_TABS.APPS,
+      title: t`Apps`,
+      Icon: IconApps,
+      disabled: !canAccessFullAdminPanel,
     },
     {
       id: SETTINGS_ADMIN_TABS.AI,

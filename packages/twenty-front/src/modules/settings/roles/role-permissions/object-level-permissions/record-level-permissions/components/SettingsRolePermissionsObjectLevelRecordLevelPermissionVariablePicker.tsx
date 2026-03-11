@@ -1,10 +1,9 @@
 /* @license Enterprise */
 
-import { useContext } from 'react';
 import { styled } from '@linaria/react';
 import { IconVariablePlus } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useContext } from 'react';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
 import { SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelect } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelect';
@@ -15,15 +14,13 @@ const StyledRecordLevelPermissionPickerContainer = styled.div<{
   readonly?: boolean;
 }>`
   align-items: center;
-  display: flex;
-  justify-content: center;
-
   background-color: ${({ multiline }) =>
     multiline
       ? 'transparent'
       : themeCssVariables.background.transparent.lighter};
   border: ${({ multiline }) =>
     multiline ? 'none' : `1px solid ${themeCssVariables.border.color.medium}`};
+
   border-bottom-right-radius: ${({ multiline }) =>
     multiline ? '0' : themeCssVariables.border.radius.sm};
   border-radius: ${({ multiline }) =>
@@ -35,6 +32,8 @@ const StyledRecordLevelPermissionPickerContainer = styled.div<{
       ? themeCssVariables.font.color.primary
       : themeCssVariables.font.color.tertiary};
   cursor: ${({ multiline }) => (multiline ? 'default' : 'pointer')};
+  display: flex;
+  justify-content: center;
   padding: ${({ multiline }) =>
     multiline
       ? `${themeCssVariables.spacing['0.5']} ${themeCssVariables.spacing[0]}`

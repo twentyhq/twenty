@@ -40,34 +40,36 @@ const StyledLabel = styled.label`
   margin-bottom: ${themeCssVariables.spacing[1]};
 `;
 
-const StyledTextArea = styled(TextareaAutosize)`
-  background-color: ${themeCssVariables.background.transparent.lighter};
-  border: 1px solid ${themeCssVariables.border.color.medium};
-  border-radius: ${themeCssVariables.border.radius.sm};
-  box-sizing: border-box;
-  color: ${themeCssVariables.font.color.primary};
-  font-family: inherit;
-  font-size: ${themeCssVariables.font.size.md};
-  font-weight: ${themeCssVariables.font.weight.regular};
-  line-height: 16px;
-  overflow: auto;
-  padding: ${themeCssVariables.spacing[2]};
-  resize: none;
-  width: 100%;
-
-  &:focus {
-    outline: none;
-    box-shadow: 0px 0px 0px 3px ${themeCssVariables.color.transparent.blue2};
-    border-color: ${themeCssVariables.color.blue};
-  }
-
-  &::placeholder {
-    color: ${themeCssVariables.font.color.light};
+const StyledTextAreaContainer = styled.div`
+  > textarea {
+    background-color: ${themeCssVariables.background.transparent.lighter};
+    border: 1px solid ${themeCssVariables.border.color.medium};
+    border-radius: ${themeCssVariables.border.radius.sm};
+    box-sizing: border-box;
+    color: ${themeCssVariables.font.color.primary};
+    font-family: inherit;
+    font-size: ${themeCssVariables.font.size.md};
     font-weight: ${themeCssVariables.font.weight.regular};
-  }
+    line-height: 16px;
+    overflow: auto;
+    padding: ${themeCssVariables.spacing[2]};
+    resize: none;
+    width: 100%;
 
-  &:disabled {
-    color: ${themeCssVariables.font.color.tertiary};
+    &:focus {
+      outline: none;
+      box-shadow: 0px 0px 0px 3px ${themeCssVariables.color.transparent.blue2};
+      border-color: ${themeCssVariables.color.blue};
+    }
+
+    &::placeholder {
+      color: ${themeCssVariables.font.color.light};
+      font-weight: ${themeCssVariables.font.weight.regular};
+    }
+
+    &:disabled {
+      color: ${themeCssVariables.font.color.tertiary};
+    }
   }
 `;
 
@@ -115,22 +117,24 @@ export const TextArea = ({
     <StyledContainer>
       {label && <StyledLabel htmlFor={instanceId}>{label}</StyledLabel>}
 
-      <StyledTextArea
-        id={instanceId}
-        placeholder={placeholder}
-        maxRows={maxRows}
-        minRows={computedMinRows}
-        value={value}
-        onChange={(event) =>
-          onChange?.(turnIntoEmptyStringIfWhitespacesOnly(event.target.value))
-        }
-        onFocus={handleFocus}
-        onBlur={handleBlur}
-        disabled={disabled}
-        className={className}
-        readOnly={readOnly}
-        style={isDefined(height) ? { height } : undefined}
-      />
+      <StyledTextAreaContainer>
+        <TextareaAutosize
+          id={instanceId}
+          placeholder={placeholder}
+          maxRows={maxRows}
+          minRows={computedMinRows}
+          value={value}
+          onChange={(event) =>
+            onChange?.(turnIntoEmptyStringIfWhitespacesOnly(event.target.value))
+          }
+          onFocus={handleFocus}
+          onBlur={handleBlur}
+          disabled={disabled}
+          className={className}
+          readOnly={readOnly}
+          style={isDefined(height) ? { height } : undefined}
+        />
+      </StyledTextAreaContainer>
     </StyledContainer>
   );
 };

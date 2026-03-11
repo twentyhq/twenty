@@ -21,7 +21,7 @@ const StyledTableRows = styled.div`
   padding-top: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledCard = styled(Card)`
+const StyledCardContainer = styled.div`
   margin-bottom: ${themeCssVariables.spacing[4]};
 `;
 
@@ -59,21 +59,23 @@ export const SettingsRolePermissionsToolSection = ({
     <Section>
       <H2Title title={t`Actions`} description={t`Actions permissions`} />
       {shouldShowAllAccessToggle && (
-        <StyledCard rounded>
-          <SettingsOptionCardContentToggle
-            Icon={IconTool}
-            title={t`All Actions Access`}
-            description={t`Grants permission to perform all available actions without restriction`}
-            checked={settingsDraftRole.canAccessAllTools}
-            disabled={!isEditable}
-            onChange={() => {
-              setSettingsDraftRole({
-                ...settingsDraftRole,
-                canAccessAllTools: !settingsDraftRole.canAccessAllTools,
-              });
-            }}
-          />
-        </StyledCard>
+        <StyledCardContainer>
+          <Card rounded>
+            <SettingsOptionCardContentToggle
+              Icon={IconTool}
+              title={t`All Actions Access`}
+              description={t`Grants permission to perform all available actions without restriction`}
+              checked={settingsDraftRole.canAccessAllTools}
+              disabled={!isEditable}
+              onChange={() => {
+                setSettingsDraftRole({
+                  ...settingsDraftRole,
+                  canAccessAllTools: !settingsDraftRole.canAccessAllTools,
+                });
+              }}
+            />
+          </Card>
+        </StyledCardContainer>
       )}
       <AnimatedExpandableContainer
         isExpanded={

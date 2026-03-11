@@ -80,7 +80,7 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
   flatFieldMetadataMaps,
   shouldIgnoreSoftDeleteDefaultFilter,
 }: {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
   record: any;
   filter: RecordGqlOperationFilter;
   flatObjectMetadata: FlatObjectMetadata;
@@ -373,6 +373,13 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
       }
       case FieldMetadataType.ACTOR: {
         const actorFilter = filterValue as ActorFilter;
+
+        if (isDefined(actorFilter.source)) {
+          return isMatchingSelectFilter({
+            selectFilter: actorFilter.source,
+            value: recordFieldValue.source,
+          });
+        }
 
         return (
           actorFilter.name === undefined ||

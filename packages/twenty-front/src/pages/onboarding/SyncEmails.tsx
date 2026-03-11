@@ -22,8 +22,7 @@ import { AppPath, ConnectedAccountProvider } from 'twenty-shared/types';
 import { IconGoogle, IconMicrosoft } from 'twenty-ui/display';
 import { MainButton } from 'twenty-ui/input';
 import { ClickToActionLink } from 'twenty-ui/navigation';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   CalendarChannelVisibility,
   MessageChannelVisibility,
@@ -35,9 +34,9 @@ import { AuthenticatedMethod } from '@/auth/types/AuthenticatedMethod.enum';
 const StyledSyncEmailsContainer = styled.div`
   display: flex;
   flex-direction: row;
-  width: 100%;
-  margin: ${themeCssVariables.spacing[8]} 0;
   gap: ${themeCssVariables.spacing[2]};
+  margin: ${themeCssVariables.spacing[8]} 0;
+  width: 100%;
 `;
 
 const StyledActionLinkContainer = styled.div`

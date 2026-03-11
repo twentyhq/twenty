@@ -10,9 +10,9 @@ type EventFieldDiffLabelProps = {
 
 const StyledUpdatedFieldContainer = styled.div`
   align-items: center;
+  color: ${themeCssVariables.font.color.tertiary};
   display: flex;
   gap: ${themeCssVariables.spacing[1]};
-  color: ${themeCssVariables.font.color.tertiary};
 `;
 
 const StyledUpdatedFieldIconContainer = styled.div`

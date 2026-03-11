@@ -3,8 +3,7 @@ import { useContext, useState } from 'react';
 
 import { IconBrain, IconChevronDown, IconChevronUp } from 'twenty-ui/display';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
-import { ThemeContext } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { ShimmeringText } from '@/ai/components/ShimmeringText';
 import { t } from '@lingui/core/macro';
@@ -24,9 +23,9 @@ const StyledThinkingText = styled.div`
 
 const StyledReasoningContainer = styled.div`
   background: ${themeCssVariables.background.transparent.lighter};
+  border: 1px solid ${themeCssVariables.border.color.light};
   border-radius: ${themeCssVariables.border.radius.sm};
   padding: ${themeCssVariables.spacing[3]};
-  border: 1px solid ${themeCssVariables.border.color.light};
 `;
 
 const StyledReasoningText = styled.div`
@@ -55,8 +54,8 @@ const StyledToggleButton = styled.div`
 `;
 
 const StyledIconContainer = styled.div`
-  display: flex;
   align-items: center;
+  display: flex;
   gap: ${themeCssVariables.spacing[1]};
 `;
 
