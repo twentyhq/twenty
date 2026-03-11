@@ -188,13 +188,20 @@ IMPORTANT: Use Context7 for code generation, setup or configuration steps, or li
 - Descriptive test names: "should [behavior] when [condition]"
 - Clear mocks between tests with `jest.clearAllMocks()`
 
-## CI Environment (GitHub Actions)
+## Dev Environment Setup
 
-When running in CI, the dev environment is **not** pre-configured. Dependencies are installed but builds, env files, and databases are not set up.
+All environments (CI, Claude Code web, Cursor, local) use one script:
 
-- **Before running tests, builds, lint, type checks, or DB operations**, run: `bash packages/twenty-utils/setup-dev-env.sh`
+```bash
+bash packages/twenty-utils/setup-dev-env.sh
+```
+
+This handles everything: starts Postgres + Redis (auto-detects local services vs Docker), creates databases, and copies `.env` files. Idempotent — safe to run multiple times.
+
+- `--docker` — force Docker mode (uses `packages/twenty-docker/docker-compose.dev.yml`)
+- `--down` — stop services
+- `--reset` — wipe data and restart fresh
 - **Skip the setup script** for tasks that only read code — architecture questions, code review, documentation, etc.
-- The script is idempotent and safe to run multiple times.
 
 ## Important Files
 - `nx.json` - Nx workspace configuration with task definitions
