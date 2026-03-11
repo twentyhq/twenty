@@ -61,10 +61,6 @@ export class WorkspaceMigrationRunnerService {
           workspaceId,
         ),
       );
-      // TODO challenge and explo mutating a isSdkClientLayertoBuilt in related application instead
-      asyncOperations.push(
-        this.logicFunctionDriver.invalidateSdkLayer(workspaceId),
-      );
     }
 
     const viewRelatedFlatMapsKeys: (keyof AllFlatEntityMaps)[] = [
@@ -257,6 +253,11 @@ export class WorkspaceMigrationRunnerService {
       await this.invalidateCache({
         allFlatEntityMapsKeys,
         workspaceId,
+      });
+
+      await this.logicFunctionDriver.invalidateSdkLayer({
+        workspaceId,
+        applicationUniversalIdentifier,
       });
 
       this.logger.timeEnd('Runner', 'Total execution');

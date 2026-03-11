@@ -15,7 +15,7 @@ export class DisabledDriver implements LogicFunctionDriver {
 
   async invalidateSdkLayer(_params: {
     workspaceId: string;
-    applicationUniversalIdentifier?: string;
+    applicationUniversalIdentifier: string;
   }): Promise<void> {
     // No-op when disabled
   }

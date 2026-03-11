@@ -39,8 +39,18 @@ export class LocalDriver implements LogicFunctionDriver {
     return join(LOGIC_FUNCTION_EXECUTOR_TMPDIR_FOLDER, 'deps', checksum);
   }
 
-  private getSdkLayerPath(workspaceId: string): string {
-    return join(LOGIC_FUNCTION_EXECUTOR_TMPDIR_FOLDER, 'sdk', workspaceId);
+  private getSdkLayerPath({
+    workspaceId,
+    applicationUniversalIdentifier,
+  }: {
+    workspaceId: string;
+    applicationUniversalIdentifier: string;
+  }): string {
+    return join(
+      LOGIC_FUNCTION_EXECUTOR_TMPDIR_FOLDER,
+      'sdk',
+      `${workspaceId}-${applicationUniversalIdentifier}`,
+    );
   }
 
   private async ensureDepsLayer({
@@ -70,10 +80,15 @@ export class LocalDriver implements LogicFunctionDriver {
 
   private async ensureSdkLayer({
     flatApplication,
+    applicationUniversalIdentifier,
   }: {
     flatApplication: FlatApplication;
+    applicationUniversalIdentifier: string;
   }): Promise<void> {
-    const sdkLayerPath = this.getSdkLayerPath(flatApplication.workspaceId);
+    const sdkLayerPath = this.getSdkLayerPath({
+      workspaceId: flatApplication.workspaceId,
+      applicationUniversalIdentifier,
+    });
 
     try {
       await fs.access(sdkLayerPath);
@@ -108,8 +123,17 @@ export class LocalDriver implements LogicFunctionDriver {
 
   async delete() {}
 
-  async invalidateSdkLayer(workspaceId: string): Promise<void> {
-    const sdkLayerPath = this.getSdkLayerPath(workspaceId);
+  async invalidateSdkLayer({
+    workspaceId,
+    applicationUniversalIdentifier,
+  }: {
+    workspaceId: string;
+    applicationUniversalIdentifier: string;
+  }): Promise<void> {
+    const sdkLayerPath = this.getSdkLayerPath({
+      workspaceId,
+      applicationUniversalIdentifier,
+    });
 
     await fs.rm(sdkLayerPath, { recursive: true, force: true });
   }
@@ -125,7 +149,7 @@ export class LocalDriver implements LogicFunctionDriver {
       flatApplication,
       applicationUniversalIdentifier,
     });
-    await this.ensureSdkLayer({ flatApplication });
+    await this.ensureSdkLayer({ flatApplication, applicationUniversalIdentifier });
   }
 
   // Symlinks everything from the deps layer except twenty-client-sdk,
@@ -133,16 +157,21 @@ export class LocalDriver implements LogicFunctionDriver {
   private async assembleNodeModules({
     sourceTemporaryDir,
     flatApplication,
+    applicationUniversalIdentifier,
   }: {
     sourceTemporaryDir: string;
     flatApplication: FlatApplication;
+    applicationUniversalIdentifier: string;
   }): Promise<void> {
     const depsNodeModules = join(
       this.getDepsLayerPath(flatApplication),
       'node_modules',
     );
     const sdkNodeModules = join(
-      this.getSdkLayerPath(flatApplication.workspaceId),
+      this.getSdkLayerPath({
+        workspaceId: flatApplication.workspaceId,
+        applicationUniversalIdentifier,
+      }),
       'node_modules',
     );
     const execNodeModules = join(sourceTemporaryDir, 'node_modules');
@@ -203,6 +232,7 @@ export class LocalDriver implements LogicFunctionDriver {
       await this.assembleNodeModules({
         sourceTemporaryDir,
         flatApplication,
+        applicationUniversalIdentifier,
       });
 
       let logs = '';

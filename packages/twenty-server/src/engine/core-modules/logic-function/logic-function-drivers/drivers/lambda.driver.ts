@@ -257,7 +257,10 @@ export class LambdaDriver implements LogicFunctionDriver {
     applicationUniversalIdentifier: string;
     stubSourcePath?: string;
   }): Promise<string> {
-    const layerName = this.getSdkLayerName(flatApplication.workspaceId);
+    const layerName = this.getSdkLayerName({
+      workspaceId: flatApplication.workspaceId,
+      applicationUniversalIdentifier,
+    });
     const existingArn = await this.findExistingLayerArn(layerName);
 
     if (isDefined(existingArn)) {
@@ -349,10 +352,29 @@ export class LambdaDriver implements LogicFunctionDriver {
 
   // We only ever publish a single layer version, but we paginate defensively
   // to handle potential duplicates from concurrent build() race conditions.
-  async invalidateSdkLayer(workspaceId: string): Promise<void> {
-    const layerName = this.getSdkLayerName(workspaceId);
+  async invalidateSdkLayer({
+    workspaceId,
+    applicationUniversalIdentifier,
+  }: {
+    workspaceId: string;
+    applicationUniversalIdentifier: string;
+  }): Promise<void> {
+    const layerName = this.getSdkLayerName({
+      workspaceId,
+      applicationUniversalIdentifier,
+    });
     const lambdaClient = await this.getLambdaClient();
 
+    await this.deleteAllLayerVersions({ lambdaClient, layerName });
+  }
+
+  private async deleteAllLayerVersions({
+    lambdaClient,
+    layerName,
+  }: {
+    lambdaClient: Lambda;
+    layerName: string;
+  }): Promise<void> {
     let marker: string | undefined;
 
     do {
@@ -381,10 +403,15 @@ export class LambdaDriver implements LogicFunctionDriver {
     } while (isDefined(marker));
   }
 
-  private async isAlreadyBuilt(
-    flatLogicFunction: FlatLogicFunction,
-    flatApplication: FlatApplication,
-  ) {
+  private async isAlreadyBuilt({
+    flatLogicFunction,
+    flatApplication,
+    applicationUniversalIdentifier,
+  }: {
+    flatLogicFunction: FlatLogicFunction;
+    flatApplication: FlatApplication;
+    applicationUniversalIdentifier: string;
+  }) {
     const lambdaExecutor = await this.getLambdaExecutor(flatLogicFunction);
 
     if (!isDefined(lambdaExecutor)) {
@@ -400,7 +427,10 @@ export class LambdaDriver implements LogicFunctionDriver {
     }
 
     const depsLayerName = this.getDepsLayerName(flatApplication);
-    const sdkLayerName = this.getSdkLayerName(flatApplication.workspaceId);
+    const sdkLayerName = this.getSdkLayerName({
+      workspaceId: flatApplication.workspaceId,
+      applicationUniversalIdentifier,
+    });
 
     const hasExpectedLayers =
       layers.some((layer) => layer.Arn?.includes(depsLayerName)) &&
@@ -424,7 +454,13 @@ export class LambdaDriver implements LogicFunctionDriver {
     flatApplication: FlatApplication;
     applicationUniversalIdentifier: string;
   }) {
-    if (await this.isAlreadyBuilt(flatLogicFunction, flatApplication)) {
+    if (
+      await this.isAlreadyBuilt({
+        flatLogicFunction,
+        flatApplication,
+        applicationUniversalIdentifier,
+      })
+    ) {
       return;
     }
 
