@@ -151,9 +151,10 @@ export const PageLayoutRendererContent = () => {
             )}
             defaultEnableXScroll={false}
           >
-            {isDefined(activeTabId) && (
-              <PageLayoutMainContent tabId={activeTabId} />
-            )}
+            {isDefined(activeTabId) &&
+              currentPageLayout.tabs.some(
+                (tab) => tab.id === activeTabId,
+              ) && <PageLayoutMainContent tabId={activeTabId} />}
           </ScrollWrapper>
         </StyledScrollWrapperContainer>
       </StyledTabsAndDashboardContainer>
