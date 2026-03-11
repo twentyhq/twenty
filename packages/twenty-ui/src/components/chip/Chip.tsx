@@ -64,12 +64,10 @@ const StyledContainer = styled.div<
   text-decoration: none;
   align-items: center;
 
-  color: ${({ accent, disabled, variant }) =>
+  color: ${({ accent, disabled }) =>
     disabled
       ? themeCssVariables.font.color.light
-      : variant === ChipVariant.Transparent
-        ? 'inherit'
-        : accent === ChipAccent.TextPrimary
+      : accent === ChipAccent.TextPrimary
         ? themeCssVariables.font.color.primary
         : themeCssVariables.font.color.secondary};
 
