@@ -2,6 +2,7 @@ import { UseFilters, UseGuards } from '@nestjs/common';
 import {
   Args,
   Context,
+  Float,
   Mutation,
   Parent,
   Query,
@@ -9,6 +10,7 @@ import {
 } from '@nestjs/graphql';
 
 import { isArray } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -16,6 +18,7 @@ import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { resolveOverridableEntityProperty } from 'src/engine/metadata-modules/utils/resolve-overridable-entity-property.util';
 import { CreateViewFieldGroupInput } from 'src/engine/metadata-modules/view-field-group/dtos/inputs/create-view-field-group.input';
 import { DeleteViewFieldGroupInput } from 'src/engine/metadata-modules/view-field-group/dtos/inputs/delete-view-field-group.input';
 import { DestroyViewFieldGroupInput } from 'src/engine/metadata-modules/view-field-group/dtos/inputs/destroy-view-field-group.input';
@@ -38,6 +41,29 @@ export class ViewFieldGroupResolver {
     private readonly viewFieldGroupService: ViewFieldGroupService,
     private readonly fieldsWidgetUpsertService: FieldsWidgetUpsertService,
   ) {}
+
+  @ResolveField(() => String)
+  name(@Parent() viewFieldGroup: ViewFieldGroupDTO): string {
+    return resolveOverridableEntityProperty(viewFieldGroup, 'name');
+  }
+
+  @ResolveField(() => Float)
+  position(@Parent() viewFieldGroup: ViewFieldGroupDTO): number {
+    return resolveOverridableEntityProperty(viewFieldGroup, 'position');
+  }
+
+  @ResolveField(() => Boolean)
+  isVisible(@Parent() viewFieldGroup: ViewFieldGroupDTO): boolean {
+    return resolveOverridableEntityProperty(viewFieldGroup, 'isVisible');
+  }
+
+  @ResolveField(() => Boolean)
+  isOverridden(@Parent() viewFieldGroup: ViewFieldGroupDTO): boolean {
+    return (
+      isDefined(viewFieldGroup.overrides) &&
+      Object.keys(viewFieldGroup.overrides).length > 0
+    );
+  }
 
   @Query(() => [ViewFieldGroupDTO])
   @UseGuards(NoPermissionGuard)

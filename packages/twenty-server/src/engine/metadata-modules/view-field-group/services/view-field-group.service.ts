@@ -157,6 +157,10 @@ export class ViewFieldGroupService {
       fromUpdateViewFieldGroupInputToFlatViewFieldGroupToUpdateOrThrow({
         flatViewFieldGroupMaps: existingFlatViewFieldGroupMaps,
         updateViewFieldGroupInput,
+        callerApplicationUniversalIdentifier:
+          workspaceCustomFlatApplication.universalIdentifier,
+        workspaceCustomApplicationUniversalIdentifier:
+          workspaceCustomFlatApplication.universalIdentifier,
       });
 
     const validateAndBuildResult =

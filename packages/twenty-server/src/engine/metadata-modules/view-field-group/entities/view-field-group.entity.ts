@@ -14,13 +14,19 @@ import {
 
 import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
-import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
+import { OverridableEntity } from 'src/engine/workspace-manager/types/overridable-entity';
+
+export type ViewFieldGroupOverrides = {
+  name?: string;
+  position?: number;
+  isVisible?: boolean;
+};
 
 @Entity({ name: 'viewFieldGroup', schema: 'core' })
 @Index('IDX_VIEW_FIELD_GROUP_WORKSPACE_ID_VIEW_ID', ['workspaceId', 'viewId'])
 @Index('IDX_VIEW_FIELD_GROUP_VIEW_ID', ['viewId'])
 export class ViewFieldGroupEntity
-  extends SyncableEntity
+  extends OverridableEntity<ViewFieldGroupOverrides>
   implements Required<ViewFieldGroupEntity>
 {
   @PrimaryGeneratedColumn('uuid')
