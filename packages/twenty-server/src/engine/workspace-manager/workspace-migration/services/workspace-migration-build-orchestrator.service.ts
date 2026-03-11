@@ -37,6 +37,7 @@ import { WorkspaceMigrationViewGroupActionsBuilderService } from 'src/engine/wor
 import { WorkspaceMigrationViewActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view/workspace-migration-view-actions-builder.service';
 import { WorkspaceMigrationWebhookActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/webhook/workspace-migration-webhook-actions-builder.service';
 import { WorkspaceMigrationViewSortActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-sort/workspace-migration-view-sort-actions.builder.service';
+import { WorkspaceMigrationPermissionFlagActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/permission-flag/workspace-migration-permission-flag-actions-builder.service';
 
 @Injectable()
 export class WorkspaceMigrationBuildOrchestratorService {
@@ -50,6 +51,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
     private readonly workspaceMigrationViewGroupActionsBuilderService: WorkspaceMigrationViewGroupActionsBuilderService,
     private readonly workspaceMigrationViewFieldGroupActionsBuilderService: WorkspaceMigrationViewFieldGroupActionsBuilderService,
     private readonly workspaceMigrationViewSortActionsBuilderService: WorkspaceMigrationViewSortActionsBuilderService,
+    private readonly workspaceMigrationPermissionFlagActionsBuilderService: WorkspaceMigrationPermissionFlagActionsBuilderService,
     private readonly workspaceMigrationLogicFunctionActionsBuilderService: WorkspaceMigrationLogicFunctionActionsBuilderService,
     private readonly workspaceMigrationRoleTargetActionsBuilderService: WorkspaceMigrationRoleTargetActionsBuilderService,
     private readonly workspaceMigrationFieldActionsBuilderService: WorkspaceMigrationFieldActionsBuilderService,
@@ -140,6 +142,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
       flatRowLevelPermissionPredicateMaps,
       flatRowLevelPermissionPredicateGroupMaps,
       flatRoleMaps,
+      flatPermissionFlagMaps,
       flatRoleTargetMaps,
       flatAgentMaps,
       flatSkillMaps,
@@ -481,6 +484,32 @@ export class WorkspaceMigrationBuildOrchestratorService {
       }
     }
 
+    if (isDefined(flatPermissionFlagMaps)) {
+      const { from: fromFlatPermissionFlagMaps, to: toFlatPermissionFlagMaps } =
+        flatPermissionFlagMaps;
+
+      const permissionFlagResult =
+        await this.workspaceMigrationPermissionFlagActionsBuilderService.validateAndBuild(
+          {
+            additionalCacheDataMaps,
+            from: fromFlatPermissionFlagMaps,
+            to: toFlatPermissionFlagMaps,
+            buildOptions,
+            dependencyOptimisticFlatEntityMaps: optimisticAllFlatEntityMaps,
+            workspaceId,
+          },
+        );
+
+      if (permissionFlagResult.status === 'fail') {
+        orchestratorFailureReport.permissionFlag.push(
+          ...permissionFlagResult.errors,
+        );
+      } else {
+        orchestratorActionsReport.permissionFlag =
+          permissionFlagResult.actions;
+      }
+    }
+
     if (isDefined(flatRoleTargetMaps)) {
       const { from: fromFlatRoleTargetMaps, to: toFlatRoleTargetMaps } =
         flatRoleTargetMaps;
@@ -809,6 +838,12 @@ export class WorkspaceMigrationBuildOrchestratorService {
           ...aggregatedOrchestratorActionsReport.roleTarget.delete,
           ...aggregatedOrchestratorActionsReport.roleTarget.create,
           ...aggregatedOrchestratorActionsReport.roleTarget.update,
+          ///
+
+          // Permission flags
+          ...aggregatedOrchestratorActionsReport.permissionFlag.delete,
+          ...aggregatedOrchestratorActionsReport.permissionFlag.create,
+          ...aggregatedOrchestratorActionsReport.permissionFlag.update,
           ///
 
           // Agents
