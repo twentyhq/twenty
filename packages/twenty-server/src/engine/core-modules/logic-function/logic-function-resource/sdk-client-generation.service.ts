@@ -15,7 +15,7 @@ import { createZipFile } from 'src/engine/core-modules/logic-function/logic-func
 import { TemporaryDirManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/temporary-dir-manager';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
-const SDK_CLIENT_ARCHIVE_NAME = 'twenty-client-sdk-dist.zip';
+const SDK_CLIENT_ARCHIVE_NAME = 'twenty-client-sdk.zip';
 
 const getStubPackageRoot = (): string => {
   const coreEntryPath = require.resolve('twenty-client-sdk/core');
@@ -31,9 +31,9 @@ export class SdkClientGenerationService {
     private readonly applicationRepository: Repository<ApplicationEntity>,
   ) {}
 
-  // Copies the stub twenty-client-sdk dist, regenerates core.mjs/core.cjs
-  // with the application-scoped schema, archives the whole dist, and
-  // uploads the single archive to file storage.
+  // Copies the stub twenty-client-sdk package, regenerates core.mjs/core.cjs
+  // with the application-scoped schema, archives the full package (like an
+  // npm publish), and uploads the archive to file storage.
   async generateAndStore({
     workspaceId,
     applicationId,
@@ -53,13 +53,17 @@ export class SdkClientGenerationService {
       const stubPackageRoot = getStubPackageRoot();
       const tempPackageRoot = join(sourceTemporaryDir, 'twenty-client-sdk');
 
-      await fs.cp(stubPackageRoot, tempPackageRoot, { recursive: true });
+      await fs.cp(stubPackageRoot, tempPackageRoot, {
+        recursive: true,
+        filter: (source) =>
+          !source.includes('node_modules') && !source.includes('src'),
+      });
 
       await replaceCoreClient({ packageRoot: tempPackageRoot, schema });
 
       const archivePath = join(sourceTemporaryDir, SDK_CLIENT_ARCHIVE_NAME);
 
-      await createZipFile(join(tempPackageRoot, 'dist'), archivePath);
+      await createZipFile(tempPackageRoot, archivePath);
 
       await this.fileStorageService.writeFile({
         workspaceId,
@@ -80,8 +84,8 @@ export class SdkClientGenerationService {
     }
   }
 
-  // Downloads the archive from file storage and extracts it into the
-  // target twenty-client-sdk package directory, replacing the stub dist.
+  // Downloads the archive from file storage and extracts the full
+  // twenty-client-sdk package into targetPackagePath.
   async downloadAndExtractToPackage({
     workspaceId,
     applicationUniversalIdentifier,
@@ -106,21 +110,39 @@ export class SdkClientGenerationService {
 
       await fs.writeFile(archivePath, await streamToBuffer(archiveStream));
 
-      const distPath = join(targetPackagePath, 'dist');
-
-      await fs.rm(distPath, { recursive: true, force: true });
+      await fs.rm(targetPackagePath, { recursive: true, force: true });
+      await fs.mkdir(targetPackagePath, { recursive: true });
 
       const { default: unzipper } = await import('unzipper');
 
       await new Promise<void>((resolve, reject) => {
         createReadStream(archivePath)
-          .pipe(unzipper.Extract({ path: distPath }))
+          .pipe(unzipper.Extract({ path: targetPackagePath }))
           .on('close', resolve)
           .on('error', reject);
       });
     } finally {
       await temporaryDirManager.clean();
     }
+  }
+
+  // Downloads the archive as a raw Buffer (for consumers that need
+  // the zip itself, e.g. Lambda layer publishing).
+  async downloadArchiveBuffer({
+    workspaceId,
+    applicationUniversalIdentifier,
+  }: {
+    workspaceId: string;
+    applicationUniversalIdentifier: string;
+  }): Promise<Buffer> {
+    const archiveStream = await this.fileStorageService.readFile({
+      workspaceId,
+      applicationUniversalIdentifier,
+      fileFolder: FileFolder.GeneratedSdkClient,
+      resourcePath: SDK_CLIENT_ARCHIVE_NAME,
+    });
+
+    return streamToBuffer(archiveStream);
   }
 
   async markSdkLayerFresh({

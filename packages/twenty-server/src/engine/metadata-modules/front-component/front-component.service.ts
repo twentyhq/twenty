@@ -384,25 +384,6 @@ export class FrontComponentService {
         targetPackagePath: sdkPackagePath,
       });
 
-      const stubPackageJson = join(sdkPackagePath, 'package.json');
-      const hasPackageJson = await fs
-        .access(stubPackageJson)
-        .then(() => true)
-        .catch(() => false);
-
-      if (!hasPackageJson) {
-        await fs.writeFile(
-          stubPackageJson,
-          JSON.stringify({
-            name: 'twenty-client-sdk',
-            exports: {
-              '.': { import: './dist/index.mjs' },
-              './core': { import: './dist/core.mjs' },
-            },
-          }),
-        );
-      }
-
       const result = await build({
         entryPoints: [entryPath],
         bundle: true,

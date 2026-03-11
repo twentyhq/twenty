@@ -171,15 +171,15 @@ export class LambdaDriver implements LogicFunctionDriver {
 
   private async publishLayer({
     layerName,
-    zipPath,
+    zipBuffer,
   }: {
     layerName: string;
-    zipPath: string;
+    zipBuffer: Buffer;
   }): Promise<string> {
     const params: PublishLayerVersionCommandInput = {
       LayerName: layerName,
       Content: {
-        ZipFile: await fs.readFile(zipPath),
+        ZipFile: zipBuffer,
       },
       CompatibleRuntimes: [
         LogicFunctionRuntime.NODE18,
@@ -227,7 +227,9 @@ export class LambdaDriver implements LogicFunctionDriver {
 
     await createZipFile(sourceTemporaryDir, lambdaZipPath);
 
-    const arn = await this.publishLayer({ layerName, zipPath: lambdaZipPath });
+    const zipBuffer = await fs.readFile(lambdaZipPath);
+
+    const arn = await this.publishLayer({ layerName, zipBuffer });
 
     await temporaryDirManager.clean();
 
@@ -259,30 +261,18 @@ export class LambdaDriver implements LogicFunctionDriver {
       layerName,
     });
 
-    const temporaryDirManager = new TemporaryDirManager();
-    const { sourceTemporaryDir, lambdaZipPath } =
-      await temporaryDirManager.init();
+    const sdkArchiveBuffer =
+      await this.sdkClientGenerationService.downloadArchiveBuffer({
+        workspaceId: flatApplication.workspaceId,
+        applicationUniversalIdentifier,
+      });
 
-    const targetSdkPath = join(
-      sourceTemporaryDir,
-      'nodejs',
-      'node_modules',
-      'twenty-client-sdk',
-    );
-
-    await fs.mkdir(targetSdkPath, { recursive: true });
-
-    await this.sdkClientGenerationService.downloadAndExtractToPackage({
-      workspaceId: flatApplication.workspaceId,
-      applicationUniversalIdentifier,
-      targetPackagePath: targetSdkPath,
+    const zipBuffer = await this.reprefixZipEntries({
+      sourceBuffer: sdkArchiveBuffer,
+      prefix: 'nodejs/node_modules/twenty-client-sdk',
     });
 
-    await createZipFile(sourceTemporaryDir, lambdaZipPath);
-
-    const arn = await this.publishLayer({ layerName, zipPath: lambdaZipPath });
-
-    await temporaryDirManager.clean();
+    const arn = await this.publishLayer({ layerName, zipBuffer });
 
     await this.sdkClientGenerationService.markSdkLayerFresh({
       applicationId: flatApplication.id,
@@ -290,6 +280,39 @@ export class LambdaDriver implements LogicFunctionDriver {
     });
 
     return arn;
+  }
+
+  // Re-wraps zip entries under a new prefix path without extracting to disk.
+  private async reprefixZipEntries({
+    sourceBuffer,
+    prefix,
+  }: {
+    sourceBuffer: Buffer;
+    prefix: string;
+  }): Promise<Buffer> {
+    const { default: unzipper } = await import('unzipper');
+    const archiver = (await import('archiver')).default;
+
+    const directory = await unzipper.Open.buffer(sourceBuffer);
+    const archive = archiver('zip', { zlib: { level: 9 } });
+
+    const chunks: Buffer[] = [];
+
+    archive.on('data', (chunk: Buffer) => chunks.push(chunk));
+
+    for (const entry of directory.files) {
+      if (entry.type === 'Directory') {
+        continue;
+      }
+
+      archive.append(entry.stream(), {
+        name: `${prefix}/${entry.path}`,
+      });
+    }
+
+    await archive.finalize();
+
+    return Buffer.concat(chunks);
   }
 
   private async getLambdaExecutor(flatLogicFunction: FlatLogicFunction) {
