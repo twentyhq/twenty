@@ -18,10 +18,7 @@ const program = new Command(packageJson.name)
     '-m, --minimal',
     'Create only core entities (application-config and default-role)',
   )
-  .option(
-    '-y, --yes',
-    'Skip interactive prompts and use defaults',
-  )
+  .option('-y, --yes', 'Skip interactive prompts and use defaults')
   .helpOption('-h, --help', 'Display this help message.')
   .action(
     async (
