@@ -201,8 +201,6 @@ export const useRecordShowPagePagination = (
   };
 
   const navigateToIndexView = () => {
-    setLastShowPageRecordId(objectRecordId);
-
     navigate(
       AppPath.RecordIndexPage,
       {
@@ -212,6 +210,8 @@ export const useRecordShowPagePagination = (
         viewId: viewIdQueryParam,
       },
     );
+
+    setLastShowPageRecordId(objectRecordId);
   };
 
   const rankInView = recordIdsInCache.findIndex((id) => id === objectRecordId);
