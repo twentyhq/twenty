@@ -13,7 +13,7 @@ const StyledButtonLink = styled.a`
   padding: 0 ${themeCssVariables.spacing[1]};
   text-decoration: none;
 
-  :hover {
+  &:hover {
     color: ${themeCssVariables.font.color.tertiary};
     cursor: pointer;
   }

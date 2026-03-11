@@ -59,11 +59,6 @@ const StyledDisplayModeContainer = styled.div`
   font-family: inherit;
   padding-inline: ${themeCssVariables.spacing[2]};
   width: 100%;
-
-  &:hover,
-  &[data-open='true'] {
-    background-color: ${themeCssVariables.background.transparent.lighter};
-  }
 `;
 
 const StyledSelectInputContainer = styled.div`
@@ -220,6 +215,7 @@ export const FormMultiSelectFieldInput = ({
         <FormFieldInputInnerContainer
           formFieldInputInstanceId={instanceId}
           hasRightElement={isDefined(VariablePicker) && !readonly}
+          hoverable={!readonly}
         >
           {draftValue.type === 'static' ? (
             readonly ? (
