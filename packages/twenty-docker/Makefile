@@ -74,6 +74,15 @@ grafana-on-docker: ensure-docker-network
 	-v $(PWD)/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources \
 	grafana/grafana-oss:latest
 
+dev-setup:
+	@bash $(CURDIR)/setup-docker-dev.sh
+
+dev-down:
+	@bash $(CURDIR)/setup-docker-dev.sh --down
+
+dev-reset:
+	@bash $(CURDIR)/setup-docker-dev.sh --reset
+
 opentelemetry-collector-on-docker: ensure-docker-network
 	docker run -d --network $(DOCKER_NETWORK) \
 	--name twenty_otlp_collector \
