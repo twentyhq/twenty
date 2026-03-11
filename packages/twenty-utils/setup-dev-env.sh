@@ -39,11 +39,19 @@ can_use_docker() {
 }
 
 pg_is_up() {
-  pg_isready -h localhost -p 5432 -U postgres -q 2>/dev/null
+  if command -v pg_isready &>/dev/null; then
+    pg_isready -h localhost -p 5432 -U postgres -q 2>/dev/null
+  else
+    PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -c "SELECT 1" &>/dev/null
+  fi
 }
 
 redis_is_up() {
-  redis-cli -h localhost -p 6379 ping 2>/dev/null | grep -q PONG
+  if command -v redis-cli &>/dev/null; then
+    redis-cli -h localhost -p 6379 ping 2>/dev/null | grep -q PONG
+  else
+    (echo PING; sleep 0.1) | nc -q 1 localhost 6379 2>/dev/null | grep -q PONG
+  fi
 }
 
 wait_for_pg() {
@@ -80,7 +88,7 @@ done
 
 # --------------- stop ---------------
 stop_services() {
-  if can_use_docker && docker compose -f "$COMPOSE_FILE" ps --quiet 2>/dev/null | grep -q .; then
+  if can_use_docker && docker compose -f "$COMPOSE_FILE" ps -a --quiet 2>/dev/null | grep -q .; then
     docker compose -f "$COMPOSE_FILE" down "$@"
     return
   fi
@@ -99,7 +107,25 @@ fi
 
 if [ "$ACTION" = "reset" ]; then
   info "Resetting dev services (wiping data)..."
-  stop_services -v 2>/dev/null || stop_services
+  if can_use_docker && docker compose -f "$COMPOSE_FILE" ps -a --quiet 2>/dev/null | grep -q .; then
+    stop_services -v 2>/dev/null || stop_services
+  else
+    stop_services
+    # Wipe local PostgreSQL data
+    if has_local_pg; then
+      info "Dropping local databases..."
+      sudo pg_ctlcluster 16 main start 2>/dev/null || true
+      wait_for_pg
+      sudo -u postgres psql -c 'DROP DATABASE IF EXISTS "default";' 2>/dev/null || true
+      sudo -u postgres psql -c 'DROP DATABASE IF EXISTS "test";' 2>/dev/null || true
+      sudo pg_ctlcluster 16 main stop 2>/dev/null || true
+    fi
+    # Wipe local Redis data
+    if has_local_redis; then
+      info "Flushing local Redis data..."
+      redis-cli flushall 2>/dev/null || true
+    fi
+  fi
 fi
 
 # =============================================================================
@@ -134,7 +160,7 @@ start_redis() {
 
   if [ "$USE_DOCKER" = false ] && has_local_redis; then
     info "Starting local Redis..."
-    sudo service redis-server start 2>/dev/null || redis-server --daemonize yes 2>/dev/null
+    sudo service redis-server start 2>/dev/null || redis-server --daemonize yes 2>/dev/null || true
     wait_for_redis
   elif can_use_docker; then
     info "Starting Redis via Docker..."
@@ -163,10 +189,18 @@ ok "Redis on localhost:6379"
 # 2. Create databases
 # =============================================================================
 info "Creating databases..."
-PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres \
-  -c 'CREATE DATABASE "default";' 2>/dev/null || true
-PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres \
-  -c 'CREATE DATABASE "test";' 2>/dev/null || true
+run_psql() {
+  if command -v psql &>/dev/null; then
+    PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c "$1" 2>/dev/null || true
+  elif can_use_docker; then
+    docker compose -f "$COMPOSE_FILE" exec -T db psql -U postgres -d postgres -c "$1" 2>/dev/null || true
+  else
+    fail "No psql client available"
+    return 1
+  fi
+}
+run_psql 'CREATE DATABASE "default";'
+run_psql 'CREATE DATABASE "test";'
 ok "Databases 'default' and 'test' ready"
 
 # =============================================================================

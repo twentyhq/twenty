@@ -190,7 +190,7 @@ IMPORTANT: Use Context7 for code generation, setup or configuration steps, or li
 
 ## Dev Environment Setup
 
-All environments (CI, Claude Code web, Cursor, local) use one script:
+All dev environments (Claude Code web, Cursor, local) use one script:
 
 ```bash
 bash packages/twenty-utils/setup-dev-env.sh
