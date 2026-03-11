@@ -82,9 +82,10 @@ export const FieldsConfigurationUngroupedEditor = ({
 
             <MenuItem
               LeftIcon={IconNewSection}
-              withIconContainer
               text={t`Add a Section`}
               onClick={onAddGroup}
+              withIconContainer
+              withIconContainerBackground={false}
             />
           </StyledFieldsDroppable>
         )}

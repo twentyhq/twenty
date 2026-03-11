@@ -43,6 +43,7 @@ type MenuItemLeftContentProps = {
   LeftComponent?: ReactNode;
   LeftIcon: IconComponent | null | undefined;
   withIconContainer?: boolean;
+  withIconContainerBackground?: boolean;
   gripMode?: MenuItemDraggableGripMode;
   disabled?: boolean;
   text: ReactNode;
@@ -55,6 +56,7 @@ export const MenuItemLeftContent = ({
   LeftComponent,
   LeftIcon,
   withIconContainer = false,
+  withIconContainerBackground = true,
   text,
   contextualText,
   contextualTextPosition = 'left',
@@ -73,7 +75,7 @@ export const MenuItemLeftContent = ({
     <StyledMenuItemLeftContent className={className}>
       {gripMode === 'always' &&
         (withIconContainer ? (
-          <MenuItemIconBoxContainer>
+          <MenuItemIconBoxContainer hasBackground={withIconContainerBackground}>
             <StyledDraggableItem>
               <IconGripVertical
                 size={theme.icon.size.md}
@@ -98,7 +100,11 @@ export const MenuItemLeftContent = ({
           gripIconColor={gripIconColor}
         />
       ) : (
-        <MenuItemIcon Icon={LeftIcon} withContainer={withIconContainer} />
+        <MenuItemIcon
+          Icon={LeftIcon}
+          withContainer={withIconContainer}
+          withContainerBackground={withIconContainerBackground}
+        />
       )}
       {LeftComponent}
       <StyledMenuItemLabel>
