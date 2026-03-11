@@ -122,6 +122,7 @@ export class EnterprisePlanService implements OnModuleInit {
   }
 
   hasValidSignedEnterpriseKey(): boolean {
+    this.refreshKeyPayload();
     return isDefined(this.cachedKeyPayload);
   }
 
