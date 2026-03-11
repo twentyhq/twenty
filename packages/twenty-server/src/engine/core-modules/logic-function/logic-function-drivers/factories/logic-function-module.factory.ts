@@ -41,6 +41,14 @@ export const logicFunctionModuleFactory = async (
         'LOGIC_FUNCTION_LAMBDA_SUBHOSTING_ROLE',
       );
 
+      const layerBucket = twentyConfigService.get(
+        'LOGIC_FUNCTION_LAMBDA_LAYER_BUCKET',
+      );
+
+      const layerBucketRegion = twentyConfigService.get(
+        'LOGIC_FUNCTION_LAMBDA_LAYER_BUCKET_REGION',
+      );
+
       return {
         type: LogicFunctionDriverType.LAMBDA,
         options: {
@@ -56,6 +64,8 @@ export const logicFunctionModuleFactory = async (
           region,
           lambdaRole,
           subhostingRole,
+          layerBucket,
+          layerBucketRegion,
         },
       };
     }

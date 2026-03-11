@@ -77,8 +77,24 @@ const createZip = async (buildDir, zipPath) => {
   return p;
 };
 
+const uploadToPresignedUrl = async (zipPath, presignedUploadUrl) => {
+  const zipBuffer = await fs.readFile(zipPath);
+
+  const response = await fetch(presignedUploadUrl, {
+    method: 'PUT',
+    body: zipBuffer,
+    headers: { 'Content-Type': 'application/zip' },
+  });
+
+  if (!response.ok) {
+    throw new Error(
+      `Failed to upload zip to S3: ${response.status} ${response.statusText}`,
+    );
+  }
+};
+
 export const handler = async (event) => {
-  const { action, packageJson, yarnLock } = event;
+  const { action, packageJson, yarnLock, presignedUploadUrl } = event;
 
   if (action !== 'createLayer') {
     throw new Error(`Unknown action: ${action}`);
@@ -86,6 +102,10 @@ export const handler = async (event) => {
 
   if (!packageJson || !yarnLock) {
     throw new Error('Missing required fields: packageJson, yarnLock');
+  }
+
+  if (!presignedUploadUrl) {
+    throw new Error('Missing required field: presignedUploadUrl');
   }
 
   const randomId = randomBytes(16).toString('hex');
@@ -99,9 +119,9 @@ export const handler = async (event) => {
     await runYarnInstall(nodejsDir);
     await createZip(buildDir, zipPath);
 
-    const zipBase64 = (await fs.readFile(zipPath)).toString('base64');
+    await uploadToPresignedUrl(zipPath, presignedUploadUrl);
 
-    return { zipBase64 };
+    return { success: true };
   } finally {
     await fs.rm(buildDir, { recursive: true, force: true });
     await fs.rm(zipPath, { force: true });

@@ -18,6 +18,8 @@ import {
   ResourceNotFoundException,
   waitUntilFunctionActiveV2,
 } from '@aws-sdk/client-lambda';
+import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { AssumeRoleCommand, STSClient } from '@aws-sdk/client-sts';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -83,10 +85,11 @@ export type YarnInstallLambdaPayload = {
   action: 'createLayer';
   packageJson: string;
   yarnLock: string;
+  presignedUploadUrl: string;
 };
 
 export type YarnInstallLambdaResult = {
-  zipBase64: string;
+  success: boolean;
 };
 
 export type BuilderLambdaPayload = {
@@ -105,6 +108,8 @@ export interface LambdaDriverOptions extends LambdaClientConfig {
   region: string;
   lambdaRole: string;
   subhostingRole?: string;
+  layerBucket: string;
+  layerBucketRegion: string;
 }
 
 export class LambdaDriver implements LogicFunctionDriver {
@@ -166,6 +171,24 @@ export class LambdaDriver implements LogicFunctionDriver {
       secretAccessKey: Credentials.SecretAccessKey,
       sessionToken: Credentials.SessionToken,
     };
+  }
+
+  private async generatePresignedUploadUrl(
+    s3Key: string,
+    expiresIn: number = 300,
+  ): Promise<string> {
+    const s3Client = new S3Client({
+      region: this.options.layerBucketRegion,
+      credentials: this.options.credentials,
+    });
+
+    const putCommand = new PutObjectCommand({
+      Bucket: this.options.layerBucket,
+      Key: s3Key,
+      ContentType: 'application/zip',
+    });
+
+    return getSignedUrl(s3Client, putCommand, { expiresIn });
   }
 
   private async waitFunctionActive(
@@ -372,8 +395,8 @@ export class LambdaDriver implements LogicFunctionDriver {
       ? JSON.parse(result.Payload.transformToString())
       : {};
 
-    if (!parsedResult.zipBase64) {
-      throw new Error('Yarn install Lambda did not return zipBase64');
+    if (!parsedResult.success) {
+      throw new Error('Yarn install Lambda did not report success');
     }
 
     return parsedResult;
@@ -540,18 +563,25 @@ export class LambdaDriver implements LogicFunctionDriver {
 
     await this.ensureYarnInstallLambdaExists();
 
-    const { zipBase64 } = await this.invokeYarnInstallLambda({
+    const s3Key = `lambda-layers/${layerName}.zip`;
+
+    const presignedUploadUrl = await this.generatePresignedUploadUrl(s3Key);
+
+    await this.invokeYarnInstallLambda({
       action: 'createLayer',
       packageJson,
       yarnLock,
+      presignedUploadUrl,
     });
+
+    const bucket = this.options.layerBucket;
 
     const lambdaClient = await this.getLambdaClient();
 
     const publishResult = await lambdaClient.send(
       new PublishLayerVersionCommand({
         LayerName: layerName,
-        Content: { ZipFile: Buffer.from(zipBase64, 'base64') },
+        Content: { S3Bucket: bucket, S3Key: s3Key },
         CompatibleRuntimes: [
           LogicFunctionRuntime.NODE18,
           LogicFunctionRuntime.NODE22,
