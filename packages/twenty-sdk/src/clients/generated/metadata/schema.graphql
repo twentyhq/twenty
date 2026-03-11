@@ -2037,6 +2037,7 @@ type CommandMenuItem {
   workflowVersionId: UUID
   frontComponentId: UUID
   frontComponent: FrontComponent
+  engineComponentKey: EngineComponentKey
   label: String!
   icon: String
   shortLabel: String
@@ -2048,6 +2049,30 @@ type CommandMenuItem {
   applicationId: UUID
   createdAt: DateTime!
   updatedAt: DateTime!
+}
+
+enum EngineComponentKey {
+  CREATE_NEW_RECORD
+  DELETE_SINGLE_RECORD
+  DELETE_MULTIPLE_RECORDS
+  RESTORE_SINGLE_RECORD
+  RESTORE_MULTIPLE_RECORDS
+  DESTROY_SINGLE_RECORD
+  DESTROY_MULTIPLE_RECORDS
+  ADD_TO_FAVORITES
+  REMOVE_FROM_FAVORITES
+  MERGE_MULTIPLE_RECORDS
+  DUPLICATE_DASHBOARD
+  DUPLICATE_WORKFLOW
+  ACTIVATE_WORKFLOW
+  DEACTIVATE_WORKFLOW
+  DISCARD_DRAFT_WORKFLOW
+  TEST_WORKFLOW
+  STOP_WORKFLOW_RUN
+  USE_AS_DRAFT_WORKFLOW_VERSION
+  SAVE_RECORD_PAGE_LAYOUT
+  SAVE_DASHBOARD_LAYOUT
+  TIDY_UP_WORKFLOW
 }
 
 enum CommandMenuItemAvailabilityType {
@@ -3650,6 +3675,7 @@ input UpsertFieldsWidgetFieldInput {
 input CreateCommandMenuItemInput {
   workflowVersionId: UUID
   frontComponentId: UUID
+  engineComponentKey: EngineComponentKey
   label: String!
   icon: String
   shortLabel: String
@@ -3669,6 +3695,7 @@ input UpdateCommandMenuItemInput {
   isPinned: Boolean
   availabilityType: CommandMenuItemAvailabilityType
   availabilityObjectMetadataId: UUID
+  engineComponentKey: EngineComponentKey
 }
 
 input CreateFrontComponentInput {
