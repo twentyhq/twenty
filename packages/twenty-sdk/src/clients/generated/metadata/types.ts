@@ -716,7 +716,7 @@ export default {
                 3
             ],
             "universalIdentifier": [
-                3
+                1
             ],
             "type": [
                 35
@@ -1130,9 +1130,6 @@ export default {
                 47
             ],
             "id": [
-                42
-            ],
-            "universalIdentifier": [
                 42
             ],
             "isCustom": [
@@ -10154,7 +10151,7 @@ export default {
         },
         "UpdateFieldInput": {
             "universalIdentifier": [
-                3
+                1
             ],
             "name": [
                 1
