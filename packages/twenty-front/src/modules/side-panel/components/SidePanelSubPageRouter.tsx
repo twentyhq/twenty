@@ -2,7 +2,7 @@ import { SIDE_PANEL_SUB_PAGES_CONFIG } from '@/side-panel/constants/SidePanelSub
 import { useSidePanelSubPageHistory } from '@/side-panel/hooks/useSidePanelSubPageHistory';
 import { SidePanelSubPageNavigationHeader } from '@/side-panel/pages/common/components/SidePanelSubPageNavigationHeader';
 import { styled } from '@linaria/react';
-import { type ReactNode } from 'react';
+import React, { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledSubPageContainer = styled.div`
@@ -30,8 +30,17 @@ export const SidePanelSubPageRouter = ({
   );
 
   if (!isDefined(subPageComponent)) {
-    return <>{children}</>;
+    throw new Error(
+      `Missing side panel sub-page config for "${currentSidePanelSubPage.subPage}". ` +
+        'Please add it to SIDE_PANEL_SUB_PAGES_CONFIG.',
+    );
   }
+
+  const keyedSubPageComponent = React.isValidElement(subPageComponent)
+    ? React.cloneElement(subPageComponent, {
+        key: currentSidePanelSubPage.id,
+      })
+    : subPageComponent;
 
   return (
     <StyledSubPageContainer>
@@ -39,7 +48,7 @@ export const SidePanelSubPageRouter = ({
         title={currentSidePanelSubPage.title}
         onBackClick={goBackFromSidePanelSubPage}
       />
-      {subPageComponent}
+      {keyedSubPageComponent}
     </StyledSubPageContainer>
   );
 };
