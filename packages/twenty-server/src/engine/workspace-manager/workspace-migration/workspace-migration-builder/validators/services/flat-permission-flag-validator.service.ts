@@ -57,6 +57,12 @@ export class FlatPermissionFlagValidatorService {
         message: t`Role not found`,
         userFriendlyMessage: msg`Role not found`,
       });
+    } else if (!referencedRole.isEditable) {
+      validationResult.errors.push({
+        code: PermissionsExceptionCode.ROLE_NOT_EDITABLE,
+        message: t`Role is not editable`,
+        userFriendlyMessage: msg`This role cannot be modified because it is a system role. Only custom roles can be edited.`,
+      });
     }
 
     const isValidFlag =
@@ -134,19 +140,23 @@ export class FlatPermissionFlagValidatorService {
       ...flatEntityUpdate,
     };
 
-    if (isDefined(flatEntityUpdate.roleUniversalIdentifier)) {
-      const referencedRole = findFlatEntityByUniversalIdentifier({
-        universalIdentifier: updatedFlatPermissionFlag.roleUniversalIdentifier,
-        flatEntityMaps: flatRoleMaps,
-      });
+    const referencedRole = findFlatEntityByUniversalIdentifier({
+      universalIdentifier: updatedFlatPermissionFlag.roleUniversalIdentifier,
+      flatEntityMaps: flatRoleMaps,
+    });
 
-      if (!isDefined(referencedRole)) {
-        validationResult.errors.push({
-          code: PermissionsExceptionCode.ROLE_NOT_FOUND,
-          message: t`Role not found`,
-          userFriendlyMessage: msg`Role not found`,
-        });
-      }
+    if (!isDefined(referencedRole)) {
+      validationResult.errors.push({
+        code: PermissionsExceptionCode.ROLE_NOT_FOUND,
+        message: t`Role not found`,
+        userFriendlyMessage: msg`Role not found`,
+      });
+    } else if (!referencedRole.isEditable) {
+      validationResult.errors.push({
+        code: PermissionsExceptionCode.ROLE_NOT_EDITABLE,
+        message: t`Role is not editable`,
+        userFriendlyMessage: msg`This role cannot be modified because it is a system role. Only custom roles can be edited.`,
+      });
     }
 
     if (isDefined(flatEntityUpdate.flag)) {
@@ -189,6 +199,7 @@ export class FlatPermissionFlagValidatorService {
     flatEntityToValidate: { universalIdentifier },
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatPermissionFlagMaps: optimisticFlatPermissionFlagMaps,
+      flatRoleMaps,
     },
   }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.permissionFlag
@@ -212,6 +223,20 @@ export class FlatPermissionFlagValidatorService {
         message: t`Permission flag to delete not found`,
         userFriendlyMessage: msg`Permission flag not found`,
       });
+    } else {
+      const referencedRole = findFlatEntityByUniversalIdentifier({
+        universalIdentifier:
+          existingFlatPermissionFlag.roleUniversalIdentifier,
+        flatEntityMaps: flatRoleMaps,
+      });
+
+      if (isDefined(referencedRole) && !referencedRole.isEditable) {
+        validationResult.errors.push({
+          code: PermissionsExceptionCode.ROLE_NOT_EDITABLE,
+          message: t`Role is not editable`,
+          userFriendlyMessage: msg`This role cannot be modified because it is a system role. Only custom roles can be edited.`,
+        });
+      }
     }
 
     return validationResult;

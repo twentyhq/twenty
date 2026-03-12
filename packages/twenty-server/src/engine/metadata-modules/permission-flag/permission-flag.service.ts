@@ -57,16 +57,6 @@ export class PermissionFlagService {
       );
     }
 
-    if (!roleById.isEditable) {
-      throw new PermissionsException(
-        PermissionsExceptionMessage.ROLE_NOT_EDITABLE,
-        PermissionsExceptionCode.ROLE_NOT_EDITABLE,
-        {
-          userFriendlyMessage: msg`This role cannot be modified because it is a system role. Only custom roles can be edited.`,
-        },
-      );
-    }
-
     const invalidFlags = input.permissionFlagKeys.filter(
       (flag) => !Object.values(PermissionFlagType).includes(flag),
     );
@@ -95,15 +85,17 @@ export class PermissionFlagService {
       currentPermissionFlagsForRole.map((pf) => pf.flag),
     );
 
-    const flatApplication =
-      await this.getFlatApplicationForWorkspace(workspaceId);
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
 
     const flatEntityToCreate = input.permissionFlagKeys
       .filter((flag) => !existingSet.has(flag))
       .map((flag) =>
         fromCreatePermissionFlagInputToFlatPermissionFlagToCreate({
           createPermissionFlagInput: { roleId: input.roleId, flag },
-          flatApplication,
+          flatApplication: workspaceCustomFlatApplication,
           flatRoleMaps,
         }),
       );
@@ -131,7 +123,8 @@ export class PermissionFlagService {
           },
           workspaceId,
           isSystemBuild: false,
-          applicationUniversalIdentifier: flatApplication.universalIdentifier,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 
@@ -158,13 +151,5 @@ export class PermissionFlagService {
     );
 
     return resultFlags.map(fromFlatPermissionFlagToPermissionFlagDto);
-  }
-
-  private async getFlatApplicationForWorkspace(workspaceId: string) {
-    const { workspaceCustomFlatApplication } =
-      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        { workspaceId },
-      );
-    return workspaceCustomFlatApplication;
   }
 }
