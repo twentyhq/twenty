@@ -10,6 +10,7 @@ export const COMMAND_MENU_ITEM_FRAGMENT = gql`
       name
       isHeadless
     }
+    engineComponentKey
     label
     icon
     shortLabel

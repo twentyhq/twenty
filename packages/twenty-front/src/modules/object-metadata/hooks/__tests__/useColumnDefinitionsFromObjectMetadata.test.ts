@@ -33,6 +33,8 @@ describe('useColumnDefinitionsFromObjectMetadata', () => {
       subdomain: 'test',
       activationStatus: WorkspaceActivationStatus.ACTIVE,
       hasValidEnterpriseKey: false,
+      hasValidSignedEnterpriseKey: false,
+      hasValidEnterpriseValidityToken: false,
       metadataVersion: 1,
       isPublicInviteLinkEnabled: false,
       isGoogleAuthEnabled: true,

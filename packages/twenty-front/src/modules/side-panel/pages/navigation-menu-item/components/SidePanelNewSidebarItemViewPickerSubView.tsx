@@ -27,12 +27,10 @@ import { ViewVisibility } from '~/generated-metadata/graphql';
 
 type SidePanelNewSidebarItemViewPickerSubViewProps = {
   selectedObjectMetadataIdForView: string;
-  onBack: () => void;
 };
 
 export const SidePanelNewSidebarItemViewPickerSubView = ({
   selectedObjectMetadataIdForView,
-  onBack,
 }: SidePanelNewSidebarItemViewPickerSubViewProps) => {
   const { t } = useLingui();
   const { getIcon } = useIcons();
@@ -63,8 +61,6 @@ export const SidePanelNewSidebarItemViewPickerSubView = ({
   const selectedObjectMetadataItem = objectMetadataItems.find(
     (item) => item.id === selectedObjectMetadataIdForView,
   );
-  const backBarTitle =
-    selectedObjectMetadataItem?.labelPlural ?? t`Pick a view`;
 
   const {
     filteredItems: filteredViews,
@@ -102,8 +98,6 @@ export const SidePanelNewSidebarItemViewPickerSubView = ({
 
   return (
     <SidePanelSubViewWithSearch
-      backBarTitle={backBarTitle}
-      onBack={onBack}
       searchPlaceholder={t`Search a view...`}
       searchValue={searchValue}
       onSearchChange={setSearchValue}

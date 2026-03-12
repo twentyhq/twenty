@@ -6,9 +6,21 @@ import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-module
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-name.type';
 import { computeStandardAttachmentViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-attachment-views.util';
+import { computeStandardBlocklistViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-blocklist-views.util';
+import { computeStandardCalendarChannelViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-calendar-channel-views.util';
+import { computeStandardCalendarChannelEventAssociationViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-calendar-channel-event-association-views.util';
+import { computeStandardCalendarEventParticipantViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-calendar-event-participant-views.util';
 import { computeStandardCalendarEventViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-calendar-event-views.util';
 import { computeStandardCompanyViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-company-views.util';
+import { computeStandardConnectedAccountViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-connected-account-views.util';
 import { computeStandardDashboardViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-dashboard-views.util';
+import { computeStandardFavoriteFolderViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-favorite-folder-views.util';
+import { computeStandardFavoriteViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-favorite-views.util';
+import { computeStandardMessageChannelMessageAssociationMessageFolderViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-message-channel-message-association-message-folder-views.util';
+import { computeStandardMessageChannelMessageAssociationViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-message-channel-message-association-views.util';
+import { computeStandardMessageChannelViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-message-channel-views.util';
+import { computeStandardMessageFolderViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-message-folder-views.util';
+import { computeStandardMessageParticipantViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-message-participant-views.util';
 import { computeStandardMessageThreadViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-message-thread-views.util';
 import { computeStandardMessageViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-message-views.util';
 import { computeStandardNoteTargetViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-note-target-views.util';
@@ -18,6 +30,7 @@ import { computeStandardPersonViews } from 'src/engine/workspace-manager/twenty-
 import { computeStandardTaskTargetViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-task-target-views.util';
 import { computeStandardTaskViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-task-views.util';
 import { computeStandardTimelineActivityViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-timeline-activity-views.util';
+import { computeStandardWorkflowAutomatedTriggerViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-workflow-automated-trigger-views.util';
 import { computeStandardWorkflowRunViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-workflow-run-views.util';
 import { computeStandardWorkflowVersionViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-workflow-version-views.util';
 import { computeStandardWorkflowViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-workflow-views.util';
@@ -30,10 +43,25 @@ type StandardViewBuilder<P extends AllStandardObjectName> = (
 
 const STANDARD_FLAT_VIEW_METADATA_BUILDERS_BY_OBJECT_NAME = {
   attachment: computeStandardAttachmentViews,
+  blocklist: computeStandardBlocklistViews,
+  calendarChannel: computeStandardCalendarChannelViews,
+  calendarChannelEventAssociation:
+    computeStandardCalendarChannelEventAssociationViews,
   calendarEvent: computeStandardCalendarEventViews,
+  calendarEventParticipant: computeStandardCalendarEventParticipantViews,
   company: computeStandardCompanyViews,
+  connectedAccount: computeStandardConnectedAccountViews,
   dashboard: computeStandardDashboardViews,
+  favorite: computeStandardFavoriteViews,
+  favoriteFolder: computeStandardFavoriteFolderViews,
   message: computeStandardMessageViews,
+  messageChannel: computeStandardMessageChannelViews,
+  messageChannelMessageAssociation:
+    computeStandardMessageChannelMessageAssociationViews,
+  messageChannelMessageAssociationMessageFolder:
+    computeStandardMessageChannelMessageAssociationMessageFolderViews,
+  messageFolder: computeStandardMessageFolderViews,
+  messageParticipant: computeStandardMessageParticipantViews,
   messageThread: computeStandardMessageThreadViews,
   note: computeStandardNoteViews,
   noteTarget: computeStandardNoteTargetViews,
@@ -43,6 +71,7 @@ const STANDARD_FLAT_VIEW_METADATA_BUILDERS_BY_OBJECT_NAME = {
   taskTarget: computeStandardTaskTargetViews,
   timelineActivity: computeStandardTimelineActivityViews,
   workflow: computeStandardWorkflowViews,
+  workflowAutomatedTrigger: computeStandardWorkflowAutomatedTriggerViews,
   workflowRun: computeStandardWorkflowRunViews,
   workflowVersion: computeStandardWorkflowVersionViews,
   workspaceMember: computeStandardWorkspaceMemberViews,
