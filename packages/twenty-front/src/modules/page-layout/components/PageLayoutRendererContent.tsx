@@ -114,9 +114,11 @@ export const PageLayoutRendererContent = () => {
     isEditMode: isPageLayoutInEditMode,
   });
 
+  const SYSTEM_OBJECT_TABS = ['Home', 'Timeline', 'Overview', 'Flow'];
+
   const tabsForCurrentObject = isSystemObject
-    ? tabsWithVisibleWidgets.filter(
-        (tab) => tab.title === 'Home' || tab.title === 'Timeline',
+    ? tabsWithVisibleWidgets.filter((tab) =>
+        SYSTEM_OBJECT_TABS.includes(tab.title),
       )
     : tabsWithVisibleWidgets;
 
