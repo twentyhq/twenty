@@ -29,7 +29,7 @@ export const useSignUpInNewWorkspace = () => {
       );
     } catch (error) {
       enqueueErrorSnackBar({
-        ...(error instanceof CombinedGraphQLErrors
+        ...(CombinedGraphQLErrors.is(error)
           ? { apolloError: error }
           : { message: t`Workspace creation failed` }),
       });

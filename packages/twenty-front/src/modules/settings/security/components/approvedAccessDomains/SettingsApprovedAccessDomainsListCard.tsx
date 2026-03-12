@@ -50,7 +50,7 @@ export const SettingsApprovedAccessDomainsListCard = () => {
   useEffect(() => {
     if (domainsError) {
       enqueueErrorSnackBar({
-        apolloError: domainsError instanceof CombinedGraphQLErrors ? domainsError : undefined,
+        apolloError: CombinedGraphQLErrors.is(domainsError) ? domainsError : undefined,
       });
     }
   }, [domainsError, enqueueErrorSnackBar]);

@@ -3,7 +3,10 @@ import { renderHook } from '@testing-library/react';
 import { type ComputeStepOutputSchemaInput } from '~/generated/graphql';
 import { useComputeStepOutputSchema } from '@/workflow/hooks/useComputeStepOutputSchema';
 
-jest.mock('@apollo/client');
+jest.mock('@apollo/client/react', () => ({
+  ...jest.requireActual('@apollo/client/react'),
+  useMutation: jest.fn(),
+}));
 jest.mock('@/object-metadata/hooks/useApolloCoreClient', () => ({
   useApolloCoreClient: () => ({}),
 }));

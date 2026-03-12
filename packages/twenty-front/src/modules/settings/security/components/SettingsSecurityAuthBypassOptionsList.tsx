@@ -72,7 +72,7 @@ export const SettingsSecurityAuthBypassOptionsList = () => {
         [key]: currentWorkspace[key],
       });
       enqueueErrorSnackBar({
-        apolloError: err instanceof CombinedGraphQLErrors ? err : undefined,
+        apolloError: CombinedGraphQLErrors.is(err) ? err : undefined,
       });
     });
   };

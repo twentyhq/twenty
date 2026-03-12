@@ -36,7 +36,7 @@ export const ToggleImpersonate = () => {
       });
     } catch (err: any) {
       enqueueErrorSnackBar({
-        apolloError: err instanceof CombinedGraphQLErrors ? err : undefined,
+        apolloError: CombinedGraphQLErrors.is(err) ? err : undefined,
       });
     }
   };

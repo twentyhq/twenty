@@ -99,7 +99,7 @@ export const SettingsAIPrompts = () => {
         aiAdditionalInstructions: originalInstructions || null,
       });
 
-      if (error instanceof CombinedGraphQLErrors) {
+      if (CombinedGraphQLErrors.is(error)) {
         enqueueErrorSnackBar({
           apolloError: error,
         });

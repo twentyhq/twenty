@@ -1,14 +1,11 @@
-import { type CombinedGraphQLErrors } from '@apollo/client/errors';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { type GraphQLFormattedError } from 'graphql';
 import { getConflictingRecordFromApolloError } from '~/utils/get-conflicting-record-from-apollo-error.util';
 
 const makeApolloError = (
   errors: GraphQLFormattedError[] = [],
 ): CombinedGraphQLErrors =>
-  ({
-    errors,
-    message: 'test error',
-  }) as unknown as CombinedGraphQLErrors;
+  new CombinedGraphQLErrors({ errors, data: null });
 
 describe('getConflictingRecordFromApolloError', () => {
   it('should return null when graphQLErrors is empty', () => {

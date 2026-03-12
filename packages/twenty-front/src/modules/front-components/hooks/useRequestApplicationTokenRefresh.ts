@@ -112,7 +112,7 @@ export const useRequestApplicationTokenRefresh = ({
       return renewedTokenPair.applicationAccessToken.token;
     } catch (error) {
       if (
-        error instanceof CombinedGraphQLErrors &&
+        CombinedGraphQLErrors.is(error) &&
         hasApplicationRefreshTokenInvalidOrExpiredSubCode(error.errors)
       ) {
         return await refetchFrontComponentForNewTokenPair();

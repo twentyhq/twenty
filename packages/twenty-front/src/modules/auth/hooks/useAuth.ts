@@ -201,7 +201,7 @@ export const useAuth = () => {
       } catch (error) {
         // TODO: Get intellisense for graphql error extensions code (codegen?)
         if (
-          error instanceof CombinedGraphQLErrors &&
+          CombinedGraphQLErrors.is(error) &&
           error.errors[0]?.extensions?.subCode === 'EMAIL_NOT_VERIFIED'
         ) {
           setSearchParams({ email });
@@ -329,7 +329,7 @@ export const useAuth = () => {
         );
       } catch (error) {
         if (
-          error instanceof CombinedGraphQLErrors &&
+          CombinedGraphQLErrors.is(error) &&
           error.errors[0]?.extensions?.subCode ===
             'TWO_FACTOR_AUTHENTICATION_PROVISION_REQUIRED'
         ) {
@@ -339,7 +339,7 @@ export const useAuth = () => {
         }
 
         if (
-          error instanceof CombinedGraphQLErrors &&
+          CombinedGraphQLErrors.is(error) &&
           error.errors[0]?.extensions?.subCode ===
             'TWO_FACTOR_AUTHENTICATION_VERIFICATION_REQUIRED'
         ) {
@@ -395,7 +395,7 @@ export const useAuth = () => {
         },
         onError: (error) => {
           if (
-            error instanceof CombinedGraphQLErrors &&
+            CombinedGraphQLErrors.is(error) &&
             error.errors[0]?.extensions?.subCode === 'EMAIL_NOT_VERIFIED'
           ) {
             setSearchParams({ email });

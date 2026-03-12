@@ -68,7 +68,7 @@ export const usePerformViewAPIPersist = () => {
           response: result,
         };
       } catch (error) {
-        if (error instanceof CombinedGraphQLErrors) {
+        if (CombinedGraphQLErrors.is(error)) {
           handleMetadataError(error, {
             primaryMetadataName: 'view',
             operationType: CrudOperationType.CREATE,
@@ -107,7 +107,7 @@ export const usePerformViewAPIPersist = () => {
           response: result,
         };
       } catch (error) {
-        if (error instanceof CombinedGraphQLErrors) {
+        if (CombinedGraphQLErrors.is(error)) {
           handleMetadataError(error, {
             primaryMetadataName: 'view',
             operationType: CrudOperationType.DELETE,

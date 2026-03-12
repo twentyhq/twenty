@@ -243,7 +243,7 @@ export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
       setOriginalFormValues({ ...formValues });
     } catch (error) {
       enqueueErrorSnackBar({
-        apolloError: error instanceof CombinedGraphQLErrors ? error : undefined,
+        apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
       });
     } finally {
       setIsSubmitting(false);
@@ -312,7 +312,7 @@ export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
       navigate(SettingsPath.AI);
     } catch (error) {
       enqueueErrorSnackBar({
-        apolloError: error instanceof CombinedGraphQLErrors ? error : undefined,
+        apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
       });
     } finally {
       setIsSubmitting(false);
@@ -331,7 +331,7 @@ export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
       navigate(SettingsPath.AI);
     } catch (error) {
       enqueueErrorSnackBar({
-        apolloError: error instanceof CombinedGraphQLErrors ? error : undefined,
+        apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
       });
     } finally {
       setIsSubmitting(false);
@@ -349,7 +349,7 @@ export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
       navigate(SettingsPath.AI);
     } catch (error) {
       enqueueErrorSnackBar({
-        apolloError: error instanceof CombinedGraphQLErrors ? error : undefined,
+        apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
       });
     } finally {
       setIsSubmitting(false);
@@ -367,7 +367,7 @@ export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
       navigate(SettingsPath.AI);
     } catch (error) {
       enqueueErrorSnackBar({
-        apolloError: error instanceof CombinedGraphQLErrors ? error : undefined,
+        apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
       });
     } finally {
       setIsSubmitting(false);

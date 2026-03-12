@@ -142,7 +142,7 @@ export const CreateProfile = () => {
         setNextOnboardingStatus();
       } catch (error: any) {
         enqueueErrorSnackBar({
-          apolloError: error instanceof CombinedGraphQLErrors ? error : undefined,
+          apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
         });
       }
     },

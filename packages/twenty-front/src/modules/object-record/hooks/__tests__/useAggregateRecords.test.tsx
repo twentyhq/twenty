@@ -11,7 +11,10 @@ import { renderHook } from '@testing-library/react';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
 // Mocks
-jest.mock('@apollo/client');
+jest.mock('@apollo/client/react', () => ({
+  ...jest.requireActual('@apollo/client/react'),
+  useQuery: jest.fn(),
+}));
 jest.mock('@/object-metadata/hooks/useObjectMetadataItem');
 jest.mock('@/object-record/hooks/useAggregateRecordsQuery');
 

@@ -118,7 +118,7 @@ export const SettingsAccountsMessageFoldersCard = () => {
       });
     } catch (error) {
       enqueueErrorSnackBar({
-        ...(error instanceof CombinedGraphQLErrors ? { apolloError: error } : {}),
+        ...(CombinedGraphQLErrors.is(error) ? { apolloError: error } : {}),
       });
     }
   };
@@ -138,7 +138,7 @@ export const SettingsAccountsMessageFoldersCard = () => {
       });
     } catch (error) {
       enqueueErrorSnackBar({
-        ...(error instanceof CombinedGraphQLErrors ? { apolloError: error } : {}),
+        ...(CombinedGraphQLErrors.is(error) ? { apolloError: error } : {}),
       });
     }
   };

@@ -70,7 +70,7 @@ export const usePerformViewFilterAPIPersist = () => {
           response: results,
         };
       } catch (error) {
-        if (error instanceof CombinedGraphQLErrors) {
+        if (CombinedGraphQLErrors.is(error)) {
           handleMetadataError(error, {
             primaryMetadataName: 'viewFilter',
             operationType: CrudOperationType.CREATE,
@@ -132,7 +132,7 @@ export const usePerformViewFilterAPIPersist = () => {
           response: results,
         };
       } catch (error) {
-        if (error instanceof CombinedGraphQLErrors) {
+        if (CombinedGraphQLErrors.is(error)) {
           handleMetadataError(error, {
             primaryMetadataName: 'viewFilter',
             operationType: CrudOperationType.UPDATE,
@@ -194,7 +194,7 @@ export const usePerformViewFilterAPIPersist = () => {
           response: results,
         };
       } catch (error) {
-        if (error instanceof CombinedGraphQLErrors) {
+        if (CombinedGraphQLErrors.is(error)) {
           handleMetadataError(error, {
             primaryMetadataName: 'viewFilter',
             operationType: CrudOperationType.DELETE,
@@ -246,7 +246,7 @@ export const usePerformViewFilterAPIPersist = () => {
           response: results,
         };
       } catch (error) {
-        if (error instanceof CombinedGraphQLErrors) {
+        if (CombinedGraphQLErrors.is(error)) {
           handleMetadataError(error, {
             primaryMetadataName: 'viewFilter',
             operationType: CrudOperationType.DESTROY,

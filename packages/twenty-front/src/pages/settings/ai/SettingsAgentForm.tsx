@@ -184,7 +184,7 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
         try {
           await saveDraftRoleToDB();
         } catch (error) {
-          if (error instanceof CombinedGraphQLErrors) {
+          if (CombinedGraphQLErrors.is(error)) {
             enqueueErrorSnackBar({
               apolloError: error,
             });
@@ -221,7 +221,7 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
       setOriginalFormValues({ ...formValues });
     } catch (error) {
       enqueueErrorSnackBar({
-        apolloError: error instanceof CombinedGraphQLErrors ? error : undefined,
+        apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
       });
     } finally {
       setIsSubmitting(false);
@@ -292,7 +292,7 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
         try {
           await saveDraftRoleToDB();
         } catch (error) {
-          if (error instanceof CombinedGraphQLErrors) {
+          if (CombinedGraphQLErrors.is(error)) {
             enqueueErrorSnackBar({
               apolloError: error,
             });
@@ -354,7 +354,7 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
       navigate(SettingsPath.AI);
     } catch (error) {
       enqueueErrorSnackBar({
-        apolloError: error instanceof CombinedGraphQLErrors ? error : undefined,
+        apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
       });
     } finally {
       setIsSubmitting(false);

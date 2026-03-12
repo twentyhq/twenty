@@ -41,7 +41,7 @@ export const SettingsEmailingDomainVerificationRecords = ({
       });
     } catch (error) {
       enqueueErrorSnackBar({
-        ...(error instanceof CombinedGraphQLErrors ? { apolloError: error } : {}),
+        ...(CombinedGraphQLErrors.is(error) ? { apolloError: error } : {}),
       });
     }
   };

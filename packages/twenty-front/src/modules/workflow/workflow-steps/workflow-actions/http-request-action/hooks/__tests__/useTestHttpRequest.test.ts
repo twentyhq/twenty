@@ -7,8 +7,8 @@ import { resolveInput } from 'twenty-shared/utils';
 import { useTestHttpRequest } from '@/workflow/workflow-steps/workflow-actions/http-request-action/hooks/useTestHttpRequest';
 
 // Mock Apollo Client
-jest.mock('@apollo/client', () => ({
-  ...jest.requireActual('@apollo/client'),
+jest.mock('@apollo/client/react', () => ({
+  ...jest.requireActual('@apollo/client/react'),
   useMutation: jest.fn(),
 }));
 

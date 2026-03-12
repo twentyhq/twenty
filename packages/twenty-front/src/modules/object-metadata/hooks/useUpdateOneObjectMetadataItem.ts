@@ -54,7 +54,7 @@ export const useUpdateOneObjectMetadataItem = () => {
         response,
       };
     } catch (error) {
-      if (error instanceof CombinedGraphQLErrors) {
+      if (CombinedGraphQLErrors.is(error)) {
         handleMetadataError(error, {
           primaryMetadataName: 'objectMetadata',
           operationType: CrudOperationType.UPDATE,

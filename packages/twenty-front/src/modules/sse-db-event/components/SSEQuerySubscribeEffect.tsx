@@ -86,7 +86,7 @@ export const SSEQuerySubscribeEffect = () => {
         });
       }
     } catch (error) {
-      if (error instanceof CombinedGraphQLErrors) {
+      if (CombinedGraphQLErrors.is(error)) {
         const subCode = error.errors[0]?.extensions?.subCode;
 
         switch (subCode) {

@@ -44,7 +44,7 @@ export const useDeleteOneObjectMetadataItem = () => {
         response,
       };
     } catch (error) {
-      if (error instanceof CombinedGraphQLErrors) {
+      if (CombinedGraphQLErrors.is(error)) {
         handleMetadataError(error, {
           primaryMetadataName: 'objectMetadata',
           operationType: CrudOperationType.DELETE,

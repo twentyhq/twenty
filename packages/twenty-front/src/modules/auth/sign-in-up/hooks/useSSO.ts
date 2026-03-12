@@ -27,7 +27,7 @@ export const useSSO = () => {
       });
     } catch (error: any) {
       return enqueueErrorSnackBar({
-        ...(error instanceof CombinedGraphQLErrors ? { apolloError: error } : {}),
+        ...(CombinedGraphQLErrors.is(error) ? { apolloError: error } : {}),
       });
     }
 

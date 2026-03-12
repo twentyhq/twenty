@@ -40,7 +40,7 @@ export const useUpdatePageLayoutWithTabsAndWidgets = () => {
         response: updatedPageLayout,
       };
     } catch (error) {
-      if (error instanceof CombinedGraphQLErrors) {
+      if (CombinedGraphQLErrors.is(error)) {
         handleMetadataError(error, {
           primaryMetadataName: 'pageLayout',
           operationType: CrudOperationType.UPDATE,

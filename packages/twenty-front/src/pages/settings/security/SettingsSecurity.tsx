@@ -92,7 +92,7 @@ export const SettingsSecurity = () => {
       });
     } catch (err) {
       enqueueErrorSnackBar({
-        apolloError: err instanceof CombinedGraphQLErrors ? err : undefined,
+        apolloError: CombinedGraphQLErrors.is(err) ? err : undefined,
       });
     }
   }, 500);
@@ -108,7 +108,7 @@ export const SettingsSecurity = () => {
       });
     } catch (err) {
       enqueueErrorSnackBar({
-        apolloError: err instanceof CombinedGraphQLErrors ? err : undefined,
+        apolloError: CombinedGraphQLErrors.is(err) ? err : undefined,
       });
     }
   }, 500);

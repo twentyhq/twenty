@@ -12,6 +12,10 @@ const getGroup = (collapsed: boolean) =>
     : console.group.bind(console);
 
 const parseQuery = (queryString: string) => {
+  if (!queryString.trim()) {
+    return ['Generic', ''];
+  }
+
   const queryObj = gql`
     ${queryString}
   `;

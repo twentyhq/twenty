@@ -82,7 +82,7 @@ export const useDeleteOneFieldMetadataItem = () => {
         response,
       };
     } catch (error) {
-      if (error instanceof CombinedGraphQLErrors) {
+      if (CombinedGraphQLErrors.is(error)) {
         handleMetadataError(error, {
           primaryMetadataName: 'fieldMetadata',
           operationType: CrudOperationType.DELETE,

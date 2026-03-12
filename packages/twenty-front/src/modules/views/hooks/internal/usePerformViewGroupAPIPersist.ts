@@ -62,7 +62,7 @@ export const usePerformViewGroupAPIPersist = () => {
           response: results,
         };
       } catch (error) {
-        if (error instanceof CombinedGraphQLErrors) {
+        if (CombinedGraphQLErrors.is(error)) {
           handleMetadataError(error, {
             primaryMetadataName: 'viewGroup',
             operationType: CrudOperationType.UPDATE,

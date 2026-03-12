@@ -95,7 +95,7 @@ export const VerifyEmailEffect = () => {
         await verifyLoginToken(loginToken.token);
       } catch (error) {
         enqueueErrorSnackBar({
-          ...(error instanceof CombinedGraphQLErrors
+          ...(CombinedGraphQLErrors.is(error)
             ? { apolloError: error }
             : { message: t`Email verification failed` }),
           options: {
@@ -103,7 +103,7 @@ export const VerifyEmailEffect = () => {
           },
         });
         if (
-          error instanceof CombinedGraphQLErrors &&
+          CombinedGraphQLErrors.is(error) &&
           error.errors[0].extensions?.subCode ===
             'EMAIL_ALREADY_VERIFIED'
         ) {

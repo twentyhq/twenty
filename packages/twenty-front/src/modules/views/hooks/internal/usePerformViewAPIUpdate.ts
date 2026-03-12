@@ -60,7 +60,7 @@ export const usePerformViewAPIUpdate = () => {
           response: result,
         };
       } catch (error) {
-        if (error instanceof CombinedGraphQLErrors) {
+        if (CombinedGraphQLErrors.is(error)) {
           handleMetadataError(error, {
             primaryMetadataName: 'view',
             operationType: CrudOperationType.UPDATE,

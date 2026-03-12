@@ -100,7 +100,7 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
         [key]: !currentWorkspace[key],
       });
       enqueueErrorSnackBar({
-        apolloError: err instanceof CombinedGraphQLErrors ? err : undefined,
+        apolloError: CombinedGraphQLErrors.is(err) ? err : undefined,
       });
     });
   };
@@ -123,7 +123,7 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
       });
     } catch (err: any) {
       enqueueErrorSnackBar({
-        apolloError: err instanceof CombinedGraphQLErrors ? err : undefined,
+        apolloError: CombinedGraphQLErrors.is(err) ? err : undefined,
       });
     }
   };

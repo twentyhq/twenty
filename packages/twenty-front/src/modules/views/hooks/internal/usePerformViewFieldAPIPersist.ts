@@ -71,7 +71,7 @@ export const usePerformViewFieldAPIPersist = () => {
           response: result,
         };
       } catch (error) {
-        if (error instanceof CombinedGraphQLErrors) {
+        if (CombinedGraphQLErrors.is(error)) {
           handleMetadataError(error, {
             primaryMetadataName: 'viewField',
             operationType: CrudOperationType.CREATE,
@@ -133,7 +133,7 @@ export const usePerformViewFieldAPIPersist = () => {
           response: results,
         };
       } catch (error) {
-        if (error instanceof CombinedGraphQLErrors) {
+        if (CombinedGraphQLErrors.is(error)) {
           handleMetadataError(error, {
             primaryMetadataName: 'viewField',
             operationType: CrudOperationType.UPDATE,
@@ -195,7 +195,7 @@ export const usePerformViewFieldAPIPersist = () => {
           response: results,
         };
       } catch (error) {
-        if (error instanceof CombinedGraphQLErrors) {
+        if (CombinedGraphQLErrors.is(error)) {
           handleMetadataError(error, {
             primaryMetadataName: 'viewField',
             operationType: CrudOperationType.DELETE,
@@ -247,7 +247,7 @@ export const usePerformViewFieldAPIPersist = () => {
           response: results,
         };
       } catch (error) {
-        if (error instanceof CombinedGraphQLErrors) {
+        if (CombinedGraphQLErrors.is(error)) {
           handleMetadataError(error, {
             primaryMetadataName: 'viewField',
             operationType: CrudOperationType.DESTROY,

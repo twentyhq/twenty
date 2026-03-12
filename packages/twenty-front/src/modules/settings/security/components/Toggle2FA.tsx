@@ -44,7 +44,7 @@ export const Toggle2FA = () => {
         isTwoFactorAuthenticationEnforced: !newEnforceValue,
       });
       enqueueErrorSnackBar({
-        apolloError: err instanceof CombinedGraphQLErrors ? err : undefined,
+        apolloError: CombinedGraphQLErrors.is(err) ? err : undefined,
         message: err?.message,
       });
     }

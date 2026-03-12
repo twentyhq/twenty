@@ -69,7 +69,7 @@ export const usePerformViewSortAPIPersist = () => {
           response: results,
         };
       } catch (error) {
-        if (error instanceof CombinedGraphQLErrors) {
+        if (CombinedGraphQLErrors.is(error)) {
           handleMetadataError(error, {
             primaryMetadataName: 'viewSort',
             operationType: CrudOperationType.CREATE,
@@ -131,7 +131,7 @@ export const usePerformViewSortAPIPersist = () => {
           response: results,
         };
       } catch (error) {
-        if (error instanceof CombinedGraphQLErrors) {
+        if (CombinedGraphQLErrors.is(error)) {
           handleMetadataError(error, {
             primaryMetadataName: 'viewSort',
             operationType: CrudOperationType.UPDATE,
@@ -198,7 +198,7 @@ export const usePerformViewSortAPIPersist = () => {
           response: results,
         };
       } catch (error) {
-        if (error instanceof CombinedGraphQLErrors) {
+        if (CombinedGraphQLErrors.is(error)) {
           handleMetadataError(error, {
             primaryMetadataName: 'viewSort',
             operationType: CrudOperationType.DELETE,
@@ -250,7 +250,7 @@ export const usePerformViewSortAPIPersist = () => {
           response: results,
         };
       } catch (error) {
-        if (error instanceof CombinedGraphQLErrors) {
+        if (CombinedGraphQLErrors.is(error)) {
           handleMetadataError(error, {
             primaryMetadataName: 'viewSort',
             operationType: CrudOperationType.DESTROY,

@@ -38,7 +38,7 @@ export const SettingsAgentDeleteConfirmationModal = ({
       navigate(SettingsPath.AI);
     } catch (error) {
       enqueueErrorSnackBar({
-        apolloError: error instanceof CombinedGraphQLErrors ? error : undefined,
+        apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
       });
     }
   };

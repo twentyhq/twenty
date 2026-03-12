@@ -109,7 +109,7 @@ export const SettingsSecurityEditableProfileFields = () => {
         prev ? { ...prev, editableProfileFields: previousFields } : prev,
       );
       enqueueErrorSnackBar({
-        apolloError: err instanceof CombinedGraphQLErrors ? err : undefined,
+        apolloError: CombinedGraphQLErrors.is(err) ? err : undefined,
       });
     });
   };

@@ -9,7 +9,7 @@ import { ErrorLink } from '@apollo/client/link/error';
 import { RetryLink } from '@apollo/client/link/retry';
 import { from, switchMap } from 'rxjs';
 import { RestLink } from 'apollo-link-rest';
-import { createUploadLink } from 'apollo-upload-client';
+import UploadHttpLink from 'apollo-upload-client/UploadHttpLink.mjs';
 
 import { renewToken } from '@/auth/services/AuthService';
 import { type CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
@@ -93,7 +93,7 @@ export class ApolloFactory implements ApolloManager {
     this.appVersion = appVersion;
 
     const buildApolloLink = (): ApolloLink => {
-      const uploadLink = createUploadLink({
+      const uploadLink = new UploadHttpLink({
         uri,
       });
 

@@ -47,7 +47,7 @@ export const SettingsEmailingDomainRowDropdownMenu = ({
       await refetchEmailingDomains();
     } catch (error) {
       enqueueErrorSnackBar({
-        ...(error instanceof CombinedGraphQLErrors ? { apolloError: error } : {}),
+        ...(CombinedGraphQLErrors.is(error) ? { apolloError: error } : {}),
       });
     }
   };

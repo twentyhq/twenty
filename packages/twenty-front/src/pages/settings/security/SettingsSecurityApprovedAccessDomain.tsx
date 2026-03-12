@@ -68,13 +68,13 @@ export const SettingsSecurityApprovedAccessDomain = () => {
         },
         onError: (error) => {
           enqueueErrorSnackBar({
-            apolloError: error instanceof CombinedGraphQLErrors ? error : undefined,
+            apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
           });
         },
       });
     } catch (error) {
       enqueueErrorSnackBar({
-        apolloError: error instanceof CombinedGraphQLErrors ? error : undefined,
+        apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
       });
     }
   };

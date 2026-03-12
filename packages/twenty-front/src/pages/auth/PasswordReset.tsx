@@ -206,7 +206,7 @@ export const PasswordReset = () => {
     } catch (err) {
       logError(err);
       enqueueErrorSnackBar({
-        apolloError: err instanceof CombinedGraphQLErrors ? err : undefined,
+        apolloError: CombinedGraphQLErrors.is(err) ? err : undefined,
       });
     }
   };

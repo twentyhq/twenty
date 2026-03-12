@@ -31,7 +31,7 @@ export const useUpdateEmail = () => {
         message: t`Check your inbox to verify your new email address.`,
       });
     } catch (error) {
-      if (error instanceof CombinedGraphQLErrors) {
+      if (CombinedGraphQLErrors.is(error)) {
         enqueueErrorSnackBar({ apolloError: error });
       }
     }

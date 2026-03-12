@@ -40,7 +40,7 @@ export const useHandleResendEmailVerificationToken = () => {
           }
         } catch (error) {
           enqueueErrorSnackBar({
-            ...(error instanceof CombinedGraphQLErrors ? { apolloError: error } : {}),
+            ...(CombinedGraphQLErrors.is(error) ? { apolloError: error } : {}),
           });
         }
       };

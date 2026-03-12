@@ -52,7 +52,7 @@ export const SettingsSecuritySSOIdentifyProvider = () => {
       navigate(SettingsPath.Security);
     } catch (error) {
       enqueueErrorSnackBar({
-        apolloError: error instanceof CombinedGraphQLErrors ? error : undefined,
+        apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
       });
     }
   };

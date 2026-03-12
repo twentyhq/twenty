@@ -130,7 +130,7 @@ export const CreateWorkspace = () => {
         setPendingCreationLoaderStep(PendingCreationLoaderStep.None);
 
         enqueueErrorSnackBar({
-          apolloError: error instanceof CombinedGraphQLErrors ? error : undefined,
+          apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
         });
       }
     },

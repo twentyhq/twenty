@@ -61,7 +61,7 @@ export const usePersistLogicFunction = () => {
           response: result,
         };
       } catch (error) {
-        if (error instanceof CombinedGraphQLErrors) {
+        if (CombinedGraphQLErrors.is(error)) {
           handleMetadataError(error, {
             primaryMetadataName: 'logicFunction',
             operationType: CrudOperationType.CREATE,
@@ -97,7 +97,7 @@ export const usePersistLogicFunction = () => {
           response: result,
         };
       } catch (error) {
-        if (error instanceof CombinedGraphQLErrors) {
+        if (CombinedGraphQLErrors.is(error)) {
           handleMetadataError(error, {
             primaryMetadataName: 'logicFunction',
             operationType: CrudOperationType.UPDATE,
@@ -141,7 +141,7 @@ export const usePersistLogicFunction = () => {
           response: result,
         };
       } catch (error) {
-        if (error instanceof CombinedGraphQLErrors) {
+        if (CombinedGraphQLErrors.is(error)) {
           handleMetadataError(error, {
             primaryMetadataName: 'logicFunction',
             operationType: CrudOperationType.DELETE,

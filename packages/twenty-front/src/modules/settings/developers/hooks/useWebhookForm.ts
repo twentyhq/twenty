@@ -113,7 +113,7 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
       );
     } catch (error) {
       enqueueErrorSnackBar({
-        apolloError: error instanceof CombinedGraphQLErrors ? error : undefined,
+        apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
       });
     }
   };
@@ -144,7 +144,7 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
       });
     } catch (error) {
       enqueueErrorSnackBar({
-        apolloError: error instanceof CombinedGraphQLErrors ? error : undefined,
+        apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
       });
     }
   };
@@ -201,7 +201,7 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
       navigate(SettingsPath.ApiWebhooks);
     } catch (error) {
       enqueueErrorSnackBar({
-        apolloError: error instanceof CombinedGraphQLErrors ? error : undefined,
+        apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
       });
     }
   };

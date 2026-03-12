@@ -212,7 +212,7 @@ describe('useUpdateManyRecords', () => {
           fail('Should have thrown an error');
         } catch (e) {
           expect(e).toMatchInlineSnapshot(
-            `[ApolloError: Internal server error]`,
+            `[Error: Internal server error]`,
           );
           assertCachedRecordsMatch(personRecords);
         }
