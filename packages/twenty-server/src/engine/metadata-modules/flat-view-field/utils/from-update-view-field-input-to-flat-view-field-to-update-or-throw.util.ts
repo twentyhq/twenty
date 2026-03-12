@@ -74,12 +74,14 @@ export const fromUpdateViewFieldInputToFlatViewFieldToUpdateOrThrow = ({
       shouldOverride,
     });
 
+  const mergedRecord = mergeUpdateInExistingRecord({
+    existing: existingFlatViewFieldToUpdate,
+    properties: [...FLAT_VIEW_FIELD_EDITABLE_PROPERTIES],
+    update: updatedEditableProperties,
+  });
+
   const flatViewFieldToUpdate = {
-    ...mergeUpdateInExistingRecord({
-      existing: existingFlatViewFieldToUpdate,
-      properties: [...FLAT_VIEW_FIELD_EDITABLE_PROPERTIES],
-      update: updatedEditableProperties,
-    }),
+    ...mergedRecord,
     overrides,
   } as UniversalFlatViewField;
 
@@ -88,7 +90,7 @@ export const fromUpdateViewFieldInputToFlatViewFieldToUpdateOrThrow = ({
       resolveEntityRelationUniversalIdentifiers({
         metadataName: 'viewField',
         foreignKeyValues: {
-          viewFieldGroupId: flatViewFieldToUpdate.viewFieldGroupId,
+          viewFieldGroupId: mergedRecord.viewFieldGroupId,
         },
         flatEntityMaps: { flatViewFieldGroupMaps },
       });

@@ -44,7 +44,7 @@ export class CreateViewFieldActionHandlerService extends WorkspaceMigrationRunne
           universalOverrides: action.flatEntity.universalOverrides,
           flatViewFieldGroupMaps: allFlatEntityMaps.flatViewFieldGroupMaps,
         })
-      : action.flatEntity.overrides;
+      : null;
 
     const emptyUniversalForeignKeyAggregators =
       getUniversalFlatEntityEmptyForeignKeyAggregators({

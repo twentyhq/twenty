@@ -67,7 +67,11 @@ export class ViewController {
         )
       : await this.viewService.findByWorkspaceId(workspace.id, userWorkspaceId);
 
-    return this.processViewsWithTemplates(views, workspace.id, locale);
+    return this.processViewsWithTemplates(
+      views as unknown as ViewDTO[],
+      workspace.id,
+      locale,
+    );
   }
 
   @Get(':id')
@@ -95,7 +99,7 @@ export class ViewController {
     }
 
     const processedViews = await this.processViewsWithTemplates(
-      [view],
+      [view] as unknown as ViewDTO[],
       workspace.id,
       locale,
     );

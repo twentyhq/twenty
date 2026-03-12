@@ -273,10 +273,23 @@ export class FieldsWidgetUpsertService {
 
       const newViewFieldGroupId = inputGroup.id;
 
+      const resolvedIsVisible =
+        existingField.overrides?.isVisible !== undefined
+          ? existingField.overrides.isVisible
+          : existingField.isVisible;
+      const resolvedPosition =
+        existingField.overrides?.position !== undefined
+          ? existingField.overrides.position
+          : existingField.position;
+      const resolvedViewFieldGroupId =
+        existingField.overrides?.viewFieldGroupId !== undefined
+          ? existingField.overrides.viewFieldGroupId
+          : existingField.viewFieldGroupId;
+
       const hasChanged =
-        existingField.isVisible !== inputField.isVisible ||
-        existingField.position !== inputField.position ||
-        existingField.viewFieldGroupId !== newViewFieldGroupId;
+        resolvedIsVisible !== inputField.isVisible ||
+        resolvedPosition !== inputField.position ||
+        resolvedViewFieldGroupId !== newViewFieldGroupId;
 
       if (!hasChanged) {
         return [];
@@ -405,10 +418,23 @@ export class FieldsWidgetUpsertService {
         return [];
       }
 
+      const resolvedIsVisible =
+        existingField.overrides?.isVisible !== undefined
+          ? existingField.overrides.isVisible
+          : existingField.isVisible;
+      const resolvedPosition =
+        existingField.overrides?.position !== undefined
+          ? existingField.overrides.position
+          : existingField.position;
+      const resolvedViewFieldGroupId =
+        existingField.overrides?.viewFieldGroupId !== undefined
+          ? existingField.overrides.viewFieldGroupId
+          : existingField.viewFieldGroupId;
+
       const hasChanged =
-        existingField.isVisible !== inputField.isVisible ||
-        existingField.position !== inputField.position ||
-        existingField.viewFieldGroupId !== null;
+        resolvedIsVisible !== inputField.isVisible ||
+        resolvedPosition !== inputField.position ||
+        resolvedViewFieldGroupId !== null;
 
       if (!hasChanged) {
         return [];
@@ -523,6 +549,7 @@ export class FieldsWidgetUpsertService {
       isVisible: inputGroup.isVisible,
       viewId,
       viewUniversalIdentifier,
+      overrides: null,
       createdAt: now,
       updatedAt: now,
       deletedAt: null,
@@ -535,10 +562,23 @@ export class FieldsWidgetUpsertService {
     existing: FlatViewFieldGroup,
     input: UpsertFieldsWidgetGroupInput,
   ): boolean {
+    const resolvedName =
+      existing.overrides?.name !== undefined
+        ? existing.overrides.name
+        : existing.name;
+    const resolvedPosition =
+      existing.overrides?.position !== undefined
+        ? existing.overrides.position
+        : existing.position;
+    const resolvedIsVisible =
+      existing.overrides?.isVisible !== undefined
+        ? existing.overrides.isVisible
+        : existing.isVisible;
+
     return (
-      existing.name !== input.name ||
-      existing.position !== input.position ||
-      existing.isVisible !== input.isVisible
+      resolvedName !== input.name ||
+      resolvedPosition !== input.position ||
+      resolvedIsVisible !== input.isVisible
     );
   }
 }

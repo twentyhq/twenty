@@ -114,21 +114,21 @@ export class ViewResolver {
     objectMetadataId?: string,
     @Args('viewTypes', { type: () => [ViewType], nullable: true })
     viewTypes?: ViewType[],
-  ): Promise<ViewEntity[]> {
+  ): Promise<ViewDTO[]> {
     if (objectMetadataId) {
       return this.viewService.findByObjectMetadataId(
         workspace.id,
         objectMetadataId,
         userWorkspaceId,
         viewTypes,
-      );
+      ) as unknown as Promise<ViewDTO[]>;
     }
 
     return this.viewService.findByWorkspaceId(
       workspace.id,
       userWorkspaceId,
       viewTypes,
-    );
+    ) as unknown as Promise<ViewDTO[]>;
   }
 
   @Query(() => ViewDTO, { nullable: true })
@@ -143,8 +143,7 @@ export class ViewResolver {
       return null;
     }
 
-    // Do not apply list visibility filtering here: unlisted views are accessible by link
-    return view;
+    return view as unknown as ViewDTO;
   }
 
   @Mutation(() => ViewDTO)
