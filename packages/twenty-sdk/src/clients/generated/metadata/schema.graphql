@@ -326,7 +326,7 @@ type StandardOverrides {
 
 type Field {
   id: UUID!
-  universalIdentifier: UUID!
+  universalIdentifier: String!
   type: FieldMetadataType!
   name: String!
   label: String!
@@ -534,7 +534,6 @@ input FieldFilter {
   and: [FieldFilter!]
   or: [FieldFilter!]
   id: UUIDFilterComparison
-  universalIdentifier: UUIDFilterComparison
   isCustom: BooleanFieldComparison
   isActive: BooleanFieldComparison
   isSystem: BooleanFieldComparison
@@ -4004,7 +4003,7 @@ input UpdateOneFieldMetadataInput {
 }
 
 input UpdateFieldInput {
-  universalIdentifier: UUID
+  universalIdentifier: String
   name: String
   label: String
   description: String
