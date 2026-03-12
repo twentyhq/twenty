@@ -119,8 +119,8 @@ export const CreateWorkspace = () => {
           },
         });
 
-        if (isDefined(result.errors)) {
-          throw result.errors ?? new Error(t`Unknown error`);
+        if (isDefined(result.error)) {
+          throw result.error ?? new Error(t`Unknown error`);
         }
 
         await refreshObjectMetadataItems();

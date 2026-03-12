@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/client/react';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -63,7 +63,10 @@ export const useFindOneRecord = <T extends ObjectRecord = ObjectRecord>({
       !hasReadPermission,
     variables: { objectRecordId },
     client: apolloCoreClient,
-    onCompleted: (data) => {
+  });
+
+  useEffect(() => {
+    if (data) {
       const recordWithoutConnection = getRecordFromRecordNode<T>({
         recordNode: { ...data[objectNameSingular] },
       });
@@ -71,8 +74,8 @@ export const useFindOneRecord = <T extends ObjectRecord = ObjectRecord>({
       if (isDefined(recordWithoutConnection)) {
         onCompleted?.(recordWithoutConnection);
       }
-    },
-  });
+    }
+  }, [data, objectNameSingular, onCompleted]);
 
   // TODO: Remove connection from record
   const recordWithoutConnection = useMemo(

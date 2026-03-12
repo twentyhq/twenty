@@ -48,7 +48,7 @@ export const SettingsSecurityApprovedAccessDomainRowDropdownMenu = ({
         });
       },
     });
-    if (isDefined(result.errors)) {
+    if (isDefined(result.error)) {
       enqueueErrorSnackBar({
         message: t`Could not delete approved access domain`,
         options: {

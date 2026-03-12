@@ -10,6 +10,7 @@ import { approvedAccessDomainsState } from '@/settings/security/states/ApprovedA
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { styled } from '@linaria/react';
+import { useEffect } from 'react';
 import { useLingui } from '@lingui/react/macro';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -36,17 +37,23 @@ export const SettingsApprovedAccessDomainsListCard = () => {
     approvedAccessDomainsState,
   );
 
-  const { loading } = useQuery(GetApprovedAccessDomainsDocument, {
+  const { loading, data: domainsData, error: domainsError } = useQuery(GetApprovedAccessDomainsDocument, {
     fetchPolicy: 'network-only',
-    onCompleted: (data) => {
-      setApprovedAccessDomains(data?.getApprovedAccessDomains ?? []);
-    },
-    onError: (error: Error) => {
-      enqueueErrorSnackBar({
-        apolloError: error instanceof CombinedGraphQLErrors ? error : undefined,
-      });
-    },
   });
+
+  useEffect(() => {
+    if (domainsData) {
+      setApprovedAccessDomains(domainsData?.getApprovedAccessDomains ?? []);
+    }
+  }, [domainsData, setApprovedAccessDomains]);
+
+  useEffect(() => {
+    if (domainsError) {
+      enqueueErrorSnackBar({
+        apolloError: domainsError instanceof CombinedGraphQLErrors ? domainsError : undefined,
+      });
+    }
+  }, [domainsError, enqueueErrorSnackBar]);
 
   const getItemDescription = (createdAt: string) => {
     const beautifyPastDateRelative = beautifyPastDateRelativeToNow(

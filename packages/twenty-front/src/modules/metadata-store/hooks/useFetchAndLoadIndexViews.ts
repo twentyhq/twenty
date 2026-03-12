@@ -11,14 +11,15 @@ import {
 const INDEX_VIEW_TYPES = [ViewType.TABLE, ViewType.KANBAN, ViewType.CALENDAR];
 
 export const useFetchAndLoadIndexViews = () => {
-  const [findAllCoreViews] = useLazyQuery(FindAllCoreViewsDocument);
+  const [findAllCoreViews] = useLazyQuery(FindAllCoreViewsDocument, {
+    fetchPolicy: 'network-only',
+  });
   const { updateDraft, applyChanges } = useMetadataStore();
   const { setIndexViews } = useSetIndexViews();
 
   const fetchAndLoadIndexViews = useCallback(async () => {
     const result = await findAllCoreViews({
       variables: { viewTypes: INDEX_VIEW_TYPES },
-      fetchPolicy: 'network-only',
     });
 
     if (isDefined(result.data?.getCoreViews)) {

@@ -5,14 +5,14 @@ import { useLazyQuery } from '@apollo/client/react';
 import { FindAllPageLayoutsDocument } from '~/generated-metadata/graphql';
 
 export const useRefreshPageLayouts = () => {
-  const [findAllPageLayoutsLazy] = useLazyQuery(FindAllPageLayoutsDocument);
+  const [findAllPageLayoutsLazy] = useLazyQuery(FindAllPageLayoutsDocument, {
+    fetchPolicy: 'network-only',
+  });
 
   const { applyPageLayouts } = useApplyPageLayouts();
 
   const refreshPageLayouts = useCallback(async () => {
-    const result = await findAllPageLayoutsLazy({
-      fetchPolicy: 'network-only',
-    });
+    const result = await findAllPageLayoutsLazy();
 
     if (!isDefined(result.data?.getPageLayouts)) {
       return;

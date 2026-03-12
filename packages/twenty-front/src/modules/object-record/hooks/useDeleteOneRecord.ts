@@ -1,4 +1,3 @@
-import { type CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useCallback } from 'react';
 
 import { triggerUpdateRecordOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerUpdateRecordOptimisticEffect';
@@ -127,7 +126,7 @@ export const useDeleteOneRecord = ({
             });
           },
         })
-        .catch((error: CombinedGraphQLErrors) => {
+        .catch((error) => {
           if (!shouldHandleOptimisticCache) {
             throw error;
           }

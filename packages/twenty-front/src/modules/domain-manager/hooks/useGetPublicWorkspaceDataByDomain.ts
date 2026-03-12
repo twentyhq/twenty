@@ -8,7 +8,9 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { workspaceAuthBypassProvidersState } from '@/workspace/states/workspaceAuthBypassProvidersState';
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
+import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useQuery } from '@apollo/client/react';
 import { GetPublicWorkspaceDataByDomainDocument } from '~/generated-metadata/graphql';
 
@@ -37,7 +39,10 @@ export const useGetPublicWorkspaceDataByDomain = () => {
       !clientConfigApiStatus.isSaved ||
       (isMultiWorkspaceEnabled && isDefaultDomain) ||
       isDefined(workspacePublicData),
-    onCompleted: (data) => {
+  });
+
+  useEffect(() => {
+    if (data) {
       setWorkspaceAuthProviders(
         data.getPublicWorkspaceDataByDomain.authProviders,
       );
@@ -45,21 +50,26 @@ export const useGetPublicWorkspaceDataByDomain = () => {
         data.getPublicWorkspaceDataByDomain.authBypassProviders ?? null,
       );
       setWorkspacePublicData(data.getPublicWorkspaceDataByDomain);
-    },
-    onError: (error) => {
-      // Only redirect to default domain if it's a workspace not found error
-      const isWorkspaceNotFoundError = error.graphQLErrors?.some(
-        (graphQLError) => graphQLError.extensions?.code === 'NOT_FOUND',
-      );
+    }
+  }, [data, setWorkspaceAuthProviders, setWorkspaceAuthBypassProviders, setWorkspacePublicData]);
 
-      if (isWorkspaceNotFoundError) {
-        redirectToDefaultDomain();
-      } else {
-        // oxlint-disable-next-line no-console
-        console.error(error);
+  useEffect(() => {
+    if (error) {
+      // Only redirect to default domain if it's a workspace not found error
+      if (CombinedGraphQLErrors.is(error)) {
+        const isWorkspaceNotFoundError = error.errors?.some(
+          (graphQLError) => graphQLError.extensions?.code === 'NOT_FOUND',
+        );
+
+        if (isWorkspaceNotFoundError) {
+          redirectToDefaultDomain();
+          return;
+        }
       }
-    },
-  });
+      // oxlint-disable-next-line no-console
+      console.error(error);
+    }
+  }, [error, redirectToDefaultDomain]);
 
   return {
     loading,

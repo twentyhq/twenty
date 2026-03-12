@@ -1,4 +1,4 @@
-import { ApolloClient, ApolloLink } from '@apollo/client';
+import { ApolloClient, ApolloLink, type ErrorLike } from '@apollo/client';
 import {
   CombinedGraphQLErrors,
   ServerError,
@@ -43,12 +43,12 @@ const logger = loggerLink(() => 'Twenty');
 // deduplicate into a single renewal request.
 let renewalPromise: Promise<void> | null = null;
 
-export interface Options<TCacheShape> {
+export interface Options {
   uri: string;
-  cache: ApolloClient.Options<TCacheShape>['cache'];
-  defaultOptions?: ApolloClient.Options<TCacheShape>['defaultOptions'];
+  cache: ApolloClient.Options['cache'];
+  defaultOptions?: ApolloClient.Options['defaultOptions'];
   headers?: Record<string, string>;
-  connectToDevTools?: boolean;
+  devtools?: { enabled?: boolean };
   onError?: (err: readonly GraphQLFormattedError[] | undefined) => void;
   onNetworkError?: (err: Error | ServerParseError | ServerError) => void;
   onTokenPairChange?: (tokenPair: AuthTokenPair) => void;
@@ -62,19 +62,19 @@ export interface Options<TCacheShape> {
   appVersion?: string;
 }
 
-export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
+export class ApolloFactory implements ApolloManager {
   private client: ApolloClient;
   private currentWorkspaceMember: CurrentWorkspaceMember | null = null;
   private currentWorkspace: CurrentWorkspace | null = null;
   private appVersion?: string;
 
-  constructor(opts: Options<TCacheShape>) {
+  constructor(opts: Options) {
     const {
       uri,
       cache,
       defaultOptions,
       headers: optionHeaders,
-      connectToDevTools,
+      devtools,
       onError: onErrorCb,
       onNetworkError,
       onTokenPairChange,
@@ -323,25 +323,25 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
         },
       );
 
-      return ApolloLink.from(
-        [
-          errorLink,
-          authLink,
-          ...(extraLinks || []),
-          isDebugMode ? logger : null,
-          retryLink,
-          streamingRestLink,
-          restLink,
-          uploadLink,
-        ].filter(isDefined),
-      );
+      const links: ApolloLink[] = [
+        errorLink,
+        authLink,
+        ...(extraLinks || []),
+        ...(isDebugMode ? [logger] : []),
+        retryLink,
+        streamingRestLink,
+        restLink,
+        uploadLink,
+      ];
+
+      return ApolloLink.from(links);
     };
 
     this.client = new ApolloClient({
       cache,
       link: buildApolloLink(),
       defaultOptions,
-      connectToDevTools,
+      devtools,
     });
   }
 
@@ -361,12 +361,12 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
     );
   }
 
-  private isAuthenticationError(error: ServerError): boolean {
-    return error.statusCode === 401;
+  private isAuthenticationError(error: ErrorLike): boolean {
+    return ServerError.is(error) && error.statusCode === 401;
   }
 
-  private isPayloadTooLargeError(error: ServerError): boolean {
-    return error.statusCode === 413;
+  private isPayloadTooLargeError(error: ErrorLike): boolean {
+    return ServerError.is(error) && error.statusCode === 413;
   }
 
   updateWorkspaceMember(workspaceMember: CurrentWorkspaceMember | null) {

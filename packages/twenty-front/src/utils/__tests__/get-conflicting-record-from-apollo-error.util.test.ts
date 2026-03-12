@@ -3,10 +3,10 @@ import { type GraphQLFormattedError } from 'graphql';
 import { getConflictingRecordFromApolloError } from '~/utils/get-conflicting-record-from-apollo-error.util';
 
 const makeApolloError = (
-  graphQLErrors: GraphQLFormattedError[] = [],
+  errors: GraphQLFormattedError[] = [],
 ): CombinedGraphQLErrors =>
   ({
-    graphQLErrors,
+    errors,
     message: 'test error',
   }) as unknown as CombinedGraphQLErrors;
 

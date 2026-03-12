@@ -5,7 +5,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { ResponsiveLine } from '@nivo/line';
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useQuery } from '@apollo/client/react';
 import {
@@ -51,19 +51,22 @@ export const SettingsAdminWorkerMetricsGraph = ({
   const { theme } = useContext(ThemeContext);
   const { enqueueErrorSnackBar } = useSnackBar();
 
-  const { loading, data } = useQuery(GetQueueMetricsDocument, {
+  const { loading, data, error } = useQuery(GetQueueMetricsDocument, {
     variables: {
       queueName,
       timeRange,
     },
     fetchPolicy: 'no-cache',
-    onError: (error) => {
+  });
+
+  useEffect(() => {
+    if (error) {
       const errorMessage = error.message;
       enqueueErrorSnackBar({
         message: t`Error fetching worker metrics: ${errorMessage}`,
       });
-    },
-  });
+    }
+  }, [error, enqueueErrorSnackBar]);
 
   const metricsData = data?.getQueueMetrics?.data || [];
   const hasData =

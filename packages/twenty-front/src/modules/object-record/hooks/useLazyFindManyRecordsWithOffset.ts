@@ -55,7 +55,6 @@ export const useLazyFindManyRecordsWithOffset = ({
       variables: {
         ...params,
       },
-      onError: handleFindManyRecordsError,
       client: apolloCoreClient,
     },
   );
@@ -78,6 +77,10 @@ export const useLazyFindManyRecordsWithOffset = ({
         },
       });
 
+      if (result?.error) {
+        handleFindManyRecordsError(result.error);
+      }
+
       const records = getRecordsFromRecordConnection({
         recordConnection: {
           edges: result?.data?.[objectMetadataItem.namePlural]?.edges ?? [],
@@ -96,7 +99,7 @@ export const useLazyFindManyRecordsWithOffset = ({
         error: result?.error,
       };
     },
-    [hasReadPermission, findManyRecords, objectMetadataItem.namePlural],
+    [hasReadPermission, findManyRecords, objectMetadataItem.namePlural, handleFindManyRecordsError],
   );
 
   return {

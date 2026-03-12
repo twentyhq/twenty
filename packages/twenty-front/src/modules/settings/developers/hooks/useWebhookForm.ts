@@ -1,4 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { WebhookFormMode } from '@/settings/developers/constants/WebhookFormMode';
@@ -53,13 +54,16 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
     defaultValues: DEFAULT_FORM_VALUES,
   });
 
-  const { loading, error } = useQuery(GetWebhookDocument, {
+  const { loading, error, data: webhookData } = useQuery(GetWebhookDocument, {
     skip: isCreationMode || !webhookId,
     variables: {
       id: webhookId || '',
     },
-    onCompleted: (data) => {
-      const webhook = data.webhook;
+  });
+
+  useEffect(() => {
+    if (webhookData) {
+      const webhook = webhookData.webhook;
       if (!webhook) return;
 
       const baseOperations = webhook?.operations?.length
@@ -73,13 +77,16 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
         operations,
         secret: webhook.secret || '',
       });
-    },
-    onError: () => {
+    }
+  }, [webhookData, formConfig]);
+
+  useEffect(() => {
+    if (error) {
       enqueueErrorSnackBar({
         message: t`Failed to load webhook`,
       });
-    },
-  });
+    }
+  }, [error, enqueueErrorSnackBar]);
 
   const { isDirty, isValid, isSubmitting } = formConfig.formState;
   const canSave = isCreationMode

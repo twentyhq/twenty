@@ -189,8 +189,8 @@ export const useAuth = () => {
             origin,
           },
         });
-        if (isDefined(getLoginTokenResult.errors)) {
-          throw getLoginTokenResult.errors;
+        if (isDefined(getLoginTokenResult.error)) {
+          throw getLoginTokenResult.error;
         }
 
         if (!getLoginTokenResult.data?.getLoginTokenFromCredentials) {
@@ -202,7 +202,7 @@ export const useAuth = () => {
         // TODO: Get intellisense for graphql error extensions code (codegen?)
         if (
           error instanceof CombinedGraphQLErrors &&
-          error.graphQLErrors[0]?.extensions?.subCode === 'EMAIL_NOT_VERIFIED'
+          error.errors[0]?.extensions?.subCode === 'EMAIL_NOT_VERIFIED'
         ) {
           setSearchParams({ email });
           setSignInUpStep(SignInUpStep.EmailVerification);
@@ -229,8 +229,8 @@ export const useAuth = () => {
         },
       });
 
-      if (isDefined(loginTokenResult.errors)) {
-        throw loginTokenResult.errors;
+      if (isDefined(loginTokenResult.error)) {
+        throw loginTokenResult.error;
       }
 
       if (!loginTokenResult.data?.verifyEmailAndGetLoginToken) {
@@ -248,7 +248,7 @@ export const useAuth = () => {
       email: string,
       captchaToken?: string,
     ) => {
-      const { data, errors } = await verifyEmailAndGetWorkspaceAgnosticToken({
+      const { data, error } = await verifyEmailAndGetWorkspaceAgnosticToken({
         variables: {
           email,
           emailVerificationToken,
@@ -256,8 +256,8 @@ export const useAuth = () => {
         },
       });
 
-      if (isDefined(errors)) {
-        throw errors;
+      if (isDefined(error)) {
+        throw error;
       }
 
       if (!data?.verifyEmailAndGetWorkspaceAgnosticToken) {
@@ -316,8 +316,8 @@ export const useAuth = () => {
           },
         });
 
-        if (isDefined(getAuthTokensResult.errors)) {
-          throw getAuthTokensResult.errors;
+        if (isDefined(getAuthTokensResult.error)) {
+          throw getAuthTokensResult.error;
         }
 
         if (!getAuthTokensResult.data?.getAuthTokensFromLoginToken) {
@@ -330,7 +330,7 @@ export const useAuth = () => {
       } catch (error) {
         if (
           error instanceof CombinedGraphQLErrors &&
-          error.graphQLErrors[0]?.extensions?.subCode ===
+          error.errors[0]?.extensions?.subCode ===
             'TWO_FACTOR_AUTHENTICATION_PROVISION_REQUIRED'
         ) {
           handleSetLoginToken(loginToken);
@@ -340,7 +340,7 @@ export const useAuth = () => {
 
         if (
           error instanceof CombinedGraphQLErrors &&
-          error.graphQLErrors[0]?.extensions?.subCode ===
+          error.errors[0]?.extensions?.subCode ===
             'TWO_FACTOR_AUTHENTICATION_VERIFICATION_REQUIRED'
         ) {
           handleSetLoginToken(loginToken);
@@ -396,7 +396,7 @@ export const useAuth = () => {
         onError: (error) => {
           if (
             error instanceof CombinedGraphQLErrors &&
-            error.graphQLErrors[0]?.extensions?.subCode === 'EMAIL_NOT_VERIFIED'
+            error.errors[0]?.extensions?.subCode === 'EMAIL_NOT_VERIFIED'
           ) {
             setSearchParams({ email });
             setSignInUpStep(SignInUpStep.EmailVerification);
@@ -428,8 +428,8 @@ export const useAuth = () => {
         },
       });
 
-      if (isDefined(signUpResult.errors)) {
-        throw signUpResult.errors;
+      if (isDefined(signUpResult.error)) {
+        throw signUpResult.error;
       }
 
       if (isEmailVerificationRequired) {
@@ -511,8 +511,8 @@ export const useAuth = () => {
         },
       });
 
-      if (isDefined(signUpInWorkspaceResult.errors)) {
-        throw signUpInWorkspaceResult.errors;
+      if (isDefined(signUpInWorkspaceResult.error)) {
+        throw signUpInWorkspaceResult.error;
       }
 
       if (!signUpInWorkspaceResult.data?.signUpInWorkspace) {
@@ -633,8 +633,8 @@ export const useAuth = () => {
         },
       });
 
-      if (isDefined(getAuthTokensFromOtpResult.errors)) {
-        throw getAuthTokensFromOtpResult.errors;
+      if (isDefined(getAuthTokensFromOtpResult.error)) {
+        throw getAuthTokensFromOtpResult.error;
       }
 
       if (!getAuthTokensFromOtpResult.data?.getAuthTokensFromOTP) {

@@ -8,7 +8,7 @@ import { DELETE_CORE_VIEW_FIELD_GROUP } from '@/views/graphql/mutations/deleteCo
 import { UPDATE_CORE_VIEW_FIELD_GROUP } from '@/views/graphql/mutations/updateCoreViewFieldGroup';
 import { useTriggerViewFieldGroupOptimisticEffect } from '@/views/optimistic-effects/hooks/useTriggerViewFieldGroupOptimisticEffect';
 import { useMutation } from '@apollo/client/react';
-import { type CombinedGraphQLErrors } from '@apollo/client/errors';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { t } from '@lingui/core/macro';
 import { CrudOperationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -87,12 +87,8 @@ export const usePerformViewFieldGroupAPIPersist = () => {
           response: result.data ?? null,
         };
       } catch (error) {
-        if (
-          typeof error === 'object' &&
-          error !== null &&
-          'graphQLErrors' in error
-        ) {
-          handleMetadataError(error as CombinedGraphQLErrors, {
+        if (CombinedGraphQLErrors.is(error)) {
+          handleMetadataError(error, {
             primaryMetadataName: 'viewFieldGroup',
             operationType: CrudOperationType.CREATE,
           });
@@ -153,12 +149,8 @@ export const usePerformViewFieldGroupAPIPersist = () => {
             .filter(isDefined) as UpdateCoreViewFieldGroupMutationResult[],
         };
       } catch (error) {
-        if (
-          typeof error === 'object' &&
-          error !== null &&
-          'graphQLErrors' in error
-        ) {
-          handleMetadataError(error as CombinedGraphQLErrors, {
+        if (CombinedGraphQLErrors.is(error)) {
+          handleMetadataError(error, {
             primaryMetadataName: 'viewFieldGroup',
             operationType: CrudOperationType.UPDATE,
           });
@@ -219,12 +211,8 @@ export const usePerformViewFieldGroupAPIPersist = () => {
             .filter(isDefined) as DeleteCoreViewFieldGroupMutationResult[],
         };
       } catch (error) {
-        if (
-          typeof error === 'object' &&
-          error !== null &&
-          'graphQLErrors' in error
-        ) {
-          handleMetadataError(error as CombinedGraphQLErrors, {
+        if (CombinedGraphQLErrors.is(error)) {
+          handleMetadataError(error, {
             primaryMetadataName: 'viewFieldGroup',
             operationType: CrudOperationType.DELETE,
           });

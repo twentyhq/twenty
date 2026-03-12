@@ -18,7 +18,7 @@ import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 
 // Mocks
 jest.mock('@/ui/feedback/snack-bar-manager/hooks/useSnackBar');
-jest.mock('~/generated-metadata/graphql');
+jest.mock('@apollo/client/react');
 
 dynamicActivate(SOURCE_LOCALE);
 
@@ -64,7 +64,7 @@ describe('useHandleResetPassword', () => {
       enqueueErrorSnackBar: enqueueErrorSnackBarMock,
       enqueueSuccessSnackBar: enqueueSuccessSnackBarMock,
     });
-    (useEmailPasswordResetLinkMutation as jest.Mock).mockReturnValue([
+    (useMutation as jest.Mock).mockReturnValue([
       emailPasswordResetLinkMock,
     ]);
   });

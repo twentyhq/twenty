@@ -128,10 +128,13 @@ export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
     isLabelSyncedWithName: true,
   });
 
-  const { data, loading } = useQuery(FindOneSkillDocument, {
+  const { data, loading, error: skillQueryError } = useQuery(FindOneSkillDocument, {
     variables: { id: skillId },
     skip: isCreateMode || !skillId,
-    onCompleted: (data: FindOneSkillQuery) => {
+  });
+
+  useEffect(() => {
+    if (data) {
       const skill = data?.skill;
       if (isDefined(skill)) {
         if (!skill.isCustom) {
@@ -156,14 +159,17 @@ export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
         });
         navigateApp(AppPath.NotFound);
       }
-    },
-    onError: (error: CombinedGraphQLErrors) => {
+    }
+  }, [data, enqueueErrorSnackBar, navigateApp]);
+
+  useEffect(() => {
+    if (skillQueryError) {
       enqueueErrorSnackBar({
-        apolloError: error,
+        ...(CombinedGraphQLErrors.is(skillQueryError) ? { apolloError: skillQueryError } : {}),
       });
       navigateApp(AppPath.NotFound);
-    },
-  });
+    }
+  }, [skillQueryError, enqueueErrorSnackBar, navigateApp]);
 
   const [createSkill] = useMutation(CreateSkillDocument);
   const [updateSkill] = useMutation(UpdateSkillDocument);

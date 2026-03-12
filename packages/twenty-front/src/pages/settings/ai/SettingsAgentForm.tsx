@@ -87,10 +87,13 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
     validateForm,
   } = useSettingsAgentFormState(mode);
 
-  const { data, loading } = useQuery(FindOneAgentDocument, {
+  const { data, loading, error: agentQueryError } = useQuery(FindOneAgentDocument, {
     variables: { id: agentId },
     skip: isCreateMode || !agentId,
-    onCompleted: (data) => {
+  });
+
+  useEffect(() => {
+    if (data) {
       const agent = data?.findOneAgent;
       if (isDefined(agent)) {
         if (isDefined(agent.applicationId)) {
@@ -117,14 +120,17 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
         });
         navigateApp(AppPath.NotFound);
       }
-    },
-    onError: (error) => {
+    }
+  }, [data, resetForm, enqueueErrorSnackBar, navigateApp]);
+
+  useEffect(() => {
+    if (agentQueryError) {
       enqueueErrorSnackBar({
-        apolloError: error,
+        apolloError: agentQueryError,
       });
       navigateApp(AppPath.NotFound);
-    },
-  });
+    }
+  }, [agentQueryError, enqueueErrorSnackBar, navigateApp]);
 
   const [createAgent] = useMutation(CreateOneAgentDocument);
   const [updateAgent] = useMutation(UpdateOneAgentDocument);

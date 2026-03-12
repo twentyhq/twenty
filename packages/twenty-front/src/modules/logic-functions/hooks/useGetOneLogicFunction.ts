@@ -1,5 +1,6 @@
 import { FIND_ONE_LOGIC_FUNCTION } from '@/logic-functions/graphql/queries/findOneLogicFunction';
 import { useQuery } from '@apollo/client/react';
+import { useEffect } from 'react';
 import {
   type FindOneLogicFunctionQuery,
   type FindOneLogicFunctionQueryVariables,
@@ -19,8 +20,14 @@ export const useGetOneLogicFunction = ({
     variables: {
       input: { id },
     },
-    onCompleted,
   });
+
+  useEffect(() => {
+    if (data) {
+      onCompleted?.(data);
+    }
+  }, [data, onCompleted]);
+
   return {
     logicFunction: data?.findOneLogicFunction || null,
     loading,

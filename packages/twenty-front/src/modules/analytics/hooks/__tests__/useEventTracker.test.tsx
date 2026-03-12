@@ -95,7 +95,7 @@ const mocks: MockedResponse[] = [
 ];
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
-  <MockedProvider mocks={mocks} addTypename={false}>
+  <MockedProvider mocks={mocks}>
     {children}
   </MockedProvider>
 );

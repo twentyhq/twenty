@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -20,32 +20,39 @@ export const useWorkspaceFromInviteHash = () => {
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const [initiallyLoggedIn] = useState(isDefined(currentWorkspace));
 
-  const { data: workspaceFromInviteHash, loading } =
+  const { data: workspaceFromInviteHash, loading, error } =
     useQuery(GetWorkspaceFromInviteHashDocument, {
       skip: !workspaceInviteHash,
       variables: { inviteHash: workspaceInviteHash || '' },
-      onError: (error) => {
-        enqueueErrorSnackBar({ apolloError: error });
-        navigate(AppPath.Index);
-      },
-      onCompleted: (data) => {
-        if (
-          isDefined(currentWorkspace) &&
-          isDefined(data?.findWorkspaceFromInviteHash) &&
-          currentWorkspace.id === data.findWorkspaceFromInviteHash.id
-        ) {
-          const workspaceDisplayName =
-            data?.findWorkspaceFromInviteHash?.displayName;
-          initiallyLoggedIn &&
-            enqueueInfoSnackBar({
-              message: workspaceDisplayName
-                ? t`You already belong to the workspace ${workspaceDisplayName}`
-                : t`You already belong to this workspace`,
-            });
-          navigate(AppPath.Index);
-        }
-      },
     });
+
+  useEffect(() => {
+    if (error) {
+      enqueueErrorSnackBar({ apolloError: error });
+      navigate(AppPath.Index);
+    }
+  }, [error, enqueueErrorSnackBar, navigate]);
+
+  useEffect(() => {
+    if (!workspaceFromInviteHash) return;
+
+    const data = workspaceFromInviteHash;
+    if (
+      isDefined(currentWorkspace) &&
+      isDefined(data?.findWorkspaceFromInviteHash) &&
+      currentWorkspace.id === data.findWorkspaceFromInviteHash.id
+    ) {
+      const workspaceDisplayName =
+        data?.findWorkspaceFromInviteHash?.displayName;
+      initiallyLoggedIn &&
+        enqueueInfoSnackBar({
+          message: workspaceDisplayName
+            ? t`You already belong to the workspace ${workspaceDisplayName}`
+            : t`You already belong to this workspace`,
+        });
+      navigate(AppPath.Index);
+    }
+  }, [workspaceFromInviteHash, currentWorkspace, initiallyLoggedIn, enqueueInfoSnackBar, navigate]);
   return {
     workspace: workspaceFromInviteHash?.findWorkspaceFromInviteHash,
     workspaceInviteHash,

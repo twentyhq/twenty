@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/client/react';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import {
@@ -27,13 +27,16 @@ export const useFindManyObjectMetadataItems = ({
     ObjectMetadataItemsQueryVariables
   >(FIND_MANY_OBJECT_METADATA_ITEMS, {
     skip,
-    onError: (error) => {
+  });
+
+  useEffect(() => {
+    if (error) {
       logError('useFindManyObjectMetadataItems error : ' + error);
       enqueueErrorSnackBar({
         apolloError: error,
       });
-    },
-  });
+    }
+  }, [error, enqueueErrorSnackBar]);
 
   const objectMetadataItems = useMemo(() => {
     const objectMetadataItemsArray =

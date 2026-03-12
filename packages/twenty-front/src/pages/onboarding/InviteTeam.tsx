@@ -138,8 +138,8 @@ export const InviteTeam = () => {
 
       const result = await sendInvitation({ emails });
 
-      if (isDefined(result.errors)) {
-        throw result.errors;
+      if (isDefined(result.error)) {
+        throw result.error;
       }
       if (emails.length > 0) {
         enqueueSuccessSnackBar({

@@ -44,6 +44,7 @@ export const useLazyFindOneRecord = <T extends ObjectRecord = ObjectRecord>({
     findOneRecordQuery,
     {
       client: apolloCoreClient,
+      fetchPolicy,
     },
   );
 
@@ -54,7 +55,6 @@ export const useLazyFindOneRecord = <T extends ObjectRecord = ObjectRecord>({
     }: FindOneRecordParams<T>) => {
       await findOneRecord({
         variables: { objectRecordId },
-        fetchPolicy,
         onCompleted: (data) => {
           const record = getRecordFromRecordNode<T>({
             recordNode: data[objectNameSingular],

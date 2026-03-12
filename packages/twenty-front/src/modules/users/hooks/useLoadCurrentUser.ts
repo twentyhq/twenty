@@ -47,17 +47,17 @@ export const useLoadCurrentUser = () => {
 
   const { isOnAWorkspace } = useIsCurrentLocationOnAWorkspace();
 
-  const [getCurrentUser] = useLazyQuery(GetCurrentUserDocument);
-  const [findAllCoreViews] = useLazyQuery(FindAllCoreViewsDocument);
+  const [getCurrentUser] = useLazyQuery(GetCurrentUserDocument, {
+    fetchPolicy: 'network-only',
+  });
+  const [findAllCoreViews] = useLazyQuery(FindAllCoreViewsDocument, {
+    fetchPolicy: 'network-only',
+  });
 
   const loadCurrentUser = useCallback(async () => {
-    const currentUserResult = await getCurrentUser({
-      fetchPolicy: 'network-only',
-    });
+    const currentUserResult = await getCurrentUser();
 
-    const coreViewsResult = await findAllCoreViews({
-      fetchPolicy: 'network-only',
-    });
+    const coreViewsResult = await findAllCoreViews();
 
     if (isDefined(currentUserResult.error)) {
       throw new Error(currentUserResult.error.message);

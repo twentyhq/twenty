@@ -21,7 +21,7 @@ import { i18n } from '@lingui/core';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { motion } from 'framer-motion';
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { useParams } from 'react-router-dom';
@@ -113,28 +113,34 @@ export const PasswordReset = () => {
     resolver: zodResolver(validationSchema),
   });
 
-  useQuery(ValidatePasswordResetTokenDocument, {
+  const { data: tokenValidationData, error: tokenValidationError } = useQuery(ValidatePasswordResetTokenDocument, {
     variables: {
       token: passwordResetToken ?? '',
     },
     skip: !passwordResetToken || isTokenValid,
-    onError: (error) => {
+  });
+
+  useEffect(() => {
+    if (tokenValidationError) {
       enqueueErrorSnackBar({
-        apolloError: error,
+        apolloError: tokenValidationError,
       });
       navigate(AppPath.Index);
-    },
-    onCompleted: (data) => {
+    }
+  }, [tokenValidationError, enqueueErrorSnackBar, navigate]);
+
+  useEffect(() => {
+    if (tokenValidationData) {
       setIsTokenValid(true);
-      const validationResult = data?.validatePasswordResetToken;
+      const validationResult = tokenValidationData?.validatePasswordResetToken;
       if (isNonEmptyString(validationResult?.email)) {
         setEmail(validationResult.email);
       }
       if (validationResult?.hasPassword) {
         setIsTargetUserPasswordSet(validationResult.hasPassword);
       }
-    },
-  });
+    }
+  }, [tokenValidationData]);
 
   const [updatePasswordViaToken, { loading: isUpdatingPassword }] =
     useMutation(UpdatePasswordViaResetTokenDocument);

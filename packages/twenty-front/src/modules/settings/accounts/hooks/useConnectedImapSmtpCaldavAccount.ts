@@ -1,4 +1,5 @@
 import { useQuery } from '@apollo/client/react';
+import { useEffect } from 'react';
 import {
   type GetConnectedImapSmtpCaldavAccountQuery,
   GetConnectedImapSmtpCaldavAccountDocument,
@@ -14,10 +15,13 @@ export const useConnectedImapSmtpCaldavAccount = (
   const { data, loading, error } = useQuery(GetConnectedImapSmtpCaldavAccountDocument, {
     variables: { id: connectedAccountId ?? '' },
     skip: !connectedAccountId,
-    onCompleted: (data) => {
-      onCompleted?.(data.getConnectedImapSmtpCaldavAccount);
-    },
   });
+
+  useEffect(() => {
+    if (data) {
+      onCompleted?.(data.getConnectedImapSmtpCaldavAccount);
+    }
+  }, [data, onCompleted]);
 
   return {
     connectedAccount: data?.getConnectedImapSmtpCaldavAccount,

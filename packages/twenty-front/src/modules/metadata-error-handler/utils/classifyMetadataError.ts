@@ -46,7 +46,7 @@ export const classifyMetadataError = ({
   error,
   primaryMetadataName,
 }: ClassifyMetadataErrorArgs): MetadataErrorClassification => {
-  const extensions = error.graphQLErrors?.[0]?.extensions;
+  const extensions = error.errors?.[0]?.extensions;
 
   if (!isDefined(extensions)) {
     return { type: 'v1', error };

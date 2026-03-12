@@ -1,6 +1,6 @@
 import { type DocumentNode, type OperationVariables, type TypedDocumentNode } from '@apollo/client';
 import { useQuery } from '@apollo/client/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
@@ -59,15 +59,19 @@ export const useCustomResolver = <
     data,
     loading: firstQueryLoading,
     fetchMore,
+    error,
   } = useQuery<CustomResolverQueryResult<T>>(query, {
     client: apolloCoreClient,
     variables: queryVariables,
-    onError: (error) => {
+  });
+
+  useEffect(() => {
+    if (error) {
       enqueueErrorSnackBar({
         apolloError: error,
       });
-    },
-  });
+    }
+  }, [error, enqueueErrorSnackBar]);
 
   const fetchMoreRecords = async () => {
     if (page.hasNextPage && !isFetchingMore && !firstQueryLoading) {

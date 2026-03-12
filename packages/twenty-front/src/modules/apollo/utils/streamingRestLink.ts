@@ -2,9 +2,9 @@ import {
   ApolloLink,
   Observable,
   type Operation,
-  type ServerError,
-} from '@apollo/client/core';
-import { type FetchResult } from '@apollo/client/link/core';
+  type FetchResult,
+} from '@apollo/client';
+import { ServerError } from '@apollo/client/errors';
 import { type ArgumentNode, type DirectiveNode } from 'graphql';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -62,13 +62,10 @@ export class StreamingRestLink extends ApolloLink {
       fetch(url, requestConfig)
         .then(async (response) => {
           if (!response.ok) {
-            const networkError = new Error(
+            throw new ServerError(
               `HTTP error! status: ${response.status}`,
-            ) as ServerError;
-
-            networkError.statusCode = response.status;
-
-            throw networkError;
+              { response, bodyText: '' },
+            );
           }
 
           if (!response.body) {

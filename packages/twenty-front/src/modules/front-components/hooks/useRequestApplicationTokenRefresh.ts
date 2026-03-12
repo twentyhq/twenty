@@ -3,7 +3,7 @@ import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { type GraphQLFormattedError } from 'graphql';
 import { useCallback } from 'react';
 import { useStore } from 'jotai';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { frontComponentApplicationTokenPairComponentState } from '@/front-components/states/frontComponentApplicationTokenPairComponentState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
@@ -88,18 +88,17 @@ export const useRequestApplicationTokenRefresh = ({
         },
       });
 
-      if (isNonEmptyArray(renewResult.errors)) {
+      if (isDefined(renewResult.error)) {
         if (
-          hasApplicationRefreshTokenInvalidOrExpiredSubCode(renewResult.errors)
+          CombinedGraphQLErrors.is(renewResult.error) &&
+          hasApplicationRefreshTokenInvalidOrExpiredSubCode(
+            renewResult.error.errors,
+          )
         ) {
           return await refetchFrontComponentForNewTokenPair();
         }
 
-        const errorMessage = renewResult.errors
-          .map((error) => error.message)
-          .join(', ');
-
-        throw new Error(`Token renewal failed: ${errorMessage}`);
+        throw new Error(`Token renewal failed: ${renewResult.error.message}`);
       }
 
       const renewedTokenPair = renewResult.data?.renewApplicationToken;
@@ -114,7 +113,7 @@ export const useRequestApplicationTokenRefresh = ({
     } catch (error) {
       if (
         error instanceof CombinedGraphQLErrors &&
-        hasApplicationRefreshTokenInvalidOrExpiredSubCode(error.graphQLErrors)
+        hasApplicationRefreshTokenInvalidOrExpiredSubCode(error.errors)
       ) {
         return await refetchFrontComponentForNewTokenPair();
       }

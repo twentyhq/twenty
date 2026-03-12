@@ -380,7 +380,7 @@ const performSearchQueries = async ({
   limit = MULTIPLE_RECORD_PICKER_PAGE_SIZE,
   after = null,
 }: {
-  client: ApolloClient<object>;
+  client: ApolloClient;
   searchFilter: string;
   searchableObjectMetadataItems: ObjectMetadataItem[];
   pickedRecordIds: string[];

@@ -55,7 +55,7 @@ const apolloMocks = [
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
   <MemoryRouter>
-    <MockedProvider mocks={apolloMocks} addTypename={false}>
+    <MockedProvider mocks={apolloMocks}>
       {children}
     </MockedProvider>
   </MemoryRouter>
@@ -87,7 +87,7 @@ describe('useSSO', () => {
 
     expect(mockEnqueueErrorSnackBar).toHaveBeenCalledWith({
       apolloError: new CombinedGraphQLErrors({
-        graphQLErrors: [{ message: 'Error message' }],
+        errors: [{ message: 'Error message' }],
       }),
     });
   });

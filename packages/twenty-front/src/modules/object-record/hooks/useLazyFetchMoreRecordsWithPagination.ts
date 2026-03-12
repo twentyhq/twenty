@@ -1,7 +1,5 @@
-import { type ApolloQueryResult, type FetchMoreQueryOptions, type OperationVariables, type WatchQueryFetchPolicy } from '@apollo/client';
-import { type CombinedGraphQLErrors } from '@apollo/client/errors';
+import { type ApolloClient, type ErrorLike, type ObservableQuery, type OperationVariables, type WatchQueryFetchPolicy } from '@apollo/client';
 import { type Unmasked } from '@apollo/client/masking';
-import { isNonEmptyArray } from '@apollo/client/utilities';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback } from 'react';
 
@@ -24,7 +22,7 @@ import {
 import { DEFAULT_SEARCH_REQUEST_LIMIT } from '@/object-record/constants/DefaultSearchRequestLimit';
 import { cursorFamilyState } from '@/object-record/states/cursorFamilyState';
 import { hasNextPageFamilyState } from '@/object-record/states/hasNextPageFamilyState';
-import { capitalize, isDefined } from 'twenty-shared/utils';
+import { capitalize, isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { useStore } from 'jotai';
 
 export type UseFindManyRecordsParams<T> = ObjectMetadataItemIdentifier &
@@ -43,21 +41,13 @@ type UseFindManyRecordsStateParams<
   'skip' | 'recordGqlFields' | 'fetchPolicy' | 'onCompleted'
 > & {
   data: RecordGqlOperationFindManyResult | undefined;
-  error: CombinedGraphQLErrors | undefined;
+  error: ErrorLike | undefined;
   fetchMore<
     TFetchData = TData,
     TFetchVars extends OperationVariables = OperationVariables,
   >(
-    fetchMoreOptions: FetchMoreQueryOptions<TFetchVars, TFetchData> & {
-      updateQuery?: (
-        previousQueryResult: TData,
-        options: {
-          fetchMoreResult: Unmasked<TFetchData>;
-          variables: TFetchVars;
-        },
-      ) => TData;
-    },
-  ): Promise<ApolloQueryResult<TFetchData>>;
+    fetchMoreOptions: ObservableQuery.FetchMoreOptions<TData, OperationVariables, TFetchData, TFetchVars>,
+  ): Promise<ApolloClient.QueryResult<TFetchData>>;
   objectMetadataItem: ObjectMetadataItem;
 };
 
@@ -171,8 +161,8 @@ export const useLazyFetchMoreRecordsWithPagination = <
             }) as T[],
           };
         } catch (error) {
-          handleFindManyRecordsError(error as CombinedGraphQLErrors);
-          return { error: error as CombinedGraphQLErrors };
+          handleFindManyRecordsError(error as ErrorLike);
+          return { error: error as ErrorLike };
         }
       }
     },

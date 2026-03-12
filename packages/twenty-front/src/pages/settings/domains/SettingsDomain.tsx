@@ -103,19 +103,23 @@ export const SettingsDomain = () => {
         setIsSubmitting(false);
         checkCustomDomainRecords();
       },
-      onError: (error: CombinedGraphQLErrors) => {
+      onError: (error) => {
         if (
-          error instanceof CombinedGraphQLErrors &&
-          error.graphQLErrors[0]?.extensions?.code === 'CONFLICT'
+          CombinedGraphQLErrors.is(error) &&
+          error.errors[0]?.extensions?.code === 'CONFLICT'
         ) {
           return form.control.setError('subdomain', {
             type: 'manual',
             message: t`Subdomain already taken`,
           });
         }
-        enqueueErrorSnackBar({
-          apolloError: error,
-        });
+        if (CombinedGraphQLErrors.is(error)) {
+          enqueueErrorSnackBar({
+            apolloError: error,
+          });
+        } else {
+          enqueueErrorSnackBar({});
+        }
         setIsSubmitting(false);
       },
     });
@@ -135,10 +139,10 @@ export const SettingsDomain = () => {
           subdomain,
         },
       },
-      onError: (error: CombinedGraphQLErrors) => {
+      onError: (error) => {
         if (
-          error instanceof CombinedGraphQLErrors &&
-          error.graphQLErrors[0]?.extensions?.code === 'CONFLICT'
+          CombinedGraphQLErrors.is(error) &&
+          error.errors[0]?.extensions?.code === 'CONFLICT'
         ) {
           closeModal(SUBDOMAIN_CHANGE_CONFIRMATION_MODAL_ID);
           return form.control.setError('subdomain', {
@@ -146,9 +150,13 @@ export const SettingsDomain = () => {
             message: t`Subdomain already taken`,
           });
         }
-        enqueueErrorSnackBar({
-          apolloError: error,
-        });
+        if (CombinedGraphQLErrors.is(error)) {
+          enqueueErrorSnackBar({
+            apolloError: error,
+          });
+        } else {
+          enqueueErrorSnackBar({});
+        }
         setIsSubmitting(false);
       },
       onCompleted: async () => {

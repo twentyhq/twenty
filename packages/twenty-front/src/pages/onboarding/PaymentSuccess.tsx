@@ -28,7 +28,9 @@ const StyledTitleContainer = styled.div`
 export const PaymentSuccess = () => {
   const navigate = useNavigateApp();
   const subscriptionStatus = useSubscriptionStatus();
-  const [getCurrentUser] = useLazyQuery(GetCurrentUserDocument);
+  const [getCurrentUser] = useLazyQuery(GetCurrentUserDocument, {
+    fetchPolicy: 'network-only',
+  });
   const setCurrentUser = useSetAtomState(currentUserState);
   const [isLoading, setIsLoading] = useState(false);
   const navigateWithSubscriptionCheck = async () => {
@@ -42,7 +44,7 @@ export const PaymentSuccess = () => {
         return;
       }
 
-      const result = await getCurrentUser({ fetchPolicy: 'network-only' });
+      const result = await getCurrentUser();
       const currentUser = result.data?.currentUser;
       const refreshedSubscriptionStatus =
         currentUser?.currentWorkspace?.currentBillingSubscription?.status;

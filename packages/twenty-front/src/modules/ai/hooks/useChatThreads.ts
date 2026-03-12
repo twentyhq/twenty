@@ -16,10 +16,13 @@ export const useChatThreads = () => {
     variables: {
       paging: { first: CHAT_THREADS_PAGE_SIZE },
     },
-    onCompleted: () => {
-      setShouldFetchMore(false);
-    },
   });
+
+  useEffect(() => {
+    if (data) {
+      setShouldFetchMore(false);
+    }
+  }, [data]);
 
   const edges = data?.chatThreads?.edges ?? [];
   const threads = edges.map((edge) => edge.node);

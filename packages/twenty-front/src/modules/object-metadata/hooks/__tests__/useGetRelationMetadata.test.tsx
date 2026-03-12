@@ -10,7 +10,7 @@ import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockO
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <JotaiProvider store={jotaiStore}>
-    <MockedProvider addTypename={false}>{children}</MockedProvider>
+    <MockedProvider>{children}</MockedProvider>
   </JotaiProvider>
 );
 

@@ -1,5 +1,5 @@
 import { addDays } from 'date-fns';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -29,21 +29,7 @@ export const SettingsDevelopersApiKeysNew = () => {
   const { t } = useLingui();
   const [generateOneApiKeyToken] = useMutation(GenerateApiKeyTokenDocument);
   const navigateSettings = useNavigateSettings();
-  const { data: rolesData, loading: rolesLoading } = useQuery(GetRolesDocument, {
-    onCompleted: (data) => {
-      if (isDefined(data?.getRoles)) {
-        const apiKeyAssignableRoles = data.getRoles.filter(
-          (role) => role.canBeAssignedToApiKeys,
-        );
-        if (!formValues.roleId && apiKeyAssignableRoles.length > 0) {
-          setFormValues((prev) => ({
-            ...prev,
-            roleId: apiKeyAssignableRoles[0].id,
-          }));
-        }
-      }
-    },
-  });
+  const { data: rolesData, loading: rolesLoading } = useQuery(GetRolesDocument);
   const roles = rolesData?.getRoles ?? [];
 
   const [formValues, setFormValues] = useState<{
@@ -55,6 +41,22 @@ export const SettingsDevelopersApiKeysNew = () => {
     name: '',
     roleId: '',
   });
+
+  useEffect(() => {
+    if (isDefined(rolesData?.getRoles)) {
+      const apiKeyAssignableRoles = rolesData.getRoles.filter(
+        (role) => role.canBeAssignedToApiKeys,
+      );
+      if (apiKeyAssignableRoles.length > 0) {
+        setFormValues((prev) => {
+          if (!prev.roleId) {
+            return { ...prev, roleId: apiKeyAssignableRoles[0].id };
+          }
+          return prev;
+        });
+      }
+    }
+  }, [rolesData]);
 
   const [createApiKey] = useMutation(CreateApiKeyDocument);
 

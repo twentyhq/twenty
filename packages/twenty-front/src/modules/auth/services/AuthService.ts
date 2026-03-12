@@ -3,7 +3,6 @@ import {
   ApolloLink,
   HttpLink,
   InMemoryCache,
-  type UriFunction,
 } from '@apollo/client';
 
 import { loggerLink } from '@/apollo/utils/loggerLink';
@@ -19,7 +18,7 @@ import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 const logger = loggerLink(() => 'Twenty-Refresh');
 
 const renewTokenMutation = async (
-  uri: string | UriFunction | undefined,
+  uri: string | undefined,
   refreshToken: string,
 ) => {
   const httpLink = new HttpLink({ uri });
@@ -30,7 +29,7 @@ const renewTokenMutation = async (
     cache: new InMemoryCache({}),
   });
 
-  const { data, errors } = await client.mutate<
+  const { data, error } = await client.mutate<
     RenewTokenMutation,
     RenewTokenMutationVariables
   >({
@@ -41,7 +40,7 @@ const renewTokenMutation = async (
     fetchPolicy: 'network-only',
   });
 
-  if (isDefined(errors) || isUndefinedOrNull(data)) {
+  if (isDefined(error) || isUndefinedOrNull(data)) {
     throw new Error('Something went wrong during token renewal');
   }
 
@@ -49,7 +48,7 @@ const renewTokenMutation = async (
 };
 
 export const renewToken = async (
-  uri: string | UriFunction | undefined,
+  uri: string | undefined,
   tokenPair: AuthTokenPair | undefined | null,
 ) => {
   if (!tokenPair) {

@@ -73,7 +73,7 @@ jest.mock('@/domain-manager/hooks/useLastAuthenticatedWorkspaceDomain', () => ({
 }));
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
-  <MockedProvider mocks={Object.values(mocks)} addTypename={false}>
+  <MockedProvider mocks={Object.values(mocks)}>
     <MemoryRouter>
       <SnackBarComponentInstanceContext.Provider
         value={{ instanceId: 'test-instance-id' }}

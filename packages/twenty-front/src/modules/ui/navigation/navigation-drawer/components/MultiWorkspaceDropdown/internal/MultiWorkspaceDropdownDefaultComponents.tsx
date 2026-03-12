@@ -24,7 +24,7 @@ import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { type CombinedGraphQLErrors } from '@apollo/client/errors';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -116,9 +116,9 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
           '_blank',
         );
       },
-      onError: (error: CombinedGraphQLErrors) => {
+      onError: (error) => {
         enqueueErrorSnackBar({
-          apolloError: error,
+          ...(CombinedGraphQLErrors.is(error) ? { apolloError: error } : {}),
         });
       },
     });

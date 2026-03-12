@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useStore } from 'jotai';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -84,15 +84,16 @@ export const SettingsDevelopersApiKeyDetail = () => {
         id: apiKeyId,
       },
     },
-    onCompleted: (data) => {
-      if (isDefined(data?.apiKey)) {
-        setApiKeyName(data.apiKey.name);
-        if (isDefined(data.apiKey.role)) {
-          setSelectedRoleId(data.apiKey.role.id);
-        }
-      }
-    },
   });
+
+  useEffect(() => {
+    if (isDefined(apiKeyData?.apiKey)) {
+      setApiKeyName(apiKeyData.apiKey.name);
+      if (isDefined(apiKeyData.apiKey.role)) {
+        setSelectedRoleId(apiKeyData.apiKey.role.id);
+      }
+    }
+  }, [apiKeyData]);
 
   const { data: rolesData, loading: rolesLoading } = useQuery(GetRolesDocument);
 

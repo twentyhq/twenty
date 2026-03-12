@@ -104,7 +104,7 @@ export const VerifyEmailEffect = () => {
         });
         if (
           error instanceof CombinedGraphQLErrors &&
-          error.graphQLErrors[0].extensions?.subCode ===
+          error.errors[0].extensions?.subCode ===
             'EMAIL_ALREADY_VERIFIED'
         ) {
           navigate(AppPath.SignInUp);

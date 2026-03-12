@@ -1,6 +1,5 @@
 import { normalizeGroupByDimensionValue } from '@/apollo/optimistic-effect/group-by/utils/normalizeGroupByDimensionValue';
 import { type RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
-import { isArray } from '@apollo/client/utilities';
 import { isDefined } from 'twenty-shared/utils';
 
 export const doesRecordBelongToGroup = (
@@ -14,7 +13,7 @@ export const doesRecordBelongToGroup = (
     return true;
   }
 
-  if (isArray(groupByConfig)) {
+  if (Array.isArray(groupByConfig)) {
     const groupByFieldNames = groupByConfig.map(
       (groupByField) => Object.keys(groupByField)[0],
     );

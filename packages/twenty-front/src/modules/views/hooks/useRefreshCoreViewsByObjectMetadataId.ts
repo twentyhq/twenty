@@ -5,7 +5,9 @@ import { useLazyQuery } from '@apollo/client/react';
 import { FindManyCoreViewsDocument } from '~/generated-metadata/graphql';
 
 export const useRefreshCoreViewsByObjectMetadataId = () => {
-  const [findManyCoreViewsLazy] = useLazyQuery(FindManyCoreViewsDocument);
+  const [findManyCoreViewsLazy] = useLazyQuery(FindManyCoreViewsDocument, {
+    fetchPolicy: 'network-only',
+  });
   const { applyCoreViewsForObjectMetadataId } =
     useApplyCoreViewsForObjectMetadataId();
 
@@ -15,7 +17,6 @@ export const useRefreshCoreViewsByObjectMetadataId = () => {
         variables: {
           objectMetadataId,
         },
-        fetchPolicy: 'network-only',
       });
 
       if (!isDefined(result.data?.getCoreViews)) {

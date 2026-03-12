@@ -113,7 +113,7 @@ export const usePerformCombinedFindManyRecords = () => {
     client: customClient,
   }: {
     operationSignatures: RecordGqlOperationSignature[];
-    client?: ApolloClient<object>;
+    client?: ApolloClient;
   }) => {
     const apolloClient = customClient || apolloCoreClient;
 

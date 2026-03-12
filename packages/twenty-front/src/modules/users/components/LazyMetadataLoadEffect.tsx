@@ -44,7 +44,8 @@ export const LazyMetadataLoadEffect = () => {
       variables: { viewTypes: FIELDS_WIDGET_VIEW_TYPES },
     });
 
-  const { data: queryDataRecordPageLayouts } = useFindAllRecordPageLayoutsQuery(
+  const { data: queryDataRecordPageLayouts } = useQuery(
+    FindAllRecordPageLayoutsDocument,
     { skip: shouldSkip },
   );
 

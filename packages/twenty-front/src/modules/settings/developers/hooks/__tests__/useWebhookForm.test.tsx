@@ -123,7 +123,7 @@ const Wrapper = ({
   children: ReactNode;
   mocks?: any[];
 }) => (
-  <MockedProvider mocks={mocks} addTypename={false}>
+  <MockedProvider mocks={mocks}>
     <MemoryRouter>{children}</MemoryRouter>
   </MockedProvider>
 );

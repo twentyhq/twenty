@@ -21,7 +21,9 @@ export const ObjectMetadataItemSSEEffect = () => {
   const { updateDraft, applyChanges } = useMetadataStore();
 
   const [findManyNavigationMenuItemsLazy] =
-    useLazyQuery(FindManyNavigationMenuItemsDocument);
+    useLazyQuery(FindManyNavigationMenuItemsDocument, {
+      fetchPolicy: 'network-only',
+    });
 
   useListenToEventsForQuery({
     queryId,
@@ -40,9 +42,7 @@ export const ObjectMetadataItemSSEEffect = () => {
       updateDraft('objectMetadataItems', loadedObjects);
       applyChanges();
 
-      const navigationMenuItemsResult = await findManyNavigationMenuItemsLazy({
-        fetchPolicy: 'network-only',
-      });
+      const navigationMenuItemsResult = await findManyNavigationMenuItemsLazy();
 
       const existingNavigationMenuItems = store.get(
         prefetchNavigationMenuItemsState.atom,

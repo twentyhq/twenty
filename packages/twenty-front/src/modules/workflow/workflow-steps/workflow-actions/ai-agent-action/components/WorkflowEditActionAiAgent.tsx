@@ -18,7 +18,7 @@ import { workflowAiAgentActionAgentState } from '@/workflow/workflow-steps/workf
 import { workflowAiAgentPermissionsIsAddingPermissionState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsIsAddingPermissionState';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   type AgentResponseSchema,
   type ModelConfiguration,
@@ -65,15 +65,19 @@ export const WorkflowEditActionAiAgent = ({
   const agentId = action.settings.input.agentId;
   const [workflowAiAgentActionAgent, setWorkflowAiAgentActionAgent] =
     useAtomState(workflowAiAgentActionAgentState);
-  const { loading: agentLoading, refetch: refetchAgent } = useFindOneAgentQuery(
+  const { data: agentData, loading: agentLoading, refetch: refetchAgent } = useQuery(
+    FindOneAgentDocument,
     {
       variables: { id: agentId || '' },
       skip: !agentId,
-      onCompleted: (data) => {
-        setWorkflowAiAgentActionAgent(data.findOneAgent);
-      },
     },
   );
+
+  useEffect(() => {
+    if (agentData?.findOneAgent) {
+      setWorkflowAiAgentActionAgent(agentData.findOneAgent);
+    }
+  }, [agentData, setWorkflowAiAgentActionAgent]);
   useResetWorkflowAiAgentPermissionsStateOnSidePanelClose();
   const [updateAgent] = useMutation(UpdateOneAgentDocument);
   const aiModelOptions = useAiModelOptions();

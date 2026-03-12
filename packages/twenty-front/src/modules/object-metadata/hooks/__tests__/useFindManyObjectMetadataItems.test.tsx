@@ -24,7 +24,7 @@ const mocks = [
 ];
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
-  <MockedProvider mocks={mocks} addTypename={false}>
+  <MockedProvider mocks={mocks}>
     <SnackBarComponentInstanceContext.Provider
       value={{ instanceId: 'snack-bar-manager' }}
     >

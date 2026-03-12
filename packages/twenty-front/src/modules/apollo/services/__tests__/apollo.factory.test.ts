@@ -79,7 +79,7 @@ const mockWorkspace = {
   workspaceCustomApplicationId: CUSTOM_WORKSPACE_APPLICATION_MOCK.id,
 };
 
-const createMockOptions = (): Options<any> => ({
+const createMockOptions = (): Options => ({
   uri: 'http://localhost:3000',
   currentWorkspaceMember: mockWorkspaceMember,
   currentWorkspace: mockWorkspace,

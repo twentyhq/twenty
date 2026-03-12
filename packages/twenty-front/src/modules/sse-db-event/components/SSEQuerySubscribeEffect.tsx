@@ -87,7 +87,7 @@ export const SSEQuerySubscribeEffect = () => {
       }
     } catch (error) {
       if (error instanceof CombinedGraphQLErrors) {
-        const subCode = error.graphQLErrors[0]?.extensions?.subCode;
+        const subCode = error.errors[0]?.extensions?.subCode;
 
         switch (subCode) {
           case 'EVENT_STREAM_DOES_NOT_EXIST':

@@ -5,7 +5,7 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
@@ -75,17 +75,20 @@ export const SettingsAgentLogsTab = ({
     useQuery(GetAgentTurnsDocument, {
       variables: { agentId },
       skip: !agentId,
-      onCompleted: (completedData) => {
-        const backgroundIds = computeBackgroundEvaluatingTurnIds(
-          completedData?.agentTurns ?? [],
-        );
-        if (backgroundIds.size > 0) {
-          startPolling(3000);
-        } else {
-          stopPolling();
-        }
-      },
     });
+
+  useEffect(() => {
+    if (data) {
+      const backgroundIds = computeBackgroundEvaluatingTurnIds(
+        data?.agentTurns ?? [],
+      );
+      if (backgroundIds.size > 0) {
+        startPolling(3000);
+      } else {
+        stopPolling();
+      }
+    }
+  }, [data, startPolling, stopPolling]);
 
   const turns = data?.agentTurns || [];
   const backgroundEvaluatingTurnIds = computeBackgroundEvaluatingTurnIds(turns);
