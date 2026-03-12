@@ -4166,6 +4166,7 @@ export default {
                 1
             ]
         },
+        "EngineComponentKey": {},
         "CommandMenuItemAvailabilityType": {},
         "AgentChatThread": {
             "id": [
@@ -9508,6 +9509,9 @@ export default {
             "frontComponentId": [
                 3
             ],
+            "engineComponentKey": [
+                224
+            ],
             "label": [
                 1
             ],
@@ -9560,6 +9564,9 @@ export default {
             ],
             "availabilityObjectMetadataId": [
                 3
+            ],
+            "engineComponentKey": [
+                224
             ],
             "__typename": [
                 1

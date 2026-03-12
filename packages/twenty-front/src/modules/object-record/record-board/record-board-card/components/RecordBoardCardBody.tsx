@@ -22,7 +22,8 @@ import { useContext } from 'react';
 export const RecordBoardCardBody = () => {
   const { recordId, isRecordReadOnly } = useContext(RecordBoardCardContext);
 
-  const { updateOneRecord, objectPermissions } = useContext(RecordBoardContext);
+  const { updateOneRecord, objectPermissions, objectMetadataItem } =
+    useContext(RecordBoardContext);
 
   const {
     labelIdentifierFieldMetadataItem,
@@ -72,12 +73,15 @@ export const RecordBoardCardBody = () => {
                 isLabelIdentifier: false,
                 isRecordFieldReadOnly: isRecordFieldReadOnly({
                   isRecordReadOnly,
+                  isSystemObject: objectMetadataItem.isSystem,
                   objectPermissions,
                   fieldMetadataItem: {
                     id: recordField.fieldMetadataItemId,
                     isUIReadOnly:
                       correspondingFieldDefinition.metadata.isUIReadOnly ??
                       false,
+                    isCustom:
+                      correspondingFieldDefinition.metadata.isCustom ?? false,
                   },
                 }),
                 fieldDefinition: correspondingFieldDefinition,

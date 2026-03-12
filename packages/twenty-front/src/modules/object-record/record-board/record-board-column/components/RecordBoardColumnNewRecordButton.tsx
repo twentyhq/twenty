@@ -52,6 +52,10 @@ export const RecordBoardColumnNewRecordButton = () => {
     return null;
   }
 
+  if (objectMetadataItem.isSystem) {
+    return null;
+  }
+
   if (hasAnySoftDeleteFilterOnView) {
     return null;
   }

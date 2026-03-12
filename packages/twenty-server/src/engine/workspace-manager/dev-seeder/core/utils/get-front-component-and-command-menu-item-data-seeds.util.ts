@@ -1,4 +1,4 @@
-import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
+import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/enums/command-menu-item-availability-type.enum';
 import {
   COMMAND_MENU_ITEM_SEEDS,
   FRONT_COMPONENT_SEEDS,

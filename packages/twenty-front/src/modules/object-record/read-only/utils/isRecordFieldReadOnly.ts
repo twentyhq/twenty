@@ -4,13 +4,18 @@ import { type ObjectPermission } from '~/generated-metadata/graphql';
 
 type IsRecordFieldReadOnlyParams = {
   isRecordReadOnly: boolean;
-  fieldMetadataItem: Pick<FieldMetadataItem, 'id' | 'isUIReadOnly'>;
+  isSystemObject?: boolean;
+  fieldMetadataItem: Pick<
+    FieldMetadataItem,
+    'id' | 'isUIReadOnly' | 'isCustom'
+  >;
   objectPermissions: ObjectPermission;
 };
 
 export const isRecordFieldReadOnly = ({
   objectPermissions,
   isRecordReadOnly,
+  isSystemObject,
   fieldMetadataItem,
 }: IsRecordFieldReadOnlyParams) => {
   const fieldReadOnlyByPermissions = isFieldMetadataReadOnlyByPermissions({
@@ -20,6 +25,7 @@ export const isRecordFieldReadOnly = ({
 
   return (
     isRecordReadOnly ||
+    (isSystemObject === true && fieldMetadataItem.isCustom !== true) ||
     fieldMetadataItem.isUIReadOnly ||
     fieldReadOnlyByPermissions
   );
