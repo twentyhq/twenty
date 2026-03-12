@@ -129,7 +129,7 @@ type BuildCommandMenuItemFromStandardKeyParams = {
   commandMenuContextApi: CommandMenuContextApi;
 };
 
-const buildCommandMenuItemFromStandardKey = ({
+const buildCommandItemFromEngineKey = ({
   item,
   engineComponentKey,
   type = CommandMenuItemType.Standard,
@@ -144,7 +144,7 @@ const buildCommandMenuItemFromStandardKey = ({
 
   return {
     type,
-    key: `command-menu-item-standard-${item.id}`,
+    key: `command-menu-item-engine-${item.id}`,
     scope,
     label: item.label,
     shortLabel: item.shortLabel ?? undefined,
@@ -225,7 +225,7 @@ export const useCommandMenuItemFrontComponentCommands = (
     typeOverride?: CommandMenuItemType;
   }) => {
     if (isDefined(item.engineComponentKey)) {
-      return buildCommandMenuItemFromStandardKey({
+      return buildCommandItemFromEngineKey({
         item,
         engineComponentKey: item.engineComponentKey,
         type: typeOverride,
