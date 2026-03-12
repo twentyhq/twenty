@@ -1,13 +1,2 @@
 generated
-
-# Ignore .twenty build output for all apps
 .twenty
-
-# Allow committed fixture metadata (used by dev seeder)
-!fixtures/**/.twenty
-fixtures/**/.twenty/*
-!fixtures/**/.twenty/output
-fixtures/**/.twenty/output/**
-!fixtures/**/.twenty/output/manifest.json
-!fixtures/**/.twenty/output/package.json
-!fixtures/**/.twenty/output/yarn.lock

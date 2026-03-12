@@ -18,7 +18,7 @@ export type AppSeedDefinition = {
     sourcePackage?: string;
     author?: string;
   };
-  outputDir: string;
+  fixtureDir: string;
 };
 
 export const APP_SEEDS: AppSeedDefinition[] = [
@@ -31,7 +31,7 @@ export const APP_SEEDS: AppSeedDefinition[] = [
       sourcePackage: 'hello-world',
       author: 'Twenty',
     },
-    outputDir: join(FIXTURES_ROOT, 'hello-world-app', '.twenty', 'output'),
+    fixtureDir: join(FIXTURES_ROOT, 'hello-world-app'),
   },
   {
     registration: {
@@ -41,7 +41,7 @@ export const APP_SEEDS: AppSeedDefinition[] = [
       sourceType: ApplicationRegistrationSourceType.TARBALL,
       author: 'Twenty',
     },
-    outputDir: join(FIXTURES_ROOT, 'postcard-app', '.twenty', 'output'),
+    fixtureDir: join(FIXTURES_ROOT, 'postcard-app'),
   },
   {
     registration: {
@@ -50,6 +50,6 @@ export const APP_SEEDS: AppSeedDefinition[] = [
       description: 'A dev-mode app running locally',
       sourceType: ApplicationRegistrationSourceType.LOCAL,
     },
-    outputDir: join(FIXTURES_ROOT, 'minimal-app', '.twenty', 'output'),
+    fixtureDir: join(FIXTURES_ROOT, 'minimal-app'),
   },
 ];

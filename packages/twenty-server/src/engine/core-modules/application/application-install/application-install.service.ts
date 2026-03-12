@@ -95,9 +95,9 @@ export class ApplicationInstallService {
     );
   }
 
-  async installFromLocalDirectory(params: {
+  async installFromFixtureDirectory(params: {
     appRegistrationId: string;
-    extractedDir: string;
+    fixtureDir: string;
     workspaceId: string;
   }): Promise<boolean> {
     const appRegistration = await this.appRegistrationRepository.findOne({
@@ -112,20 +112,33 @@ export class ApplicationInstallService {
     }
 
     const manifestContent = await fs.readFile(
-      join(params.extractedDir, 'manifest.json'),
+      join(params.fixtureDir, 'manifest.json'),
       'utf-8',
     );
     const manifest: Manifest = JSON.parse(manifestContent);
 
-    await this.installFromExtractedDir({
-      appRegistration,
-      extractedDir: params.extractedDir,
-      manifest,
+    await this.ensureApplicationExists({
+      universalIdentifier: appRegistration.universalIdentifier,
+      name: manifest.application.displayName,
       workspaceId: params.workspaceId,
+      applicationRegistrationId: appRegistration.id,
+      sourceType: appRegistration.sourceType,
+    });
+
+    await this.writeDependencyFilesToStorage(
+      params.fixtureDir,
+      appRegistration.universalIdentifier,
+      params.workspaceId,
+    );
+
+    await this.applicationSyncService.synchronizeFromManifest({
+      workspaceId: params.workspaceId,
+      manifest,
+      applicationRegistrationId: appRegistration.id,
     });
 
     this.logger.log(
-      `Installed app from local directory: ${appRegistration.universalIdentifier}`,
+      `Installed app from fixture directory: ${appRegistration.universalIdentifier}`,
     );
 
     return true;
@@ -200,6 +213,34 @@ export class ApplicationInstallService {
       manifest: params.manifest,
       applicationRegistrationId: params.appRegistration.id,
     });
+  }
+
+  private async writeDependencyFilesToStorage(
+    fixtureDir: string,
+    applicationUniversalIdentifier: string,
+    workspaceId: string,
+  ): Promise<void> {
+    const dependencyFiles = ['package.json', 'yarn.lock'];
+
+    for (const fileName of dependencyFiles) {
+      const filePath = join(fixtureDir, fileName);
+
+      try {
+        const content = await fs.readFile(filePath);
+
+        await this.fileStorageService.writeFile({
+          sourceFile: content,
+          mimeType: undefined,
+          fileFolder: FileFolder.Dependencies,
+          applicationUniversalIdentifier,
+          workspaceId,
+          resourcePath: fileName,
+          settings: { isTemporaryFile: false, toDelete: false },
+        });
+      } catch {
+        // yarn.lock may not exist for all fixtures
+      }
+    }
   }
 
   private async writeFilesToStorage(

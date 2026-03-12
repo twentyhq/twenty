@@ -255,7 +255,6 @@
             "nx ts-node-no-deps-transpile-only -- ./scripts/setup-db.ts",
             "nx database:migrate",
             "nx command-no-deps -- cache:flush",
-            "cd ../twenty-sdk && npx tsx ../twenty-apps/fixtures/build-fixture-outputs.ts",
             "nx command-no-deps -- workspace:seed:dev --with-apps"
           ],
           "parallel": false

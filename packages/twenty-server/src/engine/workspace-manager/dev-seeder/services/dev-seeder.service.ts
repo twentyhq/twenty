@@ -226,9 +226,9 @@ export class DevSeederService {
       );
     }
 
-    await this.applicationInstallService.installFromLocalDirectory({
+    await this.applicationInstallService.installFromFixtureDirectory({
       appRegistrationId: registration.id,
-      extractedDir: seed.outputDir,
+      fixtureDir: seed.fixtureDir,
       workspaceId,
     });
 
