@@ -36,6 +36,9 @@ import { UpdatePageLayoutWidgetActionHandlerService } from 'src/engine/workspace
 import { CreatePageLayoutActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/page-layout/services/create-page-layout-action-handler.service';
 import { DeletePageLayoutActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/page-layout/services/delete-page-layout-action-handler.service';
 import { UpdatePageLayoutActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/page-layout/services/update-page-layout-action-handler.service';
+import { CreateObjectPermissionActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/object-permission/services/create-object-permission-action-handler.service';
+import { DeleteObjectPermissionActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/object-permission/services/delete-object-permission-action-handler.service';
+import { UpdateObjectPermissionActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/object-permission/services/update-object-permission-action-handler.service';
 import { CreatePermissionFlagActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/permission-flag/services/create-permission-flag-action-handler.service';
 import { DeletePermissionFlagActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/permission-flag/services/delete-permission-flag-action-handler.service';
 import { UpdatePermissionFlagActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/permission-flag/services/update-permission-flag-action-handler.service';
@@ -140,6 +143,10 @@ import { UpdateWebhookActionHandlerService } from 'src/engine/workspace-manager/
     CreatePermissionFlagActionHandlerService,
     UpdatePermissionFlagActionHandlerService,
     DeletePermissionFlagActionHandlerService,
+
+    CreateObjectPermissionActionHandlerService,
+    UpdateObjectPermissionActionHandlerService,
+    DeleteObjectPermissionActionHandlerService,
 
     CreateAgentActionHandlerService,
     UpdateAgentActionHandlerService,
