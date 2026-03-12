@@ -2577,6 +2577,11 @@ msgstr ""
 msgid "Cancel your subscription"
 msgstr ""
 
+#. js-lingui-id: XDbjjW
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
+msgid "Cannot delete the only view"
+msgstr ""
+
 #. js-lingui-id: 8fbdLj
 #: src/modules/ui/feedback/snack-bar-manager/utils/sanitizeMessageToRenderInSnackbar.ts
 #: src/modules/ui/feedback/snack-bar-manager/utils/sanitizeMessageToRenderInSnackbar.ts
