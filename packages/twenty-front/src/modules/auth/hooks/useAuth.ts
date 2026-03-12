@@ -263,7 +263,6 @@ export const useAuth = () => {
         throw new Error('No workspace agnostic token in result');
       }
 
-      setIsAppEffectRedirectEnabled(false);
       handleSetAuthTokens(data.verifyEmailAndGetWorkspaceAgnosticToken.tokens);
 
       const { user } = await loadCurrentUser();
@@ -278,7 +277,6 @@ export const useAuth = () => {
       createWorkspace,
       verifyEmailAndGetWorkspaceAgnosticToken,
       handleSetAuthTokens,
-      setIsAppEffectRedirectEnabled,
       loadCurrentUser,
       setSignInUpStep,
     ],
@@ -365,7 +363,6 @@ export const useAuth = () => {
       signIn({
         variables: { email, password, captchaToken },
         onCompleted: async (data) => {
-          setIsAppEffectRedirectEnabled(false);
           handleSetAuthTokens(data.signIn.tokens);
           const { user } = await loadCurrentUser();
 
@@ -410,7 +407,6 @@ export const useAuth = () => {
     },
     [
       handleSetAuthTokens,
-      setIsAppEffectRedirectEnabled,
       redirectToWorkspaceDomain,
       signIn,
       loadCurrentUser,
@@ -445,7 +441,6 @@ export const useAuth = () => {
         throw new Error('No signUp result');
       }
 
-      setIsAppEffectRedirectEnabled(false);
       handleSetAuthTokens(signUpResult.data.signUp.tokens);
 
       const { user } = await loadCurrentUser();
@@ -460,7 +455,6 @@ export const useAuth = () => {
       isEmailVerificationRequired,
       setSearchParams,
       handleSetAuthTokens,
-      setIsAppEffectRedirectEnabled,
       signUp,
       loadCurrentUser,
       setSignInUpStep,
