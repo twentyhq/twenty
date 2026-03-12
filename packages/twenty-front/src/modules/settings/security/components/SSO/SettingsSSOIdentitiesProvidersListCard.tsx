@@ -8,8 +8,7 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { SettingsSSOIdentitiesProvidersListCardWrapper } from '@/settings/security/components/SSO/SettingsSSOIdentitiesProvidersListCardWrapper';
 import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProvidersState';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
+import { useSnackBarOnQueryError } from '@/apollo/hooks/useSnackBarOnQueryError';
 import { styled } from '@linaria/react';
 import { useEffect } from 'react';
 import { useLingui } from '@lingui/react/macro';
@@ -29,8 +28,6 @@ const StyledLinkContainer = styled.div<{ isDisabled: boolean }>`
 `;
 
 export const SettingsSSOIdentitiesProvidersListCard = () => {
-  const { enqueueErrorSnackBar } = useSnackBar();
-
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
   const { t } = useLingui();
@@ -39,7 +36,11 @@ export const SettingsSSOIdentitiesProvidersListCard = () => {
     SSOIdentitiesProvidersState,
   );
 
-  const { loading, data: ssoData, error: ssoError } = useQuery(GetSsoIdentityProvidersDocument, {
+  const {
+    loading,
+    data: ssoData,
+    error: ssoError,
+  } = useQuery(GetSsoIdentityProvidersDocument, {
     fetchPolicy: 'network-only',
     skip: currentWorkspace?.hasValidEnterpriseKey === false,
   });
@@ -50,13 +51,7 @@ export const SettingsSSOIdentitiesProvidersListCard = () => {
     }
   }, [ssoData, setSSOIdentitiesProviders]);
 
-  useEffect(() => {
-    if (ssoError) {
-      enqueueErrorSnackBar({
-        ...(CombinedGraphQLErrors.is(ssoError) ? { apolloError: ssoError } : {}),
-      });
-    }
-  }, [ssoError, enqueueErrorSnackBar]);
+  useSnackBarOnQueryError(ssoError);
 
   return loading || !SSOIdentitiesProviders.length ? (
     <StyledLinkContainer

@@ -13,6 +13,7 @@ import {
   webhookFormSchema,
   type WebhookFormValues,
 } from '@/settings/developers/validation-schemas/webhookFormSchema';
+import { useSnackBarOnQueryError } from '@/apollo/hooks/useSnackBarOnQueryError';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { t } from '@lingui/core/macro';
@@ -54,7 +55,11 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
     defaultValues: DEFAULT_FORM_VALUES,
   });
 
-  const { loading, error, data: webhookData } = useQuery(GetWebhookDocument, {
+  const {
+    loading,
+    error,
+    data: webhookData,
+  } = useQuery(GetWebhookDocument, {
     skip: isCreationMode || !webhookId,
     variables: {
       id: webhookId || '',
@@ -80,13 +85,7 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
     }
   }, [webhookData, formConfig]);
 
-  useEffect(() => {
-    if (error) {
-      enqueueErrorSnackBar({
-        message: t`Failed to load webhook`,
-      });
-    }
-  }, [error, enqueueErrorSnackBar]);
+  useSnackBarOnQueryError(error, t`Failed to load webhook`);
 
   const { isDirty, isValid, isSubmitting } = formConfig.formState;
   const canSave = isCreationMode

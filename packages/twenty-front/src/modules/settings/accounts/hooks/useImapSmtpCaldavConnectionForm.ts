@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -23,10 +23,7 @@ import {
 } from '@/settings/accounts/validation-schemas/connectionImapSmtpCalDav';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  type ConnectedImapSmtpCaldavAccount,
-  useConnectedImapSmtpCaldavAccount,
-} from './useConnectedImapSmtpCaldavAccount';
+import { useConnectedImapSmtpCaldavAccount } from './useConnectedImapSmtpCaldavAccount';
 
 type UseConnectionFormProps = {
   isEditing?: boolean;
@@ -68,23 +65,22 @@ export const useImapSmtpCaldavConnectionForm = ({
   const { connectedAccount, loading: accountLoading } =
     useConnectedImapSmtpCaldavAccount(
       isEditing ? connectedAccountId : undefined,
-      useCallback(
-        (account: ConnectedImapSmtpCaldavAccount | null) => {
-          if (isDefined(account)) {
-            reset({
-              handle: account.handle || '',
-              IMAP: account.connectionParameters?.IMAP || undefined,
-              SMTP: account.connectionParameters?.SMTP || undefined,
-              CALDAV: account.connectionParameters?.CALDAV || undefined,
-            });
-          }
-        },
-        [reset],
-      ),
     );
 
-  const [saveConnection, { loading: saveLoading }] =
-    useMutation(SaveImapSmtpCaldavAccountDocument);
+  useEffect(() => {
+    if (isDefined(connectedAccount)) {
+      reset({
+        handle: connectedAccount.handle || '',
+        IMAP: connectedAccount.connectionParameters?.IMAP || undefined,
+        SMTP: connectedAccount.connectionParameters?.SMTP || undefined,
+        CALDAV: connectedAccount.connectionParameters?.CALDAV || undefined,
+      });
+    }
+  }, [connectedAccount, reset]);
+
+  const [saveConnection, { loading: saveLoading }] = useMutation(
+    SaveImapSmtpCaldavAccountDocument,
+  );
 
   const watchedValues = watch();
 

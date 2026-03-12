@@ -165,7 +165,7 @@ export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
   useEffect(() => {
     if (skillQueryError) {
       enqueueErrorSnackBar({
-        ...(CombinedGraphQLErrors.is(skillQueryError) ? { apolloError: skillQueryError } : {}),
+        apolloError: CombinedGraphQLErrors.is(skillQueryError) ? skillQueryError : undefined,
       });
       navigateApp(AppPath.NotFound);
     }

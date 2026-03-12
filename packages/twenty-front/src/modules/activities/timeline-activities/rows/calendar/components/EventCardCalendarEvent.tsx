@@ -10,7 +10,7 @@ import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { UserContext } from '@/users/contexts/UserContext';
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { isDefined } from 'twenty-shared/utils';
@@ -119,10 +119,13 @@ export const EventCardCalendarEvent = ({
         displayName: true,
       },
     },
-    onCompleted: (data) => {
-      upsertRecordsInStore({ partialRecords: [data] });
-    },
   });
+
+  useEffect(() => {
+    if (calendarEvent) {
+      upsertRecordsInStore({ partialRecords: [calendarEvent] });
+    }
+  }, [calendarEvent, upsertRecordsInStore]);
 
   const { timeZone } = useContext(UserContext);
 

@@ -19,7 +19,7 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { WorkspaceInviteLink } from '@/workspace/components/WorkspaceInviteLink';
 import { WorkspaceInviteTeam } from '@/workspace/components/WorkspaceInviteTeam';
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
+import { useSnackBarOnQueryError } from '@/apollo/hooks/useSnackBarOnQueryError';
 import { CoreObjectNameSingular, SettingsPath } from 'twenty-shared/types';
 import {
   generateILikeFiltersForCompositeFields,
@@ -169,15 +169,11 @@ export const SettingsWorkspaceMembers = () => {
     setSearchFilter(text);
   };
 
-  const { data: invitationsData, error: invitationsError } = useQuery(GetWorkspaceInvitationsDocument);
+  const { data: invitationsData, error: invitationsError } = useQuery(
+    GetWorkspaceInvitationsDocument,
+  );
 
-  useEffect(() => {
-    if (invitationsError) {
-      enqueueErrorSnackBar({
-        ...(CombinedGraphQLErrors.is(invitationsError) ? { apolloError: invitationsError } : {}),
-      });
-    }
-  }, [invitationsError, enqueueErrorSnackBar]);
+  useSnackBarOnQueryError(invitationsError);
 
   useEffect(() => {
     if (invitationsData) {

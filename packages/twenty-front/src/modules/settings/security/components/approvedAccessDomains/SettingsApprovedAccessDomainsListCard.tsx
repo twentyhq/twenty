@@ -7,8 +7,7 @@ import { SettingsListCard } from '@/settings/components/SettingsListCard';
 import { SettingsSecurityApprovedAccessDomainRowDropdownMenu } from '@/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainRowDropdownMenu';
 import { SettingsSecurityApprovedAccessDomainValidationEffect } from '@/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainValidationEffect';
 import { approvedAccessDomainsState } from '@/settings/security/states/ApprovedAccessDomainsState';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
+import { useSnackBarOnQueryError } from '@/apollo/hooks/useSnackBarOnQueryError';
 import { styled } from '@linaria/react';
 import { useEffect } from 'react';
 import { useLingui } from '@lingui/react/macro';
@@ -28,7 +27,6 @@ const StyledLinkContainer = styled.div`
 `;
 
 export const SettingsApprovedAccessDomainsListCard = () => {
-  const { enqueueErrorSnackBar } = useSnackBar();
   const navigate = useNavigate();
   const { t } = useLingui();
   const { localeCatalog } = useAtomStateValue(dateLocaleState);
@@ -37,7 +35,11 @@ export const SettingsApprovedAccessDomainsListCard = () => {
     approvedAccessDomainsState,
   );
 
-  const { loading, data: domainsData, error: domainsError } = useQuery(GetApprovedAccessDomainsDocument, {
+  const {
+    loading,
+    data: domainsData,
+    error: domainsError,
+  } = useQuery(GetApprovedAccessDomainsDocument, {
     fetchPolicy: 'network-only',
   });
 
@@ -47,13 +49,7 @@ export const SettingsApprovedAccessDomainsListCard = () => {
     }
   }, [domainsData, setApprovedAccessDomains]);
 
-  useEffect(() => {
-    if (domainsError) {
-      enqueueErrorSnackBar({
-        apolloError: CombinedGraphQLErrors.is(domainsError) ? domainsError : undefined,
-      });
-    }
-  }, [domainsError, enqueueErrorSnackBar]);
+  useSnackBarOnQueryError(domainsError);
 
   const getItemDescription = (createdAt: string) => {
     const beautifyPastDateRelative = beautifyPastDateRelativeToNow(
