@@ -839,7 +839,7 @@ msgid "Add a node"
 msgstr "Lisää solmu"
 
 #. js-lingui-id: nGv1DN
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemRecordSubView.tsx
+#: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
 msgid "Add a record"
 msgstr ""
 
@@ -1444,7 +1444,7 @@ msgid "All set!"
 msgstr "Valmista!"
 
 #. js-lingui-id: CHvT6e
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemObjectFlow.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemObjectSystemPickerSubPage.tsx
 msgid "All system objects are already in the sidebar"
 msgstr ""
 
@@ -3120,11 +3120,6 @@ msgstr ""
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Configure fallback login methods for users with SSO bypass permissions"
 msgstr "Määritä varasijaiset kirjautumismenetelmät käyttäjille, joilla on SSO-ohituksen käyttöoikeudet"
-
-#. js-lingui-id: c7wznw
-#: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts
-msgid "Configure filters"
-msgstr "Määritä suodattimet"
 
 #. js-lingui-id: ghdb7+
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelsGeneral.tsx
@@ -6486,7 +6481,6 @@ msgstr ""
 #: src/modules/views/components/ViewBarFilterDropdownFieldSelectMenu.tsx
 #: src/modules/views/components/ViewBarFilterButton.tsx
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
-#: src/modules/side-panel/pages/page-layout/components/ChartFiltersSettings.tsx
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
@@ -6509,6 +6503,7 @@ msgid "Filter group rule options"
 msgstr "Suodatinryhmän säännön valinnat"
 
 #. js-lingui-id: cSev+j
+#: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "Filters"
 msgstr "Suodattimet"
@@ -6603,7 +6598,7 @@ msgid "Folder name"
 msgstr ""
 
 #. js-lingui-id: HSh8u/
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditFolderPickerSubView.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditFolderPickerSubPage.tsx
 #: src/modules/settings/accounts/components/message-folders/SettingsAccountsMessageFoldersCard.tsx
 msgid "Folders"
 msgstr "Kansiot"
@@ -8026,9 +8021,8 @@ msgid "Launch manually"
 msgstr "Käynnistä manuaalisesti"
 
 #. js-lingui-id: rdU729
-#: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts
+#: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutFieldsSettings.tsx
-#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutFieldsLayout.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 msgid "Layout"
@@ -8830,7 +8824,7 @@ msgid "Move right"
 msgstr "Siirrä oikealle"
 
 #. js-lingui-id: 6qDVmw
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditFolderPickerSubView.tsx
+#: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
 msgid "Move to a folder"
 msgstr ""
 
@@ -9431,13 +9425,13 @@ msgid "No Files"
 msgstr "Ei tiedostoja"
 
 #. js-lingui-id: pYblOw
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditFolderPickerSubView.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditFolderPickerSubPage.tsx
 #: src/modules/favorites/favorite-folder-picker/components/FavoriteFolderPickerList.tsx
 msgid "No folder"
 msgstr "Ei kansiota"
 
 #. js-lingui-id: 6XMhqL
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditFolderPickerSubView.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditFolderPickerSubPage.tsx
 msgid "No folders available"
 msgstr ""
 
@@ -9611,8 +9605,8 @@ msgstr "Ei tuloksia"
 #: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemViewSystemSubView.tsx
 #: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemViewPickerSubView.tsx
 #: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemViewObjectPickerSubView.tsx
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemRecordSubView.tsx
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditFolderPickerSubView.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemRecordSubPage.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditFolderPickerSubPage.tsx
 #: src/modules/side-panel/components/SidePanelList.tsx
 msgid "No results found"
 msgstr "Tuloksia ei löytynyt"
@@ -10501,13 +10495,13 @@ msgid "Pick a {objectLabel} record"
 msgstr "Valitse {objectLabel} tietue"
 
 #. js-lingui-id: JqqNlC
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemViewPickerSubView.tsx
+#: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
 msgid "Pick a view"
 msgstr ""
 
 #. js-lingui-id: Wlba2h
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelObjectPickerSubView.tsx
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemViewObjectPickerSubView.tsx
+#: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
+#: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
 msgid "Pick an object"
 msgstr ""
 
@@ -11410,7 +11404,7 @@ msgstr "Tulos"
 
 #. js-lingui-id: kx0s+n
 #: src/modules/side-panel/pages/search/hooks/useSidePanelSearchRecords.tsx
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemRecordSubView.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemRecordSubPage.tsx
 msgid "Results"
 msgstr "Tulokset"
 
@@ -11710,7 +11704,7 @@ msgid "Search a field..."
 msgstr "Etsi kenttää..."
 
 #. js-lingui-id: ITQFzL
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditFolderPickerSubView.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditFolderPickerSubPage.tsx
 msgid "Search a folder..."
 msgstr ""
 
@@ -11878,7 +11872,7 @@ msgid "Search records"
 msgstr "Hae tietueita"
 
 #. js-lingui-id: rRklUH
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemRecordSubView.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemRecordSubPage.tsx
 msgid "Search records..."
 msgstr ""
 
@@ -13127,10 +13121,10 @@ msgstr ""
 
 #. js-lingui-id: 0apULK
 #: src/pages/settings/data-model/SettingsObjectTable.tsx
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelSystemObjectPickerSubView.tsx
+#: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
+#: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
 #: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelSystemObjectPickerSubView.tsx
 #: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelObjectPickerSubView.tsx
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemViewSystemSubView.tsx
 #: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemViewSystemSubView.tsx
 #: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemViewObjectPickerSubView.tsx
 msgid "System objects"
@@ -14054,7 +14048,7 @@ msgid "Type anything..."
 msgstr "Kirjoita jotain..."
 
 #. js-lingui-id: UhqKcC
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemRecordSubView.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemRecordSubPage.tsx
 msgid "Type to search records"
 msgstr ""
 

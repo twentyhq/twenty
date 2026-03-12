@@ -280,7 +280,7 @@ export interface StandardOverrides {
 
 export interface Field {
     id: Scalars['UUID']
-    universalIdentifier: Scalars['UUID']
+    universalIdentifier: Scalars['String']
     type: FieldMetadataType
     name: Scalars['String']
     label: Scalars['String']
@@ -3253,7 +3253,7 @@ export interface ObjectGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface FieldFilter {and?: (FieldFilter[] | null),or?: (FieldFilter[] | null),id?: (UUIDFilterComparison | null),universalIdentifier?: (UUIDFilterComparison | null),isCustom?: (BooleanFieldComparison | null),isActive?: (BooleanFieldComparison | null),isSystem?: (BooleanFieldComparison | null),isUIReadOnly?: (BooleanFieldComparison | null)}
+export interface FieldFilter {and?: (FieldFilter[] | null),or?: (FieldFilter[] | null),id?: (UUIDFilterComparison | null),isCustom?: (BooleanFieldComparison | null),isActive?: (BooleanFieldComparison | null),isSystem?: (BooleanFieldComparison | null),isUIReadOnly?: (BooleanFieldComparison | null)}
 
 export interface IndexFilter {and?: (IndexFilter[] | null),or?: (IndexFilter[] | null),id?: (UUIDFilterComparison | null),isCustom?: (BooleanFieldComparison | null)}
 
@@ -6124,7 +6124,7 @@ id: Scalars['UUID'],
 /** The record to update */
 update: UpdateFieldInput}
 
-export interface UpdateFieldInput {universalIdentifier?: (Scalars['UUID'] | null),name?: (Scalars['String'] | null),label?: (Scalars['String'] | null),description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),isActive?: (Scalars['Boolean'] | null),isSystem?: (Scalars['Boolean'] | null),isUIReadOnly?: (Scalars['Boolean'] | null),isNullable?: (Scalars['Boolean'] | null),isUnique?: (Scalars['Boolean'] | null),defaultValue?: (Scalars['JSON'] | null),options?: (Scalars['JSON'] | null),settings?: (Scalars['JSON'] | null),isLabelSyncedWithName?: (Scalars['Boolean'] | null),morphRelationsUpdatePayload?: (Scalars['JSON'][] | null)}
+export interface UpdateFieldInput {universalIdentifier?: (Scalars['String'] | null),name?: (Scalars['String'] | null),label?: (Scalars['String'] | null),description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),isActive?: (Scalars['Boolean'] | null),isSystem?: (Scalars['Boolean'] | null),isUIReadOnly?: (Scalars['Boolean'] | null),isNullable?: (Scalars['Boolean'] | null),isUnique?: (Scalars['Boolean'] | null),defaultValue?: (Scalars['JSON'] | null),options?: (Scalars['JSON'] | null),settings?: (Scalars['JSON'] | null),isLabelSyncedWithName?: (Scalars['Boolean'] | null),morphRelationsUpdatePayload?: (Scalars['JSON'][] | null)}
 
 export interface DeleteOneFieldInput {
 /** The id of the field to delete. */
