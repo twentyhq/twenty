@@ -21,10 +21,7 @@ import { frontComponentHostCommunicationApi } from '@/sdk/front-component-api/gl
 
 import { type FrontComponentExecutionContext } from '@/sdk/front-component-api';
 import { type FrontComponentHostCommunicationApi } from '../../types/FrontComponentHostCommunicationApi';
-import {
-  type HostToWorkerRenderContext,
-  type SdkClientUrls,
-} from '../../types/HostToWorkerRenderContext';
+import { type HostToWorkerRenderContext } from '../../types/HostToWorkerRenderContext';
 import { type WorkerExports } from '../../types/WorkerExports';
 import { exposeGlobals } from '../utils/exposeGlobals';
 import {
@@ -39,11 +36,6 @@ patchRemoteElementSetAttribute();
 exposeGlobals({
   __HTML_TAG_TO_CUSTOM_ELEMENT_TAG__: HTML_TAG_TO_CUSTOM_ELEMENT_TAG,
 });
-
-const SDK_IMPORT_SPECIFIERS: Record<string, keyof SdkClientUrls> = {
-  'twenty-client-sdk/core': 'core',
-  'twenty-client-sdk/metadata': 'metadata',
-};
 
 const fetchTextOrThrow = async (
   url: string,
@@ -60,60 +52,29 @@ const fetchTextOrThrow = async (
   return response.text();
 };
 
-// Fetches SDK modules that the component actually imports and returns
-// a map of specifier -> blob URL. Only fetches modules that appear in the source.
-const resolveSdkModules = async (
-  componentSource: string,
-  sdkClientUrls: SdkClientUrls | undefined,
-  authHeaders: Record<string, string> | undefined,
-): Promise<Record<string, string>> => {
-  const blobUrls: Record<string, string> = {};
+const SDK_IMPORT_SPECIFIERS = [
+  'twenty-client-sdk/core',
+  'twenty-client-sdk/metadata',
+] as const;
 
-  if (!isDefined(sdkClientUrls)) {
-    return blobUrls;
-  }
-
-  const fetchPromises = Object.entries(SDK_IMPORT_SPECIFIERS)
-    .filter(([specifier]) => componentSource.includes(specifier))
-    .map(async ([specifier, moduleKey]) => {
-      const moduleSource = await fetchTextOrThrow(
-        sdkClientUrls[moduleKey],
-        authHeaders,
-      );
-
-      const blob = new Blob([moduleSource], {
-        type: 'application/javascript',
-      });
-
-      blobUrls[specifier] = URL.createObjectURL(blob);
-    });
-
-  await Promise.all(fetchPromises);
-
-  return blobUrls;
-};
-
-// Rewrites bare SDK import specifiers to blob URLs so the browser can resolve them.
-const escapeRegExp = (string: string): string =>
-  string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-
+// Rewrites bare SDK import specifiers to the blob URLs provided by the host.
 const rewriteSdkImports = (
   source: string,
-  sdkBlobUrls: Record<string, string>,
+  sdkClientUrls: { core: string; metadata: string },
 ): string => {
+  const specifierToBlobUrl: Record<string, string> = {
+    'twenty-client-sdk/core': sdkClientUrls.core,
+    'twenty-client-sdk/metadata': sdkClientUrls.metadata,
+  };
+
   let rewritten = source;
 
-  for (const [specifier, blobUrl] of Object.entries(sdkBlobUrls)) {
-    const escaped = escapeRegExp(specifier);
-
-    rewritten = rewritten.replace(
-      new RegExp(`"${escaped}"`, 'g'),
-      `"${blobUrl}"`,
-    );
-    rewritten = rewritten.replace(
-      new RegExp(`'${escaped}'`, 'g'),
-      `'${blobUrl}'`,
-    );
+  for (const [specifier, blobUrl] of Object.entries(specifierToBlobUrl)) {
+    rewritten = rewritten
+      .split(`"${specifier}"`)
+      .join(`"${blobUrl}"`)
+      .split(`'${specifier}'`)
+      .join(`'${blobUrl}'`);
   }
 
   return rewritten;
@@ -152,15 +113,17 @@ const render: WorkerExports['render'] = async (
     authHeaders,
   );
 
-  const sdkBlobUrls = await resolveSdkModules(
-    componentSource,
-    renderContext.sdkClientUrls,
-    authHeaders,
-  );
+  const hasSdkImports =
+    isDefined(renderContext.sdkClientUrls) &&
+    SDK_IMPORT_SPECIFIERS.some((specifier) =>
+      componentSource.includes(specifier),
+    );
 
-  const rewrittenSource = rewriteSdkImports(componentSource, sdkBlobUrls);
+  const finalSource = hasSdkImports
+    ? rewriteSdkImports(componentSource, renderContext.sdkClientUrls!)
+    : componentSource;
 
-  const componentBlob = new Blob([rewrittenSource], {
+  const componentBlob = new Blob([finalSource], {
     type: 'application/javascript',
   });
 
@@ -173,10 +136,6 @@ const render: WorkerExports['render'] = async (
     componentModule.default(renderContainer);
   } finally {
     URL.revokeObjectURL(importUrl);
-
-    for (const blobUrl of Object.values(sdkBlobUrls)) {
-      URL.revokeObjectURL(blobUrl);
-    }
   }
 };
 
