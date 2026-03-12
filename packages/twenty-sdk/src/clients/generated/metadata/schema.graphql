@@ -443,7 +443,6 @@ input ObjectFilter {
   and: [ObjectFilter!]
   or: [ObjectFilter!]
   id: UUIDFilterComparison
-  universalIdentifier: UUIDFilterComparison
   isCustom: BooleanFieldComparison
   isRemote: BooleanFieldComparison
   isActive: BooleanFieldComparison
@@ -491,7 +490,7 @@ type ObjectStandardOverrides {
 
 type Object {
   id: UUID!
-  universalIdentifier: UUID!
+  universalIdentifier: String!
   nameSingular: String!
   namePlural: String!
   labelSingular: String!

@@ -3629,7 +3629,7 @@ export type Object = {
   nameSingular: Scalars['String'];
   shortcut?: Maybe<Scalars['String']>;
   standardOverrides?: Maybe<ObjectStandardOverrides>;
-  universalIdentifier: Scalars['UUID'];
+  universalIdentifier: Scalars['String'];
   updatedAt: Scalars['DateTime'];
 };
 
@@ -3679,7 +3679,6 @@ export type ObjectFilter = {
   isSystem?: InputMaybe<BooleanFieldComparison>;
   isUIReadOnly?: InputMaybe<BooleanFieldComparison>;
   or?: InputMaybe<Array<ObjectFilter>>;
-  universalIdentifier?: InputMaybe<UuidFilterComparison>;
 };
 
 export type ObjectIndexMetadatasConnection = {

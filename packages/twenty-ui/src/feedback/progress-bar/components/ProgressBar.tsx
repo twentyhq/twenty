@@ -17,7 +17,8 @@ export type StyledBarProps = {
 };
 
 const StyledBar = styled.div<StyledBarProps>`
-  height: ${themeCssVariables.spacing[2]};
+  height: 100%;
+  min-height: ${themeCssVariables.spacing[2]};
   background-color: ${({ backgroundColor }) => backgroundColor ?? ''};
   border-radius: ${({ withBorderRadius }) =>
     withBorderRadius ? themeCssVariables.border.radius.xxl : '0'};
