@@ -98,19 +98,11 @@ export const fromUpdateViewFieldInputToFlatViewFieldToUpdateOrThrow = ({
   }
 
   if (isDefined(overrides)) {
-    const viewFieldGroupUniversalIdentifierById = Object.fromEntries(
-      Object.entries(flatViewFieldGroupMaps.byId).map(
-        ([id, flatViewFieldGroup]) => [
-          id,
-          flatViewFieldGroup.universalIdentifier,
-        ],
-      ),
-    );
-
     flatViewFieldToUpdate.universalOverrides =
       fromViewFieldOverridesToUniversalOverrides({
         overrides,
-        viewFieldGroupUniversalIdentifierById,
+        viewFieldGroupUniversalIdentifierById:
+          flatViewFieldGroupMaps.universalIdentifierById,
       });
   } else {
     flatViewFieldToUpdate.universalOverrides = null;

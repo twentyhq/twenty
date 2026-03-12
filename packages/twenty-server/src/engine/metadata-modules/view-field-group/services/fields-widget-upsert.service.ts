@@ -14,8 +14,11 @@ import { isFlatPageLayoutWidgetConfigurationOfType } from 'src/engine/metadata-m
 import { type FlatViewFieldGroupMaps } from 'src/engine/metadata-modules/flat-view-field-group/types/flat-view-field-group-maps.type';
 import { type FlatViewFieldGroup } from 'src/engine/metadata-modules/flat-view-field-group/types/flat-view-field-group.type';
 import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
+import { fromViewFieldOverridesToUniversalOverrides } from 'src/engine/metadata-modules/flat-view-field/utils/from-view-field-overrides-to-universal-overrides.util';
 import { type FlatViewMaps } from 'src/engine/metadata-modules/flat-view/types/flat-view-maps.type';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
+import { isCallerOverridingEntity } from 'src/engine/metadata-modules/utils/is-caller-overriding-entity.util';
+import { sanitizeOverridableEntityInput } from 'src/engine/metadata-modules/utils/sanitize-overridable-entity-input.util';
 import { type UpsertFieldsWidgetFieldInput } from 'src/engine/metadata-modules/view-field-group/dtos/inputs/upsert-fields-widget-field.input';
 import { UpsertFieldsWidgetGroupInput } from 'src/engine/metadata-modules/view-field-group/dtos/inputs/upsert-fields-widget-group.input';
 import { UpsertFieldsWidgetInput } from 'src/engine/metadata-modules/view-field-group/dtos/inputs/upsert-fields-widget.input';
@@ -204,11 +207,30 @@ export class FieldsWidgetUpsertService {
           }),
         );
       } else if (this.hasGroupChanged(existingGroup, inputGroup)) {
+        const shouldOverride = isCallerOverridingEntity({
+          callerApplicationUniversalIdentifier: applicationUniversalIdentifier,
+          entityApplicationUniversalIdentifier:
+            existingGroup.applicationUniversalIdentifier,
+          workspaceCustomApplicationUniversalIdentifier:
+            applicationUniversalIdentifier,
+        });
+
+        const { overrides, updatedEditableProperties: sanitizedGroupProps } =
+          sanitizeOverridableEntityInput({
+            metadataName: 'viewFieldGroup',
+            existingFlatEntity: existingGroup,
+            updatedEditableProperties: {
+              name: inputGroup.name,
+              position: inputGroup.position,
+              isVisible: inputGroup.isVisible,
+            },
+            shouldOverride,
+          });
+
         groupsToUpdate.push({
           ...existingGroup,
-          name: inputGroup.name,
-          position: inputGroup.position,
-          isVisible: inputGroup.isVisible,
+          ...sanitizedGroupProps,
+          overrides,
           updatedAt: now,
         });
       }
@@ -271,16 +293,61 @@ export class FieldsWidgetUpsertService {
           },
         });
 
-      return [
-        {
-          ...existingField,
-          isVisible: inputField.isVisible,
-          position: inputField.position,
-          viewFieldGroupId: newViewFieldGroupId,
-          viewFieldGroupUniversalIdentifier,
-          updatedAt: now,
-        },
-      ];
+      const shouldOverride = isCallerOverridingEntity({
+        callerApplicationUniversalIdentifier: applicationUniversalIdentifier,
+        entityApplicationUniversalIdentifier:
+          existingField.applicationUniversalIdentifier,
+        workspaceCustomApplicationUniversalIdentifier:
+          applicationUniversalIdentifier,
+      });
+
+      const { overrides, updatedEditableProperties: sanitizedFieldProps } =
+        sanitizeOverridableEntityInput({
+          metadataName: 'viewField',
+          existingFlatEntity: existingField,
+          updatedEditableProperties: {
+            isVisible: inputField.isVisible,
+            position: inputField.position,
+            viewFieldGroupId: newViewFieldGroupId,
+          },
+          shouldOverride,
+        });
+
+      const updatedField: FlatViewField = {
+        ...existingField,
+        ...sanitizedFieldProps,
+        overrides,
+        updatedAt: now,
+      };
+
+      if (sanitizedFieldProps.viewFieldGroupId !== undefined) {
+        const resolved = resolveEntityRelationUniversalIdentifiers({
+          metadataName: 'viewField',
+          foreignKeyValues: {
+            viewFieldGroupId: updatedField.viewFieldGroupId,
+          },
+          flatEntityMaps: {
+            flatViewFieldGroupMaps: optimisticFlatViewFieldGroupMaps,
+          },
+        });
+
+        updatedField.viewFieldGroupUniversalIdentifier =
+          resolved.viewFieldGroupUniversalIdentifier;
+      }
+
+      if (isDefined(overrides)) {
+        updatedField.universalOverrides =
+          fromViewFieldOverridesToUniversalOverrides({
+            overrides,
+            viewFieldGroupUniversalIdentifierById:
+              optimisticFlatViewFieldGroupMaps.universalIdentifierById,
+          });
+      } else {
+        updatedField.universalOverrides =
+          existingField.universalOverrides ?? null;
+      }
+
+      return [updatedField];
     });
 
     const validateAndBuildResult =
@@ -347,16 +414,49 @@ export class FieldsWidgetUpsertService {
         return [];
       }
 
-      return [
-        {
-          ...existingField,
-          isVisible: inputField.isVisible,
-          position: inputField.position,
-          viewFieldGroupId: null,
-          viewFieldGroupUniversalIdentifier: null,
-          updatedAt: now,
-        },
-      ];
+      const shouldOverride = isCallerOverridingEntity({
+        callerApplicationUniversalIdentifier: applicationUniversalIdentifier,
+        entityApplicationUniversalIdentifier:
+          existingField.applicationUniversalIdentifier,
+        workspaceCustomApplicationUniversalIdentifier:
+          applicationUniversalIdentifier,
+      });
+
+      const { overrides, updatedEditableProperties: sanitizedFieldProps } =
+        sanitizeOverridableEntityInput({
+          metadataName: 'viewField',
+          existingFlatEntity: existingField,
+          updatedEditableProperties: {
+            isVisible: inputField.isVisible,
+            position: inputField.position,
+            viewFieldGroupId: null as string | null,
+          },
+          shouldOverride,
+        });
+
+      const updatedField: FlatViewField = {
+        ...existingField,
+        ...sanitizedFieldProps,
+        overrides,
+        updatedAt: now,
+      };
+
+      if (sanitizedFieldProps.viewFieldGroupId !== undefined) {
+        updatedField.viewFieldGroupUniversalIdentifier = null;
+      }
+
+      if (isDefined(overrides)) {
+        updatedField.universalOverrides =
+          fromViewFieldOverridesToUniversalOverrides({
+            overrides,
+            viewFieldGroupUniversalIdentifierById: {},
+          });
+      } else {
+        updatedField.universalOverrides =
+          existingField.universalOverrides ?? null;
+      }
+
+      return [updatedField];
     });
 
     const validateAndBuildResult =
