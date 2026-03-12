@@ -1,23 +1,27 @@
 import { currentUserState } from '@/auth/states/currentUserState';
+import { billingState } from '@/client-config/states/billingState';
 import { SettingsAdminTabContent } from '@/settings/admin-panel/components/SettingsAdminTabContent';
 import { SETTINGS_ADMIN_TABS } from '@/settings/admin-panel/constants/SettingsAdminTabs';
 import { SETTINGS_ADMIN_TABS_ID } from '@/settings/admin-panel/constants/SettingsAdminTabsId';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { t } from '@lingui/core/macro';
 import {
   IconApps,
   IconHeart,
+  IconKey,
   IconSettings2,
   IconSparkles,
   IconVariable,
 } from 'twenty-ui/display';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const SettingsAdminContent = () => {
   const currentUser = useAtomStateValue(currentUserState);
+  const billing = useAtomStateValue(billingState);
 
   const canAccessFullAdminPanel = currentUser?.canAccessFullAdminPanel;
   const canImpersonate = currentUser?.canImpersonate;
+  const isBillingEnabled = billing?.isBillingEnabled;
   const tabs = [
     {
       id: SETTINGS_ADMIN_TABS.GENERAL,
@@ -49,6 +53,16 @@ export const SettingsAdminContent = () => {
       Icon: IconHeart,
       disabled: !canAccessFullAdminPanel,
     },
+    ...(!isBillingEnabled
+      ? [
+          {
+            id: SETTINGS_ADMIN_TABS.ENTERPRISE,
+            title: t`Enterprise`,
+            Icon: IconKey,
+            disabled: !canAccessFullAdminPanel && !canImpersonate,
+          },
+        ]
+      : []),
   ];
 
   return (

@@ -207,7 +207,6 @@
       "packages/twenty-e2e-testing",
       "packages/twenty-shared",
       "packages/twenty-sdk",
-      "packages/twenty-standard-application",
       "packages/twenty-apps",
       "packages/twenty-cli",
       "packages/create-twenty-app",

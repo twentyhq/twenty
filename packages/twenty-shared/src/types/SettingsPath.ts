@@ -10,6 +10,7 @@ export enum SettingsPath {
   NewImapSmtpCaldavConnection = 'accounts/new-imap-smtp-caldav-connection',
   EditImapSmtpCaldavConnection = 'accounts/edit-imap-smtp-caldav-connection/:connectedAccountId',
   Billing = 'billing',
+  Enterprise = 'enterprise',
   Objects = 'objects',
   ObjectOverview = 'objects/overview',
   ObjectDetail = 'objects/:objectNamePlural',
@@ -55,6 +56,7 @@ export enum SettingsPath {
   EventLogs = 'security/event-logs',
 
   AdminPanel = 'admin-panel',
+  AdminPanelEnterprise = 'admin-panel#enterprise',
   AdminPanelHealthStatus = 'admin-panel#health-status',
   AdminPanelIndicatorHealthStatus = 'admin-panel/health-status/:indicatorId',
   AdminPanelQueueDetail = 'admin-panel/health-status/queue/:queueName',
