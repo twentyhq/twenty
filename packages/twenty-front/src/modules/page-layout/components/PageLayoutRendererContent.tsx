@@ -1,4 +1,5 @@
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { PageLayoutLeftPanel } from '@/page-layout/components/PageLayoutLeftPanel';
 import { PageLayoutTabList } from '@/page-layout/components/PageLayoutTabList';
 import { PageLayoutTabListEffect } from '@/page-layout/components/PageLayoutTabListEffect';
@@ -80,7 +81,7 @@ export const PageLayoutRendererContent = () => {
   );
 
   const isSystemObject =
-    metadataStore.current.find(
+    (metadataStore.current as ObjectMetadataItem[]).find(
       (item) =>
         item.nameSingular === targetRecordIdentifier?.targetObjectNameSingular,
     )?.isSystem ?? false;
