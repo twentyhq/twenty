@@ -33,7 +33,11 @@ const StyledPillContainer = styled.span`
   }
 `;
 
-export const ViewBarFilterDropdownAdvancedFilterButton = () => {
+const ViewBarFilterDropdownAdvancedFilterButtonContent = ({
+  objectMetadataId,
+}: {
+  objectMetadataId: string;
+}) => {
   const advancedFilterQuerySubFilterCount = 0; // TODO
 
   const { t } = useLingui();
@@ -53,14 +57,8 @@ export const ViewBarFilterDropdownAdvancedFilterButton = () => {
 
   const { upsertRecordFilter } = useUpsertRecordFilter();
 
-  const objectMetadataId = currentView?.objectMetadataId;
-
-  if (!objectMetadataId) {
-    throw new Error('Object metadata id is missing from current view');
-  }
-
   const { objectMetadataItem } = useObjectMetadataItemById({
-    objectId: objectMetadataId ?? null,
+    objectId: objectMetadataId,
   });
 
   const availableFieldMetadataItemsForFilter = useAtomFamilySelectorValue(
@@ -141,5 +139,21 @@ export const ViewBarFilterDropdownAdvancedFilterButton = () => {
         </StyledPillContainer>
       )}
     </SelectableListItem>
+  );
+};
+
+export const ViewBarFilterDropdownAdvancedFilterButton = () => {
+  const { currentView } = useGetCurrentViewOnly();
+
+  const objectMetadataId = currentView?.objectMetadataId;
+
+  if (!isDefined(objectMetadataId)) {
+    return null;
+  }
+
+  return (
+    <ViewBarFilterDropdownAdvancedFilterButtonContent
+      objectMetadataId={objectMetadataId}
+    />
   );
 };
