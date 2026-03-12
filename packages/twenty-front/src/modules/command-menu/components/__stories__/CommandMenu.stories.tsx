@@ -36,11 +36,12 @@ import { type SidePanelRootPage } from '@/side-panel/pages/root/components/SideP
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { sidePanelPageInfoState } from '@/side-panel/states/sidePanelPageInfoState';
+import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { HttpResponse, graphql } from 'msw';
 import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { IconDotsVertical } from 'twenty-ui/display';
+import { IconDotsVertical, IconPlus } from 'twenty-ui/display';
 import { JestContextStoreSetter } from '~/testing/jest/JestContextStoreSetter';
 
 const openTimeout = 50;
@@ -249,3 +250,43 @@ export const NoResultsSearchFallback: Story = {
 //     expect(await canvas.findByText('Search records')).toBeVisible();
 //   },
 // };
+
+export const SubPageNavigation: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const objectButton = await canvas.findByText('Object');
+    expect(objectButton).toBeVisible();
+
+    await userEvent.click(objectButton);
+
+    expect(await canvas.findByText('Pick an object')).toBeVisible();
+
+    const backButton = await canvas.findByRole('button', { name: 'Go back' });
+    await userEvent.click(backButton);
+
+    expect(await canvas.findByText('Object')).toBeVisible();
+  },
+  decorators: [
+    (Story) => {
+      jotaiStore.set(
+        sidePanelPageState.atom,
+        SidePanelPages.NavigationMenuAddItem,
+      );
+      jotaiStore.set(sidePanelPageInfoState.atom, {
+        title: 'Add item',
+        instanceId: SIDE_PANEL_COMPONENT_INSTANCE_ID,
+      });
+      jotaiStore.set(sidePanelNavigationStackState.atom, [
+        {
+          page: SidePanelPages.NavigationMenuAddItem,
+          pageTitle: 'Add item',
+          pageIcon: IconPlus,
+          pageId: '1',
+        },
+      ]);
+
+      return <Story />;
+    },
+  ],
+};
