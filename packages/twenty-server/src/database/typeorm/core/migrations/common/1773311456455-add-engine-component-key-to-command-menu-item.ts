@@ -16,13 +16,13 @@ export class AddEngineComponentKeyToCommandMenuItem1773311456455
       `ALTER TABLE "core"."commandMenuItem" ADD "engineComponentKey" "core"."commandMenuItem_enginecomponentkey_enum"`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."commandMenuItem" ADD CONSTRAINT "CHK_cmd_menu_item_wf_or_front_comp_or_engine_key" CHECK (("workflowVersionId" IS NOT NULL AND "frontComponentId" IS NULL AND "engineComponentKey" IS NULL) OR ("workflowVersionId" IS NULL AND "frontComponentId" IS NOT NULL AND "engineComponentKey" IS NULL) OR ("workflowVersionId" IS NULL AND "frontComponentId" IS NULL AND "engineComponentKey" IS NOT NULL))`,
+      `ALTER TABLE "core"."commandMenuItem" ADD CONSTRAINT "CHK_CMD_MENU_ITEM_WF_OR_FC_OR_ENGINE_KEY" CHECK (("workflowVersionId" IS NOT NULL AND "frontComponentId" IS NULL AND "engineComponentKey" IS NULL) OR ("workflowVersionId" IS NULL AND "frontComponentId" IS NOT NULL AND "engineComponentKey" IS NULL) OR ("workflowVersionId" IS NULL AND "frontComponentId" IS NULL AND "engineComponentKey" IS NOT NULL))`,
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "core"."commandMenuItem" DROP CONSTRAINT "CHK_cmd_menu_item_wf_or_front_comp_or_engine_key"`,
+      `ALTER TABLE "core"."commandMenuItem" DROP CONSTRAINT "CHK_CMD_MENU_ITEM_WF_OR_FC_OR_ENGINE_KEY"`,
     );
     await queryRunner.query(
       `ALTER TABLE "core"."commandMenuItem" DROP COLUMN "engineComponentKey"`,

@@ -30,7 +30,7 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
   'availabilityObjectMetadataId',
 ])
 @Check(
-  'CHK_cmd_menu_item_wf_or_front_comp_or_engine_key',
+  'CHK_CMD_MENU_ITEM_WF_OR_FC_OR_ENGINE_KEY',
   '("workflowVersionId" IS NOT NULL AND "frontComponentId" IS NULL AND "engineComponentKey" IS NULL) OR ("workflowVersionId" IS NULL AND "frontComponentId" IS NOT NULL AND "engineComponentKey" IS NULL) OR ("workflowVersionId" IS NULL AND "frontComponentId" IS NULL AND "engineComponentKey" IS NOT NULL)',
 )
 export class CommandMenuItemEntity
