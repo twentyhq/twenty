@@ -17,12 +17,36 @@ exports[`Permission flag upsert should fail when permissionFlagKeys contains inv
 exports[`Permission flag upsert should fail when role is not editable (system role) 1`] = `
 {
   "extensions": {
-    "code": "FORBIDDEN",
-    "subCode": "ROLE_NOT_EDITABLE",
-    "userFriendlyMessage": "This role cannot be modified because it is a system role. Only custom roles can be edited.",
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "permissionFlag": [
+        {
+          "errors": [
+            {
+              "code": "ROLE_NOT_EDITABLE",
+              "message": "Role is not editable",
+              "userFriendlyMessage": "This role cannot be modified because it is a system role. Only custom roles can be edited.",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "roleUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "permissionFlag",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 permissionFlag",
+    "summary": {
+      "permissionFlag": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
   },
-  "message": "Role is not editable",
-  "name": "ForbiddenError",
+  "message": "Validation errors occurred while upserting permission flags",
+  "name": "GraphQLError",
 }
 `;
 

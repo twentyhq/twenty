@@ -8,15 +8,12 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type FlatPermissionFlag } from 'src/engine/metadata-modules/flat-permission-flag/types/flat-permission-flag.type';
 import { fromCreatePermissionFlagInputToFlatPermissionFlagToCreate } from 'src/engine/metadata-modules/flat-permission-flag/utils/from-create-permission-flag-input-to-flat-permission-flag-to-create.util';
-import { type PermissionFlagDTO } from 'src/engine/metadata-modules/permission-flag/dtos/permission-flag.dto';
 import { type UpsertPermissionFlagsInput } from 'src/engine/metadata-modules/permission-flag/dtos/upsert-permission-flag-input';
-import { fromFlatPermissionFlagToPermissionFlagDto } from 'src/engine/metadata-modules/permission-flag/utils/from-flat-permission-flag-to-permission-flag-dto.util';
 import {
   PermissionsException,
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
@@ -26,7 +23,6 @@ export class PermissionFlagService {
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationService: ApplicationService,
-    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   public async upsertPermissionFlags({
@@ -35,7 +31,7 @@ export class PermissionFlagService {
   }: {
     workspaceId: string;
     input: UpsertPermissionFlagsInput;
-  }): Promise<PermissionFlagDTO[]> {
+  }): Promise<FlatPermissionFlag[]> {
     const { flatPermissionFlagMaps, flatRoleMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -55,16 +51,6 @@ export class PermissionFlagService {
         PermissionsExceptionCode.ROLE_NOT_FOUND,
         {
           userFriendlyMessage: msg`The role you are trying to modify could not be found.`,
-        },
-      );
-    }
-
-    if (!roleById.isEditable) {
-      throw new PermissionsException(
-        PermissionsExceptionMessage.ROLE_NOT_EDITABLE,
-        PermissionsExceptionCode.ROLE_NOT_EDITABLE,
-        {
-          userFriendlyMessage: msg`This role cannot be modified because it is a system role. Only custom roles can be edited.`,
         },
       );
     }
@@ -97,15 +83,17 @@ export class PermissionFlagService {
       currentPermissionFlagsForRole.map((pf) => pf.flag),
     );
 
-    const flatApplication =
-      await this.getFlatApplicationForWorkspace(workspaceId);
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
 
     const flatEntityToCreate = input.permissionFlagKeys
       .filter((flag) => !existingSet.has(flag))
       .map((flag) =>
         fromCreatePermissionFlagInputToFlatPermissionFlagToCreate({
           createPermissionFlagInput: { roleId: input.roleId, flag },
-          flatApplication,
+          flatApplication: workspaceCustomFlatApplication,
           flatRoleMaps,
         }),
       );
@@ -118,7 +106,7 @@ export class PermissionFlagService {
       const unchanged = currentPermissionFlagsForRole.filter((pf) =>
         inputSet.has(pf.flag),
       );
-      return unchanged.map(fromFlatPermissionFlagToPermissionFlagDto);
+      return unchanged;
     }
 
     const buildAndRunResult =
@@ -133,7 +121,8 @@ export class PermissionFlagService {
           },
           workspaceId,
           isSystemBuild: false,
-          applicationUniversalIdentifier: flatApplication.universalIdentifier,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 
@@ -143,10 +132,6 @@ export class PermissionFlagService {
         'Validation errors occurred while upserting permission flags',
       );
     }
-
-    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
-      'rolesPermissions',
-    ]);
 
     const { flatPermissionFlagMaps: freshFlatPermissionFlagMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
@@ -163,14 +148,6 @@ export class PermissionFlagService {
         isDefined(pf) && pf.roleUniversalIdentifier === roleUniversalIdentifier,
     );
 
-    return resultFlags.map(fromFlatPermissionFlagToPermissionFlagDto);
-  }
-
-  private async getFlatApplicationForWorkspace(workspaceId: string) {
-    const { workspaceCustomFlatApplication } =
-      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        { workspaceId },
-      );
-    return workspaceCustomFlatApplication;
+    return resultFlags;
   }
 }
