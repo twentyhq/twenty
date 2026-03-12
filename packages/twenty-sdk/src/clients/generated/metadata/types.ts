@@ -10587,13 +10587,13 @@ export default {
         },
         "EmailAccountConnectionParameters": {
             "IMAP": [
-                445
+                449
             ],
             "SMTP": [
-                445
+                449
             ],
             "CALDAV": [
-                445
+                449
             ],
             "__typename": [
                 1
@@ -10632,7 +10632,7 @@ export default {
         },
         "CreateOneAppTokenInput": {
             "appToken": [
-                448
+                452
             ],
             "__typename": [
                 1
@@ -10646,30 +10646,6 @@ export default {
                 1
             ]
         },
-        "WorkspaceMigrationInput": {
-            "actions": [
-                450
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "WorkspaceMigrationDeleteActionInput": {
-            "type": [
-                451
-            ],
-            "metadataName": [
-                452
-            ],
-            "universalIdentifier": [
-                1
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "WorkspaceMigrationActionType": {},
-        "AllMetadataName": {},
         "FileFolder": {},
         "Subscription": {
             "onDbEvent": [
