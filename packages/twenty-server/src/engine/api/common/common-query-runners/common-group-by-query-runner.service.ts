@@ -11,6 +11,7 @@ import {
   computeRecordGqlOperationFilter,
   convertViewFilterValueToString,
   getFilterTypeFromFieldType,
+  isDefined,
   turnAnyFieldFilterIntoRecordGqlFilter,
 } from 'twenty-shared/utils';
 import { ObjectLiteral } from 'typeorm';
@@ -265,7 +266,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
     const viewFromFilter = viewFilters[0]?.view;
     let viewAnyFieldFilterValue = viewFromFilter?.anyFieldFilterValue;
 
-    if (!viewFromFilter) {
+    if (!isDefined(viewFromFilter)) {
       const view = await this.viewService.findById(args.viewId, workspaceId);
 
       viewAnyFieldFilterValue = view?.anyFieldFilterValue ?? null;
