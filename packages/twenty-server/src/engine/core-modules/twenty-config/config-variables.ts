@@ -479,7 +479,10 @@ export class ConfigVariables {
   })
   @IsOptional()
   @CastToUpperSnakeCase()
-  LOGIC_FUNCTION_TYPE: LogicFunctionDriverType = LogicFunctionDriverType.LOCAL;
+  LOGIC_FUNCTION_TYPE: LogicFunctionDriverType =
+    process.env.NODE_ENV === NodeEnvironment.DEVELOPMENT
+      ? LogicFunctionDriverType.LOCAL
+      : LogicFunctionDriverType.DISABLED;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LOGIC_FUNCTION_CONFIG,
@@ -598,7 +601,9 @@ export class ConfigVariables {
   @IsOptional()
   @CastToUpperSnakeCase()
   CODE_INTERPRETER_TYPE: CodeInterpreterDriverType =
-    CodeInterpreterDriverType.DISABLED;
+    process.env.NODE_ENV === NodeEnvironment.DEVELOPMENT
+      ? CodeInterpreterDriverType.LOCAL
+      : CodeInterpreterDriverType.DISABLED;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.CODE_INTERPRETER_CONFIG,
