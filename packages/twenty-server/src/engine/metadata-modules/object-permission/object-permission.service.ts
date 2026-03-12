@@ -1,35 +1,37 @@
-import { InjectRepository } from '@nestjs/typeorm';
+import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { In, Repository } from 'typeorm';
 
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { type FlatObjectPermission } from 'src/engine/metadata-modules/flat-object-permission/types/flat-object-permission.type';
+import { fromCreateObjectPermissionInputToUniversalFlatObjectPermission } from 'src/engine/metadata-modules/flat-object-permission/utils/from-create-object-permission-input-to-universal-flat-object-permission.util';
+import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
+import { type ObjectPermissionDTO } from 'src/engine/metadata-modules/object-permission/dtos/object-permission.dto';
 import {
   type ObjectPermissionInput,
   type UpsertObjectPermissionsInput,
 } from 'src/engine/metadata-modules/object-permission/dtos/upsert-object-permissions.input';
-import { ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permission/object-permission.entity';
+import { fromFlatObjectPermissionToObjectPermissionDto } from 'src/engine/metadata-modules/object-permission/utils/from-flat-object-permission-to-object-permission-dto.util';
 import {
   PermissionsException,
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
+import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
+import { type UniversalFlatObjectPermission } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-permission.type';
 
+@Injectable()
 export class ObjectPermissionService {
   constructor(
-    @InjectRepository(ObjectPermissionEntity)
-    private readonly objectPermissionRepository: Repository<ObjectPermissionEntity>,
-    @InjectRepository(RoleEntity)
-    private readonly roleRepository: Repository<RoleEntity>,
-    @InjectRepository(ObjectMetadataEntity)
-    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
-    private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
+    private readonly applicationService: ApplicationService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   public async upsertObjectPermissions({
@@ -38,144 +40,280 @@ export class ObjectPermissionService {
   }: {
     workspaceId: string;
     input: UpsertObjectPermissionsInput;
-  }): Promise<ObjectPermissionEntity[]> {
-    try {
-      const role = await this.getRoleOrThrow({
-        roleId: input.roleId,
-        workspaceId,
+  }): Promise<ObjectPermissionDTO[]> {
+    const { flatObjectPermissionMaps, flatRoleMaps, flatObjectMetadataMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: [
+            'flatObjectPermissionMaps',
+            'flatRoleMaps',
+            'flatObjectMetadataMaps',
+          ],
+        },
+      );
+
+    const roleUniversalIdentifier =
+      flatRoleMaps.universalIdentifierById[input.roleId];
+    const flatRole = isDefined(roleUniversalIdentifier)
+      ? flatRoleMaps.byUniversalIdentifier[roleUniversalIdentifier]
+      : undefined;
+
+    if (!isDefined(flatRole)) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.ROLE_NOT_FOUND,
+        PermissionsExceptionCode.ROLE_NOT_FOUND,
+        {
+          userFriendlyMessage: msg`The role you are trying to modify could not be found.`,
+        },
+      );
+    }
+
+    if (!flatRole.isEditable) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.ROLE_NOT_EDITABLE,
+        PermissionsExceptionCode.ROLE_NOT_EDITABLE,
+        {
+          userFriendlyMessage: msg`This role cannot be modified because it is a system role. Only custom roles can be edited.`,
+        },
+      );
+    }
+
+    const currentObjectPermissionsForRole = Object.values(
+      flatObjectPermissionMaps.byUniversalIdentifier,
+    ).filter(
+      (op): op is FlatObjectPermission =>
+        isDefined(op) && op.roleUniversalIdentifier === roleUniversalIdentifier,
+    );
+
+    this.validateObjectPermissionsReadAndWriteConsistencyOrThrow({
+      objectPermissions: input.objectPermissions,
+      flatRole,
+      currentObjectPermissionsForRole,
+    });
+
+    const flatApplication =
+      await this.getFlatApplicationForWorkspace(workspaceId);
+
+    const desiredByObjectMetadataId = new Map(
+      input.objectPermissions.map((op) => [op.objectMetadataId, op]),
+    );
+
+    for (const desired of input.objectPermissions) {
+      const objectMetadata = findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: desired.objectMetadataId,
+        flatEntityMaps: flatObjectMetadataMaps,
       });
 
-      await this.validateRoleIsEditableOrThrow({
-        role,
-      });
-
-      await this.validateObjectPermissionsReadAndWriteConsistencyOrThrow({
-        objectPermissions: input.objectPermissions,
-        roleWithObjectPermissions: role,
-      });
-
-      const { flatObjectMetadataMaps } =
-        await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+      if (!isDefined(objectMetadata)) {
+        throw new PermissionsException(
+          'Object metadata id not found',
+          PermissionsExceptionCode.OBJECT_METADATA_NOT_FOUND,
           {
-            workspaceId,
-            flatMapsKeys: ['flatObjectMetadataMaps'],
+            userFriendlyMessage: msg`The object you are trying to set permissions for could not be found. It may have been deleted.`,
           },
         );
-
-      input.objectPermissions.forEach((objectPermission) => {
-        const objectMetadataForObjectPermission =
-          findFlatEntityByIdInFlatEntityMaps({
-            flatEntityId: objectPermission.objectMetadataId,
-            flatEntityMaps: flatObjectMetadataMaps,
-          });
-
-        if (!isDefined(objectMetadataForObjectPermission)) {
-          throw new PermissionsException(
-            'Object metadata id not found',
-            PermissionsExceptionCode.OBJECT_METADATA_NOT_FOUND,
-            {
-              userFriendlyMessage: msg`The object you are trying to set permissions for could not be found. It may have been deleted.`,
-            },
-          );
-        }
-
-        if (objectMetadataForObjectPermission.isSystem === true) {
-          throw new PermissionsException(
-            PermissionsExceptionMessage.CANNOT_ADD_OBJECT_PERMISSION_ON_SYSTEM_OBJECT,
-            PermissionsExceptionCode.CANNOT_ADD_OBJECT_PERMISSION_ON_SYSTEM_OBJECT,
-            {
-              userFriendlyMessage: msg`You cannot set permissions on system objects as they are managed by the platform.`,
-            },
-          );
-        }
-      });
-
-      const objectPermissions = input.objectPermissions.map(
-        (objectPermission) => ({
-          ...objectPermission,
-          roleId: input.roleId,
-          workspaceId,
-        }),
-      );
-
-      const result = await this.objectPermissionRepository.upsert(
-        objectPermissions,
-        {
-          conflictPaths: ['objectMetadataId', 'roleId'],
-        },
-      );
-
-      const objectPermissionId = result.generatedMaps?.[0]?.id;
-
-      if (!isDefined(objectPermissionId)) {
-        throw new Error('Failed to upsert object permission');
       }
 
-      await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
-        'rolesPermissions',
-      ]);
-
-      return this.objectPermissionRepository.find({
-        where: {
-          roleId: input.roleId,
-          objectMetadataId: In(
-            input.objectPermissions.map(
-              (objectPermission) => objectPermission.objectMetadataId,
-            ),
-          ),
-        },
-      });
-    } catch (error) {
-      await this.handleForeignKeyError({
-        error,
-        roleId: input.roleId,
-        workspaceId,
-        objectMetadataIds: input.objectPermissions.map(
-          (objectPermission) => objectPermission.objectMetadataId,
-        ),
-      });
-
-      throw error;
+      if (objectMetadata.isSystem === true) {
+        throw new PermissionsException(
+          PermissionsExceptionMessage.CANNOT_ADD_OBJECT_PERMISSION_ON_SYSTEM_OBJECT,
+          PermissionsExceptionCode.CANNOT_ADD_OBJECT_PERMISSION_ON_SYSTEM_OBJECT,
+          {
+            userFriendlyMessage: msg`You cannot set permissions on system objects as they are managed by the platform.`,
+          },
+        );
+      }
     }
+
+    const flatEntityToCreate: (UniversalFlatObjectPermission & {
+      id: string;
+    })[] = [];
+    const flatEntityToUpdate: UniversalFlatObjectPermission[] = [];
+    const flatEntityToDelete: UniversalFlatObjectPermission[] = [];
+
+    const currentByObjectMetadataId = new Map(
+      currentObjectPermissionsForRole.map((op) => [op.objectMetadataId, op]),
+    );
+
+    for (const desired of input.objectPermissions) {
+      const current = currentByObjectMetadataId.get(desired.objectMetadataId);
+
+      if (!isDefined(current)) {
+        flatEntityToCreate.push(
+          fromCreateObjectPermissionInputToUniversalFlatObjectPermission({
+            createObjectPermissionInput: {
+              roleId: input.roleId,
+              objectMetadataId: desired.objectMetadataId,
+              canReadObjectRecords: desired.canReadObjectRecords,
+              canUpdateObjectRecords: desired.canUpdateObjectRecords,
+              canSoftDeleteObjectRecords: desired.canSoftDeleteObjectRecords,
+              canDestroyObjectRecords: desired.canDestroyObjectRecords,
+            },
+            flatApplication,
+            flatRoleMaps,
+            flatObjectMetadataMaps,
+          }),
+        );
+      } else {
+        const canChanged =
+          desired.canReadObjectRecords !== current.canReadObjectRecords ||
+          desired.canUpdateObjectRecords !== current.canUpdateObjectRecords ||
+          desired.canSoftDeleteObjectRecords !==
+            current.canSoftDeleteObjectRecords ||
+          desired.canDestroyObjectRecords !== current.canDestroyObjectRecords;
+
+        if (canChanged) {
+          const now = new Date().toISOString();
+          flatEntityToUpdate.push({
+            universalIdentifier: current.universalIdentifier,
+            applicationUniversalIdentifier:
+              current.applicationUniversalIdentifier,
+            roleUniversalIdentifier: current.roleUniversalIdentifier,
+            objectMetadataUniversalIdentifier:
+              current.objectMetadataUniversalIdentifier,
+            canReadObjectRecords:
+              desired.canReadObjectRecords ?? current.canReadObjectRecords,
+            canUpdateObjectRecords:
+              desired.canUpdateObjectRecords ?? current.canUpdateObjectRecords,
+            canSoftDeleteObjectRecords:
+              desired.canSoftDeleteObjectRecords ??
+              current.canSoftDeleteObjectRecords,
+            canDestroyObjectRecords:
+              desired.canDestroyObjectRecords ??
+              current.canDestroyObjectRecords,
+            createdAt: current.createdAt,
+            updatedAt: now,
+          });
+        }
+      }
+    }
+
+    for (const current of currentObjectPermissionsForRole) {
+      if (!desiredByObjectMetadataId.has(current.objectMetadataId)) {
+        flatEntityToDelete.push({
+          universalIdentifier: current.universalIdentifier,
+          applicationUniversalIdentifier:
+            current.applicationUniversalIdentifier,
+          roleUniversalIdentifier: current.roleUniversalIdentifier,
+          objectMetadataUniversalIdentifier:
+            current.objectMetadataUniversalIdentifier,
+          canReadObjectRecords: current.canReadObjectRecords,
+          canUpdateObjectRecords: current.canUpdateObjectRecords,
+          canSoftDeleteObjectRecords: current.canSoftDeleteObjectRecords,
+          canDestroyObjectRecords: current.canDestroyObjectRecords,
+          createdAt: current.createdAt,
+          updatedAt: current.updatedAt,
+        });
+      }
+    }
+
+    if (
+      flatEntityToCreate.length === 0 &&
+      flatEntityToUpdate.length === 0 &&
+      flatEntityToDelete.length === 0
+    ) {
+      const unchanged = currentObjectPermissionsForRole.filter((op) =>
+        desiredByObjectMetadataId.has(op.objectMetadataId),
+      );
+      return unchanged.map(fromFlatObjectPermissionToObjectPermissionDto);
+    }
+
+    const buildAndRunResult =
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+        {
+          allFlatEntityOperationByMetadataName: {
+            objectPermission: {
+              flatEntityToCreate,
+              flatEntityToUpdate,
+              flatEntityToDelete,
+            },
+          },
+          workspaceId,
+          isSystemBuild: false,
+          applicationUniversalIdentifier: flatApplication.universalIdentifier,
+        },
+      );
+
+    if (buildAndRunResult.status === 'fail') {
+      throw new WorkspaceMigrationBuilderException(
+        buildAndRunResult,
+        'Validation errors occurred while upserting object permissions',
+      );
+    }
+
+    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+      'rolesPermissions',
+    ]);
+
+    const { flatObjectPermissionMaps: freshFlatObjectPermissionMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatObjectPermissionMaps'],
+        },
+      );
+
+    const resultObjectPermissions = Object.values(
+      freshFlatObjectPermissionMaps.byUniversalIdentifier,
+    ).filter(
+      (op): op is FlatObjectPermission =>
+        isDefined(op) && op.roleUniversalIdentifier === roleUniversalIdentifier,
+    );
+
+    const desiredObjectMetadataIds = new Set(
+      input.objectPermissions.map((op) => op.objectMetadataId),
+    );
+    const filtered = resultObjectPermissions.filter((op) =>
+      desiredObjectMetadataIds.has(op.objectMetadataId),
+    );
+
+    return filtered.map(fromFlatObjectPermissionToObjectPermissionDto);
   }
 
-  private async validateObjectPermissionsReadAndWriteConsistencyOrThrow({
+  private validateObjectPermissionsReadAndWriteConsistencyOrThrow({
     objectPermissions: newObjectPermissions,
-    roleWithObjectPermissions,
+    flatRole,
+    currentObjectPermissionsForRole,
   }: {
     objectPermissions: ObjectPermissionInput[];
-    roleWithObjectPermissions: RoleEntity;
-  }) {
-    const existingObjectPermissions =
-      roleWithObjectPermissions.objectPermissions;
-
+    flatRole: Pick<
+      FlatRole,
+      | 'canReadAllObjectRecords'
+      | 'canUpdateAllObjectRecords'
+      | 'canSoftDeleteAllObjectRecords'
+      | 'canDestroyAllObjectRecords'
+    >;
+    currentObjectPermissionsForRole: FlatObjectPermission[];
+  }): void {
     for (const newObjectPermission of newObjectPermissions) {
-      const existingObjectRecordPermission = existingObjectPermissions.find(
-        (objectPermission) =>
-          objectPermission.objectMetadataId ===
-          newObjectPermission.objectMetadataId,
-      );
+      const existingObjectRecordPermission =
+        currentObjectPermissionsForRole.find(
+          (objectPermission) =>
+            objectPermission.objectMetadataId ===
+            newObjectPermission.objectMetadataId,
+        );
 
       const hasReadPermissionAfterUpdate =
         newObjectPermission.canReadObjectRecords ??
         existingObjectRecordPermission?.canReadObjectRecords ??
-        roleWithObjectPermissions.canReadAllObjectRecords;
+        flatRole.canReadAllObjectRecords;
 
       if (hasReadPermissionAfterUpdate === false) {
         const hasUpdatePermissionAfterUpdate =
           newObjectPermission.canUpdateObjectRecords ??
           existingObjectRecordPermission?.canUpdateObjectRecords ??
-          roleWithObjectPermissions.canUpdateAllObjectRecords;
+          flatRole.canUpdateAllObjectRecords;
 
         const hasSoftDeletePermissionAfterUpdate =
           newObjectPermission.canSoftDeleteObjectRecords ??
           existingObjectRecordPermission?.canSoftDeleteObjectRecords ??
-          roleWithObjectPermissions.canSoftDeleteAllObjectRecords;
+          flatRole.canSoftDeleteAllObjectRecords;
 
         const hasDestroyPermissionAfterUpdate =
           newObjectPermission.canDestroyObjectRecords ??
           existingObjectRecordPermission?.canDestroyObjectRecords ??
-          roleWithObjectPermissions.canDestroyAllObjectRecords;
+          flatRole.canDestroyAllObjectRecords;
 
         if (
           hasUpdatePermissionAfterUpdate ||
@@ -194,91 +332,11 @@ export class ObjectPermissionService {
     }
   }
 
-  private async handleForeignKeyError({
-    error,
-    roleId,
-    workspaceId,
-    objectMetadataIds,
-  }: {
-    error: Error;
-    roleId: string;
-    workspaceId: string;
-    objectMetadataIds: string[];
-  }) {
-    if (error.message.includes('violates foreign key constraint')) {
-      const role = await this.roleRepository.findOne({
-        where: {
-          id: roleId,
-          workspaceId,
-        },
-      });
-
-      if (!isDefined(role)) {
-        throw new PermissionsException(
-          PermissionsExceptionMessage.ROLE_NOT_FOUND,
-          PermissionsExceptionCode.ROLE_NOT_FOUND,
-          {
-            userFriendlyMessage: msg`The role you are trying to modify could not be found. It may have been deleted or you may not have access to it.`,
-          },
-        );
-      }
-
-      const objectMetadata = await this.objectMetadataRepository.find({
-        where: {
-          workspaceId,
-          id: In(objectMetadataIds),
-        },
-      });
-
-      if (objectMetadata.length !== objectMetadataIds.length) {
-        throw new PermissionsException(
-          PermissionsExceptionMessage.OBJECT_METADATA_NOT_FOUND,
-          PermissionsExceptionCode.OBJECT_METADATA_NOT_FOUND,
-          {
-            userFriendlyMessage: msg`One or more objects you are trying to set permissions for could not be found. They may have been deleted.`,
-          },
-        );
-      }
-    }
-  }
-
-  private async getRoleOrThrow({
-    roleId,
-    workspaceId,
-  }: {
-    roleId: string;
-    workspaceId: string;
-  }) {
-    const role = await this.roleRepository.findOne({
-      where: {
-        id: roleId,
-        workspaceId,
-      },
-      relations: ['objectPermissions'],
-    });
-
-    if (!isDefined(role)) {
-      throw new PermissionsException(
-        PermissionsExceptionMessage.ROLE_NOT_FOUND,
-        PermissionsExceptionCode.ROLE_NOT_FOUND,
-        {
-          userFriendlyMessage: msg`The role you are trying to modify could not be found. It may have been deleted or you may not have access to it.`,
-        },
+  private async getFlatApplicationForWorkspace(workspaceId: string) {
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
       );
-    }
-
-    return role;
-  }
-
-  private async validateRoleIsEditableOrThrow({ role }: { role: RoleEntity }) {
-    if (!role.isEditable) {
-      throw new PermissionsException(
-        PermissionsExceptionMessage.ROLE_NOT_EDITABLE,
-        PermissionsExceptionCode.ROLE_NOT_EDITABLE,
-        {
-          userFriendlyMessage: msg`This role cannot be modified because it is a system role. Only custom roles can be edited.`,
-        },
-      );
-    }
+    return workspaceCustomFlatApplication;
   }
 }
