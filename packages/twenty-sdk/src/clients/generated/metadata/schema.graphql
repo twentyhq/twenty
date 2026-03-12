@@ -805,6 +805,8 @@ type Workspace {
   currentBillingSubscription: BillingSubscription
   billingEntitlements: [BillingEntitlement!]!
   hasValidEnterpriseKey: Boolean!
+  hasValidSignedEnterpriseKey: Boolean!
+  hasValidEnterpriseValidityToken: Boolean!
   workspaceUrls: WorkspaceUrls!
   workspaceCustomApplicationId: String!
 }
@@ -1452,6 +1454,22 @@ type BillingUpdate {
 
   """All billing subscriptions"""
   billingSubscriptions: [BillingSubscription!]!
+}
+
+type EnterpriseLicenseInfoDTO {
+  isValid: Boolean!
+  licensee: String
+  expiresAt: DateTime
+  subscriptionId: String
+}
+
+type EnterpriseSubscriptionStatusDTO {
+  status: String!
+  licensee: String
+  expiresAt: DateTime
+  cancelAt: DateTime
+  currentPeriodEnd: DateTime
+  isCancellationScheduled: Boolean!
 }
 
 type OnboardingStepSuccess {
@@ -2859,6 +2877,9 @@ type Query {
   billingPortalSession(returnUrlPath: String): BillingSession!
   listPlans: [BillingPlan!]!
   getMeteredProductsUsage: [BillingMeteredProductUsage!]!
+  enterprisePortalSession(returnUrlPath: String): String
+  enterpriseCheckoutSession(billingInterval: String): String
+  enterpriseSubscriptionStatus: EnterpriseSubscriptionStatusDTO
   navigationMenuItems: [NavigationMenuItem!]!
   navigationMenuItem(id: UUID!): NavigationMenuItem
   apiKeys: [ApiKey!]!
@@ -3119,6 +3140,8 @@ type Mutation {
   setMeteredSubscriptionPrice(priceId: String!): BillingUpdate!
   endSubscriptionTrialPeriod: BillingEndTrialPeriod!
   cancelSwitchMeteredPrice: BillingUpdate!
+  refreshEnterpriseValidityToken: Boolean!
+  setEnterpriseKey(enterpriseKey: String!): EnterpriseLicenseInfoDTO!
   createNavigationMenuItem(input: CreateNavigationMenuItemInput!): NavigationMenuItem!
   updateNavigationMenuItem(input: UpdateOneNavigationMenuItemInput!): NavigationMenuItem!
   deleteNavigationMenuItem(id: UUID!): NavigationMenuItem!

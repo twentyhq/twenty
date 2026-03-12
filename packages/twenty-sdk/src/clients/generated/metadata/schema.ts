@@ -589,6 +589,8 @@ export interface Workspace {
     currentBillingSubscription?: BillingSubscription
     billingEntitlements: BillingEntitlement[]
     hasValidEnterpriseKey: Scalars['Boolean']
+    hasValidSignedEnterpriseKey: Scalars['Boolean']
+    hasValidEnterpriseValidityToken: Scalars['Boolean']
     workspaceUrls: WorkspaceUrls
     workspaceCustomApplicationId: Scalars['String']
     __typename: 'Workspace'
@@ -1168,6 +1170,24 @@ export interface BillingUpdate {
     /** All billing subscriptions */
     billingSubscriptions: BillingSubscription[]
     __typename: 'BillingUpdate'
+}
+
+export interface EnterpriseLicenseInfoDTO {
+    isValid: Scalars['Boolean']
+    licensee?: Scalars['String']
+    expiresAt?: Scalars['DateTime']
+    subscriptionId?: Scalars['String']
+    __typename: 'EnterpriseLicenseInfoDTO'
+}
+
+export interface EnterpriseSubscriptionStatusDTO {
+    status: Scalars['String']
+    licensee?: Scalars['String']
+    expiresAt?: Scalars['DateTime']
+    cancelAt?: Scalars['DateTime']
+    currentPeriodEnd?: Scalars['DateTime']
+    isCancellationScheduled: Scalars['Boolean']
+    __typename: 'EnterpriseSubscriptionStatusDTO'
 }
 
 export interface OnboardingStepSuccess {
@@ -2542,6 +2562,9 @@ export interface Query {
     billingPortalSession: BillingSession
     listPlans: BillingPlan[]
     getMeteredProductsUsage: BillingMeteredProductUsage[]
+    enterprisePortalSession?: Scalars['String']
+    enterpriseCheckoutSession?: Scalars['String']
+    enterpriseSubscriptionStatus?: EnterpriseSubscriptionStatusDTO
     navigationMenuItems: NavigationMenuItem[]
     navigationMenuItem?: NavigationMenuItem
     apiKeys: ApiKey[]
@@ -2692,6 +2715,8 @@ export interface Mutation {
     setMeteredSubscriptionPrice: BillingUpdate
     endSubscriptionTrialPeriod: BillingEndTrialPeriod
     cancelSwitchMeteredPrice: BillingUpdate
+    refreshEnterpriseValidityToken: Scalars['Boolean']
+    setEnterpriseKey: EnterpriseLicenseInfoDTO
     createNavigationMenuItem: NavigationMenuItem
     updateNavigationMenuItem: NavigationMenuItem
     deleteNavigationMenuItem: NavigationMenuItem
@@ -3432,6 +3457,8 @@ export interface WorkspaceGenqlSelection{
     currentBillingSubscription?: BillingSubscriptionGenqlSelection
     billingEntitlements?: BillingEntitlementGenqlSelection
     hasValidEnterpriseKey?: boolean | number
+    hasValidSignedEnterpriseKey?: boolean | number
+    hasValidEnterpriseValidityToken?: boolean | number
     workspaceUrls?: WorkspaceUrlsGenqlSelection
     workspaceCustomApplicationId?: boolean | number
     __typename?: boolean | number
@@ -4038,6 +4065,26 @@ export interface BillingUpdateGenqlSelection{
     currentBillingSubscription?: BillingSubscriptionGenqlSelection
     /** All billing subscriptions */
     billingSubscriptions?: BillingSubscriptionGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface EnterpriseLicenseInfoDTOGenqlSelection{
+    isValid?: boolean | number
+    licensee?: boolean | number
+    expiresAt?: boolean | number
+    subscriptionId?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface EnterpriseSubscriptionStatusDTOGenqlSelection{
+    status?: boolean | number
+    licensee?: boolean | number
+    expiresAt?: boolean | number
+    cancelAt?: boolean | number
+    currentPeriodEnd?: boolean | number
+    isCancellationScheduled?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -5530,6 +5577,9 @@ export interface QueryGenqlSelection{
     billingPortalSession?: (BillingSessionGenqlSelection & { __args?: {returnUrlPath?: (Scalars['String'] | null)} })
     listPlans?: BillingPlanGenqlSelection
     getMeteredProductsUsage?: BillingMeteredProductUsageGenqlSelection
+    enterprisePortalSession?: { __args: {returnUrlPath?: (Scalars['String'] | null)} } | boolean | number
+    enterpriseCheckoutSession?: { __args: {billingInterval?: (Scalars['String'] | null)} } | boolean | number
+    enterpriseSubscriptionStatus?: EnterpriseSubscriptionStatusDTOGenqlSelection
     navigationMenuItems?: NavigationMenuItemGenqlSelection
     navigationMenuItem?: (NavigationMenuItemGenqlSelection & { __args: {id: Scalars['UUID']} })
     apiKeys?: ApiKeyGenqlSelection
@@ -5711,6 +5761,8 @@ export interface MutationGenqlSelection{
     setMeteredSubscriptionPrice?: (BillingUpdateGenqlSelection & { __args: {priceId: Scalars['String']} })
     endSubscriptionTrialPeriod?: BillingEndTrialPeriodGenqlSelection
     cancelSwitchMeteredPrice?: BillingUpdateGenqlSelection
+    refreshEnterpriseValidityToken?: boolean | number
+    setEnterpriseKey?: (EnterpriseLicenseInfoDTOGenqlSelection & { __args: {enterpriseKey: Scalars['String']} })
     createNavigationMenuItem?: (NavigationMenuItemGenqlSelection & { __args: {input: CreateNavigationMenuItemInput} })
     updateNavigationMenuItem?: (NavigationMenuItemGenqlSelection & { __args: {input: UpdateOneNavigationMenuItemInput} })
     deleteNavigationMenuItem?: (NavigationMenuItemGenqlSelection & { __args: {id: Scalars['UUID']} })
@@ -6879,6 +6931,22 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     export const isBillingUpdate = (obj?: { __typename?: any } | null): obj is BillingUpdate => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isBillingUpdate"')
       return BillingUpdate_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const EnterpriseLicenseInfoDTO_possibleTypes: string[] = ['EnterpriseLicenseInfoDTO']
+    export const isEnterpriseLicenseInfoDTO = (obj?: { __typename?: any } | null): obj is EnterpriseLicenseInfoDTO => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isEnterpriseLicenseInfoDTO"')
+      return EnterpriseLicenseInfoDTO_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const EnterpriseSubscriptionStatusDTO_possibleTypes: string[] = ['EnterpriseSubscriptionStatusDTO']
+    export const isEnterpriseSubscriptionStatusDTO = (obj?: { __typename?: any } | null): obj is EnterpriseSubscriptionStatusDTO => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isEnterpriseSubscriptionStatusDTO"')
+      return EnterpriseSubscriptionStatusDTO_possibleTypes.includes(obj.__typename)
     }
     
 
