@@ -15,8 +15,6 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
-import { IconNewSection } from 'twenty-ui/display';
-import { MenuItem } from 'twenty-ui/navigation';
 
 import { FieldsConfigurationGroupDraggableHeader } from '@/page-layout/widgets/fields/components/FieldsConfigurationGroupDraggableHeader';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -172,6 +170,7 @@ export const FieldsConfigurationGroupEditor = ({
             groupId={group.id}
             onStartRename={handleStartRename}
             onDelete={() => onDeleteGroup({ groupId: group.id })}
+            onAddGroup={onAddGroup}
           />
         </StyledDropdownContainer>
       </StyledGroupHeaderRow>
@@ -215,13 +214,6 @@ export const FieldsConfigurationGroupEditor = ({
           </StyledFieldsDroppable>
         )}
       </Droppable>
-
-      <MenuItem
-        LeftIcon={IconNewSection}
-        withIconContainer
-        text={t`Add a Section`}
-        onClick={onAddGroup}
-      />
     </StyledGroupContainer>
   );
 };

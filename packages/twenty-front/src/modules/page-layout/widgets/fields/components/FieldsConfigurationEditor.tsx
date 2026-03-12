@@ -25,11 +25,17 @@ import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
+import { IconNewSection } from 'twenty-ui/display';
+import { MenuItem } from 'twenty-ui/navigation';
 
 const StyledGroupsDroppable = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
+`;
+
+const StyledAddGroupButtonContainer = styled.div`
+  border: 1px solid transparent;
 `;
 
 type FieldsConfigurationEditorProps = {
@@ -250,6 +256,16 @@ export const FieldsConfigurationEditor = ({
               </Draggable>
             ))}
             {provided.placeholder}
+
+            <StyledAddGroupButtonContainer>
+              <MenuItem
+                LeftIcon={IconNewSection}
+                text={t`Add a Group`}
+                onClick={() => handleAddGroup({})}
+                withIconContainer
+                withIconContainerBackground={false}
+              />
+            </StyledAddGroupButtonContainer>
           </StyledGroupsDroppable>
         )}
       </Droppable>
