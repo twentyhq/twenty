@@ -1,10 +1,4 @@
-import {
-  Field,
-  Float,
-  HideField,
-  ObjectType,
-  registerEnumType,
-} from '@nestjs/graphql';
+import { Field, Float, HideField, ObjectType } from '@nestjs/graphql';
 
 import {
   IsBoolean,
@@ -18,19 +12,9 @@ import {
 } from 'class-validator';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import {
-  CommandMenuItemAvailabilityType,
-  EngineComponentKey,
-} from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
+import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/enums/command-menu-item-availability-type.enum';
+import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import { FrontComponentDTO } from 'src/engine/metadata-modules/front-component/dtos/front-component.dto';
-
-registerEnumType(CommandMenuItemAvailabilityType, {
-  name: 'CommandMenuItemAvailabilityType',
-});
-
-registerEnumType(EngineComponentKey, {
-  name: 'EngineComponentKey',
-});
 
 @ObjectType('CommandMenuItem')
 export class CommandMenuItemDTO {

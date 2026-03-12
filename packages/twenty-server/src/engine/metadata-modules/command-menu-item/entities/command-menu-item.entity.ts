@@ -11,39 +11,11 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/enums/command-menu-item-availability-type.enum';
+import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import { FrontComponentEntity } from 'src/engine/metadata-modules/front-component/entities/front-component.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
-
-export enum CommandMenuItemAvailabilityType {
-  GLOBAL = 'GLOBAL',
-  RECORD_SELECTION = 'RECORD_SELECTION',
-  FALLBACK = 'FALLBACK',
-}
-
-export enum EngineComponentKey {
-  CREATE_NEW_RECORD = 'CREATE_NEW_RECORD',
-  DELETE_SINGLE_RECORD = 'DELETE_SINGLE_RECORD',
-  DELETE_MULTIPLE_RECORDS = 'DELETE_MULTIPLE_RECORDS',
-  RESTORE_SINGLE_RECORD = 'RESTORE_SINGLE_RECORD',
-  RESTORE_MULTIPLE_RECORDS = 'RESTORE_MULTIPLE_RECORDS',
-  DESTROY_SINGLE_RECORD = 'DESTROY_SINGLE_RECORD',
-  DESTROY_MULTIPLE_RECORDS = 'DESTROY_MULTIPLE_RECORDS',
-  ADD_TO_FAVORITES = 'ADD_TO_FAVORITES',
-  REMOVE_FROM_FAVORITES = 'REMOVE_FROM_FAVORITES',
-  MERGE_MULTIPLE_RECORDS = 'MERGE_MULTIPLE_RECORDS',
-  DUPLICATE_DASHBOARD = 'DUPLICATE_DASHBOARD',
-  DUPLICATE_WORKFLOW = 'DUPLICATE_WORKFLOW',
-  ACTIVATE_WORKFLOW = 'ACTIVATE_WORKFLOW',
-  DEACTIVATE_WORKFLOW = 'DEACTIVATE_WORKFLOW',
-  DISCARD_DRAFT_WORKFLOW = 'DISCARD_DRAFT_WORKFLOW',
-  TEST_WORKFLOW = 'TEST_WORKFLOW',
-  STOP_WORKFLOW_RUN = 'STOP_WORKFLOW_RUN',
-  USE_AS_DRAFT_WORKFLOW_VERSION = 'USE_AS_DRAFT_WORKFLOW_VERSION',
-  SAVE_RECORD_PAGE_LAYOUT = 'SAVE_RECORD_PAGE_LAYOUT',
-  SAVE_DASHBOARD_LAYOUT = 'SAVE_DASHBOARD_LAYOUT',
-  TIDY_UP_WORKFLOW = 'TIDY_UP_WORKFLOW',
-}
 
 @Entity({ name: 'commandMenuItem', schema: 'core' })
 @Index('IDX_COMMAND_MENU_ITEM_WORKFLOW_VERSION_ID_WORKSPACE_ID', [

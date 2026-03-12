@@ -1,9 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import {
-  type CommandMenuItemAvailabilityType,
-  EngineComponentKey,
-} from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
+import { type CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/enums/command-menu-item-availability-type.enum';
+import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
