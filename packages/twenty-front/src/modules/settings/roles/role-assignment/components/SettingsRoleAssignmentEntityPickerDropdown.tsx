@@ -59,12 +59,18 @@ export const SettingsRoleAssignmentEntityPickerDropdown = ({
 
   const isAgent = entityType === 'agent';
 
-  const { data: agentsData, loading: agentsLoading } = useQuery(FindManyAgentsDocument, {
-    skip: !isAgent,
-  });
-  const { data: apiKeysData, loading: apiKeysLoading } = useQuery(GetApiKeysDocument, {
-    skip: isAgent,
-  });
+  const { data: agentsData, loading: agentsLoading } = useQuery(
+    FindManyAgentsDocument,
+    {
+      skip: !isAgent,
+    },
+  );
+  const { data: apiKeysData, loading: apiKeysLoading } = useQuery(
+    GetApiKeysDocument,
+    {
+      skip: isAgent,
+    },
+  );
 
   const loading = isAgent ? agentsLoading : apiKeysLoading;
 

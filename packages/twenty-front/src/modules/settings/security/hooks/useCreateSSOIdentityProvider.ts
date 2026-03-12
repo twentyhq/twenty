@@ -11,10 +11,12 @@ import {
 } from '~/generated-metadata/graphql';
 
 export const useCreateSSOIdentityProvider = () => {
-  const [createOidcIdentityProviderMutation] =
-    useMutation(CreateOidcIdentityProviderDocument);
-  const [createSamlIdentityProviderMutation] =
-    useMutation(CreateSamlIdentityProviderDocument);
+  const [createOidcIdentityProviderMutation] = useMutation(
+    CreateOidcIdentityProviderDocument,
+  );
+  const [createSamlIdentityProviderMutation] = useMutation(
+    CreateSamlIdentityProviderDocument,
+  );
 
   const setSSOIdentitiesProviders = useSetAtomState(
     SSOIdentitiesProvidersState,

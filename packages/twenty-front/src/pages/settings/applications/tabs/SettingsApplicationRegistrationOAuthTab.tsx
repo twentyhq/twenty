@@ -87,12 +87,15 @@ export const SettingsApplicationRegistrationOAuthTab = ({
   const [newRedirectUri, setNewRedirectUri] = useState('');
   const [hasChanges, setHasChanges] = useState(false);
 
-  const [updateRegistration] = useMutation(UpdateApplicationRegistrationDocument, {
-    refetchQueries: [
-      FindOneApplicationRegistrationDocument,
-      FindManyApplicationRegistrationsDocument,
-    ],
-  });
+  const [updateRegistration] = useMutation(
+    UpdateApplicationRegistrationDocument,
+    {
+      refetchQueries: [
+        FindOneApplicationRegistrationDocument,
+        FindManyApplicationRegistrationsDocument,
+      ],
+    },
+  );
 
   const [rotateSecret] = useMutation(
     RotateApplicationRegistrationClientSecretDocument,

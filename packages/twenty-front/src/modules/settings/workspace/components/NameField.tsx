@@ -73,7 +73,10 @@ export const NameField = ({
           },
         });
 
-        if (isDefined(result.error) || isUndefinedOrNull(result.data?.updateWorkspace)) {
+        if (
+          isDefined(result.error) ||
+          isUndefinedOrNull(result.data?.updateWorkspace)
+        ) {
           throw result.error;
         }
       } catch (error) {

@@ -29,13 +29,15 @@ const StyledTitleContainer = styled.div`
 export const SettingsAdminIndicatorHealthStatus = () => {
   const { t } = useLingui();
   const { indicatorId } = useParams();
-  const { data, loading: loadingIndicatorHealthStatus } =
-    useQuery(GetIndicatorHealthStatusDocument, {
+  const { data, loading: loadingIndicatorHealthStatus } = useQuery(
+    GetIndicatorHealthStatusDocument,
+    {
       variables: {
         indicatorId: indicatorId as HealthIndicatorId,
       },
       fetchPolicy: 'network-only',
-    });
+    },
+  );
 
   if (loadingIndicatorHealthStatus) {
     return <SettingsSkeletonLoader />;

@@ -28,9 +28,13 @@ export const SettingsEmailingDomainRowDropdownMenu = ({
 
   const { closeDropdown } = useCloseDropdown();
 
-  const { refetch: refetchEmailingDomains } = useQuery(GetEmailingDomainsDocument);
+  const { refetch: refetchEmailingDomains } = useQuery(
+    GetEmailingDomainsDocument,
+  );
 
-  const [deleteEmailingDomainMutation] = useMutation(DeleteEmailingDomainDocument);
+  const [deleteEmailingDomainMutation] = useMutation(
+    DeleteEmailingDomainDocument,
+  );
 
   const handleDeleteEmailingDomain = async () => {
     try {

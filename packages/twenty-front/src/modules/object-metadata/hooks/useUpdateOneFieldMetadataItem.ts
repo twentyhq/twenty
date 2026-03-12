@@ -23,8 +23,9 @@ export const useUpdateOneFieldMetadataItem = () => {
   const { refreshCoreViewsByObjectMetadataId } =
     useRefreshCoreViewsByObjectMetadataId();
 
-  const [updateOneFieldMetadataItemMutation] =
-    useMutation(UpdateOneFieldMetadataItemDocument);
+  const [updateOneFieldMetadataItemMutation] = useMutation(
+    UpdateOneFieldMetadataItemDocument,
+  );
 
   const { handleMetadataError } = useMetadataErrorHandler();
 

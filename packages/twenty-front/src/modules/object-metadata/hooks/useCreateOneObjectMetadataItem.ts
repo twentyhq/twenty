@@ -20,8 +20,9 @@ export const useCreateOneObjectMetadataItem = () => {
   const { refreshCoreViewsByObjectMetadataId } =
     useRefreshCoreViewsByObjectMetadataId();
 
-  const [createOneObjectMetadataItemMutation] =
-    useMutation(CreateOneObjectMetadataItemDocument);
+  const [createOneObjectMetadataItemMutation] = useMutation(
+    CreateOneObjectMetadataItemDocument,
+  );
 
   const { handleMetadataError } = useMetadataErrorHandler();
   const { enqueueErrorSnackBar } = useSnackBar();

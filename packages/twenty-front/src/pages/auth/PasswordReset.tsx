@@ -113,12 +113,15 @@ export const PasswordReset = () => {
     resolver: zodResolver(validationSchema),
   });
 
-  const { data: tokenValidationData, error: tokenValidationError } = useQuery(ValidatePasswordResetTokenDocument, {
-    variables: {
-      token: passwordResetToken ?? '',
+  const { data: tokenValidationData, error: tokenValidationError } = useQuery(
+    ValidatePasswordResetTokenDocument,
+    {
+      variables: {
+        token: passwordResetToken ?? '',
+      },
+      skip: !passwordResetToken || isTokenValid,
     },
-    skip: !passwordResetToken || isTokenValid,
-  });
+  );
 
   useEffect(() => {
     if (tokenValidationError) {
@@ -142,8 +145,9 @@ export const PasswordReset = () => {
     }
   }, [tokenValidationData]);
 
-  const [updatePasswordViaToken, { loading: isUpdatingPassword }] =
-    useMutation(UpdatePasswordViaResetTokenDocument);
+  const [updatePasswordViaToken, { loading: isUpdatingPassword }] = useMutation(
+    UpdatePasswordViaResetTokenDocument,
+  );
 
   const { signInWithCredentialsInWorkspace, signInWithCredentials } = useAuth();
   const { isOnAWorkspace } = useIsCurrentLocationOnAWorkspace();

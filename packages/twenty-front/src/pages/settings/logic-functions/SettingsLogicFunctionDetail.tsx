@@ -34,10 +34,13 @@ export const SettingsLogicFunctionDetail = () => {
   const navigate = useNavigate();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
-  const { data, loading: applicationLoading } = useQuery(FindOneApplicationDocument, {
-    variables: { id: applicationId },
-    skip: !applicationId,
-  });
+  const { data, loading: applicationLoading } = useQuery(
+    FindOneApplicationDocument,
+    {
+      variables: { id: applicationId },
+      skip: !applicationId,
+    },
+  );
 
   const applicationName = data?.findOneApplication?.name;
 

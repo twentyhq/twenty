@@ -57,7 +57,9 @@ export const useWorkflowAiAgentPermissionActions = ({
 
   const [createRole] = useMutation(CreateOneRoleDocument);
   const [assignRoleToAgent] = useMutation(AssignRoleToAgentDocument);
-  const [upsertObjectPermissions] = useMutation(UpsertObjectPermissionsDocument);
+  const [upsertObjectPermissions] = useMutation(
+    UpsertObjectPermissionsDocument,
+  );
   const [upsertPermissionFlags] = useMutation(UpsertPermissionFlagsDocument);
 
   const roleId = workflowAiAgentActionAgent?.roleId;

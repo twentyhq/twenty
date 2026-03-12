@@ -9,8 +9,9 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 
 export const useCurrentUserWorkspaceTwoFactorAuthentication = () => {
   const currentUserWorkspace = useAtomStateValue(currentUserWorkspaceState);
-  const [initiateCurrentUserWorkspaceOtpProvisioning] =
-    useMutation(InitiateOtpProvisioningDocument);
+  const [initiateCurrentUserWorkspaceOtpProvisioning] = useMutation(
+    InitiateOtpProvisioningDocument,
+  );
 
   const currentUserWorkspaceTwoFactorAuthenticationMethods = useMemo(() => {
     const methods: Record<string, TwoFactorAuthenticationMethodSummary> = {};

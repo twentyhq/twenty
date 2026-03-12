@@ -185,9 +185,7 @@ export class ApolloFactory implements ApolloManager {
             });
         }
 
-        return from(renewalPromise).pipe(
-          switchMap(() => forward(operation)),
-        );
+        return from(renewalPromise).pipe(switchMap(() => forward(operation)));
       };
 
       const sendToSentry = ({
@@ -248,80 +246,78 @@ export class ApolloFactory implements ApolloManager {
           });
       };
 
-      const errorLink = new ErrorLink(
-        ({ error, operation, forward }) => {
-          if (CombinedGraphQLErrors.is(error)) {
-            onErrorCb?.(error.errors);
-            for (const graphQLError of error.errors) {
-              if (graphQLError.message === 'Unauthorized') {
-                // oxlint-disable-next-line no-console
-                console.log('Unauthorized, triggering token renewal');
-                return handleTokenRenewal(operation, forward);
-              }
-
-              switch (graphQLError?.extensions?.code) {
-                case 'APP_VERSION_MISMATCH': {
-                  onAppVersionMismatch?.(
-                    (graphQLError.extensions?.userFriendlyMessage as string) ||
-                      t`Your app version is out of date. Please refresh the page.`,
-                  );
-                  return;
-                }
-                case 'UNAUTHENTICATED': {
-                  // oxlint-disable-next-line no-console
-                  console.log('UNAUTHENTICATED, triggering token renewal');
-                  return handleTokenRenewal(operation, forward);
-                }
-                case 'NOT_FOUND':
-                case 'BAD_USER_INPUT':
-                case 'FORBIDDEN':
-                case 'CONFLICT':
-                case 'METADATA_VALIDATION_FAILED': {
-                  return;
-                }
-                case 'USER_INPUT_ERROR': {
-                  if (graphQLError.extensions?.isExpected === true) {
-                    return;
-                  }
-                  sendToSentry({ graphQLError, operation });
-                  return;
-                }
-                case 'INTERNAL_SERVER_ERROR': {
-                  return; // already caught in BE
-                }
-                default:
-                  sendToSentry({ graphQLError, operation });
-              }
-            }
-          } else if (ServerError.is(error)) {
-            if (
-              this.isRestOperation(operation) &&
-              this.isAuthenticationError(error)
-            ) {
+      const errorLink = new ErrorLink(({ error, operation, forward }) => {
+        if (CombinedGraphQLErrors.is(error)) {
+          onErrorCb?.(error.errors);
+          for (const graphQLError of error.errors) {
+            if (graphQLError.message === 'Unauthorized') {
               // oxlint-disable-next-line no-console
-              console.log(
-                'Authentication error, triggering token renewal from errorLink',
-              );
+              console.log('Unauthorized, triggering token renewal');
               return handleTokenRenewal(operation, forward);
             }
 
-            if (this.isPayloadTooLargeError(error)) {
-              onPayloadTooLarge?.(t`Uploaded content is too large.`);
-              return;
+            switch (graphQLError?.extensions?.code) {
+              case 'APP_VERSION_MISMATCH': {
+                onAppVersionMismatch?.(
+                  (graphQLError.extensions?.userFriendlyMessage as string) ||
+                    t`Your app version is out of date. Please refresh the page.`,
+                );
+                return;
+              }
+              case 'UNAUTHENTICATED': {
+                // oxlint-disable-next-line no-console
+                console.log('UNAUTHENTICATED, triggering token renewal');
+                return handleTokenRenewal(operation, forward);
+              }
+              case 'NOT_FOUND':
+              case 'BAD_USER_INPUT':
+              case 'FORBIDDEN':
+              case 'CONFLICT':
+              case 'METADATA_VALIDATION_FAILED': {
+                return;
+              }
+              case 'USER_INPUT_ERROR': {
+                if (graphQLError.extensions?.isExpected === true) {
+                  return;
+                }
+                sendToSentry({ graphQLError, operation });
+                return;
+              }
+              case 'INTERNAL_SERVER_ERROR': {
+                return; // already caught in BE
+              }
+              default:
+                sendToSentry({ graphQLError, operation });
             }
-
-            if (isDebugMode === true) {
-              logDebug(`[Network error]: ${error}`);
-            }
-            onNetworkError?.(error);
-          } else if (isDefined(error)) {
-            if (isDebugMode === true) {
-              logDebug(`[Network error]: ${error}`);
-            }
-            onNetworkError?.(error as Error);
           }
-        },
-      );
+        } else if (ServerError.is(error)) {
+          if (
+            this.isRestOperation(operation) &&
+            this.isAuthenticationError(error)
+          ) {
+            // oxlint-disable-next-line no-console
+            console.log(
+              'Authentication error, triggering token renewal from errorLink',
+            );
+            return handleTokenRenewal(operation, forward);
+          }
+
+          if (this.isPayloadTooLargeError(error)) {
+            onPayloadTooLarge?.(t`Uploaded content is too large.`);
+            return;
+          }
+
+          if (isDebugMode === true) {
+            logDebug(`[Network error]: ${error}`);
+          }
+          onNetworkError?.(error);
+        } else if (isDefined(error)) {
+          if (isDebugMode === true) {
+            logDebug(`[Network error]: ${error}`);
+          }
+          onNetworkError?.(error as Error);
+        }
+      });
 
       // Type assertion needed because third-party link packages (apollo-link-rest,
       // apollo-upload-client) reference their own @apollo/client ApolloLink type

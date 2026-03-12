@@ -71,11 +71,13 @@ export const SettingsAgentLogsTab = ({
     return backgroundEvaluatingTurnIds;
   };
 
-  const { data, loading, refetch, startPolling, stopPolling } =
-    useQuery(GetAgentTurnsDocument, {
+  const { data, loading, refetch, startPolling, stopPolling } = useQuery(
+    GetAgentTurnsDocument,
+    {
       variables: { agentId },
       skip: !agentId,
-    });
+    },
+  );
 
   useEffect(() => {
     if (data) {
@@ -93,22 +95,25 @@ export const SettingsAgentLogsTab = ({
   const turns = data?.agentTurns || [];
   const backgroundEvaluatingTurnIds = computeBackgroundEvaluatingTurnIds(turns);
 
-  const [evaluateTurn, { loading: evaluating }] = useMutation(EvaluateAgentTurnDocument, {
-    onCompleted: (data) => {
-      const turnId = data?.evaluateAgentTurn?.turnId;
-      if (isDefined(turnId)) {
-        setEvaluatingTurnIds((prev) => {
-          const next = new Set(prev);
-          next.delete(turnId);
-          return next;
+  const [evaluateTurn, { loading: evaluating }] = useMutation(
+    EvaluateAgentTurnDocument,
+    {
+      onCompleted: (data) => {
+        const turnId = data?.evaluateAgentTurn?.turnId;
+        if (isDefined(turnId)) {
+          setEvaluatingTurnIds((prev) => {
+            const next = new Set(prev);
+            next.delete(turnId);
+            return next;
+          });
+        }
+        enqueueSuccessSnackBar({
+          message: t`Turn evaluated successfully`,
         });
-      }
-      enqueueSuccessSnackBar({
-        message: t`Turn evaluated successfully`,
-      });
-      refetch();
+        refetch();
+      },
     },
-  });
+  );
 
   const handleEvaluateTurn = (turnId: string) => {
     setEvaluatingTurnIds((prev) => new Set(prev).add(turnId));

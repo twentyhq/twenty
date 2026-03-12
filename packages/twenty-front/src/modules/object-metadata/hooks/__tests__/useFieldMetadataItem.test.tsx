@@ -51,20 +51,22 @@ jest.mock('@/object-metadata/hooks/useCreateOneFieldMetadataItem', () => ({
 
 jest.mock('@/object-metadata/hooks/useDeleteOneFieldMetadataItem', () => ({
   useDeleteOneFieldMetadataItem: () => ({
-    deleteOneFieldMetadataItem: jest.fn().mockImplementation(({ idToDelete }) => {
-      const data =
-        idToDelete === FIELD_RELATION_METADATA_ID
-          ? responseData.fieldRelation
-          : responseData.default;
-      return Promise.resolve({
-        status: 'successful',
-        response: {
-          data: {
-            deleteOneField: data,
+    deleteOneFieldMetadataItem: jest
+      .fn()
+      .mockImplementation(({ idToDelete }) => {
+        const data =
+          idToDelete === FIELD_RELATION_METADATA_ID
+            ? responseData.fieldRelation
+            : responseData.default;
+        return Promise.resolve({
+          status: 'successful',
+          response: {
+            data: {
+              deleteOneField: data,
+            },
           },
-        },
-      });
-    }),
+        });
+      }),
   }),
 }));
 

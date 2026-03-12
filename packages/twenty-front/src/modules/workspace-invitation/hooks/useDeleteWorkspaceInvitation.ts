@@ -7,8 +7,9 @@ import { workspaceInvitationsState } from '@/workspace-invitation/states/workspa
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 export const useDeleteWorkspaceInvitation = () => {
-  const [deleteWorkspaceInvitationMutation] =
-    useMutation(DeleteWorkspaceInvitationDocument);
+  const [deleteWorkspaceInvitationMutation] = useMutation(
+    DeleteWorkspaceInvitationDocument,
+  );
 
   const setWorkspaceInvitations = useSetAtomState(workspaceInvitationsState);
 

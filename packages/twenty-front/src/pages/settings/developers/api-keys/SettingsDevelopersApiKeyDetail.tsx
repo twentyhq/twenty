@@ -78,13 +78,16 @@ export const SettingsDevelopersApiKeyDetail = () => {
   const [revokeApiKey] = useMutation(RevokeApiKeyDocument);
   const [assignRoleToApiKey] = useMutation(AssignRoleToApiKeyDocument);
 
-  const { data: apiKeyData, loading: apiKeyLoading } = useQuery(GetApiKeyDocument, {
-    variables: {
-      input: {
-        id: apiKeyId,
+  const { data: apiKeyData, loading: apiKeyLoading } = useQuery(
+    GetApiKeyDocument,
+    {
+      variables: {
+        input: {
+          id: apiKeyId,
+        },
       },
     },
-  });
+  );
 
   useEffect(() => {
     if (isDefined(apiKeyData?.apiKey)) {

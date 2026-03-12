@@ -1,4 +1,10 @@
-import { type ApolloClient, type ErrorLike, type ObservableQuery, type OperationVariables, type WatchQueryFetchPolicy } from '@apollo/client';
+import {
+  type ApolloClient,
+  type ErrorLike,
+  type ObservableQuery,
+  type OperationVariables,
+  type WatchQueryFetchPolicy,
+} from '@apollo/client';
 import { type Unmasked } from '@apollo/client/masking';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback } from 'react';
@@ -46,7 +52,12 @@ type UseFindManyRecordsStateParams<
     TFetchData = TData,
     TFetchVars extends OperationVariables = OperationVariables,
   >(
-    fetchMoreOptions: ObservableQuery.FetchMoreOptions<TData, OperationVariables, TFetchData, TFetchVars>,
+    fetchMoreOptions: ObservableQuery.FetchMoreOptions<
+      TData,
+      OperationVariables,
+      TFetchData,
+      TFetchVars
+    >,
   ): Promise<ApolloClient.QueryResult<TFetchData>>;
   objectMetadataItem: ObjectMetadataItem;
 };
@@ -153,7 +164,8 @@ export const useLazyFetchMoreRecordsWithPagination = <
             records: getRecordsFromRecordConnection({
               recordConnection: {
                 edges:
-                  fetchMoreDataResult?.[objectMetadataItem.namePlural]?.edges ?? [],
+                  fetchMoreDataResult?.[objectMetadataItem.namePlural]?.edges ??
+                  [],
                 pageInfo:
                   fetchMoreDataResult?.[objectMetadataItem.namePlural]
                     ?.pageInfo,

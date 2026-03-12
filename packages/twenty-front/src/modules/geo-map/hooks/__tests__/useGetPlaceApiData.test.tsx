@@ -33,9 +33,7 @@ const mockPlaceDetails: PlaceDetailsResult = {
 
 const createWrapper = (mocks: MockedResponse[]) => {
   return ({ children }: { children: ReactNode }) => (
-    <MockedProvider mocks={mocks}>
-      {children}
-    </MockedProvider>
+    <MockedProvider mocks={mocks}>{children}</MockedProvider>
   );
 };
 

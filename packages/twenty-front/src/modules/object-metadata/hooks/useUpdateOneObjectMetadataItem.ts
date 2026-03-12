@@ -15,8 +15,9 @@ import { CrudOperationType } from 'twenty-shared/types';
 
 // TODO: Slice the Apollo store synchronously in the update function instead of subscribing, so we can use update after read in the same function call
 export const useUpdateOneObjectMetadataItem = () => {
-  const [updateOneObjectMetadataItemMutation, { loading }] =
-    useMutation(UpdateOneObjectMetadataItemDocument);
+  const [updateOneObjectMetadataItemMutation, { loading }] = useMutation(
+    UpdateOneObjectMetadataItemDocument,
+  );
 
   const { refreshObjectMetadataItems } =
     useRefreshObjectMetadataItems('network-only');

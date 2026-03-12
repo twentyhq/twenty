@@ -34,7 +34,10 @@ export const useTriggerViewSortOptimisticEffect = () => {
           }),
           fields: {
             viewSorts: (existingViewSorts, { toReference }) =>
-              [...(existingViewSorts ?? []), toReference(createdViewSort)].filter(isDefined),
+              [
+                ...(existingViewSorts ?? []),
+                toReference(createdViewSort),
+              ].filter(isDefined),
           },
         });
         const toBeModifiedCoreView = newCoreViews.find(
@@ -61,13 +64,15 @@ export const useTriggerViewSortOptimisticEffect = () => {
           }),
           fields: {
             viewSorts: (existingViewSorts, { readField, toReference }) =>
-              existingViewSorts.map((viewSort) => {
-                const viewSortId = readField<string>('id', viewSort);
-                if (viewSortId === updatedViewSort.id) {
-                  return toReference(updatedViewSort);
-                }
-                return viewSort;
-              }).filter(isDefined),
+              existingViewSorts
+                .map((viewSort) => {
+                  const viewSortId = readField<string>('id', viewSort);
+                  if (viewSortId === updatedViewSort.id) {
+                    return toReference(updatedViewSort);
+                  }
+                  return viewSort;
+                })
+                .filter(isDefined),
           },
         });
         const toBeModifiedCoreView = newCoreViews.find(

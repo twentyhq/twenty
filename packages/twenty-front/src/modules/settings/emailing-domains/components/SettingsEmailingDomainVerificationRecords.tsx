@@ -22,8 +22,9 @@ export const SettingsEmailingDomainVerificationRecords = ({
 }: SettingsEmailingDomainVerificationRecordsProps) => {
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
 
-  const [verifyEmailingDomainMutation, { loading: isVerifying }] =
-    useMutation(VerifyEmailingDomainDocument);
+  const [verifyEmailingDomainMutation, { loading: isVerifying }] = useMutation(
+    VerifyEmailingDomainDocument,
+  );
 
   if (!domain.verificationRecords || domain.verificationRecords.length === 0) {
     return null;

@@ -20,11 +20,14 @@ export const useWorkspaceFromInviteHash = () => {
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const [initiallyLoggedIn] = useState(isDefined(currentWorkspace));
 
-  const { data: workspaceFromInviteHash, loading, error } =
-    useQuery(GetWorkspaceFromInviteHashDocument, {
-      skip: !workspaceInviteHash,
-      variables: { inviteHash: workspaceInviteHash || '' },
-    });
+  const {
+    data: workspaceFromInviteHash,
+    loading,
+    error,
+  } = useQuery(GetWorkspaceFromInviteHashDocument, {
+    skip: !workspaceInviteHash,
+    variables: { inviteHash: workspaceInviteHash || '' },
+  });
 
   useEffect(() => {
     if (error) {
@@ -52,7 +55,13 @@ export const useWorkspaceFromInviteHash = () => {
         });
       navigate(AppPath.Index);
     }
-  }, [workspaceFromInviteHash, currentWorkspace, initiallyLoggedIn, enqueueInfoSnackBar, navigate]);
+  }, [
+    workspaceFromInviteHash,
+    currentWorkspace,
+    initiallyLoggedIn,
+    enqueueInfoSnackBar,
+    navigate,
+  ]);
   return {
     workspace: workspaceFromInviteHash?.findWorkspaceFromInviteHash,
     workspaceInviteHash,

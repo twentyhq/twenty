@@ -31,15 +31,18 @@ export const useGetPublicWorkspaceDataByDomain = () => {
   const setWorkspacePublicData = useSetAtomState(workspacePublicDataState);
   const clientConfigApiStatus = useAtomStateValue(clientConfigApiStatusState);
 
-  const { loading, data, error } = useQuery(GetPublicWorkspaceDataByDomainDocument, {
-    variables: {
-      origin,
+  const { loading, data, error } = useQuery(
+    GetPublicWorkspaceDataByDomainDocument,
+    {
+      variables: {
+        origin,
+      },
+      skip:
+        !clientConfigApiStatus.isSaved ||
+        (isMultiWorkspaceEnabled && isDefaultDomain) ||
+        isDefined(workspacePublicData),
     },
-    skip:
-      !clientConfigApiStatus.isSaved ||
-      (isMultiWorkspaceEnabled && isDefaultDomain) ||
-      isDefined(workspacePublicData),
-  });
+  );
 
   useEffect(() => {
     if (data) {
@@ -51,7 +54,12 @@ export const useGetPublicWorkspaceDataByDomain = () => {
       );
       setWorkspacePublicData(data.getPublicWorkspaceDataByDomain);
     }
-  }, [data, setWorkspaceAuthProviders, setWorkspaceAuthBypassProviders, setWorkspacePublicData]);
+  }, [
+    data,
+    setWorkspaceAuthProviders,
+    setWorkspaceAuthBypassProviders,
+    setWorkspacePublicData,
+  ]);
 
   useEffect(() => {
     if (error) {

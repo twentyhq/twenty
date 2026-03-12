@@ -30,7 +30,11 @@ export const SettingsRoleAssignmentWorkspaceMemberPickerDropdown = ({
 
   const filteredWorkspaceMembers =
     workspaceMembers?.filter(
-      (workspaceMember): workspaceMember is NonNullable<typeof workspaceMember> & { recordId: string } =>
+      (
+        workspaceMember,
+      ): workspaceMember is NonNullable<typeof workspaceMember> & {
+        recordId: string;
+      } =>
         !!workspaceMember?.recordId &&
         !excludedWorkspaceMemberIds.includes(workspaceMember.recordId),
     ) ?? [];

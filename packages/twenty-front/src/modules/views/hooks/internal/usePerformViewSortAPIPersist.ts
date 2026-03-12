@@ -26,7 +26,9 @@ export const usePerformViewSortAPIPersist = () => {
   const [createCoreViewSortMutation] = useMutation(CreateCoreViewSortDocument);
   const [updateCoreViewSortMutation] = useMutation(UpdateCoreViewSortDocument);
   const [deleteCoreViewSortMutation] = useMutation(DeleteCoreViewSortDocument);
-  const [destroyCoreViewSortMutation] = useMutation(DestroyCoreViewSortDocument);
+  const [destroyCoreViewSortMutation] = useMutation(
+    DestroyCoreViewSortDocument,
+  );
 
   const { handleMetadataError } = useMetadataErrorHandler();
   const { enqueueErrorSnackBar } = useSnackBar();

@@ -1,4 +1,8 @@
-import { useApolloClient, useLazyQuery, useMutation } from '@apollo/client/react';
+import {
+  useApolloClient,
+  useLazyQuery,
+  useMutation,
+} from '@apollo/client/react';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useCallback } from 'react';
 import { AppPath } from 'twenty-shared/types';
@@ -92,25 +96,30 @@ export const useAuth = () => {
   const { redirect } = useRedirect();
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
 
-  const [getLoginTokenFromCredentials] =
-    useMutation(GetLoginTokenFromCredentialsDocument);
+  const [getLoginTokenFromCredentials] = useMutation(
+    GetLoginTokenFromCredentialsDocument,
+  );
   const [signIn] = useMutation(SignInDocument);
   const [signUp] = useMutation(SignUpDocument);
   const [signUpInWorkspace] = useMutation(SignUpInWorkspaceDocument);
-  const [getAuthTokensFromLoginToken] =
-    useMutation(GetAuthTokensFromLoginTokenDocument);
-  const [verifyEmailAndGetLoginToken] =
-    useMutation(VerifyEmailAndGetLoginTokenDocument);
-  const [verifyEmailAndGetWorkspaceAgnosticToken] =
-    useMutation(VerifyEmailAndGetWorkspaceAgnosticTokenDocument);
+  const [getAuthTokensFromLoginToken] = useMutation(
+    GetAuthTokensFromLoginTokenDocument,
+  );
+  const [verifyEmailAndGetLoginToken] = useMutation(
+    VerifyEmailAndGetLoginTokenDocument,
+  );
+  const [verifyEmailAndGetWorkspaceAgnosticToken] = useMutation(
+    VerifyEmailAndGetWorkspaceAgnosticTokenDocument,
+  );
   const [getAuthTokensFromOtp] = useMutation(GetAuthTokensFromOtpDocument);
 
   const workspacePublicData = useAtomStateValue(workspacePublicDataState);
 
   const { setLastAuthenticateWorkspaceDomain } =
     useLastAuthenticatedWorkspaceDomain();
-  const [checkUserExistsQuery, { data: checkUserExistsData }] =
-    useLazyQuery(CheckUserExistsDocument);
+  const [checkUserExistsQuery, { data: checkUserExistsData }] = useLazyQuery(
+    CheckUserExistsDocument,
+  );
 
   const client = useApolloClient();
 

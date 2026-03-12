@@ -246,7 +246,9 @@ export const useUpdateOneRecord = () => {
       objectMetadataNamePlural: objectMetadataItem.namePlural,
     });
 
-    const resultRecord = (updatedRecord?.data as Record<string, any>)?.[mutationResponseField] ?? null;
+    const resultRecord =
+      (updatedRecord?.data as Record<string, any>)?.[mutationResponseField] ??
+      null;
 
     dispatchObjectRecordOperationBrowserEvent({
       objectMetadataItem,

@@ -24,11 +24,18 @@ export const usePerformViewFieldAPIPersist = () => {
   const { triggerViewFieldOptimisticEffect } =
     useTriggerViewFieldOptimisticEffect();
 
-  const [createManyCoreViewFieldsMutation] =
-    useMutation(CreateManyCoreViewFieldsDocument);
-  const [updateCoreViewFieldMutation] = useMutation(UpdateCoreViewFieldDocument);
-  const [deleteCoreViewFieldMutation] = useMutation(DeleteCoreViewFieldDocument);
-  const [destroyCoreViewFieldMutation] = useMutation(DestroyCoreViewFieldDocument);
+  const [createManyCoreViewFieldsMutation] = useMutation(
+    CreateManyCoreViewFieldsDocument,
+  );
+  const [updateCoreViewFieldMutation] = useMutation(
+    UpdateCoreViewFieldDocument,
+  );
+  const [deleteCoreViewFieldMutation] = useMutation(
+    DeleteCoreViewFieldDocument,
+  );
+  const [destroyCoreViewFieldMutation] = useMutation(
+    DestroyCoreViewFieldDocument,
+  );
 
   const { handleMetadataError } = useMetadataErrorHandler();
   const { enqueueErrorSnackBar } = useSnackBar();

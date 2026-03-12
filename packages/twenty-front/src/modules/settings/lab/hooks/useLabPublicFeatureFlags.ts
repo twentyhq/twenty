@@ -18,28 +18,31 @@ export const useLabPublicFeatureFlags = () => {
   );
   const labPublicFeatureFlags = useAtomStateValue(labPublicFeatureFlagsState);
 
-  const [updateLabPublicFeatureFlag] = useMutation(UpdateLabPublicFeatureFlagDocument, {
-    onCompleted: (data) => {
-      if (isDefined(currentWorkspace)) {
-        const updatedFlag = data.updateLabPublicFeatureFlag;
+  const [updateLabPublicFeatureFlag] = useMutation(
+    UpdateLabPublicFeatureFlagDocument,
+    {
+      onCompleted: (data) => {
+        if (isDefined(currentWorkspace)) {
+          const updatedFlag = data.updateLabPublicFeatureFlag;
 
-        setCurrentWorkspace({
-          ...currentWorkspace,
-          featureFlags: [
-            ...(currentWorkspace.featureFlags?.filter(
-              (flag) => flag.key !== updatedFlag.key,
-            ) ?? []),
-            {
-              ...updatedFlag,
-            },
-          ],
-        });
-      }
+          setCurrentWorkspace({
+            ...currentWorkspace,
+            featureFlags: [
+              ...(currentWorkspace.featureFlags?.filter(
+                (flag) => flag.key !== updatedFlag.key,
+              ) ?? []),
+              {
+                ...updatedFlag,
+              },
+            ],
+          });
+        }
+      },
+      onError: (error) => {
+        setError(error.message);
+      },
     },
-    onError: (error) => {
-      setError(error.message);
-    },
-  });
+  );
 
   const handleLabPublicFeatureFlagUpdate = async (
     publicFeatureFlag: FeatureFlagKey,

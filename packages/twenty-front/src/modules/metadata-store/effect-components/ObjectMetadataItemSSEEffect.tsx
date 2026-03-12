@@ -20,10 +20,12 @@ export const ObjectMetadataItemSSEEffect = () => {
   const { refreshObjectMetadataItems } = useRefreshObjectMetadataItems();
   const { updateDraft, applyChanges } = useMetadataStore();
 
-  const [findManyNavigationMenuItemsLazy] =
-    useLazyQuery(FindManyNavigationMenuItemsDocument, {
+  const [findManyNavigationMenuItemsLazy] = useLazyQuery(
+    FindManyNavigationMenuItemsDocument,
+    {
       fetchPolicy: 'network-only',
-    });
+    },
+  );
 
   useListenToEventsForQuery({
     queryId,

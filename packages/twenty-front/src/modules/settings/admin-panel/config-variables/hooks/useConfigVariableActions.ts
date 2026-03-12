@@ -17,12 +17,15 @@ export const useConfigVariableActions = (variableName: string) => {
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
   const { refetch: refetchClientConfig } = useClientConfig();
 
-  const [updateDatabaseConfigVariable] =
-    useMutation(UpdateDatabaseConfigVariableDocument);
-  const [createDatabaseConfigVariable] =
-    useMutation(CreateDatabaseConfigVariableDocument);
-  const [deleteDatabaseConfigVariable] =
-    useMutation(DeleteDatabaseConfigVariableDocument);
+  const [updateDatabaseConfigVariable] = useMutation(
+    UpdateDatabaseConfigVariableDocument,
+  );
+  const [createDatabaseConfigVariable] = useMutation(
+    CreateDatabaseConfigVariableDocument,
+  );
+  const [deleteDatabaseConfigVariable] = useMutation(
+    DeleteDatabaseConfigVariableDocument,
+  );
 
   const handleUpdateVariable = async (
     value: ConfigVariableValue,

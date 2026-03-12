@@ -59,7 +59,9 @@ export const SettingsRoleAssignment = ({
   const { addApiKeyToRoleAndUpdateState, updateApiKeyRoleDraftState } =
     useUpdateApiKeyRole(roleId);
 
-  const { data: agentsData } = useQuery(FindManyAgentsDocument, { skip: !isAiEnabled });
+  const { data: agentsData } = useQuery(FindManyAgentsDocument, {
+    skip: !isAiEnabled,
+  });
   const { data: apiKeysData } = useQuery(GetApiKeysDocument);
 
   const { openModal, closeModal } = useModal();

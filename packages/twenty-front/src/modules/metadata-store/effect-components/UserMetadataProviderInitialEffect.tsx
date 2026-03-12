@@ -67,10 +67,12 @@ export const UserMetadataProviderInitialEffect = () => {
 
   const shouldSkipUserQuery = !isLoggedIn || isDefined(currentUser);
 
-  const { data: userQueryData, loading: userQueryLoading } =
-    useQuery(GetCurrentUserDocument, {
+  const { data: userQueryData, loading: userQueryLoading } = useQuery(
+    GetCurrentUserDocument,
+    {
       skip: shouldSkipUserQuery,
-    });
+    },
+  );
 
   useEffect(() => {
     if (isInitialized) {

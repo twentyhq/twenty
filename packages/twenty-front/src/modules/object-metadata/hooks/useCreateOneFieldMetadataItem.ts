@@ -17,8 +17,9 @@ export const useCreateOneFieldMetadataItem = () => {
   const { refreshObjectMetadataItems } =
     useRefreshObjectMetadataItems('network-only');
 
-  const [createOneFieldMetadataItemMutation] =
-    useMutation(CreateOneFieldMetadataItemDocument);
+  const [createOneFieldMetadataItemMutation] = useMutation(
+    CreateOneFieldMetadataItemDocument,
+  );
 
   const { refreshCoreViewsByObjectMetadataId } =
     useRefreshCoreViewsByObjectMetadataId();

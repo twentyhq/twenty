@@ -134,17 +134,23 @@ export const SettingsBillingSubscriptionInfo = ({
     getBeautifiedRenewDate,
   } = useBillingWording();
 
-  const [switchSubscriptionIntervalMutation] =
-    useMutation(SwitchSubscriptionIntervalDocument);
+  const [switchSubscriptionIntervalMutation] = useMutation(
+    SwitchSubscriptionIntervalDocument,
+  );
 
   const [switchBillingPlan] = useMutation(SwitchBillingPlanDocument);
 
-  const [cancelSwitchBillingInterval] =
-    useMutation(CancelSwitchBillingIntervalDocument);
+  const [cancelSwitchBillingInterval] = useMutation(
+    CancelSwitchBillingIntervalDocument,
+  );
 
-  const [cancelSwitchBillingPlan] = useMutation(CancelSwitchBillingPlanDocument);
+  const [cancelSwitchBillingPlan] = useMutation(
+    CancelSwitchBillingPlanDocument,
+  );
 
-  const [cancelSwitchMeteredPrice] = useMutation(CancelSwitchMeteredPriceDocument);
+  const [cancelSwitchMeteredPrice] = useMutation(
+    CancelSwitchMeteredPriceDocument,
+  );
 
   const setCurrentWorkspace = useSetAtomState(currentWorkspaceState);
 

@@ -57,7 +57,9 @@ export const SettingPublicDomain = () => {
   const navigate = useNavigateSettings();
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
 
-  const [createPublicDomain, { loading }] = useMutation(CreatePublicDomainDocument);
+  const [createPublicDomain, { loading }] = useMutation(
+    CreatePublicDomainDocument,
+  );
 
   const [newPublicDomain, setNewPublicDomain] = useState<string | undefined>(
     selectedPublicDomain?.domain ?? '',
@@ -67,7 +69,9 @@ export const SettingPublicDomain = () => {
     string | undefined
   >(undefined);
 
-  const { refetch: refetchPublicDomains } = useQuery(FindManyPublicDomainsDocument);
+  const { refetch: refetchPublicDomains } = useQuery(
+    FindManyPublicDomainsDocument,
+  );
 
   const [deletePublicDomain] = useMutation(DeletePublicDomainDocument);
 

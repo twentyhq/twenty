@@ -8,8 +8,9 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const useCheckCustomDomainValidRecords = () => {
-  const [checkCustomDomainValidRecords] =
-    useMutation(CheckCustomDomainValidRecordsDocument);
+  const [checkCustomDomainValidRecords] = useMutation(
+    CheckCustomDomainValidRecordsDocument,
+  );
   const { enqueueErrorSnackBar } = useSnackBar();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 

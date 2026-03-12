@@ -201,9 +201,7 @@ describe('useDeleteManyRecords', () => {
           });
           fail('Should have thrown an error');
         } catch (e) {
-          expect(e).toMatchInlineSnapshot(
-            `[Error: Internal server error]`,
-          );
+          expect(e).toMatchInlineSnapshot(`[Error: Internal server error]`);
           assertCachedRecordsMatch(personRecords);
         }
       });

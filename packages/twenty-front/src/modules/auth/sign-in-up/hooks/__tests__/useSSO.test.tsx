@@ -55,9 +55,7 @@ const apolloMocks = [
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
   <MemoryRouter>
-    <MockedProvider mocks={apolloMocks}>
-      {children}
-    </MockedProvider>
+    <MockedProvider mocks={apolloMocks}>{children}</MockedProvider>
   </MemoryRouter>
 );
 

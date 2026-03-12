@@ -21,13 +21,10 @@ describe('useUpdateAgentLabel', () => {
   it('should skip query when agentId is undefined', () => {
     renderHook(() => useUpdateAgentLabel(undefined));
 
-    expect(mockUseFindOneAgentQuery).toHaveBeenCalledWith(
-      expect.anything(),
-      {
-        variables: { id: '' },
-        skip: true,
-      },
-    );
+    expect(mockUseFindOneAgentQuery).toHaveBeenCalledWith(expect.anything(), {
+      variables: { id: '' },
+      skip: true,
+    });
   });
 
   it('should fetch agent when agentId is provided', () => {
@@ -44,13 +41,10 @@ describe('useUpdateAgentLabel', () => {
 
     renderHook(() => useUpdateAgentLabel('agent-123'));
 
-    expect(mockUseFindOneAgentQuery).toHaveBeenCalledWith(
-      expect.anything(),
-      {
-        variables: { id: 'agent-123' },
-        skip: false,
-      },
-    );
+    expect(mockUseFindOneAgentQuery).toHaveBeenCalledWith(expect.anything(), {
+      variables: { id: 'agent-123' },
+      skip: false,
+    });
   });
 
   it('should update agent label when agent is defined', async () => {

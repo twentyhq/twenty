@@ -128,7 +128,11 @@ export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
     isLabelSyncedWithName: true,
   });
 
-  const { data, loading, error: skillQueryError } = useQuery(FindOneSkillDocument, {
+  const {
+    data,
+    loading,
+    error: skillQueryError,
+  } = useQuery(FindOneSkillDocument, {
     variables: { id: skillId },
     skip: isCreateMode || !skillId,
   });
@@ -165,7 +169,9 @@ export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
   useEffect(() => {
     if (skillQueryError) {
       enqueueErrorSnackBar({
-        apolloError: CombinedGraphQLErrors.is(skillQueryError) ? skillQueryError : undefined,
+        apolloError: CombinedGraphQLErrors.is(skillQueryError)
+          ? skillQueryError
+          : undefined,
       });
       navigateApp(AppPath.NotFound);
     }

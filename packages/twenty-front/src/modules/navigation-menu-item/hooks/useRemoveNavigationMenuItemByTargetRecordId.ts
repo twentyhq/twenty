@@ -31,16 +31,19 @@ export const useRemoveNavigationMenuItemByTargetRecordId = () => {
 
       setPrefetchNavigationMenuItems(updatedNavigationMenuItems);
 
-      cache.updateQuery({ query: FindManyNavigationMenuItemsDocument }, (data) => {
-        if (!isDefined(data?.navigationMenuItems)) {
-          return data;
-        }
+      cache.updateQuery(
+        { query: FindManyNavigationMenuItemsDocument },
+        (data) => {
+          if (!isDefined(data?.navigationMenuItems)) {
+            return data;
+          }
 
-        return {
-          ...data,
-          navigationMenuItems: updatedNavigationMenuItems,
-        };
-      });
+          return {
+            ...data,
+            navigationMenuItems: updatedNavigationMenuItems,
+          };
+        },
+      );
     },
     [cache, setPrefetchNavigationMenuItems, store],
   );

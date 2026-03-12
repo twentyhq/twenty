@@ -7,9 +7,12 @@ import { useQuery } from '@apollo/client/react';
 import { GetSystemHealthStatusDocument } from '~/generated-metadata/graphql';
 
 export const SettingsAdminHealthStatus = () => {
-  const { data, loading: loadingHealthStatus } = useQuery(GetSystemHealthStatusDocument, {
-    fetchPolicy: 'network-only',
-  });
+  const { data, loading: loadingHealthStatus } = useQuery(
+    GetSystemHealthStatusDocument,
+    {
+      fetchPolicy: 'network-only',
+    },
+  );
 
   const services = data?.getSystemHealthStatus.services ?? [];
 

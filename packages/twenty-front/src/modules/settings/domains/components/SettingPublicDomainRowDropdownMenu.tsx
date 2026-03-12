@@ -26,7 +26,9 @@ export const SettingPublicDomainRowDropdownMenu = ({
 
   const { closeDropdown } = useCloseDropdown();
 
-  const { refetch: refetchPublicDomains } = useQuery(FindManyPublicDomainsDocument);
+  const { refetch: refetchPublicDomains } = useQuery(
+    FindManyPublicDomainsDocument,
+  );
 
   const [deletePublicDomain] = useMutation(DeletePublicDomainDocument);
 

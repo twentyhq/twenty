@@ -33,8 +33,9 @@ export const useUpdateWorkspaceMemberRole = (roleId: string) => {
     roleId,
   );
 
-  const [updateWorkspaceMemberRoleMutation] =
-    useMutation(UpdateWorkspaceMemberRoleDocument);
+  const [updateWorkspaceMemberRoleMutation] = useMutation(
+    UpdateWorkspaceMemberRoleDocument,
+  );
 
   const updateWorkspaceMemberRoleDraftState = ({
     workspaceMember,

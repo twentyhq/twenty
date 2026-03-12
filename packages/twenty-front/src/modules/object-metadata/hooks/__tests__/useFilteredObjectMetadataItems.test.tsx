@@ -35,9 +35,7 @@ const Wrapper = ({ children }: { children: ReactNode }) => {
 
   return (
     <JotaiProvider store={jotaiStore}>
-      <MockedProvider mocks={mocks}>
-        {children}
-      </MockedProvider>
+      <MockedProvider mocks={mocks}>{children}</MockedProvider>
     </JotaiProvider>
   );
 };

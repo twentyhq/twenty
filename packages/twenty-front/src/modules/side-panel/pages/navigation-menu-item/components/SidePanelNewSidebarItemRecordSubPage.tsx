@@ -49,17 +49,20 @@ export const SidePanelNewSidebarItemRecordSubPage = () => {
     )
     .map((objectMetadataItem) => objectMetadataItem.nameSingular);
 
-  const { data: searchData, loading: recordSearchLoading } = useQuery(SearchDocument, {
-    client: coreClient,
-    variables: {
-      searchInput: deferredRecordSearchInput ?? '',
-      limit: MAX_SEARCH_RESULTS,
-      excludedObjectNameSingulars: [
-        'workspaceMember',
-        ...nonReadableObjectMetadataItemsNameSingular,
-      ],
+  const { data: searchData, loading: recordSearchLoading } = useQuery(
+    SearchDocument,
+    {
+      client: coreClient,
+      variables: {
+        searchInput: deferredRecordSearchInput ?? '',
+        limit: MAX_SEARCH_RESULTS,
+        excludedObjectNameSingulars: [
+          'workspaceMember',
+          ...nonReadableObjectMetadataItemsNameSingular,
+        ],
+      },
     },
-  });
+  );
 
   const workspaceRecordIds = new Set(
     currentDraft.flatMap((item) =>

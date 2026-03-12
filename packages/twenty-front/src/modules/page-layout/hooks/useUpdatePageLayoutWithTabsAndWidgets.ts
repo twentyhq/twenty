@@ -12,8 +12,9 @@ import { t } from '@lingui/core/macro';
 import { CrudOperationType } from 'twenty-shared/types';
 
 export const useUpdatePageLayoutWithTabsAndWidgets = () => {
-  const [updatePageLayoutWithTabsAndWidgetsMutation] =
-    useMutation(UpdatePageLayoutWithTabsAndWidgetsDocument);
+  const [updatePageLayoutWithTabsAndWidgetsMutation] = useMutation(
+    UpdatePageLayoutWithTabsAndWidgetsDocument,
+  );
 
   const { handleMetadataError } = useMetadataErrorHandler();
   const { enqueueErrorSnackBar } = useSnackBar();

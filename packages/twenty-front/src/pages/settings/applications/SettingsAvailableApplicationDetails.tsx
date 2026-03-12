@@ -272,11 +272,13 @@ export const SettingsAvailableApplicationDetails = () => {
   const canInstallMarketplaceApps = useHasPermissionFlag(
     PermissionFlagType.MARKETPLACE_APPS,
   );
-  const { data: installedAppData } =
-    useQuery(FindOneApplicationByUniversalIdentifierDocument, {
+  const { data: installedAppData } = useQuery(
+    FindOneApplicationByUniversalIdentifierDocument,
+    {
       variables: { universalIdentifier: availableApplicationId },
       skip: !availableApplicationId,
-    });
+    },
+  );
 
   const listedApp = marketplaceApps?.find(
     (app) => app.id === availableApplicationId,

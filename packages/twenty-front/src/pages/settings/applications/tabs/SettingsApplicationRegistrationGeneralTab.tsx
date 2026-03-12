@@ -154,9 +154,12 @@ export const SettingsApplicationRegistrationGeneralTab = ({
     },
   );
 
-  const [deleteRegistration] = useMutation(DeleteApplicationRegistrationDocument, {
-    refetchQueries: [FindManyApplicationRegistrationsDocument],
-  });
+  const [deleteRegistration] = useMutation(
+    DeleteApplicationRegistrationDocument,
+    {
+      refetchQueries: [FindManyApplicationRegistrationsDocument],
+    },
+  );
 
   const [updateVariable] = useMutation(
     UpdateApplicationRegistrationVariableDocument,
@@ -174,8 +177,9 @@ export const SettingsApplicationRegistrationGeneralTab = ({
 
   const { install } = useInstallMarketplaceApp();
   const [uninstallApplication] = useMutation(UninstallApplicationDocument);
-  const { data: applicationsData, refetch: refetchApplications } =
-    useQuery(FindManyApplicationsDocument);
+  const { data: applicationsData, refetch: refetchApplications } = useQuery(
+    FindManyApplicationsDocument,
+  );
 
   const variables: ServerVariable[] =
     variablesData?.findApplicationRegistrationVariables ?? [];

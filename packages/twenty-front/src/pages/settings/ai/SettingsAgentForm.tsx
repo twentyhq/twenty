@@ -87,7 +87,11 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
     validateForm,
   } = useSettingsAgentFormState(mode);
 
-  const { data, loading, error: agentQueryError } = useQuery(FindOneAgentDocument, {
+  const {
+    data,
+    loading,
+    error: agentQueryError,
+  } = useQuery(FindOneAgentDocument, {
     variables: { id: agentId },
     skip: isCreateMode || !agentId,
   });

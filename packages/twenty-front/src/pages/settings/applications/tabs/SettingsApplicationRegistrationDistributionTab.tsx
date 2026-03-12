@@ -39,10 +39,13 @@ export const SettingsApplicationRegistrationDistributionTab = ({
   const isNpmSource =
     registration.sourceType === ApplicationRegistrationSourceType.NPM;
 
-  const { data: statsData } = useQuery(FindApplicationRegistrationStatsDocument, {
-    variables: { id: applicationRegistrationId },
-    skip: !applicationRegistrationId,
-  });
+  const { data: statsData } = useQuery(
+    FindApplicationRegistrationStatsDocument,
+    {
+      variables: { id: applicationRegistrationId },
+      skip: !applicationRegistrationId,
+    },
+  );
 
   const marketplacePageUrl = getSettingsPath(
     SettingsPath.AvailableApplicationDetail,

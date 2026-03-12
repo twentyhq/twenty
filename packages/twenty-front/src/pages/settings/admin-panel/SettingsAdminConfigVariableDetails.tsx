@@ -62,11 +62,13 @@ export const SettingsAdminConfigVariableDetails = () => {
     isConfigVariablesInDbEnabledState,
   );
 
-  const { data: configVariableData, loading } =
-    useQuery(GetDatabaseConfigVariableDocument, {
+  const { data: configVariableData, loading } = useQuery(
+    GetDatabaseConfigVariableDocument,
+    {
       variables: { key: variableName ?? '' },
       fetchPolicy: 'network-only',
-    });
+    },
+  );
 
   const variable = configVariableData?.getDatabaseConfigVariable;
 

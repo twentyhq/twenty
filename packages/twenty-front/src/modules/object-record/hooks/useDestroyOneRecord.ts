@@ -58,7 +58,9 @@ export const useDestroyOneRecord = ({
             },
           },
           update: (cache, { data }) => {
-            const record = (data as Record<string, any>)?.[mutationResponseField];
+            const record = (data as Record<string, any>)?.[
+              mutationResponseField
+            ];
             if (!isDefined(record)) return;
 
             const cachedRecord = getRecordFromCache(record.id, cache);
@@ -95,7 +97,10 @@ export const useDestroyOneRecord = ({
         },
       });
 
-      return (deletedRecord.data as Record<string, any>)?.[mutationResponseField] ?? null;
+      return (
+        (deletedRecord.data as Record<string, any>)?.[mutationResponseField] ??
+        null
+      );
     },
     [
       getRecordFromCache,

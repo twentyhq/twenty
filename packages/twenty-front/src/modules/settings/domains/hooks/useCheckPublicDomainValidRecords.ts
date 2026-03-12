@@ -6,8 +6,9 @@ import { CheckPublicDomainValidRecordsDocument } from '~/generated-metadata/grap
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 
 export const useCheckPublicDomainValidRecords = () => {
-  const [checkPublicDomainValidRecords] =
-    useMutation(CheckPublicDomainValidRecordsDocument);
+  const [checkPublicDomainValidRecords] = useMutation(
+    CheckPublicDomainValidRecordsDocument,
+  );
   const { enqueueErrorSnackBar } = useSnackBar();
 
   const [{ isLoading, publicDomainRecords }, setPublicDomainRecords] =

@@ -9,8 +9,9 @@ import {
 } from '~/generated-metadata/graphql';
 
 export const useUpdateSSOIdentityProvider = () => {
-  const [editSsoIdentityProviderMutation] =
-    useMutation(EditSsoIdentityProviderDocument);
+  const [editSsoIdentityProviderMutation] = useMutation(
+    EditSsoIdentityProviderDocument,
+  );
 
   const setSSOIdentitiesProviders = useSetAtomState(
     SSOIdentitiesProvidersState,

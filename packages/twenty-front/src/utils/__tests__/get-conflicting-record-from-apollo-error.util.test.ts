@@ -4,8 +4,7 @@ import { getConflictingRecordFromApolloError } from '~/utils/get-conflicting-rec
 
 const makeApolloError = (
   errors: GraphQLFormattedError[] = [],
-): CombinedGraphQLErrors =>
-  new CombinedGraphQLErrors({ errors, data: null });
+): CombinedGraphQLErrors => new CombinedGraphQLErrors({ errors, data: null });
 
 describe('getConflictingRecordFromApolloError', () => {
   it('should return null when graphQLErrors is empty', () => {

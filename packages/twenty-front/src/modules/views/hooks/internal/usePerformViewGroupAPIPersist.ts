@@ -18,7 +18,9 @@ export const usePerformViewGroupAPIPersist = () => {
   const { triggerViewGroupOptimisticEffect } =
     useTriggerViewGroupOptimisticEffect();
 
-  const [updateCoreViewGroupMutation] = useMutation(UpdateCoreViewGroupDocument);
+  const [updateCoreViewGroupMutation] = useMutation(
+    UpdateCoreViewGroupDocument,
+  );
 
   const { handleMetadataError } = useMetadataErrorHandler();
   const { enqueueErrorSnackBar } = useSnackBar();

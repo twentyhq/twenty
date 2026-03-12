@@ -56,57 +56,59 @@ export const loggerLink = (getSchemaName: (operation: Operation) => string) =>
       return forward(operation);
     }
 
-    return forward(operation).pipe(map((result) => {
-      const time = Date.now() - operation.getContext().start;
-      const errors = result.errors ?? result.data?.[queryName]?.errors;
-      const hasError = Boolean(errors);
+    return forward(operation).pipe(
+      map((result) => {
+        const time = Date.now() - operation.getContext().start;
+        const errors = result.errors ?? result.data?.[queryName]?.errors;
+        const hasError = Boolean(errors);
 
-      try {
-        const titleArgs = formatTitle(
-          operationType,
-          schemaName,
-          queryName,
-          time,
-        );
+        try {
+          const titleArgs = formatTitle(
+            operationType,
+            schemaName,
+            queryName,
+            time,
+          );
 
-        getGroup(!hasError)(...titleArgs);
+          getGroup(!hasError)(...titleArgs);
 
-        if (isDefined(errors)) {
-          errors.forEach((err: any) => {
-            logDebug(
-              `%c${err.message}`,
-              // oxlint-disable-next-line twenty/no-hardcoded-colors
-              'color: #F51818; font-weight: lighter',
-            );
-          });
+          if (isDefined(errors)) {
+            errors.forEach((err: any) => {
+              logDebug(
+                `%c${err.message}`,
+                // oxlint-disable-next-line twenty/no-hardcoded-colors
+                'color: #F51818; font-weight: lighter',
+              );
+            });
+          }
+
+          logDebug('HEADERS: ', headers);
+
+          if (Object.keys(variables).length !== 0) {
+            logDebug('VARIABLES', variables);
+          }
+
+          logDebug('QUERY', query);
+
+          if (isDefined(result.data)) {
+            logDebug('RESULT', result.data);
+          }
+          if (isDefined(errors)) {
+            logDebug('ERRORS', errors);
+          }
+
+          console.groupEnd();
+        } catch {
+          // this may happen if console group is not supported
+          logDebug(
+            `${operationType} ${schemaName}::${queryName} (in ${time} ms)`,
+          );
+          if (isDefined(errors)) {
+            logError(errors);
+          }
         }
 
-        logDebug('HEADERS: ', headers);
-
-        if (Object.keys(variables).length !== 0) {
-          logDebug('VARIABLES', variables);
-        }
-
-        logDebug('QUERY', query);
-
-        if (isDefined(result.data)) {
-          logDebug('RESULT', result.data);
-        }
-        if (isDefined(errors)) {
-          logDebug('ERRORS', errors);
-        }
-
-        console.groupEnd();
-      } catch {
-        // this may happen if console group is not supported
-        logDebug(
-          `${operationType} ${schemaName}::${queryName} (in ${time} ms)`,
-        );
-        if (isDefined(errors)) {
-          logError(errors);
-        }
-      }
-
-      return result;
-    }));
+        return result;
+      }),
+    );
   });

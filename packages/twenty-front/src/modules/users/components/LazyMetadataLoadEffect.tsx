@@ -38,20 +38,25 @@ export const LazyMetadataLoadEffect = () => {
 
   const shouldSkip = !isLoggedIn || isOnAuthPath;
 
-  const { data: queryDataFieldsWidgetCoreViews } =
-    useQuery(FindFieldsWidgetCoreViewsDocument, {
+  const { data: queryDataFieldsWidgetCoreViews } = useQuery(
+    FindFieldsWidgetCoreViewsDocument,
+    {
       skip: shouldSkip,
       variables: { viewTypes: FIELDS_WIDGET_VIEW_TYPES },
-    });
+    },
+  );
 
   const { data: queryDataRecordPageLayouts } = useQuery(
     FindAllRecordPageLayoutsDocument,
     { skip: shouldSkip },
   );
 
-  const { data: logicFunctionsData } = useQuery(FindManyLogicFunctionsDocument, {
-    skip: !isLoggedIn,
-  });
+  const { data: logicFunctionsData } = useQuery(
+    FindManyLogicFunctionsDocument,
+    {
+      skip: !isLoggedIn,
+    },
+  );
 
   const setFieldsWidgetCoreViews = useCallback(
     (fieldsWidgetViews: CoreViewWithRelations[]) => {

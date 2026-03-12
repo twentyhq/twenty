@@ -16,10 +16,12 @@ export const useCreateFavoriteFolder = () => {
   const { favoriteFolders } = usePrefetchedFavoritesFoldersData();
   const { navigationMenuItems } = usePrefetchedNavigationMenuItemsData();
 
-  const [createNavigationMenuItemMutation] =
-    useMutation(CreateNavigationMenuItemDocument, {
+  const [createNavigationMenuItemMutation] = useMutation(
+    CreateNavigationMenuItemDocument,
+    {
       refetchQueries: ['FindManyNavigationMenuItems'],
-    });
+    },
+  );
 
   const createNewFavoriteFolder = async (name: string): Promise<void> => {
     if (!name || !currentWorkspaceMemberId) {

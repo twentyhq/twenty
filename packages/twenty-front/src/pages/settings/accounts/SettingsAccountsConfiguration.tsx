@@ -28,8 +28,9 @@ export const SettingsAccountsConfiguration = () => {
   }>();
   const navigate = useNavigate();
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
-  const [startChannelSyncMutation, { loading: isSubmitting }] =
-    useMutation(StartChannelSyncDocument);
+  const [startChannelSyncMutation, { loading: isSubmitting }] = useMutation(
+    StartChannelSyncDocument,
+  );
   const setSettingsAccountsSelectedMessageChannel = useSetAtomState(
     settingsAccountsSelectedMessageChannelState,
   );

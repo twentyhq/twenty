@@ -410,9 +410,16 @@ const performSearchQueries = async ({
         after,
       },
     });
-    const typedData = data as { search: { edges: SearchResultEdge[]; pageInfo: { hasNextPage: boolean; endCursor: string | null } } };
+    const typedData = data as {
+      search: {
+        edges: SearchResultEdge[];
+        pageInfo: { hasNextPage: boolean; endCursor: string | null };
+      };
+    };
     return {
-      records: typedData.search.edges.map((edge: SearchResultEdge) => edge.node),
+      records: typedData.search.edges.map(
+        (edge: SearchResultEdge) => edge.node,
+      ),
       pageInfo: typedData.search.pageInfo,
     };
   };

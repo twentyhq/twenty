@@ -82,8 +82,9 @@ export const SettingsWorkspaceMember = () => {
 
   const { updateOneRecord } = useUpdateOneRecord();
 
-  const [deleteUserFromWorkspace, { loading: isDeleting }] =
-    useMutation(DeleteUserWorkspaceDocument);
+  const [deleteUserFromWorkspace, { loading: isDeleting }] = useMutation(
+    DeleteUserWorkspaceDocument,
+  );
 
   const debouncedUpdateName = useDebouncedCallback(
     async (firstName: string, lastName: string) => {

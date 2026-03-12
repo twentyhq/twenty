@@ -9,8 +9,9 @@ import { ResendEmailVerificationTokenDocument } from '~/generated-metadata/graph
 
 export const useHandleResendEmailVerificationToken = () => {
   const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
-  const [resendEmailVerificationToken, { loading }] =
-    useMutation(ResendEmailVerificationTokenDocument);
+  const [resendEmailVerificationToken, { loading }] = useMutation(
+    ResendEmailVerificationTokenDocument,
+  );
   const { origin } = useOrigin();
 
   const handleResendEmailVerificationToken = useCallback(

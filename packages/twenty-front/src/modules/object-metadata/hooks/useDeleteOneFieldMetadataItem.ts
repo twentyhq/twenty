@@ -17,8 +17,9 @@ import { t } from '@lingui/core/macro';
 import { CrudOperationType } from 'twenty-shared/types';
 
 export const useDeleteOneFieldMetadataItem = () => {
-  const [deleteOneFieldMetadataItemMutation] =
-    useMutation(DeleteOneFieldMetadataItemDocument);
+  const [deleteOneFieldMetadataItemMutation] = useMutation(
+    DeleteOneFieldMetadataItemDocument,
+  );
 
   const { refreshObjectMetadataItems } =
     useRefreshObjectMetadataItems('network-only');

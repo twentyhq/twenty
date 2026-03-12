@@ -36,7 +36,9 @@ export const WorkspaceMemberPictureUploader = ({
     currentWorkspaceMemberState,
   );
 
-  const [uploadPicture] = useMutation(UploadWorkspaceMemberProfilePictureDocument);
+  const [uploadPicture] = useMutation(
+    UploadWorkspaceMemberProfilePictureDocument,
+  );
 
   const { updateOneRecord } = useUpdateOneRecord();
 

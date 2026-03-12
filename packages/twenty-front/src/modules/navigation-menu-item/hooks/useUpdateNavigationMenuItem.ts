@@ -6,10 +6,12 @@ import {
 } from '~/generated-metadata/graphql';
 
 export const useUpdateNavigationMenuItem = () => {
-  const [updateNavigationMenuItemMutation] =
-    useMutation(UpdateNavigationMenuItemDocument, {
+  const [updateNavigationMenuItemMutation] = useMutation(
+    UpdateNavigationMenuItemDocument,
+    {
       refetchQueries: ['FindManyNavigationMenuItems'],
-    });
+    },
+  );
 
   const updateNavigationMenuItem = async (
     input: UpdateNavigationMenuItemInput & { id: string },

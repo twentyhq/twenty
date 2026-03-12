@@ -42,7 +42,9 @@ const StyledLinkContainer = styled.div`
 export const BookCallDecision = () => {
   const { t } = useLingui();
   const setNextOnboardingStatus = useSetNextOnboardingStatus();
-  const [skipBookOnboardingStepMutation] = useMutation(SkipBookOnboardingStepDocument);
+  const [skipBookOnboardingStepMutation] = useMutation(
+    SkipBookOnboardingStepDocument,
+  );
 
   const handleFinish = async () => {
     await skipBookOnboardingStepMutation();

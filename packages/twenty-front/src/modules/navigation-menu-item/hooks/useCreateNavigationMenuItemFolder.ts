@@ -8,10 +8,12 @@ export const useCreateNavigationMenuItemFolder = () => {
   const { navigationMenuItems, currentWorkspaceMemberId } =
     usePrefetchedNavigationMenuItemsData();
 
-  const [createNavigationMenuItemMutation] =
-    useMutation(CreateNavigationMenuItemDocument, {
+  const [createNavigationMenuItemMutation] = useMutation(
+    CreateNavigationMenuItemDocument,
+    {
       refetchQueries: ['FindManyNavigationMenuItems'],
-    });
+    },
+  );
 
   const createNewNavigationMenuItemFolder = async (
     name: string,

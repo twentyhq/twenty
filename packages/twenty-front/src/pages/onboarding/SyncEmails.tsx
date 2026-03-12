@@ -61,8 +61,9 @@ export const SyncEmails = () => {
     MessageChannelVisibility.SHARE_EVERYTHING,
   );
   const [lastAuthenticatedMethod] = useAtomState(lastAuthenticatedMethodState);
-  const [skipSyncEmailOnboardingStatusMutation] =
-    useMutation(SkipSyncEmailOnboardingStepDocument);
+  const [skipSyncEmailOnboardingStatusMutation] = useMutation(
+    SkipSyncEmailOnboardingStepDocument,
+  );
 
   const handleButtonClick = async (provider: ConnectedAccountProvider) => {
     const calendarChannelVisibility =

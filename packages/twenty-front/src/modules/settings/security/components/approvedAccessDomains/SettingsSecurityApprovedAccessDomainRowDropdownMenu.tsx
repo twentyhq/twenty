@@ -31,7 +31,9 @@ export const SettingsSecurityApprovedAccessDomainRowDropdownMenu = ({
 
   const { closeDropdown } = useCloseDropdown();
 
-  const [deleteApprovedAccessDomain] = useMutation(DeleteApprovedAccessDomainDocument);
+  const [deleteApprovedAccessDomain] = useMutation(
+    DeleteApprovedAccessDomainDocument,
+  );
 
   const handleDeleteApprovedAccessDomain = async () => {
     const result = await deleteApprovedAccessDomain({

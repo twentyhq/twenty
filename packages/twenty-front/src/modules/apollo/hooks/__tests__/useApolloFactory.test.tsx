@@ -89,7 +89,9 @@ describe('useApolloFactory', () => {
       });
     } catch (error) {
       expect(error).toBeInstanceOf(CombinedGraphQLErrors);
-      expect((error as CombinedGraphQLErrors).message).toBe('Error message not found.');
+      expect((error as CombinedGraphQLErrors).message).toBe(
+        'Error message not found.',
+      );
 
       expect(mockNavigate).toHaveBeenCalled();
       expect(mockNavigate).toHaveBeenCalledWith('/welcome');

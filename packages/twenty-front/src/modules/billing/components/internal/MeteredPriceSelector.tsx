@@ -77,8 +77,9 @@ export const MeteredPriceSelector = ({
 
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
 
-  const [setMeteredSubscriptionPrice, { loading: isUpdating }] =
-    useMutation(SetMeteredSubscriptionPriceDocument);
+  const [setMeteredSubscriptionPrice, { loading: isUpdating }] = useMutation(
+    SetMeteredSubscriptionPriceDocument,
+  );
 
   const options = [...meteredBillingPrices]
     .sort((a, b) => a.tiers[0].flatAmount - b.tiers[0].flatAmount)

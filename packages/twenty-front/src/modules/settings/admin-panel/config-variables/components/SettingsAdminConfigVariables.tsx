@@ -31,10 +31,12 @@ const StyledTableContainer = styled.div`
 `;
 
 export const SettingsAdminConfigVariables = () => {
-  const { data: configVariables, loading: configVariablesLoading } =
-    useQuery(GetConfigVariablesGroupedDocument, {
+  const { data: configVariables, loading: configVariablesLoading } = useQuery(
+    GetConfigVariablesGroupedDocument,
+    {
       fetchPolicy: 'network-only',
-    });
+    },
+  );
 
   const [search, setSearch] = useState('');
   const [showHiddenGroupVariables, setShowHiddenGroupVariables] = useAtomState(

@@ -27,12 +27,14 @@ export const AIChatCreditsExhaustedMessage = () => {
   const { [PermissionFlagType.WORKSPACE]: hasPermissionToManageBilling } =
     usePermissionFlagMap();
 
-  const { data: billingPortalData, loading: isBillingPortalLoading } =
-    useQuery(BillingPortalSessionDocument, {
+  const { data: billingPortalData, loading: isBillingPortalLoading } = useQuery(
+    BillingPortalSessionDocument,
+    {
       variables: {
         returnUrlPath: getSettingsPath(SettingsPath.Billing),
       },
-    });
+    },
+  );
 
   const openBillingPortal = () => {
     if (

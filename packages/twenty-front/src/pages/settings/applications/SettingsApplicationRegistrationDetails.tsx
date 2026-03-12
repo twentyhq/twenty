@@ -37,12 +37,17 @@ export const SettingsApplicationRegistrationDetails = () => {
     skip: !applicationRegistrationId,
   });
 
-  const { data: statsData } = useQuery(FindApplicationRegistrationStatsDocument, {
-    variables: { id: applicationRegistrationId },
-    skip: !applicationRegistrationId,
-  });
+  const { data: statsData } = useQuery(
+    FindApplicationRegistrationStatsDocument,
+    {
+      variables: { id: applicationRegistrationId },
+      skip: !applicationRegistrationId,
+    },
+  );
 
-  const registration = data?.findOneApplicationRegistration as ApplicationRegistrationData | undefined;
+  const registration = data?.findOneApplicationRegistration as
+    | ApplicationRegistrationData
+    | undefined;
   const stats = statsData?.findApplicationRegistrationStats;
   const hasActiveInstalls = (stats?.activeInstalls ?? 0) > 0;
 

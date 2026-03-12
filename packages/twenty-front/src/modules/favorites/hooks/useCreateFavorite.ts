@@ -21,10 +21,12 @@ export const useCreateFavorite = () => {
     objectNameSingular: CoreObjectNameSingular.Favorite,
   });
 
-  const [createNavigationMenuItemMutation] =
-    useMutation(CreateNavigationMenuItemDocument, {
+  const [createNavigationMenuItemMutation] = useMutation(
+    CreateNavigationMenuItemDocument,
+    {
       refetchQueries: ['FindManyNavigationMenuItems'],
-    });
+    },
+  );
 
   const createFavorite = async (
     targetRecord: ObjectRecord,

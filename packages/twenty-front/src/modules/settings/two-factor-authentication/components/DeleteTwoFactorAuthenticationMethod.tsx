@@ -26,8 +26,9 @@ export const DeleteTwoFactorAuthentication = () => {
   const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
   const { signOut } = useAuth();
   const { loadCurrentUser } = useLoadCurrentUser();
-  const [deleteTwoFactorAuthenticationMethod] =
-    useMutation(DeleteTwoFactorAuthenticationMethodDocument);
+  const [deleteTwoFactorAuthenticationMethod] = useMutation(
+    DeleteTwoFactorAuthenticationMethodDocument,
+  );
   const currentUser = useAtomStateValue(currentUserState);
   const userEmail = currentUser?.email;
   const navigate = useNavigateSettings();

@@ -84,7 +84,9 @@ export const useRecordCalendarGroupByRecords = (
     },
   });
 
-  const groupByResults = (data as Record<string, any>)?.[`${objectMetadataItem.namePlural}GroupBy`];
+  const groupByResults = (data as Record<string, any>)?.[
+    `${objectMetadataItem.namePlural}GroupBy`
+  ];
 
   const records: ObjectRecord[] = useMemo(() => {
     if (!isDefined(groupByResults)) {

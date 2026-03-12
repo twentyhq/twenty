@@ -10,7 +10,9 @@ import { EndSubscriptionTrialPeriodDocument } from '~/generated-metadata/graphql
 
 export const useEndSubscriptionTrialPeriod = () => {
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
-  const [endSubscriptionTrialPeriod] = useMutation(EndSubscriptionTrialPeriodDocument);
+  const [endSubscriptionTrialPeriod] = useMutation(
+    EndSubscriptionTrialPeriodDocument,
+  );
   const [currentWorkspace, setCurrentWorkspace] = useAtomState(
     currentWorkspaceState,
   );

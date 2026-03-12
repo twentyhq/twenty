@@ -12,10 +12,12 @@ export const useCreateNavigationMenuItem = () => {
     usePrefetchedNavigationMenuItemsData();
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
 
-  const [createNavigationMenuItemMutation] =
-    useMutation(CreateNavigationMenuItemDocument, {
+  const [createNavigationMenuItemMutation] = useMutation(
+    CreateNavigationMenuItemDocument,
+    {
       refetchQueries: ['FindManyNavigationMenuItems'],
-    });
+    },
+  );
 
   const createNavigationMenuItem = async (
     targetRecord: ObjectRecord,

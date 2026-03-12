@@ -64,8 +64,9 @@ export const MemberPermissionsTab = ({
     null,
   );
 
-  const [updateWorkspaceMemberRoleMutation] =
-    useMutation(UpdateWorkspaceMemberRoleDocument);
+  const [updateWorkspaceMemberRoleMutation] = useMutation(
+    UpdateWorkspaceMemberRoleDocument,
+  );
 
   const rolesOptions =
     allRoles

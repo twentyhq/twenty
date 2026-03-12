@@ -110,7 +110,10 @@ export const useMergeManyRecords = <
           });
         }
 
-        return (mergedObject.data as Record<string, any>)?.[mutationResponseField] ?? null;
+        return (
+          (mergedObject.data as Record<string, any>)?.[mutationResponseField] ??
+          null
+        );
       } catch (error) {
         setLoading(false);
         throw error;

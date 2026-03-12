@@ -23,10 +23,18 @@ import {
 export const usePerformViewFilterAPIPersist = () => {
   const { triggerViewFilterOptimisticEffect } =
     useTriggerViewFilterOptimisticEffect();
-  const [createCoreViewFilterMutation] = useMutation(CreateCoreViewFilterDocument);
-  const [updateCoreViewFilterMutation] = useMutation(UpdateCoreViewFilterDocument);
-  const [deleteCoreViewFilterMutation] = useMutation(DeleteCoreViewFilterDocument);
-  const [destroyCoreViewFilterMutation] = useMutation(DestroyCoreViewFilterDocument);
+  const [createCoreViewFilterMutation] = useMutation(
+    CreateCoreViewFilterDocument,
+  );
+  const [updateCoreViewFilterMutation] = useMutation(
+    UpdateCoreViewFilterDocument,
+  );
+  const [deleteCoreViewFilterMutation] = useMutation(
+    DeleteCoreViewFilterDocument,
+  );
+  const [destroyCoreViewFilterMutation] = useMutation(
+    DestroyCoreViewFilterDocument,
+  );
 
   const { handleMetadataError } = useMetadataErrorHandler();
   const { enqueueErrorSnackBar } = useSnackBar();

@@ -27,7 +27,9 @@ export const BookCall = () => {
   const calendarBookingPageId = useAtomStateValue(calendarBookingPageIdState);
   const setNextOnboardingStatus = useSetNextOnboardingStatus();
   const currentUser = useAtomStateValue(currentUserState);
-  const [skipBookOnboardingStepMutation] = useMutation(SkipBookOnboardingStepDocument);
+  const [skipBookOnboardingStepMutation] = useMutation(
+    SkipBookOnboardingStepDocument,
+  );
 
   const isMobile = useIsMobile();
   const isPlanRequired =

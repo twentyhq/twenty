@@ -9,8 +9,9 @@ import { useMutation } from '@apollo/client/react';
 import { ValidateApprovedAccessDomainDocument } from '~/generated-metadata/graphql';
 
 export const SettingsSecurityApprovedAccessDomainValidationEffect = () => {
-  const [validateApprovedAccessDomainMutation] =
-    useMutation(ValidateApprovedAccessDomainDocument);
+  const [validateApprovedAccessDomainMutation] = useMutation(
+    ValidateApprovedAccessDomainDocument,
+  );
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
   const [searchParams] = useSearchParams();
   const approvedAccessDomainId = searchParams.get('wtdId');

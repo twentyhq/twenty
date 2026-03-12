@@ -13,7 +13,9 @@ export const useSignUpInNewWorkspace = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
   const { t } = useLingui();
 
-  const [signUpInNewWorkspaceMutation] = useMutation(SignUpInNewWorkspaceDocument);
+  const [signUpInNewWorkspaceMutation] = useMutation(
+    SignUpInNewWorkspaceDocument,
+  );
 
   const createWorkspace = async ({ newTab } = { newTab: true }) => {
     try {

@@ -23,7 +23,9 @@ export const SettingsSecurityApprovedAccessDomain = () => {
 
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
 
-  const [createApprovedAccessDomain] = useMutation(CreateApprovedAccessDomainDocument);
+  const [createApprovedAccessDomain] = useMutation(
+    CreateApprovedAccessDomainDocument,
+  );
 
   const form = useForm<{ domain: string; email: string }>({
     mode: 'onSubmit',

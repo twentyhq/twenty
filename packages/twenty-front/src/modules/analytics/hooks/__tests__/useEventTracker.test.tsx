@@ -95,9 +95,7 @@ const mocks: MockedResponse[] = [
 ];
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
-  <MockedProvider mocks={mocks}>
-    {children}
-  </MockedProvider>
+  <MockedProvider mocks={mocks}>{children}</MockedProvider>
 );
 
 describe('useEventTracker', () => {

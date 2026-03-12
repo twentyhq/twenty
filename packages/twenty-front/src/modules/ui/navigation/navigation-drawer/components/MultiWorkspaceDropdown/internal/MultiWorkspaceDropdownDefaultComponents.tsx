@@ -77,7 +77,9 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
     supportChat?.supportDriver === 'FRONT' &&
     isNonEmptyString(supportChat.supportFrontChatId);
 
-  const [signUpInNewWorkspaceMutation] = useMutation(SignUpInNewWorkspaceDocument);
+  const [signUpInNewWorkspaceMutation] = useMutation(
+    SignUpInNewWorkspaceDocument,
+  );
 
   const setMultiWorkspaceDropdown = useSetAtomState(
     multiWorkspaceDropdownState,

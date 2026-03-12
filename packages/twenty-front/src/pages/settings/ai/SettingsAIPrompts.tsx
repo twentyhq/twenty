@@ -47,8 +47,9 @@ export const SettingsAIPrompts = () => {
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const [updateWorkspace] = useMutation(UpdateWorkspaceDocument);
 
-  const { data: previewData, loading: previewLoading } =
-    useQuery(GetAiSystemPromptPreviewDocument);
+  const { data: previewData, loading: previewLoading } = useQuery(
+    GetAiSystemPromptPreviewDocument,
+  );
 
   const [workspaceInstructions, setWorkspaceInstructions] = useState(
     currentWorkspace?.aiAdditionalInstructions ?? '',

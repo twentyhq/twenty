@@ -65,13 +65,14 @@ export const WorkflowEditActionAiAgent = ({
   const agentId = action.settings.input.agentId;
   const [workflowAiAgentActionAgent, setWorkflowAiAgentActionAgent] =
     useAtomState(workflowAiAgentActionAgentState);
-  const { data: agentData, loading: agentLoading, refetch: refetchAgent } = useQuery(
-    FindOneAgentDocument,
-    {
-      variables: { id: agentId || '' },
-      skip: !agentId,
-    },
-  );
+  const {
+    data: agentData,
+    loading: agentLoading,
+    refetch: refetchAgent,
+  } = useQuery(FindOneAgentDocument, {
+    variables: { id: agentId || '' },
+    skip: !agentId,
+  });
 
   useEffect(() => {
     if (agentData?.findOneAgent) {

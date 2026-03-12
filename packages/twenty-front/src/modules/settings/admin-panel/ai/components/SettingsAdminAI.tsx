@@ -29,7 +29,9 @@ export const SettingsAdminAI = () => {
   const { refetch: refetchClientConfig } = useClientConfig();
 
   const { data } = useQuery(GetAdminAiModelsDocument);
-  const [createConfigVariable] = useMutation(CreateDatabaseConfigVariableDocument);
+  const [createConfigVariable] = useMutation(
+    CreateDatabaseConfigVariableDocument,
+  );
   const [setModelEnabled] = useMutation(SetAdminAiModelEnabledDocument);
 
   const autoEnableNewModels =

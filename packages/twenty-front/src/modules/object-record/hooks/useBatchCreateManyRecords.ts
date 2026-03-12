@@ -81,7 +81,10 @@ export const useBatchCreateManyRecords = <
         allCreatedRecords.push(...createdRecords);
       }
     } catch (error) {
-      if (CombinedGraphQLErrors.is(error) && error.message.includes('aborted')) {
+      if (
+        CombinedGraphQLErrors.is(error) &&
+        error.message.includes('aborted')
+      ) {
         const formattedCreatedRecordsCount = formatNumber(createdRecordsCount);
         enqueueWarningSnackBar({
           message: t`Record creation stopped. ${formattedCreatedRecordsCount} records created.`,
