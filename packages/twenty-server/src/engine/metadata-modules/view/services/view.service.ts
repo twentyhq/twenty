@@ -399,11 +399,17 @@ export class ViewService {
     );
   }
 
-  async findByWorkspaceId(
-    workspaceId: string,
-    userWorkspaceId?: string,
-    viewTypes?: ViewType[],
-  ): Promise<ViewDTO[]> {
+  private async getFilteredFlatViews({
+    workspaceId,
+    objectMetadataId,
+    userWorkspaceId,
+    viewTypes,
+  }: {
+    workspaceId: string;
+    objectMetadataId?: string;
+    userWorkspaceId?: string;
+    viewTypes?: ViewType[];
+  }): Promise<FlatView[]> {
     const { flatViewMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -412,11 +418,14 @@ export class ViewService {
         },
       );
 
-    const allFlatViews = Object.values(flatViewMaps.byUniversalIdentifier);
-
-    return allFlatViews
+    return Object.values(flatViewMaps.byUniversalIdentifier)
       .filter(isDefined)
       .filter((flatView) => flatView.workspaceId === workspaceId)
+      .filter(
+        (flatView) =>
+          !objectMetadataId ||
+          flatView.objectMetadataId === objectMetadataId,
+      )
       .filter((flatView) => flatView.deletedAt === null)
       .filter(
         (flatView) =>
@@ -425,8 +434,21 @@ export class ViewService {
           viewTypes.includes(flatView.type),
       )
       .filter((flatView) => this.isViewVisibleToUser(flatView, userWorkspaceId))
-      .sort((a, b) => a.position - b.position)
-      .map(fromFlatViewToViewDto);
+      .sort((a, b) => a.position - b.position);
+  }
+
+  async findByWorkspaceId(
+    workspaceId: string,
+    userWorkspaceId?: string,
+    viewTypes?: ViewType[],
+  ): Promise<ViewDTO[]> {
+    const flatViews = await this.getFilteredFlatViews({
+      workspaceId,
+      userWorkspaceId,
+      viewTypes,
+    });
+
+    return flatViews.map(fromFlatViewToViewDto);
   }
 
   async findByObjectMetadataId(
@@ -435,30 +457,14 @@ export class ViewService {
     userWorkspaceId?: string,
     viewTypes?: ViewType[],
   ): Promise<ViewDTO[]> {
-    const { flatViewMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatViewMaps'],
-        },
-      );
+    const flatViews = await this.getFilteredFlatViews({
+      workspaceId,
+      objectMetadataId,
+      userWorkspaceId,
+      viewTypes,
+    });
 
-    const allFlatViews = Object.values(flatViewMaps.byUniversalIdentifier);
-
-    return allFlatViews
-      .filter(isDefined)
-      .filter((flatView) => flatView.workspaceId === workspaceId)
-      .filter((flatView) => flatView.objectMetadataId === objectMetadataId)
-      .filter((flatView) => flatView.deletedAt === null)
-      .filter(
-        (flatView) =>
-          !viewTypes ||
-          viewTypes.length === 0 ||
-          viewTypes.includes(flatView.type),
-      )
-      .filter((flatView) => this.isViewVisibleToUser(flatView, userWorkspaceId))
-      .sort((a, b) => a.position - b.position)
-      .map(fromFlatViewToViewDto);
+    return flatViews.map(fromFlatViewToViewDto);
   }
 
   async findById(id: string, workspaceId: string): Promise<ViewDTO | null> {
@@ -562,26 +568,11 @@ export class ViewService {
     userWorkspaceId?: string,
     viewTypes?: ViewType[],
   ): Promise<ViewDTO[]> {
-    const { flatViewMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatViewMaps'],
-        },
-      );
-
-    const flatViews = Object.values(flatViewMaps.byUniversalIdentifier)
-      .filter(isDefined)
-      .filter((flatView) => flatView.workspaceId === workspaceId)
-      .filter((flatView) => flatView.deletedAt === null)
-      .filter(
-        (flatView) =>
-          !viewTypes ||
-          viewTypes.length === 0 ||
-          viewTypes.includes(flatView.type),
-      )
-      .filter((flatView) => this.isViewVisibleToUser(flatView, userWorkspaceId))
-      .sort((a, b) => a.position - b.position);
+    const flatViews = await this.getFilteredFlatViews({
+      workspaceId,
+      userWorkspaceId,
+      viewTypes,
+    });
 
     return this.findManyWithRelationsFromCache(flatViews, workspaceId);
   }
@@ -592,27 +583,12 @@ export class ViewService {
     userWorkspaceId?: string,
     viewTypes?: ViewType[],
   ): Promise<ViewDTO[]> {
-    const { flatViewMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatViewMaps'],
-        },
-      );
-
-    const flatViews = Object.values(flatViewMaps.byUniversalIdentifier)
-      .filter(isDefined)
-      .filter((flatView) => flatView.workspaceId === workspaceId)
-      .filter((flatView) => flatView.objectMetadataId === objectMetadataId)
-      .filter((flatView) => flatView.deletedAt === null)
-      .filter(
-        (flatView) =>
-          !viewTypes ||
-          viewTypes.length === 0 ||
-          viewTypes.includes(flatView.type),
-      )
-      .filter((flatView) => this.isViewVisibleToUser(flatView, userWorkspaceId))
-      .sort((a, b) => a.position - b.position);
+    const flatViews = await this.getFilteredFlatViews({
+      workspaceId,
+      objectMetadataId,
+      userWorkspaceId,
+      viewTypes,
+    });
 
     return this.findManyWithRelationsFromCache(flatViews, workspaceId);
   }
