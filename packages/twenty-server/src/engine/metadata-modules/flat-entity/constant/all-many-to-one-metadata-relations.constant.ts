@@ -291,6 +291,24 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
       universalForeignKey: 'roleUniversalIdentifier',
     },
   },
+  objectPermission: {
+    workspace: null,
+    application: null,
+    role: {
+      metadataName: 'role',
+      foreignKey: 'roleId',
+      inverseOneToManyProperty: 'objectPermissions',
+      isNullable: false,
+      universalForeignKey: 'roleUniversalIdentifier',
+    },
+    objectMetadata: {
+      metadataName: 'objectMetadata',
+      foreignKey: 'objectMetadataId',
+      inverseOneToManyProperty: 'objectPermissions',
+      isNullable: false,
+      universalForeignKey: 'objectMetadataUniversalIdentifier',
+    },
+  },
   pageLayout: {
     workspace: null,
     objectMetadata: {

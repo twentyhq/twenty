@@ -170,6 +170,16 @@ export const ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY = {
       foreignKey: 'roleId',
     },
   },
+  objectPermission: {
+    workspace: null,
+    application: null,
+    role: {
+      foreignKey: 'roleId',
+    },
+    objectMetadata: {
+      foreignKey: 'objectMetadataId',
+    },
+  },
   pageLayout: {
     workspace: null,
     objectMetadata: {
