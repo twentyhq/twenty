@@ -1,11 +1,8 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { AddMissingSystemFieldsToStandardObjectsCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-add-missing-system-fields-to-standard-objects.command';
-import { BackfillMessageChannelMessageAssociationMessageFolderCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-backfill-message-channel-message-association-message-folder.command';
-import { BackfillSystemFieldsIsSystemCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-backfill-system-fields-is-system.command';
-import { FixInvalidStandardUniversalIdentifiersCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-fix-invalid-standard-universal-identifiers.command';
-import { SeedServerIdCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-seed-server-id.command';
+import { BackfillMissingStandardViewsCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-backfill-missing-standard-views.command';
+import { BackfillPageLayoutsCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-backfill-page-layouts.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -29,18 +26,12 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     FeatureFlagModule,
   ],
   providers: [
-    BackfillSystemFieldsIsSystemCommand,
-    AddMissingSystemFieldsToStandardObjectsCommand,
-    BackfillMessageChannelMessageAssociationMessageFolderCommand,
-    FixInvalidStandardUniversalIdentifiersCommand,
-    SeedServerIdCommand,
+    BackfillMissingStandardViewsCommand,
+    BackfillPageLayoutsCommand,
   ],
   exports: [
-    BackfillSystemFieldsIsSystemCommand,
-    AddMissingSystemFieldsToStandardObjectsCommand,
-    BackfillMessageChannelMessageAssociationMessageFolderCommand,
-    FixInvalidStandardUniversalIdentifiersCommand,
-    SeedServerIdCommand,
+    BackfillMissingStandardViewsCommand,
+    BackfillPageLayoutsCommand,
   ],
 })
-export class V1_19_UpgradeVersionCommandModule {}
+export class V1_20_UpgradeVersionCommandModule {}
