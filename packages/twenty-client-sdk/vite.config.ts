@@ -6,8 +6,8 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 import packageJson from './package.json';
 
 const entries = [
-  'src/index.ts',
   'src/core/index.ts',
+  'src/metadata/index.ts',
   'src/generate/index.ts',
 ];
 

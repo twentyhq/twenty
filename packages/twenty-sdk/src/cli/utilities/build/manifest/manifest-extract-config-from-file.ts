@@ -10,8 +10,8 @@ import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 const MANIFEST_MOCK_MODULES = [
   'twenty-sdk/ui',
-  'twenty-client-sdk',
   'twenty-client-sdk/core',
+  'twenty-client-sdk/metadata',
 ];
 
 const manifestMockPlugin: esbuild.Plugin = {

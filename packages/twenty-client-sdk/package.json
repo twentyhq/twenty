@@ -3,23 +3,20 @@
   "version": "0.7.0-canary.0",
   "private": true,
   "sideEffects": false,
-  "main": "dist/index.mjs",
-  "module": "dist/index.mjs",
-  "types": "dist/index.d.ts",
   "license": "AGPL-3.0",
   "scripts": {
     "build": "npx rimraf dist && npx vite build && tsgo -p tsconfig.lib.json --declaration --emitDeclarationOnly --noEmit false --outDir dist --rootDir src && npx tsc-alias -p tsconfig.lib.json --outDir dist"
   },
   "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs"
-    },
     "./core": {
       "types": "./dist/core/index.d.ts",
       "import": "./dist/core.mjs",
       "require": "./dist/core.cjs"
+    },
+    "./metadata": {
+      "types": "./dist/metadata/index.d.ts",
+      "import": "./dist/metadata.mjs",
+      "require": "./dist/metadata.cjs"
     },
     "./generate": {
       "types": "./dist/generate/index.d.ts",
@@ -31,6 +28,9 @@
     "*": {
       "core": [
         "dist/core/index.d.ts"
+      ],
+      "metadata": [
+        "dist/metadata/index.d.ts"
       ],
       "generate": [
         "dist/generate/index.d.ts"

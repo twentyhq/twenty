@@ -15,8 +15,8 @@ import { NODE_ESM_CJS_BANNER, OUTPUT_DIR } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
 
 export const LOGIC_FUNCTION_EXTERNAL_MODULES: string[] = [
-  'twenty-client-sdk',
   'twenty-client-sdk/core',
+  'twenty-client-sdk/metadata',
   'path',
   'fs',
   'crypto',
