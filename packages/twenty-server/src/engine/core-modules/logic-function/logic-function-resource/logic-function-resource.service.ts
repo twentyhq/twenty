@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
 import crypto from 'crypto';
-import { join } from 'path';
+import { promises as fs } from 'fs';
+import { dirname, join } from 'path';
 
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -239,22 +240,37 @@ export class LogicFunctionResourceService {
     workspaceId: string;
     inMemoryFolderPath: string;
   }) {
-    await Promise.all([
-      this.fileStorageService.downloadFile({
-        workspaceId,
-        applicationUniversalIdentifier,
-        fileFolder: FileFolder.Dependencies,
-        resourcePath: 'package.json',
-        localPath: join(inMemoryFolderPath, 'package.json'),
-      }),
-      this.fileStorageService.downloadFile({
+    await this.fileStorageService.downloadFile({
+      workspaceId,
+      applicationUniversalIdentifier,
+      fileFolder: FileFolder.Dependencies,
+      resourcePath: 'package.json',
+      localPath: join(inMemoryFolderPath, 'package.json'),
+    });
+
+    try {
+      await this.fileStorageService.downloadFile({
         workspaceId,
         applicationUniversalIdentifier,
         fileFolder: FileFolder.Dependencies,
         resourcePath: 'yarn.lock',
         localPath: join(inMemoryFolderPath, 'yarn.lock'),
-      }),
-    ]);
+      });
+    } catch (error) {
+      if (
+        isDefined(error) &&
+        typeof error === 'object' &&
+        'code' in error &&
+        error.code === FileStorageExceptionCode.FILE_NOT_FOUND
+      ) {
+        const yarnLockPath = join(inMemoryFolderPath, 'yarn.lock');
+
+        await fs.mkdir(dirname(yarnLockPath), { recursive: true });
+        await fs.writeFile(yarnLockPath, '', 'utf-8');
+      } else {
+        throw error;
+      }
+    }
   }
 
   async getBuiltCode({
