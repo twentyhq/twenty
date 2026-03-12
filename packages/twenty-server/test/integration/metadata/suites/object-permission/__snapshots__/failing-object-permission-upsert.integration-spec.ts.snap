@@ -1,0 +1,76 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`Object permission upsert should fail when object is system object 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "CANNOT_ADD_OBJECT_PERMISSION_ON_SYSTEM_OBJECT",
+    "userFriendlyMessage": "You cannot set permissions on system objects as they are managed by the platform.",
+  },
+  "message": "Cannot add object permission on system object",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Object permission upsert should fail when objectMetadataId does not exist 1`] = `
+{
+  "extensions": {
+    "code": "NOT_FOUND",
+    "subCode": "OBJECT_METADATA_NOT_FOUND_PERMISSIONS",
+    "userFriendlyMessage": "The object you are trying to set permissions for could not be found. It may have been deleted.",
+  },
+  "message": "Object metadata id not found",
+  "name": "NotFoundError",
+}
+`;
+
+exports[`Object permission upsert should fail when read=false but canUpdateObjectRecords=true (read/write consistency) 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "CANNOT_GIVE_WRITING_PERMISSION_ON_NON_READABLE_OBJECT",
+    "userFriendlyMessage": "You cannot grant edit permissions without also granting read permissions. Please enable read access first.",
+  },
+  "message": "Cannot give update permission to non-readable object",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Object permission upsert should fail when role is not editable (system role) 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "ROLE_NOT_EDITABLE",
+    "userFriendlyMessage": "This role cannot be modified because it is a system role. Only custom roles can be edited.",
+  },
+  "message": "Role is not editable",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Object permission upsert should fail when roleId does not exist 1`] = `
+{
+  "extensions": {
+    "code": "NOT_FOUND",
+    "subCode": "ROLE_NOT_FOUND",
+    "userFriendlyMessage": "The role you are trying to modify could not be found.",
+  },
+  "message": "Role not found",
+  "name": "NotFoundError",
+}
+`;
+
+exports[`Object permission upsert should fail when roleId is not a valid UUID 1`] = `
+{
+  "extensions": {
+    "code": "GRAPHQL_VALIDATION_FAILED",
+    "http": {
+      "status": 400,
+    },
+    "userFriendlyMessage": "An error occurred.",
+    "value": "invalid-uuid",
+  },
+  "message": "Invalid UUID: \"invalid-uuid\"",
+  "name": "ValidationError",
+}
+`;
