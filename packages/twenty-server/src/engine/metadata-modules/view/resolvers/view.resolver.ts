@@ -8,7 +8,6 @@ import {
   ResolveField,
 } from '@nestjs/graphql';
 
-import { isArray } from '@sniptt/guards';
 import { ViewType, ViewVisibility } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -25,23 +24,17 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { resolveObjectMetadataStandardOverride } from 'src/engine/metadata-modules/object-metadata/utils/resolve-object-metadata-standard-override.util';
 import { ViewFieldGroupDTO } from 'src/engine/metadata-modules/view-field-group/dtos/view-field-group.dto';
 import { ViewFieldDTO } from 'src/engine/metadata-modules/view-field/dtos/view-field.dto';
-import { ViewFieldService } from 'src/engine/metadata-modules/view-field/services/view-field.service';
 import { ViewFilterGroupDTO } from 'src/engine/metadata-modules/view-filter-group/dtos/view-filter-group.dto';
-import { ViewFilterGroupService } from 'src/engine/metadata-modules/view-filter-group/services/view-filter-group.service';
 import { ViewFilterDTO } from 'src/engine/metadata-modules/view-filter/dtos/view-filter.dto';
-import { ViewFilterService } from 'src/engine/metadata-modules/view-filter/services/view-filter.service';
 import { ViewGroupDTO } from 'src/engine/metadata-modules/view-group/dtos/view-group.dto';
-import { ViewGroupService } from 'src/engine/metadata-modules/view-group/services/view-group.service';
 import { CreateViewPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/create-view-permission.guard';
 import { DeleteViewPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/delete-view-permission.guard';
 import { DestroyViewPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/destroy-view-permission.guard';
 import { UpdateViewPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/update-view-permission.guard';
 import { ViewSortDTO } from 'src/engine/metadata-modules/view-sort/dtos/view-sort.dto';
-import { ViewSortService } from 'src/engine/metadata-modules/view-sort/services/view-sort.service';
 import { CreateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/create-view.input';
 import { UpdateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/update-view.input';
 import { ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
-import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { ViewGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/view/utils/view-graphql-api-exception.filter';
 
@@ -51,13 +44,7 @@ import { ViewGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/view/
 export class ViewResolver {
   constructor(
     private readonly viewService: ViewService,
-    private readonly viewFilterService: ViewFilterService,
-    private readonly viewFilterGroupService: ViewFilterGroupService,
-    private readonly viewSortService: ViewSortService,
-    private readonly viewGroupService: ViewGroupService,
     private readonly i18nService: I18nService,
-
-    private readonly viewFieldService: ViewFieldService,
   ) {}
 
   @ResolveField(() => String)
@@ -114,7 +101,7 @@ export class ViewResolver {
     objectMetadataId?: string,
     @Args('viewTypes', { type: () => [ViewType], nullable: true })
     viewTypes?: ViewType[],
-  ): Promise<ViewEntity[]> {
+  ): Promise<ViewDTO[]> {
     if (objectMetadataId) {
       return this.viewService.findByObjectMetadataId(
         workspace.id,
@@ -143,7 +130,6 @@ export class ViewResolver {
       return null;
     }
 
-    // Do not apply list visibility filtering here: unlisted views are accessible by link
     return view;
   }
 
@@ -211,61 +197,61 @@ export class ViewResolver {
   @ResolveField(() => [ViewFieldDTO])
   async viewFields(
     @Parent() view: ViewDTO,
+    @Context() context: { loaders: IDataloaders },
     @AuthWorkspace() workspace: WorkspaceEntity,
   ) {
-    if (isArray(view.viewFields)) {
-      return view.viewFields;
-    }
-
-    return this.viewFieldService.findByViewId(workspace.id, view.id);
+    return context.loaders.viewFieldsByViewIdLoader.load({
+      workspaceId: workspace.id,
+      viewId: view.id,
+    });
   }
 
   @ResolveField(() => [ViewFilterDTO])
   async viewFilters(
     @Parent() view: ViewDTO,
+    @Context() context: { loaders: IDataloaders },
     @AuthWorkspace() workspace: WorkspaceEntity,
   ) {
-    if (isArray(view.viewFilters)) {
-      return view.viewFilters;
-    }
-
-    return this.viewFilterService.findByViewId(workspace.id, view.id);
+    return context.loaders.viewFiltersByViewIdLoader.load({
+      workspaceId: workspace.id,
+      viewId: view.id,
+    });
   }
 
   @ResolveField(() => [ViewFilterGroupDTO])
   async viewFilterGroups(
     @Parent() view: ViewDTO,
+    @Context() context: { loaders: IDataloaders },
     @AuthWorkspace() workspace: WorkspaceEntity,
   ) {
-    if (isArray(view.viewFilterGroups)) {
-      return view.viewFilterGroups;
-    }
-
-    return this.viewFilterGroupService.findByViewId(workspace.id, view.id);
+    return context.loaders.viewFilterGroupsByViewIdLoader.load({
+      workspaceId: workspace.id,
+      viewId: view.id,
+    });
   }
 
   @ResolveField(() => [ViewSortDTO])
   async viewSorts(
     @Parent() view: ViewDTO,
+    @Context() context: { loaders: IDataloaders },
     @AuthWorkspace() workspace: WorkspaceEntity,
   ) {
-    if (isArray(view.viewSorts)) {
-      return view.viewSorts;
-    }
-
-    return this.viewSortService.findByViewId(workspace.id, view.id);
+    return context.loaders.viewSortsByViewIdLoader.load({
+      workspaceId: workspace.id,
+      viewId: view.id,
+    });
   }
 
   @ResolveField(() => [ViewGroupDTO])
   async viewGroups(
     @Parent() view: ViewDTO,
+    @Context() context: { loaders: IDataloaders },
     @AuthWorkspace() workspace: WorkspaceEntity,
   ) {
-    if (isArray(view.viewGroups)) {
-      return view.viewGroups;
-    }
-
-    return this.viewGroupService.findByViewId(workspace.id, view.id);
+    return context.loaders.viewGroupsByViewIdLoader.load({
+      workspaceId: workspace.id,
+      viewId: view.id,
+    });
   }
 
   @ResolveField(() => [ViewFieldGroupDTO])
@@ -274,10 +260,6 @@ export class ViewResolver {
     @Context() context: { loaders: IDataloaders },
     @AuthWorkspace() workspace: WorkspaceEntity,
   ) {
-    if (isArray(view.viewFieldGroups)) {
-      return view.viewFieldGroups;
-    }
-
     return context.loaders.viewFieldGroupsByViewIdLoader.load({
       workspaceId: workspace.id,
       viewId: view.id,

@@ -53,6 +53,7 @@ import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { ViewFilterGroupService } from 'src/engine/metadata-modules/view-filter-group/services/view-filter-group.service';
 import { ViewFilterService } from 'src/engine/metadata-modules/view-filter/services/view-filter.service';
+import { type ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
@@ -263,7 +264,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
       },
     });
 
-    let view: ViewEntity | null = viewFilters[0]?.view;
+    let view: ViewEntity | ViewDTO | null = viewFilters[0]?.view;
 
     if (!view) {
       view = await this.viewService.findById(args.viewId, workspaceId);
