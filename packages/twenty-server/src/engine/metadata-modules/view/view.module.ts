@@ -7,7 +7,9 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata
 import { FlatViewModule } from 'src/engine/metadata-modules/flat-view/flat-view.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
+import { ViewFieldGroupModule } from 'src/engine/metadata-modules/view-field-group/view-field-group.module';
 import { ViewPermissionsModule } from 'src/engine/metadata-modules/view-permissions/view-permissions.module';
+import { ViewSortModule } from 'src/engine/metadata-modules/view-sort/view-sort.module';
 import { ViewController } from 'src/engine/metadata-modules/view/controllers/view.controller';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { ViewResolver } from 'src/engine/metadata-modules/view/resolvers/view.resolver';
@@ -21,6 +23,8 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
   imports: [
     TypeOrmModule.forFeature([ViewEntity]),
     ViewPermissionsModule,
+    ViewFieldGroupModule,
+    ViewSortModule,
     I18nModule,
     ApplicationModule,
     PermissionsModule,

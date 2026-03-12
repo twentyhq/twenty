@@ -23,8 +23,11 @@ import {
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
+import { GroupByDefinition } from 'src/engine/api/common/common-query-runners/types/group-by-definition.type';
+import { GroupByField } from 'src/engine/api/common/common-query-runners/types/group-by-field.types';
 import { getGroupByDefinitions } from 'src/engine/api/common/common-query-runners/utils/get-group-by-definitions.util';
 import { getObjectAlias } from 'src/engine/api/common/common-query-runners/utils/get-object-alias-for-group-by.util';
+import { isGroupByRelationField } from 'src/engine/api/common/common-query-runners/utils/is-group-by-relation-field.util';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
 import { CommonGroupByOutputItem } from 'src/engine/api/common/types/common-group-by-output-item.type';
@@ -36,10 +39,7 @@ import {
 } from 'src/engine/api/common/types/common-query-args.type';
 import { CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
-import { GroupByDefinition } from 'src/engine/api/common/common-query-runners/types/group-by-definition.type';
-import { GroupByField } from 'src/engine/api/common/common-query-runners/types/group-by-field.types';
 import { formatResultWithGroupByDimensionValues } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util';
-import { isGroupByRelationField } from 'src/engine/api/common/common-query-runners/utils/is-group-by-relation-field.util';
 import { parseGroupByArgs } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/parse-group-by-args.util';
 import { GroupByWithRecordsService } from 'src/engine/api/graphql/graphql-query-runner/group-by/services/group-by-with-records.service';
 import { getGroupLimit } from 'src/engine/api/graphql/graphql-query-runner/group-by/utils/get-group-limit.util';
@@ -53,8 +53,6 @@ import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { ViewFilterGroupService } from 'src/engine/metadata-modules/view-filter-group/services/view-filter-group.service';
 import { ViewFilterService } from 'src/engine/metadata-modules/view-filter/services/view-filter.service';
-import { type ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
-import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
 import { formatColumnNameForRelationField } from 'src/engine/twenty-orm/utils/format-column-name-for-relation-field.util';
@@ -264,16 +262,19 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
       },
     });
 
-    let view: ViewEntity | ViewDTO | null = viewFilters[0]?.view;
+    const viewFromFilter = viewFilters[0]?.view;
+    let viewAnyFieldFilterValue = viewFromFilter?.anyFieldFilterValue;
 
-    if (!view) {
-      view = await this.viewService.findById(args.viewId, workspaceId);
+    if (!viewFromFilter) {
+      const view = await this.viewService.findById(args.viewId, workspaceId);
+
+      viewAnyFieldFilterValue = view?.anyFieldFilterValue ?? null;
     }
 
     const { recordGqlOperationFilter: anyFieldFilter } =
       turnAnyFieldFilterIntoRecordGqlFilter({
         fields,
-        filterValue: view?.anyFieldFilterValue ?? '',
+        filterValue: viewAnyFieldFilterValue ?? '',
       });
 
     appliedFilters = combineFilters([
