@@ -479,7 +479,10 @@ export class ConfigVariables {
   })
   @IsOptional()
   @CastToUpperSnakeCase()
-  LOGIC_FUNCTION_TYPE: LogicFunctionDriverType = LogicFunctionDriverType.LOCAL;
+  LOGIC_FUNCTION_TYPE: LogicFunctionDriverType =
+    process.env.NODE_ENV === NodeEnvironment.DEVELOPMENT
+      ? LogicFunctionDriverType.LOCAL
+      : LogicFunctionDriverType.DISABLED;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LOGIC_FUNCTION_CONFIG,
@@ -598,7 +601,9 @@ export class ConfigVariables {
   @IsOptional()
   @CastToUpperSnakeCase()
   CODE_INTERPRETER_TYPE: CodeInterpreterDriverType =
-    CodeInterpreterDriverType.DISABLED;
+    process.env.NODE_ENV === NodeEnvironment.DEVELOPMENT
+      ? CodeInterpreterDriverType.LOCAL
+      : CodeInterpreterDriverType.DISABLED;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.CODE_INTERPRETER_CONFIG,
@@ -1530,6 +1535,24 @@ export class ConfigVariables {
   })
   @IsOptional()
   ENTERPRISE_KEY: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
+    isSensitive: true,
+    description:
+      'Signed enterprise validity token (JWT). Used as fallback when no token is stored in the database.',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  ENTERPRISE_VALIDITY_TOKEN: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
+    description: 'Base URL for the Enterprise API on twenty.com',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  ENTERPRISE_API_URL: string = 'https://twenty.com/api/enterprise';
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.OTHER,

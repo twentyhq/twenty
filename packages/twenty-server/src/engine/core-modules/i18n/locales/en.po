@@ -631,6 +631,12 @@ msgstr "Cannot delete standard skill"
 msgid "Cannot delete the last admin user."
 msgstr "Cannot delete the last admin user."
 
+#. js-lingui-id: W3Ik7m
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+msgid "Cannot delete the only view for this object"
+msgstr "Cannot delete the only view for this object"
+
 #. js-lingui-id: mWk3X+
 #: src/engine/metadata-modules/flat-field-metadata/utils/handle-index-changes-during-field-update.util.ts
 msgid "Cannot delete unique index that have not been created by the workspace custom application"
@@ -1192,15 +1198,15 @@ msgstr "Error"
 msgid "Exactly one of \"groups\" or \"fields\" must be provided"
 msgstr "Exactly one of \"groups\" or \"fields\" must be provided"
 
-#. js-lingui-id: ksMwKk
+#. js-lingui-id: gyqLlt
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
-msgid "Exactly one of workflow version or front component is required"
-msgstr "Exactly one of workflow version or front component is required"
+msgid "Exactly one of workflow version, front component or engine component key is required"
+msgstr "Exactly one of workflow version, front component or engine component key is required"
 
-#. js-lingui-id: yX0axn
+#. js-lingui-id: ucm3bq
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
-msgid "Exactly one of workflowVersionId or frontComponentUniversalIdentifier is required"
-msgstr "Exactly one of workflowVersionId or frontComponentUniversalIdentifier is required"
+msgid "Exactly one of workflowVersionId, frontComponentUniversalIdentifier or engineComponentKey is required"
+msgstr "Exactly one of workflowVersionId, frontComponentUniversalIdentifier or engineComponentKey is required"
 
 #. js-lingui-id: AiFXmG
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts

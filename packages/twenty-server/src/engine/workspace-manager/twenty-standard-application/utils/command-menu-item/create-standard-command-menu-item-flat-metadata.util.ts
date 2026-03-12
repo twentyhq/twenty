@@ -28,15 +28,24 @@ export const createStandardCommandMenuItemFlatMetadata = ({
 }): FlatCommandMenuItem => {
   const definition = STANDARD_COMMAND_MENU_ITEMS[commandMenuItemName];
 
-  const flatFrontComponent = findFlatEntityByUniversalIdentifier({
-    flatEntityMaps: flatFrontComponentMaps,
-    universalIdentifier: definition.frontComponentUniversalIdentifier,
-  });
+  let resolvedFrontComponentId: string | null = null;
+  let resolvedFrontComponentUniversalIdentifier: string | null = null;
 
-  if (!isDefined(flatFrontComponent)) {
-    throw new Error(
-      `Front component not found for universal identifier ${definition.frontComponentUniversalIdentifier}`,
-    );
+  if (isDefined(definition.frontComponentUniversalIdentifier)) {
+    const flatFrontComponent = findFlatEntityByUniversalIdentifier({
+      flatEntityMaps: flatFrontComponentMaps,
+      universalIdentifier: definition.frontComponentUniversalIdentifier,
+    });
+
+    if (!isDefined(flatFrontComponent)) {
+      throw new Error(
+        `Front component not found for universal identifier ${definition.frontComponentUniversalIdentifier}`,
+      );
+    }
+
+    resolvedFrontComponentId = flatFrontComponent.id;
+    resolvedFrontComponentUniversalIdentifier =
+      flatFrontComponent.universalIdentifier;
   }
 
   let resolvedObjectMetadataId: string | null = null;
@@ -75,8 +84,10 @@ export const createStandardCommandMenuItemFlatMetadata = ({
     availabilityType: definition.availabilityType,
     conditionalAvailabilityExpression:
       definition.conditionalAvailabilityExpression ?? null,
-    frontComponentId: flatFrontComponent.id,
-    frontComponentUniversalIdentifier: flatFrontComponent.universalIdentifier,
+    frontComponentId: resolvedFrontComponentId,
+    frontComponentUniversalIdentifier:
+      resolvedFrontComponentUniversalIdentifier,
+    engineComponentKey: definition.engineComponentKey,
     workflowVersionId: null,
     availabilityObjectMetadataId: resolvedObjectMetadataId,
     availabilityObjectMetadataUniversalIdentifier:

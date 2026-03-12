@@ -24,6 +24,7 @@ import { mapDBMessagesToUIMessages } from '@/ai/utils/mapDBMessagesToUIMessages'
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
+import { useCallback, useMemo } from 'react';
 import {
   type GetChatThreadsQuery,
   GetChatThreadsDocument,
@@ -181,7 +182,11 @@ export const useAgentChatData = () => {
     },
   });
 
-  const isNewThread = currentAIChatThread === AGENT_CHAT_NEW_THREAD_DRAFT_KEY;
+  const isNewThread = useMemo(
+    () => currentAIChatThread === AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
+    [currentAIChatThread],
+  );
+
   const { loading: messagesLoading, data } = useGetChatMessagesQuery({
     variables: { threadId: currentAIChatThread! },
     skip: !isDefined(currentAIChatThread) || isNewThread,
@@ -191,7 +196,7 @@ export const useAgentChatData = () => {
     },
   });
 
-  const ensureThreadForDraft = () => {
+  const ensureThreadForDraft = useCallback(() => {
     const current = store.get(currentAIChatThreadState.atom);
     if (current !== AGENT_CHAT_NEW_THREAD_DRAFT_KEY) {
       return;
@@ -218,9 +223,16 @@ export const useAgentChatData = () => {
     threadIdPromise.finally(() => {
       setPendingCreateFromDraftPromise(null);
     });
-  };
+  }, [
+    createChatThread,
+    setPendingCreateFromDraftPromise,
+    store,
+    setIsCreatingChatThread,
+  ]);
 
-  const ensureThreadIdForSend = async (): Promise<string | null> => {
+  const ensureThreadIdForSend = useCallback(async (): Promise<
+    string | null
+  > => {
     const current = store.get(currentAIChatThreadState.atom);
     if (current !== AGENT_CHAT_NEW_THREAD_DRAFT_KEY) {
       return current;
@@ -247,16 +259,33 @@ export const useAgentChatData = () => {
     } finally {
       setIsCreatingChatThread(false);
     }
-  };
+  }, [createChatThread, store, setIsCreatingChatThread]);
 
-  const uiMessages = mapDBMessagesToUIMessages(data?.chatMessages || []);
-  const isLoading = messagesLoading || threadsLoading;
+  const threadsLoadingMemoized = useMemo(
+    () => threadsLoading,
+    [threadsLoading],
+  );
+
+  const messagesLoadingMemoized = useMemo(
+    () => messagesLoading,
+    [messagesLoading],
+  );
+
+  const uiMessages = useMemo(
+    () => mapDBMessagesToUIMessages(data?.chatMessages || []),
+    [data?.chatMessages],
+  );
+
+  const isLoading = useMemo(
+    () => messagesLoadingMemoized || threadsLoadingMemoized,
+    [messagesLoadingMemoized, threadsLoadingMemoized],
+  );
 
   return {
     uiMessages,
     isLoading,
-    threadsLoading,
-    messagesLoading,
+    threadsLoading: threadsLoadingMemoized,
+    messagesLoading: messagesLoadingMemoized,
     ensureThreadForDraft,
     ensureThreadIdForSend,
   };
