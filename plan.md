@@ -4,24 +4,64 @@
 
 Twenty already has a **solid OAuth infrastructure**:
 
-- **Authorization Server Metadata** (`/.well-known/oauth-authorization-server`) — `oauth-discovery.controller.ts` serves RFC 8414 metadata with issuer, token/revoke/introspect endpoints, supported scopes, grant types, and PKCE
-- **Token endpoint** (`POST /oauth/token`) — supports `authorization_code` (with PKCE), `client_credentials`, and `refresh_token` grants
-- **Revocation** (`POST /oauth/revoke`) and **Introspection** (`POST /oauth/introspect`) — RFC 7009/7662 compliant
+- **Authorization Server Metadata** (`/.well-known/oauth-authorization-server`) — `oauth-discovery.controller.ts` serves RFC 8414 metadata with issuer, endpoints, scopes, grant types, PKCE
+- **Token endpoint** (`POST /oauth/token`) — supports `authorization_code` (with PKCE), `client_credentials`, `refresh_token`
+- **Revocation** (`POST /oauth/revoke`) and **Introspection** (`POST /oauth/introspect`) — RFC 7009/7662
 - **Consent screen** — frontend `Authorize.tsx` at `/authorize` with scope display, app logo, approve/cancel
 - **App registration** — `ApplicationRegistrationEntity` with clientId, hashed secret, redirect URIs, scopes
 - **MCP endpoint** (`POST /mcp`) — uses `JwtAuthGuard` + `WorkspaceAuthGuard`, accepts Bearer tokens
 
+## Key Design Decision: OAUTH_ONLY Source Type
+
+### Problem
+
+The current `ApplicationRegistration` → `Application` flow is designed for **full apps** that ship code (logic functions, front components, agents, database objects, dependencies). When `oauth.service.ts` exchanges a token, `findOrInstallApplication()` auto-installs the full app package into the workspace.
+
+MCP clients (Claude Desktop, Cursor, VS Code) just need an OAuth identity to get an access token. They should **never** trigger code installation or gain code execution capabilities.
+
+### Solution
+
+Add a new `ApplicationRegistrationSourceType.OAUTH_ONLY` enum value. This is the most elegant approach because:
+
+1. **Reuses existing entity and flows** — no schema duplication, consent screen and token exchange work unchanged
+2. **Has precedent** — the install flow already skips code for `LOCAL` type
+3. **Clear semantics** — `OAUTH_ONLY` communicates exactly what the registration is for
+4. **Natural guard point** — the install service can short-circuit for this type
+
+```typescript
+enum ApplicationRegistrationSourceType {
+  NPM = 'npm',
+  TARBALL = 'tarball',
+  LOCAL = 'local',
+  OAUTH_ONLY = 'oauth-only',  // NEW — dynamic MCP client registrations
+}
+```
+
+**Constraints for OAUTH_ONLY registrations:**
+- No tarball, no sourcePackage, no code artifacts
+- Scopes limited to `['api', 'profile']`
+- No client secret (public client, PKCE required)
+- `grant_types` restricted to `['authorization_code']` (no `client_credentials`)
+- Install creates a lightweight `ApplicationEntity` record (no logic functions, no packages)
+- Cannot be promoted to a full app without re-registering through the normal flow
+
+### Protection for the Dynamic Registration Endpoint
+
+1. **Rate limiting** — Aggressive per-IP rate limit (e.g., 10 registrations/hour)
+2. **sourceType always OAUTH_ONLY** — endpoint hardcodes this, callers cannot override
+3. **No secret issued** — public clients only, PKCE enforced on token exchange
+4. **No client_credentials grant** — prevents server-to-server token minting
+5. **Scopes capped** — registration endpoint only allows `api` and `profile`
+6. **Lightweight install** — even if the app gets "installed" during token exchange, it creates a bare record with no code execution surface
+
 ## What's Missing for MCP Dynamic Discovery
 
-Per the [MCP Authorization Spec (2025-06-18)](https://modelcontextprotocol.io/specification/2025-06-18/basic/authorization), the following pieces are needed:
+Per the [MCP Authorization Spec (2025-06-18)](https://modelcontextprotocol.io/specification/2025-06-18/basic/authorization):
 
-### 1. Protected Resource Metadata (RFC 9728) — **NEW**
+### 1. Protected Resource Metadata (RFC 9728) — NEW
 
-The MCP server must expose `/.well-known/oauth-protected-resource` so MCP clients can discover which authorization server to use.
+Add `GET /.well-known/oauth-protected-resource` to `OAuthDiscoveryController`.
 
-**Action:** Add a new `GET /.well-known/oauth-protected-resource` endpoint to the existing `OAuthDiscoveryController`.
-
-Returns:
 ```json
 {
   "resource": "https://your-twenty-server.com/mcp",
@@ -31,22 +71,20 @@ Returns:
 }
 ```
 
-### 2. WWW-Authenticate Header on 401 from MCP endpoint — **NEW**
+### 2. WWW-Authenticate Header on MCP 401 — NEW
 
-When the MCP endpoint returns a 401 Unauthorized, it MUST include a `WWW-Authenticate` header pointing to the resource metadata URL per RFC 9728 Section 5.1.
-
-**Action:** Create an exception filter or interceptor for the MCP controller that catches 401 responses and adds:
+Create an MCP-specific auth guard that throws `UnauthorizedException` with:
 ```
 WWW-Authenticate: Bearer resource_metadata="https://your-twenty-server.com/.well-known/oauth-protected-resource"
 ```
 
-Currently `JwtAuthGuard` returns `false` which triggers a generic NestJS 403. This needs to be changed to throw an `UnauthorizedException` that results in a proper 401 with the correct header.
+Currently `JwtAuthGuard` returns `false` → generic NestJS 403. Must become proper 401 with RFC 9728 header.
 
-### 3. Dynamic Client Registration (RFC 7591) — **NEW**
+### 3. Dynamic Client Registration (RFC 7591) — NEW
 
-MCP clients (Claude Desktop, Cursor, VS Code, etc.) need to automatically register themselves as OAuth clients without manual pre-registration. This is crucial because MCP clients don't know all possible servers in advance.
+Add `POST /oauth/register` that creates `ApplicationRegistrationEntity` with `sourceType: OAUTH_ONLY`.
 
-**Action:** Add a `POST /oauth/register` endpoint that accepts:
+Request:
 ```json
 {
   "client_name": "Claude Desktop",
@@ -58,7 +96,7 @@ MCP clients (Claude Desktop, Cursor, VS Code, etc.) need to automatically regist
 }
 ```
 
-Returns:
+Response:
 ```json
 {
   "client_id": "<generated-uuid>",
@@ -71,72 +109,69 @@ Returns:
 }
 ```
 
-This creates an `ApplicationRegistrationEntity` on the fly. Public clients (no secret) are allowed since MCP clients use PKCE.
+### 4. Update Authorization Server Metadata — MODIFY
 
-Also add `registration_endpoint` to the authorization server metadata.
+Add `registration_endpoint` to `/.well-known/oauth-authorization-server`.
 
-### 4. Update Authorization Server Metadata — **MODIFY**
+### 5. Standard OAuth Query Parameters — MODIFY
 
-Add the `registration_endpoint` field to the existing `/.well-known/oauth-authorization-server` response.
+The `/authorize` page uses camelCase params (`clientId`, `codeChallenge`, `redirectUrl`). Standard OAuth uses `client_id`, `code_challenge`, `redirect_uri`. Support both for MCP client compatibility.
 
-### 5. Fix Authorization Endpoint URL Format — **MODIFY**
+### 6. Resource Indicators (RFC 8707) — CONSIDER
 
-The current discovery metadata returns `authorization_endpoint: "${serverUrl}/authorize"` but the actual flow goes through the **frontend** route (`/authorize` in the React SPA). MCP clients expect a standard HTTP endpoint that redirects to the consent screen. This is fine as-is since MCP clients open this in a browser — the frontend route handles the consent UI. However, we should verify the URL is correct (it maps to `AppPath.Authorize`).
+Accept `resource` parameter in authorization and token flows to audience-bind tokens.
 
-Also, the current `/authorize` page uses non-standard query parameter names (`clientId`, `codeChallenge`, `redirectUrl` in camelCase). Standard OAuth uses `client_id`, `code_challenge`, `redirect_uri`. These should be supported for MCP client compatibility.
+## Implementation Steps
 
-### 6. Resource Indicators (RFC 8707) — **CONSIDER**
+### Step 1: Add OAUTH_ONLY source type
+- Add `OAUTH_ONLY = 'oauth-only'` to `ApplicationRegistrationSourceType` enum
+- Update `ApplicationInstallService.installApplication()` to skip code install for this type (like LOCAL)
+- Update `oauth.service.ts` `findOrInstallApplication()` to create lightweight app for OAUTH_ONLY registrations
 
-MCP clients MUST include a `resource` parameter in authorization and token requests. The authorization server should accept (and ideally validate) this parameter to bind tokens to the MCP server audience.
-
-**Action:** Accept the `resource` parameter in the authorization flow and token endpoint. Store it with the authorization code and validate it during token exchange. This ensures tokens are audience-bound.
-
-## Implementation Steps (Ordered)
-
-### Step 1: Protected Resource Metadata Endpoint
+### Step 2: Protected Resource Metadata endpoint
 - Add `GET /.well-known/oauth-protected-resource` to `OAuthDiscoveryController`
-- Return RFC 9728 compliant JSON with `resource`, `authorization_servers`, `scopes_supported`, `bearer_methods_supported`
 
-### Step 2: WWW-Authenticate Header on MCP 401
-- Modify the MCP auth flow so that a missing/invalid token returns HTTP 401 (not 403) with `WWW-Authenticate: Bearer resource_metadata="<url>"`
-- Option A: Create a custom `McpAuthGuard` that extends `JwtAuthGuard` and throws `UnauthorizedException` with the correct header
-- Option B: Add an exception filter to the MCP controller that intercepts auth failures
+### Step 3: MCP auth guard with WWW-Authenticate
+- Create `McpAuthGuard` extending `JwtAuthGuard` that throws `UnauthorizedException` with the RFC 9728 header
+- Use it on the MCP controller instead of plain `JwtAuthGuard`
 
-### Step 3: Dynamic Client Registration Endpoint
-- Add `POST /oauth/register` controller method (or new controller)
-- Validate input per RFC 7591 (redirect_uris, grant_types, response_types)
-- Create `ApplicationRegistrationEntity` with generated clientId, no secret for public clients
-- Return registration response per RFC 7591
-- Rate-limit this endpoint to prevent abuse
+### Step 4: Dynamic Client Registration endpoint
+- Create `POST /oauth/register` controller
+- Validate input per RFC 7591
+- Create `ApplicationRegistrationEntity` with `sourceType: OAUTH_ONLY`, no secret, limited scopes
+- Rate-limit aggressively
+- Register in `ApplicationOAuthModule`
 
-### Step 4: Update Authorization Server Metadata
-- Add `registration_endpoint` to `/.well-known/oauth-authorization-server` response
+### Step 5: Update Authorization Server Metadata
+- Add `registration_endpoint` to `/.well-known/oauth-authorization-server`
 
-### Step 5: Support Standard OAuth Query Parameters
-- Update the frontend `/authorize` page to accept both camelCase (`clientId`) and standard (`client_id`) query parameters for backward compatibility
-- Or alternatively update the metadata to match the frontend's expected format
+### Step 6: Standard OAuth query parameters on /authorize
+- Update `Authorize.tsx` to accept both camelCase and standard (`client_id`, `redirect_uri`, `code_challenge`) params
 
-### Step 6: Resource Parameter Support
-- Accept `resource` parameter in the authorize and token flows
-- Store the resource value with the authorization code
-- Validate during token exchange that the resource matches
+### Step 7: Resource parameter support
+- Accept `resource` parameter in authorize and token flows
+- Store with authorization code, validate during exchange
 
 ## Files to Create/Modify
 
 | File | Action |
 |------|--------|
-| `application-oauth/controllers/oauth-discovery.controller.ts` | Add `oauth-protected-resource` endpoint |
-| `application-oauth/controllers/oauth-discovery.controller.ts` | Add `registration_endpoint` to AS metadata |
+| `application-registration/enums/application-registration-source-type.enum.ts` | Add `OAUTH_ONLY` |
+| `application-install/application-install.service.ts` | Skip code install for OAUTH_ONLY |
+| `application-oauth/oauth.service.ts` | Lightweight app creation for OAUTH_ONLY |
+| `application-oauth/controllers/oauth-discovery.controller.ts` | Add PRM endpoint + registration_endpoint |
 | `application-oauth/controllers/oauth-registration.controller.ts` | **NEW** — Dynamic Client Registration |
+| `application-oauth/dtos/oauth-register.input.ts` | **NEW** — Registration DTO |
 | `application-oauth/application-oauth.module.ts` | Register new controller |
-| `engine/api/mcp/controllers/mcp-core.controller.ts` | Add WWW-Authenticate on 401 (guard or filter) |
-| `engine/api/mcp/guards/mcp-auth.guard.ts` | **NEW** — MCP-specific auth guard with 401 + WWW-Authenticate |
-| `twenty-front/src/pages/auth/Authorize.tsx` | Support standard `client_id`/`redirect_uri`/`code_challenge` params |
+| `engine/api/mcp/guards/mcp-auth.guard.ts` | **NEW** — MCP auth guard with 401 + WWW-Authenticate |
+| `engine/api/mcp/controllers/mcp-core.controller.ts` | Use McpAuthGuard |
+| `twenty-front/src/pages/auth/Authorize.tsx` | Support standard OAuth params |
 | `application-oauth/dtos/oauth-token.input.ts` | Accept `resource` parameter |
 
 ## Risks & Considerations
 
-1. **Security of Dynamic Registration**: Rate-limiting and possibly feature-flag gating to prevent abuse. Consider requiring the registration endpoint be enabled via config.
-2. **Scope of public clients**: Public MCP clients (no secret) rely entirely on PKCE for security. This is per spec and already supported.
-3. **Token audience validation**: Full RFC 8707 support means tokens should include audience claims. The current JWT structure may need an `aud` field.
-4. **Backward compatibility**: Existing API key auth for MCP continues to work. The OAuth discovery flow is an additional option, not a replacement.
+1. **Dynamic registration abuse** — Mitigated by aggressive rate limiting, OAUTH_ONLY type restriction, no secrets, no client_credentials
+2. **Public clients** — Rely on PKCE only (per MCP spec, already supported)
+3. **Token audience** — Full RFC 8707 support means JWTs need `aud` field
+4. **Backward compat** — API key auth for MCP continues to work; OAuth discovery is additive
+5. **DB migration** — Adding OAUTH_ONLY enum value is a data-only change (text column), no schema migration needed
