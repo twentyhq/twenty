@@ -1,7 +1,7 @@
 import { FrontComponentRendererProvider } from '@/front-components/components/FrontComponentRendererProvider';
+import { FrontComponentRendererWithSdkClient } from '@/front-components/components/FrontComponentRendererWithSdkClient';
 import { useFrontComponentExecutionContext } from '@/front-components/hooks/useFrontComponentExecutionContext';
 import { useOnFrontComponentUpdated } from '@/front-components/hooks/useOnFrontComponentUpdated';
-import { useSdkClientBlobUrls } from '@/front-components/hooks/useSdkClientBlobUrls';
 import { frontComponentApplicationTokenPairComponentState } from '@/front-components/states/frontComponentApplicationTokenPairComponentState';
 import { getFrontComponentUrl } from '@/front-components/utils/getFrontComponentUrl';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -47,12 +47,6 @@ export const FrontComponentRenderer = ({
     [enqueueErrorSnackBar],
   );
 
-  const {
-    sdkClientBlobUrls,
-    isLoading: sdkClientLoading,
-    loadSdkClient,
-  } = useSdkClientBlobUrls();
-
   const { data, loading } = useFindOneFrontComponentQuery({
     variables: { id: frontComponentId },
     onError: handleError,
@@ -62,36 +56,12 @@ export const FrontComponentRenderer = ({
       if (isDefined(tokenPair)) {
         setFrontComponentApplicationTokenPair(tokenPair);
       }
-
-      const completedApplicationId =
-        completedData.frontComponent?.applicationId;
-      const completedAccessToken =
-        completedData.frontComponent?.applicationTokenPair
-          ?.applicationAccessToken?.token;
-
-      if (
-        completedData.frontComponent?.usesSdkClient &&
-        isDefined(completedApplicationId) &&
-        isDefined(completedAccessToken)
-      ) {
-        loadSdkClient({
-          applicationId: completedApplicationId,
-          accessToken: completedAccessToken,
-        });
-      }
     },
   });
 
   useOnFrontComponentUpdated({
     frontComponentId,
   });
-
-  const componentUrl = getFrontComponentUrl({
-    frontComponentId,
-    checksum: data?.frontComponent?.builtComponentChecksum,
-  });
-
-  const usesSdkClient = data?.frontComponent?.usesSdkClient ?? false;
 
   const applicationTokenPair =
     data?.frontComponent?.applicationTokenPair ?? null;
@@ -104,8 +74,31 @@ export const FrontComponentRenderer = ({
     return null;
   }
 
-  if (usesSdkClient && (sdkClientLoading || !isDefined(sdkClientBlobUrls))) {
-    return null;
+  const componentUrl = getFrontComponentUrl({
+    frontComponentId,
+    checksum: data.frontComponent.builtComponentChecksum,
+  });
+
+  const usesSdkClient =
+    (data.frontComponent as { usesSdkClient?: boolean })?.usesSdkClient ??
+    false;
+
+  const accessToken = applicationTokenPair.applicationAccessToken.token;
+
+  if (usesSdkClient) {
+    return (
+      <FrontComponentRendererProvider frontComponentId={frontComponentId}>
+        <FrontComponentRendererWithSdkClient
+          colorScheme={colorScheme}
+          componentUrl={componentUrl}
+          applicationAccessToken={accessToken}
+          applicationId={data.frontComponent.applicationId}
+          executionContext={executionContext}
+          frontComponentHostCommunicationApi={frontComponentHostCommunicationApi}
+          onError={handleError}
+        />
+      </FrontComponentRendererProvider>
+    );
   }
 
   return (
@@ -113,11 +106,8 @@ export const FrontComponentRenderer = ({
       <SharedFrontComponentRenderer
         colorScheme={colorScheme}
         componentUrl={componentUrl}
-        applicationAccessToken={
-          applicationTokenPair.applicationAccessToken.token
-        }
+        applicationAccessToken={accessToken}
         apiUrl={REACT_APP_SERVER_BASE_URL}
-        sdkClientUrls={sdkClientBlobUrls}
         executionContext={executionContext}
         frontComponentHostCommunicationApi={frontComponentHostCommunicationApi}
         onError={handleError}
