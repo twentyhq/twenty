@@ -4,7 +4,7 @@
     "displayName": "Root App",
     "description": "An app with all entities at root level",
     "icon": "IconFolder",
-    "defaultRoleUniversalIdentifier": "e1e2e3e4-e5e6-4000-8000-000000000002",
+    "defaultRoleUniversalIdentifier": "e1e2e3e4-e5e6-4000-8000-000000000040",
     "yarnLockChecksum": "d41d8cd98f00b204e9800998ecf8427e",
     "packageJsonChecksum": "ac87abb5113d9d09be71481efc123800",
     "apiClientChecksum": null

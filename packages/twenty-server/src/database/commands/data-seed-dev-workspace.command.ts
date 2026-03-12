@@ -41,7 +41,7 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
     try {
       for (const workspaceId of this.workspaceIds) {
         await this.devSeederService.seedDev(workspaceId, {
-          includeApps: options.withApps,
+          includeApps: options?.withApps ?? false,
         });
       }
     } catch (error) {

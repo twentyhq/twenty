@@ -237,8 +237,16 @@ export class ApplicationInstallService {
           resourcePath: fileName,
           settings: { isTemporaryFile: false, toDelete: false },
         });
-      } catch {
-        // yarn.lock may not exist for all fixtures
+      } catch (error: unknown) {
+        const isFileNotFound =
+          typeof error === 'object' &&
+          error !== null &&
+          'code' in error &&
+          (error as NodeJS.ErrnoException).code === 'ENOENT';
+
+        if (!isFileNotFound) {
+          throw error;
+        }
       }
     }
   }
