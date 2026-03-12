@@ -1770,7 +1770,7 @@ export type Field = {
   settings?: Maybe<Scalars['JSON']>;
   standardOverrides?: Maybe<StandardOverrides>;
   type: FieldMetadataType;
-  universalIdentifier: Scalars['UUID'];
+  universalIdentifier: Scalars['String'];
   updatedAt: Scalars['DateTime'];
 };
 
@@ -1803,7 +1803,6 @@ export type FieldFilter = {
   isSystem?: InputMaybe<BooleanFieldComparison>;
   isUIReadOnly?: InputMaybe<BooleanFieldComparison>;
   or?: InputMaybe<Array<FieldFilter>>;
-  universalIdentifier?: InputMaybe<UuidFilterComparison>;
 };
 
 /** Type of the field */
@@ -3629,7 +3628,7 @@ export type Object = {
   nameSingular: Scalars['String'];
   shortcut?: Maybe<Scalars['String']>;
   standardOverrides?: Maybe<ObjectStandardOverrides>;
-  universalIdentifier: Scalars['UUID'];
+  universalIdentifier: Scalars['String'];
   updatedAt: Scalars['DateTime'];
 };
 
@@ -3679,7 +3678,6 @@ export type ObjectFilter = {
   isSystem?: InputMaybe<BooleanFieldComparison>;
   isUIReadOnly?: InputMaybe<BooleanFieldComparison>;
   or?: InputMaybe<Array<ObjectFilter>>;
-  universalIdentifier?: InputMaybe<UuidFilterComparison>;
 };
 
 export type ObjectIndexMetadatasConnection = {
@@ -4993,7 +4991,7 @@ export type UpdateFieldInput = {
   name?: InputMaybe<Scalars['String']>;
   options?: InputMaybe<Scalars['JSON']>;
   settings?: InputMaybe<Scalars['JSON']>;
-  universalIdentifier?: InputMaybe<Scalars['UUID']>;
+  universalIdentifier?: InputMaybe<Scalars['String']>;
 };
 
 export type UpdateFrontComponentInput = {

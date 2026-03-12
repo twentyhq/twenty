@@ -326,7 +326,7 @@ type StandardOverrides {
 
 type Field {
   id: UUID!
-  universalIdentifier: UUID!
+  universalIdentifier: String!
   type: FieldMetadataType!
   name: String!
   label: String!
@@ -443,7 +443,6 @@ input ObjectFilter {
   and: [ObjectFilter!]
   or: [ObjectFilter!]
   id: UUIDFilterComparison
-  universalIdentifier: UUIDFilterComparison
   isCustom: BooleanFieldComparison
   isRemote: BooleanFieldComparison
   isActive: BooleanFieldComparison
@@ -491,7 +490,7 @@ type ObjectStandardOverrides {
 
 type Object {
   id: UUID!
-  universalIdentifier: UUID!
+  universalIdentifier: String!
   nameSingular: String!
   namePlural: String!
   labelSingular: String!
@@ -535,7 +534,6 @@ input FieldFilter {
   and: [FieldFilter!]
   or: [FieldFilter!]
   id: UUIDFilterComparison
-  universalIdentifier: UUIDFilterComparison
   isCustom: BooleanFieldComparison
   isActive: BooleanFieldComparison
   isSystem: BooleanFieldComparison
@@ -3831,7 +3829,7 @@ input UpdateOneFieldMetadataInput {
 }
 
 input UpdateFieldInput {
-  universalIdentifier: UUID
+  universalIdentifier: String
   name: String
   label: String
   description: String

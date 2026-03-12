@@ -11,14 +11,10 @@ export const getPageLayoutPageTitle = (page: PageLayoutSidePanelPage) => {
       return t`Select Graph Type`;
     case SidePanelPages.PageLayoutIframeSettings:
       return t`iFrame Settings`;
-    case SidePanelPages.PageLayoutGraphFilter:
-      return t`Configure filters`;
     case SidePanelPages.PageLayoutTabSettings:
       return t`Tab Settings`;
     case SidePanelPages.PageLayoutFieldsSettings:
       return t`Fields Settings`;
-    case SidePanelPages.PageLayoutFieldsLayout:
-      return t`Layout`;
     default:
       assertUnreachable(page);
   }

@@ -32,7 +32,7 @@ export class ObjectMetadataDTO {
   @IDField(() => UUIDScalarType)
   id: string;
 
-  @IDField(() => UUIDScalarType)
+  @Field()
   universalIdentifier: string;
 
   @Field()
