@@ -25,21 +25,12 @@ type SearchRecordBase = {
   imageUrl?: string | null;
 };
 
-type SidePanelNewSidebarItemRecordSubViewProps = {
-  onBack: () => void;
-  disableDrag?: boolean;
-};
-
-export const SidePanelNewSidebarItemRecordSubView = ({
-  onBack,
-  disableDrag: disableDragProp,
-}: SidePanelNewSidebarItemRecordSubViewProps) => {
+export const SidePanelNewSidebarItemRecordSubPage = () => {
   const { t } = useLingui();
   const addMenuItemInsertionContext = useAtomStateValue(
     addMenuItemInsertionContextState,
   );
-  const disableDrag =
-    disableDragProp ?? addMenuItemInsertionContext?.disableDrag === true;
+  const disableDrag = addMenuItemInsertionContext?.disableDrag === true;
   const { currentDraft } = useDraftNavigationMenuItems();
   const { objectMetadataItems } = useObjectMetadataItems();
   const [recordSearchInput, setRecordSearchInput] = useState('');
@@ -92,8 +83,6 @@ export const SidePanelNewSidebarItemRecordSubView = ({
 
   return (
     <SidePanelSubViewWithSearch
-      backBarTitle={t`Add a record`}
-      onBack={onBack}
       searchPlaceholder={t`Search records...`}
       searchValue={recordSearchInput}
       onSearchChange={setRecordSearchInput}
