@@ -1,13 +1,10 @@
-import { dirname, join } from 'path';
+import { join } from 'path';
 
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 
-// Resolve via Node module resolution, same pattern as standard-front-component-upload.service.ts
-const PACKAGES_ROOT = dirname(
-  dirname(require.resolve('twenty-standard-application/package.json')),
-);
-
-const FIXTURES_ROOT = join(PACKAGES_ROOT, 'twenty-apps', 'fixtures');
+// In Docker the server cwd is /app/packages/twenty-server,
+// so ../twenty-apps/fixtures resolves to /app/packages/twenty-apps/fixtures.
+const FIXTURES_ROOT = join(process.cwd(), '..', 'twenty-apps', 'fixtures');
 
 export type AppSeedDefinition = {
   registration: {

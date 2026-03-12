@@ -805,6 +805,8 @@ type Workspace {
   currentBillingSubscription: BillingSubscription
   billingEntitlements: [BillingEntitlement!]!
   hasValidEnterpriseKey: Boolean!
+  hasValidSignedEnterpriseKey: Boolean!
+  hasValidEnterpriseValidityToken: Boolean!
   workspaceUrls: WorkspaceUrls!
   workspaceCustomApplicationId: String!
 }
@@ -1454,6 +1456,22 @@ type BillingUpdate {
   billingSubscriptions: [BillingSubscription!]!
 }
 
+type EnterpriseLicenseInfoDTO {
+  isValid: Boolean!
+  licensee: String
+  expiresAt: DateTime
+  subscriptionId: String
+}
+
+type EnterpriseSubscriptionStatusDTO {
+  status: String!
+  licensee: String
+  expiresAt: DateTime
+  cancelAt: DateTime
+  currentPeriodEnd: DateTime
+  isCancellationScheduled: Boolean!
+}
+
 type OnboardingStepSuccess {
   """Boolean that confirms query was dispatched"""
   success: Boolean!
@@ -2052,6 +2070,8 @@ type CommandMenuItem {
 }
 
 enum EngineComponentKey {
+  NAVIGATE_TO_NEXT_RECORD
+  NAVIGATE_TO_PREVIOUS_RECORD
   CREATE_NEW_RECORD
   DELETE_SINGLE_RECORD
   DELETE_MULTIPLE_RECORDS
@@ -2061,18 +2081,54 @@ enum EngineComponentKey {
   DESTROY_MULTIPLE_RECORDS
   ADD_TO_FAVORITES
   REMOVE_FROM_FAVORITES
+  EXPORT_NOTE_TO_PDF
+  EXPORT_FROM_RECORD_INDEX
+  EXPORT_FROM_RECORD_SHOW
+  UPDATE_MULTIPLE_RECORDS
   MERGE_MULTIPLE_RECORDS
+  EXPORT_MULTIPLE_RECORDS
+  IMPORT_RECORDS
+  EXPORT_VIEW
+  SEE_DELETED_RECORDS
+  CREATE_NEW_VIEW
+  HIDE_DELETED_RECORDS
+  GO_TO_PEOPLE
+  GO_TO_COMPANIES
+  GO_TO_DASHBOARDS
+  GO_TO_OPPORTUNITIES
+  GO_TO_SETTINGS
+  GO_TO_TASKS
+  GO_TO_NOTES
+  EDIT_RECORD_PAGE_LAYOUT
+  SAVE_RECORD_PAGE_LAYOUT
+  CANCEL_RECORD_PAGE_LAYOUT
+  EDIT_DASHBOARD_LAYOUT
+  SAVE_DASHBOARD_LAYOUT
+  CANCEL_DASHBOARD_LAYOUT
   DUPLICATE_DASHBOARD
-  DUPLICATE_WORKFLOW
+  GO_TO_WORKFLOWS
   ACTIVATE_WORKFLOW
   DEACTIVATE_WORKFLOW
   DISCARD_DRAFT_WORKFLOW
   TEST_WORKFLOW
-  STOP_WORKFLOW_RUN
-  USE_AS_DRAFT_WORKFLOW_VERSION
-  SAVE_RECORD_PAGE_LAYOUT
-  SAVE_DASHBOARD_LAYOUT
+  SEE_ACTIVE_VERSION_WORKFLOW
+  SEE_RUNS_WORKFLOW
+  SEE_VERSIONS_WORKFLOW
+  ADD_NODE_WORKFLOW
   TIDY_UP_WORKFLOW
+  DUPLICATE_WORKFLOW
+  GO_TO_RUNS
+  SEE_VERSION_WORKFLOW_RUN
+  SEE_WORKFLOW_WORKFLOW_RUN
+  STOP_WORKFLOW_RUN
+  SEE_RUNS_WORKFLOW_VERSION
+  SEE_WORKFLOW_WORKFLOW_VERSION
+  USE_AS_DRAFT_WORKFLOW_VERSION
+  SEE_VERSIONS_WORKFLOW_VERSION
+  SEARCH_RECORDS
+  SEARCH_RECORDS_FALLBACK
+  ASK_AI
+  VIEW_PREVIOUS_AI_CHATS
 }
 
 enum CommandMenuItemAvailabilityType {
@@ -2859,6 +2915,9 @@ type Query {
   billingPortalSession(returnUrlPath: String): BillingSession!
   listPlans: [BillingPlan!]!
   getMeteredProductsUsage: [BillingMeteredProductUsage!]!
+  enterprisePortalSession(returnUrlPath: String): String
+  enterpriseCheckoutSession(billingInterval: String): String
+  enterpriseSubscriptionStatus: EnterpriseSubscriptionStatusDTO
   navigationMenuItems: [NavigationMenuItem!]!
   navigationMenuItem(id: UUID!): NavigationMenuItem
   apiKeys: [ApiKey!]!
@@ -3119,6 +3178,8 @@ type Mutation {
   setMeteredSubscriptionPrice(priceId: String!): BillingUpdate!
   endSubscriptionTrialPeriod: BillingEndTrialPeriod!
   cancelSwitchMeteredPrice: BillingUpdate!
+  refreshEnterpriseValidityToken: Boolean!
+  setEnterpriseKey(enterpriseKey: String!): EnterpriseLicenseInfoDTO!
   createNavigationMenuItem(input: CreateNavigationMenuItemInput!): NavigationMenuItem!
   updateNavigationMenuItem(input: UpdateOneNavigationMenuItemInput!): NavigationMenuItem!
   deleteNavigationMenuItem(id: UUID!): NavigationMenuItem!

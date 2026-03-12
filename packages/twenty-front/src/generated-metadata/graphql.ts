@@ -1575,8 +1575,13 @@ export type EmailsConfiguration = {
 
 export enum EngineComponentKey {
   ACTIVATE_WORKFLOW = 'ACTIVATE_WORKFLOW',
+  ADD_NODE_WORKFLOW = 'ADD_NODE_WORKFLOW',
   ADD_TO_FAVORITES = 'ADD_TO_FAVORITES',
+  ASK_AI = 'ASK_AI',
+  CANCEL_DASHBOARD_LAYOUT = 'CANCEL_DASHBOARD_LAYOUT',
+  CANCEL_RECORD_PAGE_LAYOUT = 'CANCEL_RECORD_PAGE_LAYOUT',
   CREATE_NEW_RECORD = 'CREATE_NEW_RECORD',
+  CREATE_NEW_VIEW = 'CREATE_NEW_VIEW',
   DEACTIVATE_WORKFLOW = 'DEACTIVATE_WORKFLOW',
   DELETE_MULTIPLE_RECORDS = 'DELETE_MULTIPLE_RECORDS',
   DELETE_SINGLE_RECORD = 'DELETE_SINGLE_RECORD',
@@ -1585,17 +1590,68 @@ export enum EngineComponentKey {
   DISCARD_DRAFT_WORKFLOW = 'DISCARD_DRAFT_WORKFLOW',
   DUPLICATE_DASHBOARD = 'DUPLICATE_DASHBOARD',
   DUPLICATE_WORKFLOW = 'DUPLICATE_WORKFLOW',
+  EDIT_DASHBOARD_LAYOUT = 'EDIT_DASHBOARD_LAYOUT',
+  EDIT_RECORD_PAGE_LAYOUT = 'EDIT_RECORD_PAGE_LAYOUT',
+  EXPORT_FROM_RECORD_INDEX = 'EXPORT_FROM_RECORD_INDEX',
+  EXPORT_FROM_RECORD_SHOW = 'EXPORT_FROM_RECORD_SHOW',
+  EXPORT_MULTIPLE_RECORDS = 'EXPORT_MULTIPLE_RECORDS',
+  EXPORT_NOTE_TO_PDF = 'EXPORT_NOTE_TO_PDF',
+  EXPORT_VIEW = 'EXPORT_VIEW',
+  GO_TO_COMPANIES = 'GO_TO_COMPANIES',
+  GO_TO_DASHBOARDS = 'GO_TO_DASHBOARDS',
+  GO_TO_NOTES = 'GO_TO_NOTES',
+  GO_TO_OPPORTUNITIES = 'GO_TO_OPPORTUNITIES',
+  GO_TO_PEOPLE = 'GO_TO_PEOPLE',
+  GO_TO_RUNS = 'GO_TO_RUNS',
+  GO_TO_SETTINGS = 'GO_TO_SETTINGS',
+  GO_TO_TASKS = 'GO_TO_TASKS',
+  GO_TO_WORKFLOWS = 'GO_TO_WORKFLOWS',
+  HIDE_DELETED_RECORDS = 'HIDE_DELETED_RECORDS',
+  IMPORT_RECORDS = 'IMPORT_RECORDS',
   MERGE_MULTIPLE_RECORDS = 'MERGE_MULTIPLE_RECORDS',
+  NAVIGATE_TO_NEXT_RECORD = 'NAVIGATE_TO_NEXT_RECORD',
+  NAVIGATE_TO_PREVIOUS_RECORD = 'NAVIGATE_TO_PREVIOUS_RECORD',
   REMOVE_FROM_FAVORITES = 'REMOVE_FROM_FAVORITES',
   RESTORE_MULTIPLE_RECORDS = 'RESTORE_MULTIPLE_RECORDS',
   RESTORE_SINGLE_RECORD = 'RESTORE_SINGLE_RECORD',
   SAVE_DASHBOARD_LAYOUT = 'SAVE_DASHBOARD_LAYOUT',
   SAVE_RECORD_PAGE_LAYOUT = 'SAVE_RECORD_PAGE_LAYOUT',
+  SEARCH_RECORDS = 'SEARCH_RECORDS',
+  SEARCH_RECORDS_FALLBACK = 'SEARCH_RECORDS_FALLBACK',
+  SEE_ACTIVE_VERSION_WORKFLOW = 'SEE_ACTIVE_VERSION_WORKFLOW',
+  SEE_DELETED_RECORDS = 'SEE_DELETED_RECORDS',
+  SEE_RUNS_WORKFLOW = 'SEE_RUNS_WORKFLOW',
+  SEE_RUNS_WORKFLOW_VERSION = 'SEE_RUNS_WORKFLOW_VERSION',
+  SEE_VERSIONS_WORKFLOW = 'SEE_VERSIONS_WORKFLOW',
+  SEE_VERSIONS_WORKFLOW_VERSION = 'SEE_VERSIONS_WORKFLOW_VERSION',
+  SEE_VERSION_WORKFLOW_RUN = 'SEE_VERSION_WORKFLOW_RUN',
+  SEE_WORKFLOW_WORKFLOW_RUN = 'SEE_WORKFLOW_WORKFLOW_RUN',
+  SEE_WORKFLOW_WORKFLOW_VERSION = 'SEE_WORKFLOW_WORKFLOW_VERSION',
   STOP_WORKFLOW_RUN = 'STOP_WORKFLOW_RUN',
   TEST_WORKFLOW = 'TEST_WORKFLOW',
   TIDY_UP_WORKFLOW = 'TIDY_UP_WORKFLOW',
-  USE_AS_DRAFT_WORKFLOW_VERSION = 'USE_AS_DRAFT_WORKFLOW_VERSION'
+  UPDATE_MULTIPLE_RECORDS = 'UPDATE_MULTIPLE_RECORDS',
+  USE_AS_DRAFT_WORKFLOW_VERSION = 'USE_AS_DRAFT_WORKFLOW_VERSION',
+  VIEW_PREVIOUS_AI_CHATS = 'VIEW_PREVIOUS_AI_CHATS'
 }
+
+export type EnterpriseLicenseInfoDto = {
+  __typename?: 'EnterpriseLicenseInfoDTO';
+  expiresAt?: Maybe<Scalars['DateTime']>;
+  isValid: Scalars['Boolean'];
+  licensee?: Maybe<Scalars['String']>;
+  subscriptionId?: Maybe<Scalars['String']>;
+};
+
+export type EnterpriseSubscriptionStatusDto = {
+  __typename?: 'EnterpriseSubscriptionStatusDTO';
+  cancelAt?: Maybe<Scalars['DateTime']>;
+  currentPeriodEnd?: Maybe<Scalars['DateTime']>;
+  expiresAt?: Maybe<Scalars['DateTime']>;
+  isCancellationScheduled: Scalars['Boolean'];
+  licensee?: Maybe<Scalars['String']>;
+  status: Scalars['String'];
+};
 
 export type EventLogDateRangeInput = {
   end?: InputMaybe<Scalars['DateTime']>;
@@ -2483,6 +2539,7 @@ export type Mutation = {
   initiateOTPProvisioningForAuthenticatedUser: InitiateTwoFactorAuthenticationProvisioning;
   installApplication: Scalars['Boolean'];
   installMarketplaceApp: Scalars['Boolean'];
+  refreshEnterpriseValidityToken: Scalars['Boolean'];
   removeQueryFromEventStream: Scalars['Boolean'];
   removeRoleFromAgent: Scalars['Boolean'];
   renewApplicationToken: ApplicationTokenPair;
@@ -2497,6 +2554,7 @@ export type Mutation = {
   saveImapSmtpCaldavAccount: ImapSmtpCaldavConnectionSuccess;
   sendInvitations: SendInvitations;
   setAdminAiModelEnabled: Scalars['Boolean'];
+  setEnterpriseKey: EnterpriseLicenseInfoDto;
   setMeteredSubscriptionPrice: BillingUpdate;
   signIn: AvailableWorkspacesAndAccessTokens;
   signUp: AvailableWorkspacesAndAccessTokens;
@@ -3157,6 +3215,11 @@ export type MutationSendInvitationsArgs = {
 export type MutationSetAdminAiModelEnabledArgs = {
   enabled: Scalars['Boolean'];
   modelId: Scalars['String'];
+};
+
+
+export type MutationSetEnterpriseKeyArgs = {
+  enterpriseKey: Scalars['String'];
 };
 
 
@@ -3975,6 +4038,9 @@ export type Query = {
   commandMenuItems: Array<CommandMenuItem>;
   currentUser: User;
   currentWorkspace: Workspace;
+  enterpriseCheckoutSession?: Maybe<Scalars['String']>;
+  enterprisePortalSession?: Maybe<Scalars['String']>;
+  enterpriseSubscriptionStatus?: Maybe<EnterpriseSubscriptionStatusDto>;
   eventLogs: EventLogQueryResult;
   field: Field;
   fields: FieldConnection;
@@ -4114,6 +4180,16 @@ export type QueryCheckWorkspaceInviteHashIsValidArgs = {
 
 export type QueryCommandMenuItemArgs = {
   id: Scalars['UUID'];
+};
+
+
+export type QueryEnterpriseCheckoutSessionArgs = {
+  billingInterval?: InputMaybe<Scalars['String']>;
+};
+
+
+export type QueryEnterprisePortalSessionArgs = {
+  returnUrlPath?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -5543,6 +5619,8 @@ export type Workspace = {
   fastModel: Scalars['String'];
   featureFlags?: Maybe<Array<FeatureFlag>>;
   hasValidEnterpriseKey: Scalars['Boolean'];
+  hasValidEnterpriseValidityToken: Scalars['Boolean'];
+  hasValidSignedEnterpriseKey: Scalars['Boolean'];
   id: Scalars['UUID'];
   inviteHash?: Maybe<Scalars['String']>;
   isCustomDomainEnabled: Scalars['Boolean'];
@@ -6823,6 +6901,37 @@ export type GetEmailingDomainsQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetEmailingDomainsQuery = { __typename?: 'Query', getEmailingDomains: Array<{ __typename?: 'EmailingDomain', id: string, domain: string, driver: EmailingDomainDriver, status: EmailingDomainStatus, verifiedAt?: string | null, createdAt: string, updatedAt: string, verificationRecords?: Array<{ __typename?: 'VerificationRecord', type: string, key: string, value: string, priority?: number | null }> | null }> };
 
+export type RefreshEnterpriseValidityTokenMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type RefreshEnterpriseValidityTokenMutation = { __typename?: 'Mutation', refreshEnterpriseValidityToken: boolean };
+
+export type SetEnterpriseKeyMutationVariables = Exact<{
+  enterpriseKey: Scalars['String'];
+}>;
+
+
+export type SetEnterpriseKeyMutation = { __typename?: 'Mutation', setEnterpriseKey: { __typename?: 'EnterpriseLicenseInfoDTO', isValid: boolean, licensee?: string | null, expiresAt?: string | null, subscriptionId?: string | null } };
+
+export type EnterpriseCheckoutSessionQueryVariables = Exact<{
+  billingInterval?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type EnterpriseCheckoutSessionQuery = { __typename?: 'Query', enterpriseCheckoutSession?: string | null };
+
+export type EnterprisePortalSessionQueryVariables = Exact<{
+  returnUrlPath?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type EnterprisePortalSessionQuery = { __typename?: 'Query', enterprisePortalSession?: string | null };
+
+export type EnterpriseSubscriptionStatusQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type EnterpriseSubscriptionStatusQuery = { __typename?: 'Query', enterpriseSubscriptionStatus?: { __typename?: 'EnterpriseSubscriptionStatusDTO', status: string, licensee?: string | null, expiresAt?: string | null, cancelAt?: string | null, currentPeriodEnd?: string | null, isCancellationScheduled: boolean } | null };
+
 export type UpdateLabPublicFeatureFlagMutationVariables = Exact<{
   input: UpdateLabPublicFeatureFlagInput;
 }>;
@@ -6991,7 +7100,7 @@ export type BillingSubscriptionFragmentFragment = { __typename?: 'BillingSubscri
 
 export type CurrentBillingSubscriptionFragmentFragment = { __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, interval?: SubscriptionInterval | null, metadata: any, currentPeriodEnd?: string | null, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }>, billingSubscriptionItems?: Array<{ __typename?: 'BillingSubscriptionItem', id: string, hasReachedCurrentPeriodCap: boolean, quantity?: number | null, stripePriceId: string, billingProduct: { __typename?: 'BillingLicensedProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } | { __typename?: 'BillingMeteredProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } }> | null };
 
-export type UserQueryFragmentFragment = { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, hasPassword: boolean, canAccessFullAdminPanel: boolean, canImpersonate: boolean, supportUserHash?: string | null, onboardingStatus?: OnboardingStatus | null, userVars?: any | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, userWorkspaceId?: string | null, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, calendarStartDay?: number | null, numberFormat?: WorkspaceMemberNumberFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, workspaceMembers?: Array<{ __typename?: 'WorkspaceMember', id: string, avatarUrl?: string | null, userEmail: string, userWorkspaceId?: string | null, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, deletedWorkspaceMembers?: Array<{ __typename?: 'DeletedWorkspaceMember', id: string, avatarUrl?: string | null, userEmail: string, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, currentUserWorkspace?: { __typename?: 'UserWorkspace', id: string, permissionFlags?: Array<PermissionFlagType> | null, objectsPermissions?: Array<{ __typename?: 'ObjectPermission', objectMetadataId: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null, restrictedFields?: any | null, rowLevelPermissionPredicates?: Array<{ __typename?: 'RowLevelPermissionPredicate', id: string, fieldMetadataId: string, objectMetadataId: string, operand: RowLevelPermissionPredicateOperand, subFieldName?: string | null, workspaceMemberFieldMetadataId?: string | null, workspaceMemberSubFieldName?: string | null, rowLevelPermissionPredicateGroupId?: string | null, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, value?: any | null }> | null, rowLevelPermissionPredicateGroups?: Array<{ __typename?: 'RowLevelPermissionPredicateGroup', id: string, parentRowLevelPermissionPredicateGroupId?: string | null, logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, objectMetadataId: string }> | null }> | null, twoFactorAuthenticationMethodSummary?: Array<{ __typename?: 'TwoFactorAuthenticationMethodSummary', twoFactorAuthenticationMethodId: string, status: string, strategy: string }> | null } | null, currentWorkspace?: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, inviteHash?: string | null, allowImpersonation: boolean, activationStatus: WorkspaceActivationStatus, isPublicInviteLinkEnabled: boolean, isGoogleAuthEnabled: boolean, isMicrosoftAuthEnabled: boolean, isPasswordAuthEnabled: boolean, isGoogleAuthBypassEnabled: boolean, isMicrosoftAuthBypassEnabled: boolean, isPasswordAuthBypassEnabled: boolean, subdomain: string, customDomain?: string | null, hasValidEnterpriseKey: boolean, isCustomDomainEnabled: boolean, metadataVersion: number, workspaceMembersCount?: number | null, fastModel: string, smartModel: string, aiAdditionalInstructions?: string | null, autoEnableNewAiModels: boolean, disabledAiModelIds?: Array<string> | null, enabledAiModelIds?: Array<string> | null, useRecommendedModels: boolean, isTwoFactorAuthenticationEnforced: boolean, trashRetentionDays: number, eventLogRetentionDays: number, editableProfileFields?: Array<string> | null, workspaceCustomApplication?: { __typename?: 'Application', id: string } | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, featureFlags?: Array<{ __typename?: 'FeatureFlag', key: FeatureFlagKey, value: boolean }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, interval?: SubscriptionInterval | null, metadata: any, currentPeriodEnd?: string | null, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }>, billingSubscriptionItems?: Array<{ __typename?: 'BillingSubscriptionItem', id: string, hasReachedCurrentPeriodCap: boolean, quantity?: number | null, stripePriceId: string, billingProduct: { __typename?: 'BillingLicensedProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } | { __typename?: 'BillingMeteredProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } }> | null } | null, billingSubscriptions: Array<{ __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, metadata: any, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }> }>, billingEntitlements: Array<{ __typename?: 'BillingEntitlement', key: BillingEntitlementKey, value: boolean }>, defaultRole?: { __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, canAccessAllTools: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, canBeAssignedToUsers: boolean, canBeAssignedToAgents: boolean, canBeAssignedToApiKeys: boolean } | null } | null, availableWorkspaces: { __typename?: 'AvailableWorkspaces', availableWorkspacesForSignIn: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }>, availableWorkspacesForSignUp: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }> } };
+export type UserQueryFragmentFragment = { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, hasPassword: boolean, canAccessFullAdminPanel: boolean, canImpersonate: boolean, supportUserHash?: string | null, onboardingStatus?: OnboardingStatus | null, userVars?: any | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, userWorkspaceId?: string | null, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, calendarStartDay?: number | null, numberFormat?: WorkspaceMemberNumberFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, workspaceMembers?: Array<{ __typename?: 'WorkspaceMember', id: string, avatarUrl?: string | null, userEmail: string, userWorkspaceId?: string | null, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, deletedWorkspaceMembers?: Array<{ __typename?: 'DeletedWorkspaceMember', id: string, avatarUrl?: string | null, userEmail: string, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, currentUserWorkspace?: { __typename?: 'UserWorkspace', id: string, permissionFlags?: Array<PermissionFlagType> | null, objectsPermissions?: Array<{ __typename?: 'ObjectPermission', objectMetadataId: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null, restrictedFields?: any | null, rowLevelPermissionPredicates?: Array<{ __typename?: 'RowLevelPermissionPredicate', id: string, fieldMetadataId: string, objectMetadataId: string, operand: RowLevelPermissionPredicateOperand, subFieldName?: string | null, workspaceMemberFieldMetadataId?: string | null, workspaceMemberSubFieldName?: string | null, rowLevelPermissionPredicateGroupId?: string | null, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, value?: any | null }> | null, rowLevelPermissionPredicateGroups?: Array<{ __typename?: 'RowLevelPermissionPredicateGroup', id: string, parentRowLevelPermissionPredicateGroupId?: string | null, logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, objectMetadataId: string }> | null }> | null, twoFactorAuthenticationMethodSummary?: Array<{ __typename?: 'TwoFactorAuthenticationMethodSummary', twoFactorAuthenticationMethodId: string, status: string, strategy: string }> | null } | null, currentWorkspace?: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, inviteHash?: string | null, allowImpersonation: boolean, activationStatus: WorkspaceActivationStatus, isPublicInviteLinkEnabled: boolean, isGoogleAuthEnabled: boolean, isMicrosoftAuthEnabled: boolean, isPasswordAuthEnabled: boolean, isGoogleAuthBypassEnabled: boolean, isMicrosoftAuthBypassEnabled: boolean, isPasswordAuthBypassEnabled: boolean, subdomain: string, customDomain?: string | null, hasValidEnterpriseKey: boolean, hasValidSignedEnterpriseKey: boolean, hasValidEnterpriseValidityToken: boolean, isCustomDomainEnabled: boolean, metadataVersion: number, workspaceMembersCount?: number | null, fastModel: string, smartModel: string, aiAdditionalInstructions?: string | null, autoEnableNewAiModels: boolean, disabledAiModelIds?: Array<string> | null, enabledAiModelIds?: Array<string> | null, useRecommendedModels: boolean, isTwoFactorAuthenticationEnforced: boolean, trashRetentionDays: number, eventLogRetentionDays: number, editableProfileFields?: Array<string> | null, workspaceCustomApplication?: { __typename?: 'Application', id: string } | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, featureFlags?: Array<{ __typename?: 'FeatureFlag', key: FeatureFlagKey, value: boolean }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, interval?: SubscriptionInterval | null, metadata: any, currentPeriodEnd?: string | null, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }>, billingSubscriptionItems?: Array<{ __typename?: 'BillingSubscriptionItem', id: string, hasReachedCurrentPeriodCap: boolean, quantity?: number | null, stripePriceId: string, billingProduct: { __typename?: 'BillingLicensedProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } | { __typename?: 'BillingMeteredProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } }> | null } | null, billingSubscriptions: Array<{ __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, metadata: any, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }> }>, billingEntitlements: Array<{ __typename?: 'BillingEntitlement', key: BillingEntitlementKey, value: boolean }>, defaultRole?: { __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, canAccessAllTools: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, canBeAssignedToUsers: boolean, canBeAssignedToAgents: boolean, canBeAssignedToApiKeys: boolean } | null } | null, availableWorkspaces: { __typename?: 'AvailableWorkspaces', availableWorkspacesForSignIn: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }>, availableWorkspacesForSignUp: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }> } };
 
 export type WorkspaceUrlsFragmentFragment = { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null };
 
@@ -7010,7 +7119,7 @@ export type DeleteUserWorkspaceMutation = { __typename?: 'Mutation', deleteUserF
 export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetCurrentUserQuery = { __typename?: 'Query', currentUser: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, hasPassword: boolean, canAccessFullAdminPanel: boolean, canImpersonate: boolean, supportUserHash?: string | null, onboardingStatus?: OnboardingStatus | null, userVars?: any | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, userWorkspaceId?: string | null, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, calendarStartDay?: number | null, numberFormat?: WorkspaceMemberNumberFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, workspaceMembers?: Array<{ __typename?: 'WorkspaceMember', id: string, avatarUrl?: string | null, userEmail: string, userWorkspaceId?: string | null, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, deletedWorkspaceMembers?: Array<{ __typename?: 'DeletedWorkspaceMember', id: string, avatarUrl?: string | null, userEmail: string, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, currentUserWorkspace?: { __typename?: 'UserWorkspace', id: string, permissionFlags?: Array<PermissionFlagType> | null, objectsPermissions?: Array<{ __typename?: 'ObjectPermission', objectMetadataId: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null, restrictedFields?: any | null, rowLevelPermissionPredicates?: Array<{ __typename?: 'RowLevelPermissionPredicate', id: string, fieldMetadataId: string, objectMetadataId: string, operand: RowLevelPermissionPredicateOperand, subFieldName?: string | null, workspaceMemberFieldMetadataId?: string | null, workspaceMemberSubFieldName?: string | null, rowLevelPermissionPredicateGroupId?: string | null, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, value?: any | null }> | null, rowLevelPermissionPredicateGroups?: Array<{ __typename?: 'RowLevelPermissionPredicateGroup', id: string, parentRowLevelPermissionPredicateGroupId?: string | null, logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, objectMetadataId: string }> | null }> | null, twoFactorAuthenticationMethodSummary?: Array<{ __typename?: 'TwoFactorAuthenticationMethodSummary', twoFactorAuthenticationMethodId: string, status: string, strategy: string }> | null } | null, currentWorkspace?: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, inviteHash?: string | null, allowImpersonation: boolean, activationStatus: WorkspaceActivationStatus, isPublicInviteLinkEnabled: boolean, isGoogleAuthEnabled: boolean, isMicrosoftAuthEnabled: boolean, isPasswordAuthEnabled: boolean, isGoogleAuthBypassEnabled: boolean, isMicrosoftAuthBypassEnabled: boolean, isPasswordAuthBypassEnabled: boolean, subdomain: string, customDomain?: string | null, hasValidEnterpriseKey: boolean, isCustomDomainEnabled: boolean, metadataVersion: number, workspaceMembersCount?: number | null, fastModel: string, smartModel: string, aiAdditionalInstructions?: string | null, autoEnableNewAiModels: boolean, disabledAiModelIds?: Array<string> | null, enabledAiModelIds?: Array<string> | null, useRecommendedModels: boolean, isTwoFactorAuthenticationEnforced: boolean, trashRetentionDays: number, eventLogRetentionDays: number, editableProfileFields?: Array<string> | null, workspaceCustomApplication?: { __typename?: 'Application', id: string } | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, featureFlags?: Array<{ __typename?: 'FeatureFlag', key: FeatureFlagKey, value: boolean }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, interval?: SubscriptionInterval | null, metadata: any, currentPeriodEnd?: string | null, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }>, billingSubscriptionItems?: Array<{ __typename?: 'BillingSubscriptionItem', id: string, hasReachedCurrentPeriodCap: boolean, quantity?: number | null, stripePriceId: string, billingProduct: { __typename?: 'BillingLicensedProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } | { __typename?: 'BillingMeteredProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } }> | null } | null, billingSubscriptions: Array<{ __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, metadata: any, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }> }>, billingEntitlements: Array<{ __typename?: 'BillingEntitlement', key: BillingEntitlementKey, value: boolean }>, defaultRole?: { __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, canAccessAllTools: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, canBeAssignedToUsers: boolean, canBeAssignedToAgents: boolean, canBeAssignedToApiKeys: boolean } | null } | null, availableWorkspaces: { __typename?: 'AvailableWorkspaces', availableWorkspacesForSignIn: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }>, availableWorkspacesForSignUp: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }> } } };
+export type GetCurrentUserQuery = { __typename?: 'Query', currentUser: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, hasPassword: boolean, canAccessFullAdminPanel: boolean, canImpersonate: boolean, supportUserHash?: string | null, onboardingStatus?: OnboardingStatus | null, userVars?: any | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, userWorkspaceId?: string | null, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, calendarStartDay?: number | null, numberFormat?: WorkspaceMemberNumberFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, workspaceMembers?: Array<{ __typename?: 'WorkspaceMember', id: string, avatarUrl?: string | null, userEmail: string, userWorkspaceId?: string | null, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, deletedWorkspaceMembers?: Array<{ __typename?: 'DeletedWorkspaceMember', id: string, avatarUrl?: string | null, userEmail: string, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, currentUserWorkspace?: { __typename?: 'UserWorkspace', id: string, permissionFlags?: Array<PermissionFlagType> | null, objectsPermissions?: Array<{ __typename?: 'ObjectPermission', objectMetadataId: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null, restrictedFields?: any | null, rowLevelPermissionPredicates?: Array<{ __typename?: 'RowLevelPermissionPredicate', id: string, fieldMetadataId: string, objectMetadataId: string, operand: RowLevelPermissionPredicateOperand, subFieldName?: string | null, workspaceMemberFieldMetadataId?: string | null, workspaceMemberSubFieldName?: string | null, rowLevelPermissionPredicateGroupId?: string | null, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, value?: any | null }> | null, rowLevelPermissionPredicateGroups?: Array<{ __typename?: 'RowLevelPermissionPredicateGroup', id: string, parentRowLevelPermissionPredicateGroupId?: string | null, logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, objectMetadataId: string }> | null }> | null, twoFactorAuthenticationMethodSummary?: Array<{ __typename?: 'TwoFactorAuthenticationMethodSummary', twoFactorAuthenticationMethodId: string, status: string, strategy: string }> | null } | null, currentWorkspace?: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, inviteHash?: string | null, allowImpersonation: boolean, activationStatus: WorkspaceActivationStatus, isPublicInviteLinkEnabled: boolean, isGoogleAuthEnabled: boolean, isMicrosoftAuthEnabled: boolean, isPasswordAuthEnabled: boolean, isGoogleAuthBypassEnabled: boolean, isMicrosoftAuthBypassEnabled: boolean, isPasswordAuthBypassEnabled: boolean, subdomain: string, customDomain?: string | null, hasValidEnterpriseKey: boolean, hasValidSignedEnterpriseKey: boolean, hasValidEnterpriseValidityToken: boolean, isCustomDomainEnabled: boolean, metadataVersion: number, workspaceMembersCount?: number | null, fastModel: string, smartModel: string, aiAdditionalInstructions?: string | null, autoEnableNewAiModels: boolean, disabledAiModelIds?: Array<string> | null, enabledAiModelIds?: Array<string> | null, useRecommendedModels: boolean, isTwoFactorAuthenticationEnforced: boolean, trashRetentionDays: number, eventLogRetentionDays: number, editableProfileFields?: Array<string> | null, workspaceCustomApplication?: { __typename?: 'Application', id: string } | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, featureFlags?: Array<{ __typename?: 'FeatureFlag', key: FeatureFlagKey, value: boolean }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, interval?: SubscriptionInterval | null, metadata: any, currentPeriodEnd?: string | null, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }>, billingSubscriptionItems?: Array<{ __typename?: 'BillingSubscriptionItem', id: string, hasReachedCurrentPeriodCap: boolean, quantity?: number | null, stripePriceId: string, billingProduct: { __typename?: 'BillingLicensedProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } | { __typename?: 'BillingMeteredProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } }> | null } | null, billingSubscriptions: Array<{ __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, metadata: any, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }> }>, billingEntitlements: Array<{ __typename?: 'BillingEntitlement', key: BillingEntitlementKey, value: boolean }>, defaultRole?: { __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, canAccessAllTools: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, canBeAssignedToUsers: boolean, canBeAssignedToAgents: boolean, canBeAssignedToApiKeys: boolean } | null } | null, availableWorkspaces: { __typename?: 'AvailableWorkspaces', availableWorkspacesForSignIn: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }>, availableWorkspacesForSignUp: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }> } } };
 
 export type ViewFieldFragmentFragment = { __typename?: 'CoreViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null };
 
@@ -8329,6 +8438,8 @@ export const UserQueryFragmentFragmentDoc = gql`
     subdomain
     customDomain
     hasValidEnterpriseKey
+    hasValidSignedEnterpriseKey
+    hasValidEnterpriseValidityToken
     workspaceCustomApplication {
       id
     }
@@ -14525,6 +14636,177 @@ export function useGetEmailingDomainsLazyQuery(baseOptions?: Apollo.LazyQueryHoo
 export type GetEmailingDomainsQueryHookResult = ReturnType<typeof useGetEmailingDomainsQuery>;
 export type GetEmailingDomainsLazyQueryHookResult = ReturnType<typeof useGetEmailingDomainsLazyQuery>;
 export type GetEmailingDomainsQueryResult = Apollo.QueryResult<GetEmailingDomainsQuery, GetEmailingDomainsQueryVariables>;
+export const RefreshEnterpriseValidityTokenDocument = gql`
+    mutation RefreshEnterpriseValidityToken {
+  refreshEnterpriseValidityToken
+}
+    `;
+export type RefreshEnterpriseValidityTokenMutationFn = Apollo.MutationFunction<RefreshEnterpriseValidityTokenMutation, RefreshEnterpriseValidityTokenMutationVariables>;
+
+/**
+ * __useRefreshEnterpriseValidityTokenMutation__
+ *
+ * To run a mutation, you first call `useRefreshEnterpriseValidityTokenMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRefreshEnterpriseValidityTokenMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [refreshEnterpriseValidityTokenMutation, { data, loading, error }] = useRefreshEnterpriseValidityTokenMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useRefreshEnterpriseValidityTokenMutation(baseOptions?: Apollo.MutationHookOptions<RefreshEnterpriseValidityTokenMutation, RefreshEnterpriseValidityTokenMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RefreshEnterpriseValidityTokenMutation, RefreshEnterpriseValidityTokenMutationVariables>(RefreshEnterpriseValidityTokenDocument, options);
+      }
+export type RefreshEnterpriseValidityTokenMutationHookResult = ReturnType<typeof useRefreshEnterpriseValidityTokenMutation>;
+export type RefreshEnterpriseValidityTokenMutationResult = Apollo.MutationResult<RefreshEnterpriseValidityTokenMutation>;
+export type RefreshEnterpriseValidityTokenMutationOptions = Apollo.BaseMutationOptions<RefreshEnterpriseValidityTokenMutation, RefreshEnterpriseValidityTokenMutationVariables>;
+export const SetEnterpriseKeyDocument = gql`
+    mutation SetEnterpriseKey($enterpriseKey: String!) {
+  setEnterpriseKey(enterpriseKey: $enterpriseKey) {
+    isValid
+    licensee
+    expiresAt
+    subscriptionId
+  }
+}
+    `;
+export type SetEnterpriseKeyMutationFn = Apollo.MutationFunction<SetEnterpriseKeyMutation, SetEnterpriseKeyMutationVariables>;
+
+/**
+ * __useSetEnterpriseKeyMutation__
+ *
+ * To run a mutation, you first call `useSetEnterpriseKeyMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSetEnterpriseKeyMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [setEnterpriseKeyMutation, { data, loading, error }] = useSetEnterpriseKeyMutation({
+ *   variables: {
+ *      enterpriseKey: // value for 'enterpriseKey'
+ *   },
+ * });
+ */
+export function useSetEnterpriseKeyMutation(baseOptions?: Apollo.MutationHookOptions<SetEnterpriseKeyMutation, SetEnterpriseKeyMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SetEnterpriseKeyMutation, SetEnterpriseKeyMutationVariables>(SetEnterpriseKeyDocument, options);
+      }
+export type SetEnterpriseKeyMutationHookResult = ReturnType<typeof useSetEnterpriseKeyMutation>;
+export type SetEnterpriseKeyMutationResult = Apollo.MutationResult<SetEnterpriseKeyMutation>;
+export type SetEnterpriseKeyMutationOptions = Apollo.BaseMutationOptions<SetEnterpriseKeyMutation, SetEnterpriseKeyMutationVariables>;
+export const EnterpriseCheckoutSessionDocument = gql`
+    query EnterpriseCheckoutSession($billingInterval: String) {
+  enterpriseCheckoutSession(billingInterval: $billingInterval)
+}
+    `;
+
+/**
+ * __useEnterpriseCheckoutSessionQuery__
+ *
+ * To run a query within a React component, call `useEnterpriseCheckoutSessionQuery` and pass it any options that fit your needs.
+ * When your component renders, `useEnterpriseCheckoutSessionQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useEnterpriseCheckoutSessionQuery({
+ *   variables: {
+ *      billingInterval: // value for 'billingInterval'
+ *   },
+ * });
+ */
+export function useEnterpriseCheckoutSessionQuery(baseOptions?: Apollo.QueryHookOptions<EnterpriseCheckoutSessionQuery, EnterpriseCheckoutSessionQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<EnterpriseCheckoutSessionQuery, EnterpriseCheckoutSessionQueryVariables>(EnterpriseCheckoutSessionDocument, options);
+      }
+export function useEnterpriseCheckoutSessionLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<EnterpriseCheckoutSessionQuery, EnterpriseCheckoutSessionQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<EnterpriseCheckoutSessionQuery, EnterpriseCheckoutSessionQueryVariables>(EnterpriseCheckoutSessionDocument, options);
+        }
+export type EnterpriseCheckoutSessionQueryHookResult = ReturnType<typeof useEnterpriseCheckoutSessionQuery>;
+export type EnterpriseCheckoutSessionLazyQueryHookResult = ReturnType<typeof useEnterpriseCheckoutSessionLazyQuery>;
+export type EnterpriseCheckoutSessionQueryResult = Apollo.QueryResult<EnterpriseCheckoutSessionQuery, EnterpriseCheckoutSessionQueryVariables>;
+export const EnterprisePortalSessionDocument = gql`
+    query EnterprisePortalSession($returnUrlPath: String) {
+  enterprisePortalSession(returnUrlPath: $returnUrlPath)
+}
+    `;
+
+/**
+ * __useEnterprisePortalSessionQuery__
+ *
+ * To run a query within a React component, call `useEnterprisePortalSessionQuery` and pass it any options that fit your needs.
+ * When your component renders, `useEnterprisePortalSessionQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useEnterprisePortalSessionQuery({
+ *   variables: {
+ *      returnUrlPath: // value for 'returnUrlPath'
+ *   },
+ * });
+ */
+export function useEnterprisePortalSessionQuery(baseOptions?: Apollo.QueryHookOptions<EnterprisePortalSessionQuery, EnterprisePortalSessionQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<EnterprisePortalSessionQuery, EnterprisePortalSessionQueryVariables>(EnterprisePortalSessionDocument, options);
+      }
+export function useEnterprisePortalSessionLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<EnterprisePortalSessionQuery, EnterprisePortalSessionQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<EnterprisePortalSessionQuery, EnterprisePortalSessionQueryVariables>(EnterprisePortalSessionDocument, options);
+        }
+export type EnterprisePortalSessionQueryHookResult = ReturnType<typeof useEnterprisePortalSessionQuery>;
+export type EnterprisePortalSessionLazyQueryHookResult = ReturnType<typeof useEnterprisePortalSessionLazyQuery>;
+export type EnterprisePortalSessionQueryResult = Apollo.QueryResult<EnterprisePortalSessionQuery, EnterprisePortalSessionQueryVariables>;
+export const EnterpriseSubscriptionStatusDocument = gql`
+    query EnterpriseSubscriptionStatus {
+  enterpriseSubscriptionStatus {
+    status
+    licensee
+    expiresAt
+    cancelAt
+    currentPeriodEnd
+    isCancellationScheduled
+  }
+}
+    `;
+
+/**
+ * __useEnterpriseSubscriptionStatusQuery__
+ *
+ * To run a query within a React component, call `useEnterpriseSubscriptionStatusQuery` and pass it any options that fit your needs.
+ * When your component renders, `useEnterpriseSubscriptionStatusQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useEnterpriseSubscriptionStatusQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useEnterpriseSubscriptionStatusQuery(baseOptions?: Apollo.QueryHookOptions<EnterpriseSubscriptionStatusQuery, EnterpriseSubscriptionStatusQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<EnterpriseSubscriptionStatusQuery, EnterpriseSubscriptionStatusQueryVariables>(EnterpriseSubscriptionStatusDocument, options);
+      }
+export function useEnterpriseSubscriptionStatusLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<EnterpriseSubscriptionStatusQuery, EnterpriseSubscriptionStatusQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<EnterpriseSubscriptionStatusQuery, EnterpriseSubscriptionStatusQueryVariables>(EnterpriseSubscriptionStatusDocument, options);
+        }
+export type EnterpriseSubscriptionStatusQueryHookResult = ReturnType<typeof useEnterpriseSubscriptionStatusQuery>;
+export type EnterpriseSubscriptionStatusLazyQueryHookResult = ReturnType<typeof useEnterpriseSubscriptionStatusLazyQuery>;
+export type EnterpriseSubscriptionStatusQueryResult = Apollo.QueryResult<EnterpriseSubscriptionStatusQuery, EnterpriseSubscriptionStatusQueryVariables>;
 export const UpdateLabPublicFeatureFlagDocument = gql`
     mutation UpdateLabPublicFeatureFlag($input: UpdateLabPublicFeatureFlagInput!) {
   updateLabPublicFeatureFlag(input: $input) {
