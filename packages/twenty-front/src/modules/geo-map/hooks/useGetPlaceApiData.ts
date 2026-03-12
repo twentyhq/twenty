@@ -16,7 +16,9 @@ export const useGetPlaceApiData = () => {
     country?: string,
     isFieldCity?: boolean,
   ): Promise<PlaceAutocompleteResult[] | undefined> => {
-    const { data } = await apolloClient.query({
+    const { data } = await apolloClient.query<{
+      getAutoCompleteAddress: PlaceAutocompleteResult[];
+    }>({
       query: GET_AUTOCOMPLETE_QUERY,
       variables: { address, token, country, isFieldCity: isFieldCity ?? false },
       fetchPolicy: 'no-cache',
@@ -28,7 +30,9 @@ export const useGetPlaceApiData = () => {
     placeId: string,
     token: string,
   ): Promise<PlaceDetailsResult | undefined> => {
-    const { data } = await apolloClient.query({
+    const { data } = await apolloClient.query<{
+      getAddressDetails: PlaceDetailsResult;
+    }>({
       query: GET_PLACE_DETAILS_QUERY,
       variables: { placeId, token },
       fetchPolicy: 'no-cache',

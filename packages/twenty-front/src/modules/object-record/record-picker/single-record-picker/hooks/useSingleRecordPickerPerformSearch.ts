@@ -37,7 +37,7 @@ export const useSingleRecordPickerPerformSearch = ({
 
   const onSearchRecordsCompleted = useCallback(
     (data: SearchQuery) => {
-      const searchRecords = data.search.edges.map((edge) => edge.node);
+      const searchRecords = data?.search?.edges?.map((edge) => edge.node) ?? [];
 
       searchRecords.forEach((searchRecord) => {
         store.set(
@@ -102,8 +102,9 @@ export const useSingleRecordPickerPerformSearch = ({
       onCompleted: onSearchRecordsCompleted,
     });
 
-  const pickableMorphItems = [...selectedRecords, ...recordsToSelect].map(
-    (record) => {
+  const pickableMorphItems = [...selectedRecords, ...recordsToSelect]
+    .filter(isDefined)
+    .map((record) => {
       const objectMetadataItem = objectMetadataItems.find(
         (objectMetadataItem) =>
           objectMetadataItem.nameSingular === record.objectNameSingular,
@@ -121,20 +122,19 @@ export const useSingleRecordPickerPerformSearch = ({
         recordId: record.recordId,
         objectMetadataId: objectMetadataItem.id,
         isSelected: selectedRecords.some(
-          (selectedRecord) => selectedRecord.recordId === record.recordId,
+          (selectedRecord) => selectedRecord?.recordId === record.recordId,
         ),
         isMatchingSearchFilter:
           recordsToSelect.some(
             (recordsToSelectRecord) =>
-              recordsToSelectRecord.recordId === record.recordId,
+              recordsToSelectRecord?.recordId === record.recordId,
           ) ||
           filteredSelectedRecords.some(
             (filteredSelectedRecord) =>
-              filteredSelectedRecord.recordId === record.recordId,
+              filteredSelectedRecord?.recordId === record.recordId,
           ),
       };
-    },
-  );
+    });
 
   return {
     pickableMorphItems,

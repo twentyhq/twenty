@@ -64,7 +64,7 @@ describe('useHandleResetPassword', () => {
       enqueueErrorSnackBar: enqueueErrorSnackBarMock,
       enqueueSuccessSnackBar: enqueueSuccessSnackBarMock,
     });
-    (useMutation as jest.Mock).mockReturnValue([
+    (useMutation as unknown as jest.Mock).mockReturnValue([
       emailPasswordResetLinkMock,
     ]);
   });

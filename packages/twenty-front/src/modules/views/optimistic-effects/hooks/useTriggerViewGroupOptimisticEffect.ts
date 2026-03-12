@@ -34,10 +34,8 @@ export const useTriggerViewGroupOptimisticEffect = () => {
             id: createdViewGroup.viewId,
           }),
           fields: {
-            viewGroups: (existingViewGroups, { toReference }) => [
-              ...(existingViewGroups ?? []),
-              toReference(createdViewGroup),
-            ],
+            viewGroups: (existingViewGroups, { toReference }) =>
+              [...(existingViewGroups ?? []), toReference(createdViewGroup)].filter(isDefined),
           },
         });
         const toBeModifiedCoreView = newCoreViews.find(
@@ -73,7 +71,7 @@ export const useTriggerViewGroupOptimisticEffect = () => {
                   return toReference(updatedViewGroup);
                 }
                 return viewGroup;
-              }),
+              }).filter(isDefined),
           },
         });
         const toBeModifiedCoreView = newCoreViews.find(

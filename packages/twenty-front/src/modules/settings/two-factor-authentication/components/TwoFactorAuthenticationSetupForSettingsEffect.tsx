@@ -1,21 +1,13 @@
 import { currentUserState } from '@/auth/states/currentUserState';
 import { qrCodeState } from '@/auth/states/qrCode';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { gql } from '@apollo/client';
 import { useMutation } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-
-const INITIATE_OTP_PROVISIONING_FOR_AUTHENTICATED_USER = gql`
-  mutation initiateOTPProvisioningForAuthenticatedUser {
-    initiateOTPProvisioningForAuthenticatedUser {
-      uri
-    }
-  }
-`;
+import { InitiateOtpProvisioningForAuthenticatedUserDocument } from '~/generated-metadata/graphql';
 
 export const TwoFactorAuthenticationSetupForSettingsEffect = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
@@ -25,7 +17,7 @@ export const TwoFactorAuthenticationSetupForSettingsEffect = () => {
   const { t } = useLingui();
 
   const [initiateOTPProvisioningForAuthenticatedUser] = useMutation(
-    INITIATE_OTP_PROVISIONING_FOR_AUTHENTICATED_USER,
+    InitiateOtpProvisioningForAuthenticatedUserDocument,
   );
 
   useEffect(() => {

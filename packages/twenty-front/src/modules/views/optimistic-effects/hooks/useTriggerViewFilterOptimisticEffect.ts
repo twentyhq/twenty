@@ -33,10 +33,8 @@ export const useTriggerViewFilterOptimisticEffect = () => {
             id: createdViewFilter.viewId,
           }),
           fields: {
-            viewFilters: (existingViewFilters, { toReference }) => [
-              ...(existingViewFilters ?? []),
-              toReference(createdViewFilter),
-            ],
+            viewFilters: (existingViewFilters, { toReference }) =>
+              [...(existingViewFilters ?? []), toReference(createdViewFilter)].filter(isDefined),
           },
         });
         const toBeModifiedCoreView = newCoreViews.find(
@@ -72,7 +70,7 @@ export const useTriggerViewFilterOptimisticEffect = () => {
                   return toReference(updatedViewFilter);
                 }
                 return viewFilter;
-              }),
+              }).filter(isDefined),
           },
         });
         const toBeModifiedCoreView = newCoreViews.find(

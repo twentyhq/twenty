@@ -195,7 +195,7 @@ export const useCreateManyRecords = <
           },
         },
         update: (cache, { data }) => {
-          const records = data?.[mutationResponseField];
+          const records = (data as Record<string, any>)?.[mutationResponseField];
 
           if (
             !isDefined(records?.length) ||
@@ -251,7 +251,7 @@ export const useCreateManyRecords = <
       operation: { type: 'create-many' },
     });
 
-    return createdObjects.data?.[mutationResponseField] ?? [];
+    return (createdObjects.data as Record<string, any>)?.[mutationResponseField] ?? [];
   };
 
   return { createManyRecords };

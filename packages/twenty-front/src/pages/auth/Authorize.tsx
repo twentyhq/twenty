@@ -1,4 +1,3 @@
-import { FIND_APPLICATION_REGISTRATION_BY_CLIENT_ID } from '@/settings/application-registrations/graphql/queries/findApplicationRegistrationByClientId';
 import { styled } from '@linaria/react';
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
@@ -13,7 +12,10 @@ import { Avatar } from 'twenty-ui/display';
 import { MainButton } from 'twenty-ui/input';
 import { UndecoratedLink } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { AuthorizeAppDocument } from '~/generated-metadata/graphql';
+import {
+  AuthorizeAppDocument,
+  FindApplicationRegistrationByClientIdDocument,
+} from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 const StyledContainer = styled.div`
@@ -105,7 +107,7 @@ export const Authorize = () => {
     data,
     loading,
     error: queryError,
-  } = useQuery(FIND_APPLICATION_REGISTRATION_BY_CLIENT_ID, {
+  } = useQuery(FindApplicationRegistrationByClientIdDocument, {
     variables: { clientId: clientId ?? '' },
     skip: !isDefined(clientId),
   });

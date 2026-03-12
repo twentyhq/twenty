@@ -66,13 +66,13 @@ export const useActivateWorkflowVersion = () => {
 
         const cacheSnapshot = apolloCoreClient.cache.extract();
 
-        const allWorkflowVersions: Array<WorkflowVersion> = Object.values(
-          cacheSnapshot,
+        const allWorkflowVersions = (
+          Object.values(cacheSnapshot) as Array<Record<string, unknown>>
         ).filter(
           (item) =>
             item.__typename === 'WorkflowVersion' &&
             item.workflowId === workflowId,
-        );
+        ) as Array<WorkflowVersion>;
 
         const previousActiveWorkflowVersions = allWorkflowVersions.filter(
           (version) =>

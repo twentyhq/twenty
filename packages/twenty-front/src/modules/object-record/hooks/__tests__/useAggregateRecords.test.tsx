@@ -41,7 +41,7 @@ describe('useAggregateRecords', () => {
       gqlFieldToFieldMap: mockGqlFieldToFieldMap,
     });
 
-    (useQuery as jest.Mock).mockReturnValue({
+    (useQuery as unknown as jest.Mock).mockReturnValue({
       data: mockResponse,
       loading: false,
       error: undefined,
@@ -77,7 +77,7 @@ describe('useAggregateRecords', () => {
   });
 
   it('should handle loading state', () => {
-    (useQuery as jest.Mock).mockReturnValue({
+    (useQuery as unknown as jest.Mock).mockReturnValue({
       data: undefined,
       loading: true,
       error: undefined,
@@ -102,7 +102,7 @@ describe('useAggregateRecords', () => {
 
   it('should handle error state', () => {
     const mockError = new Error('Query failed');
-    (useQuery as jest.Mock).mockReturnValue({
+    (useQuery as unknown as jest.Mock).mockReturnValue({
       data: undefined,
       loading: false,
       error: mockError,

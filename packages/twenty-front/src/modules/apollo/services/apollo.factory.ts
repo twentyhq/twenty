@@ -323,7 +323,9 @@ export class ApolloFactory implements ApolloManager {
         },
       );
 
-      const links: ApolloLink[] = [
+      // Type assertion needed because third-party link packages (apollo-link-rest,
+      // apollo-upload-client) reference their own @apollo/client ApolloLink type
+      const links = [
         errorLink,
         authLink,
         ...(extraLinks || []),
@@ -332,7 +334,7 @@ export class ApolloFactory implements ApolloManager {
         streamingRestLink,
         restLink,
         uploadLink,
-      ];
+      ] as ApolloLink[];
 
       return ApolloLink.from(links);
     };

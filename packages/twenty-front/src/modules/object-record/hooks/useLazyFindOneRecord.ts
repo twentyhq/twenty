@@ -53,19 +53,19 @@ export const useLazyFindOneRecord = <T extends ObjectRecord = ObjectRecord>({
       objectRecordId,
       onCompleted,
     }: FindOneRecordParams<T>) => {
-      await findOneRecord({
+      const result = await findOneRecord({
         variables: { objectRecordId },
-        onCompleted: (data) => {
-          const record = getRecordFromRecordNode<T>({
-            recordNode: data[objectNameSingular],
-          });
-          onCompleted?.(record);
-        },
       });
+      if (result.data) {
+        const record = getRecordFromRecordNode<T>({
+          recordNode: (result.data as Record<string, any>)[objectNameSingular],
+        });
+        onCompleted?.(record);
+      }
     },
     called,
     error,
     loading,
-    record: data?.[objectNameSingular] || undefined,
+    record: (data as Record<string, any>)?.[objectNameSingular] || undefined,
   };
 };

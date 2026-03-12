@@ -33,10 +33,8 @@ export const useTriggerViewSortOptimisticEffect = () => {
             id: createdViewSort.viewId,
           }),
           fields: {
-            viewSorts: (existingViewSorts, { toReference }) => [
-              ...(existingViewSorts ?? []),
-              toReference(createdViewSort),
-            ],
+            viewSorts: (existingViewSorts, { toReference }) =>
+              [...(existingViewSorts ?? []), toReference(createdViewSort)].filter(isDefined),
           },
         });
         const toBeModifiedCoreView = newCoreViews.find(
@@ -69,7 +67,7 @@ export const useTriggerViewSortOptimisticEffect = () => {
                   return toReference(updatedViewSort);
                 }
                 return viewSort;
-              }),
+              }).filter(isDefined),
           },
         });
         const toBeModifiedCoreView = newCoreViews.find(

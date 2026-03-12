@@ -1,4 +1,3 @@
-import { FIND_ALL_APPLICATION_REGISTRATIONS } from '@/settings/admin-panel/apps/graphql/queries/findAllApplicationRegistrations';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
@@ -15,7 +14,10 @@ import { SearchInput } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { UndecoratedLink } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { type ApplicationRegistrationFragmentFragment } from '~/generated-metadata/graphql';
+import {
+  type ApplicationRegistrationFragmentFragment,
+  FindAllApplicationRegistrationsDocument,
+} from '~/generated-metadata/graphql';
 
 const StyledTableContainer = styled.div`
   margin-top: ${themeCssVariables.spacing[3]};
@@ -30,7 +32,7 @@ const TABLE_GRID = '1fr 1fr 100px 80px';
 export const SettingsAdminApps = () => {
   const [searchQuery, setSearchQuery] = useState('');
 
-  const { data } = useQuery(FIND_ALL_APPLICATION_REGISTRATIONS);
+  const { data } = useQuery(FindAllApplicationRegistrationsDocument);
 
   const registrations: ApplicationRegistrationFragmentFragment[] =
     data?.findAllApplicationRegistrations ?? [];

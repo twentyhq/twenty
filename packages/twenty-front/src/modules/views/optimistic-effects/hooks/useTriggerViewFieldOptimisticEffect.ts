@@ -33,10 +33,8 @@ export const useTriggerViewFieldOptimisticEffect = () => {
             id: createdViewField.viewId,
           }),
           fields: {
-            viewFields: (existingViewFields, { toReference }) => [
-              ...(existingViewFields ?? []),
-              toReference(createdViewField),
-            ],
+            viewFields: (existingViewFields, { toReference }) =>
+              [...(existingViewFields ?? []), toReference(createdViewField)].filter(isDefined),
           },
         });
         const toBeModifiedCoreView = newCoreViews.find(
@@ -72,7 +70,7 @@ export const useTriggerViewFieldOptimisticEffect = () => {
                   return toReference(updatedViewField);
                 }
                 return viewField;
-              }),
+              }).filter(isDefined),
           },
         });
         const toBeModifiedCoreView = newCoreViews.find(

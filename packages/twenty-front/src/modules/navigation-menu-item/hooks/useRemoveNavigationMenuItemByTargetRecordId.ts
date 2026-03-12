@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 
-import { FIND_MANY_NAVIGATION_MENU_ITEMS } from '@/navigation-menu-item/graphql/queries/findManyNavigationMenuItems';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
+import { FindManyNavigationMenuItemsDocument } from '~/generated-metadata/graphql';
 import { prefetchNavigationMenuItemsState } from '@/prefetch/states/prefetchNavigationMenuItemsState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { isDefined } from 'twenty-shared/utils';
@@ -31,7 +31,7 @@ export const useRemoveNavigationMenuItemByTargetRecordId = () => {
 
       setPrefetchNavigationMenuItems(updatedNavigationMenuItems);
 
-      cache.updateQuery({ query: FIND_MANY_NAVIGATION_MENU_ITEMS }, (data) => {
+      cache.updateQuery({ query: FindManyNavigationMenuItemsDocument }, (data) => {
         if (!isDefined(data?.navigationMenuItems)) {
           return data;
         }

@@ -16,7 +16,7 @@ import { getSettingsPath } from 'twenty-shared/utils';
 import { H2Title, Status } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { GET_AGENT_TURNS } from '@/ai/graphql/queries/getAgentTurns';
+import { GetAgentTurnsDocument } from '~/generated-metadata/graphql';
 
 const StyledTableContainer = styled.div`
   margin-top: ${themeCssVariables.spacing[3]};
@@ -56,7 +56,7 @@ export const SettingsAgentTurnDetail = () => {
     turnId: string;
   }>();
 
-  const { data, loading } = useQuery(GET_AGENT_TURNS, {
+  const { data, loading } = useQuery(GetAgentTurnsDocument, {
     variables: { agentId: agentId || '' },
     skip: !agentId,
   });

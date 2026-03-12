@@ -153,7 +153,7 @@ export const useLazyFetchMoreRecordsWithPagination = <
             records: getRecordsFromRecordConnection({
               recordConnection: {
                 edges:
-                  fetchMoreDataResult?.[objectMetadataItem.namePlural]?.edges,
+                  fetchMoreDataResult?.[objectMetadataItem.namePlural]?.edges ?? [],
                 pageInfo:
                   fetchMoreDataResult?.[objectMetadataItem.namePlural]
                     ?.pageInfo,

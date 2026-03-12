@@ -38,10 +38,8 @@ export const useTriggerViewFieldGroupOptimisticEffect = () => {
             id: createdViewFieldGroup.viewId,
           }),
           fields: {
-            viewFieldGroups: (existingViewFieldGroups, { toReference }) => [
-              ...(existingViewFieldGroups ?? []),
-              toReference(createdViewFieldGroup),
-            ],
+            viewFieldGroups: (existingViewFieldGroups, { toReference }) =>
+              [...(existingViewFieldGroups ?? []), toReference(createdViewFieldGroup)].filter(isDefined),
           },
         });
         const toBeModifiedCoreView = newCoreViews.find(
@@ -83,7 +81,7 @@ export const useTriggerViewFieldGroupOptimisticEffect = () => {
                   return toReference(updatedViewFieldGroup);
                 }
                 return viewFieldGroup;
-              }) ?? [],
+              })?.filter(isDefined) ?? [],
           },
         });
         const toBeModifiedCoreView = newCoreViews.find(

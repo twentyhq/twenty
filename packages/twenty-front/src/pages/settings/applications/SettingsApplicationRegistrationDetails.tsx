@@ -1,5 +1,3 @@
-import { FIND_APPLICATION_REGISTRATION_STATS } from '@/settings/application-registrations/graphql/queries/findApplicationRegistrationStats';
-import { FIND_ONE_APPLICATION_REGISTRATION } from '@/settings/application-registrations/graphql/queries/findOneApplicationRegistration';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
@@ -11,6 +9,10 @@ import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { IconInfoCircle, IconKey, IconWorld } from 'twenty-ui/display';
+import {
+  FindApplicationRegistrationStatsDocument,
+  FindOneApplicationRegistrationDocument,
+} from '~/generated-metadata/graphql';
 import { SettingsApplicationRegistrationGeneralTab } from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab';
 import { SettingsApplicationRegistrationOAuthTab } from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab';
 import { SettingsApplicationRegistrationDistributionTab } from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab';
@@ -29,12 +31,12 @@ export const SettingsApplicationRegistrationDetails = () => {
     REGISTRATION_DETAIL_TAB_LIST_ID,
   );
 
-  const { data, loading } = useQuery(FIND_ONE_APPLICATION_REGISTRATION, {
+  const { data, loading } = useQuery(FindOneApplicationRegistrationDocument, {
     variables: { id: applicationRegistrationId },
     skip: !applicationRegistrationId,
   });
 
-  const { data: statsData } = useQuery(FIND_APPLICATION_REGISTRATION_STATS, {
+  const { data: statsData } = useQuery(FindApplicationRegistrationStatsDocument, {
     variables: { id: applicationRegistrationId },
     skip: !applicationRegistrationId,
   });
