@@ -12,17 +12,9 @@ export const STANDARD_FRONT_COMPONENT_BUILD_MANIFEST = {
     "builtComponentPath": "dashboard/cancel-dashboard-layout.front-component.mjs",
     "builtComponentChecksum": "1233c1c6b371e623c29b58aa3ca9dfec"
   },
-  "duplicateDashboard": {
-    "builtComponentPath": "dashboard/duplicate-dashboard.front-component.mjs",
-    "builtComponentChecksum": "1233c1c6b371e623c29b58aa3ca9dfec"
-  },
   "editDashboardLayout": {
     "builtComponentPath": "dashboard/edit-dashboard-layout.front-component.mjs",
     "builtComponentChecksum": "2d8373187861b98be2b46922308787b0"
-  },
-  "saveDashboardLayout": {
-    "builtComponentPath": "dashboard/save-dashboard-layout.front-component.mjs",
-    "builtComponentChecksum": "1233c1c6b371e623c29b58aa3ca9dfec"
   },
   "goToCompanies": {
     "builtComponentPath": "navigation/go-to-companies.front-component.mjs",
@@ -68,36 +60,8 @@ export const STANDARD_FRONT_COMPONENT_BUILD_MANIFEST = {
     "builtComponentPath": "page-layout/edit-record-page-layout.front-component.mjs",
     "builtComponentChecksum": "2d8373187861b98be2b46922308787b0"
   },
-  "saveRecordPageLayout": {
-    "builtComponentPath": "page-layout/save-record-page-layout.front-component.mjs",
-    "builtComponentChecksum": "1233c1c6b371e623c29b58aa3ca9dfec"
-  },
-  "addToFavorites": {
-    "builtComponentPath": "record/add-to-favorites.front-component.mjs",
-    "builtComponentChecksum": "1233c1c6b371e623c29b58aa3ca9dfec"
-  },
-  "createNewRecord": {
-    "builtComponentPath": "record/create-new-record.front-component.mjs",
-    "builtComponentChecksum": "1233c1c6b371e623c29b58aa3ca9dfec"
-  },
   "createNewView": {
     "builtComponentPath": "record/create-new-view.front-component.mjs",
-    "builtComponentChecksum": "1233c1c6b371e623c29b58aa3ca9dfec"
-  },
-  "deleteMultipleRecords": {
-    "builtComponentPath": "record/delete-multiple-records.front-component.mjs",
-    "builtComponentChecksum": "1233c1c6b371e623c29b58aa3ca9dfec"
-  },
-  "deleteSingleRecord": {
-    "builtComponentPath": "record/delete-single-record.front-component.mjs",
-    "builtComponentChecksum": "1233c1c6b371e623c29b58aa3ca9dfec"
-  },
-  "destroyMultipleRecords": {
-    "builtComponentPath": "record/destroy-multiple-records.front-component.mjs",
-    "builtComponentChecksum": "1233c1c6b371e623c29b58aa3ca9dfec"
-  },
-  "destroySingleRecord": {
-    "builtComponentPath": "record/destroy-single-record.front-component.mjs",
     "builtComponentChecksum": "1233c1c6b371e623c29b58aa3ca9dfec"
   },
   "exportFromRecordIndex": {
@@ -128,28 +92,12 @@ export const STANDARD_FRONT_COMPONENT_BUILD_MANIFEST = {
     "builtComponentPath": "record/import-records.front-component.mjs",
     "builtComponentChecksum": "1233c1c6b371e623c29b58aa3ca9dfec"
   },
-  "mergeMultipleRecords": {
-    "builtComponentPath": "record/merge-multiple-records.front-component.mjs",
-    "builtComponentChecksum": "1233c1c6b371e623c29b58aa3ca9dfec"
-  },
   "navigateToNextRecord": {
     "builtComponentPath": "record/navigate-to-next-record.front-component.mjs",
     "builtComponentChecksum": "1233c1c6b371e623c29b58aa3ca9dfec"
   },
   "navigateToPreviousRecord": {
     "builtComponentPath": "record/navigate-to-previous-record.front-component.mjs",
-    "builtComponentChecksum": "1233c1c6b371e623c29b58aa3ca9dfec"
-  },
-  "removeFromFavorites": {
-    "builtComponentPath": "record/remove-from-favorites.front-component.mjs",
-    "builtComponentChecksum": "1233c1c6b371e623c29b58aa3ca9dfec"
-  },
-  "restoreMultipleRecords": {
-    "builtComponentPath": "record/restore-multiple-records.front-component.mjs",
-    "builtComponentChecksum": "1233c1c6b371e623c29b58aa3ca9dfec"
-  },
-  "restoreSingleRecord": {
-    "builtComponentPath": "record/restore-single-record.front-component.mjs",
     "builtComponentChecksum": "1233c1c6b371e623c29b58aa3ca9dfec"
   },
   "seeDeletedRecords": {
@@ -184,10 +132,6 @@ export const STANDARD_FRONT_COMPONENT_BUILD_MANIFEST = {
     "builtComponentPath": "workflow-run/see-workflow-workflow-run.front-component.mjs",
     "builtComponentChecksum": "1233c1c6b371e623c29b58aa3ca9dfec"
   },
-  "stopWorkflowRun": {
-    "builtComponentPath": "workflow-run/stop-workflow-run.front-component.mjs",
-    "builtComponentChecksum": "1233c1c6b371e623c29b58aa3ca9dfec"
-  },
   "seeRunsWorkflowVersion": {
     "builtComponentPath": "workflow-version/see-runs-workflow-version.front-component.mjs",
     "builtComponentChecksum": "1233c1c6b371e623c29b58aa3ca9dfec"
@@ -200,28 +144,8 @@ export const STANDARD_FRONT_COMPONENT_BUILD_MANIFEST = {
     "builtComponentPath": "workflow-version/see-workflow-workflow-version.front-component.mjs",
     "builtComponentChecksum": "1233c1c6b371e623c29b58aa3ca9dfec"
   },
-  "useAsDraftWorkflowVersion": {
-    "builtComponentPath": "workflow-version/use-as-draft-workflow-version.front-component.mjs",
-    "builtComponentChecksum": "1233c1c6b371e623c29b58aa3ca9dfec"
-  },
-  "activateWorkflow": {
-    "builtComponentPath": "workflow/activate-workflow.front-component.mjs",
-    "builtComponentChecksum": "1233c1c6b371e623c29b58aa3ca9dfec"
-  },
   "addNodeWorkflow": {
     "builtComponentPath": "workflow/add-node-workflow.front-component.mjs",
-    "builtComponentChecksum": "1233c1c6b371e623c29b58aa3ca9dfec"
-  },
-  "deactivateWorkflow": {
-    "builtComponentPath": "workflow/deactivate-workflow.front-component.mjs",
-    "builtComponentChecksum": "1233c1c6b371e623c29b58aa3ca9dfec"
-  },
-  "discardDraftWorkflow": {
-    "builtComponentPath": "workflow/discard-draft-workflow.front-component.mjs",
-    "builtComponentChecksum": "1233c1c6b371e623c29b58aa3ca9dfec"
-  },
-  "duplicateWorkflow": {
-    "builtComponentPath": "workflow/duplicate-workflow.front-component.mjs",
     "builtComponentChecksum": "1233c1c6b371e623c29b58aa3ca9dfec"
   },
   "seeActiveVersionWorkflow": {
@@ -234,14 +158,6 @@ export const STANDARD_FRONT_COMPONENT_BUILD_MANIFEST = {
   },
   "seeVersionsWorkflow": {
     "builtComponentPath": "workflow/see-versions-workflow.front-component.mjs",
-    "builtComponentChecksum": "1233c1c6b371e623c29b58aa3ca9dfec"
-  },
-  "testWorkflow": {
-    "builtComponentPath": "workflow/test-workflow.front-component.mjs",
-    "builtComponentChecksum": "1233c1c6b371e623c29b58aa3ca9dfec"
-  },
-  "tidyUpWorkflow": {
-    "builtComponentPath": "workflow/tidy-up-workflow.front-component.mjs",
     "builtComponentChecksum": "1233c1c6b371e623c29b58aa3ca9dfec"
   }
 } as const;

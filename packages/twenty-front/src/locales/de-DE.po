@@ -806,6 +806,13 @@ msgstr "\"{trimmedName}\" zu den Optionen hinzufügen"
 msgid "Add a {objectLabelSingular}"
 msgstr "Ein {objectLabelSingular} hinzufügen"
 
+#. js-lingui-id: 7W8nJr
+#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationUngroupedEditor.tsx
+#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupDropdown.tsx
+#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationEditor.tsx
+msgid "Add a Group"
+msgstr ""
+
 #. js-lingui-id: CZDwqQ
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
 msgid "Add a new company we're in touch with (e.g. name, website, industry). Details: "
@@ -820,12 +827,6 @@ msgstr "Knoten hinzufügen"
 #. js-lingui-id: nGv1DN
 #: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemRecordSubView.tsx
 msgid "Add a record"
-msgstr ""
-
-#. js-lingui-id: r8W+9y
-#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationUngroupedEditor.tsx
-#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupEditor.tsx
-msgid "Add a Section"
 msgstr ""
 
 #. js-lingui-id: eMc2xs

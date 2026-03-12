@@ -297,46 +297,60 @@ yarn command:prod cron:workflow:automated-cron-trigger
 **Çevre-yalnızca modu:** `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false` ayarlarsanız, bu değişkenleri `.env` dosyanıza ekleyin.
 </Warning>
 
-## Mantıksal işlevler
+## Mantıksal İşlevler ve Kod Yorumlayıcısı
 
-Twenty, iş akışları ve özel mantık için mantıksal işlevleri destekler. Yürütme ortamı, `SERVERLESS_TYPE` ortam değişkeni aracılığıyla yapılandırılır.
+Twenty, iş akışları için mantıksal işlevleri ve yapay zekâ veri analizi için kod yorumlayıcısını destekler. Her ikisi de kullanıcı tarafından sağlanan kodu çalıştırır ve güvenlik için açık bir yapılandırma gerektirir.
+
+### Güvenlik Varsayılanları
+
+**Üretimde (NODE_ENV=production):** Hem mantıksal işlevler hem de kod yorumlayıcı varsayılan olarak **Devre Dışı**dır. Bu özelliklere ihtiyacınız varsa, onları `LOGIC_FUNCTION_TYPE` ve `CODE_INTERPRETER_TYPE` ile açıkça etkinleştirmeniz gerekir.
+
+**Geliştirmede (NODE_ENV=development):** Yerel olarak çalıştırırken kolaylık olması için her ikisinin varsayılanı **LOCAL**dır.
 
 <Warning>
-**Güvenlik Notu:** Yerel sürücü (`SERVERLESS_TYPE=LOCAL`), herhangi bir sandbox olmadan kodu ana makinede doğrudan bir Node.js sürecinde çalıştırır. Yalnızca geliştirirken güvenilen kod için kullanılmalıdır. Güvenilmeyen kodu işleyen üretim dağıtımları için `SERVERLESS_TYPE=LAMBDA` veya `SERVERLESS_TYPE=DISABLED` kullanmanızı şiddetle öneririz.
+**Güvenlik Notu:** Yerel sürücü (`LOGIC_FUNCTION_TYPE=LOCAL` veya `CODE_INTERPRETER_TYPE=LOCAL`), herhangi bir sandbox olmadan kodu ana makinede doğrudan bir Node.js sürecinde çalıştırır. Yalnızca geliştirirken güvenilen kod için kullanılmalıdır. Üretim dağıtımlarında güvenilmeyen kodu işlerken, `LOGIC_FUNCTION_TYPE=LAMBDA` veya `CODE_INTERPRETER_TYPE=E2B` (korumalı alanla) kullanın ya da bunları devre dışı bırakın.
 </Warning>
 
-### Kullanılabilir Sürücüler
+### Mantıksal İşlevler - Kullanılabilir Sürücüler
 
-| Sürücü     | Ortam Değişkeni            | Kullanım alanı                                 | Güvenlik Düzeyi                      |
-| ---------- | -------------------------- | ---------------------------------------------- | ------------------------------------ |
-| Devre dışı | `SERVERLESS_TYPE=DISABLED` | Mantıksal işlevleri tamamen devre dışı bırakın | Uygulanamaz                          |
-| Yerel      | `SERVERLESS_TYPE=LOCAL`    | Geliştirme ve güvenilir ortamlar               | Düşük (sandbox yok)                  |
-| Lambda     | `SERVERLESS_TYPE=LAMBDA`   | Güvenilmeyen kodla üretim                      | Yüksek (donanım düzeyinde izolasyon) |
+| Sürücü     | Ortam Değişkeni                | Kullanım alanı                                 | Güvenlik Düzeyi                      |
+| ---------- | ------------------------------ | ---------------------------------------------- | ------------------------------------ |
+| Devre dışı | `LOGIC_FUNCTION_TYPE=DISABLED` | Mantıksal işlevleri tamamen devre dışı bırakın | Uygulanamaz                          |
+| Yerel      | `LOGIC_FUNCTION_TYPE=LOCAL`    | Geliştirme ve güvenilir ortamlar               | Düşük (sandbox yok)                  |
+| Lambda     | `LOGIC_FUNCTION_TYPE=LAMBDA`   | Güvenilmeyen kodla üretim                      | Yüksek (donanım düzeyinde izolasyon) |
 
-### Önerilen Yapılandırma
+### Mantıksal İşlevler - Önerilen Yapılandırma
 
 **Geliştirme için:**
 
 ```bash
-SERVERLESS_TYPE=LOCAL  # default
+LOGIC_FUNCTION_TYPE=LOCAL  # default when NODE_ENV=development
 ```
 
 **Üretim için (AWS):**
 
 ```bash
-SERVERLESS_TYPE=LAMBDA
-SERVERLESS_LAMBDA_REGION=us-east-1
-SERVERLESS_LAMBDA_ROLE=arn:aws:iam::123456789:role/your-lambda-role
-SERVERLESS_LAMBDA_ACCESS_KEY_ID=your-access-key
-SERVERLESS_LAMBDA_SECRET_ACCESS_KEY=your-secret-key
+LOGIC_FUNCTION_TYPE=LAMBDA
+LOGIC_FUNCTION_LAMBDA_REGION=us-east-1
+LOGIC_FUNCTION_LAMBDA_ROLE=arn:aws:iam::123456789:role/your-lambda-role
+LOGIC_FUNCTION_LAMBDA_ACCESS_KEY_ID=your-access-key
+LOGIC_FUNCTION_LAMBDA_SECRET_ACCESS_KEY=your-secret-key
 ```
 
 **Mantıksal işlevleri devre dışı bırakmak için:**
 
 ```bash
-SERVERLESS_TYPE=DISABLED
+LOGIC_FUNCTION_TYPE=DISABLED  # default when NODE_ENV=production
 ```
 
+### Kod Yorumlayıcısı - Kullanılabilir Sürücüler
+
+| Sürücü     | Ortam Değişkeni                  | Kullanım Senaryosu                            | Güvenlik Düzeyi                   |
+| ---------- | -------------------------------- | --------------------------------------------- | --------------------------------- |
+| Devre dışı | `CODE_INTERPRETER_TYPE=DISABLED` | Yapay zekâ kod yürütmesini devre dışı bırakın | Uygulanamaz                       |
+| Yerel      | `CODE_INTERPRETER_TYPE=LOCAL`    | Yalnızca geliştirme için                      | Düşük (sandbox yok)               |
+| E2B        | `CODE_INTERPRETER_TYPE=E_2_B`    | Korumalı alanlı yürütmeyle üretim             | Yüksek (yalıtılmış korumalı alan) |
+
 <Note>
-`SERVERLESS_TYPE=DISABLED` kullanıldığında, bir mantıksal işlevi yürütmeye yönelik herhangi bir girişim bir hata döndürür. Bu, Twenty'yi mantıksal işlev yetenekleri olmadan çalıştırmak istiyorsanız kullanışlıdır.
+`LOGIC_FUNCTION_TYPE=DISABLED` veya `CODE_INTERPRETER_TYPE=DISABLED` kullanıldığında, herhangi bir yürütme girişimi bir hata döndürür. Bu, Twenty'yi bu yetenekler olmadan çalıştırmak istiyorsanız kullanışlıdır.
 </Note>
