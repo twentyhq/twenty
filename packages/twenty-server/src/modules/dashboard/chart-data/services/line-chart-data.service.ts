@@ -7,6 +7,7 @@ import {
   isDefined,
 } from 'twenty-shared/utils';
 
+import { CommonQueryRunnerException } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
@@ -200,6 +201,16 @@ export class LineChartDataService {
     } catch (error) {
       if (error instanceof ChartDataException) {
         throw error;
+      }
+
+      if (error instanceof CommonQueryRunnerException) {
+        throw new ChartDataException(
+          generateChartDataExceptionMessage(
+            ChartDataExceptionCode.INVALID_WIDGET_CONFIGURATION,
+            `Line chart filter is invalid: ${error.message}`,
+          ),
+          ChartDataExceptionCode.INVALID_WIDGET_CONFIGURATION,
+        );
       }
 
       throw new ChartDataException(
