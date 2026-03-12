@@ -18,7 +18,10 @@ export const useRedirectToDefaultDomain = () => {
       setLastAuthenticateWorkspaceDomain(null);
 
       const returnToPath = store.get(returnToPathState.atom);
-      if (isNonEmptyString(returnToPath) && !url.searchParams.has('returnToPath')) {
+      if (
+        isNonEmptyString(returnToPath) &&
+        !url.searchParams.has('returnToPath')
+      ) {
         url.searchParams.set('returnToPath', returnToPath);
       }
 

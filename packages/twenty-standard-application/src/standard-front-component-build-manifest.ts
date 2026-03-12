@@ -10,154 +10,154 @@
 export const STANDARD_FRONT_COMPONENT_BUILD_MANIFEST = {
   "cancelDashboardLayout": {
     "builtComponentPath": "dashboard/cancel-dashboard-layout.front-component.mjs",
-    "builtComponentChecksum": "7c3b46d239655bc1688e794659b304f2"
+    "builtComponentChecksum": "1233c1c6b371e623c29b58aa3ca9dfec"
   },
   "editDashboardLayout": {
     "builtComponentPath": "dashboard/edit-dashboard-layout.front-component.mjs",
-    "builtComponentChecksum": "c9ed5c9c9e8654631fd64a78f2718e40"
+    "builtComponentChecksum": "2d8373187861b98be2b46922308787b0"
   },
   "goToCompanies": {
     "builtComponentPath": "navigation/go-to-companies.front-component.mjs",
-    "builtComponentChecksum": "7bee4647f383c7fad9ac56a95317c516"
+    "builtComponentChecksum": "26828ed9d08676e9ea1ab53ca4379c8e"
   },
   "goToDashboards": {
     "builtComponentPath": "navigation/go-to-dashboards.front-component.mjs",
-    "builtComponentChecksum": "91a12d05116b43e67fb0d08e18e297c1"
+    "builtComponentChecksum": "cb7741e370a1012657a4a7515585fe5d"
   },
   "goToNotes": {
     "builtComponentPath": "navigation/go-to-notes.front-component.mjs",
-    "builtComponentChecksum": "adaafc572b5a87af1a5cfa4f32248423"
+    "builtComponentChecksum": "9418d9e4006f808a69019e3570cbe568"
   },
   "goToOpportunities": {
     "builtComponentPath": "navigation/go-to-opportunities.front-component.mjs",
-    "builtComponentChecksum": "921615e35fdd1f061bb41f804e1443a5"
+    "builtComponentChecksum": "3b6ab0baaae946834086cd5b056d8324"
   },
   "goToPeople": {
     "builtComponentPath": "navigation/go-to-people.front-component.mjs",
-    "builtComponentChecksum": "70014c3c1e2f2026da458a04f4468682"
+    "builtComponentChecksum": "3e987e176c032820290c588f319beea1"
   },
   "goToRuns": {
     "builtComponentPath": "navigation/go-to-runs.front-component.mjs",
-    "builtComponentChecksum": "54a113a6e200b5dc7ec203f499518443"
+    "builtComponentChecksum": "cee14a6d80f3f3c12d737748831ac866"
   },
   "goToSettings": {
     "builtComponentPath": "navigation/go-to-settings.front-component.mjs",
-    "builtComponentChecksum": "5deaff43ed072f9dde24deec40d1dbc8"
+    "builtComponentChecksum": "155c09cfab58448561f5ed3917050fc3"
   },
   "goToTasks": {
     "builtComponentPath": "navigation/go-to-tasks.front-component.mjs",
-    "builtComponentChecksum": "546f144ea1fb39fe19b8a0d4d21e3d52"
+    "builtComponentChecksum": "435ad5f301d21471f1f66646c32b47ce"
   },
   "goToWorkflows": {
     "builtComponentPath": "navigation/go-to-workflows.front-component.mjs",
-    "builtComponentChecksum": "c728c9c7d06ba2f0250d5da4e26ef6c7"
+    "builtComponentChecksum": "d582460a380eef9df529592854372cdf"
   },
   "cancelRecordPageLayout": {
     "builtComponentPath": "page-layout/cancel-record-page-layout.front-component.mjs",
-    "builtComponentChecksum": "7c3b46d239655bc1688e794659b304f2"
+    "builtComponentChecksum": "1233c1c6b371e623c29b58aa3ca9dfec"
   },
   "editRecordPageLayout": {
     "builtComponentPath": "page-layout/edit-record-page-layout.front-component.mjs",
-    "builtComponentChecksum": "c9ed5c9c9e8654631fd64a78f2718e40"
+    "builtComponentChecksum": "2d8373187861b98be2b46922308787b0"
   },
   "createNewView": {
     "builtComponentPath": "record/create-new-view.front-component.mjs",
-    "builtComponentChecksum": "7c3b46d239655bc1688e794659b304f2"
+    "builtComponentChecksum": "1233c1c6b371e623c29b58aa3ca9dfec"
   },
   "exportFromRecordIndex": {
     "builtComponentPath": "record/export-from-record-index.front-component.mjs",
-    "builtComponentChecksum": "c9ed5c9c9e8654631fd64a78f2718e40"
+    "builtComponentChecksum": "2d8373187861b98be2b46922308787b0"
   },
   "exportFromRecordShow": {
     "builtComponentPath": "record/export-from-record-show.front-component.mjs",
-    "builtComponentChecksum": "c9ed5c9c9e8654631fd64a78f2718e40"
+    "builtComponentChecksum": "2d8373187861b98be2b46922308787b0"
   },
   "exportMultipleRecords": {
     "builtComponentPath": "record/export-multiple-records.front-component.mjs",
-    "builtComponentChecksum": "c9ed5c9c9e8654631fd64a78f2718e40"
+    "builtComponentChecksum": "2d8373187861b98be2b46922308787b0"
   },
   "exportNoteToPdf": {
     "builtComponentPath": "record/export-note-to-pdf.front-component.mjs",
-    "builtComponentChecksum": "7c3b46d239655bc1688e794659b304f2"
+    "builtComponentChecksum": "1233c1c6b371e623c29b58aa3ca9dfec"
   },
   "exportView": {
     "builtComponentPath": "record/export-view.front-component.mjs",
-    "builtComponentChecksum": "c9ed5c9c9e8654631fd64a78f2718e40"
+    "builtComponentChecksum": "2d8373187861b98be2b46922308787b0"
   },
   "hideDeletedRecords": {
     "builtComponentPath": "record/hide-deleted-records.front-component.mjs",
-    "builtComponentChecksum": "7c3b46d239655bc1688e794659b304f2"
+    "builtComponentChecksum": "1233c1c6b371e623c29b58aa3ca9dfec"
   },
   "importRecords": {
     "builtComponentPath": "record/import-records.front-component.mjs",
-    "builtComponentChecksum": "7c3b46d239655bc1688e794659b304f2"
+    "builtComponentChecksum": "1233c1c6b371e623c29b58aa3ca9dfec"
   },
   "navigateToNextRecord": {
     "builtComponentPath": "record/navigate-to-next-record.front-component.mjs",
-    "builtComponentChecksum": "7c3b46d239655bc1688e794659b304f2"
+    "builtComponentChecksum": "1233c1c6b371e623c29b58aa3ca9dfec"
   },
   "navigateToPreviousRecord": {
     "builtComponentPath": "record/navigate-to-previous-record.front-component.mjs",
-    "builtComponentChecksum": "7c3b46d239655bc1688e794659b304f2"
+    "builtComponentChecksum": "1233c1c6b371e623c29b58aa3ca9dfec"
   },
   "seeDeletedRecords": {
     "builtComponentPath": "record/see-deleted-records.front-component.mjs",
-    "builtComponentChecksum": "7c3b46d239655bc1688e794659b304f2"
+    "builtComponentChecksum": "1233c1c6b371e623c29b58aa3ca9dfec"
   },
   "updateMultipleRecords": {
     "builtComponentPath": "record/update-multiple-records.front-component.mjs",
-    "builtComponentChecksum": "7c3b46d239655bc1688e794659b304f2"
+    "builtComponentChecksum": "1233c1c6b371e623c29b58aa3ca9dfec"
   },
   "askAi": {
     "builtComponentPath": "side-panel/ask-ai.front-component.mjs",
-    "builtComponentChecksum": "1c550715a9b1135ef1076b2ef288b6e0"
+    "builtComponentChecksum": "40e360d52c60eeea5b319e53e6aaaa60"
   },
   "searchRecordsFallback": {
     "builtComponentPath": "side-panel/search-records-fallback.front-component.mjs",
-    "builtComponentChecksum": "18cf771722062b7b372690f7093517b1"
+    "builtComponentChecksum": "8ea57cd79a3be7e5745466d2af22f5f3"
   },
   "searchRecords": {
     "builtComponentPath": "side-panel/search-records.front-component.mjs",
-    "builtComponentChecksum": "18cf771722062b7b372690f7093517b1"
+    "builtComponentChecksum": "8ea57cd79a3be7e5745466d2af22f5f3"
   },
   "viewPreviousAiChats": {
     "builtComponentPath": "side-panel/view-previous-ai-chats.front-component.mjs",
-    "builtComponentChecksum": "f524c76ba5e0b565861648ea5e9ca354"
+    "builtComponentChecksum": "bd422cd56864624c33e01ab26ebaead4"
   },
   "seeVersionWorkflowRun": {
     "builtComponentPath": "workflow-run/see-version-workflow-run.front-component.mjs",
-    "builtComponentChecksum": "7c3b46d239655bc1688e794659b304f2"
+    "builtComponentChecksum": "1233c1c6b371e623c29b58aa3ca9dfec"
   },
   "seeWorkflowWorkflowRun": {
     "builtComponentPath": "workflow-run/see-workflow-workflow-run.front-component.mjs",
-    "builtComponentChecksum": "7c3b46d239655bc1688e794659b304f2"
+    "builtComponentChecksum": "1233c1c6b371e623c29b58aa3ca9dfec"
   },
   "seeRunsWorkflowVersion": {
     "builtComponentPath": "workflow-version/see-runs-workflow-version.front-component.mjs",
-    "builtComponentChecksum": "7c3b46d239655bc1688e794659b304f2"
+    "builtComponentChecksum": "1233c1c6b371e623c29b58aa3ca9dfec"
   },
   "seeVersionsWorkflowVersion": {
     "builtComponentPath": "workflow-version/see-versions-workflow-version.front-component.mjs",
-    "builtComponentChecksum": "7c3b46d239655bc1688e794659b304f2"
+    "builtComponentChecksum": "1233c1c6b371e623c29b58aa3ca9dfec"
   },
   "seeWorkflowWorkflowVersion": {
     "builtComponentPath": "workflow-version/see-workflow-workflow-version.front-component.mjs",
-    "builtComponentChecksum": "7c3b46d239655bc1688e794659b304f2"
+    "builtComponentChecksum": "1233c1c6b371e623c29b58aa3ca9dfec"
   },
   "addNodeWorkflow": {
     "builtComponentPath": "workflow/add-node-workflow.front-component.mjs",
-    "builtComponentChecksum": "7c3b46d239655bc1688e794659b304f2"
+    "builtComponentChecksum": "1233c1c6b371e623c29b58aa3ca9dfec"
   },
   "seeActiveVersionWorkflow": {
     "builtComponentPath": "workflow/see-active-version-workflow.front-component.mjs",
-    "builtComponentChecksum": "7c3b46d239655bc1688e794659b304f2"
+    "builtComponentChecksum": "1233c1c6b371e623c29b58aa3ca9dfec"
   },
   "seeRunsWorkflow": {
     "builtComponentPath": "workflow/see-runs-workflow.front-component.mjs",
-    "builtComponentChecksum": "7c3b46d239655bc1688e794659b304f2"
+    "builtComponentChecksum": "1233c1c6b371e623c29b58aa3ca9dfec"
   },
   "seeVersionsWorkflow": {
     "builtComponentPath": "workflow/see-versions-workflow.front-component.mjs",
-    "builtComponentChecksum": "7c3b46d239655bc1688e794659b304f2"
+    "builtComponentChecksum": "1233c1c6b371e623c29b58aa3ca9dfec"
   }
 } as const;

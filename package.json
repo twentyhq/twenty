@@ -2,7 +2,6 @@
   "private": true,
   "dependencies": {
     "@apollo/client": "^3.7.17",
-    "@file-type/pdf": "^0.2.0",
     "@floating-ui/react": "^0.24.3",
     "@linaria/core": "^6.2.0",
     "@linaria/react": "^6.2.1",
