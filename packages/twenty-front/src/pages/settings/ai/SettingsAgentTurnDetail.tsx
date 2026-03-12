@@ -144,7 +144,7 @@ export const SettingsAgentTurnDetail = () => {
               timeStyle: 'short',
             })}
           />
-          {turn.messages && turn.messages.length > 0 ? (
+          {turn.messages.length > 0 ? (
             <StyledMessagesContainer>
               {mapDBMessagesToUIMessages(
                 ([...turn.messages] as any[])
@@ -184,7 +184,7 @@ export const SettingsAgentTurnDetail = () => {
 
         <Section>
           <H2Title title={t`Evaluations`} />
-          {turn.evaluations && turn.evaluations.length > 0 ? (
+          {turn.evaluations.length > 0 ? (
             <StyledTableContainer>
               <Table>
                 <StyledTableHeaderRowContainer>

@@ -13,6 +13,7 @@ import { type ExtendedAggregateOperations } from '@/object-record/record-table/t
 import { buildGroupByFieldObject } from '@/page-layout/widgets/graph/utils/buildGroupByFieldObject';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useQuery } from '@apollo/client/react';
+import { useMemo } from 'react';
 import { type Nullable } from 'twenty-shared/types';
 import {
   computeRecordGqlOperationFilter,
@@ -60,12 +61,16 @@ export const useRecordIndexGroupsAggregatesGroupBy = ({
       recordIndexGroupAggregateOperation,
     });
 
-  const groupByAggregateQuery = isDefined(recordAggregateGqlField)
-    ? generateGroupByAggregateQuery({
-        aggregateOperationGqlFields: [recordAggregateGqlField],
-        objectMetadataItem,
-      })
-    : EMPTY_QUERY;
+  const groupByAggregateQuery = useMemo(
+    () =>
+      isDefined(recordAggregateGqlField)
+        ? generateGroupByAggregateQuery({
+            aggregateOperationGqlFields: [recordAggregateGqlField],
+            objectMetadataItem,
+          })
+        : EMPTY_QUERY,
+    [recordAggregateGqlField, objectMetadataItem],
+  );
 
   const anyFieldFilterValue = useAtomComponentStateValue(
     anyFieldFilterValueComponentState,

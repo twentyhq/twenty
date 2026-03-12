@@ -1,6 +1,6 @@
 import { useApolloClient, useMutation, useQuery } from '@apollo/client/react';
 import { getOperationName } from '~/utils/getOperationName';
-import { useEffect } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -25,7 +25,6 @@ import { mapDBMessagesToUIMessages } from '@/ai/utils/mapDBMessagesToUIMessages'
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
-import { useCallback, useMemo } from 'react';
 import {
   type GetChatThreadsQuery,
   GetChatThreadsDocument,
@@ -137,10 +136,13 @@ export const useAgentChatData = () => {
     ],
   });
 
-  const { loading: threadsLoading, data: threadsData } = useQuery(GetChatThreadsDocument, {
-    variables: { paging: { first: CHAT_THREADS_PAGE_SIZE } },
-    skip: isDefined(currentAIChatThread),
-  });
+  const { loading: threadsLoading, data: threadsData } = useQuery(
+    GetChatThreadsDocument,
+    {
+      variables: { paging: { first: CHAT_THREADS_PAGE_SIZE } },
+      skip: isDefined(currentAIChatThread),
+    },
+  );
 
   useEffect(() => {
     if (!threadsData) return;
@@ -183,7 +185,14 @@ export const useAgentChatData = () => {
       setCurrentAIChatThreadTitle(null);
       setAgentChatUsage(null);
     }
-  }, [threadsData, store, setCurrentAIChatThread, setAgentChatInput, setCurrentAIChatThreadTitle, setAgentChatUsage]);
+  }, [
+    threadsData,
+    store,
+    setCurrentAIChatThread,
+    setAgentChatInput,
+    setCurrentAIChatThreadTitle,
+    setAgentChatUsage,
+  ]);
 
   const isNewThread = useMemo(
     () => currentAIChatThread === AGENT_CHAT_NEW_THREAD_DRAFT_KEY,

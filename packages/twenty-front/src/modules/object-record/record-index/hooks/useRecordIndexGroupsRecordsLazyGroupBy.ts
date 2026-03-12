@@ -9,7 +9,7 @@ import { generateGroupsRecordsGroupByQuery } from '@/object-record/record-aggreg
 import { useRecordIndexGroupCommonQueryVariables } from '@/object-record/record-index/hooks/useRecordIndexGroupCommonQueryVariables';
 import { buildGroupByFieldObject } from '@/page-layout/widgets/graph/utils/buildGroupByFieldObject';
 import { useLazyQuery } from '@apollo/client/react';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { type Nullable } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type PageInfo } from '~/generated-metadata/graphql';
@@ -38,13 +38,21 @@ export const useRecordIndexGroupsRecordsLazyGroupBy = ({
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
-  const recordIndexGroupsRecordGroupsGroupByQuery =
-    generateGroupsRecordsGroupByQuery({
+  const recordIndexGroupsRecordGroupsGroupByQuery = useMemo(
+    () =>
+      generateGroupsRecordsGroupByQuery({
+        objectMetadataItem,
+        objectMetadataItems,
+        objectPermissionsByObjectMetadataId,
+        recordGqlFields,
+      }),
+    [
       objectMetadataItem,
       objectMetadataItems,
       objectPermissionsByObjectMetadataId,
       recordGqlFields,
-    });
+    ],
+  );
 
   const groupByGqlInput = isDefined(groupByFieldMetadataItem)
     ? buildGroupByFieldObject({
@@ -71,7 +79,11 @@ export const useRecordIndexGroupsRecordsLazyGroupBy = ({
     );
 
   const executeRecordIndexGroupsRecordsLazyGroupBy = useCallback(
-    (options?: Parameters<typeof executeRecordIndexGroupsRecordsLazyGroupByRaw>[0]) =>
+    (
+      options?: Parameters<
+        typeof executeRecordIndexGroupsRecordsLazyGroupByRaw
+      >[0],
+    ) =>
       executeRecordIndexGroupsRecordsLazyGroupByRaw({
         ...options,
         variables: { ...defaultVariables, ...options?.variables },
