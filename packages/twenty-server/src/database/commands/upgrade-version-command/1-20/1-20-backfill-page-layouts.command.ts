@@ -27,7 +27,7 @@ import { type UniversalFlatViewField } from 'src/engine/workspace-manager/worksp
 import { type UniversalFlatView } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view.type';
 
 @Command({
-  name: 'upgrade:1-19:backfill-page-layouts',
+  name: 'upgrade:1-20:backfill-page-layouts',
   description:
     'Backfill RECORD_PAGE page layouts for legacy workspaces and enable the IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED feature flag',
 })
