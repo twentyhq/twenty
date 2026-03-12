@@ -48,6 +48,87 @@
           "yarn playwright show-report"
         ]
       }
+    },
+    "cypress:setup": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/twenty-e2e-testing",
+        "commands": [
+          "cp .env.example .env"
+        ]
+      }
+    },
+    "cypress:run": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/twenty-e2e-testing",
+        "commands": [
+          "yarn cypress run --config-file cypress.config.ts"
+        ]
+      }
+    },
+    "cypress:run:auth": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/twenty-e2e-testing",
+        "commands": [
+          "yarn cypress run --config-file cypress.config.ts --spec 'cypress/e2e/auth/**/*.cy.ts'"
+        ]
+      }
+    },
+    "cypress:run:navigation": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/twenty-e2e-testing",
+        "commands": [
+          "yarn cypress run --config-file cypress.config.ts --spec 'cypress/e2e/navigation/**/*.cy.ts'"
+        ]
+      }
+    },
+    "cypress:run:objects": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/twenty-e2e-testing",
+        "commands": [
+          "yarn cypress run --config-file cypress.config.ts --spec 'cypress/e2e/objects/**/*.cy.ts'"
+        ]
+      }
+    },
+    "cypress:run:search": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/twenty-e2e-testing",
+        "commands": [
+          "yarn cypress run --config-file cypress.config.ts --spec 'cypress/e2e/search/**/*.cy.ts'"
+        ]
+      }
+    },
+    "cypress:run:settings": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/twenty-e2e-testing",
+        "commands": [
+          "yarn cypress run --config-file cypress.config.ts --spec 'cypress/e2e/settings/**/*.cy.ts'"
+        ]
+      }
+    },
+    "cypress:run:workflows": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/twenty-e2e-testing",
+        "commands": [
+          "yarn cypress run --config-file cypress.config.ts --spec 'cypress/e2e/workflows/**/*.cy.ts'"
+        ]
+      }
+    },
+    "cypress:open": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/twenty-e2e-testing",
+        "commands": [
+          "yarn cypress open --config-file cypress.config.ts"
+        ]
+      }
     }
   }
 }

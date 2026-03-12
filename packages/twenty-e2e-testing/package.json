@@ -4,7 +4,19 @@
   "author": "",
   "private": true,
   "license": "AGPL-3.0",
+  "scripts": {
+    "cypress:run": "cypress run --config-file cypress.config.ts",
+    "cypress:open": "cypress open --config-file cypress.config.ts",
+    "cypress:run:auth": "cypress run --config-file cypress.config.ts --spec 'cypress/e2e/auth/**/*.cy.ts'",
+    "cypress:run:navigation": "cypress run --config-file cypress.config.ts --spec 'cypress/e2e/navigation/**/*.cy.ts'",
+    "cypress:run:objects": "cypress run --config-file cypress.config.ts --spec 'cypress/e2e/objects/**/*.cy.ts'",
+    "cypress:run:search": "cypress run --config-file cypress.config.ts --spec 'cypress/e2e/search/**/*.cy.ts'",
+    "cypress:run:settings": "cypress run --config-file cypress.config.ts --spec 'cypress/e2e/settings/**/*.cy.ts'",
+    "cypress:run:workflows": "cypress run --config-file cypress.config.ts --spec 'cypress/e2e/workflows/**/*.cy.ts'"
+  },
   "devDependencies": {
-    "@playwright/test": "^1.51.0"
+    "@playwright/test": "^1.51.0",
+    "@testing-library/cypress": "^10.1.0",
+    "cypress": "^15.11.0"
   }
 }

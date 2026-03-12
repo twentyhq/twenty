@@ -8,3 +8,8 @@ results/
 run_results/.playwright-artifacts-0/
 run_results/.playwright-artifacts-1/
 .auth/
+
+# Cypress
+cypress/screenshots/
+cypress/videos/
+cypress/downloads/
