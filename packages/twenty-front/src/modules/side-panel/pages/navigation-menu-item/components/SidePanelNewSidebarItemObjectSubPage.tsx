@@ -1,4 +1,3 @@
-import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 
 import { useAddObjectToNavigationMenuDraft } from '@/navigation-menu-item/hooks/useAddObjectToNavigationMenuDraft';
@@ -10,26 +9,19 @@ import { getStandardObjectIconColor } from '@/navigation-menu-item/utils/getStan
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { useSidePanelSubPageHistory } from '@/side-panel/hooks/useSidePanelSubPageHistory';
 import { SidePanelObjectPickerSubView } from '@/side-panel/pages/navigation-menu-item/components/SidePanelObjectPickerSubView';
-import { SidePanelSystemObjectPickerSubView } from '@/side-panel/pages/navigation-menu-item/components/SidePanelSystemObjectPickerSubView';
 import { getAvailableObjectMetadataForNewSidebarItem } from '@/side-panel/pages/navigation-menu-item/utils/getAvailableObjectMetadataForNewSidebarItem';
+import { SidePanelSubPages } from '@/side-panel/types/SidePanelSubPages';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { ViewKey } from '@/views/types/ViewKey';
 import { useIcons } from 'twenty-ui/display';
 
-type SidePanelNewSidebarItemObjectFlowProps = {
-  onBack: () => void;
-};
-
-export const SidePanelNewSidebarItemObjectFlow = ({
-  onBack,
-}: SidePanelNewSidebarItemObjectFlowProps) => {
-  const { t } = useLingui();
+export const SidePanelNewSidebarItemObjectSubPage = () => {
+  const { navigateToSidePanelSubPage } = useSidePanelSubPageHistory();
   const { getIcon } = useIcons();
   const [objectSearchInput, setObjectSearchInput] = useState('');
-  const [systemObjectSearchInput, setSystemObjectSearchInput] = useState('');
-  const [isInSystemPicker, setIsInSystemPicker] = useState(false);
 
   const { currentDraft } = useDraftNavigationMenuItems();
   const { objectMetadataItems } = useObjectMetadataItems();
@@ -56,7 +48,7 @@ export const SidePanelNewSidebarItemObjectFlow = ({
       .map((view) => view.objectMetadataId),
   );
 
-  const { availableObjectMetadataItems, availableSystemObjectMetadataItems } =
+  const { availableObjectMetadataItems } =
     getAvailableObjectMetadataForNewSidebarItem({
       objectMetadataItems,
       activeNonSystemObjectMetadataItems,
@@ -87,36 +79,18 @@ export const SidePanelNewSidebarItemObjectFlow = ({
     });
   };
 
-  const handleBackToObjectList = () => {
-    setIsInSystemPicker(false);
-    setSystemObjectSearchInput('');
-  };
-
   const disableDrag = addMenuItemInsertionContext?.disableDrag === true;
-
-  if (isInSystemPicker) {
-    return (
-      <SidePanelSystemObjectPickerSubView
-        systemObjects={availableSystemObjectMetadataItems}
-        searchValue={systemObjectSearchInput}
-        onSearchChange={setSystemObjectSearchInput}
-        onBack={handleBackToObjectList}
-        isViewItem={false}
-        onChangeObject={handleSelectObject}
-        objectMenuItemVariant="add"
-        emptyNoResultsText={t`All system objects are already in the sidebar`}
-        disableDrag={disableDrag}
-      />
-    );
-  }
 
   return (
     <SidePanelObjectPickerSubView
       objects={availableObjectMetadataItems}
       searchValue={objectSearchInput}
       onSearchChange={setObjectSearchInput}
-      onBack={onBack}
-      onOpenSystemPicker={() => setIsInSystemPicker(true)}
+      onOpenSystemPicker={() =>
+        navigateToSidePanelSubPage(
+          SidePanelSubPages.NewSidebarItemObjectSystemPicker,
+        )
+      }
       isViewItem={false}
       onChangeObject={handleSelectObject}
       objectMenuItemVariant="add"
