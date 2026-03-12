@@ -14,3 +14,25 @@ if (app && !app.document.head.querySelector('[data-hide-command-log-request]')) 
 Cypress.on('uncaught:exception', () => {
   return false;
 });
+
+// Intercept GraphQL requests and provide aliases for common operations
+beforeEach(() => {
+  cy.intercept('POST', '**/graphql', (req) => {
+    const operationName = req.body?.operationName;
+    if (operationName) {
+      req.alias = `gql${operationName}`;
+    }
+  });
+});
+
+// Log test name before each test for easier debugging
+beforeEach(function () {
+  const testTitle = this.currentTest?.fullTitle();
+  if (testTitle) {
+    Cypress.log({
+      name: 'TEST',
+      displayName: 'TEST',
+      message: testTitle,
+    });
+  }
+});

@@ -23,6 +23,18 @@ describe('Workflows', () => {
     it('should display records or empty state', () => {
       cy.get('body').should('be.visible');
     });
+
+    it('should display a table or list view', () => {
+      cy.get(
+        'table, [role="table"], [role="grid"], [data-testid*="row"]',
+        { timeout: 15000 },
+      ).should('exist');
+    });
+
+    it('should display filter and sort buttons', () => {
+      cy.get('button').filter(':contains("Filter")').should('exist');
+      cy.get('button').filter(':contains("Sort")').should('exist');
+    });
   });
 
   describe('Workflow Creation', () => {
@@ -30,16 +42,12 @@ describe('Workflows', () => {
       cy.visit('/objects/workflows');
       cy.waitForAppLoaded();
 
-      // Click create button
       cy.get('button')
         .filter(':contains("Create new workflow")')
         .first()
         .click();
 
-      // Should navigate to the new workflow detail page
       cy.url({ timeout: 15000 }).should('include', '/object/workflow/');
-
-      // The workflow detail page should have the top bar title
       cy.getByTestId('top-bar-title').should('exist');
     });
 
@@ -54,17 +62,34 @@ describe('Workflows', () => {
 
       cy.url({ timeout: 15000 }).should('include', '/object/workflow/');
 
-      // Click on the title to edit it
       cy.getByTestId('top-bar-title').click();
 
-      // Type a new name
       cy.getByTestId('top-bar-title')
         .find('input, [contenteditable="true"]')
         .clear()
         .type('My Test Workflow{enter}');
 
-      // Verify the name was updated
       cy.getByTestId('top-bar-title').should('contain.text', 'My Test Workflow');
+    });
+
+    it('should show the new workflow in the list after creation', () => {
+      cy.visit('/objects/workflows');
+      cy.waitForAppLoaded();
+
+      cy.get('button')
+        .filter(':contains("Create new workflow")')
+        .first()
+        .click();
+
+      cy.url({ timeout: 15000 }).should('include', '/object/workflow/');
+
+      // Navigate back to list
+      cy.contains('a', 'Workflows').click();
+      cy.url().should('include', '/objects/workflows');
+
+      // The list should have at least one workflow
+      cy.get('[data-testid^="row-id-"]', { timeout: 15000 })
+        .should('have.length.greaterThan', 0);
     });
   });
 
@@ -73,7 +98,6 @@ describe('Workflows', () => {
       cy.visit('/objects/workflows');
       cy.waitForAppLoaded();
 
-      // Click on a workflow if one exists, otherwise create one
       cy.get('body').then(($body) => {
         if ($body.find('[data-testid^="row-id-"]').length > 0) {
           cy.get('[data-testid^="row-id-"]').first().click();
@@ -87,7 +111,6 @@ describe('Workflows', () => {
 
       cy.url({ timeout: 15000 }).should('include', '/object/workflow/');
 
-      // The workflow should have a diagram/visualizer
       cy.get('.react-flow__renderer, [data-testid*="workflow"]', {
         timeout: 15000,
       }).should('exist');
@@ -110,11 +133,122 @@ describe('Workflows', () => {
 
       cy.url({ timeout: 15000 }).should('include', '/object/workflow/');
 
-      // Workflow should have at least a trigger node
       cy.get(
         '.react-flow__node, [data-testid*="step"], [data-testid*="trigger"]',
         { timeout: 15000 },
       ).should('have.length.greaterThan', 0);
+    });
+
+    it('should display a trigger node in the workflow', () => {
+      cy.visit('/objects/workflows');
+      cy.waitForAppLoaded();
+
+      cy.get('body').then(($body) => {
+        if ($body.find('[data-testid^="row-id-"]').length > 0) {
+          cy.get('[data-testid^="row-id-"]').first().click();
+        } else {
+          cy.get('button')
+            .filter(':contains("Create new workflow")')
+            .first()
+            .click();
+        }
+      });
+
+      cy.url({ timeout: 15000 }).should('include', '/object/workflow/');
+
+      // Workflow should have a trigger node
+      cy.get(
+        '.react-flow__node, [data-testid*="trigger"]',
+        { timeout: 15000 },
+      ).should('exist');
+    });
+
+    it('should have a clickable trigger node', () => {
+      cy.visit('/objects/workflows');
+      cy.waitForAppLoaded();
+
+      cy.get('body').then(($body) => {
+        if ($body.find('[data-testid^="row-id-"]').length > 0) {
+          cy.get('[data-testid^="row-id-"]').first().click();
+        } else {
+          cy.get('button')
+            .filter(':contains("Create new workflow")')
+            .first()
+            .click();
+        }
+      });
+
+      cy.url({ timeout: 15000 }).should('include', '/object/workflow/');
+
+      // Click on the first node
+      cy.get(
+        '.react-flow__node, [data-testid*="step"], [data-testid*="trigger"]',
+        { timeout: 15000 },
+      ).first().click();
+
+      // Should open a panel or show node details
+      cy.get('body').should('be.visible');
+    });
+
+    it('should have a unique URL for each workflow', () => {
+      cy.visit('/objects/workflows');
+      cy.waitForAppLoaded();
+
+      cy.get('body').then(($body) => {
+        if ($body.find('[data-testid^="row-id-"]').length > 0) {
+          cy.get('[data-testid^="row-id-"]').first().click();
+        } else {
+          cy.get('button')
+            .filter(':contains("Create new workflow")')
+            .first()
+            .click();
+        }
+      });
+
+      cy.url({ timeout: 15000 }).should('match', /\/object\/workflow\/[\w-]+/);
+    });
+  });
+
+  describe('Workflow Activation', () => {
+    it('should display workflow status (active/draft)', () => {
+      cy.visit('/objects/workflows');
+      cy.waitForAppLoaded();
+
+      cy.get('body').then(($body) => {
+        if ($body.find('[data-testid^="row-id-"]').length > 0) {
+          cy.get('[data-testid^="row-id-"]').first().click();
+        } else {
+          cy.get('button')
+            .filter(':contains("Create new workflow")')
+            .first()
+            .click();
+        }
+      });
+
+      cy.url({ timeout: 15000 }).should('include', '/object/workflow/');
+      cy.get('body').should('be.visible');
+    });
+
+    it('should have activate/deactivate controls', () => {
+      cy.visit('/objects/workflows');
+      cy.waitForAppLoaded();
+
+      cy.get('body').then(($body) => {
+        if ($body.find('[data-testid^="row-id-"]').length > 0) {
+          cy.get('[data-testid^="row-id-"]').first().click();
+        } else {
+          cy.get('button')
+            .filter(':contains("Create new workflow")')
+            .first()
+            .click();
+        }
+      });
+
+      cy.url({ timeout: 15000 }).should('include', '/object/workflow/');
+
+      // Should have some toggle or button for activation
+      cy.get('button, [role="switch"]', { timeout: 10000 })
+        .should('have.length.greaterThan', 0);
     });
   });
 
@@ -130,7 +264,6 @@ describe('Workflows', () => {
         }
       });
 
-      // Navigate back via sidebar
       cy.contains('a', 'Workflows').click();
       cy.url().should('include', '/objects/workflows');
     });

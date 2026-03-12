@@ -34,10 +34,19 @@ declare namespace Cypress {
      */
     clickSidebarItem(label: string): Chainable<JQuery<HTMLElement>>;
 
-    /**
-     * Get an element by its data-testid attribute.
-     */
     getByTestId(testId: string): Chainable<JQuery<HTMLElement>>;
+    createRecordFromListPage(): Chainable<void>;
+    clickFirstRecord(): Chainable<void>;
+    navigateToSettings(path: string): Chainable<void>;
+    searchAndNavigate(term: string): Chainable<void>;
+    clickButton(text: string): Chainable<JQuery<HTMLElement>>;
+    openFilterMenu(): Chainable<void>;
+    openSortMenu(): Chainable<void>;
+    graphqlRequest(
+      operationName: string,
+      query: string,
+      variables?: Record<string, unknown>,
+    ): Chainable<Cypress.Response<unknown>>;
   }
 }
 
@@ -172,3 +181,67 @@ Cypress.Commands.add('clickSidebarItem', (label: string) => {
     .first()
     .click();
 });
+
+Cypress.Commands.add('createRecordFromListPage', () => {
+  cy.get('button').filter(':contains("+")').first().click();
+  cy.wait(1000);
+});
+
+Cypress.Commands.add('clickFirstRecord', () => {
+  cy.get('[data-testid^="row-id-"]', { timeout: 15000 })
+    .first()
+    .click();
+});
+
+Cypress.Commands.add('navigateToSettings', (path: string) => {
+  cy.visit(`/settings/${path}`);
+  cy.waitForAppLoaded();
+});
+
+Cypress.Commands.add('searchAndNavigate', (term: string) => {
+  cy.openCommandMenu();
+  cy.getByTestId('command-menu').should('be.visible');
+  cy.getByTestId('command-menu').find('input').type(term);
+  cy.getByTestId('command-menu')
+    .find('[role="option"], [role="listitem"], li, a')
+    .first()
+    .click();
+});
+
+Cypress.Commands.add('clickButton', (text: string) => {
+  return cy.contains('button', text).click();
+});
+
+Cypress.Commands.add('openFilterMenu', () => {
+  cy.get('button')
+    .filter(':contains("Filter")')
+    .first()
+    .click();
+});
+
+Cypress.Commands.add('openSortMenu', () => {
+  cy.get('button')
+    .filter(':contains("Sort")')
+    .first()
+    .click();
+});
+
+Cypress.Commands.add(
+  'graphqlRequest',
+  (
+    operationName: string,
+    query: string,
+    variables: Record<string, unknown> = {},
+  ) => {
+    const backendUrl = Cypress.env('BACKEND_BASE_URL');
+    return cy.request({
+      method: 'POST',
+      url: `${backendUrl}/graphql`,
+      body: {
+        operationName,
+        query,
+        variables,
+      },
+    });
+  },
+);

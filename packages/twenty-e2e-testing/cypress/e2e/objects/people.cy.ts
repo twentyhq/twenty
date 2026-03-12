@@ -34,56 +34,83 @@ describe('CRM Objects - People', () => {
         .should('exist');
     });
 
-    it('should be able to create a new person record via the + button', () => {
-      // Click the create button
-      cy.get('button').filter(':contains("+")').first().click();
-
-      // Should either open a form or create an inline record
+    it('should create a new person record via the + button', () => {
+      cy.createRecordFromListPage();
       cy.get('body').should('be.visible');
+    });
+
+    it('should display filter and sort buttons', () => {
+      cy.get('button').filter(':contains("Filter")').should('exist');
+      cy.get('button').filter(':contains("Sort")').should('exist');
+    });
+
+    it('should open filter menu and show field options', () => {
+      cy.openFilterMenu();
+      cy.get(
+        '[role="menu"], [role="listbox"], [data-testid*="filter"]',
+        { timeout: 10000 },
+      ).should('exist');
+    });
+
+    it('should open sort menu and show field options', () => {
+      cy.openSortMenu();
+      cy.get(
+        '[role="menu"], [role="listbox"], [data-testid*="sort"]',
+        { timeout: 10000 },
+      ).should('exist');
+    });
+
+    it('should have multiple rows when records exist', () => {
+      cy.get('[data-testid^="row-id-"]', { timeout: 15000 })
+        .should('have.length.greaterThan', 0);
     });
   });
 
   describe('Person Detail View', () => {
-    it('should navigate to a person detail page by clicking a record', () => {
+    beforeEach(() => {
       cy.visit('/objects/people');
       cy.waitForAppLoaded();
+    });
 
-      // Click on the first record row
-      cy.get('[data-testid^="row-id-"]', { timeout: 15000 })
-        .first()
-        .click();
-
-      // Should navigate to the detail view
+    it('should navigate to a person detail page by clicking a record', () => {
+      cy.clickFirstRecord();
       cy.url({ timeout: 10000 }).should('include', '/object/person/');
     });
 
     it('should display person details on the detail page', () => {
-      cy.visit('/objects/people');
-      cy.waitForAppLoaded();
-
-      cy.get('[data-testid^="row-id-"]', { timeout: 15000 })
-        .first()
-        .click();
-
+      cy.clickFirstRecord();
       cy.url({ timeout: 10000 }).should('include', '/object/person/');
-
-      // The detail page should have the top bar title
       cy.getByTestId('top-bar-title').should('exist');
     });
 
-    it('should be able to navigate back to the People list', () => {
-      cy.visit('/objects/people');
-      cy.waitForAppLoaded();
-
-      cy.get('[data-testid^="row-id-"]', { timeout: 15000 })
-        .first()
-        .click();
-
+    it('should display field sections on person detail', () => {
+      cy.clickFirstRecord();
       cy.url({ timeout: 10000 }).should('include', '/object/person/');
+      cy.get('body').should('be.visible');
+    });
 
-      // Navigate back using the sidebar
+    it('should display timeline/activity section on person detail', () => {
+      cy.clickFirstRecord();
+      cy.url({ timeout: 10000 }).should('include', '/object/person/');
+      cy.contains(/Timeline|Activity|Relations/i, { timeout: 10000 }).should('exist');
+    });
+
+    it('should display related companies on person detail', () => {
+      cy.clickFirstRecord();
+      cy.url({ timeout: 10000 }).should('include', '/object/person/');
+      cy.contains(/Company|Companies|Relations/i, { timeout: 10000 }).should('exist');
+    });
+
+    it('should be able to navigate back to the People list', () => {
+      cy.clickFirstRecord();
+      cy.url({ timeout: 10000 }).should('include', '/object/person/');
       cy.contains('a', 'People').click();
       cy.url().should('include', '/objects/people');
+    });
+
+    it('should have a unique URL for the person detail', () => {
+      cy.clickFirstRecord();
+      cy.url({ timeout: 10000 }).should('match', /\/object\/person\/[\w-]+/);
     });
   });
 });

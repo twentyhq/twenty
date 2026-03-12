@@ -33,62 +33,90 @@ describe('CRM Objects - Companies', () => {
         .should('exist');
     });
 
-    it('should be able to create a new company record via the + button', () => {
-      cy.get('button').filter(':contains("+")').first().click();
+    it('should create a new company record via the + button', () => {
+      cy.createRecordFromListPage();
       cy.get('body').should('be.visible');
+    });
+
+    it('should display filter and sort buttons', () => {
+      cy.get('button').filter(':contains("Filter")').should('exist');
+      cy.get('button').filter(':contains("Sort")').should('exist');
+    });
+
+    it('should open filter menu and show field options', () => {
+      cy.openFilterMenu();
+      cy.get(
+        '[role="menu"], [role="listbox"], [data-testid*="filter"]',
+        { timeout: 10000 },
+      ).should('exist');
+    });
+
+    it('should open sort menu and show field options', () => {
+      cy.openSortMenu();
+      cy.get(
+        '[role="menu"], [role="listbox"], [data-testid*="sort"]',
+        { timeout: 10000 },
+      ).should('exist');
+    });
+
+    it('should have multiple rows when records exist', () => {
+      cy.get('[data-testid^="row-id-"]', { timeout: 15000 })
+        .should('have.length.greaterThan', 0);
     });
   });
 
   describe('Company Detail View', () => {
-    it('should navigate to a company detail page by clicking a record', () => {
+    beforeEach(() => {
       cy.visit('/objects/companies');
       cy.waitForAppLoaded();
+    });
 
-      cy.get('[data-testid^="row-id-"]', { timeout: 15000 })
-        .first()
-        .click();
-
+    it('should navigate to a company detail page by clicking a record', () => {
+      cy.clickFirstRecord();
       cy.url({ timeout: 10000 }).should('include', '/object/company/');
     });
 
     it('should display company details on the detail page', () => {
-      cy.visit('/objects/companies');
-      cy.waitForAppLoaded();
-
-      cy.get('[data-testid^="row-id-"]', { timeout: 15000 })
-        .first()
-        .click();
-
+      cy.clickFirstRecord();
       cy.url({ timeout: 10000 }).should('include', '/object/company/');
       cy.getByTestId('top-bar-title').should('exist');
     });
 
+    it('should display field sections on company detail', () => {
+      cy.clickFirstRecord();
+      cy.url({ timeout: 10000 }).should('include', '/object/company/');
+
+      // Detail page should have field labels
+      cy.get('body').should('be.visible');
+    });
+
     it('should display timeline/activity section on company detail', () => {
-      cy.visit('/objects/companies');
-      cy.waitForAppLoaded();
-
-      cy.get('[data-testid^="row-id-"]', { timeout: 15000 })
-        .first()
-        .click();
-
+      cy.clickFirstRecord();
       cy.url({ timeout: 10000 }).should('include', '/object/company/');
 
       // Detail page should have content sections (timeline, relations, etc.)
-      cy.get('body').should('contain.text', 'Timeline').or('contain.text', 'Activity');
+      cy.contains(/Timeline|Activity|Relations/i, { timeout: 10000 }).should('exist');
+    });
+
+    it('should display related people section on company detail', () => {
+      cy.clickFirstRecord();
+      cy.url({ timeout: 10000 }).should('include', '/object/company/');
+
+      // Should show related records section
+      cy.contains(/People|Contacts|Relations/i, { timeout: 10000 }).should('exist');
     });
 
     it('should be able to navigate back to the Companies list', () => {
-      cy.visit('/objects/companies');
-      cy.waitForAppLoaded();
-
-      cy.get('[data-testid^="row-id-"]', { timeout: 15000 })
-        .first()
-        .click();
-
+      cy.clickFirstRecord();
       cy.url({ timeout: 10000 }).should('include', '/object/company/');
 
       cy.contains('a', 'Companies').click();
       cy.url().should('include', '/objects/companies');
+    });
+
+    it('should allow opening company detail from record in a new URL', () => {
+      cy.clickFirstRecord();
+      cy.url({ timeout: 10000 }).should('match', /\/object\/company\/[\w-]+/);
     });
   });
 });

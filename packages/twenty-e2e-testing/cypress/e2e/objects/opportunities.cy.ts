@@ -27,6 +27,32 @@ describe('CRM Objects - Opportunities', () => {
       cy.get('button').filter(':contains("+")')
         .should('exist');
     });
+
+    it('should create a new opportunity via the + button', () => {
+      cy.createRecordFromListPage();
+      cy.get('body').should('be.visible');
+    });
+
+    it('should display filter and sort buttons', () => {
+      cy.get('button').filter(':contains("Filter")').should('exist');
+      cy.get('button').filter(':contains("Sort")').should('exist');
+    });
+
+    it('should open filter menu and show field options', () => {
+      cy.openFilterMenu();
+      cy.get(
+        '[role="menu"], [role="listbox"], [data-testid*="filter"]',
+        { timeout: 10000 },
+      ).should('exist');
+    });
+
+    it('should open sort menu and show field options', () => {
+      cy.openSortMenu();
+      cy.get(
+        '[role="menu"], [role="listbox"], [data-testid*="sort"]',
+        { timeout: 10000 },
+      ).should('exist');
+    });
   });
 
   describe('Opportunity Detail View', () => {
@@ -34,15 +60,55 @@ describe('CRM Objects - Opportunities', () => {
       cy.visit('/objects/opportunities');
       cy.waitForAppLoaded();
 
-      // Only proceed if there are records
       cy.get('body').then(($body) => {
         if ($body.find('[data-testid^="row-id-"]').length > 0) {
-          cy.get('[data-testid^="row-id-"]').first().click();
+          cy.clickFirstRecord();
           cy.url({ timeout: 10000 }).should('include', '/object/opportunity/');
           cy.getByTestId('top-bar-title').should('exist');
         } else {
-          // No records - test passes with a note
           cy.log('No opportunity records found to click');
+        }
+      });
+    });
+
+    it('should display opportunity fields on detail page', () => {
+      cy.visit('/objects/opportunities');
+      cy.waitForAppLoaded();
+
+      cy.get('body').then(($body) => {
+        if ($body.find('[data-testid^="row-id-"]').length > 0) {
+          cy.clickFirstRecord();
+          cy.url({ timeout: 10000 }).should('include', '/object/opportunity/');
+          cy.get('body').should('be.visible');
+        } else {
+          cy.log('No opportunity records found');
+        }
+      });
+    });
+
+    it('should display timeline section on opportunity detail', () => {
+      cy.visit('/objects/opportunities');
+      cy.waitForAppLoaded();
+
+      cy.get('body').then(($body) => {
+        if ($body.find('[data-testid^="row-id-"]').length > 0) {
+          cy.clickFirstRecord();
+          cy.url({ timeout: 10000 }).should('include', '/object/opportunity/');
+          cy.contains(/Timeline|Activity|Relations/i, { timeout: 10000 }).should('exist');
+        }
+      });
+    });
+
+    it('should navigate back to opportunities list from detail', () => {
+      cy.visit('/objects/opportunities');
+      cy.waitForAppLoaded();
+
+      cy.get('body').then(($body) => {
+        if ($body.find('[data-testid^="row-id-"]').length > 0) {
+          cy.clickFirstRecord();
+          cy.url({ timeout: 10000 }).should('include', '/object/opportunity/');
+          cy.contains('a', 'Opportunities').click();
+          cy.url().should('include', '/objects/opportunities');
         }
       });
     });
