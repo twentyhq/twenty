@@ -12,6 +12,8 @@ import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-m
 import { type FlatNavigationMenuItemMaps } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item-maps.type';
 import { type FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type FlatObjectPermissionMaps } from 'src/engine/metadata-modules/flat-object-permission/types/flat-object-permission-maps.type';
+import { type FlatObjectPermission } from 'src/engine/metadata-modules/flat-object-permission/types/flat-object-permission.type';
 import { type FlatPageLayoutTabMaps } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab-maps.type';
 import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
 import { type FlatPageLayoutWidgetMaps } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget-maps.type';
@@ -55,6 +57,7 @@ import { type UniversalFlatIndexMetadata } from 'src/engine/workspace-manager/wo
 import { type UniversalFlatLogicFunction } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-logic-function.type';
 import { type UniversalFlatNavigationMenuItem } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-navigation-menu-item.type';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
+import { type UniversalFlatObjectPermission } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-permission.type';
 import { type UniversalFlatPageLayout } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout.type';
 import { type UniversalFlatPermissionFlag } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-permission-flag.type';
 import { type UniversalFlatPageLayoutTab } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout-tab.type';
@@ -144,6 +147,14 @@ import {
   type UniversalDeletePermissionFlagAction,
   type UniversalUpdatePermissionFlagAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/permission-flag/types/workspace-migration-permission-flag-action.type';
+import {
+  type FlatCreateObjectPermissionAction,
+  type FlatDeleteObjectPermissionAction,
+  type FlatUpdateObjectPermissionAction,
+  type UniversalCreateObjectPermissionAction,
+  type UniversalDeleteObjectPermissionAction,
+  type UniversalUpdateObjectPermissionAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/object-permission/types/workspace-migration-object-permission-action.type';
 import {
   type FlatCreatePageLayoutTabAction,
   type FlatDeletePageLayoutTabAction,
@@ -596,6 +607,22 @@ export type AllFlatEntityTypesByMetadataName = {
     flatEntity: FlatPermissionFlag;
     universalFlatEntity: UniversalFlatPermissionFlag;
     entity: MetadataEntity<'permissionFlag'>;
+  };
+  objectPermission: {
+    flatEntityMaps: FlatObjectPermissionMaps;
+    universalActions: {
+      create: UniversalCreateObjectPermissionAction;
+      update: UniversalUpdateObjectPermissionAction;
+      delete: UniversalDeleteObjectPermissionAction;
+    };
+    flatActions: {
+      create: FlatCreateObjectPermissionAction;
+      update: FlatUpdateObjectPermissionAction;
+      delete: FlatDeleteObjectPermissionAction;
+    };
+    flatEntity: FlatObjectPermission;
+    universalFlatEntity: UniversalFlatObjectPermission;
+    entity: MetadataEntity<'objectPermission'>;
   };
   pageLayout: {
     flatEntityMaps: FlatPageLayoutMaps;
