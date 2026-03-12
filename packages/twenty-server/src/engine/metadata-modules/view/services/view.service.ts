@@ -423,8 +423,7 @@ export class ViewService {
       .filter((flatView) => flatView.workspaceId === workspaceId)
       .filter(
         (flatView) =>
-          !objectMetadataId ||
-          flatView.objectMetadataId === objectMetadataId,
+          !objectMetadataId || flatView.objectMetadataId === objectMetadataId,
       )
       .filter((flatView) => flatView.deletedAt === null)
       .filter(
