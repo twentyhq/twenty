@@ -51218,7 +51218,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:18.3.1, react@npm:^18, react@npm:^18.2.0, react@npm:^18.3.1":
+"react@npm:18.3.1, react@npm:^18, react@npm:^18.2.0":
   version: 18.3.1
   resolution: "react@npm:18.3.1"
   dependencies:
@@ -54934,6 +54934,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"stripe@npm:^20.3.1":
+  version: 20.4.1
+  resolution: "stripe@npm:20.4.1"
+  peerDependencies:
+    "@types/node": ">=16"
+  peerDependenciesMeta:
+    "@types/node":
+      optional: true
+  checksum: 10c0/c4ca1099d70afd175b27ec1fc83f72230c46a95868b85d615a141a806e63dd6d1896fa239f593aca7ad110bb8a14a5fb136b8091453c1c5db663b07529e0f94b
+  languageName: node
+  linkType: hard
+
 "strnum@npm:^2.1.2":
   version: 2.1.2
   resolution: "strnum@npm:2.1.2"
@@ -56813,7 +56825,6 @@ __metadata:
     tslib: "npm:2.8.1"
     twenty-emails: "workspace:*"
     twenty-shared: "workspace:*"
-    twenty-standard-application: "workspace:*"
     type-fest: "npm:4.10.1"
     typeorm: "patch:typeorm@0.3.20#./patches/typeorm+0.3.20.patch"
     unzipper: "npm:^0.12.3"
@@ -56849,19 +56860,6 @@ __metadata:
     vite-plugin-dts: "npm:3.8.1"
     vite-tsconfig-paths: "npm:^4.2.1"
     zod: "npm:^4.1.11"
-  languageName: unknown
-  linkType: soft
-
-"twenty-standard-application@workspace:*, twenty-standard-application@workspace:packages/twenty-standard-application":
-  version: 0.0.0-use.local
-  resolution: "twenty-standard-application@workspace:packages/twenty-standard-application"
-  dependencies:
-    esbuild: "npm:^0.25.10"
-    react: "npm:^18.3.1"
-    tinyglobby: "npm:^0.2.15"
-    tsx: "npm:^4.19.3"
-    twenty-sdk: "workspace:*"
-    twenty-shared: "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -56931,6 +56929,7 @@ __metadata:
     next-runtime-env: "npm:^3.3.0"
     postgres: "npm:^3.4.3"
     react-tooltip: "npm:^5.13.1"
+    stripe: "npm:^20.3.1"
     twenty-ui: "workspace:*"
   languageName: unknown
   linkType: soft

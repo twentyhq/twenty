@@ -10,22 +10,22 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
+import { EnterprisePlanService } from 'src/engine/core-modules/enterprise/services/enterprise-plan.service';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
 export class EnterpriseFeaturesEnabledGuard implements CanActivate {
   constructor(
     private readonly guardRedirectService: GuardRedirectService,
-    private readonly twentyConfigService: TwentyConfigService,
+    private readonly enterprisePlanService: EnterprisePlanService,
   ) {}
 
   canActivate(context: ExecutionContext): boolean {
     try {
-      if (!this.twentyConfigService.get('ENTERPRISE_KEY')) {
+      if (!this.enterprisePlanService.isValid()) {
         throw new AuthException(
-          'Enterprise key missing',
-          AuthExceptionCode.MISSING_ENVIRONMENT_VARIABLE,
+          'Enterprise features are not enabled',
+          AuthExceptionCode.ENTERPRISE_VALIDITY_TOKEN_NOT_VALID,
         );
       }
 

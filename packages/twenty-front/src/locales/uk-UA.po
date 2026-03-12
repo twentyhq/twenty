@@ -752,23 +752,37 @@ msgid "Actions users can perform on this object"
 msgstr "Дії, які користувачі можуть виконувати на цьому об'єкті"
 
 #. js-lingui-id: FQBaXG
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/ai/SettingsSkillForm.tsx
 #: src/pages/settings/ai/components/SettingsSkillInactiveMenuDropDown.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 #: src/modules/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
+#: src/modules/information-banner/components/enterprise/InformationBannerLegacyEnterpriseKey.tsx
 #: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "Activate"
 msgstr "Активувати"
+
+#. js-lingui-id: eqeFkF
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+msgid "Activate Enterprise Key"
+msgstr ""
 
 #. js-lingui-id: tu8A/k
 #: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "Activate Workflow"
 msgstr "Активувати процеси роботи"
 
+#. js-lingui-id: jSZacs
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+msgid "Activating..."
+msgstr ""
+
 #. js-lingui-id: F6pfE9
 #: src/pages/settings/SettingsProfile.tsx
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
 #: src/modules/settings/domains/components/SettingsWorkspaceDomainCard.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 msgid "Active"
@@ -825,7 +839,7 @@ msgid "Add a node"
 msgstr "Додати вузол"
 
 #. js-lingui-id: nGv1DN
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemRecordSubView.tsx
+#: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
 msgid "Add a record"
 msgstr ""
 
@@ -1430,7 +1444,7 @@ msgid "All set!"
 msgstr "Готово!"
 
 #. js-lingui-id: CHvT6e
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemObjectFlow.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemObjectSystemPickerSubPage.tsx
 msgid "All system objects are already in the sidebar"
 msgstr ""
 
@@ -1665,6 +1679,7 @@ msgstr "API"
 #. js-lingui-id: 0RqpZr
 #: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 #: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
+#: src/modules/settings/enterprise/components/EnterprisePlanModal.tsx
 msgid "API & Webhooks"
 msgstr "API та Webhooks"
 
@@ -1941,6 +1956,7 @@ msgstr "За зростанням"
 #: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
 #: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
 #: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/constants/EngineComponentKeyComponentMap.tsx
 msgid "Ask AI"
 msgstr "Запитати AI"
 
@@ -2078,6 +2094,11 @@ msgstr ""
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
 msgid "Attachments"
 msgstr "Вкладення"
+
+#. js-lingui-id: y2W2Hg
+#: src/modules/settings/enterprise/components/EnterprisePlanModal.tsx
+msgid "Audit logs"
+msgstr ""
 
 #. js-lingui-id: EPEFrH
 #: src/pages/settings/security/SettingsSecurity.tsx
@@ -2306,6 +2327,11 @@ msgstr "між {startOrdinal} та {endOrdinal} числами місяця"
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Billing"
 msgstr "Розрахунки"
+
+#. js-lingui-id: dSjFxR
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+msgid "Billing history"
+msgstr ""
 
 #. js-lingui-id: nJGwRf
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -2564,6 +2590,7 @@ msgid "Cancel metered tier switching?"
 msgstr "Скасувати перемикання тарифу з лічильником?"
 
 #. js-lingui-id: rRK/Lf
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
 #: src/modules/billing/components/SettingsBillingContent.tsx
 msgid "Cancel Plan"
 msgstr "Скасувати план"
@@ -2579,9 +2606,25 @@ msgid "Cancel plan switching?"
 msgstr "Скасувати перемикання плану?"
 
 #. js-lingui-id: N6gPiD
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
 #: src/modules/billing/components/SettingsBillingContent.tsx
 msgid "Cancel your subscription"
 msgstr "Скасувати підписку"
+
+#. js-lingui-id: GGWsTU
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+msgid "Canceled"
+msgstr ""
+
+#. js-lingui-id: y4uH7j
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+msgid "Cancelling"
+msgstr ""
+
+#. js-lingui-id: WbPx+C
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+msgid "Cancels on"
+msgstr ""
 
 #. js-lingui-id: XDbjjW
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
@@ -3078,11 +3121,6 @@ msgstr ""
 msgid "Configure fallback login methods for users with SSO bypass permissions"
 msgstr "Налаштуйте резервні методи входу для користувачів з правами обходу SSO"
 
-#. js-lingui-id: c7wznw
-#: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts
-msgid "Configure filters"
-msgstr "Налаштувати фільтри"
-
 #. js-lingui-id: ghdb7+
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelsGeneral.tsx
 msgid "Configure how we should display your events in your calendar"
@@ -3280,6 +3318,7 @@ msgstr ""
 #: src/modules/spreadsheet-import/steps/components/SelectHeaderStep/SelectHeaderStep.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
 #: src/modules/spreadsheet-import/components/StepNavigationButton.tsx
+#: src/modules/settings/enterprise/components/EnterprisePlanModal.tsx
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWithCredentials.tsx
 msgid "Continue"
 msgstr "Продовжити"
@@ -3438,6 +3477,21 @@ msgstr "Вартість за 1k додаткових кредитів"
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainRowDropdownMenu.tsx
 msgid "Could not delete approved access domain"
 msgstr "Не вдалося видалити затверджений домен доступу"
+
+#. js-lingui-id: KqYYBp
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+msgid "Could not open billing portal. Please check your enterprise key is present, or contact support."
+msgstr ""
+
+#. js-lingui-id: ZuI4Sl
+#: src/modules/settings/enterprise/components/EnterprisePlanModal.tsx
+msgid "Could not open Stripe. Please contact support."
+msgstr ""
+
+#. js-lingui-id: wVw4Am
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+msgid "Could not refresh validity token. Please contact support."
+msgstr ""
 
 #. js-lingui-id: s8lFtq
 #: src/hooks/useCopyToClipboard.tsx
@@ -3816,6 +3870,7 @@ msgstr "Користувацький домен оновлено"
 #. js-lingui-id: 8skTDV
 #: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 #: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
+#: src/modules/settings/enterprise/components/EnterprisePlanModal.tsx
 msgid "Custom objects"
 msgstr "Користувацькі об'єкти"
 
@@ -4918,6 +4973,8 @@ msgid "Edit own profile information"
 msgstr ""
 
 #. js-lingui-id: h2KoTu
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
 #: src/modules/billing/components/SettingsBillingContent.tsx
 msgid "Edit payment method, see your invoices and more"
 msgstr "Редагувати спосіб оплати, переглядати свої рахунки та більше"
@@ -5217,6 +5274,11 @@ msgstr "Покращує безпеку, вимагаючи введення к�
 msgid "Enjoy a {withCreditCardTrialPeriodDuration}-days free trial"
 msgstr "Насолоджуйтеся {withCreditCardTrialPeriodDuration}-денним безкоштовним пробним періодом"
 
+#. js-lingui-id: 6iUnle
+#: src/modules/settings/enterprise/components/EnterprisePlanModal.tsx
+msgid "Enjoy a 30-day free trial"
+msgstr ""
+
 #. js-lingui-id: T/N+2Z
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerWebhookForm.tsx
 #: src/modules/object-record/record-field/ui/form-types/components/FormRawJsonFieldInput.tsx
@@ -5423,12 +5485,31 @@ msgstr "Введіть свій ключ API"
 #. js-lingui-id: GpB8YV
 #: src/pages/settings/security/SettingsSecurity.tsx
 #: src/pages/settings/security/SettingsSecurity.tsx
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
 msgid "Enterprise"
 msgstr "Підприємство"
 
 #. js-lingui-id: Kjjkt3
 #: src/pages/settings/security/event-logs/SettingsEventLogs.tsx
 msgid "Enterprise Feature"
+msgstr ""
+
+#. js-lingui-id: S5c4pl
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+msgid "Enterprise License"
+msgstr ""
+
+#. js-lingui-id: KGE5g0
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+msgid "Enterprise license activated successfully"
 msgstr ""
 
 #. js-lingui-id: SLuq/l
@@ -5470,6 +5551,11 @@ msgstr "Видалення м'яко видалених записів"
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
 msgid "Error"
 msgstr "Помилка"
+
+#. js-lingui-id: VouTsQ
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+msgid "Error activating enterprise license"
+msgstr ""
 
 #. js-lingui-id: GHKxvg
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -5531,10 +5617,25 @@ msgstr "Помилка завантаження повідомлення"
 msgid "Error Message"
 msgstr "Повідомлення про помилку"
 
+#. js-lingui-id: Mox63G
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+msgid "Error opening billing portal"
+msgstr ""
+
+#. js-lingui-id: e/eieW
+#: src/modules/settings/enterprise/components/EnterprisePlanModal.tsx
+msgid "Error opening Stripe"
+msgstr ""
+
 #. js-lingui-id: bT/0cM
 #: src/modules/ui/field/display/components/PhonesDisplay.tsx
 msgid "Error parsing additional phones: {error}"
 msgstr "Помилка розбору додаткових телефонів: {error}"
+
+#. js-lingui-id: zRXcyv
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+msgid "Error refreshing validity token. Please contact support."
+msgstr ""
 
 #. js-lingui-id: PfAip2
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -5998,6 +6099,11 @@ msgstr ""
 msgid "Failed to {translatedOperationType} {translatedMetadataName}. Related {relatedEntityNames} validation failed. Please check your configuration and try again."
 msgstr ""
 
+#. js-lingui-id: R1XJV1
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+msgid "Failed to activate enterprise license. Please check your key or contact support."
+msgstr ""
+
 #. js-lingui-id: vJiM7T
 #: src/pages/settings/ai/components/SettingsSkillsTable.tsx
 msgid "Failed to activate skill"
@@ -6375,7 +6481,6 @@ msgstr ""
 #: src/modules/views/components/ViewBarFilterDropdownFieldSelectMenu.tsx
 #: src/modules/views/components/ViewBarFilterButton.tsx
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
-#: src/modules/side-panel/pages/page-layout/components/ChartFiltersSettings.tsx
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
@@ -6398,6 +6503,7 @@ msgid "Filter group rule options"
 msgstr "Параметри правила групи фільтра"
 
 #. js-lingui-id: cSev+j
+#: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "Filters"
 msgstr "Фільтри"
@@ -6468,6 +6574,11 @@ msgstr "Ім’я"
 msgid "First name can not be empty"
 msgstr "Ім’я не може бути порожнім"
 
+#. js-lingui-id: JREYkg
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+msgid "Fix the payment issue to keep your enterprise features active."
+msgstr ""
+
 #. js-lingui-id: ylQd2j
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
 #: src/modules/side-panel/pages/workflow/action/components/SidePanelWorkflowSelectAction.tsx
@@ -6487,7 +6598,7 @@ msgid "Folder name"
 msgstr ""
 
 #. js-lingui-id: HSh8u/
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditFolderPickerSubView.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditFolderPickerSubPage.tsx
 #: src/modules/settings/accounts/components/message-folders/SettingsAccountsMessageFoldersCard.tsx
 msgid "Folders"
 msgstr "Папки"
@@ -6636,6 +6747,22 @@ msgstr "Згенеровані файли"
 msgid "German"
 msgstr "Німецька"
 
+#. js-lingui-id: sqtljx
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+#: src/modules/settings/enterprise/components/EnterprisePlanModal.tsx
+msgid "Get Enterprise"
+msgstr ""
+
+#. js-lingui-id: o2kSwB
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+msgid "Get Enterprise Key"
+msgstr ""
+
 #. js-lingui-id: NXEW3h
 #: src/pages/onboarding/InviteTeam.tsx
 msgid "Get the most out of your workspace by inviting your team."
@@ -6654,6 +6781,12 @@ msgstr "Глобальні"
 #. js-lingui-id: sr0UJD
 #: src/pages/settings/security/event-logs/SettingsEventLogs.tsx
 msgid "Go Back"
+msgstr ""
+
+#. js-lingui-id: Hb4Cgz
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+msgid "Go to billing portal"
 msgstr ""
 
 #. js-lingui-id: mUbv8L
@@ -7240,6 +7373,11 @@ msgstr ""
 #: src/modules/activities/emails/components/EmailsCard.tsx
 msgid "Inbox"
 msgstr "Вхідні"
+
+#. js-lingui-id: mtGDyy
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+msgid "Incomplete"
+msgstr ""
 
 #. js-lingui-id: O5wNUa
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -7883,9 +8021,8 @@ msgid "Launch manually"
 msgstr "Запустити вручну"
 
 #. js-lingui-id: rdU729
-#: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts
+#: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutFieldsSettings.tsx
-#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutFieldsLayout.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 msgid "Layout"
@@ -7957,6 +8094,12 @@ msgstr ""
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Less than or equal"
 msgstr "Менше або дорівнює"
+
+#. js-lingui-id: 3qg5Ro
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+msgid "Licensee"
+msgstr ""
 
 #. js-lingui-id: 1njn7W
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
@@ -8261,6 +8404,8 @@ msgid "Manage billing and subscriptions"
 msgstr "Керуйте обліковою інформацією та передплатами"
 
 #. js-lingui-id: nvgUPq
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
 #: src/modules/billing/components/SettingsBillingContent.tsx
 msgid "Manage billing information"
 msgstr "Керування платіжною інформацією"
@@ -8613,6 +8758,11 @@ msgstr "Місяць року"
 msgid "monthly"
 msgstr "щомісяця"
 
+#. js-lingui-id: Sew/cK
+#: src/modules/settings/enterprise/components/EnterprisePlanModal.tsx
+msgid "Monthly subscription"
+msgstr ""
+
 #. js-lingui-id: 6jefe3
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityPluralLabel.ts
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityPluralLabel.ts
@@ -8674,7 +8824,7 @@ msgid "Move right"
 msgstr "Перемістити вправо"
 
 #. js-lingui-id: 6qDVmw
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditFolderPickerSubView.tsx
+#: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
 msgid "Move to a folder"
 msgstr ""
 
@@ -9275,13 +9425,13 @@ msgid "No Files"
 msgstr "Нема файлів"
 
 #. js-lingui-id: pYblOw
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditFolderPickerSubView.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditFolderPickerSubPage.tsx
 #: src/modules/favorites/favorite-folder-picker/components/FavoriteFolderPickerList.tsx
 msgid "No folder"
 msgstr "Немає папки"
 
 #. js-lingui-id: 6XMhqL
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditFolderPickerSubView.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditFolderPickerSubPage.tsx
 msgid "No folders available"
 msgstr ""
 
@@ -9455,8 +9605,8 @@ msgstr "Немає результатів"
 #: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemViewSystemSubView.tsx
 #: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemViewPickerSubView.tsx
 #: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemViewObjectPickerSubView.tsx
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemRecordSubView.tsx
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditFolderPickerSubView.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemRecordSubPage.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditFolderPickerSubPage.tsx
 #: src/modules/side-panel/components/SidePanelList.tsx
 msgid "No results found"
 msgstr "Результатів не знайдено"
@@ -10189,10 +10339,25 @@ msgstr "Посилання для скидання пароля було від�
 msgid "Paste the code below"
 msgstr "Вставте код нижче"
 
+#. js-lingui-id: raz2Pm
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+msgid "Paste your enterprise key below to activate"
+msgstr ""
+
+#. js-lingui-id: dNdgvF
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+msgid "Paste your enterprise key here"
+msgstr ""
+
 #. js-lingui-id: I6gXOa
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab.tsx
 msgid "Path"
 msgstr "Шлях"
+
+#. js-lingui-id: QmXBEc
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+msgid "Payment issue"
+msgstr ""
 
 #. js-lingui-id: UbRKMZ
 #: src/pages/settings/emailing-domains/utils/getEmailingDomainStatusText.ts
@@ -10330,13 +10495,13 @@ msgid "Pick a {objectLabel} record"
 msgstr "Виберіть запис {objectLabel}"
 
 #. js-lingui-id: JqqNlC
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemViewPickerSubView.tsx
+#: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
 msgid "Pick a view"
 msgstr ""
 
 #. js-lingui-id: Wlba2h
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelObjectPickerSubView.tsx
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemViewObjectPickerSubView.tsx
+#: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
+#: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
 msgid "Pick an object"
 msgstr ""
 
@@ -10954,6 +11119,16 @@ msgstr "Релізи"
 msgid "Reload"
 msgstr "Перезавантажити"
 
+#. js-lingui-id: qbM5In
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+msgid "Reload validity token"
+msgstr ""
+
+#. js-lingui-id: MZWnSC
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+msgid "Reloading..."
+msgstr ""
+
 #. js-lingui-id: qlAIQ1
 #: src/modules/object-metadata/components/RemoteNavigationDrawerSection.tsx
 msgid "Remote"
@@ -11229,7 +11404,7 @@ msgstr "Результат"
 
 #. js-lingui-id: kx0s+n
 #: src/modules/side-panel/pages/search/hooks/useSidePanelSearchRecords.tsx
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemRecordSubView.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemRecordSubPage.tsx
 msgid "Results"
 msgstr "Результати"
 
@@ -11368,6 +11543,11 @@ msgstr ""
 msgid "row level permission predicate group"
 msgstr ""
 
+#. js-lingui-id: xPaeO2
+#: src/modules/settings/enterprise/components/EnterprisePlanModal.tsx
+msgid "Row-level security"
+msgstr ""
+
 #. js-lingui-id: 7jTlsu
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Ruby"
@@ -11486,6 +11666,8 @@ msgstr ""
 #: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
 #: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
 #: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/constants/EngineComponentKeyComponentMap.tsx
+#: src/modules/command-menu-item/constants/EngineComponentKeyComponentMap.tsx
 msgid "Search"
 msgstr "Пошук"
 
@@ -11522,7 +11704,7 @@ msgid "Search a field..."
 msgstr "Пошук поля..."
 
 #. js-lingui-id: ITQFzL
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditFolderPickerSubView.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditFolderPickerSubPage.tsx
 msgid "Search a folder..."
 msgstr ""
 
@@ -11690,7 +11872,7 @@ msgid "Search records"
 msgstr "Пошук записів"
 
 #. js-lingui-id: rRklUH
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemRecordSubView.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemRecordSubPage.tsx
 msgid "Search records..."
 msgstr ""
 
@@ -11725,11 +11907,13 @@ msgid "Searching the web for {query}"
 msgstr ""
 
 #. js-lingui-id: 8sgZS9
+#: src/modules/settings/enterprise/components/EnterprisePlanModal.tsx
 #: src/modules/billing/components/SubscriptionPrice.tsx
 msgid "seat / month"
 msgstr "місце / місяць"
 
 #. js-lingui-id: aQnWwf
+#: src/modules/settings/enterprise/components/EnterprisePlanModal.tsx
 #: src/modules/billing/components/SubscriptionPrice.tsx
 msgid "seat / month - billed yearly"
 msgstr "місце / місяць - виставляється рахунок щорічно"
@@ -12557,6 +12741,7 @@ msgstr "Єдиний вхід"
 
 #. js-lingui-id: vlvAkg
 #: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
+#: src/modules/settings/enterprise/components/EnterprisePlanModal.tsx
 msgid "SSO (SAML / OIDC)"
 msgstr "SSO (SAML / OIDC)"
 
@@ -12601,6 +12786,16 @@ msgstr ""
 msgid "Start"
 msgstr "Почати"
 
+#. js-lingui-id: ASqWQi
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+msgid "Start a new enterprise subscription to re-enable enterprise features."
+msgstr ""
+
+#. js-lingui-id: OC6rnK
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+msgid "Start a new enterprise subscription."
+msgstr ""
+
 #. js-lingui-id: D3iCkb
 #: src/pages/settings/security/event-logs/components/EventLogFilters.tsx
 msgid "Start Date"
@@ -12626,6 +12821,11 @@ msgid "State"
 msgstr "Стан"
 
 #. js-lingui-id: uAQUqI
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/modules/settings/components/SettingsDnsRecordsTable.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
@@ -12921,10 +13121,10 @@ msgstr ""
 
 #. js-lingui-id: 0apULK
 #: src/pages/settings/data-model/SettingsObjectTable.tsx
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelSystemObjectPickerSubView.tsx
+#: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
+#: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
 #: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelSystemObjectPickerSubView.tsx
 #: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelObjectPickerSubView.tsx
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemViewSystemSubView.tsx
 #: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemViewSystemSubView.tsx
 #: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemViewObjectPickerSubView.tsx
 msgid "System objects"
@@ -13228,6 +13428,11 @@ msgstr "Є обов'язкові стовпці, які не зіставлен�
 msgid "There are still some rows that contain errors. Rows with errors will be ignored when submitting."
 msgstr "Є ще рядки, що містять помилки. Рядки з помилками будуть проігноровані при відправленні."
 
+#. js-lingui-id: CA9PTn
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+msgid "There is a payment issue with your subscription. Please update your payment method."
+msgstr ""
+
 #. js-lingui-id: WQk7Cf
 #: src/modules/activities/timeline-activities/components/TimelineCard.tsx
 msgid "There is no activity associated with this record."
@@ -13342,9 +13547,9 @@ msgstr ""
 msgid "This database value overrides environment settings. "
 msgstr "Це значення з бази даних перевизначає параметри середовища."
 
-#. js-lingui-id: qHAJQ2
+#. js-lingui-id: 8IRnd6
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
-msgid "This feature is part of the Organization Plan"
+msgid "This feature is part of the Enterprise Plan"
 msgstr ""
 
 #. js-lingui-id: own57K
@@ -13653,6 +13858,8 @@ msgid "Transfer ownership"
 msgstr ""
 
 #. js-lingui-id: lhkaAC
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
 #: src/modules/billing/components/internal/PlansTags.tsx
 msgid "Trial"
 msgstr "Випробування"
@@ -13843,7 +14050,7 @@ msgid "Type anything..."
 msgstr "Наберіть щось..."
 
 #. js-lingui-id: UhqKcC
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemRecordSubView.tsx
+#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemRecordSubPage.tsx
 msgid "Type to search records"
 msgstr ""
 
@@ -14001,6 +14208,11 @@ msgstr "Необмежена кількість контактів"
 msgid "Unlisted"
 msgstr "Не перелічено"
 
+#. js-lingui-id: Ep1uUU
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+msgid "Unlock enterprise features like SSO, row-level security, and audit logs."
+msgstr ""
+
 #. js-lingui-id: eQMhFX
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "unordered"
@@ -14069,6 +14281,11 @@ msgstr "оновити"
 #: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Update"
 msgstr "Оновити"
+
+#. js-lingui-id: Y69tSP
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+msgid "Update payment method"
+msgstr ""
 
 #. js-lingui-id: 0KAL3W
 #: src/modules/side-panel/hooks/useOpenUpdateMultipleRecordsPageInSidePanel.tsx
@@ -14308,10 +14525,21 @@ msgstr "Використовується значення за замовчув�
 msgid "Using default value. Set a custom value to override."
 msgstr "Використовується значення за замовчуванням. Встановіть користувацьке значення, щоб перевизначити."
 
+#. js-lingui-id: zzp4XX
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+msgid "Valid until"
+msgstr ""
+
 #. js-lingui-id: Clr4qp
 #: src/modules/spreadsheet-import/steps/components/SpreadsheetImportStepperContainer.tsx
 msgid "Validate Data"
 msgstr "Перевірити дані"
+
+#. js-lingui-id: PWZBIT
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+msgid "Validity token refreshed successfully"
+msgstr ""
 
 #. js-lingui-id: wMHvYH
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTable.tsx
@@ -14439,6 +14667,8 @@ msgid "View and filter events, page views, object changes"
 msgstr ""
 
 #. js-lingui-id: KANz0G
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
 #: src/modules/billing/components/SettingsBillingContent.tsx
 msgid "View billing details"
 msgstr "Переглянути деталі оплати"
@@ -14488,6 +14718,11 @@ msgstr "група перегляду"
 msgid "View installed app"
 msgstr ""
 
+#. js-lingui-id: B02hom
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+msgid "View invoices"
+msgstr ""
+
 #. js-lingui-id: lh5BED
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerQueueMetricsSection.tsx
 msgid "View Jobs"
@@ -14506,6 +14741,7 @@ msgstr ""
 #. js-lingui-id: ecVcAx
 #: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
 #: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/constants/EngineComponentKeyComponentMap.tsx
 msgid "View Previous AI Chats"
 msgstr "Переглянути попередні чати з ШІ"
 
@@ -14855,6 +15091,7 @@ msgstr "Робочі процеси"
 #: src/pages/settings/members/SettingsWorkspaceMember.tsx
 #: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
 #: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
 #: src/pages/settings/emailing-domains/SettingsNewEmailingDomain.tsx
 #: src/pages/settings/emailing-domains/SettingsEmailingDomainDetail.tsx
 #: src/pages/settings/domains/SettingsDomains.tsx
@@ -15021,6 +15258,11 @@ msgstr "Рік"
 msgid "yearly"
 msgstr "щорічно"
 
+#. js-lingui-id: Y1GwUe
+#: src/modules/settings/enterprise/components/EnterprisePlanModal.tsx
+msgid "Yearly subscription"
+msgstr ""
+
 #. js-lingui-id: +BGee5
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityPluralLabel.ts
 msgid "years"
@@ -15153,6 +15395,36 @@ msgstr "Ваші теми листів та назви зустрічей буд
 msgid "Your emails and events content will be shared with your team."
 msgstr "Ваш вміст електронних листів та подій буде поділено з вашою командою."
 
+#. js-lingui-id: ahEwS4
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+msgid "Your enterprise features are active"
+msgstr ""
+
+#. js-lingui-id: XMZLU/
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+msgid "Your enterprise features are active but your enterprise key is missing or invalid. This may be expected, but if not, please set a valid signed enterprise key to manage your subscription, or contact support."
+msgstr ""
+
+#. js-lingui-id: AxcwNj
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+msgid "Your enterprise features will be disabled"
+msgstr ""
+
+#. js-lingui-id: PT137K
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+msgid "Your enterprise features will remain active until {cancelAtDate}."
+msgstr ""
+
+#. js-lingui-id: 69Siss
+#: src/modules/information-banner/components/enterprise/InformationBannerLegacyEnterpriseKey.tsx
+msgid "Your enterprise key format is deprecated. Please activate a new key to keep enterprise features."
+msgstr ""
+
+#. js-lingui-id: NTpA4U
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+msgid "Your enterprise subscription has been canceled."
+msgstr ""
+
 #. js-lingui-id: 9ivpwk
 #: src/pages/settings/SettingsProfile.tsx
 msgid "Your name as it will be displayed"
@@ -15162,6 +15434,26 @@ msgstr "Ваше ім'я, як воно буде відображатися"
 #: src/pages/onboarding/CreateProfile.tsx
 msgid "Your name as it will be displayed on the app"
 msgstr "Ваше ім'я, як воно буде відображатися в додатку"
+
+#. js-lingui-id: 319YPG
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+msgid "Your subscription is active but your validity token is invalid or has expired. Try reloading it or contact support."
+msgstr ""
+
+#. js-lingui-id: Fx0axg
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+msgid "Your subscription is scheduled for cancellation"
+msgstr ""
+
+#. js-lingui-id: XgIa/8
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+msgid "Your subscription setup was not completed."
+msgstr ""
+
+#. js-lingui-id: Z9kbt6
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+msgid "Your subscription status is: {statusLabel}"
+msgstr ""
 
 #. js-lingui-id: QOd24n
 #: src/modules/billing/hooks/useBillingWording.ts

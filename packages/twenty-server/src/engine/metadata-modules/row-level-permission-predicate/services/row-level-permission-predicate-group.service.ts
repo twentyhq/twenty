@@ -8,7 +8,7 @@ import { Repository } from 'typeorm';
 
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { EnterprisePlanService } from 'src/engine/core-modules/enterprise/services/enterprise-plan.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { fromFlatRowLevelPermissionPredicateGroupToDto } from 'src/engine/metadata-modules/flat-row-level-permission-predicate/utils/from-flat-row-level-permission-predicate-group-to-dto.util';
@@ -24,7 +24,7 @@ export class RowLevelPermissionPredicateGroupService {
     private readonly billingService: BillingService,
     @InjectRepository(RowLevelPermissionPredicateGroupEntity)
     private readonly rowLevelPermissionPredicateGroupRepository: Repository<RowLevelPermissionPredicateGroupEntity>,
-    private readonly twentyConfigService: TwentyConfigService,
+    private readonly enterprisePlanService: EnterprisePlanService,
   ) {}
 
   async findByWorkspaceId(
@@ -136,9 +136,7 @@ export class RowLevelPermissionPredicateGroupService {
   private async hasRowLevelPermissionFeature(
     workspaceId: string,
   ): Promise<boolean> {
-    const hasValidEnterpriseKey = isDefined(
-      this.twentyConfigService.get('ENTERPRISE_KEY'),
-    );
+    const hasValidEnterprisePlan = this.enterprisePlanService.isValid();
 
     const isRowLevelPermissionEnabled =
       await this.billingService.hasEntitlement(
@@ -146,6 +144,6 @@ export class RowLevelPermissionPredicateGroupService {
         BillingEntitlementKey.RLS,
       );
 
-    return hasValidEnterpriseKey && isRowLevelPermissionEnabled;
+    return hasValidEnterprisePlan && isRowLevelPermissionEnabled;
   }
 }
