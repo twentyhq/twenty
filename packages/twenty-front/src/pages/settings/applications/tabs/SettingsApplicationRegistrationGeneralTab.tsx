@@ -29,8 +29,14 @@ import { Button } from 'twenty-ui/input';
 import { Section, SectionAlignment, SectionFontColor } from 'twenty-ui/layout';
 import {
   ApplicationRegistrationSourceType,
+  ApplicationRegistrationTarballUrlDocument,
+  DeleteApplicationRegistrationDocument,
+  FindApplicationRegistrationVariablesDocument,
+  FindManyApplicationRegistrationsDocument,
   FindManyApplicationsDocument,
+  TransferApplicationRegistrationOwnershipDocument,
   UninstallApplicationDocument,
+  UpdateApplicationRegistrationVariableDocument,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -133,7 +139,7 @@ export const SettingsApplicationRegistrationGeneralTab = ({
   const applicationRegistrationId = registration.id;
 
   const { data: variablesData } = useQuery(
-    FIND_APPLICATION_REGISTRATION_VARIABLES,
+    FindApplicationRegistrationVariablesDocument,
     {
       variables: { applicationRegistrationId },
       skip: !applicationRegistrationId,
@@ -141,28 +147,28 @@ export const SettingsApplicationRegistrationGeneralTab = ({
   );
 
   const { data: tarballUrlData } = useQuery(
-    APPLICATION_REGISTRATION_TARBALL_URL,
+    ApplicationRegistrationTarballUrlDocument,
     {
       variables: { id: applicationRegistrationId },
       skip: !applicationRegistrationId,
     },
   );
 
-  const [deleteRegistration] = useMutation(DELETE_APPLICATION_REGISTRATION, {
-    refetchQueries: [FIND_MANY_APPLICATION_REGISTRATIONS],
+  const [deleteRegistration] = useMutation(DeleteApplicationRegistrationDocument, {
+    refetchQueries: [FindManyApplicationRegistrationsDocument],
   });
 
   const [updateVariable] = useMutation(
-    UPDATE_APPLICATION_REGISTRATION_VARIABLE,
+    UpdateApplicationRegistrationVariableDocument,
     {
-      refetchQueries: [FIND_APPLICATION_REGISTRATION_VARIABLES],
+      refetchQueries: [FindApplicationRegistrationVariablesDocument],
     },
   );
 
   const [transferOwnership] = useMutation(
-    TRANSFER_APPLICATION_REGISTRATION_OWNERSHIP,
+    TransferApplicationRegistrationOwnershipDocument,
     {
-      refetchQueries: [FIND_MANY_APPLICATION_REGISTRATIONS],
+      refetchQueries: [FindManyApplicationRegistrationsDocument],
     },
   );
 

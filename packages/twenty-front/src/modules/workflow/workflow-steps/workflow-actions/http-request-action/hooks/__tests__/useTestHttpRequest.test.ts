@@ -91,7 +91,7 @@ describe('useTestHttpRequest', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     (useApolloCoreClient as jest.Mock).mockReturnValue(mockApolloClient);
-    (useMutation as jest.Mock).mockReturnValue([mockMutate]);
+    (useMutation as unknown as jest.Mock).mockReturnValue([mockMutate]);
   });
 
   it('should initialize with correct default values', () => {

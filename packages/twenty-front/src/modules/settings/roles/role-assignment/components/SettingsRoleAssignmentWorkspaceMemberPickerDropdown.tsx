@@ -1,5 +1,6 @@
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { useObjectRecordSearchRecords } from '@/object-record/hooks/useObjectRecordSearchRecords';
+import { type SearchRecord } from '~/generated/graphql';
 import { SettingsRoleAssignmentWorkspaceMemberPickerDropdownContent } from '@/settings/roles/role-assignment/components/SettingsRoleAssignmentWorkspaceMemberPickerDropdownContent';
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -29,7 +30,8 @@ export const SettingsRoleAssignmentWorkspaceMemberPickerDropdown = ({
 
   const filteredWorkspaceMembers =
     workspaceMembers?.filter(
-      (workspaceMember) =>
+      (workspaceMember): workspaceMember is NonNullable<typeof workspaceMember> & { recordId: string } =>
+        !!workspaceMember?.recordId &&
         !excludedWorkspaceMemberIds.includes(workspaceMember.recordId),
     ) ?? [];
 
@@ -50,7 +52,7 @@ export const SettingsRoleAssignmentWorkspaceMemberPickerDropdown = ({
         <SettingsRoleAssignmentWorkspaceMemberPickerDropdownContent
           loading={loading}
           searchFilter={searchFilter}
-          filteredWorkspaceMembers={filteredWorkspaceMembers}
+          filteredWorkspaceMembers={filteredWorkspaceMembers as SearchRecord[]}
           onSelect={onSelect}
         />
       </DropdownMenuItemsContainer>

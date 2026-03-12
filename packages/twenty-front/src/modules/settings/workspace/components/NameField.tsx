@@ -65,7 +65,7 @@ export const NameField = ({
         return;
       }
       try {
-        const { data, errors } = await updateWorkspace({
+        const result = await updateWorkspace({
           variables: {
             input: {
               displayName: name,
@@ -73,8 +73,8 @@ export const NameField = ({
           },
         });
 
-        if (isDefined(errors) || isUndefinedOrNull(data?.updateWorkspace)) {
-          throw errors;
+        if (isDefined(result.error) || isUndefinedOrNull(result.data?.updateWorkspace)) {
+          throw result.error;
         }
       } catch (error) {
         logError(error);

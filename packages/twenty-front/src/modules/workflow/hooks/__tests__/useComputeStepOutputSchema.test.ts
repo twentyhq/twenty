@@ -16,7 +16,7 @@ describe('useComputeStepOutputSchema', () => {
     };
     const mockMutate = jest.fn().mockResolvedValue(mockResponse);
 
-    (useMutation as jest.Mock).mockReturnValue([mockMutate]);
+    (useMutation as unknown as jest.Mock).mockReturnValue([mockMutate]);
 
     const { result } = renderHook(() => useComputeStepOutputSchema());
     const response = await result.current.computeStepOutputSchema(

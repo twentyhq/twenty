@@ -23,10 +23,10 @@ export const useRefreshAllCoreViews = (
 
     const currentCoreViews = store.get(coreViewsState.atom);
 
-    const coreViewsFromResult = result.data.getCoreViews;
+    const coreViewsFromResult = result.data?.getCoreViews;
 
     if (
-      isDefined(result.data?.getCoreViews) &&
+      isDefined(coreViewsFromResult) &&
       !isDeeplyEqual(currentCoreViews, coreViewsFromResult)
     ) {
       store.set(coreViewsState.atom, coreViewsFromResult);

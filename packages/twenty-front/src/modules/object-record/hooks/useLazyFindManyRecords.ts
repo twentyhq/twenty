@@ -60,13 +60,14 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
 
   const hasReadPermission = objectPermissions.canReadObjectRecords;
 
+  const defaultVariables = {
+    filter,
+    limit,
+    orderBy,
+  };
+
   const [findManyRecords, { data, error, fetchMore }] =
     useLazyQuery<RecordGqlOperationFindManyResult>(findManyRecordsQuery, {
-      variables: {
-        filter,
-        limit,
-        orderBy,
-      },
       fetchPolicy,
       client: apolloCoreClient,
     });
@@ -77,7 +78,7 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
     orderBy,
     limit,
     fetchMore,
-    data,
+    data: data as RecordGqlOperationFindManyResult | undefined,
     error,
     objectMetadataItem,
   });
@@ -96,7 +97,7 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
       };
     }
 
-    const result = await findManyRecords();
+    const result = await findManyRecords({ variables: defaultVariables });
     if (isDefined(result?.error)) {
       handleFindManyRecordsError(result.error);
     }
@@ -136,6 +137,7 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
   }, [
     hasReadPermission,
     findManyRecords,
+    defaultVariables,
     objectMetadataItem.namePlural,
     queryIdentifier,
     handleFindManyRecordsError,

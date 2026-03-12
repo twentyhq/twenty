@@ -13,6 +13,7 @@ import {
   FindApplicationRegistrationStatsDocument,
   FindOneApplicationRegistrationDocument,
 } from '~/generated-metadata/graphql';
+import { type ApplicationRegistrationData } from '~/pages/settings/applications/tabs/types/ApplicationRegistrationData';
 import { SettingsApplicationRegistrationGeneralTab } from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab';
 import { SettingsApplicationRegistrationOAuthTab } from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab';
 import { SettingsApplicationRegistrationDistributionTab } from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab';
@@ -41,7 +42,7 @@ export const SettingsApplicationRegistrationDetails = () => {
     skip: !applicationRegistrationId,
   });
 
-  const registration = data?.findOneApplicationRegistration;
+  const registration = data?.findOneApplicationRegistration as ApplicationRegistrationData | undefined;
   const stats = statsData?.findApplicationRegistrationStats;
   const hasActiveInstalls = (stats?.activeInstalls ?? 0) > 0;
 

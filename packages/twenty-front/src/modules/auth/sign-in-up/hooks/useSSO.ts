@@ -31,10 +31,13 @@ export const useSSO = () => {
       });
     }
 
-    redirect(
+    const authorizationURL =
       authorizationUrlForSSOResult.data?.getAuthorizationUrlForSSO
-        .authorizationURL,
-    );
+        ?.authorizationURL;
+
+    if (authorizationURL) {
+      redirect(authorizationURL);
+    }
   };
 
   return {

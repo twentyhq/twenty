@@ -52,9 +52,6 @@ export const useLazyFindManyRecordsWithOffset = ({
   const [findManyRecords] = useLazyQuery<RecordGqlOperationFindManyResult>(
     findManyRecordsQuery,
     {
-      variables: {
-        ...params,
-      },
       client: apolloCoreClient,
     },
   );
@@ -72,6 +69,7 @@ export const useLazyFindManyRecordsWithOffset = ({
 
       const result = await findManyRecords({
         variables: {
+          ...params,
           limit,
           offset,
         },

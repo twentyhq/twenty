@@ -5,7 +5,7 @@ import { useDoObjectMetadataItemsExist } from '@/object-metadata/hooks/useDoObje
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { type WatchQueryFetchPolicy } from '@apollo/client';
 import { useQuery } from '@apollo/client/react';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -53,8 +53,19 @@ export const useObjectRecordSearchRecords = ({
     },
     fetchPolicy: fetchPolicy,
     client: apolloCoreClient,
-    onCompleted: onCompleted,
-    onError: (error) => {
+  });
+
+  const onCompletedRef = useRef(onCompleted);
+  onCompletedRef.current = onCompleted;
+
+  useEffect(() => {
+    if (data) {
+      onCompletedRef.current?.(data);
+    }
+  }, [data]);
+
+  useEffect(() => {
+    if (error) {
       logError(
         `useSearchRecords for "${objectNameSingulars.join(', ')}" error : ` +
           error,
@@ -62,13 +73,14 @@ export const useObjectRecordSearchRecords = ({
       enqueueErrorSnackBar({
         apolloError: error,
       });
-    },
-  });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [error]);
 
   const effectiveData = loading ? previousData : data;
 
   const searchRecords = useMemo(
-    () => effectiveData?.search.edges.map((edge) => edge.node) || [],
+    () => effectiveData?.search?.edges?.map((edge) => edge.node) || [],
     [effectiveData],
   );
 

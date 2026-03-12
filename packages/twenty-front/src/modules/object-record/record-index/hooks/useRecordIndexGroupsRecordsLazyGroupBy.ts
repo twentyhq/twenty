@@ -9,6 +9,7 @@ import { generateGroupsRecordsGroupByQuery } from '@/object-record/record-aggreg
 import { useRecordIndexGroupCommonQueryVariables } from '@/object-record/record-index/hooks/useRecordIndexGroupCommonQueryVariables';
 import { buildGroupByFieldObject } from '@/page-layout/widgets/graph/utils/buildGroupByFieldObject';
 import { useLazyQuery } from '@apollo/client/react';
+import { useCallback } from 'react';
 import { type Nullable } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type PageInfo } from '~/generated-metadata/graphql';
@@ -51,22 +52,32 @@ export const useRecordIndexGroupsRecordsLazyGroupBy = ({
       })
     : {};
 
-  const [executeRecordIndexGroupsRecordsLazyGroupBy] =
+  const defaultVariables = {
+    filter: combinedFilters,
+    groupBy: {
+      ...groupByGqlInput,
+    },
+    orderByForRecords: orderBy,
+    limit: recordGroupsLimit,
+  };
+
+  const [executeRecordIndexGroupsRecordsLazyGroupByRaw] =
     useLazyQuery<GroupsRecordsGroupByLazyResult>(
       recordIndexGroupsRecordGroupsGroupByQuery,
       {
-        variables: {
-          filter: combinedFilters,
-          groupBy: {
-            ...groupByGqlInput,
-          },
-          orderByForRecords: orderBy,
-          limit: recordGroupsLimit,
-        },
         client: apolloCoreClient,
         fetchPolicy: 'no-cache',
       },
     );
+
+  const executeRecordIndexGroupsRecordsLazyGroupBy = useCallback(
+    (options?: Parameters<typeof executeRecordIndexGroupsRecordsLazyGroupByRaw>[0]) =>
+      executeRecordIndexGroupsRecordsLazyGroupByRaw({
+        ...options,
+        variables: { ...defaultVariables, ...options?.variables },
+      }),
+    [executeRecordIndexGroupsRecordsLazyGroupByRaw, defaultVariables],
+  );
 
   return {
     executeRecordIndexGroupsRecordsLazyGroupBy,
