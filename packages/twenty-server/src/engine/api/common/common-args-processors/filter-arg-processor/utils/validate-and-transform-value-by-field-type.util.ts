@@ -5,6 +5,7 @@ import { validateBooleanFieldOrThrow } from 'src/engine/api/common/common-args-p
 import { validateDateFieldOrThrow } from 'src/engine/api/common/common-args-processors/filter-arg-processor/validator-utils/validate-date-field-or-throw.util';
 import { validateDateTimeFieldOrThrow } from 'src/engine/api/common/common-args-processors/filter-arg-processor/validator-utils/validate-date-time-field-or-throw.util';
 import { validateNumberFieldOrThrow } from 'src/engine/api/common/common-args-processors/filter-arg-processor/validator-utils/validate-number-field-or-throw.util';
+import { validateSelectFieldOrThrow } from 'src/engine/api/common/common-args-processors/filter-arg-processor/validator-utils/validate-select-field-or-throw.util';
 import { validateUUIDFieldOrThrow } from 'src/engine/api/common/common-args-processors/filter-arg-processor/validator-utils/validate-uuid-field-or-throw.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 
@@ -53,6 +54,12 @@ export const validateAndTransformValueByFieldType = (
 
     case FieldMetadataType.DATE_TIME:
       validateDateTimeFieldOrThrow(value, fieldName);
+
+      return value;
+
+    case FieldMetadataType.SELECT:
+    case FieldMetadataType.MULTI_SELECT:
+      validateSelectFieldOrThrow(value, fieldMetadata, fieldName);
 
       return value;
 
