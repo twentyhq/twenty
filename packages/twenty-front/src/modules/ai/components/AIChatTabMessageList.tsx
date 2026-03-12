@@ -1,11 +1,14 @@
 import { AIChatErrorUnderMessageList } from '@/ai/components/AIChatErrorUnderMessageList';
-import { AIChatMessage } from '@/ai/components/AIChatMessage';
+import { AIChatVirtualizedMessageContainer } from '@/ai/components/AIChatVirtualizedMessageContainer';
+import { AIChatVirtualizedPlaceholder } from '@/ai/components/AIChatVirtualizedPlaceholder';
+import { AIChatVirtualizedScrollEffect } from '@/ai/components/AIChatVirtualizedScrollEffect';
 import { AI_CHAT_SCROLL_WRAPPER_ID } from '@/ai/constants/AiChatScrollWrapperId';
-import { agentChatMessageIdsComponentSelector } from '@/ai/states/agentChatMessageIdsComponentSelector';
+import { NUMBER_OF_VIRTUALIZED_CHAT_MESSAGES } from '@/ai/constants/NumberOfVirtualizedChatMessages';
+import { agentChatHasMessageComponentSelector } from '@/ai/states/agentChatHasMessageComponentSelector';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { styled } from '@linaria/react';
-import { isNonEmptyArray } from '@sniptt/guards';
+import { getContiguousIncrementalValues } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledScrollWrapperContainer = styled.div`
@@ -18,12 +21,19 @@ const StyledScrollWrapperContainer = styled.div`
   width: calc(100% - 24px);
 `;
 
-export const AIChatTabMessageList = () => {
-  const agentChatMessageIdsComponent = useAtomComponentSelectorValue(
-    agentChatMessageIdsComponentSelector,
-  );
+const StyledVirtualizationContainer = styled.div`
+  position: relative;
+  width: 100%;
+`;
 
-  const hasMessages = isNonEmptyArray(agentChatMessageIdsComponent);
+const virtualIndices = getContiguousIncrementalValues(
+  NUMBER_OF_VIRTUALIZED_CHAT_MESSAGES,
+);
+
+export const AIChatTabMessageList = () => {
+  const hasMessages = useAtomComponentSelectorValue(
+    agentChatHasMessageComponentSelector,
+  );
 
   if (!hasMessages) {
     return null;
@@ -32,10 +42,17 @@ export const AIChatTabMessageList = () => {
   return (
     <StyledScrollWrapperContainer>
       <ScrollWrapper componentInstanceId={AI_CHAT_SCROLL_WRAPPER_ID}>
-        {agentChatMessageIdsComponent.map((messageId) => {
-          return <AIChatMessage messageId={messageId} key={messageId} />;
-        })}
+        <StyledVirtualizationContainer>
+          <AIChatVirtualizedPlaceholder />
+          {virtualIndices.map((virtualIndex) => (
+            <AIChatVirtualizedMessageContainer
+              key={virtualIndex}
+              virtualIndex={virtualIndex}
+            />
+          ))}
+        </StyledVirtualizationContainer>
         <AIChatErrorUnderMessageList />
+        <AIChatVirtualizedScrollEffect />
       </ScrollWrapper>
     </StyledScrollWrapperContainer>
   );
