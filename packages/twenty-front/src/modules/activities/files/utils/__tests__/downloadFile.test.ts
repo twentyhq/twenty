@@ -1,35 +1,39 @@
 import { downloadFile } from '@/activities/files/utils/downloadFile';
+import { saveAs } from 'file-saver';
+
+jest.mock('file-saver', () => ({
+  saveAs: jest.fn(),
+}));
+
+const mockBlob = new Blob(['test content'], { type: 'application/pdf' });
 
 global.fetch = jest.fn(() =>
   Promise.resolve({
     status: 200,
-    blob: jest.fn(),
+    blob: () => Promise.resolve(mockBlob),
   } as unknown as Response),
 );
 
-window.URL.createObjectURL = jest.fn(() => 'mock-url');
-window.URL.revokeObjectURL = jest.fn();
+describe('downloadFile', () => {
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
 
-// FIXME: jest is behaving weirdly here, it's not finding the element
-// Also the document's innerHTML is empty
-// `global.fetch` and `window.fetch` are also undefined
-describe.skip('downloadFile', () => {
-  it('should download a file', () => {
-    downloadFile('url/to/file.pdf', 'file.pdf');
+  it('should download a file', async () => {
+    await downloadFile('url/to/file.pdf', 'file.pdf');
 
     expect(fetch).toHaveBeenCalledWith('url/to/file.pdf');
+    expect(saveAs).toHaveBeenCalledWith(mockBlob, 'file.pdf');
+  });
 
-    const link = document.querySelector(
-      'a[href="mock-url"][download="file.pdf"]',
+  it('should reject when fetch fails', async () => {
+    (global.fetch as jest.Mock).mockResolvedValueOnce({
+      status: 404,
+      blob: () => Promise.resolve(mockBlob),
+    });
+
+    await expect(downloadFile('url/to/file.pdf', 'file.pdf')).rejects.toBe(
+      'Failed downloading file',
     );
-
-    expect(link).not.toBeNull();
-    // oxlint-disable-next-line @typescripttypescript/ban-ts-comment
-    // @ts-ignore
-    expect(link?.style?.display).toBe('none');
-
-    expect(link).toHaveBeenCalledTimes(1);
-
-    jest.clearAllMocks();
   });
 });
