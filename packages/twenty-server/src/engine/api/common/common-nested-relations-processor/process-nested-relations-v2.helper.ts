@@ -195,13 +195,8 @@ export class ProcessNestedRelationsV2Helper {
     });
 
     const fieldMetadataTargetRelationColumnName =
-      targetRelation &&
-      isFieldMetadataEntityOfType(
-        targetRelation,
-        FieldMetadataType.MORPH_RELATION,
-      )
-        ? `${targetRelation.settings?.joinColumnName}`
-        : `${targetRelationName}Id`;
+      targetRelation?.settings?.joinColumnName ??
+      `${targetRelationName}Id`;
 
     const { relationResults, relationAggregatedFieldsResult } =
       await this.findRelations({
