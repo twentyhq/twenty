@@ -15,6 +15,7 @@ import { createZipFile } from 'src/engine/core-modules/logic-function/logic-func
 import { SDK_CLIENT_PACKAGE_DIRNAME } from 'src/engine/core-modules/logic-function/logic-function-resource/constants/sdk-client-package-dirname';
 import { TemporaryDirManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/temporary-dir-manager';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const SDK_CLIENT_ARCHIVE_NAME = 'twenty-client-sdk.zip';
 
@@ -24,6 +25,7 @@ export class SdkClientGenerationService {
     private readonly fileStorageService: FileStorageService,
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   // Copies the stub twenty-client-sdk package, regenerates core.mjs/core.cjs
@@ -150,5 +152,9 @@ export class SdkClientGenerationService {
       { id: applicationId, workspaceId },
       { isSdkLayerStale: false },
     );
+
+    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+      'flatApplicationMaps',
+    ]);
   }
 }
