@@ -17,28 +17,10 @@ export const useSidePanelHistory = () => {
   const store = useStore();
   const { closeSidePanelMenu } = useSidePanelMenu();
 
-  const goBackFromSidePanel = useCallback(() => {
+  const cleanupCurrentPage = useCallback(() => {
     const currentNavigationStack = store.get(
       sidePanelNavigationStackState.atom,
     );
-
-    const newNavigationStack = currentNavigationStack.slice(0, -1);
-    const lastNavigationStackItem = newNavigationStack.at(-1);
-
-    if (!isDefined(lastNavigationStackItem)) {
-      closeSidePanelMenu();
-      return;
-    }
-
-    store.set(sidePanelPageState.atom, lastNavigationStackItem.page);
-
-    store.set(sidePanelPageInfoState.atom, {
-      title: lastNavigationStackItem.pageTitle,
-      Icon: lastNavigationStackItem.pageIcon,
-      instanceId: lastNavigationStackItem.pageId,
-    });
-
-    store.set(sidePanelNavigationStackState.atom, newNavigationStack);
 
     const currentMorphItems = store.get(
       sidePanelNavigationMorphItemsByPageState.atom,
@@ -73,9 +55,57 @@ export const useSidePanelHistory = () => {
         }
       }
     }
+  }, [store]);
+
+  const goBackFromSidePanel = useCallback(() => {
+    cleanupCurrentPage();
+
+    const currentNavigationStack = store.get(
+      sidePanelNavigationStackState.atom,
+    );
+
+    const newNavigationStack = currentNavigationStack.slice(0, -1);
+    const lastNavigationStackItem = newNavigationStack.at(-1);
+
+    if (!isDefined(lastNavigationStackItem)) {
+      closeSidePanelMenu();
+      return;
+    }
+
+    store.set(sidePanelPageState.atom, lastNavigationStackItem.page);
+
+    store.set(sidePanelPageInfoState.atom, {
+      title: lastNavigationStackItem.pageTitle,
+      Icon: lastNavigationStackItem.pageIcon,
+      instanceId: lastNavigationStackItem.pageId,
+    });
+
+    store.set(sidePanelNavigationStackState.atom, newNavigationStack);
 
     store.set(hasUserSelectedSidePanelListItemState.atom, false);
-  }, [closeSidePanelMenu, store]);
+  }, [cleanupCurrentPage, closeSidePanelMenu, store]);
+
+  const goBackOneSubPageOrMainPage = useCallback(() => {
+    const currentPageInfo = store.get(sidePanelPageInfoState.atom);
+
+    const subPageStack = store.get(
+      sidePanelSubPageStackComponentState.atomFamily({
+        instanceId: currentPageInfo.instanceId,
+      }),
+    );
+
+    if (isNonEmptyArray(subPageStack)) {
+      store.set(
+        sidePanelSubPageStackComponentState.atomFamily({
+          instanceId: currentPageInfo.instanceId,
+        }),
+        subPageStack.slice(0, -1),
+      );
+      return;
+    }
+
+    goBackFromSidePanel();
+  }, [goBackFromSidePanel, store]);
 
   const navigateSidePanelHistory = useCallback(
     (pageIndex: number) => {
@@ -141,6 +171,7 @@ export const useSidePanelHistory = () => {
 
   return {
     goBackFromSidePanel,
+    goBackOneSubPageOrMainPage,
     navigateSidePanelHistory,
   };
 };
