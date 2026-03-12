@@ -103,6 +103,32 @@ describe('useRequestFreshCaptchaToken', () => {
     });
   });
 
+  it('should reset isRequestingCaptchaToken when Google reCAPTCHA execute fails', async () => {
+    mockGrecaptchaExecute.mockImplementation(() => {
+      return Promise.reject(
+        new Error('Invalid site key or not loaded in api.js: fake-key'),
+      );
+    });
+
+    jotaiStore.set(isRequestingCaptchaTokenState.atom, false);
+    jotaiStore.set(captchaState.atom, {
+      provider: CaptchaDriverType.GOOGLE_RECAPTCHA,
+      siteKey: 'invalid-site-key',
+    } as Captcha);
+
+    const { result } = renderHook(() => useRequestFreshCaptchaToken(), {
+      wrapper: createWrapper,
+    });
+
+    await act(async () => {
+      await result.current.requestFreshCaptchaToken();
+    });
+
+    await waitFor(() => {
+      expect(jotaiStore.get(isRequestingCaptchaTokenState.atom)).toBe(false);
+    });
+  });
+
   it('should request a token from Turnstile when provider is TURNSTILE', async () => {
     jotaiStore.set(isRequestingCaptchaTokenState.atom, false);
     jotaiStore.set(captchaState.atom, {

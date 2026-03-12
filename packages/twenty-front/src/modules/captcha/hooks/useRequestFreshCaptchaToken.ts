@@ -40,6 +40,9 @@ export const useRequestFreshCaptchaToken = () => {
           .then((token: string) => {
             setCaptchaToken(token);
             setIsRequestingCaptchaToken(false);
+          })
+          .catch(() => {
+            setIsRequestingCaptchaToken(false);
           });
         break;
       case CaptchaDriverType.TURNSTILE:
