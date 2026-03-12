@@ -94,6 +94,9 @@ const resolveSdkModules = async (
 };
 
 // Rewrites bare SDK import specifiers to blob URLs so the browser can resolve them.
+const escapeRegExp = (string: string): string =>
+  string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
 const rewriteSdkImports = (
   source: string,
   sdkBlobUrls: Record<string, string>,
@@ -101,12 +104,14 @@ const rewriteSdkImports = (
   let rewritten = source;
 
   for (const [specifier, blobUrl] of Object.entries(sdkBlobUrls)) {
-    rewritten = rewritten.replaceAll(
-      `"${specifier}"`,
+    const escaped = escapeRegExp(specifier);
+
+    rewritten = rewritten.replace(
+      new RegExp(`"${escaped}"`, 'g'),
       `"${blobUrl}"`,
     );
-    rewritten = rewritten.replaceAll(
-      `'${specifier}'`,
+    rewritten = rewritten.replace(
+      new RegExp(`'${escaped}'`, 'g'),
       `'${blobUrl}'`,
     );
   }
