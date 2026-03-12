@@ -74,13 +74,13 @@ export const PageLayoutRendererContent = () => {
 
   const isMobile = useIsMobile();
 
-  const objectMetadataItemsStore = useAtomFamilyStateValue(
+  const metadataStore = useAtomFamilyStateValue(
     metadataStoreState,
     'objectMetadataItems',
   );
 
   const isSystemObject =
-    objectMetadataItemsStore.current.find(
+    metadataStore.current.find(
       (item) =>
         item.nameSingular === targetRecordIdentifier?.targetObjectNameSingular,
     )?.isSystem ?? false;

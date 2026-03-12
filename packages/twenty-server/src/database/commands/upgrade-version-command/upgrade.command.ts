@@ -130,9 +130,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       this.seedServerIdCommand,
     ];
 
-    const commands_1200: VersionCommands = [
-      this.backfillPageLayoutsCommand,
-    ];
+    const commands_1200: VersionCommands = [this.backfillPageLayoutsCommand];
 
     this.allCommands = {
       '1.16.0': commands_1160,

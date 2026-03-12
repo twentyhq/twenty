@@ -24,11 +24,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     WorkspaceMigrationModule,
     FeatureFlagModule,
   ],
-  providers: [
-    BackfillPageLayoutsCommand,
-  ],
-  exports: [
-    BackfillPageLayoutsCommand,
-  ],
+  providers: [BackfillPageLayoutsCommand],
+  exports: [BackfillPageLayoutsCommand],
 })
 export class V1_20_UpgradeVersionCommandModule {}
