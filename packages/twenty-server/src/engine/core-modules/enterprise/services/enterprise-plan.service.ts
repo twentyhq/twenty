@@ -12,12 +12,16 @@ import {
   AppTokenEntity,
   AppTokenType,
 } from 'src/engine/core-modules/app-token/app-token.entity';
-import { ENTERPRISE_JWT_PUBLIC_KEY } from 'src/engine/core-modules/enterprise/constants/enterprise-public-key.constant';
+import {
+  ENTERPRISE_JWT_DEV_PUBLIC_KEY,
+  ENTERPRISE_JWT_PUBLIC_KEY,
+} from 'src/engine/core-modules/enterprise/constants/enterprise-public-key.constant';
 import {
   type EnterpriseKeyPayload,
   type EnterpriseLicenseInfo,
   type EnterpriseValidityPayload,
 } from 'src/engine/core-modules/enterprise/types/enterprise-key-payload.type';
+import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 import {
   ConfigVariableException,
   ConfigVariableExceptionCode,
@@ -38,7 +42,7 @@ export class EnterprisePlanService implements OnModuleInit {
 
   async onModuleInit() {
     this.refreshKeyPayload();
-    await this.loadValidityTokenFromDb();
+    await this.loadValidityToken();
   }
 
   private refreshKeyPayload(): void {
@@ -55,9 +59,9 @@ export class EnterprisePlanService implements OnModuleInit {
     this.cachedKeyPayload = payload;
   }
 
-  private async loadValidityTokenFromDb(): Promise<void> {
+  private async loadValidityToken(): Promise<void> {
     try {
-      const validityToken = await this.appTokenRepository.findOne({
+      const dbToken = await this.appTokenRepository.findOne({
         where: {
           type: AppTokenType.EnterpriseValidityToken,
           userId: IsNull(),
@@ -67,15 +71,17 @@ export class EnterprisePlanService implements OnModuleInit {
         order: { createdAt: 'DESC' },
       });
 
-      if (!validityToken?.value) {
+      const tokenValue =
+        dbToken?.value ??
+        this.twentyConfigService.get('ENTERPRISE_VALIDITY_TOKEN');
+
+      if (!tokenValue) {
         this.cachedValidityPayload = null;
 
         return;
       }
 
-      const payload = this.verifyJwt<EnterpriseValidityPayload>(
-        validityToken.value,
-      );
+      const payload = this.verifyJwt<EnterpriseValidityPayload>(tokenValue);
 
       if (payload && payload.status === 'valid') {
         this.cachedValidityPayload = payload;
@@ -84,7 +90,7 @@ export class EnterprisePlanService implements OnModuleInit {
       }
     } catch (error) {
       this.logger.warn(
-        `Failed to load validity token from DB: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        `Failed to load validity token: ${error instanceof Error ? error.message : 'Unknown error'}`,
       );
       this.cachedValidityPayload = null;
     }
@@ -127,6 +133,7 @@ export class EnterprisePlanService implements OnModuleInit {
   }
 
   hasValidEnterpriseValidityToken(): boolean {
+    this.loadValidityToken();
     if (isDefined(this.cachedValidityPayload)) {
       const now = Math.floor(Date.now() / 1000);
 
@@ -173,7 +180,7 @@ export class EnterprisePlanService implements OnModuleInit {
 
   async getLicenseInfo(): Promise<EnterpriseLicenseInfo> {
     this.refreshKeyPayload();
-    await this.loadValidityTokenFromDb();
+    await this.loadValidityToken();
 
     if (isDefined(this.cachedValidityPayload)) {
       const now = Math.floor(Date.now() / 1000);
@@ -270,7 +277,7 @@ export class EnterprisePlanService implements OnModuleInit {
       }
 
       await this.saveNewValidityTokenToDb(data.validityToken);
-      await this.loadValidityTokenFromDb();
+      await this.loadValidityToken();
 
       this.logger.log('Enterprise validity token refreshed successfully');
 
@@ -471,6 +478,14 @@ export class EnterprisePlanService implements OnModuleInit {
     }
   }
 
+  private getPublicKey(): string {
+    const nodeEnv = this.twentyConfigService.get('NODE_ENV');
+
+    return nodeEnv === NodeEnvironment.DEVELOPMENT
+      ? ENTERPRISE_JWT_DEV_PUBLIC_KEY
+      : ENTERPRISE_JWT_PUBLIC_KEY;
+  }
+
   private verifyJwt<T extends Record<string, unknown>>(
     token: string,
   ): T | null {
@@ -494,7 +509,7 @@ export class EnterprisePlanService implements OnModuleInit {
         'sha256',
         Buffer.from(signingInput),
         {
-          key: ENTERPRISE_JWT_PUBLIC_KEY,
+          key: this.getPublicKey(),
           padding: crypto.constants.RSA_PKCS1_PADDING,
         },
         signatureBuffer,

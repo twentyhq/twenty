@@ -172,6 +172,45 @@ describe('EnterprisePlanService', () => {
       expect(service.hasValidEnterpriseValidityToken()).toBe(false);
     });
 
+    it('should fall back to ENTERPRISE_VALIDITY_TOKEN config when DB has no token', async () => {
+      const fakeKey = createFakeJwt(MOCK_KEY_PAYLOAD);
+      const fakeValidityToken = createFakeJwt(MOCK_VALIDITY_PAYLOAD);
+
+      configGetMock.mockImplementation((key: string) => {
+        if (key === 'ENTERPRISE_KEY') return fakeKey;
+        if (key === 'ENTERPRISE_API_URL') return MOCK_API_URL;
+        if (key === 'ENTERPRISE_VALIDITY_TOKEN') return fakeValidityToken;
+
+        return undefined;
+      });
+      mockCryptoVerify.mockReturnValue(true);
+      appTokenFindOneMock.mockResolvedValue(null);
+
+      await service.onModuleInit();
+
+      expect(service.hasValidEnterpriseValidityToken()).toBe(true);
+    });
+
+    it('should prefer DB token over ENTERPRISE_VALIDITY_TOKEN config', async () => {
+      const fakeKey = createFakeJwt(MOCK_KEY_PAYLOAD);
+      const dbToken = createFakeJwt(MOCK_VALIDITY_PAYLOAD);
+      const envToken = createFakeJwt(MOCK_EXPIRED_VALIDITY_PAYLOAD);
+
+      configGetMock.mockImplementation((key: string) => {
+        if (key === 'ENTERPRISE_KEY') return fakeKey;
+        if (key === 'ENTERPRISE_API_URL') return MOCK_API_URL;
+        if (key === 'ENTERPRISE_VALIDITY_TOKEN') return envToken;
+
+        return undefined;
+      });
+      mockCryptoVerify.mockReturnValue(true);
+      appTokenFindOneMock.mockResolvedValue({ value: dbToken });
+
+      await service.onModuleInit();
+
+      expect(service.hasValidEnterpriseValidityToken()).toBe(true);
+    });
+
     it('should reject validity token with non-valid status', async () => {
       const invalidStatusPayload = {
         ...MOCK_VALIDITY_PAYLOAD,
