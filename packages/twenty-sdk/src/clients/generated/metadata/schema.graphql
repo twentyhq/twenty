@@ -2885,12 +2885,6 @@ type Query {
   getCoreView(id: String!): CoreView
   getCoreViewSorts(viewId: String): [CoreViewSort!]!
   getCoreViewSort(id: String!): CoreViewSort
-  getCoreViewGroups(viewId: String): [CoreViewGroup!]!
-  getCoreViewGroup(id: String!): CoreViewGroup
-  getCoreViewFilterGroups(viewId: String): [CoreViewFilterGroup!]!
-  getCoreViewFilterGroup(id: String!): CoreViewFilterGroup
-  getCoreViewFilters(viewId: String): [CoreViewFilter!]!
-  getCoreViewFilter(id: String!): CoreViewFilter
   getCoreViewFieldGroups(viewId: String!): [CoreViewFieldGroup!]!
   getCoreViewFieldGroup(id: String!): CoreViewFieldGroup
   index(
@@ -2936,6 +2930,12 @@ type Query {
     """Specify to filter the records returned."""
     filter: FieldFilter! = {}
   ): FieldConnection!
+  getCoreViewGroups(viewId: String): [CoreViewGroup!]!
+  getCoreViewGroup(id: String!): CoreViewGroup
+  getCoreViewFilters(viewId: String): [CoreViewFilter!]!
+  getCoreViewFilter(id: String!): CoreViewFilter
+  getCoreViewFilterGroups(viewId: String): [CoreViewFilterGroup!]!
+  getCoreViewFilterGroup(id: String!): CoreViewFilterGroup
   currentUser: User!
   currentWorkspace: Workspace!
   getPublicWorkspaceDataByDomain(origin: String): PublicWorkspaceData!
@@ -3134,19 +3134,6 @@ type Mutation {
   updateCoreViewSort(input: UpdateViewSortInput!): CoreViewSort!
   deleteCoreViewSort(input: DeleteViewSortInput!): Boolean!
   destroyCoreViewSort(input: DestroyViewSortInput!): Boolean!
-  createCoreViewGroup(input: CreateViewGroupInput!): CoreViewGroup!
-  createManyCoreViewGroups(inputs: [CreateViewGroupInput!]!): [CoreViewGroup!]!
-  updateCoreViewGroup(input: UpdateViewGroupInput!): CoreViewGroup!
-  deleteCoreViewGroup(input: DeleteViewGroupInput!): CoreViewGroup!
-  destroyCoreViewGroup(input: DestroyViewGroupInput!): CoreViewGroup!
-  createCoreViewFilterGroup(input: CreateViewFilterGroupInput!): CoreViewFilterGroup!
-  updateCoreViewFilterGroup(id: String!, input: UpdateViewFilterGroupInput!): CoreViewFilterGroup!
-  deleteCoreViewFilterGroup(id: String!): Boolean!
-  destroyCoreViewFilterGroup(id: String!): Boolean!
-  createCoreViewFilter(input: CreateViewFilterInput!): CoreViewFilter!
-  updateCoreViewFilter(input: UpdateViewFilterInput!): CoreViewFilter!
-  deleteCoreViewFilter(input: DeleteViewFilterInput!): CoreViewFilter!
-  destroyCoreViewFilter(input: DestroyViewFilterInput!): CoreViewFilter!
   updateCoreViewFieldGroup(input: UpdateViewFieldGroupInput!): CoreViewFieldGroup!
   createCoreViewFieldGroup(input: CreateViewFieldGroupInput!): CoreViewFieldGroup!
   createManyCoreViewFieldGroups(inputs: [CreateViewFieldGroupInput!]!): [CoreViewFieldGroup!]!
@@ -3206,6 +3193,19 @@ type Mutation {
   createOneField(input: CreateOneFieldMetadataInput!): Field!
   updateOneField(input: UpdateOneFieldMetadataInput!): Field!
   deleteOneField(input: DeleteOneFieldInput!): Field!
+  createCoreViewGroup(input: CreateViewGroupInput!): CoreViewGroup!
+  createManyCoreViewGroups(inputs: [CreateViewGroupInput!]!): [CoreViewGroup!]!
+  updateCoreViewGroup(input: UpdateViewGroupInput!): CoreViewGroup!
+  deleteCoreViewGroup(input: DeleteViewGroupInput!): CoreViewGroup!
+  destroyCoreViewGroup(input: DestroyViewGroupInput!): CoreViewGroup!
+  createCoreViewFilter(input: CreateViewFilterInput!): CoreViewFilter!
+  updateCoreViewFilter(input: UpdateViewFilterInput!): CoreViewFilter!
+  deleteCoreViewFilter(input: DeleteViewFilterInput!): CoreViewFilter!
+  destroyCoreViewFilter(input: DestroyViewFilterInput!): CoreViewFilter!
+  createCoreViewFilterGroup(input: CreateViewFilterGroupInput!): CoreViewFilterGroup!
+  updateCoreViewFilterGroup(id: String!, input: UpdateViewFilterGroupInput!): CoreViewFilterGroup!
+  deleteCoreViewFilterGroup(id: String!): Boolean!
+  destroyCoreViewFilterGroup(id: String!): Boolean!
   deleteUser: User!
   deleteUserFromWorkspace(workspaceMemberIdToDelete: String!): UserWorkspace!
   updateUserEmail(newEmail: String!, verifyEmailRedirectPath: String): Boolean!
@@ -3581,93 +3581,6 @@ input DestroyViewSortInput {
   id: UUID!
 }
 
-input CreateViewGroupInput {
-  id: UUID
-  isVisible: Boolean = true
-  fieldValue: String!
-  position: Float = 0
-  viewId: UUID!
-}
-
-input UpdateViewGroupInput {
-  """The id of the view group to update"""
-  id: UUID!
-
-  """The view group to update"""
-  update: UpdateViewGroupInputUpdates!
-}
-
-input UpdateViewGroupInputUpdates {
-  fieldMetadataId: UUID
-  isVisible: Boolean
-  fieldValue: String
-  position: Float
-}
-
-input DeleteViewGroupInput {
-  """The id of the view group to delete."""
-  id: UUID!
-}
-
-input DestroyViewGroupInput {
-  """The id of the view group to destroy."""
-  id: UUID!
-}
-
-input CreateViewFilterGroupInput {
-  id: UUID
-  parentViewFilterGroupId: UUID
-  logicalOperator: ViewFilterGroupLogicalOperator = AND
-  positionInViewFilterGroup: Float
-  viewId: UUID!
-}
-
-input UpdateViewFilterGroupInput {
-  id: UUID
-  parentViewFilterGroupId: UUID
-  logicalOperator: ViewFilterGroupLogicalOperator = AND
-  positionInViewFilterGroup: Float
-  viewId: UUID
-}
-
-input CreateViewFilterInput {
-  id: UUID
-  fieldMetadataId: UUID!
-  operand: ViewFilterOperand = CONTAINS
-  value: JSON!
-  viewFilterGroupId: UUID
-  positionInViewFilterGroup: Float
-  subFieldName: String
-  viewId: UUID!
-}
-
-input UpdateViewFilterInput {
-  """The id of the view filter to update"""
-  id: UUID!
-
-  """The view filter to update"""
-  update: UpdateViewFilterInputUpdates!
-}
-
-input UpdateViewFilterInputUpdates {
-  fieldMetadataId: UUID
-  operand: ViewFilterOperand
-  value: JSON
-  viewFilterGroupId: UUID
-  positionInViewFilterGroup: Float
-  subFieldName: String
-}
-
-input DeleteViewFilterInput {
-  """The id of the view filter to delete."""
-  id: UUID!
-}
-
-input DestroyViewFilterInput {
-  """The id of the view filter to destroy."""
-  id: UUID!
-}
-
 input UpdateViewFieldGroupInput {
   """The id of the view field group to update"""
   id: UUID!
@@ -4023,6 +3936,93 @@ input UpdateFieldInput {
 input DeleteOneFieldInput {
   """The id of the field to delete."""
   id: UUID!
+}
+
+input CreateViewGroupInput {
+  id: UUID
+  isVisible: Boolean = true
+  fieldValue: String!
+  position: Float = 0
+  viewId: UUID!
+}
+
+input UpdateViewGroupInput {
+  """The id of the view group to update"""
+  id: UUID!
+
+  """The view group to update"""
+  update: UpdateViewGroupInputUpdates!
+}
+
+input UpdateViewGroupInputUpdates {
+  fieldMetadataId: UUID
+  isVisible: Boolean
+  fieldValue: String
+  position: Float
+}
+
+input DeleteViewGroupInput {
+  """The id of the view group to delete."""
+  id: UUID!
+}
+
+input DestroyViewGroupInput {
+  """The id of the view group to destroy."""
+  id: UUID!
+}
+
+input CreateViewFilterInput {
+  id: UUID
+  fieldMetadataId: UUID!
+  operand: ViewFilterOperand = CONTAINS
+  value: JSON!
+  viewFilterGroupId: UUID
+  positionInViewFilterGroup: Float
+  subFieldName: String
+  viewId: UUID!
+}
+
+input UpdateViewFilterInput {
+  """The id of the view filter to update"""
+  id: UUID!
+
+  """The view filter to update"""
+  update: UpdateViewFilterInputUpdates!
+}
+
+input UpdateViewFilterInputUpdates {
+  fieldMetadataId: UUID
+  operand: ViewFilterOperand
+  value: JSON
+  viewFilterGroupId: UUID
+  positionInViewFilterGroup: Float
+  subFieldName: String
+}
+
+input DeleteViewFilterInput {
+  """The id of the view filter to delete."""
+  id: UUID!
+}
+
+input DestroyViewFilterInput {
+  """The id of the view filter to destroy."""
+  id: UUID!
+}
+
+input CreateViewFilterGroupInput {
+  id: UUID
+  parentViewFilterGroupId: UUID
+  logicalOperator: ViewFilterGroupLogicalOperator = AND
+  positionInViewFilterGroup: Float
+  viewId: UUID!
+}
+
+input UpdateViewFilterGroupInput {
+  id: UUID
+  parentViewFilterGroupId: UUID
+  logicalOperator: ViewFilterGroupLogicalOperator = AND
+  positionInViewFilterGroup: Float
+  viewId: UUID
 }
 
 input ActivateWorkspaceInput {
