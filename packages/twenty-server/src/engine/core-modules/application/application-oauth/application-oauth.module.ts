@@ -3,10 +3,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
 import { ApplicationInstallModule } from 'src/engine/core-modules/application/application-install/application-install.module';
+import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationModule as ApplicationCoreModule } from 'src/engine/core-modules/application/application.module';
 import { ApplicationOAuthResolver } from 'src/engine/core-modules/application/application-oauth/application-oauth.resolver';
 import { OAuthDiscoveryController } from 'src/engine/core-modules/application/application-oauth/controllers/oauth-discovery.controller';
+import { OAuthRegistrationController } from 'src/engine/core-modules/application/application-oauth/controllers/oauth-registration.controller';
 import { OAuthTokenController } from 'src/engine/core-modules/application/application-oauth/controllers/oauth-token.controller';
 import { OAuthService } from 'src/engine/core-modules/application/application-oauth/oauth.service';
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
@@ -23,6 +25,7 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
     TypeOrmModule.forFeature([
       AppTokenEntity,
       ApplicationEntity,
+      ApplicationRegistrationEntity,
       UserWorkspaceEntity,
     ]),
     ApplicationRegistrationModule,
@@ -35,7 +38,11 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
     TwentyConfigModule,
     WorkspaceCacheStorageModule,
   ],
-  controllers: [OAuthTokenController, OAuthDiscoveryController],
+  controllers: [
+    OAuthTokenController,
+    OAuthDiscoveryController,
+    OAuthRegistrationController,
+  ],
   providers: [OAuthService, ApplicationOAuthResolver],
   exports: [OAuthService],
 })

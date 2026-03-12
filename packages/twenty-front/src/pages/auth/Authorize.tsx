@@ -97,9 +97,12 @@ export const Authorize = () => {
     profile: t`Read your profile`,
   };
 
-  const clientId = searchParam.get('clientId');
-  const codeChallenge = searchParam.get('codeChallenge');
-  const redirectUrl = searchParam.get('redirectUrl');
+  // Support both camelCase (legacy) and standard OAuth snake_case params
+  const clientId = searchParam.get('client_id') ?? searchParam.get('clientId');
+  const codeChallenge =
+    searchParam.get('code_challenge') ?? searchParam.get('codeChallenge');
+  const redirectUrl =
+    searchParam.get('redirect_uri') ?? searchParam.get('redirectUrl');
 
   const {
     data,
