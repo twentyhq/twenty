@@ -644,12 +644,6 @@ export interface RatioAggregateConfig {
     __typename: 'RatioAggregateConfig'
 }
 
-export interface NewFieldDefaultConfiguration {
-    isVisible: Scalars['Boolean']
-    viewFieldGroupId?: Scalars['String']
-    __typename: 'NewFieldDefaultConfiguration'
-}
-
 export interface RichTextV2Body {
     blocknote?: Scalars['String']
     markdown?: Scalars['String']
@@ -887,7 +881,7 @@ export interface FieldRichTextConfiguration {
 export interface FieldsConfiguration {
     configurationType: WidgetConfigurationType
     viewId?: Scalars['String']
-    newFieldDefaultConfiguration?: NewFieldDefaultConfiguration
+    newFieldDefaultVisibility?: Scalars['Boolean']
     shouldAllowUserToSeeHiddenFields?: Scalars['Boolean']
     __typename: 'FieldsConfiguration'
 }
@@ -3488,13 +3482,6 @@ export interface RatioAggregateConfigGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface NewFieldDefaultConfigurationGenqlSelection{
-    isVisible?: boolean | number
-    viewFieldGroupId?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
 export interface RichTextV2BodyGenqlSelection{
     blocknote?: boolean | number
     markdown?: boolean | number
@@ -3752,7 +3739,7 @@ export interface FieldRichTextConfigurationGenqlSelection{
 export interface FieldsConfigurationGenqlSelection{
     configurationType?: boolean | number
     viewId?: boolean | number
-    newFieldDefaultConfiguration?: NewFieldDefaultConfigurationGenqlSelection
+    newFieldDefaultVisibility?: boolean | number
     shouldAllowUserToSeeHiddenFields?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -6448,14 +6435,6 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     export const isRatioAggregateConfig = (obj?: { __typename?: any } | null): obj is RatioAggregateConfig => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isRatioAggregateConfig"')
       return RatioAggregateConfig_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const NewFieldDefaultConfiguration_possibleTypes: string[] = ['NewFieldDefaultConfiguration']
-    export const isNewFieldDefaultConfiguration = (obj?: { __typename?: any } | null): obj is NewFieldDefaultConfiguration => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isNewFieldDefaultConfiguration"')
-      return NewFieldDefaultConfiguration_possibleTypes.includes(obj.__typename)
     }
     
 

@@ -41,6 +41,7 @@ export const useIsRecordFieldReadOnly = ({
 
   return isRecordFieldReadOnly({
     isRecordReadOnly,
+    isSystemObject: objectMetadataItem.isSystem,
     objectPermissions,
     fieldMetadataItem,
   });

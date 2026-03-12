@@ -801,6 +801,13 @@ msgstr "Add \"{trimmedName}\" to options"
 msgid "Add a {objectLabelSingular}"
 msgstr "Add a {objectLabelSingular}"
 
+#. js-lingui-id: 7W8nJr
+#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationUngroupedEditor.tsx
+#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupDropdown.tsx
+#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationEditor.tsx
+msgid "Add a Group"
+msgstr "Add a Group"
+
 #. js-lingui-id: CZDwqQ
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
 msgid "Add a new company we're in touch with (e.g. name, website, industry). Details: "
@@ -816,12 +823,6 @@ msgstr "Add a node"
 #: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemRecordSubView.tsx
 msgid "Add a record"
 msgstr "Add a record"
-
-#. js-lingui-id: r8W+9y
-#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationUngroupedEditor.tsx
-#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupEditor.tsx
-msgid "Add a Section"
-msgstr "Add a Section"
 
 #. js-lingui-id: eMc2xs
 #: src/modules/workflow/workflow-diagram/components/WorkflowDiagramCreateStepElement.tsx
@@ -1350,6 +1351,11 @@ msgstr "All App Registrations"
 msgid "All application registrations across the platform, including orphaned marketplace apps"
 msgstr "All application registrations across the platform, including orphaned marketplace apps"
 
+#. js-lingui-id: mSTufP
+#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
+msgid "All applications registered on this workspace"
+msgstr "All applications registered on this workspace"
+
 #. js-lingui-id: 1kLn6M
 #: src/modules/activities/calendar/components/CalendarEventRow.tsx
 msgid "All day"
@@ -1789,7 +1795,6 @@ msgid "Application details"
 msgstr "Application details"
 
 #. js-lingui-id: lGEBD4
-#: src/pages/settings/applications/components/SettingsUploadTarballModal.tsx
 #: src/modules/marketplace/hooks/useInstallApp.ts
 msgid "Application installed successfully."
 msgstr "Application installed successfully."
@@ -1848,11 +1853,6 @@ msgstr "Approved Domains"
 #: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
 msgid "Apps"
 msgstr "Apps"
-
-#. js-lingui-id: KKYyo8
-#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
-msgid "Apps you've created, registered, or published"
-msgstr "Apps you've created, registered, or published"
 
 #. js-lingui-id: 8HV3WN
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -2516,7 +2516,6 @@ msgstr "Can't scan? Copy the"
 #. js-lingui-id: dEgA5A
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
-#: src/pages/settings/applications/components/SettingsUploadTarballModal.tsx
 #: src/pages/auth/Authorize.tsx
 #: src/modules/ui/layout/modal/components/ConfirmationModal.tsx
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
@@ -2578,6 +2577,11 @@ msgstr "Cancel plan switching?"
 #: src/modules/billing/components/SettingsBillingContent.tsx
 msgid "Cancel your subscription"
 msgstr "Cancel your subscription"
+
+#. js-lingui-id: XDbjjW
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
+msgid "Cannot delete the only view"
+msgstr "Cannot delete the only view"
 
 #. js-lingui-id: 8fbdLj
 #: src/modules/ui/feedback/snack-bar-manager/utils/sanitizeMessageToRenderInSnackbar.ts
@@ -2732,11 +2736,6 @@ msgstr "Choose between OIDC and SAML protocols"
 #: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
 msgid "Choose between Short and Full"
 msgstr "Choose between Short and Full"
-
-#. js-lingui-id: +yPBXI
-#: src/pages/settings/applications/components/SettingsUploadTarballModal.tsx
-msgid "Choose file"
-msgstr "Choose file"
 
 #. js-lingui-id: YcrXB2
 #: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
@@ -2941,6 +2940,11 @@ msgstr "column data is not compatible with Multi-Select. Format required is '[\"
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
 msgid "Columns not matched:"
 msgstr "Columns not matched:"
+
+#. js-lingui-id: cj9UFG
+#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
+msgid "Command copied to clipboard"
+msgstr "Command copied to clipboard"
 
 #. js-lingui-id: RyZt4H
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
@@ -3300,11 +3304,6 @@ msgstr "Continue with Microsoft"
 msgid "Continue without sync"
 msgstr "Continue without sync"
 
-#. js-lingui-id: nTcGbN
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
-msgid "Control visibility on the marketplace. Unlisted apps are still accessible via direct link."
-msgstr "Control visibility on the marketplace. Unlisted apps are still accessible via direct link."
-
 #. js-lingui-id: +iFqZW
 #: src/modules/settings/roles/role-settings/components/SettingsRoleApplicability.tsx
 msgid "Control which types of entities this role can be assigned to"
@@ -3341,6 +3340,11 @@ msgstr "Copy"
 #: src/modules/ai/components/CodeExecutionDisplay.tsx
 msgid "Copy code"
 msgstr "Copy code"
+
+#. js-lingui-id: Oos8fo
+#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
+msgid "Copy command"
+msgstr "Copy command"
 
 #. js-lingui-id: Es0ros
 #: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
@@ -3502,6 +3506,11 @@ msgstr "Create"
 msgid "Create {targetObjectLabelSingular}"
 msgstr "Create {targetObjectLabelSingular}"
 
+#. js-lingui-id: 5XhrY3
+#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
+msgid "Create & Develop"
+msgstr "Create & Develop"
+
 #. js-lingui-id: 8aATyU
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
 msgid "Create a dashboard"
@@ -3541,11 +3550,6 @@ msgstr "Create a workflow and return here to view its versions"
 #: src/modules/auth/sign-in-up/components/SignInUpGlobalScopeForm.tsx
 msgid "Create a workspace"
 msgstr "Create a workspace"
-
-#. js-lingui-id: /WlFSf
-#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
-msgid "Create an application"
-msgstr "Create an application"
 
 #. js-lingui-id: 8ZjIgO
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -4140,12 +4144,6 @@ msgstr "Default Country Code"
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartColorPaletteOption.tsx
 msgid "Default palette"
 msgstr "Default palette"
-
-#. js-lingui-id: U/uGBk
-#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationUngroupedEditor.tsx
-#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupEditor.tsx
-msgid "Default position/visibility for fields created in the future"
-msgstr "Default position/visibility for fields created in the future"
 
 #. js-lingui-id: v41VX6
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
@@ -5558,11 +5556,6 @@ msgstr "Error uninstalling application"
 msgid "Error uninstalling application."
 msgstr "Error uninstalling application."
 
-#. js-lingui-id: OceoGT
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
-msgid "Error updating marketplace listing"
-msgstr "Error updating marketplace listing"
-
 #. js-lingui-id: fQYyhK
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
 msgid "Error updating redirect URIs"
@@ -6187,11 +6180,6 @@ msgstr "Failed to upload file: {fileName}"
 #: src/modules/settings/workspace-member/components/WorkspaceMemberPictureUploader.tsx
 msgid "Failed to upload picture"
 msgstr "Failed to upload picture"
-
-#. js-lingui-id: vWFfVs
-#: src/modules/marketplace/hooks/useUploadAppTarball.ts
-msgid "Failed to upload tarball."
-msgstr "Failed to upload tarball."
 
 #. js-lingui-id: K0joU5
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthAccountSyncCountersTable.tsx
@@ -8060,11 +8048,6 @@ msgstr "List installed applications. Use filter to search for a specific applica
 msgid "Listed"
 msgstr "Listed"
 
-#. js-lingui-id: vxO58F
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
-msgid "Listed on marketplace"
-msgstr "Listed on marketplace"
-
 #. js-lingui-id: HhVDr2
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Listing"
@@ -8332,11 +8315,6 @@ msgstr "Manage your app"
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 msgid "Manage your internet accounts."
 msgstr "Manage your internet accounts."
-
-#. js-lingui-id: +pSdLP
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
-msgid "Managed by the marketplace catalog sync for npm packages"
-msgstr "Managed by the marketplace catalog sync for npm packages"
 
 #. js-lingui-id: BWTzAb
 #: src/modules/side-panel/pages/page-layout/hooks/useGraphXSortOptionLabels.ts
@@ -8725,11 +8703,6 @@ msgstr "must be an array of object with valid url and label (format: '[{\"url\":
 msgid "must be an array of valid emails"
 msgstr "must be an array of valid emails"
 
-#. js-lingui-id: bPl77g
-#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
-msgid "My Apps"
-msgstr "My Apps"
-
 #. js-lingui-id: XTGSZU
 #: src/modules/views/view-picker/components/ViewPickerListContent.tsx
 msgid "My unlisted views"
@@ -8950,12 +8923,6 @@ msgstr "New Emailing Domain"
 #: src/modules/settings/data-model/components/SettingsDataModelNewFieldBreadcrumbDropDown.tsx
 msgid "New Field"
 msgstr "New Field"
-
-#. js-lingui-id: DNUCGO
-#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationUngroupedEditor.tsx
-#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupEditor.tsx
-msgid "New fields"
-msgstr "New fields"
 
 #. js-lingui-id: 96G6Re
 #: src/modules/side-panel/pages/navigation-menu-item/hooks/useAddFolderToNavigationMenu.ts
@@ -11470,6 +11437,11 @@ msgstr "Save Dashboard"
 msgid "Save Page Layout"
 msgstr "Save Page Layout"
 
+#. js-lingui-id: veLq3R
+#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
+msgid "Scaffold a new app, then use the CLI to develop, publish, and distribute"
+msgstr "Scaffold a new app, then use the CLI to develop, publish, and distribute"
+
 #. js-lingui-id: gmB6oO
 #: src/modules/workflow/workflow-trigger/components/CronExpressionHelper.tsx
 msgid "Schedule"
@@ -11921,11 +11893,6 @@ msgstr "Select 1 {fieldTypeLabelLowercase} field"
 msgid "Select 1 field"
 msgstr "Select 1 field"
 
-#. js-lingui-id: YfBvUy
-#: src/pages/settings/applications/components/SettingsUploadTarballModal.tsx
-msgid "Select a .tar.gz application package to upload and install."
-msgstr "Select a .tar.gz application package to upload and install."
-
 #. js-lingui-id: OMoA3j
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
 msgid "Select a date"
@@ -12172,6 +12139,11 @@ msgstr "Set as Primary"
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 msgid "Set email visibility, manage your blocklist and more."
 msgstr "Set email visibility, manage your blocklist and more."
+
+#. js-lingui-id: qFjlHh
+#: src/modules/side-panel/pages/page-layout/components/NewFieldDefaultVisibilityToggle.tsx
+msgid "Set fields created in the future as \"visible\""
+msgstr "Set fields created in the future as \"visible\""
 
 #. js-lingui-id: 6KA8xy
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -13040,11 +13012,6 @@ msgstr "Table"
 msgid "Tarball upload"
 msgstr "Tarball upload"
 
-#. js-lingui-id: yvSCl+
-#: src/pages/settings/applications/components/SettingsUploadTarballModal.tsx
-msgid "Tarball uploaded but installation failed."
-msgstr "Tarball uploaded but installation failed."
-
 #. js-lingui-id: sceIIK
 #: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationJunctionForm.tsx
 msgid "Target relation on Junction Object"
@@ -13354,6 +13321,11 @@ msgstr "This action will delete this folder and the navigation menu item inside.
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 msgid "This app is installed on the current workspace"
 msgstr "This app is installed on the current workspace"
+
+#. js-lingui-id: AldXy0
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
+msgid "This app is listed on the marketplace because it is published to npm."
+msgstr "This app is listed on the marketplace because it is published to npm."
 
 #. js-lingui-id: SYslQU
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
@@ -14178,11 +14150,6 @@ msgstr "Upload"
 msgid "Upload .xlsx, .xls or .csv file"
 msgstr "Upload .xlsx, .xls or .csv file"
 
-#. js-lingui-id: BhkxTk
-#: src/modules/marketplace/hooks/useUploadAppTarball.ts
-msgid "Upload failed."
-msgstr "Upload failed."
-
 #. js-lingui-id: 2IXDgU
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/FilesFieldInput.tsx
@@ -14205,12 +14172,6 @@ msgstr "Upload files"
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Upload Files"
 msgstr "Upload Files"
-
-#. js-lingui-id: aG3MkW
-#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
-#: src/pages/settings/applications/components/SettingsUploadTarballModal.tsx
-msgid "Upload tarball"
-msgstr "Upload tarball"
 
 #. js-lingui-id: akDOEO
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
@@ -14813,11 +14774,6 @@ msgstr "When enabled, new AI models will be available to users by default"
 msgid "When enabled, newly added models are available to all workspaces by default"
 msgstr "When enabled, newly added models are available to all workspaces by default"
 
-#. js-lingui-id: mCGuXk
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
-msgid "When enabled, this app appears in the marketplace browse page"
-msgstr "When enabled, this app appears in the marketplace browse page"
-
 #. js-lingui-id: C51ilI
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 msgid "When the API key will expire."
@@ -15107,11 +15063,6 @@ msgstr "You already belong to this workspace"
 msgid "You are not allowed to create records for this object"
 msgstr "You are not allowed to create records for this object"
 
-#. js-lingui-id: iibZbD
-#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
-msgid "You can either create a private app or share it to others"
-msgstr "You can either create a private app or share it to others"
-
 #. js-lingui-id: CNAoaw
 #: src/modules/workflow/workflow-steps/workflow-actions/logic-function-action/components/WorkflowEditActionLogicFunction.tsx
 msgid "You can see the function logic in your application settings."
@@ -15181,6 +15132,11 @@ msgstr "Your account has been activated."
 #: src/modules/apollo/services/apollo.factory.ts
 msgid "Your app version is out of date. Please refresh the page."
 msgstr "Your app version is out of date. Please refresh the page."
+
+#. js-lingui-id: oNUh7z
+#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
+msgid "Your Apps"
+msgstr "Your Apps"
 
 #. js-lingui-id: +5YqGH
 #: src/modules/onboarding/constants/OnboardingSyncEmailsOptions.ts

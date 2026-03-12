@@ -136,6 +136,14 @@
       "cache": true,
       "dependsOn": ["^build"]
     },
+    "set-local-version": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "npm pkg set version={args.releaseVersion}"
+      }
+    },
     "storybook:build": {
       "executor": "nx:run-commands",
       "cache": true,

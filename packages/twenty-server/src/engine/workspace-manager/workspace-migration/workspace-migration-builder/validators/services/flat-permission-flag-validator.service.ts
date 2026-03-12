@@ -163,6 +163,25 @@ export class FlatPermissionFlagValidatorService {
       }
     }
 
+    const duplicateForSameRole = Object.values(
+      optimisticFlatPermissionFlagMaps.byUniversalIdentifier,
+    ).filter(
+      (pf) =>
+        isDefined(pf) &&
+        pf.roleUniversalIdentifier ===
+          updatedFlatPermissionFlag.roleUniversalIdentifier &&
+        pf.flag === updatedFlatPermissionFlag.flag &&
+        pf.universalIdentifier !== universalIdentifier,
+    );
+
+    if (duplicateForSameRole.length > 0) {
+      validationResult.errors.push({
+        code: PermissionsExceptionCode.INVALID_SETTING,
+        message: t`Permission flag for this role and setting already exists`,
+        userFriendlyMessage: msg`This permission is already set for the role`,
+      });
+    }
+
     return validationResult;
   }
 

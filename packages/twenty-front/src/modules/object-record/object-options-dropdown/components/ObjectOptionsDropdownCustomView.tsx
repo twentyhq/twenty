@@ -14,11 +14,13 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
+import { coreViewsFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/coreViewsFromObjectMetadataItemFamilySelector';
 import { ViewKey } from '@/views/types/ViewKey';
 import { ViewType, viewTypeIconMapping } from '@/views/types/ViewType';
 import { useDestroyViewFromCurrentState } from '@/views/view-picker/hooks/useDestroyViewFromCurrentState';
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useLingui } from '@lingui/react/macro';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import {
@@ -64,7 +66,13 @@ export const ObjectOptionsDropdownCustomView = ({
       )
     : undefined;
 
+  const viewsOnCurrentObject = useAtomFamilySelectorValue(
+    coreViewsFromObjectMetadataItemFamilySelector,
+    { objectMetadataItemId: objectMetadataItem.id },
+  );
+
   const isDefaultView = currentView?.key === ViewKey.Index;
+  const isLastView = viewsOnCurrentObject.length <= 1;
 
   const recordIndexCalendarLayout = useAtomStateValue(
     recordIndexCalendarLayoutState,
@@ -272,14 +280,18 @@ export const ObjectOptionsDropdownCustomView = ({
                 onClick={() => handleDelete()}
                 LeftIcon={IconTrash}
                 text={t`Delete view`}
-                disabled={isDefaultView}
+                disabled={isDefaultView || isLastView}
               />
             </SelectableListItem>
           </div>
-          {isDefaultView && (
+          {(isDefaultView || isLastView) && (
             <AppTooltip
               anchorSelect={`#delete-view-menu-item`}
-              content={t`Not available on Default View`}
+              content={
+                isDefaultView
+                  ? t`Not available on Default View`
+                  : t`Cannot delete the only view`
+              }
               noArrow
               place="bottom"
               width="100%"

@@ -1,4 +1,5 @@
 import { type OnDragEndResponder } from '@hello-pangea/dnd';
+import { useStore } from 'jotai';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/constants/NavigationMenuItemDroppableIds';
@@ -11,21 +12,15 @@ import {
   matchesWorkspaceFolderId,
   validateAndExtractWorkspaceFolderId,
 } from '@/navigation-menu-item/utils/validateAndExtractWorkspaceFolderId';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 import { isDefined } from 'twenty-shared/utils';
 import { usePrefetchedNavigationMenuItemsData } from './usePrefetchedNavigationMenuItemsData';
 
 export const useHandleWorkspaceNavigationMenuItemDragAndDrop = () => {
+  const store = useStore();
   const { workspaceNavigationMenuItems } =
     usePrefetchedNavigationMenuItemsData();
-  const isNavigationMenuInEditMode = useAtomStateValue(
-    isNavigationMenuInEditModeState,
-  );
-  const navigationMenuItemsDraft = useAtomStateValue(
-    navigationMenuItemsDraftState,
-  );
   const setNavigationMenuItemsDraft = useSetAtomState(
     navigationMenuItemsDraftState,
   );
@@ -47,7 +42,9 @@ export const useHandleWorkspaceNavigationMenuItemDragAndDrop = () => {
   };
 
   const handleWorkspaceNavigationMenuItemDragAndDrop: OnDragEndResponder = (
-    result,
+    result: Parameters<OnDragEndResponder>[0] & {
+      insertBeforeItemId?: string | null;
+    },
   ) => {
     const { destination, source, draggableId } = result;
 
@@ -70,6 +67,12 @@ export const useHandleWorkspaceNavigationMenuItemDragAndDrop = () => {
       return;
     }
 
+    const navigationMenuItemsDraft = store.get(
+      navigationMenuItemsDraftState.atom,
+    );
+    const isNavigationMenuInEditMode = store.get(
+      isNavigationMenuInEditModeState.atom,
+    );
     if (!isNavigationMenuInEditMode || !navigationMenuItemsDraft) {
       return;
     }
@@ -122,8 +125,24 @@ export const useHandleWorkspaceNavigationMenuItemDragAndDrop = () => {
       const listWithoutDragged = sourceList.filter(
         (item) => item.id !== draggableId,
       );
-      const prevItem = listWithoutDragged[destination.index - 1];
-      const nextItem = listWithoutDragged[destination.index];
+      const sourceIndexInList = sourceList.findIndex(
+        (item) => item.id === draggableId,
+      );
+      const insertBeforeIndex =
+        result.insertBeforeItemId != null
+          ? sourceList.findIndex(
+              (item) => item.id === result.insertBeforeItemId,
+            )
+          : -1;
+      const destinationIndexInFullList =
+        insertBeforeIndex >= 0 ? insertBeforeIndex : destination.index;
+      const destIndexInListWithoutDragged =
+        sourceIndexInList < destinationIndexInFullList &&
+        destinationIndexInFullList <= listWithoutDragged.length
+          ? destinationIndexInFullList - 1
+          : destinationIndexInFullList;
+      const prevItem = listWithoutDragged[destIndexInListWithoutDragged - 1];
+      const nextItem = listWithoutDragged[destIndexInListWithoutDragged];
       const newPosition = getPositionBetween(
         prevItem?.position,
         nextItem?.position,

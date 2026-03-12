@@ -297,46 +297,60 @@ yarn command:prod cron:workflow:automated-cron-trigger
 **Nur-Umgebungsmodus:** Wenn Sie `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false` setzen, fügen Sie diese Variablen stattdessen Ihrer `.env`-Datei hinzu.
 </Warning>
 
-## Logikfunktionen
+## Logikfunktionen & Code-Interpreter
 
-Twenty unterstützt Logikfunktionen für Workflows und benutzerdefinierte Logik. Die Ausführungsumgebung wird über die Umgebungsvariable `SERVERLESS_TYPE` konfiguriert.
+Twenty unterstützt Logikfunktionen für Workflows und den Code-Interpreter für KI-Datenanalyse. Beide führen vom Benutzer bereitgestellten Code aus und erfordern aus Sicherheitsgründen eine explizite Konfiguration.
+
+### Sicherheits-Standardeinstellungen
+
+**In Produktion (NODE_ENV=production):** Sowohl Logikfunktionen als auch der Code-Interpreter sind standardmäßig **deaktiviert**. Sie müssen sie, wenn Sie diese Funktionen benötigen, explizit mit `LOGIC_FUNCTION_TYPE` und `CODE_INTERPRETER_TYPE` aktivieren.
+
+**In der Entwicklung (NODE_ENV=development):** Beide sind der Einfachheit halber beim lokalen Betrieb standardmäßig **LOCAL**.
 
 <Warning>
-**Sicherheitshinweis:** Der lokale Treiber (`SERVERLESS_TYPE=LOCAL`) führt Code ohne Sandbox direkt auf dem Host in einem Node.js-Prozess aus. Er sollte nur für vertrauenswürdigen Code in der Entwicklung verwendet werden. Für Produktivbereitstellungen, die nicht vertrauenswürdigen Code verarbeiten, empfehlen wir nachdrücklich, `SERVERLESS_TYPE=LAMBDA` oder `SERVERLESS_TYPE=DISABLED` zu verwenden.
+**Sicherheitshinweis:** Der lokale Treiber (`LOGIC_FUNCTION_TYPE=LOCAL` oder `CODE_INTERPRETER_TYPE=LOCAL`) führt Code ohne Sandbox direkt auf dem Host in einem Node.js-Prozess aus. Er sollte nur für vertrauenswürdigen Code in der Entwicklung verwendet werden. Für Produktionsbereitstellungen, die nicht vertrauenswürdigen Code verarbeiten, verwenden Sie `LOGIC_FUNCTION_TYPE=LAMBDA` oder `CODE_INTERPRETER_TYPE=E2B` (mit Sandbox-Isolierung), oder lassen Sie sie deaktiviert.
 </Warning>
 
-### Verfügbare Treiber
+### Logikfunktionen - Verfügbare Treiber
 
-| Treiber     | Umgebungsvariable          | Anwendungsfall                                     | Sicherheitsstufe                   |
-| ----------- | -------------------------- | -------------------------------------------------- | ---------------------------------- |
-| Deaktiviert | `SERVERLESS_TYPE=DISABLED` | Logikfunktionen vollständig deaktivieren           | N/A                                |
-| Lokal       | `SERVERLESS_TYPE=LOCAL`    | Entwicklung und vertrauenswürdige Umgebungen       | Niedrig (keine Sandbox)            |
-| Lambda      | `SERVERLESS_TYPE=LAMBDA`   | Produktivbetrieb mit nicht vertrauenswürdigem Code | Hoch (Isolation auf Hardwareebene) |
+| Treiber     | Umgebungsvariable              | Anwendungsfall                                     | Sicherheitsstufe                   |
+| ----------- | ------------------------------ | -------------------------------------------------- | ---------------------------------- |
+| Deaktiviert | `LOGIC_FUNCTION_TYPE=DISABLED` | Logikfunktionen vollständig deaktivieren           | N/A                                |
+| Lokal       | `LOGIC_FUNCTION_TYPE=LOCAL`    | Entwicklung und vertrauenswürdige Umgebungen       | Niedrig (keine Sandbox)            |
+| Lambda      | `LOGIC_FUNCTION_TYPE=LAMBDA`   | Produktivbetrieb mit nicht vertrauenswürdigem Code | Hoch (Isolation auf Hardwareebene) |
 
-### Empfohlene Konfiguration
+### Logikfunktionen - Empfohlene Konfiguration
 
 **Für die Entwicklung:**
 
 ```bash
-SERVERLESS_TYPE=LOCAL  # default
+LOGIC_FUNCTION_TYPE=LOCAL  # default when NODE_ENV=development
 ```
 
 **Für den Produktivbetrieb (AWS):**
 
 ```bash
-SERVERLESS_TYPE=LAMBDA
-SERVERLESS_LAMBDA_REGION=us-east-1
-SERVERLESS_LAMBDA_ROLE=arn:aws:iam::123456789:role/your-lambda-role
-SERVERLESS_LAMBDA_ACCESS_KEY_ID=your-access-key
-SERVERLESS_LAMBDA_SECRET_ACCESS_KEY=your-secret-key
+LOGIC_FUNCTION_TYPE=LAMBDA
+LOGIC_FUNCTION_LAMBDA_REGION=us-east-1
+LOGIC_FUNCTION_LAMBDA_ROLE=arn:aws:iam::123456789:role/your-lambda-role
+LOGIC_FUNCTION_LAMBDA_ACCESS_KEY_ID=your-access-key
+LOGIC_FUNCTION_LAMBDA_SECRET_ACCESS_KEY=your-secret-key
 ```
 
 **Zum Deaktivieren von Logikfunktionen:**
 
 ```bash
-SERVERLESS_TYPE=DISABLED
+LOGIC_FUNCTION_TYPE=DISABLED  # default when NODE_ENV=production
 ```
 
+### Code-Interpreter - Verfügbare Treiber
+
+| Treiber     | Umgebungsvariable                | Anwendungsfall                             | Sicherheitsstufe         |
+| ----------- | -------------------------------- | ------------------------------------------ | ------------------------ |
+| Deaktiviert | `CODE_INTERPRETER_TYPE=DISABLED` | KI-Codeausführung deaktivieren             | N/A                      |
+| Lokal       | `CODE_INTERPRETER_TYPE=LOCAL`    | Nur für die Entwicklung                    | Niedrig (keine Sandbox)  |
+| E2B         | `CODE_INTERPRETER_TYPE=E_2_B`    | Produktion mit Ausführung in einer Sandbox | Hoch (isolierte Sandbox) |
+
 <Note>
-Bei Verwendung von `SERVERLESS_TYPE=DISABLED` führt jeder Versuch, eine Logikfunktion auszuführen, zu einem Fehler. Dies ist nützlich, wenn Sie Twenty ohne Unterstützung für Logikfunktionen betreiben möchten.
+Bei Verwendung von `LOGIC_FUNCTION_TYPE=DISABLED` oder `CODE_INTERPRETER_TYPE=DISABLED` führt jeder Ausführungsversuch zu einem Fehler. Dies ist nützlich, wenn Sie Twenty ohne diese Funktionen betreiben möchten.
 </Note>

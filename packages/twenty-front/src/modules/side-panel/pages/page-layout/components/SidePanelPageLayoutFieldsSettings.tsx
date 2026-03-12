@@ -3,6 +3,7 @@ import { CommandMenuItemToggle } from '@/command-menu/components/CommandMenuItem
 import { useFieldsWidgetGroups } from '@/page-layout/widgets/fields/hooks/useFieldsWidgetGroups';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
+import { NewFieldDefaultVisibilityToggle } from '@/side-panel/pages/page-layout/components/NewFieldDefaultVisibilityToggle';
 import { WidgetSettingsFooter } from '@/side-panel/pages/page-layout/components/WidgetSettingsFooter';
 import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
 import { usePageLayoutIdForRecordPageLayoutFromContextStoreTargetedRecord } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdForRecordPageLayoutFromContextStoreTargetedRecord';
@@ -78,6 +79,7 @@ export const SidePanelPageLayoutFieldsSettings = () => {
 
   const selectableItemIds = [
     'layout',
+    'new-field-default-visibility',
     'display-more-fields-button',
     'action-button',
     'move-down',
@@ -119,6 +121,10 @@ export const SidePanelPageLayoutFieldsSettings = () => {
                 onToggleChange={handleToggleShouldAllowUserToSeeHiddenFields}
               />
             </SelectableListItem>
+            <NewFieldDefaultVisibilityToggle
+              pageLayoutId={pageLayoutId}
+              widgetId={widgetInEditMode.id}
+            />
           </SidePanelGroup>
         </SidePanelList>
       </StyledSidePanelContainer>

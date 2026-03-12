@@ -26,12 +26,18 @@ import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/us
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
+import { styled } from '@linaria/react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const LazyWorkspaceSectionListDndKit = lazy(() =>
   import(
     '@/object-metadata/components/NavigationDrawerSectionForWorkspaceItemsListDndKit'
   ).then((m) => ({ default: m.WorkspaceSectionListDndKit })),
 );
+
+const StyledWorkspaceSectionContentGapOffset = styled.div`
+  margin-top: calc(-1 * ${themeCssVariables.betweenSiblingsGap});
+`;
 
 type NavigationDrawerSectionForWorkspaceItemsProps = {
   sectionTitle: string;
@@ -150,44 +156,48 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
           isOpen={isNavigationSectionOpen}
         />
       </NavigationDrawerAnimatedCollapseWrapper>
-      <AnimatedExpandableContainer
-        isExpanded={
-          isNavigationSectionOpen || isAddToNavigationDropTargetVisible
-        }
-        dimension="height"
-        mode="fit-content"
-        containAnimation
-        initial={false}
-      >
-        {isNavigationMenuInEditMode ? (
-          <Suspense
-            fallback={
-              <WorkspaceSectionListEditModeFallback
+      <StyledWorkspaceSectionContentGapOffset>
+        <AnimatedExpandableContainer
+          isExpanded={
+            isNavigationSectionOpen || isAddToNavigationDropTargetVisible
+          }
+          dimension="height"
+          mode="fit-content"
+          containAnimation
+          initial={false}
+        >
+          {isNavigationMenuInEditMode ? (
+            <Suspense
+              fallback={
+                <WorkspaceSectionListEditModeFallback
+                  filteredItems={filteredItems}
+                  folderChildrenById={folderChildrenById}
+                  onActiveObjectMetadataItemClick={
+                    onActiveObjectMetadataItemClick
+                  }
+                />
+              }
+            >
+              <LazyWorkspaceSectionListDndKit
                 filteredItems={filteredItems}
+                getEditModeProps={getEditModeProps}
                 folderChildrenById={folderChildrenById}
+                selectedNavigationMenuItemId={selectedNavigationMenuItemId}
+                onNavigationMenuItemClick={onNavigationMenuItemClick}
                 onActiveObjectMetadataItemClick={
                   onActiveObjectMetadataItemClick
                 }
               />
-            }
-          >
-            <LazyWorkspaceSectionListDndKit
+            </Suspense>
+          ) : (
+            <NavigationDrawerSectionForWorkspaceItemsListReadOnly
               filteredItems={filteredItems}
-              getEditModeProps={getEditModeProps}
               folderChildrenById={folderChildrenById}
-              selectedNavigationMenuItemId={selectedNavigationMenuItemId}
-              onNavigationMenuItemClick={onNavigationMenuItemClick}
               onActiveObjectMetadataItemClick={onActiveObjectMetadataItemClick}
             />
-          </Suspense>
-        ) : (
-          <NavigationDrawerSectionForWorkspaceItemsListReadOnly
-            filteredItems={filteredItems}
-            folderChildrenById={folderChildrenById}
-            onActiveObjectMetadataItemClick={onActiveObjectMetadataItemClick}
-          />
-        )}
-      </AnimatedExpandableContainer>
+          )}
+        </AnimatedExpandableContainer>
+      </StyledWorkspaceSectionContentGapOffset>
     </NavigationDrawerSection>
   );
 };

@@ -6,13 +6,8 @@ import { FieldsConfigurationFieldEditor } from '@/page-layout/widgets/fields/com
 import { type FieldsWidgetGroupField } from '@/page-layout/widgets/fields/types/FieldsWidgetGroup';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import {
-  IconEye,
-  IconEyeOff,
-  IconNewSection,
-  IconPlaylistAdd,
-} from 'twenty-ui/display';
-import { MenuItem, MenuItemDraggable } from 'twenty-ui/navigation';
+import { IconNewSection } from 'twenty-ui/display';
+import { MenuItem } from 'twenty-ui/navigation';
 
 const StyledFieldsDroppable = styled.div`
   display: flex;
@@ -25,8 +20,6 @@ type FieldsConfigurationUngroupedEditorProps = {
   onMoveField: (sourceIndex: number, destinationIndex: number) => void;
   onToggleFieldVisibility: (fieldMetadataId: string) => void;
   onAddGroup: () => void;
-  newFieldsIsVisible: boolean;
-  onToggleNewFieldsVisibility: () => void;
 };
 
 export const FieldsConfigurationUngroupedEditor = ({
@@ -34,8 +27,6 @@ export const FieldsConfigurationUngroupedEditor = ({
   onMoveField,
   onToggleFieldVisibility,
   onAddGroup,
-  newFieldsIsVisible,
-  onToggleNewFieldsVisibility,
 }: FieldsConfigurationUngroupedEditorProps) => {
   const { t } = useLingui();
 
@@ -89,30 +80,12 @@ export const FieldsConfigurationUngroupedEditor = ({
             ))}
             {provided.placeholder}
 
-            <MenuItemDraggable
-              LeftIcon={IconPlaylistAdd}
-              text={t`New fields`}
-              contextualText={t`Default position/visibility for fields created in the future`}
-              gripMode="never"
-              isDragDisabled
-              withIconContainer
-              isIconDisplayedOnHoverOnly={false}
-              iconButtons={[
-                {
-                  Icon: newFieldsIsVisible ? IconEye : IconEyeOff,
-                  onClick: (e) => {
-                    e.stopPropagation();
-                    onToggleNewFieldsVisibility();
-                  },
-                },
-              ]}
-            />
-
             <MenuItem
               LeftIcon={IconNewSection}
-              withIconContainer
-              text={t`Add a Section`}
+              text={t`Add a Group`}
               onClick={onAddGroup}
+              withIconContainer
+              withIconContainerBackground={false}
             />
           </StyledFieldsDroppable>
         )}
