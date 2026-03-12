@@ -25,10 +25,10 @@ const StyledBarRow = styled.div`
 `;
 
 const StyledClickableBarRow = styled(StyledBarRow)`
-  cursor: pointer;
   border-radius: ${themeCssVariables.border.radius.sm};
-  padding: ${themeCssVariables.spacing[1]};
+  cursor: pointer;
   margin: -${themeCssVariables.spacing[1]};
+  padding: ${themeCssVariables.spacing[1]};
 
   &:hover {
     background-color: ${themeCssVariables.background.transparent.light};
@@ -36,19 +36,19 @@ const StyledClickableBarRow = styled(StyledBarRow)`
 `;
 
 const StyledBarLabel = styled.div`
+  align-items: center;
   display: flex;
   justify-content: space-between;
-  align-items: center;
 `;
 
 const StyledLabelText = styled.span`
   color: ${themeCssVariables.font.color.tertiary};
   font-size: ${themeCssVariables.font.size.xs};
   font-weight: ${themeCssVariables.font.weight.semiBold};
+  max-width: 60%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  max-width: 60%;
 `;
 
 const StyledValueText = styled.span`
@@ -58,8 +58,8 @@ const StyledValueText = styled.span`
 `;
 
 const StyledTimeSeriesContainer = styled.div`
-  display: flex;
   align-items: flex-end;
+  display: flex;
   gap: 2px;
   height: 80px;
   width: 100%;
@@ -132,7 +132,14 @@ const StyledBackButton = styled.button`
 `;
 
 const getBarColors = (theme: {
-  color: { blue: string; purple: string; green: string; orange: string; turquoise: string; pink: string };
+  color: {
+    blue: string;
+    purple: string;
+    green: string;
+    orange: string;
+    turquoise: string;
+    pink: string;
+  };
 }): string[] => [
   theme.color.blue,
   theme.color.purple,
@@ -219,9 +226,7 @@ export const SettingsBillingAnalyticsSection = () => {
   );
 
   const displayTimeSeries =
-    selectedUserId && userDailyUsage
-      ? userDailyUsage.dailyUsage
-      : timeSeries;
+    selectedUserId && userDailyUsage ? userDailyUsage.dailyUsage : timeSeries;
 
   const maxTimeSeriesValue = Math.max(
     ...displayTimeSeries.map((point) => point.creditsUsed),
@@ -278,15 +283,10 @@ export const SettingsBillingAnalyticsSection = () => {
               label={t`Usage by Type`}
               value={`${formatNumber(totalCredits)} total`}
             />
-            <HorizontalSeparator
-              noMargin
-              color={theme.background.tertiary}
-            />
+            <HorizontalSeparator noMargin color={theme.background.tertiary} />
             {usageByExecutionType.map((item, index) => {
               const percentage =
-                totalCredits > 0
-                  ? (item.creditsUsed / totalCredits) * 100
-                  : 0;
+                totalCredits > 0 ? (item.creditsUsed / totalCredits) * 100 : 0;
 
               return (
                 <StyledBarRow key={item.key}>
@@ -295,8 +295,8 @@ export const SettingsBillingAnalyticsSection = () => {
                       {EXECUTION_TYPE_LABELS[item.key] ?? item.key}
                     </StyledLabelText>
                     <StyledValueText>
-                      {formatNumber(item.creditsUsed)} (
-                      {Math.round(percentage)}%)
+                      {formatNumber(item.creditsUsed)} ({Math.round(percentage)}
+                      %)
                     </StyledValueText>
                   </StyledBarLabel>
                   <ProgressBar
@@ -369,9 +369,7 @@ export const SettingsBillingAnalyticsSection = () => {
           <SubscriptionInfoContainer>
             {usageByUser.map((item, index) => {
               const percentage =
-                totalCredits > 0
-                  ? (item.creditsUsed / totalCredits) * 100
-                  : 0;
+                totalCredits > 0 ? (item.creditsUsed / totalCredits) * 100 : 0;
 
               return (
                 <StyledClickableBarRow
@@ -406,9 +404,7 @@ export const SettingsBillingAnalyticsSection = () => {
           <SubscriptionInfoContainer>
             {usageByResource.map((item, index) => {
               const percentage =
-                totalCredits > 0
-                  ? (item.creditsUsed / totalCredits) * 100
-                  : 0;
+                totalCredits > 0 ? (item.creditsUsed / totalCredits) * 100 : 0;
 
               return (
                 <StyledBarRow key={item.key}>
