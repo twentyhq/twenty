@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { createReadStream } from 'fs';
+import { createReadStream, createWriteStream } from 'fs';
 import * as fs from 'fs/promises';
 import { join } from 'path';
+import { pipeline } from 'stream/promises';
 
 import { replaceCoreClient } from 'twenty-client-sdk/generate';
 import { FileFolder } from 'twenty-shared/types';
@@ -104,7 +105,7 @@ export class SdkClientGenerationService {
         resourcePath: SDK_CLIENT_ARCHIVE_NAME,
       });
 
-      await fs.writeFile(archivePath, await streamToBuffer(archiveStream));
+      await pipeline(archiveStream, createWriteStream(archivePath));
 
       await fs.rm(targetPackagePath, { recursive: true, force: true });
       await fs.mkdir(targetPackagePath, { recursive: true });
