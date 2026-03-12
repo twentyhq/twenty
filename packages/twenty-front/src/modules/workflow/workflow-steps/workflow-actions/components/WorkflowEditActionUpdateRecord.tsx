@@ -57,11 +57,13 @@ export const WorkflowEditActionUpdateRecord = ({
         value: item.nameSingular,
       }));
 
+  const actionInput = action.settings?.input;
+
   const [formData, setFormData] = useState<UpdateRecordFormData>({
-    objectNameSingular: action.settings.input.objectName,
-    objectRecordId: action.settings.input.objectRecordId,
-    fieldsToUpdate: action.settings.input.fieldsToUpdate ?? [],
-    ...action.settings.input.objectRecord,
+    objectNameSingular: actionInput?.objectName ?? '',
+    objectRecordId: actionInput?.objectRecordId ?? '',
+    fieldsToUpdate: actionInput?.fieldsToUpdate ?? [],
+    ...actionInput?.objectRecord,
   });
 
   const isFormDisabled = actionOptions.readonly === true;

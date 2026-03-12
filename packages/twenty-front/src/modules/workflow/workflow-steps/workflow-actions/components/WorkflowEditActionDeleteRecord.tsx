@@ -56,9 +56,11 @@ export const WorkflowEditActionDeleteRecord = ({
         value: item.nameSingular,
       }));
 
+  const actionInput = action.settings?.input;
+
   const [formData, setFormData] = useState<DeleteRecordFormData>({
-    objectNameSingular: action.settings.input.objectName,
-    objectRecordId: action.settings.input.objectRecordId,
+    objectNameSingular: actionInput?.objectName ?? '',
+    objectRecordId: actionInput?.objectRecordId ?? '',
   });
   const isFormDisabled = actionOptions.readonly;
 

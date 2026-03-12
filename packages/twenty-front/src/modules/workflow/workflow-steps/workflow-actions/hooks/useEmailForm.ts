@@ -15,19 +15,21 @@ export const useEmailForm = ({
   onActionUpdate,
   readonly,
 }: UseEmailFormParams) => {
+  const actionInput = action.settings?.input;
+
   const [formData, setFormData] = useState<EmailFormData>(() => {
-    const inputRecipients = action.settings.input.recipients;
+    const inputRecipients = actionInput?.recipients;
 
     return {
-      connectedAccountId: action.settings.input.connectedAccountId,
+      connectedAccountId: actionInput?.connectedAccountId ?? '',
       recipients: {
         to: inputRecipients?.to ?? '',
         cc: inputRecipients?.cc ?? '',
         bcc: inputRecipients?.bcc ?? '',
       },
-      subject: action.settings.input.subject ?? '',
-      body: action.settings.input.body ?? '',
-      files: action.settings.input.files ?? [],
+      subject: actionInput?.subject ?? '',
+      body: actionInput?.body ?? '',
+      files: actionInput?.files ?? [],
     };
   });
 

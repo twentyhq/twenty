@@ -72,11 +72,13 @@ export const WorkflowEditActionEmailBase = ({
     readonly: actionOptions.readonly === true,
   });
 
+  const actionInput = action.settings?.input;
+
   const [visibleAdvancedFields, setVisibleAdvancedFields] = useState<{
     cc: boolean;
     bcc: boolean;
   }>(() => {
-    const inputRecipients = action.settings.input.recipients;
+    const inputRecipients = actionInput?.recipients;
 
     return {
       cc: Boolean(inputRecipients?.cc),
@@ -117,12 +119,12 @@ export const WorkflowEditActionEmailBase = ({
   };
 
   if (
-    isDefined(action.settings.input.connectedAccountId) &&
-    action.settings.input.connectedAccountId !== ''
+    isDefined(actionInput?.connectedAccountId) &&
+    actionInput.connectedAccountId !== ''
   ) {
     filter.or.push({
       id: {
-        eq: action.settings.input.connectedAccountId,
+        eq: actionInput.connectedAccountId,
       },
     });
   }

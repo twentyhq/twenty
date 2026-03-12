@@ -54,10 +54,6 @@ export const SentryInitEffect = () => {
             tracesSampleRate: 1.0,
             replaysSessionSampleRate: 0.1,
             replaysOnErrorSampleRate: 1.0,
-            ignoreErrors: [
-              // reCAPTCHA errors from regions where Google is blocked (e.g. China)
-              /Invalid site key or not loaded in api\.js/,
-            ],
           });
 
           setIsSentryInitialized(true);

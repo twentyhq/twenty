@@ -84,9 +84,11 @@ export const WorkflowEditActionCreateRecord = ({
         value: item.nameSingular,
       }));
 
+  const actionInput = action.settings?.input;
+
   const [formData, setFormData] = useState<CreateRecordFormData>({
-    objectName: action.settings.input.objectName,
-    ...action.settings.input.objectRecord,
+    objectName: actionInput?.objectName ?? '',
+    ...actionInput?.objectRecord,
   });
 
   const isFormDisabled = actionOptions.readonly === true;
