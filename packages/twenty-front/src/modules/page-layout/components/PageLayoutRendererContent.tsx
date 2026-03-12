@@ -1,3 +1,5 @@
+import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { PageLayoutLeftPanel } from '@/page-layout/components/PageLayoutLeftPanel';
 import { PageLayoutTabList } from '@/page-layout/components/PageLayoutTabList';
 import { PageLayoutTabListEffect } from '@/page-layout/components/PageLayoutTabListEffect';
@@ -19,6 +21,7 @@ import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingC
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
@@ -72,6 +75,17 @@ export const PageLayoutRendererContent = () => {
 
   const isMobile = useIsMobile();
 
+  const metadataStore = useAtomFamilyStateValue(
+    metadataStoreState,
+    'objectMetadataItems',
+  );
+
+  const isSystemObject =
+    (metadataStore.current as ObjectMetadataItem[]).find(
+      (item) =>
+        item.nameSingular === targetRecordIdentifier?.targetObjectNameSingular,
+    )?.isSystem ?? false;
+
   if (!isDefined(currentPageLayout)) {
     return null;
   }
@@ -100,8 +114,14 @@ export const PageLayoutRendererContent = () => {
     isEditMode: isPageLayoutInEditMode,
   });
 
+  const tabsForCurrentObject = isSystemObject
+    ? tabsWithVisibleWidgets.filter(
+        (tab) => tab.title === 'Home' || tab.title === 'Timeline',
+      )
+    : tabsWithVisibleWidgets;
+
   const { tabsToRenderInTabList, pinnedLeftTab } = getTabsByDisplayMode({
-    tabs: tabsWithVisibleWidgets,
+    tabs: tabsForCurrentObject,
     pageLayoutType: currentPageLayout.type,
     isMobile,
     isInSidePanel,

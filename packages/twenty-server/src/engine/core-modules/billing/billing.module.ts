@@ -34,6 +34,7 @@ import { BillingService } from 'src/engine/core-modules/billing/services/billing
 import { MeteredCreditService } from 'src/engine/core-modules/billing/services/metered-credit.service';
 import { StripeModule } from 'src/engine/core-modules/billing/stripe/stripe.module';
 import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
+import { EnterpriseModule } from 'src/engine/core-modules/enterprise/enterprise.module';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { MessageQueueModule } from 'src/engine/core-modules/message-queue/message-queue.module';
@@ -70,6 +71,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     DataSourceModule,
     MetricsModule,
     ClickHouseModule,
+    EnterpriseModule,
   ],
   providers: [
     BillingSubscriptionService,

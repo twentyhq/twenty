@@ -12,6 +12,7 @@ const StyledButtonLink = styled.a`
   gap: ${themeCssVariables.spacing[1]};
   padding: 0 ${themeCssVariables.spacing[1]};
   text-decoration: none;
+  white-space: nowrap;
 
   &:hover {
     color: ${themeCssVariables.font.color.tertiary};

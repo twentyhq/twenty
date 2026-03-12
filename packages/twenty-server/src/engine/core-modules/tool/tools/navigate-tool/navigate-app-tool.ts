@@ -123,12 +123,41 @@ export class NavigateAppTool implements Tool {
       };
     }
 
+    const { flatObjectMetadataMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatObjectMetadataMaps'],
+        },
+      );
+
+    const objectMetadataUniversalIdentifier =
+      flatObjectMetadataMaps.universalIdentifierById[
+        matchingView.objectMetadataId
+      ];
+
+    const objectMetadata = isDefined(objectMetadataUniversalIdentifier)
+      ? flatObjectMetadataMaps.byUniversalIdentifier[
+          objectMetadataUniversalIdentifier
+        ]
+      : undefined;
+
+    if (!isDefined(objectMetadata)) {
+      return {
+        success: false,
+        message: `Object metadata for view "${matchingView.name}" not found`,
+        error: `Could not resolve the object associated with view "${matchingView.name}"`,
+      };
+    }
+
     return {
       success: true,
       message: `Navigating to view "${matchingView.name}"`,
       result: {
         action: 'navigateToView',
+        viewId: matchingView.id,
         viewName: matchingView.name,
+        objectNameSingular: objectMetadata.nameSingular,
       },
     };
   }
