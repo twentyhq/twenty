@@ -55,7 +55,7 @@ export class CommandMenuItemEntity
 
   @Column({
     type: 'enum',
-    enum: EngineComponentKey,
+    enum: Object.values(EngineComponentKey),
     nullable: true,
   })
   engineComponentKey: EngineComponentKey | null;
@@ -77,7 +77,7 @@ export class CommandMenuItemEntity
 
   @Column({
     type: 'enum',
-    enum: CommandMenuItemAvailabilityType,
+    enum: Object.values(CommandMenuItemAvailabilityType),
     nullable: false,
     default: CommandMenuItemAvailabilityType.GLOBAL,
   })
