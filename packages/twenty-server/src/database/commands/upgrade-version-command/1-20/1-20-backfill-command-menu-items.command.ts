@@ -94,8 +94,15 @@ export class BackfillCommandMenuItemsCommand extends ActiveOrSuspendedWorkspaces
 
     if (numberOfCommandMenuItemsToCreate === 0) {
       this.logger.log(
-        `No missing standard command menu items for workspace ${workspaceId}, skipping`,
+        `No missing standard command menu items for workspace ${workspaceId}, enabling feature flag only`,
       );
+
+      if (!isDryRun) {
+        await this.featureFlagService.enableFeatureFlags(
+          [FeatureFlagKey.IS_COMMAND_MENU_ITEM_ENABLED],
+          workspaceId,
+        );
+      }
 
       return;
     }
