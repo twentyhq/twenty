@@ -9,18 +9,15 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { type FlatObjectPermission } from 'src/engine/metadata-modules/flat-object-permission/types/flat-object-permission.type';
 import { fromCreateObjectPermissionInputToUniversalFlatObjectPermission } from 'src/engine/metadata-modules/flat-object-permission/utils/from-create-object-permission-input-to-universal-flat-object-permission.util';
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
-import { type ObjectPermissionDTO } from 'src/engine/metadata-modules/object-permission/dtos/object-permission.dto';
 import {
   type ObjectPermissionInput,
   type UpsertObjectPermissionsInput,
 } from 'src/engine/metadata-modules/object-permission/dtos/upsert-object-permissions.input';
-import { fromFlatObjectPermissionToObjectPermissionDto } from 'src/engine/metadata-modules/object-permission/utils/from-flat-object-permission-to-object-permission-dto.util';
 import {
   PermissionsException,
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { type UniversalFlatObjectPermission } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-permission.type';
@@ -31,7 +28,6 @@ export class ObjectPermissionService {
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationService: ApplicationService,
-    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   public async upsertObjectPermissions({
@@ -40,7 +36,7 @@ export class ObjectPermissionService {
   }: {
     workspaceId: string;
     input: UpsertObjectPermissionsInput;
-  }): Promise<ObjectPermissionDTO[]> {
+  }): Promise<FlatObjectPermission[]> {
     const { flatObjectPermissionMaps, flatRoleMaps, flatObjectMetadataMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -65,16 +61,6 @@ export class ObjectPermissionService {
         PermissionsExceptionCode.ROLE_NOT_FOUND,
         {
           userFriendlyMessage: msg`The role you are trying to modify could not be found.`,
-        },
-      );
-    }
-
-    if (!flatRole.isEditable) {
-      throw new PermissionsException(
-        PermissionsExceptionMessage.ROLE_NOT_EDITABLE,
-        PermissionsExceptionCode.ROLE_NOT_EDITABLE,
-        {
-          userFriendlyMessage: msg`This role cannot be modified because it is a system role. Only custom roles can be edited.`,
         },
       );
     }
@@ -216,7 +202,7 @@ export class ObjectPermissionService {
       const unchanged = currentObjectPermissionsForRole.filter((op) =>
         desiredByObjectMetadataId.has(op.objectMetadataId),
       );
-      return unchanged.map(fromFlatObjectPermissionToObjectPermissionDto);
+      return unchanged;
     }
 
     const buildAndRunResult =
@@ -242,10 +228,6 @@ export class ObjectPermissionService {
       );
     }
 
-    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
-      'rolesPermissions',
-    ]);
-
     const { flatObjectPermissionMaps: freshFlatObjectPermissionMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -268,7 +250,7 @@ export class ObjectPermissionService {
       desiredObjectMetadataIds.has(op.objectMetadataId),
     );
 
-    return filtered.map(fromFlatObjectPermissionToObjectPermissionDto);
+    return filtered;
   }
 
   private validateObjectPermissionsReadAndWriteConsistencyOrThrow({
