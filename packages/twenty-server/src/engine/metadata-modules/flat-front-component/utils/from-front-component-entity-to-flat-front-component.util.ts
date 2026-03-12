@@ -32,6 +32,7 @@ export const fromFrontComponentEntityToFlatFrontComponent = ({
     componentName: frontComponentEntity.componentName,
     builtComponentChecksum: frontComponentEntity.builtComponentChecksum,
     isHeadless: frontComponentEntity.isHeadless,
+    usesSdkClient: frontComponentEntity.usesSdkClient,
     workspaceId: frontComponentEntity.workspaceId,
     universalIdentifier: frontComponentEntity.universalIdentifier,
     applicationId: frontComponentEntity.applicationId,

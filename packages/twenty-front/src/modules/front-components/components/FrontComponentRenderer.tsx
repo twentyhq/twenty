@@ -3,11 +3,15 @@ import { useFrontComponentExecutionContext } from '@/front-components/hooks/useF
 import { useOnFrontComponentUpdated } from '@/front-components/hooks/useOnFrontComponentUpdated';
 import { frontComponentApplicationTokenPairComponentState } from '@/front-components/states/frontComponentApplicationTokenPairComponentState';
 import { getFrontComponentUrl } from '@/front-components/utils/getFrontComponentUrl';
+import { getOrFetchSdkClientBlobUrls } from '@/front-components/utils/sdkClientBlobUrlCache';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { t } from '@lingui/core/macro';
-import { useCallback, useContext } from 'react';
-import { FrontComponentRenderer as SharedFrontComponentRenderer } from 'twenty-sdk/front-component-renderer';
+import { useCallback, useContext, useEffect, useState } from 'react';
+import {
+  FrontComponentRenderer as SharedFrontComponentRenderer,
+  type SdkClientUrls,
+} from 'twenty-sdk/front-component-renderer';
 import { isDefined } from 'twenty-shared/utils';
 import { ThemeContext } from 'twenty-ui/theme-constants';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
@@ -67,6 +71,38 @@ export const FrontComponentRenderer = ({
     checksum: data?.frontComponent?.builtComponentChecksum,
   });
 
+  const applicationId = data?.frontComponent?.applicationId;
+  const usesSdkClient = data?.frontComponent?.usesSdkClient ?? false;
+  const accessToken =
+    data?.frontComponent?.applicationTokenPair?.applicationAccessToken?.token;
+
+  const [sdkClientBlobUrls, setSdkClientBlobUrls] =
+    useState<SdkClientUrls | undefined>(undefined);
+  const [sdkClientLoading, setSdkClientLoading] = useState(false);
+
+  useEffect(() => {
+    if (
+      !usesSdkClient ||
+      !isDefined(applicationId) ||
+      !isDefined(accessToken)
+    ) {
+      setSdkClientBlobUrls(undefined);
+
+      return;
+    }
+
+    setSdkClientLoading(true);
+
+    getOrFetchSdkClientBlobUrls(applicationId, accessToken)
+      .then(setSdkClientBlobUrls)
+      .catch((error: Error) => {
+        handleError(error);
+      })
+      .finally(() => {
+        setSdkClientLoading(false);
+      });
+  }, [applicationId, usesSdkClient, accessToken, handleError]);
+
   const applicationTokenPair =
     data?.frontComponent?.applicationTokenPair ?? null;
 
@@ -75,6 +111,10 @@ export const FrontComponentRenderer = ({
     !isDefined(data?.frontComponent) ||
     !isDefined(applicationTokenPair)
   ) {
+    return null;
+  }
+
+  if (usesSdkClient && (sdkClientLoading || !isDefined(sdkClientBlobUrls))) {
     return null;
   }
 
@@ -87,6 +127,7 @@ export const FrontComponentRenderer = ({
           applicationTokenPair.applicationAccessToken.token
         }
         apiUrl={REACT_APP_SERVER_BASE_URL}
+        sdkClientUrls={sdkClientBlobUrls}
         executionContext={executionContext}
         frontComponentHostCommunicationApi={frontComponentHostCommunicationApi}
         onError={handleError}

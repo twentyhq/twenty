@@ -31,6 +31,7 @@ export const createStandardFrontComponentFlatMetadata = ({
     componentName: definition.componentName,
     builtComponentChecksum: definition.builtComponentChecksum,
     isHeadless: definition.isHeadless,
+    usesSdkClient: false,
     createdAt: now,
     updatedAt: now,
   };

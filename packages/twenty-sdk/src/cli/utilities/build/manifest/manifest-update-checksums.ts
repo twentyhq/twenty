@@ -19,7 +19,12 @@ export type UpdateManifestChecksumParams = {
   manifest: Manifest;
   builtFileInfos: Map<
     string,
-    { checksum: string; builtPath: string; fileFolder: FileFolder }
+    {
+      checksum: string;
+      builtPath: string;
+      fileFolder: FileFolder;
+      usesSdkClient?: boolean;
+    }
   >;
 };
 
@@ -73,11 +78,17 @@ export const manifestUpdateChecksums = ({
       if (componentIndex === -1) {
         continue;
       }
+      const builtFileInfo = builtFileInfos.get(builtPath);
+
       result = {
         ...result,
         frontComponents: frontComponents.map((component, index) =>
           index === componentIndex
-            ? { ...component, builtComponentChecksum: checksum }
+            ? {
+                ...component,
+                builtComponentChecksum: checksum,
+                usesSdkClient: builtFileInfo?.usesSdkClient ?? false,
+              }
             : component,
         ),
       };

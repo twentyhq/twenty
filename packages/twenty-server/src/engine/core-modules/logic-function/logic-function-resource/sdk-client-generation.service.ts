@@ -141,6 +141,38 @@ export class SdkClientGenerationService {
     return streamToBuffer(archiveStream);
   }
 
+  // Reads a single file from the generated SDK archive (e.g. 'dist/core.mjs').
+  // Used to serve individual SDK modules to the frontend worker.
+  async readFileFromArchive({
+    workspaceId,
+    applicationUniversalIdentifier,
+    filePath,
+  }: {
+    workspaceId: string;
+    applicationUniversalIdentifier: string;
+    filePath: string;
+  }): Promise<Buffer> {
+    const archiveBuffer = await this.downloadArchiveBuffer({
+      workspaceId,
+      applicationUniversalIdentifier,
+    });
+
+    const { default: unzipper } = await import('unzipper');
+    const directory = await unzipper.Open.buffer(archiveBuffer);
+
+    const entry = directory.files.find(
+      (file) => file.path === filePath || file.path === `./${filePath}`,
+    );
+
+    if (!entry) {
+      throw new Error(
+        `File "${filePath}" not found in SDK archive for application ${applicationUniversalIdentifier}`,
+      );
+    }
+
+    return entry.buffer();
+  }
+
   async markSdkLayerFresh({
     applicationId,
     workspaceId,
