@@ -4,20 +4,21 @@ import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetad
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useTriggerViewGroupOptimisticEffect } from '@/views/optimistic-effects/hooks/useTriggerViewGroupOptimisticEffect';
-import { ApolloError } from '@apollo/client';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { t } from '@lingui/core/macro';
 import { CrudOperationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { useMutation } from '@apollo/client/react';
 import {
   type UpdateCoreViewGroupMutationVariables,
-  useUpdateCoreViewGroupMutation,
+  UpdateCoreViewGroupDocument,
 } from '~/generated-metadata/graphql';
 
 export const usePerformViewGroupAPIPersist = () => {
   const { triggerViewGroupOptimisticEffect } =
     useTriggerViewGroupOptimisticEffect();
 
-  const [updateCoreViewGroupMutation] = useUpdateCoreViewGroupMutation();
+  const [updateCoreViewGroupMutation] = useMutation(UpdateCoreViewGroupDocument);
 
   const { handleMetadataError } = useMetadataErrorHandler();
   const { enqueueErrorSnackBar } = useSnackBar();
@@ -61,7 +62,7 @@ export const usePerformViewGroupAPIPersist = () => {
           response: results,
         };
       } catch (error) {
-        if (error instanceof ApolloError) {
+        if (error instanceof CombinedGraphQLErrors) {
           handleMetadataError(error, {
             primaryMetadataName: 'viewGroup',
             operationType: CrudOperationType.UPDATE,

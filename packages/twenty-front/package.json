@@ -30,7 +30,7 @@
   },
   "dependencies": {
     "@ai-sdk/react": "3.0.99",
-    "@apollo/client": "^3.7.17",
+    "@apollo/client": "^4.0.0",
     "@blocknote/mantine": "^0.47.1",
     "@blocknote/react": "^0.47.1",
     "@blocknote/xl-docx-exporter": "^0.47.1",

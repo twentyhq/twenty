@@ -1,4 +1,4 @@
-import { type ApolloError } from '@apollo/client';
+import { type CombinedGraphQLErrors } from '@apollo/client/errors';
 
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -15,7 +15,7 @@ export const useHandleFindManyRecordsError = ({
   const { enqueueErrorSnackBar } = useSnackBar();
 
   const handleFindManyRecordsError = useCallback(
-    (error: ApolloError) => {
+    (error: CombinedGraphQLErrors) => {
       logError(
         `useFindManyRecords for "${objectMetadataItem.namePlural}" error : ` +
           error,

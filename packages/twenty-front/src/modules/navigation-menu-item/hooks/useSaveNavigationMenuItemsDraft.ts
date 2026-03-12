@@ -1,7 +1,8 @@
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { useCreateNavigationMenuItemMutation } from '~/generated-metadata/graphql';
+import { useMutation } from '@apollo/client/react';
+import { CreateNavigationMenuItemDocument } from '~/generated-metadata/graphql';
 
 import { useDeleteNavigationMenuItem } from '@/navigation-menu-item/hooks/useDeleteNavigationMenuItem';
 import { useUpdateNavigationMenuItem } from '@/navigation-menu-item/hooks/useUpdateNavigationMenuItem';
@@ -18,7 +19,7 @@ export const useSaveNavigationMenuItemsDraft = () => {
   const { updateNavigationMenuItem } = useUpdateNavigationMenuItem();
   const { deleteNavigationMenuItem } = useDeleteNavigationMenuItem();
   const [createNavigationMenuItemMutation] =
-    useCreateNavigationMenuItemMutation({
+    useMutation(CreateNavigationMenuItemDocument, {
       refetchQueries: ['FindManyNavigationMenuItems'],
     });
 

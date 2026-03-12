@@ -29,10 +29,11 @@ import {
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useQuery } from '@apollo/client/react';
 import {
   PermissionFlagType,
-  useFindOneApplicationByUniversalIdentifierQuery,
-  useFindOneMarketplaceAppQuery,
+  FindOneApplicationByUniversalIdentifierDocument,
+  FindOneMarketplaceAppDocument,
 } from '~/generated-metadata/graphql';
 import { useMarketplaceApps } from '~/modules/marketplace/hooks/useMarketplaceApps';
 import { SettingsApplicationPermissionsTab } from '~/pages/settings/applications/tabs/SettingsApplicationPermissionsTab';
@@ -272,7 +273,7 @@ export const SettingsAvailableApplicationDetails = () => {
     PermissionFlagType.MARKETPLACE_APPS,
   );
   const { data: installedAppData } =
-    useFindOneApplicationByUniversalIdentifierQuery({
+    useQuery(FindOneApplicationByUniversalIdentifierDocument, {
       variables: { universalIdentifier: availableApplicationId },
       skip: !availableApplicationId,
     });
@@ -281,7 +282,7 @@ export const SettingsAvailableApplicationDetails = () => {
     (app) => app.id === availableApplicationId,
   );
 
-  const { data: singleAppData } = useFindOneMarketplaceAppQuery({
+  const { data: singleAppData } = useQuery(FindOneMarketplaceAppDocument, {
     variables: { universalIdentifier: availableApplicationId },
     skip: isDefined(listedApp) || !availableApplicationId,
   });

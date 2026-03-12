@@ -1,10 +1,10 @@
-import { type ApolloError } from '@apollo/client';
+import { type CombinedGraphQLErrors } from '@apollo/client/errors';
 import { type MessageDescriptor } from '@lingui/core';
 import { t } from '@lingui/core/macro';
 import { type Nullable } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-export const getErrorMessageFromApolloError = (error: ApolloError): string => {
+export const getErrorMessageFromApolloError = (error: CombinedGraphQLErrors): string => {
   const userFriendlyMessage = error.graphQLErrors?.[0]?.extensions
     ?.userFriendlyMessage as Nullable<MessageDescriptor | string>;
 

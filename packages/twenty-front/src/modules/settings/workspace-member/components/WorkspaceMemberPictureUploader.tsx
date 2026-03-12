@@ -9,7 +9,8 @@ import { useCanEditProfileField } from '@/settings/profile/hooks/useCanEditProfi
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ImageInput } from '@/ui/input/components/ImageInput';
 import { isDefined } from 'twenty-shared/utils';
-import { useUploadWorkspaceMemberProfilePictureMutation } from '~/generated-metadata/graphql';
+import { useMutation } from '@apollo/client/react';
+import { UploadWorkspaceMemberProfilePictureDocument } from '~/generated-metadata/graphql';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 type WorkspaceMemberPictureUploaderProps = {
@@ -35,7 +36,7 @@ export const WorkspaceMemberPictureUploader = ({
     currentWorkspaceMemberState,
   );
 
-  const [uploadPicture] = useUploadWorkspaceMemberProfilePictureMutation();
+  const [uploadPicture] = useMutation(UploadWorkspaceMemberProfilePictureDocument);
 
   const { updateOneRecord } = useUpdateOneRecord();
 

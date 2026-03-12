@@ -9,7 +9,8 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import { workspaceAuthBypassProvidersState } from '@/workspace/states/workspaceAuthBypassProvidersState';
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 import { isDefined } from 'twenty-shared/utils';
-import { useGetPublicWorkspaceDataByDomainQuery } from '~/generated-metadata/graphql';
+import { useQuery } from '@apollo/client/react';
+import { GetPublicWorkspaceDataByDomainDocument } from '~/generated-metadata/graphql';
 
 export const useGetPublicWorkspaceDataByDomain = () => {
   const { isDefaultDomain } = useIsCurrentLocationOnDefaultDomain();
@@ -28,7 +29,7 @@ export const useGetPublicWorkspaceDataByDomain = () => {
   const setWorkspacePublicData = useSetAtomState(workspacePublicDataState);
   const clientConfigApiStatus = useAtomStateValue(clientConfigApiStatusState);
 
-  const { loading, data, error } = useGetPublicWorkspaceDataByDomainQuery({
+  const { loading, data, error } = useQuery(GetPublicWorkspaceDataByDomainDocument, {
     variables: {
       origin,
     },

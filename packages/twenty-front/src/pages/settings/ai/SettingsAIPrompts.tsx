@@ -1,4 +1,4 @@
-import { ApolloError } from '@apollo/client';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { styled } from '@linaria/react';
 import { useDebouncedCallback } from 'use-debounce';
 
@@ -17,9 +17,10 @@ import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useQuery, useMutation } from '@apollo/client/react';
 import {
-  useGetAiSystemPromptPreviewQuery,
-  useUpdateWorkspaceMutation,
+  GetAiSystemPromptPreviewDocument,
+  UpdateWorkspaceDocument,
 } from '~/generated-metadata/graphql';
 
 const StyledFormContainer = styled.div`
@@ -44,10 +45,10 @@ export const SettingsAIPrompts = () => {
     currentWorkspaceState,
   );
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
-  const [updateWorkspace] = useUpdateWorkspaceMutation();
+  const [updateWorkspace] = useMutation(UpdateWorkspaceDocument);
 
   const { data: previewData, loading: previewLoading } =
-    useGetAiSystemPromptPreviewQuery();
+    useQuery(GetAiSystemPromptPreviewDocument);
 
   const [workspaceInstructions, setWorkspaceInstructions] = useState(
     currentWorkspace?.aiAdditionalInstructions ?? '',
@@ -98,7 +99,7 @@ export const SettingsAIPrompts = () => {
         aiAdditionalInstructions: originalInstructions || null,
       });
 
-      if (error instanceof ApolloError) {
+      if (error instanceof CombinedGraphQLErrors) {
         enqueueErrorSnackBar({
           apolloError: error,
         });

@@ -25,13 +25,14 @@ import { H2Title, IconRepeat, IconTrash } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useMutation, useQuery } from '@apollo/client/react';
 import {
-  useAssignRoleToApiKeyMutation,
-  useCreateApiKeyMutation,
-  useGenerateApiKeyTokenMutation,
-  useGetApiKeyQuery,
-  useGetRolesQuery,
-  useRevokeApiKeyMutation,
+  AssignRoleToApiKeyDocument,
+  CreateApiKeyDocument,
+  GenerateApiKeyTokenDocument,
+  GetApiKeyDocument,
+  GetRolesDocument,
+  RevokeApiKeyDocument,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
@@ -72,12 +73,12 @@ export const SettingsDevelopersApiKeyDetail = () => {
     [jotaiStore],
   );
 
-  const [generateOneApiKeyToken] = useGenerateApiKeyTokenMutation();
-  const [createApiKey] = useCreateApiKeyMutation();
-  const [revokeApiKey] = useRevokeApiKeyMutation();
-  const [assignRoleToApiKey] = useAssignRoleToApiKeyMutation();
+  const [generateOneApiKeyToken] = useMutation(GenerateApiKeyTokenDocument);
+  const [createApiKey] = useMutation(CreateApiKeyDocument);
+  const [revokeApiKey] = useMutation(RevokeApiKeyDocument);
+  const [assignRoleToApiKey] = useMutation(AssignRoleToApiKeyDocument);
 
-  const { data: apiKeyData, loading: apiKeyLoading } = useGetApiKeyQuery({
+  const { data: apiKeyData, loading: apiKeyLoading } = useQuery(GetApiKeyDocument, {
     variables: {
       input: {
         id: apiKeyId,
@@ -93,7 +94,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
     },
   });
 
-  const { data: rolesData, loading: rolesLoading } = useGetRolesQuery();
+  const { data: rolesData, loading: rolesLoading } = useQuery(GetRolesDocument);
 
   const roles = rolesData?.getRoles ?? [];
 

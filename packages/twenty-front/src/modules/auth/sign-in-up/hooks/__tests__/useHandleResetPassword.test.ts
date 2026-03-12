@@ -9,9 +9,10 @@ import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
+import { useMutation } from '@apollo/client/react';
 import {
   type PublicWorkspaceData,
-  useEmailPasswordResetLinkMutation,
+  EmailPasswordResetLinkDocument,
 } from '~/generated-metadata/graphql';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 

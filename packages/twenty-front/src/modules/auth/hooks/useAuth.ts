@@ -1,20 +1,21 @@
-import { ApolloError, useApolloClient } from '@apollo/client';
+import { useApolloClient, useLazyQuery, useMutation } from '@apollo/client/react';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useCallback } from 'react';
 import { AppPath } from 'twenty-shared/types';
 
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import {
-  useCheckUserExistsLazyQuery,
-  useGetAuthTokensFromLoginTokenMutation,
-  useGetAuthTokensFromOtpMutation,
-  useGetLoginTokenFromCredentialsMutation,
-  useSignInMutation,
-  useSignUpInWorkspaceMutation,
-  useSignUpMutation,
-  useVerifyEmailAndGetLoginTokenMutation,
-  useVerifyEmailAndGetWorkspaceAgnosticTokenMutation,
   type AuthToken,
   type AuthTokenPair,
+  CheckUserExistsDocument,
+  GetAuthTokensFromLoginTokenDocument,
+  GetAuthTokensFromOtpDocument,
+  GetLoginTokenFromCredentialsDocument,
+  SignInDocument,
+  SignUpInWorkspaceDocument,
+  SignUpDocument,
+  VerifyEmailAndGetLoginTokenDocument,
+  VerifyEmailAndGetWorkspaceAgnosticTokenDocument,
 } from '~/generated-metadata/graphql';
 
 import { tokenPairState } from '@/auth/states/tokenPairState';
@@ -91,24 +92,24 @@ export const useAuth = () => {
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
 
   const [getLoginTokenFromCredentials] =
-    useGetLoginTokenFromCredentialsMutation();
-  const [signIn] = useSignInMutation();
-  const [signUp] = useSignUpMutation();
-  const [signUpInWorkspace] = useSignUpInWorkspaceMutation();
+    useMutation(GetLoginTokenFromCredentialsDocument);
+  const [signIn] = useMutation(SignInDocument);
+  const [signUp] = useMutation(SignUpDocument);
+  const [signUpInWorkspace] = useMutation(SignUpInWorkspaceDocument);
   const [getAuthTokensFromLoginToken] =
-    useGetAuthTokensFromLoginTokenMutation();
+    useMutation(GetAuthTokensFromLoginTokenDocument);
   const [verifyEmailAndGetLoginToken] =
-    useVerifyEmailAndGetLoginTokenMutation();
+    useMutation(VerifyEmailAndGetLoginTokenDocument);
   const [verifyEmailAndGetWorkspaceAgnosticToken] =
-    useVerifyEmailAndGetWorkspaceAgnosticTokenMutation();
-  const [getAuthTokensFromOtp] = useGetAuthTokensFromOtpMutation();
+    useMutation(VerifyEmailAndGetWorkspaceAgnosticTokenDocument);
+  const [getAuthTokensFromOtp] = useMutation(GetAuthTokensFromOtpDocument);
 
   const workspacePublicData = useAtomStateValue(workspacePublicDataState);
 
   const { setLastAuthenticateWorkspaceDomain } =
     useLastAuthenticatedWorkspaceDomain();
   const [checkUserExistsQuery, { data: checkUserExistsData }] =
-    useCheckUserExistsLazyQuery();
+    useLazyQuery(CheckUserExistsDocument);
 
   const client = useApolloClient();
 
@@ -200,7 +201,7 @@ export const useAuth = () => {
       } catch (error) {
         // TODO: Get intellisense for graphql error extensions code (codegen?)
         if (
-          error instanceof ApolloError &&
+          error instanceof CombinedGraphQLErrors &&
           error.graphQLErrors[0]?.extensions?.subCode === 'EMAIL_NOT_VERIFIED'
         ) {
           setSearchParams({ email });
@@ -328,7 +329,7 @@ export const useAuth = () => {
         );
       } catch (error) {
         if (
-          error instanceof ApolloError &&
+          error instanceof CombinedGraphQLErrors &&
           error.graphQLErrors[0]?.extensions?.subCode ===
             'TWO_FACTOR_AUTHENTICATION_PROVISION_REQUIRED'
         ) {
@@ -338,7 +339,7 @@ export const useAuth = () => {
         }
 
         if (
-          error instanceof ApolloError &&
+          error instanceof CombinedGraphQLErrors &&
           error.graphQLErrors[0]?.extensions?.subCode ===
             'TWO_FACTOR_AUTHENTICATION_VERIFICATION_REQUIRED'
         ) {
@@ -394,7 +395,7 @@ export const useAuth = () => {
         },
         onError: (error) => {
           if (
-            error instanceof ApolloError &&
+            error instanceof CombinedGraphQLErrors &&
             error.graphQLErrors[0]?.extensions?.subCode === 'EMAIL_NOT_VERIFIED'
           ) {
             setSearchParams({ email });

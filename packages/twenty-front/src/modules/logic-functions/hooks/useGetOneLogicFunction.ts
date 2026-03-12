@@ -1,5 +1,5 @@
 import { FIND_ONE_LOGIC_FUNCTION } from '@/logic-functions/graphql/queries/findOneLogicFunction';
-import { useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client/react';
 import {
   type FindOneLogicFunctionQuery,
   type FindOneLogicFunctionQueryVariables,

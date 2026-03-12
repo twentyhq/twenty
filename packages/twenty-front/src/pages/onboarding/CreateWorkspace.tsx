@@ -16,7 +16,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { ModalContent } from 'twenty-ui/layout';
 import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
-import { ApolloError } from '@apollo/client';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -25,7 +25,8 @@ import { H2Title } from 'twenty-ui/display';
 import { Loader } from 'twenty-ui/feedback';
 import { MainButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { useActivateWorkspaceMutation } from '~/generated-metadata/graphql';
+import { useMutation } from '@apollo/client/react';
+import { ActivateWorkspaceDocument } from '~/generated-metadata/graphql';
 
 const StyledContentContainer = styled.div`
   width: 100%;
@@ -70,7 +71,7 @@ export const CreateWorkspace = () => {
   const { refreshObjectMetadataItems } = useRefreshObjectMetadataItems();
 
   const { loadCurrentUser } = useLoadCurrentUser();
-  const [activateWorkspace] = useActivateWorkspaceMutation();
+  const [activateWorkspace] = useMutation(ActivateWorkspaceDocument);
   const [pendingCreationLoaderStep, setPendingCreationLoaderStep] = useState(
     PendingCreationLoaderStep.None,
   );
@@ -129,7 +130,7 @@ export const CreateWorkspace = () => {
         setPendingCreationLoaderStep(PendingCreationLoaderStep.None);
 
         enqueueErrorSnackBar({
-          apolloError: error instanceof ApolloError ? error : undefined,
+          apolloError: error instanceof CombinedGraphQLErrors ? error : undefined,
         });
       }
     },

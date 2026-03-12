@@ -10,7 +10,7 @@ import { determineChartItemColor } from '@/page-layout/widgets/graph/utils/deter
 import { determineGraphColorMode } from '@/page-layout/widgets/graph/utils/determineGraphColorMode';
 import { extractBarChartDataConfiguration } from '@/page-layout/widgets/graph/utils/extractBarChartDataConfiguration';
 import { parseGraphColor } from '@/page-layout/widgets/graph/utils/parseGraphColor';
-import { useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client/react';
 import { isString } from '@sniptt/guards';
 import { useMemo } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';

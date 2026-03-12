@@ -4,9 +4,10 @@ import { prefetchNavigationMenuItemsState } from '@/prefetch/states/prefetchNavi
 import { useListenToEventsForQuery } from '@/sse-db-event/hooks/useListenToEventsForQuery';
 import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
+import { useLazyQuery } from '@apollo/client/react';
 import {
   AllMetadataName,
-  useFindManyNavigationMenuItemsLazyQuery,
+  FindManyNavigationMenuItemsDocument,
 } from '~/generated-metadata/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
@@ -17,7 +18,7 @@ export const NavigationMenuItemSSEEffect = () => {
   const { updateDraft, applyChanges } = useMetadataStore();
 
   const [findManyNavigationMenuItemsLazy] =
-    useFindManyNavigationMenuItemsLazyQuery();
+    useLazyQuery(FindManyNavigationMenuItemsDocument);
 
   useListenToEventsForQuery({
     queryId,

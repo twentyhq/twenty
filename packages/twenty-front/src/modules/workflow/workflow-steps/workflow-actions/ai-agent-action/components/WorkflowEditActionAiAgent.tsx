@@ -27,10 +27,11 @@ import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconLock, IconSparkles } from 'twenty-ui/display';
 import { useDebouncedCallback } from 'use-debounce';
+import { useQuery, useMutation } from '@apollo/client/react';
 import {
-  useFindOneAgentQuery,
-  useGetRolesQuery,
-  useUpdateOneAgentMutation,
+  FindOneAgentDocument,
+  GetRolesDocument,
+  UpdateOneAgentDocument,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { SidePanelSkeletonLoader } from '~/loading/components/SidePanelSkeletonLoader';
@@ -74,7 +75,7 @@ export const WorkflowEditActionAiAgent = ({
     },
   );
   useResetWorkflowAiAgentPermissionsStateOnSidePanelClose();
-  const [updateAgent] = useUpdateOneAgentMutation();
+  const [updateAgent] = useMutation(UpdateOneAgentDocument);
   const aiModelOptions = useAiModelOptions();
   const { updateWorkflowVersionStep } = useUpdateWorkflowVersionStep();
   const flow = useFlowOrThrow();
@@ -208,7 +209,7 @@ export const WorkflowEditActionAiAgent = ({
     (activeTabId as WorkflowAiAgentTabId) ?? WORKFLOW_AI_AGENT_TABS.PROMPT;
 
   const navigateSettings = useNavigateSettings();
-  const { data: rolesData } = useGetRolesQuery();
+  const { data: rolesData } = useQuery(GetRolesDocument);
 
   const [
     workflowAiAgentPermissionsIsAddingPermission,

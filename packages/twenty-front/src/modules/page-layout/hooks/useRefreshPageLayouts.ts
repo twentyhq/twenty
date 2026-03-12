@@ -1,10 +1,11 @@
 import { useApplyPageLayouts } from '@/page-layout/hooks/useApplyPageLayouts';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { useFindAllPageLayoutsLazyQuery } from '~/generated-metadata/graphql';
+import { useLazyQuery } from '@apollo/client/react';
+import { FindAllPageLayoutsDocument } from '~/generated-metadata/graphql';
 
 export const useRefreshPageLayouts = () => {
-  const [findAllPageLayoutsLazy] = useFindAllPageLayoutsLazyQuery();
+  const [findAllPageLayoutsLazy] = useLazyQuery(FindAllPageLayoutsDocument);
 
   const { applyPageLayouts } = useApplyPageLayouts();
 

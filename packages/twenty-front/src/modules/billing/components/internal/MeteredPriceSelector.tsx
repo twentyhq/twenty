@@ -19,9 +19,10 @@ import { findOrThrow, isDefined } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useMutation } from '@apollo/client/react';
 import {
-  useSetMeteredSubscriptionPriceMutation,
   SubscriptionInterval,
+  SetMeteredSubscriptionPriceDocument,
 } from '~/generated-metadata/graphql';
 
 const StyledRow = styled.div`
@@ -77,7 +78,7 @@ export const MeteredPriceSelector = ({
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
 
   const [setMeteredSubscriptionPrice, { loading: isUpdating }] =
-    useSetMeteredSubscriptionPriceMutation();
+    useMutation(SetMeteredSubscriptionPriceDocument);
 
   const options = [...meteredBillingPrices]
     .sort((a, b) => a.tiers[0].flatAmount - b.tiers[0].flatAmount)

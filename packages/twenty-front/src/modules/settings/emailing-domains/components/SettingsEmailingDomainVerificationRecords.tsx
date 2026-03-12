@@ -1,15 +1,16 @@
 import { SettingsDnsRecordsTable } from '@/settings/components/SettingsDnsRecordsTable';
 
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { ApolloError } from '@apollo/client';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { t } from '@lingui/core/macro';
 import { H2Title, IconRefresh } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 
 import { Section } from 'twenty-ui/layout';
+import { useMutation } from '@apollo/client/react';
 import {
   type EmailingDomain,
-  useVerifyEmailingDomainMutation,
+  VerifyEmailingDomainDocument,
 } from '~/generated-metadata/graphql';
 
 type SettingsEmailingDomainVerificationRecordsProps = {
@@ -22,7 +23,7 @@ export const SettingsEmailingDomainVerificationRecords = ({
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
 
   const [verifyEmailingDomainMutation, { loading: isVerifying }] =
-    useVerifyEmailingDomainMutation();
+    useMutation(VerifyEmailingDomainDocument);
 
   if (!domain.verificationRecords || domain.verificationRecords.length === 0) {
     return null;
@@ -40,7 +41,7 @@ export const SettingsEmailingDomainVerificationRecords = ({
       });
     } catch (error) {
       enqueueErrorSnackBar({
-        ...(error instanceof ApolloError ? { apolloError: error } : {}),
+        ...(error instanceof CombinedGraphQLErrors ? { apolloError: error } : {}),
       });
     }
   };

@@ -14,9 +14,10 @@ import { IconChevronLeft, IconChevronRightPipe } from 'twenty-ui/display';
 import { LightButton } from 'twenty-ui/input';
 import { ThemeContext } from 'twenty-ui/theme-constants';
 import { useIsMobile } from 'twenty-ui/utilities';
+import { useMutation } from '@apollo/client/react';
 import {
   OnboardingStatus,
-  useSkipBookOnboardingStepMutation,
+  SkipBookOnboardingStepDocument,
 } from '~/generated-metadata/graphql';
 
 export const BookCall = () => {
@@ -26,7 +27,7 @@ export const BookCall = () => {
   const calendarBookingPageId = useAtomStateValue(calendarBookingPageIdState);
   const setNextOnboardingStatus = useSetNextOnboardingStatus();
   const currentUser = useAtomStateValue(currentUserState);
-  const [skipBookOnboardingStepMutation] = useSkipBookOnboardingStepMutation();
+  const [skipBookOnboardingStepMutation] = useMutation(SkipBookOnboardingStepDocument);
 
   const isMobile = useIsMobile();
   const isPlanRequired =

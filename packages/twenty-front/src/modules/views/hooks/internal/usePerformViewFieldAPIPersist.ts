@@ -4,19 +4,20 @@ import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetad
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useTriggerViewFieldOptimisticEffect } from '@/views/optimistic-effects/hooks/useTriggerViewFieldOptimisticEffect';
-import { ApolloError } from '@apollo/client';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { t } from '@lingui/core/macro';
 import { CrudOperationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { useMutation } from '@apollo/client/react';
 import {
   type CreateManyCoreViewFieldsMutationVariables,
   type DeleteCoreViewFieldMutationVariables,
   type DestroyCoreViewFieldMutationVariables,
   type UpdateCoreViewFieldMutationVariables,
-  useCreateManyCoreViewFieldsMutation,
-  useDeleteCoreViewFieldMutation,
-  useDestroyCoreViewFieldMutation,
-  useUpdateCoreViewFieldMutation,
+  CreateManyCoreViewFieldsDocument,
+  DeleteCoreViewFieldDocument,
+  DestroyCoreViewFieldDocument,
+  UpdateCoreViewFieldDocument,
 } from '~/generated-metadata/graphql';
 
 export const usePerformViewFieldAPIPersist = () => {
@@ -24,10 +25,10 @@ export const usePerformViewFieldAPIPersist = () => {
     useTriggerViewFieldOptimisticEffect();
 
   const [createManyCoreViewFieldsMutation] =
-    useCreateManyCoreViewFieldsMutation();
-  const [updateCoreViewFieldMutation] = useUpdateCoreViewFieldMutation();
-  const [deleteCoreViewFieldMutation] = useDeleteCoreViewFieldMutation();
-  const [destroyCoreViewFieldMutation] = useDestroyCoreViewFieldMutation();
+    useMutation(CreateManyCoreViewFieldsDocument);
+  const [updateCoreViewFieldMutation] = useMutation(UpdateCoreViewFieldDocument);
+  const [deleteCoreViewFieldMutation] = useMutation(DeleteCoreViewFieldDocument);
+  const [destroyCoreViewFieldMutation] = useMutation(DestroyCoreViewFieldDocument);
 
   const { handleMetadataError } = useMetadataErrorHandler();
   const { enqueueErrorSnackBar } = useSnackBar();
@@ -70,7 +71,7 @@ export const usePerformViewFieldAPIPersist = () => {
           response: result,
         };
       } catch (error) {
-        if (error instanceof ApolloError) {
+        if (error instanceof CombinedGraphQLErrors) {
           handleMetadataError(error, {
             primaryMetadataName: 'viewField',
             operationType: CrudOperationType.CREATE,
@@ -132,7 +133,7 @@ export const usePerformViewFieldAPIPersist = () => {
           response: results,
         };
       } catch (error) {
-        if (error instanceof ApolloError) {
+        if (error instanceof CombinedGraphQLErrors) {
           handleMetadataError(error, {
             primaryMetadataName: 'viewField',
             operationType: CrudOperationType.UPDATE,
@@ -194,7 +195,7 @@ export const usePerformViewFieldAPIPersist = () => {
           response: results,
         };
       } catch (error) {
-        if (error instanceof ApolloError) {
+        if (error instanceof CombinedGraphQLErrors) {
           handleMetadataError(error, {
             primaryMetadataName: 'viewField',
             operationType: CrudOperationType.DELETE,
@@ -246,7 +247,7 @@ export const usePerformViewFieldAPIPersist = () => {
           response: results,
         };
       } catch (error) {
-        if (error instanceof ApolloError) {
+        if (error instanceof CombinedGraphQLErrors) {
           handleMetadataError(error, {
             primaryMetadataName: 'viewField',
             operationType: CrudOperationType.DESTROY,

@@ -3,7 +3,8 @@
 import { GET_AUTHORIZATION_URL_FOR_SSO } from '@/auth/graphql/mutations/getAuthorizationUrlForSSO';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { ApolloError, useApolloClient } from '@apollo/client';
+import { useApolloClient } from '@apollo/client/react';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useParams } from 'react-router-dom';
 
 export const useSSO = () => {
@@ -26,7 +27,7 @@ export const useSSO = () => {
       });
     } catch (error: any) {
       return enqueueErrorSnackBar({
-        ...(error instanceof ApolloError ? { apolloError: error } : {}),
+        ...(error instanceof CombinedGraphQLErrors ? { apolloError: error } : {}),
       });
     }
 

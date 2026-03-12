@@ -6,14 +6,14 @@ import { AppPath } from 'twenty-shared/types';
 
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { useQuery } from '@apollo/client';
+import { useQuery, useMutation } from '@apollo/client/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/display';
 import { MainButton } from 'twenty-ui/input';
 import { UndecoratedLink } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { useAuthorizeAppMutation } from '~/generated-metadata/graphql';
+import { AuthorizeAppDocument } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 const StyledContainer = styled.div`
@@ -111,7 +111,7 @@ export const Authorize = () => {
   });
 
   const applicationRegistration = data?.findApplicationRegistrationByClientId;
-  const [authorizeApp] = useAuthorizeAppMutation();
+  const [authorizeApp] = useMutation(AuthorizeAppDocument);
   const [hasLogoError, setHasLogoError] = useState(false);
   const [authorizeError, setAuthorizeError] = useState<string | null>(null);
   const [isAuthorizing, setIsAuthorizing] = useState(false);

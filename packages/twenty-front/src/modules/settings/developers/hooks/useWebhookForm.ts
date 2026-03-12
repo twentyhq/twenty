@@ -13,14 +13,15 @@ import {
   type WebhookFormValues,
 } from '@/settings/developers/validation-schemas/webhookFormSchema';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { ApolloError } from '@apollo/client';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
+import { useMutation, useQuery } from '@apollo/client/react';
 import {
-  useCreateWebhookMutation,
-  useDeleteWebhookMutation,
-  useGetWebhookQuery,
-  useUpdateWebhookMutation,
+  CreateWebhookDocument,
+  DeleteWebhookDocument,
+  GetWebhookDocument,
+  UpdateWebhookDocument,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
@@ -42,9 +43,9 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
 
   const isCreationMode = mode === WebhookFormMode.Create;
 
-  const [createWebhook] = useCreateWebhookMutation();
-  const [updateWebhook] = useUpdateWebhookMutation();
-  const [deleteWebhook] = useDeleteWebhookMutation();
+  const [createWebhook] = useMutation(CreateWebhookDocument);
+  const [updateWebhook] = useMutation(UpdateWebhookDocument);
+  const [deleteWebhook] = useMutation(DeleteWebhookDocument);
 
   const formConfig = useForm<WebhookFormValues>({
     mode: isCreationMode ? 'onSubmit' : 'onTouched',
@@ -52,7 +53,7 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
     defaultValues: DEFAULT_FORM_VALUES,
   });
 
-  const { loading, error } = useGetWebhookQuery({
+  const { loading, error } = useQuery(GetWebhookDocument, {
     skip: isCreationMode || !webhookId,
     variables: {
       id: webhookId || '',
@@ -105,7 +106,7 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
       );
     } catch (error) {
       enqueueErrorSnackBar({
-        apolloError: error instanceof ApolloError ? error : undefined,
+        apolloError: error instanceof CombinedGraphQLErrors ? error : undefined,
       });
     }
   };
@@ -136,7 +137,7 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
       });
     } catch (error) {
       enqueueErrorSnackBar({
-        apolloError: error instanceof ApolloError ? error : undefined,
+        apolloError: error instanceof CombinedGraphQLErrors ? error : undefined,
       });
     }
   };
@@ -193,7 +194,7 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
       navigate(SettingsPath.ApiWebhooks);
     } catch (error) {
       enqueueErrorSnackBar({
-        apolloError: error instanceof ApolloError ? error : undefined,
+        apolloError: error instanceof CombinedGraphQLErrors ? error : undefined,
       });
     }
   };

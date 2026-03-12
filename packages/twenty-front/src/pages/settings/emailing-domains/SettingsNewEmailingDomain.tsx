@@ -3,16 +3,17 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { ApolloError } from '@apollo/client';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
+import { useMutation } from '@apollo/client/react';
 import {
   EmailingDomainDriver,
-  useCreateEmailingDomainMutation,
+  CreateEmailingDomainDocument,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import {
@@ -37,7 +38,7 @@ export const SettingsNewEmailingDomain = () => {
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const [createEmailingDomain] = useCreateEmailingDomainMutation();
+  const [createEmailingDomain] = useMutation(CreateEmailingDomainDocument);
 
   const validateForm = (): boolean => {
     const result = settingsEmailingDomainFormSchema.safeParse(formValues);
@@ -95,13 +96,13 @@ export const SettingsNewEmailingDomain = () => {
         },
         onError: (error) => {
           enqueueErrorSnackBar({
-            apolloError: error instanceof ApolloError ? error : undefined,
+            apolloError: error instanceof CombinedGraphQLErrors ? error : undefined,
           });
         },
       });
     } catch (error) {
       enqueueErrorSnackBar({
-        apolloError: error instanceof ApolloError ? error : undefined,
+        apolloError: error instanceof CombinedGraphQLErrors ? error : undefined,
       });
     } finally {
       setIsSubmitting(false);

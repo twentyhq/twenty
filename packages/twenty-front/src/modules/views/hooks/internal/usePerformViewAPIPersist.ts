@@ -4,22 +4,23 @@ import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetad
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useViewsSideEffectsOnViewGroups } from '@/views/hooks/useViewsSideEffectsOnViewGroups';
-import { ApolloError } from '@apollo/client';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { t } from '@lingui/core/macro';
 import { CrudOperationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
+import { useMutation } from '@apollo/client/react';
 import {
   type CreateCoreViewMutationVariables,
   type DestroyCoreViewMutationVariables,
-  useCreateCoreViewMutation,
-  useDestroyCoreViewMutation,
   ViewType,
+  CreateCoreViewDocument,
+  DestroyCoreViewDocument,
 } from '~/generated-metadata/graphql';
 
 export const usePerformViewAPIPersist = () => {
-  const [createCoreViewMutation] = useCreateCoreViewMutation();
-  const [destroyCoreViewMutation] = useDestroyCoreViewMutation();
+  const [createCoreViewMutation] = useMutation(CreateCoreViewDocument);
+  const [destroyCoreViewMutation] = useMutation(DestroyCoreViewDocument);
   const { triggerViewGroupOptimisticEffectAtViewCreation } =
     useViewsSideEffectsOnViewGroups();
 
@@ -67,7 +68,7 @@ export const usePerformViewAPIPersist = () => {
           response: result,
         };
       } catch (error) {
-        if (error instanceof ApolloError) {
+        if (error instanceof CombinedGraphQLErrors) {
           handleMetadataError(error, {
             primaryMetadataName: 'view',
             operationType: CrudOperationType.CREATE,
@@ -106,7 +107,7 @@ export const usePerformViewAPIPersist = () => {
           response: result,
         };
       } catch (error) {
-        if (error instanceof ApolloError) {
+        if (error instanceof CombinedGraphQLErrors) {
           handleMetadataError(error, {
             primaryMetadataName: 'view',
             operationType: CrudOperationType.DELETE,

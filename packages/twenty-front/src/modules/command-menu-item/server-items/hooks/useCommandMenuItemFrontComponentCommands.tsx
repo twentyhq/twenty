@@ -19,10 +19,11 @@ import { type IconComponent, useIcons } from 'twenty-ui/display';
 
 import { type HeadlessFrontComponentMountContext } from '@/front-components/states/mountedHeadlessFrontComponentMapsState';
 import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants/CommandMenuDefaultIcon';
+import { useQuery } from '@apollo/client/react';
 import {
   CommandMenuItemAvailabilityType,
   type CommandMenuItemFieldsFragment,
-  useFindManyCommandMenuItemsQuery,
+  FindManyCommandMenuItemsDocument,
 } from '~/generated-metadata/graphql';
 
 type CommandMenuItemWithFrontComponent = CommandMenuItemFieldsFragment & {
@@ -157,7 +158,7 @@ export const useCommandMenuItemFrontComponentCommands = (
         }
       : undefined;
 
-  const { data } = useFindManyCommandMenuItemsQuery();
+  const { data } = useQuery(FindManyCommandMenuItemsDocument);
 
   const frontComponentItems =
     data?.commandMenuItems?.filter(

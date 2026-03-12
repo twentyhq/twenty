@@ -9,7 +9,8 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { t } from '@lingui/core/macro';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { useGetWorkspaceFromInviteHashQuery } from '~/generated-metadata/graphql';
+import { useQuery } from '@apollo/client/react';
+import { GetWorkspaceFromInviteHashDocument } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const useWorkspaceFromInviteHash = () => {
@@ -20,7 +21,7 @@ export const useWorkspaceFromInviteHash = () => {
   const [initiallyLoggedIn] = useState(isDefined(currentWorkspace));
 
   const { data: workspaceFromInviteHash, loading } =
-    useGetWorkspaceFromInviteHashQuery({
+    useQuery(GetWorkspaceFromInviteHashDocument, {
       skip: !workspaceInviteHash,
       variables: { inviteHash: workspaceInviteHash || '' },
       onError: (error) => {

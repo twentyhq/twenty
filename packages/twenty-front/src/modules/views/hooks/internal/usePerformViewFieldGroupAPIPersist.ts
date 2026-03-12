@@ -7,7 +7,8 @@ import { CREATE_MANY_CORE_VIEW_FIELD_GROUPS } from '@/views/graphql/mutations/cr
 import { DELETE_CORE_VIEW_FIELD_GROUP } from '@/views/graphql/mutations/deleteCoreViewFieldGroup';
 import { UPDATE_CORE_VIEW_FIELD_GROUP } from '@/views/graphql/mutations/updateCoreViewFieldGroup';
 import { useTriggerViewFieldGroupOptimisticEffect } from '@/views/optimistic-effects/hooks/useTriggerViewFieldGroupOptimisticEffect';
-import { useMutation, type ApolloError } from '@apollo/client';
+import { useMutation } from '@apollo/client/react';
+import { type CombinedGraphQLErrors } from '@apollo/client/errors';
 import { t } from '@lingui/core/macro';
 import { CrudOperationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -91,7 +92,7 @@ export const usePerformViewFieldGroupAPIPersist = () => {
           error !== null &&
           'graphQLErrors' in error
         ) {
-          handleMetadataError(error as ApolloError, {
+          handleMetadataError(error as CombinedGraphQLErrors, {
             primaryMetadataName: 'viewFieldGroup',
             operationType: CrudOperationType.CREATE,
           });
@@ -157,7 +158,7 @@ export const usePerformViewFieldGroupAPIPersist = () => {
           error !== null &&
           'graphQLErrors' in error
         ) {
-          handleMetadataError(error as ApolloError, {
+          handleMetadataError(error as CombinedGraphQLErrors, {
             primaryMetadataName: 'viewFieldGroup',
             operationType: CrudOperationType.UPDATE,
           });
@@ -223,7 +224,7 @@ export const usePerformViewFieldGroupAPIPersist = () => {
           error !== null &&
           'graphQLErrors' in error
         ) {
-          handleMetadataError(error as ApolloError, {
+          handleMetadataError(error as CombinedGraphQLErrors, {
             primaryMetadataName: 'viewFieldGroup',
             operationType: CrudOperationType.DELETE,
           });

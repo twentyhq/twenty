@@ -2,11 +2,12 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { ApolloError } from '@apollo/client';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { t } from '@lingui/core/macro';
 import { IconLifebuoy } from 'twenty-ui/display';
 import { Card } from 'twenty-ui/layout';
-import { useUpdateWorkspaceMutation } from '~/generated-metadata/graphql';
+import { useMutation } from '@apollo/client/react';
+import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
 
 export const ToggleImpersonate = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
@@ -15,7 +16,7 @@ export const ToggleImpersonate = () => {
     currentWorkspaceState,
   );
 
-  const [updateWorkspace] = useUpdateWorkspaceMutation();
+  const [updateWorkspace] = useMutation(UpdateWorkspaceDocument);
 
   const handleChange = async (value: boolean) => {
     try {
@@ -35,7 +36,7 @@ export const ToggleImpersonate = () => {
       });
     } catch (err: any) {
       enqueueErrorSnackBar({
-        apolloError: err instanceof ApolloError ? err : undefined,
+        apolloError: err instanceof CombinedGraphQLErrors ? err : undefined,
       });
     }
   };

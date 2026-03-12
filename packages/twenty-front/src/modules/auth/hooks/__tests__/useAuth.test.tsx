@@ -5,8 +5,8 @@ import { supportChatState } from '@/client-config/states/supportChatState';
 
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useApolloClient } from '@apollo/client';
-import { MockedProvider } from '@apollo/client/testing';
+import { useApolloClient } from '@apollo/client/react';
+import { MockedProvider } from '@apollo/client/testing/react';
 import { type ReactNode, act } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 

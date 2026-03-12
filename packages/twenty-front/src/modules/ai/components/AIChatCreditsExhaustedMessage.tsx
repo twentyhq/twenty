@@ -8,10 +8,11 @@ import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { IconSparkles } from 'twenty-ui/display';
+import { useQuery } from '@apollo/client/react';
 import {
   PermissionFlagType,
   SubscriptionStatus,
-  useBillingPortalSessionQuery,
+  BillingPortalSessionDocument,
 } from '~/generated-metadata/graphql';
 
 export const AIChatCreditsExhaustedMessage = () => {
@@ -27,7 +28,7 @@ export const AIChatCreditsExhaustedMessage = () => {
     usePermissionFlagMap();
 
   const { data: billingPortalData, loading: isBillingPortalLoading } =
-    useBillingPortalSessionQuery({
+    useQuery(BillingPortalSessionDocument, {
       variables: {
         returnUrlPath: getSettingsPath(SettingsPath.Billing),
       },

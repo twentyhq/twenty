@@ -1,4 +1,4 @@
-import { ApolloError } from '@apollo/client';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { styled } from '@linaria/react';
 import { useParams } from 'react-router-dom';
 import { useDebouncedCallback } from 'use-debounce';
@@ -30,14 +30,15 @@ import {
 import { Button } from 'twenty-ui/input';
 import { Card, Section } from 'twenty-ui/layout';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useMutation, useQuery } from '@apollo/client/react';
 import {
-  useActivateSkillMutation,
-  useCreateSkillMutation,
-  useDeactivateSkillMutation,
-  useDeleteSkillMutation,
-  useFindOneSkillQuery,
-  useUpdateSkillMutation,
   type FindOneSkillQuery,
+  ActivateSkillDocument,
+  CreateSkillDocument,
+  DeactivateSkillDocument,
+  DeleteSkillDocument,
+  FindOneSkillDocument,
+  UpdateSkillDocument,
 } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -127,7 +128,7 @@ export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
     isLabelSyncedWithName: true,
   });
 
-  const { data, loading } = useFindOneSkillQuery({
+  const { data, loading } = useQuery(FindOneSkillDocument, {
     variables: { id: skillId },
     skip: isCreateMode || !skillId,
     onCompleted: (data: FindOneSkillQuery) => {
@@ -156,7 +157,7 @@ export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
         navigateApp(AppPath.NotFound);
       }
     },
-    onError: (error: ApolloError) => {
+    onError: (error: CombinedGraphQLErrors) => {
       enqueueErrorSnackBar({
         apolloError: error,
       });
@@ -164,11 +165,11 @@ export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
     },
   });
 
-  const [createSkill] = useCreateSkillMutation();
-  const [updateSkill] = useUpdateSkillMutation();
-  const [deleteSkill] = useDeleteSkillMutation();
-  const [activateSkill] = useActivateSkillMutation();
-  const [deactivateSkill] = useDeactivateSkillMutation();
+  const [createSkill] = useMutation(CreateSkillDocument);
+  const [updateSkill] = useMutation(UpdateSkillDocument);
+  const [deleteSkill] = useMutation(DeleteSkillDocument);
+  const [activateSkill] = useMutation(ActivateSkillDocument);
+  const [deactivateSkill] = useMutation(DeactivateSkillDocument);
 
   const skill = data?.skill;
 
@@ -236,7 +237,7 @@ export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
       setOriginalFormValues({ ...formValues });
     } catch (error) {
       enqueueErrorSnackBar({
-        apolloError: error instanceof ApolloError ? error : undefined,
+        apolloError: error instanceof CombinedGraphQLErrors ? error : undefined,
       });
     } finally {
       setIsSubmitting(false);
@@ -305,7 +306,7 @@ export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
       navigate(SettingsPath.AI);
     } catch (error) {
       enqueueErrorSnackBar({
-        apolloError: error instanceof ApolloError ? error : undefined,
+        apolloError: error instanceof CombinedGraphQLErrors ? error : undefined,
       });
     } finally {
       setIsSubmitting(false);
@@ -324,7 +325,7 @@ export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
       navigate(SettingsPath.AI);
     } catch (error) {
       enqueueErrorSnackBar({
-        apolloError: error instanceof ApolloError ? error : undefined,
+        apolloError: error instanceof CombinedGraphQLErrors ? error : undefined,
       });
     } finally {
       setIsSubmitting(false);
@@ -342,7 +343,7 @@ export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
       navigate(SettingsPath.AI);
     } catch (error) {
       enqueueErrorSnackBar({
-        apolloError: error instanceof ApolloError ? error : undefined,
+        apolloError: error instanceof CombinedGraphQLErrors ? error : undefined,
       });
     } finally {
       setIsSubmitting(false);
@@ -360,7 +361,7 @@ export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
       navigate(SettingsPath.AI);
     } catch (error) {
       enqueueErrorSnackBar({
-        apolloError: error instanceof ApolloError ? error : undefined,
+        apolloError: error instanceof CombinedGraphQLErrors ? error : undefined,
       });
     } finally {
       setIsSubmitting(false);

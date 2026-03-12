@@ -1,6 +1,7 @@
 import { FIND_ALL_CORE_VIEWS } from '@/views/graphql/queries/findAllCoreViews';
 import { coreViewsState } from '@/views/states/coreViewState';
-import { type FetchPolicy, useApolloClient } from '@apollo/client';
+import { type FetchPolicy } from '@apollo/client';
+import { useApolloClient } from '@apollo/client/react';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { type FindAllCoreViewsQuery } from '~/generated-metadata/graphql';

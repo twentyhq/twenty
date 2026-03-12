@@ -14,7 +14,8 @@ import { IconCheck } from 'twenty-ui/display';
 import { Loader } from 'twenty-ui/feedback';
 import { MainButton } from 'twenty-ui/input';
 import { AnimatedEaseIn } from 'twenty-ui/utilities';
-import { useGetCurrentUserLazyQuery } from '~/generated-metadata/graphql';
+import { useLazyQuery } from '@apollo/client/react';
+import { GetCurrentUserDocument } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 const StyledTitleContainer = styled.div`
@@ -27,7 +28,7 @@ const StyledTitleContainer = styled.div`
 export const PaymentSuccess = () => {
   const navigate = useNavigateApp();
   const subscriptionStatus = useSubscriptionStatus();
-  const [getCurrentUser] = useGetCurrentUserLazyQuery();
+  const [getCurrentUser] = useLazyQuery(GetCurrentUserDocument);
   const setCurrentUser = useSetAtomState(currentUserState);
   const [isLoading, setIsLoading] = useState(false);
   const navigateWithSubscriptionCheck = async () => {

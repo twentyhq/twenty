@@ -2,15 +2,16 @@ import { useMetadataStore } from '@/metadata-store/hooks/useMetadataStore';
 import { useSetIndexViews } from '@/metadata-store/hooks/useSetIndexViews';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { useLazyQuery } from '@apollo/client/react';
 import {
-  useFindAllCoreViewsLazyQuery,
   ViewType,
+  FindAllCoreViewsDocument,
 } from '~/generated-metadata/graphql';
 
 const INDEX_VIEW_TYPES = [ViewType.TABLE, ViewType.KANBAN, ViewType.CALENDAR];
 
 export const useFetchAndLoadIndexViews = () => {
-  const [findAllCoreViews] = useFindAllCoreViewsLazyQuery();
+  const [findAllCoreViews] = useLazyQuery(FindAllCoreViewsDocument);
   const { updateDraft, applyChanges } = useMetadataStore();
   const { setIndexViews } = useSetIndexViews();
 

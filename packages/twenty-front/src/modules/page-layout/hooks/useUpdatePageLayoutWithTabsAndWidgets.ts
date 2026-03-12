@@ -1,18 +1,19 @@
+import { useMutation } from '@apollo/client/react';
 import {
   type UpdatePageLayoutWithTabsInput,
-  useUpdatePageLayoutWithTabsAndWidgetsMutation,
+  UpdatePageLayoutWithTabsAndWidgetsDocument,
 } from '~/generated-metadata/graphql';
 
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { ApolloError } from '@apollo/client';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { t } from '@lingui/core/macro';
 import { CrudOperationType } from 'twenty-shared/types';
 
 export const useUpdatePageLayoutWithTabsAndWidgets = () => {
   const [updatePageLayoutWithTabsAndWidgetsMutation] =
-    useUpdatePageLayoutWithTabsAndWidgetsMutation();
+    useMutation(UpdatePageLayoutWithTabsAndWidgetsDocument);
 
   const { handleMetadataError } = useMetadataErrorHandler();
   const { enqueueErrorSnackBar } = useSnackBar();
@@ -39,7 +40,7 @@ export const useUpdatePageLayoutWithTabsAndWidgets = () => {
         response: updatedPageLayout,
       };
     } catch (error) {
-      if (error instanceof ApolloError) {
+      if (error instanceof CombinedGraphQLErrors) {
         handleMetadataError(error, {
           primaryMetadataName: 'pageLayout',
           operationType: CrudOperationType.UPDATE,

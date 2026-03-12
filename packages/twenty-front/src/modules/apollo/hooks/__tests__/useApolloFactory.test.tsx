@@ -1,4 +1,5 @@
-import { ApolloError, gql } from '@apollo/client';
+import { gql } from '@apollo/client';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { act, renderHook } from '@testing-library/react';
 import fetchMock, { enableFetchMocks } from 'jest-fetch-mock';
 import { MemoryRouter, useLocation } from 'react-router-dom';
@@ -87,8 +88,8 @@ describe('useApolloFactory', () => {
         });
       });
     } catch (error) {
-      expect(error).toBeInstanceOf(ApolloError);
-      expect((error as ApolloError).message).toBe('Error message not found.');
+      expect(error).toBeInstanceOf(CombinedGraphQLErrors);
+      expect((error as CombinedGraphQLErrors).message).toBe('Error message not found.');
 
       expect(mockNavigate).toHaveBeenCalled();
       expect(mockNavigate).toHaveBeenCalledWith('/welcome');

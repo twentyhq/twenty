@@ -1,4 +1,4 @@
-import { useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client/react';
 import { renderHook } from '@testing-library/react';
 import { type ComputeStepOutputSchemaInput } from '~/generated/graphql';
 import { useComputeStepOutputSchema } from '@/workflow/hooks/useComputeStepOutputSchema';

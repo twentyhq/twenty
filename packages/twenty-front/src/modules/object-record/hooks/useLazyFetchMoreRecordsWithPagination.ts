@@ -1,10 +1,5 @@
-import {
-  type ApolloError,
-  type ApolloQueryResult,
-  type FetchMoreQueryOptions,
-  type OperationVariables,
-  type WatchQueryFetchPolicy,
-} from '@apollo/client';
+import { type ApolloQueryResult, type FetchMoreQueryOptions, type OperationVariables, type WatchQueryFetchPolicy } from '@apollo/client';
+import { type CombinedGraphQLErrors } from '@apollo/client/errors';
 import { type Unmasked } from '@apollo/client/masking';
 import { isNonEmptyArray } from '@apollo/client/utilities';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -48,7 +43,7 @@ type UseFindManyRecordsStateParams<
   'skip' | 'recordGqlFields' | 'fetchPolicy' | 'onCompleted'
 > & {
   data: RecordGqlOperationFindManyResult | undefined;
-  error: ApolloError | undefined;
+  error: CombinedGraphQLErrors | undefined;
   fetchMore<
     TFetchData = TData,
     TFetchVars extends OperationVariables = OperationVariables,
@@ -176,8 +171,8 @@ export const useLazyFetchMoreRecordsWithPagination = <
             }) as T[],
           };
         } catch (error) {
-          handleFindManyRecordsError(error as ApolloError);
-          return { error: error as ApolloError };
+          handleFindManyRecordsError(error as CombinedGraphQLErrors);
+          return { error: error as CombinedGraphQLErrors };
         }
       }
     },

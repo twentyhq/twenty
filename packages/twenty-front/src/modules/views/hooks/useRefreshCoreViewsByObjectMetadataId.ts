@@ -1,10 +1,11 @@
 import { useApplyCoreViewsForObjectMetadataId } from '@/views/hooks/useApplyCoreViewsForObjectMetadataId';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { useFindManyCoreViewsLazyQuery } from '~/generated-metadata/graphql';
+import { useLazyQuery } from '@apollo/client/react';
+import { FindManyCoreViewsDocument } from '~/generated-metadata/graphql';
 
 export const useRefreshCoreViewsByObjectMetadataId = () => {
-  const [findManyCoreViewsLazy] = useFindManyCoreViewsLazyQuery();
+  const [findManyCoreViewsLazy] = useLazyQuery(FindManyCoreViewsDocument);
   const { applyCoreViewsForObjectMetadataId } =
     useApplyCoreViewsForObjectMetadataId();
 

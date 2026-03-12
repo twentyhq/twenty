@@ -6,7 +6,7 @@ import {
 import { useAggregateRecords } from '@/object-record/hooks/useAggregateRecords';
 import { useAggregateRecordsQuery } from '@/object-record/hooks/useAggregateRecordsQuery';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
-import { useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client/react';
 import { renderHook } from '@testing-library/react';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 

@@ -11,7 +11,8 @@ import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
-import { useDeleteTwoFactorAuthenticationMethodMutation } from '~/generated-metadata/graphql';
+import { useMutation } from '@apollo/client/react';
+import { DeleteTwoFactorAuthenticationMethodDocument } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { useCurrentUserWorkspaceTwoFactorAuthentication } from '@/settings/two-factor-authentication/hooks/useCurrentUserWorkspaceTwoFactorAuthentication';
 import { useCurrentWorkspaceTwoFactorAuthenticationPolicy } from '@/settings/two-factor-authentication/hooks/useWorkspaceTwoFactorAuthenticationPolicy';
@@ -26,7 +27,7 @@ export const DeleteTwoFactorAuthentication = () => {
   const { signOut } = useAuth();
   const { loadCurrentUser } = useLoadCurrentUser();
   const [deleteTwoFactorAuthenticationMethod] =
-    useDeleteTwoFactorAuthenticationMethodMutation();
+    useMutation(DeleteTwoFactorAuthenticationMethodDocument);
   const currentUser = useAtomStateValue(currentUserState);
   const userEmail = currentUser?.email;
   const navigate = useNavigateSettings();

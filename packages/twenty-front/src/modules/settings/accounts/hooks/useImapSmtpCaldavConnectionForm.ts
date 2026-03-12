@@ -8,9 +8,10 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
 import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
+import { useMutation } from '@apollo/client/react';
 import {
   type ConnectionParameters,
-  useSaveImapSmtpCaldavAccountMutation,
+  SaveImapSmtpCaldavAccountDocument,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
@@ -20,7 +21,7 @@ import {
   connectionImapSmtpCalDav,
   isProtocolConfigured,
 } from '@/settings/accounts/validation-schemas/connectionImapSmtpCalDav';
-import { ApolloError } from '@apollo/client';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { isDefined } from 'twenty-shared/utils';
 import {
   type ConnectedImapSmtpCaldavAccount,
@@ -83,7 +84,7 @@ export const useImapSmtpCaldavConnectionForm = ({
     );
 
   const [saveConnection, { loading: saveLoading }] =
-    useSaveImapSmtpCaldavAccountMutation();
+    useMutation(SaveImapSmtpCaldavAccountDocument);
 
   const watchedValues = watch();
 
@@ -158,7 +159,7 @@ export const useImapSmtpCaldavConnectionForm = ({
         });
       } catch (error) {
         enqueueErrorSnackBar({
-          apolloError: error instanceof ApolloError ? error : undefined,
+          apolloError: error instanceof CombinedGraphQLErrors ? error : undefined,
         });
       }
     },

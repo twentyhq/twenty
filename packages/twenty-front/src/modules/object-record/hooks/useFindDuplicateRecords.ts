@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client/react';
 import { isDefined } from 'twenty-shared/utils';
 import { useMemo } from 'react';
 

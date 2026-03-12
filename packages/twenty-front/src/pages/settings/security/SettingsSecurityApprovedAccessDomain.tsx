@@ -3,7 +3,7 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { ApolloError } from '@apollo/client';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { Controller, useForm } from 'react-hook-form';
@@ -12,7 +12,8 @@ import { getSettingsPath } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import { z } from 'zod';
-import { useCreateApprovedAccessDomainMutation } from '~/generated-metadata/graphql';
+import { useMutation } from '@apollo/client/react';
+import { CreateApprovedAccessDomainDocument } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 export const SettingsSecurityApprovedAccessDomain = () => {
@@ -22,7 +23,7 @@ export const SettingsSecurityApprovedAccessDomain = () => {
 
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
 
-  const [createApprovedAccessDomain] = useCreateApprovedAccessDomainMutation();
+  const [createApprovedAccessDomain] = useMutation(CreateApprovedAccessDomainDocument);
 
   const form = useForm<{ domain: string; email: string }>({
     mode: 'onSubmit',
@@ -67,13 +68,13 @@ export const SettingsSecurityApprovedAccessDomain = () => {
         },
         onError: (error) => {
           enqueueErrorSnackBar({
-            apolloError: error instanceof ApolloError ? error : undefined,
+            apolloError: error instanceof CombinedGraphQLErrors ? error : undefined,
           });
         },
       });
     } catch (error) {
       enqueueErrorSnackBar({
-        apolloError: error instanceof ApolloError ? error : undefined,
+        apolloError: error instanceof CombinedGraphQLErrors ? error : undefined,
       });
     }
   };

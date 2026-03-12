@@ -1,4 +1,4 @@
-import { type ApolloError } from '@apollo/client';
+import { type CombinedGraphQLErrors } from '@apollo/client/errors';
 import {
   type AllMetadataName,
   type MetadataValidationErrorResponse,
@@ -7,7 +7,7 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 
 export type MetadataErrorClassification =
-  | { type: 'v1'; error: ApolloError }
+  | { type: 'v1'; error: CombinedGraphQLErrors }
   | {
       type: 'v2-validation';
       extensions: MetadataValidationErrorResponse;
@@ -39,7 +39,7 @@ const isMetadataInternalError = (
 };
 
 type ClassifyMetadataErrorArgs = {
-  error: ApolloError;
+  error: CombinedGraphQLErrors;
   primaryMetadataName: AllMetadataName;
 };
 export const classifyMetadataError = ({

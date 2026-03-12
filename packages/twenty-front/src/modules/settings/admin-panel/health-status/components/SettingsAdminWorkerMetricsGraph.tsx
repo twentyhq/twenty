@@ -7,9 +7,10 @@ import { t } from '@lingui/core/macro';
 import { ResponsiveLine } from '@nivo/line';
 import { useContext } from 'react';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useQuery } from '@apollo/client/react';
 import {
   QueueMetricsTimeRange,
-  useGetQueueMetricsQuery,
+  GetQueueMetricsDocument,
 } from '~/generated-metadata/graphql';
 
 const StyledGraphContainer = styled.div`
@@ -50,7 +51,7 @@ export const SettingsAdminWorkerMetricsGraph = ({
   const { theme } = useContext(ThemeContext);
   const { enqueueErrorSnackBar } = useSnackBar();
 
-  const { loading, data } = useGetQueueMetricsQuery({
+  const { loading, data } = useQuery(GetQueueMetricsDocument, {
     variables: {
       queueName,
       timeRange,

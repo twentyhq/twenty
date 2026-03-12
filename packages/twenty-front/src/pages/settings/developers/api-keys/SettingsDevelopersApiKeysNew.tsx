@@ -17,18 +17,19 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
+import { useMutation, useQuery } from '@apollo/client/react';
 import {
-  useCreateApiKeyMutation,
-  useGenerateApiKeyTokenMutation,
-  useGetRolesQuery,
+  CreateApiKeyDocument,
+  GenerateApiKeyTokenDocument,
+  GetRolesDocument,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 export const SettingsDevelopersApiKeysNew = () => {
   const { t } = useLingui();
-  const [generateOneApiKeyToken] = useGenerateApiKeyTokenMutation();
+  const [generateOneApiKeyToken] = useMutation(GenerateApiKeyTokenDocument);
   const navigateSettings = useNavigateSettings();
-  const { data: rolesData, loading: rolesLoading } = useGetRolesQuery({
+  const { data: rolesData, loading: rolesLoading } = useQuery(GetRolesDocument, {
     onCompleted: (data) => {
       if (isDefined(data?.getRoles)) {
         const apiKeyAssignableRoles = data.getRoles.filter(
@@ -55,7 +56,7 @@ export const SettingsDevelopersApiKeysNew = () => {
     roleId: '',
   });
 
-  const [createApiKey] = useCreateApiKeyMutation();
+  const [createApiKey] = useMutation(CreateApiKeyDocument);
 
   const jotaiStore = useStore();
 

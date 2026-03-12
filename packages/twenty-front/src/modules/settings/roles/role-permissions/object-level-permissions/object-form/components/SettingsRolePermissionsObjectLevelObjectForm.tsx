@@ -15,11 +15,12 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { SettingsPath, type ViewFilterOperand } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/input';
+import { useQuery } from '@apollo/client/react';
 import {
   type BillingEntitlement,
   BillingEntitlementKey,
   FeatureFlagKey,
-  useFindOneAgentQuery,
+  FindOneAgentDocument,
 } from '~/generated-metadata/graphql';
 
 type SettingsRolePermissionsObjectLevelObjectFormProps = {
@@ -41,7 +42,7 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
     roleId,
   );
 
-  const { data: agentData } = useFindOneAgentQuery({
+  const { data: agentData } = useQuery(FindOneAgentDocument, {
     variables: { id: fromAgentId || '' },
     skip: !fromAgentId,
   });

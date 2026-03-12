@@ -6,7 +6,7 @@ import {
   type PlaceAutocompleteResult,
   type PlaceDetailsResult,
 } from '@/geo-map/types/placeApi';
-import { useApolloClient } from '@apollo/client';
+import { useApolloClient } from '@apollo/client/react';
 
 export const useGetPlaceApiData = () => {
   const apolloClient = useApolloClient();

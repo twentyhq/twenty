@@ -3,14 +3,14 @@ import { MAX_SEARCH_RESULTS } from '@/command-menu/constants/MaxSearchResults';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useDoObjectMetadataItemsExist } from '@/object-metadata/hooks/useDoObjectMetadataItemsExist';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { type WatchQueryFetchPolicy } from '@apollo/client';
+import { type WatchQueryFetchPolicy, useQuery } from '@apollo/client';
 import { useMemo } from 'react';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
 import {
   type ObjectRecordFilterInput,
   type SearchQuery,
-  useSearchQuery,
+  SearchDocument,
 } from '~/generated/graphql';
 import { logError } from '~/utils/logError';
 
@@ -41,7 +41,7 @@ export const useObjectRecordSearchRecords = ({
   const { enqueueErrorSnackBar } = useSnackBar();
   const apolloCoreClient = useApolloCoreClient();
 
-  const { data, loading, error, previousData } = useSearchQuery({
+  const { data, loading, error, previousData } = useQuery(SearchDocument, {
     skip:
       skip || !areDefined || !currentWorkspaceMember || !isDefined(searchInput),
     variables: {

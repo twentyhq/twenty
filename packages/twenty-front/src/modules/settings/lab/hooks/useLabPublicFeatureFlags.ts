@@ -5,9 +5,10 @@ import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { isDefined } from 'twenty-shared/utils';
+import { useMutation } from '@apollo/client/react';
 import {
   type FeatureFlagKey,
-  useUpdateLabPublicFeatureFlagMutation,
+  UpdateLabPublicFeatureFlagDocument,
 } from '~/generated-metadata/graphql';
 
 export const useLabPublicFeatureFlags = () => {
@@ -17,7 +18,7 @@ export const useLabPublicFeatureFlags = () => {
   );
   const labPublicFeatureFlags = useAtomStateValue(labPublicFeatureFlagsState);
 
-  const [updateLabPublicFeatureFlag] = useUpdateLabPublicFeatureFlagMutation({
+  const [updateLabPublicFeatureFlag] = useMutation(UpdateLabPublicFeatureFlagDocument, {
     onCompleted: (data) => {
       if (isDefined(currentWorkspace)) {
         const updatedFlag = data.updateLabPublicFeatureFlag;

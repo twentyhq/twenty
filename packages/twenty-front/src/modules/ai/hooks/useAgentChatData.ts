@@ -1,5 +1,5 @@
-import { useApolloClient } from '@apollo/client';
-import { getOperationName } from '@apollo/client/utilities';
+import { useApolloClient, useMutation, useQuery } from '@apollo/client/react';
+import { getOperationName } from '~/utils/getOperationName';
 import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -27,9 +27,9 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import {
   type GetChatThreadsQuery,
   GetChatThreadsDocument,
-  useCreateChatThreadMutation,
-  useGetChatMessagesQuery,
-  useGetChatThreadsQuery,
+  CreateChatThreadDocument,
+  GetChatMessagesDocument,
+  GetChatThreadsDocument,
 } from '~/generated-metadata/graphql';
 
 export const useAgentChatData = () => {
@@ -53,7 +53,7 @@ export const useAgentChatData = () => {
 
   const { scrollToBottom } = useAgentChatScrollToBottom();
 
-  const [createChatThread] = useCreateChatThreadMutation({
+  const [createChatThread] = useMutation(CreateChatThreadDocument, {
     onCompleted: (data) => {
       if (store.get(isCreatingForFirstSendState.atom)) {
         store.set(isCreatingForFirstSendState.atom, false);
@@ -136,7 +136,7 @@ export const useAgentChatData = () => {
     ],
   });
 
-  const { loading: threadsLoading } = useGetChatThreadsQuery({
+  const { loading: threadsLoading } = useQuery(GetChatThreadsDocument, {
     variables: { paging: { first: CHAT_THREADS_PAGE_SIZE } },
     skip: isDefined(currentAIChatThread),
     onCompleted: (data) => {
@@ -182,7 +182,7 @@ export const useAgentChatData = () => {
   });
 
   const isNewThread = currentAIChatThread === AGENT_CHAT_NEW_THREAD_DRAFT_KEY;
-  const { loading: messagesLoading, data } = useGetChatMessagesQuery({
+  const { loading: messagesLoading, data } = useQuery(GetChatMessagesDocument, {
     variables: { threadId: currentAIChatThread! },
     skip: !isDefined(currentAIChatThread) || isNewThread,
     onCompleted: () => {

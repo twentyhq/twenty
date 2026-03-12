@@ -16,7 +16,8 @@ import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { SidePanelSubViewWithSearch } from '@/side-panel/components/SidePanelSubViewWithSearch';
 import { SidePanelNewSidebarItemRecordItem } from '@/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemRecordItem';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useSearchQuery } from '~/generated/graphql';
+import { useQuery } from '@apollo/client/react';
+import { SearchDocument } from '~/generated/graphql';
 
 type SearchRecordBase = {
   recordId: string;
@@ -57,7 +58,7 @@ export const SidePanelNewSidebarItemRecordSubView = ({
     )
     .map((objectMetadataItem) => objectMetadataItem.nameSingular);
 
-  const { data: searchData, loading: recordSearchLoading } = useSearchQuery({
+  const { data: searchData, loading: recordSearchLoading } = useQuery(SearchDocument, {
     client: coreClient,
     variables: {
       searchInput: deferredRecordSearchInput ?? '',

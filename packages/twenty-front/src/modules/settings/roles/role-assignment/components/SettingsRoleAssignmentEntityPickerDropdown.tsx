@@ -6,11 +6,12 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
+import { useQuery } from '@apollo/client/react';
 import {
   type Agent,
-  useFindManyAgentsQuery,
-  useGetApiKeysQuery,
   type ApiKeyForRole,
+  FindManyAgentsDocument,
+  GetApiKeysDocument,
 } from '~/generated-metadata/graphql';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -58,10 +59,10 @@ export const SettingsRoleAssignmentEntityPickerDropdown = ({
 
   const isAgent = entityType === 'agent';
 
-  const { data: agentsData, loading: agentsLoading } = useFindManyAgentsQuery({
+  const { data: agentsData, loading: agentsLoading } = useQuery(FindManyAgentsDocument, {
     skip: !isAgent,
   });
-  const { data: apiKeysData, loading: apiKeysLoading } = useGetApiKeysQuery({
+  const { data: apiKeysData, loading: apiKeysLoading } = useQuery(GetApiKeysDocument, {
     skip: isAgent,
   });
 

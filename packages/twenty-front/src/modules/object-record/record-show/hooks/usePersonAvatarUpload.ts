@@ -1,17 +1,17 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
-import { useApolloClient } from '@apollo/client';
+import { useApolloClient, useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import {
-  useUploadFilesFieldFileMutation,
   FieldMetadataType,
+  UploadFilesFieldFileDocument,
 } from '~/generated-metadata/graphql';
 
 export const usePersonAvatarUpload = (personRecordId: string) => {
   const apolloClient = useApolloClient();
-  const [uploadFilesFieldFile] = useUploadFilesFieldFileMutation({
+  const [uploadFilesFieldFile] = useMutation(UploadFilesFieldFileDocument, {
     client: apolloClient,
   });
   const { updateOneRecord } = useUpdateOneRecord();

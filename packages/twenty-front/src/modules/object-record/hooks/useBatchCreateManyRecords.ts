@@ -9,7 +9,7 @@ import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggr
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { dispatchObjectRecordOperationBrowserEvent } from '@/browser-event/utils/dispatchObjectRecordOperationBrowserEvent';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { ApolloError } from '@apollo/client';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { t } from '@lingui/core/macro';
 
 export const useBatchCreateManyRecords = <
@@ -81,7 +81,7 @@ export const useBatchCreateManyRecords = <
         allCreatedRecords.push(...createdRecords);
       }
     } catch (error) {
-      if (error instanceof ApolloError && error.message.includes('aborted')) {
+      if (error instanceof CombinedGraphQLErrors && error.message.includes('aborted')) {
         const formattedCreatedRecordsCount = formatNumber(createdRecordsCount);
         enqueueWarningSnackBar({
           message: t`Record creation stopped. ${formattedCreatedRecordsCount} records created.`,

@@ -10,7 +10,7 @@ import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useInstallMarketplaceApp } from '~/modules/marketplace/hooks/useInstallMarketplaceApp';
-import { useMutation, useQuery } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -35,8 +35,8 @@ import { Button } from 'twenty-ui/input';
 import { Section, SectionAlignment, SectionFontColor } from 'twenty-ui/layout';
 import {
   ApplicationRegistrationSourceType,
-  useFindManyApplicationsQuery,
-  useUninstallApplicationMutation,
+  FindManyApplicationsDocument,
+  UninstallApplicationDocument,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -173,9 +173,9 @@ export const SettingsApplicationRegistrationGeneralTab = ({
   );
 
   const { install } = useInstallMarketplaceApp();
-  const [uninstallApplication] = useUninstallApplicationMutation();
+  const [uninstallApplication] = useMutation(UninstallApplicationDocument);
   const { data: applicationsData, refetch: refetchApplications } =
-    useFindManyApplicationsQuery();
+    useQuery(FindManyApplicationsDocument);
 
   const variables: ServerVariable[] =
     variablesData?.findApplicationRegistrationVariables ?? [];

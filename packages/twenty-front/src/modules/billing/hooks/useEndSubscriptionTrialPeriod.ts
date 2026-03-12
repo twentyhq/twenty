@@ -5,11 +5,12 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { useEndSubscriptionTrialPeriodMutation } from '~/generated-metadata/graphql';
+import { useMutation } from '@apollo/client/react';
+import { EndSubscriptionTrialPeriodDocument } from '~/generated-metadata/graphql';
 
 export const useEndSubscriptionTrialPeriod = () => {
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
-  const [endSubscriptionTrialPeriod] = useEndSubscriptionTrialPeriodMutation();
+  const [endSubscriptionTrialPeriod] = useMutation(EndSubscriptionTrialPeriodDocument);
   const [currentWorkspace, setCurrentWorkspace] = useAtomState(
     currentWorkspaceState,
   );

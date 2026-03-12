@@ -12,10 +12,11 @@ import { getSettingsPath } from 'twenty-shared/utils';
 import { H2Title, H3Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useQuery } from '@apollo/client/react';
 import {
   AdminPanelHealthServiceStatus,
   HealthIndicatorId,
-  useGetIndicatorHealthStatusQuery,
+  GetIndicatorHealthStatusDocument,
 } from '~/generated-metadata/graphql';
 
 const StyledTitleContainer = styled.div`
@@ -29,7 +30,7 @@ export const SettingsAdminIndicatorHealthStatus = () => {
   const { t } = useLingui();
   const { indicatorId } = useParams();
   const { data, loading: loadingIndicatorHealthStatus } =
-    useGetIndicatorHealthStatusQuery({
+    useQuery(GetIndicatorHealthStatusDocument, {
       variables: {
         indicatorId: indicatorId as HealthIndicatorId,
       },

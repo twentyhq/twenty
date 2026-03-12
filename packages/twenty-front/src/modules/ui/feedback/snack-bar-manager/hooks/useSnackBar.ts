@@ -9,7 +9,7 @@ import {
 } from '@/ui/feedback/snack-bar-manager/states/snackBarInternalComponentState';
 import { buildErrorAction } from '@/ui/feedback/snack-bar-manager/utils/buildErrorAction';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { type ApolloError } from '@apollo/client';
+import { type CombinedGraphQLErrors } from '@apollo/client/errors';
 import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
@@ -129,7 +129,7 @@ export const useSnackBar = () => {
       message,
       options,
     }: (
-      | { apolloError: ApolloError; message?: never }
+      | { apolloError: CombinedGraphQLErrors; message?: never }
       | { apolloError?: never; message?: string }
     ) & {
       options?: Omit<SnackBarOptions, 'message' | 'id'>;

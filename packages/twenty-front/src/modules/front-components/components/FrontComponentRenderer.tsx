@@ -11,7 +11,8 @@ import { FrontComponentRenderer as SharedFrontComponentRenderer } from 'twenty-s
 import { isDefined } from 'twenty-shared/utils';
 import { ThemeContext } from 'twenty-ui/theme-constants';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
-import { useFindOneFrontComponentQuery } from '~/generated-metadata/graphql';
+import { useQuery } from '@apollo/client/react';
+import { FindOneFrontComponentDocument } from '~/generated-metadata/graphql';
 
 type FrontComponentRendererProps = {
   frontComponentId: string;
@@ -46,7 +47,7 @@ export const FrontComponentRenderer = ({
     [enqueueErrorSnackBar],
   );
 
-  const { data, loading } = useFindOneFrontComponentQuery({
+  const { data, loading } = useQuery(FindOneFrontComponentDocument, {
     variables: { id: frontComponentId },
     onError: handleError,
     onCompleted: (completedData) => {

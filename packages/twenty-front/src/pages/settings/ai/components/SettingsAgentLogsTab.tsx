@@ -20,9 +20,10 @@ import {
 } from 'twenty-ui/layout';
 import { UndecoratedLink } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useMutation, useQuery } from '@apollo/client/react';
 import {
-  useEvaluateAgentTurnMutation,
-  useGetAgentTurnsQuery,
+  EvaluateAgentTurnDocument,
+  GetAgentTurnsDocument,
 } from '~/generated-metadata/graphql';
 
 const StyledTableContainer = styled.div`
@@ -71,7 +72,7 @@ export const SettingsAgentLogsTab = ({
   };
 
   const { data, loading, refetch, startPolling, stopPolling } =
-    useGetAgentTurnsQuery({
+    useQuery(GetAgentTurnsDocument, {
       variables: { agentId },
       skip: !agentId,
       onCompleted: (completedData) => {
@@ -89,7 +90,7 @@ export const SettingsAgentLogsTab = ({
   const turns = data?.agentTurns || [];
   const backgroundEvaluatingTurnIds = computeBackgroundEvaluatingTurnIds(turns);
 
-  const [evaluateTurn, { loading: evaluating }] = useEvaluateAgentTurnMutation({
+  const [evaluateTurn, { loading: evaluating }] = useMutation(EvaluateAgentTurnDocument, {
     onCompleted: (data) => {
       const turnId = data?.evaluateAgentTurn?.turnId;
       if (isDefined(turnId)) {

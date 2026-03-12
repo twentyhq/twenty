@@ -12,11 +12,12 @@ import { useCallback, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { useQuery } from '@apollo/client/react';
 import {
   ViewType as CoreViewType,
-  useFindAllRecordPageLayoutsQuery,
-  useFindFieldsWidgetCoreViewsQuery,
-  useFindManyLogicFunctionsQuery,
+  FindAllRecordPageLayoutsDocument,
+  FindFieldsWidgetCoreViewsDocument,
+  FindManyLogicFunctionsDocument,
 } from '~/generated-metadata/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
@@ -38,7 +39,7 @@ export const LazyMetadataLoadEffect = () => {
   const shouldSkip = !isLoggedIn || isOnAuthPath;
 
   const { data: queryDataFieldsWidgetCoreViews } =
-    useFindFieldsWidgetCoreViewsQuery({
+    useQuery(FindFieldsWidgetCoreViewsDocument, {
       skip: shouldSkip,
       variables: { viewTypes: FIELDS_WIDGET_VIEW_TYPES },
     });
@@ -47,7 +48,7 @@ export const LazyMetadataLoadEffect = () => {
     { skip: shouldSkip },
   );
 
-  const { data: logicFunctionsData } = useFindManyLogicFunctionsQuery({
+  const { data: logicFunctionsData } = useQuery(FindManyLogicFunctionsDocument, {
     skip: !isLoggedIn,
   });
 

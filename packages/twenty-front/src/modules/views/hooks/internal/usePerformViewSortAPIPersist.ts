@@ -4,28 +4,29 @@ import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetad
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useTriggerViewSortOptimisticEffect } from '@/views/optimistic-effects/hooks/useTriggerViewSortOptimisticEffect';
-import { ApolloError } from '@apollo/client';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { t } from '@lingui/core/macro';
 import { CrudOperationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { useMutation } from '@apollo/client/react';
 import {
   type CreateCoreViewSortMutationVariables,
   type DeleteCoreViewSortMutationVariables,
   type DestroyCoreViewSortMutationVariables,
   type UpdateCoreViewSortMutationVariables,
-  useCreateCoreViewSortMutation,
-  useDeleteCoreViewSortMutation,
-  useDestroyCoreViewSortMutation,
-  useUpdateCoreViewSortMutation,
+  CreateCoreViewSortDocument,
+  DeleteCoreViewSortDocument,
+  DestroyCoreViewSortDocument,
+  UpdateCoreViewSortDocument,
 } from '~/generated-metadata/graphql';
 
 export const usePerformViewSortAPIPersist = () => {
   const { triggerViewSortOptimisticEffect } =
     useTriggerViewSortOptimisticEffect();
-  const [createCoreViewSortMutation] = useCreateCoreViewSortMutation();
-  const [updateCoreViewSortMutation] = useUpdateCoreViewSortMutation();
-  const [deleteCoreViewSortMutation] = useDeleteCoreViewSortMutation();
-  const [destroyCoreViewSortMutation] = useDestroyCoreViewSortMutation();
+  const [createCoreViewSortMutation] = useMutation(CreateCoreViewSortDocument);
+  const [updateCoreViewSortMutation] = useMutation(UpdateCoreViewSortDocument);
+  const [deleteCoreViewSortMutation] = useMutation(DeleteCoreViewSortDocument);
+  const [destroyCoreViewSortMutation] = useMutation(DestroyCoreViewSortDocument);
 
   const { handleMetadataError } = useMetadataErrorHandler();
   const { enqueueErrorSnackBar } = useSnackBar();
@@ -68,7 +69,7 @@ export const usePerformViewSortAPIPersist = () => {
           response: results,
         };
       } catch (error) {
-        if (error instanceof ApolloError) {
+        if (error instanceof CombinedGraphQLErrors) {
           handleMetadataError(error, {
             primaryMetadataName: 'viewSort',
             operationType: CrudOperationType.CREATE,
@@ -130,7 +131,7 @@ export const usePerformViewSortAPIPersist = () => {
           response: results,
         };
       } catch (error) {
-        if (error instanceof ApolloError) {
+        if (error instanceof CombinedGraphQLErrors) {
           handleMetadataError(error, {
             primaryMetadataName: 'viewSort',
             operationType: CrudOperationType.UPDATE,
@@ -197,7 +198,7 @@ export const usePerformViewSortAPIPersist = () => {
           response: results,
         };
       } catch (error) {
-        if (error instanceof ApolloError) {
+        if (error instanceof CombinedGraphQLErrors) {
           handleMetadataError(error, {
             primaryMetadataName: 'viewSort',
             operationType: CrudOperationType.DELETE,
@@ -249,7 +250,7 @@ export const usePerformViewSortAPIPersist = () => {
           response: results,
         };
       } catch (error) {
-        if (error instanceof ApolloError) {
+        if (error instanceof CombinedGraphQLErrors) {
           handleMetadataError(error, {
             primaryMetadataName: 'viewSort',
             operationType: CrudOperationType.DESTROY,

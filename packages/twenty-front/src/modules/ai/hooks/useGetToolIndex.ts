@@ -1,5 +1,5 @@
 import { GET_TOOL_INDEX } from '@/ai/graphql/queries/getToolIndex';
-import { useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client/react';
 
 type ToolIndexEntry = {
   name: string;

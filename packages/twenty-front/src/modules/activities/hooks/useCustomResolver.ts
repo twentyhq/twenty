@@ -1,9 +1,5 @@
-import {
-  type DocumentNode,
-  type OperationVariables,
-  type TypedDocumentNode,
-  useQuery,
-} from '@apollo/client';
+import { type DocumentNode, type OperationVariables, type TypedDocumentNode } from '@apollo/client';
+import { useQuery } from '@apollo/client/react';
 import { useState } from 'react';
 
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';

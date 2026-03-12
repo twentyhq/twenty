@@ -1,4 +1,5 @@
-import { ApolloError, gql, InMemoryCache } from '@apollo/client';
+import { gql, InMemoryCache } from '@apollo/client';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import fetchMock, { enableFetchMocks } from 'jest-fetch-mock';
 
 import { DEFAULT_FAST_MODEL } from '@/ai/constants/DefaultFastModel';
@@ -145,8 +146,8 @@ describe('ApolloFactory', () => {
     try {
       await makeRequest();
     } catch (error) {
-      expect(error).toBeInstanceOf(ApolloError);
-      expect((error as ApolloError).message).toBe('Unauthorized');
+      expect(error).toBeInstanceOf(CombinedGraphQLErrors);
+      expect((error as CombinedGraphQLErrors).message).toBe('Unauthorized');
       expect(mockOnError).toHaveBeenCalledWith(errors);
     }
   }, 10000);
@@ -171,8 +172,8 @@ describe('ApolloFactory', () => {
     try {
       await makeRequest();
     } catch (error) {
-      expect(error).toBeInstanceOf(ApolloError);
-      expect((error as ApolloError).message).toBe('Error message not found.');
+      expect(error).toBeInstanceOf(CombinedGraphQLErrors);
+      expect((error as CombinedGraphQLErrors).message).toBe('Error message not found.');
       expect(mockOnError).toHaveBeenCalledWith(errors);
     }
   }, 10000);
@@ -195,8 +196,8 @@ describe('ApolloFactory', () => {
     try {
       await makeRequest();
     } catch (error) {
-      expect(error).toBeInstanceOf(ApolloError);
-      expect((error as ApolloError).message).toBe('Unknown error');
+      expect(error).toBeInstanceOf(CombinedGraphQLErrors);
+      expect((error as CombinedGraphQLErrors).message).toBe('Unknown error');
       expect(mockOnError).toHaveBeenCalledWith(errors);
     }
   }, 10000);
@@ -208,8 +209,8 @@ describe('ApolloFactory', () => {
     try {
       await makeRequest();
     } catch (error) {
-      expect(error).toBeInstanceOf(ApolloError);
-      expect((error as ApolloError).message).toBe('Unknown error');
+      expect(error).toBeInstanceOf(CombinedGraphQLErrors);
+      expect((error as CombinedGraphQLErrors).message).toBe('Unknown error');
       expect(mockOnNetworkError).toHaveBeenCalledWith(mockError);
     }
   }, 10000);

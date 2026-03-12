@@ -5,13 +5,14 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { CHAT_THREADS_PAGE_SIZE } from '@/ai/constants/ChatThreads';
 
-import { useGetChatThreadsQuery } from '~/generated-metadata/graphql';
+import { useQuery } from '@apollo/client/react';
+import { GetChatThreadsDocument } from '~/generated-metadata/graphql';
 
 const FETCH_MORE_ROOT_MARGIN = '200px';
 
 export const useChatThreads = () => {
   const [shouldFetchMore, setShouldFetchMore] = useState(false);
-  const { data, loading, fetchMore } = useGetChatThreadsQuery({
+  const { data, loading, fetchMore } = useQuery(GetChatThreadsDocument, {
     variables: {
       paging: { first: CHAT_THREADS_PAGE_SIZE },
     },

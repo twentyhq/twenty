@@ -12,7 +12,7 @@ import { useAggregateGqlFieldsFromRecordIndexGroupAggregates } from '@/object-re
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { buildGroupByFieldObject } from '@/page-layout/widgets/graph/utils/buildGroupByFieldObject';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client/react';
 import { type Nullable } from 'twenty-shared/types';
 import {
   computeRecordGqlOperationFilter,

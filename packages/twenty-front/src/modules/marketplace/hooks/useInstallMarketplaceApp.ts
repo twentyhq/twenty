@@ -1,8 +1,9 @@
 import { useInstallApp } from '~/modules/marketplace/hooks/useInstallApp';
-import { useInstallMarketplaceAppMutation } from '~/generated-metadata/graphql';
+import { useMutation } from '@apollo/client/react';
+import { InstallMarketplaceAppDocument } from '~/generated-metadata/graphql';
 
 export const useInstallMarketplaceApp = () => {
-  const [installMarketplaceAppMutation] = useInstallMarketplaceAppMutation();
+  const [installMarketplaceAppMutation] = useMutation(InstallMarketplaceAppDocument);
 
   return useInstallApp<{
     universalIdentifier: string;

@@ -4,15 +4,16 @@ import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMa
 import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { useQuery } from '@apollo/client/react';
 import {
   PermissionFlagType,
-  useBillingPortalSessionQuery,
+  BillingPortalSessionDocument,
 } from '~/generated-metadata/graphql';
 
 export const InformationBannerBillingSubscriptionPaused = () => {
   const { redirect } = useRedirect();
 
-  const { data, loading } = useBillingPortalSessionQuery({
+  const { data, loading } = useQuery(BillingPortalSessionDocument, {
     variables: {
       returnUrlPath: getSettingsPath(SettingsPath.Billing),
     },

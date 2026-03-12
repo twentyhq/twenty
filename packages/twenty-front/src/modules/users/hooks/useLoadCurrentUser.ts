@@ -17,9 +17,10 @@ import { SOURCE_LOCALE, type APP_LOCALES } from 'twenty-shared/translations';
 import { type ObjectPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type ColorScheme } from 'twenty-ui/input';
+import { useLazyQuery } from '@apollo/client/react';
 import {
-  useFindAllCoreViewsLazyQuery,
-  useGetCurrentUserLazyQuery,
+  FindAllCoreViewsDocument,
+  GetCurrentUserDocument,
 } from '~/generated-metadata/graphql';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
@@ -46,8 +47,8 @@ export const useLoadCurrentUser = () => {
 
   const { isOnAWorkspace } = useIsCurrentLocationOnAWorkspace();
 
-  const [getCurrentUser] = useGetCurrentUserLazyQuery();
-  const [findAllCoreViews] = useFindAllCoreViewsLazyQuery();
+  const [getCurrentUser] = useLazyQuery(GetCurrentUserDocument);
+  const [findAllCoreViews] = useLazyQuery(FindAllCoreViewsDocument);
 
   const loadCurrentUser = useCallback(async () => {
     const currentUserResult = await getCurrentUser({

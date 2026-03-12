@@ -1,4 +1,5 @@
-import { useCheckCustomDomainValidRecordsMutation } from '~/generated-metadata/graphql';
+import { useMutation } from '@apollo/client/react';
+import { CheckCustomDomainValidRecordsDocument } from '~/generated-metadata/graphql';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { isDefined } from 'twenty-shared/utils';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -8,7 +9,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 
 export const useCheckCustomDomainValidRecords = () => {
   const [checkCustomDomainValidRecords] =
-    useCheckCustomDomainValidRecordsMutation();
+    useMutation(CheckCustomDomainValidRecordsDocument);
   const { enqueueErrorSnackBar } = useSnackBar();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 

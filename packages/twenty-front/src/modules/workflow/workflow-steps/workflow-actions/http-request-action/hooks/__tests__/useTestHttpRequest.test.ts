@@ -1,6 +1,6 @@
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { type HttpRequestFormData } from '@/workflow/workflow-steps/workflow-actions/http-request-action/constants/HttpRequest';
-import { useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client/react';
 import { act, renderHook } from '@testing-library/react';
 import React from 'react';
 import { resolveInput } from 'twenty-shared/utils';

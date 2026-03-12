@@ -9,14 +9,15 @@ import { SettingsCard } from '@/settings/components/SettingsCard';
 import { SettingsSSOIdentitiesProvidersListCardWrapper } from '@/settings/security/components/SSO/SettingsSSOIdentitiesProvidersListCardWrapper';
 import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProvidersState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { type ApolloError } from '@apollo/client';
+import { type CombinedGraphQLErrors } from '@apollo/client/errors';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconKey } from 'twenty-ui/display';
-import { useGetSsoIdentityProvidersQuery } from '~/generated-metadata/graphql';
+import { useQuery } from '@apollo/client/react';
+import { GetSsoIdentityProvidersDocument } from '~/generated-metadata/graphql';
 
 const StyledLinkContainer = styled.div<{ isDisabled: boolean }>`
   pointer-events: ${({ isDisabled }) => (isDisabled ? 'none' : 'auto')};
@@ -37,13 +38,13 @@ export const SettingsSSOIdentitiesProvidersListCard = () => {
     SSOIdentitiesProvidersState,
   );
 
-  const { loading } = useGetSsoIdentityProvidersQuery({
+  const { loading } = useQuery(GetSsoIdentityProvidersDocument, {
     fetchPolicy: 'network-only',
     skip: currentWorkspace?.hasValidEnterpriseKey === false,
     onCompleted: (data) => {
       setSSOIdentitiesProviders(data?.getSSOIdentityProviders ?? []);
     },
-    onError: (error: ApolloError) => {
+    onError: (error: CombinedGraphQLErrors) => {
       enqueueErrorSnackBar({
         apolloError: error,
       });

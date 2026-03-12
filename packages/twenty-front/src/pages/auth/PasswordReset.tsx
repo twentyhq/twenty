@@ -13,7 +13,7 @@ import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { ModalContent } from 'twenty-ui/layout';
-import { ApolloError } from '@apollo/client';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { styled } from '@linaria/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { msg } from '@lingui/core/macro';
@@ -32,9 +32,10 @@ import { MainButton } from 'twenty-ui/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { AnimatedEaseIn } from 'twenty-ui/utilities';
 import { z } from 'zod';
+import { useMutation, useQuery } from '@apollo/client/react';
 import {
-  useUpdatePasswordViaResetTokenMutation,
-  useValidatePasswordResetTokenQuery,
+  UpdatePasswordViaResetTokenDocument,
+  ValidatePasswordResetTokenDocument,
 } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { logError } from '~/utils/logError';
@@ -112,7 +113,7 @@ export const PasswordReset = () => {
     resolver: zodResolver(validationSchema),
   });
 
-  useValidatePasswordResetTokenQuery({
+  useQuery(ValidatePasswordResetTokenDocument, {
     variables: {
       token: passwordResetToken ?? '',
     },
@@ -136,7 +137,7 @@ export const PasswordReset = () => {
   });
 
   const [updatePasswordViaToken, { loading: isUpdatingPassword }] =
-    useUpdatePasswordViaResetTokenMutation();
+    useMutation(UpdatePasswordViaResetTokenDocument);
 
   const { signInWithCredentialsInWorkspace, signInWithCredentials } = useAuth();
   const { isOnAWorkspace } = useIsCurrentLocationOnAWorkspace();
@@ -199,7 +200,7 @@ export const PasswordReset = () => {
     } catch (err) {
       logError(err);
       enqueueErrorSnackBar({
-        apolloError: err instanceof ApolloError ? err : undefined,
+        apolloError: err instanceof CombinedGraphQLErrors ? err : undefined,
       });
     }
   };

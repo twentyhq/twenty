@@ -11,7 +11,8 @@ import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { settingsAccountsSelectedMessageChannelState } from '@/settings/accounts/states/settingsAccountsSelectedMessageChannelState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { useStartChannelSyncMutation } from '~/generated-metadata/graphql';
+import { useMutation } from '@apollo/client/react';
+import { StartChannelSyncDocument } from '~/generated-metadata/graphql';
 import { SettingsAccountsConfigurationStepCalendar } from '~/pages/settings/accounts/SettingsAccountsConfigurationStepCalendar';
 import { SettingsAccountsConfigurationStepEmail } from '~/pages/settings/accounts/SettingsAccountsConfigurationStepEmail';
 
@@ -28,7 +29,7 @@ export const SettingsAccountsConfiguration = () => {
   const navigate = useNavigate();
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
   const [startChannelSyncMutation, { loading: isSubmitting }] =
-    useStartChannelSyncMutation();
+    useMutation(StartChannelSyncDocument);
   const setSettingsAccountsSelectedMessageChannel = useSetAtomState(
     settingsAccountsSelectedMessageChannelState,
   );

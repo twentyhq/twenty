@@ -21,7 +21,7 @@ import { recordPageLayoutFromIdFamilySelector } from '@/page-layout/states/selec
 import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { transformPageLayout } from '@/page-layout/utils/transformPageLayout';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-import { useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client/react';
 import { isDefined } from 'twenty-shared/utils';
 
 const getDefaultLayoutById = (layoutId: string): PageLayout => {

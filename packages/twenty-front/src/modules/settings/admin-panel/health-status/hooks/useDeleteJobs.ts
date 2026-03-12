@@ -1,15 +1,16 @@
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { ApolloError } from '@apollo/client';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { plural, t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { useDeleteJobsMutation } from '~/generated-metadata/graphql';
+import { useMutation } from '@apollo/client/react';
+import { DeleteJobsDocument } from '~/generated-metadata/graphql';
 import { getErrorMessageFromApolloError } from '~/utils/get-error-message-from-apollo-error.util';
 
 export const useDeleteJobs = (queueName: string, onSuccess?: () => void) => {
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
   const [isDeleting, setIsDeleting] = useState(false);
-  const [deleteJobsMutation] = useDeleteJobsMutation();
+  const [deleteJobsMutation] = useMutation(DeleteJobsDocument);
 
   const deleteJobs = async (jobIds: string[]) => {
     setIsDeleting(true);
@@ -67,7 +68,7 @@ export const useDeleteJobs = (queueName: string, onSuccess?: () => void) => {
     } catch (error) {
       enqueueErrorSnackBar({
         message:
-          error instanceof ApolloError
+          error instanceof CombinedGraphQLErrors
             ? getErrorMessageFromApolloError(error)
             : t`Failed to delete jobs. Please try again later.`,
       });

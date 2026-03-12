@@ -13,9 +13,10 @@ import { isDefined } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useMutation } from '@apollo/client/react';
 import {
-  useDeleteUserAccountMutation,
-  useDeleteUserWorkspaceMutation,
+  DeleteUserAccountDocument,
+  DeleteUserWorkspaceDocument,
 } from '~/generated-metadata/graphql';
 
 const DELETE_ACCOUNT_MODAL_ID = 'delete-account-modal';
@@ -30,8 +31,8 @@ export const DeleteAccount = () => {
   const { openModal } = useModal();
   const { enqueueErrorSnackBar } = useSnackBar();
 
-  const [deleteUserAccount] = useDeleteUserAccountMutation();
-  const [deleteUserFromWorkspace] = useDeleteUserWorkspaceMutation();
+  const [deleteUserAccount] = useMutation(DeleteUserAccountDocument);
+  const [deleteUserFromWorkspace] = useMutation(DeleteUserWorkspaceDocument);
   const currentUser = useAtomStateValue(currentUserState);
   const userEmail = currentUser?.email;
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);

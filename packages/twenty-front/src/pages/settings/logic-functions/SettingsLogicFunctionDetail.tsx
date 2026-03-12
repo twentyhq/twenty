@@ -19,7 +19,8 @@ import {
   IconPlayerPlay,
   IconSettings,
 } from 'twenty-ui/display';
-import { useFindOneApplicationQuery } from '~/generated-metadata/graphql';
+import { useQuery } from '@apollo/client/react';
+import { FindOneApplicationDocument } from '~/generated-metadata/graphql';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { SettingsLogicFunctionCodeEditorTab } from '@/settings/logic-functions/components/tabs/SettingsLogicFunctionCodeEditorTab';
@@ -33,7 +34,7 @@ export const SettingsLogicFunctionDetail = () => {
   const navigate = useNavigate();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
-  const { data, loading: applicationLoading } = useFindOneApplicationQuery({
+  const { data, loading: applicationLoading } = useQuery(FindOneApplicationDocument, {
     variables: { id: applicationId },
     skip: !applicationId,
   });

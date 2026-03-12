@@ -1,4 +1,4 @@
-import { type ApolloError } from '@apollo/client';
+import { type CombinedGraphQLErrors } from '@apollo/client/errors';
 import { isDefined } from 'twenty-shared/utils';
 
 export type ConflictingRecordInfo = {
@@ -7,7 +7,7 @@ export type ConflictingRecordInfo = {
 };
 
 export const getConflictingRecordFromApolloError = (
-  error: ApolloError,
+  error: CombinedGraphQLErrors,
 ): ConflictingRecordInfo | null => {
   const extensions = error.graphQLErrors?.[0]?.extensions;
 

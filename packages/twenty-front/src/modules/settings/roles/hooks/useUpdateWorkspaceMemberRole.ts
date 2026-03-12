@@ -3,7 +3,8 @@ import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settin
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
-import { useUpdateWorkspaceMemberRoleMutation } from '~/generated-metadata/graphql';
+import { useMutation } from '@apollo/client/react';
+import { UpdateWorkspaceMemberRoleDocument } from '~/generated-metadata/graphql';
 
 type AddWorkspaceMemberToRoleAndUpdateStateParams = {
   workspaceMemberId: string;
@@ -33,7 +34,7 @@ export const useUpdateWorkspaceMemberRole = (roleId: string) => {
   );
 
   const [updateWorkspaceMemberRoleMutation] =
-    useUpdateWorkspaceMemberRoleMutation();
+    useMutation(UpdateWorkspaceMemberRoleDocument);
 
   const updateWorkspaceMemberRoleDraftState = ({
     workspaceMember,

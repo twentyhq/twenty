@@ -1,4 +1,5 @@
-import { ApolloError, useApolloClient } from '@apollo/client';
+import { useApolloClient } from '@apollo/client/react';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { type GraphQLFormattedError } from 'graphql';
 import { useCallback } from 'react';
 import { useStore } from 'jotai';
@@ -112,7 +113,7 @@ export const useRequestApplicationTokenRefresh = ({
       return renewedTokenPair.applicationAccessToken.token;
     } catch (error) {
       if (
-        error instanceof ApolloError &&
+        error instanceof CombinedGraphQLErrors &&
         hasApplicationRefreshTokenInvalidOrExpiredSubCode(error.graphQLErrors)
       ) {
         return await refetchFrontComponentForNewTokenPair();
