@@ -15,7 +15,7 @@ import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/wo
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 @Command({
-  name: 'upgrade:1-20:backfill-missing-standard-views',
+  name: 'upgrade:1-19:backfill-missing-standard-views',
   description:
     'Backfill missing standard views and their child entities (fields, groups, filters, field groups) for workspaces',
 })

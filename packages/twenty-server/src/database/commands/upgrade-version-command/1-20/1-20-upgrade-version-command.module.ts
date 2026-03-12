@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { BackfillMissingStandardViewsCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-backfill-missing-standard-views.command';
 import { BackfillPageLayoutsCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-backfill-page-layouts.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
@@ -25,13 +24,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     WorkspaceMigrationModule,
     FeatureFlagModule,
   ],
-  providers: [
-    BackfillMissingStandardViewsCommand,
-    BackfillPageLayoutsCommand,
-  ],
-  exports: [
-    BackfillMissingStandardViewsCommand,
-    BackfillPageLayoutsCommand,
-  ],
+  providers: [BackfillPageLayoutsCommand],
+  exports: [BackfillPageLayoutsCommand],
 })
 export class V1_20_UpgradeVersionCommandModule {}
