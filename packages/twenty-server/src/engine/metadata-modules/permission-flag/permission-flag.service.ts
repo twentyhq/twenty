@@ -16,7 +16,6 @@ import {
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
@@ -26,7 +25,6 @@ export class PermissionFlagService {
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationService: ApplicationService,
-    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   public async upsertPermissionFlags({
@@ -143,10 +141,6 @@ export class PermissionFlagService {
         'Validation errors occurred while upserting permission flags',
       );
     }
-
-    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
-      'rolesPermissions',
-    ]);
 
     const { flatPermissionFlagMaps: freshFlatPermissionFlagMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
