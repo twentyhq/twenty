@@ -69,6 +69,17 @@ export class GraphqlQueryFilterFieldParser {
         useDirectTableReference,
       );
     }
+
+    if (!isDefined(filterValue)) {
+      throw new GraphqlQueryRunnerException(
+        `Invalid filter value for field "${key}". Use { is: "NULL" } or { is: "NOT_NULL" } to filter on null values`,
+        GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+        {
+          userFriendlyMessage: msg`Invalid filter value for field "${key}". Use { is: "NULL" } to filter on null values`,
+        },
+      );
+    }
+
     const [[operator, value]] = Object.entries(filterValue);
 
     if (
