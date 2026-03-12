@@ -2543,12 +2543,6 @@ export interface Query {
     getCoreView?: CoreView
     getCoreViewSorts: CoreViewSort[]
     getCoreViewSort?: CoreViewSort
-    getCoreViewGroups: CoreViewGroup[]
-    getCoreViewGroup?: CoreViewGroup
-    getCoreViewFilterGroups: CoreViewFilterGroup[]
-    getCoreViewFilterGroup?: CoreViewFilterGroup
-    getCoreViewFilters: CoreViewFilter[]
-    getCoreViewFilter?: CoreViewFilter
     getCoreViewFieldGroups: CoreViewFieldGroup[]
     getCoreViewFieldGroup?: CoreViewFieldGroup
     index: Index
@@ -2576,6 +2570,12 @@ export interface Query {
     getToolInputSchema?: Scalars['JSON']
     field: Field
     fields: FieldConnection
+    getCoreViewGroups: CoreViewGroup[]
+    getCoreViewGroup?: CoreViewGroup
+    getCoreViewFilters: CoreViewFilter[]
+    getCoreViewFilter?: CoreViewFilter
+    getCoreViewFilterGroups: CoreViewFilterGroup[]
+    getCoreViewFilterGroup?: CoreViewFilterGroup
     currentUser: User
     currentWorkspace: Workspace
     getPublicWorkspaceDataByDomain: PublicWorkspaceData
@@ -2673,19 +2673,6 @@ export interface Mutation {
     updateCoreViewSort: CoreViewSort
     deleteCoreViewSort: Scalars['Boolean']
     destroyCoreViewSort: Scalars['Boolean']
-    createCoreViewGroup: CoreViewGroup
-    createManyCoreViewGroups: CoreViewGroup[]
-    updateCoreViewGroup: CoreViewGroup
-    deleteCoreViewGroup: CoreViewGroup
-    destroyCoreViewGroup: CoreViewGroup
-    createCoreViewFilterGroup: CoreViewFilterGroup
-    updateCoreViewFilterGroup: CoreViewFilterGroup
-    deleteCoreViewFilterGroup: Scalars['Boolean']
-    destroyCoreViewFilterGroup: Scalars['Boolean']
-    createCoreViewFilter: CoreViewFilter
-    updateCoreViewFilter: CoreViewFilter
-    deleteCoreViewFilter: CoreViewFilter
-    destroyCoreViewFilter: CoreViewFilter
     updateCoreViewFieldGroup: CoreViewFieldGroup
     createCoreViewFieldGroup: CoreViewFieldGroup
     createManyCoreViewFieldGroups: CoreViewFieldGroup[]
@@ -2745,6 +2732,19 @@ export interface Mutation {
     createOneField: Field
     updateOneField: Field
     deleteOneField: Field
+    createCoreViewGroup: CoreViewGroup
+    createManyCoreViewGroups: CoreViewGroup[]
+    updateCoreViewGroup: CoreViewGroup
+    deleteCoreViewGroup: CoreViewGroup
+    destroyCoreViewGroup: CoreViewGroup
+    createCoreViewFilter: CoreViewFilter
+    updateCoreViewFilter: CoreViewFilter
+    deleteCoreViewFilter: CoreViewFilter
+    destroyCoreViewFilter: CoreViewFilter
+    createCoreViewFilterGroup: CoreViewFilterGroup
+    updateCoreViewFilterGroup: CoreViewFilterGroup
+    deleteCoreViewFilterGroup: Scalars['Boolean']
+    destroyCoreViewFilterGroup: Scalars['Boolean']
     deleteUser: User
     deleteUserFromWorkspace: UserWorkspace
     updateUserEmail: Scalars['Boolean']
@@ -5552,12 +5552,6 @@ export interface QueryGenqlSelection{
     getCoreView?: (CoreViewGenqlSelection & { __args: {id: Scalars['String']} })
     getCoreViewSorts?: (CoreViewSortGenqlSelection & { __args?: {viewId?: (Scalars['String'] | null)} })
     getCoreViewSort?: (CoreViewSortGenqlSelection & { __args: {id: Scalars['String']} })
-    getCoreViewGroups?: (CoreViewGroupGenqlSelection & { __args?: {viewId?: (Scalars['String'] | null)} })
-    getCoreViewGroup?: (CoreViewGroupGenqlSelection & { __args: {id: Scalars['String']} })
-    getCoreViewFilterGroups?: (CoreViewFilterGroupGenqlSelection & { __args?: {viewId?: (Scalars['String'] | null)} })
-    getCoreViewFilterGroup?: (CoreViewFilterGroupGenqlSelection & { __args: {id: Scalars['String']} })
-    getCoreViewFilters?: (CoreViewFilterGenqlSelection & { __args?: {viewId?: (Scalars['String'] | null)} })
-    getCoreViewFilter?: (CoreViewFilterGenqlSelection & { __args: {id: Scalars['String']} })
     getCoreViewFieldGroups?: (CoreViewFieldGroupGenqlSelection & { __args: {viewId: Scalars['String']} })
     getCoreViewFieldGroup?: (CoreViewFieldGroupGenqlSelection & { __args: {id: Scalars['String']} })
     index?: (IndexGenqlSelection & { __args: {
@@ -5597,6 +5591,12 @@ export interface QueryGenqlSelection{
     paging: CursorPaging, 
     /** Specify to filter the records returned. */
     filter: FieldFilter} })
+    getCoreViewGroups?: (CoreViewGroupGenqlSelection & { __args?: {viewId?: (Scalars['String'] | null)} })
+    getCoreViewGroup?: (CoreViewGroupGenqlSelection & { __args: {id: Scalars['String']} })
+    getCoreViewFilters?: (CoreViewFilterGenqlSelection & { __args?: {viewId?: (Scalars['String'] | null)} })
+    getCoreViewFilter?: (CoreViewFilterGenqlSelection & { __args: {id: Scalars['String']} })
+    getCoreViewFilterGroups?: (CoreViewFilterGroupGenqlSelection & { __args?: {viewId?: (Scalars['String'] | null)} })
+    getCoreViewFilterGroup?: (CoreViewFilterGroupGenqlSelection & { __args: {id: Scalars['String']} })
     currentUser?: UserGenqlSelection
     currentWorkspace?: WorkspaceGenqlSelection
     getPublicWorkspaceDataByDomain?: (PublicWorkspaceDataGenqlSelection & { __args?: {origin?: (Scalars['String'] | null)} })
@@ -5719,19 +5719,6 @@ export interface MutationGenqlSelection{
     updateCoreViewSort?: (CoreViewSortGenqlSelection & { __args: {input: UpdateViewSortInput} })
     deleteCoreViewSort?: { __args: {input: DeleteViewSortInput} }
     destroyCoreViewSort?: { __args: {input: DestroyViewSortInput} }
-    createCoreViewGroup?: (CoreViewGroupGenqlSelection & { __args: {input: CreateViewGroupInput} })
-    createManyCoreViewGroups?: (CoreViewGroupGenqlSelection & { __args: {inputs: CreateViewGroupInput[]} })
-    updateCoreViewGroup?: (CoreViewGroupGenqlSelection & { __args: {input: UpdateViewGroupInput} })
-    deleteCoreViewGroup?: (CoreViewGroupGenqlSelection & { __args: {input: DeleteViewGroupInput} })
-    destroyCoreViewGroup?: (CoreViewGroupGenqlSelection & { __args: {input: DestroyViewGroupInput} })
-    createCoreViewFilterGroup?: (CoreViewFilterGroupGenqlSelection & { __args: {input: CreateViewFilterGroupInput} })
-    updateCoreViewFilterGroup?: (CoreViewFilterGroupGenqlSelection & { __args: {id: Scalars['String'], input: UpdateViewFilterGroupInput} })
-    deleteCoreViewFilterGroup?: { __args: {id: Scalars['String']} }
-    destroyCoreViewFilterGroup?: { __args: {id: Scalars['String']} }
-    createCoreViewFilter?: (CoreViewFilterGenqlSelection & { __args: {input: CreateViewFilterInput} })
-    updateCoreViewFilter?: (CoreViewFilterGenqlSelection & { __args: {input: UpdateViewFilterInput} })
-    deleteCoreViewFilter?: (CoreViewFilterGenqlSelection & { __args: {input: DeleteViewFilterInput} })
-    destroyCoreViewFilter?: (CoreViewFilterGenqlSelection & { __args: {input: DestroyViewFilterInput} })
     updateCoreViewFieldGroup?: (CoreViewFieldGroupGenqlSelection & { __args: {input: UpdateViewFieldGroupInput} })
     createCoreViewFieldGroup?: (CoreViewFieldGroupGenqlSelection & { __args: {input: CreateViewFieldGroupInput} })
     createManyCoreViewFieldGroups?: (CoreViewFieldGroupGenqlSelection & { __args: {inputs: CreateViewFieldGroupInput[]} })
@@ -5791,6 +5778,19 @@ export interface MutationGenqlSelection{
     createOneField?: (FieldGenqlSelection & { __args: {input: CreateOneFieldMetadataInput} })
     updateOneField?: (FieldGenqlSelection & { __args: {input: UpdateOneFieldMetadataInput} })
     deleteOneField?: (FieldGenqlSelection & { __args: {input: DeleteOneFieldInput} })
+    createCoreViewGroup?: (CoreViewGroupGenqlSelection & { __args: {input: CreateViewGroupInput} })
+    createManyCoreViewGroups?: (CoreViewGroupGenqlSelection & { __args: {inputs: CreateViewGroupInput[]} })
+    updateCoreViewGroup?: (CoreViewGroupGenqlSelection & { __args: {input: UpdateViewGroupInput} })
+    deleteCoreViewGroup?: (CoreViewGroupGenqlSelection & { __args: {input: DeleteViewGroupInput} })
+    destroyCoreViewGroup?: (CoreViewGroupGenqlSelection & { __args: {input: DestroyViewGroupInput} })
+    createCoreViewFilter?: (CoreViewFilterGenqlSelection & { __args: {input: CreateViewFilterInput} })
+    updateCoreViewFilter?: (CoreViewFilterGenqlSelection & { __args: {input: UpdateViewFilterInput} })
+    deleteCoreViewFilter?: (CoreViewFilterGenqlSelection & { __args: {input: DeleteViewFilterInput} })
+    destroyCoreViewFilter?: (CoreViewFilterGenqlSelection & { __args: {input: DestroyViewFilterInput} })
+    createCoreViewFilterGroup?: (CoreViewFilterGroupGenqlSelection & { __args: {input: CreateViewFilterGroupInput} })
+    updateCoreViewFilterGroup?: (CoreViewFilterGroupGenqlSelection & { __args: {id: Scalars['String'], input: UpdateViewFilterGroupInput} })
+    deleteCoreViewFilterGroup?: { __args: {id: Scalars['String']} }
+    destroyCoreViewFilterGroup?: { __args: {id: Scalars['String']} }
     deleteUser?: UserGenqlSelection
     deleteUserFromWorkspace?: (UserWorkspaceGenqlSelection & { __args: {workspaceMemberIdToDelete: Scalars['String']} })
     updateUserEmail?: { __args: {newEmail: Scalars['String'], verifyEmailRedirectPath?: (Scalars['String'] | null)} }
@@ -5976,46 +5976,6 @@ export interface DestroyViewSortInput {
 /** The id of the view sort to destroy. */
 id: Scalars['UUID']}
 
-export interface CreateViewGroupInput {id?: (Scalars['UUID'] | null),isVisible?: (Scalars['Boolean'] | null),fieldValue: Scalars['String'],position?: (Scalars['Float'] | null),viewId: Scalars['UUID']}
-
-export interface UpdateViewGroupInput {
-/** The id of the view group to update */
-id: Scalars['UUID'],
-/** The view group to update */
-update: UpdateViewGroupInputUpdates}
-
-export interface UpdateViewGroupInputUpdates {fieldMetadataId?: (Scalars['UUID'] | null),isVisible?: (Scalars['Boolean'] | null),fieldValue?: (Scalars['String'] | null),position?: (Scalars['Float'] | null)}
-
-export interface DeleteViewGroupInput {
-/** The id of the view group to delete. */
-id: Scalars['UUID']}
-
-export interface DestroyViewGroupInput {
-/** The id of the view group to destroy. */
-id: Scalars['UUID']}
-
-export interface CreateViewFilterGroupInput {id?: (Scalars['UUID'] | null),parentViewFilterGroupId?: (Scalars['UUID'] | null),logicalOperator?: (ViewFilterGroupLogicalOperator | null),positionInViewFilterGroup?: (Scalars['Float'] | null),viewId: Scalars['UUID']}
-
-export interface UpdateViewFilterGroupInput {id?: (Scalars['UUID'] | null),parentViewFilterGroupId?: (Scalars['UUID'] | null),logicalOperator?: (ViewFilterGroupLogicalOperator | null),positionInViewFilterGroup?: (Scalars['Float'] | null),viewId?: (Scalars['UUID'] | null)}
-
-export interface CreateViewFilterInput {id?: (Scalars['UUID'] | null),fieldMetadataId: Scalars['UUID'],operand?: (ViewFilterOperand | null),value: Scalars['JSON'],viewFilterGroupId?: (Scalars['UUID'] | null),positionInViewFilterGroup?: (Scalars['Float'] | null),subFieldName?: (Scalars['String'] | null),viewId: Scalars['UUID']}
-
-export interface UpdateViewFilterInput {
-/** The id of the view filter to update */
-id: Scalars['UUID'],
-/** The view filter to update */
-update: UpdateViewFilterInputUpdates}
-
-export interface UpdateViewFilterInputUpdates {fieldMetadataId?: (Scalars['UUID'] | null),operand?: (ViewFilterOperand | null),value?: (Scalars['JSON'] | null),viewFilterGroupId?: (Scalars['UUID'] | null),positionInViewFilterGroup?: (Scalars['Float'] | null),subFieldName?: (Scalars['String'] | null)}
-
-export interface DeleteViewFilterInput {
-/** The id of the view filter to delete. */
-id: Scalars['UUID']}
-
-export interface DestroyViewFilterInput {
-/** The id of the view filter to destroy. */
-id: Scalars['UUID']}
-
 export interface UpdateViewFieldGroupInput {
 /** The id of the view field group to update */
 id: Scalars['UUID'],
@@ -6129,6 +6089,46 @@ export interface UpdateFieldInput {universalIdentifier?: (Scalars['UUID'] | null
 export interface DeleteOneFieldInput {
 /** The id of the field to delete. */
 id: Scalars['UUID']}
+
+export interface CreateViewGroupInput {id?: (Scalars['UUID'] | null),isVisible?: (Scalars['Boolean'] | null),fieldValue: Scalars['String'],position?: (Scalars['Float'] | null),viewId: Scalars['UUID']}
+
+export interface UpdateViewGroupInput {
+/** The id of the view group to update */
+id: Scalars['UUID'],
+/** The view group to update */
+update: UpdateViewGroupInputUpdates}
+
+export interface UpdateViewGroupInputUpdates {fieldMetadataId?: (Scalars['UUID'] | null),isVisible?: (Scalars['Boolean'] | null),fieldValue?: (Scalars['String'] | null),position?: (Scalars['Float'] | null)}
+
+export interface DeleteViewGroupInput {
+/** The id of the view group to delete. */
+id: Scalars['UUID']}
+
+export interface DestroyViewGroupInput {
+/** The id of the view group to destroy. */
+id: Scalars['UUID']}
+
+export interface CreateViewFilterInput {id?: (Scalars['UUID'] | null),fieldMetadataId: Scalars['UUID'],operand?: (ViewFilterOperand | null),value: Scalars['JSON'],viewFilterGroupId?: (Scalars['UUID'] | null),positionInViewFilterGroup?: (Scalars['Float'] | null),subFieldName?: (Scalars['String'] | null),viewId: Scalars['UUID']}
+
+export interface UpdateViewFilterInput {
+/** The id of the view filter to update */
+id: Scalars['UUID'],
+/** The view filter to update */
+update: UpdateViewFilterInputUpdates}
+
+export interface UpdateViewFilterInputUpdates {fieldMetadataId?: (Scalars['UUID'] | null),operand?: (ViewFilterOperand | null),value?: (Scalars['JSON'] | null),viewFilterGroupId?: (Scalars['UUID'] | null),positionInViewFilterGroup?: (Scalars['Float'] | null),subFieldName?: (Scalars['String'] | null)}
+
+export interface DeleteViewFilterInput {
+/** The id of the view filter to delete. */
+id: Scalars['UUID']}
+
+export interface DestroyViewFilterInput {
+/** The id of the view filter to destroy. */
+id: Scalars['UUID']}
+
+export interface CreateViewFilterGroupInput {id?: (Scalars['UUID'] | null),parentViewFilterGroupId?: (Scalars['UUID'] | null),logicalOperator?: (ViewFilterGroupLogicalOperator | null),positionInViewFilterGroup?: (Scalars['Float'] | null),viewId: Scalars['UUID']}
+
+export interface UpdateViewFilterGroupInput {id?: (Scalars['UUID'] | null),parentViewFilterGroupId?: (Scalars['UUID'] | null),logicalOperator?: (ViewFilterGroupLogicalOperator | null),positionInViewFilterGroup?: (Scalars['Float'] | null),viewId?: (Scalars['UUID'] | null)}
 
 export interface ActivateWorkspaceInput {displayName?: (Scalars['String'] | null)}
 
