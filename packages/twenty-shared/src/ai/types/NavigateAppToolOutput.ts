@@ -5,7 +5,9 @@ export type NavigateAppToolOutput =
     }
   | {
       action: 'navigateToView';
+      viewId: string;
       viewName: string;
+      objectNameSingular: string;
     }
   | {
       action: 'navigateToRecord';
