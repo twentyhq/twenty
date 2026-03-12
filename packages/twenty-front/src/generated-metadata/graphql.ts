@@ -6240,10 +6240,14 @@ export type GetMeteredProductsUsageQueryVariables = Exact<{ [key: string]: never
 
 export type GetMeteredProductsUsageQuery = { __typename?: 'Query', getMeteredProductsUsage: Array<{ __typename?: 'BillingMeteredProductUsage', productKey: BillingProductKey, usedCredits: number, grantedCredits: number, rolloverCredits: number, totalGrantedCredits: number, unitPriceCents: number }> };
 
-export type GetBillingAnalyticsQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetBillingAnalyticsQueryVariables = Exact<{
+  periodStart?: InputMaybe<Scalars['DateTime']>;
+  periodEnd?: InputMaybe<Scalars['DateTime']>;
+  userWorkspaceId?: InputMaybe<Scalars['String']>;
+}>;
 
 
-export type GetBillingAnalyticsQuery = { __typename?: 'Query', getBillingAnalytics: { __typename?: 'BillingAnalytics', periodStart: string, periodEnd: string, usageByUser: Array<{ __typename?: 'BillingUsageBreakdownItem', key: string, creditsUsed: number }>, usageByResource: Array<{ __typename?: 'BillingUsageBreakdownItem', key: string, creditsUsed: number }>, usageByExecutionType: Array<{ __typename?: 'BillingUsageBreakdownItem', key: string, creditsUsed: number }>, timeSeries: Array<{ __typename?: 'BillingUsageTimeSeries', date: string, creditsUsed: number }> } };
+export type GetBillingAnalyticsQuery = { __typename?: 'Query', getBillingAnalytics: { __typename?: 'BillingAnalytics', periodStart: string, periodEnd: string, usageByUser: Array<{ __typename?: 'BillingUsageBreakdownItem', key: string, creditsUsed: number }>, usageByResource: Array<{ __typename?: 'BillingUsageBreakdownItem', key: string, creditsUsed: number }>, usageByExecutionType: Array<{ __typename?: 'BillingUsageBreakdownItem', key: string, creditsUsed: number }>, timeSeries: Array<{ __typename?: 'BillingUsageTimeSeries', date: string, creditsUsed: number }>, userDailyUsage?: { __typename?: 'BillingUserDailyUsage', userWorkspaceId: string, dailyUsage: Array<{ __typename?: 'BillingUsageTimeSeries', date: string, creditsUsed: number }> } | null } };
 
 export type ListPlansQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -11026,8 +11030,8 @@ export type GetMeteredProductsUsageQueryHookResult = ReturnType<typeof useGetMet
 export type GetMeteredProductsUsageLazyQueryHookResult = ReturnType<typeof useGetMeteredProductsUsageLazyQuery>;
 export type GetMeteredProductsUsageQueryResult = Apollo.QueryResult<GetMeteredProductsUsageQuery, GetMeteredProductsUsageQueryVariables>;
 export const GetBillingAnalyticsDocument = gql`
-    query GetBillingAnalytics {
-  getBillingAnalytics {
+    query GetBillingAnalytics($periodStart: DateTime, $periodEnd: DateTime, $userWorkspaceId: String) {
+  getBillingAnalytics(periodStart: $periodStart, periodEnd: $periodEnd, userWorkspaceId: $userWorkspaceId) {
     usageByUser {
       key
       creditsUsed
@@ -11046,6 +11050,13 @@ export const GetBillingAnalyticsDocument = gql`
     }
     periodStart
     periodEnd
+    userDailyUsage {
+      userWorkspaceId
+      dailyUsage {
+        date
+        creditsUsed
+      }
+    }
   }
 }
     `;

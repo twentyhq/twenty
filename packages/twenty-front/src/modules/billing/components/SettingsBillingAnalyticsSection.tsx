@@ -3,8 +3,8 @@ import { SubscriptionInfoContainer } from '@/billing/components/SubscriptionInfo
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
-import { H2Title, HorizontalSeparator } from 'twenty-ui/display';
+import { useContext, useMemo, useState } from 'react';
+import { H2Title, HorizontalSeparator, IconArrowLeft } from 'twenty-ui/display';
 import { ProgressBar } from 'twenty-ui/feedback';
 import { Section } from 'twenty-ui/layout';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
@@ -16,19 +16,23 @@ const EXECUTION_TYPE_LABELS: Record<string, string> = {
   code_execution: 'Code Execution',
 };
 
-const BAR_COLORS = [
-  '#1961ED',
-  '#6C5CE7',
-  '#00B894',
-  '#E17055',
-  '#FDCB6E',
-  '#74B9FF',
-];
+type PeriodPreset = '7d' | '30d' | '90d' | 'billing';
 
 const StyledBarRow = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[1]};
+`;
+
+const StyledClickableBarRow = styled(StyledBarRow)`
+  cursor: pointer;
+  border-radius: ${themeCssVariables.border.radius.sm};
+  padding: ${themeCssVariables.spacing[1]};
+  margin: -${themeCssVariables.spacing[1]};
+
+  &:hover {
+    background-color: ${themeCssVariables.background.transparent.light};
+  }
 `;
 
 const StyledBarLabel = styled.div`
@@ -51,13 +55,6 @@ const StyledValueText = styled.span`
   color: ${themeCssVariables.font.color.secondary};
   font-size: ${themeCssVariables.font.size.xs};
   font-weight: ${themeCssVariables.font.weight.medium};
-`;
-
-const StyledEmptyState = styled.div`
-  color: ${themeCssVariables.font.color.tertiary};
-  font-size: ${themeCssVariables.font.size.sm};
-  padding: ${themeCssVariables.spacing[2]} 0;
-  text-align: center;
 `;
 
 const StyledTimeSeriesContainer = styled.div`
@@ -87,57 +84,130 @@ const StyledTimeSeriesLabel = styled.span`
   font-size: 10px;
 `;
 
-// __SCREENSHOT_MOCK_START__ (remove for production)
-const MOCK_DATA = {
-  usageByExecutionType: [
-    { key: 'ai_token', creditsUsed: 12450 },
-    { key: 'workflow_execution', creditsUsed: 3280 },
-    { key: 'code_execution', creditsUsed: 870 },
-  ],
-  usageByUser: [
-    { key: 'Tim Cook', creditsUsed: 8200 },
-    { key: 'Jony Ive', creditsUsed: 5100 },
-    { key: 'Craig Federighi', creditsUsed: 3300 },
-  ],
-  usageByResource: [
-    { key: 'Sales Assistant Agent', creditsUsed: 6400 },
-    { key: 'Lead Qualification Workflow', creditsUsed: 4200 },
-    { key: 'Data Enrichment Agent', creditsUsed: 3800 },
-    { key: 'Email Drip Workflow', creditsUsed: 2200 },
-  ],
-  timeSeries: Array.from({ length: 28 }, (_, i) => ({
-    date: new Date(2026, 1, 13 + i).toISOString().slice(0, 10),
-    creditsUsed: Math.round(300 + Math.random() * 800 + (i > 14 ? 200 : 0)),
-  })),
+const StyledPeriodSelector = styled.div`
+  display: flex;
+  gap: ${themeCssVariables.spacing[1]};
+  margin-bottom: ${themeCssVariables.spacing[2]};
+`;
+
+const StyledPeriodButton = styled.button<{ isActive: boolean }>`
+  background: ${({ isActive }) =>
+    isActive
+      ? themeCssVariables.background.transparent.medium
+      : themeCssVariables.background.transparent.lighter};
+  border: 1px solid
+    ${({ isActive }) =>
+      isActive
+        ? themeCssVariables.border.color.strong
+        : themeCssVariables.border.color.medium};
+  border-radius: ${themeCssVariables.border.radius.sm};
+  color: ${({ isActive }) =>
+    isActive
+      ? themeCssVariables.font.color.primary
+      : themeCssVariables.font.color.secondary};
+  cursor: pointer;
+  font-size: ${themeCssVariables.font.size.xs};
+  font-weight: ${themeCssVariables.font.weight.medium};
+  padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
+
+  &:hover {
+    border-color: ${themeCssVariables.border.color.strong};
+  }
+`;
+
+const StyledBackButton = styled.button`
+  align-items: center;
+  background: none;
+  border: none;
+  color: ${themeCssVariables.font.color.secondary};
+  cursor: pointer;
+  display: flex;
+  font-size: ${themeCssVariables.font.size.sm};
+  gap: ${themeCssVariables.spacing[1]};
+  padding: 0;
+
+  &:hover {
+    color: ${themeCssVariables.font.color.primary};
+  }
+`;
+
+const getBarColors = (theme: {
+  color: { blue: string; purple: string; green: string; orange: string; turquoise: string; pink: string };
+}): string[] => [
+  theme.color.blue,
+  theme.color.purple,
+  theme.color.green,
+  theme.color.orange,
+  theme.color.turquoise,
+  theme.color.pink,
+];
+
+const getPeriodDates = (
+  preset: PeriodPreset,
+): { periodStart?: string; periodEnd?: string } => {
+  if (preset === 'billing') {
+    return {};
+  }
+
+  const now = new Date();
+  const daysMap: Record<string, number> = {
+    '7d': 7,
+    '30d': 30,
+    '90d': 90,
+  };
+  const days = daysMap[preset];
+  const start = new Date(now);
+
+  start.setDate(start.getDate() - days);
+
+  return {
+    periodStart: start.toISOString(),
+    periodEnd: now.toISOString(),
+  };
 };
-// __SCREENSHOT_MOCK_END__
 
 export const SettingsBillingAnalyticsSection = () => {
   const { theme } = useContext(ThemeContext);
   const { formatNumber } = useNumberFormat();
+  const [periodPreset, setPeriodPreset] = useState<PeriodPreset>('billing');
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
 
-  const { data, loading } = useGetBillingAnalyticsQuery();
+  const barColors = useMemo(() => getBarColors(theme), [theme]);
 
-  // Use real data if available, otherwise use mock for preview
-  const analyticsData =
-    data?.getBillingAnalytics &&
-    (data.getBillingAnalytics.usageByExecutionType.length > 0 ||
-      data.getBillingAnalytics.usageByUser.length > 0 ||
-      data.getBillingAnalytics.usageByResource.length > 0)
-      ? data.getBillingAnalytics
-      : MOCK_DATA;
+  const periodDates = getPeriodDates(periodPreset);
 
-  const { usageByUser, usageByResource, usageByExecutionType, timeSeries } =
-    analyticsData;
+  const { data, loading } = useGetBillingAnalyticsQuery({
+    variables: {
+      ...(periodDates.periodStart && {
+        periodStart: periodDates.periodStart,
+      }),
+      ...(periodDates.periodEnd && { periodEnd: periodDates.periodEnd }),
+      ...(selectedUserId && { userWorkspaceId: selectedUserId }),
+    },
+  });
+
+  const analyticsData = data?.getBillingAnalytics;
+
+  if (loading && !analyticsData) {
+    return null;
+  }
+
+  if (!analyticsData) {
+    return null;
+  }
+
+  const {
+    usageByUser,
+    usageByResource,
+    usageByExecutionType,
+    timeSeries,
+    userDailyUsage,
+  } = analyticsData;
 
   const hasAnalyticsData =
     usageByExecutionType.length > 0 ||
     usageByUser.length > 0 ||
     usageByResource.length > 0;
-
-  if (loading) {
-    return null;
-  }
 
   if (!hasAnalyticsData) {
     return null;
@@ -148,8 +218,13 @@ export const SettingsBillingAnalyticsSection = () => {
     0,
   );
 
+  const displayTimeSeries =
+    selectedUserId && userDailyUsage
+      ? userDailyUsage.dailyUsage
+      : timeSeries;
+
   const maxTimeSeriesValue = Math.max(
-    ...timeSeries.map((point) => point.creditsUsed),
+    ...displayTimeSeries.map((point) => point.creditsUsed),
     1,
   );
 
@@ -159,13 +234,43 @@ export const SettingsBillingAnalyticsSection = () => {
     return `${date.getMonth() + 1}/${date.getDate()}`;
   };
 
+  const periodOptions: { key: PeriodPreset; label: string }[] = [
+    { key: 'billing', label: t`Billing Period` },
+    { key: '7d', label: t`7 days` },
+    { key: '30d', label: t`30 days` },
+    { key: '90d', label: t`90 days` },
+  ];
+
+  const handleUserClick = (userWorkspaceId: string) => {
+    setSelectedUserId(userWorkspaceId);
+  };
+
+  const handleBackFromUser = () => {
+    setSelectedUserId(null);
+  };
+
   return (
     <>
       <Section>
         <H2Title
           title={t`Usage Analytics`}
-          description={t`Detailed breakdown of your credit usage this billing period.`}
+          description={t`Credit usage breakdown for your workspace.`}
         />
+
+        <StyledPeriodSelector>
+          {periodOptions.map((option) => (
+            <StyledPeriodButton
+              key={option.key}
+              isActive={periodPreset === option.key}
+              onClick={() => {
+                setPeriodPreset(option.key);
+                setSelectedUserId(null);
+              }}
+            >
+              {option.label}
+            </StyledPeriodButton>
+          ))}
+        </StyledPeriodSelector>
 
         {usageByExecutionType.length > 0 && (
           <SubscriptionInfoContainer>
@@ -196,7 +301,7 @@ export const SettingsBillingAnalyticsSection = () => {
                   </StyledBarLabel>
                   <ProgressBar
                     value={percentage < 3 && percentage > 0 ? 3 : percentage}
-                    barColor={BAR_COLORS[index % BAR_COLORS.length]}
+                    barColor={barColors[index % barColors.length]}
                     backgroundColor={theme.background.tertiary}
                     withBorderRadius
                   />
@@ -207,15 +312,29 @@ export const SettingsBillingAnalyticsSection = () => {
         )}
       </Section>
 
-      {timeSeries.length > 0 && (
+      {displayTimeSeries.length > 0 && (
         <Section>
           <H2Title
-            title={t`Daily Usage`}
-            description={t`Credit consumption over time.`}
+            title={
+              selectedUserId
+                ? t`Daily Usage — ${selectedUserId}`
+                : t`Daily Usage`
+            }
+            description={
+              selectedUserId
+                ? t`Per-day credit consumption for this user.`
+                : t`Credit consumption over time.`
+            }
           />
+          {selectedUserId && (
+            <StyledBackButton onClick={handleBackFromUser}>
+              <IconArrowLeft size={14} />
+              {t`Back to all users`}
+            </StyledBackButton>
+          )}
           <SubscriptionInfoContainer>
             <StyledTimeSeriesContainer>
-              {timeSeries.map((point) => (
+              {displayTimeSeries.map((point) => (
                 <StyledTimeSeriesBar
                   key={point.date}
                   height={`${(point.creditsUsed / maxTimeSeriesValue) * 100}%`}
@@ -224,14 +343,16 @@ export const SettingsBillingAnalyticsSection = () => {
               ))}
             </StyledTimeSeriesContainer>
             <StyledTimeSeriesLabels>
-              {timeSeries.length > 0 && (
+              {displayTimeSeries.length > 0 && (
                 <StyledTimeSeriesLabel>
-                  {formatShortDate(timeSeries[0].date)}
+                  {formatShortDate(displayTimeSeries[0].date)}
                 </StyledTimeSeriesLabel>
               )}
-              {timeSeries.length > 1 && (
+              {displayTimeSeries.length > 1 && (
                 <StyledTimeSeriesLabel>
-                  {formatShortDate(timeSeries[timeSeries.length - 1].date)}
+                  {formatShortDate(
+                    displayTimeSeries[displayTimeSeries.length - 1].date,
+                  )}
                 </StyledTimeSeriesLabel>
               )}
             </StyledTimeSeriesLabels>
@@ -239,11 +360,11 @@ export const SettingsBillingAnalyticsSection = () => {
         </Section>
       )}
 
-      {usageByUser.length > 0 && (
+      {!selectedUserId && usageByUser.length > 0 && (
         <Section>
           <H2Title
             title={t`Usage by User`}
-            description={t`Credit consumption per team member.`}
+            description={t`Click a user to see their daily breakdown.`}
           />
           <SubscriptionInfoContainer>
             {usageByUser.map((item, index) => {
@@ -253,7 +374,10 @@ export const SettingsBillingAnalyticsSection = () => {
                   : 0;
 
               return (
-                <StyledBarRow key={item.key}>
+                <StyledClickableBarRow
+                  key={item.key}
+                  onClick={() => handleUserClick(item.key)}
+                >
                   <StyledBarLabel>
                     <StyledLabelText>{item.key}</StyledLabelText>
                     <StyledValueText>
@@ -262,18 +386,18 @@ export const SettingsBillingAnalyticsSection = () => {
                   </StyledBarLabel>
                   <ProgressBar
                     value={percentage < 3 && percentage > 0 ? 3 : percentage}
-                    barColor={BAR_COLORS[index % BAR_COLORS.length]}
+                    barColor={barColors[index % barColors.length]}
                     backgroundColor={theme.background.tertiary}
                     withBorderRadius
                   />
-                </StyledBarRow>
+                </StyledClickableBarRow>
               );
             })}
           </SubscriptionInfoContainer>
         </Section>
       )}
 
-      {usageByResource.length > 0 && (
+      {!selectedUserId && usageByResource.length > 0 && (
         <Section>
           <H2Title
             title={t`Usage by Resource`}
@@ -296,7 +420,7 @@ export const SettingsBillingAnalyticsSection = () => {
                   </StyledBarLabel>
                   <ProgressBar
                     value={percentage < 3 && percentage > 0 ? 3 : percentage}
-                    barColor={BAR_COLORS[index % BAR_COLORS.length]}
+                    barColor={barColors[index % barColors.length]}
                     backgroundColor={theme.background.tertiary}
                     withBorderRadius
                   />

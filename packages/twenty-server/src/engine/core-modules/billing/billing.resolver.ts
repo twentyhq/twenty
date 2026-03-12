@@ -16,7 +16,10 @@ import { BillingMeteredProductUsageDTO } from 'src/engine/core-modules/billing/d
 import { BillingPlanDTO } from 'src/engine/core-modules/billing/dtos/billing-plan.dto';
 import { BillingSessionDTO } from 'src/engine/core-modules/billing/dtos/billing-session.dto';
 import { BillingUpdateDTO } from 'src/engine/core-modules/billing/dtos/billing-update.dto';
-import { BillingAnalyticsDTO } from 'src/engine/core-modules/billing/dtos/billing-usage-breakdown.dto';
+import {
+  BillingAnalyticsDTO,
+  BillingAnalyticsInput,
+} from 'src/engine/core-modules/billing/dtos/billing-usage-breakdown.dto';
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { BillingAnalyticsService } from 'src/engine/core-modules/billing/services/billing-analytics.service';
 import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
@@ -333,14 +336,17 @@ export class BillingResolver {
   @RequireFeatureFlag(FeatureFlagKey.IS_USAGE_ANALYTICS_ENABLED)
   async getBillingAnalytics(
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @Args({ nullable: true }) input?: BillingAnalyticsInput,
   ): Promise<BillingAnalyticsDTO> {
     const subscription =
       await this.billingSubscriptionService.getCurrentBillingSubscriptionOrThrow(
         { workspaceId: workspace.id },
       );
 
-    const periodStart = subscription.currentPeriodStart;
-    const periodEnd = subscription.currentPeriodEnd;
+    const periodStart =
+      input?.periodStart ?? subscription.currentPeriodStart;
+    const periodEnd =
+      input?.periodEnd ?? subscription.currentPeriodEnd;
 
     const [usageByUser, usageByResource, usageByExecutionType, timeSeries] =
       await Promise.all([
@@ -366,7 +372,7 @@ export class BillingResolver {
         ),
       ]);
 
-    return {
+    const result: BillingAnalyticsDTO = {
       usageByUser,
       usageByResource,
       usageByExecutionType,
@@ -374,6 +380,23 @@ export class BillingResolver {
       periodStart,
       periodEnd,
     };
+
+    if (input?.userWorkspaceId) {
+      const dailyUsage =
+        await this.billingAnalyticsService.getUsageByUserTimeSeries(
+          workspace.id,
+          input.userWorkspaceId,
+          periodStart,
+          periodEnd,
+        );
+
+      result.userDailyUsage = {
+        userWorkspaceId: input.userWorkspaceId,
+        dailyUsage,
+      };
+    }
+
+    return result;
   }
 
   @Mutation(() => BillingUpdateDTO)

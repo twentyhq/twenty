@@ -95,6 +95,33 @@ export class BillingAnalyticsService {
     });
   }
 
+  async getUsageByUserTimeSeries(
+    workspaceId: string,
+    userWorkspaceId: string,
+    periodStart: Date,
+    periodEnd: Date,
+  ): Promise<BillingUsageTimeSeriesPoint[]> {
+    const query = `
+      SELECT
+        formatDateTime(timestamp, '%Y-%m-%d') AS date,
+        sum(creditsUsed) AS creditsUsed
+      FROM billingEvent
+      WHERE workspaceId = {workspaceId:String}
+        AND userWorkspaceId = {userWorkspaceId:String}
+        AND timestamp >= {periodStart:String}
+        AND timestamp < {periodEnd:String}
+      GROUP BY date
+      ORDER BY date ASC
+    `;
+
+    return this.clickHouseService.select<BillingUsageTimeSeriesPoint>(query, {
+      workspaceId,
+      userWorkspaceId,
+      periodStart: formatDateForClickHouse(periodStart),
+      periodEnd: formatDateForClickHouse(periodEnd),
+    });
+  }
+
   async getUsageTimeSeries(
     workspaceId: string,
     periodStart: Date,
