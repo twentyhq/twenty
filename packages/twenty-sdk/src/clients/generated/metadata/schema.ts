@@ -2556,8 +2556,6 @@ export interface Query {
     currentUser: User
     currentWorkspace: Workspace
     getPublicWorkspaceDataByDomain: PublicWorkspaceData
-    findManyApplications: Application[]
-    findOneApplication: Application
     checkUserExists: CheckUserExist
     checkWorkspaceInviteHashIsValid: WorkspaceInviteHashValid
     findWorkspaceFromInviteHash: Workspace
@@ -2600,6 +2598,8 @@ export interface Query {
     getEmailingDomains: EmailingDomain[]
     findManyMarketplaceApps: MarketplaceApp[]
     findOneMarketplaceApp: MarketplaceApp
+    findManyApplications: Application[]
+    findOneApplication: Application
     __typename: 'Query'
 }
 
@@ -2728,10 +2728,6 @@ export interface Mutation {
     updateWorkspace: Workspace
     deleteCurrentWorkspace: Workspace
     checkCustomDomainValidRecords?: DomainValidRecords
-    installApplication: Scalars['Boolean']
-    runWorkspaceMigration: Scalars['Boolean']
-    uninstallApplication: Scalars['Boolean']
-    updateOneApplicationVariable: Scalars['Boolean']
     getAuthorizationUrlForSSO: GetAuthorizationUrlForSSO
     getLoginTokenFromCredentials: LoginToken
     signIn: AvailableWorkspacesAndAccessTokens
@@ -2799,6 +2795,10 @@ export interface Mutation {
     verifyEmailingDomain: EmailingDomain
     createOneAppToken: AppToken
     installMarketplaceApp: Scalars['Boolean']
+    installApplication: Scalars['Boolean']
+    runWorkspaceMigration: Scalars['Boolean']
+    uninstallApplication: Scalars['Boolean']
+    updateOneApplicationVariable: Scalars['Boolean']
     createDevelopmentApplication: DevelopmentApplication
     generateApplicationToken: ApplicationTokenPair
     syncApplication: WorkspaceMigration
@@ -5550,8 +5550,6 @@ export interface QueryGenqlSelection{
     currentUser?: UserGenqlSelection
     currentWorkspace?: WorkspaceGenqlSelection
     getPublicWorkspaceDataByDomain?: (PublicWorkspaceDataGenqlSelection & { __args?: {origin?: (Scalars['String'] | null)} })
-    findManyApplications?: ApplicationGenqlSelection
-    findOneApplication?: (ApplicationGenqlSelection & { __args?: {id?: (Scalars['UUID'] | null), universalIdentifier?: (Scalars['UUID'] | null)} })
     checkUserExists?: (CheckUserExistGenqlSelection & { __args: {email: Scalars['String'], captchaToken?: (Scalars['String'] | null)} })
     checkWorkspaceInviteHashIsValid?: (WorkspaceInviteHashValidGenqlSelection & { __args: {inviteHash: Scalars['String']} })
     findWorkspaceFromInviteHash?: (WorkspaceGenqlSelection & { __args: {inviteHash: Scalars['String']} })
@@ -5600,6 +5598,8 @@ export interface QueryGenqlSelection{
     getEmailingDomains?: EmailingDomainGenqlSelection
     findManyMarketplaceApps?: MarketplaceAppGenqlSelection
     findOneMarketplaceApp?: (MarketplaceAppGenqlSelection & { __args: {universalIdentifier: Scalars['String']} })
+    findManyApplications?: ApplicationGenqlSelection
+    findOneApplication?: (ApplicationGenqlSelection & { __args?: {id?: (Scalars['UUID'] | null), universalIdentifier?: (Scalars['UUID'] | null)} })
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -5747,10 +5747,6 @@ export interface MutationGenqlSelection{
     updateWorkspace?: (WorkspaceGenqlSelection & { __args: {data: UpdateWorkspaceInput} })
     deleteCurrentWorkspace?: WorkspaceGenqlSelection
     checkCustomDomainValidRecords?: DomainValidRecordsGenqlSelection
-    installApplication?: { __args: {appRegistrationId: Scalars['String'], version?: (Scalars['String'] | null)} }
-    runWorkspaceMigration?: { __args: {workspaceMigration: WorkspaceMigrationInput} }
-    uninstallApplication?: { __args: {universalIdentifier: Scalars['String']} }
-    updateOneApplicationVariable?: { __args: {key: Scalars['String'], value: Scalars['String'], applicationId: Scalars['UUID']} }
     getAuthorizationUrlForSSO?: (GetAuthorizationUrlForSSOGenqlSelection & { __args: {input: GetAuthorizationUrlForSSOInput} })
     getLoginTokenFromCredentials?: (LoginTokenGenqlSelection & { __args: {email: Scalars['String'], password: Scalars['String'], captchaToken?: (Scalars['String'] | null), locale?: (Scalars['String'] | null), verifyEmailRedirectPath?: (Scalars['String'] | null), origin: Scalars['String']} })
     signIn?: (AvailableWorkspacesAndAccessTokensGenqlSelection & { __args: {email: Scalars['String'], password: Scalars['String'], captchaToken?: (Scalars['String'] | null), locale?: (Scalars['String'] | null), verifyEmailRedirectPath?: (Scalars['String'] | null)} })
@@ -5818,6 +5814,10 @@ export interface MutationGenqlSelection{
     verifyEmailingDomain?: (EmailingDomainGenqlSelection & { __args: {id: Scalars['String']} })
     createOneAppToken?: (AppTokenGenqlSelection & { __args: {input: CreateOneAppTokenInput} })
     installMarketplaceApp?: { __args: {universalIdentifier: Scalars['String'], version?: (Scalars['String'] | null)} }
+    installApplication?: { __args: {appRegistrationId: Scalars['String'], version?: (Scalars['String'] | null)} }
+    runWorkspaceMigration?: { __args: {workspaceMigration: WorkspaceMigrationInput} }
+    uninstallApplication?: { __args: {universalIdentifier: Scalars['String']} }
+    updateOneApplicationVariable?: { __args: {key: Scalars['String'], value: Scalars['String'], applicationId: Scalars['UUID']} }
     createDevelopmentApplication?: (DevelopmentApplicationGenqlSelection & { __args: {universalIdentifier: Scalars['String'], name: Scalars['String']} })
     generateApplicationToken?: (ApplicationTokenPairGenqlSelection & { __args: {applicationId: Scalars['UUID']} })
     syncApplication?: (WorkspaceMigrationGenqlSelection & { __args: {manifest: Scalars['JSON']} })
@@ -6082,10 +6082,6 @@ export interface ActivateWorkspaceInput {displayName?: (Scalars['String'] | null
 
 export interface UpdateWorkspaceInput {subdomain?: (Scalars['String'] | null),customDomain?: (Scalars['String'] | null),displayName?: (Scalars['String'] | null),logo?: (Scalars['String'] | null),inviteHash?: (Scalars['String'] | null),isPublicInviteLinkEnabled?: (Scalars['Boolean'] | null),allowImpersonation?: (Scalars['Boolean'] | null),isGoogleAuthEnabled?: (Scalars['Boolean'] | null),isMicrosoftAuthEnabled?: (Scalars['Boolean'] | null),isPasswordAuthEnabled?: (Scalars['Boolean'] | null),isGoogleAuthBypassEnabled?: (Scalars['Boolean'] | null),isMicrosoftAuthBypassEnabled?: (Scalars['Boolean'] | null),isPasswordAuthBypassEnabled?: (Scalars['Boolean'] | null),defaultRoleId?: (Scalars['UUID'] | null),isTwoFactorAuthenticationEnforced?: (Scalars['Boolean'] | null),trashRetentionDays?: (Scalars['Float'] | null),eventLogRetentionDays?: (Scalars['Float'] | null),fastModel?: (Scalars['String'] | null),smartModel?: (Scalars['String'] | null),aiAdditionalInstructions?: (Scalars['String'] | null),editableProfileFields?: (Scalars['String'][] | null),autoEnableNewAiModels?: (Scalars['Boolean'] | null),disabledAiModelIds?: (Scalars['String'][] | null),enabledAiModelIds?: (Scalars['String'][] | null),useRecommendedModels?: (Scalars['Boolean'] | null)}
 
-export interface WorkspaceMigrationInput {actions: WorkspaceMigrationDeleteActionInput[]}
-
-export interface WorkspaceMigrationDeleteActionInput {type: WorkspaceMigrationActionType,metadataName: AllMetadataName,universalIdentifier: Scalars['String']}
-
 export interface GetAuthorizationUrlForSSOInput {identityProviderId: Scalars['UUID'],workspaceInviteHash?: (Scalars['String'] | null)}
 
 export interface CreateApplicationRegistrationInput {name: Scalars['String'],description?: (Scalars['String'] | null),logoUrl?: (Scalars['String'] | null),author?: (Scalars['String'] | null),universalIdentifier?: (Scalars['String'] | null),oAuthRedirectUris?: (Scalars['String'][] | null),oAuthScopes?: (Scalars['String'][] | null),websiteUrl?: (Scalars['String'] | null),termsUrl?: (Scalars['String'] | null)}
@@ -6133,6 +6129,10 @@ export interface CreateOneAppTokenInput {
 appToken: CreateAppTokenInput}
 
 export interface CreateAppTokenInput {expiresAt: Scalars['DateTime']}
+
+export interface WorkspaceMigrationInput {actions: WorkspaceMigrationDeleteActionInput[]}
+
+export interface WorkspaceMigrationDeleteActionInput {type: WorkspaceMigrationActionType,metadataName: AllMetadataName,universalIdentifier: Scalars['String']}
 
 export interface SubscriptionGenqlSelection{
     onDbEvent?: (OnDbEventGenqlSelection & { __args: {input: OnDbEventInput} })

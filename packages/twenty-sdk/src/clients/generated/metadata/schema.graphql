@@ -2882,8 +2882,6 @@ type Query {
   currentUser: User!
   currentWorkspace: Workspace!
   getPublicWorkspaceDataByDomain(origin: String): PublicWorkspaceData!
-  findManyApplications: [Application!]!
-  findOneApplication(id: UUID, universalIdentifier: UUID): Application!
   checkUserExists(email: String!, captchaToken: String): CheckUserExist!
   checkWorkspaceInviteHashIsValid(inviteHash: String!): WorkspaceInviteHashValid!
   findWorkspaceFromInviteHash(inviteHash: String!): Workspace!
@@ -2935,6 +2933,8 @@ type Query {
   getEmailingDomains: [EmailingDomain!]!
   findManyMarketplaceApps: [MarketplaceApp!]!
   findOneMarketplaceApp(universalIdentifier: String!): MarketplaceApp!
+  findManyApplications: [Application!]!
+  findOneApplication(id: UUID, universalIdentifier: UUID): Application!
 }
 
 input LogicFunctionIdInput {
@@ -3155,10 +3155,6 @@ type Mutation {
   updateWorkspace(data: UpdateWorkspaceInput!): Workspace!
   deleteCurrentWorkspace: Workspace!
   checkCustomDomainValidRecords: DomainValidRecords
-  installApplication(appRegistrationId: String!, version: String): Boolean!
-  runWorkspaceMigration(workspaceMigration: WorkspaceMigrationInput!): Boolean!
-  uninstallApplication(universalIdentifier: String!): Boolean!
-  updateOneApplicationVariable(key: String!, value: String!, applicationId: UUID!): Boolean!
   getAuthorizationUrlForSSO(input: GetAuthorizationUrlForSSOInput!): GetAuthorizationUrlForSSO!
   getLoginTokenFromCredentials(email: String!, password: String!, captchaToken: String, locale: String, verifyEmailRedirectPath: String, origin: String!): LoginToken!
   signIn(email: String!, password: String!, captchaToken: String, locale: String, verifyEmailRedirectPath: String): AvailableWorkspacesAndAccessTokens!
@@ -3226,6 +3222,10 @@ type Mutation {
   verifyEmailingDomain(id: String!): EmailingDomain!
   createOneAppToken(input: CreateOneAppTokenInput!): AppToken!
   installMarketplaceApp(universalIdentifier: String!, version: String): Boolean!
+  installApplication(appRegistrationId: String!, version: String): Boolean!
+  runWorkspaceMigration(workspaceMigration: WorkspaceMigrationInput!): Boolean!
+  uninstallApplication(universalIdentifier: String!): Boolean!
+  updateOneApplicationVariable(key: String!, value: String!, applicationId: UUID!): Boolean!
   createDevelopmentApplication(universalIdentifier: String!, name: String!): DevelopmentApplication!
   generateApplicationToken(applicationId: UUID!): ApplicationTokenPair!
   syncApplication(manifest: JSON!): WorkspaceMigration!
@@ -3998,49 +3998,6 @@ input UpdateWorkspaceInput {
   useRecommendedModels: Boolean
 }
 
-input WorkspaceMigrationInput {
-  actions: [WorkspaceMigrationDeleteActionInput!]!
-}
-
-input WorkspaceMigrationDeleteActionInput {
-  type: WorkspaceMigrationActionType!
-  metadataName: AllMetadataName!
-  universalIdentifier: String!
-}
-
-enum WorkspaceMigrationActionType {
-  delete
-  create
-  update
-}
-
-enum AllMetadataName {
-  fieldMetadata
-  objectMetadata
-  view
-  viewField
-  viewFieldGroup
-  viewGroup
-  viewSort
-  rowLevelPermissionPredicate
-  rowLevelPermissionPredicateGroup
-  viewFilterGroup
-  index
-  logicFunction
-  viewFilter
-  role
-  roleTarget
-  agent
-  skill
-  pageLayout
-  pageLayoutWidget
-  pageLayoutTab
-  commandMenuItem
-  navigationMenuItem
-  frontComponent
-  webhook
-}
-
 input GetAuthorizationUrlForSSOInput {
   identityProviderId: UUID!
   workspaceInviteHash: String
@@ -4186,6 +4143,49 @@ input CreateOneAppTokenInput {
 
 input CreateAppTokenInput {
   expiresAt: DateTime!
+}
+
+input WorkspaceMigrationInput {
+  actions: [WorkspaceMigrationDeleteActionInput!]!
+}
+
+input WorkspaceMigrationDeleteActionInput {
+  type: WorkspaceMigrationActionType!
+  metadataName: AllMetadataName!
+  universalIdentifier: String!
+}
+
+enum WorkspaceMigrationActionType {
+  delete
+  create
+  update
+}
+
+enum AllMetadataName {
+  fieldMetadata
+  objectMetadata
+  view
+  viewField
+  viewFieldGroup
+  viewGroup
+  viewSort
+  rowLevelPermissionPredicate
+  rowLevelPermissionPredicateGroup
+  viewFilterGroup
+  index
+  logicFunction
+  viewFilter
+  role
+  roleTarget
+  agent
+  skill
+  pageLayout
+  pageLayoutWidget
+  pageLayoutTab
+  commandMenuItem
+  navigationMenuItem
+  frontComponent
+  webhook
 }
 
 enum FileFolder {
