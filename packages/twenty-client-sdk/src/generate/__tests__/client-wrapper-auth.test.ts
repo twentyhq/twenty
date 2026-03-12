@@ -1,8 +1,10 @@
-import { transform } from 'esbuild';
-import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { readFileSync } from 'node:fs';
+import { mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
+
+import { transform } from 'esbuild';
 import {
   afterAll,
   beforeAll,
@@ -13,13 +15,12 @@ import {
   vi,
 } from 'vitest';
 
-vi.mock('twenty-shared/application', () => ({
-  DEFAULT_APP_ACCESS_TOKEN_NAME: 'TWENTY_APP_ACCESS_TOKEN',
-  DEFAULT_API_KEY_NAME: 'TWENTY_API_KEY',
-  DEFAULT_API_URL_NAME: 'TWENTY_API_URL',
-}));
+import { buildClientWrapperSource } from '../client-wrapper';
 
-import { ClientService } from '@/cli/utilities/client/client-service';
+const twentyClientTemplateSource = readFileSync(
+  join(__dirname, '..', 'twenty-client-template.ts'),
+  'utf-8',
+);
 
 type TwentyClassType = new (options?: {
   url?: string;
@@ -106,59 +107,38 @@ const getAuthorizationHeaderValue = (requestInit: RequestInit | undefined) => {
   return new Headers(requestInit?.headers).get('Authorization');
 };
 
-describe('ClientService generated Twenty auth behavior', () => {
-  let temporaryGeneratedClientDirectory: string;
+describe('Generated client wrapper auth behavior', () => {
+  let temporaryDir: string;
   let TwentyClass: TwentyClassType;
 
   beforeAll(async () => {
-    temporaryGeneratedClientDirectory = await mkdtemp(
+    temporaryDir = await mkdtemp(
       join(tmpdir(), 'twenty-generated-client-'),
     );
 
-    const temporaryGeneratedIndexTsPath = join(
-      temporaryGeneratedClientDirectory,
-      'index.ts',
+    const wrapperSource = buildClientWrapperSource(
+      twentyClientTemplateSource,
+      {
+        apiClientName: 'MetadataApiClient',
+        defaultUrl: '`${process.env.TWENTY_API_URL}/metadata`',
+        includeUploadFile: true,
+      },
     );
 
-    await writeFile(temporaryGeneratedIndexTsPath, stubGeneratedIndexSource);
+    const fullSource = stubGeneratedIndexSource + wrapperSource;
 
-    const clientService = new ClientService();
-    await (
-      clientService as unknown as {
-        injectClientWrapper: (
-          output: string,
-          options: {
-            apiClientName: string;
-            defaultUrl: string;
-            includeUploadFile: boolean;
-          },
-        ) => Promise<void>;
-      }
-    ).injectClientWrapper(temporaryGeneratedClientDirectory, {
-      apiClientName: 'MetadataApiClient',
-      defaultUrl: '`${process.env.TWENTY_API_URL}/metadata`',
-      includeUploadFile: true,
-    });
-
-    const generatedIndexContent = await readFile(
-      temporaryGeneratedIndexTsPath,
-      'utf-8',
-    );
-
-    const transpiledModule = await transform(generatedIndexContent, {
+    const transpiledModule = await transform(fullSource, {
       loader: 'ts',
       format: 'esm',
       target: 'es2022',
     });
 
-    const temporaryGeneratedIndexMjsPath = join(
-      temporaryGeneratedClientDirectory,
-      'index.mjs',
-    );
-    await writeFile(temporaryGeneratedIndexMjsPath, transpiledModule.code);
+    const outputPath = join(temporaryDir, 'index.mjs');
+
+    await writeFile(outputPath, transpiledModule.code);
 
     const generatedModule = await import(
-      `${pathToFileURL(temporaryGeneratedIndexMjsPath).href}?t=${Date.now()}`
+      `${pathToFileURL(outputPath).href}?t=${Date.now()}`
     );
 
     TwentyClass = generatedModule.MetadataApiClient as TwentyClassType;
@@ -172,11 +152,8 @@ describe('ClientService generated Twenty auth behavior', () => {
   });
 
   afterAll(async () => {
-    if (temporaryGeneratedClientDirectory) {
-      await rm(temporaryGeneratedClientDirectory, {
-        recursive: true,
-        force: true,
-      });
+    if (temporaryDir) {
+      await rm(temporaryDir, { recursive: true, force: true });
     }
   });
 
@@ -299,6 +276,7 @@ describe('ClientService generated Twenty auth behavior', () => {
       .fn<() => Promise<string>>()
       .mockImplementation(async () => {
         await Promise.resolve();
+
         return 'fresh-token';
       });
 

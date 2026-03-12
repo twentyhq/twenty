@@ -30,6 +30,13 @@
         "command": "tsx scripts/generate-metadata-client.ts"
       }
     },
+    "test": {
+      "executor": "@nx/vitest:test",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "config": "{projectRoot}/vitest.config.ts"
+      }
+    },
     "typecheck": {},
     "lint": {}
   }

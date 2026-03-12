@@ -56362,6 +56362,7 @@ __metadata:
     vite: "npm:^7.0.0"
     vite-plugin-dts: "npm:^4.5.4"
     vite-tsconfig-paths: "npm:^4.2.1"
+    vitest: "npm:^4.0.18"
   languageName: unknown
   linkType: soft
 
