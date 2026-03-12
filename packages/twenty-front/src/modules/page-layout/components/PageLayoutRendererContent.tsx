@@ -119,7 +119,8 @@ export const PageLayoutRendererContent = () => {
         (tab) =>
           tab.title === 'Home' ||
           tab.title === 'Timeline' ||
-          tab.title === 'Overview',
+          tab.title === 'Overview' ||
+          tab.title === 'Flow',
       )
     : tabsWithVisibleWidgets;
 
