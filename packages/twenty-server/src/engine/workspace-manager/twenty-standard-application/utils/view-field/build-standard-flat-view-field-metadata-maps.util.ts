@@ -6,9 +6,21 @@ import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-module
 import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
 import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-name.type';
 import { computeStandardAttachmentViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-attachment-view-fields.util';
+import { computeStandardBlocklistViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-blocklist-view-fields.util';
+import { computeStandardCalendarChannelEventAssociationViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-calendar-channel-event-association-view-fields.util';
+import { computeStandardCalendarChannelViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-calendar-channel-view-fields.util';
+import { computeStandardCalendarEventParticipantViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-calendar-event-participant-view-fields.util';
 import { computeStandardCalendarEventViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-calendar-event-view-fields.util';
 import { computeStandardCompanyViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-company-view-fields.util';
+import { computeStandardConnectedAccountViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-connected-account-view-fields.util';
 import { computeStandardDashboardViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-dashboard-view-fields.util';
+import { computeStandardFavoriteFolderViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-favorite-folder-view-fields.util';
+import { computeStandardFavoriteViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-favorite-view-fields.util';
+import { computeStandardMessageChannelMessageAssociationMessageFolderViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-message-channel-message-association-message-folder-view-fields.util';
+import { computeStandardMessageChannelMessageAssociationViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-message-channel-message-association-view-fields.util';
+import { computeStandardMessageChannelViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-message-channel-view-fields.util';
+import { computeStandardMessageFolderViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-message-folder-view-fields.util';
+import { computeStandardMessageParticipantViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-message-participant-view-fields.util';
 import { computeStandardMessageThreadViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-message-thread-view-fields.util';
 import { computeStandardMessageViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-message-view-fields.util';
 import { computeStandardNoteTargetViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-note-target-view-fields.util';
@@ -18,6 +30,7 @@ import { computeStandardPersonViewFields } from 'src/engine/workspace-manager/tw
 import { computeStandardTaskTargetViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-task-target-view-fields.util';
 import { computeStandardTaskViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-task-view-fields.util';
 import { computeStandardTimelineActivityViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-timeline-activity-view-fields.util';
+import { computeStandardWorkflowAutomatedTriggerViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-workflow-automated-trigger-view-fields.util';
 import { computeStandardWorkflowRunViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-workflow-run-view-fields.util';
 import { computeStandardWorkflowVersionViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-workflow-version-view-fields.util';
 import { computeStandardWorkflowViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-workflow-view-fields.util';
@@ -30,10 +43,25 @@ type StandardViewFieldBuilder<P extends AllStandardObjectName> = (
 
 const STANDARD_FLAT_VIEW_FIELD_METADATA_BUILDERS_BY_OBJECT_NAME = {
   attachment: computeStandardAttachmentViewFields,
+  blocklist: computeStandardBlocklistViewFields,
+  calendarChannel: computeStandardCalendarChannelViewFields,
+  calendarChannelEventAssociation:
+    computeStandardCalendarChannelEventAssociationViewFields,
   calendarEvent: computeStandardCalendarEventViewFields,
+  calendarEventParticipant: computeStandardCalendarEventParticipantViewFields,
   company: computeStandardCompanyViewFields,
+  connectedAccount: computeStandardConnectedAccountViewFields,
   dashboard: computeStandardDashboardViewFields,
+  favorite: computeStandardFavoriteViewFields,
+  favoriteFolder: computeStandardFavoriteFolderViewFields,
   message: computeStandardMessageViewFields,
+  messageChannel: computeStandardMessageChannelViewFields,
+  messageChannelMessageAssociation:
+    computeStandardMessageChannelMessageAssociationViewFields,
+  messageChannelMessageAssociationMessageFolder:
+    computeStandardMessageChannelMessageAssociationMessageFolderViewFields,
+  messageFolder: computeStandardMessageFolderViewFields,
+  messageParticipant: computeStandardMessageParticipantViewFields,
   messageThread: computeStandardMessageThreadViewFields,
   note: computeStandardNoteViewFields,
   noteTarget: computeStandardNoteTargetViewFields,
@@ -43,6 +71,7 @@ const STANDARD_FLAT_VIEW_FIELD_METADATA_BUILDERS_BY_OBJECT_NAME = {
   taskTarget: computeStandardTaskTargetViewFields,
   timelineActivity: computeStandardTimelineActivityViewFields,
   workflow: computeStandardWorkflowViewFields,
+  workflowAutomatedTrigger: computeStandardWorkflowAutomatedTriggerViewFields,
   workflowRun: computeStandardWorkflowRunViewFields,
   workflowVersion: computeStandardWorkflowVersionViewFields,
   workspaceMember: computeStandardWorkspaceMemberViewFields,
