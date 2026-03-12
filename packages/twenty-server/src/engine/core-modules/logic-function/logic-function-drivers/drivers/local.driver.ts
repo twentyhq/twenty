@@ -236,6 +236,10 @@ export class LocalDriver implements LogicFunctionDriver {
       flatApplication,
       applicationUniversalIdentifier,
     });
+    await this.ensureSdkLayer({
+      flatApplication,
+      applicationUniversalIdentifier,
+    });
 
     const startTime = Date.now();
 

@@ -2,10 +2,8 @@ import { Module } from '@nestjs/common';
 import { DiscoveryModule } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { CoreGraphQLApiModule } from 'src/engine/api/graphql/core-graphql-api.module';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
-import { LogicFunctionResourceModule } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
@@ -28,8 +26,6 @@ import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/wo
     DiscoveryModule,
     WorkspaceCacheStorageModule,
     WorkspaceCacheModule,
-    CoreGraphQLApiModule,
-    LogicFunctionResourceModule,
     TypeOrmModule.forFeature([WorkspaceEntity]),
   ],
   providers: [

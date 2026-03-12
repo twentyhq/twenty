@@ -47,7 +47,10 @@ export class ApplicationManifestMigrationService {
     manifest: Manifest;
     workspaceId: string;
     ownerFlatApplication: FlatApplication;
-  }): Promise<WorkspaceMigration> {
+  }): Promise<{
+    workspaceMigration: WorkspaceMigration;
+    hasSchemaMetadataChanged: boolean;
+  }> {
     const now = new Date().toISOString();
 
     const { twentyStandardFlatApplication } =
@@ -122,7 +125,10 @@ export class ApplicationManifestMigrationService {
       ownerFlatApplication,
     });
 
-    return validateAndBuildResult.workspaceMigration;
+    return {
+      workspaceMigration: validateAndBuildResult.workspaceMigration,
+      hasSchemaMetadataChanged: validateAndBuildResult.hasSchemaMetadataChanged,
+    };
   }
 
   /**

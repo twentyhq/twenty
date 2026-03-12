@@ -361,7 +361,9 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     },
   ): Promise<
     | WorkspaceMigrationOrchestratorFailedResult
-    | WorkspaceMigrationOrchestratorSuccessfulResult
+    | (WorkspaceMigrationOrchestratorSuccessfulResult & {
+        hasSchemaMetadataChanged: boolean;
+      })
   > {
     const { idByUniversalIdentifierByMetadataName, ...buildArgs } = args;
 
@@ -391,23 +393,29 @@ export class WorkspaceMigrationValidateBuildAndRunService {
         })
       : validateAndBuildResult.workspaceMigration;
 
-    if (workspaceMigration.actions.length > 0) {
-      const { metadataEvents } = await this.workspaceMigrationRunnerService.run(
-        {
-          workspaceId: args.workspaceId,
-          workspaceMigration,
-        },
-      );
-
-      this.metadataEventEmitter.emitMetadataEvents({
-        metadataEvents,
-        workspaceId: args.workspaceId,
-      });
+    if (workspaceMigration.actions.length === 0) {
+      return {
+        status: 'success',
+        workspaceMigration,
+        hasSchemaMetadataChanged: false,
+      };
     }
+
+    const { hasSchemaMetadataChanged, metadataEvents } =
+      await this.workspaceMigrationRunnerService.run({
+        workspaceId: args.workspaceId,
+        workspaceMigration,
+      });
+
+    this.metadataEventEmitter.emitMetadataEvents({
+      metadataEvents: metadataEvents,
+      workspaceId: args.workspaceId,
+    });
 
     return {
       status: 'success',
       workspaceMigration,
+      hasSchemaMetadataChanged,
     };
   }
 

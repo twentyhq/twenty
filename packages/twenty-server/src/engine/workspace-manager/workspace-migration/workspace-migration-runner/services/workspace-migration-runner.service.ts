@@ -1,15 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
-import { printSchema } from 'graphql';
 import { type AllMetadataName } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 import { DataSource } from 'typeorm';
 
-import { WorkspaceSchemaFactory } from 'src/engine/api/graphql/workspace-schema.factory';
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
-import { SdkClientGenerationService } from 'src/engine/core-modules/logic-function/logic-function-resource/sdk-client-generation.service';
-import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
@@ -38,8 +34,6 @@ export class WorkspaceMigrationRunnerService {
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly sdkClientGenerationService: SdkClientGenerationService,
-    private readonly workspaceSchemaFactory: WorkspaceSchemaFactory,
     private readonly logger: LoggerService,
   ) {}
 
@@ -165,6 +159,7 @@ export class WorkspaceMigrationRunnerService {
   }): Promise<{
     allFlatEntityMaps: AllFlatEntityMaps;
     metadataEvents: MetadataEvent[];
+    hasSchemaMetadataChanged: boolean;
   }> => {
     this.logger.time('Runner', 'Total execution');
     this.logger.time('Runner', 'Initial cache retrieval');
@@ -257,28 +252,17 @@ export class WorkspaceMigrationRunnerService {
         workspaceId,
       });
 
-      const shouldRegenerateSdkClient =
+      const hasSchemaMetadataChanged =
         allFlatEntityMapsKeys.includes('flatObjectMetadataMaps') ||
         allFlatEntityMapsKeys.includes('flatFieldMetadataMaps');
 
-      if (shouldRegenerateSdkClient) {
-        const graphqlSchema =
-          await this.workspaceSchemaFactory.createGraphQLSchema(
-            { id: workspaceId } as WorkspaceEntity,
-            applicationId,
-          );
-
-        await this.sdkClientGenerationService.generateAndStore({
-          workspaceId,
-          applicationId,
-          applicationUniversalIdentifier,
-          schema: printSchema(graphqlSchema),
-        });
-      }
-
       this.logger.timeEnd('Runner', 'Total execution');
 
-      return { allFlatEntityMaps, metadataEvents: allMetadataEvents };
+      return {
+        allFlatEntityMaps,
+        metadataEvents: allMetadataEvents,
+        hasSchemaMetadataChanged,
+      };
     } catch (error) {
       if (queryRunner.isTransactionActive) {
         await queryRunner.rollbackTransaction().catch((error) =>
