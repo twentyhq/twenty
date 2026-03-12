@@ -33,7 +33,7 @@ COPY ./packages/twenty-apps /app/packages/twenty-apps
 
 RUN npx nx run twenty-server:build
 
-RUN yarn workspaces focus --production twenty-apps twenty-emails twenty-shared twenty-sdk twenty-server
+RUN yarn workspaces focus --production twenty-emails twenty-shared twenty-sdk twenty-server
 
 # Build the front
 FROM common-deps AS twenty-front-build
