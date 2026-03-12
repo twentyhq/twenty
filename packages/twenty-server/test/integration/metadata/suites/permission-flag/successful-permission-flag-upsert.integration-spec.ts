@@ -3,7 +3,6 @@ import { createOneRole } from 'test/integration/metadata/suites/role/utils/creat
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { isDefined } from 'twenty-shared/utils';
 
 describe('Permission flag upsert should succeed', () => {
   let createdRoleId: string;
@@ -27,12 +26,13 @@ describe('Permission flag upsert should succeed', () => {
       },
     });
 
-    createdRoleId = roleData?.createOneRole?.id ?? '';
-    jestExpectToBeDefined(createdRoleId);
+    const roleId = roleData?.createOneRole?.id;
+    jestExpectToBeDefined(roleId);
+    createdRoleId = roleId;
   });
 
   afterAll(async () => {
-    if (isDefined(createdRoleId)) {
+    if (createdRoleId) {
       await deleteOneRole({
         expectToFail: false,
         input: { idToDelete: createdRoleId },
