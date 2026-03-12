@@ -93,6 +93,7 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
       targetTableName: 'DEPRECATED',
       applicationUniversalIdentifier: flatApplication.universalIdentifier,
       fieldUniversalIdentifiers: [],
+      objectPermissionUniversalIdentifiers: [],
       viewUniversalIdentifiers: [],
       indexMetadataUniversalIdentifiers: [],
       labelIdentifierFieldMetadataUniversalIdentifier,
