@@ -1,3 +1,4 @@
+import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { PageLayoutLeftPanel } from '@/page-layout/components/PageLayoutLeftPanel';
 import { PageLayoutTabList } from '@/page-layout/components/PageLayoutTabList';
 import { PageLayoutTabListEffect } from '@/page-layout/components/PageLayoutTabListEffect';
@@ -19,6 +20,7 @@ import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingC
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
@@ -72,6 +74,16 @@ export const PageLayoutRendererContent = () => {
 
   const isMobile = useIsMobile();
 
+  const objectMetadataItem = useAtomFamilySelectorValue(
+    objectMetadataItemFamilySelector,
+    {
+      objectName: targetRecordIdentifier?.targetObjectNameSingular ?? '',
+      objectNameType: 'singular',
+    },
+  );
+
+  const isSystemObject = objectMetadataItem?.isSystem ?? false;
+
   if (!isDefined(currentPageLayout)) {
     return null;
   }
@@ -100,8 +112,14 @@ export const PageLayoutRendererContent = () => {
     isEditMode: isPageLayoutInEditMode,
   });
 
+  const tabsForCurrentObject = isSystemObject
+    ? tabsWithVisibleWidgets.filter(
+        (tab) => tab.title === 'Home' || tab.title === 'Timeline',
+      )
+    : tabsWithVisibleWidgets;
+
   const { tabsToRenderInTabList, pinnedLeftTab } = getTabsByDisplayMode({
-    tabs: tabsWithVisibleWidgets,
+    tabs: tabsForCurrentObject,
     pageLayoutType: currentPageLayout.type,
     isMobile,
     isInSidePanel,
