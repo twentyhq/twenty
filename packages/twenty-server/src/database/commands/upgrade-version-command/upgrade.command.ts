@@ -29,11 +29,11 @@ import { MigrateWorkflowSendEmailAttachmentsCommand } from 'src/database/command
 import { MigrateWorkspacePicturesCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-migrate-workspace-pictures.command';
 import { AddMissingSystemFieldsToStandardObjectsCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-add-missing-system-fields-to-standard-objects.command';
 import { BackfillMessageChannelMessageAssociationMessageFolderCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-backfill-message-channel-message-association-message-folder.command';
-import { BackfillMissingStandardViewsCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-backfill-missing-standard-views.command';
-import { BackfillPageLayoutsCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-backfill-page-layouts.command';
 import { BackfillSystemFieldsIsSystemCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-backfill-system-fields-is-system.command';
 import { FixInvalidStandardUniversalIdentifiersCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-fix-invalid-standard-universal-identifiers.command';
 import { SeedServerIdCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-seed-server-id.command';
+import { BackfillMissingStandardViewsCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-backfill-missing-standard-views.command';
+import { BackfillPageLayoutsCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-backfill-page-layouts.command';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
@@ -79,10 +79,12 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly backfillSystemFieldsIsSystemCommand: BackfillSystemFieldsIsSystemCommand,
     protected readonly addMissingSystemFieldsToStandardObjectsCommand: AddMissingSystemFieldsToStandardObjectsCommand,
     protected readonly backfillMessageChannelMessageAssociationMessageFolderCommand: BackfillMessageChannelMessageAssociationMessageFolderCommand,
-    protected readonly backfillMissingStandardViewsCommand: BackfillMissingStandardViewsCommand,
-    protected readonly backfillPageLayoutsCommand: BackfillPageLayoutsCommand,
     protected readonly fixRoleAndAgentUniversalIdentifiersCommand: FixInvalidStandardUniversalIdentifiersCommand,
     protected readonly seedServerIdCommand: SeedServerIdCommand,
+
+    // 1.20 Commands
+    protected readonly backfillMissingStandardViewsCommand: BackfillMissingStandardViewsCommand,
+    protected readonly backfillPageLayoutsCommand: BackfillPageLayoutsCommand,
   ) {
     super(
       workspaceRepository,
@@ -123,10 +125,13 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       this.backfillSystemFieldsIsSystemCommand,
       this.addMissingSystemFieldsToStandardObjectsCommand,
       this.backfillMessageChannelMessageAssociationMessageFolderCommand,
-      this.backfillMissingStandardViewsCommand,
-      this.backfillPageLayoutsCommand,
       this.fixRoleAndAgentUniversalIdentifiersCommand,
       this.seedServerIdCommand,
+    ];
+
+    const commands_1200: VersionCommands = [
+      this.backfillMissingStandardViewsCommand,
+      this.backfillPageLayoutsCommand,
     ];
 
     this.allCommands = {
@@ -134,6 +139,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       '1.17.0': commands_1170,
       '1.18.0': commands_1180,
       '1.19.0': commands_1190,
+      '1.20.0': commands_1200,
     };
   }
 
