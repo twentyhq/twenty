@@ -297,7 +297,9 @@ export const DEFAULT_RECORD_COMMAND_MENU_ITEMS_CONFIG: Record<
       selectedRecord,
       isFavorite,
       hasAnySoftDeleteFilterOnView,
+      objectMetadataItem,
     }) =>
+      !objectMetadataItem?.isSystem &&
       !selectedRecord?.isRemote &&
       !isFavorite &&
       !isDefined(selectedRecord?.deletedAt) &&
@@ -321,7 +323,9 @@ export const DEFAULT_RECORD_COMMAND_MENU_ITEMS_CONFIG: Record<
       selectedRecord,
       isFavorite,
       hasAnySoftDeleteFilterOnView,
+      objectMetadataItem,
     }) =>
+      !objectMetadataItem?.isSystem &&
       isDefined(selectedRecord) &&
       !selectedRecord?.isRemote &&
       isDefined(isFavorite) &&
