@@ -1,5 +1,5 @@
 import { gql, InMemoryCache } from '@apollo/client';
-import { CombinedGraphQLErrors, ServerError } from '@apollo/client/errors';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import fetchMock, { enableFetchMocks } from 'jest-fetch-mock';
 
 import { DEFAULT_FAST_MODEL } from '@/ai/constants/DefaultFastModel';

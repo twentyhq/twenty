@@ -15,7 +15,6 @@ import {
   LineChartDataDocument,
   type LineChartConfiguration,
   type LineChartDataPoint,
-  type LineChartSeries,
 } from '~/generated-metadata/graphql';
 
 type UseGraphLineChartWidgetDataProps = {

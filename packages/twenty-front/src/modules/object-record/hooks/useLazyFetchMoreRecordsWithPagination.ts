@@ -5,7 +5,6 @@ import {
   type OperationVariables,
   type WatchQueryFetchPolicy,
 } from '@apollo/client';
-import { type Unmasked } from '@apollo/client/masking';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback } from 'react';
 

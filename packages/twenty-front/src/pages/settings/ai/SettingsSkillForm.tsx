@@ -32,7 +32,6 @@ import { Card, Section } from 'twenty-ui/layout';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useMutation, useQuery } from '@apollo/client/react';
 import {
-  type FindOneSkillQuery,
   ActivateSkillDocument,
   CreateSkillDocument,
   DeactivateSkillDocument,

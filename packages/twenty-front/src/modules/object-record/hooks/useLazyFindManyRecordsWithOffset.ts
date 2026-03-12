@@ -100,6 +100,7 @@ export const useLazyFindManyRecordsWithOffset = ({
     [
       hasReadPermission,
       findManyRecords,
+      params,
       objectMetadataItem.namePlural,
       handleFindManyRecordsError,
     ],

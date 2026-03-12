@@ -1,5 +1,5 @@
 import { useLazyQuery } from '@apollo/client/react';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -60,11 +60,11 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
 
   const hasReadPermission = objectPermissions.canReadObjectRecords;
 
-  const defaultVariables = {
+  const defaultVariables = useMemo(() => ({
     filter,
     limit,
     orderBy,
-  };
+  }), [filter, limit, orderBy]);
 
   const [findManyRecords, { data, error, fetchMore }] =
     useLazyQuery<RecordGqlOperationFindManyResult>(findManyRecordsQuery, {
