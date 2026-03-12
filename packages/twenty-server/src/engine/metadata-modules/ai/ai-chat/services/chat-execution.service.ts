@@ -243,6 +243,7 @@ export class ChatExecutionService {
           { usage, cacheCreationTokens },
           workspace.id,
           null,
+          userWorkspaceId,
         );
       })
       .catch((error) => {

@@ -19,6 +19,7 @@ import {
   IconCalendarEvent,
   IconColorSwatch,
   type IconComponent,
+  IconChartBar,
   IconCurrencyDollar,
   IconDoorEnter,
   IconHelpCircle,
@@ -158,6 +159,13 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           Icon: IconCurrencyDollar,
           isHidden:
             !isBillingEnabled || !permissionMap[PermissionFlagType.WORKSPACE],
+        },
+        {
+          label: t`Usage`,
+          path: SettingsPath.Usage,
+          Icon: IconChartBar,
+          isHidden:
+            isBillingEnabled || !permissionMap[PermissionFlagType.WORKSPACE],
         },
         {
           label: t`APIs & Webhooks`,

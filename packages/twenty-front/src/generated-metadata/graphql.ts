@@ -6135,6 +6135,11 @@ export type GetMeteredProductsUsageQueryVariables = Exact<{ [key: string]: never
 
 export type GetMeteredProductsUsageQuery = { __typename?: 'Query', getMeteredProductsUsage: Array<{ __typename?: 'BillingMeteredProductUsage', productKey: BillingProductKey, usedCredits: number, grantedCredits: number, rolloverCredits: number, totalGrantedCredits: number, unitPriceCents: number }> };
 
+export type GetBillingAnalyticsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetBillingAnalyticsQuery = { __typename?: 'Query', getBillingAnalytics: { __typename?: 'BillingAnalytics', periodStart: string, periodEnd: string, usageByUser: Array<{ __typename?: 'BillingUsageBreakdownItem', key: string, creditsUsed: number }>, usageByResource: Array<{ __typename?: 'BillingUsageBreakdownItem', key: string, creditsUsed: number }>, usageByExecutionType: Array<{ __typename?: 'BillingUsageBreakdownItem', key: string, creditsUsed: number }>, timeSeries: Array<{ __typename?: 'BillingUsageTimeSeries', date: string, creditsUsed: number }> } };
+
 export type ListPlansQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -10881,6 +10886,41 @@ export function useGetMeteredProductsUsageLazyQuery(baseOptions?: Apollo.LazyQue
 export type GetMeteredProductsUsageQueryHookResult = ReturnType<typeof useGetMeteredProductsUsageQuery>;
 export type GetMeteredProductsUsageLazyQueryHookResult = ReturnType<typeof useGetMeteredProductsUsageLazyQuery>;
 export type GetMeteredProductsUsageQueryResult = Apollo.QueryResult<GetMeteredProductsUsageQuery, GetMeteredProductsUsageQueryVariables>;
+export const GetBillingAnalyticsDocument = gql`
+    query GetBillingAnalytics {
+  getBillingAnalytics {
+    usageByUser {
+      key
+      creditsUsed
+    }
+    usageByResource {
+      key
+      creditsUsed
+    }
+    usageByExecutionType {
+      key
+      creditsUsed
+    }
+    timeSeries {
+      date
+      creditsUsed
+    }
+    periodStart
+    periodEnd
+  }
+}
+    `;
+export function useGetBillingAnalyticsQuery(baseOptions?: Apollo.QueryHookOptions<GetBillingAnalyticsQuery, GetBillingAnalyticsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetBillingAnalyticsQuery, GetBillingAnalyticsQueryVariables>(GetBillingAnalyticsDocument, options);
+      }
+export function useGetBillingAnalyticsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetBillingAnalyticsQuery, GetBillingAnalyticsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetBillingAnalyticsQuery, GetBillingAnalyticsQueryVariables>(GetBillingAnalyticsDocument, options);
+        }
+export type GetBillingAnalyticsQueryHookResult = ReturnType<typeof useGetBillingAnalyticsQuery>;
+export type GetBillingAnalyticsLazyQueryHookResult = ReturnType<typeof useGetBillingAnalyticsLazyQuery>;
+export type GetBillingAnalyticsQueryResult = Apollo.QueryResult<GetBillingAnalyticsQuery, GetBillingAnalyticsQueryVariables>;
 export const ListPlansDocument = gql`
     query listPlans {
   listPlans {

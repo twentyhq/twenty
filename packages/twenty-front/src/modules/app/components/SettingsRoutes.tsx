@@ -250,6 +250,12 @@ const SettingsBilling = lazy(() =>
   })),
 );
 
+const SettingsUsage = lazy(() =>
+  import('~/pages/settings/SettingsUsage').then((module) => ({
+    default: module.SettingsUsage,
+  })),
+);
+
 const SettingsObjects = lazy(() =>
   import('~/pages/settings/data-model/SettingsObjects').then((module) => ({
     default: module.SettingsObjects,
@@ -496,6 +502,7 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
           element={<SettingsLogicFunctionDetail />}
         />
         <Route path={SettingsPath.Billing} element={<SettingsBilling />} />
+        <Route path={SettingsPath.Usage} element={<SettingsUsage />} />
         <Route path={SettingsPath.Domain} element={<SettingsDomain />} />
         <Route
           path={SettingsPath.NewEmailingDomain}

@@ -18,7 +18,9 @@ import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entit
 import { BillingRestApiExceptionFilter } from 'src/engine/core-modules/billing/filters/billing-api-exception.filter';
 import { BillingFeatureUsedListener } from 'src/engine/core-modules/billing/listeners/billing-feature-used.listener';
 import { BillingWorkspaceMemberListener } from 'src/engine/core-modules/billing/listeners/billing-workspace-member.listener';
+import { BillingAnalyticsService } from 'src/engine/core-modules/billing/services/billing-analytics.service';
 import { BillingCreditRolloverService } from 'src/engine/core-modules/billing/services/billing-credit-rollover.service';
+import { BillingEventWriterService } from 'src/engine/core-modules/billing/services/billing-event-writer.service';
 import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
 import { BillingPortalWorkspaceService } from 'src/engine/core-modules/billing/services/billing-portal.workspace-service';
 import { BillingPriceService } from 'src/engine/core-modules/billing/services/billing-price.service';
@@ -35,6 +37,7 @@ import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { MessageQueueModule } from 'src/engine/core-modules/message-queue/message-queue.module';
+import { ClickHouseModule } from 'src/database/clickHouse/clickHouse.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -66,6 +69,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     ]),
     DataSourceModule,
     MetricsModule,
+    ClickHouseModule,
   ],
   providers: [
     BillingSubscriptionService,
@@ -88,6 +92,8 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     BillingCreditRolloverService,
     MeteredCreditService,
     BillingGaugeService,
+    BillingEventWriterService,
+    BillingAnalyticsService,
   ],
   exports: [
     BillingSubscriptionService,

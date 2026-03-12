@@ -1,4 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
+import { useNavigate } from 'react-router-dom';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsBillingCreditsSection } from '@/billing/components/SettingsBillingCreditsSection';
@@ -6,8 +7,9 @@ import { SettingsBillingSubscriptionInfo } from '@/billing/components/SettingsBi
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
-import { isDefined } from 'twenty-shared/utils';
-import { H2Title, IconCircleX, IconCreditCard } from 'twenty-ui/display';
+import { isDefined, getSettingsPath } from 'twenty-shared/utils';
+import { SettingsPath } from 'twenty-shared/types';
+import { H2Title, IconChartBar, IconCircleX, IconCreditCard } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import {
@@ -21,6 +23,7 @@ export const SettingsBillingContent = () => {
   const { t } = useLingui();
 
   const { redirect } = useRedirect();
+  const navigate = useNavigate();
 
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
@@ -75,6 +78,18 @@ export const SettingsBillingContent = () => {
             }
           />
         )}
+      <Section>
+        <H2Title
+          title={t`Usage`}
+          description={t`View detailed usage analytics for your workspace`}
+        />
+        <Button
+          Icon={IconChartBar}
+          title={t`View usage`}
+          variant="secondary"
+          onClick={() => navigate(getSettingsPath(SettingsPath.Usage))}
+        />
+      </Section>
       <Section>
         <H2Title
           title={t`Manage billing information`}

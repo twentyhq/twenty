@@ -15,7 +15,9 @@ import { BillingMeteredProductUsageDTO } from 'src/engine/core-modules/billing/d
 import { BillingPlanDTO } from 'src/engine/core-modules/billing/dtos/billing-plan.dto';
 import { BillingSessionDTO } from 'src/engine/core-modules/billing/dtos/billing-session.dto';
 import { BillingUpdateDTO } from 'src/engine/core-modules/billing/dtos/billing-update.dto';
+import { BillingAnalyticsDTO } from 'src/engine/core-modules/billing/dtos/billing-usage-breakdown.dto';
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
+import { BillingAnalyticsService } from 'src/engine/core-modules/billing/services/billing-analytics.service';
 import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
 import { BillingPortalWorkspaceService } from 'src/engine/core-modules/billing/services/billing-portal.workspace-service';
 import { BillingSubscriptionUpdateService } from 'src/engine/core-modules/billing/services/billing-subscription-update.service';
@@ -62,6 +64,7 @@ export class BillingResolver {
     private readonly billingPlanService: BillingPlanService,
     private readonly billingService: BillingService,
     private readonly billingUsageService: BillingUsageService,
+    private readonly billingAnalyticsService: BillingAnalyticsService,
     private readonly permissionsService: PermissionsService,
   ) {}
 
@@ -314,6 +317,56 @@ export class BillingResolver {
       totalGrantedCredits: toDisplayCredits(item.totalGrantedCredits),
       unitPriceCents: item.unitPriceCents * INTERNAL_CREDITS_PER_DISPLAY_CREDIT,
     }));
+  }
+
+  @Query(() => BillingAnalyticsDTO)
+  @UseGuards(
+    WorkspaceAuthGuard,
+    SettingsPermissionGuard(PermissionFlagType.BILLING),
+  )
+  async getBillingAnalytics(
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<BillingAnalyticsDTO> {
+    const subscription =
+      await this.billingSubscriptionService.getCurrentBillingSubscriptionOrThrow(
+        { workspaceId: workspace.id },
+      );
+
+    const periodStart = subscription.currentPeriodStart;
+    const periodEnd = subscription.currentPeriodEnd;
+
+    const [usageByUser, usageByResource, usageByExecutionType, timeSeries] =
+      await Promise.all([
+        this.billingAnalyticsService.getUsageByUser(
+          workspace.id,
+          periodStart,
+          periodEnd,
+        ),
+        this.billingAnalyticsService.getUsageByResource(
+          workspace.id,
+          periodStart,
+          periodEnd,
+        ),
+        this.billingAnalyticsService.getUsageByExecutionType(
+          workspace.id,
+          periodStart,
+          periodEnd,
+        ),
+        this.billingAnalyticsService.getUsageTimeSeries(
+          workspace.id,
+          periodStart,
+          periodEnd,
+        ),
+      ]);
+
+    return {
+      usageByUser,
+      usageByResource,
+      usageByExecutionType,
+      timeSeries,
+      periodStart,
+      periodEnd,
+    };
   }
 
   @Mutation(() => BillingUpdateDTO)
