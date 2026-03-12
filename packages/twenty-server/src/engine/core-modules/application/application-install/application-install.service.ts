@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { promises as fs } from 'fs';
-import { join, resolve } from 'path';
+import { resolve } from 'path';
 
 import { Manifest } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
