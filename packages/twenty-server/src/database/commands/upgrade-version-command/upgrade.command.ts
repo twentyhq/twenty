@@ -33,6 +33,7 @@ import { BackfillMissingStandardViewsCommand } from 'src/database/commands/upgra
 import { BackfillPageLayoutsCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-backfill-page-layouts.command';
 import { BackfillSystemFieldsIsSystemCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-backfill-system-fields-is-system.command';
 import { FixInvalidStandardUniversalIdentifiersCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-fix-invalid-standard-universal-identifiers.command';
+import { MakePermissionFlagUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-make-permission-flag-universal-identifier-and-application-id-not-nullable-migration.command';
 import { SeedServerIdCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-seed-server-id.command';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -82,6 +83,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly backfillMissingStandardViewsCommand: BackfillMissingStandardViewsCommand,
     protected readonly backfillPageLayoutsCommand: BackfillPageLayoutsCommand,
     protected readonly fixRoleAndAgentUniversalIdentifiersCommand: FixInvalidStandardUniversalIdentifiersCommand,
+    protected readonly makePermissionFlagUniversalIdentifierAndApplicationIdNotNullableMigrationCommand: MakePermissionFlagUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
     protected readonly seedServerIdCommand: SeedServerIdCommand,
   ) {
     super(
@@ -126,6 +128,8 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       this.backfillMissingStandardViewsCommand,
       this.backfillPageLayoutsCommand,
       this.fixRoleAndAgentUniversalIdentifiersCommand,
+      this
+        .makePermissionFlagUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
       this.seedServerIdCommand,
     ];
 

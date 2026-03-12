@@ -7,6 +7,7 @@ import { BackfillMissingStandardViewsCommand } from 'src/database/commands/upgra
 import { BackfillPageLayoutsCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-backfill-page-layouts.command';
 import { BackfillSystemFieldsIsSystemCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-backfill-system-fields-is-system.command';
 import { FixInvalidStandardUniversalIdentifiersCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-fix-invalid-standard-universal-identifiers.command';
+import { MakePermissionFlagUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-make-permission-flag-universal-identifier-and-application-id-not-nullable-migration.command';
 import { SeedServerIdCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-seed-server-id.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
@@ -37,6 +38,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     BackfillMissingStandardViewsCommand,
     BackfillPageLayoutsCommand,
     FixInvalidStandardUniversalIdentifiersCommand,
+    MakePermissionFlagUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
     SeedServerIdCommand,
   ],
   exports: [
@@ -46,6 +48,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     BackfillMissingStandardViewsCommand,
     BackfillPageLayoutsCommand,
     FixInvalidStandardUniversalIdentifiersCommand,
+    MakePermissionFlagUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
     SeedServerIdCommand,
   ],
 })
