@@ -8,9 +8,7 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type FlatPermissionFlag } from 'src/engine/metadata-modules/flat-permission-flag/types/flat-permission-flag.type';
 import { fromCreatePermissionFlagInputToFlatPermissionFlagToCreate } from 'src/engine/metadata-modules/flat-permission-flag/utils/from-create-permission-flag-input-to-flat-permission-flag-to-create.util';
-import { type PermissionFlagDTO } from 'src/engine/metadata-modules/permission-flag/dtos/permission-flag.dto';
 import { type UpsertPermissionFlagsInput } from 'src/engine/metadata-modules/permission-flag/dtos/upsert-permission-flag-input';
-import { fromFlatPermissionFlagToPermissionFlagDto } from 'src/engine/metadata-modules/permission-flag/utils/from-flat-permission-flag-to-permission-flag-dto.util';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -33,7 +31,7 @@ export class PermissionFlagService {
   }: {
     workspaceId: string;
     input: UpsertPermissionFlagsInput;
-  }): Promise<PermissionFlagDTO[]> {
+  }): Promise<FlatPermissionFlag[]> {
     const { flatPermissionFlagMaps, flatRoleMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -108,7 +106,7 @@ export class PermissionFlagService {
       const unchanged = currentPermissionFlagsForRole.filter((pf) =>
         inputSet.has(pf.flag),
       );
-      return unchanged.map(fromFlatPermissionFlagToPermissionFlagDto);
+      return unchanged;
     }
 
     const buildAndRunResult =
@@ -150,6 +148,6 @@ export class PermissionFlagService {
         isDefined(pf) && pf.roleUniversalIdentifier === roleUniversalIdentifier,
     );
 
-    return resultFlags.map(fromFlatPermissionFlagToPermissionFlagDto);
+    return resultFlags;
   }
 }
