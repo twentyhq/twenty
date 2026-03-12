@@ -9,4 +9,5 @@ export type ComposedEmail = {
   sanitizedHtmlBody: string;
   attachments: MessageAttachment[];
   connectedAccount: ConnectedAccountWorkspaceEntity;
+  inReplyTo?: string;
 };

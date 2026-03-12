@@ -70,6 +70,20 @@ export class MicrosoftMessageOutboundService implements MessageOutboundDriver {
             })),
           }
         : {}),
+      ...(sendMessageInput.inReplyTo
+        ? {
+            internetMessageHeaders: [
+              {
+                name: 'In-Reply-To',
+                value: sendMessageInput.inReplyTo,
+              },
+              {
+                name: 'References',
+                value: sendMessageInput.inReplyTo,
+              },
+            ],
+          }
+        : {}),
     };
   }
 }
