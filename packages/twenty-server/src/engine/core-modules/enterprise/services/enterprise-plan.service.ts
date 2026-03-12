@@ -133,7 +133,6 @@ export class EnterprisePlanService implements OnModuleInit {
   }
 
   hasValidEnterpriseValidityToken(): boolean {
-    this.loadValidityToken();
     if (isDefined(this.cachedValidityPayload)) {
       const now = Math.floor(Date.now() / 1000);
 
