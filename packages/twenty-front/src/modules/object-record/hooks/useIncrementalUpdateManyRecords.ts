@@ -1,11 +1,12 @@
+import { dispatchObjectRecordOperationBrowserEvent } from '@/browser-event/utils/dispatchObjectRecordOperationBrowserEvent';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { DEFAULT_QUERY_PAGE_SIZE } from '@/object-record/constants/DefaultQueryPageSize';
 import { type UseFindManyRecordsParams } from '@/object-record/hooks/useFetchMoreRecordsWithPagination';
 import { useIncrementalFetchAndMutateRecords } from '@/object-record/hooks/useIncrementalFetchAndMutateRecords';
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
+import { useRefetchFindManyRecords } from '@/object-record/hooks/useRefetchFindManyRecords';
 import { useUpdateManyRecords } from '@/object-record/hooks/useUpdateManyRecords';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { dispatchObjectRecordOperationBrowserEvent } from '@/browser-event/utils/dispatchObjectRecordOperationBrowserEvent';
 import { getUpdatedFieldsFromRecordInput } from '@/object-record/utils/getUpdatedFieldsFromRecordInput';
 
 const DEFAULT_DELAY_BETWEEN_MUTATIONS_MS = 50;
@@ -39,6 +40,10 @@ export const useIncrementalUpdateManyRecords = <
 
   const { refetchAggregateQueries } = useRefetchAggregateQueries();
 
+  const { refetchFindManyRecords } = useRefetchFindManyRecords({
+    objectMetadataNamePlural: objectMetadataItem.namePlural,
+  });
+
   const {
     incrementalFetchAndMutate,
     progress,
@@ -68,6 +73,7 @@ export const useIncrementalUpdateManyRecords = <
             delayInMsBetweenRequests: delayInMsBetweenMutations,
             skipRegisterObjectOperation: true,
             skipRefetchAggregateQueries: true,
+            skipOptimisticEffect: true,
             abortSignal,
           });
 
@@ -78,6 +84,7 @@ export const useIncrementalUpdateManyRecords = <
         },
       );
     } finally {
+      await refetchFindManyRecords();
       await refetchAggregateQueries({
         objectMetadataNamePlural: objectMetadataItem.namePlural,
       });
