@@ -51,7 +51,7 @@
     "start": {
       "executor": "nx:run-commands",
       "cache": false,
-      "dependsOn": ["^build", "twenty-standard-application:build"],
+      "dependsOn": ["^build"],
       "options": {
         "cwd": "packages/twenty-server",
         "command": "rimraf dist && NODE_ENV=development nest start --watch"

@@ -65,11 +65,14 @@ export class UploadFilesOrchestratorStep {
       return;
     }
 
+    step.status = 'in_progress';
+
     this.state.addEvent({
       message: `Uploading ${builtPath}`,
       status: 'info',
     });
     this.state.updateEntityStatus(sourcePath, 'uploading');
+    this.notify();
 
     const uploadPromise = step.output.fileUploader
       .uploadFile({ builtPath, fileFolder })
@@ -95,6 +98,11 @@ export class UploadFilesOrchestratorStep {
       })
       .finally(() => {
         step.output.activeUploads.delete(uploadPromise);
+
+        if (step.output.activeUploads.size === 0) {
+          step.status = 'done';
+          this.notify();
+        }
       });
 
     step.output.activeUploads.add(uploadPromise);
