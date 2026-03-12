@@ -121,8 +121,7 @@ export class PageLayoutWidgetResolver {
   @ResolveField(() => Boolean)
   isOverridden(@Parent() widget: PageLayoutWidgetDTO): boolean {
     return (
-      isDefined(widget.overrides) &&
-      Object.keys(widget.overrides).length > 0
+      isDefined(widget.overrides) && Object.keys(widget.overrides).length > 0
     );
   }
 }

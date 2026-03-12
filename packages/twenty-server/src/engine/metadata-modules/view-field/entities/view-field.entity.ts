@@ -10,7 +10,10 @@ import {
   type Relation,
   UpdateDateColumn,
 } from 'typeorm';
-import { AggregateOperations, type SerializedRelation } from 'twenty-shared/types';
+import {
+  AggregateOperations,
+  type SerializedRelation,
+} from 'twenty-shared/types';
 
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ViewFieldGroupEntity } from 'src/engine/metadata-modules/view-field-group/entities/view-field-group.entity';

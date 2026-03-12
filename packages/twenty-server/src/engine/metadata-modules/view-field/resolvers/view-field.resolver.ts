@@ -1,5 +1,13 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
-import { Args, Float, Int, Mutation, Parent, Query, ResolveField } from '@nestjs/graphql';
+import {
+  Args,
+  Float,
+  Int,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+} from '@nestjs/graphql';
 
 import { AggregateOperations } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';

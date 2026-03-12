@@ -73,9 +73,7 @@ export class PageLayoutTabResolver {
 
   @ResolveField(() => Boolean)
   isOverridden(@Parent() tab: PageLayoutTabDTO): boolean {
-    return (
-      isDefined(tab.overrides) && Object.keys(tab.overrides).length > 0
-    );
+    return isDefined(tab.overrides) && Object.keys(tab.overrides).length > 0;
   }
 
   @Query(() => [PageLayoutTabDTO])

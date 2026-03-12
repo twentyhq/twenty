@@ -48,8 +48,7 @@ export class UpdateViewFieldActionHandlerService extends WorkspaceMigrationRunne
             ...updateWithResolvedForeignKeys,
             overrides: fromUniversalOverridesToViewFieldOverrides({
               universalOverrides,
-              flatViewFieldGroupMaps:
-                allFlatEntityMaps.flatViewFieldGroupMaps,
+              flatViewFieldGroupMaps: allFlatEntityMaps.flatViewFieldGroupMaps,
             }),
           };
 

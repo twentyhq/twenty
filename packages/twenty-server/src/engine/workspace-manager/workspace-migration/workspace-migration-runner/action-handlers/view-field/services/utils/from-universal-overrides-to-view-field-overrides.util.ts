@@ -28,12 +28,11 @@ export const fromUniversalOverridesToViewFieldOverrides = ({
     } as ViewFieldOverrides;
   }
 
-  const flatViewFieldGroup = findFlatEntityByUniversalIdentifier<
-    FlatViewFieldGroup
-  >({
-    flatEntityMaps: flatViewFieldGroupMaps,
-    universalIdentifier: viewFieldGroupUniversalIdentifier,
-  });
+  const flatViewFieldGroup =
+    findFlatEntityByUniversalIdentifier<FlatViewFieldGroup>({
+      flatEntityMaps: flatViewFieldGroupMaps,
+      universalIdentifier: viewFieldGroupUniversalIdentifier,
+    });
 
   return {
     ...scalarOverrides,
