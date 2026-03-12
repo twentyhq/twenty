@@ -15,7 +15,6 @@ type SidePanelNewSidebarItemViewSystemSubViewProps = {
   systemObjects: ObjectMetadataItem[];
   searchValue: string;
   onSearchChange: (value: string) => void;
-  onBack?: () => void;
   onSelectObject: (objectMetadataItem: ObjectMetadataItem) => void;
 };
 
@@ -23,7 +22,6 @@ export const SidePanelNewSidebarItemViewSystemSubView = ({
   systemObjects,
   searchValue,
   onSearchChange,
-  onBack,
   onSelectObject,
 }: SidePanelNewSidebarItemViewSystemSubViewProps) => {
   const { t } = useLingui();
@@ -44,8 +42,6 @@ export const SidePanelNewSidebarItemViewSystemSubView = ({
 
   return (
     <SidePanelSubViewWithSearch
-      backBarTitle={onBack ? t`System objects` : undefined}
-      onBack={onBack}
       searchPlaceholder={t`Search a system object...`}
       searchValue={searchValue}
       onSearchChange={onSearchChange}

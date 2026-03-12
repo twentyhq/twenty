@@ -25,7 +25,7 @@ type SearchRecordBase = {
   imageUrl?: string | null;
 };
 
-export const SidePanelNewSidebarItemRecordSubView = () => {
+export const SidePanelNewSidebarItemRecordSubPage = () => {
   const { t } = useLingui();
   const addMenuItemInsertionContext = useAtomStateValue(
     addMenuItemInsertionContextState,

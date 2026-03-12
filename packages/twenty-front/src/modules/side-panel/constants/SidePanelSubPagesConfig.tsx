@@ -1,6 +1,7 @@
-import { SidePanelNewSidebarItemObjectFlow } from '@/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemObjectFlow';
+import { SidePanelEditFolderPickerSubPage } from '@/side-panel/pages/navigation-menu-item/components/SidePanelEditFolderPickerSubPage';
+import { SidePanelNewSidebarItemObjectSubPage } from '@/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemObjectSubPage';
 import { SidePanelNewSidebarItemObjectSystemPickerSubPage } from '@/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemObjectSystemPickerSubPage';
-import { SidePanelNewSidebarItemRecordSubView } from '@/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemRecordSubView';
+import { SidePanelNewSidebarItemRecordSubPage } from '@/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemRecordSubPage';
 import { SidePanelNewSidebarItemViewObjectPickerSubPage } from '@/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemViewObjectPickerSubPage';
 import { SidePanelNewSidebarItemViewPickerSubPage } from '@/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemViewPickerSubPage';
 import { SidePanelNewSidebarItemViewSystemPickerSubPage } from '@/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemViewSystemPickerSubPage';
@@ -29,7 +30,7 @@ export const SIDE_PANEL_SUB_PAGES_CONFIG = new Map<
   ],
   [
     SidePanelSubPages.NewSidebarItemObjectPicker,
-    <SidePanelNewSidebarItemObjectFlow />,
+    <SidePanelNewSidebarItemObjectSubPage />,
   ],
   [
     SidePanelSubPages.NewSidebarItemObjectSystemPicker,
@@ -37,6 +38,7 @@ export const SIDE_PANEL_SUB_PAGES_CONFIG = new Map<
   ],
   [
     SidePanelSubPages.NewSidebarItemRecord,
-    <SidePanelNewSidebarItemRecordSubView />,
+    <SidePanelNewSidebarItemRecordSubPage />,
   ],
+  [SidePanelSubPages.EditFolderPicker, <SidePanelEditFolderPickerSubPage />],
 ]);

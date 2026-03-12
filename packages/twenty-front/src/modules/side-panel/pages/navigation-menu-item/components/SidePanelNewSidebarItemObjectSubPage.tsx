@@ -18,7 +18,7 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import { ViewKey } from '@/views/types/ViewKey';
 import { useIcons } from 'twenty-ui/display';
 
-export const SidePanelNewSidebarItemObjectFlow = () => {
+export const SidePanelNewSidebarItemObjectSubPage = () => {
   const { navigateToSidePanelSubPage } = useSidePanelSubPageHistory();
   const { getIcon } = useIcons();
   const [objectSearchInput, setObjectSearchInput] = useState('');

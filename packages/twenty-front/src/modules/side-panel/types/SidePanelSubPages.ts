@@ -7,4 +7,5 @@ export enum SidePanelSubPages {
   NewSidebarItemObjectPicker = 'new-sidebar-item-object-picker',
   NewSidebarItemObjectSystemPicker = 'new-sidebar-item-object-system-picker',
   NewSidebarItemRecord = 'new-sidebar-item-record',
+  EditFolderPicker = 'edit-folder-picker',
 }

@@ -22,6 +22,8 @@ export const getSidePanelSubPageTitle = (
       return t`System objects`;
     case SidePanelSubPages.NewSidebarItemRecord:
       return t`Add a record`;
+    case SidePanelSubPages.EditFolderPicker:
+      return t`Move to a folder`;
     default:
       assertUnreachable(subPage);
   }
