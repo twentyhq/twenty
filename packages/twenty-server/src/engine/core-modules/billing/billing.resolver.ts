@@ -4,6 +4,7 @@ import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 import { type ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
@@ -48,6 +49,10 @@ import {
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
+import {
+  FeatureFlagGuard,
+  RequireFeatureFlag,
+} from 'src/engine/guards/feature-flag.guard';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 
 @MetadataResolver()
@@ -322,8 +327,10 @@ export class BillingResolver {
   @Query(() => BillingAnalyticsDTO)
   @UseGuards(
     WorkspaceAuthGuard,
+    FeatureFlagGuard,
     SettingsPermissionGuard(PermissionFlagType.BILLING),
   )
+  @RequireFeatureFlag(FeatureFlagKey.IS_USAGE_ANALYTICS_ENABLED)
   async getBillingAnalytics(
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<BillingAnalyticsDTO> {

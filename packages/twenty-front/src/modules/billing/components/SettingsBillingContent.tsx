@@ -2,6 +2,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useNavigate } from 'react-router-dom';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { SettingsBillingAnalyticsSection } from '@/billing/components/SettingsBillingAnalyticsSection';
 import { SettingsBillingCreditsSection } from '@/billing/components/SettingsBillingCreditsSection';
 import { SettingsBillingSubscriptionInfo } from '@/billing/components/SettingsBillingSubscriptionInfo';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
@@ -78,6 +79,7 @@ export const SettingsBillingContent = () => {
             }
           />
         )}
+      <SettingsBillingAnalyticsSection />
       <Section>
         <H2Title
           title={t`Usage`}

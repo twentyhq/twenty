@@ -77,6 +77,9 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
   const isApplicationEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_APPLICATION_ENABLED,
   );
+  const isUsageAnalyticsEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_USAGE_ANALYTICS_ENABLED,
+  );
   const isSupportChatConfigured =
     supportChat?.supportDriver === 'FRONT' &&
     isNonEmptyString(supportChat.supportFrontChatId);
@@ -165,7 +168,9 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           path: SettingsPath.Usage,
           Icon: IconChartBar,
           isHidden:
-            isBillingEnabled || !permissionMap[PermissionFlagType.WORKSPACE],
+            !isUsageAnalyticsEnabled ||
+            isBillingEnabled ||
+            !permissionMap[PermissionFlagType.WORKSPACE],
         },
         {
           label: t`APIs & Webhooks`,
