@@ -10,7 +10,6 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { useOpenFrontComponentInSidePanel } from '@/side-panel/hooks/useOpenFrontComponentInSidePanel';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { type CommandMenuContextApi } from 'twenty-shared/types';
 import {
   evaluateConditionalAvailabilityExpression,
@@ -23,7 +22,6 @@ import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants
 import {
   CommandMenuItemAvailabilityType,
   type CommandMenuItemFieldsFragment,
-  FeatureFlagKey,
   useFindManyCommandMenuItemsQuery,
 } from '~/generated-metadata/graphql';
 
@@ -159,13 +157,7 @@ export const useCommandMenuItemFrontComponentCommands = (
         }
       : undefined;
 
-  const isCommandMenuItemEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_COMMAND_MENU_ITEM_ENABLED,
-  );
-
-  const { data } = useFindManyCommandMenuItemsQuery({
-    skip: !isCommandMenuItemEnabled,
-  });
+  const { data } = useFindManyCommandMenuItemsQuery();
 
   const frontComponentItems =
     data?.commandMenuItems?.filter(

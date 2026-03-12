@@ -54,7 +54,7 @@ export const RecordTableHeaderLabelIdentifierCellPlusButton = () => {
     !isReadOnly &&
     hasObjectUpdatePermissions &&
     !hasAnySoftDeleteFilterOnView &&
-    !isRecordTableCreateDisabled(objectMetadataItem.nameSingular) && (
+    !isRecordTableCreateDisabled(objectMetadataItem) && (
       <StyledHeaderIcon>
         <LightIconButton
           Icon={IconPlus}

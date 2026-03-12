@@ -874,11 +874,6 @@ type RatioAggregateConfig {
   optionValue: String!
 }
 
-type NewFieldDefaultConfiguration {
-  isVisible: Boolean!
-  viewFieldGroupId: String
-}
-
 type RichTextV2Body {
   blocknote: String
   markdown: String
@@ -1168,7 +1163,7 @@ type FieldRichTextConfiguration {
 type FieldsConfiguration {
   configurationType: WidgetConfigurationType!
   viewId: String
-  newFieldDefaultConfiguration: NewFieldDefaultConfiguration
+  newFieldDefaultVisibility: Boolean
   shouldAllowUserToSeeHiddenFields: Boolean
 }
 

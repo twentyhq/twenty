@@ -806,6 +806,13 @@ msgstr "Lisää \"{trimmedName}\" valintoihin"
 msgid "Add a {objectLabelSingular}"
 msgstr "Lisää {objectLabelSingular}"
 
+#. js-lingui-id: 7W8nJr
+#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationUngroupedEditor.tsx
+#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupDropdown.tsx
+#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationEditor.tsx
+msgid "Add a Group"
+msgstr ""
+
 #. js-lingui-id: CZDwqQ
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
 msgid "Add a new company we're in touch with (e.g. name, website, industry). Details: "
@@ -820,12 +827,6 @@ msgstr "Lisää solmu"
 #. js-lingui-id: nGv1DN
 #: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemRecordSubView.tsx
 msgid "Add a record"
-msgstr ""
-
-#. js-lingui-id: r8W+9y
-#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationUngroupedEditor.tsx
-#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupEditor.tsx
-msgid "Add a Section"
 msgstr ""
 
 #. js-lingui-id: eMc2xs
@@ -1355,6 +1356,11 @@ msgstr ""
 msgid "All application registrations across the platform, including orphaned marketplace apps"
 msgstr ""
 
+#. js-lingui-id: mSTufP
+#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
+msgid "All applications registered on this workspace"
+msgstr ""
+
 #. js-lingui-id: 1kLn6M
 #: src/modules/activities/calendar/components/CalendarEventRow.tsx
 msgid "All day"
@@ -1794,7 +1800,6 @@ msgid "Application details"
 msgstr "Sovelluksen tiedot"
 
 #. js-lingui-id: lGEBD4
-#: src/pages/settings/applications/components/SettingsUploadTarballModal.tsx
 #: src/modules/marketplace/hooks/useInstallApp.ts
 msgid "Application installed successfully."
 msgstr ""
@@ -1852,11 +1857,6 @@ msgstr "Hyväksytyt verkkotunnukset"
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
 msgid "Apps"
-msgstr ""
-
-#. js-lingui-id: KKYyo8
-#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
-msgid "Apps you've created, registered, or published"
 msgstr ""
 
 #. js-lingui-id: 8HV3WN
@@ -2521,7 +2521,6 @@ msgstr "Et voi skannata? Kopioi"
 #. js-lingui-id: dEgA5A
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
-#: src/pages/settings/applications/components/SettingsUploadTarballModal.tsx
 #: src/pages/auth/Authorize.tsx
 #: src/modules/ui/layout/modal/components/ConfirmationModal.tsx
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
@@ -2583,6 +2582,11 @@ msgstr "Peruuta suunnitelman vaihtaminen?"
 #: src/modules/billing/components/SettingsBillingContent.tsx
 msgid "Cancel your subscription"
 msgstr "Peruuta tilauksesi"
+
+#. js-lingui-id: XDbjjW
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
+msgid "Cannot delete the only view"
+msgstr ""
 
 #. js-lingui-id: 8fbdLj
 #: src/modules/ui/feedback/snack-bar-manager/utils/sanitizeMessageToRenderInSnackbar.ts
@@ -2737,11 +2741,6 @@ msgstr "Valitse OIDC- ja SAML-protokollien välillä"
 #: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
 msgid "Choose between Short and Full"
 msgstr "Valitse lyhyen ja täyden välillä"
-
-#. js-lingui-id: +yPBXI
-#: src/pages/settings/applications/components/SettingsUploadTarballModal.tsx
-msgid "Choose file"
-msgstr ""
 
 #. js-lingui-id: YcrXB2
 #: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
@@ -2946,6 +2945,11 @@ msgstr "sarakedata ei ole yhteensopiva monivalinnan kanssa. Vaadittu muoto on '[
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
 msgid "Columns not matched:"
 msgstr "Sarakkeita ei ole yhdistetty:"
+
+#. js-lingui-id: cj9UFG
+#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
+msgid "Command copied to clipboard"
+msgstr ""
 
 #. js-lingui-id: RyZt4H
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
@@ -3305,11 +3309,6 @@ msgstr "Jatka Microsoftin avulla"
 msgid "Continue without sync"
 msgstr "Jatka ilman synkronointia"
 
-#. js-lingui-id: nTcGbN
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
-msgid "Control visibility on the marketplace. Unlisted apps are still accessible via direct link."
-msgstr ""
-
 #. js-lingui-id: +iFqZW
 #: src/modules/settings/roles/role-settings/components/SettingsRoleApplicability.tsx
 msgid "Control which types of entities this role can be assigned to"
@@ -3346,6 +3345,11 @@ msgstr "Kopioi"
 #: src/modules/ai/components/CodeExecutionDisplay.tsx
 msgid "Copy code"
 msgstr "Kopioi koodi"
+
+#. js-lingui-id: Oos8fo
+#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
+msgid "Copy command"
+msgstr ""
 
 #. js-lingui-id: Es0ros
 #: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
@@ -3507,6 +3511,11 @@ msgstr "Luo"
 msgid "Create {targetObjectLabelSingular}"
 msgstr "Luo {targetObjectLabelSingular}"
 
+#. js-lingui-id: 5XhrY3
+#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
+msgid "Create & Develop"
+msgstr ""
+
 #. js-lingui-id: 8aATyU
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
 msgid "Create a dashboard"
@@ -3546,11 +3555,6 @@ msgstr "Luo työnkulku ja palaa tänne nähdäksesi sen versiot"
 #: src/modules/auth/sign-in-up/components/SignInUpGlobalScopeForm.tsx
 msgid "Create a workspace"
 msgstr "Luo työtila"
-
-#. js-lingui-id: /WlFSf
-#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
-msgid "Create an application"
-msgstr "Luo sovellus"
 
 #. js-lingui-id: 8ZjIgO
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -4145,12 +4149,6 @@ msgstr "Oletusmaakoodi"
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartColorPaletteOption.tsx
 msgid "Default palette"
 msgstr "Oletuspaletti"
-
-#. js-lingui-id: U/uGBk
-#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationUngroupedEditor.tsx
-#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupEditor.tsx
-msgid "Default position/visibility for fields created in the future"
-msgstr ""
 
 #. js-lingui-id: v41VX6
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
@@ -5563,11 +5561,6 @@ msgstr ""
 msgid "Error uninstalling application."
 msgstr ""
 
-#. js-lingui-id: OceoGT
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
-msgid "Error updating marketplace listing"
-msgstr ""
-
 #. js-lingui-id: fQYyhK
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
 msgid "Error updating redirect URIs"
@@ -6192,11 +6185,6 @@ msgstr "Tiedostoa ei voitu ladata: {fileName}"
 #: src/modules/settings/workspace-member/components/WorkspaceMemberPictureUploader.tsx
 msgid "Failed to upload picture"
 msgstr "Kuvan lähetys epäonnistui"
-
-#. js-lingui-id: vWFfVs
-#: src/modules/marketplace/hooks/useUploadAppTarball.ts
-msgid "Failed to upload tarball."
-msgstr ""
 
 #. js-lingui-id: K0joU5
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthAccountSyncCountersTable.tsx
@@ -8065,11 +8053,6 @@ msgstr "Listaa asennetut sovellukset. Käytä suodatinta tietyn sovelluksen etsi
 msgid "Listed"
 msgstr ""
 
-#. js-lingui-id: vxO58F
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
-msgid "Listed on marketplace"
-msgstr ""
-
 #. js-lingui-id: HhVDr2
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Listing"
@@ -8337,11 +8320,6 @@ msgstr "Hallitse sovellustasi"
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 msgid "Manage your internet accounts."
 msgstr "Hallitse internet-tilejäsi."
-
-#. js-lingui-id: +pSdLP
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
-msgid "Managed by the marketplace catalog sync for npm packages"
-msgstr ""
 
 #. js-lingui-id: BWTzAb
 #: src/modules/side-panel/pages/page-layout/hooks/useGraphXSortOptionLabels.ts
@@ -8730,11 +8708,6 @@ msgstr "täytyy olla objekti taulukossa, jossa on kelvollinen URL ja tunniste (f
 msgid "must be an array of valid emails"
 msgstr "täytyy olla kelvollisia sähköposteja sisältävä taulukko"
 
-#. js-lingui-id: bPl77g
-#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
-msgid "My Apps"
-msgstr ""
-
 #. js-lingui-id: XTGSZU
 #: src/modules/views/view-picker/components/ViewPickerListContent.tsx
 msgid "My unlisted views"
@@ -8955,12 +8928,6 @@ msgstr "Uusi sähköpostitoimialue"
 #: src/modules/settings/data-model/components/SettingsDataModelNewFieldBreadcrumbDropDown.tsx
 msgid "New Field"
 msgstr "Uusi kenttä"
-
-#. js-lingui-id: DNUCGO
-#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationUngroupedEditor.tsx
-#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupEditor.tsx
-msgid "New fields"
-msgstr ""
 
 #. js-lingui-id: 96G6Re
 #: src/modules/side-panel/pages/navigation-menu-item/hooks/useAddFolderToNavigationMenu.ts
@@ -11475,6 +11442,11 @@ msgstr "Tallenna hallintapaneeli"
 msgid "Save Page Layout"
 msgstr ""
 
+#. js-lingui-id: veLq3R
+#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
+msgid "Scaffold a new app, then use the CLI to develop, publish, and distribute"
+msgstr ""
+
 #. js-lingui-id: gmB6oO
 #: src/modules/workflow/workflow-trigger/components/CronExpressionHelper.tsx
 msgid "Schedule"
@@ -11926,11 +11898,6 @@ msgstr ""
 msgid "Select 1 field"
 msgstr ""
 
-#. js-lingui-id: YfBvUy
-#: src/pages/settings/applications/components/SettingsUploadTarballModal.tsx
-msgid "Select a .tar.gz application package to upload and install."
-msgstr ""
-
 #. js-lingui-id: OMoA3j
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
 msgid "Select a date"
@@ -12177,6 +12144,11 @@ msgstr "Aseta ensisijaiseksi"
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 msgid "Set email visibility, manage your blocklist and more."
 msgstr "Aseta sähköpostin näkyvyys, hallinnoi estolistaa ja muuta."
+
+#. js-lingui-id: qFjlHh
+#: src/modules/side-panel/pages/page-layout/components/NewFieldDefaultVisibilityToggle.tsx
+msgid "Set fields created in the future as \"visible\""
+msgstr ""
 
 #. js-lingui-id: 6KA8xy
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -13045,11 +13017,6 @@ msgstr "Taulukko"
 msgid "Tarball upload"
 msgstr ""
 
-#. js-lingui-id: yvSCl+
-#: src/pages/settings/applications/components/SettingsUploadTarballModal.tsx
-msgid "Tarball uploaded but installation failed."
-msgstr ""
-
 #. js-lingui-id: sceIIK
 #: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationJunctionForm.tsx
 msgid "Target relation on Junction Object"
@@ -13356,6 +13323,11 @@ msgstr ""
 #. js-lingui-id: 5AOB6g
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 msgid "This app is installed on the current workspace"
+msgstr ""
+
+#. js-lingui-id: AldXy0
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
+msgid "This app is listed on the marketplace because it is published to npm."
 msgstr ""
 
 #. js-lingui-id: SYslQU
@@ -14181,11 +14153,6 @@ msgstr "Lataa"
 msgid "Upload .xlsx, .xls or .csv file"
 msgstr "Lataa .xlsx, .xls tai .csv tiedosto"
 
-#. js-lingui-id: BhkxTk
-#: src/modules/marketplace/hooks/useUploadAppTarball.ts
-msgid "Upload failed."
-msgstr ""
-
 #. js-lingui-id: 2IXDgU
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/FilesFieldInput.tsx
@@ -14208,12 +14175,6 @@ msgstr "Lataa tiedostoja"
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Upload Files"
 msgstr "Lataa tiedostoja"
-
-#. js-lingui-id: aG3MkW
-#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
-#: src/pages/settings/applications/components/SettingsUploadTarballModal.tsx
-msgid "Upload tarball"
-msgstr ""
 
 #. js-lingui-id: akDOEO
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
@@ -14816,11 +14777,6 @@ msgstr ""
 msgid "When enabled, newly added models are available to all workspaces by default"
 msgstr ""
 
-#. js-lingui-id: mCGuXk
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
-msgid "When enabled, this app appears in the marketplace browse page"
-msgstr ""
-
 #. js-lingui-id: C51ilI
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 msgid "When the API key will expire."
@@ -15110,11 +15066,6 @@ msgstr "Kuulut jo tähän työtilaan"
 msgid "You are not allowed to create records for this object"
 msgstr "Et voi luoda tietueita tälle objektille"
 
-#. js-lingui-id: iibZbD
-#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
-msgid "You can either create a private app or share it to others"
-msgstr "Voit joko luoda yksityisen sovelluksen tai jakaa sen muille"
-
 #. js-lingui-id: CNAoaw
 #: src/modules/workflow/workflow-steps/workflow-actions/logic-function-action/components/WorkflowEditActionLogicFunction.tsx
 msgid "You can see the function logic in your application settings."
@@ -15184,6 +15135,11 @@ msgstr "Tilisi on aktivoitu."
 #: src/modules/apollo/services/apollo.factory.ts
 msgid "Your app version is out of date. Please refresh the page."
 msgstr "Sovelluksesi versio on vanhentunut. Ole hyvä, päivitä sivu."
+
+#. js-lingui-id: oNUh7z
+#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
+msgid "Your Apps"
+msgstr ""
 
 #. js-lingui-id: +5YqGH
 #: src/modules/onboarding/constants/OnboardingSyncEmailsOptions.ts

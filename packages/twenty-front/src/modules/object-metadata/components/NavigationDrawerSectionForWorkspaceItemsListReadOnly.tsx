@@ -10,6 +10,7 @@ const StyledList = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.betweenSiblingsGap};
+  padding-top: ${themeCssVariables.betweenSiblingsGap};
 `;
 
 type NavigationDrawerSectionForWorkspaceItemsListReadOnlyProps = Pick<

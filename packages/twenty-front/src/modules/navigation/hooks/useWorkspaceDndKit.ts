@@ -1,8 +1,8 @@
 import { type DragDropProvider } from '@dnd-kit/react';
 import { isSortable } from '@dnd-kit/react/sortable';
 import type { ResponderProvided } from '@hello-pangea/dnd';
-import { type ComponentProps, useCallback, useState } from 'react';
 import { useStore } from 'jotai';
+import { type ComponentProps, useCallback, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ADD_TO_NAV_SOURCE_DROPPABLE_ID } from '@/navigation-menu-item/constants/AddToNavSourceDroppableId';
@@ -96,6 +96,7 @@ export const useWorkspaceDndKit = (): {
     id: string,
     source: DropDestination,
     destination: DropDestination,
+    insertBeforeItemId?: string | null,
   ) => {
     const draggedItem = getNavItemById(id);
     const destFolderId = validateAndExtractWorkspaceFolderId(
@@ -118,7 +119,11 @@ export const useWorkspaceDndKit = (): {
     );
     const provided: ResponderProvided = { announce: () => {} };
     handleWorkspaceNavigationMenuItemDragAndDrop(
-      { ...result, ...DROP_RESULT_OPTIONS },
+      {
+        ...result,
+        ...DROP_RESULT_OPTIONS,
+        ...(insertBeforeItemId != null && { insertBeforeItemId }),
+      },
       provided,
     );
   };
@@ -284,10 +289,14 @@ export const useWorkspaceDndKit = (): {
         isWorkspaceDroppableId(initialGroupStr) &&
         isWorkspaceDroppableId(destGroup);
       if (bothWorkspace) {
+        const insertBeforeItemId = resolved.isTargetFolder
+          ? null
+          : String(target?.id ?? '');
         applyWorkspaceReorderIfAllowed(
           draggableId,
           { droppableId: initialGroupStr, index: initialIndex },
           resolved.destination,
+          insertBeforeItemId || undefined,
         );
         return;
       }

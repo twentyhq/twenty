@@ -8,7 +8,6 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import { FieldsConfigurationFieldEditor } from '@/page-layout/widgets/fields/components/FieldsConfigurationFieldEditor';
 import { FieldsConfigurationGroupDropdown } from '@/page-layout/widgets/fields/components/FieldsConfigurationGroupDropdown';
 import { FieldsConfigurationGroupRenameInput } from '@/page-layout/widgets/fields/components/FieldsConfigurationGroupRenameInput';
-import { NEW_FIELDS_INDICATOR_DRAGGABLE_ID } from '@/page-layout/widgets/fields/constants/NewFieldsIndicatorDraggableId';
 import { type FieldsWidgetGroup } from '@/page-layout/widgets/fields/types/FieldsWidgetGroup';
 import { getFieldsConfigurationGroupRenameDropdownId } from '@/page-layout/widgets/fields/utils/getFieldsConfigurationGroupRenameDropdownId';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -16,13 +15,6 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
-import {
-  IconEye,
-  IconEyeOff,
-  IconNewSection,
-  IconPlaylistAdd,
-} from 'twenty-ui/display';
-import { MenuItem, MenuItemDraggable } from 'twenty-ui/navigation';
 
 import { FieldsConfigurationGroupDraggableHeader } from '@/page-layout/widgets/fields/components/FieldsConfigurationGroupDraggableHeader';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -89,9 +81,6 @@ type FieldsConfigurationGroupEditorProps = {
   renamingGroupValue: string;
   onRenamingGroupValueChange: (value: string) => void;
   onStartRename: (params: { groupId: string; groupName: string }) => void;
-  showNewFieldsItem: boolean;
-  newFieldsIsVisible: boolean;
-  onToggleNewFieldsVisibility: () => void;
 };
 
 export const FieldsConfigurationGroupEditor = ({
@@ -105,9 +94,6 @@ export const FieldsConfigurationGroupEditor = ({
   renamingGroupValue,
   onRenamingGroupValueChange,
   onStartRename,
-  showNewFieldsItem,
-  newFieldsIsVisible,
-  onToggleNewFieldsVisibility,
 }: FieldsConfigurationGroupEditorProps) => {
   const { t } = useLingui();
 
@@ -184,6 +170,7 @@ export const FieldsConfigurationGroupEditor = ({
             groupId={group.id}
             onStartRename={handleStartRename}
             onDelete={() => onDeleteGroup({ groupId: group.id })}
+            onAddGroup={onAddGroup}
           />
         </StyledDropdownContainer>
       </StyledGroupHeaderRow>
@@ -223,44 +210,10 @@ export const FieldsConfigurationGroupEditor = ({
                 />
               );
             })}
-            {showNewFieldsItem && (
-              <DraggableItem
-                key={NEW_FIELDS_INDICATOR_DRAGGABLE_ID}
-                draggableId={NEW_FIELDS_INDICATOR_DRAGGABLE_ID}
-                index={sortedFields.length}
-                isInsideScrollableContainer
-                itemComponent={
-                  <MenuItemDraggable
-                    LeftIcon={IconPlaylistAdd}
-                    text={t`New fields`}
-                    contextualText={t`Default position/visibility for fields created in the future`}
-                    gripMode="onHover"
-                    withIconContainer
-                    isIconDisplayedOnHoverOnly={false}
-                    iconButtons={[
-                      {
-                        Icon: newFieldsIsVisible ? IconEye : IconEyeOff,
-                        onClick: (e) => {
-                          e.stopPropagation();
-                          onToggleNewFieldsVisibility();
-                        },
-                      },
-                    ]}
-                  />
-                }
-              />
-            )}
             {droppableProvided.placeholder}
           </StyledFieldsDroppable>
         )}
       </Droppable>
-
-      <MenuItem
-        LeftIcon={IconNewSection}
-        withIconContainer
-        text={t`Add a Section`}
-        onClick={onAddGroup}
-      />
     </StyledGroupContainer>
   );
 };

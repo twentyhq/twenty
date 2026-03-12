@@ -85,7 +85,7 @@ export const RecordTableEmptyStateDisplay = (
         {'buttonTitle' in props &&
           !isReadOnly &&
           !hasAnySoftDeleteFilterOnView &&
-          !isRecordTableCreateDisabled(objectMetadataItem.nameSingular) && (
+          !isRecordTableCreateDisabled(objectMetadataItem) && (
             <Button
               Icon={props.ButtonIcon}
               title={props.buttonTitle}

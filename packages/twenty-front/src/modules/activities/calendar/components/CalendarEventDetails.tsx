@@ -157,10 +157,12 @@ export const CalendarEventDetails = ({
   const renderField = (fieldMetadataItem: FieldMetadataItem) => {
     const isReadOnly = isRecordFieldReadOnly({
       isRecordReadOnly,
+      isSystemObject: objectMetadataItem.isSystem,
       objectPermissions,
       fieldMetadataItem: {
         id: fieldMetadataItem.id,
         isUIReadOnly: fieldMetadataItem.isUIReadOnly ?? false,
+        isCustom: fieldMetadataItem.isCustom ?? false,
       },
     });
 
