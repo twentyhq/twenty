@@ -3,6 +3,7 @@ import { type BaseOutputSchemaV2 } from 'twenty-shared/workflow';
 import { parseAndValidateVariableFriendlyStringifiedJson } from '@/workflow/utils/parseAndValidateVariableFriendlyStringifiedJson';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { convertOutputSchemaToJson } from '@/workflow/workflow-steps/workflow-actions/http-request-action/utils/convertOutputSchemaToJson';
 import { getHttpRequestOutputSchema } from '@/workflow/workflow-steps/workflow-actions/http-request-action/utils/getHttpRequestOutputSchema';
 
@@ -18,7 +19,8 @@ export const useHttpRequestOutputSchema = ({
   readonly,
 }: UseHttpRequestOutputSchemaProps) => {
   const [outputSchema, setOutputSchema] = useState<string | null>(
-    Object.keys(action.settings.outputSchema).length
+    isDefined(action.settings.outputSchema) &&
+      Object.keys(action.settings.outputSchema).length
       ? JSON.stringify(
           convertOutputSchemaToJson(
             action.settings.outputSchema as BaseOutputSchemaV2,
