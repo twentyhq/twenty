@@ -27,8 +27,20 @@ export const PromiseRejectionEffect = () => {
         error.networkError?.name === 'AbortError' ||
         error.name === 'AbortError';
 
-      if (!isAbortError) {
+      // Transient network errors (Failed to fetch, Load failed) from Apollo
+      // are not actionable — typically caused by unstable connectivity or
+      // browser tab backgrounding. Skip both the snackbar and Sentry.
+      const isTransientNetworkError =
+        error.name === 'ApolloError' &&
+        isEmpty(error.graphQLErrors) &&
+        error.networkError?.name === 'TypeError';
+
+      if (!isAbortError && !isTransientNetworkError) {
         enqueueErrorSnackBar({});
+      }
+
+      if (isTransientNetworkError) {
+        return;
       }
 
       try {

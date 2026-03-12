@@ -54,6 +54,14 @@ export const SentryInitEffect = () => {
             tracesSampleRate: 1.0,
             replaysSessionSampleRate: 0.1,
             replaysOnErrorSampleRate: 1.0,
+            ignoreErrors: [
+              // Transient network errors from Apollo — not actionable,
+              // typically caused by unstable connectivity on self-hosted
+              // instances or browser tab backgrounding.
+              'Failed to fetch',
+              'NetworkError when attempting to fetch resource',
+              'Load failed',
+            ],
           });
 
           setIsSentryInitialized(true);
