@@ -1,6 +1,6 @@
 {
   "install": "yarn install",
-  "start": "(sudo service docker start || service docker start) && sleep 2 && bash packages/twenty-utils/setup-dev-env.sh && npx nx database:reset twenty-server",
+  "start": "(sudo service docker start || service docker start || true) && bash packages/twenty-utils/setup-dev-env.sh && npx nx database:reset twenty-server",
   "terminals": [
     {
       "name": "Development Server",

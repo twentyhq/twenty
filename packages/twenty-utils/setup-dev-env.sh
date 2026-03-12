@@ -57,7 +57,7 @@ redis_is_up() {
     docker compose -f "$COMPOSE_FILE" exec -T redis redis-cli ping 2>/dev/null | grep -q PONG
   else
     # Portable fallback using bash /dev/tcp (no nc -q dependency)
-    (echo PING | timeout 2 bash -c 'cat > /dev/tcp/localhost/6379 && head -1' 2>/dev/null || true) | grep -q PONG
+    timeout 2 bash -c 'exec 3<>/dev/tcp/localhost/6379; echo PING >&3; read -r reply <&3; exec 3>&-; echo "$reply"' 2>/dev/null | grep -q PONG
   fi
 }
 
@@ -210,10 +210,10 @@ info "Creating databases..."
 run_psql() {
   if command -v psql &>/dev/null; then
     PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c "$1" 2>/dev/null || true
-  elif can_use_docker; then
+  elif can_use_docker && docker compose -f "$COMPOSE_FILE" ps --quiet db 2>/dev/null | grep -q .; then
     docker compose -f "$COMPOSE_FILE" exec -T db psql -U postgres -d postgres -c "$1" 2>/dev/null || true
   else
-    fail "No psql client available"
+    fail "No psql client available and no Docker db container running"
     return 1
   fi
 }
