@@ -116,7 +116,10 @@ export const PageLayoutRendererContent = () => {
 
   const tabsForCurrentObject = isSystemObject
     ? tabsWithVisibleWidgets.filter(
-        (tab) => tab.title === 'Home' || tab.title === 'Timeline',
+        (tab) =>
+          tab.title === 'Home' ||
+          tab.title === 'Timeline' ||
+          tab.title === 'Overview',
       )
     : tabsWithVisibleWidgets;
 
