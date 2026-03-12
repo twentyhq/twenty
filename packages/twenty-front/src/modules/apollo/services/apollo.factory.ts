@@ -1,17 +1,13 @@
+import { ApolloClient, ApolloLink } from '@apollo/client';
 import {
-  ApolloClient,
-  type ApolloClientOptions,
-  ApolloLink,
-  type FetchResult,
-  fromPromise,
-  type Observable,
-  type Operation,
-  type ServerError,
+  CombinedGraphQLErrors,
+  ServerError,
   type ServerParseError,
-} from '@apollo/client';
+} from '@apollo/client/errors';
 import { setContext } from '@apollo/client/link/context';
-import { onError } from '@apollo/client/link/error';
+import { ErrorLink } from '@apollo/client/link/error';
 import { RetryLink } from '@apollo/client/link/retry';
+import { from, switchMap } from 'rxjs';
 import { RestLink } from 'apollo-link-rest';
 import { createUploadLink } from 'apollo-upload-client';
 
@@ -47,7 +43,12 @@ const logger = loggerLink(() => 'Twenty');
 // deduplicate into a single renewal request.
 let renewalPromise: Promise<void> | null = null;
 
-export interface Options<TCacheShape> extends ApolloClientOptions<TCacheShape> {
+export interface Options<TCacheShape> {
+  uri: string;
+  cache: ApolloClient.Options<TCacheShape>['cache'];
+  defaultOptions?: ApolloClient.Options<TCacheShape>['defaultOptions'];
+  headers?: Record<string, string>;
+  connectToDevTools?: boolean;
   onError?: (err: readonly GraphQLFormattedError[] | undefined) => void;
   onNetworkError?: (err: Error | ServerParseError | ServerError) => void;
   onTokenPairChange?: (tokenPair: AuthTokenPair) => void;
@@ -62,7 +63,7 @@ export interface Options<TCacheShape> extends ApolloClientOptions<TCacheShape> {
 }
 
 export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
-  private client: ApolloClient<TCacheShape>;
+  private client: ApolloClient;
   private currentWorkspaceMember: CurrentWorkspaceMember | null = null;
   private currentWorkspace: CurrentWorkspace | null = null;
   private appVersion?: string;
@@ -70,6 +71,10 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
   constructor(opts: Options<TCacheShape>) {
     const {
       uri,
+      cache,
+      defaultOptions,
+      headers: optionHeaders,
+      connectToDevTools,
       onError: onErrorCb,
       onNetworkError,
       onTokenPairChange,
@@ -81,7 +86,6 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
       extraLinks,
       isDebugMode,
       appVersion,
-      ...options
     } = opts;
 
     this.currentWorkspaceMember = currentWorkspaceMember;
@@ -110,7 +114,7 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
           return {
             headers: {
               ...headers,
-              ...options.headers,
+              ...optionHeaders,
               'x-locale': locale,
             },
           };
@@ -121,7 +125,7 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
         return {
           headers: {
             ...headers,
-            ...options.headers,
+            ...optionHeaders,
             authorization: token ? `Bearer ${token}` : '',
             'x-locale': locale,
             ...(this.currentWorkspace?.metadataVersion && {
@@ -153,8 +157,8 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
       });
 
       const handleTokenRenewal = (
-        operation: Operation,
-        forward: (operation: Operation) => Observable<FetchResult>,
+        operation: ApolloLink.Operation,
+        forward: ApolloLink.ForwardFunction,
       ) => {
         if (!renewalPromise) {
           // Always renew through /metadata since the RenewToken is only exposed there
@@ -181,7 +185,9 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
             });
         }
 
-        return fromPromise(renewalPromise).flatMap(() => forward(operation));
+        return from(renewalPromise).pipe(
+          switchMap(() => forward(operation)),
+        );
       };
 
       const sendToSentry = ({
@@ -189,7 +195,7 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
         operation,
       }: {
         graphQLError: GraphQLFormattedError;
-        operation: Operation;
+        operation: ApolloLink.Operation;
       }) => {
         if (isDebugMode === true) {
           logDebug(
@@ -242,11 +248,11 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
           });
       };
 
-      const errorLink = onError(
-        ({ graphQLErrors, networkError, forward, operation }) => {
-          if (isDefined(graphQLErrors)) {
-            onErrorCb?.(graphQLErrors);
-            for (const graphQLError of graphQLErrors) {
+      const errorLink = new ErrorLink(
+        ({ error, operation, forward }) => {
+          if (CombinedGraphQLErrors.is(error)) {
+            onErrorCb?.(error.errors);
+            for (const graphQLError of error.errors) {
               if (graphQLError.message === 'Unauthorized') {
                 // oxlint-disable-next-line no-console
                 console.log('Unauthorized, triggering token renewal');
@@ -287,12 +293,10 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
                   sendToSentry({ graphQLError, operation });
               }
             }
-          }
-
-          if (isDefined(networkError)) {
+          } else if (ServerError.is(error)) {
             if (
               this.isRestOperation(operation) &&
-              this.isAuthenticationError(networkError as ServerError)
+              this.isAuthenticationError(error)
             ) {
               // oxlint-disable-next-line no-console
               console.log(
@@ -301,15 +305,20 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
               return handleTokenRenewal(operation, forward);
             }
 
-            if (this.isPayloadTooLargeError(networkError as ServerError)) {
+            if (this.isPayloadTooLargeError(error)) {
               onPayloadTooLarge?.(t`Uploaded content is too large.`);
               return;
             }
 
             if (isDebugMode === true) {
-              logDebug(`[Network error]: ${networkError}`);
+              logDebug(`[Network error]: ${error}`);
             }
-            onNetworkError?.(networkError);
+            onNetworkError?.(error);
+          } else if (isDefined(error)) {
+            if (isDebugMode === true) {
+              logDebug(`[Network error]: ${error}`);
+            }
+            onNetworkError?.(error as Error);
           }
         },
       );
@@ -329,12 +338,14 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
     };
 
     this.client = new ApolloClient({
-      ...options,
+      cache,
       link: buildApolloLink(),
+      defaultOptions,
+      connectToDevTools,
     });
   }
 
-  private isRestOperation(operation: Operation): boolean {
+  private isRestOperation(operation: ApolloLink.Operation): boolean {
     return operation.query.definitions.some(
       (def: DefinitionNode) =>
         def.kind === 'OperationDefinition' &&
