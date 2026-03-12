@@ -1,5 +1,10 @@
 import { useLingui } from '@lingui/react/macro';
-import { IconDotsVertical, IconPencil, IconTrash } from 'twenty-ui/display';
+import {
+  IconDotsVertical,
+  IconNewSection,
+  IconPencil,
+  IconTrash,
+} from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
 
@@ -14,12 +19,14 @@ type FieldsConfigurationGroupDropdownProps = {
   groupId: string;
   onStartRename: () => void;
   onDelete: () => void;
+  onAddGroup?: () => void;
 };
 
 export const FieldsConfigurationGroupDropdown = ({
   groupId,
   onStartRename,
   onDelete,
+  onAddGroup,
 }: FieldsConfigurationGroupDropdownProps) => {
   const { t } = useLingui();
 
@@ -35,6 +42,11 @@ export const FieldsConfigurationGroupDropdown = ({
   const handleDelete = () => {
     closeDropdown(dropdownId);
     onDelete();
+  };
+
+  const handleAddGroup = () => {
+    closeDropdown(dropdownId);
+    onAddGroup?.();
   };
 
   return (
@@ -58,6 +70,12 @@ export const FieldsConfigurationGroupDropdown = ({
               onClick={handleDelete}
               accent="danger"
               text={t`Delete`}
+            />
+            <MenuItem
+              LeftIcon={IconNewSection}
+              onClick={handleAddGroup}
+              accent="default"
+              text={t`Add a Group`}
             />
           </DropdownMenuItemsContainer>
         </DropdownContent>

@@ -297,46 +297,60 @@ yarn command:prod cron:workflow:automated-cron-trigger
 **Modo somente ambiente:** Se você definir `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, adicione estas variáveis ao seu arquivo `.env`.
 </Warning>
 
-## Funções lógicas
+## Funções lógicas e interpretador de código
 
-O Twenty oferece suporte a funções lógicas para fluxos de trabalho e lógica personalizada. O ambiente de execução é configurado por meio da variável de ambiente `SERVERLESS_TYPE`.
+O Twenty oferece suporte a funções lógicas para fluxos de trabalho e ao interpretador de código para análise de dados com IA. Ambos executam código fornecido pelo usuário e exigem configuração explícita por motivos de segurança.
+
+### Padrões de segurança
+
+**Em produção (NODE_ENV=production):** Tanto as funções lógicas quanto o interpretador de código têm como padrão **Desativado**. Você deve habilitá-los explicitamente com `LOGIC_FUNCTION_TYPE` e `CODE_INTERPRETER_TYPE` se precisar desses recursos.
+
+**Em desenvolvimento (NODE_ENV=development):** Ambos têm como padrão **LOCAL** por conveniência ao executar localmente.
 
 <Warning>
-**Aviso de segurança:** O driver local (`SERVERLESS_TYPE=LOCAL`) executa código diretamente no host em um processo Node.js sem sandbox. Deve ser usado apenas para código confiável em desenvolvimento. Para implantações de produção que lidam com código não confiável, recomendamos fortemente usar `SERVERLESS_TYPE=LAMBDA` ou `SERVERLESS_TYPE=DISABLED`.
+**Aviso de segurança:** O driver local (`LOGIC_FUNCTION_TYPE=LOCAL` ou `CODE_INTERPRETER_TYPE=LOCAL`) executa código diretamente no host em um processo Node.js sem sandbox. Deve ser usado apenas para código confiável em desenvolvimento. Para implantações de produção que lidam com código não confiável, use `LOGIC_FUNCTION_TYPE=LAMBDA` ou `CODE_INTERPRETER_TYPE=E2B` (com sandbox), ou mantenha-os desativados.
 </Warning>
 
-### Drivers disponíveis
+### Funções lógicas - Drivers disponíveis
 
-| Driver     | Variável de ambiente       | Caso de uso                                | Nível de segurança                     |
-| ---------- | -------------------------- | ------------------------------------------ | -------------------------------------- |
-| Desativado | `SERVERLESS_TYPE=DISABLED` | Desativar completamente as funções lógicas | N/A                                    |
-| Local      | `SERVERLESS_TYPE=LOCAL`    | Desenvolvimento e ambientes confiáveis     | Baixo (sem sandbox)                    |
-| Lambda     | `SERVERLESS_TYPE=LAMBDA`   | Produção com código não confiável          | Alto (isolamento em nível de hardware) |
+| Driver     | Variável de ambiente           | Caso de uso                                | Nível de segurança                     |
+| ---------- | ------------------------------ | ------------------------------------------ | -------------------------------------- |
+| Desativado | `LOGIC_FUNCTION_TYPE=DISABLED` | Desativar completamente as funções lógicas | N/A                                    |
+| Local      | `LOGIC_FUNCTION_TYPE=LOCAL`    | Desenvolvimento e ambientes confiáveis     | Baixo (sem sandbox)                    |
+| Lambda     | `LOGIC_FUNCTION_TYPE=LAMBDA`   | Produção com código não confiável          | Alto (isolamento em nível de hardware) |
 
-### Configuração recomendada
+### Funções lógicas - Configuração recomendada
 
 **Para desenvolvimento:**
 
 ```bash
-SERVERLESS_TYPE=LOCAL  # default
+LOGIC_FUNCTION_TYPE=LOCAL  # default when NODE_ENV=development
 ```
 
 **Para produção (AWS):**
 
 ```bash
-SERVERLESS_TYPE=LAMBDA
-SERVERLESS_LAMBDA_REGION=us-east-1
-SERVERLESS_LAMBDA_ROLE=arn:aws:iam::123456789:role/your-lambda-role
-SERVERLESS_LAMBDA_ACCESS_KEY_ID=your-access-key
-SERVERLESS_LAMBDA_SECRET_ACCESS_KEY=your-secret-key
+LOGIC_FUNCTION_TYPE=LAMBDA
+LOGIC_FUNCTION_LAMBDA_REGION=us-east-1
+LOGIC_FUNCTION_LAMBDA_ROLE=arn:aws:iam::123456789:role/your-lambda-role
+LOGIC_FUNCTION_LAMBDA_ACCESS_KEY_ID=your-access-key
+LOGIC_FUNCTION_LAMBDA_SECRET_ACCESS_KEY=your-secret-key
 ```
 
 **Para desativar as funções lógicas:**
 
 ```bash
-SERVERLESS_TYPE=DISABLED
+LOGIC_FUNCTION_TYPE=DISABLED  # default when NODE_ENV=production
 ```
 
+### Interpretador de código - Drivers disponíveis
+
+| Driver     | Variável de ambiente             | Caso de uso                          | Nível de segurança     |
+| ---------- | -------------------------------- | ------------------------------------ | ---------------------- |
+| Desativado | `CODE_INTERPRETER_TYPE=DISABLED` | Desativar a execução de código de IA | N/A                    |
+| Local      | `CODE_INTERPRETER_TYPE=LOCAL`    | Apenas para desenvolvimento          | Baixo (sem sandbox)    |
+| E2B        | `CODE_INTERPRETER_TYPE=E_2_B`    | Produção com execução em sandbox     | Alto (sandbox isolado) |
+
 <Note>
-Ao usar `SERVERLESS_TYPE=DISABLED`, qualquer tentativa de executar uma função lógica retornará um erro. Isso é útil se você quiser executar o Twenty sem recursos de funções lógicas.
+Ao usar `LOGIC_FUNCTION_TYPE=DISABLED` ou `CODE_INTERPRETER_TYPE=DISABLED`, qualquer tentativa de execução retornará um erro. Isso é útil se você quiser executar o Twenty sem esses recursos.
 </Note>
