@@ -31,7 +31,7 @@ COPY ./packages/twenty-ui /app/packages/twenty-ui
 COPY ./packages/twenty-sdk /app/packages/twenty-sdk
 COPY ./packages/twenty-standard-application /app/packages/twenty-standard-application
 COPY ./packages/twenty-server /app/packages/twenty-server
-COPY ./packages/twenty-apps/fixtures /app/packages/twenty-apps/fixtures
+COPY ./packages/twenty-apps /app/packages/twenty-apps
 
 RUN npx nx build twenty-standard-application
 RUN npx nx run twenty-server:build
