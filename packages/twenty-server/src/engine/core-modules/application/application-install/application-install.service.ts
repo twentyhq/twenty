@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { promises as fs } from 'fs';
-import { join } from 'path';
+import { join, resolve } from 'path';
 
 import { Manifest } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
@@ -147,8 +147,25 @@ export class ApplicationInstallService {
     const filesToWrite = this.buildFileList(manifest);
 
     for (const { relativePath, fileFolder } of filesToWrite) {
-      const absolutePath = join(extractedDir, relativePath);
-      const content = await fs.readFile(absolutePath);
+      const absolutePath = resolve(extractedDir, relativePath);
+
+      if (!absolutePath.startsWith(extractedDir)) {
+        throw new ApplicationException(
+          `Path traversal detected for file: ${relativePath}`,
+          ApplicationExceptionCode.INVALID_INPUT,
+        );
+      }
+
+      let content: Buffer;
+
+      try {
+        content = await fs.readFile(absolutePath);
+      } catch {
+        throw new ApplicationException(
+          `File not found in package: ${relativePath}`,
+          ApplicationExceptionCode.PACKAGE_RESOLUTION_FAILED,
+        );
+      }
 
       await this.fileStorageService.writeFile({
         sourceFile: content,
@@ -172,21 +189,21 @@ export class ApplicationInstallService {
       { relativePath: 'manifest.json', fileFolder: FileFolder.Source },
     );
 
-    for (const logicFunction of manifest.logicFunctions) {
+    for (const logicFunction of manifest.logicFunctions ?? []) {
       files.push({
         relativePath: logicFunction.builtHandlerPath,
         fileFolder: FileFolder.BuiltLogicFunction,
       });
     }
 
-    for (const frontComponent of manifest.frontComponents) {
+    for (const frontComponent of manifest.frontComponents ?? []) {
       files.push({
         relativePath: frontComponent.builtComponentPath,
         fileFolder: FileFolder.BuiltFrontComponent,
       });
     }
 
-    for (const publicAsset of manifest.publicAssets) {
+    for (const publicAsset of manifest.publicAssets ?? []) {
       files.push({
         relativePath: publicAsset.filePath,
         fileFolder: FileFolder.PublicAsset,

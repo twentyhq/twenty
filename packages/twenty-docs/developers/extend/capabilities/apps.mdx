@@ -1291,7 +1291,7 @@ This builds the app and runs `npm publish` from the `.twenty/output/` directory.
 
 ```bash filename="Terminal"
 # Publish directly to a Twenty server
-yarn twenty app:publish --server https://app.twenty.com --token <your-api-token>
+yarn twenty app:publish --server https://app.twenty.com
 ```
 
 This builds the app with a tarball, uploads it to the server via the `uploadAppTarball` GraphQL mutation, and triggers installation in one step. This is useful for private deployments or testing against a specific server.

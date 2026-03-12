@@ -133,7 +133,7 @@ yarn twenty app:publish
 yarn twenty app:publish --tag beta
 
 # Publish directly to a Twenty server (builds, uploads, and installs in one step)
-yarn twenty app:publish --server https://app.twenty.com --token <your-api-token>
+yarn twenty app:publish --server https://app.twenty.com
 ```
 
 ### Publish to the Twenty marketplace
