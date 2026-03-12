@@ -15,6 +15,7 @@ import {
 } from 'twenty-shared/utils';
 
 import { transformActorField } from 'src/engine/api/common/common-args-processors/data-arg-processor/transformer-utils/transform-actor-field.util';
+import { transformRelationConnectWhereValue } from 'src/engine/api/common/common-args-processors/data-arg-processor/transformer-utils/transform-relation-connect-where.util';
 import { isRelationNestedOperation } from 'src/engine/api/common/common-args-processors/data-arg-processor/utils/is-relation-nested-operation.util';
 import { transformAddressField } from 'src/engine/api/common/common-args-processors/data-arg-processor/transformer-utils/transform-address-field.util';
 import { transformArrayField } from 'src/engine/api/common/common-args-processors/data-arg-processor/transformer-utils/transform-array-field.util';
@@ -258,6 +259,24 @@ export class DataArgProcessorService {
             CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
             { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
           );
+        }
+
+        const connectOperation = value as Record<
+          string,
+          Record<string, unknown>
+        >;
+        const connectWhere = connectOperation.connect?.where;
+
+        if (isDefined(connectWhere) && typeof connectWhere === 'object') {
+          return {
+            ...connectOperation,
+            connect: {
+              ...connectOperation.connect,
+              where: transformRelationConnectWhereValue(
+                connectWhere as Record<string, unknown>,
+              ),
+            },
+          };
         }
 
         return value;
