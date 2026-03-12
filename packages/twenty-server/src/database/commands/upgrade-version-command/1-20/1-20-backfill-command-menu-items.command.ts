@@ -1,12 +1,14 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
@@ -17,7 +19,7 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 @Command({
   name: 'upgrade:1-20:backfill-command-menu-items',
   description:
-    'Backfill missing standard command menu items for existing workspaces',
+    'Backfill missing standard command menu items for existing workspaces and enable IS_COMMAND_MENU_ITEM_ENABLED feature flag',
 })
 export class BackfillCommandMenuItemsCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   constructor(
@@ -27,6 +29,7 @@ export class BackfillCommandMenuItemsCommand extends ActiveOrSuspendedWorkspaces
     protected readonly dataSourceService: DataSourceService,
     private readonly applicationService: ApplicationService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
+    private readonly featureFlagService: FeatureFlagService,
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {
     super(workspaceRepository, twentyORMGlobalManager, dataSourceService);
@@ -41,6 +44,20 @@ export class BackfillCommandMenuItemsCommand extends ActiveOrSuspendedWorkspaces
     this.logger.log(
       `${isDryRun ? '[DRY RUN] ' : ''}Starting backfill of missing standard command menu items for workspace ${workspaceId}`,
     );
+
+    const isFeatureFlagAlreadyEnabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_COMMAND_MENU_ITEM_ENABLED,
+        workspaceId,
+      );
+
+    if (isFeatureFlagAlreadyEnabled) {
+      this.logger.log(
+        `IS_COMMAND_MENU_ITEM_ENABLED already enabled for workspace ${workspaceId}, skipping`,
+      );
+
+      return;
+    }
 
     const { twentyStandardFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
@@ -73,7 +90,9 @@ export class BackfillCommandMenuItemsCommand extends ActiveOrSuspendedWorkspaces
           ),
       );
 
-    if (commandMenuItemsToCreate.length === 0) {
+    const numberOfCommandMenuItemsToCreate = commandMenuItemsToCreate.length;
+
+    if (numberOfCommandMenuItemsToCreate === 0) {
       this.logger.log(
         `No missing standard command menu items for workspace ${workspaceId}, skipping`,
       );
@@ -82,12 +101,12 @@ export class BackfillCommandMenuItemsCommand extends ActiveOrSuspendedWorkspaces
     }
 
     this.logger.log(
-      `Found ${commandMenuItemsToCreate.length} missing standard command menu item(s) for workspace ${workspaceId}`,
+      `Found ${numberOfCommandMenuItemsToCreate} missing standard command menu item(s) for workspace ${workspaceId}`,
     );
 
     if (isDryRun) {
       this.logger.log(
-        `[DRY RUN] Would create ${commandMenuItemsToCreate.length} command menu item(s) for workspace ${workspaceId}`,
+        `[DRY RUN] Would create ${numberOfCommandMenuItemsToCreate} command menu item(s) and enable IS_COMMAND_MENU_ITEM_ENABLED for workspace ${workspaceId}`,
       );
 
       return;
@@ -113,13 +132,19 @@ export class BackfillCommandMenuItemsCommand extends ActiveOrSuspendedWorkspaces
       this.logger.error(
         `Failed to backfill missing standard command menu items:\n${JSON.stringify(validateAndBuildResult, null, 2)}`,
       );
+
       throw new Error(
         `Failed to backfill missing standard command menu items for workspace ${workspaceId}`,
       );
     }
 
+    await this.featureFlagService.enableFeatureFlags(
+      [FeatureFlagKey.IS_COMMAND_MENU_ITEM_ENABLED],
+      workspaceId,
+    );
+
     this.logger.log(
-      `Successfully backfilled ${commandMenuItemsToCreate.length} standard command menu item(s) for workspace ${workspaceId}`,
+      `Successfully backfilled ${commandMenuItemsToCreate.length} standard command menu item(s) and enabled IS_COMMAND_MENU_ITEM_ENABLED for workspace ${workspaceId}`,
     );
   }
 }
