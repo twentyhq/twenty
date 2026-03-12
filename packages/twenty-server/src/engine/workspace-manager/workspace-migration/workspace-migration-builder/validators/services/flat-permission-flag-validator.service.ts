@@ -225,8 +225,7 @@ export class FlatPermissionFlagValidatorService {
       });
     } else {
       const referencedRole = findFlatEntityByUniversalIdentifier({
-        universalIdentifier:
-          existingFlatPermissionFlag.roleUniversalIdentifier,
+        universalIdentifier: existingFlatPermissionFlag.roleUniversalIdentifier,
         flatEntityMaps: flatRoleMaps,
       });
 
