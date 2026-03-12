@@ -72,8 +72,8 @@ export default {
         329,
         338,
         397,
-        448,
-        449,
+        427,
+        428,
         450
     ],
     "types": {
@@ -6021,6 +6021,20 @@ export default {
                     ]
                 }
             ],
+            "findManyApplications": [
+                49
+            ],
+            "findOneApplication": [
+                49,
+                {
+                    "id": [
+                        3
+                    ],
+                    "universalIdentifier": [
+                        3
+                    ]
+                }
+            ],
             "checkUserExists": [
                 211,
                 {
@@ -6350,20 +6364,6 @@ export default {
                     "universalIdentifier": [
                         1,
                         "String!"
-                    ]
-                }
-            ],
-            "findManyApplications": [
-                49
-            ],
-            "findOneApplication": [
-                49,
-                {
-                    "id": [
-                        3
-                    ],
-                    "universalIdentifier": [
-                        3
                     ]
                 }
             ],
@@ -7592,11 +7592,58 @@ export default {
             "checkCustomDomainValidRecords": [
                 160
             ],
+            "installApplication": [
+                6,
+                {
+                    "appRegistrationId": [
+                        1,
+                        "String!"
+                    ],
+                    "version": [
+                        1
+                    ]
+                }
+            ],
+            "runWorkspaceMigration": [
+                6,
+                {
+                    "workspaceMigration": [
+                        425,
+                        "WorkspaceMigrationInput!"
+                    ]
+                }
+            ],
+            "uninstallApplication": [
+                6,
+                {
+                    "universalIdentifier": [
+                        1,
+                        "String!"
+                    ]
+                }
+            ],
+            "updateOneApplicationVariable": [
+                6,
+                {
+                    "key": [
+                        1,
+                        "String!"
+                    ],
+                    "value": [
+                        1,
+                        "String!"
+                    ],
+                    "applicationId": [
+                        3,
+                        "UUID!"
+                    ]
+                }
+            ],
             "getAuthorizationUrlForSSO": [
                 201,
                 {
                     "input": [
-                        425,
+                        429,
                         "GetAuthorizationUrlForSSOInput!"
                     ]
                 }
@@ -7850,7 +7897,7 @@ export default {
                 185,
                 {
                     "input": [
-                        426,
+                        430,
                         "CreateApplicationRegistrationInput!"
                     ]
                 }
@@ -7859,7 +7906,7 @@ export default {
                 7,
                 {
                     "input": [
-                        427,
+                        431,
                         "UpdateApplicationRegistrationInput!"
                     ]
                 }
@@ -7886,7 +7933,7 @@ export default {
                 5,
                 {
                     "input": [
-                        429,
+                        433,
                         "CreateApplicationRegistrationVariableInput!"
                     ]
                 }
@@ -7895,7 +7942,7 @@ export default {
                 5,
                 {
                     "input": [
-                        430,
+                        434,
                         "UpdateApplicationRegistrationVariableInput!"
                     ]
                 }
@@ -7972,7 +8019,7 @@ export default {
                 192,
                 {
                     "input": [
-                        432,
+                        436,
                         "SetupOIDCSsoInput!"
                     ]
                 }
@@ -7981,7 +8028,7 @@ export default {
                 192,
                 {
                     "input": [
-                        433,
+                        437,
                         "SetupSAMLSsoInput!"
                     ]
                 }
@@ -7990,7 +8037,7 @@ export default {
                 188,
                 {
                     "input": [
-                        434,
+                        438,
                         "DeleteSsoInput!"
                     ]
                 }
@@ -7999,7 +8046,7 @@ export default {
                 189,
                 {
                     "input": [
-                        435,
+                        439,
                         "EditSsoInput!"
                     ]
                 }
@@ -8008,7 +8055,7 @@ export default {
                 233,
                 {
                     "input": [
-                        436,
+                        440,
                         "CreateWebhookInput!"
                     ]
                 }
@@ -8017,7 +8064,7 @@ export default {
                 233,
                 {
                     "input": [
-                        437,
+                        441,
                         "UpdateWebhookInput!"
                     ]
                 }
@@ -8038,7 +8085,7 @@ export default {
                 220,
                 {
                     "input": [
-                        439,
+                        443,
                         "CreateSkillInput!"
                     ]
                 }
@@ -8047,7 +8094,7 @@ export default {
                 220,
                 {
                     "input": [
-                        440,
+                        444,
                         "UpdateSkillInput!"
                     ]
                 }
@@ -8144,7 +8191,7 @@ export default {
                         "String!"
                     ],
                     "connectionParameters": [
-                        441,
+                        445,
                         "EmailAccountConnectionParameters!"
                     ],
                     "id": [
@@ -8156,7 +8203,7 @@ export default {
                 161,
                 {
                     "input": [
-                        443,
+                        447,
                         "UpdateLabPublicFeatureFlagInput!"
                     ]
                 }
@@ -8329,7 +8376,7 @@ export default {
                 68,
                 {
                     "input": [
-                        444,
+                        448,
                         "CreateOneAppTokenInput!"
                     ]
                 }
@@ -8343,53 +8390,6 @@ export default {
                     ],
                     "version": [
                         1
-                    ]
-                }
-            ],
-            "installApplication": [
-                6,
-                {
-                    "appRegistrationId": [
-                        1,
-                        "String!"
-                    ],
-                    "version": [
-                        1
-                    ]
-                }
-            ],
-            "runWorkspaceMigration": [
-                6,
-                {
-                    "workspaceMigration": [
-                        446,
-                        "WorkspaceMigrationInput!"
-                    ]
-                }
-            ],
-            "uninstallApplication": [
-                6,
-                {
-                    "universalIdentifier": [
-                        1,
-                        "String!"
-                    ]
-                }
-            ],
-            "updateOneApplicationVariable": [
-                6,
-                {
-                    "key": [
-                        1,
-                        "String!"
-                    ],
-                    "value": [
-                        1,
-                        "String!"
-                    ],
-                    "applicationId": [
-                        3,
-                        "UUID!"
                     ]
                 }
             ],
@@ -10213,6 +10213,30 @@ export default {
                 1
             ]
         },
+        "WorkspaceMigrationInput": {
+            "actions": [
+                426
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "WorkspaceMigrationDeleteActionInput": {
+            "type": [
+                427
+            ],
+            "metadataName": [
+                428
+            ],
+            "universalIdentifier": [
+                1
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "WorkspaceMigrationActionType": {},
+        "AllMetadataName": {},
         "GetAuthorizationUrlForSSOInput": {
             "identityProviderId": [
                 3
@@ -10261,7 +10285,7 @@ export default {
                 1
             ],
             "update": [
-                428
+                432
             ],
             "__typename": [
                 1
@@ -10324,7 +10348,7 @@ export default {
                 1
             ],
             "update": [
-                431
+                435
             ],
             "__typename": [
                 1
@@ -10425,7 +10449,7 @@ export default {
                 3
             ],
             "update": [
-                438
+                442
             ],
             "__typename": [
                 1
@@ -10499,13 +10523,13 @@ export default {
         },
         "EmailAccountConnectionParameters": {
             "IMAP": [
-                442
+                446
             ],
             "SMTP": [
-                442
+                446
             ],
             "CALDAV": [
-                442
+                446
             ],
             "__typename": [
                 1
@@ -10544,7 +10568,7 @@ export default {
         },
         "CreateOneAppTokenInput": {
             "appToken": [
-                445
+                449
             ],
             "__typename": [
                 1
@@ -10558,30 +10582,6 @@ export default {
                 1
             ]
         },
-        "WorkspaceMigrationInput": {
-            "actions": [
-                447
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "WorkspaceMigrationDeleteActionInput": {
-            "type": [
-                448
-            ],
-            "metadataName": [
-                449
-            ],
-            "universalIdentifier": [
-                1
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "WorkspaceMigrationActionType": {},
-        "AllMetadataName": {},
         "FileFolder": {},
         "Subscription": {
             "onDbEvent": [
