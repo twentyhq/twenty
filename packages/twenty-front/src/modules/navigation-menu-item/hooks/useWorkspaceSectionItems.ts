@@ -31,8 +31,7 @@ export type NavigationMenuItemClickParams = {
 };
 
 export const useWorkspaceSectionItems = (): FlatWorkspaceItem[] => {
-  const { workspaceNavigationMenuItems } =
-    useNavigationMenuItemsData();
+  const { workspaceNavigationMenuItems } = useNavigationMenuItemsData();
   const { workspaceNavigationMenuItemsSorted } = useSortedNavigationMenuItems();
   const { workspaceNavigationMenuItemsByFolder } =
     useNavigationMenuItemsByFolder();

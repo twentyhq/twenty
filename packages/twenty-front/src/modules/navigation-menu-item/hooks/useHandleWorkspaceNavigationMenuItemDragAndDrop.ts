@@ -19,8 +19,7 @@ import { useNavigationMenuItemsData } from './useNavigationMenuItemsData';
 
 export const useHandleWorkspaceNavigationMenuItemDragAndDrop = () => {
   const store = useStore();
-  const { workspaceNavigationMenuItems } =
-    useNavigationMenuItemsData();
+  const { workspaceNavigationMenuItems } = useNavigationMenuItemsData();
   const setNavigationMenuItemsDraft = useSetAtomState(
     navigationMenuItemsDraftState,
   );

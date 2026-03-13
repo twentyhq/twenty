@@ -14,35 +14,32 @@ type NavigationMenuItemsData = {
   currentWorkspaceMemberId: string | undefined;
 };
 
-export const useNavigationMenuItemsData =
-  (): NavigationMenuItemsData => {
-    const currentWorkspaceMember = useAtomStateValue(
-      currentWorkspaceMemberState,
-    );
-    const currentWorkspaceMemberId = currentWorkspaceMember?.id;
-    const navigationMenuItems = useAtomStateValue(navigationMenuItemsState);
-    const isNavigationMenuInEditMode = useAtomStateValue(
-      isNavigationMenuInEditModeState,
-    );
-    const navigationMenuItemsDraft = useAtomStateValue(
-      navigationMenuItemsDraftState,
-    );
+export const useNavigationMenuItemsData = (): NavigationMenuItemsData => {
+  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
+  const currentWorkspaceMemberId = currentWorkspaceMember?.id;
+  const navigationMenuItems = useAtomStateValue(navigationMenuItemsState);
+  const isNavigationMenuInEditMode = useAtomStateValue(
+    isNavigationMenuInEditModeState,
+  );
+  const navigationMenuItemsDraft = useAtomStateValue(
+    navigationMenuItemsDraftState,
+  );
 
-    const userNavigationMenuItems = navigationMenuItems.filter((item) =>
-      isDefined(item.userWorkspaceId),
-    );
+  const userNavigationMenuItems = navigationMenuItems.filter((item) =>
+    isDefined(item.userWorkspaceId),
+  );
 
-    const workspaceNavigationMenuItemsFromState =
-      filterWorkspaceNavigationMenuItems(navigationMenuItems);
+  const workspaceNavigationMenuItemsFromState =
+    filterWorkspaceNavigationMenuItems(navigationMenuItems);
 
-    const workspaceNavigationMenuItems =
-      isNavigationMenuInEditMode && isDefined(navigationMenuItemsDraft)
-        ? navigationMenuItemsDraft
-        : workspaceNavigationMenuItemsFromState;
+  const workspaceNavigationMenuItems =
+    isNavigationMenuInEditMode && isDefined(navigationMenuItemsDraft)
+      ? navigationMenuItemsDraft
+      : workspaceNavigationMenuItemsFromState;
 
-    return {
-      navigationMenuItems: userNavigationMenuItems,
-      workspaceNavigationMenuItems,
-      currentWorkspaceMemberId,
-    };
+  return {
+    navigationMenuItems: userNavigationMenuItems,
+    workspaceNavigationMenuItems,
+    currentWorkspaceMemberId,
   };
+};
