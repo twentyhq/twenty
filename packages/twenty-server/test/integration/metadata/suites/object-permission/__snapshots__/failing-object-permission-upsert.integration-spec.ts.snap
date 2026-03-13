@@ -95,7 +95,7 @@ exports[`Object permission upsert should fail when roleId is not a valid UUID 1`
     "userFriendlyMessage": "An error occurred.",
     "value": "invalid-uuid",
   },
-  "message": "Invalid UUID: \"invalid-uuid\"",
+  "message": "Invalid UUID: 'invalid-uuid'",
   "name": "ValidationError",
 }
 `;
