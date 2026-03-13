@@ -246,6 +246,161 @@ describe('getTabsWithVisibleWidgets', () => {
     });
   });
 
+  describe('with record field values', () => {
+    it('should show widget when boolean field condition is met', () => {
+      const tabs = [
+        createMockTab('tab-1', [
+          createMockWidget('widget-1'),
+          createMockWidget('widget-2', {
+            '===': [{ var: 'record.addClientAccountTeam' }, true],
+          }),
+        ]),
+      ];
+
+      const result = getTabsWithVisibleWidgets({
+        tabs,
+        isMobile: false,
+        isInSidePanel: false,
+        isEditMode: false,
+        recordFieldValues: { addClientAccountTeam: true },
+      });
+
+      expect(result[0].widgets).toHaveLength(2);
+    });
+
+    it('should hide widget when boolean field condition is not met', () => {
+      const tabs = [
+        createMockTab('tab-1', [
+          createMockWidget('widget-1'),
+          createMockWidget('widget-2', {
+            '===': [{ var: 'record.addClientAccountTeam' }, true],
+          }),
+        ]),
+      ];
+
+      const result = getTabsWithVisibleWidgets({
+        tabs,
+        isMobile: false,
+        isInSidePanel: false,
+        isEditMode: false,
+        recordFieldValues: { addClientAccountTeam: false },
+      });
+
+      expect(result[0].widgets).toHaveLength(1);
+      expect(result[0].widgets[0].id).toBe('widget-1');
+    });
+
+    it('should hide widget when record field values are not provided', () => {
+      const tabs = [
+        createMockTab('tab-1', [
+          createMockWidget('widget-1'),
+          createMockWidget('widget-2', {
+            '===': [{ var: 'record.addClientAccountTeam' }, true],
+          }),
+        ]),
+      ];
+
+      const result = getTabsWithVisibleWidgets({
+        tabs,
+        isMobile: false,
+        isInSidePanel: false,
+        isEditMode: false,
+      });
+
+      // record.addClientAccountTeam is undefined, so === true is false
+      expect(result[0].widgets).toHaveLength(1);
+      expect(result[0].widgets[0].id).toBe('widget-1');
+    });
+
+    it('should show loss widget when salesStage is CLOSEDLOST', () => {
+      const tabs = [
+        createMockTab('tab-1', [
+          createMockWidget('widget-1'),
+          createMockWidget('widget-loss', {
+            in: [{ var: 'record.salesStage' }, ['CLOSEDLOST', 'DIDNOTPROCEED']],
+          }),
+        ]),
+      ];
+
+      const result = getTabsWithVisibleWidgets({
+        tabs,
+        isMobile: false,
+        isInSidePanel: false,
+        isEditMode: false,
+        recordFieldValues: { salesStage: 'CLOSEDLOST' },
+      });
+
+      expect(result[0].widgets).toHaveLength(2);
+    });
+
+    it('should show loss widget when salesStage is DIDNOTPROCEED', () => {
+      const tabs = [
+        createMockTab('tab-1', [
+          createMockWidget('widget-1'),
+          createMockWidget('widget-loss', {
+            in: [{ var: 'record.salesStage' }, ['CLOSEDLOST', 'DIDNOTPROCEED']],
+          }),
+        ]),
+      ];
+
+      const result = getTabsWithVisibleWidgets({
+        tabs,
+        isMobile: false,
+        isInSidePanel: false,
+        isEditMode: false,
+        recordFieldValues: { salesStage: 'DIDNOTPROCEED' },
+      });
+
+      expect(result[0].widgets).toHaveLength(2);
+    });
+
+    it('should hide loss widget when salesStage is CLOSEDWON', () => {
+      const tabs = [
+        createMockTab('tab-1', [
+          createMockWidget('widget-1'),
+          createMockWidget('widget-loss', {
+            in: [{ var: 'record.salesStage' }, ['CLOSEDLOST', 'DIDNOTPROCEED']],
+          }),
+        ]),
+      ];
+
+      const result = getTabsWithVisibleWidgets({
+        tabs,
+        isMobile: false,
+        isInSidePanel: false,
+        isEditMode: false,
+        recordFieldValues: { salesStage: 'CLOSEDWON' },
+      });
+
+      expect(result[0].widgets).toHaveLength(1);
+      expect(result[0].widgets[0].id).toBe('widget-1');
+    });
+
+    it('should show all conditional widgets in edit mode regardless of record values', () => {
+      const tabs = [
+        createMockTab('tab-1', [
+          createMockWidget('widget-1'),
+          createMockWidget('widget-2', {
+            '===': [{ var: 'record.addClientAccountTeam' }, true],
+          }),
+          createMockWidget('widget-loss', {
+            in: [{ var: 'record.salesStage' }, ['CLOSEDLOST', 'DIDNOTPROCEED']],
+          }),
+        ]),
+      ];
+
+      const result = getTabsWithVisibleWidgets({
+        tabs,
+        isMobile: false,
+        isInSidePanel: false,
+        isEditMode: true,
+        recordFieldValues: { addClientAccountTeam: false, salesStage: 'NEW' },
+      });
+
+      expect(result[0].widgets).toHaveLength(3);
+    });
+  });
+
   describe('edge cases', () => {
     it('should handle empty tabs array', () => {
       const result = getTabsWithVisibleWidgets({
