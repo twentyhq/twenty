@@ -5,9 +5,8 @@ export const makePermissionFlagUniversalIdentifierAndApplicationIdNotNullQueries
     await queryRunner.query(`
       UPDATE "core"."permissionFlag" pf
       SET "applicationId" = (
-        SELECT a.id FROM "core"."application" a
-        WHERE a."workspaceId" = pf."workspaceId"
-        LIMIT 1
+        SELECT r."applicationId" FROM "core"."role" r
+        WHERE r.id = pf."roleId"
       )
       WHERE pf."applicationId" IS NULL
     `);
