@@ -74,4 +74,21 @@ describe('getFirstNonEmptyLineOfRichText', () => {
     const result = getFirstNonEmptyLineOfRichText(input);
     expect(result).toBe('First non-empty line');
   });
+
+  it('should handle non-array string content (e.g. heading blocks)', () => {
+    const input = [
+      { content: 'Hello heading' },
+    ] as unknown as PartialBlock[];
+    const result = getFirstNonEmptyLineOfRichText(input);
+    expect(result).toBe('Hello heading');
+  });
+
+  it('should skip empty non-array string content', () => {
+    const input = [
+      { content: '   ' },
+      { content: [{ text: 'Fallback text', type: 'text', styles: {} }] },
+    ] as unknown as PartialBlock[];
+    const result = getFirstNonEmptyLineOfRichText(input);
+    expect(result).toBe('Fallback text');
+  });
 });
