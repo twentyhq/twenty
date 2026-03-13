@@ -13,9 +13,11 @@ type UniversalViewFieldOverrides =
 export const fromViewFieldOverridesToUniversalOverrides = ({
   overrides,
   viewFieldGroupUniversalIdentifierById,
+  shouldThrowOnMissingIdentifier = true,
 }: {
   overrides: ViewFieldOverrides;
   viewFieldGroupUniversalIdentifierById: Partial<Record<string, string>>;
+  shouldThrowOnMissingIdentifier?: boolean;
 }): UniversalViewFieldOverrides => {
   const { viewFieldGroupId, ...scalarOverrides } = overrides;
 
@@ -32,10 +34,14 @@ export const fromViewFieldOverridesToUniversalOverrides = ({
     viewFieldGroupUniversalIdentifierById[viewFieldGroupId];
 
   if (!isDefined(viewFieldGroupUniversalIdentifier)) {
-    throw new FlatEntityMapsException(
-      `ViewFieldGroup universal identifier not found for id: ${viewFieldGroupId}`,
-      FlatEntityMapsExceptionCode.RELATION_UNIVERSAL_IDENTIFIER_NOT_FOUND,
-    );
+    if (shouldThrowOnMissingIdentifier) {
+      throw new FlatEntityMapsException(
+        `ViewFieldGroup universal identifier not found for id: ${viewFieldGroupId}`,
+        FlatEntityMapsExceptionCode.RELATION_UNIVERSAL_IDENTIFIER_NOT_FOUND,
+      );
+    }
+
+    return scalarOverrides;
   }
 
   return {

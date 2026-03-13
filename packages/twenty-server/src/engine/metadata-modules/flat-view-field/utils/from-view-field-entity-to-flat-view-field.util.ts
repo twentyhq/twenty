@@ -78,6 +78,7 @@ export const fromViewFieldEntityToFlatViewField = ({
     ? fromViewFieldOverridesToUniversalOverrides({
         overrides: viewFieldEntity.overrides,
         viewFieldGroupUniversalIdentifierById,
+        shouldThrowOnMissingIdentifier: false,
       })
     : null;
 

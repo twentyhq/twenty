@@ -17,6 +17,7 @@ describe('convertCoreViewFieldGroupToViewFieldGroup', () => {
           isVisible: true,
           size: 150,
           aggregateOperation: null,
+          isOverridden: false,
         },
         {
           id: 'vf-2',
@@ -25,6 +26,7 @@ describe('convertCoreViewFieldGroupToViewFieldGroup', () => {
           isVisible: false,
           size: 200,
           aggregateOperation: null,
+          isOverridden: false,
         },
       ],
     };

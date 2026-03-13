@@ -98,7 +98,7 @@ export class ViewController {
     }
 
     const processedViews = await this.processViewsWithTemplates(
-      [view] as unknown as ViewDTO[],
+      [view],
       workspace.id,
       locale,
     );

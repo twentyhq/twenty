@@ -273,14 +273,13 @@ export class FieldsWidgetUpsertService {
 
       const newViewFieldGroupId = inputGroup.id;
 
-      const resolvedIsVisible =
-        existingField.overrides?.isVisible !== undefined
-          ? existingField.overrides.isVisible
-          : existingField.isVisible;
-      const resolvedPosition =
-        existingField.overrides?.position !== undefined
-          ? existingField.overrides.position
-          : existingField.position;
+      const resolvedIsVisible = isDefined(existingField.overrides?.isVisible)
+        ? existingField.overrides.isVisible
+        : existingField.isVisible;
+      const resolvedPosition = isDefined(existingField.overrides?.position)
+        ? existingField.overrides.position
+        : existingField.position;
+      // null is a valid override value (meaning "ungrouped"), so use !== undefined
       const resolvedViewFieldGroupId =
         existingField.overrides?.viewFieldGroupId !== undefined
           ? existingField.overrides.viewFieldGroupId
@@ -363,6 +362,16 @@ export class FieldsWidgetUpsertService {
       return [updatedField];
     });
 
+    const fieldsWithStaleGroupOverrides =
+      this.buildFieldUpdatesForStaleGroupOverrides({
+        existingViewFields,
+        groupsToDelete,
+        alreadyUpdatedFieldIds: new Set(
+          viewFieldsToUpdate.map((field) => field.id),
+        ),
+        now,
+      });
+
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
@@ -375,7 +384,10 @@ export class FieldsWidgetUpsertService {
             viewField: {
               flatEntityToCreate: [],
               flatEntityToDelete: [],
-              flatEntityToUpdate: viewFieldsToUpdate,
+              flatEntityToUpdate: [
+                ...viewFieldsToUpdate,
+                ...fieldsWithStaleGroupOverrides,
+              ],
             },
           },
           workspaceId,
@@ -418,14 +430,12 @@ export class FieldsWidgetUpsertService {
         return [];
       }
 
-      const resolvedIsVisible =
-        existingField.overrides?.isVisible !== undefined
-          ? existingField.overrides.isVisible
-          : existingField.isVisible;
-      const resolvedPosition =
-        existingField.overrides?.position !== undefined
-          ? existingField.overrides.position
-          : existingField.position;
+      const resolvedIsVisible = isDefined(existingField.overrides?.isVisible)
+        ? existingField.overrides.isVisible
+        : existingField.isVisible;
+      const resolvedPosition = isDefined(existingField.overrides?.position)
+        ? existingField.overrides.position
+        : existingField.position;
       const resolvedViewFieldGroupId =
         existingField.overrides?.viewFieldGroupId !== undefined
           ? existingField.overrides.viewFieldGroupId
@@ -485,6 +495,16 @@ export class FieldsWidgetUpsertService {
       return [updatedField];
     });
 
+    const fieldsWithStaleGroupOverrides =
+      this.buildFieldUpdatesForStaleGroupOverrides({
+        existingViewFields,
+        groupsToDelete,
+        alreadyUpdatedFieldIds: new Set(
+          viewFieldsToUpdate.map((field) => field.id),
+        ),
+        now: new Date().toISOString(),
+      });
+
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
@@ -497,7 +517,10 @@ export class FieldsWidgetUpsertService {
             viewField: {
               flatEntityToCreate: [],
               flatEntityToDelete: [],
-              flatEntityToUpdate: viewFieldsToUpdate,
+              flatEntityToUpdate: [
+                ...viewFieldsToUpdate,
+                ...fieldsWithStaleGroupOverrides,
+              ],
             },
           },
           workspaceId,
@@ -512,6 +535,59 @@ export class FieldsWidgetUpsertService {
         'Multiple validation errors occurred while upserting fields widget',
       );
     }
+  }
+
+  private buildFieldUpdatesForStaleGroupOverrides({
+    existingViewFields,
+    groupsToDelete,
+    alreadyUpdatedFieldIds,
+    now,
+  }: {
+    existingViewFields: FlatViewField[];
+    groupsToDelete: FlatViewFieldGroup[];
+    alreadyUpdatedFieldIds: Set<string>;
+    now: string;
+  }): FlatViewField[] {
+    if (groupsToDelete.length === 0) {
+      return [];
+    }
+
+    const deletedGroupIds = new Set(groupsToDelete.map((group) => group.id));
+
+    return existingViewFields
+      .filter((field) => {
+        if (alreadyUpdatedFieldIds.has(field.id)) {
+          return false;
+        }
+
+        const overriddenGroupId = field.overrides?.viewFieldGroupId;
+
+        return (
+          isDefined(overriddenGroupId) &&
+          typeof overriddenGroupId === 'string' &&
+          deletedGroupIds.has(overriddenGroupId)
+        );
+      })
+      .map((field) => {
+        const { viewFieldGroupId: _, ...remainingOverrides } = field.overrides!;
+
+        const cleanedOverrides =
+          Object.keys(remainingOverrides).length > 0
+            ? (remainingOverrides as typeof field.overrides)
+            : null;
+
+        return {
+          ...field,
+          overrides: cleanedOverrides,
+          universalOverrides: isDefined(cleanedOverrides)
+            ? fromViewFieldOverridesToUniversalOverrides({
+                overrides: cleanedOverrides,
+                viewFieldGroupUniversalIdentifierById: {},
+              })
+            : null,
+          updatedAt: now,
+        };
+      });
   }
 
   private buildGroupToCreate({
@@ -562,18 +638,15 @@ export class FieldsWidgetUpsertService {
     existing: FlatViewFieldGroup,
     input: UpsertFieldsWidgetGroupInput,
   ): boolean {
-    const resolvedName =
-      existing.overrides?.name !== undefined
-        ? existing.overrides.name
-        : existing.name;
-    const resolvedPosition =
-      existing.overrides?.position !== undefined
-        ? existing.overrides.position
-        : existing.position;
-    const resolvedIsVisible =
-      existing.overrides?.isVisible !== undefined
-        ? existing.overrides.isVisible
-        : existing.isVisible;
+    const resolvedName = isDefined(existing.overrides?.name)
+      ? existing.overrides.name
+      : existing.name;
+    const resolvedPosition = isDefined(existing.overrides?.position)
+      ? existing.overrides.position
+      : existing.position;
+    const resolvedIsVisible = isDefined(existing.overrides?.isVisible)
+      ? existing.overrides.isVisible
+      : existing.isVisible;
 
     return (
       resolvedName !== input.name ||
