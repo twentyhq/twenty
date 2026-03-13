@@ -1,5 +1,6 @@
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { PageLayoutLeftPanel } from '@/page-layout/components/PageLayoutLeftPanel';
 import { PageLayoutTabList } from '@/page-layout/components/PageLayoutTabList';
 import { PageLayoutTabListEffect } from '@/page-layout/components/PageLayoutTabListEffect';
@@ -86,6 +87,16 @@ export const PageLayoutRendererContent = () => {
         item.nameSingular === targetRecordIdentifier?.targetObjectNameSingular,
     )?.isSystem ?? false;
 
+  const currentRecord = useAtomFamilyStateValue(
+    recordStoreFamilyState,
+    targetRecordIdentifier?.id ?? '',
+  );
+
+  const recordFieldValues =
+    isDefined(currentRecord) && currentRecord !== null
+      ? (currentRecord as Record<string, unknown>)
+      : undefined;
+
   if (!isDefined(currentPageLayout)) {
     return null;
   }
@@ -112,6 +123,7 @@ export const PageLayoutRendererContent = () => {
     isMobile,
     isInSidePanel,
     isEditMode: isPageLayoutInEditMode,
+    recordFieldValues,
   });
 
   const SYSTEM_OBJECT_TABS = ['Home', 'Timeline', 'Overview', 'Flow'];

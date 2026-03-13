@@ -10,7 +10,7 @@ import { singleRecordPickerSearchableObjectMetadataItemsComponentState } from '@
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { CustomError, isDefined } from 'twenty-shared/utils';
-import { type SearchQuery } from '~/generated/graphql';
+import { type ObjectRecordFilterInput, type SearchQuery } from '~/generated/graphql';
 
 export const useSingleRecordPickerPerformSearch = ({
   selectedIds,
@@ -18,12 +18,14 @@ export const useSingleRecordPickerPerformSearch = ({
   excludedRecordIds = [],
   objectNameSingulars,
   searchFilter,
+  additionalFilter,
 }: {
   selectedIds: string[];
   limit?: number;
   excludedRecordIds?: string[];
   objectNameSingulars: string[];
   searchFilter?: string;
+  additionalFilter?: ObjectRecordFilterInput;
 }): {
   pickableMorphItems: RecordPickerPickableMorphItem[];
   loading: boolean;
@@ -66,7 +68,9 @@ export const useSingleRecordPickerPerformSearch = ({
     ],
   );
 
-  const selectedIdsFilter = { id: { in: selectedIds } };
+  const selectedIdsFilter = isDefined(additionalFilter)
+    ? { and: [{ id: { in: selectedIds } }, additionalFilter] }
+    : { id: { in: selectedIds } };
 
   const { loading: selectedRecordsLoading, searchRecords: selectedRecords } =
     useObjectRecordSearchRecords({
@@ -89,9 +93,14 @@ export const useSingleRecordPickerPerformSearch = ({
   });
 
   const notFilterIds = [...selectedIds, ...excludedRecordIds];
-  const notFilter = notFilterIds.length
+  const baseNotFilter = notFilterIds.length
     ? { not: { id: { in: notFilterIds } } }
     : undefined;
+  const notFilter = isDefined(additionalFilter)
+    ? isDefined(baseNotFilter)
+      ? { and: [baseNotFilter, additionalFilter] }
+      : additionalFilter
+    : baseNotFilter;
   const { loading: recordsToSelectLoading, searchRecords: recordsToSelect } =
     useObjectRecordSearchRecords({
       objectNameSingulars,

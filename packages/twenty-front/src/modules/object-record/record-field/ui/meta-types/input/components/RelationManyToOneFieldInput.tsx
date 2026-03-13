@@ -1,5 +1,6 @@
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
 import { useRelationField } from '@/object-record/record-field/ui/meta-types/hooks/useRelationField';
+import { useRelationFieldAdditionalFilter } from '@/object-record/record-field/ui/meta-types/hooks/useRelationFieldAdditionalFilter';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -66,6 +67,12 @@ export const RelationManyToOneFieldInput = () => {
     );
   }
 
+  const additionalFilter = useRelationFieldAdditionalFilter({
+    fieldName: fieldDefinition.metadata.fieldName,
+    recordId,
+    objectNameSingular: objectMetadataItem.nameSingular,
+  });
+
   const { createNewRecordAndOpenSidePanel } = useAddNewRecordAndOpenSidePanel({
     fieldMetadataItem,
     objectMetadataItem,
@@ -123,6 +130,7 @@ export const RelationManyToOneFieldInput = () => {
           ? 'search-bar-on-top'
           : 'search-bar-on-bottom'
       }
+      additionalFilter={additionalFilter}
     />
   );
 };

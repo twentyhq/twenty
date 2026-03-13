@@ -7,6 +7,7 @@ type GetTabsWithVisibleWidgetsParams = {
   isMobile: boolean;
   isInSidePanel: boolean;
   isEditMode: boolean;
+  recordFieldValues?: Record<string, unknown>;
 };
 
 export const getTabsWithVisibleWidgets = ({
@@ -14,12 +15,17 @@ export const getTabsWithVisibleWidgets = ({
   isMobile,
   isInSidePanel,
   isEditMode,
+  recordFieldValues,
 }: GetTabsWithVisibleWidgetsParams): PageLayoutTab[] => {
   if (isEditMode) {
     return tabs;
   }
 
-  const context = buildWidgetVisibilityContext({ isMobile, isInSidePanel });
+  const context = buildWidgetVisibilityContext({
+    isMobile,
+    isInSidePanel,
+    recordFieldValues,
+  });
 
   const tabsWithFilteredWidgets = tabs.map((tab) => ({
     ...tab,

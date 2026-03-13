@@ -30,6 +30,7 @@ export const SingleRecordPicker = ({
   layoutDirection,
   dropdownWidth,
   focusId,
+  additionalFilter,
 }: SingleRecordPickerProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -86,6 +87,7 @@ export const SingleRecordPicker = ({
             onMorphItemSelected: handleMorphItemSelected,
             objectNameSingulars,
             layoutDirection,
+            additionalFilter,
           }}
         />
       </DropdownContent>
