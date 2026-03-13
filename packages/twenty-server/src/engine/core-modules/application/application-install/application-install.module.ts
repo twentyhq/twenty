@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { CoreGraphQLApiModule } from 'src/engine/api/graphql/core-graphql-api.module';
 import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
@@ -20,6 +21,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     ApplicationManifestModule,
     ApplicationPackageModule,
     CacheLockModule,
+    CoreGraphQLApiModule,
     FeatureFlagModule,
     LogicFunctionResourceModule,
     PermissionsModule,
