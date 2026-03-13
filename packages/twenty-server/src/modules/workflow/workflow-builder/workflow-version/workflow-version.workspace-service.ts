@@ -90,13 +90,12 @@ export class WorkflowVersionWorkspaceService {
           newWorkflowVersionSteps.push(duplicatedStep);
         }
 
-        const existingDraftVersion =
-          await workflowVersionRepository.findOne({
-            where: {
-              workflowId,
-              status: WorkflowVersionStatus.DRAFT,
-            },
-          });
+        const existingDraftVersion = await workflowVersionRepository.findOne({
+          where: {
+            workflowId,
+            status: WorkflowVersionStatus.DRAFT,
+          },
+        });
 
         if (isDefined(existingDraftVersion)) {
           assertWorkflowVersionIsDraft(existingDraftVersion);
@@ -114,22 +113,20 @@ export class WorkflowVersionWorkspaceService {
           };
         }
 
-        const workflowVersionsCount =
-          await workflowVersionRepository.count({
-            where: {
-              workflowId,
-            },
-          });
+        const workflowVersionsCount = await workflowVersionRepository.count({
+          where: {
+            workflowId,
+          },
+        });
 
-        const position =
-          await this.recordPositionService.buildRecordPosition({
-            value: 'first',
-            objectMetadata: {
-              isCustom: false,
-              nameSingular: 'workflowVersion',
-            },
-            workspaceId,
-          });
+        const position = await this.recordPositionService.buildRecordPosition({
+          value: 'first',
+          objectMetadata: {
+            isCustom: false,
+            nameSingular: 'workflowVersion',
+          },
+          workspaceId,
+        });
 
         const insertResult = await workflowVersionRepository.insert({
           workflowId,
