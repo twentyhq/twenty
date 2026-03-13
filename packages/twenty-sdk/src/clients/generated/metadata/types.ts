@@ -72,7 +72,7 @@ export default {
         330,
         332,
         341,
-        388,
+        400,
         451,
         452,
         453
@@ -716,7 +716,7 @@ export default {
                 3
             ],
             "universalIdentifier": [
-                1
+                3
             ],
             "type": [
                 35
@@ -1130,6 +1130,9 @@ export default {
                 47
             ],
             "id": [
+                42
+            ],
+            "universalIdentifier": [
                 42
             ],
             "isCustom": [
@@ -5844,6 +5847,57 @@ export default {
                     ]
                 }
             ],
+            "getCoreViewGroups": [
+                56,
+                {
+                    "viewId": [
+                        1
+                    ]
+                }
+            ],
+            "getCoreViewGroup": [
+                56,
+                {
+                    "id": [
+                        1,
+                        "String!"
+                    ]
+                }
+            ],
+            "getCoreViewFilterGroups": [
+                52,
+                {
+                    "viewId": [
+                        1
+                    ]
+                }
+            ],
+            "getCoreViewFilterGroup": [
+                52,
+                {
+                    "id": [
+                        1,
+                        "String!"
+                    ]
+                }
+            ],
+            "getCoreViewFilters": [
+                54,
+                {
+                    "viewId": [
+                        1
+                    ]
+                }
+            ],
+            "getCoreViewFilter": [
+                54,
+                {
+                    "id": [
+                        1,
+                        "String!"
+                    ]
+                }
+            ],
             "getCoreViewFieldGroups": [
                 59,
                 {
@@ -6017,57 +6071,6 @@ export default {
                     "filter": [
                         47,
                         "FieldFilter!"
-                    ]
-                }
-            ],
-            "getCoreViewGroups": [
-                56,
-                {
-                    "viewId": [
-                        1
-                    ]
-                }
-            ],
-            "getCoreViewGroup": [
-                56,
-                {
-                    "id": [
-                        1,
-                        "String!"
-                    ]
-                }
-            ],
-            "getCoreViewFilters": [
-                54,
-                {
-                    "viewId": [
-                        1
-                    ]
-                }
-            ],
-            "getCoreViewFilter": [
-                54,
-                {
-                    "id": [
-                        1,
-                        "String!"
-                    ]
-                }
-            ],
-            "getCoreViewFilterGroups": [
-                52,
-                {
-                    "viewId": [
-                        1
-                    ]
-                }
-            ],
-            "getCoreViewFilterGroup": [
-                52,
-                {
-                    "id": [
-                        1,
-                        "String!"
                     ]
                 }
             ],
@@ -6975,11 +6978,132 @@ export default {
                     ]
                 }
             ],
+            "createCoreViewGroup": [
+                56,
+                {
+                    "input": [
+                        373,
+                        "CreateViewGroupInput!"
+                    ]
+                }
+            ],
+            "createManyCoreViewGroups": [
+                56,
+                {
+                    "inputs": [
+                        373,
+                        "[CreateViewGroupInput!]!"
+                    ]
+                }
+            ],
+            "updateCoreViewGroup": [
+                56,
+                {
+                    "input": [
+                        374,
+                        "UpdateViewGroupInput!"
+                    ]
+                }
+            ],
+            "deleteCoreViewGroup": [
+                56,
+                {
+                    "input": [
+                        376,
+                        "DeleteViewGroupInput!"
+                    ]
+                }
+            ],
+            "destroyCoreViewGroup": [
+                56,
+                {
+                    "input": [
+                        377,
+                        "DestroyViewGroupInput!"
+                    ]
+                }
+            ],
+            "createCoreViewFilterGroup": [
+                52,
+                {
+                    "input": [
+                        378,
+                        "CreateViewFilterGroupInput!"
+                    ]
+                }
+            ],
+            "updateCoreViewFilterGroup": [
+                52,
+                {
+                    "id": [
+                        1,
+                        "String!"
+                    ],
+                    "input": [
+                        379,
+                        "UpdateViewFilterGroupInput!"
+                    ]
+                }
+            ],
+            "deleteCoreViewFilterGroup": [
+                6,
+                {
+                    "id": [
+                        1,
+                        "String!"
+                    ]
+                }
+            ],
+            "destroyCoreViewFilterGroup": [
+                6,
+                {
+                    "id": [
+                        1,
+                        "String!"
+                    ]
+                }
+            ],
+            "createCoreViewFilter": [
+                54,
+                {
+                    "input": [
+                        380,
+                        "CreateViewFilterInput!"
+                    ]
+                }
+            ],
+            "updateCoreViewFilter": [
+                54,
+                {
+                    "input": [
+                        381,
+                        "UpdateViewFilterInput!"
+                    ]
+                }
+            ],
+            "deleteCoreViewFilter": [
+                54,
+                {
+                    "input": [
+                        383,
+                        "DeleteViewFilterInput!"
+                    ]
+                }
+            ],
+            "destroyCoreViewFilter": [
+                54,
+                {
+                    "input": [
+                        384,
+                        "DestroyViewFilterInput!"
+                    ]
+                }
+            ],
             "updateCoreViewFieldGroup": [
                 59,
                 {
                     "input": [
-                        373,
+                        385,
                         "UpdateViewFieldGroupInput!"
                     ]
                 }
@@ -6988,7 +7112,7 @@ export default {
                 59,
                 {
                     "input": [
-                        375,
+                        387,
                         "CreateViewFieldGroupInput!"
                     ]
                 }
@@ -6997,7 +7121,7 @@ export default {
                 59,
                 {
                     "inputs": [
-                        375,
+                        387,
                         "[CreateViewFieldGroupInput!]!"
                     ]
                 }
@@ -7006,7 +7130,7 @@ export default {
                 59,
                 {
                     "input": [
-                        376,
+                        388,
                         "DeleteViewFieldGroupInput!"
                     ]
                 }
@@ -7015,7 +7139,7 @@ export default {
                 59,
                 {
                     "input": [
-                        377,
+                        389,
                         "DestroyViewFieldGroupInput!"
                     ]
                 }
@@ -7024,7 +7148,7 @@ export default {
                 60,
                 {
                     "input": [
-                        378,
+                        390,
                         "UpsertFieldsWidgetInput!"
                     ]
                 }
@@ -7033,7 +7157,7 @@ export default {
                 225,
                 {
                     "input": [
-                        381,
+                        393,
                         "CreateCommandMenuItemInput!"
                     ]
                 }
@@ -7042,7 +7166,7 @@ export default {
                 225,
                 {
                     "input": [
-                        382,
+                        394,
                         "UpdateCommandMenuItemInput!"
                     ]
                 }
@@ -7060,7 +7184,7 @@ export default {
                 224,
                 {
                     "input": [
-                        383,
+                        395,
                         "CreateFrontComponentInput!"
                     ]
                 }
@@ -7069,7 +7193,7 @@ export default {
                 224,
                 {
                     "input": [
-                        384,
+                        396,
                         "UpdateFrontComponentInput!"
                     ]
                 }
@@ -7087,7 +7211,7 @@ export default {
                 25,
                 {
                     "input": [
-                        386,
+                        398,
                         "CreateAgentInput!"
                     ]
                 }
@@ -7096,7 +7220,7 @@ export default {
                 25,
                 {
                     "input": [
-                        387,
+                        399,
                         "UpdateAgentInput!"
                     ]
                 }
@@ -7114,7 +7238,7 @@ export default {
                 148,
                 {
                     "file": [
-                        388,
+                        400,
                         "Upload!"
                     ]
                 }
@@ -7123,7 +7247,7 @@ export default {
                 148,
                 {
                     "file": [
-                        388,
+                        400,
                         "Upload!"
                     ]
                 }
@@ -7132,7 +7256,7 @@ export default {
                 148,
                 {
                     "file": [
-                        388,
+                        400,
                         "Upload!"
                     ]
                 }
@@ -7141,7 +7265,7 @@ export default {
                 148,
                 {
                     "file": [
-                        388,
+                        400,
                         "Upload!"
                     ]
                 }
@@ -7150,7 +7274,7 @@ export default {
                 148,
                 {
                     "file": [
-                        388,
+                        400,
                         "Upload!"
                     ],
                     "fieldMetadataId": [
@@ -7163,7 +7287,7 @@ export default {
                 148,
                 {
                     "file": [
-                        388,
+                        400,
                         "Upload!"
                     ],
                     "fieldMetadataUniversalIdentifier": [
@@ -7235,7 +7359,7 @@ export default {
                 216,
                 {
                     "input": [
-                        389,
+                        401,
                         "CreateNavigationMenuItemInput!"
                     ]
                 }
@@ -7244,7 +7368,7 @@ export default {
                 216,
                 {
                     "input": [
-                        390,
+                        402,
                         "UpdateOneNavigationMenuItemInput!"
                     ]
                 }
@@ -7262,7 +7386,7 @@ export default {
                 2,
                 {
                     "input": [
-                        392,
+                        404,
                         "CreateApiKeyInput!"
                     ]
                 }
@@ -7271,7 +7395,7 @@ export default {
                 2,
                 {
                     "input": [
-                        393,
+                        405,
                         "UpdateApiKeyInput!"
                     ]
                 }
@@ -7280,7 +7404,7 @@ export default {
                 2,
                 {
                     "input": [
-                        394,
+                        406,
                         "RevokeApiKeyInput!"
                     ]
                 }
@@ -7315,7 +7439,7 @@ export default {
                 29,
                 {
                     "createRoleInput": [
-                        395,
+                        407,
                         "CreateRoleInput!"
                     ]
                 }
@@ -7324,7 +7448,7 @@ export default {
                 29,
                 {
                     "updateRoleInput": [
-                        396,
+                        408,
                         "UpdateRoleInput!"
                     ]
                 }
@@ -7342,7 +7466,7 @@ export default {
                 16,
                 {
                     "upsertObjectPermissionsInput": [
-                        398,
+                        410,
                         "UpsertObjectPermissionsInput!"
                     ]
                 }
@@ -7351,7 +7475,7 @@ export default {
                 27,
                 {
                     "upsertPermissionFlagsInput": [
-                        400,
+                        412,
                         "UpsertPermissionFlagsInput!"
                     ]
                 }
@@ -7360,7 +7484,7 @@ export default {
                 26,
                 {
                     "upsertFieldPermissionsInput": [
-                        401,
+                        413,
                         "UpsertFieldPermissionsInput!"
                     ]
                 }
@@ -7369,7 +7493,7 @@ export default {
                 181,
                 {
                     "input": [
-                        403,
+                        415,
                         "UpsertRowLevelPermissionPredicatesInput!"
                     ]
                 }
@@ -7436,7 +7560,7 @@ export default {
                 147,
                 {
                     "input": [
-                        406,
+                        418,
                         "CreateApprovedAccessDomainInput!"
                     ]
                 }
@@ -7445,7 +7569,7 @@ export default {
                 6,
                 {
                     "input": [
-                        407,
+                        419,
                         "DeleteApprovedAccessDomainInput!"
                     ]
                 }
@@ -7454,7 +7578,7 @@ export default {
                 147,
                 {
                     "input": [
-                        408,
+                        420,
                         "ValidateApprovedAccessDomainInput!"
                     ]
                 }
@@ -7463,7 +7587,7 @@ export default {
                 34,
                 {
                     "input": [
-                        409,
+                        421,
                         "CreateOneFieldMetadataInput!"
                     ]
                 }
@@ -7472,7 +7596,7 @@ export default {
                 34,
                 {
                     "input": [
-                        411,
+                        423,
                         "UpdateOneFieldMetadataInput!"
                     ]
                 }
@@ -7481,129 +7605,8 @@ export default {
                 34,
                 {
                     "input": [
-                        413,
-                        "DeleteOneFieldInput!"
-                    ]
-                }
-            ],
-            "createCoreViewGroup": [
-                56,
-                {
-                    "input": [
-                        414,
-                        "CreateViewGroupInput!"
-                    ]
-                }
-            ],
-            "createManyCoreViewGroups": [
-                56,
-                {
-                    "inputs": [
-                        414,
-                        "[CreateViewGroupInput!]!"
-                    ]
-                }
-            ],
-            "updateCoreViewGroup": [
-                56,
-                {
-                    "input": [
-                        415,
-                        "UpdateViewGroupInput!"
-                    ]
-                }
-            ],
-            "deleteCoreViewGroup": [
-                56,
-                {
-                    "input": [
-                        417,
-                        "DeleteViewGroupInput!"
-                    ]
-                }
-            ],
-            "destroyCoreViewGroup": [
-                56,
-                {
-                    "input": [
-                        418,
-                        "DestroyViewGroupInput!"
-                    ]
-                }
-            ],
-            "createCoreViewFilter": [
-                54,
-                {
-                    "input": [
-                        419,
-                        "CreateViewFilterInput!"
-                    ]
-                }
-            ],
-            "updateCoreViewFilter": [
-                54,
-                {
-                    "input": [
-                        420,
-                        "UpdateViewFilterInput!"
-                    ]
-                }
-            ],
-            "deleteCoreViewFilter": [
-                54,
-                {
-                    "input": [
-                        422,
-                        "DeleteViewFilterInput!"
-                    ]
-                }
-            ],
-            "destroyCoreViewFilter": [
-                54,
-                {
-                    "input": [
-                        423,
-                        "DestroyViewFilterInput!"
-                    ]
-                }
-            ],
-            "createCoreViewFilterGroup": [
-                52,
-                {
-                    "input": [
-                        424,
-                        "CreateViewFilterGroupInput!"
-                    ]
-                }
-            ],
-            "updateCoreViewFilterGroup": [
-                52,
-                {
-                    "id": [
-                        1,
-                        "String!"
-                    ],
-                    "input": [
                         425,
-                        "UpdateViewFilterGroupInput!"
-                    ]
-                }
-            ],
-            "deleteCoreViewFilterGroup": [
-                6,
-                {
-                    "id": [
-                        1,
-                        "String!"
-                    ]
-                }
-            ],
-            "destroyCoreViewFilterGroup": [
-                6,
-                {
-                    "id": [
-                        1,
-                        "String!"
+                        "DeleteOneFieldInput!"
                     ]
                 }
             ],
@@ -7989,7 +7992,7 @@ export default {
                 7,
                 {
                     "file": [
-                        388,
+                        400,
                         "Upload!"
                     ],
                     "universalIdentifier": [
@@ -8504,7 +8507,7 @@ export default {
                 285,
                 {
                     "file": [
-                        388,
+                        400,
                         "Upload!"
                     ],
                     "applicationUniversalIdentifier": [
@@ -9205,12 +9208,195 @@ export default {
                 1
             ]
         },
+        "CreateViewGroupInput": {
+            "id": [
+                3
+            ],
+            "isVisible": [
+                6
+            ],
+            "fieldValue": [
+                1
+            ],
+            "position": [
+                11
+            ],
+            "viewId": [
+                3
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "UpdateViewGroupInput": {
+            "id": [
+                3
+            ],
+            "update": [
+                375
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "UpdateViewGroupInputUpdates": {
+            "fieldMetadataId": [
+                3
+            ],
+            "isVisible": [
+                6
+            ],
+            "fieldValue": [
+                1
+            ],
+            "position": [
+                11
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "DeleteViewGroupInput": {
+            "id": [
+                3
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "DestroyViewGroupInput": {
+            "id": [
+                3
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "CreateViewFilterGroupInput": {
+            "id": [
+                3
+            ],
+            "parentViewFilterGroupId": [
+                3
+            ],
+            "logicalOperator": [
+                53
+            ],
+            "positionInViewFilterGroup": [
+                11
+            ],
+            "viewId": [
+                3
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "UpdateViewFilterGroupInput": {
+            "id": [
+                3
+            ],
+            "parentViewFilterGroupId": [
+                3
+            ],
+            "logicalOperator": [
+                53
+            ],
+            "positionInViewFilterGroup": [
+                11
+            ],
+            "viewId": [
+                3
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "CreateViewFilterInput": {
+            "id": [
+                3
+            ],
+            "fieldMetadataId": [
+                3
+            ],
+            "operand": [
+                55
+            ],
+            "value": [
+                15
+            ],
+            "viewFilterGroupId": [
+                3
+            ],
+            "positionInViewFilterGroup": [
+                11
+            ],
+            "subFieldName": [
+                1
+            ],
+            "viewId": [
+                3
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "UpdateViewFilterInput": {
+            "id": [
+                3
+            ],
+            "update": [
+                382
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "UpdateViewFilterInputUpdates": {
+            "fieldMetadataId": [
+                3
+            ],
+            "operand": [
+                55
+            ],
+            "value": [
+                15
+            ],
+            "viewFilterGroupId": [
+                3
+            ],
+            "positionInViewFilterGroup": [
+                11
+            ],
+            "subFieldName": [
+                1
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "DeleteViewFilterInput": {
+            "id": [
+                3
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "DestroyViewFilterInput": {
+            "id": [
+                3
+            ],
+            "__typename": [
+                1
+            ]
+        },
         "UpdateViewFieldGroupInput": {
             "id": [
                 3
             ],
             "update": [
-                374
+                386
             ],
             "__typename": [
                 1
@@ -9274,10 +9460,10 @@ export default {
                 3
             ],
             "groups": [
-                379
+                391
             ],
             "fields": [
-                380
+                392
             ],
             "__typename": [
                 1
@@ -9297,7 +9483,7 @@ export default {
                 6
             ],
             "fields": [
-                380
+                392
             ],
             "__typename": [
                 1
@@ -9418,7 +9604,7 @@ export default {
                 3
             ],
             "update": [
-                385
+                397
             ],
             "__typename": [
                 1
@@ -9549,7 +9735,7 @@ export default {
                 3
             ],
             "update": [
-                391
+                403
             ],
             "__typename": [
                 1
@@ -9666,7 +9852,7 @@ export default {
         },
         "UpdateRoleInput": {
             "update": [
-                397
+                409
             ],
             "id": [
                 3
@@ -9721,7 +9907,7 @@ export default {
                 3
             ],
             "objectPermissions": [
-                399
+                411
             ],
             "__typename": [
                 1
@@ -9763,7 +9949,7 @@ export default {
                 3
             ],
             "fieldPermissions": [
-                402
+                414
             ],
             "__typename": [
                 1
@@ -9794,10 +9980,10 @@ export default {
                 3
             ],
             "predicates": [
-                404
+                416
             ],
             "predicateGroups": [
-                405
+                417
             ],
             "__typename": [
                 1
@@ -9887,7 +10073,7 @@ export default {
         },
         "CreateOneFieldMetadataInput": {
             "field": [
-                410
+                422
             ],
             "__typename": [
                 1
@@ -9960,7 +10146,7 @@ export default {
                 3
             ],
             "update": [
-                412
+                424
             ],
             "__typename": [
                 1
@@ -9968,7 +10154,7 @@ export default {
         },
         "UpdateFieldInput": {
             "universalIdentifier": [
-                1
+                3
             ],
             "name": [
                 1
@@ -10018,189 +10204,6 @@ export default {
         },
         "DeleteOneFieldInput": {
             "id": [
-                3
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "CreateViewGroupInput": {
-            "id": [
-                3
-            ],
-            "isVisible": [
-                6
-            ],
-            "fieldValue": [
-                1
-            ],
-            "position": [
-                11
-            ],
-            "viewId": [
-                3
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "UpdateViewGroupInput": {
-            "id": [
-                3
-            ],
-            "update": [
-                416
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "UpdateViewGroupInputUpdates": {
-            "fieldMetadataId": [
-                3
-            ],
-            "isVisible": [
-                6
-            ],
-            "fieldValue": [
-                1
-            ],
-            "position": [
-                11
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "DeleteViewGroupInput": {
-            "id": [
-                3
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "DestroyViewGroupInput": {
-            "id": [
-                3
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "CreateViewFilterInput": {
-            "id": [
-                3
-            ],
-            "fieldMetadataId": [
-                3
-            ],
-            "operand": [
-                55
-            ],
-            "value": [
-                15
-            ],
-            "viewFilterGroupId": [
-                3
-            ],
-            "positionInViewFilterGroup": [
-                11
-            ],
-            "subFieldName": [
-                1
-            ],
-            "viewId": [
-                3
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "UpdateViewFilterInput": {
-            "id": [
-                3
-            ],
-            "update": [
-                421
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "UpdateViewFilterInputUpdates": {
-            "fieldMetadataId": [
-                3
-            ],
-            "operand": [
-                55
-            ],
-            "value": [
-                15
-            ],
-            "viewFilterGroupId": [
-                3
-            ],
-            "positionInViewFilterGroup": [
-                11
-            ],
-            "subFieldName": [
-                1
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "DeleteViewFilterInput": {
-            "id": [
-                3
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "DestroyViewFilterInput": {
-            "id": [
-                3
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "CreateViewFilterGroupInput": {
-            "id": [
-                3
-            ],
-            "parentViewFilterGroupId": [
-                3
-            ],
-            "logicalOperator": [
-                53
-            ],
-            "positionInViewFilterGroup": [
-                11
-            ],
-            "viewId": [
-                3
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "UpdateViewFilterGroupInput": {
-            "id": [
-                3
-            ],
-            "parentViewFilterGroupId": [
-                3
-            ],
-            "logicalOperator": [
-                53
-            ],
-            "positionInViewFilterGroup": [
-                11
-            ],
-            "viewId": [
                 3
             ],
             "__typename": [
