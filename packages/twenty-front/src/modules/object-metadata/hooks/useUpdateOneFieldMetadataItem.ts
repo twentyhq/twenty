@@ -1,6 +1,7 @@
+import { useMutation } from '@apollo/client/react';
 import {
   type UpdateOneFieldMetadataItemMutationVariables,
-  useUpdateOneFieldMetadataItemMutation,
+  UpdateOneFieldMetadataItemDocument,
 } from '~/generated-metadata/graphql';
 
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
@@ -10,7 +11,7 @@ import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequ
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { ApolloError } from '@apollo/client';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { t } from '@lingui/core/macro';
 import { CrudOperationType } from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
@@ -22,8 +23,9 @@ export const useUpdateOneFieldMetadataItem = () => {
   const { refreshCoreViewsByObjectMetadataId } =
     useRefreshCoreViewsByObjectMetadataId();
 
-  const [updateOneFieldMetadataItemMutation] =
-    useUpdateOneFieldMetadataItemMutation();
+  const [updateOneFieldMetadataItemMutation] = useMutation(
+    UpdateOneFieldMetadataItemDocument,
+  );
 
   const { handleMetadataError } = useMetadataErrorHandler();
 
@@ -78,7 +80,7 @@ export const useUpdateOneFieldMetadataItem = () => {
         response,
       };
     } catch (error) {
-      if (error instanceof ApolloError) {
+      if (CombinedGraphQLErrors.is(error)) {
         handleMetadataError(error, {
           primaryMetadataName: 'fieldMetadata',
           operationType: CrudOperationType.UPDATE,

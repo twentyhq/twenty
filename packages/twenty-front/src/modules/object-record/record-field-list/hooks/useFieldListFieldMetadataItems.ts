@@ -65,7 +65,7 @@ export const useFieldListFieldMetadataItems = ({
       )
       .filter(
         (fieldMetadataItem) =>
-          fieldMetadataItem.type !== FieldMetadataType.RICH_TEXT_V2,
+          fieldMetadataItem.type !== FieldMetadataType.RICH_TEXT,
       ),
     (fieldMetadataItem) =>
       fieldMetadataItem.type === FieldMetadataType.RELATION ||

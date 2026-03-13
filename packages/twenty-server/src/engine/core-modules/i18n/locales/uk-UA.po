@@ -1176,6 +1176,11 @@ msgstr ""
 msgid "Empty field permissions are not allowed."
 msgstr "Порожні дозволи на поля не допускаються."
 
+#. js-lingui-id: ArAFBo
+#: src/engine/core-modules/auth/auth.exception.ts
+msgid "Enterprise validity token is not valid."
+msgstr ""
+
 #. js-lingui-id: qpXqpa
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts
 #: src/engine/core-modules/application/application.exception.ts
@@ -1203,14 +1208,14 @@ msgstr "Помилка"
 msgid "Exactly one of \"groups\" or \"fields\" must be provided"
 msgstr ""
 
-#. js-lingui-id: ksMwKk
+#. js-lingui-id: gyqLlt
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
-msgid "Exactly one of workflow version or front component is required"
+msgid "Exactly one of workflow version, front component or engine component key is required"
 msgstr ""
 
-#. js-lingui-id: yX0axn
+#. js-lingui-id: ucm3bq
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
-msgid "Exactly one of workflowVersionId or frontComponentUniversalIdentifier is required"
+msgid "Exactly one of workflowVersionId, frontComponentUniversalIdentifier or engineComponentKey is required"
 msgstr ""
 
 #. js-lingui-id: AiFXmG
@@ -1898,6 +1903,11 @@ msgstr "Недійсна електронна адреса."
 msgid "Invalid email or domain."
 msgstr ""
 
+#. js-lingui-id: pOHI+b
+#: src/engine/core-modules/enterprise/enterprise.exception.ts
+msgid "Invalid enterprise key."
+msgstr ""
+
 #. js-lingui-id: YtFgT4
 #: src/engine/core-modules/feature-flag/feature-flag.exception.ts
 msgid "Invalid feature flag key."
@@ -2312,7 +2322,7 @@ msgid "Invalid value for position: \"{inspectedValue}\""
 msgstr ""
 
 #. js-lingui-id: Sf+6YJ
-#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-rich-text-v2-field-or-throw.util.ts
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-rich-text-field-or-throw.util.ts
 msgid "Invalid value for rich text."
 msgstr ""
 
@@ -2422,6 +2432,11 @@ msgstr "Некоректні вхідні дані тригера робочог
 #: src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception.ts
 msgid "Invalid workflow version."
 msgstr "Недійсна версія робочого процесу."
+
+#. js-lingui-id: 1bOGPq
+#: src/engine/core-modules/enterprise/enterprise.exception.ts
+msgid "IS_CONFIG_VARIABLES_IN_DB_ENABLED is false on your server. Please add ENTERPRISE_KEY to your .env file manually."
+msgstr ""
 
 #. js-lingui-id: rjyWPb
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts

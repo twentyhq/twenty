@@ -33,7 +33,7 @@ import {
 } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input';
 import { FilesInputType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input/files.input-type';
 import { MultiSelectFilterType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input/multi-select-filter.input-type';
-import { RichTextV2FilterType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input/rich-text.input-type';
+import { RichTextFilterType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input/rich-text.input-type';
 import { SelectFilterType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input/select-filter.input-type';
 import { TSVectorFilterType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input/ts-vector-filter.input-type';
 import { UUIDFilterType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input/uuid-filter.input-type';
@@ -74,7 +74,6 @@ export class TypeMapperService {
     [FieldMetadataType.POSITION, PositionScalarType],
     [FieldMetadataType.RAW_JSON, GraphQLJSON],
     [FieldMetadataType.ARRAY, StringArrayScalarType],
-    [FieldMetadataType.RICH_TEXT, GraphQLString],
     [FieldMetadataType.TS_VECTOR, TSVectorScalarType],
   ]);
 
@@ -179,8 +178,7 @@ export class TypeMapperService {
       [FieldMetadataType.POSITION, FloatFilterType],
       [FieldMetadataType.FILES, RawJsonFilterType],
       [FieldMetadataType.RAW_JSON, RawJsonFilterType],
-      [FieldMetadataType.RICH_TEXT, StringFilterType],
-      [FieldMetadataType.RICH_TEXT_V2, RichTextV2FilterType],
+      [FieldMetadataType.RICH_TEXT, RichTextFilterType],
       [FieldMetadataType.ARRAY, ArrayFilterType],
       [FieldMetadataType.MULTI_SELECT, MultiSelectFilterType],
       [FieldMetadataType.SELECT, SelectFilterType],
@@ -209,7 +207,6 @@ export class TypeMapperService {
       [FieldMetadataType.POSITION, OrderByDirectionType],
       [FieldMetadataType.FILES, OrderByDirectionType],
       [FieldMetadataType.RAW_JSON, OrderByDirectionType],
-      [FieldMetadataType.RICH_TEXT, OrderByDirectionType],
       [FieldMetadataType.ARRAY, OrderByDirectionType],
       [FieldMetadataType.TS_VECTOR, OrderByDirectionType], // TODO: Add TSVectorOrderByType
     ]);

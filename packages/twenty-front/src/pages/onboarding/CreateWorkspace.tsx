@@ -9,23 +9,28 @@ import { Logo } from '@/auth/components/Logo';
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { useFetchAndLoadIndexViews } from '@/metadata-store/hooks/useFetchAndLoadIndexViews';
+import { useMetadataStore } from '@/metadata-store/hooks/useMetadataStore';
 import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItems';
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
 import { WorkspaceLogoUploader } from '@/settings/workspace/components/WorkspaceLogoUploader';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { ModalContent } from 'twenty-ui/layout';
 import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
-import { ApolloError } from '@apollo/client';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
+import { useStore } from 'jotai';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { Loader } from 'twenty-ui/feedback';
 import { MainButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { useActivateWorkspaceMutation } from '~/generated-metadata/graphql';
+import { useMutation } from '@apollo/client/react';
+import { ActivateWorkspaceDocument } from '~/generated-metadata/graphql';
 
 const StyledContentContainer = styled.div`
   width: 100%;
@@ -68,9 +73,12 @@ export const CreateWorkspace = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
   const setNextOnboardingStatus = useSetNextOnboardingStatus();
   const { refreshObjectMetadataItems } = useRefreshObjectMetadataItems();
+  const { updateDraft, applyChanges } = useMetadataStore();
+  const { fetchAndLoadIndexViews } = useFetchAndLoadIndexViews();
+  const store = useStore();
 
   const { loadCurrentUser } = useLoadCurrentUser();
-  const [activateWorkspace] = useActivateWorkspaceMutation();
+  const [activateWorkspace] = useMutation(ActivateWorkspaceDocument);
   const [pendingCreationLoaderStep, setPendingCreationLoaderStep] = useState(
     PendingCreationLoaderStep.None,
   );
@@ -118,18 +126,25 @@ export const CreateWorkspace = () => {
           },
         });
 
-        if (isDefined(result.errors)) {
-          throw result.errors ?? new Error(t`Unknown error`);
+        if (isDefined(result.error)) {
+          throw result.error ?? new Error(t`Unknown error`);
         }
 
         await refreshObjectMetadataItems();
+
+        const loadedObjects = store.get(objectMetadataItemsState.atom);
+        updateDraft('objectMetadataItems', loadedObjects);
+        applyChanges();
+
+        await fetchAndLoadIndexViews();
+
         await loadCurrentUser();
         setNextOnboardingStatus();
       } catch (error: any) {
         setPendingCreationLoaderStep(PendingCreationLoaderStep.None);
 
         enqueueErrorSnackBar({
-          apolloError: error instanceof ApolloError ? error : undefined,
+          apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
         });
       }
     },
@@ -138,6 +153,10 @@ export const CreateWorkspace = () => {
       enqueueErrorSnackBar,
       loadCurrentUser,
       refreshObjectMetadataItems,
+      updateDraft,
+      applyChanges,
+      store,
+      fetchAndLoadIndexViews,
       setNextOnboardingStatus,
       t,
     ],

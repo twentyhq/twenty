@@ -1,7 +1,7 @@
 {
   "private": true,
   "dependencies": {
-    "@apollo/client": "^3.7.17",
+    "@apollo/client": "^4.0.0",
     "@floating-ui/react": "^0.24.3",
     "@linaria/core": "^6.2.0",
     "@linaria/react": "^6.2.1",
@@ -207,7 +207,6 @@
       "packages/twenty-e2e-testing",
       "packages/twenty-shared",
       "packages/twenty-sdk",
-      "packages/twenty-standard-application",
       "packages/twenty-apps",
       "packages/twenty-cli",
       "packages/create-twenty-app",

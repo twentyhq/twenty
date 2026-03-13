@@ -6,9 +6,10 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { IconAt, IconMailCog, Status } from 'twenty-ui/display';
+import { useQuery } from '@apollo/client/react';
 import {
-  useFindManyPublicDomainsQuery,
   type PublicDomain,
+  FindManyPublicDomainsDocument,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
@@ -19,7 +20,7 @@ export const SettingsPublicDomainsListCard = () => {
 
   const setSelectedPublicDomain = useSetAtomState(selectedPublicDomainState);
 
-  const { data, loading } = useFindManyPublicDomainsQuery();
+  const { data, loading } = useQuery(FindManyPublicDomainsDocument);
 
   const publicDomains = data?.findManyPublicDomains;
 

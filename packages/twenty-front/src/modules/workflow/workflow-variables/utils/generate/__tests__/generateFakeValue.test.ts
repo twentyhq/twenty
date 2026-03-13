@@ -141,15 +141,6 @@ describe('generateFakeValue', () => {
       expect(result).toBeNull();
     });
 
-    it('should generate RICH_TEXT value', () => {
-      const result = generateFakeValue(
-        FieldMetadataType.RICH_TEXT,
-        'FieldMetadataType',
-      );
-
-      expect(result).toBe('My rich text');
-    });
-
     it('should generate UUID value', () => {
       const result = generateFakeValue(
         FieldMetadataType.UUID,

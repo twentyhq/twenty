@@ -1,4 +1,4 @@
-import { useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client/react';
 
 import { triggerUpdateRecordOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerUpdateRecordOptimisticEffect';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
@@ -62,14 +62,17 @@ export const useDeactivateWorkflowVersion = () => {
           },
         });
 
-        const cacheSnapshot = apolloCoreClient.cache.extract();
-        const workflowVersion: WorkflowVersion | undefined = Object.values(
-          cacheSnapshot,
+        const cacheSnapshot = apolloCoreClient.cache.extract() as Record<
+          string,
+          Record<string, unknown>
+        >;
+        const workflowVersion = (
+          Object.values(cacheSnapshot) as Array<Record<string, unknown>>
         ).find(
           (item) =>
             item.__typename === 'WorkflowVersion' &&
             item.id === workflowVersionId,
-        );
+        ) as WorkflowVersion | undefined;
 
         if (!isDefined(workflowVersion)) {
           return;

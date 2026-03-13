@@ -25,7 +25,7 @@ import { parseApolloStoreFieldName } from '~/utils/parseApolloStoreFieldName';
   then we'll be able to uncomment the code below so the cached lists are updated coherently with the variables.
 */
 type TriggerCreateRecordsOptimisticEffectArgs = {
-  cache: ApolloCache<object>;
+  cache: ApolloCache;
   objectMetadataItem: ObjectMetadataItem;
   recordsToCreate: RecordGqlNode[];
   objectMetadataItems: ObjectMetadataItem[];

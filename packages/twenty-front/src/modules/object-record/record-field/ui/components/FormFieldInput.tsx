@@ -13,7 +13,7 @@ import { FormNumberFieldInput } from '@/object-record/record-field/ui/form-types
 import { FormPhoneFieldInput } from '@/object-record/record-field/ui/form-types/components/FormPhoneFieldInput';
 import { FormRawJsonFieldInput } from '@/object-record/record-field/ui/form-types/components/FormRawJsonFieldInput';
 import { FormRelationToOneFieldInput } from '@/object-record/record-field/ui/form-types/components/FormRelationToOneFieldInput';
-import { FormRichTextV2FieldInput } from '@/object-record/record-field/ui/form-types/components/FormRichTextV2FieldInput';
+import { FormRichTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormRichTextFieldInput';
 import { FormSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormSelectFieldInput';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { FormUuidFieldInput } from '@/object-record/record-field/ui/form-types/components/FormUuidFieldInput';
@@ -30,7 +30,7 @@ import {
   type FieldPhonesValue,
   type FieldRelationToOneValue,
   type FieldRelationValue,
-  type FieldRichTextV2Value,
+  type FieldRichTextValue,
   type FormFieldCurrencyValue,
 } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { isFieldAddress } from '@/object-record/record-field/ui/types/guards/isFieldAddress';
@@ -48,7 +48,7 @@ import { isFieldNumber } from '@/object-record/record-field/ui/types/guards/isFi
 import { isFieldPhones } from '@/object-record/record-field/ui/types/guards/isFieldPhones';
 import { isFieldRawJson } from '@/object-record/record-field/ui/types/guards/isFieldRawJson';
 import { isFieldRelationManyToOne } from '@/object-record/record-field/ui/types/guards/isFieldRelationManyToOne';
-import { isFieldRichTextV2 } from '@/object-record/record-field/ui/types/guards/isFieldRichTextV2';
+import { isFieldRichText } from '@/object-record/record-field/ui/types/guards/isFieldRichText';
 import { isFieldSelect } from '@/object-record/record-field/ui/types/guards/isFieldSelect';
 import { isFieldText } from '@/object-record/record-field/ui/types/guards/isFieldText';
 import { isFieldUuid } from '@/object-record/record-field/ui/types/guards/isFieldUuid';
@@ -220,10 +220,10 @@ export const FormFieldInput = ({
       VariablePicker={VariablePicker}
       readonly={readonly}
     />
-  ) : isFieldRichTextV2(field) ? (
-    <FormRichTextV2FieldInput
+  ) : isFieldRichText(field) ? (
+    <FormRichTextFieldInput
       label={field.label}
-      defaultValue={defaultValue as FieldRichTextV2Value | undefined}
+      defaultValue={defaultValue as FieldRichTextValue | undefined}
       onChange={onChange}
       VariablePicker={VariablePicker}
       readonly={readonly}

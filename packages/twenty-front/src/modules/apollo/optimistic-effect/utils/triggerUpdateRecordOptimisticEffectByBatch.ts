@@ -26,7 +26,7 @@ export const triggerUpdateRecordOptimisticEffectByBatch = ({
   objectPermissionsByObjectMetadataId,
   upsertRecordsInStore,
 }: {
-  cache: ApolloCache<unknown>;
+  cache: ApolloCache;
   objectMetadataItem: ObjectMetadataItem;
   currentRecords: RecordGqlNode[];
   updatedRecords: RecordGqlNode[];

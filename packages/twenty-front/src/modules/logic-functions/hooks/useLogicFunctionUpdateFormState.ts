@@ -1,10 +1,7 @@
 import { useGetOneLogicFunction } from '@/logic-functions/hooks/useGetOneLogicFunction';
 import { type Dispatch, type SetStateAction, useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  type FindOneLogicFunctionQuery,
-  type LogicFunction,
-} from '~/generated-metadata/graphql';
+import { type LogicFunction } from '~/generated-metadata/graphql';
 import { useGetLogicFunctionSourceCode } from '@/logic-functions/hooks/useGetLogicFunctionSourceCode';
 import { DEFAULT_TOOL_INPUT_SCHEMA } from 'twenty-shared/logic-function';
 
@@ -48,21 +45,21 @@ export const useLogicFunctionUpdateFormState = ({
   const { logicFunction, loading: logicFunctionLoading } =
     useGetOneLogicFunction({
       id: logicFunctionId,
-      onCompleted: (data: FindOneLogicFunctionQuery) => {
-        const fn = data?.findOneLogicFunction;
-
-        if (isDefined(fn)) {
-          setFormValues((prevState) => ({
-            ...prevState,
-            name: fn.name || '',
-            description: fn.description || '',
-            isTool: fn.isTool ?? false,
-            timeoutSeconds: fn.timeoutSeconds ?? 300,
-            toolInputSchema: fn.toolInputSchema || DEFAULT_TOOL_INPUT_SCHEMA,
-          }));
-        }
-      },
     });
+
+  useEffect(() => {
+    if (isDefined(logicFunction)) {
+      setFormValues((prevState) => ({
+        ...prevState,
+        name: logicFunction.name || '',
+        description: logicFunction.description || '',
+        isTool: logicFunction.isTool ?? false,
+        timeoutSeconds: logicFunction.timeoutSeconds ?? 300,
+        toolInputSchema:
+          logicFunction.toolInputSchema || DEFAULT_TOOL_INPUT_SCHEMA,
+      }));
+    }
+  }, [logicFunction]);
 
   useEffect(() => {
     if (isDefined(sourceHandlerCode)) {

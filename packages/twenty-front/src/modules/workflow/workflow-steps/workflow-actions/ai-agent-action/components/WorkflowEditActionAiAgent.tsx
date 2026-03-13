@@ -18,7 +18,7 @@ import { workflowAiAgentActionAgentState } from '@/workflow/workflow-steps/workf
 import { workflowAiAgentPermissionsIsAddingPermissionState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsIsAddingPermissionState';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   type AgentResponseSchema,
   type ModelConfiguration,
@@ -27,10 +27,11 @@ import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconLock, IconSparkles } from 'twenty-ui/display';
 import { useDebouncedCallback } from 'use-debounce';
+import { useQuery, useMutation } from '@apollo/client/react';
 import {
-  useFindOneAgentQuery,
-  useGetRolesQuery,
-  useUpdateOneAgentMutation,
+  FindOneAgentDocument,
+  GetRolesDocument,
+  UpdateOneAgentDocument,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { SidePanelSkeletonLoader } from '~/loading/components/SidePanelSkeletonLoader';
@@ -64,17 +65,22 @@ export const WorkflowEditActionAiAgent = ({
   const agentId = action.settings.input.agentId;
   const [workflowAiAgentActionAgent, setWorkflowAiAgentActionAgent] =
     useAtomState(workflowAiAgentActionAgentState);
-  const { loading: agentLoading, refetch: refetchAgent } = useFindOneAgentQuery(
-    {
-      variables: { id: agentId || '' },
-      skip: !agentId,
-      onCompleted: (data) => {
-        setWorkflowAiAgentActionAgent(data.findOneAgent);
-      },
-    },
-  );
+  const {
+    data: agentData,
+    loading: agentLoading,
+    refetch: refetchAgent,
+  } = useQuery(FindOneAgentDocument, {
+    variables: { id: agentId || '' },
+    skip: !agentId,
+  });
+
+  useEffect(() => {
+    if (agentData?.findOneAgent) {
+      setWorkflowAiAgentActionAgent(agentData.findOneAgent);
+    }
+  }, [agentData, setWorkflowAiAgentActionAgent]);
   useResetWorkflowAiAgentPermissionsStateOnSidePanelClose();
-  const [updateAgent] = useUpdateOneAgentMutation();
+  const [updateAgent] = useMutation(UpdateOneAgentDocument);
   const aiModelOptions = useAiModelOptions();
   const { updateWorkflowVersionStep } = useUpdateWorkflowVersionStep();
   const flow = useFlowOrThrow();
@@ -208,7 +214,7 @@ export const WorkflowEditActionAiAgent = ({
     (activeTabId as WorkflowAiAgentTabId) ?? WORKFLOW_AI_AGENT_TABS.PROMPT;
 
   const navigateSettings = useNavigateSettings();
-  const { data: rolesData } = useGetRolesQuery();
+  const { data: rolesData } = useQuery(GetRolesDocument);
 
   const [
     workflowAiAgentPermissionsIsAddingPermission,

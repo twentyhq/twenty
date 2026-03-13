@@ -2,11 +2,12 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { useUpgradeApplicationMutation } from '~/generated-metadata/graphql';
+import { useMutation } from '@apollo/client/react';
+import { UpgradeApplicationDocument } from '~/generated-metadata/graphql';
 
 export const useUpgradeApplication = () => {
   const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
-  const [upgradeApplicationMutation] = useUpgradeApplicationMutation();
+  const [upgradeApplicationMutation] = useMutation(UpgradeApplicationDocument);
   const [isUpgrading, setIsUpgrading] = useState(false);
 
   const upgrade = async (params: {

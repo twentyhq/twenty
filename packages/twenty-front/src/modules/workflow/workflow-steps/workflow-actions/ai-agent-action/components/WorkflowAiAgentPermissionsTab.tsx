@@ -14,7 +14,8 @@ import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
-import { type Agent, useGetRolesQuery } from '~/generated-metadata/graphql';
+import { useQuery } from '@apollo/client/react';
+import { type Agent, GetRolesDocument } from '~/generated-metadata/graphql';
 import { SidePanelSkeletonLoader } from '~/loading/components/SidePanelSkeletonLoader';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
@@ -96,7 +97,7 @@ export const WorkflowAiAgentPermissionsTab = ({
     data: rolesData,
     loading: rolesLoading,
     refetch: refetchRoles,
-  } = useGetRolesQuery();
+  } = useQuery(GetRolesDocument);
 
   const [searchQuery, setSearchQuery] = useState('');
   const role = rolesData?.getRoles.find(

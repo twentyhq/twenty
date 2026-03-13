@@ -21,7 +21,7 @@ describe('triggerUpdateGroupByQueriesOptimisticEffect', () => {
     const mockModify = jest.fn();
     const mockCache = {
       modify: mockModify,
-    } as unknown as ApolloCache<unknown>;
+    } as unknown as ApolloCache;
 
     triggerUpdateGroupByQueriesOptimisticEffect({
       cache: mockCache,
@@ -43,7 +43,7 @@ describe('triggerUpdateGroupByQueriesOptimisticEffect', () => {
     const mockModify = jest.fn();
     const mockCache = {
       modify: mockModify,
-    } as unknown as ApolloCache<unknown>;
+    } as unknown as ApolloCache;
 
     triggerUpdateGroupByQueriesOptimisticEffect({
       cache: mockCache,
@@ -60,7 +60,7 @@ describe('triggerUpdateGroupByQueriesOptimisticEffect', () => {
     const mockModify = jest.fn();
     const mockCache = {
       modify: mockModify,
-    } as unknown as ApolloCache<unknown>;
+    } as unknown as ApolloCache;
 
     triggerUpdateGroupByQueriesOptimisticEffect({
       cache: mockCache,
@@ -77,7 +77,7 @@ describe('triggerUpdateGroupByQueriesOptimisticEffect', () => {
     const mockModify = jest.fn();
     const mockCache = {
       modify: mockModify,
-    } as unknown as ApolloCache<unknown>;
+    } as unknown as ApolloCache;
 
     triggerUpdateGroupByQueriesOptimisticEffect({
       cache: mockCache,

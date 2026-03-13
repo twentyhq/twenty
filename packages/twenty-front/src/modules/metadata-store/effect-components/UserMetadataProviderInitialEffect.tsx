@@ -18,9 +18,10 @@ import { useCallback, useEffect, useState } from 'react';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { type ObjectPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { useQuery } from '@apollo/client/react';
 import {
-  useGetCurrentUserQuery,
   type WorkspaceMember,
+  GetCurrentUserDocument,
 } from '~/generated-metadata/graphql';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
@@ -66,10 +67,12 @@ export const UserMetadataProviderInitialEffect = () => {
 
   const shouldSkipUserQuery = !isLoggedIn || isDefined(currentUser);
 
-  const { data: userQueryData, loading: userQueryLoading } =
-    useGetCurrentUserQuery({
+  const { data: userQueryData, loading: userQueryLoading } = useQuery(
+    GetCurrentUserDocument,
+    {
       skip: shouldSkipUserQuery,
-    });
+    },
+  );
 
   useEffect(() => {
     if (isInitialized) {

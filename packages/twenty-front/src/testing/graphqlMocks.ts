@@ -1,4 +1,4 @@
-import { getOperationName } from '@apollo/client/utilities';
+import { getOperationName } from '~/utils/getOperationName';
 import { parse, type FieldNode } from 'graphql';
 import { graphql, http, HttpResponse, type GraphQLQuery } from 'msw';
 
@@ -7,8 +7,6 @@ import { FIND_MANY_OBJECT_METADATA_ITEMS } from '@/object-metadata/graphql/queri
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { mockedClientConfig } from '~/testing/mock-data/config';
-import { mockedFavoriteRecords } from '~/testing/mock-data/generated/data/favorites/mock-favorites-data';
-import { mockedFavoriteFoldersData } from '~/testing/mock-data/favorite-folders';
 import { mockedNoteRecords } from '~/testing/mock-data/generated/data/notes/mock-notes-data';
 import { mockedPersonRecords } from '~/testing/mock-data/generated/data/people/mock-people-data';
 import { mockedPublicWorkspaceDataBySubdomain } from '~/testing/mock-data/publicWorkspaceDataBySubdomain';
@@ -406,36 +404,6 @@ export const graphqlMocks = {
             'taskTarget',
             taskTargetNodes as Record<string, unknown>[],
           ),
-        },
-      });
-    }),
-    graphql.query('FindManyFavoriteFolders', () => {
-      return HttpResponse.json({
-        data: {
-          favoriteFolders: {
-            edges: mockedFavoriteFoldersData.map((favoriteFolder) => ({
-              node: favoriteFolder,
-              cursor: null,
-            })),
-            pageInfo: {
-              hasNextPage: false,
-              hasPreviousPage: false,
-              startCursor: null,
-              endCursor: null,
-            },
-          },
-        },
-      });
-    }),
-    graphql.query('FindManyFavorites', () => {
-      return HttpResponse.json({
-        data: {
-          favorites: {
-            ...wrapRecordsAsConnection(
-              'favorite',
-              mockedFavoriteRecords as Record<string, unknown>[],
-            ),
-          },
         },
       });
     }),

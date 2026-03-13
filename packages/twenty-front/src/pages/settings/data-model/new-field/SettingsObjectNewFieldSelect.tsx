@@ -48,7 +48,6 @@ export const SettingsObjectNewFieldSelect = () => {
     [
       FieldMetadataType.NUMERIC,
       FieldMetadataType.RICH_TEXT,
-      FieldMetadataType.RICH_TEXT_V2,
       FieldMetadataType.ACTOR,
       FieldMetadataType.UUID,
     ] as const

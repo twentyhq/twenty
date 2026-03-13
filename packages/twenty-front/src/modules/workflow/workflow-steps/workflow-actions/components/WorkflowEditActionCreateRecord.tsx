@@ -6,7 +6,7 @@ import { FormFieldInput } from '@/object-record/record-field/ui/components/FormF
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { Select } from '@/ui/input/components/Select';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { useViewOrDefaultViewFromPrefetchedViews } from '@/views/hooks/useViewOrDefaultViewFromPrefetchedViews';
+import { useViewOrDefaultView } from '@/views/hooks/useViewOrDefaultView';
 import { type WorkflowCreateRecordAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
@@ -99,7 +99,7 @@ export const WorkflowEditActionCreateRecord = ({
     (item) => item.nameSingular === objectNameSingular,
   );
 
-  const { view: indexView } = useViewOrDefaultViewFromPrefetchedViews({
+  const { view: indexView } = useViewOrDefaultView({
     objectMetadataItemId: objectMetadataItem?.id ?? '',
   });
 

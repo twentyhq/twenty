@@ -131,16 +131,12 @@ export const InviteTeam = () => {
         ),
       );
 
-      if (emails.length === 0) {
-        setNextOnboardingStatus();
-        return;
-      }
-
       const result = await sendInvitation({ emails });
 
-      if (isDefined(result.errors)) {
-        throw result.errors;
+      if (isDefined(result.error)) {
+        throw result.error;
       }
+
       if (emails.length > 0) {
         enqueueSuccessSnackBar({
           message: t`Invite link sent to email addresses`,

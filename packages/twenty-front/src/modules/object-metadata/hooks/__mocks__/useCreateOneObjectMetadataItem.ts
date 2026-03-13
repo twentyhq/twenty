@@ -1,61 +1,11 @@
-import { gql } from '@apollo/client';
+import {
+  CreateOneObjectMetadataItemDocument,
+  FindManyCoreViewsDocument,
+} from '~/generated-metadata/graphql';
 
-export const query = gql`
-  mutation CreateOneObjectMetadataItem($input: CreateOneObjectInput!) {
-    createOneObject(input: $input) {
-      id
-      nameSingular
-      namePlural
-      labelSingular
-      labelPlural
-      description
-      icon
-      isCustom
-      isActive
-      isSearchable
-      createdAt
-      updatedAt
-      labelIdentifierFieldMetadataId
-      imageIdentifierFieldMetadataId
-      isLabelSyncedWithName
-    }
-  }
-`;
+export const query = CreateOneObjectMetadataItemDocument;
 
-export const findManyViewsQuery = gql`
-  query FindManyViews(
-    $filter: ViewFilterInput
-    $orderBy: [ViewOrderByInput]
-    $lastCursor: String
-    $limit: Int
-  ) {
-    views(
-      filter: $filter
-      orderBy: $orderBy
-      first: $limit
-      after: $lastCursor
-    ) {
-      edges {
-        node {
-          __typename
-          id
-          objectMetadataId
-          type
-          createdAt
-          name
-          updatedAt
-        }
-        cursor
-      }
-      pageInfo {
-        hasNextPage
-        startCursor
-        endCursor
-      }
-      totalCount
-    }
-  }
-`;
+export const findManyCoreViewsQuery = FindManyCoreViewsDocument;
 
 export const variables = {
   input: {

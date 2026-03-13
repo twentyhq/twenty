@@ -1,26 +1,18 @@
 import { Command } from '@/command-menu-item/display/components/Command';
 import { useSelectedRecordIdOrThrow } from '@/command-menu-item/record/single-record/hooks/useSelectedRecordIdOrThrow';
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
-import { useDeleteFavorite } from '@/favorites/hooks/useDeleteFavorite';
-import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { useDeleteNavigationMenuItem } from '@/navigation-menu-item/hooks/useDeleteNavigationMenuItem';
-import { usePrefetchedNavigationMenuItemsData } from '@/navigation-menu-item/hooks/usePrefetchedNavigationMenuItemsData';
+import { useNavigationMenuItemsData } from '@/navigation-menu-item/hooks/useNavigationMenuItemsData';
 import { isDefined } from 'twenty-shared/utils';
 
 export const RemoveFromFavoritesSingleRecordCommand = () => {
   const recordId = useSelectedRecordIdOrThrow();
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
 
-  const { sortedFavorites: favorites } = useFavorites();
   const { navigationMenuItems, workspaceNavigationMenuItems } =
-    usePrefetchedNavigationMenuItemsData();
+    useNavigationMenuItemsData();
 
-  const { deleteFavorite } = useDeleteFavorite();
   const { deleteNavigationMenuItem } = useDeleteNavigationMenuItem();
-
-  const foundFavorite = favorites?.find(
-    (favorite) => favorite.recordId === recordId,
-  );
 
   const foundNavigationMenuItem = [
     ...navigationMenuItems,
@@ -32,12 +24,11 @@ export const RemoveFromFavoritesSingleRecordCommand = () => {
   );
 
   const handleClick = () => {
-    if (!isDefined(foundNavigationMenuItem) || !isDefined(foundFavorite)) {
+    if (!isDefined(foundNavigationMenuItem)) {
       return;
     }
 
     deleteNavigationMenuItem(foundNavigationMenuItem.id);
-    deleteFavorite(foundFavorite.id);
   };
 
   return <Command onClick={handleClick} />;

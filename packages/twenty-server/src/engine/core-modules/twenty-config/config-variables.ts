@@ -1537,6 +1537,24 @@ export class ConfigVariables {
   ENTERPRISE_KEY: string;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
+    isSensitive: true,
+    description:
+      'Signed enterprise validity token (JWT). Used as fallback when no token is stored in the database.',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  ENTERPRISE_VALIDITY_TOKEN: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
+    description: 'Base URL for the Enterprise API on twenty.com',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  ENTERPRISE_API_URL: string = 'https://twenty.com/api/enterprise';
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.OTHER,
     description: 'Health monitoring time window in minutes',
     type: ConfigVariableType.NUMBER,
@@ -1663,6 +1681,17 @@ export class ConfigVariables {
   @CastToPositiveNumber()
   @IsOptional()
   PG_DATABASE_REPLICA_TIMEOUT_MS: number = 10000;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
+    description:
+      'Client-side query timeout in milliseconds for the core database connection pool. Controls how long any single query can run before the driver aborts it.',
+    type: ConfigVariableType.NUMBER,
+    isEnvOnly: true,
+  })
+  @CastToPositiveNumber()
+  @IsOptional()
+  DATABASE_STATEMENT_TIMEOUT_MS: number = 15000;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,

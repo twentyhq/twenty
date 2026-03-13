@@ -1,13 +1,13 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
+import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import { useDraftNavigationMenuItemsAllFolders } from '@/navigation-menu-item/hooks/useDraftNavigationMenuItemsAllFolders';
 import { useDraftNavigationMenuItemsWorkspaceFolders } from '@/navigation-menu-item/hooks/useDraftNavigationMenuItemsWorkspaceFolders';
-import { useSelectedNavigationMenuItemEditItem } from '@/navigation-menu-item/hooks/useSelectedNavigationMenuItemEditItem';
 import { useNavigationMenuItemMoveRemove } from '@/navigation-menu-item/hooks/useNavigationMenuItemMoveRemove';
+import { useSelectedNavigationMenuItemEditItem } from '@/navigation-menu-item/hooks/useSelectedNavigationMenuItemEditItem';
 import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeState';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 
 type FolderOption = {
   id: string;
@@ -38,13 +38,7 @@ const excludeCurrentFolder = <T extends { id: string }>(
     ? folders
     : folders.filter((folder) => folder.id !== currentFolderId);
 
-type UseFolderPickerSelectionDataParams = {
-  onCloseSubView: () => void;
-};
-
-export const useFolderPickerSelectionData = ({
-  onCloseSubView,
-}: UseFolderPickerSelectionDataParams) => {
+export const useFolderPickerSelectionData = () => {
   const { closeSidePanelMenu } = useSidePanelMenu();
   const { moveToFolder } = useNavigationMenuItemMoveRemove();
   const selectedNavigationMenuItemInEditMode = useAtomStateValue(
@@ -94,7 +88,6 @@ export const useFolderPickerSelectionData = ({
   const handleSelectFolder = (folderId: string | null) => {
     if (isDefined(selectedNavigationMenuItemInEditMode)) {
       moveToFolder(selectedNavigationMenuItemInEditMode, folderId);
-      onCloseSubView();
       closeSidePanelMenu();
     }
   };

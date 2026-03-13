@@ -21,13 +21,6 @@ export const successfulFilterInputsByFieldMetadataType: {
     { filter: { textField: { is: 'NOT_NULL' } } },
     { filter: { textField: { eq: null } } },
   ],
-  [FieldMetadataType.RICH_TEXT]: [
-    { filter: { richTextField: { eq: 'test' } } },
-    { filter: { richTextField: { like: '%test%' } } },
-    { filter: { richTextField: { ilike: '%test%' } } },
-    { filter: { richTextField: { is: 'NULL' } } },
-    { filter: { richTextField: { is: 'NOT_NULL' } } },
-  ],
   [FieldMetadataType.NUMBER]: [
     { filter: { numberField: { eq: 1 } } },
     { filter: { numberField: { neq: 1 } } },
@@ -197,8 +190,8 @@ export const successfulFilterInputsByFieldMetadataType: {
     { filter: { filesField: { is: 'NOT_NULL' } } },
     { filter: { filesField: { like: '%test%' } } },
   ],
-  [FieldMetadataType.RICH_TEXT_V2]: [
-    { filter: { richTextV2Field: { markdown: { ilike: '%test%' } } } },
+  [FieldMetadataType.RICH_TEXT]: [
+    { filter: { richTextField: { markdown: { ilike: '%test%' } } } },
   ],
   [FieldMetadataType.ADDRESS]: [
     { filter: { addressField: { addressCity: { eq: 'Paris' } } } },

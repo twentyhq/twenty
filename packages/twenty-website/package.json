@@ -27,6 +27,7 @@
     "next-runtime-env": "^3.3.0",
     "postgres": "^3.4.3",
     "react-tooltip": "^5.13.1",
+    "stripe": "^20.3.1",
     "twenty-ui": "workspace:*"
   },
   "devDependencies": {

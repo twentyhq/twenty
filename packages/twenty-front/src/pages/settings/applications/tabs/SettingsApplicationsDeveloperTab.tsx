@@ -1,9 +1,8 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { FIND_MANY_APPLICATION_REGISTRATIONS } from '@/settings/application-registrations/graphql/queries/findManyApplicationRegistrations';
 import { SettingsListCard } from '@/settings/components/SettingsListCard';
 import { getDocumentationUrl } from '@/support/utils/getDocumentationUrl';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
@@ -24,6 +23,7 @@ import { Tag } from 'twenty-ui/components';
 import {
   type ApplicationRegistrationFragmentFragment,
   ApplicationRegistrationSourceType,
+  FindManyApplicationRegistrationsDocument,
 } from '~/generated-metadata/graphql';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
@@ -62,7 +62,7 @@ export const SettingsApplicationsDeveloperTab = () => {
 
   const { copyToClipboard } = useCopyToClipboard();
 
-  const { data, loading } = useQuery(FIND_MANY_APPLICATION_REGISTRATIONS);
+  const { data, loading } = useQuery(FindManyApplicationRegistrationsDocument);
 
   const registrations: ApplicationRegistrationFragmentFragment[] =
     data?.findManyApplicationRegistrations ?? [];

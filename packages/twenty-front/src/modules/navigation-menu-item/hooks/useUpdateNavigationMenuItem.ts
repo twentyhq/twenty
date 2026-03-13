@@ -1,14 +1,17 @@
+import { useMutation } from '@apollo/client/react';
 import {
-  useUpdateNavigationMenuItemMutation,
   type UpdateNavigationMenuItemInput,
   type UpdateOneNavigationMenuItemInput,
+  UpdateNavigationMenuItemDocument,
 } from '~/generated-metadata/graphql';
 
 export const useUpdateNavigationMenuItem = () => {
-  const [updateNavigationMenuItemMutation] =
-    useUpdateNavigationMenuItemMutation({
+  const [updateNavigationMenuItemMutation] = useMutation(
+    UpdateNavigationMenuItemDocument,
+    {
       refetchQueries: ['FindManyNavigationMenuItems'],
-    });
+    },
+  );
 
   const updateNavigationMenuItem = async (
     input: UpdateNavigationMenuItemInput & { id: string },

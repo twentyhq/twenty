@@ -1,20 +1,20 @@
-import { SIDE_PANEL_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelComponentInstanceId';
-import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
-import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
-import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
-import { useOpenAskAIPageInSidePanel } from '@/side-panel/hooks/useOpenAskAIPageInSidePanel';
-import { useOpenRecordsSearchPageInSidePanel } from '@/side-panel/hooks/useOpenRecordsSearchPageInSidePanel';
 import { useSetGlobalCommandMenuContext } from '@/command-menu/hooks/useSetGlobalCommandMenuContext';
-import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
-import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { useKeyboardShortcutMenu } from '@/keyboard-shortcut-menu/hooks/useKeyboardShortcutMenu';
+import { SIDE_PANEL_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelComponentInstanceId';
+import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
+import { useOpenAskAIPageInSidePanel } from '@/side-panel/hooks/useOpenAskAIPageInSidePanel';
+import { useOpenRecordsSearchPageInSidePanel } from '@/side-panel/hooks/useOpenRecordsSearchPageInSidePanel';
+import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
+import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
+import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { useGlobalHotkeys } from '@/ui/utilities/hotkey/hooks/useGlobalHotkeys';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { Key } from 'ts-key-enum';
 import { SidePanelPages } from 'twenty-shared/types';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
@@ -26,7 +26,8 @@ export const useCommandMenuHotKeys = () => {
 
   const { openAskAIPage } = useOpenAskAIPageInSidePanel();
 
-  const { goBackFromSidePanel } = useSidePanelHistory();
+  const { goBackFromSidePanel, goBackOneSubPageOrMainPage } =
+    useSidePanelHistory();
 
   const { setGlobalCommandMenuContext } = useSetGlobalCommandMenuContext();
 
@@ -108,7 +109,7 @@ export const useCommandMenuHotKeys = () => {
         setGlobalCommandMenuContext();
       }
       if (sidePanelPage !== SidePanelPages.Root) {
-        goBackFromSidePanel();
+        goBackOneSubPageOrMainPage();
       }
     },
     focusId: SIDE_PANEL_FOCUS_ID,
@@ -116,7 +117,7 @@ export const useCommandMenuHotKeys = () => {
       sidePanelPage,
       sidePanelSearch,
       contextStoreTargetedRecordsRule,
-      goBackFromSidePanel,
+      goBackOneSubPageOrMainPage,
       setGlobalCommandMenuContext,
     ],
     options: {

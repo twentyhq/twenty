@@ -15,7 +15,7 @@ export type FieldMetadataDefaultValueUuidFunction =
 export type FieldMetadataDefaultValueNowFunction =
   typeof fieldMetadataDefaultValueFunctionName.NOW;
 
-export type FieldMetadataDefaultValueRichTextV2 = {
+export type FieldMetadataDefaultValueRichText = {
   blocknote: string | null;
   markdown: string | null;
 };
@@ -90,8 +90,7 @@ export type FieldMetadataDefaultValueMapping = {
   [FieldMetadataType.SELECT]: string | null;
   [FieldMetadataType.MULTI_SELECT]: string[] | null;
   [FieldMetadataType.RAW_JSON]: object | null;
-  [FieldMetadataType.RICH_TEXT]: string | null;
-  [FieldMetadataType.RICH_TEXT_V2]: FieldMetadataDefaultValueRichTextV2 | null;
+  [FieldMetadataType.RICH_TEXT]: FieldMetadataDefaultValueRichText | null;
   [FieldMetadataType.ACTOR]: FieldMetadataDefaultActor | null;
   [FieldMetadataType.ARRAY]: string[] | null;
 };

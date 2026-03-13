@@ -15,7 +15,7 @@ import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/h
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 import { useStore } from 'jotai';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { computeRecordGqlOperationFilter } from 'twenty-shared/utils';
 
 export const RecordTableEmptyHasNewRecordEffect = () => {
@@ -79,20 +79,28 @@ export const RecordTableEmptyHasNewRecordEffect = () => {
     operationSignature,
   });
 
-  const handleObjectRecordOperation = (
-    objectRecordOperationEventDetail: ObjectRecordOperationBrowserEventDetail,
-  ) => {
-    const objectRecordOperation = objectRecordOperationEventDetail.operation;
+  const handleObjectRecordOperation = useCallback(
+    (
+      objectRecordOperationEventDetail: ObjectRecordOperationBrowserEventDetail,
+    ) => {
+      const objectRecordOperation = objectRecordOperationEventDetail.operation;
 
-    if (
-      objectRecordOperation.type.includes('update') ||
-      objectRecordOperation.type.includes('create')
-    ) {
-      if (!isRecordTableInitialLoading && !recordTableHasRecords) {
-        store.set(recordTableWentFromEmptyToNotEmptyCallbackState, true);
+      if (
+        objectRecordOperation.type.includes('update') ||
+        objectRecordOperation.type.includes('create')
+      ) {
+        if (!isRecordTableInitialLoading && !recordTableHasRecords) {
+          store.set(recordTableWentFromEmptyToNotEmptyCallbackState, true);
+        }
       }
-    }
-  };
+    },
+    [
+      recordTableHasRecords,
+      isRecordTableInitialLoading,
+      store,
+      recordTableWentFromEmptyToNotEmptyCallbackState,
+    ],
+  );
 
   useListenToObjectRecordOperationBrowserEvent({
     onObjectRecordOperationBrowserEvent: handleObjectRecordOperation,

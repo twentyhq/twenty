@@ -9,13 +9,12 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import { SettingsPath } from 'twenty-shared/types';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
-import { PrefetchLoadedDecorator } from '~/testing/decorators/PrefetchLoadedDecorator';
+import { LoadedDecorator } from '~/testing/decorators/LoadedDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedWorkspaceMemberData } from '~/testing/mock-data/users';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
-import { CurrentWorkspaceMemberFavoritesFolders } from '@/favorites/components/CurrentWorkspaceMemberFavoritesFolders';
 import { NavigationDrawerFixedContent } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerFixedContent';
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
 import { getSettingsPath } from 'twenty-shared/utils';
@@ -51,7 +50,7 @@ const meta: Meta<typeof NavigationDrawer> = {
     ComponentWithRouterDecorator,
     SnackBarDecorator,
     ObjectMetadataItemsDecorator,
-    PrefetchLoadedDecorator,
+    LoadedDecorator,
     (Story) => {
       const setCurrentWorkspaceMember = useSetAtomState(
         currentWorkspaceMemberState,
@@ -106,8 +105,6 @@ export const Default: Story = {
             count={2}
           />
         </NavigationDrawerSection>
-
-        <CurrentWorkspaceMemberFavoritesFolders />
 
         <NavigationDrawerSection>
           <NavigationDrawerSectionTitle label="Workspace" />

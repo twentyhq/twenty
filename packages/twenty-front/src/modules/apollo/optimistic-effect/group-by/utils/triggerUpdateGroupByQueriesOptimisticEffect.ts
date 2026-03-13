@@ -15,7 +15,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { parseApolloStoreFieldName } from '~/utils/parseApolloStoreFieldName';
 
 type TriggerUpdateGroupByQueriesOptimisticEffectArgs = {
-  cache: ApolloCache<unknown>;
+  cache: ApolloCache;
   objectMetadataItem: ObjectMetadataItem;
   operation: 'create' | 'update' | 'delete';
   records: RecordGqlNode[];

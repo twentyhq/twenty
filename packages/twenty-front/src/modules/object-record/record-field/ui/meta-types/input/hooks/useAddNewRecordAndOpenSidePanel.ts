@@ -12,7 +12,7 @@ import { viewableRecordIdState } from '@/object-record/record-side-panel/states/
 import { viewableRecordNameSingularState } from '@/object-record/record-side-panel/states/viewableRecordNameSingularState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { buildRecordLabelPayload } from '@/object-record/utils/buildRecordLabelPayload';
-import { getOperationName } from '@apollo/client/utilities';
+import { getOperationName } from '~/utils/getOperationName';
 import { computeMorphRelationFieldName, isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 

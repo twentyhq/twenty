@@ -15,7 +15,6 @@ COPY ./packages/twenty-ui/package.json /app/packages/twenty-ui/
 COPY ./packages/twenty-shared/package.json /app/packages/twenty-shared/
 COPY ./packages/twenty-front/package.json /app/packages/twenty-front/
 COPY ./packages/twenty-sdk/package.json /app/packages/twenty-sdk/
-COPY ./packages/twenty-standard-application/package.json /app/packages/twenty-standard-application/
 
 # Install all dependencies
 RUN yarn && yarn cache clean && npx nx reset
@@ -29,13 +28,11 @@ COPY ./packages/twenty-emails /app/packages/twenty-emails
 COPY ./packages/twenty-shared /app/packages/twenty-shared
 COPY ./packages/twenty-ui /app/packages/twenty-ui
 COPY ./packages/twenty-sdk /app/packages/twenty-sdk
-COPY ./packages/twenty-standard-application /app/packages/twenty-standard-application
 COPY ./packages/twenty-server /app/packages/twenty-server
 
-RUN npx nx build twenty-standard-application
 RUN npx nx run twenty-server:build
 
-RUN yarn workspaces focus --production twenty-emails twenty-shared twenty-sdk twenty-standard-application twenty-server
+RUN yarn workspaces focus --production twenty-emails twenty-shared twenty-sdk twenty-server
 
 # Build the front
 FROM common-deps AS twenty-front-build
