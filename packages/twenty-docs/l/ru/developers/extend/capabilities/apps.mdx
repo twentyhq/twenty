@@ -1263,12 +1263,12 @@ yarn twenty app:build --tarball
 1. **Разбирает и проверяет манифест** — читает все сущности `defineX()` из ваших исходных файлов и проверяет структуру манифеста.
 2. **Компилирует логические функции и фронтенд-компоненты** — упаковывает исходники TypeScript в ESM-файлы `.mjs` с помощью esbuild.
 3. **Генерирует контрольные суммы** — вычисляет хэши MD5 для каждого собранного файла, сохраняемые в манифесте как `builtHandlerChecksum` / `builtComponentChecksum`.
-4. **Generates the typed API client** — introspects the GraphQL schema and generates typed `CoreApiClient` and `MetadataApiClient` clients.
-5. **Runs a TypeScript type check** — runs `tsc --noEmit` to catch type errors before publishing.
-6. **Rebuilds with the generated client** — performs a second compilation pass so the generated client types are included.
-7. **Optionally creates a tarball** — if `--tarball` is passed, runs `npm pack` to create a `.tgz` file ready for distribution.
+4. **Генерирует типизированный клиент API** — проводит интроспекцию схемы GraphQL и генерирует типизированные клиенты `CoreApiClient` и `MetadataApiClient`.
+5. **Запускает проверку типов TypeScript** — выполняет `tsc --noEmit`, чтобы обнаружить ошибки типов перед публикацией.
+6. **Пересобирает со сгенерированным клиентом** — выполняет второй проход компиляции, чтобы включить сгенерированные типы клиента.
+7. **Опционально создаёт tar-архив** — если передан `--tarball`, выполняет `npm pack` для создания файла `.tgz`, готового к распространению.
 
-The build output in `.twenty/output/` contains:
+Результат сборки в `.twenty/output/` содержит:
 
 ```text
 .twenty/output/
@@ -1282,16 +1282,16 @@ The build output in `.twenty/output/` contains:
 └── my-app-1.0.0.tgz          # Only with --tarball flag
 ```
 
-| Вариант     | Описание                                                  |
-| ----------- | --------------------------------------------------------- |
-| `[appPath]` | Path to the app directory (defaults to current directory) |
-| `--tarball` | Also pack the output into a `.tgz` tarball                |
+| Вариант     | Описание                                                    |
+| ----------- | ----------------------------------------------------------- |
+| `[appPath]` | Путь к каталогу приложения (по умолчанию — текущий каталог) |
+| `--tarball` | Также упаковать результат в tar-архив `.tgz`                |
 
-## Publishing your app
+## Публикация вашего приложения
 
-Use `app:publish` to distribute your app — either to the npm registry or directly to a Twenty server.
+Используйте `app:publish` для распространения вашего приложения — либо в реестр npm, либо напрямую на сервер Twenty.
 
-### Publish to npm (default)
+### Публикация в npm (по умолчанию)
 
 ```bash filename="Terminal"
 # Publish to npm (requires npm login)
@@ -1301,57 +1301,57 @@ yarn twenty app:publish
 yarn twenty app:publish --tag beta
 ```
 
-This builds the app and runs `npm publish` from the `.twenty/output/` directory. The published package can then be installed from the Twenty marketplace by any workspace.
+Это собирает приложение и выполняет `npm publish` из каталога `.twenty/output/`. Опубликованный пакет затем может быть установлен из маркетплейса Twenty любым рабочим пространством.
 
-### Publish to a Twenty server
+### Публикация на сервер Twenty
 
 ```bash filename="Terminal"
 # Publish directly to a Twenty server
 yarn twenty app:publish --server https://app.twenty.com
 ```
 
-This builds the app with a tarball, uploads it to the server via the `uploadAppTarball` GraphQL mutation, and triggers installation in one step. This is useful for private deployments or testing against a specific server.
+Это собирает приложение с tar-архивом, загружает его на сервер через мутацию GraphQL `uploadAppTarball` и запускает установку в один шаг. Это полезно для приватных развёртываний или тестирования на конкретном сервере.
 
-| Вариант           | Описание                                                  |
-| ----------------- | --------------------------------------------------------- |
-| `[appPath]`       | Path to the app directory (defaults to current directory) |
-| `--server <url>`  | Publish to a Twenty server instead of npm                 |
-| `--token <token>` | Authentication token for the target server                |
-| `--tag <tag>`     | npm dist-tag (e.g. `beta`, `next`) — only for npm publish |
+| Вариант           | Описание                                                              |
+| ----------------- | --------------------------------------------------------------------- |
+| `[appPath]`       | Путь к каталогу приложения (по умолчанию — текущий каталог)           |
+| `--server <url>`  | Публиковать на сервер Twenty вместо npm                               |
+| `--token <token>` | Токен аутентификации для целевого сервера                             |
+| `--tag <tag>`     | dist-тег npm (например, `beta`, `next`) — только для публикации в npm |
 
-## Application registration
+## Регистрация приложения
 
-Before an app can be installed in a workspace, it must be **registered**. A registration is a metadata record that describes where the app comes from and how to authenticate it. This is handled automatically by the CLI in most cases.
+Прежде чем приложение можно будет установить в рабочем пространстве, его необходимо **зарегистрировать**. Регистрация — это запись метаданных, описывающая, откуда берётся приложение и как его аутентифицировать. В большинстве случаев это делает CLI автоматически.
 
-### Source types
+### Типы источников
 
-Each registration has a **source type** that determines how the app's files are resolved during installation:
+У каждой регистрации есть **тип источника**, который определяет, как файлы приложения будут получены при установке:
 
-| Source type | How files are resolved                                                     | Typical use case                       |
-| ----------- | -------------------------------------------------------------------------- | -------------------------------------- |
-| `LOCAL`     | Files are synced in real-time by the CLI watcher — installation is skipped | Development with `app:dev`             |
-| `NPM`       | Fetched from the npm registry via the `sourcePackage` field                | Published apps on npm                  |
-| `TARBALL`   | Extracted from an uploaded `.tgz` file stored on the server                | Private apps published with `--server` |
+| Тип источника | Как получаются файлы                                                                | Типичный сценарий использования                   |
+| ------------- | ----------------------------------------------------------------------------------- | ------------------------------------------------- |
+| `LOCAL`       | Файлы синхронизируются в реальном времени наблюдателем CLI — установка пропускается | Разработка с `app:dev`                            |
+| `NPM`         | Получается из реестра npm через поле `sourcePackage`                                | Опубликованные приложения в npm                   |
+| `TARBALL`     | Извлекается из загруженного файла `.tgz`, хранящегося на сервере                    | Приватные приложения, опубликованные с `--server` |
 
-### How registration happens
+### Как происходит регистрация
 
-* **`app:dev`** — automatically creates a `LOCAL` registration the first time you run dev mode against a workspace.
-* **`app:publish --server`** — uploads a tarball and creates (or updates) a `TARBALL` registration, then installs the app.
-* **npm marketplace** — `NPM` registrations are created when apps are synced from the npm registry into the Twenty marketplace catalog.
-* **GraphQL API** — you can also create registrations programmatically via the `createApplicationRegistration` mutation.
+* **`app:dev`** — автоматически создаёт регистрацию `LOCAL` при первом запуске режима разработки для рабочего пространства.
+* **`app:publish --server`** — загружает tar-архив и создаёт (или обновляет) регистрацию `TARBALL`, затем устанавливает приложение.
+* **маркетплейс npm** — регистрации `NPM` создаются, когда приложения синхронизируются из реестра npm в каталог маркетплейса Twenty.
+* **GraphQL API** — вы также можете создавать регистрации программно через мутацию `createApplicationRegistration`.
 
-### Registration vs installation
+### Регистрация и установка
 
-**Registration** and **installation** are separate concepts:
+**Регистрация** и **установка** — это разные понятия:
 
-* A **registration** (`ApplicationRegistration`) is a global metadata record describing the app: its name, source type, OAuth credentials, and marketplace listing status. It exists independently of any workspace.
-* An **installation** (`Application`) is a per-workspace instance. When a user installs an app, Twenty resolves the package from the registration's source, writes the built files to storage, and synchronizes the manifest (creating objects, fields, logic functions, etc.) in that workspace.
+* **Регистрация** (`ApplicationRegistration`) — это глобальная запись метаданных, описывающая приложение: его имя, тип источника, учётные данные OAuth и статус публикации в маркетплейсе. Она существует независимо от какого-либо рабочего пространства.
+* **Установка** (`Application`) — это экземпляр для каждого рабочего пространства. Когда пользователь устанавливает приложение, Twenty получает пакет из источника, указанного в регистрации, записывает собранные файлы в хранилище и синхронизирует манифест (создавая объекты, поля, логические функции и т. д.) в этом рабочем пространстве.
 
-One registration can be installed in many workspaces. Each workspace gets its own copy of the app's files and data model.
+Одну и ту же регистрацию можно установить во многих рабочих пространствах. Каждое рабочее пространство получает свою собственную копию файлов приложения и модели данных.
 
-### OAuth credentials
+### Учётные данные OAuth
 
-Each registration includes OAuth credentials (`oAuthClientId` and `oAuthClientSecret`) generated at creation time. These are used by the app to authenticate API requests on behalf of users. The client secret is returned **once** at creation — store it securely. You can rotate it later via the `rotateApplicationRegistrationClientSecret` mutation.
+Каждая регистрация включает учётные данные OAuth (`oAuthClientId` и `oAuthClientSecret`), сгенерированные при создании. Они используются приложением для аутентификации запросов к API от имени пользователей. Секрет клиента возвращается **один раз** при создании — храните его в надёжном месте. Позже вы можете сменить его через мутацию `rotateApplicationRegistrationClientSecret`.
 
 ## Ручная настройка (без генератора)
 
