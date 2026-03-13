@@ -12,6 +12,11 @@ export const makePermissionFlagUniversalIdentifierAndApplicationIdNotNullQueries
       WHERE pf."applicationId" IS NULL
     `);
 
+    await queryRunner.query(`
+      DELETE FROM "core"."permissionFlag"
+      WHERE "applicationId" IS NULL
+    `);
+
     await queryRunner.query(
       `ALTER TABLE "core"."permissionFlag" ALTER COLUMN "universalIdentifier" SET NOT NULL`,
     );
@@ -27,6 +32,5 @@ export const makePermissionFlagUniversalIdentifierAndApplicationIdNotNullQueries
         IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'FK_b26a9d39a88d0e72373c677c6c5') THEN
           ALTER TABLE "core"."permissionFlag" ADD CONSTRAINT "FK_b26a9d39a88d0e72373c677c6c5" FOREIGN KEY ("applicationId") REFERENCES "core"."application"("id") ON DELETE CASCADE ON UPDATE NO ACTION;
         END IF;
-      END $$`,
-    );
+      END $$`);
   };
