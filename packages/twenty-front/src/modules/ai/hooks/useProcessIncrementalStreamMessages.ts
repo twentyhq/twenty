@@ -2,7 +2,6 @@ import { useProcessNewMessageStreamIncrement } from '@/ai/hooks/useProcessNewMes
 import { agentChatMessageComponentFamilyState } from '@/ai/states/agentChatMessageComponentFamilyState';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { cloneDeep } from '@apollo/client/utilities';
 import { useCallback } from 'react';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
@@ -38,7 +37,7 @@ export const useProcessIncrementalStreamMessages = () => {
           continue;
         }
 
-        const clonedMessage = cloneDeep(updatedMessage);
+        const clonedMessage = structuredClone(updatedMessage);
 
         jotaiStore.set(
           agentChatMessageFamilyCallbackState(updatedMessage.id),

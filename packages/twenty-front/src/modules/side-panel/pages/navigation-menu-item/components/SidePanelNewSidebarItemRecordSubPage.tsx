@@ -16,7 +16,8 @@ import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { SidePanelSubViewWithSearch } from '@/side-panel/components/SidePanelSubViewWithSearch';
 import { SidePanelNewSidebarItemRecordItem } from '@/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemRecordItem';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useSearchQuery } from '~/generated/graphql';
+import { useQuery } from '@apollo/client/react';
+import { SearchDocument } from '~/generated/graphql';
 
 type SearchRecordBase = {
   recordId: string;
@@ -25,21 +26,12 @@ type SearchRecordBase = {
   imageUrl?: string | null;
 };
 
-type SidePanelNewSidebarItemRecordSubViewProps = {
-  onBack: () => void;
-  disableDrag?: boolean;
-};
-
-export const SidePanelNewSidebarItemRecordSubView = ({
-  onBack,
-  disableDrag: disableDragProp,
-}: SidePanelNewSidebarItemRecordSubViewProps) => {
+export const SidePanelNewSidebarItemRecordSubPage = () => {
   const { t } = useLingui();
   const addMenuItemInsertionContext = useAtomStateValue(
     addMenuItemInsertionContextState,
   );
-  const disableDrag =
-    disableDragProp ?? addMenuItemInsertionContext?.disableDrag === true;
+  const disableDrag = addMenuItemInsertionContext?.disableDrag === true;
   const { currentDraft } = useDraftNavigationMenuItems();
   const { objectMetadataItems } = useObjectMetadataItems();
   const [recordSearchInput, setRecordSearchInput] = useState('');
@@ -57,17 +49,20 @@ export const SidePanelNewSidebarItemRecordSubView = ({
     )
     .map((objectMetadataItem) => objectMetadataItem.nameSingular);
 
-  const { data: searchData, loading: recordSearchLoading } = useSearchQuery({
-    client: coreClient,
-    variables: {
-      searchInput: deferredRecordSearchInput ?? '',
-      limit: MAX_SEARCH_RESULTS,
-      excludedObjectNameSingulars: [
-        'workspaceMember',
-        ...nonReadableObjectMetadataItemsNameSingular,
-      ],
+  const { data: searchData, loading: recordSearchLoading } = useQuery(
+    SearchDocument,
+    {
+      client: coreClient,
+      variables: {
+        searchInput: deferredRecordSearchInput ?? '',
+        limit: MAX_SEARCH_RESULTS,
+        excludedObjectNameSingulars: [
+          'workspaceMember',
+          ...nonReadableObjectMetadataItemsNameSingular,
+        ],
+      },
     },
-  });
+  );
 
   const workspaceRecordIds = new Set(
     currentDraft.flatMap((item) =>
@@ -92,8 +87,6 @@ export const SidePanelNewSidebarItemRecordSubView = ({
 
   return (
     <SidePanelSubViewWithSearch
-      backBarTitle={t`Add a record`}
-      onBack={onBack}
       searchPlaceholder={t`Search records...`}
       searchValue={recordSearchInput}
       onSearchChange={setRecordSearchInput}

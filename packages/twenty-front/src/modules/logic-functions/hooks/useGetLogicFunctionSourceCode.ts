@@ -1,5 +1,5 @@
 import { GET_LOGIC_FUNCTION_SOURCE_CODE } from '@/logic-functions/graphql/queries/getLogicFunctionSourceCode';
-import { useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client/react';
 import {
   type GetLogicFunctionSourceCodeQuery,
   type GetLogicFunctionSourceCodeQueryVariables,

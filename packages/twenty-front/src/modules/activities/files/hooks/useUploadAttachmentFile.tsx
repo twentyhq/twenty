@@ -5,18 +5,18 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { useApolloClient } from '@apollo/client';
+import { useApolloClient, useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import {
   FeatureFlagKey,
   FieldMetadataType,
-  useUploadFilesFieldFileMutation,
+  UploadFilesFieldFileDocument,
 } from '~/generated-metadata/graphql';
 
 export const useUploadAttachmentFile = () => {
   const apolloClient = useApolloClient();
-  const [uploadFilesFieldFile] = useUploadFilesFieldFileMutation({
+  const [uploadFilesFieldFile] = useMutation(UploadFilesFieldFileDocument, {
     client: apolloClient,
   });
   const isAttachmentMigrated = useIsFeatureEnabled(

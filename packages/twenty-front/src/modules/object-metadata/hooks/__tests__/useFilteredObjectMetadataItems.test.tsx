@@ -1,4 +1,4 @@
-import { MockedProvider } from '@apollo/client/testing';
+import { MockedProvider } from '@apollo/client/testing/react';
 import { act, renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
@@ -35,9 +35,7 @@ const Wrapper = ({ children }: { children: ReactNode }) => {
 
   return (
     <JotaiProvider store={jotaiStore}>
-      <MockedProvider mocks={mocks} addTypename={false}>
-        {children}
-      </MockedProvider>
+      <MockedProvider mocks={mocks}>{children}</MockedProvider>
     </JotaiProvider>
   );
 };

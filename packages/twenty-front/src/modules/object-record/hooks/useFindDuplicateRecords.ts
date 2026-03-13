@@ -1,7 +1,8 @@
-import { useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client/react';
 import { isDefined } from 'twenty-shared/utils';
 import { useMemo } from 'react';
 
+import { useSnackBarOnQueryError } from '@/apollo/hooks/useSnackBarOnQueryError';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { type ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
@@ -11,17 +12,13 @@ import { type RecordGqlOperationFindDuplicatesResult } from '@/object-record/gra
 import { useFindDuplicateRecordsQuery } from '@/object-record/hooks/useFindDuplicatesRecordsQuery';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getFindDuplicateRecordsQueryResponseField } from '@/object-record/utils/getFindDuplicateRecordsQueryResponseField';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { logError } from '~/utils/logError';
 
 export const useFindDuplicateRecords = <T extends ObjectRecord = ObjectRecord>({
   objectRecordIds = [],
   objectNameSingular,
-  onCompleted,
   skip,
 }: ObjectMetadataItemIdentifier & {
   objectRecordIds: string[] | undefined;
-  onCompleted?: (data: RecordGqlConnectionEdgesRequired[]) => void;
   skip?: boolean;
 }) => {
   const findDuplicateQueryStateIdentifier = objectNameSingular;
@@ -36,8 +33,6 @@ export const useFindDuplicateRecords = <T extends ObjectRecord = ObjectRecord>({
     objectNameSingular,
   });
 
-  const { enqueueErrorSnackBar } = useSnackBar();
-
   const queryResponseField = getFindDuplicateRecordsQueryResponseField(
     objectMetadataItem.nameSingular,
   );
@@ -51,20 +46,10 @@ export const useFindDuplicateRecords = <T extends ObjectRecord = ObjectRecord>({
           ids: objectRecordIds,
         },
         client: apolloCoreClient,
-        onCompleted: (data) => {
-          onCompleted?.(data[queryResponseField]);
-        },
-        onError: (error) => {
-          logError(
-            `useFindDuplicateRecords for "${objectMetadataItem.nameSingular}" error : ` +
-              error,
-          );
-          enqueueErrorSnackBar({
-            apolloError: error,
-          });
-        },
       },
     );
+
+  useSnackBarOnQueryError(error);
 
   const objectResults = data?.[queryResponseField];
 

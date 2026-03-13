@@ -195,7 +195,9 @@ export const useRestoreManyRecords = ({
         });
 
       const restoredRecordsForThisBatch =
-        restoredRecordsResponse.data?.[mutationResponseField] ?? [];
+        (restoredRecordsResponse.data as Record<string, any>)?.[
+          mutationResponseField
+        ] ?? [];
 
       restoredRecords.push(...restoredRecordsForThisBatch);
 

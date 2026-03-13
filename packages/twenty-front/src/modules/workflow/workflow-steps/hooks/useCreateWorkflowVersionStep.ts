@@ -1,6 +1,6 @@
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { CREATE_WORKFLOW_VERSION_STEP } from '@/workflow/graphql/mutations/createWorkflowVersionStep';
-import { useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client/react';
 import {
   type CreateWorkflowVersionStepInput,
   type CreateWorkflowVersionStepMutation,

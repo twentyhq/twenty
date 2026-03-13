@@ -1,4 +1,5 @@
-import { useLazyQuery, type WatchQueryFetchPolicy } from '@apollo/client';
+import { type WatchQueryFetchPolicy } from '@apollo/client';
+import { useLazyQuery } from '@apollo/client/react';
 
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { type ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
@@ -43,6 +44,7 @@ export const useLazyFindOneRecord = <T extends ObjectRecord = ObjectRecord>({
     findOneRecordQuery,
     {
       client: apolloCoreClient,
+      fetchPolicy,
     },
   );
 
@@ -51,20 +53,19 @@ export const useLazyFindOneRecord = <T extends ObjectRecord = ObjectRecord>({
       objectRecordId,
       onCompleted,
     }: FindOneRecordParams<T>) => {
-      await findOneRecord({
+      const result = await findOneRecord({
         variables: { objectRecordId },
-        fetchPolicy,
-        onCompleted: (data) => {
-          const record = getRecordFromRecordNode<T>({
-            recordNode: data[objectNameSingular],
-          });
-          onCompleted?.(record);
-        },
-      });
+      }).retain();
+      if (result.data) {
+        const record = getRecordFromRecordNode<T>({
+          recordNode: (result.data as Record<string, any>)[objectNameSingular],
+        });
+        onCompleted?.(record);
+      }
     },
     called,
     error,
     loading,
-    record: data?.[objectNameSingular] || undefined,
+    record: (data as Record<string, any>)?.[objectNameSingular] || undefined,
   };
 };

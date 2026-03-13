@@ -8,8 +8,9 @@ import { CREATE_ONE_LOGIC_FUNCTION } from '@/logic-functions/graphql/mutations/c
 import { DELETE_ONE_LOGIC_FUNCTION } from '@/logic-functions/graphql/mutations/deleteOneLogicFunction';
 import { FIND_MANY_LOGIC_FUNCTIONS } from '@/logic-functions/graphql/queries/findManyLogicFunctions';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { ApolloError, useMutation } from '@apollo/client';
-import { getOperationName } from '@apollo/client/utilities';
+import { useMutation } from '@apollo/client/react';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
+import { getOperationName } from '~/utils/getOperationName';
 import { t } from '@lingui/core/macro';
 import { CrudOperationType } from 'twenty-shared/types';
 import {
@@ -60,7 +61,7 @@ export const usePersistLogicFunction = () => {
           response: result,
         };
       } catch (error) {
-        if (error instanceof ApolloError) {
+        if (CombinedGraphQLErrors.is(error)) {
           handleMetadataError(error, {
             primaryMetadataName: 'logicFunction',
             operationType: CrudOperationType.CREATE,
@@ -96,7 +97,7 @@ export const usePersistLogicFunction = () => {
           response: result,
         };
       } catch (error) {
-        if (error instanceof ApolloError) {
+        if (CombinedGraphQLErrors.is(error)) {
           handleMetadataError(error, {
             primaryMetadataName: 'logicFunction',
             operationType: CrudOperationType.UPDATE,
@@ -140,7 +141,7 @@ export const usePersistLogicFunction = () => {
           response: result,
         };
       } catch (error) {
-        if (error instanceof ApolloError) {
+        if (CombinedGraphQLErrors.is(error)) {
           handleMetadataError(error, {
             primaryMetadataName: 'logicFunction',
             operationType: CrudOperationType.DELETE,

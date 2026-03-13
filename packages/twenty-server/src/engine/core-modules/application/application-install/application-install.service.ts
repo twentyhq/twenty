@@ -2,8 +2,9 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { promises as fs } from 'fs';
-import { join, relative } from 'path';
+import { resolve } from 'path';
 
+import { Manifest } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
@@ -23,23 +24,6 @@ import {
 import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
-
-const FILE_FOLDER_MAPPING: Record<string, FileFolder> = {
-  'package.json': FileFolder.Dependencies,
-  'yarn.lock': FileFolder.Dependencies,
-};
-
-const FILE_FOLDER_PATTERN_MAPPING: Array<{
-  pattern: RegExp;
-  folder: FileFolder;
-}> = [
-  { pattern: /\.function\.mjs$/, folder: FileFolder.BuiltLogicFunction },
-  {
-    pattern: /\.front-component\.mjs$/,
-    folder: FileFolder.BuiltFrontComponent,
-  },
-  { pattern: /^public\//, folder: FileFolder.PublicAsset },
-];
 
 @Injectable()
 export class ApplicationInstallService {
@@ -134,6 +118,7 @@ export class ApplicationInstallService {
 
       await this.writeFilesToStorage(
         resolvedPackage.extractedDir,
+        resolvedPackage.manifest,
         universalIdentifier,
         params.workspaceId,
       );
@@ -166,15 +151,32 @@ export class ApplicationInstallService {
 
   private async writeFilesToStorage(
     extractedDir: string,
+    manifest: Manifest,
     applicationUniversalIdentifier: string,
     workspaceId: string,
   ): Promise<void> {
-    const files = await this.collectFiles(extractedDir);
+    const filesToWrite = this.buildFileList(manifest);
 
-    for (const filePath of files) {
-      const relativePath = relative(extractedDir, filePath);
-      const fileFolder = this.resolveFileFolder(relativePath);
-      const content = await fs.readFile(filePath);
+    for (const { relativePath, fileFolder } of filesToWrite) {
+      const absolutePath = resolve(extractedDir, relativePath);
+
+      if (!absolutePath.startsWith(extractedDir)) {
+        throw new ApplicationException(
+          `Path traversal detected for file: ${relativePath}`,
+          ApplicationExceptionCode.INVALID_INPUT,
+        );
+      }
+
+      let content: Buffer;
+
+      try {
+        content = await fs.readFile(absolutePath);
+      } catch {
+        throw new ApplicationException(
+          `File not found in package: ${relativePath}`,
+          ApplicationExceptionCode.PACKAGE_RESOLUTION_FAILED,
+        );
+      }
 
       await this.fileStorageService.writeFile({
         sourceFile: content,
@@ -188,47 +190,38 @@ export class ApplicationInstallService {
     }
   }
 
-  private resolveFileFolder(relativePath: string): FileFolder {
-    const exact = FILE_FOLDER_MAPPING[relativePath];
+  private buildFileList(
+    manifest: Manifest,
+  ): Array<{ relativePath: string; fileFolder: FileFolder }> {
+    const files: Array<{ relativePath: string; fileFolder: FileFolder }> = [];
 
-    if (isDefined(exact)) {
-      return exact;
+    files.push(
+      { relativePath: 'package.json', fileFolder: FileFolder.Dependencies },
+      { relativePath: 'manifest.json', fileFolder: FileFolder.Source },
+    );
+
+    for (const logicFunction of manifest.logicFunctions ?? []) {
+      files.push({
+        relativePath: logicFunction.builtHandlerPath,
+        fileFolder: FileFolder.BuiltLogicFunction,
+      });
     }
 
-    for (const { pattern, folder } of FILE_FOLDER_PATTERN_MAPPING) {
-      if (pattern.test(relativePath)) {
-        return folder;
-      }
+    for (const frontComponent of manifest.frontComponents ?? []) {
+      files.push({
+        relativePath: frontComponent.builtComponentPath,
+        fileFolder: FileFolder.BuiltFrontComponent,
+      });
     }
 
-    return FileFolder.Source;
-  }
-
-  private async collectFiles(dir: string): Promise<string[]> {
-    const result: string[] = [];
-    const entries = await fs.readdir(dir, { withFileTypes: true });
-
-    for (const entry of entries) {
-      const fullPath = join(dir, entry.name);
-
-      if (entry.name === 'node_modules' || entry.name === '.yarn') {
-        continue;
-      }
-
-      if (entry.isSymbolicLink()) {
-        continue;
-      }
-
-      if (entry.isDirectory()) {
-        const subFiles = await this.collectFiles(fullPath);
-
-        result.push(...subFiles);
-      } else {
-        result.push(fullPath);
-      }
+    for (const publicAsset of manifest.publicAssets ?? []) {
+      files.push({
+        relativePath: publicAsset.filePath,
+        fileFolder: FileFolder.PublicAsset,
+      });
     }
 
-    return result;
+    return files;
   }
 
   private async ensureApplicationExists(params: {

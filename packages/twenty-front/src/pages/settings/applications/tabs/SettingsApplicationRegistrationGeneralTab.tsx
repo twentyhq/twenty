@@ -1,16 +1,10 @@
 import { SettingsAdminTableCard } from '@/settings/admin-panel/components/SettingsAdminTableCard';
-import { DELETE_APPLICATION_REGISTRATION } from '@/settings/application-registrations/graphql/mutations/deleteApplicationRegistration';
-import { TRANSFER_APPLICATION_REGISTRATION_OWNERSHIP } from '@/settings/application-registrations/graphql/mutations/transferApplicationRegistrationOwnership';
-import { UPDATE_APPLICATION_REGISTRATION_VARIABLE } from '@/settings/application-registrations/graphql/mutations/updateApplicationRegistrationVariable';
-import { APPLICATION_REGISTRATION_TARBALL_URL } from '@/settings/application-registrations/graphql/queries/applicationRegistrationTarballUrl';
-import { FIND_APPLICATION_REGISTRATION_VARIABLES } from '@/settings/application-registrations/graphql/queries/findApplicationRegistrationVariables';
-import { FIND_MANY_APPLICATION_REGISTRATIONS } from '@/settings/application-registrations/graphql/queries/findManyApplicationRegistrations';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useInstallMarketplaceApp } from '~/modules/marketplace/hooks/useInstallMarketplaceApp';
-import { useMutation, useQuery } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -35,8 +29,14 @@ import { Button } from 'twenty-ui/input';
 import { Section, SectionAlignment, SectionFontColor } from 'twenty-ui/layout';
 import {
   ApplicationRegistrationSourceType,
-  useFindManyApplicationsQuery,
-  useUninstallApplicationMutation,
+  ApplicationRegistrationTarballUrlDocument,
+  DeleteApplicationRegistrationDocument,
+  FindApplicationRegistrationVariablesDocument,
+  FindManyApplicationRegistrationsDocument,
+  FindManyApplicationsDocument,
+  TransferApplicationRegistrationOwnershipDocument,
+  UninstallApplicationDocument,
+  UpdateApplicationRegistrationVariableDocument,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -139,7 +139,7 @@ export const SettingsApplicationRegistrationGeneralTab = ({
   const applicationRegistrationId = registration.id;
 
   const { data: variablesData } = useQuery(
-    FIND_APPLICATION_REGISTRATION_VARIABLES,
+    FindApplicationRegistrationVariablesDocument,
     {
       variables: { applicationRegistrationId },
       skip: !applicationRegistrationId,
@@ -147,35 +147,39 @@ export const SettingsApplicationRegistrationGeneralTab = ({
   );
 
   const { data: tarballUrlData } = useQuery(
-    APPLICATION_REGISTRATION_TARBALL_URL,
+    ApplicationRegistrationTarballUrlDocument,
     {
       variables: { id: applicationRegistrationId },
       skip: !applicationRegistrationId,
     },
   );
 
-  const [deleteRegistration] = useMutation(DELETE_APPLICATION_REGISTRATION, {
-    refetchQueries: [FIND_MANY_APPLICATION_REGISTRATIONS],
-  });
+  const [deleteRegistration] = useMutation(
+    DeleteApplicationRegistrationDocument,
+    {
+      refetchQueries: [FindManyApplicationRegistrationsDocument],
+    },
+  );
 
   const [updateVariable] = useMutation(
-    UPDATE_APPLICATION_REGISTRATION_VARIABLE,
+    UpdateApplicationRegistrationVariableDocument,
     {
-      refetchQueries: [FIND_APPLICATION_REGISTRATION_VARIABLES],
+      refetchQueries: [FindApplicationRegistrationVariablesDocument],
     },
   );
 
   const [transferOwnership] = useMutation(
-    TRANSFER_APPLICATION_REGISTRATION_OWNERSHIP,
+    TransferApplicationRegistrationOwnershipDocument,
     {
-      refetchQueries: [FIND_MANY_APPLICATION_REGISTRATIONS],
+      refetchQueries: [FindManyApplicationRegistrationsDocument],
     },
   );
 
   const { install } = useInstallMarketplaceApp();
-  const [uninstallApplication] = useUninstallApplicationMutation();
-  const { data: applicationsData, refetch: refetchApplications } =
-    useFindManyApplicationsQuery();
+  const [uninstallApplication] = useMutation(UninstallApplicationDocument);
+  const { data: applicationsData, refetch: refetchApplications } = useQuery(
+    FindManyApplicationsDocument,
+  );
 
   const variables: ServerVariable[] =
     variablesData?.findApplicationRegistrationVariables ?? [];

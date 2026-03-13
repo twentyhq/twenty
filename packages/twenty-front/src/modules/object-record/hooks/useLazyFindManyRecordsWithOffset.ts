@@ -1,4 +1,3 @@
-import { useLazyQuery } from '@apollo/client';
 import { useCallback } from 'react';
 
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
@@ -49,17 +48,6 @@ export const useLazyFindManyRecordsWithOffset = ({
 
   const hasReadPermission = objectPermissions.canReadObjectRecords;
 
-  const [findManyRecords] = useLazyQuery<RecordGqlOperationFindManyResult>(
-    findManyRecordsQuery,
-    {
-      variables: {
-        ...params,
-      },
-      onError: handleFindManyRecordsError,
-      client: apolloCoreClient,
-    },
-  );
-
   const findManyRecordsLazyWithOffset = useCallback(
     async (limit: number, offset: number) => {
       if (!hasReadPermission) {
@@ -71,12 +59,19 @@ export const useLazyFindManyRecordsWithOffset = ({
         };
       }
 
-      const result = await findManyRecords({
-        variables: {
-          limit,
-          offset,
-        },
-      });
+      const result =
+        await apolloCoreClient.query<RecordGqlOperationFindManyResult>({
+          query: findManyRecordsQuery,
+          variables: {
+            ...params,
+            limit,
+            offset,
+          },
+        });
+
+      if (result?.error) {
+        handleFindManyRecordsError(result.error);
+      }
 
       const records = getRecordsFromRecordConnection({
         recordConnection: {
@@ -96,7 +91,14 @@ export const useLazyFindManyRecordsWithOffset = ({
         error: result?.error,
       };
     },
-    [hasReadPermission, findManyRecords, objectMetadataItem.namePlural],
+    [
+      hasReadPermission,
+      apolloCoreClient,
+      findManyRecordsQuery,
+      params,
+      objectMetadataItem.namePlural,
+      handleFindManyRecordsError,
+    ],
   );
 
   return {
