@@ -252,26 +252,34 @@ describe('computeOptimisticRecordFromInput', () => {
     });
   });
 
-  it('should throw an error if recordInput contains fields unrelated to the current objectMetadata', () => {
+  it('should warn and skip unknown fields if recordInput contains fields unrelated to the current objectMetadata', () => {
     const cache = new InMemoryCache();
     const personObjectMetadataItem = getMockObjectMetadataItemOrThrow('person');
+    const consoleWarnSpy = jest
+      .spyOn(console, 'warn')
+      .mockImplementation(() => {});
 
-    expect(() =>
-      computeOptimisticRecordFromInput({
-        currentWorkspaceMember,
-        objectMetadataItems: generatedMockObjectMetadataItems,
-        objectMetadataItem: personObjectMetadataItem,
-        recordInput: {
-          unknwon: 'unknown',
-          foo: 'foo',
-          bar: 'bar',
-          city: 'Paris',
-        },
-        cache,
-        objectPermissionsByObjectMetadataId: {},
-      }),
-    ).toThrowErrorMatchingInlineSnapshot(
-      `"Should never occur, encountered unknown fields unknwon, foo, bar in objectMetadataItem person"`,
+    const result = computeOptimisticRecordFromInput({
+      currentWorkspaceMember,
+      objectMetadataItems: generatedMockObjectMetadataItems,
+      objectMetadataItem: personObjectMetadataItem,
+      recordInput: {
+        unknwon: 'unknown',
+        foo: 'foo',
+        bar: 'bar',
+        city: 'Paris',
+      },
+      cache,
+      objectPermissionsByObjectMetadataId: {},
+    });
+
+    expect(consoleWarnSpy).toHaveBeenCalledWith(
+      expect.stringContaining('encountered unknown fields'),
     );
+    expect(result).toEqual({
+      city: 'Paris',
+    });
+
+    consoleWarnSpy.mockRestore();
   });
 });
