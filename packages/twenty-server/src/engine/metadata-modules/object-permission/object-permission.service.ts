@@ -142,12 +142,21 @@ export class ObjectPermissionService {
           }),
         );
       } else {
+        const effectiveCanRead =
+          desired.canReadObjectRecords ?? current.canReadObjectRecords;
+        const effectiveCanUpdate =
+          desired.canUpdateObjectRecords ?? current.canUpdateObjectRecords;
+        const effectiveCanSoftDelete =
+          desired.canSoftDeleteObjectRecords ??
+          current.canSoftDeleteObjectRecords;
+        const effectiveCanDestroy =
+          desired.canDestroyObjectRecords ?? current.canDestroyObjectRecords;
+
         const canChanged =
-          desired.canReadObjectRecords !== current.canReadObjectRecords ||
-          desired.canUpdateObjectRecords !== current.canUpdateObjectRecords ||
-          desired.canSoftDeleteObjectRecords !==
-            current.canSoftDeleteObjectRecords ||
-          desired.canDestroyObjectRecords !== current.canDestroyObjectRecords;
+          effectiveCanRead !== current.canReadObjectRecords ||
+          effectiveCanUpdate !== current.canUpdateObjectRecords ||
+          effectiveCanSoftDelete !== current.canSoftDeleteObjectRecords ||
+          effectiveCanDestroy !== current.canDestroyObjectRecords;
 
         if (canChanged) {
           const now = new Date().toISOString();
@@ -158,16 +167,10 @@ export class ObjectPermissionService {
             roleUniversalIdentifier: current.roleUniversalIdentifier,
             objectMetadataUniversalIdentifier:
               current.objectMetadataUniversalIdentifier,
-            canReadObjectRecords:
-              desired.canReadObjectRecords ?? current.canReadObjectRecords,
-            canUpdateObjectRecords:
-              desired.canUpdateObjectRecords ?? current.canUpdateObjectRecords,
-            canSoftDeleteObjectRecords:
-              desired.canSoftDeleteObjectRecords ??
-              current.canSoftDeleteObjectRecords,
-            canDestroyObjectRecords:
-              desired.canDestroyObjectRecords ??
-              current.canDestroyObjectRecords,
+            canReadObjectRecords: effectiveCanRead,
+            canUpdateObjectRecords: effectiveCanUpdate,
+            canSoftDeleteObjectRecords: effectiveCanSoftDelete,
+            canDestroyObjectRecords: effectiveCanDestroy,
             createdAt: current.createdAt,
             updatedAt: now,
           });
