@@ -133,11 +133,12 @@ export class ApplicationDevelopmentResolver {
       workspaceId,
     );
 
-    const application =
-      await this.applicationService.findByUniversalIdentifier({
+    const application = await this.applicationService.findByUniversalIdentifier(
+      {
         universalIdentifier: manifest.application.universalIdentifier,
         workspaceId,
-      });
+      },
+    );
 
     if (!isDefined(application)) {
       throw new ApplicationException(

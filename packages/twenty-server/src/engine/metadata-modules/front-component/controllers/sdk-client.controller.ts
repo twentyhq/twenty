@@ -36,19 +36,18 @@ export class SdkClientController {
     @Param('moduleName') moduleName: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ) {
-    if (
-      !ALLOWED_SDK_MODULES.includes(moduleName as SdkModuleName)
-    ) {
+    if (!ALLOWED_SDK_MODULES.includes(moduleName as SdkModuleName)) {
       throw new NotFoundException(
         `SDK module "${moduleName}" not found. Allowed: ${ALLOWED_SDK_MODULES.join(', ')}`,
       );
     }
 
-    const application =
-      await this.applicationService.findOneApplicationOrThrow({
+    const application = await this.applicationService.findOneApplicationOrThrow(
+      {
         id: applicationId,
         workspaceId: workspace.id,
-      });
+      },
+    );
 
     const fileBuffer =
       await this.sdkClientGenerationService.readFileFromArchive({

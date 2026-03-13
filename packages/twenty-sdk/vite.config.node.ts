@@ -1,17 +1,17 @@
-import path from "path";
-import { type PackageJson } from "type-fest";
-import { defineConfig } from "vite";
-import tsconfigPaths from "vite-tsconfig-paths";
+import path from 'path';
+import { type PackageJson } from 'type-fest';
+import { defineConfig } from 'vite';
+import tsconfigPaths from 'vite-tsconfig-paths';
 
-import packageJson from "./package.json";
+import packageJson from './package.json';
 
 export default defineConfig(() => {
   return {
     root: __dirname,
-    cacheDir: "../../node_modules/.vite/packages/twenty-sdk-node",
+    cacheDir: '../../node_modules/.vite/packages/twenty-sdk-node',
     resolve: {
       alias: {
-        "@/": path.resolve(__dirname, "src") + "/",
+        '@/': path.resolve(__dirname, 'src') + '/',
       },
     },
     plugins: [
@@ -21,15 +21,15 @@ export default defineConfig(() => {
     ],
     build: {
       emptyOutDir: false,
-      outDir: "dist",
+      outDir: 'dist',
       lib: {
         entry: {
-          index: "src/sdk/index.ts",
-          cli: "src/cli/cli.ts",
-          operations: "src/cli/public-operations/index.ts",
-          build: "src/build/index.ts",
+          index: 'src/sdk/index.ts',
+          cli: 'src/cli/cli.ts',
+          operations: 'src/cli/public-operations/index.ts',
+          build: 'src/build/index.ts',
         },
-        name: "twenty-sdk",
+        name: 'twenty-sdk',
       },
       rollupOptions: {
         external: (id: string) => {
@@ -38,16 +38,16 @@ export default defineConfig(() => {
           }
 
           const builtins = [
-            "child_process",
-            "crypto",
-            "fs",
-            "fs/promises",
-            "module",
-            "os",
-            "path",
-            "stream",
-            "url",
-            "util",
+            'child_process',
+            'crypto',
+            'fs',
+            'fs/promises',
+            'module',
+            'os',
+            'path',
+            'stream',
+            'url',
+            'util',
           ];
 
           if (builtins.includes(id)) {
@@ -58,23 +58,23 @@ export default defineConfig(() => {
             (packageJson as PackageJson).dependencies || {},
           );
 
-          return deps.some((dep) => id === dep || id.startsWith(dep + "/"));
+          return deps.some((dep) => id === dep || id.startsWith(dep + '/'));
         },
         output: [
           {
-            format: "es" as const,
-            entryFileNames: "[name].mjs",
+            format: 'es' as const,
+            entryFileNames: '[name].mjs',
           },
           {
-            format: "cjs" as const,
-            interop: "auto" as const,
+            format: 'cjs' as const,
+            interop: 'auto' as const,
             esModule: true,
-            exports: "named" as const,
-            entryFileNames: "[name].cjs",
+            exports: 'named' as const,
+            entryFileNames: '[name].cjs',
           },
         ],
       },
     },
-    logLevel: "warn" as const,
+    logLevel: 'warn' as const,
   };
 });

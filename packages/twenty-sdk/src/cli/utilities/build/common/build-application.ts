@@ -1,26 +1,26 @@
-import crypto from "crypto";
-import { readFile } from "node:fs/promises";
-import { dirname, join } from "path";
+import crypto from 'crypto';
+import { readFile } from 'node:fs/promises';
+import { dirname, join } from 'path';
 import {
   NODE_ESM_CJS_BANNER,
   OUTPUT_DIR,
   type Manifest,
-} from "twenty-shared/application";
-import { FileFolder } from "twenty-shared/types";
+} from 'twenty-shared/application';
+import { FileFolder } from 'twenty-shared/types';
 
-import { esbuildOneShotBuild } from "@/cli/utilities/build/common/esbuild-one-shot-build";
-import { LOGIC_FUNCTION_EXTERNAL_MODULES } from "@/cli/utilities/build/common/esbuild-watcher";
-import { getBaseFrontComponentBuildOptions } from "@/cli/utilities/build/common/front-component-build/utils/get-base-front-component-build-options";
-import { getFrontComponentBuildPlugins } from "@/cli/utilities/build/common/front-component-build/utils/get-front-component-build-plugins";
-import { type OnFileBuiltCallback } from "@/cli/utilities/build/common/restartable-watcher-interface";
-import { type EntityFilePaths } from "@/cli/utilities/build/manifest/manifest-extract-config";
+import { esbuildOneShotBuild } from '@/cli/utilities/build/common/esbuild-one-shot-build';
+import { LOGIC_FUNCTION_EXTERNAL_MODULES } from '@/cli/utilities/build/common/esbuild-watcher';
+import { getBaseFrontComponentBuildOptions } from '@/cli/utilities/build/common/front-component-build/utils/get-base-front-component-build-options';
+import { getFrontComponentBuildPlugins } from '@/cli/utilities/build/common/front-component-build/utils/get-front-component-build-plugins';
+import { type OnFileBuiltCallback } from '@/cli/utilities/build/common/restartable-watcher-interface';
+import { type EntityFilePaths } from '@/cli/utilities/build/manifest/manifest-extract-config';
 import {
   copy,
   emptyDir,
   ensureDir,
   pathExists,
   pathExistsSync,
-} from "@/cli/utilities/file/fs-utils";
+} from '@/cli/utilities/file/fs-utils';
 
 export type AppBuildOptions = {
   appPath: string;
@@ -69,15 +69,15 @@ export const buildApplication = async (
     buildOptions: {
       bundle: true,
       splitting: false,
-      format: "esm",
-      platform: "node",
+      format: 'esm',
+      platform: 'node',
       outdir: join(options.appPath, OUTPUT_DIR),
-      outExtension: { ".js": ".mjs" },
+      outExtension: { '.js': '.mjs' },
       external: LOGIC_FUNCTION_EXTERNAL_MODULES,
-      tsconfig: join(options.appPath, "tsconfig.json"),
+      tsconfig: join(options.appPath, 'tsconfig.json'),
       sourcemap: true,
       metafile: true,
-      logLevel: "silent",
+      logLevel: 'silent',
       banner: NODE_ESM_CJS_BANNER,
     },
     onFileBuilt: collectFileBuilt,
@@ -90,11 +90,11 @@ export const buildApplication = async (
     buildOptions: {
       ...getBaseFrontComponentBuildOptions(),
       outdir: join(options.appPath, OUTPUT_DIR),
-      tsconfig: join(options.appPath, "tsconfig.json"),
-      jsx: "automatic",
+      tsconfig: join(options.appPath, 'tsconfig.json'),
+      jsx: 'automatic',
       sourcemap: true,
       metafile: true,
-      logLevel: "silent",
+      logLevel: 'silent',
       plugins: [...getFrontComponentBuildPlugins()],
     },
     onFileBuilt: collectFileBuilt,
@@ -110,7 +110,7 @@ export const buildApplication = async (
   await copyStaticFiles({
     appPath: options.appPath,
     fileFolder: FileFolder.Dependencies,
-    filePaths: ["package.json", "yarn.lock"].filter((filePath) =>
+    filePaths: ['package.json', 'yarn.lock'].filter((filePath) =>
       pathExistsSync(join(options.appPath, filePath)),
     ),
     collectFileBuilt,
@@ -144,7 +144,7 @@ const copyStaticFiles = async ({
     await copy(absoluteSourcePath, absoluteBuiltPath);
 
     const content = await readFile(absoluteBuiltPath);
-    const checksum = crypto.createHash("md5").update(content).digest("hex");
+    const checksum = crypto.createHash('md5').update(content).digest('hex');
 
     collectFileBuilt({
       fileFolder,
