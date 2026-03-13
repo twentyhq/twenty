@@ -258,6 +258,7 @@ export enum AllMetadataName {
   logicFunction = 'logicFunction',
   navigationMenuItem = 'navigationMenuItem',
   objectMetadata = 'objectMetadata',
+  objectPermission = 'objectPermission',
   pageLayout = 'pageLayout',
   pageLayoutTab = 'pageLayoutTab',
   pageLayoutWidget = 'pageLayoutWidget',
