@@ -7,6 +7,13 @@ type GetTabsWithVisibleWidgetsParams = {
   isMobile: boolean;
   isInSidePanel: boolean;
   isEditMode: boolean;
+  // recordFieldValues feeds record field data into the widget visibility context,
+  // enabling pageLayoutWidget.conditionalDisplay json-logic rules to reference
+  // record values (e.g. show/hide an entire widget based on salesStage).
+  // PageLayoutRendererContent reads this from the Jotai record store and passes
+  // it here. The infrastructure is in place but not currently used for any
+  // active widget-level rules — field-level conditional visibility for
+  // Opportunity fields is handled separately in useOpportunityConditionalFields.
   recordFieldValues?: Record<string, unknown>;
 };
 
