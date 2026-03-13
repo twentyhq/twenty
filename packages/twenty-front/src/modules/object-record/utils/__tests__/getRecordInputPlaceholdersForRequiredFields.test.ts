@@ -1,6 +1,8 @@
 import {
   getRecordInputPlaceholdersForRequiredFields,
+  getRequiredFieldsUnfillableErrorMessage,
   getRequiredRelationFieldsMissingErrorMessage,
+  REQUIRED_FIELDS_UNFILLABLE_ERROR_CODE,
   REQUIRED_RELATION_FIELDS_MISSING_ERROR_CODE,
 } from '@/object-record/utils/getRecordInputPlaceholdersForRequiredFields';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
@@ -93,7 +95,6 @@ describe('getRecordInputPlaceholdersForRequiredFields', () => {
           type: FieldMetadataType.RELATION,
           isNullable: false,
           relation: { type: RelationType.MANY_TO_ONE },
-          settings: { joinColumnName: 'workspaceId' },
         }),
       ],
     });
@@ -106,7 +107,7 @@ describe('getRecordInputPlaceholdersForRequiredFields', () => {
     expect(missingRequiredRelationFields[0].name).toBe('workspace');
   });
 
-  it('should use joinColumnName when checking for existing value', () => {
+  it('should treat relation as provided when {fieldName}Id is set', () => {
     const objectMetadataItem = createMockObjectMetadataItem({
       labelIdentifierFieldMetadataId: 'title-field-id',
       fields: [
@@ -123,7 +124,6 @@ describe('getRecordInputPlaceholdersForRequiredFields', () => {
           type: FieldMetadataType.RELATION,
           isNullable: false,
           relation: { type: RelationType.MANY_TO_ONE },
-          settings: { joinColumnName: 'workspaceId' },
         }),
       ],
     });
@@ -164,6 +164,57 @@ describe('REQUIRED_RELATION_FIELDS_MISSING_ERROR_CODE', () => {
   it('should be the expected constant', () => {
     expect(REQUIRED_RELATION_FIELDS_MISSING_ERROR_CODE).toBe(
       'REQUIRED_RELATION_FIELDS_MISSING',
+    );
+  });
+});
+
+describe('missingRequiredFieldsUnfillable', () => {
+  it('should add required SELECT with no options to missingRequiredFieldsUnfillable', () => {
+    const objectMetadataItem = createMockObjectMetadataItem({
+      labelIdentifierFieldMetadataId: 'title-field-id',
+      fields: [
+        createMockField({
+          id: 'title-field-id',
+          name: 'title',
+          type: FieldMetadataType.TEXT,
+          isNullable: false,
+        }),
+        createMockField({
+          id: 'status-field-id',
+          name: 'status',
+          label: 'Status',
+          type: FieldMetadataType.SELECT,
+          isNullable: false,
+          options: [],
+        }),
+      ],
+    });
+
+    const { placeholders, missingRequiredFieldsUnfillable } =
+      getRecordInputPlaceholdersForRequiredFields(objectMetadataItem, {});
+
+    expect(placeholders.title).toBeDefined();
+    expect(placeholders.status).toBeUndefined();
+    expect(missingRequiredFieldsUnfillable).toHaveLength(1);
+    expect(missingRequiredFieldsUnfillable[0].name).toBe('status');
+  });
+});
+
+describe('getRequiredFieldsUnfillableErrorMessage', () => {
+  it('should return formatted message', () => {
+    const fields = [
+      createMockField({ name: 'status', label: 'Status' }),
+    ];
+    const message = getRequiredFieldsUnfillableErrorMessage(fields);
+    expect(message).toContain('Status');
+    expect(message).toContain('cannot be auto-filled');
+  });
+});
+
+describe('REQUIRED_FIELDS_UNFILLABLE_ERROR_CODE', () => {
+  it('should be the expected constant', () => {
+    expect(REQUIRED_FIELDS_UNFILLABLE_ERROR_CODE).toBe(
+      'REQUIRED_FIELDS_UNFILLABLE',
     );
   });
 });

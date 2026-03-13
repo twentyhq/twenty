@@ -4,15 +4,22 @@ import { v4 } from 'uuid';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
+import { getJoinColumnName } from '@/object-record/record-field/ui/utils/junction/getJoinColumnName';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
 const UNTITLED_PLACEHOLDER = 'Untitled';
 
+// Unlike prefillRecord/generateEmptyFieldValue which produce empty/display values
+// (null, ''), this utility produces valid non-null placeholders for required
+// fields so the create mutation can succeed. The backend rejects null/empty
+// for required TEXT fields.
+
 type GetRecordInputPlaceholdersForRequiredFieldsResult = {
   placeholders: Partial<ObjectRecord>;
   missingRequiredRelationFields: FieldMetadataItem[];
+  missingRequiredFieldsUnfillable: FieldMetadataItem[];
 };
 
 const getPlaceholderForFieldType = (
@@ -61,7 +68,14 @@ const getPlaceholderForFieldType = (
     return defaultValue ?? 0;
   }
 
-  if (field.type === FieldMetadataType.DATE || field.type === FieldMetadataType.DATE_TIME) {
+  if (field.type === FieldMetadataType.DATE) {
+    return (
+      defaultValue ??
+      new Date().toISOString().split('T')[0]
+    );
+  }
+
+  if (field.type === FieldMetadataType.DATE_TIME) {
     return defaultValue ?? new Date().toISOString();
   }
 
@@ -100,7 +114,7 @@ const getPlaceholderForFieldType = (
 
   if (field.type === FieldMetadataType.EMAILS) {
     return {
-      primaryEmail: untitledLabel,
+      primaryEmail: 'untitled@example.com',
       additionalEmails: null,
     };
   }
@@ -177,6 +191,7 @@ export const getRecordInputPlaceholdersForRequiredFields = (
 ): GetRecordInputPlaceholdersForRequiredFieldsResult => {
   const placeholders: Partial<ObjectRecord> = {};
   const missingRequiredRelationFields: FieldMetadataItem[] = [];
+  const missingRequiredFieldsUnfillable: FieldMetadataItem[] = [];
 
   for (const field of objectMetadataItem.fields) {
     if (field.isNullable !== false) {
@@ -185,8 +200,12 @@ export const getRecordInputPlaceholdersForRequiredFields = (
 
     // Skip if value already provided (filters, RLS, or explicit input)
     const existingValue = recordInput[field.name];
-    const joinColumnValue = field.settings?.joinColumnName
-      ? recordInput[field.settings.joinColumnName]
+    const relationJoinColumnName =
+      isRequiredRelationField(field) || isRequiredMorphRelationField(field)
+        ? getJoinColumnName(field.settings) ?? `${field.name}Id`
+        : undefined;
+    const joinColumnValue = relationJoinColumnName
+      ? recordInput[relationJoinColumnName]
       : undefined;
     if (isDefined(existingValue) || isDefined(joinColumnValue)) {
       continue;
@@ -198,20 +217,30 @@ export const getRecordInputPlaceholdersForRequiredFields = (
     }
 
     if (!canProvidePlaceholderForFieldType(field.type)) {
+      missingRequiredFieldsUnfillable.push(field);
       continue;
     }
 
     const placeholder = getPlaceholderForFieldType(field, objectMetadataItem);
     if (isDefined(placeholder)) {
       placeholders[field.name] = placeholder;
+    } else {
+      missingRequiredFieldsUnfillable.push(field);
     }
   }
 
-  return { placeholders, missingRequiredRelationFields };
+  return {
+    placeholders,
+    missingRequiredRelationFields,
+    missingRequiredFieldsUnfillable,
+  };
 };
 
 export const REQUIRED_RELATION_FIELDS_MISSING_ERROR_CODE =
   'REQUIRED_RELATION_FIELDS_MISSING' as const;
+
+export const REQUIRED_FIELDS_UNFILLABLE_ERROR_CODE =
+  'REQUIRED_FIELDS_UNFILLABLE' as const;
 
 export const getRequiredRelationFieldsMissingErrorMessage = (
   missingRequiredRelationFields: FieldMetadataItem[],
@@ -220,4 +249,13 @@ export const getRequiredRelationFieldsMissingErrorMessage = (
     .map((field) => field.label)
     .join(', ');
   return `Cannot create record: the field(s) "${fieldLabels}" are required but cannot be auto-filled. Make them optional in Settings > Data model, or add a default value.`;
+};
+
+export const getRequiredFieldsUnfillableErrorMessage = (
+  missingRequiredFieldsUnfillable: FieldMetadataItem[],
+): string => {
+  const fieldLabels = missingRequiredFieldsUnfillable
+    .map((field) => field.label)
+    .join(', ');
+  return `Cannot create record: the field(s) "${fieldLabels}" are required but cannot be auto-filled (e.g. SELECT with no options). Make them optional in Settings > Data model, or add a default value.`;
 };

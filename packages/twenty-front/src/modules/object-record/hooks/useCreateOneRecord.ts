@@ -31,7 +31,9 @@ import { dispatchObjectRecordOperationBrowserEvent } from '@/browser-event/utils
 import { getCreateOneRecordMutationResponseField } from '@/object-record/utils/getCreateOneRecordMutationResponseField';
 import {
   getRecordInputPlaceholdersForRequiredFields,
+  getRequiredFieldsUnfillableErrorMessage,
   getRequiredRelationFieldsMissingErrorMessage,
+  REQUIRED_FIELDS_UNFILLABLE_ERROR_CODE,
   REQUIRED_RELATION_FIELDS_MISSING_ERROR_CODE,
 } from '@/object-record/utils/getRecordInputPlaceholdersForRequiredFields';
 import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
@@ -92,14 +94,30 @@ export const useCreateOneRecord = <
 
     const idForCreation = recordInput.id ?? v4();
 
-    const { placeholders, missingRequiredRelationFields } =
-      getRecordInputPlaceholdersForRequiredFields(objectMetadataItem, recordInput);
+    const {
+      placeholders,
+      missingRequiredRelationFields,
+      missingRequiredFieldsUnfillable,
+    } = getRecordInputPlaceholdersForRequiredFields(
+      objectMetadataItem,
+      recordInput,
+    );
 
     if (missingRequiredRelationFields.length > 0) {
       setLoading(false);
       throw new CustomError(
-        getRequiredRelationFieldsMissingErrorMessage(missingRequiredRelationFields),
+        getRequiredRelationFieldsMissingErrorMessage(
+          missingRequiredRelationFields,
+        ),
         REQUIRED_RELATION_FIELDS_MISSING_ERROR_CODE,
+      );
+    }
+
+    if (missingRequiredFieldsUnfillable.length > 0) {
+      setLoading(false);
+      throw new CustomError(
+        getRequiredFieldsUnfillableErrorMessage(missingRequiredFieldsUnfillable),
+        REQUIRED_FIELDS_UNFILLABLE_ERROR_CODE,
       );
     }
 
@@ -165,7 +183,7 @@ export const useCreateOneRecord = <
         variables: {
           input: sanitizedInput,
         },
-        update: (cache: ApolloCache, result: FetchResult) => {
+        update: (cache: ApolloCache<object>, result: FetchResult) => {
           const { data } = result;
           const record = data?.[mutationResponseField];
           if (skipPostOptimisticEffect === false && isDefined(record)) {
