@@ -97,13 +97,17 @@ export class WorkspaceMemberPreQueryHookService {
     }
 
     // Sync name back to core.user so "Created by" shows correctly
-    await this.userRepository.update(
-      { id: userId },
-      {
-        ...(isDefined(firstName) && firstName !== '' && { firstName }),
-        ...(isDefined(lastName) && lastName !== '' && { lastName }),
-      },
-    );
+
+    const nameUpdate = {
+      ...(isDefined(firstName) && firstName !== '' && { firstName }),
+      ...(isDefined(lastName) && lastName !== '' && { lastName }),
+    };
+
+    if (Object.keys(nameUpdate).length === 0) {
+      return;
+    }
+
+    await this.userRepository.update({ id: userId }, nameUpdate);
 
     await this.onboardingService.setOnboardingCreateProfilePending({
       userId,
