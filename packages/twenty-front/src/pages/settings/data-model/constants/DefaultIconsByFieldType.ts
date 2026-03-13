@@ -24,6 +24,6 @@ export const DEFAULT_ICONS_BY_FIELD_TYPE: Record<FieldMetadataType, string> = {
   [FieldMetadataType.ACTOR]: 'IconUsers',
   [FieldMetadataType.NUMERIC]: 'IconUsers',
   [FieldMetadataType.POSITION]: 'IconUsers',
-  [FieldMetadataType.RICH_TEXT_V2]: 'IconUsers',
+  [FieldMetadataType.RICH_TEXT]: 'IconUsers',
   [FieldMetadataType.TS_VECTOR]: 'IconUsers',
 };

@@ -873,7 +873,7 @@ type RatioAggregateConfig {
   optionValue: String!
 }
 
-type RichTextV2Body {
+type RichTextBody {
   blocknote: String
   markdown: String
 }
@@ -990,7 +990,7 @@ enum WidgetConfigurationType {
 
 type StandaloneRichTextConfiguration {
   configurationType: WidgetConfigurationType!
-  body: RichTextV2Body!
+  body: RichTextBody!
 }
 
 type PieChartConfiguration {

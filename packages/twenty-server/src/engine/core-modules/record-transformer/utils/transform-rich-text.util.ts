@@ -1,7 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import {
-  type RichTextV2Metadata,
-  richTextV2ValueSchema,
+  type RichTextMetadata,
+  richTextValueSchema,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -29,12 +29,12 @@ const getServerBlockNoteEditor = async (): Promise<ServerBlockNoteEditor> => {
   return editor;
 };
 
-export const transformRichTextV2Value = async (
+export const transformRichTextValue = async (
   // oxlint-disable-next-line @typescripttypescript/no-explicit-any
   richTextValue: any,
-): Promise<RichTextV2Metadata> => {
+): Promise<RichTextMetadata> => {
   const parsedValue = isNonEmptyString(richTextValue)
-    ? richTextV2ValueSchema.parse(richTextValue)
+    ? richTextValueSchema.parse(richTextValue)
     : richTextValue;
 
   const serverBlockNoteEditor = await getServerBlockNoteEditor();

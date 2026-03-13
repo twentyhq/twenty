@@ -1,16 +1,16 @@
-import { type RichTextV2Filter } from '@/types';
+import { type RichTextFilter } from '@/types';
 import escapeRegExp from 'lodash.escaperegexp';
 
-export const isMatchingRichTextV2Filter = ({
-  richTextV2Filter,
+export const isMatchingRichTextFilter = ({
+  richTextFilter,
   value,
 }: {
-  richTextV2Filter: RichTextV2Filter;
+  richTextFilter: RichTextFilter;
   value: string;
 }) => {
   switch (true) {
-    case richTextV2Filter.markdown !== undefined: {
-      const escapedPattern = escapeRegExp(richTextV2Filter.markdown.ilike);
+    case richTextFilter.markdown !== undefined: {
+      const escapedPattern = escapeRegExp(richTextFilter.markdown.ilike);
       const regexPattern = escapedPattern.replace(/%/g, '.*');
       const regexCaseInsensitive = new RegExp(`^${regexPattern}$`, 'i');
 
@@ -18,7 +18,7 @@ export const isMatchingRichTextV2Filter = ({
     }
     default: {
       throw new Error(
-        `Unexpected value for RICH_TEXT_V2 filter : ${JSON.stringify(richTextV2Filter)}`,
+        `Unexpected value for RICH_TEXT_V2 filter : ${JSON.stringify(richTextFilter)}`,
       );
     }
   }

@@ -37,10 +37,10 @@ export const getFieldMetadataCreationInputs = (
       'ACTOR' | 'POSITION'
     >]: FieldMetadataCreationInput | FieldMetadataCreationInput[];
   } = {
-    [FieldMetadataType.RICH_TEXT_V2]: {
-      name: 'richTextV2Field',
-      label: 'richTextV2Field',
-      type: FieldMetadataType.RICH_TEXT_V2,
+    [FieldMetadataType.RICH_TEXT]: {
+      name: 'richTextField',
+      label: 'richTextField',
+      type: FieldMetadataType.RICH_TEXT,
       objectMetadataId,
     },
     [FieldMetadataType.TEXT]: {

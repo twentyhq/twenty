@@ -2,7 +2,7 @@ import { FieldMetadataType } from '@/types';
 import { isFieldMetadataTextKind } from '../isFieldMetadataTextKind';
 
 describe('isFieldMetadataTextKind', () => {
-  it.each([FieldMetadataType.TEXT, FieldMetadataType.RICH_TEXT_V2])(
+  it.each([FieldMetadataType.TEXT, FieldMetadataType.RICH_TEXT])(
     'should return true for %s',
     (type) => {
       expect(isFieldMetadataTextKind(type)).toBe(true);

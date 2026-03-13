@@ -105,7 +105,7 @@ const _assertion: Record<string, AbstractFlatFieldMetadata> = {
   // JSON/Array types
   rawJson: {} as FlatFieldMetadata<FieldMetadataType.RAW_JSON>,
   array: {} as FlatFieldMetadata<FieldMetadataType.ARRAY>,
-  richTextV2: {} as FlatFieldMetadata<FieldMetadataType.RICH_TEXT_V2>,
+  richText: {} as FlatFieldMetadata<FieldMetadataType.RICH_TEXT>,
 
   // Relation types
   relation: {} as FlatFieldMetadata<FieldMetadataType.RELATION>,

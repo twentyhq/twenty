@@ -1,4 +1,4 @@
-import { FormRichTextV2FieldInput } from '@/object-record/record-field/ui/form-types/components/FormRichTextV2FieldInput';
+import { FormRichTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormRichTextFieldInput';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import {
   expect,
@@ -12,9 +12,9 @@ import { getUserDevice } from 'twenty-ui/utilities';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { MOCKED_STEP_ID } from '~/testing/mock-data/workflow';
 
-const meta: Meta<typeof FormRichTextV2FieldInput> = {
-  title: 'UI/Data/Field/Form/Input/FormRichTextV2FieldInput',
-  component: FormRichTextV2FieldInput,
+const meta: Meta<typeof FormRichTextFieldInput> = {
+  title: 'UI/Data/Field/Form/Input/FormRichTextFieldInput',
+  component: FormRichTextFieldInput,
   args: {},
   argTypes: {},
   decorators: [WorkflowStepDecorator],
@@ -22,7 +22,7 @@ const meta: Meta<typeof FormRichTextV2FieldInput> = {
 
 export default meta;
 
-type Story = StoryObj<typeof FormRichTextV2FieldInput>;
+type Story = StoryObj<typeof FormRichTextFieldInput>;
 
 export const Default: Story = {
   args: {

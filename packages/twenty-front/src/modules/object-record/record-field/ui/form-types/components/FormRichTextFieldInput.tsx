@@ -1,22 +1,22 @@
 import { FormAdvancedTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormAdvancedTextFieldInput';
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
-import { type FieldRichTextV2Value } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { type FieldRichTextValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 
-type FormRichTextV2FieldInputProps = {
+type FormRichTextFieldInputProps = {
   label?: string;
   error?: string;
   hint?: string;
-  defaultValue: FieldRichTextV2Value | undefined;
-  onChange: (value: FieldRichTextV2Value) => void;
+  defaultValue: FieldRichTextValue | undefined;
+  onChange: (value: FieldRichTextValue) => void;
   onBlur?: () => void;
   readonly?: boolean;
   placeholder?: string;
   VariablePicker?: VariablePickerComponent;
 };
 
-const RICH_TEXT_V2_EDITOR_MIN_HEIGHT = 340;
+const RICH_TEXT_EDITOR_MIN_HEIGHT = 340;
 
-const RICH_TEXT_V2_EDITOR_MAX_WIDTH = 600;
+const RICH_TEXT_EDITOR_MAX_WIDTH = 600;
 
 const mapTipTapToBlockNote = (tiptapJson: string): string => {
   try {
@@ -30,7 +30,7 @@ const mapTipTapToBlockNote = (tiptapJson: string): string => {
   }
 };
 
-export const FormRichTextV2FieldInput = ({
+export const FormRichTextFieldInput = ({
   label,
   error,
   hint,
@@ -39,7 +39,7 @@ export const FormRichTextV2FieldInput = ({
   onChange,
   readonly,
   VariablePicker,
-}: FormRichTextV2FieldInputProps) => {
+}: FormRichTextFieldInputProps) => {
   const handleChange = (value: string) => {
     onChange({
       blocknote: mapTipTapToBlockNote(value),
@@ -57,8 +57,8 @@ export const FormRichTextV2FieldInput = ({
       onChange={handleChange}
       readonly={readonly}
       VariablePicker={VariablePicker}
-      minHeight={RICH_TEXT_V2_EDITOR_MIN_HEIGHT}
-      maxWidth={RICH_TEXT_V2_EDITOR_MAX_WIDTH}
+      minHeight={RICH_TEXT_EDITOR_MIN_HEIGHT}
+      maxWidth={RICH_TEXT_EDITOR_MAX_WIDTH}
     />
   );
 };

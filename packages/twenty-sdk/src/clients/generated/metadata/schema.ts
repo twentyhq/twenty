@@ -646,10 +646,10 @@ export interface RatioAggregateConfig {
     __typename: 'RatioAggregateConfig'
 }
 
-export interface RichTextV2Body {
+export interface RichTextBody {
     blocknote?: Scalars['String']
     markdown?: Scalars['String']
-    __typename: 'RichTextV2Body'
+    __typename: 'RichTextBody'
 }
 
 export interface GridPosition {
@@ -726,7 +726,7 @@ export type WidgetConfigurationType = 'AGGREGATE_CHART' | 'GAUGE_CHART' | 'PIE_C
 
 export interface StandaloneRichTextConfiguration {
     configurationType: WidgetConfigurationType
-    body: RichTextV2Body
+    body: RichTextBody
     __typename: 'StandaloneRichTextConfiguration'
 }
 
@@ -3512,7 +3512,7 @@ export interface RatioAggregateConfigGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface RichTextV2BodyGenqlSelection{
+export interface RichTextBodyGenqlSelection{
     blocknote?: boolean | number
     markdown?: boolean | number
     __typename?: boolean | number
@@ -3621,7 +3621,7 @@ export interface AggregateChartConfigurationGenqlSelection{
 
 export interface StandaloneRichTextConfigurationGenqlSelection{
     configurationType?: boolean | number
-    body?: RichTextV2BodyGenqlSelection
+    body?: RichTextBodyGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -6495,10 +6495,10 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
-    const RichTextV2Body_possibleTypes: string[] = ['RichTextV2Body']
-    export const isRichTextV2Body = (obj?: { __typename?: any } | null): obj is RichTextV2Body => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isRichTextV2Body"')
-      return RichTextV2Body_possibleTypes.includes(obj.__typename)
+    const RichTextBody_possibleTypes: string[] = ['RichTextBody']
+    export const isRichTextBody = (obj?: { __typename?: any } | null): obj is RichTextBody => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isRichTextBody"')
+      return RichTextBody_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -8290,7 +8290,7 @@ export const enumFieldMetadataType = {
    RATING: 'RATING' as const,
    RAW_JSON: 'RAW_JSON' as const,
    RELATION: 'RELATION' as const,
-   RICH_TEXT_V2: 'RICH_TEXT_V2' as const,
+   RICH_TEXT: 'RICH_TEXT_V2' as const,
    SELECT: 'SELECT' as const,
    TEXT: 'TEXT' as const,
    TS_VECTOR: 'TS_VECTOR' as const,

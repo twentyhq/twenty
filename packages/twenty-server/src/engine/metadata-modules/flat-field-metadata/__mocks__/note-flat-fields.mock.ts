@@ -55,7 +55,7 @@ export const NOTE_FLAT_FIELDS_MOCK = {
   bodyV2: getFlatFieldMetadataMock({
     id: 'acb2973c-7e46-4296-ac79-8b8d163b6d85',
     objectMetadataId: '1253e3e5-5b00-4a34-93b8-02f3dc6e2b7c',
-    type: FieldMetadataType.RICH_TEXT_V2,
+    type: FieldMetadataType.RICH_TEXT,
     name: 'bodyV2',
     label: 'Body',
     defaultValue: null,

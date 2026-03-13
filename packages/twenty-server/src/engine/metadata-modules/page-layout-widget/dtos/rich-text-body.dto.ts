@@ -1,10 +1,10 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
 import { IsOptional, IsString } from 'class-validator';
-import { type RichTextV2Metadata } from 'twenty-shared/types';
+import { type RichTextMetadata } from 'twenty-shared/types';
 
-@ObjectType('RichTextV2Body')
-export class RichTextV2BodyDTO implements RichTextV2Metadata {
+@ObjectType('RichTextBody')
+export class RichTextBodyDTO implements RichTextMetadata {
   @Field(() => String, { nullable: true })
   @IsString()
   @IsOptional()

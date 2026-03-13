@@ -98,10 +98,10 @@ describe('filterSortableFieldMetadataItems', () => {
 
   it('should NOT allow unsortable field types like RICH_TEXT_V2', () => {
     const field = {
-      type: FieldMetadataType.RICH_TEXT_V2,
+      type: FieldMetadataType.RICH_TEXT,
       isSystem: false,
       isActive: true,
-      name: 'richTextV2',
+      name: 'richText',
     };
 
     expect(filterSortableFieldMetadataItems(field)).toBe(false);

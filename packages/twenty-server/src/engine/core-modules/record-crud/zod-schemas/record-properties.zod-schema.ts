@@ -238,7 +238,7 @@ export const generateRecordPropertiesZodSchema = (
         });
         break;
 
-      case FieldMetadataType.RICH_TEXT_V2:
+      case FieldMetadataType.RICH_TEXT:
         fieldSchema = z.object({
           markdown: z.string().optional(),
           blocknote: z.string().optional(),

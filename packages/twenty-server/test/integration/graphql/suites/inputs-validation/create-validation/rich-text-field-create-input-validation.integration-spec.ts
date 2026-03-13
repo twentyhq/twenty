@@ -8,7 +8,7 @@ import { destroyManyObjectsMetadata } from 'test/integration/graphql/suites/inpu
 import { setupTestObjectsWithAllFieldTypes } from 'test/integration/graphql/suites/inputs-validation/utils/setup-test-objects-with-all-field-types.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 
-const FIELD_METADATA_TYPE = FieldMetadataType.RICH_TEXT_V2;
+const FIELD_METADATA_TYPE = FieldMetadataType.RICH_TEXT;
 
 const successfulTestCases =
   successfulCreateInputByFieldMetadataType[FIELD_METADATA_TYPE];

@@ -76,8 +76,8 @@ describe('Rich text v2 field metadata creation tests suite', () => {
     const { data } = await createOneObjectMetadata({
       expectToFail: false,
       input: {
-        nameSingular: 'testRichTextV2Object',
-        namePlural: 'testRichTextV2Objects',
+        nameSingular: 'testRichTextObject',
+        namePlural: 'testRichTextObjects',
         labelSingular: 'Test Rich Text V2 Object',
         labelPlural: 'Test Rich Text V2 Objects',
         icon: 'IconTestPipe',
@@ -124,7 +124,7 @@ describe('Rich text v2 field metadata creation tests suite', () => {
     async ({ context: { input } }) => {
       const inputPayload = {
         objectMetadataId: createdObjectMetadataId,
-        type: FieldMetadataType.RICH_TEXT_V2,
+        type: FieldMetadataType.RICH_TEXT,
         isLabelSyncedWithName: false,
         ...input,
       };

@@ -1,12 +1,12 @@
-import { type FieldRichTextV2Value } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { type FieldRichTextValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { z } from 'zod';
 
-export const richTextV2Schema: z.ZodType<FieldRichTextV2Value> = z.object({
+export const richTextSchema: z.ZodType<FieldRichTextValue> = z.object({
   blocknote: z.string().nullable(),
   markdown: z.string().nullable(),
 });
 
-export const isFieldRichTextV2Value = (
+export const isFieldRichTextValue = (
   fieldValue: unknown,
-): fieldValue is FieldRichTextV2Value =>
-  richTextV2Schema.safeParse(fieldValue).success;
+): fieldValue is FieldRichTextValue =>
+  richTextSchema.safeParse(fieldValue).success;
