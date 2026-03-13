@@ -1,5 +1,5 @@
-import { useLazyQuery } from '@apollo/client';
-import { useCallback } from 'react';
+import { useLazyQuery } from '@apollo/client/react';
+import { useCallback, useMemo } from 'react';
 
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -60,13 +60,17 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
 
   const hasReadPermission = objectPermissions.canReadObjectRecords;
 
+  const defaultVariables = useMemo(
+    () => ({
+      filter,
+      limit,
+      orderBy,
+    }),
+    [filter, limit, orderBy],
+  );
+
   const [findManyRecords, { data, error, fetchMore }] =
     useLazyQuery<RecordGqlOperationFindManyResult>(findManyRecordsQuery, {
-      variables: {
-        filter,
-        limit,
-        orderBy,
-      },
       fetchPolicy,
       client: apolloCoreClient,
     });
@@ -77,7 +81,7 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
     orderBy,
     limit,
     fetchMore,
-    data,
+    data: data as RecordGqlOperationFindManyResult | undefined,
     error,
     objectMetadataItem,
   });
@@ -96,7 +100,14 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
       };
     }
 
-    const result = await findManyRecords();
+    // In Apollo v4, useLazyQuery's execute aborts in-flight queries when
+    // the query document changes (e.g. metadata/permissions loading).
+    // Calling .retain() keeps the query running to completion even if
+    // the ObservableQuery is updated, preventing AbortError rejections.
+    const result = await findManyRecords({
+      variables: defaultVariables,
+    }).retain();
+
     if (isDefined(result?.error)) {
       handleFindManyRecordsError(result.error);
     }
@@ -136,6 +147,7 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
   }, [
     hasReadPermission,
     findManyRecords,
+    defaultVariables,
     objectMetadataItem.namePlural,
     queryIdentifier,
     handleFindManyRecordsError,

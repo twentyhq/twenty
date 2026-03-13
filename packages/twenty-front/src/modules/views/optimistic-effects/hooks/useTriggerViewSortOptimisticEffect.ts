@@ -1,6 +1,6 @@
 import { coreViewsState } from '@/views/states/coreViewState';
 import { type CoreViewWithRelations } from '@/views/types/CoreViewWithRelations';
-import { useApolloClient } from '@apollo/client';
+import { useApolloClient } from '@apollo/client/react';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -33,10 +33,11 @@ export const useTriggerViewSortOptimisticEffect = () => {
             id: createdViewSort.viewId,
           }),
           fields: {
-            viewSorts: (existingViewSorts, { toReference }) => [
-              ...(existingViewSorts ?? []),
-              toReference(createdViewSort),
-            ],
+            viewSorts: (existingViewSorts, { toReference }) =>
+              [
+                ...(existingViewSorts ?? []),
+                toReference(createdViewSort),
+              ].filter(isDefined),
           },
         });
         const toBeModifiedCoreView = newCoreViews.find(
@@ -63,13 +64,15 @@ export const useTriggerViewSortOptimisticEffect = () => {
           }),
           fields: {
             viewSorts: (existingViewSorts, { readField, toReference }) =>
-              existingViewSorts.map((viewSort) => {
-                const viewSortId = readField<string>('id', viewSort);
-                if (viewSortId === updatedViewSort.id) {
-                  return toReference(updatedViewSort);
-                }
-                return viewSort;
-              }),
+              existingViewSorts
+                .map((viewSort) => {
+                  const viewSortId = readField<string>('id', viewSort);
+                  if (viewSortId === updatedViewSort.id) {
+                    return toReference(updatedViewSort);
+                  }
+                  return viewSort;
+                })
+                .filter(isDefined),
           },
         });
         const toBeModifiedCoreView = newCoreViews.find(

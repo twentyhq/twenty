@@ -2,16 +2,16 @@ import { agentChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesS
 import { agentChatUploadedFilesState } from '@/ai/states/agentChatUploadedFilesState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { useApolloClient } from '@apollo/client';
+import { useApolloClient, useMutation } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type AgentChatFileUIPart } from '@/ai/types/agent-chat-file-ui-part.type';
-import { useUploadAiChatFileMutation } from '~/generated-metadata/graphql';
+import { UploadAiChatFileDocument } from '~/generated-metadata/graphql';
 
 export const useAIChatFileUpload = () => {
   const apolloClient = useApolloClient();
-  const [uploadAiChatFile] = useUploadAiChatFileMutation({
+  const [uploadAiChatFile] = useMutation(UploadAiChatFileDocument, {
     client: apolloClient,
   });
   const { t } = useLingui();

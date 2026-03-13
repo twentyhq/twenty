@@ -2,8 +2,8 @@ import { GET_AUTHORIZATION_URL_FOR_SSO } from '@/auth/graphql/mutations/getAutho
 import { useSSO } from '@/auth/sign-in-up/hooks/useSSO';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { ApolloError } from '@apollo/client';
-import { MockedProvider } from '@apollo/client/testing';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
+import { MockedProvider } from '@apollo/client/testing/react';
 import { renderHook } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 
@@ -55,9 +55,7 @@ const apolloMocks = [
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
   <MemoryRouter>
-    <MockedProvider mocks={apolloMocks} addTypename={false}>
-      {children}
-    </MockedProvider>
+    <MockedProvider mocks={apolloMocks}>{children}</MockedProvider>
   </MemoryRouter>
 );
 
@@ -86,8 +84,8 @@ describe('useSSO', () => {
     await result.current.redirectToSSOLoginPage(identityProviderId);
 
     expect(mockEnqueueErrorSnackBar).toHaveBeenCalledWith({
-      apolloError: new ApolloError({
-        graphQLErrors: [{ message: 'Error message' }],
+      apolloError: new CombinedGraphQLErrors({
+        errors: [{ message: 'Error message' }],
       }),
     });
   });

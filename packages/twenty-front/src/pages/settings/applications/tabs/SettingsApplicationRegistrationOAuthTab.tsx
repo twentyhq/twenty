@@ -1,15 +1,11 @@
 import { SettingsAdminTableCard } from '@/settings/admin-panel/components/SettingsAdminTableCard';
-import { ROTATE_APPLICATION_REGISTRATION_CLIENT_SECRET } from '@/settings/application-registrations/graphql/mutations/rotateApplicationRegistrationClientSecret';
-import { UPDATE_APPLICATION_REGISTRATION } from '@/settings/application-registrations/graphql/mutations/updateApplicationRegistration';
-import { FIND_MANY_APPLICATION_REGISTRATIONS } from '@/settings/application-registrations/graphql/queries/findManyApplicationRegistrations';
-import { FIND_ONE_APPLICATION_REGISTRATION } from '@/settings/application-registrations/graphql/queries/findOneApplicationRegistration';
 import { ApiKeyInput } from '@/settings/developers/components/ApiKeyInput';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
-import { useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -24,6 +20,12 @@ import {
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  FindManyApplicationRegistrationsDocument,
+  FindOneApplicationRegistrationDocument,
+  RotateApplicationRegistrationClientSecretDocument,
+  UpdateApplicationRegistrationDocument,
+} from '~/generated-metadata/graphql';
 import { applicationRegistrationClientSecretFamilyState } from '~/pages/settings/applications/states/applicationRegistrationClientSecretFamilyState';
 import { type ApplicationRegistrationData } from '~/pages/settings/applications/tabs/types/ApplicationRegistrationData';
 import { isValidUrl } from 'twenty-shared/utils';
@@ -85,15 +87,18 @@ export const SettingsApplicationRegistrationOAuthTab = ({
   const [newRedirectUri, setNewRedirectUri] = useState('');
   const [hasChanges, setHasChanges] = useState(false);
 
-  const [updateRegistration] = useMutation(UPDATE_APPLICATION_REGISTRATION, {
-    refetchQueries: [
-      FIND_ONE_APPLICATION_REGISTRATION,
-      FIND_MANY_APPLICATION_REGISTRATIONS,
-    ],
-  });
+  const [updateRegistration] = useMutation(
+    UpdateApplicationRegistrationDocument,
+    {
+      refetchQueries: [
+        FindOneApplicationRegistrationDocument,
+        FindManyApplicationRegistrationsDocument,
+      ],
+    },
+  );
 
   const [rotateSecret] = useMutation(
-    ROTATE_APPLICATION_REGISTRATION_CLIENT_SECRET,
+    RotateApplicationRegistrationClientSecretDocument,
   );
 
   const markDirty = () => setHasChanges(true);

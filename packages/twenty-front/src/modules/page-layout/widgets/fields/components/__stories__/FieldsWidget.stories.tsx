@@ -1,8 +1,5 @@
-import {
-  type ApolloClient,
-  type NormalizedCacheObject,
-  useApolloClient,
-} from '@apollo/client';
+import { type ApolloClient } from '@apollo/client';
+import { useApolloClient } from '@apollo/client/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { MemoryRouter } from 'react-router-dom';
 import { expect, waitFor, within } from 'storybook/test';
@@ -124,7 +121,7 @@ const CoreClientProviderWrapper = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const apolloClient = useApolloClient() as ApolloClient<NormalizedCacheObject>;
+  const apolloClient = useApolloClient() as ApolloClient;
 
   return (
     <ApolloCoreClientContext.Provider value={apolloClient}>

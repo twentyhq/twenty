@@ -4,19 +4,20 @@ import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetad
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { coreViewsState } from '@/views/states/coreViewState';
-import { ApolloError } from '@apollo/client';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { t } from '@lingui/core/macro';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { CrudOperationType } from 'twenty-shared/types';
 import { upsertPropertiesOfItemIntoArrayOfObjectsComparingId } from 'twenty-shared/utils';
+import { useMutation } from '@apollo/client/react';
 import {
   type CoreView,
   type UpdateCoreViewMutationVariables,
-  useUpdateCoreViewMutation,
+  UpdateCoreViewDocument,
 } from '~/generated-metadata/graphql';
 
 export const usePerformViewAPIUpdate = () => {
-  const [updateCoreViewMutation] = useUpdateCoreViewMutation();
+  const [updateCoreViewMutation] = useMutation(UpdateCoreViewDocument);
 
   const { handleMetadataError } = useMetadataErrorHandler();
   const { enqueueErrorSnackBar } = useSnackBar();
@@ -59,7 +60,7 @@ export const usePerformViewAPIUpdate = () => {
           response: result,
         };
       } catch (error) {
-        if (error instanceof ApolloError) {
+        if (CombinedGraphQLErrors.is(error)) {
           handleMetadataError(error, {
             primaryMetadataName: 'view',
             operationType: CrudOperationType.UPDATE,

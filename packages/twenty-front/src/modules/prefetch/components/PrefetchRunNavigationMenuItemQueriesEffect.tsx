@@ -11,10 +11,11 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useCallback, useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
+import { useQuery } from '@apollo/client/react';
 import {
   FeatureFlagKey,
-  useFindManyNavigationMenuItemsQuery,
   type NavigationMenuItem,
+  FindManyNavigationMenuItemsDocument,
 } from '~/generated-metadata/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { useStore } from 'jotai';
@@ -40,7 +41,7 @@ export const PrefetchRunNavigationMenuItemQueriesEffect = () => {
     prefetchNavigationMenuItemsState,
   );
 
-  const { data, loading } = useFindManyNavigationMenuItemsQuery({
+  const { data, loading } = useQuery(FindManyNavigationMenuItemsDocument, {
     skip:
       showAuthModal ||
       isSettingsPage ||

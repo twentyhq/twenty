@@ -2,20 +2,22 @@ import { useMetadataStore } from '@/metadata-store/hooks/useMetadataStore';
 import { useSetIndexViews } from '@/metadata-store/hooks/useSetIndexViews';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { useApolloClient } from '@apollo/client/react';
 import {
-  useFindAllCoreViewsLazyQuery,
   ViewType,
+  FindAllCoreViewsDocument,
 } from '~/generated-metadata/graphql';
 
 const INDEX_VIEW_TYPES = [ViewType.TABLE, ViewType.KANBAN, ViewType.CALENDAR];
 
 export const useFetchAndLoadIndexViews = () => {
-  const [findAllCoreViews] = useFindAllCoreViewsLazyQuery();
+  const client = useApolloClient();
   const { updateDraft, applyChanges } = useMetadataStore();
   const { setIndexViews } = useSetIndexViews();
 
   const fetchAndLoadIndexViews = useCallback(async () => {
-    const result = await findAllCoreViews({
+    const result = await client.query({
+      query: FindAllCoreViewsDocument,
       variables: { viewTypes: INDEX_VIEW_TYPES },
       fetchPolicy: 'network-only',
     });
@@ -25,7 +27,7 @@ export const useFetchAndLoadIndexViews = () => {
       updateDraft('views', result.data.getCoreViews);
       applyChanges();
     }
-  }, [findAllCoreViews, setIndexViews, updateDraft, applyChanges]);
+  }, [client, setIndexViews, updateDraft, applyChanges]);
 
   return { fetchAndLoadIndexViews };
 };

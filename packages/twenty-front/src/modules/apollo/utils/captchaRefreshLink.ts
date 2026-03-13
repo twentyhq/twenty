@@ -1,4 +1,5 @@
 import { ApolloLink } from '@apollo/client';
+import { map } from 'rxjs';
 
 export const createCaptchaRefreshLink = (
   requestFreshCaptchaToken: () => void,
@@ -8,12 +9,14 @@ export const createCaptchaRefreshLink = (
 
     const hasCaptchaToken = variables != null && 'captchaToken' in variables;
 
-    return forward(operation).map((response) => {
-      if (hasCaptchaToken) {
-        requestFreshCaptchaToken();
-      }
+    return forward(operation).pipe(
+      map((response) => {
+        if (hasCaptchaToken) {
+          requestFreshCaptchaToken();
+        }
 
-      return response;
-    });
+        return response;
+      }),
+    );
   });
 };

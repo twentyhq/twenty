@@ -63,6 +63,12 @@ yarn twenty function:execute --preInstall
 # Execute the post-install function
 yarn twenty function:execute --postInstall
 
+# Build the app for distribution
+yarn twenty app:build
+
+# Publish the app to npm or a Twenty server
+yarn twenty app:publish
+
 # Uninstall the application from the current workspace
 yarn twenty app:uninstall
 
@@ -1223,6 +1229,113 @@ Key points:
 ### Hello World example
 
 Explore a minimal, end-to-end example that demonstrates objects, logic functions, front components, and multiple triggers [here](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/hello-world):
+
+## Building your app
+
+Once you've developed your app with `app:dev`, use `app:build` to compile it into a distributable package.
+
+```bash filename="Terminal"
+# Build the app (output goes to .twenty/output/)
+yarn twenty app:build
+
+# Build and create a tarball (.tgz) for distribution
+yarn twenty app:build --tarball
+```
+
+The build process:
+
+1. **Parses and validates the manifest** — reads all `defineX()` entities from your source files and validates the manifest structure.
+2. **Compiles logic functions and front components** — bundles TypeScript sources into ESM `.mjs` files using esbuild.
+3. **Generates checksums** — computes MD5 hashes for each built file, stored in the manifest as `builtHandlerChecksum` / `builtComponentChecksum`.
+4. **Generates the typed API client** — introspects the GraphQL schema and generates typed `CoreApiClient` and `MetadataApiClient` clients.
+5. **Runs a TypeScript type check** — runs `tsc --noEmit` to catch type errors before publishing.
+6. **Rebuilds with the generated client** — performs a second compilation pass so the generated client types are included.
+7. **Optionally creates a tarball** — if `--tarball` is passed, runs `npm pack` to create a `.tgz` file ready for distribution.
+
+The build output in `.twenty/output/` contains:
+
+```text
+.twenty/output/
+├── manifest.json              # Manifest with checksums for all built files
+├── package.json               # Copied from app root
+├── yarn.lock                  # Copied from app root
+├── src/
+│   ├── logic-functions/       # Compiled .mjs logic function files
+│   └── front-components/      # Compiled .mjs front component files
+├── public/                    # Static assets (if any)
+└── my-app-1.0.0.tgz          # Only with --tarball flag
+```
+
+| Option | Description |
+|--------|-------------|
+| `[appPath]` | Path to the app directory (defaults to current directory) |
+| `--tarball` | Also pack the output into a `.tgz` tarball |
+
+## Publishing your app
+
+Use `app:publish` to distribute your app — either to the npm registry or directly to a Twenty server.
+
+### Publish to npm (default)
+
+```bash filename="Terminal"
+# Publish to npm (requires npm login)
+yarn twenty app:publish
+
+# Publish with a dist-tag (e.g. beta, next)
+yarn twenty app:publish --tag beta
+```
+
+This builds the app and runs `npm publish` from the `.twenty/output/` directory. The published package can then be installed from the Twenty marketplace by any workspace.
+
+### Publish to a Twenty server
+
+```bash filename="Terminal"
+# Publish directly to a Twenty server
+yarn twenty app:publish --server https://app.twenty.com
+```
+
+This builds the app with a tarball, uploads it to the server via the `uploadAppTarball` GraphQL mutation, and triggers installation in one step. This is useful for private deployments or testing against a specific server.
+
+| Option | Description |
+|--------|-------------|
+| `[appPath]` | Path to the app directory (defaults to current directory) |
+| `--server <url>` | Publish to a Twenty server instead of npm |
+| `--token <token>` | Authentication token for the target server |
+| `--tag <tag>` | npm dist-tag (e.g. `beta`, `next`) — only for npm publish |
+
+## Application registration
+
+Before an app can be installed in a workspace, it must be **registered**. A registration is a metadata record that describes where the app comes from and how to authenticate it. This is handled automatically by the CLI in most cases.
+
+### Source types
+
+Each registration has a **source type** that determines how the app's files are resolved during installation:
+
+| Source type | How files are resolved | Typical use case |
+|-------------|----------------------|------------------|
+| `LOCAL` | Files are synced in real-time by the CLI watcher — installation is skipped | Development with `app:dev` |
+| `NPM` | Fetched from the npm registry via the `sourcePackage` field | Published apps on npm |
+| `TARBALL` | Extracted from an uploaded `.tgz` file stored on the server | Private apps published with `--server` |
+
+### How registration happens
+
+- **`app:dev`** — automatically creates a `LOCAL` registration the first time you run dev mode against a workspace.
+- **`app:publish --server`** — uploads a tarball and creates (or updates) a `TARBALL` registration, then installs the app.
+- **npm marketplace** — `NPM` registrations are created when apps are synced from the npm registry into the Twenty marketplace catalog.
+- **GraphQL API** — you can also create registrations programmatically via the `createApplicationRegistration` mutation.
+
+### Registration vs installation
+
+**Registration** and **installation** are separate concepts:
+
+- A **registration** (`ApplicationRegistration`) is a global metadata record describing the app: its name, source type, OAuth credentials, and marketplace listing status. It exists independently of any workspace.
+- An **installation** (`Application`) is a per-workspace instance. When a user installs an app, Twenty resolves the package from the registration's source, writes the built files to storage, and synchronizes the manifest (creating objects, fields, logic functions, etc.) in that workspace.
+
+One registration can be installed in many workspaces. Each workspace gets its own copy of the app's files and data model.
+
+### OAuth credentials
+
+Each registration includes OAuth credentials (`oAuthClientId` and `oAuthClientSecret`) generated at creation time. These are used by the app to authenticate API requests on behalf of users. The client secret is returned **once** at creation — store it securely. You can rotate it later via the `rotateApplicationRegistrationClientSecret` mutation.
 
 ## Manual setup (without the scaffolder)
 

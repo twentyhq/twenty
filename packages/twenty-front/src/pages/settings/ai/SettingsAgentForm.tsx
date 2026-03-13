@@ -1,4 +1,4 @@
-import { ApolloError } from '@apollo/client';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { styled } from '@linaria/react';
 import { useParams } from 'react-router-dom';
 import { useDebouncedCallback } from 'use-debounce';
@@ -25,11 +25,12 @@ import {
 } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useMutation, useQuery } from '@apollo/client/react';
 import {
   type CreateAgentInput,
-  useCreateOneAgentMutation,
-  useFindOneAgentQuery,
-  useUpdateOneAgentMutation,
+  CreateOneAgentDocument,
+  FindOneAgentDocument,
+  UpdateOneAgentDocument,
 } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -86,10 +87,17 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
     validateForm,
   } = useSettingsAgentFormState(mode);
 
-  const { data, loading } = useFindOneAgentQuery({
+  const {
+    data,
+    loading,
+    error: agentQueryError,
+  } = useQuery(FindOneAgentDocument, {
     variables: { id: agentId },
     skip: isCreateMode || !agentId,
-    onCompleted: (data) => {
+  });
+
+  useEffect(() => {
+    if (data) {
       const agent = data?.findOneAgent;
       if (isDefined(agent)) {
         if (isDefined(agent.applicationId)) {
@@ -116,17 +124,20 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
         });
         navigateApp(AppPath.NotFound);
       }
-    },
-    onError: (error) => {
+    }
+  }, [data, resetForm, enqueueErrorSnackBar, navigateApp]);
+
+  useEffect(() => {
+    if (agentQueryError) {
       enqueueErrorSnackBar({
-        apolloError: error,
+        apolloError: agentQueryError,
       });
       navigateApp(AppPath.NotFound);
-    },
-  });
+    }
+  }, [agentQueryError, enqueueErrorSnackBar, navigateApp]);
 
-  const [createAgent] = useCreateOneAgentMutation();
-  const [updateAgent] = useUpdateOneAgentMutation();
+  const [createAgent] = useMutation(CreateOneAgentDocument);
+  const [updateAgent] = useMutation(UpdateOneAgentDocument);
 
   const agent = data?.findOneAgent;
 
@@ -177,7 +188,7 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
         try {
           await saveDraftRoleToDB();
         } catch (error) {
-          if (error instanceof ApolloError) {
+          if (CombinedGraphQLErrors.is(error)) {
             enqueueErrorSnackBar({
               apolloError: error,
             });
@@ -214,7 +225,7 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
       setOriginalFormValues({ ...formValues });
     } catch (error) {
       enqueueErrorSnackBar({
-        apolloError: error instanceof ApolloError ? error : undefined,
+        apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
       });
     } finally {
       setIsSubmitting(false);
@@ -285,7 +296,7 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
         try {
           await saveDraftRoleToDB();
         } catch (error) {
-          if (error instanceof ApolloError) {
+          if (CombinedGraphQLErrors.is(error)) {
             enqueueErrorSnackBar({
               apolloError: error,
             });
@@ -347,7 +358,7 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
       navigate(SettingsPath.AI);
     } catch (error) {
       enqueueErrorSnackBar({
-        apolloError: error instanceof ApolloError ? error : undefined,
+        apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
       });
     } finally {
       setIsSubmitting(false);

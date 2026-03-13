@@ -17,9 +17,10 @@ import { SOURCE_LOCALE, type APP_LOCALES } from 'twenty-shared/translations';
 import { type ObjectPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type ColorScheme } from 'twenty-ui/input';
+import { useApolloClient } from '@apollo/client/react';
 import {
-  useFindAllCoreViewsLazyQuery,
-  useGetCurrentUserLazyQuery,
+  FindAllCoreViewsDocument,
+  GetCurrentUserDocument,
 } from '~/generated-metadata/graphql';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
@@ -46,15 +47,16 @@ export const useLoadCurrentUser = () => {
 
   const { isOnAWorkspace } = useIsCurrentLocationOnAWorkspace();
 
-  const [getCurrentUser] = useGetCurrentUserLazyQuery();
-  const [findAllCoreViews] = useFindAllCoreViewsLazyQuery();
+  const client = useApolloClient();
 
   const loadCurrentUser = useCallback(async () => {
-    const currentUserResult = await getCurrentUser({
+    const currentUserResult = await client.query({
+      query: GetCurrentUserDocument,
       fetchPolicy: 'network-only',
     });
 
-    const coreViewsResult = await findAllCoreViews({
+    const coreViewsResult = await client.query({
+      query: FindAllCoreViewsDocument,
       fetchPolicy: 'network-only',
     });
 
@@ -145,8 +147,7 @@ export const useLoadCurrentUser = () => {
       workspace,
     };
   }, [
-    getCurrentUser,
-    findAllCoreViews,
+    client,
     setCurrentUser,
     setCurrentWorkspace,
     isOnAWorkspace,

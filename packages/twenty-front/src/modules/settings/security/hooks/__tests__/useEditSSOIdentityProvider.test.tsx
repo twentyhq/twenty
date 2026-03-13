@@ -8,13 +8,10 @@ import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMeta
 
 const mutationEditSSOIDPCallSpy = jest.fn();
 
-jest.mock('~/generated-metadata/graphql', () => {
-  const actual = jest.requireActual('~/generated-metadata/graphql');
-  return {
-    ...actual,
-    useEditSsoIdentityProviderMutation: () => [mutationEditSSOIDPCallSpy],
-  };
-});
+jest.mock('@apollo/client/react', () => ({
+  ...jest.requireActual('@apollo/client/react'),
+  useMutation: () => [mutationEditSSOIDPCallSpy],
+}));
 
 const Wrapper = getJestMetadataAndApolloMocksWrapper({
   apolloMocks: [],

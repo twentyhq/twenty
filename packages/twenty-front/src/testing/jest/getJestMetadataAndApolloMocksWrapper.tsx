@@ -1,4 +1,5 @@
-import { MockedProvider, type MockedResponse } from '@apollo/client/testing';
+import { type MockedResponse } from '@apollo/client/testing';
+import { MockedProvider } from '@apollo/client/testing/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
@@ -36,7 +37,7 @@ export const getJestMetadataAndApolloMocksWrapper = ({
       <SnackBarComponentInstanceContext.Provider
         value={{ instanceId: 'snack-bar-manager' }}
       >
-        <MockedProvider mocks={apolloMocks} addTypename={false} cache={cache}>
+        <MockedProvider mocks={apolloMocks} cache={cache}>
           <RecordComponentInstanceContextsWrapper componentInstanceId="instanceId">
             <ViewComponentInstanceContext.Provider
               value={{ instanceId: 'instanceId' }}

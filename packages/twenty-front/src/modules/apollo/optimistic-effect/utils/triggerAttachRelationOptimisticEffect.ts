@@ -20,7 +20,7 @@ export const triggerAttachRelationOptimisticEffect = ({
   objectMetadataItems,
   objectPermissionsByObjectMetadataId,
 }: {
-  cache: ApolloCache<unknown>;
+  cache: ApolloCache;
   sourceObjectNameSingular: string;
   sourceRecordId: string;
   targetObjectMetadataItem: Pick<
