@@ -2,10 +2,10 @@ import { useIsLayoutCustomizationDirty } from '@/app/hooks/useIsLayoutCustomizat
 import { activeCustomizationPageLayoutIdsState } from '@/app/states/activeCustomizationPageLayoutIdsState';
 import { isLayoutCustomizationActiveState } from '@/app/states/isLayoutCustomizationActiveState';
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/states/navigationMenuItemsDraftState';
+import { navigationMenuItemsState } from '@/navigation-menu-item/states/navigationMenuItemsState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
 import { type PageLayout } from '@/page-layout/types/PageLayout';
-import { navigationMenuItemsState } from '@/navigation-menu-item/states/navigationMenuItemsState';
 import { renderHook } from '@testing-library/react';
 import { createStore, Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
@@ -30,14 +30,13 @@ const MOCK_PAGE_LAYOUT: PageLayout = {
   defaultTabToFocusOnMobileAndSidePanelId: null,
 };
 
-// Draft shape mirrors what PageLayoutInitializationQueryEffect sets —
-// only the fields relevant to editing, no timestamps or __typename.
 const MOCK_DRAFT_PAGE_LAYOUT = {
   id: PAGE_LAYOUT_ID_1,
   name: 'Test Layout',
   type: PageLayoutType.RECORD_PAGE,
   objectMetadataId: 'obj-1',
   tabs: [] as PageLayout['tabs'],
+  defaultTabToFocusOnMobileAndSidePanelId: null,
 };
 
 const getWrapper =
