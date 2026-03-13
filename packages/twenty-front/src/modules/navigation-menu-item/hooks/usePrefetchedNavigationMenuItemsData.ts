@@ -20,9 +20,7 @@ export const usePrefetchedNavigationMenuItemsData =
       currentWorkspaceMemberState,
     );
     const currentWorkspaceMemberId = currentWorkspaceMember?.id;
-    const prefetchNavigationMenuItems = useAtomStateValue(
-      navigationMenuItemsState,
-    );
+    const navigationMenuItems = useAtomStateValue(navigationMenuItemsState);
     const isLayoutCustomizationActive = useAtomStateValue(
       isLayoutCustomizationActiveState,
     );
