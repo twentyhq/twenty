@@ -56584,6 +56584,8 @@ __metadata:
     "@chakra-ui/react": "npm:^3.33.0"
     "@emotion/react": "npm:^11.14.0"
     "@emotion/styled": "npm:^11.14.0"
+    "@genql/cli": "npm:^3.0.3"
+    "@genql/runtime": "npm:^2.10.0"
     "@mui/material": "npm:^7.3.8"
     "@prettier/sync": "npm:^0.5.2"
     "@quilted/threads": "npm:^4.0.1"

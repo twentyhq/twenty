@@ -53,7 +53,9 @@ export default defineConfig(() => {
       rollupOptions: {
         external: [
           ...Object.keys((packageJson as any).dependencies || {}),
-          ...Object.keys((packageJson as any).devDependencies || {}),
+          ...Object.keys((packageJson as any).devDependencies || {}).filter(
+            (dep: string) => dep !== 'twenty-shared',
+          ),
           'node:fs/promises',
           'node:fs',
           'node:path',

@@ -54,8 +54,9 @@
   "dependencies": {
     "@chakra-ui/react": "^3.33.0",
     "@emotion/react": "^11.14.0",
+    "@genql/cli": "^3.0.3",
+    "@genql/runtime": "^2.10.0",
     "@quilted/threads": "^4.0.1",
-    "twenty-client-sdk": "workspace:*",
     "@remote-dom/core": "^1.10.1",
     "@remote-dom/react": "^1.2.2",
     "@sniptt/guards": "^0.2.0",
@@ -95,6 +96,7 @@
     "storybook": "^10.2.13",
     "ts-morph": "^25.0.0",
     "tsx": "^4.7.0",
+    "twenty-client-sdk": "workspace:*",
     "twenty-shared": "workspace:*",
     "twenty-ui": "workspace:*",
     "vite-plugin-dts": "^4.5.4",

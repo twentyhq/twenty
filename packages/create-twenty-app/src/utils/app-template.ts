@@ -613,6 +613,7 @@ const createPackageJson = async ({
     react: '^18.2.0',
     oxlint: '^0.16.0',
     'twenty-sdk': createTwentyAppPackageJson.version,
+    'twenty-client-sdk': createTwentyAppPackageJson.version,
   };
 
   if (includeExampleIntegrationTest) {

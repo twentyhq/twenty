@@ -106,6 +106,9 @@ describe('copyBaseApplicationProject', () => {
     expect(packageJson.devDependencies['twenty-sdk']).toBe(
       createTwentyAppPackageJson.version,
     );
+    expect(packageJson.devDependencies['twenty-client-sdk']).toBe(
+      createTwentyAppPackageJson.version,
+    );
     expect(packageJson.scripts['twenty']).toBe('twenty');
   });
 
