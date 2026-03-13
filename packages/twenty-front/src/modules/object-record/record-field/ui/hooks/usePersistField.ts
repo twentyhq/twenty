@@ -49,9 +49,7 @@ import { isFieldRating } from '@/object-record/record-field/ui/types/guards/isFi
 import { isFieldRatingValue } from '@/object-record/record-field/ui/types/guards/isFieldRatingValue';
 import { isFieldRelationManyToOne } from '@/object-record/record-field/ui/types/guards/isFieldRelationManyToOne';
 import { isFieldRelationManyToOneValue } from '@/object-record/record-field/ui/types/guards/isFieldRelationManyToOneValue';
-import { isFieldRichText } from '@/object-record/record-field/ui/types/guards/isFieldRichText';
 import { isFieldRichTextV2 } from '@/object-record/record-field/ui/types/guards/isFieldRichTextV2';
-import { isFieldRichTextValue } from '@/object-record/record-field/ui/types/guards/isFieldRichTextValue';
 import { isFieldRichTextV2Value } from '@/object-record/record-field/ui/types/guards/isFieldRichTextValueV2';
 import { isFieldText } from '@/object-record/record-field/ui/types/guards/isFieldText';
 import { isFieldTextValue } from '@/object-record/record-field/ui/types/guards/isFieldTextValue';
@@ -145,10 +143,6 @@ export const usePersistField = ({
       const fieldIsRawJson =
         isFieldRawJson(fieldDefinition) && isFieldRawJsonValue(valueToPersist);
 
-      const fieldIsRichText =
-        isFieldRichText(fieldDefinition) &&
-        isFieldRichTextValue(valueToPersist);
-
       const fieldIsRichTextV2 =
         isFieldRichTextV2(fieldDefinition) &&
         isFieldRichTextV2Value(valueToPersist);
@@ -185,7 +179,6 @@ export const usePersistField = ({
         fieldIsRawJson ||
         fieldIsArray ||
         fieldIsFiles ||
-        fieldIsRichText ||
         fieldIsRichTextV2;
 
       if (isValuePersistable) {

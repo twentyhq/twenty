@@ -374,7 +374,6 @@ enum FieldMetadataType {
   RATING
   RAW_JSON
   RELATION
-  RICH_TEXT
   RICH_TEXT_V2
   SELECT
   TEXT

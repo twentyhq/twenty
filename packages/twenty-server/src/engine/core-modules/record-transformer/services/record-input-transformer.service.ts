@@ -78,10 +78,6 @@ export class RecordInputTransformerService {
         return value || null;
       case FieldMetadataType.NUMBER:
         return value === null ? null : Number(value);
-      case FieldMetadataType.RICH_TEXT:
-        throw new Error(
-          'Rich text is not supported, please use RICH_TEXT_V2 instead',
-        );
       case FieldMetadataType.RICH_TEXT_V2:
         return await transformRichTextV2Value(value);
       case FieldMetadataType.LINKS:

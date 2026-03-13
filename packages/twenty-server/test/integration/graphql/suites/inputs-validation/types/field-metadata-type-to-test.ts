@@ -2,7 +2,6 @@ import { type FieldMetadataType } from 'twenty-shared/types';
 
 type FieldMetadataTypesNotTestedForFilterInputValidation =
   | 'TS_VECTOR'
-  | 'RICH_TEXT'
   | 'POSITION'
   | 'ACTOR'
   | 'NUMERIC'

@@ -1,5 +1,0 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
-
-exports[`Create input validation - RICH_TEXT Gql create input - failure RICH_TEXT - should fail with : {"richTextField":"test"} 1`] = `"richTextField RICH_TEXT-typed field does not support write operations"`;
-
-exports[`Create input validation - RICH_TEXT Rest create input - failure RICH_TEXT - should fail with : {"richTextField":"test"} 1`] = `"["richTextField RICH_TEXT-typed field does not support write operations"]"`;

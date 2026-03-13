@@ -20,7 +20,6 @@ export const getOperatorsForFieldType = (
 ): FilterOperator[] => {
   switch (fieldType) {
     case FieldMetadataType.TEXT:
-    case FieldMetadataType.RICH_TEXT:
       return STRING_FILTER_OPERATORS;
 
     case FieldMetadataType.NUMBER:

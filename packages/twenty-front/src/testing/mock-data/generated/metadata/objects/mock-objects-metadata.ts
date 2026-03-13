@@ -13456,7 +13456,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               "__typename": "Field",
               "id": "7700d2ac-0643-44a2-acd0-f0bb446bc08c",
               "universalIdentifier": "107ed3e9-2ae0-43ef-a2d6-3f24bc54c2a5",
-              "type": "RICH_TEXT",
+              "type": "TEXT",
               "name": "bio",
               "label": "Bio",
               "description": "",
