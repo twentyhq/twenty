@@ -6,10 +6,11 @@ import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNaviga
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
+import { motion } from 'framer-motion';
 import React from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { IconChevronDown, IconChevronRight, Label } from 'twenty-ui/display';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { IconChevronRight, Label } from 'twenty-ui/display';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledTitle = styled.div`
   align-items: center;
@@ -43,10 +44,14 @@ const StyledChevron = styled.div`
   align-items: center;
   display: flex;
   opacity: 0;
+  transition: opacity calc(${themeCssVariables.animation.duration.fast} * 1s)
+    ease;
   .section-title-container:hover & {
     opacity: 1;
   }
 `;
+
+const MotionIconChevronRight = motion.create(IconChevronRight);
 
 type StyledRightIconProps = {
   isMobile: boolean;
@@ -78,6 +83,7 @@ export const NavigationDrawerSectionTitle = ({
   alwaysShowRightIcon = false,
   isOpen,
 }: NavigationDrawerSectionTitleProps) => {
+  const { theme } = React.useContext(ThemeContext);
   const isMobile = useIsMobile();
   const isNavigationDrawerExpanded = useAtomStateValue(
     isNavigationDrawerExpandedState,
@@ -95,18 +101,18 @@ export const NavigationDrawerSectionTitle = ({
   if (loading && isDefined(currentUser)) {
     return <NavigationDrawerSectionTitleSkeletonLoader />;
   }
-
-  const ChevronIcon = isOpen === true ? IconChevronDown : IconChevronRight;
-
   return (
     <StyledTitle className="section-title-container">
       <StyledLabelContainer onClick={handleTitleClick}>
         <Label className="section-title-label">{label}</Label>
         {isOpen !== undefined && (
           <StyledChevron>
-            <ChevronIcon
+            <MotionIconChevronRight
+              initial={false}
+              animate={{ rotate: isOpen ? 90 : 0 }}
+              transition={{ duration: theme.animation.duration.normal }}
               size="12px"
-              stroke={themeCssVariables.icon.stroke.sm}
+              stroke={theme.icon.stroke.lg}
               color={themeCssVariables.font.color.tertiary}
             />
           </StyledChevron>
