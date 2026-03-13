@@ -355,8 +355,7 @@ export class FieldsWidgetUpsertService {
               optimisticFlatViewFieldGroupMaps.universalIdentifierById,
           });
       } else {
-        updatedField.universalOverrides =
-          existingField.universalOverrides ?? null;
+        updatedField.universalOverrides = null;
       }
 
       return [updatedField];
@@ -488,8 +487,7 @@ export class FieldsWidgetUpsertService {
             viewFieldGroupUniversalIdentifierById: {},
           });
       } else {
-        updatedField.universalOverrides =
-          existingField.universalOverrides ?? null;
+        updatedField.universalOverrides = null;
       }
 
       return [updatedField];
@@ -590,8 +588,18 @@ export class FieldsWidgetUpsertService {
               ? (remainingOverrides as typeof field.overrides)
               : null;
 
+          const baseGroupIsAlsoStale =
+            isDefined(field.viewFieldGroupId) &&
+            deletedGroupIds.has(field.viewFieldGroupId);
+
           return {
             ...field,
+            ...(baseGroupIsAlsoStale
+              ? {
+                  viewFieldGroupId: null,
+                  viewFieldGroupUniversalIdentifier: null,
+                }
+              : {}),
             overrides: cleanedOverrides,
             universalOverrides: isDefined(cleanedOverrides)
               ? fromViewFieldOverridesToUniversalOverrides({

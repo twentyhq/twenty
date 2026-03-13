@@ -44,13 +44,16 @@ export class UpdateViewFieldActionHandlerService extends WorkspaceMigrationRunne
     const update =
       universalOverrides === undefined
         ? updateWithResolvedForeignKeys
-        : {
-            ...updateWithResolvedForeignKeys,
-            overrides: fromUniversalOverridesToViewFieldOverrides({
-              universalOverrides,
-              flatViewFieldGroupMaps: allFlatEntityMaps.flatViewFieldGroupMaps,
-            }),
-          };
+        : universalOverrides === null
+          ? { ...updateWithResolvedForeignKeys, overrides: null }
+          : {
+              ...updateWithResolvedForeignKeys,
+              overrides: fromUniversalOverridesToViewFieldOverrides({
+                universalOverrides,
+                flatViewFieldGroupMaps:
+                  allFlatEntityMaps.flatViewFieldGroupMaps,
+              }),
+            };
 
     return {
       type: 'update',
