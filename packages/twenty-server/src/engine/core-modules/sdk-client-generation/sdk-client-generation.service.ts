@@ -207,6 +207,10 @@ export class SdkClientGenerationService {
         { id: applicationId, workspaceId },
         { isSdkLayerStale: true },
       );
+
+      await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+        'flatApplicationMaps',
+      ]);
     } catch (error) {
       throw new SdkClientGenerationException(
         `Failed to generate SDK client for application "${applicationUniversalIdentifier}" in workspace "${workspaceId}": ${error instanceof Error ? error.message : String(error)}`,

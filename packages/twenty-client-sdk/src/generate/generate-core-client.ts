@@ -35,24 +35,29 @@ export const generateCoreClientFromSchema = async ({
   await ensureDir(tempPath);
   await emptyDir(tempPath);
 
-  await generate({
-    schema,
-    output: tempPath,
-    scalarTypes: COMMON_SCALAR_TYPES,
-  });
+  try {
+    await generate({
+      schema,
+      output: tempPath,
+      scalarTypes: COMMON_SCALAR_TYPES,
+    });
 
-  const clientContent = buildClientWrapperSource(templateSource, {
-    apiClientName: 'CoreApiClient',
-    defaultUrl: `\`\${process.env.${DEFAULT_API_URL_NAME}}/graphql\``,
-    includeUploadFile: true,
-  });
+    const clientContent = buildClientWrapperSource(templateSource, {
+      apiClientName: 'CoreApiClient',
+      defaultUrl: `\`\${process.env.${DEFAULT_API_URL_NAME}}/graphql\``,
+      includeUploadFile: true,
+    });
 
-  await appendFile(join(tempPath, 'index.ts'), clientContent);
+    await appendFile(join(tempPath, 'index.ts'), clientContent);
 
-  await remove(outputPath);
-  await move(tempPath, outputPath);
+    await remove(outputPath);
+    await move(tempPath, outputPath);
 
-  await compileGeneratedClient(outputPath);
+    await compileGeneratedClient(outputPath);
+  } catch (error) {
+    await remove(tempPath);
+    throw error;
+  }
 };
 
 // Generates the core client and replaces the pre-built stub inside

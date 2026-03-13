@@ -16,9 +16,11 @@ const revokeBlobUrls = (blobUrls: SdkClientBlobUrls) => {
 export const useApplicationSdkClient = ({
   applicationId,
   accessToken,
+  onError,
 }: {
   applicationId: string;
   accessToken: string;
+  onError?: (error: Error) => void;
 }): {
   sdkClientBlobUrls: SdkClientBlobUrls | null;
   isLoading: boolean;
@@ -50,24 +52,18 @@ export const useApplicationSdkClient = ({
 
         store.set(targetAtom, blobUrls);
       })
+      .catch((error: unknown) => {
+        onError?.(
+          error instanceof Error
+            ? error
+            : new Error(String(error)),
+        );
+      })
       .finally(() => {
         isFetchingRef.current = false;
         setIsLoading(false);
       });
-  }, [applicationId, accessToken, sdkClientBlobUrls, store]);
-
-  useEffect(() => {
-    return () => {
-      const targetAtom =
-        sdkClientBlobUrlsFamilyState.atomFamily(applicationId);
-      const currentBlobUrls = store.get(targetAtom);
-
-      if (isDefined(currentBlobUrls)) {
-        revokeBlobUrls(currentBlobUrls);
-        store.set(targetAtom, null);
-      }
-    };
-  }, [applicationId, store]);
+  }, [applicationId, accessToken, sdkClientBlobUrls, store, onError]);
 
   return {
     sdkClientBlobUrls,

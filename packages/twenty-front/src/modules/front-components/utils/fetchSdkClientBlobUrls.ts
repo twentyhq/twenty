@@ -27,10 +27,29 @@ export const fetchSdkClientBlobUrls = async (
 ): Promise<SdkClientBlobUrls> => {
   const urls = getSdkClientUrls(applicationId);
 
-  const [coreBlobUrl, metadataBlobUrl] = await Promise.all([
+  const [coreResult, metadataResult] = await Promise.allSettled([
     fetchAndCreateBlobUrl(urls.core, accessToken),
     fetchAndCreateBlobUrl(urls.metadata, accessToken),
   ]);
 
-  return { core: coreBlobUrl, metadata: metadataBlobUrl };
+  if (
+    coreResult.status === 'fulfilled' &&
+    metadataResult.status === 'fulfilled'
+  ) {
+    return { core: coreResult.value, metadata: metadataResult.value };
+  }
+
+  if (coreResult.status === 'fulfilled') {
+    URL.revokeObjectURL(coreResult.value);
+  }
+
+  if (metadataResult.status === 'fulfilled') {
+    URL.revokeObjectURL(metadataResult.value);
+  }
+
+  throw coreResult.status === 'rejected'
+    ? coreResult.reason
+    : metadataResult.status === 'rejected'
+      ? metadataResult.reason
+      : new Error('Unexpected SDK client fetch failure');
 };

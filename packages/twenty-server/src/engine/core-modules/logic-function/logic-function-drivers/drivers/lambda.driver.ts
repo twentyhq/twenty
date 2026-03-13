@@ -747,7 +747,11 @@ export class LambdaDriver implements LogicFunctionDriver {
       });
     }
 
-    await archive.finalize();
+    await new Promise<void>((resolve, reject) => {
+      archive.on('end', resolve);
+      archive.on('error', reject);
+      archive.finalize();
+    });
 
     return Buffer.concat(chunks);
   }
@@ -892,29 +896,31 @@ export class LambdaDriver implements LogicFunctionDriver {
     const { sourceTemporaryDir, lambdaZipPath } =
       await temporaryDirManager.init();
 
-    await copyExecutor(sourceTemporaryDir);
+    try {
+      await copyExecutor(sourceTemporaryDir);
 
-    await createZipFile(sourceTemporaryDir, lambdaZipPath);
+      await createZipFile(sourceTemporaryDir, lambdaZipPath);
 
-    // SDK layer listed last so it overwrites the stub twenty-client-sdk
-    // from the deps layer (later layers take precedence in /opt merge).
-    const params: CreateFunctionCommandInput = {
-      Code: {
-        ZipFile: await fs.readFile(lambdaZipPath),
-      },
-      FunctionName: flatLogicFunction.id,
-      Layers: [depsLayerArn, sdkLayerArn],
-      Handler: 'index.handler',
-      Role: this.options.lambdaRole,
-      Runtime: flatLogicFunction.runtime,
-      Timeout: 900,
-    };
+      // SDK layer listed last so it overwrites the stub twenty-client-sdk
+      // from the deps layer (later layers take precedence in /opt merge).
+      const params: CreateFunctionCommandInput = {
+        Code: {
+          ZipFile: await fs.readFile(lambdaZipPath),
+        },
+        FunctionName: flatLogicFunction.id,
+        Layers: [depsLayerArn, sdkLayerArn],
+        Handler: 'index.handler',
+        Role: this.options.lambdaRole,
+        Runtime: flatLogicFunction.runtime,
+        Timeout: 900,
+      };
 
-    const command = new CreateFunctionCommand(params);
+      const command = new CreateFunctionCommand(params);
 
-    await (await this.getLambdaClient()).send(command);
-
-    await temporaryDirManager.clean();
+      await (await this.getLambdaClient()).send(command);
+    } finally {
+      await temporaryDirManager.clean();
+    }
   }
 
   private extractLogs(logString: string): string {

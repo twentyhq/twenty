@@ -24,7 +24,7 @@
       "executor": "nx:run-commands",
       "cache": false,
       "dependsOn": ["^build"],
-      "outputs": ["{projectRoot}/src/generated/metadata"],
+      "outputs": ["{projectRoot}/src/metadata/generated"],
       "options": {
         "cwd": "packages/twenty-client-sdk",
         "command": "tsx scripts/generate-metadata-client.ts"

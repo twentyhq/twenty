@@ -27,6 +27,7 @@ export const FrontComponentRendererWithSdkClient = ({
   const { sdkClientBlobUrls, isLoading } = useApplicationSdkClient({
     applicationId,
     accessToken: applicationAccessToken,
+    onError,
   });
 
   if (isLoading || !isDefined(sdkClientBlobUrls)) {
