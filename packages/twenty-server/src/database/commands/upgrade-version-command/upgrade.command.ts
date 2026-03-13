@@ -124,11 +124,11 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     ];
 
     const commands_1190: VersionCommands = [
+      this.fixRoleAndAgentUniversalIdentifiersCommand,
       this.backfillSystemFieldsIsSystemCommand,
       this.addMissingSystemFieldsToStandardObjectsCommand,
       this.backfillMessageChannelMessageAssociationMessageFolderCommand,
       this.backfillMissingStandardViewsCommand,
-      this.fixRoleAndAgentUniversalIdentifiersCommand,
       this.seedServerIdCommand,
     ];
 

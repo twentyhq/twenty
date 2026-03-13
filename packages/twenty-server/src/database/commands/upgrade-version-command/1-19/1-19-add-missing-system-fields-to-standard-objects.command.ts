@@ -1,6 +1,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
@@ -11,11 +12,33 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { type WorkspaceMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration.type';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/workspace-migration-runner.service';
 
-const FIRST_FIELD_UNIVERSAL_IDENTIFIER =
-  ADD_MISSING_SYSTEM_FIELDS_TO_STANDARD_OBJECTS_1771420702241.actions[0]
-    .flatEntity.universalIdentifier;
+const { applicationUniversalIdentifier, actions: allActions } =
+  ADD_MISSING_SYSTEM_FIELDS_TO_STANDARD_OBJECTS_1771420702241;
+
+// Sentinel identifiers extracted from the const tuple where TypeScript
+// knows every element is a create action with flatEntity.
+const FIRST_NON_TS_VECTOR_UNIVERSAL_IDENTIFIER =
+  allActions[0].flatEntity.universalIdentifier;
+
+const FIRST_TS_VECTOR_UNIVERSAL_IDENTIFIER =
+  allActions[1].flatEntity.universalIdentifier;
+
+const NON_TS_VECTOR_MIGRATION: WorkspaceMigration = {
+  applicationUniversalIdentifier,
+  actions: allActions.filter(
+    (action) => action.flatEntity.type !== FieldMetadataType.TS_VECTOR,
+  ),
+};
+
+const TS_VECTOR_MIGRATION: WorkspaceMigration = {
+  applicationUniversalIdentifier,
+  actions: allActions.filter(
+    (action) => action.flatEntity.type === FieldMetadataType.TS_VECTOR,
+  ),
+};
 
 @Command({
   name: 'upgrade:1-19:add-missing-system-fields-to-standard-objects',
@@ -34,19 +57,17 @@ export class AddMissingSystemFieldsToStandardObjectsCommand extends ActiveOrSusp
     super(workspaceRepository, twentyORMGlobalManager, dataSourceService);
   }
 
-  // The entire migration runs in a single transaction, so checking the first
-  // field is enough to know whether the migration has already been applied.
-  // In the future we will maintain a list of passed migrations
-  private async hasAlreadyRun(workspaceId: string): Promise<boolean> {
+  private async hasFieldBeenCreated(
+    workspaceId: string,
+    universalIdentifier: string,
+  ): Promise<boolean> {
     const { flatFieldMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatFieldMetadataMaps',
       ]);
 
     return isDefined(
-      flatFieldMetadataMaps.byUniversalIdentifier[
-        FIRST_FIELD_UNIVERSAL_IDENTIFIER
-      ],
+      flatFieldMetadataMaps.byUniversalIdentifier[universalIdentifier],
     );
   }
 
@@ -62,25 +83,51 @@ export class AddMissingSystemFieldsToStandardObjectsCommand extends ActiveOrSusp
 
     if (dryRun) {
       this.logger.log(
-        `[DRY RUN] Would add ${ADD_MISSING_SYSTEM_FIELDS_TO_STANDARD_OBJECTS_1771420702241.actions.length} missing system fields to standard objects in workspace ${workspaceId}. Skipping.`,
+        `[DRY RUN] Would add ${NON_TS_VECTOR_MIGRATION.actions.length} non-tsVector fields and ${TS_VECTOR_MIGRATION.actions.length} tsVector fields to standard objects in workspace ${workspaceId}. Skipping.`,
       );
 
       return;
     }
 
-    if (await this.hasAlreadyRun(workspaceId)) {
-      this.logger.log(
-        `Migration already applied for workspace ${workspaceId}, skipping.`,
-      );
-
-      return;
-    }
-
-    await this.workspaceMigrationRunnerService.run({
+    const nonTsVectorAlreadyRan = await this.hasFieldBeenCreated(
       workspaceId,
-      workspaceMigration:
-        ADD_MISSING_SYSTEM_FIELDS_TO_STANDARD_OBJECTS_1771420702241,
-    });
+      FIRST_NON_TS_VECTOR_UNIVERSAL_IDENTIFIER,
+    );
+
+    if (!nonTsVectorAlreadyRan) {
+      this.logger.log(
+        `Adding ${NON_TS_VECTOR_MIGRATION.actions.length} non-tsVector fields (position, createdBy, updatedBy) in workspace ${workspaceId}`,
+      );
+
+      await this.workspaceMigrationRunnerService.run({
+        workspaceId,
+        workspaceMigration: NON_TS_VECTOR_MIGRATION,
+      });
+    } else {
+      this.logger.log(
+        `Non-tsVector fields already exist in workspace ${workspaceId}, skipping.`,
+      );
+    }
+
+    const tsVectorAlreadyRan = await this.hasFieldBeenCreated(
+      workspaceId,
+      FIRST_TS_VECTOR_UNIVERSAL_IDENTIFIER,
+    );
+
+    if (!tsVectorAlreadyRan) {
+      this.logger.log(
+        `Adding ${TS_VECTOR_MIGRATION.actions.length} tsVector fields in workspace ${workspaceId} (this may take a while on large tables)`,
+      );
+
+      await this.workspaceMigrationRunnerService.run({
+        workspaceId,
+        workspaceMigration: TS_VECTOR_MIGRATION,
+      });
+    } else {
+      this.logger.log(
+        `TsVector fields already exist in workspace ${workspaceId}, skipping.`,
+      );
+    }
 
     this.logger.log(
       `Successfully added missing system fields to standard objects in workspace ${workspaceId}`,
