@@ -6,9 +6,7 @@ import { EventCardMessageForbidden } from '@/activities/timeline-activities/rows
 import { useOpenEmailThreadInSidePanel } from '@/side-panel/hooks/useOpenEmailThreadInSidePanel';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
-import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { useEffect } from 'react';
 import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { isDefined } from 'twenty-shared/utils';
@@ -63,7 +61,6 @@ export const EventCardMessage = ({
   authorFullName: string;
 }) => {
   const { t } = useLingui();
-  const { upsertRecordsInStore } = useUpsertRecordsInStore();
   const { openEmailThreadInSidePanel } = useOpenEmailThreadInSidePanel();
 
   const {
@@ -84,12 +81,6 @@ export const EventCardMessage = ({
       },
     },
   });
-
-  useEffect(() => {
-    if (message) {
-      upsertRecordsInStore({ partialRecords: [message] });
-    }
-  }, [message, upsertRecordsInStore]);
 
   if (isDefined(error)) {
     if (CombinedGraphQLErrors.is(error)) {

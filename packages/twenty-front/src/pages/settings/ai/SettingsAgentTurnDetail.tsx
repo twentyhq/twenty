@@ -16,7 +16,10 @@ import { getSettingsPath } from 'twenty-shared/utils';
 import { H2Title, Status } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { GetAgentTurnsDocument } from '~/generated-metadata/graphql';
+import {
+  type AgentMessage,
+  GetAgentTurnsDocument,
+} from '~/generated-metadata/graphql';
 
 const StyledTableContainer = styled.div`
   margin-top: ${themeCssVariables.spacing[3]};
@@ -61,7 +64,7 @@ export const SettingsAgentTurnDetail = () => {
     skip: !agentId,
   });
 
-  const turn = data?.agentTurns?.find((t: any) => t.id === turnId);
+  const turn = data?.agentTurns?.find((t) => t.id === turnId);
 
   const getScoreColor = (score: number) => {
     if (score >= 80) return 'green';
@@ -147,9 +150,9 @@ export const SettingsAgentTurnDetail = () => {
           {turn.messages.length > 0 ? (
             <StyledMessagesContainer>
               {mapDBMessagesToUIMessages(
-                ([...turn.messages] as any[])
-                  .filter((msg: any) => msg.parts && msg.parts.length > 0)
-                  .sort((a: any, b: any) => {
+                ([...turn.messages] as AgentMessage[])
+                  .filter((msg) => msg.parts && msg.parts.length > 0)
+                  .sort((a, b) => {
                     if (a.role === 'user' && b.role === 'assistant') return -1;
                     if (a.role === 'assistant' && b.role === 'user') return 1;
                     return (
@@ -196,11 +199,11 @@ export const SettingsAgentTurnDetail = () => {
                 </StyledTableHeaderRowContainer>
                 {[...turn.evaluations]
                   .sort(
-                    (a: any, b: any) =>
+                    (a, b) =>
                       new Date(b.createdAt).getTime() -
                       new Date(a.createdAt).getTime(),
                   )
-                  .map((evaluation: any) => (
+                  .map((evaluation) => (
                     <TableRow
                       key={evaluation.id}
                       gridTemplateColumns="140px 80px 1fr"

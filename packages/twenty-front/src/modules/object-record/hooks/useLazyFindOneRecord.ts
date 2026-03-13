@@ -5,6 +5,7 @@ import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient
 import { type ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
 import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
 import { useGenerateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/hooks/useGenerateDepthRecordGqlFieldsFromObject';
+import { type RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 import { type RecordGqlOperationGqlRecordFields } from 'twenty-shared/types';
 import { useFindOneRecordQuery } from '@/object-record/hooks/useFindOneRecordQuery';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -58,7 +59,7 @@ export const useLazyFindOneRecord = <T extends ObjectRecord = ObjectRecord>({
       }).retain();
       if (result.data) {
         const record = getRecordFromRecordNode<T>({
-          recordNode: (result.data as Record<string, any>)[objectNameSingular],
+          recordNode: (result.data as Record<string, RecordGqlNode>)[objectNameSingular],
         });
         onCompleted?.(record);
       }
@@ -66,6 +67,6 @@ export const useLazyFindOneRecord = <T extends ObjectRecord = ObjectRecord>({
     called,
     error,
     loading,
-    record: (data as Record<string, any>)?.[objectNameSingular] || undefined,
+    record: (data as Record<string, RecordGqlNode> | undefined)?.[objectNameSingular] || undefined,
   };
 };

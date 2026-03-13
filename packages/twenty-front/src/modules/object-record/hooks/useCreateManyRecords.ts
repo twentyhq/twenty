@@ -20,6 +20,7 @@ import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useU
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeOptimisticRecordFromInput';
 import { dispatchObjectRecordOperationBrowserEvent } from '@/browser-event/utils/dispatchObjectRecordOperationBrowserEvent';
+import { type RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 import { getCreateManyRecordsMutationResponseField } from '@/object-record/utils/getCreateManyRecordsMutationResponseField';
 import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -195,7 +196,7 @@ export const useCreateManyRecords = <
           },
         },
         update: (cache, { data }) => {
-          const records = (data as Record<string, any>)?.[
+          const records = (data as Record<string, RecordGqlNode[]> | null)?.[
             mutationResponseField
           ];
 
@@ -254,7 +255,7 @@ export const useCreateManyRecords = <
     });
 
     return (
-      (createdObjects.data as Record<string, any>)?.[mutationResponseField] ??
+      (createdObjects.data as Record<string, RecordGqlNode[]> | null)?.[mutationResponseField] ??
       []
     );
   };
