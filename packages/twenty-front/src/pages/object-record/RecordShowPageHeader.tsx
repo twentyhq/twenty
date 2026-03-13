@@ -26,7 +26,7 @@ export const RecordShowPageHeader = ({
         <ObjectRecordShowPageBreadcrumb
           objectNameSingular={objectNameSingular}
           objectRecordId={objectRecordId}
-          objectLabel={objectMetadataItem.labelSingular}
+          objectLabel={objectMetadataItem.labelPlural}
           labelIdentifierFieldMetadataItem={labelIdentifierFieldMetadataItem}
         />
       }
