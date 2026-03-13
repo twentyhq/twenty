@@ -8,7 +8,6 @@ import { generateGroupsRecordsGroupByQuery } from '@/object-record/record-aggreg
 
 import { useRecordIndexGroupCommonQueryVariables } from '@/object-record/record-index/hooks/useRecordIndexGroupCommonQueryVariables';
 import { buildGroupByFieldObject } from '@/page-layout/widgets/graph/utils/buildGroupByFieldObject';
-import { useLazyQuery } from '@apollo/client/react';
 import { useCallback, useMemo } from 'react';
 import { type Nullable } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -69,26 +68,18 @@ export const useRecordIndexGroupsRecordsLazyGroupBy = ({
     limit: recordGroupsLimit,
   };
 
-  const [executeRecordIndexGroupsRecordsLazyGroupByRaw] =
-    useLazyQuery<GroupsRecordsGroupByLazyResult>(
-      recordIndexGroupsRecordGroupsGroupByQuery,
-      {
-        client: apolloCoreClient,
-        fetchPolicy: 'no-cache',
-      },
-    );
-
   const executeRecordIndexGroupsRecordsLazyGroupBy = useCallback(
-    (
-      options?: Parameters<
-        typeof executeRecordIndexGroupsRecordsLazyGroupByRaw
-      >[0],
-    ) =>
-      executeRecordIndexGroupsRecordsLazyGroupByRaw({
-        ...options,
+    (options?: { variables?: Record<string, unknown> }) =>
+      apolloCoreClient.query<GroupsRecordsGroupByLazyResult>({
+        query: recordIndexGroupsRecordGroupsGroupByQuery,
         variables: { ...defaultVariables, ...options?.variables },
+        fetchPolicy: 'no-cache',
       }),
-    [executeRecordIndexGroupsRecordsLazyGroupByRaw, defaultVariables],
+    [
+      apolloCoreClient,
+      recordIndexGroupsRecordGroupsGroupByQuery,
+      defaultVariables,
+    ],
   );
 
   return {

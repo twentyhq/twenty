@@ -55,7 +55,7 @@ export const useLazyFindOneRecord = <T extends ObjectRecord = ObjectRecord>({
     }: FindOneRecordParams<T>) => {
       const result = await findOneRecord({
         variables: { objectRecordId },
-      });
+      }).retain();
       if (result.data) {
         const record = getRecordFromRecordNode<T>({
           recordNode: (result.data as Record<string, any>)[objectNameSingular],

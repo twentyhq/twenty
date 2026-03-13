@@ -5,7 +5,7 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { prefetchNavigationMenuItemsState } from '@/prefetch/states/prefetchNavigationMenuItemsState';
 import { useListenToEventsForQuery } from '@/sse-db-event/hooks/useListenToEventsForQuery';
 import { useStore } from 'jotai';
-import { useLazyQuery } from '@apollo/client/react';
+import { useApolloClient } from '@apollo/client/react';
 import {
   AllMetadataName,
   FindManyNavigationMenuItemsDocument,
@@ -16,16 +16,10 @@ export const ObjectMetadataItemSSEEffect = () => {
   const queryId = 'object-metadata-sse-effect';
 
   const store = useStore();
+  const client = useApolloClient();
 
   const { refreshObjectMetadataItems } = useRefreshObjectMetadataItems();
   const { updateDraft, applyChanges } = useMetadataStore();
-
-  const [findManyNavigationMenuItemsLazy] = useLazyQuery(
-    FindManyNavigationMenuItemsDocument,
-    {
-      fetchPolicy: 'network-only',
-    },
-  );
 
   useListenToEventsForQuery({
     queryId,
@@ -44,7 +38,10 @@ export const ObjectMetadataItemSSEEffect = () => {
       updateDraft('objectMetadataItems', loadedObjects);
       applyChanges();
 
-      const navigationMenuItemsResult = await findManyNavigationMenuItemsLazy();
+      const navigationMenuItemsResult = await client.query({
+        query: FindManyNavigationMenuItemsDocument,
+        fetchPolicy: 'network-only',
+      });
 
       const existingNavigationMenuItems = store.get(
         prefetchNavigationMenuItemsState.atom,

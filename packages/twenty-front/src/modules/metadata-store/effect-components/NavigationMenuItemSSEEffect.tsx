@@ -4,7 +4,7 @@ import { prefetchNavigationMenuItemsState } from '@/prefetch/states/prefetchNavi
 import { useListenToEventsForQuery } from '@/sse-db-event/hooks/useListenToEventsForQuery';
 import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
-import { useLazyQuery } from '@apollo/client/react';
+import { useApolloClient } from '@apollo/client/react';
 import {
   AllMetadataName,
   FindManyNavigationMenuItemsDocument,
@@ -16,13 +16,7 @@ export const NavigationMenuItemSSEEffect = () => {
 
   const store = useStore();
   const { updateDraft, applyChanges } = useMetadataStore();
-
-  const [findManyNavigationMenuItemsLazy] = useLazyQuery(
-    FindManyNavigationMenuItemsDocument,
-    {
-      fetchPolicy: 'network-only',
-    },
-  );
+  const client = useApolloClient();
 
   useListenToEventsForQuery({
     queryId,
@@ -35,7 +29,10 @@ export const NavigationMenuItemSSEEffect = () => {
   useListenToMetadataOperationBrowserEvent({
     metadataName: AllMetadataName.navigationMenuItem,
     onMetadataOperationBrowserEvent: async () => {
-      const result = await findManyNavigationMenuItemsLazy();
+      const result = await client.query({
+        query: FindManyNavigationMenuItemsDocument,
+        fetchPolicy: 'network-only',
+      });
 
       if (!isDefined(result.data?.navigationMenuItems)) {
         return;
