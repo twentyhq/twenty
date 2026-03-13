@@ -16,14 +16,14 @@
     "test:watch": "vitest"
   },
   "devDependencies": {
-    "typescript": "^5.9.3",
     "@types/node": "^24.7.2",
     "@types/react": "^18.2.0",
-    "react": "^18.2.0",
     "oxlint": "^0.16.0",
-    "twenty-sdk": "0.7.0-canary.0",
-    "twenty-client-sdk": "0.7.0-canary.0",
-    "vitest": "^3.1.1",
-    "vite-tsconfig-paths": "^4.2.1"
+    "react": "^18.2.0",
+    "twenty-client-sdk": "portal:../../twenty-client-sdk",
+    "twenty-sdk": "portal:../../twenty-sdk",
+    "typescript": "^5.9.3",
+    "vite-tsconfig-paths": "^4.2.1",
+    "vitest": "^3.1.1"
   }
 }
