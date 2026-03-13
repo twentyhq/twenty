@@ -4,10 +4,6 @@ import { useWorkspaceNavigationMenuItems } from '@/navigation-menu-item/hooks/us
 import { NavigationDrawerSectionForObjectMetadataItems } from '@/object-metadata/components/NavigationDrawerSectionForObjectMetadataItems';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
-import { prefetchIsLoadedFamilyState } from '@/prefetch/states/prefetchIsLoadedFamilyState';
-import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
-import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useLingui } from '@lingui/react/macro';
 
 const WORKFLOW_OBJECTS_IN_SIDEBAR = [
@@ -22,14 +18,6 @@ export const NavigationDrawerOpenedSection = () => {
   const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
   const filteredActiveNonSystemObjectMetadataItems =
     activeObjectMetadataItems.filter((item) => !item.isRemote);
-
-  const isPrefetchLoading = useIsPrefetchLoading();
-  const prefetchIsLoaded = useAtomFamilyStateValue(
-    prefetchIsLoadedFamilyState,
-    PrefetchKey.AllNavigationMenuItems,
-  );
-
-  const loading = isPrefetchLoading || !prefetchIsLoaded;
 
   const { workspaceNavigationMenuItemsObjectMetadataItems } =
     useWorkspaceNavigationMenuItems();
@@ -62,10 +50,6 @@ export const NavigationDrawerOpenedSection = () => {
     !workspaceNavigationMenuItemsObjectMetadataItems
       .map((item) => item.id)
       .includes(objectMetadataItem.id);
-
-  if (loading) {
-    return null;
-  }
 
   return (
     shouldDisplayObjectInOpenedSection && (

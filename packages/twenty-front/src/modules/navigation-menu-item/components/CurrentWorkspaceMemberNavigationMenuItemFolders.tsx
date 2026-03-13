@@ -6,12 +6,10 @@ import { LightIconButton } from 'twenty-ui/input';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 import { CurrentWorkspaceMemberOrphanNavigationMenuItems } from '@/navigation-menu-item/components/CurrentWorkspaceMemberOrphanNavigationMenuItems';
 import { NavigationMenuItemFolders } from '@/navigation-menu-item/components/NavigationMenuItemFolders';
-import { NavigationMenuItemSkeletonLoader } from '@/navigation-menu-item/components/NavigationMenuItemSkeletonLoader';
 import { useNavigationMenuItemsByFolder } from '@/navigation-menu-item/hooks/useNavigationMenuItemsByFolder';
 import { useSortedNavigationMenuItems } from '@/navigation-menu-item/hooks/useSortedNavigationMenuItems';
 import { isNavigationMenuItemFolderCreatingState } from '@/navigation-menu-item/states/isNavigationMenuItemFolderCreatingState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
@@ -30,8 +28,6 @@ export const CurrentWorkspaceMemberNavigationMenuItemFolders = () => {
     setIsNavigationMenuItemFolderCreating,
   ] = useAtomState(isNavigationMenuItemFolderCreatingState);
 
-  const loading = useIsPrefetchLoading();
-
   const { t } = useLingui();
 
   const { toggleNavigationSection, openNavigationSection } =
@@ -45,10 +41,6 @@ export const CurrentWorkspaceMemberNavigationMenuItemFolders = () => {
     openNavigationSection();
     setIsNavigationMenuItemFolderCreating((current) => !current);
   };
-
-  if (loading && isDefined(currentWorkspaceMember)) {
-    return <NavigationMenuItemSkeletonLoader />;
-  }
 
   if (
     navigationMenuItemsSorted.length === 0 &&

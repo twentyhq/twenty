@@ -12,7 +12,7 @@ import { filterWorkspaceNavigationMenuItems } from '@/navigation-menu-item/utils
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/utils/isNavigationMenuItemFolder';
 import { isNavigationMenuItemLink } from '@/navigation-menu-item/utils/isNavigationMenuItemLink';
 import { orderFoldersForCreation } from '@/navigation-menu-item/utils/orderFoldersForCreation';
-import { prefetchNavigationMenuItemsState } from '@/prefetch/states/prefetchNavigationMenuItemsState';
+import { navigationMenuItemsState } from '@/navigation-menu-item/states/navigationMenuItemsState';
 import { useStore } from 'jotai';
 
 export const useSaveNavigationMenuItemsDraft = () => {
@@ -29,7 +29,7 @@ export const useSaveNavigationMenuItemsDraft = () => {
 
   const saveDraft = useCallback(async () => {
     const draft = store.get(navigationMenuItemsDraftState.atom);
-    const prefetch = store.get(prefetchNavigationMenuItemsState.atom);
+    const prefetch = store.get(navigationMenuItemsState.atom);
 
     if (!draft) return;
 

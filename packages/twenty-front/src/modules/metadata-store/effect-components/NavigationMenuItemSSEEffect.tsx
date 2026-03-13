@@ -1,6 +1,6 @@
 import { useListenToMetadataOperationBrowserEvent } from '@/browser-event/hooks/useListenToMetadataOperationBrowserEvent';
 import { useMetadataStore } from '@/metadata-store/hooks/useMetadataStore';
-import { prefetchNavigationMenuItemsState } from '@/prefetch/states/prefetchNavigationMenuItemsState';
+import { navigationMenuItemsState } from '@/navigation-menu-item/states/navigationMenuItemsState';
 import { useListenToEventsForQuery } from '@/sse-db-event/hooks/useListenToEventsForQuery';
 import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
@@ -39,7 +39,7 @@ export const NavigationMenuItemSSEEffect = () => {
       }
 
       const existingNavigationMenuItems = store.get(
-        prefetchNavigationMenuItemsState.atom,
+        navigationMenuItemsState.atom,
       );
 
       if (
@@ -49,7 +49,7 @@ export const NavigationMenuItemSSEEffect = () => {
         )
       ) {
         store.set(
-          prefetchNavigationMenuItemsState.atom,
+          navigationMenuItemsState.atom,
           result.data.navigationMenuItems,
         );
 

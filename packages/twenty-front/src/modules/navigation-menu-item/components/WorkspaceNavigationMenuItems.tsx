@@ -26,11 +26,9 @@ import { openNavigationMenuItemFolderIdsState } from '@/navigation-menu-item/sta
 import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeState';
 import { filterWorkspaceNavigationMenuItems } from '@/navigation-menu-item/utils/filterWorkspaceNavigationMenuItems';
 import { preloadWorkspaceDndKit } from '@/navigation/preloadWorkspaceDndKit';
-import { NavigationDrawerSectionForObjectMetadataItemsSkeletonLoader } from '@/object-metadata/components/NavigationDrawerSectionForObjectMetadataItemsSkeletonLoader';
 import { NavigationDrawerSectionForWorkspaceItems } from '@/object-metadata/components/NavigationDrawerSectionForWorkspaceItems';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
-import { prefetchNavigationMenuItemsState } from '@/prefetch/states/prefetchNavigationMenuItemsState';
+import { navigationMenuItemsState } from '@/navigation-menu-item/states/navigationMenuItemsState';
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -49,11 +47,9 @@ export const WorkspaceNavigationMenuItems = () => {
   const { workspaceNavigationMenuItemsSorted } = useSortedNavigationMenuItems();
   const store = useStore();
   const enterEditMode = () => {
-    const prefetchNavigationMenuItems = store.get(
-      prefetchNavigationMenuItemsState.atom,
-    );
+    const currentNavigationMenuItems = store.get(navigationMenuItemsState.atom);
     const workspaceNavigationMenuItems = filterWorkspaceNavigationMenuItems(
-      prefetchNavigationMenuItems,
+      currentNavigationMenuItems,
     );
     store.set(navigationMenuItemsDraftState.atom, workspaceNavigationMenuItems);
     store.set(isNavigationMenuInEditModeState.atom, true);
@@ -74,7 +70,6 @@ export const WorkspaceNavigationMenuItems = () => {
     useOpenNavigationMenuItemInSidePanel();
   const { getIcon } = useIcons();
 
-  const loading = useIsPrefetchLoading();
   const { t } = useLingui();
 
   const handleEditClick = (event: React.MouseEvent) => {
@@ -165,10 +160,6 @@ export const WorkspaceNavigationMenuItems = () => {
       resetNavigationStack: true,
     });
   };
-
-  if (loading) {
-    return <NavigationDrawerSectionForObjectMetadataItemsSkeletonLoader />;
-  }
 
   return (
     <NavigationDrawerSectionForWorkspaceItems
