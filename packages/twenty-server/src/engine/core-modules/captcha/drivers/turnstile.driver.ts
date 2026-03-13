@@ -26,27 +26,15 @@ export class TurnstileDriver implements CaptchaDriver {
       secret: this.secretKey,
       response: token,
     });
+    const response = await this.httpService.post('', formData);
 
-    try {
-      const response = await this.httpService.post('', formData);
-      const responseData = response.data as CaptchaServerResponse;
+    const responseData = response.data as CaptchaServerResponse;
 
-      return {
-        success: responseData.success,
-        ...(!responseData.success && {
-          error: responseData['error-codes']?.[0] ?? 'unknown-error',
-        }),
-      };
-    } catch (error: unknown) {
-      const errorCode =
-        error instanceof Error && 'code' in error
-          ? String(error.code)
-          : 'unknown-network-error';
-
-      return {
-        success: false,
-        error: `captcha-provider-unreachable: ${errorCode}`,
-      };
-    }
+    return {
+      success: responseData.success,
+      ...(!responseData.success && {
+        error: responseData['error-codes']?.[0] ?? 'unknown-error',
+      }),
+    };
   }
 }

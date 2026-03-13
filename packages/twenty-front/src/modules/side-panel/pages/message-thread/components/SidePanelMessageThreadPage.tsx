@@ -44,7 +44,6 @@ const StyledButtonContainer = styled.div`
 const ALLOWED_REPLY_PROVIDERS = [
   ConnectedAccountProvider.GOOGLE,
   ConnectedAccountProvider.MICROSOFT,
-  ConnectedAccountProvider.IMAP_SMTP_CALDAV,
 ];
 
 export const SidePanelMessageThreadPage = () => {
@@ -62,7 +61,6 @@ export const SidePanelMessageThreadPage = () => {
     messageChannelLoading,
     connectedAccountProvider,
     lastMessageExternalId,
-    connectedAccountConnectionParameters,
   } = useEmailThreadInSidePanel();
 
   useEffect(() => {
@@ -89,13 +87,10 @@ export const SidePanelMessageThreadPage = () => {
       connectedAccountHandle &&
       connectedAccountProvider &&
       ALLOWED_REPLY_PROVIDERS.includes(connectedAccountProvider) &&
-      (connectedAccountProvider !== ConnectedAccountProvider.IMAP_SMTP_CALDAV ||
-        isDefined(connectedAccountConnectionParameters?.SMTP)) &&
       isDefined(lastMessage) &&
       messageThreadExternalId != null
     );
   }, [
-    connectedAccountConnectionParameters,
     connectedAccountHandle,
     connectedAccountProvider,
     lastMessage,
@@ -103,7 +98,7 @@ export const SidePanelMessageThreadPage = () => {
   ]);
 
   const handleReplyClick = () => {
-    if (!isDefined(canReply)) {
+    if (!canReply) {
       return;
     }
 
@@ -118,9 +113,8 @@ export const SidePanelMessageThreadPage = () => {
         window.open(url, '_blank');
         break;
       case ConnectedAccountProvider.IMAP_SMTP_CALDAV:
-        throw new Error('Account provider not supported');
       case null:
-        throw new Error('Account provider not provided');
+        break;
       default:
         assertUnreachable(connectedAccountProvider);
     }
@@ -166,14 +160,14 @@ export const SidePanelMessageThreadPage = () => {
           </>
         )}
       </StyledContainer>
-      {isDefined(canReply) && !messageChannelLoading && (
+      {canReply && !messageChannelLoading && (
         <StyledButtonContainer>
           <Button
             size="small"
             onClick={handleReplyClick}
             title={t`Reply`}
             Icon={IconArrowBackUp}
-            disabled={!isDefined(canReply)}
+            disabled={!canReply}
           />
         </StyledButtonContainer>
       )}

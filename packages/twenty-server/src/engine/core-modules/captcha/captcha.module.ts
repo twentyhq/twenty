@@ -33,7 +33,6 @@ export class CaptchaModule {
               config.options,
               secureHttpClientService.getHttpClient({
                 baseURL: 'https://www.google.com/recaptcha/api/siteverify',
-                timeout: 10_000,
               }),
             );
           case CaptchaDriverType.TURNSTILE:
@@ -42,7 +41,6 @@ export class CaptchaModule {
               secureHttpClientService.getHttpClient({
                 baseURL:
                   'https://challenges.cloudflare.com/turnstile/v0/siteverify',
-                timeout: 10_000,
               }),
             );
           default:
