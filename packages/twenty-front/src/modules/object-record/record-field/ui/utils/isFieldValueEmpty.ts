@@ -179,7 +179,7 @@ export const isFieldValueEmpty = ({
 
   if (isFieldRichText(fieldDefinition)) {
     return (
-      !isFieldRichTextValue(fieldValue) || isValueEmpty(fieldValue?.markdown)
+      !isFieldRichTextValue(fieldValue) || isValueEmpty(fieldValue?.blocknote)
     );
   }
 
