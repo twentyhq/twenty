@@ -11,10 +11,6 @@ export const failingFilterInputsByFieldMetadataType: {
     { filter: { textField: { eq: 'test', neq: 'test' } } },
     { filter: { textField: {} } },
   ],
-  [FieldMetadataType.RICH_TEXT]: [
-    { filter: { richTextField: { invalidOperator: 'test' } } },
-    { filter: { richTextField: {} } },
-  ],
   [FieldMetadataType.NUMBER]: [
     { filter: { numberField: { eq: 'not-a-number' } } },
     { filter: { numberField: { eq: {} } } },

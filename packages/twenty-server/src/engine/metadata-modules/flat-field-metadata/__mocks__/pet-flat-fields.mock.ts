@@ -742,7 +742,7 @@ export const PET_FLAT_FIELDS_MOCK = {
   bio: getFlatFieldMetadataMock({
     id: 'fa0ec409-0f29-4b19-b304-31d1018a2344',
     objectMetadataId: 'd34e0f07-1b8c-4de0-938e-599cf05e1f7f',
-    type: FieldMetadataType.RICH_TEXT,
+    type: FieldMetadataType.TEXT,
     name: 'bio',
     label: 'Bio',
     defaultValue: null,

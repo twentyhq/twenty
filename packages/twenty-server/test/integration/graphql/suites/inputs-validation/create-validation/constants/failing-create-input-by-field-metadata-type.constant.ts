@@ -138,13 +138,6 @@ export const failingCreateInputByFieldMetadataType: {
       },
     },
   ],
-  [FieldMetadataType.RICH_TEXT]: [
-    {
-      input: {
-        richTextField: 'test',
-      },
-    },
-  ],
   [FieldMetadataType.ADDRESS]: [
     {
       input: {

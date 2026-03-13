@@ -295,10 +295,6 @@ describe('computeSchemaComponents', () => {
         "format": "uuid",
         "type": "string",
       },
-      "fieldRichText": {
-        "description": "Default field metadata entity description",
-        "type": "string",
-      },
       "fieldSelect": {
         "description": "Default field metadata entity description",
         "enum": [
@@ -538,10 +534,6 @@ describe('computeSchemaComponents', () => {
       },
       "fieldRelationId": {
         "format": "uuid",
-        "type": "string",
-      },
-      "fieldRichText": {
-        "description": "Default field metadata entity description",
         "type": "string",
       },
       "fieldSelect": {
@@ -794,10 +786,6 @@ describe('computeSchemaComponents', () => {
       },
       "fieldRelationId": {
         "format": "uuid",
-        "type": "string",
-      },
-      "fieldRichText": {
-        "description": "Default field metadata entity description",
         "type": "string",
       },
       "fieldSelect": {

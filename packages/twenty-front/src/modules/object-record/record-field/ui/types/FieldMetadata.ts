@@ -135,10 +135,6 @@ export type FieldRichTextV2Metadata = BaseFieldMetadata & {
   settings?: null;
 };
 
-export type FieldRichTextMetadata = BaseFieldMetadata & {
-  settings?: null;
-};
-
 export type FieldPositionMetadata = BaseFieldMetadata & {
   settings?: null;
 };
@@ -229,8 +225,7 @@ export type FieldMetadata =
   | FieldArrayMetadata
   | FieldTsVectorMetadata
   | FieldRawJsonMetadata
-  | FieldRichTextV2Metadata
-  | FieldRichTextMetadata;
+  | FieldRichTextV2Metadata;
 
 export type FieldTextValue = string;
 export type FieldUUidValue = string; // TODO: can we replace with a template literal type, or maybe overkill ?
@@ -288,8 +283,6 @@ export type FieldRichTextV2Value = {
   blocknote: string | null;
   markdown: string | null;
 };
-
-export type FieldRichTextValue = null | string;
 
 const FieldActorSourceSchema = z.union([
   z.literal('API'),
