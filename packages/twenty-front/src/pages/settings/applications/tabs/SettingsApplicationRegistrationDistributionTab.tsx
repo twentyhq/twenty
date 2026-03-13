@@ -1,7 +1,6 @@
 import { SettingsAdminTableCard } from '@/settings/admin-panel/components/SettingsAdminTableCard';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
-import { FIND_APPLICATION_REGISTRATION_STATS } from '@/settings/application-registrations/graphql/queries/findApplicationRegistrationStats';
-import { useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import {
@@ -15,7 +14,10 @@ import { Button } from 'twenty-ui/input';
 import { Card, Section } from 'twenty-ui/layout';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { ApplicationRegistrationSourceType } from '~/generated-metadata/graphql';
+import {
+  ApplicationRegistrationSourceType,
+  FindApplicationRegistrationStatsDocument,
+} from '~/generated-metadata/graphql';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type ApplicationRegistrationData } from '~/pages/settings/applications/tabs/types/ApplicationRegistrationData';
 
@@ -37,10 +39,13 @@ export const SettingsApplicationRegistrationDistributionTab = ({
   const isNpmSource =
     registration.sourceType === ApplicationRegistrationSourceType.NPM;
 
-  const { data: statsData } = useQuery(FIND_APPLICATION_REGISTRATION_STATS, {
-    variables: { id: applicationRegistrationId },
-    skip: !applicationRegistrationId,
-  });
+  const { data: statsData } = useQuery(
+    FindApplicationRegistrationStatsDocument,
+    {
+      variables: { id: applicationRegistrationId },
+      skip: !applicationRegistrationId,
+    },
+  );
 
   const marketplacePageUrl = getSettingsPath(
     SettingsPath.AvailableApplicationDetail,

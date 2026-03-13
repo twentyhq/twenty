@@ -1,5 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
-import { useCreateNavigationMenuItemMutation } from '~/generated-metadata/graphql';
+import { useMutation } from '@apollo/client/react';
+import { CreateNavigationMenuItemDocument } from '~/generated-metadata/graphql';
 
 import { usePrefetchedNavigationMenuItemsData } from '@/navigation-menu-item/hooks/usePrefetchedNavigationMenuItemsData';
 
@@ -7,10 +8,12 @@ export const useCreateNavigationMenuItemFolder = () => {
   const { navigationMenuItems, currentWorkspaceMemberId } =
     usePrefetchedNavigationMenuItemsData();
 
-  const [createNavigationMenuItemMutation] =
-    useCreateNavigationMenuItemMutation({
+  const [createNavigationMenuItemMutation] = useMutation(
+    CreateNavigationMenuItemDocument,
+    {
       refetchQueries: ['FindManyNavigationMenuItems'],
-    });
+    },
+  );
 
   const createNewNavigationMenuItemFolder = async (
     name: string,

@@ -1,6 +1,6 @@
 import { coreViewsState } from '@/views/states/coreViewState';
 import { type CoreViewWithRelations } from '@/views/types/CoreViewWithRelations';
-import { useApolloClient } from '@apollo/client';
+import { useApolloClient } from '@apollo/client/react';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { type CoreViewGroup } from '~/generated-metadata/graphql';
@@ -34,10 +34,11 @@ export const useTriggerViewGroupOptimisticEffect = () => {
             id: createdViewGroup.viewId,
           }),
           fields: {
-            viewGroups: (existingViewGroups, { toReference }) => [
-              ...(existingViewGroups ?? []),
-              toReference(createdViewGroup),
-            ],
+            viewGroups: (existingViewGroups, { toReference }) =>
+              [
+                ...(existingViewGroups ?? []),
+                toReference(createdViewGroup),
+              ].filter(isDefined),
           },
         });
         const toBeModifiedCoreView = newCoreViews.find(
@@ -67,13 +68,15 @@ export const useTriggerViewGroupOptimisticEffect = () => {
           }),
           fields: {
             viewGroups: (existingViewGroups, { readField, toReference }) =>
-              existingViewGroups.map((viewGroup) => {
-                const viewGroupId = readField<string>('id', viewGroup);
-                if (viewGroupId === updatedViewGroup.id) {
-                  return toReference(updatedViewGroup);
-                }
-                return viewGroup;
-              }),
+              existingViewGroups
+                .map((viewGroup) => {
+                  const viewGroupId = readField<string>('id', viewGroup);
+                  if (viewGroupId === updatedViewGroup.id) {
+                    return toReference(updatedViewGroup);
+                  }
+                  return viewGroup;
+                })
+                .filter(isDefined),
           },
         });
         const toBeModifiedCoreView = newCoreViews.find(

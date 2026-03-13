@@ -26,10 +26,11 @@ import { Button } from 'twenty-ui/input';
 import { MenuItemToggle, UndecoratedLink } from 'twenty-ui/navigation';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
+import { useMutation, useQuery } from '@apollo/client/react';
 import {
-  useActivateSkillMutation,
-  useDeleteSkillMutation,
-  useFindManySkillsQuery,
+  ActivateSkillDocument,
+  DeleteSkillDocument,
+  FindManySkillsDocument,
 } from '~/generated-metadata/graphql';
 import { SettingsSkillInactiveMenuDropDown } from '~/pages/settings/ai/components/SettingsSkillInactiveMenuDropDown';
 import { SETTINGS_SKILL_TABLE_METADATA } from '~/pages/settings/ai/constants/SettingsSkillTableMetadata';
@@ -60,9 +61,9 @@ const StyledFooterContainer = styled.div`
 
 export const SettingsSkillsTable = () => {
   const { theme } = useContext(ThemeContext);
-  const { data, loading, refetch } = useFindManySkillsQuery();
-  const [activateSkill] = useActivateSkillMutation();
-  const [deleteSkill] = useDeleteSkillMutation();
+  const { data, loading, refetch } = useQuery(FindManySkillsDocument);
+  const [activateSkill] = useMutation(ActivateSkillDocument);
+  const [deleteSkill] = useMutation(DeleteSkillDocument);
 
   const { t } = useLingui();
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();

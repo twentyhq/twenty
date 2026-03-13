@@ -2,7 +2,8 @@ import { usePrefetchedNavigationMenuItemsData } from '@/navigation-menu-item/hoo
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { isDefined } from 'twenty-shared/utils';
-import { useCreateNavigationMenuItemMutation } from '~/generated-metadata/graphql';
+import { useMutation } from '@apollo/client/react';
+import { CreateNavigationMenuItemDocument } from '~/generated-metadata/graphql';
 import { usePrefetchedFavoritesData } from './usePrefetchedFavoritesData';
 import { usePrefetchedFavoritesFoldersData } from './usePrefetchedFavoritesFoldersData';
 
@@ -15,10 +16,12 @@ export const useCreateFavoriteFolder = () => {
   const { favoriteFolders } = usePrefetchedFavoritesFoldersData();
   const { navigationMenuItems } = usePrefetchedNavigationMenuItemsData();
 
-  const [createNavigationMenuItemMutation] =
-    useCreateNavigationMenuItemMutation({
+  const [createNavigationMenuItemMutation] = useMutation(
+    CreateNavigationMenuItemDocument,
+    {
       refetchQueries: ['FindManyNavigationMenuItems'],
-    });
+    },
+  );
 
   const createNewFavoriteFolder = async (name: string): Promise<void> => {
     if (!name || !currentWorkspaceMemberId) {
