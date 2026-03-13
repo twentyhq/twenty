@@ -42,9 +42,11 @@ export const useHandleResetPassword = () => {
             enqueueErrorSnackBar({});
           }
         } catch (error) {
-          enqueueErrorSnackBar({
-            ...(CombinedGraphQLErrors.is(error) ? { apolloError: error } : {}),
-          });
+          enqueueErrorSnackBar(
+            CombinedGraphQLErrors.is(error)
+              ? { apolloError: error }
+              : { message: error instanceof Error ? error.message : undefined },
+          );
         }
       };
     },

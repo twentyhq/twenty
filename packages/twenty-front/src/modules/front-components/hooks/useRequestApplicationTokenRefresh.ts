@@ -77,6 +77,8 @@ export const useRequestApplicationTokenRefresh = ({
     // If the refresh token itself is expired, fall back to refetching
     // the front component which issues a fresh token pair server-side.
     try {
+      // With the default errorPolicy ('none'), client.mutate() rejects on
+      // GraphQL/network errors, so error handling happens in the catch block.
       const renewResult = await apolloClient.mutate<
         RenewApplicationTokenMutation,
         RenewApplicationTokenMutationVariables
@@ -87,19 +89,6 @@ export const useRequestApplicationTokenRefresh = ({
             applicationTokenPair.applicationRefreshToken.token,
         },
       });
-
-      if (isDefined(renewResult.error)) {
-        if (
-          CombinedGraphQLErrors.is(renewResult.error) &&
-          hasApplicationRefreshTokenInvalidOrExpiredSubCode(
-            renewResult.error.errors,
-          )
-        ) {
-          return await refetchFrontComponentForNewTokenPair();
-        }
-
-        throw new Error(`Token renewal failed: ${renewResult.error.message}`);
-      }
 
       const renewedTokenPair = renewResult.data?.renewApplicationToken;
 

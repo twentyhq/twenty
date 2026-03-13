@@ -6,7 +6,6 @@ import {
 } from '@apollo/client';
 
 import { loggerLink } from '@/apollo/utils/loggerLink';
-import { isDefined } from 'twenty-shared/utils';
 import {
   type AuthTokenPair,
   RenewTokenDocument,
@@ -29,18 +28,24 @@ const renewTokenMutation = async (
     cache: new InMemoryCache({}),
   });
 
-  const { data, error } = await client.mutate<
-    RenewTokenMutation,
-    RenewTokenMutationVariables
-  >({
-    mutation: RenewTokenDocument,
-    variables: {
-      appToken: refreshToken,
-    },
-    fetchPolicy: 'network-only',
-  });
+  let data: RenewTokenMutation | null | undefined;
+  try {
+    const result = await client.mutate<
+      RenewTokenMutation,
+      RenewTokenMutationVariables
+    >({
+      mutation: RenewTokenDocument,
+      variables: {
+        appToken: refreshToken,
+      },
+      fetchPolicy: 'network-only',
+    });
+    data = result.data;
+  } catch {
+    throw new Error('Something went wrong during token renewal');
+  }
 
-  if (isDefined(error) || isUndefinedOrNull(data)) {
+  if (isUndefinedOrNull(data)) {
     throw new Error('Something went wrong during token renewal');
   }
 

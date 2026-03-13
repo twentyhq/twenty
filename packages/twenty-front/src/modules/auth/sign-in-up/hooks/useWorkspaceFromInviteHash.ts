@@ -19,6 +19,7 @@ export const useWorkspaceFromInviteHash = () => {
   const workspaceInviteHash = useParams().workspaceInviteHash;
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const [initiallyLoggedIn] = useState(isDefined(currentWorkspace));
+  const [hasRedirected, setHasRedirected] = useState(false);
 
   const {
     data: workspaceFromInviteHash,
@@ -37,16 +38,17 @@ export const useWorkspaceFromInviteHash = () => {
   }, [error, enqueueErrorSnackBar, navigate]);
 
   useEffect(() => {
-    if (!workspaceFromInviteHash) return;
+    if (!workspaceFromInviteHash || hasRedirected) return;
 
-    const data = workspaceFromInviteHash;
+    const inviteWorkspace = workspaceFromInviteHash.findWorkspaceFromInviteHash;
+
     if (
       isDefined(currentWorkspace) &&
-      isDefined(data?.findWorkspaceFromInviteHash) &&
-      currentWorkspace.id === data.findWorkspaceFromInviteHash.id
+      isDefined(inviteWorkspace) &&
+      currentWorkspace.id === inviteWorkspace.id
     ) {
-      const workspaceDisplayName =
-        data?.findWorkspaceFromInviteHash?.displayName;
+      setHasRedirected(true);
+      const workspaceDisplayName = inviteWorkspace.displayName;
       initiallyLoggedIn &&
         enqueueInfoSnackBar({
           message: workspaceDisplayName
@@ -58,6 +60,7 @@ export const useWorkspaceFromInviteHash = () => {
   }, [
     workspaceFromInviteHash,
     currentWorkspace,
+    hasRedirected,
     initiallyLoggedIn,
     enqueueInfoSnackBar,
     navigate,

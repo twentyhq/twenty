@@ -25,10 +25,12 @@ export const useSSO = () => {
           },
         },
       });
-    } catch (error: any) {
-      return enqueueErrorSnackBar({
-        ...(CombinedGraphQLErrors.is(error) ? { apolloError: error } : {}),
-      });
+    } catch (error: unknown) {
+      return enqueueErrorSnackBar(
+        CombinedGraphQLErrors.is(error)
+          ? { apolloError: error }
+          : { message: error instanceof Error ? error.message : undefined },
+      );
     }
 
     const authorizationURL =

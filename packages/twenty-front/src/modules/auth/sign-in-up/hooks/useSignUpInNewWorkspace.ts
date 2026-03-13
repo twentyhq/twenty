@@ -30,11 +30,16 @@ export const useSignUpInNewWorkspace = () => {
         newTab ? '_blank' : '_self',
       );
     } catch (error) {
-      enqueueErrorSnackBar({
-        ...(CombinedGraphQLErrors.is(error)
+      enqueueErrorSnackBar(
+        CombinedGraphQLErrors.is(error)
           ? { apolloError: error }
-          : { message: t`Workspace creation failed` }),
-      });
+          : {
+              message:
+                error instanceof Error
+                  ? error.message
+                  : t`Workspace creation failed`,
+            },
+      );
     }
   };
 
