@@ -96,16 +96,6 @@
         "command": "npx vite build -c vite.config.sdk.ts"
       }
     },
-    "generate-metadata-client": {
-      "executor": "nx:run-commands",
-      "cache": false,
-      "dependsOn": ["^build"],
-      "outputs": ["{projectRoot}/src/clients/generated/metadata"],
-      "options": {
-        "cwd": "packages/twenty-sdk",
-        "command": "tsx -r tsconfig-paths/register scripts/generate-metadata-client.ts"
-      }
-    },
     "generate-remote-dom-elements": {
       "executor": "nx:run-commands",
       "cache": true,

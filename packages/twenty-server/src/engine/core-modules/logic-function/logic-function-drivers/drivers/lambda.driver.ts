@@ -6,6 +6,7 @@ import {
   CreateFunctionCommand,
   type CreateFunctionCommandInput,
   DeleteFunctionCommand,
+  DeleteLayerVersionCommand,
   GetFunctionCommand,
   InvokeCommand,
   type InvokeCommandInput,
@@ -24,9 +25,9 @@ import { AssumeRoleCommand, STSClient } from '@aws-sdk/client-sts';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
+  type LogicFunctionDriver,
   type LogicFunctionExecuteParams,
   type LogicFunctionExecuteResult,
-  type LogicFunctionDriver,
   type LogicFunctionTranspileParams,
   type LogicFunctionTranspileResult,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
@@ -40,6 +41,9 @@ import { copyExecutor } from 'src/engine/core-modules/logic-function/logic-funct
 import { copyYarnInstall } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-yarn-install';
 import { createZipFile } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/create-zip-file';
 import { TemporaryDirManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/temporary-dir-manager';
+import { type LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
+import { type SdkClientGenerationService } from 'src/engine/core-modules/sdk-client-generation/sdk-client-generation.service';
+import { callWithTimeout } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/call-with-timeout';
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
 import { LogicFunctionRuntime } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import {
@@ -47,8 +51,6 @@ import {
   LogicFunctionExceptionCode,
 } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
-import { type LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
-import { callWithTimeout } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/call-with-timeout';
 
 const UPDATE_FUNCTION_DURATION_TIMEOUT_IN_SECONDS = 60;
 const CREDENTIALS_DURATION_IN_SECONDS = 60 * 60; // 1h
@@ -105,6 +107,7 @@ export type BuilderLambdaResult = {
 
 export interface LambdaDriverOptions extends LambdaClientConfig {
   logicFunctionResourceService: LogicFunctionResourceService;
+  sdkClientGenerationService: SdkClientGenerationService;
   region: string;
   lambdaRole: string;
   subhostingRole?: string;
@@ -117,11 +120,13 @@ export class LambdaDriver implements LogicFunctionDriver {
   private credentialsExpiry: Date | null = null;
   private readonly options: LambdaDriverOptions;
   private readonly logicFunctionResourceService: LogicFunctionResourceService;
+  private readonly sdkClientGenerationService: SdkClientGenerationService;
 
   constructor(options: LambdaDriverOptions) {
     this.options = options;
     this.lambdaClient = undefined;
     this.logicFunctionResourceService = options.logicFunctionResourceService;
+    this.sdkClientGenerationService = options.sdkClientGenerationService;
   }
 
   private async getLambdaClient() {
@@ -203,8 +208,20 @@ export class LambdaDriver implements LogicFunctionDriver {
     );
   }
 
-  private getLayerName(flatApplication: FlatApplication) {
-    return flatApplication.yarnLockChecksum ?? 'default';
+  private getDepsLayerName(flatApplication: FlatApplication): string {
+    const checksum = flatApplication.yarnLockChecksum ?? 'default';
+
+    return `deps-${checksum}`;
+  }
+
+  private getSdkLayerName({
+    workspaceId,
+    applicationUniversalIdentifier,
+  }: {
+    workspaceId: string;
+    applicationUniversalIdentifier: string;
+  }): string {
+    return `sdk-${workspaceId}-${applicationUniversalIdentifier}`;
   }
 
   private yarnInstallFunctionName: string | undefined;
@@ -518,6 +535,33 @@ export class LambdaDriver implements LogicFunctionDriver {
     return listLayerResult.LayerVersions?.[0]?.LayerVersionArn;
   }
 
+  private async publishLayer({
+    layerName,
+    zipBuffer,
+  }: {
+    layerName: string;
+    zipBuffer: Buffer;
+  }): Promise<string> {
+    const result = await (
+      await this.getLambdaClient()
+    ).send(
+      new PublishLayerVersionCommand({
+        LayerName: layerName,
+        Content: { ZipFile: zipBuffer },
+        CompatibleRuntimes: [
+          LogicFunctionRuntime.NODE18,
+          LogicFunctionRuntime.NODE22,
+        ],
+      }),
+    );
+
+    if (!isDefined(result.LayerVersionArn)) {
+      throw new Error('New layer version ARN is undefined');
+    }
+
+    return result.LayerVersionArn;
+  }
+
   private async getDependencyContents(
     flatApplication: FlatApplication,
     applicationUniversalIdentifier: string,
@@ -550,7 +594,7 @@ export class LambdaDriver implements LogicFunctionDriver {
     flatApplication: FlatApplication;
     applicationUniversalIdentifier: string;
   }): Promise<void> {
-    const layerName = this.getLayerName(flatApplication);
+    const layerName = this.getDepsLayerName(flatApplication);
 
     const existingArn = await this.getExistingLayerArn(layerName);
 
@@ -605,7 +649,7 @@ export class LambdaDriver implements LogicFunctionDriver {
     flatApplication: FlatApplication;
     applicationUniversalIdentifier: string;
   }): Promise<string> {
-    const layerName = this.getLayerName(flatApplication);
+    const layerName = this.getDepsLayerName(flatApplication);
 
     const existingArn = await this.getExistingLayerArn(layerName);
 
@@ -627,6 +671,85 @@ export class LambdaDriver implements LogicFunctionDriver {
     }
 
     return newArn;
+  }
+
+  private async ensureSdkLayer({
+    flatApplication,
+    applicationUniversalIdentifier,
+  }: {
+    flatApplication: FlatApplication;
+    applicationUniversalIdentifier: string;
+  }): Promise<string> {
+    const layerName = this.getSdkLayerName({
+      workspaceId: flatApplication.workspaceId,
+      applicationUniversalIdentifier,
+    });
+
+    if (!flatApplication.isSdkLayerStale) {
+      const existingArn = await this.getExistingLayerArn(layerName);
+
+      if (isDefined(existingArn)) {
+        return existingArn;
+      }
+    }
+
+    await this.deleteAllLayerVersions({
+      lambdaClient: await this.getLambdaClient(),
+      layerName,
+    });
+
+    const sdkArchiveBuffer =
+      await this.sdkClientGenerationService.downloadArchiveBuffer({
+        workspaceId: flatApplication.workspaceId,
+        applicationUniversalIdentifier,
+      });
+
+    const zipBuffer = await this.reprefixZipEntries({
+      sourceBuffer: sdkArchiveBuffer,
+      prefix: 'nodejs/node_modules/twenty-client-sdk',
+    });
+
+    const arn = await this.publishLayer({ layerName, zipBuffer });
+
+    await this.sdkClientGenerationService.markSdkLayerFresh({
+      applicationId: flatApplication.id,
+      workspaceId: flatApplication.workspaceId,
+    });
+
+    return arn;
+  }
+
+  // Re-wraps zip entries under a new prefix path without extracting to disk.
+  private async reprefixZipEntries({
+    sourceBuffer,
+    prefix,
+  }: {
+    sourceBuffer: Buffer;
+    prefix: string;
+  }): Promise<Buffer> {
+    const { default: unzipper } = await import('unzipper');
+    const archiver = (await import('archiver')).default;
+
+    const directory = await unzipper.Open.buffer(sourceBuffer);
+    const archive = archiver('zip', { zlib: { level: 9 } });
+
+    const chunks: Buffer[] = [];
+
+    archive.on('data', (chunk: Buffer) => chunks.push(chunk));
+
+    for (const entry of directory.files) {
+      if (entry.type === 'Directory') {
+        continue;
+      }
+
+      archive.append(entry.stream(), {
+        name: `${prefix}/${entry.path}`,
+      });
+    }
+
+    await archive.finalize();
+
+    return Buffer.concat(chunks);
   }
 
   private async getLambdaExecutor(flatLogicFunction: FlatLogicFunction) {
@@ -655,10 +778,50 @@ export class LambdaDriver implements LogicFunctionDriver {
     }
   }
 
-  private async isAlreadyBuilt(
-    flatLogicFunction: FlatLogicFunction,
-    flatApplication: FlatApplication,
-  ) {
+  private async deleteAllLayerVersions({
+    lambdaClient,
+    layerName,
+  }: {
+    lambdaClient: Lambda;
+    layerName: string;
+  }): Promise<void> {
+    let marker: string | undefined;
+
+    do {
+      const listResult = await lambdaClient.send(
+        new ListLayerVersionsCommand({
+          LayerName: layerName,
+          MaxItems: 50,
+          Marker: marker,
+        }),
+      );
+
+      const versions = listResult.LayerVersions ?? [];
+
+      await Promise.all(
+        versions.map((version) =>
+          lambdaClient.send(
+            new DeleteLayerVersionCommand({
+              LayerName: layerName,
+              VersionNumber: version.Version,
+            }),
+          ),
+        ),
+      );
+
+      marker = listResult.NextMarker;
+    } while (isDefined(marker));
+  }
+
+  private async isAlreadyBuilt({
+    flatLogicFunction,
+    flatApplication,
+    applicationUniversalIdentifier,
+  }: {
+    flatLogicFunction: FlatLogicFunction;
+    flatApplication: FlatApplication;
+    applicationUniversalIdentifier: string;
+  }) {
     const lambdaExecutor = await this.getLambdaExecutor(flatLogicFunction);
 
     if (!isDefined(lambdaExecutor)) {
@@ -667,15 +830,23 @@ export class LambdaDriver implements LogicFunctionDriver {
 
     const layers = lambdaExecutor.Configuration?.Layers;
 
-    if (!isDefined(layers) || layers.length !== 1) {
+    if (!isDefined(layers) || layers.length !== 2) {
       await this.delete(flatLogicFunction);
 
       return false;
     }
 
-    const layerName = this.getLayerName(flatApplication);
+    const depsLayerName = this.getDepsLayerName(flatApplication);
+    const sdkLayerName = this.getSdkLayerName({
+      workspaceId: flatApplication.workspaceId,
+      applicationUniversalIdentifier,
+    });
 
-    if (layers[0].Arn?.includes(layerName)) {
+    const hasExpectedLayers =
+      layers.some((layer) => layer.Arn?.includes(depsLayerName)) &&
+      layers.some((layer) => layer.Arn?.includes(sdkLayerName));
+
+    if (hasExpectedLayers) {
       return true;
     }
 
@@ -693,11 +864,25 @@ export class LambdaDriver implements LogicFunctionDriver {
     flatApplication: FlatApplication;
     applicationUniversalIdentifier: string;
   }) {
-    if (await this.isAlreadyBuilt(flatLogicFunction, flatApplication)) {
+    if (
+      !flatApplication.isSdkLayerStale &&
+      (await this.isAlreadyBuilt({
+        flatLogicFunction,
+        flatApplication,
+        applicationUniversalIdentifier,
+      }))
+    ) {
       return;
     }
 
-    const layerArn = await this.getLayerArn({
+    await this.delete(flatLogicFunction);
+
+    const depsLayerArn = await this.getLayerArn({
+      flatApplication,
+      applicationUniversalIdentifier,
+    });
+
+    const sdkLayerArn = await this.ensureSdkLayer({
       flatApplication,
       applicationUniversalIdentifier,
     });
@@ -711,16 +896,18 @@ export class LambdaDriver implements LogicFunctionDriver {
 
     await createZipFile(sourceTemporaryDir, lambdaZipPath);
 
+    // SDK layer listed last so it overwrites the stub twenty-client-sdk
+    // from the deps layer (later layers take precedence in /opt merge).
     const params: CreateFunctionCommandInput = {
       Code: {
         ZipFile: await fs.readFile(lambdaZipPath),
       },
       FunctionName: flatLogicFunction.id,
-      Layers: [layerArn],
+      Layers: [depsLayerArn, sdkLayerArn],
       Handler: 'index.handler',
       Role: this.options.lambdaRole,
       Runtime: flatLogicFunction.runtime,
-      Timeout: 900, // timeout is handled by the logic function service
+      Timeout: 900,
     };
 
     const command = new CreateFunctionCommand(params);

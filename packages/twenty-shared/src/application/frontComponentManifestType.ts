@@ -24,5 +24,6 @@ export type FrontComponentManifest = {
   builtComponentChecksum: string;
   componentName: string;
   isHeadless?: boolean;
+  usesSdkClient?: boolean;
   command?: FrontComponentCommandManifest;
 };

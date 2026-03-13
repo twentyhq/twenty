@@ -2045,6 +2045,7 @@ type FrontComponent {
   createdAt: DateTime!
   updatedAt: DateTime!
   isHeadless: Boolean!
+  usesSdkClient: Boolean!
   applicationTokenPair: ApplicationTokenPair
 }
 
@@ -3102,8 +3103,6 @@ input BarChartDataInput {
 type Mutation {
   addQueryToEventStream(input: AddQuerySubscriptionInput!): Boolean!
   removeQueryFromEventStream(input: RemoveQueryFromEventStreamInput!): Boolean!
-  createObjectEvent(event: String!, recordId: UUID!, objectMetadataId: UUID!, properties: JSON): Analytics!
-  trackAnalytics(type: AnalyticsType!, name: String, event: String, properties: JSON): Analytics!
   createPageLayoutWidget(input: CreatePageLayoutWidgetInput!): PageLayoutWidget!
   updatePageLayoutWidget(id: String!, input: UpdatePageLayoutWidgetInput!): PageLayoutWidget!
   destroyPageLayoutWidget(id: String!): Boolean!
@@ -3118,6 +3117,8 @@ type Mutation {
   createOneLogicFunction(input: CreateLogicFunctionFromSourceInput!): LogicFunction!
   executeOneLogicFunction(input: ExecuteOneLogicFunctionInput!): LogicFunctionExecutionResult!
   updateOneLogicFunction(input: UpdateLogicFunctionFromSourceInput!): Boolean!
+  createObjectEvent(event: String!, recordId: UUID!, objectMetadataId: UUID!, properties: JSON): Analytics!
+  trackAnalytics(type: AnalyticsType!, name: String, event: String, properties: JSON): Analytics!
   createOneObject(input: CreateOneObjectInput!): Object!
   deleteOneObject(input: DeleteOneObjectInput!): Object!
   updateOneObject(input: UpdateOneObjectInput!): Object!
@@ -3304,11 +3305,6 @@ input RemoveQueryFromEventStreamInput {
   queryId: String!
 }
 
-enum AnalyticsType {
-  PAGEVIEW
-  TRACK
-}
-
 input CreatePageLayoutWidgetInput {
   pageLayoutTabId: UUID!
   title: String!
@@ -3429,6 +3425,11 @@ input UpdateLogicFunctionFromSourceInputUpdates {
   cronTriggerSettings: JSON
   databaseEventTriggerSettings: JSON
   httpRouteTriggerSettings: JSON
+}
+
+enum AnalyticsType {
+  PAGEVIEW
+  TRACK
 }
 
 input CreateOneObjectInput {
@@ -4263,6 +4264,7 @@ enum FileFolder {
   Dependencies
   Workflow
   AppTarball
+  GeneratedSdkClient
 }
 
 type Subscription {

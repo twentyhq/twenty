@@ -73,6 +73,9 @@ import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/
 import { ChannelSyncModule } from 'src/modules/connected-account/channel-sync/channel-sync.module';
 import { DashboardModule } from 'src/modules/dashboard/dashboard.module';
 import { LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
+import { LogicFunctionResourceModule } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.module';
+import { SdkClientGenerationModule } from 'src/engine/core-modules/sdk-client-generation/sdk-client-generation.module';
+import { SdkClientGenerationService } from 'src/engine/core-modules/sdk-client-generation/sdk-client-generation.service';
 
 import { AuditModule } from './audit/audit.module';
 import { ClientConfigModule } from './client-config/client-config.module';
@@ -153,8 +156,13 @@ import { FileModule } from './file/file.module';
     AiModelsModule,
     AiBillingModule,
     LogicFunctionModule.forRootAsync({
+      imports: [LogicFunctionResourceModule, SdkClientGenerationModule],
       useFactory: logicFunctionModuleFactory,
-      inject: [TwentyConfigService, LogicFunctionResourceService],
+      inject: [
+        TwentyConfigService,
+        LogicFunctionResourceService,
+        SdkClientGenerationService,
+      ],
     }),
     CodeInterpreterModule.forRootAsync({
       useFactory: codeInterpreterModuleFactory,

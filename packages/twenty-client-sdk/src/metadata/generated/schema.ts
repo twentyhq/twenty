@@ -1782,6 +1782,7 @@ export interface FrontComponent {
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
     isHeadless: Scalars['Boolean']
+    usesSdkClient: Scalars['Boolean']
     applicationTokenPair?: ApplicationTokenPair
     __typename: 'FrontComponent'
 }
@@ -2641,8 +2642,6 @@ export type EventLogTable = 'WORKSPACE_EVENT' | 'PAGEVIEW' | 'OBJECT_EVENT'
 export interface Mutation {
     addQueryToEventStream: Scalars['Boolean']
     removeQueryFromEventStream: Scalars['Boolean']
-    createObjectEvent: Analytics
-    trackAnalytics: Analytics
     createPageLayoutWidget: PageLayoutWidget
     updatePageLayoutWidget: PageLayoutWidget
     destroyPageLayoutWidget: Scalars['Boolean']
@@ -2657,6 +2656,8 @@ export interface Mutation {
     createOneLogicFunction: LogicFunction
     executeOneLogicFunction: LogicFunctionExecutionResult
     updateOneLogicFunction: Scalars['Boolean']
+    createObjectEvent: Analytics
+    trackAnalytics: Analytics
     createOneObject: Object
     deleteOneObject: Object
     updateOneObject: Object
@@ -2839,7 +2840,7 @@ export type WorkspaceMigrationActionType = 'delete' | 'create' | 'update'
 
 export type AllMetadataName = 'fieldMetadata' | 'objectMetadata' | 'view' | 'viewField' | 'viewFieldGroup' | 'viewGroup' | 'viewSort' | 'rowLevelPermissionPredicate' | 'rowLevelPermissionPredicateGroup' | 'viewFilterGroup' | 'index' | 'logicFunction' | 'viewFilter' | 'role' | 'roleTarget' | 'agent' | 'skill' | 'pageLayout' | 'pageLayoutWidget' | 'pageLayoutTab' | 'commandMenuItem' | 'navigationMenuItem' | 'frontComponent' | 'webhook'
 
-export type FileFolder = 'ProfilePicture' | 'WorkspaceLogo' | 'Attachment' | 'PersonPicture' | 'CorePicture' | 'File' | 'AgentChat' | 'BuiltLogicFunction' | 'BuiltFrontComponent' | 'PublicAsset' | 'Source' | 'FilesField' | 'Dependencies' | 'Workflow' | 'AppTarball'
+export type FileFolder = 'ProfilePicture' | 'WorkspaceLogo' | 'Attachment' | 'PersonPicture' | 'CorePicture' | 'File' | 'AgentChat' | 'BuiltLogicFunction' | 'BuiltFrontComponent' | 'PublicAsset' | 'Source' | 'FilesField' | 'Dependencies' | 'Workflow' | 'AppTarball' | 'GeneratedSdkClient'
 
 export interface Subscription {
     onDbEvent: OnDbEvent
@@ -4737,6 +4738,7 @@ export interface FrontComponentGenqlSelection{
     createdAt?: boolean | number
     updatedAt?: boolean | number
     isHeadless?: boolean | number
+    usesSdkClient?: boolean | number
     applicationTokenPair?: ApplicationTokenPairGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -5687,8 +5689,6 @@ export interface BarChartDataInput {objectMetadataId: Scalars['UUID'],configurat
 export interface MutationGenqlSelection{
     addQueryToEventStream?: { __args: {input: AddQuerySubscriptionInput} }
     removeQueryFromEventStream?: { __args: {input: RemoveQueryFromEventStreamInput} }
-    createObjectEvent?: (AnalyticsGenqlSelection & { __args: {event: Scalars['String'], recordId: Scalars['UUID'], objectMetadataId: Scalars['UUID'], properties?: (Scalars['JSON'] | null)} })
-    trackAnalytics?: (AnalyticsGenqlSelection & { __args: {type: AnalyticsType, name?: (Scalars['String'] | null), event?: (Scalars['String'] | null), properties?: (Scalars['JSON'] | null)} })
     createPageLayoutWidget?: (PageLayoutWidgetGenqlSelection & { __args: {input: CreatePageLayoutWidgetInput} })
     updatePageLayoutWidget?: (PageLayoutWidgetGenqlSelection & { __args: {id: Scalars['String'], input: UpdatePageLayoutWidgetInput} })
     destroyPageLayoutWidget?: { __args: {id: Scalars['String']} }
@@ -5703,6 +5703,8 @@ export interface MutationGenqlSelection{
     createOneLogicFunction?: (LogicFunctionGenqlSelection & { __args: {input: CreateLogicFunctionFromSourceInput} })
     executeOneLogicFunction?: (LogicFunctionExecutionResultGenqlSelection & { __args: {input: ExecuteOneLogicFunctionInput} })
     updateOneLogicFunction?: { __args: {input: UpdateLogicFunctionFromSourceInput} }
+    createObjectEvent?: (AnalyticsGenqlSelection & { __args: {event: Scalars['String'], recordId: Scalars['UUID'], objectMetadataId: Scalars['UUID'], properties?: (Scalars['JSON'] | null)} })
+    trackAnalytics?: (AnalyticsGenqlSelection & { __args: {type: AnalyticsType, name?: (Scalars['String'] | null), event?: (Scalars['String'] | null), properties?: (Scalars['JSON'] | null)} })
     createOneObject?: (ObjectGenqlSelection & { __args: {input: CreateOneObjectInput} })
     deleteOneObject?: (ObjectGenqlSelection & { __args: {input: DeleteOneObjectInput} })
     updateOneObject?: (ObjectGenqlSelection & { __args: {input: UpdateOneObjectInput} })
@@ -8838,5 +8840,6 @@ export const enumFileFolder = {
    FilesField: 'FilesField' as const,
    Dependencies: 'Dependencies' as const,
    Workflow: 'Workflow' as const,
-   AppTarball: 'AppTarball' as const
+   AppTarball: 'AppTarball' as const,
+   GeneratedSdkClient: 'GeneratedSdkClient' as const
 }

@@ -47,7 +47,10 @@ export class ApplicationSyncService {
     workspaceId: string;
     manifest: Manifest;
     applicationRegistrationId?: string;
-  }): Promise<WorkspaceMigration> {
+  }): Promise<{
+    workspaceMigration: WorkspaceMigration;
+    hasSchemaMetadataChanged: boolean;
+  }> {
     const application = await this.syncApplication({
       workspaceId,
       manifest,
@@ -56,7 +59,7 @@ export class ApplicationSyncService {
 
     const ownerFlatApplication: FlatApplication = application;
 
-    const workspaceMigration =
+    const syncResult =
       await this.applicationManifestMigrationService.syncMetadataFromManifest({
         manifest,
         workspaceId,
@@ -65,7 +68,7 @@ export class ApplicationSyncService {
 
     this.logger.log('Application sync from manifest completed');
 
-    return workspaceMigration;
+    return syncResult;
   }
 
   private async syncApplication({

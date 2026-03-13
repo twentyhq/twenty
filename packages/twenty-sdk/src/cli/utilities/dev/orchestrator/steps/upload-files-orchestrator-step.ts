@@ -7,7 +7,7 @@ import { copy, ensureDir, pathExists } from '@/cli/utilities/file/fs-utils';
 import crypto from 'crypto';
 import { readFile } from 'node:fs/promises';
 import { join } from 'path';
-import { CLIENTS_GENERATED_DIR } from '@/cli/constants/clients-dir';
+import { GENERATED_CORE_DIR } from 'twenty-client-sdk/generate';
 import { OUTPUT_DIR, API_CLIENT_DIR } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
 
@@ -123,8 +123,9 @@ export class UploadFilesOrchestratorStep {
     const generatedDir = join(
       appPath,
       'node_modules',
-      'twenty-sdk',
-      CLIENTS_GENERATED_DIR,
+      'twenty-client-sdk',
+      'dist',
+      GENERATED_CORE_DIR,
     );
 
     if (!(await pathExists(generatedDir))) {

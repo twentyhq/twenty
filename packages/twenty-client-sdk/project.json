@@ -1,0 +1,44 @@
+{
+  "name": "twenty-client-sdk",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/twenty-client-sdk/src",
+  "projectType": "library",
+  "tags": ["scope:sdk"],
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": ["production", "^production"],
+      "dependsOn": ["^build"],
+      "outputs": ["{projectRoot}/dist"],
+      "options": {
+        "cwd": "{projectRoot}",
+        "commands": [
+          "npx rimraf dist && npx vite build",
+          "tsgo -p tsconfig.lib.json --declaration --emitDeclarationOnly --noEmit false --outDir dist --rootDir src && npx tsc-alias -p tsconfig.lib.json --outDir dist"
+        ],
+        "parallel": false
+      }
+    },
+    "generate-metadata-client": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "dependsOn": ["^build"],
+      "outputs": ["{projectRoot}/src/generated/metadata"],
+      "options": {
+        "cwd": "packages/twenty-client-sdk",
+        "command": "tsx scripts/generate-metadata-client.ts"
+      }
+    },
+    "test": {
+      "executor": "@nx/vitest:test",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "config": "{projectRoot}/vitest.config.ts"
+      }
+    },
+    "set-local-version": {},
+    "typecheck": {},
+    "lint": {}
+  }
+}

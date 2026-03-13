@@ -69,6 +69,12 @@ export const copyBaseApplicationProject = async ({
       fileFolder: 'logic-functions',
       fileName: 'hello-world.ts',
     });
+
+    await createCreateCompanyFunction({
+      appDirectory: sourceFolderPath,
+      fileFolder: 'logic-functions',
+      fileName: 'create-hello-world-company.ts',
+    });
   }
 
   if (exampleOptions.includeExampleFrontComponent) {
@@ -76,6 +82,12 @@ export const copyBaseApplicationProject = async ({
       appDirectory: sourceFolderPath,
       fileFolder: 'front-components',
       fileName: 'hello-world.tsx',
+    });
+
+    await createExamplePageLayout({
+      appDirectory: sourceFolderPath,
+      fileFolder: 'page-layouts',
+      fileName: 'example-record-page-layout.ts',
     });
   }
 
@@ -230,22 +242,112 @@ const createDefaultFrontComponent = async ({
 }) => {
   const universalIdentifier = v4();
 
-  const content = `import { defineFrontComponent } from 'twenty-sdk';
+  const content = `import { useEffect, useState } from 'react';
+import { CoreApiClient, CoreSchema } from 'twenty-client-sdk/core';
+import { defineFrontComponent } from 'twenty-sdk';
+
+export const HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER =
+  '${universalIdentifier}';
 
 export const HelloWorld = () => {
+  const client = new CoreApiClient();
+  const [data, setData] = useState<
+    Pick<CoreSchema.Company, 'name' | 'id'> | undefined
+  >(undefined);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await client.query({
+        company: {
+          name: true,
+          id: true,
+          __args: {
+            filter: {
+              position: {
+                eq: 1,
+              },
+            },
+          },
+        },
+      });
+
+      setData(response.company);
+    };
+
+    fetchData();
+  }, []);
+
   return (
     <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
       <h1>Hello, World!</h1>
       <p>This is your first front component.</p>
+      {data ? (
+        <div>
+          <p>Company name: {data.name}</p>
+          <p>Company id: {data.id}</p>
+        </div>
+      ) : (
+        <p>Company not found</p>
+      )}
     </div>
   );
 };
 
 export default defineFrontComponent({
-  universalIdentifier: '${universalIdentifier}',
+  universalIdentifier: HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
   name: 'hello-world-front-component',
   description: 'A sample front component',
   component: HelloWorld,
+});
+`;
+
+  await fs.ensureDir(join(appDirectory, fileFolder ?? ''));
+  await fs.writeFile(join(appDirectory, fileFolder ?? '', fileName), content);
+};
+
+const createExamplePageLayout = async ({
+  appDirectory,
+  fileFolder,
+  fileName,
+}: {
+  appDirectory: string;
+  fileFolder?: string;
+  fileName: string;
+}) => {
+  const pageLayoutUniversalIdentifier = v4();
+  const tabUniversalIdentifier = v4();
+  const widgetUniversalIdentifier = v4();
+
+  const content = `import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/objects/example-object';
+import { HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from 'src/front-components/hello-world';
+import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk';
+
+export default definePageLayout({
+  universalIdentifier: '${pageLayoutUniversalIdentifier}',
+  name: 'Example Record Page',
+  type: 'RECORD_PAGE',
+  objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
+  tabs: [
+    {
+      universalIdentifier: '${tabUniversalIdentifier}',
+      title: 'Hello World',
+      position: 50,
+      icon: 'IconWorld',
+      layoutMode: PageLayoutTabLayoutMode.CANVAS,
+      widgets: [
+        {
+          universalIdentifier: '${widgetUniversalIdentifier}',
+          title: 'Hello World',
+          type: 'FRONT_COMPONENT',
+          configuration: {
+            configurationType: 'FRONT_COMPONENT',
+            frontComponentUniversalIdentifier:
+              HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+          },
+        },
+      ],
+    },
+  ],
 });
 `;
 
@@ -278,6 +380,58 @@ export default defineLogicFunction({
   handler,
   httpRouteTriggerSettings: {
     path: '/hello-world-logic-function',
+    httpMethod: 'GET',
+    isAuthRequired: false,
+  },
+});
+`;
+
+  await fs.ensureDir(join(appDirectory, fileFolder ?? ''));
+  await fs.writeFile(join(appDirectory, fileFolder ?? '', fileName), content);
+};
+
+const createCreateCompanyFunction = async ({
+  appDirectory,
+  fileFolder,
+  fileName,
+}: {
+  appDirectory: string;
+  fileFolder?: string;
+  fileName: string;
+}) => {
+  const universalIdentifier = v4();
+
+  const content = `import { CoreApiClient } from 'twenty-client-sdk/core';
+import { defineLogicFunction } from 'twenty-sdk';
+
+const handler = async (): Promise<{ message: string }> => {
+  const client = new CoreApiClient();
+
+  const { createCompany } = await client.mutation({
+    createCompany: {
+      __args: {
+        data: {
+          name: 'Hello World',
+        },
+      },
+      id: true,
+      name: true,
+    },
+  });
+
+  return {
+    message: \`Created company "\${createCompany?.name}" with id \${createCompany?.id}\`,
+  };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: '${universalIdentifier}',
+  name: 'create-hello-world-company',
+  description: 'Creates a company called Hello World',
+  timeoutSeconds: 5,
+  handler,
+  httpRouteTriggerSettings: {
+    path: '/create-hello-world-company',
     httpMethod: 'GET',
     isAuthRequired: false,
   },
@@ -613,6 +767,7 @@ const createPackageJson = async ({
     react: '^18.2.0',
     oxlint: '^0.16.0',
     'twenty-sdk': createTwentyAppPackageJson.version,
+    'twenty-client-sdk': createTwentyAppPackageJson.version,
   };
 
   if (includeExampleIntegrationTest) {

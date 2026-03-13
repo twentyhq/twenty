@@ -1,7 +1,7 @@
 import { defineRole } from 'twenty-sdk';
 
 export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
-  '9238bc7b-d38f-4a1c-9d19-31ab7bc67a2f';
+  'c38f4d11-760c-4d5c-89ed-e569c28b7b70';
 
 export default defineRole({
   universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,

@@ -1,0 +1,61 @@
+{
+  "name": "twenty-client-sdk",
+  "version": "0.7.0-canary.0",
+  "private": true,
+  "sideEffects": false,
+  "license": "AGPL-3.0",
+  "scripts": {
+    "build": "npx rimraf dist && npx vite build && tsgo -p tsconfig.lib.json --declaration --emitDeclarationOnly --noEmit false --outDir dist --rootDir src && npx tsc-alias -p tsconfig.lib.json --outDir dist"
+  },
+  "exports": {
+    "./core": {
+      "types": "./dist/core/index.d.ts",
+      "import": "./dist/core.mjs",
+      "require": "./dist/core.cjs"
+    },
+    "./metadata": {
+      "types": "./dist/metadata/index.d.ts",
+      "import": "./dist/metadata.mjs",
+      "require": "./dist/metadata.cjs"
+    },
+    "./generate": {
+      "types": "./dist/generate/index.d.ts",
+      "import": "./dist/generate.mjs",
+      "require": "./dist/generate.cjs"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "core": [
+        "dist/core/index.d.ts"
+      ],
+      "metadata": [
+        "dist/metadata/index.d.ts"
+      ],
+      "generate": [
+        "dist/generate/index.d.ts"
+      ]
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "dependencies": {
+    "@genql/cli": "^3.0.3",
+    "@genql/runtime": "^2.10.0",
+    "esbuild": "^0.25.0",
+    "graphql": "^16.8.1"
+  },
+  "devDependencies": {
+    "twenty-shared": "workspace:*",
+    "typescript": "^5.9.2",
+    "vite": "^7.0.0",
+    "vite-plugin-dts": "^4.5.4",
+    "vite-tsconfig-paths": "^4.2.1",
+    "vitest": "^4.0.18"
+  },
+  "engines": {
+    "node": "^24.5.0",
+    "yarn": "^4.0.2"
+  }
+}

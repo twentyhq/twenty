@@ -37,6 +37,49 @@ exposeGlobals({
   __HTML_TAG_TO_CUSTOM_ELEMENT_TAG__: HTML_TAG_TO_CUSTOM_ELEMENT_TAG,
 });
 
+const fetchTextOrThrow = async (
+  url: string,
+  headers?: Record<string, string>,
+): Promise<string> => {
+  const response = await fetch(url, { headers });
+
+  if (!response.ok) {
+    throw new Error(
+      `Failed to fetch ${url}: ${response.status} ${response.statusText}`,
+    );
+  }
+
+  return response.text();
+};
+
+const SDK_IMPORT_SPECIFIERS = [
+  'twenty-client-sdk/core',
+  'twenty-client-sdk/metadata',
+] as const;
+
+// Rewrites bare SDK import specifiers to the blob URLs provided by the host.
+const rewriteSdkImports = (
+  source: string,
+  sdkClientUrls: { core: string; metadata: string },
+): string => {
+  const specifierToBlobUrl: Record<string, string> = {
+    'twenty-client-sdk/core': sdkClientUrls.core,
+    'twenty-client-sdk/metadata': sdkClientUrls.metadata,
+  };
+
+  let rewritten = source;
+
+  for (const [specifier, blobUrl] of Object.entries(specifierToBlobUrl)) {
+    rewritten = rewritten
+      .split(`"${specifier}"`)
+      .join(`"${blobUrl}"`)
+      .split(`'${specifier}'`)
+      .join(`'${blobUrl}'`);
+  }
+
+  return rewritten;
+};
+
 const render: WorkerExports['render'] = async (
   connection: RemoteConnection,
   renderContext: HostToWorkerRenderContext,
@@ -61,25 +104,30 @@ const render: WorkerExports['render'] = async (
     });
   }
 
-  const response = await fetch(renderContext.componentUrl, {
-    headers: isDefined(renderContext.applicationAccessToken)
-      ? { Authorization: `Bearer ${renderContext.applicationAccessToken}` }
-      : undefined,
-  });
+  const authHeaders = isDefined(renderContext.applicationAccessToken)
+    ? { Authorization: `Bearer ${renderContext.applicationAccessToken}` }
+    : undefined;
 
-  if (!response.ok) {
-    throw new Error(
-      `Failed to fetch front component from ${renderContext.componentUrl}: ${response.status} ${response.statusText}`,
+  const componentSource = await fetchTextOrThrow(
+    renderContext.componentUrl,
+    authHeaders,
+  );
+
+  const hasSdkImports =
+    isDefined(renderContext.sdkClientUrls) &&
+    SDK_IMPORT_SPECIFIERS.some((specifier) =>
+      componentSource.includes(specifier),
     );
-  }
 
-  const responseText = await response.text();
+  const finalSource = hasSdkImports
+    ? rewriteSdkImports(componentSource, renderContext.sdkClientUrls!)
+    : componentSource;
 
-  const blob = new Blob([responseText], {
+  const componentBlob = new Blob([finalSource], {
     type: 'application/javascript',
   });
 
-  const importUrl = URL.createObjectURL(blob);
+  const importUrl = URL.createObjectURL(componentBlob);
 
   try {
     /* @vite-ignore */

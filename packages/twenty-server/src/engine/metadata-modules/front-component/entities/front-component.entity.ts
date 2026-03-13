@@ -37,6 +37,9 @@ export class FrontComponentEntity
   @Column({ default: false })
   isHeadless: boolean;
 
+  @Column({ default: false })
+  usesSdkClient: boolean;
+
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
 

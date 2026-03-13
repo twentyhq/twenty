@@ -21,10 +21,12 @@ jobs:
       files: |
         packages/create-twenty-app/**
         packages/twenty-sdk/**
+        packages/twenty-client-sdk/**
         packages/twenty-shared/**
         packages/twenty-server/**
         !packages/create-twenty-app/package.json
         !packages/twenty-sdk/package.json
+        !packages/twenty-client-sdk/package.json
         !packages/twenty-shared/package.json
         !packages/twenty-server/package.json
   create-app-e2e:
@@ -64,11 +66,12 @@ jobs:
         run: |
           CI_VERSION="0.0.0-ci.$(date +%s)"
           echo "CI_VERSION=$CI_VERSION" >> $GITHUB_ENV
-          npx nx run-many -t set-local-version -p twenty-sdk create-twenty-app --releaseVersion=$CI_VERSION
+          npx nx run-many -t set-local-version -p twenty-sdk twenty-client-sdk create-twenty-app --releaseVersion=$CI_VERSION
 
       - name: Build packages
         run: |
           npx nx build twenty-sdk
+          npx nx build twenty-client-sdk
           npx nx build create-twenty-app
 
       - name: Install and start Verdaccio
@@ -88,7 +91,7 @@ jobs:
         run: |
           npm set //localhost:4873/:_authToken "ci-auth-token"
 
-          for pkg in twenty-sdk create-twenty-app; do
+          for pkg in twenty-sdk twenty-client-sdk create-twenty-app; do
             cd packages/$pkg
             npm publish --registry http://localhost:4873 --tag ci
             cd ../..
@@ -165,6 +168,13 @@ jobs:
           EXEC_OUTPUT=$(npx --no-install twenty function:execute --functionName hello-world-logic-function)
           echo "$EXEC_OUTPUT"
           echo "$EXEC_OUTPUT" | grep -q "Hello, World!"
+
+      - name: Execute create-hello-world-company logic function
+        run: |
+          cd /tmp/e2e-test-workspace/test-app
+          EXEC_OUTPUT=$(npx --no-install twenty function:execute --functionName create-hello-world-company)
+          echo "$EXEC_OUTPUT"
+          echo "$EXEC_OUTPUT" | grep -q "Created company"
 
       - name: Run scaffolded app integration test
         run: |

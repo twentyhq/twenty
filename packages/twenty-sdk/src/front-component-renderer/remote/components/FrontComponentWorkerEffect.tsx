@@ -3,6 +3,7 @@ import { RemoteReceiver } from '@remote-dom/core/receivers';
 import { useEffect, useRef } from 'react';
 import { type CommandConfirmationModalResult } from '../../../sdk/front-component-api/globals/frontComponentHostCommunicationApi';
 import { type FrontComponentHostCommunicationApi } from '../../types/FrontComponentHostCommunicationApi';
+import { type SdkClientUrls } from '../../types/HostToWorkerRenderContext';
 import { type WorkerExports } from '../../types/WorkerExports';
 import { createRemoteWorker } from '../worker/utils/createRemoteWorker';
 
@@ -19,6 +20,7 @@ type FrontComponentWorkerEffectProps = {
   componentUrl: string;
   applicationAccessToken?: string;
   apiUrl?: string;
+  sdkClientUrls?: SdkClientUrls;
   frontComponentId: string;
   frontComponentHostCommunicationApi: FrontComponentHostCommunicationApi;
   setReceiver: React.Dispatch<React.SetStateAction<RemoteReceiver | null>>;
@@ -35,6 +37,7 @@ export const FrontComponentWorkerEffect = ({
   componentUrl,
   applicationAccessToken,
   apiUrl,
+  sdkClientUrls,
   frontComponentId,
   frontComponentHostCommunicationApi,
   setReceiver,
@@ -101,6 +104,7 @@ export const FrontComponentWorkerEffect = ({
         componentUrl,
         applicationAccessToken,
         apiUrl,
+        sdkClientUrls,
       })
       .catch((error: Error) => {
         setError(error);
@@ -122,6 +126,7 @@ export const FrontComponentWorkerEffect = ({
     componentUrl,
     applicationAccessToken,
     apiUrl,
+    sdkClientUrls,
     frontComponentId,
     setError,
     setReceiver,

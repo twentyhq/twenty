@@ -7,6 +7,7 @@ export type { AuthLogoutOptions } from './auth-logout';
 // App
 export { appBuild } from './app-build';
 export type { AppBuildOptions, AppBuildResult } from './app-build';
+
 export { appPublish } from './app-publish';
 export type { AppPublishOptions, AppPublishResult } from './app-publish';
 export { appUninstall } from './app-uninstall';

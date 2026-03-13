@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { printSchema } from 'graphql';
 import { promises as fs } from 'fs';
 import { resolve } from 'path';
 
@@ -9,6 +10,7 @@ import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
+import { WorkspaceSchemaFactory } from 'src/engine/api/graphql/workspace-schema.factory';
 import {
   ApplicationException,
   ApplicationExceptionCode,
@@ -24,6 +26,8 @@ import {
 import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { SdkClientGenerationService } from 'src/engine/core-modules/sdk-client-generation/sdk-client-generation.service';
+import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Injectable()
 export class ApplicationInstallService {
@@ -37,6 +41,8 @@ export class ApplicationInstallService {
     private readonly applicationSyncService: ApplicationSyncService,
     private readonly fileStorageService: FileStorageService,
     private readonly cacheLockService: CacheLockService,
+    private readonly sdkClientGenerationService: SdkClientGenerationService,
+    private readonly workspaceSchemaFactory: WorkspaceSchemaFactory,
   ) {}
 
   async installApplication(params: {
@@ -97,7 +103,7 @@ export class ApplicationInstallService {
 
       const universalIdentifier = appRegistration.universalIdentifier;
 
-      await this.ensureApplicationExists({
+      const { application, wasCreated } = await this.ensureApplicationExists({
         universalIdentifier,
         name: resolvedPackage.manifest.application.displayName,
         workspaceId: params.workspaceId,
@@ -112,11 +118,27 @@ export class ApplicationInstallService {
         params.workspaceId,
       );
 
-      await this.applicationSyncService.synchronizeFromManifest({
-        workspaceId: params.workspaceId,
-        manifest: resolvedPackage.manifest,
-        applicationRegistrationId: appRegistration.id,
-      });
+      const { hasSchemaMetadataChanged } =
+        await this.applicationSyncService.synchronizeFromManifest({
+          workspaceId: params.workspaceId,
+          manifest: resolvedPackage.manifest,
+          applicationRegistrationId: appRegistration.id,
+        });
+
+      if (wasCreated || hasSchemaMetadataChanged) {
+        const graphqlSchema =
+          await this.workspaceSchemaFactory.createGraphQLSchema(
+            { id: params.workspaceId } as WorkspaceEntity,
+            application.id,
+          );
+
+        await this.sdkClientGenerationService.generateApplicationClient({
+          workspaceId: params.workspaceId,
+          applicationId: application.id,
+          applicationUniversalIdentifier: universalIdentifier,
+          schema: printSchema(graphqlSchema),
+        });
+      }
 
       this.logger.log(
         `Successfully installed app ${universalIdentifier} v${resolvedPackage.packageJson.version ?? 'unknown'}`,
@@ -219,17 +241,17 @@ export class ApplicationInstallService {
     workspaceId: string;
     applicationRegistrationId: string;
     sourceType: ApplicationRegistrationSourceType;
-  }): Promise<ApplicationEntity> {
+  }): Promise<{ application: ApplicationEntity; wasCreated: boolean }> {
     const existing = await this.applicationService.findByUniversalIdentifier({
       universalIdentifier: params.universalIdentifier,
       workspaceId: params.workspaceId,
     });
 
     if (isDefined(existing)) {
-      return existing;
+      return { application: existing, wasCreated: false };
     }
 
-    return this.applicationService.create({
+    const application = await this.applicationService.create({
       universalIdentifier: params.universalIdentifier,
       name: params.name,
       sourcePath: params.universalIdentifier,
@@ -237,5 +259,7 @@ export class ApplicationInstallService {
       applicationRegistrationId: params.applicationRegistrationId,
       workspaceId: params.workspaceId,
     });
+
+    return { application, wasCreated: true };
   }
 }

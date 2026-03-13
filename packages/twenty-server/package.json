@@ -228,6 +228,7 @@
     "@types/unzipper": "^0",
     "@yarnpkg/types": "^4.0.0",
     "rimraf": "^5.0.5",
+    "twenty-client-sdk": "workspace:*",
     "twenty-emails": "workspace:*",
     "twenty-shared": "workspace:*"
   },

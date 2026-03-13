@@ -1,6 +1,6 @@
 {
   "name": "twenty-sdk",
-  "version": "0.7.0",
+  "version": "0.7.1-canary.0",
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",
   "types": "dist/sdk/index.d.ts",
@@ -48,11 +48,6 @@
       "types": "./dist/build/index.d.ts",
       "import": "./dist/build.mjs",
       "require": "./dist/build.cjs"
-    },
-    "./clients": {
-      "types": "./dist/clients/index.d.ts",
-      "import": "./dist/clients.mjs",
-      "require": "./dist/clients.cjs"
     }
   },
   "license": "AGPL-3.0",
@@ -101,6 +96,7 @@
     "storybook": "^10.2.13",
     "ts-morph": "^25.0.0",
     "tsx": "^4.7.0",
+    "twenty-client-sdk": "workspace:*",
     "twenty-shared": "workspace:*",
     "twenty-ui": "workspace:*",
     "vite-plugin-dts": "^4.5.4",
@@ -120,9 +116,6 @@
       ],
       "front-component-renderer": [
         "dist/front-component-renderer/index.d.ts"
-      ],
-      "clients": [
-        "dist/clients/index.d.ts"
       ]
     }
   }

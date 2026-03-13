@@ -7,13 +7,16 @@ import {
 
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import type { LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
+import type { SdkClientGenerationService } from 'src/engine/core-modules/sdk-client-generation/sdk-client-generation.service';
 
 export const logicFunctionModuleFactory = async (
   twentyConfigService: TwentyConfigService,
   logicFunctionResourceService: LogicFunctionResourceService,
+  sdkClientGenerationService: SdkClientGenerationService,
 ): Promise<LogicFunctionModuleOptions> => {
   const driverType = twentyConfigService.get('LOGIC_FUNCTION_TYPE');
-  const options = { logicFunctionResourceService };
+
+  const options = { logicFunctionResourceService, sdkClientGenerationService };
 
   switch (driverType) {
     case LogicFunctionDriverType.DISABLED: {

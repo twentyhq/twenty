@@ -71,7 +71,7 @@ export default {
         329,
         330,
         332,
-        341,
+        355,
         388,
         451,
         452,
@@ -4104,6 +4104,9 @@ export default {
             "isHeadless": [
                 6
             ],
+            "usesSdkClient": [
+                6
+            ],
             "applicationTokenPair": [
                 223
             ],
@@ -6647,6 +6650,148 @@ export default {
                     ]
                 }
             ],
+            "createPageLayoutWidget": [
+                75,
+                {
+                    "input": [
+                        341,
+                        "CreatePageLayoutWidgetInput!"
+                    ]
+                }
+            ],
+            "updatePageLayoutWidget": [
+                75,
+                {
+                    "id": [
+                        1,
+                        "String!"
+                    ],
+                    "input": [
+                        343,
+                        "UpdatePageLayoutWidgetInput!"
+                    ]
+                }
+            ],
+            "destroyPageLayoutWidget": [
+                6,
+                {
+                    "id": [
+                        1,
+                        "String!"
+                    ]
+                }
+            ],
+            "createPageLayoutTab": [
+                110,
+                {
+                    "input": [
+                        344,
+                        "CreatePageLayoutTabInput!"
+                    ]
+                }
+            ],
+            "updatePageLayoutTab": [
+                110,
+                {
+                    "id": [
+                        1,
+                        "String!"
+                    ],
+                    "input": [
+                        345,
+                        "UpdatePageLayoutTabInput!"
+                    ]
+                }
+            ],
+            "destroyPageLayoutTab": [
+                6,
+                {
+                    "id": [
+                        1,
+                        "String!"
+                    ]
+                }
+            ],
+            "createPageLayout": [
+                111,
+                {
+                    "input": [
+                        346,
+                        "CreatePageLayoutInput!"
+                    ]
+                }
+            ],
+            "updatePageLayout": [
+                111,
+                {
+                    "id": [
+                        1,
+                        "String!"
+                    ],
+                    "input": [
+                        347,
+                        "UpdatePageLayoutInput!"
+                    ]
+                }
+            ],
+            "destroyPageLayout": [
+                6,
+                {
+                    "id": [
+                        1,
+                        "String!"
+                    ]
+                }
+            ],
+            "updatePageLayoutWithTabsAndWidgets": [
+                111,
+                {
+                    "id": [
+                        1,
+                        "String!"
+                    ],
+                    "input": [
+                        348,
+                        "UpdatePageLayoutWithTabsInput!"
+                    ]
+                }
+            ],
+            "deleteOneLogicFunction": [
+                32,
+                {
+                    "input": [
+                        320,
+                        "LogicFunctionIdInput!"
+                    ]
+                }
+            ],
+            "createOneLogicFunction": [
+                32,
+                {
+                    "input": [
+                        351,
+                        "CreateLogicFunctionFromSourceInput!"
+                    ]
+                }
+            ],
+            "executeOneLogicFunction": [
+                217,
+                {
+                    "input": [
+                        352,
+                        "ExecuteOneLogicFunctionInput!"
+                    ]
+                }
+            ],
+            "updateOneLogicFunction": [
+                6,
+                {
+                    "input": [
+                        353,
+                        "UpdateLogicFunctionFromSourceInput!"
+                    ]
+                }
+            ],
             "createObjectEvent": [
                 122,
                 {
@@ -6671,7 +6816,7 @@ export default {
                 122,
                 {
                     "type": [
-                        341,
+                        355,
                         "AnalyticsType!"
                     ],
                     "name": [
@@ -6682,148 +6827,6 @@ export default {
                     ],
                     "properties": [
                         15
-                    ]
-                }
-            ],
-            "createPageLayoutWidget": [
-                75,
-                {
-                    "input": [
-                        342,
-                        "CreatePageLayoutWidgetInput!"
-                    ]
-                }
-            ],
-            "updatePageLayoutWidget": [
-                75,
-                {
-                    "id": [
-                        1,
-                        "String!"
-                    ],
-                    "input": [
-                        344,
-                        "UpdatePageLayoutWidgetInput!"
-                    ]
-                }
-            ],
-            "destroyPageLayoutWidget": [
-                6,
-                {
-                    "id": [
-                        1,
-                        "String!"
-                    ]
-                }
-            ],
-            "createPageLayoutTab": [
-                110,
-                {
-                    "input": [
-                        345,
-                        "CreatePageLayoutTabInput!"
-                    ]
-                }
-            ],
-            "updatePageLayoutTab": [
-                110,
-                {
-                    "id": [
-                        1,
-                        "String!"
-                    ],
-                    "input": [
-                        346,
-                        "UpdatePageLayoutTabInput!"
-                    ]
-                }
-            ],
-            "destroyPageLayoutTab": [
-                6,
-                {
-                    "id": [
-                        1,
-                        "String!"
-                    ]
-                }
-            ],
-            "createPageLayout": [
-                111,
-                {
-                    "input": [
-                        347,
-                        "CreatePageLayoutInput!"
-                    ]
-                }
-            ],
-            "updatePageLayout": [
-                111,
-                {
-                    "id": [
-                        1,
-                        "String!"
-                    ],
-                    "input": [
-                        348,
-                        "UpdatePageLayoutInput!"
-                    ]
-                }
-            ],
-            "destroyPageLayout": [
-                6,
-                {
-                    "id": [
-                        1,
-                        "String!"
-                    ]
-                }
-            ],
-            "updatePageLayoutWithTabsAndWidgets": [
-                111,
-                {
-                    "id": [
-                        1,
-                        "String!"
-                    ],
-                    "input": [
-                        349,
-                        "UpdatePageLayoutWithTabsInput!"
-                    ]
-                }
-            ],
-            "deleteOneLogicFunction": [
-                32,
-                {
-                    "input": [
-                        320,
-                        "LogicFunctionIdInput!"
-                    ]
-                }
-            ],
-            "createOneLogicFunction": [
-                32,
-                {
-                    "input": [
-                        352,
-                        "CreateLogicFunctionFromSourceInput!"
-                    ]
-                }
-            ],
-            "executeOneLogicFunction": [
-                217,
-                {
-                    "input": [
-                        353,
-                        "ExecuteOneLogicFunctionInput!"
-                    ]
-                }
-            ],
-            "updateOneLogicFunction": [
-                6,
-                {
-                    "input": [
-                        354,
-                        "UpdateLogicFunctionFromSourceInput!"
                     ]
                 }
             ],
@@ -8572,7 +8575,6 @@ export default {
                 1
             ]
         },
-        "AnalyticsType": {},
         "CreatePageLayoutWidgetInput": {
             "pageLayoutTabId": [
                 3
@@ -8587,7 +8589,7 @@ export default {
                 3
             ],
             "gridPosition": [
-                343
+                342
             ],
             "position": [
                 15
@@ -8627,7 +8629,7 @@ export default {
                 3
             ],
             "gridPosition": [
-                343
+                342
             ],
             "position": [
                 15
@@ -8709,7 +8711,7 @@ export default {
                 3
             ],
             "tabs": [
-                350
+                349
             ],
             "__typename": [
                 1
@@ -8729,7 +8731,7 @@ export default {
                 1
             ],
             "widgets": [
-                351
+                350
             ],
             "__typename": [
                 1
@@ -8752,7 +8754,7 @@ export default {
                 3
             ],
             "gridPosition": [
-                343
+                342
             ],
             "position": [
                 15
@@ -8821,7 +8823,7 @@ export default {
                 3
             ],
             "update": [
-                355
+                354
             ],
             "__typename": [
                 1
@@ -8865,6 +8867,7 @@ export default {
                 1
             ]
         },
+        "AnalyticsType": {},
         "CreateOneObjectInput": {
             "object": [
                 357
