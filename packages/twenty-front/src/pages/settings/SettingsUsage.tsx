@@ -1,5 +1,6 @@
 import { Trans, useLingui } from '@lingui/react/macro';
 import { SettingsBillingAnalyticsSection } from '@/billing/components/SettingsBillingAnalyticsSection';
+import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { SettingsPath } from 'twenty-shared/types';
@@ -18,7 +19,9 @@ export const SettingsUsage = () => {
         { children: <Trans>Usage</Trans> },
       ]}
     >
-      <SettingsBillingAnalyticsSection />
+      <SettingsPageContainer>
+        <SettingsBillingAnalyticsSection />
+      </SettingsPageContainer>
     </SubMenuTopBarContainer>
   );
 };
