@@ -371,6 +371,15 @@ describe('copyBaseApplicationProject', () => {
           ),
         ).toBe(true);
         expect(
+          await fs.pathExists(
+            join(
+              srcPath,
+              'page-layouts',
+              'example-record-page-layout.ts',
+            ),
+          ),
+        ).toBe(true);
+        expect(
           await fs.pathExists(join(srcPath, 'views', 'example-view.ts')),
         ).toBe(true);
         expect(
@@ -457,6 +466,15 @@ describe('copyBaseApplicationProject', () => {
           ),
         ).toBe(false);
         expect(
+          await fs.pathExists(
+            join(
+              srcPath,
+              'page-layouts',
+              'example-record-page-layout.ts',
+            ),
+          ),
+        ).toBe(false);
+        expect(
           await fs.pathExists(join(srcPath, 'views', 'example-view.ts')),
         ).toBe(false);
         expect(
@@ -483,7 +501,7 @@ describe('copyBaseApplicationProject', () => {
     });
 
     describe('selective examples', () => {
-      it('should create only front component when only that option is enabled', async () => {
+      it('should create front component and page layout when only front component option is enabled', async () => {
         await copyBaseApplicationProject({
           appName: 'my-test-app',
           appDisplayName: 'My Test App',
@@ -507,6 +525,11 @@ describe('copyBaseApplicationProject', () => {
         expect(
           await fs.pathExists(
             join(srcPath, 'front-components', 'hello-world.tsx'),
+          ),
+        ).toBe(true);
+        expect(
+          await fs.pathExists(
+            join(srcPath, 'page-layouts', 'example-record-page-layout.ts'),
           ),
         ).toBe(true);
         expect(
