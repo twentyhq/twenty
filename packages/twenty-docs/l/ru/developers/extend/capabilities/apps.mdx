@@ -49,31 +49,31 @@ npx create-twenty-app@latest my-app --minimal
 Отсюда вы можете:
 
 ```bash filename="Terminal"
-# Добавить новую сущность в ваше приложение (с мастером)
+# Add a new entity to your application (guided)
 yarn twenty entity:add
 
-# Просматривать логи функций вашего приложения
+# Watch your application's function logs
 yarn twenty function:logs
 
-# Выполнить функцию по имени
+# Execute a function by name
 yarn twenty function:execute -n my-function -p '{"name": "test"}'
 
-# Выполнить предустановочную функцию
+# Execute the pre-install function
 yarn twenty function:execute --preInstall
 
-# Выполнить послеустановочную функцию
+# Execute the post-install function
 yarn twenty function:execute --postInstall
 
-# Собрать приложение для распространения
+# Build the app for distribution
 yarn twenty app:build
 
-# Опубликовать приложение в npm или на сервер Twenty
+# Publish the app to npm or a Twenty server
 yarn twenty app:publish
 
-# Удалить приложение из текущего рабочего пространства
+# Uninstall the application from the current workspace
 yarn twenty app:uninstall
 
-# Показать справку по командам
+# Display commands' help
 yarn twenty help
 ```
 
@@ -1246,23 +1246,23 @@ uploadFile(
 
 Ознакомьтесь с минимальным сквозным примером, демонстрирующим объекты, логические функции, фронт-компоненты и несколько триггеров, [здесь](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/hello-world):
 
-## Сборка вашего приложения
+## Building your app
 
-После того как вы разработали приложение с помощью `app:dev`, используйте `app:build`, чтобы скомпилировать его в распространяемый пакет.
+Once you've developed your app with `app:dev`, use `app:build` to compile it into a distributable package.
 
 ```bash filename="Terminal"
-# Собрать приложение (результат сохраняется в .twenty/output/)
+# Build the app (output goes to .twenty/output/)
 yarn twenty app:build
 
-# Собрать и создать tarball (.tgz) для распространения
+# Build and create a tarball (.tgz) for distribution
 yarn twenty app:build --tarball
 ```
 
-Процесс сборки:
+The build process:
 
-1. **Разбирает и проверяет манифест** — читает все сущности `defineX()` из ваших исходных файлов и проверяет структуру манифеста.
-2. **Компилирует логические функции и фронтенд-компоненты** — упаковывает исходники TypeScript в ESM-файлы `.mjs` с помощью esbuild.
-3. **Генерирует контрольные суммы** — вычисляет хэши MD5 для каждого собранного файла, сохраняемые в манифесте как `builtHandlerChecksum` / `builtComponentChecksum`.
+1. **Parses and validates the manifest** — reads all `defineX()` entities from your source files and validates the manifest structure.
+2. **Compiles logic functions and front components** — bundles TypeScript sources into ESM `.mjs` files using esbuild.
+3. **Generates checksums** — computes MD5 hashes for each built file, stored in the manifest as `builtHandlerChecksum` / `builtComponentChecksum`.
 4. **Generates the typed API client** — introspects the GraphQL schema and generates typed `CoreApiClient` and `MetadataApiClient` clients.
 5. **Runs a TypeScript type check** — runs `tsc --noEmit` to catch type errors before publishing.
 6. **Rebuilds with the generated client** — performs a second compilation pass so the generated client types are included.
