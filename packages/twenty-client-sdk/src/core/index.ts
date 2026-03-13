@@ -1,2 +1,2 @@
-export { CoreApiClient } from '../generated/core/index';
-export * as CoreSchema from '../generated/core/schema';
+export { CoreApiClient } from './generated/index';
+export * as CoreSchema from './generated/schema';

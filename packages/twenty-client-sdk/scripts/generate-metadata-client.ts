@@ -47,8 +47,8 @@ const main = async () => {
     __dirname,
     '..',
     'src',
-    'generated',
     'metadata',
+    'generated',
   );
 
   await generateMetadataClient({
