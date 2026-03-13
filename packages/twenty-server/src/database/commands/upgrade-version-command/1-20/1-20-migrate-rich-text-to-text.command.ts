@@ -65,9 +65,7 @@ export class MigrateRichTextToTextCommand extends ActiveOrSuspendedWorkspacesMig
       return;
     }
 
-    this.logger.log(
-      `Migrating RICH_TEXT fields in workspace ${workspaceId}`,
-    );
+    this.logger.log(`Migrating RICH_TEXT fields in workspace ${workspaceId}`);
 
     const queryRunner = this.coreDataSource.createQueryRunner();
 
