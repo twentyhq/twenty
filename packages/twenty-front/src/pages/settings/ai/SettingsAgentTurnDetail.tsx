@@ -151,7 +151,7 @@ export const SettingsAgentTurnDetail = () => {
             <StyledMessagesContainer>
               {mapDBMessagesToUIMessages(
                 ([...turn.messages] as AgentMessage[])
-                  .filter((msg) => msg.parts && msg.parts.length > 0)
+                  .filter((msg) => msg.parts.length > 0)
                   .sort((a, b) => {
                     if (a.role === 'user' && b.role === 'assistant') return -1;
                     if (a.role === 'assistant' && b.role === 'user') return 1;

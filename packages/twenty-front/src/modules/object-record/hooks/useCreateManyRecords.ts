@@ -255,8 +255,9 @@ export const useCreateManyRecords = <
     });
 
     return (
-      (createdObjects.data as Record<string, RecordGqlNode[]> | null)?.[mutationResponseField] ??
-      []
+      (createdObjects.data as Record<string, RecordGqlNode[]> | null)?.[
+        mutationResponseField
+      ] ?? []
     );
   };
 

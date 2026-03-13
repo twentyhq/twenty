@@ -59,7 +59,9 @@ export const useLazyFindOneRecord = <T extends ObjectRecord = ObjectRecord>({
       }).retain();
       if (result.data) {
         const record = getRecordFromRecordNode<T>({
-          recordNode: (result.data as Record<string, RecordGqlNode>)[objectNameSingular],
+          recordNode: (result.data as Record<string, RecordGqlNode>)[
+            objectNameSingular
+          ],
         });
         onCompleted?.(record);
       }
@@ -67,6 +69,9 @@ export const useLazyFindOneRecord = <T extends ObjectRecord = ObjectRecord>({
     called,
     error,
     loading,
-    record: (data as Record<string, RecordGqlNode> | undefined)?.[objectNameSingular] || undefined,
+    record:
+      (data as Record<string, RecordGqlNode> | undefined)?.[
+        objectNameSingular
+      ] || undefined,
   };
 };
