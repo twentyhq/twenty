@@ -1,7 +1,7 @@
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
-import { isDefined } from 'twenty-shared/utils';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useContextStoreObjectMetadataItemOrThrow = (
   contextStoreInstanceId?: string,

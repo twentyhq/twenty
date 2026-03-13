@@ -1,7 +1,7 @@
 import { Suspense, lazy } from 'react';
 
+import { EngineCommandContextProviders } from '@/command-menu-item/engine-command/components/EngineCommandContextProviders';
 import { ENGINE_COMPONENT_KEY_HEADLESS_COMPONENT_MAP } from '@/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap';
-import { EngineCommandIdContext } from '@/command-menu-item/engine-command/contexts/EngineCommandIdContext';
 import { mountedEngineCommandsState } from '@/command-menu-item/engine-command/states/mountedEngineCommandsState';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { mountedHeadlessFrontComponentMapsState } from '@/front-components/states/mountedHeadlessFrontComponentMapsState';
@@ -59,13 +59,13 @@ export const HeadlessFrontComponentMountRoot = () => {
               key={engineCommandId}
               value={{ instanceId: mountContext.contextStoreInstanceId }}
             >
-              <EngineCommandIdContext.Provider value={engineCommandId}>
+              <EngineCommandContextProviders engineCommandId={engineCommandId}>
                 {
                   ENGINE_COMPONENT_KEY_HEADLESS_COMPONENT_MAP[
                     mountContext.engineComponentKey
                   ]
                 }
-              </EngineCommandIdContext.Provider>
+              </EngineCommandContextProviders>
             </ContextStoreComponentInstanceContext.Provider>
           ),
         )}
