@@ -570,7 +570,16 @@ export class FieldsWidgetUpsertService {
           isDefined(field.viewFieldGroupId) &&
           deletedGroupIds.has(field.viewFieldGroupId);
 
-        return hasStaleOverride || hasStaleBase;
+        const hasStaleBaseHiddenByNullOverride =
+          overriddenGroupId === null &&
+          isDefined(field.viewFieldGroupId) &&
+          deletedGroupIds.has(field.viewFieldGroupId);
+
+        return (
+          hasStaleOverride ||
+          hasStaleBase ||
+          hasStaleBaseHiddenByNullOverride
+        );
       })
       .map((field) => {
         const overriddenGroupId = field.overrides?.viewFieldGroupId;
@@ -607,6 +616,19 @@ export class FieldsWidgetUpsertService {
                   viewFieldGroupUniversalIdentifierById: {},
                 })
               : null,
+            updatedAt: now,
+          };
+        }
+
+        if (
+          overriddenGroupId === null &&
+          isDefined(field.viewFieldGroupId) &&
+          deletedGroupIds.has(field.viewFieldGroupId)
+        ) {
+          return {
+            ...field,
+            viewFieldGroupId: null,
+            viewFieldGroupUniversalIdentifier: null,
             updatedAt: now,
           };
         }
