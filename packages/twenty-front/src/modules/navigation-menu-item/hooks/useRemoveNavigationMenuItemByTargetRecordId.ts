@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { FindManyNavigationMenuItemsDocument } from '~/generated-metadata/graphql';
-import { prefetchNavigationMenuItemsState } from '@/prefetch/states/prefetchNavigationMenuItemsState';
+import { navigationMenuItemsState } from '@/navigation-menu-item/states/navigationMenuItemsState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { isDefined } from 'twenty-shared/utils';
 import { useStore } from 'jotai';
@@ -12,15 +12,13 @@ export const useRemoveNavigationMenuItemByTargetRecordId = () => {
   const apolloCoreClient = useApolloCoreClient();
   const cache = apolloCoreClient.cache;
 
-  const setPrefetchNavigationMenuItems = useSetAtomState(
-    prefetchNavigationMenuItemsState,
-  );
+  const setNavigationMenuItems = useSetAtomState(navigationMenuItemsState);
 
   const removeNavigationMenuItemsByTargetRecordIds = useCallback(
     (targetRecordIds: string[]) => {
       const targetRecordIdsSet = new Set(targetRecordIds);
       const currentNavigationMenuItems = store.get(
-        prefetchNavigationMenuItemsState.atom,
+        navigationMenuItemsState.atom,
       );
 
       const updatedNavigationMenuItems = currentNavigationMenuItems.filter(
@@ -29,7 +27,7 @@ export const useRemoveNavigationMenuItemByTargetRecordId = () => {
           !targetRecordIdsSet.has(item.targetRecordId),
       );
 
-      setPrefetchNavigationMenuItems(updatedNavigationMenuItems);
+      setNavigationMenuItems(updatedNavigationMenuItems);
 
       cache.updateQuery(
         { query: FindManyNavigationMenuItemsDocument },
@@ -45,7 +43,7 @@ export const useRemoveNavigationMenuItemByTargetRecordId = () => {
         },
       );
     },
-    [cache, setPrefetchNavigationMenuItems, store],
+    [cache, setNavigationMenuItems, store],
   );
 
   return {

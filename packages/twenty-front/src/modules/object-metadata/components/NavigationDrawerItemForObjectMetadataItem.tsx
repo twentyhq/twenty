@@ -1,5 +1,3 @@
-import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
-import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { ObjectIconWithViewOverlay } from '@/navigation-menu-item/components/ObjectIconWithViewOverlay';
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import { useObjectNavItemColor } from '@/navigation-menu-item/hooks/useObjectNavItemColor';
@@ -9,22 +7,12 @@ import { type ProcessedNavigationMenuItem } from '@/navigation-menu-item/utils/s
 import { lastVisitedViewPerObjectMetadataItemState } from '@/navigation/states/lastVisitedViewPerObjectMetadataItemState';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
-import { NavigationDrawerItemsCollapsableContainer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemsCollapsableContainer';
-import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
-import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { coreViewsFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/coreViewsFromObjectMetadataItemFamilySelector';
 import { ViewKey } from '@/views/types/ViewKey';
 import { useLocation } from 'react-router-dom';
 import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
 import { Avatar, useIcons } from 'twenty-ui/display';
-import { AnimatedExpandableContainer } from 'twenty-ui/layout';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
-
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
 export type NavigationDrawerItemForObjectMetadataItemProps = {
   objectMetadataItem: ObjectMetadataItem;
@@ -46,21 +34,8 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
   const isNavigationMenuInEditMode = useAtomStateValue(
     isNavigationMenuInEditModeState,
   );
-  const isNavigationMenuItemEditingEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED,
-  );
   const lastVisitedViewPerObjectMetadataItem = useAtomStateValue(
     lastVisitedViewPerObjectMetadataItemState,
-  );
-
-  const views = useAtomFamilySelectorValue(
-    coreViewsFromObjectMetadataItemFamilySelector,
-    { objectMetadataItemId: objectMetadataItem.id },
-  );
-
-  const contextStoreCurrentViewId = useAtomComponentStateValue(
-    contextStoreCurrentViewIdComponentState,
-    MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
 
   const lastVisitedViewId =
@@ -139,72 +114,16 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
         )
       : getIcon(objectMetadataItem.icon);
 
-  const iconThemeColor =
-    isNavigationMenuItemEditingEnabled && !isRecord
-      ? isDefined(navigationMenuItem?.color)
-        ? navigationMenuItem.color
-        : (getStandardObjectIconColor(objectMetadataItem.nameSingular) ??
-          'gray')
-      : undefined;
+  const iconThemeColor = !isRecord
+    ? isDefined(navigationMenuItem?.color)
+      ? navigationMenuItem.color
+      : (getStandardObjectIconColor(objectMetadataItem.nameSingular) ?? 'gray')
+    : undefined;
 
   const secondaryLabel =
     isRecord || isViewWithCustomName
       ? objectMetadataItem.labelSingular
       : undefined;
-
-  const shouldSubItemsBeDisplayed =
-    !isNavigationMenuItemEditingEnabled && isActive && views.length > 1;
-
-  const sortedObjectMetadataViews = [...views].sort(
-    (viewA, viewB) => viewA.position - viewB.position,
-  );
-
-  const selectedSubItemIndex = sortedObjectMetadataViews.findIndex(
-    (view) => contextStoreCurrentViewId === view.id,
-  );
-
-  const subItemArrayLength = sortedObjectMetadataViews.length;
-
-  if (!isNavigationMenuItemEditingEnabled) {
-    return (
-      <NavigationDrawerItemsCollapsableContainer
-        isGroup={shouldSubItemsBeDisplayed}
-      >
-        <NavigationDrawerItem
-          key={objectMetadataItem.id}
-          label={objectMetadataItem.labelPlural}
-          to={navigationPath}
-          Icon={getIcon(objectMetadataItem.icon)}
-          active={isActive}
-        />
-        <AnimatedExpandableContainer
-          isExpanded={shouldSubItemsBeDisplayed}
-          dimension="height"
-          mode="fit-content"
-          containAnimation
-        >
-          {sortedObjectMetadataViews.map((view, index) => (
-            <NavigationDrawerSubItem
-              label={view.name}
-              to={getAppPath(
-                AppPath.RecordIndexPage,
-                { objectNamePlural: objectMetadataItem.namePlural },
-                { viewId: view.id },
-              )}
-              active={contextStoreCurrentViewId === view.id}
-              subItemState={getNavigationSubItemLeftAdornment({
-                index,
-                arrayLength: subItemArrayLength,
-                selectedIndex: selectedSubItemIndex,
-              })}
-              Icon={getIcon(view.icon)}
-              key={view.id}
-            />
-          ))}
-        </AnimatedExpandableContainer>
-      </NavigationDrawerItemsCollapsableContainer>
-    );
-  }
 
   return (
     <NavigationDrawerItem

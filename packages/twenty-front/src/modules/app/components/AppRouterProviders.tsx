@@ -18,7 +18,7 @@ import { PromiseRejectionEffect } from '@/error-handler/components/PromiseReject
 import { HeadlessFrontComponentMountRoot } from '@/front-components/components/HeadlessFrontComponentMountRoot';
 import { ApolloCoreProvider } from '@/object-metadata/components/ApolloCoreProvider';
 import { PreComputedChipGeneratorsProvider } from '@/object-metadata/components/PreComputedChipGeneratorsProvider';
-import { PrefetchDataProvider } from '@/prefetch/components/PrefetchDataProvider';
+
 import { SSEProvider } from '@/sse-db-event/components/SSEProvider';
 import { SupportChatEffect } from '@/support/components/SupportChatEffect';
 import { DialogManager } from '@/ui/feedback/dialog-manager/components/DialogManager';
@@ -56,32 +56,30 @@ export const AppRouterProviders = () => {
                   <ApolloCoreProvider>
                     <SSEProvider>
                       <PreComputedChipGeneratorsProvider>
-                        <PrefetchDataProvider>
-                          <UserThemeProviderEffect />
-                          <SnackBarProvider>
-                            <ErrorMessageEffect />
-                            <AgentChatProvider>
-                              <DialogComponentInstanceContext.Provider
-                                value={{ instanceId: 'dialog-manager' }}
-                              >
-                                <DialogManager>
-                                  <StrictMode>
-                                    <PromiseRejectionEffect />
-                                    <GotoHotkeysEffectsProvider />
-                                    <PageTitle title={pageTitle} />
-                                    <PageFavicon />
-                                    <Outlet />
-                                    <GlobalFilePreviewModal />
-                                    <CommandMenuConfirmationModalManager />
-                                    <HeadlessFrontComponentMountRoot />
-                                  </StrictMode>
-                                </DialogManager>
-                              </DialogComponentInstanceContext.Provider>
-                            </AgentChatProvider>
-                          </SnackBarProvider>
-                          <MainContextStoreProvider />
-                          <SupportChatEffect />
-                        </PrefetchDataProvider>
+                        <UserThemeProviderEffect />
+                        <SnackBarProvider>
+                          <ErrorMessageEffect />
+                          <AgentChatProvider>
+                            <DialogComponentInstanceContext.Provider
+                              value={{ instanceId: 'dialog-manager' }}
+                            >
+                              <DialogManager>
+                                <StrictMode>
+                                  <PromiseRejectionEffect />
+                                  <GotoHotkeysEffectsProvider />
+                                  <PageTitle title={pageTitle} />
+                                  <PageFavicon />
+                                  <Outlet />
+                                  <GlobalFilePreviewModal />
+                                  <CommandMenuConfirmationModalManager />
+                                  <HeadlessFrontComponentMountRoot />
+                                </StrictMode>
+                              </DialogManager>
+                            </DialogComponentInstanceContext.Provider>
+                          </AgentChatProvider>
+                        </SnackBarProvider>
+                        <MainContextStoreProvider />
+                        <SupportChatEffect />
                         <PageChangeEffect />
                       </PreComputedChipGeneratorsProvider>
                     </SSEProvider>
