@@ -9,6 +9,14 @@ export const getFirstNonEmptyLineOfRichText = (
   }
   for (const block of blocks) {
     if (!isUndefinedOrNull(block.content)) {
+      if (!Array.isArray(block.content)) {
+        const value = String(block.content).trim();
+        if (value !== '') {
+          return value;
+        }
+        continue;
+      }
+
       const contentArray = block.content as Array<
         { text: string } | { link: string }
       >;
