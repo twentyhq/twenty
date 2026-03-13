@@ -8,6 +8,11 @@ import {
 import { fetchSdkClientBlobUrls } from '@/front-components/utils/fetchSdkClientBlobUrls';
 import { isDefined } from 'twenty-shared/utils';
 
+const revokeBlobUrls = (blobUrls: SdkClientBlobUrls) => {
+  URL.revokeObjectURL(blobUrls.core);
+  URL.revokeObjectURL(blobUrls.metadata);
+};
+
 export const useApplicationSdkClient = ({
   applicationId,
   accessToken,
@@ -37,6 +42,11 @@ export const useApplicationSdkClient = ({
       .then((blobUrls) => {
         const targetAtom =
           sdkClientBlobUrlsFamilyState.atomFamily(applicationId);
+        const previousBlobUrls = store.get(targetAtom);
+
+        if (isDefined(previousBlobUrls)) {
+          revokeBlobUrls(previousBlobUrls);
+        }
 
         store.set(targetAtom, blobUrls);
       })
@@ -45,6 +55,19 @@ export const useApplicationSdkClient = ({
         setIsLoading(false);
       });
   }, [applicationId, accessToken, sdkClientBlobUrls, store]);
+
+  useEffect(() => {
+    return () => {
+      const targetAtom =
+        sdkClientBlobUrlsFamilyState.atomFamily(applicationId);
+      const currentBlobUrls = store.get(targetAtom);
+
+      if (isDefined(currentBlobUrls)) {
+        revokeBlobUrls(currentBlobUrls);
+        store.set(targetAtom, null);
+      }
+    };
+  }, [applicationId, store]);
 
   return {
     sdkClientBlobUrls,
