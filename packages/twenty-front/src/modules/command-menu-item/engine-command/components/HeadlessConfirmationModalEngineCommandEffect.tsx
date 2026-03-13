@@ -1,4 +1,4 @@
-import { type ReactNode, useContext, useEffect, useState } from 'react';
+import { type ReactNode, useContext, useEffect, useRef } from 'react';
 
 import { COMMAND_MENU_CONFIRMATION_MODAL_RESULT_BROWSER_EVENT_NAME } from '@/command-menu-item/confirmation-modal/constants/CommandMenuItemConfirmationModalResultBrowserEventName';
 import { useCommandMenuConfirmationModal } from '@/command-menu-item/confirmation-modal/hooks/useCommandMenuConfirmationModal';
@@ -24,18 +24,19 @@ export const HeadlessConfirmationModalEngineCommandEffect = ({
   confirmButtonAccent = 'danger',
   execute,
 }: HeadlessConfirmationModalEngineCommandEffectProps) => {
-  const [hasOpened, setHasOpened] = useState(false);
+  //eslint-disable-next-line twenty/no-state-useref
+  const hasOpenedRef = useRef(false);
   const engineCommandId = useContext(EngineCommandIdContext);
   const unmountEngineCommand = useUnmountEngineCommand();
   const { openConfirmationModal } = useCommandMenuConfirmationModal();
   const { enqueueErrorSnackBar } = useSnackBar();
 
   useEffect(() => {
-    if (hasOpened || !isDefined(engineCommandId)) {
+    if (hasOpenedRef.current || !isDefined(engineCommandId)) {
       return;
     }
 
-    setHasOpened(true);
+    hasOpenedRef.current = true;
 
     openConfirmationModal({
       frontComponentId: engineCommandId,
@@ -45,7 +46,6 @@ export const HeadlessConfirmationModalEngineCommandEffect = ({
       confirmButtonAccent,
     });
   }, [
-    hasOpened,
     engineCommandId,
     openConfirmationModal,
     title,
