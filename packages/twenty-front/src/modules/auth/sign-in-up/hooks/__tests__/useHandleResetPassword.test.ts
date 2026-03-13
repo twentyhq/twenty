@@ -125,6 +125,8 @@ describe('useHandleResetPassword', () => {
     const { result } = renderHooks();
     await act(() => result.current.handleResetPassword('test@example.com')());
 
-    expect(enqueueErrorSnackBarMock).toHaveBeenCalledWith({});
+    expect(enqueueErrorSnackBarMock).toHaveBeenCalledWith({
+      message: errorMessage,
+    });
   });
 });
