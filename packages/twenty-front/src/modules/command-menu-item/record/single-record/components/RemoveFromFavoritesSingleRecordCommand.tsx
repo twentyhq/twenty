@@ -2,7 +2,7 @@ import { Command } from '@/command-menu-item/display/components/Command';
 import { useSelectedRecordIdOrThrow } from '@/command-menu-item/record/single-record/hooks/useSelectedRecordIdOrThrow';
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { useDeleteNavigationMenuItem } from '@/navigation-menu-item/hooks/useDeleteNavigationMenuItem';
-import { usePrefetchedNavigationMenuItemsData } from '@/navigation-menu-item/hooks/usePrefetchedNavigationMenuItemsData';
+import { useNavigationMenuItemsData } from '@/navigation-menu-item/hooks/useNavigationMenuItemsData';
 import { isDefined } from 'twenty-shared/utils';
 
 export const RemoveFromFavoritesSingleRecordCommand = () => {
@@ -10,7 +10,7 @@ export const RemoveFromFavoritesSingleRecordCommand = () => {
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
 
   const { navigationMenuItems, workspaceNavigationMenuItems } =
-    usePrefetchedNavigationMenuItemsData();
+    useNavigationMenuItemsData();
 
   const { deleteNavigationMenuItem } = useDeleteNavigationMenuItem();
 

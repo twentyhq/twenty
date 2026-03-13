@@ -54,9 +54,7 @@ export const ViewBar = ({
       <ViewBarPageTitle />
       <TopBar
         className={className}
-        leftComponent={
-          <ViewPickerDropdown />
-        }
+        leftComponent={<ViewPickerDropdown />}
         rightComponent={
           <>
             <ObjectFilterDropdownComponentInstanceContext.Provider

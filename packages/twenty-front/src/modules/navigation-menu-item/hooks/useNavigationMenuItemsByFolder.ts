@@ -10,7 +10,7 @@ import { coreViewsState } from '@/views/states/coreViewState';
 import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
-import { usePrefetchedNavigationMenuItemsData } from './usePrefetchedNavigationMenuItemsData';
+import { useNavigationMenuItemsData } from './useNavigationMenuItemsData';
 
 type NavigationMenuItemFolder = {
   id: string;
@@ -30,7 +30,7 @@ export const useNavigationMenuItemsByFolder = () => {
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
 
   const { navigationMenuItems, workspaceNavigationMenuItems } =
-    usePrefetchedNavigationMenuItemsData();
+    useNavigationMenuItemsData();
 
   const views = coreViews.map(convertCoreViewToView);
 

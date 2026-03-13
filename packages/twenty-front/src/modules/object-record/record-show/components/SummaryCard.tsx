@@ -30,7 +30,7 @@ export const SummaryCard = ({
   objectRecordId,
   isInSidePanel,
 }: SummaryCardProps) => {
-  const { recordLoading, isPrefetchLoading } = useRecordShowContainerData({
+  const { recordLoading } = useRecordShowContainerData({
     objectRecordId,
   });
 
@@ -83,9 +83,7 @@ export const SummaryCard = ({
       logoOrAvatar={recordIdentifier?.avatarUrl ?? ''}
       avatarPlaceholder={recordIdentifier?.name ?? ''}
       date={recordCreatedAt ?? ''}
-      loading={
-        isPrefetchLoading || recordLoading || !isDefined(recordCreatedAt)
-      }
+      loading={recordLoading || !isDefined(recordCreatedAt)}
       title={
         <FieldContext.Provider
           value={{

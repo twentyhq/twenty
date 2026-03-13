@@ -15,6 +15,5 @@ export const useRecordShowContainerData = ({
 
   return {
     recordLoading,
-    isPrefetchLoading: false,
   };
 };

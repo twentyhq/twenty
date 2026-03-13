@@ -1,5 +1,5 @@
 import { type Decorator } from '@storybook/react-vite';
 
-export const PrefetchLoadingDecorator: Decorator = (Story) => {
+export const LoadingDecorator: Decorator = (Story) => {
   return <Story />;
 };

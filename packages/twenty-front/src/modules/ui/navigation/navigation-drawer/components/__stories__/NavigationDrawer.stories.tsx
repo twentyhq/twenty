@@ -9,7 +9,7 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import { SettingsPath } from 'twenty-shared/types';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
-import { PrefetchLoadedDecorator } from '~/testing/decorators/PrefetchLoadedDecorator';
+import { LoadedDecorator } from '~/testing/decorators/LoadedDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedWorkspaceMemberData } from '~/testing/mock-data/users';
@@ -50,7 +50,7 @@ const meta: Meta<typeof NavigationDrawer> = {
     ComponentWithRouterDecorator,
     SnackBarDecorator,
     ObjectMetadataItemsDecorator,
-    PrefetchLoadedDecorator,
+    LoadedDecorator,
     (Story) => {
       const setCurrentWorkspaceMember = useSetAtomState(
         currentWorkspaceMemberState,

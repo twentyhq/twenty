@@ -1,5 +1,5 @@
 import { useCreateNavigationMenuItem } from '@/navigation-menu-item/hooks/useCreateNavigationMenuItem';
-import { usePrefetchedNavigationMenuItemsData } from '@/navigation-menu-item/hooks/usePrefetchedNavigationMenuItemsData';
+import { useNavigationMenuItemsData } from '@/navigation-menu-item/hooks/useNavigationMenuItemsData';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -60,7 +60,7 @@ export const ViewPickerOptionDropdown = ({
 
   const { createNavigationMenuItem } = useCreateNavigationMenuItem();
   const { navigationMenuItems, currentWorkspaceMemberId } =
-    usePrefetchedNavigationMenuItemsData();
+    useNavigationMenuItemsData();
 
   // Users with VIEWS permission can edit all views
   // Users without VIEWS permission can only edit unlisted views (which are always their own, filtered by backend)

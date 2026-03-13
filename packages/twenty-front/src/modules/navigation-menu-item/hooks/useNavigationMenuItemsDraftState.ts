@@ -11,27 +11,25 @@ export const useNavigationMenuItemsDraftState = () => {
   const isNavigationMenuInEditMode = useAtomStateValue(
     isNavigationMenuInEditModeState,
   );
-  const prefetchNavigationMenuItems = useAtomStateValue(
-    navigationMenuItemsState,
-  );
+  const navigationMenuItems = useAtomStateValue(navigationMenuItemsState);
   const navigationMenuItemsDraft = useAtomStateValue(
     navigationMenuItemsDraftState,
   );
 
-  const workspaceNavigationMenuItemsFromPrefetch =
-    filterWorkspaceNavigationMenuItems(prefetchNavigationMenuItems);
+  const workspaceNavigationMenuItemsFromState =
+    filterWorkspaceNavigationMenuItems(navigationMenuItems);
 
   const workspaceNavigationMenuItems =
     isNavigationMenuInEditMode && isDefined(navigationMenuItemsDraft)
       ? navigationMenuItemsDraft
-      : workspaceNavigationMenuItemsFromPrefetch;
+      : workspaceNavigationMenuItemsFromState;
 
   const isDirty =
     isNavigationMenuInEditMode &&
     isDefined(navigationMenuItemsDraft) &&
     !isDeeplyEqual(
       navigationMenuItemsDraft,
-      workspaceNavigationMenuItemsFromPrefetch,
+      workspaceNavigationMenuItemsFromState,
     );
 
   return {

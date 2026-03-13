@@ -8,21 +8,19 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { isDefined } from 'twenty-shared/utils';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
-type PrefetchedNavigationMenuItemsData = {
+type NavigationMenuItemsData = {
   navigationMenuItems: NavigationMenuItem[];
   workspaceNavigationMenuItems: NavigationMenuItem[];
   currentWorkspaceMemberId: string | undefined;
 };
 
-export const usePrefetchedNavigationMenuItemsData =
-  (): PrefetchedNavigationMenuItemsData => {
+export const useNavigationMenuItemsData =
+  (): NavigationMenuItemsData => {
     const currentWorkspaceMember = useAtomStateValue(
       currentWorkspaceMemberState,
     );
     const currentWorkspaceMemberId = currentWorkspaceMember?.id;
-    const prefetchNavigationMenuItems = useAtomStateValue(
-      navigationMenuItemsState,
-    );
+    const navigationMenuItems = useAtomStateValue(navigationMenuItemsState);
     const isNavigationMenuInEditMode = useAtomStateValue(
       isNavigationMenuInEditModeState,
     );
@@ -30,20 +28,20 @@ export const usePrefetchedNavigationMenuItemsData =
       navigationMenuItemsDraftState,
     );
 
-    const navigationMenuItems = prefetchNavigationMenuItems.filter((item) =>
+    const userNavigationMenuItems = navigationMenuItems.filter((item) =>
       isDefined(item.userWorkspaceId),
     );
 
-    const workspaceNavigationMenuItemsFromPrefetch =
-      filterWorkspaceNavigationMenuItems(prefetchNavigationMenuItems);
+    const workspaceNavigationMenuItemsFromState =
+      filterWorkspaceNavigationMenuItems(navigationMenuItems);
 
     const workspaceNavigationMenuItems =
       isNavigationMenuInEditMode && isDefined(navigationMenuItemsDraft)
         ? navigationMenuItemsDraft
-        : workspaceNavigationMenuItemsFromPrefetch;
+        : workspaceNavigationMenuItemsFromState;
 
     return {
-      navigationMenuItems,
+      navigationMenuItems: userNavigationMenuItems,
       workspaceNavigationMenuItems,
       currentWorkspaceMemberId,
     };
