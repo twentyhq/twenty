@@ -4,6 +4,7 @@ import { useSaveNavigationMenuItemsDraft } from '@/navigation-menu-item/hooks/us
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/states/navigationMenuItemsDraftState';
 import { filterWorkspaceNavigationMenuItems } from '@/navigation-menu-item/utils/filterWorkspaceNavigationMenuItems';
 import { prefetchNavigationMenuItemsState } from '@/prefetch/states/prefetchNavigationMenuItemsState';
+import { type DraftPageLayout } from '@/page-layout/types/DraftPageLayout';
 import { UPSERT_FIELDS_WIDGET } from '@/page-layout/graphql/mutations/upsertFieldsWidget';
 import { useUpdatePageLayoutWithTabsAndWidgets } from '@/page-layout/hooks/useUpdatePageLayoutWithTabsAndWidgets';
 import { fieldsWidgetEditorModeDraftComponentState } from '@/page-layout/states/fieldsWidgetEditorModeDraftComponentState';
@@ -216,12 +217,14 @@ export const useSaveLayoutCustomization = () => {
           continue;
         }
 
-        const persistedAsDraft = {
+        const persistedAsDraft: DraftPageLayout = {
           id: persisted.id,
           name: persisted.name,
           type: persisted.type,
           objectMetadataId: persisted.objectMetadataId,
           tabs: persisted.tabs,
+          defaultTabToFocusOnMobileAndSidePanelId:
+            persisted.defaultTabToFocusOnMobileAndSidePanelId,
         };
 
         const isPageLayoutStructureDirty = !isDeeplyEqual(

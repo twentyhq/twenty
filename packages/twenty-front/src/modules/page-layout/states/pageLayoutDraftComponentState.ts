@@ -13,6 +13,7 @@ export const pageLayoutDraftComponentState =
       type: PageLayoutType.DASHBOARD,
       objectMetadataId: null,
       tabs: [],
+      defaultTabToFocusOnMobileAndSidePanelId: null,
     },
     componentInstanceContext: PageLayoutComponentInstanceContext,
   });

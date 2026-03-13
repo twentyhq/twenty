@@ -1,6 +1,11 @@
 import { type PageLayout } from '@/page-layout/types/PageLayout';
 
-export type DraftPageLayout = Omit<
+export type DraftPageLayout = Pick<
   PageLayout,
-  'createdAt' | 'updatedAt' | 'deletedAt'
+  | 'id'
+  | 'name'
+  | 'type'
+  | 'objectMetadataId'
+  | 'tabs'
+  | 'defaultTabToFocusOnMobileAndSidePanelId'
 >;

@@ -1,4 +1,5 @@
 import { activeCustomizationPageLayoutIdsState } from '@/app/states/activeCustomizationPageLayoutIdsState';
+import { type DraftPageLayout } from '@/page-layout/types/DraftPageLayout';
 import { useNavigationMenuItemsDraftState } from '@/navigation-menu-item/hooks/useNavigationMenuItemsDraftState';
 import { fieldsWidgetGroupsDraftComponentState } from '@/page-layout/states/fieldsWidgetGroupsDraftComponentState';
 import { fieldsWidgetGroupsPersistedComponentState } from '@/page-layout/states/fieldsWidgetGroupsPersistedComponentState';
@@ -38,12 +39,14 @@ export const useIsLayoutCustomizationDirty = () => {
             continue;
           }
 
-          const persistedAsDraft = {
+          const persistedAsDraft: DraftPageLayout = {
             id: persisted.id,
             name: persisted.name,
             type: persisted.type,
             objectMetadataId: persisted.objectMetadataId,
             tabs: persisted.tabs,
+            defaultTabToFocusOnMobileAndSidePanelId:
+              persisted.defaultTabToFocusOnMobileAndSidePanelId,
           };
 
           if (!isDeeplyEqual(draft, persistedAsDraft)) {

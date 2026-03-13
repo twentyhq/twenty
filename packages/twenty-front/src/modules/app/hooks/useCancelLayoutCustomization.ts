@@ -1,4 +1,5 @@
 import { useExitLayoutCustomizationMode } from '@/app/hooks/useExitLayoutCustomizationMode';
+import { type DraftPageLayout } from '@/page-layout/types/DraftPageLayout';
 import { activeCustomizationPageLayoutIdsState } from '@/app/states/activeCustomizationPageLayoutIdsState';
 import { fieldsWidgetEditorModeDraftComponentState } from '@/page-layout/states/fieldsWidgetEditorModeDraftComponentState';
 import { fieldsWidgetEditorModePersistedComponentState } from '@/page-layout/states/fieldsWidgetEditorModePersistedComponentState';
@@ -41,7 +42,9 @@ export const useCancelLayoutCustomization = () => {
             type: persisted.type,
             objectMetadataId: persisted.objectMetadataId,
             tabs: persisted.tabs,
-          },
+            defaultTabToFocusOnMobileAndSidePanelId:
+              persisted.defaultTabToFocusOnMobileAndSidePanelId,
+          } satisfies DraftPageLayout,
         );
 
         store.set(
