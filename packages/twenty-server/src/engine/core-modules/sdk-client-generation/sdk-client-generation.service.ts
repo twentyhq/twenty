@@ -7,10 +7,12 @@ import { join } from 'path';
 import { type Readable } from 'stream';
 import { pipeline } from 'stream/promises';
 
+import { printSchema } from 'graphql';
 import { replaceCoreClient } from 'twenty-client-sdk/generate';
 import { FileFolder } from 'twenty-shared/types';
 import { Repository } from 'typeorm';
 
+import { WorkspaceSchemaFactory } from 'src/engine/api/graphql/workspace-schema.factory';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import {
@@ -19,11 +21,12 @@ import {
 } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 import { createZipFile } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/create-zip-file';
 import { TemporaryDirManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/temporary-dir-manager';
-import { SDK_CLIENT_PACKAGE_DIRNAME } from 'src/engine/core-modules/logic-function/logic-function-resource/constants/sdk-client-package-dirname';
+import { SDK_CLIENT_PACKAGE_DIRNAME } from 'src/engine/core-modules/sdk-client-generation/constants/sdk-client-package-dirname';
 import {
   SdkClientGenerationException,
   SdkClientGenerationExceptionCode,
-} from 'src/engine/core-modules/logic-function/logic-function-resource/exceptions/sdk-client-generation.exception';
+} from 'src/engine/core-modules/sdk-client-generation/exceptions/sdk-client-generation.exception';
+import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
@@ -36,63 +39,33 @@ export class SdkClientGenerationService {
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly workspaceSchemaFactory: WorkspaceSchemaFactory,
   ) {}
 
-  // Generates the SDK client archive from the provided schema string,
-  // uploads it to file storage, and sets isSdkLayerStale = true so
+  // Introspects the application-scoped GraphQL schema and (re)generates
+  // the SDK client archive in storage. Sets isSdkLayerStale = true so
   // drivers re-download on next execution.
   async generateApplicationClient({
     workspaceId,
     applicationId,
     applicationUniversalIdentifier,
-    schema,
   }: {
     workspaceId: string;
     applicationId: string;
     applicationUniversalIdentifier: string;
-    schema: string;
   }): Promise<void> {
-    const temporaryDirManager = new TemporaryDirManager();
-
-    try {
-      const { sourceTemporaryDir } = await temporaryDirManager.init();
-
-      const tempPackageRoot = join(sourceTemporaryDir, 'twenty-client-sdk');
-
-      await fs.cp(SDK_CLIENT_PACKAGE_DIRNAME, tempPackageRoot, {
-        recursive: true,
-        filter: (source) =>
-          !source.includes('node_modules') && !source.includes('/src'),
-      });
-
-      await replaceCoreClient({ packageRoot: tempPackageRoot, schema });
-
-      const archivePath = join(sourceTemporaryDir, SDK_CLIENT_ARCHIVE_NAME);
-
-      await createZipFile(tempPackageRoot, archivePath);
-
-      await this.fileStorageService.writeFile({
-        workspaceId,
-        applicationUniversalIdentifier,
-        fileFolder: FileFolder.GeneratedSdkClient,
-        resourcePath: SDK_CLIENT_ARCHIVE_NAME,
-        sourceFile: await fs.readFile(archivePath),
-        mimeType: 'application/zip',
-        settings: { isTemporaryFile: false, toDelete: false },
-      });
-
-      await this.applicationRepository.update(
-        { id: applicationId, workspaceId },
-        { isSdkLayerStale: true },
+    const graphqlSchema =
+      await this.workspaceSchemaFactory.createGraphQLSchema(
+        { id: workspaceId } as WorkspaceEntity,
+        applicationId,
       );
-    } catch (error) {
-      throw new SdkClientGenerationException(
-        `Failed to generate SDK client for application "${applicationUniversalIdentifier}" in workspace "${workspaceId}": ${error instanceof Error ? error.message : String(error)}`,
-        SdkClientGenerationExceptionCode.GENERATION_FAILED,
-      );
-    } finally {
-      await temporaryDirManager.clean();
-    }
+
+    await this.generateAndStore({
+      workspaceId,
+      applicationId,
+      applicationUniversalIdentifier,
+      schema: printSchema(graphqlSchema),
+    });
   }
 
   // Downloads the archive from file storage and extracts the full
@@ -181,6 +154,77 @@ export class SdkClientGenerationService {
     return entry.buffer();
   }
 
+  async markSdkLayerFresh({
+    applicationId,
+    workspaceId,
+  }: {
+    applicationId: string;
+    workspaceId: string;
+  }): Promise<void> {
+    await this.applicationRepository.update(
+      { id: applicationId, workspaceId },
+      { isSdkLayerStale: false },
+    );
+
+    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+      'flatApplicationMaps',
+    ]);
+  }
+
+  private async generateAndStore({
+    workspaceId,
+    applicationId,
+    applicationUniversalIdentifier,
+    schema,
+  }: {
+    workspaceId: string;
+    applicationId: string;
+    applicationUniversalIdentifier: string;
+    schema: string;
+  }): Promise<void> {
+    const temporaryDirManager = new TemporaryDirManager();
+
+    try {
+      const { sourceTemporaryDir } = await temporaryDirManager.init();
+
+      const tempPackageRoot = join(sourceTemporaryDir, 'twenty-client-sdk');
+
+      await fs.cp(SDK_CLIENT_PACKAGE_DIRNAME, tempPackageRoot, {
+        recursive: true,
+        filter: (source) =>
+          !source.includes('node_modules') && !source.includes('/src'),
+      });
+
+      await replaceCoreClient({ packageRoot: tempPackageRoot, schema });
+
+      const archivePath = join(sourceTemporaryDir, SDK_CLIENT_ARCHIVE_NAME);
+
+      await createZipFile(tempPackageRoot, archivePath);
+
+      await this.fileStorageService.writeFile({
+        workspaceId,
+        applicationUniversalIdentifier,
+        fileFolder: FileFolder.GeneratedSdkClient,
+        resourcePath: SDK_CLIENT_ARCHIVE_NAME,
+        sourceFile: await fs.readFile(archivePath),
+        mimeType: 'application/zip',
+        settings: { isTemporaryFile: false, toDelete: false },
+      });
+
+      await this.applicationRepository.update(
+        { id: applicationId, workspaceId },
+        { isSdkLayerStale: true },
+      );
+    } catch (error) {
+      throw new SdkClientGenerationException(
+        `Failed to generate SDK client for application "${applicationUniversalIdentifier}" in workspace "${workspaceId}": ${error instanceof Error ? error.message : String(error)}`,
+        SdkClientGenerationExceptionCode.GENERATION_FAILED,
+      );
+    } finally {
+      await temporaryDirManager.clean();
+    }
+  }
+
   private async readArchiveStream({
     workspaceId,
     applicationUniversalIdentifier,
@@ -208,22 +252,5 @@ export class SdkClientGenerationService {
 
       throw error;
     }
-  }
-
-  async markSdkLayerFresh({
-    applicationId,
-    workspaceId,
-  }: {
-    applicationId: string;
-    workspaceId: string;
-  }): Promise<void> {
-    await this.applicationRepository.update(
-      { id: applicationId, workspaceId },
-      { isSdkLayerStale: false },
-    );
-
-    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
-      'flatApplicationMaps',
-    ]);
   }
 }

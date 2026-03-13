@@ -6,7 +6,6 @@ import {
 } from '@nestjs/common';
 import { Args, Mutation } from '@nestjs/graphql';
 
-import { printSchema } from 'graphql';
 import GraphQLUpload from 'graphql-upload/GraphQLUpload.mjs';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { FeatureFlagKey, FileFolder } from 'twenty-shared/types';
@@ -15,7 +14,6 @@ import { isDefined } from 'twenty-shared/utils';
 import type { FileUpload } from 'graphql-upload/processRequest.mjs';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
-import { WorkspaceSchemaFactory } from 'src/engine/api/graphql/workspace-schema.factory';
 import { ApplicationInput } from 'src/engine/core-modules/application/application-development/dtos/application.input';
 import { CreateDevelopmentApplicationInput } from 'src/engine/core-modules/application/application-development/dtos/create-development-application.input';
 import { DevelopmentApplicationDTO } from 'src/engine/core-modules/application/application-development/dtos/development-application.dto';
@@ -37,7 +35,7 @@ import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/serv
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { FileDTO } from 'src/engine/core-modules/file/dtos/file.dto';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
-import { SdkClientGenerationService } from 'src/engine/core-modules/logic-function/logic-function-resource/sdk-client-generation.service';
+import { SdkClientGenerationService } from 'src/engine/core-modules/sdk-client-generation/sdk-client-generation.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { DevelopmentGuard } from 'src/engine/guards/development.guard';
@@ -69,7 +67,6 @@ export class ApplicationDevelopmentResolver {
     private readonly applicationRegistrationVariableService: ApplicationRegistrationVariableService,
     private readonly fileStorageService: FileStorageService,
     private readonly sdkClientGenerationService: SdkClientGenerationService,
-    private readonly workspaceSchemaFactory: WorkspaceSchemaFactory,
   ) {}
 
   @Mutation(() => DevelopmentApplicationDTO)
@@ -156,18 +153,11 @@ export class ApplicationDevelopmentResolver {
       });
 
     if (isFirstSync || hasSchemaMetadataChanged) {
-      const graphqlSchema =
-        await this.workspaceSchemaFactory.createGraphQLSchema(
-          { id: workspaceId } as WorkspaceEntity,
-          application.id,
-        );
-
       await this.sdkClientGenerationService.generateApplicationClient({
         workspaceId,
         applicationId: application.id,
         applicationUniversalIdentifier:
           manifest.application.universalIdentifier,
-        schema: printSchema(graphqlSchema),
       });
     }
 

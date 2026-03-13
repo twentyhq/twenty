@@ -74,7 +74,8 @@ import { ChannelSyncModule } from 'src/modules/connected-account/channel-sync/ch
 import { DashboardModule } from 'src/modules/dashboard/dashboard.module';
 import { LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
 import { LogicFunctionResourceModule } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.module';
-import { SdkClientGenerationService } from 'src/engine/core-modules/logic-function/logic-function-resource/sdk-client-generation.service';
+import { SdkClientGenerationModule } from 'src/engine/core-modules/sdk-client-generation/sdk-client-generation.module';
+import { SdkClientGenerationService } from 'src/engine/core-modules/sdk-client-generation/sdk-client-generation.service';
 
 import { AuditModule } from './audit/audit.module';
 import { ClientConfigModule } from './client-config/client-config.module';
@@ -155,7 +156,7 @@ import { FileModule } from './file/file.module';
     AiModelsModule,
     AiBillingModule,
     LogicFunctionModule.forRootAsync({
-      imports: [LogicFunctionResourceModule],
+      imports: [LogicFunctionResourceModule, SdkClientGenerationModule],
       useFactory: logicFunctionModuleFactory,
       inject: [
         TwentyConfigService,
