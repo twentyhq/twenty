@@ -24,7 +24,7 @@ import {
   type FieldRatingMetadata,
   type FieldRawJsonMetadata,
   type FieldRelationMetadata,
-  type FieldRichTextV2Metadata,
+  type FieldRichTextMetadata,
   type FieldSelectMetadata,
   type FieldTextMetadata,
   type FieldUuidMetadata,
@@ -74,8 +74,8 @@ type AssertFieldMetadataFunction = <
                                           ? FieldAddressMetadata
                                           : E extends 'RAW_JSON'
                                             ? FieldRawJsonMetadata
-                                            : E extends 'RICH_TEXT_V2'
-                                              ? FieldRichTextV2Metadata
+                                            : E extends 'RICH_TEXT'
+                                              ? FieldRichTextMetadata
                                               : E extends 'ACTOR'
                                                 ? FieldActorMetadata
                                                 : E extends 'ARRAY'

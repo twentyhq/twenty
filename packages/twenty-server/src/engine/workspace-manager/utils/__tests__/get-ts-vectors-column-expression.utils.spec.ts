@@ -63,7 +63,7 @@ describe('getTsVectorColumnExpressionFromFields', () => {
 
   it('should handle rich text v2 fields', () => {
     const fields = [
-      { name: 'bodyV2', type: FieldMetadataType.RICH_TEXT_V2 },
+      { name: 'bodyV2', type: FieldMetadataType.RICH_TEXT },
     ] as FieldTypeAndNameMetadata[];
     const result = getTsVectorColumnExpressionFromFields(fields);
 

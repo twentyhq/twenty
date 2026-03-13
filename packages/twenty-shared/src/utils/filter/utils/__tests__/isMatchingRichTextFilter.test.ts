@@ -1,11 +1,11 @@
-import { isMatchingRichTextV2Filter } from '@/utils/filter/utils/isMatchingRichTextV2Filter';
+import { isMatchingRichTextFilter } from '@/utils/filter/utils/isMatchingRichTextFilter';
 
-describe('isMatchingRichTextV2Filter', () => {
+describe('isMatchingRichTextFilter', () => {
   describe('markdown ilike', () => {
     it('should match with wildcard pattern', () => {
       expect(
-        isMatchingRichTextV2Filter({
-          richTextV2Filter: { markdown: { ilike: '%hello%' } },
+        isMatchingRichTextFilter({
+          richTextFilter: { markdown: { ilike: '%hello%' } },
           value: 'say hello world',
         }),
       ).toBe(true);
@@ -13,8 +13,8 @@ describe('isMatchingRichTextV2Filter', () => {
 
     it('should not match when pattern does not match', () => {
       expect(
-        isMatchingRichTextV2Filter({
-          richTextV2Filter: { markdown: { ilike: '%goodbye%' } },
+        isMatchingRichTextFilter({
+          richTextFilter: { markdown: { ilike: '%goodbye%' } },
           value: 'say hello world',
         }),
       ).toBe(false);
@@ -22,8 +22,8 @@ describe('isMatchingRichTextV2Filter', () => {
 
     it('should be case insensitive', () => {
       expect(
-        isMatchingRichTextV2Filter({
-          richTextV2Filter: { markdown: { ilike: '%HELLO%' } },
+        isMatchingRichTextFilter({
+          richTextFilter: { markdown: { ilike: '%HELLO%' } },
           value: 'say hello world',
         }),
       ).toBe(true);
@@ -33,11 +33,11 @@ describe('isMatchingRichTextV2Filter', () => {
   describe('default', () => {
     it('should throw for unexpected filter', () => {
       expect(() =>
-        isMatchingRichTextV2Filter({
-          richTextV2Filter: {} as any,
+        isMatchingRichTextFilter({
+          richTextFilter: {} as any,
           value: 'test',
         }),
-      ).toThrow('Unexpected value for RICH_TEXT_V2 filter');
+      ).toThrow('Unexpected value for RICH_TEXT filter');
     });
   });
 });

@@ -9,7 +9,7 @@ export const isSearchableSubfield = (
   }
 
   switch (compositeFieldMetadataType) {
-    case FieldMetadataType.RICH_TEXT_V2:
+    case FieldMetadataType.RICH_TEXT:
       return ['markdown'].includes(subFieldName);
     case FieldMetadataType.PHONES:
       return ['primaryPhoneNumber', 'primaryPhoneCallingCode'].includes(

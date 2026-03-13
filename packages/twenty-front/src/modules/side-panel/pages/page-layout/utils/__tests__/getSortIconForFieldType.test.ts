@@ -51,10 +51,10 @@ describe('getSortIconForFieldType', () => {
       ).toBe(IconSortDescendingLetters);
     });
 
-    it('should return IconSortAscendingLetters for RICH_TEXT_V2 field ascending', () => {
+    it('should return IconSortAscendingLetters for RICH_TEXT field ascending', () => {
       expect(
         getSortIconForFieldType({
-          fieldType: FieldMetadataType.RICH_TEXT_V2,
+          fieldType: FieldMetadataType.RICH_TEXT,
           orderBy: GraphOrderBy.FIELD_ASC,
         }),
       ).toBe(IconSortAscendingLetters);

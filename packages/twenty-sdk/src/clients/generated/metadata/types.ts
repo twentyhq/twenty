@@ -1822,7 +1822,7 @@ export default {
                 1
             ]
         },
-        "RichTextV2Body": {
+        "RichTextBody": {
             "blocknote": [
                 1
             ],

@@ -224,10 +224,10 @@ export const failingCreateInputByFieldMetadataType: {
       },
     },
   ],
-  [FieldMetadataType.RICH_TEXT_V2]: [
+  [FieldMetadataType.RICH_TEXT]: [
     {
       input: {
-        richTextV2Field: 'not-a-rich-text',
+        richTextField: 'not-a-rich-text',
       },
     },
   ],

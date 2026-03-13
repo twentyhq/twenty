@@ -95,7 +95,7 @@ export const generateEmptyFieldValue = ({
     case FieldMetadataType.RAW_JSON: {
       return null;
     }
-    case FieldMetadataType.RICH_TEXT_V2: {
+    case FieldMetadataType.RICH_TEXT: {
       return {
         blocknote: null,
         markdown: null,

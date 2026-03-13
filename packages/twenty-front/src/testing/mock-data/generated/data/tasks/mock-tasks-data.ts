@@ -33,7 +33,7 @@ export const mockedTaskRecords: ObjectRecord[] =
       ]
     },
     "bodyV2": {
-      "__typename": "RichTextV2",
+      "__typename": "RichText",
       "blocknote": "[{\"id\":\"block-1\",\"type\":\"paragraph\",\"props\":{\"textColor\":\"default\",\"backgroundColor\":\"default\",\"textAlignment\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"Arrange a follow-up call to discuss project details and next steps.\",\"styles\":{}}],\"children\":[]}]",
       "markdown": "Arrange a follow-up call to discuss project details and next steps."
     },
@@ -128,7 +128,7 @@ export const mockedTaskRecords: ObjectRecord[] =
       ]
     },
     "bodyV2": {
-      "__typename": "RichTextV2",
+      "__typename": "RichText",
       "blocknote": "[{\"id\":\"block-2\",\"type\":\"paragraph\",\"props\":{\"textColor\":\"default\",\"backgroundColor\":\"default\",\"textAlignment\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"Prepare and send the project proposal document with timeline and deliverables.\",\"styles\":{}}],\"children\":[]}]",
       "markdown": "Prepare and send the project proposal document with timeline and deliverables."
     },
@@ -223,7 +223,7 @@ export const mockedTaskRecords: ObjectRecord[] =
       ]
     },
     "bodyV2": {
-      "__typename": "RichTextV2",
+      "__typename": "RichText",
       "blocknote": "[{\"id\":\"block-3\",\"type\":\"paragraph\",\"props\":{\"textColor\":\"default\",\"backgroundColor\":\"default\",\"textAlignment\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"Review the contract terms and conditions before final approval.\",\"styles\":{}}],\"children\":[]}]",
       "markdown": "Review the contract terms and conditions before final approval."
     },
@@ -318,7 +318,7 @@ export const mockedTaskRecords: ObjectRecord[] =
       ]
     },
     "bodyV2": {
-      "__typename": "RichTextV2",
+      "__typename": "RichText",
       "blocknote": "[{\"id\":\"block-4\",\"type\":\"paragraph\",\"props\":{\"textColor\":\"default\",\"backgroundColor\":\"default\",\"textAlignment\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"Create detailed agenda for upcoming strategy meeting.\",\"styles\":{}}],\"children\":[]}]",
       "markdown": "Create detailed agenda for upcoming strategy meeting."
     },
@@ -413,7 +413,7 @@ export const mockedTaskRecords: ObjectRecord[] =
       ]
     },
     "bodyV2": {
-      "__typename": "RichTextV2",
+      "__typename": "RichText",
       "blocknote": "[{\"id\":\"block-5\",\"type\":\"paragraph\",\"props\":{\"textColor\":\"default\",\"backgroundColor\":\"default\",\"textAlignment\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"Verify and update contact details in the system.\",\"styles\":{}}],\"children\":[]}]",
       "markdown": "Verify and update contact details in the system."
     },
@@ -508,7 +508,7 @@ export const mockedTaskRecords: ObjectRecord[] =
       ]
     },
     "bodyV2": {
-      "__typename": "RichTextV2",
+      "__typename": "RichText",
       "blocknote": "[{\"id\":\"block-6\",\"type\":\"paragraph\",\"props\":{\"textColor\":\"default\",\"backgroundColor\":\"default\",\"textAlignment\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"Complete reference verification for background check process.\",\"styles\":{}}],\"children\":[]}]",
       "markdown": "Complete reference verification for background check process."
     },
@@ -603,7 +603,7 @@ export const mockedTaskRecords: ObjectRecord[] =
       ]
     },
     "bodyV2": {
-      "__typename": "RichTextV2",
+      "__typename": "RichText",
       "blocknote": "[{\"id\":\"block-7\",\"type\":\"paragraph\",\"props\":{\"textColor\":\"default\",\"backgroundColor\":\"default\",\"textAlignment\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"Send portfolio examples and case studies for review.\",\"styles\":{}}],\"children\":[]}]",
       "markdown": "Send portfolio examples and case studies for review."
     },
@@ -698,7 +698,7 @@ export const mockedTaskRecords: ObjectRecord[] =
       ]
     },
     "bodyV2": {
-      "__typename": "RichTextV2",
+      "__typename": "RichText",
       "blocknote": "[{\"id\":\"block-8\",\"type\":\"paragraph\",\"props\":{\"textColor\":\"default\",\"backgroundColor\":\"default\",\"textAlignment\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"Prepare onboarding materials and schedule orientation session.\",\"styles\":{}}],\"children\":[]}]",
       "markdown": "Prepare onboarding materials and schedule orientation session."
     },
@@ -793,7 +793,7 @@ export const mockedTaskRecords: ObjectRecord[] =
       ]
     },
     "bodyV2": {
-      "__typename": "RichTextV2",
+      "__typename": "RichText",
       "blocknote": "[{\"id\":\"block-9\",\"type\":\"paragraph\",\"props\":{\"textColor\":\"default\",\"backgroundColor\":\"default\",\"textAlignment\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"Arrange a follow-up call to discuss project details and next steps.\",\"styles\":{}}],\"children\":[]}]",
       "markdown": "Arrange a follow-up call to discuss project details and next steps."
     },
@@ -888,7 +888,7 @@ export const mockedTaskRecords: ObjectRecord[] =
       ]
     },
     "bodyV2": {
-      "__typename": "RichTextV2",
+      "__typename": "RichText",
       "blocknote": "[{\"id\":\"block-10\",\"type\":\"paragraph\",\"props\":{\"textColor\":\"default\",\"backgroundColor\":\"default\",\"textAlignment\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"Prepare and send the project proposal document with timeline and deliverables.\",\"styles\":{}}],\"children\":[]}]",
       "markdown": "Prepare and send the project proposal document with timeline and deliverables."
     },

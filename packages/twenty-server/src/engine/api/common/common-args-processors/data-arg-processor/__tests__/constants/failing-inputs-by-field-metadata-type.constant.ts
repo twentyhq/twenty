@@ -150,10 +150,10 @@ export const failingInputsByFieldMetadataType: {
     { input: { linksField: 1 } },
     { input: { linksField: true } },
   ],
-  [FieldMetadataType.RICH_TEXT_V2]: [
-    { input: { richTextV2Field: 'not-a-rich-text' } },
-    { input: { richTextV2Field: 1 } },
-    { input: { richTextV2Field: true } },
+  [FieldMetadataType.RICH_TEXT]: [
+    { input: { richTextField: 'not-a-rich-text' } },
+    { input: { richTextField: 1 } },
+    { input: { richTextField: true } },
   ],
   [FieldMetadataType.POSITION]: [
     { input: { position: 'not-a-position' } },

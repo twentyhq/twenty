@@ -12,7 +12,7 @@ import {
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 
-export const validateRichTextV2FieldOrThrow = (
+export const validateRichTextFieldOrThrow = (
   value: unknown,
   fieldName: string,
 ): {
@@ -29,16 +29,16 @@ export const validateRichTextV2FieldOrThrow = (
     if (Object.keys(parsedValue).length === 0) return null;
 
     const subfields = Object.keys(parsedValue);
-    const richTextV2Subfields = compositeTypeDefinitions
-      .get(FieldMetadataType.RICH_TEXT_V2)
+    const richTextSubfields = compositeTypeDefinitions
+      .get(FieldMetadataType.RICH_TEXT)
       ?.properties.filter(
         (prop) => prop.hidden !== true && prop.hidden !== 'input',
       )
       .map((prop) => prop.name);
 
-    if (!subfields.every((subfield) => richTextV2Subfields?.includes(subfield)))
+    if (!subfields.every((subfield) => richTextSubfields?.includes(subfield)))
       throw new Error(
-        `Should have only ${richTextV2Subfields?.join(', ')} subfields`,
+        `Should have only ${richTextSubfields?.join(', ')} subfields`,
       );
 
     return value as {

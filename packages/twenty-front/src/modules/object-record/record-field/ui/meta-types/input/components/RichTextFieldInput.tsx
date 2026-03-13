@@ -7,7 +7,7 @@ import { RecordFieldComponentInstanceContext } from '@/object-record/record-fiel
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
 
-import { type FieldRichTextV2Metadata } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { type FieldRichTextMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { styled } from '@linaria/react';
 import { Suspense, lazy, useContext, useRef } from 'react';
@@ -59,7 +59,7 @@ export const RichTextFieldInput = () => {
     id: recordId,
     targetObjectNameSingular: (
       fieldDefinition as {
-        metadata: FieldRichTextV2Metadata;
+        metadata: FieldRichTextMetadata;
       }
     ).metadata.objectMetadataNameSingular as
       | CoreObjectNameSingular.Note

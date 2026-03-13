@@ -117,7 +117,7 @@ export { isMatchingFloatFilter } from './filter/utils/isMatchingFloatFilter';
 export { isMatchingMultiSelectFilter } from './filter/utils/isMatchingMultiSelectFilter';
 export { isMatchingRatingFilter } from './filter/utils/isMatchingRatingFilter';
 export { isMatchingRawJsonFilter } from './filter/utils/isMatchingRawJsonFilter';
-export { isMatchingRichTextV2Filter } from './filter/utils/isMatchingRichTextV2Filter';
+export { isMatchingRichTextFilter } from './filter/utils/isMatchingRichTextFilter';
 export { isMatchingSelectFilter } from './filter/utils/isMatchingSelectFilter';
 export { isMatchingStringFilter } from './filter/utils/isMatchingStringFilter';
 export { isMatchingTSVectorFilter } from './filter/utils/isMatchingTSVectorFilter';

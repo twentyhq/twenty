@@ -30,7 +30,7 @@ const parseBlocknoteJsonSafely = (
   }
 };
 
-export class RichTextV2FieldQueryResultGetterHandler
+export class RichTextFieldQueryResultGetterHandler
   implements QueryResultGetterHandlerInterface
 {
   constructor(private readonly fileUrlService: FileUrlService) {}
@@ -40,15 +40,15 @@ export class RichTextV2FieldQueryResultGetterHandler
     workspaceId: string,
     flatFieldMetadata: FlatFieldMetadata[],
   ): Promise<ObjectRecord> {
-    const richTextV2Fields = flatFieldMetadata.filter(
-      (field) => field.type === FieldMetadataType.RICH_TEXT_V2,
+    const richTextFields = flatFieldMetadata.filter(
+      (field) => field.type === FieldMetadataType.RICH_TEXT,
     );
 
-    if (richTextV2Fields.length === 0) {
+    if (richTextFields.length === 0) {
       return record;
     }
 
-    for (const field of richTextV2Fields) {
+    for (const field of richTextFields) {
       const fieldValue = record[field.name];
       const blocknoteJson = fieldValue?.blocknote;
 

@@ -47,7 +47,7 @@ export const SettingsObjectNewFieldSelect = () => {
   const excludedFieldTypes: FieldType[] = (
     [
       FieldMetadataType.NUMERIC,
-      FieldMetadataType.RICH_TEXT_V2,
+      FieldMetadataType.RICH_TEXT,
       FieldMetadataType.ACTOR,
       FieldMetadataType.UUID,
     ] as const

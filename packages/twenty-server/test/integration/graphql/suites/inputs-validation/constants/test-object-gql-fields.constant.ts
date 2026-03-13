@@ -53,7 +53,7 @@ export const TEST_OBJECT_GQL_FIELDS = `
     }
     rawJsonField
     arrayField
-    richTextV2Field {
+    richTextField {
         blocknote
         markdown
     }

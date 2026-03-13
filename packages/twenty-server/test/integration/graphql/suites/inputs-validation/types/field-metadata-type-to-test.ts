@@ -5,7 +5,7 @@ type FieldMetadataTypesNotTestedForFilterInputValidation =
   | 'POSITION'
   | 'ACTOR'
   | 'NUMERIC'
-  | 'RICH_TEXT_V2';
+  | 'RICH_TEXT';
 
 type FieldMetadataTypesNotTestedForCreateInputValidation =
   | 'TS_VECTOR'
