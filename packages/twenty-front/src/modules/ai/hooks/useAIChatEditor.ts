@@ -8,7 +8,6 @@ import { useEditor } from '@tiptap/react';
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { useAgentChatContext } from '@/ai/contexts/AgentChatContext';
 import { AI_CHAT_INPUT_ID } from '@/ai/constants/AiChatInputId';
 import {
   AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
@@ -16,6 +15,7 @@ import {
 } from '@/ai/states/agentChatDraftsByThreadIdState';
 import { agentChatInputState } from '@/ai/states/agentChatInputState';
 import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
+import { dispatchAgentChatEnsureThreadForDraftEvent } from '@/ai/utils/dispatchAgentChatEnsureThreadForDraftEvent';
 import { dispatchAgentChatSendMessageEvent } from '@/ai/utils/dispatchAgentChatSendMessageEvent';
 import { MENTION_SUGGESTION_PLUGIN_KEY } from '@/mention/constants/MentionSuggestionPluginKey';
 import { MentionSuggestion } from '@/mention/extensions/MentionSuggestion';
@@ -44,14 +44,12 @@ export const useAIChatEditor = () => {
   const currentAIChatThread = useAtomStateValue(currentAIChatThreadState);
   const [agentChatDraftsByThreadId, setAgentChatDraftsByThreadId] =
     useAtomState(agentChatDraftsByThreadIdState);
-  const { ensureThreadForDraft } = useAgentChatContext();
-
   const { searchMentionRecords } = useMentionSearch();
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const { removeFocusItemFromFocusStackById } =
     useRemoveFocusItemFromFocusStackById();
 
-  const draftKey = currentAIChatThread ?? AGENT_CHAT_NEW_THREAD_DRAFT_KEY;
+  const draftKey = currentAIChatThread;
   const initialDraft = agentChatDraftsByThreadId[draftKey] ?? '';
   const initialContent = textToTiptapContent(initialDraft);
 
@@ -102,7 +100,7 @@ export const useAIChatEditor = () => {
       setAgentChatInput(text);
       setAgentChatDraftsByThreadId((prev) => ({ ...prev, [draftKey]: text }));
       if (draftKey === AGENT_CHAT_NEW_THREAD_DRAFT_KEY && text.trim() !== '') {
-        ensureThreadForDraft?.();
+        dispatchAgentChatEnsureThreadForDraftEvent();
       }
     },
     onFocus: () => {

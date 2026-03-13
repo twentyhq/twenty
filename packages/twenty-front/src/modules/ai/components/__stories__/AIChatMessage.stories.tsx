@@ -12,7 +12,8 @@ import { AIChatMessage } from '@/ai/components/AIChatMessage';
 
 import { AgentChatComponentInstanceContext } from '@/ai/states/AgentChatComponentInstanceContext';
 import { agentChatMessageComponentFamilyState } from '@/ai/states/agentChatMessageComponentFamilyState';
-import { agentChatMessagesComponentState } from '@/ai/states/agentChatMessagesComponentState';
+import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMessagesComponentFamilyState';
+import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
 import { styled } from '@linaria/react';
 import { useStore } from 'jotai';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
@@ -255,8 +256,13 @@ const AgentChatMessagesSetterEffect = ({
   const store = useStore();
 
   useEffect(() => {
+    const currentThreadId = store.get(currentAIChatThreadState.atom);
+
     store.set(
-      agentChatMessagesComponentState.atomFamily({ instanceId: INSTANCE_ID }),
+      agentChatMessagesComponentFamilyState.atomFamily({
+        instanceId: INSTANCE_ID,
+        familyKey: { threadId: currentThreadId },
+      }),
       messages,
     );
 

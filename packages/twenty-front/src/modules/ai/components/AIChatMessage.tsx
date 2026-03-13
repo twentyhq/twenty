@@ -5,13 +5,9 @@ import { AgentMessageRole } from '@/ai/constants/AgentMessageRole';
 
 import { AIChatAssistantMessageRenderer } from '@/ai/components/AIChatAssistantMessageRenderer';
 import { AIChatErrorRenderer } from '@/ai/components/AIChatErrorRenderer';
-import { agentChatErrorState } from '@/ai/states/agentChatErrorState';
-import { agentChatIsStreamingState } from '@/ai/states/agentChatIsStreamingState';
-import { agentChatMessageComponentFamilySelector } from '@/ai/states/agentChatMessageComponentFamilySelector';
-import { agentChatMessageIdsComponentSelector } from '@/ai/states/agentChatMessageIdsComponentSelector';
+import { agentChatMessageComponentFamilyState } from '@/ai/states/agentChatMessageComponentFamilyState';
 import { LightCopyIconButton } from '@/object-record/record-field/ui/components/LightCopyIconButton';
-import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
-import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 import { isExtendedFileUIPart } from 'twenty-shared/ai';
@@ -143,19 +139,21 @@ const StyledFilesContainer = styled.div`
   margin-top: ${themeCssVariables.spacing[2]};
 `;
 
-export const AIChatMessage = ({ messageId }: { messageId: string }) => {
-  const agentChatMessage = useAtomComponentFamilySelectorValue(
-    agentChatMessageComponentFamilySelector,
-    { messageId },
+type AIChatMessageProps = {
+  messageId: string;
+  isLastMessageStreaming?: boolean;
+  error?: Error | undefined;
+};
+
+export const AIChatMessage = ({
+  messageId,
+  isLastMessageStreaming = false,
+  error,
+}: AIChatMessageProps) => {
+  const agentChatMessage = useAtomComponentFamilyStateValue(
+    agentChatMessageComponentFamilyState,
+    messageId,
   );
-
-  const agentChatMessageIds = useAtomComponentSelectorValue(
-    agentChatMessageIdsComponentSelector,
-  );
-
-  const agentChatIsStreaming = useAtomStateValue(agentChatIsStreamingState);
-
-  const agentChatError = useAtomStateValue(agentChatErrorState);
 
   const { localeCatalog } = useAtomStateValue(dateLocaleState);
 
@@ -163,19 +161,15 @@ export const AIChatMessage = ({ messageId }: { messageId: string }) => {
     return null;
   }
 
-  const isLastMessage = agentChatMessageIds.at(-1) === messageId;
-
-  const isLastMessageStreaming = agentChatIsStreaming && isLastMessage;
-  const isLastAssistantMessage =
-    isLastMessage && agentChatMessage?.role === AgentMessageRole.ASSISTANT;
-  const shouldShowError = isDefined(agentChatError) && isLastAssistantMessage;
-
   const isUser = agentChatMessage.role === AgentMessageRole.USER;
+  const isLastAssistantMessage =
+    agentChatMessage.role === AgentMessageRole.ASSISTANT;
+  const shouldShowError = isDefined(error) && isLastAssistantMessage;
 
   const fileParts = agentChatMessage.parts.filter(isExtendedFileUIPart);
 
   return (
-    <StyledMessageBubble key={agentChatMessage.id} isUser={isUser}>
+    <StyledMessageBubble isUser={isUser}>
       <StyledMessageContainer isUser={isUser}>
         <StyledMessageText isUser={isUser}>
           <AIChatAssistantMessageRenderer
@@ -191,7 +185,9 @@ export const AIChatMessage = ({ messageId }: { messageId: string }) => {
             ))}
           </StyledFilesContainer>
         )}
-        {shouldShowError && <AIChatErrorRenderer error={agentChatError} />}
+        {shouldShowError && isDefined(error) && (
+          <AIChatErrorRenderer error={error} />
+        )}
       </StyledMessageContainer>
       {agentChatMessage.parts.length > 0 &&
         agentChatMessage.metadata?.createdAt && (

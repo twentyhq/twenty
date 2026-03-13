@@ -14,7 +14,7 @@ import { useOpenAskAIPageInSidePanel } from '@/side-panel/hooks/useOpenAskAIPage
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
-export const useCreateNewAIChatThread = () => {
+export const useSwitchToNewAIChat = () => {
   const setThreadIdCreatedFromDraft = useSetAtomState(
     threadIdCreatedFromDraftState,
   );
@@ -34,8 +34,7 @@ export const useCreateNewAIChatThread = () => {
 
   const switchToNewChat = () => {
     setThreadIdCreatedFromDraft(null);
-    const previousDraftKey =
-      currentAIChatThread ?? AGENT_CHAT_NEW_THREAD_DRAFT_KEY;
+    const previousDraftKey = currentAIChatThread;
     const newChatDraft =
       store.get(agentChatDraftsByThreadIdState.atom)[
         AGENT_CHAT_NEW_THREAD_DRAFT_KEY

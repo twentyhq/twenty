@@ -10,7 +10,7 @@ import { useIsMobile } from 'twenty-ui/utilities';
 
 import { useContext } from 'react';
 
-import { useCreateNewAIChatThread } from '@/ai/hooks/useCreateNewAIChatThread';
+import { useSwitchToNewAIChat } from '@/ai/hooks/useSwitchToNewAIChat';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { navigationDrawerActiveTabState } from '@/ui/navigation/states/navigationDrawerActiveTabState';
@@ -127,7 +127,7 @@ export const MainNavigationDrawerTabsRow = () => {
   );
   const [navigationDrawerActiveTab, setNavigationDrawerActiveTab] =
     useAtomState(navigationDrawerActiveTabState);
-  const { switchToNewChat } = useCreateNewAIChatThread();
+  const { switchToNewChat } = useSwitchToNewAIChat();
   const isAiEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
   const setIsNavigationDrawerExpanded = useSetAtomState(
     isNavigationDrawerExpandedState,

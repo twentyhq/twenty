@@ -6,21 +6,21 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { Temporal } from 'temporal-polyfill';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 
-export const useProcessNewMessageStreamIncrement = () => {
+export const useProcessStreamingMessageUpdate = () => {
   const agentChatUISessionStartTime = useAtomStateValue(
     agentChatUISessionStartTimeState,
   );
 
   const { processUIToolCallMessage } = useProcessUIToolCallMessage();
 
-  const processNewMessageStreamIncrement = (
-    messageStreamIncrement: ExtendedUIMessage,
+  const processStreamingMessageUpdate = (
+    streamingMessage: ExtendedUIMessage,
   ) => {
     if (agentChatUISessionStartTime === null) {
       return false;
     }
 
-    const messageCreatedAt = messageStreamIncrement.metadata?.createdAt;
+    const messageCreatedAt = streamingMessage.metadata?.createdAt;
 
     if (isNonEmptyString(messageCreatedAt)) {
       const messageCreatedAtInstant = Temporal.Instant.from(messageCreatedAt);
@@ -34,14 +34,14 @@ export const useProcessNewMessageStreamIncrement = () => {
       }
     }
 
-    const messageIsUIToolCall = isUIToolCallMessage(messageStreamIncrement);
+    const messageIsUIToolCall = isUIToolCallMessage(streamingMessage);
 
     if (messageIsUIToolCall) {
-      processUIToolCallMessage(messageStreamIncrement);
+      processUIToolCallMessage(streamingMessage);
     }
   };
 
   return {
-    processNewMessageStreamIncrement,
+    processStreamingMessageUpdate,
   };
 };
