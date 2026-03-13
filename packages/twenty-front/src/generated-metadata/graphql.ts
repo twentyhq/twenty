@@ -375,6 +375,7 @@ export type ApplicationRegistration = {
 export enum ApplicationRegistrationSourceType {
   LOCAL = 'LOCAL',
   NPM = 'NPM',
+  OAUTH_ONLY = 'OAUTH_ONLY',
   TARBALL = 'TARBALL'
 }
 
