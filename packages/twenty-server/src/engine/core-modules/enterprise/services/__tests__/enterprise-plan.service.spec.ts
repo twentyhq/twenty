@@ -362,10 +362,13 @@ describe('EnterprisePlanService', () => {
 
         return undefined;
       });
-      mockCryptoVerify.mockReturnValue(true);
+      mockCryptoVerify
+        .mockReturnValueOnce(false)
+        .mockReturnValueOnce(true);
       const productionKey = createFakeJwt(MOCK_KEY_PAYLOAD);
 
       expect(service.isValidEnterpriseKeyFormat(productionKey)).toBe(true);
+      expect(mockCryptoVerify).toHaveBeenCalledTimes(2);
     });
   });
 
