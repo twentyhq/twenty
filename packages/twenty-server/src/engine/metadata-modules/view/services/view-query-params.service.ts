@@ -46,7 +46,10 @@ export class ViewQueryParamsService {
     workspaceId: string,
     currentWorkspaceMemberId?: string,
   ): Promise<ViewQueryParams> {
-    const view = await this.viewService.findById(viewId, workspaceId);
+    const view = await this.viewService.findByIdWithRelations(
+      viewId,
+      workspaceId,
+    );
 
     if (!view) {
       throw new Error(`View with id ${viewId} not found`);

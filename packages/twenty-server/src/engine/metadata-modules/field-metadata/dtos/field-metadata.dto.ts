@@ -64,9 +64,8 @@ export class FieldMetadataDTO<T extends FieldMetadataType = FieldMetadataType> {
   @IDField(() => UUIDScalarType)
   id: string;
 
-  @IsUUID()
   @IsNotEmpty()
-  @IDField(() => UUIDScalarType)
+  @Field()
   universalIdentifier: string;
 
   @IsEnum(FieldMetadataType)
