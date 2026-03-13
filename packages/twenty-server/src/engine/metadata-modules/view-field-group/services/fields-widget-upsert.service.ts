@@ -576,9 +576,7 @@ export class FieldsWidgetUpsertService {
           deletedGroupIds.has(field.viewFieldGroupId);
 
         return (
-          hasStaleOverride ||
-          hasStaleBase ||
-          hasStaleBaseHiddenByNullOverride
+          hasStaleOverride || hasStaleBase || hasStaleBaseHiddenByNullOverride
         );
       })
       .map((field) => {
