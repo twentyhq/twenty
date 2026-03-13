@@ -10,7 +10,7 @@ import { RecordComponentInstanceContextsWrapper } from '@/object-record/componen
 import { SnackBarComponentInstanceContext } from '@/ui/feedback/snack-bar-manager/contexts/SnackBarComponentInstanceContext';
 import { resetJotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
-import { InMemoryCache } from '@apollo/client';
+import { type InMemoryCache } from '@apollo/client';
 import type { Store } from 'jotai/vanilla/store';
 import { JestContextStoreSetter } from '~/testing/jest/JestContextStoreSetter';
 import { JestObjectMetadataItemSetter } from '~/testing/jest/JestObjectMetadataItemSetter';
@@ -39,7 +39,7 @@ export const getJestMetadataAndApolloMocksWrapper = ({
       >
         <MockedProvider
           mocks={apolloMocks}
-          cache={cache ?? new InMemoryCache({ addTypename: false })}
+          cache={cache}
         >
           <RecordComponentInstanceContextsWrapper componentInstanceId="instanceId">
             <ViewComponentInstanceContext.Provider
