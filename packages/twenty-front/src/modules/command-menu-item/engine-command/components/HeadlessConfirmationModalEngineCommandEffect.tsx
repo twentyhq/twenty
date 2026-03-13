@@ -25,7 +25,7 @@ export const HeadlessConfirmationModalEngineCommandEffect = ({
   confirmButtonAccent = 'danger',
   execute,
 }: HeadlessConfirmationModalEngineCommandEffectProps) => {
-  const { isInitialized, setIsInitialized } =
+  const { getIsInitialized, setIsInitialized } =
     useIsHeadlessEngineCommandEffectInitialized();
   const engineCommandId = useContext(EngineCommandIdContext);
   const unmountEngineCommand = useUnmountEngineCommand();
@@ -33,7 +33,7 @@ export const HeadlessConfirmationModalEngineCommandEffect = ({
   const { enqueueErrorSnackBar } = useSnackBar();
 
   useEffect(() => {
-    if (isInitialized || !isDefined(engineCommandId)) {
+    if (getIsInitialized() || !isDefined(engineCommandId)) {
       return;
     }
 
@@ -47,7 +47,7 @@ export const HeadlessConfirmationModalEngineCommandEffect = ({
       confirmButtonAccent,
     });
   }, [
-    isInitialized,
+    getIsInitialized,
     setIsInitialized,
     engineCommandId,
     openConfirmationModal,

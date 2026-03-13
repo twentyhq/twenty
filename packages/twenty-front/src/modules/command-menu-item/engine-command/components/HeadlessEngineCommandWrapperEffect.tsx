@@ -12,7 +12,7 @@ export type HeadlessEngineCommandWrapperEffectProps = {
 export const HeadlessEngineCommandWrapperEffect = ({
   execute,
 }: HeadlessEngineCommandWrapperEffectProps) => {
-  const { isInitialized, setIsInitialized } =
+  const { getIsInitialized, setIsInitialized } =
     useIsHeadlessEngineCommandEffectInitialized();
 
   const engineCommandId = useContext(EngineCommandIdContext);
@@ -22,7 +22,7 @@ export const HeadlessEngineCommandWrapperEffect = ({
   const { enqueueErrorSnackBar } = useSnackBar();
 
   useEffect(() => {
-    if (isInitialized) {
+    if (getIsInitialized()) {
       return;
     }
 
@@ -49,7 +49,7 @@ export const HeadlessEngineCommandWrapperEffect = ({
     run();
   }, [
     execute,
-    isInitialized,
+    getIsInitialized,
     setIsInitialized,
     engineCommandId,
     unmountEngineCommand,
