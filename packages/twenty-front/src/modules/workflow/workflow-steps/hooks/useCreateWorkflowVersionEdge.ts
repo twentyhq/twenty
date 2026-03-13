@@ -1,4 +1,6 @@
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useFindOneRecordQuery } from '@/object-record/hooks/useFindOneRecordQuery';
 import { useMutation } from '@apollo/client';
 import {
   type CreateWorkflowVersionEdgeMutation,
@@ -13,6 +15,11 @@ export const useCreateWorkflowVersionEdge = () => {
 
   const { updateWorkflowVersionCache } = useUpdateWorkflowVersionCache();
 
+  const { findOneRecordQuery: findOneWorkflowVersionQuery } =
+    useFindOneRecordQuery({
+      objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
+    });
+
   const [mutate] = useMutation<
     CreateWorkflowVersionEdgeMutation,
     CreateWorkflowVersionEdgeMutationVariables
@@ -21,7 +28,15 @@ export const useCreateWorkflowVersionEdge = () => {
   const createWorkflowVersionEdge = async (
     input: CreateWorkflowVersionEdgeInput,
   ) => {
-    const result = await mutate({ variables: { input } });
+    const result = await mutate({
+      variables: { input },
+      refetchQueries: [
+        {
+          query: findOneWorkflowVersionQuery,
+          variables: { objectRecordId: input.workflowVersionId },
+        },
+      ],
+    });
 
     const workflowVersionStepChanges = result?.data?.createWorkflowVersionEdge;
 

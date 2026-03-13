@@ -37,7 +37,11 @@ export const useUpdateWorkflowVersionCache = () => {
 
     const cachedRecord = getRecordFromCache<WorkflowVersion>(workflowVersionId);
 
-    if (!isDefined(cachedRecord)) {
+    if (
+      !isDefined(cachedRecord) ||
+      !isDefined(cachedRecord.steps) ||
+      !isDefined(cachedRecord.trigger)
+    ) {
       return;
     }
 
