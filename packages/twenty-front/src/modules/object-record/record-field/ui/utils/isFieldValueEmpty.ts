@@ -32,7 +32,6 @@ import { isFieldPosition } from '@/object-record/record-field/ui/types/guards/is
 import { isFieldRating } from '@/object-record/record-field/ui/types/guards/isFieldRating';
 import { isFieldRawJson } from '@/object-record/record-field/ui/types/guards/isFieldRawJson';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
-import { isFieldRichText } from '@/object-record/record-field/ui/types/guards/isFieldRichText';
 import { isFieldRichTextV2 } from '@/object-record/record-field/ui/types/guards/isFieldRichTextV2';
 import { isFieldRichTextV2Value } from '@/object-record/record-field/ui/types/guards/isFieldRichTextValueV2';
 import { isFieldSelect } from '@/object-record/record-field/ui/types/guards/isFieldSelect';
@@ -63,7 +62,6 @@ export const isFieldValueEmpty = ({
     isFieldRating(fieldDefinition) ||
     isFieldBoolean(fieldDefinition) ||
     isFieldRawJson(fieldDefinition) ||
-    isFieldRichText(fieldDefinition) ||
     isFieldPosition(fieldDefinition)
   ) {
     return isValueEmpty(fieldValue);

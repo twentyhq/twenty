@@ -3,7 +3,7 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { isNonEmptyArray } from '@sniptt/guards';
-import { useContext, useMemo, useState } from 'react';
+import { useContext, useEffect, useMemo, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { useDebounce } from 'use-debounce';
 
@@ -19,7 +19,7 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { WorkspaceInviteLink } from '@/workspace/components/WorkspaceInviteLink';
 import { WorkspaceInviteTeam } from '@/workspace/components/WorkspaceInviteTeam';
-import { type ApolloError } from '@apollo/client';
+import { useSnackBarOnQueryError } from '@/apollo/hooks/useSnackBarOnQueryError';
 import { CoreObjectNameSingular, SettingsPath } from 'twenty-shared/types';
 import {
   generateILikeFiltersForCompositeFields,
@@ -40,7 +40,8 @@ import {
 } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import { useGetWorkspaceInvitationsQuery } from '~/generated-metadata/graphql';
+import { useQuery } from '@apollo/client/react';
+import { GetWorkspaceInvitationsDocument } from '~/generated-metadata/graphql';
 
 import { SettingsRolesQueryEffect } from '@/settings/roles/components/SettingsRolesQueryEffect';
 import { useSettingsAllRoles } from '@/settings/roles/hooks/useSettingsAllRoles';
@@ -168,20 +169,21 @@ export const SettingsWorkspaceMembers = () => {
     setSearchFilter(text);
   };
 
-  useGetWorkspaceInvitationsQuery({
-    onError: (error: ApolloError) => {
-      enqueueErrorSnackBar({
-        apolloError: error,
-      });
-    },
-    onCompleted: (data) => {
-      setWorkspaceInvitations(data?.findWorkspaceInvitations ?? []);
-    },
-  });
+  const { data: invitationsData, error: invitationsError } = useQuery(
+    GetWorkspaceInvitationsDocument,
+  );
+
+  useSnackBarOnQueryError(invitationsError);
+
+  useEffect(() => {
+    if (invitationsData) {
+      setWorkspaceInvitations(invitationsData?.findWorkspaceInvitations ?? []);
+    }
+  }, [invitationsData, setWorkspaceInvitations]);
 
   const handleRemoveWorkspaceInvitation = async (appTokenId: string) => {
     const result = await deleteWorkspaceInvitation({ appTokenId });
-    if (isDefined(result.errors)) {
+    if (isDefined(result.error)) {
       enqueueErrorSnackBar({
         message: t`Error deleting invitation`,
         options: {
@@ -193,7 +195,7 @@ export const SettingsWorkspaceMembers = () => {
 
   const handleResendWorkspaceInvitation = async (appTokenId: string) => {
     const result = await resendInvitation({ appTokenId });
-    if (isDefined(result.errors)) {
+    if (isDefined(result.error)) {
       enqueueErrorSnackBar({
         message: t`Error resending invitation`,
         options: {

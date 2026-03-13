@@ -139,11 +139,6 @@ export const fieldMetadataConfigByFieldName: Record<
     type: FieldMetadataType.RICH_TEXT_V2,
     isNullable: true,
   },
-  richTextField: {
-    name: 'richTextField',
-    type: FieldMetadataType.RICH_TEXT,
-    isNullable: true,
-  },
   position: {
     name: 'position',
     type: FieldMetadataType.POSITION,

@@ -1,6 +1,6 @@
 import { type WorkflowVersion } from '@/workflow/types/Workflow';
 import { type WorkflowDiagram } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
-import { useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client/react';
 import { isDefined } from 'twenty-shared/utils';
 import {
   type UpdateWorkflowVersionPositionsMutation,

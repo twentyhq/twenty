@@ -22,7 +22,7 @@ export const triggerDestroyRecordsOptimisticEffect = ({
   upsertRecordsInStore,
   objectPermissionsByObjectMetadataId,
 }: {
-  cache: ApolloCache<unknown>;
+  cache: ApolloCache;
   objectMetadataItem: ObjectMetadataItem;
   recordsToDestroy: RecordGqlNode[];
   objectMetadataItems: ObjectMetadataItem[];

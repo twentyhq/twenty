@@ -12,11 +12,12 @@ import { useCallback, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { useQuery } from '@apollo/client/react';
 import {
   ViewType as CoreViewType,
-  useFindAllRecordPageLayoutsQuery,
-  useFindFieldsWidgetCoreViewsQuery,
-  useFindManyLogicFunctionsQuery,
+  FindAllRecordPageLayoutsDocument,
+  FindFieldsWidgetCoreViewsDocument,
+  FindManyLogicFunctionsDocument,
 } from '~/generated-metadata/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
@@ -37,19 +38,25 @@ export const LazyMetadataLoadEffect = () => {
 
   const shouldSkip = !isLoggedIn || isOnAuthPath;
 
-  const { data: queryDataFieldsWidgetCoreViews } =
-    useFindFieldsWidgetCoreViewsQuery({
+  const { data: queryDataFieldsWidgetCoreViews } = useQuery(
+    FindFieldsWidgetCoreViewsDocument,
+    {
       skip: shouldSkip,
       variables: { viewTypes: FIELDS_WIDGET_VIEW_TYPES },
-    });
+    },
+  );
 
-  const { data: queryDataRecordPageLayouts } = useFindAllRecordPageLayoutsQuery(
+  const { data: queryDataRecordPageLayouts } = useQuery(
+    FindAllRecordPageLayoutsDocument,
     { skip: shouldSkip },
   );
 
-  const { data: logicFunctionsData } = useFindManyLogicFunctionsQuery({
-    skip: !isLoggedIn,
-  });
+  const { data: logicFunctionsData } = useQuery(
+    FindManyLogicFunctionsDocument,
+    {
+      skip: !isLoggedIn,
+    },
+  );
 
   const setFieldsWidgetCoreViews = useCallback(
     (fieldsWidgetViews: CoreViewWithRelations[]) => {

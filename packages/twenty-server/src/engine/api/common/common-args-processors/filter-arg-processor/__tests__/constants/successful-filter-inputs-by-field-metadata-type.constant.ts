@@ -21,13 +21,6 @@ export const successfulFilterInputsByFieldMetadataType: {
     { filter: { textField: { is: 'NOT_NULL' } } },
     { filter: { textField: { eq: null } } },
   ],
-  [FieldMetadataType.RICH_TEXT]: [
-    { filter: { richTextField: { eq: 'test' } } },
-    { filter: { richTextField: { like: '%test%' } } },
-    { filter: { richTextField: { ilike: '%test%' } } },
-    { filter: { richTextField: { is: 'NULL' } } },
-    { filter: { richTextField: { is: 'NOT_NULL' } } },
-  ],
   [FieldMetadataType.NUMBER]: [
     { filter: { numberField: { eq: 1 } } },
     { filter: { numberField: { neq: 1 } } },

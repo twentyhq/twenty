@@ -124,7 +124,6 @@ export const generateRandomFieldValue = ({
       return {};
     }
 
-    case FieldMetadataType.RICH_TEXT:
     case FieldMetadataType.RICH_TEXT_V2: {
       return '';
     }

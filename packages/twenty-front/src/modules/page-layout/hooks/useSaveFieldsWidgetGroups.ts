@@ -7,7 +7,7 @@ import { fieldsWidgetUngroupedFieldsDraftComponentState } from '@/page-layout/st
 import { fieldsWidgetUngroupedFieldsPersistedComponentState } from '@/page-layout/states/fieldsWidgetUngroupedFieldsPersistedComponentState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useRefreshAllCoreViews } from '@/views/hooks/useRefreshAllCoreViews';
-import { useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client/react';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';

@@ -19,7 +19,7 @@ import { RUN_WORKFLOW_VERSION } from '@/workflow/graphql/mutations/runWorkflowVe
 import { type WorkflowRun } from '@/workflow/types/Workflow';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useCallback } from 'react';
-import { useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client/react';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 import {

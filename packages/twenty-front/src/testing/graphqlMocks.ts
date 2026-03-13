@@ -1,4 +1,4 @@
-import { getOperationName } from '@apollo/client/utilities';
+import { getOperationName } from '~/utils/getOperationName';
 import { parse, type FieldNode } from 'graphql';
 import { graphql, http, HttpResponse, type GraphQLQuery } from 'msw';
 

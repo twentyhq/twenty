@@ -1,4 +1,5 @@
-import { useDeleteOneFieldMetadataItemMutation } from '~/generated-metadata/graphql';
+import { useMutation } from '@apollo/client/react';
+import { DeleteOneFieldMetadataItemDocument } from '~/generated-metadata/graphql';
 
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
@@ -11,13 +12,14 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
-import { ApolloError } from '@apollo/client';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { t } from '@lingui/core/macro';
 import { CrudOperationType } from 'twenty-shared/types';
 
 export const useDeleteOneFieldMetadataItem = () => {
-  const [deleteOneFieldMetadataItemMutation] =
-    useDeleteOneFieldMetadataItemMutation();
+  const [deleteOneFieldMetadataItemMutation] = useMutation(
+    DeleteOneFieldMetadataItemDocument,
+  );
 
   const { refreshObjectMetadataItems } =
     useRefreshObjectMetadataItems('network-only');
@@ -81,7 +83,7 @@ export const useDeleteOneFieldMetadataItem = () => {
         response,
       };
     } catch (error) {
-      if (error instanceof ApolloError) {
+      if (CombinedGraphQLErrors.is(error)) {
         handleMetadataError(error, {
           primaryMetadataName: 'fieldMetadata',
           operationType: CrudOperationType.DELETE,

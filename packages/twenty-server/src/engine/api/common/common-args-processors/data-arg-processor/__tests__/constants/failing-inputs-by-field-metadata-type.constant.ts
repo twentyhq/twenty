@@ -96,7 +96,6 @@ export const failingInputsByFieldMetadataType: {
     { input: { booleanField: 'string' } },
     { input: { booleanField: 1 } },
   ],
-  [FieldMetadataType.RICH_TEXT]: [{ input: { richTextField: 'test' } }],
   [FieldMetadataType.ADDRESS]: [
     { input: { addressField: 'not-an-address' } },
     { input: { addressField: 1 } },

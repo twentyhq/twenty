@@ -335,20 +335,6 @@ export const fieldRawJsonMock = getMockFieldMetadataEntity({
   updatedAt: new Date(),
 });
 
-export const fieldRichTextMock = getMockFieldMetadataEntity({
-  workspaceId,
-  objectMetadataId,
-  id: 'fieldRichTextId',
-  name: 'fieldRichText',
-  type: FieldMetadataType.RICH_TEXT,
-  label: 'Field Rich Text',
-  isNullable: true,
-  defaultValue: null,
-  isLabelSyncedWithName: true,
-  createdAt: new Date(),
-  updatedAt: new Date(),
-});
-
 export const fieldActorMock = getMockFieldMetadataEntity({
   workspaceId,
   objectMetadataId,
@@ -436,7 +422,6 @@ const FIELDS_MOCK = [
   fieldPositionMock,
   fieldAddressMock,
   fieldRawJsonMock,
-  fieldRichTextMock,
   fieldActorMock,
   fieldArrayMock,
 ];

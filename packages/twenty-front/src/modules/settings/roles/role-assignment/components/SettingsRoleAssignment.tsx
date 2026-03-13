@@ -17,12 +17,13 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useState } from 'react';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { SettingsPath } from 'twenty-shared/types';
+import { useQuery } from '@apollo/client/react';
 import {
-  useFindManyAgentsQuery,
-  useGetApiKeysQuery,
   type Agent,
   FeatureFlagKey,
   type ApiKeyForRole,
+  FindManyAgentsDocument,
+  GetApiKeysDocument,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
@@ -58,8 +59,10 @@ export const SettingsRoleAssignment = ({
   const { addApiKeyToRoleAndUpdateState, updateApiKeyRoleDraftState } =
     useUpdateApiKeyRole(roleId);
 
-  const { data: agentsData } = useFindManyAgentsQuery({ skip: !isAiEnabled });
-  const { data: apiKeysData } = useGetApiKeysQuery();
+  const { data: agentsData } = useQuery(FindManyAgentsDocument, {
+    skip: !isAiEnabled,
+  });
+  const { data: apiKeysData } = useQuery(GetApiKeysDocument);
 
   const { openModal, closeModal } = useModal();
   const [selectedRoleTarget, setSelectRoleTarget] =
