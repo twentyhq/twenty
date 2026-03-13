@@ -1,8 +1,12 @@
-import { useApplicationSdkClient } from '@/front-components/hooks/useApplicationSdkClient';
-import { type FrontComponentExecutionContext } from 'twenty-sdk/front-component-renderer';
-import { FrontComponentRenderer as SharedFrontComponentRenderer } from 'twenty-sdk/front-component-renderer';
-import { type FrontComponentHostCommunicationApi } from 'twenty-sdk/front-component-renderer';
-import { isDefined } from 'twenty-shared/utils';
+import { useAtomValue } from 'jotai';
+
+import { SdkClientBlobUrlsEffect } from '@/front-components/components/SdkClientBlobUrlsEffect';
+import { sdkClientFamilyState } from '@/front-components/states/sdkClientFamilyState';
+import {
+  FrontComponentRenderer as SharedFrontComponentRenderer,
+  type FrontComponentExecutionContext,
+  type FrontComponentHostCommunicationApi,
+} from 'twenty-sdk/front-component-renderer';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
 type FrontComponentRendererWithSdkClientProps = {
@@ -24,26 +28,31 @@ export const FrontComponentRendererWithSdkClient = ({
   frontComponentHostCommunicationApi,
   onError,
 }: FrontComponentRendererWithSdkClientProps) => {
-  const { sdkClientBlobUrls, isLoading } = useApplicationSdkClient({
-    applicationId,
-    accessToken: applicationAccessToken,
-    onError,
-  });
-
-  if (isLoading || !isDefined(sdkClientBlobUrls)) {
-    return null;
-  }
+  const sdkClientState = useAtomValue(
+    sdkClientFamilyState.atomFamily(applicationId),
+  );
 
   return (
-    <SharedFrontComponentRenderer
-      colorScheme={colorScheme}
-      componentUrl={componentUrl}
-      applicationAccessToken={applicationAccessToken}
-      apiUrl={REACT_APP_SERVER_BASE_URL}
-      sdkClientUrls={sdkClientBlobUrls}
-      executionContext={executionContext}
-      frontComponentHostCommunicationApi={frontComponentHostCommunicationApi}
-      onError={onError}
-    />
+    <>
+      <SdkClientBlobUrlsEffect
+        applicationId={applicationId}
+        accessToken={applicationAccessToken}
+        onError={onError}
+      />
+      {sdkClientState.status === 'loaded' && (
+        <SharedFrontComponentRenderer
+          colorScheme={colorScheme}
+          componentUrl={componentUrl}
+          applicationAccessToken={applicationAccessToken}
+          apiUrl={REACT_APP_SERVER_BASE_URL}
+          sdkClientUrls={sdkClientState.blobUrls}
+          executionContext={executionContext}
+          frontComponentHostCommunicationApi={
+            frontComponentHostCommunicationApi
+          }
+          onError={onError}
+        />
+      )}
+    </>
   );
 };

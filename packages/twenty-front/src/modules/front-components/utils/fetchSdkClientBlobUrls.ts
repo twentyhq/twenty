@@ -1,4 +1,4 @@
-import { type SdkClientBlobUrls } from '@/front-components/states/sdkClientBlobUrlsFamilyState';
+import { type SdkClientBlobUrls } from '@/front-components/states/sdkClientFamilyState';
 import { getSdkClientUrls } from '@/front-components/utils/getSdkClientUrls';
 
 const fetchAndCreateBlobUrl = async (
