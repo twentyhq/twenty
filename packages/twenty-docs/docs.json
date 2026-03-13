@@ -360,7 +360,6 @@
                 "pages": [
                   "developers/extend/api",
                   "developers/extend/webhooks",
-                  "developers/extend/mcp",
                   {
                     "group": "Apps",
                     "pages": [
@@ -807,7 +806,6 @@
                 "pages": [
                   "l/fr/developers/extend/api",
                   "l/fr/developers/extend/webhooks",
-                  "l/fr/developers/extend/mcp",
                   {
                     "group": "Apps",
                     "pages": [
@@ -1254,7 +1252,6 @@
                 "pages": [
                   "l/ar/developers/extend/api",
                   "l/ar/developers/extend/webhooks",
-                  "l/ar/developers/extend/mcp",
                   {
                     "group": "التطبيقات",
                     "pages": [
@@ -1701,7 +1698,6 @@
                 "pages": [
                   "l/cs/developers/extend/api",
                   "l/cs/developers/extend/webhooks",
-                  "l/cs/developers/extend/mcp",
                   {
                     "group": "Apps",
                     "pages": [
@@ -2148,7 +2144,6 @@
                 "pages": [
                   "l/de/developers/extend/api",
                   "l/de/developers/extend/webhooks",
-                  "l/de/developers/extend/mcp",
                   {
                     "group": "Apps",
                     "pages": [
@@ -2595,7 +2590,6 @@
                 "pages": [
                   "l/es/developers/extend/api",
                   "l/es/developers/extend/webhooks",
-                  "l/es/developers/extend/mcp",
                   {
                     "group": "Apps",
                     "pages": [
@@ -3042,7 +3036,6 @@
                 "pages": [
                   "l/it/developers/extend/api",
                   "l/it/developers/extend/webhooks",
-                  "l/it/developers/extend/mcp",
                   {
                     "group": "App",
                     "pages": [
@@ -3489,7 +3482,6 @@
                 "pages": [
                   "l/ja/developers/extend/api",
                   "l/ja/developers/extend/webhooks",
-                  "l/ja/developers/extend/mcp",
                   {
                     "group": "Apps",
                     "pages": [
@@ -3936,7 +3928,6 @@
                 "pages": [
                   "l/ko/developers/extend/api",
                   "l/ko/developers/extend/webhooks",
-                  "l/ko/developers/extend/mcp",
                   {
                     "group": "Apps",
                     "pages": [
@@ -4383,7 +4374,6 @@
                 "pages": [
                   "l/pt/developers/extend/api",
                   "l/pt/developers/extend/webhooks",
-                  "l/pt/developers/extend/mcp",
                   {
                     "group": "Aplicativos",
                     "pages": [
@@ -4830,7 +4820,6 @@
                 "pages": [
                   "l/ro/developers/extend/api",
                   "l/ro/developers/extend/webhooks",
-                  "l/ro/developers/extend/mcp",
                   {
                     "group": "Aplicații",
                     "pages": [
@@ -5277,7 +5266,6 @@
                 "pages": [
                   "l/ru/developers/extend/api",
                   "l/ru/developers/extend/webhooks",
-                  "l/ru/developers/extend/mcp",
                   {
                     "group": "Приложения",
                     "pages": [
@@ -5724,7 +5712,6 @@
                 "pages": [
                   "l/tr/developers/extend/api",
                   "l/tr/developers/extend/webhooks",
-                  "l/tr/developers/extend/mcp",
                   {
                     "group": "Uygulamalar",
                     "pages": [
@@ -6171,7 +6158,6 @@
                 "pages": [
                   "l/zh/developers/extend/api",
                   "l/zh/developers/extend/webhooks",
-                  "l/zh/developers/extend/mcp",
                   {
                     "group": "应用",
                     "pages": [
