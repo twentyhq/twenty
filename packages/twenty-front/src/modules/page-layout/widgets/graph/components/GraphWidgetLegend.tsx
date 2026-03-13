@@ -1,4 +1,4 @@
-import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
+import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { GraphWidgetLegendDot } from '@/page-layout/widgets/graph/components/GraphWidgetLegendDot';
 import { LEGEND_HIGHLIGHT_DIMMED_OPACITY } from '@/page-layout/widgets/graph/constants/LegendHighlightDimmedOpacity.constant';
 import { LEGEND_ITEM_ESTIMATED_WIDTH } from '@/page-layout/widgets/graph/constants/LegendItemEstimatedWidth';
@@ -150,9 +150,7 @@ export const GraphWidgetLegend = ({
   const [animationDirection, setAnimationDirection] =
     useState<AnimationDirection>('forward');
 
-  const isPageLayoutInEditMode = useAtomComponentStateValue(
-    isPageLayoutInEditModeComponentState,
-  );
+  const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
 
   const isInteractive = !isPageLayoutInEditMode;
 

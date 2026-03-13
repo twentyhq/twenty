@@ -1,5 +1,5 @@
 import { useCurrentPageLayout } from '@/page-layout/hooks/useCurrentPageLayout';
-import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
+import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { buildWidgetVisibilityContext } from '@/page-layout/utils/buildWidgetVisibilityContext';
 import { filterVisibleWidgets } from '@/page-layout/utils/filterVisibleWidgets';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
@@ -11,9 +11,7 @@ export const useIsCurrentWidgetLastOfTab = (widgetId: string): boolean => {
   const { currentPageLayout } = useCurrentPageLayout();
   const isMobile = useIsMobile();
   const { isInSidePanel } = useLayoutRenderingContext();
-  const isPageLayoutInEditMode = useAtomComponentStateValue(
-    isPageLayoutInEditModeComponentState,
-  );
+  const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
 
   if (!isDefined(currentPageLayout)) {
     return false;

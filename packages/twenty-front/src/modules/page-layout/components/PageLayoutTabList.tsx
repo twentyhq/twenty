@@ -36,7 +36,7 @@ import { PageLayoutTabListVisibleTabs } from '@/page-layout/components/PageLayou
 import { STANDARD_PAGE_LAYOUT_TAB_TITLE_TRANSLATIONS } from '@/page-layout/constants/StandardPageLayoutTabTitleTranslations';
 import { useIsCurrentObjectCustom } from '@/page-layout/hooks/useIsCurrentObjectCustom';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
-import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
+import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { pageLayoutTabListCurrentDragDroppableIdComponentState } from '@/page-layout/states/pageLayoutTabListCurrentDragDroppableIdComponentState';
 import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/states/pageLayoutTabSettingsOpenTabIdComponentState';
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
@@ -232,10 +232,7 @@ export const PageLayoutTabList = ({
     ],
   );
 
-  const isPageLayoutInEditMode = useAtomComponentStateValue(
-    isPageLayoutInEditModeComponentState,
-    pageLayoutId,
-  );
+  const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
   const pageLayoutTabSettingsOpenTabId = useAtomComponentStateValue(
     pageLayoutTabSettingsOpenTabIdComponentState,
     pageLayoutId,

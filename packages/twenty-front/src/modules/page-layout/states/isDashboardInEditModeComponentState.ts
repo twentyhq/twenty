@@ -2,9 +2,10 @@ import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/creat
 
 import { PageLayoutComponentInstanceContext } from './contexts/PageLayoutComponentInstanceContext';
 
-export const isPageLayoutInEditModeComponentState =
+export const isDashboardInEditModeComponentState =
   createAtomComponentState<boolean>({
-    key: 'isPageLayoutInEditModeComponentState',
+    key: 'isDashboardInEditModeComponentState',
     defaultValue: false,
     componentInstanceContext: PageLayoutComponentInstanceContext,
   });
+

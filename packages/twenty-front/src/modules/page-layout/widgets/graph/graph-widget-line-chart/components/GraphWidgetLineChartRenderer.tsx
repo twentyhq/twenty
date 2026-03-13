@@ -1,4 +1,4 @@
-import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
+import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { WidgetSkeletonLoader } from '@/page-layout/widgets/components/WidgetSkeletonLoader';
 import { GraphWidgetChartHasTooManyGroupsEffect } from '@/page-layout/widgets/graph/components/GraphWidgetChartHasTooManyGroupsEffect';
 import { LINE_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graph-widget-line-chart/constants/LineChartConstants';
@@ -56,9 +56,7 @@ export const GraphWidgetLineChartRenderer = () => {
 
   const navigate = useNavigate();
   const configuration = widget.configuration;
-  const isPageLayoutInEditMode = useAtomComponentStateValue(
-    isPageLayoutInEditModeComponentState,
-  );
+  const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
 
   const hasGroupByOnSecondaryAxis = isDefined(
     configuration.secondaryAxisGroupByFieldMetadataId,

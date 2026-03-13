@@ -1,6 +1,6 @@
 import { useExecuteTasksOnAnyLocationChange } from '@/app/hooks/useExecuteTasksOnAnyLocationChange';
 import { currentPageLayoutIdState } from '@/page-layout/states/currentPageLayoutIdState';
-import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
+import { isDashboardInEditModeComponentState } from '@/page-layout/states/isDashboardInEditModeComponentState';
 import { isLayoutCustomizationActiveState } from '@/app/states/isLayoutCustomizationActiveState';
 import { act, renderHook } from '@testing-library/react';
 import { createStore, Provider as JotaiProvider } from 'jotai';
@@ -33,7 +33,7 @@ describe('useExecuteTasksOnAnyLocationChange', () => {
 
     store.set(currentPageLayoutIdState.atom, PAGE_LAYOUT_ID);
     store.set(
-      isPageLayoutInEditModeComponentState.atomFamily({
+      isDashboardInEditModeComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_ID,
       }),
       true,
@@ -52,7 +52,7 @@ describe('useExecuteTasksOnAnyLocationChange', () => {
     expect(store.get(currentPageLayoutIdState.atom)).toBeNull();
     expect(
       store.get(
-        isPageLayoutInEditModeComponentState.atomFamily({
+        isDashboardInEditModeComponentState.atomFamily({
           instanceId: PAGE_LAYOUT_ID,
         }),
       ),
@@ -65,7 +65,7 @@ describe('useExecuteTasksOnAnyLocationChange', () => {
 
     store.set(currentPageLayoutIdState.atom, PAGE_LAYOUT_ID);
     store.set(
-      isPageLayoutInEditModeComponentState.atomFamily({
+      isDashboardInEditModeComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_ID,
       }),
       true,
@@ -84,7 +84,7 @@ describe('useExecuteTasksOnAnyLocationChange', () => {
     expect(store.get(currentPageLayoutIdState.atom)).toBe(PAGE_LAYOUT_ID);
     expect(
       store.get(
-        isPageLayoutInEditModeComponentState.atomFamily({
+        isDashboardInEditModeComponentState.atomFamily({
           instanceId: PAGE_LAYOUT_ID,
         }),
       ),

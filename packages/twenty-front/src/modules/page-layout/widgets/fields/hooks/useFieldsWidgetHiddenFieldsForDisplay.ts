@@ -1,7 +1,7 @@
 import { fieldsWidgetEditorModeDraftComponentState } from '@/page-layout/states/fieldsWidgetEditorModeDraftComponentState';
 import { fieldsWidgetGroupsDraftComponentState } from '@/page-layout/states/fieldsWidgetGroupsDraftComponentState';
 import { fieldsWidgetUngroupedFieldsDraftComponentState } from '@/page-layout/states/fieldsWidgetUngroupedFieldsDraftComponentState';
-import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
+import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { useFieldsWidgetHiddenFields } from '@/page-layout/widgets/fields/hooks/useFieldsWidgetHiddenFields';
 import { type FieldsWidgetGroupField } from '@/page-layout/widgets/fields/types/FieldsWidgetGroup';
 import { getHiddenFieldsFromGroups } from '@/page-layout/widgets/fields/utils/getHiddenFieldsFromGroups';
@@ -20,9 +20,7 @@ export const useFieldsWidgetHiddenFieldsForDisplay = ({
   viewId,
   objectNameSingular,
 }: UseFieldsWidgetHiddenFieldsForDisplayParams) => {
-  const isPageLayoutInEditMode = useAtomComponentStateValue(
-    isPageLayoutInEditModeComponentState,
-  );
+  const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
 
   const fieldsWidgetGroupsDraft = useAtomComponentStateValue(
     fieldsWidgetGroupsDraftComponentState,

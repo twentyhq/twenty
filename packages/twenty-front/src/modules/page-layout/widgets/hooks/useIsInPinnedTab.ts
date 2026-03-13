@@ -1,6 +1,6 @@
 import { usePageLayoutContentContext } from '@/page-layout/contexts/PageLayoutContentContext';
 import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageLayoutOrThrow';
-import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
+import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { getTabsByDisplayMode } from '@/page-layout/utils/getTabsByDisplayMode';
 import { getTabsWithVisibleWidgets } from '@/page-layout/utils/getTabsWithVisibleWidgets';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
@@ -15,9 +15,7 @@ export const useIsInPinnedTab = () => {
   const { isInSidePanel } = useLayoutRenderingContext();
   const { currentPageLayout } = useCurrentPageLayoutOrThrow();
 
-  const isPageLayoutInEditMode = useAtomComponentStateValue(
-    isPageLayoutInEditModeComponentState,
-  );
+  const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
 
   const tabsWithVisibleWidgets = getTabsWithVisibleWidgets({
     tabs: currentPageLayout.tabs,

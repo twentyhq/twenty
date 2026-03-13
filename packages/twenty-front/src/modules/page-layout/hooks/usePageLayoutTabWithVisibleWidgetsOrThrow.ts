@@ -1,5 +1,5 @@
 import { useCurrentPageLayout } from '@/page-layout/hooks/useCurrentPageLayout';
-import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
+import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { buildWidgetVisibilityContext } from '@/page-layout/utils/buildWidgetVisibilityContext';
 import { filterVisibleWidgets } from '@/page-layout/utils/filterVisibleWidgets';
@@ -14,9 +14,7 @@ export const usePageLayoutTabWithVisibleWidgetsOrThrow = (
   const { currentPageLayout } = useCurrentPageLayout();
   const isMobile = useIsMobile();
   const { isInSidePanel } = useLayoutRenderingContext();
-  const isPageLayoutInEditMode = useAtomComponentStateValue(
-    isPageLayoutInEditModeComponentState,
-  );
+  const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
 
   if (!isDefined(currentPageLayout)) {
     throw new Error('currentPageLayout is not defined');

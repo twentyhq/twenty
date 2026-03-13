@@ -6,7 +6,7 @@ import { fieldsWidgetEditorModeDraftComponentState } from '@/page-layout/states/
 import { fieldsWidgetGroupsDraftComponentState } from '@/page-layout/states/fieldsWidgetGroupsDraftComponentState';
 import { fieldsWidgetUngroupedFieldsDraftComponentState } from '@/page-layout/states/fieldsWidgetUngroupedFieldsDraftComponentState';
 import { hasInitializedFieldsWidgetGroupsDraftComponentState } from '@/page-layout/states/hasInitializedFieldsWidgetGroupsDraftComponentState';
-import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
+import { isDashboardInEditModeComponentState } from '@/page-layout/states/isDashboardInEditModeComponentState';
 import { SIDE_PANEL_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelComponentInstanceId';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
@@ -20,8 +20,8 @@ export const useSetIsPageLayoutInEditMode = (pageLayoutIdFromProps: string) => {
     pageLayoutIdFromProps,
   );
 
-  const isPageLayoutInEditModeState = useAtomComponentStateCallbackState(
-    isPageLayoutInEditModeComponentState,
+  const isDashboardInEditModeState = useAtomComponentStateCallbackState(
+    isDashboardInEditModeComponentState,
     pageLayoutId,
   );
 
@@ -64,7 +64,7 @@ export const useSetIsPageLayoutInEditMode = (pageLayoutIdFromProps: string) => {
         store.set(hasInitializedFieldsWidgetGroupsDraftState, {});
       }
 
-      store.set(isPageLayoutInEditModeState, value);
+      store.set(isDashboardInEditModeState, value);
 
       store.set(contextStoreIsFullTabWidgetInEditModeState, value);
 
@@ -82,7 +82,7 @@ export const useSetIsPageLayoutInEditMode = (pageLayoutIdFromProps: string) => {
       }
     },
     [
-      isPageLayoutInEditModeState,
+      isDashboardInEditModeState,
       contextStoreIsFullTabWidgetInEditModeState,
       fieldsWidgetGroupsDraftState,
       fieldsWidgetUngroupedFieldsDraftState,

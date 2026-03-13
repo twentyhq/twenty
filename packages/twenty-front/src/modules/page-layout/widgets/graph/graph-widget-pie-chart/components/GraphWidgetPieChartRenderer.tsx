@@ -1,4 +1,4 @@
-import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
+import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { WidgetSkeletonLoader } from '@/page-layout/widgets/components/WidgetSkeletonLoader';
 import { GraphWidgetChartHasTooManyGroupsEffect } from '@/page-layout/widgets/graph/components/GraphWidgetChartHasTooManyGroupsEffect';
 import { useGraphPieChartWidgetData } from '@/page-layout/widgets/graph/graph-widget-pie-chart/hooks/useGraphPieChartWidgetData';
@@ -49,9 +49,7 @@ export const GraphWidgetPieChartRenderer = () => {
 
   const navigate = useNavigate();
 
-  const isPageLayoutInEditMode = useAtomComponentStateValue(
-    isPageLayoutInEditModeComponentState,
-  );
+  const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
   const indexViewId = useAtomFamilySelectorValue(
     coreIndexViewIdFromObjectMetadataItemFamilySelector,
     { objectMetadataItemId: objectMetadataItem.id },

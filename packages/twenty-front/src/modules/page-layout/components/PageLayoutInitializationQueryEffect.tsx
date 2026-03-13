@@ -3,8 +3,6 @@ import { recordLayoutDraftStoreByPageLayoutIdState } from '@/app/states/recordLa
 import { useBasePageLayout } from '@/page-layout/hooks/useBasePageLayout';
 import { usePageLayoutWithRelationWidgets } from '@/page-layout/hooks/usePageLayoutWithRelationWidgets';
 import { useSetIsPageLayoutInEditMode } from '@/page-layout/hooks/useSetIsPageLayoutInEditMode';
-import { currentPageLayoutIdState } from '@/page-layout/states/currentPageLayoutIdState';
-import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutIsInitializedComponentState } from '@/page-layout/states/pageLayoutIsInitializedComponentState';
@@ -66,14 +64,6 @@ export const PageLayoutInitializationQueryEffect = ({
         isLayoutCustomizationActive &&
         isCustomizationDraftAlreadyRegistered
       ) {
-        store.set(
-          isPageLayoutInEditModeComponentState.atomFamily({
-            instanceId: layout.id,
-          }),
-          true,
-        );
-        store.set(currentPageLayoutIdState.atom, layout.id);
-
         return;
       }
 
@@ -96,10 +86,10 @@ export const PageLayoutInitializationQueryEffect = ({
       const tabLayouts = convertPageLayoutToTabLayouts(layout);
       store.set(pageLayoutCurrentLayoutsComponentCallbackState, tabLayouts);
 
-      const shouldEnterEditMode =
-        isPageLayoutEmpty(layout) ||
-        (isLayoutCustomizationActive && isRecordPageLayout);
-      setIsPageLayoutInEditMode(shouldEnterEditMode);
+      if (!isRecordPageLayout) {
+        const shouldEnterDashboardEditMode = isPageLayoutEmpty(layout);
+        setIsPageLayoutInEditMode(shouldEnterDashboardEditMode);
+      }
     },
     [
       pageLayoutCurrentLayoutsComponentCallbackState,
