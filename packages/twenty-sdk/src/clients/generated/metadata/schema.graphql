@@ -582,6 +582,7 @@ type CoreViewField {
   createdAt: DateTime!
   updatedAt: DateTime!
   deletedAt: DateTime
+  isOverridden: Boolean!
 }
 
 enum AggregateOperations {
@@ -690,6 +691,7 @@ type CoreViewFieldGroup {
   updatedAt: DateTime!
   deletedAt: DateTime
   viewFields: [CoreViewField!]!
+  isOverridden: Boolean!
 }
 
 type CoreView {
