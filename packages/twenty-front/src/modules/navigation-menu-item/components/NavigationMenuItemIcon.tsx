@@ -2,7 +2,6 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { Avatar, IconLink, IconWorld, useIcons } from 'twenty-ui/display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 import { LinkIconWithLinkOverlay } from '@/navigation-menu-item/components/LinkIconWithLinkOverlay';
 import { StyledNavigationMenuItemIconContainer } from '@/navigation-menu-item/components/NavigationMenuItemIconContainer';
@@ -16,7 +15,6 @@ import { useGetStandardObjectIcon } from '@/object-metadata/hooks/useGetStandard
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { ViewKey } from '@/views/types/ViewKey';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
 export const NavigationMenuItemIcon = ({
   navigationMenuItem,
@@ -24,9 +22,6 @@ export const NavigationMenuItemIcon = ({
   navigationMenuItem: ProcessedNavigationMenuItem;
 }) => {
   const { getIcon } = useIcons();
-  const isNavigationMenuItemEditingEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED,
-  );
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
   const { Icon: StandardIcon, IconColor } = useGetStandardObjectIcon(
     navigationMenuItem.objectNameSingular ?? '',
@@ -80,10 +75,7 @@ export const NavigationMenuItemIcon = ({
     (navigationMenuItem.Icon ? getIcon(navigationMenuItem.Icon) : undefined);
   const effectiveColor =
     getEffectiveNavigationMenuItemColor(navigationMenuItem);
-  const useStyledIcon =
-    isNavigationMenuItemEditingEnabled &&
-    !isRecord &&
-    isNonEmptyString(effectiveColor);
+  const useStyledIcon = !isRecord && isNonEmptyString(effectiveColor);
   const iconStyle = useStyledIcon
     ? getNavigationMenuItemIconStyleFromColor(effectiveColor)
     : null;

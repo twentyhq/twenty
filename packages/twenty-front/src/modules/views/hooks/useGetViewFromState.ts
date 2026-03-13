@@ -2,10 +2,10 @@ import { coreViewFromViewIdFamilySelector } from '@/views/states/selectors/coreV
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 
-export const useGetViewFromPrefetchState = () => {
+export const useGetViewFromState = () => {
   const store = useStore();
 
-  const getViewFromPrefetchState = useCallback(
+  const getViewFromState = useCallback(
     (viewId: string) => {
       return store.get(
         coreViewFromViewIdFamilySelector.selectorFamily({ viewId }),
@@ -15,6 +15,6 @@ export const useGetViewFromPrefetchState = () => {
   );
 
   return {
-    getViewFromPrefetchState,
+    getViewFromState,
   };
 };

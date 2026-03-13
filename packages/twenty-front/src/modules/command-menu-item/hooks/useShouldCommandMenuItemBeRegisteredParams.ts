@@ -7,8 +7,7 @@ import { contextStoreCurrentViewTypeComponentState } from '@/context-store/state
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
-import { useFavorites } from '@/favorites/hooks/useFavorites';
-import { usePrefetchedNavigationMenuItemsData } from '@/navigation-menu-item/hooks/usePrefetchedNavigationMenuItemsData';
+import { useNavigationMenuItemsData } from '@/navigation-menu-item/hooks/useNavigationMenuItemsData';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
@@ -19,11 +18,10 @@ import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useStore } from 'jotai';
 import { useCallback, useContext, useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import type { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const useShouldCommandMenuItemBeRegisteredParams = ({
   objectMetadataItem,
@@ -31,11 +29,7 @@ export const useShouldCommandMenuItemBeRegisteredParams = ({
   objectMetadataItem?: ObjectMetadataItem;
 }): ShouldBeRegisteredFunctionParams => {
   const store = useStore();
-  const { sortedFavorites: favorites } = useFavorites();
-  const { navigationMenuItems } = usePrefetchedNavigationMenuItemsData();
-  const isNavigationMenuItemEditingEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED,
-  );
+  const { navigationMenuItems } = useNavigationMenuItemsData();
 
   const contextStoreTargetedRecordsRule = useAtomComponentStateValue(
     contextStoreTargetedRecordsRuleComponentState,
@@ -47,30 +41,17 @@ export const useShouldCommandMenuItemBeRegisteredParams = ({
       : undefined;
 
   const isFavorite = useMemo(() => {
-    if (!isDefined(recordId)) {
+    if (!isDefined(recordId) || !isDefined(objectMetadataItem)) {
       return false;
     }
 
-    if (isNavigationMenuItemEditingEnabled && isDefined(objectMetadataItem)) {
-      const foundNavigationMenuItem = navigationMenuItems?.find(
-        (item) =>
-          item.targetRecordId === recordId &&
-          item.targetObjectMetadataId === objectMetadataItem.id,
-      );
-      return !!foundNavigationMenuItem;
-    }
-
-    const foundFavorite = favorites?.find(
-      (favorite) => favorite.recordId === recordId,
+    const foundNavigationMenuItem = navigationMenuItems?.find(
+      (item) =>
+        item.targetRecordId === recordId &&
+        item.targetObjectMetadataId === objectMetadataItem.id,
     );
-    return !!foundFavorite;
-  }, [
-    recordId,
-    isNavigationMenuItemEditingEnabled,
-    objectMetadataItem,
-    navigationMenuItems,
-    favorites,
-  ]);
+    return !!foundNavigationMenuItem;
+  }, [recordId, objectMetadataItem, navigationMenuItems]);
 
   const selectedRecord =
     useAtomFamilyStateValue(recordStoreFamilyState, recordId ?? '') ||
