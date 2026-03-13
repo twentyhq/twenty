@@ -1,5 +1,5 @@
 import { isLayoutCustomizationActiveState } from '@/app/states/isLayoutCustomizationActiveState';
-import { touchedPageLayoutIdsState } from '@/app/states/touchedPageLayoutIdsState';
+import { recordLayoutDraftStoreByPageLayoutIdState } from '@/app/states/recordLayoutDraftStoreByPageLayoutIdState';
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/states/navigationMenuItemsDraftState';
 import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeState';
 import { currentPageLayoutIdState } from '@/page-layout/states/currentPageLayoutIdState';
@@ -30,9 +30,13 @@ export const useExitLayoutCustomizationMode = () => {
     setNavigationMenuItemsDraft(null);
     setSelectedNavigationMenuItemInEditMode(null);
 
-    const touchedIds = store.get(touchedPageLayoutIdsState.atom);
+    const recordLayoutDraftStoreByPageLayoutId = store.get(
+      recordLayoutDraftStoreByPageLayoutIdState.atom,
+    );
 
-    for (const pageLayoutId of touchedIds) {
+    for (const pageLayoutId of Object.keys(
+      recordLayoutDraftStoreByPageLayoutId,
+    )) {
       store.set(
         isPageLayoutInEditModeComponentState.atomFamily({
           instanceId: pageLayoutId,
@@ -42,7 +46,7 @@ export const useExitLayoutCustomizationMode = () => {
     }
 
     store.set(currentPageLayoutIdState.atom, null);
-    store.set(touchedPageLayoutIdsState.atom, new Set());
+    store.set(recordLayoutDraftStoreByPageLayoutIdState.atom, {});
     setIsLayoutCustomizationActive(false);
     closeSidePanelMenu();
   }, [

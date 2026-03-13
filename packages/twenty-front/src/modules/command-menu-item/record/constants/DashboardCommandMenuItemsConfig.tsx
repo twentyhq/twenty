@@ -9,7 +9,10 @@ import { SingleRecordCommandKeys } from '@/command-menu-item/record/single-recor
 import { inheritCommandMenuItemsFromDefaultConfig } from '@/command-menu-item/record/utils/inheritCommandMenuItemsFromDefaultConfig';
 import { CommandMenuItemScope } from '@/command-menu-item/types/CommandMenuItemScope';
 import { CommandMenuItemType } from '@/command-menu-item/types/CommandMenuItemType';
-import { CommandMenuItemViewType } from 'twenty-shared/types';
+import {
+  CommandMenuItemViewType,
+  CoreObjectNameSingular,
+} from 'twenty-shared/types';
 import { PageLayoutSingleRecordActionKeys } from '@/page-layout/actions/PageLayoutSingleRecordActionKeys';
 import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
@@ -32,7 +35,13 @@ export const DASHBOARD_COMMAND_MENU_ITEMS_CONFIG =
         Icon: IconPencil,
         type: CommandMenuItemType.Standard,
         scope: CommandMenuItemScope.RecordSelection,
-        shouldBeRegistered: ({ selectedRecord, objectPermissions }) =>
+        shouldBeRegistered: ({
+          selectedRecord,
+          objectPermissions,
+          objectMetadataItem,
+        }) =>
+          objectMetadataItem?.nameSingular ===
+            CoreObjectNameSingular.Dashboard &&
           isDefined(selectedRecord) &&
           !selectedRecord?.isRemote &&
           !isDefined(selectedRecord?.deletedAt) &&
@@ -51,7 +60,13 @@ export const DASHBOARD_COMMAND_MENU_ITEMS_CONFIG =
         Icon: IconDeviceFloppy,
         type: CommandMenuItemType.Standard,
         scope: CommandMenuItemScope.RecordSelection,
-        shouldBeRegistered: ({ selectedRecord, objectPermissions }) =>
+        shouldBeRegistered: ({
+          selectedRecord,
+          objectPermissions,
+          objectMetadataItem,
+        }) =>
+          objectMetadataItem?.nameSingular ===
+            CoreObjectNameSingular.Dashboard &&
           isDefined(selectedRecord) &&
           !selectedRecord?.isRemote &&
           !isDefined(selectedRecord?.deletedAt) &&
@@ -69,7 +84,13 @@ export const DASHBOARD_COMMAND_MENU_ITEMS_CONFIG =
         Icon: IconCancel,
         type: CommandMenuItemType.Standard,
         scope: CommandMenuItemScope.RecordSelection,
-        shouldBeRegistered: ({ selectedRecord, objectPermissions }) =>
+        shouldBeRegistered: ({
+          selectedRecord,
+          objectPermissions,
+          objectMetadataItem,
+        }) =>
+          objectMetadataItem?.nameSingular ===
+            CoreObjectNameSingular.Dashboard &&
           isDefined(selectedRecord) &&
           !selectedRecord?.isRemote &&
           !isDefined(selectedRecord?.deletedAt) &&

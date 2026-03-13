@@ -1,10 +1,7 @@
-import { touchedPageLayoutIdsState } from '@/app/states/touchedPageLayoutIdsState';
+import { recordLayoutDraftStoreByPageLayoutIdState } from '@/app/states/recordLayoutDraftStoreByPageLayoutIdState';
 import { useNavigationMenuItemsDraftState } from '@/navigation-menu-item/hooks/useNavigationMenuItemsDraftState';
-import { fieldsWidgetGroupsDraftComponentState } from '@/page-layout/states/fieldsWidgetGroupsDraftComponentState';
 import { fieldsWidgetGroupsPersistedComponentState } from '@/page-layout/states/fieldsWidgetGroupsPersistedComponentState';
-import { fieldsWidgetUngroupedFieldsDraftComponentState } from '@/page-layout/states/fieldsWidgetUngroupedFieldsDraftComponentState';
 import { fieldsWidgetUngroupedFieldsPersistedComponentState } from '@/page-layout/states/fieldsWidgetUngroupedFieldsPersistedComponentState';
-import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
 import { atom, useAtomValue } from 'jotai';
 import { useMemo } from 'react';
@@ -14,20 +11,20 @@ import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 export const useIsLayoutCustomizationDirty = () => {
   const { isDirty: isNavigationDirty } = useNavigationMenuItemsDraftState();
 
-  // Derived atom that reactively subscribes to all touched page layout
-  // draft/persisted atoms via get(). Jotai tracks every get() call as a
+  // Derived atom that reactively subscribes to the per-layout draft registry
+  // and relevant persisted atoms. Jotai tracks every get() call as a
   // dependency and re-evaluates when any of them changes.
   const isAnyPageLayoutDirtyAtom = useMemo(
     () =>
       atom((get) => {
-        const touchedIds = get(touchedPageLayoutIdsState.atom);
+        const recordLayoutDraftStoreByPageLayoutId = get(
+          recordLayoutDraftStoreByPageLayoutIdState.atom,
+        );
 
-        for (const pageLayoutId of touchedIds) {
-          const draft = get(
-            pageLayoutDraftComponentState.atomFamily({
-              instanceId: pageLayoutId,
-            }),
-          );
+        for (const [pageLayoutId, recordLayoutDraftEntry] of Object.entries(
+          recordLayoutDraftStoreByPageLayoutId,
+        )) {
+          const draft = recordLayoutDraftEntry.pageLayoutDraft;
 
           const persisted = get(
             pageLayoutPersistedComponentState.atomFamily({
@@ -55,11 +52,8 @@ export const useIsLayoutCustomizationDirty = () => {
 
           // Check field widget dirtiness — field edits live in separate
           // atom families from the page layout structure.
-          const fieldsWidgetGroupsDraft = get(
-            fieldsWidgetGroupsDraftComponentState.atomFamily({
-              instanceId: pageLayoutId,
-            }),
-          );
+          const fieldsWidgetGroupsDraft =
+            recordLayoutDraftEntry.fieldsWidgetGroupsDraft;
           const fieldsWidgetGroupsPersisted = get(
             fieldsWidgetGroupsPersistedComponentState.atomFamily({
               instanceId: pageLayoutId,
@@ -72,11 +66,8 @@ export const useIsLayoutCustomizationDirty = () => {
             return true;
           }
 
-          const ungroupedFieldsDraft = get(
-            fieldsWidgetUngroupedFieldsDraftComponentState.atomFamily({
-              instanceId: pageLayoutId,
-            }),
-          );
+          const ungroupedFieldsDraft =
+            recordLayoutDraftEntry.fieldsWidgetUngroupedFieldsDraft;
           const ungroupedFieldsPersisted = get(
             fieldsWidgetUngroupedFieldsPersistedComponentState.atomFamily({
               instanceId: pageLayoutId,

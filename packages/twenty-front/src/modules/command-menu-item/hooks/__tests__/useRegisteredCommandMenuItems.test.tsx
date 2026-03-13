@@ -1,8 +1,8 @@
-import { isLayoutCustomizationActiveState } from '@/app/states/isLayoutCustomizationActiveState';
 import { useRegisteredCommandMenuItems } from '@/command-menu-item/hooks/useRegisteredCommandMenuItems';
 import { CommandMenuItemScope } from '@/command-menu-item/types/CommandMenuItemScope';
 import { CommandMenuItemType } from '@/command-menu-item/types/CommandMenuItemType';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
+import { contextStoreIsPageInEditModeComponentState } from '@/context-store/states/contextStoreIsPageInEditModeComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
@@ -99,7 +99,7 @@ const shouldBeRegisteredParams = {
 };
 
 describe('useRegisteredCommandMenuItems', () => {
-  it('should register SHOW_PAGE and GLOBAL commands when layout customization is inactive', () => {
+  it('should register SHOW_PAGE and GLOBAL commands when page is not in edit mode', () => {
     const store = createStore();
     const wrapper = getWrapper(store);
 
@@ -117,7 +117,12 @@ describe('useRegisteredCommandMenuItems', () => {
     );
 
     act(() => {
-      store.set(isLayoutCustomizationActiveState.atom, false);
+      store.set(
+        contextStoreIsPageInEditModeComponentState.atomFamily({
+          instanceId: CONTEXT_STORE_INSTANCE_ID,
+        }),
+        false,
+      );
     });
 
     const { result } = renderHook(
@@ -138,7 +143,7 @@ describe('useRegisteredCommandMenuItems', () => {
     ]);
   });
 
-  it('should register PAGE_EDIT_MODE commands when layout customization is active', () => {
+  it('should register PAGE_EDIT_MODE commands when page is in edit mode', () => {
     const store = createStore();
     const wrapper = getWrapper(store);
 
@@ -156,7 +161,12 @@ describe('useRegisteredCommandMenuItems', () => {
     );
 
     act(() => {
-      store.set(isLayoutCustomizationActiveState.atom, true);
+      store.set(
+        contextStoreIsPageInEditModeComponentState.atomFamily({
+          instanceId: CONTEXT_STORE_INSTANCE_ID,
+        }),
+        true,
+      );
     });
 
     const { result } = renderHook(

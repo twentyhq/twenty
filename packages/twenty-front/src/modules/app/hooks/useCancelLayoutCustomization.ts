@@ -1,5 +1,5 @@
 import { useExitLayoutCustomizationMode } from '@/app/hooks/useExitLayoutCustomizationMode';
-import { touchedPageLayoutIdsState } from '@/app/states/touchedPageLayoutIdsState';
+import { recordLayoutDraftStoreByPageLayoutIdState } from '@/app/states/recordLayoutDraftStoreByPageLayoutIdState';
 import { fieldsWidgetEditorModeDraftComponentState } from '@/page-layout/states/fieldsWidgetEditorModeDraftComponentState';
 import { fieldsWidgetEditorModePersistedComponentState } from '@/page-layout/states/fieldsWidgetEditorModePersistedComponentState';
 import { fieldsWidgetGroupsDraftComponentState } from '@/page-layout/states/fieldsWidgetGroupsDraftComponentState';
@@ -19,10 +19,14 @@ export const useCancelLayoutCustomization = () => {
   const { exitLayoutCustomizationMode } = useExitLayoutCustomizationMode();
 
   const cancel = useCallback(() => {
-    // Revert all touched page layouts to persisted state
-    const touchedIds = store.get(touchedPageLayoutIdsState.atom);
+    // Revert all customization draft entries to persisted state.
+    const recordLayoutDraftStoreByPageLayoutId = store.get(
+      recordLayoutDraftStoreByPageLayoutIdState.atom,
+    );
 
-    for (const pageLayoutId of touchedIds) {
+    for (const pageLayoutId of Object.keys(
+      recordLayoutDraftStoreByPageLayoutId,
+    )) {
       const persisted = store.get(
         pageLayoutPersistedComponentState.atomFamily({
           instanceId: pageLayoutId,

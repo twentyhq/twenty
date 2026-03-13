@@ -1,6 +1,5 @@
 import { useIsLayoutCustomizationDirty } from '@/app/hooks/useIsLayoutCustomizationDirty';
 import { isLayoutCustomizationActiveState } from '@/app/states/isLayoutCustomizationActiveState';
-import { touchedPageLayoutIdsState } from '@/app/states/touchedPageLayoutIdsState';
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/states/navigationMenuItemsDraftState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
@@ -67,7 +66,6 @@ describe('useIsLayoutCustomizationDirty', () => {
 
     store.set(prefetchNavigationMenuItemsState.atom, []);
     store.set(isLayoutCustomizationActiveState.atom, true);
-    store.set(touchedPageLayoutIdsState.atom, new Set([PAGE_LAYOUT_ID_1]));
 
     store.set(
       pageLayoutPersistedComponentState.atomFamily({
@@ -95,7 +93,6 @@ describe('useIsLayoutCustomizationDirty', () => {
 
     store.set(prefetchNavigationMenuItemsState.atom, []);
     store.set(isLayoutCustomizationActiveState.atom, true);
-    store.set(touchedPageLayoutIdsState.atom, new Set([PAGE_LAYOUT_ID_1]));
 
     store.set(
       pageLayoutPersistedComponentState.atomFamily({
@@ -156,10 +153,6 @@ describe('useIsLayoutCustomizationDirty', () => {
 
     store.set(prefetchNavigationMenuItemsState.atom, []);
     store.set(isLayoutCustomizationActiveState.atom, true);
-    store.set(
-      touchedPageLayoutIdsState.atom,
-      new Set([PAGE_LAYOUT_ID_1, PAGE_LAYOUT_ID_2]),
-    );
 
     // First layout is clean
     store.set(

@@ -1,4 +1,3 @@
-import { isLayoutCustomizationActiveState } from '@/app/states/isLayoutCustomizationActiveState';
 import { useRecordAgnosticCommands } from '@/command-menu-item/record-agnostic/hooks/useRecordAgnosticCommands';
 import { useRelatedRecordCommands } from '@/command-menu-item/record-agnostic/hooks/useRelatedRecordCommands';
 import { CommandMenuItemViewType } from 'twenty-shared/types';
@@ -6,10 +5,10 @@ import { type ShouldBeRegisteredFunctionParams } from '@/command-menu-item/types
 import { getCommandMenuItemConfig } from '@/command-menu-item/utils/getCommandMenuItemConfig';
 import { getCommandMenuItemViewType } from '@/command-menu-item/utils/getCommandMenuItemViewType';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
+import { contextStoreIsPageInEditModeComponentState } from '@/context-store/states/contextStoreIsPageInEditModeComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 
@@ -28,8 +27,8 @@ export const useRegisteredCommandMenuItems = (
     contextStoreCurrentViewTypeComponentState,
   );
 
-  const isLayoutCustomizationActive = useAtomStateValue(
-    isLayoutCustomizationActiveState,
+  const contextStoreIsPageInEditMode = useAtomComponentStateValue(
+    contextStoreIsPageInEditModeComponentState,
   );
 
   const viewType = getCommandMenuItemViewType(
@@ -60,7 +59,7 @@ export const useRegisteredCommandMenuItems = (
   const commandMenuItemsToRegister = Object.values(
     commandMenuItemsConfig,
   ).filter((commandMenuItem) => {
-    if (isLayoutCustomizationActive) {
+    if (contextStoreIsPageInEditMode) {
       return (
         isDefined(commandMenuItem.availableOn) &&
         commandMenuItem.availableOn.includes(

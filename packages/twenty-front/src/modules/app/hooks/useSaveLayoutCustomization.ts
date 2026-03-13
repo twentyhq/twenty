@@ -1,19 +1,18 @@
 import { useExitLayoutCustomizationMode } from '@/app/hooks/useExitLayoutCustomizationMode';
-import { touchedPageLayoutIdsState } from '@/app/states/touchedPageLayoutIdsState';
+import {
+  type RecordLayoutDraftEntry,
+  recordLayoutDraftStoreByPageLayoutIdState,
+} from '@/app/states/recordLayoutDraftStoreByPageLayoutIdState';
 import { useSaveNavigationMenuItemsDraft } from '@/navigation-menu-item/hooks/useSaveNavigationMenuItemsDraft';
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/states/navigationMenuItemsDraftState';
 import { filterWorkspaceNavigationMenuItems } from '@/navigation-menu-item/utils/filterWorkspaceNavigationMenuItems';
 import { prefetchNavigationMenuItemsState } from '@/prefetch/states/prefetchNavigationMenuItemsState';
 import { UPSERT_FIELDS_WIDGET } from '@/page-layout/graphql/mutations/upsertFieldsWidget';
 import { useUpdatePageLayoutWithTabsAndWidgets } from '@/page-layout/hooks/useUpdatePageLayoutWithTabsAndWidgets';
-import { fieldsWidgetEditorModeDraftComponentState } from '@/page-layout/states/fieldsWidgetEditorModeDraftComponentState';
 import { fieldsWidgetEditorModePersistedComponentState } from '@/page-layout/states/fieldsWidgetEditorModePersistedComponentState';
-import { fieldsWidgetGroupsDraftComponentState } from '@/page-layout/states/fieldsWidgetGroupsDraftComponentState';
 import { fieldsWidgetGroupsPersistedComponentState } from '@/page-layout/states/fieldsWidgetGroupsPersistedComponentState';
-import { fieldsWidgetUngroupedFieldsDraftComponentState } from '@/page-layout/states/fieldsWidgetUngroupedFieldsDraftComponentState';
 import { fieldsWidgetUngroupedFieldsPersistedComponentState } from '@/page-layout/states/fieldsWidgetUngroupedFieldsPersistedComponentState';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
-import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
 import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { convertPageLayoutDraftToUpdateInput } from '@/page-layout/utils/convertPageLayoutDraftToUpdateInput';
@@ -69,27 +68,19 @@ export const useSaveLayoutCustomization = () => {
   >(UPSERT_FIELDS_WIDGET);
 
   const saveFieldsWidgetGroupsForPageLayout = useCallback(
-    async (pageLayoutId: string) => {
-      const allDraftGroups = store.get(
-        fieldsWidgetGroupsDraftComponentState.atomFamily({
-          instanceId: pageLayoutId,
-        }),
-      );
+    async (
+      pageLayoutId: string,
+      recordLayoutDraftEntry: RecordLayoutDraftEntry,
+    ) => {
+      const allDraftGroups = recordLayoutDraftEntry.fieldsWidgetGroupsDraft;
       const allPersistedGroups = store.get(
         fieldsWidgetGroupsPersistedComponentState.atomFamily({
           instanceId: pageLayoutId,
         }),
       );
-      const allUngroupedFieldsDraft = store.get(
-        fieldsWidgetUngroupedFieldsDraftComponentState.atomFamily({
-          instanceId: pageLayoutId,
-        }),
-      );
-      const allEditorModes = store.get(
-        fieldsWidgetEditorModeDraftComponentState.atomFamily({
-          instanceId: pageLayoutId,
-        }),
-      );
+      const allUngroupedFieldsDraft =
+        recordLayoutDraftEntry.fieldsWidgetUngroupedFieldsDraft;
+      const allEditorModes = recordLayoutDraftEntry.fieldsWidgetEditorModeDraft;
 
       const widgetIds = new Set([
         ...Object.keys(allDraftGroups),
@@ -196,15 +187,15 @@ export const useSaveLayoutCustomization = () => {
         await saveDraft();
       }
 
-      const touchedIds = store.get(touchedPageLayoutIdsState.atom);
+      const recordLayoutDraftStoreByPageLayoutId = store.get(
+        recordLayoutDraftStoreByPageLayoutIdState.atom,
+      );
       let hasAnyFailure = false;
 
-      for (const pageLayoutId of touchedIds) {
-        const draft = store.get(
-          pageLayoutDraftComponentState.atomFamily({
-            instanceId: pageLayoutId,
-          }),
-        );
+      for (const [pageLayoutId, recordLayoutDraftEntry] of Object.entries(
+        recordLayoutDraftStoreByPageLayoutId,
+      )) {
+        const draft = recordLayoutDraftEntry.pageLayoutDraft;
 
         const persisted = store.get(
           pageLayoutPersistedComponentState.atomFamily({
@@ -279,7 +270,10 @@ export const useSaveLayoutCustomization = () => {
         // Save fields widget groups independently — field edits live in
         // separate atom families and must persist even when the page
         // layout structure itself hasn't changed.
-        await saveFieldsWidgetGroupsForPageLayout(pageLayoutId);
+        await saveFieldsWidgetGroupsForPageLayout(
+          pageLayoutId,
+          recordLayoutDraftEntry,
+        );
       }
 
       if (hasAnyFailure) {

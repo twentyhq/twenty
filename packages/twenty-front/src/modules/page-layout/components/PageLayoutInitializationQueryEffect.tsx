@@ -1,8 +1,10 @@
 import { isLayoutCustomizationActiveState } from '@/app/states/isLayoutCustomizationActiveState';
-import { touchedPageLayoutIdsState } from '@/app/states/touchedPageLayoutIdsState';
+import { recordLayoutDraftStoreByPageLayoutIdState } from '@/app/states/recordLayoutDraftStoreByPageLayoutIdState';
 import { useBasePageLayout } from '@/page-layout/hooks/useBasePageLayout';
 import { usePageLayoutWithRelationWidgets } from '@/page-layout/hooks/usePageLayoutWithRelationWidgets';
 import { useSetIsPageLayoutInEditMode } from '@/page-layout/hooks/useSetIsPageLayoutInEditMode';
+import { currentPageLayoutIdState } from '@/page-layout/states/currentPageLayoutIdState';
+import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutIsInitializedComponentState } from '@/page-layout/states/pageLayoutIsInitializedComponentState';
@@ -12,9 +14,11 @@ import { convertPageLayoutToTabLayouts } from '@/page-layout/utils/convertPageLa
 import { isPageLayoutEmpty } from '@/page-layout/utils/isPageLayoutEmpty';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useStore } from 'jotai';
 import { useCallback, useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { PageLayoutType } from '~/generated-metadata/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 type PageLayoutInitializationQueryEffectProps = {
@@ -43,10 +47,36 @@ export const PageLayoutInitializationQueryEffect = ({
   const pageLayoutCurrentLayoutsComponentCallbackState =
     useAtomComponentStateCallbackState(pageLayoutCurrentLayoutsComponentState);
 
+  const isLayoutCustomizationActive = useAtomStateValue(
+    isLayoutCustomizationActiveState,
+  );
+
   const store = useStore();
 
   const initializePageLayout = useCallback(
     (layout: PageLayout) => {
+      const isRecordPageLayout = layout.type === PageLayoutType.RECORD_PAGE;
+
+      const isCustomizationDraftAlreadyRegistered = isDefined(
+        store.get(recordLayoutDraftStoreByPageLayoutIdState.atom)[layout.id],
+      );
+
+      if (
+        isRecordPageLayout &&
+        isLayoutCustomizationActive &&
+        isCustomizationDraftAlreadyRegistered
+      ) {
+        store.set(
+          isPageLayoutInEditModeComponentState.atomFamily({
+            instanceId: layout.id,
+          }),
+          true,
+        );
+        store.set(currentPageLayoutIdState.atom, layout.id);
+
+        return;
+      }
+
       const currentPersisted = store.get(
         pageLayoutPersistedComponentCallbackState,
       );
@@ -66,41 +96,46 @@ export const PageLayoutInitializationQueryEffect = ({
       const tabLayouts = convertPageLayoutToTabLayouts(layout);
       store.set(pageLayoutCurrentLayoutsComponentCallbackState, tabLayouts);
 
-      const isLayoutCustomizationActive = store.get(
-        isLayoutCustomizationActiveState.atom,
-      );
-
-      // During active customization, return visits are handled by
-      // PageLayoutGlobalEditModeEffect which preserves existing drafts.
-      // Calling setIsPageLayoutInEditMode here would wipe field widget drafts.
-      const touchedIds = store.get(touchedPageLayoutIdsState.atom);
-      const isAlreadyTouched = touchedIds.has(layout.id);
-
-      if (isLayoutCustomizationActive && isAlreadyTouched) {
-        return;
-      }
-
       const shouldEnterEditMode =
-        isPageLayoutEmpty(layout) || isLayoutCustomizationActive;
+        isPageLayoutEmpty(layout) ||
+        (isLayoutCustomizationActive && isRecordPageLayout);
       setIsPageLayoutInEditMode(shouldEnterEditMode);
     },
     [
       pageLayoutCurrentLayoutsComponentCallbackState,
       pageLayoutDraftComponentCallbackState,
       pageLayoutPersistedComponentCallbackState,
+      isLayoutCustomizationActive,
       setIsPageLayoutInEditMode,
       store,
     ],
   );
 
   useEffect(() => {
-    if (!pageLayoutIsInitialized && isDefined(pageLayout)) {
+    if (
+      !isLayoutCustomizationActive &&
+      !pageLayoutIsInitialized &&
+      isDefined(pageLayout)
+    ) {
+      initializePageLayout(pageLayout);
+      setPageLayoutIsInitialized(true);
+    }
+  }, [
+    isLayoutCustomizationActive,
+    initializePageLayout,
+    pageLayoutIsInitialized,
+    pageLayout,
+    setPageLayoutIsInitialized,
+  ]);
+
+  useEffect(() => {
+    if (isLayoutCustomizationActive && isDefined(pageLayout)) {
       initializePageLayout(pageLayout);
       setPageLayoutIsInitialized(true);
     }
   }, [
     initializePageLayout,
-    pageLayoutIsInitialized,
+    isLayoutCustomizationActive,
     pageLayout,
     setPageLayoutIsInitialized,
   ]);

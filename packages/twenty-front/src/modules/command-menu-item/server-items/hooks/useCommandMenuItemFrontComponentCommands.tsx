@@ -3,8 +3,8 @@ import { Command } from '@/command-menu-item/display/components/Command';
 import { HeadlessFrontComponentCommandMenuItem } from '@/command-menu-item/display/components/HeadlessFrontComponentCommandMenuItem';
 import { CommandMenuItemScope } from '@/command-menu-item/types/CommandMenuItemScope';
 import { CommandMenuItemType } from '@/command-menu-item/types/CommandMenuItemType';
-import { isLayoutCustomizationActiveState } from '@/app/states/isLayoutCustomizationActiveState';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
+import { contextStoreIsPageInEditModeComponentState } from '@/context-store/states/contextStoreIsPageInEditModeComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { useMountHeadlessFrontComponent } from '@/front-components/hooks/useMountHeadlessFrontComponent';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
@@ -167,8 +167,8 @@ export const useCommandMenuItemFrontComponentCommands = (
   const { openFrontComponentInSidePanel } = useOpenFrontComponentInSidePanel();
   const mountHeadlessFrontComponent = useMountHeadlessFrontComponent();
 
-  const isLayoutCustomizationActive = useAtomStateValue(
-    isLayoutCustomizationActiveState,
+  const contextStoreIsPageInEditMode = useAtomComponentStateValue(
+    contextStoreIsPageInEditModeComponentState,
   );
 
   const contextStoreCurrentObjectMetadataItemId = useAtomComponentStateValue(
@@ -273,7 +273,7 @@ export const useCommandMenuItemFrontComponentCommands = (
       buildCommandMenuItem({
         item,
         scope: CommandMenuItemScope.Global,
-        isPinned: !isLayoutCustomizationActive && item.isPinned,
+        isPinned: !contextStoreIsPageInEditMode && item.isPinned,
       }),
     )
     .filter(isDefined);
@@ -284,7 +284,7 @@ export const useCommandMenuItemFrontComponentCommands = (
           buildCommandMenuItem({
             item,
             scope: CommandMenuItemScope.RecordSelection,
-            isPinned: !isLayoutCustomizationActive && item.isPinned,
+            isPinned: !contextStoreIsPageInEditMode && item.isPinned,
           }),
         )
         .filter(isDefined)

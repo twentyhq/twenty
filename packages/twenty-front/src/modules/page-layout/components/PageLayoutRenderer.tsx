@@ -1,4 +1,3 @@
-import { PageLayoutGlobalEditModeEffect } from '@/page-layout/components/PageLayoutGlobalEditModeEffect';
 import { PageLayoutInitializationQueryEffect } from '@/page-layout/components/PageLayoutInitializationQueryEffect';
 import { PageLayoutRelationWidgetsSyncEffect } from '@/page-layout/components/PageLayoutRelationWidgetsSyncEffect';
 import { PageLayoutRendererContent } from '@/page-layout/components/PageLayoutRendererContent';
@@ -36,7 +35,6 @@ export const PageLayoutRenderer = ({
         }}
       >
         <PageLayoutInitializationQueryEffect pageLayoutId={pageLayoutId} />
-        <PageLayoutGlobalEditModeEffect pageLayoutId={pageLayoutId} />
         <PageLayoutRelationWidgetsSyncEffect pageLayoutId={pageLayoutId} />
         <PageLayoutRendererContent />
       </TabListComponentInstanceContext.Provider>
