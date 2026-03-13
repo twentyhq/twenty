@@ -62,11 +62,12 @@ export class MigrateRichTextToTextCommand extends ActiveOrSuspendedWorkspacesMig
         `UPDATE core."fieldMetadata"
          SET "type" = 'TEXT'
          WHERE "workspaceId" = $1
-           AND "type" = 'RICH_TEXT'`,
+           AND "type" = 'RICH_TEXT'
+         RETURNING "id"`,
         [workspaceId],
       );
 
-      const updatedCount = result?.[1] ?? 0;
+      const updatedCount = result.length;
 
       if (updatedCount > 0) {
         this.logger.log(
