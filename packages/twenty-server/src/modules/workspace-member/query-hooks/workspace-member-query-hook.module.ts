@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { OnboardingModule } from 'src/engine/core-modules/onboarding/onboarding.module';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -40,7 +41,7 @@ import { WorkspaceMemberUpdateOnePreQueryHook } from 'src/modules/workspace-memb
     OnboardingModule,
     PermissionsModule,
     UserWorkspaceModule,
-    TypeOrmModule.forFeature([UserWorkspaceEntity]),
+    TypeOrmModule.forFeature([UserWorkspaceEntity, UserEntity]),
     UserModule,
   ],
 })
