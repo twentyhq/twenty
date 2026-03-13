@@ -73,9 +73,16 @@ export class WorkflowVersionStepUpdateWorkspaceService {
           additionalCreatedSteps: undefined,
         };
 
+    const normalizedUpdatedStep = {
+      ...updatedStep,
+      valid: isDefined(updatedStep.valid)
+        ? updatedStep.valid
+        : existingStep.valid,
+    };
+
     const updatedSteps = workflowVersion.steps.map((existingStep) => {
       if (existingStep.id === step.id) {
-        return updatedStep;
+        return normalizedUpdatedStep;
       } else {
         return existingStep;
       }
@@ -93,7 +100,7 @@ export class WorkflowVersionStepUpdateWorkspaceService {
       },
     );
 
-    return updatedStep;
+    return normalizedUpdatedStep;
   }
 
   private async updateWorkflowVersionStepType({
