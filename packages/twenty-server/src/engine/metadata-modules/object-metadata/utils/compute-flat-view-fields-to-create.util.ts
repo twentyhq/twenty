@@ -4,6 +4,7 @@ import { type FlatApplication } from 'src/engine/core-modules/application/types/
 import { DEFAULT_VIEW_FIELD_SIZE } from 'src/engine/metadata-modules/flat-view-field/constants/default-view-field-size.constant';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { type UniversalFlatViewField } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-field.type';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 export const computeFlatViewFieldsToCreate = ({
   objectFlatFieldMetadatas,
@@ -21,6 +22,8 @@ export const computeFlatViewFieldsToCreate = ({
     .filter(
       (field) =>
         field.name !== 'deletedAt' &&
+        field.type !== FieldMetadataType.MORPH_RELATION &&
+        field.type !== FieldMetadataType.RELATION &&
         // Include 'id' only if it's the label identifier (e.g., for junction tables)
         (field.name !== 'id' ||
           field.universalIdentifier ===
