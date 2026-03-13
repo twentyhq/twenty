@@ -7,7 +7,7 @@ import { FIND_MANY_OBJECT_METADATA_ITEMS } from '@/object-metadata/graphql/queri
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { mockedClientConfig } from '~/testing/mock-data/config';
-import { mockedNoteRecords} from '~/testing/mock-data/generated/data/notes/mock-notes-data';
+import { mockedNoteRecords } from '~/testing/mock-data/generated/data/notes/mock-notes-data';
 import { mockedPersonRecords } from '~/testing/mock-data/generated/data/people/mock-people-data';
 import { mockedPublicWorkspaceDataBySubdomain } from '~/testing/mock-data/publicWorkspaceDataBySubdomain';
 import { mockedUserData } from '~/testing/mock-data/users';
