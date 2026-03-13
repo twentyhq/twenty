@@ -60,12 +60,15 @@ export class ViewController {
     @Query('objectMetadataId') objectMetadataId?: string,
   ): Promise<ViewDTO[]> {
     const views = objectMetadataId
-      ? await this.viewService.findByObjectMetadataId(
+      ? await this.viewService.findByObjectMetadataIdWithRelations(
           workspace.id,
           objectMetadataId,
           userWorkspaceId,
         )
-      : await this.viewService.findByWorkspaceId(workspace.id, userWorkspaceId);
+      : await this.viewService.findByWorkspaceIdWithRelations(
+          workspace.id,
+          userWorkspaceId,
+        );
 
     return this.processViewsWithTemplates(
       views as unknown as ViewDTO[],
@@ -81,7 +84,7 @@ export class ViewController {
     @RequestLocale() locale: keyof typeof APP_LOCALES | undefined,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<ViewDTO> {
-    const view = await this.viewService.findById(id, workspace.id);
+    const view = await this.viewService.findByIdWithRelations(id, workspace.id);
 
     if (!isDefined(view)) {
       throw new ViewException(

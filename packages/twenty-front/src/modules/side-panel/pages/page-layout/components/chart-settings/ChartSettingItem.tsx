@@ -4,8 +4,8 @@ import { CommandMenuItemNumberInput } from '@/command-menu/components/CommandMen
 import { CommandMenuItemTextInput } from '@/command-menu/components/CommandMenuItemTextInput';
 import { CommandMenuItemToggle } from '@/command-menu/components/CommandMenuItemToggle';
 import { SIDE_PANEL_SELECTABLE_LIST_ID } from '@/side-panel/constants/SidePanelSelectableListId';
+import { useSidePanelSubPageHistory } from '@/side-panel/hooks/useSidePanelSubPageHistory';
 import { useChartSettingsValues } from '@/side-panel/pages/page-layout/hooks/useChartSettingsValues';
-import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/side-panel/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
 import { useUpdateChartSettingInput } from '@/side-panel/pages/page-layout/hooks/useUpdateChartSettingInput';
 import { useUpdateChartSettingTextInput } from '@/side-panel/pages/page-layout/hooks/useUpdateChartSettingTextInput';
@@ -14,6 +14,7 @@ import { type ChartConfiguration } from '@/side-panel/pages/page-layout/types/Ch
 import { CHART_CONFIGURATION_SETTING_IDS } from '@/side-panel/pages/page-layout/types/ChartConfigurationSettingIds';
 import { type ChartSettingsItem } from '@/side-panel/pages/page-layout/types/ChartSettingsGroup';
 import { isMinMaxRangeValid } from '@/side-panel/pages/page-layout/utils/isMinMaxRangeValid';
+import { SidePanelSubPages } from '@/side-panel/types/SidePanelSubPages';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { useCloseAnyOpenDropdown } from '@/ui/layout/dropdown/hooks/useCloseAnyOpenDropdown';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
@@ -21,7 +22,6 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { t } from '@lingui/core/macro';
 import { isString } from '@sniptt/guards';
-import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 type ChartSettingItemProps = {
@@ -41,7 +41,7 @@ export const ChartSettingItem = ({
   const { setSelectedItemId } = useSelectableList(
     SIDE_PANEL_SELECTABLE_LIST_ID,
   );
-  const { navigatePageLayoutSidePanel } = useNavigatePageLayoutSidePanel();
+  const { navigateToSidePanelSubPage } = useSidePanelSubPageHistory();
 
   const { getChartSettingsValues } = useChartSettingsValues({
     objectMetadataId,
@@ -80,9 +80,7 @@ export const ChartSettingItem = ({
   };
 
   const handleFilterClick = () => {
-    navigatePageLayoutSidePanel({
-      sidePanelPage: SidePanelPages.PageLayoutGraphFilter,
-    });
+    navigateToSidePanelSubPage(SidePanelSubPages.PageLayoutGraphFilter);
   };
   if (item.id === CHART_CONFIGURATION_SETTING_IDS.FILTER) {
     const filterValue = getChartSettingsValues(item.id);

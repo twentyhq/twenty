@@ -1,18 +1,17 @@
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { TabListHiddenMeasurements } from '@/ui/layout/tab-list/components/TabListHiddenMeasurements';
 import { TAB_LIST_GAP } from '@/ui/layout/tab-list/constants/TabListGap';
 import { TAB_LIST_HEIGHT } from '@/ui/layout/tab-list/constants/TabListHeight';
+import { useTabListMeasurements } from '@/ui/layout/tab-list/hooks/useTabListMeasurements';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
 import { type TabListProps } from '@/ui/layout/tab-list/types/TabListProps';
 import { NodeDimension } from '@/ui/utilities/dimensions/components/NodeDimension';
-import { TabListHiddenMeasurements } from '@/ui/layout/tab-list/components/TabListHiddenMeasurements';
-import { useTabListMeasurements } from '@/ui/layout/tab-list/hooks/useTabListMeasurements';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { styled } from '@linaria/react';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { TabButton } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { TabListDropdown } from './TabListDropdown';
 import { TabListFromUrlOptionalEffect } from './TabListFromUrlOptionalEffect';
 
@@ -23,16 +22,6 @@ const StyledContainer = styled.div`
   position: relative;
   user-select: none;
   width: 100%;
-
-  &::after {
-    background-color: ${themeCssVariables.border.color.light};
-    bottom: 0;
-    content: '';
-    height: 1px;
-    left: 0;
-    position: absolute;
-    right: 0;
-  }
 `;
 
 const StyledDropdownContainer = styled.div`

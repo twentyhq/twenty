@@ -7,14 +7,10 @@ import { GlobalWorkspaceDataSourceModule } from 'src/engine/twenty-orm/global-wo
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 
-import { StandardFrontComponentUploadService } from './services/standard-front-component-upload.service';
 import { TwentyStandardApplicationService } from './services/twenty-standard-application.service';
 
 @Module({
-  providers: [
-    TwentyStandardApplicationService,
-    StandardFrontComponentUploadService,
-  ],
+  providers: [TwentyStandardApplicationService],
   imports: [
     ApplicationModule,
     TwentyConfigModule,

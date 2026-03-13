@@ -80,9 +80,26 @@ export const useProcessUIToolCallMessage = () => {
 
           break;
         }
-        case 'navigateToView':
-          // TODO: implement
+        case 'navigateToView': {
+          const viewObjectNamePlural = objectMetadataItems.find(
+            (item) =>
+              item.nameSingular === navigateAppOutput.objectNameSingular,
+          )?.namePlural;
+
+          if (!isDefined(viewObjectNamePlural)) {
+            throw new Error(
+              `Object with singular name ${navigateAppOutput.objectNameSingular} not found, cannot navigate to view from chat.`,
+            );
+          }
+
+          navigateApp(
+            AppPath.RecordIndexPage,
+            { objectNamePlural: viewObjectNamePlural },
+            { viewId: navigateAppOutput.viewId },
+          );
+
           break;
+        }
         case 'wait': {
           await sleep(navigateAppOutput.durationMs);
           break;

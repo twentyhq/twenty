@@ -1058,6 +1058,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: 'frontComponentUniversalIdentifier',
     },
+    engineComponentKey: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
     workflowVersionId: {
       toCompare: false,
       toStringify: false,
