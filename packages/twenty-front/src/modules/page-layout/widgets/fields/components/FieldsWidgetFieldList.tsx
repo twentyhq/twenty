@@ -7,6 +7,7 @@ import { PropertyBoxSkeletonLoader } from '@/object-record/record-inline-cell/pr
 import { useRecordShowContainerActions } from '@/object-record/record-show/hooks/useRecordShowContainerActions';
 import { useRecordShowContainerData } from '@/object-record/record-show/hooks/useRecordShowContainerData';
 import { FieldsWidgetFieldItem } from '@/page-layout/widgets/fields/components/FieldsWidgetFieldItem';
+import { useOpportunityConditionalFields } from '@/page-layout/widgets/fields/hooks/useOpportunityConditionalFields';
 import { type FieldsWidgetGroupField } from '@/page-layout/widgets/fields/types/FieldsWidgetGroup';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
@@ -47,11 +48,18 @@ export const FieldsWidgetFieldList = ({
     instanceId,
   );
 
+  const hiddenFieldNames = useOpportunityConditionalFields({
+    recordId: targetRecord.id,
+    objectNameSingular: targetRecord.targetObjectNameSingular,
+  });
+
   if (isPrefetchLoading) {
     return <PropertyBoxSkeletonLoader />;
   }
 
-  return fields.map(({ fieldMetadataItem, globalIndex }) => (
+  return fields
+    .filter(({ fieldMetadataItem }) => !hiddenFieldNames.has(fieldMetadataItem.name))
+    .map(({ fieldMetadataItem, globalIndex }) => (
     <FieldsWidgetFieldItem
       key={targetRecord.id + fieldMetadataItem.id}
       fieldMetadataItem={fieldMetadataItem}
