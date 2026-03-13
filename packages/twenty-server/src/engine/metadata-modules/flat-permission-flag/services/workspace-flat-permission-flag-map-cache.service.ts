@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
@@ -10,8 +9,8 @@ import { type FlatPermissionFlagMaps } from 'src/engine/metadata-modules/flat-pe
 import { fromPermissionFlagEntityToFlatPermissionFlag } from 'src/engine/metadata-modules/flat-permission-flag/utils/from-permission-flag-entity-to-flat-permission-flag.util';
 import { PermissionFlagEntity } from 'src/engine/metadata-modules/permission-flag/permission-flag.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
-import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
+import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
@@ -54,11 +53,7 @@ export class WorkspaceFlatPermissionFlagMapCacheService extends WorkspaceCachePr
 
     const flatPermissionFlagMaps = createEmptyFlatEntityMaps();
 
-    const permissionFlagsWithApplicationId = permissionFlags.filter((pf) =>
-      isDefined(pf.applicationId),
-    );
-
-    for (const permissionFlagEntity of permissionFlagsWithApplicationId) {
+    for (const permissionFlagEntity of permissionFlags) {
       const flatPermissionFlag = fromPermissionFlagEntityToFlatPermissionFlag({
         entity: permissionFlagEntity,
         applicationIdToUniversalIdentifierMap,
