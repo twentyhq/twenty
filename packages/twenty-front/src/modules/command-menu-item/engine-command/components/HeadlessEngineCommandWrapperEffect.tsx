@@ -1,7 +1,8 @@
 import { EngineCommandIdContext } from '@/command-menu-item/engine-command/contexts/EngineCommandIdContext';
+import { useIsHeadlessEngineCommandEffectInitialized } from '@/command-menu-item/engine-command/hooks/useIsHeadlessEngineCommandEffectInitialized';
 import { useUnmountEngineCommand } from '@/command-menu-item/engine-command/hooks/useUnmountEngineCommand';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useContext, useEffect, useRef } from 'react';
+import { useContext, useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export type HeadlessEngineCommandWrapperEffectProps = {
@@ -11,8 +12,8 @@ export type HeadlessEngineCommandWrapperEffectProps = {
 export const HeadlessEngineCommandWrapperEffect = ({
   execute,
 }: HeadlessEngineCommandWrapperEffectProps) => {
-  //eslint-disable-next-line twenty/no-state-useref
-  const hasExecutedRef = useRef(false);
+  const { isInitialized, setIsInitialized } =
+    useIsHeadlessEngineCommandEffectInitialized();
 
   const engineCommandId = useContext(EngineCommandIdContext);
 
@@ -21,11 +22,11 @@ export const HeadlessEngineCommandWrapperEffect = ({
   const { enqueueErrorSnackBar } = useSnackBar();
 
   useEffect(() => {
-    if (hasExecutedRef.current) {
+    if (isInitialized) {
       return;
     }
 
-    hasExecutedRef.current = true;
+    setIsInitialized(true);
 
     const run = async () => {
       try {
@@ -48,7 +49,8 @@ export const HeadlessEngineCommandWrapperEffect = ({
     run();
   }, [
     execute,
-    hasExecutedRef,
+    isInitialized,
+    setIsInitialized,
     engineCommandId,
     unmountEngineCommand,
     enqueueErrorSnackBar,
