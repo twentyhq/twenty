@@ -1589,6 +1589,7 @@ msgstr "Der opstod en fejl under upload af billedet."
 
 #. js-lingui-id: XyOToQ
 #: src/utils/get-error-message-from-apollo-error.util.ts
+#: src/utils/get-error-message-from-apollo-error.util.ts
 #: src/modules/views/hooks/internal/usePerformViewSortAPIPersist.ts
 #: src/modules/views/hooks/internal/usePerformViewGroupAPIPersist.ts
 #: src/modules/views/hooks/internal/usePerformViewFilterAPIPersist.ts
@@ -5581,11 +5582,6 @@ msgstr "Fejl ved sletning af SSO Identitetsudbyder"
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 msgid "Error editing SSO Identity Provider"
 msgstr "Fejl ved redigering af SSO Identitetsudbyder"
-
-#. js-lingui-id: GsIfmO
-#: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerMetricsGraph.tsx
-msgid "Error fetching worker metrics: {errorMessage}"
-msgstr "Fejl ved hentning af worker-metrics: {errorMessage}"
 
 #. js-lingui-id: GdBN5t
 #: src/modules/error-handler/components/AppRootErrorFallback.tsx

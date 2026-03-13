@@ -1589,6 +1589,7 @@ msgstr "上传图片时发生错误。"
 
 #. js-lingui-id: XyOToQ
 #: src/utils/get-error-message-from-apollo-error.util.ts
+#: src/utils/get-error-message-from-apollo-error.util.ts
 #: src/modules/views/hooks/internal/usePerformViewSortAPIPersist.ts
 #: src/modules/views/hooks/internal/usePerformViewGroupAPIPersist.ts
 #: src/modules/views/hooks/internal/usePerformViewFilterAPIPersist.ts
@@ -5581,11 +5582,6 @@ msgstr "删除 SSO 身份提供商时出错"
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 msgid "Error editing SSO Identity Provider"
 msgstr "编辑 SSO 身份提供商时出错"
-
-#. js-lingui-id: GsIfmO
-#: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerMetricsGraph.tsx
-msgid "Error fetching worker metrics: {errorMessage}"
-msgstr "获取工作进程指标时出错：{errorMessage}"
 
 #. js-lingui-id: GdBN5t
 #: src/modules/error-handler/components/AppRootErrorFallback.tsx
