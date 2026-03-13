@@ -930,11 +930,6 @@ msgstr "Додати правило фільтра"
 msgid "Add first filter"
 msgstr "Додати перший фільтр"
 
-#. js-lingui-id: //rVZt
-#: src/modules/favorites/favorite-folder-picker/components/FavoriteFolderPickerFooter.tsx
-msgid "Add folder"
-msgstr "Додати папку"
-
 #. js-lingui-id: 7XzAKI
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
 msgid "Add inputs to your form"
@@ -1100,7 +1095,6 @@ msgid "Add to Favorite"
 msgstr "Додати до обраних"
 
 #. js-lingui-id: pBsoKL
-#: src/modules/favorites/components/PageFavoriteButton.tsx
 #: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 #: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 #: src/modules/command-menu-item/mock/command-menu-items.mock.tsx
@@ -4306,7 +4300,6 @@ msgstr "видалити"
 #: src/modules/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationRecordsListItem.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/MultiItemFieldMenuItem.tsx
 #: src/modules/navigation-menu-item/components/NavigationMenuItemFolderNavigationDrawerItemDropdown.tsx
-#: src/modules/favorites/components/FavoriteFolderNavigationDrawerItemDropdown.tsx
 #: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 #: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 #: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
@@ -4394,7 +4387,6 @@ msgstr "Видалити поле"
 
 #. js-lingui-id: 97QUV6
 #: src/modules/navigation-menu-item/components/CurrentWorkspaceMemberNavigationMenuItems.tsx
-#: src/modules/favorites/components/CurrentWorkspaceMemberFavorites.tsx
 msgid "Delete Folder"
 msgstr "Видалити папку"
 
@@ -6311,7 +6303,6 @@ msgstr ""
 
 #. js-lingui-id: X9kySA
 #: src/modules/navigation-menu-item/components/CurrentWorkspaceMemberNavigationMenuItemFolders.tsx
-#: src/modules/favorites/components/CurrentWorkspaceMemberFavoritesFolders.tsx
 msgid "Favorites"
 msgstr "Обрані"
 
@@ -9422,7 +9413,6 @@ msgstr "Нема файлів"
 
 #. js-lingui-id: pYblOw
 #: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditFolderPickerSubPage.tsx
-#: src/modules/favorites/favorite-folder-picker/components/FavoriteFolderPickerList.tsx
 msgid "No folder"
 msgstr "Немає папки"
 
@@ -9430,11 +9420,6 @@ msgstr "Немає папки"
 #: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditFolderPickerSubPage.tsx
 msgid "No folders available"
 msgstr ""
-
-#. js-lingui-id: aywdyd
-#: src/modules/favorites/favorite-folder-picker/components/FavoriteFolderPickerList.tsx
-msgid "No folders found"
-msgstr "Папок не знайдено"
 
 #. js-lingui-id: 1jgsYC
 #: src/modules/settings/accounts/components/message-folders/SettingsMessageFoldersEmptyStateCard.tsx
@@ -11137,16 +11122,6 @@ msgstr "Віддалений"
 msgid "Remove"
 msgstr "Видалити"
 
-#. js-lingui-id: gleHgw
-#: src/modules/favorites/components/CurrentWorkspaceMemberFavorites.tsx
-msgid "Remove {favoriteCount} favorite?"
-msgstr "Вилучити {favoriteCount} елемент з обраного?"
-
-#. js-lingui-id: 1VQkMD
-#: src/modules/favorites/components/CurrentWorkspaceMemberFavorites.tsx
-msgid "Remove {favoriteCount} favorites?"
-msgstr "Вилучити {favoriteCount} елементів з обраного?"
-
 #. js-lingui-id: 0Urj9q
 #: src/modules/navigation-menu-item/components/CurrentWorkspaceMemberNavigationMenuItems.tsx
 msgid "Remove {navigationMenuItemCount} navigation menu item?"
@@ -11178,7 +11153,6 @@ msgid "Remove Deleted filter"
 msgstr "Видалити фільтр видалених"
 
 #. js-lingui-id: T/pF0Z
-#: src/modules/favorites/components/PageFavoriteButton.tsx
 #: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 #: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Remove from favorites"
@@ -11233,7 +11207,6 @@ msgstr "Вилучити змінну"
 #. js-lingui-id: 2wxgft
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupDropdown.tsx
 #: src/modules/navigation-menu-item/components/NavigationMenuItemFolderNavigationDrawerItemDropdown.tsx
-#: src/modules/favorites/components/FavoriteFolderNavigationDrawerItemDropdown.tsx
 #: src/modules/activities/files/components/AttachmentDropdown.tsx
 msgid "Rename"
 msgstr "Перейменувати"
@@ -13503,16 +13476,6 @@ msgstr "Цю дію не можна відмінити. Це назавжди в
 msgid "This action cannot be undone. This will permanently reset your two factor authentication method. <0/> Please type in your email to confirm."
 msgstr "Цю дію не можна скасувати. Це назавжди скине ваш метод двофакторної автентифікації. <0/> Будь ласка, введіть свою електронну адресу для підтвердження."
 
-#. js-lingui-id: XdFYs2
-#: src/modules/favorites/components/CurrentWorkspaceMemberFavorites.tsx
-msgid "This action will delete this favorite folder and all {favoriteCount} favorites inside. Do you want to continue?"
-msgstr "Ця дія видалить цю папку обраного та всі {favoriteCount} елементи в ній. Продовжити?"
-
-#. js-lingui-id: pFXbgz
-#: src/modules/favorites/components/CurrentWorkspaceMemberFavorites.tsx
-msgid "This action will delete this favorite folder and the favorite inside. Do you want to continue?"
-msgstr "Ця дія видалить цю папку обраного та елемент усередині. Продовжити?"
-
 #. js-lingui-id: lAHIY2
 #: src/modules/navigation-menu-item/components/CurrentWorkspaceMemberNavigationMenuItems.tsx
 msgid "This action will delete this folder and all {navigationMenuItemCount} navigation menu items inside. Do you want to continue?"
@@ -15130,7 +15093,6 @@ msgstr "Робочі процеси"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/navigation-menu-item/components/WorkspaceNavigationMenuItems.tsx
-#: src/modules/favorites/components/WorkspaceFavorites.tsx
 msgid "Workspace"
 msgstr "Працевлаштування"
 
