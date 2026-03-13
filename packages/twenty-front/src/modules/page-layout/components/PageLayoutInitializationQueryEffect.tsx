@@ -1,3 +1,5 @@
+import { isLayoutCustomizationActiveState } from '@/app/states/isLayoutCustomizationActiveState';
+import { touchedPageLayoutIdsState } from '@/app/states/touchedPageLayoutIdsState';
 import { useBasePageLayout } from '@/page-layout/hooks/useBasePageLayout';
 import { usePageLayoutWithRelationWidgets } from '@/page-layout/hooks/usePageLayoutWithRelationWidgets';
 import { useSetIsPageLayoutInEditMode } from '@/page-layout/hooks/useSetIsPageLayoutInEditMode';
@@ -64,7 +66,23 @@ export const PageLayoutInitializationQueryEffect = ({
       const tabLayouts = convertPageLayoutToTabLayouts(layout);
       store.set(pageLayoutCurrentLayoutsComponentCallbackState, tabLayouts);
 
-      setIsPageLayoutInEditMode(isPageLayoutEmpty(layout));
+      const isLayoutCustomizationActive = store.get(
+        isLayoutCustomizationActiveState.atom,
+      );
+
+      // During active customization, return visits are handled by
+      // PageLayoutGlobalEditModeEffect which preserves existing drafts.
+      // Calling setIsPageLayoutInEditMode here would wipe field widget drafts.
+      const touchedIds = store.get(touchedPageLayoutIdsState.atom);
+      const isAlreadyTouched = touchedIds.has(layout.id);
+
+      if (isLayoutCustomizationActive && isAlreadyTouched) {
+        return;
+      }
+
+      const shouldEnterEditMode =
+        isPageLayoutEmpty(layout) || isLayoutCustomizationActive;
+      setIsPageLayoutInEditMode(shouldEnterEditMode);
     },
     [
       pageLayoutCurrentLayoutsComponentCallbackState,

@@ -4,6 +4,7 @@ import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconFolder, IconLink, useIcons } from 'twenty-ui/display';
 
+import { useEnterLayoutCustomizationMode } from '@/app/hooks/useEnterLayoutCustomizationMode';
 import { ADD_TO_NAV_SOURCE_DROPPABLE_ID } from '@/navigation-menu-item/constants/AddToNavSourceDroppableId';
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import { useAddFolderToNavigationMenuDraft } from '@/navigation-menu-item/hooks/useAddFolderToNavigationMenuDraft';
@@ -14,7 +15,6 @@ import { useAddViewToNavigationMenuDraft } from '@/navigation-menu-item/hooks/us
 import { useNavigationMenuItemsDraftState } from '@/navigation-menu-item/hooks/useNavigationMenuItemsDraftState';
 import { useOpenNavigationMenuItemInSidePanel } from '@/navigation-menu-item/hooks/useOpenNavigationMenuItemInSidePanel';
 import { addToNavPayloadRegistryState } from '@/navigation-menu-item/states/addToNavPayloadRegistryState';
-import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/isNavigationMenuInEditModeState';
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/states/navigationMenuItemsDraftState';
 import { openNavigationMenuItemFolderIdsState } from '@/navigation-menu-item/states/openNavigationMenuItemFolderIdsState';
 import { getObjectMetadataIdsInDraft } from '@/navigation-menu-item/utils/getObjectMetadataIdsInDraft';
@@ -44,9 +44,7 @@ export const useHandleAddToNavigationDrop = () => {
   const { objectMetadataItems } = useObjectMetadataItems();
   const coreViews = useAtomStateValue(coreViewsState);
   const { getIcon } = useIcons();
-  const setIsNavigationMenuInEditMode = useSetAtomState(
-    isNavigationMenuInEditModeState,
-  );
+  const { enterLayoutCustomizationMode } = useEnterLayoutCustomizationMode();
   const setOpenNavigationMenuItemFolderIds = useSetAtomState(
     openNavigationMenuItemFolderIdsState,
   );
@@ -93,7 +91,7 @@ export const useHandleAddToNavigationDrop = () => {
           'itemId'
         >,
       ) => {
-        setIsNavigationMenuInEditMode(true);
+        enterLayoutCustomizationMode();
         openNavigationMenuItemInSidePanel({ ...options, itemId: newItemId });
       };
 
@@ -220,7 +218,7 @@ export const useHandleAddToNavigationDrop = () => {
       objectMetadataItems,
       openNavigationMenuItemInSidePanel,
       setOpenNavigationMenuItemFolderIds,
-      setIsNavigationMenuInEditMode,
+      enterLayoutCustomizationMode,
       workspaceNavigationMenuItems,
       store,
     ],

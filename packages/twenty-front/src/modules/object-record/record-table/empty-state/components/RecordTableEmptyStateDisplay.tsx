@@ -1,4 +1,4 @@
-import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/isNavigationMenuInEditModeState';
+import { isLayoutCustomizationActiveState } from '@/app/states/isLayoutCustomizationActiveState';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
 import { hasAnySoftDeleteFilterOnViewComponentSelector } from '@/object-record/record-filter/states/hasAnySoftDeleteFilterOnView';
@@ -51,11 +51,11 @@ export const RecordTableEmptyStateDisplay = (
   const objectPermissions = useObjectPermissionsForObject(
     objectMetadataItem.id,
   );
-  const isNavigationMenuInEditMode = useAtomStateValue(
-    isNavigationMenuInEditModeState,
+  const isLayoutCustomizationActive = useAtomStateValue(
+    isLayoutCustomizationActiveState,
   );
   const isReadOnly =
-    isNavigationMenuInEditMode ||
+    isLayoutCustomizationActive ||
     isObjectMetadataReadOnly({
       objectPermissions,
       objectMetadataItem,

@@ -2,7 +2,7 @@ import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 import { CurrentWorkspaceMemberFavoritesFolders } from '@/favorites/components/CurrentWorkspaceMemberFavoritesFolders';
 import { CurrentWorkspaceMemberNavigationMenuItemFolders } from '@/navigation-menu-item/components/CurrentWorkspaceMemberNavigationMenuItemFolders';
-import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/isNavigationMenuInEditModeState';
+import { isLayoutCustomizationActiveState } from '@/app/states/isLayoutCustomizationActiveState';
 import { FavoritesDragDropProviderContent } from '@/navigation/components/FavoritesDragDropProviderContent';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
@@ -12,12 +12,12 @@ export const CurrentWorkspaceMemberNavigationMenuItemFoldersDispatcher = () => {
   const isNavigationMenuItemEditingEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED,
   );
-  const isNavigationMenuInEditMode = useAtomStateValue(
-    isNavigationMenuInEditModeState,
+  const isLayoutCustomizationActive = useAtomStateValue(
+    isLayoutCustomizationActiveState,
   );
 
   return (
-    <AnimatedEaseInOut isOpen={!isNavigationMenuInEditMode} initial>
+    <AnimatedEaseInOut isOpen={!isLayoutCustomizationActive} initial>
       {isNavigationMenuItemEditingEnabled ? (
         <FavoritesDragDropProviderContent>
           <CurrentWorkspaceMemberNavigationMenuItemFolders />

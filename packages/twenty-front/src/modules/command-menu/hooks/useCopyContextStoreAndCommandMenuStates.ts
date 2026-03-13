@@ -4,7 +4,6 @@ import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
 import { contextStoreFilterGroupsComponentState } from '@/context-store/states/contextStoreFilterGroupsComponentState';
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
-import { contextStoreIsPageInEditModeComponentState } from '@/context-store/states/contextStoreIsPageInEditModeComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { useCallback } from 'react';
@@ -122,19 +121,6 @@ export const useCopyContextStoreStates = () => {
           instanceId: instanceIdToCopyTo,
         }),
         contextStoreCurrentViewType,
-      );
-
-      const contextStoreIsFullTabWidgetInEditMode = store.get(
-        contextStoreIsPageInEditModeComponentState.atomFamily({
-          instanceId: instanceIdToCopyFrom,
-        }),
-      );
-
-      store.set(
-        contextStoreIsPageInEditModeComponentState.atomFamily({
-          instanceId: instanceIdToCopyTo,
-        }),
-        contextStoreIsFullTabWidgetInEditMode,
       );
     },
     [store],

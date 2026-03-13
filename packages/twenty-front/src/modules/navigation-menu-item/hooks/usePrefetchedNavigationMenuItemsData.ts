@@ -1,5 +1,5 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/isNavigationMenuInEditModeState';
+import { isLayoutCustomizationActiveState } from '@/app/states/isLayoutCustomizationActiveState';
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/states/navigationMenuItemsDraftState';
 import { filterWorkspaceNavigationMenuItems } from '@/navigation-menu-item/utils/filterWorkspaceNavigationMenuItems';
 import { prefetchNavigationMenuItemsState } from '@/prefetch/states/prefetchNavigationMenuItemsState';
@@ -23,8 +23,8 @@ export const usePrefetchedNavigationMenuItemsData =
     const prefetchNavigationMenuItems = useAtomStateValue(
       prefetchNavigationMenuItemsState,
     );
-    const isNavigationMenuInEditMode = useAtomStateValue(
-      isNavigationMenuInEditModeState,
+    const isLayoutCustomizationActive = useAtomStateValue(
+      isLayoutCustomizationActiveState,
     );
     const navigationMenuItemsDraft = useAtomStateValue(
       navigationMenuItemsDraftState,
@@ -38,7 +38,7 @@ export const usePrefetchedNavigationMenuItemsData =
       filterWorkspaceNavigationMenuItems(prefetchNavigationMenuItems);
 
     const workspaceNavigationMenuItems =
-      isNavigationMenuInEditMode && isDefined(navigationMenuItemsDraft)
+      isLayoutCustomizationActive && isDefined(navigationMenuItemsDraft)
         ? navigationMenuItemsDraft
         : workspaceNavigationMenuItemsFromPrefetch;
 

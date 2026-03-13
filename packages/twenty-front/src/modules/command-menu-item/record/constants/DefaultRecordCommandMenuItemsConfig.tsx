@@ -803,20 +803,11 @@ export const DEFAULT_RECORD_COMMAND_MENU_ITEMS_CONFIG: Record<
     type: CommandMenuItemType.Standard,
     scope: CommandMenuItemScope.RecordSelection,
     requiredPermissionFlag: PermissionFlagType.LAYOUTS,
-    shouldBeRegistered: ({
-      selectedRecord,
-      objectPermissions,
-      objectMetadataItem,
-      isFeatureFlagEnabled,
-    }) =>
-      isFeatureFlagEnabled(
-        FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED,
-      ) &&
-      isDefined(selectedRecord) &&
-      !selectedRecord?.isRemote &&
-      !isDefined(selectedRecord?.deletedAt) &&
-      objectPermissions.canUpdateObjectRecords &&
-      objectMetadataItem?.nameSingular !== CoreObjectNameSingular.Dashboard,
+    // Save/Cancel are now handled by the unified LayoutCustomizationBar
+    // this shouldnt be needed anymore?
+    // because the LayoutCustomizationBar is handling it now
+    // this shouldnt even be a command menu item anymore?
+    shouldBeRegistered: () => false,
     availableOn: [CommandMenuItemViewType.PAGE_EDIT_MODE],
     component: <SaveRecordPageLayoutSingleRecordCommand />,
   },
@@ -830,20 +821,8 @@ export const DEFAULT_RECORD_COMMAND_MENU_ITEMS_CONFIG: Record<
     type: CommandMenuItemType.Standard,
     scope: CommandMenuItemScope.RecordSelection,
     requiredPermissionFlag: PermissionFlagType.LAYOUTS,
-    shouldBeRegistered: ({
-      selectedRecord,
-      objectPermissions,
-      objectMetadataItem,
-      isFeatureFlagEnabled,
-    }) =>
-      isFeatureFlagEnabled(
-        FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED,
-      ) &&
-      isDefined(selectedRecord) &&
-      !selectedRecord?.isRemote &&
-      !isDefined(selectedRecord?.deletedAt) &&
-      objectPermissions.canUpdateObjectRecords &&
-      objectMetadataItem?.nameSingular !== CoreObjectNameSingular.Dashboard,
+    // Save/Cancel are now handled by the unified LayoutCustomizationBar
+    shouldBeRegistered: () => false,
     availableOn: [CommandMenuItemViewType.PAGE_EDIT_MODE],
     component: <CancelRecordPageLayoutSingleRecordCommand />,
   },

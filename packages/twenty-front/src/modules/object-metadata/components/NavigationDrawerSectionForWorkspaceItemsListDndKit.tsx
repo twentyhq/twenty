@@ -4,7 +4,7 @@ import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/constants
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import { NavigationDropTargetContext } from '@/navigation-menu-item/contexts/NavigationDropTargetContext';
 import { useIsDropDisabledForSection } from '@/navigation-menu-item/hooks/useIsDropDisabledForSection';
-import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/isNavigationMenuInEditModeState';
+import { isLayoutCustomizationActiveState } from '@/app/states/isLayoutCustomizationActiveState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
@@ -37,8 +37,8 @@ export const WorkspaceSectionListDndKit = ({
   onNavigationMenuItemClick,
   onActiveObjectMetadataItemClick,
 }: WorkspaceSectionListDndKitProps) => {
-  const isNavigationMenuInEditMode = useAtomStateValue(
-    isNavigationMenuInEditModeState,
+  const isLayoutCustomizationActive = useAtomStateValue(
+    isLayoutCustomizationActiveState,
   );
   const workspaceDropDisabled = useIsDropDisabledForSection(true);
   const { isDragging } = useContext(NavigationMenuItemDragContext);
@@ -48,7 +48,7 @@ export const WorkspaceSectionListDndKit = ({
   const folderCount = filteredItems.filter(
     (item) => item.itemType === NavigationMenuItemType.FOLDER,
   ).length;
-  const isAddMenuItemButtonVisible = isNavigationMenuInEditMode;
+  const isAddMenuItemButtonVisible = isLayoutCustomizationActive;
   return (
     <StyledList>
       {filteredItems.map((item, index) => (
@@ -60,7 +60,7 @@ export const WorkspaceSectionListDndKit = ({
             group={
               NavigationMenuItemDroppableIds.WORKSPACE_ORPHAN_NAVIGATION_MENU_ITEMS
             }
-            disabled={!isNavigationMenuInEditMode || workspaceDropDisabled}
+            disabled={!isLayoutCustomizationActive || workspaceDropDisabled}
           >
             <NavigationDrawerSectionForWorkspaceItemContent
               item={item}

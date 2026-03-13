@@ -3,7 +3,7 @@ import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/
 import { ObjectIconWithViewOverlay } from '@/navigation-menu-item/components/ObjectIconWithViewOverlay';
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import { useObjectNavItemColor } from '@/navigation-menu-item/hooks/useObjectNavItemColor';
-import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/isNavigationMenuInEditModeState';
+import { isLayoutCustomizationActiveState } from '@/app/states/isLayoutCustomizationActiveState';
 import { getStandardObjectIconColor } from '@/navigation-menu-item/utils/getStandardObjectIconColor';
 import { type ProcessedNavigationMenuItem } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
 import { lastVisitedViewPerObjectMetadataItemState } from '@/navigation/states/lastVisitedViewPerObjectMetadataItemState';
@@ -43,8 +43,8 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
   onActiveItemClickWhenNotInEditMode: _onActiveItemClickWhenNotInEditMode,
   isDragging = false,
 }: NavigationDrawerItemForObjectMetadataItemProps) => {
-  const isNavigationMenuInEditMode = useAtomStateValue(
-    isNavigationMenuInEditModeState,
+  const isLayoutCustomizationActive = useAtomStateValue(
+    isLayoutCustomizationActiveState,
   );
   const isNavigationMenuItemEditingEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED,
@@ -101,9 +101,9 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
         }) + '/',
       );
 
-  const handleClick = isNavigationMenuInEditMode ? onEditModeClick : undefined;
+  const handleClick = isLayoutCustomizationActive ? onEditModeClick : undefined;
 
-  const shouldNavigate = !isNavigationMenuInEditMode;
+  const shouldNavigate = !isLayoutCustomizationActive;
 
   const isViewWithCustomName =
     isView &&
@@ -211,7 +211,7 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
       label={label}
       secondaryLabel={secondaryLabel}
       to={
-        isNavigationMenuInEditMode || isDragging
+        isLayoutCustomizationActive || isDragging
           ? undefined
           : shouldNavigate
             ? navigationPath
@@ -223,7 +223,7 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
       active={isActive}
       isSelectedInEditMode={isSelectedInEditMode}
       isDragging={isDragging}
-      triggerEvent={isNavigationMenuInEditMode ? 'CLICK' : undefined}
+      triggerEvent={isLayoutCustomizationActive ? 'CLICK' : undefined}
     />
   );
 };

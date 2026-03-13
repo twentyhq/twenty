@@ -1,9 +1,9 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { isLayoutCustomizationActiveState } from '@/app/states/isLayoutCustomizationActiveState';
 import { objectPermissionsFamilySelector } from '@/auth/states/objectPermissionsFamilySelector';
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
-import { contextStoreIsPageInEditModeComponentState } from '@/context-store/states/contextStoreIsPageInEditModeComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
@@ -112,8 +112,8 @@ export const useCommandMenuContextApi = (): CommandMenuContextApi => {
     contextStoreCurrentViewTypeComponentState,
   );
 
-  const contextStoreIsPageInEditMode = useAtomComponentStateValue(
-    contextStoreIsPageInEditModeComponentState,
+  const isLayoutCustomizationActive = useAtomStateValue(
+    isLayoutCustomizationActiveState,
   );
 
   const pageType =
@@ -153,7 +153,7 @@ export const useCommandMenuContextApi = (): CommandMenuContextApi => {
   return {
     pageType,
     isInSidePanel,
-    isPageInEditMode: contextStoreIsPageInEditMode,
+    isPageInEditMode: isLayoutCustomizationActive,
     favoriteRecordIds,
     isSelectAll,
     hasAnySoftDeleteFilterOnView,

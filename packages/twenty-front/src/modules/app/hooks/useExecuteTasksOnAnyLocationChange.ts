@@ -1,5 +1,4 @@
-import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
-import { contextStoreIsPageInEditModeComponentState } from '@/context-store/states/contextStoreIsPageInEditModeComponentState';
+import { isLayoutCustomizationActiveState } from '@/app/states/isLayoutCustomizationActiveState';
 import { currentPageLayoutIdState } from '@/page-layout/states/currentPageLayoutIdState';
 import { fieldsWidgetEditorModeDraftComponentState } from '@/page-layout/states/fieldsWidgetEditorModeDraftComponentState';
 import { fieldsWidgetEditorModePersistedComponentState } from '@/page-layout/states/fieldsWidgetEditorModePersistedComponentState';
@@ -121,13 +120,6 @@ export const useExecuteTasksOnAnyLocationChange = () => {
 
       store.set(currentPageLayoutIdState.atom, null);
     }
-
-    store.set(
-      contextStoreIsPageInEditModeComponentState.atomFamily({
-        instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
-      }),
-      false,
-    );
   }, [store]);
 
   /**
@@ -137,7 +129,14 @@ export const useExecuteTasksOnAnyLocationChange = () => {
    */
   const executeTasksOnAnyLocationChange = () => {
     closeAnyOpenDropdown();
-    resetPageLayoutEditMode();
+
+    const isLayoutCustomizationActive = store.get(
+      isLayoutCustomizationActiveState.atom,
+    );
+
+    if (!isLayoutCustomizationActive) {
+      resetPageLayoutEditMode();
+    }
   };
 
   return { executeTasksOnAnyLocationChange };

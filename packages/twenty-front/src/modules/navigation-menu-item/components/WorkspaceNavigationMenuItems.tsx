@@ -13,6 +13,8 @@ import { LightIconButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
+import { useEnterLayoutCustomizationMode } from '@/app/hooks/useEnterLayoutCustomizationMode';
+import { isLayoutCustomizationActiveState } from '@/app/states/isLayoutCustomizationActiveState';
 import { FOLDER_ICON_DEFAULT } from '@/navigation-menu-item/constants/FolderIconDefault';
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import { useOpenNavigationMenuItemInSidePanel } from '@/navigation-menu-item/hooks/useOpenNavigationMenuItemInSidePanel';
@@ -21,23 +23,18 @@ import {
   type NavigationMenuItemClickParams,
   useWorkspaceSectionItems,
 } from '@/navigation-menu-item/hooks/useWorkspaceSectionItems';
-import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/isNavigationMenuInEditModeState';
-import { navigationMenuItemsDraftState } from '@/navigation-menu-item/states/navigationMenuItemsDraftState';
 import { openNavigationMenuItemFolderIdsState } from '@/navigation-menu-item/states/openNavigationMenuItemFolderIdsState';
 import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeState';
-import { filterWorkspaceNavigationMenuItems } from '@/navigation-menu-item/utils/filterWorkspaceNavigationMenuItems';
 import { preloadWorkspaceDndKit } from '@/navigation/preloadWorkspaceDndKit';
 import { NavigationDrawerSectionForObjectMetadataItemsSkeletonLoader } from '@/object-metadata/components/NavigationDrawerSectionForObjectMetadataItemsSkeletonLoader';
 import { NavigationDrawerSectionForWorkspaceItems } from '@/object-metadata/components/NavigationDrawerSectionForWorkspaceItems';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
-import { prefetchNavigationMenuItemsState } from '@/prefetch/states/prefetchNavigationMenuItemsState';
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { useStore } from 'jotai';
 import { SidePanelPages } from 'twenty-shared/types';
 
 const StyledRightIconsContainer = styled.div`
@@ -49,22 +46,12 @@ const StyledRightIconsContainer = styled.div`
 export const WorkspaceNavigationMenuItems = () => {
   const items = useWorkspaceSectionItems();
   const { workspaceNavigationMenuItemsSorted } = useSortedNavigationMenuItems();
-  const store = useStore();
-  const enterEditMode = () => {
-    const prefetchNavigationMenuItems = store.get(
-      prefetchNavigationMenuItemsState.atom,
-    );
-    const workspaceNavigationMenuItems = filterWorkspaceNavigationMenuItems(
-      prefetchNavigationMenuItems,
-    );
-    store.set(navigationMenuItemsDraftState.atom, workspaceNavigationMenuItems);
-    store.set(isNavigationMenuInEditModeState.atom, true);
-  };
+  const { enterLayoutCustomizationMode } = useEnterLayoutCustomizationMode();
   const isNavigationMenuItemEditingEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED,
   );
-  const isNavigationMenuInEditMode = useAtomStateValue(
-    isNavigationMenuInEditModeState,
+  const isLayoutCustomizationActive = useAtomStateValue(
+    isLayoutCustomizationActiveState,
   );
   const [
     selectedNavigationMenuItemInEditMode,
@@ -84,7 +71,7 @@ export const WorkspaceNavigationMenuItems = () => {
 
   const handleEditClick = (event: React.MouseEvent) => {
     event.stopPropagation();
-    enterEditMode();
+    enterLayoutCustomizationMode();
   };
 
   const openFolderAndNavigateToFirstChild = (
@@ -153,7 +140,7 @@ export const WorkspaceNavigationMenuItems = () => {
     objectMetadataItem: ObjectMetadataItem,
     navigationMenuItemId: string,
   ) => {
-    enterEditMode();
+    enterLayoutCustomizationMode();
     setSelectedNavigationMenuItemInEditMode(navigationMenuItemId);
     openNavigationMenuItemInSidePanel({
       pageTitle: objectMetadataItem.labelSingular,
@@ -182,7 +169,7 @@ export const WorkspaceNavigationMenuItems = () => {
       rightIcon={
         isNavigationMenuItemEditingEnabled ? (
           <StyledRightIconsContainer>
-            {isNavigationMenuInEditMode ? (
+            {isLayoutCustomizationActive ? (
               <LightIconButton
                 Icon={IconPlus}
                 accent="tertiary"
@@ -204,7 +191,7 @@ export const WorkspaceNavigationMenuItems = () => {
       }
       selectedNavigationMenuItemId={selectedNavigationMenuItemInEditMode}
       onNavigationMenuItemClick={
-        isNavigationMenuInEditMode ? handleNavigationMenuItemClick : undefined
+        isLayoutCustomizationActive ? handleNavigationMenuItemClick : undefined
       }
       onActiveObjectMetadataItemClick={
         isNavigationMenuItemEditingEnabled
