@@ -108,14 +108,14 @@ export class ViewResolver {
         objectMetadataId,
         userWorkspaceId,
         viewTypes,
-      ) as unknown as Promise<ViewDTO[]>;
+      );
     }
 
     return this.viewService.findByWorkspaceId(
       workspace.id,
       userWorkspaceId,
       viewTypes,
-    ) as unknown as Promise<ViewDTO[]>;
+    );
   }
 
   @Query(() => ViewDTO, { nullable: true })

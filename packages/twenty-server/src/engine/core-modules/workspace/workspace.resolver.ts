@@ -367,7 +367,7 @@ export class WorkspaceResolver {
     return this.viewService.findByWorkspaceId(
       workspace.id,
       userWorkspaceId,
-    ) as unknown as Promise<ViewDTO[]>;
+    );
   }
 
   @Query(() => PublicWorkspaceDataDTO)

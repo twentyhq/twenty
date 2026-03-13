@@ -70,11 +70,7 @@ export class ViewController {
           userWorkspaceId,
         );
 
-    return this.processViewsWithTemplates(
-      views as unknown as ViewDTO[],
-      workspace.id,
-      locale,
-    );
+    return this.processViewsWithTemplates(views, workspace.id, locale);
   }
 
   @Get(':id')

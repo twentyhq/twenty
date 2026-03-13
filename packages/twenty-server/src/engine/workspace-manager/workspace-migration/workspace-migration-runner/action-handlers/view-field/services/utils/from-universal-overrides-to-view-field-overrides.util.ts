@@ -25,7 +25,7 @@ export const fromUniversalOverridesToViewFieldOverrides = ({
       ...(viewFieldGroupUniversalIdentifier === null
         ? { viewFieldGroupId: null }
         : {}),
-    } as ViewFieldOverrides;
+    };
   }
 
   const flatViewFieldGroup =
@@ -37,5 +37,5 @@ export const fromUniversalOverridesToViewFieldOverrides = ({
   return {
     ...scalarOverrides,
     viewFieldGroupId: flatViewFieldGroup?.id ?? null,
-  } as ViewFieldOverrides;
+  };
 };

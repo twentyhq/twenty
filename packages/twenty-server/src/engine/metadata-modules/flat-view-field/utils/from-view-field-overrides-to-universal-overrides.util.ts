@@ -1,6 +1,10 @@
 import { type FormatRecordSerializedRelationProperties } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import {
+  FlatEntityMapsException,
+  FlatEntityMapsExceptionCode,
+} from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { type ViewFieldOverrides } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
 
 type UniversalViewFieldOverrides =
@@ -25,7 +29,14 @@ export const fromViewFieldOverridesToUniversalOverrides = ({
   }
 
   const viewFieldGroupUniversalIdentifier =
-    viewFieldGroupUniversalIdentifierById[viewFieldGroupId] ?? null;
+    viewFieldGroupUniversalIdentifierById[viewFieldGroupId];
+
+  if (!isDefined(viewFieldGroupUniversalIdentifier)) {
+    throw new FlatEntityMapsException(
+      `ViewFieldGroup universal identifier not found for id: ${viewFieldGroupId}`,
+      FlatEntityMapsExceptionCode.RELATION_UNIVERSAL_IDENTIFIER_NOT_FOUND,
+    );
+  }
 
   return {
     ...scalarOverrides,
