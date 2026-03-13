@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { v4 } from 'uuid';
 
+import { type ApolloCache, type FetchResult } from '@apollo/client';
 import { triggerCreateRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerCreateRecordsOptimisticEffect';
 import { triggerDestroyRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerDestroyRecordsOptimisticEffect';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -28,6 +29,11 @@ import { computeOptimisticCreateRecordBaseRecordInput } from '@/object-record/ut
 import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeOptimisticRecordFromInput';
 import { dispatchObjectRecordOperationBrowserEvent } from '@/browser-event/utils/dispatchObjectRecordOperationBrowserEvent';
 import { getCreateOneRecordMutationResponseField } from '@/object-record/utils/getCreateOneRecordMutationResponseField';
+import {
+  getRecordInputPlaceholdersForRequiredFields,
+  getRequiredRelationFieldsMissingErrorMessage,
+  REQUIRED_RELATION_FIELDS_MISSING_ERROR_CODE,
+} from '@/object-record/utils/getRecordInputPlaceholdersForRequiredFields';
 import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { CustomError, isDefined } from 'twenty-shared/utils';
@@ -86,10 +92,26 @@ export const useCreateOneRecord = <
 
     const idForCreation = recordInput.id ?? v4();
 
+    const { placeholders, missingRequiredRelationFields } =
+      getRecordInputPlaceholdersForRequiredFields(objectMetadataItem, recordInput);
+
+    if (missingRequiredRelationFields.length > 0) {
+      setLoading(false);
+      throw new CustomError(
+        getRequiredRelationFieldsMissingErrorMessage(missingRequiredRelationFields),
+        REQUIRED_RELATION_FIELDS_MISSING_ERROR_CODE,
+      );
+    }
+
+    const recordInputWithPlaceholder = {
+      ...placeholders,
+      ...recordInput,
+    };
+
     const sanitizedInput = {
       ...sanitizeRecordInput({
         objectMetadataItem,
-        recordInput,
+        recordInput: recordInputWithPlaceholder,
       }),
       id: idForCreation,
     };
@@ -101,7 +123,7 @@ export const useCreateOneRecord = <
       objectMetadataItems,
       recordInput: {
         ...computeOptimisticCreateRecordBaseRecordInput(objectMetadataItem),
-        ...recordInput,
+        ...recordInputWithPlaceholder,
         id: idForCreation,
       },
       objectPermissionsByObjectMetadataId,
@@ -143,7 +165,8 @@ export const useCreateOneRecord = <
         variables: {
           input: sanitizedInput,
         },
-        update: (cache, { data }) => {
+        update: (cache: ApolloCache, result: FetchResult) => {
+          const { data } = result;
           const record = data?.[mutationResponseField];
           if (skipPostOptimisticEffect === false && isDefined(record)) {
             triggerCreateRecordsOptimisticEffect({
@@ -162,6 +185,8 @@ export const useCreateOneRecord = <
         },
       })
       .catch((error: Error) => {
+        setLoading(false);
+
         if (!isDefined(recordCreatedInCache)) {
           throw error;
         }
