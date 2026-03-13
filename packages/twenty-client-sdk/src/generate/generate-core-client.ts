@@ -15,7 +15,7 @@ const COMMON_SCALAR_TYPES = {
   UUID: 'string',
 };
 
-export const GENERATED_CORE_DIR = 'generated-core';
+export const GENERATED_CORE_DIR = 'core/generated';
 
 // Generates the core API client from a GraphQL schema string.
 // Produces both TypeScript source and compiled ESM/CJS bundles.
