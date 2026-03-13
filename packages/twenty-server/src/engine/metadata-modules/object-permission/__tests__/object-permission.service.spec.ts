@@ -57,12 +57,14 @@ describe('ObjectPermissionService', () => {
         {
           provide: ApplicationService,
           useValue: {
-            findWorkspaceTwentyStandardAndCustomApplicationOrThrow: jest.fn().mockResolvedValue({
-              workspaceCustomFlatApplication: {
-                id: 'app-id',
-                universalIdentifier: 'app-universal-id',
-              },
-            }),
+            findWorkspaceTwentyStandardAndCustomApplicationOrThrow: jest
+              .fn()
+              .mockResolvedValue({
+                workspaceCustomFlatApplication: {
+                  id: 'app-id',
+                  universalIdentifier: 'app-universal-id',
+                },
+              }),
           },
         },
         {
@@ -148,7 +150,9 @@ describe('ObjectPermissionService', () => {
       expect(
         workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration,
       ).not.toHaveBeenCalled();
-      expect(workspaceCacheService.invalidateAndRecompute).not.toHaveBeenCalled();
+      expect(
+        workspaceCacheService.invalidateAndRecompute,
+      ).not.toHaveBeenCalled();
     });
 
     it('should successfully create object permission for custom (non-system) object', async () => {
