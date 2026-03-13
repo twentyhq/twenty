@@ -5,7 +5,6 @@ import { buildWidgetVisibilityContext } from '@/page-layout/utils/buildWidgetVis
 import { filterVisibleWidgets } from '@/page-layout/utils/filterVisibleWidgets';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isDefined } from 'twenty-shared/utils';
 
 export const usePageLayoutTabWithVisibleWidgetsOrThrow = (
