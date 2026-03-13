@@ -4,7 +4,6 @@ import { useCallback, useMemo } from 'react';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
-import { type ErrorLike } from '@apollo/client';
 import { type RecordGqlOperationFindManyResult } from '@/object-record/graphql/types/RecordGqlOperationFindManyResult';
 import { type UseFindManyRecordsParams } from '@/object-record/hooks/useFindManyRecords';
 import { useFindManyRecordsQuery } from '@/object-record/hooks/useFindManyRecordsQuery';
@@ -101,27 +100,13 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
       };
     }
 
-    // In Apollo v4, useLazyQuery's execute can reject (unlike v3 which
-    // resolved with the error in the result). We catch rejections here to
-    // prevent unhandled exceptions that would leave loading states stuck.
-    let result;
-
-    try {
-      result = await findManyRecords({ variables: defaultVariables });
-    } catch (executionError) {
-      handleFindManyRecordsError(executionError as ErrorLike);
-
-      store.set(hasNextPageFamilyState.atomFamily(queryIdentifier), false);
-      store.set(cursorFamilyState.atomFamily(queryIdentifier), '');
-
-      return {
-        data: null,
-        records: [] as T[],
-        totalCount: 0,
-        hasNextPage: false,
-        error: executionError as ErrorLike,
-      };
-    }
+    // In Apollo v4, useLazyQuery's execute aborts in-flight queries when
+    // the query document changes (e.g. metadata/permissions loading).
+    // Calling .retain() keeps the query running to completion even if
+    // the ObservableQuery is updated, preventing AbortError rejections.
+    const result = await findManyRecords({
+      variables: defaultVariables,
+    }).retain();
 
     if (isDefined(result?.error)) {
       handleFindManyRecordsError(result.error);

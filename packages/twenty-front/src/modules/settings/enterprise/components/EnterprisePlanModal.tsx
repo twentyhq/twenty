@@ -5,7 +5,7 @@ import { ENTERPRISE_CHECKOUT_SESSION } from '@/settings/enterprise/graphql/queri
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ModalStatefulWrapper } from '@/ui/layout/modal/components/ModalStatefulWrapper';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { useLazyQuery } from '@apollo/client/react';
+import { useApolloClient } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
@@ -83,10 +83,7 @@ export const EnterprisePlanModal = () => {
   const [selectedInterval, setSelectedInterval] =
     useState<BillingInterval>('monthly');
   const [isLoading, setIsLoading] = useState(false);
-
-  const [fetchCheckoutSession] = useLazyQuery<{
-    enterpriseCheckoutSession: string | null;
-  }>(ENTERPRISE_CHECKOUT_SESSION);
+  const client = useApolloClient();
 
   const benefits = [
     t`SSO (SAML / OIDC)`,
@@ -106,7 +103,10 @@ export const EnterprisePlanModal = () => {
     setIsLoading(true);
 
     try {
-      const { data } = await fetchCheckoutSession({
+      const { data } = await client.query<{
+        enterpriseCheckoutSession: string | null;
+      }>({
+        query: ENTERPRISE_CHECKOUT_SESSION,
         variables: { billingInterval: selectedInterval },
       });
 

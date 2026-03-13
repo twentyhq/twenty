@@ -17,7 +17,7 @@ import { SOURCE_LOCALE, type APP_LOCALES } from 'twenty-shared/translations';
 import { type ObjectPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type ColorScheme } from 'twenty-ui/input';
-import { useLazyQuery } from '@apollo/client/react';
+import { useApolloClient } from '@apollo/client/react';
 import {
   FindAllCoreViewsDocument,
   GetCurrentUserDocument,
@@ -47,17 +47,18 @@ export const useLoadCurrentUser = () => {
 
   const { isOnAWorkspace } = useIsCurrentLocationOnAWorkspace();
 
-  const [getCurrentUser] = useLazyQuery(GetCurrentUserDocument, {
-    fetchPolicy: 'network-only',
-  });
-  const [findAllCoreViews] = useLazyQuery(FindAllCoreViewsDocument, {
-    fetchPolicy: 'network-only',
-  });
+  const client = useApolloClient();
 
   const loadCurrentUser = useCallback(async () => {
-    const currentUserResult = await getCurrentUser();
+    const currentUserResult = await client.query({
+      query: GetCurrentUserDocument,
+      fetchPolicy: 'network-only',
+    });
 
-    const coreViewsResult = await findAllCoreViews();
+    const coreViewsResult = await client.query({
+      query: FindAllCoreViewsDocument,
+      fetchPolicy: 'network-only',
+    });
 
     if (isDefined(currentUserResult.error)) {
       throw new Error(currentUserResult.error.message);
@@ -146,8 +147,7 @@ export const useLoadCurrentUser = () => {
       workspace,
     };
   }, [
-    getCurrentUser,
-    findAllCoreViews,
+    client,
     setCurrentUser,
     setCurrentWorkspace,
     isOnAWorkspace,
