@@ -7,10 +7,10 @@ import { AIChatAssistantMessageRenderer } from '@/ai/components/AIChatAssistantM
 import { AIChatErrorRenderer } from '@/ai/components/AIChatErrorRenderer';
 import { agentChatErrorState } from '@/ai/states/agentChatErrorState';
 import { agentChatIsStreamingState } from '@/ai/states/agentChatIsStreamingState';
-import { agentChatMessageComponentFamilySelector } from '@/ai/states/agentChatMessageComponentFamilySelector';
-import { agentChatMessageIdsComponentSelector } from '@/ai/states/agentChatMessageIdsComponentSelector';
+import { agentChatLastMessageIdComponentSelector } from '@/ai/states/agentChatLastMessageIdComponentSelector';
+import { agentChatMessageComponentFamilyState } from '@/ai/states/agentChatMessageComponentFamilyState';
 import { LightCopyIconButton } from '@/object-record/record-field/ui/components/LightCopyIconButton';
-import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
+import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -144,13 +144,13 @@ const StyledFilesContainer = styled.div`
 `;
 
 export const AIChatMessage = ({ messageId }: { messageId: string }) => {
-  const agentChatMessage = useAtomComponentFamilySelectorValue(
-    agentChatMessageComponentFamilySelector,
-    { messageId },
+  const agentChatMessage = useAtomComponentFamilyStateValue(
+    agentChatMessageComponentFamilyState,
+    messageId,
   );
 
-  const agentChatMessageIds = useAtomComponentSelectorValue(
-    agentChatMessageIdsComponentSelector,
+  const lastMessageId = useAtomComponentSelectorValue(
+    agentChatLastMessageIdComponentSelector,
   );
 
   const agentChatIsStreaming = useAtomStateValue(agentChatIsStreamingState);
@@ -163,7 +163,7 @@ export const AIChatMessage = ({ messageId }: { messageId: string }) => {
     return null;
   }
 
-  const isLastMessage = agentChatMessageIds.at(-1) === messageId;
+  const isLastMessage = lastMessageId === messageId;
 
   const isLastMessageStreaming = agentChatIsStreaming && isLastMessage;
   const isLastAssistantMessage =

@@ -80,6 +80,17 @@ npx nx run twenty-server:typeorm migration:generate src/database/typeorm/core/mi
 npx nx run twenty-server:command workspace:sync-metadata
 ```
 
+### Database Inspection (Postgres MCP)
+
+A read-only Postgres MCP server is configured in `.mcp.json`. Use it to:
+- Inspect workspace data, metadata, and object definitions while developing
+- Verify migration results (columns, types, constraints) after running migrations
+- Explore the multi-tenant schema structure (core, metadata, workspace-specific schemas)
+- Debug issues by querying raw data to confirm whether a bug is frontend, backend, or data-level
+- Inspect metadata tables to debug GraphQL schema generation or `workspace:sync-metadata` issues
+
+This server is read-only — for write operations (reset, migrations, sync), use the CLI commands above.
+
 ### GraphQL
 ```bash
 # Generate GraphQL types (run after schema changes)
