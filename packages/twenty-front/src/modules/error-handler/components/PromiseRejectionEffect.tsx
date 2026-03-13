@@ -1,6 +1,7 @@
 import { useCallback, useEffect } from 'react';
 
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { ApolloError } from '@apollo/client';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { isDefined, type CustomError } from 'twenty-shared/utils';
 
@@ -16,7 +17,7 @@ export const PromiseRejectionEffect = () => {
   const handlePromiseRejection = useCallback(
     async (event: PromiseRejectionEvent) => {
       const error = event.reason;
-      if (CombinedGraphQLErrors.is(error)) {
+      if (CombinedGraphQLErrors.is(error) || error instanceof ApolloError) {
         enqueueErrorSnackBar({
           apolloError: error,
         });
@@ -28,7 +29,9 @@ export const PromiseRejectionEffect = () => {
         error?.name === 'AbortError';
 
       if (!isAbortError) {
-        enqueueErrorSnackBar({});
+        enqueueErrorSnackBar(
+          error instanceof Error ? { message: error.message } : {},
+        );
       }
 
       try {

@@ -22,9 +22,9 @@ export const useSnackBarOnQueryError = (
     enqueueErrorSnackBar(
       message
         ? { message }
-        : {
-            apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
-          },
+        : CombinedGraphQLErrors.is(error)
+          ? { apolloError: error }
+          : { message: error.message },
     );
   }, [error, enqueueErrorSnackBar, message]);
 };

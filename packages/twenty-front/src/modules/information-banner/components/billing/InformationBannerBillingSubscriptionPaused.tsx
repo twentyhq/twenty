@@ -1,3 +1,4 @@
+import { useSnackBarOnQueryError } from '@/apollo/hooks/useSnackBarOnQueryError';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { InformationBanner } from '@/information-banner/components/InformationBanner';
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
@@ -13,11 +14,13 @@ import {
 export const InformationBannerBillingSubscriptionPaused = () => {
   const { redirect } = useRedirect();
 
-  const { data, loading } = useQuery(BillingPortalSessionDocument, {
+  const { data, loading, error } = useQuery(BillingPortalSessionDocument, {
     variables: {
       returnUrlPath: getSettingsPath(SettingsPath.Billing),
     },
   });
+
+  useSnackBarOnQueryError(error);
 
   const {
     [PermissionFlagType.WORKSPACE]: hasPermissionToUpdateBillingDetails,
