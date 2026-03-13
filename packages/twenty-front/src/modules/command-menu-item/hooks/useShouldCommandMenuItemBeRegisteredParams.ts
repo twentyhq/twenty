@@ -21,7 +21,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useStore } from 'jotai';
 import { useCallback, useContext, useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import type { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const useShouldCommandMenuItemBeRegisteredParams = ({
   objectMetadataItem,
