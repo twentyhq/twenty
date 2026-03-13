@@ -71,8 +71,8 @@ export const computeOptimisticRecordFromInput = ({
     },
   );
   if (unknownRecordInputFields.length > 0) {
-    console.warn(
-      `computeOptimisticRecordFromInput: encountered unknown fields ${unknownRecordInputFields.join(', ')} in objectMetadataItem ${objectMetadataItem.nameSingular}. Skipping unknown fields.`,
+    throw new Error(
+      `Should never occur, encountered unknown fields ${unknownRecordInputFields.join(', ')} in objectMetadataItem ${objectMetadataItem.nameSingular}`,
     );
   }
 

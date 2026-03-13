@@ -147,6 +147,36 @@ describe('ActorFromAuthContextService', () => {
       ]);
     });
 
+    it('should build metadata from user when pendingActivationUser auth context', async () => {
+      const authContext = {
+        type: 'pendingActivationUser',
+        userWorkspaceId: '20202020-1234-5678-9012-345678901234',
+        user: {
+          id: '20202020-9aae-49a8-bafc-ac44bae62d6d',
+          firstName: 'Simone',
+          lastName: 'Ergotino',
+        },
+        workspace: { id: '20202020-bdec-497f-847a-1bb334fefe58' },
+      } as unknown as WorkspaceAuthContext;
+
+      const result = await service.injectCreatedBy({
+        records: [{}],
+        objectMetadataNameSingular: 'person',
+        authContext,
+      });
+
+      expect(result).toEqual<ExpectedResult>([
+        {
+          createdBy: {
+            context: {},
+            name: 'Simone Ergotino',
+            workspaceMemberId: '',
+            source: FieldActorSource.MANUAL,
+          },
+        },
+      ]);
+    });
+
     it('should throw error when no valid actor information is found', async () => {
       const authContext = {
         type: 'system',
@@ -160,7 +190,7 @@ describe('ActorFromAuthContextService', () => {
           authContext,
         }),
       ).rejects.toThrowErrorMatchingInlineSnapshot(
-        `"Unable to build actor metadata - no valid actor information found in auth context"`,
+        `"Unable to build actor metadata - unhandled auth context type: system"`,
       );
     });
   });

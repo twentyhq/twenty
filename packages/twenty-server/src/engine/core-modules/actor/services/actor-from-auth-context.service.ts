@@ -8,6 +8,7 @@ import { buildCreatedByFromApplication } from 'src/engine/core-modules/actor/uti
 import { buildCreatedByFromFullNameMetadata } from 'src/engine/core-modules/actor/utils/build-created-by-from-full-name-metadata.util';
 import { isApiKeyAuthContext } from 'src/engine/core-modules/auth/guards/is-api-key-auth-context.guard';
 import { isApplicationAuthContext } from 'src/engine/core-modules/auth/guards/is-application-auth-context.guard';
+import { isPendingActivationUserAuthContext } from 'src/engine/core-modules/auth/guards/is-pending-activation-user-auth-context.guard';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
@@ -175,8 +176,18 @@ export class ActorFromAuthContextService {
       });
     }
 
+    if (isPendingActivationUserAuthContext(authContext)) {
+      return buildCreatedByFromFullNameMetadata({
+        fullNameMetadata: {
+          firstName: authContext.user.firstName,
+          lastName: authContext.user.lastName,
+        },
+        workspaceMemberId: '',
+      });
+    }
+
     throw new Error(
-      'Unable to build actor metadata - no valid actor information found in auth context',
+      `Unable to build actor metadata - unhandled auth context type: ${authContext.type}`,
     );
   }
 }
