@@ -157,7 +157,8 @@
                     "user-guide/workflows/how-tos/crm-automations/formula-fields",
                     "user-guide/workflows/how-tos/crm-automations/display-related-record-data",
                     "user-guide/workflows/how-tos/crm-automations/closed-won-automations",
-                    "user-guide/workflows/how-tos/crm-automations/detect-stale-opportunities"
+                    "user-guide/workflows/how-tos/crm-automations/detect-stale-opportunities",
+                    "user-guide/workflows/how-tos/crm-automations/auto-reply-to-inbound-emails"
                   ]
                 },
                 {
