@@ -7,6 +7,7 @@ describe('convertCoreViewFieldGroupToViewFieldGroup', () => {
       name: 'Group 1',
       position: 0,
       isVisible: true,
+      isOverridden: false,
       viewId: 'view-1',
       viewFields: [
         {
@@ -69,6 +70,7 @@ describe('convertCoreViewFieldGroupToViewFieldGroup', () => {
       name: 'Empty Group',
       position: 1,
       isVisible: false,
+      isOverridden: false,
       viewId: 'view-1',
       viewFields: [],
     };
@@ -93,6 +95,7 @@ describe('convertCoreViewFieldGroupToViewFieldGroup', () => {
       name: 'Test',
       position: 0,
       isVisible: true,
+      isOverridden: false,
       viewId: 'view-2',
       viewFields: [],
     };
