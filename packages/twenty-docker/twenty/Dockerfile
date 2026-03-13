@@ -29,6 +29,7 @@ COPY ./packages/twenty-shared /app/packages/twenty-shared
 COPY ./packages/twenty-ui /app/packages/twenty-ui
 COPY ./packages/twenty-sdk /app/packages/twenty-sdk
 COPY ./packages/twenty-server /app/packages/twenty-server
+COPY ./packages/twenty-apps /app/packages/twenty-apps
 
 RUN npx nx run twenty-server:build
 

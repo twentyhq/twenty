@@ -1,12 +1,17 @@
 import { Logger } from '@nestjs/common';
 
-import { Command, CommandRunner } from 'nest-commander';
+import { Command, CommandRunner, Option } from 'nest-commander';
 
 import {
   SEED_APPLE_WORKSPACE_ID,
   SEED_YCOMBINATOR_WORKSPACE_ID,
 } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { DevSeederService } from 'src/engine/workspace-manager/dev-seeder/services/dev-seeder.service';
+
+type SeedDevOptions = {
+  withApps?: boolean;
+};
+
 @Command({
   name: 'workspace:seed:dev',
   description:
@@ -23,10 +28,21 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
     super();
   }
 
-  async run(): Promise<void> {
+  @Option({
+    flags: '--with-apps',
+    description: 'Include fixture app seeding (builds and installs apps)',
+    required: false,
+  })
+  parseWithApps(): boolean {
+    return true;
+  }
+
+  async run(_passedParams: string[], options: SeedDevOptions): Promise<void> {
     try {
       for (const workspaceId of this.workspaceIds) {
-        await this.devSeederService.seedDev(workspaceId);
+        await this.devSeederService.seedDev(workspaceId, {
+          includeApps: options?.withApps ?? false,
+        });
       }
     } catch (error) {
       this.logger.error(error);

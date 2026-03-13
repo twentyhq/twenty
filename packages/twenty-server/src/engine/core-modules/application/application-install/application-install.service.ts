@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { promises as fs } from 'fs';
 import { join, relative } from 'path';
 
+import { type Manifest } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
@@ -94,6 +95,55 @@ export class ApplicationInstallService {
     );
   }
 
+  async installFromFixtureDirectory(params: {
+    appRegistrationId: string;
+    fixtureDir: string;
+    workspaceId: string;
+  }): Promise<boolean> {
+    const appRegistration = await this.appRegistrationRepository.findOne({
+      where: { id: params.appRegistrationId },
+    });
+
+    if (!appRegistration) {
+      throw new ApplicationException(
+        `Application registration with id ${params.appRegistrationId} not found`,
+        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
+      );
+    }
+
+    const manifestContent = await fs.readFile(
+      join(params.fixtureDir, 'manifest.json'),
+      'utf-8',
+    );
+    const manifest: Manifest = JSON.parse(manifestContent);
+
+    await this.ensureApplicationExists({
+      universalIdentifier: appRegistration.universalIdentifier,
+      name: manifest.application.displayName,
+      workspaceId: params.workspaceId,
+      applicationRegistrationId: appRegistration.id,
+      sourceType: appRegistration.sourceType,
+    });
+
+    await this.writeDependencyFilesToStorage(
+      params.fixtureDir,
+      appRegistration.universalIdentifier,
+      params.workspaceId,
+    );
+
+    await this.applicationSyncService.synchronizeFromManifest({
+      workspaceId: params.workspaceId,
+      manifest,
+      applicationRegistrationId: appRegistration.id,
+    });
+
+    this.logger.log(
+      `Installed app from fixture directory: ${appRegistration.universalIdentifier}`,
+    );
+
+    return true;
+  }
+
   private async doInstallApplication(
     appRegistration: ApplicationRegistrationEntity,
     params: { version?: string; workspaceId: string },
@@ -111,30 +161,15 @@ export class ApplicationInstallService {
         return true;
       }
 
-      const universalIdentifier = appRegistration.universalIdentifier;
-
-      await this.ensureApplicationExists({
-        universalIdentifier,
-        name: resolvedPackage.manifest.application.displayName,
-        workspaceId: params.workspaceId,
-        applicationRegistrationId: appRegistration.id,
-        sourceType: appRegistration.sourceType,
-      });
-
-      await this.writeFilesToStorage(
-        resolvedPackage.extractedDir,
-        universalIdentifier,
-        params.workspaceId,
-      );
-
-      await this.applicationSyncService.synchronizeFromManifest({
-        workspaceId: params.workspaceId,
+      await this.installFromExtractedDir({
+        appRegistration,
+        extractedDir: resolvedPackage.extractedDir,
         manifest: resolvedPackage.manifest,
-        applicationRegistrationId: appRegistration.id,
+        workspaceId: params.workspaceId,
       });
 
       this.logger.log(
-        `Successfully installed app ${universalIdentifier} v${resolvedPackage.packageJson.version ?? 'unknown'}`,
+        `Successfully installed app ${appRegistration.universalIdentifier} v${resolvedPackage.packageJson.version ?? 'unknown'}`,
       );
 
       return true;
@@ -149,6 +184,69 @@ export class ApplicationInstallService {
         await this.applicationPackageFetcherService.cleanupExtractedDir(
           resolvedPackage.cleanupDir,
         );
+      }
+    }
+  }
+
+  private async installFromExtractedDir(params: {
+    appRegistration: ApplicationRegistrationEntity;
+    extractedDir: string;
+    manifest: Manifest;
+    workspaceId: string;
+  }): Promise<void> {
+    await this.ensureApplicationExists({
+      universalIdentifier: params.appRegistration.universalIdentifier,
+      name: params.manifest.application.displayName,
+      workspaceId: params.workspaceId,
+      applicationRegistrationId: params.appRegistration.id,
+      sourceType: params.appRegistration.sourceType,
+    });
+
+    await this.writeFilesToStorage(
+      params.extractedDir,
+      params.appRegistration.universalIdentifier,
+      params.workspaceId,
+    );
+
+    await this.applicationSyncService.synchronizeFromManifest({
+      workspaceId: params.workspaceId,
+      manifest: params.manifest,
+      applicationRegistrationId: params.appRegistration.id,
+    });
+  }
+
+  private async writeDependencyFilesToStorage(
+    fixtureDir: string,
+    applicationUniversalIdentifier: string,
+    workspaceId: string,
+  ): Promise<void> {
+    const dependencyFiles = ['package.json', 'yarn.lock'];
+
+    for (const fileName of dependencyFiles) {
+      const filePath = join(fixtureDir, fileName);
+
+      try {
+        const content = await fs.readFile(filePath);
+
+        await this.fileStorageService.writeFile({
+          sourceFile: content,
+          mimeType: undefined,
+          fileFolder: FileFolder.Dependencies,
+          applicationUniversalIdentifier,
+          workspaceId,
+          resourcePath: fileName,
+          settings: { isTemporaryFile: false, toDelete: false },
+        });
+      } catch (error: unknown) {
+        const isFileNotFound =
+          typeof error === 'object' &&
+          error !== null &&
+          'code' in error &&
+          (error as NodeJS.ErrnoException).code === 'ENOENT';
+
+        if (!isFileNotFound) {
+          throw error;
+        }
       }
     }
   }

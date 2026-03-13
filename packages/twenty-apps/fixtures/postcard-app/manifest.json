@@ -1,0 +1,1588 @@
+{
+  "application": {
+    "universalIdentifier": "4ec0391d-18d5-411c-b2f3-266ddc1c3ef7",
+    "displayName": "Rich App",
+    "description": "A simple rich app",
+    "icon": "IconWorld",
+    "applicationVariables": {
+      "DEFAULT_RECIPIENT_NAME": {
+        "universalIdentifier": "19e94e59-d4fe-4251-8981-b96d0a9f74de",
+        "description": "Default recipient name for postcards",
+        "value": "Alex Karp",
+        "isSecret": false
+      }
+    },
+    "serverVariables": {
+      "POSTCARD_API_KEY": {
+        "description": "API key for the postcard printing service",
+        "isSecret": true,
+        "isRequired": true
+      },
+      "POSTCARD_SENDER_NAME": {
+        "description": "Default sender name on postcards",
+        "isSecret": false,
+        "isRequired": false
+      }
+    },
+    "defaultRoleUniversalIdentifier": "b648f87b-1d26-4961-b974-0908fd991061",
+    "yarnLockChecksum": "d41d8cd98f00b204e9800998ecf8427e",
+    "packageJsonChecksum": "ba87d0e7b6fe8beafdfb428f0b953a22",
+    "apiClientChecksum": null
+  },
+  "objects": [
+    {
+      "universalIdentifier": "b0b1b2b3-b4b5-4000-8000-000000000001",
+      "nameSingular": "rootNote",
+      "namePlural": "rootNotes",
+      "labelSingular": "Root note",
+      "labelPlural": "Root notes",
+      "description": "A simple root-level object",
+      "icon": "IconNote",
+      "labelIdentifierFieldMetadataUniversalIdentifier": "b0b1b2b3-b4b5-4000-8000-000000000002",
+      "fields": [
+        {
+          "universalIdentifier": "b0b1b2b3-b4b5-4000-8000-000000000002",
+          "type": "TEXT",
+          "label": "Title",
+          "name": "title"
+        },
+        {
+          "universalIdentifier": "b0b1b2b3-b4b5-4000-8000-000000000003",
+          "type": "TEXT",
+          "label": "Body",
+          "name": "body"
+        },
+        {
+          "name": "id",
+          "label": "Id",
+          "description": "Id",
+          "icon": "Icon123",
+          "isNullable": false,
+          "defaultValue": "uuid",
+          "type": "UUID",
+          "universalIdentifier": "b5830f92-1abe-5ae7-b689-7821dda00b15"
+        },
+        {
+          "name": "name",
+          "label": "Name",
+          "description": "Name",
+          "icon": "IconAbc",
+          "isNullable": true,
+          "defaultValue": null,
+          "type": "TEXT",
+          "universalIdentifier": "ae2b2e5a-6c8b-5324-b639-8f17e3bc0420"
+        },
+        {
+          "name": "createdAt",
+          "label": "Creation date",
+          "description": "Creation date",
+          "icon": "IconCalendar",
+          "isNullable": false,
+          "defaultValue": "now",
+          "type": "DATE_TIME",
+          "universalIdentifier": "7c84a501-41a6-531e-bc5e-8062843f6cba"
+        },
+        {
+          "name": "updatedAt",
+          "label": "Last update",
+          "description": "Last time the record was changed",
+          "icon": "IconCalendarClock",
+          "isNullable": false,
+          "defaultValue": "now",
+          "type": "DATE_TIME",
+          "universalIdentifier": "72c2903a-91c9-5f36-8668-b53b083ae4cf"
+        },
+        {
+          "name": "deletedAt",
+          "label": "Deleted at",
+          "description": "Deletion date",
+          "icon": "IconCalendarClock",
+          "isNullable": true,
+          "defaultValue": null,
+          "type": "DATE_TIME",
+          "universalIdentifier": "007f5d8e-d376-519e-bd07-aea41a53f7d9"
+        },
+        {
+          "name": "createdBy",
+          "label": "Created by",
+          "description": "The creator of the record",
+          "icon": "IconCreativeCommonsSa",
+          "isNullable": false,
+          "defaultValue": {
+            "name": "''",
+            "source": "'MANUAL'"
+          },
+          "type": "ACTOR",
+          "universalIdentifier": "44053354-0d8b-5d66-bfa8-7e7d221de3db"
+        },
+        {
+          "name": "updatedBy",
+          "label": "Updated by",
+          "description": "The workspace member who last updated the record",
+          "icon": "IconUserCircle",
+          "isNullable": false,
+          "defaultValue": {
+            "name": "''",
+            "source": "'MANUAL'"
+          },
+          "type": "ACTOR",
+          "universalIdentifier": "38e2c671-cbf5-5773-a04a-e5a2d6c323c8"
+        },
+        {
+          "name": "position",
+          "label": "Position",
+          "description": "Position",
+          "icon": "IconHierarchy2",
+          "isNullable": false,
+          "defaultValue": 0,
+          "type": "POSITION",
+          "universalIdentifier": "3b56cdea-cf85-51d4-a7a0-cd701f76141a"
+        },
+        {
+          "name": "searchVector",
+          "label": "Search vector",
+          "icon": "IconSearch",
+          "description": "Search vector",
+          "isNullable": true,
+          "defaultValue": null,
+          "type": "TS_VECTOR",
+          "universalIdentifier": "7c6d88f5-a348-51dd-8d0b-74a17e626754"
+        },
+        {
+          "name": "timelineActivities",
+          "label": "Timeline Activities",
+          "description": "Root notes tied to the RootNote",
+          "icon": "IconBuildingSkyscraper",
+          "isNullable": true,
+          "type": "RELATION",
+          "universalSettings": {
+            "relationType": "ONE_TO_MANY"
+          },
+          "universalIdentifier": "1cdb0b3a-0ae1-59f6-b3f0-59ff99e40525",
+          "relationTargetFieldMetadataUniversalIdentifier": "a0f6ffdc-a570-58a6-973d-a9bc9a527de8",
+          "relationTargetObjectMetadataUniversalIdentifier": "20202020-6736-4337-b5c4-8b39fae325a5"
+        },
+        {
+          "name": "favorites",
+          "label": "Favorites",
+          "description": "Root notes tied to the RootNote",
+          "icon": "IconBuildingSkyscraper",
+          "isNullable": true,
+          "type": "RELATION",
+          "universalSettings": {
+            "relationType": "ONE_TO_MANY"
+          },
+          "universalIdentifier": "bbc0dc11-9daa-5e3f-b939-e6f0a12bb277",
+          "relationTargetFieldMetadataUniversalIdentifier": "13fb0eae-50b4-5e28-afbc-5b5a9c422ead",
+          "relationTargetObjectMetadataUniversalIdentifier": "20202020-ab56-4e05-92a3-e2414a499860"
+        },
+        {
+          "name": "attachments",
+          "label": "Attachments",
+          "description": "Root notes tied to the RootNote",
+          "icon": "IconBuildingSkyscraper",
+          "isNullable": true,
+          "type": "RELATION",
+          "universalSettings": {
+            "relationType": "ONE_TO_MANY"
+          },
+          "universalIdentifier": "aa05ee89-bd8a-5911-a4d5-3355926186bc",
+          "relationTargetFieldMetadataUniversalIdentifier": "95cad10a-bff6-524d-b6d8-dbc6db7cbf18",
+          "relationTargetObjectMetadataUniversalIdentifier": "20202020-bd3d-4c60-8dca-571c71d4447a"
+        },
+        {
+          "name": "noteTargets",
+          "label": "Note Targets",
+          "description": "Root notes tied to the RootNote",
+          "icon": "IconBuildingSkyscraper",
+          "isNullable": true,
+          "type": "RELATION",
+          "universalSettings": {
+            "relationType": "ONE_TO_MANY"
+          },
+          "universalIdentifier": "762ad37e-d624-51d8-989c-3a119eef9e7f",
+          "relationTargetFieldMetadataUniversalIdentifier": "c327faff-76eb-5baf-8b35-1c31e57306fb",
+          "relationTargetObjectMetadataUniversalIdentifier": "20202020-fff0-4b44-be82-bda313884400"
+        },
+        {
+          "name": "taskTargets",
+          "label": "Task Targets",
+          "description": "Root notes tied to the RootNote",
+          "icon": "IconBuildingSkyscraper",
+          "isNullable": true,
+          "type": "RELATION",
+          "universalSettings": {
+            "relationType": "ONE_TO_MANY"
+          },
+          "universalIdentifier": "d4f1b0c8-8cd9-581e-9bf9-917f8c918d76",
+          "relationTargetFieldMetadataUniversalIdentifier": "36843050-e6e3-5759-99b6-e975426bad73",
+          "relationTargetObjectMetadataUniversalIdentifier": "20202020-5a9a-44e8-95df-771cd06d0fb1"
+        }
+      ]
+    },
+    {
+      "universalIdentifier": "e1a2b3c4-5e6f-4a7b-8c9d-0e1f2a3b4c5e",
+      "nameSingular": "postCardRecipient",
+      "namePlural": "postCardRecipients",
+      "labelSingular": "Post Card Recipient",
+      "labelPlural": "Post Card Recipients",
+      "description": "Junction object linking post cards to their recipients",
+      "icon": "IconLink",
+      "fields": [
+        {
+          "universalIdentifier": "e2a2b3c4-5e6f-4a7b-8c9d-0e1f2a3b4c5e",
+          "type": "DATE_TIME",
+          "label": "Sent at",
+          "name": "sentAt",
+          "icon": "IconClock",
+          "isNullable": true,
+          "defaultValue": null
+        },
+        {
+          "name": "id",
+          "label": "Id",
+          "description": "Id",
+          "icon": "Icon123",
+          "isNullable": false,
+          "defaultValue": "uuid",
+          "type": "UUID",
+          "universalIdentifier": "2809d745-deb3-5ac0-8328-ea6256ec22b3"
+        },
+        {
+          "name": "name",
+          "label": "Name",
+          "description": "Name",
+          "icon": "IconAbc",
+          "isNullable": true,
+          "defaultValue": null,
+          "type": "TEXT",
+          "universalIdentifier": "a6ee6cc8-b9a0-5e23-a39e-bc3fee2aa3d3"
+        },
+        {
+          "name": "createdAt",
+          "label": "Creation date",
+          "description": "Creation date",
+          "icon": "IconCalendar",
+          "isNullable": false,
+          "defaultValue": "now",
+          "type": "DATE_TIME",
+          "universalIdentifier": "87ad23b6-b04e-5dc1-9907-c1eca54ea6d6"
+        },
+        {
+          "name": "updatedAt",
+          "label": "Last update",
+          "description": "Last time the record was changed",
+          "icon": "IconCalendarClock",
+          "isNullable": false,
+          "defaultValue": "now",
+          "type": "DATE_TIME",
+          "universalIdentifier": "6d7523dc-c097-5b75-96eb-37502d09cc19"
+        },
+        {
+          "name": "deletedAt",
+          "label": "Deleted at",
+          "description": "Deletion date",
+          "icon": "IconCalendarClock",
+          "isNullable": true,
+          "defaultValue": null,
+          "type": "DATE_TIME",
+          "universalIdentifier": "bd4fe2fa-373a-5fdd-ba09-cb5435781e4c"
+        },
+        {
+          "name": "createdBy",
+          "label": "Created by",
+          "description": "The creator of the record",
+          "icon": "IconCreativeCommonsSa",
+          "isNullable": false,
+          "defaultValue": {
+            "name": "''",
+            "source": "'MANUAL'"
+          },
+          "type": "ACTOR",
+          "universalIdentifier": "c5026f20-ab7a-54e0-900e-37a2d5381aee"
+        },
+        {
+          "name": "updatedBy",
+          "label": "Updated by",
+          "description": "The workspace member who last updated the record",
+          "icon": "IconUserCircle",
+          "isNullable": false,
+          "defaultValue": {
+            "name": "''",
+            "source": "'MANUAL'"
+          },
+          "type": "ACTOR",
+          "universalIdentifier": "1dd75ff5-5fd0-51df-b3a3-a12e3aff30df"
+        },
+        {
+          "name": "position",
+          "label": "Position",
+          "description": "Position",
+          "icon": "IconHierarchy2",
+          "isNullable": false,
+          "defaultValue": 0,
+          "type": "POSITION",
+          "universalIdentifier": "6c5e91f5-e323-555b-84e0-5a1dd7f36b1b"
+        },
+        {
+          "name": "searchVector",
+          "label": "Search vector",
+          "icon": "IconSearch",
+          "description": "Search vector",
+          "isNullable": true,
+          "defaultValue": null,
+          "type": "TS_VECTOR",
+          "universalIdentifier": "9fa18b19-41b6-5082-b3e2-4e73f7461164"
+        },
+        {
+          "name": "timelineActivities",
+          "label": "Timeline Activities",
+          "description": "Post Card Recipients tied to the PostCardRecipient",
+          "icon": "IconBuildingSkyscraper",
+          "isNullable": true,
+          "type": "RELATION",
+          "universalSettings": {
+            "relationType": "ONE_TO_MANY"
+          },
+          "universalIdentifier": "02f5efba-4f94-5cc3-9e17-ca7b1fe5f71b",
+          "relationTargetFieldMetadataUniversalIdentifier": "18b6354d-8b0f-5be6-9473-d635aed670a1",
+          "relationTargetObjectMetadataUniversalIdentifier": "20202020-6736-4337-b5c4-8b39fae325a5"
+        },
+        {
+          "name": "favorites",
+          "label": "Favorites",
+          "description": "Post Card Recipients tied to the PostCardRecipient",
+          "icon": "IconBuildingSkyscraper",
+          "isNullable": true,
+          "type": "RELATION",
+          "universalSettings": {
+            "relationType": "ONE_TO_MANY"
+          },
+          "universalIdentifier": "a284914f-650c-54ad-84ef-d6229d3fa453",
+          "relationTargetFieldMetadataUniversalIdentifier": "f3247843-dd1f-5b15-8873-c0062a021180",
+          "relationTargetObjectMetadataUniversalIdentifier": "20202020-ab56-4e05-92a3-e2414a499860"
+        },
+        {
+          "name": "attachments",
+          "label": "Attachments",
+          "description": "Post Card Recipients tied to the PostCardRecipient",
+          "icon": "IconBuildingSkyscraper",
+          "isNullable": true,
+          "type": "RELATION",
+          "universalSettings": {
+            "relationType": "ONE_TO_MANY"
+          },
+          "universalIdentifier": "82497ec7-0121-53d6-9518-ae7434ceaf8b",
+          "relationTargetFieldMetadataUniversalIdentifier": "ba74dfd1-e7ee-502d-abad-82e14d595874",
+          "relationTargetObjectMetadataUniversalIdentifier": "20202020-bd3d-4c60-8dca-571c71d4447a"
+        },
+        {
+          "name": "noteTargets",
+          "label": "Note Targets",
+          "description": "Post Card Recipients tied to the PostCardRecipient",
+          "icon": "IconBuildingSkyscraper",
+          "isNullable": true,
+          "type": "RELATION",
+          "universalSettings": {
+            "relationType": "ONE_TO_MANY"
+          },
+          "universalIdentifier": "6de8b57e-ed0a-5d35-bd39-bd8874445810",
+          "relationTargetFieldMetadataUniversalIdentifier": "9d5a9f4b-5431-5b90-810a-1e9d8873b302",
+          "relationTargetObjectMetadataUniversalIdentifier": "20202020-fff0-4b44-be82-bda313884400"
+        },
+        {
+          "name": "taskTargets",
+          "label": "Task Targets",
+          "description": "Post Card Recipients tied to the PostCardRecipient",
+          "icon": "IconBuildingSkyscraper",
+          "isNullable": true,
+          "type": "RELATION",
+          "universalSettings": {
+            "relationType": "ONE_TO_MANY"
+          },
+          "universalIdentifier": "00459e7e-8ef1-5a9b-b180-26bbb54a2696",
+          "relationTargetFieldMetadataUniversalIdentifier": "85353e69-1e70-51ef-91c3-334d85013a4b",
+          "relationTargetObjectMetadataUniversalIdentifier": "20202020-5a9a-44e8-95df-771cd06d0fb1"
+        }
+      ],
+      "labelIdentifierFieldMetadataUniversalIdentifier": "a6ee6cc8-b9a0-5e23-a39e-bc3fee2aa3d3"
+    },
+    {
+      "universalIdentifier": "54b589ca-eeed-4950-a176-358418b85c05",
+      "nameSingular": "postCard",
+      "namePlural": "postCards",
+      "labelSingular": "Post card",
+      "labelPlural": "Post cards",
+      "description": "A post card object",
+      "icon": "IconMail",
+      "labelIdentifierFieldMetadataUniversalIdentifier": "58a0a314-d7ea-4865-9850-7fb84e72f30b",
+      "fields": [
+        {
+          "universalIdentifier": "58a0a314-d7ea-4865-9850-7fb84e72f30b",
+          "type": "TEXT",
+          "label": "Content",
+          "description": "Postcard's content",
+          "icon": "IconAbc",
+          "name": "content"
+        },
+        {
+          "universalIdentifier": "c6aa31f3-da76-4ac6-889f-475e226009ac",
+          "type": "FULL_NAME",
+          "label": "Recipient name",
+          "icon": "IconUser",
+          "name": "recipientName"
+        },
+        {
+          "universalIdentifier": "95045777-a0ad-49ec-98f9-22f9fc0c8266",
+          "type": "ADDRESS",
+          "label": "Recipient address",
+          "icon": "IconHome",
+          "name": "recipientAddress"
+        },
+        {
+          "universalIdentifier": "87b675b8-dd8c-4448-b4ca-20e5a2234a1e",
+          "type": "SELECT",
+          "label": "Status",
+          "icon": "IconSend",
+          "defaultValue": "'DRAFT'",
+          "options": [
+            {
+              "id": "a1b2c3d4-0001-4000-8000-000000000001",
+              "value": "DRAFT",
+              "label": "Draft",
+              "position": 0,
+              "color": "gray"
+            },
+            {
+              "id": "a1b2c3d4-0002-4000-8000-000000000002",
+              "value": "SENT",
+              "label": "Sent",
+              "position": 1,
+              "color": "orange"
+            },
+            {
+              "id": "a1b2c3d4-0003-4000-8000-000000000003",
+              "value": "DELIVERED",
+              "label": "Delivered",
+              "position": 2,
+              "color": "green"
+            },
+            {
+              "id": "a1b2c3d4-0004-4000-8000-000000000004",
+              "value": "RETURNED",
+              "label": "Returned",
+              "position": 3,
+              "color": "orange"
+            }
+          ],
+          "name": "status"
+        },
+        {
+          "universalIdentifier": "e06abe72-5b44-4e7f-93be-afc185a3c433",
+          "type": "DATE_TIME",
+          "label": "Delivered at",
+          "icon": "IconCheck",
+          "isNullable": true,
+          "defaultValue": null,
+          "name": "deliveredAt"
+        },
+        {
+          "name": "id",
+          "label": "Id",
+          "description": "Id",
+          "icon": "Icon123",
+          "isNullable": false,
+          "defaultValue": "uuid",
+          "type": "UUID",
+          "universalIdentifier": "56e652a3-fac2-54fd-a379-f01b72758268"
+        },
+        {
+          "name": "name",
+          "label": "Name",
+          "description": "Name",
+          "icon": "IconAbc",
+          "isNullable": true,
+          "defaultValue": null,
+          "type": "TEXT",
+          "universalIdentifier": "c59a149f-5861-51a3-a924-2bd2fa31daaa"
+        },
+        {
+          "name": "createdAt",
+          "label": "Creation date",
+          "description": "Creation date",
+          "icon": "IconCalendar",
+          "isNullable": false,
+          "defaultValue": "now",
+          "type": "DATE_TIME",
+          "universalIdentifier": "236e2ec5-3636-5b97-b19d-f7799cb88d99"
+        },
+        {
+          "name": "updatedAt",
+          "label": "Last update",
+          "description": "Last time the record was changed",
+          "icon": "IconCalendarClock",
+          "isNullable": false,
+          "defaultValue": "now",
+          "type": "DATE_TIME",
+          "universalIdentifier": "2cf640eb-09a7-52f2-820b-419071c5ec24"
+        },
+        {
+          "name": "deletedAt",
+          "label": "Deleted at",
+          "description": "Deletion date",
+          "icon": "IconCalendarClock",
+          "isNullable": true,
+          "defaultValue": null,
+          "type": "DATE_TIME",
+          "universalIdentifier": "2eb62b4a-6888-58ab-9887-a879321fff31"
+        },
+        {
+          "name": "createdBy",
+          "label": "Created by",
+          "description": "The creator of the record",
+          "icon": "IconCreativeCommonsSa",
+          "isNullable": false,
+          "defaultValue": {
+            "name": "''",
+            "source": "'MANUAL'"
+          },
+          "type": "ACTOR",
+          "universalIdentifier": "36e95d21-9c86-5b6f-8133-a66d09fc8952"
+        },
+        {
+          "name": "updatedBy",
+          "label": "Updated by",
+          "description": "The workspace member who last updated the record",
+          "icon": "IconUserCircle",
+          "isNullable": false,
+          "defaultValue": {
+            "name": "''",
+            "source": "'MANUAL'"
+          },
+          "type": "ACTOR",
+          "universalIdentifier": "dc5231a4-e128-57b0-ac9d-723678d9b239"
+        },
+        {
+          "name": "position",
+          "label": "Position",
+          "description": "Position",
+          "icon": "IconHierarchy2",
+          "isNullable": false,
+          "defaultValue": 0,
+          "type": "POSITION",
+          "universalIdentifier": "3ad26df7-6345-5f85-aac1-2306cf10eaed"
+        },
+        {
+          "name": "searchVector",
+          "label": "Search vector",
+          "icon": "IconSearch",
+          "description": "Search vector",
+          "isNullable": true,
+          "defaultValue": null,
+          "type": "TS_VECTOR",
+          "universalIdentifier": "b49b1a1c-2f6b-52a3-836b-ece89c698627"
+        },
+        {
+          "name": "timelineActivities",
+          "label": "Timeline Activities",
+          "description": "Post cards tied to the PostCard",
+          "icon": "IconBuildingSkyscraper",
+          "isNullable": true,
+          "type": "RELATION",
+          "universalSettings": {
+            "relationType": "ONE_TO_MANY"
+          },
+          "universalIdentifier": "3f8c70b5-abb0-51ec-9109-0a94ce9c04a6",
+          "relationTargetFieldMetadataUniversalIdentifier": "1bdc52a0-0339-5360-ba17-b615250ef730",
+          "relationTargetObjectMetadataUniversalIdentifier": "20202020-6736-4337-b5c4-8b39fae325a5"
+        },
+        {
+          "name": "favorites",
+          "label": "Favorites",
+          "description": "Post cards tied to the PostCard",
+          "icon": "IconBuildingSkyscraper",
+          "isNullable": true,
+          "type": "RELATION",
+          "universalSettings": {
+            "relationType": "ONE_TO_MANY"
+          },
+          "universalIdentifier": "94f43ec4-d2d1-5a50-b414-78da27d24258",
+          "relationTargetFieldMetadataUniversalIdentifier": "9a5d4ae3-6f45-593f-923d-bcd16ede4345",
+          "relationTargetObjectMetadataUniversalIdentifier": "20202020-ab56-4e05-92a3-e2414a499860"
+        },
+        {
+          "name": "attachments",
+          "label": "Attachments",
+          "description": "Post cards tied to the PostCard",
+          "icon": "IconBuildingSkyscraper",
+          "isNullable": true,
+          "type": "RELATION",
+          "universalSettings": {
+            "relationType": "ONE_TO_MANY"
+          },
+          "universalIdentifier": "547c93e4-c9e7-5880-b251-46230fb59bfa",
+          "relationTargetFieldMetadataUniversalIdentifier": "fecb8484-7e3c-59f8-a5ef-30882c5c1904",
+          "relationTargetObjectMetadataUniversalIdentifier": "20202020-bd3d-4c60-8dca-571c71d4447a"
+        },
+        {
+          "name": "noteTargets",
+          "label": "Note Targets",
+          "description": "Post cards tied to the PostCard",
+          "icon": "IconBuildingSkyscraper",
+          "isNullable": true,
+          "type": "RELATION",
+          "universalSettings": {
+            "relationType": "ONE_TO_MANY"
+          },
+          "universalIdentifier": "47deea5c-8559-5ae7-991a-60c9f7102f86",
+          "relationTargetFieldMetadataUniversalIdentifier": "ca687361-ac2b-5722-9ad9-cd37427d087a",
+          "relationTargetObjectMetadataUniversalIdentifier": "20202020-fff0-4b44-be82-bda313884400"
+        },
+        {
+          "name": "taskTargets",
+          "label": "Task Targets",
+          "description": "Post cards tied to the PostCard",
+          "icon": "IconBuildingSkyscraper",
+          "isNullable": true,
+          "type": "RELATION",
+          "universalSettings": {
+            "relationType": "ONE_TO_MANY"
+          },
+          "universalIdentifier": "ecdccc0d-7c31-5126-89d5-0bdf3372257c",
+          "relationTargetFieldMetadataUniversalIdentifier": "17058c96-d5a4-53b1-96ca-786f8c5fc8bd",
+          "relationTargetObjectMetadataUniversalIdentifier": "20202020-5a9a-44e8-95df-771cd06d0fb1"
+        }
+      ]
+    },
+    {
+      "universalIdentifier": "d1a2b3c4-5e6f-4a7b-8c9d-0e1f2a3b4c5d",
+      "nameSingular": "recipient",
+      "namePlural": "recipients",
+      "labelSingular": "Recipient",
+      "labelPlural": "Recipients",
+      "description": "A person or organization that receives post cards",
+      "icon": "IconUser",
+      "fields": [
+        {
+          "universalIdentifier": "d2a2b3c4-5e6f-4a7b-8c9d-0e1f2a3b4c5d",
+          "type": "EMAILS",
+          "label": "Email",
+          "name": "email",
+          "icon": "IconMail"
+        },
+        {
+          "universalIdentifier": "d3a2b3c4-5e6f-4a7b-8c9d-0e1f2a3b4c5d",
+          "type": "ADDRESS",
+          "label": "Address",
+          "name": "address",
+          "icon": "IconHome"
+        },
+        {
+          "name": "id",
+          "label": "Id",
+          "description": "Id",
+          "icon": "Icon123",
+          "isNullable": false,
+          "defaultValue": "uuid",
+          "type": "UUID",
+          "universalIdentifier": "71aa41d7-54d0-5447-bf98-f37435b62bc4"
+        },
+        {
+          "name": "name",
+          "label": "Name",
+          "description": "Name",
+          "icon": "IconAbc",
+          "isNullable": true,
+          "defaultValue": null,
+          "type": "TEXT",
+          "universalIdentifier": "ff07c707-df79-58fa-91a4-c60c31f90e6e"
+        },
+        {
+          "name": "createdAt",
+          "label": "Creation date",
+          "description": "Creation date",
+          "icon": "IconCalendar",
+          "isNullable": false,
+          "defaultValue": "now",
+          "type": "DATE_TIME",
+          "universalIdentifier": "8dd42a57-7aca-5e60-89c1-6e0e430dad43"
+        },
+        {
+          "name": "updatedAt",
+          "label": "Last update",
+          "description": "Last time the record was changed",
+          "icon": "IconCalendarClock",
+          "isNullable": false,
+          "defaultValue": "now",
+          "type": "DATE_TIME",
+          "universalIdentifier": "a81e915c-f21d-5163-a547-f04029655bf0"
+        },
+        {
+          "name": "deletedAt",
+          "label": "Deleted at",
+          "description": "Deletion date",
+          "icon": "IconCalendarClock",
+          "isNullable": true,
+          "defaultValue": null,
+          "type": "DATE_TIME",
+          "universalIdentifier": "33ba5fa8-dbc3-5a08-b0e0-d85b18ff15e0"
+        },
+        {
+          "name": "createdBy",
+          "label": "Created by",
+          "description": "The creator of the record",
+          "icon": "IconCreativeCommonsSa",
+          "isNullable": false,
+          "defaultValue": {
+            "name": "''",
+            "source": "'MANUAL'"
+          },
+          "type": "ACTOR",
+          "universalIdentifier": "7c377262-63b7-5a79-ba54-f7b8acd804dc"
+        },
+        {
+          "name": "updatedBy",
+          "label": "Updated by",
+          "description": "The workspace member who last updated the record",
+          "icon": "IconUserCircle",
+          "isNullable": false,
+          "defaultValue": {
+            "name": "''",
+            "source": "'MANUAL'"
+          },
+          "type": "ACTOR",
+          "universalIdentifier": "8da8e149-b60e-52e2-878d-73d05c8312b2"
+        },
+        {
+          "name": "position",
+          "label": "Position",
+          "description": "Position",
+          "icon": "IconHierarchy2",
+          "isNullable": false,
+          "defaultValue": 0,
+          "type": "POSITION",
+          "universalIdentifier": "824e930c-ce9f-5267-bebd-f6db215c3c14"
+        },
+        {
+          "name": "searchVector",
+          "label": "Search vector",
+          "icon": "IconSearch",
+          "description": "Search vector",
+          "isNullable": true,
+          "defaultValue": null,
+          "type": "TS_VECTOR",
+          "universalIdentifier": "1f5df24b-8248-59cf-8bb6-362de121d2e4"
+        },
+        {
+          "name": "timelineActivities",
+          "label": "Timeline Activities",
+          "description": "Recipients tied to the Recipient",
+          "icon": "IconBuildingSkyscraper",
+          "isNullable": true,
+          "type": "RELATION",
+          "universalSettings": {
+            "relationType": "ONE_TO_MANY"
+          },
+          "universalIdentifier": "51d6d2d7-2fa8-5f77-b6cf-a96dbb801fa5",
+          "relationTargetFieldMetadataUniversalIdentifier": "b01f6937-4859-587b-b3df-92e0a6f65e93",
+          "relationTargetObjectMetadataUniversalIdentifier": "20202020-6736-4337-b5c4-8b39fae325a5"
+        },
+        {
+          "name": "favorites",
+          "label": "Favorites",
+          "description": "Recipients tied to the Recipient",
+          "icon": "IconBuildingSkyscraper",
+          "isNullable": true,
+          "type": "RELATION",
+          "universalSettings": {
+            "relationType": "ONE_TO_MANY"
+          },
+          "universalIdentifier": "d16a6387-273b-563c-a6cc-2cb4524b9b7b",
+          "relationTargetFieldMetadataUniversalIdentifier": "f4e6fd66-83bb-5f2d-b1ec-a3db2e0ca32d",
+          "relationTargetObjectMetadataUniversalIdentifier": "20202020-ab56-4e05-92a3-e2414a499860"
+        },
+        {
+          "name": "attachments",
+          "label": "Attachments",
+          "description": "Recipients tied to the Recipient",
+          "icon": "IconBuildingSkyscraper",
+          "isNullable": true,
+          "type": "RELATION",
+          "universalSettings": {
+            "relationType": "ONE_TO_MANY"
+          },
+          "universalIdentifier": "244a7841-9e45-5ed1-a830-83e73c1f13fa",
+          "relationTargetFieldMetadataUniversalIdentifier": "9c87e1b8-74a2-5833-9237-281d561d2a7d",
+          "relationTargetObjectMetadataUniversalIdentifier": "20202020-bd3d-4c60-8dca-571c71d4447a"
+        },
+        {
+          "name": "noteTargets",
+          "label": "Note Targets",
+          "description": "Recipients tied to the Recipient",
+          "icon": "IconBuildingSkyscraper",
+          "isNullable": true,
+          "type": "RELATION",
+          "universalSettings": {
+            "relationType": "ONE_TO_MANY"
+          },
+          "universalIdentifier": "eab71eb1-b457-555a-8a2b-f292cef1671d",
+          "relationTargetFieldMetadataUniversalIdentifier": "23508618-7ed8-519e-9fee-a57b94dc98e9",
+          "relationTargetObjectMetadataUniversalIdentifier": "20202020-fff0-4b44-be82-bda313884400"
+        },
+        {
+          "name": "taskTargets",
+          "label": "Task Targets",
+          "description": "Recipients tied to the Recipient",
+          "icon": "IconBuildingSkyscraper",
+          "isNullable": true,
+          "type": "RELATION",
+          "universalSettings": {
+            "relationType": "ONE_TO_MANY"
+          },
+          "universalIdentifier": "305f1890-04ba-5101-b18f-a1ca25a1d8a7",
+          "relationTargetFieldMetadataUniversalIdentifier": "20500ff3-2410-5bfc-b2e7-804785c07770",
+          "relationTargetObjectMetadataUniversalIdentifier": "20202020-5a9a-44e8-95df-771cd06d0fb1"
+        }
+      ],
+      "labelIdentifierFieldMetadataUniversalIdentifier": "ff07c707-df79-58fa-91a4-c60c31f90e6e"
+    }
+  ],
+  "fields": [
+    {
+      "name": "targetRootNote",
+      "label": "RootNote",
+      "description": "RootNote Root note",
+      "icon": "IconTimelineEvent",
+      "isNullable": true,
+      "universalSettings": {
+        "relationType": "MANY_TO_ONE",
+        "onDelete": "SET_NULL",
+        "joinColumnName": "targetRootNoteId"
+      },
+      "universalIdentifier": "a0f6ffdc-a570-58a6-973d-a9bc9a527de8",
+      "objectUniversalIdentifier": "20202020-6736-4337-b5c4-8b39fae325a5",
+      "relationTargetFieldMetadataUniversalIdentifier": "1cdb0b3a-0ae1-59f6-b3f0-59ff99e40525",
+      "relationTargetObjectMetadataUniversalIdentifier": "b0b1b2b3-b4b5-4000-8000-000000000001",
+      "type": "MORPH_RELATION",
+      "morphId": "20202020-9a2b-4c3d-a4e5-f6a7b8c9d0e1"
+    },
+    {
+      "name": "targetRootNote",
+      "label": "RootNote",
+      "description": "RootNote Root note",
+      "icon": "IconHeart",
+      "isNullable": true,
+      "universalSettings": {
+        "relationType": "MANY_TO_ONE",
+        "onDelete": "SET_NULL",
+        "joinColumnName": "targetRootNoteId"
+      },
+      "universalIdentifier": "13fb0eae-50b4-5e28-afbc-5b5a9c422ead",
+      "objectUniversalIdentifier": "20202020-ab56-4e05-92a3-e2414a499860",
+      "relationTargetFieldMetadataUniversalIdentifier": "bbc0dc11-9daa-5e3f-b939-e6f0a12bb277",
+      "relationTargetObjectMetadataUniversalIdentifier": "b0b1b2b3-b4b5-4000-8000-000000000001",
+      "type": "RELATION"
+    },
+    {
+      "name": "targetRootNote",
+      "label": "RootNote",
+      "description": "RootNote Root note",
+      "icon": "IconFileImport",
+      "isNullable": true,
+      "universalSettings": {
+        "relationType": "MANY_TO_ONE",
+        "onDelete": "SET_NULL",
+        "joinColumnName": "targetRootNoteId"
+      },
+      "universalIdentifier": "95cad10a-bff6-524d-b6d8-dbc6db7cbf18",
+      "objectUniversalIdentifier": "20202020-bd3d-4c60-8dca-571c71d4447a",
+      "relationTargetFieldMetadataUniversalIdentifier": "aa05ee89-bd8a-5911-a4d5-3355926186bc",
+      "relationTargetObjectMetadataUniversalIdentifier": "b0b1b2b3-b4b5-4000-8000-000000000001",
+      "type": "MORPH_RELATION",
+      "morphId": "20202020-f634-435d-ab8d-e1168b375c69"
+    },
+    {
+      "name": "targetRootNote",
+      "label": "RootNote",
+      "description": "RootNote Root note",
+      "icon": "IconCheckbox",
+      "isNullable": true,
+      "universalSettings": {
+        "relationType": "MANY_TO_ONE",
+        "onDelete": "SET_NULL",
+        "joinColumnName": "targetRootNoteId"
+      },
+      "universalIdentifier": "c327faff-76eb-5baf-8b35-1c31e57306fb",
+      "objectUniversalIdentifier": "20202020-fff0-4b44-be82-bda313884400",
+      "relationTargetFieldMetadataUniversalIdentifier": "762ad37e-d624-51d8-989c-3a119eef9e7f",
+      "relationTargetObjectMetadataUniversalIdentifier": "b0b1b2b3-b4b5-4000-8000-000000000001",
+      "type": "MORPH_RELATION",
+      "morphId": "20202020-f635-435d-ab8d-e1168b375c70"
+    },
+    {
+      "name": "targetRootNote",
+      "label": "RootNote",
+      "description": "RootNote Root note",
+      "icon": "IconCheckbox",
+      "isNullable": true,
+      "universalSettings": {
+        "relationType": "MANY_TO_ONE",
+        "onDelete": "SET_NULL",
+        "joinColumnName": "targetRootNoteId"
+      },
+      "universalIdentifier": "36843050-e6e3-5759-99b6-e975426bad73",
+      "objectUniversalIdentifier": "20202020-5a9a-44e8-95df-771cd06d0fb1",
+      "relationTargetFieldMetadataUniversalIdentifier": "d4f1b0c8-8cd9-581e-9bf9-917f8c918d76",
+      "relationTargetObjectMetadataUniversalIdentifier": "b0b1b2b3-b4b5-4000-8000-000000000001",
+      "type": "MORPH_RELATION",
+      "morphId": "20202020-f636-435d-ab8d-e1168b375c71"
+    },
+    {
+      "universalIdentifier": "a1a2b3c4-0002-4a7b-8c9d-0e1f2a3b4c5d",
+      "objectUniversalIdentifier": "e1a2b3c4-5e6f-4a7b-8c9d-0e1f2a3b4c5e",
+      "type": "RELATION",
+      "name": "postCard",
+      "label": "Post Card",
+      "relationTargetObjectMetadataUniversalIdentifier": "54b589ca-eeed-4950-a176-358418b85c05",
+      "relationTargetFieldMetadataUniversalIdentifier": "a1a2b3c4-0001-4a7b-8c9d-0e1f2a3b4c5d",
+      "universalSettings": {
+        "relationType": "MANY_TO_ONE",
+        "onDelete": "CASCADE",
+        "joinColumnName": "postCardId"
+      }
+    },
+    {
+      "universalIdentifier": "a1a2b3c4-0001-4a7b-8c9d-0e1f2a3b4c5d",
+      "objectUniversalIdentifier": "54b589ca-eeed-4950-a176-358418b85c05",
+      "type": "RELATION",
+      "name": "postCardRecipients",
+      "label": "Post Card Recipients",
+      "relationTargetObjectMetadataUniversalIdentifier": "e1a2b3c4-5e6f-4a7b-8c9d-0e1f2a3b4c5e",
+      "relationTargetFieldMetadataUniversalIdentifier": "a1a2b3c4-0002-4a7b-8c9d-0e1f2a3b4c5d",
+      "universalSettings": {
+        "relationType": "ONE_TO_MANY"
+      }
+    },
+    {
+      "universalIdentifier": "a1a2b3c4-0003-4a7b-8c9d-0e1f2a3b4c5d",
+      "objectUniversalIdentifier": "d1a2b3c4-5e6f-4a7b-8c9d-0e1f2a3b4c5d",
+      "type": "RELATION",
+      "name": "postCardRecipients",
+      "label": "Post Card Recipients",
+      "relationTargetObjectMetadataUniversalIdentifier": "e1a2b3c4-5e6f-4a7b-8c9d-0e1f2a3b4c5e",
+      "relationTargetFieldMetadataUniversalIdentifier": "a1a2b3c4-0004-4a7b-8c9d-0e1f2a3b4c5d",
+      "universalSettings": {
+        "relationType": "ONE_TO_MANY"
+      }
+    },
+    {
+      "objectUniversalIdentifier": "54b589ca-eeed-4950-a176-358418b85c05",
+      "universalIdentifier": "8b9c0d1e-2f3a-4b5c-6d7e-8f9a0b1c2d3e",
+      "type": "SELECT",
+      "name": "category",
+      "label": "Category",
+      "description": "Post card category",
+      "options": [
+        {
+          "id": "c1d2e3f4-0001-4000-8000-000000000001",
+          "value": "PERSONAL",
+          "label": "Personal",
+          "color": "blue",
+          "position": 0
+        },
+        {
+          "id": "c1d2e3f4-0002-4000-8000-000000000002",
+          "value": "BUSINESS",
+          "label": "Business",
+          "color": "green",
+          "position": 1
+        },
+        {
+          "id": "c1d2e3f4-0003-4000-8000-000000000003",
+          "value": "PROMOTIONAL",
+          "label": "Promotional",
+          "color": "orange",
+          "position": 2
+        }
+      ]
+    },
+    {
+      "objectUniversalIdentifier": "54b589ca-eeed-4950-a176-358418b85c05",
+      "universalIdentifier": "7a8b9c0d-1e2f-3a4b-5c6d-7e8f9a0b1c2d",
+      "type": "NUMBER",
+      "name": "priority",
+      "label": "Priority",
+      "description": "Priority level for the post card (1-10)"
+    },
+    {
+      "universalIdentifier": "a1a2b3c4-0004-4a7b-8c9d-0e1f2a3b4c5d",
+      "objectUniversalIdentifier": "e1a2b3c4-5e6f-4a7b-8c9d-0e1f2a3b4c5e",
+      "type": "RELATION",
+      "name": "recipient",
+      "label": "Recipient",
+      "relationTargetObjectMetadataUniversalIdentifier": "d1a2b3c4-5e6f-4a7b-8c9d-0e1f2a3b4c5d",
+      "relationTargetFieldMetadataUniversalIdentifier": "a1a2b3c4-0003-4a7b-8c9d-0e1f2a3b4c5d",
+      "universalSettings": {
+        "relationType": "MANY_TO_ONE",
+        "onDelete": "CASCADE",
+        "joinColumnName": "recipientId"
+      }
+    },
+    {
+      "name": "targetPostCardRecipient",
+      "label": "PostCardRecipient",
+      "description": "PostCardRecipient Post Card Recipient",
+      "icon": "IconTimelineEvent",
+      "isNullable": true,
+      "universalSettings": {
+        "relationType": "MANY_TO_ONE",
+        "onDelete": "SET_NULL",
+        "joinColumnName": "targetPostCardRecipientId"
+      },
+      "universalIdentifier": "18b6354d-8b0f-5be6-9473-d635aed670a1",
+      "objectUniversalIdentifier": "20202020-6736-4337-b5c4-8b39fae325a5",
+      "relationTargetFieldMetadataUniversalIdentifier": "02f5efba-4f94-5cc3-9e17-ca7b1fe5f71b",
+      "relationTargetObjectMetadataUniversalIdentifier": "e1a2b3c4-5e6f-4a7b-8c9d-0e1f2a3b4c5e",
+      "type": "MORPH_RELATION",
+      "morphId": "20202020-9a2b-4c3d-a4e5-f6a7b8c9d0e1"
+    },
+    {
+      "name": "targetPostCardRecipient",
+      "label": "PostCardRecipient",
+      "description": "PostCardRecipient Post Card Recipient",
+      "icon": "IconHeart",
+      "isNullable": true,
+      "universalSettings": {
+        "relationType": "MANY_TO_ONE",
+        "onDelete": "SET_NULL",
+        "joinColumnName": "targetPostCardRecipientId"
+      },
+      "universalIdentifier": "f3247843-dd1f-5b15-8873-c0062a021180",
+      "objectUniversalIdentifier": "20202020-ab56-4e05-92a3-e2414a499860",
+      "relationTargetFieldMetadataUniversalIdentifier": "a284914f-650c-54ad-84ef-d6229d3fa453",
+      "relationTargetObjectMetadataUniversalIdentifier": "e1a2b3c4-5e6f-4a7b-8c9d-0e1f2a3b4c5e",
+      "type": "RELATION"
+    },
+    {
+      "name": "targetPostCardRecipient",
+      "label": "PostCardRecipient",
+      "description": "PostCardRecipient Post Card Recipient",
+      "icon": "IconFileImport",
+      "isNullable": true,
+      "universalSettings": {
+        "relationType": "MANY_TO_ONE",
+        "onDelete": "SET_NULL",
+        "joinColumnName": "targetPostCardRecipientId"
+      },
+      "universalIdentifier": "ba74dfd1-e7ee-502d-abad-82e14d595874",
+      "objectUniversalIdentifier": "20202020-bd3d-4c60-8dca-571c71d4447a",
+      "relationTargetFieldMetadataUniversalIdentifier": "82497ec7-0121-53d6-9518-ae7434ceaf8b",
+      "relationTargetObjectMetadataUniversalIdentifier": "e1a2b3c4-5e6f-4a7b-8c9d-0e1f2a3b4c5e",
+      "type": "MORPH_RELATION",
+      "morphId": "20202020-f634-435d-ab8d-e1168b375c69"
+    },
+    {
+      "name": "targetPostCardRecipient",
+      "label": "PostCardRecipient",
+      "description": "PostCardRecipient Post Card Recipient",
+      "icon": "IconCheckbox",
+      "isNullable": true,
+      "universalSettings": {
+        "relationType": "MANY_TO_ONE",
+        "onDelete": "SET_NULL",
+        "joinColumnName": "targetPostCardRecipientId"
+      },
+      "universalIdentifier": "9d5a9f4b-5431-5b90-810a-1e9d8873b302",
+      "objectUniversalIdentifier": "20202020-fff0-4b44-be82-bda313884400",
+      "relationTargetFieldMetadataUniversalIdentifier": "6de8b57e-ed0a-5d35-bd39-bd8874445810",
+      "relationTargetObjectMetadataUniversalIdentifier": "e1a2b3c4-5e6f-4a7b-8c9d-0e1f2a3b4c5e",
+      "type": "MORPH_RELATION",
+      "morphId": "20202020-f635-435d-ab8d-e1168b375c70"
+    },
+    {
+      "name": "targetPostCardRecipient",
+      "label": "PostCardRecipient",
+      "description": "PostCardRecipient Post Card Recipient",
+      "icon": "IconCheckbox",
+      "isNullable": true,
+      "universalSettings": {
+        "relationType": "MANY_TO_ONE",
+        "onDelete": "SET_NULL",
+        "joinColumnName": "targetPostCardRecipientId"
+      },
+      "universalIdentifier": "85353e69-1e70-51ef-91c3-334d85013a4b",
+      "objectUniversalIdentifier": "20202020-5a9a-44e8-95df-771cd06d0fb1",
+      "relationTargetFieldMetadataUniversalIdentifier": "00459e7e-8ef1-5a9b-b180-26bbb54a2696",
+      "relationTargetObjectMetadataUniversalIdentifier": "e1a2b3c4-5e6f-4a7b-8c9d-0e1f2a3b4c5e",
+      "type": "MORPH_RELATION",
+      "morphId": "20202020-f636-435d-ab8d-e1168b375c71"
+    },
+    {
+      "name": "targetPostCard",
+      "label": "PostCard",
+      "description": "PostCard Post card",
+      "icon": "IconTimelineEvent",
+      "isNullable": true,
+      "universalSettings": {
+        "relationType": "MANY_TO_ONE",
+        "onDelete": "SET_NULL",
+        "joinColumnName": "targetPostCardId"
+      },
+      "universalIdentifier": "1bdc52a0-0339-5360-ba17-b615250ef730",
+      "objectUniversalIdentifier": "20202020-6736-4337-b5c4-8b39fae325a5",
+      "relationTargetFieldMetadataUniversalIdentifier": "3f8c70b5-abb0-51ec-9109-0a94ce9c04a6",
+      "relationTargetObjectMetadataUniversalIdentifier": "54b589ca-eeed-4950-a176-358418b85c05",
+      "type": "MORPH_RELATION",
+      "morphId": "20202020-9a2b-4c3d-a4e5-f6a7b8c9d0e1"
+    },
+    {
+      "name": "targetPostCard",
+      "label": "PostCard",
+      "description": "PostCard Post card",
+      "icon": "IconHeart",
+      "isNullable": true,
+      "universalSettings": {
+        "relationType": "MANY_TO_ONE",
+        "onDelete": "SET_NULL",
+        "joinColumnName": "targetPostCardId"
+      },
+      "universalIdentifier": "9a5d4ae3-6f45-593f-923d-bcd16ede4345",
+      "objectUniversalIdentifier": "20202020-ab56-4e05-92a3-e2414a499860",
+      "relationTargetFieldMetadataUniversalIdentifier": "94f43ec4-d2d1-5a50-b414-78da27d24258",
+      "relationTargetObjectMetadataUniversalIdentifier": "54b589ca-eeed-4950-a176-358418b85c05",
+      "type": "RELATION"
+    },
+    {
+      "name": "targetPostCard",
+      "label": "PostCard",
+      "description": "PostCard Post card",
+      "icon": "IconFileImport",
+      "isNullable": true,
+      "universalSettings": {
+        "relationType": "MANY_TO_ONE",
+        "onDelete": "SET_NULL",
+        "joinColumnName": "targetPostCardId"
+      },
+      "universalIdentifier": "fecb8484-7e3c-59f8-a5ef-30882c5c1904",
+      "objectUniversalIdentifier": "20202020-bd3d-4c60-8dca-571c71d4447a",
+      "relationTargetFieldMetadataUniversalIdentifier": "547c93e4-c9e7-5880-b251-46230fb59bfa",
+      "relationTargetObjectMetadataUniversalIdentifier": "54b589ca-eeed-4950-a176-358418b85c05",
+      "type": "MORPH_RELATION",
+      "morphId": "20202020-f634-435d-ab8d-e1168b375c69"
+    },
+    {
+      "name": "targetPostCard",
+      "label": "PostCard",
+      "description": "PostCard Post card",
+      "icon": "IconCheckbox",
+      "isNullable": true,
+      "universalSettings": {
+        "relationType": "MANY_TO_ONE",
+        "onDelete": "SET_NULL",
+        "joinColumnName": "targetPostCardId"
+      },
+      "universalIdentifier": "ca687361-ac2b-5722-9ad9-cd37427d087a",
+      "objectUniversalIdentifier": "20202020-fff0-4b44-be82-bda313884400",
+      "relationTargetFieldMetadataUniversalIdentifier": "47deea5c-8559-5ae7-991a-60c9f7102f86",
+      "relationTargetObjectMetadataUniversalIdentifier": "54b589ca-eeed-4950-a176-358418b85c05",
+      "type": "MORPH_RELATION",
+      "morphId": "20202020-f635-435d-ab8d-e1168b375c70"
+    },
+    {
+      "name": "targetPostCard",
+      "label": "PostCard",
+      "description": "PostCard Post card",
+      "icon": "IconCheckbox",
+      "isNullable": true,
+      "universalSettings": {
+        "relationType": "MANY_TO_ONE",
+        "onDelete": "SET_NULL",
+        "joinColumnName": "targetPostCardId"
+      },
+      "universalIdentifier": "17058c96-d5a4-53b1-96ca-786f8c5fc8bd",
+      "objectUniversalIdentifier": "20202020-5a9a-44e8-95df-771cd06d0fb1",
+      "relationTargetFieldMetadataUniversalIdentifier": "ecdccc0d-7c31-5126-89d5-0bdf3372257c",
+      "relationTargetObjectMetadataUniversalIdentifier": "54b589ca-eeed-4950-a176-358418b85c05",
+      "type": "MORPH_RELATION",
+      "morphId": "20202020-f636-435d-ab8d-e1168b375c71"
+    },
+    {
+      "name": "targetRecipient",
+      "label": "Recipient",
+      "description": "Recipient Recipient",
+      "icon": "IconTimelineEvent",
+      "isNullable": true,
+      "universalSettings": {
+        "relationType": "MANY_TO_ONE",
+        "onDelete": "SET_NULL",
+        "joinColumnName": "targetRecipientId"
+      },
+      "universalIdentifier": "b01f6937-4859-587b-b3df-92e0a6f65e93",
+      "objectUniversalIdentifier": "20202020-6736-4337-b5c4-8b39fae325a5",
+      "relationTargetFieldMetadataUniversalIdentifier": "51d6d2d7-2fa8-5f77-b6cf-a96dbb801fa5",
+      "relationTargetObjectMetadataUniversalIdentifier": "d1a2b3c4-5e6f-4a7b-8c9d-0e1f2a3b4c5d",
+      "type": "MORPH_RELATION",
+      "morphId": "20202020-9a2b-4c3d-a4e5-f6a7b8c9d0e1"
+    },
+    {
+      "name": "targetRecipient",
+      "label": "Recipient",
+      "description": "Recipient Recipient",
+      "icon": "IconHeart",
+      "isNullable": true,
+      "universalSettings": {
+        "relationType": "MANY_TO_ONE",
+        "onDelete": "SET_NULL",
+        "joinColumnName": "targetRecipientId"
+      },
+      "universalIdentifier": "f4e6fd66-83bb-5f2d-b1ec-a3db2e0ca32d",
+      "objectUniversalIdentifier": "20202020-ab56-4e05-92a3-e2414a499860",
+      "relationTargetFieldMetadataUniversalIdentifier": "d16a6387-273b-563c-a6cc-2cb4524b9b7b",
+      "relationTargetObjectMetadataUniversalIdentifier": "d1a2b3c4-5e6f-4a7b-8c9d-0e1f2a3b4c5d",
+      "type": "RELATION"
+    },
+    {
+      "name": "targetRecipient",
+      "label": "Recipient",
+      "description": "Recipient Recipient",
+      "icon": "IconFileImport",
+      "isNullable": true,
+      "universalSettings": {
+        "relationType": "MANY_TO_ONE",
+        "onDelete": "SET_NULL",
+        "joinColumnName": "targetRecipientId"
+      },
+      "universalIdentifier": "9c87e1b8-74a2-5833-9237-281d561d2a7d",
+      "objectUniversalIdentifier": "20202020-bd3d-4c60-8dca-571c71d4447a",
+      "relationTargetFieldMetadataUniversalIdentifier": "244a7841-9e45-5ed1-a830-83e73c1f13fa",
+      "relationTargetObjectMetadataUniversalIdentifier": "d1a2b3c4-5e6f-4a7b-8c9d-0e1f2a3b4c5d",
+      "type": "MORPH_RELATION",
+      "morphId": "20202020-f634-435d-ab8d-e1168b375c69"
+    },
+    {
+      "name": "targetRecipient",
+      "label": "Recipient",
+      "description": "Recipient Recipient",
+      "icon": "IconCheckbox",
+      "isNullable": true,
+      "universalSettings": {
+        "relationType": "MANY_TO_ONE",
+        "onDelete": "SET_NULL",
+        "joinColumnName": "targetRecipientId"
+      },
+      "universalIdentifier": "23508618-7ed8-519e-9fee-a57b94dc98e9",
+      "objectUniversalIdentifier": "20202020-fff0-4b44-be82-bda313884400",
+      "relationTargetFieldMetadataUniversalIdentifier": "eab71eb1-b457-555a-8a2b-f292cef1671d",
+      "relationTargetObjectMetadataUniversalIdentifier": "d1a2b3c4-5e6f-4a7b-8c9d-0e1f2a3b4c5d",
+      "type": "MORPH_RELATION",
+      "morphId": "20202020-f635-435d-ab8d-e1168b375c70"
+    },
+    {
+      "name": "targetRecipient",
+      "label": "Recipient",
+      "description": "Recipient Recipient",
+      "icon": "IconCheckbox",
+      "isNullable": true,
+      "universalSettings": {
+        "relationType": "MANY_TO_ONE",
+        "onDelete": "SET_NULL",
+        "joinColumnName": "targetRecipientId"
+      },
+      "universalIdentifier": "20500ff3-2410-5bfc-b2e7-804785c07770",
+      "objectUniversalIdentifier": "20202020-5a9a-44e8-95df-771cd06d0fb1",
+      "relationTargetFieldMetadataUniversalIdentifier": "305f1890-04ba-5101-b18f-a1ca25a1d8a7",
+      "relationTargetObjectMetadataUniversalIdentifier": "d1a2b3c4-5e6f-4a7b-8c9d-0e1f2a3b4c5d",
+      "type": "MORPH_RELATION",
+      "morphId": "20202020-f636-435d-ab8d-e1168b375c71"
+    }
+  ],
+  "roles": [
+    {
+      "universalIdentifier": "c0c1c2c3-c4c5-4000-8000-000000000001",
+      "label": "Root role",
+      "description": "A simple root-level role",
+      "canReadAllObjectRecords": true,
+      "canUpdateAllObjectRecords": false,
+      "canSoftDeleteAllObjectRecords": false,
+      "canDestroyAllObjectRecords": false,
+      "canUpdateAllSettings": false,
+      "canBeAssignedToAgents": false,
+      "canBeAssignedToUsers": true,
+      "canBeAssignedToApiKeys": false
+    },
+    {
+      "universalIdentifier": "b648f87b-1d26-4961-b974-0908fd991061",
+      "label": "Default function role",
+      "description": "Default role for function Twenty client",
+      "canReadAllObjectRecords": false,
+      "canUpdateAllObjectRecords": false,
+      "canSoftDeleteAllObjectRecords": false,
+      "canDestroyAllObjectRecords": false,
+      "canUpdateAllSettings": false,
+      "canBeAssignedToAgents": false,
+      "canBeAssignedToUsers": false,
+      "canBeAssignedToApiKeys": false,
+      "objectPermissions": [
+        {
+          "objectUniversalIdentifier": "54b589ca-eeed-4950-a176-358418b85c05",
+          "canReadObjectRecords": true,
+          "canUpdateObjectRecords": true,
+          "canSoftDeleteObjectRecords": false,
+          "canDestroyObjectRecords": false
+        }
+      ],
+      "fieldPermissions": [
+        {
+          "objectUniversalIdentifier": "54b589ca-eeed-4950-a176-358418b85c05",
+          "fieldUniversalIdentifier": "58a0a314-d7ea-4865-9850-7fb84e72f30b",
+          "canReadFieldValue": false,
+          "canUpdateFieldValue": false
+        }
+      ],
+      "permissionFlags": [
+        "APPLICATIONS"
+      ]
+    }
+  ],
+  "skills": [],
+  "agents": [],
+  "logicFunctions": [
+    {
+      "universalIdentifier": "f0f1f2f3-f4f5-4000-8000-000000000001",
+      "name": "root-function",
+      "timeoutSeconds": 5,
+      "httpRouteTriggerSettings": {
+        "path": "/root",
+        "httpMethod": "GET",
+        "isAuthRequired": false
+      },
+      "toolInputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "handlerName": "default.config.handler",
+      "sourceHandlerPath": "src/root.function.ts",
+      "builtHandlerPath": "src/root.function.mjs",
+      "builtHandlerChecksum": "b6bceb14fc6a44fcf4d5fc5b14c7c283"
+    },
+    {
+      "universalIdentifier": "9d412d9e-2caf-487c-8b66-d1585883dd4e",
+      "name": "greeting-function",
+      "timeoutSeconds": 5,
+      "httpRouteTriggerSettings": {
+        "path": "/greet",
+        "httpMethod": "GET",
+        "isAuthRequired": false
+      },
+      "toolInputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "handlerName": "default.config.handler",
+      "sourceHandlerPath": "src/logic-functions/greeting.function.ts",
+      "builtHandlerPath": "src/logic-functions/greeting.function.mjs",
+      "builtHandlerChecksum": "9511859fec11e5f7b6d19c04b1da8d3a"
+    },
+    {
+      "universalIdentifier": "a1b2c3d4-1001-4a7b-8c9d-0e1f2a3b4c5d",
+      "name": "lookup-recipient",
+      "description": "Look up a recipient by name to find their details",
+      "timeoutSeconds": 5,
+      "isTool": true,
+      "toolInputSchema": {
+        "type": "object",
+        "properties": {
+          "recipientName": {
+            "type": "string"
+          }
+        }
+      },
+      "handlerName": "default.config.handler",
+      "sourceHandlerPath": "src/logic-functions/lookup-recipient.function.ts",
+      "builtHandlerPath": "src/logic-functions/lookup-recipient.function.mjs",
+      "builtHandlerChecksum": "6f3bdc85fe2d8cbfa8ab955ee4725ef0"
+    },
+    {
+      "universalIdentifier": "a1b2c3d4-db01-4a7b-8c9d-0e1f2a3b4c5d",
+      "name": "on-post-card-created",
+      "description": "Triggered when a new post card is created",
+      "timeoutSeconds": 5,
+      "databaseEventTriggerSettings": {
+        "eventName": "postCard.created"
+      },
+      "toolInputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "handlerName": "default.config.handler",
+      "sourceHandlerPath": "src/logic-functions/on-post-card-created.function.ts",
+      "builtHandlerPath": "src/logic-functions/on-post-card-created.function.mjs",
+      "builtHandlerChecksum": "e39b2a56c8a75350360b16b957ded982"
+    },
+    {
+      "universalIdentifier": "eb3ffc98-88ec-45d4-9b4a-56833b219ccb",
+      "name": "test-function-2",
+      "timeoutSeconds": 2,
+      "cronTriggerSettings": {
+        "pattern": "0 0 1 1 *"
+      },
+      "toolInputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "handlerName": "default.config.handler",
+      "sourceHandlerPath": "src/logic-functions/test-function-2.function.ts",
+      "builtHandlerPath": "src/logic-functions/test-function-2.function.mjs",
+      "builtHandlerChecksum": "e8440fe1e436b77e59f7fcbe31b6deca"
+    },
+    {
+      "universalIdentifier": "e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf",
+      "name": "test-function",
+      "timeoutSeconds": 2,
+      "httpRouteTriggerSettings": {
+        "path": "/post-card/create",
+        "httpMethod": "GET",
+        "isAuthRequired": false,
+        "forwardedRequestHeaders": [
+          "signature"
+        ]
+      },
+      "toolInputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "handlerName": "default.config.handler",
+      "sourceHandlerPath": "src/logic-functions/test-function.function.ts",
+      "builtHandlerPath": "src/logic-functions/test-function.function.mjs",
+      "builtHandlerChecksum": "3b8189f4be7dca80b2024aa33de928cf"
+    }
+  ],
+  "frontComponents": [
+    {
+      "universalIdentifier": "a0a1a2a3-a4a5-4000-8000-000000000001",
+      "name": "root-component",
+      "description": "A root-level front component",
+      "componentName": "RootComponent",
+      "sourceComponentPath": "src/root.front-component.tsx",
+      "builtComponentPath": "src/root.front-component.mjs",
+      "builtComponentChecksum": "b971c78f8e10a709dc2c0cc5e5462e73",
+      "isHeadless": false
+    },
+    {
+      "universalIdentifier": "88c15ae2-5f87-4a6b-b48f-1974bbe62eb7",
+      "name": "card-component",
+      "description": "A component using an external component file",
+      "componentName": "CardDisplay",
+      "sourceComponentPath": "src/components/card.front-component.tsx",
+      "builtComponentPath": "src/components/card.front-component.mjs",
+      "builtComponentChecksum": "8da776766f05607e8ce9776b18cb749c",
+      "isHeadless": false
+    },
+    {
+      "universalIdentifier": "370ae182-743f-4ecb-b625-7ac48e21f0e5",
+      "name": "greeting-component",
+      "description": "A component that uses greeting utility",
+      "componentName": "GreetingComponent",
+      "sourceComponentPath": "src/components/greeting.front-component.tsx",
+      "builtComponentPath": "src/components/greeting.front-component.mjs",
+      "builtComponentChecksum": "9360659e78741ac4310f35a6490049bf",
+      "isHeadless": false
+    },
+    {
+      "universalIdentifier": "f1234567-abcd-4000-8000-000000000001",
+      "name": "test-component",
+      "description": "A test front component",
+      "componentName": "TestComponent",
+      "sourceComponentPath": "src/components/test.front-component.tsx",
+      "builtComponentPath": "src/components/test.front-component.mjs",
+      "builtComponentChecksum": "b87a113131d9fd8380447531c504c02a",
+      "isHeadless": false
+    }
+  ],
+  "publicAssets": [
+    {
+      "filePath": "public/favicon.png",
+      "fileName": "favicon.png",
+      "fileType": "png",
+      "checksum": null
+    }
+  ],
+  "views": [
+    {
+      "universalIdentifier": "b1a2b3c4-0003-4a7b-8c9d-0e1f2a3b4c5d",
+      "name": "All Post Card Recipients",
+      "objectUniversalIdentifier": "e1a2b3c4-5e6f-4a7b-8c9d-0e1f2a3b4c5e",
+      "type": "TABLE",
+      "icon": "IconLink",
+      "position": 2,
+      "fields": [
+        {
+          "universalIdentifier": "bf1a2b3c-0004-4a7b-8c9d-0e1f2a3b4c5d",
+          "fieldMetadataUniversalIdentifier": "e2a2b3c4-5e6f-4a7b-8c9d-0e1f2a3b4c5e",
+          "position": 0,
+          "isVisible": true,
+          "size": 200
+        }
+      ]
+    },
+    {
+      "universalIdentifier": "b1a2b3c4-0001-4a7b-8c9d-0e1f2a3b4c5d",
+      "name": "All Post Cards",
+      "objectUniversalIdentifier": "54b589ca-eeed-4950-a176-358418b85c05",
+      "type": "TABLE",
+      "icon": "IconMail",
+      "position": 0,
+      "fields": [
+        {
+          "universalIdentifier": "bf1a2b3c-0001-4a7b-8c9d-0e1f2a3b4c5d",
+          "fieldMetadataUniversalIdentifier": "58a0a314-d7ea-4865-9850-7fb84e72f30b",
+          "position": 0,
+          "isVisible": true,
+          "size": 200
+        },
+        {
+          "universalIdentifier": "bf1a2b3c-0002-4a7b-8c9d-0e1f2a3b4c5d",
+          "fieldMetadataUniversalIdentifier": "87b675b8-dd8c-4448-b4ca-20e5a2234a1e",
+          "position": 1,
+          "isVisible": true,
+          "size": 150
+        }
+      ]
+    },
+    {
+      "universalIdentifier": "b1a2b3c4-0002-4a7b-8c9d-0e1f2a3b4c5d",
+      "name": "All Recipients",
+      "objectUniversalIdentifier": "d1a2b3c4-5e6f-4a7b-8c9d-0e1f2a3b4c5d",
+      "type": "TABLE",
+      "icon": "IconUser",
+      "position": 1,
+      "fields": [
+        {
+          "universalIdentifier": "bf1a2b3c-0003-4a7b-8c9d-0e1f2a3b4c5d",
+          "fieldMetadataUniversalIdentifier": "d2a2b3c4-5e6f-4a7b-8c9d-0e1f2a3b4c5d",
+          "position": 0,
+          "isVisible": true,
+          "size": 200
+        }
+      ]
+    }
+  ],
+  "navigationMenuItems": [
+    {
+      "universalIdentifier": "c1a2b3c4-0003-4a7b-8c9d-0e1f2a3b4c5d",
+      "position": 2,
+      "viewUniversalIdentifier": "b1a2b3c4-0003-4a7b-8c9d-0e1f2a3b4c5d"
+    },
+    {
+      "universalIdentifier": "c1a2b3c4-0001-4a7b-8c9d-0e1f2a3b4c5d",
+      "position": 0,
+      "viewUniversalIdentifier": "b1a2b3c4-0001-4a7b-8c9d-0e1f2a3b4c5d"
+    },
+    {
+      "universalIdentifier": "c1a2b3c4-0002-4a7b-8c9d-0e1f2a3b4c5d",
+      "position": 1,
+      "viewUniversalIdentifier": "b1a2b3c4-0002-4a7b-8c9d-0e1f2a3b4c5d"
+    }
+  ],
+  "pageLayouts": []
+}
