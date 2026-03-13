@@ -367,11 +367,7 @@ describe('copyBaseApplicationProject', () => {
         ).toBe(true);
         expect(
           await fs.pathExists(
-            join(
-              srcPath,
-              'logic-functions',
-              'create-hello-world-company.ts',
-            ),
+            join(srcPath, 'logic-functions', 'create-hello-world-company.ts'),
           ),
         ).toBe(true);
         expect(
@@ -381,11 +377,7 @@ describe('copyBaseApplicationProject', () => {
         ).toBe(true);
         expect(
           await fs.pathExists(
-            join(
-              srcPath,
-              'page-layouts',
-              'example-record-page-layout.ts',
-            ),
+            join(srcPath, 'page-layouts', 'example-record-page-layout.ts'),
           ),
         ).toBe(true);
         expect(
@@ -471,11 +463,7 @@ describe('copyBaseApplicationProject', () => {
         ).toBe(false);
         expect(
           await fs.pathExists(
-            join(
-              srcPath,
-              'logic-functions',
-              'create-hello-world-company.ts',
-            ),
+            join(srcPath, 'logic-functions', 'create-hello-world-company.ts'),
           ),
         ).toBe(false);
         expect(
@@ -485,11 +473,7 @@ describe('copyBaseApplicationProject', () => {
         ).toBe(false);
         expect(
           await fs.pathExists(
-            join(
-              srcPath,
-              'page-layouts',
-              'example-record-page-layout.ts',
-            ),
+            join(srcPath, 'page-layouts', 'example-record-page-layout.ts'),
           ),
         ).toBe(false);
         expect(
@@ -591,11 +575,7 @@ describe('copyBaseApplicationProject', () => {
         ).toBe(true);
         expect(
           await fs.pathExists(
-            join(
-              srcPath,
-              'logic-functions',
-              'create-hello-world-company.ts',
-            ),
+            join(srcPath, 'logic-functions', 'create-hello-world-company.ts'),
           ),
         ).toBe(true);
         expect(
