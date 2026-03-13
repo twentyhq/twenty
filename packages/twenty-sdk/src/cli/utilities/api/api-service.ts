@@ -28,9 +28,30 @@ export class ApiService {
 
       config.baseURL = serverUrl ?? twentyConfig.apiUrl;
 
-      const authToken = token ?? twentyConfig.apiKey;
+      // Prefer OAuth token over API key
+      const authToken =
+        token ?? twentyConfig.applicationAccessToken ?? twentyConfig.apiKey;
 
       if (!config.headers.Authorization && authToken) {
+        // Auto-refresh if OAuth token looks expired and we have a refresh token
+        if (
+          !token &&
+          authToken === twentyConfig.applicationAccessToken &&
+          twentyConfig.applicationRefreshToken &&
+          this.isTokenExpired(authToken)
+        ) {
+          const refreshed = await this.tryRefreshToken(
+            twentyConfig.applicationRefreshToken,
+            config.baseURL as string,
+          );
+
+          if (refreshed) {
+            config.headers.Authorization = `Bearer ${refreshed}`;
+
+            return config;
+          }
+        }
+
         config.headers.Authorization = `Bearer ${authToken}`;
       }
 
@@ -950,6 +971,60 @@ export class ApiService {
         success: false,
         error,
       };
+    }
+  }
+
+  private isTokenExpired(token: string): boolean {
+    try {
+      const payload = JSON.parse(
+        Buffer.from(token.split('.')[1], 'base64').toString(),
+      );
+
+      // Treat as expired if less than 60 seconds remain
+      return payload.exp * 1000 < Date.now() + 60_000;
+    } catch {
+      return false;
+    }
+  }
+
+  private async tryRefreshToken(
+    refreshToken: string,
+    baseUrl: string,
+  ): Promise<string | null> {
+    try {
+      // Fetch the client_id from discovery
+      const discoveryResponse = await axios.get(
+        `${baseUrl}/.well-known/oauth-authorization-server`,
+      );
+      const clientId = discoveryResponse.data.cli_client_id;
+
+      if (!clientId) {
+        return null;
+      }
+
+      const tokenResponse = await axios.post(`${baseUrl}/oauth/token`, {
+        grant_type: 'refresh_token',
+        refresh_token: refreshToken,
+        client_id: clientId,
+      });
+
+      const { applicationAccessToken, applicationRefreshToken } =
+        tokenResponse.data;
+
+      await this.configService.setConfig({
+        applicationAccessToken,
+        applicationRefreshToken,
+      });
+
+      return applicationAccessToken;
+    } catch {
+      // Refresh failed — clear OAuth tokens so user gets prompted to re-login
+      await this.configService.setConfig({
+        applicationAccessToken: undefined,
+        applicationRefreshToken: undefined,
+      });
+
+      return null;
     }
   }
 

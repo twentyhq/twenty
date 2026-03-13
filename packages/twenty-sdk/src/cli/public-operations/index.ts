@@ -1,6 +1,8 @@
 // Auth
 export { authLogin } from './auth-login';
 export type { AuthLoginOptions } from './auth-login';
+export { authLoginOAuth } from './auth-login-oauth';
+export type { AuthLoginOAuthOptions } from './auth-login-oauth';
 export { authLogout } from './auth-logout';
 export type { AuthLogoutOptions } from './auth-logout';
 

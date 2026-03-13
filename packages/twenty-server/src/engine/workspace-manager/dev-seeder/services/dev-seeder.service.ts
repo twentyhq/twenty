@@ -5,6 +5,7 @@ import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { DataSource } from 'typeorm';
 import { FeatureFlagKey } from 'twenty-shared/types';
 
+import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
@@ -37,6 +38,7 @@ export class DevSeederService {
     private readonly devSeederPermissionsService: DevSeederPermissionsService,
     private readonly devSeederDataService: DevSeederDataService,
     private readonly applicationService: ApplicationService,
+    private readonly applicationRegistrationService: ApplicationRegistrationService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
@@ -53,6 +55,8 @@ export class DevSeederService {
       seedBilling: isBillingEnabled,
       appVersion,
     });
+
+    await this.applicationRegistrationService.createCliRegistrationIfNotExists();
 
     const schemaName =
       await this.workspaceDataSourceService.createWorkspaceDBSchema(

@@ -17,7 +17,9 @@ import {
   AppTokenEntity,
   AppTokenType,
 } from 'src/engine/core-modules/app-token/app-token.entity';
+import { type ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
+import { TWENTY_CLI_APPLICATION_REGISTRATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-cli-application-registration.constant';
 import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
 import {
   AuthException,
@@ -520,8 +522,9 @@ export class AuthService {
     }
 
     if (
-      !applicationRegistration.oAuthRedirectUris.includes(
+      !this.isRedirectUriAllowed(
         authorizeAppInput.redirectUrl,
+        applicationRegistration,
       )
     ) {
       throw new AuthException(
@@ -1021,6 +1024,36 @@ export class AuthService {
           ),
         pathname: AppPath.Verify,
       });
+    }
+  }
+
+  // RFC 8252 §7.3: Native apps (public clients like the CLI) may use
+  // any localhost port as redirect URI. Other registrations use exact match.
+  private isRedirectUriAllowed(
+    redirectUrl: string,
+    registration: ApplicationRegistrationEntity,
+  ): boolean {
+    if (registration.oAuthRedirectUris.includes(redirectUrl)) {
+      return true;
+    }
+
+    const isCliRegistration =
+      registration.universalIdentifier ===
+        TWENTY_CLI_APPLICATION_REGISTRATION.universalIdentifier &&
+      registration.oAuthClientSecretHash === null;
+
+    if (!isCliRegistration) {
+      return false;
+    }
+
+    try {
+      const parsed = new URL(redirectUrl);
+      const isLocalhost =
+        parsed.hostname === 'localhost' || parsed.hostname === '127.0.0.1';
+
+      return isLocalhost && parsed.protocol === 'http:';
+    } catch {
+      return false;
     }
   }
 }
