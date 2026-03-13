@@ -47,7 +47,11 @@ export const useFindDuplicateRecordsQuery = ({
       }
     }
   `,
-    [objectMetadataItem, objectMetadataItems, objectPermissionsByObjectMetadataId],
+    [
+      objectMetadataItem,
+      objectMetadataItems,
+      objectPermissionsByObjectMetadataId,
+    ],
   );
 
   return {
