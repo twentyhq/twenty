@@ -100,8 +100,8 @@ export class WorkspaceMemberPreQueryHookService {
     await this.userRepository.update(
       { id: userId },
       {
-        ...(isDefined(firstName) && { firstName }),
-        ...(isDefined(lastName) && { lastName }),
+        ...(isDefined(firstName) && firstName !== '' && { firstName }),
+        ...(isDefined(lastName) && lastName !== '' && { lastName }),
       },
     );
 
