@@ -33,16 +33,18 @@ export class ApiService {
         token ?? twentyConfig.applicationAccessToken ?? twentyConfig.apiKey;
 
       if (!config.headers.Authorization && authToken) {
-        // Auto-refresh if OAuth token looks expired and we have a refresh token
+        // Auto-refresh if OAuth token looks expired and we have a refresh token + client ID
         if (
           !token &&
           authToken === twentyConfig.applicationAccessToken &&
           twentyConfig.applicationRefreshToken &&
+          twentyConfig.oauthClientId &&
           this.isTokenExpired(authToken)
         ) {
           const refreshed = await this.tryRefreshToken(
             twentyConfig.applicationRefreshToken,
             config.baseURL as string,
+            twentyConfig.oauthClientId,
           );
 
           if (refreshed) {
@@ -68,7 +70,7 @@ export class ApiService {
         if (error.response?.status === 401) {
           console.error(
             chalk.red(
-              'Authentication failed. Please run `twenty auth:login` first.',
+              'Authentication failed. Please run `yarn twenty auth:login`.',
             ),
           );
         } else if (error.response?.status === 403) {
@@ -990,40 +992,27 @@ export class ApiService {
   private async tryRefreshToken(
     refreshToken: string,
     baseUrl: string,
+    clientId: string,
   ): Promise<string | null> {
     try {
-      // Fetch the client_id from discovery
-      const discoveryResponse = await axios.get(
-        `${baseUrl}/.well-known/oauth-authorization-server`,
-      );
-      const clientId = discoveryResponse.data.cli_client_id;
-
-      if (!clientId) {
-        return null;
-      }
-
       const tokenResponse = await axios.post(`${baseUrl}/oauth/token`, {
         grant_type: 'refresh_token',
         refresh_token: refreshToken,
         client_id: clientId,
       });
 
-      const { applicationAccessToken, applicationRefreshToken } =
+      const { access_token: newAccessToken, refresh_token: newRefreshToken } =
         tokenResponse.data;
 
       await this.configService.setConfig({
-        applicationAccessToken,
-        applicationRefreshToken,
+        applicationAccessToken: newAccessToken,
+        applicationRefreshToken: newRefreshToken,
       });
 
-      return applicationAccessToken;
+      return newAccessToken;
     } catch {
-      // Refresh failed — clear OAuth tokens so user gets prompted to re-login
-      await this.configService.setConfig({
-        applicationAccessToken: undefined,
-        applicationRefreshToken: undefined,
-      });
-
+      // Don't wipe tokens — the refresh token may still be valid on retry,
+      // or the user can re-authenticate manually
       return null;
     }
   }

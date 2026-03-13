@@ -6,11 +6,13 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { TWENTY_CLI_APPLICATION_REGISTRATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-cli-application-registration.constant';
+import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
 
 @Controller('.well-known')
 export class OAuthDiscoveryController {
   constructor(
     private readonly twentyConfigService: TwentyConfigService,
+    private readonly domainServerConfigService: DomainServerConfigService,
     private readonly applicationRegistrationService: ApplicationRegistrationService,
   ) {}
 
@@ -18,8 +20,7 @@ export class OAuthDiscoveryController {
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   async getAuthorizationServerMetadata() {
     const serverUrl = this.twentyConfigService.get('SERVER_URL');
-    const frontendUrl =
-      this.twentyConfigService.get('FRONTEND_URL') ?? serverUrl;
+    const frontendUrl = this.domainServerConfigService.getFrontUrl();
 
     const cliRegistration =
       await this.applicationRegistrationService.findOneByUniversalIdentifier(
@@ -28,7 +29,7 @@ export class OAuthDiscoveryController {
 
     return {
       issuer: serverUrl,
-      authorization_endpoint: `${frontendUrl}/authorize`,
+      authorization_endpoint: `${frontendUrl}authorize`,
       token_endpoint: `${serverUrl}/oauth/token`,
       revocation_endpoint: `${serverUrl}/oauth/revoke`,
       introspection_endpoint: `${serverUrl}/oauth/introspect`,

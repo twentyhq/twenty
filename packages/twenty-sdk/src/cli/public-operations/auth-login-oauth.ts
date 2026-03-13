@@ -111,14 +111,17 @@ const innerAuthLoginOAuth = async (
       redirect_uri: callbackServer.callbackUrl,
     });
 
-    const { applicationAccessToken, applicationRefreshToken } =
-      tokenResponse.data;
+    const {
+      access_token: applicationAccessToken,
+      refresh_token: applicationRefreshToken,
+    } = tokenResponse.data;
 
-    // Step 7: Store tokens in config
+    // Step 7: Store tokens and OAuth client ID in config
     await configService.setConfig({
       apiUrl,
       applicationAccessToken,
       applicationRefreshToken,
+      oauthClientId: discovery.cli_client_id,
     });
 
     // Step 8: Validate the token works
