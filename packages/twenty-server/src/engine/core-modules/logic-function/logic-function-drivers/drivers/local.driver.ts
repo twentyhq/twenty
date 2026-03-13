@@ -103,6 +103,12 @@ export class LocalDriver implements LogicFunctionDriver {
       return;
     }
 
+    await this.sdkClientGenerationService.ensureArchiveExists({
+      workspaceId: flatApplication.workspaceId,
+      applicationId: flatApplication.id,
+      applicationUniversalIdentifier,
+    });
+
     await fs.rm(sdkLayerPath, { recursive: true, force: true });
 
     const sdkPackagePath = join(

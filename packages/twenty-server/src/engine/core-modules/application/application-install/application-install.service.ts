@@ -1,7 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { printSchema } from 'graphql';
 import { promises as fs } from 'fs';
 import { join, relative } from 'path';
 
@@ -9,7 +8,6 @@ import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
-import { WorkspaceSchemaFactory } from 'src/engine/api/graphql/workspace-schema.factory';
 import {
   ApplicationException,
   ApplicationExceptionCode,
@@ -26,7 +24,6 @@ import { ApplicationSyncService } from 'src/engine/core-modules/application/appl
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { SdkClientGenerationService } from 'src/engine/core-modules/logic-function/logic-function-resource/sdk-client-generation.service';
-import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 const FILE_FOLDER_MAPPING: Record<string, FileFolder> = {
   'package.json': FileFolder.Dependencies,
@@ -58,7 +55,6 @@ export class ApplicationInstallService {
     private readonly fileStorageService: FileStorageService,
     private readonly cacheLockService: CacheLockService,
     private readonly sdkClientGenerationService: SdkClientGenerationService,
-    private readonly workspaceSchemaFactory: WorkspaceSchemaFactory,
   ) {}
 
   async installApplication(params: {
@@ -141,7 +137,7 @@ export class ApplicationInstallService {
         });
 
       if (wasCreated || hasSchemaMetadataChanged) {
-        await this.generateSdkClient({
+        await this.sdkClientGenerationService.generateApplicationClient({
           workspaceId: params.workspaceId,
           applicationId: application.id,
           applicationUniversalIdentifier: universalIdentifier,
@@ -233,29 +229,6 @@ export class ApplicationInstallService {
     }
 
     return result;
-  }
-
-  private async generateSdkClient({
-    workspaceId,
-    applicationId,
-    applicationUniversalIdentifier,
-  }: {
-    workspaceId: string;
-    applicationId: string;
-    applicationUniversalIdentifier: string;
-  }): Promise<void> {
-    const graphqlSchema =
-      await this.workspaceSchemaFactory.createGraphQLSchema(
-        { id: workspaceId } as WorkspaceEntity,
-        applicationId,
-      );
-
-    await this.sdkClientGenerationService.generateAndStore({
-      workspaceId,
-      applicationId,
-      applicationUniversalIdentifier,
-      schema: printSchema(graphqlSchema),
-    });
   }
 
   private async ensureApplicationExists(params: {

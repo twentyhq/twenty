@@ -34,6 +34,7 @@ import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/serv
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { FileDTO } from 'src/engine/core-modules/file/dtos/file.dto';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
+import { SdkClientGenerationService } from 'src/engine/core-modules/logic-function/logic-function-resource/sdk-client-generation.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { DevelopmentGuard } from 'src/engine/guards/development.guard';
@@ -64,6 +65,7 @@ export class ApplicationDevelopmentResolver {
     private readonly applicationRegistrationService: ApplicationRegistrationService,
     private readonly applicationRegistrationVariableService: ApplicationRegistrationVariableService,
     private readonly fileStorageService: FileStorageService,
+    private readonly sdkClientGenerationService: SdkClientGenerationService,
   ) {}
 
   @Mutation(() => DevelopmentApplicationDTO)
@@ -127,12 +129,29 @@ export class ApplicationDevelopmentResolver {
       workspaceId,
     );
 
-    const { workspaceMigration } =
+    const { workspaceMigration, hasSchemaMetadataChanged } =
       await this.applicationSyncService.synchronizeFromManifest({
         workspaceId,
         manifest,
         applicationRegistrationId,
       });
+
+    if (hasSchemaMetadataChanged) {
+      const application =
+        await this.applicationService.findByUniversalIdentifier({
+          universalIdentifier: manifest.application.universalIdentifier,
+          workspaceId,
+        });
+
+      if (application) {
+        await this.sdkClientGenerationService.generateApplicationClient({
+          workspaceId,
+          applicationId: application.id,
+          applicationUniversalIdentifier:
+            manifest.application.universalIdentifier,
+        });
+      }
+    }
 
     await this.syncRegistrationMetadata(
       applicationRegistrationId,
