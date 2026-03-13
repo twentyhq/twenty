@@ -85,7 +85,17 @@ export class GlobalWorkspaceDataSource extends DataSource {
     const context = getWorkspaceContext();
     const { entityMetadatas } = context;
 
-    return entityMetadatas.find((metadata) => metadata.target === target);
+    return entityMetadatas.find((metadata) => {
+      if (metadata.target === target) {
+        return true;
+      }
+
+      if (typeof target === 'string') {
+        return metadata.tableName === target || metadata.name === target;
+      }
+
+      return false;
+    });
   }
 
   override getMetadata(target: EntityTarget<ObjectLiteral>): EntityMetadata {
