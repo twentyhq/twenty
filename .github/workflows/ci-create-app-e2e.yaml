@@ -166,6 +166,13 @@ jobs:
           echo "$EXEC_OUTPUT"
           echo "$EXEC_OUTPUT" | grep -q "Hello, World!"
 
+      - name: Execute create-hello-world-company logic function
+        run: |
+          cd /tmp/e2e-test-workspace/test-app
+          EXEC_OUTPUT=$(npx --no-install twenty function:execute --functionName create-hello-world-company)
+          echo "$EXEC_OUTPUT"
+          echo "$EXEC_OUTPUT" | grep -q "Created company"
+
       - name: Run scaffolded app integration test
         run: |
           cd /tmp/e2e-test-workspace/test-app
