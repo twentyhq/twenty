@@ -72,6 +72,7 @@ export const useSingleRecordPickerPerformSearch = ({
     [selectedRecords, filteredSelectedRecords, recordsToSelect],
   );
 
+  // TODO: Refactor this useEffect to avoid unnecessary re-renders (see PR #18584 review)
   useEffect(() => {
     allSearchRecords.forEach((searchRecord) => {
       store.set(

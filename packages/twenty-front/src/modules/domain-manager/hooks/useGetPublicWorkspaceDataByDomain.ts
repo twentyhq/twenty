@@ -44,6 +44,7 @@ export const useGetPublicWorkspaceDataByDomain = () => {
     },
   );
 
+  // TODO: Refactor these useEffects to avoid unnecessary re-renders (see PR #18584 review)
   useEffect(() => {
     if (data) {
       setWorkspaceAuthProviders(

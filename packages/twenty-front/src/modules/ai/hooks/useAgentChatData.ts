@@ -144,6 +144,7 @@ export const useAgentChatData = () => {
     },
   );
 
+  // TODO: Refactor this useEffect to avoid unnecessary re-renders (see PR #18584 review)
   useEffect(() => {
     if (!threadsData) return;
 
@@ -204,6 +205,7 @@ export const useAgentChatData = () => {
     skip: !isDefined(currentAIChatThread) || isNewThread,
   });
 
+  // TODO: Refactor this useEffect to avoid unnecessary re-renders (see PR #18584 review)
   useEffect(() => {
     if (data) {
       store.set(skipMessagesSkeletonUntilLoadedState.atom, false);
