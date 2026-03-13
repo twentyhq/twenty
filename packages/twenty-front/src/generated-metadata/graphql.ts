@@ -6241,10 +6241,14 @@ export type GetMeteredProductsUsageQueryVariables = Exact<{ [key: string]: never
 
 export type GetMeteredProductsUsageQuery = { __typename?: 'Query', getMeteredProductsUsage: Array<{ __typename?: 'BillingMeteredProductUsage', productKey: BillingProductKey, usedCredits: number, grantedCredits: number, rolloverCredits: number, totalGrantedCredits: number, unitPriceCents: number }> };
 
-export type GetBillingAnalyticsQueryVariables = Exact<{
+export type BillingAnalyticsInput = {
   periodStart?: InputMaybe<Scalars['DateTime']>;
   periodEnd?: InputMaybe<Scalars['DateTime']>;
   userWorkspaceId?: InputMaybe<Scalars['String']>;
+};
+
+export type GetBillingAnalyticsQueryVariables = Exact<{
+  input?: InputMaybe<BillingAnalyticsInput>;
 }>;
 
 
@@ -11031,8 +11035,8 @@ export type GetMeteredProductsUsageQueryHookResult = ReturnType<typeof useGetMet
 export type GetMeteredProductsUsageLazyQueryHookResult = ReturnType<typeof useGetMeteredProductsUsageLazyQuery>;
 export type GetMeteredProductsUsageQueryResult = Apollo.QueryResult<GetMeteredProductsUsageQuery, GetMeteredProductsUsageQueryVariables>;
 export const GetBillingAnalyticsDocument = gql`
-    query GetBillingAnalytics($periodStart: DateTime, $periodEnd: DateTime, $userWorkspaceId: String) {
-  getBillingAnalytics(periodStart: $periodStart, periodEnd: $periodEnd, userWorkspaceId: $userWorkspaceId) {
+    query GetBillingAnalytics($input: BillingAnalyticsInput) {
+  getBillingAnalytics(input: $input) {
     usageByUser {
       key
       creditsUsed

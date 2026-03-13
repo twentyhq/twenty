@@ -336,17 +336,27 @@ export class BillingResolver {
   @RequireFeatureFlag(FeatureFlagKey.IS_USAGE_ANALYTICS_ENABLED)
   async getBillingAnalytics(
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @Args({ nullable: true }) input?: BillingAnalyticsInput,
+    @Args('input', { nullable: true }) input?: BillingAnalyticsInput,
   ): Promise<BillingAnalyticsDTO> {
-    const subscription =
-      await this.billingSubscriptionService.getCurrentBillingSubscriptionOrThrow(
-        { workspaceId: workspace.id },
-      );
+    let defaultPeriodStart: Date;
+    let defaultPeriodEnd: Date;
 
-    const periodStart =
-      input?.periodStart ?? subscription.currentPeriodStart;
-    const periodEnd =
-      input?.periodEnd ?? subscription.currentPeriodEnd;
+    if (this.billingService.isBillingEnabled()) {
+      const subscription =
+        await this.billingSubscriptionService.getCurrentBillingSubscriptionOrThrow(
+          { workspaceId: workspace.id },
+        );
+
+      defaultPeriodStart = subscription.currentPeriodStart;
+      defaultPeriodEnd = subscription.currentPeriodEnd;
+    } else {
+      defaultPeriodEnd = new Date();
+      defaultPeriodStart = new Date();
+      defaultPeriodStart.setDate(defaultPeriodStart.getDate() - 30);
+    }
+
+    const periodStart = input?.periodStart ?? defaultPeriodStart;
+    const periodEnd = input?.periodEnd ?? defaultPeriodEnd;
 
     const [usageByUser, usageByResource, usageByExecutionType, timeSeries] =
       await Promise.all([

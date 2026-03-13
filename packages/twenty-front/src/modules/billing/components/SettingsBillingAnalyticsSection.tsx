@@ -185,11 +185,13 @@ export const SettingsBillingAnalyticsSection = () => {
 
   const { data, loading } = useGetBillingAnalyticsQuery({
     variables: {
-      ...(periodDates.periodStart && {
-        periodStart: periodDates.periodStart,
-      }),
-      ...(periodDates.periodEnd && { periodEnd: periodDates.periodEnd }),
-      ...(selectedUserId && { userWorkspaceId: selectedUserId }),
+      input: {
+        ...(periodDates.periodStart && {
+          periodStart: periodDates.periodStart,
+        }),
+        ...(periodDates.periodEnd && { periodEnd: periodDates.periodEnd }),
+        ...(selectedUserId && { userWorkspaceId: selectedUserId }),
+      },
     },
   });
 

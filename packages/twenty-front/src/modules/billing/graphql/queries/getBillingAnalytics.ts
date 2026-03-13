@@ -1,16 +1,8 @@
 import { gql } from '@apollo/client';
 
 export const GET_BILLING_ANALYTICS = gql`
-  query GetBillingAnalytics(
-    $periodStart: DateTime
-    $periodEnd: DateTime
-    $userWorkspaceId: String
-  ) {
-    getBillingAnalytics(
-      periodStart: $periodStart
-      periodEnd: $periodEnd
-      userWorkspaceId: $userWorkspaceId
-    ) {
+  query GetBillingAnalytics($input: BillingAnalyticsInput) {
+    getBillingAnalytics(input: $input) {
       usageByUser {
         key
         creditsUsed
