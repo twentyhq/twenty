@@ -151,8 +151,10 @@ const getPlaceholderForFieldType = (
   return undefined;
 };
 
-const canProvidePlaceholderForFieldType = (fieldType: string): boolean => {
-  const placeholderableTypes = [
+const canProvidePlaceholderForFieldType = (
+  fieldType: FieldMetadataType,
+): boolean => {
+  const placeholderableTypes: FieldMetadataType[] = [
     FieldMetadataType.TEXT,
     FieldMetadataType.FULL_NAME,
     FieldMetadataType.UUID,
