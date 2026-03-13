@@ -103,11 +103,9 @@ export class WorkspaceMemberPreQueryHookService {
       ...(isDefined(lastName) && lastName !== '' && { lastName }),
     };
 
-    if (Object.keys(nameUpdate).length === 0) {
-      return;
+    if (Object.keys(nameUpdate).length > 0) {
+      await this.userRepository.update({ id: userId }, nameUpdate);
     }
-
-    await this.userRepository.update({ id: userId }, nameUpdate);
 
     await this.onboardingService.setOnboardingCreateProfilePending({
       userId,
