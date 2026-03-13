@@ -41,7 +41,10 @@ export const fromViewFieldOverridesToUniversalOverrides = ({
       );
     }
 
-    return scalarOverrides;
+    return {
+      ...scalarOverrides,
+      viewFieldGroupUniversalIdentifier: null,
+    };
   }
 
   return {
