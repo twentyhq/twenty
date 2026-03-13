@@ -30,6 +30,10 @@ import { fromFlatObjectMetadataToObjectMetadataDto } from 'src/engine/metadata-m
 import { getMorphNameFromMorphFieldMetadataName } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-morph-name-from-morph-field-metadata-name.util';
 import { fromFlatViewFieldGroupToViewFieldGroupDto } from 'src/engine/metadata-modules/view-field-group/utils/from-flat-view-field-group-to-view-field-group-dto.util';
 import { fromFlatViewFieldToViewFieldDto } from 'src/engine/metadata-modules/view-field/utils/from-flat-view-field-to-view-field-dto.util';
+import { fromFlatViewFilterToViewFilterDto } from 'src/engine/metadata-modules/view-filter/utils/from-flat-view-filter-to-view-filter-dto.util';
+import { fromFlatViewFilterGroupToViewFilterGroupDto } from 'src/engine/metadata-modules/view-filter-group/utils/from-flat-view-filter-group-to-view-filter-group-dto.util';
+import { fromFlatViewGroupToViewGroupDto } from 'src/engine/metadata-modules/view-group/utils/from-flat-view-group-to-view-group-dto.util';
+import { fromFlatViewSortToViewSortDto } from 'src/engine/metadata-modules/view-sort/utils/from-flat-view-sort-to-view-sort-dto.util';
 import { type IndexFieldMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-field-metadata.dto';
 import { type IndexMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-metadata.dto';
 import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
@@ -84,6 +88,31 @@ export type ViewFieldsByViewFieldGroupIdLoaderPayload = {
   viewFieldGroupId: string;
 };
 
+export type ViewFieldsByViewIdLoaderPayload = {
+  workspaceId: string;
+  viewId: string;
+};
+
+export type ViewFiltersByViewIdLoaderPayload = {
+  workspaceId: string;
+  viewId: string;
+};
+
+export type ViewSortsByViewIdLoaderPayload = {
+  workspaceId: string;
+  viewId: string;
+};
+
+export type ViewGroupsByViewIdLoaderPayload = {
+  workspaceId: string;
+  viewId: string;
+};
+
+export type ViewFilterGroupsByViewIdLoaderPayload = {
+  workspaceId: string;
+  viewId: string;
+};
+
 @Injectable()
 export class DataloaderService {
   constructor(
@@ -102,6 +131,12 @@ export class DataloaderService {
       this.createViewFieldGroupsByViewIdLoader();
     const viewFieldsByViewFieldGroupIdLoader =
       this.createViewFieldsByViewFieldGroupIdLoader();
+    const viewFieldsByViewIdLoader = this.createViewFieldsByViewIdLoader();
+    const viewFiltersByViewIdLoader = this.createViewFiltersByViewIdLoader();
+    const viewSortsByViewIdLoader = this.createViewSortsByViewIdLoader();
+    const viewGroupsByViewIdLoader = this.createViewGroupsByViewIdLoader();
+    const viewFilterGroupsByViewIdLoader =
+      this.createViewFilterGroupsByViewIdLoader();
 
     return {
       relationLoader,
@@ -112,6 +147,11 @@ export class DataloaderService {
       objectMetadataLoader,
       viewFieldGroupsByViewIdLoader,
       viewFieldsByViewFieldGroupIdLoader,
+      viewFieldsByViewIdLoader,
+      viewFiltersByViewIdLoader,
+      viewSortsByViewIdLoader,
+      viewGroupsByViewIdLoader,
+      viewFilterGroupsByViewIdLoader,
     };
   }
 
@@ -606,6 +646,183 @@ export class DataloaderService {
         })
           .filter((flatViewField) => flatViewField.deletedAt === null)
           .map(fromFlatViewFieldToViewFieldDto);
+      });
+    });
+  }
+
+  private createViewFieldsByViewIdLoader() {
+    return new DataLoader<
+      ViewFieldsByViewIdLoaderPayload,
+      ReturnType<typeof fromFlatViewFieldToViewFieldDto>[]
+    >(async (dataLoaderParams: ViewFieldsByViewIdLoaderPayload[]) => {
+      const workspaceId = dataLoaderParams[0].workspaceId;
+
+      const { flatViewMaps, flatViewFieldMaps } =
+        await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+          {
+            workspaceId,
+            flatMapsKeys: ['flatViewMaps', 'flatViewFieldMaps'],
+          },
+        );
+
+      return dataLoaderParams.map(({ viewId }) => {
+        const flatView = findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: viewId,
+          flatEntityMaps: flatViewMaps,
+        });
+
+        if (!isDefined(flatView)) {
+          return [];
+        }
+
+        return findManyFlatEntityByIdInFlatEntityMaps({
+          flatEntityIds: flatView.viewFieldIds,
+          flatEntityMaps: flatViewFieldMaps,
+        })
+          .filter((flatViewField) => flatViewField.deletedAt === null)
+          .map(fromFlatViewFieldToViewFieldDto);
+      });
+    });
+  }
+
+  private createViewFiltersByViewIdLoader() {
+    return new DataLoader<
+      ViewFiltersByViewIdLoaderPayload,
+      ReturnType<typeof fromFlatViewFilterToViewFilterDto>[]
+    >(async (dataLoaderParams: ViewFiltersByViewIdLoaderPayload[]) => {
+      const workspaceId = dataLoaderParams[0].workspaceId;
+
+      const { flatViewMaps, flatViewFilterMaps } =
+        await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+          {
+            workspaceId,
+            flatMapsKeys: ['flatViewMaps', 'flatViewFilterMaps'],
+          },
+        );
+
+      return dataLoaderParams.map(({ viewId }) => {
+        const flatView = findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: viewId,
+          flatEntityMaps: flatViewMaps,
+        });
+
+        if (!isDefined(flatView)) {
+          return [];
+        }
+
+        return findManyFlatEntityByIdInFlatEntityMaps({
+          flatEntityIds: flatView.viewFilterIds,
+          flatEntityMaps: flatViewFilterMaps,
+        })
+          .filter((flatViewFilter) => flatViewFilter.deletedAt === null)
+          .map(fromFlatViewFilterToViewFilterDto);
+      });
+    });
+  }
+
+  private createViewSortsByViewIdLoader() {
+    return new DataLoader<
+      ViewSortsByViewIdLoaderPayload,
+      ReturnType<typeof fromFlatViewSortToViewSortDto>[]
+    >(async (dataLoaderParams: ViewSortsByViewIdLoaderPayload[]) => {
+      const workspaceId = dataLoaderParams[0].workspaceId;
+
+      const { flatViewMaps, flatViewSortMaps } =
+        await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+          {
+            workspaceId,
+            flatMapsKeys: ['flatViewMaps', 'flatViewSortMaps'],
+          },
+        );
+
+      return dataLoaderParams.map(({ viewId }) => {
+        const flatView = findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: viewId,
+          flatEntityMaps: flatViewMaps,
+        });
+
+        if (!isDefined(flatView)) {
+          return [];
+        }
+
+        return findManyFlatEntityByIdInFlatEntityMaps({
+          flatEntityIds: flatView.viewSortIds,
+          flatEntityMaps: flatViewSortMaps,
+        })
+          .filter((flatViewSort) => flatViewSort.deletedAt === null)
+          .map(fromFlatViewSortToViewSortDto);
+      });
+    });
+  }
+
+  private createViewGroupsByViewIdLoader() {
+    return new DataLoader<
+      ViewGroupsByViewIdLoaderPayload,
+      ReturnType<typeof fromFlatViewGroupToViewGroupDto>[]
+    >(async (dataLoaderParams: ViewGroupsByViewIdLoaderPayload[]) => {
+      const workspaceId = dataLoaderParams[0].workspaceId;
+
+      const { flatViewMaps, flatViewGroupMaps } =
+        await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+          {
+            workspaceId,
+            flatMapsKeys: ['flatViewMaps', 'flatViewGroupMaps'],
+          },
+        );
+
+      return dataLoaderParams.map(({ viewId }) => {
+        const flatView = findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: viewId,
+          flatEntityMaps: flatViewMaps,
+        });
+
+        if (!isDefined(flatView)) {
+          return [];
+        }
+
+        return findManyFlatEntityByIdInFlatEntityMaps({
+          flatEntityIds: flatView.viewGroupIds,
+          flatEntityMaps: flatViewGroupMaps,
+        })
+          .filter((flatViewGroup) => flatViewGroup.deletedAt === null)
+          .map(fromFlatViewGroupToViewGroupDto);
+      });
+    });
+  }
+
+  private createViewFilterGroupsByViewIdLoader() {
+    return new DataLoader<
+      ViewFilterGroupsByViewIdLoaderPayload,
+      ReturnType<typeof fromFlatViewFilterGroupToViewFilterGroupDto>[]
+    >(async (dataLoaderParams: ViewFilterGroupsByViewIdLoaderPayload[]) => {
+      const workspaceId = dataLoaderParams[0].workspaceId;
+
+      const { flatViewMaps, flatViewFilterGroupMaps } =
+        await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+          {
+            workspaceId,
+            flatMapsKeys: ['flatViewMaps', 'flatViewFilterGroupMaps'],
+          },
+        );
+
+      return dataLoaderParams.map(({ viewId }) => {
+        const flatView = findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: viewId,
+          flatEntityMaps: flatViewMaps,
+        });
+
+        if (!isDefined(flatView)) {
+          return [];
+        }
+
+        return findManyFlatEntityByIdInFlatEntityMaps({
+          flatEntityIds: flatView.viewFilterGroupIds,
+          flatEntityMaps: flatViewFilterGroupMaps,
+        })
+          .filter(
+            (flatViewFilterGroup) => flatViewFilterGroup.deletedAt === null,
+          )
+          .map(fromFlatViewFilterGroupToViewFilterGroupDto);
       });
     });
   }

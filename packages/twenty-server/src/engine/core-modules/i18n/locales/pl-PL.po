@@ -1176,6 +1176,11 @@ msgstr ""
 msgid "Empty field permissions are not allowed."
 msgstr "Puste uprawnienia do pól nie są dozwolone."
 
+#. js-lingui-id: ArAFBo
+#: src/engine/core-modules/auth/auth.exception.ts
+msgid "Enterprise validity token is not valid."
+msgstr ""
+
 #. js-lingui-id: qpXqpa
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts
 #: src/engine/core-modules/application/application.exception.ts
@@ -1898,6 +1903,11 @@ msgstr "Nieprawidłowy adres e-mail."
 msgid "Invalid email or domain."
 msgstr ""
 
+#. js-lingui-id: pOHI+b
+#: src/engine/core-modules/enterprise/enterprise.exception.ts
+msgid "Invalid enterprise key."
+msgstr ""
+
 #. js-lingui-id: YtFgT4
 #: src/engine/core-modules/feature-flag/feature-flag.exception.ts
 msgid "Invalid feature flag key."
@@ -2422,6 +2432,11 @@ msgstr "Nieprawidłowe dane wejściowe wyzwalacza przepływu pracy."
 #: src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception.ts
 msgid "Invalid workflow version."
 msgstr "Nieprawidłowa wersja przepływu pracy."
+
+#. js-lingui-id: 1bOGPq
+#: src/engine/core-modules/enterprise/enterprise.exception.ts
+msgid "IS_CONFIG_VARIABLES_IN_DB_ENABLED is false on your server. Please add ENTERPRISE_KEY to your .env file manually."
+msgstr ""
 
 #. js-lingui-id: rjyWPb
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts

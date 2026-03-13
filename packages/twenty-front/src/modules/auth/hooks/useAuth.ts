@@ -52,7 +52,7 @@ import { useOrigin } from '@/domain-manager/hooks/useOrigin';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
-import { sseClientState } from '@/sse-db-event/states/sseClientState';
+import { useClearSseClient } from '@/sse-db-event/hooks/useClearSseClient';
 import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 import { i18n } from '@lingui/core';
@@ -81,6 +81,7 @@ export const useAuth = () => {
     isEmailVerificationRequiredState,
   );
   const { loadCurrentUser } = useLoadCurrentUser();
+  const { clearSseClient } = useClearSseClient();
 
   const { reloadWorkspaceMetadata, resetToMockedMetadata } =
     useReloadWorkspaceMetadata();
@@ -117,9 +118,7 @@ export const useAuth = () => {
   const navigate = useNavigate();
 
   const clearSession = useCallback(async () => {
-    const sseClient = store.get(sseClientState.atom);
-
-    sseClient?.dispose();
+    clearSseClient();
 
     const authProvidersValue = store.get(workspaceAuthProvidersState.atom);
     const domainConfigurationValue = store.get(domainConfigurationState.atom);
@@ -162,6 +161,7 @@ export const useAuth = () => {
     navigate(AppPath.SignInUp);
     store.set(isAppEffectRedirectEnabledState.atom, true);
   }, [
+    clearSseClient,
     client,
     setLastAuthenticateWorkspaceDomain,
     resetToMockedMetadata,
