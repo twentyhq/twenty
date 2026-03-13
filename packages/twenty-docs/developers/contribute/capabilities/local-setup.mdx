@@ -7,7 +7,7 @@ description: "The guide for contributors (or curious developers) who want to run
 ## Prerequisites
 
 <Tabs>
-<Tab title="Linux and MacOS">
+<Tab title="Linux and macOS">
 
 Before you can install and use Twenty, make sure you install the following on your computer:
 - [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
@@ -31,7 +31,7 @@ wsl --install
 ```
 You should now see a prompt to restart your computer. If not, restart it manually.
 
-Upon restart, a powershell window will open and install Ubuntu. This may take up some time.
+Upon restart, a PowerShell window will open and install Ubuntu. This may take up some time.
 You'll see a prompt to create a username and password for your Ubuntu installation.
 
 2. Install and configure git
@@ -104,7 +104,7 @@ You should run all commands in the following steps from the root of the project.
 <Tabs>
   <Tab title="Linux">
     **Option 1 (preferred):** To provision your database locally:
-    Use the following link to install Postgresql on your Linux machine: [Postgresql Installation](https://www.postgresql.org/download/linux/)
+    Use the following link to install PostgreSQL on your Linux machine: [PostgreSQL Installation](https://www.postgresql.org/download/linux/)
     ```bash
       psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
     ```
@@ -131,7 +131,7 @@ You should run all commands in the following steps from the root of the project.
     ```
 
     The installer might not create the `postgres` user by default when installing
-    via Homebrew on MacOS. Instead, it creates a PostgreSQL role that matches your macOS
+    via Homebrew on macOS. Instead, it creates a PostgreSQL role that matches your macOS
     username (e.g., "john").
     To check and create the `postgres` user if necessary, follow these steps:
     ```bash
@@ -174,8 +174,8 @@ You should run all commands in the following steps from the root of the project.
   <Tab title="Windows (WSL)">
     All the following steps are to be run in the WSL terminal (within your virtual machine)
 
-    **Option 1:** To provision your Postgresql locally:
-    Use the following link to install Postgresql on your Linux virtual machine: [Postgresql Installation](https://www.postgresql.org/download/linux/)
+    **Option 1:** To provision your PostgreSQL locally:
+    Use the following link to install PostgreSQL on your Linux virtual machine: [PostgreSQL Installation](https://www.postgresql.org/download/linux/)
     ```bash
       psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
     ```
@@ -190,10 +190,10 @@ You should run all commands in the following steps from the root of the project.
   </Tab>
 </Tabs>
 
-You can now access the database at [localhost:5432](localhost:5432), with user `postgres` and password `postgres` .
+You can now access the database at `localhost:5432`, with user `postgres` and password `postgres`.
 
 ## Step 4: Set up a Redis Database (cache)
-Twenty requires a redis cache to provide the best performance
+Twenty requires a Redis cache to provide the best performance.
 
 <Tabs>
   <Tab title="Linux">
@@ -210,8 +210,10 @@ Twenty requires a redis cache to provide the best performance
     ```bash
     brew install redis
     ```
-    Start your redis server:
-    ```brew services start redis```
+    Start your Redis server:
+    ```bash
+    brew services start redis
+    ```
 
     **Option 2:** If you have docker installed:
     ```bash
@@ -229,11 +231,11 @@ Twenty requires a redis cache to provide the best performance
   </Tab>
 </Tabs>
 
-If you need a Client GUI, we recommend [redis insight](https://redis.io/insight/) (free version available)
+If you need a client GUI, we recommend [Redis Insight](https://redis.io/insight/) (free version available).
 
-## Step 5: Setup environment variables
+## Step 5: Set up environment variables
 
-Use environment variables or `.env` files to configure your project. More info [here](/developers/self-host/capabilities/setup)
+Use environment variables or `.env` files to configure your project. More info [here](/developers/self-host/capabilities/setup).
 
 Copy the `.env.example` files in `/front` and `/server`:
 ```bash
