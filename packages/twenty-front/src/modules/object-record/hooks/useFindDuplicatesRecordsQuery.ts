@@ -1,4 +1,5 @@
 import gql from 'graphql-tag';
+import { useMemo } from 'react';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
@@ -22,7 +23,8 @@ export const useFindDuplicateRecordsQuery = ({
 
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
 
-  const findDuplicateRecordsQuery = gql`
+  const findDuplicateRecordsQuery = useMemo(
+    () => gql`
     query FindDuplicate${capitalize(
       objectMetadataItem.nameSingular,
     )}($ids: [UUID!]!) {
@@ -44,7 +46,9 @@ export const useFindDuplicateRecordsQuery = ({
         }
       }
     }
-  `;
+  `,
+    [objectMetadataItem, objectMetadataItems, objectPermissionsByObjectMetadataId],
+  );
 
   return {
     findDuplicateRecordsQuery,
