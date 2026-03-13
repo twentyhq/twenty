@@ -14,7 +14,7 @@ export class SetConditionalDisplayOnOpportunityFieldWidgets1773400000000
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     const opportunityObjectRows: { id: string }[] = await queryRunner.query(
-      `SELECT id FROM core."objectMetadata" WHERE "nameSingular" = 'opportunity' AND "deletedAt" IS NULL LIMIT 1`,
+      `SELECT id FROM core."objectMetadata" WHERE "nameSingular" = 'opportunity' LIMIT 1`,
     );
 
     if (opportunityObjectRows.length === 0) {
@@ -29,8 +29,7 @@ export class SetConditionalDisplayOnOpportunityFieldWidgets1773400000000
     const fieldRows: { id: string; name: string }[] = await queryRunner.query(
       `SELECT id, name FROM core."fieldMetadata"
        WHERE "objectMetadataId" = $1
-         AND name IN ('clientAccountTeam', 'lossReason', 'lossNotes')
-         AND "deletedAt" IS NULL`,
+         AND name IN ('clientAccountTeam', 'lossReason', 'lossNotes')`,
       [opportunityObjectId],
     );
 
@@ -96,7 +95,7 @@ export class SetConditionalDisplayOnOpportunityFieldWidgets1773400000000
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     const opportunityObjectRows: { id: string }[] = await queryRunner.query(
-      `SELECT id FROM core."objectMetadata" WHERE "nameSingular" = 'opportunity' AND "deletedAt" IS NULL LIMIT 1`,
+      `SELECT id FROM core."objectMetadata" WHERE "nameSingular" = 'opportunity' LIMIT 1`,
     );
 
     if (opportunityObjectRows.length === 0) {
@@ -108,8 +107,7 @@ export class SetConditionalDisplayOnOpportunityFieldWidgets1773400000000
     const fieldRows: { id: string }[] = await queryRunner.query(
       `SELECT id FROM core."fieldMetadata"
        WHERE "objectMetadataId" = $1
-         AND name IN ('clientAccountTeam', 'lossReason', 'lossNotes')
-         AND "deletedAt" IS NULL`,
+         AND name IN ('clientAccountTeam', 'lossReason', 'lossNotes')`,
       [opportunityObjectId],
     );
 
