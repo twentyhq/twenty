@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import crypto from 'crypto';
 import { promises as fs } from 'fs';
-import { dirname, join } from 'path';
+import { join } from 'path';
 
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
