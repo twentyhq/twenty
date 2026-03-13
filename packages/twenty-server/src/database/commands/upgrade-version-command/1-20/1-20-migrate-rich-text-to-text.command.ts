@@ -1,10 +1,12 @@
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { DataSource, Repository } from 'typeorm';
 
 import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
@@ -28,6 +30,7 @@ export class MigrateRichTextToTextCommand extends ActiveOrSuspendedWorkspacesMig
     private readonly coreDataSource: DataSource,
     protected readonly twentyORMGlobalManager: GlobalWorkspaceOrmManager,
     protected readonly dataSourceService: DataSourceService,
+    private readonly featureFlagService: FeatureFlagService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
@@ -39,11 +42,20 @@ export class MigrateRichTextToTextCommand extends ActiveOrSuspendedWorkspacesMig
     workspaceId,
     options,
   }: RunOnWorkspaceArgs): Promise<void> {
-    const dryRun = options?.dryRun ?? false;
-
-    this.logger.log(
-      `${dryRun ? '[DRY RUN] ' : ''}Migrating RICH_TEXT fields to TEXT in workspace ${workspaceId}`,
+    const isMigrated = await this.featureFlagService.isFeatureEnabled(
+      FeatureFlagKey.IS_RICH_TEXT_V1_MIGRATED,
+      workspaceId,
     );
+
+    if (isMigrated) {
+      this.logger.log(
+        `Rich text migration already completed for workspace ${workspaceId}. Skipping.`,
+      );
+
+      return;
+    }
+
+    const dryRun = options?.dryRun ?? false;
 
     if (dryRun) {
       this.logger.log(
@@ -53,22 +65,16 @@ export class MigrateRichTextToTextCommand extends ActiveOrSuspendedWorkspacesMig
       return;
     }
 
+    this.logger.log(
+      `Migrating RICH_TEXT fields in workspace ${workspaceId}`,
+    );
+
     const queryRunner = this.coreDataSource.createQueryRunner();
 
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
     try {
-      // Step 1: park V2 fields under a temp value so step 2 won't touch them
-      await queryRunner.query(
-        `UPDATE core."fieldMetadata"
-         SET "type" = '__RICH_TEXT_TEMP__'
-         WHERE "workspaceId" = $1
-           AND "type" = 'RICH_TEXT_V2'`,
-        [workspaceId],
-      );
-
-      // Step 2: convert deprecated V1 RICH_TEXT → TEXT
       const v1Result = await queryRunner.query(
         `UPDATE core."fieldMetadata"
          SET "type" = 'TEXT'
@@ -80,12 +86,11 @@ export class MigrateRichTextToTextCommand extends ActiveOrSuspendedWorkspacesMig
 
       const v1Count = v1Result.length;
 
-      // Step 3: rename V2 from temp value to RICH_TEXT
       const renameResult = await queryRunner.query(
         `UPDATE core."fieldMetadata"
          SET "type" = 'RICH_TEXT'
          WHERE "workspaceId" = $1
-           AND "type" = '__RICH_TEXT_TEMP__'
+           AND "type" = 'RICH_TEXT_V2'
          RETURNING "id"`,
         [workspaceId],
       );
@@ -105,6 +110,11 @@ export class MigrateRichTextToTextCommand extends ActiveOrSuspendedWorkspacesMig
           `Renamed ${renameCount} RICH_TEXT_V2 field(s) to RICH_TEXT in workspace ${workspaceId}`,
         );
       }
+
+      await this.featureFlagService.enableFeatureFlags(
+        [FeatureFlagKey.IS_RICH_TEXT_V1_MIGRATED],
+        workspaceId,
+      );
 
       if (v1Count > 0 || renameCount > 0) {
         await this.invalidateCaches(workspaceId);
@@ -131,6 +141,7 @@ export class MigrateRichTextToTextCommand extends ActiveOrSuspendedWorkspacesMig
           .map(getMetadataFlatEntityMapsKey),
       ),
       'ORMEntityMetadatas',
+      'featureFlagsMap',
     ];
 
     await this.workspaceCacheService.invalidateAndRecompute(
