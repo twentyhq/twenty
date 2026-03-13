@@ -47,7 +47,6 @@ describe('ObjectPermissionService', () => {
   let service: ObjectPermissionService;
   let workspaceCacheService: jest.Mocked<WorkspaceCacheService>;
   let workspaceManyOrAllFlatEntityMapsCacheService: jest.Mocked<WorkspaceManyOrAllFlatEntityMapsCacheService>;
-  let applicationService: jest.Mocked<ApplicationService>;
   let workspaceMigrationValidateBuildAndRunService: jest.Mocked<WorkspaceMigrationValidateBuildAndRunService>;
 
   beforeEach(async () => {
@@ -94,7 +93,6 @@ describe('ObjectPermissionService', () => {
     workspaceManyOrAllFlatEntityMapsCacheService = module.get(
       WorkspaceManyOrAllFlatEntityMapsCacheService,
     );
-    applicationService = module.get(ApplicationService);
     workspaceMigrationValidateBuildAndRunService = module.get(
       WorkspaceMigrationValidateBuildAndRunService,
     );
