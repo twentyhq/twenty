@@ -18,14 +18,6 @@ import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/wo
 const { applicationUniversalIdentifier, actions: allActions } =
   ADD_MISSING_SYSTEM_FIELDS_TO_STANDARD_OBJECTS_1771420702241;
 
-// Sentinel identifiers extracted from the const tuple where TypeScript
-// knows every element is a create action with flatEntity.
-const FIRST_NON_TS_VECTOR_UNIVERSAL_IDENTIFIER =
-  allActions[0].flatEntity.universalIdentifier;
-
-const FIRST_TS_VECTOR_UNIVERSAL_IDENTIFIER =
-  allActions[1].flatEntity.universalIdentifier;
-
 const NON_TS_VECTOR_MIGRATION: WorkspaceMigration = {
   applicationUniversalIdentifier,
   actions: allActions.filter(
@@ -33,12 +25,20 @@ const NON_TS_VECTOR_MIGRATION: WorkspaceMigration = {
   ),
 };
 
-const TS_VECTOR_MIGRATION: WorkspaceMigration = {
-  applicationUniversalIdentifier,
-  actions: allActions.filter(
-    (action) => action.flatEntity.type === FieldMetadataType.TS_VECTOR,
-  ),
-};
+const TS_VECTOR_INDIVIDUAL_MIGRATIONS = allActions
+  .filter((action) => action.flatEntity.type === FieldMetadataType.TS_VECTOR)
+  .map((action) => ({
+    universalIdentifier: action.flatEntity.universalIdentifier,
+    fieldName: action.flatEntity.name,
+    objectIdentifier: action.flatEntity.objectMetadataUniversalIdentifier,
+    migration: {
+      applicationUniversalIdentifier,
+      actions: [action],
+    } satisfies WorkspaceMigration,
+  }));
+
+const FIRST_NON_TS_VECTOR_UNIVERSAL_IDENTIFIER =
+  allActions[0].flatEntity.universalIdentifier;
 
 @Command({
   name: 'upgrade:1-19:add-missing-system-fields-to-standard-objects',
@@ -83,7 +83,7 @@ export class AddMissingSystemFieldsToStandardObjectsCommand extends ActiveOrSusp
 
     if (dryRun) {
       this.logger.log(
-        `[DRY RUN] Would add ${NON_TS_VECTOR_MIGRATION.actions.length} non-tsVector fields and ${TS_VECTOR_MIGRATION.actions.length} tsVector fields to standard objects in workspace ${workspaceId}. Skipping.`,
+        `[DRY RUN] Would add ${NON_TS_VECTOR_MIGRATION.actions.length} non-tsVector fields and ${TS_VECTOR_INDIVIDUAL_MIGRATIONS.length} tsVector fields to standard objects in workspace ${workspaceId}. Skipping.`,
       );
 
       return;
@@ -109,24 +109,24 @@ export class AddMissingSystemFieldsToStandardObjectsCommand extends ActiveOrSusp
       );
     }
 
-    const tsVectorAlreadyRan = await this.hasFieldBeenCreated(
-      workspaceId,
-      FIRST_TS_VECTOR_UNIVERSAL_IDENTIFIER,
-    );
+    for (const tsVectorEntry of TS_VECTOR_INDIVIDUAL_MIGRATIONS) {
+      const alreadyCreated = await this.hasFieldBeenCreated(
+        workspaceId,
+        tsVectorEntry.universalIdentifier,
+      );
 
-    if (!tsVectorAlreadyRan) {
+      if (alreadyCreated) {
+        continue;
+      }
+
       this.logger.log(
-        `Adding ${TS_VECTOR_MIGRATION.actions.length} tsVector fields in workspace ${workspaceId} (this may take a while on large tables)`,
+        `Adding tsVector field ${tsVectorEntry.fieldName} on object ${tsVectorEntry.objectIdentifier} in workspace ${workspaceId}`,
       );
 
       await this.workspaceMigrationRunnerService.run({
         workspaceId,
-        workspaceMigration: TS_VECTOR_MIGRATION,
+        workspaceMigration: tsVectorEntry.migration,
       });
-    } else {
-      this.logger.log(
-        `TsVector fields already exist in workspace ${workspaceId}, skipping.`,
-      );
     }
 
     this.logger.log(
