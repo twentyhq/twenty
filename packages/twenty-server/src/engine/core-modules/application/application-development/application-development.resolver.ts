@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { Args, Mutation } from '@nestjs/graphql';
 
+import { printSchema } from 'graphql';
 import GraphQLUpload from 'graphql-upload/GraphQLUpload.mjs';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { FeatureFlagKey, FileFolder } from 'twenty-shared/types';
@@ -14,6 +15,7 @@ import { isDefined } from 'twenty-shared/utils';
 import type { FileUpload } from 'graphql-upload/processRequest.mjs';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
+import { WorkspaceSchemaFactory } from 'src/engine/api/graphql/workspace-schema.factory';
 import { ApplicationInput } from 'src/engine/core-modules/application/application-development/dtos/application.input';
 import { CreateDevelopmentApplicationInput } from 'src/engine/core-modules/application/application-development/dtos/create-development-application.input';
 import { DevelopmentApplicationDTO } from 'src/engine/core-modules/application/application-development/dtos/development-application.dto';
@@ -67,6 +69,7 @@ export class ApplicationDevelopmentResolver {
     private readonly applicationRegistrationVariableService: ApplicationRegistrationVariableService,
     private readonly fileStorageService: FileStorageService,
     private readonly sdkClientGenerationService: SdkClientGenerationService,
+    private readonly workspaceSchemaFactory: WorkspaceSchemaFactory,
   ) {}
 
   @Mutation(() => DevelopmentApplicationDTO)
@@ -153,11 +156,18 @@ export class ApplicationDevelopmentResolver {
       });
 
     if (isFirstSync || hasSchemaMetadataChanged) {
+      const graphqlSchema =
+        await this.workspaceSchemaFactory.createGraphQLSchema(
+          { id: workspaceId } as WorkspaceEntity,
+          application.id,
+        );
+
       await this.sdkClientGenerationService.generateApplicationClient({
         workspaceId,
         applicationId: application.id,
         applicationUniversalIdentifier:
           manifest.application.universalIdentifier,
+        schema: printSchema(graphqlSchema),
       });
     }
 

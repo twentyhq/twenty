@@ -7,12 +7,10 @@ import { join } from 'path';
 import { type Readable } from 'stream';
 import { pipeline } from 'stream/promises';
 
-import { printSchema } from 'graphql';
 import { replaceCoreClient } from 'twenty-client-sdk/generate';
 import { FileFolder } from 'twenty-shared/types';
 import { Repository } from 'typeorm';
 
-import { WorkspaceSchemaFactory } from 'src/engine/api/graphql/workspace-schema.factory';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import {
@@ -26,7 +24,6 @@ import {
   SdkClientGenerationException,
   SdkClientGenerationExceptionCode,
 } from 'src/engine/core-modules/sdk-client-generation/exceptions/sdk-client-generation.exception';
-import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
@@ -39,32 +36,27 @@ export class SdkClientGenerationService {
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly workspaceSchemaFactory: WorkspaceSchemaFactory,
   ) {}
 
-  // Introspects the application-scoped GraphQL schema and (re)generates
-  // the SDK client archive in storage. Sets isSdkLayerStale = true so
+  // Generates the SDK client archive from the provided schema string,
+  // uploads it to file storage, and sets isSdkLayerStale = true so
   // drivers re-download on next execution.
   async generateApplicationClient({
     workspaceId,
     applicationId,
     applicationUniversalIdentifier,
+    schema,
   }: {
     workspaceId: string;
     applicationId: string;
     applicationUniversalIdentifier: string;
+    schema: string;
   }): Promise<void> {
-    const graphqlSchema =
-      await this.workspaceSchemaFactory.createGraphQLSchema(
-        { id: workspaceId } as WorkspaceEntity,
-        applicationId,
-      );
-
     await this.generateAndStore({
       workspaceId,
       applicationId,
       applicationUniversalIdentifier,
-      schema: printSchema(graphqlSchema),
+      schema,
     });
   }
 
