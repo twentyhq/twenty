@@ -37,6 +37,7 @@
         "config": "{projectRoot}/vitest.config.ts"
       }
     },
+    "set-local-version": {},
     "typecheck": {},
     "lint": {}
   }
