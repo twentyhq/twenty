@@ -367,6 +367,15 @@ describe('copyBaseApplicationProject', () => {
         ).toBe(true);
         expect(
           await fs.pathExists(
+            join(
+              srcPath,
+              'logic-functions',
+              'create-hello-world-company.ts',
+            ),
+          ),
+        ).toBe(true);
+        expect(
+          await fs.pathExists(
             join(srcPath, 'front-components', 'hello-world.tsx'),
           ),
         ).toBe(true);
@@ -458,6 +467,15 @@ describe('copyBaseApplicationProject', () => {
         expect(
           await fs.pathExists(
             join(srcPath, 'logic-functions', 'hello-world.ts'),
+          ),
+        ).toBe(false);
+        expect(
+          await fs.pathExists(
+            join(
+              srcPath,
+              'logic-functions',
+              'create-hello-world-company.ts',
+            ),
           ),
         ).toBe(false);
         expect(
@@ -569,6 +587,15 @@ describe('copyBaseApplicationProject', () => {
         expect(
           await fs.pathExists(
             join(srcPath, 'logic-functions', 'hello-world.ts'),
+          ),
+        ).toBe(true);
+        expect(
+          await fs.pathExists(
+            join(
+              srcPath,
+              'logic-functions',
+              'create-hello-world-company.ts',
+            ),
           ),
         ).toBe(true);
         expect(

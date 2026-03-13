@@ -1,10 +1,10 @@
 import { defineObject, FieldType } from 'twenty-sdk';
 
 export const EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER =
-  'dfd43356-39b3-4b55-b4a7-279bec689928';
+  '47fd9bd9-392b-4d9f-9091-9a91b1edf519';
 
 export const NAME_FIELD_UNIVERSAL_IDENTIFIER =
-  'd2d7f6cd-33f6-456f-bf00-17adeca926ba';
+  '2d9ff841-cf8e-44ec-ad8e-468455f7eebd';
 
 export default defineObject({
   universalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,

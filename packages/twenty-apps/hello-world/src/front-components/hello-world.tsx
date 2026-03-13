@@ -2,6 +2,9 @@ import { useEffect, useState } from 'react';
 import { CoreApiClient, CoreSchema } from 'twenty-client-sdk/core';
 import { defineFrontComponent } from 'twenty-sdk';
 
+export const HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER =
+  '7a758f23-5e7d-497d-98c9-7ca8d6c085b0';
+
 export const HelloWorld = () => {
   const client = new CoreApiClient();
   const [data, setData] = useState<
@@ -47,7 +50,7 @@ export const HelloWorld = () => {
 };
 
 export default defineFrontComponent({
-  universalIdentifier: 'd371f098-5b2c-42f0-898d-94459f1ee337',
+  universalIdentifier: HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
   name: 'hello-world-front-component',
   description: 'A sample front component',
   component: HelloWorld,
