@@ -218,12 +218,11 @@ describe('Object permission upsert should fail', () => {
       getObjectMetadataOperation,
     );
     const edges = objectMetadataResponse.body.data?.objects?.edges ?? [];
-    const personNode = edges.find(
-      (edge: { node: { nameSingular: string } }) =>
-        edge.node.nameSingular === 'person',
+    const systemObjectNode = edges.find(
+      (edge: { node: { isSystem: boolean } }) => edge.node.isSystem === true,
     )?.node;
-    jestExpectToBeDefined(personNode);
-    systemObjectMetadataId = personNode.id;
+    jestExpectToBeDefined(systemObjectNode);
+    systemObjectMetadataId = systemObjectNode.id;
   });
 
   afterAll(async () => {
