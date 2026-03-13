@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { createWriteStream } from 'fs';
@@ -34,8 +34,6 @@ const SDK_CLIENT_ARCHIVE_NAME = 'twenty-client-sdk.zip';
 
 @Injectable()
 export class SdkClientGenerationService {
-  private readonly logger = new Logger(SdkClientGenerationService.name);
-
   constructor(
     private readonly fileStorageService: FileStorageService,
     @InjectRepository(ApplicationEntity)
@@ -207,66 +205,6 @@ export class SdkClientGenerationService {
     }
 
     return entry.buffer();
-  }
-
-  // Ensures the SDK client archive exists in storage for this application.
-  // If missing (first creation, disk wipe, etc.), introspects the schema
-  // and generates the archive on-demand.
-  async ensureArchiveExists({
-    workspaceId,
-    applicationId,
-    applicationUniversalIdentifier,
-  }: {
-    workspaceId: string;
-    applicationId: string;
-    applicationUniversalIdentifier: string;
-  }): Promise<void> {
-    const exists = await this.archiveExists({
-      workspaceId,
-      applicationUniversalIdentifier,
-    });
-
-    if (exists) {
-      return;
-    }
-
-    this.logger.log(
-      `SDK client archive missing for application "${applicationUniversalIdentifier}" in workspace "${workspaceId}", generating on-demand`,
-    );
-
-    await this.generateApplicationClient({
-      workspaceId,
-      applicationId,
-      applicationUniversalIdentifier,
-    });
-  }
-
-  private async archiveExists({
-    workspaceId,
-    applicationUniversalIdentifier,
-  }: {
-    workspaceId: string;
-    applicationUniversalIdentifier: string;
-  }): Promise<boolean> {
-    try {
-      await this.fileStorageService.readFile({
-        workspaceId,
-        applicationUniversalIdentifier,
-        fileFolder: FileFolder.GeneratedSdkClient,
-        resourcePath: SDK_CLIENT_ARCHIVE_NAME,
-      });
-
-      return true;
-    } catch (error) {
-      if (
-        error instanceof FileStorageException &&
-        error.code === FileStorageExceptionCode.FILE_NOT_FOUND
-      ) {
-        return false;
-      }
-
-      throw error;
-    }
   }
 
   private async readArchiveStream({

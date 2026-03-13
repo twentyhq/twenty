@@ -9,6 +9,7 @@ import { Args, Mutation } from '@nestjs/graphql';
 import GraphQLUpload from 'graphql-upload/GraphQLUpload.mjs';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { FeatureFlagKey, FileFolder } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import type { FileUpload } from 'graphql-upload/processRequest.mjs';
 
@@ -129,6 +130,21 @@ export class ApplicationDevelopmentResolver {
       workspaceId,
     );
 
+    const application =
+      await this.applicationService.findByUniversalIdentifier({
+        universalIdentifier: manifest.application.universalIdentifier,
+        workspaceId,
+      });
+
+    if (!isDefined(application)) {
+      throw new ApplicationException(
+        `Application "${manifest.application.universalIdentifier}" not found in workspace "${workspaceId}". Run createDevelopmentApplication first.`,
+        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
+      );
+    }
+
+    const isFirstSync = !isDefined(application.version);
+
     const { workspaceMigration, hasSchemaMetadataChanged } =
       await this.applicationSyncService.synchronizeFromManifest({
         workspaceId,
@@ -136,21 +152,13 @@ export class ApplicationDevelopmentResolver {
         applicationRegistrationId,
       });
 
-    if (hasSchemaMetadataChanged) {
-      const application =
-        await this.applicationService.findByUniversalIdentifier({
-          universalIdentifier: manifest.application.universalIdentifier,
-          workspaceId,
-        });
-
-      if (application) {
-        await this.sdkClientGenerationService.generateApplicationClient({
-          workspaceId,
-          applicationId: application.id,
-          applicationUniversalIdentifier:
-            manifest.application.universalIdentifier,
-        });
-      }
+    if (isFirstSync || hasSchemaMetadataChanged) {
+      await this.sdkClientGenerationService.generateApplicationClient({
+        workspaceId,
+        applicationId: application.id,
+        applicationUniversalIdentifier:
+          manifest.application.universalIdentifier,
+      });
     }
 
     await this.syncRegistrationMetadata(

@@ -693,12 +693,6 @@ export class LambdaDriver implements LogicFunctionDriver {
       }
     }
 
-    await this.sdkClientGenerationService.ensureArchiveExists({
-      workspaceId: flatApplication.workspaceId,
-      applicationId: flatApplication.id,
-      applicationUniversalIdentifier,
-    });
-
     await this.deleteAllLayerVersions({
       lambdaClient: await this.getLambdaClient(),
       layerName,
