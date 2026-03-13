@@ -49,31 +49,31 @@ npx create-twenty-app@latest my-app --minimal
 Da qui puoi:
 
 ```bash filename="Terminal"
-# Add a new entity to your application (guided)
+# Aggiungi una nuova entità alla tua applicazione (guidata)
 yarn twenty entity:add
 
-# Watch your application's function logs
+# Monitora i log delle funzioni della tua applicazione
 yarn twenty function:logs
 
-# Execute a function by name
+# Esegui una funzione per nome
 yarn twenty function:execute -n my-function -p '{"name": "test"}'
 
-# Execute the pre-install function
+# Esegui la funzione di pre-installazione
 yarn twenty function:execute --preInstall
 
-# Execute the post-install function
+# Esegui la funzione post-installazione
 yarn twenty function:execute --postInstall
 
-# Build the app for distribution
+# Compila l'app per la distribuzione
 yarn twenty app:build
 
-# Publish the app to npm or a Twenty server
+# Pubblica l'app su npm o su un server Twenty
 yarn twenty app:publish
 
-# Uninstall the application from the current workspace
+# Disinstalla l'applicazione dallo spazio di lavoro corrente
 yarn twenty app:uninstall
 
-# Display commands' help
+# Mostra l'aiuto dei comandi
 yarn twenty help
 ```
 
@@ -1246,23 +1246,23 @@ Punti chiave:
 
 Esplora un esempio minimale end-to-end che dimostra oggetti, funzioni logiche, componenti front-end e trigger multipli [qui](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/hello-world):
 
-## Building your app
+## Compilazione della tua app
 
-Once you've developed your app with `app:dev`, use `app:build` to compile it into a distributable package.
+Una volta che hai sviluppato la tua app con `app:dev`, usa `app:build` per compilarla in un pacchetto distribuibile.
 
 ```bash filename="Terminal"
-# Build the app (output goes to .twenty/output/)
+# Compila l'app (l'output va in .twenty/output/)
 yarn twenty app:build
 
-# Build and create a tarball (.tgz) for distribution
+# Compila e crea un tarball (.tgz) per la distribuzione
 yarn twenty app:build --tarball
 ```
 
-The build process:
+Il processo di compilazione:
 
-1. **Parses and validates the manifest** — reads all `defineX()` entities from your source files and validates the manifest structure.
-2. **Compiles logic functions and front components** — bundles TypeScript sources into ESM `.mjs` files using esbuild.
-3. **Generates checksums** — computes MD5 hashes for each built file, stored in the manifest as `builtHandlerChecksum` / `builtComponentChecksum`.
+1. **Analizza e convalida il manifest** — legge tutte le entità `defineX()` dai tuoi file sorgente e convalida la struttura del manifest.
+2. **Compila le funzioni di logica e i componenti front-end** — raggruppa i sorgenti TypeScript in file ESM `.mjs` usando esbuild.
+3. **Genera i checksum** — calcola gli hash MD5 per ogni file compilato, memorizzati nel manifest come `builtHandlerChecksum` / `builtComponentChecksum`.
 4. **Generates the typed API client** — introspects the GraphQL schema and generates typed `CoreApiClient` and `MetadataApiClient` clients.
 5. **Runs a TypeScript type check** — runs `tsc --noEmit` to catch type errors before publishing.
 6. **Rebuilds with the generated client** — performs a second compilation pass so the generated client types are included.
