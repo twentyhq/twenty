@@ -5,8 +5,8 @@ import { supportChatState } from '@/client-config/states/supportChatState';
 
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useApolloClient } from '@apollo/client';
-import { MockedProvider } from '@apollo/client/testing';
+import { useApolloClient } from '@apollo/client/react';
+import { MockedProvider } from '@apollo/client/testing/react';
 import { type ReactNode, act } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 
@@ -73,7 +73,7 @@ jest.mock('@/domain-manager/hooks/useLastAuthenticatedWorkspaceDomain', () => ({
 }));
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
-  <MockedProvider mocks={Object.values(mocks)} addTypename={false}>
+  <MockedProvider mocks={Object.values(mocks)}>
     <MemoryRouter>
       <SnackBarComponentInstanceContext.Provider
         value={{ instanceId: 'test-instance-id' }}

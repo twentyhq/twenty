@@ -1,15 +1,16 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { ImageInput } from '@/ui/input/components/ImageInput';
+import { useMutation } from '@apollo/client/react';
 import {
-  useUpdateWorkspaceMutation,
-  useUploadWorkspaceLogoMutation,
+  UpdateWorkspaceDocument,
+  UploadWorkspaceLogoDocument,
 } from '~/generated-metadata/graphql';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const WorkspaceLogoUploader = () => {
-  const [uploadLogo] = useUploadWorkspaceLogoMutation();
-  const [updateWorkspace] = useUpdateWorkspaceMutation();
+  const [uploadLogo] = useMutation(UploadWorkspaceLogoDocument);
+  const [updateWorkspace] = useMutation(UpdateWorkspaceDocument);
   const [currentWorkspace, setCurrentWorkspace] = useAtomState(
     currentWorkspaceState,
   );

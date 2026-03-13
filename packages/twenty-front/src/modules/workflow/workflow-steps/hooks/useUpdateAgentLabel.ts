@@ -1,16 +1,17 @@
 import { isDefined } from 'twenty-shared/utils';
+import { useQuery, useMutation } from '@apollo/client/react';
 import {
-  useFindOneAgentQuery,
-  useUpdateOneAgentMutation,
+  FindOneAgentDocument,
+  UpdateOneAgentDocument,
 } from '~/generated-metadata/graphql';
 
 export const useUpdateAgentLabel = (agentId: string | undefined) => {
-  const { data: agentData } = useFindOneAgentQuery({
+  const { data: agentData } = useQuery(FindOneAgentDocument, {
     variables: { id: agentId || '' },
     skip: !isDefined(agentId),
   });
 
-  const [updateAgent] = useUpdateOneAgentMutation();
+  const [updateAgent] = useMutation(UpdateOneAgentDocument);
 
   const agent = agentData?.findOneAgent;
 

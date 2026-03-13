@@ -20,14 +20,8 @@ import {
 } from '~/testing/mock-data/users';
 import { sleep } from '~/utils/sleep';
 
-import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
-import { SidePanelRouter } from '@/side-panel/components/SidePanelRouter';
-import { SIDE_PANEL_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelComponentInstanceId';
-import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
-import { type SidePanelRootPage } from '@/side-panel/pages/root/components/SidePanelRootPage';
-import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
-import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
+import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
@@ -35,11 +29,19 @@ import { ContextStoreComponentInstanceContext } from '@/context-store/states/con
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
+import { SidePanelRouter } from '@/side-panel/components/SidePanelRouter';
+import { SIDE_PANEL_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelComponentInstanceId';
+import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
+import { type SidePanelRootPage } from '@/side-panel/pages/root/components/SidePanelRootPage';
+import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
+import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
+import { sidePanelPageInfoState } from '@/side-panel/states/sidePanelPageInfoState';
+import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { HttpResponse, graphql } from 'msw';
 import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { IconDotsVertical } from 'twenty-ui/display';
+import { IconDotsVertical, IconPlus } from 'twenty-ui/display';
 import { JestContextStoreSetter } from '~/testing/jest/JestContextStoreSetter';
 
 const openTimeout = 50;
@@ -87,6 +89,10 @@ const meta: Meta<typeof SidePanelRootPage> = {
         mockedUserData.currentUserWorkspace,
       );
       jotaiStore.set(isSidePanelOpenedState.atom, true);
+      jotaiStore.set(sidePanelPageInfoState.atom, {
+        title: 'Command Menu',
+        instanceId: SIDE_PANEL_COMPONENT_INSTANCE_ID,
+      });
       jotaiStore.set(sidePanelNavigationStackState.atom, [
         {
           page: SidePanelPages.Root,
@@ -244,3 +250,43 @@ export const NoResultsSearchFallback: Story = {
 //     expect(await canvas.findByText('Search records')).toBeVisible();
 //   },
 // };
+
+export const SubPageNavigation: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const objectButton = await canvas.findByText('Object');
+    expect(objectButton).toBeVisible();
+
+    await userEvent.click(objectButton);
+
+    expect(await canvas.findByText('Pick an object')).toBeVisible();
+
+    const backButton = await canvas.findByRole('button', { name: 'Go back' });
+    await userEvent.click(backButton);
+
+    expect(await canvas.findByText('Object')).toBeVisible();
+  },
+  decorators: [
+    (Story) => {
+      jotaiStore.set(
+        sidePanelPageState.atom,
+        SidePanelPages.NavigationMenuAddItem,
+      );
+      jotaiStore.set(sidePanelPageInfoState.atom, {
+        title: 'Add item',
+        instanceId: SIDE_PANEL_COMPONENT_INSTANCE_ID,
+      });
+      jotaiStore.set(sidePanelNavigationStackState.atom, [
+        {
+          page: SidePanelPages.NavigationMenuAddItem,
+          pageTitle: 'Add item',
+          pageIcon: IconPlus,
+          pageId: '1',
+        },
+      ]);
+
+      return <Story />;
+    },
+  ],
+};

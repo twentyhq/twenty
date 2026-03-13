@@ -1,6 +1,7 @@
+import { useQuery } from '@apollo/client/react';
 import {
-  useFindManyMarketplaceAppsQuery,
   type MarketplaceApp,
+  FindManyMarketplaceAppsDocument,
 } from '~/generated-metadata/graphql';
 
 export type MarketplaceAppWithContentCounts = MarketplaceApp & {
@@ -13,7 +14,7 @@ export type MarketplaceAppWithContentCounts = MarketplaceApp & {
 };
 
 export const useMarketplaceApps = () => {
-  const { data, loading, error } = useFindManyMarketplaceAppsQuery();
+  const { data, loading, error } = useQuery(FindManyMarketplaceAppsDocument);
 
   const marketplaceApps: MarketplaceAppWithContentCounts[] =
     data?.findManyMarketplaceApps.map((app) => {

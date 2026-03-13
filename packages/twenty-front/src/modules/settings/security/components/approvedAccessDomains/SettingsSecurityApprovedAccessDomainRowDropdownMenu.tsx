@@ -10,9 +10,10 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconDotsVertical, IconTrash } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
+import { useMutation } from '@apollo/client/react';
 import {
   type ApprovedAccessDomain,
-  useDeleteApprovedAccessDomainMutation,
+  DeleteApprovedAccessDomainDocument,
 } from '~/generated-metadata/graphql';
 
 type SettingsSecurityApprovedAccessDomainRowDropdownMenuProps = {
@@ -30,7 +31,9 @@ export const SettingsSecurityApprovedAccessDomainRowDropdownMenu = ({
 
   const { closeDropdown } = useCloseDropdown();
 
-  const [deleteApprovedAccessDomain] = useDeleteApprovedAccessDomainMutation();
+  const [deleteApprovedAccessDomain] = useMutation(
+    DeleteApprovedAccessDomainDocument,
+  );
 
   const handleDeleteApprovedAccessDomain = async () => {
     const result = await deleteApprovedAccessDomain({
@@ -47,7 +50,7 @@ export const SettingsSecurityApprovedAccessDomainRowDropdownMenu = ({
         });
       },
     });
-    if (isDefined(result.errors)) {
+    if (isDefined(result.error)) {
       enqueueErrorSnackBar({
         message: t`Could not delete approved access domain`,
         options: {

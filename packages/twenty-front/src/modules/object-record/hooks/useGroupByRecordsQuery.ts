@@ -1,3 +1,5 @@
+import { useMemo } from 'react';
+
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -22,13 +24,23 @@ export const useGroupByRecordsQuery = ({
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
-  const groupByRecordsQuery = generateGroupByRecordsQuery({
-    objectMetadataItem,
-    objectMetadataItems,
-    recordGqlFields,
-    computeReferences,
-    objectPermissionsByObjectMetadataId,
-  });
+  const groupByRecordsQuery = useMemo(
+    () =>
+      generateGroupByRecordsQuery({
+        objectMetadataItem,
+        objectMetadataItems,
+        recordGqlFields,
+        computeReferences,
+        objectPermissionsByObjectMetadataId,
+      }),
+    [
+      objectMetadataItem,
+      objectMetadataItems,
+      recordGqlFields,
+      computeReferences,
+      objectPermissionsByObjectMetadataId,
+    ],
+  );
 
   return {
     groupByRecordsQuery,

@@ -7,15 +7,16 @@ import { SettingsListCard } from '@/settings/components/SettingsListCard';
 import { SettingsSecurityApprovedAccessDomainRowDropdownMenu } from '@/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainRowDropdownMenu';
 import { SettingsSecurityApprovedAccessDomainValidationEffect } from '@/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainValidationEffect';
 import { approvedAccessDomainsState } from '@/settings/security/states/ApprovedAccessDomainsState';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { ApolloError } from '@apollo/client';
+import { useSnackBarOnQueryError } from '@/apollo/hooks/useSnackBarOnQueryError';
 import { styled } from '@linaria/react';
+import { useEffect } from 'react';
 import { useLingui } from '@lingui/react/macro';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconAt, IconMailCog, Status } from 'twenty-ui/display';
-import { useGetApprovedAccessDomainsQuery } from '~/generated-metadata/graphql';
+import { useQuery } from '@apollo/client/react';
+import { GetApprovedAccessDomainsDocument } from '~/generated-metadata/graphql';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 
@@ -26,7 +27,6 @@ const StyledLinkContainer = styled.div`
 `;
 
 export const SettingsApprovedAccessDomainsListCard = () => {
-  const { enqueueErrorSnackBar } = useSnackBar();
   const navigate = useNavigate();
   const { t } = useLingui();
   const { localeCatalog } = useAtomStateValue(dateLocaleState);
@@ -35,17 +35,21 @@ export const SettingsApprovedAccessDomainsListCard = () => {
     approvedAccessDomainsState,
   );
 
-  const { loading } = useGetApprovedAccessDomainsQuery({
+  const {
+    loading,
+    data: domainsData,
+    error: domainsError,
+  } = useQuery(GetApprovedAccessDomainsDocument, {
     fetchPolicy: 'network-only',
-    onCompleted: (data) => {
-      setApprovedAccessDomains(data?.getApprovedAccessDomains ?? []);
-    },
-    onError: (error: Error) => {
-      enqueueErrorSnackBar({
-        apolloError: error instanceof ApolloError ? error : undefined,
-      });
-    },
   });
+
+  useEffect(() => {
+    if (domainsData) {
+      setApprovedAccessDomains(domainsData?.getApprovedAccessDomains ?? []);
+    }
+  }, [domainsData, setApprovedAccessDomains]);
+
+  useSnackBarOnQueryError(domainsError);
 
   const getItemDescription = (createdAt: string) => {
     const beautifyPastDateRelative = beautifyPastDateRelativeToNow(

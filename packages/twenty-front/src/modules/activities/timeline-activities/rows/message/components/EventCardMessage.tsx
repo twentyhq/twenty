@@ -8,7 +8,9 @@ import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { Trans, useLingui } from '@lingui/react/macro';
+import { useEffect } from 'react';
 import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { isDefined } from 'twenty-shared/utils';
 import { OverflowingTextWithTooltip } from 'twenty-ui/display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -81,30 +83,37 @@ export const EventCardMessage = ({
         handle: true,
       },
     },
-    onCompleted: (data) => {
-      upsertRecordsInStore({ partialRecords: [data] });
-    },
   });
 
-  if (isDefined(error)) {
-    const shouldHideMessageContent = error.graphQLErrors.some(
-      (e) => e.extensions?.code === 'FORBIDDEN',
-    );
-
-    if (shouldHideMessageContent) {
-      return <EventCardMessageForbidden notSharedByFullName={authorFullName} />;
+  useEffect(() => {
+    if (message) {
+      upsertRecordsInStore({ partialRecords: [message] });
     }
+  }, [message, upsertRecordsInStore]);
 
-    const shouldHandleNotFound = error.graphQLErrors.some(
-      (e) => e.extensions?.code === 'NOT_FOUND',
-    );
-
-    if (shouldHandleNotFound) {
-      return (
-        <div>
-          <Trans>Message not found</Trans>
-        </div>
+  if (isDefined(error)) {
+    if (CombinedGraphQLErrors.is(error)) {
+      const shouldHideMessageContent = error.errors.some(
+        (e) => e.extensions?.code === 'FORBIDDEN',
       );
+
+      if (shouldHideMessageContent) {
+        return (
+          <EventCardMessageForbidden notSharedByFullName={authorFullName} />
+        );
+      }
+
+      const shouldHandleNotFound = error.errors.some(
+        (e) => e.extensions?.code === 'NOT_FOUND',
+      );
+
+      if (shouldHandleNotFound) {
+        return (
+          <div>
+            <Trans>Message not found</Trans>
+          </div>
+        );
+      }
     }
 
     return (

@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+
 import { CalendarEventDetails } from '@/activities/calendar/components/CalendarEventDetails';
 import { CalendarEventDetailsEffect } from '@/activities/calendar/components/CalendarEventDetailsEffect';
 import { type CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
@@ -41,11 +43,13 @@ export const SidePanelCalendarEventPage = () => {
     objectNameSingular: CoreObjectNameSingular.CalendarEvent,
     objectRecordId: viewableRecordId ?? '',
     recordGqlFields: calendarEventRecordGqlFields,
-    // TODO: this is not executed on sub-sequent runs, make sure that it is intended
-    onCompleted: (record) => {
-      upsertRecordsInStore({ partialRecords: [record] });
-    },
   });
+
+  useEffect(() => {
+    if (calendarEvent) {
+      upsertRecordsInStore({ partialRecords: [calendarEvent] });
+    }
+  }, [calendarEvent, upsertRecordsInStore]);
 
   if (!calendarEvent) {
     return null;

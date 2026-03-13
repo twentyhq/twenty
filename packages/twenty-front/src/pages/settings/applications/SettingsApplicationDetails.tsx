@@ -3,7 +3,8 @@ import { t } from '@lingui/core/macro';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useParams } from 'react-router-dom';
-import { useFindOneApplicationQuery } from '~/generated-metadata/graphql';
+import { useQuery } from '@apollo/client/react';
+import { FindOneApplicationDocument } from '~/generated-metadata/graphql';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import {
   IconApps,
@@ -32,7 +33,7 @@ export const SettingsApplicationDetails = () => {
     APPLICATION_DETAIL_ID,
   );
 
-  const { data } = useFindOneApplicationQuery({
+  const { data } = useQuery(FindOneApplicationDocument, {
     variables: { id: applicationId },
     skip: !applicationId,
   });

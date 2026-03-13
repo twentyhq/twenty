@@ -17,7 +17,8 @@ import { convertUpdateViewInputToCore } from '@/views/utils/convertUpdateViewInp
 import { useCallback, useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
-import { useUpdateCoreViewMutation } from '~/generated-metadata/graphql';
+import { useMutation } from '@apollo/client/react';
+import { UpdateCoreViewDocument } from '~/generated-metadata/graphql';
 
 export const useUpdateCurrentView = () => {
   const { canPersistChanges } = useCanPersistViewChanges();
@@ -30,7 +31,7 @@ export const useUpdateCurrentView = () => {
 
   const store = useStore();
 
-  const [updateOneCoreView] = useUpdateCoreViewMutation();
+  const [updateOneCoreView] = useMutation(UpdateCoreViewDocument);
   const { refreshCoreViewsByObjectMetadataId } =
     useRefreshCoreViewsByObjectMetadataId();
 

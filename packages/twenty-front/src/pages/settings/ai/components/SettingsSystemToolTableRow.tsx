@@ -1,7 +1,7 @@
-import { useLazyQuery } from '@apollo/client';
+import { useLazyQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 
 import { GET_TOOL_INPUT_SCHEMA } from '@/ai/graphql/queries/getToolInputSchemas';
 import { SettingsItemTypeTag } from '@/settings/components/SettingsItemTypeTag';
@@ -107,10 +107,13 @@ export const SettingsSystemToolTableRow = ({
   const [isExpanded, setIsExpanded] = useState(false);
   const { copyToClipboard } = useCopyToClipboard();
 
-  const [fetchSchema, { data: schemaData, loading: schemaLoading }] =
-    useLazyQuery<GetToolInputSchemaQuery>(GET_TOOL_INPUT_SCHEMA, {
-      variables: { toolName: tool.name },
-    });
+  const [fetchSchemaRaw, { data: schemaData, loading: schemaLoading }] =
+    useLazyQuery<GetToolInputSchemaQuery>(GET_TOOL_INPUT_SCHEMA);
+
+  const fetchSchema = useCallback(
+    () => fetchSchemaRaw({ variables: { toolName: tool.name } }),
+    [fetchSchemaRaw, tool.name],
+  );
 
   const inputSchema = schemaData?.getToolInputSchema;
 

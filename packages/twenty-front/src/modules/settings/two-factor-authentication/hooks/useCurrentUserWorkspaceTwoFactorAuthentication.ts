@@ -1,15 +1,17 @@
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { useMemo } from 'react';
+import { useMutation } from '@apollo/client/react';
 import {
   type TwoFactorAuthenticationMethodSummary,
-  useInitiateOtpProvisioningMutation,
+  InitiateOtpProvisioningDocument,
 } from '~/generated-metadata/graphql';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const useCurrentUserWorkspaceTwoFactorAuthentication = () => {
   const currentUserWorkspace = useAtomStateValue(currentUserWorkspaceState);
-  const [initiateCurrentUserWorkspaceOtpProvisioning] =
-    useInitiateOtpProvisioningMutation();
+  const [initiateCurrentUserWorkspaceOtpProvisioning] = useMutation(
+    InitiateOtpProvisioningDocument,
+  );
 
   const currentUserWorkspaceTwoFactorAuthenticationMethods = useMemo(() => {
     const methods: Record<string, TwoFactorAuthenticationMethodSummary> = {};
