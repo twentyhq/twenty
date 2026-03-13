@@ -2,6 +2,7 @@ import {
   type CanActivate,
   type ExecutionContext,
   Injectable,
+  Logger,
 } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 
@@ -17,6 +18,8 @@ import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.
 
 @Injectable()
 export class CaptchaGuard implements CanActivate {
+  private readonly logger = new Logger(CaptchaGuard.name);
+
   constructor(
     private captchaService: CaptchaService,
     private metricsService: MetricsService,
@@ -31,20 +34,26 @@ export class CaptchaGuard implements CanActivate {
 
     if (result.success) {
       return true;
-    } else {
-      await this.metricsService.incrementCounter({
-        key: MetricsKeys.InvalidCaptcha,
-        eventId: token || '',
-        ...(result.error ? { attributes: { error: result.error } } : {}),
-      });
+    }
 
-      throw new CaptchaException(
-        'Invalid Captcha, please try another device',
-        CaptchaExceptionCode.INVALID_CAPTCHA,
-        {
-          userFriendlyMessage: msg`Invalid Captcha, please try another device`,
-        },
+    if (result.error?.startsWith('captcha-provider-unreachable')) {
+      this.logger.warn(
+        `Captcha provider unreachable: ${result.error}`,
       );
     }
+
+    await this.metricsService.incrementCounter({
+      key: MetricsKeys.InvalidCaptcha,
+      eventId: token || '',
+      ...(result.error ? { attributes: { error: result.error } } : {}),
+    });
+
+    throw new CaptchaException(
+      'Invalid Captcha, please try another device',
+      CaptchaExceptionCode.INVALID_CAPTCHA,
+      {
+        userFriendlyMessage: msg`Invalid Captcha, please try another device`,
+      },
+    );
   }
 }
