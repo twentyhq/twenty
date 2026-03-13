@@ -562,29 +562,51 @@ export class FieldsWidgetUpsertService {
 
         const overriddenGroupId = field.overrides?.viewFieldGroupId;
 
-        return (
+        const hasStaleOverride =
           isDefined(overriddenGroupId) &&
           typeof overriddenGroupId === 'string' &&
-          deletedGroupIds.has(overriddenGroupId)
-        );
+          deletedGroupIds.has(overriddenGroupId);
+
+        const hasStaleBase =
+          overriddenGroupId === undefined &&
+          isDefined(field.viewFieldGroupId) &&
+          deletedGroupIds.has(field.viewFieldGroupId);
+
+        return hasStaleOverride || hasStaleBase;
       })
       .map((field) => {
-        const { viewFieldGroupId: _, ...remainingOverrides } = field.overrides!;
+        const overriddenGroupId = field.overrides?.viewFieldGroupId;
+        const hasStaleOverride =
+          isDefined(overriddenGroupId) &&
+          typeof overriddenGroupId === 'string' &&
+          deletedGroupIds.has(overriddenGroupId);
 
-        const cleanedOverrides =
-          Object.keys(remainingOverrides).length > 0
-            ? (remainingOverrides as typeof field.overrides)
-            : null;
+        if (hasStaleOverride) {
+          const { viewFieldGroupId: _, ...remainingOverrides } =
+            field.overrides!;
+
+          const cleanedOverrides =
+            Object.keys(remainingOverrides).length > 0
+              ? (remainingOverrides as typeof field.overrides)
+              : null;
+
+          return {
+            ...field,
+            overrides: cleanedOverrides,
+            universalOverrides: isDefined(cleanedOverrides)
+              ? fromViewFieldOverridesToUniversalOverrides({
+                  overrides: cleanedOverrides,
+                  viewFieldGroupUniversalIdentifierById: {},
+                })
+              : null,
+            updatedAt: now,
+          };
+        }
 
         return {
           ...field,
-          overrides: cleanedOverrides,
-          universalOverrides: isDefined(cleanedOverrides)
-            ? fromViewFieldOverridesToUniversalOverrides({
-                overrides: cleanedOverrides,
-                viewFieldGroupUniversalIdentifierById: {},
-              })
-            : null,
+          viewFieldGroupId: null,
+          viewFieldGroupUniversalIdentifier: null,
           updatedAt: now,
         };
       });
