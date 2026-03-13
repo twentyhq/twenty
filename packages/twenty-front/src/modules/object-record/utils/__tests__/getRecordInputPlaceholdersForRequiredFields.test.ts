@@ -202,9 +202,7 @@ describe('missingRequiredFieldsUnfillable', () => {
 
 describe('getRequiredFieldsUnfillableErrorMessage', () => {
   it('should return formatted message', () => {
-    const fields = [
-      createMockField({ name: 'status', label: 'Status' }),
-    ];
+    const fields = [createMockField({ name: 'status', label: 'Status' })];
     const message = getRequiredFieldsUnfillableErrorMessage(fields);
     expect(message).toContain('Status');
     expect(message).toContain('cannot be auto-filled');

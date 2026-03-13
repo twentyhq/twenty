@@ -3,9 +3,9 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { getJoinColumnName } from '@/object-record/record-field/ui/utils/junction/getJoinColumnName';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { format } from 'date-fns';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
+import { format } from 'date-fns';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
@@ -16,6 +16,10 @@ const UNTITLED_PLACEHOLDER = 'Untitled';
 // (null, ''), this utility produces valid non-null placeholders for required
 // fields so the create mutation can succeed. The backend rejects null/empty
 // for required TEXT fields.
+//
+// TODO: Long-term product vision: when quick-create has no/minimal input, show
+// a creation form instead of auto-creating with placeholders, so users provide
+// real data rather than editing placeholder records after creation.
 
 type GetRecordInputPlaceholdersForRequiredFieldsResult = {
   placeholders: Partial<ObjectRecord>;

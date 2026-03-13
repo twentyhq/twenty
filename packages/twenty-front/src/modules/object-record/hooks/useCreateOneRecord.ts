@@ -116,7 +116,9 @@ export const useCreateOneRecord = <
     if (missingRequiredFieldsUnfillable.length > 0) {
       setLoading(false);
       throw new CustomError(
-        getRequiredFieldsUnfillableErrorMessage(missingRequiredFieldsUnfillable),
+        getRequiredFieldsUnfillableErrorMessage(
+          missingRequiredFieldsUnfillable,
+        ),
         REQUIRED_FIELDS_UNFILLABLE_ERROR_CODE,
       );
     }
