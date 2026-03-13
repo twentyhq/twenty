@@ -60,11 +60,14 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
 
   const hasReadPermission = objectPermissions.canReadObjectRecords;
 
-  const defaultVariables = useMemo(() => ({
-    filter,
-    limit,
-    orderBy,
-  }), [filter, limit, orderBy]);
+  const defaultVariables = useMemo(
+    () => ({
+      filter,
+      limit,
+      orderBy,
+    }),
+    [filter, limit, orderBy],
+  );
 
   const [findManyRecords, { data, error, fetchMore }] =
     useLazyQuery<RecordGqlOperationFindManyResult>(findManyRecordsQuery, {
