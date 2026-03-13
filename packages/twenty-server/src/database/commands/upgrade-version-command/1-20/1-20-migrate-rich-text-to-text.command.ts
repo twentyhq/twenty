@@ -18,7 +18,7 @@ import { type WorkspaceCacheKeyName } from 'src/engine/workspace-cache/types/wor
 @Command({
   name: 'upgrade:1-20:migrate-rich-text-to-text',
   description:
-    'Migrate deprecated RICH_TEXT field metadata type to TEXT. The underlying column type is already text, so only the metadata needs updating.',
+    'Migrate deprecated RICH_TEXT (V1) to TEXT and rename RICH_TEXT_V2 to RICH_TEXT. The underlying column type is already text, so only the metadata needs updating.',
 })
 export class MigrateRichTextToTextCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   constructor(
@@ -47,7 +47,7 @@ export class MigrateRichTextToTextCommand extends ActiveOrSuspendedWorkspacesMig
 
     if (dryRun) {
       this.logger.log(
-        `[DRY RUN] Would update RICH_TEXT -> TEXT in core.fieldMetadata for workspace ${workspaceId}. Skipping.`,
+        `[DRY RUN] Would update RICH_TEXT -> TEXT and RICH_TEXT_V2 -> RICH_TEXT in core.fieldMetadata for workspace ${workspaceId}. Skipping.`,
       );
 
       return;
@@ -58,7 +58,7 @@ export class MigrateRichTextToTextCommand extends ActiveOrSuspendedWorkspacesMig
     await queryRunner.connect();
 
     try {
-      const result = await queryRunner.query(
+      const v1Result = await queryRunner.query(
         `UPDATE core."fieldMetadata"
          SET "type" = 'TEXT'
          WHERE "workspaceId" = $1
@@ -67,16 +67,36 @@ export class MigrateRichTextToTextCommand extends ActiveOrSuspendedWorkspacesMig
         [workspaceId],
       );
 
-      const updatedCount = result.length;
+      const v1Count = v1Result.length;
 
-      if (updatedCount > 0) {
+      if (v1Count > 0) {
         this.logger.log(
-          `Migrated ${updatedCount} RICH_TEXT field(s) to TEXT in workspace ${workspaceId}`,
+          `Migrated ${v1Count} RICH_TEXT (V1) field(s) to TEXT in workspace ${workspaceId}`,
         );
+      }
+
+      const renameResult = await queryRunner.query(
+        `UPDATE core."fieldMetadata"
+         SET "type" = 'RICH_TEXT'
+         WHERE "workspaceId" = $1
+           AND "type" = 'RICH_TEXT_V2'
+         RETURNING "id"`,
+        [workspaceId],
+      );
+
+      const renameCount = renameResult.length;
+
+      if (renameCount > 0) {
+        this.logger.log(
+          `Renamed ${renameCount} RICH_TEXT_V2 field(s) to RICH_TEXT in workspace ${workspaceId}`,
+        );
+      }
+
+      if (v1Count > 0 || renameCount > 0) {
         await this.invalidateCaches(workspaceId);
       } else {
         this.logger.log(
-          `No RICH_TEXT fields found in workspace ${workspaceId}`,
+          `No RICH_TEXT or RICH_TEXT_V2 fields found in workspace ${workspaceId}`,
         );
       }
     } finally {

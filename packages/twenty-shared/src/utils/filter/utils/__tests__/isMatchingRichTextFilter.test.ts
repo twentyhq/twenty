@@ -37,7 +37,7 @@ describe('isMatchingRichTextFilter', () => {
           richTextFilter: {} as any,
           value: 'test',
         }),
-      ).toThrow('Unexpected value for RICH_TEXT_V2 filter');
+      ).toThrow('Unexpected value for RICH_TEXT filter');
     });
   });
 });

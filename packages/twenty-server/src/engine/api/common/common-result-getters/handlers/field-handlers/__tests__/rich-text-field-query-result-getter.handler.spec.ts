@@ -37,7 +37,7 @@ describe('RichTextFieldQueryResultGetterHandler', () => {
   });
 
   describe('should return record unchanged', () => {
-    it('when no RICH_TEXT_V2 field metadata is present', async () => {
+    it('when no RICH_TEXT field metadata is present', async () => {
       const record = {
         ...baseRecord,
         bodyV2: { blocknote: '[]', markdown: null },
@@ -156,7 +156,7 @@ describe('RichTextFieldQueryResultGetterHandler', () => {
     });
   });
 
-  describe('should handle multiple RICH_TEXT_V2 fields', () => {
+  describe('should handle multiple RICH_TEXT fields', () => {
     it('when record has multiple rich text fields', async () => {
       const multiFieldMetadata = [
         { type: FieldMetadataType.RICH_TEXT, name: 'bodyV2' },

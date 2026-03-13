@@ -175,7 +175,7 @@ describe('findDefaultNullEquivalentValue', () => {
     });
   });
 
-  describe('RICH_TEXT_V2', () => {
+  describe('RICH_TEXT', () => {
     it('should return undefined for blocknote', () => {
       expect(
         findDefaultNullEquivalentValue({

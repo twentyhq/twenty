@@ -18,7 +18,7 @@ export const isMatchingRichTextFilter = ({
     }
     default: {
       throw new Error(
-        `Unexpected value for RICH_TEXT_V2 filter : ${JSON.stringify(richTextFilter)}`,
+        `Unexpected value for RICH_TEXT filter : ${JSON.stringify(richTextFilter)}`,
       );
     }
   }

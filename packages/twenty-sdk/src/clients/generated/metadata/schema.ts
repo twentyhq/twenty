@@ -309,7 +309,7 @@ export interface Field {
 
 
 /** Type of the field */
-export type FieldMetadataType = 'ACTOR' | 'ADDRESS' | 'ARRAY' | 'BOOLEAN' | 'CURRENCY' | 'DATE' | 'DATE_TIME' | 'EMAILS' | 'FILES' | 'FULL_NAME' | 'LINKS' | 'MORPH_RELATION' | 'MULTI_SELECT' | 'NUMBER' | 'NUMERIC' | 'PHONES' | 'POSITION' | 'RATING' | 'RAW_JSON' | 'RELATION' | 'RICH_TEXT_V2' | 'SELECT' | 'TEXT' | 'TS_VECTOR' | 'UUID'
+export type FieldMetadataType = 'ACTOR' | 'ADDRESS' | 'ARRAY' | 'BOOLEAN' | 'CURRENCY' | 'DATE' | 'DATE_TIME' | 'EMAILS' | 'FILES' | 'FULL_NAME' | 'LINKS' | 'MORPH_RELATION' | 'MULTI_SELECT' | 'NUMBER' | 'NUMERIC' | 'PHONES' | 'POSITION' | 'RATING' | 'RAW_JSON' | 'RELATION' | 'RICH_TEXT' | 'SELECT' | 'TEXT' | 'TS_VECTOR' | 'UUID'
 
 export interface IndexField {
     id: Scalars['UUID']
@@ -8290,7 +8290,7 @@ export const enumFieldMetadataType = {
    RATING: 'RATING' as const,
    RAW_JSON: 'RAW_JSON' as const,
    RELATION: 'RELATION' as const,
-   RICH_TEXT: 'RICH_TEXT_V2' as const,
+   RICH_TEXT: 'RICH_TEXT' as const,
    SELECT: 'SELECT' as const,
    TEXT: 'TEXT' as const,
    TS_VECTOR: 'TS_VECTOR' as const,

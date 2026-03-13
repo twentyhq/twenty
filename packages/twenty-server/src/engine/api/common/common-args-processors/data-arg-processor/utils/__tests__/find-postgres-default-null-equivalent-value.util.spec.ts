@@ -171,7 +171,7 @@ describe('findPostgresDefaultNullEquivalentValue', () => {
     });
   });
 
-  describe('RICH_TEXT_V2', () => {
+  describe('RICH_TEXT', () => {
     it('should return json default for blocknote', () => {
       expect(
         findPostgresDefaultNullEquivalentValue(
