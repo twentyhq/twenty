@@ -1,12 +1,13 @@
-import { isNonEmptyString } from '@sniptt/guards';
-import { t } from '@lingui/core/macro';
-import { v4 } from 'uuid';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { getJoinColumnName } from '@/object-record/record-field/ui/utils/junction/getJoinColumnName';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { format } from 'date-fns';
+import { t } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
 const UNTITLED_PLACEHOLDER = 'Untitled';
@@ -42,7 +43,9 @@ const getPlaceholderForFieldType = (
 
   if (field.type === FieldMetadataType.FULL_NAME) {
     const defaultFirstName =
-      defaultValue && typeof defaultValue === 'object' && 'firstName' in defaultValue
+      defaultValue &&
+      typeof defaultValue === 'object' &&
+      'firstName' in defaultValue
         ? (defaultValue as { firstName?: string }).firstName
         : undefined;
     const firstName = isNonEmptyString(defaultFirstName)
@@ -69,10 +72,7 @@ const getPlaceholderForFieldType = (
   }
 
   if (field.type === FieldMetadataType.DATE) {
-    return (
-      defaultValue ??
-      new Date().toISOString().split('T')[0]
-    );
+    return defaultValue ?? format(new Date(), 'yyyy-MM-dd');
   }
 
   if (field.type === FieldMetadataType.DATE_TIME) {
@@ -121,9 +121,9 @@ const getPlaceholderForFieldType = (
 
   if (field.type === FieldMetadataType.PHONES) {
     return {
-      primaryPhoneNumber: untitledLabel,
-      primaryPhoneCountryCode: '',
-      primaryPhoneCallingCode: '',
+      primaryPhoneNumber: '5551234567',
+      primaryPhoneCountryCode: 'US',
+      primaryPhoneCallingCode: '+1',
       additionalPhones: null,
     };
   }
@@ -137,7 +137,9 @@ const getPlaceholderForFieldType = (
 
   if (field.type === FieldMetadataType.CURRENCY) {
     const defaultCurrency =
-      defaultValue && typeof defaultValue === 'object' && 'currencyCode' in defaultValue
+      defaultValue &&
+      typeof defaultValue === 'object' &&
+      'currencyCode' in defaultValue
         ? (defaultValue as { amountMicros?: number; currencyCode?: string })
         : undefined;
     return {
@@ -149,9 +151,7 @@ const getPlaceholderForFieldType = (
   return undefined;
 };
 
-const canProvidePlaceholderForFieldType = (
-  fieldType: string,
-): boolean => {
+const canProvidePlaceholderForFieldType = (fieldType: string): boolean => {
   const placeholderableTypes = [
     FieldMetadataType.TEXT,
     FieldMetadataType.FULL_NAME,
@@ -202,7 +202,7 @@ export const getRecordInputPlaceholdersForRequiredFields = (
     const existingValue = recordInput[field.name];
     const relationJoinColumnName =
       isRequiredRelationField(field) || isRequiredMorphRelationField(field)
-        ? getJoinColumnName(field.settings) ?? `${field.name}Id`
+        ? (getJoinColumnName(field.settings) ?? `${field.name}Id`)
         : undefined;
     const joinColumnValue = relationJoinColumnName
       ? recordInput[relationJoinColumnName]
