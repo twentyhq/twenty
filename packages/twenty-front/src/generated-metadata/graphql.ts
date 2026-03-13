@@ -1883,6 +1883,7 @@ export enum FileFolder {
   Dependencies = 'Dependencies',
   File = 'File',
   FilesField = 'FilesField',
+  GeneratedSdkClient = 'GeneratedSdkClient',
   PersonPicture = 'PersonPicture',
   ProfilePicture = 'ProfilePicture',
   PublicAsset = 'PublicAsset',
@@ -1930,6 +1931,7 @@ export type FrontComponent = {
   sourceComponentPath: Scalars['String'];
   universalIdentifier?: Maybe<Scalars['UUID']>;
   updatedAt: Scalars['DateTime'];
+  usesSdkClient: Scalars['Boolean'];
 };
 
 export type FrontComponentConfiguration = {
@@ -6300,7 +6302,7 @@ export type FindOneFrontComponentQueryVariables = Exact<{
 }>;
 
 
-export type FindOneFrontComponentQuery = { __typename?: 'Query', frontComponent?: { __typename?: 'FrontComponent', id: string, name: string, applicationId: string, builtComponentChecksum: string, isHeadless: boolean, applicationTokenPair?: { __typename?: 'ApplicationTokenPair', applicationAccessToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, applicationRefreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } | null } | null };
+export type FindOneFrontComponentQuery = { __typename?: 'Query', frontComponent?: { __typename?: 'FrontComponent', id: string, name: string, applicationId: string, builtComponentChecksum: string, isHeadless: boolean, usesSdkClient: boolean, applicationTokenPair?: { __typename?: 'ApplicationTokenPair', applicationAccessToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, applicationRefreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } | null } | null };
 
 export type LogicFunctionFieldsFragment = { __typename?: 'LogicFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, sourceHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, cronTriggerSettings?: any | null, databaseEventTriggerSettings?: any | null, httpRouteTriggerSettings?: any | null, applicationId?: string | null, createdAt: string, updatedAt: string };
 
@@ -11349,6 +11351,7 @@ export const FindOneFrontComponentDocument = gql`
     applicationId
     builtComponentChecksum
     isHeadless
+    usesSdkClient
     applicationTokenPair {
       applicationAccessToken {
         token

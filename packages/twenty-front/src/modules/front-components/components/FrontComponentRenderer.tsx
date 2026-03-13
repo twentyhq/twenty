@@ -79,9 +79,7 @@ export const FrontComponentRenderer = ({
     checksum: data.frontComponent.builtComponentChecksum,
   });
 
-  const usesSdkClient =
-    (data.frontComponent as { usesSdkClient?: boolean })?.usesSdkClient ??
-    false;
+  const usesSdkClient = data.frontComponent.usesSdkClient;
 
   const accessToken = applicationTokenPair.applicationAccessToken.token;
 
@@ -94,7 +92,9 @@ export const FrontComponentRenderer = ({
           applicationAccessToken={accessToken}
           applicationId={data.frontComponent.applicationId}
           executionContext={executionContext}
-          frontComponentHostCommunicationApi={frontComponentHostCommunicationApi}
+          frontComponentHostCommunicationApi={
+            frontComponentHostCommunicationApi
+          }
           onError={handleError}
         />
       </FrontComponentRendererProvider>
