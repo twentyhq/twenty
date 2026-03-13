@@ -97,7 +97,12 @@ export const SettingsEnterprise = ({
   const [enterpriseKey, setEnterpriseKey] = useState('');
   const [isActivating, setIsActivating] = useState(false);
   const [setEnterpriseKeyMutation] = useMutation<{
-    setEnterpriseKey: { isValid: boolean; licensee: string | null; expiresAt: string | null; subscriptionId: string | null };
+    setEnterpriseKey: {
+      isValid: boolean;
+      licensee: string | null;
+      expiresAt: string | null;
+      subscriptionId: string | null;
+    };
   }>(SET_ENTERPRISE_KEY);
   const [refreshValidityTokenMutation] = useMutation<{
     refreshEnterpriseValidityToken: boolean;
