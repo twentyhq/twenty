@@ -41,6 +41,7 @@ const getAddMenuItemInsertionContext = (
   return {
     targetFolderId,
     targetIndex: selectedIndexInFolder + offset,
+    disableDrag: true,
   };
 };
 

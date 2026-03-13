@@ -159,6 +159,7 @@ export {
   IconCirclePlus,
   IconCircleX,
   IconClick,
+  IconClock,
   IconClockHour8,
   IconClockPlay,
   IconClockShare,

@@ -4,10 +4,11 @@ import { getColorSchemeByIndex } from '@/page-layout/widgets/graph/utils/getColo
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { useContext } from 'react';
 import { ColorSample } from 'twenty-ui/display';
 import { MenuItemSelect } from 'twenty-ui/navigation';
 import { getMainColorNameFromPaletteColorName } from 'twenty-ui/utilities';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { type ThemeColor } from 'twenty-ui/theme';
 type ChartColorPaletteOptionProps = {
   selectedItemId: string | null;
@@ -26,7 +27,8 @@ export const ChartColorPaletteOption = ({
   currentColor,
   onSelectColor,
 }: ChartColorPaletteOptionProps) => {
-  const colorRegistry = createGraphColorRegistry();
+  const { theme } = useContext(ThemeContext);
+  const colorRegistry = createGraphColorRegistry(theme.color);
 
   const paletteColors = Array.from(
     { length: CHART_SETTINGS_PALETTE_COLOR_GROUP_COUNT },

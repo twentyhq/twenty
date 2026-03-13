@@ -3,6 +3,7 @@ import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { RecordIndexContainerGater } from '@/object-record/record-index/components/RecordIndexContainerGater';
+import { RecordIndexSkeletonLoader } from '@/object-record/record-index/components/RecordIndexSkeletonLoader';
 import { PageContainer } from '@/ui/layout/page/components/PageContainer';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isUndefined } from '@sniptt/guards';
@@ -16,7 +17,7 @@ export const RecordIndexPage = () => {
   const { objectMetadataItems } = useObjectMetadataItems();
 
   if (isUndefined(contextStoreCurrentObjectMetadataItemId)) {
-    return <></>;
+    return <RecordIndexSkeletonLoader />;
   }
 
   const objectMetadataItem = objectMetadataItems.find(
@@ -25,7 +26,7 @@ export const RecordIndexPage = () => {
   );
 
   if (isUndefined(objectMetadataItem)) {
-    return <></>;
+    return <RecordIndexSkeletonLoader />;
   }
 
   return (

@@ -14,7 +14,7 @@ beforeAll(async () => {
     profiles: {
       default: {
         apiUrl: process.env.TWENTY_API_URL,
-        apiKey: process.env.TWENTY_TEST_API_KEY,
+        apiKey: process.env.TWENTY_API_KEY,
       },
     },
   };

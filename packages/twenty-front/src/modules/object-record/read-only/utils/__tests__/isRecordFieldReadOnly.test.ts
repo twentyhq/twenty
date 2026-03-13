@@ -23,6 +23,7 @@ describe('isRecordFieldReadOnly', () => {
       fieldMetadataItem: {
         id: 'field-123',
         isUIReadOnly: false,
+        isCustom: false,
       },
     });
 
@@ -39,6 +40,7 @@ describe('isRecordFieldReadOnly', () => {
       fieldMetadataItem: {
         id: 'field-123',
         isUIReadOnly: false,
+        isCustom: false,
       },
     });
 
@@ -57,6 +59,7 @@ describe('isRecordFieldReadOnly', () => {
       fieldMetadataItem: {
         id: 'field-123',
         isUIReadOnly: false,
+        isCustom: false,
       },
     });
 
@@ -69,6 +72,7 @@ describe('isRecordFieldReadOnly', () => {
       fieldMetadataItem: {
         id: 'field-123',
         isUIReadOnly: true,
+        isCustom: false,
       },
     });
 
@@ -81,6 +85,48 @@ describe('isRecordFieldReadOnly', () => {
       fieldMetadataItem: {
         id: 'field-123',
         isUIReadOnly: false,
+        isCustom: false,
+      },
+    });
+
+    expect(result).toBe(false);
+  });
+
+  it('should return true when field is non-custom on a system object', () => {
+    const result = isRecordFieldReadOnly({
+      ...mockParams,
+      isSystemObject: true,
+      fieldMetadataItem: {
+        id: 'field-123',
+        isUIReadOnly: false,
+        isCustom: false,
+      },
+    });
+
+    expect(result).toBe(true);
+  });
+
+  it('should return false when field is custom on a system object', () => {
+    const result = isRecordFieldReadOnly({
+      ...mockParams,
+      isSystemObject: true,
+      fieldMetadataItem: {
+        id: 'field-123',
+        isUIReadOnly: false,
+        isCustom: true,
+      },
+    });
+
+    expect(result).toBe(false);
+  });
+
+  it('should return false when isSystemObject is not provided', () => {
+    const result = isRecordFieldReadOnly({
+      ...mockParams,
+      fieldMetadataItem: {
+        id: 'field-123',
+        isUIReadOnly: false,
+        isCustom: false,
       },
     });
 

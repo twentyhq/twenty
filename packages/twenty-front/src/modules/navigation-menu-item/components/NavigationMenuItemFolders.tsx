@@ -9,13 +9,7 @@ import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import { NavigationDrawerInput } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerInput';
 
-type NavigationMenuItemFoldersProps = {
-  isNavigationSectionOpen: boolean;
-};
-
-export const NavigationMenuItemFolders = ({
-  isNavigationSectionOpen,
-}: NavigationMenuItemFoldersProps) => {
+export const NavigationMenuItemFolders = () => {
   const [newFolderName, setNewFolderName] = useState('');
 
   const { userNavigationMenuItemsByFolder } = useNavigationMenuItemsByFolder();
@@ -60,10 +54,6 @@ export const NavigationMenuItemFolders = ({
     setNewFolderName('');
     setIsNavigationMenuItemFolderCreating(false);
   };
-
-  if (!isNavigationSectionOpen) {
-    return null;
-  }
 
   return (
     <>

@@ -7,6 +7,7 @@ export const APPLICATION_MANIFEST_METADATA_NAMES = [
   'frontComponent',
   'role',
   'skill',
+  'agent',
   'view',
   'viewField',
   'viewFieldGroup',

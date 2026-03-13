@@ -68,13 +68,13 @@ const StyledRowDraggableCloneCSSBridge = styled.div`
   div.table-cell:nth-of-type(1) {
     left: 0px;
     position: sticky;
-    z-index: ${TABLE_Z_INDEX.cell.withGroups.sticky};
+    z-index: ${TABLE_Z_INDEX.cell.sticky};
   }
 
   div.table-cell:nth-of-type(2) {
     left: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px;
     position: sticky;
-    z-index: ${TABLE_Z_INDEX.cell.withoutGroups.sticky};
+    z-index: ${TABLE_Z_INDEX.cell.sticky};
   }
 
   div.table-cell-0-0 {
@@ -87,7 +87,7 @@ const StyledRowDraggableCloneCSSBridge = styled.div`
   div.table-cell:nth-of-type(3) {
     left: ${`${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH + RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px`};
     position: sticky;
-    z-index: ${TABLE_Z_INDEX.cell.withoutGroups.sticky};
+    z-index: ${TABLE_Z_INDEX.cell.sticky};
 
     ${HorizontalScrollBoxShadowCSS}
   }
@@ -180,10 +180,8 @@ export const RecordTableBodyVirtualizedDraggableClone = ({
         }}
         isDragging={draggableSnapshot.isDragging}
         data-testid={`row-id-${recordId}`}
-        data-virtualized-id={recordId}
         data-selectable-id={recordId}
         onClick={() => {}}
-        isFirstRowOfGroup={false}
       >
         <RecordTableRowDraggableContextProvider
           value={{

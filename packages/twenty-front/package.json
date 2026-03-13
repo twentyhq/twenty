@@ -38,6 +38,7 @@
     "@calcom/embed-react": "^1.5.3",
     "@cyntler/react-doc-viewer": "^1.17.0",
     "@dagrejs/dagre": "^1.1.8",
+    "@dnd-kit/react": "^0.3.2",
     "@floating-ui/react": "^0.24.3",
     "@graphiql/plugin-explorer": "^1.0.2",
     "@graphiql/react": "^0.23.0",

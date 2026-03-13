@@ -15,7 +15,6 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 const StyledText = styled.div`
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
 `;
 
 const StyledCloseButtonContainer = styled.div`

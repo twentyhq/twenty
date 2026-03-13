@@ -70,6 +70,7 @@ export const computeFlatDefaultRecordPageLayoutToCreate = ({
       deletedAt: null,
       icon: tabProps.icon,
       layoutMode: tabProps.layoutMode,
+      overrides: null,
     });
 
     const isFieldsWidget = widgetKey === 'fields';
@@ -120,6 +121,7 @@ export const computeFlatDefaultRecordPageLayoutToCreate = ({
       updatedAt: now,
       deletedAt: null,
       conditionalDisplay: null,
+      overrides: null,
     });
   }
 

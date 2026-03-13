@@ -30,6 +30,7 @@ import {
 
 type ViewPickerOptionDropdownProps = {
   isIndexView: boolean;
+  isLastView: boolean;
   view: Pick<
     View,
     | 'id'
@@ -45,6 +46,7 @@ type ViewPickerOptionDropdownProps = {
 
 export const ViewPickerOptionDropdown = ({
   isIndexView,
+  isLastView,
   onEdit,
   view,
   handleViewSelect,
@@ -149,12 +151,14 @@ export const ViewPickerOptionDropdown = ({
                           closeDropdown(dropdownId);
                         }}
                       />
-                      <MenuItem
-                        LeftIcon={IconTrash}
-                        text={t`Delete`}
-                        onClick={handleDelete}
-                        accent="danger"
-                      />
+                      {!isLastView && (
+                        <MenuItem
+                          LeftIcon={IconTrash}
+                          text={t`Delete`}
+                          onClick={handleDelete}
+                          accent="danger"
+                        />
+                      )}
                     </>
                   )}
                 </>

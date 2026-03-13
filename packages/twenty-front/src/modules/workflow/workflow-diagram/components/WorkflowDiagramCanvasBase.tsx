@@ -1,4 +1,4 @@
-import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
+import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { sidePanelWidthState } from '@/side-panel/states/sidePanelWidthState';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { useListenToSidePanelClosing } from '@/ui/layout/side-panel/hooks/useListenToSidePanelClosing';
@@ -256,7 +256,7 @@ export const WorkflowDiagramCanvasBase = ({
   }, [workflowDiagram, workflowInsertStepIds]);
 
   const isSidePanelOpened = useAtomStateValue(isSidePanelOpenedState);
-  const { isInSidePanel } = useContext(ActionMenuContext);
+  const { isInSidePanel } = useContext(CommandMenuContext);
 
   const handleEdgesChange = (
     edgeChanges: Array<EdgeChange<WorkflowDiagramEdge>>,

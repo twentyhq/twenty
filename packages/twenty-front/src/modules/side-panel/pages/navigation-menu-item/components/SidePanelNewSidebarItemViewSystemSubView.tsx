@@ -1,21 +1,20 @@
 import { useLingui } from '@lingui/react/macro';
 import { useIcons } from 'twenty-ui/display';
 
-import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
-import { SidePanelList } from '@/side-panel/components/SidePanelList';
-import { SidePanelSubViewWithSearch } from '@/side-panel/components/SidePanelSubViewWithSearch';
-import { useSidePanelFilteredPickerItems } from '@/side-panel/hooks/useSidePanelFilteredPickerItems';
 import { NavigationMenuItemStyleIcon } from '@/navigation-menu-item/components/NavigationMenuItemStyleIcon';
 import { getStandardObjectIconColor } from '@/navigation-menu-item/utils/getStandardObjectIconColor';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
+import { SidePanelList } from '@/side-panel/components/SidePanelList';
+import { SidePanelSubViewWithSearch } from '@/side-panel/components/SidePanelSubViewWithSearch';
+import { useSidePanelFilteredPickerItems } from '@/side-panel/hooks/useSidePanelFilteredPickerItems';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 
 type SidePanelNewSidebarItemViewSystemSubViewProps = {
   systemObjects: ObjectMetadataItem[];
   searchValue: string;
   onSearchChange: (value: string) => void;
-  onBack: () => void;
   onSelectObject: (objectMetadataItem: ObjectMetadataItem) => void;
 };
 
@@ -23,7 +22,6 @@ export const SidePanelNewSidebarItemViewSystemSubView = ({
   systemObjects,
   searchValue,
   onSearchChange,
-  onBack,
   onSelectObject,
 }: SidePanelNewSidebarItemViewSystemSubViewProps) => {
   const { t } = useLingui();
@@ -44,8 +42,6 @@ export const SidePanelNewSidebarItemViewSystemSubView = ({
 
   return (
     <SidePanelSubViewWithSearch
-      backBarTitle={t`System objects`}
-      onBack={onBack}
       searchPlaceholder={t`Search a system object...`}
       searchValue={searchValue}
       onSearchChange={onSearchChange}

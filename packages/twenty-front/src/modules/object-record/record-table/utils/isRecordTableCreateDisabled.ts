@@ -1,14 +1,17 @@
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 
 const OBJECTS_WITHOUT_MANUAL_RECORD_CREATION: readonly CoreObjectNameSingular[] =
   [CoreObjectNameSingular.WorkflowRun, CoreObjectNameSingular.WorkflowVersion];
 
 export const isRecordTableCreateDisabled = (
-  objectNameSingular: string,
+  objectMetadataItem: Pick<ObjectMetadataItem, 'nameSingular' | 'isSystem'>,
 ): boolean => {
-  const isDisabled = OBJECTS_WITHOUT_MANUAL_RECORD_CREATION.includes(
-    objectNameSingular as CoreObjectNameSingular,
-  );
+  if (objectMetadataItem.isSystem) {
+    return true;
+  }
 
-  return isDisabled;
+  return OBJECTS_WITHOUT_MANUAL_RECORD_CREATION.includes(
+    objectMetadataItem.nameSingular as CoreObjectNameSingular,
+  );
 };

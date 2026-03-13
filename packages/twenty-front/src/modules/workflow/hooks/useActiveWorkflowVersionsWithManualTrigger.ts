@@ -1,4 +1,4 @@
-import { isGlobalManualTrigger } from '@/action-menu/actions/record-actions/utils/isGlobalManualTrigger';
+import { isGlobalManualTrigger } from '@/command-menu-item/record/utils/isGlobalManualTrigger';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';

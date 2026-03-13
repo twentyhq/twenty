@@ -1,19 +1,14 @@
 import path, { relative } from 'path';
 import chokidar, { type FSWatcher } from 'chokidar';
 import { type EventName } from 'chokidar/handler.js';
-import { ASSETS_DIR, GENERATED_DIR } from 'twenty-shared/application';
+import { ASSETS_DIR } from 'twenty-shared/application';
 
 export type ManifestWatcherOptions = {
   appPath: string;
   handleChangeDetected: (filePath: string) => void;
 };
 
-const IGNORED_DIRECTORY_NAMES = new Set([
-  'node_modules',
-  GENERATED_DIR,
-  'dist',
-  '.twenty',
-]);
+const IGNORED_DIRECTORY_NAMES = new Set(['node_modules', 'dist', '.twenty']);
 
 export class ManifestWatcher {
   private appPath: string;

@@ -233,6 +233,10 @@ export class PageLayoutTabService {
       fromUpdatePageLayoutTabInputToFlatPageLayoutTabToUpdateOrThrow({
         updatePageLayoutTabInput,
         flatPageLayoutTabMaps: existingFlatPageLayoutTabMaps,
+        callerApplicationUniversalIdentifier:
+          workspaceCustomFlatApplication.universalIdentifier,
+        workspaceCustomApplicationUniversalIdentifier:
+          workspaceCustomFlatApplication.universalIdentifier,
       });
 
     const validateAndBuildResult =

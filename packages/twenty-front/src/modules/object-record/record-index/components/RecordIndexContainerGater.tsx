@@ -1,7 +1,7 @@
 import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
 
-import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
-import { getActionMenuIdFromRecordIndexId } from '@/action-menu/utils/getActionMenuIdFromRecordIndexId';
+import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
+import { getCommandMenuIdFromRecordIndexId } from '@/command-menu-item/utils/getCommandMenuIdFromRecordIndexId';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { MainContainerLayoutWithSidePanel } from '@/object-record/components/MainContainerLayoutWithSidePanel';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
@@ -88,9 +88,9 @@ export const RecordIndexContainerGater = () => {
           <RecordComponentInstanceContextsWrapper
             componentInstanceId={recordIndexId}
           >
-            <ActionMenuComponentInstanceContext.Provider
+            <CommandMenuComponentInstanceContext.Provider
               value={{
-                instanceId: getActionMenuIdFromRecordIndexId(recordIndexId),
+                instanceId: getCommandMenuIdFromRecordIndexId(recordIndexId),
               }}
             >
               <PageTitle title={objectMetadataItem.labelPlural} />
@@ -103,7 +103,7 @@ export const RecordIndexContainerGater = () => {
                   <RecordIndexContainer />
                 </StyledIndexContainer>
               </MainContainerLayoutWithSidePanel>
-            </ActionMenuComponentInstanceContext.Provider>
+            </CommandMenuComponentInstanceContext.Provider>
           </RecordComponentInstanceContextsWrapper>
           <RecordIndexLoadBaseOnContextStoreEffect />
         </ViewComponentInstanceContext.Provider>

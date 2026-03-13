@@ -8,7 +8,7 @@ import {
 } from 'src/utils/match-participants';
 import { summarizeTranscript } from 'src/utils/summarize-transcript';
 import { defineLogicFunction } from 'twenty-sdk';
-import { CoreApiClient, MetadataApiClient } from 'twenty-sdk/generated';
+import { CoreApiClient, MetadataApiClient } from 'twenty-sdk/clients';
 import { z } from 'zod';
 
 interface LocalTranscriptWord {

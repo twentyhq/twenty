@@ -363,14 +363,15 @@
           "label": "Extend",
           "icon": "plug",
           "pages": [
-            "developers/extend/extend",
+            "developers/extend/api",
+            "developers/extend/webhooks",
             {
-              "key": "extendCapabilities",
-              "label": "Capabilities",
+              "key": "apps",
+              "label": "Apps",
               "pages": [
-                "developers/extend/capabilities/apis",
-                "developers/extend/capabilities/webhooks",
-                "developers/extend/capabilities/apps"
+                "developers/extend/apps/getting-started",
+                "developers/extend/apps/building",
+                "developers/extend/apps/publishing"
               ]
             }
           ]

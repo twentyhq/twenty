@@ -1,8 +1,9 @@
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
-import { renderDevUI } from '@/cli/utilities/dev/ui/components/dev-ui';
-import { DevUiStateManager } from '@/cli/utilities/dev/ui/dev-ui-state-manager';
 import { DevModeOrchestrator } from '@/cli/utilities/dev/orchestrator/dev-mode-orchestrator';
 import { OrchestratorState } from '@/cli/utilities/dev/orchestrator/dev-mode-orchestrator-state';
+import { renderDevUI } from '@/cli/utilities/dev/ui/components/dev-ui';
+import { DevUiStateManager } from '@/cli/utilities/dev/ui/dev-ui-state-manager';
+import { checkSdkVersionCompatibility } from '@/cli/utilities/version/check-sdk-version-compatibility';
 
 export type AppDevOptions = {
   appPath?: string;
@@ -24,6 +25,8 @@ export class AppDevCommand {
 
   async execute(options: AppDevOptions): Promise<void> {
     const appPath = options.appPath ?? CURRENT_EXECUTION_DIRECTORY;
+
+    await checkSdkVersionCompatibility(appPath);
 
     const orchestratorState = new OrchestratorState({
       appPath,

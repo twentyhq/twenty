@@ -12,10 +12,10 @@ import {
   SubscriptionStatus,
   WorkspaceActivationStatus,
 } from '~/generated-metadata/graphql';
-import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
+import { getJestMetadataAndApolloMocksAndCommandMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndCommandMenuWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
-const Wrapper = getJestMetadataAndApolloMocksAndActionMenuWrapper({
+const Wrapper = getJestMetadataAndApolloMocksAndCommandMenuWrapper({
   apolloMocks: [],
   componentInstanceId: 'instanceId',
   contextStoreCurrentObjectMetadataNameSingular: 'company',
@@ -33,6 +33,8 @@ describe('useColumnDefinitionsFromObjectMetadata', () => {
       subdomain: 'test',
       activationStatus: WorkspaceActivationStatus.ACTIVE,
       hasValidEnterpriseKey: false,
+      hasValidSignedEnterpriseKey: false,
+      hasValidEnterpriseValidityToken: false,
       metadataVersion: 1,
       isPublicInviteLinkEnabled: false,
       isGoogleAuthEnabled: true,

@@ -2,10 +2,10 @@ import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
-import { SidePanelObjectMenuItem } from '@/side-panel/pages/navigation-menu-item/components/SidePanelObjectMenuItem';
 import { NavigationMenuItemStyleIcon } from '@/navigation-menu-item/components/NavigationMenuItemStyleIcon';
 import { getStandardObjectIconColor } from '@/navigation-menu-item/utils/getStandardObjectIconColor';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { SidePanelObjectMenuItem } from '@/side-panel/pages/navigation-menu-item/components/SidePanelObjectMenuItem';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 
 type SidePanelObjectPickerItemProps = {
@@ -18,6 +18,7 @@ type SidePanelObjectPickerItemProps = {
   ) => void;
   objectMenuItemVariant?: 'add' | 'edit';
   dragIndex?: number;
+  disableDrag?: boolean;
 };
 
 export const SidePanelObjectPickerItem = ({
@@ -27,6 +28,7 @@ export const SidePanelObjectPickerItem = ({
   onChangeObject,
   objectMenuItemVariant = 'edit',
   dragIndex,
+  disableDrag = false,
 }: SidePanelObjectPickerItemProps) => {
   const { getIcon } = useIcons();
 
@@ -59,6 +61,7 @@ export const SidePanelObjectPickerItem = ({
       onSelect={onChangeObject}
       variant={objectMenuItemVariant}
       dragIndex={dragIndex}
+      disableDrag={disableDrag}
     />
   );
 };

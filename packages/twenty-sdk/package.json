@@ -1,6 +1,6 @@
 {
   "name": "twenty-sdk",
-  "version": "0.6.4",
+  "version": "0.7.0",
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",
   "types": "dist/sdk/index.d.ts",
@@ -9,7 +9,6 @@
   },
   "files": [
     "dist",
-    "generated",
     "README.md",
     "package.json"
   ],
@@ -45,20 +44,15 @@
       "import": "./dist/front-component-renderer/index.mjs",
       "require": "./dist/front-component-renderer/index.cjs"
     },
-    "./generated": {
-      "types": "./generated/index.ts",
-      "import": "./generated/index.ts",
-      "require": "./generated/index.ts"
+    "./build": {
+      "types": "./dist/build/index.d.ts",
+      "import": "./dist/build.mjs",
+      "require": "./dist/build.cjs"
     },
-    "./generated/core": {
-      "types": "./generated/core/index.ts",
-      "import": "./generated/core/index.ts",
-      "require": "./generated/core/index.ts"
-    },
-    "./generated/metadata": {
-      "types": "./generated/metadata/index.ts",
-      "import": "./generated/metadata/index.ts",
-      "require": "./generated/metadata/index.ts"
+    "./clients": {
+      "types": "./dist/clients/index.d.ts",
+      "import": "./dist/clients.mjs",
+      "require": "./dist/clients.cjs"
     }
   },
   "license": "AGPL-3.0",
@@ -127,14 +121,8 @@
       "front-component-renderer": [
         "dist/front-component-renderer/index.d.ts"
       ],
-      "generated": [
-        "generated/index.ts"
-      ],
-      "generated/core": [
-        "generated/core/index.ts"
-      ],
-      "generated/metadata": [
-        "generated/metadata/index.ts"
+      "clients": [
+        "dist/clients/index.d.ts"
       ]
     }
   }

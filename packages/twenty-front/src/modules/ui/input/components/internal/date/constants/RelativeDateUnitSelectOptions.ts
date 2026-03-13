@@ -9,5 +9,6 @@ export const RELATIVE_DATE_UNITS_SELECT_OPTIONS: RelativeDateUnitOption[] = [
   { value: 'DAY', label: 'Day' },
   { value: 'WEEK', label: 'Week' },
   { value: 'MONTH', label: 'Month' },
+  { value: 'QUARTER', label: 'Quarter' },
   { value: 'YEAR', label: 'Year' },
 ];

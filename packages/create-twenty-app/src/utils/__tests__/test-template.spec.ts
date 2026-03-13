@@ -47,18 +47,17 @@ describe('scaffoldIntegrationTest', () => {
       const content = await fs.readFile(testPath, 'utf8');
 
       expect(content).toContain(
-        "import { appGenerateClient, appUninstall } from 'twenty-sdk/cli'",
+        "import { appBuild, appUninstall } from 'twenty-sdk/cli'",
       );
       expect(content).toContain(
-        "import { MetadataApiClient } from 'twenty-sdk/generated'",
+        "import { MetadataApiClient } from 'twenty-sdk/clients'",
       );
       expect(content).toContain(
         "import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/application-config'",
       );
-      expect(content).toContain('TWENTY_TEST_API_KEY');
-      expect(content).toContain('assertServerIsReachable');
-      expect(content).toContain('appGenerateClient');
+      expect(content).toContain('appBuild');
       expect(content).toContain('appUninstall');
+      expect(content).toContain('new MetadataApiClient()');
       expect(content).toContain('findManyApplications');
       expect(content).toContain('APPLICATION_UNIVERSAL_IDENTIFIER');
     });
@@ -84,7 +83,8 @@ describe('scaffoldIntegrationTest', () => {
       expect(content).toContain('.twenty-sdk-test');
       expect(content).toContain('config.json');
       expect(content).toContain('process.env.TWENTY_API_URL');
-      expect(content).toContain('process.env.TWENTY_TEST_API_KEY');
+      expect(content).toContain('process.env.TWENTY_API_KEY');
+      expect(content).toContain('assertServerIsReachable');
     });
   });
 
@@ -101,11 +101,43 @@ describe('scaffoldIntegrationTest', () => {
 
       const content = await fs.readFile(vitestConfigPath, 'utf8');
 
-      expect(content).toContain('TWENTY_TEST_API_KEY');
+      expect(content).toContain('TWENTY_API_KEY');
+      expect(content).not.toContain('TWENTY_TEST_API_KEY');
       expect(content).toContain('TWENTY_API_URL');
       expect(content).toContain('setup-test.ts');
       expect(content).toContain('tsconfig.spec.json');
       expect(content).toContain('integration-test.ts');
+    });
+  });
+
+  describe('github workflow', () => {
+    it('should create .github/workflows/ci.yml with correct structure', async () => {
+      await scaffoldIntegrationTest({
+        appDirectory: testAppDirectory,
+        sourceFolderPath,
+      });
+
+      const workflowPath = join(
+        testAppDirectory,
+        '.github',
+        'workflows',
+        'ci.yml',
+      );
+
+      expect(await fs.pathExists(workflowPath)).toBe(true);
+
+      const content = await fs.readFile(workflowPath, 'utf8');
+
+      expect(content).toContain('name: CI');
+      expect(content).toContain('TWENTY_VERSION: latest');
+      expect(content).toContain('twenty-version: ${{ env.TWENTY_VERSION }}');
+      expect(content).toContain('actions/checkout@v4');
+      expect(content).toContain('spawn-twenty-docker-image@main');
+      expect(content).toContain('actions/setup-node@v4');
+      expect(content).toContain('yarn install --immutable');
+      expect(content).toContain('yarn test');
+      expect(content).toContain('TWENTY_API_URL');
+      expect(content).toContain('TWENTY_TEST_API_KEY');
     });
   });
 

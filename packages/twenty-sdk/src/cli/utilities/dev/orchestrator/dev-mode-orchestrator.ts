@@ -90,10 +90,6 @@ export class DevModeOrchestrator {
     await ensureDir(outputDir);
     await emptyDir(outputDir);
 
-    await this.clientService.ensureGeneratedClientStub({
-      appPath: this.state.appPath,
-    });
-
     await this.startWatchersStep.start();
 
     this.serverCheckInterval = setInterval(() => {

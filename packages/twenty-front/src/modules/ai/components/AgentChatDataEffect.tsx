@@ -14,14 +14,13 @@ import { useEffect } from 'react';
 import { Temporal } from 'temporal-polyfill';
 
 export const AgentChatDataEffect = () => {
-  const { uiMessages, isLoading } = useAgentChatData();
-  const chatState = useAgentChat(uiMessages);
+  const { uiMessages, isLoading, ensureThreadIdForSend } = useAgentChatData();
+  const chatState = useAgentChat(uiMessages, ensureThreadIdForSend);
 
   const combinedIsLoading = chatState.isLoading || isLoading;
   const isStreaming = chatState.status === 'streaming';
 
   const setAgentChatIsLoading = useSetAtomState(agentChatIsLoadingState);
-
   const setAgentChatError = useSetAtomState(agentChatErrorState);
 
   const [agentChatUISessionStartTime, setAgentChatUISessionStartTime] =

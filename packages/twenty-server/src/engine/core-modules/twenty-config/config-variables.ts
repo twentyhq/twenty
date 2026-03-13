@@ -479,7 +479,10 @@ export class ConfigVariables {
   })
   @IsOptional()
   @CastToUpperSnakeCase()
-  LOGIC_FUNCTION_TYPE: LogicFunctionDriverType = LogicFunctionDriverType.LOCAL;
+  LOGIC_FUNCTION_TYPE: LogicFunctionDriverType =
+    process.env.NODE_ENV === NodeEnvironment.DEVELOPMENT
+      ? LogicFunctionDriverType.LOCAL
+      : LogicFunctionDriverType.DISABLED;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LOGIC_FUNCTION_CONFIG,
@@ -564,6 +567,30 @@ export class ConfigVariables {
   LOGIC_FUNCTION_LAMBDA_SECRET_ACCESS_KEY: string;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LOGIC_FUNCTION_CONFIG,
+    description: 'S3 bucket for uploading Lambda layer zip files',
+    type: ConfigVariableType.STRING,
+  })
+  @ValidateIf(
+    (env) => env.LOGIC_FUNCTION_TYPE === LogicFunctionDriverType.LAMBDA,
+  )
+  @IsOptional()
+  LOGIC_FUNCTION_LAMBDA_LAYER_BUCKET?: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LOGIC_FUNCTION_CONFIG,
+    description:
+      'AWS region of the S3 bucket for Lambda layer uploads (defaults to LOGIC_FUNCTION_LAMBDA_REGION)',
+    type: ConfigVariableType.STRING,
+  })
+  @ValidateIf(
+    (env) => env.LOGIC_FUNCTION_TYPE === LogicFunctionDriverType.LAMBDA,
+  )
+  @IsOptional()
+  @IsAWSRegion()
+  LOGIC_FUNCTION_LAMBDA_LAYER_BUCKET_REGION?: AwsRegion;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.CODE_INTERPRETER_CONFIG,
     description:
       'Code interpreter driver type - LOCAL for development (unsafe), E2B for sandboxed execution',
@@ -574,7 +601,9 @@ export class ConfigVariables {
   @IsOptional()
   @CastToUpperSnakeCase()
   CODE_INTERPRETER_TYPE: CodeInterpreterDriverType =
-    CodeInterpreterDriverType.DISABLED;
+    process.env.NODE_ENV === NodeEnvironment.DEVELOPMENT
+      ? CodeInterpreterDriverType.LOCAL
+      : CodeInterpreterDriverType.DISABLED;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.CODE_INTERPRETER_CONFIG,
@@ -1508,6 +1537,24 @@ export class ConfigVariables {
   ENTERPRISE_KEY: string;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
+    isSensitive: true,
+    description:
+      'Signed enterprise validity token (JWT). Used as fallback when no token is stored in the database.',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  ENTERPRISE_VALIDITY_TOKEN: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
+    description: 'Base URL for the Enterprise API on twenty.com',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  ENTERPRISE_API_URL: string = 'https://twenty.com/api/enterprise';
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.OTHER,
     description: 'Health monitoring time window in minutes',
     type: ConfigVariableType.NUMBER,
@@ -1634,6 +1681,17 @@ export class ConfigVariables {
   @CastToPositiveNumber()
   @IsOptional()
   PG_DATABASE_REPLICA_TIMEOUT_MS: number = 10000;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
+    description:
+      'Client-side query timeout in milliseconds for the core database connection pool. Controls how long any single query can run before the driver aborts it.',
+    type: ConfigVariableType.NUMBER,
+    isEnvOnly: true,
+  })
+  @CastToPositiveNumber()
+  @IsOptional()
+  DATABASE_STATEMENT_TIMEOUT_MS: number = 15000;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,

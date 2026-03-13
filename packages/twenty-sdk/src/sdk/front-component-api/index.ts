@@ -1,25 +1,36 @@
 export {
-  isShowPage,
+  pageType,
   isInSidePanel,
-  isFavorite,
-  isRemote,
-  isNoteOrTask,
+  favoriteRecordIds,
   isSelectAll,
   hasAnySoftDeleteFilterOnView,
   numberOfSelectedRecords,
   objectPermissions,
-  selectedRecord,
+  selectedRecords,
   featureFlags,
   targetObjectReadPermissions,
   targetObjectWritePermissions,
   isDefined,
   isNonEmptyString,
+  includes,
+  every,
+  everyDefined,
+  everyEquals,
+  some,
+  someDefined,
+  someEquals,
+  none,
+  noneDefined,
+  noneEquals,
+  someNonEmptyString,
+  includesEvery,
+  objectMetadataItem,
 } from './conditional-availability/conditional-availability-variables';
 export { setFrontComponentExecutionContext } from './context/frontComponentContext';
 export { closeSidePanel } from './functions/closeSidePanel';
 export { enqueueSnackbar } from './functions/enqueueSnackbar';
 export { navigate } from './functions/navigate';
-export { openActionConfirmationModal } from './functions/openActionConfirmationModal';
+export { openCommandConfirmationModal } from './functions/openCommandConfirmationModal';
 export { openSidePanelPage } from './functions/openSidePanelPage';
 export { unmountFrontComponent } from './functions/unmountFrontComponent';
 export { useFrontComponentExecutionContext } from './hooks/useFrontComponentExecutionContext';
@@ -27,10 +38,10 @@ export { useFrontComponentId } from './hooks/useFrontComponentId';
 export { useRecordId } from './hooks/useRecordId';
 export { useUserId } from './hooks/useUserId';
 export type { FrontComponentExecutionContext } from './types/FrontComponentExecutionContext';
-export { getFrontComponentActionErrorDedupeKey } from './utils/getFrontComponentActionErrorDedupeKey';
+export { getFrontComponentCommandErrorDedupeKey } from './utils/getFrontComponentCommandErrorDedupeKey';
 export type {
-  ActionConfirmationModalAccent,
-  ActionConfirmationModalResult,
+  CommandConfirmationModalAccent,
+  CommandConfirmationModalResult,
 } from './globals/frontComponentHostCommunicationApi';
 
 export { ALLOWED_HTML_ELEMENTS } from './constants/AllowedHtmlElements';

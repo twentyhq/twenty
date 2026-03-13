@@ -30,6 +30,7 @@ export const seedPageLayoutTabs = async ({
         'workspaceId',
         'universalIdentifier',
         'applicationId',
+        'overrides',
       ])
       .values(pageLayoutTabs)
       .orIgnore()

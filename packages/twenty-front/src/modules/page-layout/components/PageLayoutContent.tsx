@@ -39,15 +39,17 @@ export const PageLayoutContent = () => {
   }
 
   if (isVerticalList) {
-    return isPageLayoutInEditMode ? (
-      <PageLayoutVerticalListEditor
-        widgets={activeTab.widgets}
-        onReorder={reorderWidgets}
-        isReorderEnabled={!isRecordPageLayout}
-      />
-    ) : (
-      <PageLayoutVerticalListViewer widgets={activeTab.widgets} />
-    );
+    if (!isRecordPageLayout && isPageLayoutInEditMode) {
+      return (
+        <PageLayoutVerticalListEditor
+          widgets={activeTab.widgets}
+          onReorder={reorderWidgets}
+          isReorderEnabled={true}
+        />
+      );
+    }
+
+    return <PageLayoutVerticalListViewer widgets={activeTab.widgets} />;
   }
 
   return <PageLayoutGridLayout tabId={tabId} />;

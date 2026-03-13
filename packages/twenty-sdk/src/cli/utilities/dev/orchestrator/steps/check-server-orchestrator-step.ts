@@ -55,9 +55,14 @@ export class CheckServerOrchestratorStep {
       return false;
     }
 
+    const wasReady = step.output.isReady;
+
     step.output = { isReady: true, errorLogged: false };
     step.status = 'done';
-    this.notify();
+
+    if (!wasReady) {
+      this.notify();
+    }
 
     return true;
   }

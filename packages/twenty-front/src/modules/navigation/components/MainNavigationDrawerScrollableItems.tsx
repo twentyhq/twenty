@@ -1,9 +1,11 @@
 import { NavigationDrawerOpenedSection } from '@/object-metadata/components/NavigationDrawerOpenedSection';
+import { NavigationDrawerWorkspaceSectionSkeletonLoader } from '@/object-metadata/components/NavigationDrawerWorkspaceSectionSkeletonLoader';
 import { RemoteNavigationDrawerSection } from '@/object-metadata/components/RemoteNavigationDrawerSection';
+
+import { NavigationDrawerOtherSection } from '@/navigation/components/NavigationDrawerOtherSection';
 import { styled } from '@linaria/react';
 import { lazy, Suspense } from 'react';
 
-import { NavigationDrawerOtherSection } from '@/navigation/components/NavigationDrawerOtherSection';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const CurrentWorkspaceMemberNavigationMenuItemFoldersDispatcher = lazy(() =>
@@ -32,10 +34,8 @@ export const MainNavigationDrawerScrollableItems = () => {
   return (
     <StyledScrollableItemsContainer>
       <NavigationDrawerOpenedSection />
-      <Suspense fallback={null}>
+      <Suspense fallback={<NavigationDrawerWorkspaceSectionSkeletonLoader />}>
         <CurrentWorkspaceMemberNavigationMenuItemFoldersDispatcher />
-      </Suspense>
-      <Suspense fallback={null}>
         <WorkspaceNavigationMenuItemsDispatcher />
       </Suspense>
       <RemoteNavigationDrawerSection />

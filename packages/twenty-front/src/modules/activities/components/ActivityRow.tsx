@@ -10,7 +10,6 @@ const StyledRowContentContainer = styled.div`
     display: flex;
     gap: ${themeCssVariables.spacing[2]};
     height: ${themeCssVariables.spacing[12]};
-    overflow: hidden;
     padding: ${themeCssVariables.spacing[0]} ${themeCssVariables.spacing[4]};
   }
 

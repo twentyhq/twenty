@@ -20,6 +20,19 @@ export const resolveRelativeDateTimeFilter = (
         throw new Error('Amount is required');
       }
 
+      if (unit === 'QUARTER') {
+        const startOfNextQuarter = getNextPeriodStart(
+          referenceZonedDateTime,
+          'QUARTER',
+        );
+
+        return {
+          ...relativeDateFilter,
+          start: startOfNextQuarter,
+          end: addUnitToZonedDateTime(startOfNextQuarter, unit, amount),
+        };
+      }
+
       if (isSubDayUnit) {
         return {
           ...relativeDateFilter,
@@ -41,6 +54,19 @@ export const resolveRelativeDateTimeFilter = (
     case 'PAST': {
       if (!isDefined(amount)) {
         throw new Error('Amount is required');
+      }
+
+      if (unit === 'QUARTER') {
+        const startOfCurrentQuarter = getPeriodStart(
+          referenceZonedDateTime,
+          'QUARTER',
+        );
+
+        return {
+          ...relativeDateFilter,
+          start: subUnitFromZonedDateTime(startOfCurrentQuarter, unit, amount),
+          end: startOfCurrentQuarter,
+        };
       }
 
       if (isSubDayUnit) {

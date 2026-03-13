@@ -86,6 +86,7 @@ export const SettingsAIAgentsTable = () => {
             placeholder={t`Search an agent...`}
             value={searchTerm}
             onChange={setSearchTerm}
+            fullWidth
           />
         </StyledSearchInputContainer>
         <Dropdown

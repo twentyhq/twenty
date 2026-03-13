@@ -28,6 +28,7 @@ export const buildBaseManifest = ({
     },
   ],
   skills: [],
+  agents: [],
   objects: [],
   fields: [],
   logicFunctions: [],

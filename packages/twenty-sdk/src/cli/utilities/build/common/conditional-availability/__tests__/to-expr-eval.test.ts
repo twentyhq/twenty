@@ -77,6 +77,20 @@ describe('toExprEval', () => {
     });
   });
 
+  describe('array .length to arrayLength()', () => {
+    it('should convert favoriteRecordIds.length to arrayLength(favoriteRecordIds)', () => {
+      expect(toExprEval('favoriteRecordIds.length > 0')).toBe(
+        'arrayLength(favoriteRecordIds) > 0',
+      );
+    });
+
+    it('should convert selectedRecords.length to arrayLength(selectedRecords)', () => {
+      expect(toExprEval('selectedRecords.length === 1')).toBe(
+        'arrayLength(selectedRecords) == 1',
+      );
+    });
+  });
+
   describe('edge cases', () => {
     it('should return an empty string unchanged', () => {
       expect(toExprEval('')).toBe('');

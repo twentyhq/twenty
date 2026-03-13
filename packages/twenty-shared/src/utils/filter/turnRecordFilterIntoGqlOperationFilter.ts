@@ -2,6 +2,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { Temporal } from 'temporal-polyfill';
 
 import {
+  FieldActorSource,
   FieldMetadataType,
   ViewFilterOperand as RecordFilterOperand,
   type ActorFilter,
@@ -1218,8 +1219,13 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
         }
       }
 
+      const matchingSourceValues = Object.values(FieldActorSource).filter(
+        (actorSource) =>
+          actorSource.toLowerCase().includes(recordFilter.value.toLowerCase()),
+      );
+
       switch (recordFilter.operand) {
-        case RecordFilterOperand.CONTAINS:
+        case RecordFilterOperand.CONTAINS: {
           return {
             or: [
               {
@@ -1229,9 +1235,21 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
                   },
                 } satisfies ActorFilter,
               },
+              ...(matchingSourceValues.length > 0
+                ? [
+                    {
+                      [correspondingFieldMetadataItem.name]: {
+                        source: {
+                          in: matchingSourceValues,
+                        },
+                      } satisfies ActorFilter,
+                    },
+                  ]
+                : []),
             ],
           };
-        case RecordFilterOperand.DOES_NOT_CONTAIN:
+        }
+        case RecordFilterOperand.DOES_NOT_CONTAIN: {
           return {
             and: [
               {
@@ -1243,8 +1261,22 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
                   } satisfies ActorFilter,
                 },
               },
+              ...(matchingSourceValues.length > 0
+                ? [
+                    {
+                      not: {
+                        [correspondingFieldMetadataItem.name]: {
+                          source: {
+                            in: matchingSourceValues,
+                          },
+                        } satisfies ActorFilter,
+                      },
+                    },
+                  ]
+                : []),
             ],
           };
+        }
         default: {
           const fieldForRecordFilter = fieldMetadataItems.find(
             (field) => field.id === recordFilter.fieldMetadataId,

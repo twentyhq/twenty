@@ -1,8 +1,5 @@
-import { AgentChatDataEffect } from '@/ai/components/AgentChatDataEffect';
-import { AgentChatComponentInstanceContext } from '@/ai/states/AgentChatComponentInstanceContext';
-
+import { AgentChatProviderContent } from '@/ai/components/AgentChatProviderContent';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { Suspense } from 'react';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const AgentChatProvider = ({
@@ -16,14 +13,5 @@ export const AgentChatProvider = ({
     return <>{children}</>;
   }
 
-  return (
-    <Suspense fallback={null}>
-      <AgentChatComponentInstanceContext.Provider
-        value={{ instanceId: 'agentChatComponentInstance' }}
-      >
-        <AgentChatDataEffect />
-        {children}
-      </AgentChatComponentInstanceContext.Provider>
-    </Suspense>
-  );
+  return <AgentChatProviderContent>{children}</AgentChatProviderContent>;
 };

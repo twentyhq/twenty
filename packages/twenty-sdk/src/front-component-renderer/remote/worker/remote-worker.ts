@@ -25,9 +25,9 @@ import { type HostToWorkerRenderContext } from '../../types/HostToWorkerRenderCo
 import { type WorkerExports } from '../../types/WorkerExports';
 import { exposeGlobals } from '../utils/exposeGlobals';
 import {
-  createOpenActionConfirmationModalAdapter,
-  handleActionConfirmationModalResult,
-} from './utils/createActionConfirmationModalBridge';
+  createOpenCommandConfirmationModalAdapter,
+  handleCommandConfirmationModalResult,
+} from './utils/createCommandConfirmationModalBridge';
 import { setWorkerEnv } from './utils/setWorkerEnv';
 
 installStylePropertyOnRemoteElements();
@@ -101,8 +101,8 @@ const initializeHostCommunicationApi: WorkerExports['initializeHostCommunication
       hostApi.requestAccessTokenRefresh;
     frontComponentHostCommunicationApi.openSidePanelPage =
       hostApi.openSidePanelPage;
-    frontComponentHostCommunicationApi.openActionConfirmationModal =
-      createOpenActionConfirmationModalAdapter(hostApi);
+    frontComponentHostCommunicationApi.openCommandConfirmationModal =
+      createOpenCommandConfirmationModalAdapter(hostApi);
     frontComponentHostCommunicationApi.unmountFrontComponent =
       hostApi.unmountFrontComponent;
     frontComponentHostCommunicationApi.enqueueSnackbar =
@@ -112,7 +112,7 @@ const initializeHostCommunicationApi: WorkerExports['initializeHostCommunication
 
 const onConfirmationModalResult: WorkerExports['onConfirmationModalResult'] =
   async (result) => {
-    await handleActionConfirmationModalResult(result);
+    await handleCommandConfirmationModalResult(result);
   };
 
 const updateContext: WorkerExports['updateContext'] = async (

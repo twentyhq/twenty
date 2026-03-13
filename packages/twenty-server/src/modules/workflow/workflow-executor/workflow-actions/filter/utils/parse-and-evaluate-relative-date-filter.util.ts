@@ -4,6 +4,7 @@ import {
   endOfHour,
   endOfMinute,
   endOfMonth,
+  endOfQuarter,
   endOfSecond,
   endOfWeek,
   endOfYear,
@@ -12,12 +13,14 @@ import {
   startOfHour,
   startOfMinute,
   startOfMonth,
+  startOfQuarter,
   startOfSecond,
   startOfWeek,
   startOfYear,
 } from 'date-fns';
 import {
   addUnitToDateTime,
+  assertUnreachable,
   getFirstDayOfTheWeekAsANumberForDateFNS,
   isDefined,
   type RelativeDateFilter,
@@ -169,7 +172,12 @@ function evaluateThisDirection(
         start: startOfYear(now),
         end: endOfYear(now),
       });
+    case 'QUARTER':
+      return isWithinInterval(dateToCheck, {
+        start: startOfQuarter(now),
+        end: endOfQuarter(now),
+      });
     default:
-      return false;
+      return assertUnreachable(unit);
   }
 }

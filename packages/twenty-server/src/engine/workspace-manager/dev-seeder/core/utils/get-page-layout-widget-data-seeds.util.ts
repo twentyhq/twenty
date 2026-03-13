@@ -106,6 +106,7 @@ export const getPageLayoutWidgetDataSeeds = (
             firstDayOfTheWeek: CalendarStartDay.MONDAY,
           },
           objectMetadataId: opportunityObject?.id ?? null,
+          overrides: null,
         } satisfies SeederFlatPageLayoutWidget)
       : null,
     isDefined(rocketIdFieldId)
@@ -137,6 +138,7 @@ export const getPageLayoutWidgetDataSeeds = (
             firstDayOfTheWeek: CalendarStartDay.MONDAY,
           },
           objectMetadataId: rocketObject?.id ?? null,
+          overrides: null,
         } satisfies SeederFlatPageLayoutWidget)
       : null,
     isDefined(opportunityAmountFieldId) &&
@@ -176,6 +178,7 @@ export const getPageLayoutWidgetDataSeeds = (
             firstDayOfTheWeek: CalendarStartDay.MONDAY,
           },
           objectMetadataId: opportunityObject?.id ?? null,
+          overrides: null,
         } satisfies SeederFlatPageLayoutWidget)
       : null,
 
@@ -214,6 +217,7 @@ export const getPageLayoutWidgetDataSeeds = (
             firstDayOfTheWeek: CalendarStartDay.MONDAY,
           },
           objectMetadataId: rocketObject?.id ?? null,
+          overrides: null,
         } satisfies SeederFlatPageLayoutWidget)
       : null,
     isDefined(opportunityIdFieldId)
@@ -245,6 +249,7 @@ export const getPageLayoutWidgetDataSeeds = (
             firstDayOfTheWeek: CalendarStartDay.MONDAY,
           },
           objectMetadataId: opportunityObject?.id ?? null,
+          overrides: null,
         } satisfies SeederFlatPageLayoutWidget)
       : null,
 
@@ -278,6 +283,7 @@ export const getPageLayoutWidgetDataSeeds = (
             firstDayOfTheWeek: CalendarStartDay.MONDAY,
           },
           objectMetadataId: companyObject?.id ?? null,
+          overrides: null,
         } satisfies SeederFlatPageLayoutWidget)
       : null,
     isDefined(companyIdFieldId) &&
@@ -320,6 +326,7 @@ export const getPageLayoutWidgetDataSeeds = (
             firstDayOfTheWeek: CalendarStartDay.MONDAY,
           },
           objectMetadataId: companyObject?.id ?? null,
+          overrides: null,
         } satisfies SeederFlatPageLayoutWidget)
       : null,
 
@@ -353,6 +360,7 @@ export const getPageLayoutWidgetDataSeeds = (
             firstDayOfTheWeek: CalendarStartDay.MONDAY,
           },
           objectMetadataId: companyObject?.id ?? null,
+          overrides: null,
         } satisfies SeederFlatPageLayoutWidget)
       : null,
     isDefined(companyLinkedinLinkFieldId)
@@ -384,6 +392,7 @@ export const getPageLayoutWidgetDataSeeds = (
             firstDayOfTheWeek: CalendarStartDay.MONDAY,
           },
           objectMetadataId: companyObject?.id ?? null,
+          overrides: null,
         } satisfies SeederFlatPageLayoutWidget)
       : null,
 
@@ -414,6 +423,7 @@ export const getPageLayoutWidgetDataSeeds = (
             firstDayOfTheWeek: CalendarStartDay.MONDAY,
           },
           objectMetadataId: personObject?.id ?? null,
+          overrides: null,
         } satisfies SeederFlatPageLayoutWidget)
       : null,
     isDefined(personIdFieldId) && isDefined(personCityFieldId)
@@ -450,6 +460,7 @@ export const getPageLayoutWidgetDataSeeds = (
             firstDayOfTheWeek: CalendarStartDay.MONDAY,
           },
           objectMetadataId: personObject?.id ?? null,
+          overrides: null,
         } satisfies SeederFlatPageLayoutWidget)
       : null,
 
@@ -483,6 +494,7 @@ export const getPageLayoutWidgetDataSeeds = (
             firstDayOfTheWeek: CalendarStartDay.MONDAY,
           },
           objectMetadataId: taskObject?.id ?? null,
+          overrides: null,
         } satisfies SeederFlatPageLayoutWidget)
       : null,
 
@@ -508,6 +520,7 @@ export const getPageLayoutWidgetDataSeeds = (
         frontComponentId: '6cdf2607-4b28-40e6-8c53-cc06799ddc88',
       } as const,
       objectMetadataId: null,
+      overrides: null,
     } satisfies SeederFlatPageLayoutWidget,
   ].filter(isDefined);
 

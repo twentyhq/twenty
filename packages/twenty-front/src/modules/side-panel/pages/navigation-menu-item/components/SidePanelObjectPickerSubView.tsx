@@ -1,23 +1,21 @@
 import { useLingui } from '@lingui/react/macro';
 import { IconSettings } from 'twenty-ui/display';
 
-import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
-import { SidePanelAddToNavigationDraggablePlaceholder } from '@/side-panel/components/SidePanelAddToNavigationDraggablePlaceholder';
-import { SidePanelAddToNavigationDroppable } from '@/side-panel/components/SidePanelAddToNavigationDroppable';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
+import { NavigationMenuItemStyleIcon } from '@/navigation-menu-item/components/NavigationMenuItemStyleIcon';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { SidePanelAddToNavigationDroppable } from '@/side-panel/components/SidePanelAddToNavigationDroppable';
+import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { SidePanelSubViewWithSearch } from '@/side-panel/components/SidePanelSubViewWithSearch';
 import { useSidePanelFilteredPickerItems } from '@/side-panel/hooks/useSidePanelFilteredPickerItems';
 import { SidePanelObjectPickerItem } from '@/side-panel/pages/navigation-menu-item/components/SidePanelObjectPickerItem';
-import { NavigationMenuItemStyleIcon } from '@/navigation-menu-item/components/NavigationMenuItemStyleIcon';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 
 type SidePanelObjectPickerSubViewProps = {
   objects: ObjectMetadataItem[];
   searchValue: string;
   onSearchChange: (value: string) => void;
-  onBack: () => void;
   onOpenSystemPicker: () => void;
   isViewItem: boolean;
   onSelectObjectForViewEdit?: (objectMetadataItem: ObjectMetadataItem) => void;
@@ -27,19 +25,20 @@ type SidePanelObjectPickerSubViewProps = {
   ) => void;
   objectMenuItemVariant?: 'add' | 'edit';
   emptyNoResultsText?: string;
+  disableDrag?: boolean;
 };
 
 export const SidePanelObjectPickerSubView = ({
   objects,
   searchValue,
   onSearchChange,
-  onBack,
   onOpenSystemPicker,
   isViewItem,
   onSelectObjectForViewEdit,
   onChangeObject,
   objectMenuItemVariant = 'edit',
   emptyNoResultsText,
+  disableDrag = false,
 }: SidePanelObjectPickerSubViewProps) => {
   const { t } = useLingui();
   const { filteredItems, selectableItemIds, isEmpty, hasSearchQuery } =
@@ -66,41 +65,24 @@ export const SidePanelObjectPickerSubView = ({
           onSelectObjectForViewEdit={onSelectObjectForViewEdit}
           onChangeObject={onChangeObject}
           objectMenuItemVariant={objectMenuItemVariant}
-          dragIndex={isAddVariant ? index : undefined}
+          dragIndex={isAddVariant && !disableDrag ? index : undefined}
+          disableDrag={disableDrag}
         />
       ))}
-      {isAddVariant ? (
-        <SidePanelAddToNavigationDraggablePlaceholder
-          index={filteredItems.length}
-        >
-          <SelectableListItem itemId="system" onEnter={onOpenSystemPicker}>
-            <CommandMenuItem
-              Icon={() => <NavigationMenuItemStyleIcon Icon={IconSettings} />}
-              label={t`System objects`}
-              id="system"
-              hasSubMenu
-              onClick={onOpenSystemPicker}
-            />
-          </SelectableListItem>
-        </SidePanelAddToNavigationDraggablePlaceholder>
-      ) : (
-        <SelectableListItem itemId="system" onEnter={onOpenSystemPicker}>
-          <CommandMenuItem
-            Icon={() => <NavigationMenuItemStyleIcon Icon={IconSettings} />}
-            label={t`System objects`}
-            id="system"
-            hasSubMenu
-            onClick={onOpenSystemPicker}
-          />
-        </SelectableListItem>
-      )}
+      <SelectableListItem itemId="system" onEnter={onOpenSystemPicker}>
+        <CommandMenuItem
+          Icon={() => <NavigationMenuItemStyleIcon Icon={IconSettings} />}
+          label={t`System objects`}
+          id="system"
+          hasSubMenu
+          onClick={onOpenSystemPicker}
+        />
+      </SelectableListItem>
     </SidePanelGroup>
   );
 
   return (
     <SidePanelSubViewWithSearch
-      backBarTitle={t`Pick an object`}
-      onBack={onBack}
       searchPlaceholder={t`Search an object...`}
       searchValue={searchValue}
       onSearchChange={onSearchChange}

@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
-import type { IconComponent } from 'twenty-ui/display';
 import { useContext } from 'react';
+import type { IconComponent } from 'twenty-ui/display';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { getNavigationMenuItemIconStyleFromColor } from '@/navigation-menu-item/utils/getNavigationMenuItemIconStyleFromColor';
@@ -37,13 +37,13 @@ const StyledViewOverlay = styled.div<{ $backgroundColor: string }>`
   align-items: center;
   background-color: ${({ $backgroundColor }) => $backgroundColor};
   border-radius: 4px;
-  bottom: -7px;
+  bottom: -5px;
   display: flex;
   height: 14px;
   justify-content: center;
   position: absolute;
-  right: -7px;
-  width: 14px;
+  right: -6px;
+  width: 12px;
 `;
 
 export type ObjectIconWithViewOverlayProps = {
@@ -74,8 +74,8 @@ export const ObjectIconWithViewOverlay = ({
       </StyledObjectIconWrapper>
       <StyledViewOverlay $backgroundColor={themeCssVariables.grayScale.gray4}>
         <ViewIcon
-          size="10px"
-          stroke={theme.icon.stroke.lg}
+          size="12px"
+          stroke={theme.icon.stroke.md}
           color={themeCssVariables.grayScale.gray10}
         />
       </StyledViewOverlay>

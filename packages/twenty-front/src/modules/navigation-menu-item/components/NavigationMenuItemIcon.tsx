@@ -1,9 +1,10 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import { Avatar, useIcons } from 'twenty-ui/display';
+import { Avatar, IconLink, IconWorld, useIcons } from 'twenty-ui/display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
+import { LinkIconWithLinkOverlay } from '@/navigation-menu-item/components/LinkIconWithLinkOverlay';
 import { StyledNavigationMenuItemIconContainer } from '@/navigation-menu-item/components/NavigationMenuItemIconContainer';
 import { ObjectIconWithViewOverlay } from '@/navigation-menu-item/components/ObjectIconWithViewOverlay';
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
@@ -59,6 +60,17 @@ export const NavigationMenuItemIcon = ({
         ObjectIcon={objectIconForView}
         ViewIcon={getIcon(navigationMenuItem.Icon!)}
         objectColor={objectNavItemColor}
+      />
+    );
+  }
+
+  if (navigationMenuItem.itemType === NavigationMenuItemType.LINK) {
+    return (
+      <LinkIconWithLinkOverlay
+        link={navigationMenuItem.link}
+        LinkIcon={IconLink}
+        DefaultIcon={IconWorld}
+        color={getEffectiveNavigationMenuItemColor(navigationMenuItem)}
       />
     );
   }

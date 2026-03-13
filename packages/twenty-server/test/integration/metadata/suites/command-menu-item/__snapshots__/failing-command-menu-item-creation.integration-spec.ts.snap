@@ -7,7 +7,7 @@ exports[`CommandMenuItem creation should fail when creating with both workflowVe
     "subCode": "WORKFLOW_OR_FRONT_COMPONENT_REQUIRED",
     "userFriendlyMessage": "Either workflow version or front component is required.",
   },
-  "message": "Exactly one of workflowVersionId or frontComponentId is required",
+  "message": "Exactly one of workflowVersionId, frontComponentId or engineComponentKey is required",
   "name": "UserInputError",
 }
 `;
@@ -98,7 +98,7 @@ exports[`CommandMenuItem creation should fail when creating with missing workflo
     "subCode": "WORKFLOW_OR_FRONT_COMPONENT_REQUIRED",
     "userFriendlyMessage": "Either workflow version or front component is required.",
   },
-  "message": "Exactly one of workflowVersionId or frontComponentId is required",
+  "message": "Exactly one of workflowVersionId, frontComponentId or engineComponentKey is required",
   "name": "UserInputError",
 }
 `;

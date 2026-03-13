@@ -29,11 +29,24 @@ export type LogicFunctionExecuteParams = {
   timeoutMs?: number;
 };
 
+export type LogicFunctionTranspileParams = {
+  sourceCode: string;
+  sourceFileName: string;
+  builtFileName: string;
+};
+
+export type LogicFunctionTranspileResult = {
+  builtCode: string;
+};
+
 export interface LogicFunctionDriver {
   delete(flatLogicFunction: FlatLogicFunction): Promise<void>;
   execute(
     params: LogicFunctionExecuteParams,
   ): Promise<LogicFunctionExecuteResult>;
+  transpile(
+    params: LogicFunctionTranspileParams,
+  ): Promise<LogicFunctionTranspileResult>;
 }
 
 export enum LogicFunctionDriverType {

@@ -152,6 +152,7 @@ export { appendCopySuffix } from './strings/appendCopySuffix';
 export { camelToKebab } from './strings/camelToKebab';
 export { camelToSnakeCase } from './strings/camelToSnakeCase';
 export { capitalize } from './strings/capitalize';
+export { kebabToCamelCase } from './strings/kebabToCamelCase';
 export { pascalCase } from './strings/pascalCase';
 export { pascalToKebab } from './strings/pascalToKebab';
 export { stringifySafely } from './strings/stringifySafely';

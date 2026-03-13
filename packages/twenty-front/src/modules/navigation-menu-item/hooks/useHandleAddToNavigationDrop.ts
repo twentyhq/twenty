@@ -17,7 +17,6 @@ import { addToNavPayloadRegistryState } from '@/navigation-menu-item/states/addT
 import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/isNavigationMenuInEditModeState';
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/states/navigationMenuItemsDraftState';
 import { openNavigationMenuItemFolderIdsState } from '@/navigation-menu-item/states/openNavigationMenuItemFolderIdsState';
-import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeState';
 import { getObjectMetadataIdsInDraft } from '@/navigation-menu-item/utils/getObjectMetadataIdsInDraft';
 import { getStandardObjectIconColor } from '@/navigation-menu-item/utils/getStandardObjectIconColor';
 import { isWorkspaceDroppableId } from '@/navigation-menu-item/utils/isWorkspaceDroppableId';
@@ -45,9 +44,6 @@ export const useHandleAddToNavigationDrop = () => {
   const { objectMetadataItems } = useObjectMetadataItems();
   const coreViews = useAtomStateValue(coreViewsState);
   const { getIcon } = useIcons();
-  const setSelectedNavigationMenuItemInEditMode = useSetAtomState(
-    selectedNavigationMenuItemInEditModeState,
-  );
   const setIsNavigationMenuInEditMode = useSetAtomState(
     isNavigationMenuInEditModeState,
   );
@@ -92,11 +88,13 @@ export const useHandleAddToNavigationDrop = () => {
 
       const openEditForNewNavItem = (
         newItemId: string,
-        options: Parameters<typeof openNavigationMenuItemInSidePanel>[0],
+        options: Omit<
+          Parameters<typeof openNavigationMenuItemInSidePanel>[0],
+          'itemId'
+        >,
       ) => {
         setIsNavigationMenuInEditMode(true);
-        setSelectedNavigationMenuItemInEditMode(newItemId);
-        openNavigationMenuItemInSidePanel(options);
+        openNavigationMenuItemInSidePanel({ ...options, itemId: newItemId });
       };
 
       switch (payload.type) {
@@ -223,7 +221,6 @@ export const useHandleAddToNavigationDrop = () => {
       openNavigationMenuItemInSidePanel,
       setOpenNavigationMenuItemFolderIds,
       setIsNavigationMenuInEditMode,
-      setSelectedNavigationMenuItemInEditMode,
       workspaceNavigationMenuItems,
       store,
     ],

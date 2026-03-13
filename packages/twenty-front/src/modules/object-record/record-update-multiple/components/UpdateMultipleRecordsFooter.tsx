@@ -1,4 +1,4 @@
-import { computeProgressText } from '@/action-menu/utils/computeProgressText';
+import { computeProgressText } from '@/command-menu-item/utils/computeProgressText';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { type ObjectRecordQueryProgress } from '@/object-record/types/ObjectRecordQueryProgress';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';

@@ -4,7 +4,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { buffer as streamToBuffer } from 'node:stream/consumers';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import FileType from 'file-type';
+import { FileTypeParser } from 'file-type';
+import { detectPdf } from '@file-type/pdf';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Like, type QueryRunner, Repository } from 'typeorm';
@@ -195,7 +196,8 @@ export class FileCorePictureService {
 
       const buffer = await getImageBufferFromUrl(imageUrl, httpClient);
 
-      const type = await FileType.fromBuffer(buffer);
+      const parser = new FileTypeParser({ customDetectors: [detectPdf] });
+      const type = await parser.fromBuffer(buffer);
 
       if (!isDefined(type) || !type.mime.startsWith('image/')) {
         return undefined;

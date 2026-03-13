@@ -74,6 +74,7 @@ export class TwentyStandardApplicationService {
         ...TWENTY_STANDARD_ALL_METADATA_NAME.map(getMetadataFlatEntityMapsKey),
         'featureFlagsMap',
       ]);
+
     const shouldIncludeRecordPageLayouts = this.twentyConfigService.get(
       'SHOULD_SEED_STANDARD_RECORD_PAGE_LAYOUTS',
     );

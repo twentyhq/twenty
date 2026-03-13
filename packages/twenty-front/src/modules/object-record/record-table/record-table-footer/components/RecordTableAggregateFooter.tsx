@@ -8,47 +8,38 @@ import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZInde
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableAggregateFooterCell } from '@/object-record/record-table/record-table-footer/components/RecordTableAggregateFooterCell';
 import { RecordTableColumnAggregateFooterCellContext } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterCellContext';
-import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledPlaceholderDragAndDropFooterCell = styled.div<{
-  isTableWithGroups: boolean;
-}>`
+const StyledPlaceholderDragAndDropFooterCell = styled.div`
   background-color: ${themeCssVariables.background.primary};
   bottom: 0;
   left: 0px;
   position: sticky;
   width: ${`${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH + RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px`};
 
-  z-index: ${({ isTableWithGroups }) =>
-    isTableWithGroups
-      ? TABLE_Z_INDEX.footer.tableWithGroups.stickyColumn
-      : TABLE_Z_INDEX.footer.tableWithoutGroups.stickyColumn};
+  z-index: ${TABLE_Z_INDEX.footer.stickyColumn};
 `;
 
-const StyledPlaceholderAddButtonPlaceholderFooterCell = styled.div<{
-  isTableWithGroups: boolean;
-}>`
+const StyledPlaceholderAddButtonPlaceholderFooterCell = styled.div`
   background-color: ${themeCssVariables.background.primary};
   bottom: 0;
   position: sticky;
   width: ${RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH}px;
-  z-index: ${({ isTableWithGroups }) =>
-    isTableWithGroups
-      ? TABLE_Z_INDEX.footer.tableWithGroups.default
-      : TABLE_Z_INDEX.footer.tableWithoutGroups.default};
+  z-index: ${TABLE_Z_INDEX.footer.default};
 `;
 
-const StyledPlaceholderLastColumnEmptyFooterCell = styled.div<{
-  isTableWithGroups: boolean;
-}>`
+const StyledPlaceholderLastColumnEmptyFooterCell = styled.div`
   background-color: ${themeCssVariables.background.primary};
   bottom: 0;
   position: sticky;
-  z-index: ${({ isTableWithGroups }) =>
-    isTableWithGroups
-      ? TABLE_Z_INDEX.footer.tableWithGroups.default
-      : TABLE_Z_INDEX.footer.tableWithoutGroups.default};
+  z-index: ${TABLE_Z_INDEX.footer.default};
+`;
+
+const StyledAggregateFooterContainer = styled.div`
+  bottom: 0;
+  display: flex;
+  position: sticky;
+  z-index: ${TABLE_Z_INDEX.footer.default};
 `;
 
 export const RecordTableAggregateFooter = ({
@@ -58,13 +49,9 @@ export const RecordTableAggregateFooter = ({
 }) => {
   const { visibleRecordFields } = useRecordTableContextOrThrow();
 
-  const isTableWithGroups = isDefined(currentRecordGroupId);
-
   return (
-    <>
-      <StyledPlaceholderDragAndDropFooterCell
-        isTableWithGroups={isTableWithGroups}
-      />
+    <StyledAggregateFooterContainer>
+      <StyledPlaceholderDragAndDropFooterCell />
       {visibleRecordFields.map((recordField, index) => {
         return (
           <RecordTableColumnAggregateFooterCellContext.Provider
@@ -81,13 +68,10 @@ export const RecordTableAggregateFooter = ({
           </RecordTableColumnAggregateFooterCellContext.Provider>
         );
       })}
-      <StyledPlaceholderAddButtonPlaceholderFooterCell
-        isTableWithGroups={isTableWithGroups}
-      />
+      <StyledPlaceholderAddButtonPlaceholderFooterCell />
       <StyledPlaceholderLastColumnEmptyFooterCell
-        isTableWithGroups={isTableWithGroups}
         className={RECORD_TABLE_COLUMN_LAST_EMPTY_COLUMN_WIDTH_CLASS_NAME}
       />
-    </>
+    </StyledAggregateFooterContainer>
   );
 };

@@ -28,10 +28,10 @@ const StyledColorSchemeBackground = styled.div<
   border: ${({ variant }) => {
     switch (variant) {
       case 'Dark':
-        return `1px solid ${GRAY_SCALE_DARK.gray5};`;
+        return `1px solid ${GRAY_SCALE_DARK.gray5}`;
       case 'Light':
       default:
-        return `1px solid ${GRAY_SCALE_LIGHT.gray5};`;
+        return `1px solid ${GRAY_SCALE_LIGHT.gray5}`;
     }
   }};
   border-radius: ${themeCssVariables.border.radius.md};
@@ -62,20 +62,20 @@ const StyledColorSchemeContentBase = styled.div<
   border-left: ${({ variant }) => {
     switch (variant) {
       case 'Dark':
-        return `1px solid ${GRAY_SCALE_DARK.gray5};`;
+        return `1px solid ${GRAY_SCALE_DARK.gray5}`;
       case 'Light':
       default:
-        return `1px solid ${GRAY_SCALE_LIGHT.gray5};`;
+        return `1px solid ${GRAY_SCALE_LIGHT.gray5}`;
     }
   }};
   border-radius: ${themeCssVariables.border.radius.md} 0px 0px 0px;
   border-top: ${({ variant }) => {
     switch (variant) {
       case 'Dark':
-        return `1px solid ${GRAY_SCALE_DARK.gray5};`;
+        return `1px solid ${GRAY_SCALE_DARK.gray5}`;
       case 'Light':
       default:
-        return `1px solid ${GRAY_SCALE_LIGHT.gray5};`;
+        return `1px solid ${GRAY_SCALE_LIGHT.gray5}`;
     }
   }};
   box-sizing: border-box;

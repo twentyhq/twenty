@@ -5,7 +5,7 @@ const handler = async (): Promise<{ message: string }> => {
 };
 
 export default defineLogicFunction({
-  universalIdentifier: '4f0b7137-1399-4e50-ac00-3c3bb2555c38',
+  universalIdentifier: '2baa26eb-9aaf-4856-a4f4-30d6fd6480ee',
   name: 'hello-world-logic-function',
   description: 'A simple logic function',
   timeoutSeconds: 5,

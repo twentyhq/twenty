@@ -15,7 +15,7 @@ Aplikace vám umožňují vytvářet a spravovat přizpůsobení Twenty **jako k
 
 * Definujte vlastní objekty a pole jako kód (spravovaný datový model)
 * Vytvářejte logické funkce s vlastními spouštěči
-* Definujte dovednosti agentů AI
+* Definujte dovednosti a agenty AI!
 * Nasazujte stejnou aplikaci do více pracovních prostorů
 
 ## Předpoklady
@@ -39,7 +39,7 @@ yarn twenty app:dev
 Nástroj pro generování kostry podporuje dva režimy pro řízení toho, které ukázkové soubory jsou zahrnuty:
 
 ```bash filename="Terminal"
-# Výchozí (úplný): všechny příklady (objekt, pole, logická funkce, front-endová komponenta, zobrazení, položka navigační nabídky, dovednost)
+# Výchozí (úplný): všechny příklady (objekt, pole, logická funkce, front-endová komponenta, zobrazení, položka navigační nabídky, dovednost, agent)
 npx create-twenty-app@latest my-app
 
 # Minimální: pouze základní soubory (application-config.ts a default-role.ts)
@@ -115,8 +115,10 @@ my-twenty-app/
   │   └── example-view.ts                # Ukázková definice uloženého zobrazení
   ├── navigation-menu-items/
   │   └── example-navigation-menu-item.ts # Ukázkový odkaz postranní navigace
-  └── skills/
-      └── example-skill.ts                # Ukázková definice dovednosti agenta AI
+  ├── skills/
+  │   └── example-skill.ts                # Ukázková definice dovednosti agenta AI
+  └── agents/
+      └── example-agent.ts                # Ukázková definice agenta AI
 ```
 
 S volbou `--minimal` se vytvoří pouze základní soubory (`application-config.ts`, `roles/default-role.ts`, `logic-functions/pre-install.ts` a `logic-functions/post-install.ts`).
@@ -148,6 +150,7 @@ SDK detekuje entity analýzou vašich souborů TypeScript a hledá volání **`e
 | `defineView()`                     | Definice uložených zobrazení                              |
 | `defineNavigationMenuItem()`       | Definice položek navigační nabídky                        |
 | `defineSkill()`                    | Definice dovedností agenta AI                             |
+| `defineAgent()`                    | Definice agentů AI                                        |
 
 <Note>
 **Pojmenování souborů je flexibilní.** Detekce entit je založená na AST — SDK prochází vaše zdrojové soubory a hledá vzor `export default define<Entity>({...})`. Soubory a složky můžete organizovat, jak chcete. Seskupování podle typu entity (např. `logic-functions/`, `roles/`) je pouze konvence pro organizaci kódu, nikoli požadavek.
@@ -168,7 +171,7 @@ export default defineObject({
 
 Pozdější příkazy přidají další soubory a složky:
 
-* `yarn twenty app:dev` automaticky vygeneruje dva typované API klienty v `node_modules/twenty-sdk/generated`: `CoreApiClient` (pro data pracovního prostoru přes `/graphql`) a `MetadataApiClient` (pro konfiguraci pracovního prostoru a nahrávání souborů přes `/metadata`).
+* `yarn twenty app:dev` will auto-generate two typed API clients in `node_modules/twenty-sdk/clients`: `CoreApiClient` (for workspace data via `/graphql`) and `MetadataApiClient` (for workspace configuration and file uploads via `/metadata`).
 * `yarn twenty entity:add` přidá soubory s definicemi entit do `src/` pro vaše vlastní objekty, funkce, frontové komponenty, role, dovednosti a další.
 
 ## Ověření
@@ -225,6 +228,7 @@ SDK poskytuje pomocné funkce pro definování entit vaší aplikace. Jak je pop
 | `defineView()`                     | Definujte uložená zobrazení pro objekty                           |
 | `defineNavigationMenuItem()`       | Definujte odkazy postranní navigace                               |
 | `defineSkill()`                    | Definuje dovednosti agenta AI                                     |
+| `defineAgent()`                    | Definujte AI agenty pomocí systémových promptů                    |
 
 Tyto funkce validují vaši konfiguraci v době sestavení a poskytují automatické doplňování v IDE a typovou bezpečnost.
 
@@ -430,7 +434,7 @@ Každý soubor funkce používá `defineLogicFunction()` k exportu konfigurace s
 // src/app/createPostCard.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk';
 import type { DatabaseEventPayload, ObjectRecordCreateEvent, CronPayload, RoutePayload } from 'twenty-sdk';
-import { CoreApiClient, type Person } from 'twenty-sdk/generated';
+import { CoreApiClient, type Person } from 'twenty-sdk/clients';
 
 const handler = async (params: RoutePayload) => {
   const client = new CoreApiClient();
@@ -675,7 +679,7 @@ Chcete-li označit logickou funkci jako nástroj, nastavte `isTool: true` a posk
 ```typescript
 // src/logic-functions/enrich-company.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk';
-import { CoreApiClient } from 'twenty-sdk/generated';
+import { CoreApiClient } from 'twenty-sdk/clients';
 
 const handler = async (params: { companyName: string; domain?: string }) => {
   const client = new CoreApiClient();
@@ -802,15 +806,51 @@ Nové dovednosti můžete vytvářet dvěma způsoby:
 * **Vygenerované**: Spusťte `yarn twenty entity:add` a zvolte možnost přidat novou dovednost.
 * **Ruční**: Vytvořte nový soubor a použijte `defineSkill()` podle stejného vzoru.
 
+### Agenti
+
+Agenti jsou AI agenti se systémovými prompty, kteří mohou fungovat ve vašem pracovním prostoru. K definování agentů s vestavěnou validací použijte `defineAgent()`:
+
+```typescript
+// src/agents/example-agent.ts
+import { defineAgent } from 'twenty-sdk';
+
+export default defineAgent({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'sales-assistant',
+  label: 'Sales Assistant',
+  description: 'An AI agent that helps with sales tasks',
+  icon: 'IconRobot',
+  prompt: `You are a sales assistant. Help users with:
+1. Researching prospects and companies
+2. Drafting personalized outreach messages
+3. Tracking follow-ups and next steps
+4. Analyzing deal pipeline and suggesting actions`,
+});
+```
+
+Hlavní body:
+
+* `name` je jedinečný identifikátor agenta (doporučuje se kebab-case).
+* `label` je uživatelsky čitelný název zobrazovaný v UI.
+* `prompt` obsahuje systémový prompt — jde o instrukční text, který určuje chování agenta.
+* `icon` (volitelné) nastavuje ikonu zobrazovanou v UI.
+* `description` (volitelné) poskytuje doplňující kontext o účelu agenta.
+
+Nové agenty můžete vytvářet dvěma způsoby:
+
+* **Vygenerované**: Spusťte `yarn twenty entity:add` a zvolte možnost přidat nového agenta.
+* **Ruční**: Vytvořte nový soubor a použijte `defineAgent()` podle stejného vzoru.
+
 ### Generované typované klienty
 
-Dva typované klienty jsou automaticky generovány pomocí `yarn twenty app:dev` a ukládají se do `node_modules/twenty-sdk/generated` podle schématu vašeho pracovního prostoru:
+Two typed clients are auto-generated by `yarn twenty app:dev` and stored in `node_modules/twenty-sdk/clients` based on your workspace schema:
 
 * **`CoreApiClient`** — provádí dotazy na endpoint `/graphql` za účelem získání dat pracovního prostoru
 * **`MetadataApiClient`** — odesílá dotazy na endpoint `/metadata` pro konfiguraci pracovního prostoru a nahrávání souborů
 
 ```typescript
-import { CoreApiClient, MetadataApiClient } from 'twenty-sdk/generated';
+import { CoreApiClient } from 'twenty-sdk/clients';
+import { MetadataApiClient } from 'twenty-sdk/clients';
 
 const client = new CoreApiClient();
 const { me } = await client.query({ me: { id: true, displayName: true } });
@@ -819,7 +859,7 @@ const metadataClient = new MetadataApiClient();
 const { currentWorkspace } = await metadataClient.query({ currentWorkspace: { id: true } });
 ```
 
-Oba klienti se automaticky znovu generují pomocí `yarn twenty app:dev` kdykoli se změní vaše objekty nebo pole.
+`CoreApiClient` is re-generated automatically by `yarn twenty app:dev` whenever your objects or fields change. `MetadataApiClient` ships pre-built with the SDK.
 
 #### Běhové přihlašovací údaje v logických funkcích
 
@@ -836,10 +876,10 @@ Poznámky:
 
 #### Nahrávání souborů
 
-Vygenerovaný `MetadataApiClient` obsahuje metodu `uploadFile` pro připojování souborů k polím typu souboru u objektů ve vašem pracovním prostoru. Protože standardní klienti GraphQL nativně nepodporují nahrávání souborů pomocí multipart, klient poskytuje tuto speciální metodu, která interně implementuje [specifikaci multipart požadavků GraphQL](https://github.com/jaydenseric/graphql-multipart-request-spec).
+The `MetadataApiClient` includes an `uploadFile` method for attaching files to file-type fields on your workspace objects. Protože standardní klienti GraphQL nativně nepodporují nahrávání souborů pomocí multipart, klient poskytuje tuto speciální metodu, která interně implementuje [specifikaci multipart požadavků GraphQL](https://github.com/jaydenseric/graphql-multipart-request-spec).
 
 ```typescript
-import { MetadataApiClient } from 'twenty-sdk/generated';
+import { MetadataApiClient } from 'twenty-sdk/clients';
 import * as fs from 'fs';
 
 const metadataClient = new MetadataApiClient();

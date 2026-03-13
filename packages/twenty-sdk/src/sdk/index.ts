@@ -68,51 +68,63 @@ export { definePageLayout } from './page-layouts/define-page-layout';
 export type { PageLayoutConfig } from './page-layouts/page-layout-config';
 export { defineRole } from './roles/define-role';
 export { PermissionFlag } from './roles/permission-flag-type';
+export { defineAgent } from './agents/define-agent';
 export { defineSkill } from './skills/define-skill';
 export { defineView } from './views/define-view';
 export type { ViewConfig } from './views/view-config';
 export { ViewKey } from './views/view-key';
 
-// Action components for front components
+// Command components for front components
 export {
-  Action,
-  ActionLink,
-  ActionModal,
-  ActionOpenSidePanelPage,
-} from './action';
+  Command,
+  CommandLink,
+  CommandModal,
+  CommandOpenSidePanelPage,
+} from './command';
 export type {
-  ActionLinkProps,
-  ActionModalProps,
-  ActionOpenSidePanelPageProps,
-  ActionProps,
-} from './action';
+  CommandLinkProps,
+  CommandModalProps,
+  CommandOpenSidePanelPageProps,
+  CommandProps,
+} from './command';
 
 // Conditional availability typed variables for command menu items
 export {
-  isShowPage,
-  isInSidePanel,
-  isFavorite,
-  isRemote,
-  isNoteOrTask,
-  isSelectAll,
-  hasAnySoftDeleteFilterOnView,
-  numberOfSelectedRecords,
-  objectPermissions,
-  selectedRecord,
+  every,
+  everyDefined,
+  everyEquals,
+  favoriteRecordIds,
   featureFlags,
+  hasAnySoftDeleteFilterOnView,
+  includes,
+  includesEvery,
+  isDefined,
+  isInSidePanel,
+  isNonEmptyString,
+  isSelectAll,
+  none,
+  noneDefined,
+  noneEquals,
+  numberOfSelectedRecords,
+  objectMetadataItem,
+  objectPermissions,
+  pageType,
+  selectedRecords,
+  some,
+  someDefined,
+  someEquals,
+  someNonEmptyString,
   targetObjectReadPermissions,
   targetObjectWritePermissions,
-  isDefined,
-  isNonEmptyString,
 } from './front-component-api';
 
 // Front Component API exports
 export {
   closeSidePanel,
   enqueueSnackbar,
-  getFrontComponentActionErrorDedupeKey,
+  getFrontComponentCommandErrorDedupeKey,
   navigate,
-  openActionConfirmationModal,
+  openCommandConfirmationModal,
   openSidePanelPage,
   unmountFrontComponent,
   useFrontComponentExecutionContext,
@@ -121,8 +133,8 @@ export {
   useUserId,
 } from './front-component-api';
 export type {
-  ActionConfirmationModalAccent,
-  ActionConfirmationModalResult,
+  CommandConfirmationModalAccent,
+  CommandConfirmationModalResult,
   FrontComponentExecutionContext,
 } from './front-component-api';
 

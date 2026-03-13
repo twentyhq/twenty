@@ -60,12 +60,16 @@ export const useDestroyViewFromCurrentState = (viewBarInstanceId?: string) => {
 
     const shouldChangeView = viewPickerReferenceViewId === currentView?.id;
 
+    const remainingViews = viewsOnCurrentObject.filter(
+      (view) => view.id !== viewPickerReferenceViewId,
+    );
+
+    if (remainingViews.length === 0) {
+      return;
+    }
+
     if (shouldChangeView) {
-      changeView(
-        viewsOnCurrentObject.filter(
-          (view) => view.id !== viewPickerReferenceViewId,
-        )[0].id,
-      );
+      changeView(remainingViews[0].id);
     }
 
     store.set(

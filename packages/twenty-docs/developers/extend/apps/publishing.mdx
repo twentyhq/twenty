@@ -1,0 +1,119 @@
+---
+title: Publishing
+description: Distribute your Twenty app to the marketplace or deploy it internally.
+---
+
+<Warning>
+Apps are currently in alpha testing. The feature is functional but still evolving.
+</Warning>
+
+## Overview
+
+Once your app is [built and tested locally](/developers/extend/apps/building), you have two paths for distributing it:
+
+- **Publish to npm** — list your app in the Twenty marketplace for any workspace to discover and install.
+- **Push a tarball** — deploy your app to a specific Twenty server for internal use without making it publicly available.
+
+## Publishing to npm
+
+Publishing to npm makes your app discoverable in the Twenty marketplace. Any Twenty workspace can browse, install, and upgrade marketplace apps directly from the UI.
+
+### Requirements
+
+- An [npm](https://www.npmjs.com) account
+- Your package name **must** use the `twenty-app-` prefix (e.g., `twenty-app-postcard-sender`)
+
+### Steps
+
+1. **Build your app** — the CLI compiles your TypeScript sources and generates the application manifest:
+
+```bash filename="Terminal"
+yarn twenty app:build
+```
+
+2. **Publish to npm** — push the built package to the npm registry:
+
+```bash filename="Terminal"
+npx twenty app:publish
+```
+
+### Auto-discovery
+
+Packages with the `twenty-app-` prefix are automatically discovered by the Twenty marketplace catalog. Once published, your app appears in the marketplace within a few minutes — no manual registration or approval required.
+
+### CI publishing
+
+The scaffolded project includes a GitHub Actions workflow that publishes on every release. It runs `app:build`, then `npm publish --provenance` from the build output:
+
+```yaml filename=".github/workflows/publish.yml"
+name: Publish
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          registry-url: https://registry.npmjs.org
+      - run: yarn install --immutable
+      - run: npx twenty app:build
+      - run: npm publish --provenance --access public
+        working-directory: .twenty/output
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+```
+
+For other CI systems (GitLab CI, CircleCI, etc.), the same three commands apply: `yarn install`, `npx twenty app:build`, then `npm publish` from `.twenty/output`.
+
+<Tip>
+**npm provenance** is optional but recommended. Publishing with `--provenance` adds a trust badge to your npm listing, letting users verify the package was built from a specific commit in a public CI pipeline. See the [npm provenance docs](https://docs.npmjs.com/generating-provenance-statements) for setup instructions.
+</Tip>
+
+## Internal distribution
+
+For apps you don't want publicly available — proprietary tools, enterprise-only integrations, or experimental builds — you can push a tarball directly to a Twenty server.
+
+### Push a tarball
+
+Build your app and deploy it to a specific server in one step:
+
+```bash filename="Terminal"
+npx twenty app:publish --server <server-url>
+```
+
+Any workspace on that server can then install and upgrade the app from the **Applications** settings page.
+
+### Version management
+
+To release an update:
+
+1. Bump the `version` field in your `package.json`
+2. Push a new tarball with `npx twenty app:publish --server <server-url>`
+3. Workspaces on that server will see the upgrade available in their settings
+
+<Note>
+Internal apps are scoped to the server they're pushed to. They won't appear in the public marketplace and can't be installed by workspaces on other servers.
+</Note>
+
+## App categories
+
+Twenty organizes apps into three categories based on how they're distributed:
+
+| Category | How it works | Visible in marketplace? |
+|----------|-------------|------------------------|
+| **Development** | Local dev mode apps running via `yarn twenty app:dev`. Used for building and testing. | No |
+| **Published** | Apps published to npm with the `twenty-app-` prefix. Listed in the marketplace for any workspace to install. | Yes |
+| **Internal** | Apps deployed via tarball to a specific server. Available only to workspaces on that server. | No |
+
+<Tip>
+Start in **Development** mode while building your app. When it's ready, choose **Published** (npm) for broad distribution or **Internal** (tarball) for private deployment.
+</Tip>

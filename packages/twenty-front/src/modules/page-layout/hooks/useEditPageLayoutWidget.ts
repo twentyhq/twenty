@@ -5,9 +5,9 @@ import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { SidePanelPages } from 'twenty-shared/types';
 
-import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
+import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { t } from '@lingui/core/macro';
@@ -36,14 +36,13 @@ export const useEditPageLayoutWidget = (pageLayoutIdFromProps?: string) => {
       widgetId: string;
       widgetType: WidgetType;
     }) => {
-      setPageLayoutEditingWidgetId(widgetId);
-
       if (widgetType === WidgetType.IFRAME) {
         navigatePageLayoutSidePanel({
           sidePanelPage: SidePanelPages.PageLayoutIframeSettings,
           pageTitle: t`Edit iFrame`,
           resetNavigationStack: true,
         });
+        setPageLayoutEditingWidgetId(widgetId);
         return;
       }
 
@@ -53,6 +52,7 @@ export const useEditPageLayoutWidget = (pageLayoutIdFromProps?: string) => {
           pageTitle: t`Edit Graph`,
           resetNavigationStack: true,
         });
+        setPageLayoutEditingWidgetId(widgetId);
         return;
       }
 
@@ -62,6 +62,7 @@ export const useEditPageLayoutWidget = (pageLayoutIdFromProps?: string) => {
           pageTitle: t`Edit Fields`,
           resetNavigationStack: true,
         });
+        setPageLayoutEditingWidgetId(widgetId);
         return;
       }
 

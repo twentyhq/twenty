@@ -6,7 +6,7 @@ import {
   SUMMARIZE_PERSON_RECORDINGS_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/summarize-person-recordings-universal-identifiers';
 import { defineFrontComponent, useRecordId } from 'twenty-sdk';
-import { CoreApiClient } from 'twenty-sdk/generated';
+import { CoreApiClient } from 'twenty-sdk/clients';
 import { isDefined } from 'twenty-shared/utils';
 
 const SUMMARIZATION_SYSTEM_PROMPT = [
@@ -40,7 +40,9 @@ const summarizeAllRecordings = async (
   const summariesText = recordings
     .map(
       (recording, index) =>
-        `### ${index + 1}. ${recording.name ?? 'Untitled'} (${recording.createdAt})\n${recording.summary?.markdown ?? 'No summary available'}`,
+        `### ${index + 1}. ${recording.name ?? 'Untitled'} (${
+          recording.createdAt
+        })\n${recording.summary?.markdown ?? 'No summary available'}`,
     )
     .join('\n\n---\n\n');
 

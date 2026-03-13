@@ -59,10 +59,6 @@ export const RecordTableHeaderFirstScrollableCell = () => {
     hasRecordGroupsComponentSelector,
   );
 
-  const zIndex = hasRecordGroups
-    ? TABLE_Z_INDEX.headerColumns.withGroups.headerColumnsNormal
-    : TABLE_Z_INDEX.headerColumns.withoutGroups.headerColumnsNormal;
-
   const shouldDisplayBorderBottom =
     hasRecordGroups ||
     !isFirstRowActiveOrFocused ||
@@ -83,7 +79,7 @@ export const RecordTableHeaderFirstScrollableCell = () => {
       className={cx('header-cell', getRecordTableColumnFieldWidthClassName(1))}
       key={recordField.fieldMetadataItemId}
       shouldDisplayBorderBottom={shouldDisplayBorderBottom}
-      zIndex={zIndex}
+      zIndex={TABLE_Z_INDEX.headerColumns.headerColumnsNormal}
       isResizing={isResizingAnyColumn}
     >
       <RecordTableHeaderResizeHandler recordFieldIndex={1} position="left" />

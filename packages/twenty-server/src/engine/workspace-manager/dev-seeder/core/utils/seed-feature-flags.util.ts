@@ -93,7 +93,7 @@ export const seedFeatureFlags = async ({
       {
         key: FeatureFlagKey.IS_COMMAND_MENU_ITEM_ENABLED,
         workspaceId: workspaceId,
-        value: true,
+        value: false,
       },
       {
         key: FeatureFlagKey.IS_DATE_TIME_WHOLE_DAY_FILTER_ENABLED,

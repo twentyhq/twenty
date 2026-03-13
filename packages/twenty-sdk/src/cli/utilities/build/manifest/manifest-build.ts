@@ -19,6 +19,7 @@ import { readFile } from 'node:fs/promises';
 import { basename, extname, relative } from 'path';
 import { glob } from 'tinyglobby';
 import {
+  type AgentManifest,
   type ApplicationManifest,
   type AssetManifest,
   ASSETS_DIR,
@@ -68,6 +69,7 @@ export const buildManifest = async (
   const fields: FieldManifest[] = [];
   const roles: RoleManifest[] = [];
   const skills: SkillManifest[] = [];
+  const agents: AgentManifest[] = [];
   const logicFunctions: LogicFunctionManifest[] = [];
   const frontComponents: FrontComponentManifest[] = [];
   const publicAssets: AssetManifest[] = [];
@@ -82,6 +84,7 @@ export const buildManifest = async (
   const fieldsFilePaths: string[] = [];
   const rolesFilePaths: string[] = [];
   const skillsFilePaths: string[] = [];
+  const agentsFilePaths: string[] = [];
   const logicFunctionsFilePaths: string[] = [];
   const frontComponentsFilePaths: string[] = [];
   const publicAssetsFilePaths: string[] = [];
@@ -182,6 +185,16 @@ export const buildManifest = async (
         skills.push(extract.config);
         errors.push(...extract.errors);
         skillsFilePaths.push(relativePath);
+        break;
+      }
+      case ManifestEntityKey.Agents: {
+        const extract = await extractManifestFromFile<AgentManifest>({
+          appPath,
+          filePath,
+        });
+        agents.push(extract.config);
+        errors.push(...extract.errors);
+        agentsFilePaths.push(relativePath);
         break;
       }
       case ManifestEntityKey.LogicFunctions: {
@@ -363,6 +376,7 @@ export const buildManifest = async (
         fields,
         roles,
         skills,
+        agents,
         logicFunctions,
         frontComponents,
         publicAssets,
@@ -377,6 +391,7 @@ export const buildManifest = async (
     fields: fieldsFilePaths,
     roles: rolesFilePaths,
     skills: skillsFilePaths,
+    agents: agentsFilePaths,
     logicFunctions: logicFunctionsFilePaths,
     frontComponents: frontComponentsFilePaths,
     publicAssets: publicAssetsFilePaths,

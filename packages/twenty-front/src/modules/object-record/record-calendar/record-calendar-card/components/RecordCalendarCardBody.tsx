@@ -82,12 +82,15 @@ export const RecordCalendarCardBody = ({
                 isLabelIdentifier: false,
                 isRecordFieldReadOnly: isRecordFieldReadOnly({
                   isRecordReadOnly,
+                  isSystemObject: objectMetadataItem.isSystem,
                   objectPermissions,
                   fieldMetadataItem: {
                     id: recordField.fieldMetadataItemId,
                     isUIReadOnly:
                       correspondingFieldDefinition.metadata.isUIReadOnly ??
                       false,
+                    isCustom:
+                      correspondingFieldDefinition.metadata.isCustom ?? false,
                   },
                 }),
                 fieldDefinition: correspondingFieldDefinition,

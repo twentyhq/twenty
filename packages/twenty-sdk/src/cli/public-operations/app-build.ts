@@ -2,10 +2,9 @@ import { execSync } from 'child_process';
 import path from 'path';
 
 import { buildApplication } from '@/cli/utilities/build/common/build-application';
+import { synchronizeBuiltApplication } from '@/cli/utilities/build/common/synchronize-built-application';
 import { runTypecheck } from '@/cli/utilities/build/common/typecheck-plugin';
 import { buildAndValidateManifest } from '@/cli/utilities/build/manifest/build-and-validate-manifest';
-import { manifestUpdateChecksums } from '@/cli/utilities/build/manifest/manifest-update-checksums';
-import { writeManifestToOutput } from '@/cli/utilities/build/manifest/manifest-writer';
 import { ClientService } from '@/cli/utilities/client/client-service';
 import { runSafe } from '@/cli/utilities/run-safe';
 import { APP_ERROR_CODES, type CommandResult } from './types';
@@ -47,26 +46,31 @@ const innerAppBuild = async (
     onProgress?.(`⚠ ${warning}`);
   }
 
-  const clientService = new ClientService();
-
-  await clientService.ensureGeneratedClientStub({ appPath });
-
   onProgress?.('Building application files...');
 
-  const buildResult = await buildApplication({
+  const firstBuildResult = await buildApplication({
     appPath,
     manifest,
     filePaths,
   });
 
-  onProgress?.('Updating manifest checksums...');
+  onProgress?.('Syncing application schema...');
 
-  const updatedManifest = manifestUpdateChecksums({
+  const firstSyncResult = await synchronizeBuiltApplication({
+    appPath,
     manifest,
-    builtFileInfos: buildResult.builtFileInfos,
+    builtFileInfos: firstBuildResult.builtFileInfos,
   });
 
-  await writeManifestToOutput(appPath, updatedManifest);
+  if (!firstSyncResult.success) {
+    return firstSyncResult;
+  }
+
+  onProgress?.('Generating API client...');
+
+  const clientService = new ClientService();
+
+  await clientService.generateCoreClient({ appPath });
 
   onProgress?.('Running typecheck...');
 
@@ -87,11 +91,31 @@ const innerAppBuild = async (
     };
   }
 
+  onProgress?.('Rebuilding with generated client...');
+
+  const finalBuildResult = await buildApplication({
+    appPath,
+    manifest,
+    filePaths,
+  });
+
+  onProgress?.('Syncing built files...');
+
+  const finalSyncResult = await synchronizeBuiltApplication({
+    appPath,
+    manifest,
+    builtFileInfos: finalBuildResult.builtFileInfos,
+  });
+
+  if (!finalSyncResult.success) {
+    return finalSyncResult;
+  }
+
   const outputDir = path.join(appPath, '.twenty', 'output');
 
   const result: AppBuildResult = {
     outputDir,
-    fileCount: buildResult.builtFileInfos.size,
+    fileCount: finalBuildResult.builtFileInfos.size,
   };
 
   if (options.tarball) {

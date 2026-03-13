@@ -33,6 +33,7 @@ const validManifest: Manifest = {
   logicFunctions: [],
   roles: [],
   skills: [],
+  agents: [],
   publicAssets: [],
   views: [],
   navigationMenuItems: [],

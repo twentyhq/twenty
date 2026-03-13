@@ -1,6 +1,5 @@
 import { type Manifest } from 'twenty-shared/application';
 
-import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { fromCommandMenuItemManifestToUniversalFlatCommandMenuItem } from 'src/engine/core-modules/application/application-manifest/converters/from-command-menu-item-manifest-to-universal-flat-command-menu-item.util';
 import { fromFieldManifestToUniversalFlatFieldMetadata } from 'src/engine/core-modules/application/application-manifest/converters/from-field-manifest-to-universal-flat-field-metadata.util';
 import { fromFrontComponentManifestToUniversalFlatFrontComponent } from 'src/engine/core-modules/application/application-manifest/converters/from-front-component-manifest-to-universal-flat-front-component.util';
@@ -18,6 +17,8 @@ import { fromViewFilterGroupManifestToUniversalFlatViewFilterGroup } from 'src/e
 import { fromViewFilterManifestToUniversalFlatViewFilter } from 'src/engine/core-modules/application/application-manifest/converters/from-view-filter-manifest-to-universal-flat-view-filter.util';
 import { fromViewGroupManifestToUniversalFlatViewGroup } from 'src/engine/core-modules/application/application-manifest/converters/from-view-group-manifest-to-universal-flat-view-group.util';
 import { fromViewManifestToUniversalFlatView } from 'src/engine/core-modules/application/application-manifest/converters/from-view-manifest-to-universal-flat-view.util';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { fromAgentManifestToUniversalFlatAgent } from 'src/engine/core-modules/application/utils/from-agent-manifest-to-universal-flat-agent.util';
 import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/add-universal-flat-entity-to-universal-flat-entity-maps-through-mutation-or-throw.util';
@@ -137,6 +138,17 @@ export const computeApplicationManifestAllUniversalFlatEntityMaps = ({
         now,
       }),
       universalFlatEntityMapsToMutate: allUniversalFlatEntityMaps.flatSkillMaps,
+    });
+  }
+
+  for (const agentManifest of manifest.agents ?? []) {
+    addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
+      universalFlatEntity: fromAgentManifestToUniversalFlatAgent({
+        agentManifest,
+        applicationUniversalIdentifier,
+        now,
+      }),
+      universalFlatEntityMapsToMutate: allUniversalFlatEntityMaps.flatAgentMaps,
     });
   }
 

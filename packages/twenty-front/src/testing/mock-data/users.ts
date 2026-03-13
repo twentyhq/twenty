@@ -68,6 +68,8 @@ export const mockCurrentWorkspace = {
   allowImpersonation: true,
   activationStatus: WorkspaceActivationStatus.ACTIVE,
   hasValidEnterpriseKey: false,
+  hasValidSignedEnterpriseKey: false,
+  hasValidEnterpriseValidityToken: false,
   isGoogleAuthEnabled: true,
   isPasswordAuthEnabled: true,
   isMicrosoftAuthEnabled: false,

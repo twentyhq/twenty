@@ -13,11 +13,14 @@ import {
   vi,
 } from 'vitest';
 
+vi.mock('@/cli/constants/clients-dir', () => ({
+  CLIENTS_GENERATED_DIR: 'src/clients/generated',
+}));
+
 vi.mock('twenty-shared/application', () => ({
   DEFAULT_APP_ACCESS_TOKEN_NAME: 'TWENTY_APP_ACCESS_TOKEN',
   DEFAULT_API_KEY_NAME: 'TWENTY_API_KEY',
   DEFAULT_API_URL_NAME: 'TWENTY_API_URL',
-  GENERATED_DIR: 'generated',
 }));
 
 import { ClientService } from '@/cli/utilities/client/client-service';

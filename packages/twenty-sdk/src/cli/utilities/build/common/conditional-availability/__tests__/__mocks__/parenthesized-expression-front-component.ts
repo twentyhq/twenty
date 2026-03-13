@@ -1,4 +1,9 @@
-import { defineFrontComponent, isFavorite, isRemote, isShowPage } from '@/sdk';
+import {
+  defineFrontComponent,
+  favoriteRecordIds,
+  objectMetadataItem,
+  pageType,
+} from '@/sdk';
 
 const MyComponent = () => null;
 
@@ -8,6 +13,8 @@ export default defineFrontComponent({
   command: {
     universalIdentifier: 'parenthesized-expression-cmd',
     label: 'Parenthesized Expression',
-    conditionalAvailabilityExpression: (isShowPage || isFavorite) && !isRemote,
+    conditionalAvailabilityExpression:
+      (pageType === 'RECORD_PAGE' || favoriteRecordIds.length > 0) &&
+      !objectMetadataItem.isRemote,
   },
 });

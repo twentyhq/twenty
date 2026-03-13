@@ -40,7 +40,7 @@ export class CommandMenuItemService {
 
     return Object.values(flatCommandMenuItemMaps.byUniversalIdentifier)
       .filter(isDefined)
-      .sort((a, b) => a.label.localeCompare(b.label))
+      .sort((a, b) => a.position - b.position)
       .map(fromFlatCommandMenuItemToCommandMenuItemDto);
   }
 
@@ -279,7 +279,7 @@ export class CommandMenuItemService {
 
     return Object.values(flatCommandMenuItemMaps.byUniversalIdentifier)
       .filter(isDefined)
-      .sort((a, b) => a.label.localeCompare(b.label));
+      .sort((a, b) => a.position - b.position);
   }
 
   async findByWorkflowVersionId(

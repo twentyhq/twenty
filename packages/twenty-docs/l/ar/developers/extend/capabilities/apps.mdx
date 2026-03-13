@@ -15,7 +15,7 @@ description: أنشئ وأدِر تخصيصات Twenty على هيئة كود.
 
 * عرِّف كائنات وحقولًا مخصصة على شكل كود (نموذج بيانات مُدار)
 * أنشئ وظائف منطقية مع مشغلات مخصصة
-* حدد المهارات لوكلاء الذكاء الاصطناعي
+* تعريف المهارات والوكلاء للذكاء الاصطناعي
 * انشر التطبيق نفسه عبر مساحات عمل متعددة
 
 ## المتطلبات الأساسية
@@ -39,7 +39,7 @@ yarn twenty app:dev
 يدعم المُنشئ وضعين للتحكم في ملفات الأمثلة التي سيتم تضمينها:
 
 ```bash filename="Terminal"
-# الافتراضي (شامل): جميع الأمثلة (كائن، حقل، دالة منطقية، مكوّن الواجهة الأمامية، عرض، عنصر قائمة التنقل، مهارة)
+# الافتراضي (شامل): جميع الأمثلة (كائن، حقل، دالة منطقية، مكوّن الواجهة الأمامية، عرض، عنصر قائمة التنقل، مهارة، وكيل)
 npx create-twenty-app@latest my-app
 
 # الأدنى: الملفات الأساسية فقط (application-config.ts و default-role.ts)
@@ -63,6 +63,12 @@ yarn twenty function:execute --preInstall
 
 # نفّذ دالة ما بعد التثبيت
 yarn twenty function:execute --postInstall
+
+# ابنِ التطبيق للتوزيع
+yarn twenty app:build
+
+# انشر التطبيق إلى npm أو إلى خادم Twenty
+yarn twenty app:publish
 
 # أزل تثبيت التطبيق من مساحة العمل الحالية
 yarn twenty app:uninstall
@@ -115,8 +121,10 @@ my-twenty-app/
   │   └── example-view.ts                # تعريف عرض محفوظ — مثال
   ├── navigation-menu-items/
   │   └── example-navigation-menu-item.ts # رابط تنقّل في الشريط الجانبي — مثال
-  └── skills/
-      └── example-skill.ts                # تعريف مهارة لوكيل الذكاء الاصطناعي — مثال},{
+  ├── skills/
+  │   └── example-skill.ts                # تعريف مهارة لوكيل الذكاء الاصطناعي — مثال
+  └── agents/
+      └── example-agent.ts                # تعريف وكيل الذكاء الاصطناعي — مثال
 ```
 
 مع `--minimal`، سيتم إنشاء الملفات الأساسية فقط (`application-config.ts`، `roles/default-role.ts`، `logic-functions/pre-install.ts`، و`logic-functions/post-install.ts`).
@@ -148,6 +156,7 @@ my-twenty-app/
 | `defineView()`                     | تعريفات العروض المحفوظة                        |
 | `defineNavigationMenuItem()`       | تعريفات عناصر قائمة التنقل                     |
 | `defineSkill()`                    | تعريفات مهارات وكيل الذكاء الاصطناعي           |
+| `defineAgent()`                    | تعريفات وكلاء الذكاء الاصطناعي                 |
 
 <Note>
 **تسمية الملفات مرنة.** يعتمد اكتشاف الكيانات على بنية الشجرة المجردة (AST) — إذ يقوم SDK بفحص ملفات المصدر لديك بحثًا عن النمط `export default define<Entity>({...})`. يمكنك تنظيم ملفاتك ومجلداتك كيفما تشاء. التجميع حسب نوع الكيان (مثلًا، `logic-functions/` و`roles/`) هو مجرد عرف لتنظيم الشيفرة، وليس مطلبًا إلزاميًا.
@@ -168,7 +177,7 @@ export default defineObject({
 
 ستضيف الأوامر اللاحقة مزيدًا من الملفات والمجلدات:
 
-* سيقوم `yarn twenty app:dev` بتوليد عميلين API مضبوطي الأنواع تلقائيًا في `node_modules/twenty-sdk/generated`: `CoreApiClient` (لبيانات مساحة العمل عبر `/graphql`) و`MetadataApiClient` (لتكوين مساحة العمل وتحميل الملفات عبر `/metadata`).
+* سيقوم `yarn twenty app:dev` بتوليد عميلين API مضبوطي الأنواع تلقائيًا في `node_modules/twenty-sdk/clients`: `CoreApiClient` (لبيانات مساحة العمل عبر `/graphql`) و`MetadataApiClient` (لتكوين مساحة العمل وتحميل الملفات عبر `/metadata`).
 * `yarn twenty entity:add` سيضيف ملفات تعريف الكيانات ضمن `src/` لكائناتك المخصّصة، والوظائف، ومكوّنات الواجهة الأمامية، والأدوار، والمهارات، وغير ذلك.
 
 ## المصادقة
@@ -225,6 +234,7 @@ yarn twenty auth:status
 | `defineView()`                     | تعريف العروض المحفوظة للكائنات                       |
 | `defineNavigationMenuItem()`       | تعريف روابط التنقل في الشريط الجانبي                 |
 | `defineSkill()`                    | عرّف مهارات وكيل الذكاء الاصطناعي                    |
+| `defineAgent()`                    | عرِّف وكلاء الذكاء الاصطناعي باستخدام موجهات النظام  |
 
 تتحقق هذه الدوال من تكوينك وقت البناء وتوفّر إكمالًا تلقائيًا في بيئة التطوير وأمان الأنواع.
 
@@ -316,6 +326,72 @@ export default defineObject({
 يمكنك تجاوز الحقول الافتراضية من خلال تعريف حقل بالاسم نفسه في مصفوفة `fields` الخاصة بك،
 لكن هذا غير مستحسن.
 </Note>
+
+### تعريف الحقول على الكائنات الموجودة
+
+استخدم `defineField()` لإضافة حقول مخصصة إلى الكائنات الموجودة — سواء الكائنات القياسية (مثل `company` و`person` و`opportunity`) أو الكائنات المخصصة التي تُعرِّفها تطبيقات أخرى. يوجد كل حقل في ملفه الخاص ويشير إلى الكائن الهدف بواسطة `universalIdentifier` الخاص به.
+
+للإشارة إلى الكائنات القياسية، استورد `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS` من `twenty-sdk`. يوفر هذا الثابت معرِّفات مستقرة لجميع الكائنات المضمنة وحقولها:
+
+```typescript
+// src/fields/apollo-total-funding.field.ts
+import {
+  defineField,
+  FieldType,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk';
+
+export default defineField({
+  universalIdentifier: 'c90ae72d-4ddf-4f22-882f-eef98c91e40e',
+  objectUniversalIdentifier:
+    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+  type: FieldType.CURRENCY,
+  name: 'apolloTotalFunding',
+  label: 'Total Funding',
+  description: 'Total funding raised by the company',
+  icon: 'IconCash',
+});
+```
+
+النقاط الرئيسية:
+
+* `objectUniversalIdentifier` يُحدِّد لـ Twenty الكائن الذي سيُرفَق به الحقل. استخدم `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.<objectName>.universalIdentifier` للكائنات القياسية.
+* يتطلب كل حقل `universalIdentifier` ثابتًا خاصًا به، و`name`، و`type`، و`label`، و`objectUniversalIdentifier` الخاص بالكائن الهدف.
+* يمكنك إنشاء حقول جديدة باستخدام `yarn twenty entity:add` واختيار خيار الحقل.
+* يُصدَّر `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS` أيضًا باسم `STANDARD_OBJECT` لسهولة الاستخدام — كلاهما يشير إلى الثابت نفسه.
+
+تشمل الكائنات القياسية المتاحة: `attachment`، `blocklist`، `calendarChannel`، `calendarEvent`، `calendarEventParticipant`، `company`، `connectedAccount`، `dashboard`، `favorite`، `favoriteFolder`، `message`، `messageChannel`، `messageParticipant`، `messageThread`، `note`، `noteTarget`، `opportunity`، `person`، `task`، `taskTarget`، `timelineActivity`، `workflow`، `workflowAutomatedTrigger`، `workflowRun`، `workflowVersion`، و`workspaceMember`.
+
+يُوفِّر كل كائن قياسي أيضًا معرّفات حقوله. على سبيل المثال، للإشارة إلى حقل محدد على كائن قياسي ضمن أذونات الأدوار:
+
+```typescript
+STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.fields.name.universalIdentifier
+```
+
+#### حقول العلاقات على الكائنات الموجودة
+
+يمكنك أيضًا تعريف حقول علاقات تربط الكائنات الموجودة بكائناتك المخصصة:
+
+```typescript
+// src/fields/people-on-call-recording.field.ts
+import { defineField, FieldType, RelationType, STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk';
+import { CALL_RECORDING_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/objects/call-recording';
+import { CALL_RECORDING_ON_PERSON_ID } from 'src/fields/call-recording-on-person.field';
+
+export default defineField({
+  universalIdentifier: '4a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d',
+  objectUniversalIdentifier:
+    CALL_RECORDING_OBJECT_UNIVERSAL_IDENTIFIER,
+  type: FieldType.RELATION,
+  name: 'person',
+  label: 'Person',
+  relationTargetObjectMetadataUniversalIdentifier:
+    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
+  relationTargetFieldMetadataUniversalIdentifier:
+    CALL_RECORDING_ON_PERSON_ID,
+  relationType: RelationType.MANY_TO_ONE,
+});
+```
 
 ### تكوين التطبيق (application-config.ts)
 
@@ -430,7 +506,7 @@ export default defineRole({
 // src/app/createPostCard.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk';
 import type { DatabaseEventPayload, ObjectRecordCreateEvent, CronPayload, RoutePayload } from 'twenty-sdk';
-import { CoreApiClient, type Person } from 'twenty-sdk/generated';
+import { CoreApiClient, type Person } from 'twenty-sdk/clients';
 
 const handler = async (params: RoutePayload) => {
   const client = new CoreApiClient();
@@ -675,7 +751,7 @@ const handler = async (event: RoutePayload) => {
 ```typescript
 // src/logic-functions/enrich-company.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk';
-import { CoreApiClient } from 'twenty-sdk/generated';
+import { CoreApiClient } from 'twenty-sdk/clients';
 
 const handler = async (params: { companyName: string; domain?: string }) => {
   const client = new CoreApiClient();
@@ -767,6 +843,255 @@ export default defineFrontComponent({
 * **مُنشأ بالقالب**: شغّل `yarn twenty entity:add` واختر خيار إضافة مكوّن أمامي جديد.
 * **يدوي**: أنشئ ملفًا جديدًا `.tsx` واستخدم `defineFrontComponent()` مع اتباع النمط نفسه.
 
+#### أين يمكن استخدام مكوّنات الواجهة الأمامية
+
+يمكن عرض مكوّنات الواجهة الأمامية في موقعين داخل Twenty:
+
+* **اللوحة الجانبية** — المكوّنات غير عديمة الرأس تفتح في اللوحة الجانبية اليمنى. هذا هو السلوك الافتراضي عندما يتم تشغيل مكوّن واجهة أمامية من قائمة الأوامر.
+* **الويدجت (لوحات المعلومات وصفحات السجلات)** — يمكن تضمين مكوّنات الواجهة الأمامية كويدجت داخل تخطيطات الصفحات. عند تكوين لوحة معلومات أو تخطيط صفحة سجل، يمكن للمستخدمين إضافة ويدجت لمكوّن واجهة أمامية.
+
+#### عديم الرأس مقابل غير عديم الرأس
+
+تأتي مكوّنات الواجهة الأمامية بوضعَي عرض يتحكّم بهما الخيار `isHeadless`:
+
+**غير عديم الرأس (افتراضي)** — يعرض المكوّن واجهة مستخدم مرئية. عند تشغيله من قائمة الأوامر يفتح في اللوحة الجانبية. هذا هو السلوك الافتراضي عندما تكون `isHeadless` تساوي `false` أو يتم تجاهلها.
+
+**عديم الرأس** — يتم تركيب المكوّن بشكل غير مرئي في الخلفية. لا يفتح اللوحة الجانبية. تم تصميم المكوّنات عديمة الرأس لإجراءات تنفّذ منطقًا ثم تُزيل تركيبها ذاتيًا — على سبيل المثال، تشغيل مهمة غير متزامنة، أو الانتقال إلى صفحة، أو إظهار نافذة تأكيد منبثقة. تتوافق بشكل طبيعي مع مكوّنات Command في SDK الموصوفة أدناه.
+
+```typescript
+export default defineFrontComponent({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'my-action',
+  description: 'Runs an action without opening the side panel',
+  component: MyAction,
+  isHeadless: true,
+  command: {
+    universalIdentifier: 'b2c3d4e5-f6a7-8901-bcde-f12345678901',
+    label: 'Run my action',
+  },
+});
+```
+
+#### إضافة عناصر قائمة الأوامر
+
+لجعل مكوّن واجهة أمامية يظهر كعنصر في قائمة الأوامر في Twenty، أضف الخاصية `command` إلى `defineFrontComponent()`. عند فتح المستخدمين لقائمة الأوامر (Cmd+K / Ctrl+K)، يظهر العنصر ويشغّل مكوّن الواجهة الأمامية عند النقر.
+
+يقبل كائن `command` الحقول التالية:
+
+| الحقل                                   | النوع                                      | الوصف                                                                           |
+| --------------------------------------- | ------------------------------------------ | ------------------------------------------------------------------------------- |
+| `universalIdentifier`                   | `string` (إلزامي)                          | معرّف فريد لعنصر قائمة الأوامر                                                  |
+| `التسمية`                               | `string` (إلزامي)                          | التسمية المعروضة في قائمة الأوامر                                               |
+| `أيقونة`                                | `string` (اختياري)                         | اسم الأيقونة (مثال: `'IconSparkles'`)                                           |
+| `isPinned`                              | `boolean` (اختياري)                        | ما إذا كان الأمر مثبتًا أعلى القائمة                                            |
+| `availabilityType`                      | `'GLOBAL' \| 'RECORD_SELECTION'` (اختياري) | `GLOBAL` يعرض الأمر في كل مكان؛ `RECORD_SELECTION` يعرضه فقط في سياقات السجلّات |
+| `availabilityObjectUniversalIdentifier` | `string` (اختياري)                         | تقييد الأمر بنوع كائن محدّد (مثال: Person)                                      |
+
+إليك مثالًا من تطبيق تسجيل المكالمات يضيف أمرًا محصورًا بسجلات Person:
+
+```typescript
+import { defineFrontComponent } from 'twenty-sdk';
+
+export default defineFrontComponent({
+  universalIdentifier: 'c3d4e5f6-a7b8-9012-cdef-123456789012',
+  name: 'Summarize Person Call Recordings',
+  description: 'Generates a summary of call recordings for a person',
+  component: SummarizePersonRecordings,
+  command: {
+    universalIdentifier: 'd4e5f6a7-b8c9-0123-defa-234567890123',
+    label: 'Summarize call recordings',
+    icon: 'IconSparkles',
+    isPinned: false,
+    availabilityType: 'RECORD_SELECTION',
+    availabilityObjectUniversalIdentifier:
+      '20202020-e674-48e5-a542-72570eee7213',
+  },
+});
+```
+
+عند مزامنة الأمر، يظهر في قائمة الأوامر. إذا كان مكوّن الواجهة الأمامية غير عديم الرأس، تُفتح اللوحة الجانبية مع عرض المكوّن بداخلها. إذا كان عديم الرأس، فسيتم تركيب المكوّن في الخلفية وتنفيذ منطقه.
+
+#### مكوّنات Command في SDK
+
+توفر حزمة `twenty-sdk` أربعة مكوّنات مساعدة من نوع Command مصممة للمكوّنات عديمة الرأس في الواجهة الأمامية. كل مكوّن ينفّذ إجراءً عند التركيب، ويتعامل مع الأخطاء بعرض إشعار Snackbar، ويزيل تركيب مكوّن الواجهة الأمامية تلقائيًا عند الانتهاء.
+
+استوردها من `twenty-sdk/command`:
+
+* **`Command`** — يشغّل رد نداء غير متزامن عبر الخاصية `execute`.
+* **`CommandLink`** — ينتقل إلى مسار في التطبيق. الخصائص: `to`، `params`، `queryParams`، `options`.
+* **`CommandModal`** — يفتح نافذة تأكيد منبثقة. إذا أكّد المستخدم، ينفّذ رد النداء `execute`. الخصائص: `title`، `subtitle`، `execute`، `confirmButtonText`، `confirmButtonAccent`.
+* **`CommandOpenSidePanelPage`** — يفتح صفحة محدّدة في اللوحة الجانبية. الخصائص: `page`، `pageTitle`، `pageIcon`.
+
+فيما يلي مثال كامل لمكوّن واجهة أمامية عديم الرأس يستخدم `Command` لتشغيل إجراء من قائمة الأوامر:
+
+```typescript
+// src/front-components/run-action.tsx
+import { defineFrontComponent } from 'twenty-sdk';
+import { Command } from 'twenty-sdk/command';
+import { CoreApiClient } from 'twenty-sdk/clients';
+
+const RunAction = () => {
+  const execute = async () => {
+    const client = new CoreApiClient();
+
+    await client.mutation({
+      createTask: {
+        __args: { data: { title: 'Created by my app' } },
+        id: true,
+      },
+    });
+  };
+
+  return <Command execute={execute} />;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'e5f6a7b8-c9d0-1234-efab-345678901234',
+  name: 'run-action',
+  description: 'Creates a task from the command menu',
+  component: RunAction,
+  isHeadless: true,
+  command: {
+    universalIdentifier: 'f6a7b8c9-d0e1-2345-fabc-456789012345',
+    label: 'Run my action',
+    icon: 'IconPlayerPlay',
+  },
+});
+```
+
+ومثال يستخدم `CommandModal` لطلب التأكيد قبل التنفيذ:
+
+```typescript
+// src/front-components/delete-draft.tsx
+import { defineFrontComponent } from 'twenty-sdk';
+import { CommandModal } from 'twenty-sdk/command';
+
+const DeleteDraft = () => {
+  const execute = async () => {
+    // perform the deletion
+  };
+
+  return (
+    <CommandModal
+      title="Delete draft?"
+      subtitle="This action cannot be undone."
+      execute={execute}
+      confirmButtonText="Delete"
+      confirmButtonAccent="danger"
+    />
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'a7b8c9d0-e1f2-3456-abcd-567890123456',
+  name: 'delete-draft',
+  description: 'Deletes a draft with confirmation',
+  component: DeleteDraft,
+  isHeadless: true,
+  command: {
+    universalIdentifier: 'b8c9d0e1-f2a3-4567-bcde-678901234567',
+    label: 'Delete draft',
+    icon: 'IconTrash',
+  },
+});
+```
+
+#### سياق التنفيذ
+
+يتلقّى كل مكوّن واجهة أمامية سياق تنفيذ يوفّر معلومات حول مكان وكيفية تشغيله. يمكنك الوصول إلى قيم السياق باستخدام الخطافات من `twenty-sdk`:
+
+| الخطّاف                 | نوع القيمة المرجعة | الوصف                                                                                                               |
+| ----------------------- | ------------------ | ------------------------------------------------------------------------------------------------------------------- |
+| `useFrontComponentId()` | `string`           | المعرّف الفريد لمثيل مكوّن الواجهة الأمامية الحالي                                                                  |
+| `useRecordId()`         | `string \| null`   | معرّف السجل الحالي، عندما يعمل المكوّن في سياق سجل (مثال: ويدجت صفحة سجل أو أمر محصور بسجل). يُرجع `null` خلاف ذلك. |
+| `useUserId()`           | `string \| null`   | معرّف المستخدم الحالي                                                                                               |
+
+```typescript
+import { useRecordId, useUserId } from 'twenty-sdk';
+
+const MyWidget = () => {
+  const recordId = useRecordId();
+  const userId = useUserId();
+
+  return (
+    <div>
+      <p>Record: {recordId ?? 'none'}</p>
+      <p>User: {userId ?? 'anonymous'}</p>
+    </div>
+  );
+};
+```
+
+السياق تفاعلي — إذا تغيّر السجل المحيط، فستُرجع الخطافات القيم المحدّثة تلقائيًا.
+
+#### دوال واجهة برمجة تطبيقات المضيف
+
+تعمل مكوّنات الواجهة الأمامية في بيئة معزولة، لكنها تستطيع التفاعل مع واجهة مستخدم Twenty عبر مجموعة من الدوال التي يوفّرها المضيف. استوردها مباشرةً من `twenty-sdk`:
+
+```typescript
+import {
+  navigate,
+  closeSidePanel,
+  enqueueSnackbar,
+  unmountFrontComponent,
+  openSidePanelPage,
+  openCommandConfirmationModal,
+} from 'twenty-sdk';
+```
+
+| دالة                           | التوقيع                                                  | الوصف                                                                                                                                                         |
+| ------------------------------ | -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `التنقل`                       | `(to, params?, queryParams?, options?) => Promise<void>` | الانتقال إلى مسار تطبيق محدّد النوع داخل Twenty                                                                                                               |
+| `closeSidePanel`               | `() => Promise<void>`                                    | إغلاق اللوحة الجانبية                                                                                                                                         |
+| `enqueueSnackbar`              | `(params) => Promise<void>`                              | عرض إشعار Snackbar. المعاملات: `message`، `variant` (`'error'`، `'success'`، `'info'`، `'warning'`)، `duration` اختياري، `detailedMessage`، `dedupeKey`       |
+| `unmountFrontComponent`        | `() => Promise<void>`                                    | إلغاء تركيب مكوّن الواجهة الأمامية الحالي (تستخدمه المكوّنات عديمة الرأس للتنظيف بعد التنفيذ)                                                                 |
+| `openSidePanelPage`            | `(params) => Promise<void>`                              | فتح صفحة في اللوحة الجانبية. المعاملات: `page`، `pageTitle`، `pageIcon`، `shouldResetSearchState`                                                             |
+| `openCommandConfirmationModal` | `(params) => Promise<'confirm' \| 'cancel'>`             | عرض نافذة تأكيد منبثقة والانتظار لرد المستخدم. المعاملات: `title`، `subtitle`، `confirmButtonText`، `confirmButtonAccent` (`'default'`، `'blue'`، `'danger'`) |
+
+فيما يلي مثال يستخدم واجهة برمجة تطبيقات المضيف لعرض Snackbar وإغلاق اللوحة الجانبية بعد اكتمال الإجراء:
+
+```typescript
+import { defineFrontComponent, useRecordId } from 'twenty-sdk';
+import { enqueueSnackbar, closeSidePanel } from 'twenty-sdk';
+import { CoreApiClient } from 'twenty-sdk/clients';
+
+const ArchiveRecord = () => {
+  const recordId = useRecordId();
+
+  const handleArchive = async () => {
+    const client = new CoreApiClient();
+
+    await client.mutation({
+      updateTask: {
+        __args: { id: recordId, data: { status: 'ARCHIVED' } },
+        id: true,
+      },
+    });
+
+    await enqueueSnackbar({
+      message: 'Record archived',
+      variant: 'success',
+    });
+
+    await closeSidePanel();
+  };
+
+  return (
+    <div style={{ padding: '20px' }}>
+      <p>Archive this record?</p>
+      <button onClick={handleArchive}>Archive</button>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'c9d0e1f2-a3b4-5678-cdef-789012345678',
+  name: 'archive-record',
+  description: 'Archives the current record',
+  component: ArchiveRecord,
+});
+```
+
 ### المهارات
 
 تُحدِّد المهارات تعليمات وإمكانات قابلة لإعادة الاستخدام يمكن لوكلاء الذكاء الاصطناعي استخدامها داخل مساحة العمل لديك. استخدم `defineSkill()` لتعريف مهارات مع تحقّق مدمج:
@@ -802,15 +1127,51 @@ export default defineSkill({
 * **مُنشأ بالقالب**: شغِّل `yarn twenty entity:add` واختر خيار إضافة مهارة جديدة.
 * **يدوي**: أنشئ ملفًا جديدًا واستخدم `defineSkill()` مع اتباع النمط نفسه.
 
+### الوكلاء
+
+تمكّنك ميزة الوكلاء من تعريف وكلاء ذكاء اصطناعي قادرين على العمل ضمن مساحة عملك، باستخدام موجهات النظام. استخدم `defineAgent()` لتعريف وكلاء مع تحقق مدمج:
+
+```typescript
+// src/agents/example-agent.ts
+import { defineAgent } from 'twenty-sdk';
+
+export default defineAgent({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'sales-assistant',
+  label: 'Sales Assistant',
+  description: 'An AI agent that helps with sales tasks',
+  icon: 'IconRobot',
+  prompt: `You are a sales assistant. Help users with:
+1. Researching prospects and companies
+2. Drafting personalized outreach messages
+3. Tracking follow-ups and next steps
+4. Analyzing deal pipeline and suggesting actions`,
+});
+```
+
+النقاط الرئيسية:
+
+* `name` هي سلسلة معرّف فريدة للوكيل (يُنصَح باستخدام kebab-case).
+* `label` هو اسم العرض المقروء للبشر الظاهر في واجهة المستخدم.
+* `prompt` يحتوي موجه النظام — وهو نص التعليمات الذي يحدد سلوك الوكيل.
+* `icon` (اختياري) يحدّد الأيقونة المعروضة في واجهة المستخدم.
+* `description` (اختياري) يوفّر سياقًا إضافيًا حول غرض الوكيل.
+
+يمكنك إنشاء وكلاء جدد بطريقتين:
+
+* **مُنشأ بالقالب**: شغِّل `yarn twenty entity:add` واختر خيار إضافة وكيل جديد.
+* **يدوي**: أنشئ ملفًا جديدًا واستخدم `defineAgent()` مع اتباع النمط نفسه.
+
 ### عملاء مُولَّدون مضبوطو الأنواع
 
-يتم توليد عميلين مضبوطي الأنواع تلقائيًا بواسطة `yarn twenty app:dev` وتخزينهما في `node_modules/twenty-sdk/generated` استنادًا إلى مخطط مساحة العمل لديك:
+يتم توليد عميلين مضبوطي الأنواع تلقائيًا بواسطة `yarn twenty app:dev` وتخزينهما في `node_modules/twenty-sdk/clients` استنادًا إلى مخطط مساحة العمل لديك:
 
 * **`CoreApiClient`** — يُجري استعلامات إلى نقطة النهاية `/graphql` للحصول على بيانات مساحة العمل
 * **`MetadataApiClient`** — يستعلم عن نقطة النهاية `/metadata` لتكوين مساحة العمل وتحميل الملفات.
 
 ```typescript
-import { CoreApiClient, MetadataApiClient } from 'twenty-sdk/generated';
+import { CoreApiClient } from 'twenty-sdk/clients';
+import { MetadataApiClient } from 'twenty-sdk/clients';
 
 const client = new CoreApiClient();
 const { me } = await client.query({ me: { id: true, displayName: true } });
@@ -819,7 +1180,7 @@ const metadataClient = new MetadataApiClient();
 const { currentWorkspace } = await metadataClient.query({ currentWorkspace: { id: true } });
 ```
 
-يُعاد توليد كلا العميلين تلقائيًا بواسطة `yarn twenty app:dev` كلما تغيّرت كائناتك أو حقولك.
+`CoreApiClient` يُعاد توليده تلقائيًا بواسطة `yarn twenty app:dev` كلما تغيّرت كائناتك أو حقولك. `MetadataApiClient` يأتي مُجهزًا مسبقًا مع SDK.
 
 #### بيانات الاعتماد وقت التشغيل في الوظائف المنطقية
 
@@ -836,10 +1197,10 @@ const { currentWorkspace } = await metadataClient.query({ currentWorkspace: { id
 
 #### رفع الملفات
 
-يتضمن `MetadataApiClient` المُولَّد طريقة `uploadFile` لإرفاق الملفات بالحقول من نوع ملف ضمن كائنات مساحة العمل الخاصة بك. نظرًا لأن عملاء GraphQL القياسيون لا يدعمون تحميل الملفات متعددة الأجزاء افتراضيًا، يوفر العميل هذه الطريقة المخصصة التي تطبق [مواصفة طلب GraphQL متعدد الأجزاء](https://github.com/jaydenseric/graphql-multipart-request-spec) في الخلفية.
+يتضمن `MetadataApiClient` طريقة `uploadFile` لإرفاق الملفات بالحقول من نوع ملف ضمن كائنات مساحة العمل الخاصة بك. نظرًا لأن عملاء GraphQL القياسيون لا يدعمون تحميل الملفات متعددة الأجزاء افتراضيًا، يوفر العميل هذه الطريقة المخصصة التي تطبق [مواصفة طلب GraphQL متعدد الأجزاء](https://github.com/jaydenseric/graphql-multipart-request-spec) في الخلفية.
 
 ```typescript
-import { MetadataApiClient } from 'twenty-sdk/generated';
+import { MetadataApiClient } from 'twenty-sdk/clients';
 import * as fs from 'fs';
 
 const metadataClient = new MetadataApiClient();
@@ -884,6 +1245,113 @@ uploadFile(
 ### مثال Hello World
 
 استكشف مثالًا بسيطًا شاملًا من البداية إلى النهاية يوضح الكائنات والوظائف المنطقية والمكوّنات الأمامية ومشغّلات متعددة [هنا](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/hello-world):
+
+## بناء تطبيقك
+
+بمجرد أن تطوّر تطبيقك باستخدام `app:dev`، استخدم `app:build` لإنشاء حزمة قابلة للتوزيع منه.
+
+```bash filename="Terminal"
+# ابنِ التطبيق (الإخراج يذهب إلى .twenty/output/)
+yarn twenty app:build
+
+# ابنِ وأنشئ ملف tarball (.tgz) للتوزيع
+yarn twenty app:build --tarball
+```
+
+عملية البناء:
+
+1. **يقوم بتحليل ملف البيان والتحقق من صحته** — يقرأ جميع الكيانات `defineX()` من ملفات المصدر لديك ويُتحقّق من بنية ملف البيان.
+2. **يُصرِّف دوال المنطق ومكوّنات الواجهة** — يُجمّع مصادر TypeScript إلى ملفات ESM `.mjs` باستخدام esbuild.
+3. **يولّد قيم التحقّق** — يحسب تجزئات MD5 لكل ملف مُبنًى، وتُخزَّن في ملف البيان كـ `builtHandlerChecksum` / `builtComponentChecksum`.
+4. **Generates the typed API client** — introspects the GraphQL schema and generates typed `CoreApiClient` and `MetadataApiClient` clients.
+5. **Runs a TypeScript type check** — runs `tsc --noEmit` to catch type errors before publishing.
+6. **Rebuilds with the generated client** — performs a second compilation pass so the generated client types are included.
+7. **Optionally creates a tarball** — if `--tarball` is passed, runs `npm pack` to create a `.tgz` file ready for distribution.
+
+The build output in `.twenty/output/` contains:
+
+```text
+.twenty/output/
+├── manifest.json              # Manifest with checksums for all built files
+├── package.json               # Copied from app root
+├── yarn.lock                  # Copied from app root
+├── src/
+│   ├── logic-functions/       # Compiled .mjs logic function files
+│   └── front-components/      # Compiled .mjs front component files
+├── public/                    # Static assets (if any)
+└── my-app-1.0.0.tgz          # Only with --tarball flag
+```
+
+| الخيار      | الوصف                                                     |
+| ----------- | --------------------------------------------------------- |
+| `[appPath]` | Path to the app directory (defaults to current directory) |
+| `--tarball` | Also pack the output into a `.tgz` tarball                |
+
+## Publishing your app
+
+Use `app:publish` to distribute your app — either to the npm registry or directly to a Twenty server.
+
+### Publish to npm (default)
+
+```bash filename="Terminal"
+# Publish to npm (requires npm login)
+yarn twenty app:publish
+
+# Publish with a dist-tag (e.g. beta, next)
+yarn twenty app:publish --tag beta
+```
+
+This builds the app and runs `npm publish` from the `.twenty/output/` directory. The published package can then be installed from the Twenty marketplace by any workspace.
+
+### Publish to a Twenty server
+
+```bash filename="Terminal"
+# Publish directly to a Twenty server
+yarn twenty app:publish --server https://app.twenty.com
+```
+
+This builds the app with a tarball, uploads it to the server via the `uploadAppTarball` GraphQL mutation, and triggers installation in one step. This is useful for private deployments or testing against a specific server.
+
+| الخيار            | الوصف                                                     |
+| ----------------- | --------------------------------------------------------- |
+| `[appPath]`       | Path to the app directory (defaults to current directory) |
+| `--server <url>`  | Publish to a Twenty server instead of npm                 |
+| `--token <token>` | Authentication token for the target server                |
+| `--tag <tag>`     | npm dist-tag (e.g. `beta`, `next`) — only for npm publish |
+
+## Application registration
+
+Before an app can be installed in a workspace, it must be **registered**. A registration is a metadata record that describes where the app comes from and how to authenticate it. This is handled automatically by the CLI in most cases.
+
+### Source types
+
+Each registration has a **source type** that determines how the app's files are resolved during installation:
+
+| Source type | How files are resolved                                                     | Typical use case                       |
+| ----------- | -------------------------------------------------------------------------- | -------------------------------------- |
+| `LOCAL`     | Files are synced in real-time by the CLI watcher — installation is skipped | Development with `app:dev`             |
+| `NPM`       | Fetched from the npm registry via the `sourcePackage` field                | Published apps on npm                  |
+| `TARBALL`   | Extracted from an uploaded `.tgz` file stored on the server                | Private apps published with `--server` |
+
+### How registration happens
+
+* **`app:dev`** — automatically creates a `LOCAL` registration the first time you run dev mode against a workspace.
+* **`app:publish --server`** — uploads a tarball and creates (or updates) a `TARBALL` registration, then installs the app.
+* **npm marketplace** — `NPM` registrations are created when apps are synced from the npm registry into the Twenty marketplace catalog.
+* **GraphQL API** — you can also create registrations programmatically via the `createApplicationRegistration` mutation.
+
+### Registration vs installation
+
+**Registration** and **installation** are separate concepts:
+
+* A **registration** (`ApplicationRegistration`) is a global metadata record describing the app: its name, source type, OAuth credentials, and marketplace listing status. It exists independently of any workspace.
+* An **installation** (`Application`) is a per-workspace instance. When a user installs an app, Twenty resolves the package from the registration's source, writes the built files to storage, and synchronizes the manifest (creating objects, fields, logic functions, etc.) in that workspace.
+
+One registration can be installed in many workspaces. Each workspace gets its own copy of the app's files and data model.
+
+### OAuth credentials
+
+Each registration includes OAuth credentials (`oAuthClientId` and `oAuthClientSecret`) generated at creation time. These are used by the app to authenticate API requests on behalf of users. The client secret is returned **once** at creation — store it securely. You can rotate it later via the `rotateApplicationRegistrationClientSecret` mutation.
 
 ## إعداد يدوي (بدون المهيئ)
 

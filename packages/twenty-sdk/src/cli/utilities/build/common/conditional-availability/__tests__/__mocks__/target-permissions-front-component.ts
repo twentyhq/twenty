@@ -1,6 +1,6 @@
 import {
   defineFrontComponent,
-  isShowPage,
+  pageType,
   targetObjectWritePermissions,
 } from '@/sdk';
 
@@ -13,6 +13,6 @@ export default defineFrontComponent({
     universalIdentifier: 'target-permissions-cmd',
     label: 'Target Permissions',
     conditionalAvailabilityExpression:
-      isShowPage && targetObjectWritePermissions.person,
+      pageType === 'RECORD_PAGE' && targetObjectWritePermissions.person,
   },
 });

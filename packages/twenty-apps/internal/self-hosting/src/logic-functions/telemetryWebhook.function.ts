@@ -1,5 +1,5 @@
 import { defineLogicFunction, type RoutePayload } from 'twenty-sdk';
-import { CoreApiClient } from 'twenty-sdk/generated';
+import { CoreApiClient } from 'twenty-sdk/clients';
 import { type TelemetryEvent } from 'src/logic-functions/types/telemetry-event.type';
 
 export const main = async (

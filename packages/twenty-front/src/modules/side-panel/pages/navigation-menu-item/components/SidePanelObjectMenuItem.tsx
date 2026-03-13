@@ -3,13 +3,13 @@ import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
-import { SidePanelItemWithAddToNavigationDrag } from '@/side-panel/components/SidePanelItemWithAddToNavigationDrag';
 import { NavigationMenuItemStyleIcon } from '@/navigation-menu-item/components/NavigationMenuItemStyleIcon';
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import { useDraftNavigationMenuItems } from '@/navigation-menu-item/hooks/useDraftNavigationMenuItems';
 import { useNavigationMenuObjectMetadataFromDraft } from '@/navigation-menu-item/hooks/useNavigationMenuObjectMetadataFromDraft';
 import { getStandardObjectIconColor } from '@/navigation-menu-item/utils/getStandardObjectIconColor';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { SidePanelItemWithAddToNavigationDrag } from '@/side-panel/components/SidePanelItemWithAddToNavigationDrag';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { coreIndexViewIdFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/coreIndexViewIdFromObjectMetadataItemFamilySelector';
@@ -22,6 +22,7 @@ type SidePanelObjectMenuItemProps = {
   ) => void;
   variant: 'add' | 'edit';
   dragIndex?: number;
+  disableDrag?: boolean;
 };
 
 export const SidePanelObjectMenuItem = ({
@@ -29,6 +30,7 @@ export const SidePanelObjectMenuItem = ({
   onSelect,
   variant,
   dragIndex,
+  disableDrag = false,
 }: SidePanelObjectMenuItemProps) => {
   const { t } = useLingui();
   const { getIcon } = useIcons();
@@ -66,11 +68,13 @@ export const SidePanelObjectMenuItem = ({
           id={objectMetadataItem.id}
           onClick={handleClick}
           dragIndex={dragIndex}
+          disableDrag={disableDrag}
           payload={{
             type: NavigationMenuItemType.OBJECT,
             objectMetadataId: objectMetadataItem.id,
             defaultViewId: defaultViewId ?? '',
             label: objectMetadataItem.labelPlural,
+            iconColor,
           }}
         />
       ) : (

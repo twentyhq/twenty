@@ -47,6 +47,7 @@ export const updateOnePageLayoutWidgetQueryFactory = ({
       objectMetadataId: input.objectMetadataId,
       gridPosition: input.gridPosition,
       configuration: input.configuration,
+      conditionalDisplay: input.conditionalDisplay,
     },
   },
 });

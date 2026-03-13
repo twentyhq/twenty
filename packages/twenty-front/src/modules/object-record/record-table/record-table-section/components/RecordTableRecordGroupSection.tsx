@@ -44,7 +44,7 @@ const StyledTrContainer = styled.div`
   display: flex;
   flex-direction: row;
 
-  div:not(:first-of-type) {
+  > div:not(:first-of-type) {
     border-bottom: 1px solid ${themeCssVariables.border.color.light};
   }
 `;

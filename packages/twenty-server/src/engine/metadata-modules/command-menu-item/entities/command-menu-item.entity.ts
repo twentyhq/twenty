@@ -11,14 +11,11 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/enums/command-menu-item-availability-type.enum';
+import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import { FrontComponentEntity } from 'src/engine/metadata-modules/front-component/entities/front-component.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
-
-export enum CommandMenuItemAvailabilityType {
-  GLOBAL = 'GLOBAL',
-  RECORD_SELECTION = 'RECORD_SELECTION',
-}
 
 @Entity({ name: 'commandMenuItem', schema: 'core' })
 @Index('IDX_COMMAND_MENU_ITEM_WORKFLOW_VERSION_ID_WORKSPACE_ID', [
@@ -33,8 +30,8 @@ export enum CommandMenuItemAvailabilityType {
   'availabilityObjectMetadataId',
 ])
 @Check(
-  'CHK_command_menu_item_workflow_or_front_component',
-  '("workflowVersionId" IS NOT NULL AND "frontComponentId" IS NULL) OR ("workflowVersionId" IS NULL AND "frontComponentId" IS NOT NULL)',
+  'CHK_CMD_MENU_ITEM_WF_OR_FC_OR_ENGINE_KEY',
+  '("workflowVersionId" IS NOT NULL AND "frontComponentId" IS NULL AND "engineComponentKey" IS NULL) OR ("workflowVersionId" IS NULL AND "frontComponentId" IS NOT NULL AND "engineComponentKey" IS NULL) OR ("workflowVersionId" IS NULL AND "frontComponentId" IS NULL AND "engineComponentKey" IS NOT NULL)',
 )
 export class CommandMenuItemEntity
   extends SyncableEntity
@@ -56,6 +53,13 @@ export class CommandMenuItemEntity
   @JoinColumn({ name: 'frontComponentId' })
   frontComponent: Relation<FrontComponentEntity> | null;
 
+  @Column({
+    type: 'enum',
+    enum: Object.values(EngineComponentKey),
+    nullable: true,
+  })
+  engineComponentKey: EngineComponentKey | null;
+
   @Column({ nullable: false })
   label: string;
 
@@ -73,7 +77,7 @@ export class CommandMenuItemEntity
 
   @Column({
     type: 'enum',
-    enum: CommandMenuItemAvailabilityType,
+    enum: Object.values(CommandMenuItemAvailabilityType),
     nullable: false,
     default: CommandMenuItemAvailabilityType.GLOBAL,
   })

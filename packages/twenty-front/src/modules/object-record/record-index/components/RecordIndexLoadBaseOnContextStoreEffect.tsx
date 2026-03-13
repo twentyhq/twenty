@@ -3,6 +3,7 @@ import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/
 import { useLoadRecordIndexStates } from '@/object-record/record-index/hooks/useLoadRecordIndexStates';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
+import { useCreateDefaultViewForObject } from '@/views/hooks/useCreateDefaultViewForObject';
 import { coreViewFromViewIdFamilySelector } from '@/views/states/selectors/coreViewFromViewIdFamilySelector';
 import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -23,8 +24,13 @@ export const RecordIndexLoadBaseOnContextStoreEffect = () => {
 
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
 
+  const { createDefaultViewForObject } = useCreateDefaultViewForObject();
+
   useEffect(() => {
-    if (loadedViewId === contextStoreCurrentViewId) {
+    if (
+      isDefined(contextStoreCurrentViewId) &&
+      loadedViewId === contextStoreCurrentViewId
+    ) {
       return;
     }
 
@@ -35,6 +41,8 @@ export const RecordIndexLoadBaseOnContextStoreEffect = () => {
     if (isDefined(view)) {
       loadRecordIndexStates(view, objectMetadataItem);
       setLoadedViewId(contextStoreCurrentViewId);
+    } else {
+      createDefaultViewForObject(objectMetadataItem);
     }
   }, [
     contextStoreCurrentViewId,
@@ -42,6 +50,7 @@ export const RecordIndexLoadBaseOnContextStoreEffect = () => {
     loadedViewId,
     objectMetadataItem,
     view,
+    createDefaultViewForObject,
   ]);
 
   return <></>;
