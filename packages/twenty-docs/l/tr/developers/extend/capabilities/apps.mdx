@@ -1246,9 +1246,9 @@ uploadFile(
 
 Nesneleri, mantık fonksiyonlarını, ön uç bileşenlerini ve birden çok tetikleyiciyi gösteren minimal, uçtan uca bir örneği [buradan](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/hello-world) inceleyin:
 
-## Building your app
+## Uygulamanızı derleme
 
-Once you've developed your app with `app:dev`, use `app:build` to compile it into a distributable package.
+Uygulamanızı `app:dev` ile geliştirdikten sonra, `app:build` kullanarak onu dağıtılabilir bir pakete derleyin.
 
 ```bash filename="Terminal"
 # Build the app (output goes to .twenty/output/)
@@ -1258,11 +1258,11 @@ yarn twenty app:build
 yarn twenty app:build --tarball
 ```
 
-The build process:
+Derleme süreci:
 
-1. **Parses and validates the manifest** — reads all `defineX()` entities from your source files and validates the manifest structure.
-2. **Compiles logic functions and front components** — bundles TypeScript sources into ESM `.mjs` files using esbuild.
-3. **Generates checksums** — computes MD5 hashes for each built file, stored in the manifest as `builtHandlerChecksum` / `builtComponentChecksum`.
+1. **Manifesti ayrıştırır ve doğrular** — kaynak dosyalarınızdaki tüm `defineX()` varlıklarını okur ve manifest yapısını doğrular.
+2. **Mantık işlevlerini ve ön bileşenleri derler** — TypeScript kaynaklarını esbuild kullanarak ESM `.mjs` dosyalarına paketler.
+3. **Sağlama toplamları üretir** — her bir oluşturulan dosya için MD5 karmalarını hesaplar ve manifestte `builtHandlerChecksum` / `builtComponentChecksum` olarak saklar.
 4. **Generates the typed API client** — introspects the GraphQL schema and generates typed `CoreApiClient` and `MetadataApiClient` clients.
 5. **Runs a TypeScript type check** — runs `tsc --noEmit` to catch type errors before publishing.
 6. **Rebuilds with the generated client** — performs a second compilation pass so the generated client types are included.
