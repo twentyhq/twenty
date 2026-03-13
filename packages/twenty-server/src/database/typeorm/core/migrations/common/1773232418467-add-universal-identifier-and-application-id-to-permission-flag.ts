@@ -19,7 +19,7 @@ export class AddUniversalIdentifierAndApplicationIdToPermissionFlag1773232418467
       );
 
       await queryRunner.query(`RELEASE SAVEPOINT ${savepointName}`);
-    } catch (error) {
+    } catch (e) {
       try {
         await queryRunner.query(`ROLLBACK TO SAVEPOINT ${savepointName}`);
         await queryRunner.query(`RELEASE SAVEPOINT ${savepointName}`);
@@ -32,7 +32,11 @@ export class AddUniversalIdentifierAndApplicationIdToPermissionFlag1773232418467
         throw rollbackError;
       }
 
-      throw error;
+      // oxlint-disable-next-line no-console
+      console.error(
+        'Swallowing AddUniversalIdentifierAndApplicationIdToPermissionFlag1773232418467 error',
+        e,
+      );
     }
   }
 
