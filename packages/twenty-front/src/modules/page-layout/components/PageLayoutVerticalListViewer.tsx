@@ -8,7 +8,6 @@ import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer'
 import { useIsInPinnedTab } from '@/page-layout/widgets/hooks/useIsInPinnedTab';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { WidgetType } from '~/generated-metadata/graphql';
 
 const StyledVerticalListContainer = styled.div<{
   variant: PageLayoutVerticalListViewerVariant;
@@ -25,10 +24,6 @@ const StyledVerticalListContainer = styled.div<{
   padding: ${({ variant }) =>
     variant === 'side-column' ? 0 : themeCssVariables.spacing[2]};
 `;
-
-const StyledFieldsWidgetWrapper = styled.div<{
-  variant: PageLayoutVerticalListViewerVariant;
-}>``;
 
 type PageLayoutVerticalListViewerProps = {
   widgets: PageLayoutWidget[];
@@ -52,17 +47,11 @@ export const PageLayoutVerticalListViewer = ({
       variant={variant}
       shouldUseWhiteBackground={isMobile || isInSidePanel}
     >
-      {widgets.map((widget) =>
-        widget.type === WidgetType.FIELDS ? (
-          <StyledFieldsWidgetWrapper key={widget.id} variant={variant}>
-            <WidgetRenderer widget={widget} />
-          </StyledFieldsWidgetWrapper>
-        ) : (
-          <div key={widget.id}>
-            <WidgetRenderer widget={widget} />
-          </div>
-        ),
-      )}
+      {widgets.map((widget) => (
+        <div key={widget.id}>
+          <WidgetRenderer widget={widget} />
+        </div>
+      ))}
     </StyledVerticalListContainer>
   );
 };
