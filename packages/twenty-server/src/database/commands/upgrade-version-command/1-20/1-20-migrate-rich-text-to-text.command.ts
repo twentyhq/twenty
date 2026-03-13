@@ -56,8 +56,19 @@ export class MigrateRichTextToTextCommand extends ActiveOrSuspendedWorkspacesMig
     const queryRunner = this.coreDataSource.createQueryRunner();
 
     await queryRunner.connect();
+    await queryRunner.startTransaction();
 
     try {
+      // Step 1: park V2 fields under a temp value so step 2 won't touch them
+      await queryRunner.query(
+        `UPDATE core."fieldMetadata"
+         SET "type" = '__RICH_TEXT_TEMP__'
+         WHERE "workspaceId" = $1
+           AND "type" = 'RICH_TEXT_V2'`,
+        [workspaceId],
+      );
+
+      // Step 2: convert deprecated V1 RICH_TEXT → TEXT
       const v1Result = await queryRunner.query(
         `UPDATE core."fieldMetadata"
          SET "type" = 'TEXT'
@@ -69,22 +80,25 @@ export class MigrateRichTextToTextCommand extends ActiveOrSuspendedWorkspacesMig
 
       const v1Count = v1Result.length;
 
-      if (v1Count > 0) {
-        this.logger.log(
-          `Migrated ${v1Count} RICH_TEXT (V1) field(s) to TEXT in workspace ${workspaceId}`,
-        );
-      }
-
+      // Step 3: rename V2 from temp value to RICH_TEXT
       const renameResult = await queryRunner.query(
         `UPDATE core."fieldMetadata"
          SET "type" = 'RICH_TEXT'
          WHERE "workspaceId" = $1
-           AND "type" = 'RICH_TEXT_V2'
+           AND "type" = '__RICH_TEXT_TEMP__'
          RETURNING "id"`,
         [workspaceId],
       );
 
       const renameCount = renameResult.length;
+
+      await queryRunner.commitTransaction();
+
+      if (v1Count > 0) {
+        this.logger.log(
+          `Migrated ${v1Count} RICH_TEXT (V1) field(s) to TEXT in workspace ${workspaceId}`,
+        );
+      }
 
       if (renameCount > 0) {
         this.logger.log(
@@ -99,6 +113,9 @@ export class MigrateRichTextToTextCommand extends ActiveOrSuspendedWorkspacesMig
           `No RICH_TEXT or RICH_TEXT_V2 fields found in workspace ${workspaceId}`,
         );
       }
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      throw error;
     } finally {
       await queryRunner.release();
     }
