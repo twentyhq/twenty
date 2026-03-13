@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
@@ -29,6 +29,10 @@ export enum MessageImportSyncStep {
 
 @Injectable()
 export class MessageImportExceptionHandlerService {
+  private readonly logger = new Logger(
+    MessageImportExceptionHandlerService.name,
+  );
+
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly messageChannelSyncStatusService: MessageChannelSyncStatusService,
@@ -226,11 +230,21 @@ export class MessageImportExceptionHandlerService {
     this.exceptionHandlerService.captureExceptions([exception], {
       workspace: { id: workspaceId },
     });
-    await this.messageChannelSyncStatusService.markAsFailed(
-      [messageChannel.id],
-      workspaceId,
-      MessageChannelSyncStatus.FAILED_UNKNOWN,
-    );
+
+    try {
+      await this.messageChannelSyncStatusService.markAsFailed(
+        [messageChannel.id],
+        workspaceId,
+        MessageChannelSyncStatus.FAILED_UNKNOWN,
+      );
+    } catch (markAsFailedError) {
+      this.logger.error(
+        `Failed to mark message channel ${messageChannel.id} as failed in workspace ${workspaceId}: ${markAsFailedError.message}. Original error: ${exception.message}`,
+      );
+      this.exceptionHandlerService.captureExceptions([markAsFailedError], {
+        workspace: { id: workspaceId },
+      });
+    }
   }
 
   private async handlePermanentException(
