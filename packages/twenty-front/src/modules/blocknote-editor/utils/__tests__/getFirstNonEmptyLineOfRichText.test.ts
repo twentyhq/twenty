@@ -76,9 +76,7 @@ describe('getFirstNonEmptyLineOfRichText', () => {
   });
 
   it('should handle non-array string content (e.g. heading blocks)', () => {
-    const input = [
-      { content: 'Hello heading' },
-    ] as unknown as PartialBlock[];
+    const input = [{ content: 'Hello heading' }] as unknown as PartialBlock[];
     const result = getFirstNonEmptyLineOfRichText(input);
     expect(result).toBe('Hello heading');
   });

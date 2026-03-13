@@ -14,8 +14,6 @@ export const useReplaceBlockEditorContent = (
 
   const replaceBlockEditorContent = useCallback(
     (recordId: string) => {
-      if (!editor) return;
-
       const record = store.get(recordStoreFamilyState.atomFamily(recordId));
 
       const fieldValue = record?.[fieldName] as
