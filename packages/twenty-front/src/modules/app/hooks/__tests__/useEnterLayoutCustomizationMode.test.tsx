@@ -1,7 +1,7 @@
 import { useEnterLayoutCustomizationMode } from '@/app/hooks/useEnterLayoutCustomizationMode';
 import { isLayoutCustomizationActiveState } from '@/app/states/isLayoutCustomizationActiveState';
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/states/navigationMenuItemsDraftState';
-import { prefetchNavigationMenuItemsState } from '@/prefetch/states/prefetchNavigationMenuItemsState';
+import { navigationMenuItemsState } from '@/navigation-menu-item/states/navigationMenuItemsState';
 import { act, renderHook } from '@testing-library/react';
 import { createStore, Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
@@ -36,7 +36,7 @@ describe('useEnterLayoutCustomizationMode', () => {
     const store = createStore();
     const wrapper = getWrapper(store);
 
-    store.set(prefetchNavigationMenuItemsState.atom, MOCK_PREFETCH_ITEMS);
+    store.set(navigationMenuItemsState.atom, MOCK_PREFETCH_ITEMS);
 
     const { result } = renderHook(() => useEnterLayoutCustomizationMode(), {
       wrapper,
@@ -58,7 +58,7 @@ describe('useEnterLayoutCustomizationMode', () => {
     const store = createStore();
     const wrapper = getWrapper(store);
 
-    store.set(prefetchNavigationMenuItemsState.atom, MOCK_PREFETCH_ITEMS);
+    store.set(navigationMenuItemsState.atom, MOCK_PREFETCH_ITEMS);
 
     const { result } = renderHook(() => useEnterLayoutCustomizationMode(), {
       wrapper,

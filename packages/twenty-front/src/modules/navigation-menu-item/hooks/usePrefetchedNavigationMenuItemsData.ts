@@ -2,7 +2,7 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { isLayoutCustomizationActiveState } from '@/app/states/isLayoutCustomizationActiveState';
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/states/navigationMenuItemsDraftState';
 import { filterWorkspaceNavigationMenuItems } from '@/navigation-menu-item/utils/filterWorkspaceNavigationMenuItems';
-import { prefetchNavigationMenuItemsState } from '@/prefetch/states/prefetchNavigationMenuItemsState';
+import { navigationMenuItemsState } from '@/navigation-menu-item/states/navigationMenuItemsState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 import { isDefined } from 'twenty-shared/utils';
@@ -21,7 +21,7 @@ export const usePrefetchedNavigationMenuItemsData =
     );
     const currentWorkspaceMemberId = currentWorkspaceMember?.id;
     const prefetchNavigationMenuItems = useAtomStateValue(
-      prefetchNavigationMenuItemsState,
+      navigationMenuItemsState,
     );
     const isLayoutCustomizationActive = useAtomStateValue(
       isLayoutCustomizationActiveState,

@@ -5,7 +5,7 @@ import { navigationMenuItemsDraftState } from '@/navigation-menu-item/states/nav
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
 import { type PageLayout } from '@/page-layout/types/PageLayout';
-import { prefetchNavigationMenuItemsState } from '@/prefetch/states/prefetchNavigationMenuItemsState';
+import { navigationMenuItemsState } from '@/navigation-menu-item/states/navigationMenuItemsState';
 import { renderHook } from '@testing-library/react';
 import { createStore, Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
@@ -51,7 +51,7 @@ describe('useIsLayoutCustomizationDirty', () => {
     const store = createStore();
     const wrapper = getWrapper(store);
 
-    store.set(prefetchNavigationMenuItemsState.atom, []);
+    store.set(navigationMenuItemsState.atom, []);
     store.set(isLayoutCustomizationActiveState.atom, false);
 
     const { result } = renderHook(() => useIsLayoutCustomizationDirty(), {
@@ -65,7 +65,7 @@ describe('useIsLayoutCustomizationDirty', () => {
     const store = createStore();
     const wrapper = getWrapper(store);
 
-    store.set(prefetchNavigationMenuItemsState.atom, []);
+    store.set(navigationMenuItemsState.atom, []);
     store.set(isLayoutCustomizationActiveState.atom, true);
     store.set(activeCustomizationPageLayoutIdsState.atom, [PAGE_LAYOUT_ID_1]);
 
@@ -93,7 +93,7 @@ describe('useIsLayoutCustomizationDirty', () => {
     const store = createStore();
     const wrapper = getWrapper(store);
 
-    store.set(prefetchNavigationMenuItemsState.atom, []);
+    store.set(navigationMenuItemsState.atom, []);
     store.set(isLayoutCustomizationActiveState.atom, true);
     store.set(activeCustomizationPageLayoutIdsState.atom, [PAGE_LAYOUT_ID_1]);
 
@@ -138,7 +138,7 @@ describe('useIsLayoutCustomizationDirty', () => {
       userWorkspaceId: null,
     };
 
-    store.set(prefetchNavigationMenuItemsState.atom, [mockNavItem]);
+    store.set(navigationMenuItemsState.atom, [mockNavItem]);
     store.set(isLayoutCustomizationActiveState.atom, true);
     // Nav draft differs from prefetch
     store.set(navigationMenuItemsDraftState.atom, []);
@@ -154,7 +154,7 @@ describe('useIsLayoutCustomizationDirty', () => {
     const store = createStore();
     const wrapper = getWrapper(store);
 
-    store.set(prefetchNavigationMenuItemsState.atom, []);
+    store.set(navigationMenuItemsState.atom, []);
     store.set(isLayoutCustomizationActiveState.atom, true);
     store.set(activeCustomizationPageLayoutIdsState.atom, [
       PAGE_LAYOUT_ID_1,

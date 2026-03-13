@@ -3,7 +3,7 @@ import { activeCustomizationPageLayoutIdsState } from '@/app/states/activeCustom
 import { useSaveNavigationMenuItemsDraft } from '@/navigation-menu-item/hooks/useSaveNavigationMenuItemsDraft';
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/states/navigationMenuItemsDraftState';
 import { filterWorkspaceNavigationMenuItems } from '@/navigation-menu-item/utils/filterWorkspaceNavigationMenuItems';
-import { prefetchNavigationMenuItemsState } from '@/prefetch/states/prefetchNavigationMenuItemsState';
+import { navigationMenuItemsState } from '@/navigation-menu-item/states/navigationMenuItemsState';
 import { type DraftPageLayout } from '@/page-layout/types/DraftPageLayout';
 import { UPSERT_FIELDS_WIDGET } from '@/page-layout/graphql/mutations/upsertFieldsWidget';
 import { useUpdatePageLayoutWithTabsAndWidgets } from '@/page-layout/hooks/useUpdatePageLayoutWithTabsAndWidgets';
@@ -23,7 +23,7 @@ import { reInjectDynamicRelationWidgetsFromDraft } from '@/page-layout/utils/reI
 import { transformPageLayout } from '@/page-layout/utils/transformPageLayout';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useRefreshAllCoreViews } from '@/views/hooks/useRefreshAllCoreViews';
-import { useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 import { useStore } from 'jotai';
 import { useCallback, useState } from 'react';
@@ -182,7 +182,7 @@ export const useSaveLayoutCustomization = () => {
     setIsSaving(true);
     try {
       const navigationDraft = store.get(navigationMenuItemsDraftState.atom);
-      const prefetchItems = store.get(prefetchNavigationMenuItemsState.atom);
+      const prefetchItems = store.get(navigationMenuItemsState.atom);
       const workspaceItems = filterWorkspaceNavigationMenuItems(prefetchItems);
       const isNavigationDirty =
         isDefined(navigationDraft) &&
