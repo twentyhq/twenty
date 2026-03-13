@@ -4,6 +4,7 @@ import { In } from 'typeorm';
 
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type MessageChannelMessageAssociationMessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association-message-folder.workspace-entity';
 
@@ -30,6 +31,17 @@ export class MessagingMessageFolderAssociationService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const workspaceContext = getWorkspaceContext();
+
+      // Skip if workspace hasn't been migrated to include this object yet
+      if (
+        !workspaceContext.objectIdByNameSingular[
+          'messageChannelMessageAssociationMessageFolder'
+        ]
+      ) {
+        return;
+      }
+
       const repository =
         await this.globalWorkspaceOrmManager.getRepository<MessageChannelMessageAssociationMessageFolderWorkspaceEntity>(
           workspaceId,
