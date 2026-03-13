@@ -27,6 +27,10 @@ export const EventLogTableSelector = ({
       value: EventLogTable.OBJECT_EVENT,
       label: t`Object Events`,
     },
+    {
+      value: EventLogTable.BILLING_EVENT,
+      label: t`Billing Events`,
+    },
   ];
 
   return (

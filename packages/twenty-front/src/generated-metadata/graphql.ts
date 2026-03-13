@@ -1698,6 +1698,7 @@ export type EventLogRecord = {
 };
 
 export enum EventLogTable {
+  BILLING_EVENT = 'BILLING_EVENT',
   OBJECT_EVENT = 'OBJECT_EVENT',
   PAGEVIEW = 'PAGEVIEW',
   WORKSPACE_EVENT = 'WORKSPACE_EVENT'
@@ -1742,7 +1743,8 @@ export enum FeatureFlagKey {
   IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED = 'IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED',
   IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED = 'IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED',
   IS_TASK_TARGET_MIGRATED = 'IS_TASK_TARGET_MIGRATED',
-  IS_UNIQUE_INDEXES_ENABLED = 'IS_UNIQUE_INDEXES_ENABLED'
+  IS_UNIQUE_INDEXES_ENABLED = 'IS_UNIQUE_INDEXES_ENABLED',
+  IS_USAGE_ANALYTICS_ENABLED = 'IS_USAGE_ANALYTICS_ENABLED'
 }
 
 export type Field = {
@@ -6237,6 +6239,19 @@ export type GetMeteredProductsUsageQueryVariables = Exact<{ [key: string]: never
 
 
 export type GetMeteredProductsUsageQuery = { __typename?: 'Query', getMeteredProductsUsage: Array<{ __typename?: 'BillingMeteredProductUsage', productKey: BillingProductKey, usedCredits: number, grantedCredits: number, rolloverCredits: number, totalGrantedCredits: number, unitPriceCents: number }> };
+
+export type BillingAnalyticsInput = {
+  periodStart?: InputMaybe<Scalars['DateTime']>;
+  periodEnd?: InputMaybe<Scalars['DateTime']>;
+  userWorkspaceId?: InputMaybe<Scalars['String']>;
+};
+
+export type GetBillingAnalyticsQueryVariables = Exact<{
+  input?: InputMaybe<BillingAnalyticsInput>;
+}>;
+
+
+export type GetBillingAnalyticsQuery = { __typename?: 'Query', getBillingAnalytics: { __typename?: 'BillingAnalytics', periodStart: string, periodEnd: string, usageByUser: Array<{ __typename?: 'BillingUsageBreakdownItem', key: string, creditsUsed: number }>, usageByResource: Array<{ __typename?: 'BillingUsageBreakdownItem', key: string, creditsUsed: number }>, usageByExecutionType: Array<{ __typename?: 'BillingUsageBreakdownItem', key: string, creditsUsed: number }>, timeSeries: Array<{ __typename?: 'BillingUsageTimeSeries', date: string, creditsUsed: number }>, userDailyUsage?: { __typename?: 'BillingUserDailyUsage', userWorkspaceId: string, dailyUsage: Array<{ __typename?: 'BillingUsageTimeSeries', date: string, creditsUsed: number }> } | null } };
 
 export type ListPlansQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -11019,6 +11034,48 @@ export function useGetMeteredProductsUsageLazyQuery(baseOptions?: Apollo.LazyQue
 export type GetMeteredProductsUsageQueryHookResult = ReturnType<typeof useGetMeteredProductsUsageQuery>;
 export type GetMeteredProductsUsageLazyQueryHookResult = ReturnType<typeof useGetMeteredProductsUsageLazyQuery>;
 export type GetMeteredProductsUsageQueryResult = Apollo.QueryResult<GetMeteredProductsUsageQuery, GetMeteredProductsUsageQueryVariables>;
+export const GetBillingAnalyticsDocument = gql`
+    query GetBillingAnalytics($input: BillingAnalyticsInput) {
+  getBillingAnalytics(input: $input) {
+    usageByUser {
+      key
+      creditsUsed
+    }
+    usageByResource {
+      key
+      creditsUsed
+    }
+    usageByExecutionType {
+      key
+      creditsUsed
+    }
+    timeSeries {
+      date
+      creditsUsed
+    }
+    periodStart
+    periodEnd
+    userDailyUsage {
+      userWorkspaceId
+      dailyUsage {
+        date
+        creditsUsed
+      }
+    }
+  }
+}
+    `;
+export function useGetBillingAnalyticsQuery(baseOptions?: Apollo.QueryHookOptions<GetBillingAnalyticsQuery, GetBillingAnalyticsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetBillingAnalyticsQuery, GetBillingAnalyticsQueryVariables>(GetBillingAnalyticsDocument, options);
+      }
+export function useGetBillingAnalyticsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetBillingAnalyticsQuery, GetBillingAnalyticsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetBillingAnalyticsQuery, GetBillingAnalyticsQueryVariables>(GetBillingAnalyticsDocument, options);
+        }
+export type GetBillingAnalyticsQueryHookResult = ReturnType<typeof useGetBillingAnalyticsQuery>;
+export type GetBillingAnalyticsLazyQueryHookResult = ReturnType<typeof useGetBillingAnalyticsLazyQuery>;
+export type GetBillingAnalyticsQueryResult = Apollo.QueryResult<GetBillingAnalyticsQuery, GetBillingAnalyticsQueryVariables>;
 export const ListPlansDocument = gql`
     query listPlans {
   listPlans {

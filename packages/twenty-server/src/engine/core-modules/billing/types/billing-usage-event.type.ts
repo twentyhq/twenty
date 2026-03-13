@@ -9,4 +9,5 @@ export type BillingUsageEvent = {
   eventName: BillingMeterEventName;
   value: NonNegative<number>;
   dimensions?: BillingDimensions;
+  userWorkspaceId?: string | null;
 };

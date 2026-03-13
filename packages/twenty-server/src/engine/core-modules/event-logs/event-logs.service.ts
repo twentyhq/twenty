@@ -36,6 +36,17 @@ type ClickHouseEventRecord = {
   isCustom?: boolean;
 };
 
+type ClickHouseBillingEventRecord = {
+  timestamp: string;
+  userWorkspaceId?: string;
+  eventType?: string;
+  executionType?: string;
+  creditsUsed?: number;
+  resourceId?: string;
+  resourceContext?: string;
+  metadata?: Record<string, unknown>;
+};
+
 const ALLOWED_TABLES = Object.values(EventLogTable);
 const MAX_LIMIT = 10000;
 
@@ -43,6 +54,7 @@ const CLICKHOUSE_TABLE_NAMES: Record<EventLogTable, string> = {
   [EventLogTable.WORKSPACE_EVENT]: 'workspaceEvent',
   [EventLogTable.PAGEVIEW]: 'pageview',
   [EventLogTable.OBJECT_EVENT]: 'objectEvent',
+  [EventLogTable.BILLING_EVENT]: 'billingEvent',
 };
 
 @Injectable()
@@ -67,7 +79,11 @@ export class EventLogsService {
     const limit = Math.min(input.first ?? 100, MAX_LIMIT);
     const tableName = CLICKHOUSE_TABLE_NAMES[input.table];
     const eventFieldName =
-      input.table === EventLogTable.PAGEVIEW ? 'name' : 'event';
+      input.table === EventLogTable.BILLING_EVENT
+        ? 'eventType'
+        : input.table === EventLogTable.PAGEVIEW
+          ? 'name'
+          : 'event';
 
     const whereClauses: string[] = ['"workspaceId" = {workspaceId:String}'];
     const params: Record<string, unknown> = { workspaceId };
@@ -179,14 +195,19 @@ export class EventLogsService {
     }
 
     if (isDefined(filters.userWorkspaceId)) {
-      const userWorkspace = await this.userWorkspaceRepository.findOne({
-        where: { id: filters.userWorkspaceId },
-        select: ['userId'],
-      });
+      if (table === EventLogTable.BILLING_EVENT) {
+        whereClauses.push('"userWorkspaceId" = {userWorkspaceId:String}');
+        params.userWorkspaceId = filters.userWorkspaceId;
+      } else {
+        const userWorkspace = await this.userWorkspaceRepository.findOne({
+          where: { id: filters.userWorkspaceId },
+          select: ['userId'],
+        });
 
-      if (isDefined(userWorkspace)) {
-        whereClauses.push('"userId" = {userId:String}');
-        params.userId = userWorkspace.userId;
+        if (isDefined(userWorkspace)) {
+          whereClauses.push('"userId" = {userId:String}');
+          params.userId = userWorkspace.userId;
+        }
       }
     }
 
@@ -222,10 +243,25 @@ export class EventLogsService {
   }
 
   private normalizeRecords(
-    records: ClickHouseEventRecord[],
+    records: ClickHouseEventRecord[] | ClickHouseBillingEventRecord[],
     table: EventLogTable,
   ): EventLogRecord[] {
-    return records.map((record) => {
+    if (table === EventLogTable.BILLING_EVENT) {
+      return (records as ClickHouseBillingEventRecord[]).map((record) => ({
+        event: record.eventType ?? '',
+        timestamp: new Date(record.timestamp),
+        userId: record.userWorkspaceId,
+        properties: {
+          executionType: record.executionType,
+          creditsUsed: record.creditsUsed,
+          resourceId: record.resourceId,
+          resourceContext: record.resourceContext,
+          ...(record.metadata ?? {}),
+        },
+      }));
+    }
+
+    return (records as ClickHouseEventRecord[]).map((record) => {
       const eventName =
         table === EventLogTable.PAGEVIEW
           ? (record.name ?? '')

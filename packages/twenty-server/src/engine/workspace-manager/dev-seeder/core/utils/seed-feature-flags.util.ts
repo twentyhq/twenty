@@ -105,6 +105,11 @@ export const seedFeatureFlags = async ({
         workspaceId: workspaceId,
         value: true,
       },
+      {
+        key: FeatureFlagKey.IS_USAGE_ANALYTICS_ENABLED,
+        workspaceId: workspaceId,
+        value: true,
+      },
     ])
     .execute();
 };

@@ -4,6 +4,7 @@ import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 import { type ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
@@ -15,7 +16,12 @@ import { BillingMeteredProductUsageDTO } from 'src/engine/core-modules/billing/d
 import { BillingPlanDTO } from 'src/engine/core-modules/billing/dtos/billing-plan.dto';
 import { BillingSessionDTO } from 'src/engine/core-modules/billing/dtos/billing-session.dto';
 import { BillingUpdateDTO } from 'src/engine/core-modules/billing/dtos/billing-update.dto';
+import {
+  BillingAnalyticsDTO,
+  BillingAnalyticsInput,
+} from 'src/engine/core-modules/billing/dtos/billing-usage-breakdown.dto';
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
+import { BillingAnalyticsService } from 'src/engine/core-modules/billing/services/billing-analytics.service';
 import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
 import { BillingPortalWorkspaceService } from 'src/engine/core-modules/billing/services/billing-portal.workspace-service';
 import { BillingSubscriptionUpdateService } from 'src/engine/core-modules/billing/services/billing-subscription-update.service';
@@ -46,6 +52,10 @@ import {
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
+import {
+  FeatureFlagGuard,
+  RequireFeatureFlag,
+} from 'src/engine/guards/feature-flag.guard';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 
 @MetadataResolver()
@@ -62,6 +72,7 @@ export class BillingResolver {
     private readonly billingPlanService: BillingPlanService,
     private readonly billingService: BillingService,
     private readonly billingUsageService: BillingUsageService,
+    private readonly billingAnalyticsService: BillingAnalyticsService,
     private readonly permissionsService: PermissionsService,
   ) {}
 
@@ -314,6 +325,88 @@ export class BillingResolver {
       totalGrantedCredits: toDisplayCredits(item.totalGrantedCredits),
       unitPriceCents: item.unitPriceCents * INTERNAL_CREDITS_PER_DISPLAY_CREDIT,
     }));
+  }
+
+  @Query(() => BillingAnalyticsDTO)
+  @UseGuards(
+    WorkspaceAuthGuard,
+    FeatureFlagGuard,
+    SettingsPermissionGuard(PermissionFlagType.BILLING),
+  )
+  @RequireFeatureFlag(FeatureFlagKey.IS_USAGE_ANALYTICS_ENABLED)
+  async getBillingAnalytics(
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @Args('input', { nullable: true }) input?: BillingAnalyticsInput,
+  ): Promise<BillingAnalyticsDTO> {
+    let defaultPeriodStart: Date;
+    let defaultPeriodEnd: Date;
+
+    if (this.billingService.isBillingEnabled()) {
+      const subscription =
+        await this.billingSubscriptionService.getCurrentBillingSubscriptionOrThrow(
+          { workspaceId: workspace.id },
+        );
+
+      defaultPeriodStart = subscription.currentPeriodStart;
+      defaultPeriodEnd = subscription.currentPeriodEnd;
+    } else {
+      defaultPeriodEnd = new Date();
+      defaultPeriodStart = new Date();
+      defaultPeriodStart.setDate(defaultPeriodStart.getDate() - 30);
+    }
+
+    const periodStart = input?.periodStart ?? defaultPeriodStart;
+    const periodEnd = input?.periodEnd ?? defaultPeriodEnd;
+
+    const [usageByUser, usageByResource, usageByExecutionType, timeSeries] =
+      await Promise.all([
+        this.billingAnalyticsService.getUsageByUser(
+          workspace.id,
+          periodStart,
+          periodEnd,
+        ),
+        this.billingAnalyticsService.getUsageByResource(
+          workspace.id,
+          periodStart,
+          periodEnd,
+        ),
+        this.billingAnalyticsService.getUsageByExecutionType(
+          workspace.id,
+          periodStart,
+          periodEnd,
+        ),
+        this.billingAnalyticsService.getUsageTimeSeries(
+          workspace.id,
+          periodStart,
+          periodEnd,
+        ),
+      ]);
+
+    const result: BillingAnalyticsDTO = {
+      usageByUser,
+      usageByResource,
+      usageByExecutionType,
+      timeSeries,
+      periodStart,
+      periodEnd,
+    };
+
+    if (input?.userWorkspaceId) {
+      const dailyUsage =
+        await this.billingAnalyticsService.getUsageByUserTimeSeries(
+          workspace.id,
+          input.userWorkspaceId,
+          periodStart,
+          periodEnd,
+        );
+
+      result.userDailyUsage = {
+        userWorkspaceId: input.userWorkspaceId,
+        dailyUsage,
+      };
+    }
+
+    return result;
   }
 
   @Mutation(() => BillingUpdateDTO)

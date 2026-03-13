@@ -245,6 +245,7 @@ describe('WorkspaceEntityManager', () => {
         IS_MARKETPLACE_ENABLED: false,
         IS_DATE_TIME_WHOLE_DAY_FILTER_ENABLED: false,
         IS_DRAFT_EMAIL_ENABLED: false,
+        IS_USAGE_ANALYTICS_ENABLED: false,
       },
       userWorkspaceRoleMap: {},
       eventEmitterService: {

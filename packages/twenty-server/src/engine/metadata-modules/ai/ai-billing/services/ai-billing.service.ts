@@ -59,13 +59,20 @@ export class AIBillingService {
     billingInput: BillingUsageInput,
     workspaceId: string,
     agentId?: string | null,
+    userWorkspaceId?: string | null,
   ): void {
     const costInDollars = this.calculateCost(modelId, billingInput);
     const creditsUsed = Math.round(
       convertDollarsToBillingCredits(costInDollars),
     );
 
-    this.sendAiTokenUsageEvent(workspaceId, creditsUsed, modelId, agentId);
+    this.sendAiTokenUsageEvent(
+      workspaceId,
+      creditsUsed,
+      modelId,
+      agentId,
+      userWorkspaceId,
+    );
   }
 
   private sendAiTokenUsageEvent(
@@ -73,6 +80,7 @@ export class AIBillingService {
     creditsUsed: number,
     modelId: ModelId,
     agentId?: string | null,
+    userWorkspaceId?: string | null,
   ): void {
     this.workspaceEventEmitter.emitCustomBatchEvent<BillingUsageEvent>(
       BILLING_FEATURE_USED,
@@ -85,6 +93,7 @@ export class AIBillingService {
             resource_id: agentId || null,
             execution_context_1: modelId,
           },
+          userWorkspaceId: userWorkspaceId || null,
         },
       ],
       workspaceId,
