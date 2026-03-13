@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { createReadStream, createWriteStream } from 'fs';
+import { createWriteStream } from 'fs';
 import * as fs from 'fs/promises';
 import { join } from 'path';
+import { type Readable } from 'stream';
 import { pipeline } from 'stream/promises';
 
 import { replaceCoreClient } from 'twenty-client-sdk/generate';
@@ -11,9 +12,17 @@ import { FileFolder } from 'twenty-shared/types';
 import { Repository } from 'typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import {
+  FileStorageException,
+  FileStorageExceptionCode,
+} from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { createZipFile } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/create-zip-file';
 import { SDK_CLIENT_PACKAGE_DIRNAME } from 'src/engine/core-modules/logic-function/logic-function-resource/constants/sdk-client-package-dirname';
+import {
+  SdkClientGenerationException,
+  SdkClientGenerationExceptionCode,
+} from 'src/engine/core-modules/logic-function/logic-function-resource/exceptions/sdk-client-generation.exception';
 import { TemporaryDirManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/temporary-dir-manager';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -76,6 +85,11 @@ export class SdkClientGenerationService {
         { id: applicationId, workspaceId },
         { isSdkLayerStale: true },
       );
+    } catch (error) {
+      throw new SdkClientGenerationException(
+        `Failed to generate SDK client for application "${applicationUniversalIdentifier}" in workspace "${workspaceId}": ${error instanceof Error ? error.message : String(error)}`,
+        SdkClientGenerationExceptionCode.GENERATION_FAILED,
+      );
     } finally {
       await temporaryDirManager.clean();
     }
@@ -98,11 +112,9 @@ export class SdkClientGenerationService {
       const { sourceTemporaryDir } = await temporaryDirManager.init();
       const archivePath = join(sourceTemporaryDir, SDK_CLIENT_ARCHIVE_NAME);
 
-      const archiveStream = await this.fileStorageService.readFile({
+      const archiveStream = await this.readArchiveStream({
         workspaceId,
         applicationUniversalIdentifier,
-        fileFolder: FileFolder.GeneratedSdkClient,
-        resourcePath: SDK_CLIENT_ARCHIVE_NAME,
       });
 
       await pipeline(archiveStream, createWriteStream(archivePath));
@@ -111,13 +123,9 @@ export class SdkClientGenerationService {
       await fs.mkdir(targetPackagePath, { recursive: true });
 
       const { default: unzipper } = await import('unzipper');
+      const directory = await unzipper.Open.file(archivePath);
 
-      await new Promise<void>((resolve, reject) => {
-        createReadStream(archivePath)
-          .pipe(unzipper.Extract({ path: targetPackagePath }))
-          .on('close', resolve)
-          .on('error', reject);
-      });
+      await directory.extract({ path: targetPackagePath });
     } finally {
       await temporaryDirManager.clean();
     }
@@ -132,11 +140,9 @@ export class SdkClientGenerationService {
     workspaceId: string;
     applicationUniversalIdentifier: string;
   }): Promise<Buffer> {
-    const archiveStream = await this.fileStorageService.readFile({
+    const archiveStream = await this.readArchiveStream({
       workspaceId,
       applicationUniversalIdentifier,
-      fileFolder: FileFolder.GeneratedSdkClient,
-      resourcePath: SDK_CLIENT_ARCHIVE_NAME,
     });
 
     return streamToBuffer(archiveStream);
@@ -166,12 +172,43 @@ export class SdkClientGenerationService {
     );
 
     if (!entry) {
-      throw new Error(
-        `File "${filePath}" not found in SDK archive for application ${applicationUniversalIdentifier}`,
+      throw new SdkClientGenerationException(
+        `File "${filePath}" not found in SDK client archive for application "${applicationUniversalIdentifier}" in workspace "${workspaceId}"`,
+        SdkClientGenerationExceptionCode.FILE_NOT_FOUND_IN_ARCHIVE,
       );
     }
 
     return entry.buffer();
+  }
+
+  private async readArchiveStream({
+    workspaceId,
+    applicationUniversalIdentifier,
+  }: {
+    workspaceId: string;
+    applicationUniversalIdentifier: string;
+  }): Promise<Readable> {
+    try {
+      return await this.fileStorageService.readFile({
+        workspaceId,
+        applicationUniversalIdentifier,
+        fileFolder: FileFolder.GeneratedSdkClient,
+        resourcePath: SDK_CLIENT_ARCHIVE_NAME,
+      });
+    } catch (error) {
+      if (
+        error instanceof FileStorageException &&
+        error.code === FileStorageExceptionCode.FILE_NOT_FOUND
+      ) {
+        throw new SdkClientGenerationException(
+          `SDK client archive "${SDK_CLIENT_ARCHIVE_NAME}" not found for application "${applicationUniversalIdentifier}" in workspace "${workspaceId}". ` +
+            `Run generateAndStore() first (e.g. by re-installing the application).`,
+          SdkClientGenerationExceptionCode.ARCHIVE_NOT_FOUND,
+        );
+      }
+
+      throw error;
+    }
   }
 
   async markSdkLayerFresh({
