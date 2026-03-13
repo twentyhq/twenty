@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { BackfillMissingStandardViewsCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-backfill-missing-standard-views.command';
+import { BackfillCommandMenuItemsCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-backfill-command-menu-items.command';
 import { BackfillPageLayoutsCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-backfill-page-layouts.command';
+import { MigrateRichTextToTextCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-migrate-rich-text-to-text.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -26,12 +27,14 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     FeatureFlagModule,
   ],
   providers: [
-    BackfillMissingStandardViewsCommand,
+    BackfillCommandMenuItemsCommand,
     BackfillPageLayoutsCommand,
+    MigrateRichTextToTextCommand,
   ],
   exports: [
-    BackfillMissingStandardViewsCommand,
+    BackfillCommandMenuItemsCommand,
     BackfillPageLayoutsCommand,
+    MigrateRichTextToTextCommand,
   ],
 })
 export class V1_20_UpgradeVersionCommandModule {}

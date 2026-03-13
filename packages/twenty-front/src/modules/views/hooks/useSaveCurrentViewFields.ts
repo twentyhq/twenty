@@ -5,7 +5,7 @@ import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { usePerformViewFieldAPIPersist } from '@/views/hooks/internal/usePerformViewFieldAPIPersist';
 import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
-import { useGetViewFromPrefetchState } from '@/views/hooks/useGetViewFromPrefetchState';
+import { useGetViewFromState } from '@/views/hooks/useGetViewFromState';
 import { type ViewField } from '@/views/types/ViewField';
 import {
   type CreateViewFieldInput,
@@ -19,7 +19,7 @@ export const useSaveCurrentViewFields = () => {
   const { performViewFieldAPICreate, performViewFieldAPIUpdate } =
     usePerformViewFieldAPIPersist();
 
-  const { getViewFromPrefetchState } = useGetViewFromPrefetchState();
+  const { getViewFromState } = useGetViewFromState();
 
   const currentViewIdCallbackState = useAtomComponentStateCallbackState(
     contextStoreCurrentViewIdComponentState,
@@ -39,7 +39,7 @@ export const useSaveCurrentViewFields = () => {
         return;
       }
 
-      const view = getViewFromPrefetchState(currentViewId);
+      const view = getViewFromState(currentViewId);
 
       if (isUndefinedOrNull(view)) {
         return;
@@ -133,7 +133,7 @@ export const useSaveCurrentViewFields = () => {
       canPersistChanges,
       performViewFieldAPICreate,
       currentViewIdCallbackState,
-      getViewFromPrefetchState,
+      getViewFromState,
       performViewFieldAPIUpdate,
     ],
   );

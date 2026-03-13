@@ -1,5 +1,5 @@
 import { isDefined } from 'twenty-shared/utils';
-import { useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client/react';
 
 import {
   type EventLogQueryInput,

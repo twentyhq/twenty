@@ -1,6 +1,6 @@
 import { coreViewsState } from '@/views/states/coreViewState';
 import { type CoreViewWithRelations } from '@/views/types/CoreViewWithRelations';
-import { useApolloClient } from '@apollo/client';
+import { useApolloClient } from '@apollo/client/react';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { type CoreViewFieldGroup } from '~/generated-metadata/graphql';
@@ -38,10 +38,11 @@ export const useTriggerViewFieldGroupOptimisticEffect = () => {
             id: createdViewFieldGroup.viewId,
           }),
           fields: {
-            viewFieldGroups: (existingViewFieldGroups, { toReference }) => [
-              ...(existingViewFieldGroups ?? []),
-              toReference(createdViewFieldGroup),
-            ],
+            viewFieldGroups: (existingViewFieldGroups, { toReference }) =>
+              [
+                ...(existingViewFieldGroups ?? []),
+                toReference(createdViewFieldGroup),
+              ].filter(isDefined),
           },
         });
         const toBeModifiedCoreView = newCoreViews.find(
@@ -74,16 +75,18 @@ export const useTriggerViewFieldGroupOptimisticEffect = () => {
               existingViewFieldGroups,
               { readField, toReference },
             ) =>
-              existingViewFieldGroups?.map((viewFieldGroup) => {
-                const viewFieldGroupId = readField<string>(
-                  'id',
-                  viewFieldGroup,
-                );
-                if (viewFieldGroupId === updatedViewFieldGroup.id) {
-                  return toReference(updatedViewFieldGroup);
-                }
-                return viewFieldGroup;
-              }) ?? [],
+              existingViewFieldGroups
+                ?.map((viewFieldGroup) => {
+                  const viewFieldGroupId = readField<string>(
+                    'id',
+                    viewFieldGroup,
+                  );
+                  if (viewFieldGroupId === updatedViewFieldGroup.id) {
+                    return toReference(updatedViewFieldGroup);
+                  }
+                  return viewFieldGroup;
+                })
+                ?.filter(isDefined) ?? [],
           },
         });
         const toBeModifiedCoreView = newCoreViews.find(

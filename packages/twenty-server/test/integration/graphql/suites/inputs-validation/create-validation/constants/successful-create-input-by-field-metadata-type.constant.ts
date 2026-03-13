@@ -8,7 +8,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 export const successfulCreateInputByFieldMetadataType: {
   [K in Exclude<
     FieldMetadataTypesToTestForCreateInputValidation,
-    FieldMetadataType.RICH_TEXT | FieldMetadataType.FILES // Done in files-field-sync.integration-spec.ts
+    FieldMetadataType.FILES // Done in files-field-sync.integration-spec.ts
   >]: {
     input: any;
     validateInput: (record: Record<string, any>) => boolean;
@@ -369,18 +369,18 @@ export const successfulCreateInputByFieldMetadataType: {
       },
     },
   ],
-  [FieldMetadataType.RICH_TEXT_V2]: [
+  [FieldMetadataType.RICH_TEXT]: [
     {
       input: {
-        richTextV2Field: {
+        richTextField: {
           blocknote: 'test',
           markdown: 'test',
         },
       },
       validateInput: (record: Record<string, any>) => {
         return (
-          record.richTextV2Field.blocknote === 'test' &&
-          record.richTextV2Field.markdown === 'test'
+          record.richTextField.blocknote === 'test' &&
+          record.richTextField.markdown === 'test'
         );
       },
     },

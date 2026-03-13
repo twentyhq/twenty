@@ -4,34 +4,32 @@ import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { isLayoutCustomizationActiveState } from '@/app/states/isLayoutCustomizationActiveState';
 import { filterWorkspaceNavigationMenuItems } from '@/navigation-menu-item/utils/filterWorkspaceNavigationMenuItems';
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/states/navigationMenuItemsDraftState';
-import { prefetchNavigationMenuItemsState } from '@/prefetch/states/prefetchNavigationMenuItemsState';
+import { navigationMenuItemsState } from '@/navigation-menu-item/states/navigationMenuItemsState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const useNavigationMenuItemsDraftState = () => {
   const isLayoutCustomizationActive = useAtomStateValue(
     isLayoutCustomizationActiveState,
   );
-  const prefetchNavigationMenuItems = useAtomStateValue(
-    prefetchNavigationMenuItemsState,
-  );
+  const navigationMenuItems = useAtomStateValue(navigationMenuItemsState);
   const navigationMenuItemsDraft = useAtomStateValue(
     navigationMenuItemsDraftState,
   );
 
-  const workspaceNavigationMenuItemsFromPrefetch =
-    filterWorkspaceNavigationMenuItems(prefetchNavigationMenuItems);
+  const workspaceNavigationMenuItemsFromState =
+    filterWorkspaceNavigationMenuItems(navigationMenuItems);
 
   const workspaceNavigationMenuItems =
     isLayoutCustomizationActive && isDefined(navigationMenuItemsDraft)
       ? navigationMenuItemsDraft
-      : workspaceNavigationMenuItemsFromPrefetch;
+      : workspaceNavigationMenuItemsFromState;
 
   const isDirty =
     isLayoutCustomizationActive &&
     isDefined(navigationMenuItemsDraft) &&
     !isDeeplyEqual(
       navigationMenuItemsDraft,
-      workspaceNavigationMenuItemsFromPrefetch,
+      workspaceNavigationMenuItemsFromState,
     );
 
   return {

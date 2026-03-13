@@ -5,7 +5,7 @@ import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { usePerformViewGroupAPIPersist } from '@/views/hooks/internal/usePerformViewGroupAPIPersist';
 import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
-import { useGetViewFromPrefetchState } from '@/views/hooks/useGetViewFromPrefetchState';
+import { useGetViewFromState } from '@/views/hooks/useGetViewFromState';
 import { type ViewGroup } from '@/views/types/ViewGroup';
 import { isDefined } from 'twenty-shared/utils';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
@@ -15,7 +15,7 @@ export const useSaveCurrentViewGroups = () => {
   const { canPersistChanges } = useCanPersistViewChanges();
   const { performViewGroupAPIUpdate } = usePerformViewGroupAPIPersist();
 
-  const { getViewFromPrefetchState } = useGetViewFromPrefetchState();
+  const { getViewFromState } = useGetViewFromState();
 
   const currentViewIdCallbackState = useAtomComponentStateCallbackState(
     contextStoreCurrentViewIdComponentState,
@@ -35,7 +35,7 @@ export const useSaveCurrentViewGroups = () => {
         return;
       }
 
-      const view = getViewFromPrefetchState(currentViewId);
+      const view = getViewFromState(currentViewId);
 
       if (isUndefinedOrNull(view)) {
         return;
@@ -84,7 +84,7 @@ export const useSaveCurrentViewGroups = () => {
       store,
       canPersistChanges,
       currentViewIdCallbackState,
-      getViewFromPrefetchState,
+      getViewFromState,
       performViewGroupAPIUpdate,
     ],
   );
@@ -101,7 +101,7 @@ export const useSaveCurrentViewGroups = () => {
         return;
       }
 
-      const view = getViewFromPrefetchState(currentViewId);
+      const view = getViewFromState(currentViewId);
 
       if (isUndefinedOrNull(view)) {
         return;
@@ -158,7 +158,7 @@ export const useSaveCurrentViewGroups = () => {
       store,
       canPersistChanges,
       currentViewIdCallbackState,
-      getViewFromPrefetchState,
+      getViewFromState,
       performViewGroupAPIUpdate,
     ],
   );

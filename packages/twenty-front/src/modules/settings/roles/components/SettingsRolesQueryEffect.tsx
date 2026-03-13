@@ -7,11 +7,12 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import { useStore } from 'jotai';
 import { useCallback, useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { useGetRolesQuery } from '~/generated-metadata/graphql';
+import { useQuery } from '@apollo/client/react';
+import { GetRolesDocument } from '~/generated-metadata/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const SettingsRolesQueryEffect = () => {
-  const { data, loading } = useGetRolesQuery({
+  const { data, loading } = useQuery(GetRolesDocument, {
     fetchPolicy: 'network-only',
   });
 

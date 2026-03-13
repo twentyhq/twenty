@@ -2,12 +2,13 @@ import { useListenToMetadataOperationBrowserEvent } from '@/browser-event/hooks/
 import { useMetadataStore } from '@/metadata-store/hooks/useMetadataStore';
 import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItems';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { prefetchNavigationMenuItemsState } from '@/prefetch/states/prefetchNavigationMenuItemsState';
+import { navigationMenuItemsState } from '@/navigation-menu-item/states/navigationMenuItemsState';
 import { useListenToEventsForQuery } from '@/sse-db-event/hooks/useListenToEventsForQuery';
 import { useStore } from 'jotai';
+import { useApolloClient } from '@apollo/client/react';
 import {
   AllMetadataName,
-  useFindManyNavigationMenuItemsLazyQuery,
+  FindManyNavigationMenuItemsDocument,
 } from '~/generated-metadata/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
@@ -15,12 +16,10 @@ export const ObjectMetadataItemSSEEffect = () => {
   const queryId = 'object-metadata-sse-effect';
 
   const store = useStore();
+  const client = useApolloClient();
 
   const { refreshObjectMetadataItems } = useRefreshObjectMetadataItems();
   const { updateDraft, applyChanges } = useMetadataStore();
-
-  const [findManyNavigationMenuItemsLazy] =
-    useFindManyNavigationMenuItemsLazyQuery();
 
   useListenToEventsForQuery({
     queryId,
@@ -39,12 +38,13 @@ export const ObjectMetadataItemSSEEffect = () => {
       updateDraft('objectMetadataItems', loadedObjects);
       applyChanges();
 
-      const navigationMenuItemsResult = await findManyNavigationMenuItemsLazy({
+      const navigationMenuItemsResult = await client.query({
+        query: FindManyNavigationMenuItemsDocument,
         fetchPolicy: 'network-only',
       });
 
       const existingNavigationMenuItems = store.get(
-        prefetchNavigationMenuItemsState.atom,
+        navigationMenuItemsState.atom,
       );
 
       if (
@@ -54,7 +54,7 @@ export const ObjectMetadataItemSSEEffect = () => {
         )
       ) {
         store.set(
-          prefetchNavigationMenuItemsState.atom,
+          navigationMenuItemsState.atom,
           navigationMenuItemsResult.data?.navigationMenuItems ?? [],
         );
       }

@@ -1,11 +1,12 @@
+import { useQuery } from '@apollo/client/react';
 import {
   BillingProductKey,
-  useGetMeteredProductsUsageQuery,
+  GetMeteredProductsUsageDocument,
 } from '~/generated-metadata/graphql';
 import { findOrThrow } from 'twenty-shared/utils';
 
 export const useGetWorkflowNodeExecutionUsage = () => {
-  const { data, loading, refetch } = useGetMeteredProductsUsageQuery();
+  const { data, loading, refetch } = useQuery(GetMeteredProductsUsageDocument);
 
   const refetchMeteredProductsUsage = () => {
     refetch();

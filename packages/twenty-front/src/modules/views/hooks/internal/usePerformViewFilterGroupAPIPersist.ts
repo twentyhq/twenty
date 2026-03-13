@@ -5,7 +5,7 @@ import { DESTROY_CORE_VIEW_FILTER_GROUP } from '@/views/graphql/mutations/destro
 import { UPDATE_CORE_VIEW_FILTER_GROUP } from '@/views/graphql/mutations/updateCoreViewFilterGroup';
 import { type GraphQLView } from '@/views/types/GraphQLView';
 import { type ViewFilterGroup } from '@/views/types/ViewFilterGroup';
-import { useApolloClient } from '@apollo/client';
+import { useApolloClient } from '@apollo/client/react';
 import { isDefined } from 'twenty-shared/utils';
 import { type CoreViewFilterGroup } from '~/generated-metadata/graphql';
 

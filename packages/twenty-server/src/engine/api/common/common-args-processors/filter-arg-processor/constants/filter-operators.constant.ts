@@ -73,4 +73,4 @@ export const ENUM_FILTER_OPERATORS: FilterOperator[] = [
 
 export const RAW_JSON_FILTER_OPERATORS: FilterOperator[] = ['is', 'like'];
 
-export const RICH_TEXT_V2_FILTER_OPERATORS: FilterOperator[] = ['ilike'];
+export const RICH_TEXT_FILTER_OPERATORS: FilterOperator[] = ['ilike'];

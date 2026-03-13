@@ -1,6 +1,6 @@
 import { coreViewsState } from '@/views/states/coreViewState';
 import { type CoreViewWithRelations } from '@/views/types/CoreViewWithRelations';
-import { useApolloClient } from '@apollo/client';
+import { useApolloClient } from '@apollo/client/react';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { type CoreViewField } from '~/generated-metadata/graphql';
@@ -33,10 +33,11 @@ export const useTriggerViewFieldOptimisticEffect = () => {
             id: createdViewField.viewId,
           }),
           fields: {
-            viewFields: (existingViewFields, { toReference }) => [
-              ...(existingViewFields ?? []),
-              toReference(createdViewField),
-            ],
+            viewFields: (existingViewFields, { toReference }) =>
+              [
+                ...(existingViewFields ?? []),
+                toReference(createdViewField),
+              ].filter(isDefined),
           },
         });
         const toBeModifiedCoreView = newCoreViews.find(
@@ -66,13 +67,15 @@ export const useTriggerViewFieldOptimisticEffect = () => {
           }),
           fields: {
             viewFields: (existingViewFields, { readField, toReference }) =>
-              existingViewFields.map((viewField) => {
-                const viewFieldId = readField<string>('id', viewField);
-                if (viewFieldId === updatedViewField.id) {
-                  return toReference(updatedViewField);
-                }
-                return viewField;
-              }),
+              existingViewFields
+                .map((viewField) => {
+                  const viewFieldId = readField<string>('id', viewField);
+                  if (viewFieldId === updatedViewField.id) {
+                    return toReference(updatedViewField);
+                  }
+                  return viewField;
+                })
+                .filter(isDefined),
           },
         });
         const toBeModifiedCoreView = newCoreViews.find(

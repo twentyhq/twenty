@@ -81,7 +81,7 @@ export default defineObject({
     },
     {
       universalIdentifier: TRANSCRIPT_FIELD_UNIVERSAL_IDENTIFIER,
-      type: FieldType.RICH_TEXT_V2,
+      type: FieldType.RICH_TEXT,
       name: 'transcript',
       label: 'Transcript',
       description: 'Human-readable transcript of the call',
@@ -114,7 +114,7 @@ export default defineObject({
     },
     {
       universalIdentifier: SUMMARY_FIELD_UNIVERSAL_IDENTIFIER,
-      type: FieldType.RICH_TEXT_V2,
+      type: FieldType.RICH_TEXT,
       name: 'summary',
       label: 'Summary',
       description: 'AI-generated summary of the call',

@@ -50,9 +50,7 @@ import { isFieldRatingValue } from '@/object-record/record-field/ui/types/guards
 import { isFieldRelationManyToOne } from '@/object-record/record-field/ui/types/guards/isFieldRelationManyToOne';
 import { isFieldRelationManyToOneValue } from '@/object-record/record-field/ui/types/guards/isFieldRelationManyToOneValue';
 import { isFieldRichText } from '@/object-record/record-field/ui/types/guards/isFieldRichText';
-import { isFieldRichTextV2 } from '@/object-record/record-field/ui/types/guards/isFieldRichTextV2';
 import { isFieldRichTextValue } from '@/object-record/record-field/ui/types/guards/isFieldRichTextValue';
-import { isFieldRichTextV2Value } from '@/object-record/record-field/ui/types/guards/isFieldRichTextValueV2';
 import { isFieldText } from '@/object-record/record-field/ui/types/guards/isFieldText';
 import { isFieldTextValue } from '@/object-record/record-field/ui/types/guards/isFieldTextValue';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
@@ -149,10 +147,6 @@ export const usePersistField = ({
         isFieldRichText(fieldDefinition) &&
         isFieldRichTextValue(valueToPersist);
 
-      const fieldIsRichTextV2 =
-        isFieldRichTextV2(fieldDefinition) &&
-        isFieldRichTextV2Value(valueToPersist);
-
       const fieldIsArray =
         isFieldArray(fieldDefinition) && isFieldArrayValue(valueToPersist);
 
@@ -185,8 +179,7 @@ export const usePersistField = ({
         fieldIsRawJson ||
         fieldIsArray ||
         fieldIsFiles ||
-        fieldIsRichText ||
-        fieldIsRichTextV2;
+        fieldIsRichText;
 
       if (isValuePersistable) {
         const fieldName = fieldDefinition.metadata.fieldName;

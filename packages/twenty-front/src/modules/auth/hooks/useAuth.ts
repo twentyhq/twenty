@@ -1,20 +1,25 @@
-import { ApolloError, useApolloClient } from '@apollo/client';
+import {
+  useApolloClient,
+  useLazyQuery,
+  useMutation,
+} from '@apollo/client/react';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useCallback } from 'react';
 import { AppPath } from 'twenty-shared/types';
 
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import {
-  useCheckUserExistsLazyQuery,
-  useGetAuthTokensFromLoginTokenMutation,
-  useGetAuthTokensFromOtpMutation,
-  useGetLoginTokenFromCredentialsMutation,
-  useSignInMutation,
-  useSignUpInWorkspaceMutation,
-  useSignUpMutation,
-  useVerifyEmailAndGetLoginTokenMutation,
-  useVerifyEmailAndGetWorkspaceAgnosticTokenMutation,
   type AuthToken,
   type AuthTokenPair,
+  CheckUserExistsDocument,
+  GetAuthTokensFromLoginTokenDocument,
+  GetAuthTokensFromOtpDocument,
+  GetLoginTokenFromCredentialsDocument,
+  SignInDocument,
+  SignUpInWorkspaceDocument,
+  SignUpDocument,
+  VerifyEmailAndGetLoginTokenDocument,
+  VerifyEmailAndGetWorkspaceAgnosticTokenDocument,
 } from '~/generated-metadata/graphql';
 
 import { tokenPairState } from '@/auth/states/tokenPairState';
@@ -52,7 +57,7 @@ import { useOrigin } from '@/domain-manager/hooks/useOrigin';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
-import { sseClientState } from '@/sse-db-event/states/sseClientState';
+import { useClearSseClient } from '@/sse-db-event/hooks/useClearSseClient';
 import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 import { i18n } from '@lingui/core';
@@ -81,6 +86,7 @@ export const useAuth = () => {
     isEmailVerificationRequiredState,
   );
   const { loadCurrentUser } = useLoadCurrentUser();
+  const { clearSseClient } = useClearSseClient();
 
   const { reloadWorkspaceMetadata, resetToMockedMetadata } =
     useReloadWorkspaceMetadata();
@@ -90,25 +96,30 @@ export const useAuth = () => {
   const { redirect } = useRedirect();
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
 
-  const [getLoginTokenFromCredentials] =
-    useGetLoginTokenFromCredentialsMutation();
-  const [signIn] = useSignInMutation();
-  const [signUp] = useSignUpMutation();
-  const [signUpInWorkspace] = useSignUpInWorkspaceMutation();
-  const [getAuthTokensFromLoginToken] =
-    useGetAuthTokensFromLoginTokenMutation();
-  const [verifyEmailAndGetLoginToken] =
-    useVerifyEmailAndGetLoginTokenMutation();
-  const [verifyEmailAndGetWorkspaceAgnosticToken] =
-    useVerifyEmailAndGetWorkspaceAgnosticTokenMutation();
-  const [getAuthTokensFromOtp] = useGetAuthTokensFromOtpMutation();
+  const [getLoginTokenFromCredentials] = useMutation(
+    GetLoginTokenFromCredentialsDocument,
+  );
+  const [signIn] = useMutation(SignInDocument);
+  const [signUp] = useMutation(SignUpDocument);
+  const [signUpInWorkspace] = useMutation(SignUpInWorkspaceDocument);
+  const [getAuthTokensFromLoginToken] = useMutation(
+    GetAuthTokensFromLoginTokenDocument,
+  );
+  const [verifyEmailAndGetLoginToken] = useMutation(
+    VerifyEmailAndGetLoginTokenDocument,
+  );
+  const [verifyEmailAndGetWorkspaceAgnosticToken] = useMutation(
+    VerifyEmailAndGetWorkspaceAgnosticTokenDocument,
+  );
+  const [getAuthTokensFromOtp] = useMutation(GetAuthTokensFromOtpDocument);
 
   const workspacePublicData = useAtomStateValue(workspacePublicDataState);
 
   const { setLastAuthenticateWorkspaceDomain } =
     useLastAuthenticatedWorkspaceDomain();
-  const [checkUserExistsQuery, { data: checkUserExistsData }] =
-    useCheckUserExistsLazyQuery();
+  const [checkUserExistsQuery, { data: checkUserExistsData }] = useLazyQuery(
+    CheckUserExistsDocument,
+  );
 
   const client = useApolloClient();
 
@@ -117,9 +128,7 @@ export const useAuth = () => {
   const navigate = useNavigate();
 
   const clearSession = useCallback(async () => {
-    const sseClient = store.get(sseClientState.atom);
-
-    sseClient?.dispose();
+    clearSseClient();
 
     const authProvidersValue = store.get(workspaceAuthProvidersState.atom);
     const domainConfigurationValue = store.get(domainConfigurationState.atom);
@@ -162,6 +171,7 @@ export const useAuth = () => {
     navigate(AppPath.SignInUp);
     store.set(isAppEffectRedirectEnabledState.atom, true);
   }, [
+    clearSseClient,
     client,
     setLastAuthenticateWorkspaceDomain,
     resetToMockedMetadata,
@@ -188,8 +198,8 @@ export const useAuth = () => {
             origin,
           },
         });
-        if (isDefined(getLoginTokenResult.errors)) {
-          throw getLoginTokenResult.errors;
+        if (isDefined(getLoginTokenResult.error)) {
+          throw getLoginTokenResult.error;
         }
 
         if (!getLoginTokenResult.data?.getLoginTokenFromCredentials) {
@@ -200,8 +210,8 @@ export const useAuth = () => {
       } catch (error) {
         // TODO: Get intellisense for graphql error extensions code (codegen?)
         if (
-          error instanceof ApolloError &&
-          error.graphQLErrors[0]?.extensions?.subCode === 'EMAIL_NOT_VERIFIED'
+          CombinedGraphQLErrors.is(error) &&
+          error.errors[0]?.extensions?.subCode === 'EMAIL_NOT_VERIFIED'
         ) {
           setSearchParams({ email });
           setSignInUpStep(SignInUpStep.EmailVerification);
@@ -228,8 +238,8 @@ export const useAuth = () => {
         },
       });
 
-      if (isDefined(loginTokenResult.errors)) {
-        throw loginTokenResult.errors;
+      if (isDefined(loginTokenResult.error)) {
+        throw loginTokenResult.error;
       }
 
       if (!loginTokenResult.data?.verifyEmailAndGetLoginToken) {
@@ -247,7 +257,7 @@ export const useAuth = () => {
       email: string,
       captchaToken?: string,
     ) => {
-      const { data, errors } = await verifyEmailAndGetWorkspaceAgnosticToken({
+      const { data, error } = await verifyEmailAndGetWorkspaceAgnosticToken({
         variables: {
           email,
           emailVerificationToken,
@@ -255,8 +265,8 @@ export const useAuth = () => {
         },
       });
 
-      if (isDefined(errors)) {
-        throw errors;
+      if (isDefined(error)) {
+        throw error;
       }
 
       if (!data?.verifyEmailAndGetWorkspaceAgnosticToken) {
@@ -315,8 +325,8 @@ export const useAuth = () => {
           },
         });
 
-        if (isDefined(getAuthTokensResult.errors)) {
-          throw getAuthTokensResult.errors;
+        if (isDefined(getAuthTokensResult.error)) {
+          throw getAuthTokensResult.error;
         }
 
         if (!getAuthTokensResult.data?.getAuthTokensFromLoginToken) {
@@ -328,8 +338,8 @@ export const useAuth = () => {
         );
       } catch (error) {
         if (
-          error instanceof ApolloError &&
-          error.graphQLErrors[0]?.extensions?.subCode ===
+          CombinedGraphQLErrors.is(error) &&
+          error.errors[0]?.extensions?.subCode ===
             'TWO_FACTOR_AUTHENTICATION_PROVISION_REQUIRED'
         ) {
           handleSetLoginToken(loginToken);
@@ -338,8 +348,8 @@ export const useAuth = () => {
         }
 
         if (
-          error instanceof ApolloError &&
-          error.graphQLErrors[0]?.extensions?.subCode ===
+          CombinedGraphQLErrors.is(error) &&
+          error.errors[0]?.extensions?.subCode ===
             'TWO_FACTOR_AUTHENTICATION_VERIFICATION_REQUIRED'
         ) {
           handleSetLoginToken(loginToken);
@@ -360,7 +370,7 @@ export const useAuth = () => {
 
   const handleCredentialsSignIn = useCallback(
     async (email: string, password: string, captchaToken?: string) => {
-      signIn({
+      await signIn({
         variables: { email, password, captchaToken },
         onCompleted: async (data) => {
           handleSetAuthTokens(data.signIn.tokens);
@@ -394,8 +404,8 @@ export const useAuth = () => {
         },
         onError: (error) => {
           if (
-            error instanceof ApolloError &&
-            error.graphQLErrors[0]?.extensions?.subCode === 'EMAIL_NOT_VERIFIED'
+            CombinedGraphQLErrors.is(error) &&
+            error.errors[0]?.extensions?.subCode === 'EMAIL_NOT_VERIFIED'
           ) {
             setSearchParams({ email });
             setSignInUpStep(SignInUpStep.EmailVerification);
@@ -427,8 +437,8 @@ export const useAuth = () => {
         },
       });
 
-      if (isDefined(signUpResult.errors)) {
-        throw signUpResult.errors;
+      if (isDefined(signUpResult.error)) {
+        throw signUpResult.error;
       }
 
       if (isEmailVerificationRequired) {
@@ -510,8 +520,8 @@ export const useAuth = () => {
         },
       });
 
-      if (isDefined(signUpInWorkspaceResult.errors)) {
-        throw signUpInWorkspaceResult.errors;
+      if (isDefined(signUpInWorkspaceResult.error)) {
+        throw signUpInWorkspaceResult.error;
       }
 
       if (!signUpInWorkspaceResult.data?.signUpInWorkspace) {
@@ -632,8 +642,8 @@ export const useAuth = () => {
         },
       });
 
-      if (isDefined(getAuthTokensFromOtpResult.errors)) {
-        throw getAuthTokensFromOtpResult.errors;
+      if (isDefined(getAuthTokensFromOtpResult.error)) {
+        throw getAuthTokensFromOtpResult.error;
       }
 
       if (!getAuthTokensFromOtpResult.data?.getAuthTokensFromOTP) {

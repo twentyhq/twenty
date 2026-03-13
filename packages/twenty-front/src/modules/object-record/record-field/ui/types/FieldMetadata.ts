@@ -131,10 +131,6 @@ export type FieldRawJsonMetadata = BaseFieldMetadata & {
   settings?: null;
 };
 
-export type FieldRichTextV2Metadata = BaseFieldMetadata & {
-  settings?: null;
-};
-
 export type FieldRichTextMetadata = BaseFieldMetadata & {
   settings?: null;
 };
@@ -229,7 +225,6 @@ export type FieldMetadata =
   | FieldArrayMetadata
   | FieldTsVectorMetadata
   | FieldRawJsonMetadata
-  | FieldRichTextV2Metadata
   | FieldRichTextMetadata;
 
 export type FieldTextValue = string;
@@ -284,12 +279,10 @@ export type FieldRelationValue<
 export type Json = ZodHelperLiteral | { [key: string]: Json } | Json[];
 export type FieldJsonValue = Record<string, Json> | Json[] | null;
 
-export type FieldRichTextV2Value = {
+export type FieldRichTextValue = {
   blocknote: string | null;
   markdown: string | null;
 };
-
-export type FieldRichTextValue = null | string;
 
 const FieldActorSourceSchema = z.union([
   z.literal('API'),

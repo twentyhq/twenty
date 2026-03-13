@@ -59,15 +59,6 @@ describe('getSortIconForFieldType', () => {
         }),
       ).toBe(IconSortAscendingLetters);
     });
-
-    it('should return IconSortAscendingLetters for RICH_TEXT_V2 field ascending', () => {
-      expect(
-        getSortIconForFieldType({
-          fieldType: FieldMetadataType.RICH_TEXT_V2,
-          orderBy: GraphOrderBy.FIELD_ASC,
-        }),
-      ).toBe(IconSortAscendingLetters);
-    });
   });
 
   describe('number field types', () => {

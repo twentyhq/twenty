@@ -19,7 +19,8 @@ import {
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { useUpdateWorkspaceMemberRoleMutation } from '~/generated-metadata/graphql';
+import { useMutation } from '@apollo/client/react';
+import { UpdateWorkspaceMemberRoleDocument } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 const CONFIRM_ROLE_CHANGE_MODAL_ID = 'confirm-role-change-modal';
@@ -63,8 +64,9 @@ export const MemberPermissionsTab = ({
     null,
   );
 
-  const [updateWorkspaceMemberRoleMutation] =
-    useUpdateWorkspaceMemberRoleMutation();
+  const [updateWorkspaceMemberRoleMutation] = useMutation(
+    UpdateWorkspaceMemberRoleDocument,
+  );
 
   const rolesOptions =
     allRoles

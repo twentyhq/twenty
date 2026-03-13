@@ -29,7 +29,6 @@ export const generateFieldFilterZodSchema = (
 
     case FieldMetadataType.TEXT:
     case FieldMetadataType.RICH_TEXT:
-    case FieldMetadataType.RICH_TEXT_V2:
       return z
         .object({
           eq: z.string().optional().describe('Equals'),

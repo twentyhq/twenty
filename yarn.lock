@@ -537,28 +537,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@apollo/client@npm:^3.7.0, @apollo/client@npm:^3.7.17":
-  version: 3.13.8
-  resolution: "@apollo/client@npm:3.13.8"
+"@apollo/client@npm:^4.0.0":
+  version: 4.1.6
+  resolution: "@apollo/client@npm:4.1.6"
   dependencies:
     "@graphql-typed-document-node/core": "npm:^3.1.1"
     "@wry/caches": "npm:^1.0.0"
     "@wry/equality": "npm:^0.5.6"
     "@wry/trie": "npm:^0.5.0"
     graphql-tag: "npm:^2.12.6"
-    hoist-non-react-statics: "npm:^3.3.2"
     optimism: "npm:^0.18.0"
-    prop-types: "npm:^15.7.2"
-    rehackt: "npm:^0.1.0"
-    symbol-observable: "npm:^4.0.0"
-    ts-invariant: "npm:^0.10.3"
     tslib: "npm:^2.3.0"
-    zen-observable-ts: "npm:^1.2.5"
   peerDependencies:
-    graphql: ^15.0.0 || ^16.0.0
+    graphql: ^16.0.0
     graphql-ws: ^5.5.5 || ^6.0.3
-    react: ^16.8.0 || ^17.0.0 || ^18.0.0 || >=19.0.0-rc
-    react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || >=19.0.0-rc
+    react: ^17.0.0 || ^18.0.0 || >=19.0.0-rc
+    react-dom: ^17.0.0 || ^18.0.0 || >=19.0.0-rc
+    rxjs: ^7.3.0
     subscriptions-transport-ws: ^0.9.0 || ^0.11.0
   peerDependenciesMeta:
     graphql-ws:
@@ -569,7 +564,7 @@ __metadata:
       optional: true
     subscriptions-transport-ws:
       optional: true
-  checksum: 10c0/0e5032c1ae1dbef72a01f87af06b84bf505d60e71eba7cb9f20f8284778d8ead65fc1b7eacc570eccb8d045577d7194e38401fbfbdf56c197e159ca91ef11755
+  checksum: 10c0/ff152317932cb0ba46423161d388d1a2bc0bbc6c8ec6e2e85e915bb2ec22f461effa6fd2bbc8b754babd75ac8b52843f1e3ddf8e501cbe1d9b857e4df2f2f2df
   languageName: node
   linkType: hard
 
@@ -23154,17 +23149,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/apollo-upload-client@npm:^17.0.2":
-  version: 17.0.5
-  resolution: "@types/apollo-upload-client@npm:17.0.5"
-  dependencies:
-    "@apollo/client": "npm:^3.7.0"
-    "@types/extract-files": "npm:*"
-    graphql: "npm:14 - 16"
-  checksum: 10c0/ce3ea0bb1579867b7a8da16edab7c4ba56a174e820238a087f748f1d8be5d65fbd6ba796961023722f86e78425e459e5fb51d05414ecf4acd59880e0f4b8b1ac
-  languageName: node
-  linkType: hard
-
 "@types/archiver@npm:^6.0.0":
   version: 6.0.4
   resolution: "@types/archiver@npm:6.0.4"
@@ -23645,13 +23629,6 @@ __metadata:
     "@types/qs": "npm:*"
     "@types/serve-static": "npm:*"
   checksum: 10c0/60490cd4f73085007247e7d4fafad0a7abdafa34fa3caba2757512564ca5e094ece7459f0f324030a63d513f967bb86579a8682af76ae2fd718e889b0a2a4fe8
-  languageName: node
-  linkType: hard
-
-"@types/extract-files@npm:*":
-  version: 13.0.1
-  resolution: "@types/extract-files@npm:13.0.1"
-  checksum: 10c0/4732f875db36498a4bf3deb6965267d515cc7a82be6a3b0346a6b9a6c9eec173ebae774301070de6c7f9b879121d81bc106498cce9cc7bc521b2e75b84710ed2
   languageName: node
   linkType: hard
 
@@ -28398,14 +28375,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"apollo-link-rest@npm:^0.9.0":
-  version: 0.9.0
-  resolution: "apollo-link-rest@npm:0.9.0"
+"apollo-link-rest@npm:^0.10.0-rc.2":
+  version: 0.10.0-rc.2
+  resolution: "apollo-link-rest@npm:0.10.0-rc.2"
   peerDependencies:
-    "@apollo/client": ">=3"
+    "@apollo/client": ">=4"
     graphql: ">=0.11"
     qs: ">=6"
-  checksum: 10c0/0ce92c27d5d8cca9695a0517746f97de6507ac9537d9f986fd47bbfa25486fedc14db89116b61146bef43b2fc17b5bb8d61a3fcb1739bb474c205c38ef32db67
+  checksum: 10c0/b011001bfbff0e1cede9851cb7e81d134e592f3354238f6f38db0d7a5825240b890f032d448d7cdcf1c32a01c6f6b772c7b389b632d2cccecc9cec872b0a2737
   languageName: node
   linkType: hard
 
@@ -28494,15 +28471,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"apollo-upload-client@npm:^17.0.0":
-  version: 17.0.0
-  resolution: "apollo-upload-client@npm:17.0.0"
+"apollo-upload-client@npm:^19.0.0":
+  version: 19.0.0
+  resolution: "apollo-upload-client@npm:19.0.0"
   dependencies:
-    extract-files: "npm:^11.0.0"
+    extract-files: "npm:^13.0.0"
   peerDependencies:
-    "@apollo/client": ^3.0.0
+    "@apollo/client": ^4.0.0
     graphql: 14 - 16
-  checksum: 10c0/bddc4c26b7e81ec0b01885d969e007d1d0f44466d126594b91e0a3e375813b81f0e0b76ffedb4c78414ceddb126cb13428ca9715783ce5b6c4e299f482150bd7
+    rxjs: ^7.3.0
+  checksum: 10c0/2a31bab3bcadae186f79d375387b8845a133d6577e96c9f91dc2f2bc099acf658707863761c8627adb10166c5b80ecbd97106f0616f7c30b3e11d72cc25b2592
   languageName: node
   linkType: hard
 
@@ -36159,6 +36137,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"extract-files@npm:^13.0.0":
+  version: 13.0.0
+  resolution: "extract-files@npm:13.0.0"
+  dependencies:
+    is-plain-obj: "npm:^4.1.0"
+  checksum: 10c0/ee1e6e37f24fcb7de5019c0dc054f3e075664f63b5a9bd38c9ba1a32481ed1e77fd237adf826a7f6c7a1db406d9db4428f8ae4395fb2dfb602235b15f8f4bc3e
+  languageName: node
+  linkType: hard
+
 "extract-stack@npm:^1.0.0":
   version: 1.0.0
   resolution: "extract-stack@npm:1.0.0"
@@ -40543,7 +40530,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"is-plain-obj@npm:^4.0.0":
+"is-plain-obj@npm:^4.0.0, is-plain-obj@npm:^4.1.0":
   version: 4.1.0
   resolution: "is-plain-obj@npm:4.1.0"
   checksum: 10c0/32130d651d71d9564dc88ba7e6fda0e91a1010a3694648e9f4f47bb6080438140696d3e3e15c741411d712e47ac9edc1a8a9de1fe76f3487b0d90be06ac9975e
@@ -51218,7 +51205,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:18.3.1, react@npm:^18, react@npm:^18.2.0, react@npm:^18.3.1":
+"react@npm:18.3.1, react@npm:^18, react@npm:^18.2.0":
   version: 18.3.1
   resolution: "react@npm:18.3.1"
   dependencies:
@@ -51730,21 +51717,6 @@ __metadata:
   bin:
     regjsparser: bin/parser
   checksum: 10c0/99d3e4e10c8c7732eb7aa843b8da2fd8b647fe144d3711b480e4647dc3bff4b1e96691ccf17f3ace24aa866a50b064236177cb25e6e4fbbb18285d99edaed83b
-  languageName: node
-  linkType: hard
-
-"rehackt@npm:^0.1.0":
-  version: 0.1.0
-  resolution: "rehackt@npm:0.1.0"
-  peerDependencies:
-    "@types/react": "*"
-    react: "*"
-  peerDependenciesMeta:
-    "@types/react":
-      optional: true
-    react:
-      optional: true
-  checksum: 10c0/3d838bfee84ec06c976f21027936f3b0fdb7660ab8a2d4d3f19c65e0daa78a268aa81352311352b8576b89a074714b36ae6cd5bdadb6e975eca079f2b342de73
   languageName: node
   linkType: hard
 
@@ -54934,6 +54906,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"stripe@npm:^20.3.1":
+  version: 20.4.1
+  resolution: "stripe@npm:20.4.1"
+  peerDependencies:
+    "@types/node": ">=16"
+  peerDependenciesMeta:
+    "@types/node":
+      optional: true
+  checksum: 10c0/c4ca1099d70afd175b27ec1fc83f72230c46a95868b85d615a141a806e63dd6d1896fa239f593aca7ad110bb8a14a5fb136b8091453c1c5db663b07529e0f94b
+  languageName: node
+  linkType: hard
+
 "strnum@npm:^2.1.2":
   version: 2.1.2
   resolution: "strnum@npm:2.1.2"
@@ -55299,7 +55283,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"symbol-observable@npm:4.0.0, symbol-observable@npm:^4.0.0":
+"symbol-observable@npm:4.0.0":
   version: 4.0.0
   resolution: "symbol-observable@npm:4.0.0"
   checksum: 10c0/5e9a3ab08263a6be8cbee76587ad5880dcc62a47002787ed5ebea56b1eb30dc87da6f0183d67e88286806799fbe21c69077fbd677be4be2188e92318d6c6f31d
@@ -56431,7 +56415,7 @@ __metadata:
   resolution: "twenty-front@workspace:packages/twenty-front"
   dependencies:
     "@ai-sdk/react": "npm:3.0.99"
-    "@apollo/client": "npm:^3.7.17"
+    "@apollo/client": "npm:^4.0.0"
     "@blocknote/mantine": "npm:^0.47.1"
     "@blocknote/react": "npm:^0.47.1"
     "@blocknote/xl-docx-exporter": "npm:^0.47.1"
@@ -56480,7 +56464,6 @@ __metadata:
     "@tiptap/extensions": "npm:3.4.2"
     "@tiptap/react": "npm:3.4.2"
     "@tiptap/suggestion": "npm:3.4.2"
-    "@types/apollo-upload-client": "npm:^17.0.2"
     "@types/file-saver": "npm:^2.0.7"
     "@types/js-cookie": "npm:^3.0.3"
     "@types/json-logic-js": "npm:^2"
@@ -56488,8 +56471,8 @@ __metadata:
     "@types/react-grid-layout": "npm:^1"
     "@xyflow/react": "npm:^12.4.2"
     ai: "npm:6.0.97"
-    apollo-link-rest: "npm:^0.9.0"
-    apollo-upload-client: "npm:^17.0.0"
+    apollo-link-rest: "npm:^0.10.0-rc.2"
+    apollo-upload-client: "npm:^19.0.0"
     buffer: "npm:^6.0.3"
     cron-parser: "npm:5.1.1"
     date-fns: "npm:^2.30.0"
@@ -56813,7 +56796,6 @@ __metadata:
     tslib: "npm:2.8.1"
     twenty-emails: "workspace:*"
     twenty-shared: "workspace:*"
-    twenty-standard-application: "workspace:*"
     type-fest: "npm:4.10.1"
     typeorm: "patch:typeorm@0.3.20#./patches/typeorm+0.3.20.patch"
     unzipper: "npm:^0.12.3"
@@ -56849,19 +56831,6 @@ __metadata:
     vite-plugin-dts: "npm:3.8.1"
     vite-tsconfig-paths: "npm:^4.2.1"
     zod: "npm:^4.1.11"
-  languageName: unknown
-  linkType: soft
-
-"twenty-standard-application@workspace:*, twenty-standard-application@workspace:packages/twenty-standard-application":
-  version: 0.0.0-use.local
-  resolution: "twenty-standard-application@workspace:packages/twenty-standard-application"
-  dependencies:
-    esbuild: "npm:^0.25.10"
-    react: "npm:^18.3.1"
-    tinyglobby: "npm:^0.2.15"
-    tsx: "npm:^4.19.3"
-    twenty-sdk: "workspace:*"
-    twenty-shared: "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -56931,6 +56900,7 @@ __metadata:
     next-runtime-env: "npm:^3.3.0"
     postgres: "npm:^3.4.3"
     react-tooltip: "npm:^5.13.1"
+    stripe: "npm:^20.3.1"
     twenty-ui: "workspace:*"
   languageName: unknown
   linkType: soft
@@ -56958,7 +56928,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "twenty@workspace:."
   dependencies:
-    "@apollo/client": "npm:^3.7.17"
+    "@apollo/client": "npm:^4.0.0"
     "@babel/core": "npm:^7.14.5"
     "@babel/preset-react": "npm:^7.14.5"
     "@babel/preset-typescript": "npm:^7.24.6"
@@ -60499,16 +60469,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zen-observable-ts@npm:^1.2.5":
-  version: 1.2.5
-  resolution: "zen-observable-ts@npm:1.2.5"
-  dependencies:
-    zen-observable: "npm:0.8.15"
-  checksum: 10c0/21d586f3d0543e1d6f05d9333a137b407dbf337907c1ee1c2fa7a7da044f7e1262e4baf4ef8902f230c6f5acb561047659eb7df73df33307233cc451efe46db1
-  languageName: node
-  linkType: hard
-
-"zen-observable@npm:0.8.15, zen-observable@npm:^0.8.0":
+"zen-observable@npm:^0.8.0":
   version: 0.8.15
   resolution: "zen-observable@npm:0.8.15"
   checksum: 10c0/71cc2f2bbb537300c3f569e25693d37b3bc91f225cefce251a71c30bc6bb3e7f8e9420ca0eb57f2ac9e492b085b8dfa075fd1e8195c40b83c951dd59c6e4fbf8

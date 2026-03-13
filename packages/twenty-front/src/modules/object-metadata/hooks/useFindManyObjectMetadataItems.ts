@@ -1,13 +1,11 @@
-import { useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client/react';
 import { useMemo } from 'react';
 
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useSnackBarOnQueryError } from '@/apollo/hooks/useSnackBarOnQueryError';
 import {
   type ObjectMetadataItemsQuery,
   type ObjectMetadataItemsQueryVariables,
 } from '~/generated-metadata/graphql';
-import { logError } from '~/utils/logError';
-
 import { enrichObjectMetadataItemsWithPermissions } from '@/object-metadata/utils/enrichObjectMetadataItemsWithPermissions';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { FIND_MANY_OBJECT_METADATA_ITEMS } from '@/object-metadata/graphql/queries';
@@ -18,8 +16,6 @@ export const useFindManyObjectMetadataItems = ({
 }: {
   skip?: boolean;
 } = {}) => {
-  const { enqueueErrorSnackBar } = useSnackBar();
-
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
   const { data, loading, error, refetch } = useQuery<
@@ -27,13 +23,9 @@ export const useFindManyObjectMetadataItems = ({
     ObjectMetadataItemsQueryVariables
   >(FIND_MANY_OBJECT_METADATA_ITEMS, {
     skip,
-    onError: (error) => {
-      logError('useFindManyObjectMetadataItems error : ' + error);
-      enqueueErrorSnackBar({
-        apolloError: error,
-      });
-    },
   });
+
+  useSnackBarOnQueryError(error);
 
   const objectMetadataItems = useMemo(() => {
     const objectMetadataItemsArray =

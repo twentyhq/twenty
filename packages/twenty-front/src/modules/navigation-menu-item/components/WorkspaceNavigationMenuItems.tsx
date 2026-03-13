@@ -11,7 +11,6 @@ import {
 } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 import { useEnterLayoutCustomizationMode } from '@/app/hooks/useEnterLayoutCustomizationMode';
 import { isLayoutCustomizationActiveState } from '@/app/states/isLayoutCustomizationActiveState';
@@ -26,15 +25,12 @@ import {
 import { openNavigationMenuItemFolderIdsState } from '@/navigation-menu-item/states/openNavigationMenuItemFolderIdsState';
 import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeState';
 import { preloadWorkspaceDndKit } from '@/navigation/preloadWorkspaceDndKit';
-import { NavigationDrawerSectionForObjectMetadataItemsSkeletonLoader } from '@/object-metadata/components/NavigationDrawerSectionForObjectMetadataItemsSkeletonLoader';
 import { NavigationDrawerSectionForWorkspaceItems } from '@/object-metadata/components/NavigationDrawerSectionForWorkspaceItems';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { SidePanelPages } from 'twenty-shared/types';
 
 const StyledRightIconsContainer = styled.div`
@@ -47,9 +43,6 @@ export const WorkspaceNavigationMenuItems = () => {
   const items = useWorkspaceSectionItems();
   const { workspaceNavigationMenuItemsSorted } = useSortedNavigationMenuItems();
   const { enterLayoutCustomizationMode } = useEnterLayoutCustomizationMode();
-  const isNavigationMenuItemEditingEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED,
-  );
   const isLayoutCustomizationActive = useAtomStateValue(
     isLayoutCustomizationActiveState,
   );
@@ -66,7 +59,6 @@ export const WorkspaceNavigationMenuItems = () => {
     useOpenNavigationMenuItemInSidePanel();
   const { getIcon } = useIcons();
 
-  const loading = useIsPrefetchLoading();
   const { t } = useLingui();
 
   const handleEditClick = (event: React.MouseEvent) => {
@@ -158,46 +150,36 @@ export const WorkspaceNavigationMenuItems = () => {
     });
   };
 
-  if (loading) {
-    return <NavigationDrawerSectionForObjectMetadataItemsSkeletonLoader />;
-  }
-
   return (
     <NavigationDrawerSectionForWorkspaceItems
       sectionTitle={t`Workspace`}
       items={items}
       rightIcon={
-        isNavigationMenuItemEditingEnabled ? (
-          <StyledRightIconsContainer>
-            {isLayoutCustomizationActive ? (
+        <StyledRightIconsContainer>
+          {isLayoutCustomizationActive ? (
+            <LightIconButton
+              Icon={IconPlus}
+              accent="tertiary"
+              size="small"
+              onClick={handleAddMenuItem}
+            />
+          ) : (
+            <div onMouseEnter={preloadWorkspaceDndKit}>
               <LightIconButton
-                Icon={IconPlus}
+                Icon={IconTool}
                 accent="tertiary"
                 size="small"
-                onClick={handleAddMenuItem}
+                onClick={handleEditClick}
               />
-            ) : (
-              <div onMouseEnter={preloadWorkspaceDndKit}>
-                <LightIconButton
-                  Icon={IconTool}
-                  accent="tertiary"
-                  size="small"
-                  onClick={handleEditClick}
-                />
-              </div>
-            )}
-          </StyledRightIconsContainer>
-        ) : undefined
+            </div>
+          )}
+        </StyledRightIconsContainer>
       }
       selectedNavigationMenuItemId={selectedNavigationMenuItemInEditMode}
       onNavigationMenuItemClick={
         isLayoutCustomizationActive ? handleNavigationMenuItemClick : undefined
       }
-      onActiveObjectMetadataItemClick={
-        isNavigationMenuItemEditingEnabled
-          ? handleActiveObjectMetadataItemClick
-          : undefined
-      }
+      onActiveObjectMetadataItemClick={handleActiveObjectMetadataItemClick}
     />
   );
 };

@@ -15,12 +15,11 @@ import {
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 import { isDefined } from 'twenty-shared/utils';
-import { usePrefetchedNavigationMenuItemsData } from './usePrefetchedNavigationMenuItemsData';
+import { useNavigationMenuItemsData } from './useNavigationMenuItemsData';
 
 export const useHandleWorkspaceNavigationMenuItemDragAndDrop = () => {
   const store = useStore();
-  const { workspaceNavigationMenuItems } =
-    usePrefetchedNavigationMenuItemsData();
+  const { workspaceNavigationMenuItems } = useNavigationMenuItemsData();
   const setNavigationMenuItemsDraft = useSetAtomState(
     navigationMenuItemsDraftState,
   );
