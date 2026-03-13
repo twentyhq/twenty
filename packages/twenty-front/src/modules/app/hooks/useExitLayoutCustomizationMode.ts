@@ -1,5 +1,5 @@
+import { activeCustomizationPageLayoutIdsState } from '@/app/states/activeCustomizationPageLayoutIdsState';
 import { isLayoutCustomizationActiveState } from '@/app/states/isLayoutCustomizationActiveState';
-import { recordLayoutDraftStoreByPageLayoutIdState } from '@/app/states/recordLayoutDraftStoreByPageLayoutIdState';
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/states/navigationMenuItemsDraftState';
 import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeState';
 import { currentPageLayoutIdState } from '@/page-layout/states/currentPageLayoutIdState';
@@ -8,9 +8,6 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 
-// Shared cleanup logic for exiting layout customization mode.
-// Used by both save and cancel to reset navigation state, page layout
-// edit modes, and global customization flag.
 export const useExitLayoutCustomizationMode = () => {
   const store = useStore();
   const { closeSidePanelMenu } = useSidePanelMenu();
@@ -30,7 +27,7 @@ export const useExitLayoutCustomizationMode = () => {
     setSelectedNavigationMenuItemInEditMode(null);
 
     store.set(currentPageLayoutIdState.atom, null);
-    store.set(recordLayoutDraftStoreByPageLayoutIdState.atom, {});
+    store.set(activeCustomizationPageLayoutIdsState.atom, []);
     setIsLayoutCustomizationActive(false);
     closeSidePanelMenu();
   }, [

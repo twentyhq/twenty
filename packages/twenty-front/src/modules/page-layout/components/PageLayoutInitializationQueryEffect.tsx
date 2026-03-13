@@ -1,5 +1,5 @@
+import { activeCustomizationPageLayoutIdsState } from '@/app/states/activeCustomizationPageLayoutIdsState';
 import { isLayoutCustomizationActiveState } from '@/app/states/isLayoutCustomizationActiveState';
-import { recordLayoutDraftStoreByPageLayoutIdState } from '@/app/states/recordLayoutDraftStoreByPageLayoutIdState';
 import { useBasePageLayout } from '@/page-layout/hooks/useBasePageLayout';
 import { usePageLayoutWithRelationWidgets } from '@/page-layout/hooks/usePageLayoutWithRelationWidgets';
 import { useSetIsPageLayoutInEditMode } from '@/page-layout/hooks/useSetIsPageLayoutInEditMode';
@@ -55,14 +55,13 @@ export const PageLayoutInitializationQueryEffect = ({
     (layout: PageLayout) => {
       const isRecordPageLayout = layout.type === PageLayoutType.RECORD_PAGE;
 
-      const isCustomizationDraftAlreadyRegistered = isDefined(
-        store.get(recordLayoutDraftStoreByPageLayoutIdState.atom)[layout.id],
-      );
+      const activeIds = store.get(activeCustomizationPageLayoutIdsState.atom);
+      const isAlreadyRegistered = activeIds.includes(layout.id);
 
       if (
         isRecordPageLayout &&
         isLayoutCustomizationActive &&
-        isCustomizationDraftAlreadyRegistered
+        isAlreadyRegistered
       ) {
         return;
       }
@@ -89,6 +88,17 @@ export const PageLayoutInitializationQueryEffect = ({
       if (!isRecordPageLayout) {
         const shouldEnterDashboardEditMode = isPageLayoutEmpty(layout);
         setIsPageLayoutInEditMode(shouldEnterDashboardEditMode);
+      }
+
+      if (
+        isRecordPageLayout &&
+        isLayoutCustomizationActive &&
+        !isAlreadyRegistered
+      ) {
+        store.set(activeCustomizationPageLayoutIdsState.atom, [
+          ...activeIds,
+          layout.id,
+        ]);
       }
     },
     [

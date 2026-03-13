@@ -1,5 +1,5 @@
+import { activeCustomizationPageLayoutIdsState } from '@/app/states/activeCustomizationPageLayoutIdsState';
 import { isLayoutCustomizationActiveState } from '@/app/states/isLayoutCustomizationActiveState';
-import { recordLayoutDraftStoreByPageLayoutIdState } from '@/app/states/recordLayoutDraftStoreByPageLayoutIdState';
 import { filterWorkspaceNavigationMenuItems } from '@/navigation-menu-item/utils/filterWorkspaceNavigationMenuItems';
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/states/navigationMenuItemsDraftState';
 import { prefetchNavigationMenuItemsState } from '@/prefetch/states/prefetchNavigationMenuItemsState';
@@ -24,8 +24,7 @@ export const useEnterLayoutCustomizationMode = () => {
     );
     store.set(navigationMenuItemsDraftState.atom, workspaceNavigationMenuItems);
 
-    // Reset per-layout draft registry at session start.
-    store.set(recordLayoutDraftStoreByPageLayoutIdState.atom, {});
+    store.set(activeCustomizationPageLayoutIdsState.atom, []);
 
     store.set(isLayoutCustomizationActiveState.atom, true);
   }, [store]);

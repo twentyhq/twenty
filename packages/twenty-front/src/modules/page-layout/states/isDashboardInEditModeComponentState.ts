@@ -8,4 +8,3 @@ export const isDashboardInEditModeComponentState =
     defaultValue: false,
     componentInstanceContext: PageLayoutComponentInstanceContext,
   });
-
