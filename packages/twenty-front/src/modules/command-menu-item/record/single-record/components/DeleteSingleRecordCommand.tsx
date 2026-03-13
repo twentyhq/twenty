@@ -1,7 +1,5 @@
 import { Command } from '@/command-menu-item/display/components/Command';
 import { useSelectedRecordIdOrThrow } from '@/command-menu-item/record/single-record/hooks/useSelectedRecordIdOrThrow';
-import { useDeleteFavorite } from '@/favorites/hooks/useDeleteFavorite';
-import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { usePrefetchedNavigationMenuItemsData } from '@/navigation-menu-item/hooks/usePrefetchedNavigationMenuItemsData';
 import { useRemoveNavigationMenuItemByTargetRecordId } from '@/navigation-menu-item/hooks/useRemoveNavigationMenuItemByTargetRecordId';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
@@ -25,9 +23,6 @@ export const DeleteSingleRecordCommand = () => {
     objectNameSingular: objectMetadataItem.nameSingular,
   });
 
-  const { sortedFavorites: favorites } = useFavorites();
-  const { deleteFavorite } = useDeleteFavorite();
-
   const { navigationMenuItems, workspaceNavigationMenuItems } =
     usePrefetchedNavigationMenuItemsData();
   const { removeNavigationMenuItemsByTargetRecordIds } =
@@ -37,14 +32,6 @@ export const DeleteSingleRecordCommand = () => {
     removeSelectedRecordsFromRecordBoard();
 
     resetTableRowSelection();
-
-    const foundFavorite = favorites?.find(
-      (favorite) => favorite.recordId === recordId,
-    );
-
-    if (isDefined(foundFavorite)) {
-      deleteFavorite(foundFavorite.id);
-    }
 
     const foundNavigationMenuItem = [
       ...navigationMenuItems,

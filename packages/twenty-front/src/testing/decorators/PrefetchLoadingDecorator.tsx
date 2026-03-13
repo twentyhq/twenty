@@ -12,13 +12,7 @@ export const PrefetchLoadingDecorator: Decorator = (Story, context) => {
 
   const setPrefetchIsLoaded = useSetAtomFamilyState(
     prefetchIsLoadedFamilyState,
-    PrefetchKey.AllFavoritesFolders,
-  );
-
-  // oxlint-disable-next-line twenty/matching-state-variable
-  const setPrefetchIsLoadedFavorites = useSetAtomFamilyState(
-    prefetchIsLoadedFamilyState,
-    PrefetchKey.AllFavorites,
+    PrefetchKey.AllNavigationMenuItems,
   );
 
   const [isInitialized, setIsInitialized] = useState(false);
@@ -31,15 +25,9 @@ export const PrefetchLoadingDecorator: Decorator = (Story, context) => {
     setIsInitialized(true);
 
     setTimeout(() => {
-      setPrefetchIsLoadedFavorites(false);
       setPrefetchIsLoaded(false);
     }, prefetchLoadingSetDelay);
-  }, [
-    isInitialized,
-    prefetchLoadingSetDelay,
-    setPrefetchIsLoaded,
-    setPrefetchIsLoadedFavorites,
-  ]);
+  }, [isInitialized, prefetchLoadingSetDelay, setPrefetchIsLoaded]);
 
   return <Story />;
 };

@@ -7,13 +7,11 @@ import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useCallback, useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { useQuery } from '@apollo/client/react';
 import {
-  FeatureFlagKey,
   type NavigationMenuItem,
   FindManyNavigationMenuItemsDocument,
 } from '~/generated-metadata/graphql';
@@ -22,9 +20,6 @@ import { useStore } from 'jotai';
 
 export const PrefetchRunNavigationMenuItemQueriesEffect = () => {
   const store = useStore();
-  const isNavigationMenuItemEditingEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED,
-  );
 
   const showAuthModal = useShowAuthModal();
   const isSettingsPage = useIsSettingsPage();
@@ -42,11 +37,7 @@ export const PrefetchRunNavigationMenuItemQueriesEffect = () => {
   );
 
   const { data, loading } = useQuery(FindManyNavigationMenuItemsDocument, {
-    skip:
-      showAuthModal ||
-      isSettingsPage ||
-      !isWorkspaceActive ||
-      !isNavigationMenuItemEditingEnabled,
+    skip: showAuthModal || isSettingsPage || !isWorkspaceActive,
     fetchPolicy: 'cache-and-network',
   });
 

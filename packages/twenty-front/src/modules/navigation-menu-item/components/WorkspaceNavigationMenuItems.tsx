@@ -11,7 +11,6 @@ import {
 } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 import { FOLDER_ICON_DEFAULT } from '@/navigation-menu-item/constants/FolderIconDefault';
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
@@ -36,7 +35,6 @@ import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useStore } from 'jotai';
 import { SidePanelPages } from 'twenty-shared/types';
 
@@ -60,9 +58,6 @@ export const WorkspaceNavigationMenuItems = () => {
     store.set(navigationMenuItemsDraftState.atom, workspaceNavigationMenuItems);
     store.set(isNavigationMenuInEditModeState.atom, true);
   };
-  const isNavigationMenuItemEditingEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED,
-  );
   const isNavigationMenuInEditMode = useAtomStateValue(
     isNavigationMenuInEditModeState,
   );
@@ -180,37 +175,31 @@ export const WorkspaceNavigationMenuItems = () => {
       sectionTitle={t`Workspace`}
       items={items}
       rightIcon={
-        isNavigationMenuItemEditingEnabled ? (
-          <StyledRightIconsContainer>
-            {isNavigationMenuInEditMode ? (
+        <StyledRightIconsContainer>
+          {isNavigationMenuInEditMode ? (
+            <LightIconButton
+              Icon={IconPlus}
+              accent="tertiary"
+              size="small"
+              onClick={handleAddMenuItem}
+            />
+          ) : (
+            <div onMouseEnter={preloadWorkspaceDndKit}>
               <LightIconButton
-                Icon={IconPlus}
+                Icon={IconTool}
                 accent="tertiary"
                 size="small"
-                onClick={handleAddMenuItem}
+                onClick={handleEditClick}
               />
-            ) : (
-              <div onMouseEnter={preloadWorkspaceDndKit}>
-                <LightIconButton
-                  Icon={IconTool}
-                  accent="tertiary"
-                  size="small"
-                  onClick={handleEditClick}
-                />
-              </div>
-            )}
-          </StyledRightIconsContainer>
-        ) : undefined
+            </div>
+          )}
+        </StyledRightIconsContainer>
       }
       selectedNavigationMenuItemId={selectedNavigationMenuItemInEditMode}
       onNavigationMenuItemClick={
         isNavigationMenuInEditMode ? handleNavigationMenuItemClick : undefined
       }
-      onActiveObjectMetadataItemClick={
-        isNavigationMenuItemEditingEnabled
-          ? handleActiveObjectMetadataItemClick
-          : undefined
-      }
+      onActiveObjectMetadataItemClick={handleActiveObjectMetadataItemClick}
     />
   );
 };

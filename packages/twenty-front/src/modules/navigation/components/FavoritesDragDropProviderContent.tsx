@@ -7,8 +7,6 @@ import {
 } from '@hello-pangea/dnd';
 import { useState, type ReactNode } from 'react';
 
-import { FavoritesDragContext } from '@/favorites/contexts/FavoritesDragContext';
-import { useHandleFavoriteDragAndDrop } from '@/favorites/hooks/useHandleFavoriteDragAndDrop';
 import { ADD_TO_NAV_SOURCE_DROPPABLE_ID } from '@/navigation-menu-item/constants/AddToNavSourceDroppableId';
 import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/constants/NavigationMenuItemDroppableIds';
 import { NavigationDragSourceContext } from '@/navigation-menu-item/contexts/NavigationDragSourceContext';
@@ -50,11 +48,10 @@ export const FavoritesDragDropProviderContent = ({
   const store = useStore();
   const { workspaceNavigationMenuItems } = useNavigationMenuItemsDraftState();
   const { handleAddToNavigationDrop } = useHandleAddToNavigationDrop();
-  const { handleFavoriteDragAndDrop } = useHandleFavoriteDragAndDrop();
   const { handleNavigationMenuItemDragAndDrop } =
     useHandleNavigationMenuItemDragAndDrop();
 
-  const isFavoritesDroppableId = (droppableId: string) =>
+  const isNavigationMenuItemDroppableId = (droppableId: string) =>
     droppableId ===
       NavigationMenuItemDroppableIds.ORPHAN_NAVIGATION_MENU_ITEMS ||
     droppableId.startsWith('folder-');
@@ -109,7 +106,7 @@ export const FavoritesDragDropProviderContent = ({
       return;
     }
 
-    if (isFavoritesDroppableId(source.droppableId)) {
+    if (isNavigationMenuItemDroppableId(source.droppableId)) {
       if (isDefined(destination)) {
         const dropTargetId =
           getFavoritesDropTargetIdFromDestination(destination);
@@ -141,36 +138,29 @@ export const FavoritesDragDropProviderContent = ({
       return;
     }
 
-    if (isFavoritesDroppableId(result.source.droppableId)) {
-      handleNavigationMenuItemDragAndDrop(result, provided);
-      return;
-    }
-
-    handleFavoriteDragAndDrop(result, provided);
+    handleNavigationMenuItemDragAndDrop(result, provided);
   };
 
   return (
     <NavigationDragSourceContext.Provider value={{ sourceDroppableId }}>
       <NavigationMenuItemDragContext.Provider value={{ isDragging }}>
-        <FavoritesDragContext.Provider value={{ isDragging }}>
-          <NavigationDropTargetContext.Provider
-            value={{
-              activeDropTargetId,
-              setActiveDropTargetId,
-              forbiddenDropTargetId,
-              setForbiddenDropTargetId,
-              addToNavigationFallbackDestination,
-            }}
+        <NavigationDropTargetContext.Provider
+          value={{
+            activeDropTargetId,
+            setActiveDropTargetId,
+            forbiddenDropTargetId,
+            setForbiddenDropTargetId,
+            addToNavigationFallbackDestination,
+          }}
+        >
+          <DragDropContext
+            onDragStart={handleDragStart}
+            onDragUpdate={handleDragUpdate}
+            onDragEnd={handleDragEnd}
           >
-            <DragDropContext
-              onDragStart={handleDragStart}
-              onDragUpdate={handleDragUpdate}
-              onDragEnd={handleDragEnd}
-            >
-              {children}
-            </DragDropContext>
-          </NavigationDropTargetContext.Provider>
-        </FavoritesDragContext.Provider>
+            {children}
+          </DragDropContext>
+        </NavigationDropTargetContext.Provider>
       </NavigationMenuItemDragContext.Provider>
     </NavigationDragSourceContext.Provider>
   );

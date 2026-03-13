@@ -15,7 +15,6 @@ import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedWorkspaceMemberData } from '~/testing/mock-data/users';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
-import { CurrentWorkspaceMemberFavoritesFolders } from '@/favorites/components/CurrentWorkspaceMemberFavoritesFolders';
 import { NavigationDrawerFixedContent } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerFixedContent';
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
 import { getSettingsPath } from 'twenty-shared/utils';
@@ -106,8 +105,6 @@ export const Default: Story = {
             count={2}
           />
         </NavigationDrawerSection>
-
-        <CurrentWorkspaceMemberFavoritesFolders />
 
         <NavigationDrawerSection>
           <NavigationDrawerSectionTitle label="Workspace" />

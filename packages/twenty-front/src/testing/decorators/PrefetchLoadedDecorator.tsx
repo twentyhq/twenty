@@ -7,16 +7,10 @@ import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAt
 export const PrefetchLoadedDecorator: Decorator = (Story) => {
   const setPrefetchIsLoaded = useSetAtomFamilyState(
     prefetchIsLoadedFamilyState,
-    PrefetchKey.AllFavorites,
-  );
-  // oxlint-disable-next-line twenty/matching-state-variable
-  const setPrefetchIsLoadedFolders = useSetAtomFamilyState(
-    prefetchIsLoadedFamilyState,
-    PrefetchKey.AllFavoritesFolders,
+    PrefetchKey.AllNavigationMenuItems,
   );
 
   setPrefetchIsLoaded(true);
-  setPrefetchIsLoadedFolders(true);
 
   return <Story />;
 };

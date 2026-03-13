@@ -10,14 +10,8 @@ export const useIsPrefetchLoading = () => {
   );
   const prefetchIsLoaded = useAtomFamilyStateValue(
     prefetchIsLoadedFamilyState,
-    PrefetchKey.AllFavoritesFolders,
+    PrefetchKey.AllNavigationMenuItems,
   );
 
-  // oxlint-disable-next-line twenty/matching-state-variable
-  const prefetchIsLoadedFavorites = useAtomFamilyStateValue(
-    prefetchIsLoadedFamilyState,
-    PrefetchKey.AllFavorites,
-  );
-
-  return isWorkspaceActive && (!prefetchIsLoadedFavorites || !prefetchIsLoaded);
+  return isWorkspaceActive && !prefetchIsLoaded;
 };
