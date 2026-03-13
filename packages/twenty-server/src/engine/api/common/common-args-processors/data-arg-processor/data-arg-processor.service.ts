@@ -312,7 +312,6 @@ export class DataArgProcessorService {
 
         return transformLinksValue(validatedValue);
       }
-      case FieldMetadataType.RICH_TEXT:
       case FieldMetadataType.TS_VECTOR:
         throw new CommonQueryRunnerException(
           `${key} ${fieldMetadata.type}-typed field does not support write operations`,

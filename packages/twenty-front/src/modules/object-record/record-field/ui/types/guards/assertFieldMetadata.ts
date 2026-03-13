@@ -24,7 +24,6 @@ import {
   type FieldRatingMetadata,
   type FieldRawJsonMetadata,
   type FieldRelationMetadata,
-  type FieldRichTextMetadata,
   type FieldRichTextV2Metadata,
   type FieldSelectMetadata,
   type FieldTextMetadata,
@@ -77,15 +76,13 @@ type AssertFieldMetadataFunction = <
                                             ? FieldRawJsonMetadata
                                             : E extends 'RICH_TEXT_V2'
                                               ? FieldRichTextV2Metadata
-                                              : E extends 'RICH_TEXT'
-                                                ? FieldRichTextMetadata
-                                                : E extends 'ACTOR'
-                                                  ? FieldActorMetadata
-                                                  : E extends 'ARRAY'
-                                                    ? FieldArrayMetadata
-                                                    : E extends 'PHONES'
-                                                      ? FieldPhonesMetadata
-                                                      : never,
+                                              : E extends 'ACTOR'
+                                                ? FieldActorMetadata
+                                                : E extends 'ARRAY'
+                                                  ? FieldArrayMetadata
+                                                  : E extends 'PHONES'
+                                                    ? FieldPhonesMetadata
+                                                    : never,
 >(
   fieldType: E,
   fieldTypeGuard: (

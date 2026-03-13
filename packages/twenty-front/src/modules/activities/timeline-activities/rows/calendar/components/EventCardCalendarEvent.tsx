@@ -8,9 +8,8 @@ import { type CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
 import { useOpenCalendarEventInSidePanel } from '@/side-panel/hooks/useOpenCalendarEventInSidePanel';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
-import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { UserContext } from '@/users/contexts/UserContext';
-import { useContext, useEffect } from 'react';
+import { useContext } from 'react';
 import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { isDefined } from 'twenty-shared/utils';
@@ -97,7 +96,6 @@ export const EventCardCalendarEvent = ({
 }: {
   calendarEventId: string;
 }) => {
-  const { upsertRecordsInStore } = useUpsertRecordsInStore();
   const { openCalendarEventInSidePanel } = useOpenCalendarEventInSidePanel();
 
   const {
@@ -120,12 +118,6 @@ export const EventCardCalendarEvent = ({
       },
     },
   });
-
-  useEffect(() => {
-    if (calendarEvent) {
-      upsertRecordsInStore({ partialRecords: [calendarEvent] });
-    }
-  }, [calendarEvent, upsertRecordsInStore]);
 
   const { timeZone } = useContext(UserContext);
 

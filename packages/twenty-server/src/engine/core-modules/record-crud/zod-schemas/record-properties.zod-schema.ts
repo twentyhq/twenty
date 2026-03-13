@@ -37,7 +37,6 @@ const getFieldZodType = (field: FlatFieldMetadata): z.ZodTypeAny => {
       return z.string().uuidv4();
 
     case FieldMetadataType.TEXT:
-    case FieldMetadataType.RICH_TEXT:
       return z.string();
 
     case FieldMetadataType.DATE_TIME:

@@ -55,6 +55,13 @@ export const useLoadCurrentUser = () => {
       fetchPolicy: 'network-only',
     });
 
+    const coreViewsResult = isOnAWorkspace
+      ? await client.query({
+          query: FindAllCoreViewsDocument,
+          fetchPolicy: 'network-only',
+        })
+      : undefined;
+
     if (isDefined(currentUserResult.error)) {
       throw new Error(currentUserResult.error.message);
     }
@@ -132,15 +139,8 @@ export const useLoadCurrentUser = () => {
       });
     }
 
-    if (isOnAWorkspace) {
-      const coreViewsResult = await client.query({
-        query: FindAllCoreViewsDocument,
-        fetchPolicy: 'network-only',
-      });
-
-      if (isDefined(coreViewsResult.data?.getCoreViews)) {
-        setCoreViews(coreViewsResult.data.getCoreViews);
-      }
+    if (isDefined(coreViewsResult?.data?.getCoreViews)) {
+      setCoreViews(coreViewsResult.data.getCoreViews);
     }
 
     return {

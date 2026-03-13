@@ -10,7 +10,6 @@ import { LinksFieldDisplay } from '@/object-record/record-field/ui/meta-types/di
 import { PhonesFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/PhonesFieldDisplay';
 import { RatingFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/RatingFieldDisplay';
 import { RelationFromManyFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/RelationFromManyFieldDisplay';
-import { RichTextFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/RichTextFieldDisplay';
 import { RichTextV2FieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/RichTextV2FieldDisplay';
 import { isFieldIdentifierDisplay } from '@/object-record/record-field/ui/meta-types/display/utils/isFieldIdentifierDisplay';
 import { isFieldActor } from '@/object-record/record-field/ui/types/guards/isFieldActor';
@@ -21,7 +20,6 @@ import { isFieldFiles } from '@/object-record/record-field/ui/types/guards/isFie
 import { isFieldLinks } from '@/object-record/record-field/ui/types/guards/isFieldLinks';
 import { isFieldPhones } from '@/object-record/record-field/ui/types/guards/isFieldPhones';
 import { isFieldRating } from '@/object-record/record-field/ui/types/guards/isFieldRating';
-import { isFieldRichText } from '@/object-record/record-field/ui/types/guards/isFieldRichText';
 import { isFieldRichTextV2 } from '@/object-record/record-field/ui/types/guards/isFieldRichTextV2';
 
 import { MorphRelationManyToOneFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/MorphRelationManyToOneFieldDisplay';
@@ -112,8 +110,6 @@ export const FieldDisplay = () => {
     <BooleanFieldDisplay />
   ) : isFieldRating(fieldDefinition) ? (
     <RatingFieldDisplay readonly={isRecordFieldReadOnly} />
-  ) : isFieldRichText(fieldDefinition) ? (
-    <RichTextFieldDisplay />
   ) : isFieldRichTextV2(fieldDefinition) ? (
     <RichTextV2FieldDisplay />
   ) : isFieldActor(fieldDefinition) ? (

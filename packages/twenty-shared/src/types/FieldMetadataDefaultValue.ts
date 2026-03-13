@@ -90,7 +90,6 @@ export type FieldMetadataDefaultValueMapping = {
   [FieldMetadataType.SELECT]: string | null;
   [FieldMetadataType.MULTI_SELECT]: string[] | null;
   [FieldMetadataType.RAW_JSON]: object | null;
-  [FieldMetadataType.RICH_TEXT]: string | null;
   [FieldMetadataType.RICH_TEXT_V2]: FieldMetadataDefaultValueRichTextV2 | null;
   [FieldMetadataType.ACTOR]: FieldMetadataDefaultActor | null;
   [FieldMetadataType.ARRAY]: string[] | null;

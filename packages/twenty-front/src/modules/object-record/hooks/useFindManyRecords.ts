@@ -103,6 +103,7 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
       client: apolloCoreClient,
     });
 
+  // TODO: Refactor these useEffects to avoid unnecessary re-renders (see PR #18584 review)
   useEffect(() => {
     if (data) {
       handleFindManyRecordsCompleted(data);

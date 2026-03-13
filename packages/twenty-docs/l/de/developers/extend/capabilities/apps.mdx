@@ -49,31 +49,31 @@ npx create-twenty-app@latest my-app --minimal
 Von hier aus können Sie:
 
 ```bash filename="Terminal"
-# Add a new entity to your application (guided)
+# Eine neue Entität zu Ihrer Anwendung hinzufügen (geführt)
 yarn twenty entity:add
 
-# Watch your application's function logs
+# Die Funktionsprotokolle Ihrer Anwendung überwachen
 yarn twenty function:logs
 
-# Execute a function by name
+# Eine Funktion anhand ihres Namens ausführen
 yarn twenty function:execute -n my-function -p '{"name": "test"}'
 
-# Execute the pre-install function
+# Die Pre-Installationsfunktion ausführen
 yarn twenty function:execute --preInstall
 
-# Execute the post-install function
+# Die Post-Installationsfunktion ausführen
 yarn twenty function:execute --postInstall
 
-# Build the app for distribution
+# Die Anwendung für die Verteilung erstellen
 yarn twenty app:build
 
-# Publish the app to npm or a Twenty server
+# Die Anwendung auf npm oder einen Twenty-Server veröffentlichen
 yarn twenty app:publish
 
-# Uninstall the application from the current workspace
+# Die Anwendung aus dem aktuellen Arbeitsbereich deinstallieren
 yarn twenty app:uninstall
 
-# Display commands' help
+# Hilfe zu Befehlen anzeigen
 yarn twenty help
 ```
 
@@ -1246,23 +1246,23 @@ Hauptpunkte:
 
 Ein minimales End-to-End-Beispiel, das Objekte, Logikfunktionen, Frontend-Komponenten und mehrere Trigger demonstriert, finden Sie [hier](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/hello-world):
 
-## Building your app
+## Erstellen Ihrer App
 
-Once you've developed your app with `app:dev`, use `app:build` to compile it into a distributable package.
+Sobald Sie Ihre App mit `app:dev` entwickelt haben, verwenden Sie `app:build`, um sie in ein verteilbares Paket zu kompilieren.
 
 ```bash filename="Terminal"
-# Build the app (output goes to .twenty/output/)
+# Die App erstellen (Ausgabe nach .twenty/output/)
 yarn twenty app:build
 
-# Build and create a tarball (.tgz) for distribution
+# Build ausführen und ein Tarball (.tgz) für die Verteilung erstellen
 yarn twenty app:build --tarball
 ```
 
-The build process:
+Der Build-Prozess:
 
-1. **Parses and validates the manifest** — reads all `defineX()` entities from your source files and validates the manifest structure.
-2. **Compiles logic functions and front components** — bundles TypeScript sources into ESM `.mjs` files using esbuild.
-3. **Generates checksums** — computes MD5 hashes for each built file, stored in the manifest as `builtHandlerChecksum` / `builtComponentChecksum`.
+1. **Parst und validiert das Manifest** — liest alle `defineX()`-Entitäten aus Ihren Quelldateien und validiert die Manifeststruktur.
+2. **Kompiliert Logikfunktionen und Front-Komponenten** — bündelt TypeScript-Quellcode in ESM `.mjs`-Dateien mit esbuild.
+3. **Erzeugt Checksummen** — berechnet MD5-Hashes für jede erstellte Datei, die im Manifest als `builtHandlerChecksum` / `builtComponentChecksum` gespeichert werden.
 4. **Generates the typed API client** — introspects the GraphQL schema and generates typed `CoreApiClient` and `MetadataApiClient` clients.
 5. **Runs a TypeScript type check** — runs `tsc --noEmit` to catch type errors before publishing.
 6. **Rebuilds with the generated client** — performs a second compilation pass so the generated client types are included.
