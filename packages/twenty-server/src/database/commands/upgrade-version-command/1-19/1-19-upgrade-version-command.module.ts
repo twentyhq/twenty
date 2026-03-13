@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { AddFolderImportToMessageFolderPendingSyncActionCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-add-folder-import-to-message-folder-pending-sync-action.command';
 import { AddMissingSystemFieldsToStandardObjectsCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-add-missing-system-fields-to-standard-objects.command';
 import { BackfillMessageChannelMessageAssociationMessageFolderCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-backfill-message-channel-message-association-message-folder.command';
 import { BackfillMissingStandardViewsCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-backfill-missing-standard-views.command';
@@ -32,6 +33,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
   providers: [
     BackfillSystemFieldsIsSystemCommand,
     AddMissingSystemFieldsToStandardObjectsCommand,
+    AddFolderImportToMessageFolderPendingSyncActionCommand,
     BackfillMessageChannelMessageAssociationMessageFolderCommand,
     BackfillMissingStandardViewsCommand,
     FixInvalidStandardUniversalIdentifiersCommand,
@@ -40,6 +42,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
   exports: [
     BackfillSystemFieldsIsSystemCommand,
     AddMissingSystemFieldsToStandardObjectsCommand,
+    AddFolderImportToMessageFolderPendingSyncActionCommand,
     BackfillMessageChannelMessageAssociationMessageFolderCommand,
     BackfillMissingStandardViewsCommand,
     FixInvalidStandardUniversalIdentifiersCommand,

@@ -322,6 +322,13 @@ export const buildMessageFolderStandardFlatFieldMetadatas = ({
           position: 1,
           color: 'blue',
         },
+        {
+          id: '20202020-5fb5-4a92-8dc0-1251676cad57',
+          value: 'FOLDER_IMPORT',
+          label: 'Folder import',
+          position: 2,
+          color: 'green',
+        },
       ],
     },
     standardObjectMetadataRelatedEntityIds,

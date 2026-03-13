@@ -28,6 +28,7 @@ import { MigratePersonAvatarFilesCommand } from 'src/database/commands/upgrade-v
 import { MigrateWorkflowSendEmailAttachmentsCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-migrate-workflow-send-email-attachments.command';
 import { MigrateWorkspacePicturesCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-migrate-workspace-pictures.command';
 import { AddMissingSystemFieldsToStandardObjectsCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-add-missing-system-fields-to-standard-objects.command';
+import { AddFolderImportToMessageFolderPendingSyncActionCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-add-folder-import-to-message-folder-pending-sync-action.command';
 import { BackfillMessageChannelMessageAssociationMessageFolderCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-backfill-message-channel-message-association-message-folder.command';
 import { BackfillSystemFieldsIsSystemCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-backfill-system-fields-is-system.command';
 import { FixInvalidStandardUniversalIdentifiersCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-fix-invalid-standard-universal-identifiers.command';
@@ -78,6 +79,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     // 1.19 Commands
     protected readonly backfillSystemFieldsIsSystemCommand: BackfillSystemFieldsIsSystemCommand,
     protected readonly addMissingSystemFieldsToStandardObjectsCommand: AddMissingSystemFieldsToStandardObjectsCommand,
+    protected readonly addFolderImportToMessageFolderPendingSyncActionCommand: AddFolderImportToMessageFolderPendingSyncActionCommand,
     protected readonly backfillMessageChannelMessageAssociationMessageFolderCommand: BackfillMessageChannelMessageAssociationMessageFolderCommand,
     protected readonly backfillMissingStandardViewsCommand: BackfillMissingStandardViewsCommand,
     protected readonly fixRoleAndAgentUniversalIdentifiersCommand: FixInvalidStandardUniversalIdentifiersCommand,
@@ -124,6 +126,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     const commands_1190: VersionCommands = [
       this.backfillSystemFieldsIsSystemCommand,
       this.addMissingSystemFieldsToStandardObjectsCommand,
+      this.addFolderImportToMessageFolderPendingSyncActionCommand,
       this.backfillMessageChannelMessageAssociationMessageFolderCommand,
       this.backfillMissingStandardViewsCommand,
       this.fixRoleAndAgentUniversalIdentifiersCommand,
