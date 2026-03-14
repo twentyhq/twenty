@@ -1,5 +1,5 @@
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
-import { objectMetadataItemsCurrentSelector } from '@/metadata-store/states/objectMetadataItemsCurrentSelector';
+import { objectMetadataItemsSelector } from '@/metadata-store/states/objectMetadataItemsSelector';
 import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
 
 export const objectPermissionsFamilySelector = createAtomFamilySelector<
@@ -14,7 +14,7 @@ export const objectPermissionsFamilySelector = createAtomFamilySelector<
     ({ objectNameSingular }) =>
     ({ get }) => {
       const currentUserWorkspace = get(currentUserWorkspaceState);
-      const objectMetadataItems = get(objectMetadataItemsCurrentSelector);
+      const objectMetadataItems = get(objectMetadataItemsSelector);
 
       const objectMetadataItem = objectMetadataItems.find(
         (item) => item.nameSingular === objectNameSingular,

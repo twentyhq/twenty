@@ -1,16 +1,16 @@
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
-import { splitCompositeObjectMetadata } from '@/metadata-store/utils/splitCompositeObjectMetadata';
+import { splitObjectMetadataItemWithRelated } from '@/metadata-store/utils/splitObjectMetadataItemWithRelated';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { type createStore } from 'jotai';
 
 type JotaiStore = ReturnType<typeof createStore>;
 
-export const setObjectMetadataItemsInMetadataStore = (
+export const setTestObjectMetadataItemsInMetadataStore = (
   store: JotaiStore,
   objectMetadataItems: ObjectMetadataItem[],
 ) => {
   const { flatObjects, flatFields, flatIndexes } =
-    splitCompositeObjectMetadata(objectMetadataItems);
+    splitObjectMetadataItemWithRelated(objectMetadataItems);
 
   store.set(metadataStoreState.atomFamily('objectMetadataItems'), {
     current: flatObjects,

@@ -3,9 +3,10 @@ import { useMemo } from 'react';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const useFilteredObjectMetadataItems = () => {
-  const objectMetadataItems = useAtomStateValue(
+  const objectMetadataItemsWithFields = useAtomStateValue(
     objectMetadataItemsWithFieldsSelector,
   );
+  const objectMetadataItems = objectMetadataItemsWithFields;
 
   const activeNonSystemObjectMetadataItems = useMemo(
     () =>

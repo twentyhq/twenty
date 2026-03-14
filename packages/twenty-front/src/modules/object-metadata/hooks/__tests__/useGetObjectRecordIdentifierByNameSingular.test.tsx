@@ -3,7 +3,7 @@ import { Provider as JotaiProvider } from 'jotai';
 
 import { useGetObjectRecordIdentifierByNameSingular } from '@/object-metadata/hooks/useGetObjectRecordIdentifierByNameSingular';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { setObjectMetadataItemsInMetadataStore } from '~/testing/utils/setObjectMetadataItemsInMetadataStore';
+import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
@@ -12,7 +12,7 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => (
 
 describe('useGetObjectRecordIdentifierByNameSingular', () => {
   beforeEach(() => {
-    setObjectMetadataItemsInMetadataStore(
+    setTestObjectMetadataItemsInMetadataStore(
       jotaiStore,
       generatedMockObjectMetadataItems,
     );

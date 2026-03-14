@@ -1,4 +1,4 @@
-import { objectMetadataItemsCurrentSelector } from '@/metadata-store/states/objectMetadataItemsCurrentSelector';
+import { objectMetadataItemsSelector } from '@/metadata-store/states/objectMetadataItemsSelector';
 import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
 
 export const isSystemObjectByNameSingularFamilySelector =
@@ -7,7 +7,7 @@ export const isSystemObjectByNameSingularFamilySelector =
     get:
       (nameSingular: string) =>
       ({ get }) => {
-        const flatObjects = get(objectMetadataItemsCurrentSelector);
+        const flatObjects = get(objectMetadataItemsSelector);
 
         return (
           flatObjects.find(

@@ -18,9 +18,10 @@ export const useObjectMetadataItem = ({
     },
   );
 
-  const objectMetadataItems = useAtomStateValue(
+  const objectMetadataItemsWithFields = useAtomStateValue(
     objectMetadataItemsWithFieldsSelector,
   );
+  const objectMetadataItems = objectMetadataItemsWithFields;
 
   if (!isDefined(objectMetadataItem)) {
     throw new ObjectMetadataItemNotFoundError(

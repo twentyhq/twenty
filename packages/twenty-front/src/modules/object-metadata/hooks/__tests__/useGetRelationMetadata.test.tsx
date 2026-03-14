@@ -5,7 +5,7 @@ import { Provider as JotaiProvider } from 'jotai';
 
 import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMetadata';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { setObjectMetadataItemsInMetadataStore } from '~/testing/utils/setObjectMetadataItemsInMetadataStore';
+import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
@@ -16,7 +16,7 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
 
 describe('useGetRelationMetadata', () => {
   beforeEach(() => {
-    setObjectMetadataItemsInMetadataStore(
+    setTestObjectMetadataItemsInMetadataStore(
       jotaiStore,
       generatedMockObjectMetadataItems,
     );

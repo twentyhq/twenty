@@ -3,7 +3,7 @@ import { type FlatIndexMetadataItem } from '@/metadata-store/types/FlatIndexMeta
 import { type FlatObjectMetadataItem } from '@/metadata-store/types/FlatObjectMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 
-type CompositeObjectMetadataItem = Omit<
+export type ObjectMetadataItemWithRelated = Omit<
   ObjectMetadataItem,
   'readableFields' | 'updatableFields'
 >;
@@ -14,29 +14,30 @@ type SplitResult = {
   flatIndexes: FlatIndexMetadataItem[];
 };
 
-export const splitCompositeObjectMetadata = (
-  compositeObjects: CompositeObjectMetadataItem[],
+export const splitObjectMetadataItemWithRelated = (
+  objectMetadataItemsWithRelated: ObjectMetadataItemWithRelated[],
 ): SplitResult => {
   const flatObjects: FlatObjectMetadataItem[] = [];
   const flatFields: FlatFieldMetadataItem[] = [];
   const flatIndexes: FlatIndexMetadataItem[] = [];
 
-  for (const compositeObject of compositeObjects) {
-    const { fields, indexMetadatas, ...objectProperties } = compositeObject;
+  for (const objectMetadataItemWithRelated of objectMetadataItemsWithRelated) {
+    const { fields, indexMetadatas, ...objectProperties } =
+      objectMetadataItemWithRelated;
 
     flatObjects.push(objectProperties);
 
     for (const field of fields) {
       flatFields.push({
         ...field,
-        objectMetadataId: compositeObject.id,
+        objectMetadataId: objectMetadataItemWithRelated.id,
       });
     }
 
     for (const index of indexMetadatas) {
       flatIndexes.push({
         ...index,
-        objectMetadataId: compositeObject.id,
+        objectMetadataId: objectMetadataItemWithRelated.id,
       });
     }
   }

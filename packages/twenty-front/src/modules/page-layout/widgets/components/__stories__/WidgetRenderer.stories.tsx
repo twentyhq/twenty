@@ -9,7 +9,7 @@ import { CatalogDecorator, type CatalogStory } from 'twenty-ui/testing';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { ApolloCoreClientContext } from '@/object-metadata/contexts/ApolloCoreClientContext';
 import { isAppMetadataReadyState } from '@/metadata-store/states/isAppMetadataReadyState';
-import { setObjectMetadataItemsInMetadataStore } from '~/testing/utils/setObjectMetadataItemsInMetadataStore';
+import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
@@ -277,7 +277,7 @@ export const WithNumberChart: Story = {
       deletedAt: null,
     };
 
-    setObjectMetadataItemsInMetadataStore(
+    setTestObjectMetadataItemsInMetadataStore(
       jotaiStore,
       generatedMockObjectMetadataItems,
     );
@@ -364,7 +364,7 @@ export const WithGaugeChart: Story = {
       deletedAt: null,
     };
 
-    setObjectMetadataItemsInMetadataStore(
+    setTestObjectMetadataItemsInMetadataStore(
       jotaiStore,
       generatedMockObjectMetadataItems,
     );
@@ -455,7 +455,7 @@ export const WithBarChart: Story = {
       deletedAt: null,
     };
 
-    setObjectMetadataItemsInMetadataStore(
+    setTestObjectMetadataItemsInMetadataStore(
       jotaiStore,
       generatedMockObjectMetadataItems,
     );
@@ -549,7 +549,7 @@ export const SmallWidget: Story = {
       deletedAt: null,
     };
 
-    setObjectMetadataItemsInMetadataStore(
+    setTestObjectMetadataItemsInMetadataStore(
       jotaiStore,
       generatedMockObjectMetadataItems,
     );
@@ -647,7 +647,7 @@ export const MediumWidget: Story = {
       deletedAt: null,
     };
 
-    setObjectMetadataItemsInMetadataStore(
+    setTestObjectMetadataItemsInMetadataStore(
       jotaiStore,
       generatedMockObjectMetadataItems,
     );
@@ -745,7 +745,7 @@ export const LargeWidget: Story = {
       deletedAt: null,
     };
 
-    setObjectMetadataItemsInMetadataStore(
+    setTestObjectMetadataItemsInMetadataStore(
       jotaiStore,
       generatedMockObjectMetadataItems,
     );
@@ -839,7 +839,7 @@ export const WideWidget: Story = {
       deletedAt: null,
     };
 
-    setObjectMetadataItemsInMetadataStore(
+    setTestObjectMetadataItemsInMetadataStore(
       jotaiStore,
       generatedMockObjectMetadataItems,
     );
@@ -937,7 +937,7 @@ export const TallWidget: Story = {
       deletedAt: null,
     };
 
-    setObjectMetadataItemsInMetadataStore(
+    setTestObjectMetadataItemsInMetadataStore(
       jotaiStore,
       generatedMockObjectMetadataItems,
     );
@@ -1031,7 +1031,7 @@ export const WithManyToOneRelationFieldWidget: Story = {
       deletedAt: null,
     };
 
-    setObjectMetadataItemsInMetadataStore(
+    setTestObjectMetadataItemsInMetadataStore(
       jotaiStore,
       generatedMockObjectMetadataItems,
     );
@@ -1150,7 +1150,7 @@ export const WithOneToManyRelationFieldWidget: Story = {
       deletedAt: null,
     };
 
-    setObjectMetadataItemsInMetadataStore(
+    setTestObjectMetadataItemsInMetadataStore(
       jotaiStore,
       generatedMockObjectMetadataItems,
     );
@@ -1261,7 +1261,7 @@ export const OneToManyRelationFieldWidgetWithSeeAllButton: Story = {
       deletedAt: null,
     };
 
-    setObjectMetadataItemsInMetadataStore(
+    setTestObjectMetadataItemsInMetadataStore(
       jotaiStore,
       generatedMockObjectMetadataItems,
     );
@@ -1399,7 +1399,7 @@ export const OnMobile: Story = {
       deletedAt: null,
     };
 
-    setObjectMetadataItemsInMetadataStore(
+    setTestObjectMetadataItemsInMetadataStore(
       jotaiStore,
       generatedMockObjectMetadataItems,
     );
@@ -1497,7 +1497,7 @@ export const InSidePanel: Story = {
       deletedAt: null,
     };
 
-    setObjectMetadataItemsInMetadataStore(
+    setTestObjectMetadataItemsInMetadataStore(
       jotaiStore,
       generatedMockObjectMetadataItems,
     );
@@ -1656,7 +1656,7 @@ export const Catalog: CatalogStory<Story, typeof WidgetRenderer> = {
       deletedAt: null,
     };
 
-    setObjectMetadataItemsInMetadataStore(
+    setTestObjectMetadataItemsInMetadataStore(
       jotaiStore,
       generatedMockObjectMetadataItems,
     );

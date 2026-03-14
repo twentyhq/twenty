@@ -1,7 +1,7 @@
 import { type ReactNode, useEffect, useState } from 'react';
 
 import { useMetadataStore } from '@/metadata-store/hooks/useMetadataStore';
-import { splitCompositeObjectMetadata } from '@/metadata-store/utils/splitCompositeObjectMetadata';
+import { splitObjectMetadataItemWithRelated } from '@/metadata-store/utils/splitObjectMetadataItemWithRelated';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
@@ -18,7 +18,7 @@ export const JestObjectMetadataItemSetter = ({
   useEffect(() => {
     const items = objectMetadataItems ?? generatedMockObjectMetadataItems;
     const { flatObjects, flatFields, flatIndexes } =
-      splitCompositeObjectMetadata(items);
+      splitObjectMetadataItemWithRelated(items);
 
     updateDraft('objectMetadataItems', flatObjects);
     updateDraft('fieldMetadataItems', flatFields);

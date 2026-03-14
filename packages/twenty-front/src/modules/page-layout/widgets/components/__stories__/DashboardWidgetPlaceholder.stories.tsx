@@ -1,5 +1,5 @@
 import { isAppMetadataReadyState } from '@/metadata-store/states/isAppMetadataReadyState';
-import { setObjectMetadataItemsInMetadataStore } from '~/testing/utils/setObjectMetadataItemsInMetadataStore';
+import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { PageLayoutContentProvider } from '@/page-layout/contexts/PageLayoutContentContext';
 import {
@@ -33,7 +33,7 @@ const meta: Meta<typeof DashboardWidgetPlaceholder> = {
   component: DashboardWidgetPlaceholder,
   decorators: [
     (Story) => {
-      setObjectMetadataItemsInMetadataStore(
+      setTestObjectMetadataItemsInMetadataStore(
         jotaiStore,
         generatedMockObjectMetadataItems,
       );

@@ -5,7 +5,7 @@ import { useIcons } from 'twenty-ui/display';
 import { JestObjectMetadataItemSetter } from '~/testing/jest/JestObjectMetadataItemSetter';
 
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { setObjectMetadataItemsInMetadataStore } from '~/testing/utils/setObjectMetadataItemsInMetadataStore';
+import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type IndexMetadataItem } from '@/object-metadata/types/IndexMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
@@ -34,7 +34,7 @@ describe('useBuildSpreadSheetImportFields', () => {
       getIcons: () => ({}),
     });
     jest.clearAllMocks();
-    setObjectMetadataItemsInMetadataStore(jotaiStore, []);
+    setTestObjectMetadataItemsInMetadataStore(jotaiStore, []);
   });
 
   const createMockFieldMetadataItem = (

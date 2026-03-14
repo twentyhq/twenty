@@ -9,7 +9,7 @@ import {
 } from '@/object-metadata/hooks/__mocks__/useFilteredObjectMetadataItems';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { setObjectMetadataItemsInMetadataStore } from '~/testing/utils/setObjectMetadataItemsInMetadataStore';
+import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
 import { isDefined } from 'twenty-shared/utils';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
@@ -28,7 +28,7 @@ const mocks = [
 ];
 
 const Wrapper = ({ children }: { children: ReactNode }) => {
-  setObjectMetadataItemsInMetadataStore(
+  setTestObjectMetadataItemsInMetadataStore(
     jotaiStore,
     generatedMockObjectMetadataItems,
   );

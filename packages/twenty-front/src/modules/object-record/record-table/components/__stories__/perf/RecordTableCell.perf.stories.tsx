@@ -2,7 +2,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useEffect } from 'react';
 
 import { useMetadataStore } from '@/metadata-store/hooks/useMetadataStore';
-import { splitCompositeObjectMetadata } from '@/metadata-store/utils/splitCompositeObjectMetadata';
+import { splitObjectMetadataItemWithRelated } from '@/metadata-store/utils/splitObjectMetadataItemWithRelated';
 import { getBasePathToShowPage } from '@/object-metadata/utils/getBasePathToShowPage';
 
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
@@ -72,7 +72,7 @@ const RelationFieldValueSetterEffect = () => {
     );
 
     const { flatObjects, flatFields, flatIndexes } =
-      splitCompositeObjectMetadata(generatedMockObjectMetadataItems);
+      splitObjectMetadataItemWithRelated(generatedMockObjectMetadataItems);
 
     updateDraft('objectMetadataItems', flatObjects);
     updateDraft('fieldMetadataItems', flatFields);

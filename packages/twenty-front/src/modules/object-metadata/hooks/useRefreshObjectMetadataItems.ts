@@ -1,6 +1,6 @@
 import { isAppEffectRedirectEnabledState } from '@/app/states/isAppEffectRedirectEnabledState';
 import { useMetadataStore } from '@/metadata-store/hooks/useMetadataStore';
-import { splitCompositeObjectMetadata } from '@/metadata-store/utils/splitCompositeObjectMetadata';
+import { splitObjectMetadataItemWithRelated } from '@/metadata-store/utils/splitObjectMetadataItemWithRelated';
 import { FIND_MANY_OBJECT_METADATA_ITEMS } from '@/object-metadata/graphql/queries';
 import { mapPaginatedObjectMetadataItemsToObjectMetadataItems } from '@/object-metadata/utils/mapPaginatedObjectMetadataItemsToObjectMetadataItems';
 import { type FetchPolicy } from '@apollo/client';
@@ -30,7 +30,7 @@ export const useRefreshObjectMetadataItems = (
       });
 
     const { flatObjects, flatFields, flatIndexes } =
-      splitCompositeObjectMetadata(compositeObjects);
+      splitObjectMetadataItemWithRelated(compositeObjects);
 
     updateDraft('objectMetadataItems', flatObjects);
     updateDraft('fieldMetadataItems', flatFields);

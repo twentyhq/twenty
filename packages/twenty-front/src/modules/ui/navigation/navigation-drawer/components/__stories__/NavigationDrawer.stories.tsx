@@ -4,7 +4,7 @@ import { expect, within } from 'storybook/test';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { setObjectMetadataItemsInMetadataStore } from '~/testing/utils/setObjectMetadataItemsInMetadataStore';
+import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { SettingsPath } from 'twenty-shared/types';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
@@ -56,7 +56,7 @@ const meta: Meta<typeof NavigationDrawer> = {
         currentWorkspaceMemberState,
       );
       useEffect(() => {
-        setObjectMetadataItemsInMetadataStore(
+        setTestObjectMetadataItemsInMetadataStore(
           jotaiStore,
           generatedMockObjectMetadataItems,
         );

@@ -1,6 +1,6 @@
 import { isAppEffectRedirectEnabledState } from '@/app/states/isAppEffectRedirectEnabledState';
 import { useMetadataStore } from '@/metadata-store/hooks/useMetadataStore';
-import { splitCompositeObjectMetadata } from '@/metadata-store/utils/splitCompositeObjectMetadata';
+import { splitObjectMetadataItemWithRelated } from '@/metadata-store/utils/splitObjectMetadataItemWithRelated';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 
@@ -14,7 +14,7 @@ export const useLoadMockedObjectMetadataItems = () => {
     );
 
     const { flatObjects, flatFields, flatIndexes } =
-      splitCompositeObjectMetadata(generatedMockObjectMetadataItems);
+      splitObjectMetadataItemWithRelated(generatedMockObjectMetadataItems);
 
     updateDraft('objectMetadataItems', flatObjects);
     updateDraft('fieldMetadataItems', flatFields);

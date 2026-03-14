@@ -6,7 +6,7 @@ import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { ApolloCoreClientContext } from '@/object-metadata/contexts/ApolloCoreClientContext';
 import { isAppMetadataReadyState } from '@/metadata-store/states/isAppMetadataReadyState';
-import { setObjectMetadataItemsInMetadataStore } from '~/testing/utils/setObjectMetadataItemsInMetadataStore';
+import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -356,7 +356,7 @@ export const TextFieldWidget: Story = {
       deletedAt: null,
     };
 
-    setObjectMetadataItemsInMetadataStore(
+    setTestObjectMetadataItemsInMetadataStore(
       jotaiStore,
       generatedMockObjectMetadataItems,
     );
@@ -450,7 +450,7 @@ export const AddressFieldWidget: Story = {
       deletedAt: null,
     };
 
-    setObjectMetadataItemsInMetadataStore(
+    setTestObjectMetadataItemsInMetadataStore(
       jotaiStore,
       generatedMockObjectMetadataItems,
     );
@@ -547,7 +547,7 @@ export const NumberFieldWidget: Story = {
       deletedAt: null,
     };
 
-    setObjectMetadataItemsInMetadataStore(
+    setTestObjectMetadataItemsInMetadataStore(
       jotaiStore,
       generatedMockObjectMetadataItems,
     );
@@ -641,7 +641,7 @@ export const LinkFieldWidget: Story = {
       deletedAt: null,
     };
 
-    setObjectMetadataItemsInMetadataStore(
+    setTestObjectMetadataItemsInMetadataStore(
       jotaiStore,
       generatedMockObjectMetadataItems,
     );
@@ -735,7 +735,7 @@ export const ManyToOneRelationFieldWidget: Story = {
       deletedAt: null,
     };
 
-    setObjectMetadataItemsInMetadataStore(
+    setTestObjectMetadataItemsInMetadataStore(
       jotaiStore,
       generatedMockObjectMetadataItems,
     );
@@ -839,7 +839,7 @@ export const OneToManyRelationFieldWidget: Story = {
       deletedAt: null,
     };
 
-    setObjectMetadataItemsInMetadataStore(
+    setTestObjectMetadataItemsInMetadataStore(
       jotaiStore,
       generatedMockObjectMetadataItems,
     );
@@ -935,7 +935,7 @@ export const BooleanFieldWidget: Story = {
       deletedAt: null,
     };
 
-    setObjectMetadataItemsInMetadataStore(
+    setTestObjectMetadataItemsInMetadataStore(
       jotaiStore,
       generatedMockObjectMetadataItems,
     );
@@ -1028,7 +1028,7 @@ export const CurrencyFieldWidget: Story = {
       deletedAt: null,
     };
 
-    setObjectMetadataItemsInMetadataStore(
+    setTestObjectMetadataItemsInMetadataStore(
       jotaiStore,
       generatedMockObjectMetadataItems,
     );
@@ -1121,7 +1121,7 @@ export const EmailsFieldWidget: Story = {
       deletedAt: null,
     };
 
-    setObjectMetadataItemsInMetadataStore(
+    setTestObjectMetadataItemsInMetadataStore(
       jotaiStore,
       generatedMockObjectMetadataItems,
     );
@@ -1215,7 +1215,7 @@ export const PhonesFieldWidget: Story = {
       deletedAt: null,
     };
 
-    setObjectMetadataItemsInMetadataStore(
+    setTestObjectMetadataItemsInMetadataStore(
       jotaiStore,
       generatedMockObjectMetadataItems,
     );
@@ -1309,7 +1309,7 @@ export const SelectFieldWidget: Story = {
       deletedAt: null,
     };
 
-    setObjectMetadataItemsInMetadataStore(
+    setTestObjectMetadataItemsInMetadataStore(
       jotaiStore,
       generatedMockObjectMetadataItems,
     );
@@ -1404,7 +1404,7 @@ export const MultiSelectFieldWidget: Story = {
       deletedAt: null,
     };
 
-    setObjectMetadataItemsInMetadataStore(
+    setTestObjectMetadataItemsInMetadataStore(
       jotaiStore,
       generatedMockObjectMetadataItems,
     );
@@ -1502,7 +1502,7 @@ export const TimelineActivityRelationFieldWidget: Story = {
       deletedAt: null,
     };
 
-    setObjectMetadataItemsInMetadataStore(
+    setTestObjectMetadataItemsInMetadataStore(
       jotaiStore,
       generatedMockObjectMetadataItems,
     );
@@ -1601,7 +1601,7 @@ export const ManyToOneRelationCardWidget: Story = {
       deletedAt: null,
     };
 
-    setObjectMetadataItemsInMetadataStore(
+    setTestObjectMetadataItemsInMetadataStore(
       jotaiStore,
       generatedMockObjectMetadataItems,
     );
@@ -1713,7 +1713,7 @@ export const OneToManyRelationCardWidget: Story = {
       deletedAt: null,
     };
 
-    setObjectMetadataItemsInMetadataStore(
+    setTestObjectMetadataItemsInMetadataStore(
       jotaiStore,
       generatedMockObjectMetadataItems,
     );
@@ -1808,7 +1808,7 @@ export const TimelineActivityRelationCardWidget: Story = {
       deletedAt: null,
     };
 
-    setObjectMetadataItemsInMetadataStore(
+    setTestObjectMetadataItemsInMetadataStore(
       jotaiStore,
       generatedMockObjectMetadataItems,
     );
@@ -1969,7 +1969,7 @@ export const OneToManyRelationCardWidgetWithProgressiveLoading: Story = {
       deletedAt: null,
     };
 
-    setObjectMetadataItemsInMetadataStore(
+    setTestObjectMetadataItemsInMetadataStore(
       jotaiStore,
       generatedMockObjectMetadataItems,
     );

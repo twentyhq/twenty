@@ -5,7 +5,7 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { setObjectMetadataItemsInMetadataStore } from '~/testing/utils/setObjectMetadataItemsInMetadataStore';
+import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { coreViewsState } from '@/views/states/coreViewState';
@@ -29,7 +29,7 @@ const renderHooks = ({
   withCurrentUser: boolean;
   withExistingView: boolean;
 }) => {
-  setObjectMetadataItemsInMetadataStore(
+  setTestObjectMetadataItemsInMetadataStore(
     jotaiStore,
     generatedMockObjectMetadataItems,
   );

@@ -25,7 +25,7 @@ import { ViewBarFilterDropdownIds } from '@/views/constants/ViewBarFilterDropdow
 import { getFilterTypeFromFieldType } from 'twenty-shared/utils';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
-import { setObjectMetadataItemsInMetadataStore } from '~/testing/utils/setObjectMetadataItemsInMetadataStore';
+import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
 
 const mockPushFocusItemToFocusStack = jest.fn();
 
@@ -46,7 +46,7 @@ const personCreatedAtFieldMetadataItemMock =
   );
 
 const wrapper = ({ children }: { children: React.ReactNode }) => {
-  setObjectMetadataItemsInMetadataStore(
+  setTestObjectMetadataItemsInMetadataStore(
     jotaiStore,
     generatedMockObjectMetadataItems,
   );
