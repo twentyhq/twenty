@@ -80,12 +80,18 @@ export class MicrosoftMessageOutboundService implements MessageOutboundDriver {
   ): Promise<string | undefined> {
     const response = await microsoftClient
       .api('/me/messages')
-      .filter(`internetMessageId eq '${internetMessageId}'`)
+      .filter(
+        `internetMessageId eq '${this.escapeODataString(internetMessageId)}'`,
+      )
       .select('id')
       .top(1)
       .get();
 
     return response?.value?.[0]?.id;
+  }
+
+  private escapeODataString(value: string): string {
+    return value.replace(/'/g, "''");
   }
 
   private composeMicrosoftMessage(
