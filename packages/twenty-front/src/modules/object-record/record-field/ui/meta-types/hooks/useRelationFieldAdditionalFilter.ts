@@ -38,7 +38,7 @@ export const useRelationFieldAdditionalFilter = ({
     )?.clientAccount?.id;
 
     if (clientAccountId) {
-      return { company: { id: { eq: clientAccountId } } };
+      return { withinCompany: { id: { eq: clientAccountId } } };
     }
     // No client account selected yet — show no teams rather than all teams
     return { id: { eq: 'no-match' } };

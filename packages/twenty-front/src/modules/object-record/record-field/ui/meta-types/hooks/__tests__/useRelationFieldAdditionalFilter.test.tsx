@@ -84,7 +84,7 @@ describe('useRelationFieldAdditionalFilter', () => {
       );
 
       expect(result.current).toEqual({
-        company: { id: { eq: 'account-abc' } },
+        withinCompany: { id: { eq: 'account-abc' } },
       });
     });
 
