@@ -6,7 +6,7 @@ description: O guia para contribuidores (ou desenvolvedores curiosos) que deseja
 ## Pré-requisitos
 
 <Tabs>
-<Tab title="Linux and macOS">
+<Tab title="Linux e macOS">
 
 Antes de instalar e usar o Twenty, certifique-se de instalar o seguinte em seu computador:
 * [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
@@ -30,7 +30,7 @@ wsl --install
 ```
 Você deve agora ver um aviso para reiniciar o computador. Caso contrário, reinicie-o manualmente.
 
-Upon restart, a PowerShell window will open and install Ubuntu. Isso pode levar algum tempo.
+Ao reiniciar, uma janela do PowerShell será aberta e instalará o Ubuntu. Isso pode levar algum tempo.
 Você verá uma solicitação para criar um nome de usuário e senha para sua instalação do Ubuntu.
 
 2. Instalar e configurar o git
@@ -102,8 +102,8 @@ Você deve executar todos os comandos nas etapas seguintes a partir da raiz do p
 
 <Tabs>
   <Tab title="Linux">
-    **Option 1 (preferred):** To provision your database locally:
-    Use the following link to install PostgreSQL on your Linux machine: [PostgreSQL Installation](https://www.postgresql.org/download/linux/)
+    **Opção 1 (preferencial):** Para provisionar seu banco de dados localmente:
+    Use o seguinte link para instalar o PostgreSQL na sua máquina Linux: [Instalação do PostgreSQL](https://www.postgresql.org/download/linux/)
     ```bash
       psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
     ```
@@ -129,8 +129,8 @@ Você deve executar todos os comandos nas etapas seguintes a partir da raiz do p
       brew services list
     ```
 
-    The installer might not create the `postgres` user by default when installing
-    via Homebrew on macOS. Em vez disso, ele cria uma função PostgreSQL que corresponde ao seu nome de usuário do macOS
+    O instalador pode não criar o usuário `postgres` por padrão ao instalar
+    via Homebrew no macOS. Em vez disso, ele cria uma função PostgreSQL que corresponde ao seu nome de usuário do macOS
     (por exemplo, "john").
     Para verificar e criar o usuário `postgres`, se necessário, siga estas etapas:
     ```bash
@@ -173,8 +173,8 @@ Você deve executar todos os comandos nas etapas seguintes a partir da raiz do p
   <Tab title="Windows (WSL)">
     Todos os passos a seguir devem ser executados no terminal WSL (dentro da sua máquina virtual)
 
-    **Option 1:** To provision your PostgreSQL locally:
-    Use the following link to install PostgreSQL on your Linux virtual machine: [PostgreSQL Installation](https://www.postgresql.org/download/linux/)
+    **Opção 1:** Para provisionar seu PostgreSQL localmente:
+    Use o seguinte link para instalar o PostgreSQL na sua máquina virtual Linux: [Instalação do PostgreSQL](https://www.postgresql.org/download/linux/)
     ```bash
       psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
     ```
@@ -189,13 +189,13 @@ Você deve executar todos os comandos nas etapas seguintes a partir da raiz do p
   </Tab>
 </Tabs>
 
-You can now access the database at `localhost:5432`.
+Agora você pode acessar o banco de dados em `localhost:5432`.
 
-If you used the Docker option above, the default credentials are user `postgres` and password `postgres`. For native PostgreSQL installations, use the credentials and roles configured on your machine.
+Se você usou a opção do Docker acima, as credenciais padrão são usuário `postgres` e senha `postgres`. Para instalações nativas do PostgreSQL, use as credenciais e os papéis configurados na sua máquina.
 
 ## Passo 4: Configurar um Banco de Dados Redis (cache)
 
-Twenty requires a Redis cache to provide the best performance.
+O Twenty requer um cache Redis para oferecer o melhor desempenho.
 
 <Tabs>
   <Tab title="Linux">
@@ -212,7 +212,7 @@ Twenty requires a Redis cache to provide the best performance.
     ```bash
     brew install redis
     ```
-    Start your Redis server:
+    Inicie o servidor Redis:
     ```bash
     brew services start redis
     ```
@@ -233,9 +233,9 @@ Twenty requires a Redis cache to provide the best performance.
   </Tab>
 </Tabs>
 
-If you need a client GUI, we recommend [Redis Insight](https://redis.io/insight/) (free version available).
+Se você precisar de uma GUI de cliente, recomendamos o [Redis Insight](https://redis.io/insight/) (versão gratuita disponível).
 
-## Step 5: Set up environment variables
+## Passo 5: Configurar variáveis de ambiente
 
 Use variáveis de ambiente ou arquivos `.env` para configurar seu projeto. Mais informações [aqui](/l/pt/developers/self-host/capabilities/setup).
 
