@@ -68,8 +68,10 @@ export class BillingWebhookController {
       );
     }
 
+    let event: Stripe.Event | undefined;
+
     try {
-      const event = this.stripeWebhookService.constructEventFromPayload(
+      event = this.stripeWebhookService.constructEventFromPayload(
         signature,
         req.rawBody,
       );
@@ -86,8 +88,12 @@ export class BillingWebhookController {
       const errorMessage =
         error instanceof Error ? error.message : JSON.stringify(error);
 
+      const eventContext = event
+        ? ` (event: ${event.type}, id: ${event.id})`
+        : '';
+
       throw new BillingException(
-        errorMessage,
+        `${errorMessage}${eventContext}`,
         BillingExceptionCode.BILLING_UNHANDLED_ERROR,
       );
     }
