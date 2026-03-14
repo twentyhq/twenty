@@ -21,6 +21,9 @@ import { type FlatPageLayout } from 'src/engine/metadata-modules/flat-page-layou
 import { reconstructFlatPageLayoutWithTabsAndWidgets } from 'src/engine/metadata-modules/flat-page-layout/utils/reconstruct-flat-page-layout-with-tabs-and-widgets.util';
 import { UpdatePageLayoutTabWithWidgetsInput } from 'src/engine/metadata-modules/page-layout-tab/dtos/inputs/update-page-layout-tab-with-widgets.input';
 import { UpdatePageLayoutWidgetWithIdInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/update-page-layout-widget-with-id.input';
+import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
+import { isChartFieldsForValidation } from 'src/engine/metadata-modules/page-layout-widget/utils/is-chart-fields-for-validation.util';
+import { validateChartConfigurationFieldReferences } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-chart-configuration-field-references.util';
 import { UpdatePageLayoutWithTabsInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/update-page-layout-with-tabs.input';
 import { PageLayoutDTO } from 'src/engine/metadata-modules/page-layout/dtos/page-layout.dto';
 import {
@@ -456,6 +459,14 @@ export class PageLayoutUpdateService {
     widgetsToCreate: FlatPageLayoutWidget[];
     widgetsToUpdate: FlatPageLayoutWidget[];
   } {
+    for (const widgetInput of widgets) {
+      this.validateChartFieldReferencesIfApplicable({
+        widgetInput,
+        flatFieldMetadataMaps,
+        flatObjectMetadataMaps,
+      });
+    }
+
     const existingWidgets = Object.values(
       flatPageLayoutWidgetMaps.byUniversalIdentifier,
     )
@@ -614,5 +625,38 @@ export class PageLayoutUpdateService {
         ...widgetsToDelete,
       ],
     };
+  }
+
+  private validateChartFieldReferencesIfApplicable({
+    widgetInput,
+    flatFieldMetadataMaps,
+    flatObjectMetadataMaps,
+  }: {
+    widgetInput: UpdatePageLayoutWidgetWithIdInput;
+    flatFieldMetadataMaps: AllFlatEntityMaps['flatFieldMetadataMaps'];
+    flatObjectMetadataMaps: AllFlatEntityMaps['flatObjectMetadataMaps'];
+  }): void {
+    const configuration = widgetInput.configuration;
+
+    if (!isDefined(configuration)) {
+      return;
+    }
+
+    const needsChartValidation =
+      isChartFieldsForValidation(configuration) ||
+      widgetInput.type === WidgetType.GRAPH;
+
+    if (!needsChartValidation) {
+      return;
+    }
+
+    validateChartConfigurationFieldReferences({
+      configuration,
+      objectMetadataId: widgetInput.objectMetadataId,
+      widgetType: widgetInput.type,
+      widgetTitle: widgetInput.title,
+      flatFieldMetadataMaps,
+      flatObjectMetadataMaps,
+    });
   }
 }
