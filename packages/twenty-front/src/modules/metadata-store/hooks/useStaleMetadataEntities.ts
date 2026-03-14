@@ -6,8 +6,6 @@ import {
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useMemo } from 'react';
 
-// Returns the list of MetadataEntityKey whose local collection hash
-// is missing or differs from the last known server collection hash.
 export const useStaleMetadataEntities = (): MetadataEntityKey[] => {
   const metadataCollectionHashes = useAtomStateValue(
     metadataCollectionHashesState,

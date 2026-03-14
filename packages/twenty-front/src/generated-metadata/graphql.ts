@@ -831,6 +831,12 @@ export type ClientConfig = {
   support: Support;
 };
 
+export type CollectionHash = {
+  __typename?: 'CollectionHash';
+  collectionName: AllMetadataName;
+  hash: Scalars['String'];
+};
+
 export type CommandMenuItem = {
   __typename?: 'CommandMenuItem';
   applicationId?: Maybe<Scalars['UUID']>;
@@ -2422,7 +2428,7 @@ export type MetadataEventWithQueryIds = {
 
 export type MinimalMetadata = {
   __typename?: 'MinimalMetadata';
-  collectionHashes: Scalars['JSON'];
+  collectionHashes: Array<CollectionHash>;
   objectMetadataItems: Array<MinimalObjectMetadata>;
   views: Array<MinimalView>;
 };

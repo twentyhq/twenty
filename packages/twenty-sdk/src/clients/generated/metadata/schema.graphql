@@ -2205,6 +2205,38 @@ type AgentTurn {
   createdAt: DateTime!
 }
 
+type CollectionHash {
+  collectionName: AllMetadataName!
+  hash: String!
+}
+
+enum AllMetadataName {
+  fieldMetadata
+  objectMetadata
+  view
+  viewField
+  viewFieldGroup
+  viewGroup
+  viewSort
+  rowLevelPermissionPredicate
+  rowLevelPermissionPredicateGroup
+  viewFilterGroup
+  index
+  logicFunction
+  viewFilter
+  role
+  roleTarget
+  agent
+  skill
+  pageLayout
+  pageLayoutWidget
+  pageLayoutTab
+  commandMenuItem
+  navigationMenuItem
+  frontComponent
+  webhook
+}
+
 type MinimalObjectMetadata {
   id: UUID!
   nameSingular: String!
@@ -2228,7 +2260,7 @@ type MinimalView {
 type MinimalMetadata {
   objectMetadataItems: [MinimalObjectMetadata!]!
   views: [MinimalView!]!
-  collectionHashes: JSON!
+  collectionHashes: [CollectionHash!]!
 }
 
 type Webhook {
@@ -4248,33 +4280,6 @@ enum WorkspaceMigrationActionType {
   delete
   create
   update
-}
-
-enum AllMetadataName {
-  fieldMetadata
-  objectMetadata
-  view
-  viewField
-  viewFieldGroup
-  viewGroup
-  viewSort
-  rowLevelPermissionPredicate
-  rowLevelPermissionPredicateGroup
-  viewFilterGroup
-  index
-  logicFunction
-  viewFilter
-  role
-  roleTarget
-  agent
-  skill
-  pageLayout
-  pageLayoutWidget
-  pageLayoutTab
-  commandMenuItem
-  navigationMenuItem
-  frontComponent
-  webhook
 }
 
 enum FileFolder {

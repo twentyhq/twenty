@@ -35,10 +35,8 @@ export const useLoadMinimalMetadata = () => {
     const serverHashes: Partial<Record<MetadataEntityKey, string>> = {};
 
     if (isDefined(collectionHashes)) {
-      for (const [metadataName, hash] of Object.entries(
-        collectionHashes as Record<string, string>,
-      )) {
-        const entityKey = mapAllMetadataNameToEntityKey(metadataName);
+      for (const { collectionName, hash } of collectionHashes) {
+        const entityKey = mapAllMetadataNameToEntityKey(collectionName);
 
         if (isDefined(entityKey)) {
           serverHashes[entityKey] = hash;
