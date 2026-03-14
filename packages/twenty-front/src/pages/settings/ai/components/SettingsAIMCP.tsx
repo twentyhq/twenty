@@ -1,6 +1,5 @@
 import { useState } from 'react';
 
-import { Separator } from '@/settings/components/Separator';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { Select } from '@/ui/input/components/Select';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
@@ -125,7 +124,6 @@ export const SettingsAIMCP = () => {
             dropdownWidth={GenericDropdownContentWidth.Medium}
           />
         </SettingsOptionCardContentSelect>
-        <Separator />
         <StyledConfigWrapper>
           <StyledEditorContainer style={{ position: 'relative' }}>
             <StyledCopyButton>
