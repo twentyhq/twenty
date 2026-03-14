@@ -1267,6 +1267,9 @@ export default {
             "deletedAt": [
                 4
             ],
+            "isOverridden": [
+                6
+            ],
             "__typename": [
                 1
             ]
@@ -1439,6 +1442,9 @@ export default {
             ],
             "viewFields": [
                 50
+            ],
+            "isOverridden": [
+                6
             ],
             "__typename": [
                 1

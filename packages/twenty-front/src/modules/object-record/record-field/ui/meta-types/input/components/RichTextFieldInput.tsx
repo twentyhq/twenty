@@ -1,6 +1,6 @@
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { useOpenRichTextInSidePanel } from '@/side-panel/hooks/useOpenRichTextInSidePanel';
-import { type CoreObjectNameSingular } from 'twenty-shared/types';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { useRegisterInputEvents } from '@/object-record/record-field/ui/meta-types/input/hooks/useRegisterInputEvents';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 
@@ -19,6 +19,14 @@ import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 const ActivityRichTextEditor = lazy(() =>
   import('@/activities/components/ActivityRichTextEditor').then((module) => ({
     default: module.ActivityRichTextEditor,
+  })),
+);
+
+const RichTextFieldEditor = lazy(() =>
+  import(
+    '@/object-record/record-field/ui/meta-types/input/components/RichTextFieldEditor'
+  ).then((module) => ({
+    default: module.RichTextFieldEditor,
   })),
 );
 
@@ -52,19 +60,23 @@ const LoadingSkeleton = () => {
     </SkeletonTheme>
   );
 };
+
+const isActivityObject = (
+  objectNameSingular: string,
+): objectNameSingular is
+  | CoreObjectNameSingular.Note
+  | CoreObjectNameSingular.Task =>
+  objectNameSingular === CoreObjectNameSingular.Note ||
+  objectNameSingular === CoreObjectNameSingular.Task;
+
 export const RichTextFieldInput = () => {
   const { fieldDefinition, recordId } = useContext(FieldContext);
 
-  const targetableObject = {
-    id: recordId,
-    targetObjectNameSingular: (
-      fieldDefinition as {
-        metadata: FieldRichTextMetadata;
-      }
-    ).metadata.objectMetadataNameSingular as
-      | CoreObjectNameSingular.Note
-      | CoreObjectNameSingular.Task,
-  };
+  const metadata = (fieldDefinition as { metadata: FieldRichTextMetadata })
+    .metadata;
+
+  const objectNameSingular = metadata.objectMetadataNameSingular ?? '';
+  const fieldName = metadata.fieldName;
 
   const { openRichTextInSidePanel } = useOpenRichTextInSidePanel();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -93,10 +105,18 @@ export const RichTextFieldInput = () => {
   return (
     <StyledContainer ref={containerRef}>
       <Suspense fallback={<LoadingSkeleton />}>
-        <ActivityRichTextEditor
-          activityId={targetableObject.id}
-          activityObjectNameSingular={targetableObject.targetObjectNameSingular}
-        />
+        {isActivityObject(objectNameSingular) ? (
+          <ActivityRichTextEditor
+            activityId={recordId}
+            activityObjectNameSingular={objectNameSingular}
+          />
+        ) : (
+          <RichTextFieldEditor
+            recordId={recordId}
+            objectNameSingular={objectNameSingular}
+            fieldName={fieldName}
+          />
+        )}
       </Suspense>
       <StyledCollapseButton>
         <FloatingIconButton
@@ -104,10 +124,7 @@ export const RichTextFieldInput = () => {
           size="small"
           onClick={() => {
             onEscape?.({ skipPersist: true });
-            openRichTextInSidePanel(
-              targetableObject.id,
-              targetableObject.targetObjectNameSingular,
-            );
+            openRichTextInSidePanel(recordId, objectNameSingular, fieldName);
           }}
         />
       </StyledCollapseButton>
