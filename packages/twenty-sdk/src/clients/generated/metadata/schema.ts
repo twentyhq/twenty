@@ -416,6 +416,7 @@ export interface CoreViewField {
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
     deletedAt?: Scalars['DateTime']
+    isOverridden: Scalars['Boolean']
     __typename: 'CoreViewField'
 }
 
@@ -492,6 +493,7 @@ export interface CoreViewFieldGroup {
     updatedAt: Scalars['DateTime']
     deletedAt?: Scalars['DateTime']
     viewFields: CoreViewField[]
+    isOverridden: Scalars['Boolean']
     __typename: 'CoreViewFieldGroup'
 }
 
@@ -3295,6 +3297,7 @@ export interface CoreViewFieldGenqlSelection{
     createdAt?: boolean | number
     updatedAt?: boolean | number
     deletedAt?: boolean | number
+    isOverridden?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -3368,6 +3371,7 @@ export interface CoreViewFieldGroupGenqlSelection{
     updatedAt?: boolean | number
     deletedAt?: boolean | number
     viewFields?: CoreViewFieldGenqlSelection
+    isOverridden?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
