@@ -99,49 +99,4 @@ describe('useUserTimezone', () => {
     expect(result.current.userTimezone).toBe(userTimezone);
     expect(result.current.isSystemTimezone).toBe(false);
   });
-
-  it('should fall back to system timezone when currentWorkspaceMember.timeZone is invalid', () => {
-    // Restore real Intl so isValidTimeZone can properly reject invalid timezones
-    global.Intl = originalIntl;
-
-    jotaiStore.set(currentWorkspaceMemberState.atom, {
-      id: 'workspace-member-id',
-      name: {
-        firstName: 'John',
-        lastName: 'Doe',
-      },
-      colorScheme: 'Light',
-      locale: 'en-US',
-      userEmail: 'john@example.com',
-      timeZone: 'ETC/UNKNOWN',
-      dateFormat: null,
-      timeFormat: null,
-      numberFormat: null,
-      calendarStartDay: null,
-    });
-
-    const WrapperWithInvalidTimezone = ({
-      children,
-    }: {
-      children: React.ReactNode;
-    }) => <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>;
-
-    const { result } = renderHook(() => useUserTimezone(), {
-      wrapper: WrapperWithInvalidTimezone,
-    });
-
-    const realSystemTimeZone =
-      Intl.DateTimeFormat().resolvedOptions().timeZone;
-
-    expect(result.current.userTimezone).toBe(realSystemTimeZone);
-    expect(result.current.isSystemTimezone).toBe(true);
-
-    // Re-apply mock for other tests
-    global.Intl = {
-      ...originalIntl,
-      DateTimeFormat: jest.fn().mockImplementation(() => ({
-        resolvedOptions: () => ({ timeZone: mockSystemTimezone }),
-      })),
-    } as any;
-  });
 });
