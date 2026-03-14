@@ -6,8 +6,8 @@ import { expect, waitFor, within } from 'storybook/test';
 
 import { isAppMetadataReadyState } from '@/metadata-store/states/isAppMetadataReadyState';
 import { ApolloCoreClientContext } from '@/object-metadata/contexts/ApolloCoreClientContext';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { PageLayoutContentProvider } from '@/page-layout/contexts/PageLayoutContentContext';
@@ -321,8 +321,8 @@ export const WithViewFieldGroups: Story = {
       companyObjectMetadataItem.id,
     );
 
-    jotaiStore.set(
-      objectMetadataItemsState.atom,
+    setTestObjectMetadataItemsInMetadataStore(
+      jotaiStore,
       generatedMockObjectMetadataItems,
     );
     jotaiStore.set(isAppMetadataReadyState.atom, true);
@@ -434,8 +434,8 @@ export const WithInlineViewFields: Story = {
       companyObjectMetadataItem.id,
     );
 
-    jotaiStore.set(
-      objectMetadataItemsState.atom,
+    setTestObjectMetadataItemsInMetadataStore(
+      jotaiStore,
       generatedMockObjectMetadataItems,
     );
     jotaiStore.set(isAppMetadataReadyState.atom, true);
@@ -526,8 +526,8 @@ export const Empty: Story = {
       companyObjectMetadataItem.id,
     );
 
-    jotaiStore.set(
-      objectMetadataItemsState.atom,
+    setTestObjectMetadataItemsInMetadataStore(
+      jotaiStore,
       generatedMockObjectMetadataItems,
     );
     jotaiStore.set(isAppMetadataReadyState.atom, true);

@@ -1,7 +1,6 @@
 import { useListenToMetadataOperationBrowserEvent } from '@/browser-event/hooks/useListenToMetadataOperationBrowserEvent';
-import { useMetadataStore } from '@/metadata-store/hooks/useMetadataStore';
-import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItems';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
+import { type FlatFieldMetadataItem } from '@/metadata-store/types/FlatFieldMetadataItem';
 import { useListenToEventsForQuery } from '@/sse-db-event/hooks/useListenToEventsForQuery';
 import { useStore } from 'jotai';
 import { AllMetadataName } from '~/generated-metadata/graphql';
@@ -10,9 +9,6 @@ export const FieldMetadataSSEEffect = () => {
   const queryId = 'field-metadata-sse-effect';
 
   const store = useStore();
-
-  const { refreshObjectMetadataItems } = useRefreshObjectMetadataItems();
-  const { updateDraft, applyChanges } = useMetadataStore();
 
   useListenToEventsForQuery({
     queryId,
@@ -24,12 +20,52 @@ export const FieldMetadataSSEEffect = () => {
 
   useListenToMetadataOperationBrowserEvent({
     metadataName: AllMetadataName.fieldMetadata,
-    onMetadataOperationBrowserEvent: async () => {
-      await refreshObjectMetadataItems();
+    onMetadataOperationBrowserEvent: (eventDetail) => {
+      const entry = store.get(
+        metadataStoreState.atomFamily('fieldMetadataItems'),
+      );
+      const currentFields = entry.current as FlatFieldMetadataItem[];
 
-      const loadedObjects = store.get(objectMetadataItemsState.atom);
-      updateDraft('objectMetadataItems', loadedObjects);
-      applyChanges();
+      switch (eventDetail.operation.type) {
+        case 'create': {
+          const createdField = eventDetail.operation
+            .createdRecord as unknown as FlatFieldMetadataItem;
+
+          store.set(metadataStoreState.atomFamily('fieldMetadataItems'), {
+            ...entry,
+            current: [...currentFields, createdField],
+          });
+          break;
+        }
+        case 'update': {
+          const updatedField = eventDetail.operation
+            .updatedRecord as unknown as FlatFieldMetadataItem;
+
+          store.set(metadataStoreState.atomFamily('fieldMetadataItems'), {
+            ...entry,
+            current: currentFields.map((field) =>
+              field.id === updatedField.id
+                ? { ...field, ...updatedField }
+                : field,
+            ),
+          });
+          break;
+        }
+        case 'delete': {
+          const deletedFieldId = eventDetail.operation
+            .deletedRecordId as string;
+
+          store.set(metadataStoreState.atomFamily('fieldMetadataItems'), {
+            ...entry,
+            current: currentFields.filter(
+              (field) => field.id !== deletedFieldId,
+            ),
+          });
+          break;
+        }
+        default:
+          return;
+      }
     },
   });
 

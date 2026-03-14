@@ -10,9 +10,7 @@ import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useFetchAndLoadIndexViews } from '@/metadata-store/hooks/useFetchAndLoadIndexViews';
-import { useMetadataStore } from '@/metadata-store/hooks/useMetadataStore';
 import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItems';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
 import { WorkspaceLogoUploader } from '@/settings/workspace/components/WorkspaceLogoUploader';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -22,7 +20,7 @@ import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useStore } from 'jotai';
+
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
@@ -73,9 +71,7 @@ export const CreateWorkspace = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
   const setNextOnboardingStatus = useSetNextOnboardingStatus();
   const { refreshObjectMetadataItems } = useRefreshObjectMetadataItems();
-  const { updateDraft, applyChanges } = useMetadataStore();
   const { fetchAndLoadIndexViews } = useFetchAndLoadIndexViews();
-  const store = useStore();
 
   const { loadCurrentUser } = useLoadCurrentUser();
   const [activateWorkspace] = useMutation(ActivateWorkspaceDocument);
@@ -132,10 +128,6 @@ export const CreateWorkspace = () => {
 
         await refreshObjectMetadataItems();
 
-        const loadedObjects = store.get(objectMetadataItemsState.atom);
-        updateDraft('objectMetadataItems', loadedObjects);
-        applyChanges();
-
         await fetchAndLoadIndexViews();
 
         await loadCurrentUser();
@@ -153,9 +145,6 @@ export const CreateWorkspace = () => {
       enqueueErrorSnackBar,
       loadCurrentUser,
       refreshObjectMetadataItems,
-      updateDraft,
-      applyChanges,
-      store,
       fetchAndLoadIndexViews,
       setNextOnboardingStatus,
       t,

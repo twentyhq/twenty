@@ -1,4 +1,4 @@
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { objectMetadataItemsWithFieldsSelector } from '@/object-metadata/states/objectMetadataItemsWithFieldsSelector';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { createAtomSelector } from '@/ui/utilities/state/jotai/utils/createAtomSelector';
 
@@ -7,7 +7,7 @@ export const objectMetadataItemsByNameSingularMapSelector = createAtomSelector<
 >({
   key: 'objectMetadataItemsByNameSingularMapSelector',
   get: ({ get }) => {
-    const objectMetadataItems = get(objectMetadataItemsState);
+    const objectMetadataItems = get(objectMetadataItemsWithFieldsSelector);
 
     return new Map(
       objectMetadataItems.map((objectMetadataItem) => [
