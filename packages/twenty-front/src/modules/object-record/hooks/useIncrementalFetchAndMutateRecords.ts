@@ -9,7 +9,9 @@ import { isDefined } from 'twenty-shared/utils';
 type UseIncrementalFetchAndMutateRecordsParams<T> = Omit<
   UseFindManyRecordsParams<T>,
   'skip'
->;
+> & {
+  initialRecordIds?: string[];
+};
 
 type MutateRecordsBatchParams = {
   recordIds: string[];
@@ -24,6 +26,7 @@ export const useIncrementalFetchAndMutateRecords = <T>({
   orderBy,
   limit = DEFAULT_QUERY_PAGE_SIZE,
   recordGqlFields,
+  initialRecordIds,
 }: UseIncrementalFetchAndMutateRecordsParams<T>) => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [progress, setProgress] = useState<ObjectRecordQueryProgress>({
@@ -48,14 +51,39 @@ export const useIncrementalFetchAndMutateRecords = <T>({
   const incrementalFetchAndMutate = async (
     mutateRecordsBatch: (params: MutateRecordsBatchParams) => Promise<void>,
   ) => {
-    if (!isDefined(findManyRecordsLazy)) {
-      return;
-    }
-
     try {
       setIsProcessing(true);
       const controller = new AbortController();
       setAbortController(controller);
+
+      if (initialRecordIds) {
+        const totalCount = initialRecordIds.length;
+        setProgress({
+          processedRecordCount: 0,
+          totalRecordCount: totalCount,
+          displayType: totalCount ? 'percentage' : 'number',
+        });
+
+        for (let i = 0; i < totalCount; i += limit) {
+          if (controller.signal.aborted) {
+            break;
+          }
+
+          const batch = initialRecordIds.slice(i, i + limit);
+          await mutateRecordsBatch({
+            recordIds: batch,
+            totalFetchedCount: i + batch.length,
+            totalCount,
+            abortSignal: controller.signal,
+          });
+        }
+
+        return;
+      }
+
+      if (!isDefined(findManyRecordsLazy)) {
+        return;
+      }
 
       const findManyRecordsDataResult = await findManyRecordsLazy();
 

@@ -68,6 +68,10 @@ export const DeleteMultipleRecordsCommand = () => {
       filter: graphqlFilter,
       pageSize: DEFAULT_QUERY_PAGE_SIZE,
       delayInMsBetweenMutations: 50,
+      recordIds:
+        contextStoreTargetedRecordsRule.mode === 'selection'
+          ? contextStoreTargetedRecordsRule.selectedRecordIds
+          : undefined,
     });
 
   const actionConfig = useContext(CommandConfigContext);
