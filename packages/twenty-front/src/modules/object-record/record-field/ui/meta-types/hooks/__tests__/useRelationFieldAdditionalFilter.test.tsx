@@ -39,7 +39,7 @@ describe('useRelationFieldAdditionalFilter', () => {
       expect(result.current).toEqual({ accountType: { eq: 'LEGAL_ENTITY' } });
     });
 
-    it('should not call useFindOneRecord', () => {
+    it('should not call useFindOneRecord with skip=false', () => {
       renderHook(() =>
         useRelationFieldAdditionalFilter({
           fieldName: 'clientAccount',
@@ -68,35 +68,44 @@ describe('useRelationFieldAdditionalFilter', () => {
     });
   });
 
-  describe('clientAccountTeam field on opportunity', () => {
-    it('should filter teams by the selected clientAccount id', () => {
+  describe('associatedDesk field on opportunity', () => {
+    it('should return id-in filter with desk ids for the company', () => {
       mockUseFindOneRecord.mockReturnValue({
         ...noOpFindOneRecord,
-        record: { id: 'opp-1', clientAccount: { id: 'account-abc' } } as any,
+        record: {
+          id: 'opp-1',
+          company: {
+            id: 'company-abc',
+            desks: [{ id: 'desk-1' }, { id: 'desk-2' }],
+          },
+        } as any,
       });
 
       const { result } = renderHook(() =>
         useRelationFieldAdditionalFilter({
-          fieldName: 'clientAccountTeam',
+          fieldName: 'associatedDesk',
           recordId: 'opp-1',
           objectNameSingular: 'opportunity',
         }),
       );
 
       expect(result.current).toEqual({
-        withinCompany: { id: { eq: 'account-abc' } },
+        id: { in: ['desk-1', 'desk-2'] },
       });
     });
 
-    it('should return no-match filter when clientAccount is not yet set', () => {
+    it('should return no-match when company has no desks', () => {
       mockUseFindOneRecord.mockReturnValue({
         ...noOpFindOneRecord,
-        record: { id: 'opp-1', clientAccount: null } as any,
+        record: {
+          id: 'opp-1',
+          company: { id: 'company-abc', desks: [] },
+        } as any,
       });
 
       const { result } = renderHook(() =>
         useRelationFieldAdditionalFilter({
-          fieldName: 'clientAccountTeam',
+          fieldName: 'associatedDesk',
           recordId: 'opp-1',
           objectNameSingular: 'opportunity',
         }),
@@ -105,7 +114,24 @@ describe('useRelationFieldAdditionalFilter', () => {
       expect(result.current).toEqual({ id: { eq: 'no-match' } });
     });
 
-    it('should return no-match filter when record has not loaded yet', () => {
+    it('should return no-match when company is not yet set', () => {
+      mockUseFindOneRecord.mockReturnValue({
+        ...noOpFindOneRecord,
+        record: { id: 'opp-1', company: null } as any,
+      });
+
+      const { result } = renderHook(() =>
+        useRelationFieldAdditionalFilter({
+          fieldName: 'associatedDesk',
+          recordId: 'opp-1',
+          objectNameSingular: 'opportunity',
+        }),
+      );
+
+      expect(result.current).toEqual({ id: { eq: 'no-match' } });
+    });
+
+    it('should return no-match when record has not loaded yet', () => {
       mockUseFindOneRecord.mockReturnValue({
         ...noOpFindOneRecord,
         record: null,
@@ -114,7 +140,7 @@ describe('useRelationFieldAdditionalFilter', () => {
 
       const { result } = renderHook(() =>
         useRelationFieldAdditionalFilter({
-          fieldName: 'clientAccountTeam',
+          fieldName: 'associatedDesk',
           recordId: 'opp-1',
           objectNameSingular: 'opportunity',
         }),
@@ -123,10 +149,10 @@ describe('useRelationFieldAdditionalFilter', () => {
       expect(result.current).toEqual({ id: { eq: 'no-match' } });
     });
 
-    it('should fetch the opportunity record to get clientAccount id', () => {
+    it('should fetch opportunity with company and desks', () => {
       renderHook(() =>
         useRelationFieldAdditionalFilter({
-          fieldName: 'clientAccountTeam',
+          fieldName: 'associatedDesk',
           recordId: 'opp-1',
           objectNameSingular: 'opportunity',
         }),
@@ -141,10 +167,10 @@ describe('useRelationFieldAdditionalFilter', () => {
       );
     });
 
-    it('should not apply team filter when object is not opportunity', () => {
+    it('should not apply desk filter when object is not opportunity', () => {
       const { result } = renderHook(() =>
         useRelationFieldAdditionalFilter({
-          fieldName: 'clientAccountTeam',
+          fieldName: 'associatedDesk',
           recordId: 'some-id',
           objectNameSingular: 'company',
         }),

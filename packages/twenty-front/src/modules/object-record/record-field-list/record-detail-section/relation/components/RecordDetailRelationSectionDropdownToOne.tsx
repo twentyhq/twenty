@@ -23,6 +23,7 @@ import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSe
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { getFieldMetadataItemById } from '@/object-metadata/utils/getFieldMetadataItemById';
+import { useRelationFieldAdditionalFilter } from '@/object-record/record-field/ui/meta-types/hooks/useRelationFieldAdditionalFilter';
 import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guards/assertFieldMetadata';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { CustomError, isDefined } from 'twenty-shared/utils';
@@ -137,6 +138,12 @@ export const RecordDetailRelationSectionDropdownToOne = ({
     recordId,
   });
 
+  const additionalFilter = useRelationFieldAdditionalFilter({
+    fieldName,
+    recordId,
+    objectNameSingular: objectMetadataItem.nameSingular,
+  });
+
   const { openSingleRecordPicker } = useSingleRecordPickerOpen();
 
   const handleOpenRelationPickerDropdown = () => {
@@ -188,6 +195,7 @@ export const RecordDetailRelationSectionDropdownToOne = ({
               ? 'search-bar-on-bottom'
               : 'search-bar-on-top'
           }
+          additionalFilter={additionalFilter}
         />
       }
     />
