@@ -26,6 +26,7 @@ export const PageLayoutSSEEffect = () => {
         store,
         'pageLayouts',
         eventDetail.operation,
+        eventDetail.updatedCollectionHash,
       );
 
       refreshPageLayouts();

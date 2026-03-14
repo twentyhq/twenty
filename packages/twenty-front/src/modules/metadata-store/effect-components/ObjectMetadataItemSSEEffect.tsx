@@ -31,6 +31,7 @@ export const ObjectMetadataItemSSEEffect = () => {
         store,
         'objectMetadataItems',
         eventDetail.operation,
+        eventDetail.updatedCollectionHash,
       );
 
       const navigationMenuItemsResult = await client.query({

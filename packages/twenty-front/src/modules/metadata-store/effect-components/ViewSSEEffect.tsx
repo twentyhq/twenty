@@ -27,7 +27,12 @@ export const ViewSSEEffect = () => {
   useListenToMetadataOperationBrowserEvent({
     metadataName: AllMetadataName.view,
     onMetadataOperationBrowserEvent: async (eventDetail) => {
-      patchMetadataStoreFromSSEEvent(store, 'views', eventDetail.operation);
+      patchMetadataStoreFromSSEEvent(
+        store,
+        'views',
+        eventDetail.operation,
+        eventDetail.updatedCollectionHash,
+      );
 
       switch (eventDetail.operation.type) {
         case 'create': {

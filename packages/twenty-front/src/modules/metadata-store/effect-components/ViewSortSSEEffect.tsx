@@ -24,7 +24,12 @@ export const ViewSortSSEEffect = () => {
   useListenToMetadataOperationBrowserEvent({
     metadataName: AllMetadataName.viewSort,
     onMetadataOperationBrowserEvent: (eventDetail) => {
-      patchMetadataStoreFromSSEEvent(store, 'viewSorts', eventDetail.operation);
+      patchMetadataStoreFromSSEEvent(
+        store,
+        'viewSorts',
+        eventDetail.operation,
+        eventDetail.updatedCollectionHash,
+      );
 
       const coreViews = store.get(coreViewsState.atom);
 

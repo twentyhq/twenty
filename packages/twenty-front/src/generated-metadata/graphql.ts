@@ -2404,6 +2404,7 @@ export type MetadataEvent = {
   properties: ObjectRecordEventProperties;
   recordId: Scalars['String'];
   type: MetadataEventAction;
+  updatedCollectionHash?: Maybe<Scalars['String']>;
 };
 
 /** Metadata Event Action */
@@ -2421,7 +2422,7 @@ export type MetadataEventWithQueryIds = {
 
 export type MinimalMetadata = {
   __typename?: 'MinimalMetadata';
-  metadataVersion: Scalars['Int'];
+  collectionHashes: Scalars['JSON'];
   objectMetadataItems: Array<MinimalObjectMetadata>;
   views: Array<MinimalView>;
 };

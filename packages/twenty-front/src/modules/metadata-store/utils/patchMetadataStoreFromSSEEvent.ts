@@ -1,8 +1,10 @@
+import { metadataCollectionHashesState } from '@/metadata-store/states/metadataCollectionHashesState';
 import {
   metadataStoreState,
   type MetadataEntityKey,
 } from '@/metadata-store/states/metadataStoreState';
 import { type createStore } from 'jotai';
+import { isDefined } from 'twenty-shared/utils';
 
 type JotaiStore = ReturnType<typeof createStore>;
 
@@ -24,6 +26,7 @@ export const patchMetadataStoreFromSSEEvent = (
   store: JotaiStore,
   entityKey: MetadataEntityKey,
   operation: SSEEventOperation,
+  updatedCollectionHash?: string,
 ) => {
   const entry = store.get(metadataStoreState.atomFamily(entityKey));
   const currentItems = entry.current as Array<{ id: string }>;
@@ -56,5 +59,14 @@ export const patchMetadataStoreFromSSEEvent = (
       });
       break;
     }
+  }
+
+  if (isDefined(updatedCollectionHash)) {
+    const currentHashes = store.get(metadataCollectionHashesState.atom);
+
+    store.set(metadataCollectionHashesState.atom, {
+      ...currentHashes,
+      [entityKey]: updatedCollectionHash,
+    });
   }
 };

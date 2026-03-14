@@ -28,6 +28,7 @@ export const ViewFilterSSEEffect = () => {
         store,
         'viewFilters',
         eventDetail.operation,
+        eventDetail.updatedCollectionHash,
       );
 
       const coreViews = store.get(coreViewsState.atom);

@@ -1,3 +1,4 @@
+import { metadataCollectionHashesState } from '@/metadata-store/states/metadataCollectionHashesState';
 import { isAppMetadataReadyState } from '@/metadata-store/states/isAppMetadataReadyState';
 import {
   ALL_METADATA_ENTITY_KEYS,
@@ -36,6 +37,7 @@ export const resetMetadataStore = (store: JotaiStore) => {
     store.set(metadataStoreState.atomFamily(key), EMPTY_ENTRY);
   }
 
+  store.set(metadataCollectionHashesState.atom, {});
   store.set(isAppMetadataReadyState.atom, false);
 };
 
