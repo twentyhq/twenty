@@ -9,7 +9,9 @@ import { useMemo } from 'react';
 // Returns the list of MetadataEntityKey whose local collection hash
 // is missing or differs from the last known server collection hash.
 export const useStaleMetadataEntities = (): MetadataEntityKey[] => {
-  const collectionHashes = useAtomStateValue(metadataCollectionHashesState);
+  const metadataCollectionHashes = useAtomStateValue(
+    metadataCollectionHashesState,
+  );
 
   return useMemo(() => {
     const staleKeys: MetadataEntityKey[] = [];
