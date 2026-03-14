@@ -14,6 +14,6 @@ export const workflowSendEmailActionSettingsSchema =
       subject: z.string().optional(),
       body: z.string().optional(),
       files: z.array(workflowFileSchema).optional().default([]),
-      inReplyTo: z.string().optional(),
+      inReplyTo: z.string().trim().optional(),
     }),
   });

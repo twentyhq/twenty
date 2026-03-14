@@ -1,0 +1,80 @@
+---
+title: Auto-Reply to Inbound Emails
+description: Build a workflow that sends threaded replies to incoming emails automatically.
+---
+
+Send Email actions now support an **In-Reply-To** field, which lets your workflow replies land inside the original email thread. This opens up use cases like instant acknowledgments, auto-replies to leads, and AI-drafted follow-ups — all threaded naturally in the recipient's inbox.
+
+## How email threading works
+
+Every email carries a hidden `Message-ID` header — a unique fingerprint assigned by the sender's mail server. When you reply to an email, your mail client sets an `In-Reply-To` header referencing that fingerprint. That's how Gmail, Outlook, and every other client groups messages into threads.
+
+In Twenty, that fingerprint is stored as `headerMessageId` on the Message object. Your workflow grabs it and passes it into the Send Email action's In-Reply-To field.
+
+## Building the workflow
+
+### Step 1: Create a new workflow
+
+Head to **Settings -> Workflows** and click **+ New Workflow**.
+
+### Step 2: Trigger on incoming messages
+
+Pick **When a Record is Created** and choose **Messages**.
+
+Every time an email lands in Twenty, this fires.
+
+![Workflow overview with trigger, search records, and send email steps](/images/user-guide/workflows/auto-reply/workflow-overview.png)
+
+### Step 3: Look up who sent it
+
+Add a **Search Records** action. The sender's address isn't on the message itself — it's on the related `Message Participant` record.
+
+| Field | Value |
+|-------|-------|
+| **Object** | Message Participants |
+| **Filter** | Message **is** `{{trigger.properties.after.id}}` |
+| **Filter** | Role **is** From |
+| **Limit** | 1 |
+
+This gives you the sender's email in `handle`.
+
+![Search Records config filtering Message Participants by message and role](/images/user-guide/workflows/auto-reply/search-records.png)
+
+### Step 4: Send a threaded reply
+
+Add a **Send Email** action. Click **Advanced options**, then **Add In-Reply-To**.
+
+| Field | Value |
+|-------|-------|
+| **To** | `{{Find Sender.first.handle}}` |
+| **Subject** | `Re: {{trigger.properties.after.subject}}` |
+| **Body** | Whatever you'd want to say |
+| **In-Reply-To** | `{{trigger.properties.after.headerMessageId}}` |
+
+That last field is what makes it a reply instead of a new conversation.
+
+![Send Email config with In-Reply-To set to headerMessageId](/images/user-guide/workflows/auto-reply/send-email.png)
+
+<Tip>
+**In-Reply-To** expects a `message.headerMessageId` from a previous step — it's the email's unique fingerprint, not a recipient address. If you leave it empty, the email still sends, just as a standalone message.
+</Tip>
+
+### Step 5: Test and activate
+
+Hit **Test**, then check your email client. The reply should appear nested under the original message.
+
+![Gmail showing the automated reply threaded under the original email](/images/user-guide/workflows/auto-reply/gmail-threaded-reply.png)
+
+Activate when you're happy with it.
+
+## Ideas to build on
+
+- **Only reply to VIPs** — add a branch that checks the sender's domain or whether they exist as a Contact in Twenty
+- **AI-drafted follow-ups** — add a Code action before Send Email to generate a contextual response from the message body
+- **Route by subject** — use branches to handle support requests differently from sales inquiries
+
+## Related
+
+- [Send Emails from Workflows](/user-guide/workflows/capabilities/send-emails-from-workflows)
+- [Workflow Actions](/user-guide/workflows/capabilities/workflow-actions)
+- [Workflow Triggers](/user-guide/workflows/capabilities/workflow-triggers)

@@ -8,6 +8,8 @@ import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { toMicrosoftRecipients } from 'src/modules/messaging/message-import-manager/utils/to-microsoft-recipients.util';
 import { type SendMessageInput } from 'src/modules/messaging/message-outbound-manager/types/send-message-input.type';
+import { type Client as MicrosoftGraphClient } from '@microsoft/microsoft-graph-client';
+import { isDefined } from 'twenty-shared/utils';
 
 @Injectable()
 export class MicrosoftMessageOutboundService implements MessageOutboundDriver {
@@ -15,7 +17,7 @@ export class MicrosoftMessageOutboundService implements MessageOutboundDriver {
     private readonly oAuth2ClientManagerService: OAuth2ClientManagerService,
   ) {}
 
-  async sendMessage(
+  public async sendMessage(
     sendMessageInput: SendMessageInput,
     connectedAccount: ConnectedAccountWorkspaceEntity,
   ): Promise<void> {
@@ -24,16 +26,15 @@ export class MicrosoftMessageOutboundService implements MessageOutboundDriver {
         connectedAccount,
       );
 
-    const message = this.composeMicrosoftMessage(sendMessageInput);
+    const messageId = await this.createDraftMessage(
+      microsoftClient,
+      sendMessageInput,
+    );
 
-    const response = await microsoftClient.api(`/me/messages`).post(message);
-
-    z.string().parse(response.id);
-
-    await microsoftClient.api(`/me/messages/${response.id}/send`).post({});
+    await microsoftClient.api(`/me/messages/${messageId}/send`).post({});
   }
 
-  async createDraft(
+  public async createDraft(
     sendMessageInput: SendMessageInput,
     connectedAccount: ConnectedAccountWorkspaceEntity,
   ): Promise<void> {
@@ -42,9 +43,49 @@ export class MicrosoftMessageOutboundService implements MessageOutboundDriver {
         connectedAccount,
       );
 
+    await this.createDraftMessage(microsoftClient, sendMessageInput);
+  }
+
+  private async createDraftMessage(
+    microsoftClient: MicrosoftGraphClient,
+    sendMessageInput: SendMessageInput,
+  ): Promise<string> {
+    const parentMessageGraphId = sendMessageInput.inReplyTo
+      ? await this.findMessageByInternetMessageId(
+          microsoftClient,
+          sendMessageInput.inReplyTo,
+        )
+      : undefined;
+
     const message = this.composeMicrosoftMessage(sendMessageInput);
 
-    await microsoftClient.api(`/me/messages`).post(message);
+    if (isDefined(parentMessageGraphId)) {
+      const reply = await microsoftClient
+        .api(`/me/messages/${parentMessageGraphId}/createReply`)
+        .post({});
+
+      await microsoftClient.api(`/me/messages/${reply.id}`).patch(message);
+
+      return reply.id;
+    }
+
+    const response = await microsoftClient.api('/me/messages').post(message);
+
+    return response.id;
+  }
+
+  private async findMessageByInternetMessageId(
+    microsoftClient: MicrosoftGraphClient,
+    internetMessageId: string,
+  ): Promise<string | undefined> {
+    const response = await microsoftClient
+      .api('/me/messages')
+      .filter(`internetMessageId eq '${internetMessageId}'`)
+      .select('id')
+      .top(1)
+      .get();
+
+    return response?.value?.[0]?.id;
   }
 
   private composeMicrosoftMessage(
@@ -68,20 +109,6 @@ export class MicrosoftMessageOutboundService implements MessageOutboundDriver {
               contentType: attachment.contentType,
               contentBytes: attachment.content.toString('base64'),
             })),
-          }
-        : {}),
-      ...(sendMessageInput.inReplyTo
-        ? {
-            internetMessageHeaders: [
-              {
-                name: 'In-Reply-To',
-                value: sendMessageInput.inReplyTo,
-              },
-              {
-                name: 'References',
-                value: sendMessageInput.inReplyTo,
-              },
-            ],
           }
         : {}),
     };
