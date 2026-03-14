@@ -4323,7 +4323,7 @@ export default {
                 1
             ]
         },
-        "PresentationObjectMetadata": {
+        "MinimalObjectMetadata": {
             "id": [
                 3
             ],
@@ -4358,7 +4358,7 @@ export default {
                 1
             ]
         },
-        "PresentationView": {
+        "MinimalView": {
             "id": [
                 3
             ],
@@ -4375,7 +4375,7 @@ export default {
                 1
             ]
         },
-        "PresentationMetadata": {
+        "MinimalMetadata": {
             "objectMetadataItems": [
                 236
             ],
@@ -6268,7 +6268,7 @@ export default {
                     ]
                 }
             ],
-            "presentationMetadata": [
+            "minimalMetadata": [
                 238
             ],
             "chatThread": [

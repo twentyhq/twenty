@@ -1885,7 +1885,7 @@ export interface AgentTurn {
     __typename: 'AgentTurn'
 }
 
-export interface PresentationObjectMetadata {
+export interface MinimalObjectMetadata {
     id: Scalars['UUID']
     nameSingular: Scalars['String']
     namePlural: Scalars['String']
@@ -1896,22 +1896,22 @@ export interface PresentationObjectMetadata {
     isActive: Scalars['Boolean']
     isSystem: Scalars['Boolean']
     isRemote: Scalars['Boolean']
-    __typename: 'PresentationObjectMetadata'
+    __typename: 'MinimalObjectMetadata'
 }
 
-export interface PresentationView {
+export interface MinimalView {
     id: Scalars['UUID']
     type: ViewType
     key?: ViewKey
     objectMetadataId: Scalars['UUID']
-    __typename: 'PresentationView'
+    __typename: 'MinimalView'
 }
 
-export interface PresentationMetadata {
-    objectMetadataItems: PresentationObjectMetadata[]
-    views: PresentationView[]
+export interface MinimalMetadata {
+    objectMetadataItems: MinimalObjectMetadata[]
+    views: MinimalView[]
     metadataVersion: Scalars['Int']
-    __typename: 'PresentationMetadata'
+    __typename: 'MinimalMetadata'
 }
 
 export interface Webhook {
@@ -2624,7 +2624,7 @@ export interface Query {
     getSSOIdentityProviders: FindAvailableSSOIDP[]
     webhooks: Webhook[]
     webhook?: Webhook
-    presentationMetadata: PresentationMetadata
+    minimalMetadata: MinimalMetadata
     chatThread: AgentChatThread
     chatMessages: AgentMessage[]
     getAISystemPromptPreview: AISystemPromptPreview
@@ -4878,7 +4878,7 @@ export interface AgentTurnGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface PresentationObjectMetadataGenqlSelection{
+export interface MinimalObjectMetadataGenqlSelection{
     id?: boolean | number
     nameSingular?: boolean | number
     namePlural?: boolean | number
@@ -4893,7 +4893,7 @@ export interface PresentationObjectMetadataGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface PresentationViewGenqlSelection{
+export interface MinimalViewGenqlSelection{
     id?: boolean | number
     type?: boolean | number
     key?: boolean | number
@@ -4902,9 +4902,9 @@ export interface PresentationViewGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface PresentationMetadataGenqlSelection{
-    objectMetadataItems?: PresentationObjectMetadataGenqlSelection
-    views?: PresentationViewGenqlSelection
+export interface MinimalMetadataGenqlSelection{
+    objectMetadataItems?: MinimalObjectMetadataGenqlSelection
+    views?: MinimalViewGenqlSelection
     metadataVersion?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -5680,7 +5680,7 @@ export interface QueryGenqlSelection{
     getSSOIdentityProviders?: FindAvailableSSOIDPGenqlSelection
     webhooks?: WebhookGenqlSelection
     webhook?: (WebhookGenqlSelection & { __args: {id: Scalars['UUID']} })
-    presentationMetadata?: PresentationMetadataGenqlSelection
+    minimalMetadata?: MinimalMetadataGenqlSelection
     chatThread?: (AgentChatThreadGenqlSelection & { __args: {id: Scalars['UUID']} })
     chatMessages?: (AgentMessageGenqlSelection & { __args: {threadId: Scalars['UUID']} })
     getAISystemPromptPreview?: AISystemPromptPreviewGenqlSelection
@@ -7674,26 +7674,26 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
-    const PresentationObjectMetadata_possibleTypes: string[] = ['PresentationObjectMetadata']
-    export const isPresentationObjectMetadata = (obj?: { __typename?: any } | null): obj is PresentationObjectMetadata => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isPresentationObjectMetadata"')
-      return PresentationObjectMetadata_possibleTypes.includes(obj.__typename)
+    const MinimalObjectMetadata_possibleTypes: string[] = ['MinimalObjectMetadata']
+    export const isMinimalObjectMetadata = (obj?: { __typename?: any } | null): obj is MinimalObjectMetadata => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isMinimalObjectMetadata"')
+      return MinimalObjectMetadata_possibleTypes.includes(obj.__typename)
     }
     
 
 
-    const PresentationView_possibleTypes: string[] = ['PresentationView']
-    export const isPresentationView = (obj?: { __typename?: any } | null): obj is PresentationView => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isPresentationView"')
-      return PresentationView_possibleTypes.includes(obj.__typename)
+    const MinimalView_possibleTypes: string[] = ['MinimalView']
+    export const isMinimalView = (obj?: { __typename?: any } | null): obj is MinimalView => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isMinimalView"')
+      return MinimalView_possibleTypes.includes(obj.__typename)
     }
     
 
 
-    const PresentationMetadata_possibleTypes: string[] = ['PresentationMetadata']
-    export const isPresentationMetadata = (obj?: { __typename?: any } | null): obj is PresentationMetadata => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isPresentationMetadata"')
-      return PresentationMetadata_possibleTypes.includes(obj.__typename)
+    const MinimalMetadata_possibleTypes: string[] = ['MinimalMetadata']
+    export const isMinimalMetadata = (obj?: { __typename?: any } | null): obj is MinimalMetadata => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isMinimalMetadata"')
+      return MinimalMetadata_possibleTypes.includes(obj.__typename)
     }
     
 

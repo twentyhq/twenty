@@ -1,28 +1,14 @@
-export type MinimalObjectMetadata = {
-  id: string;
-  nameSingular: string;
-  namePlural: string;
-  labelSingular: string;
-  labelPlural: string;
-  icon?: string;
-  isCustom: boolean;
-  isActive: boolean;
-  isSystem: boolean;
-  isRemote: boolean;
-};
+import {
+  type MinimalMetadata as GeneratedMinimalMetadata,
+  type MinimalObjectMetadata as GeneratedMinimalObjectMetadata,
+  type MinimalView as GeneratedMinimalView,
+} from '~/generated-metadata/graphql';
 
-export type MinimalView = {
-  id: string;
-  type: string;
-  key: string | null;
-  objectMetadataId: string;
-};
+export type MinimalObjectMetadata = GeneratedMinimalObjectMetadata;
 
-export type MinimalMetadata = {
-  objectMetadataItems: MinimalObjectMetadata[];
-  views: MinimalView[];
-  metadataVersion: number;
-};
+export type MinimalView = GeneratedMinimalView;
+
+export type MinimalMetadata = GeneratedMinimalMetadata;
 
 export type FindMinimalMetadataQuery = {
   minimalMetadata: MinimalMetadata;
