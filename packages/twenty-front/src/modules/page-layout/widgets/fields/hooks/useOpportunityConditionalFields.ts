@@ -20,9 +20,9 @@ export const useOpportunityConditionalFields = ({
 
   const r = record as Record<string, unknown>;
 
-  // lossReason and lossNotes are visible only when salesStage is a loss stage
+  // lossReason and lossNotes are visible only when stage is a loss stage
   const lossStages = new Set(['CLOSEDLOST', 'DIDNOTPROCEED']);
-  if (!lossStages.has(r['salesStage'] as string)) {
+  if (!lossStages.has(r['stage'] as string)) {
     hiddenFields.add('lossReason');
     hiddenFields.add('lossNotes');
   }
