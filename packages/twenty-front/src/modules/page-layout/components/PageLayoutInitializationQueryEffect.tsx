@@ -114,34 +114,13 @@ export const PageLayoutInitializationQueryEffect = ({
   );
 
   useEffect(() => {
-    if (
-      !isLayoutCustomizationActive &&
-      !pageLayoutIsInitialized &&
-      isDefined(pageLayout)
-    ) {
+    if (!pageLayoutIsInitialized && isDefined(pageLayout)) {
       initializePageLayout(pageLayout);
       setPageLayoutIsInitialized(true);
     }
   }, [
-    isLayoutCustomizationActive,
     initializePageLayout,
     pageLayoutIsInitialized,
-    pageLayout,
-    setPageLayoutIsInitialized,
-  ]);
-
-  useEffect(() => {
-    if (
-      isLayoutCustomizationActive &&
-      isDefined(pageLayout) &&
-      pageLayout.type === PageLayoutType.RECORD_PAGE
-    ) {
-      initializePageLayout(pageLayout);
-      setPageLayoutIsInitialized(true);
-    }
-  }, [
-    initializePageLayout,
-    isLayoutCustomizationActive,
     pageLayout,
     setPageLayoutIsInitialized,
   ]);
