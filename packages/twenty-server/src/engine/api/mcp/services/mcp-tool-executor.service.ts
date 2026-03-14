@@ -22,7 +22,7 @@ export class McpToolExecutorService {
             {
               type: 'text',
               text: JSON.stringify(
-                await tool.execute(params.arguments, {
+                await tool.execute!(params.arguments, {
                   toolCallId: '1',
                   messages: [],
                 }),
