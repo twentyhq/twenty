@@ -14,7 +14,7 @@ import { PresentationViewDTO } from 'src/engine/metadata-modules/presentation-me
 @Injectable()
 export class PresentationMetadataService {
   constructor(
-    @InjectRepository(WorkspaceEntity, 'core')
+    @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}

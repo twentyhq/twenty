@@ -8,7 +8,7 @@ import { PresentationMetadataService } from 'src/engine/metadata-modules/present
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([WorkspaceEntity], 'core'),
+    TypeOrmModule.forFeature([WorkspaceEntity]),
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
   ],
   providers: [PresentationMetadataResolver, PresentationMetadataService],
