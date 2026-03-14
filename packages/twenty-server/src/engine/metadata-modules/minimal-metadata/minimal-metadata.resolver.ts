@@ -7,22 +7,22 @@ import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-worksp
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { PresentationMetadataDTO } from 'src/engine/metadata-modules/presentation-metadata/dtos/presentation-metadata.dto';
-import { PresentationMetadataService } from 'src/engine/metadata-modules/presentation-metadata/presentation-metadata.service';
+import { MinimalMetadataDTO } from 'src/engine/metadata-modules/minimal-metadata/dtos/minimal-metadata.dto';
+import { MinimalMetadataService } from 'src/engine/metadata-modules/minimal-metadata/minimal-metadata.service';
 
-@MetadataResolver(() => PresentationMetadataDTO)
+@MetadataResolver(() => MinimalMetadataDTO)
 @UseGuards(WorkspaceAuthGuard, NoPermissionGuard)
-export class PresentationMetadataResolver {
+export class MinimalMetadataResolver {
   constructor(
-    private readonly presentationMetadataService: PresentationMetadataService,
+    private readonly minimalMetadataService: MinimalMetadataService,
   ) {}
 
-  @Query(() => PresentationMetadataDTO)
-  async presentationMetadata(
+  @Query(() => MinimalMetadataDTO)
+  async minimalMetadata(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
-  ): Promise<PresentationMetadataDTO> {
-    return this.presentationMetadataService.getPresentationMetadata(
+  ): Promise<MinimalMetadataDTO> {
+    return this.minimalMetadataService.getMinimalMetadata(
       workspace.id,
       userWorkspaceId,
     );

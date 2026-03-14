@@ -1,30 +1,30 @@
-import { FIND_PRESENTATION_METADATA } from '@/metadata-store/graphql/queries/findPresentationMetadata';
+import { FIND_MINIMAL_METADATA } from '@/metadata-store/graphql/queries/findMinimalMetadata';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { metadataVersionState } from '@/metadata-store/states/metadataVersionState';
 import { type FlatObjectMetadataItem } from '@/metadata-store/types/FlatObjectMetadataItem';
 import { type FlatView } from '@/metadata-store/types/FlatView';
-import { type FindPresentationMetadataQuery } from '@/metadata-store/types/PresentationMetadata';
+import { type FindMinimalMetadataQuery } from '@/metadata-store/types/MinimalMetadata';
 import { useApolloClient } from '@apollo/client/react';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-export const useFetchPresentationMetadata = () => {
+export const useLoadMinimalMetadata = () => {
   const client = useApolloClient();
   const store = useStore();
 
-  const fetchPresentationMetadata = useCallback(async () => {
-    const result = await client.query<FindPresentationMetadataQuery>({
-      query: FIND_PRESENTATION_METADATA,
+  const loadMinimalMetadata = useCallback(async () => {
+    const result = await client.query<FindMinimalMetadataQuery>({
+      query: FIND_MINIMAL_METADATA,
       fetchPolicy: 'network-only',
     });
 
-    if (!isDefined(result.data?.presentationMetadata)) {
+    if (!isDefined(result.data?.minimalMetadata)) {
       return null;
     }
 
     const { objectMetadataItems, views, metadataVersion } =
-      result.data.presentationMetadata;
+      result.data.minimalMetadata;
 
     const localMetadataVersion = store.get(metadataVersionState.atom);
 
@@ -66,5 +66,5 @@ export const useFetchPresentationMetadata = () => {
     return { metadataVersion, isStale };
   }, [client, store]);
 
-  return { fetchPresentationMetadata };
+  return { loadMinimalMetadata };
 };

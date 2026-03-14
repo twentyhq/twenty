@@ -52,4 +52,6 @@ export const metadataStoreState = createAtomFamilyState<
 >({
   key: 'metadataStoreState',
   defaultValue: METADATA_STORE_ITEM_INITIAL_VALUE,
+  useLocalStorage: true,
+  localStorageOptions: { getOnInit: true },
 });

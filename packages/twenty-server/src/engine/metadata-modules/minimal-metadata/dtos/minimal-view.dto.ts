@@ -5,8 +5,8 @@ import { ViewKey, ViewType } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
-@ObjectType('PresentationView')
-export class PresentationViewDTO {
+@ObjectType('MinimalView')
+export class MinimalViewDTO {
   @IDField(() => UUIDScalarType)
   id: string;
 

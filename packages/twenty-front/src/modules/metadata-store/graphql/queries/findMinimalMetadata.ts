@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client';
 
-export const FIND_PRESENTATION_METADATA = gql`
-  query FindPresentationMetadata {
-    presentationMetadata {
+export const FIND_MINIMAL_METADATA = gql`
+  query FindMinimalMetadata {
+    minimalMetadata {
       objectMetadataItems {
         id
         nameSingular

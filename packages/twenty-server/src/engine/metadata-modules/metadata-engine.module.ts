@@ -15,7 +15,7 @@ import { LogicFunctionModule } from 'src/engine/metadata-modules/logic-function/
 import { NavigationMenuItemModule } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
-import { PresentationMetadataModule } from 'src/engine/metadata-modules/presentation-metadata/presentation-metadata.module';
+import { MinimalMetadataModule } from 'src/engine/metadata-modules/minimal-metadata/minimal-metadata.module';
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
 import { RouteTriggerModule } from 'src/engine/metadata-modules/route-trigger/route-trigger.module';
 import { SearchFieldMetadataModule } from 'src/engine/metadata-modules/search-field-metadata/search-field-metadata.module';
@@ -40,7 +40,7 @@ import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/work
     AiAgentMonitorModule,
     AiChatModule,
     AiGenerateTextModule,
-    PresentationMetadataModule,
+    MinimalMetadataModule,
     ViewModule,
     WorkspaceMetadataVersionModule,
     RoleModule,
@@ -66,7 +66,7 @@ import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/work
     NavigationMenuItemModule,
     AiAgentModule,
     AiChatModule,
-    PresentationMetadataModule,
+    MinimalMetadataModule,
     ViewModule,
     RoleModule,
     PermissionsModule,

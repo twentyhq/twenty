@@ -7,22 +7,22 @@ import { Repository } from 'typeorm';
 
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { PresentationMetadataDTO } from 'src/engine/metadata-modules/presentation-metadata/dtos/presentation-metadata.dto';
-import { PresentationObjectMetadataDTO } from 'src/engine/metadata-modules/presentation-metadata/dtos/presentation-object-metadata.dto';
-import { PresentationViewDTO } from 'src/engine/metadata-modules/presentation-metadata/dtos/presentation-view.dto';
+import { MinimalMetadataDTO } from 'src/engine/metadata-modules/minimal-metadata/dtos/minimal-metadata.dto';
+import { MinimalObjectMetadataDTO } from 'src/engine/metadata-modules/minimal-metadata/dtos/minimal-object-metadata.dto';
+import { MinimalViewDTO } from 'src/engine/metadata-modules/minimal-metadata/dtos/minimal-view.dto';
 
 @Injectable()
-export class PresentationMetadataService {
+export class MinimalMetadataService {
   constructor(
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
 
-  async getPresentationMetadata(
+  async getMinimalMetadata(
     workspaceId: string,
     userWorkspaceId?: string,
-  ): Promise<PresentationMetadataDTO> {
+  ): Promise<MinimalMetadataDTO> {
     const [workspace, { flatObjectMetadataMaps, flatViewMaps }] =
       await Promise.all([
         this.workspaceRepository.findOneOrFail({
@@ -35,7 +35,7 @@ export class PresentationMetadataService {
         }),
       ]);
 
-    const objectMetadataItems: PresentationObjectMetadataDTO[] = Object.values(
+    const objectMetadataItems: MinimalObjectMetadataDTO[] = Object.values(
       flatObjectMetadataMaps.byUniversalIdentifier,
     )
       .filter(isDefined)
@@ -53,7 +53,7 @@ export class PresentationMetadataService {
         isRemote: flatObjectMetadata.isRemote,
       }));
 
-    const views: PresentationViewDTO[] = Object.values(
+    const views: MinimalViewDTO[] = Object.values(
       flatViewMaps.byUniversalIdentifier,
     )
       .filter(isDefined)
