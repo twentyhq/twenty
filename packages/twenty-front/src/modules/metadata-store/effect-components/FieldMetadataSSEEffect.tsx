@@ -24,6 +24,7 @@ export const FieldMetadataSSEEffect = () => {
         store,
         'fieldMetadataItems',
         eventDetail.operation,
+        eventDetail.updatedCollectionHash,
       );
     },
   });

@@ -26,6 +26,7 @@ export const PageLayoutTabSSEEffect = () => {
         store,
         'pageLayoutTabs',
         eventDetail.operation,
+        eventDetail.updatedCollectionHash,
       );
 
       refreshPageLayouts();

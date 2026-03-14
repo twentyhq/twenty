@@ -1,9 +1,13 @@
 import { FIND_MINIMAL_METADATA } from '@/metadata-store/graphql/queries/findMinimalMetadata';
-import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
-import { metadataVersionState } from '@/metadata-store/states/metadataVersionState';
+import { metadataCollectionHashesState } from '@/metadata-store/states/metadataCollectionHashesState';
+import {
+  metadataStoreState,
+  type MetadataEntityKey,
+} from '@/metadata-store/states/metadataStoreState';
 import { type FlatObjectMetadataItem } from '@/metadata-store/types/FlatObjectMetadataItem';
 import { type FlatView } from '@/metadata-store/types/FlatView';
 import { type FindMinimalMetadataQuery } from '@/metadata-store/types/MinimalMetadata';
+import { mapAllMetadataNameToEntityKey } from '@/metadata-store/utils/mapAllMetadataNameToEntityKey';
 import { useApolloClient } from '@apollo/client/react';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
@@ -23,18 +27,33 @@ export const useLoadMinimalMetadata = () => {
       return null;
     }
 
-    const { objectMetadataItems, views, metadataVersion } =
+    const { objectMetadataItems, views, collectionHashes } =
       result.data.minimalMetadata;
 
-    const localMetadataVersion = store.get(metadataVersionState.atom);
+    const localHashes = store.get(metadataCollectionHashesState.atom);
 
-    // Skip hydration if data already loaded with same or newer version
-    if (
-      isDefined(localMetadataVersion) &&
-      localMetadataVersion >= metadataVersion
-    ) {
-      return { metadataVersion, isStale: false };
+    const serverHashes: Partial<Record<MetadataEntityKey, string>> = {};
+
+    if (isDefined(collectionHashes)) {
+      for (const [metadataName, hash] of Object.entries(
+        collectionHashes as Record<string, string>,
+      )) {
+        const entityKey = mapAllMetadataNameToEntityKey(metadataName);
+
+        if (isDefined(entityKey)) {
+          serverHashes[entityKey] = hash;
+        }
+      }
     }
+
+    store.set(metadataCollectionHashesState.atom, serverHashes);
+
+    const staleEntityKeys: MetadataEntityKey[] = Object.entries(serverHashes)
+      .filter(
+        ([entityKey, hash]) =>
+          localHashes[entityKey as MetadataEntityKey] !== hash,
+      )
+      .map(([entityKey]) => entityKey as MetadataEntityKey);
 
     const objectsEntry = store.get(
       metadataStoreState.atomFamily('objectMetadataItems'),
@@ -58,12 +77,7 @@ export const useLoadMinimalMetadata = () => {
       });
     }
 
-    store.set(metadataVersionState.atom, metadataVersion);
-
-    const isStale =
-      isDefined(localMetadataVersion) && localMetadataVersion < metadataVersion;
-
-    return { metadataVersion, isStale };
+    return { staleEntityKeys };
   }, [client, store]);
 
   return { loadMinimalMetadata };

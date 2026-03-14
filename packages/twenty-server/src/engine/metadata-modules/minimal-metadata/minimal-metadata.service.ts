@@ -1,39 +1,65 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
+import {
+  ALL_METADATA_NAME,
+  type AllMetadataName,
+} from 'twenty-shared/metadata';
 import { ViewVisibility } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
+import { isDefined, uncapitalize } from 'twenty-shared/utils';
 
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { ALL_FLAT_ENTITY_MAPS_PROPERTIES } from 'src/engine/metadata-modules/flat-entity/constant/all-flat-entity-maps-properties.constant';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { MinimalMetadataDTO } from 'src/engine/metadata-modules/minimal-metadata/dtos/minimal-metadata.dto';
 import { MinimalObjectMetadataDTO } from 'src/engine/metadata-modules/minimal-metadata/dtos/minimal-object-metadata.dto';
 import { MinimalViewDTO } from 'src/engine/metadata-modules/minimal-metadata/dtos/minimal-view.dto';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { type WorkspaceCacheKeyName } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
+
+// Inverse of getMetadataFlatEntityMapsKey: "flatObjectMetadataMaps" -> "objectMetadata"
+const flatMapsKeyToMetadataName = (
+  flatMapsKey: string,
+): AllMetadataName | undefined => {
+  const withoutPrefix = flatMapsKey.replace(/^flat/, '');
+  const withoutSuffix = withoutPrefix.replace(/Maps$/, '');
+  const metadataName = uncapitalize(withoutSuffix);
+
+  return metadataName in ALL_METADATA_NAME
+    ? (metadataName as AllMetadataName)
+    : undefined;
+};
 
 @Injectable()
 export class MinimalMetadataService {
   constructor(
-    @InjectRepository(WorkspaceEntity)
-    private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   async getMinimalMetadata(
     workspaceId: string,
     userWorkspaceId?: string,
   ): Promise<MinimalMetadataDTO> {
-    const [workspace, { flatObjectMetadataMaps, flatViewMaps }] =
+    const [{ flatObjectMetadataMaps, flatViewMaps }, cacheHashes] =
       await Promise.all([
-        this.workspaceRepository.findOneOrFail({
-          where: { id: workspaceId },
-          select: ['metadataVersion'],
-        }),
         this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps({
           workspaceId,
           flatMapsKeys: ['flatObjectMetadataMaps', 'flatViewMaps'],
         }),
+        this.workspaceCacheService.getCacheHashes(
+          workspaceId,
+          ALL_FLAT_ENTITY_MAPS_PROPERTIES as WorkspaceCacheKeyName[],
+        ),
       ]);
+
+    const collectionHashes: Record<string, string> = {};
+
+    for (const [cacheKey, hash] of Object.entries(cacheHashes)) {
+      const metadataName = flatMapsKeyToMetadataName(cacheKey);
+
+      if (isDefined(metadataName) && isDefined(hash)) {
+        collectionHashes[metadataName] = hash;
+      }
+    }
 
     const objectMetadataItems: MinimalObjectMetadataDTO[] = Object.values(
       flatObjectMetadataMaps.byUniversalIdentifier,
@@ -76,7 +102,7 @@ export class MinimalMetadataService {
     return {
       objectMetadataItems,
       views,
-      metadataVersion: workspace.metadataVersion,
+      collectionHashes,
     };
   }
 }

@@ -34,6 +34,7 @@ export const NavigationMenuItemSSEEffect = () => {
         store,
         'navigationMenuItems',
         eventDetail.operation,
+        eventDetail.updatedCollectionHash,
       );
 
       const result = await client.query({
