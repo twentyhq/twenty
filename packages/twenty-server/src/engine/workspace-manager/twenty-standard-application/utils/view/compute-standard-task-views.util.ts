@@ -16,7 +16,7 @@ export const computeStandardTaskViews = (
       objectName: 'task',
       context: {
         viewName: 'allTasks',
-        name: 'All Tasks',
+        name: 'All {objectLabelPlural}',
         type: ViewType.TABLE,
         key: ViewKey.INDEX,
         position: 0,

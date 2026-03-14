@@ -65,7 +65,7 @@ const validatePrimaryPhoneCountryCodeAndCallingCode = ({
   if (
     isNonEmptyString(countryCode) &&
     expectedCountryCodes.every(
-      (expectedCountryCode) => expectedCountryCode !== countryCode,
+      (expectedCountryCode: string) => expectedCountryCode !== countryCode,
     )
   ) {
     throw new RecordTransformerException(
@@ -185,14 +185,28 @@ export const transformPhonesValue = ({
     return input;
   }
 
-  const { additionalPhones, ...primary } = input;
+  const inputObject = input as Exclude<
+    PhonesFieldGraphQLInput,
+    null | undefined
+  >;
+  const { additionalPhones, ...primary } = inputObject;
+
+  const primaryPhoneCallingCode =
+    primary.primaryPhoneCallingCode === ''
+      ? undefined
+      : primary.primaryPhoneCallingCode;
+  const primaryPhoneCountryCode =
+    primary.primaryPhoneCountryCode === ''
+    ? undefined
+    : primary.primaryPhoneCountryCode;
+
   const {
+    callingCode: resolvedPhoneCallingCode,
+    countryCode: resolvedPhoneCountryCode,
+    number: resolvedPhoneNumber,
+  } = validateAndInferPhoneInput({
     callingCode: primaryPhoneCallingCode,
     countryCode: primaryPhoneCountryCode,
-    number: primaryPhoneNumber,
-  } = validateAndInferPhoneInput({
-    callingCode: primary.primaryPhoneCallingCode,
-    countryCode: primary.primaryPhoneCountryCode,
     number: primary.primaryPhoneNumber,
   });
 
@@ -203,15 +217,22 @@ export const transformPhonesValue = ({
       : [];
 
   const validatedAdditionalPhones = parsedAdditionalPhones.map(
-    validateAndInferPhoneInput,
+    (phoneInput: Partial<AdditionalPhoneMetadata>) =>
+      validateAndInferPhoneInput({
+        ...phoneInput,
+        callingCode:
+          phoneInput.callingCode === '' ? undefined : phoneInput.callingCode,
+        countryCode:
+          phoneInput.countryCode === '' ? undefined : phoneInput.countryCode,
+      }),
   );
 
   return removeUndefinedFields({
     additionalPhones: isEmpty(validatedAdditionalPhones)
       ? null
       : JSON.stringify(validatedAdditionalPhones),
-    primaryPhoneCallingCode,
-    primaryPhoneCountryCode,
-    primaryPhoneNumber,
+    primaryPhoneCallingCode: resolvedPhoneCallingCode,
+    primaryPhoneCountryCode: resolvedPhoneCountryCode,
+    primaryPhoneNumber: resolvedPhoneNumber,
   });
 };

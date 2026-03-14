@@ -110,6 +110,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       flatIndexMetadatasToUpdate,
       flatViewFieldsToCreate,
       flatViewFieldsToUpdate,
+      flatViewsToUpdate,
     } = fromUpdateObjectInputToFlatObjectMetadataAndRelatedFlatEntities({
       flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
@@ -140,6 +141,11 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
                 ...otherObjectFlatFieldMetadatasToUpdate,
                 ...sameObjectFlatFieldMetadatasToUpdate,
               ],
+            },
+            view: {
+              flatEntityToCreate: [],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: flatViewsToUpdate,
             },
             viewField: {
               flatEntityToCreate: flatViewFieldsToCreate,
