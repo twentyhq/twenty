@@ -13,9 +13,23 @@ export const ALL_METADATA_ENTITY_KEYS = [
   'viewFields',
   'viewFilters',
   'viewSorts',
+  'viewGroups',
+  'viewFilterGroups',
+  'viewFieldGroups',
   'pageLayouts',
+  'pageLayoutTabs',
+  'pageLayoutWidgets',
   'logicFunctions',
   'navigationMenuItems',
+  'commandMenuItems',
+  'frontComponents',
+  'webhooks',
+  'roles',
+  'roleTargets',
+  'agents',
+  'skills',
+  'rowLevelPermissionPredicates',
+  'rowLevelPermissionPredicateGroups',
 ] as const;
 
 export type MetadataEntityKey = (typeof ALL_METADATA_ENTITY_KEYS)[number];

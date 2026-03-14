@@ -3,6 +3,7 @@ import { CommandMenuConfirmationModalManager } from '@/command-menu-item/confirm
 import { ApolloProvider } from '@/apollo/components/ApolloProvider';
 import { MetadataGater } from '@/metadata-store/components/MetadataGater';
 import { IsAppMetadataReadyEffect } from '@/metadata-store/effect-components/IsAppMetadataReadyEffect';
+import { MetadataLocalStorageEffect } from '@/metadata-store/effect-components/MetadataLocalStorageEffect';
 import { GotoHotkeysEffectsProvider } from '@/app/effect-components/GotoHotkeysEffectsProvider';
 import { MetadataProviderInitialEffects } from '@/metadata-store/effect-components/MetadataProviderInitialEffects';
 import { PageChangeEffect } from '@/app/effect-components/PageChangeEffect';
@@ -43,6 +44,7 @@ export const AppRouterProviders = () => {
     <ApolloProvider>
       <BaseThemeProvider>
         <ClientConfigProviderEffect />
+        <MetadataLocalStorageEffect />
         <MetadataProviderInitialEffects />
         <LazyMetadataLoadEffect />
         <IsAppMetadataReadyEffect />

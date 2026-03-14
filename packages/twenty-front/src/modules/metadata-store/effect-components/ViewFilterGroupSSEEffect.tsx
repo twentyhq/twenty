@@ -5,33 +5,28 @@ import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshC
 import { coreViewsState } from '@/views/states/coreViewState';
 import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  AllMetadataName,
-  type CoreViewField,
-} from '~/generated-metadata/graphql';
+import { AllMetadataName } from '~/generated-metadata/graphql';
 
-export const ViewFieldSSEEffect = () => {
+export const ViewFilterGroupSSEEffect = () => {
   const store = useStore();
-
-  const queryId = 'view-field-metadata-sse-effect';
 
   const { refreshCoreViewsByObjectMetadataId } =
     useRefreshCoreViewsByObjectMetadataId();
 
   useListenToEventsForQuery({
-    queryId,
+    queryId: 'view-filter-groups-sse-effect',
     operationSignature: {
-      metadataName: AllMetadataName.viewField,
+      metadataName: AllMetadataName.viewFilterGroup,
       variables: {},
     },
   });
 
   useListenToMetadataOperationBrowserEvent({
-    metadataName: AllMetadataName.viewField,
+    metadataName: AllMetadataName.viewFilterGroup,
     onMetadataOperationBrowserEvent: (eventDetail) => {
       patchMetadataStoreFromSSEEvent(
         store,
-        'viewFields',
+        'viewFilterGroups',
         eventDetail.operation,
       );
 
@@ -41,28 +36,22 @@ export const ViewFieldSSEEffect = () => {
 
       switch (eventDetail.operation.type) {
         case 'create': {
-          const createdViewField = eventDetail.operation
-            .createdRecord as unknown as CoreViewField;
-          viewId = createdViewField.viewId;
+          viewId = (eventDetail.operation.createdRecord as { viewId?: string })
+            .viewId;
           break;
         }
         case 'update': {
-          const updatedViewField = eventDetail.operation
-            .updatedRecord as unknown as CoreViewField;
-          viewId = updatedViewField.viewId;
+          viewId = (eventDetail.operation.updatedRecord as { viewId?: string })
+            .viewId;
           break;
         }
         case 'delete': {
-          const deletedViewFieldId = eventDetail.operation
-            .deletedRecordId as string;
-
-          const view = coreViews.find((coreView) =>
-            coreView.viewFields.some(
-              (viewField) => viewField.id === deletedViewFieldId,
+          const deletedId = eventDetail.operation.deletedRecordId as string;
+          viewId = coreViews.find((view) =>
+            view.viewFilterGroups?.some(
+              (viewFilterGroup) => viewFilterGroup.id === deletedId,
             ),
-          );
-
-          viewId = view?.id;
+          )?.id;
           break;
         }
       }
@@ -73,11 +62,9 @@ export const ViewFieldSSEEffect = () => {
 
       const view = coreViews.find((coreView) => coreView.id === viewId);
 
-      if (!isDefined(view)) {
-        return;
+      if (isDefined(view)) {
+        refreshCoreViewsByObjectMetadataId(view.objectMetadataId);
       }
-
-      refreshCoreViewsByObjectMetadataId(view.objectMetadataId);
     },
   });
 

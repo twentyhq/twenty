@@ -1,6 +1,5 @@
 import { useListenToMetadataOperationBrowserEvent } from '@/browser-event/hooks/useListenToMetadataOperationBrowserEvent';
-import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
-import { type FlatFieldMetadataItem } from '@/metadata-store/types/FlatFieldMetadataItem';
+import { patchMetadataStoreFromSSEEvent } from '@/metadata-store/utils/patchMetadataStoreFromSSEEvent';
 import { useListenToEventsForQuery } from '@/sse-db-event/hooks/useListenToEventsForQuery';
 import { useStore } from 'jotai';
 import { AllMetadataName } from '~/generated-metadata/graphql';
@@ -21,51 +20,11 @@ export const FieldMetadataSSEEffect = () => {
   useListenToMetadataOperationBrowserEvent({
     metadataName: AllMetadataName.fieldMetadata,
     onMetadataOperationBrowserEvent: (eventDetail) => {
-      const entry = store.get(
-        metadataStoreState.atomFamily('fieldMetadataItems'),
+      patchMetadataStoreFromSSEEvent(
+        store,
+        'fieldMetadataItems',
+        eventDetail.operation,
       );
-      const currentFields = entry.current as FlatFieldMetadataItem[];
-
-      switch (eventDetail.operation.type) {
-        case 'create': {
-          const createdField = eventDetail.operation
-            .createdRecord as unknown as FlatFieldMetadataItem;
-
-          store.set(metadataStoreState.atomFamily('fieldMetadataItems'), {
-            ...entry,
-            current: [...currentFields, createdField],
-          });
-          break;
-        }
-        case 'update': {
-          const updatedField = eventDetail.operation
-            .updatedRecord as unknown as FlatFieldMetadataItem;
-
-          store.set(metadataStoreState.atomFamily('fieldMetadataItems'), {
-            ...entry,
-            current: currentFields.map((field) =>
-              field.id === updatedField.id
-                ? { ...field, ...updatedField }
-                : field,
-            ),
-          });
-          break;
-        }
-        case 'delete': {
-          const deletedFieldId = eventDetail.operation
-            .deletedRecordId as string;
-
-          store.set(metadataStoreState.atomFamily('fieldMetadataItems'), {
-            ...entry,
-            current: currentFields.filter(
-              (field) => field.id !== deletedFieldId,
-            ),
-          });
-          break;
-        }
-        default:
-          return;
-      }
     },
   });
 

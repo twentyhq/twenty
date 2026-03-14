@@ -4,7 +4,10 @@ import { ObjectMetadataItemSSEEffect } from '@/metadata-store/effect-components/
 import { PageLayoutSSEEffect } from '@/metadata-store/effect-components/PageLayoutSSEEffect';
 import { PageLayoutTabSSEEffect } from '@/metadata-store/effect-components/PageLayoutTabSSEEffect';
 import { PageLayoutWidgetSSEEffect } from '@/metadata-store/effect-components/PageLayoutWidgetSSEEffect';
-import { ViewRelationsSSEEffect } from '@/metadata-store/effect-components/ViewRelationsSSEEffect';
+import { ViewFieldSSEEffect } from '@/metadata-store/effect-components/ViewFieldSSEEffect';
+import { ViewFilterGroupSSEEffect } from '@/metadata-store/effect-components/ViewFilterGroupSSEEffect';
+import { ViewFilterSSEEffect } from '@/metadata-store/effect-components/ViewFilterSSEEffect';
+import { ViewSortSSEEffect } from '@/metadata-store/effect-components/ViewSortSSEEffect';
 import { ViewSSEEffect } from '@/metadata-store/effect-components/ViewSSEEffect';
 import { SSEClientEffect } from '@/sse-db-event/components/SSEClientEffect';
 import { SSEEventStreamEffect } from '@/sse-db-event/components/SSEEventStreamEffect';
@@ -27,8 +30,11 @@ export const SSEProvider = ({ children }: SSEProviderProps) => {
       <PageLayoutSSEEffect />
       <PageLayoutTabSSEEffect />
       <PageLayoutWidgetSSEEffect />
-      <ViewRelationsSSEEffect />
       <ViewSSEEffect />
+      <ViewFieldSSEEffect />
+      <ViewFilterSSEEffect />
+      <ViewSortSSEEffect />
+      <ViewFilterGroupSSEEffect />
       {children}
     </>
   );

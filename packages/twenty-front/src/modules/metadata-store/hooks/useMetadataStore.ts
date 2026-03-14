@@ -31,12 +31,20 @@ const areViewsConsistentWithObjects = (
   );
 };
 
+export const METADATA_STORE_STORAGE_KEY = 'twenty-metadata-store';
+
 export const resetMetadataStore = (store: JotaiStore) => {
   for (const key of ALL_METADATA_ENTITY_KEYS) {
     store.set(metadataStoreState.atomFamily(key), EMPTY_ENTRY);
   }
 
   store.set(isAppMetadataReadyState.atom, false);
+
+  try {
+    localStorage.removeItem(METADATA_STORE_STORAGE_KEY);
+  } catch {
+    // localStorage may be unavailable
+  }
 };
 
 const changeMetadataEntityAsUpToDate = (

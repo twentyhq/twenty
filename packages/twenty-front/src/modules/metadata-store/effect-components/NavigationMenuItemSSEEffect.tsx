@@ -1,5 +1,6 @@
 import { useListenToMetadataOperationBrowserEvent } from '@/browser-event/hooks/useListenToMetadataOperationBrowserEvent';
 import { useMetadataStore } from '@/metadata-store/hooks/useMetadataStore';
+import { patchMetadataStoreFromSSEEvent } from '@/metadata-store/utils/patchMetadataStoreFromSSEEvent';
 import { navigationMenuItemsState } from '@/navigation-menu-item/states/navigationMenuItemsState';
 import { useListenToEventsForQuery } from '@/sse-db-event/hooks/useListenToEventsForQuery';
 import { useStore } from 'jotai';
@@ -28,7 +29,13 @@ export const NavigationMenuItemSSEEffect = () => {
 
   useListenToMetadataOperationBrowserEvent({
     metadataName: AllMetadataName.navigationMenuItem,
-    onMetadataOperationBrowserEvent: async () => {
+    onMetadataOperationBrowserEvent: async (eventDetail) => {
+      patchMetadataStoreFromSSEEvent(
+        store,
+        'navigationMenuItems',
+        eventDetail.operation,
+      );
+
       const result = await client.query({
         query: FindManyNavigationMenuItemsDocument,
         fetchPolicy: 'network-only',
