@@ -57,7 +57,7 @@ const StyledToolbar = styled.div`
 `;
 
 const StyledButtonContainer = styled.div`
-  > button {
+  button {
     height: 24px;
   }
 `;
