@@ -20,11 +20,6 @@ export const useOpportunityConditionalFields = ({
 
   const r = record as Record<string, unknown>;
 
-  // clientAccountTeam is visible only when addClientAccountTeam is true
-  if (r['addClientAccountTeam'] !== true) {
-    hiddenFields.add('clientAccountTeam');
-  }
-
   // lossReason and lossNotes are visible only when salesStage is a loss stage
   const lossStages = new Set(['CLOSEDLOST', 'DIDNOTPROCEED']);
   if (!lossStages.has(r['salesStage'] as string)) {
