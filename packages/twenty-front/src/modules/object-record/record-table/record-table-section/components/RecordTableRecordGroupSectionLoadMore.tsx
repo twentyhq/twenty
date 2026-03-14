@@ -1,5 +1,5 @@
 import { useCurrentRecordGroupId } from '@/object-record/record-group/hooks/useCurrentRecordGroupId';
-import { useRecordIndexTableFetchMore } from '@/object-record/record-index/hooks/useRecordIndexTableFetchMore';
+import { useRecordIndexTableQuery } from '@/object-record/record-index/hooks/useRecordIndexTableQuery';
 import { recordIndexHasFetchedAllRecordsByGroupComponentState } from '@/object-record/record-index/states/recordIndexHasFetchedAllRecordsByGroupComponentState';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableActionRow } from '@/object-record/record-table/record-table-row/components/RecordTableActionRow';
@@ -12,8 +12,7 @@ export const RecordTableRecordGroupSectionLoadMore = () => {
 
   const currentRecordGroupId = useCurrentRecordGroupId();
 
-  const { fetchMoreRecordsLazy } =
-    useRecordIndexTableFetchMore(objectNameSingular);
+  const { fetchMoreRecords } = useRecordIndexTableQuery(objectNameSingular);
 
   const recordIndexHasFetchedAllRecordsByGroup =
     useAtomComponentFamilyStateValue(
@@ -22,7 +21,7 @@ export const RecordTableRecordGroupSectionLoadMore = () => {
     );
 
   const handleLoadMore = () => {
-    fetchMoreRecordsLazy();
+    fetchMoreRecords();
   };
 
   if (recordIndexHasFetchedAllRecordsByGroup) {
