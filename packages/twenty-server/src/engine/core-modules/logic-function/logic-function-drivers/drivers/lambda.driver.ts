@@ -2,6 +2,7 @@ import { createHash } from 'crypto';
 import * as fs from 'fs/promises';
 import { resolve, join } from 'path';
 
+import { Logger } from '@nestjs/common';
 import {
   CreateFunctionCommand,
   type CreateFunctionCommandInput,
@@ -117,6 +118,7 @@ export class LambdaDriver implements LogicFunctionDriver {
   private credentialsExpiry: Date | null = null;
   private readonly options: LambdaDriverOptions;
   private readonly logicFunctionResourceService: LogicFunctionResourceService;
+  private readonly logger = new Logger(LambdaDriver.name);
 
   constructor(options: LambdaDriverOptions) {
     this.options = options;
@@ -177,9 +179,15 @@ export class LambdaDriver implements LogicFunctionDriver {
     s3Key: string,
     expiresIn: number = 300,
   ): Promise<string> {
+    const usesAssumedRole = isDefined(this.options.subhostingRole);
+
+    this.logger.log(
+      `Generating presigned upload URL for bucket=${this.options.layerBucket}, key=${s3Key}, region=${this.options.layerBucketRegion}, usesAssumedRole=${usesAssumedRole}, expiresIn=${expiresIn}s`,
+    );
+
     const s3Client = new S3Client({
       region: this.options.layerBucketRegion,
-      credentials: isDefined(this.options.subhostingRole)
+      credentials: usesAssumedRole
         ? await this.getAssumeRoleCredentials()
         : this.options.credentials,
     });
@@ -387,8 +395,15 @@ export class LambdaDriver implements LogicFunctionDriver {
         ? JSON.parse(result.Payload.transformToString())
         : {};
 
+      const errorMessage =
+        parsedResult.errorMessage ?? JSON.stringify(parsedResult);
+
+      this.logger.error(
+        `Yarn install Lambda '${yarnInstallFunctionName}' failed: ${errorMessage}`,
+      );
+
       throw new LogicFunctionException(
-        `Yarn install Lambda failed: ${JSON.stringify(parsedResult)}`,
+        `Yarn install Lambda failed: ${errorMessage}`,
         LogicFunctionExceptionCode.LOGIC_FUNCTION_CREATE_FAILED,
       );
     }
@@ -398,6 +413,10 @@ export class LambdaDriver implements LogicFunctionDriver {
       : {};
 
     if (!parsedResult.success) {
+      this.logger.error(
+        `Yarn install Lambda '${yarnInstallFunctionName}' did not report success`,
+      );
+
       throw new Error('Yarn install Lambda did not report success');
     }
 
@@ -486,8 +505,15 @@ export class LambdaDriver implements LogicFunctionDriver {
         ? JSON.parse(result.Payload.transformToString())
         : {};
 
+      const errorMessage =
+        parsedResult.errorMessage ?? JSON.stringify(parsedResult);
+
+      this.logger.error(
+        `Builder Lambda '${builderFunctionName}' failed: ${errorMessage}`,
+      );
+
       throw new LogicFunctionException(
-        `Builder Lambda failed: ${JSON.stringify(parsedResult)}`,
+        `Builder Lambda failed: ${errorMessage}`,
         LogicFunctionExceptionCode.LOGIC_FUNCTION_CREATE_FAILED,
       );
     }
@@ -497,6 +523,10 @@ export class LambdaDriver implements LogicFunctionDriver {
       : {};
 
     if (!parsedResult.builtCode) {
+      this.logger.error(
+        `Builder Lambda '${builderFunctionName}' did not return builtCode`,
+      );
+
       throw new Error('Builder Lambda did not return builtCode');
     }
 
@@ -567,6 +597,10 @@ export class LambdaDriver implements LogicFunctionDriver {
 
     const s3Key = `lambda-layers/${layerName}.zip`;
 
+    this.logger.log(
+      `Creating layer '${layerName}' via yarn install Lambda, s3Key=${s3Key}`,
+    );
+
     const presignedUploadUrl = await this.generatePresignedUploadUrl(s3Key);
 
     await this.invokeYarnInstallLambda({
@@ -575,6 +609,8 @@ export class LambdaDriver implements LogicFunctionDriver {
       yarnLock,
       presignedUploadUrl,
     });
+
+    this.logger.log(`Layer '${layerName}' zip uploaded, publishing layer`);
 
     const bucket = this.options.layerBucket;
 
@@ -621,6 +657,10 @@ export class LambdaDriver implements LogicFunctionDriver {
     const newArn = await this.getExistingLayerArn(layerName);
 
     if (!isDefined(newArn)) {
+      this.logger.error(
+        `Layer '${layerName}' was not found after yarn install Lambda completed`,
+      );
+
       throw new Error(
         `Layer '${layerName}' was not created by the yarn install Lambda`,
       );
