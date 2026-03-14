@@ -200,6 +200,28 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
 
       expect(result).toEqual({ not: { name: { ilike: '%test%' } } });
     });
+
+    it('should handle IS operand', () => {
+      const result = turnRecordFilterIntoRecordGqlOperationFilter({
+        filterValueDependencies,
+        recordFilter: makeFilter('f-text', RecordFilterOperand.IS, 'test'),
+        fieldMetadataItems: fields,
+      });
+
+      expect(result).toEqual({ name: { eq: 'test' } });
+    });
+
+    it('should handle IS_NOT operand', () => {
+      const result = turnRecordFilterIntoRecordGqlOperationFilter({
+        filterValueDependencies,
+        recordFilter: makeFilter('f-text', RecordFilterOperand.IS_NOT, 'test'),
+        fieldMetadataItems: fields,
+      });
+
+      expect(result).toEqual({
+        or: [{ not: { name: { eq: 'test' } } }, { name: { is: 'NULL' } }],
+      });
+    });
   });
 
   describe('NUMBER filter', () => {
@@ -690,6 +712,120 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
 
       expect(result).toHaveProperty('or');
     });
+
+    it('should handle IS operand without subfield', () => {
+      const result = turnRecordFilterIntoRecordGqlOperationFilter({
+        filterValueDependencies,
+        recordFilter: makeFilter(
+          'f-fullname',
+          RecordFilterOperand.IS,
+          'John',
+          'FULL_NAME',
+        ),
+        fieldMetadataItems: fields,
+      });
+
+      expect(result).toEqual({
+        or: [
+          { fullName: { firstName: { eq: 'John' } } },
+          { fullName: { lastName: { eq: 'John' } } },
+        ],
+      });
+    });
+
+    it('should handle IS operand with multi-word value', () => {
+      const result = turnRecordFilterIntoRecordGqlOperationFilter({
+        filterValueDependencies,
+        recordFilter: makeFilter(
+          'f-fullname',
+          RecordFilterOperand.IS,
+          'John Doe',
+          'FULL_NAME',
+        ),
+        fieldMetadataItems: fields,
+      });
+
+      expect(result).toEqual({
+        or: [
+          { fullName: { firstName: { eq: 'John Doe' } } },
+          { fullName: { lastName: { eq: 'John Doe' } } },
+          {
+            and: [
+              { fullName: { firstName: { eq: 'John' } } },
+              { fullName: { lastName: { eq: 'Doe' } } },
+            ],
+          },
+        ],
+      });
+    });
+
+    it('should handle IS_NOT operand without subfield', () => {
+      const result = turnRecordFilterIntoRecordGqlOperationFilter({
+        filterValueDependencies,
+        recordFilter: makeFilter(
+          'f-fullname',
+          RecordFilterOperand.IS_NOT,
+          'John',
+          'FULL_NAME',
+        ),
+        fieldMetadataItems: fields,
+      });
+
+      expect(result).toEqual({
+        and: [
+          {
+            or: [
+              { not: { fullName: { firstName: { eq: 'John' } } } },
+              { fullName: { firstName: { is: 'NULL' } } },
+            ],
+          },
+          {
+            or: [
+              { not: { fullName: { lastName: { eq: 'John' } } } },
+              { fullName: { lastName: { is: 'NULL' } } },
+            ],
+          },
+        ],
+      });
+    });
+
+    it('should handle IS_NOT operand with multi-word value', () => {
+      const result = turnRecordFilterIntoRecordGqlOperationFilter({
+        filterValueDependencies,
+        recordFilter: makeFilter(
+          'f-fullname',
+          RecordFilterOperand.IS_NOT,
+          'John Doe',
+          'FULL_NAME',
+        ),
+        fieldMetadataItems: fields,
+      });
+
+      expect(result).toEqual({
+        and: [
+          {
+            or: [
+              { not: { fullName: { firstName: { eq: 'John Doe' } } } },
+              { fullName: { firstName: { is: 'NULL' } } },
+            ],
+          },
+          {
+            or: [
+              { not: { fullName: { lastName: { eq: 'John Doe' } } } },
+              { fullName: { lastName: { is: 'NULL' } } },
+            ],
+          },
+          {
+            or: [
+              { not: { fullName: { firstName: { eq: 'John' } } } },
+              { not: { fullName: { lastName: { eq: 'Doe' } } } },
+              { fullName: { firstName: { is: 'NULL' } } },
+              { fullName: { lastName: { is: 'NULL' } } },
+            ],
+          },
+        ],
+      });
+    });
   });
 
   describe('ADDRESS filter', () => {
@@ -836,6 +972,45 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
 
       expect(result).toBeDefined();
     });
+
+    it('should handle IS on primaryPhoneNumber', () => {
+      const result = turnRecordFilterIntoRecordGqlOperationFilter({
+        filterValueDependencies,
+        recordFilter: makeFilter(
+          'f-phones',
+          RecordFilterOperand.IS,
+          '5551234',
+          'PHONES',
+          'primaryPhoneNumber',
+        ),
+        fieldMetadataItems: fields,
+      });
+
+      expect(result).toEqual({
+        phone: { primaryPhoneNumber: { eq: '5551234' } },
+      });
+    });
+
+    it('should handle IS_NOT on primaryPhoneNumber', () => {
+      const result = turnRecordFilterIntoRecordGqlOperationFilter({
+        filterValueDependencies,
+        recordFilter: makeFilter(
+          'f-phones',
+          RecordFilterOperand.IS_NOT,
+          '5551234',
+          'PHONES',
+          'primaryPhoneNumber',
+        ),
+        fieldMetadataItems: fields,
+      });
+
+      expect(result).toEqual({
+        or: [
+          { not: { phone: { primaryPhoneNumber: { eq: '5551234' } } } },
+          { phone: { primaryPhoneNumber: { is: 'NULL' } } },
+        ],
+      });
+    });
   });
 
   describe('EMAILS filter', () => {
@@ -854,6 +1029,45 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
 
       expect(result).toBeDefined();
     });
+
+    it('should handle IS on primaryEmail', () => {
+      const result = turnRecordFilterIntoRecordGqlOperationFilter({
+        filterValueDependencies,
+        recordFilter: makeFilter(
+          'f-emails',
+          RecordFilterOperand.IS,
+          'test@example.com',
+          'EMAILS',
+          'primaryEmail',
+        ),
+        fieldMetadataItems: fields,
+      });
+
+      expect(result).toEqual({
+        email: { primaryEmail: { eq: 'test@example.com' } },
+      });
+    });
+
+    it('should handle IS_NOT on primaryEmail', () => {
+      const result = turnRecordFilterIntoRecordGqlOperationFilter({
+        filterValueDependencies,
+        recordFilter: makeFilter(
+          'f-emails',
+          RecordFilterOperand.IS_NOT,
+          'test@example.com',
+          'EMAILS',
+          'primaryEmail',
+        ),
+        fieldMetadataItems: fields,
+      });
+
+      expect(result).toEqual({
+        or: [
+          { not: { email: { primaryEmail: { eq: 'test@example.com' } } } },
+          { email: { primaryEmail: { is: 'NULL' } } },
+        ],
+      });
+    });
   });
 
   describe('LINKS filter', () => {
@@ -871,6 +1085,47 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
       });
 
       expect(result).toBeDefined();
+    });
+
+    it('should handle IS on primaryLinkUrl', () => {
+      const result = turnRecordFilterIntoRecordGqlOperationFilter({
+        filterValueDependencies,
+        recordFilter: makeFilter(
+          'f-links',
+          RecordFilterOperand.IS,
+          'https://example.com',
+          'LINKS',
+          'primaryLinkUrl',
+        ),
+        fieldMetadataItems: fields,
+      });
+
+      expect(result).toEqual({
+        website: { primaryLinkUrl: { eq: 'https://example.com' } },
+      });
+    });
+
+    it('should handle IS_NOT on primaryLinkUrl', () => {
+      const result = turnRecordFilterIntoRecordGqlOperationFilter({
+        filterValueDependencies,
+        recordFilter: makeFilter(
+          'f-links',
+          RecordFilterOperand.IS_NOT,
+          'https://example.com',
+          'LINKS',
+          'primaryLinkUrl',
+        ),
+        fieldMetadataItems: fields,
+      });
+
+      expect(result).toEqual({
+        or: [
+          {
+            not: { website: { primaryLinkUrl: { eq: 'https://example.com' } } },
+          },
+          { website: { primaryLinkUrl: { is: 'NULL' } } },
+        ],
+      });
     });
   });
 

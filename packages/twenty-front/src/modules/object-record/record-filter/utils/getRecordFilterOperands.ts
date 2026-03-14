@@ -7,7 +7,11 @@ import {
   type FilterableAndTSVectorFieldType,
   type FilterableFieldType,
 } from 'twenty-shared/types';
-import { assertUnreachable, isExpectedSubFieldName } from 'twenty-shared/utils';
+import {
+  assertUnreachable,
+  isDefined,
+  isExpectedSubFieldName,
+} from 'twenty-shared/utils';
 
 export type GetRecordFilterOperandsParams = {
   filterType: FilterableAndTSVectorFieldType;
@@ -41,16 +45,22 @@ export const FILTER_OPERANDS_MAP = {
   TEXT: [
     RecordFilterOperand.CONTAINS,
     RecordFilterOperand.DOES_NOT_CONTAIN,
+    RecordFilterOperand.IS,
+    RecordFilterOperand.IS_NOT,
     ...emptyOperands,
   ],
   EMAILS: [
     RecordFilterOperand.CONTAINS,
     RecordFilterOperand.DOES_NOT_CONTAIN,
+    RecordFilterOperand.IS,
+    RecordFilterOperand.IS_NOT,
     ...emptyOperands,
   ],
   FULL_NAME: [
     RecordFilterOperand.CONTAINS,
     RecordFilterOperand.DOES_NOT_CONTAIN,
+    RecordFilterOperand.IS,
+    RecordFilterOperand.IS_NOT,
     ...emptyOperands,
   ],
   ADDRESS: [
@@ -61,11 +71,15 @@ export const FILTER_OPERANDS_MAP = {
   LINKS: [
     RecordFilterOperand.CONTAINS,
     RecordFilterOperand.DOES_NOT_CONTAIN,
+    RecordFilterOperand.IS,
+    RecordFilterOperand.IS_NOT,
     ...emptyOperands,
   ],
   PHONES: [
     RecordFilterOperand.CONTAINS,
     RecordFilterOperand.DOES_NOT_CONTAIN,
+    RecordFilterOperand.IS,
+    RecordFilterOperand.IS_NOT,
     ...emptyOperands,
   ],
   CURRENCY: [
@@ -157,6 +171,33 @@ export const COMPOSITE_FIELD_FILTER_OPERANDS_MAP = {
       ...emptyOperands,
     ],
   },
+  PHONES: {
+    primaryPhoneNumber: [
+      RecordFilterOperand.CONTAINS,
+      RecordFilterOperand.DOES_NOT_CONTAIN,
+      RecordFilterOperand.IS,
+      RecordFilterOperand.IS_NOT,
+      ...emptyOperands,
+    ],
+  },
+  EMAILS: {
+    primaryEmail: [
+      RecordFilterOperand.CONTAINS,
+      RecordFilterOperand.DOES_NOT_CONTAIN,
+      RecordFilterOperand.IS,
+      RecordFilterOperand.IS_NOT,
+      ...emptyOperands,
+    ],
+  },
+  LINKS: {
+    primaryLinkUrl: [
+      RecordFilterOperand.CONTAINS,
+      RecordFilterOperand.DOES_NOT_CONTAIN,
+      RecordFilterOperand.IS,
+      RecordFilterOperand.IS_NOT,
+      ...emptyOperands,
+    ],
+  },
 } as const satisfies Partial<CompositeFieldFilterOperandMap>;
 
 export const getRecordFilterOperands = ({
@@ -165,12 +206,68 @@ export const getRecordFilterOperands = ({
 }: GetRecordFilterOperandsParams): readonly RecordFilterOperand[] => {
   switch (filterType) {
     case 'TEXT':
-    case 'EMAILS':
-    case 'FULL_NAME':
-    case 'ADDRESS':
-    case 'LINKS':
-    case 'PHONES':
       return FILTER_OPERANDS_MAP.TEXT;
+    case 'EMAILS': {
+      if (
+        isExpectedSubFieldName(
+          FieldMetadataType.EMAILS,
+          'primaryEmail',
+          subFieldName,
+        ) === true
+      ) {
+        return COMPOSITE_FIELD_FILTER_OPERANDS_MAP.EMAILS.primaryEmail;
+      }
+      if (isDefined(subFieldName)) {
+        return [
+          RecordFilterOperand.CONTAINS,
+          RecordFilterOperand.DOES_NOT_CONTAIN,
+          ...emptyOperands,
+        ] as const;
+      }
+      return FILTER_OPERANDS_MAP.EMAILS;
+    }
+    case 'FULL_NAME':
+      return FILTER_OPERANDS_MAP.FULL_NAME;
+    case 'ADDRESS':
+      return FILTER_OPERANDS_MAP.ADDRESS;
+    case 'LINKS': {
+      if (
+        isExpectedSubFieldName(
+          FieldMetadataType.LINKS,
+          'primaryLinkUrl',
+          subFieldName,
+        ) === true
+      ) {
+        return COMPOSITE_FIELD_FILTER_OPERANDS_MAP.LINKS.primaryLinkUrl;
+      }
+      if (isDefined(subFieldName)) {
+        return [
+          RecordFilterOperand.CONTAINS,
+          RecordFilterOperand.DOES_NOT_CONTAIN,
+          ...emptyOperands,
+        ] as const;
+      }
+      return FILTER_OPERANDS_MAP.LINKS;
+    }
+    case 'PHONES': {
+      if (
+        isExpectedSubFieldName(
+          FieldMetadataType.PHONES,
+          'primaryPhoneNumber',
+          subFieldName,
+        ) === true
+      ) {
+        return COMPOSITE_FIELD_FILTER_OPERANDS_MAP.PHONES.primaryPhoneNumber;
+      }
+      if (isDefined(subFieldName)) {
+        return [
+          RecordFilterOperand.CONTAINS,
+          RecordFilterOperand.DOES_NOT_CONTAIN,
+          ...emptyOperands,
+        ] as const;
+      }
+      return FILTER_OPERANDS_MAP.PHONES;
+    }
     case 'CURRENCY': {
       if (
         isExpectedSubFieldName(

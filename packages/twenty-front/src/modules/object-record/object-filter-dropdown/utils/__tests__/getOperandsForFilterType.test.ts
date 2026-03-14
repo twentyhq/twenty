@@ -15,6 +15,8 @@ describe('getOperandsForFilterType', () => {
     RecordFilterOperand.DOES_NOT_CONTAIN,
   ];
 
+  const isOperands = [RecordFilterOperand.IS, RecordFilterOperand.IS_NOT];
+
   const numberOperands = [
     RecordFilterOperand.IS,
     RecordFilterOperand.IS_NOT,
@@ -52,13 +54,24 @@ describe('getOperandsForFilterType', () => {
   const relationOperand = [RecordFilterOperand.IS, RecordFilterOperand.IS_NOT];
 
   const testCases = [
-    ['TEXT', [...containsOperands, ...emptyOperands]],
-    ['FULL_NAME', [...containsOperands, ...emptyOperands]],
+    ['TEXT', [...containsOperands, ...isOperands, ...emptyOperands]],
+    ['FULL_NAME', [...containsOperands, ...isOperands, ...emptyOperands]],
     ['ADDRESS', [...containsOperands, ...emptyOperands]],
-    ['LINKS', [...containsOperands, ...emptyOperands]],
-    ['LINKS', [...containsOperands, ...emptyOperands], 'primaryLinkUrl'],
+    ['LINKS', [...containsOperands, ...isOperands, ...emptyOperands]],
+    [
+      'LINKS',
+      [...containsOperands, ...isOperands, ...emptyOperands],
+      'primaryLinkUrl',
+    ],
     ['LINKS', [...containsOperands, ...emptyOperands], 'primaryLinkLabel'],
     ['LINKS', [...containsOperands, ...emptyOperands], 'secondaryLinks'],
+    ['EMAILS', [...containsOperands, ...isOperands, ...emptyOperands]],
+    [
+      'EMAILS',
+      [...containsOperands, ...isOperands, ...emptyOperands],
+      'primaryEmail',
+    ],
+    ['EMAILS', [...containsOperands, ...emptyOperands], 'additionalEmails'],
     ['ACTOR', [...containsOperands, ...emptyOperands], 'name'],
     ['ACTOR', [...actorSourceOperands, ...emptyOperands], 'source'],
     ['ACTOR', [...containsOperands, ...emptyOperands]],
@@ -72,6 +85,18 @@ describe('getOperandsForFilterType', () => {
       [...currencyAmountMicrosOperands, ...emptyOperands],
       'amountMicros',
     ],
+    ['PHONES', [...containsOperands, ...isOperands, ...emptyOperands]],
+    [
+      'PHONES',
+      [...containsOperands, ...isOperands, ...emptyOperands],
+      'primaryPhoneNumber',
+    ],
+    [
+      'PHONES',
+      [...containsOperands, ...emptyOperands],
+      'primaryPhoneCallingCode',
+    ],
+    ['PHONES', [...containsOperands, ...emptyOperands], 'additionalPhones'],
     ['NUMBER', [...numberOperands, ...emptyOperands]],
     ['DATE', [...dateOperands, ...emptyOperands]],
     ['DATE_TIME', [...dateOperands, ...emptyOperands]],

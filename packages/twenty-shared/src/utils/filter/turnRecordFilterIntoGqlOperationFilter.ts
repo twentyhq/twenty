@@ -115,6 +115,29 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
   switch (filterType) {
     case 'TEXT':
       switch (recordFilter.operand) {
+        case RecordFilterOperand.IS:
+          return {
+            [correspondingFieldMetadataItem.name]: {
+              eq: recordFilter.value,
+            } as StringFilter,
+          };
+        case RecordFilterOperand.IS_NOT:
+          return {
+            or: [
+              {
+                not: {
+                  [correspondingFieldMetadataItem.name]: {
+                    eq: recordFilter.value,
+                  } as StringFilter,
+                },
+              },
+              {
+                [correspondingFieldMetadataItem.name]: {
+                  is: 'NULL',
+                } as StringFilter,
+              },
+            ],
+          };
         case RecordFilterOperand.CONTAINS:
           return {
             [correspondingFieldMetadataItem.name]: {
@@ -674,6 +697,149 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
               },
             };
           }
+        case RecordFilterOperand.IS: {
+          if (!isSubFieldFilter) {
+            const parts = recordFilter.value
+              .split(' ')
+              .map((p) => p.trim())
+              .filter(isNonEmptyString);
+            const [firstPart, ...rest] = parts;
+            const lastPart = rest.join(' ');
+            return {
+              or: [
+                {
+                  [correspondingFieldMetadataItem.name]: {
+                    firstName: { eq: recordFilter.value },
+                  },
+                },
+                {
+                  [correspondingFieldMetadataItem.name]: {
+                    lastName: { eq: recordFilter.value },
+                  },
+                },
+                ...(isNonEmptyString(lastPart)
+                  ? [
+                      {
+                        and: [
+                          {
+                            [correspondingFieldMetadataItem.name]: {
+                              firstName: { eq: firstPart },
+                            },
+                          },
+                          {
+                            [correspondingFieldMetadataItem.name]: {
+                              lastName: { eq: lastPart },
+                            },
+                          },
+                        ],
+                      },
+                    ]
+                  : []),
+              ],
+            };
+          } else {
+            return {
+              [correspondingFieldMetadataItem.name]: {
+                [subFieldName]: { eq: recordFilter.value },
+              },
+            };
+          }
+        }
+        case RecordFilterOperand.IS_NOT: {
+          if (!isSubFieldFilter) {
+            const parts = recordFilter.value
+              .split(' ')
+              .map((p) => p.trim())
+              .filter(isNonEmptyString);
+            const [firstPart, ...rest] = parts;
+            const lastPart = rest.join(' ');
+            return {
+              and: [
+                {
+                  or: [
+                    {
+                      not: {
+                        [correspondingFieldMetadataItem.name]: {
+                          firstName: { eq: recordFilter.value },
+                        },
+                      },
+                    },
+                    {
+                      [correspondingFieldMetadataItem.name]: {
+                        firstName: { is: 'NULL' },
+                      },
+                    },
+                  ],
+                },
+                {
+                  or: [
+                    {
+                      not: {
+                        [correspondingFieldMetadataItem.name]: {
+                          lastName: { eq: recordFilter.value },
+                        },
+                      },
+                    },
+                    {
+                      [correspondingFieldMetadataItem.name]: {
+                        lastName: { is: 'NULL' },
+                      },
+                    },
+                  ],
+                },
+                ...(isNonEmptyString(lastPart)
+                  ? [
+                      {
+                        or: [
+                          {
+                            not: {
+                              [correspondingFieldMetadataItem.name]: {
+                                firstName: { eq: firstPart },
+                              },
+                            },
+                          },
+                          {
+                            not: {
+                              [correspondingFieldMetadataItem.name]: {
+                                lastName: { eq: lastPart },
+                              },
+                            },
+                          },
+                          {
+                            [correspondingFieldMetadataItem.name]: {
+                              firstName: { is: 'NULL' },
+                            },
+                          },
+                          {
+                            [correspondingFieldMetadataItem.name]: {
+                              lastName: { is: 'NULL' },
+                            },
+                          },
+                        ],
+                      },
+                    ]
+                  : []),
+              ],
+            };
+          } else {
+            return {
+              or: [
+                {
+                  not: {
+                    [correspondingFieldMetadataItem.name]: {
+                      [subFieldName]: { eq: recordFilter.value },
+                    },
+                  },
+                },
+                {
+                  [correspondingFieldMetadataItem.name]: {
+                    [subFieldName]: { is: 'NULL' },
+                  },
+                },
+              ],
+            };
+          }
+        }
         case RecordFilterOperand.DOES_NOT_CONTAIN:
           if (!isSubFieldFilter) {
             return {
@@ -1304,6 +1470,35 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
         }
 
         switch (recordFilter.operand) {
+          case RecordFilterOperand.IS:
+            return {
+              [correspondingFieldMetadataItem.name]: {
+                primaryPhoneNumber: {
+                  eq: filterValue,
+                },
+              } as PhonesFilter,
+            };
+          case RecordFilterOperand.IS_NOT:
+            return {
+              or: [
+                {
+                  not: {
+                    [correspondingFieldMetadataItem.name]: {
+                      primaryPhoneNumber: {
+                        eq: filterValue,
+                      },
+                    } as PhonesFilter,
+                  },
+                },
+                {
+                  [correspondingFieldMetadataItem.name]: {
+                    primaryPhoneNumber: {
+                      is: 'NULL',
+                    },
+                  } as PhonesFilter,
+                },
+              ],
+            };
           case RecordFilterOperand.CONTAINS:
             return {
               or: [
@@ -1380,7 +1575,11 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
         }
       }
 
-      const filterValue = recordFilter.value;
+      const filterValue = recordFilter.value.replace(/[^0-9]/g, '');
+
+      if (!isNonEmptyString(filterValue)) {
+        return;
+      }
 
       switch (subFieldName) {
         case 'additionalPhones': {
@@ -1426,6 +1625,35 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
         }
         case 'primaryPhoneNumber': {
           switch (recordFilter.operand) {
+            case RecordFilterOperand.IS:
+              return {
+                [correspondingFieldMetadataItem.name]: {
+                  primaryPhoneNumber: {
+                    eq: filterValue,
+                  },
+                } as PhonesFilter,
+              };
+            case RecordFilterOperand.IS_NOT:
+              return {
+                or: [
+                  {
+                    not: {
+                      [correspondingFieldMetadataItem.name]: {
+                        primaryPhoneNumber: {
+                          eq: filterValue,
+                        },
+                      } as PhonesFilter,
+                    },
+                  },
+                  {
+                    [correspondingFieldMetadataItem.name]: {
+                      primaryPhoneNumber: {
+                        is: 'NULL',
+                      },
+                    } as PhonesFilter,
+                  },
+                ],
+              };
             case RecordFilterOperand.CONTAINS:
               return {
                 [correspondingFieldMetadataItem.name]: {

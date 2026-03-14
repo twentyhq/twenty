@@ -28,6 +28,35 @@ export const computeGqlOperationFilterForEmails = ({
     switch (subFieldName) {
       case 'primaryEmail': {
         switch (recordFilter.operand) {
+          case RecordFilterOperand.IS:
+            return {
+              [correspondingFieldMetadataItem.name]: {
+                primaryEmail: {
+                  eq: recordFilter.value,
+                },
+              } satisfies EmailsFilter,
+            };
+          case RecordFilterOperand.IS_NOT:
+            return {
+              or: [
+                {
+                  not: {
+                    [correspondingFieldMetadataItem.name]: {
+                      primaryEmail: {
+                        eq: recordFilter.value,
+                      },
+                    } satisfies EmailsFilter,
+                  },
+                },
+                {
+                  [correspondingFieldMetadataItem.name]: {
+                    primaryEmail: {
+                      is: 'NULL',
+                    },
+                  } satisfies EmailsFilter,
+                },
+              ],
+            };
           case RecordFilterOperand.CONTAINS:
             return {
               [correspondingFieldMetadataItem.name]: {
@@ -100,6 +129,35 @@ export const computeGqlOperationFilterForEmails = ({
   }
 
   switch (recordFilter.operand) {
+    case RecordFilterOperand.IS:
+      return {
+        [correspondingFieldMetadataItem.name]: {
+          primaryEmail: {
+            eq: recordFilter.value,
+          },
+        } satisfies EmailsFilter,
+      };
+    case RecordFilterOperand.IS_NOT:
+      return {
+        or: [
+          {
+            not: {
+              [correspondingFieldMetadataItem.name]: {
+                primaryEmail: {
+                  eq: recordFilter.value,
+                },
+              } satisfies EmailsFilter,
+            },
+          },
+          {
+            [correspondingFieldMetadataItem.name]: {
+              primaryEmail: {
+                is: 'NULL',
+              },
+            } satisfies EmailsFilter,
+          },
+        ],
+      };
     case RecordFilterOperand.CONTAINS:
       return {
         or: [

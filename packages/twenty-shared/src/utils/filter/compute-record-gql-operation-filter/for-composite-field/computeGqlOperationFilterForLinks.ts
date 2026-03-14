@@ -27,6 +27,35 @@ export const computeGqlOperationFilterForLinks = ({
       case 'primaryLinkLabel':
       case 'primaryLinkUrl': {
         switch (recordFilter.operand) {
+          case RecordFilterOperand.IS:
+            return {
+              [correspondingFieldMetadataItem.name]: {
+                [subFieldName]: {
+                  eq: recordFilter.value,
+                },
+              } satisfies LinksFilter,
+            };
+          case RecordFilterOperand.IS_NOT:
+            return {
+              or: [
+                {
+                  not: {
+                    [correspondingFieldMetadataItem.name]: {
+                      [subFieldName]: {
+                        eq: recordFilter.value,
+                      },
+                    } satisfies LinksFilter,
+                  },
+                },
+                {
+                  [correspondingFieldMetadataItem.name]: {
+                    [subFieldName]: {
+                      is: 'NULL',
+                    },
+                  } satisfies LinksFilter,
+                },
+              ],
+            };
           case RecordFilterOperand.CONTAINS:
             return {
               [correspondingFieldMetadataItem.name]: {
@@ -99,6 +128,35 @@ export const computeGqlOperationFilterForLinks = ({
   }
 
   switch (recordFilter.operand) {
+    case RecordFilterOperand.IS:
+      return {
+        [correspondingFieldMetadataItem.name]: {
+          primaryLinkUrl: {
+            eq: recordFilter.value,
+          },
+        } satisfies LinksFilter,
+      };
+    case RecordFilterOperand.IS_NOT:
+      return {
+        or: [
+          {
+            not: {
+              [correspondingFieldMetadataItem.name]: {
+                primaryLinkUrl: {
+                  eq: recordFilter.value,
+                },
+              } satisfies LinksFilter,
+            },
+          },
+          {
+            [correspondingFieldMetadataItem.name]: {
+              primaryLinkUrl: {
+                is: 'NULL',
+              },
+            } satisfies LinksFilter,
+          },
+        ],
+      };
     case RecordFilterOperand.CONTAINS:
       return {
         or: [
