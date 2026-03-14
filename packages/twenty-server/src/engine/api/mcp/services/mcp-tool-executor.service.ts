@@ -42,8 +42,8 @@ export class McpToolExecutorService {
 
   handleToolsListing(id: string | number, toolSet: ToolSet) {
     const toolsArray = Object.entries(toolSet)
-      .filter(([, def]) => !!def.inputSchema)
-      .map(([name, def]) => {
+      .filter(([, def]: [string, any]) => !!def.inputSchema)
+      .map(([name, def]: [string, any]) => {
         // Unwrap the AI SDK's jsonSchema wrapper if present
         // The AI SDK serializes schemas as { jsonSchema: {...} } but MCP expects {...} directly
         const inputSchema = def.inputSchema;
@@ -63,12 +63,7 @@ export class McpToolExecutorService {
 
     return wrapJsonRpcResponse(id, {
       result: {
-        capabilities: {
-          tools: { listChanged: false },
-        },
         tools: toolsArray,
-        resources: [],
-        prompts: [],
       },
     });
   }
