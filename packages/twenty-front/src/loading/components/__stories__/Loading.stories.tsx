@@ -6,11 +6,11 @@ import {
   PageDecorator,
   type PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
-import { PrefetchLoadingDecorator } from '~/testing/decorators/PrefetchLoadingDecorator';
+import { LoadingDecorator } from '~/testing/decorators/LoadingDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
 const meta: Meta<PageDecoratorArgs> = {
-  title: 'App/Loading/PrefetchLoading',
+  title: 'App/Loading',
   component: RecordIndexPage,
   args: {
     routePath: '/objects/:objectNamePlural',
@@ -20,7 +20,7 @@ const meta: Meta<PageDecoratorArgs> = {
   },
   parameters: {
     msw: graphqlMocks,
-    prefetchLoadingSetDelay: 1000,
+    loadingSetDelay: 1000,
   },
   tags: ['no-tests'],
 };
@@ -32,7 +32,7 @@ export type Story = StoryObj<typeof RecordIndexPage>;
 export const Default: Story = {
   // oxlint-disable-next-line @typescripttypescript/ban-ts-comment
   // @ts-ignore
-  decorators: [PrefetchLoadingDecorator, PageDecorator],
+  decorators: [LoadingDecorator, PageDecorator],
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 

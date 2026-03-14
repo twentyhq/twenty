@@ -2,7 +2,7 @@ import { useListenToMetadataOperationBrowserEvent } from '@/browser-event/hooks/
 import { useMetadataStore } from '@/metadata-store/hooks/useMetadataStore';
 import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItems';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { prefetchNavigationMenuItemsState } from '@/prefetch/states/prefetchNavigationMenuItemsState';
+import { navigationMenuItemsState } from '@/navigation-menu-item/states/navigationMenuItemsState';
 import { useListenToEventsForQuery } from '@/sse-db-event/hooks/useListenToEventsForQuery';
 import { useStore } from 'jotai';
 import { useApolloClient } from '@apollo/client/react';
@@ -44,7 +44,7 @@ export const ObjectMetadataItemSSEEffect = () => {
       });
 
       const existingNavigationMenuItems = store.get(
-        prefetchNavigationMenuItemsState.atom,
+        navigationMenuItemsState.atom,
       );
 
       if (
@@ -54,7 +54,7 @@ export const ObjectMetadataItemSSEEffect = () => {
         )
       ) {
         store.set(
-          prefetchNavigationMenuItemsState.atom,
+          navigationMenuItemsState.atom,
           navigationMenuItemsResult.data?.navigationMenuItems ?? [],
         );
       }

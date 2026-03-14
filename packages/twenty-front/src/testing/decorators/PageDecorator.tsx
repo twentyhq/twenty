@@ -24,7 +24,6 @@ import { mockedApolloClient } from '~/testing/mockedApolloClient';
 import { MainContextStoreProvider } from '@/context-store/components/MainContextStoreProvider';
 import { PreComputedChipGeneratorsProvider } from '@/object-metadata/components/PreComputedChipGeneratorsProvider';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
-import { PrefetchDataProvider } from '@/prefetch/components/PrefetchDataProvider';
 import { SnackBarComponentInstanceContext } from '@/ui/feedback/snack-bar-manager/contexts/SnackBarComponentInstanceContext';
 import { WorkspaceProviderEffect } from '@/workspace/components/WorkspaceProviderEffect';
 import { i18n } from '@lingui/core';
@@ -92,11 +91,9 @@ const Providers = () => {
                     <FullHeightStorybookLayout>
                       <HelmetProvider>
                         <IconsProvider>
-                          <PrefetchDataProvider>
-                            <RecordComponentInstanceContextsWrapper componentInstanceId="storybook-test-record">
-                              <Outlet />
-                            </RecordComponentInstanceContextsWrapper>
-                          </PrefetchDataProvider>
+                          <RecordComponentInstanceContextsWrapper componentInstanceId="storybook-test-record">
+                            <Outlet />
+                          </RecordComponentInstanceContextsWrapper>
                         </IconsProvider>
                       </HelmetProvider>
                     </FullHeightStorybookLayout>

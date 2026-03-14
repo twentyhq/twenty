@@ -2,11 +2,11 @@ import { isDefined } from 'twenty-shared/utils';
 import { useMutation } from '@apollo/client/react';
 import { CreateNavigationMenuItemDocument } from '~/generated-metadata/graphql';
 
-import { usePrefetchedNavigationMenuItemsData } from '@/navigation-menu-item/hooks/usePrefetchedNavigationMenuItemsData';
+import { useNavigationMenuItemsData } from '@/navigation-menu-item/hooks/useNavigationMenuItemsData';
 
 export const useCreateNavigationMenuItemFolder = () => {
   const { navigationMenuItems, currentWorkspaceMemberId } =
-    usePrefetchedNavigationMenuItemsData();
+    useNavigationMenuItemsData();
 
   const [createNavigationMenuItemMutation] = useMutation(
     CreateNavigationMenuItemDocument,

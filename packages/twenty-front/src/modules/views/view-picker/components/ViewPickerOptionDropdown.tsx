@@ -1,7 +1,6 @@
-import { isDefined } from 'twenty-shared/utils';
-import { useCreateFavorite } from '@/favorites/hooks/useCreateFavorite';
-import { useFavorites } from '@/favorites/hooks/useFavorites';
-import { usePrefetchedNavigationMenuItemsData } from '@/navigation-menu-item/hooks/usePrefetchedNavigationMenuItemsData';
+import { useCreateNavigationMenuItem } from '@/navigation-menu-item/hooks/useCreateNavigationMenuItem';
+import { useNavigationMenuItemsData } from '@/navigation-menu-item/hooks/useNavigationMenuItemsData';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -10,9 +9,7 @@ import { MenuItemWithOptionDropdown } from '@/ui/navigation/menu-item/components
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { type View } from '@/views/types/View';
 import { useDestroyViewFromCurrentState } from '@/views/view-picker/hooks/useDestroyViewFromCurrentState';
-import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useLingui } from '@lingui/react/macro';
 import {
   IconHeart,
@@ -23,7 +20,6 @@ import {
 } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
 import {
-  FeatureFlagKey,
   PermissionFlagType,
   ViewVisibility,
 } from '~/generated-metadata/graphql';
@@ -60,33 +56,22 @@ export const ViewPickerOptionDropdown = ({
   const setViewPickerReferenceViewId = useSetAtomComponentState(
     viewPickerReferenceViewIdComponentState,
   );
-  const { setViewPickerMode } = useViewPickerMode();
   const hasViewsPermission = useHasPermissionFlag(PermissionFlagType.VIEWS);
 
-  const { sortedFavorites: favorites } = useFavorites();
-  const { createFavorite } = useCreateFavorite();
-  const isNavigationMenuItemEditingEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED,
-  );
+  const { createNavigationMenuItem } = useCreateNavigationMenuItem();
   const { navigationMenuItems, currentWorkspaceMemberId } =
-    usePrefetchedNavigationMenuItemsData();
+    useNavigationMenuItemsData();
 
   // Users with VIEWS permission can edit all views
   // Users without VIEWS permission can only edit unlisted views (which are always their own, filtered by backend)
   const canEditView =
     hasViewsPermission || view.visibility === ViewVisibility.UNLISTED;
 
-  const isFavorite = isNavigationMenuItemEditingEnabled
-    ? navigationMenuItems.some(
-        (item) =>
-          item.viewId === view.id &&
-          item.userWorkspaceId === currentWorkspaceMemberId,
-      )
-    : favorites.some(
-        (favorite) =>
-          favorite.recordId === view.id &&
-          isDefined(favorite.forWorkspaceMemberId),
-      );
+  const isFavorite = navigationMenuItems.some(
+    (item) =>
+      item.viewId === view.id &&
+      item.userWorkspaceId === currentWorkspaceMemberId,
+  );
 
   const handleDelete = () => {
     setViewPickerReferenceViewId(view.id);
@@ -96,10 +81,7 @@ export const ViewPickerOptionDropdown = ({
 
   const handleAddToFavorites = () => {
     if (!isFavorite) {
-      createFavorite(view, 'view');
-    } else {
-      setViewPickerReferenceViewId(view.id);
-      setViewPickerMode('favorite-folders-picker');
+      createNavigationMenuItem(view as unknown as ObjectRecord, 'view');
     }
     closeDropdown(dropdownId);
   };

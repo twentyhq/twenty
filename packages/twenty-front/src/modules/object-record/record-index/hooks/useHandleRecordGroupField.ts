@@ -5,7 +5,7 @@ import { useSetRecordGroups } from '@/object-record/record-group/hooks/useSetRec
 import { useLoadRecordIndexStates } from '@/object-record/record-index/hooks/useLoadRecordIndexStates';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { usePerformViewAPIUpdate } from '@/views/hooks/internal/usePerformViewAPIUpdate';
-import { useGetViewFromPrefetchState } from '@/views/hooks/useGetViewFromPrefetchState';
+import { useGetViewFromState } from '@/views/hooks/useGetViewFromState';
 import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
 import { type ViewGroup } from '@/views/types/ViewGroup';
 import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
@@ -23,7 +23,7 @@ export const useHandleRecordGroupField = () => {
 
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
 
-  const { getViewFromPrefetchState } = useGetViewFromPrefetchState();
+  const { getViewFromState } = useGetViewFromState();
 
   const { setRecordGroupsFromViewGroups } = useSetRecordGroups();
 
@@ -42,7 +42,7 @@ export const useHandleRecordGroupField = () => {
         return;
       }
 
-      const view = getViewFromPrefetchState(currentViewId);
+      const view = getViewFromState(currentViewId);
 
       if (isUndefinedOrNull(view)) {
         return;
@@ -126,7 +126,7 @@ export const useHandleRecordGroupField = () => {
     },
     [
       currentViewIdCallbackState,
-      getViewFromPrefetchState,
+      getViewFromState,
       performViewAPIUpdate,
       setRecordGroupsFromViewGroups,
       objectMetadataItem,
@@ -143,7 +143,7 @@ export const useHandleRecordGroupField = () => {
       return;
     }
 
-    const view = getViewFromPrefetchState(currentViewId);
+    const view = getViewFromState(currentViewId);
 
     if (isUndefinedOrNull(view)) {
       return;
@@ -161,7 +161,7 @@ export const useHandleRecordGroupField = () => {
     });
   }, [
     currentViewIdCallbackState,
-    getViewFromPrefetchState,
+    getViewFromState,
     performViewAPIUpdate,
     store,
   ]);
