@@ -1,3 +1,4 @@
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { type ObjectRecordFilterInput } from '~/generated/graphql';
 
@@ -12,9 +13,10 @@ type UseRelationFieldAdditionalFilterParams = {
 //
 // NOTE: The single-record picker uses the /search endpoint, which only accepts
 // ObjectRecordFilterInput with { id, createdAt, deletedAt, updatedAt } fields.
-// Filtering by custom relation fields (e.g. owningCompanyId) is not supported
-// there. For relation-scoped filters we must resolve the allowed IDs first and
-// pass { id: { in: [...] } } to stay within what the search endpoint accepts.
+// Custom relation/scalar fields (e.g. accountType, owningCompanyId) are NOT
+// supported there. For custom-field-based filters we resolve the affected IDs
+// via the workspace endpoint (useFindManyRecords / useFindOneRecord) and then
+// pass an id-based filter to stay within what the search endpoint accepts.
 export const useRelationFieldAdditionalFilter = ({
   fieldName,
   recordId,
@@ -23,8 +25,7 @@ export const useRelationFieldAdditionalFilter = ({
   const isAssociatedDeskField = fieldName === 'associatedDesk';
   const isOpportunity = objectNameSingular === 'opportunity';
 
-  // Fetch opportunity with its company and that company's desks in one call.
-  // skip when not needed so this hook is always called (rules of hooks).
+  // For associatedDesk on opportunity: fetch company + its desks in one call.
   const { record: opportunityRecord } = useFindOneRecord({
     objectNameSingular: 'opportunity',
     objectRecordId: recordId,
@@ -33,6 +34,24 @@ export const useRelationFieldAdditionalFilter = ({
       company: { id: true, desks: { id: true } },
     },
     skip: !(isAssociatedDeskField && isOpportunity),
+  });
+
+  // For company pickers on person / opportunity: exclude PARENT-type companies.
+  // We fetch PARENT company IDs via the workspace endpoint (which supports
+  // custom field filters) and pass { not: { id: { in: [...] } } } to the
+  // search endpoint (which only accepts id-based filters).
+  const isCompanyFieldOnPersonOrOpp =
+    fieldName === 'company' &&
+    (objectNameSingular === 'person' || objectNameSingular === 'opportunity');
+
+  const {
+    records: parentCompanies,
+    loading: parentCompaniesLoading,
+  } = useFindManyRecords({
+    objectNameSingular: 'company',
+    filter: { accountType: { eq: 'PARENT' } } as ObjectRecordFilterInput,
+    recordGqlFields: { id: true },
+    skip: !isCompanyFieldOnPersonOrOpp,
   });
 
   if (fieldName === 'clientAccount') {
@@ -51,18 +70,32 @@ export const useRelationFieldAdditionalFilter = ({
     )?.company;
 
     if (!company?.id) {
-      // No company selected yet — show nothing
       return { id: { eq: 'no-match' } };
     }
 
     const deskIds = (company.desks ?? []).map((d) => d.id).filter(Boolean);
 
     if (deskIds.length === 0) {
-      // Company has no desks yet — show nothing
       return { id: { eq: 'no-match' } };
     }
 
     return { id: { in: deskIds } };
+  }
+
+  if (isCompanyFieldOnPersonOrOpp) {
+    if (parentCompaniesLoading) {
+      // Show nothing until we know which IDs to exclude
+      return { id: { eq: 'no-match' } };
+    }
+
+    const parentIds = parentCompanies.map((c) => c.id);
+
+    if (parentIds.length === 0) {
+      // No PARENT companies exist — no restriction needed
+      return undefined;
+    }
+
+    return { not: { id: { in: parentIds } } };
   }
 
   return undefined;
