@@ -152,33 +152,44 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
       objectMetadataNameSingular: flatObjectMetadata.nameSingular,
     });
 
+    const hasAggregatedFields =
+      Object.keys(args.selectedFieldsResult.aggregate ?? {}).length > 0;
+
+    const hasRecordFields =
+      Object.keys(args.selectedFieldsResult.select ?? {}).length > 0 ||
+      Object.keys(args.selectedFieldsResult.relations ?? {}).length > 0;
+
     const limit = args.first ?? args.last ?? QUERY_MAX_RECORDS;
 
-    const columnsToSelect = buildColumnsToSelect({
-      select: args.selectedFieldsResult.select,
-      relations: args.selectedFieldsResult.relations,
-      flatObjectMetadata,
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-    });
+    let objectRecords: ObjectRecord[] = [];
 
-    if (isDefined(args.offset)) {
-      queryBuilder.skip(args.offset);
+    if (hasRecordFields) {
+      const columnsToSelect = buildColumnsToSelect({
+        select: args.selectedFieldsResult.select,
+        relations: args.selectedFieldsResult.relations,
+        flatObjectMetadata,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+      });
+
+      if (isDefined(args.offset)) {
+        queryBuilder.skip(args.offset);
+      }
+
+      queryBuilder.setFindOptions({ select: columnsToSelect });
+      queryBuilder.take(limit + 1);
+
+      // Add order columns AFTER setFindOptions (setFindOptions clears addSelect)
+      // Pass columnsToSelect so we only add columns that aren't already selected
+      commonQueryParser.addRelationOrderColumnsToBuilder(
+        queryBuilder,
+        parsedOrderBy,
+        flatObjectMetadata.nameSingular,
+        columnsToSelect,
+      );
+
+      objectRecords = (await queryBuilder.getMany()) as ObjectRecord[];
     }
-
-    queryBuilder.setFindOptions({ select: columnsToSelect });
-    queryBuilder.take(limit + 1);
-
-    // Add order columns AFTER setFindOptions (setFindOptions clears addSelect)
-    // Pass columnsToSelect so we only add columns that aren't already selected
-    commonQueryParser.addRelationOrderColumnsToBuilder(
-      queryBuilder,
-      parsedOrderBy,
-      flatObjectMetadata.nameSingular,
-      columnsToSelect,
-    );
-
-    const objectRecords = (await queryBuilder.getMany()) as ObjectRecord[];
 
     const pageInfo = getPageInfo(
       objectRecords,
@@ -190,9 +201,6 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
     if (!isForwardPagination) {
       objectRecords.reverse();
     }
-
-    const hasAggregatedFields =
-      Object.keys(args.selectedFieldsResult.aggregate ?? {}).length > 0;
 
     const parentObjectRecordsAggregatedValues = hasAggregatedFields
       ? await aggregateQueryBuilder.getRawOne()
