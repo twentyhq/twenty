@@ -22,8 +22,11 @@ export const splitObjectMetadataItemWithRelated = (
   const flatIndexes: FlatIndexMetadataItem[] = [];
 
   for (const objectMetadataItemWithRelated of objectMetadataItemsWithRelated) {
-    const { fields, indexMetadatas, ...objectProperties } =
-      objectMetadataItemWithRelated;
+    const {
+      fields = [],
+      indexMetadatas = [],
+      ...objectProperties
+    } = objectMetadataItemWithRelated;
 
     flatObjects.push(objectProperties);
 

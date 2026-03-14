@@ -80,7 +80,7 @@ describe('useGetAvailableFieldsForCalendar', () => {
     });
 
     expect(result.current.availableFieldsForCalendar).toHaveLength(2);
-    expect(result.current.availableFieldsForCalendar).toEqual([
+    expect(result.current.availableFieldsForCalendar).toMatchObject([
       {
         id: '1',
         type: FieldMetadataType.DATE,

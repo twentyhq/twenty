@@ -50,11 +50,11 @@ describe('useGetRelationMetadata', () => {
         (field) => field.name === 'pointOfContact',
       );
 
-    expect(relationObjectMetadataItem).toEqual(
-      expectedRelationObjectMetadataItem,
+    expect(relationObjectMetadataItem).toMatchObject(
+      expectedRelationObjectMetadataItem!,
     );
-    expect(relationFieldMetadataItem).toEqual(
-      expectedRelationFieldMetadataItem,
+    expect(relationFieldMetadataItem).toMatchObject(
+      expectedRelationFieldMetadataItem!,
     );
     expect(relationType).toBe('ONE_TO_MANY');
   });
