@@ -10,6 +10,7 @@ import {
   ViewVisibility,
 } from 'twenty-shared/types';
 import { fromArrayToUniqueKeyRecord, isDefined } from 'twenty-shared/utils';
+import { type APP_LOCALES } from 'twenty-shared/translations';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { v4 as uuidv4, v4 } from 'uuid';
 
@@ -71,10 +72,12 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     updateObjectInput,
     workspaceId,
     ownerFlatApplication,
+    locale,
   }: {
     workspaceId: string;
     updateObjectInput: UpdateOneObjectInput;
     ownerFlatApplication?: FlatApplication;
+    locale?: keyof typeof APP_LOCALES;
   }): Promise<FlatObjectMetadata> {
     const resolvedOwnerFlatApplication =
       ownerFlatApplication ??
@@ -117,6 +120,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       flatIndexMaps: existingFlatIndexMaps,
       flatViewFieldMaps: existingFlatViewFieldMaps,
       flatViewMaps: existingFlatViewMaps,
+      locale,
     });
 
     const validateAndBuildResult =

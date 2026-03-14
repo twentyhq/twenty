@@ -1,3 +1,4 @@
+import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import {
   extractAndSanitizeObjectStringFields,
   isDefined,
@@ -17,11 +18,13 @@ import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/be
 type SanitizeRawUpdateObjectInputArgs = {
   rawUpdateObjectInput: UpdateOneObjectInput;
   existingFlatObjectMetadata: FlatObjectMetadata;
+  locale?: keyof typeof APP_LOCALES;
 };
 
 export const sanitizeRawUpdateObjectInput = ({
   existingFlatObjectMetadata,
   rawUpdateObjectInput,
+  locale,
 }: SanitizeRawUpdateObjectInputArgs) => {
   const isStandardObject = belongsToTwentyStandardApp(
     existingFlatObjectMetadata,
@@ -59,6 +62,8 @@ export const sanitizeRawUpdateObjectInput = ({
     );
   }
 
+  const isSourceLocale = !locale || locale === SOURCE_LOCALE;
+
   const standardOverrides =
     OBJECT_METADATA_STANDARD_OVERRIDES_PROPERTIES.reduce(
       (standardOverrides, property) => {
@@ -73,21 +78,74 @@ export const sanitizeRawUpdateObjectInput = ({
         delete updatedEditableObjectProperties[property];
 
         if (propertyValue === existingFlatObjectMetadata[property]) {
-          if (
-            isDefined(standardOverrides) &&
-            Object.prototype.hasOwnProperty.call(standardOverrides, property)
-          ) {
-            const { [property]: _, ...restOverrides } = standardOverrides;
+          if (isSourceLocale || property === 'icon') {
+            if (
+              isDefined(standardOverrides) &&
+              Object.prototype.hasOwnProperty.call(standardOverrides, property)
+            ) {
+              const { [property]: _, ...restOverrides } = standardOverrides;
 
-            return restOverrides;
+              return restOverrides;
+            }
+
+            return standardOverrides;
           }
 
+          const localeTranslations = standardOverrides?.translations?.[locale];
+
+          if (
+            !isDefined(localeTranslations) ||
+            !Object.prototype.hasOwnProperty.call(localeTranslations, property)
+          ) {
+            return standardOverrides;
+          }
+
+          const { [property]: _removed, ...restLocaleTranslations } =
+            localeTranslations;
+          const { [locale]: _locale, ...restTranslations } =
+            standardOverrides?.translations ?? {};
+
+          const updatedTranslations =
+            Object.keys(restLocaleTranslations).length > 0
+              ? { ...restTranslations, [locale]: restLocaleTranslations }
+              : restTranslations;
+
+          if (Object.keys(updatedTranslations).length > 0) {
+            return { ...standardOverrides, translations: updatedTranslations };
+          }
+
+          const { translations: _translations, ...rootOverrides } =
+            standardOverrides ?? {};
+
+          return Object.keys(rootOverrides).length > 0
+            ? (rootOverrides as NonNullable<typeof standardOverrides>)
+            : null;
+        }
+
+        if (isSourceLocale || property === 'icon') {
+          return {
+            ...standardOverrides,
+            [property]: propertyValue,
+          };
+        }
+
+        const localeTranslations = standardOverrides?.translations?.[locale];
+        const existingTranslationValue =
+          localeTranslations?.[property as keyof typeof localeTranslations];
+
+        if (propertyValue === existingTranslationValue) {
           return standardOverrides;
         }
 
         return {
           ...standardOverrides,
-          [property]: propertyValue,
+          translations: {
+            ...standardOverrides?.translations,
+            [locale]: {
+              ...standardOverrides?.translations?.[locale],
+              [property]: propertyValue,
+            },
+          },
         };
       },
       existingFlatObjectMetadata.standardOverrides,

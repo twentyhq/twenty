@@ -23,6 +23,7 @@ import { mergeUpdateInExistingRecord } from 'src/utils/merge-update-in-existing-
 
 type FromUpdateObjectInputToFlatObjectMetadataArgs = {
   updateObjectInput: UpdateOneObjectInput;
+  locale?: Parameters<typeof sanitizeRawUpdateObjectInput>[0]['locale'];
 } & Pick<
   AllFlatEntityMaps,
   | 'flatIndexMaps'
@@ -40,6 +41,7 @@ export const fromUpdateObjectInputToFlatObjectMetadataAndRelatedFlatEntities =
     flatFieldMetadataMaps,
     flatViewFieldMaps,
     flatViewMaps,
+    locale,
   }: FromUpdateObjectInputToFlatObjectMetadataArgs): FlatObjectMetadataUpdateSideEffects & {
     flatObjectMetadataToUpdate: UniversalFlatObjectMetadata;
   } => {
@@ -68,6 +70,7 @@ export const fromUpdateObjectInputToFlatObjectMetadataAndRelatedFlatEntities =
       sanitizeRawUpdateObjectInput({
         existingFlatObjectMetadata,
         rawUpdateObjectInput,
+        locale,
       });
 
     const toFlatObjectMetadata = {
