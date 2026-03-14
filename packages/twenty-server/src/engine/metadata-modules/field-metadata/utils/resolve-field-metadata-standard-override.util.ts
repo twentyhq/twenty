@@ -1,6 +1,6 @@
 import { type I18n } from '@lingui/core';
 import { isNonEmptyString } from '@sniptt/guards';
-import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
+import { type APP_LOCALES } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 
 import { generateMessageId } from 'src/engine/core-modules/i18n/utils/generateMessageId';
@@ -37,10 +37,7 @@ export const resolveFieldMetadataStandardOverride = (
     }
   }
 
-  if (
-    locale === SOURCE_LOCALE &&
-    isNonEmptyString(fieldMetadata.standardOverrides?.[labelKey])
-  ) {
+  if (isNonEmptyString(fieldMetadata.standardOverrides?.[labelKey])) {
     return fieldMetadata.standardOverrides[labelKey] ?? '';
   }
 

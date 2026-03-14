@@ -1,5 +1,3 @@
-import { FileTypeParser } from 'file-type';
-
 import { extractFileInfo } from '../extract-file-info.utils';
 
 const pngBuffer = Buffer.from([
@@ -103,27 +101,4 @@ describe('extractFileInfo', () => {
       );
     },
   );
-
-  it('should not crash when file-type detection throws an internal error', async () => {
-    jest
-      .spyOn(FileTypeParser.prototype, 'fromBuffer')
-      .mockRejectedValueOnce(new Error('Unclosed root tag'));
-
-    const result = await extractFileInfo({
-      file: textBuffer,
-      filename: 'notes.txt',
-    });
-
-    expect(result).toEqual({ mimeType: 'text/plain', ext: 'txt' });
-  });
-
-  it('should throw FileStorageException instead of internal error when detection fails for supported type', async () => {
-    jest
-      .spyOn(FileTypeParser.prototype, 'fromBuffer')
-      .mockRejectedValueOnce(new Error('Unclosed root tag'));
-
-    await expect(
-      extractFileInfo({ file: pdfBuffer, filename: 'document.pdf' }),
-    ).rejects.toThrow('File content does not match its extension');
-  });
 });

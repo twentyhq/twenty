@@ -319,7 +319,7 @@ describe('resolveObjectMetadataStandardOverride', () => {
       ).toBe('overridden-icon');
     });
 
-    it('should not use direct override for non-SOURCE_LOCALE', () => {
+    it('should use direct override for non-SOURCE_LOCALE', () => {
       const objectMetadata = {
         labelSingular: 'Standard Label',
         labelPlural: 'Standard Labels',
@@ -332,9 +332,6 @@ describe('resolveObjectMetadataStandardOverride', () => {
         },
       };
 
-      mockGenerateMessageId.mockReturnValue('generated-message-id');
-      mockI18n._.mockReturnValue('generated-message-id');
-
       const result = resolveObjectMetadataStandardOverride(
         objectMetadata,
         'labelSingular',
@@ -342,7 +339,9 @@ describe('resolveObjectMetadataStandardOverride', () => {
         mockI18n,
       );
 
-      expect(result).toBe('Standard Label');
+      expect(result).toBe('Overridden Label');
+      expect(mockGenerateMessageId).not.toHaveBeenCalled();
+      expect(mockI18n._).not.toHaveBeenCalled();
     });
 
     it('should not use undefined override for SOURCE_LOCALE', () => {

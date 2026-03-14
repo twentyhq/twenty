@@ -45,10 +45,7 @@ export const resolveObjectMetadataStandardOverride = (
     }
   }
 
-  if (
-    safeLocale === SOURCE_LOCALE &&
-    isNonEmptyString(objectMetadata.standardOverrides?.[labelKey])
-  ) {
+  if (isNonEmptyString(objectMetadata.standardOverrides?.[labelKey])) {
     return objectMetadata.standardOverrides[labelKey] ?? '';
   }
 

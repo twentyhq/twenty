@@ -25,19 +25,8 @@ export const extractFileInfo = async ({
     customDetectors: [detectPdf],
   });
 
-  let detectedExt: string | undefined;
-  let detectedMime: string | undefined;
-
-  try {
-    const detected = await fileParser.fromBuffer(file);
-
-    detectedExt = detected?.ext;
-    detectedMime = detected?.mime;
-  } catch {
-    // The @file-type/pdf plugin may throw SAX XML parsing errors
-    // on PDFs with malformed internal metadata. Fall through to
-    // extension-based detection.
-  }
+  const { ext: detectedExt, mime: detectedMime } =
+    (await fileParser.fromBuffer(file)) ?? {};
 
   if (isDefined(detectedExt) && isDefined(detectedMime)) {
     return {
