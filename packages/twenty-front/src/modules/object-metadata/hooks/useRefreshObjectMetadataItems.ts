@@ -1,75 +1,22 @@
 import { isAppEffectRedirectEnabledState } from '@/app/states/isAppEffectRedirectEnabledState';
-import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
+import { useMetadataStore } from '@/metadata-store/hooks/useMetadataStore';
+import { splitObjectMetadataItemWithRelated } from '@/metadata-store/utils/splitObjectMetadataItemWithRelated';
 import { FIND_MANY_OBJECT_METADATA_ITEMS } from '@/object-metadata/graphql/queries';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { enrichObjectMetadataItemsWithPermissions } from '@/object-metadata/utils/enrichObjectMetadataItemsWithPermissions';
 import { mapPaginatedObjectMetadataItemsToObjectMetadataItems } from '@/object-metadata/utils/mapPaginatedObjectMetadataItemsToObjectMetadataItems';
 import { type FetchPolicy } from '@apollo/client';
 import { useApolloClient } from '@apollo/client/react';
-import { useCallback } from 'react';
-import { type ObjectPermissions } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
-import { type ObjectMetadataItemsQuery } from '~/generated-metadata/graphql';
-import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { useStore } from 'jotai';
+import { useCallback } from 'react';
+import { type ObjectMetadataItemsQuery } from '~/generated-metadata/graphql';
 
 export const useRefreshObjectMetadataItems = (
   fetchPolicy: FetchPolicy = 'network-only',
 ) => {
   const store = useStore();
   const client = useApolloClient();
+  const { updateDraft, applyChanges } = useMetadataStore();
 
-  const replaceObjectMetadataItemIfDifferent = useCallback(
-    (
-      toSetObjectMetadataItems: Omit<
-        ObjectMetadataItem,
-        'readableFields' | 'updatableFields'
-      >[],
-    ) => {
-      const currentUserWorkspace = store.get(currentUserWorkspaceState.atom);
-
-      if (!isDefined(currentUserWorkspace)) {
-        return;
-      }
-
-      const objectPermissionsByObjectMetadataId =
-        currentUserWorkspace.objectsPermissions.reduce(
-          (acc, objectPermission) => {
-            acc[objectPermission.objectMetadataId] = objectPermission;
-            return acc;
-          },
-          {} as Record<
-            string,
-            ObjectPermissions & { objectMetadataId: string }
-          >,
-        );
-
-      const newObjectMetadataItems = enrichObjectMetadataItemsWithPermissions({
-        objectMetadataItems: toSetObjectMetadataItems,
-        objectPermissionsByObjectMetadataId,
-      });
-
-      if (
-        !isDeeplyEqual(
-          store.get(objectMetadataItemsState.atom),
-          newObjectMetadataItems,
-        ) &&
-        newObjectMetadataItems.length > 0
-      ) {
-        store.set(objectMetadataItemsState.atom, newObjectMetadataItems);
-      }
-
-      if (store.get(isAppEffectRedirectEnabledState.atom) === false) {
-        store.set(isAppEffectRedirectEnabledState.atom, true);
-      }
-
-      return newObjectMetadataItems;
-    },
-    [store],
-  );
-
-  const refreshObjectMetadataItems = async () => {
+  const refreshObjectMetadataItems = useCallback(async () => {
     const objectMetadataItemsResult =
       await client.query<ObjectMetadataItemsQuery>({
         query: FIND_MANY_OBJECT_METADATA_ITEMS,
@@ -77,13 +24,23 @@ export const useRefreshObjectMetadataItems = (
         fetchPolicy,
       });
 
-    const objectMetadataItems =
+    const compositeObjects =
       mapPaginatedObjectMetadataItemsToObjectMetadataItems({
         pagedObjectMetadataItems: objectMetadataItemsResult.data,
       });
 
-    return replaceObjectMetadataItemIfDifferent(objectMetadataItems);
-  };
+    const { flatObjects, flatFields, flatIndexes } =
+      splitObjectMetadataItemWithRelated(compositeObjects);
+
+    updateDraft('objectMetadataItems', flatObjects);
+    updateDraft('fieldMetadataItems', flatFields);
+    updateDraft('indexMetadataItems', flatIndexes);
+    applyChanges();
+
+    if (store.get(isAppEffectRedirectEnabledState.atom) === false) {
+      store.set(isAppEffectRedirectEnabledState.atom, true);
+    }
+  }, [client, fetchPolicy, store, updateDraft, applyChanges]);
 
   return {
     refreshObjectMetadataItems,

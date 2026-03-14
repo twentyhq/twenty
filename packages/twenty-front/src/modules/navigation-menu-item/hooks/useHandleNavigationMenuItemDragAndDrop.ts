@@ -10,10 +10,10 @@ import { calculateNewPosition } from '@/ui/layout/draggable-list/utils/calculate
 import { FOLDER_DROPPABLE_IDS } from '@/ui/layout/draggable-list/utils/folderDroppableIds';
 import { validateAndExtractFolderId } from '@/ui/layout/draggable-list/utils/validateAndExtractFolderId';
 
-import { usePrefetchedNavigationMenuItemsData } from './usePrefetchedNavigationMenuItemsData';
+import { useNavigationMenuItemsData } from './useNavigationMenuItemsData';
 
 export const useHandleNavigationMenuItemDragAndDrop = () => {
-  const { navigationMenuItems } = usePrefetchedNavigationMenuItemsData();
+  const { navigationMenuItems } = useNavigationMenuItemsData();
   const { navigationMenuItemsSorted } = useSortedNavigationMenuItems();
   const { updateNavigationMenuItem } = useUpdateNavigationMenuItem();
   const setOpenNavigationMenuItemFolderIds = useSetAtomState(

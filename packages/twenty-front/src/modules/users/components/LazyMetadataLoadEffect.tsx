@@ -1,5 +1,6 @@
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { useMetadataStore } from '@/metadata-store/hooks/useMetadataStore';
+import { navigationMenuItemsState } from '@/navigation-menu-item/states/navigationMenuItemsState';
 import { recordPageLayoutsState } from '@/page-layout/states/recordPageLayoutsState';
 import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { transformPageLayout } from '@/page-layout/utils/transformPageLayout';
@@ -18,6 +19,7 @@ import {
   FindAllRecordPageLayoutsDocument,
   FindFieldsWidgetCoreViewsDocument,
   FindManyLogicFunctionsDocument,
+  FindManyNavigationMenuItemsDocument,
 } from '~/generated-metadata/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
@@ -30,6 +32,7 @@ export const LazyMetadataLoadEffect = () => {
   const store = useStore();
 
   const setLogicFunctions = useSetAtomState(logicFunctionsState);
+  const setNavigationMenuItems = useSetAtomState(navigationMenuItemsState);
   const { updateDraft, applyChanges } = useMetadataStore();
 
   const isOnAuthPath =
@@ -56,6 +59,11 @@ export const LazyMetadataLoadEffect = () => {
     {
       skip: !isLoggedIn,
     },
+  );
+
+  const { data: navigationMenuItemsData } = useQuery(
+    FindManyNavigationMenuItemsDocument,
+    { skip: shouldSkip },
   );
 
   const setFieldsWidgetCoreViews = useCallback(
@@ -121,6 +129,37 @@ export const LazyMetadataLoadEffect = () => {
   }, [
     logicFunctionsData?.findManyLogicFunctions,
     setLogicFunctions,
+    updateDraft,
+    applyChanges,
+  ]);
+
+  useEffect(() => {
+    if (!isDefined(navigationMenuItemsData?.navigationMenuItems)) {
+      return;
+    }
+
+    const existingNavigationMenuItems = store.get(
+      navigationMenuItemsState.atom,
+    );
+
+    if (
+      !isDeeplyEqual(
+        existingNavigationMenuItems,
+        navigationMenuItemsData.navigationMenuItems,
+      )
+    ) {
+      setNavigationMenuItems(navigationMenuItemsData.navigationMenuItems);
+    }
+
+    updateDraft(
+      'navigationMenuItems',
+      navigationMenuItemsData.navigationMenuItems,
+    );
+    applyChanges();
+  }, [
+    navigationMenuItemsData?.navigationMenuItems,
+    setNavigationMenuItems,
+    store,
     updateDraft,
     applyChanges,
   ]);

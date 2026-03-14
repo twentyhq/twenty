@@ -90,7 +90,7 @@ export const PET_CUSTOM_FIELD_SEEDS: FieldMetadataSeed[] = [
     name: 'soundSwag',
   },
   {
-    type: FieldMetadataType.RICH_TEXT,
+    type: FieldMetadataType.TEXT,
     label: 'Bio',
     name: 'bio',
   },

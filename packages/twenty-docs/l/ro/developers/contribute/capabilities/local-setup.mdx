@@ -6,7 +6,7 @@ description: Ghidul pentru contribuitori (sau dezvoltatori curioși) care doresc
 ## Cerințe
 
 <Tabs>
-<Tab title="Linux și MacOS">
+<Tab title="Linux și macOS">
 
 Înainte de a instala și utiliza Twenty, asigurați-vă că instalați următoarele pe computerul dvs.:
 * [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
@@ -129,8 +129,8 @@ Trebuie să rulați toate comenzile în pașii următori de la rădăcina proiec
       brew services list
     ```
 
-    Instalatorul s-ar putea să nu creeze implicit utilizatorul `postgres` atunci când instalați
-    prin Homebrew pe MacOS. În schimb, creează un rol PostgreSQL care se potrivește cu numele de utilizator al
+    Instalatorul s-ar putea să nu creeze implicit utilizatorul `postgres` la instalarea
+    prin Homebrew pe macOS. În schimb, creează un rol PostgreSQL care se potrivește cu numele de utilizator al
     macOS-ului dvs. (de ex., "john").
     Pentru a verifica și crea utilizatorul `postgres` dacă este necesar, urmați acești pași:
     ```bash
@@ -189,11 +189,13 @@ Trebuie să rulați toate comenzile în pașii următori de la rădăcina proiec
   </Tab>
 </Tabs>
 
-Acum puteți accesa baza de date la [localhost:5432](localhost:5432), cu utilizator `postgres` și parolă `postgres`.
+You can now access the database at `localhost:5432`.
+
+If you used the Docker option above, the default credentials are user `postgres` and password `postgres`. For native PostgreSQL installations, use the credentials and roles configured on your machine.
 
 ## Pasul 4: Configurați o bază de date Redis (cache)
 
-Twenty necesită un cache Redis pentru a oferi cea mai bună performanță
+Twenty requires a Redis cache to provide the best performance.
 
 <Tabs>
   <Tab title="Linux">
@@ -210,8 +212,10 @@ Twenty necesită un cache Redis pentru a oferi cea mai bună performanță
     ```bash
     brew install redis
     ```
-    Porniți serverul Redis:
-    `brew services start redis`
+    Start your Redis server:
+    ```bash
+    brew services start redis
+    ```
 
     **Opțiunea 2:** Dacă aveți docker instalat:
     ```bash
@@ -229,11 +233,11 @@ Twenty necesită un cache Redis pentru a oferi cea mai bună performanță
   </Tab>
 </Tabs>
 
-Dacă aveți nevoie de o interfață grafică pentru client, vă recomandăm [Redis Insight](https://redis.io/insight/) (versiune gratuită disponibilă)
+If you need a client GUI, we recommend [Redis Insight](https://redis.io/insight/) (free version available).
 
-## Pasul 5: Configurați variabilele de mediu
+## Step 5: Set up environment variables
 
-Utilizați variabile de mediu sau fișiere `.env` pentru a configura proiectul dvs. Mai multe informații [aici](/l/ro/developers/self-host/capabilities/setup)
+Utilizați variabile de mediu sau fișiere `.env` pentru a configura proiectul dvs. Mai multe informații [aici](/l/ro/developers/self-host/capabilities/setup).
 
 Copiați fișierele `.env.example` din `/front` și `/server`:
 

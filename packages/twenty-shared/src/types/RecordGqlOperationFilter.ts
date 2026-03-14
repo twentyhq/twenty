@@ -146,13 +146,13 @@ export type FilesFilter = {
   is?: IsFilter;
 };
 
-export type RichTextV2LeafFilter = {
+export type RichTextLeafFilter = {
   ilike?: string;
 };
 
-export type RichTextV2Filter = {
-  blocknote?: RichTextV2LeafFilter;
-  markdown?: RichTextV2LeafFilter;
+export type RichTextFilter = {
+  blocknote?: RichTextLeafFilter;
+  markdown?: RichTextLeafFilter;
 };
 
 export type TSVectorFilter = {
@@ -176,7 +176,7 @@ export type LeafFilter =
   | ArrayFilter
   | RawJsonFilter
   | FilesFilter
-  | RichTextV2Filter
+  | RichTextFilter
   | TSVectorFilter
   | undefined;
 

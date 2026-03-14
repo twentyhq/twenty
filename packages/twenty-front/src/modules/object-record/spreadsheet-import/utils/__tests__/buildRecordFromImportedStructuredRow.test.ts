@@ -251,7 +251,7 @@ describe('buildRecordFromImportedStructuredRow', () => {
       universalIdentifier: '16',
       name: 'richTextField',
       label: 'Rich Text Field',
-      type: FieldMetadataType.RICH_TEXT_V2,
+      type: FieldMetadataType.RICH_TEXT,
       isNullable: true,
       isActive: true,
       isCustom: false,

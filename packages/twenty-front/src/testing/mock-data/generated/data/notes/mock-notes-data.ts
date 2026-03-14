@@ -23,7 +23,7 @@ export const mockedNoteRecords: ObjectRecord[] =
       ]
     },
     "bodyV2": {
-      "__typename": "RichTextV2",
+      "__typename": "RichText",
       "blocknote": "[{\"id\":\"block-1\",\"type\":\"paragraph\",\"props\":{\"textColor\":\"default\",\"backgroundColor\":\"default\",\"textAlignment\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"Great conversation today about potential collaboration opportunities. Next steps discussed include proposal review and timeline planning.\",\"styles\":{}}],\"children\":[]}]",
       "markdown": "Great conversation today about potential collaboration opportunities. Next steps discussed include proposal review and timeline planning."
     },
@@ -106,7 +106,7 @@ export const mockedNoteRecords: ObjectRecord[] =
       ]
     },
     "bodyV2": {
-      "__typename": "RichTextV2",
+      "__typename": "RichText",
       "blocknote": "[{\"id\":\"block-2\",\"type\":\"paragraph\",\"props\":{\"textColor\":\"default\",\"backgroundColor\":\"default\",\"textAlignment\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"Reviewed current project status and identified key deliverables for the upcoming quarter. Timeline adjustments may be needed.\",\"styles\":{}}],\"children\":[]}]",
       "markdown": "Reviewed current project status and identified key deliverables for the upcoming quarter. Timeline adjustments may be needed."
     },
@@ -189,7 +189,7 @@ export const mockedNoteRecords: ObjectRecord[] =
       ]
     },
     "bodyV2": {
-      "__typename": "RichTextV2",
+      "__typename": "RichText",
       "blocknote": "[{\"id\":\"block-3\",\"type\":\"paragraph\",\"props\":{\"textColor\":\"default\",\"backgroundColor\":\"default\",\"textAlignment\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"Impressive background in technology and leadership. Strong potential for senior roles in upcoming projects.\",\"styles\":{}}],\"children\":[]}]",
       "markdown": "Impressive background in technology and leadership. Strong potential for senior roles in upcoming projects."
     },
@@ -272,7 +272,7 @@ export const mockedNoteRecords: ObjectRecord[] =
       ]
     },
     "bodyV2": {
-      "__typename": "RichTextV2",
+      "__typename": "RichText",
       "blocknote": "[{\"id\":\"block-4\",\"type\":\"paragraph\",\"props\":{\"textColor\":\"default\",\"backgroundColor\":\"default\",\"textAlignment\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"Made connection at industry conference. Shared interests in digital transformation and innovation strategies.\",\"styles\":{}}],\"children\":[]}]",
       "markdown": "Made connection at industry conference. Shared interests in digital transformation and innovation strategies."
     },
@@ -355,7 +355,7 @@ export const mockedNoteRecords: ObjectRecord[] =
       ]
     },
     "bodyV2": {
-      "__typename": "RichTextV2",
+      "__typename": "RichText",
       "blocknote": "[{\"id\":\"block-5\",\"type\":\"paragraph\",\"props\":{\"textColor\":\"default\",\"backgroundColor\":\"default\",\"textAlignment\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"Strong candidate with relevant experience. Technical skills align well with team requirements. Positive cultural fit assessment.\",\"styles\":{}}],\"children\":[]}]",
       "markdown": "Strong candidate with relevant experience. Technical skills align well with team requirements. Positive cultural fit assessment."
     },
@@ -438,7 +438,7 @@ export const mockedNoteRecords: ObjectRecord[] =
       ]
     },
     "bodyV2": {
-      "__typename": "RichTextV2",
+      "__typename": "RichText",
       "blocknote": "[{\"id\":\"block-6\",\"type\":\"paragraph\",\"props\":{\"textColor\":\"default\",\"backgroundColor\":\"default\",\"textAlignment\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"Quarterly review completed. Exceeded targets in key areas. Discussed career development opportunities and growth plans.\",\"styles\":{}}],\"children\":[]}]",
       "markdown": "Quarterly review completed. Exceeded targets in key areas. Discussed career development opportunities and growth plans."
     },
@@ -521,7 +521,7 @@ export const mockedNoteRecords: ObjectRecord[] =
       ]
     },
     "bodyV2": {
-      "__typename": "RichTextV2",
+      "__typename": "RichText",
       "blocknote": "[{\"id\":\"block-7\",\"type\":\"paragraph\",\"props\":{\"textColor\":\"default\",\"backgroundColor\":\"default\",\"textAlignment\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"Completed certification program successfully. Ready to take on expanded responsibilities in the next phase.\",\"styles\":{}}],\"children\":[]}]",
       "markdown": "Completed certification program successfully. Ready to take on expanded responsibilities in the next phase."
     },
@@ -604,7 +604,7 @@ export const mockedNoteRecords: ObjectRecord[] =
       ]
     },
     "bodyV2": {
-      "__typename": "RichTextV2",
+      "__typename": "RichText",
       "blocknote": "[{\"id\":\"block-8\",\"type\":\"paragraph\",\"props\":{\"textColor\":\"default\",\"backgroundColor\":\"default\",\"textAlignment\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"Long-standing professional relationship. Reliable partner for complex initiatives. High satisfaction ratings.\",\"styles\":{}}],\"children\":[]}]",
       "markdown": "Long-standing professional relationship. Reliable partner for complex initiatives. High satisfaction ratings."
     },
@@ -687,7 +687,7 @@ export const mockedNoteRecords: ObjectRecord[] =
       ]
     },
     "bodyV2": {
-      "__typename": "RichTextV2",
+      "__typename": "RichText",
       "blocknote": "[{\"id\":\"block-9\",\"type\":\"paragraph\",\"props\":{\"textColor\":\"default\",\"backgroundColor\":\"default\",\"textAlignment\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"Great conversation today about potential collaboration opportunities. Next steps discussed include proposal review and timeline planning.\",\"styles\":{}}],\"children\":[]}]",
       "markdown": "Great conversation today about potential collaboration opportunities. Next steps discussed include proposal review and timeline planning."
     },
@@ -770,7 +770,7 @@ export const mockedNoteRecords: ObjectRecord[] =
       ]
     },
     "bodyV2": {
-      "__typename": "RichTextV2",
+      "__typename": "RichText",
       "blocknote": "[{\"id\":\"block-10\",\"type\":\"paragraph\",\"props\":{\"textColor\":\"default\",\"backgroundColor\":\"default\",\"textAlignment\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"Reviewed current project status and identified key deliverables for the upcoming quarter. Timeline adjustments may be needed.\",\"styles\":{}}],\"children\":[]}]",
       "markdown": "Reviewed current project status and identified key deliverables for the upcoming quarter. Timeline adjustments may be needed."
     },

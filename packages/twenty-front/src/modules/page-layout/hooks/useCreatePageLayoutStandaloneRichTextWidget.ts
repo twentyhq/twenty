@@ -17,7 +17,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 import {
   type PageLayoutWidget,
-  type RichTextV2Body,
+  type RichTextBody,
   WidgetType,
 } from '~/generated-metadata/graphql';
 
@@ -48,7 +48,7 @@ export const useCreatePageLayoutStandaloneRichTextWidget = (
   );
 
   const createPageLayoutStandaloneRichTextWidget = useCallback(
-    (body: RichTextV2Body): PageLayoutWidget => {
+    (body: RichTextBody): PageLayoutWidget => {
       const activeTabId = store.get(
         activeTabIdComponentState.atomFamily({
           instanceId: tabListInstanceId,

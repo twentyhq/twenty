@@ -8,6 +8,7 @@ export type MetadataEntityStoreStatus =
 export const ALL_METADATA_ENTITY_KEYS = [
   'objectMetadataItems',
   'fieldMetadataItems',
+  'indexMetadataItems',
   'views',
   'viewFields',
   'viewFilters',

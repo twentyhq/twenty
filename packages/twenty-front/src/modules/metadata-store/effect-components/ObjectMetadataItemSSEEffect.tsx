@@ -1,8 +1,7 @@
 import { useListenToMetadataOperationBrowserEvent } from '@/browser-event/hooks/useListenToMetadataOperationBrowserEvent';
-import { useMetadataStore } from '@/metadata-store/hooks/useMetadataStore';
-import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItems';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { prefetchNavigationMenuItemsState } from '@/prefetch/states/prefetchNavigationMenuItemsState';
+import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
+import { type FlatObjectMetadataItem } from '@/metadata-store/types/FlatObjectMetadataItem';
+import { navigationMenuItemsState } from '@/navigation-menu-item/states/navigationMenuItemsState';
 import { useListenToEventsForQuery } from '@/sse-db-event/hooks/useListenToEventsForQuery';
 import { useStore } from 'jotai';
 import { useApolloClient } from '@apollo/client/react';
@@ -18,9 +17,6 @@ export const ObjectMetadataItemSSEEffect = () => {
   const store = useStore();
   const client = useApolloClient();
 
-  const { refreshObjectMetadataItems } = useRefreshObjectMetadataItems();
-  const { updateDraft, applyChanges } = useMetadataStore();
-
   useListenToEventsForQuery({
     queryId,
     operationSignature: {
@@ -31,12 +27,52 @@ export const ObjectMetadataItemSSEEffect = () => {
 
   useListenToMetadataOperationBrowserEvent({
     metadataName: AllMetadataName.objectMetadata,
-    onMetadataOperationBrowserEvent: async () => {
-      await refreshObjectMetadataItems();
+    onMetadataOperationBrowserEvent: async (eventDetail) => {
+      const entry = store.get(
+        metadataStoreState.atomFamily('objectMetadataItems'),
+      );
+      const currentObjects = entry.current as FlatObjectMetadataItem[];
 
-      const loadedObjects = store.get(objectMetadataItemsState.atom);
-      updateDraft('objectMetadataItems', loadedObjects);
-      applyChanges();
+      switch (eventDetail.operation.type) {
+        case 'create': {
+          const createdObject = eventDetail.operation
+            .createdRecord as unknown as FlatObjectMetadataItem;
+
+          store.set(metadataStoreState.atomFamily('objectMetadataItems'), {
+            ...entry,
+            current: [...currentObjects, createdObject],
+          });
+          break;
+        }
+        case 'update': {
+          const updatedObject = eventDetail.operation
+            .updatedRecord as unknown as FlatObjectMetadataItem;
+
+          store.set(metadataStoreState.atomFamily('objectMetadataItems'), {
+            ...entry,
+            current: currentObjects.map((object) =>
+              object.id === updatedObject.id
+                ? { ...object, ...updatedObject }
+                : object,
+            ),
+          });
+          break;
+        }
+        case 'delete': {
+          const deletedObjectId = eventDetail.operation
+            .deletedRecordId as string;
+
+          store.set(metadataStoreState.atomFamily('objectMetadataItems'), {
+            ...entry,
+            current: currentObjects.filter(
+              (object) => object.id !== deletedObjectId,
+            ),
+          });
+          break;
+        }
+        default:
+          return;
+      }
 
       const navigationMenuItemsResult = await client.query({
         query: FindManyNavigationMenuItemsDocument,
@@ -44,7 +80,7 @@ export const ObjectMetadataItemSSEEffect = () => {
       });
 
       const existingNavigationMenuItems = store.get(
-        prefetchNavigationMenuItemsState.atom,
+        navigationMenuItemsState.atom,
       );
 
       if (
@@ -54,7 +90,7 @@ export const ObjectMetadataItemSSEEffect = () => {
         )
       ) {
         store.set(
-          prefetchNavigationMenuItemsState.atom,
+          navigationMenuItemsState.atom,
           navigationMenuItemsResult.data?.navigationMenuItems ?? [],
         );
       }

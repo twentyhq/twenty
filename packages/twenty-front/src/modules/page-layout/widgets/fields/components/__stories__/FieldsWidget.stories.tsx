@@ -6,8 +6,8 @@ import { expect, waitFor, within } from 'storybook/test';
 
 import { isAppMetadataReadyState } from '@/metadata-store/states/isAppMetadataReadyState';
 import { ApolloCoreClientContext } from '@/object-metadata/contexts/ApolloCoreClientContext';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { PageLayoutContentProvider } from '@/page-layout/contexts/PageLayoutContentContext';
@@ -236,6 +236,7 @@ export const WithViewFieldGroups: Story = {
           name: 'Contact Info',
           position: 0,
           isVisible: true,
+          isOverridden: false,
           viewId: FIELDS_VIEW_ID,
           viewFields: [
             {
@@ -245,6 +246,7 @@ export const WithViewFieldGroups: Story = {
               isVisible: true,
               size: 200,
               aggregateOperation: null,
+              isOverridden: false,
               viewId: FIELDS_VIEW_ID,
             },
             {
@@ -254,6 +256,7 @@ export const WithViewFieldGroups: Story = {
               isVisible: true,
               size: 200,
               aggregateOperation: null,
+              isOverridden: false,
               viewId: FIELDS_VIEW_ID,
             },
             {
@@ -263,6 +266,7 @@ export const WithViewFieldGroups: Story = {
               isVisible: true,
               size: 200,
               aggregateOperation: null,
+              isOverridden: false,
               viewId: FIELDS_VIEW_ID,
             },
           ],
@@ -272,6 +276,7 @@ export const WithViewFieldGroups: Story = {
           name: 'Business',
           position: 1,
           isVisible: true,
+          isOverridden: false,
           viewId: FIELDS_VIEW_ID,
           viewFields: [
             {
@@ -281,6 +286,7 @@ export const WithViewFieldGroups: Story = {
               isVisible: true,
               size: 200,
               aggregateOperation: null,
+              isOverridden: false,
               viewId: FIELDS_VIEW_ID,
             },
             {
@@ -290,6 +296,7 @@ export const WithViewFieldGroups: Story = {
               isVisible: true,
               size: 200,
               aggregateOperation: null,
+              isOverridden: false,
               viewId: FIELDS_VIEW_ID,
             },
             {
@@ -299,6 +306,7 @@ export const WithViewFieldGroups: Story = {
               isVisible: true,
               size: 200,
               aggregateOperation: null,
+              isOverridden: false,
               viewId: FIELDS_VIEW_ID,
             },
           ],
@@ -313,8 +321,8 @@ export const WithViewFieldGroups: Story = {
       companyObjectMetadataItem.id,
     );
 
-    jotaiStore.set(
-      objectMetadataItemsState.atom,
+    setTestObjectMetadataItemsInMetadataStore(
+      jotaiStore,
       generatedMockObjectMetadataItems,
     );
     jotaiStore.set(isAppMetadataReadyState.atom, true);
@@ -393,6 +401,7 @@ export const WithInlineViewFields: Story = {
           isVisible: true,
           size: 200,
           aggregateOperation: null,
+          isOverridden: false,
           viewId: FIELDS_VIEW_ID,
         },
         {
@@ -402,6 +411,7 @@ export const WithInlineViewFields: Story = {
           isVisible: true,
           size: 200,
           aggregateOperation: null,
+          isOverridden: false,
           viewId: FIELDS_VIEW_ID,
         },
         {
@@ -411,6 +421,7 @@ export const WithInlineViewFields: Story = {
           isVisible: true,
           size: 200,
           aggregateOperation: null,
+          isOverridden: false,
           viewId: FIELDS_VIEW_ID,
         },
       ],
@@ -423,8 +434,8 @@ export const WithInlineViewFields: Story = {
       companyObjectMetadataItem.id,
     );
 
-    jotaiStore.set(
-      objectMetadataItemsState.atom,
+    setTestObjectMetadataItemsInMetadataStore(
+      jotaiStore,
       generatedMockObjectMetadataItems,
     );
     jotaiStore.set(isAppMetadataReadyState.atom, true);
@@ -501,6 +512,7 @@ export const Empty: Story = {
           name: 'Empty Group',
           position: 0,
           isVisible: false,
+          isOverridden: false,
           viewId: FIELDS_VIEW_ID,
           viewFields: [],
         },
@@ -514,8 +526,8 @@ export const Empty: Story = {
       companyObjectMetadataItem.id,
     );
 
-    jotaiStore.set(
-      objectMetadataItemsState.atom,
+    setTestObjectMetadataItemsInMetadataStore(
+      jotaiStore,
       generatedMockObjectMetadataItems,
     );
     jotaiStore.set(isAppMetadataReadyState.atom, true);
