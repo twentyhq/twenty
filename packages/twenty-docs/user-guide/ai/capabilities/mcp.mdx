@@ -3,13 +3,17 @@ title: MCP Server
 description: Connect AI assistants to your Twenty workspace using the Model Context Protocol.
 ---
 
-Twenty exposes an [MCP](https://modelcontextprotocol.io/) server so that AI assistants — Claude Desktop, Windsurf, Cursor, and others — can read and write your CRM data through natural language.
+<Warning>
+MCP is currently in **alpha** and is only available on some workspaces. If you don't see the MCP Server section in Settings > APIs & Webhooks, it may not be enabled for your workspace yet.
+</Warning>
 
-The server is available at:
+Twenty exposes an [MCP](https://modelcontextprotocol.io/) server so that AI assistants — Claude Desktop, Claude Code, Cursor, ChatGPT, and others — can read and write your CRM data through natural language.
+
+Use your **workspace URL** (the URL you use to access Twenty) as the MCP endpoint. On Twenty Cloud, your workspace URL might be `https://{mycompany}.twenty.com` or a custom domain. The server is available at:
 
 | Environment | MCP Endpoint |
 |-------------|-------------|
-| **Cloud** | `https://api.twenty.com/mcp` |
+| **Cloud** | `https://{your-workspace-url}/mcp` (e.g. `https://mycompany.twenty.com/mcp`) |
 | **Self-Hosted** | `https://{your-domain}/mcp` |
 
 ## Authentication Methods
@@ -21,17 +25,17 @@ You have two ways to authenticate your MCP client: **OAuth** (recommended) or **
 With OAuth, your MCP client opens a browser window for you to log in. No secrets are stored in config files, and tokens refresh automatically.
 
 <Note>
-OAuth requires an MCP client that supports the [MCP Authorization specification](https://modelcontextprotocol.io/specification/2025-03-26/basic/authorization). Claude Desktop, Windsurf, and Cursor all support it.
+OAuth requires an MCP client that supports the [MCP Authorization specification](https://modelcontextprotocol.io/specification/2025-03-26/basic/authorization). Claude Desktop, Claude Code, Cursor, and ChatGPT support it.
 </Note>
 
-Add this to your MCP client configuration:
+Add this to your MCP client configuration, replacing `{your-workspace-url}` with the URL you use to access Twenty (e.g. `https://app.twenty.com`):
 
 ```json
 {
   "mcpServers": {
     "twenty": {
       "type": "streamable-http",
-      "url": "https://api.twenty.com/mcp"
+      "url": "https://{your-workspace-url}/mcp"
     }
   }
 }
@@ -55,7 +59,7 @@ If your MCP client does not support OAuth, or you prefer static credentials, pas
   "mcpServers": {
     "twenty": {
       "type": "streamable-http",
-      "url": "https://api.twenty.com/mcp",
+      "url": "https://{your-workspace-url}/mcp",
       "headers": {
         "Authorization": "Bearer YOUR_API_KEY"
       }
@@ -74,13 +78,14 @@ To create an API key, go to **Settings > APIs & Webhooks > + Create key**. See [
 
 ### 1. Copy the config
 
-Go to **Settings > AI > More > MCP Server** in Twenty. Choose your authentication method (OAuth or API Key), copy the JSON snippet, and paste it into your MCP client's config file.
+Go to **Settings > APIs & Webhooks** in Twenty and scroll to the **MCP Server** section. Choose your authentication method (OAuth or API Key), copy the JSON snippet (it will already use your workspace URL), and paste it into your MCP client's config file.
 
 | Client | Config file location |
 |--------|---------------------|
 | **Claude Desktop** | `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS) or `%APPDATA%\Claude\claude_desktop_config.json` (Windows) |
+| **Claude Code** | `~/.claude.json` (user) or `.mcp.json` (project) |
 | **Cursor** | `.cursor/mcp.json` in your project, or `~/.cursor/mcp.json` globally |
-| **Windsurf** | `~/.codeium/windsurf/mcp_config.json` |
+| **ChatGPT** | Add via **Settings > Connectors > Add custom connector** (Pro/Plus with Developer Mode) |
 
 ### 2. Connect
 
@@ -113,7 +118,7 @@ MCP connections inherit the permissions of the authenticated user (OAuth) or the
 
 ## Self-Hosted Configuration
 
-For self-hosted instances, replace `https://api.twenty.com` with your server URL. Make sure `SERVER_URL` in your environment matches the public URL of your Twenty instance — this is used to generate the OAuth discovery metadata.
+For self-hosted instances, replace `{your-workspace-url}` with your server URL. Make sure `SERVER_URL` in your environment matches the public URL of your Twenty instance — this is used to generate the OAuth discovery metadata.
 
 ```bash
 SERVER_URL=https://twenty.yourcompany.com
@@ -126,9 +131,6 @@ The MCP endpoint, OAuth endpoints, and discovery metadata all derive from this v
 **"Unauthorized" or 401 errors**
 - OAuth: re-authorize by clearing the stored tokens in your MCP client and reconnecting.
 - API Key: verify the key is valid and hasn't expired. Regenerate it if needed.
-
-**"Feature not enabled" errors**
-- The AI feature flag must be enabled for your workspace. Contact your workspace admin.
 
 **OAuth flow doesn't open a browser**
 - Ensure your MCP client supports MCP Authorization. Fall back to the API Key method if it doesn't.

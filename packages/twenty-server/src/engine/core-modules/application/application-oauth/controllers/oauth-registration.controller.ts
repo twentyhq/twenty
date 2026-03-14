@@ -14,6 +14,7 @@ import {
 import { type Request, type Response } from 'express';
 import { v4 } from 'uuid';
 
+import { InjectRepository } from '@nestjs/typeorm';
 import {
   ALL_OAUTH_SCOPES,
   type OAuthScope,
@@ -25,16 +26,17 @@ import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters
 import { validateRedirectUri } from 'src/engine/core-modules/auth/utils/validate-redirect-uri.util';
 import { ThrottlerException } from 'src/engine/core-modules/throttler/throttler.exception';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
+import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
-import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 // RFC 7591: 10 registrations per hour per IP
-const REGISTRATION_RATE_LIMIT_MAX = 10;
+const REGISTRATION_RATE_LIMIT_MAX =
+  process.env.NODE_ENV === NodeEnvironment.DEVELOPMENT ? 100 : 10;
 const REGISTRATION_RATE_LIMIT_WINDOW_MS = 3_600_000;
 
-const ALLOWED_GRANT_TYPES = ['authorization_code'];
+const ALLOWED_GRANT_TYPES = ['authorization_code', 'refresh_token'];
 const ALLOWED_RESPONSE_TYPES = ['code'];
 
 @Controller('oauth')
@@ -91,7 +93,7 @@ export class OAuthRegistrationController {
 
         return {
           error: 'invalid_client_metadata',
-          error_description: `Unsupported grant_type: ${grantType}. Only authorization_code is allowed for dynamic registrations.`,
+          error_description: `Unsupported grant_type: ${grantType}. Only authorization_code and refresh_token are allowed for dynamic registrations.`,
         };
       }
     }

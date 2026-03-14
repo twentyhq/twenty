@@ -48,7 +48,10 @@ export class JwtAuthGuard implements CanActivate {
 
       return true;
     } catch (error) {
-      this.logger.warn(`Auth failed with error: ${error}`);
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+
+      this.logger.warn(`Auth failed: ${errorMessage}`);
 
       return false;
     }
