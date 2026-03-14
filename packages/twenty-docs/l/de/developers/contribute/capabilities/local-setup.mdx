@@ -6,7 +6,7 @@ description: Der Leitfaden für Mitwirkende (oder neugierige Entwickler), die Tw
 ## Voraussetzungen
 
 <Tabs>
-<Tab title="Linux und MacOS">
+<Tab title="Linux and macOS">
 
 Bevor Sie Twenty installieren und verwenden können, stellen Sie sicher, dass Sie Folgendes auf Ihrem Computer installiert haben:
 * [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
@@ -30,7 +30,7 @@ wsl --install
 ```
 Sie sollten nun eine Aufforderung sehen, Ihren Computer neu zu starten. Wenn nicht, starten Sie ihn manuell neu.
 
-Nach dem Neustart wird ein PowerShell-Fenster geöffnet und Ubuntu installiert. Dies kann einige Zeit in Anspruch nehmen.
+Upon restart, a PowerShell window will open and install Ubuntu. Dies kann einige Zeit in Anspruch nehmen.
 Sie werden aufgefordert, einen Benutzernamen und ein Passwort für Ihre Ubuntu-Installation zu erstellen.
 
 2. Git installieren und konfigurieren
@@ -102,8 +102,8 @@ Alle folgenden Befehle innerhalb des Projekts sind vom Stammverzeichnis aus ausz
 
 <Tabs>
   <Tab title="Linux">
-    **Option 1 (bevorzugt):** Um Ihre Datenbank lokal bereitzustellen:
-    Verwenden Sie den folgenden Link, um PostgreSQL auf Ihrem Linux-Rechner zu installieren: [Postgresql-Installation](https://www.postgresql.org/download/linux/)
+    **Option 1 (preferred):** To provision your database locally:
+    Use the following link to install PostgreSQL on your Linux machine: [PostgreSQL Installation](https://www.postgresql.org/download/linux/)
     ```bash
       psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
     ```
@@ -129,8 +129,8 @@ Alle folgenden Befehle innerhalb des Projekts sind vom Stammverzeichnis aus ausz
      brew services list
     ```
 
-    Der Installer erstellt möglicherweise nicht standardmäßig den Benutzer `postgres`, wenn er
-    über Homebrew auf MacOS installiert wird. Stattdessen wird eine PostgreSQL-Rolle erstellt, die Ihrem macOS
+    The installer might not create the `postgres` user by default when installing
+    via Homebrew on macOS. Stattdessen wird eine PostgreSQL-Rolle erstellt, die Ihrem macOS
     Benutzernamen (z. B. "john") entspricht.
     Um zu überprüfen und, falls erforderlich, den Benutzer `postgres` zu erstellen, führen Sie folgende Schritte aus:
     ```bash
@@ -173,8 +173,8 @@ Alle folgenden Befehle innerhalb des Projekts sind vom Stammverzeichnis aus ausz
   <Tab title="Windows (WSL)">
     Alle folgenden Schritte sind im WSL-Terminal auszuführen (innerhalb Ihrer virtuellen Maschine)
 
-    **Option 1:** Um Ihr PostgreSQL lokal bereitzustellen:
-    Verwenden Sie den folgenden Link, um PostgreSQL auf Ihrer Linux-VM zu installieren: [Postgresql-Installation](https://www.postgresql.org/download/linux/)
+    **Option 1:** To provision your PostgreSQL locally:
+    Use the following link to install PostgreSQL on your Linux virtual machine: [PostgreSQL Installation](https://www.postgresql.org/download/linux/)
     ```bash
       psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
     ```
@@ -189,11 +189,13 @@ Alle folgenden Befehle innerhalb des Projekts sind vom Stammverzeichnis aus ausz
   </Tab>
 </Tabs>
 
-Sie können jetzt über [localhost:5432](localhost:5432) auf die Datenbank zugreifen, mit dem Benutzer `postgres` und dem Passwort `postgres`.
+You can now access the database at `localhost:5432`.
+
+If you used the Docker option above, the default credentials are user `postgres` and password `postgres`. For native PostgreSQL installations, use the credentials and roles configured on your machine.
 
 ## Schritt 4: Einrichten einer Redis-Datenbank (Cache)
 
-Twenty benötigt einen Redis-Cache, um die beste Leistung zu bieten
+Twenty requires a Redis cache to provide the best performance.
 
 <Tabs>
   <Tab title="Linux">
@@ -210,8 +212,10 @@ Twenty benötigt einen Redis-Cache, um die beste Leistung zu bieten
     ```bash
     brew install redis
     ```
-    Starten Sie Ihren Redis-Server:
-    `brew services start redis`
+    Start your Redis server:
+    ```bash
+    brew services start redis
+    ```
 
     **Option 2:** Wenn Sie Docker installiert haben:
     ```bash
@@ -229,11 +233,11 @@ Twenty benötigt einen Redis-Cache, um die beste Leistung zu bieten
   </Tab>
 </Tabs>
 
-Wenn Sie eine Client-GUI benötigen, empfehlen wir [redis insight](https://redis.io/insight/) (kostenlose Version verfügbar)
+If you need a client GUI, we recommend [Redis Insight](https://redis.io/insight/) (free version available).
 
-## Schritt 5: Einrichten von Umgebungsvariablen
+## Step 5: Set up environment variables
 
-Verwenden Sie Umgebungsvariablen oder `.env`-Dateien, um Ihr Projekt zu konfigurieren. Weitere Informationen [hier](/l/de/developers/self-host/capabilities/setup)
+Verwenden Sie Umgebungsvariablen oder `.env`-Dateien, um Ihr Projekt zu konfigurieren. Weitere Informationen [hier](/l/de/developers/self-host/capabilities/setup).
 
 Kopieren Sie die `.env.example`-Dateien in `/front` und `/server`:
 
