@@ -15,6 +15,7 @@ export class OAuthRegisterInput {
   @IsArray()
   @IsString({ each: true })
   @ArrayMaxSize(20)
+  @MaxLength(2048, { each: true })
   redirect_uris: string[];
 
   @IsOptional()

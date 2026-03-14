@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { In, LessThan, Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
@@ -23,22 +23,26 @@ export class StaleRegistrationCleanupService {
   async cleanupStaleRegistrations(): Promise<number> {
     const cutoffDate = this.calculateCutoffDate();
     let totalDeleted = 0;
+    let lastCreatedAt: Date | undefined;
 
     while (true) {
       const staleRegistrations = await this.findStaleRegistrationBatch(
         cutoffDate,
         STALE_REGISTRATION_CLEANUP_BATCH_SIZE,
+        lastCreatedAt,
       );
 
       if (staleRegistrations.length === 0) {
         break;
       }
 
+      lastCreatedAt = staleRegistrations[staleRegistrations.length - 1].createdAt;
+
       const staleIds = staleRegistrations.map(
         (registration) => registration.id,
       );
 
-      // Filter out registrations that have active installations
+      // Filter out registrations that have active (non-deleted) installations
       const registrationsWithInstallations = await this.applicationRepository
         .createQueryBuilder('application')
         .select('application.applicationRegistrationId')
@@ -46,6 +50,7 @@ export class StaleRegistrationCleanupService {
           'application.applicationRegistrationId IN (:...registrationIds)',
           { registrationIds: staleIds },
         )
+        .andWhere('application.deletedAt IS NULL')
         .groupBy('application.applicationRegistrationId')
         .getRawMany<{ application_applicationRegistrationId: string }>();
 
@@ -60,8 +65,7 @@ export class StaleRegistrationCleanupService {
       );
 
       if (idsToDelete.length > 0) {
-        // Hard delete since these are orphaned OAuth registrations
-        await this.applicationRegistrationRepository.delete({
+        await this.applicationRegistrationRepository.softDelete({
           id: In(idsToDelete),
         });
 
@@ -83,24 +87,39 @@ export class StaleRegistrationCleanupService {
   private async findStaleRegistrationBatch(
     cutoffDate: Date,
     batchSize: number,
-  ): Promise<Array<{ id: string }>> {
-    return this.applicationRegistrationRepository.find({
-      select: ['id'],
-      where: {
+    afterCreatedAt?: Date,
+  ): Promise<Array<{ id: string; createdAt: Date }>> {
+    const queryBuilder = this.applicationRegistrationRepository
+      .createQueryBuilder('registration')
+      .select('registration.id', 'id')
+      .addSelect('registration.createdAt', 'createdAt')
+      .where('registration.sourceType = :sourceType', {
         sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
-        createdAt: LessThan(cutoffDate),
-      },
-      order: { createdAt: 'ASC' },
-      take: batchSize,
-    });
+      })
+      .andWhere('registration.createdAt < :cutoffDate', { cutoffDate })
+      .orderBy('registration.createdAt', 'ASC')
+      .take(batchSize);
+
+    if (afterCreatedAt) {
+      queryBuilder.andWhere('registration.createdAt > :afterCreatedAt', {
+        afterCreatedAt,
+      });
+    }
+
+    const rows = await queryBuilder.getRawMany<{ id: string; createdAt: Date }>();
+
+    return rows.map((row) => ({
+      id: row.id,
+      createdAt: new Date(row.createdAt),
+    }));
   }
 
   private calculateCutoffDate(): Date {
     const cutoffDate = new Date();
 
     cutoffDate.setUTCHours(0, 0, 0, 0);
-    cutoffDate.setDate(
-      cutoffDate.getDate() - STALE_REGISTRATION_GRACE_PERIOD_DAYS,
+    cutoffDate.setUTCDate(
+      cutoffDate.getUTCDate() - STALE_REGISTRATION_GRACE_PERIOD_DAYS,
     );
 
     return cutoffDate;

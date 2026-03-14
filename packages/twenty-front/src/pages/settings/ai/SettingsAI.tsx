@@ -21,6 +21,7 @@ import {
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Card, Section } from 'twenty-ui/layout';
+import { SettingsAIMCP } from './components/SettingsAIMCP';
 import { SettingsAIModelsTab } from './components/SettingsAIModelsTab';
 import { SettingsSkillsTable } from './components/SettingsSkillsTable';
 import { SettingsToolsTable } from './components/SettingsToolsTable';
@@ -86,30 +87,33 @@ export const SettingsAI = () => {
         {isSkillsTab && <SettingsSkillsTable />}
         {isToolsTab && <SettingsToolsTable />}
         {isMoreTab && (
-          <Section>
-            <H2Title
-              title={t`System Prompt`}
-              description={t`View and customize AI instructions`}
-            />
-            <Card rounded>
-              <SettingsOptionCardContentButton
-                Icon={IconFileText}
+          <>
+            <Section>
+              <H2Title
                 title={t`System Prompt`}
-                description={t`View the AI system prompt and add custom instructions`}
-                Button={
-                  <StyledLinkContainer>
-                    <Link to={getSettingsPath(SettingsPath.AIPrompts)}>
-                      <Button
-                        title={t`Configure`}
-                        variant="secondary"
-                        size="small"
-                      />
-                    </Link>
-                  </StyledLinkContainer>
-                }
+                description={t`View and customize AI instructions`}
               />
-            </Card>
-          </Section>
+              <Card rounded>
+                <SettingsOptionCardContentButton
+                  Icon={IconFileText}
+                  title={t`System Prompt`}
+                  description={t`View the AI system prompt and add custom instructions`}
+                  Button={
+                    <StyledLinkContainer>
+                      <Link to={getSettingsPath(SettingsPath.AIPrompts)}>
+                        <Button
+                          title={t`Configure`}
+                          variant="secondary"
+                          size="small"
+                        />
+                      </Link>
+                    </StyledLinkContainer>
+                  }
+                />
+              </Card>
+            </Section>
+            <SettingsAIMCP />
+          </>
         )}
       </SettingsPageContainer>
     </SubMenuTopBarContainer>

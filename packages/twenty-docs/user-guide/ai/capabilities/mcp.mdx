@@ -28,7 +28,7 @@ With OAuth, your MCP client opens a browser window for you to log in. No secrets
 OAuth requires an MCP client that supports the [MCP Authorization specification](https://modelcontextprotocol.io/specification/2025-03-26/basic/authorization). Claude Desktop, Claude Code, Cursor, and ChatGPT support it.
 </Note>
 
-Add this to your MCP client configuration, replacing `{your-workspace-url}` with the URL you use to access Twenty (e.g. `https://app.twenty.com`):
+Add this to your MCP client configuration, replacing `{your-workspace-url}` with the URL you use to access Twenty (e.g. `https://mycompany.twenty.com`):
 
 ```json
 {
@@ -78,14 +78,14 @@ To create an API key, go to **Settings > APIs & Webhooks > + Create key**. See [
 
 ### 1. Copy the config
 
-Go to **Settings > APIs & Webhooks** in Twenty and scroll to the **MCP Server** section. Choose your authentication method (OAuth or API Key), copy the JSON snippet (it will already use your workspace URL), and paste it into your MCP client's config file.
+Go to **Settings > AI > More > MCP Server** in Twenty. Choose your authentication method (OAuth or API Key), copy the JSON snippet (it will already use your workspace URL), and paste it into your MCP client's config file.
 
 | Client | Config file location |
 |--------|---------------------|
 | **Claude Desktop** | `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS) or `%APPDATA%\Claude\claude_desktop_config.json` (Windows) |
 | **Claude Code** | `~/.claude.json` (user) or `.mcp.json` (project) |
 | **Cursor** | `.cursor/mcp.json` in your project, or `~/.cursor/mcp.json` globally |
-| **ChatGPT** | Add via **Settings > Connectors > Add custom connector** (Pro/Plus with Developer Mode) |
+| **ChatGPT** | Turn on Developer Mode in **Settings > Apps & Connectors > Advanced settings**, then use **Create** in **Settings > Apps & Connectors** to add the MCP server |
 
 ### 2. Connect
 

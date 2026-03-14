@@ -1,7 +1,6 @@
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsApiKeysTable } from '@/settings/developers/components/SettingsApiKeysTable';
 import { SettingsWebhooksTable } from '@/settings/developers/components/SettingsWebhooksTable';
-import { SettingsAIMCP } from '~/pages/settings/ai/components/SettingsAIMCP';
 import { PlaygroundSetupForm } from '@/settings/playground/components/PlaygroundSetupForm';
 import { StyledSettingsApiPlaygroundCoverImage } from '@/settings/playground/components/SettingsPlaygroundCoverImage';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
@@ -112,10 +111,6 @@ export const SettingsApiWebhooks = () => {
                 </StyledButtonContainer>
               </StyledContainer>
             </Section>
-          </StyledSectionContainer>
-
-          <StyledSectionContainer>
-            <SettingsAIMCP />
           </StyledSectionContainer>
         </StyledMainContent>
       </SettingsPageContainer>

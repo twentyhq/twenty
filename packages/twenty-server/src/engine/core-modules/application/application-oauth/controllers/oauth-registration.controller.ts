@@ -57,8 +57,12 @@ export class OAuthRegistrationController {
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ) {
-    if (await this.applyRateLimit(req, res)) {
-      return;
+    const rateLimitResult = await this.applyRateLimit(req);
+
+    if (rateLimitResult) {
+      res.status(429);
+
+      return rateLimitResult;
     }
 
     // Validate redirect URIs
@@ -166,7 +170,9 @@ export class OAuthRegistrationController {
     };
   }
 
-  private async applyRateLimit(req: Request, res: Response): Promise<boolean> {
+  private async applyRateLimit(
+    req: Request,
+  ): Promise<{ error: string; error_description: string } | null> {
     const rateLimitKey = `oauth-register:${req.ip}`;
 
     try {
@@ -177,16 +183,14 @@ export class OAuthRegistrationController {
         REGISTRATION_RATE_LIMIT_WINDOW_MS,
       );
 
-      return false;
+      return null;
     } catch (error) {
       if (error instanceof ThrottlerException) {
-        res.status(429).json({
+        return {
           error: 'rate_limit_exceeded',
           error_description:
             'Too many registration requests, please try again later',
-        });
-
-        return true;
+        };
       }
 
       throw error;
