@@ -6,10 +6,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { In, Repository } from 'typeorm';
+import { In, QueryFailedError, Repository } from 'typeorm';
 
 import type Stripe from 'stripe';
 
+import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
 import { getDeletedStripeSubscriptionItemIdsFromStripeSubscriptionEvent } from 'src/engine/core-modules/billing-webhook/utils/get-deleted-stripe-subscription-item-ids-from-stripe-subscription-event.util';
 import { transformStripeSubscriptionEventToDatabaseCustomer } from 'src/engine/core-modules/billing-webhook/utils/transform-stripe-subscription-event-to-database-customer.util';
 import { transformStripeSubscriptionEventToDatabaseSubscriptionItem } from 'src/engine/core-modules/billing-webhook/utils/transform-stripe-subscription-event-to-database-subscription-item.util';
@@ -134,10 +135,22 @@ export class BillingWebhookSubscriptionService {
       );
     }
 
-    await this.updateBillingSubscriptionItems(
-      updatedBillingSubscription.id,
-      event,
-    );
+    const subscriptionItemsUpdated =
+      await this.updateBillingSubscriptionItems(
+        updatedBillingSubscription.id,
+        event,
+      );
+
+    if (!subscriptionItemsUpdated) {
+      this.logger.warn(
+        `Subscription ${data.object.id} was deleted by a concurrent webhook handler, skipping remaining processing for workspace ${workspaceId}`,
+      );
+
+      return {
+        stripeSubscriptionId: data.object.id,
+        stripeCustomerId: data.object.customer,
+      };
+    }
 
     const shouldSuspend = this.shouldSuspendWorkspace(data);
 
@@ -224,7 +237,7 @@ export class BillingWebhookSubscriptionService {
       | Stripe.CustomerSubscriptionUpdatedEvent
       | Stripe.CustomerSubscriptionCreatedEvent
       | Stripe.CustomerSubscriptionDeletedEvent,
-  ) {
+  ): Promise<boolean> {
     const deletedSubscriptionItemIds =
       getDeletedStripeSubscriptionItemIdsFromStripeSubscriptionEvent(event);
 
@@ -235,15 +248,32 @@ export class BillingWebhookSubscriptionService {
       });
     }
 
-    await this.billingSubscriptionItemRepository.upsert(
-      transformStripeSubscriptionEventToDatabaseSubscriptionItem(
-        subscriptionId,
-        event.data,
-      ),
-      {
-        conflictPaths: ['stripeSubscriptionItemId'],
-        skipUpdateIfNoValuesChanged: true,
-      },
-    );
+    try {
+      await this.billingSubscriptionItemRepository.upsert(
+        transformStripeSubscriptionEventToDatabaseSubscriptionItem(
+          subscriptionId,
+          event.data,
+        ),
+        {
+          conflictPaths: ['stripeSubscriptionItemId'],
+          skipUpdateIfNoValuesChanged: true,
+        },
+      );
+    } catch (error) {
+      // When concurrent webhook handlers process the same workspace,
+      // one handler may delete the workspace (cascade-deleting subscriptions)
+      // while the other is still inserting subscription items.
+      if (
+        error instanceof QueryFailedError &&
+        (error as QueryFailedError & { code?: string }).code ===
+          POSTGRESQL_ERROR_CODES.FOREIGN_KEY_VIOLATION
+      ) {
+        return false;
+      }
+
+      throw error;
+    }
+
+    return true;
   }
 }
