@@ -1,4 +1,5 @@
 import { useListenToMetadataOperationBrowserEvent } from '@/browser-event/hooks/useListenToMetadataOperationBrowserEvent';
+import { patchMetadataStoreFromSSEEvent } from '@/metadata-store/utils/patchMetadataStoreFromSSEEvent';
 import { useListenToEventsForQuery } from '@/sse-db-event/hooks/useListenToEventsForQuery';
 import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
 import { coreViewsState } from '@/views/states/coreViewState';
@@ -26,6 +27,8 @@ export const ViewSSEEffect = () => {
   useListenToMetadataOperationBrowserEvent({
     metadataName: AllMetadataName.view,
     onMetadataOperationBrowserEvent: async (eventDetail) => {
+      patchMetadataStoreFromSSEEvent(store, 'views', eventDetail.operation);
+
       switch (eventDetail.operation.type) {
         case 'create': {
           const createdView = eventDetail.operation

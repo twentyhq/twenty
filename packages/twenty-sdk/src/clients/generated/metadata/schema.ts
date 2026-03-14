@@ -1885,6 +1885,35 @@ export interface AgentTurn {
     __typename: 'AgentTurn'
 }
 
+export interface MinimalObjectMetadata {
+    id: Scalars['UUID']
+    nameSingular: Scalars['String']
+    namePlural: Scalars['String']
+    labelSingular: Scalars['String']
+    labelPlural: Scalars['String']
+    icon?: Scalars['String']
+    isCustom: Scalars['Boolean']
+    isActive: Scalars['Boolean']
+    isSystem: Scalars['Boolean']
+    isRemote: Scalars['Boolean']
+    __typename: 'MinimalObjectMetadata'
+}
+
+export interface MinimalView {
+    id: Scalars['UUID']
+    type: ViewType
+    key?: ViewKey
+    objectMetadataId: Scalars['UUID']
+    __typename: 'MinimalView'
+}
+
+export interface MinimalMetadata {
+    objectMetadataItems: MinimalObjectMetadata[]
+    views: MinimalView[]
+    metadataVersion: Scalars['Int']
+    __typename: 'MinimalMetadata'
+}
+
 export interface Webhook {
     id: Scalars['UUID']
     targetUrl: Scalars['String']
@@ -2595,6 +2624,7 @@ export interface Query {
     getSSOIdentityProviders: FindAvailableSSOIDP[]
     webhooks: Webhook[]
     webhook?: Webhook
+    minimalMetadata: MinimalMetadata
     chatThread: AgentChatThread
     chatMessages: AgentMessage[]
     getAISystemPromptPreview: AISystemPromptPreview
@@ -4848,6 +4878,38 @@ export interface AgentTurnGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface MinimalObjectMetadataGenqlSelection{
+    id?: boolean | number
+    nameSingular?: boolean | number
+    namePlural?: boolean | number
+    labelSingular?: boolean | number
+    labelPlural?: boolean | number
+    icon?: boolean | number
+    isCustom?: boolean | number
+    isActive?: boolean | number
+    isSystem?: boolean | number
+    isRemote?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface MinimalViewGenqlSelection{
+    id?: boolean | number
+    type?: boolean | number
+    key?: boolean | number
+    objectMetadataId?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface MinimalMetadataGenqlSelection{
+    objectMetadataItems?: MinimalObjectMetadataGenqlSelection
+    views?: MinimalViewGenqlSelection
+    metadataVersion?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface WebhookGenqlSelection{
     id?: boolean | number
     targetUrl?: boolean | number
@@ -5618,6 +5680,7 @@ export interface QueryGenqlSelection{
     getSSOIdentityProviders?: FindAvailableSSOIDPGenqlSelection
     webhooks?: WebhookGenqlSelection
     webhook?: (WebhookGenqlSelection & { __args: {id: Scalars['UUID']} })
+    minimalMetadata?: MinimalMetadataGenqlSelection
     chatThread?: (AgentChatThreadGenqlSelection & { __args: {id: Scalars['UUID']} })
     chatMessages?: (AgentMessageGenqlSelection & { __args: {threadId: Scalars['UUID']} })
     getAISystemPromptPreview?: AISystemPromptPreviewGenqlSelection
@@ -7607,6 +7670,30 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     export const isAgentTurn = (obj?: { __typename?: any } | null): obj is AgentTurn => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isAgentTurn"')
       return AgentTurn_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const MinimalObjectMetadata_possibleTypes: string[] = ['MinimalObjectMetadata']
+    export const isMinimalObjectMetadata = (obj?: { __typename?: any } | null): obj is MinimalObjectMetadata => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isMinimalObjectMetadata"')
+      return MinimalObjectMetadata_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const MinimalView_possibleTypes: string[] = ['MinimalView']
+    export const isMinimalView = (obj?: { __typename?: any } | null): obj is MinimalView => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isMinimalView"')
+      return MinimalView_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const MinimalMetadata_possibleTypes: string[] = ['MinimalMetadata']
+    export const isMinimalMetadata = (obj?: { __typename?: any } | null): obj is MinimalMetadata => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isMinimalMetadata"')
+      return MinimalMetadata_possibleTypes.includes(obj.__typename)
     }
     
 

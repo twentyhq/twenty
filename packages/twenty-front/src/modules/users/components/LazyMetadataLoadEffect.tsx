@@ -1,5 +1,6 @@
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { useMetadataStore } from '@/metadata-store/hooks/useMetadataStore';
+import { splitPageLayoutWithRelated } from '@/metadata-store/utils/splitPageLayoutWithRelated';
 import { navigationMenuItemsState } from '@/navigation-menu-item/states/navigationMenuItemsState';
 import { recordPageLayoutsState } from '@/page-layout/states/recordPageLayoutsState';
 import { type PageLayout } from '@/page-layout/types/PageLayout';
@@ -109,7 +110,13 @@ export const LazyMetadataLoadEffect = () => {
       queryDataRecordPageLayouts.getPageLayouts.map(transformPageLayout);
 
     setRecordPageLayouts(transformedPageLayouts);
-    updateDraft('pageLayouts', transformedPageLayouts);
+
+    const { flatPageLayouts, flatPageLayoutTabs, flatPageLayoutWidgets } =
+      splitPageLayoutWithRelated(transformedPageLayouts);
+
+    updateDraft('pageLayouts', flatPageLayouts);
+    updateDraft('pageLayoutTabs', flatPageLayoutTabs);
+    updateDraft('pageLayoutWidgets', flatPageLayoutWidgets);
     applyChanges();
   }, [
     queryDataRecordPageLayouts?.getPageLayouts,

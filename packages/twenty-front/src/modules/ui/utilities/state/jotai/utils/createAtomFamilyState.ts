@@ -7,10 +7,12 @@ export const createAtomFamilyState = <ValueType, FamilyKey>({
   key,
   defaultValue,
   useLocalStorage = false,
+  localStorageOptions,
 }: {
   key: string;
   defaultValue: ValueType;
   useLocalStorage?: boolean;
+  localStorageOptions?: { getOnInit?: boolean };
 }): FamilyState<ValueType, FamilyKey> => {
   const atomCache = new Map<
     string,
@@ -31,7 +33,12 @@ export const createAtomFamilyState = <ValueType, FamilyKey>({
 
     const atomKey = `${key}__${cacheKey}`;
     const baseAtom = useLocalStorage
-      ? atomWithStorage<ValueType>(atomKey, defaultValue)
+      ? atomWithStorage<ValueType>(
+          atomKey,
+          defaultValue,
+          undefined,
+          localStorageOptions ?? undefined,
+        )
       : atom(defaultValue);
     baseAtom.debugLabel = atomKey;
     atomCache.set(cacheKey, baseAtom);

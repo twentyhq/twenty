@@ -2419,6 +2419,35 @@ export type MetadataEventWithQueryIds = {
   queryIds: Array<Scalars['String']>;
 };
 
+export type MinimalMetadata = {
+  __typename?: 'MinimalMetadata';
+  metadataVersion: Scalars['Int'];
+  objectMetadataItems: Array<MinimalObjectMetadata>;
+  views: Array<MinimalView>;
+};
+
+export type MinimalObjectMetadata = {
+  __typename?: 'MinimalObjectMetadata';
+  icon?: Maybe<Scalars['String']>;
+  id: Scalars['UUID'];
+  isActive: Scalars['Boolean'];
+  isCustom: Scalars['Boolean'];
+  isRemote: Scalars['Boolean'];
+  isSystem: Scalars['Boolean'];
+  labelPlural: Scalars['String'];
+  labelSingular: Scalars['String'];
+  namePlural: Scalars['String'];
+  nameSingular: Scalars['String'];
+};
+
+export type MinimalView = {
+  __typename?: 'MinimalView';
+  id: Scalars['UUID'];
+  key?: Maybe<ViewKey>;
+  objectMetadataId: Scalars['UUID'];
+  type: ViewType;
+};
+
 export enum ModelFamily {
   ANTHROPIC = 'ANTHROPIC',
   GOOGLE = 'GOOGLE',
@@ -4108,6 +4137,7 @@ export type Query = {
   indexMetadatas: IndexConnection;
   lineChartData: LineChartData;
   listPlans: Array<BillingPlan>;
+  minimalMetadata: MinimalMetadata;
   navigationMenuItem?: Maybe<NavigationMenuItem>;
   navigationMenuItems: Array<NavigationMenuItem>;
   object: Object;

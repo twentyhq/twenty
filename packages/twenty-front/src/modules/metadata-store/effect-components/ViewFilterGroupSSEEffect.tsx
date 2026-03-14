@@ -1,0 +1,72 @@
+import { useListenToMetadataOperationBrowserEvent } from '@/browser-event/hooks/useListenToMetadataOperationBrowserEvent';
+import { patchMetadataStoreFromSSEEvent } from '@/metadata-store/utils/patchMetadataStoreFromSSEEvent';
+import { useListenToEventsForQuery } from '@/sse-db-event/hooks/useListenToEventsForQuery';
+import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
+import { coreViewsState } from '@/views/states/coreViewState';
+import { useStore } from 'jotai';
+import { isDefined } from 'twenty-shared/utils';
+import { AllMetadataName } from '~/generated-metadata/graphql';
+
+export const ViewFilterGroupSSEEffect = () => {
+  const store = useStore();
+
+  const { refreshCoreViewsByObjectMetadataId } =
+    useRefreshCoreViewsByObjectMetadataId();
+
+  useListenToEventsForQuery({
+    queryId: 'view-filter-groups-sse-effect',
+    operationSignature: {
+      metadataName: AllMetadataName.viewFilterGroup,
+      variables: {},
+    },
+  });
+
+  useListenToMetadataOperationBrowserEvent({
+    metadataName: AllMetadataName.viewFilterGroup,
+    onMetadataOperationBrowserEvent: (eventDetail) => {
+      patchMetadataStoreFromSSEEvent(
+        store,
+        'viewFilterGroups',
+        eventDetail.operation,
+      );
+
+      const coreViews = store.get(coreViewsState.atom);
+
+      let viewId: string | undefined;
+
+      switch (eventDetail.operation.type) {
+        case 'create': {
+          viewId = (eventDetail.operation.createdRecord as { viewId?: string })
+            .viewId;
+          break;
+        }
+        case 'update': {
+          viewId = (eventDetail.operation.updatedRecord as { viewId?: string })
+            .viewId;
+          break;
+        }
+        case 'delete': {
+          const deletedId = eventDetail.operation.deletedRecordId as string;
+          viewId = coreViews.find((view) =>
+            view.viewFilterGroups?.some(
+              (viewFilterGroup) => viewFilterGroup.id === deletedId,
+            ),
+          )?.id;
+          break;
+        }
+      }
+
+      if (!isDefined(viewId)) {
+        return;
+      }
+
+      const view = coreViews.find((coreView) => coreView.id === viewId);
+
+      if (isDefined(view)) {
+        refreshCoreViewsByObjectMetadataId(view.objectMetadataId);
+      }
+    },
+  });
+
+  return null;
+};
