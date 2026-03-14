@@ -309,7 +309,7 @@ export interface Field {
 
 
 /** Type of the field */
-export type FieldMetadataType = 'ACTOR' | 'ADDRESS' | 'ARRAY' | 'BOOLEAN' | 'CURRENCY' | 'DATE' | 'DATE_TIME' | 'EMAILS' | 'FILES' | 'FULL_NAME' | 'LINKS' | 'MORPH_RELATION' | 'MULTI_SELECT' | 'NUMBER' | 'NUMERIC' | 'PHONES' | 'POSITION' | 'RATING' | 'RAW_JSON' | 'RELATION' | 'RICH_TEXT_V2' | 'SELECT' | 'TEXT' | 'TS_VECTOR' | 'UUID'
+export type FieldMetadataType = 'ACTOR' | 'ADDRESS' | 'ARRAY' | 'BOOLEAN' | 'CURRENCY' | 'DATE' | 'DATE_TIME' | 'EMAILS' | 'FILES' | 'FULL_NAME' | 'LINKS' | 'MORPH_RELATION' | 'MULTI_SELECT' | 'NUMBER' | 'NUMERIC' | 'PHONES' | 'POSITION' | 'RATING' | 'RAW_JSON' | 'RELATION' | 'RICH_TEXT' | 'SELECT' | 'TEXT' | 'TS_VECTOR' | 'UUID'
 
 export interface IndexField {
     id: Scalars['UUID']
@@ -416,6 +416,7 @@ export interface CoreViewField {
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
     deletedAt?: Scalars['DateTime']
+    isOverridden: Scalars['Boolean']
     __typename: 'CoreViewField'
 }
 
@@ -492,6 +493,7 @@ export interface CoreViewFieldGroup {
     updatedAt: Scalars['DateTime']
     deletedAt?: Scalars['DateTime']
     viewFields: CoreViewField[]
+    isOverridden: Scalars['Boolean']
     __typename: 'CoreViewFieldGroup'
 }
 
@@ -646,10 +648,10 @@ export interface RatioAggregateConfig {
     __typename: 'RatioAggregateConfig'
 }
 
-export interface RichTextV2Body {
+export interface RichTextBody {
     blocknote?: Scalars['String']
     markdown?: Scalars['String']
-    __typename: 'RichTextV2Body'
+    __typename: 'RichTextBody'
 }
 
 export interface GridPosition {
@@ -726,7 +728,7 @@ export type WidgetConfigurationType = 'AGGREGATE_CHART' | 'GAUGE_CHART' | 'PIE_C
 
 export interface StandaloneRichTextConfiguration {
     configurationType: WidgetConfigurationType
-    body: RichTextV2Body
+    body: RichTextBody
     __typename: 'StandaloneRichTextConfiguration'
 }
 
@@ -1310,7 +1312,7 @@ export interface FeatureFlag {
     __typename: 'FeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_UNIQUE_INDEXES_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_AI_ENABLED' | 'IS_APPLICATION_ENABLED' | 'IS_MARKETPLACE_ENABLED' | 'IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED' | 'IS_PUBLIC_DOMAIN_ENABLED' | 'IS_EMAILING_DOMAIN_ENABLED' | 'IS_DASHBOARD_V2_ENABLED' | 'IS_ATTACHMENT_MIGRATED' | 'IS_NOTE_TARGET_MIGRATED' | 'IS_TASK_TARGET_MIGRATED' | 'IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED' | 'IS_JUNCTION_RELATIONS_ENABLED' | 'IS_COMMAND_MENU_ITEM_ENABLED' | 'IS_NAVIGATION_MENU_ITEM_ENABLED' | 'IS_DATE_TIME_WHOLE_DAY_FILTER_ENABLED' | 'IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED' | 'IS_DRAFT_EMAIL_ENABLED'
+export type FeatureFlagKey = 'IS_UNIQUE_INDEXES_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_AI_ENABLED' | 'IS_APPLICATION_ENABLED' | 'IS_MARKETPLACE_ENABLED' | 'IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED' | 'IS_PUBLIC_DOMAIN_ENABLED' | 'IS_EMAILING_DOMAIN_ENABLED' | 'IS_DASHBOARD_V2_ENABLED' | 'IS_ATTACHMENT_MIGRATED' | 'IS_NOTE_TARGET_MIGRATED' | 'IS_TASK_TARGET_MIGRATED' | 'IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED' | 'IS_JUNCTION_RELATIONS_ENABLED' | 'IS_COMMAND_MENU_ITEM_ENABLED' | 'IS_NAVIGATION_MENU_ITEM_ENABLED' | 'IS_DATE_TIME_WHOLE_DAY_FILTER_ENABLED' | 'IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED' | 'IS_DRAFT_EMAIL_ENABLED' | 'IS_RICH_TEXT_V1_MIGRATED'
 
 export interface SSOIdentityProvider {
     id: Scalars['UUID']
@@ -3295,6 +3297,7 @@ export interface CoreViewFieldGenqlSelection{
     createdAt?: boolean | number
     updatedAt?: boolean | number
     deletedAt?: boolean | number
+    isOverridden?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -3368,6 +3371,7 @@ export interface CoreViewFieldGroupGenqlSelection{
     updatedAt?: boolean | number
     deletedAt?: boolean | number
     viewFields?: CoreViewFieldGenqlSelection
+    isOverridden?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -3512,7 +3516,7 @@ export interface RatioAggregateConfigGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface RichTextV2BodyGenqlSelection{
+export interface RichTextBodyGenqlSelection{
     blocknote?: boolean | number
     markdown?: boolean | number
     __typename?: boolean | number
@@ -3621,7 +3625,7 @@ export interface AggregateChartConfigurationGenqlSelection{
 
 export interface StandaloneRichTextConfigurationGenqlSelection{
     configurationType?: boolean | number
-    body?: RichTextV2BodyGenqlSelection
+    body?: RichTextBodyGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -6495,10 +6499,10 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
-    const RichTextV2Body_possibleTypes: string[] = ['RichTextV2Body']
-    export const isRichTextV2Body = (obj?: { __typename?: any } | null): obj is RichTextV2Body => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isRichTextV2Body"')
-      return RichTextV2Body_possibleTypes.includes(obj.__typename)
+    const RichTextBody_possibleTypes: string[] = ['RichTextBody']
+    export const isRichTextBody = (obj?: { __typename?: any } | null): obj is RichTextBody => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isRichTextBody"')
+      return RichTextBody_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -8290,7 +8294,7 @@ export const enumFieldMetadataType = {
    RATING: 'RATING' as const,
    RAW_JSON: 'RAW_JSON' as const,
    RELATION: 'RELATION' as const,
-   RICH_TEXT_V2: 'RICH_TEXT_V2' as const,
+   RICH_TEXT: 'RICH_TEXT' as const,
    SELECT: 'SELECT' as const,
    TEXT: 'TEXT' as const,
    TS_VECTOR: 'TS_VECTOR' as const,
@@ -8570,7 +8574,8 @@ export const enumFeatureFlagKey = {
    IS_NAVIGATION_MENU_ITEM_ENABLED: 'IS_NAVIGATION_MENU_ITEM_ENABLED' as const,
    IS_DATE_TIME_WHOLE_DAY_FILTER_ENABLED: 'IS_DATE_TIME_WHOLE_DAY_FILTER_ENABLED' as const,
    IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED: 'IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED' as const,
-   IS_DRAFT_EMAIL_ENABLED: 'IS_DRAFT_EMAIL_ENABLED' as const
+   IS_DRAFT_EMAIL_ENABLED: 'IS_DRAFT_EMAIL_ENABLED' as const,
+   IS_RICH_TEXT_V1_MIGRATED: 'IS_RICH_TEXT_V1_MIGRATED' as const
 }
 
 export const enumRelationType = {

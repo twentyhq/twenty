@@ -1,14 +1,10 @@
 import { styled } from '@linaria/react';
 
-import { useFavoritesByFolder } from '@/favorites/hooks/useFavoritesByFolder';
 import { NavigationMenuItemFolderContentDispatcherEffect } from '@/navigation-menu-item/components/NavigationMenuItemFolderContentDispatcher';
 import { useNavigationMenuItemsByFolder } from '@/navigation-menu-item/hooks/useNavigationMenuItemsByFolder';
 import { MainNavigationDrawerScrollableItems } from '@/navigation/components/MainNavigationDrawerScrollableItems';
-import { currentFavoriteFolderIdState } from '@/ui/navigation/navigation-drawer/states/currentFavoriteFolderIdState';
 import { currentNavigationMenuItemFolderIdState } from '@/ui/navigation/navigation-drawer/states/currentNavigationMenuItemFolderIdState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 const StyledScrollableContent = styled.div`
   height: 100%;
@@ -16,59 +12,28 @@ const StyledScrollableContent = styled.div`
 `;
 
 export const MainNavigationDrawerNavigationContent = () => {
-  const currentFavoriteFolderId = useAtomStateValue(
-    currentFavoriteFolderIdState,
-  );
   const currentNavigationMenuItemFolderId = useAtomStateValue(
     currentNavigationMenuItemFolderIdState,
   );
-  const { favoritesByFolder } = useFavoritesByFolder();
   const { navigationMenuItemsByFolder } = useNavigationMenuItemsByFolder();
-  const isNavigationMenuItemEditingEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED,
-  );
-
-  const openedFavoriteFolder = favoritesByFolder.find(
-    (folder) => folder.folderId === currentFavoriteFolderId,
-  );
 
   const openedNavigationMenuItemFolder = navigationMenuItemsByFolder.find(
     (folder) => folder.id === currentNavigationMenuItemFolderId,
   );
 
-  const openedFolder = isNavigationMenuItemEditingEnabled
-    ? openedNavigationMenuItemFolder
-    : openedFavoriteFolder;
-
-  const openedFolderId = openedNavigationMenuItemFolder?.id ?? '';
-
-  if (isNavigationMenuItemEditingEnabled) {
-    return (
-      <StyledScrollableContent>
-        {openedFolder ? (
-          <NavigationMenuItemFolderContentDispatcherEffect
-            folderName={openedFolder.folderName}
-            folderId={openedFolderId}
-            favorites={openedFavoriteFolder?.favorites}
-            navigationMenuItems={
-              openedNavigationMenuItemFolder?.navigationMenuItems
-            }
-          />
-        ) : (
-          <MainNavigationDrawerScrollableItems />
-        )}
-      </StyledScrollableContent>
-    );
-  }
-
-  return openedFolder ? (
-    <NavigationMenuItemFolderContentDispatcherEffect
-      folderName={openedFolder.folderName}
-      folderId={openedFolderId}
-      favorites={openedFavoriteFolder?.favorites}
-      navigationMenuItems={openedNavigationMenuItemFolder?.navigationMenuItems}
-    />
-  ) : (
-    <MainNavigationDrawerScrollableItems />
+  return (
+    <StyledScrollableContent>
+      {openedNavigationMenuItemFolder ? (
+        <NavigationMenuItemFolderContentDispatcherEffect
+          folderName={openedNavigationMenuItemFolder.folderName}
+          folderId={openedNavigationMenuItemFolder.id ?? ''}
+          navigationMenuItems={
+            openedNavigationMenuItemFolder.navigationMenuItems
+          }
+        />
+      ) : (
+        <MainNavigationDrawerScrollableItems />
+      )}
+    </StyledScrollableContent>
   );
 };

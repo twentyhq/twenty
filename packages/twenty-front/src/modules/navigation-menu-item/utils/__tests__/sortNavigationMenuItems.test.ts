@@ -5,18 +5,6 @@ import { type View } from '@/views/types/View';
 import { ViewKey } from '@/views/types/ViewKey';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
-jest.mock('@/favorites/utils/getObjectMetadataNamePluralFromViewId', () => ({
-  getObjectMetadataNamePluralFromViewId: jest.fn(
-    (
-      view: Pick<View, 'id' | 'name' | 'objectMetadataId'>,
-      items: ObjectMetadataItem[],
-    ) => {
-      const item = items.find((item) => item.id === view.objectMetadataId);
-      return { namePlural: item?.namePlural ?? 'items' };
-    },
-  ),
-}));
-
 jest.mock('twenty-shared/utils', () => {
   const actual = jest.requireActual('twenty-shared/utils');
   return {

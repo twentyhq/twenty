@@ -140,9 +140,9 @@ exports[`FilterArgProcessorService failing filter inputs validation RELATION sho
 
 exports[`FilterArgProcessorService failing filter inputs validation RELATION should throw for invalid filter #3: {"manyToOneRelationFieldId":{}} 1`] = `"Filter for field "manyToOneRelationFieldId" must have exactly one operator"`;
 
-exports[`FilterArgProcessorService failing filter inputs validation RICH_TEXT_V2 should throw for invalid filter #1: {"richTextV2Field":{"invalidOperator":"test"}} 1`] = `"Sub field "invalidOperator" not found for composite type: RICH_TEXT_V2"`;
+exports[`FilterArgProcessorService failing filter inputs validation RICH_TEXT should throw for invalid filter #1: {"richTextField":{"invalidOperator":"test"}} 1`] = `"Sub field "invalidOperator" not found for composite type: RICH_TEXT"`;
 
-exports[`FilterArgProcessorService failing filter inputs validation RICH_TEXT_V2 should throw for invalid filter #2: {"richTextV2Field":{"markdown":{"invalidOperator":"test"}}} 1`] = `"Operator "invalidOperator" is not valid for field "richTextV2Field.markdown" of type TEXT - Allowed operators: eq, neq, gt, gte, lt, lte, in, is, like, ilike, startsWith, endsWith"`;
+exports[`FilterArgProcessorService failing filter inputs validation RICH_TEXT should throw for invalid filter #2: {"richTextField":{"markdown":{"invalidOperator":"test"}}} 1`] = `"Operator "invalidOperator" is not valid for field "richTextField.markdown" of type TEXT - Allowed operators: eq, neq, gt, gte, lt, lte, in, is, like, ilike, startsWith, endsWith"`;
 
 exports[`FilterArgProcessorService failing filter inputs validation SELECT should throw for invalid filter #1: {"selectField":{"invalidOperator":"OPTION_1"}} 1`] = `"Operator "invalidOperator" is not valid for field "selectField" of type SELECT - Allowed operators: eq, neq, in, containsAny, is, isEmptyArray"`;
 

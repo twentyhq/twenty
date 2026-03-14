@@ -28,7 +28,7 @@ export const generateFieldFilterZodSchema = (
         .describe(`Filter by ${field.name} (UUID field)`);
 
     case FieldMetadataType.TEXT:
-    case FieldMetadataType.RICH_TEXT_V2:
+    case FieldMetadataType.RICH_TEXT:
       return z
         .object({
           eq: z.string().optional().describe('Equals'),

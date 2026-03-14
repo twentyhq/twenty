@@ -40,7 +40,7 @@ export const COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES = {
     workspaceMemberId: 'workspaceMemberId',
     context: 'context',
   },
-  [FieldMetadataType.RICH_TEXT_V2]: {
+  [FieldMetadataType.RICH_TEXT]: {
     blocknote: 'blocknote',
     markdown: 'markdown',
   },

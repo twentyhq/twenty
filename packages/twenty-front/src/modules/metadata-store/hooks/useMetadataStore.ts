@@ -5,6 +5,7 @@ import {
   type MetadataEntityKey,
   type MetadataStoreItem,
 } from '@/metadata-store/states/metadataStoreState';
+import { type MetadataEntityTypeMap } from '@/metadata-store/types/MetadataEntityTypeMap';
 import { useStore, type createStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
@@ -55,7 +56,7 @@ export const useMetadataStore = () => {
   const store = useStore();
 
   const updateDraft = useCallback(
-    (key: MetadataEntityKey, data: object[]) => {
+    <K extends MetadataEntityKey>(key: K, data: MetadataEntityTypeMap[K][]) => {
       const currentEntry = store.get(metadataStoreState.atomFamily(key));
 
       if (

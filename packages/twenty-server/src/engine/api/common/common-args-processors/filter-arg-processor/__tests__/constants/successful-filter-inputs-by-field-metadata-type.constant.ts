@@ -190,8 +190,8 @@ export const successfulFilterInputsByFieldMetadataType: {
     { filter: { filesField: { is: 'NOT_NULL' } } },
     { filter: { filesField: { like: '%test%' } } },
   ],
-  [FieldMetadataType.RICH_TEXT_V2]: [
-    { filter: { richTextV2Field: { markdown: { ilike: '%test%' } } } },
+  [FieldMetadataType.RICH_TEXT]: [
+    { filter: { richTextField: { markdown: { ilike: '%test%' } } } },
   ],
   [FieldMetadataType.ADDRESS]: [
     { filter: { addressField: { addressCity: { eq: 'Paris' } } } },

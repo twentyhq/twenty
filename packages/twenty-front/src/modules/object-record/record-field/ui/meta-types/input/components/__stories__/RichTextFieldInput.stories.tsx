@@ -65,7 +65,7 @@ const RichTextFieldInputWithContext = () => {
           fieldDefinition: {
             fieldMetadataId: 'richText',
             label: 'Rich Text',
-            type: FieldMetadataType.RICH_TEXT_V2,
+            type: FieldMetadataType.RICH_TEXT,
             iconName: 'IconRichText',
             metadata: {
               fieldName: 'richText',

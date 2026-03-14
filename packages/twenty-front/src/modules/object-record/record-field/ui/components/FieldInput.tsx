@@ -36,7 +36,7 @@ import { isFieldRating } from '@/object-record/record-field/ui/types/guards/isFi
 import { isFieldRawJson } from '@/object-record/record-field/ui/types/guards/isFieldRawJson';
 import { isFieldRelationManyToOne } from '@/object-record/record-field/ui/types/guards/isFieldRelationManyToOne';
 import { isFieldRelationOneToMany } from '@/object-record/record-field/ui/types/guards/isFieldRelationOneToMany';
-import { isFieldRichTextV2 } from '@/object-record/record-field/ui/types/guards/isFieldRichTextV2';
+import { isFieldRichText } from '@/object-record/record-field/ui/types/guards/isFieldRichText';
 import { isFieldSelect } from '@/object-record/record-field/ui/types/guards/isFieldSelect';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { BooleanFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/BooleanFieldInput';
@@ -94,7 +94,7 @@ export const FieldInput = () => {
         <RawJsonFieldInput />
       ) : isFieldArray(fieldDefinition) ? (
         <ArrayFieldInput />
-      ) : isFieldRichTextV2(fieldDefinition) ? (
+      ) : isFieldRichText(fieldDefinition) ? (
         <RichTextFieldInput />
       ) : (
         <></>

@@ -6,7 +6,6 @@ import { objectFilterDropdownFilterIsSelectedComponentState } from '@/object-rec
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
 import { useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown } from '@/views/hooks/useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown';
 
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -26,6 +25,7 @@ import { ViewBarFilterDropdownIds } from '@/views/constants/ViewBarFilterDropdow
 import { getFilterTypeFromFieldType } from 'twenty-shared/utils';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
+import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
 
 const mockPushFocusItemToFocusStack = jest.fn();
 
@@ -46,8 +46,8 @@ const personCreatedAtFieldMetadataItemMock =
   );
 
 const wrapper = ({ children }: { children: React.ReactNode }) => {
-  jotaiStore.set(
-    objectMetadataItemsState.atom,
+  setTestObjectMetadataItemsInMetadataStore(
+    jotaiStore,
     generatedMockObjectMetadataItems,
   );
   return (

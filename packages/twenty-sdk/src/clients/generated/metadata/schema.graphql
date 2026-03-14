@@ -374,7 +374,7 @@ enum FieldMetadataType {
   RATING
   RAW_JSON
   RELATION
-  RICH_TEXT_V2
+  RICH_TEXT
   SELECT
   TEXT
   TS_VECTOR
@@ -582,6 +582,7 @@ type CoreViewField {
   createdAt: DateTime!
   updatedAt: DateTime!
   deletedAt: DateTime
+  isOverridden: Boolean!
 }
 
 enum AggregateOperations {
@@ -690,6 +691,7 @@ type CoreViewFieldGroup {
   updatedAt: DateTime!
   deletedAt: DateTime
   viewFields: [CoreViewField!]!
+  isOverridden: Boolean!
 }
 
 type CoreView {
@@ -873,7 +875,7 @@ type RatioAggregateConfig {
   optionValue: String!
 }
 
-type RichTextV2Body {
+type RichTextBody {
   blocknote: String
   markdown: String
 }
@@ -990,7 +992,7 @@ enum WidgetConfigurationType {
 
 type StandaloneRichTextConfiguration {
   configurationType: WidgetConfigurationType!
-  body: RichTextV2Body!
+  body: RichTextBody!
 }
 
 type PieChartConfiguration {
@@ -1606,6 +1608,7 @@ enum FeatureFlagKey {
   IS_DATE_TIME_WHOLE_DAY_FILTER_ENABLED
   IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED
   IS_DRAFT_EMAIL_ENABLED
+  IS_RICH_TEXT_V1_MIGRATED
 }
 
 type SSOIdentityProvider {

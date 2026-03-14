@@ -2,14 +2,14 @@ import { isDefined } from 'twenty-shared/utils';
 import { useMutation } from '@apollo/client/react';
 import { CreateNavigationMenuItemDocument } from '~/generated-metadata/graphql';
 
-import { usePrefetchedNavigationMenuItemsData } from '@/navigation-menu-item/hooks/usePrefetchedNavigationMenuItemsData';
+import { useNavigationMenuItemsData } from '@/navigation-menu-item/hooks/useNavigationMenuItemsData';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 
 export const useCreateNavigationMenuItem = () => {
   const { navigationMenuItems, currentWorkspaceMemberId } =
-    usePrefetchedNavigationMenuItemsData();
+    useNavigationMenuItemsData();
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
 
   const [createNavigationMenuItemMutation] = useMutation(

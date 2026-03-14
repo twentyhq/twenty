@@ -134,9 +134,9 @@ export const fieldMetadataConfigByFieldName: Record<
     type: FieldMetadataType.LINKS,
     isNullable: true,
   },
-  richTextV2Field: {
-    name: 'richTextV2Field',
-    type: FieldMetadataType.RICH_TEXT_V2,
+  richTextField: {
+    name: 'richTextField',
+    type: FieldMetadataType.RICH_TEXT,
     isNullable: true,
   },
   position: {
