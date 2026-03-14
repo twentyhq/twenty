@@ -8,6 +8,7 @@ import { isFieldEmails } from '@/object-record/record-field/ui/types/guards/isFi
 import { isFieldLinks } from '@/object-record/record-field/ui/types/guards/isFieldLinks';
 import { isFieldPhones } from '@/object-record/record-field/ui/types/guards/isFieldPhones';
 import { useRecordFieldValue } from '@/object-record/record-store/hooks/useRecordFieldValue';
+import { isNonEmptyString } from '@sniptt/guards';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { FieldMetadataSettingsOnClickAction } from 'twenty-shared/types';
@@ -48,6 +49,11 @@ export const useGetSecondaryRecordTableCellButton = () => {
     const { primaryPhoneCallingCode = '', primaryPhoneNumber = '' } =
       fieldValue as FieldPhonesValue;
     const phoneNumber = `${primaryPhoneCallingCode}${primaryPhoneNumber}`;
+
+    if (!isNonEmptyString(phoneNumber)) {
+      return [];
+    }
+
     openLinkOnClick = () => {
       window.open(`tel:${phoneNumber}`, '_blank');
     };
@@ -58,6 +64,11 @@ export const useGetSecondaryRecordTableCellButton = () => {
 
   if (isFieldEmails(fieldDefinition)) {
     const email = (fieldValue as FieldEmailsValue).primaryEmail ?? '';
+
+    if (!isNonEmptyString(email)) {
+      return [];
+    }
+
     openLinkOnClick = () => {
       window.open(`mailto:${email}`, '_blank');
     };
@@ -68,6 +79,11 @@ export const useGetSecondaryRecordTableCellButton = () => {
 
   if (isFieldLinks(fieldDefinition)) {
     const url = (fieldValue as FieldLinksValue).primaryLinkUrl ?? '';
+
+    if (!isNonEmptyString(url)) {
+      return [];
+    }
+
     openLinkOnClick = () => {
       window.open(getAbsoluteUrl(url), '_blank');
     };
