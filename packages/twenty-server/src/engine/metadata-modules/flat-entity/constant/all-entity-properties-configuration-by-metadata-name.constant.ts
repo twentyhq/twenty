@@ -350,16 +350,23 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
     },
   },
   viewFieldGroup: {
-    name: { toStringify: false, universalProperty: undefined, toCompare: true },
+    name: {
+      toStringify: false,
+      universalProperty: undefined,
+      toCompare: true,
+      isOverridable: true,
+    },
     position: {
       toStringify: false,
       universalProperty: undefined,
       toCompare: true,
+      isOverridable: true,
     },
     isVisible: {
       toStringify: false,
       universalProperty: undefined,
       toCompare: true,
+      isOverridable: true,
     },
     deletedAt: {
       toStringify: false,
@@ -381,28 +388,42 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: 'viewUniversalIdentifier',
       toStringify: false,
     },
+    overrides: {
+      toCompare: true,
+      toStringify: true,
+      universalProperty: undefined,
+    },
   },
   viewField: {
     isVisible: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
+      isOverridable: true,
     },
-    size: { toCompare: true, toStringify: false, universalProperty: undefined },
+    size: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+      isOverridable: true,
+    },
     position: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
+      isOverridable: true,
     },
     aggregateOperation: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
+      isOverridable: true,
     },
     viewFieldGroupId: {
       toStringify: false,
       universalProperty: 'viewFieldGroupUniversalIdentifier',
       toCompare: true,
+      isOverridable: true,
     },
     deletedAt: {
       toCompare: true,
@@ -428,6 +449,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: false,
       toStringify: false,
       universalProperty: 'viewUniversalIdentifier',
+    },
+    overrides: {
+      toCompare: true,
+      toStringify: true,
+      universalProperty: 'universalOverrides',
     },
   },
   viewGroup: {

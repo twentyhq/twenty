@@ -236,6 +236,7 @@ export const WithViewFieldGroups: Story = {
           name: 'Contact Info',
           position: 0,
           isVisible: true,
+          isOverridden: false,
           viewId: FIELDS_VIEW_ID,
           viewFields: [
             {
@@ -245,6 +246,7 @@ export const WithViewFieldGroups: Story = {
               isVisible: true,
               size: 200,
               aggregateOperation: null,
+              isOverridden: false,
               viewId: FIELDS_VIEW_ID,
             },
             {
@@ -254,6 +256,7 @@ export const WithViewFieldGroups: Story = {
               isVisible: true,
               size: 200,
               aggregateOperation: null,
+              isOverridden: false,
               viewId: FIELDS_VIEW_ID,
             },
             {
@@ -263,6 +266,7 @@ export const WithViewFieldGroups: Story = {
               isVisible: true,
               size: 200,
               aggregateOperation: null,
+              isOverridden: false,
               viewId: FIELDS_VIEW_ID,
             },
           ],
@@ -272,6 +276,7 @@ export const WithViewFieldGroups: Story = {
           name: 'Business',
           position: 1,
           isVisible: true,
+          isOverridden: false,
           viewId: FIELDS_VIEW_ID,
           viewFields: [
             {
@@ -281,6 +286,7 @@ export const WithViewFieldGroups: Story = {
               isVisible: true,
               size: 200,
               aggregateOperation: null,
+              isOverridden: false,
               viewId: FIELDS_VIEW_ID,
             },
             {
@@ -290,6 +296,7 @@ export const WithViewFieldGroups: Story = {
               isVisible: true,
               size: 200,
               aggregateOperation: null,
+              isOverridden: false,
               viewId: FIELDS_VIEW_ID,
             },
             {
@@ -299,6 +306,7 @@ export const WithViewFieldGroups: Story = {
               isVisible: true,
               size: 200,
               aggregateOperation: null,
+              isOverridden: false,
               viewId: FIELDS_VIEW_ID,
             },
           ],
@@ -393,6 +401,7 @@ export const WithInlineViewFields: Story = {
           isVisible: true,
           size: 200,
           aggregateOperation: null,
+          isOverridden: false,
           viewId: FIELDS_VIEW_ID,
         },
         {
@@ -402,6 +411,7 @@ export const WithInlineViewFields: Story = {
           isVisible: true,
           size: 200,
           aggregateOperation: null,
+          isOverridden: false,
           viewId: FIELDS_VIEW_ID,
         },
         {
@@ -411,6 +421,7 @@ export const WithInlineViewFields: Story = {
           isVisible: true,
           size: 200,
           aggregateOperation: null,
+          isOverridden: false,
           viewId: FIELDS_VIEW_ID,
         },
       ],
@@ -501,6 +512,7 @@ export const Empty: Story = {
           name: 'Empty Group',
           position: 0,
           isVisible: false,
+          isOverridden: false,
           viewId: FIELDS_VIEW_ID,
           viewFields: [],
         },
