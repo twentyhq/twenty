@@ -1245,6 +1245,7 @@ type MetadataEvent {
   metadataName: String!
   recordId: String!
   properties: ObjectRecordEventProperties!
+  updatedCollectionHash: String
 }
 
 """Metadata Event Action"""
@@ -2227,7 +2228,7 @@ type MinimalView {
 type MinimalMetadata {
   objectMetadataItems: [MinimalObjectMetadata!]!
   views: [MinimalView!]!
-  metadataVersion: Int!
+  collectionHashes: JSON!
 }
 
 type Webhook {

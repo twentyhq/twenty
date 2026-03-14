@@ -2589,6 +2589,9 @@ export default {
             "properties": [
                 113
             ],
+            "updatedCollectionHash": [
+                1
+            ],
             "__typename": [
                 1
             ]
@@ -4382,8 +4385,8 @@ export default {
             "views": [
                 237
             ],
-            "metadataVersion": [
-                21
+            "collectionHashes": [
+                15
             ],
             "__typename": [
                 1

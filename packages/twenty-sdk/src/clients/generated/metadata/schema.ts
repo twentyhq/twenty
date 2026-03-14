@@ -974,6 +974,7 @@ export interface MetadataEvent {
     metadataName: Scalars['String']
     recordId: Scalars['String']
     properties: ObjectRecordEventProperties
+    updatedCollectionHash?: Scalars['String']
     __typename: 'MetadataEvent'
 }
 
@@ -1910,7 +1911,7 @@ export interface MinimalView {
 export interface MinimalMetadata {
     objectMetadataItems: MinimalObjectMetadata[]
     views: MinimalView[]
-    metadataVersion: Scalars['Int']
+    collectionHashes: Scalars['JSON']
     __typename: 'MinimalMetadata'
 }
 
@@ -3902,6 +3903,7 @@ export interface MetadataEventGenqlSelection{
     metadataName?: boolean | number
     recordId?: boolean | number
     properties?: ObjectRecordEventPropertiesGenqlSelection
+    updatedCollectionHash?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -4905,7 +4907,7 @@ export interface MinimalViewGenqlSelection{
 export interface MinimalMetadataGenqlSelection{
     objectMetadataItems?: MinimalObjectMetadataGenqlSelection
     views?: MinimalViewGenqlSelection
-    metadataVersion?: boolean | number
+    collectionHashes?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }

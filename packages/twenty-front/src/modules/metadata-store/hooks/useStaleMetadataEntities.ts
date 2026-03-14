@@ -17,11 +17,11 @@ export const useStaleMetadataEntities = (): MetadataEntityKey[] => {
     const staleKeys: MetadataEntityKey[] = [];
 
     for (const entityKey of ALL_METADATA_ENTITY_KEYS) {
-      if (collectionHashes[entityKey] === undefined) {
+      if (metadataCollectionHashes[entityKey] === undefined) {
         staleKeys.push(entityKey);
       }
     }
 
     return staleKeys;
-  }, [collectionHashes]);
+  }, [metadataCollectionHashes]);
 };
