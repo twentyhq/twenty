@@ -216,7 +216,6 @@
                     "pages": [
                       "user-guide/ai/capabilities/ai-chatbot",
                       "user-guide/ai/capabilities/ai-agents",
-                      "user-guide/ai/capabilities/mcp",
                       "user-guide/ai/capabilities/permissions-access-control"
                     ]
                   },
@@ -663,7 +662,6 @@
                     "pages": [
                       "l/fr/user-guide/ai/capabilities/ai-chatbot",
                       "l/fr/user-guide/ai/capabilities/ai-agents",
-                      "l/fr/user-guide/ai/capabilities/mcp",
                       "l/fr/user-guide/ai/capabilities/permissions-access-control"
                     ]
                   },
@@ -1110,7 +1108,6 @@
                     "pages": [
                       "l/ar/user-guide/ai/capabilities/ai-chatbot",
                       "l/ar/user-guide/ai/capabilities/ai-agents",
-                      "l/ar/user-guide/ai/capabilities/mcp",
                       "l/ar/user-guide/ai/capabilities/permissions-access-control"
                     ]
                   },
@@ -1557,7 +1554,6 @@
                     "pages": [
                       "l/cs/user-guide/ai/capabilities/ai-chatbot",
                       "l/cs/user-guide/ai/capabilities/ai-agents",
-                      "l/cs/user-guide/ai/capabilities/mcp",
                       "l/cs/user-guide/ai/capabilities/permissions-access-control"
                     ]
                   },
@@ -2004,7 +2000,6 @@
                     "pages": [
                       "l/de/user-guide/ai/capabilities/ai-chatbot",
                       "l/de/user-guide/ai/capabilities/ai-agents",
-                      "l/de/user-guide/ai/capabilities/mcp",
                       "l/de/user-guide/ai/capabilities/permissions-access-control"
                     ]
                   },
@@ -2451,7 +2446,6 @@
                     "pages": [
                       "l/es/user-guide/ai/capabilities/ai-chatbot",
                       "l/es/user-guide/ai/capabilities/ai-agents",
-                      "l/es/user-guide/ai/capabilities/mcp",
                       "l/es/user-guide/ai/capabilities/permissions-access-control"
                     ]
                   },
@@ -2898,7 +2892,6 @@
                     "pages": [
                       "l/it/user-guide/ai/capabilities/ai-chatbot",
                       "l/it/user-guide/ai/capabilities/ai-agents",
-                      "l/it/user-guide/ai/capabilities/mcp",
                       "l/it/user-guide/ai/capabilities/permissions-access-control"
                     ]
                   },
@@ -3345,7 +3338,6 @@
                     "pages": [
                       "l/ja/user-guide/ai/capabilities/ai-chatbot",
                       "l/ja/user-guide/ai/capabilities/ai-agents",
-                      "l/ja/user-guide/ai/capabilities/mcp",
                       "l/ja/user-guide/ai/capabilities/permissions-access-control"
                     ]
                   },
@@ -3792,7 +3784,6 @@
                     "pages": [
                       "l/ko/user-guide/ai/capabilities/ai-chatbot",
                       "l/ko/user-guide/ai/capabilities/ai-agents",
-                      "l/ko/user-guide/ai/capabilities/mcp",
                       "l/ko/user-guide/ai/capabilities/permissions-access-control"
                     ]
                   },
@@ -4239,7 +4230,6 @@
                     "pages": [
                       "l/pt/user-guide/ai/capabilities/ai-chatbot",
                       "l/pt/user-guide/ai/capabilities/ai-agents",
-                      "l/pt/user-guide/ai/capabilities/mcp",
                       "l/pt/user-guide/ai/capabilities/permissions-access-control"
                     ]
                   },
@@ -4686,7 +4676,6 @@
                     "pages": [
                       "l/ro/user-guide/ai/capabilities/ai-chatbot",
                       "l/ro/user-guide/ai/capabilities/ai-agents",
-                      "l/ro/user-guide/ai/capabilities/mcp",
                       "l/ro/user-guide/ai/capabilities/permissions-access-control"
                     ]
                   },
@@ -5133,7 +5122,6 @@
                     "pages": [
                       "l/ru/user-guide/ai/capabilities/ai-chatbot",
                       "l/ru/user-guide/ai/capabilities/ai-agents",
-                      "l/ru/user-guide/ai/capabilities/mcp",
                       "l/ru/user-guide/ai/capabilities/permissions-access-control"
                     ]
                   },
@@ -5580,7 +5568,6 @@
                     "pages": [
                       "l/tr/user-guide/ai/capabilities/ai-chatbot",
                       "l/tr/user-guide/ai/capabilities/ai-agents",
-                      "l/tr/user-guide/ai/capabilities/mcp",
                       "l/tr/user-guide/ai/capabilities/permissions-access-control"
                     ]
                   },
@@ -6027,7 +6014,6 @@
                     "pages": [
                       "l/zh/user-guide/ai/capabilities/ai-chatbot",
                       "l/zh/user-guide/ai/capabilities/ai-agents",
-                      "l/zh/user-guide/ai/capabilities/mcp",
                       "l/zh/user-guide/ai/capabilities/permissions-access-control"
                     ]
                   },
