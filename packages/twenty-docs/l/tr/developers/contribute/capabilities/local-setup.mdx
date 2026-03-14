@@ -6,7 +6,7 @@ description: Twenty'i yerel olarak çalıştırmak isteyen katkıda bulunanlar (
 ## Ön Gereksinimler
 
 <Tabs>
-<Tab title="Linux ve MacOS">
+<Tab title="Linux and macOS">
 
 Twenty'i yüklemeden ve kullanmadan önce bilgisayarınıza aşağıdakileri yüklediğinizden emin olun:
 * [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
@@ -30,7 +30,7 @@ wsl --install
 ```
 Şimdi bilgisayarınızı yeniden başlatmanız gerektiğine dair bir uyarı göreceksiniz. Eğer görmüyorsanız, manuel olarak yeniden başlatın.
 
-Yeniden başladıktan sonra bir powershell penceresi açılacak ve Ubuntu yüklenecek. Bu biraz zaman alabilir.
+Upon restart, a PowerShell window will open and install Ubuntu. Bu biraz zaman alabilir.
 Ubuntu kurulumunuz için bir kullanıcı adı ve şifre oluşturmanız gerektiğine dair bir uyarı göreceksiniz.
 
 2. git'i Yükleyin ve Yapılandırın
@@ -102,8 +102,8 @@ Sonraki adımlardaki tüm komutları projenin kök dizininden çalıştırmalıs
 
 <Tabs>
   <Tab title="Linux">
-    **Seçenek 1 (tercih edilen):** Veritabanınızı yerel olarak kurmak için:
-    Linux makinenize Postgresql yüklemek için şu bağlantıyı kullanın: [Postgresql Kurulumu](https://www.postgresql.org/download/linux/)
+    **Option 1 (preferred):** To provision your database locally:
+    Use the following link to install PostgreSQL on your Linux machine: [PostgreSQL Installation](https://www.postgresql.org/download/linux/)
     ```bash
       psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
     ```
@@ -129,7 +129,8 @@ Sonraki adımlardaki tüm komutları projenin kök dizininden çalıştırmalıs
       brew services list
     ```
 
-    Yükleyici, MacOS'ta Homebrew ile yüklenirken varsayılan olarak `postgres` kullanıcısını oluşturmayabilir. Bunun yerine, macOS kullanıcı adınıza (ör. "john") uygun bir PostgreSQL rolü oluşturur.
+    The installer might not create the `postgres` user by default when installing
+    via Homebrew on macOS. Bunun yerine, macOS kullanıcı adınıza (ör. "john") uygun bir PostgreSQL rolü oluşturur.
     Gerekiyorsa `postgres` kullanıcısını kontrol etmek ve oluşturtmak için şu adımları izleyin:
     ```bash
       # PostgreSQL'e Bağlan
@@ -171,8 +172,8 @@ Sonraki adımlardaki tüm komutları projenin kök dizininden çalıştırmalıs
   <Tab title="Windows (WSL)">
     Aşağıdaki tüm adımlar WSL terminalinde (sanallaştırma makineniz içinde) çalıştırılmalıdır.
 
-    **Seçenek 1:** Postgresql'i yerel olarak sağlamak için:
-    Linux sanal makinenize Postgresql yüklemek için şu bağlantıyı kullanın: [Postgresql Kurulumu](https://www.postgresql.org/download/linux/)
+    **Option 1:** To provision your PostgreSQL locally:
+    Use the following link to install PostgreSQL on your Linux virtual machine: [PostgreSQL Installation](https://www.postgresql.org/download/linux/)
     ```bash
       psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
     ```
@@ -187,11 +188,13 @@ Sonraki adımlardaki tüm komutları projenin kök dizininden çalıştırmalıs
   </Tab>
 </Tabs>
 
-Veritabanına [localhost:5432](localhost:5432) adresinden, kullanıcı `postgres` ve şifre `postgres` ile şimdi erişebilirsiniz.
+You can now access the database at `localhost:5432`.
+
+If you used the Docker option above, the default credentials are user `postgres` and password `postgres`. For native PostgreSQL installations, use the credentials and roles configured on your machine.
 
 ## Adım 4: Redis Veritabanı (önbellek) Kurun
 
-Twenty, en iyi performansı sağlamak için bir redis önbelleğe ihtiyaç duyar
+Twenty requires a Redis cache to provide the best performance.
 
 <Tabs>
   <Tab title="Linux">
@@ -208,8 +211,10 @@ Twenty, en iyi performansı sağlamak için bir redis önbelleğe ihtiyaç duyar
     ```bash
     brew install redis
     ```
-    Redis sunucunuzu başlatın:
-    `brew services start redis`
+    Start your Redis server:
+    ```bash
+    brew services start redis
+    ```
 
     **Seçenek 2:** Eğer docker yüklüyse:
     ```bash
@@ -227,11 +232,11 @@ Twenty, en iyi performansı sağlamak için bir redis önbelleğe ihtiyaç duyar
   </Tab>
 </Tabs>
 
-Bir İstemci GUI'ye ihtiyacınız varsa, [redis insight](https://redis.io/insight/) (ücretsiz sürüm mevcut) öneriyoruz.
+If you need a client GUI, we recommend [Redis Insight](https://redis.io/insight/) (free version available).
 
-## Adım 5: Çevresel değişkenleri ayarlayın
+## Step 5: Set up environment variables
 
-Projenizi yapılandırmak için çevresel değişkenler veya `.env` dosyaları kullanın. Daha fazla bilgi [burada](/l/tr/developers/self-host/capabilities/setup)
+Projenizi yapılandırmak için çevresel değişkenler veya `.env` dosyaları kullanın. Daha fazla bilgi [burada](/l/tr/developers/self-host/capabilities/setup).
 
 `.env.example` dosyalarını `/front` ve `/server` içine kopyalayın:
 

@@ -6,7 +6,7 @@ description: الدليل للمساهمين (أو المطورين الفضول
 ## المتطلبات الأساسية
 
 <Tabs>
-<Tab title="Linux و MacOS">
+<Tab title="Linux and macOS">
 
 قبل أن تتمكن من تثبيت واستخدام Twenty، تأكد من تثبيت الأمور التالية على جهاز الكمبيوتر الخاص بك:
 * [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
@@ -30,7 +30,7 @@ wsl --install
 ```
 يجب أن ترى الآن مطالبة لإعادة تشغيل جهاز الكمبيوتر الخاص بك. إذا لم يكن كذلك، فأعد تشغيله يدويًا.
 
-عند إعادة التشغيل، ستُفتح نافذة PowerShell وسيتم تثبيت Ubuntu. قد يستغرق هذا وقتًا طويلاً.
+Upon restart, a PowerShell window will open and install Ubuntu. قد يستغرق هذا وقتًا طويلاً.
 سترى مطالبة لإنشاء اسم المستخدم وكلمة المرور لتثبيت Ubuntu الخاص بك.
 
 2. تثبيت وإعداد git
@@ -102,8 +102,8 @@ cd twenty
 
 <Tabs>
   <Tab title="Linux">
-    **الخيار 1 (المفضل):** لتوفير قاعدة بياناتك محليًا:
-    استخدم الرابط التالي لتثبيت Postgresql على جهاز Linux الخاص بك: [تثبيت Postgresql](https://www.postgresql.org/download/linux/)
+    **Option 1 (preferred):** To provision your database locally:
+    Use the following link to install PostgreSQL on your Linux machine: [PostgreSQL Installation](https://www.postgresql.org/download/linux/)
     ```bash
       psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
     ```
@@ -129,8 +129,8 @@ cd twenty
     brew services list
     ```
 
-    المثبت قد لا ينشئ المستخدم `postgres` افتراضيًا عند التثبيت
-    عبر Homebrew على MacOS. بدلاً من ذلك، فإنه ينشئ دور PostgreSQL يطابق
+    The installer might not create the `postgres` user by default when installing
+    via Homebrew on macOS. بدلاً من ذلك، فإنه ينشئ دور PostgreSQL يطابق
     اسم المستخدم الخاص بك في MacOS (مثل "john").
     للتحقق وإنشاء المستخدم `postgres` إذا لزم الأمر، اتبع هذه الخطوات:
     ```bash
@@ -173,8 +173,8 @@ cd twenty
   <Tab title="ويندوز (WSL)">
     يجب أن تُنفذ جميع الخطوات التالية في تيرمينال WSL (داخل جهازك الافتراضي)
 
-    **الخيار 1:** لتوفير قاعدة بيانات Postgresql الخاصة بك محليًا:
-    استخدم الرابط التالي لتثبيت Postgresql على جهاز Linux الافتراضي الخاص بك: [تثبيت Postgresql](https://www.postgresql.org/download/linux/)
+    **Option 1:** To provision your PostgreSQL locally:
+    Use the following link to install PostgreSQL on your Linux virtual machine: [PostgreSQL Installation](https://www.postgresql.org/download/linux/)
     ```bash
       psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
     ```
@@ -189,11 +189,13 @@ cd twenty
   </Tab>
 </Tabs>
 
-يمكنك الآن الوصول إلى قاعدة البيانات على [localhost:5432](localhost:5432)، مع المستخدم `postgres` وكلمة المرور `postgres`.
+You can now access the database at `localhost:5432`.
+
+If you used the Docker option above, the default credentials are user `postgres` and password `postgres`. For native PostgreSQL installations, use the credentials and roles configured on your machine.
 
 ## الخطوة 4: إعداد قاعدة بيانات Redis (للتخزين المؤقت)
 
-يتطلب Twenty مخزن بيانات Redis لتقديم أفضل أداء
+Twenty requires a Redis cache to provide the best performance.
 
 <Tabs>
   <Tab title="Linux">
@@ -210,8 +212,10 @@ cd twenty
     ```bash
     brew install redis
     ```
-    ابدأ خادم redis الخاص بك:
-    `brew services start redis`
+    Start your Redis server:
+    ```bash
+    brew services start redis
+    ```
 
     **الخيار 2:** إذا كنت قد قمت بتثبيت docker:
     ```bash
@@ -229,11 +233,11 @@ cd twenty
   </Tab>
 </Tabs>
 
-إذا كنت بحاجة إلى واجهة رسومية للعميل، نوصي بـ [redis insight](https://redis.io/insight/) (يتوفر إصدار مجاني)
+If you need a client GUI, we recommend [Redis Insight](https://redis.io/insight/) (free version available).
 
-## الخطوة 5: إعداد متغيرات البيئة
+## Step 5: Set up environment variables
 
-استخدم متغيرات البيئة أو ملفات `.env` لتكوين مشروعك. المزيد من المعلومات [هنا](/l/ar/developers/self-host/capabilities/setup)
+استخدم متغيرات البيئة أو ملفات `.env` لتكوين مشروعك. المزيد من المعلومات [هنا](/l/ar/developers/self-host/capabilities/setup).
 
 انسخ ملفات `.env.example` الموجودة في `/front` و`/server`:
 
