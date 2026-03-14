@@ -1885,6 +1885,35 @@ export interface AgentTurn {
     __typename: 'AgentTurn'
 }
 
+export interface PresentationObjectMetadata {
+    id: Scalars['UUID']
+    nameSingular: Scalars['String']
+    namePlural: Scalars['String']
+    labelSingular: Scalars['String']
+    labelPlural: Scalars['String']
+    icon?: Scalars['String']
+    isCustom: Scalars['Boolean']
+    isActive: Scalars['Boolean']
+    isSystem: Scalars['Boolean']
+    isRemote: Scalars['Boolean']
+    __typename: 'PresentationObjectMetadata'
+}
+
+export interface PresentationView {
+    id: Scalars['UUID']
+    type: ViewType
+    key?: ViewKey
+    objectMetadataId: Scalars['UUID']
+    __typename: 'PresentationView'
+}
+
+export interface PresentationMetadata {
+    objectMetadataItems: PresentationObjectMetadata[]
+    views: PresentationView[]
+    metadataVersion: Scalars['Int']
+    __typename: 'PresentationMetadata'
+}
+
 export interface Webhook {
     id: Scalars['UUID']
     targetUrl: Scalars['String']
@@ -2595,6 +2624,7 @@ export interface Query {
     getSSOIdentityProviders: FindAvailableSSOIDP[]
     webhooks: Webhook[]
     webhook?: Webhook
+    presentationMetadata: PresentationMetadata
     chatThread: AgentChatThread
     chatMessages: AgentMessage[]
     getAISystemPromptPreview: AISystemPromptPreview
@@ -4848,6 +4878,38 @@ export interface AgentTurnGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface PresentationObjectMetadataGenqlSelection{
+    id?: boolean | number
+    nameSingular?: boolean | number
+    namePlural?: boolean | number
+    labelSingular?: boolean | number
+    labelPlural?: boolean | number
+    icon?: boolean | number
+    isCustom?: boolean | number
+    isActive?: boolean | number
+    isSystem?: boolean | number
+    isRemote?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface PresentationViewGenqlSelection{
+    id?: boolean | number
+    type?: boolean | number
+    key?: boolean | number
+    objectMetadataId?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface PresentationMetadataGenqlSelection{
+    objectMetadataItems?: PresentationObjectMetadataGenqlSelection
+    views?: PresentationViewGenqlSelection
+    metadataVersion?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface WebhookGenqlSelection{
     id?: boolean | number
     targetUrl?: boolean | number
@@ -5618,6 +5680,7 @@ export interface QueryGenqlSelection{
     getSSOIdentityProviders?: FindAvailableSSOIDPGenqlSelection
     webhooks?: WebhookGenqlSelection
     webhook?: (WebhookGenqlSelection & { __args: {id: Scalars['UUID']} })
+    presentationMetadata?: PresentationMetadataGenqlSelection
     chatThread?: (AgentChatThreadGenqlSelection & { __args: {id: Scalars['UUID']} })
     chatMessages?: (AgentMessageGenqlSelection & { __args: {threadId: Scalars['UUID']} })
     getAISystemPromptPreview?: AISystemPromptPreviewGenqlSelection
@@ -7607,6 +7670,30 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     export const isAgentTurn = (obj?: { __typename?: any } | null): obj is AgentTurn => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isAgentTurn"')
       return AgentTurn_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const PresentationObjectMetadata_possibleTypes: string[] = ['PresentationObjectMetadata']
+    export const isPresentationObjectMetadata = (obj?: { __typename?: any } | null): obj is PresentationObjectMetadata => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isPresentationObjectMetadata"')
+      return PresentationObjectMetadata_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const PresentationView_possibleTypes: string[] = ['PresentationView']
+    export const isPresentationView = (obj?: { __typename?: any } | null): obj is PresentationView => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isPresentationView"')
+      return PresentationView_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const PresentationMetadata_possibleTypes: string[] = ['PresentationMetadata']
+    export const isPresentationMetadata = (obj?: { __typename?: any } | null): obj is PresentationMetadata => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isPresentationMetadata"')
+      return PresentationMetadata_possibleTypes.includes(obj.__typename)
     }
     
 

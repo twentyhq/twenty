@@ -2204,6 +2204,32 @@ type AgentTurn {
   createdAt: DateTime!
 }
 
+type PresentationObjectMetadata {
+  id: UUID!
+  nameSingular: String!
+  namePlural: String!
+  labelSingular: String!
+  labelPlural: String!
+  icon: String
+  isCustom: Boolean!
+  isActive: Boolean!
+  isSystem: Boolean!
+  isRemote: Boolean!
+}
+
+type PresentationView {
+  id: UUID!
+  type: ViewType!
+  key: ViewKey
+  objectMetadataId: UUID!
+}
+
+type PresentationMetadata {
+  objectMetadataItems: [PresentationObjectMetadata!]!
+  views: [PresentationView!]!
+  metadataVersion: Int!
+}
+
 type Webhook {
   id: UUID!
   targetUrl: String!
@@ -2955,6 +2981,7 @@ type Query {
   getSSOIdentityProviders: [FindAvailableSSOIDP!]!
   webhooks: [Webhook!]!
   webhook(id: UUID!): Webhook
+  presentationMetadata: PresentationMetadata!
   chatThread(id: UUID!): AgentChatThread!
   chatMessages(threadId: UUID!): [AgentMessage!]!
   getAISystemPromptPreview: AISystemPromptPreview!

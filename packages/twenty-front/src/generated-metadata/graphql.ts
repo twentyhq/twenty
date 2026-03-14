@@ -3979,6 +3979,35 @@ export type PostgresCredentials = {
   workspaceId: Scalars['UUID'];
 };
 
+export type PresentationMetadata = {
+  __typename?: 'PresentationMetadata';
+  metadataVersion: Scalars['Int'];
+  objectMetadataItems: Array<PresentationObjectMetadata>;
+  views: Array<PresentationView>;
+};
+
+export type PresentationObjectMetadata = {
+  __typename?: 'PresentationObjectMetadata';
+  icon?: Maybe<Scalars['String']>;
+  id: Scalars['UUID'];
+  isActive: Scalars['Boolean'];
+  isCustom: Scalars['Boolean'];
+  isRemote: Scalars['Boolean'];
+  isSystem: Scalars['Boolean'];
+  labelPlural: Scalars['String'];
+  labelSingular: Scalars['String'];
+  namePlural: Scalars['String'];
+  nameSingular: Scalars['String'];
+};
+
+export type PresentationView = {
+  __typename?: 'PresentationView';
+  id: Scalars['UUID'];
+  key?: Maybe<ViewKey>;
+  objectMetadataId: Scalars['UUID'];
+  type: ViewType;
+};
+
 export type PublicApplicationRegistration = {
   __typename?: 'PublicApplicationRegistration';
   id: Scalars['UUID'];
@@ -4114,6 +4143,7 @@ export type Query = {
   objectRecordCounts: Array<ObjectRecordCount>;
   objects: ObjectConnection;
   pieChartData: PieChartData;
+  presentationMetadata: PresentationMetadata;
   skill?: Maybe<Skill>;
   skills: Array<Skill>;
   validatePasswordResetToken: ValidatePasswordResetToken;
