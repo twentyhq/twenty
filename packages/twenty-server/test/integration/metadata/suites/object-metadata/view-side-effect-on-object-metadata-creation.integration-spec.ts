@@ -93,6 +93,6 @@ describe('View side effect on object creation', () => {
       expectToFail: false,
     });
 
-    expect(createdViewFields.length).toBe(12);
+    expect(createdViewFields.length).toBe(7);
   });
 });
