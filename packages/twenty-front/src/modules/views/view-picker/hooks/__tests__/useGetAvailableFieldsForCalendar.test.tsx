@@ -1,5 +1,5 @@
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { setObjectMetadataItemsInMetadataStore } from '~/testing/utils/setObjectMetadataItemsInMetadataStore';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { viewObjectMetadataIdComponentState } from '@/views/states/viewObjectMetadataIdComponentState';
 import { useGetAvailableFieldsForCalendar } from '@/views/view-picker/hooks/useGetAvailableFieldsForCalendar';
@@ -22,7 +22,7 @@ const createMockObjectMetadataItem = (fields: any[]) => ({
 
 const createWrapper = (objectMetadataItems: any[]) => {
   return ({ children }: { children: ReactNode }) => {
-    jotaiStore.set(objectMetadataItemsState.atom, objectMetadataItems);
+    setObjectMetadataItemsInMetadataStore(jotaiStore, objectMetadataItems);
     jotaiStore.set(
       viewObjectMetadataIdComponentState.atomFamily({
         instanceId: mockViewInstanceId,

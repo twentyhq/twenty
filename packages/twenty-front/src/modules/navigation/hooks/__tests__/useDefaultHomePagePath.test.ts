@@ -4,8 +4,8 @@ import { Provider as JotaiProvider } from 'jotai';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { setObjectMetadataItemsInMetadataStore } from '~/testing/utils/setObjectMetadataItemsInMetadataStore';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { coreViewsState } from '@/views/states/coreViewState';
@@ -29,8 +29,8 @@ const renderHooks = ({
   withCurrentUser: boolean;
   withExistingView: boolean;
 }) => {
-  jotaiStore.set(
-    objectMetadataItemsState.atom,
+  setObjectMetadataItemsInMetadataStore(
+    jotaiStore,
     generatedMockObjectMetadataItems,
   );
 

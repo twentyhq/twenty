@@ -4,8 +4,8 @@ import { type ReactNode } from 'react';
 import { Provider as JotaiProvider } from 'jotai';
 
 import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMetadata';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { setObjectMetadataItemsInMetadataStore } from '~/testing/utils/setObjectMetadataItemsInMetadataStore';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
@@ -16,8 +16,8 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
 
 describe('useGetRelationMetadata', () => {
   beforeEach(() => {
-    jotaiStore.set(
-      objectMetadataItemsState.atom,
+    setObjectMetadataItemsInMetadataStore(
+      jotaiStore,
       generatedMockObjectMetadataItems,
     );
   });

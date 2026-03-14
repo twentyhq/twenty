@@ -1,7 +1,7 @@
 import { useMetadataStore } from '@/metadata-store/hooks/useMetadataStore';
 import { useLoadMockedObjectMetadataItems } from '@/object-metadata/hooks/useLoadMockedObjectMetadataItems';
 import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItems';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { type View } from '@/views/types/View';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
@@ -16,11 +16,9 @@ export const useReloadWorkspaceMetadata = () => {
     resetMetadataStore();
 
     await refreshObjectMetadataItems();
-    const loadedObjects = store.get(objectMetadataItemsState.atom);
-    updateDraft('objectMetadataItems', loadedObjects);
-    applyChanges();
 
-    const loadedViews = store.get(coreViewsState.atom);
+    // TODO: align generated ViewType with app ViewType to remove this cast
+    const loadedViews = store.get(coreViewsState.atom) as unknown as View[];
     updateDraft('views', loadedViews);
     applyChanges();
   }, [
@@ -35,16 +33,7 @@ export const useReloadWorkspaceMetadata = () => {
     resetMetadataStore();
 
     await loadMockedObjectMetadataItems();
-    const loadedObjects = store.get(objectMetadataItemsState.atom);
-    updateDraft('objectMetadataItems', loadedObjects);
-    applyChanges();
-  }, [
-    resetMetadataStore,
-    loadMockedObjectMetadataItems,
-    store,
-    updateDraft,
-    applyChanges,
-  ]);
+  }, [resetMetadataStore, loadMockedObjectMetadataItems]);
 
   return { reloadWorkspaceMetadata, resetToMockedMetadata };
 };

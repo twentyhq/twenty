@@ -1,32 +1,30 @@
 import { isAppEffectRedirectEnabledState } from '@/app/states/isAppEffectRedirectEnabledState';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { useCallback } from 'react';
-import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
+import { useMetadataStore } from '@/metadata-store/hooks/useMetadataStore';
+import { splitCompositeObjectMetadata } from '@/metadata-store/utils/splitCompositeObjectMetadata';
 import { useStore } from 'jotai';
+import { useCallback } from 'react';
 
 export const useLoadMockedObjectMetadataItems = () => {
   const store = useStore();
+  const { updateDraft, applyChanges } = useMetadataStore();
+
   const loadMockedObjectMetadataItems = useCallback(async () => {
     const { generatedMockObjectMetadataItems } = await import(
       '~/testing/utils/generatedMockObjectMetadataItems'
     );
 
-    if (
-      !isDeeplyEqual(
-        store.get(objectMetadataItemsState.atom),
-        generatedMockObjectMetadataItems,
-      )
-    ) {
-      store.set(
-        objectMetadataItemsState.atom,
-        generatedMockObjectMetadataItems,
-      );
-    }
+    const { flatObjects, flatFields, flatIndexes } =
+      splitCompositeObjectMetadata(generatedMockObjectMetadataItems);
+
+    updateDraft('objectMetadataItems', flatObjects);
+    updateDraft('fieldMetadataItems', flatFields);
+    updateDraft('indexMetadataItems', flatIndexes);
+    applyChanges();
 
     if (store.get(isAppEffectRedirectEnabledState.atom) === false) {
       store.set(isAppEffectRedirectEnabledState.atom, true);
     }
-  }, [store]);
+  }, [store, updateDraft, applyChanges]);
 
   return {
     loadMockedObjectMetadataItems,

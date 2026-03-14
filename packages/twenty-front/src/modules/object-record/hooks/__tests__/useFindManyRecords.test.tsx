@@ -1,13 +1,13 @@
 import { renderHook } from '@testing-library/react';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { setObjectMetadataItemsInMetadataStore } from '~/testing/utils/setObjectMetadataItemsInMetadataStore';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
-jotaiStore.set(objectMetadataItemsState.atom, generatedMockObjectMetadataItems);
+setObjectMetadataItemsInMetadataStore(jotaiStore, generatedMockObjectMetadataItems);
 
 const Wrapper = getJestMetadataAndApolloMocksWrapper({
   apolloMocks: [],

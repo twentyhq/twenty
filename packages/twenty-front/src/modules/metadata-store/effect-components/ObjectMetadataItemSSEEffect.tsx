@@ -1,7 +1,5 @@
 import { useListenToMetadataOperationBrowserEvent } from '@/browser-event/hooks/useListenToMetadataOperationBrowserEvent';
-import { useMetadataStore } from '@/metadata-store/hooks/useMetadataStore';
 import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItems';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { navigationMenuItemsState } from '@/navigation-menu-item/states/navigationMenuItemsState';
 import { useListenToEventsForQuery } from '@/sse-db-event/hooks/useListenToEventsForQuery';
 import { useStore } from 'jotai';
@@ -19,7 +17,6 @@ export const ObjectMetadataItemSSEEffect = () => {
   const client = useApolloClient();
 
   const { refreshObjectMetadataItems } = useRefreshObjectMetadataItems();
-  const { updateDraft, applyChanges } = useMetadataStore();
 
   useListenToEventsForQuery({
     queryId,
@@ -33,10 +30,6 @@ export const ObjectMetadataItemSSEEffect = () => {
     metadataName: AllMetadataName.objectMetadata,
     onMetadataOperationBrowserEvent: async () => {
       await refreshObjectMetadataItems();
-
-      const loadedObjects = store.get(objectMetadataItemsState.atom);
-      updateDraft('objectMetadataItems', loadedObjects);
-      applyChanges();
 
       const navigationMenuItemsResult = await client.query({
         query: FindManyNavigationMenuItemsDocument,
