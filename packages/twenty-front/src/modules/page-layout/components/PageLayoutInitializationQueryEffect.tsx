@@ -131,7 +131,11 @@ export const PageLayoutInitializationQueryEffect = ({
   ]);
 
   useEffect(() => {
-    if (isLayoutCustomizationActive && isDefined(pageLayout)) {
+    if (
+      isLayoutCustomizationActive &&
+      isDefined(pageLayout) &&
+      pageLayout.type === PageLayoutType.RECORD_PAGE
+    ) {
       initializePageLayout(pageLayout);
       setPageLayoutIsInitialized(true);
     }

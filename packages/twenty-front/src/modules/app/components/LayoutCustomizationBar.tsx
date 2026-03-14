@@ -58,6 +58,7 @@ const LayoutCustomizationBarContent = () => {
           onSave={save}
           onCancel={cancel}
           isSaveDisabled={!isDirty || isSaving}
+          isCancelDisabled={isSaving}
           isLoading={isSaving}
           inverted
           saveIcon={IconCheck}
