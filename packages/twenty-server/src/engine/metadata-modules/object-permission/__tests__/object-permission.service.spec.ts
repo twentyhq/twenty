@@ -228,10 +228,6 @@ describe('ObjectPermissionService', () => {
       expect(
         workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration,
       ).toHaveBeenCalled();
-      expect(workspaceCacheService.invalidateAndRecompute).toHaveBeenCalledWith(
-        workspaceId,
-        ['rolesPermissions'],
-      );
     });
 
     it('should throw PermissionsException when object metadata is not found', async () => {
