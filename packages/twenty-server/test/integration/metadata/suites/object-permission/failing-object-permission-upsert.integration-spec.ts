@@ -70,7 +70,7 @@ const failingObjectPermissionUpsertTestCases: EachTestingContext<TestContext>[] 
           roleId: globalContext.nonEditableRoleId,
           objectPermissions: [
             {
-              objectMetadataId: globalContext.systemObjectMetadataId,
+              objectMetadataId: globalContext.nonSystemObjectMetadataId,
               canReadObjectRecords: true,
               canUpdateObjectRecords: false,
               canSoftDeleteObjectRecords: false,
