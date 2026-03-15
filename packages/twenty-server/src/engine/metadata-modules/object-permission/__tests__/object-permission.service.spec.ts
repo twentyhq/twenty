@@ -9,7 +9,6 @@ import {
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 const createMockFlatRoleMaps = (roleId: string, isEditable: boolean) => ({
@@ -45,7 +44,6 @@ const createMockFlatObjectMetadataMaps = (
 
 describe('ObjectPermissionService', () => {
   let service: ObjectPermissionService;
-  let workspaceCacheService: jest.Mocked<WorkspaceCacheService>;
   let workspaceManyOrAllFlatEntityMapsCacheService: jest.Mocked<WorkspaceManyOrAllFlatEntityMapsCacheService>;
   let workspaceMigrationValidateBuildAndRunService: jest.Mocked<WorkspaceMigrationValidateBuildAndRunService>;
 
@@ -67,13 +65,6 @@ describe('ObjectPermissionService', () => {
           },
         },
         {
-          provide: WorkspaceCacheService,
-          useValue: {
-            invalidate: jest.fn(),
-            invalidateAndRecompute: jest.fn(),
-          },
-        },
-        {
           provide: WorkspaceManyOrAllFlatEntityMapsCacheService,
           useValue: {
             getOrRecomputeManyOrAllFlatEntityMaps: jest.fn(),
@@ -89,7 +80,6 @@ describe('ObjectPermissionService', () => {
     }).compile();
 
     service = module.get<ObjectPermissionService>(ObjectPermissionService);
-    workspaceCacheService = module.get(WorkspaceCacheService);
     workspaceManyOrAllFlatEntityMapsCacheService = module.get(
       WorkspaceManyOrAllFlatEntityMapsCacheService,
     );
@@ -147,9 +137,6 @@ describe('ObjectPermissionService', () => {
 
       expect(
         workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration,
-      ).not.toHaveBeenCalled();
-      expect(
-        workspaceCacheService.invalidateAndRecompute,
       ).not.toHaveBeenCalled();
     });
 
