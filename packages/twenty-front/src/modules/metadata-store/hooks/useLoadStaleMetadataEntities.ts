@@ -172,10 +172,7 @@ export const useLoadStaleMetadataEntities = () => {
                 logicFunctionsState.atom,
                 result.data.findManyLogicFunctions,
               );
-              updateDraft(
-                'logicFunctions',
-                result.data.findManyLogicFunctions,
-              );
+              updateDraft('logicFunctions', result.data.findManyLogicFunctions);
             }),
         );
       }

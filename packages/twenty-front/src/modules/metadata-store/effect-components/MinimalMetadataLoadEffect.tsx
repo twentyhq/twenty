@@ -5,56 +5,47 @@ import { useLoadMinimalMetadata } from '@/metadata-store/hooks/useLoadMinimalMet
 import { useLoadMockedMinimalMetadata } from '@/metadata-store/hooks/useLoadMockedMinimalMetadata';
 import { useLoadStaleMetadataEntities } from '@/metadata-store/hooks/useLoadStaleMetadataEntities';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { isWorkspaceActiveOrSuspended } from 'twenty-shared/workspace';
 
 export const MinimalMetadataLoadEffect = () => {
   const isLoggedIn = useIsLogged();
   const isCurrentUserLoaded = useAtomStateValue(isCurrentUserLoadedState);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-  const isLoadingRef = useRef(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const { loadMinimalMetadata } = useLoadMinimalMetadata();
   const { loadMockedMinimalMetadata } = useLoadMockedMinimalMetadata();
   const { loadStaleMetadataEntities } = useLoadStaleMetadataEntities();
 
-  useEffect(() => {
-    if (!isCurrentUserLoaded || !isLoggedIn) {
-      return;
-    }
-
-    if (isLoadingRef.current) {
-      return;
-    }
-
+  const performLoad = useCallback(async () => {
     if (!isWorkspaceActiveOrSuspended(currentWorkspace)) {
-      isLoadingRef.current = true;
-      loadMockedMinimalMetadata().finally(() => {
-        isLoadingRef.current = false;
-      });
-
+      await loadMockedMinimalMetadata();
       return;
     }
 
-    isLoadingRef.current = true;
+    const result = await loadMinimalMetadata();
 
-    loadMinimalMetadata()
-      .then((result) => {
-        if (result?.staleEntityKeys && result.staleEntityKeys.length > 0) {
-          loadStaleMetadataEntities(result.staleEntityKeys);
-        }
-      })
-      .finally(() => {
-        isLoadingRef.current = false;
-      });
+    if (result?.staleEntityKeys && result.staleEntityKeys.length > 0) {
+      loadStaleMetadataEntities(result.staleEntityKeys);
+    }
   }, [
-    isCurrentUserLoaded,
-    isLoggedIn,
     currentWorkspace,
     loadMinimalMetadata,
     loadMockedMinimalMetadata,
     loadStaleMetadataEntities,
   ]);
+
+  useEffect(() => {
+    if (!isCurrentUserLoaded || !isLoggedIn || isLoading) {
+      return;
+    }
+
+    setIsLoading(true);
+    performLoad().finally(() => {
+      setIsLoading(false);
+    });
+  }, [isCurrentUserLoaded, isLoggedIn, isLoading, performLoad]);
 
   return null;
 };

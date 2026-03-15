@@ -118,7 +118,6 @@ export const useHandleRecordGroupField = () => {
         viewGroups: newViewGroupsList,
         objectMetadataItem,
       });
-
     },
     [
       currentViewIdCallbackState,

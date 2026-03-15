@@ -8,11 +8,9 @@ const useViewsSideEffectsOnViewGroups = () => {
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
 
   const triggerViewGroupOptimisticEffectAtViewCreation = ({
-    newViewId,
     mainGroupByFieldMetadataId,
     objectMetadataItemId,
   }: {
-    newViewId: string;
     mainGroupByFieldMetadataId?: string | null;
     objectMetadataItemId: string;
   }) => {

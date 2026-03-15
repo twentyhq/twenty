@@ -34,7 +34,8 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useSignUpInNewWorkspace } from '@/auth/sign-in-up/hooks/useSignUpInNewWorkspace';
-import { useReloadWorkspaceMetadata } from '@/metadata-store/hooks/useReloadWorkspaceMetadata';
+import { useLoadMockedMinimalMetadata } from '@/metadata-store/hooks/useLoadMockedMinimalMetadata';
+import { useMetadataStore } from '@/metadata-store/hooks/useMetadataStore';
 import { lastAuthenticatedMethodState } from '@/auth/states/lastAuthenticatedMethodState';
 import { loginTokenState } from '@/auth/states/loginTokenState';
 import {
@@ -87,7 +88,8 @@ export const useAuth = () => {
   const { loadCurrentUser } = useLoadCurrentUser();
   const { clearSseClient } = useClearSseClient();
 
-  const { resetToMockedMetadata } = useReloadWorkspaceMetadata();
+  const { resetMetadataStore } = useMetadataStore();
+  const { loadMockedMinimalMetadata } = useLoadMockedMinimalMetadata();
   const { createWorkspace } = useSignUpInNewWorkspace();
 
   const setSignInUpStep = useSetAtomState(signInUpStepState);
@@ -164,14 +166,16 @@ export const useAuth = () => {
 
     await client.clearStore();
     setLastAuthenticateWorkspaceDomain(null);
-    await resetToMockedMetadata();
+    resetMetadataStore();
+    await loadMockedMinimalMetadata();
     navigate(AppPath.SignInUp);
     store.set(isAppEffectRedirectEnabledState.atom, true);
   }, [
     clearSseClient,
     client,
     setLastAuthenticateWorkspaceDomain,
-    resetToMockedMetadata,
+    resetMetadataStore,
+    loadMockedMinimalMetadata,
     navigate,
     store,
   ]);

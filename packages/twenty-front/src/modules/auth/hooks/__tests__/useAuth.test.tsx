@@ -30,7 +30,6 @@ jest.mock('@/domain-manager/hooks/useRedirect', () => ({
   })),
 }));
 
-
 jest.mock('@/domain-manager/hooks/useOrigin', () => ({
   useOrigin: jest.fn().mockImplementation(() => ({
     origin: 'http://localhost',

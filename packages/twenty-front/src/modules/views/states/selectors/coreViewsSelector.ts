@@ -27,12 +27,8 @@ const coreViewsAtom = atom((get) => {
   const viewFiltersEntry = get(viewFiltersAtom) as MetadataStoreItem;
   const viewSortsEntry = get(viewSortsAtom) as MetadataStoreItem;
   const viewGroupsEntry = get(viewGroupsAtom) as MetadataStoreItem;
-  const viewFilterGroupsEntry = get(
-    viewFilterGroupsAtom,
-  ) as MetadataStoreItem;
-  const viewFieldGroupsEntry = get(
-    viewFieldGroupsAtom,
-  ) as MetadataStoreItem;
+  const viewFilterGroupsEntry = get(viewFilterGroupsAtom) as MetadataStoreItem;
+  const viewFieldGroupsEntry = get(viewFieldGroupsAtom) as MetadataStoreItem;
 
   const flatViews = viewsEntry.current as FlatView[];
   const flatViewFields = viewFieldsEntry.current as FlatViewField[];
@@ -77,8 +73,7 @@ const coreViewsAtom = atom((get) => {
 
   for (const filterGroup of flatViewFilterGroups) {
     if ('viewId' in filterGroup && typeof filterGroup.viewId === 'string') {
-      const existing =
-        viewFilterGroupsByViewId.get(filterGroup.viewId) ?? [];
+      const existing = viewFilterGroupsByViewId.get(filterGroup.viewId) ?? [];
       existing.push(filterGroup);
       viewFilterGroupsByViewId.set(filterGroup.viewId, existing);
     }
@@ -86,8 +81,7 @@ const coreViewsAtom = atom((get) => {
 
   for (const fieldGroup of flatViewFieldGroups) {
     if ('viewId' in fieldGroup && typeof fieldGroup.viewId === 'string') {
-      const existing =
-        viewFieldGroupsByViewId.get(fieldGroup.viewId) ?? [];
+      const existing = viewFieldGroupsByViewId.get(fieldGroup.viewId) ?? [];
       existing.push(fieldGroup);
       viewFieldGroupsByViewId.set(fieldGroup.viewId, existing);
     }

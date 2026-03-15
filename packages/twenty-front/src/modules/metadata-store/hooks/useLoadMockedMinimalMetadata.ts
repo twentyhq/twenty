@@ -1,12 +1,8 @@
-import { isAppEffectRedirectEnabledState } from '@/app/states/isAppEffectRedirectEnabledState';
 import { useMetadataStore } from '@/metadata-store/hooks/useMetadataStore';
 import { type FlatObjectMetadataItem } from '@/metadata-store/types/FlatObjectMetadataItem';
-import { type FlatView } from '@/metadata-store/types/FlatView';
-import { useStore } from 'jotai';
 import { useCallback } from 'react';
 
 export const useLoadMockedMinimalMetadata = () => {
-  const store = useStore();
   const { updateDraft, applyChanges } = useMetadataStore();
 
   const loadMockedMinimalMetadata = useCallback(async () => {
@@ -30,11 +26,7 @@ export const useLoadMockedMinimalMetadata = () => {
 
     updateDraft('objectMetadataItems', minimalObjects);
     applyChanges();
-
-    if (store.get(isAppEffectRedirectEnabledState.atom) === false) {
-      store.set(isAppEffectRedirectEnabledState.atom, true);
-    }
-  }, [store, updateDraft, applyChanges]);
+  }, [updateDraft, applyChanges]);
 
   return { loadMockedMinimalMetadata };
 };

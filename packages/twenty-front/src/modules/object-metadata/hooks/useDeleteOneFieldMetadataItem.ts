@@ -49,10 +49,8 @@ export const useDeleteOneFieldMetadataItem = () => {
 
   const deleteOneFieldMetadataItem = async ({
     idToDelete,
-    objectMetadataId,
   }: {
     idToDelete: string;
-    objectMetadataId: string;
   }): Promise<
     MetadataRequestResult<
       Awaited<ReturnType<typeof deleteOneFieldMetadataItemMutation>>
