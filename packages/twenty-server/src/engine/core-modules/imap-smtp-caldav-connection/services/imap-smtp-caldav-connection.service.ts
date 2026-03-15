@@ -29,11 +29,14 @@ export class ImapSmtpCaldavService {
     handle: string,
     params: ConnectionParameters,
   ): Promise<boolean> {
+    let client: ImapFlow | null = null;
+
     try {
       const validatedHost = await this.secureHttpClientService.getValidatedHost(
         params.host,
       );
-      const client = new ImapFlow({
+
+      client = new ImapFlow({
         host: validatedHost,
         port: params.port,
         secure: params.secure ?? true,
@@ -85,7 +88,7 @@ export class ImapSmtpCaldavService {
         userFriendlyMessage: msg`We encountered an issue connecting to your email account. Please check your settings and try again.`,
       });
     } finally {
-      if (client.authenticated) {
+      if (client?.authenticated) {
         client.logout().catch((err) => {
           this.logger.warn(`IMAP logout failed: ${err.message}`);
         });
