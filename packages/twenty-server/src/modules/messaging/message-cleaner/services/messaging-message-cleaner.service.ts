@@ -3,6 +3,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import chunk from 'lodash.chunk';
 import { In, IsNull, Like } from 'typeorm';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -51,9 +53,10 @@ export class MessagingMessageCleanerService {
       const wildcardId = messageExternalIds.find((id) => id.endsWith(':*'));
       const shouldDeleteAllInFolder = isDefined(wildcardId);
 
-      if (shouldDeleteAllInFolder) {
+      if (shouldDeleteAllInFolder && isDefined(wildcardId)) {
         const folderPath = wildcardId.split(':*')[0];
         let hasMore = true;
+
         while (hasMore) {
           const associations =
             await messageChannelMessageAssociationRepository.find({
@@ -113,7 +116,7 @@ export class MessagingMessageCleanerService {
     messageThreadRepository: any,
   ) {
     await messageChannelMessageAssociationRepository.delete(
-      associations.map(({ id }) => id),
+      associations.map(({ id }: { id: string }) => id),
     );
 
     this.logger.log(
@@ -122,7 +125,7 @@ export class MessagingMessageCleanerService {
 
     const orphanMessages = await messageRepository.find({
       where: {
-        id: In(associations.map(({ messageId }) => messageId)),
+        id: In(associations.map(({ messageId }: { messageId: string }) => messageId)),
         messageChannelMessageAssociations: {
           id: IsNull(),
         },
@@ -134,11 +137,17 @@ export class MessagingMessageCleanerService {
         `WorkspaceId: ${workspaceId} Deleting ${orphanMessages.length} orphan messages`,
       );
 
-      await messageRepository.delete(orphanMessages.map(({ id }) => id));
+      await messageRepository.delete(
+        orphanMessages.map(({ id }: { id: string }) => id),
+      );
 
       const orphanMessageThreads = await messageThreadRepository.find({
         where: {
-          id: In(orphanMessages.map(({ messageThreadId }) => messageThreadId)),
+          id: In(
+            orphanMessages.map(
+              ({ messageThreadId }: { messageThreadId: string }) => messageThreadId,
+            ),
+          ),
           messages: {
             id: IsNull(),
           },
@@ -151,7 +160,7 @@ export class MessagingMessageCleanerService {
         );
 
         await messageThreadRepository.delete(
-          orphanMessageThreads.map(({ id }) => id),
+          orphanMessageThreads.map(({ id }: { id: string }) => id),
         );
       }
     }
