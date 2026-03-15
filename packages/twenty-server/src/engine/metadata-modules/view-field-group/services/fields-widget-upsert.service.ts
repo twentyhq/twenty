@@ -294,7 +294,7 @@ export class FieldsWidgetUpsertService {
         return [];
       }
 
-      const { viewFieldGroupUniversalIdentifier } =
+      const { viewFieldGroupUniversalIdentifier: _viewFieldGroupUniversalIdentifier } =
         resolveEntityRelationUniversalIdentifiers({
           metadataName: 'viewField',
           foreignKeyValues: {

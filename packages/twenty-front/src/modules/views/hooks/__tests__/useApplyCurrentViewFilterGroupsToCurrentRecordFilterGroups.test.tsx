@@ -17,7 +17,7 @@ import { type CoreViewFilterGroup } from '~/generated-metadata/graphql';
 import { getJestMetadataAndApolloMocksAndCommandMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndCommandMenuWrapper';
 import { mockedCoreViews } from '~/testing/mock-data/generated/metadata/views/mock-views-data';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
-import { setCoreViewsInMetadataStore } from '~/testing/utils/setCoreViewsInMetadataStore';
+import { setTestCoreViewsInMetadataStore } from '~/testing/utils/setTestCoreViewsInMetadataStore';
 
 const mockObjectMetadataItemNameSingular = 'company';
 
@@ -94,7 +94,7 @@ describe('useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups', () => {
           contextStoreCurrentObjectMetadataNameSingular:
             mockObjectMetadataItemNameSingular,
           onInitializeJotaiStore: (store) => {
-            setCoreViewsInMetadataStore(store, [mockCoreView]);
+            setTestCoreViewsInMetadataStore(store, [mockCoreView]);
           },
         }),
       },
@@ -186,7 +186,7 @@ describe('useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups', () => {
           contextStoreCurrentObjectMetadataNameSingular:
             mockObjectMetadataItemNameSingular,
           onInitializeJotaiStore: (store) => {
-            setCoreViewsInMetadataStore(store, [
+            setTestCoreViewsInMetadataStore(store, [
               { ...mockCoreView, viewFilterGroups: [] },
             ]);
             store.set(

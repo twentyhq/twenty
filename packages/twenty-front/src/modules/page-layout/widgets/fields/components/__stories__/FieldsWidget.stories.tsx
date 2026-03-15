@@ -6,8 +6,6 @@ import { expect, waitFor, within } from 'storybook/test';
 
 import { isMinimalMetadataReadyState } from '@/metadata-store/states/isMinimalMetadataReadyState';
 import { ApolloCoreClientContext } from '@/object-metadata/contexts/ApolloCoreClientContext';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { PageLayoutContentProvider } from '@/page-layout/contexts/PageLayoutContentContext';
@@ -24,6 +22,7 @@ import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/con
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type CoreViewWithRelations } from '@/views/types/CoreViewWithRelations';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import {
   ViewOpenRecordIn as CoreViewOpenRecordIn,
@@ -40,7 +39,8 @@ import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMeta
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
-import { setCoreViewsInMetadataStore } from '~/testing/utils/setCoreViewsInMetadataStore';
+import { setTestCoreViewsInMetadataStore } from '~/testing/utils/setTestCoreViewsInMetadataStore';
+import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
 
 const companyObjectMetadataItem = getMockObjectMetadataItemOrThrow(
   CoreObjectNameSingular.Company,
@@ -309,7 +309,7 @@ export const WithViewFieldGroups: Story = {
       generatedMockObjectMetadataItems,
     );
     jotaiStore.set(isMinimalMetadataReadyState.atom, true);
-    setCoreViewsInMetadataStore(jotaiStore, [coreView]);
+    setTestCoreViewsInMetadataStore(jotaiStore, [coreView]);
     jotaiStore.set(
       pageLayoutPersistedComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
@@ -395,7 +395,7 @@ export const WithInlineViewFields: Story = {
       generatedMockObjectMetadataItems,
     );
     jotaiStore.set(isMinimalMetadataReadyState.atom, true);
-    setCoreViewsInMetadataStore(jotaiStore, [coreView]);
+    setTestCoreViewsInMetadataStore(jotaiStore, [coreView]);
     jotaiStore.set(
       pageLayoutPersistedComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
@@ -479,7 +479,7 @@ export const Empty: Story = {
       generatedMockObjectMetadataItems,
     );
     jotaiStore.set(isMinimalMetadataReadyState.atom, true);
-    setCoreViewsInMetadataStore(jotaiStore, [coreView]);
+    setTestCoreViewsInMetadataStore(jotaiStore, [coreView]);
     jotaiStore.set(
       pageLayoutPersistedComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,

@@ -51,8 +51,6 @@ import { isRecordMatchingRLSRowLevelPermissionPredicate } from 'src/engine/twent
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { parseEventNameOrThrow } from 'src/engine/workspace-event-emitter/utils/parse-event-name';
-import { type MetadataEvent } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/metadata-event';
-
 @Injectable()
 export class WorkspaceEventEmitterService {
   constructor(

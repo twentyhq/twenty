@@ -1,14 +1,12 @@
-import { renderHook, waitFor } from '@testing-library/react';
-import { createElement, useEffect, type ReactNode } from 'react';
-import { Provider as JotaiProvider } from 'jotai';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
-import { setCoreViewsInMetadataStore } from '~/testing/utils/setCoreViewsInMetadataStore';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { renderHook, waitFor } from '@testing-library/react';
+import { Provider as JotaiProvider } from 'jotai';
+import { createElement, useEffect, type ReactNode } from 'react';
 import { AppPath } from 'twenty-shared/types';
 import {
   ViewOpenRecordIn,
@@ -16,8 +14,10 @@ import {
   ViewVisibility,
 } from '~/generated-metadata/graphql';
 import { mockedUserData } from '~/testing/mock-data/users';
-import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
+import { setTestCoreViewsInMetadataStore } from '~/testing/utils/setTestCoreViewsInMetadataStore';
+import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
 
 const Wrapper = ({ children }: { children: ReactNode }) =>
   createElement(JotaiProvider, { store: jotaiStore }, children);
@@ -43,7 +43,7 @@ const renderHooks = ({
 
       useEffect(() => {
         if (withExistingView) {
-          setCoreViewsInMetadataStore(jotaiStore, [
+          setTestCoreViewsInMetadataStore(jotaiStore, [
             {
               id: 'viewId',
               name: 'Test View',
@@ -68,7 +68,7 @@ const renderHooks = ({
             },
           ]);
         } else {
-          setCoreViewsInMetadataStore(jotaiStore, []);
+          setTestCoreViewsInMetadataStore(jotaiStore, []);
         }
 
         if (withCurrentUser) {

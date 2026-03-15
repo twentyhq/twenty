@@ -5,7 +5,7 @@ import { type createStore } from 'jotai';
 
 type JotaiStore = ReturnType<typeof createStore>;
 
-export const setCoreViewsInMetadataStore = (
+export const setTestCoreViewsInMetadataStore = (
   store: JotaiStore,
   views: CoreViewWithRelations[],
 ) => {
