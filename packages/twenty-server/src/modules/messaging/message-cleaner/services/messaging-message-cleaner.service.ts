@@ -125,7 +125,9 @@ export class MessagingMessageCleanerService {
 
     const orphanMessages = await messageRepository.find({
       where: {
-        id: In(associations.map(({ messageId }: { messageId: string }) => messageId)),
+        id: In(
+          associations.map(({ messageId }: { messageId: string }) => messageId),
+        ),
         messageChannelMessageAssociations: {
           id: IsNull(),
         },
@@ -145,7 +147,8 @@ export class MessagingMessageCleanerService {
         where: {
           id: In(
             orphanMessages.map(
-              ({ messageThreadId }: { messageThreadId: string }) => messageThreadId,
+              ({ messageThreadId }: { messageThreadId: string }) =>
+                messageThreadId,
             ),
           ),
           messages: {
