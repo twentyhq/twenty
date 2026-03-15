@@ -74,12 +74,10 @@ describe('ImapGetMessageListService', () => {
         {
           provide: ImapSyncService,
           useValue: {
-            syncFolder: jest
-              .fn()
-              .mockResolvedValue({
-                messageUids: [1, 2, 3],
-                isResetRequired: false,
-              }),
+            syncFolder: jest.fn().mockResolvedValue({
+              messageUids: [1, 2, 3],
+              isResetRequired: false,
+            }),
           },
         },
         {
