@@ -1,3 +1,4 @@
+import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { Injectable, Logger } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
@@ -20,6 +21,7 @@ export class ImapSmtpCaldavService {
   private readonly logger = new Logger(ImapSmtpCaldavService.name);
 
   constructor(
+    private readonly secureHttpClientService: SecureHttpClientService,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
   ) {}
 
@@ -27,8 +29,11 @@ export class ImapSmtpCaldavService {
     handle: string,
     params: ConnectionParameters,
   ): Promise<boolean> {
+    const validatedHost = await this.secureHttpClientService.getValidatedHost(
+      params.host,
+    );
     const client = new ImapFlow({
-      host: params.host,
+      host: validatedHost,
       port: params.port,
       secure: params.secure ?? true,
       auth: {
@@ -89,8 +94,11 @@ export class ImapSmtpCaldavService {
     handle: string,
     params: ConnectionParameters,
   ): Promise<boolean> {
+    const validatedHost = await this.secureHttpClientService.getValidatedHost(
+      params.host,
+    );
     const transport = createTransport({
-      host: params.host,
+      host: validatedHost,
       port: params.port,
       auth: {
         user: params.username ?? handle,
@@ -120,8 +128,11 @@ export class ImapSmtpCaldavService {
     handle: string,
     params: ConnectionParameters,
   ): Promise<boolean> {
+    const validatedUrl = await this.secureHttpClientService.getValidatedUrl(
+      params.host,
+    );
     const client = new CalDAVClient({
-      serverUrl: params.host,
+      serverUrl: validatedUrl,
       username: params.username ?? handle,
       password: params.password,
     });
