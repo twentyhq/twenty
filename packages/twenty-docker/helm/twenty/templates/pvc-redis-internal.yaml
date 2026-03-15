@@ -1,0 +1,20 @@
+{{- if and .Values.redisInternal.enabled (not .Values.redisInternal.persistence.existingClaim) }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "twenty.fullname" . }}-redis
+  namespace: {{ include "twenty.namespace" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "twenty.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/component: redis
+spec:
+  accessModes:
+{{ toYaml .Values.redisInternal.persistence.accessModes | nindent 4 }}
+  resources:
+    requests:
+      storage: {{ .Values.redisInternal.persistence.size }}
+  {{- if .Values.redisInternal.persistence.storageClass }}
+  storageClassName: {{ .Values.redisInternal.persistence.storageClass }}
+  {{- end }}
+{{- end }}
