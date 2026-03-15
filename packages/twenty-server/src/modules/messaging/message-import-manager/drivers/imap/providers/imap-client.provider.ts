@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
 
 import { ImapFlow } from 'imapflow';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
@@ -16,11 +16,13 @@ type ConnectedAccountIdentifier = Pick<
 >;
 
 @Injectable()
-export class ImapClientProvider {
+export class ImapClientProvider implements OnModuleDestroy {
   private readonly logger = new Logger(ImapClientProvider.name);
 
   private static readonly CONNECTION_TIMEOUT_MS = 30000;
   private static readonly GREETING_TIMEOUT_MS = 16000;
+
+  private readonly connectionCache = new Map<string, ImapFlow>();
 
   constructor(
     private readonly secureHttpClientService: SecureHttpClientService,
@@ -29,8 +31,22 @@ export class ImapClientProvider {
   async getClient(
     connectedAccount: ConnectedAccountIdentifier,
   ): Promise<ImapFlow> {
+    const cachedClient = this.connectionCache.get(connectedAccount.id);
+
+    if (cachedClient && cachedClient.authenticated) {
+      this.logger.debug(
+        `Reusing cached IMAP connection for ${connectedAccount.handle}`,
+      );
+
+      return cachedClient;
+    }
+
     try {
-      return await this.createConnection(connectedAccount);
+      const client = await this.createConnection(connectedAccount);
+
+      this.connectionCache.set(connectedAccount.id, client);
+
+      return client;
     } catch (error) {
       this.logger.error(
         `Failed to establish IMAP connection for ${connectedAccount.handle}: ${error.message}`,
@@ -42,12 +58,9 @@ export class ImapClientProvider {
   }
 
   async closeClient(client: ImapFlow): Promise<void> {
-    try {
-      await client.logout();
-      this.logger.log('Closed IMAP client');
-    } catch (error) {
-      this.logger.error(`Error closing IMAP client: ${error.message}`);
-    }
+    // We keep the client open in the cache for reuse.
+    // Logout will happen when the process terminates or connection is lost.
+    this.logger.debug('Keeping IMAP client open in cache');
   }
 
   private async createConnection(
@@ -111,5 +124,18 @@ export class ImapClientProvider {
 
       throw error;
     }
+  }
+
+  async onModuleDestroy() {
+    this.logger.log('Closing all cached IMAP connections...');
+    for (const [id, client] of this.connectionCache) {
+      try {
+        await client.logout();
+        this.logger.debug(`Closed IMAP connection for ${id}`);
+      } catch (error) {
+        this.logger.error(`Error closing IMAP connection ${id}: ${error.message}`);
+      }
+    }
+    this.connectionCache.clear();
   }
 }
