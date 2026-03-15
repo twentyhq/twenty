@@ -29,24 +29,25 @@ export class ImapSmtpCaldavService {
     handle: string,
     params: ConnectionParameters,
   ): Promise<boolean> {
-    const validatedHost = await this.secureHttpClientService.getValidatedHost(
-      params.host,
-    );
-    const client = new ImapFlow({
-      host: validatedHost,
-      port: params.port,
-      secure: params.secure ?? true,
-      auth: {
-        user: params.username ?? handle,
-        pass: params.password,
-      },
-      logger: false,
-      tls: {
-        rejectUnauthorized: false,
-      },
-    });
-
     try {
+      const validatedHost = await this.secureHttpClientService.getValidatedHost(
+        params.host,
+      );
+      const client = new ImapFlow({
+        host: validatedHost,
+        port: params.port,
+        secure: params.secure ?? true,
+        auth: {
+          user: params.username ?? handle,
+          pass: params.password,
+        },
+        logger: false,
+        tls: {
+          rejectUnauthorized: false,
+          servername: params.host,
+        },
+      });
+
       await client.connect();
 
       const mailboxes = await client.list();
@@ -54,6 +55,10 @@ export class ImapSmtpCaldavService {
       this.logger.log(
         `IMAP connection successful. Found ${mailboxes.length} mailboxes.`,
       );
+
+      if (client.authenticated) {
+        await client.logout();
+      }
 
       return true;
     } catch (error) {
@@ -83,10 +88,6 @@ export class ImapSmtpCaldavService {
       throw new UserInputError(`IMAP connection failed: ${error.message}`, {
         userFriendlyMessage: msg`We encountered an issue connecting to your email account. Please check your settings and try again.`,
       });
-    } finally {
-      if (client.authenticated) {
-        await client.logout();
-      }
     }
   }
 
@@ -94,22 +95,23 @@ export class ImapSmtpCaldavService {
     handle: string,
     params: ConnectionParameters,
   ): Promise<boolean> {
-    const validatedHost = await this.secureHttpClientService.getValidatedHost(
-      params.host,
-    );
-    const transport = createTransport({
-      host: validatedHost,
-      port: params.port,
-      auth: {
-        user: params.username ?? handle,
-        pass: params.password,
-      },
-      tls: {
-        rejectUnauthorized: false,
-      },
-    });
-
     try {
+      const validatedHost = await this.secureHttpClientService.getValidatedHost(
+        params.host,
+      );
+      const transport = createTransport({
+        host: validatedHost,
+        port: params.port,
+        auth: {
+          user: params.username ?? handle,
+          pass: params.password,
+        },
+        tls: {
+          rejectUnauthorized: false,
+          servername: params.host,
+        },
+      });
+
       await transport.verify();
     } catch (error) {
       this.logger.error(
