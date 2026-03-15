@@ -48,13 +48,18 @@ export class MessagingMessageCleanerService {
           'messageThread',
         );
 
-      const messageExternalIdsChunks = chunk(messageExternalIds, 500);
+      const shouldDeleteAll = messageExternalIds.includes('*');
+      const messageExternalIdsChunks = shouldDeleteAll
+        ? [null]
+        : chunk(messageExternalIds, 500);
 
       for (const messageExternalIdsChunk of messageExternalIdsChunks) {
         const messageChannelMessageAssociationsToDelete =
           await messageChannelMessageAssociationRepository.find({
             where: {
-              messageExternalId: In(messageExternalIdsChunk),
+              ...(messageExternalIdsChunk
+                ? { messageExternalId: In(messageExternalIdsChunk) }
+                : {}),
               messageChannelId,
             },
           });

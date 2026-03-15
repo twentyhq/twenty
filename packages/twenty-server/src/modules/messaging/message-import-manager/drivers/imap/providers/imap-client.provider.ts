@@ -92,15 +92,21 @@ export class ImapClientProvider implements OnModuleDestroy {
       }
     }
 
-    // Check if there's already a connection attempt in progress for this account with the SAME parameters
-    const pendingKey = `${connectedAccount.id}:${parametersHash}`;
-    const pending = this.pendingConnections.get(pendingKey);
+    // Check if there's already a connection attempt in progress for this account
+    // We key by account ID to ensure we don't start multiple connections for the same account simultaneously.
+    const pending = this.pendingConnections.get(connectedAccount.id);
     if (pending) {
       this.logger.debug(
         `Waiting for existing IMAP connection attempt for ${connectedAccount.handle}`,
       );
       try {
-        return await pending;
+        const client = await pending;
+        // Verify that the resolved connection matches our current parameters
+        const currentCached = this.connectionCache.get(connectedAccount.id);
+        if (currentCached && currentCached.parametersHash === parametersHash) {
+          return client;
+        }
+        // If parameters changed while waiting, we fall through to create a new one
       } catch (error) {
         throw parseImapAuthenticationError(error);
       }
@@ -130,15 +136,19 @@ export class ImapClientProvider implements OnModuleDestroy {
 
         return client;
       } finally {
-        this.pendingConnections.delete(pendingKey);
+        this.pendingConnections.delete(connectedAccount.id);
       }
     })();
 
-    this.pendingConnections.set(pendingKey, connectionPromise);
+    this.pendingConnections.set(connectedAccount.id, connectionPromise);
 
     try {
       return await connectionPromise;
     } catch (error) {
+      if (error instanceof CustomError) {
+        throw error;
+      }
+
       this.logger.error(
         `Failed to establish IMAP connection for ${connectedAccount.handle}: ${error.message}`,
         error.stack,
@@ -175,10 +185,17 @@ export class ImapClientProvider implements OnModuleDestroy {
       );
     }
 
-    const validatedImapHost =
-      await this.secureHttpClientService.getValidatedHost(
+    let validatedImapHost: string;
+    try {
+      validatedImapHost = await this.secureHttpClientService.getValidatedHost(
         connectionParameters.IMAP?.host || '',
       );
+    } catch (error) {
+      throw new CustomError(
+        `Invalid IMAP host: ${error.message}`,
+        MessageImportDriverExceptionCode.CHANNEL_MISCONFIGURED,
+      );
+    }
 
     const client = new ImapFlow({
       host: validatedImapHost,
