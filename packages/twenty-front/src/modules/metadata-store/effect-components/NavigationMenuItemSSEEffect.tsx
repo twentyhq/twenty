@@ -2,7 +2,6 @@ import { useListenToMetadataOperationBrowserEvent } from '@/browser-event/hooks/
 import { useMetadataStore } from '@/metadata-store/hooks/useMetadataStore';
 import { patchMetadataStoreFromSSEEvent } from '@/metadata-store/utils/patchMetadataStoreFromSSEEvent';
 import { navigationMenuItemsState } from '@/navigation-menu-item/states/navigationMenuItemsState';
-import { useListenToEventsForQuery } from '@/sse-db-event/hooks/useListenToEventsForQuery';
 import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
 import { useApolloClient } from '@apollo/client/react';
@@ -13,19 +12,9 @@ import {
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const NavigationMenuItemSSEEffect = () => {
-  const queryId = 'navigation-menu-item-sse-effect';
-
   const store = useStore();
   const { updateDraft, applyChanges } = useMetadataStore();
   const client = useApolloClient();
-
-  useListenToEventsForQuery({
-    queryId,
-    operationSignature: {
-      metadataName: AllMetadataName.navigationMenuItem,
-      variables: {},
-    },
-  });
 
   useListenToMetadataOperationBrowserEvent({
     metadataName: AllMetadataName.navigationMenuItem,

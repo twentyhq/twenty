@@ -19,8 +19,7 @@ import { currentRecordFieldsComponentState } from '@/object-record/record-field/
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { useRecordIndexFieldMetadataDerivedStates } from '@/object-record/record-index/hooks/useRecordIndexFieldMetadataDerivedStates';
 import { ViewBarFilterDropdownIds } from '@/views/constants/ViewBarFilterDropdownIds';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { coreViewsState } from '@/views/states/coreViewState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
 import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
@@ -28,6 +27,7 @@ import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadat
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { mockedCoreViews } from '~/testing/mock-data/generated/metadata/views/mock-views-data';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { setCoreViewsInMetadataStore } from '~/testing/utils/setCoreViewsInMetadataStore';
 
 const meta: Meta<typeof RecordCalendarMonth> = {
   title: 'Modules/ObjectRecord/RecordCalendar/Month',
@@ -43,8 +43,6 @@ const meta: Meta<typeof RecordCalendarMonth> = {
         currentRecordFieldsComponentState,
         instanceId,
       );
-
-      const setCoreViews = useSetAtomState(coreViewsState);
 
       const mockCoreView = mockedCoreViews.find(
         (v) => v.name === 'All Companies',
@@ -73,12 +71,11 @@ const meta: Meta<typeof RecordCalendarMonth> = {
       const [isLoaded, setIsLoaded] = useState(false);
 
       useEffect(() => {
-        setCoreViews([mockCoreView]);
+        setCoreViewsInMetadataStore(jotaiStore, [mockCoreView]);
         setContextStoreCurrentViewId(mockCoreView.id);
         setCurrentRecordFields(columns);
         setIsLoaded(true);
       }, [
-        setCoreViews,
         setContextStoreCurrentViewId,
         setCurrentRecordFields,
         mockCoreView,

@@ -24,7 +24,7 @@ import { validateAndExtractWorkspaceFolderId } from '@/navigation-menu-item/util
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { coreViewsState } from '@/views/states/coreViewState';
+import { coreViewsSelector } from '@/views/states/selectors/coreViewsSelector';
 import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
 import { useStore } from 'jotai';
 
@@ -42,7 +42,7 @@ export const useHandleAddToNavigationDrop = () => {
   const { openNavigationMenuItemInSidePanel } =
     useOpenNavigationMenuItemInSidePanel();
   const { objectMetadataItems } = useObjectMetadataItems();
-  const coreViews = useAtomStateValue(coreViewsState);
+  const coreViews = useAtomStateValue(coreViewsSelector);
   const { getIcon } = useIcons();
   const setIsNavigationMenuInEditMode = useSetAtomState(
     isNavigationMenuInEditModeState,

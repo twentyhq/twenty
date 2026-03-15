@@ -17,8 +17,7 @@ import { currentRecordFieldsComponentState } from '@/object-record/record-field/
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { useRecordIndexFieldMetadataDerivedStates } from '@/object-record/record-index/hooks/useRecordIndexFieldMetadataDerivedStates';
 import { ViewBarFilterDropdownIds } from '@/views/constants/ViewBarFilterDropdownIds';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { coreViewsState } from '@/views/states/coreViewState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { userEvent, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
@@ -27,6 +26,7 @@ import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadat
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { mockedCoreViews } from '~/testing/mock-data/generated/metadata/views/mock-views-data';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { setCoreViewsInMetadataStore } from '~/testing/utils/setCoreViewsInMetadataStore';
 
 const meta: Meta<typeof ViewBarFilterDropdown> = {
   title: 'Modules/Views/ViewBarFilterDropdown',
@@ -42,8 +42,6 @@ const meta: Meta<typeof ViewBarFilterDropdown> = {
         currentRecordFieldsComponentState,
         instanceId,
       );
-
-      const setCoreViews = useSetAtomState(coreViewsState);
 
       const mockCoreView = mockedCoreViews.find(
         (v) => v.name === 'All Companies',
@@ -72,12 +70,11 @@ const meta: Meta<typeof ViewBarFilterDropdown> = {
       const [isLoaded, setIsLoaded] = useState(false);
 
       useEffect(() => {
-        setCoreViews([mockCoreView]);
+        setCoreViewsInMetadataStore(jotaiStore, [mockCoreView]);
         setContextStoreCurrentViewId(mockCoreView.id);
         setCurrentRecordFields(columns);
         setIsLoaded(true);
       }, [
-        setCoreViews,
         setContextStoreCurrentViewId,
         setCurrentRecordFields,
         mockCoreView,

@@ -6,7 +6,6 @@ import { useLoadRecordIndexStates } from '@/object-record/record-index/hooks/use
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { usePerformViewAPIUpdate } from '@/views/hooks/internal/usePerformViewAPIUpdate';
 import { useGetViewFromState } from '@/views/hooks/useGetViewFromState';
-import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
 import { type ViewGroup } from '@/views/types/ViewGroup';
 import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
 import { useStore } from 'jotai';
@@ -29,8 +28,6 @@ export const useHandleRecordGroupField = () => {
 
   const { performViewAPIUpdate } = usePerformViewAPIUpdate();
   const { loadRecordIndexStates } = useLoadRecordIndexStates();
-  const { refreshCoreViewsByObjectMetadataId } =
-    useRefreshCoreViewsByObjectMetadataId();
 
   const store = useStore();
 
@@ -122,7 +119,6 @@ export const useHandleRecordGroupField = () => {
         objectMetadataItem,
       });
 
-      await refreshCoreViewsByObjectMetadataId(objectMetadataItem.id);
     },
     [
       currentViewIdCallbackState,
@@ -130,7 +126,6 @@ export const useHandleRecordGroupField = () => {
       performViewAPIUpdate,
       setRecordGroupsFromViewGroups,
       objectMetadataItem,
-      refreshCoreViewsByObjectMetadataId,
       loadRecordIndexStates,
       store,
     ],

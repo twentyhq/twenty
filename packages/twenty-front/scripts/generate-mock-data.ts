@@ -2,6 +2,7 @@
 import { generateApiKeys } from './mock-data/generate-api-keys.js';
 import { generateBillingPlans } from './mock-data/generate-billing-plans.js';
 import { generateMetadata } from './mock-data/generate-metadata.js';
+import { generateMinimalMetadata } from './mock-data/generate-minimal-metadata.js';
 import { generateRecordData } from './mock-data/generate-record-data.js';
 import { generateRoles } from './mock-data/generate-roles.js';
 import { generateViews } from './mock-data/generate-views.js';
@@ -11,6 +12,7 @@ const main = async () => {
   const token = await authenticate();
 
   const metadata = await generateMetadata(token);
+  await generateMinimalMetadata(token);
   await generateRecordData(token, metadata);
   await generateRoles(token);
   await generateViews(token);

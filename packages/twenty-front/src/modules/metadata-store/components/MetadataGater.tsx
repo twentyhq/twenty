@@ -3,7 +3,6 @@ import React from 'react';
 import { isAppMetadataReadyState } from '@/metadata-store/states/isAppMetadataReadyState';
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { UserContext } from '@/users/contexts/UserContext';
 import { useLocation } from 'react-router-dom';
@@ -13,7 +12,6 @@ import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
 export const MetadataGater = ({ children }: React.PropsWithChildren) => {
   const isAppMetadataReady = useAtomStateValue(isAppMetadataReadyState);
-  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
   const isLoggedIn = useIsLogged();
   const location = useLocation();
 
@@ -25,8 +23,7 @@ export const MetadataGater = ({ children }: React.PropsWithChildren) => {
     isMatchingLocation(location, AppPath.CreateWorkspace);
 
   const shouldShowLoader =
-    (!isAppMetadataReady && isLoggedIn && !isOnExcludedPath) ||
-    objectMetadataItems.length === 0;
+    !isAppMetadataReady && isLoggedIn && !isOnExcludedPath;
 
   if (shouldShowLoader) {
     return <UserOrMetadataLoader />;

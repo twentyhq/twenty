@@ -10,7 +10,6 @@ import { useLastAuthenticatedWorkspaceDomain } from '@/domain-manager/hooks/useL
 import { useInitializeFormatPreferences } from '@/localization/hooks/useInitializeFormatPreferences';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { coreViewsState } from '@/views/states/coreViewState';
 import { workspaceAuthBypassProvidersState } from '@/workspace/states/workspaceAuthBypassProvidersState';
 import { useCallback } from 'react';
 import { SOURCE_LOCALE, type APP_LOCALES } from 'twenty-shared/translations';
@@ -18,10 +17,7 @@ import { type ObjectPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type ColorScheme } from 'twenty-ui/input';
 import { useApolloClient } from '@apollo/client/react';
-import {
-  FindAllCoreViewsDocument,
-  GetCurrentUserDocument,
-} from '~/generated-metadata/graphql';
+import { GetCurrentUserDocument } from '~/generated-metadata/graphql';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 
@@ -39,7 +35,6 @@ export const useLoadCurrentUser = () => {
   );
   const setCurrentWorkspace = useSetAtomState(currentWorkspaceState);
   const { initializeFormatPreferences } = useInitializeFormatPreferences();
-  const setCoreViews = useSetAtomState(coreViewsState);
   const setWorkspaceAuthBypassProviders = useSetAtomState(
     workspaceAuthBypassProvidersState,
   );
@@ -54,13 +49,6 @@ export const useLoadCurrentUser = () => {
       query: GetCurrentUserDocument,
       fetchPolicy: 'network-only',
     });
-
-    const coreViewsResult = isOnAWorkspace
-      ? await client.query({
-          query: FindAllCoreViewsDocument,
-          fetchPolicy: 'network-only',
-        })
-      : undefined;
 
     if (isDefined(currentUserResult.error)) {
       throw new Error(currentUserResult.error.message);
@@ -139,10 +127,6 @@ export const useLoadCurrentUser = () => {
       });
     }
 
-    if (isDefined(coreViewsResult?.data?.getCoreViews)) {
-      setCoreViews(coreViewsResult.data.getCoreViews);
-    }
-
     return {
       user,
       workspaceMember,
@@ -159,7 +143,6 @@ export const useLoadCurrentUser = () => {
     setCurrentWorkspaceMember,
     initializeFormatPreferences,
     setLastAuthenticateWorkspaceDomain,
-    setCoreViews,
     authProviders,
     setWorkspaceAuthBypassProviders,
   ]);

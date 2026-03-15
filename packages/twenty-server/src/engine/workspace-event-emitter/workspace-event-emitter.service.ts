@@ -13,7 +13,6 @@ import {
 import {
   combineFilters,
   isDefined,
-  isMetadataGqlOperationSignature,
   isNonEmptyArray,
   isRecordGqlOperationSignature,
 } from 'twenty-shared/utils';
@@ -51,7 +50,6 @@ import { buildRowLevelPermissionRecordFilter } from 'src/engine/twenty-orm/utils
 import { isRecordMatchingRLSRowLevelPermissionPredicate } from 'src/engine/twenty-orm/utils/is-record-matching-rls-row-level-permission-predicate.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
-import { isMetadataRecordMatchingFilter } from 'src/engine/workspace-event-emitter/utils/is-metadata-record-matching-filter.util';
 import { parseEventNameOrThrow } from 'src/engine/workspace-event-emitter/utils/parse-event-name';
 import { type MetadataEvent } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/metadata-event';
 
@@ -183,36 +181,22 @@ export class WorkspaceEventEmitterService {
 
   private async processMetadataStreamEvents(
     streamChannelId: string,
-    streamData: EventStreamData,
+    _streamData: EventStreamData,
     metadataEventBatch: MetadataEventBatch,
   ): Promise<void> {
-    const metadataEventsWithQueryIds: {
-      queryIds: string[];
-      metadataEvent: MetadataEvent & { updatedCollectionHash?: string };
-    }[] = [];
+    if (!isNonEmptyArray(metadataEventBatch.events)) {
+      return;
+    }
 
-    for (const metadataEvent of metadataEventBatch.events) {
-      const matchedQueryIds = this.getMatchingMetadataQueryIds(
-        streamData.queries,
-        metadataEvent,
-      );
-
-      if (!isNonEmptyArray(matchedQueryIds)) {
-        continue;
-      }
-
-      metadataEventsWithQueryIds.push({
-        queryIds: matchedQueryIds,
+    const metadataEventsWithQueryIds = metadataEventBatch.events.map(
+      (metadataEvent) => ({
+        queryIds: [] as string[],
         metadataEvent: {
           ...metadataEvent,
           updatedCollectionHash: metadataEventBatch.updatedCollectionHash,
         },
-      });
-    }
-
-    if (!isNonEmptyArray(metadataEventsWithQueryIds)) {
-      return;
-    }
+      }),
+    );
 
     const payload: EventStreamPayload = {
       objectRecordEventsWithQueryIds: [],
@@ -224,49 +208,6 @@ export class WorkspaceEventEmitterService {
       eventStreamChannelId: streamChannelId,
       payload,
     });
-  }
-
-  private getMatchingMetadataQueryIds(
-    queries: Record<string, RecordOrMetadataGqlOperationSignature>,
-    metadataEvent: MetadataEvent,
-  ): string[] {
-    const properties = metadataEvent.properties as {
-      after?: Record<string, unknown>;
-      before?: Record<string, unknown>;
-    };
-
-    const record = properties?.after ?? properties?.before;
-
-    return Object.entries(queries)
-      .filter(([, operationSignature]) => {
-        if (!isMetadataGqlOperationSignature(operationSignature)) {
-          return false;
-        }
-
-        if (operationSignature.metadataName !== metadataEvent.metadataName) {
-          return false;
-        }
-
-        const queryFilter = (
-          operationSignature.variables as {
-            filter?: Record<string, unknown>;
-          }
-        )?.filter;
-
-        if (!isDefined(queryFilter) || Object.keys(queryFilter).length === 0) {
-          return true;
-        }
-
-        if (!isDefined(record)) {
-          return false;
-        }
-
-        return isMetadataRecordMatchingFilter({
-          record,
-          filter: queryFilter,
-        });
-      })
-      .map(([queryId]) => queryId);
   }
 
   private async processObjectRecordStreamEvents(

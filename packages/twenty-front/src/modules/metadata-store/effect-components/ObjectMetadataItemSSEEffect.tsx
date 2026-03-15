@@ -1,7 +1,6 @@
 import { useListenToMetadataOperationBrowserEvent } from '@/browser-event/hooks/useListenToMetadataOperationBrowserEvent';
 import { patchMetadataStoreFromSSEEvent } from '@/metadata-store/utils/patchMetadataStoreFromSSEEvent';
 import { navigationMenuItemsState } from '@/navigation-menu-item/states/navigationMenuItemsState';
-import { useListenToEventsForQuery } from '@/sse-db-event/hooks/useListenToEventsForQuery';
 import { useStore } from 'jotai';
 import { useApolloClient } from '@apollo/client/react';
 import {
@@ -11,18 +10,8 @@ import {
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const ObjectMetadataItemSSEEffect = () => {
-  const queryId = 'object-metadata-sse-effect';
-
   const store = useStore();
   const client = useApolloClient();
-
-  useListenToEventsForQuery({
-    queryId,
-    operationSignature: {
-      metadataName: AllMetadataName.objectMetadata,
-      variables: {},
-    },
-  });
 
   useListenToMetadataOperationBrowserEvent({
     metadataName: AllMetadataName.objectMetadata,

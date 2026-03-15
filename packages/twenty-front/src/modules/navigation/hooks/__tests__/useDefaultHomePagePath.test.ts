@@ -6,9 +6,9 @@ import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceSta
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
+import { setCoreViewsInMetadataStore } from '~/testing/utils/setCoreViewsInMetadataStore';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
-import { coreViewsState } from '@/views/states/coreViewState';
 import { AppPath } from 'twenty-shared/types';
 import {
   ViewOpenRecordIn,
@@ -40,11 +40,10 @@ const renderHooks = ({
       const setCurrentUserWorkspace = useSetAtomState(
         currentUserWorkspaceState,
       );
-      const setCoreViews = useSetAtomState(coreViewsState);
 
       useEffect(() => {
         if (withExistingView) {
-          setCoreViews([
+          setCoreViewsInMetadataStore(jotaiStore, [
             {
               id: 'viewId',
               name: 'Test View',
@@ -69,14 +68,14 @@ const renderHooks = ({
             },
           ]);
         } else {
-          setCoreViews([]);
+          setCoreViewsInMetadataStore(jotaiStore, []);
         }
 
         if (withCurrentUser) {
           setCurrentUser(mockedUserData);
           setCurrentUserWorkspace(mockedUserData.currentUserWorkspace);
         }
-      }, [setCurrentUser, setCurrentUserWorkspace, setCoreViews]);
+      }, [setCurrentUser, setCurrentUserWorkspace]);
 
       return useDefaultHomePagePath();
     },

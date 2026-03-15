@@ -42,7 +42,6 @@ import {
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
 import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
-import { coreViewsState } from '@/views/states/coreViewState';
 import { type BillingCheckoutSession } from '@/auth/types/billingCheckoutSession.type';
 import {
   countAvailableWorkspaces,
@@ -88,8 +87,7 @@ export const useAuth = () => {
   const { loadCurrentUser } = useLoadCurrentUser();
   const { clearSseClient } = useClearSseClient();
 
-  const { reloadWorkspaceMetadata, resetToMockedMetadata } =
-    useReloadWorkspaceMetadata();
+  const { resetToMockedMetadata } = useReloadWorkspaceMetadata();
   const { createWorkspace } = useSignUpInNewWorkspace();
 
   const setSignInUpStep = useSetAtomState(signInUpStepState);
@@ -163,7 +161,6 @@ export const useAuth = () => {
     });
     store.set(loginTokenState.atom, null);
     store.set(signInUpStepState.atom, SignInUpStep.Init);
-    store.set(coreViewsState.atom, []);
 
     await client.clearStore();
     setLastAuthenticateWorkspaceDomain(null);
@@ -305,14 +302,8 @@ export const useAuth = () => {
       setIsAppEffectRedirectEnabled(false);
 
       await loadCurrentUser();
-      await reloadWorkspaceMetadata();
     },
-    [
-      loadCurrentUser,
-      handleSetAuthTokens,
-      reloadWorkspaceMetadata,
-      setIsAppEffectRedirectEnabled,
-    ],
+    [loadCurrentUser, handleSetAuthTokens, setIsAppEffectRedirectEnabled],
   );
 
   const handleGetAuthTokensFromLoginToken = useCallback(

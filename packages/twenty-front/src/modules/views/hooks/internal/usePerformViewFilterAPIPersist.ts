@@ -3,11 +3,9 @@ import { useCallback } from 'react';
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useTriggerViewFilterOptimisticEffect } from '@/views/optimistic-effects/hooks/useTriggerViewFilterOptimisticEffect';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { t } from '@lingui/core/macro';
 import { CrudOperationType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 import { useMutation } from '@apollo/client/react';
 import {
   type CreateCoreViewFilterMutationVariables,
@@ -21,8 +19,6 @@ import {
 } from '~/generated-metadata/graphql';
 
 export const usePerformViewFilterAPIPersist = () => {
-  const { triggerViewFilterOptimisticEffect } =
-    useTriggerViewFilterOptimisticEffect();
   const [createCoreViewFilterMutation] = useMutation(
     CreateCoreViewFilterDocument,
   );
@@ -59,16 +55,6 @@ export const usePerformViewFilterAPIPersist = () => {
           createCoreViewFilterInputs.map((variables) =>
             createCoreViewFilterMutation({
               variables,
-              update: (_cache, { data }) => {
-                const createdViewFilter = data?.createCoreViewFilter;
-                if (!isDefined(createdViewFilter)) {
-                  return;
-                }
-
-                triggerViewFilterOptimisticEffect({
-                  createdViewFilters: [createdViewFilter],
-                });
-              },
             }),
           ),
         );
@@ -93,12 +79,7 @@ export const usePerformViewFilterAPIPersist = () => {
         };
       }
     },
-    [
-      triggerViewFilterOptimisticEffect,
-      createCoreViewFilterMutation,
-      handleMetadataError,
-      enqueueErrorSnackBar,
-    ],
+    [createCoreViewFilterMutation, handleMetadataError, enqueueErrorSnackBar],
   );
 
   const performViewFilterAPIUpdate = useCallback(
@@ -121,16 +102,6 @@ export const usePerformViewFilterAPIPersist = () => {
           updateCoreViewFilterInputs.map((variables) =>
             updateCoreViewFilterMutation({
               variables,
-              update: (_cache, { data }) => {
-                const updatedViewFilter = data?.updateCoreViewFilter;
-                if (!isDefined(updatedViewFilter)) {
-                  return;
-                }
-
-                triggerViewFilterOptimisticEffect({
-                  updatedViewFilters: [updatedViewFilter],
-                });
-              },
             }),
           ),
         );
@@ -155,12 +126,7 @@ export const usePerformViewFilterAPIPersist = () => {
         };
       }
     },
-    [
-      triggerViewFilterOptimisticEffect,
-      updateCoreViewFilterMutation,
-      handleMetadataError,
-      enqueueErrorSnackBar,
-    ],
+    [updateCoreViewFilterMutation, handleMetadataError, enqueueErrorSnackBar],
   );
 
   const performViewFilterAPIDelete = useCallback(
@@ -183,16 +149,6 @@ export const usePerformViewFilterAPIPersist = () => {
           deleteCoreViewFilterInputs.map((variables) =>
             deleteCoreViewFilterMutation({
               variables,
-              update: (_cache, { data }) => {
-                const deletedViewFilter = data?.deleteCoreViewFilter;
-                if (!isDefined(deletedViewFilter)) {
-                  return;
-                }
-
-                triggerViewFilterOptimisticEffect({
-                  deletedViewFilters: [deletedViewFilter],
-                });
-              },
             }),
           ),
         );
@@ -217,12 +173,7 @@ export const usePerformViewFilterAPIPersist = () => {
         };
       }
     },
-    [
-      triggerViewFilterOptimisticEffect,
-      deleteCoreViewFilterMutation,
-      handleMetadataError,
-      enqueueErrorSnackBar,
-    ],
+    [deleteCoreViewFilterMutation, handleMetadataError, enqueueErrorSnackBar],
   );
 
   const performViewFilterAPIDestroy = useCallback(

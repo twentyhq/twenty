@@ -5,7 +5,6 @@ import { currentRecordFiltersComponentState } from '@/object-record/record-filte
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { resetJotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { coreViewsState } from '@/views/states/coreViewState';
 import { type CoreViewWithRelations } from '@/views/types/CoreViewWithRelations';
 import { type View } from '@/views/types/View';
 import { type ViewFilter } from '@/views/types/ViewFilter';
@@ -19,6 +18,7 @@ import {
 import { getJestMetadataAndApolloMocksAndCommandMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndCommandMenuWrapper';
 import { mockedCoreViews } from '~/testing/mock-data/generated/metadata/views/mock-views-data';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { setCoreViewsInMetadataStore } from '~/testing/utils/setCoreViewsInMetadataStore';
 import { useApplyCurrentViewFiltersToCurrentRecordFilters } from '@/views/hooks/useApplyCurrentViewFiltersToCurrentRecordFilters';
 
 const mockObjectMetadataItemNameSingular = 'company';
@@ -105,7 +105,7 @@ describe('useApplyCurrentViewFiltersToCurrentRecordFilters', () => {
             mockObjectMetadataItemNameSingular,
           contextStoreCurrentViewId: mockView.id,
           onInitializeJotaiStore: (store) => {
-            store.set(coreViewsState.atom, [mockCoreView]);
+            setCoreViewsInMetadataStore(store, [mockCoreView]);
           },
         }),
       },
@@ -195,7 +195,7 @@ describe('useApplyCurrentViewFiltersToCurrentRecordFilters', () => {
           contextStoreCurrentObjectMetadataNameSingular:
             mockObjectMetadataItemNameSingular,
           onInitializeJotaiStore: (store) => {
-            store.set(coreViewsState.atom, [
+            setCoreViewsInMetadataStore(store, [
               { ...mockCoreView, viewFilters: [] },
             ]);
             store.set(

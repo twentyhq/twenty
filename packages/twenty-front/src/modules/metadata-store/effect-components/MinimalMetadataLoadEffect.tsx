@@ -2,61 +2,58 @@ import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadedState';
 import { useLoadMinimalMetadata } from '@/metadata-store/hooks/useLoadMinimalMetadata';
-import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
+import { useLoadMockedMinimalMetadata } from '@/metadata-store/hooks/useLoadMockedMinimalMetadata';
+import { useLoadStaleMetadataEntities } from '@/metadata-store/hooks/useLoadStaleMetadataEntities';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useStore } from 'jotai';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { isWorkspaceActiveOrSuspended } from 'twenty-shared/workspace';
 
 export const MinimalMetadataLoadEffect = () => {
   const isLoggedIn = useIsLogged();
   const isCurrentUserLoaded = useAtomStateValue(isCurrentUserLoadedState);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-  const store = useStore();
-  const [hasLoaded, setHasLoaded] = useState(false);
+  const isLoadingRef = useRef(false);
 
   const { loadMinimalMetadata } = useLoadMinimalMetadata();
+  const { loadMockedMinimalMetadata } = useLoadMockedMinimalMetadata();
+  const { loadStaleMetadataEntities } = useLoadStaleMetadataEntities();
 
   useEffect(() => {
-    if (hasLoaded) {
-      return;
-    }
-
     if (!isCurrentUserLoaded || !isLoggedIn) {
       return;
     }
 
+    if (isLoadingRef.current) {
+      return;
+    }
+
     if (!isWorkspaceActiveOrSuspended(currentWorkspace)) {
-      return;
-    }
-
-    const objectsEntry = store.get(
-      metadataStoreState.atomFamily('objectMetadataItems'),
-    );
-    const viewsEntry = store.get(metadataStoreState.atomFamily('views'));
-
-    const hasObjectsFromStorage = objectsEntry.status === 'up-to-date';
-    const hasViewsFromStorage = viewsEntry.status === 'up-to-date';
-
-    if (hasObjectsFromStorage && hasViewsFromStorage) {
-      setHasLoaded(true);
+      isLoadingRef.current = true;
+      loadMockedMinimalMetadata().finally(() => {
+        isLoadingRef.current = false;
+      });
 
       return;
     }
 
-    const load = async () => {
-      await loadMinimalMetadata();
-      setHasLoaded(true);
-    };
+    isLoadingRef.current = true;
 
-    load();
+    loadMinimalMetadata()
+      .then((result) => {
+        if (result?.staleEntityKeys && result.staleEntityKeys.length > 0) {
+          loadStaleMetadataEntities(result.staleEntityKeys);
+        }
+      })
+      .finally(() => {
+        isLoadingRef.current = false;
+      });
   }, [
-    hasLoaded,
     isCurrentUserLoaded,
     isLoggedIn,
     currentWorkspace,
-    store,
     loadMinimalMetadata,
+    loadMockedMinimalMetadata,
+    loadStaleMetadataEntities,
   ]);
 
   return null;
