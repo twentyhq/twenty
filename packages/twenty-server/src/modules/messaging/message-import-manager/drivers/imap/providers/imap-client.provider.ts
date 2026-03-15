@@ -92,22 +92,19 @@ export class ImapClientProvider implements OnModuleDestroy {
       }
     }
 
-    // Check if there's already a connection attempt in progress for this account
-    // We key by account ID to ensure we don't start multiple connections for the same account simultaneously.
-    const pending = this.pendingConnections.get(connectedAccount.id);
+    // Check if there's already a connection attempt in progress for this account with the SAME parameters
+    const pendingKey = `${connectedAccount.id}:${parametersHash}`;
+    const pending = this.pendingConnections.get(pendingKey);
     if (pending) {
       this.logger.debug(
         `Waiting for existing IMAP connection attempt for ${connectedAccount.handle}`,
       );
       try {
-        const client = await pending;
-        // Verify that the resolved connection matches our current parameters
-        const currentCached = this.connectionCache.get(connectedAccount.id);
-        if (currentCached && currentCached.parametersHash === parametersHash) {
-          return client;
-        }
-        // If parameters changed while waiting, we fall through to create a new one
+        return await pending;
       } catch (error) {
+        if (error instanceof CustomError) {
+          throw error;
+        }
         throw parseImapAuthenticationError(error);
       }
     }
@@ -136,11 +133,11 @@ export class ImapClientProvider implements OnModuleDestroy {
 
         return client;
       } finally {
-        this.pendingConnections.delete(connectedAccount.id);
+        this.pendingConnections.delete(pendingKey);
       }
     })();
 
-    this.pendingConnections.set(connectedAccount.id, connectionPromise);
+    this.pendingConnections.set(pendingKey, connectionPromise);
 
     try {
       return await connectionPromise;
