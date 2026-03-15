@@ -16,7 +16,7 @@ export const computeStandardWorkflowRunViews = (
       objectName: 'workflowRun',
       context: {
         viewName: 'allWorkflowRuns',
-        name: 'Runs',
+        name: 'All {objectLabelPlural}',
         type: ViewType.TABLE,
         key: ViewKey.INDEX,
         position: 0,

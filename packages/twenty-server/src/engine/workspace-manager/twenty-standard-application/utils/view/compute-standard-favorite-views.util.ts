@@ -15,7 +15,7 @@ export const computeStandardFavoriteViews = (
       objectName: 'favorite',
       context: {
         viewName: 'allFavorites',
-        name: 'All Favorites',
+        name: 'All {objectLabelPlural}',
         type: ViewType.TABLE,
         key: ViewKey.INDEX,
         position: 0,
