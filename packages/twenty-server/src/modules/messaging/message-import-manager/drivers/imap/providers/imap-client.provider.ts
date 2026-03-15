@@ -194,6 +194,11 @@ export class ImapClientProvider implements OnModuleDestroy {
       );
     }
 
+    const tlsOptions: any = {
+      rejectUnauthorized: false,
+      servername: connectionParameters.IMAP?.host,
+    };
+
     const client = new ImapFlow({
       host: validatedImapHost,
       port: connectionParameters.IMAP?.port || 993,
@@ -205,10 +210,7 @@ export class ImapClientProvider implements OnModuleDestroy {
         pass: connectionParameters.IMAP?.password || '',
       },
       logger: false,
-      tls: {
-        rejectUnauthorized: false,
-        ['servername']: connectionParameters.IMAP?.host,
-      },
+      tls: tlsOptions,
       connectionTimeout: ImapClientProvider.CONNECTION_TIMEOUT_MS,
       greetingTimeout: ImapClientProvider.GREETING_TIMEOUT_MS,
     });

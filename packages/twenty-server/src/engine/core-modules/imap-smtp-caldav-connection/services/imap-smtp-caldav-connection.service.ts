@@ -36,6 +36,11 @@ export class ImapSmtpCaldavService {
         params.host,
       );
 
+      const tlsOptions: any = {
+        rejectUnauthorized: false,
+        servername: params.host,
+      };
+
       client = new ImapFlow({
         host: validatedHost,
         port: params.port,
@@ -45,10 +50,7 @@ export class ImapSmtpCaldavService {
           pass: params.password,
         },
         logger: false,
-        tls: {
-          rejectUnauthorized: false,
-          ['servername']: params.host,
-        },
+        tls: tlsOptions,
       });
 
       await client.connect();
@@ -104,6 +106,11 @@ export class ImapSmtpCaldavService {
       const validatedHost = await this.secureHttpClientService.getValidatedHost(
         params.host,
       );
+      const tlsOptions: any = {
+        rejectUnauthorized: false,
+        servername: params.host,
+      };
+
       const transport = createTransport({
         host: validatedHost,
         port: params.port,
@@ -111,10 +118,7 @@ export class ImapSmtpCaldavService {
           user: params.username ?? handle,
           pass: params.password,
         },
-        tls: {
-          rejectUnauthorized: false,
-          ['servername']: params.host,
-        },
+        tls: tlsOptions,
       });
 
       await transport.verify();
