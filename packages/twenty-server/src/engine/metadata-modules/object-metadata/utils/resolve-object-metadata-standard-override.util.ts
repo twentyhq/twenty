@@ -45,9 +45,7 @@ export const resolveObjectMetadataStandardOverride = (
     }
   }
 
-  if (
-  isNonEmptyString(objectMetadata.standardOverrides?.[labelKey])
-  ) {
+  if (isNonEmptyString(objectMetadata.standardOverrides?.[labelKey])) {
     return objectMetadata.standardOverrides[labelKey] ?? '';
   }
 
