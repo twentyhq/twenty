@@ -42,7 +42,9 @@ export const ViewBar = ({
   }
 
   if (isReadOnly) {
-    return <TopBar className={className} leftComponent={<ViewPickerDropdown />} />;
+    return (
+      <TopBar className={className} leftComponent={<ViewPickerDropdown />} />
+    );
   }
 
   return (

@@ -17,16 +17,7 @@ export const mockedPersonRecords: ObjectRecord[] =
     "avatarUrl": "https://twentyhq.github.io/placeholder-images/people/image-88.png",
     "calendarEventParticipants": {
       "__typename": "CalendarEventParticipantConnection",
-      "edges": [
-        {
-          "__typename": "CalendarEventParticipantEdge",
-          "node": {
-            "__typename": "CalendarEventParticipant",
-            "handle": "person442@company.com",
-            "id": "20202020-06e2-4e7c-8001-123456789def"
-          }
-        }
-      ]
+      "edges": []
     },
     "caredForPets": {
       "__typename": "PetCareAgreementConnection",
@@ -45,7 +36,7 @@ export const mockedPersonRecords: ObjectRecord[] =
       "name": "Zuora"
     },
     "companyId": "20202020-aa0b-48a9-85ba-e223975696ea",
-    "createdAt": "2026-03-15T19:26:23.267Z",
+    "createdAt": "2026-02-27T01:17:29.464Z",
     "createdBy": {
       "__typename": "Actor",
       "source": "WEBHOOK",
@@ -74,7 +65,16 @@ export const mockedPersonRecords: ObjectRecord[] =
     },
     "messageParticipants": {
       "__typename": "MessageParticipantConnection",
-      "edges": []
+      "edges": [
+        {
+          "__typename": "MessageParticipantEdge",
+          "node": {
+            "__typename": "MessageParticipant",
+            "handle": "outgoing",
+            "id": "20202020-0138-4e7c-8001-123456789cde"
+          }
+        }
+      ]
     },
     "name": {
       "__typename": "FullName",
@@ -161,7 +161,7 @@ export const mockedPersonRecords: ObjectRecord[] =
         }
       ]
     },
-    "updatedAt": "2026-03-15T19:26:23.267Z",
+    "updatedAt": "2026-02-27T01:17:29.464Z",
     "updatedBy": {
       "__typename": "Actor",
       "source": "WEBHOOK",
@@ -194,7 +194,16 @@ export const mockedPersonRecords: ObjectRecord[] =
     "avatarUrl": "https://twentyhq.github.io/placeholder-images/people/image-5.png",
     "calendarEventParticipants": {
       "__typename": "CalendarEventParticipantConnection",
-      "edges": []
+      "edges": [
+        {
+          "__typename": "CalendarEventParticipantEdge",
+          "node": {
+            "__typename": "CalendarEventParticipant",
+            "handle": "person963@company.com",
+            "id": "20202020-0586-4e7c-8001-123456789def"
+          }
+        }
+      ]
     },
     "caredForPets": {
       "__typename": "PetCareAgreementConnection",
@@ -213,7 +222,7 @@ export const mockedPersonRecords: ObjectRecord[] =
       "name": "Greenhouse Software"
     },
     "companyId": "20202020-a30d-4604-9018-dd212faf7845",
-    "createdAt": "2026-03-15T19:26:23.267Z",
+    "createdAt": "2026-02-27T01:17:29.464Z",
     "createdBy": {
       "__typename": "Actor",
       "source": "CALENDAR",
@@ -331,29 +340,13 @@ export const mockedPersonRecords: ObjectRecord[] =
           "__typename": "TimelineActivityEdge",
           "node": {
             "__typename": "TimelineActivity",
-            "id": "20202020-0701-1001-8001-0000275e0001",
+            "id": "20202020-0701-1001-8001-000027a80001",
             "name": "calendarEvent.linked"
-          }
-        },
-        {
-          "__typename": "TimelineActivityEdge",
-          "node": {
-            "__typename": "TimelineActivity",
-            "id": "20202020-0751-1001-8001-00002d160001",
-            "name": "message.linked"
-          }
-        },
-        {
-          "__typename": "TimelineActivityEdge",
-          "node": {
-            "__typename": "TimelineActivity",
-            "id": "20202020-0751-1001-8001-000030e80001",
-            "name": "message.linked"
           }
         }
       ]
     },
-    "updatedAt": "2026-03-15T19:26:23.267Z",
+    "updatedAt": "2026-02-27T01:17:29.464Z",
     "updatedBy": {
       "__typename": "Actor",
       "source": "CALENDAR",
@@ -405,7 +398,7 @@ export const mockedPersonRecords: ObjectRecord[] =
       "name": "Auctane"
     },
     "companyId": "20202020-a398-470f-97ef-905b9053f1d7",
-    "createdAt": "2026-03-15T19:26:23.267Z",
+    "createdAt": "2026-02-27T01:17:29.464Z",
     "createdBy": {
       "__typename": "Actor",
       "source": "EMAIL",
@@ -523,13 +516,29 @@ export const mockedPersonRecords: ObjectRecord[] =
           "__typename": "TimelineActivityEdge",
           "node": {
             "__typename": "TimelineActivity",
-            "id": "20202020-0701-1001-8001-0000265e0001",
-            "name": "calendarEvent.linked"
+            "id": "20202020-0751-1001-8001-00002b3e0001",
+            "name": "message.linked"
+          }
+        },
+        {
+          "__typename": "TimelineActivityEdge",
+          "node": {
+            "__typename": "TimelineActivity",
+            "id": "20202020-0751-1001-8001-00002d480001",
+            "name": "message.linked"
+          }
+        },
+        {
+          "__typename": "TimelineActivityEdge",
+          "node": {
+            "__typename": "TimelineActivity",
+            "id": "20202020-0751-1001-8001-000035780001",
+            "name": "message.linked"
           }
         }
       ]
     },
-    "updatedAt": "2026-03-15T19:26:23.267Z",
+    "updatedAt": "2026-02-27T01:17:29.464Z",
     "updatedBy": {
       "__typename": "Actor",
       "source": "EMAIL",
@@ -581,7 +590,7 @@ export const mockedPersonRecords: ObjectRecord[] =
       "name": "M-Files"
     },
     "companyId": "20202020-aff9-4d18-ba24-26304be22c42",
-    "createdAt": "2026-03-15T19:26:23.267Z",
+    "createdAt": "2026-02-27T01:17:29.464Z",
     "createdBy": {
       "__typename": "Actor",
       "source": "EMAIL",
@@ -616,7 +625,15 @@ export const mockedPersonRecords: ObjectRecord[] =
           "node": {
             "__typename": "MessageParticipant",
             "handle": "incoming",
-            "id": "df458a51-dfdd-41c3-9469-beb757aececd"
+            "id": "20202020-0401-4e7c-8001-123456789cde"
+          }
+        },
+        {
+          "__typename": "MessageParticipantEdge",
+          "node": {
+            "__typename": "MessageParticipant",
+            "handle": "incoming",
+            "id": "20202020-04cf-4e7c-8001-123456789cde"
           }
         }
       ]
@@ -703,26 +720,10 @@ export const mockedPersonRecords: ObjectRecord[] =
             "id": "20202020-0651-1001-8001-00001db60001",
             "name": "linked-task.created"
           }
-        },
-        {
-          "__typename": "TimelineActivityEdge",
-          "node": {
-            "__typename": "TimelineActivity",
-            "id": "20202020-0701-1001-8001-0000249e0001",
-            "name": "calendarEvent.linked"
-          }
-        },
-        {
-          "__typename": "TimelineActivityEdge",
-          "node": {
-            "__typename": "TimelineActivity",
-            "id": "20202020-0751-1001-8001-00002f4e0001",
-            "name": "message.linked"
-          }
         }
       ]
     },
-    "updatedAt": "2026-03-15T19:26:23.267Z",
+    "updatedAt": "2026-02-27T01:17:29.464Z",
     "updatedBy": {
       "__typename": "Actor",
       "source": "EMAIL",
@@ -755,7 +756,16 @@ export const mockedPersonRecords: ObjectRecord[] =
     "avatarUrl": "https://twentyhq.github.io/placeholder-images/people/image-23.png",
     "calendarEventParticipants": {
       "__typename": "CalendarEventParticipantConnection",
-      "edges": []
+      "edges": [
+        {
+          "__typename": "CalendarEventParticipantEdge",
+          "node": {
+            "__typename": "CalendarEventParticipant",
+            "handle": "person644@company.com",
+            "id": "20202020-03bf-4e7c-8001-123456789def"
+          }
+        }
+      ]
     },
     "caredForPets": {
       "__typename": "PetCareAgreementConnection",
@@ -774,7 +784,7 @@ export const mockedPersonRecords: ObjectRecord[] =
       "name": "Wish"
     },
     "companyId": "20202020-a494-4962-8073-8f0221a314af",
-    "createdAt": "2026-03-15T19:26:23.267Z",
+    "createdAt": "2026-02-27T01:17:29.464Z",
     "createdBy": {
       "__typename": "Actor",
       "source": "IMPORT",
@@ -803,7 +813,24 @@ export const mockedPersonRecords: ObjectRecord[] =
     },
     "messageParticipants": {
       "__typename": "MessageParticipantConnection",
-      "edges": []
+      "edges": [
+        {
+          "__typename": "MessageParticipantEdge",
+          "node": {
+            "__typename": "MessageParticipant",
+            "handle": "incoming",
+            "id": "20202020-0012-4e7c-8001-123456789cde"
+          }
+        },
+        {
+          "__typename": "MessageParticipantEdge",
+          "node": {
+            "__typename": "MessageParticipant",
+            "handle": "incoming",
+            "id": "20202020-04c3-4e7c-8001-123456789cde"
+          }
+        }
+      ]
     },
     "name": {
       "__typename": "FullName",
@@ -887,18 +914,10 @@ export const mockedPersonRecords: ObjectRecord[] =
             "id": "20202020-0651-1001-8001-00001a1e0001",
             "name": "linked-task.created"
           }
-        },
-        {
-          "__typename": "TimelineActivityEdge",
-          "node": {
-            "__typename": "TimelineActivity",
-            "id": "20202020-0751-1001-8001-00002e200001",
-            "name": "message.linked"
-          }
         }
       ]
     },
-    "updatedAt": "2026-03-15T19:26:23.267Z",
+    "updatedAt": "2026-02-27T01:17:29.464Z",
     "updatedBy": {
       "__typename": "Actor",
       "source": "IMPORT",
@@ -937,7 +956,15 @@ export const mockedPersonRecords: ObjectRecord[] =
           "node": {
             "__typename": "CalendarEventParticipant",
             "handle": "person280@company.com",
-            "id": "20202020-04d1-4e7c-8001-123456789def"
+            "id": "20202020-037b-4e7c-8001-123456789def"
+          }
+        },
+        {
+          "__typename": "CalendarEventParticipantEdge",
+          "node": {
+            "__typename": "CalendarEventParticipant",
+            "handle": "person280@company.com",
+            "id": "20202020-03eb-4e7c-8001-123456789def"
           }
         }
       ]
@@ -959,7 +986,7 @@ export const mockedPersonRecords: ObjectRecord[] =
       "name": "Celonis"
     },
     "companyId": "20202020-ad11-49f7-95ed-78038ef37aec",
-    "createdAt": "2026-03-15T19:26:23.267Z",
+    "createdAt": "2026-02-27T01:17:29.464Z",
     "createdBy": {
       "__typename": "Actor",
       "source": "CALENDAR",
@@ -993,16 +1020,8 @@ export const mockedPersonRecords: ObjectRecord[] =
           "__typename": "MessageParticipantEdge",
           "node": {
             "__typename": "MessageParticipant",
-            "handle": "incoming",
-            "id": "20202020-03bc-4e7c-8001-123456789cde"
-          }
-        },
-        {
-          "__typename": "MessageParticipantEdge",
-          "node": {
-            "__typename": "MessageParticipant",
-            "handle": "incoming",
-            "id": "20202020-045e-4e7c-8001-123456789cde"
+            "handle": "outgoing",
+            "id": "20202020-0319-4e7c-8001-123456789cde"
           }
         }
       ]
@@ -1092,7 +1111,7 @@ export const mockedPersonRecords: ObjectRecord[] =
         }
       ]
     },
-    "updatedAt": "2026-03-15T19:26:23.267Z",
+    "updatedAt": "2026-02-27T01:17:29.464Z",
     "updatedBy": {
       "__typename": "Actor",
       "source": "CALENDAR",
@@ -1125,24 +1144,7 @@ export const mockedPersonRecords: ObjectRecord[] =
     "avatarUrl": "",
     "calendarEventParticipants": {
       "__typename": "CalendarEventParticipantConnection",
-      "edges": [
-        {
-          "__typename": "CalendarEventParticipantEdge",
-          "node": {
-            "__typename": "CalendarEventParticipant",
-            "handle": "person1092@company.com",
-            "id": "20202020-0464-4e7c-8001-123456789def"
-          }
-        },
-        {
-          "__typename": "CalendarEventParticipantEdge",
-          "node": {
-            "__typename": "CalendarEventParticipant",
-            "handle": "person1092@company.com",
-            "id": "20202020-05e8-4e7c-8001-123456789def"
-          }
-        }
-      ]
+      "edges": []
     },
     "caredForPets": {
       "__typename": "PetCareAgreementConnection",
@@ -1161,7 +1163,7 @@ export const mockedPersonRecords: ObjectRecord[] =
       "name": "Denodo"
     },
     "companyId": "20202020-ae80-4fbc-8e79-88233787ce46",
-    "createdAt": "2026-03-15T19:26:23.267Z",
+    "createdAt": "2026-02-27T01:17:29.464Z",
     "createdBy": {
       "__typename": "Actor",
       "source": "IMPORT",
@@ -1190,16 +1192,7 @@ export const mockedPersonRecords: ObjectRecord[] =
     },
     "messageParticipants": {
       "__typename": "MessageParticipantConnection",
-      "edges": [
-        {
-          "__typename": "MessageParticipantEdge",
-          "node": {
-            "__typename": "MessageParticipant",
-            "handle": "outgoing",
-            "id": "20202020-00ca-4e7c-8001-123456789cde"
-          }
-        }
-      ]
+      "edges": []
     },
     "name": {
       "__typename": "FullName",
@@ -1283,26 +1276,10 @@ export const mockedPersonRecords: ObjectRecord[] =
             "id": "20202020-0651-1001-8001-00001d9e0001",
             "name": "linked-task.created"
           }
-        },
-        {
-          "__typename": "TimelineActivityEdge",
-          "node": {
-            "__typename": "TimelineActivity",
-            "id": "20202020-0701-1001-8001-000026840001",
-            "name": "calendarEvent.linked"
-          }
-        },
-        {
-          "__typename": "TimelineActivityEdge",
-          "node": {
-            "__typename": "TimelineActivity",
-            "id": "20202020-0701-1001-8001-000028ee0001",
-            "name": "calendarEvent.linked"
-          }
         }
       ]
     },
-    "updatedAt": "2026-03-15T19:26:23.267Z",
+    "updatedAt": "2026-02-27T01:17:29.464Z",
     "updatedBy": {
       "__typename": "Actor",
       "source": "IMPORT",
@@ -1354,7 +1331,7 @@ export const mockedPersonRecords: ObjectRecord[] =
       "name": "TCP Software"
     },
     "companyId": "20202020-aa29-4f90-ba1c-2cc4d6c4c7c2",
-    "createdAt": "2026-03-15T19:26:23.267Z",
+    "createdAt": "2026-02-27T01:17:29.464Z",
     "createdBy": {
       "__typename": "Actor",
       "source": "EMAIL",
@@ -1472,7 +1449,7 @@ export const mockedPersonRecords: ObjectRecord[] =
           "__typename": "TimelineActivityEdge",
           "node": {
             "__typename": "TimelineActivity",
-            "id": "20202020-0701-1001-8001-000026d00001",
+            "id": "20202020-0701-1001-8001-000025080001",
             "name": "calendarEvent.linked"
           }
         },
@@ -1480,13 +1457,21 @@ export const mockedPersonRecords: ObjectRecord[] =
           "__typename": "TimelineActivityEdge",
           "node": {
             "__typename": "TimelineActivity",
-            "id": "20202020-0751-1001-8001-00002dfc0001",
+            "id": "20202020-0751-1001-8001-00002b320001",
+            "name": "message.linked"
+          }
+        },
+        {
+          "__typename": "TimelineActivityEdge",
+          "node": {
+            "__typename": "TimelineActivity",
+            "id": "20202020-0751-1001-8001-00002bf20001",
             "name": "message.linked"
           }
         }
       ]
     },
-    "updatedAt": "2026-03-15T19:26:23.267Z",
+    "updatedAt": "2026-02-27T01:17:29.464Z",
     "updatedBy": {
       "__typename": "Actor",
       "source": "EMAIL",
@@ -1519,16 +1504,7 @@ export const mockedPersonRecords: ObjectRecord[] =
     "avatarUrl": "https://twentyhq.github.io/placeholder-images/people/image-94.png",
     "calendarEventParticipants": {
       "__typename": "CalendarEventParticipantConnection",
-      "edges": [
-        {
-          "__typename": "CalendarEventParticipantEdge",
-          "node": {
-            "__typename": "CalendarEventParticipant",
-            "handle": "person900@company.com",
-            "id": "20202020-01a7-4e7c-8001-123456789def"
-          }
-        }
-      ]
+      "edges": []
     },
     "caredForPets": {
       "__typename": "PetCareAgreementConnection",
@@ -1547,7 +1523,7 @@ export const mockedPersonRecords: ObjectRecord[] =
       "name": "Folio3 Software"
     },
     "companyId": "20202020-aa50-443f-b83d-18ef2a21a292",
-    "createdAt": "2026-03-15T19:26:23.267Z",
+    "createdAt": "2026-02-27T01:17:29.464Z",
     "createdBy": {
       "__typename": "Actor",
       "source": "SYSTEM",
@@ -1665,13 +1641,13 @@ export const mockedPersonRecords: ObjectRecord[] =
           "__typename": "TimelineActivityEdge",
           "node": {
             "__typename": "TimelineActivity",
-            "id": "20202020-0701-1001-8001-000026d20001",
+            "id": "20202020-0701-1001-8001-000026ca0001",
             "name": "calendarEvent.linked"
           }
         }
       ]
     },
-    "updatedAt": "2026-03-15T19:26:23.267Z",
+    "updatedAt": "2026-02-27T01:17:29.464Z",
     "updatedBy": {
       "__typename": "Actor",
       "source": "SYSTEM",
@@ -1704,7 +1680,16 @@ export const mockedPersonRecords: ObjectRecord[] =
     "avatarUrl": "",
     "calendarEventParticipants": {
       "__typename": "CalendarEventParticipantConnection",
-      "edges": []
+      "edges": [
+        {
+          "__typename": "CalendarEventParticipantEdge",
+          "node": {
+            "__typename": "CalendarEventParticipant",
+            "handle": "person917@company.com",
+            "id": "20202020-028c-4e7c-8001-123456789def"
+          }
+        }
+      ]
     },
     "caredForPets": {
       "__typename": "PetCareAgreementConnection",
@@ -1723,7 +1708,7 @@ export const mockedPersonRecords: ObjectRecord[] =
       "name": "PandaDoc"
     },
     "companyId": "20202020-ac06-4880-bce0-0c55deba0e70",
-    "createdAt": "2026-03-15T19:26:23.267Z",
+    "createdAt": "2026-02-27T01:17:29.464Z",
     "createdBy": {
       "__typename": "Actor",
       "source": "CALENDAR",
@@ -1752,7 +1737,16 @@ export const mockedPersonRecords: ObjectRecord[] =
     },
     "messageParticipants": {
       "__typename": "MessageParticipantConnection",
-      "edges": []
+      "edges": [
+        {
+          "__typename": "MessageParticipantEdge",
+          "node": {
+            "__typename": "MessageParticipant",
+            "handle": "incoming",
+            "id": "20202020-054c-4e7c-8001-123456789cde"
+          }
+        }
+      ]
     },
     "name": {
       "__typename": "FullName",
@@ -1841,21 +1835,13 @@ export const mockedPersonRecords: ObjectRecord[] =
           "__typename": "TimelineActivityEdge",
           "node": {
             "__typename": "TimelineActivity",
-            "id": "20202020-0751-1001-8001-00002d980001",
-            "name": "message.linked"
-          }
-        },
-        {
-          "__typename": "TimelineActivityEdge",
-          "node": {
-            "__typename": "TimelineActivity",
-            "id": "20202020-0751-1001-8001-000035300001",
-            "name": "message.linked"
+            "id": "20202020-0701-1001-8001-0000289e0001",
+            "name": "calendarEvent.linked"
           }
         }
       ]
     },
-    "updatedAt": "2026-03-15T19:26:23.267Z",
+    "updatedAt": "2026-02-27T01:17:29.464Z",
     "updatedBy": {
       "__typename": "Actor",
       "source": "CALENDAR",

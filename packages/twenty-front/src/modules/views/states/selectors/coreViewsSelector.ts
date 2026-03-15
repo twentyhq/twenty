@@ -12,8 +12,7 @@ import { type CoreViewWithRelations } from '@/views/types/CoreViewWithRelations'
 export const coreViewsSelector = createAtomSelector<CoreViewWithRelations[]>({
   key: 'coreViewsSelector',
   get: ({ get }) => {
-    const flatViews = get(metadataStoreState, 'views')
-      .current as FlatView[];
+    const flatViews = get(metadataStoreState, 'views').current as FlatView[];
     const flatViewFields = get(metadataStoreState, 'viewFields')
       .current as FlatViewField[];
     const flatViewFilters = get(metadataStoreState, 'viewFilters')
@@ -60,8 +59,7 @@ export const coreViewsSelector = createAtomSelector<CoreViewWithRelations[]>({
 
     for (const filterGroup of flatViewFilterGroups) {
       if ('viewId' in filterGroup && typeof filterGroup.viewId === 'string') {
-        const existing =
-          viewFilterGroupsByViewId.get(filterGroup.viewId) ?? [];
+        const existing = viewFilterGroupsByViewId.get(filterGroup.viewId) ?? [];
         existing.push(filterGroup);
         viewFilterGroupsByViewId.set(filterGroup.viewId, existing);
       }
@@ -69,8 +67,7 @@ export const coreViewsSelector = createAtomSelector<CoreViewWithRelations[]>({
 
     for (const fieldGroup of flatViewFieldGroups) {
       if ('viewId' in fieldGroup && typeof fieldGroup.viewId === 'string') {
-        const existing =
-          viewFieldGroupsByViewId.get(fieldGroup.viewId) ?? [];
+        const existing = viewFieldGroupsByViewId.get(fieldGroup.viewId) ?? [];
         existing.push(fieldGroup);
         viewFieldGroupsByViewId.set(fieldGroup.viewId, existing);
       }
