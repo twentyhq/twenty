@@ -56,9 +56,7 @@ export const getJestMetadataAndApolloMocksWrapper = ({
                   <ContextStoreComponentInstanceContext.Provider
                     value={{ instanceId: 'instanceId' }}
                   >
-                    <JestContextStoreSetter>
-                      {children}
-                    </JestContextStoreSetter>
+                    <JestContextStoreSetter>{children}</JestContextStoreSetter>
                   </ContextStoreComponentInstanceContext.Provider>
                 </JestObjectMetadataItemSetter>
               </ViewComponentInstanceContext.Provider>
