@@ -34,11 +34,34 @@ export class ImapClientProvider implements OnModuleDestroy {
     const cachedClient = this.connectionCache.get(connectedAccount.id);
 
     if (cachedClient && cachedClient.authenticated) {
-      this.logger.debug(
-        `Reusing cached IMAP connection for ${connectedAccount.handle}`,
-      );
+      try {
+        // Health check: NOOP ensures the connection is still alive and responsive
+        // We use a short timeout for the health check to avoid hanging
+        await Promise.race([
+          cachedClient.noop(),
+          new Promise((_, reject) =>
+            setTimeout(() => reject(new Error('Health check timeout')), 5000),
+          ),
+        ]);
 
-      return cachedClient;
+        this.logger.debug(
+          `Reusing cached IMAP connection for ${connectedAccount.handle}`,
+        );
+
+        return cachedClient;
+      } catch (error) {
+        this.logger.warn(
+          `Cached IMAP connection for ${connectedAccount.handle} is dead, evicting from cache: ${error.message}`,
+        );
+
+        this.connectionCache.delete(connectedAccount.id);
+
+        try {
+          await cachedClient.logout();
+        } catch {
+          // Ignore logout errors for a dead connection
+        }
+      }
     }
 
     try {
