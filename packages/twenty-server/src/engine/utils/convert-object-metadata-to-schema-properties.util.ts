@@ -49,8 +49,7 @@ const getFieldProperties = (field: FieldMetadataEntity): SchemaObject => {
     case FieldMetadataType.UUID: {
       return { type: 'string', format: 'uuid' };
     }
-    case FieldMetadataType.TEXT:
-    case FieldMetadataType.RICH_TEXT: {
+    case FieldMetadataType.TEXT: {
       return { type: 'string' };
     }
     case FieldMetadataType.DATE_TIME: {
@@ -325,7 +324,7 @@ export const convertObjectMetadataToSchemaProperties = ({
           type: 'object',
         };
         break;
-      case FieldMetadataType.RICH_TEXT_V2:
+      case FieldMetadataType.RICH_TEXT:
         itemProperty = {
           type: 'object',
           properties: {

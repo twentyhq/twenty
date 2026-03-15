@@ -1,5 +1,5 @@
 import { AGENT_CHAT_SEND_MESSAGE_EVENT_NAME } from '@/ai/constants/AgentChatSendMessageEventName';
-import { useApolloClient } from '@apollo/client';
+import { useApolloClient } from '@apollo/client/react';
 
 import { useGetBrowsingContext } from '@/ai/hooks/useBrowsingContext';
 import { agentChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';

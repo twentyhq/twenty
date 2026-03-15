@@ -375,7 +375,6 @@ enum FieldMetadataType {
   RAW_JSON
   RELATION
   RICH_TEXT
-  RICH_TEXT_V2
   SELECT
   TEXT
   TS_VECTOR
@@ -583,6 +582,7 @@ type CoreViewField {
   createdAt: DateTime!
   updatedAt: DateTime!
   deletedAt: DateTime
+  isOverridden: Boolean!
 }
 
 enum AggregateOperations {
@@ -691,6 +691,7 @@ type CoreViewFieldGroup {
   updatedAt: DateTime!
   deletedAt: DateTime
   viewFields: [CoreViewField!]!
+  isOverridden: Boolean!
 }
 
 type CoreView {
@@ -874,7 +875,7 @@ type RatioAggregateConfig {
   optionValue: String!
 }
 
-type RichTextV2Body {
+type RichTextBody {
   blocknote: String
   markdown: String
 }
@@ -991,7 +992,7 @@ enum WidgetConfigurationType {
 
 type StandaloneRichTextConfiguration {
   configurationType: WidgetConfigurationType!
-  body: RichTextV2Body!
+  body: RichTextBody!
 }
 
 type PieChartConfiguration {
@@ -1244,6 +1245,7 @@ type MetadataEvent {
   metadataName: String!
   recordId: String!
   properties: ObjectRecordEventProperties!
+  updatedCollectionHash: String
 }
 
 """Metadata Event Action"""
@@ -1607,6 +1609,7 @@ enum FeatureFlagKey {
   IS_DATE_TIME_WHOLE_DAY_FILTER_ENABLED
   IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED
   IS_DRAFT_EMAIL_ENABLED
+  IS_RICH_TEXT_V1_MIGRATED
 }
 
 type SSOIdentityProvider {
@@ -2200,6 +2203,32 @@ type AgentTurn {
   evaluations: [AgentTurnEvaluation!]!
   messages: [AgentMessage!]!
   createdAt: DateTime!
+}
+
+type MinimalObjectMetadata {
+  id: UUID!
+  nameSingular: String!
+  namePlural: String!
+  labelSingular: String!
+  labelPlural: String!
+  icon: String
+  isCustom: Boolean!
+  isActive: Boolean!
+  isSystem: Boolean!
+  isRemote: Boolean!
+}
+
+type MinimalView {
+  id: UUID!
+  type: ViewType!
+  key: ViewKey
+  objectMetadataId: UUID!
+}
+
+type MinimalMetadata {
+  objectMetadataItems: [MinimalObjectMetadata!]!
+  views: [MinimalView!]!
+  collectionHashes: JSON!
 }
 
 type Webhook {
@@ -2953,6 +2982,7 @@ type Query {
   getSSOIdentityProviders: [FindAvailableSSOIDP!]!
   webhooks: [Webhook!]!
   webhook(id: UUID!): Webhook
+  minimalMetadata: MinimalMetadata!
   chatThread(id: UUID!): AgentChatThread!
   chatMessages(threadId: UUID!): [AgentMessage!]!
   getAISystemPromptPreview: AISystemPromptPreview!

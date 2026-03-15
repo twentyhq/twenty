@@ -1,4 +1,3 @@
-import { global } from '@apollo/client/utilities/globals';
 import { graphql } from '@octokit/graphql';
 
 import { fetchAssignableUsers } from '@/github/contributors/fetch-assignable-users';
@@ -13,7 +12,7 @@ import { fetchAndSaveGithubReleases } from '@/github/github-releases/fetch-and-s
 import { fetchAndSaveGithubStars } from '@/github/github-stars/fetch-and-save-github-stars';
 
 export const fetchAndSaveGithubData = async () => {
-  if (!global.process.env.GITHUB_TOKEN) {
+  if (!process.env.GITHUB_TOKEN) {
     return new Error('No GitHub token provided');
   }
 
@@ -21,7 +20,7 @@ export const fetchAndSaveGithubData = async () => {
 
   const query = graphql.defaults({
     headers: {
-      Authorization: 'bearer ' + global.process.env.GITHUB_TOKEN,
+      Authorization: 'bearer ' + process.env.GITHUB_TOKEN,
     },
   });
 

@@ -1,5 +1,7 @@
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { useMetadataStore } from '@/metadata-store/hooks/useMetadataStore';
+import { splitPageLayoutWithRelated } from '@/metadata-store/utils/splitPageLayoutWithRelated';
+import { navigationMenuItemsState } from '@/navigation-menu-item/states/navigationMenuItemsState';
 import { recordPageLayoutsState } from '@/page-layout/states/recordPageLayoutsState';
 import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { transformPageLayout } from '@/page-layout/utils/transformPageLayout';
@@ -12,11 +14,13 @@ import { useCallback, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { useQuery } from '@apollo/client/react';
 import {
   ViewType as CoreViewType,
-  useFindAllRecordPageLayoutsQuery,
-  useFindFieldsWidgetCoreViewsQuery,
-  useFindManyLogicFunctionsQuery,
+  FindAllRecordPageLayoutsDocument,
+  FindFieldsWidgetCoreViewsDocument,
+  FindManyLogicFunctionsDocument,
+  FindManyNavigationMenuItemsDocument,
 } from '~/generated-metadata/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
@@ -29,6 +33,7 @@ export const LazyMetadataLoadEffect = () => {
   const store = useStore();
 
   const setLogicFunctions = useSetAtomState(logicFunctionsState);
+  const setNavigationMenuItems = useSetAtomState(navigationMenuItemsState);
   const { updateDraft, applyChanges } = useMetadataStore();
 
   const isOnAuthPath =
@@ -37,19 +42,30 @@ export const LazyMetadataLoadEffect = () => {
 
   const shouldSkip = !isLoggedIn || isOnAuthPath;
 
-  const { data: queryDataFieldsWidgetCoreViews } =
-    useFindFieldsWidgetCoreViewsQuery({
+  const { data: queryDataFieldsWidgetCoreViews } = useQuery(
+    FindFieldsWidgetCoreViewsDocument,
+    {
       skip: shouldSkip,
       variables: { viewTypes: FIELDS_WIDGET_VIEW_TYPES },
-    });
+    },
+  );
 
-  const { data: queryDataRecordPageLayouts } = useFindAllRecordPageLayoutsQuery(
+  const { data: queryDataRecordPageLayouts } = useQuery(
+    FindAllRecordPageLayoutsDocument,
     { skip: shouldSkip },
   );
 
-  const { data: logicFunctionsData } = useFindManyLogicFunctionsQuery({
-    skip: !isLoggedIn,
-  });
+  const { data: logicFunctionsData } = useQuery(
+    FindManyLogicFunctionsDocument,
+    {
+      skip: !isLoggedIn,
+    },
+  );
+
+  const { data: navigationMenuItemsData } = useQuery(
+    FindManyNavigationMenuItemsDocument,
+    { skip: shouldSkip },
+  );
 
   const setFieldsWidgetCoreViews = useCallback(
     (fieldsWidgetViews: CoreViewWithRelations[]) => {
@@ -94,7 +110,13 @@ export const LazyMetadataLoadEffect = () => {
       queryDataRecordPageLayouts.getPageLayouts.map(transformPageLayout);
 
     setRecordPageLayouts(transformedPageLayouts);
-    updateDraft('pageLayouts', transformedPageLayouts);
+
+    const { flatPageLayouts, flatPageLayoutTabs, flatPageLayoutWidgets } =
+      splitPageLayoutWithRelated(transformedPageLayouts);
+
+    updateDraft('pageLayouts', flatPageLayouts);
+    updateDraft('pageLayoutTabs', flatPageLayoutTabs);
+    updateDraft('pageLayoutWidgets', flatPageLayoutWidgets);
     applyChanges();
   }, [
     queryDataRecordPageLayouts?.getPageLayouts,
@@ -114,6 +136,37 @@ export const LazyMetadataLoadEffect = () => {
   }, [
     logicFunctionsData?.findManyLogicFunctions,
     setLogicFunctions,
+    updateDraft,
+    applyChanges,
+  ]);
+
+  useEffect(() => {
+    if (!isDefined(navigationMenuItemsData?.navigationMenuItems)) {
+      return;
+    }
+
+    const existingNavigationMenuItems = store.get(
+      navigationMenuItemsState.atom,
+    );
+
+    if (
+      !isDeeplyEqual(
+        existingNavigationMenuItems,
+        navigationMenuItemsData.navigationMenuItems,
+      )
+    ) {
+      setNavigationMenuItems(navigationMenuItemsData.navigationMenuItems);
+    }
+
+    updateDraft(
+      'navigationMenuItems',
+      navigationMenuItemsData.navigationMenuItems,
+    );
+    applyChanges();
+  }, [
+    navigationMenuItemsData?.navigationMenuItems,
+    setNavigationMenuItems,
+    store,
     updateDraft,
     applyChanges,
   ]);

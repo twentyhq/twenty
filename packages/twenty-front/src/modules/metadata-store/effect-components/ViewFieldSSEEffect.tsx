@@ -1,4 +1,5 @@
 import { useListenToMetadataOperationBrowserEvent } from '@/browser-event/hooks/useListenToMetadataOperationBrowserEvent';
+import { patchMetadataStoreFromSSEEvent } from '@/metadata-store/utils/patchMetadataStoreFromSSEEvent';
 import { useListenToEventsForQuery } from '@/sse-db-event/hooks/useListenToEventsForQuery';
 import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
 import { coreViewsState } from '@/views/states/coreViewState';
@@ -28,6 +29,13 @@ export const ViewFieldSSEEffect = () => {
   useListenToMetadataOperationBrowserEvent({
     metadataName: AllMetadataName.viewField,
     onMetadataOperationBrowserEvent: (eventDetail) => {
+      patchMetadataStoreFromSSEEvent(
+        store,
+        'viewFields',
+        eventDetail.operation,
+        eventDetail.updatedCollectionHash,
+      );
+
       const coreViews = store.get(coreViewsState.atom);
 
       let viewId: string | undefined;

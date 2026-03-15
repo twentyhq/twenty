@@ -1,4 +1,4 @@
-import { MockedProvider } from '@apollo/client/testing';
+import { MockedProvider } from '@apollo/client/testing/react';
 import { renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
 
@@ -24,7 +24,7 @@ const mocks = [
 ];
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
-  <MockedProvider mocks={mocks} addTypename={false}>
+  <MockedProvider mocks={mocks}>
     <SnackBarComponentInstanceContext.Provider
       value={{ instanceId: 'snack-bar-manager' }}
     >

@@ -25,7 +25,8 @@ import { SETTINGS_AI_AGENT_TABLE_METADATA } from '~/pages/settings/ai/constants/
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
 import Skeleton from 'react-loading-skeleton';
-import { useFindManyAgentsQuery } from '~/generated-metadata/graphql';
+import { useQuery } from '@apollo/client/react';
+import { FindManyAgentsDocument } from '~/generated-metadata/graphql';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import {
   AI_AGENT_TABLE_ROW_GRID_TEMPLATE_COLUMNS,
@@ -53,7 +54,7 @@ const StyledTableHeaderRowContainer = styled.div`
 
 export const SettingsAIAgentsTable = () => {
   const { theme } = useContext(ThemeContext);
-  const { data, loading } = useFindManyAgentsQuery();
+  const { data, loading } = useQuery(FindManyAgentsDocument);
 
   const { t } = useLingui();
   const [searchTerm, setSearchTerm] = useState('');

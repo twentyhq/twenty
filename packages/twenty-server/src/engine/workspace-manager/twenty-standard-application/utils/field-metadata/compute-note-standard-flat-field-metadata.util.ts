@@ -151,7 +151,7 @@ export const buildNoteStandardFlatFieldMetadatas = ({
     workspaceId,
     context: {
       fieldName: 'bodyV2',
-      type: FieldMetadataType.RICH_TEXT_V2,
+      type: FieldMetadataType.RICH_TEXT,
       label: 'Body',
       description: 'Note body',
       icon: 'IconFilePencil',

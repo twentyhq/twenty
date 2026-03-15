@@ -1,15 +1,16 @@
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { ApolloError } from '@apollo/client';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { plural, t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { useRetryJobsMutation } from '~/generated-metadata/graphql';
+import { useMutation } from '@apollo/client/react';
+import { RetryJobsDocument } from '~/generated-metadata/graphql';
 import { getErrorMessageFromApolloError } from '~/utils/get-error-message-from-apollo-error.util';
 
 export const useRetryJobs = (queueName: string, onSuccess?: () => void) => {
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
   const [isRetrying, setIsRetrying] = useState(false);
-  const [retryJobsMutation] = useRetryJobsMutation();
+  const [retryJobsMutation] = useMutation(RetryJobsDocument);
 
   const retryJobs = async (jobIds: string[]) => {
     setIsRetrying(true);
@@ -70,10 +71,9 @@ export const useRetryJobs = (queueName: string, onSuccess?: () => void) => {
       }
     } catch (error) {
       enqueueErrorSnackBar({
-        message:
-          error instanceof ApolloError
-            ? getErrorMessageFromApolloError(error)
-            : t`Failed to retry jobs. Please try again later.`,
+        message: CombinedGraphQLErrors.is(error)
+          ? getErrorMessageFromApolloError(error)
+          : t`Failed to retry jobs. Please try again later.`,
       });
     } finally {
       setIsRetrying(false);

@@ -37,7 +37,6 @@ const getFieldZodType = (field: FlatFieldMetadata): z.ZodTypeAny => {
       return z.string().uuidv4();
 
     case FieldMetadataType.TEXT:
-    case FieldMetadataType.RICH_TEXT:
       return z.string();
 
     case FieldMetadataType.DATE_TIME:
@@ -239,7 +238,7 @@ export const generateRecordPropertiesZodSchema = (
         });
         break;
 
-      case FieldMetadataType.RICH_TEXT_V2:
+      case FieldMetadataType.RICH_TEXT:
         fieldSchema = z.object({
           markdown: z.string().optional(),
           blocknote: z.string().optional(),

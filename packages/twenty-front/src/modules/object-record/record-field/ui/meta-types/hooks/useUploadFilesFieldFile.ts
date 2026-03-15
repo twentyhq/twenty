@@ -1,15 +1,15 @@
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useApolloClient } from '@apollo/client';
+import { useApolloClient, useMutation } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { useUploadFilesFieldFileMutation } from '~/generated-metadata/graphql';
+import { UploadFilesFieldFileDocument } from '~/generated-metadata/graphql';
 
 const DEFAULT_VALUE_BEFORE_SERVER_RESPONSE =
   'default-value-before-server-response';
 
 export const useUploadFilesFieldFile = () => {
   const apolloClient = useApolloClient();
-  const [uploadFilesFieldFile] = useUploadFilesFieldFileMutation({
+  const [uploadFilesFieldFile] = useMutation(UploadFilesFieldFileDocument, {
     client: apolloClient,
   });
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();

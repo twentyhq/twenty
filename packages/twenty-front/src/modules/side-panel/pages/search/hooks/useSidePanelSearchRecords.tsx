@@ -15,7 +15,8 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useMemo } from 'react';
 import { Avatar } from 'twenty-ui/display';
 import { useDebounce } from 'use-debounce';
-import { useSearchQuery } from '~/generated/graphql';
+import { useQuery } from '@apollo/client/react';
+import { SearchDocument } from '~/generated/graphql';
 
 export const useSidePanelSearchRecords = () => {
   const sidePanelSearch = useAtomStateValue(sidePanelSearchState);
@@ -38,7 +39,7 @@ export const useSidePanelSearchRecords = () => {
       .map((objectMetadataItem) => objectMetadataItem.nameSingular);
   }, [objectMetadataItems, objectPermissionsByObjectMetadataId]);
 
-  const { data: searchData, loading } = useSearchQuery({
+  const { data: searchData, loading } = useQuery(SearchDocument, {
     client: coreClient,
     variables: {
       searchInput: deferredSidePanelSearch ?? '',

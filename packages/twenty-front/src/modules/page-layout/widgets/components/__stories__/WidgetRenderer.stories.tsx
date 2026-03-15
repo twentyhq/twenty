@@ -1,8 +1,5 @@
-import {
-  useApolloClient,
-  type ApolloClient,
-  type NormalizedCacheObject,
-} from '@apollo/client';
+import { type ApolloClient } from '@apollo/client';
+import { useApolloClient } from '@apollo/client/react';
 import { type MockedResponse } from '@apollo/client/testing';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { MemoryRouter } from 'react-router-dom';
@@ -11,8 +8,8 @@ import { CatalogDecorator, type CatalogStory } from 'twenty-ui/testing';
 
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { ApolloCoreClientContext } from '@/object-metadata/contexts/ApolloCoreClientContext';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { isAppMetadataReadyState } from '@/metadata-store/states/isAppMetadataReadyState';
+import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
@@ -219,7 +216,7 @@ const CoreClientProviderWrapper = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const apolloClient = useApolloClient() as ApolloClient<NormalizedCacheObject>;
+  const apolloClient = useApolloClient() as ApolloClient;
 
   return (
     <ApolloCoreClientContext.Provider value={apolloClient}>
@@ -280,8 +277,8 @@ export const WithNumberChart: Story = {
       deletedAt: null,
     };
 
-    jotaiStore.set(
-      objectMetadataItemsState.atom,
+    setTestObjectMetadataItemsInMetadataStore(
+      jotaiStore,
       generatedMockObjectMetadataItems,
     );
     jotaiStore.set(isAppMetadataReadyState.atom, true);
@@ -367,8 +364,8 @@ export const WithGaugeChart: Story = {
       deletedAt: null,
     };
 
-    jotaiStore.set(
-      objectMetadataItemsState.atom,
+    setTestObjectMetadataItemsInMetadataStore(
+      jotaiStore,
       generatedMockObjectMetadataItems,
     );
     jotaiStore.set(isAppMetadataReadyState.atom, true);
@@ -458,8 +455,8 @@ export const WithBarChart: Story = {
       deletedAt: null,
     };
 
-    jotaiStore.set(
-      objectMetadataItemsState.atom,
+    setTestObjectMetadataItemsInMetadataStore(
+      jotaiStore,
       generatedMockObjectMetadataItems,
     );
     jotaiStore.set(isAppMetadataReadyState.atom, true);
@@ -552,8 +549,8 @@ export const SmallWidget: Story = {
       deletedAt: null,
     };
 
-    jotaiStore.set(
-      objectMetadataItemsState.atom,
+    setTestObjectMetadataItemsInMetadataStore(
+      jotaiStore,
       generatedMockObjectMetadataItems,
     );
     jotaiStore.set(isAppMetadataReadyState.atom, true);
@@ -650,8 +647,8 @@ export const MediumWidget: Story = {
       deletedAt: null,
     };
 
-    jotaiStore.set(
-      objectMetadataItemsState.atom,
+    setTestObjectMetadataItemsInMetadataStore(
+      jotaiStore,
       generatedMockObjectMetadataItems,
     );
     jotaiStore.set(isAppMetadataReadyState.atom, true);
@@ -748,8 +745,8 @@ export const LargeWidget: Story = {
       deletedAt: null,
     };
 
-    jotaiStore.set(
-      objectMetadataItemsState.atom,
+    setTestObjectMetadataItemsInMetadataStore(
+      jotaiStore,
       generatedMockObjectMetadataItems,
     );
     jotaiStore.set(isAppMetadataReadyState.atom, true);
@@ -842,8 +839,8 @@ export const WideWidget: Story = {
       deletedAt: null,
     };
 
-    jotaiStore.set(
-      objectMetadataItemsState.atom,
+    setTestObjectMetadataItemsInMetadataStore(
+      jotaiStore,
       generatedMockObjectMetadataItems,
     );
     jotaiStore.set(isAppMetadataReadyState.atom, true);
@@ -940,8 +937,8 @@ export const TallWidget: Story = {
       deletedAt: null,
     };
 
-    jotaiStore.set(
-      objectMetadataItemsState.atom,
+    setTestObjectMetadataItemsInMetadataStore(
+      jotaiStore,
       generatedMockObjectMetadataItems,
     );
     jotaiStore.set(isAppMetadataReadyState.atom, true);
@@ -1034,8 +1031,8 @@ export const WithManyToOneRelationFieldWidget: Story = {
       deletedAt: null,
     };
 
-    jotaiStore.set(
-      objectMetadataItemsState.atom,
+    setTestObjectMetadataItemsInMetadataStore(
+      jotaiStore,
       generatedMockObjectMetadataItems,
     );
     jotaiStore.set(isAppMetadataReadyState.atom, true);
@@ -1153,8 +1150,8 @@ export const WithOneToManyRelationFieldWidget: Story = {
       deletedAt: null,
     };
 
-    jotaiStore.set(
-      objectMetadataItemsState.atom,
+    setTestObjectMetadataItemsInMetadataStore(
+      jotaiStore,
       generatedMockObjectMetadataItems,
     );
     jotaiStore.set(isAppMetadataReadyState.atom, true);
@@ -1264,8 +1261,8 @@ export const OneToManyRelationFieldWidgetWithSeeAllButton: Story = {
       deletedAt: null,
     };
 
-    jotaiStore.set(
-      objectMetadataItemsState.atom,
+    setTestObjectMetadataItemsInMetadataStore(
+      jotaiStore,
       generatedMockObjectMetadataItems,
     );
     jotaiStore.set(isAppMetadataReadyState.atom, true);
@@ -1402,8 +1399,8 @@ export const OnMobile: Story = {
       deletedAt: null,
     };
 
-    jotaiStore.set(
-      objectMetadataItemsState.atom,
+    setTestObjectMetadataItemsInMetadataStore(
+      jotaiStore,
       generatedMockObjectMetadataItems,
     );
     jotaiStore.set(isAppMetadataReadyState.atom, true);
@@ -1500,8 +1497,8 @@ export const InSidePanel: Story = {
       deletedAt: null,
     };
 
-    jotaiStore.set(
-      objectMetadataItemsState.atom,
+    setTestObjectMetadataItemsInMetadataStore(
+      jotaiStore,
       generatedMockObjectMetadataItems,
     );
     jotaiStore.set(isAppMetadataReadyState.atom, true);
@@ -1659,8 +1656,8 @@ export const Catalog: CatalogStory<Story, typeof WidgetRenderer> = {
       deletedAt: null,
     };
 
-    jotaiStore.set(
-      objectMetadataItemsState.atom,
+    setTestObjectMetadataItemsInMetadataStore(
+      jotaiStore,
       generatedMockObjectMetadataItems,
     );
     jotaiStore.set(isAppMetadataReadyState.atom, true);

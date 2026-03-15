@@ -7,11 +7,12 @@ import {
   isDefined,
 } from 'twenty-shared/utils';
 import { type WorkflowAttachment } from 'twenty-shared/workflow';
-import { useUploadWorkflowFileMutation } from '~/generated-metadata/graphql';
+import { useMutation } from '@apollo/client/react';
+import { UploadWorkflowFileDocument } from '~/generated-metadata/graphql';
 import { logError } from '~/utils/logError';
 
 export const useUploadWorkflowFile = () => {
-  const [uploadWorkflowFileMutation] = useUploadWorkflowFileMutation();
+  const [uploadWorkflowFileMutation] = useMutation(UploadWorkflowFileDocument);
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
 
   const uploadWorkflowFile = async (

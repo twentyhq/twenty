@@ -11,9 +11,10 @@ import { t } from '@lingui/core/macro';
 import { useMemo, useState } from 'react';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
+import { useQuery } from '@apollo/client/react';
 import {
   ConfigSource,
-  useGetConfigVariablesGroupedQuery,
+  GetConfigVariablesGroupedDocument,
 } from '~/generated-metadata/graphql';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 import { ConfigVariableSearchInput } from './ConfigVariableSearchInput';
@@ -30,10 +31,12 @@ const StyledTableContainer = styled.div`
 `;
 
 export const SettingsAdminConfigVariables = () => {
-  const { data: configVariables, loading: configVariablesLoading } =
-    useGetConfigVariablesGroupedQuery({
+  const { data: configVariables, loading: configVariablesLoading } = useQuery(
+    GetConfigVariablesGroupedDocument,
+    {
       fetchPolicy: 'network-only',
-    });
+    },
+  );
 
   const [search, setSearch] = useState('');
   const [showHiddenGroupVariables, setShowHiddenGroupVariables] = useAtomState(

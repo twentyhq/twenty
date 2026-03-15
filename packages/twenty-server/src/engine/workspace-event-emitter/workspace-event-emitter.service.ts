@@ -188,7 +188,7 @@ export class WorkspaceEventEmitterService {
   ): Promise<void> {
     const metadataEventsWithQueryIds: {
       queryIds: string[];
-      metadataEvent: MetadataEvent;
+      metadataEvent: MetadataEvent & { updatedCollectionHash?: string };
     }[] = [];
 
     for (const metadataEvent of metadataEventBatch.events) {
@@ -203,7 +203,10 @@ export class WorkspaceEventEmitterService {
 
       metadataEventsWithQueryIds.push({
         queryIds: matchedQueryIds,
-        metadataEvent,
+        metadataEvent: {
+          ...metadataEvent,
+          updatedCollectionHash: metadataEventBatch.updatedCollectionHash,
+        },
       });
     }
 

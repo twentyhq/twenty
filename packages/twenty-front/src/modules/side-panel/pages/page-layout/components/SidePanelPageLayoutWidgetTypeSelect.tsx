@@ -19,7 +19,7 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';

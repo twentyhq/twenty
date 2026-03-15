@@ -1,23 +1,23 @@
-import { MockedProvider } from '@apollo/client/testing';
+import { MockedProvider } from '@apollo/client/testing/react';
 import { renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
 import { Provider as JotaiProvider } from 'jotai';
 
 import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMetadata';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <JotaiProvider store={jotaiStore}>
-    <MockedProvider addTypename={false}>{children}</MockedProvider>
+    <MockedProvider>{children}</MockedProvider>
   </JotaiProvider>
 );
 
 describe('useGetRelationMetadata', () => {
   beforeEach(() => {
-    jotaiStore.set(
-      objectMetadataItemsState.atom,
+    setTestObjectMetadataItemsInMetadataStore(
+      jotaiStore,
       generatedMockObjectMetadataItems,
     );
   });
@@ -50,11 +50,11 @@ describe('useGetRelationMetadata', () => {
         (field) => field.name === 'pointOfContact',
       );
 
-    expect(relationObjectMetadataItem).toEqual(
-      expectedRelationObjectMetadataItem,
+    expect(relationObjectMetadataItem).toMatchObject(
+      expectedRelationObjectMetadataItem!,
     );
-    expect(relationFieldMetadataItem).toEqual(
-      expectedRelationFieldMetadataItem,
+    expect(relationFieldMetadataItem).toMatchObject(
+      expectedRelationFieldMetadataItem!,
     );
     expect(relationType).toBe('ONE_TO_MANY');
   });

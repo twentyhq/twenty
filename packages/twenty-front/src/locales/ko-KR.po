@@ -930,11 +930,6 @@ msgstr "필터 규칙 추가"
 msgid "Add first filter"
 msgstr "첫 번째 필터 추가"
 
-#. js-lingui-id: //rVZt
-#: src/modules/favorites/favorite-folder-picker/components/FavoriteFolderPickerFooter.tsx
-msgid "Add folder"
-msgstr "폴더 추가"
-
 #. js-lingui-id: 7XzAKI
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
 msgid "Add inputs to your form"
@@ -1100,7 +1095,6 @@ msgid "Add to Favorite"
 msgstr "즐겨찾기에 추가"
 
 #. js-lingui-id: pBsoKL
-#: src/modules/favorites/components/PageFavoriteButton.tsx
 #: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 #: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 #: src/modules/command-menu-item/mock/command-menu-items.mock.tsx
@@ -1588,6 +1582,7 @@ msgid "An error occurred while uploading the picture."
 msgstr "사진을 업로드하는 중 오류가 발생했습니다."
 
 #. js-lingui-id: XyOToQ
+#: src/utils/get-error-message-from-apollo-error.util.ts
 #: src/utils/get-error-message-from-apollo-error.util.ts
 #: src/modules/views/hooks/internal/usePerformViewSortAPIPersist.ts
 #: src/modules/views/hooks/internal/usePerformViewGroupAPIPersist.ts
@@ -4305,7 +4300,6 @@ msgstr "삭제"
 #: src/modules/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationRecordsListItem.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/MultiItemFieldMenuItem.tsx
 #: src/modules/navigation-menu-item/components/NavigationMenuItemFolderNavigationDrawerItemDropdown.tsx
-#: src/modules/favorites/components/FavoriteFolderNavigationDrawerItemDropdown.tsx
 #: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 #: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 #: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
@@ -4393,7 +4387,6 @@ msgstr "필드 삭제"
 
 #. js-lingui-id: 97QUV6
 #: src/modules/navigation-menu-item/components/CurrentWorkspaceMemberNavigationMenuItems.tsx
-#: src/modules/favorites/components/CurrentWorkspaceMemberFavorites.tsx
 msgid "Delete Folder"
 msgstr "폴더 삭제"
 
@@ -5582,11 +5575,6 @@ msgstr "SSO ID 공급자 삭제 오류"
 msgid "Error editing SSO Identity Provider"
 msgstr "SSO ID 공급자 편집 오류"
 
-#. js-lingui-id: GsIfmO
-#: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerMetricsGraph.tsx
-msgid "Error fetching worker metrics: {errorMessage}"
-msgstr "워커 메트릭을 가져오는 중 오류: {errorMessage}"
-
 #. js-lingui-id: GdBN5t
 #: src/modules/error-handler/components/AppRootErrorFallback.tsx
 msgid "Error illustration"
@@ -6315,7 +6303,6 @@ msgstr ""
 
 #. js-lingui-id: X9kySA
 #: src/modules/navigation-menu-item/components/CurrentWorkspaceMemberNavigationMenuItemFolders.tsx
-#: src/modules/favorites/components/CurrentWorkspaceMemberFavoritesFolders.tsx
 msgid "Favorites"
 msgstr "즐겨찾기"
 
@@ -9426,7 +9413,6 @@ msgstr "파일 없음"
 
 #. js-lingui-id: pYblOw
 #: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditFolderPickerSubPage.tsx
-#: src/modules/favorites/favorite-folder-picker/components/FavoriteFolderPickerList.tsx
 msgid "No folder"
 msgstr "폴더 없음"
 
@@ -9434,11 +9420,6 @@ msgstr "폴더 없음"
 #: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditFolderPickerSubPage.tsx
 msgid "No folders available"
 msgstr ""
-
-#. js-lingui-id: aywdyd
-#: src/modules/favorites/favorite-folder-picker/components/FavoriteFolderPickerList.tsx
-msgid "No folders found"
-msgstr "폴더를 찾을 수 없습니다"
 
 #. js-lingui-id: 1jgsYC
 #: src/modules/settings/accounts/components/message-folders/SettingsMessageFoldersEmptyStateCard.tsx
@@ -11141,16 +11122,6 @@ msgstr "원격"
 msgid "Remove"
 msgstr "제거"
 
-#. js-lingui-id: gleHgw
-#: src/modules/favorites/components/CurrentWorkspaceMemberFavorites.tsx
-msgid "Remove {favoriteCount} favorite?"
-msgstr "즐겨찾기 {favoriteCount}개를 제거하시겠습니까?"
-
-#. js-lingui-id: 1VQkMD
-#: src/modules/favorites/components/CurrentWorkspaceMemberFavorites.tsx
-msgid "Remove {favoriteCount} favorites?"
-msgstr "즐겨찾기 {favoriteCount}개를 제거하시겠습니까?"
-
 #. js-lingui-id: 0Urj9q
 #: src/modules/navigation-menu-item/components/CurrentWorkspaceMemberNavigationMenuItems.tsx
 msgid "Remove {navigationMenuItemCount} navigation menu item?"
@@ -11182,7 +11153,6 @@ msgid "Remove Deleted filter"
 msgstr "삭제된 필터 제거"
 
 #. js-lingui-id: T/pF0Z
-#: src/modules/favorites/components/PageFavoriteButton.tsx
 #: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 #: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Remove from favorites"
@@ -11237,7 +11207,6 @@ msgstr "변수 제거"
 #. js-lingui-id: 2wxgft
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupDropdown.tsx
 #: src/modules/navigation-menu-item/components/NavigationMenuItemFolderNavigationDrawerItemDropdown.tsx
-#: src/modules/favorites/components/FavoriteFolderNavigationDrawerItemDropdown.tsx
 #: src/modules/activities/files/components/AttachmentDropdown.tsx
 msgid "Rename"
 msgstr "이름 바꾸기"
@@ -13505,16 +13474,6 @@ msgstr "이 작업은 취소할 수 없습니다. 이렇게 하면 이 워크스
 msgid "This action cannot be undone. This will permanently reset your two factor authentication method. <0/> Please type in your email to confirm."
 msgstr "이 작업은 취소할 수 없습니다. 이 작업은 이중 인증 방법을 영구적으로 초기화합니다. <0/> 확인하려면 이메일을 입력하세요."
 
-#. js-lingui-id: XdFYs2
-#: src/modules/favorites/components/CurrentWorkspaceMemberFavorites.tsx
-msgid "This action will delete this favorite folder and all {favoriteCount} favorites inside. Do you want to continue?"
-msgstr "이 작업을 수행하면 이 즐겨찾기 폴더와 내부의 즐겨찾기 {favoriteCount}개가 삭제됩니다. 계속하시겠습니까?"
-
-#. js-lingui-id: pFXbgz
-#: src/modules/favorites/components/CurrentWorkspaceMemberFavorites.tsx
-msgid "This action will delete this favorite folder and the favorite inside. Do you want to continue?"
-msgstr "이 작업을 수행하면 이 즐겨찾기 폴더와 내부의 즐겨찾기가 삭제됩니다. 계속하시겠습니까?"
-
 #. js-lingui-id: lAHIY2
 #: src/modules/navigation-menu-item/components/CurrentWorkspaceMemberNavigationMenuItems.tsx
 msgid "This action will delete this folder and all {navigationMenuItemCount} navigation menu items inside. Do you want to continue?"
@@ -14037,7 +13996,7 @@ msgid "Type"
 msgstr "유형"
 
 #. js-lingui-id: SKD2e4
-#: src/modules/activities/components/ActivityRichTextEditor.tsx
+#: src/modules/object-record/record-field/ui/meta-types/input/components/RichTextFieldEditor.tsx
 msgid "Type '/' for commands, '@' for mentions"
 msgstr ""
 
@@ -15132,7 +15091,6 @@ msgstr "Workflows"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/navigation-menu-item/components/WorkspaceNavigationMenuItems.tsx
-#: src/modules/favorites/components/WorkspaceFavorites.tsx
 msgid "Workspace"
 msgstr "워크스페이스"
 

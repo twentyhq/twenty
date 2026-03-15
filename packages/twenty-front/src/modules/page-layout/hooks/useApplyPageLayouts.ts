@@ -1,4 +1,5 @@
 import { useMetadataStore } from '@/metadata-store/hooks/useMetadataStore';
+import { splitPageLayoutWithRelated } from '@/metadata-store/utils/splitPageLayoutWithRelated';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
 import { recordPageLayoutsState } from '@/page-layout/states/recordPageLayoutsState';
@@ -32,7 +33,13 @@ export const useApplyPageLayouts = () => {
       }
 
       store.set(recordPageLayoutsState.atom, transformedPageLayouts);
-      updateDraft('pageLayouts', transformedPageLayouts);
+
+      const { flatPageLayouts, flatPageLayoutTabs, flatPageLayoutWidgets } =
+        splitPageLayoutWithRelated(transformedPageLayouts);
+
+      updateDraft('pageLayouts', flatPageLayouts);
+      updateDraft('pageLayoutTabs', flatPageLayoutTabs);
+      updateDraft('pageLayoutWidgets', flatPageLayoutWidgets);
       applyChanges();
     },
     [store, updateDraft, applyChanges],

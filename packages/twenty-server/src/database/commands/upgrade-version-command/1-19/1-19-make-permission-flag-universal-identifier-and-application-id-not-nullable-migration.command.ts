@@ -61,7 +61,7 @@ export class MakePermissionFlagUniversalIdentifierAndApplicationIdNotNullableMig
       this.hasRunOnce = true;
     } catch (error) {
       await queryRunner.rollbackTransaction();
-      this.logger.log(
+      this.logger.error(
         `Rolling back MakePermissionFlagUniversalIdentifierAndApplicationIdNotNullableMigrationCommand: ${error.message}`,
       );
     } finally {

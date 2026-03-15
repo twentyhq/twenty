@@ -17,7 +17,7 @@ export const deleteRecordFromCache = ({
   objectMetadataItem: ObjectMetadataItem;
   objectMetadataItems: ObjectMetadataItem[];
   recordToDestroy: ObjectRecord;
-  cache: ApolloCache<object>;
+  cache: ApolloCache;
   objectPermissionsByObjectMetadataId: Record<
     string,
     ObjectPermissions & { objectMetadataId: string }

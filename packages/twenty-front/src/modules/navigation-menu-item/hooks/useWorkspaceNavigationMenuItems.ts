@@ -8,13 +8,13 @@ import { coreViewsState } from '@/views/states/coreViewState';
 import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
 
 import { isDefined } from 'twenty-shared/utils';
-import { usePrefetchedNavigationMenuItemsData } from './usePrefetchedNavigationMenuItemsData';
+import { useNavigationMenuItemsData } from './useNavigationMenuItemsData';
 
 export const useWorkspaceNavigationMenuItems = (): {
   workspaceNavigationMenuItemsObjectMetadataItems: ObjectMetadataItem[];
 } => {
   const { workspaceNavigationMenuItems: rawWorkspaceNavigationMenuItems } =
-    usePrefetchedNavigationMenuItemsData();
+    useNavigationMenuItemsData();
   const coreViews = useAtomStateValue(coreViewsState);
 
   const views = coreViews.map(convertCoreViewToView);

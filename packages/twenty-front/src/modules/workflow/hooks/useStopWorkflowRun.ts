@@ -2,11 +2,12 @@ import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { dispatchObjectRecordOperationBrowserEvent } from '@/browser-event/utils/dispatchObjectRecordOperationBrowserEvent';
-import { useStopWorkflowRunMutation } from '~/generated/graphql';
+import { useMutation } from '@apollo/client/react';
+import { StopWorkflowRunDocument } from '~/generated/graphql';
 
 export const useStopWorkflowRun = () => {
   const apolloCoreClient = useApolloCoreClient();
-  const [mutate] = useStopWorkflowRunMutation({
+  const [mutate] = useMutation(StopWorkflowRunDocument, {
     client: apolloCoreClient,
   });
 

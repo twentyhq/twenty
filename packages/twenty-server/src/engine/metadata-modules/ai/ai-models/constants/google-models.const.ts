@@ -42,6 +42,20 @@ export const GOOGLE_MODELS: AIModelConfig[] = [
     supportedFileTypes: ['image/png', 'image/jpeg', 'image/gif', 'image/webp'],
     doesSupportThinking: true,
   },
+  {
+    modelId: 'gemini-3.1-flash-lite-preview',
+    label: 'Gemini 3.1 Flash Lite',
+    description:
+      'Ultra-low-cost Gemini model for high-volume tasks with 1M context',
+    modelFamily: ModelFamily.GOOGLE,
+    inferenceProvider: InferenceProvider.GOOGLE,
+    inputCostPerMillionTokens: 0.25,
+    outputCostPerMillionTokens: 1.5,
+    contextWindowTokens: 1048576,
+    maxOutputTokens: 65536,
+    supportedFileTypes: ['image/png', 'image/jpeg', 'image/gif', 'image/webp'],
+    doesSupportThinking: true,
+  },
 
   // Deprecated models - kept for backward compatibility with existing agents
   {

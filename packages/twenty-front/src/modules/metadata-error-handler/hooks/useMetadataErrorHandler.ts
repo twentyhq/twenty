@@ -1,4 +1,4 @@
-import { type ApolloError } from '@apollo/client';
+import { type CombinedGraphQLErrors } from '@apollo/client/errors';
 import { t } from '@lingui/core/macro';
 
 import { classifyMetadataError } from '@/metadata-error-handler/utils/classifyMetadataError';
@@ -50,7 +50,7 @@ export const useMetadataErrorHandler = () => {
   } as const satisfies Record<AllMetadataName, string>;
 
   const handleMetadataError = (
-    error: ApolloError,
+    error: CombinedGraphQLErrors,
     options: {
       primaryMetadataName: AllMetadataName;
       operationType: CrudOperationType;
