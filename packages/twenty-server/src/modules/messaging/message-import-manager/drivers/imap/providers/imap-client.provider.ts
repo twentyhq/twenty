@@ -29,6 +29,7 @@ export class ImapClientProvider implements OnModuleDestroy {
   private static readonly MAX_CACHE_SIZE = 100;
 
   private readonly connectionCache = new Map<string, CachedConnection>();
+  private readonly pendingConnections = new Map<string, Promise<ImapFlow>>();
 
   constructor(
     private readonly secureHttpClientService: SecureHttpClientService,
@@ -37,9 +38,10 @@ export class ImapClientProvider implements OnModuleDestroy {
   async getClient(
     connectedAccount: ConnectedAccountIdentifier,
   ): Promise<ImapFlow> {
-    const parametersHash = JSON.stringify(
-      connectedAccount.connectionParameters,
-    );
+    const parametersHash = JSON.stringify({
+      params: connectedAccount.connectionParameters,
+      handle: connectedAccount.handle,
+    });
     const cached = this.connectionCache.get(connectedAccount.id);
 
     if (
@@ -90,26 +92,47 @@ export class ImapClientProvider implements OnModuleDestroy {
       }
     }
 
-    try {
-      const client = await this.createConnection(connectedAccount);
+    // Check if there's already a connection attempt in progress for this account
+    const pending = this.pendingConnections.get(connectedAccount.id);
+    if (pending) {
+      this.logger.debug(
+        `Waiting for existing IMAP connection attempt for ${connectedAccount.handle}`,
+      );
+      return pending;
+    }
 
-      // Implement simple LRU-like eviction if cache is full
-      if (this.connectionCache.size >= ImapClientProvider.MAX_CACHE_SIZE) {
-        const oldestId = this.connectionCache.keys().next().value;
-        const oldestConnection = this.connectionCache.get(oldestId);
-        if (oldestConnection) {
-          this.logger.log(`Cache full, evicting oldest connection: ${oldestId}`);
-          this.connectionCache.delete(oldestId);
-          oldestConnection.client.logout().catch(() => {});
+    const connectionPromise = (async () => {
+      try {
+        const client = await this.createConnection(connectedAccount);
+
+        // Implement simple LRU-like eviction if cache is full
+        if (this.connectionCache.size >= ImapClientProvider.MAX_CACHE_SIZE) {
+          const oldestId = this.connectionCache.keys().next().value;
+          const oldestConnection = this.connectionCache.get(oldestId);
+          if (oldestConnection) {
+            this.logger.log(
+              `Cache full, evicting oldest connection: ${oldestId}`,
+            );
+            this.connectionCache.delete(oldestId);
+            oldestConnection.client.logout().catch(() => {});
+          }
         }
+
+        this.connectionCache.set(connectedAccount.id, {
+          client,
+          parametersHash,
+        });
+
+        return client;
+      } finally {
+        this.pendingConnections.delete(connectedAccount.id);
       }
+    })();
 
-      this.connectionCache.set(connectedAccount.id, {
-        client,
-        parametersHash,
-      });
+    this.pendingConnections.set(connectedAccount.id, connectionPromise);
 
-      return client;
+    try {
+      return await connectionPromise;
     } catch (error) {
       this.logger.error(
         `Failed to establish IMAP connection for ${connectedAccount.handle}: ${error.message}`,
