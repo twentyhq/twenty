@@ -146,6 +146,12 @@ const StyledRightComponentDivider = styled.div`
   border-left: 1px solid ${themeCssVariables.border.color.light};
 `;
 
+const StyledRightComponentContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${themeCssVariables.spacing[1]};
+`;
+
 const renderRightComponent = (
   rightComponent: (() => ReactNode) | ReactNode | null,
   rightComponentDivider?: boolean,
@@ -157,16 +163,14 @@ const renderRightComponent = (
   const rendered =
     typeof rightComponent === 'function' ? rightComponent() : rightComponent;
 
-  if (rightComponentDivider === true) {
-    return (
-      <>
-        <StyledRightComponentDivider />
-        {rendered}
-      </>
-    );
-  }
-
-  return rendered;
+  return (
+    <StyledRightComponentContainer
+      onClick={(event) => event.stopPropagation()}
+    >
+      {rightComponentDivider === true && <StyledRightComponentDivider />}
+      {rendered}
+    </StyledRightComponentContainer>
+  );
 };
 
 export const Chip = ({
