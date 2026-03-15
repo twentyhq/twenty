@@ -19,6 +19,7 @@ type GlobalTestContext = {
   editableRoleId: string;
   nonEditableRoleId: string;
   systemObjectMetadataId: string;
+  nonSystemObjectMetadataId: string;
   editableRoleWithNoReadId: string;
 };
 
@@ -120,7 +121,7 @@ const failingObjectPermissionUpsertTestCases: EachTestingContext<TestContext>[] 
           roleId: globalContext.editableRoleWithNoReadId,
           objectPermissions: [
             {
-              objectMetadataId: globalContext.systemObjectMetadataId,
+              objectMetadataId: globalContext.nonSystemObjectMetadataId,
               canReadObjectRecords: false,
               canUpdateObjectRecords: true,
               canSoftDeleteObjectRecords: false,
@@ -136,6 +137,7 @@ describe('Object permission upsert should fail', () => {
   let editableRoleId: string;
   let nonEditableRoleId: string;
   let systemObjectMetadataId: string;
+  let nonSystemObjectMetadataId: string;
   let editableRoleWithNoReadId: string;
 
   beforeAll(async () => {
@@ -223,6 +225,12 @@ describe('Object permission upsert should fail', () => {
     )?.node;
     jestExpectToBeDefined(systemObjectNode);
     systemObjectMetadataId = systemObjectNode.id;
+
+    const nonSystemObjectNode = edges.find(
+      (edge: { node: { isSystem: boolean } }) => edge.node.isSystem === false,
+    )?.node;
+    jestExpectToBeDefined(nonSystemObjectNode);
+    nonSystemObjectMetadataId = nonSystemObjectNode.id;
   });
 
   afterAll(async () => {
@@ -247,6 +255,7 @@ describe('Object permission upsert should fail', () => {
         editableRoleId: editableRoleId ?? '',
         nonEditableRoleId: nonEditableRoleId ?? '',
         systemObjectMetadataId: systemObjectMetadataId ?? '',
+        nonSystemObjectMetadataId: nonSystemObjectMetadataId ?? '',
         editableRoleWithNoReadId: editableRoleWithNoReadId ?? '',
       };
       const input = context.input(globalContext);
