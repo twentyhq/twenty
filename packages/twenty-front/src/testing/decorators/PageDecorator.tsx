@@ -17,6 +17,7 @@ import { DefaultLayout } from '@/ui/layout/page/components/DefaultLayout';
 import { MinimalMetadataGater } from '@/metadata-store/components/MinimalMetadataGater';
 import { UserMetadataProviderInitialEffect } from '@/metadata-store/effect-components/UserMetadataProviderInitialEffect';
 import { IsMinimalMetadataReadyEffect } from '@/metadata-store/effect-components/IsMinimalMetadataReadyEffect';
+import { MinimalMetadataLoadEffect } from '@/metadata-store/effect-components/MinimalMetadataLoadEffect';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { ClientConfigProvider } from '~/modules/client-config/components/ClientConfigProvider';
 import { mockedApolloClient } from '~/testing/mockedApolloClient';
@@ -83,6 +84,7 @@ const Providers = () => {
             <ClientConfigProviderEffect />
             <ClientConfigProvider>
               <UserMetadataProviderInitialEffect />
+              <MinimalMetadataLoadEffect />
               <IsMinimalMetadataReadyEffect />
               <WorkspaceProviderEffect />
               <MinimalMetadataGater>
