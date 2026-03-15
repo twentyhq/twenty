@@ -1,0 +1,1 @@
+export const MICROSOFT_OAUTH_MAX_RETRY_ATTEMPTS = 1;
