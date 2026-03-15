@@ -1,49 +1,74 @@
-import { useIsLogged } from '@/auth/hooks/useIsLogged';
+import { useHasAccessTokenPair } from '@/auth/hooks/useHasAccessTokenPair';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadedState';
 import { useLoadMinimalMetadata } from '@/metadata-store/hooks/useLoadMinimalMetadata';
 import { useLoadMockedMinimalMetadata } from '@/metadata-store/hooks/useLoadMockedMinimalMetadata';
 import { useLoadStaleMetadataEntities } from '@/metadata-store/hooks/useLoadStaleMetadataEntities';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { isWorkspaceActiveOrSuspended } from 'twenty-shared/workspace';
 
+type LoadedState = 'none' | 'mocked' | 'real';
+
+const computeDesiredLoadState = (
+  hasAccessTokenPair: boolean,
+  isActiveWorkspace: boolean,
+): LoadedState => {
+  if (hasAccessTokenPair && isActiveWorkspace) {
+    return 'real';
+  }
+
+  return 'mocked';
+};
+
 export const MinimalMetadataLoadEffect = () => {
-  const isLoggedIn = useIsLogged();
+  const hasAccessTokenPair = useHasAccessTokenPair();
   const isCurrentUserLoaded = useAtomStateValue(isCurrentUserLoadedState);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-  const [hasTriggeredLoad, setHasTriggeredLoad] = useState(false);
+  const [loadedState, setLoadedState] = useState<LoadedState>('none');
 
   const { loadMinimalMetadata } = useLoadMinimalMetadata();
   const { loadMockedMinimalMetadata } = useLoadMockedMinimalMetadata();
   const { loadStaleMetadataEntities } = useLoadStaleMetadataEntities();
 
-  const performLoad = useCallback(async () => {
-    if (!isWorkspaceActiveOrSuspended(currentWorkspace)) {
-      await loadMockedMinimalMetadata();
+  const isActiveWorkspace = isWorkspaceActiveOrSuspended(currentWorkspace);
+
+  const desiredLoadState = computeDesiredLoadState(
+    hasAccessTokenPair,
+    isActiveWorkspace,
+  );
+
+  useEffect(() => {
+    if (!isCurrentUserLoaded || loadedState === desiredLoadState) {
       return;
     }
 
-    const result = await loadMinimalMetadata();
+    setLoadedState(desiredLoadState);
 
-    if (result?.staleEntityKeys && result.staleEntityKeys.length > 0) {
-      await loadStaleMetadataEntities(result.staleEntityKeys);
-    }
+    const performLoad = async () => {
+      if (desiredLoadState === 'mocked') {
+        await loadMockedMinimalMetadata();
+        return;
+      }
+
+      const result = await loadMinimalMetadata();
+
+      if (result?.staleEntityKeys && result.staleEntityKeys.length > 0) {
+        await loadStaleMetadataEntities(result.staleEntityKeys);
+      }
+    };
+
+    performLoad();
   }, [
-    currentWorkspace,
+    isCurrentUserLoaded,
+    hasAccessTokenPair,
+    isActiveWorkspace,
+    desiredLoadState,
+    loadedState,
     loadMinimalMetadata,
     loadMockedMinimalMetadata,
     loadStaleMetadataEntities,
   ]);
-
-  useEffect(() => {
-    if (!isCurrentUserLoaded || !isLoggedIn || hasTriggeredLoad) {
-      return;
-    }
-
-    setHasTriggeredLoad(true);
-    performLoad();
-  }, [isCurrentUserLoaded, isLoggedIn, hasTriggeredLoad, performLoad]);
 
   return null;
 };

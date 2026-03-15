@@ -1,4 +1,4 @@
-import { useIsLogged } from '@/auth/hooks/useIsLogged';
+import { useHasAccessTokenPair } from '@/auth/hooks/useHasAccessTokenPair';
 import { tokenPairState } from '@/auth/states/tokenPairState';
 import { useHandleSseClientConnectionRetry } from '@/sse-db-event/hooks/useHandleSseClientConnectionRetry';
 import { activeQueryListenersState } from '@/sse-db-event/states/activeQueryListenersState';
@@ -14,7 +14,7 @@ import { useStore } from 'jotai';
 
 export const SSEClientEffect = () => {
   const store = useStore();
-  const isLoggedIn = useIsLogged();
+  const hasAccessTokenPair = useHasAccessTokenPair();
   const [sseClient, setSseClient] = useAtomState(sseClientState);
   const tokenPair = useAtomStateValue(tokenPairState);
 
@@ -32,7 +32,7 @@ export const SSEClientEffect = () => {
     useHandleSseClientConnectionRetry();
 
   useEffect(() => {
-    if (isLoggedIn && !isDefined(sseClient) && isDefined(tokenPair)) {
+    if (hasAccessTokenPair && !isDefined(sseClient) && isDefined(tokenPair)) {
       const token = tokenPair?.accessOrWorkspaceAgnosticToken?.token;
 
       const newSseClient = createClient({
@@ -52,7 +52,7 @@ export const SSEClientEffect = () => {
     }
   }, [
     handleSSEClientConnected,
-    isLoggedIn,
+    hasAccessTokenPair,
     setSseClient,
     sseClient,
     tokenPair,

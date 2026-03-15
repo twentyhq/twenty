@@ -63,6 +63,21 @@ exports[`generateActivityTargetGqlFields snapshot tests should match snapshot fo
     "name": true,
   },
   "targetSurveyResultId": true,
+  "targetTea": {
+    "id": true,
+    "name": true,
+  },
+  "targetTeaId": true,
+  "targetToto": {
+    "id": true,
+    "name": true,
+  },
+  "targetTotoId": true,
+  "targetVla": {
+    "id": true,
+    "name": true,
+  },
+  "targetVlaId": true,
   "updatedAt": true,
   "updatedBy": true,
 }
@@ -116,6 +131,21 @@ exports[`generateActivityTargetGqlFields snapshot tests should match snapshot fo
     "name": true,
   },
   "targetSurveyResultId": true,
+  "targetTea": {
+    "id": true,
+    "name": true,
+  },
+  "targetTeaId": true,
+  "targetToto": {
+    "id": true,
+    "name": true,
+  },
+  "targetTotoId": true,
+  "targetVla": {
+    "id": true,
+    "name": true,
+  },
+  "targetVlaId": true,
   "updatedAt": true,
   "updatedBy": true,
 }
@@ -179,6 +209,21 @@ exports[`generateActivityTargetGqlFields snapshot tests should match snapshot fo
     "name": true,
   },
   "targetSurveyResultId": true,
+  "targetTea": {
+    "id": true,
+    "name": true,
+  },
+  "targetTeaId": true,
+  "targetToto": {
+    "id": true,
+    "name": true,
+  },
+  "targetTotoId": true,
+  "targetVla": {
+    "id": true,
+    "name": true,
+  },
+  "targetVlaId": true,
   "task": {
     "id": true,
     "title": true,
@@ -237,6 +282,21 @@ exports[`generateActivityTargetGqlFields snapshot tests should match snapshot fo
     "name": true,
   },
   "targetSurveyResultId": true,
+  "targetTea": {
+    "id": true,
+    "name": true,
+  },
+  "targetTeaId": true,
+  "targetToto": {
+    "id": true,
+    "name": true,
+  },
+  "targetTotoId": true,
+  "targetVla": {
+    "id": true,
+    "name": true,
+  },
+  "targetVlaId": true,
   "updatedAt": true,
   "updatedBy": true,
 }

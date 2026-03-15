@@ -1,7 +1,7 @@
 import { verifyEmailRedirectPathState } from '@/app/states/verifyEmailRedirectPathState';
 import { ONBOARDING_PATHS } from '@/auth/constants/OnboardingPaths';
 import { ONGOING_USER_CREATION_PATHS } from '@/auth/constants/OngoingUserCreationPaths';
-import { useIsLogged } from '@/auth/hooks/useIsLogged';
+import { useHasAccessTokenPair } from '@/auth/hooks/useHasAccessTokenPair';
 import { returnToPathState } from '@/auth/states/returnToPathState';
 import { calendarBookingPageIdState } from '@/client-config/states/calendarBookingPageIdState';
 import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
@@ -26,7 +26,7 @@ const readReturnToPathFromUrlSearchParams = (): string | null => {
 };
 
 export const usePageChangeEffectNavigateLocation = () => {
-  const isLoggedIn = useIsLogged();
+  const hasAccessTokenPair = useHasAccessTokenPair();
   const { isOnAWorkspace } = useIsCurrentLocationOnAWorkspace();
   const onboardingStatus = useOnboardingStatus();
   const isWorkspaceSuspended = useIsWorkspaceActivationStatusEqualsTo(
@@ -54,7 +54,7 @@ export const usePageChangeEffectNavigateLocation = () => {
     : readReturnToPathFromUrlSearchParams();
 
   if (
-    (!isLoggedIn || (isLoggedIn && !isOnAWorkspace)) &&
+    (!hasAccessTokenPair || (hasAccessTokenPair && !isOnAWorkspace)) &&
     !someMatchingLocationOf([
       ...ONGOING_USER_CREATION_PATHS,
       AppPath.ResetPassword,
@@ -140,13 +140,13 @@ export const usePageChangeEffectNavigateLocation = () => {
       ...ONGOING_USER_CREATION_PATHS,
     ]) &&
     !isMatchingLocation(location, AppPath.ResetPassword) &&
-    isLoggedIn &&
+    hasAccessTokenPair &&
     isOnAWorkspace
   ) {
     return resolvedReturnToPath ?? defaultHomePagePath;
   }
 
-  if (isMatchingLocation(location, AppPath.Index) && isLoggedIn) {
+  if (isMatchingLocation(location, AppPath.Index) && hasAccessTokenPair) {
     return resolvedReturnToPath ?? defaultHomePagePath;
   }
 

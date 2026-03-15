@@ -35,7 +35,7 @@ export const mockedConnectedAccountRecords: ObjectRecord[] =
       ]
     },
     "connectionParameters": null,
-    "createdAt": "2026-02-27T01:17:25.392Z",
+    "createdAt": "2026-03-14T18:16:49.952Z",
     "createdBy": {
       "__typename": "Actor",
       "source": "MANUAL",
@@ -66,7 +66,7 @@ export const mockedConnectedAccountRecords: ObjectRecord[] =
     "provider": "google",
     "refreshToken": "exampleRefreshToken",
     "scopes": [],
-    "updatedAt": "2026-02-27T01:17:25.392Z",
+    "updatedAt": "2026-03-14T18:16:49.952Z",
     "updatedBy": {
       "__typename": "Actor",
       "source": "MANUAL",
@@ -119,7 +119,7 @@ export const mockedConnectedAccountRecords: ObjectRecord[] =
       ]
     },
     "connectionParameters": null,
-    "createdAt": "2026-02-27T01:17:25.392Z",
+    "createdAt": "2026-03-14T18:16:49.952Z",
     "createdBy": {
       "__typename": "Actor",
       "source": "MANUAL",
@@ -166,7 +166,7 @@ export const mockedConnectedAccountRecords: ObjectRecord[] =
     "provider": "google",
     "refreshToken": "exampleRefreshToken",
     "scopes": [],
-    "updatedAt": "2026-02-27T01:17:25.392Z",
+    "updatedAt": "2026-03-14T18:16:49.952Z",
     "updatedBy": {
       "__typename": "Actor",
       "source": "MANUAL",
@@ -203,7 +203,7 @@ export const mockedConnectedAccountRecords: ObjectRecord[] =
       ]
     },
     "connectionParameters": null,
-    "createdAt": "2026-02-27T01:17:25.392Z",
+    "createdAt": "2026-03-14T18:16:49.952Z",
     "createdBy": {
       "__typename": "Actor",
       "source": "MANUAL",
@@ -234,7 +234,7 @@ export const mockedConnectedAccountRecords: ObjectRecord[] =
     "provider": "google",
     "refreshToken": "exampleRefreshToken",
     "scopes": [],
-    "updatedAt": "2026-02-27T01:17:25.392Z",
+    "updatedAt": "2026-03-14T18:16:49.952Z",
     "updatedBy": {
       "__typename": "Actor",
       "source": "MANUAL",

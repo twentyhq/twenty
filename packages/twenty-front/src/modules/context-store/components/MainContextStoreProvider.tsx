@@ -38,6 +38,8 @@ const getViewId = (
   return undefined;
 };
 
+const SIGN_IN_BACKGROUND_OBJECT_NAME_PLURAL = 'companies';
+
 export const MainContextStoreProvider = () => {
   const location = useLocation();
   const isRecordIndexPage = isMatchingLocation(
@@ -46,9 +48,14 @@ export const MainContextStoreProvider = () => {
   );
   const isRecordShowPage = isMatchingLocation(location, AppPath.RecordShowPage);
   const isSettingsPage = useIsSettingsPage();
+  const showAuthModal = useShowAuthModal();
 
-  const objectNamePlural = useParams().objectNamePlural ?? '';
+  const objectNamePluralFromParams = useParams().objectNamePlural ?? '';
   const objectNameSingular = useParams().objectNameSingular ?? '';
+
+  const objectNamePlural = showAuthModal
+    ? SIGN_IN_BACKGROUND_OBJECT_NAME_PLURAL
+    : objectNamePluralFromParams;
 
   const [searchParams] = useSearchParams();
   const viewIdQueryParamRaw = searchParams.get('viewId');
@@ -108,11 +115,11 @@ export const MainContextStoreProvider = () => {
     firstAvailableViewId,
   );
 
-  const showAuthModal = useShowAuthModal();
-
   const shouldComputeContextStore =
-    (isRecordIndexPage || isRecordShowPage || isSettingsPage) &&
-    !showAuthModal &&
+    (isRecordIndexPage ||
+      isRecordShowPage ||
+      isSettingsPage ||
+      showAuthModal) &&
     metadataStore.status === 'up-to-date';
 
   if (!shouldComputeContextStore) {

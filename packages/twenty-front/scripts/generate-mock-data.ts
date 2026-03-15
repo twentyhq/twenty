@@ -5,6 +5,7 @@ import { generateMetadata } from './mock-data/generate-metadata.js';
 import { generateMinimalMetadata } from './mock-data/generate-minimal-metadata.js';
 import { generateRecordData } from './mock-data/generate-record-data.js';
 import { generateRoles } from './mock-data/generate-roles.js';
+import { generateNavigationMenuItems } from './mock-data/generate-navigation-menu-items.js';
 import { generateViews } from './mock-data/generate-views.js';
 import { authenticate } from './mock-data/utils.js';
 
@@ -16,6 +17,7 @@ const main = async () => {
   await generateRecordData(token, metadata);
   await generateRoles(token);
   await generateViews(token);
+  await generateNavigationMenuItems(token);
 
   try {
     await generateBillingPlans(token);

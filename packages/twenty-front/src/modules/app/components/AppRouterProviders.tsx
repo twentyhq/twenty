@@ -1,8 +1,8 @@
 import { AgentChatProvider } from '@/ai/components/AgentChatProvider';
 import { CommandMenuConfirmationModalManager } from '@/command-menu-item/confirmation-modal/components/CommandMenuConfirmationModalManager';
 import { ApolloProvider } from '@/apollo/components/ApolloProvider';
-import { MetadataGater } from '@/metadata-store/components/MetadataGater';
-import { IsAppMetadataReadyEffect } from '@/metadata-store/effect-components/IsAppMetadataReadyEffect';
+import { MinimalMetadataGater } from '@/metadata-store/components/MinimalMetadataGater';
+import { IsMinimalMetadataReadyEffect } from '@/metadata-store/effect-components/IsMinimalMetadataReadyEffect';
 
 import { GotoHotkeysEffectsProvider } from '@/app/effect-components/GotoHotkeysEffectsProvider';
 import { MinimalMetadataLoadEffect } from '@/metadata-store/effect-components/MinimalMetadataLoadEffect';
@@ -46,13 +46,13 @@ export const AppRouterProviders = () => {
         <ClientConfigProviderEffect />
         <UserMetadataProviderInitialEffect />
         <MinimalMetadataLoadEffect />
-        <IsAppMetadataReadyEffect />
+        <IsMinimalMetadataReadyEffect />
         <WorkspaceProviderEffect />
         <ClientConfigProvider>
           <CaptchaProvider>
             <ChromeExtensionSidecarEffect />
             <ChromeExtensionSidecarProvider>
-              <MetadataGater>
+              <MinimalMetadataGater>
                 <AuthProvider>
                   <ApolloCoreProvider>
                     <SSEProvider>
@@ -86,7 +86,7 @@ export const AppRouterProviders = () => {
                     </SSEProvider>
                   </ApolloCoreProvider>
                 </AuthProvider>
-              </MetadataGater>
+              </MinimalMetadataGater>
             </ChromeExtensionSidecarProvider>
           </CaptchaProvider>
         </ClientConfigProvider>

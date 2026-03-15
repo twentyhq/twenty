@@ -5,7 +5,6 @@ import { splitPageLayoutWithRelated } from '@/metadata-store/utils/splitPageLayo
 import { splitViewWithRelated } from '@/metadata-store/utils/splitViewWithRelated';
 import { FIND_MANY_OBJECT_METADATA_ITEMS } from '@/object-metadata/graphql/queries';
 import { mapPaginatedObjectMetadataItemsToObjectMetadataItems } from '@/object-metadata/utils/mapPaginatedObjectMetadataItemsToObjectMetadataItems';
-import { navigationMenuItemsState } from '@/navigation-menu-item/states/navigationMenuItemsState';
 import { transformPageLayout } from '@/page-layout/utils/transformPageLayout';
 import { logicFunctionsState } from '@/settings/logic-functions/states/logicFunctionsState';
 import { useApolloClient } from '@apollo/client/react';
@@ -189,10 +188,6 @@ export const useLoadStaleMetadataEntities = () => {
                 return;
               }
 
-              store.set(
-                navigationMenuItemsState.atom,
-                result.data.navigationMenuItems,
-              );
               updateDraft(
                 'navigationMenuItems',
                 result.data.navigationMenuItems,

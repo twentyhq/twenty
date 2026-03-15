@@ -306,6 +306,8 @@ export const useAuth = () => {
       setIsAppEffectRedirectEnabled(false);
 
       await loadCurrentUser();
+
+      setIsAppEffectRedirectEnabled(true);
     },
     [loadCurrentUser, handleSetAuthTokens, setIsAppEffectRedirectEnabled],
   );

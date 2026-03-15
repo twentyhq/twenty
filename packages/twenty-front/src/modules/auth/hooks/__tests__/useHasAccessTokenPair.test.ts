@@ -1,27 +1,27 @@
 import { act, renderHook } from '@testing-library/react';
 
-import { useIsLogged } from '@/auth/hooks/useIsLogged';
+import { useHasAccessTokenPair } from '@/auth/hooks/useHasAccessTokenPair';
 import { tokenPairState } from '@/auth/states/tokenPairState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 const renderHooks = () => {
   const { result } = renderHook(() => {
-    const isLogged = useIsLogged();
+    const hasAccessTokenPair = useHasAccessTokenPair();
     const setTokenPair = useSetAtomState(tokenPairState);
 
     return {
-      isLogged,
+      hasAccessTokenPair,
       setTokenPair,
     };
   });
   return { result };
 };
 
-describe('useIsLogged', () => {
+describe('useHasAccessTokenPair', () => {
   it('should return correct value', async () => {
     const { result } = renderHooks();
 
-    expect(result.current.isLogged).toBe(false);
+    expect(result.current.hasAccessTokenPair).toBe(false);
 
     await act(async () => {
       result.current.setTokenPair({
@@ -36,6 +36,6 @@ describe('useIsLogged', () => {
       });
     });
 
-    expect(result.current.isLogged).toBe(true);
+    expect(result.current.hasAccessTokenPair).toBe(true);
   });
 });

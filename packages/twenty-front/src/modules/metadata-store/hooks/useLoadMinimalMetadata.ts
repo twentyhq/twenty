@@ -1,5 +1,4 @@
 import { FIND_MINIMAL_METADATA } from '@/metadata-store/graphql/queries/findMinimalMetadata';
-import { metadataCollectionHashesState } from '@/metadata-store/states/metadataCollectionHashesState';
 import {
   metadataStoreState,
   type MetadataEntityKey,
@@ -30,49 +29,56 @@ export const useLoadMinimalMetadata = () => {
     const { objectMetadataItems, views, collectionHashes } =
       result.data.minimalMetadata;
 
-    const localHashes = store.get(metadataCollectionHashesState.atom);
-
-    const serverHashes: Partial<Record<MetadataEntityKey, string>> = {};
+    const staleEntityKeys: MetadataEntityKey[] = [];
 
     if (isDefined(collectionHashes)) {
       for (const { collectionName, hash } of collectionHashes) {
         const entityKey = mapAllMetadataNameToEntityKey(collectionName);
 
-        if (isDefined(entityKey)) {
-          serverHashes[entityKey] = hash;
+        if (!isDefined(entityKey)) {
+          continue;
         }
+
+        const entry = store.get(metadataStoreState.atomFamily(entityKey));
+
+        if (entry.currentCollectionHash !== hash) {
+          staleEntityKeys.push(entityKey);
+        }
+
+        store.set(metadataStoreState.atomFamily(entityKey), (prev) => ({
+          ...prev,
+          draftCollectionHash: hash,
+        }));
       }
     }
-
-    store.set(metadataCollectionHashesState.atom, serverHashes);
-
-    const staleEntityKeys: MetadataEntityKey[] = Object.entries(serverHashes)
-      .filter(
-        ([entityKey, hash]) =>
-          localHashes[entityKey as MetadataEntityKey] !== hash,
-      )
-      .map(([entityKey]) => entityKey as MetadataEntityKey);
 
     const objectsEntry = store.get(
       metadataStoreState.atomFamily('objectMetadataItems'),
     );
 
     if (objectsEntry.status === 'empty') {
-      store.set(metadataStoreState.atomFamily('objectMetadataItems'), {
-        current: objectMetadataItems as unknown as FlatObjectMetadataItem[],
-        draft: [],
-        status: 'up-to-date',
-      });
+      store.set(
+        metadataStoreState.atomFamily('objectMetadataItems'),
+        (prev) => ({
+          ...prev,
+          current: objectMetadataItems as unknown as FlatObjectMetadataItem[],
+          status: 'up-to-date',
+          currentCollectionHash: prev.draftCollectionHash,
+          draftCollectionHash: undefined,
+        }),
+      );
     }
 
     const viewsEntry = store.get(metadataStoreState.atomFamily('views'));
 
     if (viewsEntry.status === 'empty') {
-      store.set(metadataStoreState.atomFamily('views'), {
+      store.set(metadataStoreState.atomFamily('views'), (prev) => ({
+        ...prev,
         current: views as unknown as FlatView[],
-        draft: [],
         status: 'up-to-date',
-      });
+        currentCollectionHash: prev.draftCollectionHash,
+        draftCollectionHash: undefined,
+      }));
     }
 
     return { staleEntityKeys };

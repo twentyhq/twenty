@@ -4,7 +4,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { MemoryRouter } from 'react-router-dom';
 import { expect, waitFor, within } from 'storybook/test';
 
-import { isAppMetadataReadyState } from '@/metadata-store/states/isAppMetadataReadyState';
+import { isMinimalMetadataReadyState } from '@/metadata-store/states/isMinimalMetadataReadyState';
 import { ApolloCoreClientContext } from '@/object-metadata/contexts/ApolloCoreClientContext';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
@@ -399,7 +399,7 @@ export const WithViewFieldGroups: Story = {
       jotaiStore,
       generatedMockObjectMetadataItems,
     );
-    jotaiStore.set(isAppMetadataReadyState.atom, true);
+    jotaiStore.set(isMinimalMetadataReadyState.atom, true);
     setCoreViewsInMetadataStore(jotaiStore, [coreView]);
     jotaiStore.set(
       pageLayoutPersistedComponentState.atomFamily({
@@ -512,7 +512,7 @@ export const WithInlineViewFields: Story = {
       jotaiStore,
       generatedMockObjectMetadataItems,
     );
-    jotaiStore.set(isAppMetadataReadyState.atom, true);
+    jotaiStore.set(isMinimalMetadataReadyState.atom, true);
     setCoreViewsInMetadataStore(jotaiStore, [coreView]);
     jotaiStore.set(
       pageLayoutPersistedComponentState.atomFamily({
@@ -604,7 +604,7 @@ export const Empty: Story = {
       jotaiStore,
       generatedMockObjectMetadataItems,
     );
-    jotaiStore.set(isAppMetadataReadyState.atom, true);
+    jotaiStore.set(isMinimalMetadataReadyState.atom, true);
     setCoreViewsInMetadataStore(jotaiStore, [coreView]);
     jotaiStore.set(
       pageLayoutPersistedComponentState.atomFamily({

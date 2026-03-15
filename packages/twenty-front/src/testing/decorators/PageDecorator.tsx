@@ -14,9 +14,9 @@ import { ClientConfigProviderEffect } from '@/client-config/components/ClientCon
 import { ApolloCoreClientMockedProvider } from '@/object-metadata/hooks/__mocks__/ApolloCoreClientMockedProvider';
 
 import { DefaultLayout } from '@/ui/layout/page/components/DefaultLayout';
-import { MetadataGater } from '@/metadata-store/components/MetadataGater';
+import { MinimalMetadataGater } from '@/metadata-store/components/MinimalMetadataGater';
 import { UserMetadataProviderInitialEffect } from '@/metadata-store/effect-components/UserMetadataProviderInitialEffect';
-import { IsAppMetadataReadyEffect } from '@/metadata-store/effect-components/IsAppMetadataReadyEffect';
+import { IsMinimalMetadataReadyEffect } from '@/metadata-store/effect-components/IsMinimalMetadataReadyEffect';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { ClientConfigProvider } from '~/modules/client-config/components/ClientConfigProvider';
 import { mockedApolloClient } from '~/testing/mockedApolloClient';
@@ -83,9 +83,9 @@ const Providers = () => {
             <ClientConfigProviderEffect />
             <ClientConfigProvider>
               <UserMetadataProviderInitialEffect />
-              <IsAppMetadataReadyEffect />
+              <IsMinimalMetadataReadyEffect />
               <WorkspaceProviderEffect />
-              <MetadataGater>
+              <MinimalMetadataGater>
                 <ApolloCoreClientMockedProvider>
                   <PreComputedChipGeneratorsProvider>
                     <FullHeightStorybookLayout>
@@ -100,7 +100,7 @@ const Providers = () => {
                   </PreComputedChipGeneratorsProvider>
                   <MainContextStoreProvider />
                 </ApolloCoreClientMockedProvider>
-              </MetadataGater>
+              </MinimalMetadataGater>
             </ClientConfigProvider>
           </I18nProvider>
         </ApolloProvider>

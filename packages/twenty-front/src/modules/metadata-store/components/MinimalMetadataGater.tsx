@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { isAppMetadataReadyState } from '@/metadata-store/states/isAppMetadataReadyState';
-import { useIsLogged } from '@/auth/hooks/useIsLogged';
+import { isMinimalMetadataReadyState } from '@/metadata-store/states/isMinimalMetadataReadyState';
+import { useHasAccessTokenPair } from '@/auth/hooks/useHasAccessTokenPair';
 import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { UserContext } from '@/users/contexts/UserContext';
@@ -10,9 +10,9 @@ import { AppPath } from 'twenty-shared/types';
 import { UserOrMetadataLoader } from '~/loading/components/UserOrMetadataLoader';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
-export const MetadataGater = ({ children }: React.PropsWithChildren) => {
-  const isAppMetadataReady = useAtomStateValue(isAppMetadataReadyState);
-  const isLoggedIn = useIsLogged();
+export const MinimalMetadataGater = ({ children }: React.PropsWithChildren) => {
+  const isMinimalMetadataReady = useAtomStateValue(isMinimalMetadataReadyState);
+  const hasAccessTokenPair = useHasAccessTokenPair();
   const location = useLocation();
 
   const { dateFormat, timeFormat, timeZone } = useDateTimeFormat();
@@ -23,7 +23,7 @@ export const MetadataGater = ({ children }: React.PropsWithChildren) => {
     isMatchingLocation(location, AppPath.CreateWorkspace);
 
   const shouldShowLoader =
-    !isAppMetadataReady && isLoggedIn && !isOnExcludedPath;
+    !isMinimalMetadataReady && hasAccessTokenPair && !isOnExcludedPath;
 
   if (shouldShowLoader) {
     return <UserOrMetadataLoader />;

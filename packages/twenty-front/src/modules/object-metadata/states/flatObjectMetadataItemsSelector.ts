@@ -2,10 +2,10 @@ import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { type FlatObjectMetadataItem } from '@/metadata-store/types/FlatObjectMetadataItem';
 import { createAtomSelector } from '@/ui/utilities/state/jotai/utils/createAtomSelector';
 
-export const objectMetadataItemsSelector = createAtomSelector<
+export const flatObjectMetadataItemsSelector = createAtomSelector<
   FlatObjectMetadataItem[]
 >({
-  key: 'objectMetadataItemsSelector',
+  key: 'flatObjectMetadataItemsSelector',
   get: ({ get }) => {
     const storeItem = get(metadataStoreState, 'objectMetadataItems');
 
