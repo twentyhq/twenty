@@ -23,6 +23,10 @@ RUN yarn && yarn cache clean && npx nx reset
 # Build the back
 FROM common-deps AS twenty-server-build
 
+# Railway injects RAILWAY_CACHE_KEY as a build arg and requires cache mount IDs
+# to be prefixed with it. Default to "local" for non-Railway builds.
+ARG RAILWAY_CACHE_KEY=local
+
 # Copy sourcecode after installing dependences to accelerate subsequents builds
 COPY ./packages/twenty-emails /app/packages/twenty-emails
 COPY ./packages/twenty-shared /app/packages/twenty-shared
@@ -41,13 +45,17 @@ COPY ./packages/twenty-server /app/packages/twenty-server
 # sharing=locked prevents corruption if both stages access the cache simultaneously.
 # If the cache is empty (first build, or evicted by Railway) it falls back to a
 # full build transparently.
-RUN --mount=type=cache,sharing=locked,target=/app/.nx/cache \
+RUN --mount=type=cache,id=${RAILWAY_CACHE_KEY}-nx-cache,sharing=locked,target=/app/.nx/cache \
     npx nx run twenty-server:build
 
 RUN yarn workspaces focus --production twenty-emails twenty-shared twenty-sdk twenty-server
 
 # Build the front
 FROM common-deps AS twenty-front-build
+
+# Railway injects RAILWAY_CACHE_KEY as a build arg and requires cache mount IDs
+# to be prefixed with it. Default to "local" for non-Railway builds.
+ARG RAILWAY_CACHE_KEY=local
 
 ARG REACT_APP_SERVER_BASE_URL
 
@@ -56,7 +64,7 @@ COPY ./packages/twenty-ui /app/packages/twenty-ui
 COPY ./packages/twenty-shared /app/packages/twenty-shared
 COPY ./packages/twenty-sdk /app/packages/twenty-sdk
 # See comment above twenty-server:build for full explanation of this cache mount.
-RUN --mount=type=cache,sharing=locked,target=/app/.nx/cache \
+RUN --mount=type=cache,id=${RAILWAY_CACHE_KEY}-nx-cache,sharing=locked,target=/app/.nx/cache \
     npx nx build twenty-front
 
 
