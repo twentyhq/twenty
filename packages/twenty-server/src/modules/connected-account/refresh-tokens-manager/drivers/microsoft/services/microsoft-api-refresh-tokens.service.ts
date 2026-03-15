@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { ConfidentialClientApplication } from '@azure/msal-node';
 
+import { getMicrosoftApisOauthScopes } from 'src/engine/core-modules/auth/utils/get-microsoft-apis-oauth-scopes';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import {
   ConnectedAccountRefreshAccessTokenException,
@@ -26,7 +27,7 @@ export class MicrosoftAPIRefreshAccessTokenService {
     try {
       const response = await msalClient.acquireTokenByRefreshToken({
         refreshToken,
-        scopes: ['https://graph.microsoft.com/.default'],
+        scopes: getMicrosoftApisOauthScopes(),
         forceCache: true,
       });
 
