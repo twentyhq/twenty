@@ -8,6 +8,7 @@ import { type ImapSyncCursor } from 'src/modules/messaging/message-import-manage
 
 type SyncResult = {
   messageUids: number[];
+  isResetRequired: boolean;
 };
 
 @Injectable()
@@ -35,7 +36,10 @@ export class ImapSyncService {
       folderPath,
     );
 
-    return { messageUids };
+    return {
+      messageUids,
+      isResetRequired: !isUidValidityValid,
+    };
   }
 
   private validateUidValidity(
