@@ -43,7 +43,9 @@ export const IsMinimalMetadataReadyEffect = () => {
       return;
     }
 
-    setIsMinimalMetadataReady(isReady);
+    if (isReady) {
+      setIsMinimalMetadataReady(true);
+    }
   }, [
     hasAccessTokenPair,
     currentUser,

@@ -19,6 +19,7 @@ import { UserMetadataProviderInitialEffect } from '@/metadata-store/effect-compo
 import { IsMinimalMetadataReadyEffect } from '@/metadata-store/effect-components/IsMinimalMetadataReadyEffect';
 import { MinimalMetadataLoadEffect } from '@/metadata-store/effect-components/MinimalMetadataLoadEffect';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { useState } from 'react';
 import { ClientConfigProvider } from '~/modules/client-config/components/ClientConfigProvider';
 import { mockedApolloClient } from '~/testing/mockedApolloClient';
 
@@ -73,8 +74,10 @@ const ApolloStorybookDevLogEffect = () => {
 await dynamicActivate(SOURCE_LOCALE);
 
 const Providers = () => {
+  const [store] = useState(() => jotaiStore);
+
   return (
-    <JotaiProvider store={jotaiStore}>
+    <JotaiProvider store={store}>
       <SnackBarComponentInstanceContext.Provider
         value={{ instanceId: 'snack-bar-manager' }}
       >
