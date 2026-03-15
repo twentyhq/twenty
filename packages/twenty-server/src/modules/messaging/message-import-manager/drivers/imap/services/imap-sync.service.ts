@@ -73,7 +73,7 @@ export class ImapSyncService {
         return await this.fetchWithQresync(
           client,
           lastSyncedUid,
-          BigInt(previousCursor?.modSeq ?? "0"),
+          BigInt(previousCursor?.modSeq ?? '0'),
         );
       } catch (error) {
         this.logger.warn(

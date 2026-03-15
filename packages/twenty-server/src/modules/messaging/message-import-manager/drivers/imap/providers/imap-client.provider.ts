@@ -133,7 +133,9 @@ export class ImapClientProvider implements OnModuleDestroy {
         await client.logout();
         this.logger.debug(`Closed IMAP connection for ${id}`);
       } catch (error) {
-        this.logger.error(`Error closing IMAP connection ${id}: ${error.message}`);
+        this.logger.error(
+          `Error closing IMAP connection ${id}: ${error.message}`,
+        );
       }
     }
     this.connectionCache.clear();
