@@ -5,7 +5,6 @@ import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runne
 import { type UpdateOneResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
 
 const PARENT_SUFFIX = ' (Parent)';
@@ -39,6 +38,7 @@ export class CompanyUpdateOnePreQueryHook
 
     // Fetch the current name so we can append/strip the suffix correctly.
     // If the user is also renaming in the same save, use their new name as the base.
+    // Use the user's authContext (not system) so permissions checks pass.
     const currentName = await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
         const repo =
@@ -53,7 +53,7 @@ export class CompanyUpdateOnePreQueryHook
 
         return record?.name ?? '';
       },
-      buildSystemAuthContext(workspaceId),
+      authContext,
     );
 
     const baseName = data.name ?? currentName;
