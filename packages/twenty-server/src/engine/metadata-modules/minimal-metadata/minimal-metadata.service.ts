@@ -9,13 +9,13 @@ import { isDefined, uncapitalize } from 'twenty-shared/utils';
 
 import { ALL_FLAT_ENTITY_MAPS_PROPERTIES } from 'src/engine/metadata-modules/flat-entity/constant/all-flat-entity-maps-properties.constant';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { type CollectionHashDTO } from 'src/engine/metadata-modules/minimal-metadata/dtos/collection-hash.dto';
 import { MinimalMetadataDTO } from 'src/engine/metadata-modules/minimal-metadata/dtos/minimal-metadata.dto';
 import { MinimalObjectMetadataDTO } from 'src/engine/metadata-modules/minimal-metadata/dtos/minimal-object-metadata.dto';
 import { MinimalViewDTO } from 'src/engine/metadata-modules/minimal-metadata/dtos/minimal-view.dto';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceCacheKeyName } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
 
-// Inverse of getMetadataFlatEntityMapsKey: "flatObjectMetadataMaps" -> "objectMetadata"
 const flatMapsKeyToMetadataName = (
   flatMapsKey: string,
 ): AllMetadataName | undefined => {
@@ -51,15 +51,17 @@ export class MinimalMetadataService {
         ),
       ]);
 
-    const collectionHashes: Record<string, string> = {};
+    const collectionHashes: CollectionHashDTO[] = Object.entries(cacheHashes)
+      .map(([cacheKey, hash]) => {
+        const metadataName = flatMapsKeyToMetadataName(cacheKey);
 
-    for (const [cacheKey, hash] of Object.entries(cacheHashes)) {
-      const metadataName = flatMapsKeyToMetadataName(cacheKey);
+        if (!isDefined(metadataName) || !isDefined(hash)) {
+          return undefined;
+        }
 
-      if (isDefined(metadataName) && isDefined(hash)) {
-        collectionHashes[metadataName] = hash;
-      }
-    }
+        return { collectionName: metadataName, hash };
+      })
+      .filter(isDefined);
 
     const objectMetadataItems: MinimalObjectMetadataDTO[] = Object.values(
       flatObjectMetadataMaps.byUniversalIdentifier,

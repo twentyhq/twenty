@@ -5,10 +5,8 @@ import {
 } from '~/generated-metadata/graphql';
 
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
-import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItems';
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { t } from '@lingui/core/macro';
 import { CrudOperationType } from 'twenty-shared/types';
@@ -18,12 +16,6 @@ export const useUpdateOneObjectMetadataItem = () => {
   const [updateOneObjectMetadataItemMutation, { loading }] = useMutation(
     UpdateOneObjectMetadataItemDocument,
   );
-
-  const { refreshObjectMetadataItems } =
-    useRefreshObjectMetadataItems('network-only');
-
-  const { refreshCoreViewsByObjectMetadataId } =
-    useRefreshCoreViewsByObjectMetadataId();
 
   const { handleMetadataError } = useMetadataErrorHandler();
   const { enqueueErrorSnackBar } = useSnackBar();
@@ -46,9 +38,6 @@ export const useUpdateOneObjectMetadataItem = () => {
           updatePayload,
         },
       });
-
-      await refreshObjectMetadataItems();
-      await refreshCoreViewsByObjectMetadataId(idToUpdate);
 
       return {
         status: 'successful',

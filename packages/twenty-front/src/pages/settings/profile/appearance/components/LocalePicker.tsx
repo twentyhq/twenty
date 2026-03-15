@@ -7,9 +7,8 @@ import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { getDateFnsLocale } from '@/ui/field/display/utils/getDateFnsLocale';
 import { Select } from '@/ui/input/components/Select';
 
-import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItems';
+import { useMetadataStore } from '@/metadata-store/hooks/useMetadataStore';
 import { useStore } from 'jotai';
-import { useRefreshAllCoreViews } from '@/views/hooks/useRefreshAllCoreViews';
 import { useLingui } from '@lingui/react/macro';
 import { enUS } from 'date-fns/locale';
 import { APP_LOCALES } from 'twenty-shared/translations';
@@ -33,10 +32,7 @@ export const LocalePicker = () => {
   );
   const { updateOneRecord } = useUpdateOneRecord();
 
-  const { refreshObjectMetadataItems } =
-    useRefreshObjectMetadataItems('network-only');
-
-  const { refreshAllCoreViews } = useRefreshAllCoreViews('network-only');
+  const { resetMetadataStore } = useMetadataStore();
 
   const updateWorkspaceMember = async (changedFields: any) => {
     if (!currentWorkspaceMember?.id) {
@@ -77,8 +73,7 @@ export const LocalePicker = () => {
       // oxlint-disable-next-line no-console
       console.log('Failed to save locale to localStorage:', error);
     }
-    await refreshObjectMetadataItems();
-    await refreshAllCoreViews();
+    resetMetadataStore();
   };
 
   const unsortedLocaleOptions: Array<{

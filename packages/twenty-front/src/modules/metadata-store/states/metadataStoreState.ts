@@ -38,6 +38,8 @@ export type MetadataStoreItem = {
   current: object[];
   draft: object[];
   status: MetadataEntityStoreStatus;
+  currentCollectionHash?: string;
+  draftCollectionHash?: string;
 };
 
 const METADATA_STORE_ITEM_INITIAL_VALUE: MetadataStoreItem = {

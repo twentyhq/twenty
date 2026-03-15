@@ -285,7 +285,6 @@ export const SettingsObjectFieldEdit = () => {
 
     const deleteResult = await deleteMetadataField({
       idToDelete: fieldMetadataItem.id,
-      objectMetadataId: objectMetadataItem.id,
     });
 
     if (deleteResult.status === 'successful') {

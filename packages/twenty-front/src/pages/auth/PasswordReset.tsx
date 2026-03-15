@@ -2,7 +2,7 @@ import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLo
 import { Logo } from '@/auth/components/Logo';
 import { Title } from '@/auth/components/Title';
 import { useAuth } from '@/auth/hooks/useAuth';
-import { useIsLogged } from '@/auth/hooks/useIsLogged';
+import { useHasAccessTokenPair } from '@/auth/hooks/useHasAccessTokenPair';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
 import { PASSWORD_REGEX } from '@/auth/utils/passwordRegex';
@@ -102,7 +102,7 @@ export const PasswordReset = () => {
   const [isTargetUserPasswordSet, setIsTargetUserPasswordSet] = useState(false);
   const passwordResetToken = useParams().passwordResetToken;
 
-  const isLoggedIn = useIsLogged();
+  const hasAccessTokenPair = useHasAccessTokenPair();
 
   const { control, handleSubmit } = useForm<Form>({
     mode: 'onChange',
@@ -179,7 +179,7 @@ export const PasswordReset = () => {
         currentUser ? { ...currentUser, hasPassword: true } : currentUser,
       );
 
-      if (isLoggedIn) {
+      if (hasAccessTokenPair) {
         enqueueSuccessSnackBar({
           message: successMessage,
         });
