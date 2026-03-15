@@ -62,10 +62,7 @@ export class RelationFieldMetadataGqlInputTypeGenerator {
       throw new Error(message);
     }
 
-    const modifiedType = applyTypeOptionsForCreateInput(type, {
-      ...typeOptions,
-      nullable: true,
-    });
+    const modifiedType = applyTypeOptionsForCreateInput(type, typeOptions);
 
     return {
       [joinColumnName]: {
