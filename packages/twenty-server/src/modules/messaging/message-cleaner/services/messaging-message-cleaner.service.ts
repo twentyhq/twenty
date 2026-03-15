@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import chunk from 'lodash.chunk';
-import { In, IsNull } from 'typeorm';
+import { In, IsNull, Like } from 'typeorm';
 
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
@@ -48,72 +48,104 @@ export class MessagingMessageCleanerService {
           'messageThread',
         );
 
-      const shouldDeleteAll = messageExternalIds.includes('*');
-      const messageExternalIdsChunks = shouldDeleteAll
-        ? [null]
-        : chunk(messageExternalIds, 500);
+      const wildcardId = messageExternalIds.find((id) => id.endsWith(':*'));
+      const shouldDeleteAllInFolder = isDefined(wildcardId);
 
-      for (const messageExternalIdsChunk of messageExternalIdsChunks) {
-        const messageChannelMessageAssociationsToDelete =
-          await messageChannelMessageAssociationRepository.find({
-            where: {
-              ...(messageExternalIdsChunk
-                ? { messageExternalId: In(messageExternalIdsChunk) }
-                : {}),
-              messageChannelId,
-            },
-          });
+      if (shouldDeleteAllInFolder) {
+        const folderPath = wildcardId.split(':*')[0];
+        let hasMore = true;
+        while (hasMore) {
+          const associations =
+            await messageChannelMessageAssociationRepository.find({
+              where: {
+                messageExternalId: Like(`${folderPath}:%`),
+                messageChannelId,
+              },
+              take: 500,
+            });
 
-        if (messageChannelMessageAssociationsToDelete.length <= 0) {
-          continue;
+          if (associations.length === 0) {
+            hasMore = false;
+            continue;
+          }
+
+          await this.deleteAssociationsAndOrphans(
+            workspaceId,
+            associations,
+            messageRepository,
+            messageChannelMessageAssociationRepository,
+            messageThreadRepository,
+          );
         }
+      } else {
+        const messageExternalIdsChunks = chunk(messageExternalIds, 500);
 
-        await messageChannelMessageAssociationRepository.delete(
-          messageChannelMessageAssociationsToDelete.map(({ id }) => id),
-        );
+        for (const messageExternalIdsChunk of messageExternalIdsChunks) {
+          const associations =
+            await messageChannelMessageAssociationRepository.find({
+              where: {
+                messageExternalId: In(messageExternalIdsChunk),
+                messageChannelId,
+              },
+            });
 
-        this.logger.log(
-          `WorkspaceId: ${workspaceId} Deleting ${messageChannelMessageAssociationsToDelete.length} message channel message associations`,
-        );
+          if (associations.length === 0) {
+            continue;
+          }
 
-        const orphanMessages = await messageRepository.find({
-          where: {
-            id: In(
-              messageChannelMessageAssociationsToDelete.map(
-                ({ messageId }) => messageId,
-              ),
-            ),
-            messageChannelMessageAssociations: {
-              id: IsNull(),
-            },
+          await this.deleteAssociationsAndOrphans(
+            workspaceId,
+            associations,
+            messageRepository,
+            messageChannelMessageAssociationRepository,
+            messageThreadRepository,
+          );
+        }
+      }
+    }, authContext);
+  }
+
+  private async deleteAssociationsAndOrphans(
+    workspaceId: string,
+    associations: MessageChannelMessageAssociationWorkspaceEntity[],
+    messageRepository: any,
+    messageChannelMessageAssociationRepository: any,
+    messageThreadRepository: any,
+  ) {
+    await messageChannelMessageAssociationRepository.delete(
+      associations.map(({ id }) => id),
+    );
+
+    this.logger.log(
+      `WorkspaceId: ${workspaceId} Deleting ${associations.length} message channel message associations`,
+    );
+
+    const orphanMessages = await messageRepository.find({
+      where: {
+        id: In(associations.map(({ messageId }) => messageId)),
+        messageChannelMessageAssociations: {
+          id: IsNull(),
+        },
+      },
+    });
+
+    if (orphanMessages.length > 0) {
+      this.logger.debug(
+        `WorkspaceId: ${workspaceId} Deleting ${orphanMessages.length} orphan messages`,
+      );
+
+      await messageRepository.delete(orphanMessages.map(({ id }) => id));
+
+      const orphanMessageThreads = await messageThreadRepository.find({
+        where: {
+          id: In(orphanMessages.map(({ messageThreadId }) => messageThreadId)),
+          messages: {
+            id: IsNull(),
           },
-        });
+        },
+      });
 
-        if (orphanMessages.length <= 0) {
-          continue;
-        }
-
-        this.logger.debug(
-          `WorkspaceId: ${workspaceId} Deleting ${orphanMessages.length} orphan messages`,
-        );
-
-        await messageRepository.delete(orphanMessages.map(({ id }) => id));
-
-        const orphanMessageThreads = await messageThreadRepository.find({
-          where: {
-            id: In(
-              orphanMessages.map(({ messageThreadId }) => messageThreadId),
-            ),
-            messages: {
-              id: IsNull(),
-            },
-          },
-        });
-
-        if (orphanMessageThreads.length <= 0) {
-          continue;
-        }
-
+      if (orphanMessageThreads.length > 0) {
         this.logger.debug(
           `WorkspaceId: ${workspaceId} Deleting ${orphanMessageThreads.length} orphan message threads`,
         );
@@ -122,7 +154,7 @@ export class MessagingMessageCleanerService {
           orphanMessageThreads.map(({ id }) => id),
         );
       }
-    }, authContext);
+    }
   }
 
   public async cleanOrphanMessagesAndThreads(workspaceId: string) {

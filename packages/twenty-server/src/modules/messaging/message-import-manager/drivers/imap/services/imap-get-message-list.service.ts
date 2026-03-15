@@ -144,7 +144,7 @@ export class ImapGetMessageListService {
 
       return {
         messageExternalIds,
-        messageExternalIdsToDelete: isResetRequired ? ['*'] : [],
+        messageExternalIdsToDelete: isResetRequired ? [`${folderPath}:*`] : [],
         nextSyncCursor: JSON.stringify(nextCursor),
         previousSyncCursor: folder.syncCursor,
         folderId: folder.id,
