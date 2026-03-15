@@ -33,14 +33,15 @@ COPY ./packages/twenty-server /app/packages/twenty-server
 # The --mount=type=cache directive persists .nx/cache between Railway builds on
 # the same machine (outside the image layer system, so it survives across builds).
 # Nx tracks build inputs: if none changed since the last build, it reuses the
-# cached output instead of recompiling. Both stages share the same cache id so
+# cached output instead of recompiling. Both stages share the same cache (Docker
+# uses the target path as the implicit cache id when none is specified) so
 # they benefit from each other's outputs:
 #   - backend-only change  → frontend build hits Nx cache (~seconds, not ~2.5 min)
 #   - frontend-only change → backend build hits Nx cache (~seconds, not ~41s)
 # sharing=locked prevents corruption if both stages access the cache simultaneously.
 # If the cache is empty (first build, or evicted by Railway) it falls back to a
 # full build transparently.
-RUN --mount=type=cache,id=nx-cache,sharing=locked,target=/app/.nx/cache \
+RUN --mount=type=cache,sharing=locked,target=/app/.nx/cache \
     npx nx run twenty-server:build
 
 RUN yarn workspaces focus --production twenty-emails twenty-shared twenty-sdk twenty-server
@@ -55,7 +56,7 @@ COPY ./packages/twenty-ui /app/packages/twenty-ui
 COPY ./packages/twenty-shared /app/packages/twenty-shared
 COPY ./packages/twenty-sdk /app/packages/twenty-sdk
 # See comment above twenty-server:build for full explanation of this cache mount.
-RUN --mount=type=cache,id=nx-cache,sharing=locked,target=/app/.nx/cache \
+RUN --mount=type=cache,sharing=locked,target=/app/.nx/cache \
     npx nx build twenty-front
 
 
