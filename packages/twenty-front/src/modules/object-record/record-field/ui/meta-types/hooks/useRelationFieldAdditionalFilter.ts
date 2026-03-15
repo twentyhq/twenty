@@ -24,6 +24,22 @@ export const useRelationFieldAdditionalFilter = ({
 }: UseRelationFieldAdditionalFilterParams): ObjectRecordFilterInput | undefined => {
   const isAssociatedDeskField = fieldName === 'associatedDesk';
   const isOpportunity = objectNameSingular === 'opportunity';
+  const isCompany = objectNameSingular === 'company';
+
+  // For parentAccount / childAccount on company: fetch the current company's
+  // accountType so we can enforce one-layer-deep hierarchy rules:
+  //   - PARENT companies may not have a parent (hide parentAccount picker)
+  //   - LEGAL_ENTITY companies may not have children (hide childAccount picker)
+  const needsCurrentCompanyAccountType =
+    isCompany && (fieldName === 'parentAccount' || fieldName === 'childAccount');
+
+  const { record: currentCompanyRecord, loading: currentCompanyLoading } =
+    useFindOneRecord({
+      objectNameSingular: 'company',
+      objectRecordId: recordId,
+      recordGqlFields: { id: true, accountType: true },
+      skip: !needsCurrentCompanyAccountType,
+    });
 
   // For associatedDesk on opportunity: fetch company + its desks in one call.
   const { record: opportunityRecord } = useFindOneRecord({
@@ -36,13 +52,21 @@ export const useRelationFieldAdditionalFilter = ({
     skip: !(isAssociatedDeskField && isOpportunity),
   });
 
-  // For company pickers on person / opportunity: exclude PARENT-type companies.
-  // We fetch PARENT company IDs via the workspace endpoint (which supports
-  // custom field filters) and pass { not: { id: { in: [...] } } } to the
-  // search endpoint (which only accepts id-based filters).
+  // Several fields need the full list of PARENT company IDs:
+  // - clientAccount: exclude PARENTs (only show LEGAL_ENTITY)
+  // - parentAccount: only show PARENTs (whitelist)
+  // - childAccount on company: exclude PARENTs (only show LEGAL_ENTITY)
+  // - company on person/opportunity: exclude PARENTs
   const isCompanyFieldOnPersonOrOpp =
     fieldName === 'company' &&
     (objectNameSingular === 'person' || objectNameSingular === 'opportunity');
+  const isChildAccountOnCompany =
+    fieldName === 'childAccount' && objectNameSingular === 'company';
+  const needsParentIds =
+    fieldName === 'clientAccount' ||
+    fieldName === 'parentAccount' ||
+    isChildAccountOnCompany ||
+    isCompanyFieldOnPersonOrOpp;
 
   const {
     records: parentCompanies,
@@ -51,15 +75,24 @@ export const useRelationFieldAdditionalFilter = ({
     objectNameSingular: 'company',
     filter: { accountType: { eq: 'PARENT' } } as ObjectRecordFilterInput,
     recordGqlFields: { id: true },
-    skip: !isCompanyFieldOnPersonOrOpp,
+    skip: !needsParentIds,
   });
 
+  // clientAccount: only show LEGAL_ENTITY companies (exclude PARENTs)
   if (fieldName === 'clientAccount') {
-    return { accountType: { eq: 'LEGAL_ENTITY' } };
+    if (parentCompaniesLoading) return { id: { eq: 'no-match' } };
+    const parentIds = parentCompanies.map((c) => c.id);
+    return parentIds.length > 0 ? { not: { id: { in: parentIds } } } : undefined;
   }
 
+  // parentAccount: only show PARENT companies (whitelist by ID).
+  // Also enforce hierarchy: a PARENT company cannot itself have a parent.
   if (fieldName === 'parentAccount') {
-    return { accountType: { eq: 'PARENT' } };
+    if (currentCompanyLoading || parentCompaniesLoading) return { id: { eq: 'no-match' } };
+    const currentAccountType = (currentCompanyRecord as { accountType?: string } | null)?.accountType;
+    if (currentAccountType === 'PARENT') return { id: { eq: 'no-match' } };
+    const parentIds = parentCompanies.map((c) => c.id);
+    return parentIds.length > 0 ? { id: { in: parentIds } } : { id: { eq: 'no-match' } };
   }
 
   if (isAssociatedDeskField && isOpportunity) {
@@ -80,6 +113,16 @@ export const useRelationFieldAdditionalFilter = ({
     }
 
     return { id: { in: deskIds } };
+  }
+
+  // childAccount on company: only show LEGAL_ENTITY companies (exclude PARENTs).
+  // Also enforce hierarchy: a LEGAL_ENTITY company cannot have children.
+  if (isChildAccountOnCompany) {
+    if (currentCompanyLoading || parentCompaniesLoading) return { id: { eq: 'no-match' } };
+    const currentAccountType = (currentCompanyRecord as { accountType?: string } | null)?.accountType;
+    if (currentAccountType === 'LEGAL_ENTITY') return { id: { eq: 'no-match' } };
+    const parentIds = parentCompanies.map((c) => c.id);
+    return parentIds.length > 0 ? { not: { id: { in: parentIds } } } : undefined;
   }
 
   if (isCompanyFieldOnPersonOrOpp) {

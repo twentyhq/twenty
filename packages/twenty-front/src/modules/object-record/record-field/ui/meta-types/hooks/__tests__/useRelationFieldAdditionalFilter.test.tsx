@@ -39,7 +39,12 @@ describe('useRelationFieldAdditionalFilter', () => {
   });
 
   describe('clientAccount field', () => {
-    it('should return LEGAL_ENTITY filter', () => {
+    it('should exclude PARENT company ids', () => {
+      mockUseFindManyRecords.mockReturnValue({
+        ...noOpFindManyRecords,
+        records: [{ id: 'parent-1' }, { id: 'parent-2' }],
+      });
+
       const { result } = renderHook(() =>
         useRelationFieldAdditionalFilter({
           fieldName: 'clientAccount',
@@ -48,10 +53,41 @@ describe('useRelationFieldAdditionalFilter', () => {
         }),
       );
 
-      expect(result.current).toEqual({ accountType: { eq: 'LEGAL_ENTITY' } });
+      expect(result.current).toEqual({
+        not: { id: { in: ['parent-1', 'parent-2'] } },
+      });
     });
 
-    it('should skip the opportunity fetch', () => {
+    it('should return undefined when no PARENT companies exist', () => {
+      const { result } = renderHook(() =>
+        useRelationFieldAdditionalFilter({
+          fieldName: 'clientAccount',
+          recordId: 'opp-1',
+          objectNameSingular: 'opportunity',
+        }),
+      );
+
+      expect(result.current).toBeUndefined();
+    });
+
+    it('should return no-match while loading', () => {
+      mockUseFindManyRecords.mockReturnValue({
+        ...noOpFindManyRecords,
+        loading: true,
+      });
+
+      const { result } = renderHook(() =>
+        useRelationFieldAdditionalFilter({
+          fieldName: 'clientAccount',
+          recordId: 'opp-1',
+          objectNameSingular: 'opportunity',
+        }),
+      );
+
+      expect(result.current).toEqual({ id: { eq: 'no-match' } });
+    });
+
+    it('should fetch PARENT companies', () => {
       renderHook(() =>
         useRelationFieldAdditionalFilter({
           fieldName: 'clientAccount',
@@ -60,14 +96,22 @@ describe('useRelationFieldAdditionalFilter', () => {
         }),
       );
 
-      expect(mockUseFindOneRecord).toHaveBeenCalledWith(
-        expect.objectContaining({ skip: true }),
+      expect(mockUseFindManyRecords).toHaveBeenCalledWith(
+        expect.objectContaining({
+          objectNameSingular: 'company',
+          skip: false,
+        }),
       );
     });
   });
 
   describe('parentAccount field', () => {
-    it('should return PARENT filter', () => {
+    it('should return id-in filter with PARENT company ids', () => {
+      mockUseFindManyRecords.mockReturnValue({
+        ...noOpFindManyRecords,
+        records: [{ id: 'parent-1' }, { id: 'parent-2' }],
+      });
+
       const { result } = renderHook(() =>
         useRelationFieldAdditionalFilter({
           fieldName: 'parentAccount',
@@ -76,7 +120,82 @@ describe('useRelationFieldAdditionalFilter', () => {
         }),
       );
 
-      expect(result.current).toEqual({ accountType: { eq: 'PARENT' } });
+      expect(result.current).toEqual({ id: { in: ['parent-1', 'parent-2'] } });
+    });
+
+    it('should return no-match when no PARENT companies exist', () => {
+      const { result } = renderHook(() =>
+        useRelationFieldAdditionalFilter({
+          fieldName: 'parentAccount',
+          recordId: 'company-1',
+          objectNameSingular: 'company',
+        }),
+      );
+
+      expect(result.current).toEqual({ id: { eq: 'no-match' } });
+    });
+
+    it('should return no-match while loading', () => {
+      mockUseFindManyRecords.mockReturnValue({
+        ...noOpFindManyRecords,
+        loading: true,
+      });
+
+      const { result } = renderHook(() =>
+        useRelationFieldAdditionalFilter({
+          fieldName: 'parentAccount',
+          recordId: 'company-1',
+          objectNameSingular: 'company',
+        }),
+      );
+
+      expect(result.current).toEqual({ id: { eq: 'no-match' } });
+    });
+
+    it('should return no-match when current company is PARENT (hierarchy enforcement)', () => {
+      mockUseFindOneRecord.mockImplementation(
+        ({ objectNameSingular: name }: { objectNameSingular: string }) => {
+          if (name === 'company') {
+            return { ...noOpFindOneRecord, record: { id: 'company-1', accountType: 'PARENT' } };
+          }
+          return noOpFindOneRecord;
+        },
+      );
+      mockUseFindManyRecords.mockReturnValue({
+        ...noOpFindManyRecords,
+        records: [{ id: 'parent-2' }],
+      });
+
+      const { result } = renderHook(() =>
+        useRelationFieldAdditionalFilter({
+          fieldName: 'parentAccount',
+          recordId: 'company-1',
+          objectNameSingular: 'company',
+        }),
+      );
+
+      expect(result.current).toEqual({ id: { eq: 'no-match' } });
+    });
+
+    it('should return no-match while current company record is loading', () => {
+      mockUseFindOneRecord.mockImplementation(
+        ({ objectNameSingular: name }: { objectNameSingular: string }) => {
+          if (name === 'company') {
+            return { ...noOpFindOneRecord, record: null, loading: true };
+          }
+          return noOpFindOneRecord;
+        },
+      );
+
+      const { result } = renderHook(() =>
+        useRelationFieldAdditionalFilter({
+          fieldName: 'parentAccount',
+          recordId: 'company-1',
+          objectNameSingular: 'company',
+        }),
+      );
+
+      expect(result.current).toEqual({ id: { eq: 'no-match' } });
     });
   });
 
@@ -166,6 +285,110 @@ describe('useRelationFieldAdditionalFilter', () => {
       );
 
       expect(result.current).toBeUndefined();
+    });
+  });
+
+  describe('childAccount field on company', () => {
+    it('should exclude PARENT company ids', () => {
+      mockUseFindManyRecords.mockReturnValue({
+        ...noOpFindManyRecords,
+        records: [{ id: 'parent-1' }],
+      });
+
+      const { result } = renderHook(() =>
+        useRelationFieldAdditionalFilter({
+          fieldName: 'childAccount',
+          recordId: 'company-1',
+          objectNameSingular: 'company',
+        }),
+      );
+
+      expect(result.current).toEqual({
+        not: { id: { in: ['parent-1'] } },
+      });
+    });
+
+    it('should return undefined when no PARENT companies exist', () => {
+      const { result } = renderHook(() =>
+        useRelationFieldAdditionalFilter({
+          fieldName: 'childAccount',
+          recordId: 'company-1',
+          objectNameSingular: 'company',
+        }),
+      );
+
+      expect(result.current).toBeUndefined();
+    });
+
+    it('should return no-match while loading', () => {
+      mockUseFindManyRecords.mockReturnValue({
+        ...noOpFindManyRecords,
+        loading: true,
+      });
+
+      const { result } = renderHook(() =>
+        useRelationFieldAdditionalFilter({
+          fieldName: 'childAccount',
+          recordId: 'company-1',
+          objectNameSingular: 'company',
+        }),
+      );
+
+      expect(result.current).toEqual({ id: { eq: 'no-match' } });
+    });
+
+    it('should not apply childAccount filter for other objects', () => {
+      const { result } = renderHook(() =>
+        useRelationFieldAdditionalFilter({
+          fieldName: 'childAccount',
+          recordId: 'opp-1',
+          objectNameSingular: 'opportunity',
+        }),
+      );
+
+      expect(result.current).toBeUndefined();
+    });
+
+    it('should return no-match when current company is LEGAL_ENTITY (hierarchy enforcement)', () => {
+      mockUseFindOneRecord.mockImplementation(
+        ({ objectNameSingular: name }: { objectNameSingular: string }) => {
+          if (name === 'company') {
+            return { ...noOpFindOneRecord, record: { id: 'company-1', accountType: 'LEGAL_ENTITY' } };
+          }
+          return noOpFindOneRecord;
+        },
+      );
+
+      const { result } = renderHook(() =>
+        useRelationFieldAdditionalFilter({
+          fieldName: 'childAccount',
+          recordId: 'company-1',
+          objectNameSingular: 'company',
+        }),
+      );
+
+      expect(result.current).toEqual({ id: { eq: 'no-match' } });
+    });
+
+    it('should return no-match while current company record is loading', () => {
+      mockUseFindOneRecord.mockImplementation(
+        ({ objectNameSingular: name }: { objectNameSingular: string }) => {
+          if (name === 'company') {
+            return { ...noOpFindOneRecord, record: null, loading: true };
+          }
+          return noOpFindOneRecord;
+        },
+      );
+
+      const { result } = renderHook(() =>
+        useRelationFieldAdditionalFilter({
+          fieldName: 'childAccount',
+          recordId: 'company-1',
+          objectNameSingular: 'company',
+        }),
+      );
+
+      expect(result.current).toEqual({ id: { eq: 'no-match' } });
     });
   });
 
@@ -286,16 +509,18 @@ describe('useRelationFieldAdditionalFilter', () => {
       expect(result.current).toBeUndefined();
     });
 
-    it('should return LEGAL_ENTITY filter for clientAccount regardless of parent object', () => {
-      const { result } = renderHook(() =>
+    it('should skip the PARENT company fetch for fields with no rule', () => {
+      renderHook(() =>
         useRelationFieldAdditionalFilter({
-          fieldName: 'clientAccount',
-          recordId: 'task-1',
-          objectNameSingular: 'task',
+          fieldName: 'assignee',
+          recordId: 'opp-1',
+          objectNameSingular: 'opportunity',
         }),
       );
 
-      expect(result.current).toEqual({ accountType: { eq: 'LEGAL_ENTITY' } });
+      expect(mockUseFindManyRecords).toHaveBeenCalledWith(
+        expect.objectContaining({ skip: true }),
+      );
     });
   });
 });

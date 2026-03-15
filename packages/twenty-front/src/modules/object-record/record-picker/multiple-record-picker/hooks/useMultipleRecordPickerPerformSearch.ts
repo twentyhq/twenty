@@ -3,6 +3,7 @@ import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { usePerformCombinedFindManyRecords } from '@/object-record/multiple-objects/hooks/usePerformCombinedFindManyRecords';
+import { multipleRecordPickerAdditionalFilterComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerAdditionalFilterComponentState';
 import { multipleRecordPickerIsLoadingComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerIsLoadingComponentState';
 import { multipleRecordPickerPaginationState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPaginationState';
 import { multipleRecordPickerPickableMorphItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPickableMorphItemsComponentState';
@@ -17,7 +18,7 @@ import { isNonEmptyArray } from '@sniptt/guards';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { capitalize, isDefined } from 'twenty-shared/utils';
-import { type SearchRecord, type SearchResultEdge } from '~/generated/graphql';
+import { type ObjectRecordFilterInput, type SearchRecord, type SearchResultEdge } from '~/generated/graphql';
 
 const MULTIPLE_RECORD_PICKER_PAGE_SIZE = 30;
 
@@ -36,12 +37,14 @@ export const useMultipleRecordPickerPerformSearch = () => {
       forceSearchFilter = '',
       forceSearchableObjectMetadataItems = [],
       forcePickableMorphItems = [],
+      forceAdditionalFilter,
       loadMore = false,
     }: {
       multipleRecordPickerInstanceId: string;
       forceSearchFilter?: string;
       forceSearchableObjectMetadataItems?: ObjectMetadataItem[];
       forcePickableMorphItems?: RecordPickerPickableMorphItem[];
+      forceAdditionalFilter?: ObjectRecordFilterInput;
       loadMore?: boolean;
     }) => {
       const atomFamilyKey = { instanceId: multipleRecordPickerInstanceId };
@@ -94,6 +97,14 @@ export const useMultipleRecordPickerPerformSearch = () => {
         ({ isSelected }) => isSelected,
       );
 
+      const storedAdditionalFilter = store.get(
+        multipleRecordPickerAdditionalFilterComponentState.atomFamily(
+          atomFamilyKey,
+        ),
+      );
+
+      const additionalFilter = forceAdditionalFilter ?? storedAdditionalFilter;
+
       const filteredSearchableObjectMetadataItems =
         searchableObjectMetadataItems.filter(
           (objectMetadataItem) =>
@@ -114,6 +125,7 @@ export const useMultipleRecordPickerPerformSearch = () => {
         pickedRecordIds: selectedPickableMorphItems.map(
           ({ recordId }) => recordId,
         ),
+        additionalFilter,
         after: loadMore ? paginationState.endCursor : null,
       });
 
@@ -377,6 +389,7 @@ const performSearchQueries = async ({
   searchFilter,
   searchableObjectMetadataItems,
   pickedRecordIds,
+  additionalFilter,
   limit = MULTIPLE_RECORD_PICKER_PAGE_SIZE,
   after = null,
 }: {
@@ -384,6 +397,7 @@ const performSearchQueries = async ({
   searchFilter: string;
   searchableObjectMetadataItems: ObjectMetadataItem[];
   pickedRecordIds: string[];
+  additionalFilter?: ObjectRecordFilterInput;
   limit?: number;
   after?: string | null;
 }): Promise<
@@ -397,7 +411,7 @@ const performSearchQueries = async ({
     return [[], [], { hasNextPage: false, endCursor: null }];
   }
 
-  const searchRecords = async (filter: any) => {
+  const searchRecords = async (filter: ObjectRecordFilterInput | undefined) => {
     const { data } = await client.query({
       query: SEARCH_QUERY,
       variables: {
@@ -416,18 +430,22 @@ const performSearchQueries = async ({
     };
   };
 
-  const searchRecordsExcludingPickedRecordsResult = await searchRecords(
+  // For the "unselected" query, combine the ID exclusion with any additional filter.
+  const idExclusionFilter: ObjectRecordFilterInput | undefined =
     pickedRecordIds.length > 0
-      ? {
-          not: {
-            id: {
-              in: pickedRecordIds,
-            },
-          },
-        }
-      : undefined,
-  );
+      ? { not: { id: { in: pickedRecordIds } } }
+      : undefined;
 
+  const excludingFilter: ObjectRecordFilterInput | undefined =
+    idExclusionFilter && additionalFilter
+      ? { and: [idExclusionFilter, additionalFilter] }
+      : (idExclusionFilter ?? additionalFilter);
+
+  const searchRecordsExcludingPickedRecordsResult =
+    await searchRecords(excludingFilter);
+
+  // For already-picked records, do not apply additionalFilter so they always
+  // remain visible regardless of the restriction.
   const searchRecordsIncludingPickedRecordsResult =
     pickedRecordIds.length > 0
       ? await searchRecords({

@@ -7,10 +7,12 @@ import { useRecordFieldsScopeContextOrThrow } from '@/object-record/record-field
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useAddNewRecordAndOpenSidePanel } from '@/object-record/record-field/ui/meta-types/input/hooks/useAddNewRecordAndOpenSidePanel';
 import { useUpdateRelationOneToManyFieldInput } from '@/object-record/record-field/ui/meta-types/input/hooks/useUpdateRelationOneToManyFieldInput';
+import { useRelationFieldAdditionalFilter } from '@/object-record/record-field/ui/meta-types/hooks/useRelationFieldAdditionalFilter';
 import { type FieldRelationMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { MultipleRecordPicker } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPicker';
 import { useMultipleRecordPickerOpen } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerOpen';
 import { useMultipleRecordPickerPerformSearch } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerPerformSearch';
+import { multipleRecordPickerAdditionalFilterComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerAdditionalFilterComponentState';
 import { multipleRecordPickerPickableMorphItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPickableMorphItemsComponentState';
 import { multipleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchFilterComponentState';
 import { multipleRecordPickerSearchableObjectMetadataItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchableObjectMetadataItemsComponentState';
@@ -96,6 +98,17 @@ export const RecordDetailRelationSectionDropdownToMany = ({
     dropdownId,
   );
 
+  const setMultipleRecordPickerAdditionalFilter = useSetAtomComponentState(
+    multipleRecordPickerAdditionalFilterComponentState,
+    dropdownId,
+  );
+
+  const additionalFilter = useRelationFieldAdditionalFilter({
+    fieldName,
+    recordId,
+    objectNameSingular: objectMetadataItem.nameSingular,
+  });
+
   const setMultipleRecordPickerPickableMorphItems = useSetAtomComponentState(
     multipleRecordPickerPickableMorphItemsComponentState,
     dropdownId,
@@ -132,6 +145,7 @@ export const RecordDetailRelationSectionDropdownToMany = ({
       relationObjectMetadataItem,
     ]);
     setMultipleRecordPickerSearchFilter('');
+    setMultipleRecordPickerAdditionalFilter(additionalFilter);
     setMultipleRecordPickerPickableMorphItems(
       relationRecords.map((record) => ({
         recordId: record.id,
@@ -146,6 +160,7 @@ export const RecordDetailRelationSectionDropdownToMany = ({
     multipleRecordPickerPerformSearch({
       multipleRecordPickerInstanceId: dropdownId,
       forceSearchFilter: '',
+      forceAdditionalFilter: additionalFilter,
       forceSearchableObjectMetadataItems: [relationObjectMetadataItem],
       forcePickableMorphItems: relationRecords.map((record) => ({
         recordId: record.id,
