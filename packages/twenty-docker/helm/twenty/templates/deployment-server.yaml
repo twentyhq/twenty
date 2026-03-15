@@ -221,7 +221,7 @@ spec:
                   name: {{ include "twenty.secret.tokens.name" . }}
                   key: accessToken
             {{- /* Render any additional server.env keys not already mapped above */}}
-            {{- $reserved := list "SERVER_URL" "PG_DATABASE_URL" "REDIS_URL" "REDIS_PASSWORD" "SIGN_IN_PREFILLED" "STORAGE_TYPE" "ACCESS_TOKEN_EXPIRES_IN" "LOGIN_TOKEN_EXPIRES_IN" "APP_SECRET" -}}
+            {{- $reserved := list "SERVER_URL" "PG_DATABASE_URL" "REDIS_URL" "REDIS_PASSWORD" "DISABLE_DB_MIGRATIONS" "SIGN_IN_PREFILLED" "STORAGE_TYPE" "ACCESS_TOKEN_EXPIRES_IN" "LOGIN_TOKEN_EXPIRES_IN" "APP_SECRET" -}}
             {{- range $k, $v := .Values.server.env }}
             {{- if not (has $k $reserved) }}
             - name: {{ $k }}

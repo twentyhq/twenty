@@ -102,7 +102,7 @@ spec:
             {{- end }}
             {{- $storageEnv := (include "twenty.storageEnv" .) }}
             {{- if $storageEnv }}
-            {{ $storageEnv | nindent 12 }}
+            {{- $storageEnv | nindent 12 }}
             {{- end }}
           resources:
             {{- toYaml .Values.worker.resources | nindent 12 }}
