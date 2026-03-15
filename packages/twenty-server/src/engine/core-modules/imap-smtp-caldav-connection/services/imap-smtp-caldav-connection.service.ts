@@ -86,7 +86,9 @@ export class ImapSmtpCaldavService {
       });
     } finally {
       if (client.authenticated) {
-        await client.logout();
+        client.logout().catch((err) => {
+          this.logger.warn(`IMAP logout failed: ${err.message}`);
+        });
       }
     }
   }
