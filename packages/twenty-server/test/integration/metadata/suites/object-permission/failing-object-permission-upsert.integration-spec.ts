@@ -221,13 +221,15 @@ describe('Object permission upsert should fail', () => {
     );
     const edges = objectMetadataResponse.body.data?.objects?.edges ?? [];
     const systemObjectNode = edges.find(
-      (edge: { node: { isSystem: boolean } }) => edge.node.isSystem === true,
+      (edge: { node: { isSystem: boolean | string } }) =>
+        edge.node.isSystem === true || String(edge.node.isSystem) === 'true',
     )?.node;
     jestExpectToBeDefined(systemObjectNode);
     systemObjectMetadataId = systemObjectNode.id;
 
     const nonSystemObjectNode = edges.find(
-      (edge: { node: { isSystem: boolean } }) => edge.node.isSystem === false,
+      (edge: { node: { isSystem: boolean | string } }) =>
+        edge.node.isSystem === false || String(edge.node.isSystem) === 'false',
     )?.node;
     jestExpectToBeDefined(nonSystemObjectNode);
     nonSystemObjectMetadataId = nonSystemObjectNode.id;
