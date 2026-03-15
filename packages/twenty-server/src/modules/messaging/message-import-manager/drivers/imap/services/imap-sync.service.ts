@@ -2,10 +2,6 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { type ImapFlow } from 'imapflow';
 
-import {
-  MessageImportDriverException,
-  MessageImportDriverExceptionCode,
-} from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import { canUseQresync } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/can-use-qresync.util';
 import { type MailboxState } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/extract-mailbox-state.util';
 import { type ImapSyncCursor } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/parse-sync-cursor.util';
@@ -24,11 +20,17 @@ export class ImapSyncService {
     previousCursor: ImapSyncCursor | null,
     mailboxState: MailboxState,
   ): Promise<SyncResult> {
-    this.validateUidValidity(previousCursor, mailboxState, folderPath);
+    const isUidValidityValid = this.validateUidValidity(
+      previousCursor,
+      mailboxState,
+      folderPath,
+    );
+
+    const effectiveCursor = isUidValidityValid ? previousCursor : null;
 
     const messageUids = await this.fetchNewMessageUids(
       client,
-      previousCursor,
+      effectiveCursor,
       mailboxState,
       folderPath,
     );
@@ -40,7 +42,7 @@ export class ImapSyncService {
     previousCursor: ImapSyncCursor | null,
     mailboxState: MailboxState,
     folderPath: string,
-  ): void {
+  ): boolean {
     const previousUidValidity = previousCursor?.uidValidity ?? 0;
     const { uidValidity } = mailboxState;
 
@@ -49,11 +51,10 @@ export class ImapSyncService {
         `UID validity changed from ${previousUidValidity} to ${uidValidity} in ${folderPath}. Full resync required.`,
       );
 
-      throw new MessageImportDriverException(
-        `IMAP UID validity changed for folder ${folderPath}`,
-        MessageImportDriverExceptionCode.SYNC_CURSOR_ERROR,
-      );
+      return false;
     }
+
+    return true;
   }
 
   private async fetchNewMessageUids(
