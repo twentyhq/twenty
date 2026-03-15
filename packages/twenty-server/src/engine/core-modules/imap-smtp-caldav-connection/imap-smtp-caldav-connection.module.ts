@@ -1,3 +1,4 @@
+import { SecureHttpClientModule } from 'src/engine/core-modules/secure-http-client/secure-http-client.module';
 import { Module } from '@nestjs/common';
 
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
@@ -25,6 +26,7 @@ import { ImapSmtpCaldavService } from './services/imap-smtp-caldav-connection.se
     FeatureFlagModule,
     ImapSmtpCaldavValidatorModule,
     PermissionsModule,
+    SecureHttpClientModule,
   ],
   providers: [ImapSmtpCaldavResolver, ImapSmtpCaldavService],
   exports: [ImapSmtpCaldavService],

@@ -207,7 +207,7 @@ export class ImapGetMessageListService {
 
       const maxUid = Math.max(0, uidNext - 1);
 
-      return previousCursor.highestUid >= maxUid;
+      return previousCursor.highestUid === maxUid;
     } catch (error) {
       this.logger.warn(
         `Failed to get status for folder ${folderPath}: ${error.message}`,
