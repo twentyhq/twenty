@@ -1,10 +1,13 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
+import { Repository } from 'typeorm';
 
 import { type ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
+import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -17,6 +20,9 @@ export class WorkspaceMemberPreQueryHookService {
   constructor(
     private readonly permissionsService: PermissionsService,
     private readonly onboardingService: OnboardingService,
+    // oxlint-disable-next-line twenty/inject-workspace-repository
+    @InjectRepository(UserEntity)
+    private readonly userRepository: Repository<UserEntity>,
   ) {}
 
   async validateWorkspaceMemberUpdatePermissionOrThrow({
@@ -88,6 +94,17 @@ export class WorkspaceMemberPreQueryHookService {
 
     if (!isDefined(firstName) && !isDefined(lastName)) {
       return;
+    }
+
+    // Sync name back to core.user so "Created by" shows correctly
+
+    const nameUpdate = {
+      ...(isDefined(firstName) && firstName !== '' && { firstName }),
+      ...(isDefined(lastName) && lastName !== '' && { lastName }),
+    };
+
+    if (Object.keys(nameUpdate).length > 0) {
+      await this.userRepository.update({ id: userId }, nameUpdate);
     }
 
     await this.onboardingService.setOnboardingCreateProfilePending({
