@@ -294,16 +294,17 @@ export class FieldsWidgetUpsertService {
         return [];
       }
 
-      const { viewFieldGroupUniversalIdentifier: _viewFieldGroupUniversalIdentifier } =
-        resolveEntityRelationUniversalIdentifiers({
-          metadataName: 'viewField',
-          foreignKeyValues: {
-            viewFieldGroupId: newViewFieldGroupId,
-          },
-          flatEntityMaps: {
-            flatViewFieldGroupMaps: optimisticFlatViewFieldGroupMaps,
-          },
-        });
+      const {
+        viewFieldGroupUniversalIdentifier: _viewFieldGroupUniversalIdentifier,
+      } = resolveEntityRelationUniversalIdentifiers({
+        metadataName: 'viewField',
+        foreignKeyValues: {
+          viewFieldGroupId: newViewFieldGroupId,
+        },
+        flatEntityMaps: {
+          flatViewFieldGroupMaps: optimisticFlatViewFieldGroupMaps,
+        },
+      });
 
       const shouldOverride = isCallerOverridingEntity({
         callerApplicationUniversalIdentifier: applicationUniversalIdentifier,

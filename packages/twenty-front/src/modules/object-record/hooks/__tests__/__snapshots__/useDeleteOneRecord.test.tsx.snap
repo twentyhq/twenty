@@ -14,14 +14,12 @@ exports[`useDeleteOneRecord B. Starting from filled cache 1. Should handle succe
   "attachments": [],
   "avatarFile": null,
   "avatarUrl": "https://twentyhq.github.io/placeholder-images/people/image-88.png",
-  "calendarEventParticipants": [
-    {},
-  ],
+  "calendarEventParticipants": [],
   "caredForPets": [],
   "city": "New Jennifer",
   "company": {},
   "companyId": "20202020-aa0b-48a9-85ba-e223975696ea",
-  "createdAt": "2026-03-15T19:26:23.267Z",
+  "createdAt": "2026-02-27T01:17:29.464Z",
   "createdBy": {
     "__typename": "Actor",
     "context": null,
@@ -45,7 +43,9 @@ exports[`useDeleteOneRecord B. Starting from filled cache 1. Should handle succe
     "primaryLinkUrl": "https://linkedin.com/in/person-442",
     "secondaryLinks": [],
   },
-  "messageParticipants": [],
+  "messageParticipants": [
+    {},
+  ],
   "name": {
     "__typename": "FullName",
     "firstName": "Jeffery",
@@ -73,7 +73,7 @@ exports[`useDeleteOneRecord B. Starting from filled cache 1. Should handle succe
     {},
     {},
   ],
-  "updatedAt": "2026-03-15T19:26:23.267Z",
+  "updatedAt": "2026-02-27T01:17:29.464Z",
   "updatedBy": {
     "__typename": "Actor",
     "context": null,
@@ -121,7 +121,7 @@ exports[`useDeleteOneRecord B. Starting from filled cache 1. Should handle succe
   },
   "attachments": [],
   "caredForPets": [],
-  "createdAt": "2026-03-15T19:26:23.267Z",
+  "createdAt": "2026-02-27T01:17:29.464Z",
   "createdBy": {
     "__typename": "Actor",
     "context": null,
@@ -173,10 +173,8 @@ exports[`useDeleteOneRecord B. Starting from filled cache 1. Should handle succe
     {},
     {},
     {},
-    {},
-    {},
   ],
-  "updatedAt": "2026-03-15T19:26:23.267Z",
+  "updatedAt": "2026-02-27T01:17:29.464Z",
   "updatedBy": {
     "__typename": "Actor",
     "context": null,
@@ -201,14 +199,12 @@ exports[`useDeleteOneRecord B. Starting from filled cache 2. Should handle optim
   "attachments": [],
   "avatarFile": null,
   "avatarUrl": "https://twentyhq.github.io/placeholder-images/people/image-88.png",
-  "calendarEventParticipants": [
-    {},
-  ],
+  "calendarEventParticipants": [],
   "caredForPets": [],
   "city": "New Jennifer",
   "company": {},
   "companyId": "20202020-aa0b-48a9-85ba-e223975696ea",
-  "createdAt": "2026-03-15T19:26:23.267Z",
+  "createdAt": "2026-02-27T01:17:29.464Z",
   "createdBy": {
     "__typename": "Actor",
     "context": null,
@@ -232,7 +228,9 @@ exports[`useDeleteOneRecord B. Starting from filled cache 2. Should handle optim
     "primaryLinkUrl": "https://linkedin.com/in/person-442",
     "secondaryLinks": [],
   },
-  "messageParticipants": [],
+  "messageParticipants": [
+    {},
+  ],
   "name": {
     "__typename": "FullName",
     "firstName": "Jeffery",
@@ -260,7 +258,7 @@ exports[`useDeleteOneRecord B. Starting from filled cache 2. Should handle optim
     {},
     {},
   ],
-  "updatedAt": "2026-03-15T19:26:23.267Z",
+  "updatedAt": "2026-02-27T01:17:29.464Z",
   "updatedBy": {
     "__typename": "Actor",
     "context": null,
@@ -308,7 +306,7 @@ exports[`useDeleteOneRecord B. Starting from filled cache 2. Should handle optim
   },
   "attachments": [],
   "caredForPets": [],
-  "createdAt": "2026-03-15T19:26:23.267Z",
+  "createdAt": "2026-02-27T01:17:29.464Z",
   "createdBy": {
     "__typename": "Actor",
     "context": null,
@@ -360,10 +358,8 @@ exports[`useDeleteOneRecord B. Starting from filled cache 2. Should handle optim
     {},
     {},
     {},
-    {},
-    {},
   ],
-  "updatedAt": "2026-03-15T19:26:23.267Z",
+  "updatedAt": "2026-02-27T01:17:29.464Z",
   "updatedBy": {
     "__typename": "Actor",
     "context": null,
@@ -388,14 +384,12 @@ exports[`useDeleteOneRecord B. Starting from filled cache 3. Should handle optim
   "attachments": [],
   "avatarFile": null,
   "avatarUrl": "https://twentyhq.github.io/placeholder-images/people/image-88.png",
-  "calendarEventParticipants": [
-    {},
-  ],
+  "calendarEventParticipants": [],
   "caredForPets": [],
   "city": "New Jennifer",
   "company": {},
   "companyId": "20202020-aa0b-48a9-85ba-e223975696ea",
-  "createdAt": "2026-03-15T19:26:23.267Z",
+  "createdAt": "2026-02-27T01:17:29.464Z",
   "createdBy": {
     "__typename": "Actor",
     "context": null,
@@ -419,7 +413,9 @@ exports[`useDeleteOneRecord B. Starting from filled cache 3. Should handle optim
     "primaryLinkUrl": "https://linkedin.com/in/person-442",
     "secondaryLinks": [],
   },
-  "messageParticipants": [],
+  "messageParticipants": [
+    {},
+  ],
   "name": {
     "__typename": "FullName",
     "firstName": "Jeffery",
@@ -447,7 +443,7 @@ exports[`useDeleteOneRecord B. Starting from filled cache 3. Should handle optim
     {},
     {},
   ],
-  "updatedAt": "2026-03-15T19:26:23.267Z",
+  "updatedAt": "2026-02-27T01:17:29.464Z",
   "updatedBy": {
     "__typename": "Actor",
     "context": null,
@@ -495,7 +491,7 @@ exports[`useDeleteOneRecord B. Starting from filled cache 3. Should handle optim
   },
   "attachments": [],
   "caredForPets": [],
-  "createdAt": "2026-03-15T19:26:23.267Z",
+  "createdAt": "2026-02-27T01:17:29.464Z",
   "createdBy": {
     "__typename": "Actor",
     "context": null,
@@ -547,10 +543,8 @@ exports[`useDeleteOneRecord B. Starting from filled cache 3. Should handle optim
     {},
     {},
     {},
-    {},
-    {},
   ],
-  "updatedAt": "2026-03-15T19:26:23.267Z",
+  "updatedAt": "2026-02-27T01:17:29.464Z",
   "updatedBy": {
     "__typename": "Actor",
     "context": null,
