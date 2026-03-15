@@ -1,3 +1,4 @@
+import { isLayoutCustomizationActiveState } from '@/app/states/isLayoutCustomizationActiveState';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreIsPageInEditModeComponentState } from '@/context-store/states/contextStoreIsPageInEditModeComponentState';
 import { currentPageLayoutIdState } from '@/page-layout/states/currentPageLayoutIdState';
@@ -8,7 +9,7 @@ import { fieldsWidgetGroupsPersistedComponentState } from '@/page-layout/states/
 import { fieldsWidgetUngroupedFieldsDraftComponentState } from '@/page-layout/states/fieldsWidgetUngroupedFieldsDraftComponentState';
 import { fieldsWidgetUngroupedFieldsPersistedComponentState } from '@/page-layout/states/fieldsWidgetUngroupedFieldsPersistedComponentState';
 import { hasInitializedFieldsWidgetGroupsDraftComponentState } from '@/page-layout/states/hasInitializedFieldsWidgetGroupsDraftComponentState';
-import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
+import { isDashboardInEditModeComponentState } from '@/page-layout/states/isDashboardInEditModeComponentState';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutIsInitializedComponentState } from '@/page-layout/states/pageLayoutIsInitializedComponentState';
@@ -57,7 +58,7 @@ export const useExecuteTasksOnAnyLocationChange = () => {
       }
 
       store.set(
-        isPageLayoutInEditModeComponentState.atomFamily({
+        isDashboardInEditModeComponentState.atomFamily({
           instanceId: pageLayoutId,
         }),
         false,
@@ -137,7 +138,14 @@ export const useExecuteTasksOnAnyLocationChange = () => {
    */
   const executeTasksOnAnyLocationChange = () => {
     closeAnyOpenDropdown();
-    resetPageLayoutEditMode();
+
+    const isLayoutCustomizationActive = store.get(
+      isLayoutCustomizationActiveState.atom,
+    );
+
+    if (!isLayoutCustomizationActive) {
+      resetPageLayoutEditMode();
+    }
   };
 
   return { executeTasksOnAnyLocationChange };

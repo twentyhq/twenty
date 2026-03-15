@@ -1,3 +1,4 @@
+import { type DraftPageLayout } from '@/page-layout/types/DraftPageLayout';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { fieldsWidgetEditorModeDraftComponentState } from '@/page-layout/states/fieldsWidgetEditorModeDraftComponentState';
 import { fieldsWidgetEditorModePersistedComponentState } from '@/page-layout/states/fieldsWidgetEditorModePersistedComponentState';
@@ -96,13 +97,16 @@ export const useResetDraftPageLayoutToPersistedPageLayout = (
         store.set(activeTabId, pageLayoutPersisted.tabs[0].id);
       }
 
-      store.set(pageLayoutDraftState, {
+      const persistedAsDraft: DraftPageLayout = {
         id: pageLayoutPersisted.id,
         name: pageLayoutPersisted.name,
         type: pageLayoutPersisted.type,
         objectMetadataId: pageLayoutPersisted.objectMetadataId,
         tabs: pageLayoutPersisted.tabs,
-      });
+        defaultTabToFocusOnMobileAndSidePanelId:
+          pageLayoutPersisted.defaultTabToFocusOnMobileAndSidePanelId,
+      };
+      store.set(pageLayoutDraftState, persistedAsDraft);
 
       const tabLayouts = convertPageLayoutToTabLayouts(pageLayoutPersisted);
       store.set(pageLayoutCurrentLayoutsState, tabLayouts);

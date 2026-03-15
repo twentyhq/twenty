@@ -5,7 +5,7 @@ import { AppPageErrorFallback } from '@/error-handler/components/AppPageErrorFal
 import { FileUploadProvider } from '@/file-upload/components/FileUploadProvider';
 import { InformationBannerIsImpersonating } from '@/information-banner/components/impersonate/InformationBannerIsImpersonating';
 import { KeyboardShortcutMenu } from '@/keyboard-shortcut-menu/components/KeyboardShortcutMenu';
-import { NavigationMenuEditModeBar } from '@/navigation-menu-item/components/NavigationMenuEditModeBar';
+import { LayoutCustomizationBar } from '@/app/components/LayoutCustomizationBar';
 import { AppNavigationDrawer } from '@/navigation/components/AppNavigationDrawer';
 import { MobileNavigationBar } from '@/navigation/components/MobileNavigationBar';
 import { PageDragDropProvider } from '@/navigation/components/PageDragDropProvider';
@@ -75,7 +75,7 @@ export const DefaultLayout = () => {
         <StyledLayout>
           <AppErrorBoundary FallbackComponent={AppFullScreenErrorFallback}>
             <InformationBannerIsImpersonating />
-            <NavigationMenuEditModeBar />
+            <LayoutCustomizationBar />
             <StyledPageContainer
               animate={{
                 marginLeft:

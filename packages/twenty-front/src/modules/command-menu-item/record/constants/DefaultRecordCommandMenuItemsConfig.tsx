@@ -21,9 +21,7 @@ import { NavigateToNextRecordSingleRecordCommand } from '@/command-menu-item/rec
 import { NavigateToPreviousRecordSingleRecordCommand } from '@/command-menu-item/record/single-record/components/NavigateToPreviousRecordSingleRecordCommand';
 import { RemoveFromFavoritesSingleRecordCommand } from '@/command-menu-item/record/single-record/components/RemoveFromFavoritesSingleRecordCommand';
 import { RestoreSingleRecordCommand } from '@/command-menu-item/record/single-record/components/RestoreSingleRecordCommand';
-import { CancelRecordPageLayoutSingleRecordCommand } from '@/command-menu-item/record/single-record/record-page-layout/components/CancelRecordPageLayoutSingleRecordCommand';
 import { EditRecordPageLayoutSingleRecordCommand } from '@/command-menu-item/record/single-record/record-page-layout/components/EditRecordPageLayoutSingleRecordCommand';
-import { SaveRecordPageLayoutSingleRecordCommand } from '@/command-menu-item/record/single-record/record-page-layout/components/SaveRecordPageLayoutSingleRecordCommand';
 import { RecordPageLayoutSingleRecordCommandKeys } from '@/command-menu-item/record/single-record/record-page-layout/types/RecordPageLayoutSingleRecordCommandKeys';
 import { SingleRecordCommandKeys } from '@/command-menu-item/record/single-record/types/SingleRecordCommandKeys';
 import { type CommandMenuItemConfig } from '@/command-menu-item/types/CommandMenuItemConfig';
@@ -45,11 +43,9 @@ import {
 import {
   IconArrowMerge,
   IconBuildingSkyscraper,
-  IconCancel,
   IconCheckbox,
   IconChevronDown,
   IconChevronUp,
-  IconDeviceFloppy,
   IconEdit,
   IconEyeOff,
   IconFileExport,
@@ -813,60 +809,5 @@ export const DEFAULT_RECORD_COMMAND_MENU_ITEMS_CONFIG: Record<
       objectMetadataItem?.nameSingular !== CoreObjectNameSingular.Dashboard,
     availableOn: [CommandMenuItemViewType.SHOW_PAGE],
     component: <EditRecordPageLayoutSingleRecordCommand />,
-  },
-  [RecordPageLayoutSingleRecordCommandKeys.SAVE_RECORD_PAGE_LAYOUT]: {
-    key: RecordPageLayoutSingleRecordCommandKeys.SAVE_RECORD_PAGE_LAYOUT,
-    label: msg`Save Page Layout`,
-    shortLabel: msg`Save`,
-    isPinned: true,
-    isPrimaryCTA: true,
-    position: 31,
-    Icon: IconDeviceFloppy,
-    type: CommandMenuItemType.Standard,
-    scope: CommandMenuItemScope.RecordSelection,
-    requiredPermissionFlag: PermissionFlagType.LAYOUTS,
-    shouldBeRegistered: ({
-      selectedRecord,
-      objectPermissions,
-      objectMetadataItem,
-      isFeatureFlagEnabled,
-    }) =>
-      isFeatureFlagEnabled(
-        FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED,
-      ) &&
-      isDefined(selectedRecord) &&
-      !selectedRecord?.isRemote &&
-      !isDefined(selectedRecord?.deletedAt) &&
-      objectPermissions.canUpdateObjectRecords &&
-      objectMetadataItem?.nameSingular !== CoreObjectNameSingular.Dashboard,
-    availableOn: [CommandMenuItemViewType.PAGE_EDIT_MODE],
-    component: <SaveRecordPageLayoutSingleRecordCommand />,
-  },
-  [RecordPageLayoutSingleRecordCommandKeys.CANCEL_RECORD_PAGE_LAYOUT_EDITION]: {
-    key: RecordPageLayoutSingleRecordCommandKeys.CANCEL_RECORD_PAGE_LAYOUT_EDITION,
-    label: msg`Cancel Edition`,
-    shortLabel: msg`Cancel`,
-    isPinned: true,
-    position: 32,
-    Icon: IconCancel,
-    type: CommandMenuItemType.Standard,
-    scope: CommandMenuItemScope.RecordSelection,
-    requiredPermissionFlag: PermissionFlagType.LAYOUTS,
-    shouldBeRegistered: ({
-      selectedRecord,
-      objectPermissions,
-      objectMetadataItem,
-      isFeatureFlagEnabled,
-    }) =>
-      isFeatureFlagEnabled(
-        FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED,
-      ) &&
-      isDefined(selectedRecord) &&
-      !selectedRecord?.isRemote &&
-      !isDefined(selectedRecord?.deletedAt) &&
-      objectPermissions.canUpdateObjectRecords &&
-      objectMetadataItem?.nameSingular !== CoreObjectNameSingular.Dashboard,
-    availableOn: [CommandMenuItemViewType.PAGE_EDIT_MODE],
-    component: <CancelRecordPageLayoutSingleRecordCommand />,
   },
 };

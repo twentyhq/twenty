@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/isNavigationMenuInEditModeState';
+import { isLayoutCustomizationActiveState } from '@/app/states/isLayoutCustomizationActiveState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 type PageDragDropProviderMountEffectProps = {
@@ -10,15 +10,15 @@ type PageDragDropProviderMountEffectProps = {
 export const PageDragDropProviderMountEffect = ({
   onEnterEditMode,
 }: PageDragDropProviderMountEffectProps) => {
-  const isNavigationMenuInEditMode = useAtomStateValue(
-    isNavigationMenuInEditModeState,
+  const isLayoutCustomizationActive = useAtomStateValue(
+    isLayoutCustomizationActiveState,
   );
 
   useEffect(() => {
-    if (isNavigationMenuInEditMode) {
+    if (isLayoutCustomizationActive) {
       onEnterEditMode();
     }
-  }, [isNavigationMenuInEditMode, onEnterEditMode]);
+  }, [isLayoutCustomizationActive, onEnterEditMode]);
 
   return null;
 };

@@ -1,5 +1,5 @@
 import { NavigationMenuItemIcon } from '@/navigation-menu-item/components/NavigationMenuItemIcon';
-import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/isNavigationMenuInEditModeState';
+import { isLayoutCustomizationActiveState } from '@/app/states/isLayoutCustomizationActiveState';
 import type { ProcessedNavigationMenuItem } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
 import type { WorkspaceSectionItemContentProps } from '@/object-metadata/components/WorkspaceSectionItemContentProps';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
@@ -15,16 +15,16 @@ export const NavigationDrawerSectionForWorkspaceItemLinkContent = ({
   editModeProps,
   isDragging,
 }: NavigationDrawerSectionForWorkspaceItemLinkContentProps) => {
-  const isNavigationMenuInEditMode = useAtomStateValue(
-    isNavigationMenuInEditModeState,
+  const isLayoutCustomizationActive = useAtomStateValue(
+    isLayoutCustomizationActiveState,
   );
   const linkItem = item as ProcessedNavigationMenuItem;
   return (
     <NavigationDrawerItem
       label={linkItem.labelIdentifier}
-      to={isNavigationMenuInEditMode || isDragging ? undefined : linkItem.link}
+      to={isLayoutCustomizationActive || isDragging ? undefined : linkItem.link}
       onClick={
-        isNavigationMenuInEditMode ? editModeProps.onEditModeClick : undefined
+        isLayoutCustomizationActive ? editModeProps.onEditModeClick : undefined
       }
       Icon={() => <NavigationMenuItemIcon navigationMenuItem={linkItem} />}
       active={false}
@@ -32,7 +32,7 @@ export const NavigationDrawerSectionForWorkspaceItemLinkContent = ({
       isDragging={isDragging}
       triggerEvent="CLICK"
       rightOptions={
-        !isNavigationMenuInEditMode && (
+        !isLayoutCustomizationActive && (
           <IconArrowUpRight
             size={themeCssVariables.icon.size.sm}
             stroke={themeCssVariables.icon.stroke.md}

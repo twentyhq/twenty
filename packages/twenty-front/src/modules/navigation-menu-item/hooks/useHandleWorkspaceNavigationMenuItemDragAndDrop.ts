@@ -3,7 +3,7 @@ import { useStore } from 'jotai';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/constants/NavigationMenuItemDroppableIds';
-import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/isNavigationMenuInEditModeState';
+import { isLayoutCustomizationActiveState } from '@/app/states/isLayoutCustomizationActiveState';
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/states/navigationMenuItemsDraftState';
 import { openNavigationMenuItemFolderIdsState } from '@/navigation-menu-item/states/openNavigationMenuItemFolderIdsState';
 import { getPositionBetween } from '@/navigation-menu-item/utils/getPositionBetween';
@@ -69,10 +69,10 @@ export const useHandleWorkspaceNavigationMenuItemDragAndDrop = () => {
     const navigationMenuItemsDraft = store.get(
       navigationMenuItemsDraftState.atom,
     );
-    const isNavigationMenuInEditMode = store.get(
-      isNavigationMenuInEditModeState.atom,
+    const isLayoutCustomizationActive = store.get(
+      isLayoutCustomizationActiveState.atom,
     );
-    if (!isNavigationMenuInEditMode || !navigationMenuItemsDraft) {
+    if (!isLayoutCustomizationActive || !navigationMenuItemsDraft) {
       return;
     }
 

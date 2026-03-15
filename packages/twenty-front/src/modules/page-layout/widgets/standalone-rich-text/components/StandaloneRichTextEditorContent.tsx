@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react';
 
 import { type Attachment } from '@/activities/files/types/Attachment';
 import { useUpdatePageLayoutWidget } from '@/page-layout/hooks/useUpdatePageLayoutWidget';
-import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
+import { isDashboardInEditModeComponentState } from '@/page-layout/states/isDashboardInEditModeComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { DashboardsBlockEditor } from '@/page-layout/widgets/standalone-rich-text/components/DashboardsBlockEditor';
@@ -45,8 +45,8 @@ export const StandaloneRichTextEditorContent = ({
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const { removeFocusItemFromFocusStackById } =
     useRemoveFocusItemFromFocusStackById();
-  const isPageLayoutInEditModeState = useAtomComponentStateCallbackState(
-    isPageLayoutInEditModeComponentState,
+  const isDashboardInEditModeState = useAtomComponentStateCallbackState(
+    isDashboardInEditModeComponentState,
   );
   const pageLayoutEditingWidgetIdState = useAtomComponentStateCallbackState(
     pageLayoutEditingWidgetIdComponentState,
@@ -57,12 +57,12 @@ export const StandaloneRichTextEditorContent = ({
   const store = useStore();
 
   const shouldPersistDraft = useCallback(() => {
-    const isPageLayoutInEditMode = store.get(isPageLayoutInEditModeState);
+    const isDashboardInEditMode = store.get(isDashboardInEditModeState);
     const editingWidgetId = store.get(pageLayoutEditingWidgetIdState);
 
-    return isPageLayoutInEditMode && editingWidgetId === widget.id;
+    return isDashboardInEditMode && editingWidgetId === widget.id;
   }, [
-    isPageLayoutInEditModeState,
+    isDashboardInEditModeState,
     pageLayoutEditingWidgetIdState,
     widget.id,
     store,

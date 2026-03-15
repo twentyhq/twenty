@@ -1,15 +1,12 @@
+import { useEnterLayoutCustomizationMode } from '@/app/hooks/useEnterLayoutCustomizationMode';
 import { Command } from '@/command-menu-item/display/components/Command';
-import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/isNavigationMenuInEditModeState';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 export const EditNavigationSidebarNoSelectionRecordCommand = () => {
-  const setIsNavigationMenuInEditMode = useSetAtomState(
-    isNavigationMenuInEditModeState,
-  );
+  const { enterLayoutCustomizationMode } = useEnterLayoutCustomizationMode();
 
   return (
     <Command
-      onClick={() => setIsNavigationMenuInEditMode(true)}
+      onClick={() => enterLayoutCustomizationMode()}
       closeSidePanelOnCommandMenuListExecution
     />
   );

@@ -1,16 +1,16 @@
 import { CurrentWorkspaceMemberNavigationMenuItemFolders } from '@/navigation-menu-item/components/CurrentWorkspaceMemberNavigationMenuItemFolders';
-import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/isNavigationMenuInEditModeState';
+import { isLayoutCustomizationActiveState } from '@/app/states/isLayoutCustomizationActiveState';
 import { FavoritesDragDropProviderContent } from '@/navigation/components/FavoritesDragDropProviderContent';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { AnimatedEaseInOut } from 'twenty-ui/utilities';
 
 export const CurrentWorkspaceMemberNavigationMenuItemFoldersDispatcher = () => {
-  const isNavigationMenuInEditMode = useAtomStateValue(
-    isNavigationMenuInEditModeState,
+  const isLayoutCustomizationActive = useAtomStateValue(
+    isLayoutCustomizationActiveState,
   );
 
   return (
-    <AnimatedEaseInOut isOpen={!isNavigationMenuInEditMode} initial>
+    <AnimatedEaseInOut isOpen={!isLayoutCustomizationActive} initial>
       <FavoritesDragDropProviderContent>
         <CurrentWorkspaceMemberNavigationMenuItemFolders />
       </FavoritesDragDropProviderContent>

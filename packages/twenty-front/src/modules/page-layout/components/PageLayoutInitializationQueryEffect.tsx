@@ -1,3 +1,5 @@
+import { activeCustomizationPageLayoutIdsState } from '@/app/states/activeCustomizationPageLayoutIdsState';
+import { isLayoutCustomizationActiveState } from '@/app/states/isLayoutCustomizationActiveState';
 import { useBasePageLayout } from '@/page-layout/hooks/useBasePageLayout';
 import { usePageLayoutWithRelationWidgets } from '@/page-layout/hooks/usePageLayoutWithRelationWidgets';
 import { useSetIsPageLayoutInEditMode } from '@/page-layout/hooks/useSetIsPageLayoutInEditMode';
@@ -10,9 +12,11 @@ import { convertPageLayoutToTabLayouts } from '@/page-layout/utils/convertPageLa
 import { isPageLayoutEmpty } from '@/page-layout/utils/isPageLayoutEmpty';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useStore } from 'jotai';
 import { useCallback, useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { PageLayoutType } from '~/generated-metadata/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 type PageLayoutInitializationQueryEffectProps = {
@@ -41,10 +45,27 @@ export const PageLayoutInitializationQueryEffect = ({
   const pageLayoutCurrentLayoutsComponentCallbackState =
     useAtomComponentStateCallbackState(pageLayoutCurrentLayoutsComponentState);
 
+  const isLayoutCustomizationActive = useAtomStateValue(
+    isLayoutCustomizationActiveState,
+  );
+
   const store = useStore();
 
   const initializePageLayout = useCallback(
     (layout: PageLayout) => {
+      const isRecordPageLayout = layout.type === PageLayoutType.RECORD_PAGE;
+
+      const activeIds = store.get(activeCustomizationPageLayoutIdsState.atom);
+      const isAlreadyRegistered = activeIds.includes(layout.id);
+
+      if (
+        isRecordPageLayout &&
+        isLayoutCustomizationActive &&
+        isAlreadyRegistered
+      ) {
+        return;
+      }
+
       const currentPersisted = store.get(
         pageLayoutPersistedComponentCallbackState,
       );
@@ -59,30 +80,68 @@ export const PageLayoutInitializationQueryEffect = ({
         type: layout.type,
         objectMetadataId: layout.objectMetadataId,
         tabs: layout.tabs,
+        defaultTabToFocusOnMobileAndSidePanelId:
+          layout.defaultTabToFocusOnMobileAndSidePanelId,
       });
 
       const tabLayouts = convertPageLayoutToTabLayouts(layout);
       store.set(pageLayoutCurrentLayoutsComponentCallbackState, tabLayouts);
 
-      setIsPageLayoutInEditMode(isPageLayoutEmpty(layout));
+      if (!isRecordPageLayout) {
+        const shouldEnterDashboardEditMode = isPageLayoutEmpty(layout);
+        setIsPageLayoutInEditMode(shouldEnterDashboardEditMode);
+      }
+
+      if (
+        isRecordPageLayout &&
+        isLayoutCustomizationActive &&
+        !isAlreadyRegistered
+      ) {
+        store.set(activeCustomizationPageLayoutIdsState.atom, [
+          ...activeIds,
+          layout.id,
+        ]);
+      }
     },
     [
       pageLayoutCurrentLayoutsComponentCallbackState,
       pageLayoutDraftComponentCallbackState,
       pageLayoutPersistedComponentCallbackState,
+      isLayoutCustomizationActive,
       setIsPageLayoutInEditMode,
       store,
     ],
   );
 
   useEffect(() => {
-    if (!pageLayoutIsInitialized && isDefined(pageLayout)) {
+    if (
+      !isLayoutCustomizationActive &&
+      !pageLayoutIsInitialized &&
+      isDefined(pageLayout)
+    ) {
+      initializePageLayout(pageLayout);
+      setPageLayoutIsInitialized(true);
+    }
+  }, [
+    isLayoutCustomizationActive,
+    initializePageLayout,
+    pageLayoutIsInitialized,
+    pageLayout,
+    setPageLayoutIsInitialized,
+  ]);
+
+  useEffect(() => {
+    if (
+      isLayoutCustomizationActive &&
+      isDefined(pageLayout) &&
+      pageLayout.type === PageLayoutType.RECORD_PAGE
+    ) {
       initializePageLayout(pageLayout);
       setPageLayoutIsInitialized(true);
     }
   }, [
     initializePageLayout,
-    pageLayoutIsInitialized,
+    isLayoutCustomizationActive,
     pageLayout,
     setPageLayoutIsInitialized,
   ]);
