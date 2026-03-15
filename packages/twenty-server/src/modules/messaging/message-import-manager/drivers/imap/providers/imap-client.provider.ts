@@ -15,14 +15,20 @@ type ConnectedAccountIdentifier = Pick<
   'id' | 'provider' | 'connectionParameters' | 'handle'
 >;
 
+type CachedConnection = {
+  client: ImapFlow;
+  parametersHash: string;
+};
+
 @Injectable()
 export class ImapClientProvider implements OnModuleDestroy {
   private readonly logger = new Logger(ImapClientProvider.name);
 
   private static readonly CONNECTION_TIMEOUT_MS = 30000;
   private static readonly GREETING_TIMEOUT_MS = 16000;
+  private static readonly MAX_CACHE_SIZE = 100;
 
-  private readonly connectionCache = new Map<string, ImapFlow>();
+  private readonly connectionCache = new Map<string, CachedConnection>();
 
   constructor(
     private readonly secureHttpClientService: SecureHttpClientService,
@@ -31,14 +37,21 @@ export class ImapClientProvider implements OnModuleDestroy {
   async getClient(
     connectedAccount: ConnectedAccountIdentifier,
   ): Promise<ImapFlow> {
-    const cachedClient = this.connectionCache.get(connectedAccount.id);
+    const parametersHash = JSON.stringify(
+      connectedAccount.connectionParameters,
+    );
+    const cached = this.connectionCache.get(connectedAccount.id);
 
-    if (cachedClient && cachedClient.authenticated) {
+    if (
+      cached &&
+      cached.client.authenticated &&
+      cached.parametersHash === parametersHash
+    ) {
       try {
         // Health check: NOOP ensures the connection is still alive and responsive
         // We use a short timeout for the health check to avoid hanging
         await Promise.race([
-          cachedClient.noop(),
+          cached.client.noop(),
           new Promise((_, reject) =>
             setTimeout(() => reject(new Error('Health check timeout')), 5000),
           ),
@@ -48,26 +61,53 @@ export class ImapClientProvider implements OnModuleDestroy {
           `Reusing cached IMAP connection for ${connectedAccount.handle}`,
         );
 
-        return cachedClient;
+        return cached.client;
       } catch (error) {
         this.logger.warn(
-          `Cached IMAP connection for ${connectedAccount.handle} is dead, evicting from cache: ${error.message}`,
+          `Cached IMAP connection for ${connectedAccount.handle} is dead or stale, evicting from cache: ${error.message}`,
         );
 
         this.connectionCache.delete(connectedAccount.id);
 
         try {
-          await cachedClient.logout();
+          await cached.client.logout();
         } catch {
           // Ignore logout errors for a dead connection
         }
       }
     }
 
+    // If parameters changed, close the old connection even if it was authenticated
+    if (cached && cached.parametersHash !== parametersHash) {
+      this.logger.log(
+        `IMAP parameters changed for ${connectedAccount.handle}, closing old connection`,
+      );
+      this.connectionCache.delete(connectedAccount.id);
+      try {
+        await cached.client.logout();
+      } catch {
+        // Ignore
+      }
+    }
+
     try {
       const client = await this.createConnection(connectedAccount);
 
-      this.connectionCache.set(connectedAccount.id, client);
+      // Implement simple LRU-like eviction if cache is full
+      if (this.connectionCache.size >= ImapClientProvider.MAX_CACHE_SIZE) {
+        const oldestId = this.connectionCache.keys().next().value;
+        const oldestConnection = this.connectionCache.get(oldestId);
+        if (oldestConnection) {
+          this.logger.log(`Cache full, evicting oldest connection: ${oldestId}`);
+          this.connectionCache.delete(oldestId);
+          oldestConnection.client.logout().catch(() => {});
+        }
+      }
+
+      this.connectionCache.set(connectedAccount.id, {
+        client,
+        parametersHash,
+      });
 
       return client;
     } catch (error) {
@@ -82,7 +122,7 @@ export class ImapClientProvider implements OnModuleDestroy {
 
   async closeClient(_client: ImapFlow): Promise<void> {
     // We keep the client open in the cache for reuse.
-    // Logout will happen when the process terminates or connection is lost.
+    // Logout will happen when the process terminates, connection is lost, or parameters change.
     this.logger.debug('Keeping IMAP client open in cache');
   }
 
@@ -125,6 +165,7 @@ export class ImapClientProvider implements OnModuleDestroy {
       logger: false,
       tls: {
         rejectUnauthorized: false,
+        servername: connectionParameters.IMAP?.host,
       },
       connectionTimeout: ImapClientProvider.CONNECTION_TIMEOUT_MS,
       greetingTimeout: ImapClientProvider.GREETING_TIMEOUT_MS,
@@ -151,9 +192,9 @@ export class ImapClientProvider implements OnModuleDestroy {
 
   async onModuleDestroy() {
     this.logger.log('Closing all cached IMAP connections...');
-    for (const [id, client] of this.connectionCache) {
+    for (const [id, cached] of this.connectionCache) {
       try {
-        await client.logout();
+        await cached.client.logout();
         this.logger.debug(`Closed IMAP connection for ${id}`);
       } catch (error) {
         this.logger.error(
