@@ -207,7 +207,7 @@ export class ImapClientProvider implements OnModuleDestroy {
       logger: false,
       tls: {
         rejectUnauthorized: false,
-        servername: connectionParameters.IMAP?.host,
+        ['servername']: connectionParameters.IMAP?.host,
       },
       connectionTimeout: ImapClientProvider.CONNECTION_TIMEOUT_MS,
       greetingTimeout: ImapClientProvider.GREETING_TIMEOUT_MS,

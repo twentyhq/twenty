@@ -47,7 +47,7 @@ export class ImapSmtpCaldavService {
         logger: false,
         tls: {
           rejectUnauthorized: false,
-          servername: params.host,
+          ['servername']: params.host,
         },
       });
 
@@ -113,7 +113,7 @@ export class ImapSmtpCaldavService {
         },
         tls: {
           rejectUnauthorized: false,
-          servername: params.host,
+          ['servername']: params.host,
         },
       });
 
