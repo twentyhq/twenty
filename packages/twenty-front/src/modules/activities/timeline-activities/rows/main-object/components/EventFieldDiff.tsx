@@ -10,6 +10,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type EventFieldDiffProps = {
   diffRecord: Record<string, any>;
+  diffBeforeRecord?: Record<string, any>;
   mainObjectMetadataItem: ObjectMetadataItem;
   fieldMetadataItem: FieldMetadataItem | undefined;
   diffArtificialRecordStoreId: string;
@@ -31,8 +32,18 @@ const StyledEmptyValue = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
 `;
 
+const StyledBeforeValue = styled.div`
+  color: ${({ theme }) => theme.font.color.tertiary};
+  text-decoration: line-through;
+
+  * {
+    color: inherit;
+  }
+`;
+
 export const EventFieldDiff = ({
   diffRecord,
+  diffBeforeRecord,
   mainObjectMetadataItem,
   fieldMetadataItem,
   diffArtificialRecordStoreId,
@@ -53,9 +64,35 @@ export const EventFieldDiff = ({
       diffRecord !== null &&
       isObjectEmpty(diffRecord));
 
+  const isBeforeEmpty =
+    diffBeforeRecord === undefined ||
+    isValueEmpty(diffBeforeRecord) ||
+    (typeof diffBeforeRecord === 'object' &&
+      diffBeforeRecord !== null &&
+      isObjectEmpty(diffBeforeRecord));
+
+  const diffBeforeArtificialRecordStoreId =
+    diffArtificialRecordStoreId + '--before';
+
   return (
     <StyledEventFieldDiffContainer>
-      <EventFieldDiffLabel fieldMetadataItem={fieldMetadataItem} />→
+      <EventFieldDiffLabel fieldMetadataItem={fieldMetadataItem} />
+      {!isBeforeEmpty && (
+        <StyledBeforeValue>
+          <EventFieldDiffValueEffect
+            diffArtificialRecordStoreId={diffBeforeArtificialRecordStoreId}
+            mainObjectMetadataItem={mainObjectMetadataItem}
+            fieldMetadataItem={fieldMetadataItem}
+            diffRecord={diffBeforeRecord}
+          />
+          <EventFieldDiffValue
+            diffArtificialRecordStoreId={diffBeforeArtificialRecordStoreId}
+            mainObjectMetadataItem={mainObjectMetadataItem}
+            fieldMetadataItem={fieldMetadataItem}
+          />
+        </StyledBeforeValue>
+      )}
+      →
       {isUpdatedToEmpty ? (
         <StyledEmptyValue>
           <Trans>Empty</Trans>
