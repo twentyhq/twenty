@@ -111,12 +111,12 @@ tests:
   # 'core' schema. This ensures the _typeorm_migrations table and all application
   # tables use the dedicated core schema.
 
-  - it: migrations run against core datasource
+  - it: migration init container runs yarn database:migrate:prod
     template: templates/deployment-server.yaml
     set:
       db.enabled: true
     asserts:
       - matchRegex:
           path: spec.template.spec.initContainers[?(@.name=="run-migrations")].command[2]
-          pattern: core\.datasource
+          pattern: yarn database:migrate:prod
 

@@ -48,10 +48,57 @@ server:
       cpu: 1000m
       memory: 1024Mi
 
+  # Set to true to skip database migrations on startup (useful for read-only replicas or manual migration control)
+  disableDbMigrations: false
+
   env:
     SIGN_IN_PREFILLED: "false"
     ACCESS_TOKEN_EXPIRES_IN: "7d"
     LOGIN_TOKEN_EXPIRES_IN: "1h"
+  additionalEnv: { }
+
+  # Optional additional server environment variables
+  # These map directly to Twenty server config. Uncomment and set as needed.
+  # GOOGLE_AUTH
+  # AUTH_GOOGLE_ENABLED: false
+  # AUTH_GOOGLE_CLIENT_ID: ""
+  # AUTH_GOOGLE_CLIENT_SECRET: ""
+  # AUTH_GOOGLE_CALLBACK_URL: ""
+  # AUTH_GOOGLE_APIS_CALLBACK_URL: ""
+  # CALENDAR_PROVIDER_GOOGLE_ENABLED: false
+  # MESSAGING_PROVIDER_GMAIL_ENABLED: false
+
+  # MICROSOFT_AUTH
+  # AUTH_MICROSOFT_ENABLED: false
+  # AUTH_MICROSOFT_CLIENT_ID: ""
+  # AUTH_MICROSOFT_CLIENT_SECRET: ""
+  # AUTH_MICROSOFT_CALLBACK_URL: ""
+  # AUTH_MICROSOFT_APIS_CALLBACK_URL: ""
+  # CALENDAR_PROVIDER_MICROSOFT_ENABLED: false
+  # MESSAGING_PROVIDER_MICROSOFT_ENABLED: false
+
+  # EMAIL_SETTINGS
+  # EMAIL_DRIVER: LOGGER
+  # EMAIL_FROM_ADDRESS: noreply@yourdomain.com
+  # EMAIL_FROM_NAME: Felix from Twenty
+  # EMAIL_SMTP_HOST: ""
+  # EMAIL_SMTP_PORT: 587
+  # EMAIL_SMTP_USER: ""
+  # EMAIL_SMTP_PASSWORD: ""
+  # EMAIL_SMTP_NO_TLS: false
+  # EMAIL_SYSTEM_ADDRESS: system@yourdomain.com
+
+  # Extra envs for custom builds (rendered to server only)
+  # Use name/value or name/valueFrom (e.g., secretKeyRef)
+  extraEnv: []
+  # extraEnv examples:
+  # - name: FEATURE_X_ENABLED
+  #   value: "true"
+  # - name: CUSTOM_SECRET
+  #   valueFrom:
+  #     secretKeyRef:
+  #       name: my-secret
+  #       key: custom
 
   service:
     type: ClusterIP
@@ -105,6 +152,18 @@ worker:
       cpu: 1000m
       memory: 2048Mi
 
+  additionalEnv: {}  # simple key-value map; use extraEnv for valueFrom support
+  # Extra envs with valueFrom support (e.g., secretKeyRef, configMapKeyRef)
+  extraEnv: []
+  # extraEnv examples:
+  # - name: FEATURE_X_ENABLED
+  #   value: "true"
+  # - name: CUSTOM_SECRET
+  #   valueFrom:
+  #     secretKeyRef:
+  #       name: my-secret
+  #       key: custom
+
 # PostgreSQL
 db:
   enabled: true
@@ -114,7 +173,7 @@ db:
     appPassword: ""  # random if empty
     image:
       repository: twentycrm/twenty-postgres-spilo
-      tag: 3.3-p2
+      tag: v0.43.5
     resources:
       requests:
         cpu: 250m
@@ -174,3 +233,6 @@ redis:
   external:
     host: ""
     port: 6379
+    password: ""
+    secretName: ""
+    passwordKey: ""

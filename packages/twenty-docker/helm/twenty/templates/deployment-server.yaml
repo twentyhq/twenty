@@ -83,16 +83,16 @@ spec:
               psql -h {{ include "twenty.fullname" . }}-db -p 5432 -U postgres -d postgres -v db="${DBNAME}" -Atc "SELECT 1 FROM pg_database WHERE datname = :'db'" | grep -q 1 || \
               psql -h {{ include "twenty.fullname" . }}-db -p 5432 -U postgres -d postgres -v db="${DBNAME}" -c 'CREATE DATABASE :"db";'
               echo "Creating app user ${APP_USER} if it doesn't exist..."
-                psql -h {{ include "twenty.fullname" . }}-db -p 5432 -U postgres -d postgres -v app_user="${APP_USER}" -v app_password="${APP_PASSWORD}" <<'EOSQL'
-  DO
-  $do$
-  BEGIN
-    IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = :'app_user') THEN
-      EXECUTE format('CREATE USER %I WITH PASSWORD %L', :'app_user', :'app_password');
-    END IF;
-  END
-  $do$;
-  EOSQL
+              psql -h {{ include "twenty.fullname" . }}-db -p 5432 -U postgres -d postgres -v app_user="${APP_USER}" -v app_password="${APP_PASSWORD}" <<'EOSQL'
+              DO
+              $do$
+              BEGIN
+                IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = :'app_user') THEN
+                  EXECUTE format('CREATE USER %I WITH PASSWORD %L', :'app_user', :'app_password');
+                END IF;
+              END
+              $do$;
+              EOSQL
               echo "Creating core schema and granting permissions..."
               psql -h {{ include "twenty.fullname" . }}-db -p 5432 -U postgres -d "${DBNAME}" -v app_user="${APP_USER}" -c 'CREATE SCHEMA IF NOT EXISTS core'
               psql -h {{ include "twenty.fullname" . }}-db -p 5432 -U postgres -d "${DBNAME}" -v db="${DBNAME}" -v app_user="${APP_USER}" -c 'GRANT ALL PRIVILEGES ON DATABASE :"db" TO :"app_user";'
@@ -113,9 +113,35 @@ spec:
           command:
             - sh
             - -c
-            - >-
-              npx -y typeorm migration:run -d dist/database/typeorm/core/core.datasource
+            - |
+              set -e
+
+              if [ "${DISABLE_DB_MIGRATIONS}" = "true" ]; then
+                  echo "Database setup and migrations are disabled, skipping..."
+                  exit 0
+              fi
+
+              echo "Running database setup and migrations..."
+
+              # Run initial setup only on empty database
+              has_schema=$(psql -tAc "SELECT EXISTS (SELECT 1 FROM information_schema.schemata WHERE schema_name = 'core')" "${PG_DATABASE_URL}")
+              if [ "$has_schema" = "f" ]; then
+                  echo "Database appears to be empty, running initial setup."
+                  NODE_OPTIONS="--max-old-space-size=1500" tsx ./scripts/setup-db.ts
+              fi
+
+              # Always run migrations to apply any pending changes
+              echo "Running database migrations..."
+              yarn database:migrate:prod
+
+              yarn command:prod cache:flush
+              yarn command:prod upgrade
+              yarn command:prod cache:flush
+
+              echo "Successfully migrated DB!"
           env:
+            - name: DISABLE_DB_MIGRATIONS
+              value: {{ .Values.server.disableDbMigrations | quote }}
             {{- if eq (include "twenty.db.useExternalSecret" .) "true" }}
             - name: DB_PASSWORD
               valueFrom:
@@ -131,12 +157,27 @@ spec:
                   name: {{ include "twenty.dbUrl.secretName" . }}
                   key: url
             {{- end }}
+            {{- if eq (include "twenty.redis.useExternalSecret" .) "true" }}
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.redis.external.secretName }}
+                  key: {{ .Values.redis.external.passwordKey }}
+            {{- else if .Values.redis.external.password }}
+            - name: REDIS_PASSWORD
+              value: {{ .Values.redis.external.password | quote }}
+            {{- end }}
+            - name: REDIS_URL
+              value: {{ include "twenty.redisUrl" . | quote }}
       containers:
         - name: server
           {{- $img := include "twenty.server.image" . }}
           image: {{ include "twenty.image.repository" $img }}:{{ include "twenty.image.tag" $img }}
           imagePullPolicy: {{ include "twenty.image.pullPolicy" $img }}
           env:
+            # run migrations in a separate init container, so we can disable them in production if needed and avoid running them on every restart
+            - name: DISABLE_DB_MIGRATIONS
+              value: "true"
             - name: SERVER_URL
               value: {{ include "twenty.serverUrl" . | quote }}
             {{- if eq (include "twenty.db.useExternalSecret" .) "true" }}
@@ -154,6 +195,16 @@ spec:
                   name: {{ include "twenty.dbUrl.secretName" . }}
                   key: url
             {{- end }}
+            {{- if eq (include "twenty.redis.useExternalSecret" .) "true" }}
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.redis.external.secretName }}
+                  key: {{ .Values.redis.external.passwordKey }}
+            {{- else if .Values.redis.external.password }}
+            - name: REDIS_PASSWORD
+              value: {{ .Values.redis.external.password | quote }}
+            {{- end }}
             - name: REDIS_URL
               value: {{ include "twenty.redisUrl" . | quote }}
             - name: SIGN_IN_PREFILLED
@@ -169,10 +220,33 @@ spec:
                 secretKeyRef:
                   name: {{ include "twenty.secret.tokens.name" . }}
                   key: accessToken
+            {{- /* Render any additional server.env keys not already mapped above */}}
+            {{- $reserved := list "SERVER_URL" "PG_DATABASE_URL" "REDIS_URL" "REDIS_PASSWORD" "DISABLE_DB_MIGRATIONS" "SIGN_IN_PREFILLED" "STORAGE_TYPE" "ACCESS_TOKEN_EXPIRES_IN" "LOGIN_TOKEN_EXPIRES_IN" "APP_SECRET" -}}
+            {{- range $k, $v := .Values.server.env }}
+            {{- if not (has $k $reserved) }}
+            - name: {{ $k }}
+              value: {{ $v | quote }}
+            {{- end }}
+            {{- end }}
+            {{- /* Optional extraEnv array for custom builds */}}
+            {{- range .Values.server.extraEnv }}
+            - name: {{ .name }}
+              {{- if .valueFrom }}
+              valueFrom:
+{{ toYaml .valueFrom | nindent 16 }}
+              {{- else }}
+              value: {{ .value | quote }}
+              {{- end }}
+            {{- end }}
             {{- $storageEnv := (include "twenty.storageEnv" .) }}
             {{- if $storageEnv }}
-            {{ $storageEnv | nindent 12 }}
+            {{- $storageEnv | nindent 12 }}
             {{- end }}
+            {{- range $key, $value := .Values.server.additionalEnv }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+            {{- end }}
+
           ports:
             - name: http-tcp
               containerPort: {{ include "twenty.server.containerPort" . }}
@@ -194,23 +268,23 @@ spec:
             timeoutSeconds: 5
             failureThreshold: 5
           resources:
-            {{- toYaml .Values.server.resources | nindent 12 }}
+                {{- toYaml .Values.server.resources | nindent 12 }}
           volumeMounts:
-            {{- if .Values.server.dockerDataPersistence.enabled }}
+                {{- if .Values.server.dockerDataPersistence.enabled }}
             - name: docker-data
               mountPath: /app/docker-data
-            {{- end }}
-            {{- if .Values.server.persistence.enabled }}
+                {{- end }}
+                {{- if .Values.server.persistence.enabled }}
             - name: server-data
               mountPath: /app/packages/twenty-server/.local-storage
-            {{- end }}
-            {{- with .Values.server.extraVolumeMounts }}
-            {{- toYaml . | nindent 12 }}
-            {{- end }}
-          {{- if .Values.server.stdin }}
+                {{- end }}
+                {{- with .Values.server.extraVolumeMounts }}
+                {{- toYaml . | nindent 12 }}
+                {{- end }}
+              {{- if .Values.server.stdin }}
           stdin: {{ .Values.server.stdin }}
-          {{- end }}
-          {{- if .Values.server.tty }}
+              {{- end }}
+              {{- if .Values.server.tty }}
           tty: {{ .Values.server.tty }}
-          {{- end }}
+              {{- end }}
 {{- end }}
