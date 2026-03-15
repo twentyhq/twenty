@@ -61,7 +61,7 @@ export interface ApplicationRegistration {
     __typename: 'ApplicationRegistration'
 }
 
-export type ApplicationRegistrationSourceType = 'NPM' | 'TARBALL' | 'LOCAL'
+export type ApplicationRegistrationSourceType = 'NPM' | 'TARBALL' | 'LOCAL' | 'OAUTH_ONLY'
 
 export interface TwoFactorAuthenticationMethodSummary {
     twoFactorAuthenticationMethodId: Scalars['UUID']
@@ -8286,7 +8286,8 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
 export const enumApplicationRegistrationSourceType = {
    NPM: 'NPM' as const,
    TARBALL: 'TARBALL' as const,
-   LOCAL: 'LOCAL' as const
+   LOCAL: 'LOCAL' as const,
+   OAUTH_ONLY: 'OAUTH_ONLY' as const
 }
 
 export const enumRowLevelPermissionPredicateGroupLogicalOperator = {

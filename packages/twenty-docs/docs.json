@@ -6303,6 +6303,10 @@
       "destination": "/developers/extend/apps/getting-started"
     },
     {
+      "source": "/developers/extend/mcp",
+      "destination": "/user-guide/ai/capabilities/mcp"
+    },
+    {
       "source": "/developers/local-setup",
       "destination": "/developers/contribute/capabilities/local-setup"
     },
