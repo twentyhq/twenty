@@ -56,10 +56,6 @@ export class ImapSmtpCaldavService {
         `IMAP connection successful. Found ${mailboxes.length} mailboxes.`,
       );
 
-      if (client.authenticated) {
-        await client.logout();
-      }
-
       return true;
     } catch (error) {
       this.logger.error(
@@ -88,6 +84,10 @@ export class ImapSmtpCaldavService {
       throw new UserInputError(`IMAP connection failed: ${error.message}`, {
         userFriendlyMessage: msg`We encountered an issue connecting to your email account. Please check your settings and try again.`,
       });
+    } finally {
+      if (client.authenticated) {
+        await client.logout();
+      }
     }
   }
 
@@ -130,16 +130,16 @@ export class ImapSmtpCaldavService {
     handle: string,
     params: ConnectionParameters,
   ): Promise<boolean> {
-    const validatedUrl = await this.secureHttpClientService.getValidatedUrl(
-      params.host,
-    );
-    const client = new CalDAVClient({
-      serverUrl: validatedUrl,
-      username: params.username ?? handle,
-      password: params.password,
-    });
-
     try {
+      const validatedUrl = await this.secureHttpClientService.getValidatedUrl(
+        params.host,
+      );
+      const client = new CalDAVClient({
+        serverUrl: validatedUrl,
+        username: params.username ?? handle,
+        password: params.password,
+      });
+
       await client.listCalendars();
       await client.validateSyncCollectionSupport();
     } catch (error) {
