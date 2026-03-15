@@ -118,16 +118,23 @@ export class ImapGetMessageListService {
 
       const mailboxState = extractMailboxState(mailbox);
 
-      const { messageUids } = await this.imapSyncService.syncFolder(
-        client,
-        folderPath,
-        previousCursor,
-        mailboxState,
-      );
+      const { messageUids, isResetRequired } =
+        await this.imapSyncService.syncFolder(
+          client,
+          folderPath,
+          previousCursor,
+          mailboxState,
+        );
+
+      if (isResetRequired) {
+        this.logger.log(
+          `Full resync triggered for folder ${folder.name} due to UIDVALIDITY change`,
+        );
+      }
 
       const nextCursor = createSyncCursor(
         messageUids,
-        previousCursor,
+        isResetRequired ? null : previousCursor,
         mailboxState,
       );
 
@@ -137,7 +144,7 @@ export class ImapGetMessageListService {
 
       return {
         messageExternalIds,
-        messageExternalIdsToDelete: [],
+        messageExternalIdsToDelete: isResetRequired ? [`${folderPath}:*`] : [],
         nextSyncCursor: JSON.stringify(nextCursor),
         previousSyncCursor: folder.syncCursor,
         folderId: folder.id,

@@ -1,3 +1,4 @@
+import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { Injectable, Logger } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
@@ -20,6 +21,7 @@ export class ImapSmtpCaldavService {
   private readonly logger = new Logger(ImapSmtpCaldavService.name);
 
   constructor(
+    private readonly secureHttpClientService: SecureHttpClientService,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
   ) {}
 
@@ -27,21 +29,30 @@ export class ImapSmtpCaldavService {
     handle: string,
     params: ConnectionParameters,
   ): Promise<boolean> {
-    const client = new ImapFlow({
-      host: params.host,
-      port: params.port,
-      secure: params.secure ?? true,
-      auth: {
-        user: params.username ?? handle,
-        pass: params.password,
-      },
-      logger: false,
-      tls: {
-        rejectUnauthorized: false,
-      },
-    });
+    let client: ImapFlow | null = null;
 
     try {
+      const validatedHost = await this.secureHttpClientService.getValidatedHost(
+        params.host,
+      );
+
+      const tlsOptions: any = {
+        rejectUnauthorized: false,
+        servername: params.host,
+      };
+
+      client = new ImapFlow({
+        host: validatedHost,
+        port: params.port,
+        secure: params.secure ?? true,
+        auth: {
+          user: params.username ?? handle,
+          pass: params.password,
+        },
+        logger: false,
+        tls: tlsOptions,
+      });
+
       await client.connect();
 
       const mailboxes = await client.list();
@@ -79,8 +90,10 @@ export class ImapSmtpCaldavService {
         userFriendlyMessage: msg`We encountered an issue connecting to your email account. Please check your settings and try again.`,
       });
     } finally {
-      if (client.authenticated) {
-        await client.logout();
+      if (client?.authenticated) {
+        client.logout().catch((err) => {
+          this.logger.warn(`IMAP logout failed: ${err.message}`);
+        });
       }
     }
   }
@@ -89,19 +102,25 @@ export class ImapSmtpCaldavService {
     handle: string,
     params: ConnectionParameters,
   ): Promise<boolean> {
-    const transport = createTransport({
-      host: params.host,
-      port: params.port,
-      auth: {
-        user: params.username ?? handle,
-        pass: params.password,
-      },
-      tls: {
-        rejectUnauthorized: false,
-      },
-    });
-
     try {
+      const validatedHost = await this.secureHttpClientService.getValidatedHost(
+        params.host,
+      );
+      const tlsOptions: any = {
+        rejectUnauthorized: false,
+        servername: params.host,
+      };
+
+      const transport = createTransport({
+        host: validatedHost,
+        port: params.port,
+        auth: {
+          user: params.username ?? handle,
+          pass: params.password,
+        },
+        tls: tlsOptions,
+      });
+
       await transport.verify();
     } catch (error) {
       this.logger.error(
@@ -120,13 +139,16 @@ export class ImapSmtpCaldavService {
     handle: string,
     params: ConnectionParameters,
   ): Promise<boolean> {
-    const client = new CalDAVClient({
-      serverUrl: params.host,
-      username: params.username ?? handle,
-      password: params.password,
-    });
-
     try {
+      const validatedUrl = await this.secureHttpClientService.getValidatedUrl(
+        params.host,
+      );
+      const client = new CalDAVClient({
+        serverUrl: validatedUrl,
+        username: params.username ?? handle,
+        password: params.password,
+      });
+
       await client.listCalendars();
       await client.validateSyncCollectionSupport();
     } catch (error) {

@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
 
 import { ImapFlow } from 'imapflow';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
@@ -15,12 +15,21 @@ type ConnectedAccountIdentifier = Pick<
   'id' | 'provider' | 'connectionParameters' | 'handle'
 >;
 
+type CachedConnection = {
+  client: ImapFlow;
+  parametersHash: string;
+};
+
 @Injectable()
-export class ImapClientProvider {
+export class ImapClientProvider implements OnModuleDestroy {
   private readonly logger = new Logger(ImapClientProvider.name);
 
   private static readonly CONNECTION_TIMEOUT_MS = 30000;
   private static readonly GREETING_TIMEOUT_MS = 16000;
+  private static readonly MAX_CACHE_SIZE = 100;
+
+  private readonly connectionCache = new Map<string, CachedConnection>();
+  private readonly pendingConnections = new Map<string, Promise<ImapFlow>>();
 
   constructor(
     private readonly secureHttpClientService: SecureHttpClientService,
@@ -29,9 +38,114 @@ export class ImapClientProvider {
   async getClient(
     connectedAccount: ConnectedAccountIdentifier,
   ): Promise<ImapFlow> {
+    const parametersHash = JSON.stringify({
+      params: connectedAccount.connectionParameters,
+      handle: connectedAccount.handle,
+    });
+    const cached = this.connectionCache.get(connectedAccount.id);
+
+    if (
+      cached &&
+      cached.client.authenticated &&
+      cached.parametersHash === parametersHash
+    ) {
+      try {
+        // Health check: NOOP ensures the connection is still alive and responsive
+        // We use a short timeout for the health check to avoid hanging
+        await Promise.race([
+          cached.client.noop(),
+          new Promise((_, reject) =>
+            setTimeout(() => reject(new Error('Health check timeout')), 5000),
+          ),
+        ]);
+
+        this.logger.debug(
+          `Reusing cached IMAP connection for ${connectedAccount.handle}`,
+        );
+
+        return cached.client;
+      } catch (error) {
+        this.logger.warn(
+          `Cached IMAP connection for ${connectedAccount.handle} is dead or stale, evicting from cache: ${error.message}`,
+        );
+
+        this.connectionCache.delete(connectedAccount.id);
+
+        try {
+          await cached.client.logout();
+        } catch {
+          // Ignore logout errors for a dead connection
+        }
+      }
+    }
+
+    // If parameters changed, close the old connection even if it was authenticated
+    if (cached && cached.parametersHash !== parametersHash) {
+      this.logger.log(
+        `IMAP parameters changed for ${connectedAccount.handle}, closing old connection`,
+      );
+      this.connectionCache.delete(connectedAccount.id);
+      try {
+        await cached.client.logout();
+      } catch {
+        // Ignore
+      }
+    }
+
+    // Check if there's already a connection attempt in progress for this account with the SAME parameters
+    const pendingKey = `${connectedAccount.id}:${parametersHash}`;
+    const pending = this.pendingConnections.get(pendingKey);
+    if (pending) {
+      this.logger.debug(
+        `Waiting for existing IMAP connection attempt for ${connectedAccount.handle}`,
+      );
+      try {
+        return await pending;
+      } catch (error) {
+        if (error instanceof CustomError) {
+          throw error;
+        }
+        throw parseImapAuthenticationError(error);
+      }
+    }
+
+    const connectionPromise = (async () => {
+      try {
+        const client = await this.createConnection(connectedAccount);
+
+        // Implement simple LRU-like eviction if cache is full
+        if (this.connectionCache.size >= ImapClientProvider.MAX_CACHE_SIZE) {
+          const oldestId = this.connectionCache.keys().next().value;
+          const oldestConnection = this.connectionCache.get(oldestId);
+          if (oldestConnection) {
+            this.logger.log(
+              `Cache full, evicting oldest connection: ${oldestId}`,
+            );
+            this.connectionCache.delete(oldestId);
+            oldestConnection.client.logout().catch(() => {});
+          }
+        }
+
+        this.connectionCache.set(connectedAccount.id, {
+          client,
+          parametersHash,
+        });
+
+        return client;
+      } finally {
+        this.pendingConnections.delete(pendingKey);
+      }
+    })();
+
+    this.pendingConnections.set(pendingKey, connectionPromise);
+
     try {
-      return await this.createConnection(connectedAccount);
+      return await connectionPromise;
     } catch (error) {
+      if (error instanceof CustomError) {
+        throw error;
+      }
+
       this.logger.error(
         `Failed to establish IMAP connection for ${connectedAccount.handle}: ${error.message}`,
         error.stack,
@@ -41,13 +155,10 @@ export class ImapClientProvider {
     }
   }
 
-  async closeClient(client: ImapFlow): Promise<void> {
-    try {
-      await client.logout();
-      this.logger.log('Closed IMAP client');
-    } catch (error) {
-      this.logger.error(`Error closing IMAP client: ${error.message}`);
-    }
+  async closeClient(_client: ImapFlow): Promise<void> {
+    // We keep the client open in the cache for reuse.
+    // Logout will happen when the process terminates, connection is lost, or parameters change.
+    this.logger.debug('Keeping IMAP client open in cache');
   }
 
   private async createConnection(
@@ -71,10 +182,22 @@ export class ImapClientProvider {
       );
     }
 
-    const validatedImapHost =
-      await this.secureHttpClientService.getValidatedHost(
+    let validatedImapHost: string;
+    try {
+      validatedImapHost = await this.secureHttpClientService.getValidatedHost(
         connectionParameters.IMAP?.host || '',
       );
+    } catch (error) {
+      throw new CustomError(
+        `Invalid IMAP host: ${error.message}`,
+        MessageImportDriverExceptionCode.CHANNEL_MISCONFIGURED,
+      );
+    }
+
+    const tlsOptions: any = {
+      rejectUnauthorized: false,
+      servername: connectionParameters.IMAP?.host,
+    };
 
     const client = new ImapFlow({
       host: validatedImapHost,
@@ -87,9 +210,7 @@ export class ImapClientProvider {
         pass: connectionParameters.IMAP?.password || '',
       },
       logger: false,
-      tls: {
-        rejectUnauthorized: false,
-      },
+      tls: tlsOptions,
       connectionTimeout: ImapClientProvider.CONNECTION_TIMEOUT_MS,
       greetingTimeout: ImapClientProvider.GREETING_TIMEOUT_MS,
     });
@@ -111,5 +232,20 @@ export class ImapClientProvider {
 
       throw error;
     }
+  }
+
+  async onModuleDestroy() {
+    this.logger.log('Closing all cached IMAP connections...');
+    for (const [id, cached] of this.connectionCache) {
+      try {
+        await cached.client.logout();
+        this.logger.debug(`Closed IMAP connection for ${id}`);
+      } catch (error) {
+        this.logger.error(
+          `Error closing IMAP connection ${id}: ${error.message}`,
+        );
+      }
+    }
+    this.connectionCache.clear();
   }
 }
