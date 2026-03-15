@@ -175,6 +175,9 @@ spec:
           image: {{ include "twenty.image.repository" $img }}:{{ include "twenty.image.tag" $img }}
           imagePullPolicy: {{ include "twenty.image.pullPolicy" $img }}
           env:
+            # run migrations in a separate init container, so we can disable them in production if needed and avoid running them on every restart
+            - name: DISABLE_DB_MIGRATIONS
+              value: "true"
             - name: SERVER_URL
               value: {{ include "twenty.serverUrl" . | quote }}
             {{- if eq (include "twenty.db.useExternalSecret" .) "true" }}
