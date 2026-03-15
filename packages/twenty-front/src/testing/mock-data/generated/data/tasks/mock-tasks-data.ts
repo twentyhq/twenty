@@ -11,14 +11,14 @@ export const mockedTaskRecords: ObjectRecord[] =
     "__typename": "Task",
     "assignee": {
       "__typename": "WorkspaceMember",
-      "id": "20202020-1553-45c6-a028-5a9064cce07f",
+      "id": "20202020-0687-4c41-b707-ed1bfca972a7",
       "name": {
         "__typename": "FullName",
-        "firstName": "Phil",
-        "lastName": "Schiler"
+        "firstName": "Tim",
+        "lastName": "Apple"
       }
     },
-    "assigneeId": "20202020-1553-45c6-a028-5a9064cce07f",
+    "assigneeId": "20202020-0687-4c41-b707-ed1bfca972a7",
     "attachments": {
       "__typename": "AttachmentConnection",
       "edges": [
@@ -37,7 +37,7 @@ export const mockedTaskRecords: ObjectRecord[] =
       "blocknote": "[{\"id\":\"block-1\",\"type\":\"paragraph\",\"props\":{\"textColor\":\"default\",\"backgroundColor\":\"default\",\"textAlignment\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"Arrange a follow-up call to discuss project details and next steps.\",\"styles\":{}}],\"children\":[]}]",
       "markdown": "Arrange a follow-up call to discuss project details and next steps."
     },
-    "createdAt": "2026-03-14T18:16:54.207Z",
+    "createdAt": "2026-03-15T19:26:23.267Z",
     "createdBy": {
       "__typename": "Actor",
       "source": "MANUAL",
@@ -46,7 +46,7 @@ export const mockedTaskRecords: ObjectRecord[] =
       "context": null
     },
     "deletedAt": null,
-    "dueAt": "2026-03-17T18:16:49.949Z",
+    "dueAt": "2026-03-18T19:26:16.845Z",
     "favorites": {
       "__typename": "FavoriteConnection",
       "edges": []
@@ -93,7 +93,7 @@ export const mockedTaskRecords: ObjectRecord[] =
       ]
     },
     "title": "Schedule follow-up call",
-    "updatedAt": "2026-03-14T18:16:54.207Z",
+    "updatedAt": "2026-03-15T19:26:23.267Z",
     "updatedBy": {
       "__typename": "Actor",
       "source": "MANUAL",
@@ -106,14 +106,14 @@ export const mockedTaskRecords: ObjectRecord[] =
     "__typename": "Task",
     "assignee": {
       "__typename": "WorkspaceMember",
-      "id": "20202020-77d5-4cb6-b60a-f4a835a85d61",
+      "id": "20202020-1553-45c6-a028-5a9064cce07f",
       "name": {
         "__typename": "FullName",
-        "firstName": "Jony",
-        "lastName": "Ive"
+        "firstName": "Phil",
+        "lastName": "Schiler"
       }
     },
-    "assigneeId": "20202020-77d5-4cb6-b60a-f4a835a85d61",
+    "assigneeId": "20202020-1553-45c6-a028-5a9064cce07f",
     "attachments": {
       "__typename": "AttachmentConnection",
       "edges": [
@@ -132,7 +132,7 @@ export const mockedTaskRecords: ObjectRecord[] =
       "blocknote": "[{\"id\":\"block-2\",\"type\":\"paragraph\",\"props\":{\"textColor\":\"default\",\"backgroundColor\":\"default\",\"textAlignment\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"Prepare and send the project proposal document with timeline and deliverables.\",\"styles\":{}}],\"children\":[]}]",
       "markdown": "Prepare and send the project proposal document with timeline and deliverables."
     },
-    "createdAt": "2026-03-14T18:16:54.207Z",
+    "createdAt": "2026-03-15T19:26:23.267Z",
     "createdBy": {
       "__typename": "Actor",
       "source": "MANUAL",
@@ -141,7 +141,7 @@ export const mockedTaskRecords: ObjectRecord[] =
       "context": null
     },
     "deletedAt": null,
-    "dueAt": "2026-03-19T18:16:49.949Z",
+    "dueAt": "2026-03-20T19:26:16.845Z",
     "favorites": {
       "__typename": "FavoriteConnection",
       "edges": []
@@ -188,7 +188,7 @@ export const mockedTaskRecords: ObjectRecord[] =
       ]
     },
     "title": "Send project proposal",
-    "updatedAt": "2026-03-14T18:16:54.207Z",
+    "updatedAt": "2026-03-15T19:26:23.267Z",
     "updatedBy": {
       "__typename": "Actor",
       "source": "MANUAL",
@@ -201,14 +201,14 @@ export const mockedTaskRecords: ObjectRecord[] =
     "__typename": "Task",
     "assignee": {
       "__typename": "WorkspaceMember",
-      "id": "20202020-1553-45c6-a028-5a9064cce07f",
+      "id": "20202020-0687-4c41-b707-ed1bfca972a7",
       "name": {
         "__typename": "FullName",
-        "firstName": "Phil",
-        "lastName": "Schiler"
+        "firstName": "Tim",
+        "lastName": "Apple"
       }
     },
-    "assigneeId": "20202020-1553-45c6-a028-5a9064cce07f",
+    "assigneeId": "20202020-0687-4c41-b707-ed1bfca972a7",
     "attachments": {
       "__typename": "AttachmentConnection",
       "edges": [
@@ -227,7 +227,7 @@ export const mockedTaskRecords: ObjectRecord[] =
       "blocknote": "[{\"id\":\"block-3\",\"type\":\"paragraph\",\"props\":{\"textColor\":\"default\",\"backgroundColor\":\"default\",\"textAlignment\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"Review the contract terms and conditions before final approval.\",\"styles\":{}}],\"children\":[]}]",
       "markdown": "Review the contract terms and conditions before final approval."
     },
-    "createdAt": "2026-03-14T18:16:54.207Z",
+    "createdAt": "2026-03-15T19:26:23.267Z",
     "createdBy": {
       "__typename": "Actor",
       "source": "MANUAL",
@@ -236,7 +236,7 @@ export const mockedTaskRecords: ObjectRecord[] =
       "context": null
     },
     "deletedAt": null,
-    "dueAt": "2026-03-21T18:16:49.949Z",
+    "dueAt": "2026-03-22T19:26:16.845Z",
     "favorites": {
       "__typename": "FavoriteConnection",
       "edges": []
@@ -283,7 +283,7 @@ export const mockedTaskRecords: ObjectRecord[] =
       ]
     },
     "title": "Review contract terms",
-    "updatedAt": "2026-03-14T18:16:54.207Z",
+    "updatedAt": "2026-03-15T19:26:23.267Z",
     "updatedBy": {
       "__typename": "Actor",
       "source": "MANUAL",
@@ -322,7 +322,7 @@ export const mockedTaskRecords: ObjectRecord[] =
       "blocknote": "[{\"id\":\"block-4\",\"type\":\"paragraph\",\"props\":{\"textColor\":\"default\",\"backgroundColor\":\"default\",\"textAlignment\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"Create detailed agenda for upcoming strategy meeting.\",\"styles\":{}}],\"children\":[]}]",
       "markdown": "Create detailed agenda for upcoming strategy meeting."
     },
-    "createdAt": "2026-03-14T18:16:54.207Z",
+    "createdAt": "2026-03-15T19:26:23.267Z",
     "createdBy": {
       "__typename": "Actor",
       "source": "MANUAL",
@@ -331,7 +331,7 @@ export const mockedTaskRecords: ObjectRecord[] =
       "context": null
     },
     "deletedAt": null,
-    "dueAt": "2026-03-16T18:16:49.949Z",
+    "dueAt": "2026-03-17T19:26:16.845Z",
     "favorites": {
       "__typename": "FavoriteConnection",
       "edges": []
@@ -378,7 +378,7 @@ export const mockedTaskRecords: ObjectRecord[] =
       ]
     },
     "title": "Prepare meeting agenda",
-    "updatedAt": "2026-03-14T18:16:54.207Z",
+    "updatedAt": "2026-03-15T19:26:23.267Z",
     "updatedBy": {
       "__typename": "Actor",
       "source": "MANUAL",
@@ -391,14 +391,14 @@ export const mockedTaskRecords: ObjectRecord[] =
     "__typename": "Task",
     "assignee": {
       "__typename": "WorkspaceMember",
-      "id": "20202020-0687-4c41-b707-ed1bfca972a7",
+      "id": "20202020-1553-45c6-a028-5a9064cce07f",
       "name": {
         "__typename": "FullName",
-        "firstName": "Tim",
-        "lastName": "Apple"
+        "firstName": "Phil",
+        "lastName": "Schiler"
       }
     },
-    "assigneeId": "20202020-0687-4c41-b707-ed1bfca972a7",
+    "assigneeId": "20202020-1553-45c6-a028-5a9064cce07f",
     "attachments": {
       "__typename": "AttachmentConnection",
       "edges": [
@@ -417,7 +417,7 @@ export const mockedTaskRecords: ObjectRecord[] =
       "blocknote": "[{\"id\":\"block-5\",\"type\":\"paragraph\",\"props\":{\"textColor\":\"default\",\"backgroundColor\":\"default\",\"textAlignment\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"Verify and update contact details in the system.\",\"styles\":{}}],\"children\":[]}]",
       "markdown": "Verify and update contact details in the system."
     },
-    "createdAt": "2026-03-14T18:16:54.207Z",
+    "createdAt": "2026-03-15T19:26:23.267Z",
     "createdBy": {
       "__typename": "Actor",
       "source": "MANUAL",
@@ -473,7 +473,7 @@ export const mockedTaskRecords: ObjectRecord[] =
       ]
     },
     "title": "Update contact information",
-    "updatedAt": "2026-03-14T18:16:54.207Z",
+    "updatedAt": "2026-03-15T19:26:23.267Z",
     "updatedBy": {
       "__typename": "Actor",
       "source": "MANUAL",
@@ -486,14 +486,14 @@ export const mockedTaskRecords: ObjectRecord[] =
     "__typename": "Task",
     "assignee": {
       "__typename": "WorkspaceMember",
-      "id": "20202020-77d5-4cb6-b60a-f4a835a85d61",
+      "id": "20202020-0687-4c41-b707-ed1bfca972a7",
       "name": {
         "__typename": "FullName",
-        "firstName": "Jony",
-        "lastName": "Ive"
+        "firstName": "Tim",
+        "lastName": "Apple"
       }
     },
-    "assigneeId": "20202020-77d5-4cb6-b60a-f4a835a85d61",
+    "assigneeId": "20202020-0687-4c41-b707-ed1bfca972a7",
     "attachments": {
       "__typename": "AttachmentConnection",
       "edges": [
@@ -512,7 +512,7 @@ export const mockedTaskRecords: ObjectRecord[] =
       "blocknote": "[{\"id\":\"block-6\",\"type\":\"paragraph\",\"props\":{\"textColor\":\"default\",\"backgroundColor\":\"default\",\"textAlignment\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"Complete reference verification for background check process.\",\"styles\":{}}],\"children\":[]}]",
       "markdown": "Complete reference verification for background check process."
     },
-    "createdAt": "2026-03-14T18:16:54.207Z",
+    "createdAt": "2026-03-15T19:26:23.267Z",
     "createdBy": {
       "__typename": "Actor",
       "source": "MANUAL",
@@ -521,7 +521,7 @@ export const mockedTaskRecords: ObjectRecord[] =
       "context": null
     },
     "deletedAt": null,
-    "dueAt": "2026-03-18T18:16:49.949Z",
+    "dueAt": "2026-03-19T19:26:16.845Z",
     "favorites": {
       "__typename": "FavoriteConnection",
       "edges": []
@@ -568,7 +568,7 @@ export const mockedTaskRecords: ObjectRecord[] =
       ]
     },
     "title": "Conduct reference check",
-    "updatedAt": "2026-03-14T18:16:54.207Z",
+    "updatedAt": "2026-03-15T19:26:23.267Z",
     "updatedBy": {
       "__typename": "Actor",
       "source": "MANUAL",
@@ -607,7 +607,7 @@ export const mockedTaskRecords: ObjectRecord[] =
       "blocknote": "[{\"id\":\"block-7\",\"type\":\"paragraph\",\"props\":{\"textColor\":\"default\",\"backgroundColor\":\"default\",\"textAlignment\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"Send portfolio examples and case studies for review.\",\"styles\":{}}],\"children\":[]}]",
       "markdown": "Send portfolio examples and case studies for review."
     },
-    "createdAt": "2026-03-14T18:16:54.207Z",
+    "createdAt": "2026-03-15T19:26:23.267Z",
     "createdBy": {
       "__typename": "Actor",
       "source": "MANUAL",
@@ -616,7 +616,7 @@ export const mockedTaskRecords: ObjectRecord[] =
       "context": null
     },
     "deletedAt": null,
-    "dueAt": "2026-03-20T18:16:49.949Z",
+    "dueAt": "2026-03-21T19:26:16.845Z",
     "favorites": {
       "__typename": "FavoriteConnection",
       "edges": []
@@ -663,7 +663,7 @@ export const mockedTaskRecords: ObjectRecord[] =
       ]
     },
     "title": "Share portfolio samples",
-    "updatedAt": "2026-03-14T18:16:54.207Z",
+    "updatedAt": "2026-03-15T19:26:23.267Z",
     "updatedBy": {
       "__typename": "Actor",
       "source": "MANUAL",
@@ -702,7 +702,7 @@ export const mockedTaskRecords: ObjectRecord[] =
       "blocknote": "[{\"id\":\"block-8\",\"type\":\"paragraph\",\"props\":{\"textColor\":\"default\",\"backgroundColor\":\"default\",\"textAlignment\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"Prepare onboarding materials and schedule orientation session.\",\"styles\":{}}],\"children\":[]}]",
       "markdown": "Prepare onboarding materials and schedule orientation session."
     },
-    "createdAt": "2026-03-14T18:16:54.207Z",
+    "createdAt": "2026-03-15T19:26:23.267Z",
     "createdBy": {
       "__typename": "Actor",
       "source": "MANUAL",
@@ -711,7 +711,7 @@ export const mockedTaskRecords: ObjectRecord[] =
       "context": null
     },
     "deletedAt": null,
-    "dueAt": "2026-03-22T18:16:49.949Z",
+    "dueAt": "2026-03-23T19:26:16.845Z",
     "favorites": {
       "__typename": "FavoriteConnection",
       "edges": []
@@ -758,7 +758,7 @@ export const mockedTaskRecords: ObjectRecord[] =
       ]
     },
     "title": "Set up onboarding process",
-    "updatedAt": "2026-03-14T18:16:54.207Z",
+    "updatedAt": "2026-03-15T19:26:23.267Z",
     "updatedBy": {
       "__typename": "Actor",
       "source": "MANUAL",
@@ -797,7 +797,7 @@ export const mockedTaskRecords: ObjectRecord[] =
       "blocknote": "[{\"id\":\"block-9\",\"type\":\"paragraph\",\"props\":{\"textColor\":\"default\",\"backgroundColor\":\"default\",\"textAlignment\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"Arrange a follow-up call to discuss project details and next steps.\",\"styles\":{}}],\"children\":[]}]",
       "markdown": "Arrange a follow-up call to discuss project details and next steps."
     },
-    "createdAt": "2026-03-14T18:16:54.207Z",
+    "createdAt": "2026-03-15T19:26:23.267Z",
     "createdBy": {
       "__typename": "Actor",
       "source": "MANUAL",
@@ -806,7 +806,7 @@ export const mockedTaskRecords: ObjectRecord[] =
       "context": null
     },
     "deletedAt": null,
-    "dueAt": "2026-03-17T18:16:49.950Z",
+    "dueAt": "2026-03-18T19:26:16.845Z",
     "favorites": {
       "__typename": "FavoriteConnection",
       "edges": []
@@ -853,7 +853,7 @@ export const mockedTaskRecords: ObjectRecord[] =
       ]
     },
     "title": "Schedule follow-up call",
-    "updatedAt": "2026-03-14T18:16:54.207Z",
+    "updatedAt": "2026-03-15T19:26:23.267Z",
     "updatedBy": {
       "__typename": "Actor",
       "source": "MANUAL",
@@ -866,14 +866,14 @@ export const mockedTaskRecords: ObjectRecord[] =
     "__typename": "Task",
     "assignee": {
       "__typename": "WorkspaceMember",
-      "id": "20202020-1553-45c6-a028-5a9064cce07f",
+      "id": "20202020-77d5-4cb6-b60a-f4a835a85d61",
       "name": {
         "__typename": "FullName",
-        "firstName": "Phil",
-        "lastName": "Schiler"
+        "firstName": "Jony",
+        "lastName": "Ive"
       }
     },
-    "assigneeId": "20202020-1553-45c6-a028-5a9064cce07f",
+    "assigneeId": "20202020-77d5-4cb6-b60a-f4a835a85d61",
     "attachments": {
       "__typename": "AttachmentConnection",
       "edges": [
@@ -892,7 +892,7 @@ export const mockedTaskRecords: ObjectRecord[] =
       "blocknote": "[{\"id\":\"block-10\",\"type\":\"paragraph\",\"props\":{\"textColor\":\"default\",\"backgroundColor\":\"default\",\"textAlignment\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"Prepare and send the project proposal document with timeline and deliverables.\",\"styles\":{}}],\"children\":[]}]",
       "markdown": "Prepare and send the project proposal document with timeline and deliverables."
     },
-    "createdAt": "2026-03-14T18:16:54.207Z",
+    "createdAt": "2026-03-15T19:26:23.267Z",
     "createdBy": {
       "__typename": "Actor",
       "source": "MANUAL",
@@ -901,7 +901,7 @@ export const mockedTaskRecords: ObjectRecord[] =
       "context": null
     },
     "deletedAt": null,
-    "dueAt": "2026-03-19T18:16:49.950Z",
+    "dueAt": "2026-03-20T19:26:16.845Z",
     "favorites": {
       "__typename": "FavoriteConnection",
       "edges": []
@@ -948,7 +948,7 @@ export const mockedTaskRecords: ObjectRecord[] =
       ]
     },
     "title": "Send project proposal",
-    "updatedAt": "2026-03-14T18:16:54.207Z",
+    "updatedAt": "2026-03-15T19:26:23.267Z",
     "updatedBy": {
       "__typename": "Actor",
       "source": "MANUAL",

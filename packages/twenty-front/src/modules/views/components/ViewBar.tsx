@@ -1,5 +1,4 @@
 import { type ReactNode } from 'react';
-import { useParams } from 'react-router-dom';
 
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { ObjectSortDropdownButton } from '@/object-record/object-sort-dropdown/components/ObjectSortDropdownButton';
@@ -27,67 +26,59 @@ type ViewBarProps = {
   viewBarId: string;
   className?: string;
   optionsDropdownButton: ReactNode;
+  isReadOnly?: boolean;
 };
 
 export const ViewBar = ({
   viewBarId,
   className,
   optionsDropdownButton,
+  isReadOnly = false,
 }: ViewBarProps) => {
-  const { objectNamePlural: objectNamePluralFromParams } = useParams();
-  const { objectNamePlural: objectNamePluralFromContext } =
-    useRecordIndexContextOrThrow();
-  const objectNamePlural =
-    objectNamePluralFromParams ?? objectNamePluralFromContext;
+  const { objectNamePlural } = useRecordIndexContextOrThrow();
 
   if (!objectNamePlural) {
     return;
   }
 
-  const hasRouteParams = !!objectNamePluralFromParams;
+  if (isReadOnly) {
+    return <TopBar className={className} leftComponent={<ViewPickerDropdown />} />;
+  }
 
   return (
     <ObjectSortDropdownComponentInstanceContext.Provider
       value={{ instanceId: VIEW_SORT_DROPDOWN_ID }}
     >
-      {hasRouteParams && (
-        <>
-          <ViewBarRecordFilterGroupEffect />
-          <ViewBarAnyFieldFilterEffect />
-          <ViewBarRecordFieldEffect />
-          <ViewBarRecordFilterEffect />
-          <ViewBarRecordSortEffect />
-          <QueryParamsFiltersEffect />
-          <QueryParamsSortsEffect />
-          <QueryParamsCleanupEffect />
-          <ViewBarPageTitle />
-        </>
-      )}
+      <ViewBarRecordFilterGroupEffect />
+      <ViewBarAnyFieldFilterEffect />
+      <ViewBarRecordFieldEffect />
+      <ViewBarRecordFilterEffect />
+      <ViewBarRecordSortEffect />
+      <QueryParamsFiltersEffect />
+      <QueryParamsSortsEffect />
+      <QueryParamsCleanupEffect />
+      <ViewBarPageTitle />
       <TopBar
         className={className}
         leftComponent={<ViewPickerDropdown />}
         rightComponent={
-          hasRouteParams ? (
-            <>
-              <ObjectFilterDropdownComponentInstanceContext.Provider
-                value={{ instanceId: ViewBarFilterDropdownIds.MAIN }}
-              >
-                <ViewBarFilterDropdown />
-              </ObjectFilterDropdownComponentInstanceContext.Provider>
-              <ObjectSortDropdownButton />
-              {optionsDropdownButton}
-            </>
-          ) : undefined
+          <>
+            <ObjectFilterDropdownComponentInstanceContext.Provider
+              value={{ instanceId: ViewBarFilterDropdownIds.MAIN }}
+            >
+              <ViewBarFilterDropdown />
+            </ObjectFilterDropdownComponentInstanceContext.Provider>
+            <ObjectSortDropdownButton />
+            {optionsDropdownButton}
+          </>
         }
         bottomComponent={
-          hasRouteParams ? (
-            <ViewBarDetails
-              hasFilterButton
-              viewBarId={viewBarId}
-              objectNamePlural={objectNamePlural}
-              rightComponent={<UpdateViewButtonGroup />}
-            />
-          ) : undefined
+          <ViewBarDetails
+            hasFilterButton
+            viewBarId={viewBarId}
+            objectNamePlural={objectNamePlural}
+            rightComponent={<UpdateViewButtonGroup />}
+          />
         }
       />
     </ObjectSortDropdownComponentInstanceContext.Provider>

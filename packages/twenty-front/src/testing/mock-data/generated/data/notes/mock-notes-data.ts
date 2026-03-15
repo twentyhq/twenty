@@ -27,7 +27,7 @@ export const mockedNoteRecords: ObjectRecord[] =
       "blocknote": "[{\"id\":\"block-1\",\"type\":\"paragraph\",\"props\":{\"textColor\":\"default\",\"backgroundColor\":\"default\",\"textAlignment\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"Great conversation today about potential collaboration opportunities. Next steps discussed include proposal review and timeline planning.\",\"styles\":{}}],\"children\":[]}]",
       "markdown": "Great conversation today about potential collaboration opportunities. Next steps discussed include proposal review and timeline planning."
     },
-    "createdAt": "2026-03-14T18:16:54.207Z",
+    "createdAt": "2026-03-15T19:26:23.267Z",
     "createdBy": {
       "__typename": "Actor",
       "source": "MANUAL",
@@ -81,7 +81,7 @@ export const mockedNoteRecords: ObjectRecord[] =
       ]
     },
     "title": "Meeting Follow-up",
-    "updatedAt": "2026-03-14T18:16:54.207Z",
+    "updatedAt": "2026-03-15T19:26:23.267Z",
     "updatedBy": {
       "__typename": "Actor",
       "source": "MANUAL",
@@ -110,7 +110,7 @@ export const mockedNoteRecords: ObjectRecord[] =
       "blocknote": "[{\"id\":\"block-2\",\"type\":\"paragraph\",\"props\":{\"textColor\":\"default\",\"backgroundColor\":\"default\",\"textAlignment\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"Reviewed current project status and identified key deliverables for the upcoming quarter. Timeline adjustments may be needed.\",\"styles\":{}}],\"children\":[]}]",
       "markdown": "Reviewed current project status and identified key deliverables for the upcoming quarter. Timeline adjustments may be needed."
     },
-    "createdAt": "2026-03-14T18:16:54.207Z",
+    "createdAt": "2026-03-15T19:26:23.267Z",
     "createdBy": {
       "__typename": "Actor",
       "source": "MANUAL",
@@ -164,7 +164,7 @@ export const mockedNoteRecords: ObjectRecord[] =
       ]
     },
     "title": "Project Update Discussion",
-    "updatedAt": "2026-03-14T18:16:54.207Z",
+    "updatedAt": "2026-03-15T19:26:23.267Z",
     "updatedBy": {
       "__typename": "Actor",
       "source": "MANUAL",
@@ -193,7 +193,7 @@ export const mockedNoteRecords: ObjectRecord[] =
       "blocknote": "[{\"id\":\"block-3\",\"type\":\"paragraph\",\"props\":{\"textColor\":\"default\",\"backgroundColor\":\"default\",\"textAlignment\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"Impressive background in technology and leadership. Strong potential for senior roles in upcoming projects.\",\"styles\":{}}],\"children\":[]}]",
       "markdown": "Impressive background in technology and leadership. Strong potential for senior roles in upcoming projects."
     },
-    "createdAt": "2026-03-14T18:16:54.207Z",
+    "createdAt": "2026-03-15T19:26:23.267Z",
     "createdBy": {
       "__typename": "Actor",
       "source": "MANUAL",
@@ -247,7 +247,7 @@ export const mockedNoteRecords: ObjectRecord[] =
       ]
     },
     "title": "Skills & Experience Review",
-    "updatedAt": "2026-03-14T18:16:54.207Z",
+    "updatedAt": "2026-03-15T19:26:23.267Z",
     "updatedBy": {
       "__typename": "Actor",
       "source": "MANUAL",
@@ -276,7 +276,7 @@ export const mockedNoteRecords: ObjectRecord[] =
       "blocknote": "[{\"id\":\"block-4\",\"type\":\"paragraph\",\"props\":{\"textColor\":\"default\",\"backgroundColor\":\"default\",\"textAlignment\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"Made connection at industry conference. Shared interests in digital transformation and innovation strategies.\",\"styles\":{}}],\"children\":[]}]",
       "markdown": "Made connection at industry conference. Shared interests in digital transformation and innovation strategies."
     },
-    "createdAt": "2026-03-14T18:16:54.207Z",
+    "createdAt": "2026-03-15T19:26:23.267Z",
     "createdBy": {
       "__typename": "Actor",
       "source": "MANUAL",
@@ -330,7 +330,7 @@ export const mockedNoteRecords: ObjectRecord[] =
       ]
     },
     "title": "Networking Connection",
-    "updatedAt": "2026-03-14T18:16:54.207Z",
+    "updatedAt": "2026-03-15T19:26:23.267Z",
     "updatedBy": {
       "__typename": "Actor",
       "source": "MANUAL",
@@ -359,7 +359,7 @@ export const mockedNoteRecords: ObjectRecord[] =
       "blocknote": "[{\"id\":\"block-5\",\"type\":\"paragraph\",\"props\":{\"textColor\":\"default\",\"backgroundColor\":\"default\",\"textAlignment\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"Strong candidate with relevant experience. Technical skills align well with team requirements. Positive cultural fit assessment.\",\"styles\":{}}],\"children\":[]}]",
       "markdown": "Strong candidate with relevant experience. Technical skills align well with team requirements. Positive cultural fit assessment."
     },
-    "createdAt": "2026-03-14T18:16:54.207Z",
+    "createdAt": "2026-03-15T19:26:23.267Z",
     "createdBy": {
       "__typename": "Actor",
       "source": "MANUAL",
@@ -413,7 +413,7 @@ export const mockedNoteRecords: ObjectRecord[] =
       ]
     },
     "title": "Interview Notes",
-    "updatedAt": "2026-03-14T18:16:54.207Z",
+    "updatedAt": "2026-03-15T19:26:23.267Z",
     "updatedBy": {
       "__typename": "Actor",
       "source": "MANUAL",
@@ -442,7 +442,7 @@ export const mockedNoteRecords: ObjectRecord[] =
       "blocknote": "[{\"id\":\"block-6\",\"type\":\"paragraph\",\"props\":{\"textColor\":\"default\",\"backgroundColor\":\"default\",\"textAlignment\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"Quarterly review completed. Exceeded targets in key areas. Discussed career development opportunities and growth plans.\",\"styles\":{}}],\"children\":[]}]",
       "markdown": "Quarterly review completed. Exceeded targets in key areas. Discussed career development opportunities and growth plans."
     },
-    "createdAt": "2026-03-14T18:16:54.207Z",
+    "createdAt": "2026-03-15T19:26:23.267Z",
     "createdBy": {
       "__typename": "Actor",
       "source": "MANUAL",
@@ -496,7 +496,7 @@ export const mockedNoteRecords: ObjectRecord[] =
       ]
     },
     "title": "Performance Check-in",
-    "updatedAt": "2026-03-14T18:16:54.207Z",
+    "updatedAt": "2026-03-15T19:26:23.267Z",
     "updatedBy": {
       "__typename": "Actor",
       "source": "MANUAL",
@@ -525,7 +525,7 @@ export const mockedNoteRecords: ObjectRecord[] =
       "blocknote": "[{\"id\":\"block-7\",\"type\":\"paragraph\",\"props\":{\"textColor\":\"default\",\"backgroundColor\":\"default\",\"textAlignment\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"Completed certification program successfully. Ready to take on expanded responsibilities in the next phase.\",\"styles\":{}}],\"children\":[]}]",
       "markdown": "Completed certification program successfully. Ready to take on expanded responsibilities in the next phase."
     },
-    "createdAt": "2026-03-14T18:16:54.207Z",
+    "createdAt": "2026-03-15T19:26:23.267Z",
     "createdBy": {
       "__typename": "Actor",
       "source": "MANUAL",
@@ -579,7 +579,7 @@ export const mockedNoteRecords: ObjectRecord[] =
       ]
     },
     "title": "Training & Development",
-    "updatedAt": "2026-03-14T18:16:54.207Z",
+    "updatedAt": "2026-03-15T19:26:23.267Z",
     "updatedBy": {
       "__typename": "Actor",
       "source": "MANUAL",
@@ -608,7 +608,7 @@ export const mockedNoteRecords: ObjectRecord[] =
       "blocknote": "[{\"id\":\"block-8\",\"type\":\"paragraph\",\"props\":{\"textColor\":\"default\",\"backgroundColor\":\"default\",\"textAlignment\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"Long-standing professional relationship. Reliable partner for complex initiatives. High satisfaction ratings.\",\"styles\":{}}],\"children\":[]}]",
       "markdown": "Long-standing professional relationship. Reliable partner for complex initiatives. High satisfaction ratings."
     },
-    "createdAt": "2026-03-14T18:16:54.207Z",
+    "createdAt": "2026-03-15T19:26:23.267Z",
     "createdBy": {
       "__typename": "Actor",
       "source": "MANUAL",
@@ -662,7 +662,7 @@ export const mockedNoteRecords: ObjectRecord[] =
       ]
     },
     "title": "Client Relationship Notes",
-    "updatedAt": "2026-03-14T18:16:54.207Z",
+    "updatedAt": "2026-03-15T19:26:23.267Z",
     "updatedBy": {
       "__typename": "Actor",
       "source": "MANUAL",
@@ -691,7 +691,7 @@ export const mockedNoteRecords: ObjectRecord[] =
       "blocknote": "[{\"id\":\"block-9\",\"type\":\"paragraph\",\"props\":{\"textColor\":\"default\",\"backgroundColor\":\"default\",\"textAlignment\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"Great conversation today about potential collaboration opportunities. Next steps discussed include proposal review and timeline planning.\",\"styles\":{}}],\"children\":[]}]",
       "markdown": "Great conversation today about potential collaboration opportunities. Next steps discussed include proposal review and timeline planning."
     },
-    "createdAt": "2026-03-14T18:16:54.207Z",
+    "createdAt": "2026-03-15T19:26:23.267Z",
     "createdBy": {
       "__typename": "Actor",
       "source": "MANUAL",
@@ -745,7 +745,7 @@ export const mockedNoteRecords: ObjectRecord[] =
       ]
     },
     "title": "Meeting Follow-up",
-    "updatedAt": "2026-03-14T18:16:54.207Z",
+    "updatedAt": "2026-03-15T19:26:23.267Z",
     "updatedBy": {
       "__typename": "Actor",
       "source": "MANUAL",
@@ -774,7 +774,7 @@ export const mockedNoteRecords: ObjectRecord[] =
       "blocknote": "[{\"id\":\"block-10\",\"type\":\"paragraph\",\"props\":{\"textColor\":\"default\",\"backgroundColor\":\"default\",\"textAlignment\":\"left\"},\"content\":[{\"type\":\"text\",\"text\":\"Reviewed current project status and identified key deliverables for the upcoming quarter. Timeline adjustments may be needed.\",\"styles\":{}}],\"children\":[]}]",
       "markdown": "Reviewed current project status and identified key deliverables for the upcoming quarter. Timeline adjustments may be needed."
     },
-    "createdAt": "2026-03-14T18:16:54.207Z",
+    "createdAt": "2026-03-15T19:26:23.267Z",
     "createdBy": {
       "__typename": "Actor",
       "source": "MANUAL",
@@ -828,7 +828,7 @@ export const mockedNoteRecords: ObjectRecord[] =
       ]
     },
     "title": "Project Update Discussion",
-    "updatedAt": "2026-03-14T18:16:54.207Z",
+    "updatedAt": "2026-03-15T19:26:23.267Z",
     "updatedBy": {
       "__typename": "Actor",
       "source": "MANUAL",

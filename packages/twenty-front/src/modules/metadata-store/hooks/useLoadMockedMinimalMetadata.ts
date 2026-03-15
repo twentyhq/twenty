@@ -6,9 +6,10 @@ import { useCallback } from 'react';
 const MOCKED_COLLECTION_HASH = 'mocked';
 
 export const useLoadMockedMinimalMetadata = () => {
-  const { updateDraft, applyChanges } = useMetadataStore();
+  const { updateDraft, applyChanges, resetMetadataStore } = useMetadataStore();
 
   const loadMockedMinimalMetadata = useCallback(async () => {
+    resetMetadataStore();
     const [
       { generatedMockObjectMetadataItems },
       { mockedCoreViews },
@@ -57,7 +58,7 @@ export const useLoadMockedMinimalMetadata = () => {
     );
 
     applyChanges();
-  }, [updateDraft, applyChanges]);
+  }, [updateDraft, applyChanges, resetMetadataStore]);
 
   return { loadMockedMinimalMetadata };
 };

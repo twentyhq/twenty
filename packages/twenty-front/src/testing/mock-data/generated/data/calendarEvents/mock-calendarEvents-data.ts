@@ -28,7 +28,7 @@ export const mockedCalendarEventRecords: ObjectRecord[] =
           "__typename": "CalendarEventParticipantEdge",
           "node": {
             "__typename": "CalendarEventParticipant",
-            "handle": "david.rodriguez@company.com",
+            "handle": "person1001@company.com",
             "id": "20202020-0001-4e7c-8001-123456789def"
           }
         },
@@ -36,36 +36,20 @@ export const mockedCalendarEventRecords: ObjectRecord[] =
           "__typename": "CalendarEventParticipantEdge",
           "node": {
             "__typename": "CalendarEventParticipant",
-            "handle": "member@company.com",
+            "handle": "person773@company.com",
             "id": "20202020-0002-4e7c-8001-123456789def"
-          }
-        },
-        {
-          "__typename": "CalendarEventParticipantEdge",
-          "node": {
-            "__typename": "CalendarEventParticipant",
-            "handle": "person616@company.com",
-            "id": "20202020-0003-4e7c-8001-123456789def"
-          }
-        },
-        {
-          "__typename": "CalendarEventParticipantEdge",
-          "node": {
-            "__typename": "CalendarEventParticipant",
-            "handle": "member@company.com",
-            "id": "20202020-0004-4e7c-8001-123456789def"
           }
         }
       ]
     },
     "conferenceLink": {
       "__typename": "Links",
-      "primaryLinkUrl": "https://teams.com/j/1954190238",
-      "primaryLinkLabel": "https://teams.com/j/1954190238",
+      "primaryLinkUrl": "https://teams.com/j/4352774618",
+      "primaryLinkLabel": "https://teams.com/j/4352774618",
       "secondaryLinks": []
     },
     "conferenceSolution": "Teams",
-    "createdAt": "2026-03-14T18:16:54.207Z",
+    "createdAt": "2026-03-15T19:26:23.267Z",
     "createdBy": {
       "__typename": "Actor",
       "source": "MANUAL",
@@ -75,18 +59,18 @@ export const mockedCalendarEventRecords: ObjectRecord[] =
     },
     "deletedAt": null,
     "description": "FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED",
-    "endsAt": "2026-02-20T10:30:00.000Z",
-    "externalCreatedAt": "2026-02-20T09:26:22.678Z",
-    "externalUpdatedAt": "2026-02-19T10:26:35.875Z",
+    "endsAt": "2026-09-03T12:00:00.000Z",
+    "externalCreatedAt": "2026-08-30T12:46:51.498Z",
+    "externalUpdatedAt": "2026-09-03T08:31:37.776Z",
     "iCalUid": "event1@calendar.twentycrm.com",
     "id": "20202020-0001-4e7c-8001-123456789cde",
     "isCanceled": false,
     "isFullDay": false,
-    "location": "Teams",
+    "location": "Conference Room A",
     "position": 0,
-    "startsAt": "2026-02-20T10:00:00.000Z",
+    "startsAt": "2026-09-03T11:30:00.000Z",
     "title": "FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED",
-    "updatedAt": "2026-03-14T18:16:54.207Z",
+    "updatedAt": "2026-03-15T19:26:23.267Z",
     "updatedBy": {
       "__typename": "Actor",
       "source": "MANUAL",
@@ -116,28 +100,28 @@ export const mockedCalendarEventRecords: ObjectRecord[] =
           "__typename": "CalendarEventParticipantEdge",
           "node": {
             "__typename": "CalendarEventParticipant",
-            "handle": "person328@company.com",
-            "id": "20202020-0005-4e7c-8001-123456789def"
+            "handle": "person704@company.com",
+            "id": "20202020-0003-4e7c-8001-123456789def"
           }
         },
         {
           "__typename": "CalendarEventParticipantEdge",
           "node": {
             "__typename": "CalendarEventParticipant",
-            "handle": "emily.davis@company.com",
-            "id": "20202020-0006-4e7c-8001-123456789def"
+            "handle": "person857@company.com",
+            "id": "20202020-0004-4e7c-8001-123456789def"
           }
         }
       ]
     },
     "conferenceLink": {
       "__typename": "Links",
-      "primaryLinkUrl": "https://zoom.com/j/1435949331",
-      "primaryLinkLabel": "https://zoom.com/j/1435949331",
+      "primaryLinkUrl": "https://teams.com/j/1524233835",
+      "primaryLinkLabel": "https://teams.com/j/1524233835",
       "secondaryLinks": []
     },
-    "conferenceSolution": "Zoom",
-    "createdAt": "2026-03-14T18:16:54.207Z",
+    "conferenceSolution": "Teams",
+    "createdAt": "2026-03-15T19:26:23.267Z",
     "createdBy": {
       "__typename": "Actor",
       "source": "MANUAL",
@@ -147,18 +131,18 @@ export const mockedCalendarEventRecords: ObjectRecord[] =
     },
     "deletedAt": null,
     "description": "Present project progress and next steps to client stakeholders.",
-    "endsAt": "2026-01-29T10:45:00.000Z",
-    "externalCreatedAt": "2026-01-28T11:09:52.079Z",
-    "externalUpdatedAt": "2026-01-29T06:24:05.436Z",
+    "endsAt": "2026-07-10T14:00:00.000Z",
+    "externalCreatedAt": "2026-07-07T02:14:29.536Z",
+    "externalUpdatedAt": "2026-07-10T09:07:29.014Z",
     "iCalUid": "event2@calendar.twentycrm.com",
     "id": "20202020-0002-4e7c-8001-123456789cde",
-    "isCanceled": true,
+    "isCanceled": false,
     "isFullDay": false,
-    "location": "Client Office",
+    "location": "Zoom",
     "position": 0,
-    "startsAt": "2026-01-29T09:45:00.000Z",
+    "startsAt": "2026-07-10T13:00:00.000Z",
     "title": "Client Presentation",
-    "updatedAt": "2026-03-14T18:16:54.207Z",
+    "updatedAt": "2026-03-15T19:26:23.267Z",
     "updatedBy": {
       "__typename": "Actor",
       "source": "MANUAL",
@@ -188,28 +172,36 @@ export const mockedCalendarEventRecords: ObjectRecord[] =
           "__typename": "CalendarEventParticipantEdge",
           "node": {
             "__typename": "CalendarEventParticipant",
-            "handle": "david.rodriguez@company.com",
-            "id": "20202020-0007-4e7c-8001-123456789def"
+            "handle": "person38@company.com",
+            "id": "20202020-0005-4e7c-8001-123456789def"
           }
         },
         {
           "__typename": "CalendarEventParticipantEdge",
           "node": {
             "__typename": "CalendarEventParticipant",
-            "handle": "member@company.com",
-            "id": "20202020-0008-4e7c-8001-123456789def"
+            "handle": "lisa.anderson@company.com",
+            "id": "20202020-0006-4e7c-8001-123456789def"
+          }
+        },
+        {
+          "__typename": "CalendarEventParticipantEdge",
+          "node": {
+            "__typename": "CalendarEventParticipant",
+            "handle": "person310@company.com",
+            "id": "20202020-0007-4e7c-8001-123456789def"
           }
         }
       ]
     },
     "conferenceLink": {
       "__typename": "Links",
-      "primaryLinkUrl": "https://googlemeet.com/j/2395856893",
-      "primaryLinkLabel": "https://googlemeet.com/j/2395856893",
+      "primaryLinkUrl": "https://zoom.com/j/7968847749",
+      "primaryLinkLabel": "https://zoom.com/j/7968847749",
       "secondaryLinks": []
     },
-    "conferenceSolution": "Google Meet",
-    "createdAt": "2026-03-14T18:16:54.207Z",
+    "conferenceSolution": "Zoom",
+    "createdAt": "2026-03-15T19:26:23.267Z",
     "createdBy": {
       "__typename": "Actor",
       "source": "MANUAL",
@@ -218,19 +210,19 @@ export const mockedCalendarEventRecords: ObjectRecord[] =
       "context": null
     },
     "deletedAt": null,
-    "description": "FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED",
-    "endsAt": "2025-10-05T12:00:00.000Z",
-    "externalCreatedAt": "2025-10-01T04:07:31.740Z",
-    "externalUpdatedAt": "2025-10-04T21:57:52.504Z",
+    "description": "Strategic planning session for upcoming project milestones and deliverables.",
+    "endsAt": "2026-08-18T13:45:00.000Z",
+    "externalCreatedAt": "2026-08-12T01:06:30.694Z",
+    "externalUpdatedAt": "2026-08-17T13:15:00.657Z",
     "iCalUid": "event3@calendar.twentycrm.com",
     "id": "20202020-0003-4e7c-8001-123456789cde",
     "isCanceled": false,
     "isFullDay": false,
-    "location": "Teams",
+    "location": "Conference Room C",
     "position": 0,
-    "startsAt": "2025-10-05T10:30:00.000Z",
-    "title": "FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED",
-    "updatedAt": "2026-03-14T18:16:54.207Z",
+    "startsAt": "2026-08-18T12:15:00.000Z",
+    "title": "Project Planning Session",
+    "updatedAt": "2026-03-15T19:26:23.267Z",
     "updatedBy": {
       "__typename": "Actor",
       "source": "MANUAL",
@@ -260,7 +252,15 @@ export const mockedCalendarEventRecords: ObjectRecord[] =
           "__typename": "CalendarEventParticipantEdge",
           "node": {
             "__typename": "CalendarEventParticipant",
-            "handle": "person846@company.com",
+            "handle": "alex.johnson@company.com",
+            "id": "20202020-0008-4e7c-8001-123456789def"
+          }
+        },
+        {
+          "__typename": "CalendarEventParticipantEdge",
+          "node": {
+            "__typename": "CalendarEventParticipant",
+            "handle": "person745@company.com",
             "id": "20202020-0009-4e7c-8001-123456789def"
           }
         },
@@ -268,7 +268,7 @@ export const mockedCalendarEventRecords: ObjectRecord[] =
           "__typename": "CalendarEventParticipantEdge",
           "node": {
             "__typename": "CalendarEventParticipant",
-            "handle": "member@company.com",
+            "handle": "person887@company.com",
             "id": "20202020-000a-4e7c-8001-123456789def"
           }
         },
@@ -276,28 +276,20 @@ export const mockedCalendarEventRecords: ObjectRecord[] =
           "__typename": "CalendarEventParticipantEdge",
           "node": {
             "__typename": "CalendarEventParticipant",
-            "handle": "person140@company.com",
+            "handle": "member@company.com",
             "id": "20202020-000b-4e7c-8001-123456789def"
-          }
-        },
-        {
-          "__typename": "CalendarEventParticipantEdge",
-          "node": {
-            "__typename": "CalendarEventParticipant",
-            "handle": "person607@company.com",
-            "id": "20202020-000c-4e7c-8001-123456789def"
           }
         }
       ]
     },
     "conferenceLink": {
       "__typename": "Links",
-      "primaryLinkUrl": "https://googlemeet.com/j/3019073426",
-      "primaryLinkLabel": "https://googlemeet.com/j/3019073426",
+      "primaryLinkUrl": "https://zoom.com/j/7490839581",
+      "primaryLinkLabel": "https://zoom.com/j/7490839581",
       "secondaryLinks": []
     },
-    "conferenceSolution": "Google Meet",
-    "createdAt": "2026-03-14T18:16:54.207Z",
+    "conferenceSolution": "Zoom",
+    "createdAt": "2026-03-15T19:26:23.267Z",
     "createdBy": {
       "__typename": "Actor",
       "source": "MANUAL",
@@ -306,19 +298,19 @@ export const mockedCalendarEventRecords: ObjectRecord[] =
       "context": null
     },
     "deletedAt": null,
-    "description": "FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED",
-    "endsAt": "2026-03-02T15:00:00.000Z",
-    "externalCreatedAt": "2026-02-28T13:27:48.566Z",
-    "externalUpdatedAt": "2026-03-01T16:44:43.953Z",
+    "description": "Regular one-on-one check-in to discuss performance and career development.",
+    "endsAt": "2025-11-14T12:30:00.000Z",
+    "externalCreatedAt": "2025-11-12T16:27:22.339Z",
+    "externalUpdatedAt": "2025-11-14T05:38:57.927Z",
     "iCalUid": "event4@calendar.twentycrm.com",
     "id": "20202020-0004-4e7c-8001-123456789cde",
-    "isCanceled": false,
+    "isCanceled": true,
     "isFullDay": false,
-    "location": "Office",
+    "location": "Zoom",
     "position": 0,
-    "startsAt": "2026-03-02T14:15:00.000Z",
-    "title": "FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED",
-    "updatedAt": "2026-03-14T18:16:54.207Z",
+    "startsAt": "2025-11-14T11:45:00.000Z",
+    "title": "One-on-One Meeting",
+    "updatedAt": "2026-03-15T19:26:23.267Z",
     "updatedBy": {
       "__typename": "Actor",
       "source": "MANUAL",
@@ -348,16 +340,8 @@ export const mockedCalendarEventRecords: ObjectRecord[] =
           "__typename": "CalendarEventParticipantEdge",
           "node": {
             "__typename": "CalendarEventParticipant",
-            "handle": "sarah.williams@company.com",
-            "id": "20202020-000d-4e7c-8001-123456789def"
-          }
-        },
-        {
-          "__typename": "CalendarEventParticipantEdge",
-          "node": {
-            "__typename": "CalendarEventParticipant",
-            "handle": "sarah.williams@company.com",
-            "id": "20202020-000e-4e7c-8001-123456789def"
+            "handle": "emily.davis@company.com",
+            "id": "20202020-000c-4e7c-8001-123456789def"
           }
         },
         {
@@ -365,6 +349,22 @@ export const mockedCalendarEventRecords: ObjectRecord[] =
           "node": {
             "__typename": "CalendarEventParticipant",
             "handle": "member@company.com",
+            "id": "20202020-000d-4e7c-8001-123456789def"
+          }
+        },
+        {
+          "__typename": "CalendarEventParticipantEdge",
+          "node": {
+            "__typename": "CalendarEventParticipant",
+            "handle": "maria.garcia@company.com",
+            "id": "20202020-000e-4e7c-8001-123456789def"
+          }
+        },
+        {
+          "__typename": "CalendarEventParticipantEdge",
+          "node": {
+            "__typename": "CalendarEventParticipant",
+            "handle": "jennifer.martinez@company.com",
             "id": "20202020-000f-4e7c-8001-123456789def"
           }
         }
@@ -372,12 +372,12 @@ export const mockedCalendarEventRecords: ObjectRecord[] =
     },
     "conferenceLink": {
       "__typename": "Links",
-      "primaryLinkUrl": "https://zoom.com/j/7739048638",
-      "primaryLinkLabel": "https://zoom.com/j/7739048638",
+      "primaryLinkUrl": "https://googlemeet.com/j/8488732375",
+      "primaryLinkLabel": "https://googlemeet.com/j/8488732375",
       "secondaryLinks": []
     },
-    "conferenceSolution": "Zoom",
-    "createdAt": "2026-03-14T18:16:54.207Z",
+    "conferenceSolution": "Google Meet",
+    "createdAt": "2026-03-15T19:26:23.267Z",
     "createdBy": {
       "__typename": "Actor",
       "source": "MANUAL",
@@ -386,19 +386,19 @@ export const mockedCalendarEventRecords: ObjectRecord[] =
       "context": null
     },
     "deletedAt": null,
-    "description": "FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED",
-    "endsAt": "2026-03-04T11:15:00.000Z",
-    "externalCreatedAt": "2026-02-26T07:44:47.207Z",
-    "externalUpdatedAt": "2026-03-04T00:49:09.351Z",
+    "description": "Collaborative code review and technical discussion.",
+    "endsAt": "2026-01-28T15:30:00.000Z",
+    "externalCreatedAt": "2026-01-24T05:23:35.196Z",
+    "externalUpdatedAt": "2026-01-27T18:25:19.684Z",
     "iCalUid": "event5@calendar.twentycrm.com",
     "id": "20202020-0005-4e7c-8001-123456789cde",
     "isCanceled": false,
     "isFullDay": false,
-    "location": "Zoom",
+    "location": "Dev Room",
     "position": 0,
-    "startsAt": "2026-03-04T10:15:00.000Z",
-    "title": "FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED",
-    "updatedAt": "2026-03-14T18:16:54.207Z",
+    "startsAt": "2026-01-28T14:30:00.000Z",
+    "title": "Code Review Session",
+    "updatedAt": "2026-03-15T19:26:23.267Z",
     "updatedBy": {
       "__typename": "Actor",
       "source": "MANUAL",
@@ -428,7 +428,7 @@ export const mockedCalendarEventRecords: ObjectRecord[] =
           "__typename": "CalendarEventParticipantEdge",
           "node": {
             "__typename": "CalendarEventParticipant",
-            "handle": "member@company.com",
+            "handle": "person482@company.com",
             "id": "20202020-0010-4e7c-8001-123456789def"
           }
         },
@@ -436,7 +436,7 @@ export const mockedCalendarEventRecords: ObjectRecord[] =
           "__typename": "CalendarEventParticipantEdge",
           "node": {
             "__typename": "CalendarEventParticipant",
-            "handle": "emily.davis@company.com",
+            "handle": "michael.chen@company.com",
             "id": "20202020-0011-4e7c-8001-123456789def"
           }
         },
@@ -447,25 +447,17 @@ export const mockedCalendarEventRecords: ObjectRecord[] =
             "handle": "lisa.anderson@company.com",
             "id": "20202020-0012-4e7c-8001-123456789def"
           }
-        },
-        {
-          "__typename": "CalendarEventParticipantEdge",
-          "node": {
-            "__typename": "CalendarEventParticipant",
-            "handle": "person757@company.com",
-            "id": "20202020-0013-4e7c-8001-123456789def"
-          }
         }
       ]
     },
     "conferenceLink": {
       "__typename": "Links",
-      "primaryLinkUrl": "https://teams.com/j/2784135722",
-      "primaryLinkLabel": "https://teams.com/j/2784135722",
+      "primaryLinkUrl": "https://googlemeet.com/j/1760321115",
+      "primaryLinkLabel": "https://googlemeet.com/j/1760321115",
       "secondaryLinks": []
     },
-    "conferenceSolution": "Teams",
-    "createdAt": "2026-03-14T18:16:54.207Z",
+    "conferenceSolution": "Google Meet",
+    "createdAt": "2026-03-15T19:26:23.267Z",
     "createdBy": {
       "__typename": "Actor",
       "source": "MANUAL",
@@ -475,18 +467,18 @@ export const mockedCalendarEventRecords: ObjectRecord[] =
     },
     "deletedAt": null,
     "description": "FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED",
-    "endsAt": "2025-11-22T23:00:00.000Z",
-    "externalCreatedAt": "2025-11-16T15:56:23.330Z",
-    "externalUpdatedAt": "2025-11-22T04:36:14.045Z",
+    "endsAt": "2025-12-12T23:00:00.000Z",
+    "externalCreatedAt": "2025-12-12T05:04:02.683Z",
+    "externalUpdatedAt": "2025-12-12T09:10:53.957Z",
     "iCalUid": "event6@calendar.twentycrm.com",
     "id": "20202020-0006-4e7c-8001-123456789cde",
     "isCanceled": false,
     "isFullDay": true,
     "location": "Conference Center",
     "position": 0,
-    "startsAt": "2025-11-22T09:00:00.000Z",
+    "startsAt": "2025-12-12T12:00:00.000Z",
     "title": "FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED",
-    "updatedAt": "2026-03-14T18:16:54.207Z",
+    "updatedAt": "2026-03-15T19:26:23.267Z",
     "updatedBy": {
       "__typename": "Actor",
       "source": "MANUAL",
@@ -516,20 +508,36 @@ export const mockedCalendarEventRecords: ObjectRecord[] =
           "__typename": "CalendarEventParticipantEdge",
           "node": {
             "__typename": "CalendarEventParticipant",
-            "handle": "member@company.com",
+            "handle": "person228@company.com",
+            "id": "20202020-0013-4e7c-8001-123456789def"
+          }
+        },
+        {
+          "__typename": "CalendarEventParticipantEdge",
+          "node": {
+            "__typename": "CalendarEventParticipant",
+            "handle": "jennifer.martinez@company.com",
             "id": "20202020-0014-4e7c-8001-123456789def"
+          }
+        },
+        {
+          "__typename": "CalendarEventParticipantEdge",
+          "node": {
+            "__typename": "CalendarEventParticipant",
+            "handle": "person269@company.com",
+            "id": "20202020-0015-4e7c-8001-123456789def"
           }
         }
       ]
     },
     "conferenceLink": {
       "__typename": "Links",
-      "primaryLinkUrl": "https://googlemeet.com/j/6803745285",
-      "primaryLinkLabel": "https://googlemeet.com/j/6803745285",
+      "primaryLinkUrl": "https://googlemeet.com/j/8557477816",
+      "primaryLinkLabel": "https://googlemeet.com/j/8557477816",
       "secondaryLinks": []
     },
     "conferenceSolution": "Google Meet",
-    "createdAt": "2026-03-14T18:16:54.207Z",
+    "createdAt": "2026-03-15T19:26:23.267Z",
     "createdBy": {
       "__typename": "Actor",
       "source": "MANUAL",
@@ -539,18 +547,18 @@ export const mockedCalendarEventRecords: ObjectRecord[] =
     },
     "deletedAt": null,
     "description": "Professional development and skills training session.",
-    "endsAt": "2026-04-18T15:45:00.000Z",
-    "externalCreatedAt": "2026-04-15T15:32:21.810Z",
-    "externalUpdatedAt": "2026-04-17T23:19:46.758Z",
+    "endsAt": "2026-03-12T10:45:00.000Z",
+    "externalCreatedAt": "2026-03-07T11:13:31.436Z",
+    "externalUpdatedAt": "2026-03-11T23:59:49.242Z",
     "iCalUid": "event7@calendar.twentycrm.com",
     "id": "20202020-0007-4e7c-8001-123456789cde",
     "isCanceled": false,
     "isFullDay": false,
     "location": "Training Room",
     "position": 0,
-    "startsAt": "2026-04-18T13:45:00.000Z",
+    "startsAt": "2026-03-12T08:45:00.000Z",
     "title": "Training Session",
-    "updatedAt": "2026-03-14T18:16:54.207Z",
+    "updatedAt": "2026-03-15T19:26:23.267Z",
     "updatedBy": {
       "__typename": "Actor",
       "source": "MANUAL",
@@ -580,28 +588,36 @@ export const mockedCalendarEventRecords: ObjectRecord[] =
           "__typename": "CalendarEventParticipantEdge",
           "node": {
             "__typename": "CalendarEventParticipant",
-            "handle": "emily.davis@company.com",
-            "id": "20202020-0015-4e7c-8001-123456789def"
+            "handle": "person439@company.com",
+            "id": "20202020-0016-4e7c-8001-123456789def"
           }
         },
         {
           "__typename": "CalendarEventParticipantEdge",
           "node": {
             "__typename": "CalendarEventParticipant",
-            "handle": "sarah.williams@company.com",
-            "id": "20202020-0016-4e7c-8001-123456789def"
+            "handle": "person582@company.com",
+            "id": "20202020-0017-4e7c-8001-123456789def"
+          }
+        },
+        {
+          "__typename": "CalendarEventParticipantEdge",
+          "node": {
+            "__typename": "CalendarEventParticipant",
+            "handle": "member@company.com",
+            "id": "20202020-0018-4e7c-8001-123456789def"
           }
         }
       ]
     },
     "conferenceLink": {
       "__typename": "Links",
-      "primaryLinkUrl": "https://teams.com/j/4351243532",
-      "primaryLinkLabel": "https://teams.com/j/4351243532",
+      "primaryLinkUrl": "https://teams.com/j/6131209087",
+      "primaryLinkLabel": "https://teams.com/j/6131209087",
       "secondaryLinks": []
     },
     "conferenceSolution": "Teams",
-    "createdAt": "2026-03-14T18:16:54.207Z",
+    "createdAt": "2026-03-15T19:26:23.267Z",
     "createdBy": {
       "__typename": "Actor",
       "source": "MANUAL",
@@ -611,18 +627,18 @@ export const mockedCalendarEventRecords: ObjectRecord[] =
     },
     "deletedAt": null,
     "description": "FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED",
-    "endsAt": "2026-02-14T15:45:00.000Z",
-    "externalCreatedAt": "2026-02-10T19:08:08.595Z",
-    "externalUpdatedAt": "2026-02-14T13:51:41.067Z",
+    "endsAt": "2025-12-03T16:15:00.000Z",
+    "externalCreatedAt": "2025-11-29T05:31:42.081Z",
+    "externalUpdatedAt": "2025-12-03T05:14:58.592Z",
     "iCalUid": "event8@calendar.twentycrm.com",
     "id": "20202020-0008-4e7c-8001-123456789cde",
     "isCanceled": false,
     "isFullDay": false,
     "location": "Phone",
     "position": 0,
-    "startsAt": "2026-02-14T15:00:00.000Z",
+    "startsAt": "2025-12-03T15:30:00.000Z",
     "title": "FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED",
-    "updatedAt": "2026-03-14T18:16:54.207Z",
+    "updatedAt": "2026-03-15T19:26:23.267Z",
     "updatedBy": {
       "__typename": "Actor",
       "source": "MANUAL",
@@ -652,36 +668,28 @@ export const mockedCalendarEventRecords: ObjectRecord[] =
           "__typename": "CalendarEventParticipantEdge",
           "node": {
             "__typename": "CalendarEventParticipant",
-            "handle": "person111@company.com",
-            "id": "20202020-0017-4e7c-8001-123456789def"
-          }
-        },
-        {
-          "__typename": "CalendarEventParticipantEdge",
-          "node": {
-            "__typename": "CalendarEventParticipant",
-            "handle": "person110@company.com",
-            "id": "20202020-0018-4e7c-8001-123456789def"
-          }
-        },
-        {
-          "__typename": "CalendarEventParticipantEdge",
-          "node": {
-            "__typename": "CalendarEventParticipant",
-            "handle": "person458@company.com",
+            "handle": "sarah.williams@company.com",
             "id": "20202020-0019-4e7c-8001-123456789def"
+          }
+        },
+        {
+          "__typename": "CalendarEventParticipantEdge",
+          "node": {
+            "__typename": "CalendarEventParticipant",
+            "handle": "person99@company.com",
+            "id": "20202020-001a-4e7c-8001-123456789def"
           }
         }
       ]
     },
     "conferenceLink": {
       "__typename": "Links",
-      "primaryLinkUrl": "https://zoom.com/j/7325933177",
-      "primaryLinkLabel": "https://zoom.com/j/7325933177",
+      "primaryLinkUrl": "https://teams.com/j/7108444581",
+      "primaryLinkLabel": "https://teams.com/j/7108444581",
       "secondaryLinks": []
     },
-    "conferenceSolution": "Zoom",
-    "createdAt": "2026-03-14T18:16:54.207Z",
+    "conferenceSolution": "Teams",
+    "createdAt": "2026-03-15T19:26:23.267Z",
     "createdBy": {
       "__typename": "Actor",
       "source": "MANUAL",
@@ -691,18 +699,18 @@ export const mockedCalendarEventRecords: ObjectRecord[] =
     },
     "deletedAt": null,
     "description": "Quarterly budget review and financial planning session.",
-    "endsAt": "2025-12-27T12:00:00.000Z",
-    "externalCreatedAt": "2025-12-22T08:37:48.602Z",
-    "externalUpdatedAt": "2025-12-27T09:56:28.121Z",
+    "endsAt": "2025-10-18T10:30:00.000Z",
+    "externalCreatedAt": "2025-10-16T22:26:08.049Z",
+    "externalUpdatedAt": "2025-10-18T08:59:17.404Z",
     "iCalUid": "event9@calendar.twentycrm.com",
     "id": "20202020-0009-4e7c-8001-123456789cde",
     "isCanceled": false,
     "isFullDay": false,
     "location": "Conference Room D",
     "position": 0,
-    "startsAt": "2025-12-27T10:30:00.000Z",
+    "startsAt": "2025-10-18T09:00:00.000Z",
     "title": "Budget Review Meeting",
-    "updatedAt": "2026-03-14T18:16:54.207Z",
+    "updatedAt": "2026-03-15T19:26:23.267Z",
     "updatedBy": {
       "__typename": "Actor",
       "source": "MANUAL",
@@ -732,14 +740,6 @@ export const mockedCalendarEventRecords: ObjectRecord[] =
           "__typename": "CalendarEventParticipantEdge",
           "node": {
             "__typename": "CalendarEventParticipant",
-            "handle": "alex.johnson@company.com",
-            "id": "20202020-001a-4e7c-8001-123456789def"
-          }
-        },
-        {
-          "__typename": "CalendarEventParticipantEdge",
-          "node": {
-            "__typename": "CalendarEventParticipant",
             "handle": "lisa.anderson@company.com",
             "id": "20202020-001b-4e7c-8001-123456789def"
           }
@@ -748,7 +748,7 @@ export const mockedCalendarEventRecords: ObjectRecord[] =
           "__typename": "CalendarEventParticipantEdge",
           "node": {
             "__typename": "CalendarEventParticipant",
-            "handle": "member@company.com",
+            "handle": "jennifer.martinez@company.com",
             "id": "20202020-001c-4e7c-8001-123456789def"
           }
         },
@@ -756,7 +756,7 @@ export const mockedCalendarEventRecords: ObjectRecord[] =
           "__typename": "CalendarEventParticipantEdge",
           "node": {
             "__typename": "CalendarEventParticipant",
-            "handle": "member@company.com",
+            "handle": "person779@company.com",
             "id": "20202020-001d-4e7c-8001-123456789def"
           }
         }
@@ -764,12 +764,12 @@ export const mockedCalendarEventRecords: ObjectRecord[] =
     },
     "conferenceLink": {
       "__typename": "Links",
-      "primaryLinkUrl": "https://googlemeet.com/j/9290037317",
-      "primaryLinkLabel": "https://googlemeet.com/j/9290037317",
+      "primaryLinkUrl": "https://teams.com/j/2623227691",
+      "primaryLinkLabel": "https://teams.com/j/2623227691",
       "secondaryLinks": []
     },
-    "conferenceSolution": "Google Meet",
-    "createdAt": "2026-03-14T18:16:54.207Z",
+    "conferenceSolution": "Teams",
+    "createdAt": "2026-03-15T19:26:23.267Z",
     "createdBy": {
       "__typename": "Actor",
       "source": "MANUAL",
@@ -779,18 +779,18 @@ export const mockedCalendarEventRecords: ObjectRecord[] =
     },
     "deletedAt": null,
     "description": "FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED",
-    "endsAt": "2025-10-27T16:45:00.000Z",
-    "externalCreatedAt": "2025-10-26T14:37:56.887Z",
-    "externalUpdatedAt": "2025-10-27T09:27:16.129Z",
+    "endsAt": "2026-07-09T09:30:00.000Z",
+    "externalCreatedAt": "2026-07-08T04:17:44.158Z",
+    "externalUpdatedAt": "2026-07-08T21:56:44.723Z",
     "iCalUid": "event10@calendar.twentycrm.com",
     "id": "20202020-000a-4e7c-8001-123456789cde",
     "isCanceled": false,
     "isFullDay": false,
-    "location": "Demo Room",
+    "location": "Zoom",
     "position": 0,
-    "startsAt": "2025-10-27T15:45:00.000Z",
+    "startsAt": "2026-07-09T08:30:00.000Z",
     "title": "FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED",
-    "updatedAt": "2026-03-14T18:16:54.207Z",
+    "updatedAt": "2026-03-15T19:26:23.267Z",
     "updatedBy": {
       "__typename": "Actor",
       "source": "MANUAL",

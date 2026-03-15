@@ -1,7 +1,7 @@
 /* oxlint-disable no-console */
 import { generateApiKeys } from './mock-data/generate-api-keys.js';
 import { generateBillingPlans } from './mock-data/generate-billing-plans.js';
-import { generateMetadata } from './mock-data/generate-metadata.js';
+import { generateObjectMetadata } from './mock-data/generate-object-metadata.js';
 import { generateMinimalMetadata } from './mock-data/generate-minimal-metadata.js';
 import { generateRecordData } from './mock-data/generate-record-data.js';
 import { generateRoles } from './mock-data/generate-roles.js';
@@ -12,7 +12,7 @@ import { authenticate } from './mock-data/utils.js';
 const main = async () => {
   const token = await authenticate();
 
-  const metadata = await generateMetadata(token);
+  const metadata = await generateObjectMetadata(token);
   await generateMinimalMetadata(token);
   await generateRecordData(token, metadata);
   await generateRoles(token);

@@ -141,7 +141,7 @@ const METADATA_QUERY = `
   }
 `;
 
-export const generateMetadata = async (token: string) => {
+export const generateObjectMetadata = async (token: string) => {
   console.log('Fetching object metadata from /metadata ...');
 
   const metadata = await graphqlRequest('/metadata', METADATA_QUERY, token);

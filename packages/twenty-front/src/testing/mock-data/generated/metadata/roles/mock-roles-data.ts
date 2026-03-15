@@ -9,7 +9,7 @@ export const mockedRoles: Role[] =
 [
   {
     "__typename": "Role",
-    "id": "08f5f62a-26a6-4d89-9cbc-c69d4059d4de",
+    "id": "4935f797-38c9-4f0b-b3a7-c5167bc69d18",
     "label": "Admin",
     "description": "Admin role",
     "icon": "IconUserCog",
@@ -54,7 +54,7 @@ export const mockedRoles: Role[] =
   },
   {
     "__typename": "Role",
-    "id": "2d0231ff-6f60-4b52-aae0-2cdac401ad98",
+    "id": "b46a9692-2188-450c-bf3c-f753d1b89d77",
     "label": "Guest",
     "description": "Guest role",
     "icon": "IconUser",
@@ -91,7 +91,7 @@ export const mockedRoles: Role[] =
   },
   {
     "__typename": "Role",
-    "id": "d818c6e1-0c3b-46c5-b53c-95e6c3603d95",
+    "id": "76bb55a2-4db7-4fda-9b38-e4618105c011",
     "label": "Object-restricted",
     "description": "All permissions except read on Rockets and update on Pets",
     "icon": "custom",
@@ -109,7 +109,7 @@ export const mockedRoles: Role[] =
     "objectPermissions": [
       {
         "__typename": "ObjectPermission",
-        "objectMetadataId": "8c77d57d-1c06-4550-bb7d-4dff29b16889",
+        "objectMetadataId": "3f6c7a1b-d797-41b7-a3bb-68c2f44a686f",
         "canReadObjectRecords": false,
         "canUpdateObjectRecords": false,
         "canSoftDeleteObjectRecords": false,
@@ -120,7 +120,7 @@ export const mockedRoles: Role[] =
       },
       {
         "__typename": "ObjectPermission",
-        "objectMetadataId": "96a6d580-c305-4a5e-9310-96d6a705c344",
+        "objectMetadataId": "74414582-4fea-4d22-869d-8ab970e71cb1",
         "canReadObjectRecords": true,
         "canUpdateObjectRecords": false,
         "canSoftDeleteObjectRecords": false,
@@ -133,21 +133,21 @@ export const mockedRoles: Role[] =
     "fieldPermissions": [
       {
         "__typename": "FieldPermission",
-        "objectMetadataId": "b6e21d5b-97f4-4d46-b3eb-84cd548fcf3e",
-        "fieldMetadataId": "f154b5b8-5630-4d0b-87e8-0804a568c4a5",
+        "objectMetadataId": "64931790-7b1b-49d6-8858-6459b10efc20",
+        "fieldMetadataId": "9c2d8c58-18a9-41dc-9058-d96b2730412d",
         "canReadFieldValue": null,
         "canUpdateFieldValue": false,
-        "id": "63d9e477-35cf-4334-ae99-4d85a993011d",
-        "roleId": "d818c6e1-0c3b-46c5-b53c-95e6c3603d95"
+        "id": "92f1eef0-6100-4838-9dd8-282fd56b5182",
+        "roleId": "76bb55a2-4db7-4fda-9b38-e4618105c011"
       },
       {
         "__typename": "FieldPermission",
-        "objectMetadataId": "def5a0f9-6233-4572-8f58-3aba99bcf248",
-        "fieldMetadataId": "3f59790b-644e-4581-992e-96a123c2b145",
+        "objectMetadataId": "1dcc12b0-4de0-49a5-ad55-a6b57ca9d0d4",
+        "fieldMetadataId": "616ececc-7ed1-4958-9cb4-f7db70889b7d",
         "canReadFieldValue": false,
         "canUpdateFieldValue": false,
-        "id": "e3f1eb37-03cb-403f-8eee-418fc9f9f30d",
-        "roleId": "d818c6e1-0c3b-46c5-b53c-95e6c3603d95"
+        "id": "0049864a-381a-4f78-bbc3-a1411a161330",
+        "roleId": "76bb55a2-4db7-4fda-9b38-e4618105c011"
       }
     ],
     "rowLevelPermissionPredicates": [],
@@ -165,12 +165,12 @@ export const mockedRoles: Role[] =
         "userEmail": "tim@apple.dev"
       }
     ],
-    "apiKeys": [],
-    "agents": []
+    "agents": [],
+    "apiKeys": []
   },
   {
     "__typename": "Role",
-    "id": "7de622dd-697c-4200-8cdc-0747653534c6",
+    "id": "ac8c58be-1118-4b7d-965a-fa00c30fc5c3",
     "label": "Member",
     "description": "Member role",
     "icon": "IconUser",
@@ -189,7 +189,6 @@ export const mockedRoles: Role[] =
     "fieldPermissions": [],
     "rowLevelPermissionPredicates": [],
     "rowLevelPermissionPredicateGroups": [],
-    "agents": [],
     "workspaceMembers": [
       {
         "__typename": "WorkspaceMember",
@@ -11203,6 +11202,7 @@ export const mockedRoles: Role[] =
         "userEmail": "richard.palmer1000@apple.dev"
       }
     ],
-    "apiKeys": []
+    "apiKeys": [],
+    "agents": []
   }
 ];
