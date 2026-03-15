@@ -57,7 +57,7 @@ export class ImapClientProvider implements OnModuleDestroy {
     }
   }
 
-  async closeClient(client: ImapFlow): Promise<void> {
+  async closeClient(_client: ImapFlow): Promise<void> {
     // We keep the client open in the cache for reuse.
     // Logout will happen when the process terminates or connection is lost.
     this.logger.debug('Keeping IMAP client open in cache');
@@ -126,7 +126,7 @@ export class ImapClientProvider implements OnModuleDestroy {
     }
   }
 
-  async onModuleDestroy() {
+  public async onModuleDestroy() {
     this.logger.log('Closing all cached IMAP connections...');
     for (const [id, client] of this.connectionCache) {
       try {
