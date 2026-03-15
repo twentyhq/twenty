@@ -12,7 +12,7 @@ export const MinimalMetadataLoadEffect = () => {
   const isLoggedIn = useIsLogged();
   const isCurrentUserLoaded = useAtomStateValue(isCurrentUserLoadedState);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-  const [isLoading, setIsLoading] = useState(false);
+  const [hasTriggeredLoad, setHasTriggeredLoad] = useState(false);
 
   const { loadMinimalMetadata } = useLoadMinimalMetadata();
   const { loadMockedMinimalMetadata } = useLoadMockedMinimalMetadata();
@@ -27,7 +27,7 @@ export const MinimalMetadataLoadEffect = () => {
     const result = await loadMinimalMetadata();
 
     if (result?.staleEntityKeys && result.staleEntityKeys.length > 0) {
-      loadStaleMetadataEntities(result.staleEntityKeys);
+      await loadStaleMetadataEntities(result.staleEntityKeys);
     }
   }, [
     currentWorkspace,
@@ -37,15 +37,13 @@ export const MinimalMetadataLoadEffect = () => {
   ]);
 
   useEffect(() => {
-    if (!isCurrentUserLoaded || !isLoggedIn || isLoading) {
+    if (!isCurrentUserLoaded || !isLoggedIn || hasTriggeredLoad) {
       return;
     }
 
-    setIsLoading(true);
-    performLoad().finally(() => {
-      setIsLoading(false);
-    });
-  }, [isCurrentUserLoaded, isLoggedIn, isLoading, performLoad]);
+    setHasTriggeredLoad(true);
+    performLoad();
+  }, [isCurrentUserLoaded, isLoggedIn, hasTriggeredLoad, performLoad]);
 
   return null;
 };
