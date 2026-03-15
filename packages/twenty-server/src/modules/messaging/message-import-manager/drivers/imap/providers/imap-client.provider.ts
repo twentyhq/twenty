@@ -126,7 +126,7 @@ export class ImapClientProvider implements OnModuleDestroy {
     }
   }
 
-  public async onModuleDestroy() {
+  async onModuleDestroy() {
     this.logger.log('Closing all cached IMAP connections...');
     for (const [id, client] of this.connectionCache) {
       try {
