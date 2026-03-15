@@ -9,7 +9,7 @@ import {
   MULTI_SELECT_FILTER_OPERATORS,
   NUMBER_FILTER_OPERATORS,
   RAW_JSON_FILTER_OPERATORS,
-  RICH_TEXT_V2_FILTER_OPERATORS,
+  RICH_TEXT_FILTER_OPERATORS,
   STRING_FILTER_OPERATORS,
   UUID_FILTER_OPERATORS,
 } from 'src/engine/api/common/common-args-processors/filter-arg-processor/constants/filter-operators.constant';
@@ -20,7 +20,6 @@ export const getOperatorsForFieldType = (
 ): FilterOperator[] => {
   switch (fieldType) {
     case FieldMetadataType.TEXT:
-    case FieldMetadataType.RICH_TEXT:
       return STRING_FILTER_OPERATORS;
 
     case FieldMetadataType.NUMBER:
@@ -54,8 +53,8 @@ export const getOperatorsForFieldType = (
     case FieldMetadataType.FILES:
       return RAW_JSON_FILTER_OPERATORS;
 
-    case FieldMetadataType.RICH_TEXT_V2:
-      return RICH_TEXT_V2_FILTER_OPERATORS;
+    case FieldMetadataType.RICH_TEXT:
+      return RICH_TEXT_FILTER_OPERATORS;
 
     case FieldMetadataType.TS_VECTOR:
     case FieldMetadataType.ACTOR:

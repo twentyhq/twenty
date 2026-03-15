@@ -10,7 +10,8 @@ import { useLingui } from '@lingui/react/macro';
 import isEmpty from 'lodash.isempty';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { useUpdateWorkspaceMutation } from '~/generated-metadata/graphql';
+import { useMutation } from '@apollo/client/react';
+import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import { logError } from '~/utils/logError';
 
@@ -39,7 +40,7 @@ export const NameField = ({
     currentWorkspace?.displayName ?? '',
   );
 
-  const [updateWorkspace] = useUpdateWorkspaceMutation();
+  const [updateWorkspace] = useMutation(UpdateWorkspaceDocument);
 
   // TODO: Enhance this with react-web-hook-form (https://www.react-hook-form.com)
   // oxlint-disable-next-line react-hooks/exhaustive-deps
@@ -64,7 +65,7 @@ export const NameField = ({
         return;
       }
       try {
-        const { data, errors } = await updateWorkspace({
+        const result = await updateWorkspace({
           variables: {
             input: {
               displayName: name,
@@ -72,8 +73,11 @@ export const NameField = ({
           },
         });
 
-        if (isDefined(errors) || isUndefinedOrNull(data?.updateWorkspace)) {
-          throw errors;
+        if (
+          isDefined(result.error) ||
+          isUndefinedOrNull(result.data?.updateWorkspace)
+        ) {
+          throw result.error;
         }
       } catch (error) {
         logError(error);

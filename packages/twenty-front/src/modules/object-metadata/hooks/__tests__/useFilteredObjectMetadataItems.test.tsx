@@ -1,4 +1,4 @@
-import { MockedProvider } from '@apollo/client/testing';
+import { MockedProvider } from '@apollo/client/testing/react';
 import { act, renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
@@ -8,8 +8,8 @@ import {
   variables,
 } from '@/object-metadata/hooks/__mocks__/useFilteredObjectMetadataItems';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
 import { isDefined } from 'twenty-shared/utils';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
@@ -28,16 +28,14 @@ const mocks = [
 ];
 
 const Wrapper = ({ children }: { children: ReactNode }) => {
-  jotaiStore.set(
-    objectMetadataItemsState.atom,
+  setTestObjectMetadataItemsInMetadataStore(
+    jotaiStore,
     generatedMockObjectMetadataItems,
   );
 
   return (
     <JotaiProvider store={jotaiStore}>
-      <MockedProvider mocks={mocks} addTypename={false}>
-        {children}
-      </MockedProvider>
+      <MockedProvider mocks={mocks}>{children}</MockedProvider>
     </JotaiProvider>
   );
 };

@@ -6,7 +6,7 @@ import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import Skeleton from 'react-loading-skeleton';
@@ -16,7 +16,10 @@ import { getSettingsPath } from 'twenty-shared/utils';
 import { H2Title, Status } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { GET_AGENT_TURNS } from '@/ai/graphql/queries/getAgentTurns';
+import {
+  type AgentMessage,
+  GetAgentTurnsDocument,
+} from '~/generated-metadata/graphql';
 
 const StyledTableContainer = styled.div`
   margin-top: ${themeCssVariables.spacing[3]};
@@ -56,12 +59,12 @@ export const SettingsAgentTurnDetail = () => {
     turnId: string;
   }>();
 
-  const { data, loading } = useQuery(GET_AGENT_TURNS, {
+  const { data, loading } = useQuery(GetAgentTurnsDocument, {
     variables: { agentId: agentId || '' },
     skip: !agentId,
   });
 
-  const turn = data?.agentTurns?.find((t: any) => t.id === turnId);
+  const turn = data?.agentTurns?.find((t) => t.id === turnId);
 
   const getScoreColor = (score: number) => {
     if (score >= 80) return 'green';
@@ -144,12 +147,12 @@ export const SettingsAgentTurnDetail = () => {
               timeStyle: 'short',
             })}
           />
-          {turn.messages && turn.messages.length > 0 ? (
+          {turn.messages.length > 0 ? (
             <StyledMessagesContainer>
               {mapDBMessagesToUIMessages(
-                [...turn.messages]
-                  .filter((msg: any) => msg.parts && msg.parts.length > 0)
-                  .sort((a: any, b: any) => {
+                ([...turn.messages] as AgentMessage[])
+                  .filter((msg) => msg.parts.length > 0)
+                  .sort((a, b) => {
                     if (a.role === 'user' && b.role === 'assistant') return -1;
                     if (a.role === 'assistant' && b.role === 'user') return 1;
                     return (
@@ -184,7 +187,7 @@ export const SettingsAgentTurnDetail = () => {
 
         <Section>
           <H2Title title={t`Evaluations`} />
-          {turn.evaluations && turn.evaluations.length > 0 ? (
+          {turn.evaluations.length > 0 ? (
             <StyledTableContainer>
               <Table>
                 <StyledTableHeaderRowContainer>
@@ -196,11 +199,11 @@ export const SettingsAgentTurnDetail = () => {
                 </StyledTableHeaderRowContainer>
                 {[...turn.evaluations]
                   .sort(
-                    (a: any, b: any) =>
+                    (a, b) =>
                       new Date(b.createdAt).getTime() -
                       new Date(a.createdAt).getTime(),
                   )
-                  .map((evaluation: any) => (
+                  .map((evaluation) => (
                     <TableRow
                       key={evaluation.id}
                       gridTemplateColumns="140px 80px 1fr"

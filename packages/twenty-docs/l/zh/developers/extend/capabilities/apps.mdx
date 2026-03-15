@@ -49,25 +49,31 @@ npx create-twenty-app@latest my-app --minimal
 从这里您可以：
 
 ```bash filename="Terminal"
-# 向你的应用添加一个新实体（引导式）
+# Add a new entity to your application (guided)
 yarn twenty entity:add
 
-# 监听你的应用函数日志
+# Watch your application's function logs
 yarn twenty function:logs
 
-# 按名称执行一个函数
+# Execute a function by name
 yarn twenty function:execute -n my-function -p '{"name": "test"}'
 
-# 执行安装前函数
+# Execute the pre-install function
 yarn twenty function:execute --preInstall
 
-# 执行安装后函数
+# Execute the post-install function
 yarn twenty function:execute --postInstall
 
-# 从当前工作区卸载该应用
+# Build the app for distribution
+yarn twenty app:build
+
+# Publish the app to npm or a Twenty server
+yarn twenty app:publish
+
+# Uninstall the application from the current workspace
 yarn twenty app:uninstall
 
-# 显示命令帮助
+# Display commands' help
 yarn twenty help
 ```
 
@@ -1239,6 +1245,113 @@ uploadFile(
 ### Hello World 示例
 
 在[此处](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/hello-world)查看一个最小的端到端示例，展示对象、逻辑函数、前端组件和多种触发器：
+
+## Building your app
+
+Once you've developed your app with `app:dev`, use `app:build` to compile it into a distributable package.
+
+```bash filename="Terminal"
+# Build the app (output goes to .twenty/output/)
+yarn twenty app:build
+
+# Build and create a tarball (.tgz) for distribution
+yarn twenty app:build --tarball
+```
+
+The build process:
+
+1. **Parses and validates the manifest** — reads all `defineX()` entities from your source files and validates the manifest structure.
+2. **Compiles logic functions and front components** — bundles TypeScript sources into ESM `.mjs` files using esbuild.
+3. **Generates checksums** — computes MD5 hashes for each built file, stored in the manifest as `builtHandlerChecksum` / `builtComponentChecksum`.
+4. **生成类型化的 API 客户端** — 对 GraphQL 架构进行自省，并生成带类型的 `CoreApiClient` 和 `MetadataApiClient` 客户端。
+5. **运行 TypeScript 类型检查** — 运行 `tsc --noEmit` 以在发布前捕获类型错误。
+6. **使用生成的客户端重新构建** — 执行第二次编译，以便包含生成的客户端类型。
+7. **可选地创建一个 tar 包** — 如果传入 `--tarball`，则运行 `npm pack` 以创建用于分发的 `.tgz` 文件。
+
+`.twenty/output/` 中的构建产物包含：
+
+```text
+.twenty/output/
+├── manifest.json              # Manifest with checksums for all built files
+├── package.json               # Copied from app root
+├── yarn.lock                  # Copied from app root
+├── src/
+│   ├── logic-functions/       # Compiled .mjs logic function files
+│   └── front-components/      # Compiled .mjs front component files
+├── public/                    # Static assets (if any)
+└── my-app-1.0.0.tgz          # Only with --tarball flag
+```
+
+| 选项          | 描述                      |
+| ----------- | ----------------------- |
+| `[appPath]` | 应用目录的路径（默认为当前目录）        |
+| `--tarball` | 同时将输出打包为一个 `.tgz` tar 包 |
+
+## 发布你的应用
+
+使用 `app:publish` 分发你的应用 — 可以发布到 npm 注册表，或直接发布到 Twenty 服务器。
+
+### 发布到 npm（默认）
+
+```bash filename="Terminal"
+# Publish to npm (requires npm login)
+yarn twenty app:publish
+
+# Publish with a dist-tag (e.g. beta, next)
+yarn twenty app:publish --tag beta
+```
+
+这会构建应用，并在 `.twenty/output/` 目录下运行 `npm publish`。 发布后的软件包可由任何工作区从 Twenty 市场进行安装。
+
+### 发布到 Twenty 服务器
+
+```bash filename="Terminal"
+# Publish directly to a Twenty server
+yarn twenty app:publish --server https://app.twenty.com
+```
+
+这会以 tar 包方式构建应用，通过 `uploadAppTarball` GraphQL 变更将其上传到服务器，并在一步中触发安装。 这对于私有部署或针对特定服务器进行测试非常有用。
+
+| 选项                | 描述                                         |
+| ----------------- | ------------------------------------------ |
+| `[appPath]`       | 应用目录的路径（默认为当前目录）                           |
+| `--server <url>`  | 发布到 Twenty 服务器（而非 npm）                     |
+| `--token <token>` | 目标服务器的身份验证令牌                               |
+| `--tag <tag>`     | npm dist-tag（例如 `beta`、`next`）— 仅用于发布到 npm |
+
+## 应用注册
+
+在应用安装到工作区之前，必须先进行**注册**。 注册是一条元数据记录，用于描述应用的来源以及如何对其进行身份验证。 在大多数情况下，CLI 会自动处理这一流程。
+
+### 来源类型
+
+每个注册都有一个**来源类型**，用于决定安装期间如何解析应用的文件：
+
+| 来源类型      | 文件的解析方式                          | 典型用例                  |
+| --------- | -------------------------------- | --------------------- |
+| `LOCAL`   | 文件由 CLI 监听器实时同步——跳过安装步骤          | 使用 `app:dev` 进行开发     |
+| `NPM`     | 通过 `sourcePackage` 字段从 npm 注册表获取 | 在 npm 上发布的应用          |
+| `TARBALL` | 从存储在服务器上的已上传 `.tgz` 文件中解压获得      | 使用 `--server` 发布的私有应用 |
+
+### 注册如何进行
+
+* **`app:dev`** — 第一次针对某个工作区运行开发模式时，会自动创建一个 `LOCAL` 注册。
+* **`app:publish --server`** — 上传一个 tar 包并创建（或更新）一个 `TARBALL` 注册，然后安装应用。
+* **npm 市场** — 当应用从 npm 注册表同步到 Twenty 市场目录时，会创建 `NPM` 注册。
+* **GraphQL API** — 你也可以通过 `createApplicationRegistration` 变更以编程方式创建注册。
+
+### 注册与安装
+
+**注册** 与 **安装** 是两个独立的概念：
+
+* **注册**（`ApplicationRegistration`）是一条全局元数据记录，用于描述应用：其名称、来源类型、OAuth 凭据以及在市场中的上架状态。 它独立于任何工作区存在。
+* **安装**（`Application`）是一个按工作区划分的实例。 当用户安装一个应用时，Twenty 会根据注册的来源解析软件包，将构建生成的文件写入存储，并同步清单（创建对象、字段、逻辑函数等） 到该工作区中。
+
+一个注册可以安装到多个工作区。 每个工作区都会获得应用文件和数据模型的独立副本。
+
+### OAuth 凭据
+
+每个注册都包含在创建时生成的 OAuth 凭据（`oAuthClientId` 和 `oAuthClientSecret`）。 应用使用这些凭据代表用户对 API 请求进行身份验证。 客户端密钥在创建时只会返回**一次**——请妥善保管。 你可以稍后通过 `rotateApplicationRegistrationClientSecret` 变更来轮换它。
 
 ## 手动设置（不使用脚手架）
 

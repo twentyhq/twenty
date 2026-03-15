@@ -1,50 +1,29 @@
-import { useCallback, useMemo } from 'react';
-import { useAtom, useStore } from 'jotai';
+import { useStore } from 'jotai';
+import { useCallback, useRef } from 'react';
 import { v4 } from 'uuid';
 
-import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
 import { useUpsertActivity } from '@/activities/hooks/useUpsertActivity';
 import { canCreateActivityState } from '@/activities/states/canCreateActivityState';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getActivityTargetObjectFieldIdName';
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { modifyRecordFromCache } from '@/object-record/cache/utils/modifyRecordFromCache';
-import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { isNonTextWritingKey } from '@/ui/utilities/hotkey/utils/isNonTextWritingKey';
-import { Key } from 'ts-key-enum';
-import { useDebouncedCallback } from 'use-debounce';
-
-import { BLOCK_SCHEMA } from '@/blocknote-editor/blocks/Schema';
-import { ActivityRichTextEditorChangeOnActivityIdEffect } from '@/activities/components/ActivityRichTextEditorChangeOnActivityIdEffect';
-import { type Attachment } from '@/activities/files/types/Attachment';
 import { type Note } from '@/activities/types/Note';
 import { type Task } from '@/activities/types/Task';
-import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
-import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
+import { type BLOCK_SCHEMA } from '@/blocknote-editor/blocks/Schema';
+import { BLOCK_EDITOR_GLOBAL_HOTKEYS_CONFIG } from '@/blocknote-editor/constants/BlockEditorGlobalHotkeysConfig';
 import { useLabelIdentifierFieldMetadataItem } from '@/object-metadata/hooks/useLabelIdentifierFieldMetadataItem';
-import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { useIsRecordFieldReadOnly } from '@/object-record/read-only/hooks/useIsRecordFieldReadOnly';
+import { RichTextFieldEditor } from '@/object-record/record-field/ui/meta-types/input/components/RichTextFieldEditor';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { isTitleCellInEditModeComponentState } from '@/object-record/record-title-cell/states/isTitleCellInEditModeComponentState';
 import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
-import { BlockEditor } from '@/blocknote-editor/components/BlockEditor';
-import { BLOCK_EDITOR_GLOBAL_HOTKEYS_CONFIG } from '@/blocknote-editor/constants/BlockEditorGlobalHotkeysConfig';
-import { useAttachmentSync } from '@/blocknote-editor/hooks/useAttachmentSync';
-import { parseInitialBlocknote } from '@/blocknote-editor/utils/parseInitialBlocknote';
-import { prepareBodyWithSignedUrls } from '@/blocknote-editor/utils/prepareBodyWithSignedUrls';
+import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { t } from '@lingui/core/macro';
-import '@blocknote/core/fonts/inter.css';
-import '@blocknote/mantine/style.css';
-import { useCreateBlockNote } from '@blocknote/react';
-import '@blocknote/react/style.css';
+import { isNonTextWritingKey } from '@/ui/utilities/hotkey/utils/isNonTextWritingKey';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { Key } from 'ts-key-enum';
+import { type CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 type ActivityRichTextEditorProps = {
   activityId: string;
@@ -58,187 +37,96 @@ export const ActivityRichTextEditor = ({
   activityObjectNameSingular,
 }: ActivityRichTextEditorProps) => {
   const store = useStore();
-  const [activityInStore] = useAtom(
-    recordStoreFamilyState.atomFamily(activityId),
-  );
 
-  const cache = useApolloCoreClient().cache;
-  const activity = activityInStore as Task | Note | null;
+  // oxlint-disable-next-line twenty/no-state-useref
+  const editorRef = useRef<typeof BLOCK_SCHEMA.BlockNoteEditor | null>(null);
 
-  const { objectMetadataItem: objectMetadataItemActivity } =
-    useObjectMetadataItem({
-      objectNameSingular: activityObjectNameSingular,
-    });
+  const { upsertActivity } = useUpsertActivity({
+    activityObjectNameSingular,
+  });
 
-  const bodyV2FieldMetadataItem = objectMetadataItemActivity.fields.find(
-    (field) => field.name === 'bodyV2',
+  const [canCreateActivity, setCanCreateActivity] = useAtomState(
+    canCreateActivityState,
   );
 
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const { removeFocusItemFromFocusStackById } =
     useRemoveFocusItemFromFocusStackById();
 
-  const isAttachmentMigrated = useIsFeatureEnabled(
-    FeatureFlagKey.IS_ATTACHMENT_MIGRATED,
-  );
-
-  const attachmentTargetFieldIdName = getActivityTargetObjectFieldIdName({
-    nameSingular: activityObjectNameSingular,
-    isMorphRelation: isAttachmentMigrated,
-  });
-
-  const { records: attachments } = useFindManyRecords<Attachment>({
-    objectNameSingular: CoreObjectNameSingular.Attachment,
-    filter: {
-      [attachmentTargetFieldIdName]: {
-        eq: activityId,
-      },
-    },
-  });
-
-  const { syncAttachments } = useAttachmentSync(attachments);
-
-  const { upsertActivity } = useUpsertActivity({
-    activityObjectNameSingular: activityObjectNameSingular,
-  });
-
-  const isRecordFieldReadOnly = useIsRecordFieldReadOnly({
-    recordId: activityId,
-    objectMetadataId: objectMetadataItemActivity.id,
-    fieldMetadataId: bodyV2FieldMetadataItem?.id ?? '',
-  });
-
-  const persistBodyDebounced = useDebouncedCallback((blocknote: string) => {
-    if (isRecordFieldReadOnly === true) return;
-
-    const input = {
-      bodyV2: {
-        blocknote,
-        markdown: null,
-      },
-    };
-
-    if (isDefined(activity)) {
-      upsertActivity({
-        activity,
-        input,
-      });
-    }
-  }, 300);
-
-  const [canCreateActivity, setCanCreateActivity] = useAtomState(
-    canCreateActivityState,
-  );
-
-  const { uploadAttachmentFile } = useUploadAttachmentFile();
-
-  const handleUploadAttachment = async (file: File) => {
-    return await uploadAttachmentFile(file, {
-      id: activityId,
-      targetObjectNameSingular: activityObjectNameSingular,
+  const { labelIdentifierFieldMetadataItem } =
+    useLabelIdentifierFieldMetadataItem({
+      objectNameSingular: activityObjectNameSingular,
     });
-  };
+
+  const recordTitleCellId = getRecordFieldInputInstanceId({
+    recordId: activityId,
+    fieldName: labelIdentifierFieldMetadataItem?.name,
+    prefix: RecordTitleCellContainerType.ShowPage,
+  });
 
   const handlePersistBody = useCallback(
-    (activityBody: string) => {
+    (blocknote: string) => {
       if (!canCreateActivity) {
         setCanCreateActivity(true);
       }
-      persistBodyDebounced(prepareBodyWithSignedUrls(activityBody));
-    },
-    [canCreateActivity, persistBodyDebounced, setCanCreateActivity],
-  );
 
-  const handleBodyChange = useCallback(
-    async (newStringifiedBody: string) => {
-      const oldActivity = store.get(
+      const activity = store.get(
         recordStoreFamilyState.atomFamily(activityId),
-      );
+      ) as Task | Note | null;
 
-      store.set(
-        recordStoreFamilyState.atomFamily(activityId),
-        (prev: typeof oldActivity) => ({
-          ...prev,
-          id: activityId,
-          bodyV2: {
-            blocknote: newStringifiedBody,
-            markdown: null,
+      if (isDefined(activity)) {
+        upsertActivity({
+          activity,
+          input: {
+            bodyV2: { blocknote, markdown: null },
           },
-          __typename: 'Activity',
-        }),
-      );
-
-      modifyRecordFromCache({
-        recordId: activityId,
-        fieldModifiers: {
-          bodyV2: () => {
-            return {
-              blocknote: newStringifiedBody,
-              markdown: null,
-            };
-          },
-        },
-        cache,
-        objectMetadataItem: objectMetadataItemActivity,
-      });
-
-      handlePersistBody(newStringifiedBody);
-
-      await syncAttachments(newStringifiedBody, oldActivity?.bodyV2.blocknote);
+        });
+      }
     },
     [
+      canCreateActivity,
+      setCanCreateActivity,
       store,
       activityId,
-      cache,
-      objectMetadataItemActivity,
-      handlePersistBody,
-      syncAttachments,
+      upsertActivity,
     ],
   );
 
-  const handleBodyChangeDebounced = useDebouncedCallback(handleBodyChange, 500);
+  const handleFocus = useCallback(() => {
+    const isRecordTitleCellOpen = store.get(
+      isTitleCellInEditModeComponentState.atomFamily({
+        instanceId: recordTitleCellId,
+      }),
+    );
 
-  const handleEditorChange = () => {
-    const newStringifiedBody = JSON.stringify(editor.document) ?? '';
-
-    handleBodyChangeDebounced(newStringifiedBody);
-  };
-
-  const initialBody = useMemo(() => {
-    if (!isDefined(activity)) {
-      return undefined;
+    if (isRecordTitleCellOpen) {
+      editorRef.current?.domElement?.blur();
+      return;
     }
 
-    return parseInitialBlocknote(
-      activity?.bodyV2?.blocknote,
-      `Failed to parse body for activity ${activityId}, for rich text version 'v2'`,
+    pushFocusItemToFocusStack({
+      component: {
+        instanceId: activityId,
+        type: FocusComponentType.ACTIVITY_RICH_TEXT_EDITOR,
+      },
+      focusId: activityId,
+      globalHotkeysConfig: BLOCK_EDITOR_GLOBAL_HOTKEYS_CONFIG,
+    });
+  }, [recordTitleCellId, activityId, pushFocusItemToFocusStack, store]);
+
+  const handleBlur = useCallback(() => {
+    const isRecordTitleCellOpen = store.get(
+      isTitleCellInEditModeComponentState.atomFamily({
+        instanceId: recordTitleCellId,
+      }),
     );
-  }, [activity, activityId]);
 
-  const handleEditorBuiltInUploadFile = async (file: File) => {
-    const { attachmentAbsoluteURL } = await handleUploadAttachment(file);
+    if (isRecordTitleCellOpen) {
+      return;
+    }
 
-    return attachmentAbsoluteURL;
-  };
-
-  const editor = useCreateBlockNote({
-    initialContent: initialBody,
-    domAttributes: { editor: { class: 'editor' } },
-    schema: BLOCK_SCHEMA,
-    uploadFile: handleEditorBuiltInUploadFile,
-    placeholders: {
-      default: t`Type '/' for commands, '@' for mentions`,
-    },
-  });
-
-  useHotkeysOnFocusedElement({
-    keys: Key.Escape,
-    callback: () => {
-      editor.domElement?.blur();
-    },
-    focusId: activityId,
-    dependencies: [editor],
-  });
+    removeFocusItemFromFocusStackById({ focusId: activityId });
+  }, [activityId, recordTitleCellId, removeFocusItemFromFocusStackById, store]);
 
   const focusRichTextEditorWhenFocusOnSidePanel = (
     keyboardEvent: KeyboardEvent,
@@ -253,6 +141,12 @@ export const ActivityRichTextEditor = ({
       !keyboardEvent.metaKey;
 
     if (!isWritingText) {
+      return;
+    }
+
+    const editor = editorRef.current;
+
+    if (!editor) {
       return;
     }
 
@@ -281,77 +175,15 @@ export const ActivityRichTextEditor = ({
     dependencies: [focusRichTextEditorWhenFocusOnSidePanel],
   });
 
-  const { labelIdentifierFieldMetadataItem } =
-    useLabelIdentifierFieldMetadataItem({
-      objectNameSingular: activityObjectNameSingular,
-    });
-
-  const recordTitleCellId = getRecordFieldInputInstanceId({
-    recordId: activityId,
-    fieldName: labelIdentifierFieldMetadataItem?.name,
-    // TODO: see comments below, this is a very temporary fix,
-    //  it won't work for the breadcrumb title input, but that's ok for now.
-    prefix: RecordTitleCellContainerType.ShowPage,
-  });
-
-  // TODO: Here instead of closing the input, as it was intially planned, we should block if there is anything open,
-  //   This information should be derived from the focus stack
-  // The problem with this library is that it takes the focus before anything else and does not prevent the event from bubbling
-  //   Because of this, other events listen at the same time, and when we're in luck, the click outside gets triggered,
-  //   but this leaves the door open for unpredicted behavior with click handlers conflicts,
-  //   we recently had a bug which was deleting what the user typed and closed the side panel if he used backspace key.
-  // We could maybe use the types of components in the focus stack.
-  const handleBlockEditorFocus = useCallback(() => {
-    const isRecordTitleCellOpen = store.get(
-      isTitleCellInEditModeComponentState.atomFamily({
-        instanceId: recordTitleCellId,
-      }),
-    );
-
-    if (isRecordTitleCellOpen) {
-      editor.domElement?.blur();
-      return;
-    }
-
-    pushFocusItemToFocusStack({
-      component: {
-        instanceId: activityId,
-        type: FocusComponentType.ACTIVITY_RICH_TEXT_EDITOR,
-      },
-      focusId: activityId,
-      globalHotkeysConfig: BLOCK_EDITOR_GLOBAL_HOTKEYS_CONFIG,
-    });
-  }, [recordTitleCellId, activityId, editor, pushFocusItemToFocusStack, store]);
-
-  const handlerBlockEditorBlur = useCallback(() => {
-    const isRecordTitleCellOpen = store.get(
-      isTitleCellInEditModeComponentState.atomFamily({
-        instanceId: recordTitleCellId,
-      }),
-    );
-
-    if (isRecordTitleCellOpen) {
-      return;
-    }
-
-    removeFocusItemFromFocusStackById({
-      focusId: activityId,
-    });
-  }, [activityId, recordTitleCellId, removeFocusItemFromFocusStackById, store]);
-
   return (
-    <>
-      <ActivityRichTextEditorChangeOnActivityIdEffect
-        editor={editor}
-        activityId={activityId}
-      />
-      <BlockEditor
-        onFocus={handleBlockEditorFocus}
-        onBlur={handlerBlockEditorBlur}
-        onChange={handleEditorChange}
-        editor={editor}
-        readonly={isRecordFieldReadOnly}
-      />
-    </>
+    <RichTextFieldEditor
+      recordId={activityId}
+      objectNameSingular={activityObjectNameSingular}
+      fieldName="bodyV2"
+      onPersistBody={handlePersistBody}
+      onFocus={handleFocus}
+      onBlur={handleBlur}
+      editorRef={editorRef}
+    />
   );
 };

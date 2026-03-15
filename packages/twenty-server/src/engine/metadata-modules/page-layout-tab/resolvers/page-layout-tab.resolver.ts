@@ -15,6 +15,7 @@ import {
 } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { isDefined } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
@@ -68,6 +69,11 @@ export class PageLayoutTabResolver {
   @ResolveField(() => String, { nullable: true })
   icon(@Parent() tab: PageLayoutTabDTO): string | null | undefined {
     return resolveOverridableEntityProperty(tab, 'icon');
+  }
+
+  @ResolveField(() => Boolean)
+  isOverridden(@Parent() tab: PageLayoutTabDTO): boolean {
+    return isDefined(tab.overrides) && Object.keys(tab.overrides).length > 0;
   }
 
   @Query(() => [PageLayoutTabDTO])

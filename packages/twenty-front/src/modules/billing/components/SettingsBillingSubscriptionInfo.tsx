@@ -46,17 +46,18 @@ import {
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useMutation } from '@apollo/client/react';
 import {
   BillingPlanKey,
   BillingProductKey,
   PermissionFlagType,
   SubscriptionInterval,
-  useCancelSwitchBillingIntervalMutation,
-  useCancelSwitchBillingPlanMutation,
-  useCancelSwitchMeteredPriceMutation,
-  useSwitchBillingPlanMutation,
-  useSwitchSubscriptionIntervalMutation,
   SubscriptionStatus,
+  CancelSwitchBillingIntervalDocument,
+  CancelSwitchBillingPlanDocument,
+  CancelSwitchMeteredPriceDocument,
+  SwitchBillingPlanDocument,
+  SwitchSubscriptionIntervalDocument,
 } from '~/generated-metadata/graphql';
 import { beautifyExactDate } from '~/utils/date-utils';
 
@@ -133,17 +134,23 @@ export const SettingsBillingSubscriptionInfo = ({
     getBeautifiedRenewDate,
   } = useBillingWording();
 
-  const [switchSubscriptionIntervalMutation] =
-    useSwitchSubscriptionIntervalMutation();
+  const [switchSubscriptionIntervalMutation] = useMutation(
+    SwitchSubscriptionIntervalDocument,
+  );
 
-  const [switchBillingPlan] = useSwitchBillingPlanMutation();
+  const [switchBillingPlan] = useMutation(SwitchBillingPlanDocument);
 
-  const [cancelSwitchBillingInterval] =
-    useCancelSwitchBillingIntervalMutation();
+  const [cancelSwitchBillingInterval] = useMutation(
+    CancelSwitchBillingIntervalDocument,
+  );
 
-  const [cancelSwitchBillingPlan] = useCancelSwitchBillingPlanMutation();
+  const [cancelSwitchBillingPlan] = useMutation(
+    CancelSwitchBillingPlanDocument,
+  );
 
-  const [cancelSwitchMeteredPrice] = useCancelSwitchMeteredPriceMutation();
+  const [cancelSwitchMeteredPrice] = useMutation(
+    CancelSwitchMeteredPriceDocument,
+  );
 
   const setCurrentWorkspace = useSetAtomState(currentWorkspaceState);
 

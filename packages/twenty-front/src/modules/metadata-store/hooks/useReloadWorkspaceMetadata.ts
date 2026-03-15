@@ -1,7 +1,7 @@
 import { useMetadataStore } from '@/metadata-store/hooks/useMetadataStore';
+import { splitViewWithRelated } from '@/metadata-store/utils/splitViewWithRelated';
 import { useLoadMockedObjectMetadataItems } from '@/object-metadata/hooks/useLoadMockedObjectMetadataItems';
 import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItems';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
@@ -16,12 +16,25 @@ export const useReloadWorkspaceMetadata = () => {
     resetMetadataStore();
 
     await refreshObjectMetadataItems();
-    const loadedObjects = store.get(objectMetadataItemsState.atom);
-    updateDraft('objectMetadataItems', loadedObjects);
-    applyChanges();
 
     const loadedViews = store.get(coreViewsState.atom);
-    updateDraft('views', loadedViews);
+    const {
+      flatViews,
+      flatViewFields,
+      flatViewFilters,
+      flatViewSorts,
+      flatViewGroups,
+      flatViewFilterGroups,
+      flatViewFieldGroups,
+    } = splitViewWithRelated(loadedViews);
+
+    updateDraft('views', flatViews);
+    updateDraft('viewFields', flatViewFields);
+    updateDraft('viewFilters', flatViewFilters);
+    updateDraft('viewSorts', flatViewSorts);
+    updateDraft('viewGroups', flatViewGroups);
+    updateDraft('viewFilterGroups', flatViewFilterGroups);
+    updateDraft('viewFieldGroups', flatViewFieldGroups);
     applyChanges();
   }, [
     resetMetadataStore,
@@ -35,16 +48,7 @@ export const useReloadWorkspaceMetadata = () => {
     resetMetadataStore();
 
     await loadMockedObjectMetadataItems();
-    const loadedObjects = store.get(objectMetadataItemsState.atom);
-    updateDraft('objectMetadataItems', loadedObjects);
-    applyChanges();
-  }, [
-    resetMetadataStore,
-    loadMockedObjectMetadataItems,
-    store,
-    updateDraft,
-    applyChanges,
-  ]);
+  }, [resetMetadataStore, loadMockedObjectMetadataItems]);
 
   return { reloadWorkspaceMetadata, resetToMockedMetadata };
 };

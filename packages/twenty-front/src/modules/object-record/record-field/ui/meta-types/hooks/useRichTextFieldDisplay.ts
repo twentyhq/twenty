@@ -4,8 +4,6 @@ import { type FieldRichTextValue } from '@/object-record/record-field/ui/types/F
 import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guards/assertFieldMetadata';
 import { isFieldRichText } from '@/object-record/record-field/ui/types/guards/isFieldRichText';
 import { useRecordFieldValue } from '@/object-record/record-store/hooks/useRecordFieldValue';
-import type { PartialBlock } from '@blocknote/core';
-import { isDefined, parseJson } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 
@@ -26,12 +24,8 @@ export const useRichTextFieldDisplay = () => {
     fieldDefinition,
   );
 
-  const fieldValueParsed = isDefined(fieldValue)
-    ? parseJson<PartialBlock[]>(fieldValue)
-    : null;
-
   return {
     fieldDefinition,
-    fieldValue: fieldValueParsed,
+    fieldValue,
   };
 };

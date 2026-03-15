@@ -2,13 +2,11 @@ import { useResendWorkspaceInvitation } from '@/workspace-invitation/hooks/useRe
 import { renderHook } from '@testing-library/react';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
-const mutationResendWorspaceInvitationCallSpy = jest.fn();
+const mutationCallSpy = jest.fn();
 
-jest.mock('~/generated-metadata/graphql', () => ({
-  ...jest.requireActual('~/generated-metadata/graphql'),
-  useResendWorkspaceInvitationMutation: () => [
-    mutationResendWorspaceInvitationCallSpy,
-  ],
+jest.mock('@apollo/client/react', () => ({
+  ...jest.requireActual('@apollo/client/react'),
+  useMutation: () => [mutationCallSpy],
 }));
 
 const Wrapper = getJestMetadataAndApolloMocksWrapper({
@@ -30,7 +28,7 @@ describe('useResendWorkspaceInvitation', () => {
       { wrapper: Wrapper },
     );
 
-    expect(mutationResendWorspaceInvitationCallSpy).toHaveBeenCalledWith({
+    expect(mutationCallSpy).toHaveBeenCalledWith({
       onCompleted: expect.any(Function),
       variables: params,
     });

@@ -6,7 +6,7 @@ description: La guida per i collaboratori (o sviluppatori curiosi) che vogliono 
 ## Prerequisiti
 
 <Tabs>
-<Tab title="Linux e MacOS">
+<Tab title="Linux e macOS">
 
 Prima di poter installare e usare Twenty, assicurati di installare quanto segue sul tuo computer:
 * [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
@@ -129,8 +129,8 @@ Dovresti eseguire tutti i comandi nei passaggi successivi dalla radice del proge
       brew services list
     ```
 
-    L'installatore potrebbe non creare l'utente `postgres` di default quando si installa
-    tramite Homebrew su MacOS. Invece, crea un ruolo di PostgreSQL che corrisponde al tuo nome utente macOS
+    Il programma di installazione potrebbe non creare l'utente `postgres` per impostazione predefinita quando si installa
+    tramite Homebrew su macOS. Invece, crea un ruolo di PostgreSQL che corrisponde al tuo nome utente macOS
     (es., "john").
     Per controllare e creare l'utente `postgres` se necessario, segui questi passaggi:
     ```bash
@@ -174,7 +174,7 @@ Dovresti eseguire tutti i comandi nei passaggi successivi dalla radice del proge
     Tutti i passaggi seguenti devono essere eseguiti nel terminale WSL (all'interno della tua macchina virtuale)
 
     **Opzione 1:** Per predisporre PostgreSQL in locale:
-    Usa il seguente link per installare PostgreSQL nella tua macchina virtuale Linux: [Installazione di PostgreSQL](https://www.postgresql.org/download/linux/)
+    Usa il seguente link per installare PostgreSQL sulla tua macchina virtuale Linux: [Installazione di PostgreSQL](https://www.postgresql.org/download/linux/)
     ```bash
       psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
     ```
@@ -189,11 +189,13 @@ Dovresti eseguire tutti i comandi nei passaggi successivi dalla radice del proge
   </Tab>
 </Tabs>
 
-Puoi ora accedere al database su [localhost:5432](localhost:5432), con utente `postgres` e password `postgres`.
+Ora puoi accedere al database all'indirizzo `localhost:5432`.
+
+Se hai utilizzato l'opzione Docker sopra, le credenziali predefinite sono utente `postgres` e password `postgres`. Per le installazioni native di PostgreSQL, usa le credenziali e i ruoli configurati sulla tua macchina.
 
 ## Passaggio 4: Configura un database Redis (cache)
 
-Twenty richiede una cache Redis per offrire le migliori prestazioni
+Twenty richiede una cache Redis per offrire le migliori prestazioni.
 
 <Tabs>
   <Tab title="Linux">
@@ -211,7 +213,9 @@ Twenty richiede una cache Redis per offrire le migliori prestazioni
     brew install redis
     ```
     Avvia il tuo server Redis:
-    `brew services start redis`
+    ```bash
+    brew services start redis
+    ```
 
     **Opzione 2:** Se hai Docker installato:
     ```bash
@@ -229,11 +233,11 @@ Twenty richiede una cache Redis per offrire le migliori prestazioni
   </Tab>
 </Tabs>
 
-Se hai bisogno di una GUI client, ti consigliamo [Redis Insight](https://redis.io/insight/) (versione gratuita disponibile)
+Se hai bisogno di una GUI client, ti consigliamo [Redis Insight](https://redis.io/insight/) (versione gratuita disponibile).
 
 ## Passaggio 5: Configura le variabili d'ambiente
 
-Usa variabili d'ambiente o file `.env` per configurare il tuo progetto. Maggiori informazioni [qui](/l/it/developers/self-host/capabilities/setup)
+Usa variabili d'ambiente o file `.env` per configurare il tuo progetto. Maggiori informazioni [qui](/l/it/developers/self-host/capabilities/setup).
 
 Copia i file `.env.example` in `/front` e `/server`:
 

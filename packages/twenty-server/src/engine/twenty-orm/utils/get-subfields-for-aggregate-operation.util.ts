@@ -36,7 +36,7 @@ export const getSubfieldsForAggregateOperation = (
           'primaryPhoneCountryCode',
           'primaryPhoneCallingCode',
         ];
-      case FieldMetadataType.RICH_TEXT_V2:
+      case FieldMetadataType.RICH_TEXT:
         return ['blocknote', 'markdown'];
       default:
         throw new Error(`Unsupported composite field type: ${fieldType}`);

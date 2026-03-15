@@ -1,8 +1,9 @@
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { ApolloError } from '@apollo/client';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { AppPath } from 'twenty-shared/types';
-import { useSignUpInNewWorkspaceMutation } from '~/generated-metadata/graphql';
+import { useMutation } from '@apollo/client/react';
+import { SignUpInNewWorkspaceDocument } from '~/generated-metadata/graphql';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 import { useLingui } from '@lingui/react/macro';
@@ -12,7 +13,9 @@ export const useSignUpInNewWorkspace = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
   const { t } = useLingui();
 
-  const [signUpInNewWorkspaceMutation] = useSignUpInNewWorkspaceMutation();
+  const [signUpInNewWorkspaceMutation] = useMutation(
+    SignUpInNewWorkspaceDocument,
+  );
 
   const createWorkspace = async ({ newTab } = { newTab: true }) => {
     try {
@@ -27,11 +30,16 @@ export const useSignUpInNewWorkspace = () => {
         newTab ? '_blank' : '_self',
       );
     } catch (error) {
-      enqueueErrorSnackBar({
-        ...(error instanceof ApolloError
+      enqueueErrorSnackBar(
+        CombinedGraphQLErrors.is(error)
           ? { apolloError: error }
-          : { message: t`Workspace creation failed` }),
-      });
+          : {
+              message:
+                error instanceof Error
+                  ? error.message
+                  : t`Workspace creation failed`,
+            },
+      );
     }
   };
 

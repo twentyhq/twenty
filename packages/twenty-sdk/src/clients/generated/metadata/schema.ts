@@ -309,7 +309,7 @@ export interface Field {
 
 
 /** Type of the field */
-export type FieldMetadataType = 'ACTOR' | 'ADDRESS' | 'ARRAY' | 'BOOLEAN' | 'CURRENCY' | 'DATE' | 'DATE_TIME' | 'EMAILS' | 'FILES' | 'FULL_NAME' | 'LINKS' | 'MORPH_RELATION' | 'MULTI_SELECT' | 'NUMBER' | 'NUMERIC' | 'PHONES' | 'POSITION' | 'RATING' | 'RAW_JSON' | 'RELATION' | 'RICH_TEXT' | 'RICH_TEXT_V2' | 'SELECT' | 'TEXT' | 'TS_VECTOR' | 'UUID'
+export type FieldMetadataType = 'ACTOR' | 'ADDRESS' | 'ARRAY' | 'BOOLEAN' | 'CURRENCY' | 'DATE' | 'DATE_TIME' | 'EMAILS' | 'FILES' | 'FULL_NAME' | 'LINKS' | 'MORPH_RELATION' | 'MULTI_SELECT' | 'NUMBER' | 'NUMERIC' | 'PHONES' | 'POSITION' | 'RATING' | 'RAW_JSON' | 'RELATION' | 'RICH_TEXT' | 'SELECT' | 'TEXT' | 'TS_VECTOR' | 'UUID'
 
 export interface IndexField {
     id: Scalars['UUID']
@@ -416,6 +416,7 @@ export interface CoreViewField {
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
     deletedAt?: Scalars['DateTime']
+    isOverridden: Scalars['Boolean']
     __typename: 'CoreViewField'
 }
 
@@ -492,6 +493,7 @@ export interface CoreViewFieldGroup {
     updatedAt: Scalars['DateTime']
     deletedAt?: Scalars['DateTime']
     viewFields: CoreViewField[]
+    isOverridden: Scalars['Boolean']
     __typename: 'CoreViewFieldGroup'
 }
 
@@ -646,10 +648,10 @@ export interface RatioAggregateConfig {
     __typename: 'RatioAggregateConfig'
 }
 
-export interface RichTextV2Body {
+export interface RichTextBody {
     blocknote?: Scalars['String']
     markdown?: Scalars['String']
-    __typename: 'RichTextV2Body'
+    __typename: 'RichTextBody'
 }
 
 export interface GridPosition {
@@ -726,7 +728,7 @@ export type WidgetConfigurationType = 'AGGREGATE_CHART' | 'GAUGE_CHART' | 'PIE_C
 
 export interface StandaloneRichTextConfiguration {
     configurationType: WidgetConfigurationType
-    body: RichTextV2Body
+    body: RichTextBody
     __typename: 'StandaloneRichTextConfiguration'
 }
 
@@ -972,6 +974,7 @@ export interface MetadataEvent {
     metadataName: Scalars['String']
     recordId: Scalars['String']
     properties: ObjectRecordEventProperties
+    updatedCollectionHash?: Scalars['String']
     __typename: 'MetadataEvent'
 }
 
@@ -1310,7 +1313,7 @@ export interface FeatureFlag {
     __typename: 'FeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_UNIQUE_INDEXES_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_AI_ENABLED' | 'IS_APPLICATION_ENABLED' | 'IS_MARKETPLACE_ENABLED' | 'IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED' | 'IS_PUBLIC_DOMAIN_ENABLED' | 'IS_EMAILING_DOMAIN_ENABLED' | 'IS_DASHBOARD_V2_ENABLED' | 'IS_ATTACHMENT_MIGRATED' | 'IS_NOTE_TARGET_MIGRATED' | 'IS_TASK_TARGET_MIGRATED' | 'IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED' | 'IS_JUNCTION_RELATIONS_ENABLED' | 'IS_COMMAND_MENU_ITEM_ENABLED' | 'IS_NAVIGATION_MENU_ITEM_ENABLED' | 'IS_DATE_TIME_WHOLE_DAY_FILTER_ENABLED' | 'IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED' | 'IS_DRAFT_EMAIL_ENABLED'
+export type FeatureFlagKey = 'IS_UNIQUE_INDEXES_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_AI_ENABLED' | 'IS_APPLICATION_ENABLED' | 'IS_MARKETPLACE_ENABLED' | 'IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED' | 'IS_PUBLIC_DOMAIN_ENABLED' | 'IS_EMAILING_DOMAIN_ENABLED' | 'IS_DASHBOARD_V2_ENABLED' | 'IS_ATTACHMENT_MIGRATED' | 'IS_NOTE_TARGET_MIGRATED' | 'IS_TASK_TARGET_MIGRATED' | 'IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED' | 'IS_JUNCTION_RELATIONS_ENABLED' | 'IS_COMMAND_MENU_ITEM_ENABLED' | 'IS_NAVIGATION_MENU_ITEM_ENABLED' | 'IS_DATE_TIME_WHOLE_DAY_FILTER_ENABLED' | 'IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED' | 'IS_DRAFT_EMAIL_ENABLED' | 'IS_RICH_TEXT_V1_MIGRATED'
 
 export interface SSOIdentityProvider {
     id: Scalars['UUID']
@@ -1881,6 +1884,35 @@ export interface AgentTurn {
     messages: AgentMessage[]
     createdAt: Scalars['DateTime']
     __typename: 'AgentTurn'
+}
+
+export interface MinimalObjectMetadata {
+    id: Scalars['UUID']
+    nameSingular: Scalars['String']
+    namePlural: Scalars['String']
+    labelSingular: Scalars['String']
+    labelPlural: Scalars['String']
+    icon?: Scalars['String']
+    isCustom: Scalars['Boolean']
+    isActive: Scalars['Boolean']
+    isSystem: Scalars['Boolean']
+    isRemote: Scalars['Boolean']
+    __typename: 'MinimalObjectMetadata'
+}
+
+export interface MinimalView {
+    id: Scalars['UUID']
+    type: ViewType
+    key?: ViewKey
+    objectMetadataId: Scalars['UUID']
+    __typename: 'MinimalView'
+}
+
+export interface MinimalMetadata {
+    objectMetadataItems: MinimalObjectMetadata[]
+    views: MinimalView[]
+    collectionHashes: Scalars['JSON']
+    __typename: 'MinimalMetadata'
 }
 
 export interface Webhook {
@@ -2593,6 +2625,7 @@ export interface Query {
     getSSOIdentityProviders: FindAvailableSSOIDP[]
     webhooks: Webhook[]
     webhook?: Webhook
+    minimalMetadata: MinimalMetadata
     chatThread: AgentChatThread
     chatMessages: AgentMessage[]
     getAISystemPromptPreview: AISystemPromptPreview
@@ -3295,6 +3328,7 @@ export interface CoreViewFieldGenqlSelection{
     createdAt?: boolean | number
     updatedAt?: boolean | number
     deletedAt?: boolean | number
+    isOverridden?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -3368,6 +3402,7 @@ export interface CoreViewFieldGroupGenqlSelection{
     updatedAt?: boolean | number
     deletedAt?: boolean | number
     viewFields?: CoreViewFieldGenqlSelection
+    isOverridden?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -3512,7 +3547,7 @@ export interface RatioAggregateConfigGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface RichTextV2BodyGenqlSelection{
+export interface RichTextBodyGenqlSelection{
     blocknote?: boolean | number
     markdown?: boolean | number
     __typename?: boolean | number
@@ -3621,7 +3656,7 @@ export interface AggregateChartConfigurationGenqlSelection{
 
 export interface StandaloneRichTextConfigurationGenqlSelection{
     configurationType?: boolean | number
-    body?: RichTextV2BodyGenqlSelection
+    body?: RichTextBodyGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -3868,6 +3903,7 @@ export interface MetadataEventGenqlSelection{
     metadataName?: boolean | number
     recordId?: boolean | number
     properties?: ObjectRecordEventPropertiesGenqlSelection
+    updatedCollectionHash?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -4844,6 +4880,38 @@ export interface AgentTurnGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface MinimalObjectMetadataGenqlSelection{
+    id?: boolean | number
+    nameSingular?: boolean | number
+    namePlural?: boolean | number
+    labelSingular?: boolean | number
+    labelPlural?: boolean | number
+    icon?: boolean | number
+    isCustom?: boolean | number
+    isActive?: boolean | number
+    isSystem?: boolean | number
+    isRemote?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface MinimalViewGenqlSelection{
+    id?: boolean | number
+    type?: boolean | number
+    key?: boolean | number
+    objectMetadataId?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface MinimalMetadataGenqlSelection{
+    objectMetadataItems?: MinimalObjectMetadataGenqlSelection
+    views?: MinimalViewGenqlSelection
+    collectionHashes?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface WebhookGenqlSelection{
     id?: boolean | number
     targetUrl?: boolean | number
@@ -5614,6 +5682,7 @@ export interface QueryGenqlSelection{
     getSSOIdentityProviders?: FindAvailableSSOIDPGenqlSelection
     webhooks?: WebhookGenqlSelection
     webhook?: (WebhookGenqlSelection & { __args: {id: Scalars['UUID']} })
+    minimalMetadata?: MinimalMetadataGenqlSelection
     chatThread?: (AgentChatThreadGenqlSelection & { __args: {id: Scalars['UUID']} })
     chatMessages?: (AgentMessageGenqlSelection & { __args: {threadId: Scalars['UUID']} })
     getAISystemPromptPreview?: AISystemPromptPreviewGenqlSelection
@@ -6495,10 +6564,10 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
-    const RichTextV2Body_possibleTypes: string[] = ['RichTextV2Body']
-    export const isRichTextV2Body = (obj?: { __typename?: any } | null): obj is RichTextV2Body => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isRichTextV2Body"')
-      return RichTextV2Body_possibleTypes.includes(obj.__typename)
+    const RichTextBody_possibleTypes: string[] = ['RichTextBody']
+    export const isRichTextBody = (obj?: { __typename?: any } | null): obj is RichTextBody => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isRichTextBody"')
+      return RichTextBody_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -7607,6 +7676,30 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
+    const MinimalObjectMetadata_possibleTypes: string[] = ['MinimalObjectMetadata']
+    export const isMinimalObjectMetadata = (obj?: { __typename?: any } | null): obj is MinimalObjectMetadata => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isMinimalObjectMetadata"')
+      return MinimalObjectMetadata_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const MinimalView_possibleTypes: string[] = ['MinimalView']
+    export const isMinimalView = (obj?: { __typename?: any } | null): obj is MinimalView => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isMinimalView"')
+      return MinimalView_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const MinimalMetadata_possibleTypes: string[] = ['MinimalMetadata']
+    export const isMinimalMetadata = (obj?: { __typename?: any } | null): obj is MinimalMetadata => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isMinimalMetadata"')
+      return MinimalMetadata_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const Webhook_possibleTypes: string[] = ['Webhook']
     export const isWebhook = (obj?: { __typename?: any } | null): obj is Webhook => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isWebhook"')
@@ -8291,7 +8384,6 @@ export const enumFieldMetadataType = {
    RAW_JSON: 'RAW_JSON' as const,
    RELATION: 'RELATION' as const,
    RICH_TEXT: 'RICH_TEXT' as const,
-   RICH_TEXT_V2: 'RICH_TEXT_V2' as const,
    SELECT: 'SELECT' as const,
    TEXT: 'TEXT' as const,
    TS_VECTOR: 'TS_VECTOR' as const,
@@ -8571,7 +8663,8 @@ export const enumFeatureFlagKey = {
    IS_NAVIGATION_MENU_ITEM_ENABLED: 'IS_NAVIGATION_MENU_ITEM_ENABLED' as const,
    IS_DATE_TIME_WHOLE_DAY_FILTER_ENABLED: 'IS_DATE_TIME_WHOLE_DAY_FILTER_ENABLED' as const,
    IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED: 'IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED' as const,
-   IS_DRAFT_EMAIL_ENABLED: 'IS_DRAFT_EMAIL_ENABLED' as const
+   IS_DRAFT_EMAIL_ENABLED: 'IS_DRAFT_EMAIL_ENABLED' as const,
+   IS_RICH_TEXT_V1_MIGRATED: 'IS_RICH_TEXT_V1_MIGRATED' as const
 }
 
 export const enumRelationType = {

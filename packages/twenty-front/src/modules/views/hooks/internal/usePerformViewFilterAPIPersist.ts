@@ -4,28 +4,37 @@ import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetad
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useTriggerViewFilterOptimisticEffect } from '@/views/optimistic-effects/hooks/useTriggerViewFilterOptimisticEffect';
-import { ApolloError } from '@apollo/client';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { t } from '@lingui/core/macro';
 import { CrudOperationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { useMutation } from '@apollo/client/react';
 import {
   type CreateCoreViewFilterMutationVariables,
   type DeleteCoreViewFilterMutationVariables,
   type DestroyCoreViewFilterMutationVariables,
   type UpdateCoreViewFilterMutationVariables,
-  useCreateCoreViewFilterMutation,
-  useDeleteCoreViewFilterMutation,
-  useDestroyCoreViewFilterMutation,
-  useUpdateCoreViewFilterMutation,
+  CreateCoreViewFilterDocument,
+  DeleteCoreViewFilterDocument,
+  DestroyCoreViewFilterDocument,
+  UpdateCoreViewFilterDocument,
 } from '~/generated-metadata/graphql';
 
 export const usePerformViewFilterAPIPersist = () => {
   const { triggerViewFilterOptimisticEffect } =
     useTriggerViewFilterOptimisticEffect();
-  const [createCoreViewFilterMutation] = useCreateCoreViewFilterMutation();
-  const [updateCoreViewFilterMutation] = useUpdateCoreViewFilterMutation();
-  const [deleteCoreViewFilterMutation] = useDeleteCoreViewFilterMutation();
-  const [destroyCoreViewFilterMutation] = useDestroyCoreViewFilterMutation();
+  const [createCoreViewFilterMutation] = useMutation(
+    CreateCoreViewFilterDocument,
+  );
+  const [updateCoreViewFilterMutation] = useMutation(
+    UpdateCoreViewFilterDocument,
+  );
+  const [deleteCoreViewFilterMutation] = useMutation(
+    DeleteCoreViewFilterDocument,
+  );
+  const [destroyCoreViewFilterMutation] = useMutation(
+    DestroyCoreViewFilterDocument,
+  );
 
   const { handleMetadataError } = useMetadataErrorHandler();
   const { enqueueErrorSnackBar } = useSnackBar();
@@ -69,7 +78,7 @@ export const usePerformViewFilterAPIPersist = () => {
           response: results,
         };
       } catch (error) {
-        if (error instanceof ApolloError) {
+        if (CombinedGraphQLErrors.is(error)) {
           handleMetadataError(error, {
             primaryMetadataName: 'viewFilter',
             operationType: CrudOperationType.CREATE,
@@ -131,7 +140,7 @@ export const usePerformViewFilterAPIPersist = () => {
           response: results,
         };
       } catch (error) {
-        if (error instanceof ApolloError) {
+        if (CombinedGraphQLErrors.is(error)) {
           handleMetadataError(error, {
             primaryMetadataName: 'viewFilter',
             operationType: CrudOperationType.UPDATE,
@@ -193,7 +202,7 @@ export const usePerformViewFilterAPIPersist = () => {
           response: results,
         };
       } catch (error) {
-        if (error instanceof ApolloError) {
+        if (CombinedGraphQLErrors.is(error)) {
           handleMetadataError(error, {
             primaryMetadataName: 'viewFilter',
             operationType: CrudOperationType.DELETE,
@@ -245,7 +254,7 @@ export const usePerformViewFilterAPIPersist = () => {
           response: results,
         };
       } catch (error) {
-        if (error instanceof ApolloError) {
+        if (CombinedGraphQLErrors.is(error)) {
           handleMetadataError(error, {
             primaryMetadataName: 'viewFilter',
             operationType: CrudOperationType.DESTROY,

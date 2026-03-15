@@ -3,7 +3,7 @@ import {
   type Meta,
   type StoryObj,
 } from '@storybook/react-vite';
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -152,8 +152,10 @@ export const LimitedPermissions: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     expect(await canvas.findByText('Go to People')).toBeVisible();
-    expect(canvas.queryByText('Go to Opportunities')).not.toBeInTheDocument();
-    expect(canvas.queryByText('Go to Tasks')).not.toBeInTheDocument();
+    await waitFor(() => {
+      expect(canvas.queryByText('Go to Opportunities')).not.toBeInTheDocument();
+      expect(canvas.queryByText('Go to Tasks')).not.toBeInTheDocument();
+    });
     expect(await canvas.findByText('Go to Settings')).toBeVisible();
     expect(await canvas.findByText('Go to Notes')).toBeVisible();
   },

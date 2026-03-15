@@ -307,6 +307,19 @@ export const computeStandardTaskViewFields = (
         viewFieldGroupName: 'general',
       },
     }),
+    taskRecordPageFieldsTaskTargets: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'task',
+      context: {
+        viewName: 'taskRecordPageFields',
+        viewFieldName: 'taskTargets',
+        fieldName: 'taskTargets',
+        position: 4,
+        isVisible: true,
+        size: 150,
+        viewFieldGroupName: 'general',
+      },
+    }),
     taskRecordPageFieldsCreatedAt: createStandardViewFieldFlatMetadata({
       ...args,
       objectName: 'task',

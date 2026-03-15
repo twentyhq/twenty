@@ -9,7 +9,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { ApolloError } from '@apollo/client';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { FormProvider, useForm } from 'react-hook-form';
@@ -18,7 +18,8 @@ import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
-import { useUpdateWorkspaceMutation } from '~/generated-metadata/graphql';
+import { useMutation } from '@apollo/client/react';
+import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { SettingsCustomDomain } from '@/settings/domains/components/SettingsCustomDomain';
 import { SettingsSubdomain } from '@/settings/domains/components/SettingsSubdomain';
@@ -47,7 +48,7 @@ export const SettingsDomain = () => {
     .required();
 
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
-  const [updateWorkspace] = useUpdateWorkspaceMutation();
+  const [updateWorkspace] = useMutation(UpdateWorkspaceDocument);
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -102,19 +103,23 @@ export const SettingsDomain = () => {
         setIsSubmitting(false);
         checkCustomDomainRecords();
       },
-      onError: (error: ApolloError) => {
+      onError: (error) => {
         if (
-          error instanceof ApolloError &&
-          error.graphQLErrors[0]?.extensions?.code === 'CONFLICT'
+          CombinedGraphQLErrors.is(error) &&
+          error.errors[0]?.extensions?.code === 'CONFLICT'
         ) {
           return form.control.setError('subdomain', {
             type: 'manual',
             message: t`Subdomain already taken`,
           });
         }
-        enqueueErrorSnackBar({
-          apolloError: error,
-        });
+        if (CombinedGraphQLErrors.is(error)) {
+          enqueueErrorSnackBar({
+            apolloError: error,
+          });
+        } else {
+          enqueueErrorSnackBar({});
+        }
         setIsSubmitting(false);
       },
     });
@@ -134,10 +139,10 @@ export const SettingsDomain = () => {
           subdomain,
         },
       },
-      onError: (error: ApolloError) => {
+      onError: (error) => {
         if (
-          error instanceof ApolloError &&
-          error.graphQLErrors[0]?.extensions?.code === 'CONFLICT'
+          CombinedGraphQLErrors.is(error) &&
+          error.errors[0]?.extensions?.code === 'CONFLICT'
         ) {
           closeModal(SUBDOMAIN_CHANGE_CONFIRMATION_MODAL_ID);
           return form.control.setError('subdomain', {
@@ -145,9 +150,13 @@ export const SettingsDomain = () => {
             message: t`Subdomain already taken`,
           });
         }
-        enqueueErrorSnackBar({
-          apolloError: error,
-        });
+        if (CombinedGraphQLErrors.is(error)) {
+          enqueueErrorSnackBar({
+            apolloError: error,
+          });
+        } else {
+          enqueueErrorSnackBar({});
+        }
         setIsSubmitting(false);
       },
       onCompleted: async () => {

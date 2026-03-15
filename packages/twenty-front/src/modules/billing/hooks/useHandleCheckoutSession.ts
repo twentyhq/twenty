@@ -2,10 +2,11 @@ import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
+import { useMutation } from '@apollo/client/react';
 import {
   type BillingPlanKey,
   type SubscriptionInterval,
-  useCheckoutSessionMutation,
+  CheckoutSessionDocument,
 } from '~/generated-metadata/graphql';
 
 export const useHandleCheckoutSession = ({
@@ -23,7 +24,7 @@ export const useHandleCheckoutSession = ({
 
   const { enqueueErrorSnackBar } = useSnackBar();
 
-  const [checkoutSession] = useCheckoutSessionMutation();
+  const [checkoutSession] = useMutation(CheckoutSessionDocument);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 

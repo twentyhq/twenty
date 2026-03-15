@@ -1,6 +1,6 @@
 import { coreViewsState } from '@/views/states/coreViewState';
 import { type CoreViewWithRelations } from '@/views/types/CoreViewWithRelations';
-import { useApolloClient } from '@apollo/client';
+import { useApolloClient } from '@apollo/client/react';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { type CoreViewFilter } from '~/generated-metadata/graphql';
@@ -33,10 +33,11 @@ export const useTriggerViewFilterOptimisticEffect = () => {
             id: createdViewFilter.viewId,
           }),
           fields: {
-            viewFilters: (existingViewFilters, { toReference }) => [
-              ...(existingViewFilters ?? []),
-              toReference(createdViewFilter),
-            ],
+            viewFilters: (existingViewFilters, { toReference }) =>
+              [
+                ...(existingViewFilters ?? []),
+                toReference(createdViewFilter),
+              ].filter(isDefined),
           },
         });
         const toBeModifiedCoreView = newCoreViews.find(
@@ -66,13 +67,15 @@ export const useTriggerViewFilterOptimisticEffect = () => {
           }),
           fields: {
             viewFilters: (existingViewFilters, { readField, toReference }) =>
-              existingViewFilters.map((viewFilter) => {
-                const viewFilterId = readField<string>('id', viewFilter);
-                if (viewFilterId === updatedViewFilter.id) {
-                  return toReference(updatedViewFilter);
-                }
-                return viewFilter;
-              }),
+              existingViewFilters
+                .map((viewFilter) => {
+                  const viewFilterId = readField<string>('id', viewFilter);
+                  if (viewFilterId === updatedViewFilter.id) {
+                    return toReference(updatedViewFilter);
+                  }
+                  return viewFilter;
+                })
+                .filter(isDefined),
           },
         });
         const toBeModifiedCoreView = newCoreViews.find(

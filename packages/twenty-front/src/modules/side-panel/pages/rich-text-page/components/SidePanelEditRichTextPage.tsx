@@ -13,6 +13,14 @@ const ActivityRichTextEditor = lazy(() =>
   })),
 );
 
+const RichTextFieldEditor = lazy(() =>
+  import(
+    '@/object-record/record-field/ui/meta-types/input/components/RichTextFieldEditor'
+  ).then((module) => ({
+    default: module.RichTextFieldEditor,
+  })),
+);
+
 const StyledContainer = styled.div`
   box-sizing: border-box;
   margin: ${themeCssVariables.spacing[4]} -8px;
@@ -33,27 +41,34 @@ const LoadingSkeleton = () => {
   );
 };
 
+const isActivityObject = (
+  objectNameSingular: string,
+): objectNameSingular is
+  | CoreObjectNameSingular.Note
+  | CoreObjectNameSingular.Task =>
+  objectNameSingular === CoreObjectNameSingular.Note ||
+  objectNameSingular === CoreObjectNameSingular.Task;
+
 export const SidePanelEditRichTextPage = () => {
-  const { activityId, activityObjectNameSingular } = useAtomStateValue(
+  const { recordId, objectNameSingular, fieldName } = useAtomStateValue(
     viewableRichTextComponentState,
   );
-
-  if (
-    activityObjectNameSingular !== CoreObjectNameSingular.Note &&
-    activityObjectNameSingular !== CoreObjectNameSingular.Task
-  ) {
-    throw new Error(
-      `Invalid activity object name singular: ${activityObjectNameSingular}`,
-    );
-  }
 
   return (
     <StyledContainer>
       <Suspense fallback={<LoadingSkeleton />}>
-        <ActivityRichTextEditor
-          activityId={activityId}
-          activityObjectNameSingular={activityObjectNameSingular}
-        />
+        {isActivityObject(objectNameSingular) ? (
+          <ActivityRichTextEditor
+            activityId={recordId}
+            activityObjectNameSingular={objectNameSingular}
+          />
+        ) : (
+          <RichTextFieldEditor
+            recordId={recordId}
+            objectNameSingular={objectNameSingular}
+            fieldName={fieldName}
+          />
+        )}
       </Suspense>
     </StyledContainer>
   );

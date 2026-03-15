@@ -12,6 +12,7 @@ export type ViewField = {
   isVisible: boolean;
   size: number;
   aggregateOperation?: AggregateOperations | null;
+  isOverridden: boolean;
   definition:
     | ColumnDefinition<FieldMetadata>
     | RecordBoardFieldDefinition<FieldMetadata>;

@@ -1,7 +1,8 @@
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { useCreateNavigationMenuItemMutation } from '~/generated-metadata/graphql';
+import { useMutation } from '@apollo/client/react';
+import { CreateNavigationMenuItemDocument } from '~/generated-metadata/graphql';
 
 import { useDeleteNavigationMenuItem } from '@/navigation-menu-item/hooks/useDeleteNavigationMenuItem';
 import { useUpdateNavigationMenuItem } from '@/navigation-menu-item/hooks/useUpdateNavigationMenuItem';
@@ -11,27 +12,29 @@ import { filterWorkspaceNavigationMenuItems } from '@/navigation-menu-item/utils
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/utils/isNavigationMenuItemFolder';
 import { isNavigationMenuItemLink } from '@/navigation-menu-item/utils/isNavigationMenuItemLink';
 import { orderFoldersForCreation } from '@/navigation-menu-item/utils/orderFoldersForCreation';
-import { prefetchNavigationMenuItemsState } from '@/prefetch/states/prefetchNavigationMenuItemsState';
+import { navigationMenuItemsState } from '@/navigation-menu-item/states/navigationMenuItemsState';
 import { useStore } from 'jotai';
 
 export const useSaveNavigationMenuItemsDraft = () => {
   const { updateNavigationMenuItem } = useUpdateNavigationMenuItem();
   const { deleteNavigationMenuItem } = useDeleteNavigationMenuItem();
-  const [createNavigationMenuItemMutation] =
-    useCreateNavigationMenuItemMutation({
+  const [createNavigationMenuItemMutation] = useMutation(
+    CreateNavigationMenuItemDocument,
+    {
       refetchQueries: ['FindManyNavigationMenuItems'],
-    });
+    },
+  );
 
   const store = useStore();
 
   const saveDraft = useCallback(async () => {
     const draft = store.get(navigationMenuItemsDraftState.atom);
-    const prefetch = store.get(prefetchNavigationMenuItemsState.atom);
+    const currentItems = store.get(navigationMenuItemsState.atom);
 
     if (!draft) return;
 
-    const workspacePrefetch = filterWorkspaceNavigationMenuItems(prefetch);
-    const topLevelWorkspace = workspacePrefetch.filter(
+    const workspaceItems = filterWorkspaceNavigationMenuItems(currentItems);
+    const topLevelWorkspace = workspaceItems.filter(
       (item) => !isDefined(item.folderId),
     );
     const draftIds = new Set(draft.map((i) => i.id));
@@ -44,7 +47,7 @@ export const useSaveNavigationMenuItemsDraft = () => {
         .filter(isNavigationMenuItemFolder)
         .map((item) => item.id),
     );
-    const folderChildrenToDelete = prefetch.filter(
+    const folderChildrenToDelete = currentItems.filter(
       (item) =>
         isDefined(item.folderId) && folderIdsToDelete.has(item.folderId),
     );
@@ -56,13 +59,11 @@ export const useSaveNavigationMenuItemsDraft = () => {
       await deleteNavigationMenuItem(item.id);
     }
 
-    const prefetchIds = new Set(workspacePrefetch.map((i) => i.id));
-    const workspacePrefetchById = new Map(
-      workspacePrefetch.map((i) => [i.id, i]),
-    );
-    const idsToCreate = draft.filter((item) => !prefetchIds.has(item.id));
+    const currentIds = new Set(workspaceItems.map((i) => i.id));
+    const workspaceItemsById = new Map(workspaceItems.map((i) => [i.id, i]));
+    const idsToCreate = draft.filter((item) => !currentIds.has(item.id));
     const idsToRecreate = draft.filter((item) => {
-      const original = workspacePrefetchById.get(item.id);
+      const original = workspaceItemsById.get(item.id);
       if (!original) return false;
       return (
         original.viewId !== item.viewId ||
@@ -85,10 +86,7 @@ export const useSaveNavigationMenuItemsDraft = () => {
     const resolveFolderId = (draftFolderId: string): string =>
       createdFolderIdByDraftId.get(draftFolderId) ?? draftFolderId;
 
-    const orderedFolders = orderFoldersForCreation(
-      foldersToCreate,
-      prefetchIds,
-    );
+    const orderedFolders = orderFoldersForCreation(foldersToCreate, currentIds);
     for (const draftItem of orderedFolders) {
       const input = buildCreateNavigationMenuItemInput(
         draftItem,
@@ -117,7 +115,7 @@ export const useSaveNavigationMenuItemsDraft = () => {
     for (const draftItem of draft) {
       if (idsToRecreateSet.has(draftItem.id)) continue;
 
-      const original = workspacePrefetchById.get(draftItem.id);
+      const original = workspaceItemsById.get(draftItem.id);
       if (!original) continue;
 
       const positionChanged = original.position !== draftItem.position;

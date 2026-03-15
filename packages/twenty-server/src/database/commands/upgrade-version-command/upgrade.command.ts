@@ -34,7 +34,9 @@ import { BackfillSystemFieldsIsSystemCommand } from 'src/database/commands/upgra
 import { FixInvalidStandardUniversalIdentifiersCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-fix-invalid-standard-universal-identifiers.command';
 import { MakePermissionFlagUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-make-permission-flag-universal-identifier-and-application-id-not-nullable-migration.command';
 import { SeedServerIdCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-seed-server-id.command';
+import { BackfillCommandMenuItemsCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-backfill-command-menu-items.command';
 import { BackfillPageLayoutsCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-backfill-page-layouts.command';
+import { MigrateRichTextToTextCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-migrate-rich-text-to-text.command';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
@@ -86,7 +88,9 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly seedServerIdCommand: SeedServerIdCommand,
 
     // 1.20 Commands
+    protected readonly backfillCommandMenuItemsCommand: BackfillCommandMenuItemsCommand,
     protected readonly backfillPageLayoutsCommand: BackfillPageLayoutsCommand,
+    protected readonly migrateRichTextToTextCommand: MigrateRichTextToTextCommand,
   ) {
     super(
       workspaceRepository,
@@ -124,6 +128,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     ];
 
     const commands_1190: VersionCommands = [
+      this.fixRoleAndAgentUniversalIdentifiersCommand,
       this.backfillSystemFieldsIsSystemCommand,
       this.addMissingSystemFieldsToStandardObjectsCommand,
       this.backfillMessageChannelMessageAssociationMessageFolderCommand,
@@ -134,7 +139,11 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       this.seedServerIdCommand,
     ];
 
-    const commands_1200: VersionCommands = [this.backfillPageLayoutsCommand];
+    const commands_1200: VersionCommands = [
+      this.migrateRichTextToTextCommand,
+      this.backfillCommandMenuItemsCommand,
+      this.backfillPageLayoutsCommand,
+    ];
 
     this.allCommands = {
       '1.16.0': commands_1160,

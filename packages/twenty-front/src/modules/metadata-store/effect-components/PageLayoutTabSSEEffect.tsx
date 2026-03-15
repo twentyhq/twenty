@@ -1,11 +1,14 @@
 import { useListenToMetadataOperationBrowserEvent } from '@/browser-event/hooks/useListenToMetadataOperationBrowserEvent';
+import { patchMetadataStoreFromSSEEvent } from '@/metadata-store/utils/patchMetadataStoreFromSSEEvent';
 import { useRefreshPageLayouts } from '@/page-layout/hooks/useRefreshPageLayouts';
 import { useListenToEventsForQuery } from '@/sse-db-event/hooks/useListenToEventsForQuery';
+import { useStore } from 'jotai';
 import { AllMetadataName } from '~/generated-metadata/graphql';
 
 export const PageLayoutTabSSEEffect = () => {
-  const queryId = 'page-layout-sse-effect';
+  const queryId = 'page-layout-tab-sse-effect';
 
+  const store = useStore();
   const { refreshPageLayouts } = useRefreshPageLayouts();
 
   useListenToEventsForQuery({
@@ -18,7 +21,14 @@ export const PageLayoutTabSSEEffect = () => {
 
   useListenToMetadataOperationBrowserEvent({
     metadataName: AllMetadataName.pageLayoutTab,
-    onMetadataOperationBrowserEvent: () => {
+    onMetadataOperationBrowserEvent: (eventDetail) => {
+      patchMetadataStoreFromSSEEvent(
+        store,
+        'pageLayoutTabs',
+        eventDetail.operation,
+        eventDetail.updatedCollectionHash,
+      );
+
       refreshPageLayouts();
     },
   });

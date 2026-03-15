@@ -2,11 +2,11 @@ import { useCreateWorkspaceInvitation } from '@/workspace-invitation/hooks/useCr
 import { renderHook } from '@testing-library/react';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
-const mutationSendInvitationsCallSpy = jest.fn();
+const mutationCallSpy = jest.fn();
 
-jest.mock('~/generated-metadata/graphql', () => ({
-  ...jest.requireActual('~/generated-metadata/graphql'),
-  useSendInvitationsMutation: () => [mutationSendInvitationsCallSpy],
+jest.mock('@apollo/client/react', () => ({
+  ...jest.requireActual('@apollo/client/react'),
+  useMutation: () => [mutationCallSpy],
 }));
 
 const Wrapper = getJestMetadataAndApolloMocksWrapper({
@@ -28,7 +28,7 @@ describe('useCreateWorkspaceInvitation', () => {
       { wrapper: Wrapper },
     );
 
-    expect(mutationSendInvitationsCallSpy).toHaveBeenCalledWith({
+    expect(mutationCallSpy).toHaveBeenCalledWith({
       onCompleted: expect.any(Function),
       variables: params,
     });
@@ -44,7 +44,7 @@ describe('useCreateWorkspaceInvitation', () => {
       { wrapper: Wrapper },
     );
 
-    expect(mutationSendInvitationsCallSpy).toHaveBeenCalledWith({
+    expect(mutationCallSpy).toHaveBeenCalledWith({
       onCompleted: expect.any(Function),
       variables: params,
     });

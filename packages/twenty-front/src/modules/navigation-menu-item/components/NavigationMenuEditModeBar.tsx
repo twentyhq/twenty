@@ -9,7 +9,6 @@ import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -17,7 +16,6 @@ import { useContext, useState } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
 import { IconCheck, useIcons } from 'twenty-ui/display';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -71,12 +69,8 @@ export const NavigationMenuEditModeBar = () => {
   const isNavigationMenuInEditMode = useAtomStateValue(
     isNavigationMenuInEditModeState,
   );
-  const isNavigationMenuItemEditingEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED,
-  );
 
-  const showNavigationMenuEditModeBar =
-    isNavigationMenuItemEditingEnabled && isNavigationMenuInEditMode;
+  const showNavigationMenuEditModeBar = isNavigationMenuInEditMode;
 
   const handleSave = async () => {
     if (!isDirty) return;

@@ -2,10 +2,11 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { ApolloError } from '@apollo/client';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { t } from '@lingui/core/macro';
 import { IconLifebuoy } from 'twenty-ui/display';
-import { useUpdateWorkspaceMutation } from '~/generated-metadata/graphql';
+import { useMutation } from '@apollo/client/react';
+import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
 
 export const Toggle2FA = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
@@ -13,7 +14,7 @@ export const Toggle2FA = () => {
     currentWorkspaceState,
   );
 
-  const [updateWorkspace] = useUpdateWorkspaceMutation();
+  const [updateWorkspace] = useMutation(UpdateWorkspaceDocument);
 
   const handleChange = async () => {
     if (!currentWorkspace?.id) {
@@ -43,7 +44,7 @@ export const Toggle2FA = () => {
         isTwoFactorAuthenticationEnforced: !newEnforceValue,
       });
       enqueueErrorSnackBar({
-        apolloError: err instanceof ApolloError ? err : undefined,
+        apolloError: CombinedGraphQLErrors.is(err) ? err : undefined,
         message: err?.message,
       });
     }

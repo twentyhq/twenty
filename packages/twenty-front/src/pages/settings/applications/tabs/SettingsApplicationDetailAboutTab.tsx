@@ -10,9 +10,10 @@ import { Trans } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useState } from 'react';
+import { useMutation } from '@apollo/client/react';
 import {
   type Application,
-  useUninstallApplicationMutation,
+  UninstallApplicationDocument,
 } from '~/generated-metadata/graphql';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -32,7 +33,7 @@ export const SettingsApplicationDetailAboutTab = ({
 
   const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
 
-  const [uninstallApplication] = useUninstallApplicationMutation();
+  const [uninstallApplication] = useMutation(UninstallApplicationDocument);
 
   const navigate = useNavigateSettings();
 

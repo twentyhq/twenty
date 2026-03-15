@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client/react';
 import { FIND_MANY_AVAILABLE_PACKAGES } from '@/logic-functions/graphql/queries/findManyAvailablePackages';
 import {
   type FindManyAvailablePackagesQuery,

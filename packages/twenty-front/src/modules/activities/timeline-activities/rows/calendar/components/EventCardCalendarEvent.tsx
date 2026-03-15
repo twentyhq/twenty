@@ -8,10 +8,10 @@ import { type CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
 import { useOpenCalendarEventInSidePanel } from '@/side-panel/hooks/useOpenCalendarEventInSidePanel';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
-import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { UserContext } from '@/users/contexts/UserContext';
 import { useContext } from 'react';
 import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
@@ -96,7 +96,6 @@ export const EventCardCalendarEvent = ({
 }: {
   calendarEventId: string;
 }) => {
-  const { upsertRecordsInStore } = useUpsertRecordsInStore();
   const { openCalendarEventInSidePanel } = useOpenCalendarEventInSidePanel();
 
   const {
@@ -118,28 +117,27 @@ export const EventCardCalendarEvent = ({
         displayName: true,
       },
     },
-    onCompleted: (data) => {
-      upsertRecordsInStore({ partialRecords: [data] });
-    },
   });
 
   const { timeZone } = useContext(UserContext);
 
   if (isDefined(error)) {
-    const shouldHideMessageContent = error.graphQLErrors.some(
-      (e) => e.extensions?.code === 'FORBIDDEN',
-    );
+    if (CombinedGraphQLErrors.is(error)) {
+      const shouldHideMessageContent = error.errors.some(
+        (e) => e.extensions?.code === 'FORBIDDEN',
+      );
 
-    if (shouldHideMessageContent) {
-      return <CalendarEventNotSharedContent />;
-    }
+      if (shouldHideMessageContent) {
+        return <CalendarEventNotSharedContent />;
+      }
 
-    const shouldHandleNotFound = error.graphQLErrors.some(
-      (e) => e.extensions?.code === 'NOT_FOUND',
-    );
+      const shouldHandleNotFound = error.errors.some(
+        (e) => e.extensions?.code === 'NOT_FOUND',
+      );
 
-    if (shouldHandleNotFound) {
-      return <div>{t`Calendar event not found`}</div>;
+      if (shouldHandleNotFound) {
+        return <div>{t`Calendar event not found`}</div>;
+      }
     }
 
     return <div>{t`Error loading calendar event`}</div>;

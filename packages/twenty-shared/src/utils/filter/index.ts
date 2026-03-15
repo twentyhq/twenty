@@ -24,7 +24,7 @@ export * from './utils/isMatchingFloatFilter';
 export * from './utils/isMatchingMultiSelectFilter';
 export * from './utils/isMatchingRatingFilter';
 export * from './utils/isMatchingRawJsonFilter';
-export * from './utils/isMatchingRichTextV2Filter';
+export * from './utils/isMatchingRichTextFilter';
 export * from './utils/isMatchingSelectFilter';
 export * from './utils/isMatchingStringFilter';
 export * from './utils/isMatchingTSVectorFilter';

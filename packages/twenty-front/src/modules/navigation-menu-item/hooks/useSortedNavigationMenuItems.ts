@@ -11,11 +11,11 @@ import { coreViewsState } from '@/views/states/coreViewState';
 import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
-import { usePrefetchedNavigationMenuItemsData } from './usePrefetchedNavigationMenuItemsData';
+import { useNavigationMenuItemsData } from './useNavigationMenuItemsData';
 
 export const useSortedNavigationMenuItems = () => {
   const { navigationMenuItems, workspaceNavigationMenuItems } =
-    usePrefetchedNavigationMenuItemsData();
+    useNavigationMenuItemsData();
   const coreViews = useAtomStateValue(coreViewsState).map(
     convertCoreViewToView,
   );

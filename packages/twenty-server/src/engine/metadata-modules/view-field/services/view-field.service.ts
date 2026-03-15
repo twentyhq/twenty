@@ -167,6 +167,10 @@ export class ViewFieldService {
         flatViewFieldMaps: existingFlatViewFieldMaps,
         flatViewFieldGroupMaps,
         updateViewFieldInput,
+        callerApplicationUniversalIdentifier:
+          workspaceCustomFlatApplication.universalIdentifier,
+        workspaceCustomApplicationUniversalIdentifier:
+          workspaceCustomFlatApplication.universalIdentifier,
       });
 
     const validateAndBuildResult =

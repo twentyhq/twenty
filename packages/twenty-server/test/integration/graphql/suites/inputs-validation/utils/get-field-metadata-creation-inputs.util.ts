@@ -43,12 +43,6 @@ export const getFieldMetadataCreationInputs = (
       type: FieldMetadataType.RICH_TEXT,
       objectMetadataId,
     },
-    [FieldMetadataType.RICH_TEXT_V2]: {
-      name: 'richTextV2Field',
-      label: 'richTextV2Field',
-      type: FieldMetadataType.RICH_TEXT_V2,
-      objectMetadataId,
-    },
     [FieldMetadataType.TEXT]: {
       name: 'textField',
       label: 'textField',
