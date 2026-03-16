@@ -474,7 +474,6 @@ const createExampleNavigationMenuItem = async ({
   const universalIdentifier = v4();
 
   const content = `import { defineNavigationMenuItem } from 'twenty-sdk';
-import { NavigationMenuItemType } from 'twenty-shared/types';
 import { EXAMPLE_VIEW_UNIVERSAL_IDENTIFIER } from 'src/views/example-view';
 
 export default defineNavigationMenuItem({
@@ -483,7 +482,7 @@ export default defineNavigationMenuItem({
   icon: 'IconList',
   color: 'blue',
   position: 0,
-  type: NavigationMenuItemType.VIEW,
+  type: 'VIEW',
   viewUniversalIdentifier: EXAMPLE_VIEW_UNIVERSAL_IDENTIFIER,
 });
 `;

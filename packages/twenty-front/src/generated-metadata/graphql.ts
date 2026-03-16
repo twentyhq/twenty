@@ -3684,6 +3684,7 @@ export enum ObjectRecordGroupByDateGranularity {
 
 export type ObjectStandardOverrides = {
   __typename?: 'ObjectStandardOverrides';
+  color?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
   icon?: Maybe<Scalars['String']>;
   labelPlural?: Maybe<Scalars['String']>;

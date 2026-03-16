@@ -485,6 +485,7 @@ type ObjectStandardOverrides {
   labelPlural: String
   description: String
   icon: String
+  color: String
   translations: JSON
 }
 
@@ -1940,6 +1941,7 @@ type NavigationMenuItem {
   targetRecordId: UUID
   targetObjectMetadataId: UUID
   viewId: UUID
+  type: NavigationMenuItemType!
   name: String
   link: String
   icon: String
@@ -1950,6 +1952,14 @@ type NavigationMenuItem {
   createdAt: DateTime!
   updatedAt: DateTime!
   targetRecordIdentifier: RecordIdentifier
+}
+
+enum NavigationMenuItemType {
+  VIEW
+  FOLDER
+  LINK
+  OBJECT
+  RECORD
 }
 
 type LogicFunctionExecutionResult {
@@ -3795,6 +3805,7 @@ input CreateNavigationMenuItemInput {
   targetRecordId: UUID
   targetObjectMetadataId: UUID
   viewId: UUID
+  type: NavigationMenuItemType!
   name: String
   link: String
   icon: String
