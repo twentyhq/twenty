@@ -17,6 +17,7 @@ export type AuthLoginOAuthOptions = {
 export type OAuthDiscoveryResponse = {
   authorization_endpoint: string;
   token_endpoint: string;
+  cli_client_id?: string;
 };
 
 const innerAuthLoginOAuth = async (
@@ -43,11 +44,23 @@ const innerAuthLoginOAuth = async (
       success: false,
       error: {
         code: AUTH_ERROR_CODES.OAUTH_NOT_SUPPORTED,
-        message:
-          'Could not reach the server OAuth discovery endpoint. Use --api-key instead.',
+        message: `Could not reach the OAuth discovery endpoint at ${discoveryUrl}. Ensure the server is running. Use --api-key instead.`,
       },
     };
   }
+
+  if (!discovery.cli_client_id) {
+    return {
+      success: false,
+      error: {
+        code: AUTH_ERROR_CODES.OAUTH_NOT_SUPPORTED,
+        message:
+          'Server does not expose a CLI client ID. Ensure the server is up to date. Use --api-key instead.',
+      },
+    };
+  }
+
+  const clientId = discovery.cli_client_id;
 
   // Step 2: Generate PKCE challenge
   const { codeVerifier, codeChallenge } = generatePkceChallenge();
@@ -59,6 +72,7 @@ const innerAuthLoginOAuth = async (
     // Step 4: Open browser to authorization endpoint
     const authUrl = new URL(discovery.authorization_endpoint);
 
+    authUrl.searchParams.set('clientId', clientId);
     authUrl.searchParams.set('codeChallenge', codeChallenge);
     authUrl.searchParams.set('redirectUrl', callbackServer.callbackUrl);
 
@@ -89,6 +103,7 @@ const innerAuthLoginOAuth = async (
       code: callbackResult.code,
       code_verifier: codeVerifier,
       redirect_uri: callbackServer.callbackUrl,
+      client_id: clientId,
     });
 
     const {
@@ -101,6 +116,7 @@ const innerAuthLoginOAuth = async (
       apiUrl,
       applicationAccessToken,
       applicationRefreshToken,
+      oauthClientId: clientId,
     });
 
     // Step 8: Validate the token works
