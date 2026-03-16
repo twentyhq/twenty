@@ -6,7 +6,6 @@ import { useCommandMenuConfirmationModal } from '@/command-menu-item/confirmatio
 import { type CommandMenuConfirmationModalResultBrowserEventDetail } from '@/command-menu-item/confirmation-modal/types/CommandMenuConfirmationModalResultBrowserEventDetail';
 import { useUnmountEngineCommand } from '@/command-menu-item/engine-command/hooks/useUnmountEngineCommand';
 import { EngineCommandComponentInstanceContext } from '@/command-menu-item/engine-command/states/contexts/EngineCommandComponentInstanceContext';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { type ButtonAccent } from 'twenty-ui/input';
 
@@ -32,7 +31,6 @@ export const HeadlessConfirmationModalEngineCommandEffect = ({
   );
   const unmountEngineCommand = useUnmountEngineCommand();
   const { openConfirmationModal } = useCommandMenuConfirmationModal();
-  const { enqueueErrorSnackBar } = useSnackBar();
 
   useEffect(() => {
     if (getIsInitialized()) {
@@ -69,13 +67,7 @@ export const HeadlessConfirmationModalEngineCommandEffect = ({
       }
 
       if (customEvent.detail.confirmationResult === 'confirm') {
-        try {
-          await execute();
-        } catch (error) {
-          if (error instanceof Error) {
-            enqueueErrorSnackBar({ message: error.message });
-          }
-        }
+        await execute();
       }
 
       unmountEngineCommand(engineCommandId);
@@ -92,7 +84,7 @@ export const HeadlessConfirmationModalEngineCommandEffect = ({
         handleConfirmationResult,
       );
     };
-  }, [engineCommandId, execute, unmountEngineCommand, enqueueErrorSnackBar]);
+  }, [engineCommandId, execute, unmountEngineCommand]);
 
   return null;
 };

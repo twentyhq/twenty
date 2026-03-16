@@ -31,17 +31,9 @@ export const HeadlessEngineCommandWrapperEffect = ({
     setIsInitialized(true);
 
     const run = async () => {
-      try {
-        await execute();
-      } catch (error) {
-        if (error instanceof Error) {
-          enqueueErrorSnackBar({
-            message: error.message,
-          });
-        }
-      } finally {
-        unmountEngineCommand(engineCommandId);
-      }
+      await execute();
+
+      unmountEngineCommand(engineCommandId);
     };
 
     run();
