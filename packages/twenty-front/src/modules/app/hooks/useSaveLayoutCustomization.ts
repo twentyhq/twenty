@@ -2,27 +2,20 @@ import { useExitLayoutCustomizationMode } from '@/app/hooks/useExitLayoutCustomi
 import { activeCustomizationPageLayoutIdsState } from '@/app/states/activeCustomizationPageLayoutIdsState';
 import { useSaveNavigationMenuItemsDraft } from '@/navigation-menu-item/hooks/useSaveNavigationMenuItemsDraft';
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/states/navigationMenuItemsDraftState';
-import { filterWorkspaceNavigationMenuItems } from '@/navigation-menu-item/utils/filterWorkspaceNavigationMenuItems';
 import { navigationMenuItemsState } from '@/navigation-menu-item/states/navigationMenuItemsState';
-import { type DraftPageLayout } from '@/page-layout/types/DraftPageLayout';
-import { UPSERT_FIELDS_WIDGET } from '@/page-layout/graphql/mutations/upsertFieldsWidget';
+import { filterWorkspaceNavigationMenuItems } from '@/navigation-menu-item/utils/filterWorkspaceNavigationMenuItems';
+import { useSaveFieldsWidgetGroups } from '@/page-layout/hooks/useSaveFieldsWidgetGroups';
 import { useUpdatePageLayoutWithTabsAndWidgets } from '@/page-layout/hooks/useUpdatePageLayoutWithTabsAndWidgets';
-import { fieldsWidgetEditorModeDraftComponentState } from '@/page-layout/states/fieldsWidgetEditorModeDraftComponentState';
-import { fieldsWidgetEditorModePersistedComponentState } from '@/page-layout/states/fieldsWidgetEditorModePersistedComponentState';
-import { fieldsWidgetGroupsDraftComponentState } from '@/page-layout/states/fieldsWidgetGroupsDraftComponentState';
-import { fieldsWidgetGroupsPersistedComponentState } from '@/page-layout/states/fieldsWidgetGroupsPersistedComponentState';
-import { fieldsWidgetUngroupedFieldsDraftComponentState } from '@/page-layout/states/fieldsWidgetUngroupedFieldsDraftComponentState';
-import { fieldsWidgetUngroupedFieldsPersistedComponentState } from '@/page-layout/states/fieldsWidgetUngroupedFieldsPersistedComponentState';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
+import { type DraftPageLayout } from '@/page-layout/types/DraftPageLayout';
 import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { convertPageLayoutDraftToUpdateInput } from '@/page-layout/utils/convertPageLayoutDraftToUpdateInput';
 import { convertPageLayoutToTabLayouts } from '@/page-layout/utils/convertPageLayoutToTabLayouts';
 import { reInjectDynamicRelationWidgetsFromDraft } from '@/page-layout/utils/reInjectDynamicRelationWidgetsFromDraft';
 import { transformPageLayout } from '@/page-layout/utils/transformPageLayout';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useMutation } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 import { useStore } from 'jotai';
 import { useCallback, useState } from 'react';
@@ -30,26 +23,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { PageLayoutType } from '~/generated-metadata/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { logError } from '~/utils/logError';
-
-type UpsertFieldsWidgetInput = {
-  widgetId: string;
-  groups?: {
-    id: string;
-    name: string;
-    position: number;
-    isVisible: boolean;
-    fields: {
-      viewFieldId: string;
-      isVisible: boolean;
-      position: number;
-    }[];
-  }[];
-  fields?: {
-    viewFieldId: string;
-    isVisible: boolean;
-    position: number;
-  }[];
-};
 
 export const useSaveLayoutCustomization = () => {
   const [isSaving, setIsSaving] = useState(false);
@@ -61,120 +34,7 @@ export const useSaveLayoutCustomization = () => {
   const { updatePageLayoutWithTabsAndWidgets } =
     useUpdatePageLayoutWithTabsAndWidgets();
   const { exitLayoutCustomizationMode } = useExitLayoutCustomizationMode();
-
-  const [upsertFieldsWidgetMutation] = useMutation<
-    { upsertFieldsWidget: unknown },
-    { input: UpsertFieldsWidgetInput }
-  >(UPSERT_FIELDS_WIDGET);
-
-  const saveFieldsWidgetGroupsForPageLayout = useCallback(
-    async (pageLayoutId: string) => {
-      const allDraftGroups = store.get(
-        fieldsWidgetGroupsDraftComponentState.atomFamily({
-          instanceId: pageLayoutId,
-        }),
-      );
-      const allPersistedGroups = store.get(
-        fieldsWidgetGroupsPersistedComponentState.atomFamily({
-          instanceId: pageLayoutId,
-        }),
-      );
-      const allUngroupedFieldsDraft = store.get(
-        fieldsWidgetUngroupedFieldsDraftComponentState.atomFamily({
-          instanceId: pageLayoutId,
-        }),
-      );
-      const allEditorModes = store.get(
-        fieldsWidgetEditorModeDraftComponentState.atomFamily({
-          instanceId: pageLayoutId,
-        }),
-      );
-
-      const widgetIds = new Set([
-        ...Object.keys(allDraftGroups),
-        ...Object.keys(allPersistedGroups),
-        ...Object.keys(allUngroupedFieldsDraft),
-      ]);
-
-      for (const widgetId of widgetIds) {
-        const editorMode = allEditorModes[widgetId] ?? 'ungrouped';
-
-        if (editorMode === 'grouped') {
-          const draftGroups = allDraftGroups[widgetId] ?? [];
-
-          await upsertFieldsWidgetMutation({
-            variables: {
-              input: {
-                widgetId,
-                groups: draftGroups.map((group) => ({
-                  id: group.id,
-                  name: group.name,
-                  position: group.position,
-                  isVisible: group.isVisible,
-                  fields: group.fields.flatMap((field) => {
-                    if (!isDefined(field.viewFieldId)) {
-                      return [];
-                    }
-
-                    return [
-                      {
-                        viewFieldId: field.viewFieldId,
-                        isVisible: field.isVisible,
-                        position: field.position,
-                      },
-                    ];
-                  }),
-                })),
-              },
-            },
-          });
-        } else {
-          const ungroupedFields = allUngroupedFieldsDraft[widgetId] ?? [];
-
-          await upsertFieldsWidgetMutation({
-            variables: {
-              input: {
-                widgetId,
-                fields: ungroupedFields.flatMap((field) => {
-                  if (!isDefined(field.viewFieldId)) {
-                    return [];
-                  }
-
-                  return [
-                    {
-                      viewFieldId: field.viewFieldId,
-                      isVisible: field.isVisible,
-                      position: field.position,
-                    },
-                  ];
-                }),
-              },
-            },
-          });
-        }
-      }
-
-      store.set(
-        fieldsWidgetGroupsPersistedComponentState.atomFamily({
-          instanceId: pageLayoutId,
-        }),
-        allDraftGroups,
-      );
-      store.set(
-        fieldsWidgetUngroupedFieldsPersistedComponentState.atomFamily({
-          instanceId: pageLayoutId,
-        }),
-        allUngroupedFieldsDraft,
-      );
-      store.set(
-        fieldsWidgetEditorModePersistedComponentState.atomFamily({
-          instanceId: pageLayoutId,
-        }),
-        allEditorModes,
-      );
-    },
-    [store, upsertFieldsWidgetMutation],
-  );
+  const { saveFieldsWidgetGroups } = useSaveFieldsWidgetGroups();
 
   const save = useCallback(async () => {
     setIsSaving(true);
@@ -186,9 +46,10 @@ export const useSaveLayoutCustomization = () => {
         isDefined(navigationDraft) &&
         !isDeeplyEqual(navigationDraft, workspaceItems);
 
-      // TODO: navigation and page layout saves should ideally be atomic —
-      // if navigation succeeds but page layouts fail, the user is left in
-      // a partially saved state.
+      // TODO: consider a single server mutation (e.g. saveLayoutCustomization)
+      // that saves navigation + page layouts + field widgets in one transaction.
+      // Currently, partial failure leaves mixed state — navigation may commit
+      // while page layouts fail.
       if (isNavigationDirty) {
         await saveDraft();
       }
@@ -267,17 +128,19 @@ export const useSaveLayoutCustomization = () => {
               );
             }
           } else {
-            // TODO: rethink partial failure strategy — currently skips
-            // failed layouts and continues, which can leave mixed state.
+            // goes away with a single server mutation (see TODO above)
             hasAnyFailure = true;
             continue;
           }
         }
 
-        await saveFieldsWidgetGroupsForPageLayout(pageLayoutId);
+        await saveFieldsWidgetGroups(pageLayoutId);
       }
 
       if (hasAnyFailure) {
+        enqueueErrorSnackBar({
+          message: t`Some layout changes could not be saved`,
+        });
         return;
       }
 
@@ -293,7 +156,7 @@ export const useSaveLayoutCustomization = () => {
   }, [
     saveDraft,
     updatePageLayoutWithTabsAndWidgets,
-    saveFieldsWidgetGroupsForPageLayout,
+    saveFieldsWidgetGroups,
     exitLayoutCustomizationMode,
     enqueueErrorSnackBar,
     store,
