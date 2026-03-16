@@ -294,7 +294,7 @@ export class PageLayoutUpdateService {
           widgetIds: [],
           widgetUniversalIdentifiers: [],
           icon: null,
-          layoutMode: PageLayoutTabLayoutMode.GRID,
+          layoutMode: tabInput.layoutMode ?? PageLayoutTabLayoutMode.GRID,
           overrides: null,
         };
       },
@@ -311,6 +311,7 @@ export class PageLayoutUpdateService {
           ...existingTab,
           title: tabInput.title,
           position: tabInput.position,
+          layoutMode: tabInput.layoutMode ?? existingTab.layoutMode,
           updatedAt: now.toISOString(),
         };
       },
@@ -327,6 +328,7 @@ export class PageLayoutUpdateService {
           ...existingTab,
           title: tabInput.title,
           position: tabInput.position,
+          layoutMode: tabInput.layoutMode ?? existingTab.layoutMode,
           deletedAt: null,
           updatedAt: now.toISOString(),
         };

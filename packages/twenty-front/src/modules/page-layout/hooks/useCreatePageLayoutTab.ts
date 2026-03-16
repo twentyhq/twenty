@@ -41,8 +41,6 @@ export const useCreatePageLayoutTab = (pageLayoutIdFromProps?: string) => {
     (title?: string): string => {
       const pageLayoutDraft = store.get(pageLayoutDraftState);
 
-      console.log('pageLayoutDraft:', pageLayoutDraft);
-
       const newTabId = uuidv4();
       const tabsLength = pageLayoutDraft.tabs.length;
       const maxPosition =
