@@ -324,6 +324,7 @@ describe('sortNavigationMenuItems', () => {
       [
         {
           id: 'link-1',
+          type: 'link',
           link: 'https://example.com',
           name: 'My Link',
           position: 1,
@@ -341,6 +342,7 @@ describe('sortNavigationMenuItems', () => {
       [
         {
           id: 'link-2',
+          type: 'link',
           link: 'example.com',
           position: 2,
         } as NavigationMenuItem,
