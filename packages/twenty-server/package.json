@@ -103,7 +103,7 @@
     "dataloader": "2.2.2",
     "date-fns": "2.30.0",
     "deep-equal": "2.2.3",
-    "dompurify": "3.2.6",
+    "dompurify": "3.3.3",
     "dotenv": "16.4.5",
     "express": "4.22.1",
     "express-session": "^1.18.2",
