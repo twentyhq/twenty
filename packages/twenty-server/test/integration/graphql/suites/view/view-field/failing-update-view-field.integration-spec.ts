@@ -3,7 +3,7 @@ import {
   setupViewFieldTest,
   type ViewFieldTestSetup,
 } from 'test/integration/graphql/suites/view/utils/setup-view-field-test.util';
-import { updateOneCoreViewField } from 'test/integration/metadata/suites/view-field/utils/update-one-core-view-field.util';
+import { updateOneViewField } from 'test/integration/metadata/suites/view-field/utils/update-one-view-field.util';
 import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 import {
   eachTestingContextFilter,
@@ -47,7 +47,7 @@ describe('View Field Resolver - Failing Update Operation', () => {
   it.each(eachTestingContextFilter(updateViewFieldTestCases))(
     'should fail to update view field when $title',
     async ({ context }) => {
-      const response = await updateOneCoreViewField({
+      const response = await updateOneViewField({
         input: context.input,
         expectToFail: true,
       });

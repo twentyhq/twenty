@@ -1,7 +1,6 @@
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { supportChatState } from '@/client-config/states/supportChatState';
-import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback, useEffect, useState } from 'react';
@@ -32,8 +31,6 @@ export const useInstantiateSupportChat = () => {
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const supportChat = useAtomStateValue(supportChatState);
   const [isFrontChatLoaded, setIsFrontChatLoaded] = useState(false);
-  const loading = useIsPrefetchLoading();
-
   const configureFront = useCallback(
     (
       chatId: string,
@@ -97,5 +94,5 @@ export const useInstantiateSupportChat = () => {
     currentWorkspaceMember,
   ]);
 
-  return { loading, isFrontChatLoaded };
+  return { isFrontChatLoaded };
 };

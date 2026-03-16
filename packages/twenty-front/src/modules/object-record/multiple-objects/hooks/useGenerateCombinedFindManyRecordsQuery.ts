@@ -1,5 +1,6 @@
 import { gql } from '@apollo/client';
 import { isNonEmptyArray, isUndefined } from '@sniptt/guards';
+import { useMemo } from 'react';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -20,103 +21,110 @@ export const useGenerateCombinedFindManyRecordsQuery = ({
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
-  if (!isNonEmptyArray(operationSignatures)) {
-    return null;
-  }
-
-  const queryOperationSignatureWithObjectMetadataItemArray = operationSignatures
-    .map((operationSignature) => {
-      const objectMetadataItem = objectMetadataItems.find(
-        (objectMetadataItem) =>
-          objectMetadataItem.nameSingular ===
-          operationSignature.objectNameSingular,
-      );
-
-      if (isUndefined(objectMetadataItem)) {
-        throw new Error(
-          `Object metadata item not found for object name singular: ${operationSignature.objectNameSingular}`,
-        );
-      }
-
-      return { operationSignature, objectMetadataItem };
-    })
-    .filter(
-      ({ objectMetadataItem }) =>
-        getObjectPermissionsForObject(
-          objectPermissionsByObjectMetadataId,
-          objectMetadataItem.id,
-        )?.canReadObjectRecords,
-    );
-
-  const filterPerMetadataItemArray =
-    queryOperationSignatureWithObjectMetadataItemArray
-      .map(
-        ({ objectMetadataItem }) =>
-          `$filter${capitalize(objectMetadataItem.nameSingular)}: ${capitalize(
-            objectMetadataItem.nameSingular,
-          )}FilterInput`,
-      )
-      .join(', ');
-
-  const orderByPerMetadataItemArray =
-    queryOperationSignatureWithObjectMetadataItemArray
-      .map(
-        ({ objectMetadataItem }) =>
-          `$orderBy${capitalize(objectMetadataItem.nameSingular)}: [${capitalize(
-            objectMetadataItem.nameSingular,
-          )}OrderByInput]`,
-      )
-      .join(', ');
-
-  const cursorFilteringPerMetadataItemArray =
-    queryOperationSignatureWithObjectMetadataItemArray
-      .map(
-        ({ objectMetadataItem }) =>
-          `$after${capitalize(objectMetadataItem.nameSingular)}: String, $before${capitalize(objectMetadataItem.nameSingular)}: String, $first${capitalize(objectMetadataItem.nameSingular)}: Int, $last${capitalize(objectMetadataItem.nameSingular)}: Int`,
-      )
-      .join(', ');
-
-  if (isEmpty(queryOperationSignatureWithObjectMetadataItemArray)) {
-    return null;
-  }
-
-  return gql`
-    query CombinedFindManyRecords(
-      ${filterPerMetadataItemArray}, 
-      ${orderByPerMetadataItemArray}, 
-      ${cursorFilteringPerMetadataItemArray},
-    ) {
-      ${queryOperationSignatureWithObjectMetadataItemArray
-        .map(
-          ({ objectMetadataItem, operationSignature }) =>
-            `${getCombinedFindManyRecordsQueryFilteringPart(
-              objectMetadataItem,
-            )} {
-          edges {
-            node ${mapObjectMetadataToGraphQLQuery({
-              objectMetadataItems: objectMetadataItems,
-              objectMetadataItem,
-              recordGqlFields:
-                operationSignature.fields ??
-                generateDepthRecordGqlFieldsFromObject({
-                  objectMetadataItems,
-                  depth: 1,
-                  objectMetadataItem,
-                }),
-              objectPermissionsByObjectMetadataId,
-            })}
-            cursor
-          }
-          pageInfo {
-            hasNextPage
-            hasPreviousPage
-            startCursor
-            endCursor
-          }
-          totalCount
-        }`,
-        )
-        .join('\n')}
+  return useMemo(() => {
+    if (!isNonEmptyArray(operationSignatures)) {
+      return null;
     }
-  `;
+
+    const queryOperationSignatureWithObjectMetadataItemArray =
+      operationSignatures
+        .map((operationSignature) => {
+          const objectMetadataItem = objectMetadataItems.find(
+            (objectMetadataItem) =>
+              objectMetadataItem.nameSingular ===
+              operationSignature.objectNameSingular,
+          );
+
+          if (isUndefined(objectMetadataItem)) {
+            throw new Error(
+              `Object metadata item not found for object name singular: ${operationSignature.objectNameSingular}`,
+            );
+          }
+
+          return { operationSignature, objectMetadataItem };
+        })
+        .filter(
+          ({ objectMetadataItem }) =>
+            getObjectPermissionsForObject(
+              objectPermissionsByObjectMetadataId,
+              objectMetadataItem.id,
+            )?.canReadObjectRecords,
+        );
+
+    const filterPerMetadataItemArray =
+      queryOperationSignatureWithObjectMetadataItemArray
+        .map(
+          ({ objectMetadataItem }) =>
+            `$filter${capitalize(objectMetadataItem.nameSingular)}: ${capitalize(
+              objectMetadataItem.nameSingular,
+            )}FilterInput`,
+        )
+        .join(', ');
+
+    const orderByPerMetadataItemArray =
+      queryOperationSignatureWithObjectMetadataItemArray
+        .map(
+          ({ objectMetadataItem }) =>
+            `$orderBy${capitalize(objectMetadataItem.nameSingular)}: [${capitalize(
+              objectMetadataItem.nameSingular,
+            )}OrderByInput]`,
+        )
+        .join(', ');
+
+    const cursorFilteringPerMetadataItemArray =
+      queryOperationSignatureWithObjectMetadataItemArray
+        .map(
+          ({ objectMetadataItem }) =>
+            `$after${capitalize(objectMetadataItem.nameSingular)}: String, $before${capitalize(objectMetadataItem.nameSingular)}: String, $first${capitalize(objectMetadataItem.nameSingular)}: Int, $last${capitalize(objectMetadataItem.nameSingular)}: Int`,
+        )
+        .join(', ');
+
+    if (isEmpty(queryOperationSignatureWithObjectMetadataItemArray)) {
+      return null;
+    }
+
+    return gql`
+      query CombinedFindManyRecords(
+        ${filterPerMetadataItemArray},
+        ${orderByPerMetadataItemArray},
+        ${cursorFilteringPerMetadataItemArray},
+      ) {
+        ${queryOperationSignatureWithObjectMetadataItemArray
+          .map(
+            ({ objectMetadataItem, operationSignature }) =>
+              `${getCombinedFindManyRecordsQueryFilteringPart(
+                objectMetadataItem,
+              )} {
+            edges {
+              node ${mapObjectMetadataToGraphQLQuery({
+                objectMetadataItems: objectMetadataItems,
+                objectMetadataItem,
+                recordGqlFields:
+                  operationSignature.fields ??
+                  generateDepthRecordGqlFieldsFromObject({
+                    objectMetadataItems,
+                    depth: 1,
+                    objectMetadataItem,
+                  }),
+                objectPermissionsByObjectMetadataId,
+              })}
+              cursor
+            }
+            pageInfo {
+              hasNextPage
+              hasPreviousPage
+              startCursor
+              endCursor
+            }
+            totalCount
+          }`,
+          )
+          .join('\n')}
+      }
+    `;
+  }, [
+    operationSignatures,
+    objectMetadataItems,
+    objectPermissionsByObjectMetadataId,
+  ]);
 };

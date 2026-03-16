@@ -8,7 +8,8 @@ import { Link } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 import { LightButton, MainButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { useSkipBookOnboardingStepMutation } from '~/generated-metadata/graphql';
+import { useMutation } from '@apollo/client/react';
+import { SkipBookOnboardingStepDocument } from '~/generated-metadata/graphql';
 
 const StyledCoverImage = styled.img`
   border-radius: ${themeCssVariables.border.radius.sm};
@@ -41,7 +42,9 @@ const StyledLinkContainer = styled.div`
 export const BookCallDecision = () => {
   const { t } = useLingui();
   const setNextOnboardingStatus = useSetNextOnboardingStatus();
-  const [skipBookOnboardingStepMutation] = useSkipBookOnboardingStepMutation();
+  const [skipBookOnboardingStepMutation] = useMutation(
+    SkipBookOnboardingStepDocument,
+  );
 
   const handleFinish = async () => {
     await skipBookOnboardingStepMutation();

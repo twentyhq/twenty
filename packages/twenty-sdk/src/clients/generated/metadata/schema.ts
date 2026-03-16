@@ -61,7 +61,7 @@ export interface ApplicationRegistration {
     __typename: 'ApplicationRegistration'
 }
 
-export type ApplicationRegistrationSourceType = 'NPM' | 'TARBALL' | 'LOCAL'
+export type ApplicationRegistrationSourceType = 'NPM' | 'TARBALL' | 'LOCAL' | 'OAUTH_ONLY'
 
 export interface TwoFactorAuthenticationMethodSummary {
     twoFactorAuthenticationMethodId: Scalars['UUID']
@@ -309,7 +309,7 @@ export interface Field {
 
 
 /** Type of the field */
-export type FieldMetadataType = 'ACTOR' | 'ADDRESS' | 'ARRAY' | 'BOOLEAN' | 'CURRENCY' | 'DATE' | 'DATE_TIME' | 'EMAILS' | 'FILES' | 'FULL_NAME' | 'LINKS' | 'MORPH_RELATION' | 'MULTI_SELECT' | 'NUMBER' | 'NUMERIC' | 'PHONES' | 'POSITION' | 'RATING' | 'RAW_JSON' | 'RELATION' | 'RICH_TEXT' | 'RICH_TEXT_V2' | 'SELECT' | 'TEXT' | 'TS_VECTOR' | 'UUID'
+export type FieldMetadataType = 'ACTOR' | 'ADDRESS' | 'ARRAY' | 'BOOLEAN' | 'CURRENCY' | 'DATE' | 'DATE_TIME' | 'EMAILS' | 'FILES' | 'FULL_NAME' | 'LINKS' | 'MORPH_RELATION' | 'MULTI_SELECT' | 'NUMBER' | 'NUMERIC' | 'PHONES' | 'POSITION' | 'RATING' | 'RAW_JSON' | 'RELATION' | 'RICH_TEXT' | 'SELECT' | 'TEXT' | 'TS_VECTOR' | 'UUID'
 
 export interface IndexField {
     id: Scalars['UUID']
@@ -403,7 +403,7 @@ export interface Application {
     __typename: 'Application'
 }
 
-export interface CoreViewField {
+export interface ViewField {
     id: Scalars['UUID']
     fieldMetadataId: Scalars['UUID']
     isVisible: Scalars['Boolean']
@@ -416,12 +416,13 @@ export interface CoreViewField {
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
     deletedAt?: Scalars['DateTime']
-    __typename: 'CoreViewField'
+    isOverridden: Scalars['Boolean']
+    __typename: 'ViewField'
 }
 
 export type AggregateOperations = 'MIN' | 'MAX' | 'AVG' | 'SUM' | 'COUNT' | 'COUNT_UNIQUE_VALUES' | 'COUNT_EMPTY' | 'COUNT_NOT_EMPTY' | 'COUNT_TRUE' | 'COUNT_FALSE' | 'PERCENTAGE_EMPTY' | 'PERCENTAGE_NOT_EMPTY'
 
-export interface CoreViewFilterGroup {
+export interface ViewFilterGroup {
     id: Scalars['UUID']
     parentViewFilterGroupId?: Scalars['UUID']
     logicalOperator: ViewFilterGroupLogicalOperator
@@ -431,12 +432,12 @@ export interface CoreViewFilterGroup {
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
     deletedAt?: Scalars['DateTime']
-    __typename: 'CoreViewFilterGroup'
+    __typename: 'ViewFilterGroup'
 }
 
 export type ViewFilterGroupLogicalOperator = 'AND' | 'OR' | 'NOT'
 
-export interface CoreViewFilter {
+export interface ViewFilter {
     id: Scalars['UUID']
     fieldMetadataId: Scalars['UUID']
     operand: ViewFilterOperand
@@ -449,12 +450,12 @@ export interface CoreViewFilter {
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
     deletedAt?: Scalars['DateTime']
-    __typename: 'CoreViewFilter'
+    __typename: 'ViewFilter'
 }
 
 export type ViewFilterOperand = 'IS' | 'IS_NOT_NULL' | 'IS_NOT' | 'LESS_THAN_OR_EQUAL' | 'GREATER_THAN_OR_EQUAL' | 'IS_BEFORE' | 'IS_AFTER' | 'CONTAINS' | 'DOES_NOT_CONTAIN' | 'IS_EMPTY' | 'IS_NOT_EMPTY' | 'IS_RELATIVE' | 'IS_IN_PAST' | 'IS_IN_FUTURE' | 'IS_TODAY' | 'VECTOR_SEARCH'
 
-export interface CoreViewGroup {
+export interface ViewGroup {
     id: Scalars['UUID']
     isVisible: Scalars['Boolean']
     fieldValue: Scalars['String']
@@ -464,10 +465,10 @@ export interface CoreViewGroup {
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
     deletedAt?: Scalars['DateTime']
-    __typename: 'CoreViewGroup'
+    __typename: 'ViewGroup'
 }
 
-export interface CoreViewSort {
+export interface ViewSort {
     id: Scalars['UUID']
     fieldMetadataId: Scalars['UUID']
     direction: ViewSortDirection
@@ -476,12 +477,12 @@ export interface CoreViewSort {
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
     deletedAt?: Scalars['DateTime']
-    __typename: 'CoreViewSort'
+    __typename: 'ViewSort'
 }
 
 export type ViewSortDirection = 'ASC' | 'DESC'
 
-export interface CoreViewFieldGroup {
+export interface ViewFieldGroup {
     id: Scalars['UUID']
     name: Scalars['String']
     position: Scalars['Float']
@@ -491,11 +492,12 @@ export interface CoreViewFieldGroup {
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
     deletedAt?: Scalars['DateTime']
-    viewFields: CoreViewField[]
-    __typename: 'CoreViewFieldGroup'
+    viewFields: ViewField[]
+    isOverridden: Scalars['Boolean']
+    __typename: 'ViewFieldGroup'
 }
 
-export interface CoreView {
+export interface View {
     id: Scalars['UUID']
     name: Scalars['String']
     objectMetadataId: Scalars['UUID']
@@ -517,15 +519,15 @@ export interface CoreView {
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
     deletedAt?: Scalars['DateTime']
-    viewFields: CoreViewField[]
-    viewFilters: CoreViewFilter[]
-    viewFilterGroups: CoreViewFilterGroup[]
-    viewSorts: CoreViewSort[]
-    viewGroups: CoreViewGroup[]
-    viewFieldGroups: CoreViewFieldGroup[]
+    viewFields: ViewField[]
+    viewFilters: ViewFilter[]
+    viewFilterGroups: ViewFilterGroup[]
+    viewSorts: ViewSort[]
+    viewGroups: ViewGroup[]
+    viewFieldGroups: ViewFieldGroup[]
     visibility: ViewVisibility
     createdByUserWorkspaceId?: Scalars['UUID']
-    __typename: 'CoreView'
+    __typename: 'View'
 }
 
 export type ViewType = 'TABLE' | 'KANBAN' | 'CALENDAR' | 'FIELDS_WIDGET'
@@ -553,12 +555,12 @@ export interface Workspace {
     eventLogRetentionDays: Scalars['Float']
     workspaceMembersCount?: Scalars['Float']
     activationStatus: WorkspaceActivationStatus
-    views?: CoreView[]
-    viewFields?: CoreViewField[]
-    viewFilters?: CoreViewFilter[]
-    viewFilterGroups?: CoreViewFilterGroup[]
-    viewGroups?: CoreViewGroup[]
-    viewSorts?: CoreViewSort[]
+    views?: View[]
+    viewFields?: ViewField[]
+    viewFilters?: ViewFilter[]
+    viewFilterGroups?: ViewFilterGroup[]
+    viewGroups?: ViewGroup[]
+    viewSorts?: ViewSort[]
     metadataVersion: Scalars['Float']
     databaseUrl: Scalars['String']
     databaseSchema: Scalars['String']
@@ -646,10 +648,10 @@ export interface RatioAggregateConfig {
     __typename: 'RatioAggregateConfig'
 }
 
-export interface RichTextV2Body {
+export interface RichTextBody {
     blocknote?: Scalars['String']
     markdown?: Scalars['String']
-    __typename: 'RichTextV2Body'
+    __typename: 'RichTextBody'
 }
 
 export interface GridPosition {
@@ -726,7 +728,7 @@ export type WidgetConfigurationType = 'AGGREGATE_CHART' | 'GAUGE_CHART' | 'PIE_C
 
 export interface StandaloneRichTextConfiguration {
     configurationType: WidgetConfigurationType
-    body: RichTextV2Body
+    body: RichTextBody
     __typename: 'StandaloneRichTextConfiguration'
 }
 
@@ -972,6 +974,7 @@ export interface MetadataEvent {
     metadataName: Scalars['String']
     recordId: Scalars['String']
     properties: ObjectRecordEventProperties
+    updatedCollectionHash?: Scalars['String']
     __typename: 'MetadataEvent'
 }
 
@@ -1310,7 +1313,7 @@ export interface FeatureFlag {
     __typename: 'FeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_UNIQUE_INDEXES_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_AI_ENABLED' | 'IS_APPLICATION_ENABLED' | 'IS_MARKETPLACE_ENABLED' | 'IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED' | 'IS_PUBLIC_DOMAIN_ENABLED' | 'IS_EMAILING_DOMAIN_ENABLED' | 'IS_DASHBOARD_V2_ENABLED' | 'IS_ATTACHMENT_MIGRATED' | 'IS_NOTE_TARGET_MIGRATED' | 'IS_TASK_TARGET_MIGRATED' | 'IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED' | 'IS_JUNCTION_RELATIONS_ENABLED' | 'IS_COMMAND_MENU_ITEM_ENABLED' | 'IS_NAVIGATION_MENU_ITEM_ENABLED' | 'IS_DATE_TIME_WHOLE_DAY_FILTER_ENABLED' | 'IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED' | 'IS_DRAFT_EMAIL_ENABLED'
+export type FeatureFlagKey = 'IS_UNIQUE_INDEXES_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_AI_ENABLED' | 'IS_APPLICATION_ENABLED' | 'IS_MARKETPLACE_ENABLED' | 'IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED' | 'IS_PUBLIC_DOMAIN_ENABLED' | 'IS_EMAILING_DOMAIN_ENABLED' | 'IS_DASHBOARD_V2_ENABLED' | 'IS_ATTACHMENT_MIGRATED' | 'IS_NOTE_TARGET_MIGRATED' | 'IS_TASK_TARGET_MIGRATED' | 'IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED' | 'IS_JUNCTION_RELATIONS_ENABLED' | 'IS_COMMAND_MENU_ITEM_ENABLED' | 'IS_NAVIGATION_MENU_ITEM_ENABLED' | 'IS_DATE_TIME_WHOLE_DAY_FILTER_ENABLED' | 'IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED' | 'IS_DRAFT_EMAIL_ENABLED' | 'IS_RICH_TEXT_V1_MIGRATED'
 
 export interface SSOIdentityProvider {
     id: Scalars['UUID']
@@ -1881,6 +1884,43 @@ export interface AgentTurn {
     messages: AgentMessage[]
     createdAt: Scalars['DateTime']
     __typename: 'AgentTurn'
+}
+
+export interface CollectionHash {
+    collectionName: AllMetadataName
+    hash: Scalars['String']
+    __typename: 'CollectionHash'
+}
+
+export type AllMetadataName = 'fieldMetadata' | 'objectMetadata' | 'view' | 'viewField' | 'viewFieldGroup' | 'viewGroup' | 'viewSort' | 'rowLevelPermissionPredicate' | 'rowLevelPermissionPredicateGroup' | 'viewFilterGroup' | 'index' | 'logicFunction' | 'viewFilter' | 'role' | 'roleTarget' | 'agent' | 'skill' | 'pageLayout' | 'pageLayoutWidget' | 'pageLayoutTab' | 'commandMenuItem' | 'navigationMenuItem' | 'frontComponent' | 'webhook'
+
+export interface MinimalObjectMetadata {
+    id: Scalars['UUID']
+    nameSingular: Scalars['String']
+    namePlural: Scalars['String']
+    labelSingular: Scalars['String']
+    labelPlural: Scalars['String']
+    icon?: Scalars['String']
+    isCustom: Scalars['Boolean']
+    isActive: Scalars['Boolean']
+    isSystem: Scalars['Boolean']
+    isRemote: Scalars['Boolean']
+    __typename: 'MinimalObjectMetadata'
+}
+
+export interface MinimalView {
+    id: Scalars['UUID']
+    type: ViewType
+    key?: ViewKey
+    objectMetadataId: Scalars['UUID']
+    __typename: 'MinimalView'
+}
+
+export interface MinimalMetadata {
+    objectMetadataItems: MinimalObjectMetadata[]
+    views: MinimalView[]
+    collectionHashes: CollectionHash[]
+    __typename: 'MinimalMetadata'
 }
 
 export interface Webhook {
@@ -2537,14 +2577,14 @@ export interface Query {
     objectRecordCounts: ObjectRecordCount[]
     object: Object
     objects: ObjectConnection
-    getCoreViewFields: CoreViewField[]
-    getCoreViewField?: CoreViewField
-    getCoreViews: CoreView[]
-    getCoreView?: CoreView
-    getCoreViewSorts: CoreViewSort[]
-    getCoreViewSort?: CoreViewSort
-    getCoreViewFieldGroups: CoreViewFieldGroup[]
-    getCoreViewFieldGroup?: CoreViewFieldGroup
+    getViewFields: ViewField[]
+    getViewField?: ViewField
+    getViews: View[]
+    getView?: View
+    getViewSorts: ViewSort[]
+    getViewSort?: ViewSort
+    getViewFieldGroups: ViewFieldGroup[]
+    getViewFieldGroup?: ViewFieldGroup
     index: Index
     indexMetadatas: IndexConnection
     commandMenuItems: CommandMenuItem[]
@@ -2570,12 +2610,12 @@ export interface Query {
     getToolInputSchema?: Scalars['JSON']
     field: Field
     fields: FieldConnection
-    getCoreViewGroups: CoreViewGroup[]
-    getCoreViewGroup?: CoreViewGroup
-    getCoreViewFilters: CoreViewFilter[]
-    getCoreViewFilter?: CoreViewFilter
-    getCoreViewFilterGroups: CoreViewFilterGroup[]
-    getCoreViewFilterGroup?: CoreViewFilterGroup
+    getViewGroups: ViewGroup[]
+    getViewGroup?: ViewGroup
+    getViewFilters: ViewFilter[]
+    getViewFilter?: ViewFilter
+    getViewFilterGroups: ViewFilterGroup[]
+    getViewFilterGroup?: ViewFilterGroup
     currentUser: User
     currentWorkspace: Workspace
     getPublicWorkspaceDataByDomain: PublicWorkspaceData
@@ -2593,6 +2633,7 @@ export interface Query {
     getSSOIdentityProviders: FindAvailableSSOIDP[]
     webhooks: Webhook[]
     webhook?: Webhook
+    minimalMetadata: MinimalMetadata
     chatThread: AgentChatThread
     chatMessages: AgentMessage[]
     getAISystemPromptPreview: AISystemPromptPreview
@@ -2660,25 +2701,25 @@ export interface Mutation {
     createOneObject: Object
     deleteOneObject: Object
     updateOneObject: Object
-    updateCoreViewField: CoreViewField
-    createCoreViewField: CoreViewField
-    createManyCoreViewFields: CoreViewField[]
-    deleteCoreViewField: CoreViewField
-    destroyCoreViewField: CoreViewField
-    createCoreView: CoreView
-    updateCoreView: CoreView
-    deleteCoreView: Scalars['Boolean']
-    destroyCoreView: Scalars['Boolean']
-    createCoreViewSort: CoreViewSort
-    updateCoreViewSort: CoreViewSort
-    deleteCoreViewSort: Scalars['Boolean']
-    destroyCoreViewSort: Scalars['Boolean']
-    updateCoreViewFieldGroup: CoreViewFieldGroup
-    createCoreViewFieldGroup: CoreViewFieldGroup
-    createManyCoreViewFieldGroups: CoreViewFieldGroup[]
-    deleteCoreViewFieldGroup: CoreViewFieldGroup
-    destroyCoreViewFieldGroup: CoreViewFieldGroup
-    upsertFieldsWidget: CoreView
+    updateViewField: ViewField
+    createViewField: ViewField
+    createManyViewFields: ViewField[]
+    deleteViewField: ViewField
+    destroyViewField: ViewField
+    createView: View
+    updateView: View
+    deleteView: Scalars['Boolean']
+    destroyView: Scalars['Boolean']
+    createViewSort: ViewSort
+    updateViewSort: ViewSort
+    deleteViewSort: Scalars['Boolean']
+    destroyViewSort: Scalars['Boolean']
+    updateViewFieldGroup: ViewFieldGroup
+    createViewFieldGroup: ViewFieldGroup
+    createManyViewFieldGroups: ViewFieldGroup[]
+    deleteViewFieldGroup: ViewFieldGroup
+    destroyViewFieldGroup: ViewFieldGroup
+    upsertFieldsWidget: View
     createCommandMenuItem: CommandMenuItem
     updateCommandMenuItem: CommandMenuItem
     deleteCommandMenuItem: CommandMenuItem
@@ -2732,19 +2773,19 @@ export interface Mutation {
     createOneField: Field
     updateOneField: Field
     deleteOneField: Field
-    createCoreViewGroup: CoreViewGroup
-    createManyCoreViewGroups: CoreViewGroup[]
-    updateCoreViewGroup: CoreViewGroup
-    deleteCoreViewGroup: CoreViewGroup
-    destroyCoreViewGroup: CoreViewGroup
-    createCoreViewFilter: CoreViewFilter
-    updateCoreViewFilter: CoreViewFilter
-    deleteCoreViewFilter: CoreViewFilter
-    destroyCoreViewFilter: CoreViewFilter
-    createCoreViewFilterGroup: CoreViewFilterGroup
-    updateCoreViewFilterGroup: CoreViewFilterGroup
-    deleteCoreViewFilterGroup: Scalars['Boolean']
-    destroyCoreViewFilterGroup: Scalars['Boolean']
+    createViewGroup: ViewGroup
+    createManyViewGroups: ViewGroup[]
+    updateViewGroup: ViewGroup
+    deleteViewGroup: ViewGroup
+    destroyViewGroup: ViewGroup
+    createViewFilter: ViewFilter
+    updateViewFilter: ViewFilter
+    deleteViewFilter: ViewFilter
+    destroyViewFilter: ViewFilter
+    createViewFilterGroup: ViewFilterGroup
+    updateViewFilterGroup: ViewFilterGroup
+    deleteViewFilterGroup: Scalars['Boolean']
+    destroyViewFilterGroup: Scalars['Boolean']
     deleteUser: User
     deleteUserFromWorkspace: UserWorkspace
     updateUserEmail: Scalars['Boolean']
@@ -2836,8 +2877,6 @@ export interface Mutation {
 export type AnalyticsType = 'PAGEVIEW' | 'TRACK'
 
 export type WorkspaceMigrationActionType = 'delete' | 'create' | 'update'
-
-export type AllMetadataName = 'fieldMetadata' | 'objectMetadata' | 'view' | 'viewField' | 'viewFieldGroup' | 'viewGroup' | 'viewSort' | 'rowLevelPermissionPredicate' | 'rowLevelPermissionPredicateGroup' | 'viewFilterGroup' | 'index' | 'logicFunction' | 'viewFilter' | 'role' | 'roleTarget' | 'agent' | 'skill' | 'pageLayout' | 'pageLayoutWidget' | 'pageLayoutTab' | 'commandMenuItem' | 'navigationMenuItem' | 'frontComponent' | 'webhook'
 
 export type FileFolder = 'ProfilePicture' | 'WorkspaceLogo' | 'Attachment' | 'PersonPicture' | 'CorePicture' | 'File' | 'AgentChat' | 'BuiltLogicFunction' | 'BuiltFrontComponent' | 'PublicAsset' | 'Source' | 'FilesField' | 'Dependencies' | 'Workflow' | 'AppTarball'
 
@@ -3282,7 +3321,7 @@ export interface ApplicationGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface CoreViewFieldGenqlSelection{
+export interface ViewFieldGenqlSelection{
     id?: boolean | number
     fieldMetadataId?: boolean | number
     isVisible?: boolean | number
@@ -3295,11 +3334,12 @@ export interface CoreViewFieldGenqlSelection{
     createdAt?: boolean | number
     updatedAt?: boolean | number
     deletedAt?: boolean | number
+    isOverridden?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
 
-export interface CoreViewFilterGroupGenqlSelection{
+export interface ViewFilterGroupGenqlSelection{
     id?: boolean | number
     parentViewFilterGroupId?: boolean | number
     logicalOperator?: boolean | number
@@ -3313,7 +3353,7 @@ export interface CoreViewFilterGroupGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface CoreViewFilterGenqlSelection{
+export interface ViewFilterGenqlSelection{
     id?: boolean | number
     fieldMetadataId?: boolean | number
     operand?: boolean | number
@@ -3330,7 +3370,7 @@ export interface CoreViewFilterGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface CoreViewGroupGenqlSelection{
+export interface ViewGroupGenqlSelection{
     id?: boolean | number
     isVisible?: boolean | number
     fieldValue?: boolean | number
@@ -3344,7 +3384,7 @@ export interface CoreViewGroupGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface CoreViewSortGenqlSelection{
+export interface ViewSortGenqlSelection{
     id?: boolean | number
     fieldMetadataId?: boolean | number
     direction?: boolean | number
@@ -3357,7 +3397,7 @@ export interface CoreViewSortGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface CoreViewFieldGroupGenqlSelection{
+export interface ViewFieldGroupGenqlSelection{
     id?: boolean | number
     name?: boolean | number
     position?: boolean | number
@@ -3367,12 +3407,13 @@ export interface CoreViewFieldGroupGenqlSelection{
     createdAt?: boolean | number
     updatedAt?: boolean | number
     deletedAt?: boolean | number
-    viewFields?: CoreViewFieldGenqlSelection
+    viewFields?: ViewFieldGenqlSelection
+    isOverridden?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
 
-export interface CoreViewGenqlSelection{
+export interface ViewGenqlSelection{
     id?: boolean | number
     name?: boolean | number
     objectMetadataId?: boolean | number
@@ -3394,12 +3435,12 @@ export interface CoreViewGenqlSelection{
     createdAt?: boolean | number
     updatedAt?: boolean | number
     deletedAt?: boolean | number
-    viewFields?: CoreViewFieldGenqlSelection
-    viewFilters?: CoreViewFilterGenqlSelection
-    viewFilterGroups?: CoreViewFilterGroupGenqlSelection
-    viewSorts?: CoreViewSortGenqlSelection
-    viewGroups?: CoreViewGroupGenqlSelection
-    viewFieldGroups?: CoreViewFieldGroupGenqlSelection
+    viewFields?: ViewFieldGenqlSelection
+    viewFilters?: ViewFilterGenqlSelection
+    viewFilterGroups?: ViewFilterGroupGenqlSelection
+    viewSorts?: ViewSortGenqlSelection
+    viewGroups?: ViewGroupGenqlSelection
+    viewFieldGroups?: ViewFieldGroupGenqlSelection
     visibility?: boolean | number
     createdByUserWorkspaceId?: boolean | number
     __typename?: boolean | number
@@ -3421,12 +3462,12 @@ export interface WorkspaceGenqlSelection{
     eventLogRetentionDays?: boolean | number
     workspaceMembersCount?: boolean | number
     activationStatus?: boolean | number
-    views?: CoreViewGenqlSelection
-    viewFields?: CoreViewFieldGenqlSelection
-    viewFilters?: CoreViewFilterGenqlSelection
-    viewFilterGroups?: CoreViewFilterGroupGenqlSelection
-    viewGroups?: CoreViewGroupGenqlSelection
-    viewSorts?: CoreViewSortGenqlSelection
+    views?: ViewGenqlSelection
+    viewFields?: ViewFieldGenqlSelection
+    viewFilters?: ViewFilterGenqlSelection
+    viewFilterGroups?: ViewFilterGroupGenqlSelection
+    viewGroups?: ViewGroupGenqlSelection
+    viewSorts?: ViewSortGenqlSelection
     metadataVersion?: boolean | number
     databaseUrl?: boolean | number
     databaseSchema?: boolean | number
@@ -3512,7 +3553,7 @@ export interface RatioAggregateConfigGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface RichTextV2BodyGenqlSelection{
+export interface RichTextBodyGenqlSelection{
     blocknote?: boolean | number
     markdown?: boolean | number
     __typename?: boolean | number
@@ -3621,7 +3662,7 @@ export interface AggregateChartConfigurationGenqlSelection{
 
 export interface StandaloneRichTextConfigurationGenqlSelection{
     configurationType?: boolean | number
-    body?: RichTextV2BodyGenqlSelection
+    body?: RichTextBodyGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -3868,6 +3909,7 @@ export interface MetadataEventGenqlSelection{
     metadataName?: boolean | number
     recordId?: boolean | number
     properties?: ObjectRecordEventPropertiesGenqlSelection
+    updatedCollectionHash?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -4844,6 +4886,45 @@ export interface AgentTurnGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface CollectionHashGenqlSelection{
+    collectionName?: boolean | number
+    hash?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface MinimalObjectMetadataGenqlSelection{
+    id?: boolean | number
+    nameSingular?: boolean | number
+    namePlural?: boolean | number
+    labelSingular?: boolean | number
+    labelPlural?: boolean | number
+    icon?: boolean | number
+    isCustom?: boolean | number
+    isActive?: boolean | number
+    isSystem?: boolean | number
+    isRemote?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface MinimalViewGenqlSelection{
+    id?: boolean | number
+    type?: boolean | number
+    key?: boolean | number
+    objectMetadataId?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface MinimalMetadataGenqlSelection{
+    objectMetadataItems?: MinimalObjectMetadataGenqlSelection
+    views?: MinimalViewGenqlSelection
+    collectionHashes?: CollectionHashGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface WebhookGenqlSelection{
     id?: boolean | number
     targetUrl?: boolean | number
@@ -5546,14 +5627,14 @@ export interface QueryGenqlSelection{
     paging: CursorPaging, 
     /** Specify to filter the records returned. */
     filter: ObjectFilter} })
-    getCoreViewFields?: (CoreViewFieldGenqlSelection & { __args: {viewId: Scalars['String']} })
-    getCoreViewField?: (CoreViewFieldGenqlSelection & { __args: {id: Scalars['String']} })
-    getCoreViews?: (CoreViewGenqlSelection & { __args?: {objectMetadataId?: (Scalars['String'] | null), viewTypes?: (ViewType[] | null)} })
-    getCoreView?: (CoreViewGenqlSelection & { __args: {id: Scalars['String']} })
-    getCoreViewSorts?: (CoreViewSortGenqlSelection & { __args?: {viewId?: (Scalars['String'] | null)} })
-    getCoreViewSort?: (CoreViewSortGenqlSelection & { __args: {id: Scalars['String']} })
-    getCoreViewFieldGroups?: (CoreViewFieldGroupGenqlSelection & { __args: {viewId: Scalars['String']} })
-    getCoreViewFieldGroup?: (CoreViewFieldGroupGenqlSelection & { __args: {id: Scalars['String']} })
+    getViewFields?: (ViewFieldGenqlSelection & { __args: {viewId: Scalars['String']} })
+    getViewField?: (ViewFieldGenqlSelection & { __args: {id: Scalars['String']} })
+    getViews?: (ViewGenqlSelection & { __args?: {objectMetadataId?: (Scalars['String'] | null), viewTypes?: (ViewType[] | null)} })
+    getView?: (ViewGenqlSelection & { __args: {id: Scalars['String']} })
+    getViewSorts?: (ViewSortGenqlSelection & { __args?: {viewId?: (Scalars['String'] | null)} })
+    getViewSort?: (ViewSortGenqlSelection & { __args: {id: Scalars['String']} })
+    getViewFieldGroups?: (ViewFieldGroupGenqlSelection & { __args: {viewId: Scalars['String']} })
+    getViewFieldGroup?: (ViewFieldGroupGenqlSelection & { __args: {id: Scalars['String']} })
     index?: (IndexGenqlSelection & { __args: {
     /** The id of the record to find. */
     id: Scalars['UUID']} })
@@ -5591,12 +5672,12 @@ export interface QueryGenqlSelection{
     paging: CursorPaging, 
     /** Specify to filter the records returned. */
     filter: FieldFilter} })
-    getCoreViewGroups?: (CoreViewGroupGenqlSelection & { __args?: {viewId?: (Scalars['String'] | null)} })
-    getCoreViewGroup?: (CoreViewGroupGenqlSelection & { __args: {id: Scalars['String']} })
-    getCoreViewFilters?: (CoreViewFilterGenqlSelection & { __args?: {viewId?: (Scalars['String'] | null)} })
-    getCoreViewFilter?: (CoreViewFilterGenqlSelection & { __args: {id: Scalars['String']} })
-    getCoreViewFilterGroups?: (CoreViewFilterGroupGenqlSelection & { __args?: {viewId?: (Scalars['String'] | null)} })
-    getCoreViewFilterGroup?: (CoreViewFilterGroupGenqlSelection & { __args: {id: Scalars['String']} })
+    getViewGroups?: (ViewGroupGenqlSelection & { __args?: {viewId?: (Scalars['String'] | null)} })
+    getViewGroup?: (ViewGroupGenqlSelection & { __args: {id: Scalars['String']} })
+    getViewFilters?: (ViewFilterGenqlSelection & { __args?: {viewId?: (Scalars['String'] | null)} })
+    getViewFilter?: (ViewFilterGenqlSelection & { __args: {id: Scalars['String']} })
+    getViewFilterGroups?: (ViewFilterGroupGenqlSelection & { __args?: {viewId?: (Scalars['String'] | null)} })
+    getViewFilterGroup?: (ViewFilterGroupGenqlSelection & { __args: {id: Scalars['String']} })
     currentUser?: UserGenqlSelection
     currentWorkspace?: WorkspaceGenqlSelection
     getPublicWorkspaceDataByDomain?: (PublicWorkspaceDataGenqlSelection & { __args?: {origin?: (Scalars['String'] | null)} })
@@ -5614,6 +5695,7 @@ export interface QueryGenqlSelection{
     getSSOIdentityProviders?: FindAvailableSSOIDPGenqlSelection
     webhooks?: WebhookGenqlSelection
     webhook?: (WebhookGenqlSelection & { __args: {id: Scalars['UUID']} })
+    minimalMetadata?: MinimalMetadataGenqlSelection
     chatThread?: (AgentChatThreadGenqlSelection & { __args: {id: Scalars['UUID']} })
     chatMessages?: (AgentMessageGenqlSelection & { __args: {threadId: Scalars['UUID']} })
     getAISystemPromptPreview?: AISystemPromptPreviewGenqlSelection
@@ -5706,25 +5788,25 @@ export interface MutationGenqlSelection{
     createOneObject?: (ObjectGenqlSelection & { __args: {input: CreateOneObjectInput} })
     deleteOneObject?: (ObjectGenqlSelection & { __args: {input: DeleteOneObjectInput} })
     updateOneObject?: (ObjectGenqlSelection & { __args: {input: UpdateOneObjectInput} })
-    updateCoreViewField?: (CoreViewFieldGenqlSelection & { __args: {input: UpdateViewFieldInput} })
-    createCoreViewField?: (CoreViewFieldGenqlSelection & { __args: {input: CreateViewFieldInput} })
-    createManyCoreViewFields?: (CoreViewFieldGenqlSelection & { __args: {inputs: CreateViewFieldInput[]} })
-    deleteCoreViewField?: (CoreViewFieldGenqlSelection & { __args: {input: DeleteViewFieldInput} })
-    destroyCoreViewField?: (CoreViewFieldGenqlSelection & { __args: {input: DestroyViewFieldInput} })
-    createCoreView?: (CoreViewGenqlSelection & { __args: {input: CreateViewInput} })
-    updateCoreView?: (CoreViewGenqlSelection & { __args: {id: Scalars['String'], input: UpdateViewInput} })
-    deleteCoreView?: { __args: {id: Scalars['String']} }
-    destroyCoreView?: { __args: {id: Scalars['String']} }
-    createCoreViewSort?: (CoreViewSortGenqlSelection & { __args: {input: CreateViewSortInput} })
-    updateCoreViewSort?: (CoreViewSortGenqlSelection & { __args: {input: UpdateViewSortInput} })
-    deleteCoreViewSort?: { __args: {input: DeleteViewSortInput} }
-    destroyCoreViewSort?: { __args: {input: DestroyViewSortInput} }
-    updateCoreViewFieldGroup?: (CoreViewFieldGroupGenqlSelection & { __args: {input: UpdateViewFieldGroupInput} })
-    createCoreViewFieldGroup?: (CoreViewFieldGroupGenqlSelection & { __args: {input: CreateViewFieldGroupInput} })
-    createManyCoreViewFieldGroups?: (CoreViewFieldGroupGenqlSelection & { __args: {inputs: CreateViewFieldGroupInput[]} })
-    deleteCoreViewFieldGroup?: (CoreViewFieldGroupGenqlSelection & { __args: {input: DeleteViewFieldGroupInput} })
-    destroyCoreViewFieldGroup?: (CoreViewFieldGroupGenqlSelection & { __args: {input: DestroyViewFieldGroupInput} })
-    upsertFieldsWidget?: (CoreViewGenqlSelection & { __args: {input: UpsertFieldsWidgetInput} })
+    updateViewField?: (ViewFieldGenqlSelection & { __args: {input: UpdateViewFieldInput} })
+    createViewField?: (ViewFieldGenqlSelection & { __args: {input: CreateViewFieldInput} })
+    createManyViewFields?: (ViewFieldGenqlSelection & { __args: {inputs: CreateViewFieldInput[]} })
+    deleteViewField?: (ViewFieldGenqlSelection & { __args: {input: DeleteViewFieldInput} })
+    destroyViewField?: (ViewFieldGenqlSelection & { __args: {input: DestroyViewFieldInput} })
+    createView?: (ViewGenqlSelection & { __args: {input: CreateViewInput} })
+    updateView?: (ViewGenqlSelection & { __args: {id: Scalars['String'], input: UpdateViewInput} })
+    deleteView?: { __args: {id: Scalars['String']} }
+    destroyView?: { __args: {id: Scalars['String']} }
+    createViewSort?: (ViewSortGenqlSelection & { __args: {input: CreateViewSortInput} })
+    updateViewSort?: (ViewSortGenqlSelection & { __args: {input: UpdateViewSortInput} })
+    deleteViewSort?: { __args: {input: DeleteViewSortInput} }
+    destroyViewSort?: { __args: {input: DestroyViewSortInput} }
+    updateViewFieldGroup?: (ViewFieldGroupGenqlSelection & { __args: {input: UpdateViewFieldGroupInput} })
+    createViewFieldGroup?: (ViewFieldGroupGenqlSelection & { __args: {input: CreateViewFieldGroupInput} })
+    createManyViewFieldGroups?: (ViewFieldGroupGenqlSelection & { __args: {inputs: CreateViewFieldGroupInput[]} })
+    deleteViewFieldGroup?: (ViewFieldGroupGenqlSelection & { __args: {input: DeleteViewFieldGroupInput} })
+    destroyViewFieldGroup?: (ViewFieldGroupGenqlSelection & { __args: {input: DestroyViewFieldGroupInput} })
+    upsertFieldsWidget?: (ViewGenqlSelection & { __args: {input: UpsertFieldsWidgetInput} })
     createCommandMenuItem?: (CommandMenuItemGenqlSelection & { __args: {input: CreateCommandMenuItemInput} })
     updateCommandMenuItem?: (CommandMenuItemGenqlSelection & { __args: {input: UpdateCommandMenuItemInput} })
     deleteCommandMenuItem?: (CommandMenuItemGenqlSelection & { __args: {id: Scalars['UUID']} })
@@ -5778,19 +5860,19 @@ export interface MutationGenqlSelection{
     createOneField?: (FieldGenqlSelection & { __args: {input: CreateOneFieldMetadataInput} })
     updateOneField?: (FieldGenqlSelection & { __args: {input: UpdateOneFieldMetadataInput} })
     deleteOneField?: (FieldGenqlSelection & { __args: {input: DeleteOneFieldInput} })
-    createCoreViewGroup?: (CoreViewGroupGenqlSelection & { __args: {input: CreateViewGroupInput} })
-    createManyCoreViewGroups?: (CoreViewGroupGenqlSelection & { __args: {inputs: CreateViewGroupInput[]} })
-    updateCoreViewGroup?: (CoreViewGroupGenqlSelection & { __args: {input: UpdateViewGroupInput} })
-    deleteCoreViewGroup?: (CoreViewGroupGenqlSelection & { __args: {input: DeleteViewGroupInput} })
-    destroyCoreViewGroup?: (CoreViewGroupGenqlSelection & { __args: {input: DestroyViewGroupInput} })
-    createCoreViewFilter?: (CoreViewFilterGenqlSelection & { __args: {input: CreateViewFilterInput} })
-    updateCoreViewFilter?: (CoreViewFilterGenqlSelection & { __args: {input: UpdateViewFilterInput} })
-    deleteCoreViewFilter?: (CoreViewFilterGenqlSelection & { __args: {input: DeleteViewFilterInput} })
-    destroyCoreViewFilter?: (CoreViewFilterGenqlSelection & { __args: {input: DestroyViewFilterInput} })
-    createCoreViewFilterGroup?: (CoreViewFilterGroupGenqlSelection & { __args: {input: CreateViewFilterGroupInput} })
-    updateCoreViewFilterGroup?: (CoreViewFilterGroupGenqlSelection & { __args: {id: Scalars['String'], input: UpdateViewFilterGroupInput} })
-    deleteCoreViewFilterGroup?: { __args: {id: Scalars['String']} }
-    destroyCoreViewFilterGroup?: { __args: {id: Scalars['String']} }
+    createViewGroup?: (ViewGroupGenqlSelection & { __args: {input: CreateViewGroupInput} })
+    createManyViewGroups?: (ViewGroupGenqlSelection & { __args: {inputs: CreateViewGroupInput[]} })
+    updateViewGroup?: (ViewGroupGenqlSelection & { __args: {input: UpdateViewGroupInput} })
+    deleteViewGroup?: (ViewGroupGenqlSelection & { __args: {input: DeleteViewGroupInput} })
+    destroyViewGroup?: (ViewGroupGenqlSelection & { __args: {input: DestroyViewGroupInput} })
+    createViewFilter?: (ViewFilterGenqlSelection & { __args: {input: CreateViewFilterInput} })
+    updateViewFilter?: (ViewFilterGenqlSelection & { __args: {input: UpdateViewFilterInput} })
+    deleteViewFilter?: (ViewFilterGenqlSelection & { __args: {input: DeleteViewFilterInput} })
+    destroyViewFilter?: (ViewFilterGenqlSelection & { __args: {input: DestroyViewFilterInput} })
+    createViewFilterGroup?: (ViewFilterGroupGenqlSelection & { __args: {input: CreateViewFilterGroupInput} })
+    updateViewFilterGroup?: (ViewFilterGroupGenqlSelection & { __args: {id: Scalars['String'], input: UpdateViewFilterGroupInput} })
+    deleteViewFilterGroup?: { __args: {id: Scalars['String']} }
+    destroyViewFilterGroup?: { __args: {id: Scalars['String']} }
     deleteUser?: UserGenqlSelection
     deleteUserFromWorkspace?: (UserWorkspaceGenqlSelection & { __args: {workspaceMemberIdToDelete: Scalars['String']} })
     updateUserEmail?: { __args: {newEmail: Scalars['String'], verifyEmailRedirectPath?: (Scalars['String'] | null)} }
@@ -6407,58 +6489,58 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
-    const CoreViewField_possibleTypes: string[] = ['CoreViewField']
-    export const isCoreViewField = (obj?: { __typename?: any } | null): obj is CoreViewField => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isCoreViewField"')
-      return CoreViewField_possibleTypes.includes(obj.__typename)
+    const ViewField_possibleTypes: string[] = ['ViewField']
+    export const isViewField = (obj?: { __typename?: any } | null): obj is ViewField => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isViewField"')
+      return ViewField_possibleTypes.includes(obj.__typename)
     }
     
 
 
-    const CoreViewFilterGroup_possibleTypes: string[] = ['CoreViewFilterGroup']
-    export const isCoreViewFilterGroup = (obj?: { __typename?: any } | null): obj is CoreViewFilterGroup => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isCoreViewFilterGroup"')
-      return CoreViewFilterGroup_possibleTypes.includes(obj.__typename)
+    const ViewFilterGroup_possibleTypes: string[] = ['ViewFilterGroup']
+    export const isViewFilterGroup = (obj?: { __typename?: any } | null): obj is ViewFilterGroup => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isViewFilterGroup"')
+      return ViewFilterGroup_possibleTypes.includes(obj.__typename)
     }
     
 
 
-    const CoreViewFilter_possibleTypes: string[] = ['CoreViewFilter']
-    export const isCoreViewFilter = (obj?: { __typename?: any } | null): obj is CoreViewFilter => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isCoreViewFilter"')
-      return CoreViewFilter_possibleTypes.includes(obj.__typename)
+    const ViewFilter_possibleTypes: string[] = ['ViewFilter']
+    export const isViewFilter = (obj?: { __typename?: any } | null): obj is ViewFilter => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isViewFilter"')
+      return ViewFilter_possibleTypes.includes(obj.__typename)
     }
     
 
 
-    const CoreViewGroup_possibleTypes: string[] = ['CoreViewGroup']
-    export const isCoreViewGroup = (obj?: { __typename?: any } | null): obj is CoreViewGroup => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isCoreViewGroup"')
-      return CoreViewGroup_possibleTypes.includes(obj.__typename)
+    const ViewGroup_possibleTypes: string[] = ['ViewGroup']
+    export const isViewGroup = (obj?: { __typename?: any } | null): obj is ViewGroup => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isViewGroup"')
+      return ViewGroup_possibleTypes.includes(obj.__typename)
     }
     
 
 
-    const CoreViewSort_possibleTypes: string[] = ['CoreViewSort']
-    export const isCoreViewSort = (obj?: { __typename?: any } | null): obj is CoreViewSort => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isCoreViewSort"')
-      return CoreViewSort_possibleTypes.includes(obj.__typename)
+    const ViewSort_possibleTypes: string[] = ['ViewSort']
+    export const isViewSort = (obj?: { __typename?: any } | null): obj is ViewSort => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isViewSort"')
+      return ViewSort_possibleTypes.includes(obj.__typename)
     }
     
 
 
-    const CoreViewFieldGroup_possibleTypes: string[] = ['CoreViewFieldGroup']
-    export const isCoreViewFieldGroup = (obj?: { __typename?: any } | null): obj is CoreViewFieldGroup => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isCoreViewFieldGroup"')
-      return CoreViewFieldGroup_possibleTypes.includes(obj.__typename)
+    const ViewFieldGroup_possibleTypes: string[] = ['ViewFieldGroup']
+    export const isViewFieldGroup = (obj?: { __typename?: any } | null): obj is ViewFieldGroup => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isViewFieldGroup"')
+      return ViewFieldGroup_possibleTypes.includes(obj.__typename)
     }
     
 
 
-    const CoreView_possibleTypes: string[] = ['CoreView']
-    export const isCoreView = (obj?: { __typename?: any } | null): obj is CoreView => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isCoreView"')
-      return CoreView_possibleTypes.includes(obj.__typename)
+    const View_possibleTypes: string[] = ['View']
+    export const isView = (obj?: { __typename?: any } | null): obj is View => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isView"')
+      return View_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -6495,10 +6577,10 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
-    const RichTextV2Body_possibleTypes: string[] = ['RichTextV2Body']
-    export const isRichTextV2Body = (obj?: { __typename?: any } | null): obj is RichTextV2Body => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isRichTextV2Body"')
-      return RichTextV2Body_possibleTypes.includes(obj.__typename)
+    const RichTextBody_possibleTypes: string[] = ['RichTextBody']
+    export const isRichTextBody = (obj?: { __typename?: any } | null): obj is RichTextBody => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isRichTextBody"')
+      return RichTextBody_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -7607,6 +7689,38 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
+    const CollectionHash_possibleTypes: string[] = ['CollectionHash']
+    export const isCollectionHash = (obj?: { __typename?: any } | null): obj is CollectionHash => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isCollectionHash"')
+      return CollectionHash_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const MinimalObjectMetadata_possibleTypes: string[] = ['MinimalObjectMetadata']
+    export const isMinimalObjectMetadata = (obj?: { __typename?: any } | null): obj is MinimalObjectMetadata => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isMinimalObjectMetadata"')
+      return MinimalObjectMetadata_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const MinimalView_possibleTypes: string[] = ['MinimalView']
+    export const isMinimalView = (obj?: { __typename?: any } | null): obj is MinimalView => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isMinimalView"')
+      return MinimalView_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const MinimalMetadata_possibleTypes: string[] = ['MinimalMetadata']
+    export const isMinimalMetadata = (obj?: { __typename?: any } | null): obj is MinimalMetadata => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isMinimalMetadata"')
+      return MinimalMetadata_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const Webhook_possibleTypes: string[] = ['Webhook']
     export const isWebhook = (obj?: { __typename?: any } | null): obj is Webhook => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isWebhook"')
@@ -8193,7 +8307,8 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
 export const enumApplicationRegistrationSourceType = {
    NPM: 'NPM' as const,
    TARBALL: 'TARBALL' as const,
-   LOCAL: 'LOCAL' as const
+   LOCAL: 'LOCAL' as const,
+   OAUTH_ONLY: 'OAUTH_ONLY' as const
 }
 
 export const enumRowLevelPermissionPredicateGroupLogicalOperator = {
@@ -8291,7 +8406,6 @@ export const enumFieldMetadataType = {
    RAW_JSON: 'RAW_JSON' as const,
    RELATION: 'RELATION' as const,
    RICH_TEXT: 'RICH_TEXT' as const,
-   RICH_TEXT_V2: 'RICH_TEXT_V2' as const,
    SELECT: 'SELECT' as const,
    TEXT: 'TEXT' as const,
    TS_VECTOR: 'TS_VECTOR' as const,
@@ -8571,7 +8685,8 @@ export const enumFeatureFlagKey = {
    IS_NAVIGATION_MENU_ITEM_ENABLED: 'IS_NAVIGATION_MENU_ITEM_ENABLED' as const,
    IS_DATE_TIME_WHOLE_DAY_FILTER_ENABLED: 'IS_DATE_TIME_WHOLE_DAY_FILTER_ENABLED' as const,
    IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED: 'IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED' as const,
-   IS_DRAFT_EMAIL_ENABLED: 'IS_DRAFT_EMAIL_ENABLED' as const
+   IS_DRAFT_EMAIL_ENABLED: 'IS_DRAFT_EMAIL_ENABLED' as const,
+   IS_RICH_TEXT_V1_MIGRATED: 'IS_RICH_TEXT_V1_MIGRATED' as const
 }
 
 export const enumRelationType = {
@@ -8651,6 +8766,33 @@ export const enumCommandMenuItemAvailabilityType = {
    GLOBAL: 'GLOBAL' as const,
    RECORD_SELECTION: 'RECORD_SELECTION' as const,
    FALLBACK: 'FALLBACK' as const
+}
+
+export const enumAllMetadataName = {
+   fieldMetadata: 'fieldMetadata' as const,
+   objectMetadata: 'objectMetadata' as const,
+   view: 'view' as const,
+   viewField: 'viewField' as const,
+   viewFieldGroup: 'viewFieldGroup' as const,
+   viewGroup: 'viewGroup' as const,
+   viewSort: 'viewSort' as const,
+   rowLevelPermissionPredicate: 'rowLevelPermissionPredicate' as const,
+   rowLevelPermissionPredicateGroup: 'rowLevelPermissionPredicateGroup' as const,
+   viewFilterGroup: 'viewFilterGroup' as const,
+   index: 'index' as const,
+   logicFunction: 'logicFunction' as const,
+   viewFilter: 'viewFilter' as const,
+   role: 'role' as const,
+   roleTarget: 'roleTarget' as const,
+   agent: 'agent' as const,
+   skill: 'skill' as const,
+   pageLayout: 'pageLayout' as const,
+   pageLayoutWidget: 'pageLayoutWidget' as const,
+   pageLayoutTab: 'pageLayoutTab' as const,
+   commandMenuItem: 'commandMenuItem' as const,
+   navigationMenuItem: 'navigationMenuItem' as const,
+   frontComponent: 'frontComponent' as const,
+   webhook: 'webhook' as const
 }
 
 export const enumModelFamily = {
@@ -8794,33 +8936,6 @@ export const enumWorkspaceMigrationActionType = {
    delete: 'delete' as const,
    create: 'create' as const,
    update: 'update' as const
-}
-
-export const enumAllMetadataName = {
-   fieldMetadata: 'fieldMetadata' as const,
-   objectMetadata: 'objectMetadata' as const,
-   view: 'view' as const,
-   viewField: 'viewField' as const,
-   viewFieldGroup: 'viewFieldGroup' as const,
-   viewGroup: 'viewGroup' as const,
-   viewSort: 'viewSort' as const,
-   rowLevelPermissionPredicate: 'rowLevelPermissionPredicate' as const,
-   rowLevelPermissionPredicateGroup: 'rowLevelPermissionPredicateGroup' as const,
-   viewFilterGroup: 'viewFilterGroup' as const,
-   index: 'index' as const,
-   logicFunction: 'logicFunction' as const,
-   viewFilter: 'viewFilter' as const,
-   role: 'role' as const,
-   roleTarget: 'roleTarget' as const,
-   agent: 'agent' as const,
-   skill: 'skill' as const,
-   pageLayout: 'pageLayout' as const,
-   pageLayoutWidget: 'pageLayoutWidget' as const,
-   pageLayoutTab: 'pageLayoutTab' as const,
-   commandMenuItem: 'commandMenuItem' as const,
-   navigationMenuItem: 'navigationMenuItem' as const,
-   frontComponent: 'frontComponent' as const,
-   webhook: 'webhook' as const
 }
 
 export const enumFileFolder = {

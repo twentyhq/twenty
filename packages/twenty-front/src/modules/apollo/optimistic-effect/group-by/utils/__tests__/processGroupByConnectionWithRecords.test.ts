@@ -1,8 +1,8 @@
 import { type Reference } from '@apollo/client';
-import {
-  type ReadFieldFunction,
-  type ToReferenceFunction,
-} from '@apollo/client/cache/core/types/common';
+import { type FieldFunctionOptions } from '@apollo/client/cache';
+
+type ReadFieldFunction = FieldFunctionOptions['readField'];
+type ToReferenceFunction = FieldFunctionOptions['toReference'];
 
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { type RecordGqlRefEdge } from '@/object-record/cache/types/RecordGqlRefEdge';

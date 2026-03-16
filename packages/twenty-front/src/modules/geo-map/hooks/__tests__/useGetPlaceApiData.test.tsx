@@ -1,4 +1,5 @@
-import { MockedProvider, type MockedResponse } from '@apollo/client/testing';
+import { type MockedResponse } from '@apollo/client/testing';
+import { MockedProvider } from '@apollo/client/testing/react';
 import { renderHook, waitFor } from '@testing-library/react';
 import { type ReactNode } from 'react';
 
@@ -32,9 +33,7 @@ const mockPlaceDetails: PlaceDetailsResult = {
 
 const createWrapper = (mocks: MockedResponse[]) => {
   return ({ children }: { children: ReactNode }) => (
-    <MockedProvider mocks={mocks} addTypename={false}>
-      {children}
-    </MockedProvider>
+    <MockedProvider mocks={mocks}>{children}</MockedProvider>
   );
 };
 

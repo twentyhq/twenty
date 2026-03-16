@@ -6,7 +6,7 @@ import { recordIndexOpenRecordInState } from '@/object-record/record-index/state
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { canOpenObjectInSidePanel } from '@/object-record/utils/canOpenObjectInSidePanel';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
+import { ViewOpenRecordIn } from '~/generated-metadata/graphql';
 import { t } from '@lingui/core/macro';
 import { type MouseEvent } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -62,13 +62,13 @@ export const RecordChip = ({
   );
   const canOpenInSidePanel = canOpenObjectInSidePanel(objectNameSingular);
 
-  const isSidePanelViewOpenRecordInType =
-    recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL &&
+  const isSidePanelViewOpenRecordIn =
+    recordIndexOpenRecordIn === ViewOpenRecordIn.SIDE_PANEL &&
     canOpenInSidePanel;
 
   const handleCustomClick = isDefined(onClick)
     ? onClick
-    : isSidePanelViewOpenRecordInType
+    : isSidePanelViewOpenRecordIn
       ? (_event: MouseEvent<HTMLElement>) => {
           openRecordInSidePanel({
             recordId: record.id,

@@ -24,7 +24,7 @@ import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { type ApolloError } from '@apollo/client';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -48,9 +48,10 @@ import {
   MenuItemSelectAvatar,
   UndecoratedLink,
 } from 'twenty-ui/navigation';
+import { useMutation } from '@apollo/client/react';
 import {
   type AvailableWorkspace,
-  useSignUpInNewWorkspaceMutation,
+  SignUpInNewWorkspaceDocument,
 } from '~/generated-metadata/graphql';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 
@@ -76,7 +77,9 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
     supportChat?.supportDriver === 'FRONT' &&
     isNonEmptyString(supportChat.supportFrontChatId);
 
-  const [signUpInNewWorkspaceMutation] = useSignUpInNewWorkspaceMutation();
+  const [signUpInNewWorkspaceMutation] = useMutation(
+    SignUpInNewWorkspaceDocument,
+  );
 
   const setMultiWorkspaceDropdown = useSetAtomState(
     multiWorkspaceDropdownState,
@@ -115,9 +118,9 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
           '_blank',
         );
       },
-      onError: (error: ApolloError) => {
+      onError: (error) => {
         enqueueErrorSnackBar({
-          apolloError: error,
+          ...(CombinedGraphQLErrors.is(error) ? { apolloError: error } : {}),
         });
       },
     });

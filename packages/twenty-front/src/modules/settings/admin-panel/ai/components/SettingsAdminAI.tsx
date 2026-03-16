@@ -12,10 +12,11 @@ import { H2Title, IconArchive, IconPlug, IconRobot } from 'twenty-ui/display';
 import { SearchInput } from 'twenty-ui/input';
 import { Card, Section } from 'twenty-ui/layout';
 import { MenuItemToggle } from 'twenty-ui/navigation';
+import { useMutation, useQuery } from '@apollo/client/react';
 import {
-  useCreateDatabaseConfigVariableMutation,
-  useGetAdminAiModelsQuery,
-  useSetAdminAiModelEnabledMutation,
+  CreateDatabaseConfigVariableDocument,
+  GetAdminAiModelsDocument,
+  SetAdminAiModelEnabledDocument,
 } from '~/generated-metadata/graphql';
 import { getModelIcon } from '~/pages/settings/ai/utils/getModelIcon';
 import { getModelProviderLabel } from '~/pages/settings/ai/utils/getModelProviderLabel';
@@ -27,9 +28,11 @@ export const SettingsAdminAI = () => {
   const [showDeprecated, setShowDeprecated] = useState(false);
   const { refetch: refetchClientConfig } = useClientConfig();
 
-  const { data } = useGetAdminAiModelsQuery();
-  const [createConfigVariable] = useCreateDatabaseConfigVariableMutation();
-  const [setModelEnabled] = useSetAdminAiModelEnabledMutation();
+  const { data } = useQuery(GetAdminAiModelsDocument);
+  const [createConfigVariable] = useMutation(
+    CreateDatabaseConfigVariableDocument,
+  );
+  const [setModelEnabled] = useMutation(SetAdminAiModelEnabledDocument);
 
   const autoEnableNewModels =
     data?.getAdminAiModels?.autoEnableNewModels ?? true;

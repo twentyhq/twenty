@@ -4,7 +4,7 @@ import { useLoadRecordIndexStates } from '@/object-record/record-index/hooks/use
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useCreateDefaultViewForObject } from '@/views/hooks/useCreateDefaultViewForObject';
-import { coreViewFromViewIdFamilySelector } from '@/views/states/selectors/coreViewFromViewIdFamilySelector';
+import { viewFromViewIdFamilySelector } from '@/views/states/selectors/viewFromViewIdFamilySelector';
 import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -18,7 +18,7 @@ export const RecordIndexLoadBaseOnContextStoreEffect = () => {
     undefined,
   );
 
-  const view = useAtomFamilySelectorValue(coreViewFromViewIdFamilySelector, {
+  const view = useAtomFamilySelectorValue(viewFromViewIdFamilySelector, {
     viewId: contextStoreCurrentViewId ?? '',
   });
 

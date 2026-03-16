@@ -7,7 +7,7 @@ const compositeFieldTypes = [
   FieldMetadataType.LINKS,
   FieldMetadataType.EMAILS,
   FieldMetadataType.PHONES,
-  FieldMetadataType.RICH_TEXT_V2,
+  FieldMetadataType.RICH_TEXT,
   FieldMetadataType.ACTOR,
 ] as const;
 

@@ -3,12 +3,13 @@ import { gql } from '@apollo/client';
 
 export const VIEW_FIELD_GROUP_FRAGMENT = gql`
   ${VIEW_FIELD_FRAGMENT}
-  fragment ViewFieldGroupFragment on CoreViewFieldGroup {
+  fragment ViewFieldGroupFragment on ViewFieldGroup {
     id
     name
     position
     isVisible
     viewId
+    isOverridden
     createdAt
     updatedAt
     deletedAt

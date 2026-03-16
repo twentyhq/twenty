@@ -1,3 +1,5 @@
+import { useMemo } from 'react';
+
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -27,14 +29,25 @@ export const useFindManyRecordsQuery = ({
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
-  const findManyRecordsQuery = generateFindManyRecordsQuery({
-    objectMetadataItem,
-    objectMetadataItems,
-    recordGqlFields,
-    computeReferences,
-    cursorDirection,
-    objectPermissionsByObjectMetadataId,
-  });
+  const findManyRecordsQuery = useMemo(
+    () =>
+      generateFindManyRecordsQuery({
+        objectMetadataItem,
+        objectMetadataItems,
+        recordGqlFields,
+        computeReferences,
+        cursorDirection,
+        objectPermissionsByObjectMetadataId,
+      }),
+    [
+      objectMetadataItem,
+      objectMetadataItems,
+      recordGqlFields,
+      computeReferences,
+      cursorDirection,
+      objectPermissionsByObjectMetadataId,
+    ],
+  );
 
   return {
     findManyRecordsQuery,

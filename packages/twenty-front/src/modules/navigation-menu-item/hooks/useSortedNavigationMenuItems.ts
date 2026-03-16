@@ -7,18 +7,15 @@ import { recordIdentifierToObjectRecordIdentifier } from '@/navigation-menu-item
 import { sortNavigationMenuItems } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { type ObjectRecordIdentifier } from '@/object-record/types/ObjectRecordIdentifier';
-import { coreViewsState } from '@/views/states/coreViewState';
-import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
+import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
-import { usePrefetchedNavigationMenuItemsData } from './usePrefetchedNavigationMenuItemsData';
+import { useNavigationMenuItemsData } from './useNavigationMenuItemsData';
 
 export const useSortedNavigationMenuItems = () => {
   const { navigationMenuItems, workspaceNavigationMenuItems } =
-    usePrefetchedNavigationMenuItemsData();
-  const coreViews = useAtomStateValue(coreViewsState).map(
-    convertCoreViewToView,
-  );
+    useNavigationMenuItemsData();
+  const views = useAtomStateValue(viewsSelector);
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
 
   const targetRecordIdentifiers = useMemo(() => {
@@ -67,13 +64,13 @@ export const useSortedNavigationMenuItems = () => {
     return sortNavigationMenuItems(
       navigationMenuItems,
       true,
-      coreViews,
+      views,
       objectMetadataItems,
       targetRecordIdentifiers,
     );
   }, [
     navigationMenuItems,
-    coreViews,
+    views,
     objectMetadataItems,
     targetRecordIdentifiers,
   ]);
@@ -87,7 +84,7 @@ export const useSortedNavigationMenuItems = () => {
         return true;
       }
       if (isDefined(item.viewId)) {
-        return coreViews.some((view) => view.id === item.viewId);
+        return views.some((view) => view.id === item.viewId);
       }
 
       const itemTargetRecordId = item.targetRecordId;
@@ -101,13 +98,13 @@ export const useSortedNavigationMenuItems = () => {
     return sortNavigationMenuItems(
       filtered,
       true,
-      coreViews,
+      views,
       objectMetadataItems,
       targetRecordIdentifiers,
     );
   }, [
     workspaceNavigationMenuItems,
-    coreViews,
+    views,
     objectMetadataItems,
     targetRecordIdentifiers,
   ]);

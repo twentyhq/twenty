@@ -65,6 +65,17 @@ export class ApplicationInstallService {
       return true;
     }
 
+    if (
+      appRegistration.sourceType ===
+      ApplicationRegistrationSourceType.OAUTH_ONLY
+    ) {
+      this.logger.log(
+        `Skipping install for OAUTH_ONLY app ${appRegistration.universalIdentifier} (OAuth-only clients have no code artifacts)`,
+      );
+
+      return true;
+    }
+
     const lockKey = `app-install:${params.workspaceId}:${appRegistration.universalIdentifier}`;
 
     return this.cacheLockService.withLock(

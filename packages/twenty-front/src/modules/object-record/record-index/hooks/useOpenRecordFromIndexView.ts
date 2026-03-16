@@ -9,7 +9,7 @@ import { recordIndexOpenRecordInState } from '@/object-record/record-index/state
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { canOpenObjectInSidePanel } from '@/object-record/utils/canOpenObjectInSidePanel';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
-import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
+import { ViewOpenRecordIn } from '~/generated-metadata/graphql';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { AppPath } from 'twenty-shared/types';
@@ -72,7 +72,7 @@ export const useOpenRecordFromIndexView = () => {
 
       if (
         !isMobile &&
-        recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL &&
+        recordIndexOpenRecordIn === ViewOpenRecordIn.SIDE_PANEL &&
         canOpenObjectInSidePanel(objectNameSingular)
       ) {
         openRecordInSidePanel({

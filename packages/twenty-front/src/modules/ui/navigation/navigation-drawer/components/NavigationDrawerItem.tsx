@@ -8,7 +8,6 @@ import { type NavigationDrawerSubItemState } from '@/ui/navigation/navigation-dr
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -34,8 +33,6 @@ import {
   type TriggerEventType,
   useMouseDownNavigation,
 } from 'twenty-ui/utilities';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
-
 const DEFAULT_INDENTATION_LEVEL = 1;
 
 export type NavigationDrawerItemIndentationLevel = 1 | 2;
@@ -299,9 +296,6 @@ export const NavigationDrawerItem = ({
   const { theme } = useContext(ThemeContext);
   const isMobile = useIsMobile();
   const isSettingsPage = useIsSettingsPage();
-  const isNavigationMenuItemEditingEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED,
-  );
   const [isNavigationDrawerExpanded, setIsNavigationDrawerExpanded] =
     useAtomState(isNavigationDrawerExpandedState);
 
@@ -381,8 +375,7 @@ export const NavigationDrawerItem = ({
           )}
 
           {Icon &&
-            (isNavigationMenuItemEditingEnabled &&
-            isNonEmptyString(iconColor) ? (
+            (isNonEmptyString(iconColor) ? (
               <StyledIcon>
                 <NavigationMenuItemStyleIcon Icon={Icon} color={iconColor} />
               </StyledIcon>

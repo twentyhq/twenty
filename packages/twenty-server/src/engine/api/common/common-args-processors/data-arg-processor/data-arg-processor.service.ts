@@ -41,7 +41,7 @@ import { validateOverriddenPositionFieldOrThrow } from 'src/engine/api/common/co
 import { validatePhonesFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-phones-field-or-throw.util';
 import { validateRatingAndSelectFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-rating-and-select-field-or-throw.util';
 import { validateRawJsonFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-raw-json-field-or-throw.util';
-import { validateRichTextV2FieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-rich-text-v2-field-or-throw.util';
+import { validateRichTextFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-rich-text-field-or-throw.util';
 import { validateTextFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-text-field-or-throw.util';
 import { validateUUIDFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-uuid-field-or-throw.util';
 import {
@@ -54,7 +54,7 @@ import { RecordPositionService } from 'src/engine/core-modules/record-position/s
 import { transformEmailsValue } from 'src/engine/core-modules/record-transformer/utils/transform-emails-value.util';
 import { transformLinksValue } from 'src/engine/core-modules/record-transformer/utils/transform-links-value.util';
 import { transformPhonesValue } from 'src/engine/core-modules/record-transformer/utils/transform-phones-value.util';
-import { transformRichTextV2Value } from 'src/engine/core-modules/record-transformer/utils/transform-rich-text-v2.util';
+import { transformRichTextValue } from 'src/engine/core-modules/record-transformer/utils/transform-rich-text.util';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -302,17 +302,16 @@ export class DataArgProcessorService {
 
         return transformActorField(validatedValue);
       }
-      case FieldMetadataType.RICH_TEXT_V2: {
-        const validatedValue = validateRichTextV2FieldOrThrow(value, key);
+      case FieldMetadataType.RICH_TEXT: {
+        const validatedValue = validateRichTextFieldOrThrow(value, key);
 
-        return await transformRichTextV2Value(validatedValue);
+        return await transformRichTextValue(validatedValue);
       }
       case FieldMetadataType.LINKS: {
         const validatedValue = validateLinksFieldOrThrow(value, key);
 
         return transformLinksValue(validatedValue);
       }
-      case FieldMetadataType.RICH_TEXT:
       case FieldMetadataType.TS_VECTOR:
         throw new CommonQueryRunnerException(
           `${key} ${fieldMetadata.type}-typed field does not support write operations`,

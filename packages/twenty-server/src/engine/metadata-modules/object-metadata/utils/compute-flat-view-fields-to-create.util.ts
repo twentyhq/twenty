@@ -38,6 +38,7 @@ export const computeFlatViewFieldsToCreate = ({
       size: DEFAULT_VIEW_FIELD_SIZE,
       position: index,
       aggregateOperation: null,
+      universalOverrides: null,
       applicationUniversalIdentifier: flatApplication.universalIdentifier,
     }));
 

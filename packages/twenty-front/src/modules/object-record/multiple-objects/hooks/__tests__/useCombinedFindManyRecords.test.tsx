@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client';
 import { renderHook, waitFor } from '@testing-library/react';
 
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { type RecordGqlFields } from '@/object-record/graphql/record-gql-fields/types/RecordGqlFields';
+import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
 import { type RecordGqlOperationSignature } from 'twenty-shared/types';
 import { useCombinedFindManyRecords } from '@/object-record/multiple-objects/hooks/useCombinedFindManyRecords';
 import { useGenerateCombinedFindManyRecordsQuery } from '@/object-record/multiple-objects/hooks/useGenerateCombinedFindManyRecordsQuery';
@@ -123,8 +123,8 @@ const renderUseCombinedFindManyRecordsHook = async ({
     },
   ];
 
-  jotaiStore.set(
-    objectMetadataItemsState.atom,
+  setTestObjectMetadataItemsInMetadataStore(
+    jotaiStore,
     generatedMockObjectMetadataItems,
   );
 

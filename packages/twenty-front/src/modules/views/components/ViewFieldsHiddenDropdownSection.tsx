@@ -25,7 +25,7 @@ export const ViewFieldsHiddenDropdownSection = () => {
   });
 
   const handleChangeFieldVisibility =
-    viewType === ViewType.Kanban
+    viewType === ViewType.KANBAN
       ? handleBoardFieldVisibilityChange
       : changeRecordFieldVisibility;
 

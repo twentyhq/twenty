@@ -6,6 +6,7 @@ import {
   FieldLinksMetadata,
   FieldMorphRelationMetadata,
   FieldRatingMetadata,
+  FieldRichTextMetadata,
   FieldSelectMetadata,
   FieldTextMetadata,
 } from '@/object-record/record-field/ui/types/FieldMetadata';
@@ -128,6 +129,17 @@ export const linksFieldDefinition: FieldDefinition<FieldLinksMetadata> = {
     fieldName: 'links',
     objectMetadataNameSingular: 'company',
     settings: null,
+  },
+};
+
+export const richTextFieldDefinition: FieldDefinition<FieldRichTextMetadata> = {
+  fieldMetadataId,
+  label: 'Description',
+  iconName: 'IconAlignLeft',
+  type: FieldMetadataType.RICH_TEXT,
+  defaultValue: { blocknote: null, markdown: null },
+  metadata: {
+    fieldName: 'description',
   },
 };
 

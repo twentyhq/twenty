@@ -16,7 +16,7 @@ import { useCaptcha } from '@/client-config/hooks/useCaptcha';
 import { useBuildSearchParamsFromUrlSyncedStates } from '@/domain-manager/hooks/useBuildSearchParamsFromUrlSyncedStates';
 import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { ApolloError } from '@apollo/client';
+import { isErrorLike } from '@apollo/client/errors';
 import { useLingui } from '@lingui/react/macro';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -178,9 +178,9 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
           captchaToken: token,
           verifyEmailRedirectPath,
         });
-      } catch (error: any) {
+      } catch (error: unknown) {
         enqueueErrorSnackBar({
-          ...(error instanceof ApolloError ? { apolloError: error } : {}),
+          ...(isErrorLike(error) ? { apolloError: error } : {}),
         });
       }
     },

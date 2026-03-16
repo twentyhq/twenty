@@ -7,7 +7,7 @@ import {
   VIEW_SORT_GQL_FIELDS,
 } from 'test/integration/constants/view-gql-fields.constants';
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
-import { findCoreViews } from 'test/integration/metadata/suites/view/utils/find-core-views.util';
+import { findViews } from 'test/integration/metadata/suites/view/utils/find-views.util';
 import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
@@ -58,12 +58,12 @@ describe('successful find view with all sub-relations (e2e)', () => {
 
   describe('Company View Structure Validation', () => {
     it('should successfully fetch complete view structure with all sub-relations in single GraphQL query', async () => {
-      const { data: viewsData } = await findCoreViews({
+      const { data: viewsData } = await findViews({
         objectMetadataId: companyObjectMetadataId,
         gqlFields: COMPREHENSIVE_VIEW_GQL_FIELDS,
         expectToFail: false,
       });
-      const testView = viewsData.getCoreViews.find(
+      const testView = viewsData.getViews.find(
         (view) => view.key === ViewKey.INDEX,
       );
 

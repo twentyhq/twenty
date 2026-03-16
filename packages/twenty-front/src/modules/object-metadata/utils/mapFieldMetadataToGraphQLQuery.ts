@@ -310,7 +310,7 @@ ${mapObjectMetadataToGraphQLQuery({
     }`;
   }
 
-  if (fieldType === FieldMetadataType.RICH_TEXT_V2) {
+  if (fieldType === FieldMetadataType.RICH_TEXT) {
     return `${gqlField}
 {
   blocknote

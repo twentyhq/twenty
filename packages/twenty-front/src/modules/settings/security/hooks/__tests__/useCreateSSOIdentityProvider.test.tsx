@@ -3,15 +3,26 @@
 import { renderHook } from '@testing-library/react';
 
 import { useCreateSSOIdentityProvider } from '@/settings/security/hooks/useCreateSSOIdentityProvider';
+import {
+  CreateOidcIdentityProviderDocument,
+  CreateSamlIdentityProviderDocument,
+} from '~/generated-metadata/graphql';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
 const mutationOIDCCallSpy = jest.fn();
 const mutationSAMLCallSpy = jest.fn();
 
-jest.mock('~/generated-metadata/graphql', () => ({
-  ...jest.requireActual('~/generated-metadata/graphql'),
-  useCreateOidcIdentityProviderMutation: () => [mutationOIDCCallSpy],
-  useCreateSamlIdentityProviderMutation: () => [mutationSAMLCallSpy],
+jest.mock('@apollo/client/react', () => ({
+  ...jest.requireActual('@apollo/client/react'),
+  useMutation: (document: unknown) => {
+    if (document === CreateOidcIdentityProviderDocument) {
+      return [mutationOIDCCallSpy];
+    }
+    if (document === CreateSamlIdentityProviderDocument) {
+      return [mutationSAMLCallSpy];
+    }
+    return [jest.fn()];
+  },
 }));
 
 const Wrapper = getJestMetadataAndApolloMocksWrapper({
