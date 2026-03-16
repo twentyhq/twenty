@@ -192,6 +192,7 @@ export const startCallbackServer = (options?: {
         },
         close: () => {
           clearTimeout(timeoutHandle);
+          server.closeAllConnections();
           server.close();
         },
       });

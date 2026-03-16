@@ -11,7 +11,6 @@ export type TwentyConfig = {
   applicationAccessToken?: string;
   applicationRefreshToken?: string;
   oauthClientId?: string;
-  oauthClientSecret?: string;
 };
 
 type PersistedConfig = TwentyConfig & {
