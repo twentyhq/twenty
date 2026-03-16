@@ -96,6 +96,7 @@ export const useCreateDefaultViewForObject = () => {
       performViewAPICreate,
       performViewFieldAPICreate,
       refreshCoreViewsByObjectMetadataId,
+      featureFlags,
     ],
   );
 

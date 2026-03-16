@@ -1,5 +1,5 @@
-import { type QueryRunner } from 'typeorm';
 import { FeatureFlagKey } from 'twenty-shared/types';
+import { type QueryRunner } from 'typeorm';
 
 const tableName = 'featureFlag';
 
@@ -107,6 +107,11 @@ export const seedFeatureFlags = async ({
       },
       {
         key: FeatureFlagKey.IS_STANDARD_VIEW_NAME_DYNAMIC_ENABLED,
+        workspaceId: workspaceId,
+        value: true,
+      },
+      {
+        key: FeatureFlagKey.IS_STANDARD_VIEW_NAME_MIGRATED,
         workspaceId: workspaceId,
         value: true,
       },

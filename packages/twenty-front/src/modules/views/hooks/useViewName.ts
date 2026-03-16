@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { View } from '@/views/types/View';
+import { type View } from '@/views/types/View';
 import { getDynamicViewName } from '@/views/utils/getDynamicViewName';
 import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 import { FeatureFlagKey } from 'twenty-shared/types';
