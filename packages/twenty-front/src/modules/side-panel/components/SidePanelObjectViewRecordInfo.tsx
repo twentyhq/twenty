@@ -7,7 +7,6 @@ import { NavigationMenuItemType } from '@/navigation-menu-item/constants/Navigat
 import { useSelectedNavigationMenuItemEditItem } from '@/navigation-menu-item/hooks/useSelectedNavigationMenuItemEditItem';
 import { useSelectedNavigationMenuItemEditItemLabel } from '@/navigation-menu-item/hooks/useSelectedNavigationMenuItemEditItemLabel';
 import { useSelectedNavigationMenuItemEditItemObjectMetadata } from '@/navigation-menu-item/hooks/useSelectedNavigationMenuItemEditItemObjectMetadata';
-import { ViewKey } from '@/views/types/ViewKey';
 
 export const SidePanelObjectViewRecordInfo = () => {
   const { t } = useLingui();

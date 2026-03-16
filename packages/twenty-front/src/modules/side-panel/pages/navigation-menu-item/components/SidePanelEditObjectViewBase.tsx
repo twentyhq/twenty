@@ -39,10 +39,8 @@ export const SidePanelEditObjectViewBase = ({
     selectedItem?.objectNameSingular ?? '',
   );
 
-  const persistedNavigationMenuItems = useAtomStateValue(
-    navigationMenuItemsSelector,
-  );
-  const persistedNavItem = persistedNavigationMenuItems.find(
+  const navigationMenuItems = useAtomStateValue(navigationMenuItemsSelector);
+  const persistedNavItem = navigationMenuItems.find(
     (item) => item.id === selectedItem?.id,
   );
   const hasUserChangedColor =
