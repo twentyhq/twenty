@@ -7,6 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { PermissionsExceptionCode } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { validateRoleReference } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-reference.util';
 import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
@@ -46,24 +47,13 @@ export class FlatPermissionFlagValidatorService {
       });
     }
 
-    const referencedRole = findFlatEntityByUniversalIdentifier({
-      universalIdentifier: flatPermissionFlagToValidate.roleUniversalIdentifier,
-      flatEntityMaps: flatRoleMaps,
-    });
-
-    if (!isDefined(referencedRole)) {
-      validationResult.errors.push({
-        code: PermissionsExceptionCode.ROLE_NOT_FOUND,
-        message: t`Role not found`,
-        userFriendlyMessage: msg`Role not found`,
-      });
-    } else if (!referencedRole.isEditable) {
-      validationResult.errors.push({
-        code: PermissionsExceptionCode.ROLE_NOT_EDITABLE,
-        message: t`Role is not editable`,
-        userFriendlyMessage: msg`This role cannot be modified because it is a system role. Only custom roles can be edited.`,
-      });
-    }
+    validationResult.errors.push(
+      ...validateRoleReference({
+        flatRoleMaps,
+        roleUniversalIdentifier:
+          flatPermissionFlagToValidate.roleUniversalIdentifier,
+      }),
+    );
 
     const isValidFlag =
       isDefined(flatPermissionFlagToValidate.flag) &&
@@ -140,24 +130,13 @@ export class FlatPermissionFlagValidatorService {
       ...flatEntityUpdate,
     };
 
-    const referencedRole = findFlatEntityByUniversalIdentifier({
-      universalIdentifier: updatedFlatPermissionFlag.roleUniversalIdentifier,
-      flatEntityMaps: flatRoleMaps,
-    });
-
-    if (!isDefined(referencedRole)) {
-      validationResult.errors.push({
-        code: PermissionsExceptionCode.ROLE_NOT_FOUND,
-        message: t`Role not found`,
-        userFriendlyMessage: msg`Role not found`,
-      });
-    } else if (!referencedRole.isEditable) {
-      validationResult.errors.push({
-        code: PermissionsExceptionCode.ROLE_NOT_EDITABLE,
-        message: t`Role is not editable`,
-        userFriendlyMessage: msg`This role cannot be modified because it is a system role. Only custom roles can be edited.`,
-      });
-    }
+    validationResult.errors.push(
+      ...validateRoleReference({
+        flatRoleMaps,
+        roleUniversalIdentifier:
+          updatedFlatPermissionFlag.roleUniversalIdentifier,
+      }),
+    );
 
     if (isDefined(flatEntityUpdate.flag)) {
       const isValidFlag = Object.values(PermissionFlagType).includes(
@@ -224,18 +203,13 @@ export class FlatPermissionFlagValidatorService {
         userFriendlyMessage: msg`Permission flag not found`,
       });
     } else {
-      const referencedRole = findFlatEntityByUniversalIdentifier({
-        universalIdentifier: existingFlatPermissionFlag.roleUniversalIdentifier,
-        flatEntityMaps: flatRoleMaps,
-      });
-
-      if (isDefined(referencedRole) && !referencedRole.isEditable) {
-        validationResult.errors.push({
-          code: PermissionsExceptionCode.ROLE_NOT_EDITABLE,
-          message: t`Role is not editable`,
-          userFriendlyMessage: msg`This role cannot be modified because it is a system role. Only custom roles can be edited.`,
-        });
-      }
+      validationResult.errors.push(
+        ...validateRoleReference({
+          flatRoleMaps,
+          roleUniversalIdentifier:
+            existingFlatPermissionFlag.roleUniversalIdentifier,
+        }),
+      );
     }
 
     return validationResult;
