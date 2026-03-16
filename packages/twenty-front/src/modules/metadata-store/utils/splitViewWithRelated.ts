@@ -28,6 +28,7 @@ export const splitViewWithRelated = (
   const flatViewGroups: FlatViewGroup[] = [];
   const flatViewFilterGroups: FlatViewFilterGroup[] = [];
   const flatViewFieldGroups: FlatViewFieldGroup[] = [];
+  const viewFieldIdToGroupId = new Map<string, string>();
 
   for (const viewWithRelated of viewsWithRelated) {
     const {
@@ -41,8 +42,6 @@ export const splitViewWithRelated = (
     } = viewWithRelated;
 
     flatViews.push(viewProperties);
-
-    const viewFieldIdToGroupId = new Map<string, string>();
 
     for (const viewFieldGroup of viewFieldGroups) {
       const { viewFields: groupViewFields, ...viewFieldGroupProperties } =
