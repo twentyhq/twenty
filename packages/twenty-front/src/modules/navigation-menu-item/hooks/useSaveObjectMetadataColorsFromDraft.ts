@@ -16,7 +16,7 @@ export const useSaveObjectMetadataColorsFromDraft = () => {
   const saveObjectMetadataColors = useCallback(async () => {
     const draft = store.get(navigationMenuItemsDraftState.atom);
     const currentItems = store.get(navigationMenuItemsState.atom);
-    const views = store.get(viewsSelector);
+    const views = store.get(viewsSelector.atom);
 
     if (!draft) return;
 
