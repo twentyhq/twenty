@@ -1,6 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { useSelectedNavigationMenuItemEditItem } from '@/navigation-menu-item/hooks/useSelectedNavigationMenuItemEditItem';
+import { navigationMenuItemsState } from '@/navigation-menu-item/states/navigationMenuItemsState';
 import { getStandardObjectIconColor } from '@/navigation-menu-item/utils/getStandardObjectIconColor';
 import { parseThemeColor } from '@/navigation-menu-item/utils/parseThemeColor';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
@@ -12,6 +13,7 @@ import {
   SidePanelEditOrganizeActions,
 } from '@/side-panel/pages/navigation-menu-item/components/SidePanelEditOrganizeActions';
 import { getOrganizeActionsSelectableItemIds } from '@/side-panel/pages/navigation-menu-item/utils/getOrganizeActionsSelectableItemIds';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -33,17 +35,22 @@ export const SidePanelEditObjectViewBase = ({
 }: SidePanelEditObjectViewBaseProps) => {
   const { t } = useLingui();
   const { selectedItem } = useSelectedNavigationMenuItemEditItem();
+  const navigationMenuItems = useAtomStateValue(navigationMenuItemsState);
   const selectableItemIds = getOrganizeActionsSelectableItemIds(true);
 
-  const currentColor = isNonEmptyString(selectedItem?.color)
-    ? parseThemeColor(selectedItem.color)
-    : isNonEmptyString(objectMetadataItem?.color)
-      ? parseThemeColor(objectMetadataItem.color)
-      : parseThemeColor(
-          getStandardObjectIconColor(
-            objectMetadataItem?.nameSingular ?? '',
-          ),
-        );
+  const persistedItem = navigationMenuItems.find(
+    (item) => item.id === selectedItem?.id,
+  );
+  const draftColorChanged = selectedItem?.color !== persistedItem?.color;
+
+  const objectMetadataColor = isNonEmptyString(objectMetadataItem?.color)
+    ? objectMetadataItem.color
+    : getStandardObjectIconColor(objectMetadataItem?.nameSingular ?? '');
+
+  const currentColor =
+    draftColorChanged && isNonEmptyString(selectedItem?.color)
+      ? parseThemeColor(selectedItem.color)
+      : parseThemeColor(objectMetadataColor);
 
   return (
     <SidePanelList commandGroups={[]} selectableItemIds={selectableItemIds}>

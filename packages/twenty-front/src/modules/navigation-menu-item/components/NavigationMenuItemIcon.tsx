@@ -8,6 +8,7 @@ import { StyledNavigationMenuItemIconContainer } from '@/navigation-menu-item/co
 import { ObjectIconWithViewOverlay } from '@/navigation-menu-item/components/ObjectIconWithViewOverlay';
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import { useObjectNavItemColor } from '@/navigation-menu-item/hooks/useObjectNavItemColor';
+import { navigationMenuItemsState } from '@/navigation-menu-item/states/navigationMenuItemsState';
 import { getNavigationMenuItemIconStyleFromColor } from '@/navigation-menu-item/utils/getNavigationMenuItemIconStyleFromColor';
 import { getEffectiveNavigationMenuItemColor } from '@/navigation-menu-item/utils/getEffectiveNavigationMenuItemColor';
 import { type ProcessedNavigationMenuItem } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
@@ -23,6 +24,7 @@ export const NavigationMenuItemIcon = ({
 }) => {
   const { getIcon } = useIcons();
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
+  const navigationMenuItems = useAtomStateValue(navigationMenuItemsState);
   const { Icon: StandardIcon, IconColor } = useGetStandardObjectIcon(
     navigationMenuItem.objectNameSingular ?? '',
   );
@@ -73,11 +75,21 @@ export const NavigationMenuItemIcon = ({
   const isView =
     navigationMenuItem.itemType === NavigationMenuItemType.VIEW;
 
+  const persistedItem = isView
+    ? navigationMenuItems.find(
+        (item) => item.id === navigationMenuItem.id,
+      )
+    : undefined;
+  const draftColorChanged =
+    isView && navigationMenuItem.color !== persistedItem?.color;
+
   const iconToUse =
     StandardIcon ??
     (navigationMenuItem.Icon ? getIcon(navigationMenuItem.Icon) : undefined);
   const effectiveColor = isView
-    ? objectNavItemColor
+    ? draftColorChanged && isNonEmptyString(navigationMenuItem.color)
+      ? navigationMenuItem.color
+      : objectNavItemColor
     : getEffectiveNavigationMenuItemColor(navigationMenuItem);
   const useStyledIcon = !isRecord && isNonEmptyString(effectiveColor);
   const iconStyle = useStyledIcon
