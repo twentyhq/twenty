@@ -6,6 +6,7 @@ import { type FlatViewFilterGroup } from '@/metadata-store/types/FlatViewFilterG
 import { type FlatViewGroup } from '@/metadata-store/types/FlatViewGroup';
 import { type FlatViewSort } from '@/metadata-store/types/FlatViewSort';
 import { type CoreViewWithRelations } from '@/views/types/CoreViewWithRelations';
+import { isDefined } from 'twenty-shared/utils';
 
 type SplitResult = {
   flatViews: FlatView[];
@@ -62,7 +63,7 @@ export const splitViewWithRelated = (
       flatViewFields.push({
         ...viewFieldProperties,
         viewId: viewWithRelated.id,
-        ...(viewFieldGroupId !== undefined ? { viewFieldGroupId } : {}),
+        ...(isDefined(viewFieldGroupId) ? { viewFieldGroupId } : {}),
       });
     }
 
