@@ -13,7 +13,14 @@ export const FLAT_OBJECT_METADATA_EDITABLE_PROPERTIES = {
     'nameSingular',
     'labelIdentifierFieldMetadataId',
   ],
-  standard: ['color', 'description', 'icon', 'isActive', 'labelPlural', 'labelSingular'],
+  standard: [
+    'color',
+    'description',
+    'icon',
+    'isActive',
+    'labelPlural',
+    'labelSingular',
+  ],
 } as const satisfies Record<
   'standard' | 'custom',
   MetadataEntityPropertyName<'objectMetadata'>[]
