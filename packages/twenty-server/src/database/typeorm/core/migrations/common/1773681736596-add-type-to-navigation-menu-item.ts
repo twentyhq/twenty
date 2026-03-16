@@ -11,7 +11,7 @@ export class AddTypeToNavigationMenuItem1773681736596
     );
 
     await queryRunner.query(
-      `ALTER TABLE "core"."navigationMenuItem" ADD "type" "core"."navigationMenuItem_type_enum"`,
+      `ALTER TABLE "core"."navigationMenuItem" ADD "type" "core"."navigationMenuItem_type_enum" DEFAULT 'VIEW'`,
     );
 
     await queryRunner.query(
@@ -19,13 +19,20 @@ export class AddTypeToNavigationMenuItem1773681736596
     );
 
     await queryRunner.query(
-      `ALTER TABLE "core"."navigationMenuItem" ADD CONSTRAINT "CHK_navigation_menu_item_target_fields" CHECK ("targetRecordId" IS NULL OR "targetObjectMetadataId" IS NOT NULL)`,
+      `ALTER TABLE "core"."navigationMenuItem" ADD CONSTRAINT "CHK_navigation_menu_item_type_fields" CHECK (
+        ("type" = 'FOLDER' AND "viewId" IS NULL AND "targetObjectMetadataId" IS NULL AND "targetRecordId" IS NULL AND "link" IS NULL)
+        OR ("type" = 'OBJECT' AND "targetObjectMetadataId" IS NOT NULL AND "viewId" IS NULL AND "targetRecordId" IS NULL AND "link" IS NULL)
+        OR ("type" = 'VIEW' AND "viewId" IS NOT NULL AND "targetRecordId" IS NULL AND "link" IS NULL)
+        OR ("type" = 'RECORD' AND "targetRecordId" IS NOT NULL AND "targetObjectMetadataId" IS NOT NULL)
+        OR ("type" = 'LINK' AND "link" IS NOT NULL AND "viewId" IS NULL AND "targetObjectMetadataId" IS NULL AND "targetRecordId" IS NULL)
+        OR ("type" IS NULL)
+      )`,
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "core"."navigationMenuItem" DROP CONSTRAINT "CHK_navigation_menu_item_target_fields"`,
+      `ALTER TABLE "core"."navigationMenuItem" DROP CONSTRAINT "CHK_navigation_menu_item_type_fields"`,
     );
 
     await queryRunner.query(
@@ -36,8 +43,6 @@ export class AddTypeToNavigationMenuItem1773681736596
       `ALTER TABLE "core"."navigationMenuItem" DROP COLUMN "type"`,
     );
 
-    await queryRunner.query(
-      `DROP TYPE "core"."navigationMenuItem_type_enum"`,
-    );
+    await queryRunner.query(`DROP TYPE "core"."navigationMenuItem_type_enum"`);
   }
 }

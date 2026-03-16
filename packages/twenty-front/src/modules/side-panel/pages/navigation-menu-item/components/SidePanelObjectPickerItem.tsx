@@ -12,10 +12,7 @@ type SidePanelObjectPickerItemProps = {
   objectMetadataItem: ObjectMetadataItem;
   isViewItem: boolean;
   onSelectObjectForViewEdit?: (objectMetadataItem: ObjectMetadataItem) => void;
-  onChangeObject: (
-    objectMetadataItem: ObjectMetadataItem,
-    defaultViewId: string,
-  ) => void;
+  onChangeObject: (objectMetadataItem: ObjectMetadataItem) => void;
   objectMenuItemVariant?: 'add' | 'edit';
   dragIndex?: number;
   disableDrag?: boolean;

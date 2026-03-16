@@ -19,11 +19,8 @@ describe('isNavigationMenuItemLink', () => {
     expect(
       isNavigationMenuItemLink({ type: NavigationMenuItemType.RECORD }),
     ).toBe(false);
-  });
-
-  it('should return false when type is null or undefined', () => {
-    expect(isNavigationMenuItemLink({ type: null })).toBe(false);
-    expect(isNavigationMenuItemLink({ type: undefined })).toBe(false);
-    expect(isNavigationMenuItemLink({})).toBe(false);
+    expect(
+      isNavigationMenuItemLink({ type: NavigationMenuItemType.OBJECT }),
+    ).toBe(false);
   });
 });

@@ -36,8 +36,13 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
   'workspaceId',
 ])
 @Check(
-  'CHK_navigation_menu_item_target_fields',
-  '("targetRecordId" IS NULL OR "targetObjectMetadataId" IS NOT NULL)',
+  'CHK_navigation_menu_item_type_fields',
+  `("type" = 'FOLDER' AND "viewId" IS NULL AND "targetObjectMetadataId" IS NULL AND "targetRecordId" IS NULL AND "link" IS NULL)
+  OR ("type" = 'OBJECT' AND "targetObjectMetadataId" IS NOT NULL AND "viewId" IS NULL AND "targetRecordId" IS NULL AND "link" IS NULL)
+  OR ("type" = 'VIEW' AND "viewId" IS NOT NULL AND "targetRecordId" IS NULL AND "link" IS NULL)
+  OR ("type" = 'RECORD' AND "targetRecordId" IS NOT NULL AND "targetObjectMetadataId" IS NOT NULL)
+  OR ("type" = 'LINK' AND "link" IS NOT NULL AND "viewId" IS NULL AND "targetObjectMetadataId" IS NULL AND "targetRecordId" IS NULL)
+  OR ("type" IS NULL)`,
 )
 export class NavigationMenuItemEntity
   extends SyncableEntity
@@ -79,7 +84,12 @@ export class NavigationMenuItemEntity
   @JoinColumn({ name: 'targetObjectMetadataId' })
   targetObjectMetadata: Relation<ObjectMetadataEntity> | null;
 
-  @Column({ nullable: false, type: 'enum', enum: NavigationMenuItemType })
+  @Column({
+    nullable: false,
+    type: 'enum',
+    enum: NavigationMenuItemType,
+    default: NavigationMenuItemType.VIEW,
+  })
   type: NavigationMenuItemType;
 
   @Column({ nullable: true, type: 'text' })

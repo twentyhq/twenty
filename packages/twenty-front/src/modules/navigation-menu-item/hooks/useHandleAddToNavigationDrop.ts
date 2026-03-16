@@ -139,7 +139,6 @@ export const useHandleAddToNavigationDrop = () => {
           );
           const newItemId = addObjectToDraft(
             payload.objectMetadataId,
-            payload.defaultViewId,
             currentDraft,
             folderId,
             index,

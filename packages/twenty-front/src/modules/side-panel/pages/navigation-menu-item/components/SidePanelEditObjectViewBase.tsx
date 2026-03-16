@@ -1,6 +1,7 @@
 import { useObjectNavItemColor } from '@/navigation-menu-item/hooks/useObjectNavItemColor';
 import { navigationMenuItemsSelector } from '@/navigation-menu-item/states/navigationMenuItemsSelector';
 import { type ProcessedNavigationMenuItem } from '@/navigation-menu-item/types/processed-navigation-menu-item';
+import { getEffectiveNavigationMenuItemColor } from '@/navigation-menu-item/utils/getEffectiveNavigationMenuItemColor';
 import { parseThemeColor } from '@/navigation-menu-item/utils/parseThemeColor';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
@@ -47,7 +48,12 @@ export const SidePanelEditObjectViewBase = ({
     isNonEmptyString(selectedItem?.color) &&
     selectedItem.color !== (persistedNavItem?.color ?? undefined);
 
-  const displayColor = hasUserChangedColor ? selectedItem.color : objectColor;
+  const effectiveColor = isDefined(selectedItem)
+    ? getEffectiveNavigationMenuItemColor(selectedItem, objectColor)
+    : undefined;
+  const displayColor = hasUserChangedColor
+    ? selectedItem.color
+    : effectiveColor;
 
   return (
     <SidePanelList commandGroups={[]} selectableItemIds={selectableItemIds}>

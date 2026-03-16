@@ -19,11 +19,8 @@ describe('isNavigationMenuItemFolder', () => {
     expect(
       isNavigationMenuItemFolder({ type: NavigationMenuItemType.RECORD }),
     ).toBe(false);
-  });
-
-  it('should return false when type is null or undefined', () => {
-    expect(isNavigationMenuItemFolder({ type: null })).toBe(false);
-    expect(isNavigationMenuItemFolder({ type: undefined })).toBe(false);
-    expect(isNavigationMenuItemFolder({})).toBe(false);
+    expect(
+      isNavigationMenuItemFolder({ type: NavigationMenuItemType.OBJECT }),
+    ).toBe(false);
   });
 });

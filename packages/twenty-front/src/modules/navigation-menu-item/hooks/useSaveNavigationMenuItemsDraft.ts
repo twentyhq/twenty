@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { useMutation } from '@apollo/client/react';
@@ -13,6 +14,8 @@ import { isNavigationMenuItemFolder } from '@/navigation-menu-item/utils/isNavig
 import { isNavigationMenuItemLink } from '@/navigation-menu-item/utils/isNavigationMenuItemLink';
 import { orderFoldersForCreation } from '@/navigation-menu-item/utils/orderFoldersForCreation';
 import { navigationMenuItemsSelector } from '@/navigation-menu-item/states/navigationMenuItemsSelector';
+import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { useStore } from 'jotai';
 
 export const useSaveNavigationMenuItemsDraft = () => {
@@ -24,6 +27,7 @@ export const useSaveNavigationMenuItemsDraft = () => {
       refetchQueries: ['FindManyNavigationMenuItems'],
     },
   );
+  const { updateOneObjectMetadataItem } = useUpdateOneObjectMetadataItem();
 
   const store = useStore();
 
@@ -32,6 +36,36 @@ export const useSaveNavigationMenuItemsDraft = () => {
     const currentItems = store.get(navigationMenuItemsSelector.atom);
 
     if (!draft) return;
+
+    const objectMetadataItems = store.get(objectMetadataItemsState.atom);
+
+    for (const draftItem of draft) {
+      if (draftItem.type !== NavigationMenuItemType.OBJECT) {
+        continue;
+      }
+      if (!isDefined(draftItem.targetObjectMetadataId)) {
+        continue;
+      }
+      if (!isDefined(draftItem.color)) {
+        continue;
+      }
+
+      const objectMetadataItem = objectMetadataItems.find(
+        (item) => item.id === draftItem.targetObjectMetadataId,
+      );
+
+      if (!isDefined(objectMetadataItem)) {
+        continue;
+      }
+      if (objectMetadataItem.color === draftItem.color) {
+        continue;
+      }
+
+      await updateOneObjectMetadataItem({
+        idToUpdate: draftItem.targetObjectMetadataId,
+        updatePayload: { color: draftItem.color },
+      });
+    }
 
     const workspaceItems = filterWorkspaceNavigationMenuItems(currentItems);
     const topLevelWorkspace = workspaceItems.filter(
@@ -190,6 +224,7 @@ export const useSaveNavigationMenuItemsDraft = () => {
     updateNavigationMenuItem,
     deleteNavigationMenuItem,
     createNavigationMenuItemMutation,
+    updateOneObjectMetadataItem,
     store,
   ]);
 

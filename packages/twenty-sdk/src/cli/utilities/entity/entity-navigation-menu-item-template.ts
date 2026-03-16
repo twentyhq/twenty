@@ -4,28 +4,39 @@ import { v4 } from 'uuid';
 export const getNavigationMenuItemBaseFile = ({
   name,
   universalIdentifier = v4(),
+  type,
   viewUniversalIdentifier,
   targetObjectUniversalIdentifier,
 }: {
   name: string;
   universalIdentifier?: string;
+  type?: 'OBJECT' | 'VIEW' | 'LINK' | 'FOLDER';
   viewUniversalIdentifier?: string;
   targetObjectUniversalIdentifier?: string;
 }) => {
   const kebabCaseName = kebabCase(name);
 
-  let linkConfig: string;
+  let typeAndConfig: string;
 
-  if (targetObjectUniversalIdentifier) {
-    linkConfig = `  targetObjectUniversalIdentifier: '${targetObjectUniversalIdentifier}',`;
-  } else if (viewUniversalIdentifier) {
-    linkConfig = `  viewUniversalIdentifier: '${viewUniversalIdentifier}',`;
+  if (type === 'OBJECT' && targetObjectUniversalIdentifier) {
+    typeAndConfig = `  type: 'OBJECT',
+  targetObjectUniversalIdentifier: '${targetObjectUniversalIdentifier}',`;
+  } else if (type === 'VIEW' && viewUniversalIdentifier) {
+    typeAndConfig = `  type: 'VIEW',
+  viewUniversalIdentifier: '${viewUniversalIdentifier}',`;
+  } else if (type === 'LINK') {
+    typeAndConfig = `  type: 'LINK',
+  link: 'https://example.com',`;
+  } else if (type === 'FOLDER') {
+    typeAndConfig = `  type: 'FOLDER',`;
   } else {
-    linkConfig = `  // Link to an object:
+    typeAndConfig = `  // type: 'OBJECT',
   // targetObjectUniversalIdentifier: '...',
-  // Or link to a view:
+  // Or:
+  // type: 'VIEW',
   // viewUniversalIdentifier: '...',
-  // Or link to an external URL:
+  // Or:
+  // type: 'LINK',
   // link: 'https://example.com',`;
   }
 
@@ -36,7 +47,7 @@ export default defineNavigationMenuItem({
   name: '${kebabCaseName}',
   icon: 'IconList',
   position: 0,
-${linkConfig}
+${typeAndConfig}
 });
 `;
 };

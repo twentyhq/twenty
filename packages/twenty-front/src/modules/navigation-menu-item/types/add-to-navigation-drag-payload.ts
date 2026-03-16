@@ -1,7 +1,6 @@
 export type AddToNavigationDragPayloadObject = {
   type: 'OBJECT';
   objectMetadataId: string;
-  defaultViewId: string;
   label: string;
   iconColor?: string;
 };

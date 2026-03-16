@@ -16,10 +16,7 @@ import { indexViewIdFromObjectMetadataItemFamilySelector } from '@/views/states/
 
 type SidePanelObjectMenuItemProps = {
   objectMetadataItem: ObjectMetadataItem;
-  onSelect: (
-    objectMetadataItem: ObjectMetadataItem,
-    defaultViewId: string,
-  ) => void;
+  onSelect: (objectMetadataItem: ObjectMetadataItem) => void;
   variant: 'add' | 'edit';
   dragIndex?: number;
   disableDrag?: boolean;
@@ -52,7 +49,7 @@ export const SidePanelObjectMenuItem = ({
     if (isDisabled || !defaultViewId) {
       return;
     }
-    onSelect(objectMetadataItem, defaultViewId);
+    onSelect(objectMetadataItem);
   };
 
   const styledIcon = () => (
@@ -72,7 +69,6 @@ export const SidePanelObjectMenuItem = ({
           payload={{
             type: NavigationMenuItemType.OBJECT,
             objectMetadataId: objectMetadataItem.id,
-            defaultViewId: defaultViewId ?? '',
             label: objectMetadataItem.labelPlural,
             iconColor,
           }}
