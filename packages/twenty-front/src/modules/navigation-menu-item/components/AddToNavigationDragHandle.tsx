@@ -84,11 +84,12 @@ export const AddToNavigationDragHandle = ({
 }: AddToNavigationDragHandleProps) => {
   const { theme } = useContext(ThemeContext);
   const effectiveColor =
-    payload.type === 'object' && isNonEmptyString(payload.iconColor)
+    payload.type === NavigationMenuItemType.OBJECT &&
+    isNonEmptyString(payload.iconColor)
       ? payload.iconColor
-      : payload.type === 'folder'
+      : payload.type === NavigationMenuItemType.FOLDER
         ? DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER
-        : payload.type === 'link'
+        : payload.type === NavigationMenuItemType.LINK
           ? DEFAULT_NAVIGATION_MENU_ITEM_COLOR_LINK
           : undefined;
   const hasBackgroundColor =

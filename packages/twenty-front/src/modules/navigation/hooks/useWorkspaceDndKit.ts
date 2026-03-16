@@ -229,7 +229,7 @@ export const useWorkspaceDndKit = (): {
           resolved.destination.droppableId,
         );
         const folderDrag =
-          getPayload()?.type === 'folder' && isDefined(folderId);
+          getPayload()?.type === 'FOLDER' && isDefined(folderId);
         setForbiddenDropTargetId(
           folderDrag ? resolved.effectiveDropTargetId : null,
         );

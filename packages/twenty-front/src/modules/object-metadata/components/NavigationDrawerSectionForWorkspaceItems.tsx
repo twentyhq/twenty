@@ -123,7 +123,7 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
         ? () => {
             const type = item.itemType;
             const objectMetadataItem =
-              type === 'view' || type === 'record'
+              type === 'OBJECT' || type === 'VIEW' || type === 'RECORD'
                 ? getObjectMetadataForNavigationMenuItem(
                     item as ProcessedNavigationMenuItem,
                     objectMetadataItems,

@@ -9,5 +9,5 @@ export const isFolderDrag = (
   payload: AddToNavPayload,
   sourceItem: NavigationMenuItem | undefined,
 ): boolean =>
-  payload?.type === 'folder' ||
+  payload?.type === 'FOLDER' ||
   (isDefined(sourceItem) && isNavigationMenuItemFolder(sourceItem));

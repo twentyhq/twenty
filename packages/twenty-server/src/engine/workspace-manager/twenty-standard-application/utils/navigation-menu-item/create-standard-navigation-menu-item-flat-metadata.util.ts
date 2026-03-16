@@ -1,7 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { NavigationMenuItemType } from 'src/engine/metadata-modules/navigation-menu-item/enums/navigation-menu-item-type.enum';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item.type';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
@@ -54,7 +53,7 @@ export const createStandardNavigationMenuItemFlatMetadata = ({
 
   return {
     id: navigationMenuItemId,
-    type: NavigationMenuItemType.VIEW,
+    type: navigationMenuItemDefinition.type,
     universalIdentifier: navigationMenuItemDefinition.universalIdentifier,
     applicationId: twentyStandardApplicationId,
     applicationUniversalIdentifier:

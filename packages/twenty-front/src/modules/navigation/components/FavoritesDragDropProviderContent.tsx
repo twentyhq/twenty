@@ -94,7 +94,7 @@ export const FavoritesDragDropProviderContent = ({
           destination.droppableId,
         );
         const isFolderOverFolder =
-          payload?.type === 'folder' && folderId !== null;
+          payload?.type === 'FOLDER' && folderId !== null;
         setForbiddenDropTargetId(isFolderOverFolder ? dropTargetId : null);
       } else {
         setForbiddenDropTargetId(null);

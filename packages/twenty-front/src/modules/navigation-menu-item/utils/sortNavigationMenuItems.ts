@@ -71,7 +71,11 @@ export const sortNavigationMenuItems = (
             ...navigationMenuItem,
             ...displayFields,
             viewKey: view.key,
-            itemType: NavigationMenuItemType.VIEW,
+            itemType:
+              navigationMenuItem.type ===
+              NavigationMenuItemType.OBJECT
+                ? NavigationMenuItemType.OBJECT
+                : NavigationMenuItemType.VIEW,
           };
         }
 

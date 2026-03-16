@@ -6,6 +6,7 @@ import { useSelectedNavigationMenuItemEditItem } from '@/navigation-menu-item/ho
 import { useSelectedNavigationMenuItemEditItemLabel } from '@/navigation-menu-item/hooks/useSelectedNavigationMenuItemEditItemLabel';
 import { useUpdateLinkInDraft } from '@/navigation-menu-item/hooks/useUpdateLinkInDraft';
 import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeState';
+import { type ProcessedNavigationMenuItem } from '@/navigation-menu-item/types/processed-navigation-menu-item';
 import { parseThemeColor } from '@/navigation-menu-item/utils/parseThemeColor';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
@@ -93,6 +94,21 @@ export const SidePanelNavigationMenuItemEditPage = () => {
   }
 
   switch (selectedItemType) {
+    case NavigationMenuItemType.OBJECT:
+      return (
+        <SidePanelEditObjectViewBase
+          onOpenFolderPicker={openFolderPicker}
+          canMoveUp={canMoveUp}
+          canMoveDown={canMoveDown}
+          onMoveUp={onMoveUp}
+          onMoveDown={onMoveDown}
+          onRemove={onRemove}
+          onAddBefore={onAddBefore}
+          onAddAfter={onAddAfter}
+          showColorOption={isDefined(selectedItem)}
+          selectedItem={selectedItem as ProcessedNavigationMenuItem | undefined}
+        />
+      );
     case NavigationMenuItemType.VIEW:
       return (
         <SidePanelEditObjectViewBase

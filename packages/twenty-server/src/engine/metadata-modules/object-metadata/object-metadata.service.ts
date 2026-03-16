@@ -715,7 +715,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
 
     return {
       id: newId,
-      type: NavigationMenuItemType.VIEW,
+      type: NavigationMenuItemType.OBJECT,
       universalIdentifier: newId,
       userWorkspaceId: null,
       targetRecordId: null,

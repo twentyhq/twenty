@@ -1,7 +1,7 @@
 export enum NavigationMenuItemType {
-  FOLDER = 'folder',
-  LINK = 'link',
-  OBJECT = 'object',
-  RECORD = 'record',
-  VIEW = 'view',
+  FOLDER = 'FOLDER',
+  LINK = 'LINK',
+  OBJECT = 'OBJECT',
+  RECORD = 'RECORD',
+  VIEW = 'VIEW',
 }

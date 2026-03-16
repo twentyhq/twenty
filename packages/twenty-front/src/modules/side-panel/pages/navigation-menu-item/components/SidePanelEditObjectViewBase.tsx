@@ -1,12 +1,20 @@
+import { type ProcessedNavigationMenuItem } from '@/navigation-menu-item/types/processed-navigation-menu-item';
+import { parseThemeColor } from '@/navigation-menu-item/utils/parseThemeColor';
+import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
+import { SidePanelEditColorOption } from '@/side-panel/pages/navigation-menu-item/components/SidePanelEditColorOption';
 import {
   type OrganizeActionsProps,
   SidePanelEditOrganizeActions,
 } from '@/side-panel/pages/navigation-menu-item/components/SidePanelEditOrganizeActions';
 import { getOrganizeActionsSelectableItemIds } from '@/side-panel/pages/navigation-menu-item/utils/getOrganizeActionsSelectableItemIds';
+import { useLingui } from '@lingui/react/macro';
+import { isDefined } from 'twenty-shared/utils';
 
 type SidePanelEditObjectViewBaseProps = OrganizeActionsProps & {
   onOpenFolderPicker: () => void;
+  showColorOption?: boolean;
+  selectedItem?: ProcessedNavigationMenuItem | null;
 };
 
 export const SidePanelEditObjectViewBase = ({
@@ -18,11 +26,22 @@ export const SidePanelEditObjectViewBase = ({
   onRemove,
   onAddBefore,
   onAddAfter,
+  showColorOption = false,
+  selectedItem,
 }: SidePanelEditObjectViewBaseProps) => {
+  const { t } = useLingui();
   const selectableItemIds = getOrganizeActionsSelectableItemIds(true);
 
   return (
     <SidePanelList commandGroups={[]} selectableItemIds={selectableItemIds}>
+      {showColorOption && isDefined(selectedItem) && (
+        <SidePanelGroup heading={t`Customize`}>
+          <SidePanelEditColorOption
+            navigationMenuItemId={selectedItem.id}
+            color={parseThemeColor(selectedItem.color)}
+          />
+        </SidePanelGroup>
+      )}
       <SidePanelEditOrganizeActions
         canMoveUp={canMoveUp}
         canMoveDown={canMoveDown}
