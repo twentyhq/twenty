@@ -35953,10 +35953,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"expr-eval@npm:^2.0.2":
-  version: 2.0.2
-  resolution: "expr-eval@npm:2.0.2"
-  checksum: 10c0/642f112ff28ea34574c595c3ad73ccd8e638498879a4dd28620c4dabebab2e11987a851266ba81883dae85a5800e0c93b3d06f81718b71a215f831534646e4f2
+"expr-eval-fork@npm:3.0.3":
+  version: 3.0.3
+  resolution: "expr-eval-fork@npm:3.0.3"
+  checksum: 10c0/26655b5e059d404de67ab374008ee03ff94c4b4af13904714404fca7fdfed4a27498032e48e75b5bbe5eac26cbcd360cd999eb9d5bbceb542824d9c588ab44ab
   languageName: node
   linkType: hard
 
@@ -56817,7 +56817,7 @@ __metadata:
     "@types/handlebars": "npm:^4.1.0"
     babel-plugin-module-resolver: "npm:^5.0.2"
     class-validator: "npm:^0.14.0"
-    expr-eval: "npm:^2.0.2"
+    expr-eval-fork: "npm:3.0.3"
     glob: "npm:^11.1.0"
     handlebars: "npm:^4.7.8"
     libphonenumber-js: "npm:^1.10.26"
