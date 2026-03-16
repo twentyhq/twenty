@@ -1,5 +1,6 @@
 import { Suspense, lazy } from 'react';
 
+import { CommandMenuItemErrorBoundary } from '@/command-menu-item/display/components/CommandMenuItemErrorBoundary';
 import { ENGINE_COMPONENT_KEY_HEADLESS_COMPONENT_MAP } from '@/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap';
 import { EngineCommandComponentInstanceContext } from '@/command-menu-item/engine-command/states/contexts/EngineCommandComponentInstanceContext';
 import { mountedEngineCommandsState } from '@/command-menu-item/engine-command/states/mountedEngineCommandsState';
@@ -31,44 +32,55 @@ export const HeadlessFrontComponentMountRoot = () => {
       {hasFrontComponents &&
         [...mountedHeadlessFrontComponentMaps.entries()].map(
           ([frontComponentId, mountContext]) => (
-            <Suspense key={frontComponentId} fallback={null}>
-              <LayoutRenderingProvider
-                value={{
-                  targetRecordIdentifier:
-                    isDefined(mountContext) &&
-                    isDefined(mountContext.objectNameSingular)
-                      ? {
-                          id: mountContext.recordId,
-                          targetObjectNameSingular:
-                            mountContext.objectNameSingular,
-                        }
-                      : undefined,
-                  layoutType: PageLayoutType.DASHBOARD,
-                  isInSidePanel: false,
-                }}
-              >
-                <FrontComponentRenderer frontComponentId={frontComponentId} />
-              </LayoutRenderingProvider>
-            </Suspense>
+            <CommandMenuItemErrorBoundary
+              key={frontComponentId}
+              resetKeys={[frontComponentId]}
+            >
+              <Suspense fallback={null}>
+                <LayoutRenderingProvider
+                  value={{
+                    targetRecordIdentifier:
+                      isDefined(mountContext) &&
+                      isDefined(mountContext.objectNameSingular)
+                        ? {
+                            id: mountContext.recordId,
+                            targetObjectNameSingular:
+                              mountContext.objectNameSingular,
+                          }
+                        : undefined,
+                    layoutType: PageLayoutType.DASHBOARD,
+                    isInSidePanel: false,
+                  }}
+                >
+                  <FrontComponentRenderer
+                    frontComponentId={frontComponentId}
+                  />
+                </LayoutRenderingProvider>
+              </Suspense>
+            </CommandMenuItemErrorBoundary>
           ),
         )}
       {hasEngineCommands &&
         [...mountedEngineCommands.entries()].map(
           ([engineCommandId, mountContext]) => (
-            <ContextStoreComponentInstanceContext.Provider
+            <CommandMenuItemErrorBoundary
               key={engineCommandId}
-              value={{ instanceId: mountContext.contextStoreInstanceId }}
+              resetKeys={[engineCommandId]}
             >
-              <EngineCommandComponentInstanceContext.Provider
-                value={{ instanceId: engineCommandId }}
+              <ContextStoreComponentInstanceContext.Provider
+                value={{ instanceId: mountContext.contextStoreInstanceId }}
               >
-                {
-                  ENGINE_COMPONENT_KEY_HEADLESS_COMPONENT_MAP[
-                    mountContext.engineComponentKey
-                  ]
-                }
-              </EngineCommandComponentInstanceContext.Provider>
-            </ContextStoreComponentInstanceContext.Provider>
+                <EngineCommandComponentInstanceContext.Provider
+                  value={{ instanceId: engineCommandId }}
+                >
+                  {
+                    ENGINE_COMPONENT_KEY_HEADLESS_COMPONENT_MAP[
+                      mountContext.engineComponentKey
+                    ]
+                  }
+                </EngineCommandComponentInstanceContext.Provider>
+              </ContextStoreComponentInstanceContext.Provider>
+            </CommandMenuItemErrorBoundary>
           ),
         )}
     </>
