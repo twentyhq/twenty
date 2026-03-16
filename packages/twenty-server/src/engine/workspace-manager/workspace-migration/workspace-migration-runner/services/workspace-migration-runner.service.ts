@@ -66,11 +66,11 @@ export class WorkspaceMigrationRunnerService {
       'flatViewFieldMaps',
       'flatViewFilterGroupMaps',
     ];
-    const shouldInvalidFindViewsGraphqlCacheOperation =
+    const shouldInvalidateFindViewsGraphqlCacheOperation =
       viewRelatedFlatMapsKeys.some((key) => flatMapsKeysSet.has(key));
 
     if (
-      shouldInvalidFindViewsGraphqlCacheOperation ||
+      shouldInvalidateFindViewsGraphqlCacheOperation ||
       shouldIncrementMetadataGraphqlSchemaVersion
     ) {
       asyncOperations.push(
