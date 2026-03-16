@@ -14,7 +14,9 @@ export const useSaveObjectMetadataColorsFromDraft = () => {
   const { updateOneObjectMetadataItem } = useUpdateOneObjectMetadataItem();
 
   const saveObjectMetadataColors = async () => {
-    if (!isDefined(navigationMenuItemsDraft)) return;
+    if (!isDefined(navigationMenuItemsDraft)) {
+      return;
+    }
 
     for (const draftItem of navigationMenuItemsDraft) {
       if (draftItem.type !== NavigationMenuItemType.OBJECT) continue;

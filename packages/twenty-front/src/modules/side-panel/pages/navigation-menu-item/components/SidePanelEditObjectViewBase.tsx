@@ -1,4 +1,5 @@
 import { useObjectNavItemColor } from '@/navigation-menu-item/hooks/useObjectNavItemColor';
+import { navigationMenuItemsSelector } from '@/navigation-menu-item/states/navigationMenuItemsSelector';
 import { type ProcessedNavigationMenuItem } from '@/navigation-menu-item/types/processed-navigation-menu-item';
 import { parseThemeColor } from '@/navigation-menu-item/utils/parseThemeColor';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
@@ -9,6 +10,7 @@ import {
   SidePanelEditOrganizeActions,
 } from '@/side-panel/pages/navigation-menu-item/components/SidePanelEditOrganizeActions';
 import { getOrganizeActionsSelectableItemIds } from '@/side-panel/pages/navigation-menu-item/utils/getOrganizeActionsSelectableItemIds';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
@@ -36,9 +38,18 @@ export const SidePanelEditObjectViewBase = ({
   const objectColor = useObjectNavItemColor(
     selectedItem?.objectNameSingular ?? '',
   );
-  const displayColor = isNonEmptyString(selectedItem?.color)
-    ? selectedItem.color
-    : objectColor;
+
+  const persistedNavigationMenuItems = useAtomStateValue(
+    navigationMenuItemsSelector,
+  );
+  const persistedNavItem = persistedNavigationMenuItems.find(
+    (item) => item.id === selectedItem?.id,
+  );
+  const hasUserChangedColor =
+    isNonEmptyString(selectedItem?.color) &&
+    selectedItem.color !== (persistedNavItem?.color ?? undefined);
+
+  const displayColor = hasUserChangedColor ? selectedItem.color : objectColor;
 
   return (
     <SidePanelList commandGroups={[]} selectableItemIds={selectableItemIds}>

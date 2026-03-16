@@ -9,10 +9,20 @@ import { validateFlatObjectMetadataNameAndLabels } from 'src/engine/metadata-mod
 import { ObjectMetadataExceptionCode } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
 import { isCallerTwentyStandardApp } from 'src/engine/metadata-modules/utils/is-caller-twenty-standard-app.util';
+import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
+
+const SYSTEM_OBJECT_ALLOWED_UPDATE_PROPERTIES = [
+  'color',
+  'description',
+  'icon',
+  'isActive',
+  'labelPlural',
+  'labelSingular',
+] as const satisfies (keyof UniversalFlatObjectMetadata)[];
 
 @Injectable()
 export class FlatObjectMetadataValidatorService {
@@ -61,11 +71,20 @@ export class FlatObjectMetadataValidatorService {
     };
 
     if (!buildOptions.isSystemBuild && existingFlatObjectMetadata.isSystem) {
-      validationResult.errors.push({
-        code: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
-        message: t`System objects cannot be updated`,
-        userFriendlyMessage: msg`System objects cannot be updated`,
-      });
+      const disallowedProperties = Object.keys(flatEntityUpdate).filter(
+        (property) =>
+          !SYSTEM_OBJECT_ALLOWED_UPDATE_PROPERTIES.includes(
+            property as (typeof SYSTEM_OBJECT_ALLOWED_UPDATE_PROPERTIES)[number],
+          ),
+      );
+
+      if (disallowedProperties.length > 0) {
+        validationResult.errors.push({
+          code: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+          message: t`System objects only allow updating: ${SYSTEM_OBJECT_ALLOWED_UPDATE_PROPERTIES.join(', ')}. Forbidden properties: ${disallowedProperties.join(', ')}`,
+          userFriendlyMessage: msg`System objects cannot be updated`,
+        });
+      }
     }
 
     validationResult.errors.push(

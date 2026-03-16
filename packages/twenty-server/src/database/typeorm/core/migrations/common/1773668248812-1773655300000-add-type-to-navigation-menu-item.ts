@@ -40,7 +40,8 @@ export class AddTypeToNavigationMenuItem1773668248812
       UPDATE "core"."navigationMenuItem" nmi
       SET
         "targetObjectMetadataId" = v."objectMetadataId",
-        "viewId" = NULL
+        "viewId" = NULL,
+        "color" = NULL
       FROM "core"."view" v
       WHERE nmi."type" = 'OBJECT'
         AND nmi."viewId" = v.id

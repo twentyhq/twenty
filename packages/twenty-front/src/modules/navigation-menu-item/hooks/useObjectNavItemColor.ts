@@ -9,9 +9,12 @@ export const useObjectNavItemColor = (objectNameSingular: string): string => {
     (item) => item.nameSingular === objectNameSingular,
   );
 
-  if (isNonEmptyString(objectMetadataItem?.color)) {
-    return objectMetadataItem.color;
+  const storedColor = objectMetadataItem?.color;
+  const fallbackColor = getStandardObjectIconColor(objectNameSingular);
+
+  if (isNonEmptyString(storedColor)) {
+    return storedColor;
   }
 
-  return getStandardObjectIconColor(objectNameSingular);
+  return fallbackColor;
 };
