@@ -1,11 +1,11 @@
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
-import { useEngineCommandExecutionContext } from '@/command-menu-item/engine-command/hooks/useEngineCommandExecutionContext';
+import { useMountedEngineCommandContext } from '@/command-menu-item/engine-command/hooks/useMountedEngineCommandContext';
 import { useExportSingleRecord } from '@/object-record/record-show/hooks/useExportSingleRecord';
 import { isDefined } from 'twenty-shared/utils';
 
 export const ExportSingleRecordCommand = () => {
   const { objectMetadataItem, currentViewId, recordId } =
-    useEngineCommandExecutionContext();
+    useMountedEngineCommandContext();
 
   if (
     !isDefined(currentViewId) ||

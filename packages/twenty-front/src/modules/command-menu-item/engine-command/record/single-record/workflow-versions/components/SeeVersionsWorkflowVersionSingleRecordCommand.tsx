@@ -1,5 +1,5 @@
 import { HeadlessNavigateEngineCommand } from '@/command-menu-item/engine-command/components/HeadlessNavigateEngineCommand';
-import { useEngineCommandExecutionContext } from '@/command-menu-item/engine-command/hooks/useEngineCommandExecutionContext';
+import { useMountedEngineCommandContext } from '@/command-menu-item/engine-command/hooks/useMountedEngineCommandContext';
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { AppPath, ViewFilterOperand } from 'twenty-shared/types';
@@ -30,7 +30,7 @@ const SeeVersionsWorkflowVersionSingleRecordCommandContent = ({
 };
 
 export const SeeVersionsWorkflowVersionSingleRecordCommand = () => {
-  const { selectedRecords } = useEngineCommandExecutionContext();
+  const { selectedRecords } = useMountedEngineCommandContext();
   const selectedRecord = selectedRecords[0];
 
   if (!isDefined(selectedRecord) || !isDefined(selectedRecord.workflowId)) {

@@ -1,9 +1,9 @@
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
-import { useEngineCommandExecutionContext } from '@/command-menu-item/engine-command/hooks/useEngineCommandExecutionContext';
+import { useMountedEngineCommandContext } from '@/command-menu-item/engine-command/hooks/useMountedEngineCommandContext';
 import { isDefined } from 'twenty-shared/utils';
 
 export const ExportNoteSingleRecordCommand = () => {
-  const { recordId, selectedRecords } = useEngineCommandExecutionContext();
+  const { recordId, selectedRecords } = useMountedEngineCommandContext();
   const selectedRecord = selectedRecords[0];
 
   if (!isDefined(recordId) || !isDefined(selectedRecord)) {

@@ -1,5 +1,5 @@
 import { HeadlessConfirmationModalEngineCommandEffect } from '@/command-menu-item/engine-command/components/HeadlessConfirmationModalEngineCommandEffect';
-import { useEngineCommandExecutionContext } from '@/command-menu-item/engine-command/hooks/useEngineCommandExecutionContext';
+import { useMountedEngineCommandContext } from '@/command-menu-item/engine-command/hooks/useMountedEngineCommandContext';
 import { DEFAULT_QUERY_PAGE_SIZE } from '@/object-record/constants/DefaultQueryPageSize';
 import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRecords';
 import { useRestoreManyRecords } from '@/object-record/hooks/useRestoreManyRecords';
@@ -11,7 +11,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 export const RestoreMultipleRecordsCommand = () => {
   const { recordIndexId, objectMetadataItem, graphqlFilter } =
-    useEngineCommandExecutionContext();
+    useMountedEngineCommandContext();
 
   if (
     !isDefined(recordIndexId) ||

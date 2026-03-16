@@ -1,11 +1,11 @@
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
-import { useEngineCommandExecutionContext } from '@/command-menu-item/engine-command/hooks/useEngineCommandExecutionContext';
+import { useMountedEngineCommandContext } from '@/command-menu-item/engine-command/hooks/useMountedEngineCommandContext';
 import { useCreateNavigationMenuItem } from '@/navigation-menu-item/hooks/useCreateNavigationMenuItem';
 import { isDefined } from 'twenty-shared/utils';
 
 export const AddToFavoritesSingleRecordCommand = () => {
   const { objectMetadataItem, selectedRecords } =
-    useEngineCommandExecutionContext();
+    useMountedEngineCommandContext();
 
   const selectedRecord = selectedRecords[0];
 

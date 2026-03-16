@@ -1,5 +1,5 @@
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
-import { useEngineCommandExecutionContext } from '@/command-menu-item/engine-command/hooks/useEngineCommandExecutionContext';
+import { useMountedEngineCommandContext } from '@/command-menu-item/engine-command/hooks/useMountedEngineCommandContext';
 import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow';
 import { getWorkflowVisualizerComponentInstanceId } from '@/workflow/utils/getWorkflowVisualizerComponentInstanceId';
 import { workflowDiagramComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramComponentState';
@@ -9,7 +9,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 export const TidyUpWorkflowSingleRecordCommand = () => {
   const store = useStore();
-  const { recordId } = useEngineCommandExecutionContext();
+  const { recordId } = useMountedEngineCommandContext();
   const { tidyUpWorkflowVersion } = useTidyUpWorkflowVersion();
   const instanceId = getWorkflowVisualizerComponentInstanceId({
     recordId: recordId ?? '',

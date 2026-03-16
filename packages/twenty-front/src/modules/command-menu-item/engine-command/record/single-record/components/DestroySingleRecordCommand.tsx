@@ -1,5 +1,5 @@
 import { HeadlessConfirmationModalEngineCommandEffect } from '@/command-menu-item/engine-command/components/HeadlessConfirmationModalEngineCommandEffect';
-import { useEngineCommandExecutionContext } from '@/command-menu-item/engine-command/hooks/useEngineCommandExecutionContext';
+import { useMountedEngineCommandContext } from '@/command-menu-item/engine-command/hooks/useMountedEngineCommandContext';
 import { useDestroyOneRecord } from '@/object-record/hooks/useDestroyOneRecord';
 import { useRemoveSelectedRecordsFromRecordBoard } from '@/object-record/record-board/hooks/useRemoveSelectedRecordsFromRecordBoard';
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
@@ -10,7 +10,7 @@ import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const DestroySingleRecordCommand = () => {
   const { recordIndexId, objectMetadataItem, recordId } =
-    useEngineCommandExecutionContext();
+    useMountedEngineCommandContext();
 
   if (
     !isDefined(recordId) ||

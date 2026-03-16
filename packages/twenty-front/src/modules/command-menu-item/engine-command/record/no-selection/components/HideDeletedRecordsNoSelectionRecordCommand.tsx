@@ -1,5 +1,5 @@
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
-import { useEngineCommandExecutionContext } from '@/command-menu-item/engine-command/hooks/useEngineCommandExecutionContext';
+import { useMountedEngineCommandContext } from '@/command-menu-item/engine-command/hooks/useMountedEngineCommandContext';
 import { useCheckIsSoftDeleteFilter } from '@/object-record/record-filter/hooks/useCheckIsSoftDeleteFilter';
 import { useRemoveRecordFilter } from '@/object-record/record-filter/hooks/useRemoveRecordFilter';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
@@ -9,7 +9,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 export const HideDeletedRecordsNoSelectionRecordCommand = () => {
   const { objectMetadataItem, recordIndexId } =
-    useEngineCommandExecutionContext();
+    useMountedEngineCommandContext();
 
   if (!isDefined(objectMetadataItem) || !isDefined(recordIndexId)) {
     throw new Error(

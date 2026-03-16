@@ -1,11 +1,11 @@
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
-import { useEngineCommandExecutionContext } from '@/command-menu-item/engine-command/hooks/useEngineCommandExecutionContext';
+import { useMountedEngineCommandContext } from '@/command-menu-item/engine-command/hooks/useMountedEngineCommandContext';
 import { useRunWorkflowVersion } from '@/workflow/hooks/useRunWorkflowVersion';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { isDefined } from 'twenty-shared/utils';
 
 export const TestWorkflowSingleRecordCommand = () => {
-  const { recordId } = useEngineCommandExecutionContext();
+  const { recordId } = useMountedEngineCommandContext();
   const { runWorkflowVersion } = useRunWorkflowVersion();
   const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(
     recordId ?? '',

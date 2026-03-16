@@ -1,10 +1,10 @@
 import { HeadlessNavigateEngineCommand } from '@/command-menu-item/engine-command/components/HeadlessNavigateEngineCommand';
-import { useEngineCommandExecutionContext } from '@/command-menu-item/engine-command/hooks/useEngineCommandExecutionContext';
+import { useMountedEngineCommandContext } from '@/command-menu-item/engine-command/hooks/useMountedEngineCommandContext';
 import { CoreObjectNameSingular, AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 export const SeeWorkflowWorkflowRunSingleRecordCommand = () => {
-  const { selectedRecords } = useEngineCommandExecutionContext();
+  const { selectedRecords } = useMountedEngineCommandContext();
   const selectedRecord = selectedRecords[0];
 
   if (!isDefined(selectedRecord) || !isDefined(selectedRecord?.workflow?.id)) {

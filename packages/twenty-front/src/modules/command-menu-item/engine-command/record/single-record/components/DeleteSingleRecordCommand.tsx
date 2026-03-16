@@ -1,5 +1,5 @@
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
-import { useEngineCommandExecutionContext } from '@/command-menu-item/engine-command/hooks/useEngineCommandExecutionContext';
+import { useMountedEngineCommandContext } from '@/command-menu-item/engine-command/hooks/useMountedEngineCommandContext';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/hooks/useNavigationMenuItemsData';
 import { useRemoveNavigationMenuItemByTargetRecordId } from '@/navigation-menu-item/hooks/useRemoveNavigationMenuItemByTargetRecordId';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
@@ -9,7 +9,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 export const DeleteSingleRecordCommand = () => {
   const { recordIndexId, objectMetadataItem, recordId } =
-    useEngineCommandExecutionContext();
+    useMountedEngineCommandContext();
 
   if (
     !isDefined(recordId) ||

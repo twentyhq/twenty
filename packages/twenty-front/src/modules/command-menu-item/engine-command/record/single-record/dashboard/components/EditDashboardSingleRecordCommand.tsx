@@ -1,11 +1,11 @@
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
-import { useEngineCommandExecutionContext } from '@/command-menu-item/engine-command/hooks/useEngineCommandExecutionContext';
+import { useMountedEngineCommandContext } from '@/command-menu-item/engine-command/hooks/useMountedEngineCommandContext';
 import { useSetIsPageLayoutInEditMode } from '@/page-layout/hooks/useSetIsPageLayoutInEditMode';
 import { isDefined } from 'twenty-shared/utils';
 import { useResetLocationHash } from 'twenty-ui/utilities';
 
 export const EditDashboardSingleRecordCommand = () => {
-  const { selectedRecords } = useEngineCommandExecutionContext();
+  const { selectedRecords } = useMountedEngineCommandContext();
   const selectedRecord = selectedRecords[0];
 
   if (!isDefined(selectedRecord)) {

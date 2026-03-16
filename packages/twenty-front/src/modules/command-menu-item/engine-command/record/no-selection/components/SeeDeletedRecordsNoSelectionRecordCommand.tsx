@@ -1,11 +1,11 @@
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
-import { useEngineCommandExecutionContext } from '@/command-menu-item/engine-command/hooks/useEngineCommandExecutionContext';
+import { useMountedEngineCommandContext } from '@/command-menu-item/engine-command/hooks/useMountedEngineCommandContext';
 import { useHandleToggleTrashColumnFilter } from '@/object-record/record-index/hooks/useHandleToggleTrashColumnFilter';
 import { isDefined } from 'twenty-shared/utils';
 
 export const SeeDeletedRecordsNoSelectionRecordCommand = () => {
   const { objectMetadataItem, recordIndexId } =
-    useEngineCommandExecutionContext();
+    useMountedEngineCommandContext();
 
   if (!isDefined(objectMetadataItem) || !isDefined(recordIndexId)) {
     throw new Error(

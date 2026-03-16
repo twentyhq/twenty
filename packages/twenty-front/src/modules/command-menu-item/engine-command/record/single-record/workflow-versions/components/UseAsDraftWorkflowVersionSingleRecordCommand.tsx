@@ -1,5 +1,5 @@
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
-import { useEngineCommandExecutionContext } from '@/command-menu-item/engine-command/hooks/useEngineCommandExecutionContext';
+import { useMountedEngineCommandContext } from '@/command-menu-item/engine-command/hooks/useMountedEngineCommandContext';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { OverrideWorkflowDraftConfirmationModal } from '@/workflow/components/OverrideWorkflowDraftConfirmationModal';
 import { OVERRIDE_WORKFLOW_DRAFT_CONFIRMATION_MODAL_ID } from '@/workflow/constants/OverrideWorkflowDraftConfirmationModalId';
@@ -66,7 +66,7 @@ const UseAsDraftWorkflowVersionSingleRecordCommandContent = ({
 };
 
 export const UseAsDraftWorkflowVersionSingleRecordCommand = () => {
-  const { recordId } = useEngineCommandExecutionContext();
+  const { recordId } = useMountedEngineCommandContext();
   const workflowVersion = useWorkflowVersion(recordId ?? '');
 
   if (!recordId || !isDefined(workflowVersion?.workflow?.id)) {

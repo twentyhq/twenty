@@ -1,10 +1,10 @@
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
-import { useEngineCommandExecutionContext } from '@/command-menu-item/engine-command/hooks/useEngineCommandExecutionContext';
+import { useMountedEngineCommandContext } from '@/command-menu-item/engine-command/hooks/useMountedEngineCommandContext';
 import { useRecordShowPagePagination } from '@/object-record/record-show/hooks/useRecordShowPagePagination';
 import { isDefined } from 'twenty-shared/utils';
 
 export const NavigateToPreviousRecordSingleRecordCommand = () => {
-  const { objectMetadataItem, recordId } = useEngineCommandExecutionContext();
+  const { objectMetadataItem, recordId } = useMountedEngineCommandContext();
 
   if (!isDefined(recordId) || !isDefined(objectMetadataItem)) {
     throw new Error(
