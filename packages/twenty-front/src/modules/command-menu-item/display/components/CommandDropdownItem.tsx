@@ -13,14 +13,20 @@ export const CommandDropdownItem = ({
   action,
   onClick,
   to,
+  disabled = false,
 }: {
   action: CommandMenuItemDisplayProps;
   onClick?: () => void;
   to?: string;
+  disabled?: boolean;
 }) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
+    if (disabled) {
+      return;
+    }
+
     onClick?.();
     if (isDefined(to)) {
       navigate(to);
@@ -45,6 +51,7 @@ export const CommandDropdownItem = ({
         LeftIcon={action.Icon}
         onClick={handleClick}
         text={getCommandMenuItemLabel(action.label)}
+        disabled={disabled}
       />
     </SelectableListItem>
   );
