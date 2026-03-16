@@ -4,7 +4,8 @@ import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 export const SeeVersionWorkflowRunSingleRecordCommand = () => {
-  const { selectedRecord } = useEngineCommandExecutionContext();
+  const { selectedRecords } = useEngineCommandExecutionContext();
+  const selectedRecord = selectedRecords[0];
 
   if (
     !isDefined(selectedRecord) ||

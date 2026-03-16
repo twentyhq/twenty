@@ -4,8 +4,10 @@ import { useCreateNavigationMenuItem } from '@/navigation-menu-item/hooks/useCre
 import { isDefined } from 'twenty-shared/utils';
 
 export const AddToFavoritesSingleRecordCommand = () => {
-  const { objectMetadataItem, selectedRecord } =
+  const { objectMetadataItem, selectedRecords } =
     useEngineCommandExecutionContext();
+
+  const selectedRecord = selectedRecords[0];
 
   if (!isDefined(objectMetadataItem)) {
     throw new Error('Object metadata item is required to add to favorites');

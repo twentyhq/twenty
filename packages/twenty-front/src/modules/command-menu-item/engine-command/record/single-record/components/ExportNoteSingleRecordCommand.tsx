@@ -3,7 +3,8 @@ import { useEngineCommandExecutionContext } from '@/command-menu-item/engine-com
 import { isDefined } from 'twenty-shared/utils';
 
 export const ExportNoteSingleRecordCommand = () => {
-  const { recordId, selectedRecord } = useEngineCommandExecutionContext();
+  const { recordId, selectedRecords } = useEngineCommandExecutionContext();
+  const selectedRecord = selectedRecords[0];
 
   if (!isDefined(recordId) || !isDefined(selectedRecord)) {
     throw new Error(

@@ -37,7 +37,8 @@ const SeeRunsWorkflowVersionSingleRecordCommandContent = ({
 };
 
 export const SeeRunsWorkflowVersionSingleRecordCommand = () => {
-  const { recordId, selectedRecord } = useEngineCommandExecutionContext();
+  const { recordId, selectedRecords } = useEngineCommandExecutionContext();
+  const selectedRecord = selectedRecords[0];
 
   const workflowId = selectedRecord?.workflow?.id;
 

@@ -55,9 +55,9 @@ export const usePopulateEngineCommandExecutionContext = () => {
           ? targetedRecordsRule.selectedRecordIds[0]
           : null;
 
-      const selectedRecord = recordId
-        ? (store.get(recordStoreFamilyState.atomFamily(recordId)) ?? null)
-        : null;
+      const selectedRecords = selectedRecordIds
+        .map((id) => store.get(recordStoreFamilyState.atomFamily(id)))
+        .filter(isDefined);
 
       const filters = store.get(
         contextStoreFiltersComponentState.atomFamily({
@@ -123,7 +123,7 @@ export const usePopulateEngineCommandExecutionContext = () => {
           recordIndexId,
           targetedRecordsRule,
           selectedRecordIds,
-          selectedRecord,
+          selectedRecords,
           filters,
           filterGroups,
           anyFieldFilterValue,

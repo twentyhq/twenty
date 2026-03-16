@@ -5,7 +5,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { useResetLocationHash } from 'twenty-ui/utilities';
 
 export const EditDashboardSingleRecordCommand = () => {
-  const { selectedRecord } = useEngineCommandExecutionContext();
+  const { selectedRecords } = useEngineCommandExecutionContext();
+  const selectedRecord = selectedRecords[0];
 
   if (!isDefined(selectedRecord)) {
     throw new Error('Selected record is required to edit dashboard');

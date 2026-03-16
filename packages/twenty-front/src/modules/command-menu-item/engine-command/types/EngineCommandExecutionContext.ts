@@ -21,7 +21,7 @@ export type EngineCommandExecutionContext = {
 
   targetedRecordsRule: ContextStoreTargetedRecordsRule;
   selectedRecordIds: string[];
-  selectedRecord: Nullable<ObjectRecord>;
+  selectedRecords: ObjectRecord[];
 
   filters: RecordFilter[];
   filterGroups: RecordFilterGroup[];

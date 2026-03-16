@@ -30,7 +30,8 @@ const SeeVersionsWorkflowVersionSingleRecordCommandContent = ({
 };
 
 export const SeeVersionsWorkflowVersionSingleRecordCommand = () => {
-  const { selectedRecord } = useEngineCommandExecutionContext();
+  const { selectedRecords } = useEngineCommandExecutionContext();
+  const selectedRecord = selectedRecords[0];
 
   if (!isDefined(selectedRecord) || !isDefined(selectedRecord.workflowId)) {
     throw new Error(

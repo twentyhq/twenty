@@ -6,7 +6,8 @@ import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { isDefined } from 'twenty-shared/utils';
 
 export const CancelDashboardSingleRecordCommand = () => {
-  const { selectedRecord } = useEngineCommandExecutionContext();
+  const { selectedRecords } = useEngineCommandExecutionContext();
+  const selectedRecord = selectedRecords[0];
 
   if (!isDefined(selectedRecord)) {
     throw new Error('Selected record is required to cancel dashboard');
