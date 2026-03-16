@@ -194,7 +194,7 @@ export class ImapClientProvider implements OnModuleDestroy {
       );
     }
 
-    const tlsOptions: any = {
+    const tlsOptions = {
       rejectUnauthorized: false,
       servername: connectionParameters.IMAP?.host,
     };
