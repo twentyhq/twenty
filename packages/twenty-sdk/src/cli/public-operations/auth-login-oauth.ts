@@ -31,8 +31,8 @@ const innerAuthLoginOAuth = async (
 
   const configService = new ConfigService();
 
-  // Step 1: Fetch OAuth discovery metadata
   const discoveryUrl = `${apiUrl}/.well-known/oauth-authorization-server`;
+
   let discovery: OAuthDiscoveryResponse;
 
   try {
@@ -62,14 +62,11 @@ const innerAuthLoginOAuth = async (
 
   const clientId = discovery.cli_client_id;
 
-  // Step 2: Generate PKCE challenge
   const { codeVerifier, codeChallenge } = generatePkceChallenge();
 
-  // Step 3: Start local callback server
   const callbackServer = await startCallbackServer({ timeoutMs });
 
   try {
-    // Step 4: Open browser to authorization endpoint
     const authUrl = new URL(discovery.authorization_endpoint);
 
     authUrl.searchParams.set('clientId', clientId);
@@ -84,7 +81,6 @@ const innerAuthLoginOAuth = async (
       );
     }
 
-    // Step 5: Wait for the callback
     const callbackResult = await callbackServer.waitForCallback();
 
     if (!callbackResult.success) {
@@ -97,7 +93,6 @@ const innerAuthLoginOAuth = async (
       };
     }
 
-    // Step 6: Exchange authorization code for tokens
     const tokenResponse = await axios.post(discovery.token_endpoint, {
       grant_type: 'authorization_code',
       code: callbackResult.code,
@@ -111,7 +106,6 @@ const innerAuthLoginOAuth = async (
       refresh_token: applicationRefreshToken,
     } = tokenResponse.data;
 
-    // Step 7: Store tokens and OAuth client ID in config
     await configService.setConfig({
       apiUrl,
       applicationAccessToken,
@@ -119,11 +113,11 @@ const innerAuthLoginOAuth = async (
       oauthClientId: clientId,
     });
 
-    // Step 8: Validate the token works
     const apiService = new ApiService({
       serverUrl: apiUrl,
       token: applicationAccessToken,
     });
+
     const validateAuth = await apiService.validateAuth();
 
     if (!validateAuth.authValid) {

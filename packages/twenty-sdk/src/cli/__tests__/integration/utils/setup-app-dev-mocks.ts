@@ -9,19 +9,7 @@ const mockApiService = {
       applicationRefreshToken: { token: 'mock-refresh-token', expiresAt: '' },
     },
   }),
-  renewApplicationToken: vi.fn().mockResolvedValue({
-    success: true,
-    data: {
-      applicationAccessToken: {
-        token: 'mock-renewed-access-token',
-        expiresAt: '',
-      },
-      applicationRefreshToken: {
-        token: 'mock-renewed-refresh-token',
-        expiresAt: '',
-      },
-    },
-  }),
+  refreshToken: vi.fn().mockResolvedValue('mock-renewed-access-token'),
   findApplicationRegistrationByUniversalIdentifier: vi
     .fn()
     .mockResolvedValue({ success: true, data: null }),
@@ -47,7 +35,7 @@ vi.mock('@/cli/utilities/api/api-service', () => ({
   ApiService: class {
     validateAuth = mockApiService.validateAuth;
     generateApplicationToken = mockApiService.generateApplicationToken;
-    renewApplicationToken = mockApiService.renewApplicationToken;
+    refreshToken = mockApiService.refreshToken;
     findApplicationRegistrationByUniversalIdentifier =
       mockApiService.findApplicationRegistrationByUniversalIdentifier;
     createApplicationRegistration =

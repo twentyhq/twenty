@@ -48,8 +48,7 @@ export class CheckServerOrchestratorStep {
         step.status = 'error';
         this.state.applyStepEvents([
           {
-            message:
-              'Authentication failed. Please run `yarn twenty auth:login`.',
+            message: 'Authentication failed. Run `yarn twenty auth:login`.',
             status: 'error',
           },
         ]);

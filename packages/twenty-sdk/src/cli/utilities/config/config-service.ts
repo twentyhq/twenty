@@ -67,12 +67,14 @@ export class ConfigService {
       const apiKey = profileConfig?.apiKey;
       const applicationAccessToken = profileConfig?.applicationAccessToken;
       const applicationRefreshToken = profileConfig?.applicationRefreshToken;
+      const oauthClientId = profileConfig?.oauthClientId;
 
       return {
         apiUrl,
         apiKey,
         applicationAccessToken,
         applicationRefreshToken,
+        oauthClientId,
       };
     } catch {
       return defaultConfig;

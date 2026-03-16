@@ -42,7 +42,6 @@ export class AuthLoginCommand {
       return;
     }
 
-    // OAuth flow (default when no --api-key)
     if (!apiUrl) {
       const urlAnswer = await inquirer.prompt([
         {
