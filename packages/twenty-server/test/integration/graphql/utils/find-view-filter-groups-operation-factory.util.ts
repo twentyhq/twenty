@@ -9,8 +9,8 @@ export const findViewFilterGroupsOperationFactory = ({
   viewId?: string;
 } = {}) => ({
   query: gql`
-    query GetCoreViewFilterGroups($viewId: String) {
-      getCoreViewFilterGroups(viewId: $viewId) {
+    query GetViewFilterGroups($viewId: String) {
+      getViewFilterGroups(viewId: $viewId) {
         ${gqlFields}
       }
     }

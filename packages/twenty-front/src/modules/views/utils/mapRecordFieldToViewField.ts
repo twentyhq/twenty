@@ -10,7 +10,6 @@ export const mapRecordFieldToViewField = (recordField: RecordField) => {
     size: recordField.size,
     aggregateOperation: recordField.aggregateOperation,
     isOverridden: false,
-    __typename: 'ViewField',
   };
 
   return viewField;

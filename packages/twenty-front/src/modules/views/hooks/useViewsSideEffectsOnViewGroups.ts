@@ -35,7 +35,6 @@ const useViewsSideEffectsOnViewGroups = () => {
           (option, index) =>
             ({
               id: v4(),
-              __typename: 'ViewGroup',
               fieldValue: option.value,
               isVisible: true,
               position: index,
@@ -48,7 +47,6 @@ const useViewsSideEffectsOnViewGroups = () => {
       )?.isNullable === true
     ) {
       viewGroupsToCreate.push({
-        __typename: 'ViewGroup',
         id: v4(),
         fieldValue: '',
         position: viewGroupsToCreate.length,

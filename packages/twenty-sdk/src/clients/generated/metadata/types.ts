@@ -1230,7 +1230,7 @@ export default {
                 1
             ]
         },
-        "CoreViewField": {
+        "ViewField": {
             "id": [
                 3
             ],
@@ -1275,7 +1275,7 @@ export default {
             ]
         },
         "AggregateOperations": {},
-        "CoreViewFilterGroup": {
+        "ViewFilterGroup": {
             "id": [
                 3
             ],
@@ -1308,7 +1308,7 @@ export default {
             ]
         },
         "ViewFilterGroupLogicalOperator": {},
-        "CoreViewFilter": {
+        "ViewFilter": {
             "id": [
                 3
             ],
@@ -1350,7 +1350,7 @@ export default {
             ]
         },
         "ViewFilterOperand": {},
-        "CoreViewGroup": {
+        "ViewGroup": {
             "id": [
                 3
             ],
@@ -1382,7 +1382,7 @@ export default {
                 1
             ]
         },
-        "CoreViewSort": {
+        "ViewSort": {
             "id": [
                 3
             ],
@@ -1412,7 +1412,7 @@ export default {
             ]
         },
         "ViewSortDirection": {},
-        "CoreViewFieldGroup": {
+        "ViewFieldGroup": {
             "id": [
                 3
             ],
@@ -1450,7 +1450,7 @@ export default {
                 1
             ]
         },
-        "CoreView": {
+        "View": {
             "id": [
                 3
             ],
@@ -5875,7 +5875,7 @@ export default {
                     ]
                 }
             ],
-            "getCoreViewFields": [
+            "getViewFields": [
                 50,
                 {
                     "viewId": [
@@ -5884,7 +5884,7 @@ export default {
                     ]
                 }
             ],
-            "getCoreViewField": [
+            "getViewField": [
                 50,
                 {
                     "id": [
@@ -5893,7 +5893,7 @@ export default {
                     ]
                 }
             ],
-            "getCoreViews": [
+            "getViews": [
                 60,
                 {
                     "objectMetadataId": [
@@ -5905,7 +5905,7 @@ export default {
                     ]
                 }
             ],
-            "getCoreView": [
+            "getView": [
                 60,
                 {
                     "id": [
@@ -5914,7 +5914,7 @@ export default {
                     ]
                 }
             ],
-            "getCoreViewSorts": [
+            "getViewSorts": [
                 57,
                 {
                     "viewId": [
@@ -5922,7 +5922,7 @@ export default {
                     ]
                 }
             ],
-            "getCoreViewSort": [
+            "getViewSort": [
                 57,
                 {
                     "id": [
@@ -5931,7 +5931,7 @@ export default {
                     ]
                 }
             ],
-            "getCoreViewFieldGroups": [
+            "getViewFieldGroups": [
                 59,
                 {
                     "viewId": [
@@ -5940,7 +5940,7 @@ export default {
                     ]
                 }
             ],
-            "getCoreViewFieldGroup": [
+            "getViewFieldGroup": [
                 59,
                 {
                     "id": [
@@ -6107,7 +6107,7 @@ export default {
                     ]
                 }
             ],
-            "getCoreViewGroups": [
+            "getViewGroups": [
                 56,
                 {
                     "viewId": [
@@ -6115,7 +6115,7 @@ export default {
                     ]
                 }
             ],
-            "getCoreViewGroup": [
+            "getViewGroup": [
                 56,
                 {
                     "id": [
@@ -6124,7 +6124,7 @@ export default {
                     ]
                 }
             ],
-            "getCoreViewFilters": [
+            "getViewFilters": [
                 54,
                 {
                     "viewId": [
@@ -6132,7 +6132,7 @@ export default {
                     ]
                 }
             ],
-            "getCoreViewFilter": [
+            "getViewFilter": [
                 54,
                 {
                     "id": [
@@ -6141,7 +6141,7 @@ export default {
                     ]
                 }
             ],
-            "getCoreViewFilterGroups": [
+            "getViewFilterGroups": [
                 52,
                 {
                     "viewId": [
@@ -6149,7 +6149,7 @@ export default {
                     ]
                 }
             ],
-            "getCoreViewFilterGroup": [
+            "getViewFilterGroup": [
                 52,
                 {
                     "id": [
@@ -6944,7 +6944,7 @@ export default {
                     ]
                 }
             ],
-            "updateCoreViewField": [
+            "updateViewField": [
                 50,
                 {
                     "input": [
@@ -6953,7 +6953,7 @@ export default {
                     ]
                 }
             ],
-            "createCoreViewField": [
+            "createViewField": [
                 50,
                 {
                     "input": [
@@ -6962,7 +6962,7 @@ export default {
                     ]
                 }
             ],
-            "createManyCoreViewFields": [
+            "createManyViewFields": [
                 50,
                 {
                     "inputs": [
@@ -6971,7 +6971,7 @@ export default {
                     ]
                 }
             ],
-            "deleteCoreViewField": [
+            "deleteViewField": [
                 50,
                 {
                     "input": [
@@ -6980,7 +6980,7 @@ export default {
                     ]
                 }
             ],
-            "destroyCoreViewField": [
+            "destroyViewField": [
                 50,
                 {
                     "input": [
@@ -6989,7 +6989,7 @@ export default {
                     ]
                 }
             ],
-            "createCoreView": [
+            "createView": [
                 60,
                 {
                     "input": [
@@ -6998,7 +6998,7 @@ export default {
                     ]
                 }
             ],
-            "updateCoreView": [
+            "updateView": [
                 60,
                 {
                     "id": [
@@ -7011,7 +7011,7 @@ export default {
                     ]
                 }
             ],
-            "deleteCoreView": [
+            "deleteView": [
                 6,
                 {
                     "id": [
@@ -7020,7 +7020,7 @@ export default {
                     ]
                 }
             ],
-            "destroyCoreView": [
+            "destroyView": [
                 6,
                 {
                     "id": [
@@ -7029,7 +7029,7 @@ export default {
                     ]
                 }
             ],
-            "createCoreViewSort": [
+            "createViewSort": [
                 57,
                 {
                     "input": [
@@ -7038,7 +7038,7 @@ export default {
                     ]
                 }
             ],
-            "updateCoreViewSort": [
+            "updateViewSort": [
                 57,
                 {
                     "input": [
@@ -7047,7 +7047,7 @@ export default {
                     ]
                 }
             ],
-            "deleteCoreViewSort": [
+            "deleteViewSort": [
                 6,
                 {
                     "input": [
@@ -7056,7 +7056,7 @@ export default {
                     ]
                 }
             ],
-            "destroyCoreViewSort": [
+            "destroyViewSort": [
                 6,
                 {
                     "input": [
@@ -7065,7 +7065,7 @@ export default {
                     ]
                 }
             ],
-            "updateCoreViewFieldGroup": [
+            "updateViewFieldGroup": [
                 59,
                 {
                     "input": [
@@ -7074,7 +7074,7 @@ export default {
                     ]
                 }
             ],
-            "createCoreViewFieldGroup": [
+            "createViewFieldGroup": [
                 59,
                 {
                     "input": [
@@ -7083,7 +7083,7 @@ export default {
                     ]
                 }
             ],
-            "createManyCoreViewFieldGroups": [
+            "createManyViewFieldGroups": [
                 59,
                 {
                     "inputs": [
@@ -7092,7 +7092,7 @@ export default {
                     ]
                 }
             ],
-            "deleteCoreViewFieldGroup": [
+            "deleteViewFieldGroup": [
                 59,
                 {
                     "input": [
@@ -7101,7 +7101,7 @@ export default {
                     ]
                 }
             ],
-            "destroyCoreViewFieldGroup": [
+            "destroyViewFieldGroup": [
                 59,
                 {
                     "input": [
@@ -7576,7 +7576,7 @@ export default {
                     ]
                 }
             ],
-            "createCoreViewGroup": [
+            "createViewGroup": [
                 56,
                 {
                     "input": [
@@ -7585,7 +7585,7 @@ export default {
                     ]
                 }
             ],
-            "createManyCoreViewGroups": [
+            "createManyViewGroups": [
                 56,
                 {
                     "inputs": [
@@ -7594,7 +7594,7 @@ export default {
                     ]
                 }
             ],
-            "updateCoreViewGroup": [
+            "updateViewGroup": [
                 56,
                 {
                     "input": [
@@ -7603,7 +7603,7 @@ export default {
                     ]
                 }
             ],
-            "deleteCoreViewGroup": [
+            "deleteViewGroup": [
                 56,
                 {
                     "input": [
@@ -7612,7 +7612,7 @@ export default {
                     ]
                 }
             ],
-            "destroyCoreViewGroup": [
+            "destroyViewGroup": [
                 56,
                 {
                     "input": [
@@ -7621,7 +7621,7 @@ export default {
                     ]
                 }
             ],
-            "createCoreViewFilter": [
+            "createViewFilter": [
                 54,
                 {
                     "input": [
@@ -7630,7 +7630,7 @@ export default {
                     ]
                 }
             ],
-            "updateCoreViewFilter": [
+            "updateViewFilter": [
                 54,
                 {
                     "input": [
@@ -7639,7 +7639,7 @@ export default {
                     ]
                 }
             ],
-            "deleteCoreViewFilter": [
+            "deleteViewFilter": [
                 54,
                 {
                     "input": [
@@ -7648,7 +7648,7 @@ export default {
                     ]
                 }
             ],
-            "destroyCoreViewFilter": [
+            "destroyViewFilter": [
                 54,
                 {
                     "input": [
@@ -7657,7 +7657,7 @@ export default {
                     ]
                 }
             ],
-            "createCoreViewFilterGroup": [
+            "createViewFilterGroup": [
                 52,
                 {
                     "input": [
@@ -7666,7 +7666,7 @@ export default {
                     ]
                 }
             ],
-            "updateCoreViewFilterGroup": [
+            "updateViewFilterGroup": [
                 52,
                 {
                     "id": [
@@ -7679,7 +7679,7 @@ export default {
                     ]
                 }
             ],
-            "deleteCoreViewFilterGroup": [
+            "deleteViewFilterGroup": [
                 6,
                 {
                     "id": [
@@ -7688,7 +7688,7 @@ export default {
                     ]
                 }
             ],
-            "destroyCoreViewFilterGroup": [
+            "destroyViewFilterGroup": [
                 6,
                 {
                     "id": [

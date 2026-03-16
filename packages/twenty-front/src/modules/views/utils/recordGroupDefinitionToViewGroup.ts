@@ -5,7 +5,6 @@ export const recordGroupDefinitionToViewGroup = (
   recordGroup: RecordGroupDefinition,
 ): ViewGroup => {
   return {
-    __typename: 'ViewGroup',
     id: recordGroup.id,
     position: recordGroup.position,
     isVisible: recordGroup.isVisible ?? true,

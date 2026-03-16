@@ -13,8 +13,8 @@ export const createViewFilterGroupOperationFactory = ({
   data = {},
 }: CreateViewFilterGroupOperationFactoryParams = {}) => ({
   query: gql`
-    mutation CreateCoreViewFilterGroup($input: CreateViewFilterGroupInput!) {
-      createCoreViewFilterGroup(input: $input) {
+    mutation CreateViewFilterGroup($input: CreateViewFilterGroupInput!) {
+      createViewFilterGroup(input: $input) {
         ${gqlFields}
       }
     }

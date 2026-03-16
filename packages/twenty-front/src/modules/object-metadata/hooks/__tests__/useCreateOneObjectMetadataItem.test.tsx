@@ -4,7 +4,7 @@ import { useCreateOneObjectMetadataItem } from '@/object-metadata/hooks/useCreat
 
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import {
-  findManyCoreViewsQuery,
+  findManyViewsQuery,
   query,
   responseData,
   variables,
@@ -52,14 +52,14 @@ const mocks = [
   },
   {
     request: {
-      query: findManyCoreViewsQuery,
+      query: findManyViewsQuery,
       variables: {
         objectMetadataId: responseData.id,
       },
     },
     result: jest.fn(() => ({
       data: {
-        getCoreViews: [],
+        getViews: [],
       },
     })),
   },

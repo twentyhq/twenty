@@ -6,10 +6,9 @@ import { convertExtendedAggregateOperationToAggregateOperation } from '@/object-
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { usePerformViewAPIUpdate } from '@/views/hooks/internal/usePerformViewAPIUpdate';
 import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
-import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { type CoreView } from '~/generated-metadata/graphql';
+import { type View as GqlView } from '~/generated-metadata/graphql';
 
 export const useUpdateViewAggregate = () => {
   const { canPersistChanges } = useCanPersistViewChanges();
@@ -54,14 +53,12 @@ export const useUpdateViewAggregate = () => {
       });
 
       if (updatedViewResult.status === 'successful') {
-        const updatedCoreView = updatedViewResult.response.data
-          ?.updateCoreView as CoreView;
+        const updatedView = updatedViewResult.response.data
+          ?.updateView as GqlView;
 
-        if (!isDefined(updatedCoreView)) {
+        if (!isDefined(updatedView)) {
           return;
         }
-
-        const updatedView = convertCoreViewToView(updatedCoreView);
 
         loadRecordIndexStates(updatedView, objectMetadataItem);
       }

@@ -53,6 +53,30 @@ describe('validateRedirectUri', () => {
     }
   });
 
+  it('should accept cursor:// custom scheme for desktop app OAuth', () => {
+    const result = validateRedirectUri(
+      'cursor://anysphere.cursor-mcp/oauth/callback',
+    );
+
+    expect(result.valid).toBe(true);
+  });
+
+  it('should accept vscode:// custom scheme', () => {
+    const result = validateRedirectUri('vscode://vscode.github/oauth/callback');
+
+    expect(result.valid).toBe(true);
+  });
+
+  it('should reject unknown custom schemes', () => {
+    const result = validateRedirectUri('evilapp://callback');
+
+    expect(result.valid).toBe(false);
+
+    if (!result.valid) {
+      expect(result.reason).toContain('allowed custom scheme');
+    }
+  });
+
   it('should accept HTTPS with query parameters', () => {
     const result = validateRedirectUri(
       'https://example.com/callback?state=abc',

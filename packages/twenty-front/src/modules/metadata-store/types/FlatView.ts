@@ -1,7 +1,7 @@
-import { type CoreViewWithRelations } from '@/views/types/CoreViewWithRelations';
+import { type ViewWithRelations } from '@/views/types/ViewWithRelations';
 
 export type FlatView = Omit<
-  CoreViewWithRelations,
+  ViewWithRelations,
   | 'viewFields'
   | 'viewFieldGroups'
   | 'viewGroups'

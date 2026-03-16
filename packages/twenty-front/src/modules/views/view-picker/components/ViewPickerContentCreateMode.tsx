@@ -104,7 +104,7 @@ export const ViewPickerContentCreateMode = () => {
       }
 
       if (
-        viewPickerType === ViewType.Kanban &&
+        viewPickerType === ViewType.KANBAN &&
         availableFieldsForGrouping.length === 0
       ) {
         return;
@@ -188,7 +188,7 @@ export const ViewPickerContentCreateMode = () => {
             dropdownId={VIEW_PICKER_VIEW_TYPE_DROPDOWN_ID}
           />
         </ViewPickerSelectContainer>
-        {viewPickerType === ViewType.Kanban && (
+        {viewPickerType === ViewType.KANBAN && (
           <>
             <ViewPickerSelectContainer>
               <Select
@@ -219,7 +219,7 @@ export const ViewPickerContentCreateMode = () => {
             )}
           </>
         )}
-        {viewPickerType === ViewType.Calendar && (
+        {viewPickerType === ViewType.CALENDAR && (
           <>
             <ViewPickerSelectContainer>
               <Select

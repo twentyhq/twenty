@@ -2,8 +2,8 @@ import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphq
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
-import { createManyCoreViewFieldGroups } from 'test/integration/metadata/suites/view-field-group/utils/create-many-core-view-field-groups.util';
-import { createOneCoreView } from 'test/integration/metadata/suites/view/utils/create-one-core-view.util';
+import { createManyViewFieldGroups } from 'test/integration/metadata/suites/view-field-group/utils/create-many-view-field-groups.util';
+import { createOneView } from 'test/integration/metadata/suites/view/utils/create-one-view.util';
 import { v4 as uuidv4 } from 'uuid';
 
 import { type CreateViewFieldGroupInput } from 'src/engine/metadata-modules/view-field-group/dtos/inputs/create-view-field-group.input';
@@ -32,9 +32,9 @@ describe('View Field Group Resolver - Failing Create Many Operations', () => {
 
     const {
       data: {
-        createCoreView: { id: testViewId },
+        createView: { id: testViewId },
       },
-    } = await createOneCoreView({
+    } = await createOneView({
       input: {
         icon: 'icon123',
         objectMetadataId,
@@ -82,7 +82,7 @@ describe('View Field Group Resolver - Failing Create Many Operations', () => {
       },
     ];
 
-    const { errors } = await createManyCoreViewFieldGroups({
+    const { errors } = await createManyViewFieldGroups({
       inputs,
       expectToFail: true,
     });

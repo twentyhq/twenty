@@ -12,7 +12,7 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import { SidePanelItemWithAddToNavigationDrag } from '@/side-panel/components/SidePanelItemWithAddToNavigationDrag';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-import { coreIndexViewIdFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/coreIndexViewIdFromObjectMetadataItemFamilySelector';
+import { indexViewIdFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/indexViewIdFromObjectMetadataItemFamilySelector';
 
 type SidePanelObjectMenuItemProps = {
   objectMetadataItem: ObjectMetadataItem;
@@ -41,7 +41,7 @@ export const SidePanelObjectMenuItem = ({
     objectMetadataItem.id,
   );
   const defaultViewId = useAtomFamilySelectorValue(
-    coreIndexViewIdFromObjectMetadataItemFamilySelector,
+    indexViewIdFromObjectMetadataItemFamilySelector,
     { objectMetadataItemId: objectMetadataItem.id },
   );
   const Icon = getIcon(objectMetadataItem.icon);

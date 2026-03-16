@@ -7,12 +7,11 @@ import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/h
 import { usePerformViewAPIUpdate } from '@/views/hooks/internal/usePerformViewAPIUpdate';
 import { useGetViewFromState } from '@/views/hooks/useGetViewFromState';
 import { type ViewGroup } from '@/views/types/ViewGroup';
-import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
-import { type CoreView } from '~/generated-metadata/graphql';
+import { type View as GqlView } from '~/generated-metadata/graphql';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const useHandleRecordGroupField = () => {
@@ -60,12 +59,11 @@ export const useHandleRecordGroupField = () => {
       });
 
       if (updatedViewResult.status === 'successful') {
-        const updatedCoreView = updatedViewResult.response.data
-          ?.updateCoreView as CoreView;
+        const updatedView = updatedViewResult.response.data
+          ?.updateView as GqlView;
 
-        if (isDefined(updatedCoreView)) {
-          const updatedViewConverted = convertCoreViewToView(updatedCoreView);
-          await loadRecordIndexStates(updatedViewConverted, objectMetadataItem);
+        if (isDefined(updatedView)) {
+          await loadRecordIndexStates(updatedView, objectMetadataItem);
         }
       }
 
@@ -84,7 +82,6 @@ export const useHandleRecordGroupField = () => {
         .map(
           (option, index) =>
             ({
-              __typename: 'ViewGroup',
               id: v4(),
               fieldValue: option.value,
               isVisible: true,
@@ -97,7 +94,6 @@ export const useHandleRecordGroupField = () => {
         fieldMetadataItem.isNullable === true
       ) {
         viewGroupsToCreate.push({
-          __typename: 'ViewGroup',
           id: v4(),
           fieldValue: '',
           isVisible: true,

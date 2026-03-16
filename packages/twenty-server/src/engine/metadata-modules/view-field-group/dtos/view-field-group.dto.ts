@@ -6,7 +6,7 @@ import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/
 import { type ViewFieldGroupOverrides } from 'src/engine/metadata-modules/view-field-group/entities/view-field-group.entity';
 import { ViewFieldDTO } from 'src/engine/metadata-modules/view-field/dtos/view-field.dto';
 
-@ObjectType('CoreViewFieldGroup')
+@ObjectType('ViewFieldGroup')
 export class ViewFieldGroupDTO {
   @IDField(() => UUIDScalarType)
   id: string;

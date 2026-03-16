@@ -5,7 +5,6 @@ export const mapRecordFilterToViewFilter = (
   recordFilter: RecordFilter,
 ): ViewFilter => {
   return {
-    __typename: 'ViewFilter',
     displayValue: recordFilter.displayValue,
     fieldMetadataId: recordFilter.fieldMetadataId,
     id: recordFilter.id,

@@ -57,7 +57,7 @@ export const ViewPickerCreateButton = () => {
   }
 
   if (
-    viewPickerType === ViewType.Kanban &&
+    viewPickerType === ViewType.KANBAN &&
     availableFieldsForGrouping.length === 0
   ) {
     return (
@@ -73,7 +73,7 @@ export const ViewPickerCreateButton = () => {
   }
 
   if (
-    viewPickerType === ViewType.Calendar &&
+    viewPickerType === ViewType.CALENDAR &&
     availableFieldsForCalendar.length === 0
   ) {
     return (
@@ -89,7 +89,7 @@ export const ViewPickerCreateButton = () => {
   }
 
   if (
-    viewPickerType !== ViewType.Kanban ||
+    viewPickerType !== ViewType.KANBAN ||
     viewPickerMainGroupByFieldMetadataId !== ''
   ) {
     return (
@@ -103,9 +103,9 @@ export const ViewPickerCreateButton = () => {
         justify="center"
         disabled={
           viewPickerIsPersisting ||
-          (viewPickerType === ViewType.Kanban &&
+          (viewPickerType === ViewType.KANBAN &&
             viewPickerMainGroupByFieldMetadataId === '') ||
-          (viewPickerType === ViewType.Calendar &&
+          (viewPickerType === ViewType.CALENDAR &&
             viewPickerCalendarFieldMetadataId === '')
         }
       />

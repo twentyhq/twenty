@@ -14,7 +14,7 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
-import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
+import { ViewOpenRecordIn } from '~/generated-metadata/graphql';
 import { t } from '@lingui/core/macro';
 import {
   IconChevronLeft,
@@ -41,8 +41,8 @@ export const ObjectOptionsDropdownLayoutOpenInContent = () => {
   );
 
   const selectableItemIdArray = [
-    ViewOpenRecordInType.SIDE_PANEL,
-    ViewOpenRecordInType.RECORD_PAGE,
+    ViewOpenRecordIn.SIDE_PANEL,
+    ViewOpenRecordIn.RECORD_PAGE,
   ];
 
   return (
@@ -64,13 +64,13 @@ export const ObjectOptionsDropdownLayoutOpenInContent = () => {
           selectableItemIdArray={selectableItemIdArray}
         >
           <SelectableListItem
-            itemId={ViewOpenRecordInType.SIDE_PANEL}
+            itemId={ViewOpenRecordIn.SIDE_PANEL}
             onEnter={() => {
               if (!canOpenInSidePanel) {
                 return;
               }
               setAndPersistOpenRecordIn(
-                ViewOpenRecordInType.SIDE_PANEL,
+                ViewOpenRecordIn.SIDE_PANEL,
                 currentView,
               );
             }}
@@ -78,17 +78,15 @@ export const ObjectOptionsDropdownLayoutOpenInContent = () => {
             <MenuItemSelect
               LeftIcon={IconLayoutSidebarRight}
               text={t`Side Panel`}
-              selected={
-                recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL
-              }
-              focused={selectedItemId === ViewOpenRecordInType.SIDE_PANEL}
+              selected={recordIndexOpenRecordIn === ViewOpenRecordIn.SIDE_PANEL}
+              focused={selectedItemId === ViewOpenRecordIn.SIDE_PANEL}
               onClick={() => {
                 if (!canOpenInSidePanel) {
                   return;
                 }
 
                 setAndPersistOpenRecordIn(
-                  ViewOpenRecordInType.SIDE_PANEL,
+                  ViewOpenRecordIn.SIDE_PANEL,
                   currentView,
                 );
               }}
@@ -96,10 +94,10 @@ export const ObjectOptionsDropdownLayoutOpenInContent = () => {
             />
           </SelectableListItem>
           <SelectableListItem
-            itemId={ViewOpenRecordInType.RECORD_PAGE}
+            itemId={ViewOpenRecordIn.RECORD_PAGE}
             onEnter={() =>
               setAndPersistOpenRecordIn(
-                ViewOpenRecordInType.RECORD_PAGE,
+                ViewOpenRecordIn.RECORD_PAGE,
                 currentView,
               )
             }
@@ -108,15 +106,15 @@ export const ObjectOptionsDropdownLayoutOpenInContent = () => {
               LeftIcon={IconLayoutNavbar}
               text={t`Record Page`}
               selected={
-                recordIndexOpenRecordIn === ViewOpenRecordInType.RECORD_PAGE
+                recordIndexOpenRecordIn === ViewOpenRecordIn.RECORD_PAGE
               }
               onClick={() =>
                 setAndPersistOpenRecordIn(
-                  ViewOpenRecordInType.RECORD_PAGE,
+                  ViewOpenRecordIn.RECORD_PAGE,
                   currentView,
                 )
               }
-              focused={selectedItemId === ViewOpenRecordInType.RECORD_PAGE}
+              focused={selectedItemId === ViewOpenRecordIn.RECORD_PAGE}
             />
           </SelectableListItem>
         </SelectableList>

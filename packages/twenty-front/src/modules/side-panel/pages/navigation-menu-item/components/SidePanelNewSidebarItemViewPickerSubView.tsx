@@ -52,8 +52,8 @@ export const SidePanelNewSidebarItemViewPickerSubView = ({
     .filter(
       (view) =>
         view.objectMetadataId === selectedObjectMetadataIdForView &&
-        view.key !== ViewKey.Index &&
-        view.type !== ViewType.FieldsWidget &&
+        view.key !== ViewKey.INDEX &&
+        view.type !== ViewType.FIELDS_WIDGET &&
         view.visibility === ViewVisibility.WORKSPACE,
     )
     .sort((a, b) => a.position - b.position);

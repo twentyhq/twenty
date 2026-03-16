@@ -15,7 +15,7 @@ import { recordStoreFamilySelector } from '@/object-record/record-store/states/s
 import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useStore } from 'jotai';
-import { coreViewFromViewIdFamilySelector } from '@/views/states/selectors/coreViewFromViewIdFamilySelector';
+import { viewFromViewIdFamilySelector } from '@/views/states/selectors/viewFromViewIdFamilySelector';
 
 export const useGetBrowsingContext = () => {
   const store = useStore();
@@ -102,7 +102,7 @@ export const useGetBrowsingContext = () => {
       );
 
       const currentView = store.get(
-        coreViewFromViewIdFamilySelector.selectorFamily({
+        viewFromViewIdFamilySelector.selectorFamily({
           viewId: currentViewId ?? '',
         }),
       );

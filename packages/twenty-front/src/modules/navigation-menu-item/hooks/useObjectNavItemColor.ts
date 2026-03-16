@@ -7,7 +7,7 @@ export const useObjectNavItemColor = (objectNameSingular: string): string => {
   const objectNavItem = items.find(
     (item) =>
       'viewKey' in item &&
-      item.viewKey === ViewKey.Index &&
+      item.viewKey === ViewKey.INDEX &&
       item.objectNameSingular === objectNameSingular,
   );
   return (

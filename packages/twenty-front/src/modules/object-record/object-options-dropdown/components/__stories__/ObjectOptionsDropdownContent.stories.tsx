@@ -108,7 +108,7 @@ const createStory = (contentId: ObjectOptionsContentId | null): Story => ({
           >
             <ObjectOptionsDropdownContext.Provider
               value={{
-                viewType: ViewType.Table,
+                viewType: ViewType.TABLE,
                 objectMetadataItem: companyObjectMetadataItem,
                 recordIndexId: instanceId,
                 currentContentId: contentId,

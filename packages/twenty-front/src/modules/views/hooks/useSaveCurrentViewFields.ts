@@ -9,7 +9,7 @@ import { useGetViewFromState } from '@/views/hooks/useGetViewFromState';
 import { type ViewField } from '@/views/types/ViewField';
 import {
   type CreateViewFieldInput,
-  type UpdateCoreViewFieldMutationVariables,
+  type UpdateViewFieldMutationVariables,
 } from '~/generated-metadata/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
@@ -50,14 +50,19 @@ export const useSaveCurrentViewFields = () => {
       const { viewFieldsToCreate, viewFieldsToUpdate } =
         viewFieldsToSave.reduce<{
           viewFieldsToCreate: CreateViewFieldInput[];
-          viewFieldsToUpdate: UpdateCoreViewFieldMutationVariables[];
+          viewFieldsToUpdate: UpdateViewFieldMutationVariables[];
         }>(
           (
             { viewFieldsToCreate, viewFieldsToUpdate },
-            { __typename, ...viewFieldToCreateOrUpdate },
+            viewFieldToCreateOrUpdate,
           ) => {
             const createViewFieldInput: CreateViewFieldInput = {
-              ...viewFieldToCreateOrUpdate,
+              id: viewFieldToCreateOrUpdate.id,
+              fieldMetadataId: viewFieldToCreateOrUpdate.fieldMetadataId,
+              position: viewFieldToCreateOrUpdate.position,
+              isVisible: viewFieldToCreateOrUpdate.isVisible,
+              size: viewFieldToCreateOrUpdate.size,
+              aggregateOperation: viewFieldToCreateOrUpdate.aggregateOperation,
               viewId: currentViewId,
             };
             const existingField = currentViewFields.find(

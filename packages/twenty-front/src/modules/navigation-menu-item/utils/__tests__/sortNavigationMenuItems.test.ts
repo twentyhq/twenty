@@ -37,7 +37,7 @@ describe('sortNavigationMenuItems', () => {
     name: 'All People',
     objectMetadataId: 'metadata-id',
     icon: 'IconUser',
-    key: ViewKey.Index,
+    key: ViewKey.INDEX,
   };
 
   const mockObjectRecordIdentifier: ObjectRecordIdentifier = {

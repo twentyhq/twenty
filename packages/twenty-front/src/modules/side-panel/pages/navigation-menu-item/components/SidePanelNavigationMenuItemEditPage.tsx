@@ -112,7 +112,7 @@ export const SidePanelNavigationMenuItemEditPage = () => {
           showColorOption={
             selectedItem &&
             'viewKey' in selectedItem &&
-            selectedItem.viewKey === ViewKey.Index
+            selectedItem.viewKey === ViewKey.INDEX
           }
         />
       );

@@ -54,7 +54,7 @@ export const RecordIndexContainer = () => {
               <ObjectOptionsDropdown
                 recordIndexId={recordIndexId}
                 objectMetadataItem={objectMetadataItem}
-                viewType={recordIndexViewType ?? ViewType.Table}
+                viewType={recordIndexViewType ?? ViewType.TABLE}
               />
             }
           />
@@ -64,12 +64,12 @@ export const RecordIndexContainer = () => {
           />
         </SpreadsheetImportProvider>
         <RecordIndexFiltersToContextStoreEffect />
-        {recordIndexViewType === ViewType.Table && (
+        {recordIndexViewType === ViewType.TABLE && (
           <>
             <RecordIndexTableContainer recordTableId={recordIndexId} />
           </>
         )}
-        {recordIndexViewType === ViewType.Kanban && (
+        {recordIndexViewType === ViewType.KANBAN && (
           <StyledContainerWithPadding>
             <RecordBoardContainer
               recordBoardId={recordIndexId}
@@ -78,7 +78,7 @@ export const RecordIndexContainer = () => {
             />
           </StyledContainerWithPadding>
         )}
-        {recordIndexViewType === ViewType.Calendar && (
+        {recordIndexViewType === ViewType.CALENDAR && (
           <StyledContainerWithPadding>
             <RecordIndexCalendarContainer
               recordCalendarInstanceId={recordIndexId}

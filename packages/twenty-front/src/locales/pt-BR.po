@@ -663,10 +663,10 @@ msgstr "Sobre este espaço de trabalho"
 msgid "Access workspace data"
 msgstr ""
 
-#. js-lingui-id: c2UA7k
+#. js-lingui-id: W5nhmk
 #: src/pages/settings/ai/components/SettingsAIMCP.tsx
-msgid "Access your workspace data from your favorite MCP client like Claude Desktop, Windsurf or Cursor."
-msgstr "Acesse seus dados de trabalho a partir do seu cliente MCP favorito, como Claude Desktop, Windsurf ou Cursor."
+msgid "Access your workspace data from your favorite MCP client like Claude Desktop, Claude Code, Cursor, or ChatGPT. Once connected, try: \"Show me the 5 most recently created companies\" or \"Create a new person named Jane Doe\"."
+msgstr ""
 
 #. js-lingui-id: u2Cycw
 #: src/modules/settings/logic-functions/components/SettingsLogicFunctionTabEnvironmentVariablesSection.tsx
@@ -1681,6 +1681,7 @@ msgstr "API e Webhooks"
 #. js-lingui-id: yRnk5W
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
+#: src/pages/settings/ai/components/SettingsAIMCP.tsx
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "API Key"
 msgstr "Chave API"
@@ -2130,6 +2131,11 @@ msgstr "Autenticação"
 #: src/modules/auth/hooks/useVerifyLogin.ts
 msgid "Authentication failed"
 msgstr "Falha na autenticação"
+
+#. js-lingui-id: TxT0ER
+#: src/pages/settings/ai/components/SettingsAIMCP.tsx
+msgid "Authentication method"
+msgstr ""
 
 #. js-lingui-id: H7qgYQ
 #: src/pages/settings/SettingsTwoFactorAuthenticationMethod.tsx
@@ -9798,12 +9804,18 @@ msgstr ""
 
 #. js-lingui-id: b/j06W
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/ai/components/SettingsAIMCP.tsx
 msgid "OAuth"
 msgstr ""
 
 #. js-lingui-id: /PKKj/
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
 msgid "OAuth Credentials"
+msgstr ""
+
+#. js-lingui-id: LNLTJB
+#: src/pages/settings/ai/components/SettingsAIMCP.tsx
+msgid "OAuth or API Key"
 msgstr ""
 
 #. js-lingui-id: pNEViR

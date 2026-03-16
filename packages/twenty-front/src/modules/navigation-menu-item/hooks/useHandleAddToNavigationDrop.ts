@@ -24,8 +24,7 @@ import { validateAndExtractWorkspaceFolderId } from '@/navigation-menu-item/util
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { coreViewsSelector } from '@/views/states/selectors/coreViewsSelector';
-import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
+import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 import { useStore } from 'jotai';
 
 export const useHandleAddToNavigationDrop = () => {
@@ -42,7 +41,7 @@ export const useHandleAddToNavigationDrop = () => {
   const { openNavigationMenuItemInSidePanel } =
     useOpenNavigationMenuItemInSidePanel();
   const { objectMetadataItems } = useObjectMetadataItems();
-  const coreViews = useAtomStateValue(coreViewsSelector);
+  const views = useAtomStateValue(viewsSelector);
   const { getIcon } = useIcons();
   const setIsNavigationMenuInEditMode = useSetAtomState(
     isNavigationMenuInEditModeState,
@@ -128,7 +127,6 @@ export const useHandleAddToNavigationDrop = () => {
           return;
         }
         case NavigationMenuItemType.OBJECT: {
-          const views = coreViews.map(convertCoreViewToView);
           const objectMetadataIdsInWorkspace = getObjectMetadataIdsInDraft(
             currentDraft,
             views,
@@ -159,7 +157,6 @@ export const useHandleAddToNavigationDrop = () => {
           return;
         }
         case NavigationMenuItemType.VIEW: {
-          const views = coreViews.map(convertCoreViewToView);
           const view = views.find((v) => v.id === payload.viewId);
           const viewObjectMetadataItem = view
             ? objectMetadataItems.find(
@@ -214,7 +211,7 @@ export const useHandleAddToNavigationDrop = () => {
       addObjectToDraft,
       addRecordToDraft,
       addViewToDraft,
-      coreViews,
+      views,
       getIcon,
       navigationMenuItemsDraft,
       objectMetadataItems,

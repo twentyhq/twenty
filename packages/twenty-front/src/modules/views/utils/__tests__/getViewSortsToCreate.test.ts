@@ -4,7 +4,6 @@ import { type ViewSort } from '@/views/types/ViewSort';
 
 describe('getViewSortsToCreate', () => {
   const baseSort: ViewSort = {
-    __typename: 'ViewSort',
     id: 'sort-1',
     fieldMetadataId: 'field-1',
     direction: ViewSortDirection.ASC,

@@ -1,6 +1,6 @@
-import { type CoreViewFieldEssential } from '@/views/types/CoreViewWithRelations';
+import { type ViewFieldEssential } from '@/views/types/ViewWithRelations';
 
-export type FlatViewField = CoreViewFieldEssential & {
+export type FlatViewField = ViewFieldEssential & {
   viewId: string;
   viewFieldGroupId?: string;
 };

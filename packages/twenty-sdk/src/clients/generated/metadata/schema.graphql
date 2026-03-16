@@ -60,6 +60,7 @@ enum ApplicationRegistrationSourceType {
   NPM
   TARBALL
   LOCAL
+  OAUTH_ONLY
 }
 
 type TwoFactorAuthenticationMethodSummary {
@@ -569,7 +570,7 @@ type Application {
   applicationRegistration: ApplicationRegistrationSummary
 }
 
-type CoreViewField {
+type ViewField {
   id: UUID!
   fieldMetadataId: UUID!
   isVisible: Boolean!
@@ -600,7 +601,7 @@ enum AggregateOperations {
   PERCENTAGE_NOT_EMPTY
 }
 
-type CoreViewFilterGroup {
+type ViewFilterGroup {
   id: UUID!
   parentViewFilterGroupId: UUID
   logicalOperator: ViewFilterGroupLogicalOperator!
@@ -618,7 +619,7 @@ enum ViewFilterGroupLogicalOperator {
   NOT
 }
 
-type CoreViewFilter {
+type ViewFilter {
   id: UUID!
   fieldMetadataId: UUID!
   operand: ViewFilterOperand!
@@ -652,7 +653,7 @@ enum ViewFilterOperand {
   VECTOR_SEARCH
 }
 
-type CoreViewGroup {
+type ViewGroup {
   id: UUID!
   isVisible: Boolean!
   fieldValue: String!
@@ -664,7 +665,7 @@ type CoreViewGroup {
   deletedAt: DateTime
 }
 
-type CoreViewSort {
+type ViewSort {
   id: UUID!
   fieldMetadataId: UUID!
   direction: ViewSortDirection!
@@ -680,7 +681,7 @@ enum ViewSortDirection {
   DESC
 }
 
-type CoreViewFieldGroup {
+type ViewFieldGroup {
   id: UUID!
   name: String!
   position: Float!
@@ -690,11 +691,11 @@ type CoreViewFieldGroup {
   createdAt: DateTime!
   updatedAt: DateTime!
   deletedAt: DateTime
-  viewFields: [CoreViewField!]!
+  viewFields: [ViewField!]!
   isOverridden: Boolean!
 }
 
-type CoreView {
+type View {
   id: UUID!
   name: String!
   objectMetadataId: UUID!
@@ -716,12 +717,12 @@ type CoreView {
   createdAt: DateTime!
   updatedAt: DateTime!
   deletedAt: DateTime
-  viewFields: [CoreViewField!]!
-  viewFilters: [CoreViewFilter!]!
-  viewFilterGroups: [CoreViewFilterGroup!]!
-  viewSorts: [CoreViewSort!]!
-  viewGroups: [CoreViewGroup!]!
-  viewFieldGroups: [CoreViewFieldGroup!]!
+  viewFields: [ViewField!]!
+  viewFilters: [ViewFilter!]!
+  viewFilterGroups: [ViewFilterGroup!]!
+  viewSorts: [ViewSort!]!
+  viewGroups: [ViewGroup!]!
+  viewFieldGroups: [ViewFieldGroup!]!
   visibility: ViewVisibility!
   createdByUserWorkspaceId: UUID
 }
@@ -768,12 +769,12 @@ type Workspace {
   eventLogRetentionDays: Float!
   workspaceMembersCount: Float
   activationStatus: WorkspaceActivationStatus!
-  views: [CoreView!]
-  viewFields: [CoreViewField!]
-  viewFilters: [CoreViewFilter!]
-  viewFilterGroups: [CoreViewFilterGroup!]
-  viewGroups: [CoreViewGroup!]
-  viewSorts: [CoreViewSort!]
+  views: [View!]
+  viewFields: [ViewField!]
+  viewFilters: [ViewFilter!]
+  viewFilterGroups: [ViewFilterGroup!]
+  viewGroups: [ViewGroup!]
+  viewSorts: [ViewSort!]
   metadataVersion: Float!
   databaseUrl: String!
   databaseSchema: String!
@@ -2940,14 +2941,14 @@ type Query {
     """Specify to filter the records returned."""
     filter: ObjectFilter! = {}
   ): ObjectConnection!
-  getCoreViewFields(viewId: String!): [CoreViewField!]!
-  getCoreViewField(id: String!): CoreViewField
-  getCoreViews(objectMetadataId: String, viewTypes: [ViewType!]): [CoreView!]!
-  getCoreView(id: String!): CoreView
-  getCoreViewSorts(viewId: String): [CoreViewSort!]!
-  getCoreViewSort(id: String!): CoreViewSort
-  getCoreViewFieldGroups(viewId: String!): [CoreViewFieldGroup!]!
-  getCoreViewFieldGroup(id: String!): CoreViewFieldGroup
+  getViewFields(viewId: String!): [ViewField!]!
+  getViewField(id: String!): ViewField
+  getViews(objectMetadataId: String, viewTypes: [ViewType!]): [View!]!
+  getView(id: String!): View
+  getViewSorts(viewId: String): [ViewSort!]!
+  getViewSort(id: String!): ViewSort
+  getViewFieldGroups(viewId: String!): [ViewFieldGroup!]!
+  getViewFieldGroup(id: String!): ViewFieldGroup
   index(
     """The id of the record to find."""
     id: UUID!
@@ -2991,12 +2992,12 @@ type Query {
     """Specify to filter the records returned."""
     filter: FieldFilter! = {}
   ): FieldConnection!
-  getCoreViewGroups(viewId: String): [CoreViewGroup!]!
-  getCoreViewGroup(id: String!): CoreViewGroup
-  getCoreViewFilters(viewId: String): [CoreViewFilter!]!
-  getCoreViewFilter(id: String!): CoreViewFilter
-  getCoreViewFilterGroups(viewId: String): [CoreViewFilterGroup!]!
-  getCoreViewFilterGroup(id: String!): CoreViewFilterGroup
+  getViewGroups(viewId: String): [ViewGroup!]!
+  getViewGroup(id: String!): ViewGroup
+  getViewFilters(viewId: String): [ViewFilter!]!
+  getViewFilter(id: String!): ViewFilter
+  getViewFilterGroups(viewId: String): [ViewFilterGroup!]!
+  getViewFilterGroup(id: String!): ViewFilterGroup
   currentUser: User!
   currentWorkspace: Workspace!
   getPublicWorkspaceDataByDomain(origin: String): PublicWorkspaceData!
@@ -3183,25 +3184,25 @@ type Mutation {
   createOneObject(input: CreateOneObjectInput!): Object!
   deleteOneObject(input: DeleteOneObjectInput!): Object!
   updateOneObject(input: UpdateOneObjectInput!): Object!
-  updateCoreViewField(input: UpdateViewFieldInput!): CoreViewField!
-  createCoreViewField(input: CreateViewFieldInput!): CoreViewField!
-  createManyCoreViewFields(inputs: [CreateViewFieldInput!]!): [CoreViewField!]!
-  deleteCoreViewField(input: DeleteViewFieldInput!): CoreViewField!
-  destroyCoreViewField(input: DestroyViewFieldInput!): CoreViewField!
-  createCoreView(input: CreateViewInput!): CoreView!
-  updateCoreView(id: String!, input: UpdateViewInput!): CoreView!
-  deleteCoreView(id: String!): Boolean!
-  destroyCoreView(id: String!): Boolean!
-  createCoreViewSort(input: CreateViewSortInput!): CoreViewSort!
-  updateCoreViewSort(input: UpdateViewSortInput!): CoreViewSort!
-  deleteCoreViewSort(input: DeleteViewSortInput!): Boolean!
-  destroyCoreViewSort(input: DestroyViewSortInput!): Boolean!
-  updateCoreViewFieldGroup(input: UpdateViewFieldGroupInput!): CoreViewFieldGroup!
-  createCoreViewFieldGroup(input: CreateViewFieldGroupInput!): CoreViewFieldGroup!
-  createManyCoreViewFieldGroups(inputs: [CreateViewFieldGroupInput!]!): [CoreViewFieldGroup!]!
-  deleteCoreViewFieldGroup(input: DeleteViewFieldGroupInput!): CoreViewFieldGroup!
-  destroyCoreViewFieldGroup(input: DestroyViewFieldGroupInput!): CoreViewFieldGroup!
-  upsertFieldsWidget(input: UpsertFieldsWidgetInput!): CoreView!
+  updateViewField(input: UpdateViewFieldInput!): ViewField!
+  createViewField(input: CreateViewFieldInput!): ViewField!
+  createManyViewFields(inputs: [CreateViewFieldInput!]!): [ViewField!]!
+  deleteViewField(input: DeleteViewFieldInput!): ViewField!
+  destroyViewField(input: DestroyViewFieldInput!): ViewField!
+  createView(input: CreateViewInput!): View!
+  updateView(id: String!, input: UpdateViewInput!): View!
+  deleteView(id: String!): Boolean!
+  destroyView(id: String!): Boolean!
+  createViewSort(input: CreateViewSortInput!): ViewSort!
+  updateViewSort(input: UpdateViewSortInput!): ViewSort!
+  deleteViewSort(input: DeleteViewSortInput!): Boolean!
+  destroyViewSort(input: DestroyViewSortInput!): Boolean!
+  updateViewFieldGroup(input: UpdateViewFieldGroupInput!): ViewFieldGroup!
+  createViewFieldGroup(input: CreateViewFieldGroupInput!): ViewFieldGroup!
+  createManyViewFieldGroups(inputs: [CreateViewFieldGroupInput!]!): [ViewFieldGroup!]!
+  deleteViewFieldGroup(input: DeleteViewFieldGroupInput!): ViewFieldGroup!
+  destroyViewFieldGroup(input: DestroyViewFieldGroupInput!): ViewFieldGroup!
+  upsertFieldsWidget(input: UpsertFieldsWidgetInput!): View!
   createCommandMenuItem(input: CreateCommandMenuItemInput!): CommandMenuItem!
   updateCommandMenuItem(input: UpdateCommandMenuItemInput!): CommandMenuItem!
   deleteCommandMenuItem(id: UUID!): CommandMenuItem!
@@ -3255,19 +3256,19 @@ type Mutation {
   createOneField(input: CreateOneFieldMetadataInput!): Field!
   updateOneField(input: UpdateOneFieldMetadataInput!): Field!
   deleteOneField(input: DeleteOneFieldInput!): Field!
-  createCoreViewGroup(input: CreateViewGroupInput!): CoreViewGroup!
-  createManyCoreViewGroups(inputs: [CreateViewGroupInput!]!): [CoreViewGroup!]!
-  updateCoreViewGroup(input: UpdateViewGroupInput!): CoreViewGroup!
-  deleteCoreViewGroup(input: DeleteViewGroupInput!): CoreViewGroup!
-  destroyCoreViewGroup(input: DestroyViewGroupInput!): CoreViewGroup!
-  createCoreViewFilter(input: CreateViewFilterInput!): CoreViewFilter!
-  updateCoreViewFilter(input: UpdateViewFilterInput!): CoreViewFilter!
-  deleteCoreViewFilter(input: DeleteViewFilterInput!): CoreViewFilter!
-  destroyCoreViewFilter(input: DestroyViewFilterInput!): CoreViewFilter!
-  createCoreViewFilterGroup(input: CreateViewFilterGroupInput!): CoreViewFilterGroup!
-  updateCoreViewFilterGroup(id: String!, input: UpdateViewFilterGroupInput!): CoreViewFilterGroup!
-  deleteCoreViewFilterGroup(id: String!): Boolean!
-  destroyCoreViewFilterGroup(id: String!): Boolean!
+  createViewGroup(input: CreateViewGroupInput!): ViewGroup!
+  createManyViewGroups(inputs: [CreateViewGroupInput!]!): [ViewGroup!]!
+  updateViewGroup(input: UpdateViewGroupInput!): ViewGroup!
+  deleteViewGroup(input: DeleteViewGroupInput!): ViewGroup!
+  destroyViewGroup(input: DestroyViewGroupInput!): ViewGroup!
+  createViewFilter(input: CreateViewFilterInput!): ViewFilter!
+  updateViewFilter(input: UpdateViewFilterInput!): ViewFilter!
+  deleteViewFilter(input: DeleteViewFilterInput!): ViewFilter!
+  destroyViewFilter(input: DestroyViewFilterInput!): ViewFilter!
+  createViewFilterGroup(input: CreateViewFilterGroupInput!): ViewFilterGroup!
+  updateViewFilterGroup(id: String!, input: UpdateViewFilterGroupInput!): ViewFilterGroup!
+  deleteViewFilterGroup(id: String!): Boolean!
+  destroyViewFilterGroup(id: String!): Boolean!
   deleteUser: User!
   deleteUserFromWorkspace(workspaceMemberIdToDelete: String!): UserWorkspace!
   updateUserEmail(newEmail: String!, verifyEmailRedirectPath: String): Boolean!

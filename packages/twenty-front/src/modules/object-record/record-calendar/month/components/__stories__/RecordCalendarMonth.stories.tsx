@@ -25,9 +25,9 @@ import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorato
 import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
-import { mockedCoreViews } from '~/testing/mock-data/generated/metadata/views/mock-views-data';
+import { mockedViews } from '~/testing/mock-data/generated/metadata/views/mock-views-data';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
-import { setTestCoreViewsInMetadataStore } from '~/testing/utils/setTestCoreViewsInMetadataStore';
+import { setTestViewsInMetadataStore } from '~/testing/utils/setTestViewsInMetadataStore';
 
 const meta: Meta<typeof RecordCalendarMonth> = {
   title: 'Modules/ObjectRecord/RecordCalendar/Month',
@@ -44,9 +44,7 @@ const meta: Meta<typeof RecordCalendarMonth> = {
         instanceId,
       );
 
-      const mockCoreView = mockedCoreViews.find(
-        (v) => v.name === 'All Companies',
-      )!;
+      const mockView = mockedViews.find((v) => v.name === 'All Companies')!;
 
       const setContextStoreCurrentViewId = useSetAtomComponentState(
         contextStoreCurrentViewIdComponentState,
@@ -71,14 +69,14 @@ const meta: Meta<typeof RecordCalendarMonth> = {
       const [isLoaded, setIsLoaded] = useState(false);
 
       useEffect(() => {
-        setTestCoreViewsInMetadataStore(jotaiStore, [mockCoreView]);
-        setContextStoreCurrentViewId(mockCoreView.id);
+        setTestViewsInMetadataStore(jotaiStore, [mockView]);
+        setContextStoreCurrentViewId(mockView.id);
         setCurrentRecordFields(columns);
         setIsLoaded(true);
       }, [
         setContextStoreCurrentViewId,
         setCurrentRecordFields,
-        mockCoreView,
+        mockView,
         columns,
       ]);
 
