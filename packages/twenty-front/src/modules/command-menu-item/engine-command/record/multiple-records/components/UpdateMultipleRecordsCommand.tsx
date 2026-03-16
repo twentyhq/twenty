@@ -1,12 +1,9 @@
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
+import { useEngineCommandExecutionContext } from '@/command-menu-item/engine-command/hooks/useEngineCommandExecutionContext';
 import { useOpenUpdateMultipleRecordsPageInSidePanel } from '@/side-panel/hooks/useOpenUpdateMultipleRecordsPageInSidePanel';
-import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
-import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 
 export const UpdateMultipleRecordsCommand = () => {
-  const contextStoreInstanceId = useAvailableComponentInstanceIdOrThrow(
-    ContextStoreComponentInstanceContext,
-  );
+  const { contextStoreInstanceId } = useEngineCommandExecutionContext();
 
   const { openUpdateMultipleRecordsPageInSidePanel } =
     useOpenUpdateMultipleRecordsPageInSidePanel({

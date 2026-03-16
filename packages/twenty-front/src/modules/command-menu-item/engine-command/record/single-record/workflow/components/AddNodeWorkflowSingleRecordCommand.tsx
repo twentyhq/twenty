@@ -1,14 +1,20 @@
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
-import { useSelectedRecordIdOrThrow } from '@/command-menu-item/record/single-record/hooks/useSelectedRecordIdOrThrow';
+import { useEngineCommandExecutionContext } from '@/command-menu-item/engine-command/hooks/useEngineCommandExecutionContext';
 import { useSidePanelWorkflowNavigation } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowNavigation';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { isDefined } from 'twenty-shared/utils';
 
 export const AddNodeWorkflowSingleRecordCommand = () => {
-  const recordId = useSelectedRecordIdOrThrow();
-  const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(recordId);
+  const { recordId } = useEngineCommandExecutionContext();
+  const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(
+    recordId ?? '',
+  );
   const { openWorkflowCreateStepInSidePanel } =
     useSidePanelWorkflowNavigation();
+
+  if (!isDefined(recordId)) {
+    throw new Error('Record ID is required to add node workflow');
+  }
 
   const handleExecute = () => {
     if (!isDefined(workflowWithCurrentVersion)) {

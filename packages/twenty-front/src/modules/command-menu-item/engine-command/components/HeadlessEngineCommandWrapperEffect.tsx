@@ -1,9 +1,9 @@
-import { EngineCommandIdContext } from '@/command-menu-item/engine-command/contexts/EngineCommandIdContext';
 import { useIsHeadlessEngineCommandEffectInitialized } from '@/command-menu-item/engine-command/hooks/useIsHeadlessEngineCommandEffectInitialized';
 import { useUnmountEngineCommand } from '@/command-menu-item/engine-command/hooks/useUnmountEngineCommand';
+import { EngineCommandComponentInstanceContext } from '@/command-menu-item/engine-command/states/contexts/EngineCommandComponentInstanceContext';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useContext, useEffect } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { useEffect } from 'react';
 
 export type HeadlessEngineCommandWrapperEffectProps = {
   execute: () => void | Promise<unknown>;
@@ -15,7 +15,9 @@ export const HeadlessEngineCommandWrapperEffect = ({
   const { getIsInitialized, setIsInitialized } =
     useIsHeadlessEngineCommandEffectInitialized();
 
-  const engineCommandId = useContext(EngineCommandIdContext);
+  const engineCommandId = useAvailableComponentInstanceIdOrThrow(
+    EngineCommandComponentInstanceContext,
+  );
 
   const unmountEngineCommand = useUnmountEngineCommand();
 
@@ -38,10 +40,6 @@ export const HeadlessEngineCommandWrapperEffect = ({
           });
         }
       } finally {
-        if (!isDefined(engineCommandId)) {
-          return;
-        }
-
         unmountEngineCommand(engineCommandId);
       }
     };

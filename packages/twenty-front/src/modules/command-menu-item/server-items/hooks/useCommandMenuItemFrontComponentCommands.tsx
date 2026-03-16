@@ -1,6 +1,7 @@
 import { Command } from '@/command-menu-item/display/components/Command';
 import { HeadlessFrontComponentCommandMenuItem } from '@/command-menu-item/display/components/HeadlessFrontComponentCommandMenuItem';
 import { useMountEngineCommand } from '@/command-menu-item/engine-command/hooks/useMountEngineCommand';
+import { usePopulateEngineCommandExecutionContext } from '@/command-menu-item/engine-command/hooks/usePopulateEngineCommandExecutionContext';
 import { type MountedEngineCommandContext } from '@/command-menu-item/engine-command/states/mountedEngineCommandsState';
 import { CommandMenuItemScope } from '@/command-menu-item/types/CommandMenuItemScope';
 import { CommandMenuItemType } from '@/command-menu-item/types/CommandMenuItemType';
@@ -135,6 +136,10 @@ type BuildCommandMenuItemFromStandardKeyParams = {
     engineCommandId: string,
     context: MountedEngineCommandContext,
   ) => void;
+  populateEngineCommandExecutionContext: (
+    commandId: string,
+    contextStoreInstanceId: string,
+  ) => void;
   contextStoreInstanceId: string;
 };
 
@@ -147,11 +152,13 @@ const buildCommandItemFromEngineKey = ({
   getIcon,
   commandMenuContextApi,
   mountEngineCommand,
+  populateEngineCommandExecutionContext,
   contextStoreInstanceId,
 }: BuildCommandMenuItemFromStandardKeyParams) => {
   const Icon = getIcon(item.icon, COMMAND_MENU_DEFAULT_ICON);
 
   const handleClick = () => {
+    populateEngineCommandExecutionContext(item.id, contextStoreInstanceId);
     mountEngineCommand(item.id, {
       engineComponentKey,
       contextStoreInstanceId,
@@ -183,6 +190,8 @@ export const useCommandMenuItemFrontComponentCommands = (
   const { openFrontComponentInSidePanel } = useOpenFrontComponentInSidePanel();
   const mountHeadlessFrontComponent = useMountHeadlessFrontComponent();
   const mountEngineCommand = useMountEngineCommand();
+  const populateEngineCommandExecutionContext =
+    usePopulateEngineCommandExecutionContext();
 
   const contextStoreInstanceId = useAvailableComponentInstanceIdOrThrow(
     ContextStoreComponentInstanceContext,
@@ -255,6 +264,7 @@ export const useCommandMenuItemFrontComponentCommands = (
         getIcon,
         commandMenuContextApi,
         mountEngineCommand,
+        populateEngineCommandExecutionContext,
         contextStoreInstanceId,
       });
     }

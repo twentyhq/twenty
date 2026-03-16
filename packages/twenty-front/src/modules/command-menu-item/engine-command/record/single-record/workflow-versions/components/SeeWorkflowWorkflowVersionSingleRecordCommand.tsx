@@ -1,16 +1,15 @@
 import { HeadlessNavigateEngineCommand } from '@/command-menu-item/engine-command/components/HeadlessNavigateEngineCommand';
-import { useSelectedRecordIdOrThrow } from '@/command-menu-item/record/single-record/hooks/useSelectedRecordIdOrThrow';
-import { CoreObjectNameSingular, AppPath } from 'twenty-shared/types';
-import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useEngineCommandExecutionContext } from '@/command-menu-item/engine-command/hooks/useEngineCommandExecutionContext';
+import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 export const SeeWorkflowWorkflowVersionSingleRecordCommand = () => {
-  const recordId = useSelectedRecordIdOrThrow();
-  const recordStore = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
+  const { selectedRecord } = useEngineCommandExecutionContext();
 
-  if (!isDefined(recordStore) || !isDefined(recordStore?.workflow?.id)) {
-    return null;
+  if (!isDefined(selectedRecord) || !isDefined(selectedRecord?.workflow?.id)) {
+    throw new Error(
+      'Selected record and workflow ID are required to see workflow workflow version',
+    );
   }
 
   return (
@@ -18,7 +17,7 @@ export const SeeWorkflowWorkflowVersionSingleRecordCommand = () => {
       to={AppPath.RecordShowPage}
       params={{
         objectNameSingular: CoreObjectNameSingular.Workflow,
-        objectRecordId: recordStore.workflow.id,
+        objectRecordId: selectedRecord.workflow.id,
       }}
     />
   );

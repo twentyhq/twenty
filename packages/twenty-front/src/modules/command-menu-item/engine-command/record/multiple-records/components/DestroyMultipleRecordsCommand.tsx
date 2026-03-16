@@ -1,72 +1,43 @@
 import { HeadlessConfirmationModalEngineCommandEffect } from '@/command-menu-item/engine-command/components/HeadlessConfirmationModalEngineCommandEffect';
-import { contextStoreAnyFieldFilterValueComponentState } from '@/context-store/states/contextStoreAnyFieldFilterValueComponentState';
-import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
-import { contextStoreFilterGroupsComponentState } from '@/context-store/states/contextStoreFilterGroupsComponentState';
-import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
-import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
-import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
+import { useEngineCommandExecutionContext } from '@/command-menu-item/engine-command/hooks/useEngineCommandExecutionContext';
 import { DEFAULT_QUERY_PAGE_SIZE } from '@/object-record/constants/DefaultQueryPageSize';
 import { useIncrementalDestroyManyRecords } from '@/object-record/hooks/useIncrementalDestroyManyRecords';
 import { useRemoveSelectedRecordsFromRecordBoard } from '@/object-record/record-board/hooks/useRemoveSelectedRecordsFromRecordBoard';
-import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
-import { useRecordIndexIdFromCurrentContextStore } from '@/object-record/record-index/hooks/useRecordIndexIdFromCurrentContextStore';
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
 import { type RecordGqlOperationFilter } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 export const DestroyMultipleRecordsCommand = () => {
-  const { recordIndexId, objectMetadataItem } =
-    useRecordIndexIdFromCurrentContextStore();
+  const { recordIndexId, objectMetadataItem, graphqlFilter } =
+    useEngineCommandExecutionContext();
 
-  const contextStoreCurrentViewId = useAtomComponentStateValue(
-    contextStoreCurrentViewIdComponentState,
-  );
-
-  if (!contextStoreCurrentViewId) {
-    throw new Error('Current view ID is not defined');
+  if (
+    !isDefined(recordIndexId) ||
+    !isDefined(objectMetadataItem) ||
+    !isDefined(graphqlFilter)
+  ) {
+    throw new Error(
+      'Record index ID, object metadata item, and graphql filter are required to destroy multiple records',
+    );
   }
 
   const { resetTableRowSelection } = useResetTableRowSelection(recordIndexId);
   const { removeSelectedRecordsFromRecordBoard } =
     useRemoveSelectedRecordsFromRecordBoard(recordIndexId);
 
-  const contextStoreTargetedRecordsRule = useAtomComponentStateValue(
-    contextStoreTargetedRecordsRuleComponentState,
-  );
-
-  const contextStoreFilters = useAtomComponentStateValue(
-    contextStoreFiltersComponentState,
-  );
-
-  const contextStoreFilterGroups = useAtomComponentStateValue(
-    contextStoreFilterGroupsComponentState,
-  );
-
-  const contextStoreAnyFieldFilterValue = useAtomComponentStateValue(
-    contextStoreAnyFieldFilterValueComponentState,
-  );
-
-  const { filterValueDependencies } = useFilterValueDependencies();
-
   const deletedAtFilter: RecordGqlOperationFilter = {
     deletedAt: { is: 'NOT_NULL' },
   };
-  const graphqlFilter = {
-    ...computeContextStoreFilters({
-      contextStoreTargetedRecordsRule,
-      contextStoreFilters,
-      contextStoreFilterGroups,
-      objectMetadataItem,
-      filterValueDependencies,
-      contextStoreAnyFieldFilterValue,
-    }),
+
+  const combinedFilter = {
+    ...graphqlFilter,
     ...deletedAtFilter,
   };
 
   const { incrementalDestroyManyRecords } = useIncrementalDestroyManyRecords({
     objectNameSingular: objectMetadataItem.nameSingular,
-    filter: graphqlFilter,
+    filter: combinedFilter,
     pageSize: DEFAULT_QUERY_PAGE_SIZE,
     delayInMsBetweenMutations: 50,
   });

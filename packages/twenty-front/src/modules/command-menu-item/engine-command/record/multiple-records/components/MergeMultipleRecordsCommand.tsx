@@ -1,21 +1,17 @@
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
-import { useSelectedRecordIds } from '@/command-menu-item/record/single-record/hooks/useSelectedRecordIds';
+import { useEngineCommandExecutionContext } from '@/command-menu-item/engine-command/hooks/useEngineCommandExecutionContext';
 import { useOpenMergeRecordsPageInSidePanel } from '@/side-panel/hooks/useOpenMergeRecordsPageInSidePanel';
-import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
-import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { isDefined } from 'twenty-shared/utils';
 
 export const MergeMultipleRecordsCommand = () => {
-  const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
+  const { objectMetadataItem, selectedRecordIds } =
+    useEngineCommandExecutionContext();
 
-  const contextStoreCurrentViewId = useAtomComponentStateValue(
-    contextStoreCurrentViewIdComponentState,
-  );
-
-  if (!contextStoreCurrentViewId) {
-    throw new Error('Current view ID is not defined');
+  if (!isDefined(objectMetadataItem) || !isDefined(selectedRecordIds)) {
+    throw new Error(
+      'Object metadata item and selected record IDs are required to merge multiple records',
+    );
   }
-  const selectedRecordIds = useSelectedRecordIds();
 
   const { openMergeRecordsPageInSidePanel } =
     useOpenMergeRecordsPageInSidePanel({

@@ -1,13 +1,19 @@
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
-import { useSelectedRecordIdOrThrow } from '@/command-menu-item/record/single-record/hooks/useSelectedRecordIdOrThrow';
+import { useEngineCommandExecutionContext } from '@/command-menu-item/engine-command/hooks/useEngineCommandExecutionContext';
 import { useActivateWorkflowVersion } from '@/workflow/hooks/useActivateWorkflowVersion';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { isDefined } from 'twenty-shared/utils';
 
 export const ActivateWorkflowSingleRecordCommand = () => {
-  const recordId = useSelectedRecordIdOrThrow();
+  const { recordId } = useEngineCommandExecutionContext();
   const { activateWorkflowVersion } = useActivateWorkflowVersion();
-  const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(recordId);
+  const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(
+    recordId ?? '',
+  );
+
+  if (!isDefined(recordId)) {
+    throw new Error('Record ID is required to activate workflow');
+  }
 
   const handleExecute = () => {
     if (!isDefined(workflowWithCurrentVersion)) {

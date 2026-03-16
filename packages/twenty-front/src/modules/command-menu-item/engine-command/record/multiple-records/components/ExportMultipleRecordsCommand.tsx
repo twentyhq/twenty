@@ -1,28 +1,22 @@
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
-import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
-import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
+import { useEngineCommandExecutionContext } from '@/command-menu-item/engine-command/hooks/useEngineCommandExecutionContext';
 import { useRecordIndexExportRecords } from '@/object-record/record-index/export/hooks/useRecordIndexExportRecords';
-import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { isDefined } from 'twenty-shared/utils';
 
 export const ExportMultipleRecordsCommand = () => {
-  const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
+  const { objectMetadataItem, recordIndexId } =
+    useEngineCommandExecutionContext();
 
-  const contextStoreCurrentViewId = useAtomComponentStateValue(
-    contextStoreCurrentViewIdComponentState,
-  );
-
-  if (!contextStoreCurrentViewId) {
-    throw new Error('Current view ID is not defined');
+  if (!isDefined(objectMetadataItem) || !isDefined(recordIndexId)) {
+    throw new Error(
+      'Object metadata item and record index ID are required to export multiple records',
+    );
   }
 
   const { download } = useRecordIndexExportRecords({
     delayMs: 100,
     objectMetadataItem,
-    recordIndexId: getRecordIndexIdFromObjectNamePluralAndViewId(
-      objectMetadataItem.namePlural,
-      contextStoreCurrentViewId,
-    ),
+    recordIndexId,
     filename: `${objectMetadataItem.nameSingular}.csv`,
   });
 

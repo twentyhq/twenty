@@ -1,13 +1,15 @@
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
-import { useSelectedRecordIdOrThrow } from '@/command-menu-item/record/single-record/hooks/useSelectedRecordIdOrThrow';
-import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
+import { useEngineCommandExecutionContext } from '@/command-menu-item/engine-command/hooks/useEngineCommandExecutionContext';
 import { useDeleteNavigationMenuItem } from '@/navigation-menu-item/hooks/useDeleteNavigationMenuItem';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/hooks/useNavigationMenuItemsData';
 import { isDefined } from 'twenty-shared/utils';
 
 export const RemoveFromFavoritesSingleRecordCommand = () => {
-  const recordId = useSelectedRecordIdOrThrow();
-  const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
+  const { recordId, objectMetadataItem } = useEngineCommandExecutionContext();
+
+  if (!isDefined(objectMetadataItem)) {
+    throw new Error('Object metadata is required to remove from favorites');
+  }
 
   const { navigationMenuItems, workspaceNavigationMenuItems } =
     useNavigationMenuItemsData();

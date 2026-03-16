@@ -1,13 +1,19 @@
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
-import { useSelectedRecordIdOrThrow } from '@/command-menu-item/record/single-record/hooks/useSelectedRecordIdOrThrow';
+import { useEngineCommandExecutionContext } from '@/command-menu-item/engine-command/hooks/useEngineCommandExecutionContext';
 import { useDeactivateWorkflowVersion } from '@/workflow/hooks/useDeactivateWorkflowVersion';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { isDefined } from 'twenty-shared/utils';
 
 export const DeactivateWorkflowSingleRecordCommand = () => {
-  const recordId = useSelectedRecordIdOrThrow();
+  const { recordId } = useEngineCommandExecutionContext();
   const { deactivateWorkflowVersion } = useDeactivateWorkflowVersion();
-  const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(recordId);
+  const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(
+    recordId ?? '',
+  );
+
+  if (!isDefined(recordId)) {
+    throw new Error('Record ID is required to deactivate workflow');
+  }
 
   const handleExecute = () => {
     if (!isDefined(workflowWithCurrentVersion)) {

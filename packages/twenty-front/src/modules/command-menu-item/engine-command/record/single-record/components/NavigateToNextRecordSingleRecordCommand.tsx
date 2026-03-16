@@ -1,12 +1,16 @@
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
-import { useSelectedRecordIdOrThrow } from '@/command-menu-item/record/single-record/hooks/useSelectedRecordIdOrThrow';
-import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
+import { useEngineCommandExecutionContext } from '@/command-menu-item/engine-command/hooks/useEngineCommandExecutionContext';
 import { useRecordShowPagePagination } from '@/object-record/record-show/hooks/useRecordShowPagePagination';
+import { isDefined } from 'twenty-shared/utils';
 
 export const NavigateToNextRecordSingleRecordCommand = () => {
-  const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
+  const { objectMetadataItem, recordId } = useEngineCommandExecutionContext();
 
-  const recordId = useSelectedRecordIdOrThrow();
+  if (!isDefined(recordId) || !isDefined(objectMetadataItem)) {
+    throw new Error(
+      'Record ID and object metadata are required to navigate to next record',
+    );
+  }
 
   const { navigateToNextRecord } = useRecordShowPagePagination(
     objectMetadataItem.nameSingular,

@@ -1,30 +1,22 @@
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
-import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
-import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
-import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
+import { useEngineCommandExecutionContext } from '@/command-menu-item/engine-command/hooks/useEngineCommandExecutionContext';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { VIEW_PICKER_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerDropdownId';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
+import { isDefined } from 'twenty-shared/utils';
 
 export const CreateNewViewNoSelectionRecordCommand = () => {
-  const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
+  const { currentViewId, recordIndexId } = useEngineCommandExecutionContext();
+
   const { openDropdown } = useOpenDropdown();
 
-  const contextStoreCurrentViewId = useAtomComponentStateValue(
-    contextStoreCurrentViewIdComponentState,
-  );
-
-  if (!contextStoreCurrentViewId) {
-    throw new Error('Current view ID is not defined');
+  if (!isDefined(currentViewId) || !isDefined(recordIndexId)) {
+    throw new Error(
+      'Current view ID and record index ID are required to create new view',
+    );
   }
-
-  const recordIndexId = getRecordIndexIdFromObjectNamePluralAndViewId(
-    objectMetadataItem.namePlural,
-    contextStoreCurrentViewId,
-  );
 
   const setViewPickerReferenceViewId = useSetAtomComponentState(
     viewPickerReferenceViewIdComponentState,
@@ -34,7 +26,9 @@ export const CreateNewViewNoSelectionRecordCommand = () => {
   const { setViewPickerMode } = useViewPickerMode(recordIndexId);
 
   const handleExecute = () => {
-    setViewPickerReferenceViewId(contextStoreCurrentViewId);
+    if (currentViewId) {
+      setViewPickerReferenceViewId(currentViewId);
+    }
     setViewPickerMode('create-empty');
     openDropdown({
       dropdownComponentInstanceIdFromProps: VIEW_PICKER_DROPDOWN_ID,

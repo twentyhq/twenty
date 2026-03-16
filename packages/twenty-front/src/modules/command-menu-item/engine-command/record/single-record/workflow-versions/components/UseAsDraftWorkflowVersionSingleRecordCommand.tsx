@@ -1,6 +1,5 @@
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
-import { useSelectedRecordIdOrThrow } from '@/command-menu-item/record/single-record/hooks/useSelectedRecordIdOrThrow';
-import { CoreObjectNameSingular, AppPath } from 'twenty-shared/types';
+import { useEngineCommandExecutionContext } from '@/command-menu-item/engine-command/hooks/useEngineCommandExecutionContext';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { OverrideWorkflowDraftConfirmationModal } from '@/workflow/components/OverrideWorkflowDraftConfirmationModal';
 import { OVERRIDE_WORKFLOW_DRAFT_CONFIRMATION_MODAL_ID } from '@/workflow/constants/OverrideWorkflowDraftConfirmationModalId';
@@ -8,6 +7,7 @@ import { useCreateDraftFromWorkflowVersion } from '@/workflow/hooks/useCreateDra
 import { useWorkflowVersion } from '@/workflow/hooks/useWorkflowVersion';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { useState } from 'react';
+import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
@@ -66,11 +66,13 @@ const UseAsDraftWorkflowVersionSingleRecordCommandContent = ({
 };
 
 export const UseAsDraftWorkflowVersionSingleRecordCommand = () => {
-  const recordId = useSelectedRecordIdOrThrow();
-  const workflowVersion = useWorkflowVersion(recordId);
+  const { recordId } = useEngineCommandExecutionContext();
+  const workflowVersion = useWorkflowVersion(recordId ?? '');
 
-  if (!isDefined(workflowVersion?.workflow?.id)) {
-    return null;
+  if (!recordId || !isDefined(workflowVersion?.workflow?.id)) {
+    throw new Error(
+      'Record ID and workflow ID are required to use as draft workflow version',
+    );
   }
 
   return (

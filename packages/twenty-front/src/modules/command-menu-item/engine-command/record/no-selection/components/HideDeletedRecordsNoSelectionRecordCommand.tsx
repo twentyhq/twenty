@@ -1,33 +1,26 @@
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
-import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
-import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
+import { useEngineCommandExecutionContext } from '@/command-menu-item/engine-command/hooks/useEngineCommandExecutionContext';
 import { useCheckIsSoftDeleteFilter } from '@/object-record/record-filter/hooks/useCheckIsSoftDeleteFilter';
 import { useRemoveRecordFilter } from '@/object-record/record-filter/hooks/useRemoveRecordFilter';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useHandleToggleTrashColumnFilter } from '@/object-record/record-index/hooks/useHandleToggleTrashColumnFilter';
-import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isDefined } from 'twenty-shared/utils';
 
 export const HideDeletedRecordsNoSelectionRecordCommand = () => {
-  const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
+  const { objectMetadataItem, recordIndexId } =
+    useEngineCommandExecutionContext();
 
-  const contextStoreCurrentViewId = useAtomComponentStateValue(
-    contextStoreCurrentViewIdComponentState,
-  );
-
-  if (!isDefined(contextStoreCurrentViewId)) {
-    throw new Error('Current view ID is not defined');
+  if (!isDefined(objectMetadataItem) || !isDefined(recordIndexId)) {
+    throw new Error(
+      'Object metadata item and record index ID are required to hide deleted records',
+    );
   }
-
-  const recordIndexId = getRecordIndexIdFromObjectNamePluralAndViewId(
-    objectMetadataItem.namePlural,
-    contextStoreCurrentViewId,
-  );
 
   const { toggleSoftDeleteFilterState } = useHandleToggleTrashColumnFilter({
     objectNameSingular: objectMetadataItem.nameSingular,
     viewBarId: recordIndexId,
+    recordFiltersInstanceId: recordIndexId,
   });
 
   const { isRecordFilterAboutSoftDelete } = useCheckIsSoftDeleteFilter();
@@ -41,7 +34,7 @@ export const HideDeletedRecordsNoSelectionRecordCommand = () => {
     isRecordFilterAboutSoftDelete,
   );
 
-  const { removeRecordFilter } = useRemoveRecordFilter();
+  const { removeRecordFilter } = useRemoveRecordFilter(recordIndexId);
 
   const handleExecute = () => {
     if (!isDefined(deletedFilter)) {

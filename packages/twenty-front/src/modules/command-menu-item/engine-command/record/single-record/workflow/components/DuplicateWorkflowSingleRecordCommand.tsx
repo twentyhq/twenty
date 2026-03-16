@@ -1,5 +1,5 @@
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
-import { useSelectedRecordIdOrThrow } from '@/command-menu-item/record/single-record/hooks/useSelectedRecordIdOrThrow';
+import { useEngineCommandExecutionContext } from '@/command-menu-item/engine-command/hooks/useEngineCommandExecutionContext';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useDuplicateWorkflow } from '@/workflow/hooks/useDuplicateWorkflow';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
@@ -10,12 +10,16 @@ import { isDefined } from 'twenty-shared/utils';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const DuplicateWorkflowSingleRecordCommand = () => {
-  const recordId = useSelectedRecordIdOrThrow();
-  const workflow = useWorkflowWithCurrentVersion(recordId);
+  const { recordId } = useEngineCommandExecutionContext();
+  const workflow = useWorkflowWithCurrentVersion(recordId ?? '');
   const { duplicateWorkflow } = useDuplicateWorkflow();
   const navigate = useNavigateApp();
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
   const { t } = useLingui();
+
+  if (!isDefined(recordId)) {
+    throw new Error('Record ID is required to duplicate workflow');
+  }
 
   const handleExecute = async () => {
     if (!isDefined(workflow) || !isDefined(workflow.currentVersion)) {

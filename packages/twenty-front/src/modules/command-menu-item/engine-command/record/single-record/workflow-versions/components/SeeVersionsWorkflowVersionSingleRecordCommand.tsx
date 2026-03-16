@@ -1,9 +1,7 @@
 import { HeadlessNavigateEngineCommand } from '@/command-menu-item/engine-command/components/HeadlessNavigateEngineCommand';
-import { useSelectedRecordIdOrThrow } from '@/command-menu-item/record/single-record/hooks/useSelectedRecordIdOrThrow';
+import { useEngineCommandExecutionContext } from '@/command-menu-item/engine-command/hooks/useEngineCommandExecutionContext';
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
-import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
-import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { AppPath, ViewFilterOperand } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -32,16 +30,17 @@ const SeeVersionsWorkflowVersionSingleRecordCommandContent = ({
 };
 
 export const SeeVersionsWorkflowVersionSingleRecordCommand = () => {
-  const recordId = useSelectedRecordIdOrThrow();
-  const recordStore = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
+  const { selectedRecord } = useEngineCommandExecutionContext();
 
-  if (!isDefined(recordStore) || !isDefined(recordStore.workflowId)) {
-    return null;
+  if (!isDefined(selectedRecord) || !isDefined(selectedRecord.workflowId)) {
+    throw new Error(
+      'Selected record and workflow ID are required to see versions workflow version',
+    );
   }
 
   return (
     <SeeVersionsWorkflowVersionSingleRecordCommandContent
-      workflowId={recordStore.workflowId}
+      workflowId={selectedRecord.workflowId}
     />
   );
 };

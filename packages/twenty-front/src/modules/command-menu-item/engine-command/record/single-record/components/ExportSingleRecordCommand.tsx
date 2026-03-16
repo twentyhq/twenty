@@ -1,23 +1,21 @@
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
-import { useSelectedRecordIdOrThrow } from '@/command-menu-item/record/single-record/hooks/useSelectedRecordIdOrThrow';
-import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
-import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
+import { useEngineCommandExecutionContext } from '@/command-menu-item/engine-command/hooks/useEngineCommandExecutionContext';
 import { useExportSingleRecord } from '@/object-record/record-show/hooks/useExportSingleRecord';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isDefined } from 'twenty-shared/utils';
 
 export const ExportSingleRecordCommand = () => {
-  const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
+  const { objectMetadataItem, currentViewId, recordId } =
+    useEngineCommandExecutionContext();
 
-  const contextStoreCurrentViewId = useAtomComponentStateValue(
-    contextStoreCurrentViewIdComponentState,
-  );
-
-  if (!isDefined(contextStoreCurrentViewId)) {
-    throw new Error('Current view ID is not defined');
+  if (
+    !isDefined(currentViewId) ||
+    !isDefined(recordId) ||
+    !isDefined(objectMetadataItem)
+  ) {
+    throw new Error(
+      'Current view ID, record ID, and object metadata are required to export single record',
+    );
   }
-
-  const recordId = useSelectedRecordIdOrThrow();
 
   const filename = `${objectMetadataItem.nameSingular}.csv`;
   const { download } = useExportSingleRecord({

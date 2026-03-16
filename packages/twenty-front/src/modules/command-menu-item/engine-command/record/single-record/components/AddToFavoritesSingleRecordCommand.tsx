@@ -1,26 +1,24 @@
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
-import { useSelectedRecordIdOrThrow } from '@/command-menu-item/record/single-record/hooks/useSelectedRecordIdOrThrow';
-import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
+import { useEngineCommandExecutionContext } from '@/command-menu-item/engine-command/hooks/useEngineCommandExecutionContext';
 import { useCreateNavigationMenuItem } from '@/navigation-menu-item/hooks/useCreateNavigationMenuItem';
-import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { isDefined } from 'twenty-shared/utils';
 
 export const AddToFavoritesSingleRecordCommand = () => {
-  const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
+  const { objectMetadataItem, selectedRecord } =
+    useEngineCommandExecutionContext();
 
-  const recordId = useSelectedRecordIdOrThrow();
+  if (!isDefined(objectMetadataItem)) {
+    throw new Error('Object metadata item is required to add to favorites');
+  }
 
   const { createNavigationMenuItem } = useCreateNavigationMenuItem();
 
-  const recordStore = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
-
   const handleExecute = () => {
-    if (!isDefined(recordStore)) {
+    if (!isDefined(selectedRecord)) {
       return;
     }
 
-    createNavigationMenuItem(recordStore, objectMetadataItem.nameSingular);
+    createNavigationMenuItem(selectedRecord, objectMetadataItem.nameSingular);
   };
 
   return <HeadlessEngineCommandWrapperEffect execute={handleExecute} />;

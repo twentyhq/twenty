@@ -1,18 +1,25 @@
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
-import { useSelectedRecordIdOrThrow } from '@/command-menu-item/record/single-record/hooks/useSelectedRecordIdOrThrow';
+import { useEngineCommandExecutionContext } from '@/command-menu-item/engine-command/hooks/useEngineCommandExecutionContext';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/hooks/useNavigationMenuItemsData';
 import { useRemoveNavigationMenuItemByTargetRecordId } from '@/navigation-menu-item/hooks/useRemoveNavigationMenuItemByTargetRecordId';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useRemoveSelectedRecordsFromRecordBoard } from '@/object-record/record-board/hooks/useRemoveSelectedRecordsFromRecordBoard';
-import { useRecordIndexIdFromCurrentContextStore } from '@/object-record/record-index/hooks/useRecordIndexIdFromCurrentContextStore';
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
 import { isDefined } from 'twenty-shared/utils';
 
 export const DeleteSingleRecordCommand = () => {
-  const { recordIndexId, objectMetadataItem } =
-    useRecordIndexIdFromCurrentContextStore();
+  const { recordIndexId, objectMetadataItem, recordId } =
+    useEngineCommandExecutionContext();
 
-  const recordId = useSelectedRecordIdOrThrow();
+  if (
+    !isDefined(recordId) ||
+    !isDefined(recordIndexId) ||
+    !isDefined(objectMetadataItem)
+  ) {
+    throw new Error(
+      'Record ID, record index ID, and object metadata are required to delete single record',
+    );
+  }
 
   const { resetTableRowSelection } = useResetTableRowSelection(recordIndexId);
 

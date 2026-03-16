@@ -1,14 +1,19 @@
 import { HeadlessNavigateEngineCommand } from '@/command-menu-item/engine-command/components/HeadlessNavigateEngineCommand';
-import { useSelectedRecordIdOrThrow } from '@/command-menu-item/record/single-record/hooks/useSelectedRecordIdOrThrow';
-import { CoreObjectNameSingular, AppPath } from 'twenty-shared/types';
+import { useEngineCommandExecutionContext } from '@/command-menu-item/engine-command/hooks/useEngineCommandExecutionContext';
 import { useActiveWorkflowVersion } from '@/workflow/hooks/useActiveWorkflowVersion';
+import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 export const SeeActiveVersionWorkflowSingleRecordCommand = () => {
-  const recordId = useSelectedRecordIdOrThrow();
+  const { recordId } = useEngineCommandExecutionContext();
 
   const { workflowVersion, loading } = useActiveWorkflowVersion({
-    workflowId: recordId,
+    workflowId: recordId ?? '',
   });
+
+  if (!isDefined(recordId)) {
+    throw new Error('Record ID is required to see active version workflow');
+  }
 
   if (loading) {
     return null;

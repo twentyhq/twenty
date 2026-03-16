@@ -1,22 +1,20 @@
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
-import { useSelectedRecordIdOrThrow } from '@/command-menu-item/record/single-record/hooks/useSelectedRecordIdOrThrow';
-import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useEngineCommandExecutionContext } from '@/command-menu-item/engine-command/hooks/useEngineCommandExecutionContext';
 import { isDefined } from 'twenty-shared/utils';
 
 export const ExportNoteSingleRecordCommand = () => {
-  const recordId = useSelectedRecordIdOrThrow();
+  const { recordId, selectedRecord } = useEngineCommandExecutionContext();
 
-  const recordStore = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
+  if (!isDefined(recordId) || !isDefined(selectedRecord)) {
+    throw new Error(
+      'Record ID and selected record are required to export note to PDF',
+    );
+  }
 
-  const filename = `${(recordStore?.title || 'Untitled Note').replace(/[<>:"/\\|?*]/g, '-')}`;
+  const filename = `${(selectedRecord.title || 'Untitled Note').replace(/[<>:"/\\|?*]/g, '-')}`;
 
   const handleExecute = async () => {
-    if (!isDefined(recordStore)) {
-      return;
-    }
-
-    const initialBody = recordStore.bodyV2?.blocknote;
+    const initialBody = selectedRecord.bodyV2?.blocknote;
 
     let parsedBody = [];
 
