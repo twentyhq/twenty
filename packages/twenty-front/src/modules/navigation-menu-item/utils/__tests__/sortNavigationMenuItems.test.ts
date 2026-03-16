@@ -1,3 +1,5 @@
+import { NavigationMenuItemType } from 'twenty-shared/types';
+
 import { sortNavigationMenuItems } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { type ObjectRecordIdentifier } from '@/object-record/types/ObjectRecordIdentifier';
@@ -324,7 +326,7 @@ describe('sortNavigationMenuItems', () => {
       [
         {
           id: 'link-1',
-          type: 'link',
+          type: NavigationMenuItemType.LINK,
           link: 'https://example.com',
           name: 'My Link',
           position: 1,
@@ -342,7 +344,7 @@ describe('sortNavigationMenuItems', () => {
       [
         {
           id: 'link-2',
-          type: 'link',
+          type: NavigationMenuItemType.LINK,
           link: 'example.com',
           position: 2,
         } as NavigationMenuItem,

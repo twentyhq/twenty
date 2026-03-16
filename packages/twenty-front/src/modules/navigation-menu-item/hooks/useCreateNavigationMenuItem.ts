@@ -1,3 +1,4 @@
+import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useMutation } from '@apollo/client/react';
 import { CreateNavigationMenuItemDocument } from '~/generated-metadata/graphql';
@@ -42,7 +43,7 @@ export const useCreateNavigationMenuItem = () => {
       await createNavigationMenuItemMutation({
         variables: {
           input: {
-            type: 'view',
+            type: NavigationMenuItemType.VIEW,
             viewId: targetRecord.id,
             userWorkspaceId: currentWorkspaceMemberId,
             folderId,
@@ -76,7 +77,7 @@ export const useCreateNavigationMenuItem = () => {
       await createNavigationMenuItemMutation({
         variables: {
           input: {
-            type: 'record',
+            type: NavigationMenuItemType.RECORD,
             targetRecordId: targetRecord.id,
             targetObjectMetadataId: objectMetadataItem.id,
             userWorkspaceId: currentWorkspaceMemberId,

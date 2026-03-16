@@ -9,6 +9,7 @@ import {
   eachTestingContextFilter,
   type EachTestingContext,
 } from 'twenty-shared/testing';
+import { NavigationMenuItemType } from 'twenty-shared/types';
 
 import { type UpdateOneNavigationMenuItemInput } from 'src/engine/metadata-modules/navigation-menu-item/dtos/update-navigation-menu-item.input';
 
@@ -54,7 +55,7 @@ describe('NavigationMenuItem update should fail', () => {
     const { data } = await createNavigationMenuItem({
       expectToFail: false,
       input: {
-        type: 'record',
+        type: NavigationMenuItemType.RECORD,
         targetRecordId,
         targetObjectMetadataId: personObjectMetadataId,
         position: 1,

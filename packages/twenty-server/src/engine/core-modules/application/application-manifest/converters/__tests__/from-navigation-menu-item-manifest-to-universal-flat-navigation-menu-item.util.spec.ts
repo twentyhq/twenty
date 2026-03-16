@@ -1,4 +1,5 @@
 import { fromNavigationMenuItemManifestToUniversalFlatNavigationMenuItem } from 'src/engine/core-modules/application/application-manifest/converters/from-navigation-menu-item-manifest-to-universal-flat-navigation-menu-item.util';
+import { NavigationMenuItemType } from 'src/engine/metadata-modules/navigation-menu-item/enums/navigation-menu-item-type.enum';
 
 describe('fromNavigationMenuItemManifestToUniversalFlatNavigationMenuItem', () => {
   const now = '2026-01-01T00:00:00.000Z';
@@ -9,7 +10,7 @@ describe('fromNavigationMenuItemManifestToUniversalFlatNavigationMenuItem', () =
       fromNavigationMenuItemManifestToUniversalFlatNavigationMenuItem({
         navigationMenuItemManifest: {
           universalIdentifier: 'nav-uuid-1',
-          type: 'view',
+          type: NavigationMenuItemType.VIEW,
           position: 0,
         },
         applicationUniversalIdentifier,
@@ -35,7 +36,7 @@ describe('fromNavigationMenuItemManifestToUniversalFlatNavigationMenuItem', () =
       fromNavigationMenuItemManifestToUniversalFlatNavigationMenuItem({
         navigationMenuItemManifest: {
           universalIdentifier: 'nav-uuid-2',
-          type: 'view',
+          type: NavigationMenuItemType.VIEW,
           name: 'Recipes Board',
           position: 1,
           viewUniversalIdentifier: 'view-uuid-1',

@@ -1,7 +1,8 @@
 import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsType';
+import { type NavigationMenuItemType } from '@/types/NavigationMenuItemType';
 
 export type NavigationMenuItemManifest = SyncableEntityOptions & {
-  type: string;
+  type: NavigationMenuItemType;
   name?: string;
   icon?: string;
   color?: string;

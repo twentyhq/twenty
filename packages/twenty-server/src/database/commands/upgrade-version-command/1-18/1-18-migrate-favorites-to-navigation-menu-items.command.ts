@@ -24,6 +24,7 @@ import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metada
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { FlatNavigationMenuItemMaps } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item-maps.type';
 import { FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item.type';
+import { NavigationMenuItemType } from 'src/engine/metadata-modules/navigation-menu-item/enums/navigation-menu-item-type.enum';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -273,7 +274,7 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
 
         const folderToCreate = {
           id: navigationMenuItemId,
-          type: 'folder',
+          type: NavigationMenuItemType.FOLDER,
           universalIdentifier: navigationMenuItemId,
           userWorkspaceId,
           targetRecordId: null,
@@ -309,7 +310,7 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
 
         const workspaceLevelFolderToCreate = {
           id: workspaceLevelNavigationMenuItemId,
-          type: 'folder',
+          type: NavigationMenuItemType.FOLDER,
           universalIdentifier: workspaceLevelNavigationMenuItemId,
           userWorkspaceId: null,
           targetRecordId: null,
@@ -518,7 +519,7 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
 
           flatNavigationMenuItemsToCreate.push({
             id: favorite.id,
-            type: 'view',
+            type: NavigationMenuItemType.VIEW,
             universalIdentifier,
             userWorkspaceId,
             targetRecordId: null,
@@ -572,7 +573,7 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
 
       flatNavigationMenuItemsToCreate.push({
         id: favorite.id,
-        type: 'record',
+        type: NavigationMenuItemType.RECORD,
         universalIdentifier: favorite.id,
         userWorkspaceId,
         targetRecordId,

@@ -1,3 +1,4 @@
+import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 import type { NavigationMenuItem } from '~/generated-metadata/graphql';
@@ -37,7 +38,7 @@ export const useAddViewToNavigationMenuDraft = () => {
     const newItem: NavigationMenuItem = {
       __typename: 'NavigationMenuItem',
       id: newItemId,
-      type: 'view',
+      type: NavigationMenuItemType.VIEW,
       viewId,
       targetObjectMetadataId: undefined,
       position,

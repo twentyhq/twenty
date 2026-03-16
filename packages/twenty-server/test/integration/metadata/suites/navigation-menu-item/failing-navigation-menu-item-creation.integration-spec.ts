@@ -5,6 +5,7 @@ import {
   eachTestingContextFilter,
   type EachTestingContext,
 } from 'twenty-shared/testing';
+import { NavigationMenuItemType } from 'twenty-shared/types';
 
 import { type CreateNavigationMenuItemInput } from 'src/engine/metadata-modules/navigation-menu-item/dtos/create-navigation-menu-item.input';
 
@@ -18,7 +19,7 @@ const failingNavigationMenuItemCreationTestCases: EachTestingContext<TestContext
       title: 'when creating with missing targetRecordId',
       context: {
         input: {
-          type: 'record',
+          type: NavigationMenuItemType.RECORD,
           targetObjectMetadataId: faker.string.uuid(),
         } as CreateNavigationMenuItemInput,
       },
@@ -27,7 +28,7 @@ const failingNavigationMenuItemCreationTestCases: EachTestingContext<TestContext
       title: 'when creating with empty targetRecordId',
       context: {
         input: {
-          type: 'record',
+          type: NavigationMenuItemType.RECORD,
           targetRecordId: '',
           targetObjectMetadataId: faker.string.uuid(),
         },
@@ -37,7 +38,7 @@ const failingNavigationMenuItemCreationTestCases: EachTestingContext<TestContext
       title: 'when creating with invalid targetRecordId (not a UUID)',
       context: {
         input: {
-          type: 'record',
+          type: NavigationMenuItemType.RECORD,
           targetRecordId: 'not-a-valid-uuid',
           targetObjectMetadataId: faker.string.uuid(),
         },
@@ -47,7 +48,7 @@ const failingNavigationMenuItemCreationTestCases: EachTestingContext<TestContext
       title: 'when creating with missing targetObjectMetadataId',
       context: {
         input: {
-          type: 'record',
+          type: NavigationMenuItemType.RECORD,
           targetRecordId: faker.string.uuid(),
         } as CreateNavigationMenuItemInput,
       },
@@ -56,7 +57,7 @@ const failingNavigationMenuItemCreationTestCases: EachTestingContext<TestContext
       title: 'when creating with empty targetObjectMetadataId',
       context: {
         input: {
-          type: 'record',
+          type: NavigationMenuItemType.RECORD,
           targetRecordId: faker.string.uuid(),
           targetObjectMetadataId: '',
         },
@@ -66,7 +67,7 @@ const failingNavigationMenuItemCreationTestCases: EachTestingContext<TestContext
       title: 'when creating with invalid targetObjectMetadataId (not a UUID)',
       context: {
         input: {
-          type: 'record',
+          type: NavigationMenuItemType.RECORD,
           targetRecordId: faker.string.uuid(),
           targetObjectMetadataId: 'not-a-valid-uuid',
         },
@@ -76,7 +77,7 @@ const failingNavigationMenuItemCreationTestCases: EachTestingContext<TestContext
       title: 'when creating with invalid userWorkspaceId (not a UUID)',
       context: {
         input: {
-          type: 'record',
+          type: NavigationMenuItemType.RECORD,
           targetRecordId: faker.string.uuid(),
           targetObjectMetadataId: faker.string.uuid(),
           userWorkspaceId: 'not-a-valid-uuid',
@@ -87,7 +88,7 @@ const failingNavigationMenuItemCreationTestCases: EachTestingContext<TestContext
       title: 'when creating with invalid folderId (not a UUID)',
       context: {
         input: {
-          type: 'record',
+          type: NavigationMenuItemType.RECORD,
           targetRecordId: faker.string.uuid(),
           targetObjectMetadataId: faker.string.uuid(),
           folderId: 'not-a-valid-uuid',

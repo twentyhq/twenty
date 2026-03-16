@@ -1,4 +1,5 @@
 import { v4 } from 'uuid';
+import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import type { NavigationMenuItem } from '~/generated-metadata/graphql';
 
@@ -60,7 +61,7 @@ export const useAddRecordToNavigationMenuDraft = () => {
     const newItem: NavigationMenuItem = {
       __typename: 'NavigationMenuItem',
       id: newItemId,
-      type: 'record',
+      type: NavigationMenuItemType.RECORD,
       viewId: undefined,
       targetObjectMetadataId: objectMetadataId,
       targetRecordId: searchRecord.recordId,

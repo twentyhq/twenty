@@ -1,3 +1,4 @@
+import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 import type { NavigationMenuItem } from '~/generated-metadata/graphql';
@@ -37,7 +38,7 @@ export const useAddFolderToNavigationMenuDraft = () => {
     const newItem: NavigationMenuItem = {
       __typename: 'NavigationMenuItem',
       id: newItemId,
-      type: 'folder',
+      type: NavigationMenuItemType.FOLDER,
       viewId: undefined,
       targetObjectMetadataId: undefined,
       targetRecordId: undefined,
