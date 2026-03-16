@@ -63,11 +63,6 @@ export const SettingsRolePermissionsObjectLevelObjectFormObjectLevel = ({
         label: t`Destroy ${objectLabelPlural}`,
         value: settingsDraftRoleObjectPermissions?.canDestroyObjectRecords,
       },
-      {
-        key: 'showInSidebar',
-        label: t`Show in Sidebar`,
-        value: settingsDraftRoleObjectPermissions?.showInSidebar,
-      },
     ];
 
   return (

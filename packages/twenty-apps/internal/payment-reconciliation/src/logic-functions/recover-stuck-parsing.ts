@@ -1,5 +1,5 @@
 import { defineLogicFunction } from 'twenty-sdk';
-import { CoreApiClient } from 'twenty-sdk/generated';
+import { CoreApiClient } from 'twenty-sdk/clients';
 
 import { RECOVER_STUCK_PARSING_LOGIC_FUNCTION_ID } from 'src/constants/universal-identifiers';
 

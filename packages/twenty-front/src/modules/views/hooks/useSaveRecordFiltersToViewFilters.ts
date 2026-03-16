@@ -13,8 +13,8 @@ import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  type CreateCoreViewFilterMutationVariables,
-  type UpdateCoreViewFilterMutationVariables,
+  type CreateViewFilterMutationVariables,
+  type UpdateViewFilterMutationVariables,
 } from '~/generated-metadata/graphql';
 
 export const useSaveRecordFiltersToViewFilters = () => {
@@ -87,7 +87,7 @@ export const useSaveRecordFiltersToViewFilters = () => {
               viewFilter.positionInViewFilterGroup ?? null,
             subFieldName: viewFilter.subFieldName ?? null,
           },
-        }) as CreateCoreViewFilterMutationVariables,
+        }) as CreateViewFilterMutationVariables,
     );
 
     const updateViewFilterInputs = viewFiltersToUpdate.map(
@@ -104,7 +104,7 @@ export const useSaveRecordFiltersToViewFilters = () => {
               subFieldName: viewFilter.subFieldName ?? null,
             },
           },
-        }) as UpdateCoreViewFilterMutationVariables,
+        }) as UpdateViewFilterMutationVariables,
     );
 
     const deleteViewFilterInputs = viewFiltersToDelete.map((viewFilter) => ({

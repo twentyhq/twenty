@@ -3,7 +3,7 @@ import {
   type DatabaseEventPayload,
   type ObjectRecordUpdateEvent,
 } from 'twenty-sdk';
-import { CoreApiClient } from 'twenty-sdk/generated';
+import { CoreApiClient } from 'twenty-sdk/clients';
 
 import { PARSE_ON_PENDING_LOGIC_FUNCTION_ID } from 'src/constants/universal-identifiers';
 import { parseAmbetterBob } from 'src/utils/parse-ambetter-bob';

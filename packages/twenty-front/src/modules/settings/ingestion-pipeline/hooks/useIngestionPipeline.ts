@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client/react';
 
 import {
   CREATE_INGESTION_PIPELINE,
@@ -20,11 +20,15 @@ export const useIngestionPipeline = (pipelineId?: string) => {
     skip: !pipelineId,
   });
 
-  const [createMutation] = useMutation(CREATE_INGESTION_PIPELINE, {
+  const [createMutation] = useMutation<{
+    createIngestionPipeline: IngestionPipeline;
+  }>(CREATE_INGESTION_PIPELINE, {
     refetchQueries: [{ query: GET_INGESTION_PIPELINES }],
   });
 
-  const [updateMutation] = useMutation(UPDATE_INGESTION_PIPELINE, {
+  const [updateMutation] = useMutation<{
+    updateIngestionPipeline: IngestionPipeline;
+  }>(UPDATE_INGESTION_PIPELINE, {
     refetchQueries: [{ query: GET_INGESTION_PIPELINES }],
   });
 
@@ -32,7 +36,9 @@ export const useIngestionPipeline = (pipelineId?: string) => {
     refetchQueries: [{ query: GET_INGESTION_PIPELINES }],
   });
 
-  const [triggerPullMutation] = useMutation(TRIGGER_INGESTION_PULL);
+  const [triggerPullMutation] = useMutation<{
+    triggerIngestionPull: unknown;
+  }>(TRIGGER_INGESTION_PULL);
 
   const createPipeline = async (
     input: Omit<IngestionPipeline, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt' | 'webhookSecret'>,

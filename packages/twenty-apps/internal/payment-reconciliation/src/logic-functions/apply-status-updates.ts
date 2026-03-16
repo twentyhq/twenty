@@ -1,5 +1,5 @@
 import { defineLogicFunction } from 'twenty-sdk';
-import { CoreApiClient } from 'twenty-sdk/generated';
+import { CoreApiClient } from 'twenty-sdk/clients';
 
 import { APPLY_STATUS_UPDATES_LOGIC_FUNCTION_ID } from 'src/constants/universal-identifiers';
 import { graphqlQuery } from 'src/utils/graphql-helpers';

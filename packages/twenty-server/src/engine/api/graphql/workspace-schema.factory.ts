@@ -230,7 +230,7 @@ export class WorkspaceSchemaFactory {
         ),
     );
     const scalarsResolvers =
-      this.scalarsExplorerService.getScalarResolvers(usedScalarNames);
+      this.scalarsExplorerService.getScalarResolvers(usedScalarNames ?? []);
 
     const executableSchema = schemaBuildObserver.observeSync(
       'makeExecutableSchemaMs',

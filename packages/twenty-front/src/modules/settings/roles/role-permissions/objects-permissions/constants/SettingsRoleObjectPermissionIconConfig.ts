@@ -2,8 +2,6 @@ import {
   type IconComponent,
   IconEye,
   IconEyeOff,
-  IconLayoutSidebarRight,
-  IconLayoutSidebarLeftCollapse,
   IconPencil,
   IconPencilOff,
   IconTrash,
@@ -21,8 +19,7 @@ export type SettingsRoleObjectPermissionKey =
   | 'canReadObjectRecords'
   | 'canUpdateObjectRecords'
   | 'canSoftDeleteObjectRecords'
-  | 'canDestroyObjectRecords'
-  | 'showInSidebar';
+  | 'canDestroyObjectRecords';
 
 export const SETTINGS_ROLE_OBJECT_PERMISSION_ICON_CONFIG: Record<
   SettingsRoleObjectPermissionKey,
@@ -43,9 +40,5 @@ export const SETTINGS_ROLE_OBJECT_PERMISSION_ICON_CONFIG: Record<
   canDestroyObjectRecords: {
     Icon: IconTrashX,
     IconForbidden: IconTrashXOff,
-  },
-  showInSidebar: {
-    Icon: IconLayoutSidebarRight,
-    IconForbidden: IconLayoutSidebarLeftCollapse,
   },
 };

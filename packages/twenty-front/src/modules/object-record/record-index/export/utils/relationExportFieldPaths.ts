@@ -68,7 +68,7 @@ const isExportableLeafField = (field: RelationExportFieldMetadataItem) => {
     return false;
   }
 
-  if (field.type === FieldMetadataType.RICH_TEXT_V2) {
+  if (field.type === FieldMetadataType.RICH_TEXT) {
     return false;
   }
 

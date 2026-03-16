@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client/react';
 
 import { GET_INGESTION_PIPELINES } from '@/settings/ingestion-pipeline/graphql/ingestion-pipeline.queries';
 import { type IngestionPipeline } from '@/settings/ingestion-pipeline/types/ingestion-pipeline.types';

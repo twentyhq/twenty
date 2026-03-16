@@ -16,7 +16,6 @@ export const MOCK_OBJECT_PERMISSION_1_REVOKES_ALL: ObjectPermission = {
   canUpdateObjectRecords: false,
   canSoftDeleteObjectRecords: false,
   canDestroyObjectRecords: false,
-  showInSidebar: false,
   editWindowMinutes: null,
 };
 
@@ -26,7 +25,6 @@ export const MOCK_OBJECT_PERMISSION_2_GRANTS_ALL: ObjectPermission = {
   canUpdateObjectRecords: true,
   canSoftDeleteObjectRecords: true,
   canDestroyObjectRecords: true,
-  showInSidebar: true,
   editWindowMinutes: null,
 };
 
@@ -36,7 +34,6 @@ export const MOCK_OBJECT_PERMISSION_3_NULL_ALL: ObjectPermission = {
   canUpdateObjectRecords: null,
   canSoftDeleteObjectRecords: null,
   canDestroyObjectRecords: null,
-  showInSidebar: null,
   editWindowMinutes: null,
 };
 
@@ -61,6 +58,7 @@ export const BASE_FIELD_PERMISSION_OBJECT_METADATA_3: Omit<
 
 export const BASE_ROLE_MOCK_GRANTS_ALL: Role = {
   canAccessAllTools: false,
+  showAllObjectsInSidebar: true,
   canReadAllObjectRecords: true,
   canUpdateAllObjectRecords: true,
   canSoftDeleteAllObjectRecords: true,
@@ -69,7 +67,6 @@ export const BASE_ROLE_MOCK_GRANTS_ALL: Role = {
   canBeAssignedToUsers: true,
   canBeAssignedToAgents: true,
   canBeAssignedToApiKeys: true,
-  showAllObjectsInSidebar: true,
   id: MOCK_ROLE_ID_GRANTS_ALL,
   isEditable: true,
   label: 'Role grants all',
@@ -94,6 +91,7 @@ export const BASE_ROLE_MOCK_GRANTS_ALL: Role = {
 
 export const BASE_ROLE_MOCK_REVOKES_ALL: Role = {
   canAccessAllTools: false,
+  showAllObjectsInSidebar: true,
   canReadAllObjectRecords: false,
   canUpdateAllObjectRecords: false,
   canSoftDeleteAllObjectRecords: false,
@@ -102,7 +100,6 @@ export const BASE_ROLE_MOCK_REVOKES_ALL: Role = {
   canBeAssignedToUsers: true,
   canBeAssignedToAgents: true,
   canBeAssignedToApiKeys: true,
-  showAllObjectsInSidebar: true,
   id: MOCK_ROLE_ID_REVOKES_ALL,
   isEditable: true,
   label: 'Role revokes all',

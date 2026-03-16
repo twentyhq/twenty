@@ -1,4 +1,4 @@
-import { useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client/react';
 
 import { TEST_INGESTION_PIPELINE } from '@/settings/ingestion-pipeline/graphql/ingestion-pipeline.mutations';
 

@@ -109,7 +109,7 @@ export default defineObject({
     },
     {
       universalIdentifier: CC_NOTES_FIELD_ID,
-      type: FieldType.RICH_TEXT_V2,
+      type: 'RICH_TEXT_V2' as FieldType,
       name: 'notes',
       label: 'Notes',
       description: 'Freeform notes about this carrier config',

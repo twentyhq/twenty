@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client/react';
 
 import {
   CREATE_INGESTION_FIELD_MAPPING,
@@ -17,9 +17,15 @@ export const useIngestionFieldMappings = (pipelineId?: string) => {
     skip: !pipelineId,
   });
 
-  const [createMutation] = useMutation(CREATE_INGESTION_FIELD_MAPPING);
-  const [createManyMutation] = useMutation(CREATE_INGESTION_FIELD_MAPPINGS);
-  const [updateMutation] = useMutation(UPDATE_INGESTION_FIELD_MAPPING);
+  const [createMutation] = useMutation<{
+    createIngestionFieldMapping: IngestionFieldMapping;
+  }>(CREATE_INGESTION_FIELD_MAPPING);
+  const [createManyMutation] = useMutation<{
+    createIngestionFieldMappings: IngestionFieldMapping[];
+  }>(CREATE_INGESTION_FIELD_MAPPINGS);
+  const [updateMutation] = useMutation<{
+    updateIngestionFieldMapping: IngestionFieldMapping;
+  }>(UPDATE_INGESTION_FIELD_MAPPING);
   const [deleteMutation] = useMutation(DELETE_INGESTION_FIELD_MAPPING);
 
   const createMapping = async (

@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "jaro-winkler-typescript": "^1.0.1",
-    "twenty-sdk": "0.6.3-alpha",
+    "twenty-sdk": "0.7.0",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {

@@ -281,8 +281,9 @@ export const useRecordIndexExportRecords = ({
             });
 
             const edges =
-              queryResult.data?.[targetObjectMetadataItem.namePlural]?.edges ??
-              [];
+              (queryResult.data as Record<string, any> | undefined)?.[
+                targetObjectMetadataItem.namePlural
+              ]?.edges ?? [];
 
             for (const edge of edges) {
               if (isDefined(edge.node?.id)) {

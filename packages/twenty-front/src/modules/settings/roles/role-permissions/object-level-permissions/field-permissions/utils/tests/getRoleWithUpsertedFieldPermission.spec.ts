@@ -3,6 +3,7 @@ import { getRoleWithUpsertedFieldPermission } from '@/settings/roles/role-permis
 
 const BASE_ROLE_MOCK: Role = {
   canAccessAllTools: false,
+  showAllObjectsInSidebar: true,
   canDestroyAllObjectRecords: true,
   canReadAllObjectRecords: true,
   canSoftDeleteAllObjectRecords: true,
@@ -11,7 +12,6 @@ const BASE_ROLE_MOCK: Role = {
   canBeAssignedToUsers: true,
   canBeAssignedToAgents: true,
   canBeAssignedToApiKeys: true,
-  showAllObjectsInSidebar: true,
   id: '1',
   isEditable: true,
   label: 'Role base',

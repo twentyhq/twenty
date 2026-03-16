@@ -9,7 +9,7 @@ export const executeRelationUpdatesViaMutation = async ({
   relationUpdates,
   batchSize,
 }: {
-  apolloClient: ApolloClient<object>;
+  apolloClient: ApolloClient;
   relationUpdates: RelationUpdateEntry[];
   batchSize: number;
 }) => {

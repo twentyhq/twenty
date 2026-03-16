@@ -9,7 +9,6 @@ export const objectPermissionKeyToHumanReadable = (
     canUpdateObjectRecords: t`update`,
     canSoftDeleteObjectRecords: t`delete`,
     canDestroyObjectRecords: t`destroy`,
-    showInSidebar: t`show in sidebar`,
   };
 
   return permissionAction[objectPermissionKey];

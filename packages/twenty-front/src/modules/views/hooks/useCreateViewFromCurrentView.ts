@@ -23,7 +23,7 @@ import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 import {
-  type CreateCoreViewFilterMutationVariables,
+  type CreateViewFilterMutationVariables,
   ViewCalendarLayout,
 } from '~/generated-metadata/graphql';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
@@ -219,7 +219,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
                   viewFilter.positionInViewFilterGroup ?? null,
                 subFieldName: viewFilter.subFieldName ?? null,
               },
-            }) as CreateCoreViewFilterMutationVariables,
+            }) as CreateViewFilterMutationVariables,
         );
 
         const filterResult = await performViewFilterAPICreate(

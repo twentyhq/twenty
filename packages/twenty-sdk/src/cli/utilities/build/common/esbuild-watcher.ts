@@ -193,15 +193,31 @@ export const createSdkClientsResolverPlugin = (
 ): esbuild.Plugin => ({
   name: 'sdk-clients-resolver',
   setup: (build) => {
-    build.onResolve({ filter: /^twenty-sdk\/clients/ }, () => ({
-      path: path.join(
+    build.onResolve({ filter: /^twenty-sdk\/clients/ }, () => {
+      const fs = require('fs') as typeof import('fs');
+      const sourcePath = path.join(
         appPath,
         'node_modules',
         'twenty-sdk',
         CLIENTS_SOURCE_DIR,
         'index.ts',
-      ),
-    }));
+      );
+
+      if (fs.existsSync(sourcePath)) {
+        return { path: sourcePath };
+      }
+
+      // Fallback to compiled dist when source isn't available (npm package)
+      const distPath = path.join(
+        appPath,
+        'node_modules',
+        'twenty-sdk',
+        'dist',
+        'clients.mjs',
+      );
+
+      return { path: distPath };
+    });
   },
 });
 

@@ -8,7 +8,6 @@ export type SettingsRolePermissionsObjectPermission = {
     | 'canReadObjectRecords'
     | 'canSoftDeleteObjectRecords'
     | 'canUpdateObjectRecords'
-    | 'showInSidebar'
   >;
   label: string | ReactNode;
   value?: boolean;
@@ -24,7 +23,6 @@ export type SettingsRolePermissionsObjectLevelPermission = {
     | 'canReadObjectRecords'
     | 'canSoftDeleteObjectRecords'
     | 'canUpdateObjectRecords'
-    | 'showInSidebar'
   >;
   label: string | ReactNode;
   value?: boolean | null;
