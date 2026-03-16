@@ -15,6 +15,9 @@ export type RecordInlineCellContextProps = {
   disableHoverEffect?: boolean;
   loading?: boolean;
   isCentered?: boolean;
+  // OMNIA-CUSTOM: Enable required-field red indicator only in sidebar widgets
+  // (not table cells where 900+ subscriptions crashed mobile Safari).
+  showRequiredIndicator?: boolean;
   onOpenEditMode?: () => void;
   onCloseEditMode?: () => void;
 };
@@ -33,6 +36,7 @@ const defaultRecordInlineCellContextProp: RecordInlineCellContextProps = {
   disableHoverEffect: false,
   loading: false,
   isCentered: false,
+  showRequiredIndicator: false,
   onOpenEditMode: undefined,
   onCloseEditMode: undefined,
 };

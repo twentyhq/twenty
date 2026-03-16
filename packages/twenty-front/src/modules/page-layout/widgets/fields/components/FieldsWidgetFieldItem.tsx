@@ -124,7 +124,7 @@ export const FieldsWidgetFieldItem = ({
             }),
           }}
         >
-          <RecordInlineCell loading={recordLoading} />
+          <RecordInlineCell loading={recordLoading} showRequiredIndicator />
         </RecordFieldComponentInstanceContext.Provider>
       )}
     </FieldContext.Provider>

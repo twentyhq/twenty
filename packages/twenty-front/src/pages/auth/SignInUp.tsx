@@ -135,7 +135,8 @@ export const SignInUp = () => {
       return t`Welcome to your workspace`;
     }
 
-    return t`Welcome, ${workspaceName}.`;
+    // OMNIA-CUSTOM: Show just the workspace name instead of "Welcome, X."
+    return workspaceName;
   }, [
     workspaceInviteHash,
     signInUpStep,

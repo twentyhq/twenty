@@ -3808,7 +3808,6 @@ msgstr "Créer un Webhook"
 
 #. js-lingui-id: kdLGki
 #: src/utils/title-utils.ts
-#: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 msgid "Create Workspace"
 msgstr "Créer un espace de travail"
 
@@ -7923,11 +7922,6 @@ msgstr "Inviter par lien"
 #: src/pages/onboarding/InviteTeam.tsx
 msgid "Invite link sent to email addresses"
 msgstr "Lien d'invitation envoyé aux adresses email"
-
-#. js-lingui-id: x1m5RZ
-#: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
-msgid "Invite user"
-msgstr "Inviter un utilisateur"
 
 #. js-lingui-id: d+Y+rP
 #: src/pages/onboarding/InviteTeam.tsx
@@ -15454,11 +15448,6 @@ msgstr ""
 #. js-lingui-id: t8ZvkC
 #: src/pages/auth/SignInUp.tsx
 msgid "Welcome to your workspace"
-msgstr ""
-
-#. js-lingui-id: Vin3Dv
-#: src/pages/auth/SignInUp.tsx
-msgid "Welcome, {workspaceName}."
 msgstr ""
 
 #. js-lingui-id: Itn+J7

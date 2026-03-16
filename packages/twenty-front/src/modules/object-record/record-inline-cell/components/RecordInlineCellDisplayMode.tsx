@@ -3,6 +3,7 @@ import { styled } from '@linaria/react';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useIsFieldEmpty } from '@/object-record/record-field/ui/hooks/useIsFieldEmpty';
 import { useIsFieldInputOnly } from '@/object-record/record-field/ui/hooks/useIsFieldInputOnly';
+import { useIsFieldRequired } from '@/object-record/record-field/ui/hooks/useIsFieldRequired';
 import {
   useRecordInlineCellContext,
   type RecordInlineCellContextProps,
@@ -55,16 +56,34 @@ const StyledRecordInlineCellNormalModeInnerContainer = styled.div`
   white-space: nowrap;
 `;
 
-// OMNIA-CUSTOM: Removed dynamic isRequired prop — required field indicators
-// belong in the sidebar detail view only, not in table cells. The previous
-// required-field hook created 3 jotai subscriptions per cell (900+ total
-// for a typical table), causing mobile Safari to crash within 6-10 seconds.
-const StyledEmptyField = styled.div`
+// OMNIA-CUSTOM: Required field indicators are only enabled in sidebar widgets
+// (via showRequiredIndicator context flag), not in table cells where 900+
+// jotai subscriptions crashed mobile Safari within 6-10 seconds.
+const StyledEmptyField = styled.div<{ isRequired?: boolean }>`
   align-items: center;
-  color: ${themeCssVariables.font.color.light};
+  color: ${({ isRequired }) =>
+    isRequired
+      ? themeCssVariables.color.red
+      : themeCssVariables.font.color.light};
   display: flex;
   height: 20px;
 `;
+
+// Sub-component that calls useIsFieldRequired — only rendered when
+// showRequiredIndicator is true, keeping hook subscriptions out of table cells.
+const RequiredEmptyField = ({
+  emptyPlaceHolder,
+}: {
+  emptyPlaceHolder: string;
+}) => {
+  const isRequired = useIsFieldRequired();
+
+  return (
+    <StyledEmptyField isRequired={isRequired}>
+      {emptyPlaceHolder}
+    </StyledEmptyField>
+  );
+};
 
 export const RecordInlineCellDisplayMode = ({
   children,
@@ -76,7 +95,7 @@ export const RecordInlineCellDisplayMode = ({
 }>) => {
   const { t } = useLingui();
 
-  const { editModeContentOnly, label, buttonIcon, readonly } =
+  const { editModeContentOnly, label, buttonIcon, readonly, showRequiredIndicator } =
     useRecordInlineCellContext();
 
   const { isForbidden } = useContext(FieldContext);
@@ -108,7 +127,11 @@ export const RecordInlineCellDisplayMode = ({
           {shouldShowValue ? (
             children
           ) : shouldShowEmptyPlaceholder ? (
-            <StyledEmptyField>{emptyPlaceHolder}</StyledEmptyField>
+            showRequiredIndicator ? (
+              <RequiredEmptyField emptyPlaceHolder={emptyPlaceHolder} />
+            ) : (
+              <StyledEmptyField>{emptyPlaceHolder}</StyledEmptyField>
+            )
           ) : null}
         </StyledRecordInlineCellNormalModeInnerContainer>
       </StyledRecordInlineCellNormalModeOuterContainer>

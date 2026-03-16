@@ -30,11 +30,13 @@ import {
 type RecordInlineCellProps = {
   loading?: boolean;
   instanceIdPrefix?: string;
+  showRequiredIndicator?: boolean;
 };
 
 export const RecordInlineCell = ({
   loading,
   instanceIdPrefix,
+  showRequiredIndicator,
 }: RecordInlineCellProps) => {
   const {
     fieldDefinition,
@@ -189,6 +191,7 @@ export const RecordInlineCell = ({
     isDisplayModeFixHeight: isDisplayModeFixHeight,
     editModeContentOnly: isFieldInputOnly,
     loading: loading,
+    showRequiredIndicator,
     onOpenEditMode,
     onCloseEditMode,
   };

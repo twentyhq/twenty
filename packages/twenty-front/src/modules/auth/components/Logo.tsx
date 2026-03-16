@@ -46,6 +46,7 @@ const StyledSecondaryLogoContainer = styled.div`
 
 const StyledPrimaryLogo = styled.div`
   background-size: cover;
+  border-radius: ${themeCssVariables.border.radius.md};
   height: 100%;
   width: 100%;
 `;
@@ -73,38 +74,47 @@ export const Logo = ({
 
   const isUsingDefaultLogo = !isDefined(primaryLogo);
 
+  // OMNIA-CUSTOM: When a workspace logo exists, show it as the primary logo
+  // instead of the Twenty "20" icon with a small workspace logo overlay.
+  const effectivePrimaryLogoUrl =
+    isDefined(secondaryLogoUrl) && isUsingDefaultLogo
+      ? secondaryLogoUrl
+      : primaryLogoUrl;
+  const hideSecondaryLogo = isDefined(secondaryLogoUrl) && isUsingDefaultLogo;
+
   return (
     <StyledContainer onClick={() => onClick?.()}>
-      {isUsingDefaultLogo ? (
+      {isUsingDefaultLogo && !hideSecondaryLogo ? (
         <UndecoratedLink
           to={AppPath.SignInUp}
           onClick={redirectToDefaultDomain}
         >
           <StyledPrimaryLogo
-            style={{ backgroundImage: `url(${primaryLogoUrl})` }}
+            style={{ backgroundImage: `url(${effectivePrimaryLogoUrl})` }}
           />
         </UndecoratedLink>
       ) : (
         <StyledPrimaryLogo
-          style={{ backgroundImage: `url(${primaryLogoUrl})` }}
+          style={{ backgroundImage: `url(${effectivePrimaryLogoUrl})` }}
         />
       )}
-      {isDefined(secondaryLogoUrl) ? (
-        <StyledSecondaryLogoContainer>
-          <StyledSecondaryLogo src={secondaryLogoUrl} />
-        </StyledSecondaryLogoContainer>
-      ) : (
-        isDefined(placeholder) && (
+      {!hideSecondaryLogo &&
+        (isDefined(secondaryLogoUrl) ? (
           <StyledSecondaryLogoContainer>
-            <Avatar
-              size="lg"
-              placeholder={placeholder}
-              type="squared"
-              placeholderColorSeed={placeholder}
-            />
+            <StyledSecondaryLogo src={secondaryLogoUrl} />
           </StyledSecondaryLogoContainer>
-        )
-      )}
+        ) : (
+          isDefined(placeholder) && (
+            <StyledSecondaryLogoContainer>
+              <Avatar
+                size="lg"
+                placeholder={placeholder}
+                type="squared"
+                placeholderColorSeed={placeholder}
+              />
+            </StyledSecondaryLogoContainer>
+          )
+        ))}
     </StyledContainer>
   );
 };
