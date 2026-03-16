@@ -1119,6 +1119,28 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: 'targetObjectMetadataUniversalIdentifier',
     },
   },
+  permissionFlag: {
+    flag: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    roleId: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: 'roleUniversalIdentifier',
+    },
+    createdAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    updatedAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+  },
   rowLevelPermissionPredicate: {
     fieldMetadataId: {
       toCompare: true,
