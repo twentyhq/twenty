@@ -3,14 +3,8 @@ import { useCallback, useState } from 'react';
 
 import {
   IconArchive,
-  IconBriefcase,
-  IconMail,
-  IconPhone,
   IconPinned,
   IconPinnedOff,
-  IconSend,
-  IconUser,
-  IconUsers,
 } from 'twenty-ui/display';
 import { type WaConversation } from '@/whatsapp-chat/types/WhatsAppTypes';
 
@@ -56,9 +50,10 @@ const PIPELINE_ICONS = {
 const StyledItem = styled.div<{ isSelected: boolean }>`
   background: ${({ isSelected }) =>
     isSelected ? '#EBF0FF' : 'transparent'};
+  border-bottom: 1px solid #F3F4F6;
   border-left: 3px solid ${({ isSelected }) =>
     isSelected ? '#1A6CFF' : 'transparent'};
-  border-radius: 8px;
+  border-radius: 0;
   cursor: pointer;
   display: flex;
   flex-direction: column;
@@ -268,87 +263,6 @@ const StyledPipelineLabel = styled.span<{ active: boolean }>`
   text-transform: uppercase;
 `;
 
-// ── Expanded detail styles ──────────────────────────────────────
-
-const StyledExpandedSection = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(1.5)};
-  margin-top: ${({ theme }) => theme.spacing(2)};
-`;
-
-const StyledDetailRow = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
-`;
-
-const StyledDetailIcon = styled.span`
-  align-items: center;
-  color: #9CA3AF;
-  display: flex;
-  flex-shrink: 0;
-  width: 16px;
-`;
-
-const StyledDetailLabel = styled.span`
-  color: #9CA3AF;
-  font-size: 12px;
-  min-width: 52px;
-`;
-
-const StyledDetailValue = styled.span`
-  color: #374151;
-  font-size: 12px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
-
-const StyledDetailLink = styled.a`
-  color: #1A6CFF;
-  font-size: 12px;
-  overflow: hidden;
-  text-decoration: none;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-
-  &:hover {
-    text-decoration: underline;
-  }
-`;
-
-const StyledLeadStatusBadge = styled.span<{ statusType?: string }>`
-  background: ${({ statusType }) => {
-    switch (statusType) {
-      case 'active':
-        return '#dbeafe';
-      case 'won':
-        return '#d1fae5';
-      case 'lost':
-        return '#ffe4e6';
-      default:
-        return '#f1f5f9';
-    }
-  }};
-  border-radius: 3px;
-  color: ${({ statusType }) => {
-    switch (statusType) {
-      case 'active':
-        return '#1d4ed8';
-      case 'won':
-        return '#047857';
-      case 'lost':
-        return '#be123c';
-      default:
-        return '#475569';
-    }
-  }};
-  font-size: 10px;
-  font-weight: 600;
-  line-height: 1;
-  padding: 2px 5px;
-`;
 
 // ── Compact pipeline (shown when not selected) ──────────────────
 
@@ -691,7 +605,7 @@ export const ConversationListItem = ({
           <StyledContent>
             <StyledTopRow>
               <StyledNameGroup>
-                <StyledName isUnread={conversation.isUnread}>
+                <StyledName isUnread={conversation.isUnread || needsReply}>
                   {displayName}
                 </StyledName>
                 {needsReply && <StyledNeedsReplyDot />}
@@ -798,91 +712,6 @@ export const ConversationListItem = ({
                 📅 {cleanMopName(conversation.mopLatestOfferName)}
               </StyledMopBanner>
             )}
-
-            <StyledExpandedSection>
-              <StyledDetailRow>
-                <StyledDetailIcon>
-                  <IconPhone size={14} />
-                </StyledDetailIcon>
-                <StyledDetailLabel>Phone</StyledDetailLabel>
-                <StyledDetailValue>
-                  {conversation.leadPhoneNumber}
-                </StyledDetailValue>
-              </StyledDetailRow>
-
-              {conversation.contactEmail && (
-                <StyledDetailRow>
-                  <StyledDetailIcon>
-                    <IconMail size={14} />
-                  </StyledDetailIcon>
-                  <StyledDetailLabel>Email</StyledDetailLabel>
-                  <StyledDetailValue>
-                    {conversation.contactEmail}
-                  </StyledDetailValue>
-                </StyledDetailRow>
-              )}
-
-              <StyledDetailRow>
-                <StyledDetailIcon>
-                  <IconUser size={14} />
-                </StyledDetailIcon>
-                <StyledDetailLabel>Owner</StyledDetailLabel>
-                <StyledDetailValue>
-                  {conversation.assignedToName || 'Unassigned'}
-                </StyledDetailValue>
-              </StyledDetailRow>
-
-              {conversation.coachLeadOwnerName && (
-                <StyledDetailRow>
-                  <StyledDetailIcon>
-                    <IconUsers size={14} />
-                  </StyledDetailIcon>
-                  <StyledDetailLabel>Coach</StyledDetailLabel>
-                  <StyledDetailValue>
-                    {conversation.coachLeadOwnerName}
-                  </StyledDetailValue>
-                </StyledDetailRow>
-              )}
-
-              {conversation.closeLeadStatus && (
-                <StyledDetailRow>
-                  <StyledDetailIcon>
-                    <IconBriefcase size={14} />
-                  </StyledDetailIcon>
-                  <StyledDetailLabel>Lead</StyledDetailLabel>
-                  <StyledLeadStatusBadge
-                    statusType={
-                      conversation.closeLeadStatus.toLowerCase().includes('won')
-                        ? 'won'
-                        : conversation.closeLeadStatus
-                              .toLowerCase()
-                              .includes('lost')
-                          ? 'lost'
-                          : 'active'
-                    }
-                  >
-                    {conversation.closeLeadStatus}
-                  </StyledLeadStatusBadge>
-                </StyledDetailRow>
-              )}
-
-              {conversation.closeLeadUrl && (
-                <StyledDetailRow>
-                  <StyledDetailIcon>
-                    <IconSend size={14} />
-                  </StyledDetailIcon>
-                  <StyledDetailLabel>Close</StyledDetailLabel>
-                  <StyledDetailLink
-                    href={conversation.closeLeadUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    Open in Close
-                  </StyledDetailLink>
-                </StyledDetailRow>
-              )}
-            </StyledExpandedSection>
 
             {/* Visual pipeline (Foundry-style circles + lines) */}
             {hasPipeline && <VisualPipeline conversation={conversation} />}

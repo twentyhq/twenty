@@ -14,10 +14,10 @@ const StyledContainer = styled.div`
 
 const StyledPlayButton = styled.button`
   align-items: center;
-  background: #1A6CFF;
+  background: rgba(128, 128, 128, 0.15);
   border: none;
   border-radius: 50%;
-  color: #FFFFFF;
+  color: inherit;
   cursor: pointer;
   display: flex;
   flex-shrink: 0;
@@ -26,7 +26,7 @@ const StyledPlayButton = styled.button`
   width: 32px;
 
   &:hover {
-    opacity: 0.9;
+    background: rgba(128, 128, 128, 0.25);
   }
 `;
 
@@ -38,7 +38,7 @@ const StyledWaveform = styled.div`
 `;
 
 const StyledProgressBar = styled.div`
-  background: rgba(0, 0, 0, 0.1);
+  background: rgba(128, 128, 128, 0.2);
   border-radius: 2px;
   cursor: pointer;
   height: 4px;
@@ -48,16 +48,18 @@ const StyledProgressBar = styled.div`
 `;
 
 const StyledProgress = styled.div<{ width: number }>`
-  background: #1A6CFF;
+  background: currentColor;
   border-radius: 2px;
   height: 100%;
+  opacity: 0.6;
   transition: width 100ms linear;
   width: ${({ width }) => width}%;
 `;
 
 const StyledDuration = styled.span`
-  color: #6B7280;
+  color: inherit;
   font-size: 12px;
+  opacity: 0.7;
 `;
 
 const resolveMediaUrl = (mediaUrl: string): string => {

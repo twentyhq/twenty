@@ -203,7 +203,7 @@ export const ConversationList = ({
       );
     }
 
-    // Segment filter
+    // Segment filter — by default hide conversations with no CRM contact match
     if (segmentFilter === 'clients') {
       result = result.filter(
         (c) => c.isClient || CLIENT_PROGRAMS.has(c.justusProgram ?? ''),
@@ -211,6 +211,11 @@ export const ConversationList = ({
     } else if (segmentFilter === 'leads') {
       result = result.filter(
         (c) => !c.isClient && !CLIENT_PROGRAMS.has(c.justusProgram ?? ''),
+      );
+    } else {
+      // 'all' still filters out chats with no CRM contact match
+      result = result.filter(
+        (c) => c.contactEmail || c.justusProgram || c.isClient,
       );
     }
 
