@@ -12,9 +12,9 @@ const StyledCardContainer = styled.div`
   flex-direction: column;
   flex-grow: 1;
   gap: ${themeCssVariables.spacing[2]};
+  max-width: 400px;
   padding: ${themeCssVariables.spacing[2]} 0px ${themeCssVariables.spacing[1]}
     0px;
-  max-width: 400px;
   width: 100%;
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
