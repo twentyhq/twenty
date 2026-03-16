@@ -108,7 +108,8 @@ export const WorkspaceNavigationMenuItems = () => {
     if (objectMetadataItem) {
       openNavigationMenuItemInSidePanel({
         pageTitle:
-          item.itemType === NavigationMenuItemType.VIEW
+          item.itemType === NavigationMenuItemType.VIEW ||
+          item.itemType === NavigationMenuItemType.OBJECT
             ? item.labelIdentifier
             : objectMetadataItem.labelSingular,
         pageIcon: getIcon(objectMetadataItem.icon),

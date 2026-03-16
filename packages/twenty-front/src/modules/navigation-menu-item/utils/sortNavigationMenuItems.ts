@@ -26,6 +26,45 @@ export const sortNavigationMenuItems = (
 ): ProcessedNavigationMenuItem[] => {
   return navigationMenuItems
     .map((navigationMenuItem) => {
+      if (
+        navigationMenuItem.type === NavigationMenuItemType.OBJECT &&
+        isDefined(navigationMenuItem.targetObjectMetadataId)
+      ) {
+        const objectMetadataItem = objectMetadataItems.find(
+          (meta) => meta.id === navigationMenuItem.targetObjectMetadataId,
+        );
+
+        if (!isDefined(objectMetadataItem)) {
+          return null;
+        }
+
+        const indexView = views.find(
+          (view) =>
+            view.objectMetadataId === objectMetadataItem.id &&
+            view.key === ViewKey.INDEX,
+        );
+
+        const displayFields: NavigationMenuItemDisplayFields = {
+          labelIdentifier: objectMetadataItem.labelPlural,
+          avatarUrl: '',
+          avatarType: 'icon',
+          link: getAppPath(
+            AppPath.RecordIndexPage,
+            { objectNamePlural: objectMetadataItem.namePlural },
+            indexView ? { viewId: indexView.id } : {},
+          ),
+          objectNameSingular: objectMetadataItem.nameSingular,
+          Icon: objectMetadataItem.icon ?? 'IconBox',
+        };
+
+        return {
+          ...navigationMenuItem,
+          ...displayFields,
+          viewKey: ViewKey.INDEX,
+          itemType: NavigationMenuItemType.OBJECT,
+        };
+      }
+
       if (isDefined(navigationMenuItem.viewId)) {
         const view = views.find(
           (view) => view.id === navigationMenuItem.viewId,
@@ -71,11 +110,7 @@ export const sortNavigationMenuItems = (
             ...navigationMenuItem,
             ...displayFields,
             viewKey: view.key,
-            itemType:
-              navigationMenuItem.type ===
-              NavigationMenuItemType.OBJECT
-                ? NavigationMenuItemType.OBJECT
-                : NavigationMenuItemType.VIEW,
+            itemType: NavigationMenuItemType.VIEW,
           };
         }
 

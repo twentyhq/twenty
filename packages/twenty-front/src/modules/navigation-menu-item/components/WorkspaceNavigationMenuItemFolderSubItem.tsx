@@ -39,6 +39,7 @@ export const WorkspaceNavigationMenuItemFolderSubItem = ({
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
   const views = useAtomStateValue(viewsSelector);
   const objectMetadataItem =
+    navigationMenuItem.itemType === NavigationMenuItemType.OBJECT ||
     navigationMenuItem.itemType === NavigationMenuItemType.VIEW ||
     navigationMenuItem.itemType === NavigationMenuItemType.RECORD
       ? getObjectMetadataForNavigationMenuItem(

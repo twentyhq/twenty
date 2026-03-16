@@ -470,7 +470,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
 
     const flatNavigationMenuItemToCreate =
       await this.computeFlatNavigationMenuItemToCreate({
-        view: flatDefaultViewToCreate,
+        objectMetadata: flatObjectMetadataToCreate,
         workspaceId,
         workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
         workspaceCustomApplicationUniversalIdentifier:
@@ -684,12 +684,12 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
   }
 
   private async computeFlatNavigationMenuItemToCreate({
-    view,
+    objectMetadata,
     workspaceId,
     workspaceCustomApplicationId,
     workspaceCustomApplicationUniversalIdentifier,
   }: {
-    view: UniversalFlatView & { id: string };
+    objectMetadata: { id: string; universalIdentifier: string };
     workspaceId: string;
     workspaceCustomApplicationId: string;
     workspaceCustomApplicationUniversalIdentifier: string;
@@ -719,10 +719,11 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       universalIdentifier: newId,
       userWorkspaceId: null,
       targetRecordId: null,
-      targetObjectMetadataId: null,
-      targetObjectMetadataUniversalIdentifier: null,
-      viewId: view.id,
-      viewUniversalIdentifier: view.universalIdentifier,
+      targetObjectMetadataId: objectMetadata.id,
+      targetObjectMetadataUniversalIdentifier:
+        objectMetadata.universalIdentifier,
+      viewId: null,
+      viewUniversalIdentifier: null,
       folderId: null,
       folderUniversalIdentifier: null,
       name: null,

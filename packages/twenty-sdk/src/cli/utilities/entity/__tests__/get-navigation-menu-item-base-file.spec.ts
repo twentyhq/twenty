@@ -29,15 +29,27 @@ describe('getNavigationMenuItemBaseFile', () => {
     expect(result).not.toContain('// Link to a view:');
   });
 
-  it('should include commented link options when viewUniversalIdentifier is not provided', () => {
+  it('should include commented link options when no identifier is provided', () => {
     const result = getNavigationMenuItemBaseFile({
       name: 'unlinked-item',
     });
 
-    expect(result).toContain('// Link to a view:');
-    expect(result).toContain('// viewUniversalIdentifier:');
+    expect(result).toContain('// Link to an object:');
     expect(result).toContain('// targetObjectUniversalIdentifier:');
+    expect(result).toContain('// viewUniversalIdentifier:');
     expect(result).toContain('// link:');
+  });
+
+  it('should include targetObjectUniversalIdentifier when provided', () => {
+    const result = getNavigationMenuItemBaseFile({
+      name: 'object-item',
+      targetObjectUniversalIdentifier: 'obj-uuid-123',
+    });
+
+    expect(result).toContain(
+      "targetObjectUniversalIdentifier: 'obj-uuid-123'",
+    );
+    expect(result).not.toContain('// Link to an object:');
   });
 
   it('should generate unique UUID when not provided', () => {

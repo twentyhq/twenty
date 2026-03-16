@@ -14,7 +14,7 @@ export const useAddObjectToNavigationMenuDraft = () => {
 
   const addObjectToDraft = (
     objectMetadataId: string,
-    defaultViewId: string,
+    _defaultViewId: string,
     currentDraft: NavigationMenuItem[],
     targetFolderId?: string | null,
     targetIndex?: number,
@@ -40,7 +40,7 @@ export const useAddObjectToNavigationMenuDraft = () => {
       __typename: 'NavigationMenuItem',
       id: newItemId,
       type: NavigationMenuItemType.OBJECT,
-      viewId: defaultViewId,
+      viewId: undefined,
       targetObjectMetadataId: objectMetadataId,
       position,
       userWorkspaceId: undefined,

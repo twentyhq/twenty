@@ -5,21 +5,29 @@ export const getNavigationMenuItemBaseFile = ({
   name,
   universalIdentifier = v4(),
   viewUniversalIdentifier,
+  targetObjectUniversalIdentifier,
 }: {
   name: string;
   universalIdentifier?: string;
   viewUniversalIdentifier?: string;
+  targetObjectUniversalIdentifier?: string;
 }) => {
   const kebabCaseName = kebabCase(name);
 
-  const linkConfig = viewUniversalIdentifier
-    ? `  viewUniversalIdentifier: '${viewUniversalIdentifier}',`
-    : `  // Link to a view:
-  // viewUniversalIdentifier: '...',
-  // Or link to an object:
+  let linkConfig: string;
+
+  if (targetObjectUniversalIdentifier) {
+    linkConfig = `  targetObjectUniversalIdentifier: '${targetObjectUniversalIdentifier}',`;
+  } else if (viewUniversalIdentifier) {
+    linkConfig = `  viewUniversalIdentifier: '${viewUniversalIdentifier}',`;
+  } else {
+    linkConfig = `  // Link to an object:
   // targetObjectUniversalIdentifier: '...',
+  // Or link to a view:
+  // viewUniversalIdentifier: '...',
   // Or link to an external URL:
   // link: 'https://example.com',`;
+  }
 
   return `import { defineNavigationMenuItem } from 'twenty-sdk';
 

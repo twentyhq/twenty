@@ -6,9 +6,10 @@ export const isLocationMatchingNavigationMenuItem = (
   currentViewPath: string,
   navigationMenuItem: Pick<ProcessedNavigationMenuItem, 'itemType' | 'link'>,
 ) => {
-  const isViewItem =
-    navigationMenuItem.itemType === NavigationMenuItemType.VIEW;
-  return isViewItem
+  const isViewBasedItem =
+    navigationMenuItem.itemType === NavigationMenuItemType.VIEW ||
+    navigationMenuItem.itemType === NavigationMenuItemType.OBJECT;
+  return isViewBasedItem
     ? navigationMenuItem.link === currentViewPath
     : navigationMenuItem.link === currentPath;
 };

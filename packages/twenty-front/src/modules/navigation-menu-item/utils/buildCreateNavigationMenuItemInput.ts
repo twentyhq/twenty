@@ -7,6 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/utils/isNavigationMenuItemFolder';
 import { isNavigationMenuItemLink } from '@/navigation-menu-item/utils/isNavigationMenuItemLink';
+import { isNavigationMenuItemObject } from '@/navigation-menu-item/utils/isNavigationMenuItemObject';
 
 export const buildCreateNavigationMenuItemInput = (
   draftItem: NavigationMenuItem,
@@ -29,6 +30,9 @@ export const buildCreateNavigationMenuItemInput = (
         : linkUrl
           ? `https://${linkUrl}`
           : undefined;
+  } else if (isNavigationMenuItemObject(draftItem)) {
+    input.targetObjectMetadataId =
+      draftItem.targetObjectMetadataId ?? undefined;
   } else if (isDefined(draftItem.viewId)) {
     input.viewId = draftItem.viewId;
   } else if (isDefined(draftItem.targetRecordId)) {

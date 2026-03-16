@@ -12,6 +12,7 @@ const getLabelForItemType = (
       return item.name ?? 'Folder';
     case NavigationMenuItemType.LINK:
       return item.name ?? 'Link';
+    case NavigationMenuItemType.OBJECT:
     case NavigationMenuItemType.VIEW:
       return item.labelIdentifier ?? objectLabelSingular ?? '';
     default:

@@ -3,6 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/utils/isNavigationMenuItemFolder';
 import { isNavigationMenuItemLink } from '@/navigation-menu-item/utils/isNavigationMenuItemLink';
+import { isNavigationMenuItemObject } from '@/navigation-menu-item/utils/isNavigationMenuItemObject';
 import { recordIdentifierToObjectRecordIdentifier } from '@/navigation-menu-item/utils/recordIdentifierToObjectRecordIdentifier';
 import { sortNavigationMenuItems } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
@@ -82,6 +83,9 @@ export const useSortedNavigationMenuItems = () => {
       }
       if (isNavigationMenuItemLink(item)) {
         return true;
+      }
+      if (isNavigationMenuItemObject(item)) {
+        return isDefined(item.targetObjectMetadataId);
       }
       if (isDefined(item.viewId)) {
         return views.some((view) => view.id === item.viewId);

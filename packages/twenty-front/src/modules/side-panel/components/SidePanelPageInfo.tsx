@@ -62,6 +62,7 @@ export const SidePanelPageInfo = ({ pageChip }: SidePanelPageInfoProps) => {
     }
 
     if (
+      itemType === NavigationMenuItemType.OBJECT ||
       itemType === NavigationMenuItemType.VIEW ||
       itemType === NavigationMenuItemType.RECORD
     ) {

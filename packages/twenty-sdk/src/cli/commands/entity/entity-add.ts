@@ -260,7 +260,7 @@ export class EntityAddCommand {
 
     const navFile = getNavigationMenuItemBaseFile({
       name: objectName,
-      viewUniversalIdentifier,
+      targetObjectUniversalIdentifier: this.lastObjectUniversalIdentifier,
     });
 
     const navFolderPath = customPath

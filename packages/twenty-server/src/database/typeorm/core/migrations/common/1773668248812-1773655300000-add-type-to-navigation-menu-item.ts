@@ -32,6 +32,16 @@ export class AddTypeToNavigationMenuItem1773668248812
       WHERE "type" IS NULL
     `);
 
+    await queryRunner.query(`
+      UPDATE "core"."navigationMenuItem" nmi
+      SET
+        "targetObjectMetadataId" = v."objectMetadataId",
+        "viewId" = NULL
+      FROM "core"."view" v
+      WHERE nmi."type" = 'OBJECT'
+        AND nmi."viewId" = v.id
+    `);
+
     await queryRunner.query(
       `ALTER TABLE "core"."navigationMenuItem" ALTER COLUMN "type" SET NOT NULL`,
     );

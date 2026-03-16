@@ -96,6 +96,7 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
       return true;
     }
     if (
+      type === NavigationMenuItemType.OBJECT ||
       type === NavigationMenuItemType.VIEW ||
       type === NavigationMenuItemType.RECORD
     ) {

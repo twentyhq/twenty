@@ -51,7 +51,9 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
   const isRecord =
     navigationMenuItem?.itemType === NavigationMenuItemType.RECORD;
   const isView = navigationMenuItem?.itemType === NavigationMenuItemType.VIEW;
-  const hasCustomLink = isRecord || isView;
+  const isObject =
+    navigationMenuItem?.itemType === NavigationMenuItemType.OBJECT;
+  const hasCustomLink = isRecord || isView || isObject;
 
   const navigationPath = hasCustomLink
     ? navigationMenuItem!.link
@@ -62,7 +64,7 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
       );
 
   const isActive = hasCustomLink
-    ? (isView ? currentPathWithSearch : currentPath) ===
+    ? (isView || isObject ? currentPathWithSearch : currentPath) ===
       navigationMenuItem!.link
     : currentPath ===
         getAppPath(AppPath.RecordIndexPage, {

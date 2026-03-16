@@ -53,8 +53,7 @@ export const NavigationMenuEditModeBar = () => {
     isNavigationMenuInEditModeState,
   );
   const { saveDraft } = useSaveNavigationMenuItemsDraft();
-  const { saveObjectMetadataColors } =
-    useSaveObjectMetadataColorsFromDraft();
+  const { saveObjectMetadataColors } = useSaveObjectMetadataColorsFromDraft();
   const { isDirty } = useNavigationMenuItemsDraftState();
 
   const cancelEditMode = () => {

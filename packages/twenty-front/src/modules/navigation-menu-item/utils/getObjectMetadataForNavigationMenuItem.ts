@@ -20,6 +20,16 @@ export const getObjectMetadataForNavigationMenuItem = (
   }
 
   if (
+    navigationMenuItem.itemType === NavigationMenuItemType.OBJECT &&
+    isDefined(navigationMenuItem.targetObjectMetadataId)
+  ) {
+    const objectMetadataItem = objectMetadataItems.find(
+      (meta) => meta.id === navigationMenuItem.targetObjectMetadataId,
+    );
+    return objectMetadataItem ?? null;
+  }
+
+  if (
     navigationMenuItem.itemType === NavigationMenuItemType.VIEW &&
     isDefined(navigationMenuItem.viewId)
   ) {
