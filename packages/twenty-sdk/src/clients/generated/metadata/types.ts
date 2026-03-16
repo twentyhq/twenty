@@ -4154,6 +4154,9 @@ export default {
             "availabilityType": [
                 227
             ],
+            "hotKeys": [
+                1
+            ],
             "conditionalAvailabilityExpression": [
                 1
             ],
@@ -9435,6 +9438,9 @@ export default {
             "availabilityType": [
                 227
             ],
+            "hotKeys": [
+                1
+            ],
             "conditionalAvailabilityExpression": [
                 1
             ],
@@ -9472,6 +9478,9 @@ export default {
             ],
             "engineComponentKey": [
                 226
+            ],
+            "hotKeys": [
+                1
             ],
             "__typename": [
                 1

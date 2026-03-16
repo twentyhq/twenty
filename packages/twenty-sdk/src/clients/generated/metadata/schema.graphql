@@ -2064,6 +2064,7 @@ type CommandMenuItem {
   position: Float!
   isPinned: Boolean!
   availabilityType: CommandMenuItemAvailabilityType!
+  hotKeys: [String!]
   conditionalAvailabilityExpression: String
   availabilityObjectMetadataId: UUID
   applicationId: UUID
@@ -3717,6 +3718,7 @@ input CreateCommandMenuItemInput {
   position: Float
   isPinned: Boolean
   availabilityType: CommandMenuItemAvailabilityType
+  hotKeys: [String!]
   conditionalAvailabilityExpression: String
   availabilityObjectMetadataId: UUID
 }
@@ -3731,6 +3733,7 @@ input UpdateCommandMenuItemInput {
   availabilityType: CommandMenuItemAvailabilityType
   availabilityObjectMetadataId: UUID
   engineComponentKey: EngineComponentKey
+  hotKeys: [String!]
 }
 
 input CreateFrontComponentInput {
