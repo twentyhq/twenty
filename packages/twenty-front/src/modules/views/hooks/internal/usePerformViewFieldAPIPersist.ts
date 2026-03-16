@@ -3,11 +3,9 @@ import { useCallback } from 'react';
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useTriggerViewFieldOptimisticEffect } from '@/views/optimistic-effects/hooks/useTriggerViewFieldOptimisticEffect';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { t } from '@lingui/core/macro';
 import { CrudOperationType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 import { useMutation } from '@apollo/client/react';
 import {
   type CreateManyCoreViewFieldsMutationVariables,
@@ -21,9 +19,6 @@ import {
 } from '~/generated-metadata/graphql';
 
 export const usePerformViewFieldAPIPersist = () => {
-  const { triggerViewFieldOptimisticEffect } =
-    useTriggerViewFieldOptimisticEffect();
-
   const [createManyCoreViewFieldsMutation] = useMutation(
     CreateManyCoreViewFieldsDocument,
   );
@@ -61,16 +56,6 @@ export const usePerformViewFieldAPIPersist = () => {
       try {
         const result = await createManyCoreViewFieldsMutation({
           variables: createCoreViewFieldInputs,
-          update: (_cache, { data }) => {
-            const createdViewFields = data?.createManyCoreViewFields;
-            if (!isDefined(createdViewFields)) {
-              return;
-            }
-
-            triggerViewFieldOptimisticEffect({
-              createdViewFields,
-            });
-          },
         });
 
         return {
@@ -94,7 +79,6 @@ export const usePerformViewFieldAPIPersist = () => {
       }
     },
     [
-      triggerViewFieldOptimisticEffect,
       createManyCoreViewFieldsMutation,
       handleMetadataError,
       enqueueErrorSnackBar,
@@ -121,16 +105,6 @@ export const usePerformViewFieldAPIPersist = () => {
           createCoreViewFieldInputs.map((variables) =>
             updateCoreViewFieldMutation({
               variables,
-              update: (_cache, { data }) => {
-                const updatedViewField = data?.updateCoreViewField;
-                if (!isDefined(updatedViewField)) {
-                  return;
-                }
-
-                triggerViewFieldOptimisticEffect({
-                  updatedViewFields: [updatedViewField],
-                });
-              },
             }),
           ),
         );
@@ -155,12 +129,7 @@ export const usePerformViewFieldAPIPersist = () => {
         };
       }
     },
-    [
-      triggerViewFieldOptimisticEffect,
-      updateCoreViewFieldMutation,
-      handleMetadataError,
-      enqueueErrorSnackBar,
-    ],
+    [updateCoreViewFieldMutation, handleMetadataError, enqueueErrorSnackBar],
   );
 
   const performViewFieldAPIDelete = useCallback(
@@ -183,16 +152,6 @@ export const usePerformViewFieldAPIPersist = () => {
           deleteCoreViewFieldInputs.map((variables) =>
             deleteCoreViewFieldMutation({
               variables,
-              update: (_cache, { data }) => {
-                const deletedViewField = data?.deleteCoreViewField;
-                if (!isDefined(deletedViewField)) {
-                  return;
-                }
-
-                triggerViewFieldOptimisticEffect({
-                  deletedViewFields: [deletedViewField],
-                });
-              },
             }),
           ),
         );
@@ -217,12 +176,7 @@ export const usePerformViewFieldAPIPersist = () => {
         };
       }
     },
-    [
-      triggerViewFieldOptimisticEffect,
-      deleteCoreViewFieldMutation,
-      handleMetadataError,
-      enqueueErrorSnackBar,
-    ],
+    [deleteCoreViewFieldMutation, handleMetadataError, enqueueErrorSnackBar],
   );
 
   const performViewFieldAPIDestroy = useCallback(

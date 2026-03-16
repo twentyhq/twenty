@@ -11,7 +11,6 @@ import { usePerformViewFieldAPIPersist } from '@/views/hooks/internal/usePerform
 import { usePerformViewFilterAPIPersist } from '@/views/hooks/internal/usePerformViewFilterAPIPersist';
 import { usePerformViewFilterGroupAPIPersist } from '@/views/hooks/internal/usePerformViewFilterGroupAPIPersist';
 import { usePerformViewSortAPIPersist } from '@/views/hooks/internal/usePerformViewSortAPIPersist';
-import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
 import { coreViewFromViewIdFamilySelector } from '@/views/states/selectors/coreViewFromViewIdFamilySelector';
 import { type GraphQLView } from '@/views/types/GraphQLView';
 import { ViewType } from '@/views/types/ViewType';
@@ -53,9 +52,6 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
     usePerformViewFilterGroupAPIPersist();
 
   const store = useStore();
-
-  const { refreshCoreViewsByObjectMetadataId } =
-    useRefreshCoreViewsByObjectMetadataId();
 
   const currentRecordFilterGroups = useAtomComponentStateValue(
     currentRecordFilterGroupsComponentState,
@@ -246,8 +242,6 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
         }
       }
 
-      await refreshCoreViewsByObjectMetadataId(objectMetadataItem.id);
-
       return newViewId;
     },
     [
@@ -256,7 +250,6 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
       anyFieldFilterValue,
       objectMetadataItem,
       performViewFieldAPICreate,
-      refreshCoreViewsByObjectMetadataId,
       store,
       currentRecordFilterGroups,
       currentRecordFilters,

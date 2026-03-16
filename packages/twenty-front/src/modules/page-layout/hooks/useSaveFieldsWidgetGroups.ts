@@ -6,7 +6,6 @@ import { fieldsWidgetGroupsPersistedComponentState } from '@/page-layout/states/
 import { fieldsWidgetUngroupedFieldsDraftComponentState } from '@/page-layout/states/fieldsWidgetUngroupedFieldsDraftComponentState';
 import { fieldsWidgetUngroupedFieldsPersistedComponentState } from '@/page-layout/states/fieldsWidgetUngroupedFieldsPersistedComponentState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
-import { useRefreshAllCoreViews } from '@/views/hooks/useRefreshAllCoreViews';
 import { useMutation } from '@apollo/client/react';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
@@ -81,8 +80,6 @@ export const useSaveFieldsWidgetGroups = ({
     UpsertFieldsWidgetResult,
     { input: UpsertFieldsWidgetInput }
   >(UPSERT_FIELDS_WIDGET);
-
-  const { refreshAllCoreViews } = useRefreshAllCoreViews();
 
   const store = useStore();
 
@@ -165,8 +162,6 @@ export const useSaveFieldsWidgetGroups = ({
     );
     store.set(fieldsWidgetEditorModePersistedState, allEditorModes);
 
-    await refreshAllCoreViews();
-
     return { status: 'successful' as const };
   }, [
     fieldsWidgetGroupsDraftState,
@@ -176,7 +171,6 @@ export const useSaveFieldsWidgetGroups = ({
     fieldsWidgetEditorModeDraftState,
     fieldsWidgetEditorModePersistedState,
     upsertFieldsWidgetMutation,
-    refreshAllCoreViews,
     store,
   ]);
 

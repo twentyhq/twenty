@@ -5,21 +5,12 @@ import {
 } from '~/generated-metadata/graphql';
 
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
-import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItems';
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { t } from '@lingui/core/macro';
 import { CrudOperationType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
-
 export const useCreateOneObjectMetadataItem = () => {
-  const { refreshObjectMetadataItems } =
-    useRefreshObjectMetadataItems('network-only');
-  const { refreshCoreViewsByObjectMetadataId } =
-    useRefreshCoreViewsByObjectMetadataId();
-
   const [createOneObjectMetadataItemMutation] = useMutation(
     CreateOneObjectMetadataItemDocument,
   );
@@ -40,14 +31,6 @@ export const useCreateOneObjectMetadataItem = () => {
           input: { object: input },
         },
       });
-
-      await refreshObjectMetadataItems();
-
-      if (isDefined(createdObjectMetadata.data?.createOneObject?.id)) {
-        await refreshCoreViewsByObjectMetadataId(
-          createdObjectMetadata.data.createOneObject.id,
-        );
-      }
 
       return {
         status: 'successful',
