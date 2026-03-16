@@ -69,6 +69,7 @@ export const optimisticallyApplyCreateActionOnAllFlatEntityMaps = ({
     case 'frontComponent':
     case 'navigationMenuItem':
     case 'permissionFlag':
+    case 'objectPermission':
     case 'webhook': {
       addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow({
         flatEntity: flatAction.flatEntity,

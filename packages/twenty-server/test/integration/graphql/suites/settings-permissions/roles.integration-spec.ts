@@ -493,12 +493,19 @@ describe('roles permissions', () => {
           .expect((res) => {
             expect(res.body.data).toBeNull();
             expect(res.body.errors).toBeDefined();
-            expect(res.body.errors[0].message).toBe(
-              PermissionsExceptionMessage.ROLE_NOT_EDITABLE,
-            );
             expect(res.body.errors[0].extensions.code).toBe(
-              ErrorCode.FORBIDDEN,
+              ErrorCode.METADATA_VALIDATION_FAILED,
             );
+            const objectPermissionErrors =
+              res.body.errors[0].extensions.errors?.objectPermission ?? [];
+            const hasRoleNotEditable = objectPermissionErrors.some(
+              (failure: { errors?: Array<{ code?: string }> }) =>
+                failure.errors?.some(
+                  (err) =>
+                    err.code === PermissionsExceptionCode.ROLE_NOT_EDITABLE,
+                ),
+            );
+            expect(hasRoleNotEditable).toBe(true);
           });
       });
 
