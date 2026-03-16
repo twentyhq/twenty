@@ -1,18 +1,19 @@
+import { parseThemeColor } from '@/navigation-menu-item/utils/parseThemeColor';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
-import { SidePanelEditColorOption } from '@/side-panel/pages/navigation-menu-item/components/SidePanelEditColorOption';
+import { SidePanelEditObjectColorOption } from '@/side-panel/pages/navigation-menu-item/components/SidePanelEditObjectColorOption';
 import {
   type OrganizeActionsProps,
   SidePanelEditOrganizeActions,
 } from '@/side-panel/pages/navigation-menu-item/components/SidePanelEditOrganizeActions';
 import { getOrganizeActionsSelectableItemIds } from '@/side-panel/pages/navigation-menu-item/utils/getOrganizeActionsSelectableItemIds';
-import { useSelectedNavigationMenuItemEditItem } from '@/navigation-menu-item/hooks/useSelectedNavigationMenuItemEditItem';
-import { parseThemeColor } from '@/navigation-menu-item/utils/parseThemeColor';
 import { useLingui } from '@lingui/react/macro';
+import { isDefined } from 'twenty-shared/utils';
 
 type SidePanelEditObjectViewBaseProps = OrganizeActionsProps & {
   onOpenFolderPicker: () => void;
-  showColorOption?: boolean;
+  objectMetadataItem?: ObjectMetadataItem | null;
 };
 
 export const SidePanelEditObjectViewBase = ({
@@ -24,19 +25,18 @@ export const SidePanelEditObjectViewBase = ({
   onRemove,
   onAddBefore,
   onAddAfter,
-  showColorOption = false,
+  objectMetadataItem,
 }: SidePanelEditObjectViewBaseProps) => {
   const { t } = useLingui();
-  const { selectedItem } = useSelectedNavigationMenuItemEditItem();
   const selectableItemIds = getOrganizeActionsSelectableItemIds(true);
 
   return (
     <SidePanelList commandGroups={[]} selectableItemIds={selectableItemIds}>
-      {showColorOption && selectedItem && (
+      {isDefined(objectMetadataItem) && (
         <SidePanelGroup heading={t`Customize`}>
-          <SidePanelEditColorOption
-            navigationMenuItemId={selectedItem.id}
-            color={parseThemeColor(selectedItem.color)}
+          <SidePanelEditObjectColorOption
+            objectMetadataId={objectMetadataItem.id}
+            color={parseThemeColor(objectMetadataItem.color)}
           />
         </SidePanelGroup>
       )}

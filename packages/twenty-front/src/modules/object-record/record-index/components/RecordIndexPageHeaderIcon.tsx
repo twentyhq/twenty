@@ -1,11 +1,8 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { NavigationMenuItemStyleIcon } from '@/navigation-menu-item/components/NavigationMenuItemStyleIcon';
-import { useNavigationMenuItemsData } from '@/navigation-menu-item/hooks/useNavigationMenuItemsData';
 import { getStandardObjectIconColor } from '@/navigation-menu-item/utils/getStandardObjectIconColor';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-import { indexViewIdFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/indexViewIdFromObjectMetadataItemFamilySelector';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 
@@ -14,11 +11,6 @@ export const RecordIndexPageHeaderIcon = ({
 }: {
   objectMetadataItem?: ObjectMetadataItem;
 }) => {
-  const { workspaceNavigationMenuItems } = useNavigationMenuItemsData();
-  const coreIndexViewId = useAtomFamilySelectorValue(
-    indexViewIdFromObjectMetadataItemFamilySelector,
-    { objectMetadataItemId: objectMetadataItem?.id ?? '' },
-  );
   const { getIcon } = useIcons();
   const ObjectIcon = getIcon(objectMetadataItem?.icon);
 
@@ -26,17 +18,9 @@ export const RecordIndexPageHeaderIcon = ({
     return null;
   }
 
-  const navItem = isDefined(coreIndexViewId)
-    ? workspaceNavigationMenuItems.find(
-        (item) => item.viewId === coreIndexViewId,
-      )
-    : undefined;
-  const navigationMenuItemColor = isNonEmptyString(navItem?.color)
-    ? navItem.color
-    : undefined;
-  const iconColor =
-    navigationMenuItemColor ??
-    getStandardObjectIconColor(objectMetadataItem?.nameSingular ?? '');
+  const iconColor = isNonEmptyString(objectMetadataItem?.color)
+    ? objectMetadataItem.color
+    : getStandardObjectIconColor(objectMetadataItem?.nameSingular ?? '');
 
   return (
     <NavigationMenuItemStyleIcon

@@ -109,10 +109,12 @@ export const SidePanelNavigationMenuItemEditPage = () => {
           onRemove={onRemove}
           onAddBefore={onAddBefore}
           onAddAfter={onAddAfter}
-          showColorOption={
+          objectMetadataItem={
             selectedItem &&
             'viewKey' in selectedItem &&
             selectedItem.viewKey === ViewKey.INDEX
+              ? selectedItemObjectMetadata
+              : null
           }
         />
       );
