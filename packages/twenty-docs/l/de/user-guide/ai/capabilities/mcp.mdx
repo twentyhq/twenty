@@ -69,10 +69,10 @@ Wenn Ihr MCP-Client OAuth nicht unterstützt oder Sie statische Anmeldeinformati
 ```
 
 <Warning>
-Ihr API-Schlüssel gewährt Zugriff auf Workspace-Daten. Halten Sie ihn von der Versionskontrolle und gemeinsam genutzten Dotfiles fern.
+Ihr API-Schlüssel gewährt Zugriff auf Workspace-Daten. Halten Sie es von der Versionskontrolle und von gemeinsam genutzten Dotfiles fern.
 </Warning>
 
-Um einen API-Schlüssel zu erstellen, gehen Sie zu **Settings > APIs & Webhooks > + Create key**. Details finden Sie unter [APIs](/l/de/developers/extend/api).
+Um einen API-Schlüssel zu erstellen, gehen Sie zu **Settings > APIs & Webhooks > + Create key**. Details finden Sie unter [APIs](/l/de/developers/extend/api#create-an-api-key).
 
 ## Schnellstart
 
@@ -118,7 +118,7 @@ MCP-Verbindungen erben die Berechtigungen des authentifizierten Benutzers (OAuth
 
 ## Selbstgehostete Konfiguration
 
-Für selbstgehostete Instanzen ersetzen Sie `{your-workspace-url}` durch die URL Ihres Servers. Stellen Sie sicher, dass `SERVER_URL` in Ihrer Umgebung der öffentlichen URL Ihrer Twenty-Instanz entspricht — diese wird verwendet, um die OAuth-Discovery-Metadaten zu generieren.
+Für selbstgehostete Instanzen ersetzen Sie `{your-workspace-url}` durch die URL Ihres Servers. Stellen Sie sicher, dass `SERVER_URL` in Ihrer Umgebung der öffentlichen URL Ihrer Twenty-Instanz entspricht — dieser Wert wird verwendet, um die OAuth-Discovery-Metadaten zu generieren.
 
 ```bash
 SERVER_URL=https://twenty.yourcompany.com
@@ -131,7 +131,7 @@ Der MCP-Endpunkt, die OAuth-Endpunkte und die Discovery-Metadaten leiten sich al
 **"Unauthorized"- oder 401-Fehler**
 
 * OAuth: Autorisieren Sie erneut, indem Sie die gespeicherten Token in Ihrem MCP-Client löschen und die Verbindung wiederherstellen.
-* API-Schlüssel: Überprüfen Sie, dass der Schlüssel gültig ist und nicht abgelaufen ist. Generieren Sie ihn bei Bedarf neu.
+* API-Schlüssel: Überprüfen Sie, ob der Schlüssel gültig ist und nicht abgelaufen ist. Generieren Sie ihn bei Bedarf neu.
 
 **Der OAuth-Flow öffnet keinen Browser**
 

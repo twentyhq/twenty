@@ -7,28 +7,28 @@ description: Collega gli assistenti AI al tuo spazio di lavoro di Twenty utilizz
 MCP è attualmente in **alpha** ed è disponibile solo su alcuni spazi di lavoro. Potrebbe non essere ancora abilitato per il tuo spazio di lavoro.
 </Warning>
 
-Twenty exposes an [MCP](https://modelcontextprotocol.io/) server so that AI assistants — Claude Desktop, Claude Code, Cursor, ChatGPT, and others — can read and write your CRM data through natural language.
+Twenty espone un server [MCP](https://modelcontextprotocol.io/) affinché gli assistenti AI — Claude Desktop, Claude Code, Cursor, ChatGPT e altri — possano leggere e scrivere i dati del tuo CRM in linguaggio naturale.
 
-Use your **workspace URL** (the URL you use to access Twenty) as the MCP endpoint. On Twenty Cloud, your workspace URL might be `https://{mycompany}.twenty.com` or a custom domain. The server is available at:
+Usa l'**URL dello spazio di lavoro** (l'URL che usi per accedere a Twenty) come endpoint MCP. Su Twenty Cloud, l'URL del tuo spazio di lavoro potrebbe essere `https://{mycompany}.twenty.com` oppure un dominio personalizzato. Il server è disponibile all'indirizzo:
 
-| Ambiente          | MCP Endpoint                                                                 |
-| ----------------- | ---------------------------------------------------------------------------- |
-| **Cloud**         | `https://{your-workspace-url}/mcp` (e.g. `https://mycompany.twenty.com/mcp`) |
-| **Auto-ospitato** | `https://{your-domain}/mcp`                                                  |
+| Ambiente          | Endpoint MCP                                                                   |
+| ----------------- | ------------------------------------------------------------------------------ |
+| **Cloud**         | `https://{your-workspace-url}/mcp` (ad es. `https://mycompany.twenty.com/mcp`) |
+| **Auto-ospitato** | `https://{your-domain}/mcp`                                                    |
 
-## Authentication Methods
+## Metodi di autenticazione
 
-You have two ways to authenticate your MCP client: **OAuth** (recommended) or **API Key**.
+Hai due modi per autenticare il tuo client MCP: **OAuth** (consigliato) o **API Key**.
 
-### Option A — OAuth (Recommended)
+### Opzione A — OAuth (Consigliato)
 
-With OAuth, your MCP client opens a browser window for you to log in. No secrets are stored in config files, and tokens refresh automatically.
+Con OAuth, il tuo client MCP apre una finestra del browser per effettuare l'accesso. Nessun segreto viene archiviato nei file di configurazione e i token si rinnovano automaticamente.
 
 <Note>
-OAuth requires an MCP client that supports the [MCP Authorization specification](https://modelcontextprotocol.io/specification/2025-03-26/basic/authorization). Claude Desktop, Claude Code, Cursor, and ChatGPT support it.
+OAuth richiede un client MCP che supporti la [specifica MCP Authorization](https://modelcontextprotocol.io/specification/2025-03-26/basic/authorization). Claude Desktop, Claude Code, Cursor e ChatGPT lo supportano.
 </Note>
 
-Add this to your MCP client configuration, replacing `{your-workspace-url}` with your workspace host (e.g. `mycompany.twenty.com`):
+Aggiungi questo alla configurazione del tuo client MCP, sostituendo `{your-workspace-url}` con l'host del tuo spazio di lavoro (ad es. `mycompany.twenty.com`):
 
 ```json
 {
@@ -41,18 +41,18 @@ Add this to your MCP client configuration, replacing `{your-workspace-url}` with
 }
 ```
 
-That's it — no API key needed. When the client connects for the first time it will:
+È tutto — non è necessaria alcuna chiave API. Quando il client si connette per la prima volta, eseguirà:
 
-1. Discover Twenty's OAuth metadata via `/.well-known/oauth-protected-resource` and `/.well-known/oauth-authorization-server`
-2. Register itself as an OAuth client via dynamic client registration (RFC 7591)
-3. Open your browser to authorize access
-4. Receive tokens and connect to the MCP server
+1. Scoprire i metadati OAuth di Twenty tramite `/.well-known/oauth-protected-resource` e `/.well-known/oauth-authorization-server`
+2. Registrarsi come client OAuth tramite registrazione dinamica del client (RFC 7591)
+3. Aprire il browser per autorizzare l'accesso
+4. Ricevere i token e connettersi al server MCP
 
-Subsequent connections reuse the stored tokens and refresh them automatically.
+Le connessioni successive riutilizzano i token memorizzati e li rinnovano automaticamente.
 
-### Option B — API Key
+### Opzione B — Chiave API
 
-If your MCP client does not support OAuth, or you prefer static credentials, pass an API key in the `Authorization` header:
+Se il tuo client MCP non supporta OAuth, o preferisci credenziali statiche, passa una chiave API nell'header `Authorization`:
 
 ```json
 {
@@ -69,74 +69,74 @@ If your MCP client does not support OAuth, or you prefer static credentials, pas
 ```
 
 <Warning>
-Your API key grants access to workspace data. Keep it out of version control and shared dotfiles.
+La tua chiave API concede l'accesso ai dati dello spazio di lavoro. Mantienila fuori dal controllo versione e dai dotfile condivisi.
 </Warning>
 
-To create an API key, go to **Settings > APIs & Webhooks > + Create key**. See [APIs](/l/it/developers/extend/api) for details.
+Per creare una chiave API, vai su **Impostazioni > API e Webhook > + Crea chiave**. Vedi [API](/l/it/developers/extend/api#create-an-api-key) per i dettagli.
 
-## Quick Start
+## Avvio rapido
 
-### 1. Copy the config
+### 1. Copia la configurazione
 
-Go to **Settings > AI > More > MCP Server** in Twenty. Choose your authentication method (OAuth or API Key), copy the JSON snippet (it will already use your workspace URL), and paste it into your MCP client's config file.
+Vai su **Impostazioni > AI > Altro > MCP Server** in Twenty. Scegli il metodo di autenticazione (OAuth o Chiave API), copia lo snippet JSON (userà già l'URL del tuo spazio di lavoro) e incollalo nel file di configurazione del tuo client MCP.
 
-| Client             | Config file location                                                                                                                                          |
-| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Claude Desktop** | `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS) or `%APPDATA%\Claude\claude_desktop_config.json` (Windows)                          |
-| **Claude Code**    | `~/.claude.json` (user) or `.mcp.json` (project)                                                                                                              |
-| **Cursor**         | `.cursor/mcp.json` in your project, or `~/.cursor/mcp.json` globally                                                                                          |
-| **ChatGPT**        | Turn on Developer Mode in **Settings > Apps & Connectors > Advanced settings**, then use **Create** in **Settings > Apps & Connectors** to add the MCP server |
+| Client             | Percorso del file di configurazione                                                                                                                                                     |
+| ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Claude Desktop** | `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS) o `%APPDATA%\Claude\claude_desktop_config.json` (Windows)                                                     |
+| **Claude Code**    | `~/.claude.json` (utente) o `.mcp.json` (progetto)                                                                                                                                      |
+| **Cursor**         | `.cursor/mcp.json` nel tuo progetto, oppure `~/.cursor/mcp.json` globalmente                                                                                                            |
+| **ChatGPT**        | Attiva la Modalità sviluppatore in **Impostazioni > App e Connettori > Impostazioni avanzate**, quindi usa **Crea** in **Impostazioni > App e Connettori** per aggiungere il server MCP |
 
-### 2. Connect
+### 2. Connetti
 
-Restart your MCP client (or reload the config). If using OAuth you will be redirected to Twenty to authorize access. If using an API key the connection is immediate.
+Riavvia il tuo client MCP (o ricarica la configurazione). Se usi OAuth verrai reindirizzato a Twenty per autorizzare l'accesso. Se usi una chiave API la connessione è immediata.
 
-### 3. Start using it
+### 3. Inizia a usarlo
 
-Ask your AI assistant to interact with your CRM:
+Chiedi al tuo assistente AI di interagire con il tuo CRM:
 
-* *"Show me the 5 most recently created companies"*
-* *"Create a new person named Jane Doe at Acme Corp"*
-* *"Find all open opportunities worth more than $10k"*
+* *"Mostrami le 5 aziende create più di recente"*
+* *"Crea una nuova persona di nome Jane Doe presso Acme Corp"*
+* *"Trova tutte le opportunità aperte di valore superiore a $10k"*
 
-## Available Tools
+## Strumenti disponibili
 
-Once connected, the MCP server exposes tools that mirror the Twenty API. The recommended workflow is:
+Una volta connesso, il server MCP espone strumenti che rispecchiano l'API di Twenty. Il flusso di lavoro consigliato è:
 
-1. **`get_tool_catalog`** — discover all available tools
-2. **`learn_tools`** — get the input schema for specific tools
-3. **`execute_tool`** — run a tool
+1. **`get_tool_catalog`** — scoprire tutti gli strumenti disponibili
+2. **`learn_tools`** — ottenere lo schema di input per strumenti specifici
+3. **`execute_tool`** — eseguire uno strumento
 
-You don't need to remember tool names. Ask your AI assistant what it can do and it will call `get_tool_catalog` automatically.
+Non è necessario ricordare i nomi degli strumenti. Chiedi al tuo assistente AI cosa può fare e chiamerà `get_tool_catalog` automaticamente.
 
 ## Permessi
 
-MCP connections inherit the permissions of the authenticated user (OAuth) or the role assigned to the API key. To restrict what the MCP server can do:
+Le connessioni MCP ereditano le autorizzazioni dell'utente autenticato (OAuth) o il ruolo assegnato alla chiave API. Per limitare ciò che il server MCP può fare:
 
-* **OAuth**: The user's workspace role applies.
-* **API Key**: Assign a role to the API key under **Settings > Roles**. See [Permissions](/l/it/user-guide/permissions-access/capabilities/permissions).
+* **OAuth**: si applica il ruolo dell'utente nello spazio di lavoro.
+* **Chiave API**: assegna un ruolo alla chiave API in **Impostazioni > Ruoli**. Vedi [Autorizzazioni](/l/it/user-guide/permissions-access/capabilities/permissions).
 
-## Self-Hosted Configuration
+## Configurazione self-hosted
 
-For self-hosted instances, replace `{your-workspace-url}` with your server URL. Make sure `SERVER_URL` in your environment matches the public URL of your Twenty instance — this is used to generate the OAuth discovery metadata.
+Per le istanze self-hosted, sostituisci `{your-workspace-url}` con l'URL del tuo server. Assicurati che `SERVER_URL` nel tuo ambiente corrisponda all'URL pubblico della tua istanza Twenty — viene utilizzato per generare i metadati di discovery OAuth.
 
 ```bash
 SERVER_URL=https://twenty.yourcompany.com
 ```
 
-The MCP endpoint, OAuth endpoints, and discovery metadata all derive from this value.
+L'endpoint MCP, gli endpoint OAuth e i metadati di discovery derivano tutti da questo valore.
 
 ## Risoluzione dei problemi
 
-**"Unauthorized" or 401 errors**
+**Errori "Unauthorized" o 401**
 
-* OAuth: re-authorize by clearing the stored tokens in your MCP client and reconnecting.
-* API Key: verify the key is valid and hasn't expired. Regenerate it if needed.
+* OAuth: esegui nuovamente l'autorizzazione eliminando i token memorizzati nel tuo client MCP e riconnettiti.
+* Chiave API: verifica che la chiave sia valida e non sia scaduta. Rigenerala se necessario.
 
-**OAuth flow doesn't open a browser**
+**Il flusso OAuth non apre il browser**
 
-* Ensure your MCP client supports MCP Authorization. Fall back to the API Key method if it doesn't.
+* Assicurati che il tuo client MCP supporti MCP Authorization. In caso contrario, ricorri al metodo con Chiave API.
 
-**Connection timeout**
+**Timeout di connessione**
 
-* Confirm the MCP endpoint URL is reachable from your machine. For self-hosted instances, check that the server is running and `SERVER_URL` is set correctly.
+* Verifica che l'URL dell'endpoint MCP sia raggiungibile dalla tua macchina. Per le istanze self-hosted, controlla che il server sia in esecuzione e che `SERVER_URL` sia impostato correttamente.
