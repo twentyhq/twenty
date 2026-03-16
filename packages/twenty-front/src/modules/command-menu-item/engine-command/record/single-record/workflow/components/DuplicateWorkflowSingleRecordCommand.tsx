@@ -10,7 +10,9 @@ import { isDefined } from 'twenty-shared/utils';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const DuplicateWorkflowSingleRecordCommand = () => {
-  const { recordId } = useMountedEngineCommandContext();
+  const { selectedRecords } = useMountedEngineCommandContext();
+
+  const recordId = selectedRecords[0]?.id;
   const workflow = useWorkflowWithCurrentVersion(recordId ?? '');
   const { duplicateWorkflow } = useDuplicateWorkflow();
   const navigate = useNavigateApp();

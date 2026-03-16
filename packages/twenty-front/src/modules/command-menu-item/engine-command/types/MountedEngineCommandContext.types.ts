@@ -11,11 +11,9 @@ export type MountedEngineCommandContext = {
   engineComponentKey: EngineComponentKey;
   contextStoreInstanceId: string;
   objectMetadataItem: Nullable<ObjectMetadataItem>;
-  recordId: Nullable<string>;
   currentViewId: Nullable<string>;
   recordIndexId: Nullable<string>;
   targetedRecordsRule: ContextStoreTargetedRecordsRule;
-  selectedRecordIds: string[];
   selectedRecords: ObjectRecord[];
   graphqlFilter: Nullable<RecordGqlOperationFilter>;
 };

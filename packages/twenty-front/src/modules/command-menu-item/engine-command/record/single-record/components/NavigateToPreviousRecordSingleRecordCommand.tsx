@@ -4,7 +4,10 @@ import { useRecordShowPagePagination } from '@/object-record/record-show/hooks/u
 import { isDefined } from 'twenty-shared/utils';
 
 export const NavigateToPreviousRecordSingleRecordCommand = () => {
-  const { objectMetadataItem, recordId } = useMountedEngineCommandContext();
+  const { objectMetadataItem, selectedRecords } =
+    useMountedEngineCommandContext();
+
+  const recordId = selectedRecords[0]?.id;
 
   if (!isDefined(recordId) || !isDefined(objectMetadataItem)) {
     throw new Error(

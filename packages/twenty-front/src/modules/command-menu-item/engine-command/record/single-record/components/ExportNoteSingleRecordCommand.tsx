@@ -3,8 +3,10 @@ import { useMountedEngineCommandContext } from '@/command-menu-item/engine-comma
 import { isDefined } from 'twenty-shared/utils';
 
 export const ExportNoteSingleRecordCommand = () => {
-  const { recordId, selectedRecords } = useMountedEngineCommandContext();
+  const { selectedRecords } = useMountedEngineCommandContext();
   const selectedRecord = selectedRecords[0];
+
+  const recordId = selectedRecord?.id;
 
   if (!isDefined(recordId) || !isDefined(selectedRecord)) {
     throw new Error(

@@ -48,18 +48,11 @@ export const useMountEngineCommand = () => {
         }),
       );
 
-      const selectedRecordIds =
+      const selectedRecords = (
         targetedRecordsRule.mode === 'selection'
           ? targetedRecordsRule.selectedRecordIds
-          : [];
-
-      const recordId =
-        targetedRecordsRule.mode === 'selection' &&
-        targetedRecordsRule.selectedRecordIds.length === 1
-          ? targetedRecordsRule.selectedRecordIds[0]
-          : null;
-
-      const selectedRecords = selectedRecordIds
+          : []
+      )
         .map((id) => store.get(recordStoreFamilyState.atomFamily(id)))
         .filter(isDefined);
 
@@ -119,11 +112,9 @@ export const useMountEngineCommand = () => {
           engineComponentKey,
           contextStoreInstanceId,
           objectMetadataItem: objectMetadataItem ?? null,
-          recordId,
           currentViewId,
           recordIndexId,
           targetedRecordsRule,
-          selectedRecordIds,
           selectedRecords,
           graphqlFilter,
         });

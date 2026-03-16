@@ -9,7 +9,9 @@ import { isDefined } from 'twenty-shared/utils';
 
 export const TidyUpWorkflowSingleRecordCommand = () => {
   const store = useStore();
-  const { recordId } = useMountedEngineCommandContext();
+  const { selectedRecords } = useMountedEngineCommandContext();
+
+  const recordId = selectedRecords[0]?.id;
   const { tidyUpWorkflowVersion } = useTidyUpWorkflowVersion();
   const instanceId = getWorkflowVisualizerComponentInstanceId({
     recordId: recordId ?? '',

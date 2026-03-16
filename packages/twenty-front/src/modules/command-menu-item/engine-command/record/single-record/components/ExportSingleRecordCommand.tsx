@@ -4,8 +4,10 @@ import { useExportSingleRecord } from '@/object-record/record-show/hooks/useExpo
 import { isDefined } from 'twenty-shared/utils';
 
 export const ExportSingleRecordCommand = () => {
-  const { objectMetadataItem, currentViewId, recordId } =
+  const { objectMetadataItem, currentViewId, selectedRecords } =
     useMountedEngineCommandContext();
+
+  const recordId = selectedRecords[0]?.id;
 
   if (
     !isDefined(currentViewId) ||

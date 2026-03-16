@@ -5,7 +5,9 @@ import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 export const SeeActiveVersionWorkflowSingleRecordCommand = () => {
-  const { recordId } = useMountedEngineCommandContext();
+  const { selectedRecords } = useMountedEngineCommandContext();
+
+  const recordId = selectedRecords[0]?.id;
 
   const { workflowVersion, loading } = useActiveWorkflowVersion({
     workflowId: recordId ?? '',

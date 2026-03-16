@@ -9,7 +9,9 @@ import { isDefined } from 'twenty-shared/utils';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const DuplicateDashboardSingleRecordCommand = () => {
-  const { recordId } = useMountedEngineCommandContext();
+  const { selectedRecords } = useMountedEngineCommandContext();
+
+  const recordId = selectedRecords[0]?.id;
   const { duplicateDashboard } = useDuplicateDashboard();
   const navigate = useNavigateApp();
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();

@@ -9,8 +9,10 @@ import { isDefined } from 'twenty-shared/utils';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const DestroySingleRecordCommand = () => {
-  const { recordIndexId, objectMetadataItem, recordId } =
+  const { recordIndexId, objectMetadataItem, selectedRecords } =
     useMountedEngineCommandContext();
+
+  const recordId = selectedRecords[0]?.id;
 
   if (
     !isDefined(recordId) ||

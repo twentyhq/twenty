@@ -6,7 +6,9 @@ import { AppPath, ViewFilterOperand } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 export const SeeRunsWorkflowSingleRecordCommand = () => {
-  const { recordId } = useMountedEngineCommandContext();
+  const { selectedRecords } = useMountedEngineCommandContext();
+
+  const recordId = selectedRecords[0]?.id;
   const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(
     recordId ?? '',
   );

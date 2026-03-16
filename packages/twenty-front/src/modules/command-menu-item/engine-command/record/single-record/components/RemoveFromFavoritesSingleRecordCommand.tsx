@@ -5,10 +5,15 @@ import { useNavigationMenuItemsData } from '@/navigation-menu-item/hooks/useNavi
 import { isDefined } from 'twenty-shared/utils';
 
 export const RemoveFromFavoritesSingleRecordCommand = () => {
-  const { recordId, objectMetadataItem } = useMountedEngineCommandContext();
+  const { selectedRecords, objectMetadataItem } =
+    useMountedEngineCommandContext();
 
-  if (!isDefined(objectMetadataItem)) {
-    throw new Error('Object metadata is required to remove from favorites');
+  const recordId = selectedRecords[0]?.id;
+
+  if (!isDefined(recordId) || !isDefined(objectMetadataItem)) {
+    throw new Error(
+      'Record ID and object metadata are required to remove from favorites',
+    );
   }
 
   const { navigationMenuItems, workspaceNavigationMenuItems } =

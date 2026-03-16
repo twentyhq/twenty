@@ -66,7 +66,9 @@ const UseAsDraftWorkflowVersionSingleRecordCommandContent = ({
 };
 
 export const UseAsDraftWorkflowVersionSingleRecordCommand = () => {
-  const { recordId } = useMountedEngineCommandContext();
+  const { selectedRecords } = useMountedEngineCommandContext();
+
+  const recordId = selectedRecords[0]?.id;
   const workflowVersion = useWorkflowVersion(recordId ?? '');
 
   if (!recordId || !isDefined(workflowVersion?.workflow?.id)) {

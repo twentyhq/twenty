@@ -5,7 +5,9 @@ import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithC
 import { isDefined } from 'twenty-shared/utils';
 
 export const ActivateWorkflowSingleRecordCommand = () => {
-  const { recordId } = useMountedEngineCommandContext();
+  const { selectedRecords } = useMountedEngineCommandContext();
+  const recordId = selectedRecords[0]?.id;
+
   const { activateWorkflowVersion } = useActivateWorkflowVersion();
   const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(
     recordId ?? '',

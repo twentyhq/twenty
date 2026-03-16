@@ -4,12 +4,14 @@ import { useOpenMergeRecordsPageInSidePanel } from '@/side-panel/hooks/useOpenMe
 import { isDefined } from 'twenty-shared/utils';
 
 export const MergeMultipleRecordsCommand = () => {
-  const { objectMetadataItem, selectedRecordIds } =
+  const { objectMetadataItem, selectedRecords } =
     useMountedEngineCommandContext();
 
-  if (!isDefined(objectMetadataItem) || !isDefined(selectedRecordIds)) {
+  const selectedRecordIds = selectedRecords.map((record) => record.id);
+
+  if (!isDefined(objectMetadataItem) || selectedRecordIds.length === 0) {
     throw new Error(
-      'Object metadata item and selected record IDs are required to merge multiple records',
+      'Object metadata item and selected records are required to merge multiple records',
     );
   }
 
