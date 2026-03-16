@@ -75,12 +75,14 @@ export const WorkflowEditActionEmailBase = ({
   const [visibleAdvancedFields, setVisibleAdvancedFields] = useState<{
     cc: boolean;
     bcc: boolean;
+    inReplyTo: boolean;
   }>(() => {
     const inputRecipients = action.settings.input.recipients;
 
     return {
       cc: Boolean(inputRecipients?.cc),
       bcc: Boolean(inputRecipients?.bcc),
+      inReplyTo: Boolean(action.settings.input.inReplyTo),
     };
   });
 
@@ -89,7 +91,9 @@ export const WorkflowEditActionEmailBase = ({
   const advancedOptionsDropdownId = `${action.id}-email-advanced-options`;
 
   const hasAvailableAdvancedOptions =
-    !visibleAdvancedFields.cc || !visibleAdvancedFields.bcc;
+    !visibleAdvancedFields.cc ||
+    !visibleAdvancedFields.bcc ||
+    !visibleAdvancedFields.inReplyTo;
 
   const handleReauthorize = async () => {
     if (!isDefined(missingScopes)) {
@@ -275,6 +279,18 @@ export const WorkflowEditActionEmailBase = ({
               VariablePicker={WorkflowVariablePicker}
             />
           )}
+          {visibleAdvancedFields.inReplyTo && (
+            <FormTextFieldInput
+              label={t`In-Reply-To`}
+              placeholder={t`Enter Message-ID to reply to`}
+              readonly={actionOptions.readonly}
+              defaultValue={formData.inReplyTo}
+              onChange={(value) => {
+                handleFieldChange('inReplyTo', value);
+              }}
+              VariablePicker={WorkflowVariablePicker}
+            />
+          )}
           {!actionOptions.readonly && hasAvailableAdvancedOptions && (
             <Dropdown
               dropdownId={advancedOptionsDropdownId}
@@ -311,6 +327,18 @@ export const WorkflowEditActionEmailBase = ({
                           setVisibleAdvancedFields((prev) => ({
                             ...prev,
                             bcc: true,
+                          }));
+                          closeDropdown(advancedOptionsDropdownId);
+                        }}
+                      />
+                    )}
+                    {!visibleAdvancedFields.inReplyTo && (
+                      <MenuItem
+                        text={t`Add In-Reply-To`}
+                        onClick={() => {
+                          setVisibleAdvancedFields((prev) => ({
+                            ...prev,
+                            inReplyTo: true,
                           }));
                           closeDropdown(advancedOptionsDropdownId);
                         }}

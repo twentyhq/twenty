@@ -32,6 +32,7 @@ const DEFAULT_SEND_EMAIL_ACTION: WorkflowSendEmailAction = {
       subject: '',
       body: '',
       files: [],
+      inReplyTo: '',
     },
     outputSchema: {},
     errorHandlingOptions: {
@@ -62,6 +63,7 @@ const CONFIGURED_SEND_EMAIL_ACTION: WorkflowSendEmailAction = {
       subject: 'Welcome to Twenty!',
       body: 'Dear Tim,\n\nWelcome to Twenty! We are excited to have you on board.\n\nBest regards,\nThe Team',
       files: [],
+      inReplyTo: '',
     },
     outputSchema: {},
     errorHandlingOptions: {
@@ -91,6 +93,7 @@ const DEFAULT_DRAFT_EMAIL_ACTION: WorkflowDraftEmailAction = {
       subject: '',
       body: '',
       files: [],
+      inReplyTo: '',
     },
     outputSchema: {},
     errorHandlingOptions: {
