@@ -2,9 +2,12 @@ import { isLayoutCustomizationActiveState } from '@/app/states/isLayoutCustomiza
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const useIsGlobalLayoutCustomizationActive = () => {
-  const isGlobalLayoutCustomizationActive = useAtomStateValue(
+  const isLayoutCustomizationActive = useAtomStateValue(
     isLayoutCustomizationActiveState,
   );
+
+  // TODO: remove this
+  const isGlobalLayoutCustomizationActive = isLayoutCustomizationActive;
 
   return isGlobalLayoutCustomizationActive;
 };
