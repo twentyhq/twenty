@@ -1,8 +1,8 @@
 import { useIsLayoutCustomizationDirty } from '@/app/hooks/useIsLayoutCustomizationDirty';
 import { activeCustomizationPageLayoutIdsState } from '@/app/states/activeCustomizationPageLayoutIdsState';
 import { isLayoutCustomizationActiveState } from '@/app/states/isLayoutCustomizationActiveState';
+import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/states/navigationMenuItemsDraftState';
-import { navigationMenuItemsState } from '@/navigation-menu-item/states/navigationMenuItemsState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
 import { type PageLayout } from '@/page-layout/types/PageLayout';
@@ -50,7 +50,11 @@ describe('useIsLayoutCustomizationDirty', () => {
     const store = createStore();
     const wrapper = getWrapper(store);
 
-    store.set(navigationMenuItemsState.atom, []);
+    store.set(metadataStoreState.atomFamily('navigationMenuItems'), {
+      current: [],
+      draft: [],
+      status: 'up-to-date',
+    });
     store.set(isLayoutCustomizationActiveState.atom, false);
 
     const { result } = renderHook(() => useIsLayoutCustomizationDirty(), {
@@ -64,7 +68,11 @@ describe('useIsLayoutCustomizationDirty', () => {
     const store = createStore();
     const wrapper = getWrapper(store);
 
-    store.set(navigationMenuItemsState.atom, []);
+    store.set(metadataStoreState.atomFamily('navigationMenuItems'), {
+      current: [],
+      draft: [],
+      status: 'up-to-date',
+    });
     store.set(isLayoutCustomizationActiveState.atom, true);
     store.set(activeCustomizationPageLayoutIdsState.atom, [PAGE_LAYOUT_ID_1]);
 
@@ -92,7 +100,11 @@ describe('useIsLayoutCustomizationDirty', () => {
     const store = createStore();
     const wrapper = getWrapper(store);
 
-    store.set(navigationMenuItemsState.atom, []);
+    store.set(metadataStoreState.atomFamily('navigationMenuItems'), {
+      current: [],
+      draft: [],
+      status: 'up-to-date',
+    });
     store.set(isLayoutCustomizationActiveState.atom, true);
     store.set(activeCustomizationPageLayoutIdsState.atom, [PAGE_LAYOUT_ID_1]);
 
@@ -137,7 +149,11 @@ describe('useIsLayoutCustomizationDirty', () => {
       userWorkspaceId: null,
     };
 
-    store.set(navigationMenuItemsState.atom, [mockNavItem]);
+    store.set(metadataStoreState.atomFamily('navigationMenuItems'), {
+      current: [mockNavItem],
+      draft: [],
+      status: 'up-to-date',
+    });
     store.set(isLayoutCustomizationActiveState.atom, true);
     // Nav draft differs from prefetch
     store.set(navigationMenuItemsDraftState.atom, []);
@@ -153,7 +169,11 @@ describe('useIsLayoutCustomizationDirty', () => {
     const store = createStore();
     const wrapper = getWrapper(store);
 
-    store.set(navigationMenuItemsState.atom, []);
+    store.set(metadataStoreState.atomFamily('navigationMenuItems'), {
+      current: [],
+      draft: [],
+      status: 'up-to-date',
+    });
     store.set(isLayoutCustomizationActiveState.atom, true);
     store.set(activeCustomizationPageLayoutIdsState.atom, [
       PAGE_LAYOUT_ID_1,

@@ -22,7 +22,6 @@ import { convertPageLayoutToTabLayouts } from '@/page-layout/utils/convertPageLa
 import { reInjectDynamicRelationWidgetsFromDraft } from '@/page-layout/utils/reInjectDynamicRelationWidgetsFromDraft';
 import { transformPageLayout } from '@/page-layout/utils/transformPageLayout';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useRefreshAllCoreViews } from '@/views/hooks/useRefreshAllCoreViews';
 import { useMutation } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 import { useStore } from 'jotai';
@@ -61,7 +60,6 @@ export const useSaveLayoutCustomization = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
   const { updatePageLayoutWithTabsAndWidgets } =
     useUpdatePageLayoutWithTabsAndWidgets();
-  const { refreshAllCoreViews } = useRefreshAllCoreViews();
   const { exitLayoutCustomizationMode } = useExitLayoutCustomizationMode();
 
   const [upsertFieldsWidgetMutation] = useMutation<
@@ -284,7 +282,6 @@ export const useSaveLayoutCustomization = () => {
       }
 
       exitLayoutCustomizationMode();
-      await refreshAllCoreViews();
     } catch (error) {
       logError(error);
       enqueueErrorSnackBar({
@@ -297,7 +294,6 @@ export const useSaveLayoutCustomization = () => {
     saveDraft,
     updatePageLayoutWithTabsAndWidgets,
     saveFieldsWidgetGroupsForPageLayout,
-    refreshAllCoreViews,
     exitLayoutCustomizationMode,
     enqueueErrorSnackBar,
     store,
