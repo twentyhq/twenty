@@ -36,7 +36,8 @@ export class StaleRegistrationCleanupService {
         break;
       }
 
-      lastCreatedAt = staleRegistrations[staleRegistrations.length - 1].createdAt;
+      lastCreatedAt =
+        staleRegistrations[staleRegistrations.length - 1].createdAt;
 
       const staleIds = staleRegistrations.map(
         (registration) => registration.id,
@@ -106,7 +107,10 @@ export class StaleRegistrationCleanupService {
       });
     }
 
-    const rows = await queryBuilder.getRawMany<{ id: string; createdAt: Date }>();
+    const rows = await queryBuilder.getRawMany<{
+      id: string;
+      createdAt: Date;
+    }>();
 
     return rows.map((row) => ({
       id: row.id,

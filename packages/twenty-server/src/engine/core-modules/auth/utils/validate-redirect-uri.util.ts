@@ -19,11 +19,7 @@ export const validateRedirectUri = (
     parsed.protocol,
   );
 
-  if (
-    parsed.protocol !== 'https:' &&
-    !isLocalhost &&
-    !isAllowedCustomScheme
-  ) {
+  if (parsed.protocol !== 'https:' && !isLocalhost && !isAllowedCustomScheme) {
     return {
       valid: false,
       reason: `Redirect URIs must use HTTPS (except localhost) or an allowed custom scheme: ${uri}`,

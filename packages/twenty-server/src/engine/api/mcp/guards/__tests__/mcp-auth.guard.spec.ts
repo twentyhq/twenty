@@ -18,7 +18,9 @@ describe('McpAuthGuard', () => {
   } as unknown as ExecutionContext;
 
   beforeEach(() => {
-    jwtAuthGuard = { canActivate: jest.fn() } as unknown as jest.Mocked<JwtAuthGuard>;
+    jwtAuthGuard = {
+      canActivate: jest.fn(),
+    } as unknown as jest.Mocked<JwtAuthGuard>;
     twentyConfigService = {
       get: jest.fn().mockReturnValue('https://crm.example.com'),
     } as unknown as jest.Mocked<TwentyConfigService>;

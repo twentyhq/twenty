@@ -101,8 +101,10 @@ export class ApplicationUpgradeService {
 
     if (
       appRegistration.sourceType === ApplicationRegistrationSourceType.LOCAL ||
-      appRegistration.sourceType === ApplicationRegistrationSourceType.TARBALL ||
-      appRegistration.sourceType === ApplicationRegistrationSourceType.OAUTH_ONLY
+      appRegistration.sourceType ===
+        ApplicationRegistrationSourceType.TARBALL ||
+      appRegistration.sourceType ===
+        ApplicationRegistrationSourceType.OAUTH_ONLY
     ) {
       throw new ApplicationException(
         'Cannot upgrade an app installed from a tarball, local source, or OAuth-only registration',
