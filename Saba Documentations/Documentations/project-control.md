@@ -1,6 +1,6 @@
 # Project Control — TOB Twenty
 
-*Last updated: 2026-03-13*
+*Last updated: 2026-03-16*
 
 ---
 
@@ -104,7 +104,7 @@ Explore the Twenty CRM at `crm.tob.sh` and `localhost:3001` to understand what e
 
 | Field | Value |
 |-------|-------|
-| **Status** | FIRST MILESTONE DEPLOYED — Phase 3 pending |
+| **Status** | FIRST MILESTONE DEPLOYED — Enzo confirmed 5 items to build next |
 | **Priority** | High (URGENT — marketing event started 2026-03-13) |
 | **Assigned to** | Saba |
 | **Requested by** | Enzo Becker |
@@ -176,8 +176,8 @@ Build a dashboard where the backoffice team can:
 | 8 | QA testing (2 rounds) | Saba | DONE — code + browser testing via Playwright |
 | 9 | Commit, push, create PR | Saba | DONE — PR #8 created |
 | 10 | Deploy to production | Saba | DONE — PRs #14 + #16 merged, deployed 2026-03-11 |
-| 11 | Test with Enzo and backoffice team | Saba + Enzo | IN PROGRESS — Enzo confirmed positive feedback, meeting planned |
-| 12 | Iterate based on feedback | Saba | WAITING — meeting with Enzo + Lascha to define Phase 3 priorities |
+| 11 | Test with Enzo and backoffice team | Saba + Enzo | DONE — Enzo confirmed positive, gave new feature requests |
+| 12 | Build Enzo's confirmed items (Pause rework, Pause-Days, Final End-Date, status dropdown, "unclear" status) | Saba | IN PROGRESS — starting implementation |
 
 ### Definition of done
 
@@ -195,7 +195,7 @@ Build a dashboard where the backoffice team can:
 
 | Field | Value |
 |-------|-------|
-| **Status** | NOT STARTED |
+| **Status** | 2 items confirmed to build now, 9 remaining |
 | **Priority** | Medium-High |
 | **Assigned to** | Saba |
 | **Requested by** | Enzo Becker |
@@ -208,7 +208,7 @@ Specific feedback and feature requests from Enzo on what Pablo already built. 11
 | # | Request | Complexity | Status |
 |---|---------|-----------|--------|
 | 1 | Rename "TOB Subscriptions" to "Subscriptions" (same for all objects) | Simple | NOT STARTED |
-| 2 | Custom ID naming convention (e.g. "BPA239403" — product type + number) | Medium | NOT STARTED |
+| 2 | Custom ID naming convention (e.g. "BPA239403" — product type + number) | Medium | DONE by Pablo (new ID format with product prefix) |
 | 3 | Better filters with AND/OR conditions and groups | Complex | NOT STARTED |
 | 4 | Backend field names vs UI display names should be different | Medium | NOT STARTED |
 | 5 | Create 3 test data entries per object | Simple | NOT STARTED |
@@ -218,6 +218,13 @@ Specific feedback and feature requests from Enzo on what Pablo already built. 11
 | 9 | Timeline filtering by type (email, zoom, call) | Medium | NOT STARTED |
 | 10 | Contract creation dashboard (replace Google Form, prefill from contact) | Complex | NOT STARTED |
 | 11 | Bulk contract creation (pre-generate 1000 contracts with DocuSeal) | Complex | NOT STARTED |
+
+**Additionally from Enzo's latest messages (2026-03-15):**
+
+| # | Request | Assigned to | Status |
+|---|---------|------------|--------|
+| 12 | Status dropdown too narrow — cuts off status names | Saba | BUILDING NEXT |
+| 13 | Add "unclear" status for all existing subscriptions | Saba | BUILDING NEXT |
 
 ---
 
@@ -323,6 +330,52 @@ Client data is scattered across:
 
 ---
 
+## Task 5: Meeting Transcripts Viewer
+
+| Field | Value |
+|-------|-------|
+| **Status** | DONE |
+| **Priority** | Medium |
+| **Assigned to** | Saba |
+| **Requested by** | Pablo Perez |
+| **PRs** | #47 (7 UX improvements), #48 (Lingui label fix) — all merged |
+| **Deployed** | 2026-03-15 — verified working on crm.tob.sh |
+
+### What was built
+
+Custom Meeting Transcripts viewer at `/meeting-transcripts` with two-panel layout: filterable meeting list on left, full meeting details on right.
+
+### Feedback items implemented (from Pablo)
+
+| # | Item | Status |
+|---|------|--------|
+| 1 | Transcripts folder in sidebar (Viewer + Dataset sub-items) | DONE |
+| 2 | Card-style meeting list with clear visual separation | DONE |
+| 3 | Date and time shown on cards (not just date) | DONE |
+| 4 | Infinite scroll — all 973 meetings load on scroll | DONE |
+| 5 | Participant cards with name and team | DONE |
+| 6 | Collapsible sections in detail panel | DONE |
+| 7 | Copy button on every section | DONE |
+
+Pablo reviewed and approved 2026-03-15.
+
+---
+
+## Task 6: Roles & Permissions (Research)
+
+| Field | Value |
+|-------|-------|
+| **Status** | NOT STARTED — research only |
+| **Priority** | Medium |
+| **Assigned to** | Saba |
+| **Requested by** | Pablo Perez |
+
+### What is this task?
+
+Research Twenty's built-in roles and permissions system — how to define different roles so certain users can only access/view certain things. Report findings to Pablo.
+
+---
+
 ## Future Tasks (Known but not started)
 
 | Task | Phase | Status | Notes |
@@ -336,7 +389,7 @@ Client data is scattered across:
 
 ## Summary
 
-### Current state (2026-03-13)
+### Current state (2026-03-16)
 
 - **Twenty CRM** is deployed and running at `crm.tob.sh`
 - **Local dev server** working at `localhost:3001` (frontend) / `localhost:3000` (backend)
@@ -345,9 +398,11 @@ Client data is scattered across:
 - **Infrastructure complete** — CI/CD pipeline, Docker, auto-deployment working
 - **Branch** — `tob-twenty/saba` on GitHub
 - **First milestone deployed** — PRs #14 + #16 merged, verified on crm.tob.sh (2026-03-11)
-- **Marketing event started** — Enzo needs contracts/subscriptions dashboard urgently (2026-03-13)
+- **Meeting Transcripts viewer DONE** — PRs #47 + #48, Pablo approved (2026-03-15)
 - **WhatsApp Chat** — built by Pablo (PRs #21–#35), merged to main, working
-- **Meeting Transcripts viewer** — built, waiting on Pablo's feedback
+- **Marketing event started** — Enzo needs contracts/subscriptions dashboard urgently (2026-03-13)
+- **Enzo confirmed 5 items to build next** — Pause rework, Pause-Days, Final End-Date, status dropdown, "unclear" status
+- **Pablo requested Roles & Permissions research** (Task 6)
 - **Enzo expects daily EOD updates** in the project channel
 
 ### Active tasks
@@ -355,10 +410,11 @@ Client data is scattered across:
 | Task | Status | Notes |
 |------|--------|-------|
 | Task 1: Explore Twenty CRM | DONE | Completed 2026-03-09 |
-| Task 2: Briefing 01 — Dashboard + Subscription Management | FIRST MILESTONE DEPLOYED | Phase 3 pending — meeting with Enzo + Lascha to define priorities |
-| Meeting Transcripts viewer | WAITING | Built, waiting on Pablo's feedback |
-| Task 3: Change Requests (11 items) | NOT STARTED | Next up after Task 2 Phase 3 |
+| Task 2: Briefing 01 — Subscription Management | BUILDING NEXT | Enzo confirmed: Pause rework, Pause-Days field, Final End-Date field |
+| Task 3: Change Requests (11+2 items) | BUILDING NEXT | 2 items confirmed: status dropdown fix, "unclear" status |
 | Task 4: Briefing 02 — Coach View / Client Profile | NOT STARTED | Big feature, many open technical questions |
+| Task 5: Meeting Transcripts Viewer | DONE | PRs #47, #48 merged. Pablo approved 2026-03-15 |
+| Task 6: Roles & Permissions | NOT STARTED | Research only — requested by Pablo |
 
 ### What was completed
 
@@ -377,22 +433,30 @@ Client data is scattered across:
 - Meeting Transcripts viewer built (on Coder)
 - Fixes: correct production API field names, removed Lingui i18n macros, re-added route after merge
 
+**2026-03-15:**
+- Implemented 7 UX improvements for Meeting Transcripts (PR #47): card-style list, date+time, infinite scroll, collapsible sections, copy buttons, participant cards, navigation folder
+- Fixed Lingui garbled labels in sidebar (PR #48): Transcripts/Viewer/Dataset
+- Pablo reviewed and approved Meeting Transcripts — Task 5 DONE
+
+**2026-03-16:**
+- Enzo confirmed 5 items to build next (3 from Briefing 01, 2 from Change Requests)
+- Enzo corrected Final End-Date formula: periods bought PLUS pause periods (not minus)
+- Pablo requested Roles & Permissions research (Task 6)
+
 ### What's blocked
 
-| Blocked item | Waiting on | Person |
-|-------------|-----------|--------|
-| Meeting Transcripts | Pablo's feedback | Pablo |
-| Task 2 Phase 3 priorities | Meeting with Enzo + Lascha | Enzo |
+Nothing currently blocked. All tasks have clear direction.
 
 ### What's coming next
 
-1. Meeting with Enzo + Lascha to define priorities for marketing event
-2. Task 2 Phase 3: build remaining features based on meeting outcome
-3. Task 3: Change Requests (11 items)
-4. Task 4: Briefing 02 — Coach View
+1. Build Enzo's 5 confirmed items (Pause rework, Pause-Days, Final End-Date, status dropdown, "unclear" status)
+2. Task 6: Research Twenty's roles & permissions system for Pablo
+3. Continue with remaining Briefing 01 features as Enzo requests
+4. Task 3: remaining Change Request items
+5. Task 4: Briefing 02 — Coach View
 
 ### Key communication
 
-- **Enzo** — confirmed progress looks good, marketing event starting, wants meeting to discuss dashboard needs
-- **Pablo** — built WhatsApp Chat (PRs #21–#35), feedback pending on Meeting Transcripts
-- **Saba** — daily EOD updates in project channel, available for meeting anytime
+- **Enzo** (2026-03-15) — confirmed 5 items to build, said to go ahead with all briefed features, wants daily progress reports in channel. Corrected Final End-Date: periods bought PLUS pause periods.
+- **Pablo** (2026-03-15) — approved Meeting Transcripts. Updated subscription data: new ID format, granted programs, linked subscriptions to contracts. Requested Roles & Permissions research (2026-03-16).
+- **Lascha** — working on automation side (Funnelbox → Twenty status changes, mailing workflows)

@@ -47,6 +47,8 @@ for field_json in \
   '{"query": "mutation { createOneField(input: { field: { objectMetadataId: \"'"$SUB_ID"'\", name: \"offerDiscountTag\", label: \"Offer/Discount Tag\", type: TEXT, icon: \"IconTag\" } }) { id name } }"}' \
   '{"query": "mutation { createOneField(input: { field: { objectMetadataId: \"'"$SUB_ID"'\", name: \"lastTouchpoint\", label: \"Last Touchpoint\", type: DATE_TIME, icon: \"IconClock\" } }) { id name } }"}' \
   '{"query": "mutation { createOneField(input: { field: { objectMetadataId: \"'"$SUB_ID"'\", name: \"nextActionDueDate\", label: \"Next Action / Due Date\", type: DATE_TIME, icon: \"IconCalendarEvent\" } }) { id name } }"}' \
+  '{"query": "mutation { createOneField(input: { field: { objectMetadataId: \"'"$SUB_ID"'\", name: \"pauseDays\", label: \"Pause Days\", type: NUMBER, icon: \"IconClock\" } }) { id name } }"}' \
+  '{"query": "mutation { createOneField(input: { field: { objectMetadataId: \"'"$SUB_ID"'\", name: \"finalEndDate\", label: \"Final End Date\", type: DATE_TIME, icon: \"IconCalendarCheck\" } }) { id name } }"}' \
 ; do
   result=$(gql "$field_json")
   name=$(echo "$result" | jq -r '.data.createOneField.name // empty')
@@ -57,6 +59,28 @@ for field_json in \
     echo "  Skipped (${err:-already exists or error})"
   fi
 done
+
+# Update accessStatus to include UNCLEAR option
+echo ""
+echo "--- Updating Access Status options ---"
+FIELD_QUERY='{"query": "{ objects(paging: {first: 100}) { edges { node { id nameSingular fields(paging: {first: 100}) { edges { node { id name } } } } } } }"}'
+FIELD_ID=$(gql "$FIELD_QUERY" \
+  | jq -r '.data.objects.edges[].node | select(.nameSingular == "tobSubscription") | .fields.edges[].node | select(.name == "accessStatus") | .id')
+
+if [ -z "$FIELD_ID" ]; then
+  echo "  accessStatus field not found — skipping"
+else
+  echo "  Found accessStatus field: $FIELD_ID"
+  UPDATE_QUERY='{"query": "mutation { updateOneField(idToUpdate: \"'"$FIELD_ID"'\", updatePayload: { options: [{value: \"ACTIVE\", label: \"Active\", color: \"green\", position: 0}, {value: \"NOT_GRANTED\", label: \"Not Granted\", color: \"gray\", position: 1}, {value: \"PAUSED\", label: \"Paused\", color: \"yellow\", position: 2}, {value: \"WITHDRAWN\", label: \"Withdrawn\", color: \"red\", position: 3}, {value: \"UNCLEAR\", label: \"Unclear\", color: \"orange\", position: 4}] }) { id name } }"}'
+  result=$(gql "$UPDATE_QUERY")
+  name=$(echo "$result" | jq -r '.data.updateOneField.name // empty')
+  if [ -n "$name" ]; then
+    echo "  Updated '$name' with UNCLEAR option"
+  else
+    err=$(echo "$result" | jq -r '.errors[0].message // empty')
+    echo "  Failed (${err:-unknown error})"
+  fi
+fi
 
 echo ""
 echo "=== Done ==="
