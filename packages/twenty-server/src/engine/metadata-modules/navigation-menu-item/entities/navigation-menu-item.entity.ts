@@ -41,8 +41,7 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
   OR ("type" = 'OBJECT' AND "targetObjectMetadataId" IS NOT NULL)
   OR ("type" = 'VIEW')
   OR ("type" = 'RECORD' AND "targetRecordId" IS NOT NULL AND "targetObjectMetadataId" IS NOT NULL)
-  OR ("type" = 'LINK' AND "link" IS NOT NULL)
-  OR ("type" IS NULL)`,
+  OR ("type" = 'LINK' AND "link" IS NOT NULL)`,
 )
 export class NavigationMenuItemEntity
   extends SyncableEntity
@@ -85,7 +84,7 @@ export class NavigationMenuItemEntity
   targetObjectMetadata: Relation<ObjectMetadataEntity> | null;
 
   @Column({
-    nullable: true,
+    nullable: false,
     type: 'enum',
     enum: NavigationMenuItemType,
     default: NavigationMenuItemType.VIEW,

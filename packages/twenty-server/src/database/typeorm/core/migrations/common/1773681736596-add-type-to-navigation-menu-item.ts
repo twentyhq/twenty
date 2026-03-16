@@ -11,7 +11,7 @@ export class AddTypeToNavigationMenuItem1773681736596
     );
 
     await queryRunner.query(
-      `ALTER TABLE "core"."navigationMenuItem" ADD "type" "core"."navigationMenuItem_type_enum" DEFAULT 'VIEW'`,
+      `ALTER TABLE "core"."navigationMenuItem" ADD "type" "core"."navigationMenuItem_type_enum" NOT NULL DEFAULT 'VIEW'`,
     );
 
     await queryRunner.query(
@@ -25,7 +25,6 @@ export class AddTypeToNavigationMenuItem1773681736596
         OR ("type" = 'VIEW')
         OR ("type" = 'RECORD' AND "targetRecordId" IS NOT NULL AND "targetObjectMetadataId" IS NOT NULL)
         OR ("type" = 'LINK' AND "link" IS NOT NULL)
-        OR ("type" IS NULL)
       )`,
     );
   }
