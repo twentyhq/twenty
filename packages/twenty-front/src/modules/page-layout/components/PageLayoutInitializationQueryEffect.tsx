@@ -1,5 +1,3 @@
-import { activeCustomizationPageLayoutIdsState } from '@/app/states/activeCustomizationPageLayoutIdsState';
-import { isLayoutCustomizationActiveState } from '@/app/states/isLayoutCustomizationActiveState';
 import { useBasePageLayout } from '@/page-layout/hooks/useBasePageLayout';
 import { usePageLayoutWithRelationWidgets } from '@/page-layout/hooks/usePageLayoutWithRelationWidgets';
 import { useSetIsPageLayoutInEditMode } from '@/page-layout/hooks/useSetIsPageLayoutInEditMode';
@@ -12,7 +10,6 @@ import { convertPageLayoutToTabLayouts } from '@/page-layout/utils/convertPageLa
 import { isPageLayoutEmpty } from '@/page-layout/utils/isPageLayoutEmpty';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useStore } from 'jotai';
 import { useCallback, useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -45,26 +42,11 @@ export const PageLayoutInitializationQueryEffect = ({
   const pageLayoutCurrentLayoutsComponentCallbackState =
     useAtomComponentStateCallbackState(pageLayoutCurrentLayoutsComponentState);
 
-  const isLayoutCustomizationActive = useAtomStateValue(
-    isLayoutCustomizationActiveState,
-  );
-
   const store = useStore();
 
   const initializePageLayout = useCallback(
     (layout: PageLayout) => {
       const isRecordPageLayout = layout.type === PageLayoutType.RECORD_PAGE;
-
-      const activeIds = store.get(activeCustomizationPageLayoutIdsState.atom);
-      const isAlreadyRegistered = activeIds.includes(layout.id);
-
-      if (
-        isRecordPageLayout &&
-        isLayoutCustomizationActive &&
-        isAlreadyRegistered
-      ) {
-        return;
-      }
 
       const currentPersisted = store.get(
         pageLayoutPersistedComponentCallbackState,
@@ -91,23 +73,11 @@ export const PageLayoutInitializationQueryEffect = ({
         const shouldEnterDashboardEditMode = isPageLayoutEmpty(layout);
         setIsPageLayoutInEditMode(shouldEnterDashboardEditMode);
       }
-
-      if (
-        isRecordPageLayout &&
-        isLayoutCustomizationActive &&
-        !isAlreadyRegistered
-      ) {
-        store.set(activeCustomizationPageLayoutIdsState.atom, [
-          ...activeIds,
-          layout.id,
-        ]);
-      }
     },
     [
       pageLayoutCurrentLayoutsComponentCallbackState,
       pageLayoutDraftComponentCallbackState,
       pageLayoutPersistedComponentCallbackState,
-      isLayoutCustomizationActive,
       setIsPageLayoutInEditMode,
       store,
     ],
