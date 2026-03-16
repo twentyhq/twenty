@@ -30,14 +30,8 @@ export const getNavigationMenuItemBaseFile = ({
   } else if (type === 'FOLDER') {
     typeAndConfig = `  type: 'FOLDER',`;
   } else {
-    typeAndConfig = `  // type: 'OBJECT',
-  // targetObjectUniversalIdentifier: '...',
-  // Or:
-  // type: 'VIEW',
-  // viewUniversalIdentifier: '...',
-  // Or:
-  // type: 'LINK',
-  // link: 'https://example.com',`;
+    typeAndConfig = `  type: 'VIEW',
+  // viewUniversalIdentifier: '...',`;
   }
 
   return `import { defineNavigationMenuItem } from 'twenty-sdk';

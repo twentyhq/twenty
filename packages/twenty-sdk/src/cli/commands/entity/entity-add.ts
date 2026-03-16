@@ -260,6 +260,7 @@ export class EntityAddCommand {
 
     const navFile = getNavigationMenuItemBaseFile({
       name: objectName,
+      type: 'OBJECT',
       targetObjectUniversalIdentifier: this.lastObjectUniversalIdentifier,
     });
 

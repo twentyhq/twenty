@@ -11,7 +11,7 @@ export class AddTypeToNavigationMenuItem1773681736596
     );
 
     await queryRunner.query(
-      `ALTER TABLE "core"."navigationMenuItem" ADD "type" "core"."navigationMenuItem_type_enum"`,
+      `ALTER TABLE "core"."navigationMenuItem" ADD "type" "core"."navigationMenuItem_type_enum" DEFAULT 'VIEW'`,
     );
 
     await queryRunner.query(
@@ -20,11 +20,11 @@ export class AddTypeToNavigationMenuItem1773681736596
 
     await queryRunner.query(
       `ALTER TABLE "core"."navigationMenuItem" ADD CONSTRAINT "CHK_navigation_menu_item_type_fields" CHECK (
-        ("type" = 'FOLDER' AND "viewId" IS NULL AND "targetObjectMetadataId" IS NULL AND "targetRecordId" IS NULL AND "link" IS NULL)
-        OR ("type" = 'OBJECT' AND "targetObjectMetadataId" IS NOT NULL AND "viewId" IS NULL AND "targetRecordId" IS NULL AND "link" IS NULL)
-        OR ("type" = 'VIEW' AND "viewId" IS NOT NULL AND "targetRecordId" IS NULL AND "link" IS NULL)
+        ("type" = 'FOLDER')
+        OR ("type" = 'OBJECT' AND "targetObjectMetadataId" IS NOT NULL)
+        OR ("type" = 'VIEW')
         OR ("type" = 'RECORD' AND "targetRecordId" IS NOT NULL AND "targetObjectMetadataId" IS NOT NULL)
-        OR ("type" = 'LINK' AND "link" IS NOT NULL AND "viewId" IS NULL AND "targetObjectMetadataId" IS NULL AND "targetRecordId" IS NULL)
+        OR ("type" = 'LINK' AND "link" IS NOT NULL)
         OR ("type" IS NULL)
       )`,
     );

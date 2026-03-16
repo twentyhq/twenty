@@ -37,11 +37,11 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
 ])
 @Check(
   'CHK_navigation_menu_item_type_fields',
-  `("type" = 'FOLDER' AND "viewId" IS NULL AND "targetObjectMetadataId" IS NULL AND "targetRecordId" IS NULL AND "link" IS NULL)
-  OR ("type" = 'OBJECT' AND "targetObjectMetadataId" IS NOT NULL AND "viewId" IS NULL AND "targetRecordId" IS NULL AND "link" IS NULL)
-  OR ("type" = 'VIEW' AND "viewId" IS NOT NULL AND "targetRecordId" IS NULL AND "link" IS NULL)
+  `("type" = 'FOLDER')
+  OR ("type" = 'OBJECT' AND "targetObjectMetadataId" IS NOT NULL)
+  OR ("type" = 'VIEW')
   OR ("type" = 'RECORD' AND "targetRecordId" IS NOT NULL AND "targetObjectMetadataId" IS NOT NULL)
-  OR ("type" = 'LINK' AND "link" IS NOT NULL AND "viewId" IS NULL AND "targetObjectMetadataId" IS NULL AND "targetRecordId" IS NULL)
+  OR ("type" = 'LINK' AND "link" IS NOT NULL)
   OR ("type" IS NULL)`,
 )
 export class NavigationMenuItemEntity
@@ -85,7 +85,7 @@ export class NavigationMenuItemEntity
   targetObjectMetadata: Relation<ObjectMetadataEntity> | null;
 
   @Column({
-    nullable: false,
+    nullable: true,
     type: 'enum',
     enum: NavigationMenuItemType,
     default: NavigationMenuItemType.VIEW,
