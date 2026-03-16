@@ -49,7 +49,7 @@ export default {
         155,
         160,
         164,
-        183,
+        188,
         218,
         226,
         227,
@@ -779,10 +779,10 @@ export default {
                 3
             ],
             "relation": [
-                182
+                187
             ],
             "morphRelations": [
-                182
+                187
             ],
             "object": [
                 46
@@ -3457,38 +3457,6 @@ export default {
                 1
             ]
         },
-        "Relation": {
-            "type": [
-                183
-            ],
-            "sourceObjectMetadata": [
-                46
-            ],
-            "targetObjectMetadata": [
-                46
-            ],
-            "sourceFieldMetadata": [
-                34
-            ],
-            "targetFieldMetadata": [
-                34
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "RelationType": {},
-        "FieldConnection": {
-            "pageInfo": [
-                170
-            ],
-            "edges": [
-                179
-            ],
-            "__typename": [
-                1
-            ]
-        },
         "VersionDistributionEntry": {
             "version": [
                 1
@@ -3508,7 +3476,7 @@ export default {
                 1
             ],
             "versionDistribution": [
-                185
+                182
             ],
             "__typename": [
                 1
@@ -3548,6 +3516,38 @@ export default {
         "RotateClientSecret": {
             "clientSecret": [
                 1
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "Relation": {
+            "type": [
+                188
+            ],
+            "sourceObjectMetadata": [
+                46
+            ],
+            "targetObjectMetadata": [
+                46
+            ],
+            "sourceFieldMetadata": [
+                34
+            ],
+            "targetFieldMetadata": [
+                34
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "RelationType": {},
+        "FieldConnection": {
+            "pageInfo": [
+                170
+            ],
+            "edges": [
+                179
             ],
             "__typename": [
                 1
@@ -6095,7 +6095,7 @@ export default {
                 }
             ],
             "fields": [
-                184,
+                189,
                 {
                     "paging": [
                         39,
@@ -6172,6 +6172,63 @@ export default {
                     ]
                 }
             ],
+            "findApplicationRegistrationByClientId": [
+                185,
+                {
+                    "clientId": [
+                        1,
+                        "String!"
+                    ]
+                }
+            ],
+            "findApplicationRegistrationByUniversalIdentifier": [
+                7,
+                {
+                    "universalIdentifier": [
+                        1,
+                        "String!"
+                    ]
+                }
+            ],
+            "findManyApplicationRegistrations": [
+                7
+            ],
+            "findOneApplicationRegistration": [
+                7,
+                {
+                    "id": [
+                        1,
+                        "String!"
+                    ]
+                }
+            ],
+            "findApplicationRegistrationStats": [
+                183,
+                {
+                    "id": [
+                        1,
+                        "String!"
+                    ]
+                }
+            ],
+            "findApplicationRegistrationVariables": [
+                5,
+                {
+                    "applicationRegistrationId": [
+                        1,
+                        "String!"
+                    ]
+                }
+            ],
+            "applicationRegistrationTarballUrl": [
+                1,
+                {
+                    "id": [
+                        1,
+                        "String!"
+                    ]
+                }
+            ],
             "checkUserExists": [
                 213,
                 {
@@ -6206,63 +6263,6 @@ export default {
                 208,
                 {
                     "passwordResetToken": [
-                        1,
-                        "String!"
-                    ]
-                }
-            ],
-            "findApplicationRegistrationByClientId": [
-                188,
-                {
-                    "clientId": [
-                        1,
-                        "String!"
-                    ]
-                }
-            ],
-            "findApplicationRegistrationByUniversalIdentifier": [
-                7,
-                {
-                    "universalIdentifier": [
-                        1,
-                        "String!"
-                    ]
-                }
-            ],
-            "findManyApplicationRegistrations": [
-                7
-            ],
-            "findOneApplicationRegistration": [
-                7,
-                {
-                    "id": [
-                        1,
-                        "String!"
-                    ]
-                }
-            ],
-            "findApplicationRegistrationStats": [
-                186,
-                {
-                    "id": [
-                        1,
-                        "String!"
-                    ]
-                }
-            ],
-            "findApplicationRegistrationVariables": [
-                5,
-                {
-                    "applicationRegistrationId": [
-                        1,
-                        "String!"
-                    ]
-                }
-            ],
-            "applicationRegistrationTarballUrl": [
-                1,
-                {
-                    "id": [
                         1,
                         "String!"
                     ]
@@ -7758,11 +7758,99 @@ export default {
             "checkCustomDomainValidRecords": [
                 162
             ],
+            "createApplicationRegistration": [
+                184,
+                {
+                    "input": [
+                        433,
+                        "CreateApplicationRegistrationInput!"
+                    ]
+                }
+            ],
+            "updateApplicationRegistration": [
+                7,
+                {
+                    "input": [
+                        434,
+                        "UpdateApplicationRegistrationInput!"
+                    ]
+                }
+            ],
+            "deleteApplicationRegistration": [
+                6,
+                {
+                    "id": [
+                        1,
+                        "String!"
+                    ]
+                }
+            ],
+            "rotateApplicationRegistrationClientSecret": [
+                186,
+                {
+                    "id": [
+                        1,
+                        "String!"
+                    ]
+                }
+            ],
+            "createApplicationRegistrationVariable": [
+                5,
+                {
+                    "input": [
+                        436,
+                        "CreateApplicationRegistrationVariableInput!"
+                    ]
+                }
+            ],
+            "updateApplicationRegistrationVariable": [
+                5,
+                {
+                    "input": [
+                        437,
+                        "UpdateApplicationRegistrationVariableInput!"
+                    ]
+                }
+            ],
+            "deleteApplicationRegistrationVariable": [
+                6,
+                {
+                    "id": [
+                        1,
+                        "String!"
+                    ]
+                }
+            ],
+            "uploadAppTarball": [
+                7,
+                {
+                    "file": [
+                        393,
+                        "Upload!"
+                    ],
+                    "universalIdentifier": [
+                        1
+                    ]
+                }
+            ],
+            "transferApplicationRegistrationOwnership": [
+                7,
+                {
+                    "applicationRegistrationId": [
+                        1,
+                        "String!"
+                    ],
+                    "targetWorkspaceSubdomain": [
+                        1,
+                        "String!"
+                    ]
+                }
+            ],
             "getAuthorizationUrlForSSO": [
                 203,
                 {
                     "input": [
-                        433,
+                        439,
                         "GetAuthorizationUrlForSSOInput!"
                     ]
                 }
@@ -8007,94 +8095,6 @@ export default {
                         "String!"
                     ],
                     "newPassword": [
-                        1,
-                        "String!"
-                    ]
-                }
-            ],
-            "createApplicationRegistration": [
-                187,
-                {
-                    "input": [
-                        434,
-                        "CreateApplicationRegistrationInput!"
-                    ]
-                }
-            ],
-            "updateApplicationRegistration": [
-                7,
-                {
-                    "input": [
-                        435,
-                        "UpdateApplicationRegistrationInput!"
-                    ]
-                }
-            ],
-            "deleteApplicationRegistration": [
-                6,
-                {
-                    "id": [
-                        1,
-                        "String!"
-                    ]
-                }
-            ],
-            "rotateApplicationRegistrationClientSecret": [
-                189,
-                {
-                    "id": [
-                        1,
-                        "String!"
-                    ]
-                }
-            ],
-            "createApplicationRegistrationVariable": [
-                5,
-                {
-                    "input": [
-                        437,
-                        "CreateApplicationRegistrationVariableInput!"
-                    ]
-                }
-            ],
-            "updateApplicationRegistrationVariable": [
-                5,
-                {
-                    "input": [
-                        438,
-                        "UpdateApplicationRegistrationVariableInput!"
-                    ]
-                }
-            ],
-            "deleteApplicationRegistrationVariable": [
-                6,
-                {
-                    "id": [
-                        1,
-                        "String!"
-                    ]
-                }
-            ],
-            "uploadAppTarball": [
-                7,
-                {
-                    "file": [
-                        393,
-                        "Upload!"
-                    ],
-                    "universalIdentifier": [
-                        1
-                    ]
-                }
-            ],
-            "transferApplicationRegistrationOwnership": [
-                7,
-                {
-                    "applicationRegistrationId": [
-                        1,
-                        "String!"
-                    ],
-                    "targetWorkspaceSubdomain": [
                         1,
                         "String!"
                     ]
@@ -10385,17 +10385,6 @@ export default {
                 1
             ]
         },
-        "GetAuthorizationUrlForSSOInput": {
-            "identityProviderId": [
-                3
-            ],
-            "workspaceInviteHash": [
-                1
-            ],
-            "__typename": [
-                1
-            ]
-        },
         "CreateApplicationRegistrationInput": {
             "name": [
                 1
@@ -10433,7 +10422,7 @@ export default {
                 1
             ],
             "update": [
-                436
+                435
             ],
             "__typename": [
                 1
@@ -10496,7 +10485,7 @@ export default {
                 1
             ],
             "update": [
-                439
+                438
             ],
             "__typename": [
                 1
@@ -10507,6 +10496,17 @@ export default {
                 1
             ],
             "description": [
+                1
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "GetAuthorizationUrlForSSOInput": {
+            "identityProviderId": [
+                3
+            ],
+            "workspaceInviteHash": [
                 1
             ],
             "__typename": [
