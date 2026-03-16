@@ -11,6 +11,7 @@ export type RemoteConfig = {
   accessToken?: string;
   refreshToken?: string;
   oauthClientId?: string;
+  oauthClientSecret?: string;
 };
 
 type PersistedConfig = {
@@ -63,32 +64,22 @@ export class ConfigService {
 
     const migrated: PersistedConfig = {};
 
+    const str = (value: unknown): string | undefined =>
+      typeof value === 'string' ? value : undefined;
+
     const migrateRemoteFields = (
       source: Record<string, unknown>,
     ): RemoteConfig => {
       const remote: RemoteConfig = {
-        apiUrl: (source.apiUrl as string) ?? '',
+        apiUrl: str(source.apiUrl) ?? '',
+        apiKey: str(source.apiKey),
+        accessToken:
+          str(source.accessToken) ?? str(source.applicationAccessToken),
+        refreshToken:
+          str(source.refreshToken) ?? str(source.applicationRefreshToken),
+        oauthClientId: str(source.oauthClientId),
+        oauthClientSecret: str(source.oauthClientSecret),
       };
-
-      if (source.apiKey) remote.apiKey = source.apiKey as string;
-      if (source.applicationAccessToken) {
-        remote.accessToken = source.applicationAccessToken as string;
-      }
-      if (source.accessToken) {
-        remote.accessToken = source.accessToken as string;
-      }
-      if (source.applicationRefreshToken) {
-        remote.refreshToken = source.applicationRefreshToken as string;
-      }
-      if (source.refreshToken) {
-        remote.refreshToken = source.refreshToken as string;
-      }
-      if (source.oauthClientId) {
-        remote.oauthClientId = source.oauthClientId as string;
-      }
-      if (source.oauthClientSecret) {
-        remote.oauthClientSecret = source.oauthClientSecret as string;
-      }
 
       return remote;
     };
