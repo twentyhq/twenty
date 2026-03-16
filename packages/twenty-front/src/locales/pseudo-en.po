@@ -12511,11 +12511,6 @@ msgstr ""
 msgid "Singular"
 msgstr ""
 
-#. js-lingui-id: djfBXF
-#: src/modules/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema.ts
-msgid "Singular and plural labels must be different"
-msgstr ""
-
 #. js-lingui-id: zvwLTy
 #: src/modules/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema.ts
 msgid "Singular and plural names must be different"

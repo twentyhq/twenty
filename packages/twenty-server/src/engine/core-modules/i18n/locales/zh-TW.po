@@ -4035,11 +4035,6 @@ msgstr "您嘗試修改的角色找不到。它可能已被刪除或者您可能
 msgid "The server address you entered is not allowed. Please use a public server address."
 msgstr ""
 
-#. js-lingui-id: H1tAJD
-#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-label.util.ts
-msgid "The singular and plural labels cannot be the same for an object"
-msgstr "物件的單數標籤與複數標籤不能相同"
-
 #. js-lingui-id: FOEWHl
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name.util.ts
 msgid "The singular and plural names cannot be the same for an object"

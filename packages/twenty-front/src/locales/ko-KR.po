@@ -12516,11 +12516,6 @@ msgstr "싱글 사인온(SSO)"
 msgid "Singular"
 msgstr "단수형"
 
-#. js-lingui-id: djfBXF
-#: src/modules/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema.ts
-msgid "Singular and plural labels must be different"
-msgstr "단수와 복수 레이블은 달라야 합니다"
-
 #. js-lingui-id: zvwLTy
 #: src/modules/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema.ts
 msgid "Singular and plural names must be different"

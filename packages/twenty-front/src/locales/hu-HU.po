@@ -12516,11 +12516,6 @@ msgstr "Egyszerű bejelentkezés (SSO)"
 msgid "Singular"
 msgstr "Egyes"
 
-#. js-lingui-id: djfBXF
-#: src/modules/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema.ts
-msgid "Singular and plural labels must be different"
-msgstr "Az egyes és többes számú címkéknek különbözniük kell"
-
 #. js-lingui-id: zvwLTy
 #: src/modules/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema.ts
 msgid "Singular and plural names must be different"
