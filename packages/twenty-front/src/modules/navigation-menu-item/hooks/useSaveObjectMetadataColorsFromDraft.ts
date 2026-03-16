@@ -4,7 +4,7 @@ import { useStore } from 'jotai';
 
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/states/navigationMenuItemsDraftState';
 import { filterWorkspaceNavigationMenuItems } from '@/navigation-menu-item/utils/filterWorkspaceNavigationMenuItems';
-import { navigationMenuItemsState } from '@/navigation-menu-item/states/navigationMenuItemsState';
+import { navigationMenuItemsSelector } from '@/navigation-menu-item/states/navigationMenuItemsSelector';
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 import { ViewKey } from '@/views/types/ViewKey';
@@ -15,7 +15,7 @@ export const useSaveObjectMetadataColorsFromDraft = () => {
 
   const saveObjectMetadataColors = useCallback(async () => {
     const draft = store.get(navigationMenuItemsDraftState.atom);
-    const currentItems = store.get(navigationMenuItemsState.atom);
+    const currentItems = store.get(navigationMenuItemsSelector.atom);
     const views = store.get(viewsSelector.atom);
 
     if (!draft) return;

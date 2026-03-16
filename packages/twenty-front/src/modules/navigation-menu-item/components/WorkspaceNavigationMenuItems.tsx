@@ -28,7 +28,7 @@ import { filterWorkspaceNavigationMenuItems } from '@/navigation-menu-item/utils
 import { preloadWorkspaceDndKit } from '@/navigation/preloadWorkspaceDndKit';
 import { NavigationDrawerSectionForWorkspaceItems } from '@/object-metadata/components/NavigationDrawerSectionForWorkspaceItems';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { navigationMenuItemsState } from '@/navigation-menu-item/states/navigationMenuItemsState';
+import { navigationMenuItemsSelector } from '@/navigation-menu-item/states/navigationMenuItemsSelector';
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -47,7 +47,7 @@ export const WorkspaceNavigationMenuItems = () => {
   const { workspaceNavigationMenuItemsSorted } = useSortedNavigationMenuItems();
   const store = useStore();
   const enterEditMode = () => {
-    const currentNavigationMenuItems = store.get(navigationMenuItemsState.atom);
+    const currentNavigationMenuItems = store.get(navigationMenuItemsSelector.atom);
     const workspaceNavigationMenuItems = filterWorkspaceNavigationMenuItems(
       currentNavigationMenuItems,
     );

@@ -1,7 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { useSelectedNavigationMenuItemEditItem } from '@/navigation-menu-item/hooks/useSelectedNavigationMenuItemEditItem';
-import { navigationMenuItemsState } from '@/navigation-menu-item/states/navigationMenuItemsState';
+import { navigationMenuItemsSelector } from '@/navigation-menu-item/states/navigationMenuItemsSelector';
 import { getStandardObjectIconColor } from '@/navigation-menu-item/utils/getStandardObjectIconColor';
 import { parseThemeColor } from '@/navigation-menu-item/utils/parseThemeColor';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
@@ -35,7 +35,7 @@ export const SidePanelEditObjectViewBase = ({
 }: SidePanelEditObjectViewBaseProps) => {
   const { t } = useLingui();
   const { selectedItem } = useSelectedNavigationMenuItemEditItem();
-  const navigationMenuItems = useAtomStateValue(navigationMenuItemsState);
+  const navigationMenuItems = useAtomStateValue(navigationMenuItemsSelector);
   const selectableItemIds = getOrganizeActionsSelectableItemIds(true);
 
   const persistedItem = navigationMenuItems.find(

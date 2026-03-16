@@ -4,14 +4,14 @@ import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/isNavigationMenuInEditModeState';
 import { filterWorkspaceNavigationMenuItems } from '@/navigation-menu-item/utils/filterWorkspaceNavigationMenuItems';
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/states/navigationMenuItemsDraftState';
-import { navigationMenuItemsState } from '@/navigation-menu-item/states/navigationMenuItemsState';
+import { navigationMenuItemsSelector } from '@/navigation-menu-item/states/navigationMenuItemsSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const useNavigationMenuItemsDraftState = () => {
   const isNavigationMenuInEditMode = useAtomStateValue(
     isNavigationMenuInEditModeState,
   );
-  const navigationMenuItems = useAtomStateValue(navigationMenuItemsState);
+  const navigationMenuItems = useAtomStateValue(navigationMenuItemsSelector);
   const navigationMenuItemsDraft = useAtomStateValue(
     navigationMenuItemsDraftState,
   );
