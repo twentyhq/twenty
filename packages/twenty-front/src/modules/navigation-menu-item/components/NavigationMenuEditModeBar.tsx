@@ -1,6 +1,5 @@
 import { useNavigationMenuItemsDraftState } from '@/navigation-menu-item/hooks/useNavigationMenuItemsDraftState';
 import { useSaveNavigationMenuItemsDraft } from '@/navigation-menu-item/hooks/useSaveNavigationMenuItemsDraft';
-import { useSaveObjectMetadataColorsFromDraft } from '@/navigation-menu-item/hooks/useSaveObjectMetadataColorsFromDraft';
 import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/isNavigationMenuInEditModeState';
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/states/navigationMenuItemsDraftState';
 import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeState';
@@ -53,7 +52,6 @@ export const NavigationMenuEditModeBar = () => {
     isNavigationMenuInEditModeState,
   );
   const { saveDraft } = useSaveNavigationMenuItemsDraft();
-  const { saveObjectMetadataColors } = useSaveObjectMetadataColorsFromDraft();
   const { isDirty } = useNavigationMenuItemsDraftState();
 
   const cancelEditMode = () => {
@@ -79,7 +77,6 @@ export const NavigationMenuEditModeBar = () => {
 
     setIsSaving(true);
     try {
-      await saveObjectMetadataColors();
       await saveDraft();
       cancelEditMode();
       closeSidePanelMenu();

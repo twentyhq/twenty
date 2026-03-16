@@ -132,8 +132,7 @@ export const useSaveNavigationMenuItemsDraft = () => {
         isNavigationMenuItemFolder(draftItem) &&
         (original.icon ?? null) !== (draftItem.icon ?? null);
       const colorChanged =
-        (isNavigationMenuItemFolder(draftItem) ||
-          isNavigationMenuItemLink(draftItem)) &&
+        isNavigationMenuItemFolder(draftItem) &&
         (original.color ?? null) !== (draftItem.color ?? null);
 
       if (

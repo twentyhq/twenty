@@ -4,7 +4,6 @@ import { useNavigationMenuItemsDraftState } from '@/navigation-menu-item/hooks/u
 import { useOpenAddItemToFolderPage } from '@/navigation-menu-item/hooks/useOpenAddItemToFolderPage';
 import { useSelectedNavigationMenuItemEditItem } from '@/navigation-menu-item/hooks/useSelectedNavigationMenuItemEditItem';
 import { useSelectedNavigationMenuItemEditItemLabel } from '@/navigation-menu-item/hooks/useSelectedNavigationMenuItemEditItemLabel';
-import { useSelectedNavigationMenuItemEditItemObjectMetadata } from '@/navigation-menu-item/hooks/useSelectedNavigationMenuItemEditItemObjectMetadata';
 import { useUpdateLinkInDraft } from '@/navigation-menu-item/hooks/useUpdateLinkInDraft';
 import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeState';
 import { parseThemeColor } from '@/navigation-menu-item/utils/parseThemeColor';
@@ -21,7 +20,6 @@ import { getOrganizeActionsSelectableItemIds } from '@/side-panel/pages/navigati
 import { SidePanelSubPages } from '@/side-panel/types/SidePanelSubPages';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { ViewKey } from '@/views/types/ViewKey';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
@@ -47,8 +45,6 @@ export const SidePanelNavigationMenuItemEditPage = () => {
   );
   const { selectedItemLabel } = useSelectedNavigationMenuItemEditItemLabel();
   const { selectedItem } = useSelectedNavigationMenuItemEditItem();
-  const { selectedItemObjectMetadata } =
-    useSelectedNavigationMenuItemEditItemObjectMetadata();
   const selectedItemType = selectedItem?.itemType ?? null;
 
   const { navigateToSidePanelSubPage } = useSidePanelSubPageHistory();
@@ -98,7 +94,6 @@ export const SidePanelNavigationMenuItemEditPage = () => {
 
   switch (selectedItemType) {
     case NavigationMenuItemType.VIEW:
-      if (!selectedItemObjectMetadata) return null;
       return (
         <SidePanelEditObjectViewBase
           onOpenFolderPicker={openFolderPicker}
@@ -109,13 +104,6 @@ export const SidePanelNavigationMenuItemEditPage = () => {
           onRemove={onRemove}
           onAddBefore={onAddBefore}
           onAddAfter={onAddAfter}
-          objectMetadataItem={
-            selectedItem &&
-            'viewKey' in selectedItem &&
-            selectedItem.viewKey === ViewKey.INDEX
-              ? selectedItemObjectMetadata
-              : null
-          }
         />
       );
     case NavigationMenuItemType.LINK:
@@ -189,14 +177,6 @@ export const SidePanelNavigationMenuItemEditPage = () => {
           commandGroups={[]}
           selectableItemIds={getOrganizeActionsSelectableItemIds(true)}
         >
-          {selectedItem && (
-            <SidePanelGroup heading={t`Customize`}>
-              <SidePanelEditColorOption
-                navigationMenuItemId={selectedItem.id}
-                color={parseThemeColor(selectedItem.color)}
-              />
-            </SidePanelGroup>
-          )}
           <SidePanelEditOrganizeActions
             canMoveUp={canMoveUp}
             canMoveDown={canMoveDown}

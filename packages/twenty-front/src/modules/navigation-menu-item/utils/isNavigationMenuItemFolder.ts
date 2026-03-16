@@ -1,3 +1,2 @@
-export const isNavigationMenuItemFolder = (item: {
-  type?: string | null;
-}) => item.type === 'folder';
+export const isNavigationMenuItemFolder = (item: { type?: string | null }) =>
+  item.type === 'folder';

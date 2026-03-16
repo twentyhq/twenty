@@ -1,3 +1,2 @@
-export const isNavigationMenuItemLink = (item: {
-  type?: string | null;
-}) => item.type === 'link';
+export const isNavigationMenuItemLink = (item: { type?: string | null }) =>
+  item.type === 'link';

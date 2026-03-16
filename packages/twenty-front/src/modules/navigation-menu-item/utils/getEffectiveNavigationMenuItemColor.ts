@@ -9,19 +9,13 @@ export const getEffectiveNavigationMenuItemColor = (
   navigationMenuItem: ProcessedNavigationMenuItem,
   objectColor?: string,
 ): string | undefined => {
-  if (navigationMenuItem.itemType === NavigationMenuItemType.RECORD) {
-    return undefined;
-  }
-  if (navigationMenuItem.itemType === NavigationMenuItemType.VIEW) {
+  if (navigationMenuItem.itemType === NavigationMenuItemType.FOLDER) {
     return isNonEmptyString(navigationMenuItem.color)
       ? navigationMenuItem.color
-      : objectColor;
+      : DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER;
   }
-  if (isNonEmptyString(navigationMenuItem.color)) {
-    return navigationMenuItem.color;
-  }
-  if (navigationMenuItem.itemType === NavigationMenuItemType.FOLDER) {
-    return DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER;
+  if (navigationMenuItem.itemType === NavigationMenuItemType.VIEW) {
+    return objectColor;
   }
   if (navigationMenuItem.itemType === NavigationMenuItemType.LINK) {
     return DEFAULT_NAVIGATION_MENU_ITEM_COLOR_LINK;
