@@ -23,12 +23,14 @@ import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useIsMobile } from 'twenty-ui/utilities';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div<{ hasPinnedTab: boolean }>`
   display: grid;
@@ -75,6 +77,10 @@ export const PageLayoutRendererContent = () => {
 
   const isMobile = useIsMobile();
 
+  const isRecordPageGlobalEditionEnabled = useIsFeatureEnabled(
+    'IS_RECORD_PAGE_LAYOUT_GLOBAL_EDITION_ENABLED' as FeatureFlagKey,
+  );
+
   const metadataStore = useAtomFamilyStateValue(
     metadataStoreState,
     'objectMetadataItems',
@@ -92,7 +98,10 @@ export const PageLayoutRendererContent = () => {
 
   const handleAddTab =
     isPageLayoutInEditMode &&
-    shouldEnableTabEditingFeatures(currentPageLayout.type)
+    shouldEnableTabEditingFeatures(
+      currentPageLayout.type,
+      isRecordPageGlobalEditionEnabled,
+    )
       ? () => {
           const newTabId = createPageLayoutTab(t`Untitled`);
           setPageLayoutTabSettingsOpenTabId(newTabId);
@@ -105,7 +114,10 @@ export const PageLayoutRendererContent = () => {
 
   const canEnableTabEditing =
     isPageLayoutInEditMode &&
-    shouldEnableTabEditingFeatures(currentPageLayout.type);
+    shouldEnableTabEditingFeatures(
+      currentPageLayout.type,
+      isRecordPageGlobalEditionEnabled,
+    );
 
   const tabsWithVisibleWidgets = getTabsWithVisibleWidgets({
     tabs: currentPageLayout.tabs,
