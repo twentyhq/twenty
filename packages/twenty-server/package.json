@@ -145,7 +145,7 @@
     "lodash.uniq": "^4.5.0",
     "lodash.uniqby": "^4.7.0",
     "lodash.upperfirst": "4.3.1",
-    "mailparser": "3.9.1",
+    "mailparser": "3.9.3",
     "microdiff": "1.4.0",
     "mrmime": "^2.0.1",
     "ms": "2.1.3",
