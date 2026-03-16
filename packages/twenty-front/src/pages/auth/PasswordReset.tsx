@@ -2,7 +2,7 @@ import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLo
 import { Logo } from '@/auth/components/Logo';
 import { Title } from '@/auth/components/Title';
 import { useAuth } from '@/auth/hooks/useAuth';
-import { useIsLogged } from '@/auth/hooks/useIsLogged';
+import { useHasAccessTokenPair } from '@/auth/hooks/useHasAccessTokenPair';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
 import { PASSWORD_REGEX } from '@/auth/utils/passwordRegex';
@@ -13,7 +13,7 @@ import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { ModalContent } from 'twenty-ui/layout';
-import { ApolloError } from '@apollo/client';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { styled } from '@linaria/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { msg } from '@lingui/core/macro';
@@ -21,7 +21,7 @@ import { i18n } from '@lingui/core';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { motion } from 'framer-motion';
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { useParams } from 'react-router-dom';
@@ -32,9 +32,10 @@ import { MainButton } from 'twenty-ui/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { AnimatedEaseIn } from 'twenty-ui/utilities';
 import { z } from 'zod';
+import { useMutation, useQuery } from '@apollo/client/react';
 import {
-  useUpdatePasswordViaResetTokenMutation,
-  useValidatePasswordResetTokenQuery,
+  UpdatePasswordViaResetTokenDocument,
+  ValidatePasswordResetTokenDocument,
 } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { logError } from '~/utils/logError';
@@ -101,7 +102,7 @@ export const PasswordReset = () => {
   const [isTargetUserPasswordSet, setIsTargetUserPasswordSet] = useState(false);
   const passwordResetToken = useParams().passwordResetToken;
 
-  const isLoggedIn = useIsLogged();
+  const hasAccessTokenPair = useHasAccessTokenPair();
 
   const { control, handleSubmit } = useForm<Form>({
     mode: 'onChange',
@@ -112,31 +113,41 @@ export const PasswordReset = () => {
     resolver: zodResolver(validationSchema),
   });
 
-  useValidatePasswordResetTokenQuery({
-    variables: {
-      token: passwordResetToken ?? '',
+  const { data: tokenValidationData, error: tokenValidationError } = useQuery(
+    ValidatePasswordResetTokenDocument,
+    {
+      variables: {
+        token: passwordResetToken ?? '',
+      },
+      skip: !passwordResetToken || isTokenValid,
     },
-    skip: !passwordResetToken || isTokenValid,
-    onError: (error) => {
+  );
+
+  useEffect(() => {
+    if (tokenValidationError) {
       enqueueErrorSnackBar({
-        apolloError: error,
+        apolloError: tokenValidationError,
       });
       navigate(AppPath.Index);
-    },
-    onCompleted: (data) => {
+    }
+  }, [tokenValidationError, enqueueErrorSnackBar, navigate]);
+
+  useEffect(() => {
+    if (tokenValidationData) {
       setIsTokenValid(true);
-      const validationResult = data?.validatePasswordResetToken;
+      const validationResult = tokenValidationData?.validatePasswordResetToken;
       if (isNonEmptyString(validationResult?.email)) {
         setEmail(validationResult.email);
       }
       if (validationResult?.hasPassword) {
         setIsTargetUserPasswordSet(validationResult.hasPassword);
       }
-    },
-  });
+    }
+  }, [tokenValidationData]);
 
-  const [updatePasswordViaToken, { loading: isUpdatingPassword }] =
-    useUpdatePasswordViaResetTokenMutation();
+  const [updatePasswordViaToken, { loading: isUpdatingPassword }] = useMutation(
+    UpdatePasswordViaResetTokenDocument,
+  );
 
   const { signInWithCredentialsInWorkspace, signInWithCredentials } = useAuth();
   const { isOnAWorkspace } = useIsCurrentLocationOnAWorkspace();
@@ -168,7 +179,7 @@ export const PasswordReset = () => {
         currentUser ? { ...currentUser, hasPassword: true } : currentUser,
       );
 
-      if (isLoggedIn) {
+      if (hasAccessTokenPair) {
         enqueueSuccessSnackBar({
           message: successMessage,
         });
@@ -199,7 +210,7 @@ export const PasswordReset = () => {
     } catch (err) {
       logError(err);
       enqueueErrorSnackBar({
-        apolloError: err instanceof ApolloError ? err : undefined,
+        apolloError: CombinedGraphQLErrors.is(err) ? err : undefined,
       });
     }
   };

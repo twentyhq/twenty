@@ -3,9 +3,9 @@ import {
   cleanupViewFieldGroupTest,
   setupViewFieldGroupTest,
 } from 'test/integration/graphql/suites/view/utils/setup-view-field-group-test.util';
-import { createOneCoreViewFieldGroup } from 'test/integration/metadata/suites/view-field-group/utils/create-one-core-view-field-group.util';
-import { deleteOneCoreViewFieldGroup } from 'test/integration/metadata/suites/view-field-group/utils/delete-one-core-view-field-group.util';
-import { destroyOneCoreViewFieldGroup } from 'test/integration/metadata/suites/view-field-group/utils/destroy-one-core-view-field-group.util';
+import { createOneViewFieldGroup } from 'test/integration/metadata/suites/view-field-group/utils/create-one-view-field-group.util';
+import { deleteOneViewFieldGroup } from 'test/integration/metadata/suites/view-field-group/utils/delete-one-view-field-group.util';
+import { destroyOneViewFieldGroup } from 'test/integration/metadata/suites/view-field-group/utils/destroy-one-view-field-group.util';
 import { assertViewFieldGroupStructure } from 'test/integration/utils/view-test.util';
 import {
   type EachTestingContext,
@@ -38,16 +38,16 @@ describe('View Field Group Resolver - Successful Create Operations', () => {
   afterEach(async () => {
     if (isDefined(createdViewFieldGroupId)) {
       const {
-        data: { deleteCoreViewFieldGroup },
-      } = await deleteOneCoreViewFieldGroup({
+        data: { deleteViewFieldGroup },
+      } = await deleteOneViewFieldGroup({
         expectToFail: false,
         input: {
           id: createdViewFieldGroupId,
         },
       });
 
-      expect(deleteCoreViewFieldGroup.deletedAt).not.toBeNull();
-      await destroyOneCoreViewFieldGroup({
+      expect(deleteViewFieldGroup.deletedAt).not.toBeNull();
+      await destroyOneViewFieldGroup({
         expectToFail: false,
         input: {
           id: createdViewFieldGroupId,
@@ -109,16 +109,16 @@ describe('View Field Group Resolver - Successful Create Operations', () => {
   test.each(eachTestingContextFilter(successfulTestCases))(
     'Create $title',
     async ({ context: { viewFieldGroupInput, expected } }) => {
-      const response = await createOneCoreViewFieldGroup({
+      const response = await createOneViewFieldGroup({
         input: viewFieldGroupInput(testSetup),
         expectToFail: false,
       });
 
       expect(response.errors).toBeUndefined();
-      expect(response.data.createCoreViewFieldGroup).toBeDefined();
-      createdViewFieldGroupId = response.data.createCoreViewFieldGroup.id;
+      expect(response.data.createViewFieldGroup).toBeDefined();
+      createdViewFieldGroupId = response.data.createViewFieldGroup.id;
 
-      assertViewFieldGroupStructure(response.data.createCoreViewFieldGroup, {
+      assertViewFieldGroupStructure(response.data.createViewFieldGroup, {
         viewId: testSetup.testViewId,
         ...expected,
       });

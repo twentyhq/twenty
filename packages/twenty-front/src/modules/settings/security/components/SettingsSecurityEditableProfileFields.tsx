@@ -5,7 +5,7 @@ import { SelectControl } from '@/ui/input/components/SelectControl';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { ApolloError } from '@apollo/client';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
@@ -20,7 +20,8 @@ import {
 import { type SelectOption } from 'twenty-ui/input';
 import { MenuItemMultiSelect } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { useUpdateWorkspaceMutation } from '~/generated-metadata/graphql';
+import { useMutation } from '@apollo/client/react';
+import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
 
 const StyledDropdownContainer = styled.div`
   display: flex;
@@ -41,7 +42,7 @@ export const SettingsSecurityEditableProfileFields = () => {
   const [currentWorkspace, setCurrentWorkspace] = useAtomState(
     currentWorkspaceState,
   );
-  const [updateWorkspace] = useUpdateWorkspaceMutation();
+  const [updateWorkspace] = useMutation(UpdateWorkspaceDocument);
 
   const profileFieldOptions: ProfileFieldOption[] = [
     { value: 'email', label: t`Email`, Icon: IconMail },
@@ -108,7 +109,7 @@ export const SettingsSecurityEditableProfileFields = () => {
         prev ? { ...prev, editableProfileFields: previousFields } : prev,
       );
       enqueueErrorSnackBar({
-        apolloError: err instanceof ApolloError ? err : undefined,
+        apolloError: CombinedGraphQLErrors.is(err) ? err : undefined,
       });
     });
   };

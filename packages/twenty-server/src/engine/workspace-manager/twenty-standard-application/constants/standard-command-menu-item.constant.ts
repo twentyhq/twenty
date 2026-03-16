@@ -1,8 +1,7 @@
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
-import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
-
-import { STANDARD_FRONT_COMPONENTS } from './standard-front-component.constant';
+import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/enums/command-menu-item-availability-type.enum';
+import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 
 export const STANDARD_COMMAND_MENU_ITEMS = {
   navigateToNextRecord: {
@@ -16,8 +15,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     conditionalAvailabilityExpression:
       'pageType == "RECORD_PAGE" and not isInSidePanel',
     availabilityObjectMetadataUniversalIdentifier: null,
-    frontComponentUniversalIdentifier:
-      STANDARD_FRONT_COMPONENTS.navigateToNextRecord.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.NAVIGATE_TO_NEXT_RECORD,
   },
   navigateToPreviousRecord: {
     universalIdentifier: 'ec10f871-415b-420b-8150-7e09f6f04833',
@@ -30,8 +29,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     conditionalAvailabilityExpression:
       'pageType == "RECORD_PAGE" and not isInSidePanel',
     availabilityObjectMetadataUniversalIdentifier: null,
-    frontComponentUniversalIdentifier:
-      STANDARD_FRONT_COMPONENTS.navigateToPreviousRecord.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.NAVIGATE_TO_PREVIOUS_RECORD,
   },
   createNewRecord: {
     universalIdentifier: '08d255bf-58cd-47a5-bd82-78c5c58592f1',
@@ -44,8 +43,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     conditionalAvailabilityExpression:
       'pageType == "INDEX_PAGE" and objectPermissions.canUpdateObjectRecords and not hasAnySoftDeleteFilterOnView',
     availabilityObjectMetadataUniversalIdentifier: null,
-    frontComponentUniversalIdentifier:
-      STANDARD_FRONT_COMPONENTS.createNewRecord.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.CREATE_NEW_RECORD,
   },
   deleteSingleRecord: {
     universalIdentifier: '6652773f-b9a9-4fa3-a52c-e2f2e259e430',
@@ -58,8 +57,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     conditionalAvailabilityExpression:
       'numberOfSelectedRecords == 1 and not hasAnySoftDeleteFilterOnView and objectPermissions.canSoftDeleteObjectRecords and noneDefined(selectedRecords, "deletedAt")',
     availabilityObjectMetadataUniversalIdentifier: null,
-    frontComponentUniversalIdentifier:
-      STANDARD_FRONT_COMPONENTS.deleteSingleRecord.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.DELETE_SINGLE_RECORD,
   },
   deleteMultipleRecords: {
     universalIdentifier: 'cde86f1f-2c13-42b1-812b-f2b2b468cb83',
@@ -72,8 +71,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     conditionalAvailabilityExpression:
       'numberOfSelectedRecords >= 2 and objectPermissions.canSoftDeleteObjectRecords and not hasAnySoftDeleteFilterOnView and numberOfSelectedRecords < 10000',
     availabilityObjectMetadataUniversalIdentifier: null,
-    frontComponentUniversalIdentifier:
-      STANDARD_FRONT_COMPONENTS.deleteMultipleRecords.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.DELETE_MULTIPLE_RECORDS,
   },
   restoreSingleRecord: {
     universalIdentifier: '8b3a1cae-3e4d-43c1-a71f-48592b2e47ff',
@@ -86,8 +85,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     conditionalAvailabilityExpression:
       'numberOfSelectedRecords == 1 and everyDefined(selectedRecords, "deletedAt") and objectPermissions.canSoftDeleteObjectRecords and (pageType == "RECORD_PAGE" or hasAnySoftDeleteFilterOnView)',
     availabilityObjectMetadataUniversalIdentifier: null,
-    frontComponentUniversalIdentifier:
-      STANDARD_FRONT_COMPONENTS.restoreSingleRecord.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.RESTORE_SINGLE_RECORD,
   },
   restoreMultipleRecords: {
     universalIdentifier: '8b740c9d-d99a-45a8-812f-809caaf420ac',
@@ -100,8 +99,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     conditionalAvailabilityExpression:
       'numberOfSelectedRecords >= 2 and objectPermissions.canSoftDeleteObjectRecords and hasAnySoftDeleteFilterOnView and numberOfSelectedRecords < 10000',
     availabilityObjectMetadataUniversalIdentifier: null,
-    frontComponentUniversalIdentifier:
-      STANDARD_FRONT_COMPONENTS.restoreMultipleRecords.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.RESTORE_MULTIPLE_RECORDS,
   },
   destroySingleRecord: {
     universalIdentifier: '44a78417-c394-4bc8-961f-98b503030ddb',
@@ -114,8 +113,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     conditionalAvailabilityExpression:
       'numberOfSelectedRecords == 1 and objectPermissions.canDestroyObjectRecords and everyDefined(selectedRecords, "deletedAt")',
     availabilityObjectMetadataUniversalIdentifier: null,
-    frontComponentUniversalIdentifier:
-      STANDARD_FRONT_COMPONENTS.destroySingleRecord.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.DESTROY_SINGLE_RECORD,
   },
   destroyMultipleRecords: {
     universalIdentifier: 'c630b3fb-7920-40d1-9906-77d0aa797608',
@@ -128,8 +127,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     conditionalAvailabilityExpression:
       'numberOfSelectedRecords >= 2 and objectPermissions.canDestroyObjectRecords and hasAnySoftDeleteFilterOnView and numberOfSelectedRecords < 10000',
     availabilityObjectMetadataUniversalIdentifier: null,
-    frontComponentUniversalIdentifier:
-      STANDARD_FRONT_COMPONENTS.destroyMultipleRecords.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.DESTROY_MULTIPLE_RECORDS,
   },
   addToFavorites: {
     universalIdentifier: '38bf80c3-bd55-4753-80ba-38aa66429a03',
@@ -142,8 +141,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     conditionalAvailabilityExpression:
       'arrayLength(favoriteRecordIds) < numberOfSelectedRecords and noneDefined(selectedRecords, "deletedAt") and not hasAnySoftDeleteFilterOnView',
     availabilityObjectMetadataUniversalIdentifier: null,
-    frontComponentUniversalIdentifier:
-      STANDARD_FRONT_COMPONENTS.addToFavorites.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.ADD_TO_FAVORITES,
   },
   removeFromFavorites: {
     universalIdentifier: '3ea42507-44fa-4895-a36d-cbfef7355a50',
@@ -156,8 +155,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     conditionalAvailabilityExpression:
       'arrayLength(favoriteRecordIds) == numberOfSelectedRecords and noneDefined(selectedRecords, "deletedAt") and not hasAnySoftDeleteFilterOnView',
     availabilityObjectMetadataUniversalIdentifier: null,
-    frontComponentUniversalIdentifier:
-      STANDARD_FRONT_COMPONENTS.removeFromFavorites.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.REMOVE_FROM_FAVORITES,
   },
   exportNoteToPdf: {
     universalIdentifier: '86c8f3aa-9276-4c16-8cff-e295e34fbaf0',
@@ -170,8 +169,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     conditionalAvailabilityExpression:
       'pageType == "RECORD_PAGE" and (objectMetadataItem.nameSingular == "note" or objectMetadataItem.nameSingular == "task") and someNonEmptyString(selectedRecords, "bodyV2.blocknote")',
     availabilityObjectMetadataUniversalIdentifier: null,
-    frontComponentUniversalIdentifier:
-      STANDARD_FRONT_COMPONENTS.exportNoteToPdf.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.EXPORT_NOTE_TO_PDF,
   },
   exportFromRecordIndex: {
     universalIdentifier: 'a934ba8a-ac8f-487d-9cd9-06dfdaec1f49',
@@ -183,8 +182,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression: 'pageType == "INDEX_PAGE"',
     availabilityObjectMetadataUniversalIdentifier: null,
-    frontComponentUniversalIdentifier:
-      STANDARD_FRONT_COMPONENTS.exportFromRecordIndex.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.EXPORT_FROM_RECORD_INDEX,
   },
   exportFromRecordShow: {
     universalIdentifier: 'ba339455-f3c2-4ed1-bf77-3e316d7d6a66',
@@ -196,8 +195,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression: 'pageType == "RECORD_PAGE"',
     availabilityObjectMetadataUniversalIdentifier: null,
-    frontComponentUniversalIdentifier:
-      STANDARD_FRONT_COMPONENTS.exportFromRecordShow.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.EXPORT_FROM_RECORD_SHOW,
   },
   updateMultipleRecords: {
     universalIdentifier: '2e080651-f098-4a78-bea9-7a70002dc57c',
@@ -210,8 +209,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     conditionalAvailabilityExpression:
       'numberOfSelectedRecords >= 2 and objectPermissions.canUpdateObjectRecords',
     availabilityObjectMetadataUniversalIdentifier: null,
-    frontComponentUniversalIdentifier:
-      STANDARD_FRONT_COMPONENTS.updateMultipleRecords.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.UPDATE_MULTIPLE_RECORDS,
   },
   mergeMultipleRecords: {
     universalIdentifier: '6c14eb04-8e7e-4d47-93c0-8ec4834e2e60',
@@ -224,8 +223,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     conditionalAvailabilityExpression:
       'numberOfSelectedRecords >= 2 and isDefined(objectMetadataItem.duplicateCriteria) and objectPermissions.canUpdateObjectRecords and objectPermissions.canDestroyObjectRecords and numberOfSelectedRecords <= 9',
     availabilityObjectMetadataUniversalIdentifier: null,
-    frontComponentUniversalIdentifier:
-      STANDARD_FRONT_COMPONENTS.mergeMultipleRecords.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.MERGE_MULTIPLE_RECORDS,
   },
   exportMultipleRecords: {
     universalIdentifier: 'f71f68e5-7b6e-4c03-8161-c48434d7777c',
@@ -237,8 +236,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression: 'numberOfSelectedRecords >= 2',
     availabilityObjectMetadataUniversalIdentifier: null,
-    frontComponentUniversalIdentifier:
-      STANDARD_FRONT_COMPONENTS.exportMultipleRecords.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.EXPORT_MULTIPLE_RECORDS,
   },
   importRecords: {
     universalIdentifier: 'a2dc9de7-4798-422e-bb55-bfad7b9bdbe8',
@@ -250,8 +249,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
     conditionalAvailabilityExpression: 'not hasAnySoftDeleteFilterOnView',
     availabilityObjectMetadataUniversalIdentifier: null,
-    frontComponentUniversalIdentifier:
-      STANDARD_FRONT_COMPONENTS.importRecords.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.IMPORT_RECORDS,
   },
   exportView: {
     universalIdentifier: '80680f2a-c426-48b3-a839-c63a6183dc4b',
@@ -263,8 +262,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
     conditionalAvailabilityExpression: null,
     availabilityObjectMetadataUniversalIdentifier: null,
-    frontComponentUniversalIdentifier:
-      STANDARD_FRONT_COMPONENTS.exportView.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.EXPORT_VIEW,
   },
   seeDeletedRecords: {
     universalIdentifier: 'd63c21c3-9785-4750-be87-5f36269b8e0d',
@@ -276,8 +275,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
     conditionalAvailabilityExpression: 'not hasAnySoftDeleteFilterOnView',
     availabilityObjectMetadataUniversalIdentifier: null,
-    frontComponentUniversalIdentifier:
-      STANDARD_FRONT_COMPONENTS.seeDeletedRecords.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.SEE_DELETED_RECORDS,
   },
   createNewView: {
     universalIdentifier: '6ec7c339-e167-431d-bec6-d1c737df677c',
@@ -289,8 +288,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
     conditionalAvailabilityExpression: 'not hasAnySoftDeleteFilterOnView',
     availabilityObjectMetadataUniversalIdentifier: null,
-    frontComponentUniversalIdentifier:
-      STANDARD_FRONT_COMPONENTS.createNewView.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.CREATE_NEW_VIEW,
   },
   hideDeletedRecords: {
     universalIdentifier: '1420db7f-0fba-49e2-b23e-4b7caa0fafa0',
@@ -302,8 +301,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
     conditionalAvailabilityExpression: 'hasAnySoftDeleteFilterOnView',
     availabilityObjectMetadataUniversalIdentifier: null,
-    frontComponentUniversalIdentifier:
-      STANDARD_FRONT_COMPONENTS.hideDeletedRecords.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.HIDE_DELETED_RECORDS,
   },
   goToPeople: {
     universalIdentifier: 'dfe5fef8-d42c-40f0-941f-8e3b5eb01daa',
@@ -315,8 +314,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
     conditionalAvailabilityExpression: 'targetObjectReadPermissions.person',
     availabilityObjectMetadataUniversalIdentifier: null,
-    frontComponentUniversalIdentifier:
-      STANDARD_FRONT_COMPONENTS.goToPeople.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.GO_TO_PEOPLE,
   },
   goToCompanies: {
     universalIdentifier: '196e4eec-bfdd-48a6-bcbb-6707ef11951a',
@@ -328,8 +327,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
     conditionalAvailabilityExpression: 'targetObjectReadPermissions.company',
     availabilityObjectMetadataUniversalIdentifier: null,
-    frontComponentUniversalIdentifier:
-      STANDARD_FRONT_COMPONENTS.goToCompanies.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.GO_TO_COMPANIES,
   },
   goToDashboards: {
     universalIdentifier: '11dc07d1-21b2-4f86-af8c-6a664c02f00c',
@@ -341,8 +340,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
     conditionalAvailabilityExpression: 'targetObjectReadPermissions.dashboard',
     availabilityObjectMetadataUniversalIdentifier: null,
-    frontComponentUniversalIdentifier:
-      STANDARD_FRONT_COMPONENTS.goToDashboards.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.GO_TO_DASHBOARDS,
   },
   goToOpportunities: {
     universalIdentifier: 'f04f5e00-a208-422f-acf2-ff189769510d',
@@ -355,8 +354,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     conditionalAvailabilityExpression:
       'targetObjectReadPermissions.opportunity',
     availabilityObjectMetadataUniversalIdentifier: null,
-    frontComponentUniversalIdentifier:
-      STANDARD_FRONT_COMPONENTS.goToOpportunities.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.GO_TO_OPPORTUNITIES,
   },
   goToSettings: {
     universalIdentifier: 'ef9aba44-0068-453e-930a-f8c182af18ee',
@@ -368,8 +367,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
     conditionalAvailabilityExpression: null,
     availabilityObjectMetadataUniversalIdentifier: null,
-    frontComponentUniversalIdentifier:
-      STANDARD_FRONT_COMPONENTS.goToSettings.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.GO_TO_SETTINGS,
   },
   goToTasks: {
     universalIdentifier: 'e8e3bd0b-5ce9-4577-bb61-588c0b1ad063',
@@ -381,8 +380,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
     conditionalAvailabilityExpression: 'targetObjectReadPermissions.task',
     availabilityObjectMetadataUniversalIdentifier: null,
-    frontComponentUniversalIdentifier:
-      STANDARD_FRONT_COMPONENTS.goToTasks.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.GO_TO_TASKS,
   },
   goToNotes: {
     universalIdentifier: '08e0f0cc-ac2d-46cd-9bca-39a409b9addf',
@@ -394,8 +393,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
     conditionalAvailabilityExpression: 'targetObjectReadPermissions.note',
     availabilityObjectMetadataUniversalIdentifier: null,
-    frontComponentUniversalIdentifier:
-      STANDARD_FRONT_COMPONENTS.goToNotes.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.GO_TO_NOTES,
   },
   editRecordPageLayout: {
     universalIdentifier: 'd9794c67-1799-424f-8871-5ea771dd4a6d',
@@ -408,8 +407,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     conditionalAvailabilityExpression:
       'pageType == "RECORD_PAGE" and featureFlags.IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED and noneDefined(selectedRecords, "deletedAt") and objectPermissions.canUpdateObjectRecords and objectMetadataItem.nameSingular != "dashboard"',
     availabilityObjectMetadataUniversalIdentifier: null,
-    frontComponentUniversalIdentifier:
-      STANDARD_FRONT_COMPONENTS.editRecordPageLayout.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.EDIT_RECORD_PAGE_LAYOUT,
   },
   saveRecordPageLayout: {
     universalIdentifier: 'a3363589-e2a6-4451-a53c-b8c2710785e2',
@@ -422,8 +421,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     conditionalAvailabilityExpression:
       'pageType == "RECORD_PAGE" and isPageInEditMode and featureFlags.IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED and noneDefined(selectedRecords, "deletedAt") and objectPermissions.canUpdateObjectRecords',
     availabilityObjectMetadataUniversalIdentifier: null,
-    frontComponentUniversalIdentifier:
-      STANDARD_FRONT_COMPONENTS.saveRecordPageLayout.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.SAVE_RECORD_PAGE_LAYOUT,
   },
   cancelRecordPageLayout: {
     universalIdentifier: '0b9b4e93-2b4e-4ab0-908e-83ed1d674df7',
@@ -436,8 +435,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     conditionalAvailabilityExpression:
       'pageType == "RECORD_PAGE" and isPageInEditMode and featureFlags.IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED and noneDefined(selectedRecords, "deletedAt") and objectPermissions.canUpdateObjectRecords',
     availabilityObjectMetadataUniversalIdentifier: null,
-    frontComponentUniversalIdentifier:
-      STANDARD_FRONT_COMPONENTS.cancelRecordPageLayout.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.CANCEL_RECORD_PAGE_LAYOUT,
   },
   editDashboardLayout: {
     universalIdentifier: 'b9b53bbc-3129-4eb9-8344-c3f9628ffa7d',
@@ -451,8 +450,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       'pageType == "RECORD_PAGE" and noneDefined(selectedRecords, "deletedAt") and everyDefined(selectedRecords, "pageLayoutId") and objectPermissions.canUpdateObjectRecords',
     availabilityObjectMetadataUniversalIdentifier:
       STANDARD_OBJECTS.dashboard.universalIdentifier,
-    frontComponentUniversalIdentifier:
-      STANDARD_FRONT_COMPONENTS.editDashboardLayout.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.EDIT_DASHBOARD_LAYOUT,
   },
   saveDashboardLayout: {
     universalIdentifier: '18b23908-f816-42ab-bc0a-eb5fae29c695',
@@ -466,8 +465,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       'pageType == "RECORD_PAGE" and isPageInEditMode and noneDefined(selectedRecords, "deletedAt") and everyDefined(selectedRecords, "pageLayoutId") and objectPermissions.canUpdateObjectRecords',
     availabilityObjectMetadataUniversalIdentifier:
       STANDARD_OBJECTS.dashboard.universalIdentifier,
-    frontComponentUniversalIdentifier:
-      STANDARD_FRONT_COMPONENTS.saveDashboardLayout.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.SAVE_DASHBOARD_LAYOUT,
   },
   cancelDashboardLayout: {
     universalIdentifier: '030ecd01-0aaf-4e6d-8400-105996548887',
@@ -481,8 +480,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       'pageType == "RECORD_PAGE" and isPageInEditMode and noneDefined(selectedRecords, "deletedAt") and everyDefined(selectedRecords, "pageLayoutId") and objectPermissions.canUpdateObjectRecords',
     availabilityObjectMetadataUniversalIdentifier:
       STANDARD_OBJECTS.dashboard.universalIdentifier,
-    frontComponentUniversalIdentifier:
-      STANDARD_FRONT_COMPONENTS.cancelDashboardLayout.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.CANCEL_DASHBOARD_LAYOUT,
   },
   duplicateDashboard: {
     universalIdentifier: '2ee07307-60ce-41ef-bfee-7c718f67557e',
@@ -496,8 +495,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       'noneDefined(selectedRecords, "deletedAt") and objectPermissions.canUpdateObjectRecords',
     availabilityObjectMetadataUniversalIdentifier:
       STANDARD_OBJECTS.dashboard.universalIdentifier,
-    frontComponentUniversalIdentifier:
-      STANDARD_FRONT_COMPONENTS.duplicateDashboard.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.DUPLICATE_DASHBOARD,
   },
   goToWorkflows: {
     universalIdentifier: '4fa778f9-7931-4d18-b895-929e1ef9c31f',
@@ -509,8 +508,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
     conditionalAvailabilityExpression: 'targetObjectReadPermissions.workflow',
     availabilityObjectMetadataUniversalIdentifier: null,
-    frontComponentUniversalIdentifier:
-      STANDARD_FRONT_COMPONENTS.goToWorkflows.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.GO_TO_WORKFLOWS,
   },
   activateWorkflow: {
     universalIdentifier: '44f19c85-0fd0-482f-a14e-da513c60b1b3',
@@ -524,8 +523,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       'everyDefined(selectedRecords, "currentVersion.trigger") and everyDefined(selectedRecords, "currentVersion.steps") and every(selectedRecords, "currentVersion.steps.length") and (everyEquals(selectedRecords, "currentVersion.status", "DRAFT") or includesNone(selectedRecords, "statuses", "ACTIVE")) and noneDefined(selectedRecords, "deletedAt")',
     availabilityObjectMetadataUniversalIdentifier:
       STANDARD_OBJECTS.workflow.universalIdentifier,
-    frontComponentUniversalIdentifier:
-      STANDARD_FRONT_COMPONENTS.activateWorkflow.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.ACTIVATE_WORKFLOW,
   },
   deactivateWorkflow: {
     universalIdentifier: '57f21a06-a17a-47b1-a123-90d90dbdf0b7',
@@ -539,8 +538,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       'everyEquals(selectedRecords, "currentVersion.status", "ACTIVE") and noneDefined(selectedRecords, "deletedAt")',
     availabilityObjectMetadataUniversalIdentifier:
       STANDARD_OBJECTS.workflow.universalIdentifier,
-    frontComponentUniversalIdentifier:
-      STANDARD_FRONT_COMPONENTS.deactivateWorkflow.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.DEACTIVATE_WORKFLOW,
   },
   discardDraftWorkflow: {
     universalIdentifier: '4c227f2e-03bb-4a66-9b13-49f263264f4a',
@@ -554,8 +553,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       'every(selectedRecords, "versions.length") and everyEquals(selectedRecords, "currentVersion.status", "DRAFT") and noneDefined(selectedRecords, "deletedAt")',
     availabilityObjectMetadataUniversalIdentifier:
       STANDARD_OBJECTS.workflow.universalIdentifier,
-    frontComponentUniversalIdentifier:
-      STANDARD_FRONT_COMPONENTS.discardDraftWorkflow.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.DISCARD_DRAFT_WORKFLOW,
   },
   testWorkflow: {
     universalIdentifier: 'f85d552a-87a3-4667-99f7-71b47917539c',
@@ -569,8 +568,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       'everyDefined(selectedRecords, "currentVersion.trigger") and everyDefined(selectedRecords, "currentVersion.steps") and every(selectedRecords, "currentVersion.steps.length") and ((everyEquals(selectedRecords, "currentVersion.trigger.type", "MANUAL") and noneDefined(selectedRecords, "currentVersion.trigger.settings.objectType")) or everyEquals(selectedRecords, "currentVersion.trigger.type", "WEBHOOK") or everyEquals(selectedRecords, "currentVersion.trigger.type", "CRON")) and noneDefined(selectedRecords, "deletedAt")',
     availabilityObjectMetadataUniversalIdentifier:
       STANDARD_OBJECTS.workflow.universalIdentifier,
-    frontComponentUniversalIdentifier:
-      STANDARD_FRONT_COMPONENTS.testWorkflow.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.TEST_WORKFLOW,
   },
   seeActiveVersionWorkflow: {
     universalIdentifier: '31790508-75ff-4e4c-a768-83bd1b0718e0',
@@ -584,8 +583,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       'includesEvery(selectedRecords, "statuses", "ACTIVE") and includesEvery(selectedRecords, "statuses", "DRAFT") and noneDefined(selectedRecords, "deletedAt")',
     availabilityObjectMetadataUniversalIdentifier:
       STANDARD_OBJECTS.workflow.universalIdentifier,
-    frontComponentUniversalIdentifier:
-      STANDARD_FRONT_COMPONENTS.seeActiveVersionWorkflow.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.SEE_ACTIVE_VERSION_WORKFLOW,
   },
   seeRunsWorkflow: {
     universalIdentifier: 'e57efc2d-00a2-493a-b76c-f2dabd23a5eb',
@@ -599,8 +598,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       'noneDefined(selectedRecords, "deletedAt")',
     availabilityObjectMetadataUniversalIdentifier:
       STANDARD_OBJECTS.workflow.universalIdentifier,
-    frontComponentUniversalIdentifier:
-      STANDARD_FRONT_COMPONENTS.seeRunsWorkflow.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.SEE_RUNS_WORKFLOW,
   },
   seeVersionsWorkflow: {
     universalIdentifier: '92781d24-b875-4282-8cdb-d127f04a5c7d',
@@ -614,8 +613,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       'noneDefined(selectedRecords, "deletedAt")',
     availabilityObjectMetadataUniversalIdentifier:
       STANDARD_OBJECTS.workflow.universalIdentifier,
-    frontComponentUniversalIdentifier:
-      STANDARD_FRONT_COMPONENTS.seeVersionsWorkflow.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.SEE_VERSIONS_WORKFLOW,
   },
   addNodeWorkflow: {
     universalIdentifier: '818117fa-6cad-4ebc-83c1-40f4afc28d94',
@@ -629,8 +628,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       'pageType == "RECORD_PAGE" and everyDefined(selectedRecords, "currentVersion.trigger") and everyDefined(selectedRecords, "currentVersion.steps") and every(selectedRecords, "currentVersion.steps.length") and noneDefined(selectedRecords, "deletedAt")',
     availabilityObjectMetadataUniversalIdentifier:
       STANDARD_OBJECTS.workflow.universalIdentifier,
-    frontComponentUniversalIdentifier:
-      STANDARD_FRONT_COMPONENTS.addNodeWorkflow.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.ADD_NODE_WORKFLOW,
   },
   tidyUpWorkflow: {
     universalIdentifier: '1f3a3cab-161a-4775-af47-11be4d0bf411',
@@ -644,8 +643,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       'pageType == "RECORD_PAGE" and everyDefined(selectedRecords, "currentVersion.trigger") and everyDefined(selectedRecords, "currentVersion.steps") and every(selectedRecords, "currentVersion.steps.length") and noneDefined(selectedRecords, "deletedAt")',
     availabilityObjectMetadataUniversalIdentifier:
       STANDARD_OBJECTS.workflow.universalIdentifier,
-    frontComponentUniversalIdentifier:
-      STANDARD_FRONT_COMPONENTS.tidyUpWorkflow.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.TIDY_UP_WORKFLOW,
   },
   duplicateWorkflow: {
     universalIdentifier: '91094438-b4c2-46ad-a23b-8af4b23ba514',
@@ -659,8 +658,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       'everyDefined(selectedRecords, "currentVersion") and noneDefined(selectedRecords, "deletedAt")',
     availabilityObjectMetadataUniversalIdentifier:
       STANDARD_OBJECTS.workflow.universalIdentifier,
-    frontComponentUniversalIdentifier:
-      STANDARD_FRONT_COMPONENTS.duplicateWorkflow.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.DUPLICATE_WORKFLOW,
   },
   goToRuns: {
     universalIdentifier: '1ba959da-ff49-4c1f-a517-2b78ee200508',
@@ -673,8 +672,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     conditionalAvailabilityExpression:
       'not hasAnySoftDeleteFilterOnView and objectMetadataItem.nameSingular != "workflowRun" and objectMetadataItem.nameSingular != "workflowVersion" and objectMetadataItem.nameSingular != "workflow"',
     availabilityObjectMetadataUniversalIdentifier: null,
-    frontComponentUniversalIdentifier:
-      STANDARD_FRONT_COMPONENTS.goToRuns.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.GO_TO_RUNS,
   },
   seeVersionWorkflowRun: {
     universalIdentifier: 'cc3a065c-c89e-40ac-9449-4272c55b1bb8',
@@ -687,8 +686,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     conditionalAvailabilityExpression: null,
     availabilityObjectMetadataUniversalIdentifier:
       STANDARD_OBJECTS.workflowRun.universalIdentifier,
-    frontComponentUniversalIdentifier:
-      STANDARD_FRONT_COMPONENTS.seeVersionWorkflowRun.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.SEE_VERSION_WORKFLOW_RUN,
   },
   seeWorkflowWorkflowRun: {
     universalIdentifier: '9d9cc62d-3543-45c3-93f3-23d2d8979f2b',
@@ -701,8 +700,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     conditionalAvailabilityExpression: null,
     availabilityObjectMetadataUniversalIdentifier:
       STANDARD_OBJECTS.workflowRun.universalIdentifier,
-    frontComponentUniversalIdentifier:
-      STANDARD_FRONT_COMPONENTS.seeWorkflowWorkflowRun.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.SEE_WORKFLOW_WORKFLOW_RUN,
   },
   stopWorkflowRun: {
     universalIdentifier: '4c186606-9515-4561-a1eb-9a072b4f5e58',
@@ -716,8 +715,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       'isSelectAll or someEquals(selectedRecords, "status", "NOT_STARTED") or someEquals(selectedRecords, "status", "ENQUEUED") or someEquals(selectedRecords, "status", "RUNNING")',
     availabilityObjectMetadataUniversalIdentifier:
       STANDARD_OBJECTS.workflowRun.universalIdentifier,
-    frontComponentUniversalIdentifier:
-      STANDARD_FRONT_COMPONENTS.stopWorkflowRun.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.STOP_WORKFLOW_RUN,
   },
   seeRunsWorkflowVersion: {
     universalIdentifier: '44e305c7-4f0a-45ec-803f-6471b56455cb',
@@ -731,8 +730,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       'everyDefined(selectedRecords, "workflow")',
     availabilityObjectMetadataUniversalIdentifier:
       STANDARD_OBJECTS.workflowVersion.universalIdentifier,
-    frontComponentUniversalIdentifier:
-      STANDARD_FRONT_COMPONENTS.seeRunsWorkflowVersion.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.SEE_RUNS_WORKFLOW_VERSION,
   },
   seeWorkflowWorkflowVersion: {
     universalIdentifier: 'b43052db-023e-4083-9b63-2c2dfbfd1320',
@@ -746,8 +745,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       'everyDefined(selectedRecords, "workflow.id")',
     availabilityObjectMetadataUniversalIdentifier:
       STANDARD_OBJECTS.workflowVersion.universalIdentifier,
-    frontComponentUniversalIdentifier:
-      STANDARD_FRONT_COMPONENTS.seeWorkflowWorkflowVersion.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.SEE_WORKFLOW_WORKFLOW_VERSION,
   },
   useAsDraftWorkflowVersion: {
     universalIdentifier: '483c0c1d-ea4d-4a4d-8a59-2dcf9f8e38f6',
@@ -761,8 +760,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       'noneEquals(selectedRecords, "status", "DRAFT")',
     availabilityObjectMetadataUniversalIdentifier:
       STANDARD_OBJECTS.workflowVersion.universalIdentifier,
-    frontComponentUniversalIdentifier:
-      STANDARD_FRONT_COMPONENTS.useAsDraftWorkflowVersion.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.USE_AS_DRAFT_WORKFLOW_VERSION,
   },
   seeVersionsWorkflowVersion: {
     universalIdentifier: '1d4abeb7-2750-4af7-9a92-fbadd2a9e4ba',
@@ -776,8 +775,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       'everyDefined(selectedRecords, "workflow")',
     availabilityObjectMetadataUniversalIdentifier:
       STANDARD_OBJECTS.workflowVersion.universalIdentifier,
-    frontComponentUniversalIdentifier:
-      STANDARD_FRONT_COMPONENTS.seeVersionsWorkflowVersion.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.SEE_VERSIONS_WORKFLOW_VERSION,
   },
   searchRecords: {
     universalIdentifier: 'fa24e25e-68f8-4548-82ff-c7b5168b7c7d',
@@ -789,8 +788,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
     conditionalAvailabilityExpression: null,
     availabilityObjectMetadataUniversalIdentifier: null,
-    frontComponentUniversalIdentifier:
-      STANDARD_FRONT_COMPONENTS.searchRecords.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.SEARCH_RECORDS,
   },
   searchRecordsFallback: {
     universalIdentifier: 'c659890c-7266-46c9-bfe1-75cefff8b6d0',
@@ -802,8 +801,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     availabilityType: CommandMenuItemAvailabilityType.FALLBACK,
     conditionalAvailabilityExpression: null,
     availabilityObjectMetadataUniversalIdentifier: null,
-    frontComponentUniversalIdentifier:
-      STANDARD_FRONT_COMPONENTS.searchRecordsFallback.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.SEARCH_RECORDS_FALLBACK,
   },
   askAi: {
     universalIdentifier: 'ce5fb54d-2b19-4dd1-b7b4-9532a1761a41',
@@ -815,8 +814,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
     conditionalAvailabilityExpression: null,
     availabilityObjectMetadataUniversalIdentifier: null,
-    frontComponentUniversalIdentifier:
-      STANDARD_FRONT_COMPONENTS.askAi.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.ASK_AI,
   },
   viewPreviousAiChats: {
     universalIdentifier: '3084c3c9-cc23-4dad-9e00-92025f5cba7a',
@@ -828,7 +827,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
     conditionalAvailabilityExpression: null,
     availabilityObjectMetadataUniversalIdentifier: null,
-    frontComponentUniversalIdentifier:
-      STANDARD_FRONT_COMPONENTS.viewPreviousAiChats.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.VIEW_PREVIOUS_AI_CHATS,
   },
 } as const;

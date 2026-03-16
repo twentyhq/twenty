@@ -149,6 +149,10 @@ check_file_contains \
   "packages/twenty-front/src/modules/command-menu-item/utils/resolveCreateRecordActionLabels.ts" \
   "buttonVariant: 'primary'" \
   "Create-record label resolver must preserve filled primary CTA styling"
+check_file_contains \
+  "packages/twenty-front/src/modules/command-menu-item/hooks/useRegisteredCommandMenuItems.ts" \
+  "resolveCreateRecordActionLabels" \
+  "Registered command menu items must apply object-aware create CTA labels"
 
 echo ""
 echo "--- Critical: Member Workspace Sidebar ---"
@@ -176,6 +180,13 @@ check_file_contains \
   "packages/twenty-front/src/modules/object-metadata/components/NavigationDrawerOpenedSection.tsx" \
   "shouldDisplayObjectInOpenedSectionForMemberWorkspace" \
   "Opened section must avoid duplicating fixed member workspace items"
+check_file_exists \
+  "packages/twenty-front/src/modules/navigation-menu-item/utils/__tests__/getOmniaMemberWorkspaceObjectMetadataItems.test.ts" \
+  "Regression test for Omnia member workspace ordering"
+check_file_contains \
+  "packages/twenty-front/src/modules/object-metadata/components/NavigationDrawerSectionForObjectMetadataItems.tsx" \
+  "ignoreShowInSidebar" \
+  "NavigationDrawerSection must support bypassing showInSidebar for curated sections"
 
 echo ""
 echo "--- Critical: Cloudflare Stale Asset Fix ---"
@@ -374,6 +385,26 @@ check_file_contains \
   "packages/twenty-shared/src/types/RowLevelPermissionPredicateScope.ts" \
   "WRITE = 'WRITE'" \
   "RLS scope enum must include WRITE"
+check_file_contains \
+  "packages/twenty-shared/src/types/RowLevelPermissionPredicate.ts" \
+  "scope" \
+  "Shared predicate type must include scope field"
+check_file_contains \
+  "packages/twenty-shared/src/types/RowLevelPermissionPredicateGroup.ts" \
+  "scope" \
+  "Shared predicate-group type must include scope field"
+check_file_contains \
+  "packages/twenty-server/src/engine/metadata-modules/row-level-permission-predicate/dtos/row-level-permission-predicate.dto.ts" \
+  "scope" \
+  "Predicate DTO must expose scope over GraphQL"
+check_file_contains \
+  "packages/twenty-server/src/engine/metadata-modules/row-level-permission-predicate/dtos/row-level-permission-predicate-group.dto.ts" \
+  "scope" \
+  "Predicate-group DTO must expose scope over GraphQL"
+check_file_contains \
+  "packages/twenty-server/src/engine/metadata-modules/row-level-permission-predicate/dtos/inputs/upsert-row-level-permission-predicates.input.ts" \
+  "scope" \
+  "Upsert predicate input must allow scope-aware upserts"
 check_file_contains \
   "packages/twenty-server/src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate.entity.ts" \
   "scope: RowLevelPermissionPredicateScope" \
@@ -853,6 +884,12 @@ check_file_not_contains \
   "packages/twenty-front/package.json" \
   "apollo3-cache-persist" \
   "apollo3-cache-persist dependency must be removed (dead code after ApolloProvider fix)"
+
+echo ""
+echo "--- Custom UI Components ---"
+check_file_exists \
+  "packages/twenty-ui/src/navigation/link/components/AudioLink.tsx" \
+  "AudioLink component for call recording playback"
 
 echo ""
 

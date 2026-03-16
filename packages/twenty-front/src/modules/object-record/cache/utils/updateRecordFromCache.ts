@@ -21,7 +21,7 @@ export const updateRecordFromCache = <T extends ObjectRecord>({
 }: {
   objectMetadataItems: ObjectMetadataItem[];
   objectMetadataItem: ObjectMetadataItem;
-  cache: ApolloCache<object>;
+  cache: ApolloCache;
   recordGqlFields: RecordGqlFields;
   record: T;
   objectPermissionsByObjectMetadataId: Record<

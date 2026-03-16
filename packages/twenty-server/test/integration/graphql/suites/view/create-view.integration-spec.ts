@@ -2,7 +2,7 @@ import { createOneSelectFieldMetadataForIntegrationTests } from 'test/integratio
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
-import { createOneCoreView } from 'test/integration/metadata/suites/view/utils/create-one-core-view.util';
+import { createOneView } from 'test/integration/metadata/suites/view/utils/create-one-view.util';
 import { assertViewStructure } from 'test/integration/utils/view-test.util';
 import { ViewOpenRecordIn, ViewType } from 'twenty-shared/types';
 
@@ -55,7 +55,7 @@ describe('Create core view', () => {
   });
 
   it('should create a new view with all properties', async () => {
-    const { data, errors } = await createOneCoreView({
+    const { data, errors } = await createOneView({
       input: {
         name: 'Kanban View',
         objectMetadataId: testObjectMetadataId,
@@ -70,7 +70,7 @@ describe('Create core view', () => {
     });
 
     expect(errors).toBeUndefined();
-    assertViewStructure(data.createCoreView, {
+    assertViewStructure(data.createView, {
       name: 'Kanban View',
       objectMetadataId: testObjectMetadataId,
       mainGroupByFieldMetadataId: testSelectFieldMetadataId,
@@ -90,13 +90,13 @@ describe('Create core view', () => {
       icon: 'IconList',
     };
 
-    const { data, errors } = await createOneCoreView({
+    const { data, errors } = await createOneView({
       input,
       expectToFail: false,
     });
 
     expect(errors).toBeUndefined();
-    assertViewStructure(data.createCoreView, {
+    assertViewStructure(data.createView, {
       name: input.name,
       objectMetadataId: input.objectMetadataId,
       icon: input.icon,

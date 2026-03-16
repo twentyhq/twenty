@@ -64,6 +64,12 @@ yarn twenty function:execute --preInstall
 # Esegui la funzione post-installazione
 yarn twenty function:execute --postInstall
 
+# Compila l'app per la distribuzione
+yarn twenty app:build
+
+# Pubblica l'app su npm o su un server Twenty
+yarn twenty app:publish
+
 # Disinstalla l'applicazione dallo spazio di lavoro corrente
 yarn twenty app:uninstall
 
@@ -1239,6 +1245,113 @@ Punti chiave:
 ### Esempio Hello World
 
 Esplora un esempio minimale end-to-end che dimostra oggetti, funzioni logiche, componenti front-end e trigger multipli [qui](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/hello-world):
+
+## Compilazione della tua app
+
+Una volta che hai sviluppato la tua app con `app:dev`, usa `app:build` per compilarla in un pacchetto distribuibile.
+
+```bash filename="Terminal"
+# Compila l'app (l'output va in .twenty/output/)
+yarn twenty app:build
+
+# Compila e crea un tarball (.tgz) per la distribuzione
+yarn twenty app:build --tarball
+```
+
+Il processo di compilazione:
+
+1. **Analizza e convalida il manifest** — legge tutte le entità `defineX()` dai tuoi file sorgente e convalida la struttura del manifest.
+2. **Compila le funzioni di logica e i componenti front-end** — raggruppa i sorgenti TypeScript in file ESM `.mjs` usando esbuild.
+3. **Genera i checksum** — calcola gli hash MD5 per ogni file compilato, memorizzati nel manifest come `builtHandlerChecksum` / `builtComponentChecksum`.
+4. **Genera il client API tipizzato** — esegue l'analisi dello schema GraphQL e genera i client tipizzati `CoreApiClient` e `MetadataApiClient`.
+5. **Esegue un controllo dei tipi di TypeScript** — esegue `tsc --noEmit` per intercettare gli errori di tipo prima della pubblicazione.
+6. **Ricompila con il client generato** — esegue una seconda passata di compilazione in modo da includere i tipi del client generato.
+7. **Crea facoltativamente un tarball** — se viene passato `--tarball`, esegue `npm pack` per creare un file `.tgz` pronto per la distribuzione.
+
+L'output della build in `.twenty/output/` contiene:
+
+```text
+.twenty/output/
+├── manifest.json              # Manifest con checksum per tutti i file compilati
+├── package.json               # Copiato dalla radice dell'app
+├── yarn.lock                  # Copiato dalla radice dell'app
+├── src/
+│   ├── logic-functions/       # File .mjs compilati delle funzioni logiche
+│   └── front-components/      # File .mjs compilati dei componenti front-end
+├── public/                    # Asset statici (se presenti)
+└── my-app-1.0.0.tgz          # Solo con il flag --tarball
+```
+
+| Opzione     | Descrizione                                                         |
+| ----------- | ------------------------------------------------------------------- |
+| `[appPath]` | Percorso della directory dell'app (predefinito: directory corrente) |
+| `--tarball` | Imballa anche l'output in un tarball `.tgz`                         |
+
+## Pubblicazione della tua app
+
+Usa `app:publish` per distribuire la tua app — al registro npm oppure direttamente a un server Twenty.
+
+### Pubblica su npm (predefinito)
+
+```bash filename="Terminal"
+# Pubblica su npm (richiede l'accesso a npm)
+yarn twenty app:publish
+
+# Pubblica con un dist-tag (ad es. beta, next)
+yarn twenty app:publish --tag beta
+```
+
+Questo compila l'app ed esegue `npm publish` dalla directory `.twenty/output/`. Il pacchetto pubblicato può quindi essere installato dal marketplace di Twenty da qualsiasi area di lavoro.
+
+### Pubblica su un server Twenty
+
+```bash filename="Terminal"
+# Pubblica direttamente su un server Twenty
+yarn twenty app:publish --server https://app.twenty.com
+```
+
+Questo compila l'app con un tarball, lo carica sul server tramite la mutation GraphQL `uploadAppTarball` e avvia l'installazione in un unico passaggio. Questo è utile per distribuzioni private o per effettuare test su un server specifico.
+
+| Opzione           | Descrizione                                                                |
+| ----------------- | -------------------------------------------------------------------------- |
+| `[appPath]`       | Percorso della directory dell'app (predefinito: directory corrente)        |
+| `--server <url>`  | Pubblica su un server Twenty invece di npm                                 |
+| `--token <token>` | Token di autenticazione per il server di destinazione                      |
+| `--tag <tag>`     | dist-tag di npm (ad es. `beta`, `next`) — solo per la pubblicazione su npm |
+
+## Registrazione dell'applicazione
+
+Prima che un'app possa essere installata in un'area di lavoro, deve essere **registrata**. Una registrazione è un record di metadati che descrive l'origine dell'app e come autenticarla. Nella maggior parte dei casi questo è gestito automaticamente dalla CLI.
+
+### Tipi di origine
+
+Ogni registrazione ha un **tipo di origine** che determina come vengono risolti i file dell'app durante l'installazione:
+
+| Tipo di origine | Come vengono risolti i file                                                                    | Caso d'uso tipico                     |
+| --------------- | ---------------------------------------------------------------------------------------------- | ------------------------------------- |
+| `LOCAL`         | I file sono sincronizzati in tempo reale dal watcher della CLI — l'installazione viene saltata | Sviluppo con `app:dev`                |
+| `NPM`           | Recuperati dal registro npm tramite il campo `sourcePackage`                                   | App pubblicate su npm                 |
+| `TARBALL`       | Estratti da un file `.tgz` caricato e archiviato sul server                                    | App private pubblicate con `--server` |
+
+### Come avviene la registrazione
+
+* **`app:dev`** — crea automaticamente una registrazione `LOCAL` la prima volta che esegui la modalità di sviluppo su un'area di lavoro.
+* **`app:publish --server`** — carica un tarball e crea (o aggiorna) una registrazione `TARBALL`, quindi installa l'app.
+* **Marketplace npm** — le registrazioni `NPM` vengono create quando le app vengono sincronizzate dal registro npm nel catalogo del marketplace di Twenty.
+* **GraphQL API** — puoi anche creare registrazioni in modo programmatico tramite la mutation `createApplicationRegistration`.
+
+### Registrazione vs installazione
+
+**Registrazione** e **installazione** sono concetti distinti:
+
+* Una **registrazione** (`ApplicationRegistration`) è un record di metadati globale che descrive l'app: il suo nome, il tipo di origine, le credenziali OAuth e lo stato di pubblicazione nel marketplace. Esiste indipendentemente da qualsiasi area di lavoro.
+* Un'**installazione** (`Application`) è un'istanza per area di lavoro. Quando un utente installa un'app, Twenty risolve il pacchetto dalla sorgente della registrazione, scrive i file compilati nell'archiviazione e sincronizza il manifest (creando oggetti, campi, funzioni logiche, ecc.) in quell'area di lavoro.
+
+Una registrazione può essere installata in molte aree di lavoro. Ogni area di lavoro ottiene la propria copia dei file dell'app e del modello di dati.
+
+### Credenziali OAuth
+
+Ogni registrazione include credenziali OAuth (`oAuthClientId` e `oAuthClientSecret`) generate al momento della creazione. Queste vengono utilizzate dall'app per autenticare le richieste API per conto degli utenti. Il client secret viene restituito **una sola volta** alla creazione — conservalo in modo sicuro. Puoi ruotarlo in seguito tramite la mutation `rotateApplicationRegistrationClientSecret`.
 
 ## Configurazione manuale (senza lo scaffolder)
 

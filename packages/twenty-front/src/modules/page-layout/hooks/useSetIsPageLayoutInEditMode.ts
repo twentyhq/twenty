@@ -7,6 +7,7 @@ import { fieldsWidgetGroupsDraftComponentState } from '@/page-layout/states/fiel
 import { fieldsWidgetUngroupedFieldsDraftComponentState } from '@/page-layout/states/fieldsWidgetUngroupedFieldsDraftComponentState';
 import { hasInitializedFieldsWidgetGroupsDraftComponentState } from '@/page-layout/states/hasInitializedFieldsWidgetGroupsDraftComponentState';
 import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
+import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { SIDE_PANEL_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelComponentInstanceId';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
@@ -53,6 +54,11 @@ export const useSetIsPageLayoutInEditMode = (pageLayoutIdFromProps: string) => {
       pageLayoutId,
     );
 
+  const pageLayoutEditingWidgetIdState = useAtomComponentStateCallbackState(
+    pageLayoutEditingWidgetIdComponentState,
+    pageLayoutId,
+  );
+
   const store = useStore();
 
   const setIsPageLayoutInEditMode = useCallback(
@@ -62,6 +68,8 @@ export const useSetIsPageLayoutInEditMode = (pageLayoutIdFromProps: string) => {
         store.set(fieldsWidgetUngroupedFieldsDraftState, {});
         store.set(fieldsWidgetEditorModeDraftState, {});
         store.set(hasInitializedFieldsWidgetGroupsDraftState, {});
+      } else {
+        store.set(pageLayoutEditingWidgetIdState, null);
       }
 
       store.set(isPageLayoutInEditModeState, value);
@@ -88,6 +96,7 @@ export const useSetIsPageLayoutInEditMode = (pageLayoutIdFromProps: string) => {
       fieldsWidgetUngroupedFieldsDraftState,
       fieldsWidgetEditorModeDraftState,
       hasInitializedFieldsWidgetGroupsDraftState,
+      pageLayoutEditingWidgetIdState,
       pageLayoutId,
       store,
     ],

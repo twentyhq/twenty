@@ -6,8 +6,7 @@ import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions
 import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { coreViewsState } from '@/views/states/coreViewState';
-import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
+import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 import isEmpty from 'lodash.isempty';
 import { useCallback, useMemo } from 'react';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
@@ -47,17 +46,15 @@ export const useDefaultHomePagePath = () => {
     [readableAlphaSortedActiveNonSystemObjectMetadataItems],
   );
 
-  const coreViews = useAtomStateValue(coreViewsState);
+  const views = useAtomStateValue(viewsSelector);
 
   const getFirstView = useCallback(
     (objectMetadataItemId: string | undefined | null) => {
-      const views = coreViews.map(convertCoreViewToView);
-
       return views.find(
         (view) => view.objectMetadataId === objectMetadataItemId,
       );
     },
-    [coreViews],
+    [views],
   );
 
   const firstObjectPathInfo = useMemo<ObjectPathInfo | null>(() => {

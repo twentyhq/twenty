@@ -1,6 +1,5 @@
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { LINE_CHART_DATA } from '@/page-layout/widgets/graph/graphql/queries/lineChartData';
 import { type LineChartSeriesWithColor } from '@/page-layout/widgets/graph/graph-widget-line-chart/types/LineChartSeriesWithColor';
 import { type GraphColorMode } from '@/page-layout/widgets/graph/types/GraphColorMode';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
@@ -8,14 +7,14 @@ import { determineChartItemColor } from '@/page-layout/widgets/graph/utils/deter
 import { determineGraphColorMode } from '@/page-layout/widgets/graph/utils/determineGraphColorMode';
 import { extractLineChartDataConfiguration } from '@/page-layout/widgets/graph/utils/extractLineChartDataConfiguration';
 import { parseGraphColor } from '@/page-layout/widgets/graph/utils/parseGraphColor';
-import { useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client/react';
 import { isString } from '@sniptt/guards';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
+  LineChartDataDocument,
   type LineChartConfiguration,
   type LineChartDataPoint,
-  type LineChartSeries,
 } from '~/generated-metadata/graphql';
 
 type UseGraphLineChartWidgetDataProps = {
@@ -24,7 +23,7 @@ type UseGraphLineChartWidgetDataProps = {
 };
 
 type UseGraphLineChartWidgetDataResult = {
-  series: LineChartSeries[];
+  series: LineChartSeriesWithColor[];
   showDataLabels: boolean;
   showLegend: boolean;
   hasTooManyGroups: boolean;
@@ -51,7 +50,7 @@ export const useGraphLineChartWidgetData = ({
     data: queryData,
     loading,
     error,
-  } = useQuery(LINE_CHART_DATA, {
+  } = useQuery(LineChartDataDocument, {
     variables: {
       input: {
         objectMetadataId: objectMetadataItemId,
@@ -112,7 +111,7 @@ export const useGraphLineChartWidgetData = ({
   );
 
   return {
-    series,
+    series: series ?? [],
     showDataLabels: configuration.displayDataLabel ?? false,
     showLegend: configuration.displayLegend ?? true,
     hasTooManyGroups: queryData?.lineChartData?.hasTooManyGroups ?? false,

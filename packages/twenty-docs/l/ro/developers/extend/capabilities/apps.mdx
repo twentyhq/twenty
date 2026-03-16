@@ -49,26 +49,32 @@ npx create-twenty-app@latest my-app --minimal
 De aici puteți:
 
 ```bash filename="Terminal"
-# Adaugă o entitate nouă în aplicația ta (ghidat)
+# Add a new entity to your application (guided)
 yarn twenty entity:add
 
-# Urmărește jurnalele funcțiilor aplicației tale
+# Watch your application's function logs
 yarn twenty function:logs
 
-# Execută o funcție după nume
+# Execute a function by name
 yarn twenty function:execute -n my-function -p '{"name": "test"}'
 
-# Execută funcția de pre-instalare
+# Execute the pre-install function
 yarn twenty function:execute --preInstall
 
-# Execută funcția post-instalare
+# Execute the post-install function
 yarn twenty function:execute --postInstall
 
-# Dezinstalează aplicația din spațiul de lucru curent
+# Build the app for distribution
+yarn twenty app:build
+
+# Publish the app to npm or a Twenty server
+yarn twenty app:publish
+
+# Uninstall the application from the current workspace
 yarn twenty app:uninstall
 
-# Afișează ajutorul pentru comenzi
-yarn twenty help},{
+# Display commands' help
+yarn twenty help
 ```
 
 Consultați și: paginile de referință CLI pentru [create-twenty-app](https://www.npmjs.com/package/create-twenty-app) și [twenty-sdk CLI](https://www.npmjs.com/package/twenty-sdk).
@@ -1239,6 +1245,113 @@ Puncte cheie:
 ### Exemplu Hello World
 
 Explorați un exemplu minim, cap la cap, care demonstrează obiecte, funcții de logică, componente Front și declanșatoare multiple [aici](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/hello-world):
+
+## Building your app
+
+Once you've developed your app with `app:dev`, use `app:build` to compile it into a distributable package.
+
+```bash filename="Terminal"
+# Build the app (output goes to .twenty/output/)
+yarn twenty app:build
+
+# Build and create a tarball (.tgz) for distribution
+yarn twenty app:build --tarball
+```
+
+The build process:
+
+1. **Parses and validates the manifest** — reads all `defineX()` entities from your source files and validates the manifest structure.
+2. **Compiles logic functions and front components** — bundles TypeScript sources into ESM `.mjs` files using esbuild.
+3. **Generates checksums** — computes MD5 hashes for each built file, stored in the manifest as `builtHandlerChecksum` / `builtComponentChecksum`.
+4. **Generează clientul API tipizat** — examinează schema GraphQL și generează clienți tipizați `CoreApiClient` și `MetadataApiClient`.
+5. **Rulează o verificare a tipurilor TypeScript** — rulează `tsc --noEmit` pentru a detecta erorile de tip înainte de publicare.
+6. **Reconstruiește cu clientul generat** — efectuează o a doua trecere de compilare astfel încât tipurile clientului generat să fie incluse.
+7. **Creează opțional un tarball** — dacă se trece `--tarball`, rulează `npm pack` pentru a crea un fișier `.tgz` gata pentru distribuire.
+
+Rezultatul build-ului din `.twenty/output/` conține:
+
+```text
+.twenty/output/
+├── manifest.json              # Manifest cu sume de control pentru toate fișierele generate
+├── package.json               # Copiat din rădăcina aplicației
+├── yarn.lock                  # Copiat din rădăcina aplicației
+├── src/
+│   ├── logic-functions/       # Fișiere .mjs de funcții de logică compilate
+│   └── front-components/      # Fișiere .mjs de componente front-end compilate
+├── public/                    # Resurse statice (dacă există)
+└── my-app-1.0.0.tgz          # Doar cu opțiunea --tarball
+```
+
+| Opțiune     | Descriere                                                      |
+| ----------- | -------------------------------------------------------------- |
+| `[appPath]` | Calea către directorul aplicației (implicit directorul curent) |
+| `--tarball` | De asemenea, împachetează rezultatul într-un tarball `.tgz`    |
+
+## Publicarea aplicației
+
+Folosește `app:publish` pentru a distribui aplicația — fie în registrul npm, fie direct pe un server Twenty.
+
+### Publicare pe npm (implicit)
+
+```bash filename="Terminal"
+# Publicare pe npm (necesită autentificare npm)
+yarn twenty app:publish
+
+# Publicare cu un dist-tag (de ex. beta, next)
+yarn twenty app:publish --tag beta
+```
+
+Aceasta construiește aplicația și rulează `npm publish` din directorul `.twenty/output/`. Pachetul publicat poate fi apoi instalat din marketplace-ul Twenty de către orice spațiu de lucru.
+
+### Publicare pe un server Twenty
+
+```bash filename="Terminal"
+# Publicare direct pe un server Twenty
+yarn twenty app:publish --server https://app.twenty.com
+```
+
+Aceasta construiește aplicația cu un tarball, o încarcă pe server prin mutația GraphQL `uploadAppTarball` și declanșează instalarea într-un singur pas. Acest lucru este util pentru implementări private sau pentru testare pe un server specific.
+
+| Opțiune           | Descriere                                                            |
+| ----------------- | -------------------------------------------------------------------- |
+| `[appPath]`       | Calea către directorul aplicației (implicit directorul curent)       |
+| `--server <url>`  | Publică pe un server Twenty în loc de npm                            |
+| `--token <token>` | Jeton de autentificare pentru serverul țintă                         |
+| `--tag <tag>`     | npm dist-tag (de ex. `beta`, `next`) — doar pentru publicarea pe npm |
+
+## Înregistrarea aplicației
+
+Înainte ca o aplicație să poată fi instalată într-un spațiu de lucru, aceasta trebuie să fie **înregistrată**. O înregistrare este o înregistrare de metadate care descrie de unde provine aplicația și cum se autentifică. Acest lucru este gestionat automat de CLI în cele mai multe cazuri.
+
+### Tipuri de sursă
+
+Fiecare înregistrare are un **tip de sursă** care determină modul în care fișierele aplicației sunt preluate în timpul instalării:
+
+| Tip de sursă | Cum sunt preluate fișierele                                                              | Caz de utilizare tipic                    |
+| ------------ | ---------------------------------------------------------------------------------------- | ----------------------------------------- |
+| `LOCAL`      | Fișierele sunt sincronizate în timp real de către watcher-ul CLI — instalarea este omisă | Dezvoltare cu `app:dev`                   |
+| `NPM`        | Obținute din registrul npm prin câmpul `sourcePackage`                                   | Aplicații publicate pe npm                |
+| `TARBALL`    | Extrase dintr-un fișier `.tgz` încărcat, stocat pe server                                | Aplicații private publicate cu `--server` |
+
+### Cum are loc înregistrarea
+
+* **`app:dev`** — creează automat o înregistrare `LOCAL` prima dată când rulezi modul de dezvoltare pentru un spațiu de lucru.
+* **`app:publish --server`** — încarcă un tarball și creează (sau actualizează) o înregistrare `TARBALL`, apoi instalează aplicația.
+* **marketplace-ul npm** — înregistrările `NPM` sunt create când aplicațiile sunt sincronizate din registrul npm în catalogul marketplace-ului Twenty.
+* **API GraphQL** — poți de asemenea să creezi înregistrări programatic prin mutația `createApplicationRegistration`.
+
+### Înregistrare vs instalare
+
+**Înregistrarea** și **instalarea** sunt concepte separate:
+
+* O **înregistrare** (`ApplicationRegistration`) este o înregistrare globală de metadate care descrie aplicația: numele ei, tipul de sursă, acreditările OAuth și statutul listării în marketplace. Există independent de orice spațiu de lucru.
+* O **instalare** (`Application`) este o instanță per spațiu de lucru. Când un utilizator instalează o aplicație, Twenty rezolvă pachetul din sursa înregistrării, scrie fișierele compilate în stocare și sincronizează manifestul (creând obiecte, câmpuri, funcții de logică etc.) în acel spațiu de lucru.
+
+O singură înregistrare poate fi instalată în multe spații de lucru. Fiecare spațiu de lucru primește propria copie a fișierelor și a modelului de date al aplicației.
+
+### Acreditări OAuth
+
+Fiecare înregistrare include acreditări OAuth (`oAuthClientId` și `oAuthClientSecret`) generate la momentul creării. Acestea sunt folosite de aplicație pentru a autentifica cererile API în numele utilizatorilor. Secretul clientului este returnat **o singură dată** la creare — păstrează-l în siguranță. Îl poți roti ulterior prin mutația `rotateApplicationRegistrationClientSecret`.
 
 ## Configurare manuală (fără generator)
 

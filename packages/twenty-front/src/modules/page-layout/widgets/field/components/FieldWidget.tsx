@@ -3,8 +3,6 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
-import { PropertyBoxSkeletonLoader } from '@/object-record/record-inline-cell/property-box/components/PropertyBoxSkeletonLoader';
-import { useRecordShowContainerData } from '@/object-record/record-show/hooks/useRecordShowContainerData';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { useResolveFieldMetadataIdFromNameOrId } from '@/page-layout/hooks/useResolveFieldMetadataIdFromNameOrId';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
@@ -53,10 +51,6 @@ export const FieldWidget = ({ widget }: FieldWidgetProps) => {
   const targetRecord = useTargetRecord();
   const { isInSidePanel } = useLayoutRenderingContext();
 
-  const { isPrefetchLoading } = useRecordShowContainerData({
-    objectRecordId: targetRecord.id,
-  });
-
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: targetRecord.targetObjectNameSingular,
   });
@@ -91,16 +85,6 @@ export const FieldWidget = ({ widget }: FieldWidgetProps) => {
   useEffect(() => {
     setWidgetCardRequiredEmpty(isRequiredEmpty);
   }, [isRequiredEmpty]);
-
-  if (isPrefetchLoading) {
-    return (
-      <SidePanelProvider value={{ isInSidePanel }}>
-        <StyledContainer>
-          <PropertyBoxSkeletonLoader />
-        </StyledContainer>
-      </SidePanelProvider>
-    );
-  }
 
   if (!isDefined(fieldMetadataItem) || !fieldMetadataItem.isActive) {
     return (

@@ -1,10 +1,13 @@
-import { useDeleteNavigationMenuItemMutation } from '~/generated-metadata/graphql';
+import { useMutation } from '@apollo/client/react';
+import { DeleteNavigationMenuItemDocument } from '~/generated-metadata/graphql';
 
 export const useDeleteNavigationMenuItem = () => {
-  const [deleteNavigationMenuItemMutation] =
-    useDeleteNavigationMenuItemMutation({
+  const [deleteNavigationMenuItemMutation] = useMutation(
+    DeleteNavigationMenuItemDocument,
+    {
       refetchQueries: ['FindManyNavigationMenuItems'],
-    });
+    },
+  );
 
   const deleteNavigationMenuItem = async (id: string) => {
     await deleteNavigationMenuItemMutation({

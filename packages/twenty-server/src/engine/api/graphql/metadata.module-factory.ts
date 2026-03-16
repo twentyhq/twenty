@@ -48,7 +48,7 @@ export const metadataModuleFactory = async (
         cacheSetter: cacheStorageService.set.bind(cacheStorageService),
         operationsToCache: [
           'ObjectMetadataItems',
-          'FindAllCoreViews',
+          'FindAllViews',
           'FindFieldsWidgetCoreViews',
           'FindAllRecordPageLayouts',
           'FindManyLogicFunctions',

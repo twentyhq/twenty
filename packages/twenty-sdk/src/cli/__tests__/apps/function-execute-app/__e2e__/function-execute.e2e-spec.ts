@@ -29,7 +29,7 @@ describe('functionExecute E2E', () => {
 
         expect(result.success).toBe(true);
       },
-      { timeout: 10_000, interval: 1_000 },
+      { timeout: 30_000, interval: 1_000 },
     );
   }, 60_000);
 

@@ -4,8 +4,8 @@ import { Provider as JotaiProvider } from 'jotai';
 import { type ChartConfiguration } from '@/side-panel/pages/page-layout/types/ChartConfiguration';
 import { CHART_CONFIGURATION_SETTING_IDS } from '@/side-panel/pages/page-layout/types/ChartConfigurationSettingIds';
 import { type TypedBarChartConfiguration } from '@/side-panel/pages/page-layout/types/TypedBarChartConfiguration';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
 import {
   AggregateOperations,
   AxisNameDisplay,
@@ -80,7 +80,9 @@ const buildBarChartConfiguration = (
   }) as TypedBarChartConfiguration;
 
 const renderUseChartSettingsValues = (configuration: ChartConfiguration) => {
-  jotaiStore.set(objectMetadataItemsState.atom, [mockObjectMetadataItem]);
+  setTestObjectMetadataItemsInMetadataStore(jotaiStore, [
+    mockObjectMetadataItem,
+  ]);
 
   return renderHook(
     () =>
@@ -411,7 +413,9 @@ describe('useChartSettingsValues', () => {
     it('should handle missing objectMetadataItem gracefully', () => {
       const config = buildBarChartConfiguration({});
 
-      jotaiStore.set(objectMetadataItemsState.atom, [mockObjectMetadataItem]);
+      setTestObjectMetadataItemsInMetadataStore(jotaiStore, [
+        mockObjectMetadataItem,
+      ]);
 
       const { result } = renderHook(
         () =>

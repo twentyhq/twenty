@@ -12,7 +12,6 @@ import {
   IconSearch,
   IconSparkles,
 } from 'twenty-ui/display';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const RECORD_AGNOSTIC_COMMAND_MENU_ITEMS_CONFIG: Record<
   string,
@@ -108,10 +107,7 @@ export const RECORD_AGNOSTIC_COMMAND_MENU_ITEMS_CONFIG: Record<
     Icon: IconLayout,
     isPinned: false,
     availableOn: [CommandMenuItemViewType.GLOBAL],
-    shouldBeRegistered: ({ isFeatureFlagEnabled }) =>
-      isFeatureFlagEnabled(
-        FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED,
-      ),
+    shouldBeRegistered: () => true,
     component: <EditNavigationSidebarNoSelectionRecordCommand />,
   },
 };

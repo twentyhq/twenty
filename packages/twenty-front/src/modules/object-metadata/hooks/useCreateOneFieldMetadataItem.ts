@@ -1,26 +1,20 @@
+import { useMutation } from '@apollo/client/react';
 import {
   type CreateFieldInput,
-  useCreateOneFieldMetadataItemMutation,
+  CreateOneFieldMetadataItemDocument,
 } from '~/generated-metadata/graphql';
 
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
-import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItems';
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
-import { ApolloError } from '@apollo/client';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { t } from '@lingui/core/macro';
 import { CrudOperationType } from 'twenty-shared/types';
 
 export const useCreateOneFieldMetadataItem = () => {
-  const { refreshObjectMetadataItems } =
-    useRefreshObjectMetadataItems('network-only');
-
-  const [createOneFieldMetadataItemMutation] =
-    useCreateOneFieldMetadataItemMutation();
-
-  const { refreshCoreViewsByObjectMetadataId } =
-    useRefreshCoreViewsByObjectMetadataId();
+  const [createOneFieldMetadataItemMutation] = useMutation(
+    CreateOneFieldMetadataItemDocument,
+  );
 
   const { handleMetadataError } = useMetadataErrorHandler();
   const { enqueueErrorSnackBar } = useSnackBar();
@@ -41,16 +35,12 @@ export const useCreateOneFieldMetadataItem = () => {
         },
       });
 
-      await refreshObjectMetadataItems();
-
-      await refreshCoreViewsByObjectMetadataId(input.objectMetadataId);
-
       return {
         status: 'successful',
         response,
       };
     } catch (error) {
-      if (error instanceof ApolloError) {
+      if (CombinedGraphQLErrors.is(error)) {
         handleMetadataError(error, {
           primaryMetadataName: 'fieldMetadata',
           operationType: CrudOperationType.CREATE,

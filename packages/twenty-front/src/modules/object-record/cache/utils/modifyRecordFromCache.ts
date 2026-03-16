@@ -14,7 +14,7 @@ export const modifyRecordFromCache = <
   recordId,
 }: {
   objectMetadataItem: ObjectMetadataItem;
-  cache: ApolloCache<object>;
+  cache: ApolloCache;
   fieldModifiers: Modifiers<CachedObjectRecord>;
   recordId: string;
 }) => {

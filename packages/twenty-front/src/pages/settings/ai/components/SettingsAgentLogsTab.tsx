@@ -5,7 +5,7 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
@@ -20,9 +20,10 @@ import {
 } from 'twenty-ui/layout';
 import { UndecoratedLink } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useMutation, useQuery } from '@apollo/client/react';
 import {
-  useEvaluateAgentTurnMutation,
-  useGetAgentTurnsQuery,
+  EvaluateAgentTurnDocument,
+  GetAgentTurnsDocument,
 } from '~/generated-metadata/graphql';
 
 const StyledTableContainer = styled.div`
@@ -70,41 +71,49 @@ export const SettingsAgentLogsTab = ({
     return backgroundEvaluatingTurnIds;
   };
 
-  const { data, loading, refetch, startPolling, stopPolling } =
-    useGetAgentTurnsQuery({
+  const { data, loading, refetch, startPolling, stopPolling } = useQuery(
+    GetAgentTurnsDocument,
+    {
       variables: { agentId },
       skip: !agentId,
-      onCompleted: (completedData) => {
-        const backgroundIds = computeBackgroundEvaluatingTurnIds(
-          completedData?.agentTurns ?? [],
-        );
-        if (backgroundIds.size > 0) {
-          startPolling(3000);
-        } else {
-          stopPolling();
-        }
-      },
-    });
+    },
+  );
+
+  useEffect(() => {
+    if (data) {
+      const backgroundIds = computeBackgroundEvaluatingTurnIds(
+        data?.agentTurns ?? [],
+      );
+      if (backgroundIds.size > 0) {
+        startPolling(3000);
+      } else {
+        stopPolling();
+      }
+    }
+  }, [data, startPolling, stopPolling]);
 
   const turns = data?.agentTurns || [];
   const backgroundEvaluatingTurnIds = computeBackgroundEvaluatingTurnIds(turns);
 
-  const [evaluateTurn, { loading: evaluating }] = useEvaluateAgentTurnMutation({
-    onCompleted: (data) => {
-      const turnId = data?.evaluateAgentTurn?.turnId;
-      if (isDefined(turnId)) {
-        setEvaluatingTurnIds((prev) => {
-          const next = new Set(prev);
-          next.delete(turnId);
-          return next;
+  const [evaluateTurn, { loading: evaluating }] = useMutation(
+    EvaluateAgentTurnDocument,
+    {
+      onCompleted: (data) => {
+        const turnId = data?.evaluateAgentTurn?.turnId;
+        if (isDefined(turnId)) {
+          setEvaluatingTurnIds((prev) => {
+            const next = new Set(prev);
+            next.delete(turnId);
+            return next;
+          });
+        }
+        enqueueSuccessSnackBar({
+          message: t`Turn evaluated successfully`,
         });
-      }
-      enqueueSuccessSnackBar({
-        message: t`Turn evaluated successfully`,
-      });
-      refetch();
+        refetch();
+      },
     },
-  });
+  );
 
   const handleEvaluateTurn = (turnId: string) => {
     setEvaluatingTurnIds((prev) => new Set(prev).add(turnId));

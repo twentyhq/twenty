@@ -64,6 +64,12 @@ yarn twenty function:execute --preInstall
 # Execute the post-install function
 yarn twenty function:execute --postInstall
 
+# Build the app for distribution
+yarn twenty app:build
+
+# Publish the app to npm or a Twenty server
+yarn twenty app:publish
+
 # Uninstall the application from the current workspace
 yarn twenty app:uninstall
 
@@ -1239,6 +1245,113 @@ uploadFile(
 ### Hello World örneği
 
 Nesneleri, mantık fonksiyonlarını, ön uç bileşenlerini ve birden çok tetikleyiciyi gösteren minimal, uçtan uca bir örneği [buradan](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/hello-world) inceleyin:
+
+## Uygulamanızı derleme
+
+Uygulamanızı `app:dev` ile geliştirdikten sonra, `app:build` kullanarak onu dağıtılabilir bir pakete derleyin.
+
+```bash filename="Terminal"
+# Build the app (output goes to .twenty/output/)
+yarn twenty app:build
+
+# Build and create a tarball (.tgz) for distribution
+yarn twenty app:build --tarball
+```
+
+Derleme süreci:
+
+1. **Manifesti ayrıştırır ve doğrular** — kaynak dosyalarınızdaki tüm `defineX()` varlıklarını okur ve manifest yapısını doğrular.
+2. **Mantık işlevlerini ve ön bileşenleri derler** — TypeScript kaynaklarını esbuild kullanarak ESM `.mjs` dosyalarına paketler.
+3. **Sağlama toplamları üretir** — her bir oluşturulan dosya için MD5 karmalarını hesaplar ve manifestte `builtHandlerChecksum` / `builtComponentChecksum` olarak saklar.
+4. **Tipli API istemcisini oluşturur** — GraphQL şemasını inceleyip tipli `CoreApiClient` ve `MetadataApiClient` istemcilerini üretir.
+5. **TypeScript tip denetimi çalıştırır** — yayımlamadan önce tip hatalarını yakalamak için `tsc --noEmit` çalıştırır.
+6. **Oluşturulan istemciyle yeniden derler** — oluşturulan istemci tiplerinin dahil edilmesi için ikinci bir derleme geçişi yapar.
+7. **İsteğe bağlı olarak bir tarball oluşturur** — `--tarball` iletilirse, dağıtıma hazır bir `.tgz` dosyası oluşturmak için `npm pack` çalıştırır.
+
+`.twenty/output/` içindeki derleme çıktısı şunları içerir:
+
+```text
+.twenty/output/
+├── manifest.json              # Manifest with checksums for all built files
+├── package.json               # Copied from app root
+├── yarn.lock                  # Copied from app root
+├── src/
+│   ├── logic-functions/       # Compiled .mjs logic function files
+│   └── front-components/      # Compiled .mjs front component files
+├── public/                    # Static assets (if any)
+└── my-app-1.0.0.tgz          # Only with --tarball flag
+```
+
+| Seçenek     | Açıklama                                                  |
+| ----------- | --------------------------------------------------------- |
+| `[appPath]` | Uygulama dizininin yolu (varsayılan olarak geçerli dizin) |
+| `--tarball` | Çıktıyı ayrıca bir `.tgz` tarball olarak paketler         |
+
+## Uygulamanızı yayımlama
+
+Uygulamanızı dağıtmak için `app:publish` komutunu kullanın — npm kayıt defterine ya da doğrudan bir Twenty sunucusuna yayımlayın.
+
+### npm'ye yayımlama (varsayılan)
+
+```bash filename="Terminal"
+# Publish to npm (requires npm login)
+yarn twenty app:publish
+
+# Publish with a dist-tag (e.g. beta, next)
+yarn twenty app:publish --tag beta
+```
+
+Bu, uygulamayı derler ve `.twenty/output/` dizininden `npm publish` çalıştırır. Yayımlanan paket daha sonra Twenty pazar yerinden herhangi bir çalışma alanı tarafından kurulabilir.
+
+### Bir Twenty sunucusuna yayımlama
+
+```bash filename="Terminal"
+# Publish directly to a Twenty server
+yarn twenty app:publish --server https://app.twenty.com
+```
+
+Bu, uygulamayı bir tarball ile derler, `uploadAppTarball` GraphQL mutasyonu aracılığıyla sunucuya yükler ve tek adımda kurulumu tetikler. Bu, özel dağıtımlar veya belirli bir sunucuya karşı test yapmak için kullanışlıdır.
+
+| Seçenek           | Açıklama                                                         |
+| ----------------- | ---------------------------------------------------------------- |
+| `[appPath]`       | Uygulama dizininin yolu (varsayılan olarak geçerli dizin)        |
+| `--server <url>`  | npm yerine bir Twenty sunucusuna yayımlar                        |
+| `--token <token>` | Hedef sunucu için kimlik doğrulama belirteci                     |
+| `--tag <tag>`     | npm dist-tag (örn. `beta`, `next`) — yalnızca npm yayımlama için |
+
+## Uygulama kaydı
+
+Bir uygulama bir çalışma alanına kurulmadan önce kaydedilmelidir. Kayıt, uygulamanın nereden geldiğini ve nasıl kimlik doğrulanacağını açıklayan bir meta veri kaydıdır. Bu, çoğu durumda CLI tarafından otomatik olarak gerçekleştirilir.
+
+### Kaynak türleri
+
+Her kaydın, kurulum sırasında uygulamanın dosyalarının nasıl çözümleneceğini belirleyen bir kaynak türü vardır:
+
+| Kaynak türü | Dosyaların nasıl çözümlendiği                                                       | Tipik kullanım durumu                      |
+| ----------- | ----------------------------------------------------------------------------------- | ------------------------------------------ |
+| `LOCAL`     | Dosyalar, CLI izleyici tarafından gerçek zamanlı olarak eşitlenir — kurulum atlanır | `app:dev` ile geliştirme                   |
+| `NPM`       | `sourcePackage` alanı aracılığıyla npm kayıt defterinden alınır                     | npm'de yayımlanan uygulamalar              |
+| `TARBALL`   | Sunucuda depolanan, yüklenmiş bir `.tgz` dosyasından çıkarılır                      | `--server` ile yayımlanan özel uygulamalar |
+
+### Kayıt nasıl gerçekleşir
+
+* **`app:dev`** — bir çalışma alanına karşı geliştirme modunu ilk kez çalıştırdığınızda otomatik olarak bir `LOCAL` kaydı oluşturur.
+* **`app:publish --server`** — bir tarball yükler ve bir `TARBALL` kaydı oluşturur (veya günceller), ardından uygulamayı kurar.
+* **npm pazar yeri** — uygulamalar npm kayıt defterinden Twenty pazar yeri kataloğuna eşitlendiğinde `NPM` kayıtları oluşturulur.
+* **GraphQL API** — `createApplicationRegistration` mutasyonu aracılığıyla programatik olarak da kayıtlar oluşturabilirsiniz.
+
+### Kayıt ve kurulum
+
+**Kayıt** ve **kurulum** ayrı kavramlardır:
+
+* Bir kayıt (`ApplicationRegistration`), uygulamayı tanımlayan genel bir meta veri kaydıdır: adı, kaynak türü, OAuth kimlik bilgileri ve pazar yeri listeleme durumu. Herhangi bir çalışma alanından bağımsız olarak var olur.
+* Bir kurulum (`Application`), çalışma alanı başına bir örnektir. Bir kullanıcı bir uygulamayı kurduğunda, Twenty paketi kaydın kaynağından çözümler, derlenen dosyaları depolamaya yazar ve manifesti (nesneler, alanlar, mantık işlevleri vb. oluşturarak) eşitler o çalışma alanında.
+
+Bir kayıt birçok çalışma alanına kurulabilir. Her çalışma alanı, uygulamanın dosyalarının ve veri modelinin kendi kopyasını alır.
+
+### OAuth kimlik bilgileri
+
+Her kayıt, oluşturma sırasında üretilen OAuth kimlik bilgilerini (`oAuthClientId` ve `oAuthClientSecret`) içerir. Bunlar, kullanıcılar adına API isteklerini kimlik doğrulamak için uygulama tarafından kullanılır. İstemci gizli anahtarı oluşturma sırasında yalnızca bir kez sağlanır — onu güvenli bir şekilde saklayın. Bunu daha sonra `rotateApplicationRegistrationClientSecret` mutasyonu aracılığıyla yenileyebilirsiniz.
 
 ## Manuel kurulum (scaffolder olmadan)
 

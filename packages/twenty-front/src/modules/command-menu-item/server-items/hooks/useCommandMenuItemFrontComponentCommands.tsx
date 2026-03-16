@@ -1,3 +1,4 @@
+import { ENGINE_COMPONENT_KEY_COMPONENT_MAP } from '@/command-menu-item/constants/EngineComponentKeyComponentMap';
 import { Command } from '@/command-menu-item/display/components/Command';
 import { HeadlessFrontComponentCommandMenuItem } from '@/command-menu-item/display/components/HeadlessFrontComponentCommandMenuItem';
 import { CommandMenuItemScope } from '@/command-menu-item/types/CommandMenuItemScope';
@@ -19,14 +20,20 @@ import { type IconComponent, useIcons } from 'twenty-ui/display';
 
 import { type HeadlessFrontComponentMountContext } from '@/front-components/states/mountedHeadlessFrontComponentMapsState';
 import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants/CommandMenuDefaultIcon';
+import { useQuery } from '@apollo/client/react';
 import {
   CommandMenuItemAvailabilityType,
   type CommandMenuItemFieldsFragment,
-  useFindManyCommandMenuItemsQuery,
+  type EngineComponentKey,
+  FindManyCommandMenuItemsDocument,
 } from '~/generated-metadata/graphql';
 
 type CommandMenuItemWithFrontComponent = CommandMenuItemFieldsFragment & {
   frontComponentId: string;
+  conditionalAvailabilityExpression?: string | null;
+};
+
+type CommandMenuItemWithSource = CommandMenuItemFieldsFragment & {
   conditionalAvailabilityExpression?: string | null;
 };
 
@@ -53,8 +60,6 @@ type BuildCommandMenuItemFromFrontComponentParams = {
   commandMenuContextApi: CommandMenuContextApi;
 };
 
-// TODO: we should remove this backward compatibility logic in the future
-// once we have migrated all command menu items
 const buildCommandMenuItemFromFrontComponent = ({
   item,
   type = CommandMenuItemType.FrontComponent,
@@ -115,6 +120,47 @@ const buildCommandMenuItemFromFrontComponent = ({
   };
 };
 
+type BuildCommandMenuItemFromStandardKeyParams = {
+  item: CommandMenuItemWithSource;
+  engineComponentKey: EngineComponentKey;
+  type?: CommandMenuItemType;
+  scope: CommandMenuItemScope;
+  isPinned: boolean;
+  getIcon: ReturnType<typeof useIcons>['getIcon'];
+  commandMenuContextApi: CommandMenuContextApi;
+};
+
+const buildCommandItemFromEngineKey = ({
+  item,
+  engineComponentKey,
+  type = CommandMenuItemType.Standard,
+  scope,
+  isPinned,
+  getIcon,
+  commandMenuContextApi,
+}: BuildCommandMenuItemFromStandardKeyParams) => {
+  const Icon = getIcon(item.icon, COMMAND_MENU_DEFAULT_ICON);
+
+  const component = ENGINE_COMPONENT_KEY_COMPONENT_MAP[engineComponentKey];
+
+  return {
+    type,
+    key: `command-menu-item-engine-${item.id}`,
+    scope,
+    label: item.label,
+    shortLabel: item.shortLabel ?? undefined,
+    position: item.position,
+    isPinned,
+    Icon,
+    shouldBeRegistered: () =>
+      evaluateConditionalAvailabilityExpression(
+        item.conditionalAvailabilityExpression,
+        commandMenuContextApi,
+      ),
+    component,
+  };
+};
+
 export const useCommandMenuItemFrontComponentCommands = (
   commandMenuContextApi: CommandMenuContextApi,
 ) => {
@@ -157,76 +203,104 @@ export const useCommandMenuItemFrontComponentCommands = (
         }
       : undefined;
 
-  const { data } = useFindManyCommandMenuItemsQuery();
+  const { data } = useQuery(FindManyCommandMenuItemsDocument);
 
-  const frontComponentItems =
-    data?.commandMenuItems?.filter(
-      (item): item is CommandMenuItemWithFrontComponent =>
-        isDefined(item.frontComponentId),
-    ) ?? [];
+  const allItems = data?.commandMenuItems ?? [];
 
-  const objectMatches = (item: CommandMenuItemWithFrontComponent) =>
+  const objectMatches = (item: CommandMenuItemFieldsFragment) =>
     !isDefined(item.availabilityObjectMetadataId) ||
     item.availabilityObjectMetadataId ===
       contextStoreCurrentObjectMetadataItemId;
 
-  const frontComponentItemsWithObjectMatches =
-    frontComponentItems.filter(objectMatches);
+  const itemsWithObjectMatches = allItems.filter(objectMatches);
 
-  const globalItems = frontComponentItemsWithObjectMatches.filter(
+  const buildCommandMenuItem = ({
+    item,
+    scope,
+    isPinned,
+    typeOverride,
+  }: {
+    item: CommandMenuItemFieldsFragment;
+    scope: CommandMenuItemScope;
+    isPinned: boolean;
+    typeOverride?: CommandMenuItemType;
+  }) => {
+    if (isDefined(item.engineComponentKey)) {
+      return buildCommandItemFromEngineKey({
+        item,
+        engineComponentKey: item.engineComponentKey,
+        type: typeOverride,
+        scope,
+        isPinned,
+        getIcon,
+        commandMenuContextApi,
+      });
+    }
+
+    if (isDefined(item.frontComponentId)) {
+      return buildCommandMenuItemFromFrontComponent({
+        item: item as CommandMenuItemWithFrontComponent,
+        type: typeOverride,
+        scope,
+        isPinned,
+        getIcon,
+        openFrontComponentInSidePanel,
+        mountHeadlessFrontComponent,
+        commandMenuContextApi,
+        mountContext,
+      });
+    }
+
+    return null;
+  };
+
+  const globalItems = itemsWithObjectMatches.filter(
     (item) => item.availabilityType === CommandMenuItemAvailabilityType.GLOBAL,
   );
 
-  const recordScopedItems = frontComponentItemsWithObjectMatches.filter(
+  const recordScopedItems = itemsWithObjectMatches.filter(
     (item) =>
       item.availabilityType ===
       CommandMenuItemAvailabilityType.RECORD_SELECTION,
   );
 
-  const fallbackItems = frontComponentItemsWithObjectMatches.filter(
+  const fallbackItems = itemsWithObjectMatches.filter(
     (item) =>
       item.availabilityType === CommandMenuItemAvailabilityType.FALLBACK,
   );
 
-  const globalCommandMenuItems = globalItems.map((item) =>
-    buildCommandMenuItemFromFrontComponent({
-      item,
-      scope: CommandMenuItemScope.Global,
-      isPinned: !contextStoreIsPageInEditMode && item.isPinned,
-      getIcon,
-      openFrontComponentInSidePanel,
-      mountHeadlessFrontComponent,
-      commandMenuContextApi,
-    }),
-  );
+  const globalCommandMenuItems = globalItems
+    .map((item) =>
+      buildCommandMenuItem({
+        item,
+        scope: CommandMenuItemScope.Global,
+        isPinned: !contextStoreIsPageInEditMode && item.isPinned,
+      }),
+    )
+    .filter(isDefined);
 
   const recordScopedCommandMenuItems = hasRecordSelection
-    ? recordScopedItems.map((item) =>
-        buildCommandMenuItemFromFrontComponent({
-          item,
-          scope: CommandMenuItemScope.RecordSelection,
-          isPinned: !contextStoreIsPageInEditMode && item.isPinned,
-          getIcon,
-          openFrontComponentInSidePanel,
-          mountHeadlessFrontComponent,
-          commandMenuContextApi,
-          mountContext,
-        }),
-      )
+    ? recordScopedItems
+        .map((item) =>
+          buildCommandMenuItem({
+            item,
+            scope: CommandMenuItemScope.RecordSelection,
+            isPinned: !contextStoreIsPageInEditMode && item.isPinned,
+          }),
+        )
+        .filter(isDefined)
     : [];
 
-  const fallbackCommandMenuItems = fallbackItems.map((item) =>
-    buildCommandMenuItemFromFrontComponent({
-      item,
-      type: CommandMenuItemType.Fallback,
-      scope: CommandMenuItemScope.Global,
-      isPinned: false,
-      getIcon,
-      openFrontComponentInSidePanel,
-      mountHeadlessFrontComponent,
-      commandMenuContextApi,
-    }),
-  );
+  const fallbackCommandMenuItems = fallbackItems
+    .map((item) =>
+      buildCommandMenuItem({
+        item,
+        scope: CommandMenuItemScope.Global,
+        isPinned: false,
+        typeOverride: CommandMenuItemType.Fallback,
+      }),
+    )
+    .filter(isDefined);
 
   return [
     ...globalCommandMenuItems,

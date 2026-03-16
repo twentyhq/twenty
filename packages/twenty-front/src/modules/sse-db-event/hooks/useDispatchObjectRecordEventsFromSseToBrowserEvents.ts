@@ -1,9 +1,9 @@
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { dispatchObjectRecordOperationBrowserEvent } from '@/browser-event/utils/dispatchObjectRecordOperationBrowserEvent';
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { groupObjectRecordSseEventsByObjectMetadataItemNameSingular } from '@/sse-db-event/utils/groupObjectRecordSseEventsByObjectMetadataItemNameSingular';
 import { turnSseObjectRecordEventsToObjectRecordOperationBrowserEvents } from '@/sse-db-event/utils/turnSseObjectRecordEventToObjectRecordOperationBrowserEvent';
-import { useCallback } from 'react';
 import { useStore } from 'jotai';
+import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { type ObjectRecordEventWithQueryIds } from '~/generated-metadata/graphql';
 
@@ -17,8 +17,6 @@ export const useDispatchObjectRecordEventsFromSseToBrowserEvents = () => {
 
   const dispatchObjectRecordEventsFromSseToBrowserEvents = useCallback(
     (objectRecordEventsWithQueryIds: ObjectRecordEventWithQueryIds[]) => {
-      const objectMetadataItems = store.get(objectMetadataItemsState.atom);
-
       const objectRecordEvents = objectRecordEventsWithQueryIds.map(
         (item) => item.objectRecordEvent,
       );
@@ -31,6 +29,8 @@ export const useDispatchObjectRecordEventsFromSseToBrowserEvents = () => {
       const objectMetadataItemNamesSingular = Array.from(
         objectRecordEventsByObjectMetadataItemNameSingular.keys(),
       );
+
+      const objectMetadataItems = store.get(objectMetadataItemsState.atom);
 
       for (const objectMetadataItemNameSingular of objectMetadataItemNamesSingular) {
         const objectRecordEventsForThisObjectMetadataItem =

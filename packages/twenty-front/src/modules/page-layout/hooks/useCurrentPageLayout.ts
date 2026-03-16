@@ -2,6 +2,7 @@ import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPag
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { isNonEmptyString } from '@sniptt/guards';
 
 export const useCurrentPageLayout = () => {
   const pageLayoutPersisted = useAtomComponentStateValue(
@@ -16,8 +17,12 @@ export const useCurrentPageLayout = () => {
     isPageLayoutInEditModeComponentState,
   );
 
+  const isDraftInitialized = isNonEmptyString(pageLayoutDraft.id);
+
   const currentPageLayout = isPageLayoutInEditMode
-    ? pageLayoutDraft
+    ? isDraftInitialized
+      ? pageLayoutDraft
+      : pageLayoutPersisted
     : pageLayoutPersisted;
 
   return { currentPageLayout };

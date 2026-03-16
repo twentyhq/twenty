@@ -1,5 +1,6 @@
 import { CommandMenuContextProvider } from '@/command-menu-item/contexts/CommandMenuContextProvider';
 import { SidePanelContainer } from '@/side-panel/components/SidePanelContainer';
+import { SidePanelSubPageRouter } from '@/side-panel/components/SidePanelSubPageRouter';
 import { SidePanelTopBar } from '@/side-panel/components/SidePanelTopBar';
 import { SIDE_PANEL_PAGES_CONFIG } from '@/side-panel/constants/SidePanelPagesConfig';
 import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
@@ -56,7 +57,9 @@ export const SidePanelRouter = () => {
             displayType="listItem"
             containerType="command-menu-list"
           >
-            {sidePanelPageComponent}
+            <SidePanelSubPageRouter>
+              {sidePanelPageComponent}
+            </SidePanelSubPageRouter>
           </CommandMenuContextProvider>
         </StyledSidePanelContent>
       </SidePanelPageComponentInstanceContext.Provider>

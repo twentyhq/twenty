@@ -16,7 +16,7 @@ const StyledColumnContainer = styled.div`
 export const RecordBoardColumns = () => {
   const visibleRecordGroupIds = useAtomComponentFamilySelectorValue(
     visibleRecordGroupIdsComponentFamilySelector,
-    ViewType.Kanban,
+    ViewType.KANBAN,
   );
 
   return (

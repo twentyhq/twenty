@@ -16,9 +16,9 @@ import { successfulInputsByFieldMetadataType } from './constants/successful-inpu
 
 // Mock the rich text v2 transformation to avoid BlockNote module issues
 jest.mock(
-  'src/engine/core-modules/record-transformer/utils/transform-rich-text-v2.util',
+  'src/engine/core-modules/record-transformer/utils/transform-rich-text.util',
   () => ({
-    transformRichTextV2Value: jest.fn().mockImplementation((value) => value),
+    transformRichTextValue: jest.fn().mockImplementation((value) => value),
   }),
 );
 

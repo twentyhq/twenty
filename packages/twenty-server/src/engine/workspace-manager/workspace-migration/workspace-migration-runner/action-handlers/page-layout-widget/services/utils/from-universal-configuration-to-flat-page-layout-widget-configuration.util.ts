@@ -72,7 +72,7 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
   flatFieldMetadataMaps,
   flatFrontComponentMaps,
   flatViewMaps,
-  flatViewFieldGroupMaps,
+  flatViewFieldGroupMaps: _flatViewFieldGroupMaps,
 }: {
   universalConfiguration: FlatPageLayoutWidget['universalConfiguration'];
   flatFieldMetadataMaps: MetadataFlatEntityMaps<'fieldMetadata'>;

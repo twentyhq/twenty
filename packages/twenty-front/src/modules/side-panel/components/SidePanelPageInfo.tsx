@@ -5,6 +5,9 @@ import {
   OverflowingTextWithTooltip,
 } from 'twenty-ui/display';
 
+import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
+import { useWorkspaceSectionItems } from '@/navigation-menu-item/hooks/useWorkspaceSectionItems';
+import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeState';
 import { SidePanelAskAIInfo } from '@/side-panel/components/SidePanelAskAIInfo';
 import { SidePanelFolderInfo } from '@/side-panel/components/SidePanelFolderInfo';
 import { SidePanelLinkInfo } from '@/side-panel/components/SidePanelLinkInfo';
@@ -14,9 +17,6 @@ import { SidePanelPageInfoLayout } from '@/side-panel/components/SidePanelPageIn
 import { SidePanelPageLayoutInfo } from '@/side-panel/components/SidePanelPageLayoutInfo';
 import { SidePanelRecordInfo } from '@/side-panel/components/SidePanelRecordInfo';
 import { SidePanelWorkflowStepInfo } from '@/side-panel/components/SidePanelWorkflowStepInfo';
-import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
-import { useWorkspaceSectionItems } from '@/navigation-menu-item/hooks/useWorkspaceSectionItems';
-import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { SidePanelPages } from 'twenty-shared/types';
 
@@ -98,11 +98,9 @@ export const SidePanelPageInfo = ({ pageChip }: SidePanelPageInfoProps) => {
     ? [
         SidePanelPages.PageLayoutWidgetTypeSelect,
         SidePanelPages.PageLayoutGraphTypeSelect,
-        SidePanelPages.PageLayoutGraphFilter,
         SidePanelPages.PageLayoutIframeSettings,
         SidePanelPages.PageLayoutTabSettings,
         SidePanelPages.PageLayoutFieldsSettings,
-        SidePanelPages.PageLayoutFieldsLayout,
       ].includes(pageChip.page?.page)
     : false;
 

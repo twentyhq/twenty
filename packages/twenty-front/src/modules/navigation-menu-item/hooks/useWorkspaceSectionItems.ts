@@ -10,12 +10,11 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { coreViewsState } from '@/views/states/coreViewState';
-import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
+import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 import { isDefined } from 'twenty-shared/utils';
 
 import { useNavigationMenuItemsByFolder } from './useNavigationMenuItemsByFolder';
-import { usePrefetchedNavigationMenuItemsData } from './usePrefetchedNavigationMenuItemsData';
+import { useNavigationMenuItemsData } from './useNavigationMenuItemsData';
 import { useSortedNavigationMenuItems } from './useSortedNavigationMenuItems';
 
 export type FlatWorkspaceItem =
@@ -31,16 +30,13 @@ export type NavigationMenuItemClickParams = {
 };
 
 export const useWorkspaceSectionItems = (): FlatWorkspaceItem[] => {
-  const { workspaceNavigationMenuItems } =
-    usePrefetchedNavigationMenuItemsData();
+  const { workspaceNavigationMenuItems } = useNavigationMenuItemsData();
   const { workspaceNavigationMenuItemsSorted } = useSortedNavigationMenuItems();
   const { workspaceNavigationMenuItemsByFolder } =
     useNavigationMenuItemsByFolder();
-  const coreViews = useAtomStateValue(coreViewsState);
+  const views = useAtomStateValue(viewsSelector);
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
-
-  const views = coreViews.map(convertCoreViewToView);
 
   const flatWorkspaceItems = workspaceNavigationMenuItems
     .filter((item) => !isDefined(item.folderId))

@@ -1,25 +1,17 @@
 import { Injectable } from '@nestjs/common';
 
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { isDefined } from 'twenty-shared/utils';
-
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
-import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { getSubFlatEntityMapsByApplicationIdsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/get-sub-flat-entity-maps-by-application-ids-or-throw.util';
-import { FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { TWENTY_STANDARD_ALL_METADATA_NAME } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-all-metadata-name.constant';
-import { StandardFrontComponentUploadService } from 'src/engine/workspace-manager/twenty-standard-application/services/standard-front-component-upload.service';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { FromToAllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-orchestrator.type';
-import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
 
 // TODO completely deprecate this file once we've created the twenty-standard twenty-app manifest
 @Injectable()
@@ -30,35 +22,7 @@ export class TwentyStandardApplicationService {
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
-    private readonly standardFrontComponentUploadService: StandardFrontComponentUploadService,
   ) {}
-
-  // Note: To remove and handle natively in validateBuildAndRun after favorite migration to metadata
-  private async createManyFavorite({
-    flatViews,
-    workspaceId,
-  }: {
-    flatViews: FlatView[];
-    workspaceId: string;
-  }) {
-    const authContext = buildSystemAuthContext(workspaceId);
-
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const favoriteRepository =
-        await this.globalWorkspaceOrmManager.getRepository<FavoriteWorkspaceEntity>(
-          workspaceId,
-          'favorite',
-        );
-
-      const favoriteCount = await favoriteRepository.count();
-      const favoriteToCreate = flatViews.map((flatView, index) => ({
-        viewId: flatView.id,
-        position: favoriteCount + index,
-      }));
-
-      await favoriteRepository.insert(favoriteToCreate);
-    }, authContext);
-  }
 
   async synchronizeTwentyStandardApplicationOrThrow({
     workspaceId,
@@ -76,10 +40,6 @@ export class TwentyStandardApplicationService {
         ...TWENTY_STANDARD_ALL_METADATA_NAME.map(getMetadataFlatEntityMapsKey),
         'featureFlagsMap',
       ]);
-
-    await this.standardFrontComponentUploadService.uploadBuiltFrontComponents({
-      workspaceId,
-    });
 
     const shouldIncludeRecordPageLayouts = this.twentyConfigService.get(
       'SHOULD_SEED_STANDARD_RECORD_PAGE_LAYOUTS',
@@ -139,32 +99,5 @@ export class TwentyStandardApplicationService {
         'Multiple validation errors occurred while synchronizing twenty-standard application',
       );
     }
-
-    const { flatViewMaps } = await this.workspaceCacheService.getOrRecompute(
-      workspaceId,
-      ['flatViewMaps'],
-    );
-
-    const flatViews = [
-      STANDARD_OBJECTS.company.views.allCompanies.universalIdentifier,
-      STANDARD_OBJECTS.dashboard.views.allDashboards.universalIdentifier,
-      STANDARD_OBJECTS.note.views.allNotes.universalIdentifier,
-      STANDARD_OBJECTS.opportunity.views.allOpportunities.universalIdentifier,
-      STANDARD_OBJECTS.person.views.allPeople.universalIdentifier,
-      STANDARD_OBJECTS.task.views.allTasks.universalIdentifier,
-      STANDARD_OBJECTS.workflow.views.allWorkflows.universalIdentifier,
-    ]
-      .map((universalIdentifier) =>
-        findFlatEntityByUniversalIdentifier({
-          flatEntityMaps: flatViewMaps,
-          universalIdentifier,
-        }),
-      )
-      .filter(isDefined);
-
-    await this.createManyFavorite({
-      flatViews,
-      workspaceId,
-    });
   }
 }

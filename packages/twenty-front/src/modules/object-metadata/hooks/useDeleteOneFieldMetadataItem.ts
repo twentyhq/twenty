@@ -1,8 +1,8 @@
-import { useDeleteOneFieldMetadataItemMutation } from '~/generated-metadata/graphql';
+import { useMutation } from '@apollo/client/react';
+import { DeleteOneFieldMetadataItemDocument } from '~/generated-metadata/graphql';
 
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
-import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItems';
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
 import { recordIndexGroupAggregateFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupAggregateFieldMetadataItemComponentState';
 import { recordIndexGroupAggregateOperationComponentState } from '@/object-record/record-index/states/recordIndexGroupAggregateOperationComponentState';
@@ -10,19 +10,14 @@ import { AggregateOperations } from '@/object-record/record-table/constants/Aggr
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
-import { ApolloError } from '@apollo/client';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { t } from '@lingui/core/macro';
 import { CrudOperationType } from 'twenty-shared/types';
 
 export const useDeleteOneFieldMetadataItem = () => {
-  const [deleteOneFieldMetadataItemMutation] =
-    useDeleteOneFieldMetadataItemMutation();
-
-  const { refreshObjectMetadataItems } =
-    useRefreshObjectMetadataItems('network-only');
-  const { refreshCoreViewsByObjectMetadataId } =
-    useRefreshCoreViewsByObjectMetadataId();
+  const [deleteOneFieldMetadataItemMutation] = useMutation(
+    DeleteOneFieldMetadataItemDocument,
+  );
 
   const { handleMetadataError } = useMetadataErrorHandler();
   const { enqueueErrorSnackBar } = useSnackBar();
@@ -54,10 +49,8 @@ export const useDeleteOneFieldMetadataItem = () => {
 
   const deleteOneFieldMetadataItem = async ({
     idToDelete,
-    objectMetadataId,
   }: {
     idToDelete: string;
-    objectMetadataId: string;
   }): Promise<
     MetadataRequestResult<
       Awaited<ReturnType<typeof deleteOneFieldMetadataItemMutation>>
@@ -73,15 +66,12 @@ export const useDeleteOneFieldMetadataItem = () => {
       // TODO: see if we can remove this lin altogether
       await resetRecordIndexKanbanAggregateOperation(idToDelete);
 
-      await refreshObjectMetadataItems();
-      await refreshCoreViewsByObjectMetadataId(objectMetadataId);
-
       return {
         status: 'successful',
         response,
       };
     } catch (error) {
-      if (error instanceof ApolloError) {
+      if (CombinedGraphQLErrors.is(error)) {
         handleMetadataError(error, {
           primaryMetadataName: 'fieldMetadata',
           operationType: CrudOperationType.DELETE,

@@ -375,7 +375,7 @@ const SUPPORTED_COMPOSITE_FIELD_TYPES: FieldMetadataType[] = [
   FieldMetadataType.EMAILS,
   FieldMetadataType.PHONES,
   FieldMetadataType.ACTOR,
-  FieldMetadataType.RICH_TEXT_V2,
+  FieldMetadataType.RICH_TEXT,
 ];
 
 const computeValueFromSubFieldType = ({

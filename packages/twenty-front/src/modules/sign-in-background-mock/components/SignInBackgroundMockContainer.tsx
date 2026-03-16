@@ -93,6 +93,7 @@ export const SignInBackgroundMockContainer = () => {
                     <ViewBar
                       viewBarId={viewBarId}
                       optionsDropdownButton={<></>}
+                      isReadOnly
                     />
 
                     <RecordTableWithWrappers

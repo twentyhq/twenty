@@ -9,11 +9,7 @@ export const isFieldCellSupported = (
   fieldMetadataItem: FieldMetadataItem,
   objectMetadataItems: ObjectMetadataItem[],
 ) => {
-  if (
-    [FieldMetadataType.POSITION, FieldMetadataType.RICH_TEXT].includes(
-      fieldMetadataItem.type,
-    )
-  ) {
+  if (fieldMetadataItem.type === FieldMetadataType.POSITION) {
     return false;
   }
 

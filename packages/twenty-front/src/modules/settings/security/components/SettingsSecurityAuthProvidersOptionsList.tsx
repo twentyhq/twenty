@@ -3,7 +3,7 @@ import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProvidersState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { ApolloError } from '@apollo/client';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
@@ -17,9 +17,10 @@ import {
 } from 'twenty-ui/display';
 import { Card } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useMutation } from '@apollo/client/react';
 import {
   type AuthProviders,
-  useUpdateWorkspaceMutation,
+  UpdateWorkspaceDocument,
 } from '~/generated-metadata/graphql';
 
 import { Toggle2FA } from './Toggle2FA';
@@ -42,7 +43,7 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
     currentWorkspaceState,
   );
 
-  const [updateWorkspace] = useUpdateWorkspaceMutation();
+  const [updateWorkspace] = useMutation(UpdateWorkspaceDocument);
 
   const isValidAuthProvider = (
     key: string,
@@ -99,7 +100,7 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
         [key]: !currentWorkspace[key],
       });
       enqueueErrorSnackBar({
-        apolloError: err instanceof ApolloError ? err : undefined,
+        apolloError: CombinedGraphQLErrors.is(err) ? err : undefined,
       });
     });
   };
@@ -122,7 +123,7 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
       });
     } catch (err: any) {
       enqueueErrorSnackBar({
-        apolloError: err instanceof ApolloError ? err : undefined,
+        apolloError: CombinedGraphQLErrors.is(err) ? err : undefined,
       });
     }
   };

@@ -431,7 +431,7 @@ const performSearchQueries = async ({
   after = null,
   additionalFilter,
 }: {
-  client: ApolloClient<object>;
+  client: ApolloClient;
   searchFilter: string;
   searchableObjectMetadataItems: ObjectMetadataItem[];
   pickedRecordIds: string[];
@@ -463,9 +463,17 @@ const performSearchQueries = async ({
         after,
       },
     });
+    const typedData = data as {
+      search: {
+        edges: SearchResultEdge[];
+        pageInfo: { hasNextPage: boolean; endCursor: string | null };
+      };
+    };
     return {
-      records: data.search.edges.map((edge: SearchResultEdge) => edge.node),
-      pageInfo: data.search.pageInfo,
+      records: typedData.search.edges.map(
+        (edge: SearchResultEdge) => edge.node,
+      ),
+      pageInfo: typedData.search.pageInfo,
     };
   };
 

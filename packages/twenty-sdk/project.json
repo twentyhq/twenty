@@ -36,6 +36,7 @@
         "command": "node dist/cli.cjs"
       }
     },
+    "set-local-version": {},
     "typecheck": {},
     "lint": {},
     "test": {

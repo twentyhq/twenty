@@ -55,8 +55,8 @@ export const SingleRecordPickerMenuItems = ({
 
   const isSelectedItemId = useAtomComponentFamilyStateValue(
     isSelectedItemIdComponentFamilyState,
-    selectableListComponentInstanceId,
     'select-none',
+    selectableListComponentInstanceId,
   );
 
   useHotkeysOnFocusedElement({
@@ -69,9 +69,10 @@ export const SingleRecordPickerMenuItems = ({
     dependencies: [onCancel, resetSelectedItem],
   });
 
-  const selectableItemIds = pickableMorphItems.map(
-    (morphItem) => morphItem.recordId,
-  );
+  const selectableItemIds = [
+    ...(emptyLabel ? ['select-none'] : []),
+    ...pickableMorphItems.map((morphItem) => morphItem.recordId),
+  ];
   const [singleRecordPickerSelectedId, setSingleRecordPickerSelectedId] =
     useAtomComponentState(singleRecordPickerSelectedIdComponentState);
 

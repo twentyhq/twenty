@@ -37,7 +37,7 @@ export const SettingsSecuritySSORowDropdownMenu = ({
     const result = await deleteSSOIdentityProvider({
       identityProviderId,
     });
-    if (isDefined(result.errors)) {
+    if (isDefined(result.error)) {
       enqueueErrorSnackBar({
         message: t`Error deleting SSO Identity Provider`,
         options: {
@@ -57,7 +57,7 @@ export const SettingsSecuritySSORowDropdownMenu = ({
           ? SsoIdentityProviderStatus.Inactive
           : SsoIdentityProviderStatus.Active,
     });
-    if (isDefined(result.errors)) {
+    if (isDefined(result.error)) {
       enqueueErrorSnackBar({
         message: t`Error editing SSO Identity Provider`,
         options: {

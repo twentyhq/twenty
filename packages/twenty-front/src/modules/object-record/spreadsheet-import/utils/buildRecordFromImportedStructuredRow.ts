@@ -197,7 +197,7 @@ export const buildRecordFromImportedStructuredRow = ({
       additionalPhones: phoneArrayJSONSchema.parse,
     },
 
-    [FieldMetadataType.RICH_TEXT_V2]: {
+    [FieldMetadataType.RICH_TEXT]: {
       blocknote: castToString,
       markdown: castToString,
     },
@@ -223,7 +223,7 @@ export const buildRecordFromImportedStructuredRow = ({
       case FieldMetadataType.CURRENCY:
       case FieldMetadataType.ADDRESS:
       case FieldMetadataType.LINKS:
-      case FieldMetadataType.RICH_TEXT_V2:
+      case FieldMetadataType.RICH_TEXT:
       case FieldMetadataType.EMAILS:
       case FieldMetadataType.FULL_NAME: {
         const compositeData = buildCompositeFieldRecord(
@@ -378,7 +378,6 @@ export const buildRecordFromImportedStructuredRow = ({
       case FieldMetadataType.FILES:
       case FieldMetadataType.MORPH_RELATION:
       case FieldMetadataType.POSITION:
-      case FieldMetadataType.RICH_TEXT:
       case FieldMetadataType.TS_VECTOR:
         break;
       default:

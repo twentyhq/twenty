@@ -145,8 +145,10 @@ export const DEFAULT_RECORD_COMMAND_MENU_ITEMS_CONFIG: Record<
       selectedRecord,
       hasAnySoftDeleteFilterOnView,
       objectPermissions,
+      objectMetadataItem,
     }) =>
-      (isDefined(selectedRecord) &&
+      (!objectMetadataItem?.isSystem &&
+        isDefined(selectedRecord) &&
         !selectedRecord.isRemote &&
         !hasAnySoftDeleteFilterOnView &&
         objectPermissions.canSoftDeleteObjectRecords &&
@@ -173,8 +175,10 @@ export const DEFAULT_RECORD_COMMAND_MENU_ITEMS_CONFIG: Record<
       isRemote,
       hasAnySoftDeleteFilterOnView,
       numberOfSelectedRecords,
+      objectMetadataItem,
     }) =>
-      (objectPermissions.canSoftDeleteObjectRecords &&
+      (!objectMetadataItem?.isSystem &&
+        objectPermissions.canSoftDeleteObjectRecords &&
         !isRemote &&
         !hasAnySoftDeleteFilterOnView &&
         isDefined(numberOfSelectedRecords) &&
@@ -199,8 +203,10 @@ export const DEFAULT_RECORD_COMMAND_MENU_ITEMS_CONFIG: Record<
       isRemote,
       isShowPage,
       hasAnySoftDeleteFilterOnView,
+      objectMetadataItem,
     }) =>
-      (!isRemote &&
+      (!objectMetadataItem?.isSystem &&
+        !isRemote &&
         isDefined(selectedRecord?.deletedAt) &&
         objectPermissions.canSoftDeleteObjectRecords &&
         ((isDefined(isShowPage) && isShowPage) ||
@@ -228,8 +234,10 @@ export const DEFAULT_RECORD_COMMAND_MENU_ITEMS_CONFIG: Record<
       isRemote,
       hasAnySoftDeleteFilterOnView,
       numberOfSelectedRecords,
+      objectMetadataItem,
     }) =>
-      (objectPermissions.canSoftDeleteObjectRecords &&
+      (!objectMetadataItem?.isSystem &&
+        objectPermissions.canSoftDeleteObjectRecords &&
         !isRemote &&
         isDefined(hasAnySoftDeleteFilterOnView) &&
         hasAnySoftDeleteFilterOnView &&
@@ -249,8 +257,14 @@ export const DEFAULT_RECORD_COMMAND_MENU_ITEMS_CONFIG: Record<
     Icon: IconTrashX,
     accent: 'danger',
     isPinned: true,
-    shouldBeRegistered: ({ selectedRecord, objectPermissions, isRemote }) =>
-      (objectPermissions.canDestroyObjectRecords &&
+    shouldBeRegistered: ({
+      selectedRecord,
+      objectPermissions,
+      isRemote,
+      objectMetadataItem,
+    }) =>
+      (!objectMetadataItem?.isSystem &&
+        objectPermissions.canDestroyObjectRecords &&
         !isRemote &&
         isDefined(selectedRecord?.deletedAt)) ??
       false,
@@ -275,8 +289,10 @@ export const DEFAULT_RECORD_COMMAND_MENU_ITEMS_CONFIG: Record<
       isRemote,
       hasAnySoftDeleteFilterOnView,
       numberOfSelectedRecords,
+      objectMetadataItem,
     }) =>
-      (objectPermissions.canDestroyObjectRecords &&
+      (!objectMetadataItem?.isSystem &&
+        objectPermissions.canDestroyObjectRecords &&
         !isRemote &&
         isDefined(hasAnySoftDeleteFilterOnView) &&
         hasAnySoftDeleteFilterOnView &&
@@ -300,7 +316,9 @@ export const DEFAULT_RECORD_COMMAND_MENU_ITEMS_CONFIG: Record<
       selectedRecord,
       isFavorite,
       hasAnySoftDeleteFilterOnView,
+      objectMetadataItem,
     }) =>
+      !objectMetadataItem?.isSystem &&
       !selectedRecord?.isRemote &&
       !isFavorite &&
       !isDefined(selectedRecord?.deletedAt) &&
@@ -324,7 +342,9 @@ export const DEFAULT_RECORD_COMMAND_MENU_ITEMS_CONFIG: Record<
       selectedRecord,
       isFavorite,
       hasAnySoftDeleteFilterOnView,
+      objectMetadataItem,
     }) =>
+      !objectMetadataItem?.isSystem &&
       isDefined(selectedRecord) &&
       !selectedRecord?.isRemote &&
       isDefined(isFavorite) &&
@@ -395,8 +415,10 @@ export const DEFAULT_RECORD_COMMAND_MENU_ITEMS_CONFIG: Record<
     Icon: IconEdit,
     accent: 'default',
     isPinned: true,
-    shouldBeRegistered: ({ objectPermissions, isRemote }) =>
-      objectPermissions.canUpdateObjectRecords && !isRemote,
+    shouldBeRegistered: ({ objectPermissions, isRemote, objectMetadataItem }) =>
+      !objectMetadataItem?.isSystem &&
+      objectPermissions.canUpdateObjectRecords &&
+      !isRemote,
     availableOn: [CommandMenuItemViewType.INDEX_PAGE_BULK_SELECTION],
     component: <UpdateMultipleRecordsCommand />,
   },

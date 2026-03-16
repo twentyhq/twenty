@@ -17,7 +17,7 @@ export type CacheMetadataPluginConfig = {
 };
 
 const USER_SCOPED_METADATA_OPERATIONS = new Set([
-  'FindAllCoreViews',
+  'FindAllViews',
   'FindFieldsWidgetCoreViews',
 ]);
 const SLOW_METADATA_CACHE_MISS_MS = 1_000;

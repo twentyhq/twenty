@@ -1,7 +1,7 @@
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-import { coreViewsFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/coreViewsFromObjectMetadataItemFamilySelector';
+import { viewsFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/viewsFromObjectMetadataItemFamilySelector';
 import { ViewType } from '@/views/types/ViewType';
 import { useCreateViewFromCurrentState } from '@/views/view-picker/hooks/useCreateViewFromCurrentState';
 import { useDestroyViewFromCurrentState } from '@/views/view-picker/hooks/useDestroyViewFromCurrentState';
@@ -20,7 +20,7 @@ export const ViewPickerEditButton = () => {
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
 
   const viewsOnCurrentObject = useAtomFamilySelectorValue(
-    coreViewsFromObjectMetadataItemFamilySelector,
+    viewsFromObjectMetadataItemFamilySelector,
     { objectMetadataItemId: objectMetadataItem.id },
   );
 
@@ -57,7 +57,7 @@ export const ViewPickerEditButton = () => {
   }
 
   if (
-    viewPickerType === ViewType.Kanban &&
+    viewPickerType === ViewType.KANBAN &&
     availableFieldsForGrouping.length === 0
   ) {
     return (
@@ -73,7 +73,7 @@ export const ViewPickerEditButton = () => {
   }
 
   if (
-    viewPickerType === ViewType.Table ||
+    viewPickerType === ViewType.TABLE ||
     viewPickerMainGroupByFieldMetadataId !== ''
   ) {
     return (
@@ -86,7 +86,7 @@ export const ViewPickerEditButton = () => {
         justify="center"
         disabled={
           viewPickerIsPersisting ||
-          (viewPickerType === ViewType.Kanban &&
+          (viewPickerType === ViewType.KANBAN &&
             viewPickerMainGroupByFieldMetadataId === '')
         }
       />

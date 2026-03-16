@@ -1,4 +1,5 @@
 import gql from 'graphql-tag';
+import { useMemo } from 'react';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
@@ -25,7 +26,8 @@ export const useFindOneRecordQuery = ({
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
-  const findOneRecordQuery = gql`
+  const findOneRecordQuery = useMemo(
+    () => gql`
       query FindOne${capitalize(
         objectMetadataItem.nameSingular,
       )}($objectRecordId: UUID!) {
@@ -50,7 +52,15 @@ export const useFindOneRecordQuery = ({
           objectPermissionsByObjectMetadataId,
         })}
       },
-  `;
+  `,
+    [
+      objectMetadataItem,
+      objectMetadataItems,
+      recordGqlFields,
+      withSoftDeleted,
+      objectPermissionsByObjectMetadataId,
+    ],
+  );
 
   return {
     findOneRecordQuery,

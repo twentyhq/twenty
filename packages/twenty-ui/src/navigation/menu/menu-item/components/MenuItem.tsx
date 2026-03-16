@@ -33,6 +33,7 @@ export type MenuItemProps = {
   accent?: MenuItemAccent;
   className?: string;
   withIconContainer?: boolean;
+  withIconContainerBackground?: boolean;
   iconButtons?: MenuItemIconButton[];
   isIconDisplayedOnHoverOnly?: boolean;
   isTooltipOpen?: boolean;
@@ -65,6 +66,7 @@ export const MenuItem = ({
   accent = 'default',
   className,
   withIconContainer = false,
+  withIconContainerBackground = true,
   iconButtons,
   isIconDisplayedOnHoverOnly = true,
   LeftIcon,
@@ -112,6 +114,7 @@ export const MenuItem = ({
         LeftIcon={LeftIcon ?? undefined}
         LeftComponent={LeftComponent}
         withIconContainer={withIconContainer}
+        withIconContainerBackground={withIconContainerBackground}
         text={text}
         contextualText={contextualText}
         contextualTextPosition={contextualTextPosition}

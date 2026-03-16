@@ -1,4 +1,3 @@
-import { useLazyQuery } from '@apollo/client';
 import { useCallback } from 'react';
 
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
@@ -49,21 +48,6 @@ export const useLazyFindManyRecordsWithOffset = ({
 
   const hasReadPermission = objectPermissions.canReadObjectRecords;
 
-  // OMNIA-CUSTOM: Use no-cache because the record table reads from jotai
-  // (recordStoreFamilyState), not Apollo cache. With Apollo 3 (no automatic
-  // cache GC), caching here causes unbounded memory growth → mobile OOM.
-  const [findManyRecords] = useLazyQuery<RecordGqlOperationFindManyResult>(
-    findManyRecordsQuery,
-    {
-      variables: {
-        ...params,
-      },
-      fetchPolicy: 'no-cache',
-      onError: handleFindManyRecordsError,
-      client: apolloCoreClient,
-    },
-  );
-
   const findManyRecordsLazyWithOffset = useCallback(
     async (limit: number, offset: number) => {
       if (!hasReadPermission) {
@@ -75,12 +59,23 @@ export const useLazyFindManyRecordsWithOffset = ({
         };
       }
 
-      const result = await findManyRecords({
-        variables: {
-          limit,
-          offset,
-        },
-      });
+      // OMNIA-CUSTOM: Use no-cache because the record table reads from jotai
+      // (recordStoreFamilyState), not Apollo cache. With Apollo 3 (no automatic
+      // cache GC), caching here causes unbounded memory growth → mobile OOM.
+      const result =
+        await apolloCoreClient.query<RecordGqlOperationFindManyResult>({
+          query: findManyRecordsQuery,
+          variables: {
+            ...params,
+            limit,
+            offset,
+          },
+          fetchPolicy: 'no-cache',
+        });
+
+      if (result?.error) {
+        handleFindManyRecordsError(result.error);
+      }
 
       const records = getRecordsFromRecordConnection({
         recordConnection: {
@@ -100,7 +95,14 @@ export const useLazyFindManyRecordsWithOffset = ({
         error: result?.error,
       };
     },
-    [hasReadPermission, findManyRecords, objectMetadataItem.namePlural],
+    [
+      hasReadPermission,
+      apolloCoreClient,
+      findManyRecordsQuery,
+      params,
+      objectMetadataItem.namePlural,
+      handleFindManyRecordsError,
+    ],
   );
 
   return {

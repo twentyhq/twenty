@@ -230,6 +230,7 @@ const previewableTypes = [
   FieldMetadataType.RAW_JSON,
   FieldMetadataType.RELATION,
   FieldMetadataType.MORPH_RELATION,
+  FieldMetadataType.RICH_TEXT,
   FieldMetadataType.SELECT,
   FieldMetadataType.TEXT,
   FieldMetadataType.UUID,

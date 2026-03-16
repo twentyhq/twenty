@@ -37,7 +37,7 @@ export const SidePanelObjectViewRecordInfo = () => {
   const label =
     processedItem.itemType === NavigationMenuItemType.RECORD
       ? selectedItemObjectMetadata?.labelSingular
-      : processedItem.viewKey === ViewKey.Index
+      : processedItem.viewKey === ViewKey.INDEX
         ? t`Object`
         : t`View`;
 

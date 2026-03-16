@@ -11,10 +11,7 @@ import {
 } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import {
-  FeatureFlagKey,
-  PermissionFlagType,
-} from '~/generated-metadata/graphql';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 import { FOLDER_ICON_DEFAULT } from '@/navigation-menu-item/constants/FolderIconDefault';
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
@@ -30,17 +27,14 @@ import { openNavigationMenuItemFolderIdsState } from '@/navigation-menu-item/sta
 import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeState';
 import { filterWorkspaceNavigationMenuItems } from '@/navigation-menu-item/utils/filterWorkspaceNavigationMenuItems';
 import { preloadWorkspaceDndKit } from '@/navigation/preloadWorkspaceDndKit';
-import { NavigationDrawerSectionForObjectMetadataItemsSkeletonLoader } from '@/object-metadata/components/NavigationDrawerSectionForObjectMetadataItemsSkeletonLoader';
 import { NavigationDrawerSectionForWorkspaceItems } from '@/object-metadata/components/NavigationDrawerSectionForWorkspaceItems';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
-import { prefetchNavigationMenuItemsState } from '@/prefetch/states/prefetchNavigationMenuItemsState';
+import { navigationMenuItemsState } from '@/navigation-menu-item/states/navigationMenuItemsState';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useStore } from 'jotai';
 import { SidePanelPages } from 'twenty-shared/types';
 
@@ -55,18 +49,13 @@ export const WorkspaceNavigationMenuItems = () => {
   const { workspaceNavigationMenuItemsSorted } = useSortedNavigationMenuItems();
   const store = useStore();
   const enterEditMode = () => {
-    const prefetchNavigationMenuItems = store.get(
-      prefetchNavigationMenuItemsState.atom,
-    );
+    const currentNavigationMenuItems = store.get(navigationMenuItemsState.atom);
     const workspaceNavigationMenuItems = filterWorkspaceNavigationMenuItems(
-      prefetchNavigationMenuItems,
+      currentNavigationMenuItems,
     );
     store.set(navigationMenuItemsDraftState.atom, workspaceNavigationMenuItems);
     store.set(isNavigationMenuInEditModeState.atom, true);
   };
-  const isNavigationMenuItemEditingEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED,
-  );
   const isNavigationMenuInEditMode = useAtomStateValue(
     isNavigationMenuInEditModeState,
   );
@@ -83,11 +72,9 @@ export const WorkspaceNavigationMenuItems = () => {
     useOpenNavigationMenuItemInSidePanel();
   const { getIcon } = useIcons();
 
-  const loading = useIsPrefetchLoading();
   const { t } = useLingui();
   const hasLayoutsPermission = useHasPermissionFlag(PermissionFlagType.LAYOUTS);
-  const canEditSidebar =
-    isNavigationMenuItemEditingEnabled && hasLayoutsPermission;
+  const canEditSidebar = hasLayoutsPermission;
   const isEditMode = canEditSidebar && isNavigationMenuInEditMode;
 
   const handleEditClick = (event: React.MouseEvent) => {
@@ -178,10 +165,6 @@ export const WorkspaceNavigationMenuItems = () => {
       resetNavigationStack: true,
     });
   };
-
-  if (loading) {
-    return <NavigationDrawerSectionForObjectMetadataItemsSkeletonLoader />;
-  }
 
   return (
     <NavigationDrawerSectionForWorkspaceItems

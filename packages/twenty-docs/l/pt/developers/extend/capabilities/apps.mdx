@@ -49,25 +49,31 @@ npx create-twenty-app@latest my-app --minimal
 A partir daqui você pode:
 
 ```bash filename="Terminal"
-# Add a new entity to your application (guided)
+# Adicionar uma nova entidade à sua aplicação (assistido)
 yarn twenty entity:add
 
-# Watch your application's function logs
+# Acompanhar os logs das funções da sua aplicação
 yarn twenty function:logs
 
-# Execute a function by name
+# Executar uma função pelo nome
 yarn twenty function:execute -n my-function -p '{"name": "test"}'
 
-# Execute the pre-install function
+# Executar a função de pré-instalação
 yarn twenty function:execute --preInstall
 
-# Execute the post-install function
+# Executar a função de pós-instalação
 yarn twenty function:execute --postInstall
 
-# Uninstall the application from the current workspace
+# Compilar a aplicação para distribuição
+yarn twenty app:build
+
+# Publicar a aplicação no npm ou em um servidor Twenty
+yarn twenty app:publish
+
+# Desinstalar a aplicação do espaço de trabalho atual
 yarn twenty app:uninstall
 
-# Display commands' help
+# Exibir a ajuda dos comandos
 yarn twenty help
 ```
 
@@ -1240,6 +1246,113 @@ Pontos-chave:
 ### Exemplo Hello World
 
 Explore um exemplo mínimo de ponta a ponta que demonstra objetos, funções de lógica, componentes de front-end e vários gatilhos [aqui](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/hello-world):
+
+## Compilando seu app
+
+Depois de desenvolver seu app com `app:dev`, use `app:build` para compilá-lo em um pacote distribuível.
+
+```bash filename="Terminal"
+# Compilar o app (a saída vai para .twenty/output/)
+yarn twenty app:build
+
+# Compilar e criar um tarball (.tgz) para distribuição
+yarn twenty app:build --tarball
+```
+
+O processo de build:
+
+1. **Analisa e valida o manifesto** — lê todas as entidades `defineX()` dos seus arquivos de código-fonte e valida a estrutura do manifesto.
+2. **Compila funções de lógica e componentes de front-end** — empacota o código-fonte TypeScript em arquivos ESM `.mjs` usando o esbuild.
+3. **Gera checksums** — calcula hashes MD5 para cada arquivo gerado, armazenados no manifesto como `builtHandlerChecksum` / `builtComponentChecksum`.
+4. **Gera o cliente de API tipado** — inspeciona o esquema GraphQL e gera clientes tipados `CoreApiClient` e `MetadataApiClient`.
+5. **Executa uma verificação de tipos do TypeScript** — executa `tsc --noEmit` para detectar erros de tipo antes da publicação.
+6. **Reconstrói com o cliente gerado** — realiza uma segunda passagem de compilação para que os tipos do cliente gerado sejam incluídos.
+7. **Opcionalmente cria um tarball** — se `--tarball` for passado, executa `npm pack` para criar um arquivo `.tgz` pronto para distribuição.
+
+A saída da compilação em `.twenty/output/` contém:
+
+```text
+.twenty/output/
+├── manifest.json              # Manifesto com somas de verificação para todos os arquivos compilados
+├── package.json               # Copiado da raiz do aplicativo
+├── yarn.lock                  # Copiado da raiz do aplicativo
+├── src/
+│   ├── logic-functions/       # Arquivos .mjs compilados de funções de lógica
+│   └── front-components/      # Arquivos .mjs compilados de componentes de front-end
+├── public/                    # Recursos estáticos (se houver)
+└── my-app-1.0.0.tgz          # Apenas com a opção --tarball
+```
+
+| Opção       | Descrição                                                 |
+| ----------- | --------------------------------------------------------- |
+| `[appPath]` | Caminho para o diretório do app (padrão: diretório atual) |
+| `--tarball` | Também empacota a saída em um tarball `.tgz`              |
+
+## Publicando seu app
+
+Use `app:publish` para distribuir seu app — ou para o registro do npm ou diretamente para um servidor Twenty.
+
+### Publicar no npm (padrão)
+
+```bash filename="Terminal"
+# Publish to npm (requires npm login)
+yarn twenty app:publish
+
+# Publish with a dist-tag (e.g. beta, next)
+yarn twenty app:publish --tag beta
+```
+
+Isso compila o app e executa `npm publish` a partir do diretório `.twenty/output/`. O pacote publicado pode então ser instalado no marketplace da Twenty por qualquer espaço de trabalho.
+
+### Publicar em um servidor Twenty
+
+```bash filename="Terminal"
+# Publish directly to a Twenty server
+yarn twenty app:publish --server https://app.twenty.com
+```
+
+Isso compila o app com um tarball, faz o upload para o servidor via a mutação GraphQL `uploadAppTarball` e aciona a instalação em uma única etapa. Isso é útil para implantações privadas ou para testar em um servidor específico.
+
+| Opção             | Descrição                                                             |
+| ----------------- | --------------------------------------------------------------------- |
+| `[appPath]`       | Caminho para o diretório do app (padrão: diretório atual)             |
+| `--server <url>`  | Publicar em um servidor Twenty em vez de no npm                       |
+| `--token <token>` | Token de autenticação para o servidor de destino                      |
+| `--tag <tag>`     | dist-tag do npm (ex.: `beta`, `next`) — apenas para publicação no npm |
+
+## Registro de aplicação
+
+Antes que um app possa ser instalado em um espaço de trabalho, ele precisa ser **registrado**. Um registro é um registro de metadados que descreve de onde o app vem e como autenticá-lo. Isso é tratado automaticamente pela CLI na maioria dos casos.
+
+### Tipos de origem
+
+Cada registro tem um **tipo de origem** que determina como os arquivos do app são resolvidos durante a instalação:
+
+| Tipo de origem | Como os arquivos são resolvidos                                                             | Caso de uso típico                      |
+| -------------- | ------------------------------------------------------------------------------------------- | --------------------------------------- |
+| `LOCAL`        | Os arquivos são sincronizados em tempo real pelo observador da CLI — a instalação é omitida | Desenvolvimento com `app:dev`           |
+| `NPM`          | Obtidos do registro npm por meio do campo `sourcePackage`                                   | Apps publicados no npm                  |
+| `TARBALL`      | Extraídos de um arquivo `.tgz` enviado e armazenado no servidor                             | Apps privados publicados com `--server` |
+
+### Como o registro acontece
+
+* **`app:dev`** — cria automaticamente um registro `LOCAL` na primeira vez que você executa o modo de desenvolvimento em um espaço de trabalho.
+* **`app:publish --server`** — faz o upload de um tarball e cria (ou atualiza) um registro `TARBALL`, e em seguida instala o app.
+* **marketplace do npm** — registros `NPM` são criados quando apps são sincronizados do registro npm para o catálogo do marketplace da Twenty.
+* **API GraphQL** — você também pode criar registros programaticamente por meio da mutação `createApplicationRegistration`.
+
+### Registro vs instalação
+
+**Registro** e **instalação** são conceitos distintos:
+
+* Um **registro** (`ApplicationRegistration`) é um registro global de metadados que descreve o app: seu nome, tipo de origem, credenciais OAuth e status de listagem no marketplace. Ele existe independentemente de qualquer espaço de trabalho.
+* Uma **instalação** (`Application`) é uma instância por espaço de trabalho. Quando um usuário instala um app, a Twenty resolve o pacote a partir da origem do registro, grava os arquivos compilados no armazenamento e sincroniza o manifesto (criando objetos, campos, funções de lógica etc.). naquele espaço de trabalho.
+
+Um registro pode ser instalado em muitos espaços de trabalho. Cada espaço de trabalho recebe sua própria cópia dos arquivos e do modelo de dados do app.
+
+### Credenciais OAuth
+
+Cada registro inclui credenciais OAuth (`oAuthClientId` e `oAuthClientSecret`) geradas no momento da criação. Elas são usadas pelo app para autenticar requisições de API em nome dos usuários. O segredo do cliente é retornado **uma única vez** na criação — armazene-o com segurança. Você pode rotacioná-lo posteriormente por meio da mutação `rotateApplicationRegistrationClientSecret`.
 
 ## Configuração manual (sem o gerador)
 

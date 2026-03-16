@@ -1,4 +1,4 @@
-import { ApolloProvider as ApolloProviderBase } from '@apollo/client';
+import { ApolloProvider as ApolloProviderBase } from '@apollo/client/react';
 
 import { useApolloFactory } from '@/apollo/hooks/useApolloFactory';
 import { createCaptchaRefreshLink } from '@/apollo/utils/captchaRefreshLink';
@@ -16,7 +16,8 @@ export const ApolloProvider = ({ children }: React.PropsWithChildren) => {
 
   const apolloClient = useApolloFactory({
     uri: `${REACT_APP_SERVER_BASE_URL}/metadata`,
-    connectToDevTools: process.env.NODE_ENV === 'development',
+    // OMNIA-CUSTOM: gate devtools to development only (upstream hardcodes IS_DEBUG_MODE)
+    devtools: { enabled: process.env.NODE_ENV === 'development' },
     extraLinks: [captchaRefreshLink],
   });
 

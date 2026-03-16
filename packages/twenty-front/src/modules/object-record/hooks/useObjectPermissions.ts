@@ -1,6 +1,7 @@
+import { useMemo } from 'react';
+
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useMemo } from 'react';
 import { type ObjectPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 

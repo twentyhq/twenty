@@ -2,6 +2,7 @@ import { UseFilters, UseGuards } from '@nestjs/common';
 import {
   Args,
   Context,
+  Float,
   Mutation,
   Parent,
   Query,
@@ -9,6 +10,7 @@ import {
 } from '@nestjs/graphql';
 
 import { isArray } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -16,6 +18,7 @@ import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { resolveOverridableEntityProperty } from 'src/engine/metadata-modules/utils/resolve-overridable-entity-property.util';
 import { CreateViewFieldGroupInput } from 'src/engine/metadata-modules/view-field-group/dtos/inputs/create-view-field-group.input';
 import { DeleteViewFieldGroupInput } from 'src/engine/metadata-modules/view-field-group/dtos/inputs/delete-view-field-group.input';
 import { DestroyViewFieldGroupInput } from 'src/engine/metadata-modules/view-field-group/dtos/inputs/destroy-view-field-group.input';
@@ -39,9 +42,32 @@ export class ViewFieldGroupResolver {
     private readonly fieldsWidgetUpsertService: FieldsWidgetUpsertService,
   ) {}
 
+  @ResolveField(() => String)
+  name(@Parent() viewFieldGroup: ViewFieldGroupDTO): string {
+    return resolveOverridableEntityProperty(viewFieldGroup, 'name');
+  }
+
+  @ResolveField(() => Float)
+  position(@Parent() viewFieldGroup: ViewFieldGroupDTO): number {
+    return resolveOverridableEntityProperty(viewFieldGroup, 'position');
+  }
+
+  @ResolveField(() => Boolean)
+  isVisible(@Parent() viewFieldGroup: ViewFieldGroupDTO): boolean {
+    return resolveOverridableEntityProperty(viewFieldGroup, 'isVisible');
+  }
+
+  @ResolveField(() => Boolean)
+  isOverridden(@Parent() viewFieldGroup: ViewFieldGroupDTO): boolean {
+    return (
+      isDefined(viewFieldGroup.overrides) &&
+      Object.keys(viewFieldGroup.overrides).length > 0
+    );
+  }
+
   @Query(() => [ViewFieldGroupDTO])
   @UseGuards(NoPermissionGuard)
-  async getCoreViewFieldGroups(
+  async getViewFieldGroups(
     @Args('viewId', { type: () => String }) viewId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<ViewFieldGroupEntity[]> {
@@ -50,7 +76,7 @@ export class ViewFieldGroupResolver {
 
   @Query(() => ViewFieldGroupDTO, { nullable: true })
   @UseGuards(NoPermissionGuard)
-  async getCoreViewFieldGroup(
+  async getViewFieldGroup(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<ViewFieldGroupEntity | null> {
@@ -59,7 +85,7 @@ export class ViewFieldGroupResolver {
 
   @Mutation(() => ViewFieldGroupDTO)
   @UseGuards(NoPermissionGuard)
-  async updateCoreViewFieldGroup(
+  async updateViewFieldGroup(
     @Args('input') updateViewFieldGroupInput: UpdateViewFieldGroupInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ViewFieldGroupDTO> {
@@ -71,7 +97,7 @@ export class ViewFieldGroupResolver {
 
   @Mutation(() => ViewFieldGroupDTO)
   @UseGuards(NoPermissionGuard)
-  async createCoreViewFieldGroup(
+  async createViewFieldGroup(
     @Args('input')
     createViewFieldGroupInput: CreateViewFieldGroupInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -84,7 +110,7 @@ export class ViewFieldGroupResolver {
 
   @Mutation(() => [ViewFieldGroupDTO])
   @UseGuards(NoPermissionGuard)
-  async createManyCoreViewFieldGroups(
+  async createManyViewFieldGroups(
     @Args('inputs', { type: () => [CreateViewFieldGroupInput] })
     createViewFieldGroupInputs: CreateViewFieldGroupInput[],
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -97,7 +123,7 @@ export class ViewFieldGroupResolver {
 
   @Mutation(() => ViewFieldGroupDTO)
   @UseGuards(NoPermissionGuard)
-  async deleteCoreViewFieldGroup(
+  async deleteViewFieldGroup(
     @Args('input') deleteViewFieldGroupInput: DeleteViewFieldGroupInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ViewFieldGroupDTO> {
@@ -109,7 +135,7 @@ export class ViewFieldGroupResolver {
 
   @Mutation(() => ViewFieldGroupDTO)
   @UseGuards(NoPermissionGuard)
-  async destroyCoreViewFieldGroup(
+  async destroyViewFieldGroup(
     @Args('input')
     destroyViewFieldGroupInput: DestroyViewFieldGroupInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,

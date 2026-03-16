@@ -6,8 +6,8 @@ import { shouldDestroyEventStreamState } from '@/sse-db-event/states/shouldDestr
 import { sseEventStreamIdState } from '@/sse-db-event/states/sseEventStreamIdState';
 import { sseEventStreamReadyState } from '@/sse-db-event/states/sseEventStreamReadyState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { ApolloError, useMutation } from '@apollo/client';
-import { captureException } from '@sentry/react';
+import { useMutation } from '@apollo/client/react';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback, useEffect } from 'react';
 import {
@@ -86,22 +86,20 @@ export const SSEQuerySubscribeEffect = () => {
         });
       }
     } catch (error) {
-      if (error instanceof ApolloError) {
-        const subCode = error.graphQLErrors[0]?.extensions?.subCode;
+      if (CombinedGraphQLErrors.is(error)) {
+        const subCode = error.errors[0]?.extensions?.subCode;
 
         switch (subCode) {
           case 'EVENT_STREAM_DOES_NOT_EXIST':
-          case 'EVENT_STREAM_ALREADY_EXISTS':
-          case 'NOT_AUTHORIZED': {
+          case 'EVENT_STREAM_ALREADY_EXISTS': {
             store.set(activeQueryListenersState.atom, []);
             store.set(shouldDestroyEventStreamState.atom, true);
             return;
           }
           default: {
-            captureException(error);
-            store.set(activeQueryListenersState.atom, []);
-            store.set(shouldDestroyEventStreamState.atom, true);
-            return;
+            throw new Error(
+              `Unhandled error for event stream: ${error.message}`,
+            );
           }
         }
       }

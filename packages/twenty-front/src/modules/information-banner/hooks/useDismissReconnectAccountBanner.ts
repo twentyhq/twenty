@@ -1,4 +1,4 @@
-import { useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client/react';
 
 import { DISMISS_RECONNECT_ACCOUNT_BANNER } from '@/information-banner/graphql/mutations/dismissReconnectAccountBanner';
 import { informationBannerIsOpenComponentState } from '@/information-banner/states/informationBannerIsOpenComponentState';

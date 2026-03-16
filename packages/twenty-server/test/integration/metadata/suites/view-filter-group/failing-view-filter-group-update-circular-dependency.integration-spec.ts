@@ -1,10 +1,10 @@
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
-import { createOneCoreViewFilterGroup } from 'test/integration/metadata/suites/view-filter-group/utils/create-one-core-view-filter-group.util';
-import { destroyOneCoreViewFilterGroup } from 'test/integration/metadata/suites/view-filter-group/utils/destroy-one-core-view-filter-group.util';
-import { updateOneCoreViewFilterGroup } from 'test/integration/metadata/suites/view-filter-group/utils/update-one-core-view-filter-group.util';
-import { createOneCoreView } from 'test/integration/metadata/suites/view/utils/create-one-core-view.util';
-import { destroyOneCoreView } from 'test/integration/metadata/suites/view/utils/destroy-one-core-view.util';
+import { createOneViewFilterGroup } from 'test/integration/metadata/suites/view-filter-group/utils/create-one-view-filter-group.util';
+import { destroyOneViewFilterGroup } from 'test/integration/metadata/suites/view-filter-group/utils/destroy-one-view-filter-group.util';
+import { updateOneViewFilterGroup } from 'test/integration/metadata/suites/view-filter-group/utils/update-one-view-filter-group.util';
+import { createOneView } from 'test/integration/metadata/suites/view/utils/create-one-view.util';
+import { destroyOneView } from 'test/integration/metadata/suites/view/utils/destroy-one-view.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import { ViewFilterGroupLogicalOperator, ViewType } from 'twenty-shared/types';
 
@@ -35,7 +35,7 @@ describe('View Filter Group update should fail with circular dependency', () => 
 
     jestExpectToBeDefined(companyObjectMetadata);
 
-    const { data: viewData } = await createOneCoreView({
+    const { data: viewData } = await createOneView({
       expectToFail: false,
       input: {
         name: 'Test View For Update Circular Dependency',
@@ -45,11 +45,11 @@ describe('View Filter Group update should fail with circular dependency', () => 
       },
     });
 
-    createdViewId = viewData?.createCoreView?.id;
+    createdViewId = viewData?.createView?.id;
     jestExpectToBeDefined(createdViewId);
 
     // Create a standalone view filter group for self-reference test
-    const { data: filterGroupData } = await createOneCoreViewFilterGroup({
+    const { data: filterGroupData } = await createOneViewFilterGroup({
       expectToFail: false,
       input: {
         viewId: createdViewId,
@@ -57,11 +57,11 @@ describe('View Filter Group update should fail with circular dependency', () => 
       },
     });
 
-    viewFilterGroupId = filterGroupData?.createCoreViewFilterGroup?.id;
+    viewFilterGroupId = filterGroupData?.createViewFilterGroup?.id;
     jestExpectToBeDefined(viewFilterGroupId);
 
     // Create parent view filter group for chain test
-    const { data: parentFilterGroupData } = await createOneCoreViewFilterGroup({
+    const { data: parentFilterGroupData } = await createOneViewFilterGroup({
       expectToFail: false,
       input: {
         viewId: createdViewId,
@@ -70,11 +70,11 @@ describe('View Filter Group update should fail with circular dependency', () => 
     });
 
     parentViewFilterGroupId =
-      parentFilterGroupData?.createCoreViewFilterGroup?.id;
+      parentFilterGroupData?.createViewFilterGroup?.id;
     jestExpectToBeDefined(parentViewFilterGroupId);
 
     // Create child view filter group with parent reference for chain test
-    const { data: childFilterGroupData } = await createOneCoreViewFilterGroup({
+    const { data: childFilterGroupData } = await createOneViewFilterGroup({
       expectToFail: false,
       input: {
         viewId: createdViewId,
@@ -84,35 +84,35 @@ describe('View Filter Group update should fail with circular dependency', () => 
     });
 
     childViewFilterGroupId =
-      childFilterGroupData?.createCoreViewFilterGroup?.id;
+      childFilterGroupData?.createViewFilterGroup?.id;
     jestExpectToBeDefined(childViewFilterGroupId);
   });
 
   afterAll(async () => {
     // Delete child first (due to foreign key constraint)
     if (childViewFilterGroupId) {
-      await destroyOneCoreViewFilterGroup({
+      await destroyOneViewFilterGroup({
         expectToFail: false,
         id: childViewFilterGroupId,
       });
     }
 
     if (parentViewFilterGroupId) {
-      await destroyOneCoreViewFilterGroup({
+      await destroyOneViewFilterGroup({
         expectToFail: false,
         id: parentViewFilterGroupId,
       });
     }
 
     if (viewFilterGroupId) {
-      await destroyOneCoreViewFilterGroup({
+      await destroyOneViewFilterGroup({
         expectToFail: false,
         id: viewFilterGroupId,
       });
     }
 
     if (createdViewId) {
-      await destroyOneCoreView({
+      await destroyOneView({
         expectToFail: false,
         viewId: createdViewId,
       });
@@ -120,7 +120,7 @@ describe('View Filter Group update should fail with circular dependency', () => 
   });
 
   it('when parentViewFilterGroupId equals id (self-reference)', async () => {
-    const { errors } = await updateOneCoreViewFilterGroup({
+    const { errors } = await updateOneViewFilterGroup({
       id: viewFilterGroupId,
       expectToFail: true,
       input: {
@@ -135,7 +135,7 @@ describe('View Filter Group update should fail with circular dependency', () => 
 
   it('when update creates a circular dependency chain', async () => {
     // Try to set parent's parent to be the child (parent → child, then child → parent = cycle)
-    const { errors } = await updateOneCoreViewFilterGroup({
+    const { errors } = await updateOneViewFilterGroup({
       id: parentViewFilterGroupId,
       expectToFail: true,
       input: {

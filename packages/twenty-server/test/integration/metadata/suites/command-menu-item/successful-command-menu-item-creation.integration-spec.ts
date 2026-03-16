@@ -9,7 +9,7 @@ import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import { FeatureFlagKey } from 'twenty-shared/types';
 
-import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
+import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/enums/command-menu-item-availability-type.enum';
 
 describe('CommandMenuItem creation should succeed', () => {
   let createdCommandMenuItemId: string;

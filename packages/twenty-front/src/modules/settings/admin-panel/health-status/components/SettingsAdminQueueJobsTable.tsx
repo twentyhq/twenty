@@ -18,10 +18,11 @@ import { useState } from 'react';
 import { IconRefresh, IconTrash } from 'twenty-ui/display';
 import { Button, Checkbox } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useQuery } from '@apollo/client/react';
 import {
   JobState,
   type QueueJob,
-  useGetQueueJobsQuery,
+  GetQueueJobsDocument,
 } from '~/generated-metadata/graphql';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 
@@ -96,7 +97,7 @@ export const SettingsAdminQueueJobsTable = ({
 
   const offset = page * LIMIT;
 
-  const { data, loading, refetch } = useGetQueueJobsQuery({
+  const { data, loading, refetch } = useQuery(GetQueueJobsDocument, {
     variables: {
       queueName,
       state: stateFilter,
