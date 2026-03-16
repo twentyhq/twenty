@@ -78,7 +78,9 @@ export const NavigationMenuItemIcon = ({
     StandardIcon ??
     (navigationMenuItem.Icon ? getIcon(navigationMenuItem.Icon) : undefined);
   const effectiveColor = isIndexView
-    ? objectNavItemColor
+    ? (isNonEmptyString(navigationMenuItem.color)
+        ? navigationMenuItem.color
+        : objectNavItemColor)
     : getEffectiveNavigationMenuItemColor(navigationMenuItem);
   const useStyledIcon = !isRecord && isNonEmptyString(effectiveColor);
   const iconStyle = useStyledIcon

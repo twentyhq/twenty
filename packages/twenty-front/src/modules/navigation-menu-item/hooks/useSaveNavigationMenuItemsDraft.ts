@@ -131,13 +131,18 @@ export const useSaveNavigationMenuItemsDraft = () => {
       const iconChanged =
         isNavigationMenuItemFolder(draftItem) &&
         (original.icon ?? null) !== (draftItem.icon ?? null);
+      const colorChanged =
+        (isNavigationMenuItemFolder(draftItem) ||
+          isNavigationMenuItemLink(draftItem)) &&
+        (original.color ?? null) !== (draftItem.color ?? null);
 
       if (
         positionChanged ||
         folderIdChanged ||
         nameChanged ||
         linkChanged ||
-        iconChanged
+        iconChanged ||
+        colorChanged
       ) {
         const updateInput: {
           id: string;
@@ -146,6 +151,7 @@ export const useSaveNavigationMenuItemsDraft = () => {
           name?: string;
           link?: string | null;
           icon?: string | null;
+          color?: string | null;
         } = { id: draftItem.id };
 
         if (positionChanged) {
@@ -173,6 +179,9 @@ export const useSaveNavigationMenuItemsDraft = () => {
         }
         if (iconChanged && isNavigationMenuItemFolder(draftItem)) {
           updateInput.icon = draftItem.icon ?? null;
+        }
+        if (colorChanged) {
+          updateInput.color = draftItem.color ?? null;
         }
 
         await updateNavigationMenuItem(updateInput);

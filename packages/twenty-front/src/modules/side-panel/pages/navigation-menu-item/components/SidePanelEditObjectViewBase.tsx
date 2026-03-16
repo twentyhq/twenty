@@ -1,8 +1,12 @@
+import { isNonEmptyString } from '@sniptt/guards';
+
+import { useSelectedNavigationMenuItemEditItem } from '@/navigation-menu-item/hooks/useSelectedNavigationMenuItemEditItem';
+import { getStandardObjectIconColor } from '@/navigation-menu-item/utils/getStandardObjectIconColor';
 import { parseThemeColor } from '@/navigation-menu-item/utils/parseThemeColor';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
-import { SidePanelEditObjectColorOption } from '@/side-panel/pages/navigation-menu-item/components/SidePanelEditObjectColorOption';
+import { SidePanelEditColorOption } from '@/side-panel/pages/navigation-menu-item/components/SidePanelEditColorOption';
 import {
   type OrganizeActionsProps,
   SidePanelEditOrganizeActions,
@@ -28,15 +32,26 @@ export const SidePanelEditObjectViewBase = ({
   objectMetadataItem,
 }: SidePanelEditObjectViewBaseProps) => {
   const { t } = useLingui();
+  const { selectedItem } = useSelectedNavigationMenuItemEditItem();
   const selectableItemIds = getOrganizeActionsSelectableItemIds(true);
+
+  const currentColor = isNonEmptyString(selectedItem?.color)
+    ? parseThemeColor(selectedItem.color)
+    : isNonEmptyString(objectMetadataItem?.color)
+      ? parseThemeColor(objectMetadataItem.color)
+      : parseThemeColor(
+          getStandardObjectIconColor(
+            objectMetadataItem?.nameSingular ?? '',
+          ),
+        );
 
   return (
     <SidePanelList commandGroups={[]} selectableItemIds={selectableItemIds}>
-      {isDefined(objectMetadataItem) && (
+      {isDefined(objectMetadataItem) && isDefined(selectedItem) && (
         <SidePanelGroup heading={t`Customize`}>
-          <SidePanelEditObjectColorOption
-            objectMetadataId={objectMetadataItem.id}
-            color={parseThemeColor(objectMetadataItem.color)}
+          <SidePanelEditColorOption
+            navigationMenuItemId={selectedItem.id}
+            color={currentColor}
           />
         </SidePanelGroup>
       )}
