@@ -1,3 +1,4 @@
+import { useIsGlobalLayoutCustomizationActive } from '@/app/hooks/useIsGlobalLayoutCustomizationActive';
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { useSetIsPageLayoutInEditMode } from '@/page-layout/hooks/useSetIsPageLayoutInEditMode';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
@@ -23,6 +24,8 @@ export const DashboardWidgetPlaceholder = () => {
   );
 
   const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
+  const isGlobalLayoutCustomizationActive =
+    useIsGlobalLayoutCustomizationActive();
 
   const { setIsPageLayoutInEditMode } =
     useSetIsPageLayoutInEditMode(pageLayoutId);
@@ -30,6 +33,10 @@ export const DashboardWidgetPlaceholder = () => {
   const { navigatePageLayoutSidePanel } = useNavigatePageLayoutSidePanel();
 
   const handleClick = () => {
+    if (isGlobalLayoutCustomizationActive) {
+      return;
+    }
+
     if (!isPageLayoutInEditMode) {
       setIsPageLayoutInEditMode(true);
     }

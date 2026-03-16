@@ -1,3 +1,4 @@
+import { isLayoutCustomizationActiveState } from '@/app/states/isLayoutCustomizationActiveState';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreIsPageInEditModeComponentState } from '@/context-store/states/contextStoreIsPageInEditModeComponentState';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
@@ -7,6 +8,7 @@ import { fieldsWidgetGroupsDraftComponentState } from '@/page-layout/states/fiel
 import { fieldsWidgetUngroupedFieldsDraftComponentState } from '@/page-layout/states/fieldsWidgetUngroupedFieldsDraftComponentState';
 import { hasInitializedFieldsWidgetGroupsDraftComponentState } from '@/page-layout/states/hasInitializedFieldsWidgetGroupsDraftComponentState';
 import { isDashboardInEditModeComponentState } from '@/page-layout/states/isDashboardInEditModeComponentState';
+import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { SIDE_PANEL_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelComponentInstanceId';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
@@ -14,6 +16,7 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
+import { PageLayoutType } from '~/generated-metadata/graphql';
 
 export const useSetIsPageLayoutInEditMode = (pageLayoutIdFromProps: string) => {
   const pageLayoutId = useAvailableComponentInstanceIdOrThrow(
@@ -63,6 +66,23 @@ export const useSetIsPageLayoutInEditMode = (pageLayoutIdFromProps: string) => {
 
   const setIsPageLayoutInEditMode = useCallback(
     (value: boolean) => {
+      const isLayoutCustomizationActive = store.get(
+        isLayoutCustomizationActiveState.atom,
+      );
+
+      const pageLayoutPersisted = store.get(
+        pageLayoutPersistedComponentState.atomFamily({
+          instanceId: pageLayoutId,
+        }),
+      );
+
+      const isDashboardPageLayout =
+        pageLayoutPersisted?.type === PageLayoutType.DASHBOARD;
+
+      if (value && isLayoutCustomizationActive && isDashboardPageLayout) {
+        return;
+      }
+
       if (value) {
         store.set(fieldsWidgetGroupsDraftState, {});
         store.set(fieldsWidgetUngroupedFieldsDraftState, {});
@@ -98,6 +118,7 @@ export const useSetIsPageLayoutInEditMode = (pageLayoutIdFromProps: string) => {
       hasInitializedFieldsWidgetGroupsDraftState,
       pageLayoutEditingWidgetIdState,
       pageLayoutId,
+      pageLayoutPersistedComponentState,
       store,
     ],
   );

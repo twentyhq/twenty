@@ -1,3 +1,4 @@
+import { useIsGlobalLayoutCustomizationActive } from '@/app/hooks/useIsGlobalLayoutCustomizationActive';
 import { useBasePageLayout } from '@/page-layout/hooks/useBasePageLayout';
 import { usePageLayoutWithRelationWidgets } from '@/page-layout/hooks/usePageLayoutWithRelationWidgets';
 import { useSetIsPageLayoutInEditMode } from '@/page-layout/hooks/useSetIsPageLayoutInEditMode';
@@ -29,6 +30,8 @@ export const PageLayoutInitializationQueryEffect = ({
   const basePageLayout = useBasePageLayout(pageLayoutId);
 
   const pageLayout = usePageLayoutWithRelationWidgets(basePageLayout);
+  const isGlobalLayoutCustomizationActive =
+    useIsGlobalLayoutCustomizationActive();
 
   const { setIsPageLayoutInEditMode } =
     useSetIsPageLayoutInEditMode(pageLayoutId);
@@ -69,7 +72,7 @@ export const PageLayoutInitializationQueryEffect = ({
       const tabLayouts = convertPageLayoutToTabLayouts(layout);
       store.set(pageLayoutCurrentLayoutsComponentCallbackState, tabLayouts);
 
-      if (!isRecordPageLayout) {
+      if (!isRecordPageLayout && !isGlobalLayoutCustomizationActive) {
         const shouldEnterDashboardEditMode = isPageLayoutEmpty(layout);
         setIsPageLayoutInEditMode(shouldEnterDashboardEditMode);
       }
@@ -78,6 +81,7 @@ export const PageLayoutInitializationQueryEffect = ({
       pageLayoutCurrentLayoutsComponentCallbackState,
       pageLayoutDraftComponentCallbackState,
       pageLayoutPersistedComponentCallbackState,
+      isGlobalLayoutCustomizationActive,
       setIsPageLayoutInEditMode,
       store,
     ],
