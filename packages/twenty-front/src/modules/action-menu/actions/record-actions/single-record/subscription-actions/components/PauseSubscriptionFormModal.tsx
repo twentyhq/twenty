@@ -186,6 +186,7 @@ export const PauseSubscriptionFormModal = ({
       onClose={handleCancel}
       size="medium"
       padding="large"
+      ignoreContainer
     >
       <Modal.Header>
         <H1Title
