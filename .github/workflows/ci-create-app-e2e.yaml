@@ -167,6 +167,8 @@ jobs:
           echo "$EXEC_OUTPUT" | grep -q "Hello, World!"
 
       - name: Run scaffolded app integration test
+        env:
+          TWENTY_API_URL: http://localhost:3000
         run: |
           cd /tmp/e2e-test-workspace/test-app
           yarn test
