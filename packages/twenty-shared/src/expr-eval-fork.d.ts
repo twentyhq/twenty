@@ -1,4 +1,4 @@
-declare module 'expr-eval' {
+declare module 'expr-eval-fork' {
   export type Value =
     | number
     | string

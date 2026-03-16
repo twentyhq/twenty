@@ -91,7 +91,7 @@ describe('evaluateConditionalAvailabilityExpression', () => {
       ).toBe(true);
     });
 
-    it('should reject favoriteRecordIds.length (expr-eval parses "length" as unary op)', () => {
+    it('should reject favoriteRecordIds.length (expr-eval-fork parses "length" as unary op)', () => {
       const expression = 'favoriteRecordIds.length < numberOfSelectedRecords';
       const context = buildContext({
         favoriteRecordIds: ['id-1'],

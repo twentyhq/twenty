@@ -4,7 +4,7 @@ import {
   isObject,
   isString,
 } from '@sniptt/guards';
-import { type EvaluationContext, Parser } from 'expr-eval';
+import { type EvaluationContext, Parser } from 'expr-eval-fork';
 
 import { isDefined } from '../validation/isDefined';
 
