@@ -11,7 +11,7 @@ export class AddTypeToNavigationMenuItem1773681736596
     );
 
     await queryRunner.query(
-      `ALTER TABLE "core"."navigationMenuItem" ADD "type" "core"."navigationMenuItem_type_enum" DEFAULT 'VIEW'`,
+      `ALTER TABLE "core"."navigationMenuItem" ADD "type" "core"."navigationMenuItem_type_enum"`,
     );
 
     await queryRunner.query(
