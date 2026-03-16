@@ -7,7 +7,6 @@ export const mapBoardFieldDefinitionsToViewFields = (
 ): ViewField[] => {
   return fieldsDefinitions.map(
     (fieldDefinition): ViewField => ({
-      __typename: 'ViewField',
       id: fieldDefinition.viewFieldId || '',
       fieldMetadataId: fieldDefinition.fieldMetadataId,
       size: 0,

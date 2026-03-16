@@ -3,8 +3,8 @@ import { createOneSelectFieldMetadataForIntegrationTests } from 'test/integratio
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
-import { createOneCoreView } from 'test/integration/metadata/suites/view/utils/create-one-core-view.util';
-import { updateOneCoreView } from 'test/integration/metadata/suites/view/utils/update-one-core-view.util';
+import { createOneView } from 'test/integration/metadata/suites/view/utils/create-one-view.util';
+import { updateOneView } from 'test/integration/metadata/suites/view/utils/update-one-view.util';
 import { ViewType } from 'twenty-shared/types';
 
 const TEST_NOT_EXISTING_VIEW_ID = '20202020-0000-4000-8000-000000000000';
@@ -74,8 +74,8 @@ describe('Update core view', () => {
 
   it('should update an existing view', async () => {
     const {
-      data: { createCoreView: view },
-    } = await createOneCoreView({
+      data: { createView: view },
+    } = await createOneView({
       input: {
         icon: '123Icon',
         name: 'Original View',
@@ -94,14 +94,14 @@ describe('Update core view', () => {
       isCompact: true,
     };
 
-    const { data, errors } = await updateOneCoreView({
+    const { data, errors } = await updateOneView({
       viewId: view.id,
       input: updateInput,
       expectToFail: false,
     });
 
     expect(errors).toBeUndefined();
-    expect(data.updateCoreView).toMatchObject({
+    expect(data.updateView).toMatchObject({
       id: view.id,
       name: 'Updated View',
       type: ViewType.KANBAN,
@@ -110,7 +110,7 @@ describe('Update core view', () => {
   });
 
   it('should throw error when updating non-existent view', async () => {
-    const { errors } = await updateOneCoreView({
+    const { errors } = await updateOneView({
       viewId: TEST_NOT_EXISTING_VIEW_ID,
       input: { id: TEST_NOT_EXISTING_VIEW_ID, name: 'Non-existent View' },
       expectToFail: true,

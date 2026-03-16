@@ -6,8 +6,7 @@ import { recordIdentifierToObjectRecordIdentifier } from '@/navigation-menu-item
 import { sortNavigationMenuItems } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { type ObjectRecordIdentifier } from '@/object-record/types/ObjectRecordIdentifier';
-import { coreViewsSelector } from '@/views/states/selectors/coreViewsSelector';
-import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
+import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 import { useNavigationMenuItemsData } from './useNavigationMenuItemsData';
@@ -26,13 +25,11 @@ type NavigationMenuItemFolderEntry = Pick<
 >;
 
 export const useNavigationMenuItemsByFolder = () => {
-  const coreViews = useAtomStateValue(coreViewsSelector);
+  const views = useAtomStateValue(viewsSelector);
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
 
   const { navigationMenuItems, workspaceNavigationMenuItems } =
     useNavigationMenuItemsData();
-
-  const views = coreViews.map(convertCoreViewToView);
 
   const allNavigationMenuItems = [
     ...workspaceNavigationMenuItems,

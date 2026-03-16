@@ -1,5 +1,5 @@
-import { type CoreViewWithRelations } from '@/views/types/CoreViewWithRelations';
+import { type ViewWithRelations } from '@/views/types/ViewWithRelations';
 
-export type FlatViewSort = CoreViewWithRelations['viewSorts'][number] & {
+export type FlatViewSort = ViewWithRelations['viewSorts'][number] & {
   viewId: string;
 };

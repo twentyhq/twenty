@@ -5,7 +5,7 @@ import { useNavigationMenuItemsData } from '@/navigation-menu-item/hooks/useNavi
 import { getStandardObjectIconColor } from '@/navigation-menu-item/utils/getStandardObjectIconColor';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-import { coreIndexViewIdFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/coreIndexViewIdFromObjectMetadataItemFamilySelector';
+import { indexViewIdFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/indexViewIdFromObjectMetadataItemFamilySelector';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 
@@ -16,7 +16,7 @@ export const RecordIndexPageHeaderIcon = ({
 }) => {
   const { workspaceNavigationMenuItems } = useNavigationMenuItemsData();
   const coreIndexViewId = useAtomFamilySelectorValue(
-    coreIndexViewIdFromObjectMetadataItemFamilySelector,
+    indexViewIdFromObjectMetadataItemFamilySelector,
     { objectMetadataItemId: objectMetadataItem?.id ?? '' },
   );
   const { getIcon } = useIcons();

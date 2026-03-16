@@ -39,7 +39,7 @@ export const ViewFieldsVisibleDropdownSection = () => {
     useGetFieldMetadataItemByIdOrThrow();
 
   const handleReorderFields =
-    viewType === ViewType.Kanban
+    viewType === ViewType.KANBAN
       ? handleReorderBoardFields
       : processOptionDropdownDragEnd;
 
@@ -47,7 +47,7 @@ export const ViewFieldsVisibleDropdownSection = () => {
     useChangeRecordFieldVisibility(recordIndexId);
 
   const handleChangeFieldVisibility =
-    viewType === ViewType.Kanban
+    viewType === ViewType.KANBAN
       ? handleBoardFieldVisibilityChange
       : changeRecordFieldVisibility;
 

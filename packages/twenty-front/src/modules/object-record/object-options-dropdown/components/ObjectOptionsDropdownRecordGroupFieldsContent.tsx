@@ -127,7 +127,7 @@ export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
       />
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer>
-        {viewType === ViewType.Table && (
+        {viewType === ViewType.TABLE && (
           <MenuItemSelect
             text={t`None`}
             selected={!isDefined(recordIndexGroupFieldMetadataItem)}

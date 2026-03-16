@@ -1,8 +1,8 @@
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
-import { createOneCoreViewFilterGroup } from 'test/integration/metadata/suites/view-filter-group/utils/create-one-core-view-filter-group.util';
-import { destroyOneCoreViewFilterGroup } from 'test/integration/metadata/suites/view-filter-group/utils/destroy-one-core-view-filter-group.util';
-import { createOneCoreView } from 'test/integration/metadata/suites/view/utils/create-one-core-view.util';
-import { destroyOneCoreView } from 'test/integration/metadata/suites/view/utils/destroy-one-core-view.util';
+import { createOneViewFilterGroup } from 'test/integration/metadata/suites/view-filter-group/utils/create-one-view-filter-group.util';
+import { destroyOneViewFilterGroup } from 'test/integration/metadata/suites/view-filter-group/utils/destroy-one-view-filter-group.util';
+import { createOneView } from 'test/integration/metadata/suites/view/utils/create-one-view.util';
+import { destroyOneView } from 'test/integration/metadata/suites/view/utils/destroy-one-view.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import { ViewFilterGroupLogicalOperator, ViewType } from 'twenty-shared/types';
 
@@ -33,7 +33,7 @@ describe('View Filter Group creation should succeed', () => {
     jestExpectToBeDefined(companyObjectMetadata);
     companyObjectMetadataId = companyObjectMetadata.id;
 
-    const { data: viewData } = await createOneCoreView({
+    const { data: viewData } = await createOneView({
       expectToFail: false,
       input: {
         name: 'Test View For Filter Group',
@@ -43,12 +43,12 @@ describe('View Filter Group creation should succeed', () => {
       },
     });
 
-    createdViewId = viewData?.createCoreView?.id;
+    createdViewId = viewData?.createView?.id;
   });
 
   afterAll(async () => {
     if (createdViewId) {
-      await destroyOneCoreView({
+      await destroyOneView({
         expectToFail: false,
         viewId: createdViewId,
       });
@@ -57,7 +57,7 @@ describe('View Filter Group creation should succeed', () => {
 
   afterEach(async () => {
     if (createdViewFilterGroupId) {
-      await destroyOneCoreViewFilterGroup({
+      await destroyOneViewFilterGroup({
         expectToFail: false,
         id: createdViewFilterGroupId,
       });
@@ -66,16 +66,16 @@ describe('View Filter Group creation should succeed', () => {
   });
 
   it('should create a view filter group with minimal input', async () => {
-    const { data } = await createOneCoreViewFilterGroup({
+    const { data } = await createOneViewFilterGroup({
       expectToFail: false,
       input: {
         viewId: createdViewId,
       },
     });
 
-    createdViewFilterGroupId = data?.createCoreViewFilterGroup?.id;
+    createdViewFilterGroupId = data?.createViewFilterGroup?.id;
 
-    expect(data.createCoreViewFilterGroup).toMatchObject({
+    expect(data.createViewFilterGroup).toMatchObject({
       id: expect.any(String),
       viewId: createdViewId,
       logicalOperator: ViewFilterGroupLogicalOperator.AND,
@@ -84,7 +84,7 @@ describe('View Filter Group creation should succeed', () => {
   });
 
   it('should create a view filter group with all fields', async () => {
-    const { data } = await createOneCoreViewFilterGroup({
+    const { data } = await createOneViewFilterGroup({
       expectToFail: false,
       input: {
         viewId: createdViewId,
@@ -93,9 +93,9 @@ describe('View Filter Group creation should succeed', () => {
       },
     });
 
-    createdViewFilterGroupId = data?.createCoreViewFilterGroup?.id;
+    createdViewFilterGroupId = data?.createViewFilterGroup?.id;
 
-    expect(data.createCoreViewFilterGroup).toMatchObject({
+    expect(data.createViewFilterGroup).toMatchObject({
       id: expect.any(String),
       viewId: createdViewId,
       logicalOperator: ViewFilterGroupLogicalOperator.OR,
@@ -105,7 +105,7 @@ describe('View Filter Group creation should succeed', () => {
 
   it('should create a nested view filter group', async () => {
     // Create parent filter group
-    const { data: parentData } = await createOneCoreViewFilterGroup({
+    const { data: parentData } = await createOneViewFilterGroup({
       expectToFail: false,
       input: {
         viewId: createdViewId,
@@ -113,10 +113,10 @@ describe('View Filter Group creation should succeed', () => {
       },
     });
 
-    const parentViewFilterGroupId = parentData?.createCoreViewFilterGroup?.id;
+    const parentViewFilterGroupId = parentData?.createViewFilterGroup?.id;
 
     // Create child filter group
-    const { data: childData } = await createOneCoreViewFilterGroup({
+    const { data: childData } = await createOneViewFilterGroup({
       expectToFail: false,
       input: {
         viewId: createdViewId,
@@ -125,9 +125,9 @@ describe('View Filter Group creation should succeed', () => {
       },
     });
 
-    createdViewFilterGroupId = childData?.createCoreViewFilterGroup?.id;
+    createdViewFilterGroupId = childData?.createViewFilterGroup?.id;
 
-    expect(childData.createCoreViewFilterGroup).toMatchObject({
+    expect(childData.createViewFilterGroup).toMatchObject({
       id: expect.any(String),
       viewId: createdViewId,
       logicalOperator: ViewFilterGroupLogicalOperator.OR,
@@ -135,7 +135,7 @@ describe('View Filter Group creation should succeed', () => {
     });
 
     // Clean up parent (this CASCADE-deletes the child too)
-    await destroyOneCoreViewFilterGroup({
+    await destroyOneViewFilterGroup({
       expectToFail: false,
       id: parentViewFilterGroupId,
     });

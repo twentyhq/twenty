@@ -1,5 +1,5 @@
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
-import { deleteOneCoreViewSort } from 'test/integration/metadata/suites/view-sort/utils/delete-one-core-view-sort.util';
+import { deleteOneViewSort } from 'test/integration/metadata/suites/view-sort/utils/delete-one-view-sort.util';
 import {
   eachTestingContextFilter,
   type EachTestingContext,
@@ -23,7 +23,7 @@ describe('View Sort deletion should fail', () => {
   it.each(eachTestingContextFilter(failingViewSortDeletionTestCases))(
     '$title',
     async ({ context }) => {
-      const { errors } = await deleteOneCoreViewSort({
+      const { errors } = await deleteOneViewSort({
         input: { id: context.id },
         expectToFail: true,
       });

@@ -11,16 +11,16 @@ import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 import { useMutation } from '@apollo/client/react';
 import {
-  type CreateCoreViewMutationVariables,
-  type DestroyCoreViewMutationVariables,
+  type CreateViewMutationVariables,
+  type DestroyViewMutationVariables,
   ViewType,
-  CreateCoreViewDocument,
-  DestroyCoreViewDocument,
+  CreateViewDocument,
+  DestroyViewDocument,
 } from '~/generated-metadata/graphql';
 
 export const usePerformViewAPIPersist = () => {
-  const [createCoreViewMutation] = useMutation(CreateCoreViewDocument);
-  const [destroyCoreViewMutation] = useMutation(DestroyCoreViewDocument);
+  const [createViewMutation] = useMutation(CreateViewDocument);
+  const [destroyViewMutation] = useMutation(DestroyViewDocument);
   const { triggerViewGroupOptimisticEffectAtViewCreation } =
     useViewsSideEffectsOnViewGroups();
 
@@ -29,10 +29,10 @@ export const usePerformViewAPIPersist = () => {
 
   const performViewAPICreate = useCallback(
     async (
-      variables: CreateCoreViewMutationVariables,
+      variables: CreateViewMutationVariables,
       objectMetadataItemId: string,
     ): Promise<
-      MetadataRequestResult<Awaited<ReturnType<typeof createCoreViewMutation>>>
+      MetadataRequestResult<Awaited<ReturnType<typeof createViewMutation>>>
     > => {
       try {
         const newViewId = variables.input.id ?? v4();
@@ -44,7 +44,7 @@ export const usePerformViewAPIPersist = () => {
           });
         }
 
-        const result = await createCoreViewMutation({
+        const result = await createViewMutation({
           variables: {
             input: {
               ...variables.input,
@@ -53,7 +53,7 @@ export const usePerformViewAPIPersist = () => {
           },
         });
 
-        const newView = result.data?.createCoreView;
+        const newView = result.data?.createView;
 
         if (!isDefined(newView)) {
           return {
@@ -83,7 +83,7 @@ export const usePerformViewAPIPersist = () => {
       }
     },
     [
-      createCoreViewMutation,
+      createViewMutation,
       triggerViewGroupOptimisticEffectAtViewCreation,
       handleMetadataError,
       enqueueErrorSnackBar,
@@ -92,12 +92,12 @@ export const usePerformViewAPIPersist = () => {
 
   const performViewAPIDestroy = useCallback(
     async (
-      variables: DestroyCoreViewMutationVariables,
+      variables: DestroyViewMutationVariables,
     ): Promise<
-      MetadataRequestResult<Awaited<ReturnType<typeof destroyCoreViewMutation>>>
+      MetadataRequestResult<Awaited<ReturnType<typeof destroyViewMutation>>>
     > => {
       try {
-        const result = await destroyCoreViewMutation({
+        const result = await destroyViewMutation({
           variables,
         });
 
@@ -121,7 +121,7 @@ export const usePerformViewAPIPersist = () => {
         };
       }
     },
-    [destroyCoreViewMutation, handleMetadataError, enqueueErrorSnackBar],
+    [destroyViewMutation, handleMetadataError, enqueueErrorSnackBar],
   );
 
   return {

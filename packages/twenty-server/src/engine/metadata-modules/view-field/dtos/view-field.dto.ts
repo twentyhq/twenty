@@ -13,7 +13,7 @@ import { type ViewFieldOverrides } from 'src/engine/metadata-modules/view-field/
 
 registerEnumType(AggregateOperations, { name: 'AggregateOperations' });
 
-@ObjectType('CoreViewField')
+@ObjectType('ViewField')
 export class ViewFieldDTO {
   @IDField(() => UUIDScalarType)
   id: string;

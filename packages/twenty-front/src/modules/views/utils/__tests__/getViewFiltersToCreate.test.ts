@@ -4,7 +4,6 @@ import { getViewFiltersToCreate } from '@/views/utils/getViewFiltersToCreate';
 
 describe('getViewFiltersToCreate', () => {
   const baseFilter: ViewFilter = {
-    __typename: 'ViewFilter',
     id: 'filter-1',
     fieldMetadataId: 'field-1',
     operand: ViewFilterOperand.CONTAINS,

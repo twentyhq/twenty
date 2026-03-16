@@ -57,7 +57,7 @@ export const WorkspaceNavigationMenuItemFolderDragClone = ({
     >
       <NavigationDrawerSubItem
         secondaryLabel={
-          navigationMenuItem.viewKey === ViewKey.Index
+          navigationMenuItem.viewKey === ViewKey.INDEX
             ? undefined
             : getNavigationMenuItemSecondaryLabel({
                 objectMetadataItems,

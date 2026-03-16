@@ -12,9 +12,9 @@ import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  FindAllCoreViewsDocument,
+  FindAllViewsDocument,
   FindAllRecordPageLayoutsDocument,
-  FindFieldsWidgetCoreViewsDocument,
+  FindFieldsWidgetViewsDocument,
   FindManyLogicFunctionsDocument,
   FindManyNavigationMenuItemsDocument,
   type ObjectMetadataItemsQuery,
@@ -91,19 +91,19 @@ export const useLoadStaleMetadataEntities = () => {
         fetchPromises.push(
           Promise.all([
             client.query({
-              query: FindAllCoreViewsDocument,
+              query: FindAllViewsDocument,
               variables: { viewTypes: INDEX_VIEW_TYPES },
               fetchPolicy: 'network-only',
             }),
             client.query({
-              query: FindFieldsWidgetCoreViewsDocument,
+              query: FindFieldsWidgetViewsDocument,
               variables: { viewTypes: FIELDS_WIDGET_VIEW_TYPES },
               fetchPolicy: 'network-only',
             }),
           ]).then(([indexViewsResult, fieldsWidgetViewsResult]) => {
             const allViews = [
-              ...(indexViewsResult.data?.getCoreViews ?? []),
-              ...(fieldsWidgetViewsResult.data?.getCoreViews ?? []),
+              ...(indexViewsResult.data?.getViews ?? []),
+              ...(fieldsWidgetViewsResult.data?.getViews ?? []),
             ];
 
             const {

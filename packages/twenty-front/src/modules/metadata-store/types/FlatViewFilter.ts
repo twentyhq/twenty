@@ -1,5 +1,5 @@
-import { type CoreViewWithRelations } from '@/views/types/CoreViewWithRelations';
+import { type ViewWithRelations } from '@/views/types/ViewWithRelations';
 
-export type FlatViewFilter = CoreViewWithRelations['viewFilters'][number] & {
+export type FlatViewFilter = ViewWithRelations['viewFilters'][number] & {
   viewId: string;
 };

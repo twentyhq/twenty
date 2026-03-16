@@ -5,7 +5,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
-import { type CoreViewSortEssential } from '@/views/types/CoreViewSortEssential';
+import { type ViewSortEssential } from '@/views/types/ViewSortEssential';
 import { isDefined } from 'twenty-shared/utils';
 import { ViewSortDirection } from '~/generated-metadata/graphql';
 import { getJestMetadataAndApolloMocksAndCommandMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndCommandMenuWrapper';
@@ -32,7 +32,7 @@ describe('useApplyViewSortsToCurrentRecordSorts', () => {
     throw new Error(`Missing mock field metadata Name`);
   }
 
-  const mockViewSort: CoreViewSortEssential = {
+  const mockViewSort: ViewSortEssential = {
     id: 'sort-1',
     fieldMetadataId: mockFieldMetadataItem.id,
     direction: ViewSortDirection.ASC,

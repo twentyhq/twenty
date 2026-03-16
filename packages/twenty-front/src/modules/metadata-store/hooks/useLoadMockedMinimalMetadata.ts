@@ -12,7 +12,7 @@ export const useLoadMockedMinimalMetadata = () => {
     resetMetadataStore();
     const [
       { generatedMockObjectMetadataItems },
-      { mockedCoreViews },
+      { mockedViews },
       { mockedNavigationMenuItems },
     ] = await Promise.all([
       import('~/testing/utils/generatedMockObjectMetadataItems'),
@@ -37,7 +37,7 @@ export const useLoadMockedMinimalMetadata = () => {
       flatViewGroups,
       flatViewFilterGroups,
       flatViewFieldGroups,
-    } = splitViewWithRelated(mockedCoreViews);
+    } = splitViewWithRelated(mockedViews);
 
     updateDraft('views', flatViews, MOCKED_COLLECTION_HASH);
     updateDraft('viewFields', flatViewFields, MOCKED_COLLECTION_HASH);

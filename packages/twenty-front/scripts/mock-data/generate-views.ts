@@ -112,8 +112,8 @@ export const generateViews = async (token: string) => {
   writeGeneratedFile(
     'metadata/views/mock-views-data.ts',
     'mockedCoreViews',
-    'CoreViewWithRelations[]',
-    "import { type CoreViewWithRelations } from '@/views/types/CoreViewWithRelations';",
+    'ViewWithRelations[]',
+    "import { type ViewWithRelations } from '@/views/types/ViewWithRelations';",
     data.getCoreViews,
   );
 };

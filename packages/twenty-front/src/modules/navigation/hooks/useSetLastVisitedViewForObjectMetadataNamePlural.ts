@@ -1,7 +1,7 @@
 import { lastVisitedViewPerObjectMetadataItemState } from '@/navigation/states/lastVisitedViewPerObjectMetadataItemState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { coreViewsSelector } from '@/views/states/selectors/coreViewsSelector';
-import { type CoreViewWithRelations } from '@/views/types/CoreViewWithRelations';
+import { viewsSelector } from '@/views/states/selectors/viewsSelector';
+import { type ViewWithRelations } from '@/views/types/ViewWithRelations';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useStore } from 'jotai';
@@ -16,11 +16,9 @@ export const useSetLastVisitedViewForObjectMetadataNamePlural = () => {
       objectNamePlural: string;
       viewId: string;
     }) => {
-      const views = store.get(coreViewsSelector.atom);
+      const views = store.get(viewsSelector.atom);
 
-      const view = views.find(
-        (view: CoreViewWithRelations) => view.id === viewId,
-      );
+      const view = views.find((view: ViewWithRelations) => view.id === viewId);
 
       const objectMetadataItems = store.get(objectMetadataItemsState.atom);
 

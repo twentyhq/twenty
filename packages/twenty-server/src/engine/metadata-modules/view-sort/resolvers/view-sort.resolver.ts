@@ -28,7 +28,7 @@ export class ViewSortResolver {
 
   @Query(() => [ViewSortDTO])
   @UseGuards(NoPermissionGuard)
-  async getCoreViewSorts(
+  async getViewSorts(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('viewId', { type: () => String, nullable: true })
     viewId?: string,
@@ -42,7 +42,7 @@ export class ViewSortResolver {
 
   @Query(() => ViewSortDTO, { nullable: true })
   @UseGuards(NoPermissionGuard)
-  async getCoreViewSort(
+  async getViewSort(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ViewSortDTO | null> {
@@ -51,7 +51,7 @@ export class ViewSortResolver {
 
   @Mutation(() => ViewSortDTO)
   @UseGuards(CreateViewSortPermissionGuard)
-  async createCoreViewSort(
+  async createViewSort(
     @Args('input') createViewSortInput: CreateViewSortInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ViewSortDTO> {
@@ -63,7 +63,7 @@ export class ViewSortResolver {
 
   @Mutation(() => ViewSortDTO)
   @UseGuards(UpdateViewSortPermissionGuard)
-  async updateCoreViewSort(
+  async updateViewSort(
     @Args('input') updateViewSortInput: UpdateViewSortInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ViewSortDTO> {
@@ -75,7 +75,7 @@ export class ViewSortResolver {
 
   @Mutation(() => Boolean)
   @UseGuards(DeleteViewSortPermissionGuard)
-  async deleteCoreViewSort(
+  async deleteViewSort(
     @Args('input') deleteViewSortInput: DeleteViewSortInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<boolean> {
@@ -89,7 +89,7 @@ export class ViewSortResolver {
 
   @Mutation(() => Boolean)
   @UseGuards(DestroyViewSortPermissionGuard)
-  async destroyCoreViewSort(
+  async destroyViewSort(
     @Args('input') destroyViewSortInput: DestroyViewSortInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<boolean> {

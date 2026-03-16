@@ -11,9 +11,8 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { coreViewsSelector } from '@/views/states/selectors/coreViewsSelector';
+import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 import { ViewKey } from '@/views/types/ViewKey';
-import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
 
 type WorkspaceNavigationMenuItemFolderSubItemProps = {
   navigationMenuItem: ProcessedNavigationMenuItem;
@@ -38,8 +37,7 @@ export const WorkspaceNavigationMenuItemFolderSubItem = ({
     isNavigationMenuInEditModeState,
   );
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
-  const coreViews = useAtomStateValue(coreViewsSelector);
-  const views = coreViews.map(convertCoreViewToView);
+  const views = useAtomStateValue(viewsSelector);
   const objectMetadataItem =
     navigationMenuItem.itemType === NavigationMenuItemType.VIEW ||
     navigationMenuItem.itemType === NavigationMenuItemType.RECORD
@@ -67,7 +65,7 @@ export const WorkspaceNavigationMenuItemFolderSubItem = ({
   return (
     <NavigationDrawerSubItem
       secondaryLabel={
-        navigationMenuItem.viewKey === ViewKey.Index
+        navigationMenuItem.viewKey === ViewKey.INDEX
           ? undefined
           : getNavigationMenuItemSecondaryLabel({
               objectMetadataItems,

@@ -29,7 +29,7 @@ const StyledHeaderContainer = styled.div`
 export const RecordBoardHeader = () => {
   const visibleRecordGroupIds = useAtomComponentFamilySelectorValue(
     visibleRecordGroupIdsComponentFamilySelector,
-    ViewType.Kanban,
+    ViewType.KANBAN,
   );
 
   return (

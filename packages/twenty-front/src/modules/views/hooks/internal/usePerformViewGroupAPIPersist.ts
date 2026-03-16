@@ -8,27 +8,25 @@ import { t } from '@lingui/core/macro';
 import { CrudOperationType } from 'twenty-shared/types';
 import { useMutation } from '@apollo/client/react';
 import {
-  type UpdateCoreViewGroupMutationVariables,
-  UpdateCoreViewGroupDocument,
+  type UpdateViewGroupMutationVariables,
+  UpdateViewGroupDocument,
 } from '~/generated-metadata/graphql';
 
 export const usePerformViewGroupAPIPersist = () => {
-  const [updateCoreViewGroupMutation] = useMutation(
-    UpdateCoreViewGroupDocument,
-  );
+  const [updateViewGroupMutation] = useMutation(UpdateViewGroupDocument);
 
   const { handleMetadataError } = useMetadataErrorHandler();
   const { enqueueErrorSnackBar } = useSnackBar();
 
   const performViewGroupAPIUpdate = useCallback(
     async (
-      updateCoreViewGroupInputs: UpdateCoreViewGroupMutationVariables[],
+      updateViewGroupInputs: UpdateViewGroupMutationVariables[],
     ): Promise<
       MetadataRequestResult<
-        Awaited<ReturnType<typeof updateCoreViewGroupMutation>>[]
+        Awaited<ReturnType<typeof updateViewGroupMutation>>[]
       >
     > => {
-      if (updateCoreViewGroupInputs.length === 0) {
+      if (updateViewGroupInputs.length === 0) {
         return {
           status: 'successful',
           response: [],
@@ -37,8 +35,8 @@ export const usePerformViewGroupAPIPersist = () => {
 
       try {
         const results = await Promise.all(
-          updateCoreViewGroupInputs.map((variables) =>
-            updateCoreViewGroupMutation({
+          updateViewGroupInputs.map((variables) =>
+            updateViewGroupMutation({
               variables,
             }),
           ),
@@ -64,7 +62,7 @@ export const usePerformViewGroupAPIPersist = () => {
         };
       }
     },
-    [updateCoreViewGroupMutation, handleMetadataError, enqueueErrorSnackBar],
+    [updateViewGroupMutation, handleMetadataError, enqueueErrorSnackBar],
   );
 
   return {
