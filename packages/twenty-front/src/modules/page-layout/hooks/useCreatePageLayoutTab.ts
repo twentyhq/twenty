@@ -2,6 +2,7 @@ import { PageLayoutComponentInstanceContext } from '@/page-layout/states/context
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
+import { getDefaultTabLayoutMode } from '@/page-layout/utils/getDefaultTabLayoutMode';
 import { getEmptyTabLayout } from '@/page-layout/utils/getEmptyTabLayout';
 import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
@@ -40,6 +41,8 @@ export const useCreatePageLayoutTab = (pageLayoutIdFromProps?: string) => {
     (title?: string): string => {
       const pageLayoutDraft = store.get(pageLayoutDraftState);
 
+      console.log('pageLayoutDraft:', pageLayoutDraft);
+
       const newTabId = uuidv4();
       const tabsLength = pageLayoutDraft.tabs.length;
       const maxPosition =
@@ -52,6 +55,7 @@ export const useCreatePageLayoutTab = (pageLayoutIdFromProps?: string) => {
         title: title || `Tab ${tabsLength + 1}`,
         position: maxPosition + 1,
         pageLayoutId: pageLayoutId,
+        layoutMode: getDefaultTabLayoutMode(pageLayoutDraft.type),
         widgets: [],
         isOverridden: false,
         createdAt: new Date().toISOString(),
