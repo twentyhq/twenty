@@ -9,5 +9,5 @@ export const useIsDashboardPageLayoutInEditMode = (
     pageLayoutIdFromProps,
   );
 
-  return isDashboardPageLayoutInEditMode;
+  return isDashboardInEditMode;
 };
