@@ -21,7 +21,7 @@ describe('MCP Controller (integration)', () => {
 
   it('should respond to ping with a JSON-RPC result envelope', async () => {
     await postMcp({ jsonrpc: '2.0', method: 'ping', id: '1' })
-      .expect(201)
+      .expect(200)
       .expect((res) => {
         expect(res.body).toMatchObject({
           id: '1',
@@ -32,18 +32,26 @@ describe('MCP Controller (integration)', () => {
       });
   });
 
-  it('should respond to initialize with server metadata and capabilities', async () => {
+  it('should respond to initialize with spec-compliant InitializeResult', async () => {
     await postMcp({ jsonrpc: '2.0', method: 'initialize', id: 123 })
-      .expect(201)
+      .expect(200)
       .expect((res) => {
         expect(res.body.id).toBe(123);
         expect(res.body.jsonrpc).toBe('2.0');
         expect(res.body.result).toBeDefined();
-        // Should include capabilities and server metadata fields merged by wrapJsonRpcResponse
+        expect(res.body.result.protocolVersion).toBe('2024-11-05');
         expect(res.body.result.capabilities).toBeDefined();
-        expect(Array.isArray(res.body.result.tools)).toBe(true);
-        expect(Array.isArray(res.body.result.resources)).toBe(true);
-        expect(Array.isArray(res.body.result.prompts)).toBe(true);
+        expect(res.body.result.serverInfo).toBeDefined();
+        expect(res.body.result.serverInfo.name).toBe('Twenty MCP Server');
+        expect(typeof res.body.result.instructions).toBe('string');
+      });
+  });
+
+  it('should return 202 with no body for notifications/initialized (no id)', async () => {
+    await postMcp({ jsonrpc: '2.0', method: 'notifications/initialized' })
+      .expect(202)
+      .expect((res) => {
+        expect(res.body).toEqual({});
       });
   });
 
@@ -61,12 +69,11 @@ describe('MCP Controller (integration)', () => {
         jsonrpc: '2.0',
         method: 'tools/list',
         id: 'tools-list-1',
-      }).expect(201);
+      }).expect(200);
 
       expect(res.body.id).toBe('tools-list-1');
       expect(res.body.jsonrpc).toBe('2.0');
       expect(res.body.result).toBeDefined();
-      expect(res.body.result.capabilities?.tools?.listChanged).toBe(false);
       expect(Array.isArray(res.body.result.tools)).toBe(true);
       // In a seeded workspace, there should be at least one tool
       expect(res.body.result.tools.length).toBeGreaterThanOrEqual(0);
@@ -80,18 +87,17 @@ describe('MCP Controller (integration)', () => {
       }
     });
 
-    it('should return empty result for tools/call without params', async () => {
+    it('should return invalid params error for tools/call without params', async () => {
       const res = await postMcp({
         jsonrpc: '2.0',
         method: 'tools/call',
         id: 'tools-call-empty',
-      }).expect(201);
+      }).expect(200);
 
-      expect(res.body).toMatchObject({
-        id: 'tools-call-empty',
-        jsonrpc: '2.0',
-        result: {},
-      });
+      expect(res.body.id).toBe('tools-call-empty');
+      expect(res.body.jsonrpc).toBe('2.0');
+      expect(res.body.error).toBeDefined();
+      expect(res.body.error.code).toBe(-32602);
     });
 
     it('should return error when calling a non-existent tool', async () => {
@@ -100,13 +106,12 @@ describe('MCP Controller (integration)', () => {
         method: 'tools/call',
         id: 'tools-call-missing',
         params: { name: 'non_existent_tool', arguments: {} },
-      }).expect(201);
+      }).expect(200);
 
       expect(res.body.id).toBe('tools-call-missing');
       expect(res.body.jsonrpc).toBe('2.0');
       expect(res.body.error).toBeDefined();
-      // From McpService error wrapper: code = HttpStatus.NOT_FOUND (404) and message containing tool name
-      expect(res.body.error.code).toBe(404);
+      expect(res.body.error.code).toBe(-32602);
       expect(String(res.body.error.message)).toMatch(/non_existent_tool/);
     });
 
@@ -115,7 +120,7 @@ describe('MCP Controller (integration)', () => {
         jsonrpc: '2.0',
         method: 'tools/list',
         id: 'tools-list-for-calls',
-      }).expect(201);
+      }).expect(200);
 
       const tools: Array<{ name: string }> = list.body.result.tools || [];
 
@@ -130,7 +135,7 @@ describe('MCP Controller (integration)', () => {
           method: 'tools/call',
           id,
           params: { name: tool.name, arguments: {} },
-        }).expect(201);
+        }).expect(200);
 
         expect(res.body.jsonrpc).toBe('2.0');
         expect(res.body.id).toBe(id);
@@ -142,27 +147,21 @@ describe('MCP Controller (integration)', () => {
       }
     });
 
-    it('should list prompts and resources as empty arrays with listChanged=false', async () => {
+    it('should list prompts and resources as empty arrays', async () => {
       const prompts = await postMcp({
         jsonrpc: '2.0',
         method: 'prompts/list',
         id: 'prompts-1',
-      }).expect(201);
+      }).expect(200);
 
-      expect(prompts.body.result.capabilities?.prompts?.listChanged).toBe(
-        false,
-      );
       expect(Array.isArray(prompts.body.result.prompts)).toBe(true);
 
       const resources = await postMcp({
         jsonrpc: '2.0',
         method: 'resources/list',
         id: 'resources-1',
-      }).expect(201);
+      }).expect(200);
 
-      expect(resources.body.result.capabilities?.resources?.listChanged).toBe(
-        false,
-      );
       expect(Array.isArray(resources.body.result.resources)).toBe(true);
     });
   });

@@ -2,7 +2,9 @@ import { Test, type TestingModule } from '@nestjs/testing';
 
 import { DEFAULT_TOOL_INPUT_SCHEMA } from 'twenty-shared/logic-function';
 
-import { MCP_SERVER_METADATA } from 'src/engine/api/mcp/constants/mcp.const';
+import { MCP_PROTOCOL_VERSION } from 'src/engine/api/mcp/constants/mcp-protocol-version.const';
+import { MCP_SERVER_INFO } from 'src/engine/api/mcp/constants/mcp-server-info.const';
+import { MCP_SERVER_INSTRUCTIONS } from 'src/engine/api/mcp/constants/mcp-server-instructions.const';
 import { McpCoreController } from 'src/engine/api/mcp/controllers/mcp-core.controller';
 import { type JsonRpc } from 'src/engine/api/mcp/dtos/json-rpc';
 import { McpAuthGuard } from 'src/engine/api/mcp/guards/mcp-auth.guard';
@@ -71,6 +73,13 @@ describe('McpCoreController', () => {
     const mockUser = { id: 'user-1' } as UserEntity;
     const mockUserWorkspaceId = 'user-workspace-1';
     const mockApiKey = { id: 'api-key-1' } as ApiKeyEntity;
+    const mockRes = {
+      status: jest.fn().mockReturnThis(),
+    } as unknown as import('express').Response;
+
+    beforeEach(() => {
+      (mockRes.status as jest.Mock).mockClear();
+    });
 
     it('should call mcpProtocolService.handleMCPCoreQuery with correct parameters', async () => {
       const mockRequest: JsonRpc = {
@@ -97,6 +106,7 @@ describe('McpCoreController', () => {
         mockApiKey,
         mockUser,
         mockUserWorkspaceId,
+        mockRes,
       );
 
       expect(mcpProtocolService.handleMCPCoreQuery).toHaveBeenCalledWith(
@@ -122,12 +132,14 @@ describe('McpCoreController', () => {
         id: '123',
         jsonrpc: '2.0',
         result: {
-          ...MCP_SERVER_METADATA,
+          protocolVersion: MCP_PROTOCOL_VERSION,
           capabilities: {
             tools: { listChanged: false },
             resources: { listChanged: false },
             prompts: { listChanged: false },
           },
+          serverInfo: MCP_SERVER_INFO,
+          instructions: MCP_SERVER_INSTRUCTIONS,
         },
       };
 
@@ -139,6 +151,7 @@ describe('McpCoreController', () => {
         mockApiKey,
         mockUser,
         mockUserWorkspaceId,
+        mockRes,
       );
 
       expect(mcpProtocolService.handleMCPCoreQuery).toHaveBeenCalledWith(
@@ -164,10 +177,6 @@ describe('McpCoreController', () => {
         id: '123',
         jsonrpc: '2.0',
         result: {
-          ...MCP_SERVER_METADATA,
-          capabilities: {
-            tools: { listChanged: false },
-          },
           tools: [
             {
               name: 'testTool',
@@ -186,6 +195,7 @@ describe('McpCoreController', () => {
         mockApiKey,
         mockUser,
         mockUserWorkspaceId,
+        mockRes,
       );
 
       expect(mcpProtocolService.handleMCPCoreQuery).toHaveBeenCalledWith(
@@ -198,6 +208,27 @@ describe('McpCoreController', () => {
         },
       );
       expect(result).toEqual(mockResponse);
+    });
+
+    it('should return 202 with no body for notifications', async () => {
+      const mockRequest: JsonRpc = {
+        jsonrpc: '2.0',
+        method: 'notifications/initialized',
+      };
+
+      mcpProtocolService.handleMCPCoreQuery.mockResolvedValue(null);
+
+      const result = await controller.handleMcpCore(
+        mockRequest,
+        mockWorkspace,
+        mockApiKey,
+        mockUser,
+        mockUserWorkspaceId,
+        mockRes,
+      );
+
+      expect(result).toBeUndefined();
+      expect(mockRes.status).toHaveBeenCalledWith(202);
     });
 
     it('should handle API key auth without user', async () => {
@@ -225,6 +256,7 @@ describe('McpCoreController', () => {
         mockApiKey,
         undefined,
         undefined,
+        mockRes,
       );
 
       expect(mcpProtocolService.handleMCPCoreQuery).toHaveBeenCalledWith(

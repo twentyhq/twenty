@@ -1,7 +1,10 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { Test, type TestingModule } from '@nestjs/testing';
 
-import { MCP_SERVER_METADATA } from 'src/engine/api/mcp/constants/mcp.const';
+import { JSON_RPC_ERROR_CODE } from 'src/engine/api/mcp/constants/json-rpc-error-code.const';
+import { MCP_PROTOCOL_VERSION } from 'src/engine/api/mcp/constants/mcp-protocol-version.const';
+import { MCP_SERVER_INFO } from 'src/engine/api/mcp/constants/mcp-server-info.const';
+import { MCP_SERVER_INSTRUCTIONS } from 'src/engine/api/mcp/constants/mcp-server-instructions.const';
 import { type JsonRpc } from 'src/engine/api/mcp/dtos/json-rpc';
 import { McpProtocolService } from 'src/engine/api/mcp/services/mcp-protocol.service';
 import { McpToolExecutorService } from 'src/engine/api/mcp/services/mcp-tool-executor.service';
@@ -97,21 +100,23 @@ describe('McpProtocolService', () => {
   });
 
   describe('handleInitialize', () => {
-    it('should return correct initialization response', () => {
+    it('should return spec-compliant initialization response', () => {
       const requestId = '123';
       const result = service.handleInitialize(requestId);
 
-      expect(result).toMatchObject({
+      expect(result).toEqual({
         id: requestId,
         jsonrpc: '2.0',
-        result: expect.objectContaining({
-          ...MCP_SERVER_METADATA,
+        result: {
+          protocolVersion: MCP_PROTOCOL_VERSION,
           capabilities: {
             tools: { listChanged: false },
             resources: { listChanged: false },
             prompts: { listChanged: false },
           },
-        }),
+          serverInfo: MCP_SERVER_INFO,
+          instructions: MCP_SERVER_INSTRUCTIONS,
+        },
       });
     });
   });
@@ -176,18 +181,35 @@ describe('McpProtocolService', () => {
         apiKey: undefined,
       });
 
-      expect(result).toMatchObject({
+      expect(result).toEqual({
         id: '123',
         jsonrpc: '2.0',
-        result: expect.objectContaining({
-          ...MCP_SERVER_METADATA,
+        result: {
+          protocolVersion: MCP_PROTOCOL_VERSION,
           capabilities: {
             tools: { listChanged: false },
             resources: { listChanged: false },
             prompts: { listChanged: false },
           },
-        }),
+          serverInfo: MCP_SERVER_INFO,
+          instructions: MCP_SERVER_INSTRUCTIONS,
+        },
       });
+    });
+
+    it('should return null for notifications (no id)', async () => {
+      const mockRequest: JsonRpc = {
+        jsonrpc: '2.0',
+        method: 'notifications/initialized',
+      };
+
+      const result = await service.handleMCPCoreQuery(mockRequest, {
+        workspace: mockWorkspace,
+        userWorkspaceId: mockUserWorkspaceId,
+        apiKey: undefined,
+      });
+
+      expect(result).toBeNull();
     });
 
     it('should build a ToolSet with exactly 5 tools and pass it to executor for tools/call', async () => {
@@ -197,7 +219,6 @@ describe('McpProtocolService', () => {
         id: '123',
         jsonrpc: '2.0',
         result: {
-          ...MCP_SERVER_METADATA,
           content: [{ type: 'text', text: '{}' }],
           isError: false,
         },
@@ -276,6 +297,71 @@ describe('McpProtocolService', () => {
       );
     });
 
+    it('should return prompts list without role resolution', async () => {
+      const mockRequest: JsonRpc = {
+        jsonrpc: '2.0',
+        method: 'prompts/list',
+        id: '123',
+      };
+
+      const result = await service.handleMCPCoreQuery(mockRequest, {
+        workspace: mockWorkspace,
+        userWorkspaceId: mockUserWorkspaceId,
+        apiKey: undefined,
+      });
+
+      expect(result).toEqual({
+        id: '123',
+        jsonrpc: '2.0',
+        result: { prompts: [] },
+      });
+      expect(userRoleService.getRoleIdForUserWorkspace).not.toHaveBeenCalled();
+    });
+
+    it('should return resources list without role resolution', async () => {
+      const mockRequest: JsonRpc = {
+        jsonrpc: '2.0',
+        method: 'resources/list',
+        id: '123',
+      };
+
+      const result = await service.handleMCPCoreQuery(mockRequest, {
+        workspace: mockWorkspace,
+        userWorkspaceId: mockUserWorkspaceId,
+        apiKey: undefined,
+      });
+
+      expect(result).toEqual({
+        id: '123',
+        jsonrpc: '2.0',
+        result: { resources: [] },
+      });
+      expect(userRoleService.getRoleIdForUserWorkspace).not.toHaveBeenCalled();
+    });
+
+    it('should return method not found for unknown methods', async () => {
+      const mockRequest: JsonRpc = {
+        jsonrpc: '2.0',
+        method: 'unknown/method',
+        id: '123',
+      };
+
+      const result = await service.handleMCPCoreQuery(mockRequest, {
+        workspace: mockWorkspace,
+        userWorkspaceId: mockUserWorkspaceId,
+        apiKey: undefined,
+      });
+
+      expect(result).toEqual({
+        id: '123',
+        jsonrpc: '2.0',
+        error: {
+          code: JSON_RPC_ERROR_CODE.METHOD_NOT_FOUND,
+          message: "Method 'unknown/method' not found",
+        },
+      });
+    });
+
     it('should handle tools/call with apiKey authentication', async () => {
       const mockToolCallResponse = {
         id: '123',
@@ -306,20 +392,17 @@ describe('McpProtocolService', () => {
       );
     });
 
-    it('should handle error when tool execution fails', async () => {
+    it('should wrap unexpected errors with INTERNAL_ERROR code', async () => {
       userRoleService.getRoleIdForUserWorkspace.mockResolvedValue(mockRoleId);
 
       mcpToolExecutorService.handleToolCall.mockRejectedValue(
-        new HttpException(
-          "Tool 'nonExistentTool' not found",
-          HttpStatus.NOT_FOUND,
-        ),
+        new Error('Something went wrong'),
       );
 
       const mockRequest: JsonRpc = {
         jsonrpc: '2.0',
         method: 'tools/call',
-        params: { name: 'nonExistentTool', arguments: {} },
+        params: { name: 'execute_tool', arguments: {} },
         id: '123',
       };
 
@@ -333,9 +416,36 @@ describe('McpProtocolService', () => {
         id: '123',
         jsonrpc: '2.0',
         error: {
-          ...MCP_SERVER_METADATA,
-          code: HttpStatus.NOT_FOUND,
-          message: "Tool 'nonExistentTool' not found",
+          code: JSON_RPC_ERROR_CODE.INTERNAL_ERROR,
+          message: 'Something went wrong',
+        },
+      });
+    });
+
+    it('should wrap HttpException errors with SERVER_ERROR code', async () => {
+      userRoleService.getRoleIdForUserWorkspace.mockRejectedValue(
+        new HttpException('Role ID missing', HttpStatus.FORBIDDEN),
+      );
+
+      const mockRequest: JsonRpc = {
+        jsonrpc: '2.0',
+        method: 'tools/call',
+        params: { name: 'execute_tool', arguments: {} },
+        id: '123',
+      };
+
+      const result = await service.handleMCPCoreQuery(mockRequest, {
+        workspace: mockWorkspace,
+        userWorkspaceId: mockUserWorkspaceId,
+        apiKey: undefined,
+      });
+
+      expect(result).toEqual({
+        id: '123',
+        jsonrpc: '2.0',
+        error: {
+          code: JSON_RPC_ERROR_CODE.SERVER_ERROR,
+          message: 'Role ID missing',
         },
       });
     });
