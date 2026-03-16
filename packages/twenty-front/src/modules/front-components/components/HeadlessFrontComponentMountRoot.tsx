@@ -1,10 +1,6 @@
 import { Suspense, lazy } from 'react';
 
 import { CommandMenuItemErrorBoundary } from '@/command-menu-item/display/components/CommandMenuItemErrorBoundary';
-import { ENGINE_COMPONENT_KEY_HEADLESS_COMPONENT_MAP } from '@/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap';
-import { EngineCommandComponentInstanceContext } from '@/command-menu-item/engine-command/states/contexts/EngineCommandComponentInstanceContext';
-import { mountedEngineCommandsState } from '@/command-menu-item/engine-command/states/mountedEngineCommandsState';
-import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { mountedHeadlessFrontComponentMapsState } from '@/front-components/states/mountedHeadlessFrontComponentMapsState';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -22,67 +18,36 @@ export const HeadlessFrontComponentMountRoot = () => {
     mountedHeadlessFrontComponentMapsState,
   );
 
-  const mountedEngineCommands = useAtomStateValue(mountedEngineCommandsState);
-
-  const hasFrontComponents = mountedHeadlessFrontComponentMaps.size > 0;
-  const hasEngineCommands = mountedEngineCommands.size > 0;
-
   return (
     <>
-      {hasFrontComponents &&
-        [...mountedHeadlessFrontComponentMaps.entries()].map(
-          ([frontComponentId, mountContext]) => (
-            <CommandMenuItemErrorBoundary
-              key={frontComponentId}
-              resetKeys={[frontComponentId]}
-            >
-              <Suspense fallback={null}>
-                <LayoutRenderingProvider
-                  value={{
-                    targetRecordIdentifier:
-                      isDefined(mountContext) &&
-                      isDefined(mountContext.objectNameSingular)
-                        ? {
-                            id: mountContext.recordId,
-                            targetObjectNameSingular:
-                              mountContext.objectNameSingular,
-                          }
-                        : undefined,
-                    layoutType: PageLayoutType.DASHBOARD,
-                    isInSidePanel: false,
-                  }}
-                >
-                  <FrontComponentRenderer
-                    frontComponentId={frontComponentId}
-                  />
-                </LayoutRenderingProvider>
-              </Suspense>
-            </CommandMenuItemErrorBoundary>
-          ),
-        )}
-      {hasEngineCommands &&
-        [...mountedEngineCommands.entries()].map(
-          ([engineCommandId, mountContext]) => (
-            <CommandMenuItemErrorBoundary
-              key={engineCommandId}
-              resetKeys={[engineCommandId]}
-            >
-              <ContextStoreComponentInstanceContext.Provider
-                value={{ instanceId: mountContext.contextStoreInstanceId }}
+      {[...mountedHeadlessFrontComponentMaps.entries()].map(
+        ([frontComponentId, mountContext]) => (
+          <CommandMenuItemErrorBoundary
+            key={frontComponentId}
+            resetKeys={[frontComponentId]}
+          >
+            <Suspense fallback={null}>
+              <LayoutRenderingProvider
+                value={{
+                  targetRecordIdentifier:
+                    isDefined(mountContext) &&
+                    isDefined(mountContext.objectNameSingular)
+                      ? {
+                          id: mountContext.recordId,
+                          targetObjectNameSingular:
+                            mountContext.objectNameSingular,
+                        }
+                      : undefined,
+                  layoutType: PageLayoutType.DASHBOARD,
+                  isInSidePanel: false,
+                }}
               >
-                <EngineCommandComponentInstanceContext.Provider
-                  value={{ instanceId: engineCommandId }}
-                >
-                  {
-                    ENGINE_COMPONENT_KEY_HEADLESS_COMPONENT_MAP[
-                      mountContext.engineComponentKey
-                    ]
-                  }
-                </EngineCommandComponentInstanceContext.Provider>
-              </ContextStoreComponentInstanceContext.Provider>
-            </CommandMenuItemErrorBoundary>
-          ),
-        )}
+                <FrontComponentRenderer frontComponentId={frontComponentId} />
+              </LayoutRenderingProvider>
+            </Suspense>
+          </CommandMenuItemErrorBoundary>
+        ),
+      )}
     </>
   );
 };
