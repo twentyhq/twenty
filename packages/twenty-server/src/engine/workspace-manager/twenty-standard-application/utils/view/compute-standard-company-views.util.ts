@@ -16,7 +16,7 @@ export const computeStandardCompanyViews = (
       objectName: 'company',
       context: {
         viewName: 'allCompanies',
-        name: 'All {objectLabelPlural}',
+        name: 'All Companies',
         type: ViewType.TABLE,
         key: ViewKey.INDEX,
         position: 0,

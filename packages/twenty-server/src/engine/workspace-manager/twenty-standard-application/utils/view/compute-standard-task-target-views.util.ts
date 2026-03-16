@@ -15,7 +15,7 @@ export const computeStandardTaskTargetViews = (
       objectName: 'taskTarget',
       context: {
         viewName: 'allTaskTargets',
-        name: 'All {objectLabelPlural}',
+        name: 'All Task Targets',
         type: ViewType.TABLE,
         key: ViewKey.INDEX,
         position: 0,

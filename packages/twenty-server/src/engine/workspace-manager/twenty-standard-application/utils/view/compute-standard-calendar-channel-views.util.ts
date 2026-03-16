@@ -15,7 +15,7 @@ export const computeStandardCalendarChannelViews = (
       objectName: 'calendarChannel',
       context: {
         viewName: 'allCalendarChannels',
-        name: 'All {objectLabelPlural}',
+        name: 'All Calendar Channels',
         type: ViewType.TABLE,
         key: ViewKey.INDEX,
         position: 0,

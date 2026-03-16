@@ -16,7 +16,7 @@ export const computeStandardOpportunityViews = (
       objectName: 'opportunity',
       context: {
         viewName: 'allOpportunities',
-        name: 'All {objectLabelPlural}',
+        name: 'All Opportunities',
         type: ViewType.TABLE,
         key: ViewKey.INDEX,
         position: 0,

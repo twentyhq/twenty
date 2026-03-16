@@ -15,7 +15,7 @@ export const computeStandardWorkflowAutomatedTriggerViews = (
       objectName: 'workflowAutomatedTrigger',
       context: {
         viewName: 'allWorkflowAutomatedTriggers',
-        name: 'All {objectLabelPlural}',
+        name: 'All Workflow Automated Triggers',
         type: ViewType.TABLE,
         key: ViewKey.INDEX,
         position: 0,

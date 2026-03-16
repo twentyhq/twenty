@@ -15,7 +15,7 @@ export const computeStandardMessageViews = (
       objectName: 'message',
       context: {
         viewName: 'allMessages',
-        name: 'All {objectLabelPlural}',
+        name: 'All Messages',
         type: ViewType.TABLE,
         key: ViewKey.INDEX,
         position: 0,

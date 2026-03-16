@@ -15,7 +15,7 @@ export const computeStandardCalendarEventViews = (
       objectName: 'calendarEvent',
       context: {
         viewName: 'allCalendarEvents',
-        name: 'All {objectLabelPlural}',
+        name: 'All Calendar Events',
         type: ViewType.TABLE,
         key: ViewKey.INDEX,
         position: 0,

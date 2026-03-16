@@ -8,6 +8,7 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { MenuItemWithOptionDropdown } from '@/ui/navigation/menu-item/components/MenuItemWithOptionDropdown';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { type View } from '@/views/types/View';
+import { useViewName } from '@/views/hooks/useViewName';
 import { useDestroyViewFromCurrentState } from '@/views/view-picker/hooks/useDestroyViewFromCurrentState';
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
 import { useLingui } from '@lingui/react/macro';
@@ -35,6 +36,7 @@ type ViewPickerOptionDropdownProps = {
     | '__typename'
     | 'visibility'
     | 'createdByUserWorkspaceId'
+    | 'objectMetadataId'
   >;
   onEdit: (event: React.MouseEvent<HTMLElement>, viewId: string) => void;
   handleViewSelect: (viewId: string) => void;
@@ -50,6 +52,7 @@ export const ViewPickerOptionDropdown = ({
   const dropdownId = `view-picker-options-${view.id}`;
 
   const { t } = useLingui();
+  const { viewName } = useViewName(view as View);
   const { closeDropdown } = useCloseDropdown();
   const { getIcon } = useIcons();
   const { destroyViewFromCurrentState } = useDestroyViewFromCurrentState();
@@ -99,7 +102,7 @@ export const ViewPickerOptionDropdown = ({
   return (
     <>
       <MenuItemWithOptionDropdown
-        text={view.name}
+        text={viewName}
         LeftIcon={getIcon(view.icon)}
         onClick={() => handleViewSelect(view.id)}
         isIconDisplayedOnHoverOnly={!shouldShowIconAlways}

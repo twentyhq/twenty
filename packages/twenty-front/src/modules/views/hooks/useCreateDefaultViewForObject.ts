@@ -3,7 +3,9 @@ import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField
 import { usePerformViewAPIPersist } from '@/views/hooks/internal/usePerformViewAPIPersist';
 import { usePerformViewFieldAPIPersist } from '@/views/hooks/internal/usePerformViewFieldAPIPersist';
 import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
+import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 import { useCallback } from 'react';
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 import { ViewType } from '~/generated-metadata/graphql';
 
@@ -18,6 +20,7 @@ export const useCreateDefaultViewForObject = () => {
   const { performViewFieldAPICreate } = usePerformViewFieldAPIPersist();
   const { refreshCoreViewsByObjectMetadataId } =
     useRefreshCoreViewsByObjectMetadataId();
+  const featureFlags = useFeatureFlagsMap();
 
   const createDefaultViewForObject = useCallback(
     async (objectMetadataItem: ObjectMetadataItem) => {
@@ -30,11 +33,18 @@ export const useCreateDefaultViewForObject = () => {
       try {
         const newViewId = v4();
 
+        const isDynamicNameEnabled =
+          featureFlags[
+            FeatureFlagKey.IS_STANDARD_VIEW_NAME_DYNAMIC_ENABLED as keyof typeof featureFlags
+          ];
+
         const viewResult = await performViewAPICreate(
           {
             input: {
               id: newViewId,
-              name: `All ${objectMetadataItem.labelPlural}`,
+              name: isDynamicNameEnabled
+                ? 'All {objectLabelPlural}'
+                : `All ${objectMetadataItem.labelPlural}`,
               icon: objectMetadataItem.icon ?? 'IconList',
               objectMetadataId: objectMetadataItem.id,
               type: ViewType.TABLE,

@@ -15,7 +15,7 @@ export const computeStandardConnectedAccountViews = (
       objectName: 'connectedAccount',
       context: {
         viewName: 'allConnectedAccounts',
-        name: 'All {objectLabelPlural}',
+        name: 'All Connected Accounts',
         type: ViewType.TABLE,
         key: ViewKey.INDEX,
         position: 0,

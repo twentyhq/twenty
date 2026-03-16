@@ -11,6 +11,7 @@ import { ViewPickerContentEditMode } from '@/views/view-picker/components/ViewPi
 import { ViewPickerContentEffect } from '@/views/view-picker/components/ViewPickerContentEffect';
 import { ViewPickerListContent } from '@/views/view-picker/components/ViewPickerListContent';
 import { VIEW_PICKER_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerDropdownId';
+import { useViewName } from '@/views/hooks/useViewName';
 import { useUpdateViewFromCurrentState } from '@/views/view-picker/hooks/useUpdateViewFromCurrentState';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
 import { isDefined } from 'twenty-shared/utils';
@@ -69,6 +70,7 @@ export const ViewPickerDropdown = () => {
 
   const { viewPickerMode, setViewPickerMode } = useViewPickerMode();
 
+  const { viewName } = useViewName(currentView);
   const { getIcon } = useIcons();
   const CurrentViewIcon = getIcon(currentView?.icon);
 
@@ -95,7 +97,7 @@ export const ViewPickerDropdown = () => {
             )}
           </StyledIconContainer>
           <StyledViewName>
-            <OverflowingTextWithTooltip text={currentView?.name ?? t`All`} />
+            <OverflowingTextWithTooltip text={viewName || t`All`} />
           </StyledViewName>
           <StyledDropdownLabelAdornments>
             {isDefined(totalCount) && <>· {totalCount} </>}

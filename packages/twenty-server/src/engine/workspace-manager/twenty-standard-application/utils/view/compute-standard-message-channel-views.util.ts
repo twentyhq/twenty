@@ -15,7 +15,7 @@ export const computeStandardMessageChannelViews = (
       objectName: 'messageChannel',
       context: {
         viewName: 'allMessageChannels',
-        name: 'All {objectLabelPlural}',
+        name: 'All Message Channels',
         type: ViewType.TABLE,
         key: ViewKey.INDEX,
         position: 0,

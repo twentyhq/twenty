@@ -16,7 +16,7 @@ export const computeStandardWorkspaceMemberViews = (
       objectName: 'workspaceMember',
       context: {
         viewName: 'allWorkspaceMembers',
-        name: 'All {objectLabelPlural}',
+        name: 'All Workspace Members',
         type: ViewType.TABLE,
         key: ViewKey.INDEX,
         position: 0,

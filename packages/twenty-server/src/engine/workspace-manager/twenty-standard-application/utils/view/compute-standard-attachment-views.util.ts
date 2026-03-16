@@ -15,7 +15,7 @@ export const computeStandardAttachmentViews = (
       objectName: 'attachment',
       context: {
         viewName: 'allAttachments',
-        name: 'All {objectLabelPlural}',
+        name: 'All Attachments',
         type: ViewType.TABLE,
         key: ViewKey.INDEX,
         position: 0,

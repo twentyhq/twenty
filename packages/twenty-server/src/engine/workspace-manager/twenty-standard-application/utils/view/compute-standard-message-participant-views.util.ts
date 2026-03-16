@@ -15,7 +15,7 @@ export const computeStandardMessageParticipantViews = (
       objectName: 'messageParticipant',
       context: {
         viewName: 'allMessageParticipants',
-        name: 'All {objectLabelPlural}',
+        name: 'All Message Participants',
         type: ViewType.TABLE,
         key: ViewKey.INDEX,
         position: 0,

@@ -1,4 +1,4 @@
-import { ViewType, ViewKey } from 'twenty-shared/types';
+import { ViewKey, ViewType } from 'twenty-shared/types';
 
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import {
@@ -15,7 +15,7 @@ export const computeStandardMessageThreadViews = (
       objectName: 'messageThread',
       context: {
         viewName: 'allMessageThreads',
-        name: 'All {objectLabelPlural}',
+        name: 'All Message Threads',
         type: ViewType.TABLE,
         key: ViewKey.INDEX,
         position: 0,
