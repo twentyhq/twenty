@@ -45,7 +45,6 @@ export default defineConfig({
     include: ['src/**/*.integration-test.ts'],
     setupFiles: ['src/__tests__/setup-test.ts'],
     env: {
-      TWENTY_API_URL: 'http://localhost:2020',
       TWENTY_API_KEY:
         '${SEED_API_KEY}',
     },
