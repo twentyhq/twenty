@@ -1,4 +1,3 @@
-import { isLayoutCustomizationModeEnabledState } from '@/app/states/isLayoutCustomizationModeEnabledState';
 import { useBasePageLayout } from '@/page-layout/hooks/useBasePageLayout';
 import { usePageLayoutWithRelationWidgets } from '@/page-layout/hooks/usePageLayoutWithRelationWidgets';
 import { useSetIsPageLayoutInEditMode } from '@/page-layout/hooks/useSetIsPageLayoutInEditMode';
@@ -11,7 +10,6 @@ import { convertPageLayoutToTabLayouts } from '@/page-layout/utils/convertPageLa
 import { isPageLayoutEmpty } from '@/page-layout/utils/isPageLayoutEmpty';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useStore } from 'jotai';
 import { useCallback, useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -31,9 +29,6 @@ export const PageLayoutInitializationQueryEffect = ({
   const basePageLayout = useBasePageLayout(pageLayoutId);
 
   const pageLayout = usePageLayoutWithRelationWidgets(basePageLayout);
-  const isLayoutCustomizationModeEnabled = useAtomStateValue(
-    isLayoutCustomizationModeEnabledState,
-  );
 
   const { setIsPageLayoutInEditMode } =
     useSetIsPageLayoutInEditMode(pageLayoutId);
@@ -74,7 +69,7 @@ export const PageLayoutInitializationQueryEffect = ({
       const tabLayouts = convertPageLayoutToTabLayouts(layout);
       store.set(pageLayoutCurrentLayoutsComponentCallbackState, tabLayouts);
 
-      if (!isRecordPageLayout && !isLayoutCustomizationModeEnabled) {
+      if (!isRecordPageLayout) {
         const shouldEnterDashboardEditMode = isPageLayoutEmpty(layout);
         setIsPageLayoutInEditMode(shouldEnterDashboardEditMode);
       }
@@ -83,7 +78,6 @@ export const PageLayoutInitializationQueryEffect = ({
       pageLayoutCurrentLayoutsComponentCallbackState,
       pageLayoutDraftComponentCallbackState,
       pageLayoutPersistedComponentCallbackState,
-      isLayoutCustomizationModeEnabled,
       setIsPageLayoutInEditMode,
       store,
     ],

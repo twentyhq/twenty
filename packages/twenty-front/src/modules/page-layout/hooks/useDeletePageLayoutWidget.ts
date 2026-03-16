@@ -62,7 +62,13 @@ export const useDeletePageLayoutWidget = (pageLayoutIdFromProps?: string) => {
         }));
       }
 
-      store.set(pageLayoutEditingWidgetIdState, null);
+      const pageLayoutEditingWidgetId = store.get(
+        pageLayoutEditingWidgetIdState,
+      );
+
+      if (pageLayoutEditingWidgetId === widgetId) {
+        store.set(pageLayoutEditingWidgetIdState, null);
+      }
     },
     [
       closeSidePanelMenu,
