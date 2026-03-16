@@ -7,8 +7,10 @@ import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
 export const RestoreSingleRecordCommand = () => {
-  const { recordIndexId, objectMetadataItem, recordId } =
+  const { recordIndexId, objectMetadataItem, selectedRecords } =
     useMountedEngineCommandContext();
+
+  const recordId = selectedRecords[0]?.id;
 
   if (
     !isDefined(recordId) ||
