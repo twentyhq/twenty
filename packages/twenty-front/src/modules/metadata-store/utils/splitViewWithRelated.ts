@@ -6,7 +6,6 @@ import { type FlatViewFilterGroup } from '@/metadata-store/types/FlatViewFilterG
 import { type FlatViewGroup } from '@/metadata-store/types/FlatViewGroup';
 import { type FlatViewSort } from '@/metadata-store/types/FlatViewSort';
 import { type ViewWithRelations } from '@/views/types/ViewWithRelations';
-import { isDefined } from 'twenty-shared/utils';
 
 type SplitResult = {
   flatViews: FlatView[];
@@ -28,7 +27,6 @@ export const splitViewWithRelated = (
   const flatViewGroups: FlatViewGroup[] = [];
   const flatViewFilterGroups: FlatViewFilterGroup[] = [];
   const flatViewFieldGroups: FlatViewFieldGroup[] = [];
-  const viewFieldIdToGroupId = new Map<string, string>();
 
   for (const viewWithRelated of viewsWithRelated) {
     const {
@@ -43,26 +41,10 @@ export const splitViewWithRelated = (
 
     flatViews.push(viewProperties);
 
-    for (const viewFieldGroup of viewFieldGroups) {
-      const { viewFields: groupViewFields, ...viewFieldGroupProperties } =
-        viewFieldGroup;
-
-      flatViewFieldGroups.push(viewFieldGroupProperties);
-
-      for (const groupViewField of groupViewFields) {
-        viewFieldIdToGroupId.set(groupViewField.id, viewFieldGroup.id);
-      }
-    }
-
     for (const viewField of viewFields) {
-      const { viewFieldGroupId: _viewFieldGroupId, ...viewFieldProperties } =
-        viewField;
-      const viewFieldGroupId = viewFieldIdToGroupId.get(viewField.id);
-
       flatViewFields.push({
-        ...viewFieldProperties,
+        ...viewField,
         viewId: viewWithRelated.id,
-        ...(isDefined(viewFieldGroupId) ? { viewFieldGroupId } : {}),
       });
     }
 
@@ -89,6 +71,13 @@ export const splitViewWithRelated = (
 
     for (const viewFilterGroup of viewFilterGroups) {
       flatViewFilterGroups.push(viewFilterGroup);
+    }
+
+    for (const viewFieldGroup of viewFieldGroups) {
+      const { viewFields: _viewFields, ...viewFieldGroupProperties } =
+        viewFieldGroup;
+
+      flatViewFieldGroups.push(viewFieldGroupProperties);
     }
   }
 
