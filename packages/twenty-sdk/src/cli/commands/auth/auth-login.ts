@@ -13,7 +13,6 @@ export class AuthLoginCommand {
 
     const config = await this.configService.getConfig();
 
-    // If --api-key is provided, use the existing API key flow
     if (apiKey) {
       if (!apiUrl) {
         const urlAnswer = await inquirer.prompt([
@@ -76,7 +75,6 @@ export class AuthLoginCommand {
       !oauthResult.success &&
       oauthResult.error.code === AUTH_ERROR_CODES.OAUTH_NOT_SUPPORTED
     ) {
-      // Fall back to API key prompt if server doesn't support OAuth
       console.log(chalk.yellow(oauthResult.error.message));
 
       const keyAnswer = await inquirer.prompt([

@@ -892,8 +892,11 @@ export class ApiService {
         Buffer.from(token.split('.')[1], 'base64').toString(),
       );
 
-      // Treat as expired if less than 30 seconds remain
-      return payload.exp * 1000 < Date.now() + 30_000;
+      const EXPIRATION_MARGIN_IN_SECONDS = 30;
+
+      return (
+        payload.exp * 1_000 < Date.now() + EXPIRATION_MARGIN_IN_SECONDS * 1_000
+      );
     } catch {
       return false;
     }
