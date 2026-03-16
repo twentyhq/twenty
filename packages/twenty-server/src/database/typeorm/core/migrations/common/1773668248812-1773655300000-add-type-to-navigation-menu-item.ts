@@ -32,6 +32,10 @@ export class AddTypeToNavigationMenuItem1773668248812
       WHERE "type" IS NULL
     `);
 
+    await queryRunner.query(
+      `ALTER TABLE "core"."navigationMenuItem" DROP CONSTRAINT "CHK_navigation_menu_item_target_fields"`,
+    );
+
     await queryRunner.query(`
       UPDATE "core"."navigationMenuItem" nmi
       SET
@@ -43,11 +47,23 @@ export class AddTypeToNavigationMenuItem1773668248812
     `);
 
     await queryRunner.query(
+      `ALTER TABLE "core"."navigationMenuItem" ADD CONSTRAINT "CHK_navigation_menu_item_target_fields" CHECK ("targetRecordId" IS NULL OR "targetObjectMetadataId" IS NOT NULL)`,
+    );
+
+    await queryRunner.query(
       `ALTER TABLE "core"."navigationMenuItem" ALTER COLUMN "type" SET NOT NULL`,
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(
+      `ALTER TABLE "core"."navigationMenuItem" DROP CONSTRAINT "CHK_navigation_menu_item_target_fields"`,
+    );
+
+    await queryRunner.query(
+      `ALTER TABLE "core"."navigationMenuItem" ADD CONSTRAINT "CHK_navigation_menu_item_target_fields" CHECK (("targetRecordId" IS NULL AND "targetObjectMetadataId" IS NULL) OR ("targetRecordId" IS NOT NULL AND "targetObjectMetadataId" IS NOT NULL))`,
+    );
+
     await queryRunner.query(
       `ALTER TABLE "core"."navigationMenuItem" DROP COLUMN "type"`,
     );

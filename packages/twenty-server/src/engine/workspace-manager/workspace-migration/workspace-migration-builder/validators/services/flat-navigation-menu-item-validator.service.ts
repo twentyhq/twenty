@@ -39,14 +39,6 @@ export class FlatNavigationMenuItemValidatorService {
     const errors: FlatEntityValidationError<NavigationMenuItemExceptionCode>[] =
       [];
 
-    if (hasTargetObjectMetadataId && !hasTargetRecordId) {
-      errors.push({
-        code: NavigationMenuItemExceptionCode.INVALID_NAVIGATION_MENU_ITEM_INPUT,
-        message: t`targetRecordId is required when targetObjectMetadataId is provided`,
-        userFriendlyMessage: msg`targetRecordId is required when targetObjectMetadataId is provided`,
-      });
-    }
-
     if (hasTargetRecordId && !hasTargetObjectMetadataId) {
       errors.push({
         code: NavigationMenuItemExceptionCode.INVALID_NAVIGATION_MENU_ITEM_INPUT,
@@ -68,12 +60,15 @@ export class FlatNavigationMenuItemValidatorService {
       !hasTargetObjectMetadataId &&
       !hasViewId &&
       !hasLink;
+    const isObjectLink =
+      hasTargetObjectMetadataId && !hasTargetRecordId && !hasViewId;
     const isViewLink = hasViewId;
     const isRecordLink = hasTargetRecordId && hasTargetObjectMetadataId;
     const isExternalLink =
       !hasTargetRecordId && !hasTargetObjectMetadataId && !hasViewId && hasLink;
     const typeCount =
       (isFolder ? 1 : 0) +
+      (isObjectLink ? 1 : 0) +
       (isViewLink ? 1 : 0) +
       (isRecordLink ? 1 : 0) +
       (isExternalLink ? 1 : 0);
@@ -81,8 +76,8 @@ export class FlatNavigationMenuItemValidatorService {
     if (typeCount === 0) {
       errors.push({
         code: NavigationMenuItemExceptionCode.INVALID_NAVIGATION_MENU_ITEM_INPUT,
-        message: t`Navigation menu item must be either a folder (with name), a view link (with viewId), a record link (with targetRecordId and targetObjectMetadataId), or an external link (with link)`,
-        userFriendlyMessage: msg`Navigation menu item must be either a folder (with name), a view link (with viewId), a record link (with targetRecordId and targetObjectMetadataId), or an external link (with link)`,
+        message: t`Navigation menu item must be either a folder (with name), an object link (with targetObjectMetadataId), a view link (with viewId), a record link (with targetRecordId and targetObjectMetadataId), or an external link (with link)`,
+        userFriendlyMessage: msg`Navigation menu item must be either a folder (with name), an object link (with targetObjectMetadataId), a view link (with viewId), a record link (with targetRecordId and targetObjectMetadataId), or an external link (with link)`,
       });
     }
 
