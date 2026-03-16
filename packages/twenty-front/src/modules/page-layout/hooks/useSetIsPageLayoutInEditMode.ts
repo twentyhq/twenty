@@ -118,7 +118,6 @@ export const useSetIsPageLayoutInEditMode = (pageLayoutIdFromProps: string) => {
       hasInitializedFieldsWidgetGroupsDraftState,
       pageLayoutEditingWidgetIdState,
       pageLayoutId,
-      pageLayoutPersistedComponentState,
       store,
     ],
   );

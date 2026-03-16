@@ -43,9 +43,7 @@ export const CommandListItem = ({
         onClick={disabled ? undefined : onClick}
         hotKeys={action.hotKeys}
         disabled={disabled}
-        RightComponent={
-          disabled && showDisabledLoader ? <Loader /> : undefined
-        }
+        RightComponent={disabled && showDisabledLoader ? <Loader /> : undefined}
       />
     </SelectableListItem>
   );

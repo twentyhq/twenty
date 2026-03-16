@@ -4,7 +4,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 export const useIsDashboardPageLayoutInEditMode = (
   pageLayoutIdFromProps?: string,
 ) => {
-  const isDashboardPageLayoutInEditMode = useAtomComponentStateValue(
+  const isDashboardInEditMode = useAtomComponentStateValue(
     isDashboardInEditModeComponentState,
     pageLayoutIdFromProps,
   );

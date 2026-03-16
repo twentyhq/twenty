@@ -39,7 +39,8 @@ describe('useIsCommandBlockedByGlobalLayoutCustomization', () => {
     store.set(isLayoutCustomizationActiveState.atom, false);
 
     const { result } = renderHook(
-      () => useIsCommandBlockedByGlobalLayoutCustomization(commandMenuItemConfig),
+      () =>
+        useIsCommandBlockedByGlobalLayoutCustomization(commandMenuItemConfig),
       {
         wrapper,
       },
@@ -56,7 +57,8 @@ describe('useIsCommandBlockedByGlobalLayoutCustomization', () => {
     store.set(isLayoutCustomizationActiveState.atom, true);
 
     const { result } = renderHook(
-      () => useIsCommandBlockedByGlobalLayoutCustomization(commandMenuItemConfig),
+      () =>
+        useIsCommandBlockedByGlobalLayoutCustomization(commandMenuItemConfig),
       {
         wrapper,
       },
@@ -73,7 +75,8 @@ describe('useIsCommandBlockedByGlobalLayoutCustomization', () => {
     store.set(isLayoutCustomizationActiveState.atom, true);
 
     const { result } = renderHook(
-      () => useIsCommandBlockedByGlobalLayoutCustomization(commandMenuItemConfig),
+      () =>
+        useIsCommandBlockedByGlobalLayoutCustomization(commandMenuItemConfig),
       {
         wrapper,
       },
