@@ -124,9 +124,9 @@ const styles = {
 };
 
 const ACTIONS = [
-  { key: 'parse', label: 'Re-Parse', path: 'reparse-bob' },
-  { key: 'match', label: 'Run Matching', path: 'match-bob' },
-  { key: 'apply', label: 'Apply Updates', path: 'apply-status-updates' },
+  { key: 'parse', label: 'Re-Parse', path: 'reparse-bob', fireAndForget: true },
+  { key: 'match', label: 'Run Matching', path: 'match-bob', fireAndForget: true },
+  { key: 'apply', label: 'Apply Updates', path: 'apply-status-updates', fireAndForget: false },
 ] as const;
 
 const SourceFileActions = () => {
@@ -145,11 +145,35 @@ const SourceFileActions = () => {
   const handleAction = async (
     action: string,
     path: string,
+    fireAndForget: boolean,
   ) => {
     setLoading(action);
     setResult(null);
 
     const { apiUrl, token } = getApiConfig();
+
+    if (fireAndForget) {
+      // Fire the request but don't wait for it to complete
+      fetch(`${apiUrl}/s/${path}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({ sourceFileId: recordId }),
+      }).catch(() => {
+        // Silently ignore — the job runs server-side regardless
+      });
+
+      setResult({
+        action,
+        success: true,
+        message: 'Queued — processing will run in the background',
+      });
+      setLoading(null);
+
+      return;
+    }
 
     try {
       const response = await triggerEndpoint(apiUrl, token, path, recordId);
@@ -187,11 +211,11 @@ const SourceFileActions = () => {
     <div style={styles.container}>
       <p style={styles.title}>Pipeline Actions</p>
       <div style={styles.buttonRow}>
-        {ACTIONS.map(({ key, label, path }) => (
+        {ACTIONS.map(({ key, label, path, fireAndForget }) => (
           <button
             key={key}
             style={loading ? styles.buttonDisabled : styles.button}
-            onClick={() => handleAction(key, path)}
+            onClick={() => handleAction(key, path, fireAndForget)}
             disabled={!!loading}
           >
             {loading === key ? `${label}...` : label}

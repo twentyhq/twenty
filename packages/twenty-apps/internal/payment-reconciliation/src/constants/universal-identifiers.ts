@@ -337,6 +337,14 @@ export const SF_PARSE_STATUS_COMPLETED_ID =
   '73c1b9ad-2b52-44d5-9925-4578b3e4e1e4';
 export const SF_PARSE_STATUS_FAILED_ID =
   '97c7b872-3b3b-4874-b1f5-321523610e36';
+export const SF_PARSE_STATUS_MATCHING_ID =
+  'a1b4c7d0-3e6f-4a2b-8d5c-9f0e1a2b3c4d';
+export const SF_PARSE_STATUS_MATCHED_ID =
+  'b2c5d8e1-4f7a-4b3c-9e6d-0a1f2b3c4d5e';
+export const SF_PARSE_STATUS_APPLYING_ID =
+  'c3d6e9f2-5a8b-4c4d-af7e-1b2a3c4d5e6f';
+export const SF_PARSE_STATUS_DONE_ID =
+  'd4e7fa03-6b9c-4d5e-ba8f-2c3b4d5e6f7a';
 
 // MatchResult matchMethod SELECT options
 export const MR_METHOD_EXACT_POLICY_NUMBER_ID =

@@ -20,6 +20,10 @@ import {
   SF_PARSE_STATUS_PARSING_ID,
   SF_PARSE_STATUS_COMPLETED_ID,
   SF_PARSE_STATUS_FAILED_ID,
+  SF_PARSE_STATUS_MATCHING_ID,
+  SF_PARSE_STATUS_MATCHED_ID,
+  SF_PARSE_STATUS_APPLYING_ID,
+  SF_PARSE_STATUS_DONE_ID,
 } from 'src/constants/universal-identifiers';
 
 export default defineObject({
@@ -101,8 +105,8 @@ export default defineObject({
       universalIdentifier: SF_PARSE_STATUS_FIELD_ID,
       type: FieldType.SELECT,
       name: 'parseStatus',
-      label: 'Parse Status',
-      description: 'Current parsing status',
+      label: 'Pipeline Status',
+      description: 'Current pipeline status across all processing steps',
       icon: 'IconStatusChange',
       defaultValue: "'PENDING'",
       options: [
@@ -123,7 +127,7 @@ export default defineObject({
         {
           id: SF_PARSE_STATUS_COMPLETED_ID,
           value: 'COMPLETED',
-          label: 'Completed',
+          label: 'Parsed',
           position: 2,
           color: 'green',
         },
@@ -133,6 +137,34 @@ export default defineObject({
           label: 'Failed',
           position: 3,
           color: 'red',
+        },
+        {
+          id: SF_PARSE_STATUS_MATCHING_ID,
+          value: 'MATCHING',
+          label: 'Matching',
+          position: 4,
+          color: 'blue',
+        },
+        {
+          id: SF_PARSE_STATUS_MATCHED_ID,
+          value: 'MATCHED',
+          label: 'Matched',
+          position: 5,
+          color: 'green',
+        },
+        {
+          id: SF_PARSE_STATUS_APPLYING_ID,
+          value: 'APPLYING',
+          label: 'Applying',
+          position: 6,
+          color: 'blue',
+        },
+        {
+          id: SF_PARSE_STATUS_DONE_ID,
+          value: 'DONE',
+          label: 'Done',
+          position: 7,
+          color: 'green',
         },
       ],
     },

@@ -25,6 +25,7 @@ type NbrNode = {
   carrierPolicyNumber: string | null;
   brokerName: string | null;
   brokerNpn: string | null;
+  policyEffectiveDate: string | null;
   trueEffectiveDate: string | null;
   memberFirstName: string | null;
   memberLastName: string | null;
@@ -82,6 +83,9 @@ type PoliciesResponse = {
 const BATCH_SIZE = 20;
 const PAGE_SIZE = 500;
 const BATCH_DELAY_MS = 100;
+
+// Omnia's first sale date — exclude anything before this
+const OMNIA_START_DATE = '2025-07-09';
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -251,6 +255,40 @@ const handler = async (event: { body: RequestBody | null }) => {
     throw new Error('Missing sourceFileId in request body');
   }
 
+  const sourceFileId = body.sourceFileId;
+
+  try {
+    return await runMatching(sourceFileId);
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : String(error);
+
+    console.error(`[match-bob] Failed: ${errorMessage}`);
+
+    try {
+      const errorClient = new CoreApiClient();
+
+      await errorClient.mutation({
+        updatePayReconSourceFile: {
+          __args: {
+            id: sourceFileId,
+            data: {
+              parseStatus: 'FAILED',
+              parseError: `Matching failed: ${errorMessage.slice(0, 450)}`,
+            },
+          },
+          id: true,
+        },
+      });
+    } catch (updateError) {
+      console.error('[match-bob] Failed to update status to FAILED', updateError);
+    }
+
+    throw error;
+  }
+};
+
+const runMatching = async (sourceFileId: string) => {
   const client = new CoreApiClient();
   const today = new Date();
   const todayStr = today.toISOString().split('T')[0];
@@ -258,7 +296,7 @@ const handler = async (event: { body: RequestBody | null }) => {
   // Fetch source file to get carrier name, CRM ID, parserId, and matchingConfig
   const { payReconSourceFiles: sfResult } = (await client.query({
     payReconSourceFiles: {
-      __args: { filter: { id: { eq: body.sourceFileId } }, first: 1 },
+      __args: { filter: { id: { eq: sourceFileId } }, first: 1 },
       edges: {
         node: {
           id: true,
@@ -279,7 +317,7 @@ const handler = async (event: { body: RequestBody | null }) => {
   const sourceFile = sfResult.edges[0]?.node;
 
   if (!sourceFile) {
-    throw new Error(`SourceFile ${body.sourceFileId} not found`);
+    throw new Error(`SourceFile ${sourceFileId} not found`);
   }
 
   const carrierName = sourceFile?.carrierConfig?.name ?? 'Unknown';
@@ -288,11 +326,22 @@ const handler = async (event: { body: RequestBody | null }) => {
   const matchingConfig: MatchingConfig =
     sourceFile?.carrierConfig?.matchingConfig ?? DEFAULT_MATCHING_CONFIG;
 
-  // Idempotency check — skip if results already exist for this source file
+  // Update pipeline status to MATCHING
+  await client.mutation({
+    updatePayReconSourceFile: {
+      __args: {
+        id: sourceFileId,
+        data: { parseStatus: 'MATCHING' },
+      },
+      id: true,
+    },
+  });
+
+  // Clean up existing match results for this source file (allows re-running)
   const { payReconMatchResults: existingCheck } = (await client.query({
     payReconMatchResults: {
       __args: {
-        filter: { sourceFileId: { eq: body.sourceFileId } },
+        filter: { sourceFileId: { eq: sourceFileId } },
         first: 1,
       },
       totalCount: true,
@@ -303,17 +352,17 @@ const handler = async (event: { body: RequestBody | null }) => {
 
   if (existingCheck.totalCount > 0) {
     console.log(
-      `[match-bob] Skipping: ${existingCheck.totalCount} match results already exist for this source file`,
+      `[match-bob] Cleaning up ${existingCheck.totalCount} existing match results`,
     );
 
-    return {
-      autoMatched: 0,
-      needsReview: 0,
-      unmatched: 0,
-      total: 0,
-      skipped: true,
-      existingCount: existingCheck.totalCount,
-    };
+    await client.mutation({
+      deletePayReconMatchResults: {
+        __args: { filter: { sourceFileId: { eq: sourceFileId } } },
+        id: true,
+      },
+    });
+
+    console.log(`[match-bob] Cleanup complete`);
   }
 
   // Create ReconciliationRun record
@@ -326,7 +375,7 @@ const handler = async (event: { body: RequestBody | null }) => {
           data: {
             name: runName,
             runStatus: 'MATCHING',
-            sourceFileId: body.sourceFileId,
+            sourceFileId: sourceFileId,
           },
         },
         id: true,
@@ -346,6 +395,7 @@ const handler = async (event: { body: RequestBody | null }) => {
       carrierPolicyNumber: true,
       brokerName: true,
       brokerNpn: true,
+      policyEffectiveDate: true,
       trueEffectiveDate: true,
       memberFirstName: true,
       memberLastName: true,
@@ -354,7 +404,7 @@ const handler = async (event: { body: RequestBody | null }) => {
       termDate: true,
       eligibleForCommission: true,
     },
-    { sourceFileId: { eq: body.sourceFileId } },
+    { sourceFileId: { eq: sourceFileId } },
   );
 
   // Fetch CRM policies (enriched) from workspace API
@@ -400,6 +450,14 @@ const handler = async (event: { body: RequestBody | null }) => {
   const allResults: MatchResultData[] = [];
 
   for (const row of bookRows) {
+    // Skip BOB rows with policy effective dates before Omnia's first sale
+    if (
+      row.policyEffectiveDate &&
+      row.policyEffectiveDate < OMNIA_START_DATE
+    ) {
+      continue;
+    }
+
     const bobRow: BobRow = {
       carrierPolicyNumber: row.carrierPolicyNumber,
       brokerName: row.brokerName,
@@ -507,7 +565,7 @@ const handler = async (event: { body: RequestBody | null }) => {
       crmPolicyId: decision.crmPolicyId,
       crmPolicyNumber: decision.crmPolicyNumber,
       normalizedBookRowId: row.id,
-      sourceFileId: body.sourceFileId,
+      sourceFileId: sourceFileId,
       derivedStatus,
       currentCrmStatus,
       derivedExpireDate,
@@ -640,7 +698,7 @@ const handler = async (event: { body: RequestBody | null }) => {
           crmPolicyId: policy.id,
           crmPolicyNumber: policy.policyNumber,
           normalizedBookRowId: bestRow.id,
-          sourceFileId: body.sourceFileId,
+          sourceFileId: sourceFileId,
           derivedStatus: null,
           currentCrmStatus: policy.status,
           derivedExpireDate: null,
@@ -670,7 +728,9 @@ const handler = async (event: { body: RequestBody | null }) => {
       !matchedCrmPolicyIds.has(p.id) &&
       !discoveredPolicyIds.has(p.id) &&
       p.status &&
-      ACTIVE_CRM_STATUSES.has(p.status),
+      ACTIVE_CRM_STATUSES.has(p.status) &&
+      // Skip policies with future effective dates — they won't appear in BOB yet
+      !(p.effectiveDate && new Date(p.effectiveDate) > today),
   );
 
   for (const policy of unmatchedCrmPolicies) {
@@ -685,7 +745,7 @@ const handler = async (event: { body: RequestBody | null }) => {
       crmPolicyId: policy.id,
       crmPolicyNumber: policy.policyNumber,
       normalizedBookRowId: null,
-      sourceFileId: body.sourceFileId,
+      sourceFileId: sourceFileId,
       derivedStatus: null,
       currentCrmStatus: policy.status,
       derivedExpireDate: null,
@@ -744,6 +804,17 @@ const handler = async (event: { body: RequestBody | null }) => {
           runStatus: 'MATCHED',
           matchedAt: new Date().toISOString(),
         },
+      },
+      id: true,
+    },
+  });
+
+  // Update pipeline status to MATCHED
+  await client.mutation({
+    updatePayReconSourceFile: {
+      __args: {
+        id: sourceFileId,
+        data: { parseStatus: 'MATCHED' },
       },
       id: true,
     },

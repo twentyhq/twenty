@@ -132,7 +132,7 @@ const updateCrmPolicy = async (
   }
 
   await graphqlQuery<UpdatePolicyResponse>(
-    `mutation ApplyStatusUpdate($id: ID!, $data: PolicyUpdateInput!) {
+    `mutation ApplyStatusUpdate($id: UUID!, $data: PolicyUpdateInput!) {
       updatePolicy(id: $id, data: $data) { id }
     }`,
     { id: policyId, data: updateData },
@@ -216,6 +216,17 @@ const handler = async (event: { body: RequestBody | null }) => {
   const sourceFile = sfResult.edges[0]?.node;
   const carrierName = sourceFile?.carrierConfig?.name ?? 'Unknown';
   const sourceName = sourceFile?.name ?? body.sourceFileId;
+
+  // Update pipeline status to APPLYING
+  await client.mutation({
+    updatePayReconSourceFile: {
+      __args: {
+        id: body.sourceFileId,
+        data: { parseStatus: 'APPLYING' },
+      },
+      id: true,
+    },
+  });
 
   // Fetch all approved match results
   const approvedResults = await fetchAllApprovedResults(
@@ -435,6 +446,17 @@ const handler = async (event: { body: RequestBody | null }) => {
       runError,
     );
   }
+
+  // Update pipeline status to DONE
+  await client.mutation({
+    updatePayReconSourceFile: {
+      __args: {
+        id: body.sourceFileId,
+        data: { parseStatus: 'DONE' },
+      },
+      id: true,
+    },
+  });
 
   const total = approvedResults.length;
 
