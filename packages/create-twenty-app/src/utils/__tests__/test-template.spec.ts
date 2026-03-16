@@ -103,7 +103,7 @@ describe('scaffoldIntegrationTest', () => {
 
       expect(content).toContain('TWENTY_API_KEY');
       expect(content).not.toContain('TWENTY_TEST_API_KEY');
-      expect(content).toContain('TWENTY_API_URL');
+      expect(content).not.toContain('TWENTY_API_URL');
       expect(content).toContain('setup-test.ts');
       expect(content).toContain('tsconfig.spec.json');
       expect(content).toContain('integration-test.ts');
