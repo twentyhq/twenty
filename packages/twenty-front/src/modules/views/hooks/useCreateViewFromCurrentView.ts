@@ -154,9 +154,14 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
       }
 
       const fieldResult = await performViewFieldAPICreate({
-        inputs: sourceView.viewFields.map(({ id: _id, ...viewField }) => ({
-          ...viewField,
+        inputs: sourceView.viewFields.map((viewField) => ({
           id: v4(),
+          fieldMetadataId: viewField.fieldMetadataId,
+          position: viewField.position,
+          isVisible: viewField.isVisible,
+          size: viewField.size,
+          aggregateOperation: viewField.aggregateOperation,
+          viewFieldGroupId: viewField.viewFieldGroupId,
           viewId: newViewId,
         })),
       });

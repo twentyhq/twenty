@@ -57,7 +57,12 @@ export const useSaveCurrentViewFields = () => {
             viewFieldToCreateOrUpdate,
           ) => {
             const createViewFieldInput: CreateViewFieldInput = {
-              ...viewFieldToCreateOrUpdate,
+              id: viewFieldToCreateOrUpdate.id,
+              fieldMetadataId: viewFieldToCreateOrUpdate.fieldMetadataId,
+              position: viewFieldToCreateOrUpdate.position,
+              isVisible: viewFieldToCreateOrUpdate.isVisible,
+              size: viewFieldToCreateOrUpdate.size,
+              aggregateOperation: viewFieldToCreateOrUpdate.aggregateOperation,
               viewId: currentViewId,
             };
             const existingField = currentViewFields.find(

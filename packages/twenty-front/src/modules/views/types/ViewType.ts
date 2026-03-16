@@ -5,7 +5,6 @@ import {
   IconTable,
 } from 'twenty-ui/display';
 
-// Re-export the generated enum as the single source of truth
 export { ViewType } from '~/generated-metadata/graphql';
 import { ViewType } from '~/generated-metadata/graphql';
 
