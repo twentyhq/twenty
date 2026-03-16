@@ -12516,11 +12516,6 @@ msgstr "Inicio de sesión único (SSO)"
 msgid "Singular"
 msgstr "Singular"
 
-#. js-lingui-id: djfBXF
-#: src/modules/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema.ts
-msgid "Singular and plural labels must be different"
-msgstr "Las etiquetas en singular y plural deben ser diferentes"
-
 #. js-lingui-id: zvwLTy
 #: src/modules/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema.ts
 msgid "Singular and plural names must be different"

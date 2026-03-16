@@ -12516,11 +12516,6 @@ msgstr "Єдиний вхід (SSO)"
 msgid "Singular"
 msgstr "Одиничне число"
 
-#. js-lingui-id: djfBXF
-#: src/modules/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema.ts
-msgid "Singular and plural labels must be different"
-msgstr "Одниночні і множинні мітки мають бути різними"
-
 #. js-lingui-id: zvwLTy
 #: src/modules/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema.ts
 msgid "Singular and plural names must be different"

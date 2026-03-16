@@ -17,7 +17,8 @@ const StyledEventCardMessageContainer = styled.div<{ canOpen?: boolean }>`
   cursor: ${({ canOpen }) => (canOpen ? 'pointer' : 'not-allowed')};
   display: flex;
   flex-direction: column;
-  width: 380px;
+  max-width: 380px;
+  width: 100%;
 `;
 
 const StyledEmailContent = styled.div`

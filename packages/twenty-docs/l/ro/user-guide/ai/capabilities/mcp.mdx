@@ -1,0 +1,142 @@
+---
+title: Server MCP
+description: Conectați asistenți AI la spațiul dvs. de lucru Twenty folosind Model Context Protocol.
+---
+
+<Warning>
+MCP este în prezent în **alpha** și este disponibil doar în unele spații de lucru. Este posibil să nu fie activat încă pentru spațiul dvs. de lucru.
+</Warning>
+
+Twenty expune un server [MCP](https://modelcontextprotocol.io/) astfel încât asistenții AI — Claude Desktop, Claude Code, Cursor, ChatGPT și alții — să poată citi și scrie datele tale din CRM prin limbaj natural.
+
+Folosește **URL-ul spațiului de lucru** (URL-ul pe care îl folosești pentru a accesa Twenty) drept punct final MCP. Pe Twenty Cloud, URL-ul spațiului tău de lucru poate fi `https://{mycompany}.twenty.com` sau un domeniu personalizat. Serverul este disponibil la:
+
+| Mediu                | Punct final MCP                                                                |
+| -------------------- | ------------------------------------------------------------------------------ |
+| **Cloud**            | `https://{your-workspace-url}/mcp` (de ex. `https://mycompany.twenty.com/mcp`) |
+| **Găzduire proprie** | `https://{your-domain}/mcp`                                                    |
+
+## Metode de autentificare
+
+Ai două moduri de a-ți autentifica clientul MCP: **OAuth** (recomandat) sau **Cheie API**.
+
+### Opțiunea A — OAuth (Recomandat)
+
+Cu OAuth, clientul tău MCP deschide o fereastră de browser pentru a te autentifica. Nicio informație secretă nu este stocată în fișierele de configurare, iar tokenurile se reîmprospătează automat.
+
+<Note>
+OAuth necesită un client MCP care suportă [specificația MCP Authorization](https://modelcontextprotocol.io/specification/2025-03-26/basic/authorization). Claude Desktop, Claude Code, Cursor și ChatGPT o suportă.
+</Note>
+
+Adaugă asta în configurația clientului tău MCP, înlocuind `{your-workspace-url}` cu gazda spațiului tău de lucru (de ex. `mycompany.twenty.com`):
+
+```json
+{
+  "mcpServers": {
+    "twenty": {
+      "type": "streamable-http",
+      "url": "https://{your-workspace-url}/mcp"
+    }
+  }
+}
+```
+
+Atât — nu este necesară nicio cheie API. Când clientul se conectează pentru prima dată, acesta va:
+
+1. Va descoperi metadatele OAuth ale Twenty prin `/.well-known/oauth-protected-resource` și `/.well-known/oauth-authorization-server`
+2. Se va înregistra ca un client OAuth prin înregistrare dinamică a clientului (RFC 7591)
+3. Îți va deschide browserul pentru a autoriza accesul
+4. Va primi tokenurile și se va conecta la serverul MCP
+
+Conexiunile ulterioare reutilizează tokenurile stocate și le reîmprospătează automat.
+
+### Opțiunea B — Cheie API
+
+Dacă clientul tău MCP nu suportă OAuth sau preferi acreditări statice, furnizează o cheie API în antetul `Authorization`:
+
+```json
+{
+  "mcpServers": {
+    "twenty": {
+      "type": "streamable-http",
+      "url": "https://{your-workspace-url}/mcp",
+      "headers": {
+        "Authorization": "Bearer YOUR_API_KEY"
+      }
+    }
+  }
+}
+```
+
+<Warning>
+Cheia ta API oferă acces la datele spațiului de lucru. Ține-o în afara controlului versiunilor și a dotfiles partajate.
+</Warning>
+
+Pentru a crea o cheie API, mergi la **Settings > APIs & Webhooks > + Create key**. Vezi [API-uri](/l/ro/developers/extend/api#create-an-api-key) pentru detalii.
+
+## Pornire rapidă
+
+### 1. Copiază configurația
+
+Mergi la **Settings > AI > More > MCP Server** în Twenty. Alege metoda de autentificare (OAuth sau Cheie API), copiază fragmentul JSON (va folosi deja URL-ul spațiului tău de lucru) și lipește-l în fișierul de configurare al clientului tău MCP.
+
+| Client             | Locația fișierului de configurare                                                                                                                                                       |
+| ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Claude Desktop** | `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS) sau `%APPDATA%\Claude\claude_desktop_config.json` (Windows)                                                   |
+| **Claude Code**    | `~/.claude.json` (utilizator) sau `.mcp.json` (proiect)                                                                                                                                 |
+| **Cursor**         | `.cursor/mcp.json` în proiectul tău sau `~/.cursor/mcp.json` global                                                                                                                     |
+| **ChatGPT**        | Activează Modul pentru dezvoltatori în **Settings > Apps & Connectors > Advanced settings**, apoi folosește **Create** în **Settings > Apps & Connectors** pentru a adăuga serverul MCP |
+
+### 2. Conectează-te
+
+Repornește clientul tău MCP (sau reîncarcă configurația). Dacă folosești OAuth, vei fi redirecționat către Twenty pentru a autoriza accesul. Dacă folosești o cheie API, conexiunea este imediată.
+
+### 3. Începe să-l folosești
+
+Roagă-ți asistentul AI să interacționeze cu CRM-ul tău:
+
+* *"Arată-mi cele 5 companii create cel mai recent"*
+* *"Creează o persoană nouă numită Jane Doe la Acme Corp"*
+* *"Găsește toate oportunitățile deschise cu o valoare mai mare de $10k"*
+
+## Instrumente disponibile
+
+După conectare, serverul MCP expune instrumente care oglindesc API-ul Twenty. Fluxul de lucru recomandat este:
+
+1. **`get_tool_catalog`** — descoperă toate instrumentele disponibile
+2. **`learn_tools`** — obține schema de intrare pentru instrumente specifice
+3. **`execute_tool`** — rulează un instrument
+
+Nu este nevoie să reții numele instrumentelor. Întreabă-ți asistentul AI ce poate face și va apela `get_tool_catalog` automat.
+
+## Permisiuni
+
+Conexiunile MCP moștenesc permisiunile utilizatorului autentificat (OAuth) sau rolul atribuit cheii API. Pentru a restricționa ce poate face serverul MCP:
+
+* **OAuth**: Se aplică rolul utilizatorului din spațiul de lucru.
+* **Cheie API**: Atribuie un rol cheii API în **Settings > Roles**. Vezi [Permisiuni](/l/ro/user-guide/permissions-access/capabilities/permissions).
+
+## Configurație pentru auto-găzduire
+
+Pentru instanțele auto-găzduite, înlocuiește `{your-workspace-url}` cu URL-ul serverului tău. Asigură-te că `SERVER_URL` din mediul tău corespunde URL-ului public al instanței tale Twenty — acesta este folosit pentru a genera metadatele de descoperire OAuth.
+
+```bash
+SERVER_URL=https://twenty.yourcompany.com
+```
+
+Punctul final MCP, punctele finale OAuth și metadatele de descoperire derivă toate din această valoare.
+
+## Depanare
+
+**Erori "Unauthorized" sau 401**
+
+* OAuth: reautorizează ștergând tokenurile stocate din clientul tău MCP și reconectează-te.
+* Cheie API: verifică dacă cheia este validă și nu a expirat. Regenereaz-o dacă este necesar.
+
+**Fluxul OAuth nu deschide un browser**
+
+* Asigură-te că clientul tău MCP suportă MCP Authorization. Dacă nu, revino la metoda cu Cheie API.
+
+**Timeout de conexiune**
+
+* Confirmă că URL-ul punctului final MCP este accesibil de pe calculatorul tău. Pentru instanțele auto-găzduite, verifică faptul că serverul rulează și că `SERVER_URL` este setat corect.
