@@ -3,8 +3,6 @@ import { Injectable, Logger } from '@nestjs/common';
 import chunk from 'lodash.chunk';
 import { In, IsNull, Like } from 'typeorm';
 
-import { isDefined } from 'twenty-shared/utils';
-
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -50,10 +48,10 @@ export class MessagingMessageCleanerService {
           'messageThread',
         );
 
-      const wildcardId = messageExternalIds.find((id) => id.endsWith(':*'));
-      const shouldDeleteAllInFolder = isDefined(wildcardId);
+      const wildcardIds = messageExternalIds.filter((id) => id.endsWith(':*'));
+      const regularIds = messageExternalIds.filter((id) => !id.endsWith(':*'));
 
-      if (shouldDeleteAllInFolder && isDefined(wildcardId)) {
+      for (const wildcardId of wildcardIds) {
         const folderPath = wildcardId.split(':*')[0];
         let hasMore = true;
 
@@ -80,8 +78,10 @@ export class MessagingMessageCleanerService {
             messageThreadRepository,
           );
         }
-      } else {
-        const messageExternalIdsChunks = chunk(messageExternalIds, 500);
+      }
+
+      if (regularIds.length > 0) {
+        const messageExternalIdsChunks = chunk(regularIds, 500);
 
         for (const messageExternalIdsChunk of messageExternalIdsChunks) {
           const associations =
