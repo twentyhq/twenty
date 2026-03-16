@@ -10,12 +10,15 @@ import { recomputeViewFieldIdentifierAfterFlatObjectIdentifierUpdate } from 'src
 import { renameRelatedMorphFieldOnObjectNamesUpdate } from 'src/engine/metadata-modules/flat-object-metadata/utils/rename-related-morph-field-on-object-names-update.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { type UniversalFlatIndexMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-index-metadata.type';
+import { type UniversalFlatView } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view.type';
 import { type UniversalFlatViewField } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-field.type';
+import { recomputeViewNameAfterFlatObjectMetadataLabelUpdate } from 'src/engine/metadata-modules/flat-object-metadata/utils/recompute-view-name-after-flat-object-metadata-label-update.util';
 
 export type FlatObjectMetadataUpdateSideEffects = {
   otherObjectFlatFieldMetadatasToUpdate: UniversalFlatFieldMetadata[];
   sameObjectFlatFieldMetadatasToUpdate: UniversalFlatFieldMetadata[];
   flatViewFieldsToUpdate: UniversalFlatViewField[];
+  flatViewsToUpdate: UniversalFlatView[];
   flatViewFieldsToCreate: UniversalFlatViewField[];
   flatIndexMetadatasToUpdate: UniversalFlatIndexMetadata[];
 };
@@ -42,6 +45,11 @@ export const handleFlatObjectMetadataUpdateSideEffect = ({
   fromFlatObjectMetadata,
   toFlatObjectMetadata,
 }: HandleFlatObjectMetadataUpdateSideEffectArgs): FlatObjectMetadataUpdateSideEffects => {
+  const flatViewsToUpdate = recomputeViewNameAfterFlatObjectMetadataLabelUpdate({
+    flatViewMaps,
+    fromFlatObjectMetadata,
+    toFlatObjectMetadata,
+  });
   const { morphRelatedFlatIndexesToUpdate, morphFlatFieldMetadatasToUpdate } =
     fromFlatObjectMetadata.nameSingular !== toFlatObjectMetadata.nameSingular ||
     fromFlatObjectMetadata.namePlural !== toFlatObjectMetadata.namePlural
@@ -115,6 +123,7 @@ export const handleFlatObjectMetadataUpdateSideEffect = ({
     ],
     flatViewFieldsToCreate,
     flatViewFieldsToUpdate,
+    flatViewsToUpdate,
     otherObjectFlatFieldMetadatasToUpdate: morphFlatFieldMetadatasToUpdate,
     sameObjectFlatFieldMetadatasToUpdate,
   };

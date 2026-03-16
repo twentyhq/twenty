@@ -31,6 +31,7 @@ type UseIncrementalDeleteManyRecordsParams<T> = Omit<
   pageSize?: number;
   delayInMsBetweenMutations?: number;
   skipOptimisticEffect?: boolean;
+  recordIds?: string[];
 };
 
 export const useIncrementalDeleteManyRecords = <T>({
@@ -40,6 +41,7 @@ export const useIncrementalDeleteManyRecords = <T>({
   pageSize = DEFAULT_QUERY_PAGE_SIZE,
   delayInMsBetweenMutations = DEFAULT_DELAY_BETWEEN_MUTATIONS_MS,
   skipOptimisticEffect = false,
+  recordIds,
 }: UseIncrementalDeleteManyRecordsParams<T>) => {
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
@@ -72,6 +74,7 @@ export const useIncrementalDeleteManyRecords = <T>({
       orderBy,
       limit: pageSize,
       recordGqlFields: { id: true },
+      initialRecordIds: recordIds,
     });
 
   const buildOptimisticRecordNodes = useCallback(

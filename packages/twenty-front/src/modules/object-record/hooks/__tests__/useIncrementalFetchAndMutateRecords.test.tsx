@@ -192,4 +192,35 @@ describe('useIncrementalFetchAndMutateRecords', () => {
       result.current.incrementalFetchAndMutate(jest.fn()),
     ).rejects.toThrow('Network error');
   });
+
+  it('should use initialRecordIds if provided and bypass findMany', async () => {
+    const { result } = renderHook(() =>
+      useIncrementalFetchAndMutateRecords({
+        objectNameSingular: 'company',
+        limit: 2,
+        initialRecordIds: ['1', '2', '3'],
+      } as any),
+    );
+
+    const mutateBatchMock = jest.fn();
+
+    await result.current.incrementalFetchAndMutate(mutateBatchMock);
+
+    expect(mockFindManyRecordsLazy).not.toHaveBeenCalled();
+    expect(mutateBatchMock).toHaveBeenCalledTimes(2);
+
+    expect(mutateBatchMock).toHaveBeenNthCalledWith(1, {
+      recordIds: ['1', '2'],
+      totalFetchedCount: 2,
+      totalCount: 3,
+      abortSignal: expect.any(Object),
+    });
+
+    expect(mutateBatchMock).toHaveBeenNthCalledWith(2, {
+      recordIds: ['3'],
+      totalFetchedCount: 3,
+      totalCount: 3,
+      abortSignal: expect.any(Object),
+    });
+  });
 });

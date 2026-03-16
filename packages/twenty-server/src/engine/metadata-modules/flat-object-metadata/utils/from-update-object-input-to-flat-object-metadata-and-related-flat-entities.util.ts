@@ -116,6 +116,7 @@ export const fromUpdateObjectInputToFlatObjectMetadataAndRelatedFlatEntities =
       flatObjectMetadataToUpdate: toFlatObjectMetadata,
       flatViewFieldsToCreate,
       flatViewFieldsToUpdate,
+      flatViewsToUpdate,
       otherObjectFlatFieldMetadatasToUpdate,
       sameObjectFlatFieldMetadatasToUpdate,
     };

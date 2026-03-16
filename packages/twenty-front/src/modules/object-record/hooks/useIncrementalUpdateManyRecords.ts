@@ -17,6 +17,7 @@ type UseIncrementalUpdateManyRecordsParams<T> = Omit<
   objectNameSingular: string;
   pageSize?: number;
   delayInMsBetweenMutations?: number;
+  recordIds?: string[];
 };
 
 export const useIncrementalUpdateManyRecords = <
@@ -28,6 +29,7 @@ export const useIncrementalUpdateManyRecords = <
   orderBy,
   pageSize = DEFAULT_QUERY_PAGE_SIZE,
   delayInMsBetweenMutations = DEFAULT_DELAY_BETWEEN_MUTATIONS_MS,
+  recordIds,
 }: UseIncrementalUpdateManyRecordsParams<T>) => {
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
@@ -51,6 +53,7 @@ export const useIncrementalUpdateManyRecords = <
     orderBy,
     limit: pageSize,
     recordGqlFields: { id: true },
+    initialRecordIds: recordIds,
   });
 
   const incrementalUpdateManyRecords = async (

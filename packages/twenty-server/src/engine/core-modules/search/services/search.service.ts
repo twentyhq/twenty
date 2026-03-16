@@ -179,41 +179,24 @@ export class SearchService {
     filter: ObjectRecordFilterInput;
     after?: string;
   }) {
-    const tsvectorResults = await this.buildSearchQueryAndGetRecords({
+    return await this.buildSearchQueryAndGetRecords({
       entityManager,
       flatObjectMetadata,
       flatFieldMetadataMaps,
+      searchInput,
       searchTerms,
       searchTermsOr,
       limit,
       filter,
       after,
     });
-
-    if (
-      tsvectorResults.length > 0 ||
-      !isNonEmptyString(searchInput.trim()) ||
-      isDefined(after)
-    ) {
-      return tsvectorResults;
-    }
-
-    const fallbackResults = await this.buildIlikeFallbackQuery({
-      entityManager,
-      flatObjectMetadata,
-      flatFieldMetadataMaps,
-      searchInput,
-      limit: limit + 1,
-      filter,
-    });
-
-    return [...tsvectorResults, ...fallbackResults];
   }
 
   async buildSearchQueryAndGetRecords<Entity extends ObjectLiteral>({
     entityManager,
     flatObjectMetadata,
     flatFieldMetadataMaps,
+    searchInput,
     searchTerms,
     searchTermsOr,
     limit,
@@ -223,6 +206,7 @@ export class SearchService {
     entityManager: WorkspaceRepository<Entity>;
     flatObjectMetadata: FlatObjectMetadata;
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+    searchInput: string;
     searchTerms: string;
     searchTermsOr: string;
     limit: number;
@@ -279,7 +263,7 @@ export class SearchService {
 
     if (isNonEmptyString(searchTerms)) {
       queryBuilder.andWhere(
-        new Brackets((qb) => {
+        new Brackets((qb: any) => {
           qb.where(
             `"${SEARCH_VECTOR_FIELD.name}" @@ to_tsquery('simple', public.unaccent_immutable(:searchTerms))`,
             { searchTerms },
@@ -287,6 +271,26 @@ export class SearchService {
             `"${SEARCH_VECTOR_FIELD.name}" @@ to_tsquery('simple', public.unaccent_immutable(:searchTermsOr))`,
             { searchTermsOr },
           );
+
+          const searchWords = searchInput
+            .trim()
+            .split(/\s+/)
+            .filter(isNonEmptyString);
+
+          if (searchWords.length > 0) {
+            qb.orWhere(
+              new Brackets((innerQb: any) => {
+                searchWords.forEach((word, index) => {
+                  const paramName = `ilikeCombine${index}`;
+
+                  innerQb.andWhere(
+                    `public.unaccent_immutable("${SEARCH_VECTOR_FIELD.name}"::text) ILIKE public.unaccent_immutable(:${paramName})`,
+                    { [paramName]: `%${escapeForIlike(word)}%` },
+                  );
+                });
+              }),
+            );
+          }
         }),
       );
     } else {
@@ -309,81 +313,6 @@ export class SearchService {
       .setParameter('searchTermsOr', searchTermsOr)
       .take(limit + 1) // We take one more to check if hasNextPage is true
       .getRawMany();
-  }
-
-  private async buildIlikeFallbackQuery<Entity extends ObjectLiteral>({
-    entityManager,
-    flatObjectMetadata,
-    flatFieldMetadataMaps,
-    searchInput,
-    limit,
-    filter,
-  }: {
-    entityManager: WorkspaceRepository<Entity>;
-    flatObjectMetadata: FlatObjectMetadata;
-    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
-    searchInput: string;
-    limit: number;
-    filter: ObjectRecordFilterInput;
-  }) {
-    const queryBuilder = entityManager.createQueryBuilder();
-
-    const { flatObjectMetadataMaps } = entityManager.internalContext;
-
-    const queryParser = new GraphqlQueryParser(
-      flatObjectMetadata,
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-    );
-
-    queryParser.applyFilterToBuilder(
-      queryBuilder,
-      flatObjectMetadata.nameSingular,
-      filter,
-    );
-
-    queryParser.applyDeletedAtToBuilder(queryBuilder, filter);
-
-    const imageIdentifierField = this.getImageIdentifierColumn(
-      flatObjectMetadata,
-      flatFieldMetadataMaps,
-    );
-
-    const fieldsToSelect = [
-      'id',
-      ...this.getLabelIdentifierColumns(
-        flatObjectMetadata,
-        flatFieldMetadataMaps,
-      ),
-      ...(imageIdentifierField ? [imageIdentifierField] : []),
-    ].map((field) => `"${field}"`);
-
-    queryBuilder.select(fieldsToSelect);
-
-    const searchWords = searchInput
-      .trim()
-      .split(/\s+/)
-      .filter(isNonEmptyString);
-
-    searchWords.forEach((word, index) => {
-      const paramName = `ilikeFallback${index}`;
-
-      queryBuilder.andWhere(
-        `public.unaccent_immutable("${SEARCH_VECTOR_FIELD.name}"::text) ILIKE public.unaccent_immutable(:${paramName})`,
-        { [paramName]: `%${escapeForIlike(word)}%` },
-      );
-    });
-
-    const rawResults = await queryBuilder
-      .orderBy('"id"', 'ASC')
-      .take(limit)
-      .getRawMany();
-
-    return rawResults.map((record) => ({
-      ...record,
-      tsRankCD: 0,
-      tsRank: 0,
-    }));
   }
 
   computeCursorWhereCondition({

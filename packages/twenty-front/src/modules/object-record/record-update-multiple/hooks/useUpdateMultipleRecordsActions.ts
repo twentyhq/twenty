@@ -60,6 +60,10 @@ export const useUpdateMultipleRecordsActions = ({
   } = useIncrementalUpdateManyRecords({
     objectNameSingular,
     filter: graphqlFilter,
+    recordIds:
+      contextStoreTargetedRecordsRule.mode === 'selection'
+        ? contextStoreTargetedRecordsRule.selectedRecordIds
+        : undefined,
   });
 
   const updateRecords = async (fieldsToUpdate: Record<string, any>) => {

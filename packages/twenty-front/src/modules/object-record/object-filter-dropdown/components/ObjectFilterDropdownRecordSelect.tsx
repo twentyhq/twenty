@@ -201,7 +201,7 @@ export const ObjectFilterDropdownRecordSelect = ({
 
     const filterDisplayValue =
       selectedItemNames.length > MAX_RECORDS_TO_DISPLAY
-        ? `${selectedItemNames.length} ${objectLabelPlural.toLowerCase()}`
+        ? `${selectedItemNames.length} ${(objectLabelPlural ?? '').toLowerCase()}`
         : selectedItemNames.join(', ');
 
     if (isDefined(selectedOperandInDropdown)) {

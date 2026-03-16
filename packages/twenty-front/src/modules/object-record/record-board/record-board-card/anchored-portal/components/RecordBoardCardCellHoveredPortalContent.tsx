@@ -28,6 +28,10 @@ export const RecordBoardCardCellHoveredPortalContent = () => {
     }),
   );
 
+  if (isRecordFieldReadOnly) {
+    return null;
+  }
+
   const shouldContainerBeClickable =
     !isRecordFieldReadOnly && !editModeContentOnly;
 

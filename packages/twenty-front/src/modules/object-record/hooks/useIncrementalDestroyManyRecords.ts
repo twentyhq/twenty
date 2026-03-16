@@ -27,6 +27,7 @@ type UseIncrementalDestroyManyRecordsParams<T> = Omit<
   pageSize?: number;
   delayInMsBetweenMutations?: number;
   skipOptimisticEffect?: boolean;
+  recordIds?: string[];
 };
 
 export const useIncrementalDestroyManyRecords = <T>({
@@ -36,6 +37,7 @@ export const useIncrementalDestroyManyRecords = <T>({
   pageSize = DEFAULT_QUERY_PAGE_SIZE,
   delayInMsBetweenMutations = DEFAULT_DELAY_BETWEEN_MUTATIONS_MS,
   skipOptimisticEffect = false,
+  recordIds,
 }: UseIncrementalDestroyManyRecordsParams<T>) => {
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
@@ -68,6 +70,7 @@ export const useIncrementalDestroyManyRecords = <T>({
       orderBy,
       limit: pageSize,
       recordGqlFields: { id: true },
+      initialRecordIds: recordIds,
     });
 
   const destroyManyRecordsBatch = async (
