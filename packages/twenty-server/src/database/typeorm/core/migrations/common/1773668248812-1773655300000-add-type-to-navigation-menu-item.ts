@@ -7,7 +7,11 @@ export class AddTypeToNavigationMenuItem1773668248812
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "core"."navigationMenuItem" ADD "type" text`,
+      `CREATE TYPE "core"."navigationMenuItem_type_enum" AS ENUM('VIEW', 'FOLDER', 'LINK', 'OBJECT', 'RECORD')`,
+    );
+
+    await queryRunner.query(
+      `ALTER TABLE "core"."navigationMenuItem" ADD "type" "core"."navigationMenuItem_type_enum"`,
     );
 
     await queryRunner.query(`
@@ -21,14 +25,14 @@ export class AddTypeToNavigationMenuItem1773668248812
             ELSE 'VIEW'
           END
         ELSE 'FOLDER'
-      END
+      END::"core"."navigationMenuItem_type_enum"
       FROM "core"."view" v
       WHERE nmi."viewId" = v.id
     `);
 
     await queryRunner.query(`
       UPDATE "core"."navigationMenuItem"
-      SET "type" = 'FOLDER'
+      SET "type" = 'FOLDER'::"core"."navigationMenuItem_type_enum"
       WHERE "type" IS NULL
     `);
 
@@ -43,7 +47,7 @@ export class AddTypeToNavigationMenuItem1773668248812
         "viewId" = NULL,
         "color" = NULL
       FROM "core"."view" v
-      WHERE nmi."type" = 'OBJECT'
+      WHERE nmi."type" = 'OBJECT'::"core"."navigationMenuItem_type_enum"
         AND nmi."viewId" = v.id
     `);
 
@@ -68,5 +72,7 @@ export class AddTypeToNavigationMenuItem1773668248812
     await queryRunner.query(
       `ALTER TABLE "core"."navigationMenuItem" DROP COLUMN "type"`,
     );
+
+    await queryRunner.query(`DROP TYPE "core"."navigationMenuItem_type_enum"`);
   }
 }

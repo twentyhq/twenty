@@ -79,7 +79,7 @@ export class NavigationMenuItemEntity
   @JoinColumn({ name: 'targetObjectMetadataId' })
   targetObjectMetadata: Relation<ObjectMetadataEntity> | null;
 
-  @Column({ nullable: false, type: 'text' })
+  @Column({ nullable: false, type: 'enum', enum: NavigationMenuItemType })
   type: NavigationMenuItemType;
 
   @Column({ nullable: true, type: 'text' })
