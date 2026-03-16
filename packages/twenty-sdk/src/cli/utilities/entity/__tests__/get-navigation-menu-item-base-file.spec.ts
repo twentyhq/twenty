@@ -46,9 +46,7 @@ describe('getNavigationMenuItemBaseFile', () => {
       targetObjectUniversalIdentifier: 'obj-uuid-123',
     });
 
-    expect(result).toContain(
-      "targetObjectUniversalIdentifier: 'obj-uuid-123'",
-    );
+    expect(result).toContain("targetObjectUniversalIdentifier: 'obj-uuid-123'");
     expect(result).not.toContain('// Link to an object:');
   });
 
