@@ -8,6 +8,7 @@ import { ApplicationRegistrationService } from 'src/engine/core-modules/applicat
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
 
 @Command({
   name: 'upgrade:1-20:seed-cli-application-registration',
@@ -27,15 +28,27 @@ export class SeedCliApplicationRegistrationCommand extends ActiveOrSuspendedWork
     super(workspaceRepository, twentyORMGlobalManager, dataSourceService);
   }
 
-  override async runOnWorkspace(): Promise<void> {
+  override async runOnWorkspace({
+    workspaceId: _,
+    options,
+  }: RunOnWorkspaceArgs): Promise<void> {
+    const dryRun = options.dryRun ?? false;
+
     if (this.hasRun) {
       return;
     }
 
-    this.hasRun = true;
+    if (dryRun) {
+      this.logger.log(
+        '[DRY RUN] Skipping CLI application registration seeding',
+      );
+      return;
+    }
 
     const result =
       await this.applicationRegistrationService.createCliRegistrationIfNotExists();
+
+    this.hasRun = true;
 
     if (result) {
       this.logger.log(

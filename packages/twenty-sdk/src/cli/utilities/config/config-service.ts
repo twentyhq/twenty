@@ -11,7 +11,6 @@ export type RemoteConfig = {
   accessToken?: string;
   refreshToken?: string;
   oauthClientId?: string;
-  oauthClientSecret?: string;
 };
 
 type PersistedConfig = {

@@ -8,7 +8,7 @@ import { fieldMetadataItemSchema } from '@/object-metadata/validation-schemas/fi
 import { AdvancedSettingsContentWrapperWithDot } from '@/settings/components/AdvancedSettingsContentWrapperWithDot';
 import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
-import { DATABASE_IDENTIFIER_MAXIMUM_LENGTH } from '@/settings/data-model/constants/DatabaseIdentifierMaximumLength';
+import { IDENTIFIER_MAX_CHAR_LENGTH } from 'twenty-shared/metadata';
 import { getErrorMessageFromError } from '@/settings/data-model/fields/forms/utils/errorMessages';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
@@ -202,7 +202,7 @@ export const SettingsDataModelFieldIconLabelForm = ({
                           readOnly={readonly}
                           disabled={!isNameEditEnabled}
                           fullWidth
-                          maxLength={DATABASE_IDENTIFIER_MAXIMUM_LENGTH}
+                          maxLength={IDENTIFIER_MAX_CHAR_LENGTH}
                           RightIcon={() =>
                             apiNameTooltipText && (
                               <>

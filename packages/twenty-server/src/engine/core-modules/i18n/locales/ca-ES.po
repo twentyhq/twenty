@@ -4035,11 +4035,6 @@ msgstr "El rol que estàs intentant modificar no es troba. Pot haver estat elimi
 msgid "The server address you entered is not allowed. Please use a public server address."
 msgstr ""
 
-#. js-lingui-id: H1tAJD
-#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-label.util.ts
-msgid "The singular and plural labels cannot be the same for an object"
-msgstr "Les etiquetes singulars i plurals no poden ser iguals per a un objecte"
-
 #. js-lingui-id: FOEWHl
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name.util.ts
 msgid "The singular and plural names cannot be the same for an object"
