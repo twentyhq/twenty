@@ -499,6 +499,7 @@ type Object {
   icon: String
   standardOverrides: ObjectStandardOverrides
   shortcut: String
+  color: String
   isCustom: Boolean!
   isRemote: Boolean!
   isActive: Boolean!
@@ -2245,6 +2246,7 @@ type MinimalObjectMetadata {
   labelSingular: String!
   labelPlural: String!
   icon: String
+  color: String
   isCustom: Boolean!
   isActive: Boolean!
   isSystem: Boolean!
@@ -3507,6 +3509,7 @@ input CreateObjectInput {
   description: String
   icon: String
   shortcut: String
+  color: String
   skipNameField: Boolean
   isRemote: Boolean
   primaryKeyColumnType: String
@@ -3534,6 +3537,7 @@ input UpdateObjectPayload {
   description: String
   icon: String
   shortcut: String
+  color: String
   isActive: Boolean
   labelIdentifierFieldMetadataId: UUID
   imageIdentifierFieldMetadataId: UUID

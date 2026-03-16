@@ -359,6 +359,7 @@ export interface Object {
     icon?: Scalars['String']
     standardOverrides?: ObjectStandardOverrides
     shortcut?: Scalars['String']
+    color?: Scalars['String']
     isCustom: Scalars['Boolean']
     isRemote: Scalars['Boolean']
     isActive: Scalars['Boolean']
@@ -1901,6 +1902,7 @@ export interface MinimalObjectMetadata {
     labelSingular: Scalars['String']
     labelPlural: Scalars['String']
     icon?: Scalars['String']
+    color?: Scalars['String']
     isCustom: Scalars['Boolean']
     isActive: Scalars['Boolean']
     isSystem: Scalars['Boolean']
@@ -3263,6 +3265,7 @@ export interface ObjectGenqlSelection{
     icon?: boolean | number
     standardOverrides?: ObjectStandardOverridesGenqlSelection
     shortcut?: boolean | number
+    color?: boolean | number
     isCustom?: boolean | number
     isRemote?: boolean | number
     isActive?: boolean | number
@@ -4900,6 +4903,7 @@ export interface MinimalObjectMetadataGenqlSelection{
     labelSingular?: boolean | number
     labelPlural?: boolean | number
     icon?: boolean | number
+    color?: boolean | number
     isCustom?: boolean | number
     isActive?: boolean | number
     isSystem?: boolean | number
@@ -6006,7 +6010,7 @@ export interface CreateOneObjectInput {
 /** The object to create */
 object: CreateObjectInput}
 
-export interface CreateObjectInput {nameSingular: Scalars['String'],namePlural: Scalars['String'],labelSingular: Scalars['String'],labelPlural: Scalars['String'],description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),shortcut?: (Scalars['String'] | null),skipNameField?: (Scalars['Boolean'] | null),isRemote?: (Scalars['Boolean'] | null),primaryKeyColumnType?: (Scalars['String'] | null),primaryKeyFieldMetadataSettings?: (Scalars['JSON'] | null),isLabelSyncedWithName?: (Scalars['Boolean'] | null)}
+export interface CreateObjectInput {nameSingular: Scalars['String'],namePlural: Scalars['String'],labelSingular: Scalars['String'],labelPlural: Scalars['String'],description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),shortcut?: (Scalars['String'] | null),color?: (Scalars['String'] | null),skipNameField?: (Scalars['Boolean'] | null),isRemote?: (Scalars['Boolean'] | null),primaryKeyColumnType?: (Scalars['String'] | null),primaryKeyFieldMetadataSettings?: (Scalars['JSON'] | null),isLabelSyncedWithName?: (Scalars['Boolean'] | null)}
 
 export interface DeleteOneObjectInput {
 /** The id of the record to delete. */
@@ -6016,7 +6020,7 @@ export interface UpdateOneObjectInput {update: UpdateObjectPayload,
 /** The id of the object to update */
 id: Scalars['UUID']}
 
-export interface UpdateObjectPayload {labelSingular?: (Scalars['String'] | null),labelPlural?: (Scalars['String'] | null),nameSingular?: (Scalars['String'] | null),namePlural?: (Scalars['String'] | null),description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),shortcut?: (Scalars['String'] | null),isActive?: (Scalars['Boolean'] | null),labelIdentifierFieldMetadataId?: (Scalars['UUID'] | null),imageIdentifierFieldMetadataId?: (Scalars['UUID'] | null),isLabelSyncedWithName?: (Scalars['Boolean'] | null)}
+export interface UpdateObjectPayload {labelSingular?: (Scalars['String'] | null),labelPlural?: (Scalars['String'] | null),nameSingular?: (Scalars['String'] | null),namePlural?: (Scalars['String'] | null),description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),shortcut?: (Scalars['String'] | null),color?: (Scalars['String'] | null),isActive?: (Scalars['Boolean'] | null),labelIdentifierFieldMetadataId?: (Scalars['UUID'] | null),imageIdentifierFieldMetadataId?: (Scalars['UUID'] | null),isLabelSyncedWithName?: (Scalars['Boolean'] | null)}
 
 export interface UpdateViewFieldInput {
 /** The id of the view field to update */

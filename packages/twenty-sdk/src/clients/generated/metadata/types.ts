@@ -1047,6 +1047,9 @@ export default {
             "shortcut": [
                 1
             ],
+            "color": [
+                1
+            ],
             "isCustom": [
                 6
             ],
@@ -4355,6 +4358,9 @@ export default {
                 1
             ],
             "icon": [
+                1
+            ],
+            "color": [
                 1
             ],
             "isCustom": [
@@ -8985,6 +8991,9 @@ export default {
             "shortcut": [
                 1
             ],
+            "color": [
+                1
+            ],
             "skipNameField": [
                 6
             ],
@@ -9043,6 +9052,9 @@ export default {
                 1
             ],
             "shortcut": [
+                1
+            ],
+            "color": [
                 1
             ],
             "isActive": [
