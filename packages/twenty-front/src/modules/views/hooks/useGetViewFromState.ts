@@ -1,4 +1,4 @@
-import { coreViewFromViewIdFamilySelector } from '@/views/states/selectors/coreViewFromViewIdFamilySelector';
+import { viewFromViewIdFamilySelector } from '@/views/states/selectors/viewFromViewIdFamilySelector';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 
@@ -7,9 +7,7 @@ export const useGetViewFromState = () => {
 
   const getViewFromState = useCallback(
     (viewId: string) => {
-      return store.get(
-        coreViewFromViewIdFamilySelector.selectorFamily({ viewId }),
-      );
+      return store.get(viewFromViewIdFamilySelector.selectorFamily({ viewId }));
     },
     [store],
   );

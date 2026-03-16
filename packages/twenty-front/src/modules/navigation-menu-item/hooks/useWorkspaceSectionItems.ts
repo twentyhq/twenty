@@ -10,8 +10,7 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { coreViewsSelector } from '@/views/states/selectors/coreViewsSelector';
-import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
+import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 import { isDefined } from 'twenty-shared/utils';
 
 import { useNavigationMenuItemsByFolder } from './useNavigationMenuItemsByFolder';
@@ -35,11 +34,9 @@ export const useWorkspaceSectionItems = (): FlatWorkspaceItem[] => {
   const { workspaceNavigationMenuItemsSorted } = useSortedNavigationMenuItems();
   const { workspaceNavigationMenuItemsByFolder } =
     useNavigationMenuItemsByFolder();
-  const coreViews = useAtomStateValue(coreViewsSelector);
+  const views = useAtomStateValue(viewsSelector);
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
-
-  const views = coreViews.map(convertCoreViewToView);
 
   const flatWorkspaceItems = workspaceNavigationMenuItems
     .filter((item) => !isDefined(item.folderId))

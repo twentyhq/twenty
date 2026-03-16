@@ -2,7 +2,7 @@ import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { coreViewFromViewIdFamilySelector } from '@/views/states/selectors/coreViewFromViewIdFamilySelector';
+import { viewFromViewIdFamilySelector } from '@/views/states/selectors/viewFromViewIdFamilySelector';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -23,7 +23,7 @@ export const useApplyCurrentViewFiltersToCurrentRecordFilters = () => {
 
   const applyCurrentViewFiltersToCurrentRecordFilters = useCallback(() => {
     const currentView = store.get(
-      coreViewFromViewIdFamilySelector.selectorFamily({
+      viewFromViewIdFamilySelector.selectorFamily({
         viewId: contextStoreCurrentViewId ?? '',
       }),
     );

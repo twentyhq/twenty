@@ -12,7 +12,7 @@ import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-e
 import { getMetadataRelatedMetadataNamesForValidation } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-related-metadata-names-for-validation.util';
 import { getMetadataRelatedMetadataNames } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-related-metadata-names.util';
 import { getMetadataSerializedRelationNames } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-serialized-relation-names.util';
-import { FIND_ALL_CORE_VIEWS_GRAPHQL_OPERATION } from 'src/engine/metadata-modules/view/constants/find-all-core-views-graphql-operation.constant';
+import { FIND_ALL_VIEWS_GRAPHQL_OPERATION } from 'src/engine/metadata-modules/view/constants/find-all-views-graphql-operation.constant';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -66,16 +66,16 @@ export class WorkspaceMigrationRunnerService {
       'flatViewFieldMaps',
       'flatViewFilterGroupMaps',
     ];
-    const shouldInvalidFindCoreViewsGraphqlCacheOperation =
+    const shouldInvalidateFindViewsGraphqlCacheOperation =
       viewRelatedFlatMapsKeys.some((key) => flatMapsKeysSet.has(key));
 
     if (
-      shouldInvalidFindCoreViewsGraphqlCacheOperation ||
+      shouldInvalidateFindViewsGraphqlCacheOperation ||
       shouldIncrementMetadataGraphqlSchemaVersion
     ) {
       asyncOperations.push(
         this.workspaceCacheStorageService.flushGraphQLOperation({
-          operationName: FIND_ALL_CORE_VIEWS_GRAPHQL_OPERATION,
+          operationName: FIND_ALL_VIEWS_GRAPHQL_OPERATION,
           workspaceId,
         }),
       );

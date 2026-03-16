@@ -7,16 +7,16 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 
 import { useApplyCurrentViewSortsToCurrentRecordSorts } from '@/views/hooks/useApplyCurrentViewSortsToCurrentRecordSorts';
-import { type CoreViewSortEssential } from '@/views/types/CoreViewSortEssential';
-import { type CoreViewWithRelations } from '@/views/types/CoreViewWithRelations';
+import { type ViewSortEssential } from '@/views/types/ViewSortEssential';
+import { type ViewWithRelations } from '@/views/types/ViewWithRelations';
 import { type View } from '@/views/types/View';
 import { type ViewSort } from '@/views/types/ViewSort';
 import { isDefined } from 'twenty-shared/utils';
 import { ViewSortDirection } from '~/generated-metadata/graphql';
 import { getJestMetadataAndApolloMocksAndCommandMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndCommandMenuWrapper';
-import { mockedCoreViews } from '~/testing/mock-data/generated/metadata/views/mock-views-data';
+import { mockedViews } from '~/testing/mock-data/generated/metadata/views/mock-views-data';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
-import { setTestCoreViewsInMetadataStore } from '~/testing/utils/setTestCoreViewsInMetadataStore';
+import { setTestViewsInMetadataStore } from '~/testing/utils/setTestViewsInMetadataStore';
 
 const mockObjectMetadataItemNameSingular = 'company';
 
@@ -40,19 +40,18 @@ describe('useApplyCurrentViewSortsToCurrentRecordSorts', () => {
   }
 
   const mockViewSort: ViewSort = {
-    __typename: 'ViewSort',
     id: 'sort-1',
     fieldMetadataId: mockFieldMetadataItem.id,
     direction: ViewSortDirection.ASC,
     viewId: 'view-1',
   };
 
-  const allCompaniesCoreView = mockedCoreViews.find(
+  const allCompaniesViewData = mockedViews.find(
     (v) => v.name === 'All Companies',
   )!;
-  const allCompaniesView = allCompaniesCoreView as unknown as View;
+  const allCompaniesView = allCompaniesViewData as unknown as View;
 
-  const mockCoreViewSort: CoreViewSortEssential = {
+  const mockViewSortData: ViewSortEssential = {
     id: 'sort-1',
     fieldMetadataId: mockFieldMetadataItem.id,
     direction: ViewSortDirection.ASC,
@@ -64,10 +63,10 @@ describe('useApplyCurrentViewSortsToCurrentRecordSorts', () => {
     viewSorts: [mockViewSort],
   } satisfies View;
 
-  const mockCoreView = {
-    ...allCompaniesCoreView,
-    viewSorts: [mockCoreViewSort],
-  } satisfies CoreViewWithRelations;
+  const mockViewWithRelations = {
+    ...allCompaniesViewData,
+    viewSorts: [mockViewSortData],
+  } satisfies ViewWithRelations;
 
   it('should apply sorts from current view', () => {
     const { result } = renderHook(
@@ -93,7 +92,7 @@ describe('useApplyCurrentViewSortsToCurrentRecordSorts', () => {
             mockObjectMetadataItemNameSingular,
           contextStoreCurrentViewId: mockView.id,
           onInitializeJotaiStore: (store) => {
-            setTestCoreViewsInMetadataStore(store, [mockCoreView]);
+            setTestViewsInMetadataStore(store, [mockViewWithRelations]);
           },
         }),
       },
@@ -105,7 +104,6 @@ describe('useApplyCurrentViewSortsToCurrentRecordSorts', () => {
 
     expect(result.current.currentRecordSorts).toEqual([
       {
-        __typename: 'ViewSort',
         id: mockViewSort.id,
         fieldMetadataId: mockViewSort.fieldMetadataId,
         direction: mockViewSort.direction,
@@ -156,7 +154,7 @@ describe('useApplyCurrentViewSortsToCurrentRecordSorts', () => {
 
   it('should handle view with empty sorts', () => {
     const viewWithNoSorts = {
-      ...mockCoreView,
+      ...mockViewWithRelations,
       viewSorts: [],
     };
 
@@ -182,7 +180,7 @@ describe('useApplyCurrentViewSortsToCurrentRecordSorts', () => {
           contextStoreCurrentObjectMetadataNameSingular:
             mockObjectMetadataItemNameSingular,
           onInitializeJotaiStore: (store) => {
-            setTestCoreViewsInMetadataStore(store, [viewWithNoSorts]);
+            setTestViewsInMetadataStore(store, [viewWithNoSorts]);
             store.set(
               contextStoreCurrentViewIdComponentState.atomFamily({
                 instanceId: 'instanceId',

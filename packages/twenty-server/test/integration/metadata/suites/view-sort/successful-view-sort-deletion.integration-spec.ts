@@ -2,11 +2,11 @@ import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-m
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
-import { createOneCoreViewSort } from 'test/integration/metadata/suites/view-sort/utils/create-one-core-view-sort.util';
-import { deleteOneCoreViewSort } from 'test/integration/metadata/suites/view-sort/utils/delete-one-core-view-sort.util';
-import { destroyOneCoreViewSort } from 'test/integration/metadata/suites/view-sort/utils/destroy-one-core-view-sort.util';
-import { createOneCoreView } from 'test/integration/metadata/suites/view/utils/create-one-core-view.util';
-import { destroyOneCoreView } from 'test/integration/metadata/suites/view/utils/destroy-one-core-view.util';
+import { createOneViewSort } from 'test/integration/metadata/suites/view-sort/utils/create-one-view-sort.util';
+import { deleteOneViewSort } from 'test/integration/metadata/suites/view-sort/utils/delete-one-view-sort.util';
+import { destroyOneViewSort } from 'test/integration/metadata/suites/view-sort/utils/destroy-one-view-sort.util';
+import { createOneView } from 'test/integration/metadata/suites/view/utils/create-one-view.util';
+import { destroyOneView } from 'test/integration/metadata/suites/view/utils/destroy-one-view.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import { FieldMetadataType, ViewType } from 'twenty-shared/types';
 
@@ -51,7 +51,7 @@ describe('View Sort deletion should succeed', () => {
 
     testFieldMetadataId = fieldMetadataId;
 
-    const { data: viewData } = await createOneCoreView({
+    const { data: viewData } = await createOneView({
       expectToFail: false,
       input: {
         name: 'Test View For View Sort Deletion',
@@ -61,13 +61,13 @@ describe('View Sort deletion should succeed', () => {
       },
     });
 
-    createdViewId = viewData?.createCoreView?.id;
+    createdViewId = viewData?.createView?.id;
     jestExpectToBeDefined(createdViewId);
   });
 
   afterAll(async () => {
     if (createdViewId) {
-      await destroyOneCoreView({
+      await destroyOneView({
         expectToFail: false,
         viewId: createdViewId,
       });
@@ -86,7 +86,7 @@ describe('View Sort deletion should succeed', () => {
   });
 
   it('should soft delete a view sort', async () => {
-    const { data: createData } = await createOneCoreViewSort({
+    const { data: createData } = await createOneViewSort({
       expectToFail: false,
       input: {
         viewId: createdViewId,
@@ -95,19 +95,19 @@ describe('View Sort deletion should succeed', () => {
       },
     });
 
-    const viewSortId = createData?.createCoreViewSort?.id;
+    const viewSortId = createData?.createViewSort?.id;
 
     jestExpectToBeDefined(viewSortId);
 
-    const { data: deleteData } = await deleteOneCoreViewSort({
+    const { data: deleteData } = await deleteOneViewSort({
       expectToFail: false,
       input: { id: viewSortId },
     });
 
-    expect(deleteData.deleteCoreViewSort).toBe(true);
+    expect(deleteData.deleteViewSort).toBe(true);
 
     // Clean up
-    await destroyOneCoreViewSort({
+    await destroyOneViewSort({
       expectToFail: false,
       input: { id: viewSortId },
     });

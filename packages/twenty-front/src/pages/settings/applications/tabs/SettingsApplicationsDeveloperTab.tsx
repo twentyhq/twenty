@@ -53,6 +53,10 @@ const SOURCE_TYPE_BADGE_CONFIG: Record<
     label: 'Internal',
     color: 'green',
   },
+  [ApplicationRegistrationSourceType.OAUTH_ONLY]: {
+    label: 'OAuth',
+    color: 'blue',
+  },
 };
 
 export const SettingsApplicationsDeveloperTab = () => {

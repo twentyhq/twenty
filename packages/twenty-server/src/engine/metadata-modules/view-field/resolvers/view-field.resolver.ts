@@ -77,7 +77,7 @@ export class ViewFieldResolver {
 
   @Query(() => [ViewFieldDTO])
   @UseGuards(NoPermissionGuard)
-  async getCoreViewFields(
+  async getViewFields(
     @Args('viewId', { type: () => String }) viewId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<ViewFieldEntity[]> {
@@ -86,7 +86,7 @@ export class ViewFieldResolver {
 
   @Query(() => ViewFieldDTO, { nullable: true })
   @UseGuards(NoPermissionGuard)
-  async getCoreViewField(
+  async getViewField(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<ViewFieldEntity | null> {
@@ -95,7 +95,7 @@ export class ViewFieldResolver {
 
   @Mutation(() => ViewFieldDTO)
   @UseGuards(UpdateViewFieldPermissionGuard)
-  async updateCoreViewField(
+  async updateViewField(
     @Args('input') updateViewFieldInput: UpdateViewFieldInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ViewFieldDTO> {
@@ -107,7 +107,7 @@ export class ViewFieldResolver {
 
   @Mutation(() => ViewFieldDTO)
   @UseGuards(CreateViewFieldPermissionGuard)
-  async createCoreViewField(
+  async createViewField(
     @Args('input') createViewFieldInput: CreateViewFieldInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ViewFieldDTO> {
@@ -119,7 +119,7 @@ export class ViewFieldResolver {
 
   @Mutation(() => [ViewFieldDTO])
   @UseGuards(CreateViewFieldPermissionGuard)
-  async createManyCoreViewFields(
+  async createManyViewFields(
     @Args('inputs', { type: () => [CreateViewFieldInput] })
     createViewFieldInputs: CreateViewFieldInput[],
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -132,7 +132,7 @@ export class ViewFieldResolver {
 
   @Mutation(() => ViewFieldDTO)
   @UseGuards(DeleteViewFieldPermissionGuard)
-  async deleteCoreViewField(
+  async deleteViewField(
     @Args('input') deleteViewFieldInput: DeleteViewFieldInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ViewFieldDTO> {
@@ -144,7 +144,7 @@ export class ViewFieldResolver {
 
   @Mutation(() => ViewFieldDTO)
   @UseGuards(DestroyViewFieldPermissionGuard)
-  async destroyCoreViewField(
+  async destroyViewField(
     @Args('input') destroyViewFieldInput: DestroyViewFieldInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ViewFieldDTO> {

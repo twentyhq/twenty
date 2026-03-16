@@ -10,7 +10,7 @@ import { mockedClientConfig } from '~/testing/mock-data/config';
 import { mockedNoteRecords } from '~/testing/mock-data/generated/data/notes/mock-notes-data';
 import { mockedPersonRecords } from '~/testing/mock-data/generated/data/people/mock-people-data';
 import { mockedWorkspaceMemberRecords } from '~/testing/mock-data/generated/data/workspaceMembers/mock-workspaceMembers-data';
-import { mockedCoreViews } from '~/testing/mock-data/generated/metadata/views/mock-views-data';
+import { mockedViews } from '~/testing/mock-data/generated/metadata/views/mock-views-data';
 import { mockedPublicWorkspaceDataBySubdomain } from '~/testing/mock-data/publicWorkspaceDataBySubdomain';
 import { mockedUserData } from '~/testing/mock-data/users';
 
@@ -180,17 +180,15 @@ export const graphqlMocks = {
         data: { minimalMetadata: mockedMinimalMetadata },
       });
     }),
-    metadataGraphql.query('FindAllCoreViews', () => {
+    metadataGraphql.query('FindAllViews', () => {
       return HttpResponse.json({
-        data: { getCoreViews: mockedCoreViews },
+        data: { getViews: mockedViews },
       });
     }),
-    metadataGraphql.query('FindFieldsWidgetCoreViews', () => {
+    metadataGraphql.query('FindFieldsWidgetViews', () => {
       return HttpResponse.json({
         data: {
-          getCoreViews: mockedCoreViews.filter(
-            (view) => view.type === 'FIELDS_WIDGET',
-          ),
+          getViews: mockedViews.filter((view) => view.type === 'FIELDS_WIDGET'),
         },
       });
     }),
@@ -323,7 +321,7 @@ export const graphqlMocks = {
       const objectMetadataId = variables.filter?.objectMetadataId?.eq;
       const viewType = variables.filter?.type?.eq;
 
-      const filtered = mockedCoreViews.filter(
+      const filtered = mockedViews.filter(
         (view) =>
           (isDefined(objectMetadataId)
             ? view?.objectMetadataId === objectMetadataId
@@ -369,7 +367,7 @@ export const graphqlMocks = {
     graphql.query('FindManyViewFields', ({ variables }) => {
       const viewId = variables.filter.view.eq;
 
-      const matchingView = mockedCoreViews.find((view) => view.id === viewId);
+      const matchingView = mockedViews.find((view) => view.id === viewId);
       const viewFields = matchingView?.viewFields ?? [];
 
       return HttpResponse.json({

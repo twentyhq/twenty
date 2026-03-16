@@ -2,10 +2,10 @@ import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-m
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
-import { createOneCoreViewSort } from 'test/integration/metadata/suites/view-sort/utils/create-one-core-view-sort.util';
-import { destroyOneCoreViewSort } from 'test/integration/metadata/suites/view-sort/utils/destroy-one-core-view-sort.util';
-import { createOneCoreView } from 'test/integration/metadata/suites/view/utils/create-one-core-view.util';
-import { destroyOneCoreView } from 'test/integration/metadata/suites/view/utils/destroy-one-core-view.util';
+import { createOneViewSort } from 'test/integration/metadata/suites/view-sort/utils/create-one-view-sort.util';
+import { destroyOneViewSort } from 'test/integration/metadata/suites/view-sort/utils/destroy-one-view-sort.util';
+import { createOneView } from 'test/integration/metadata/suites/view/utils/create-one-view.util';
+import { destroyOneView } from 'test/integration/metadata/suites/view/utils/destroy-one-view.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import { FieldMetadataType, ViewType } from 'twenty-shared/types';
 
@@ -51,7 +51,7 @@ describe('View Sort creation should succeed', () => {
 
     testFieldMetadataId = fieldMetadataId;
 
-    const { data: viewData } = await createOneCoreView({
+    const { data: viewData } = await createOneView({
       expectToFail: false,
       input: {
         name: 'Test View For View Sort Creation',
@@ -61,13 +61,13 @@ describe('View Sort creation should succeed', () => {
       },
     });
 
-    createdViewId = viewData?.createCoreView?.id;
+    createdViewId = viewData?.createView?.id;
     jestExpectToBeDefined(createdViewId);
   });
 
   afterAll(async () => {
     if (createdViewId) {
-      await destroyOneCoreView({
+      await destroyOneView({
         expectToFail: false,
         viewId: createdViewId,
       });
@@ -87,7 +87,7 @@ describe('View Sort creation should succeed', () => {
 
   afterEach(async () => {
     if (createdViewSortId) {
-      await destroyOneCoreViewSort({
+      await destroyOneViewSort({
         expectToFail: false,
         input: { id: createdViewSortId },
       });
@@ -96,7 +96,7 @@ describe('View Sort creation should succeed', () => {
   });
 
   it('should create a view sort with default direction (ASC)', async () => {
-    const { data } = await createOneCoreViewSort({
+    const { data } = await createOneViewSort({
       expectToFail: false,
       input: {
         viewId: createdViewId,
@@ -104,9 +104,9 @@ describe('View Sort creation should succeed', () => {
       },
     });
 
-    createdViewSortId = data?.createCoreViewSort?.id;
+    createdViewSortId = data?.createViewSort?.id;
 
-    expect(data.createCoreViewSort).toMatchObject({
+    expect(data.createViewSort).toMatchObject({
       id: expect.any(String),
       viewId: createdViewId,
       fieldMetadataId: testFieldMetadataId,
@@ -115,7 +115,7 @@ describe('View Sort creation should succeed', () => {
   });
 
   it('should create a view sort with ASC direction', async () => {
-    const { data } = await createOneCoreViewSort({
+    const { data } = await createOneViewSort({
       expectToFail: false,
       input: {
         viewId: createdViewId,
@@ -124,9 +124,9 @@ describe('View Sort creation should succeed', () => {
       },
     });
 
-    createdViewSortId = data?.createCoreViewSort?.id;
+    createdViewSortId = data?.createViewSort?.id;
 
-    expect(data.createCoreViewSort).toMatchObject({
+    expect(data.createViewSort).toMatchObject({
       id: expect.any(String),
       viewId: createdViewId,
       fieldMetadataId: testFieldMetadataId,
@@ -135,7 +135,7 @@ describe('View Sort creation should succeed', () => {
   });
 
   it('should create a view sort with DESC direction', async () => {
-    const { data } = await createOneCoreViewSort({
+    const { data } = await createOneViewSort({
       expectToFail: false,
       input: {
         viewId: createdViewId,
@@ -144,9 +144,9 @@ describe('View Sort creation should succeed', () => {
       },
     });
 
-    createdViewSortId = data?.createCoreViewSort?.id;
+    createdViewSortId = data?.createViewSort?.id;
 
-    expect(data.createCoreViewSort).toMatchObject({
+    expect(data.createViewSort).toMatchObject({
       id: expect.any(String),
       viewId: createdViewId,
       fieldMetadataId: testFieldMetadataId,

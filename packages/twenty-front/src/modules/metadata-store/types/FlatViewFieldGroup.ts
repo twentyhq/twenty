@@ -1,6 +1,3 @@
-import { type CoreViewFieldGroupEssential } from '@/views/types/CoreViewWithRelations';
+import { type ViewFieldGroupEssential } from '@/views/types/ViewWithRelations';
 
-export type FlatViewFieldGroup = Omit<
-  CoreViewFieldGroupEssential,
-  'viewFields'
->;
+export type FlatViewFieldGroup = Omit<ViewFieldGroupEssential, 'viewFields'>;

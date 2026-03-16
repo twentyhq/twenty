@@ -1,7 +1,7 @@
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
-import { createOneCoreView } from 'test/integration/metadata/suites/view/utils/create-one-core-view.util';
+import { createOneView } from 'test/integration/metadata/suites/view/utils/create-one-view.util';
 
 export type ViewFieldGroupTestSetup = {
   testViewId: string;
@@ -27,9 +27,9 @@ export const setupViewFieldGroupTest =
 
     const {
       data: {
-        createCoreView: { id: testViewId },
+        createView: { id: testViewId },
       },
-    } = await createOneCoreView({
+    } = await createOneView({
       input: {
         icon: 'icon123',
         objectMetadataId,

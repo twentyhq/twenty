@@ -4,7 +4,6 @@ import { type AggregateOperations } from '@/object-record/record-table/constants
 import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 
 export type ViewField = {
-  __typename: 'ViewField';
   id: string;
   viewId?: string;
   fieldMetadataId: string;
@@ -12,8 +11,9 @@ export type ViewField = {
   isVisible: boolean;
   size: number;
   aggregateOperation?: AggregateOperations | null;
+  viewFieldGroupId?: string | null;
   isOverridden: boolean;
-  definition:
+  definition?:
     | ColumnDefinition<FieldMetadata>
     | RecordBoardFieldDefinition<FieldMetadata>;
 };

@@ -3,8 +3,8 @@ import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-m
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
-import { createManyCoreViewFields } from 'test/integration/metadata/suites/view-field/utils/create-many-core-view-fields.util';
-import { createOneCoreView } from 'test/integration/metadata/suites/view/utils/create-one-core-view.util';
+import { createManyViewFields } from 'test/integration/metadata/suites/view-field/utils/create-many-view-fields.util';
+import { createOneView } from 'test/integration/metadata/suites/view/utils/create-one-view.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -78,9 +78,9 @@ describe('View Field Resolver - Failing Create Many Operations', () => {
 
     const {
       data: {
-        createCoreView: { id: testViewId },
+        createView: { id: testViewId },
       },
-    } = await createOneCoreView({
+    } = await createOneView({
       input: {
         icon: 'icon123',
         objectMetadataId,
@@ -140,7 +140,7 @@ describe('View Field Resolver - Failing Create Many Operations', () => {
       },
     ];
 
-    const { errors } = await createManyCoreViewFields({
+    const { errors } = await createManyViewFields({
       inputs,
       expectToFail: true,
     });

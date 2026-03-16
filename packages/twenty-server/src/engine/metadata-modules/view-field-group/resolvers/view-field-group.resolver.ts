@@ -67,7 +67,7 @@ export class ViewFieldGroupResolver {
 
   @Query(() => [ViewFieldGroupDTO])
   @UseGuards(NoPermissionGuard)
-  async getCoreViewFieldGroups(
+  async getViewFieldGroups(
     @Args('viewId', { type: () => String }) viewId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<ViewFieldGroupEntity[]> {
@@ -76,7 +76,7 @@ export class ViewFieldGroupResolver {
 
   @Query(() => ViewFieldGroupDTO, { nullable: true })
   @UseGuards(NoPermissionGuard)
-  async getCoreViewFieldGroup(
+  async getViewFieldGroup(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<ViewFieldGroupEntity | null> {
@@ -85,7 +85,7 @@ export class ViewFieldGroupResolver {
 
   @Mutation(() => ViewFieldGroupDTO)
   @UseGuards(NoPermissionGuard)
-  async updateCoreViewFieldGroup(
+  async updateViewFieldGroup(
     @Args('input') updateViewFieldGroupInput: UpdateViewFieldGroupInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ViewFieldGroupDTO> {
@@ -97,7 +97,7 @@ export class ViewFieldGroupResolver {
 
   @Mutation(() => ViewFieldGroupDTO)
   @UseGuards(NoPermissionGuard)
-  async createCoreViewFieldGroup(
+  async createViewFieldGroup(
     @Args('input')
     createViewFieldGroupInput: CreateViewFieldGroupInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -110,7 +110,7 @@ export class ViewFieldGroupResolver {
 
   @Mutation(() => [ViewFieldGroupDTO])
   @UseGuards(NoPermissionGuard)
-  async createManyCoreViewFieldGroups(
+  async createManyViewFieldGroups(
     @Args('inputs', { type: () => [CreateViewFieldGroupInput] })
     createViewFieldGroupInputs: CreateViewFieldGroupInput[],
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -123,7 +123,7 @@ export class ViewFieldGroupResolver {
 
   @Mutation(() => ViewFieldGroupDTO)
   @UseGuards(NoPermissionGuard)
-  async deleteCoreViewFieldGroup(
+  async deleteViewFieldGroup(
     @Args('input') deleteViewFieldGroupInput: DeleteViewFieldGroupInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ViewFieldGroupDTO> {
@@ -135,7 +135,7 @@ export class ViewFieldGroupResolver {
 
   @Mutation(() => ViewFieldGroupDTO)
   @UseGuards(NoPermissionGuard)
-  async destroyCoreViewFieldGroup(
+  async destroyViewFieldGroup(
     @Args('input')
     destroyViewFieldGroupInput: DestroyViewFieldGroupInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,

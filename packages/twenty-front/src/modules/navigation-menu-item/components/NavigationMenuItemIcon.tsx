@@ -31,7 +31,7 @@ export const NavigationMenuItemIcon = ({
     navigationMenuItem.itemType === NavigationMenuItemType.RECORD;
   const isViewWithOverlay =
     navigationMenuItem.itemType === NavigationMenuItemType.VIEW &&
-    navigationMenuItem.viewKey !== ViewKey.Index;
+    navigationMenuItem.viewKey !== ViewKey.INDEX;
 
   const objectMetadataItem = objectMetadataItems.find(
     (item) => item.nameSingular === navigationMenuItem.objectNameSingular,

@@ -16,7 +16,7 @@ import {
 import { mockedUserData } from '~/testing/mock-data/users';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
-import { setTestCoreViewsInMetadataStore } from '~/testing/utils/setTestCoreViewsInMetadataStore';
+import { setTestViewsInMetadataStore } from '~/testing/utils/setTestViewsInMetadataStore';
 import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
 
 const Wrapper = ({ children }: { children: ReactNode }) =>
@@ -43,7 +43,7 @@ const renderHooks = ({
 
       useEffect(() => {
         if (withExistingView) {
-          setTestCoreViewsInMetadataStore(jotaiStore, [
+          setTestViewsInMetadataStore(jotaiStore, [
             {
               id: 'viewId',
               name: 'Test View',
@@ -68,7 +68,7 @@ const renderHooks = ({
             },
           ]);
         } else {
-          setTestCoreViewsInMetadataStore(jotaiStore, []);
+          setTestViewsInMetadataStore(jotaiStore, []);
         }
 
         if (withCurrentUser) {

@@ -8,7 +8,7 @@ import { useSetLastVisitedViewForObjectMetadataNamePlural } from '@/navigation/h
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-import { coreViewFromViewIdFamilySelector } from '@/views/states/selectors/coreViewFromViewIdFamilySelector';
+import { viewFromViewIdFamilySelector } from '@/views/states/selectors/viewFromViewIdFamilySelector';
 import { useEffect } from 'react';
 
 type MainContextStoreProviderEffectProps = {
@@ -52,7 +52,7 @@ export const MainContextStoreProviderEffect = ({
     MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
 
-  const view = useAtomFamilySelectorValue(coreViewFromViewIdFamilySelector, {
+  const view = useAtomFamilySelectorValue(viewFromViewIdFamilySelector, {
     viewId: viewId ?? '',
   });
 

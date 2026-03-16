@@ -4,8 +4,8 @@ import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-m
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
-import { createOneCoreView } from 'test/integration/metadata/suites/view/utils/create-one-core-view.util';
-import { findOneCoreView } from 'test/integration/metadata/suites/view/utils/find-one-core-view.util';
+import { createOneView } from 'test/integration/metadata/suites/view/utils/create-one-view.util';
+import { findOneView } from 'test/integration/metadata/suites/view/utils/find-one-view.util';
 import { generateRecordName } from 'test/integration/utils/generate-record-name';
 import { FieldMetadataType, ViewType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -37,20 +37,20 @@ describe('calendar-field-deactivation-deletes-views', () => {
 
   const verifyViewExists = async (viewId: string, shouldExist: boolean) => {
     const {
-      data: { getCoreView },
-    } = await findOneCoreView({
+      data: { getView },
+    } = await findOneView({
       viewId,
       gqlFields: VIEW_WITH_CALENDAR_FIELDS,
       expectToFail: false,
     });
 
     if (shouldExist) {
-      expect(isDefined(getCoreView)).toBe(true);
+      expect(isDefined(getView)).toBe(true);
     } else {
-      expect(getCoreView).toBeNull();
+      expect(getView).toBeNull();
     }
 
-    return getCoreView;
+    return getView;
   };
 
   const deactivateFieldAndVerify = async (fieldId: string) => {
@@ -118,8 +118,8 @@ describe('calendar-field-deactivation-deletes-views', () => {
     });
 
     const {
-      data: { createCoreView: viewWithCalendar },
-    } = await createOneCoreView({
+      data: { createView: viewWithCalendar },
+    } = await createOneView({
       input: {
         name: generateRecordName('Calendar View With Date Field'),
         objectMetadataId,
@@ -133,8 +133,8 @@ describe('calendar-field-deactivation-deletes-views', () => {
     });
 
     const {
-      data: { createCoreView: viewWithoutCalendar },
-    } = await createOneCoreView({
+      data: { createView: viewWithoutCalendar },
+    } = await createOneView({
       input: {
         name: generateRecordName('Table View Without Calendar'),
         objectMetadataId,
@@ -201,8 +201,8 @@ describe('calendar-field-deactivation-deletes-views', () => {
 
   it('should delete multiple views when they all use the same field as calendarFieldMetadataId', async () => {
     const {
-      data: { createCoreView: secondViewWithCalendar },
-    } = await createOneCoreView({
+      data: { createView: secondViewWithCalendar },
+    } = await createOneView({
       input: {
         name: generateRecordName('Second Calendar View'),
         objectMetadataId: testSetup.objectMetadataId,
@@ -228,8 +228,8 @@ describe('calendar-field-deactivation-deletes-views', () => {
 
   it('should handle deactivation when views have different calendar layouts on same field', async () => {
     const {
-      data: { createCoreView: viewWithDayLayout },
-    } = await createOneCoreView({
+      data: { createView: viewWithDayLayout },
+    } = await createOneView({
       input: {
         name: generateRecordName('Calendar View With Day Layout'),
         objectMetadataId: testSetup.objectMetadataId,
@@ -243,8 +243,8 @@ describe('calendar-field-deactivation-deletes-views', () => {
     });
 
     const {
-      data: { createCoreView: viewWithMonthLayout },
-    } = await createOneCoreView({
+      data: { createView: viewWithMonthLayout },
+    } = await createOneView({
       input: {
         name: generateRecordName('Calendar View With Month Layout'),
         objectMetadataId: testSetup.objectMetadataId,
@@ -280,8 +280,8 @@ describe('calendar-field-deactivation-deletes-views', () => {
       });
 
     const {
-      data: { createCoreView: kanbanViewWithSameObject },
-    } = await createOneCoreView({
+      data: { createView: kanbanViewWithSameObject },
+    } = await createOneView({
       input: {
         name: generateRecordName('Kanban View'),
         objectMetadataId: testSetup.objectMetadataId,

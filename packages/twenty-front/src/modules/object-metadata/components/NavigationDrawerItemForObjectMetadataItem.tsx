@@ -82,7 +82,7 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
 
   const isViewWithCustomName =
     isView &&
-    navigationMenuItem?.viewKey !== ViewKey.Index &&
+    navigationMenuItem?.viewKey !== ViewKey.INDEX &&
     isDefined(navigationMenuItem?.labelIdentifier);
 
   const label = isRecord

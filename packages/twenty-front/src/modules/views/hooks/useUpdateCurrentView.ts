@@ -7,17 +7,17 @@ import { useLoadRecordIndexStates } from '@/object-record/record-index/hooks/use
 import { recordIndexViewTypeState } from '@/object-record/record-index/states/recordIndexViewTypeState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
-import { coreViewFromViewIdFamilySelector } from '@/views/states/selectors/coreViewFromViewIdFamilySelector';
+import { viewFromViewIdFamilySelector } from '@/views/states/selectors/viewFromViewIdFamilySelector';
 import { type GraphQLView } from '@/views/types/GraphQLView';
 import { type View } from '@/views/types/View';
 import { type ViewGroup } from '@/views/types/ViewGroup';
 import { type ViewType } from '@/views/types/ViewType';
-import { convertUpdateViewInputToCore } from '@/views/utils/convertUpdateViewInputToCore';
+import { convertUpdateViewInputToGql } from '@/views/utils/convertUpdateViewInputToGql';
 import { useCallback, useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 import { useMutation } from '@apollo/client/react';
-import { UpdateCoreViewDocument } from '~/generated-metadata/graphql';
+import { UpdateViewDocument } from '~/generated-metadata/graphql';
 
 export const useUpdateCurrentView = () => {
   const { canPersistChanges } = useCanPersistViewChanges();
@@ -30,7 +30,7 @@ export const useUpdateCurrentView = () => {
 
   const store = useStore();
 
-  const [updateOneCoreView] = useMutation(UpdateCoreViewDocument);
+  const [updateOneView] = useMutation(UpdateViewDocument);
 
   const getViewGroupsToCreateAtViewUpdate = useMemo(() => {
     return ({
@@ -61,7 +61,6 @@ export const useUpdateCurrentView = () => {
                 (option: { value: string }, index: number) =>
                   ({
                     id: v4(),
-                    __typename: 'ViewGroup',
                     fieldValue: option.value,
                     isVisible: true,
                     position: index,
@@ -75,7 +74,6 @@ export const useUpdateCurrentView = () => {
             )?.isNullable === true
           ) {
             viewGroupsToCreate.push({
-              __typename: 'ViewGroup',
               id: v4(),
               fieldValue: '',
               position: viewGroupsToCreate.length,
@@ -98,7 +96,7 @@ export const useUpdateCurrentView = () => {
       const currentViewId = store.get(currentViewIdCallbackState);
 
       const currentView = store.get(
-        coreViewFromViewIdFamilySelector.selectorFamily({
+        viewFromViewIdFamilySelector.selectorFamily({
           viewId: currentViewId ?? '',
         }),
       );
@@ -108,9 +106,9 @@ export const useUpdateCurrentView = () => {
       }
 
       if (isDefined(currentViewId)) {
-        const input = convertUpdateViewInputToCore(view);
+        const input = convertUpdateViewInputToGql(view);
 
-        await updateOneCoreView({
+        await updateOneView({
           variables: {
             id: currentViewId,
             input,
@@ -150,7 +148,7 @@ export const useUpdateCurrentView = () => {
       objectMetadataItem,
       setRecordIndexViewType,
       store,
-      updateOneCoreView,
+      updateOneView,
     ],
   );
 
