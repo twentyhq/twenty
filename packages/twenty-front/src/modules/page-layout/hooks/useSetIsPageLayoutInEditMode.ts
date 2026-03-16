@@ -1,4 +1,4 @@
-import { isLayoutCustomizationActiveState } from '@/app/states/isLayoutCustomizationActiveState';
+import { isLayoutCustomizationModeEnabledState } from '@/app/states/isLayoutCustomizationModeEnabledState';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreIsPageInEditModeComponentState } from '@/context-store/states/contextStoreIsPageInEditModeComponentState';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
@@ -66,8 +66,8 @@ export const useSetIsPageLayoutInEditMode = (pageLayoutIdFromProps: string) => {
 
   const setIsPageLayoutInEditMode = useCallback(
     (value: boolean) => {
-      const isLayoutCustomizationActive = store.get(
-        isLayoutCustomizationActiveState.atom,
+      const isLayoutCustomizationModeEnabled = store.get(
+        isLayoutCustomizationModeEnabledState.atom,
       );
 
       const pageLayoutPersisted = store.get(
@@ -79,7 +79,7 @@ export const useSetIsPageLayoutInEditMode = (pageLayoutIdFromProps: string) => {
       const isDashboardPageLayout =
         pageLayoutPersisted?.type === PageLayoutType.DASHBOARD;
 
-      if (value && isLayoutCustomizationActive && isDashboardPageLayout) {
+      if (value && isLayoutCustomizationModeEnabled && isDashboardPageLayout) {
         return;
       }
 

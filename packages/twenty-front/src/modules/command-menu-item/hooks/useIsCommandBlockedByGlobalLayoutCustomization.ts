@@ -1,15 +1,15 @@
-import { isLayoutCustomizationActiveState } from '@/app/states/isLayoutCustomizationActiveState';
+import { isLayoutCustomizationModeEnabledState } from '@/app/states/isLayoutCustomizationModeEnabledState';
 import { type CommandMenuItemConfig } from '@/command-menu-item/types/CommandMenuItemConfig';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const useIsCommandBlockedByGlobalLayoutCustomization = (
   commandMenuItemConfig: CommandMenuItemConfig | null,
 ) => {
-  const isLayoutCustomizationActive = useAtomStateValue(
-    isLayoutCustomizationActiveState,
+  const isLayoutCustomizationModeEnabled = useAtomStateValue(
+    isLayoutCustomizationModeEnabledState,
   );
 
-  if (!isLayoutCustomizationActive) {
+  if (!isLayoutCustomizationModeEnabled) {
     return false;
   }
 

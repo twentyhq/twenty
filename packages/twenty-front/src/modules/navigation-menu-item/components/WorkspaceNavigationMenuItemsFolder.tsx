@@ -34,7 +34,7 @@ import { NavigationDropTargetContext } from '@/navigation-menu-item/contexts/Nav
 import { NavigationMenuItemDragContext } from '@/navigation-menu-item/contexts/NavigationMenuItemDragContext';
 import { SortableDropTargetRefContext } from '@/navigation-menu-item/contexts/SortableDropTargetRefContext';
 import { type NavigationMenuItemClickParams } from '@/navigation-menu-item/hooks/useWorkspaceSectionItems';
-import { isLayoutCustomizationActiveState } from '@/app/states/isLayoutCustomizationActiveState';
+import { isLayoutCustomizationModeEnabledState } from '@/app/states/isLayoutCustomizationModeEnabledState';
 import { getDndKitDropTargetId } from '@/navigation-menu-item/utils/getDndKitDropTargetId';
 import { type ProcessedNavigationMenuItem } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
@@ -98,8 +98,8 @@ export const WorkspaceNavigationMenuItemsFolder = ({
   selectedNavigationMenuItemId = null,
   isDragging = false,
 }: WorkspaceNavigationMenuItemsFolderProps) => {
-  const isLayoutCustomizationActive = useAtomStateValue(
-    isLayoutCustomizationActiveState,
+  const isLayoutCustomizationModeEnabled = useAtomStateValue(
+    isLayoutCustomizationModeEnabledState,
   );
   const { theme } = useContext(ThemeContext);
   const { getIcon } = useIcons();
@@ -114,7 +114,7 @@ export const WorkspaceNavigationMenuItemsFolder = ({
     addMenuItemInsertionContextState,
   );
 
-  const folderContentLengthForTree = isLayoutCustomizationActive
+  const folderContentLengthForTree = isLayoutCustomizationModeEnabled
     ? navigationMenuItems.length + 1
     : navigationMenuItems.length;
 
@@ -127,7 +127,7 @@ export const WorkspaceNavigationMenuItemsFolder = ({
   };
 
   const shouldUseEditModeClick =
-    isLayoutCustomizationActive && isDefined(onEditModeClick);
+    isLayoutCustomizationModeEnabled && isDefined(onEditModeClick);
   const handleClick = shouldUseEditModeClick
     ? (e?: React.MouseEvent) => {
         e?.stopPropagation();
@@ -160,7 +160,7 @@ export const WorkspaceNavigationMenuItemsFolder = ({
   const isDragOverFolderHeader =
     !isForbiddenDropTarget && activeDropTargetId === folderHeaderSlotId;
   const isCompact =
-    isLayoutCustomizationActive || navigationMenuItems.length === 0;
+    isLayoutCustomizationModeEnabled || navigationMenuItems.length === 0;
 
   const headerItem = (
     <NavigationDrawerItem
@@ -246,7 +246,8 @@ export const WorkspaceNavigationMenuItemsFolder = ({
                     index={index}
                     group={folderContentDroppableId}
                     disabled={
-                      !isLayoutCustomizationActive || folderContentDropDisabled
+                      !isLayoutCustomizationModeEnabled ||
+                      folderContentDropDisabled
                     }
                   >
                     <WorkspaceNavigationMenuItemFolderSubItem
@@ -280,7 +281,7 @@ export const WorkspaceNavigationMenuItemsFolder = ({
                     navigationMenuItems.length,
                   )}
                 />
-                {isLayoutCustomizationActive && (
+                {isLayoutCustomizationModeEnabled && (
                   <NavigationDrawerSubItem
                     label={t`Add menu item`}
                     Icon={IconPlus}

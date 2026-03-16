@@ -1,7 +1,7 @@
 import { useExecuteTasksOnAnyLocationChange } from '@/app/hooks/useExecuteTasksOnAnyLocationChange';
 import { currentPageLayoutIdState } from '@/page-layout/states/currentPageLayoutIdState';
 import { isDashboardInEditModeComponentState } from '@/page-layout/states/isDashboardInEditModeComponentState';
-import { isLayoutCustomizationActiveState } from '@/app/states/isLayoutCustomizationActiveState';
+import { isLayoutCustomizationModeEnabledState } from '@/app/states/isLayoutCustomizationModeEnabledState';
 import { act, renderHook } from '@testing-library/react';
 import { createStore, Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
@@ -38,7 +38,7 @@ describe('useExecuteTasksOnAnyLocationChange', () => {
       }),
       true,
     );
-    store.set(isLayoutCustomizationActiveState.atom, false);
+    store.set(isLayoutCustomizationModeEnabledState.atom, false);
 
     const { result } = renderHook(() => useExecuteTasksOnAnyLocationChange(), {
       wrapper,
@@ -70,7 +70,7 @@ describe('useExecuteTasksOnAnyLocationChange', () => {
       }),
       true,
     );
-    store.set(isLayoutCustomizationActiveState.atom, true);
+    store.set(isLayoutCustomizationModeEnabledState.atom, true);
 
     const { result } = renderHook(() => useExecuteTasksOnAnyLocationChange(), {
       wrapper,

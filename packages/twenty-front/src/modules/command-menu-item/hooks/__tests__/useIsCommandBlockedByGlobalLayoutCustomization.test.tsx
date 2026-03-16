@@ -1,4 +1,4 @@
-import { isLayoutCustomizationActiveState } from '@/app/states/isLayoutCustomizationActiveState';
+import { isLayoutCustomizationModeEnabledState } from '@/app/states/isLayoutCustomizationModeEnabledState';
 import { useIsCommandBlockedByGlobalLayoutCustomization } from '@/command-menu-item/hooks/useIsCommandBlockedByGlobalLayoutCustomization';
 import { type CommandMenuItemConfig } from '@/command-menu-item/types/CommandMenuItemConfig';
 import { CommandMenuItemScope } from '@/command-menu-item/types/CommandMenuItemScope';
@@ -36,7 +36,7 @@ describe('useIsCommandBlockedByGlobalLayoutCustomization', () => {
     const wrapper = getWrapper(store);
     const commandMenuItemConfig = buildCommandMenuItemConfig(false);
 
-    store.set(isLayoutCustomizationActiveState.atom, false);
+    store.set(isLayoutCustomizationModeEnabledState.atom, false);
 
     const { result } = renderHook(
       () =>
@@ -54,7 +54,7 @@ describe('useIsCommandBlockedByGlobalLayoutCustomization', () => {
     const wrapper = getWrapper(store);
     const commandMenuItemConfig = buildCommandMenuItemConfig();
 
-    store.set(isLayoutCustomizationActiveState.atom, true);
+    store.set(isLayoutCustomizationModeEnabledState.atom, true);
 
     const { result } = renderHook(
       () =>
@@ -72,7 +72,7 @@ describe('useIsCommandBlockedByGlobalLayoutCustomization', () => {
     const wrapper = getWrapper(store);
     const commandMenuItemConfig = buildCommandMenuItemConfig(true);
 
-    store.set(isLayoutCustomizationActiveState.atom, true);
+    store.set(isLayoutCustomizationModeEnabledState.atom, true);
 
     const { result } = renderHook(
       () =>

@@ -13,7 +13,7 @@ import { LightIconButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { useEnterLayoutCustomizationMode } from '@/app/hooks/useEnterLayoutCustomizationMode';
-import { isLayoutCustomizationActiveState } from '@/app/states/isLayoutCustomizationActiveState';
+import { isLayoutCustomizationModeEnabledState } from '@/app/states/isLayoutCustomizationModeEnabledState';
 import { FOLDER_ICON_DEFAULT } from '@/navigation-menu-item/constants/FolderIconDefault';
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import { useOpenNavigationMenuItemInSidePanel } from '@/navigation-menu-item/hooks/useOpenNavigationMenuItemInSidePanel';
@@ -43,8 +43,8 @@ export const WorkspaceNavigationMenuItems = () => {
   const items = useWorkspaceSectionItems();
   const { workspaceNavigationMenuItemsSorted } = useSortedNavigationMenuItems();
   const { enterLayoutCustomizationMode } = useEnterLayoutCustomizationMode();
-  const isLayoutCustomizationActive = useAtomStateValue(
-    isLayoutCustomizationActiveState,
+  const isLayoutCustomizationModeEnabled = useAtomStateValue(
+    isLayoutCustomizationModeEnabledState,
   );
   const [
     selectedNavigationMenuItemInEditMode,
@@ -156,7 +156,7 @@ export const WorkspaceNavigationMenuItems = () => {
       items={items}
       rightIcon={
         <StyledRightIconsContainer>
-          {isLayoutCustomizationActive ? (
+          {isLayoutCustomizationModeEnabled ? (
             <LightIconButton
               Icon={IconPlus}
               accent="tertiary"
@@ -177,7 +177,9 @@ export const WorkspaceNavigationMenuItems = () => {
       }
       selectedNavigationMenuItemId={selectedNavigationMenuItemInEditMode}
       onNavigationMenuItemClick={
-        isLayoutCustomizationActive ? handleNavigationMenuItemClick : undefined
+        isLayoutCustomizationModeEnabled
+          ? handleNavigationMenuItemClick
+          : undefined
       }
       onActiveObjectMetadataItemClick={handleActiveObjectMetadataItemClick}
     />

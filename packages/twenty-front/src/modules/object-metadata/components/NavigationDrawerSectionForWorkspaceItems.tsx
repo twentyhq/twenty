@@ -9,7 +9,7 @@ import {
   type FlatWorkspaceItem,
   type NavigationMenuItemClickParams,
 } from '@/navigation-menu-item/hooks/useWorkspaceSectionItems';
-import { isLayoutCustomizationActiveState } from '@/app/states/isLayoutCustomizationActiveState';
+import { isLayoutCustomizationModeEnabledState } from '@/app/states/isLayoutCustomizationModeEnabledState';
 import { getObjectMetadataForNavigationMenuItem } from '@/navigation-menu-item/utils/getObjectMetadataForNavigationMenuItem';
 import { type ProcessedNavigationMenuItem } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
 import type { EditModeProps } from '@/object-metadata/components/EditModeProps';
@@ -58,8 +58,8 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
   onNavigationMenuItemClick,
   onActiveObjectMetadataItemClick,
 }: NavigationDrawerSectionForWorkspaceItemsProps) => {
-  const isLayoutCustomizationActive = useAtomStateValue(
-    isLayoutCustomizationActiveState,
+  const isLayoutCustomizationModeEnabled = useAtomStateValue(
+    isLayoutCustomizationModeEnabledState,
   );
   const { toggleNavigationSection, isNavigationSectionOpen } =
     useNavigationSection('Workspace');
@@ -150,7 +150,7 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
           label={sectionTitle}
           onClick={() => toggleNavigationSection()}
           rightIcon={rightIcon}
-          alwaysShowRightIcon={isLayoutCustomizationActive}
+          alwaysShowRightIcon={isLayoutCustomizationModeEnabled}
           isOpen={isNavigationSectionOpen}
         />
       </NavigationDrawerAnimatedCollapseWrapper>
@@ -164,7 +164,7 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
           containAnimation
           initial={false}
         >
-          {isLayoutCustomizationActive ? (
+          {isLayoutCustomizationModeEnabled ? (
             <Suspense
               fallback={
                 <WorkspaceSectionListEditModeFallback

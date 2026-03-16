@@ -1,7 +1,7 @@
 import { ObjectIconWithViewOverlay } from '@/navigation-menu-item/components/ObjectIconWithViewOverlay';
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import { useObjectNavItemColor } from '@/navigation-menu-item/hooks/useObjectNavItemColor';
-import { isLayoutCustomizationActiveState } from '@/app/states/isLayoutCustomizationActiveState';
+import { isLayoutCustomizationModeEnabledState } from '@/app/states/isLayoutCustomizationModeEnabledState';
 import { getStandardObjectIconColor } from '@/navigation-menu-item/utils/getStandardObjectIconColor';
 import { type ProcessedNavigationMenuItem } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
 import { lastVisitedViewPerObjectMetadataItemState } from '@/navigation/states/lastVisitedViewPerObjectMetadataItemState';
@@ -31,8 +31,8 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
   onActiveItemClickWhenNotInEditMode: _onActiveItemClickWhenNotInEditMode,
   isDragging = false,
 }: NavigationDrawerItemForObjectMetadataItemProps) => {
-  const isLayoutCustomizationActive = useAtomStateValue(
-    isLayoutCustomizationActiveState,
+  const isLayoutCustomizationModeEnabled = useAtomStateValue(
+    isLayoutCustomizationModeEnabledState,
   );
   const lastVisitedViewPerObjectMetadataItem = useAtomStateValue(
     lastVisitedViewPerObjectMetadataItemState,
@@ -76,9 +76,11 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
         }) + '/',
       );
 
-  const handleClick = isLayoutCustomizationActive ? onEditModeClick : undefined;
+  const handleClick = isLayoutCustomizationModeEnabled
+    ? onEditModeClick
+    : undefined;
 
-  const shouldNavigate = !isLayoutCustomizationActive;
+  const shouldNavigate = !isLayoutCustomizationModeEnabled;
 
   const isViewWithCustomName =
     isView &&
@@ -130,7 +132,7 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
       label={label}
       secondaryLabel={secondaryLabel}
       to={
-        isLayoutCustomizationActive || isDragging
+        isLayoutCustomizationModeEnabled || isDragging
           ? undefined
           : shouldNavigate
             ? navigationPath
@@ -142,7 +144,7 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
       active={isActive}
       isSelectedInEditMode={isSelectedInEditMode}
       isDragging={isDragging}
-      triggerEvent={isLayoutCustomizationActive ? 'CLICK' : undefined}
+      triggerEvent={isLayoutCustomizationModeEnabled ? 'CLICK' : undefined}
     />
   );
 };

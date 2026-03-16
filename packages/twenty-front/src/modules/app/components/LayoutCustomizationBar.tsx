@@ -1,7 +1,7 @@
 import { useCancelLayoutCustomization } from '@/app/hooks/useCancelLayoutCustomization';
 import { useIsLayoutCustomizationDirty } from '@/app/hooks/useIsLayoutCustomizationDirty';
 import { useSaveLayoutCustomization } from '@/app/hooks/useSaveLayoutCustomization';
-import { isLayoutCustomizationActiveState } from '@/app/states/isLayoutCustomizationActiveState';
+import { isLayoutCustomizationModeEnabledState } from '@/app/states/isLayoutCustomizationModeEnabledState';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
@@ -69,13 +69,13 @@ const LayoutCustomizationBarContent = () => {
 };
 
 export const LayoutCustomizationBar = () => {
-  const isLayoutCustomizationActive = useAtomStateValue(
-    isLayoutCustomizationActiveState,
+  const isLayoutCustomizationModeEnabled = useAtomStateValue(
+    isLayoutCustomizationModeEnabledState,
   );
 
   return (
     <AnimatePresence>
-      {isLayoutCustomizationActive && <LayoutCustomizationBarContent />}
+      {isLayoutCustomizationModeEnabled && <LayoutCustomizationBarContent />}
     </AnimatePresence>
   );
 };

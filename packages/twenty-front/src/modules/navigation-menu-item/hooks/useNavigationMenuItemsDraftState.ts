@@ -1,15 +1,15 @@
 import { isDefined } from 'twenty-shared/utils';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
-import { isLayoutCustomizationActiveState } from '@/app/states/isLayoutCustomizationActiveState';
+import { isLayoutCustomizationModeEnabledState } from '@/app/states/isLayoutCustomizationModeEnabledState';
 import { filterWorkspaceNavigationMenuItems } from '@/navigation-menu-item/utils/filterWorkspaceNavigationMenuItems';
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/states/navigationMenuItemsDraftState';
 import { navigationMenuItemsState } from '@/navigation-menu-item/states/navigationMenuItemsState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const useNavigationMenuItemsDraftState = () => {
-  const isLayoutCustomizationActive = useAtomStateValue(
-    isLayoutCustomizationActiveState,
+  const isLayoutCustomizationModeEnabled = useAtomStateValue(
+    isLayoutCustomizationModeEnabledState,
   );
   const navigationMenuItems = useAtomStateValue(navigationMenuItemsState);
   const navigationMenuItemsDraft = useAtomStateValue(
@@ -20,12 +20,12 @@ export const useNavigationMenuItemsDraftState = () => {
     filterWorkspaceNavigationMenuItems(navigationMenuItems);
 
   const workspaceNavigationMenuItems =
-    isLayoutCustomizationActive && isDefined(navigationMenuItemsDraft)
+    isLayoutCustomizationModeEnabled && isDefined(navigationMenuItemsDraft)
       ? navigationMenuItemsDraft
       : workspaceNavigationMenuItemsFromState;
 
   const isDirty =
-    isLayoutCustomizationActive &&
+    isLayoutCustomizationModeEnabled &&
     isDefined(navigationMenuItemsDraft) &&
     !isDeeplyEqual(
       navigationMenuItemsDraft,

@@ -1,4 +1,4 @@
-import { useIsGlobalLayoutCustomizationActive } from '@/app/hooks/useIsGlobalLayoutCustomizationActive';
+import { isLayoutCustomizationModeEnabledState } from '@/app/states/isLayoutCustomizationModeEnabledState';
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { useSetIsPageLayoutInEditMode } from '@/page-layout/hooks/useSetIsPageLayoutInEditMode';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
@@ -6,6 +6,7 @@ import { WidgetCard } from '@/page-layout/widgets/widget-card/components/WidgetC
 import { WidgetCardHeader } from '@/page-layout/widgets/widget-card/components/WidgetCardHeader';
 import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import { SidePanelPages } from 'twenty-shared/types';
@@ -24,8 +25,9 @@ export const DashboardWidgetPlaceholder = () => {
   );
 
   const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
-  const isGlobalLayoutCustomizationActive =
-    useIsGlobalLayoutCustomizationActive();
+  const isLayoutCustomizationModeEnabled = useAtomStateValue(
+    isLayoutCustomizationModeEnabledState,
+  );
 
   const { setIsPageLayoutInEditMode } =
     useSetIsPageLayoutInEditMode(pageLayoutId);
@@ -33,7 +35,7 @@ export const DashboardWidgetPlaceholder = () => {
   const { navigatePageLayoutSidePanel } = useNavigatePageLayoutSidePanel();
 
   const handleClick = () => {
-    if (isGlobalLayoutCustomizationActive) {
+    if (isLayoutCustomizationModeEnabled) {
       return;
     }
 

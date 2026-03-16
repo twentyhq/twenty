@@ -1,4 +1,4 @@
-import { isLayoutCustomizationActiveState } from '@/app/states/isLayoutCustomizationActiveState';
+import { isLayoutCustomizationModeEnabledState } from '@/app/states/isLayoutCustomizationModeEnabledState';
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import {
   PAGE_LAYOUT_TEST_INSTANCE_ID,
@@ -30,7 +30,7 @@ describe('useIsPageLayoutInEditMode', () => {
     const store = createStore();
     const wrapper = getWrapper(store, PageLayoutType.RECORD_PAGE);
 
-    store.set(isLayoutCustomizationActiveState.atom, true);
+    store.set(isLayoutCustomizationModeEnabledState.atom, true);
     store.set(
       isDashboardInEditModeComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
@@ -49,7 +49,7 @@ describe('useIsPageLayoutInEditMode', () => {
     const store = createStore();
     const wrapper = getWrapper(store, PageLayoutType.DASHBOARD);
 
-    store.set(isLayoutCustomizationActiveState.atom, true);
+    store.set(isLayoutCustomizationModeEnabledState.atom, true);
     store.set(
       isDashboardInEditModeComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,

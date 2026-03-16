@@ -1,4 +1,4 @@
-import { isLayoutCustomizationActiveState } from '@/app/states/isLayoutCustomizationActiveState';
+import { isLayoutCustomizationModeEnabledState } from '@/app/states/isLayoutCustomizationModeEnabledState';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreIsPageInEditModeComponentState } from '@/context-store/states/contextStoreIsPageInEditModeComponentState';
 import { currentPageLayoutIdState } from '@/page-layout/states/currentPageLayoutIdState';
@@ -139,11 +139,11 @@ export const useExecuteTasksOnAnyLocationChange = () => {
   const executeTasksOnAnyLocationChange = () => {
     closeAnyOpenDropdown();
 
-    const isLayoutCustomizationActive = store.get(
-      isLayoutCustomizationActiveState.atom,
+    const isLayoutCustomizationModeEnabled = store.get(
+      isLayoutCustomizationModeEnabledState.atom,
     );
 
-    if (!isLayoutCustomizationActive) {
+    if (!isLayoutCustomizationModeEnabled) {
       resetPageLayoutEditMode();
     }
   };

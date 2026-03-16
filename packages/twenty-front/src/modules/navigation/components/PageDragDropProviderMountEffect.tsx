@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-import { isLayoutCustomizationActiveState } from '@/app/states/isLayoutCustomizationActiveState';
+import { isLayoutCustomizationModeEnabledState } from '@/app/states/isLayoutCustomizationModeEnabledState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 type PageDragDropProviderMountEffectProps = {
@@ -10,15 +10,15 @@ type PageDragDropProviderMountEffectProps = {
 export const PageDragDropProviderMountEffect = ({
   onEnterEditMode,
 }: PageDragDropProviderMountEffectProps) => {
-  const isLayoutCustomizationActive = useAtomStateValue(
-    isLayoutCustomizationActiveState,
+  const isLayoutCustomizationModeEnabled = useAtomStateValue(
+    isLayoutCustomizationModeEnabledState,
   );
 
   useEffect(() => {
-    if (isLayoutCustomizationActive) {
+    if (isLayoutCustomizationModeEnabled) {
       onEnterEditMode();
     }
-  }, [isLayoutCustomizationActive, onEnterEditMode]);
+  }, [isLayoutCustomizationModeEnabled, onEnterEditMode]);
 
   return null;
 };

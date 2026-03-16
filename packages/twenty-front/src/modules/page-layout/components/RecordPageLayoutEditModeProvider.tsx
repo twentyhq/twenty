@@ -1,5 +1,6 @@
-import { useIsGlobalLayoutCustomizationActive } from '@/app/hooks/useIsGlobalLayoutCustomizationActive';
+import { isLayoutCustomizationModeEnabledState } from '@/app/states/isLayoutCustomizationModeEnabledState';
 import { PageLayoutEditModeProviderContext } from '@/page-layout/contexts/PageLayoutEditModeContext';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type ReactNode } from 'react';
 
 type RecordPageLayoutEditModeProviderProps = {
@@ -9,10 +10,14 @@ type RecordPageLayoutEditModeProviderProps = {
 export const RecordPageLayoutEditModeProvider = ({
   children,
 }: RecordPageLayoutEditModeProviderProps) => {
-  const isInEditMode = useIsGlobalLayoutCustomizationActive();
+  const isLayoutCustomizationModeEnabled = useAtomStateValue(
+    isLayoutCustomizationModeEnabledState,
+  );
 
   return (
-    <PageLayoutEditModeProviderContext value={{ isInEditMode }}>
+    <PageLayoutEditModeProviderContext
+      value={{ isInEditMode: isLayoutCustomizationModeEnabled }}
+    >
       {children}
     </PageLayoutEditModeProviderContext>
   );

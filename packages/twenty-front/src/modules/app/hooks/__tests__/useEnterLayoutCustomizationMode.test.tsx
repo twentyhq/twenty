@@ -1,5 +1,5 @@
 import { useEnterLayoutCustomizationMode } from '@/app/hooks/useEnterLayoutCustomizationMode';
-import { isLayoutCustomizationActiveState } from '@/app/states/isLayoutCustomizationActiveState';
+import { isLayoutCustomizationModeEnabledState } from '@/app/states/isLayoutCustomizationModeEnabledState';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/states/navigationMenuItemsDraftState';
 import { act, renderHook } from '@testing-library/react';
@@ -32,7 +32,7 @@ const getWrapper =
   );
 
 describe('useEnterLayoutCustomizationMode', () => {
-  it('should set isLayoutCustomizationActive to true and initialize nav draft', () => {
+  it('should set isLayoutCustomizationModeEnabled to true and initialize nav draft', () => {
     const store = createStore();
     const wrapper = getWrapper(store);
 
@@ -50,7 +50,7 @@ describe('useEnterLayoutCustomizationMode', () => {
       result.current.enterLayoutCustomizationMode();
     });
 
-    expect(store.get(isLayoutCustomizationActiveState.atom)).toBe(true);
+    expect(store.get(isLayoutCustomizationModeEnabledState.atom)).toBe(true);
 
     const draft = store.get(navigationMenuItemsDraftState.atom);
 
@@ -87,6 +87,6 @@ describe('useEnterLayoutCustomizationMode', () => {
     const draftAfterSecond = store.get(navigationMenuItemsDraftState.atom);
 
     expect(draftAfterSecond).toEqual([]);
-    expect(store.get(isLayoutCustomizationActiveState.atom)).toBe(true);
+    expect(store.get(isLayoutCustomizationModeEnabledState.atom)).toBe(true);
   });
 });

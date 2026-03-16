@@ -1,5 +1,5 @@
 import { activeCustomizationPageLayoutIdsState } from '@/app/states/activeCustomizationPageLayoutIdsState';
-import { isLayoutCustomizationActiveState } from '@/app/states/isLayoutCustomizationActiveState';
+import { isLayoutCustomizationModeEnabledState } from '@/app/states/isLayoutCustomizationModeEnabledState';
 import { filterWorkspaceNavigationMenuItems } from '@/navigation-menu-item/utils/filterWorkspaceNavigationMenuItems';
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/states/navigationMenuItemsDraftState';
 import { navigationMenuItemsState } from '@/navigation-menu-item/states/navigationMenuItemsState';
@@ -10,9 +10,11 @@ export const useEnterLayoutCustomizationMode = () => {
   const store = useStore();
 
   const enterLayoutCustomizationMode = useCallback(() => {
-    const isAlreadyActive = store.get(isLayoutCustomizationActiveState.atom);
+    const isLayoutCustomizationModeAlreadyEnabled = store.get(
+      isLayoutCustomizationModeEnabledState.atom,
+    );
 
-    if (isAlreadyActive) {
+    if (isLayoutCustomizationModeAlreadyEnabled) {
       return;
     }
 
@@ -26,7 +28,7 @@ export const useEnterLayoutCustomizationMode = () => {
 
     store.set(activeCustomizationPageLayoutIdsState.atom, []);
 
-    store.set(isLayoutCustomizationActiveState.atom, true);
+    store.set(isLayoutCustomizationModeEnabledState.atom, true);
   }, [store]);
 
   return { enterLayoutCustomizationMode };

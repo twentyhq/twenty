@@ -1,5 +1,5 @@
 import { activeCustomizationPageLayoutIdsState } from '@/app/states/activeCustomizationPageLayoutIdsState';
-import { isLayoutCustomizationActiveState } from '@/app/states/isLayoutCustomizationActiveState';
+import { isLayoutCustomizationModeEnabledState } from '@/app/states/isLayoutCustomizationModeEnabledState';
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/states/navigationMenuItemsDraftState';
 import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeState';
 import { currentPageLayoutIdState } from '@/page-layout/states/currentPageLayoutIdState';
@@ -18,8 +18,8 @@ export const useExitLayoutCustomizationMode = () => {
   const setSelectedNavigationMenuItemInEditMode = useSetAtomState(
     selectedNavigationMenuItemInEditModeState,
   );
-  const setIsLayoutCustomizationActive = useSetAtomState(
-    isLayoutCustomizationActiveState,
+  const setIsLayoutCustomizationModeEnabled = useSetAtomState(
+    isLayoutCustomizationModeEnabledState,
   );
 
   const exitLayoutCustomizationMode = useCallback(() => {
@@ -28,12 +28,12 @@ export const useExitLayoutCustomizationMode = () => {
 
     store.set(currentPageLayoutIdState.atom, null);
     store.set(activeCustomizationPageLayoutIdsState.atom, []);
-    setIsLayoutCustomizationActive(false);
+    setIsLayoutCustomizationModeEnabled(false);
     closeSidePanelMenu();
   }, [
     setNavigationMenuItemsDraft,
     setSelectedNavigationMenuItemInEditMode,
-    setIsLayoutCustomizationActive,
+    setIsLayoutCustomizationModeEnabled,
     closeSidePanelMenu,
     store,
   ]);

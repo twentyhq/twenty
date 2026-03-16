@@ -1,4 +1,4 @@
-import { useIsGlobalLayoutCustomizationActive } from '@/app/hooks/useIsGlobalLayoutCustomizationActive';
+import { isLayoutCustomizationModeEnabledState } from '@/app/states/isLayoutCustomizationModeEnabledState';
 import { useFieldListFieldMetadataItems } from '@/object-record/record-field-list/hooks/useFieldListFieldMetadataItems';
 import { useBasePageLayout } from '@/page-layout/hooks/useBasePageLayout';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
@@ -11,6 +11,7 @@ import { injectRelationWidgetsIntoLayout } from '@/page-layout/utils/injectRelat
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useStore } from 'jotai';
 import { useCallback, useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -46,8 +47,9 @@ export const PageLayoutRelationWidgetsSyncEffect = ({
     useAtomComponentStateCallbackState(pageLayoutCurrentLayoutsComponentState);
 
   const store = useStore();
-  const isGlobalLayoutCustomizationActive =
-    useIsGlobalLayoutCustomizationActive();
+  const isLayoutCustomizationModeEnabled = useAtomStateValue(
+    isLayoutCustomizationModeEnabledState,
+  );
 
   const syncPageLayoutWithRelationWidgets = useCallback(
     (layout: PageLayout) => {
@@ -57,7 +59,7 @@ export const PageLayoutRelationWidgetsSyncEffect = ({
 
       if (!isDeeplyEqual(layout, currentPersisted)) {
         store.set(pageLayoutPersistedComponentCallbackState, layout);
-        if (!isGlobalLayoutCustomizationActive) {
+        if (!isLayoutCustomizationModeEnabled) {
           store.set(pageLayoutDraftComponentCallbackState, {
             id: layout.id,
             name: layout.name,
@@ -72,7 +74,7 @@ export const PageLayoutRelationWidgetsSyncEffect = ({
       }
     },
     [
-      isGlobalLayoutCustomizationActive,
+      isLayoutCustomizationModeEnabled,
       pageLayoutCurrentLayoutsComponentCallbackState,
       pageLayoutDraftComponentCallbackState,
       pageLayoutPersistedComponentCallbackState,

@@ -4,7 +4,7 @@ import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { isSidePanelClosingState } from '@/side-panel/states/isSidePanelClosingState';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { addToNavPayloadRegistryState } from '@/navigation-menu-item/states/addToNavPayloadRegistryState';
-import { isLayoutCustomizationActiveState } from '@/app/states/isLayoutCustomizationActiveState';
+import { isLayoutCustomizationModeEnabledState } from '@/app/states/isLayoutCustomizationModeEnabledState';
 import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeState';
 import { useCloseAnyOpenDropdown } from '@/ui/layout/dropdown/hooks/useCloseAnyOpenDropdown';
 import { emitSidePanelOpenEvent } from '@/ui/layout/side-panel/utils/emitSidePanelOpenEvent';
@@ -41,20 +41,23 @@ export const useSidePanelMenu = () => {
   const openSidePanelMenu = useCallback(() => {
     emitSidePanelOpenEvent();
     closeAnyOpenDropdown();
-    const isLayoutCustomizationActive = store.get(
-      isLayoutCustomizationActiveState.atom,
+    const isLayoutCustomizationModeEnabled = store.get(
+      isLayoutCustomizationModeEnabledState.atom,
     );
     const selectedNavigationItemId = store.get(
       selectedNavigationMenuItemInEditModeState.atom,
     );
-    if (isLayoutCustomizationActive && isDefined(selectedNavigationItemId)) {
+    if (
+      isLayoutCustomizationModeEnabled &&
+      isDefined(selectedNavigationItemId)
+    ) {
       navigateSidePanel({
         page: SidePanelPages.NavigationMenuItemEdit,
         pageTitle: t`Edit`,
         pageIcon: IconDotsVertical,
         resetNavigationStack: true,
       });
-    } else if (isLayoutCustomizationActive) {
+    } else if (isLayoutCustomizationModeEnabled) {
       navigateSidePanel({
         page: SidePanelPages.NavigationMenuAddItem,
         pageTitle: t`New sidebar item`,

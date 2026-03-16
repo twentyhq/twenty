@@ -1,4 +1,4 @@
-import { isLayoutCustomizationActiveState } from '@/app/states/isLayoutCustomizationActiveState';
+import { isLayoutCustomizationModeEnabledState } from '@/app/states/isLayoutCustomizationModeEnabledState';
 import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
 import { hasAnySoftDeleteFilterOnViewComponentSelector } from '@/object-record/record-filter/states/hasAnySoftDeleteFilterOnView';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
@@ -22,8 +22,8 @@ export const RecordTableHeaderLabelIdentifierCellPlusButton = () => {
     useRecordTableContextOrThrow();
 
   const isMobile = useIsMobile();
-  const isLayoutCustomizationActive = useAtomStateValue(
-    isLayoutCustomizationActiveState,
+  const isLayoutCustomizationModeEnabled = useAtomStateValue(
+    isLayoutCustomizationModeEnabledState,
   );
 
   const { createNewIndexRecord } = useCreateNewIndexRecord({
@@ -37,7 +37,7 @@ export const RecordTableHeaderLabelIdentifierCellPlusButton = () => {
   };
 
   const isReadOnly =
-    isLayoutCustomizationActive ||
+    isLayoutCustomizationModeEnabled ||
     isObjectMetadataReadOnly({
       objectPermissions,
       objectMetadataItem,

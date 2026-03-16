@@ -1,4 +1,4 @@
-import { isLayoutCustomizationActiveState } from '@/app/states/isLayoutCustomizationActiveState';
+import { isLayoutCustomizationModeEnabledState } from '@/app/states/isLayoutCustomizationModeEnabledState';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
 import { hasAnySoftDeleteFilterOnViewComponentSelector } from '@/object-record/record-filter/states/hasAnySoftDeleteFilterOnView';
@@ -51,11 +51,11 @@ export const RecordTableEmptyStateDisplay = (
   const objectPermissions = useObjectPermissionsForObject(
     objectMetadataItem.id,
   );
-  const isLayoutCustomizationActive = useAtomStateValue(
-    isLayoutCustomizationActiveState,
+  const isLayoutCustomizationModeEnabled = useAtomStateValue(
+    isLayoutCustomizationModeEnabledState,
   );
   const isReadOnly =
-    isLayoutCustomizationActive ||
+    isLayoutCustomizationModeEnabled ||
     isObjectMetadataReadOnly({
       objectPermissions,
       objectMetadataItem,

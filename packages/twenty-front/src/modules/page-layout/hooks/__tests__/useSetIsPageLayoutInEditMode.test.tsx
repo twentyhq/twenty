@@ -1,4 +1,4 @@
-import { isLayoutCustomizationActiveState } from '@/app/states/isLayoutCustomizationActiveState';
+import { isLayoutCustomizationModeEnabledState } from '@/app/states/isLayoutCustomizationModeEnabledState';
 import { useSetIsPageLayoutInEditMode } from '@/page-layout/hooks/useSetIsPageLayoutInEditMode';
 import {
   PAGE_LAYOUT_TEST_INSTANCE_ID,
@@ -42,7 +42,7 @@ describe('useSetIsPageLayoutInEditMode', () => {
     const store = createStore();
     const wrapper = getWrapper(store);
 
-    store.set(isLayoutCustomizationActiveState.atom, true);
+    store.set(isLayoutCustomizationModeEnabledState.atom, true);
     store.set(
       pageLayoutPersistedComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
@@ -74,7 +74,7 @@ describe('useSetIsPageLayoutInEditMode', () => {
     const store = createStore();
     const wrapper = getWrapper(store);
 
-    store.set(isLayoutCustomizationActiveState.atom, false);
+    store.set(isLayoutCustomizationModeEnabledState.atom, false);
     store.set(
       pageLayoutPersistedComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,

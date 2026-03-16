@@ -4,7 +4,7 @@ import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/constants
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import { NavigationDropTargetContext } from '@/navigation-menu-item/contexts/NavigationDropTargetContext';
 import { useIsDropDisabledForSection } from '@/navigation-menu-item/hooks/useIsDropDisabledForSection';
-import { isLayoutCustomizationActiveState } from '@/app/states/isLayoutCustomizationActiveState';
+import { isLayoutCustomizationModeEnabledState } from '@/app/states/isLayoutCustomizationModeEnabledState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
@@ -37,8 +37,8 @@ export const WorkspaceSectionListDndKit = ({
   onNavigationMenuItemClick,
   onActiveObjectMetadataItemClick,
 }: WorkspaceSectionListDndKitProps) => {
-  const isLayoutCustomizationActive = useAtomStateValue(
-    isLayoutCustomizationActiveState,
+  const isLayoutCustomizationModeEnabled = useAtomStateValue(
+    isLayoutCustomizationModeEnabledState,
   );
   const workspaceDropDisabled = useIsDropDisabledForSection(true);
   const { isDragging } = useContext(NavigationMenuItemDragContext);
@@ -48,7 +48,7 @@ export const WorkspaceSectionListDndKit = ({
   const folderCount = filteredItems.filter(
     (item) => item.itemType === NavigationMenuItemType.FOLDER,
   ).length;
-  const isAddMenuItemButtonVisible = isLayoutCustomizationActive;
+  const isAddMenuItemButtonVisible = isLayoutCustomizationModeEnabled;
   return (
     <StyledList>
       {filteredItems.map((item, index) => (
@@ -60,7 +60,9 @@ export const WorkspaceSectionListDndKit = ({
             group={
               NavigationMenuItemDroppableIds.WORKSPACE_ORPHAN_NAVIGATION_MENU_ITEMS
             }
-            disabled={!isLayoutCustomizationActive || workspaceDropDisabled}
+            disabled={
+              !isLayoutCustomizationModeEnabled || workspaceDropDisabled
+            }
           >
             <NavigationDrawerSectionForWorkspaceItemContent
               item={item}

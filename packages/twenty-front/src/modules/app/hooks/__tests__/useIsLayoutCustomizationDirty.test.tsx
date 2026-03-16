@@ -1,6 +1,6 @@
 import { useIsLayoutCustomizationDirty } from '@/app/hooks/useIsLayoutCustomizationDirty';
 import { activeCustomizationPageLayoutIdsState } from '@/app/states/activeCustomizationPageLayoutIdsState';
-import { isLayoutCustomizationActiveState } from '@/app/states/isLayoutCustomizationActiveState';
+import { isLayoutCustomizationModeEnabledState } from '@/app/states/isLayoutCustomizationModeEnabledState';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/states/navigationMenuItemsDraftState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
@@ -55,7 +55,7 @@ describe('useIsLayoutCustomizationDirty', () => {
       draft: [],
       status: 'up-to-date',
     });
-    store.set(isLayoutCustomizationActiveState.atom, false);
+    store.set(isLayoutCustomizationModeEnabledState.atom, false);
 
     const { result } = renderHook(() => useIsLayoutCustomizationDirty(), {
       wrapper,
@@ -73,7 +73,7 @@ describe('useIsLayoutCustomizationDirty', () => {
       draft: [],
       status: 'up-to-date',
     });
-    store.set(isLayoutCustomizationActiveState.atom, true);
+    store.set(isLayoutCustomizationModeEnabledState.atom, true);
     store.set(activeCustomizationPageLayoutIdsState.atom, [PAGE_LAYOUT_ID_1]);
 
     store.set(
@@ -105,7 +105,7 @@ describe('useIsLayoutCustomizationDirty', () => {
       draft: [],
       status: 'up-to-date',
     });
-    store.set(isLayoutCustomizationActiveState.atom, true);
+    store.set(isLayoutCustomizationModeEnabledState.atom, true);
     store.set(activeCustomizationPageLayoutIdsState.atom, [PAGE_LAYOUT_ID_1]);
 
     store.set(
@@ -154,7 +154,7 @@ describe('useIsLayoutCustomizationDirty', () => {
       draft: [],
       status: 'up-to-date',
     });
-    store.set(isLayoutCustomizationActiveState.atom, true);
+    store.set(isLayoutCustomizationModeEnabledState.atom, true);
     // Nav draft differs from prefetch
     store.set(navigationMenuItemsDraftState.atom, []);
 
@@ -174,7 +174,7 @@ describe('useIsLayoutCustomizationDirty', () => {
       draft: [],
       status: 'up-to-date',
     });
-    store.set(isLayoutCustomizationActiveState.atom, true);
+    store.set(isLayoutCustomizationModeEnabledState.atom, true);
     store.set(activeCustomizationPageLayoutIdsState.atom, [
       PAGE_LAYOUT_ID_1,
       PAGE_LAYOUT_ID_2,

@@ -1,5 +1,5 @@
 import { NavigationMenuItemIcon } from '@/navigation-menu-item/components/NavigationMenuItemIcon';
-import { isLayoutCustomizationActiveState } from '@/app/states/isLayoutCustomizationActiveState';
+import { isLayoutCustomizationModeEnabledState } from '@/app/states/isLayoutCustomizationModeEnabledState';
 import type { ProcessedNavigationMenuItem } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
 import type { WorkspaceSectionItemContentProps } from '@/object-metadata/components/WorkspaceSectionItemContentProps';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
@@ -15,16 +15,22 @@ export const NavigationDrawerSectionForWorkspaceItemLinkContent = ({
   editModeProps,
   isDragging,
 }: NavigationDrawerSectionForWorkspaceItemLinkContentProps) => {
-  const isLayoutCustomizationActive = useAtomStateValue(
-    isLayoutCustomizationActiveState,
+  const isLayoutCustomizationModeEnabled = useAtomStateValue(
+    isLayoutCustomizationModeEnabledState,
   );
   const linkItem = item as ProcessedNavigationMenuItem;
   return (
     <NavigationDrawerItem
       label={linkItem.labelIdentifier}
-      to={isLayoutCustomizationActive || isDragging ? undefined : linkItem.link}
+      to={
+        isLayoutCustomizationModeEnabled || isDragging
+          ? undefined
+          : linkItem.link
+      }
       onClick={
-        isLayoutCustomizationActive ? editModeProps.onEditModeClick : undefined
+        isLayoutCustomizationModeEnabled
+          ? editModeProps.onEditModeClick
+          : undefined
       }
       Icon={() => <NavigationMenuItemIcon navigationMenuItem={linkItem} />}
       active={false}
@@ -32,7 +38,7 @@ export const NavigationDrawerSectionForWorkspaceItemLinkContent = ({
       isDragging={isDragging}
       triggerEvent="CLICK"
       rightOptions={
-        !isLayoutCustomizationActive && (
+        !isLayoutCustomizationModeEnabled && (
           <IconArrowUpRight
             size={themeCssVariables.icon.size.sm}
             stroke={themeCssVariables.icon.stroke.md}
