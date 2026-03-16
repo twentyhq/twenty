@@ -2,7 +2,6 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
 import { usePerformViewAPIPersist } from '@/views/hooks/internal/usePerformViewAPIPersist';
 import { usePerformViewFieldAPIPersist } from '@/views/hooks/internal/usePerformViewFieldAPIPersist';
-import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
 import { useCallback } from 'react';
 import { v4 } from 'uuid';
 import { ViewType } from '~/generated-metadata/graphql';
@@ -16,8 +15,6 @@ const pendingViewCreations = new Set<string>();
 export const useCreateDefaultViewForObject = () => {
   const { performViewAPICreate } = usePerformViewAPIPersist();
   const { performViewFieldAPICreate } = usePerformViewFieldAPIPersist();
-  const { refreshCoreViewsByObjectMetadataId } =
-    useRefreshCoreViewsByObjectMetadataId();
 
   const createDefaultViewForObject = useCallback(
     async (objectMetadataItem: ObjectMetadataItem) => {
@@ -76,17 +73,11 @@ export const useCreateDefaultViewForObject = () => {
         }));
 
         await performViewFieldAPICreate({ inputs: viewFieldInputs });
-
-        await refreshCoreViewsByObjectMetadataId(objectMetadataItem.id);
       } finally {
         pendingViewCreations.delete(objectMetadataItem.id);
       }
     },
-    [
-      performViewAPICreate,
-      performViewFieldAPICreate,
-      refreshCoreViewsByObjectMetadataId,
-    ],
+    [performViewAPICreate, performViewFieldAPICreate],
   );
 
   return {

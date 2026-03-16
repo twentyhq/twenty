@@ -8,8 +8,8 @@ import { CatalogDecorator, type CatalogStory } from 'twenty-ui/testing';
 
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { ApolloCoreClientContext } from '@/object-metadata/contexts/ApolloCoreClientContext';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { isAppMetadataReadyState } from '@/metadata-store/states/isAppMetadataReadyState';
+import { isMinimalMetadataReadyState } from '@/metadata-store/states/isMinimalMetadataReadyState';
+import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
@@ -277,11 +277,11 @@ export const WithNumberChart: Story = {
       deletedAt: null,
     };
 
-    jotaiStore.set(
-      objectMetadataItemsState.atom,
+    setTestObjectMetadataItemsInMetadataStore(
+      jotaiStore,
       generatedMockObjectMetadataItems,
     );
-    jotaiStore.set(isAppMetadataReadyState.atom, true);
+    jotaiStore.set(isMinimalMetadataReadyState.atom, true);
     const pageLayoutData = createPageLayoutWithWidget(widget);
     jotaiStore.set(
       pageLayoutPersistedComponentState.atomFamily({
@@ -364,11 +364,11 @@ export const WithGaugeChart: Story = {
       deletedAt: null,
     };
 
-    jotaiStore.set(
-      objectMetadataItemsState.atom,
+    setTestObjectMetadataItemsInMetadataStore(
+      jotaiStore,
       generatedMockObjectMetadataItems,
     );
-    jotaiStore.set(isAppMetadataReadyState.atom, true);
+    jotaiStore.set(isMinimalMetadataReadyState.atom, true);
     const pageLayoutData = createPageLayoutWithWidget(widget);
     jotaiStore.set(
       pageLayoutPersistedComponentState.atomFamily({
@@ -455,11 +455,11 @@ export const WithBarChart: Story = {
       deletedAt: null,
     };
 
-    jotaiStore.set(
-      objectMetadataItemsState.atom,
+    setTestObjectMetadataItemsInMetadataStore(
+      jotaiStore,
       generatedMockObjectMetadataItems,
     );
-    jotaiStore.set(isAppMetadataReadyState.atom, true);
+    jotaiStore.set(isMinimalMetadataReadyState.atom, true);
     const pageLayoutData = createPageLayoutWithWidget(widget);
     jotaiStore.set(
       pageLayoutPersistedComponentState.atomFamily({
@@ -549,11 +549,11 @@ export const SmallWidget: Story = {
       deletedAt: null,
     };
 
-    jotaiStore.set(
-      objectMetadataItemsState.atom,
+    setTestObjectMetadataItemsInMetadataStore(
+      jotaiStore,
       generatedMockObjectMetadataItems,
     );
-    jotaiStore.set(isAppMetadataReadyState.atom, true);
+    jotaiStore.set(isMinimalMetadataReadyState.atom, true);
     const pageLayoutData = createPageLayoutWithWidget(widget);
     jotaiStore.set(
       pageLayoutPersistedComponentState.atomFamily({
@@ -647,11 +647,11 @@ export const MediumWidget: Story = {
       deletedAt: null,
     };
 
-    jotaiStore.set(
-      objectMetadataItemsState.atom,
+    setTestObjectMetadataItemsInMetadataStore(
+      jotaiStore,
       generatedMockObjectMetadataItems,
     );
-    jotaiStore.set(isAppMetadataReadyState.atom, true);
+    jotaiStore.set(isMinimalMetadataReadyState.atom, true);
     const pageLayoutData = createPageLayoutWithWidget(widget);
     jotaiStore.set(
       pageLayoutPersistedComponentState.atomFamily({
@@ -745,11 +745,11 @@ export const LargeWidget: Story = {
       deletedAt: null,
     };
 
-    jotaiStore.set(
-      objectMetadataItemsState.atom,
+    setTestObjectMetadataItemsInMetadataStore(
+      jotaiStore,
       generatedMockObjectMetadataItems,
     );
-    jotaiStore.set(isAppMetadataReadyState.atom, true);
+    jotaiStore.set(isMinimalMetadataReadyState.atom, true);
     const pageLayoutData = createPageLayoutWithWidget(widget);
     jotaiStore.set(
       pageLayoutPersistedComponentState.atomFamily({
@@ -839,11 +839,11 @@ export const WideWidget: Story = {
       deletedAt: null,
     };
 
-    jotaiStore.set(
-      objectMetadataItemsState.atom,
+    setTestObjectMetadataItemsInMetadataStore(
+      jotaiStore,
       generatedMockObjectMetadataItems,
     );
-    jotaiStore.set(isAppMetadataReadyState.atom, true);
+    jotaiStore.set(isMinimalMetadataReadyState.atom, true);
     const pageLayoutData = createPageLayoutWithWidget(widget);
     jotaiStore.set(
       pageLayoutPersistedComponentState.atomFamily({
@@ -937,11 +937,11 @@ export const TallWidget: Story = {
       deletedAt: null,
     };
 
-    jotaiStore.set(
-      objectMetadataItemsState.atom,
+    setTestObjectMetadataItemsInMetadataStore(
+      jotaiStore,
       generatedMockObjectMetadataItems,
     );
-    jotaiStore.set(isAppMetadataReadyState.atom, true);
+    jotaiStore.set(isMinimalMetadataReadyState.atom, true);
     const pageLayoutData = createPageLayoutWithWidget(widget);
     jotaiStore.set(
       pageLayoutPersistedComponentState.atomFamily({
@@ -1031,11 +1031,11 @@ export const WithManyToOneRelationFieldWidget: Story = {
       deletedAt: null,
     };
 
-    jotaiStore.set(
-      objectMetadataItemsState.atom,
+    setTestObjectMetadataItemsInMetadataStore(
+      jotaiStore,
       generatedMockObjectMetadataItems,
     );
-    jotaiStore.set(isAppMetadataReadyState.atom, true);
+    jotaiStore.set(isMinimalMetadataReadyState.atom, true);
     const pageLayoutData = createPageLayoutWithWidget(
       widget,
       PageLayoutType.RECORD_PAGE,
@@ -1150,11 +1150,11 @@ export const WithOneToManyRelationFieldWidget: Story = {
       deletedAt: null,
     };
 
-    jotaiStore.set(
-      objectMetadataItemsState.atom,
+    setTestObjectMetadataItemsInMetadataStore(
+      jotaiStore,
       generatedMockObjectMetadataItems,
     );
-    jotaiStore.set(isAppMetadataReadyState.atom, true);
+    jotaiStore.set(isMinimalMetadataReadyState.atom, true);
     const pageLayoutData = createPageLayoutWithWidget(
       widget,
       PageLayoutType.RECORD_PAGE,
@@ -1261,11 +1261,11 @@ export const OneToManyRelationFieldWidgetWithSeeAllButton: Story = {
       deletedAt: null,
     };
 
-    jotaiStore.set(
-      objectMetadataItemsState.atom,
+    setTestObjectMetadataItemsInMetadataStore(
+      jotaiStore,
       generatedMockObjectMetadataItems,
     );
-    jotaiStore.set(isAppMetadataReadyState.atom, true);
+    jotaiStore.set(isMinimalMetadataReadyState.atom, true);
     const pageLayoutData = createPageLayoutWithWidget(
       widget,
       PageLayoutType.RECORD_PAGE,
@@ -1399,11 +1399,11 @@ export const OnMobile: Story = {
       deletedAt: null,
     };
 
-    jotaiStore.set(
-      objectMetadataItemsState.atom,
+    setTestObjectMetadataItemsInMetadataStore(
+      jotaiStore,
       generatedMockObjectMetadataItems,
     );
-    jotaiStore.set(isAppMetadataReadyState.atom, true);
+    jotaiStore.set(isMinimalMetadataReadyState.atom, true);
     const pageLayoutData = createPageLayoutWithWidget(
       widget,
       PageLayoutType.RECORD_PAGE,
@@ -1497,11 +1497,11 @@ export const InSidePanel: Story = {
       deletedAt: null,
     };
 
-    jotaiStore.set(
-      objectMetadataItemsState.atom,
+    setTestObjectMetadataItemsInMetadataStore(
+      jotaiStore,
       generatedMockObjectMetadataItems,
     );
-    jotaiStore.set(isAppMetadataReadyState.atom, true);
+    jotaiStore.set(isMinimalMetadataReadyState.atom, true);
     const pageLayoutData = createPageLayoutWithWidget(
       widget,
       PageLayoutType.RECORD_PAGE,
@@ -1656,11 +1656,11 @@ export const Catalog: CatalogStory<Story, typeof WidgetRenderer> = {
       deletedAt: null,
     };
 
-    jotaiStore.set(
-      objectMetadataItemsState.atom,
+    setTestObjectMetadataItemsInMetadataStore(
+      jotaiStore,
       generatedMockObjectMetadataItems,
     );
-    jotaiStore.set(isAppMetadataReadyState.atom, true);
+    jotaiStore.set(isMinimalMetadataReadyState.atom, true);
 
     if (state === 'hover') {
       jotaiStore.set(

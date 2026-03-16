@@ -5,11 +5,9 @@ import {
 } from '~/generated-metadata/graphql';
 
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
-import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItems';
 import { lastFieldMetadataItemUpdateState } from '@/object-metadata/states/lastFieldMetadataItemUpdateState';
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { t } from '@lingui/core/macro';
@@ -17,12 +15,6 @@ import { CrudOperationType } from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
 
 export const useUpdateOneFieldMetadataItem = () => {
-  const { refreshObjectMetadataItems } =
-    useRefreshObjectMetadataItems('network-only');
-
-  const { refreshCoreViewsByObjectMetadataId } =
-    useRefreshCoreViewsByObjectMetadataId();
-
   const [updateOneFieldMetadataItemMutation] = useMutation(
     UpdateOneFieldMetadataItemDocument,
   );
@@ -65,9 +57,6 @@ export const useUpdateOneFieldMetadataItem = () => {
           updatePayload: updatePayload,
         },
       });
-
-      await refreshObjectMetadataItems();
-      await refreshCoreViewsByObjectMetadataId(objectMetadataId);
 
       setLastFieldMetadataItemUpdate({
         fieldMetadataItemId: fieldMetadataIdToUpdate,

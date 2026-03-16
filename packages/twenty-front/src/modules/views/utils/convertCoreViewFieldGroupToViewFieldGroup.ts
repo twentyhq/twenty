@@ -7,7 +7,7 @@ import {
 
 type CoreViewFieldGroupInput = Pick<
   CoreViewFieldGroup,
-  'id' | 'name' | 'position' | 'isVisible' | 'viewId'
+  'id' | 'name' | 'position' | 'isVisible' | 'viewId' | 'isOverridden'
 > & {
   viewFields: Pick<
     CoreViewField,
@@ -17,6 +17,7 @@ type CoreViewFieldGroupInput = Pick<
     | 'isVisible'
     | 'size'
     | 'aggregateOperation'
+    | 'isOverridden'
   >[];
 };
 
@@ -29,6 +30,7 @@ export const convertCoreViewFieldGroupToViewFieldGroup = (
     name: coreViewFieldGroup.name,
     position: coreViewFieldGroup.position,
     isVisible: coreViewFieldGroup.isVisible,
+    isOverridden: coreViewFieldGroup.isOverridden ?? false,
     viewId: coreViewFieldGroup.viewId,
     viewFields: coreViewFieldGroup.viewFields.map(
       convertCoreViewFieldToViewField,

@@ -1,7 +1,7 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
+import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
 import { ObjectOptionsDropdownContent } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownContent';
 import { OBJECT_OPTIONS_DROPDOWN_ID } from '@/object-record/object-options-dropdown/constants/ObjectOptionsDropdownId';
 import { ObjectOptionsDropdownContext } from '@/object-record/object-options-dropdown/states/contexts/ObjectOptionsDropdownContext';
@@ -32,8 +32,8 @@ const meta: Meta<typeof ObjectOptionsDropdownContent> = {
   decorators: [
     (Story) => {
       useEffect(() => {
-        jotaiStore.set(
-          objectMetadataItemsState.atom,
+        setTestObjectMetadataItemsInMetadataStore(
+          jotaiStore,
           generatedMockObjectMetadataItems,
         );
       }, []);

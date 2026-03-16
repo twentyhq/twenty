@@ -12,6 +12,7 @@ export const convertCoreViewFieldToViewField = (
     | 'isVisible'
     | 'size'
     | 'aggregateOperation'
+    | 'isOverridden'
   >,
 ): ViewField => {
   const viewField: ViewField = {
@@ -22,6 +23,7 @@ export const convertCoreViewFieldToViewField = (
     isVisible: coreViewField.isVisible,
     size: coreViewField.size,
     aggregateOperation: coreViewField.aggregateOperation ?? null,
+    isOverridden: coreViewField.isOverridden ?? false,
     // TODO: remove this once we have refactored the view field definition
     definition: undefined as unknown as ColumnDefinition<FieldMetadata>,
   };

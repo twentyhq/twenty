@@ -1,4 +1,4 @@
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { objectMetadataItemsWithFieldsSelector } from '@/object-metadata/states/objectMetadataItemsWithFieldsSelector';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
 
@@ -15,7 +15,7 @@ export const objectMetadataItemFamilySelector = createAtomFamilySelector<
   get:
     ({ objectNameType, objectName }: ObjectMetadataItemSelector) =>
     ({ get }) => {
-      const objectMetadataItems = get(objectMetadataItemsState);
+      const objectMetadataItems = get(objectMetadataItemsWithFieldsSelector);
 
       if (objectNameType === 'singular') {
         return (

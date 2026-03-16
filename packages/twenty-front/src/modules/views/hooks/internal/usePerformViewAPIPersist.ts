@@ -38,7 +38,6 @@ export const usePerformViewAPIPersist = () => {
         const newViewId = variables.input.id ?? v4();
         if (variables.input.type === ViewType.KANBAN) {
           triggerViewGroupOptimisticEffectAtViewCreation({
-            newViewId,
             objectMetadataItemId: objectMetadataItemId,
             mainGroupByFieldMetadataId:
               variables.input.mainGroupByFieldMetadataId,

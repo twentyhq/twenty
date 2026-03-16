@@ -7,7 +7,6 @@ import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/use
 import { usePerformViewAPIPersist } from '@/views/hooks/internal/usePerformViewAPIPersist';
 import { useChangeView } from '@/views/hooks/useChangeView';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
-import { coreViewsByObjectMetadataIdFamilySelector } from '@/views/states/selectors/coreViewsByObjectMetadataIdFamilySelector';
 import { coreViewsFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/coreViewsFromObjectMetadataItemFamilySelector';
 import { useCloseAndResetViewPicker } from '@/views/view-picker/hooks/useCloseAndResetViewPicker';
 import { viewPickerIsDirtyComponentState } from '@/views/view-picker/states/viewPickerIsDirtyComponentState';
@@ -72,18 +71,10 @@ export const useDestroyViewFromCurrentState = (viewBarInstanceId?: string) => {
       changeView(remainingViews[0].id);
     }
 
-    store.set(
-      coreViewsByObjectMetadataIdFamilySelector.selectorFamily(
-        objectMetadataItem.id,
-      ),
-      (views) => views.filter((view) => view.id !== viewPickerReferenceViewId),
-    );
-
     await performViewAPIDestroy({ id: viewPickerReferenceViewId });
   }, [
     currentView,
     closeAndResetViewPicker,
-    objectMetadataItem.id,
     changeView,
     performViewAPIDestroy,
     store,

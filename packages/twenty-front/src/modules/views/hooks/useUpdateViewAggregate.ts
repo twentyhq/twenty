@@ -6,18 +6,12 @@ import { convertExtendedAggregateOperationToAggregateOperation } from '@/object-
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { usePerformViewAPIUpdate } from '@/views/hooks/internal/usePerformViewAPIUpdate';
 import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
-import { coreViewsState } from '@/views/states/coreViewState';
 import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
 import { useCallback } from 'react';
-import {
-  isDefined,
-  upsertIntoArrayOfObjectsComparingId,
-} from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { type CoreView } from '~/generated-metadata/graphql';
-import { useStore } from 'jotai';
 
 export const useUpdateViewAggregate = () => {
-  const store = useStore();
   const { canPersistChanges } = useCanPersistViewChanges();
   const contextStoreCurrentViewId = useAtomComponentStateValue(
     contextStoreCurrentViewIdComponentState,
@@ -67,13 +61,6 @@ export const useUpdateViewAggregate = () => {
           return;
         }
 
-        store.set(coreViewsState.atom, (currentCoreViews) =>
-          upsertIntoArrayOfObjectsComparingId(
-            currentCoreViews,
-            updatedCoreView,
-          ),
-        );
-
         const updatedView = convertCoreViewToView(updatedCoreView);
 
         loadRecordIndexStates(updatedView, objectMetadataItem);
@@ -84,7 +71,6 @@ export const useUpdateViewAggregate = () => {
       contextStoreCurrentViewId,
       performViewAPIUpdate,
       loadRecordIndexStates,
-      store,
     ],
   );
 

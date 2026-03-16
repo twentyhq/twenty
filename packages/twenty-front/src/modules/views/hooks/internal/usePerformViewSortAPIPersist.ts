@@ -3,11 +3,9 @@ import { useCallback } from 'react';
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useTriggerViewSortOptimisticEffect } from '@/views/optimistic-effects/hooks/useTriggerViewSortOptimisticEffect';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { t } from '@lingui/core/macro';
 import { CrudOperationType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 import { useMutation } from '@apollo/client/react';
 import {
   type CreateCoreViewSortMutationVariables,
@@ -21,8 +19,6 @@ import {
 } from '~/generated-metadata/graphql';
 
 export const usePerformViewSortAPIPersist = () => {
-  const { triggerViewSortOptimisticEffect } =
-    useTriggerViewSortOptimisticEffect();
   const [createCoreViewSortMutation] = useMutation(CreateCoreViewSortDocument);
   const [updateCoreViewSortMutation] = useMutation(UpdateCoreViewSortDocument);
   const [deleteCoreViewSortMutation] = useMutation(DeleteCoreViewSortDocument);
@@ -53,16 +49,6 @@ export const usePerformViewSortAPIPersist = () => {
           createCoreViewSortInputs.map((variables) =>
             createCoreViewSortMutation({
               variables,
-              update: (_cache, { data }) => {
-                const createdViewSort = data?.createCoreViewSort;
-                if (!isDefined(createdViewSort)) {
-                  return;
-                }
-
-                triggerViewSortOptimisticEffect({
-                  createdViewSorts: [createdViewSort],
-                });
-              },
             }),
           ),
         );
@@ -86,12 +72,7 @@ export const usePerformViewSortAPIPersist = () => {
         };
       }
     },
-    [
-      triggerViewSortOptimisticEffect,
-      createCoreViewSortMutation,
-      handleMetadataError,
-      enqueueErrorSnackBar,
-    ],
+    [createCoreViewSortMutation, handleMetadataError, enqueueErrorSnackBar],
   );
 
   const performViewSortAPIUpdate = useCallback(
@@ -114,16 +95,6 @@ export const usePerformViewSortAPIPersist = () => {
           updateCoreViewSortInputs.map((variables) =>
             updateCoreViewSortMutation({
               variables,
-              update: (_cache, { data }) => {
-                const updatedViewSort = data?.updateCoreViewSort;
-                if (!isDefined(updatedViewSort)) {
-                  return;
-                }
-
-                triggerViewSortOptimisticEffect({
-                  updatedViewSorts: [updatedViewSort],
-                });
-              },
             }),
           ),
         );
@@ -148,12 +119,7 @@ export const usePerformViewSortAPIPersist = () => {
         };
       }
     },
-    [
-      triggerViewSortOptimisticEffect,
-      updateCoreViewSortMutation,
-      handleMetadataError,
-      enqueueErrorSnackBar,
-    ],
+    [updateCoreViewSortMutation, handleMetadataError, enqueueErrorSnackBar],
   );
 
   const performViewSortAPIDelete = useCallback(
@@ -176,21 +142,6 @@ export const usePerformViewSortAPIPersist = () => {
           deleteCoreViewSortInputs.map((variables) =>
             deleteCoreViewSortMutation({
               variables,
-              update: (_cache, { data }) => {
-                const deletedViewSort = data?.deleteCoreViewSort;
-
-                if (!isDefined(deletedViewSort)) {
-                  return;
-                }
-
-                triggerViewSortOptimisticEffect({
-                  deletedViewSorts: [
-                    {
-                      id: variables.input.id,
-                    },
-                  ],
-                });
-              },
             }),
           ),
         );
@@ -215,12 +166,7 @@ export const usePerformViewSortAPIPersist = () => {
         };
       }
     },
-    [
-      triggerViewSortOptimisticEffect,
-      deleteCoreViewSortMutation,
-      handleMetadataError,
-      enqueueErrorSnackBar,
-    ],
+    [deleteCoreViewSortMutation, handleMetadataError, enqueueErrorSnackBar],
   );
 
   const performViewSortAPIDestroy = useCallback(

@@ -170,6 +170,31 @@ export class WorkspaceCacheService implements OnModuleInit {
     await this.recomputeDataFromProvider(workspaceId, cacheKeyNames);
   }
 
+  public async getCacheHashes(
+    workspaceId: string,
+    cacheKeyNames: WorkspaceCacheKeyName[],
+  ): Promise<Partial<Record<WorkspaceCacheKeyName, string>>> {
+    if (cacheKeyNames.length === 0) {
+      return {};
+    }
+
+    const hashKeys = cacheKeyNames.map(
+      (keyName) => `${this.buildCacheKey(workspaceId, keyName)}:hash`,
+    );
+
+    const hashes = await this.cacheStorage.mget<string>(hashKeys);
+
+    const result: Partial<Record<WorkspaceCacheKeyName, string>> = {};
+
+    for (const [index, keyName] of cacheKeyNames.entries()) {
+      if (isDefined(hashes[index])) {
+        result[keyName] = hashes[index];
+      }
+    }
+
+    return result;
+  }
+
   public async flush(
     workspaceId: string,
     cacheKeyNames: WorkspaceCacheKeyName[],
