@@ -125,6 +125,8 @@ type ChatThreadProps = {
   onSendMedia?: (file: File) => void;
   onEditMessage?: (messageId: string, newBody: string) => void;
   onDeleteMessage?: (message: WaMessage) => void;
+  onForwardMessage?: (message: WaMessage) => void;
+  onFlagLead?: () => void;
 };
 
 export const ChatThread = ({
@@ -137,6 +139,8 @@ export const ChatThread = ({
   onSendMedia,
   onEditMessage,
   onDeleteMessage,
+  onForwardMessage,
+  onFlagLead,
 }: ChatThreadProps) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
@@ -185,12 +189,14 @@ export const ChatThread = ({
           message={message}
           onEdit={onEditMessage}
           onDelete={onDeleteMessage}
+          onForward={onForwardMessage}
+          onFlagLead={onFlagLead}
         />,
       );
     }
 
     return elements;
-  }, [messages, onEditMessage, onDeleteMessage]);
+  }, [messages, onEditMessage, onDeleteMessage, onForwardMessage, onFlagLead]);
 
   return (
     <StyledContainer>

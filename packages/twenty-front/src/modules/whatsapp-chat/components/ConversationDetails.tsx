@@ -449,6 +449,9 @@ export const ConversationDetails = ({
     useMopDetails(contactEmail);
   const [activeTab, setActiveTab] = useState<TabId>('profile');
   const [mopExpanded, setMopExpanded] = useState(false);
+  const [coachEmail, setCoachEmail] = useState(
+    conversation.coachLeadOwnerEmail ?? '',
+  );
   const [assignEmail, setAssignEmail] = useState(
     conversation.assignedToEmail ?? '',
   );
@@ -483,6 +486,21 @@ export const ConversationDetails = ({
       // Silently fail
     }
   }, [bridgeFetch, conversation.id, assignEmail, onUpdate]);
+
+  const handleAssignCoach = useCallback(async () => {
+    const trimmedEmail = coachEmail.trim();
+    if (!trimmedEmail) return;
+
+    try {
+      await bridgeFetch(`/api/v1/conversations/${conversation.id}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ coach_lead_owner_email: trimmedEmail }),
+      });
+      onUpdate?.(conversation.id, { coachLeadOwnerEmail: trimmedEmail });
+    } catch {
+      // Silently fail
+    }
+  }, [bridgeFetch, conversation.id, coachEmail, onUpdate]);
 
   return (
     <StyledContainer>
@@ -1116,26 +1134,35 @@ export const ConversationDetails = ({
 
             <StyledSection>
               <StyledSectionTitle>Coach</StyledSectionTitle>
-              {conversation.coachLeadOwnerName ? (
-                <>
-                  <StyledField>
-                    <StyledFieldLabel>Name</StyledFieldLabel>
-                    <StyledFieldValue>
-                      {conversation.coachLeadOwnerName}
-                    </StyledFieldValue>
-                  </StyledField>
-                  {conversation.coachLeadOwnerEmail && (
-                    <StyledField>
-                      <StyledFieldLabel>Email</StyledFieldLabel>
-                      <StyledFieldValue>
-                        {conversation.coachLeadOwnerEmail}
-                      </StyledFieldValue>
-                    </StyledField>
-                  )}
-                </>
-              ) : (
+              {conversation.coachLeadOwnerName && (
+                <StyledField>
+                  <StyledFieldLabel>Currently assigned to</StyledFieldLabel>
+                  <StyledFieldValue>
+                    {conversation.coachLeadOwnerName}
+                  </StyledFieldValue>
+                </StyledField>
+              )}
+              {!conversation.coachLeadOwnerName && (
                 <StyledBadge variant="neutral">No coach assigned</StyledBadge>
               )}
+            </StyledSection>
+
+            <StyledSection>
+              <StyledSectionTitle>Reassign Coach</StyledSectionTitle>
+              <StyledAssignInput
+                type="email"
+                placeholder="Coach email..."
+                value={coachEmail}
+                onChange={(e) => setCoachEmail(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    handleAssignCoach();
+                  }
+                }}
+              />
+              <StyledAssignButton onClick={handleAssignCoach}>
+                Assign Coach
+              </StyledAssignButton>
             </StyledSection>
           </>
         )}

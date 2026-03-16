@@ -162,9 +162,11 @@ type ChatMessageProps = {
   message: WaMessage;
   onEdit?: (messageId: string, newBody: string) => void;
   onDelete?: (message: WaMessage) => void;
+  onForward?: (message: WaMessage) => void;
+  onFlagLead?: () => void;
 };
 
-export const ChatMessage = ({ message, onEdit, onDelete }: ChatMessageProps) => {
+export const ChatMessage = ({ message, onEdit, onDelete, onForward, onFlagLead }: ChatMessageProps) => {
   const [contextMenu, setContextMenu] = useState<{
     x: number;
     y: number;
@@ -302,6 +304,8 @@ export const ChatMessage = ({ message, onEdit, onDelete }: ChatMessageProps) => 
           onCopy={handleCopy}
           onEdit={onEdit ? handleStartEdit : undefined}
           onDelete={onDelete}
+          onForward={onForward}
+          onFlagLead={onFlagLead}
         />
       )}
     </StyledRow>
