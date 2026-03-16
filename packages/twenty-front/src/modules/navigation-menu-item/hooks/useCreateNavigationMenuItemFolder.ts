@@ -40,6 +40,7 @@ export const useCreateNavigationMenuItemFolder = () => {
     await createNavigationMenuItemMutation({
       variables: {
         input: {
+          type: 'folder',
           name,
           targetRecordId: null,
           targetObjectMetadataId: null,

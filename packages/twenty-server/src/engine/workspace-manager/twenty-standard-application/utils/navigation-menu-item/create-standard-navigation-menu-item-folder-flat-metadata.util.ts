@@ -24,6 +24,7 @@ export const createStandardNavigationMenuItemFolderFlatMetadata = ({
   now: string;
 }): FlatNavigationMenuItem => ({
   id: navigationMenuItemId,
+  type: 'folder',
   universalIdentifier,
   applicationId: twentyStandardApplicationId,
   applicationUniversalIdentifier:
@@ -84,6 +85,7 @@ export const createStandardNavigationMenuItemFolderItemFlatMetadata = ({
 
   return {
     id: navigationMenuItemId,
+    type: 'view',
     universalIdentifier,
     applicationId: twentyStandardApplicationId,
     applicationUniversalIdentifier:

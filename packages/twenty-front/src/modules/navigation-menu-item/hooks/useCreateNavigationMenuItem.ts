@@ -42,6 +42,7 @@ export const useCreateNavigationMenuItem = () => {
       await createNavigationMenuItemMutation({
         variables: {
           input: {
+            type: 'view',
             viewId: targetRecord.id,
             userWorkspaceId: currentWorkspaceMemberId,
             folderId,
@@ -75,6 +76,7 @@ export const useCreateNavigationMenuItem = () => {
       await createNavigationMenuItemMutation({
         variables: {
           input: {
+            type: 'record',
             targetRecordId: targetRecord.id,
             targetObjectMetadataId: objectMetadataItem.id,
             userWorkspaceId: currentWorkspaceMemberId,

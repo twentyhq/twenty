@@ -53,6 +53,7 @@ export const createStandardNavigationMenuItemFlatMetadata = ({
 
   return {
     id: navigationMenuItemId,
+    type: 'view',
     universalIdentifier: navigationMenuItemDefinition.universalIdentifier,
     applicationId: twentyStandardApplicationId,
     applicationUniversalIdentifier:

@@ -37,6 +37,7 @@ export const useAddFolderToNavigationMenuDraft = () => {
     const newItem: NavigationMenuItem = {
       __typename: 'NavigationMenuItem',
       id: newItemId,
+      type: 'folder',
       viewId: undefined,
       targetObjectMetadataId: undefined,
       targetRecordId: undefined,

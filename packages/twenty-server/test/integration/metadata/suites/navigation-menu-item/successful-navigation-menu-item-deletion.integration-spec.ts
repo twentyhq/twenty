@@ -38,6 +38,7 @@ describe('NavigationMenuItem deletion should succeed', () => {
     const { data: createData } = await createNavigationMenuItem({
       expectToFail: false,
       input: {
+        type: 'record',
         targetRecordId,
         targetObjectMetadataId: personObjectMetadataId,
       },

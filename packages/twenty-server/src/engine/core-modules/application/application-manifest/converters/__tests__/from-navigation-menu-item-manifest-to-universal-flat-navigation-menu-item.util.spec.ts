@@ -9,6 +9,7 @@ describe('fromNavigationMenuItemManifestToUniversalFlatNavigationMenuItem', () =
       fromNavigationMenuItemManifestToUniversalFlatNavigationMenuItem({
         navigationMenuItemManifest: {
           universalIdentifier: 'nav-uuid-1',
+          type: 'view',
           position: 0,
         },
         applicationUniversalIdentifier,
@@ -34,6 +35,7 @@ describe('fromNavigationMenuItemManifestToUniversalFlatNavigationMenuItem', () =
       fromNavigationMenuItemManifestToUniversalFlatNavigationMenuItem({
         navigationMenuItemManifest: {
           universalIdentifier: 'nav-uuid-2',
+          type: 'view',
           name: 'Recipes Board',
           position: 1,
           viewUniversalIdentifier: 'view-uuid-1',

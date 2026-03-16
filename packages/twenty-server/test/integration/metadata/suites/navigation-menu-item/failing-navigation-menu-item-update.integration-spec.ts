@@ -54,6 +54,7 @@ describe('NavigationMenuItem update should fail', () => {
     const { data } = await createNavigationMenuItem({
       expectToFail: false,
       input: {
+        type: 'record',
         targetRecordId,
         targetObjectMetadataId: personObjectMetadataId,
         position: 1,

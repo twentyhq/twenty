@@ -13,6 +13,7 @@ export const buildCreateNavigationMenuItemInput = (
   resolveFolderId: (draftFolderId: string) => string,
 ): CreateNavigationMenuItemInput => {
   const input: CreateNavigationMenuItemInput = {
+    type: draftItem.type,
     position: draftItem.position,
   };
 

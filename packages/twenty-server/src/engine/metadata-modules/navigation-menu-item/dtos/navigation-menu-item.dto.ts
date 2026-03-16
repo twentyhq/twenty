@@ -39,6 +39,10 @@ export class NavigationMenuItemDTO {
   @Field(() => UUIDScalarType, { nullable: true })
   viewId?: string | null;
 
+  @IsNotEmpty()
+  @Field(() => String)
+  type: string;
+
   @IsOptional()
   @Field(() => String, { nullable: true })
   name?: string | null;

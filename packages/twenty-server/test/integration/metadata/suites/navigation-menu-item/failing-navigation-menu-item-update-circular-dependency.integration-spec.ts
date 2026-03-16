@@ -13,6 +13,7 @@ describe('Navigation Menu Item update should fail with circular dependency', () 
     const { data: folderData } = await createNavigationMenuItem({
       expectToFail: false,
       input: {
+        type: 'folder',
         name: 'Standalone Folder',
       },
     });
@@ -23,6 +24,7 @@ describe('Navigation Menu Item update should fail with circular dependency', () 
     const { data: parentFolderData } = await createNavigationMenuItem({
       expectToFail: false,
       input: {
+        type: 'folder',
         name: 'Parent Folder',
       },
     });
@@ -33,6 +35,7 @@ describe('Navigation Menu Item update should fail with circular dependency', () 
     const { data: childFolderData } = await createNavigationMenuItem({
       expectToFail: false,
       input: {
+        type: 'folder',
         name: 'Child Folder',
         folderId: parentFolderId,
       },

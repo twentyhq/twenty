@@ -26,6 +26,10 @@ export class CreateNavigationMenuItemInput {
   @Field(() => UUIDScalarType, { nullable: true })
   viewId?: string | null;
 
+  @IsString()
+  @Field(() => String)
+  type: string;
+
   @IsOptional()
   @IsString()
   @Field(() => String, { nullable: true })

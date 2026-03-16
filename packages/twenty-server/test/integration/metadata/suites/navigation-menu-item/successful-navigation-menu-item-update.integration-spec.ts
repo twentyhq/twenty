@@ -40,6 +40,7 @@ describe('NavigationMenuItem update should succeed', () => {
     const { data } = await createNavigationMenuItem({
       expectToFail: false,
       input: {
+        type: 'record',
         targetRecordId,
         targetObjectMetadataId: personObjectMetadataId,
         position: 1,
@@ -89,6 +90,7 @@ describe('NavigationMenuItem update should succeed', () => {
     const { data: folderData } = await createNavigationMenuItem({
       expectToFail: false,
       input: {
+        type: 'record',
         targetRecordId: folderTargetRecordId,
         targetObjectMetadataId: personObjectMetadataId,
       },
@@ -121,6 +123,7 @@ describe('NavigationMenuItem update should succeed', () => {
     const { data: folderData } = await createNavigationMenuItem({
       expectToFail: false,
       input: {
+        type: 'record',
         targetRecordId: folderTargetRecordId,
         targetObjectMetadataId: personObjectMetadataId,
       },
@@ -163,6 +166,7 @@ describe('NavigationMenuItem update should succeed', () => {
     const { data: folderData } = await createNavigationMenuItem({
       expectToFail: false,
       input: {
+        type: 'record',
         targetRecordId: folderTargetRecordId,
         targetObjectMetadataId: personObjectMetadataId,
       },

@@ -37,6 +37,7 @@ export const useAddViewToNavigationMenuDraft = () => {
     const newItem: NavigationMenuItem = {
       __typename: 'NavigationMenuItem',
       id: newItemId,
+      type: 'view',
       viewId,
       targetObjectMetadataId: undefined,
       position,

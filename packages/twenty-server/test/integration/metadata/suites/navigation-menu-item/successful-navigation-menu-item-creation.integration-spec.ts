@@ -74,6 +74,7 @@ describe('NavigationMenuItem creation should succeed', () => {
     const { data } = await createNavigationMenuItem({
       expectToFail: false,
       input: {
+        type: 'record',
         targetRecordId,
         targetObjectMetadataId: personObjectMetadataId,
       },
@@ -98,6 +99,7 @@ describe('NavigationMenuItem creation should succeed', () => {
     const { data: folderData } = await createNavigationMenuItem({
       expectToFail: false,
       input: {
+        type: 'record',
         targetRecordId: folderTargetRecordId,
         targetObjectMetadataId: companyObjectMetadataId,
         userWorkspaceId: validUserWorkspaceId ?? undefined,
@@ -112,6 +114,7 @@ describe('NavigationMenuItem creation should succeed', () => {
     const { data } = await createNavigationMenuItem({
       expectToFail: false,
       input: {
+        type: 'record',
         targetRecordId,
         targetObjectMetadataId: companyObjectMetadataId,
         userWorkspaceId: validUserWorkspaceId ?? undefined,
@@ -139,6 +142,7 @@ describe('NavigationMenuItem creation should succeed', () => {
     const { data: data1 } = await createNavigationMenuItem({
       expectToFail: false,
       input: {
+        type: 'record',
         targetRecordId: targetRecordId1,
         targetObjectMetadataId: personObjectMetadataId,
       },
@@ -150,6 +154,7 @@ describe('NavigationMenuItem creation should succeed', () => {
     const { data: data2 } = await createNavigationMenuItem({
       expectToFail: false,
       input: {
+        type: 'record',
         targetRecordId: targetRecordId2,
         targetObjectMetadataId: personObjectMetadataId,
       },

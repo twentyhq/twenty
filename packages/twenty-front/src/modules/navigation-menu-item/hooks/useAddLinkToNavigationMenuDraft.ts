@@ -40,6 +40,7 @@ export const useAddLinkToNavigationMenuDraft = () => {
     const newItem: NavigationMenuItem = {
       __typename: 'NavigationMenuItem',
       id: newItemId,
+      type: 'link',
       viewId: undefined,
       targetObjectMetadataId: undefined,
       targetRecordId: undefined,

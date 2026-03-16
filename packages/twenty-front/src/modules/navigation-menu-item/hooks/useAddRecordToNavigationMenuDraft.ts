@@ -60,6 +60,7 @@ export const useAddRecordToNavigationMenuDraft = () => {
     const newItem: NavigationMenuItem = {
       __typename: 'NavigationMenuItem',
       id: newItemId,
+      type: 'record',
       viewId: undefined,
       targetObjectMetadataId: objectMetadataId,
       targetRecordId: searchRecord.recordId,
